@@ -1,0 +1,196 @@
+[
+  {
+    "id": "AI_PATTERN_1",
+    "pathname": "/api/v1/ml/:model/:category/:entity",
+    "hostname": ["aibookie.ai", "ml.predictive.com"],
+    "priority": 1500,
+    "region": "global",
+    "confidence": 0.999,
+    "aiModel": "gpt-4o-mini",
+    "validation": {
+      "method": "POST",
+      "headers": ["Content-Type: application/json"],
+      "payloadSchema": {
+        "type": "object",
+        "properties": {
+          "features": { "type": "array", "items": { "type": "number" } },
+          "timestamp": { "type": "string", "format": "date-time" }
+        },
+        "required": ["features"]
+      }
+    },
+    "performance": {
+      "avgLatency": "45ms",
+      "throughput": "1200 req/s"
+    },
+    "generatedAt": "2025-01-09T10:00:00Z",
+    "enhancedBy": "industrial-bun-toolkit"
+  },
+  {
+    "id": "AI_PATTERN_2",
+    "pathname": "/predict/:endpoint([a-z]+-[a-z]+)/:marketId/:variant?",
+    "hostname": "*.predict.com",
+    "priority": 1400,
+    "regex": true,
+    "region": ["us", "eu", "asia"],
+    "confidence": 0.998,
+    "aiModel": "gpt-4o-mini",
+    "caching": {
+      "ttl": "300s",
+      "strategy": "redis"
+    },
+    "validation": {
+      "method": ["GET", "POST"],
+      "queryParams": {
+        "marketId": { "type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$" }
+      }
+    },
+    "performance": {
+      "avgLatency": "22ms",
+      "throughput": "2500 req/s"
+    },
+    "generatedAt": "2025-01-09T10:05:15Z",
+    "enhancedBy": "industrial-bun-toolkit"
+  },
+  {
+    "id": "AI_PATTERN_3",
+    "pathname": "/realtime/:stream/:event/:id",
+    "hostname": "realtime.ai",
+    "priority": 1300,
+    "region": "global",
+    "confidence": 0.996,
+    "aiModel": "llama3.1-70b",
+    "streaming": true,
+    "validation": {
+      "method": "GET",
+      "headers": ["Authorization: Bearer <token>"],
+      "responseType": "SSE"
+    },
+    "performance": {
+      "avgLatency": "8ms",
+      "throughput": "5000 events/s"
+    },
+    "generatedAt": "2025-01-09T10:10:30Z",
+    "enhancedBy": "industrial-bun-toolkit"
+  },
+  {
+    "id": "AI_PATTERN_4",
+    "pathname": "/ensemble/:models+/predict/:target",
+    "hostname": "ensemble.ml",
+    "priority": 1250,
+    "region": "eu",
+    "confidence": 0.995,
+    "aiModel": "multi-model",
+    "validation": {
+      "method": "POST",
+      "payloadSchema": {
+        "type": "object",
+        "properties": {
+          "models": { "type": "array", "items": { "type": "string", "enum": ["rf", "xgb", "nn"] } },
+          "data": { "type": "object" }
+        },
+        "required": ["models", "data"]
+      }
+    },
+    "performance": {
+      "avgLatency": "120ms",
+      "throughput": "800 req/s"
+    },
+    "generatedAt": "2025-01-09T10:15:45Z",
+    "enhancedBy": "industrial-bun-toolkit"
+  },
+  {
+    "id": "AI_PATTERN_5",
+    "pathname": "/batch/:jobId/analyze/:dataset",
+    "hostname": "batch.ai",
+    "priority": 1200,
+    "region": "us",
+    "confidence": 0.994,
+    "aiModel": "gpt-4o-mini",
+    "batchSize": 1000,
+    "validation": {
+      "method": "POST",
+      "payloadMaxSize": "50MB",
+      "headers": ["X-Batch-ID: <uuid>"]
+    },
+    "performance": {
+      "avgLatency": "2.5s",
+      "throughput": "400 jobs/hour"
+    },
+    "generatedAt": "2025-01-09T10:20:00Z",
+    "enhancedBy": "industrial-bun-toolkit"
+  },
+  {
+    "id": "AI_PATTERN_6",
+    "pathname": "/federated/:network/:node/:model/update",
+    "hostname": "*.federated-learning.org",
+    "priority": 1150,
+    "regex": true,
+    "region": "global",
+    "confidence": 0.992,
+    "aiModel": "federated",
+    "security": {
+      "encryption": "AES-256-GCM",
+      "auth": "mTLS"
+    },
+    "validation": {
+      "method": "PUT",
+      "headers": ["X-Federated-Node: <cert>"]
+    },
+    "performance": {
+      "avgLatency": "350ms",
+      "throughput": "200 updates/s"
+    },
+    "generatedAt": "2025-01-09T10:25:15Z",
+    "enhancedBy": "industrial-bun-toolkit"
+  },
+  {
+    "id": "AI_PATTERN_7",
+    "pathname": "/anomaly/:detector/:stream/:alert",
+    "hostname": "anomaly.detect.com",
+    "priority": 1100,
+    "region": "asia",
+    "confidence": 0.990,
+    "aiModel": "isolation-forest",
+    "realTime": true,
+    "validation": {
+      "method": "GET",
+      "queryParams": {
+        "threshold": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "performance": {
+      "avgLatency": "15ms",
+      "throughput": "3000 alerts/s"
+    },
+    "generatedAt": "2025-01-09T10:30:30Z",
+    "enhancedBy": "industrial-bun-toolkit"
+  },
+  {
+    "id": "AI_PATTERN_8",
+    "pathname": "/optimize/:algorithm/:objective/:constraints",
+    "hostname": "optima.ai",
+    "priority": 1050,
+    "region": "global",
+    "confidence": 0.988,
+    "aiModel": "bayesian-optimization",
+    "validation": {
+      "method": "POST",
+      "payloadSchema": {
+        "type": "object",
+        "properties": {
+          "objective": { "type": "function" },
+          "bounds": { "type": "object", "additionalProperties": { "type": "number" } },
+          "constraints": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "performance": {
+      "avgLatency": "800ms",
+      "throughput": "150 optimizations/hour"
+    },
+    "generatedAt": "2025-01-09T10:35:45Z",
+    "enhancedBy": "industrial-bun-toolkit"
+  }
+]
+

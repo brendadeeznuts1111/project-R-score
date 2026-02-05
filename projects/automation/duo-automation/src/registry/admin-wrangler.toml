@@ -1,0 +1,53 @@
+# src/registry/admin-wrangler.toml
+name = "admin-dashboard"
+main = "admin-dashboard-worker.ts"
+compatibility_date = "2024-01-15"
+compatibility_flags = ["nodejs_compat"]
+
+# Environment variables
+[vars]
+ENVIRONMENT = "production"
+DOMAIN = "admin.factory-wager.com"
+ADMIN_API_KEY = "your-production-api-key"
+
+# KV Namespaces for caching and session storage
+[[kv_namespaces]]
+binding = "KV_STORE"
+id = "your-kv-namespace-id"
+preview_id = "your-preview-kv-namespace-id"
+
+# D1 Database for analytics and logs
+[[d1_databases]]
+binding = "D1_DATABASE"
+database_name = "admin-dashboard-db"
+database_id = "your-d1-database-id"
+
+# Routes - Admin dashboard will be served from admin subdomain
+[[routes]]
+pattern = "admin.factory-wager.com/*"
+zone_name = "factory-wager.com"
+
+# Custom domains
+[[custom_domains]]
+domain = "admin.factory-wager.com"
+
+# Performance limits
+[limits]
+cpu_ms = 10000
+
+# Build configuration
+[build]
+command = ""
+
+# Environment-specific configurations
+[env.staging]
+name = "admin-dashboard-staging"
+vars = { ENVIRONMENT = "staging", DOMAIN = "admin-staging.factory-wager.com" }
+routes = [{ pattern = "admin-staging.factory-wager.com/*", zone_name = "factory-wager.com" }]
+custom_domains = [{ domain = "admin-staging.factory-wager.com" }]
+
+[env.development]
+name = "admin-dashboard-dev"
+vars = { ENVIRONMENT = "development", DOMAIN = "admin-dev.factory-wager.com" }
+routes = [{ pattern = "admin-dev.factory-wager.com/*", zone_name = "factory-wager.com" }]
+custom_domains = [{ domain = "admin-dev.factory-wager.com" }]

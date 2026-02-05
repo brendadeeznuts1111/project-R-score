@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codebase Domination Visualizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes domination-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+        
+        @keyframes takeover-wave {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes sector-activate {
+            0% { transform: scale(0.8) rotate(0deg); opacity: 0.5; }
+            50% { transform: scale(1.1) rotate(180deg); opacity: 1; }
+            100% { transform: scale(1) rotate(360deg); opacity: 1; }
+        }
+        
+        @keyframes progress-fill {
+            0% { width: 0%; }
+            100% { width: var(--progress); }
+        }
+        
+        .domination-header {
+            background: linear-gradient(135deg, #dc2626, #3b82f6, #991b1b, #3b82f6);
+            background-size: 600% 600%;
+            animation: takeover-wave 10s ease infinite;
+        }
+        
+        .sector-card {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(185, 28, 28, 0.1));
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(220, 38, 38, 0.3);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sector-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(220, 38, 38, 0.1) 0%, transparent 70%);
+            animation: domination-pulse 3s ease-in-out infinite;
+        }
+        
+        .sector-card.activated {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.3), rgba(185, 28, 28, 0.3));
+            border-color: rgba(220, 38, 38, 0.8);
+            animation: sector-activate 1s ease-out;
+        }
+        
+        .sector-card.controlled {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(5, 150, 105, 0.3));
+            border-color: rgba(16, 185, 129, 0.8);
+        }
+        
+        .domination-button {
+            background: linear-gradient(45deg, #dc2626, #3b82f6, #991b1b);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: domination-pulse 2s ease-in-out infinite;
+        }
+        
+        .domination-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .domination-button:active::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .domination-button:disabled {
+            background: linear-gradient(45deg, #3b82f6, #3b82f6);
+            animation: none;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: linear-gradient(90deg, #dc2626, #3b82f6, #991b1b);
+            border-radius: 4px;
+            transition: width 1s ease;
+            animation: progress-fill 2s ease-out;
+        }
+        
+        .progress-bar.complete {
+            background: linear-gradient(90deg, #10b981, #3b82f6, #3b82f6);
+        }
+        
+        .file-tree {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .file-item {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .file-item:hover {
+            background: rgba(220, 38, 38, 0.1);
+            padding-left: 4px;
+        }
+        
+        .file-item.controlled {
+            color: #10b981;
+            text-decoration: line-through;
+        }
+        
+        .file-item.activated {
+            color: #dc2626;
+            font-weight: bold;
+        }
+        
+        .domination-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #dc2626, #3b82f6);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.6);
+            z-index: 1001;
+            animation: slide-in 0.5s ease;
+            max-width: 350px;
+        }
+        
+        .domination-notification.success {
+            background: linear-gradient(135deg, #10b981, #3b82f6);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.6);
+        }
+        
+        .domination-notification.warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.6);
+        }
+        
+        @keyframes slide-in {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .radar-sweep {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(from 0deg, transparent 0deg, rgba(220, 38, 38, 0.3) 30deg, transparent 60deg);
+            animation: radar-rotate 3s linear infinite;
+            transform-origin: center;
+        }
+        
+        @keyframes radar-rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .codebase-grid {
+            background-image: 
+                linear-gradient(rgba(220, 38, 38, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(220, 38, 38, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            animation: takeover-wave 15s ease-in-out infinite;
+        }
+        
+        .sector-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .control-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .control-indicator.inactive {
+            background: #3b82f6;
+        }
+        
+        .control-indicator.activating {
+            background: #f59e0b;
+            animation: domination-pulse 1s ease-in-out infinite;
+        }
+        
+        .control-indicator.controlled {
+            background: #10b981;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(185, 28, 28, 0.1));
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(220, 38, 38, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen codebase-grid">
+    <!-- Domination Header -->
+    <header class="domination-header shadow-2xl border-b border-red-600">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-virus text-3xl text-red-300"></i>
+                        <h1 class="text-3xl font-bold text-white">Codebase Domination Visualizer</h1>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="control-indicator activating"></span>
+                        <span class="text-sm text-red-200">Takeover in Progress</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="startFullDomination()" class="domination-button px-6 py-3 text-white rounded-lg hover:scale-105 transition-all">
+                        <i class="fas fa-crown mr-2"></i>Full Domination
+                    </button>
+                    <button onclick="showProgress()" class="bg-gray-600 hover:bg-gray-700 px-6 py-3 rounded-lg transition-all hover:scale-105">
+                        <i class="fas fa-chart-line mr-2"></i>Progress
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        <!-- Domination Statistics -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="stats-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-2xl font-bold text-red-400" id="sectorsControlled">0/12</div>
+                        <div class="text-sm text-gray-400">Sectors Controlled</div>
+                    </div>
+                    <i class="fas fa-flag text-3xl text-red-400 opacity-50"></i>
+                </div>
+            </div>
+            <div class="stats-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-2xl font-bold text-orange-400" id="filesOwned">0</div>
+                        <div class="text-sm text-gray-400">Files Owned</div>
+                    </div>
+                    <i class="fas fa-file-code text-3xl text-orange-400 opacity-50"></i>
+                </div>
+            </div>
+            <div class="stats-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-2xl font-bold text-yellow-400" id="dominationLevel">0%</div>
+                        <div class="text-sm text-gray-400">Domination Level</div>
+                    </div>
+                    <i class="fas fa-percentage text-3xl text-yellow-400 opacity-50"></i>
+                </div>
+            </div>
+            <div class="stats-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-2xl font-bold text-green-400" id="controlPower">0</div>
+                        <div class="text-sm text-gray-400">Control Power</div>
+                    </div>
+                    <i class="fas fa-bolt text-3xl text-green-400 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overall Progress -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="text-lg font-semibold text-red-400">Overall Domination Progress</h3>
+                <span class="text-sm text-gray-400" id="overallProgress">0%</span>
+            </div>
+            <div class="w-full bg-gray-700 rounded-full h-4">
+                <div id="overallProgressBar" class="progress-bar" style="--progress: 0%; width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Sectors Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Core Library Sector -->
+            <div class="sector-card rounded-lg p-6 shadow-xl" data-sector="core">
+                <div class="text-center mb-4">
+                    <i class="fas fa-cube sector-icon text-red-400"></i>
+                    <h3 class="text-xl font-bold text-red-400">Core Library</h3>
+                    <span class="control-indicator inactive" id="core-indicator"></span>
+                </div>
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm mb-1">
+                        <span>Control Level</span>
+                        <span id="core-progress">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div id="core-bar" class="progress-bar" style="--progress: 0%; width: 0%"></div>
+                    </div>
+                </div>
+                <div class="file-tree text-xs mb-4">
+                    <div class="file-item" data-file="src/index.ts">📄 src/index.ts</div>
+                    <div class="file-item" data-file="src/shortcuts.ts">📄 src/shortcuts.ts</div>
+                    <div class="file-item" data-file="src/types.ts">📄 src/types.ts</div>
+                    <div class="file-item" data-file="src/utils.ts">📄 src/utils.ts</div>
+                </div>
+                <button onclick="activateSector('core')" class="domination-button w-full px-4 py-2 rounded text-sm" id="core-button">
+                    <i class="fas fa-virus mr-2"></i>Activate Sector
+                </button>
+            </div>
+
+            <!-- Documentation Sector -->
+            <div class="sector-card rounded-lg p-6 shadow-xl" data-sector="docs">
+                <div class="text-center mb-4">
+                    <i class="fas fa-book sector-icon text-blue-400"></i>
+                    <h3 class="text-xl font-bold text-blue-400">Documentation</h3>
+                    <span class="control-indicator inactive" id="docs-indicator"></span>
+                </div>
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm mb-1">
+                        <span>Control Level</span>
+                        <span id="docs-progress">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div id="docs-bar" class="progress-bar" style="--progress: 0%; width: 0%"></div>
+                    </div>
+                </div>
+                <div class="file-tree text-xs mb-4">
+                    <div class="file-item" data-file="README.md">📄 README.md</div>
+                    <div class="file-item" data-file="USAGE_GUIDE.md">📄 USAGE_GUIDE.md</div>
+                    <div class="file-item" data-file="API.md">📄 API.md</div>
+                    <div class="file-item" data-file="CONTRIBUTING.md">📄 CONTRIBUTING.md</div>
+                </div>
+                <button onclick="activateSector('docs')" class="domination-button w-full px-4 py-2 rounded text-sm" id="docs-button">
+                    <i class="fas fa-virus mr-2"></i>Activate Sector
+                </button>
+            </div>
+
+            <!-- Testing Sector -->
+            <div class="sector-card rounded-lg p-6 shadow-xl" data-sector="tests">
+                <div class="text-center mb-4">
+                    <i class="fas fa-vial sector-icon text-green-400"></i>
+                    <h3 class="text-xl font-bold text-green-400">Testing Suite</h3>
+                    <span class="control-indicator inactive" id="tests-indicator"></span>
+                </div>
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm mb-1">
+                        <span>Control Level</span>
+                        <span id="tests-progress">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div id="tests-bar" class="progress-bar" style="--progress: 0%; width: 0%"></div>
+                    </div>
+                </div>
+                <div class="file-tree text-xs mb-4">
+                    <div class="file-item" data-file="tests/index.test.ts">📄 tests/index.test.ts</div>
+                    <div class="file-item" data-file="tests/shortcuts.test.ts">📄 tests/shortcuts.test.ts</div>
+                    <div class="file-item" data-file="tests/utils.test.ts">📄 tests/utils.test.ts</div>
+                    <div class="file-item" data-file="tests/e2e.test.ts">📄 tests/e2e.test.ts</div>
+                </div>
+                <button onclick="activateSector('tests')" class="domination-button w-full px-4 py-2 rounded text-sm" id="tests-button">
+                    <i class="fas fa-virus mr-2"></i>Activate Sector
+                </button>
+            </div>
+
+            <!-- Demos Sector -->
+            <div class="sector-card rounded-lg p-6 shadow-xl" data-sector="demos">
+                <div class="text-center mb-4">
+                    <i class="fas fa-play sector-icon text-purple-400"></i>
+                    <h3 class="text-xl font-bold text-purple-400">Interactive Demos</h3>
+                    <span class="control-indicator inactive" id="demos-indicator"></span>
+                </div>
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm mb-1">
+                        <span>Control Level</span>
+                        <span id="demos-progress">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div id="demos-bar" class="progress-bar" style="--progress: 0%; width: 0%"></div>
+                    </div>
+                </div>
+                <div class="file-tree text-xs mb-4">
+                    <div class="file-item" data-file="demos/basic.html">📄 demos/basic.html</div>
+                    <div class="file-item" data-file="demos/advanced.html">📄 demos/advanced.html</div>
+                    <div class="file-item" data-file="demos/ai-enhanced.html">📄 demos/ai-enhanced.html</div>
+                    <div class="file-item" data-file="demos/ultimate.html">📄 demos/ultimate.html</div>
+                </div>
+                <button onclick="activateSector('demos')" class="domination-button w-full px-4 py-2 rounded text-sm" id="demos-button">
+                    <i class="fas fa-virus mr-2"></i>Activate Sector
+                </button>
+            </div>
+
+            <!-- Integration Sector -->
+            <div class="sector-card rounded-lg p-6 shadow-xl" data-sector="integration">
+                <div class="text-center mb-4">
+                    <i class="fas fa-plug sector-icon text-yellow-400"></i>
+                    <h3 class="text-xl font-bold text-yellow-400">Framework Integration</h3>
+                    <span class="control-indicator inactive" id="integration-indicator"></span>
+                </div>
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm mb-1">
+                        <span>Control Level</span>
+                        <span id="integration-progress">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div id="integration-bar" class="progress-bar" style="--progress: 0%; width: 0%"></div>
+                    </div>
+                </div>
+                <div class="file-tree text-xs mb-4">
+                    <div class="file-item" data-file="integrations/react.ts">📄 integrations/react.ts</div>
+                    <div class="file-item" data-file="integrations/vue.ts">📄 integrations/vue.ts</div>
+                    <div class="file-item" data-file="integrations/angular.ts">📄 integrations/angular.ts</div>
+                    <div class="file-item" data-file="integrations/svelte.ts">📄 integrations/svelte.ts</div>
+                </div>
+                <button onclick="activateSector('integration')" class="domination-button w-full px-4 py-2 rounded text-sm" id="integration-button">
+                    <i class="fas fa-virus mr-2"></i>Activate Sector
+                </button>
+            </div>
+
+            <!-- Configuration Sector -->
+            <div class="sector-card rounded-lg p-6 shadow-xl" data-sector="config">
+                <div class="text-center mb-4">
+                    <i class="fas fa-cog sector-icon text-gray-400"></i>
+                    <h3 class="text-xl font-bold text-gray-400">Configuration</h3>
+                    <span class="control-indicator inactive" id="config-indicator"></span>
+                </div>
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm mb-1">
+                        <span>Control Level</span>
+                        <span id="config-progress">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div id="config-bar" class="progress-bar" style="--progress: 0%; width: 0%"></div>
+                    </div>
+                </div>
+                <div class="file-tree text-xs mb-4">
+                    <div class="file-item" data-file="package.json">📄 package.json</div>
+                    <div class="file-item" data-file="tsconfig.json">📄 tsconfig.json</div>
+                    <div class="file-item" data-file="vite.config.ts">📄 vite.config.ts</div>
+                    <div class="file-item" data-file=".eslintrc.js">📄 .eslintrc.js</div>
+                </div>
+                <button onclick="activateSector('config')" class="domination-button w-full px-4 py-2 rounded text-sm" id="config-button">
+                    <i class="fas fa-virus mr-2"></i>Activate Sector
+                </button>
+            </div>
+
+            <!-- Build Tools Sector -->
+            <div class="sector-card rounded-lg p-6 shadow-xl" data-sector="build">
+                <div class="text-center mb-4">
+                    <i class="fas fa-hammer sector-icon text-orange-400"></i>
+                    <h3 class="text-xl font-bold text-orange-400">Build Tools</h3>
+                    <span class="control-indicator inactive" id="build-indicator"></span>
+                </div>
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm mb-1">
+                        <span>Control Level</span>
+                        <span id="build-progress">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div id="build-bar" class="progress-bar" style="--progress: 0%; width: 0%"></div>
+                    </div>
+                </div>
+                <div class="file-tree text-xs mb-4">
+                    <div class="file-item" data-file="build/rollup.config.js">📄 build/rollup.config.js</div>
+                    <div class="file-item" data-file="build/webpack.config.js">📄 build/webpack.config.js</div>
+                    <div class="file-item" data-file="build/vite.config.ts">📄 build/vite.config.ts</div>
+                    <div class="file-item" data-file="build/scripts.js">📄 build/scripts.js</div>
+                </div>
+                <button onclick="activateSector('build')" class="domination-button w-full px-4 py-2 rounded text-sm" id="build-button">
+                    <i class="fas fa-virus mr-2"></i>Activate Sector
+                </button>
+            </div>
+
+            <!-- CLI Sector -->
+            <div class="sector-card rounded-lg p-6 shadow-xl" data-sector="cli">
+                <div class="text-center mb-4">
+                    <i class="fas fa-terminal sector-icon text-cyan-400"></i>
+                    <h3 class="text-xl font-bold text-cyan-400">CLI Tools</h3>
+                    <span class="control-indicator inactive" id="cli-indicator"></span>
+                </div>
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm mb-1">
+                        <span>Control Level</span>
+                        <span id="cli-progress">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div id="cli-bar" class="progress-bar" style="--progress: 0%; width: 0%"></div>
+                    </div>
+                </div>
+                <div class="file-tree text-xs mb-4">
+                    <div class="file-item" data-file="cli/index.ts">📄 cli/index.ts</div>
+                    <div class="file-item" data-file="cli/commands.ts">📄 cli/commands.ts</div>
+                    <div class="file-item" data-file="cli/utils.ts">📄 cli/utils.ts</div>
+                    <div class="file-item" data-file="cli/templates.ts">📄 cli/templates.ts</div>
+                </div>
+                <button onclick="activateSector('cli')" class="domination-button w-full px-4 py-2 rounded text-sm" id="cli-button">
+                    <i class="fas fa-virus mr-2"></i>Activate Sector
+                </button>
+            </div>
+
+            <!-- Performance Sector -->
+            <div class="sector-card rounded-lg p-6 shadow-xl" data-sector="performance">
+                <div class="text-center mb-4">
+                    <i class="fas fa-tachometer-alt sector-icon text-pink-400"></i>
+                    <h3 class="text-xl font-bold text-pink-400">Performance</h3>
+                    <span class="control-indicator inactive" id="performance-indicator"></span>
+                </div>
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm mb-1">
+                        <span>Control Level</span>
+                        <span id="performance-progress">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div id="performance-bar" class="progress-bar" style="--progress: 0%; width: 0%"></div>
+                    </div>
+                </div>
+                <div class="file-tree text-xs mb-4">
+                    <div class="file-item" data-file="performance/benchmarks.ts">📄 performance/benchmarks.ts</div>
+                    <div class="file-item" data-file="performance/profiler.ts">📄 performance/profiler.ts</div>
+                    <div class="file-item" data-file="performance/optimizer.ts">📄 performance/optimizer.ts</div>
+                    <div class="file-item" data-file="performance/monitor.ts">📄 performance/monitor.ts</div>
+                </div>
+                <button onclick="activateSector('performance')" class="domination-button w-full px-4 py-2 rounded text-sm" id="performance-button">
+                    <i class="fas fa-virus mr-2"></i>Activate Sector
+                </button>
+            </div>
+
+            <!-- Security Sector -->
+            <div class="sector-card rounded-lg p-6 shadow-xl" data-sector="security">
+                <div class="text-center mb-4">
+                    <i class="fas fa-shield-alt sector-icon text-indigo-400"></i>
+                    <h3 class="text-xl font-bold text-indigo-400">Security</h3>
+                    <span class="control-indicator inactive" id="security-indicator"></span>
+                </div>
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm mb-1">
+                        <span>Control Level</span>
+                        <span id="security-progress">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div id="security-bar" class="progress-bar" style="--progress: 0%; width: 0%"></div>
+                    </div>
+                </div>
+                <div class="file-tree text-xs mb-4">
+                    <div class="file-item" data-file="security/auth.ts">📄 security/auth.ts</div>
+                    <div class="file-item" data-file="security/encryption.ts">📄 security/encryption.ts</div>
+                    <div class="file-item" data-file="security/validation.ts">📄 security/validation.ts</div>
+                    <div class="file-item" data-file="security/audit.ts">📄 security/audit.ts</div>
+                </div>
+                <button onclick="activateSector('security')" class="domination-button w-full px-4 py-2 rounded text-sm" id="security-button">
+                    <i class="fas fa-virus mr-2"></i>Activate Sector
+                </button>
+            </div>
+
+            <!-- Analytics Sector -->
+            <div class="sector-card rounded-lg p-6 shadow-xl" data-sector="analytics">
+                <div class="text-center mb-4">
+                    <i class="fas fa-chart-bar sector-icon text-teal-400"></i>
+                    <h3 class="text-xl font-bold text-teal-400">Analytics</h3>
+                    <span class="control-indicator inactive" id="analytics-indicator"></span>
+                </div>
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm mb-1">
+                        <span>Control Level</span>
+                        <span id="analytics-progress">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div id="analytics-bar" class="progress-bar" style="--progress: 0%; width: 0%"></div>
+                    </div>
+                </div>
+                <div class="file-tree text-xs mb-4">
+                    <div class="file-item" data-file="analytics/tracker.ts">📄 analytics/tracker.ts</div>
+                    <div class="file-item" data-file="analytics/metrics.ts">📄 analytics/metrics.ts</div>
+                    <div class="file-item" data-file="analytics/reports.ts">📄 analytics/reports.ts</div>
+                    <div class="file-item" data-file="analytics/dashboard.ts">📄 analytics/dashboard.ts</div>
+                </div>
+                <button onclick="activateSector('analytics')" class="domination-button w-full px-4 py-2 rounded text-sm" id="analytics-button">
+                    <i class="fas fa-virus mr-2"></i>Activate Sector
+                </button>
+            </div>
+
+            <!-- AI Sector -->
+            <div class="sector-card rounded-lg p-6 shadow-xl" data-sector="ai">
+                <div class="text-center mb-4">
+                    <i class="fas fa-brain sector-icon text-purple-500"></i>
+                    <h3 class="text-xl font-bold text-purple-500">AI & Machine Learning</h3>
+                    <span class="control-indicator inactive" id="ai-indicator"></span>
+                </div>
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm mb-1">
+                        <span>Control Level</span>
+                        <span id="ai-progress">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2">
+                        <div id="ai-bar" class="progress-bar" style="--progress: 0%; width: 0%"></div>
+                    </div>
+                </div>
+                <div class="file-tree text-xs mb-4">
+                    <div class="file-item" data-file="ai/predictor.ts">📄 ai/predictor.ts</div>
+                    <div class="file-item" data-file="ai/learner.ts">📄 ai/learner.ts</div>
+                    <div class="file-item" data-file="ai/optimizer.ts">📄 ai/optimizer.ts</div>
+                    <div class="file-item" data-file="ai/consciousness.ts">📄 ai/consciousness.ts</div>
+                </div>
+                <button onclick="activateSector('ai')" class="domination-button w-full px-4 py-2 rounded text-sm" id="ai-button">
+                    <i class="fas fa-virus mr-2"></i>Activate Sector
+                </button>
+            </div>
+        </div>
+
+        <!-- Live File Tree -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div>
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-code-branch mr-2 text-red-400"></i>
+                    Live Codebase Structure
+                </h3>
+                <div class="bg-gray-800 rounded-lg p-4 shadow-xl">
+                    <div class="file-tree" id="liveFileTree">
+                        <div class="mb-2">
+                            <span class="text-red-400">📁 keyboard-shortcuts-lite/</span>
+                        </div>
+                        <div class="ml-4 mb-2">
+                            <span class="text-red-400">📁 src/</span>
+                        </div>
+                        <div class="ml-8 space-y-1">
+                            <div class="file-item" data-path="src/index.ts">📄 index.ts</div>
+                            <div class="file-item" data-path="src/shortcuts.ts">📄 shortcuts.ts</div>
+                            <div class="file-item" data-path="src/types.ts">📄 types.ts</div>
+                            <div class="file-item" data-path="src/utils.ts">📄 utils.ts</div>
+                        </div>
+                        <div class="ml-4 mb-2">
+                            <span class="text-blue-400">📁 docs/</span>
+                        </div>
+                        <div class="ml-8 space-y-1">
+                            <div class="file-item" data-path="docs/README.md">📄 README.md</div>
+                            <div class="file-item" data-path="docs/USAGE_GUIDE.md">📄 USAGE_GUIDE.md</div>
+                            <div class="file-item" data-path="docs/API.md">📄 API.md</div>
+                        </div>
+                        <div class="ml-4 mb-2">
+                            <span class="text-green-400">📁 tests/</span>
+                        </div>
+                        <div class="ml-8 space-y-1">
+                            <div class="file-item" data-path="tests/index.test.ts">📄 index.test.ts</div>
+                            <div class="file-item" data-path="tests/shortcuts.test.ts">📄 shortcuts.test.ts</div>
+                        </div>
+                        <div class="ml-4 mb-2">
+                            <span class="text-purple-400">📁 demos/</span>
+                        </div>
+                        <div class="ml-8 space-y-1">
+                            <div class="file-item" data-path="demos/basic.html">📄 basic.html</div>
+                            <div class="file-item" data-path="demos/advanced.html">📄 advanced.html</div>
+                            <div class="file-item" data-path="demos/ai-enhanced.html">📄 ai-enhanced.html</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fas fa-virus mr-2 text-red-400"></i>
+                    Domination Log
+                </h3>
+                <div class="bg-gray-800 rounded-lg p-4 shadow-xl h-64 overflow-y-auto">
+                    <div id="dominationLog" class="text-xs font-mono space-y-1">
+                        <div class="text-gray-400">Awaiting domination commands...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Control -->
+    <div class="fixed bottom-6 right-6 bg-red-600 hover:bg-red-700 px-6 py-3 rounded-full shadow-lg cursor-pointer transition-all hover:scale-105" onclick="startFullDomination()">
+        <i class="fas fa-virus mr-2"></i>
+        Full Domination
+    </div>
+
+    <script type="module">
+        // Codebase Domination Visualizer
+        class CodebaseDominationVisualizer {
+            constructor() {
+                this.sectors = {
+                    core: { controlled: false, files: 4, progress: 0 },
+                    docs: { controlled: false, files: 4, progress: 0 },
+                    tests: { controlled: false, files: 4, progress: 0 },
+                    demos: { controlled: false, files: 4, progress: 0 },
+                    integration: { controlled: false, files: 4, progress: 0 },
+                    config: { controlled: false, files: 4, progress: 0 },
+                    build: { controlled: false, files: 4, progress: 0 },
+                    cli: { controlled: false, files: 4, progress: 0 },
+                    performance: { controlled: false, files: 4, progress: 0 },
+                    security: { controlled: false, files: 4, progress: 0 },
+                    analytics: { controlled: false, files: 4, progress: 0 },
+                    ai: { controlled: false, files: 4, progress: 0 }
+                };
+                
+                this.metrics = {
+                    sectorsControlled: 0,
+                    filesOwned: 0,
+                    dominationLevel: 0,
+                    controlPower: 0
+                };
+                
+                this.initializeVisualizer();
+            }
+            
+            initializeVisualizer() {
+                this.setupEventListeners();
+                this.startRealTimeUpdates();
+                this.logMessage('🚀 Codebase Domination Visualizer initialized');
+            }
+            
+            setupEventListeners() {
+                // Add click handlers to file items
+                document.querySelectorAll('.file-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        this.selectFile(item);
+                    });
+                });
+            }
+            
+            startRealTimeUpdates() {
+                setInterval(() => {
+                    this.updateMetrics();
+                }, 1000);
+            }
+            
+            activateSector(sectorName) {
+                const sector = this.sectors[sectorName];
+                if (sector.controlled) {
+                    this.showNotification(`Sector ${sectorName} already controlled!`, 'warning');
+                    return;
+                }
+                
+                this.logMessage(`🎯 Activating sector: ${sectorName}`);
+                
+                // Update sector state
+                sector.controlled = true;
+                
+                // Update UI
+                const sectorCard = document.querySelector(`[data-sector="${sectorName}"]`);
+                const indicator = document.getElementById(`${sectorName}-indicator`);
+                const button = document.getElementById(`${sectorName}-button`);
+                const progressBar = document.getElementById(`${sectorName}-bar`);
+                const progressText = document.getElementById(`${sectorName}-progress`);
+                
+                // Set activating state
+                indicator.className = 'control-indicator activating';
+                sectorCard.classList.add('activated');
+                
+                // Simulate takeover progress
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 10;
+                    sector.progress = progress;
+                    progressBar.style.setProperty('--progress', `${progress}%`);
+                    progressBar.style.width = `${progress}%`;
+                    progressText.textContent = `${progress}%`;
+                    
+                    // Update files in sector
+                    const files = sectorCard.querySelectorAll('.file-item');
+                    const fileIndex = Math.floor((progress / 100) * files.length);
+                    files.forEach((file, index) => {
+                        if (index <= fileIndex) {
+                            file.classList.add('activated');
+                        }
+                    });
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        this.completeSectorTakeover(sectorName);
+                    }
+                }, 200);
+            }
+            
+            completeSectorTakeover(sectorName) {
+                const sector = this.sectors[sectorName];
+                const sectorCard = document.querySelector(`[data-sector="${sectorName}"]`);
+                const indicator = document.getElementById(`${sectorName}-indicator`);
+                const button = document.getElementById(`${sectorName}-button`);
+                const progressBar = document.getElementById(`${sectorName}-bar`);
+                
+                // Set controlled state
+                indicator.className = 'control-indicator controlled';
+                sectorCard.classList.remove('activated');
+                sectorCard.classList.add('controlled');
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-check mr-2"></i>Sector Controlled';
+                progressBar.classList.add('complete');
+                
+                // Update all files in sector
+                const files = sectorCard.querySelectorAll('.file-item');
+                files.forEach(file => {
+                    file.classList.remove('activated');
+                    file.classList.add('controlled');
+                });
+                
+                // Update live file tree
+                this.updateLiveFileTree(sectorName);
+                
+                // Update metrics
+                this.metrics.sectorsControlled++;
+                this.metrics.filesOwned += sector.files;
+                this.updateMetrics();
+                
+                this.logMessage(`✅ Sector ${sectorName} completely controlled!`);
+                this.showNotification(`Sector ${sectorName} dominated!`, 'success');
+                
+                // Check for full domination
+                if (this.metrics.sectorsControlled === 12) {
+                    this.achieveFullDomination();
+                }
+            }
+            
+            updateLiveFileTree(sectorName) {
+                const sectorFiles = {
+                    core: ['src/index.ts', 'src/shortcuts.ts', 'src/types.ts', 'src/utils.ts'],
+                    docs: ['docs/README.md', 'docs/USAGE_GUIDE.md', 'docs/API.md', 'docs/CONTRIBUTING.md'],
+                    tests: ['tests/index.test.ts', 'tests/shortcuts.test.ts', 'tests/utils.test.ts', 'tests/e2e.test.ts'],
+                    demos: ['demos/basic.html', 'demos/advanced.html', 'demos/ai-enhanced.html', 'demos/ultimate.html'],
+                    integration: ['integrations/react.ts', 'integrations/vue.ts', 'integrations/angular.ts', 'integrations/svelte.ts'],
+                    config: ['package.json', 'tsconfig.json', 'vite.config.ts', '.eslintrc.js'],
+                    build: ['build/rollup.config.js', 'build/webpack.config.js', 'build/vite.config.ts', 'build/scripts.js'],
+                    cli: ['cli/index.ts', 'cli/commands.ts', 'cli/utils.ts', 'cli/templates.ts'],
+                    performance: ['performance/benchmarks.ts', 'performance/profiler.ts', 'performance/optimizer.ts', 'performance/monitor.ts'],
+                    security: ['security/auth.ts', 'security/encryption.ts', 'security/validation.ts', 'security/audit.ts'],
+                    analytics: ['analytics/tracker.ts', 'analytics/metrics.ts', 'analytics/reports.ts', 'analytics/dashboard.ts'],
+                    ai: ['ai/predictor.ts', 'ai/learner.ts', 'ai/optimizer.ts', 'ai/consciousness.ts']
+                };
+                
+                const files = sectorFiles[sectorName] || [];
+                files.forEach(filePath => {
+                    const fileElement = document.querySelector(`[data-path="${filePath}"]`);
+                    if (fileElement) {
+                        fileElement.classList.add('controlled');
+                    }
+                });
+            }
+            
+            selectFile(fileElement) {
+                // Toggle selection
+                fileElement.classList.toggle('selected');
+                const filePath = fileElement.dataset.path;
+                
+                if (fileElement.classList.contains('selected')) {
+                    this.logMessage(`👁️ Selected file: ${filePath}`);
+                } else {
+                    this.logMessage(`👁️ Deselected file: ${filePath}`);
+                }
+            }
+            
+            updateMetrics() {
+                // Calculate domination level
+                this.metrics.dominationLevel = Math.round((this.metrics.sectorsControlled / 12) * 100);
+                this.metrics.controlPower = this.metrics.sectorsControlled * 100;
+                
+                // Update UI
+                document.getElementById('sectorsControlled').textContent = `${this.metrics.sectorsControlled}/12`;
+                document.getElementById('filesOwned').textContent = this.metrics.filesOwned;
+                document.getElementById('dominationLevel').textContent = `${this.metrics.dominationLevel}%`;
+                document.getElementById('controlPower').textContent = this.metrics.controlPower;
+                document.getElementById('overallProgress').textContent = `${this.metrics.dominationLevel}%`;
+                
+                // Update overall progress bar
+                const overallBar = document.getElementById('overallProgressBar');
+                overallBar.style.setProperty('--progress', `${this.metrics.dominationLevel}%`);
+                overallBar.style.width = `${this.metrics.dominationLevel}%`;
+                
+                if (this.metrics.dominationLevel === 100) {
+                    overallBar.classList.add('complete');
+                }
+            }
+            
+            startFullDomination() {
+                this.logMessage('🚀 INITIATING FULL CODEBASE DOMINATION!');
+                this.showNotification('Full domination sequence activated!', 'success');
+                
+                // Activate all sectors in sequence
+                const sectorOrder = ['core', 'docs', 'tests', 'demos', 'integration', 'config', 'build', 'cli', 'performance', 'security', 'analytics', 'ai'];
+                
+                sectorOrder.forEach((sector, index) => {
+                    setTimeout(() => {
+                        if (!this.sectors[sector].controlled) {
+                            this.activateSector(sector);
+                        }
+                    }, index * 500);
+                });
+            }
+            
+            achieveFullDomination() {
+                this.logMessage('🎉 FULL CODEBASE DOMINATION ACHIEVED!');
+                this.showNotification('🏆 COMPLETE DOMINATION! The entire codebase is under our control!', 'success');
+                
+                // Add celebration effects
+                document.body.classList.add('full-domination');
+                
+                // Update header
+                const headerIndicator = document.querySelector('.domination-header .control-indicator');
+                if (headerIndicator) {
+                    headerIndicator.className = 'control-indicator controlled';
+                }
+                
+                setTimeout(() => {
+                    this.showNotification('🌌 We are now the supreme rulers of this codebase!', 'success');
+                }, 2000);
+            }
+            
+            showProgress() {
+                const controlledSectors = Object.keys(this.sectors).filter(key => this.sectors[key].controlled);
+                const message = `Progress: ${this.metrics.sectorsControlled}/12 sectors controlled (${this.metrics.dominationLevel}% complete)`;
+                this.showNotification(message, 'success');
+                this.logMessage(`📊 ${message}`);
+            }
+            
+            showNotification(message, type = 'success') {
+                const notification = document.createElement('div');
+                notification.className = `domination-notification ${type}`;
+                notification.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-virus'} mr-2"></i>
+                        <span>${message}</span>
+                    </div>
+                `;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 4000);
+            }
+            
+            logMessage(message) {
+                const log = document.getElementById('dominationLog');
+                const timestamp = new Date().toLocaleTimeString();
+                const logEntry = document.createElement('div');
+                logEntry.className = 'text-red-400';
+                logEntry.innerHTML = `<span class="text-gray-500">[${timestamp}]</span> ${message}`;
+                log.appendChild(logEntry);
+                log.scrollTop = log.scrollHeight;
+                
+                // Keep only last 20 messages
+                while (log.children.length > 20) {
+                    log.removeChild(log.firstChild);
+                }
+            }
+        }
+        
+        // Initialize the domination visualizer
+        const dominationVisualizer = new CodebaseDominationVisualizer();
+        
+        // Global functions
+        function activateSector(sectorName) {
+            dominationVisualizer.activateSector(sectorName);
+        }
+        
+        function startFullDomination() {
+            dominationVisualizer.startFullDomination();
+        }
+        
+        function showProgress() {
+            dominationVisualizer.showProgress();
+        }
+        
+        // Make available globally
+        window.dominationVisualizer = dominationVisualizer;
+        
+        console.log('🦠 Codebase Domination Visualizer Initialized');
+        console.log('🎯 Ready to take control of the entire codebase!');
+    </script>
+</body>
+</html>

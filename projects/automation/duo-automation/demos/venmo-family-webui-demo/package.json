@@ -1,0 +1,35 @@
+{
+  "name": "venmo-family-webui-demo",
+  "version": "1.0.0",
+  "description": "Venmo Family System - Web UI Demo Bundle",
+  "main": "server.ts",
+  "scripts": {
+    "start": "bun server.ts",
+    "demo": "bun demo-launcher.ts",
+    "health-check": "bun health-check.ts"
+  },
+  "dependencies": {
+    "bun": "latest"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "keywords": [
+    "venmo",
+    "family",
+    "payments",
+    "qr-codes",
+    "android",
+    "demo",
+    "web-ui"
+  ],
+  "author": "DuoPlus Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/duoplus/venmo-family-system"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "name": "@duoplus/utils",
+  "version": "1.2.4-beta.0",
+  "description": "DuoPlus Core - Utility functions for status management and data processing with enterprise-grade reliability",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "build": "bun build index.ts --outdir dist",
+    "test": "bun test",
+    "lint": "bun --bun tsc --noEmit"
+  },
+  "dependencies": {
+    "libphonenumber-js": "catalog:",
+    "mailparser": "catalog:"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  },
+  "author": "DuoPlus Development Team",
+  "license": "MIT",
+  "keywords": [
+    "duoplus",
+    "automation",
+    "bun",
+    "typescript",
+    "enterprise",
+    "status-system",
+    "monitoring",
+    "utilities",
+    "terminal",
+    "utility",
+    "functions",
+    "status",
+    "management",
+    "data",
+    "processing"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/duoplus/duo-automation.git",
+    "bugs": "https://github.com/duoplus/duo-automation/issues",
+    "homepage": "https://duoplus.ai"
+  },
+  "bugs": {
+    "url": "https://github.com/duoplus/duo-automation/issues"
+  },
+  "homepage": "https://duoplus.ai/packages/utils",
+  "contributors": [
+    "DuoPlus Development Team <dev@duoplus.ai>"
+  ]
+}

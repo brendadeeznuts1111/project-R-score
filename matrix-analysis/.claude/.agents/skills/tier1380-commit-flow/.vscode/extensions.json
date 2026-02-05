@@ -1,8 +1,0 @@
-{
-	"recommendations": [
-		"biomejs.biome",
-		"oven.bun-vscode",
-		"github.vscode-github-actions",
-		"ms-vscode.vscode-json"
-	]
-}

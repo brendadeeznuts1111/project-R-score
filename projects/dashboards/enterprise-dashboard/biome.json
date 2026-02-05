@@ -1,0 +1,56 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "complexity": {
+        "noExcessiveCognitiveComplexity": {
+          "level": "error",
+          "options": { "maxComplexity": 8 }
+        },
+        "useSimplifiedLogicExpression": "error"
+      },
+      "performance": {
+        "noAccumulatingSpread": "error",
+        "noDelete": "error"
+      },
+      "suspicious": {
+        "noConsoleLog": "warn"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "include": ["scripts/__tests__/**"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveCognitiveComplexity": { "maxComplexity": 15 }
+          },
+          "suspicious": { "noConsoleLog": "off" }
+        }
+      }
+    },
+    {
+      "include": ["**/*.types.test.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": { "noConsoleLog": "off" }
+        }
+      }
+    },
+    {
+      "include": ["**/v8-bindings/**/*"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveCognitiveComplexity": { "maxComplexity": 12 }
+          }
+        }
+      }
+    }
+  ]
+}

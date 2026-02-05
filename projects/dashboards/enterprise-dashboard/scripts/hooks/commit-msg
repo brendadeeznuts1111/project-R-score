@@ -1,0 +1,180 @@
+#!/usr/bin/env bash
+# =============================================================================
+# COMMIT MESSAGE VALIDATION HOOK
+# Enforces structured commit format: [DOMAIN][SCOPE][COMPONENT][ACTION] TICKET: Summary
+# =============================================================================
+
+set -euo pipefail
+
+MSG_FILE="$1"
+MSG=$(cat "$MSG_FILE")
+
+# Skip merge commits
+if echo "$MSG" | grep -q "^Merge"; then
+  exit 0
+fi
+
+# Skip revert commits
+if echo "$MSG" | grep -q "^Revert"; then
+  exit 0
+fi
+
+# Skip WIP commits (but warn)
+if echo "$MSG" | grep -qi "^WIP"; then
+  echo "Warning: WIP commit - will need to be squashed before merge" >&2
+  exit 0
+fi
+
+# Skip commits that start with # (all comments)
+FIRST_LINE=$(echo "$MSG" | grep -v "^#" | head -1)
+if [ -z "$FIRST_LINE" ]; then
+  echo "Error: Empty commit message" >&2
+  exit 1
+fi
+
+# =============================================================================
+# VALIDATION RULES
+# =============================================================================
+
+# DOMAIN: What area of the codebase
+# - API: Backend endpoints and routes
+# - UI: React components and client-side code
+# - NETWORK: Network utilities, fetch, DNS, connections
+# - SECURITY: Auth, secrets, validation
+# - CONFIG: Configuration files, bunfig, tsconfig
+# - ADAPTER: External service integrations (S3, Redis, etc.)
+# - MATRIX: Analytics and monitoring dashboards
+# - PTY: Terminal and pseudo-terminal handling
+# - UTILS: Shared utilities and helpers
+# - CORE: Core infrastructure and types
+# - DB: Database schemas, queries, migrations
+# - SCRIPT: Build scripts, CLI tools
+# - TEST: Test files and fixtures
+# - DOCS: Documentation only changes
+
+DOMAINS="API|UI|NETWORK|SECURITY|CONFIG|ADAPTER|MATRIX|PTY|UTILS|CORE|DB|SCRIPT|TEST|DOCS"
+
+# SCOPE: What type of component within the domain
+# - ENDPOINT: API endpoints
+# - TAB: Dashboard tabs/views
+# - QUERY: Database queries
+# - ROUTER: Routing logic
+# - HANDLER: Request/event handlers
+# - VALIDATOR: Input validation
+# - MATRIX: Matrix/grid components
+# - UTILS: Utility functions
+# - CORE: Core modules
+# - HOOK: React hooks
+# - COMPONENT: React components
+# - SERVICE: Backend services
+# - MODEL: Data models
+# - BENCH: Benchmarks
+# - FIXTURE: Test fixtures
+
+SCOPES="ENDPOINT|TAB|QUERY|ROUTER|HANDLER|VALIDATOR|MATRIX|UTILS|CORE|HOOK|COMPONENT|SERVICE|MODEL|BENCH|FIXTURE"
+
+# ACTION: What was done
+# - ADD: New feature or file
+# - FIX: Bug fix
+# - REFACTOR: Code restructuring (no behavior change)
+# - OPTIMIZE: Performance improvement
+# - REMOVE: Deletion of feature or file
+# - UPDATE: Modification to existing feature
+# - TEST: Adding or updating tests
+# - CHORE: Maintenance tasks
+# - DOCS: Documentation updates
+# - STYLE: Formatting, whitespace changes
+# - SECURITY: Security-related changes
+
+ACTIONS="ADD|FIX|REFACTOR|OPTIMIZE|REMOVE|UPDATE|TEST|CHORE|DOCS|STYLE|SECURITY"
+
+# Check for [DOMAIN] tag
+if ! echo "$FIRST_LINE" | grep -qE "^\[($DOMAINS)\]"; then
+  echo "Error: Missing or invalid [DOMAIN] tag at start of message" >&2
+  echo "" >&2
+  echo "  Valid domains: $DOMAINS" >&2
+  echo "  Got: $FIRST_LINE" >&2
+  echo "" >&2
+  echo "  Example: [API][ENDPOINT][AUTH][ADD] ONE-456: Add auth endpoint" >&2
+  exit 1
+fi
+
+# Check for [SCOPE] tag
+if ! echo "$FIRST_LINE" | grep -qE "\[($SCOPES)\]"; then
+  echo "Error: Missing or invalid [SCOPE] tag" >&2
+  echo "" >&2
+  echo "  Valid scopes: $SCOPES" >&2
+  echo "" >&2
+  echo "  Example: [API][ENDPOINT][AUTH][ADD] ONE-456: Add auth endpoint" >&2
+  exit 1
+fi
+
+# Check for [ACTION] tag
+if ! echo "$FIRST_LINE" | grep -qE "\[($ACTIONS)\]"; then
+  echo "Error: Missing or invalid [ACTION] tag" >&2
+  echo "" >&2
+  echo "  Valid actions: $ACTIONS" >&2
+  echo "" >&2
+  echo "  Example: [API][ENDPOINT][AUTH][ADD] ONE-456: Add auth endpoint" >&2
+  exit 1
+fi
+
+# Check for ticket ID (e.g., ONE-123:, GH-456:, DASH-789:)
+if ! echo "$FIRST_LINE" | grep -qE '[A-Z]+-[0-9]+:'; then
+  echo "Error: Missing Ticket ID (format: ABC-123:)" >&2
+  echo "" >&2
+  echo "  Example: [API][ENDPOINT][AUTH][ADD] ONE-456: Add auth endpoint" >&2
+  echo "  Prefixes: ONE-, GH-, DASH-, or any [A-Z]+-[0-9]+ pattern" >&2
+  exit 1
+fi
+
+# Check summary length (50 chars recommended, 72 max)
+SUMMARY=$(echo "$FIRST_LINE" | sed 's/.*: //')
+SUMMARY_LEN=${#SUMMARY}
+if [ "$SUMMARY_LEN" -gt 72 ]; then
+  echo "Warning: Summary exceeds 72 characters ($SUMMARY_LEN chars)" >&2
+  echo "  Recommended: 50 chars max for summary line" >&2
+fi
+
+# =============================================================================
+# OPTIONAL VALIDATION (warnings only)
+# =============================================================================
+
+# Check Tension score format if present
+if echo "$MSG" | grep -q "^Tension:"; then
+  TENSION=$(echo "$MSG" | grep "^Tension:" | sed 's/Tension: *//' | tr -d ' ')
+  if ! echo "$TENSION" | grep -qE '^[0-1](\.[0-9]+)?$'; then
+    echo "Warning: Invalid Tension format '$TENSION' (should be 0.0-1.0)" >&2
+  fi
+fi
+
+# Check for Impact section
+if ! echo "$MSG" | grep -q "^Impact:"; then
+  echo "Info: Consider adding Impact: section for better traceability" >&2
+fi
+
+# Check for Co-authored-by
+if ! echo "$MSG" | grep -qi "Co-authored-by:"; then
+  echo "Info: Consider adding Co-authored-by: for attribution" >&2
+fi
+
+# =============================================================================
+# GENERATE GREPABLE TAG (append to footer if not present)
+# =============================================================================
+
+# Extract tags for grepable footer
+DOMAIN=$(echo "$FIRST_LINE" | grep -oE "^\[($DOMAINS)\]" | head -1 | tr -d '[]' | tr '[:upper:]' '[:lower:]')
+SCOPE=$(echo "$FIRST_LINE" | grep -oE "\[($SCOPES)\]" | head -1 | tr -d '[]' | tr '[:upper:]' '[:lower:]')
+ACTION=$(echo "$FIRST_LINE" | grep -oE "\[($ACTIONS)\]" | head -1 | tr -d '[]' | tr '[:upper:]' '[:lower:]')
+TICKET=$(echo "$FIRST_LINE" | grep -oE '[A-Z]+-[0-9]+' | head -1 | tr '[:upper:]' '[:lower:]')
+
+GREP_TAG="[$DOMAIN-$SCOPE-$ACTION][$TICKET]"
+
+# Add grepable tag if not already present
+if ! echo "$MSG" | grep -q "^\[.*-.*-.*\]\[.*-[0-9]*\]$"; then
+  echo "" >> "$MSG_FILE"
+  echo "$GREP_TAG" >> "$MSG_FILE"
+fi
+
+echo "Commit message validated: $GREP_TAG"
+exit 0

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Duo Automation - Release Notes</title>
+    <description>Enterprise automation platform updates and deployments</description>
+    <link>https://duo-automation.dev</link>
+    <atom:link href="https://duo-automation.dev/blog/feed.xml" rel="self" type="application/rss+xml"/>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 14 Jan 2026 12:14:00 -0600</lastBuildDate>
+    
+    <item>
+      <title>🚀 v3.7 NPM Registry Deployment Complete</title>
+      <description>
+        <![CDATA[
+          <p>![Version](https://img.shields.io/badge/version-2.5.0-blue.svg) ![Registry](https://img.shields.io/badge/registry-v3.7%20Deployed-green.svg) ![Bun](https://img.shields.io/badge/runtime-Bun%201.3.6+-black.svg) ![License](https://img.shields.io/badge/license-MIT-orange.svg) ![Status](https://img.shields.io/badge/status-Production%20Ready-brightgreen.svg)</p>
+          
+          <h2>Custom NPM Registry Successfully Deployed</h2>
+          <p>We're excited to announce the successful deployment of our custom NPM registry v3.7!</p>
+          
+          <h3>📦 Deployment Details</h3>
+          <ul>
+            <li><strong>Registry URL</strong>: <a href="https://duo-npm-registry.utahj4754.workers.dev">https://duo-npm-registry.utahj4754.workers.dev</a></li>
+            <li><strong>Package</strong>: windsurf-project@2.5.0</li>
+            <li><strong>Status</strong>: ✅ Production Ready</li>
+            <li><strong>Storage</strong>: Cloudflare R2</li>
+            <li><strong>Authentication</strong>: Bearer Token</li>
+          </ul>
+          
+          <h3>🛠️ Key Features</h3>
+          <ul>
+            <li>R2-backed storage for reliability</li>
+            <li>Bun-optimized authentication</li>
+            <li>868 files included (8.35MB)</li>
+            <li>CLI tools: windsurf-cli, ep-cli, duo-cli, taxonomy-cli</li>
+          </ul>
+          
+          <h3>🚀 Usage</h3>
+          <pre><code>bun install windsurf-project --registry https://duo-npm-registry.utahj4754.workers.dev</code></pre>
+          
+          <p>The registry is now live and ready for production use!</p>
+          
+          <hr>
+          <p><strong>© 2026 Duo Automation - Enterprise Platform</strong></p>
+          <p>![Version](https://img.shields.io/badge/version-2.5.0-blue.svg) ![Registry](https://img.shields.io/badge/registry-v3.7%20Deployed-green.svg)</p>
+        ]]>
+      </description>
+      <pubDate>Tue, 14 Jan 2026 12:14:00 -0600</pubDate>
+      <link>https://duo-automation.dev/blog/v3.7-registry-deployment</link>
+      <guid>https://duo-automation.dev/blog/v3.7-registry-deployment</guid>
+      <category>deployment</category>
+      <category>npm-registry</category>
+      <category>v3.7</category>
+    </item>
+    
+    <item>
+      <title>📊 Dashboard Updates - Registry Integration</title>
+      <description>
+        <![CDATA[
+          <p>![Version](https://img.shields.io/badge/version-2.5.0-blue.svg) ![Registry](https://img.shields.io/badge/registry-v3.7%20Deployed-green.svg) ![Dashboard](https://img.shields.io/badge/dashboard-Updated-purple.svg)</p>
+          
+          <h2>Registry Status Added to Main Dashboard</h2>
+          <p>The main dashboard now includes real-time status for our NPM registry v3.7 deployment.</p>
+          
+          <h3>🎯 Dashboard Features</h3>
+          <ul>
+            <li>Live registry status monitoring</li>
+            <li>Direct links to registry interface</li>
+            <li>Package statistics and metrics</li>
+            <li>Authentication status indicators</li>
+          </ul>
+          
+          <p>Visit the <a href="/src/dashboard/index.html">main dashboard</a> to see the registry in action!</p>
+          
+          <hr>
+          <p><strong>© 2026 Duo Automation - Enterprise Platform</strong></p>
+          <p>![Version](https://img.shields.io/badge/version-2.5.0-blue.svg) ![Registry](https://img.shields.io/badge/registry-v3.7%20Deployed-green.svg)</p>
+        ]]>
+      </description>
+      <pubDate>Tue, 14 Jan 2026 12:16:00 -0600</pubDate>
+      <link>https://duo-automation.dev/blog/dashboard-registry-integration</link>
+      <guid>https://duo-automation.dev/blog/dashboard-registry-integration</guid>
+      <category>dashboard</category>
+      <category>registry</category>
+      <category>update</category>
+    </item>
+  </channel>
+</rss>

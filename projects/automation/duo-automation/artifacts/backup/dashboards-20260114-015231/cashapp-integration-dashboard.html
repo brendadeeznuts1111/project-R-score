@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Empire Pro CashApp Integration Dashboard - Real-time identity resolution and fraud detection monitoring">
+    <meta name="keywords" content="CashApp, fraud detection, identity resolution, dashboard, empire pro">
+    <meta name="author" content="Empire Pro Team">
+    <title>CashApp Integration Dashboard - Empire Pro | Real-time Fraud Detection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+    <style>
+        @keyframes pulse-border {
+            0%, 100% { border-color: rgb(239 68 68); }
+            50% { border-color: rgb(252 165 165); }
+        }
+        .critical-alert { animation: pulse-border 2s infinite; }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .risk-gradient-low { background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%); }
+        .risk-gradient-medium { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+        .risk-gradient-high { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+        .risk-gradient-critical { background: linear-gradient(135deg, #991b1b 0%, #3b82f6 100%); }
+        
+        /* Chart container fixes */
+        .chart-container {
+            position: relative;
+            height: 320px;
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        /* Responsive fixes */
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 280px;
+            }
+            
+            .glass-effect {
+                margin: 0.5rem;
+                border-radius: 0.75rem;
+            }
+            
+            .grid {
+                gap: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded">
+        Skip to main content
+    </a>
+
+    <!-- Header -->
+    <header class="bg-gray-800 border-b border-gray-700 sticky top-0 z-50 backdrop-blur-lg bg-opacity-90">
+        <nav class="container mx-auto px-4 py-4" role="navigation" aria-label="Main navigation">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-6">
+                    <button onclick="window.history.back()" class="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                        <span>Back to Dashboard</span>
+                    </button>
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="shield-check" class="w-8 h-8 text-blue-400" aria-hidden="true"></i>
+                        <div>
+                            <h1 class="text-2xl font-bold">CashApp Integration Dashboard</h1>
+                            <p class="text-sm text-gray-400">Empire Pro - Real-time Identity Resolution & Fraud Detection</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Primary Navigation -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#dashboard" class="text-gray-300 hover:text-white transition-colors">Dashboard</a>
+                    <a href="#analysis" class="text-gray-300 hover:text-white transition-colors">Analysis</a>
+                    <a href="#enforcement" class="text-gray-300 hover:text-white transition-colors">Enforcement</a>
+                    <a href="#docs" class="text-gray-300 hover:text-white transition-colors">Documentation</a>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center space-x-3">
+                    <button onclick="refreshDashboard()" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <i data-lucide="refresh-cw" class="w-4 h-4" aria-hidden="true"></i>
+                        <span>Refresh</span>
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse" aria-hidden="true"></div>
+                        <span class="text-sm">Live</span>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 rounded-lg hover:bg-gray-700" onclick="toggleMobileMenu()" aria-label="Toggle mobile menu">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <div id="mobileMenu" class="hidden md:hidden mt-4 pt-4 border-t border-gray-700">
+                <div class="flex flex-col space-y-2">
+                    <a href="#dashboard" class="text-gray-300 hover:text-white py-2 transition-colors">Dashboard</a>
+                    <a href="#analysis" class="text-gray-300 hover:text-white py-2 transition-colors">Analysis</a>
+                    <a href="#enforcement" class="text-gray-300 hover:text-white py-2 transition-colors">Enforcement</a>
+                    <a href="#docs" class="text-gray-300 hover:text-white py-2 transition-colors">Documentation</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" class="flex-grow container mx-auto px-4 py-6">
+        <!-- Key Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="glass-effect rounded-xl p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <i data-lucide="users" class="w-8 h-8 text-blue-400"></i>
+                    <span class="text-2xl font-bold" id="totalProcessed">0</span>
+                </div>
+                <h3 class="text-gray-400 text-sm">Total Processed</h3>
+                <p class="text-xs text-gray-500 mt-1">Last 24 hours</p>
+            </div>
+
+            <div class="glass-effect rounded-xl p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <i data-lucide="alert-triangle" class="w-8 h-8 text-yellow-400"></i>
+                    <span class="text-2xl font-bold" id="syntheticDetected">0</span>
+                </div>
+                <h3 class="text-gray-400 text-sm">Synthetic Identities</h3>
+                <p class="text-xs text-gray-500 mt-1">High risk detected</p>
+            </div>
+
+            <div class="glass-effect rounded-xl p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <i data-lucide="shield" class="w-8 h-8 text-green-400"></i>
+                    <span class="text-2xl font-bold" id="cashAppVerified">0</span>
+                </div>
+                <h3 class="text-gray-400 text-sm">CashApp Verified</h3>
+                <p class="text-xs text-gray-500 mt-1">Legitimate accounts</p>
+            </div>
+
+            <div class="glass-effect rounded-xl p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <i data-lucide="activity" class="w-8 h-8 text-red-400"></i>
+                    <span class="text-2xl font-bold" id="enforcementActions">0</span>
+                </div>
+                <h3 class="text-gray-400 text-sm">Enforcement Actions</h3>
+                <p class="text-xs text-gray-500 mt-1">Automated responses</p>
+            </div>
+        </div>
+
+        <!-- Risk Score Distribution & Real-time Feed -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Risk Score Chart -->
+            <div class="lg:col-span-2 glass-effect rounded-xl p-6">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i data-lucide="bar-chart-2" class="w-5 h-5 mr-2"></i>
+                    Risk Score Distribution
+                </h2>
+                <div class="chart-container">
+                    <canvas id="riskChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Real-time Alert Feed -->
+            <div class="glass-effect rounded-xl p-6">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i data-lucide="bell" class="w-5 h-5 mr-2"></i>
+                    Live Alerts
+                    <span class="ml-auto bg-red-600 text-xs px-2 py-1 rounded-full" id="alertCount">0</span>
+                </h2>
+                <div id="alertFeed" class="space-y-3 max-h-64 overflow-y-auto">
+                    <!-- Alerts will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- CashApp Integration Flow -->
+        <div class="glass-effect rounded-xl p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-6 flex items-center">
+                <i data-lucide="git-branch" class="w-5 h-5 mr-2"></i>
+                CashApp Integration Flow
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <!-- Step 1 -->
+                <div class="text-center">
+                    <div class="bg-blue-600 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                        <i data-lucide="phone" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-semibold mb-1">Phone Input</h3>
+                    <p class="text-sm text-gray-400">E.164 format</p>
+                </div>
+
+                <!-- Arrow -->
+                <div class="flex items-center justify-center">
+                    <i data-lucide="arrow-right" class="w-6 h-6 text-gray-500"></i>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="text-center">
+                    <div class="bg-green-600 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                        <i data-lucide="search" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-semibold mb-1">CashApp Lookup</h3>
+                    <p class="text-sm text-gray-400">API + Cache</p>
+                </div>
+
+                <!-- Arrow -->
+                <div class="flex items-center justify-center">
+                    <i data-lucide="arrow-right" class="w-6 h-6 text-gray-500"></i>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="text-center">
+                    <div class="bg-purple-600 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                        <i data-lucide="brain" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="font-semibold mb-1">Risk Analysis</h3>
+                    <p class="text-sm text-gray-400">AI scoring</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Analysis Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Phone Analysis -->
+            <div class="glass-effect rounded-xl p-6">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i data-lucide="phone-call" class="w-5 h-5 mr-2"></i>
+                    Phone Intelligence Analysis
+                </h2>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center p-3 bg-gray-800 rounded-lg">
+                        <span class="text-sm">IPQS Fraud Score</span>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-24 bg-gray-700 rounded-full h-2">
+                                <div id="ipqsScore" class="bg-yellow-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                            <span class="text-sm font-mono" id="ipqsScoreText">0</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-800 rounded-lg">
+                        <span class="text-sm">Carrier Type</span>
+                        <span class="text-sm font-mono" id="carrierType">-</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-800 rounded-lg">
+                        <span class="text-sm">Location</span>
+                        <span class="text-sm font-mono" id="phoneLocation">-</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-800 rounded-lg">
+                        <span class="text-sm">Risk Factors</span>
+                        <div class="flex flex-wrap gap-1" id="phoneRiskFactors">
+                            <!-- Risk factors will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CashApp Analysis -->
+            <div class="glass-effect rounded-xl p-6">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i data-lucide="dollar-sign" class="w-5 h-5 mr-2"></i>
+                    CashApp Profile Analysis
+                </h2>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center p-3 bg-gray-800 rounded-lg">
+                        <span class="text-sm">Verification Status</span>
+                        <span class="px-2 py-1 rounded text-xs font-semibold" id="verificationStatus">-</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-800 rounded-lg">
+                        <span class="text-sm">Transaction Volume (30d)</span>
+                        <span class="text-sm font-mono" id="transactionVolume">$0</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-800 rounded-lg">
+                        <span class="text-sm">Account Age</span>
+                        <span class="text-sm font-mono" id="accountAge">-</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-800 rounded-lg">
+                        <span class="text-sm">Fraud Flags</span>
+                        <div class="flex flex-wrap gap-1" id="fraudFlags">
+                            <!-- Fraud flags will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enforcement Actions Panel -->
+        <div class="glass-effect rounded-xl p-6">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i data-lucide="shield-alert" class="w-5 h-5 mr-2"></i>
+                Enforcement Actions History
+            </h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-gray-700">
+                            <th class="text-left py-3 px-4">Timestamp</th>
+                            <th class="text-left py-3 px-4">Phone</th>
+                            <th class="text-left py-3 px-4">Risk Score</th>
+                            <th class="text-left py-3 px-4">Trigger</th>
+                            <th class="text-left py-3 px-4">Action</th>
+                            <th class="text-left py-3 px-4">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="enforcementTable">
+                        <!-- Enforcement actions will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 border-t border-gray-700 mt-auto">
+        <div class="container mx-auto px-4 py-8">
+            <!-- Footer Content -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <!-- Company Info -->
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <i data-lucide="shield-check" class="w-6 h-6 text-blue-400" aria-hidden="true"></i>
+                        <h3 class="text-lg font-semibold">Empire Pro</h3>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">
+                        Advanced identity resolution and fraud detection platform for modern enterprises.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="https://github.com" class="text-gray-400 hover:text-white transition-colors" aria-label="GitHub">
+                            <i data-lucide="github" class="w-5 h-5"></i>
+                        </a>
+                        <a href="https://twitter.com" class="text-gray-400 hover:text-white transition-colors" aria-label="Twitter">
+                            <i data-lucide="twitter" class="w-5 h-5"></i>
+                        </a>
+                        <a href="https://linkedin.com" class="text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn">
+                            <i data-lucide="linkedin" class="w-5 h-5"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Product Links -->
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Product</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#features" class="text-gray-400 hover:text-white text-sm transition-colors">Features</a></li>
+                        <li><a href="#pricing" class="text-gray-400 hover:text-white text-sm transition-colors">Pricing</a></li>
+                        <li><a href="#api" class="text-gray-400 hover:text-white text-sm transition-colors">API Documentation</a></li>
+                        <li><a href="#integrations" class="text-gray-400 hover:text-white text-sm transition-colors">Integrations</a></li>
+                        <li><a href="#changelog" class="text-gray-400 hover:text-white text-sm transition-colors">Changelog</a></li>
+                    </ul>
+                </div>
+
+                <!-- Resources -->
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#docs" class="text-gray-400 hover:text-white text-sm transition-colors">Documentation</a></li>
+                        <li><a href="#tutorials" class="text-gray-400 hover:text-white text-sm transition-colors">Tutorials</a></li>
+                        <li><a href="#blog" class="text-gray-400 hover:text-white text-sm transition-colors">Blog</a></li>
+                        <li><a href="#support" class="text-gray-400 hover:text-white text-sm transition-colors">Support Center</a></li>
+                        <li><a href="#status" class="text-gray-400 hover:text-white text-sm transition-colors">System Status</a></li>
+                    </ul>
+                </div>
+
+                <!-- Legal -->
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#privacy" class="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</a></li>
+                        <li><a href="#terms" class="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</a></li>
+                        <li><a href="#security" class="text-gray-400 hover:text-white text-sm transition-colors">Security</a></li>
+                        <li><a href="#compliance" class="text-gray-400 hover:text-white text-sm transition-colors">Compliance</a></li>
+                        <li><a href="#gdpr" class="text-gray-400 hover:text-white text-sm transition-colors">GDPR</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="border-t border-gray-700 pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="text-gray-400 text-sm mb-4 md:mb-0">
+                        © 2026 Empire Pro. All rights reserved. Version 1.0.0
+                    </div>
+                    <div class="flex items-center space-x-6 text-sm">
+                        <span class="text-gray-400">Status:</span>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse" aria-hidden="true"></div>
+                            <span class="text-green-400">All Systems Operational</span>
+                        </div>
+                        <span class="text-gray-600">|</span>
+                        <a href="#contact" class="text-gray-400 hover:text-white transition-colors">Contact</a>
+                        <span class="text-gray-600">|</span>
+                        <a href="#3b82f6ck" class="text-gray-400 hover:text-white transition-colors">Feedback</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button onclick="scrollToTop()" id="backToTop" class="fixed bottom-8 right-8 bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg transition-all duration-300 opacity-0 invisible focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Back to top">
+        <i data-lucide="arrow-up" class="w-5 h-5"></i>
+    </button>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Global state
+        let dashboardData = {
+            totalProcessed: 0,
+            syntheticDetected: 0,
+            cashAppVerified: 0,
+            enforcementActions: 0,
+            alerts: [],
+            riskDistribution: {
+                low: 0,
+                medium: 0,
+                high: 0,
+                critical: 0
+            },
+            enforcementHistory: []
+        };
+
+        // Initialize charts
+        let riskChart;
+
+        function initializeCharts() {
+            const ctx = document.getElementById('riskChart').getContext('2d');
+            riskChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Low Risk (0-0.2)', 'Medium Risk (0.2-0.4)', 'High Risk (0.4-0.6)', 'Critical (0.6-1.0)'],
+                    datasets: [{
+                        data: [0, 0, 0, 0],
+                        backgroundColor: [
+                            '#10b981',
+                            '#f59e0b',
+                            '#ef4444',
+                            '#991b1b'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#3b82f6',
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Simulate real-time data updates
+        function simulateDataUpdate() {
+            // Simulate phone analysis
+            const phones = [
+                '+14155551234',
+                '+14155551235', 
+                '+14155551236',
+                '+14155551237',
+                '+14155551238'
+            ];
+
+            const phone = phones[Math.floor(Math.random() * phones.length)];
+            
+            // Simulate CashApp profile data
+            const cashAppProfiles = [
+                {
+                    cashtag: '$johnsmith123',
+                    verificationStatus: 'verified',
+                    transactionVolume30d: 2500,
+                    fraudFlags: [],
+                    accountAgeDays: 180,
+                    confidence: 0.9
+                },
+                {
+                    cashtag: '$quickcash2024',
+                    verificationStatus: 'unverified',
+                    transactionVolume30d: 12000,
+                    fraudFlags: ['suspicious_activity'],
+                    accountAgeDays: 15,
+                    confidence: 0.3
+                },
+                {
+                    cashtag: null,
+                    verificationStatus: 'unknown',
+                    transactionVolume30d: 0,
+                    fraudFlags: [],
+                    accountAgeDays: 0,
+                    confidence: 0
+                }
+            ];
+
+            const profile = cashAppProfiles[Math.floor(Math.random() * cashAppProfiles.length)];
+            
+            // Calculate synthetic score
+            let syntheticScore = Math.random() * 0.3; // Base score
+            
+            if (profile.verificationStatus === 'unverified') syntheticScore += 0.2;
+            if (profile.verificationStatus === 'suspended') syntheticScore += 0.5;
+            if (profile.fraudFlags.length > 0) syntheticScore += 0.1 * profile.fraudFlags.length;
+            if (profile.transactionVolume30d > 10000) syntheticScore += 0.3;
+            if (profile.accountAgeDays < 30 && profile.transactionVolume30d > 1000) syntheticScore += 0.3;
+            
+            syntheticScore = Math.min(syntheticScore, 1.0);
+
+            // Update metrics
+            dashboardData.totalProcessed++;
+            
+            if (syntheticScore > 0.6) {
+                dashboardData.syntheticDetected++;
+                createAlert(phone, profile, syntheticScore);
+                triggerEnforcementAction(phone, syntheticScore, profile);
+            }
+            
+            if (profile.verificationStatus === 'verified') {
+                dashboardData.cashAppVerified++;
+            }
+
+            // Update risk distribution
+            if (syntheticScore <= 0.2) dashboardData.riskDistribution.low++;
+            else if (syntheticScore <= 0.4) dashboardData.riskDistribution.medium++;
+            else if (syntheticScore <= 0.6) dashboardData.riskDistribution.high++;
+            else dashboardData.riskDistribution.critical++;
+
+            // Update UI
+            updateMetrics();
+            updateRiskChart();
+            updatePhoneAnalysis(phone, syntheticScore);
+            updateCashAppAnalysis(profile);
+        }
+
+        function createAlert(phone, profile, score) {
+            const severity = score > 0.8 ? 'CRITICAL' : score > 0.6 ? 'HIGH' : 'MEDIUM';
+            const alert = {
+                id: Date.now(),
+                timestamp: new Date(),
+                phone,
+                severity,
+                message: `${severity}: ${profile.cashtag || 'No CashApp'} - Score: ${(score * 100).toFixed(1)}%`
+            };
+
+            dashboardData.alerts.unshift(alert);
+            if (dashboardData.alerts.length > 10) dashboardData.alerts.pop();
+
+            updateAlertFeed();
+        }
+
+        function triggerEnforcementAction(phone, score, profile) {
+            let action = 'NO_ACTION';
+            
+            if (score > 0.8) action = 'BLOCK_TRANSACTION';
+            else if (score > 0.6) action = 'IDENTITY_VERIFICATION';
+            else if (score > 0.4) action = 'REQUIRE_MFA';
+            else if (score > 0.2) action = 'ENHANCED_MONITORING';
+
+            if (action !== 'NO_ACTION') {
+                dashboardData.enforcementActions++;
+                
+                const enforcement = {
+                    timestamp: new Date(),
+                    phone,
+                    riskScore: (score * 100).toFixed(1) + '%',
+                    trigger: profile.verificationStatus === 'suspended' ? 'SUSPENDED_ACCOUNT' : 
+                            profile.fraudFlags.length > 0 ? 'FRAUD_FLAGS' : 'HIGH_RISK_SCORE',
+                    action,
+                    status: 'EXECUTED'
+                };
+
+                dashboardData.enforcementHistory.unshift(enforcement);
+                if (dashboardData.enforcementHistory.length > 20) dashboardData.enforcementHistory.pop();
+
+                updateEnforcementTable();
+            }
+        }
+
+        function updateMetrics() {
+            document.getElementById('totalProcessed').textContent = dashboardData.totalProcessed;
+            document.getElementById('syntheticDetected').textContent = dashboardData.syntheticDetected;
+            document.getElementById('cashAppVerified').textContent = dashboardData.cashAppVerified;
+            document.getElementById('enforcementActions').textContent = dashboardData.enforcementActions;
+            document.getElementById('alertCount').textContent = dashboardData.alerts.length;
+        }
+
+        function updateRiskChart() {
+            riskChart.data.datasets[0].data = [
+                dashboardData.riskDistribution.low,
+                dashboardData.riskDistribution.medium,
+                dashboardData.riskDistribution.high,
+                dashboardData.riskDistribution.critical
+            ];
+            riskChart.update();
+        }
+
+        function updateAlertFeed() {
+            const feed = document.getElementById('alertFeed');
+            feed.innerHTML = dashboardData.alerts.map(alert => {
+                const colorClass = alert.severity === 'CRITICAL' ? 'bg-red-600' : 
+                                  alert.severity === 'HIGH' ? 'bg-orange-600' : 'bg-yellow-600';
+                return `
+                    <div class="p-3 bg-gray-800 rounded-lg border-l-4 ${colorClass.replace('bg', 'border')}">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-semibold">${alert.message}</p>
+                                <p class="text-xs text-gray-400">${alert.phone}</p>
+                            </div>
+                            <span class="text-xs text-gray-500">${formatTime(alert.timestamp)}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updatePhoneAnalysis(phone, score) {
+            const ipqsScore = Math.floor(Math.random() * 100);
+            document.getElementById('ipqsScore').style.width = ipqsScore + '%';
+            document.getElementById('ipqsScoreText').textContent = ipqsScore;
+            
+            const carriers = ['Verizon Wireless', 'AT&T', 'T-Mobile', 'Sprint'];
+            document.getElementById('carrierType').textContent = carriers[Math.floor(Math.random() * carriers.length)];
+            
+            const locations = ['San Francisco, CA', 'New York, NY', 'Los Angeles, CA', 'Chicago, IL'];
+            document.getElementById('phoneLocation').textContent = locations[Math.floor(Math.random() * locations.length)];
+            
+            const riskFactors = [];
+            if (score > 0.6) riskFactors.push('HIGH_FRAUD');
+            if (Math.random() > 0.7) riskFactors.push('VOIP');
+            if (Math.random() > 0.8) riskFactors.push('PREPAID');
+            
+            document.getElementById('phoneRiskFactors').innerHTML = riskFactors.map(factor => 
+                `<span class="px-2 py-1 bg-red-900 text-red-200 text-xs rounded">${factor}</span>`
+            ).join('');
+        }
+
+        function updateCashAppAnalysis(profile) {
+            const statusEl = document.getElementById('verificationStatus');
+            statusEl.textContent = profile.verificationStatus?.toUpperCase() || 'NOT_FOUND';
+            
+            const statusColors = {
+                'verified': 'bg-green-600',
+                'unverified': 'bg-yellow-600',
+                'suspended': 'bg-red-600',
+                'pending': 'bg-orange-600',
+                'unknown': 'bg-gray-600'
+            };
+            
+            statusEl.className = `px-2 py-1 rounded text-xs font-semibold ${statusColors[profile.verificationStatus] || 'bg-gray-600'}`;
+            
+            document.getElementById('transactionVolume').textContent = 
+                '$' + profile.transactionVolume30d.toLocaleString();
+            
+            document.getElementById('accountAge').textContent = 
+                profile.accountAgeDays > 0 ? `${profile.accountAgeDays} days` : 'N/A';
+            
+            document.getElementById('fraudFlags').innerHTML = profile.fraudFlags.map(flag => 
+                `<span class="px-2 py-1 bg-red-900 text-red-200 text-xs rounded">${flag}</span>`
+            ).join('') || '<span class="text-gray-500 text-xs">None</span>';
+        }
+
+        function updateEnforcementTable() {
+            const tbody = document.getElementById('enforcementTable');
+            tbody.innerHTML = dashboardData.enforcementHistory.map(enforcement => {
+                const actionColors = {
+                    'BLOCK_TRANSACTION': 'bg-red-600',
+                    'IDENTITY_VERIFICATION': 'bg-orange-600',
+                    'REQUIRE_MFA': 'bg-yellow-600',
+                    'ENHANCED_MONITORING': 'bg-blue-600'
+                };
+                
+                return `
+                    <tr class="border-b border-gray-800">
+                        <td class="py-3 px-4 text-xs">${formatTime(enforcement.timestamp)}</td>
+                        <td class="py-3 px-4 font-mono text-sm">${enforcement.phone}</td>
+                        <td class="py-3 px-4">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-12 bg-gray-700 rounded-full h-1.5">
+                                    <div class="bg-red-500 h-1.5 rounded-full" style="width: ${enforcement.riskScore}"></div>
+                                </div>
+                                <span class="text-xs">${enforcement.riskScore}</span>
+                            </div>
+                        </td>
+                        <td class="py-3 px-4 text-xs">${enforcement.trigger}</td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-1 text-xs rounded ${actionColors[enforcement.action]}">
+                                ${enforcement.action.replace('_', ' ')}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-1 bg-green-900 text-green-200 text-xs rounded">
+                                ${enforcement.status}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function formatTime(date) {
+            return new Date(date).toLocaleTimeString();
+        }
+
+        function refreshDashboard() {
+            // Simulate refresh with new data
+            simulateDataUpdate();
+            
+            // Show refresh animation
+            const button = event.target.closest('button');
+            const icon = button.querySelector('[data-lucide="refresh-cw"]');
+            icon.classList.add('animate-spin');
+            
+            setTimeout(() => {
+                icon.classList.remove('animate-spin');
+            }, 1000);
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeCharts();
+            refreshDashboard();
+            lucide.createIcons();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Start data simulation
+            setInterval(simulateDataUpdate, 3000);
+            
+            // Initial data
+            for (let i = 0; i < 5; i++) {
+                simulateDataUpdate();
+            }
+        });
+
+        function setupEventListeners() {
+            // Mobile menu toggle
+            window.toggleMobileMenu = function() {
+                const menu = document.getElementById('mobileMenu');
+                menu.classList.toggle('hidden');
+            };
+
+            // Back to top functionality
+            window.scrollToTop = function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            };
+
+            // Show/hide back to top button
+            window.addEventListener('scroll', () => {
+                const backToTopBtn = document.getElementById('backToTop');
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.remove('opacity-0', 'invisible');
+                    backToTopBtn.classList.add('opacity-100', 'visible');
+                } else {
+                    backToTopBtn.classList.add('opacity-0', 'invisible');
+                    backToTopBtn.classList.remove('opacity-100', 'visible');
+                }
+            });
+
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        // Close mobile menu if open
+                        document.getElementById('mobileMenu').classList.add('hidden');
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>

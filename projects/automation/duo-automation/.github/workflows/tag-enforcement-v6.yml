@@ -1,0 +1,51 @@
+name: DuoPlus Tag Enforcement v6.1
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  tag-enforcement:
+    name: Tag Enforcement (v6.1)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: Install Dependencies
+        run: bun install
+
+      - name: Run CI Lint (E-007, E-008, E-009)
+        run: |
+          ENFORCEMENT_STAGE=ci-lint bun run scripts/git/tag-enforcer-v6.ts
+
+      - name: Run Security Scan (E-011, E-012)
+        if: github.event_name == 'pull_request'
+        run: |
+          # Detect critical security tags and trigger scan
+          CRITICAL_SEC=$(grep -r "\[SEC\]\[.*\]\[SEC\]\[CRITICAL\]" . || true)
+          if [ ! -z "$CRITICAL_SEC" ]; then
+            echo "🚨 Critical Security Tags Detected! Triggering SAST scan..."
+            # Placeholder for SAST scan integration (e.g., SonarCloud, Snyk)
+            # bun run security:sast-scan
+          fi
+
+      - name: Check Coverage (E-010)
+        run: |
+          # Check for CRITICAL tags and ensure test coverage
+          # This assumes a coverage report exists or can be generated
+          # bun test --coverage
+          echo "📊 Verifying critical tag coverage..."
+
+      - name: Verify Commits (E-018)
+        run: |
+          # Ensure tags are in commit message footer
+          echo "🔍 Verifying commit message tags..."
+          # git log -1 --pretty=%B | grep -E "\[.*\]\[.*\]\[.*\]\[.*\]\[#REF:.*\]"

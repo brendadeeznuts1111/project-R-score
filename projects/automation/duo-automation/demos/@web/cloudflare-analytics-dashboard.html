@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloudflare Analytics Dashboard | factory-wager.com</title>
+    <meta name="description" content="Comprehensive Cloudflare analytics dashboard with visitor metrics, DNS management, security settings, and performance optimization">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+    <style>
+        @keyframes pulse-border {
+            0%, 100% { border-color: rgb(59 130 246 / 0.5); }
+            50% { border-color: rgb(59 130 246 / 1); }
+        }
+        .animate-pulse-border {
+            animation: pulse-border 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .cloudflare-orange {
+            color: #3b82f6;
+        }
+        .analytics-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border: 1px solid #3b82f6;
+            transition: all 0.3s ease;
+        }
+        .analytics-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border: 1px solid #3b82f6;
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-online { background-color: #10b981; }
+        .status-warning { background-color: #f59e0b; }
+        .status-error { background-color: #ef4444; }
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            transform: translateY(-1px);
+        }
+        .tab-active {
+            border-bottom: 2px solid #3b82f6;
+            color: #3b82f6;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+        .recommendation-card {
+            background: linear-gradient(135deg, #fef3c7 0%, #3b82f6 100%);
+            border: 1px solid #3b82f6;
+            transition: all 0.3s ease;
+        }
+        .recommendation-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(251, 191, 36, 0.2);
+        }
+        /* Dark Mode Styles */
+        .dark {
+            background-color: #3b82f6;
+            color: #3b82f6;
+        }
+        .dark .bg-white {
+            background-color: #3b82f6 !important;
+        }
+        .dark .bg-gray-50 {
+            background-color: #3b82f6 !important;
+        }
+        .dark .text-gray-900 {
+            color: #3b82f6 !important;
+        }
+        .dark .text-gray-600 {
+            color: #3b82f6 !important;
+        }
+        .dark .border-gray-200 {
+            border-color: #3b82f6 !important;
+        }
+        .dark .analytics-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border-color: #3b82f6;
+        }
+        .dark .metric-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border-color: #3b82f6;
+        }
+        .dark .recommendation-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #92400e 100%);
+            border-color: #3b82f6;
+        }
+        /* Theme transition */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <i data-lucide="cloud" class="w-8 h-8 cloudflare-orange"></i>
+                    <h1 class="text-2xl font-bold gradient-text">factory-wager.com</h1>
+                    <span class="text-sm text-gray-600 ml-2">Monitor and configure how Cloudflare processes your web traffic</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <span class="status-indicator status-online"></span>
+                        <span class="text-sm text-gray-600">Active</span>
+                    </div>
+                    <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-gray-100" title="Toggle Theme">
+                        <i data-lucide="moon" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="exportData()" class="p-2 rounded-lg hover:bg-gray-100" title="Export Data">
+                        <i data-lucide="download" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Time Range Selector -->
+        <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button onclick="setTimeRange('24h')" class="px-4 py-2 text-sm font-medium rounded-lg bg-orange-100 text-orange-700 tab-active" data-range="24h">24 Hours</button>
+                    <button onclick="setTimeRange('7d')" class="px-4 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100" data-range="7d">7 Days</button>
+                    <button onclick="setTimeRange('30d')" class="px-4 py-2 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100" data-range="30d">30 Days</button>
+                </div>
+                <div class="text-sm text-gray-600">
+                    <span id="date-range">14 JANUARY — 15 JANUARY</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Overview -->
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">Overview</h2>
+            
+            <!-- Metrics Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+                <div class="metric-card p-6 rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-medium text-gray-600">Unique Visitors</h3>
+                        <i data-lucide="users" class="w-5 h-5 text-blue-500"></i>
+                    </div>
+                    <p class="text-3xl font-bold text-gray-900">19</p>
+                    <p class="text-xs text-gray-500 mt-1">24 Hours - Use download data button to access chart data</p>
+                </div>
+                
+                <div class="metric-card p-6 rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-medium text-gray-600">Total Requests</h3>
+                        <i data-lucide="activity" class="w-5 h-5 text-green-500"></i>
+                    </div>
+                    <p class="text-3xl font-bold text-gray-900">60</p>
+                    <p class="text-xs text-gray-500 mt-1">24 Hours - Use download data button to access chart data</p>
+                </div>
+                
+                <div class="metric-card p-6 rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-medium text-gray-600">Percent Cached</h3>
+                        <i data-lucide="database" class="w-5 h-5 text-purple-500"></i>
+                    </div>
+                    <p class="text-3xl font-bold text-gray-900">2.95%</p>
+                    <p class="text-xs text-gray-500 mt-1">24 Hours - Use download data button to access chart data</p>
+                </div>
+                
+                <div class="metric-card p-6 rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-medium text-gray-600">Total Data Served</h3>
+                        <i data-lucide="hard-drive" class="w-5 h-5 text-orange-500"></i>
+                    </div>
+                    <p class="text-3xl font-bold text-gray-900">221 kB</p>
+                    <p class="text-xs text-gray-500 mt-1">24 Hours - Use download data button to access chart data</p>
+                </div>
+                
+                <div class="metric-card p-6 rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-medium text-gray-600">Data Cached</h3>
+                        <i data-lucide="archive" class="w-5 h-5 text-cyan-500"></i>
+                    </div>
+                    <p class="text-3xl font-bold text-gray-900">7 kB</p>
+                    <p class="text-xs text-gray-500 mt-1">24 Hours - Use download data button to access chart data</p>
+                </div>
+            </div>
+
+            <!-- Chart Section -->
+            <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Unique Visitors, 24 Hours</h3>
+                    <div class="flex space-x-2">
+                        <button onclick="downloadChartData()" class="btn-secondary">
+                            <i data-lucide="download" class="w-4 h-4 inline mr-2"></i>
+                            Download data
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="visitorsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="flex justify-center">
+                <button onclick="viewMoreAnalytics()" class="btn-primary">
+                    <i data-lucide="bar-chart-2" class="w-4 h-4 inline mr-2"></i>
+                    View more analytics
+                </button>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold text-gray-900">Recommendations</h2>
+                <button onclick="toggleRecommendations()" class="text-sm text-gray-600 hover:text-gray-900">
+                    <i data-lucide="eye-off" class="w-4 h-4 inline mr-1"></i>
+                    Hide
+                </button>
+            </div>
+            
+            <div id="recommendations" class="recommendation-card p-6 rounded-lg">
+                <div class="flex items-start space-x-4">
+                    <i data-lucide="zap" class="w-6 h-6 text-orange-600 mt-1"></i>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Speed up your website or application</h3>
+                        <p class="text-gray-700 mb-4">Turn on recommended image, content, and protocol settings.</p>
+                        <button onclick="optimizeSite()" class="btn-primary">
+                            <i data-lucide="rocket" class="w-4 h-4 inline mr-2"></i>
+                            Optimize Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DNS Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="analytics-card p-6 rounded-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">DNS</h3>
+                    <span class="status-indicator status-online"></span>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-600">DNS Setup:</span>
+                        <span class="text-sm text-green-600 font-medium">Full</span>
+                    </div>
+                    <div>
+                        <button onclick="manageDNSRecords()" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            <i data-lucide="settings" class="w-4 h-4 inline mr-1"></i>
+                            DNS Records
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analytics-card p-6 rounded-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Control AI crawlers</h3>
+                    <i data-lucide="bot" class="w-5 h-5 text-gray-400"></i>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">Block AI training bots - Deploys a Cloudflare-managed rule to block bots that we categorize as AI training crawlers from visiting your site.</p>
+                <div class="space-y-3">
+                    <label class="flex items-center space-x-3">
+                        <input type="radio" name="ai-crawlers" value="block" class="text-orange-600">
+                        <span class="text-sm text-gray-700">Block AI crawlers</span>
+                    </label>
+                    <label class="flex items-center space-x-3">
+                        <input type="radio" name="ai-crawlers" value="allow" checked class="text-orange-600">
+                        <span class="text-sm text-gray-700">Do not block (allow crawlers)</span>
+                    </label>
+                    <button onclick="showBotList()" class="text-blue-600 hover:text-blue-800 text-sm">
+                        See the list of bots and learn more
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Robots.txt Management -->
+        <div class="analytics-card p-6 rounded-lg mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Manage your robots.txt</h3>
+                <i data-lucide="file-text" class="w-5 h-5 text-gray-400"></i>
+            </div>
+            <p class="text-sm text-gray-600 mb-4">Set how Cloudflare manages your robots.txt file, which tells bots and crawlers how they should interact with your site.</p>
+            <div class="flex items-center space-x-4">
+                <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                    <option>Content Signals Policy</option>
+                    <option>Allow all crawlers</option>
+                    <option>Block all crawlers</option>
+                    <option>Custom policy</option>
+                </select>
+                <button onclick="learnMoreRobots()" class="text-blue-600 hover:text-blue-800 text-sm">
+                    Learn more
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="analytics-card p-6 rounded-lg text-center">
+                    <i data-lucide="shield" class="w-12 h-12 text-red-500 mx-auto mb-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Under Attack Mode</h3>
+                    <p class="text-sm text-gray-600 mb-4">Show visitors a JavaScript challenge when they visit your site.</p>
+                    <button onclick="enableUnderAttackMode()" class="btn-secondary w-full">
+                        Enable
+                    </button>
+                    <button onclick="aboutUnderAttackMode()" class="text-blue-600 hover:text-blue-800 text-xs mt-2">
+                        About Under Attack Mode
+                    </button>
+                </div>
+
+                <div class="analytics-card p-6 rounded-lg text-center">
+                    <i data-lucide="code" class="w-12 h-12 text-blue-500 mx-auto mb-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Development Mode</h3>
+                    <p class="text-sm text-gray-600 mb-4">Temporarily bypass our cache. See changes to your origin server in realtime.</p>
+                    <button onclick="enableDevelopmentMode()" class="btn-secondary w-full">
+                        Enable
+                    </button>
+                    <button onclick="aboutDevelopmentMode()" class="text-blue-600 hover:text-blue-800 text-xs mt-2">
+                        About Development Mode
+                    </button>
+                </div>
+
+                <div class="analytics-card p-6 rounded-lg text-center">
+                    <i data-lucide="zap" class="w-12 h-12 text-yellow-500 mx-auto mb-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Run speed test</h3>
+                    <p class="text-sm text-gray-600 mb-4">Test your website's performance from multiple locations.</p>
+                    <button onclick="runSpeedTest()" class="btn-secondary w-full">
+                        Start Test
+                    </button>
+                </div>
+
+                <div class="analytics-card p-6 rounded-lg text-center">
+                    <i data-lucide="database" class="w-12 h-12 text-green-500 mx-auto mb-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Configure caching</h3>
+                    <p class="text-sm text-gray-600 mb-4">Optimize caching rules for better performance.</p>
+                    <button onclick="configureCaching()" class="btn-secondary w-full">
+                        Configure
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Domain Registration -->
+        <div class="analytics-card p-6 rounded-lg mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Domain Registration</h3>
+                <i data-lucide="globe" class="w-5 h-5 text-gray-400"></i>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-600">Registrar:</span>
+                        <span class="text-sm text-gray-900">Cloudflare</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-600">Expires:</span>
+                        <span class="text-sm text-gray-900">November 1, 2026</span>
+                    </div>
+                </div>
+                <div>
+                    <button onclick="manageDomainRegistration()" class="btn-primary">
+                        <i data-lucide="settings" class="w-4 h-4 inline mr-2"></i>
+                        Manage domain registration
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Subscriptions -->
+        <div class="analytics-card p-6 rounded-lg mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Active Subscriptions</h3>
+                <i data-lucide="credit-card" class="w-5 h-5 text-gray-400"></i>
+            </div>
+            <div class="space-y-3">
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="zap" class="w-5 h-5 text-orange-500"></i>
+                        <span class="font-medium text-gray-900">Workers Paid Plan</span>
+                    </div>
+                    <span class="text-sm text-gray-600">Active</span>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="package" class="w-5 h-5 text-blue-500"></i>
+                        <span class="font-medium text-gray-900">Free plan</span>
+                    </div>
+                    <span class="text-sm text-gray-600">Active</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Support Resources -->
+        <div class="analytics-card p-6 rounded-lg mb-8">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Support Resources</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button onclick="openDocumentation()" class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                    <i data-lucide="book-open" class="w-5 h-5 text-blue-500"></i>
+                    <span class="text-sm font-medium text-gray-900">Documentation</span>
+                </button>
+                <button onclick="openCommunity()" class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                    <i data-lucide="users" class="w-5 h-5 text-green-500"></i>
+                    <span class="text-sm font-medium text-gray-900">Community</span>
+                </button>
+                <button onclick="openAPI()" class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                    <i data-lucide="code" class="w-5 h-5 text-purple-500"></i>
+                    <span class="text-sm font-medium text-gray-900">API</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- API Information -->
+        <div class="analytics-card p-6 rounded-lg">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">API Information</h3>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div>
+                        <span class="text-sm font-medium text-gray-600">Zone ID</span>
+                        <p class="text-sm text-gray-900 font-mono">a3b7ba4bb62cb1b177b04b8675250674</p>
+                    </div>
+                    <button onclick="copyToClipboard('a3b7ba4bb62cb1b177b04b8675250674')" class="text-blue-600 hover:text-blue-800 text-sm">
+                        <i data-lucide="copy" class="w-4 h-4"></i>
+                        Click to copy
+                    </button>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div>
+                        <span class="text-sm font-medium text-gray-600">Account ID</span>
+                        <p class="text-sm text-gray-900 font-mono">7a470541a704caaf91e71efccc78fd36</p>
+                    </div>
+                    <button onclick="copyToClipboard('7a470541a704caaf91e71efccc78fd36')" class="text-blue-600 hover:text-blue-800 text-sm">
+                        <i data-lucide="copy" class="w-4 h-4"></i>
+                        Click to copy
+                    </button>
+                </div>
+                <div class="flex space-x-4">
+                    <button onclick="getAPIToken()" class="btn-primary">
+                        <i data-lucide="key" class="w-4 h-4 inline mr-2"></i>
+                        Get your API token
+                    </button>
+                    <button onclick="openAPIDocumentation()" class="btn-secondary">
+                        <i data-lucide="book" class="w-4 h-4 inline mr-2"></i>
+                        API documentation
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Actions -->
+        <div class="mt-8 p-6 bg-red-50 border border-red-200 rounded-lg">
+            <h3 class="text-lg font-semibold text-red-900 mb-4">Advanced Actions</h3>
+            <div class="flex space-x-4">
+                <button onclick="pauseCloudflare()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                    <i data-lucide="pause" class="w-4 h-4 inline mr-2"></i>
+                    Pause Cloudflare
+                </button>
+                <button onclick="removeFromCloudflare()" class="px-4 py-2 bg-red-800 text-white rounded-lg hover:bg-red-900 transition">
+                    <i data-lucide="trash-2" class="w-4 h-4 inline mr-2"></i>
+                    Remove from Cloudflare
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Chart instance
+        let visitorsChart = null;
+
+        // Theme Manager
+        const themeManager = {
+            currentTheme: 'light',
+            
+            init() {
+                this.loadSavedTheme();
+                this.applyTheme(this.currentTheme);
+                this.setupEventListeners();
+            },
+            
+            toggleTheme() {
+                const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+                this.applyTheme(newTheme);
+                this.saveTheme(newTheme);
+                this.currentTheme = newTheme;
+            },
+            
+            applyTheme(theme) {
+                const body = document.body;
+                if (theme === 'dark') {
+                    body.classList.add('dark');
+                } else {
+                    body.classList.remove('dark');
+                }
+            },
+            
+            updateCharts(theme) {
+                if (visitorsChart) {
+                    const gridColor = theme === 'dark' ? '#3b82f6' : '#3b82f6';
+                    const textColor = theme === 'dark' ? '#3b82f6' : '#3b82f6';
+                    
+                    visitorsChart.options.scales.x.grid.color = gridColor;
+                    visitorsChart.options.scales.y.grid.color = gridColor;
+                    visitorsChart.options.scales.x.ticks.color = textColor;
+                    visitorsChart.options.scales.y.ticks.color = textColor;
+                    visitorsChart.update();
+                }
+            },
+            
+            saveTheme(theme) {
+                localStorage.setItem('cloudflare-analytics-theme', theme);
+            },
+            
+            loadSavedTheme() {
+                const saved = localStorage.getItem('cloudflare-analytics-theme');
+                if (saved) {
+                    this.currentTheme = saved;
+                } else {
+                    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        this.currentTheme = 'dark';
+                    }
+                }
+            },
+            
+            setupEventListeners() {
+                if (window.matchMedia) {
+                    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                    mediaQuery.addListener((e) => {
+                        if (!localStorage.getItem('cloudflare-analytics-theme')) {
+                            const systemTheme = e.matches ? 'dark' : 'light';
+                            this.applyTheme(systemTheme);
+                            this.currentTheme = systemTheme;
+                            this.updateCharts(systemTheme);
+                        }
+                    });
+                }
+            }
+        };
+
+        // Initialize chart
+        function initChart() {
+            const ctx = document.getElementById('visitorsChart').getContext('2d');
+            
+            // Generate sample data for 24 hours
+            const labels = [];
+            const data = [];
+            const now = new Date();
+            
+            for (let i = 23; i >= 0; i--) {
+                const hour = new Date(now - i * 60 * 60 * 1000);
+                labels.push(hour.getHours() + ':00');
+                data.push(Math.floor(Math.random() * 5) + 1);
+            }
+            
+            visitorsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Unique Visitors',
+                        data: data,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(243, 128, 32, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            display: true,
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Time range functions
+        function setTimeRange(range) {
+            // Update active tab
+            document.querySelectorAll('[data-range]').forEach(btn => {
+                btn.classList.remove('tab-active', 'bg-orange-100', 'text-orange-700');
+                btn.classList.add('text-gray-600', 'hover:bg-gray-100');
+            });
+            
+            const activeBtn = document.querySelector(`[data-range="${range}"]`);
+            activeBtn.classList.add('tab-active', 'bg-orange-100', 'text-orange-700');
+            activeBtn.classList.remove('text-gray-600', 'hover:bg-gray-100');
+            
+            // Update date range
+            const now = new Date();
+            let startDate, endDate, rangeText;
+            
+            switch(range) {
+                case '24h':
+                    startDate = new Date(now - 24 * 60 * 60 * 1000);
+                    endDate = now;
+                    rangeText = `${startDate.getDate()} ${startDate.toLocaleString('default', { month: 'short' })} — ${endDate.getDate()} ${endDate.toLocaleString('default', { month: 'short' })}`;
+                    break;
+                case '7d':
+                    startDate = new Date(now - 7 * 24 * 60 * 60 * 1000);
+                    endDate = now;
+                    rangeText = `${startDate.getDate()} ${startDate.toLocaleString('default', { month: 'short' })} — ${endDate.getDate()} ${endDate.toLocaleString('default', { month: 'short' })}`;
+                    break;
+                case '30d':
+                    startDate = new Date(now - 30 * 24 * 60 * 60 * 1000);
+                    endDate = now;
+                    rangeText = `${startDate.getDate()} ${startDate.toLocaleString('default', { month: 'short' })} — ${endDate.getDate()} ${endDate.toLocaleString('default', { month: 'short' })}`;
+                    break;
+            }
+            
+            document.getElementById('date-range').textContent = rangeText.toUpperCase();
+            
+            // Update chart data
+            updateChartData(range);
+        }
+
+        function updateChartData(range) {
+            if (!visitorsChart) return;
+            
+            let labels = [];
+            let data = [];
+            const now = new Date();
+            
+            switch(range) {
+                case '24h':
+                    for (let i = 23; i >= 0; i--) {
+                        const hour = new Date(now - i * 60 * 60 * 1000);
+                        labels.push(hour.getHours() + ':00');
+                        data.push(Math.floor(Math.random() * 5) + 1);
+                    }
+                    break;
+                case '7d':
+                    for (let i = 6; i >= 0; i--) {
+                        const day = new Date(now - i * 24 * 60 * 60 * 1000);
+                        labels.push(day.toLocaleDateString('en', { weekday: 'short' }));
+                        data.push(Math.floor(Math.random() * 50) + 10);
+                    }
+                    break;
+                case '30d':
+                    for (let i = 29; i >= 0; i--) {
+                        const day = new Date(now - i * 24 * 60 * 60 * 1000);
+                        labels.push(day.getDate());
+                        data.push(Math.floor(Math.random() * 100) + 20);
+                    }
+                    break;
+            }
+            
+            visitorsChart.data.labels = labels;
+            visitorsChart.data.datasets[0].data = data;
+            visitorsChart.update();
+        }
+
+        // Action functions
+        function downloadChartData() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                range: document.querySelector('.tab-active').dataset.range,
+                data: visitorsChart.data.datasets[0].data,
+                labels: visitorsChart.data.labels
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `analytics-data-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('Export', 'Analytics data downloaded successfully', 'success');
+        }
+
+        function viewMoreAnalytics() {
+            showNotification('Analytics', 'Opening detailed analytics...', 'info');
+        }
+
+        function toggleRecommendations() {
+            const recommendations = document.getElementById('recommendations');
+            recommendations.style.display = recommendations.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function optimizeSite() {
+            showNotification('Optimization', 'Site optimization started...', 'success');
+        }
+
+        function manageDNSRecords() {
+            showNotification('DNS', 'Opening DNS records management...', 'info');
+        }
+
+        function showBotList() {
+            showNotification('AI Crawlers', 'Opening bot list documentation...', 'info');
+        }
+
+        function learnMoreRobots() {
+            showNotification('Robots.txt', 'Opening robots.txt documentation...', 'info');
+        }
+
+        function enableUnderAttackMode() {
+            if (confirm('Are you sure you want to enable Under Attack Mode? This may impact legitimate visitors.')) {
+                showNotification('Security', 'Under Attack Mode enabled', 'success');
+            }
+        }
+
+        function aboutUnderAttackMode() {
+            showNotification('Security', 'Opening Under Attack Mode documentation...', 'info');
+        }
+
+        function enableDevelopmentMode() {
+            showNotification('Development', 'Development Mode enabled for 3 hours', 'success');
+        }
+
+        function aboutDevelopmentMode() {
+            showNotification('Development', 'Opening Development Mode documentation...', 'info');
+        }
+
+        function runSpeedTest() {
+            showNotification('Performance', 'Running speed test from multiple locations...', 'info');
+        }
+
+        function configureCaching() {
+            showNotification('Caching', 'Opening caching configuration...', 'info');
+        }
+
+        function manageDomainRegistration() {
+            showNotification('Domain', 'Opening domain registration management...', 'info');
+        }
+
+        function openDocumentation() {
+            showNotification('Support', 'Opening Cloudflare documentation...', 'info');
+        }
+
+        function openCommunity() {
+            showNotification('Support', 'Opening Cloudflare community...', 'info');
+        }
+
+        function openAPI() {
+            showNotification('API', 'Opening API documentation...', 'info');
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('Copied', 'Text copied to clipboard', 'success');
+            });
+        }
+
+        function getAPIToken() {
+            showNotification('API', 'Opening API token management...', 'info');
+        }
+
+        function openAPIDocumentation() {
+            showNotification('API', 'Opening API documentation...', 'info');
+        }
+
+        function pauseCloudflare() {
+            if (confirm('Are you sure you want to pause Cloudflare? This will disable all Cloudflare services.')) {
+                showNotification('Advanced', 'Cloudflare services paused', 'warning');
+            }
+        }
+
+        function removeFromCloudflare() {
+            if (confirm('Are you sure you want to remove this site from Cloudflare? This action cannot be undone.')) {
+                showNotification('Advanced', 'Site removed from Cloudflare', 'error');
+            }
+        }
+
+        function exportData() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                domain: 'factory-wager.com',
+                metrics: {
+                    uniqueVisitors: 19,
+                    totalRequests: 60,
+                    percentCached: 2.95,
+                    totalDataServed: '221 kB',
+                    dataCached: '7 kB'
+                },
+                analytics: visitorsChart.data.datasets[0].data
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `cloudflare-analytics-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('Export', 'Dashboard data exported successfully', 'success');
+        }
+
+        function showNotification(title, message, type = 'info') {
+            console.log(`[${type.toUpperCase()}] ${title}: ${message}`);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            themeManager.init();
+            initChart();
+            
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+
+        // Global functions
+        function toggleTheme() {
+            themeManager.toggleTheme();
+        }
+    </script>
+</body>
+</html>

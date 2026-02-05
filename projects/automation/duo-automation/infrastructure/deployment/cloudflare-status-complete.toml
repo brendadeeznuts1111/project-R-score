@@ -1,0 +1,88 @@
+# 🌐 Cloudflare Status Worker Configuration - Complete 18 Endpoints
+# Empire Pro CLI Status Endpoints with Subscription Management
+
+name = "empire-pro-status"
+main = "deployment/workers/status-worker-18-endpoints.ts"
+compatibility_date = "2026-01-15"
+compatibility_flags = ["nodejs_compat"]
+
+# Durable Objects for Subscription Management
+[[durable_objects.bindings]]
+name = "SUBSCRIPTION_MANAGER"
+class_name = "SubscriptionManagerDO"
+
+# Durable Object migrations
+[[migrations]]
+tag = "v1"
+new_classes = [ "SubscriptionManagerDO" ]
+
+# Environment variables
+[vars]
+ENVIRONMENT = "production"
+SERVICE_NAME = "Empire Pro CLI Complete Status API"
+VERSION = "3.7.0"
+DOMAIN = "apple.factory-wager.com"
+
+# Production environment
+[env.production]
+vars = { ENVIRONMENT = "production", DEBUG = "false" }
+
+# R2 Bucket Configuration
+[[env.production.r2_buckets]]
+binding = "REPORTS_BUCKET"
+bucket_name = "empire-pro-reports"
+
+# Domain routing
+[[env.production.routes]]
+pattern = "status.empire-pro-cli.com/*"
+zone_name = "empire-pro-cli.com"
+
+# Scheduled health checks
+[env.production.triggers]
+crons = ["*/5 * * * *"]  # Every 5 minutes
+
+# Staging environment
+[env.staging]
+vars = { ENVIRONMENT = "staging", DEBUG = "true" }
+
+[[env.staging.r2_buckets]]
+binding = "REPORTS_BUCKET"
+bucket_name = "empire-pro-reports-staging"
+
+[[env.staging.routes]]
+pattern = "status-staging.empire-pro-cli.com/*"
+zone_name = "empire-pro-cli.com"
+
+# Development environment
+[env.dev]
+vars = { ENVIRONMENT = "development", DEBUG = "true" }
+
+[[env.dev.r2_buckets]]
+binding = "REPORTS_BUCKET"
+bucket_name = "empire-pro-reports-dev"
+
+# KV Store for caching (optional)
+[[env.production.kv_namespaces]]
+binding = "STATUS_CACHE"
+id = "your-kv-namespace-id"
+preview_id = "your-preview-kv-namespace-id"
+
+# D1 Database for metrics (optional)
+[[env.production.d1_databases]]
+binding = "METRICS_DB"
+database_name = "empire-pro-metrics"
+database_id = "your-d1-database-id"
+
+# Limits and quotas
+[env.production.limits]
+cpu_ms = 50000  # 50 seconds CPU time
+memory_mb = 128  # 128MB memory
+
+# Build configuration
+[build]
+command = "bun build deployment/workers/status-worker-18-endpoints.ts --outdir=dist --target=browser"
+
+# Observability
+[env.production.observability]
+enabled = true
+head_sampling_rate = 1  # Sample 100% of requests for debugging

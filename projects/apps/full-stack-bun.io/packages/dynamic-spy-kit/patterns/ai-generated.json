@@ -1,0 +1,13 @@
+[
+  {
+    "id": "AI_PATTERN_1",
+    "pathname": "/ai/:feed/:market",
+    "hostname": "newbookie.com",
+    "priority": 999,
+    "region": "global",
+    "confidence": 0.992,
+    "aiModel": "gpt-4o-mini",
+    "generatedAt": "2025-01-08T23:45:12Z"
+  }
+]
+

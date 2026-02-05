@@ -1,0 +1,264 @@
+# .github/workflows/feature-builds.yml
+# Empire Pro v3.7 - Feature-based build pipeline
+
+name: Empire Pro v3.7 - Feature Builds
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      build_target:
+        description: 'Build target'
+        required: true
+        default: 'enterprise'
+        type: choice
+        options:
+        - enterprise
+        - development
+        - all
+
+jobs:
+  test-enterprise:
+    name: Test Enterprise Features
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
+    
+    - name: Install dependencies
+      run: bun install
+    
+    - name: Test with ENTERPRISE_SECURITY features
+      run: |
+        bun test --feature=ENTERPRISE_SECURITY \
+                 --feature=PREMIUM_ANALYTICS \
+                 --feature=AUDIT_EXPORT \
+                 tests/feature-flags.test.ts
+    
+    - name: Test Bun v1.3.5 compliance
+      run: bun run verify:bun135
+    
+    - name: Test canonical timezones
+      run: bun run verify:canonical-timezones
+    
+    - name: Validate Canonical tzdb 2025c compliance
+      run: bun run validate:canonical-timezones
+
+  test-development:
+    name: Test Development Features
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
+    
+    - name: Install dependencies
+      run: bun install
+    
+    - name: Test with DEVELOPMENT_TOOLS features
+      run: |
+        bun test --feature=DEVELOPMENT_TOOLS \
+                 --feature=DEBUG_UNICODE \
+                 --feature=PREMIUM_ANALYTICS \
+                 tests/feature-flags.test.ts
+    
+    - name: Test deep path access
+      run: bun run demo:deep-path
+
+  build-enterprise:
+    name: Build Enterprise Bundle
+    runs-on: ubuntu-latest
+    needs: test-enterprise
+    if: github.event.inputs.build_target == 'enterprise' || github.event.inputs.build_target == 'all' || github.event.inputs.build_target == ''
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
+    
+    - name: Install dependencies
+      run: bun install
+    
+    - name: Build Enterprise Bundle
+      run: bun run build:enterprise
+    
+    - name: Verify Enterprise Bundle
+      run: |
+        echo "🔍 Verifying enterprise bundle..."
+        
+        # Check bundle exists
+        test -f dist/enterprise/security-dashboard.js || exit 1
+        test -f dist/enterprise/audit-exporter.js || exit 1
+        
+        # Verify no development code
+        if grep -q "DEVELOPMENT_TOOLS\|Mock\|Simulated" dist/enterprise/*.js; then
+          echo "❌ Development code found in enterprise build!"
+          exit 1
+        fi
+        
+        # Verify enterprise features included
+        if ! grep -q "ENTERPRISE_SECURITY\|SOC2\|AUDIT_EXPORT" dist/enterprise/*.js; then
+          echo "❌ Enterprise features missing!"
+          exit 1
+        fi
+        
+        echo "✅ Enterprise bundle verification passed"
+    
+    - name: Upload Enterprise Bundle
+      uses: actions/upload-artifact@v3
+      with:
+        name: empire-pro-enterprise
+        path: dist/enterprise/
+        retention-days: 30
+
+  build-development:
+    name: Build Development Bundle
+    runs-on: ubuntu-latest
+    needs: test-development
+    if: github.event.inputs.build_target == 'development' || github.event.inputs.build_target == 'all'
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
+    
+    - name: Install dependencies
+      run: bun install
+    
+    - name: Build Development Bundle
+      run: bun run build:development
+    
+    - name: Verify Development Bundle
+      run: |
+        echo "🔍 Verifying development bundle..."
+        
+        # Check bundle exists
+        test -f dist/development/security-dashboard.js || exit 1
+        
+        # Verify development features included
+        if ! grep -q "DEVELOPMENT_TOOLS\|Mock\|Simulated\|DEBUG_UNICODE" dist/development/*.js; then
+          echo "❌ Development features missing!"
+          exit 1
+        fi
+        
+        # Verify no enterprise-only code
+        if grep -q "ENTERPRISE_SECURITY\|SOC2\|AUDIT_EXPORT" dist/development/*.js; then
+          echo "⚠️ Enterprise code found in development build (may be expected)"
+        fi
+        
+        echo "✅ Development bundle verification passed"
+    
+    - name: Upload Development Bundle
+      uses: actions/upload-artifact@v3
+      with:
+        name: empire-pro-development
+        path: dist/development/
+        retention-days: 30
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
+    
+    - name: Install dependencies
+      run: bun install
+    
+    - name: Run Security Audit
+      run: bun audit
+    
+    - name: Check for secrets
+      run: |
+        # Basic secret detection
+        if grep -r "password\|secret\|key" --include="*.ts" --include="*.js" src/ | grep -v "passwordHash\|secretManager"; then
+          echo "❌ Potential secrets found in source code"
+          exit 1
+        fi
+
+  performance-benchmark:
+    name: Performance Benchmark
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
+      with:
+        bun-version: latest
+    
+    - name: Install dependencies
+      run: bun install
+    
+    - name: Run Benchmarks
+      run: |
+        bun run test:stringwidth
+        bun run demo:enhanced-table
+        bun run demo:deep-path
+    
+    - name: Bundle Size Analysis
+      run: |
+        echo "📊 Bundle Size Analysis:"
+        echo "Enterprise build size:"
+        du -sh dist/enterprise/ 2>/dev/null || echo "Not built"
+        echo "Development build size:"
+        du -sh dist/development/ 2>/dev/null || echo "Not built"
+
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [build-enterprise, test-enterprise]
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    steps:
+    - name: Download Enterprise Bundle
+      uses: actions/download-artifact@v3
+      with:
+        name: empire-pro-enterprise
+        path: ./bundle/
+    
+    - name: Deploy to Staging
+      run: |
+        echo "🚀 Deploying Empire Pro v3.7 to staging..."
+        echo "Bundle location: ./bundle/"
+        echo "Features: ENTERPRISE_SECURITY, PREMIUM_ANALYTICS, AUDIT_EXPORT"
+        # Add actual deployment commands here
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build-enterprise, test-enterprise, security-scan]
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+    - name: Download Enterprise Bundle
+      uses: actions/download-artifact@v3
+      with:
+        name: empire-pro-enterprise
+        path: ./bundle/
+    
+    - name: Deploy to Production
+      run: |
+        echo "🚀 Deploying Empire Pro v3.7 to production..."
+        echo "Bundle location: ./bundle/"
+        echo "Features: ENTERPRISE_SECURITY, PREMIUM_ANALYTICS, AUDIT_EXPORT"
+        echo "✅ All tests passed, security scan completed"
+        # Add actual deployment commands here

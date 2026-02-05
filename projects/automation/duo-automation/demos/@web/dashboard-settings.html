@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Settings | Configuration & Integration</title>
+    <meta name="description" content="Comprehensive dashboard settings with Duo Plus integration, email configuration, Android VM connection, proxy settings, R2 storage, and preferences">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes pulse-border {
+            0%, 100% { border-color: rgb(59 130 246 / 0.5); }
+            50% { border-color: rgb(59 130 246 / 1); }
+        }
+        .animate-pulse-border {
+            animation: pulse-border 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .settings-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border: 1px solid #3b82f6;
+            transition: all 0.3s ease;
+        }
+        .settings-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-online { background-color: #10b981; }
+        .status-warning { background-color: #f59e0b; }
+        .status-error { background-color: #ef4444; }
+        .status-checking { background-color: #3b82f6; animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            background: #3b82f6;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .toggle-switch.active {
+            background: #3b82f6;
+        }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+        .toggle-switch.active::after {
+            transform: translateX(24px);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            transform: translateY(-1px);
+        }
+        .input-field {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #3b82f6;
+            border-radius: 0.5rem;
+            background: white;
+            transition: all 0.3s ease;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        /* Dark Mode Styles */
+        .dark {
+            background-color: #3b82f6;
+            color: #3b82f6;
+        }
+        .dark .bg-white {
+            background-color: #3b82f6 !important;
+        }
+        .dark .bg-gray-50 {
+            background-color: #3b82f6 !important;
+        }
+        .dark .text-gray-900 {
+            color: #3b82f6 !important;
+        }
+        .dark .text-gray-600 {
+            color: #3b82f6 !important;
+        }
+        .dark .border-gray-200 {
+            border-color: #3b82f6 !important;
+        }
+        .dark .settings-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border-color: #3b82f6;
+        }
+        .dark .input-field {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+        .dark .input-field:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+        /* Theme transition */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <i data-lucide="settings" class="w-8 h-8 text-blue-600"></i>
+                    <h1 class="text-2xl font-bold gradient-text">Dashboard Settings</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-gray-100" title="Toggle Theme">
+                        <i data-lucide="moon" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="saveAllSettings()" class="btn-primary">
+                        <i data-lucide="save" class="w-4 h-4 inline mr-2"></i>
+                        Save All
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Duo Plus Integration -->
+        <div class="settings-card p-6 rounded-lg mb-6">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center space-x-3">
+                    <i data-lucide="layers" class="w-6 h-6 text-purple-600"></i>
+                    <h2 class="text-xl font-semibold text-gray-900">Duo Plus Integration</h2>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="status-indicator status-online"></span>
+                    <span class="text-sm text-gray-600">Connected</span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">API Endpoint</label>
+                    <input type="url" id="duo-api-endpoint" class="input-field" value="https://api.duoplus.example.com/v2" placeholder="https://api.duoplus.example.com/v2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">API Key</label>
+                    <input type="password" id="duo-api-key" class="input-field" value="duo_plus_api_key_123456789" placeholder="Enter your Duo Plus API key">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Environment</label>
+                    <select id="duo-environment" class="input-field">
+                        <option value="production">Production</option>
+                        <option value="staging">Staging</option>
+                        <option value="development">Development</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Timeout (seconds)</label>
+                    <input type="number" id="duo-timeout" class="input-field" value="30" min="5" max="300">
+                </div>
+            </div>
+            
+            <div class="mt-6 flex space-x-4">
+                <button onclick="testDuoIntegration()" class="btn-primary">
+                    <i data-lucide="test-tube" class="w-4 h-4 inline mr-2"></i>
+                    Test Connection
+                </button>
+                <button onclick="syncDuoData()" class="btn-secondary">
+                    <i data-lucide="refresh-cw" class="w-4 h-4 inline mr-2"></i>
+                    Sync Data
+                </button>
+            </div>
+        </div>
+
+        <!-- Email Integration -->
+        <div class="settings-card p-6 rounded-lg mb-6">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center space-x-3">
+                    <i data-lucide="mail" class="w-6 h-6 text-blue-600"></i>
+                    <h2 class="text-xl font-semibold text-gray-900">Email Integration</h2>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="status-indicator status-online"></span>
+                    <span class="text-sm text-gray-600">Configured</span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                    <input type="email" id="email-address" class="input-field" value="mikesbighunt123@proton.me" placeholder="your.email@example.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">SMTP Server</label>
+                    <input type="text" id="smtp-server" class="input-field" value="smtp.proton.me" placeholder="smtp.example.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Port</label>
+                    <input type="number" id="smtp-port" class="input-field" value="587" min="1" max="65535">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                    <input type="text" id="smtp-username" class="input-field" value="mikesbighunt123@proton.me" placeholder="SMTP username">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input type="password" id="smtp-password" class="input-field" value="••••••••••••" placeholder="SMTP password">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Encryption</label>
+                    <select id="smtp-encryption" class="input-field">
+                        <option value="tls">TLS</option>
+                        <option value="ssl">SSL</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex space-x-4">
+                <button onclick="testEmail()" class="btn-primary">
+                    <i data-lucide="send" class="w-4 h-4 inline mr-2"></i>
+                    Test Email
+                </button>
+                <button onclick="verifyEmailSettings()" class="btn-secondary">
+                    <i data-lucide="check-circle" class="w-4 h-4 inline mr-2"></i>
+                    Verify Settings
+                </button>
+            </div>
+        </div>
+
+        <!-- Android VM -->
+        <div class="settings-card p-6 rounded-lg mb-6">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center space-x-3">
+                    <i data-lucide="smartphone" class="w-6 h-6 text-green-600"></i>
+                    <h2 class="text-xl font-semibold text-gray-900">Android VM</h2>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="status-indicator status-warning"></span>
+                    <span class="text-sm text-gray-600">Checking...</span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">IP Address</label>
+                    <input type="text" id="android-ip" class="input-field" value="192.168.1.100" placeholder="192.168.1.100">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Port</label>
+                    <input type="number" id="android-port" class="input-field" value="5555" min="1" max="65535">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Device ID</label>
+                    <input type="text" id="android-device-id" class="input-field" value="emulator-5554" placeholder="emulator-5554">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Connection Type</label>
+                    <select id="android-connection" class="input-field">
+                        <option value="adb">ADB</option>
+                        <option value="scrcpy">Scrcpy</option>
+                        <option value="vnc">VNC</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex space-x-4">
+                <button onclick="testAndroidConnection()" class="btn-primary">
+                    <i data-lucide="wifi" class="w-4 h-4 inline mr-2"></i>
+                    Test Connection
+                </button>
+                <button onclick="restartAndroidVM()" class="btn-secondary">
+                    <i data-lucide="power" class="w-4 h-4 inline mr-2"></i>
+                    Restart VM
+                </button>
+                <button onclick="getAndroidInfo()" class="btn-secondary">
+                    <i data-lucide="info" class="w-4 h-4 inline mr-2"></i>
+                    Get Info
+                </button>
+            </div>
+        </div>
+
+        <!-- Proxy Server -->
+        <div class="settings-card p-6 rounded-lg mb-6">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center space-x-3">
+                    <i data-lucide="globe" class="w-6 h-6 text-orange-600"></i>
+                    <h2 class="text-xl font-semibold text-gray-900">Proxy Server</h2>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="status-indicator status-error"></span>
+                    <span class="text-sm text-gray-600">Disconnected</span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Proxy URL</label>
+                    <input type="url" id="proxy-url" class="input-field" value="http://proxy.example.com:8080" placeholder="http://proxy.example.com:8080">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                    <input type="text" id="proxy-username" class="input-field" placeholder="Proxy username (optional)">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <input type="password" id="proxy-password" class="input-field" placeholder="Proxy password (optional)">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Proxy Type</label>
+                    <select id="proxy-type" class="input-field">
+                        <option value="http">HTTP</option>
+                        <option value="https">HTTPS</option>
+                        <option value="socks5">SOCKS5</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex space-x-4">
+                <button onclick="testProxy()" class="btn-primary">
+                    <i data-lucide="shield" class="w-4 h-4 inline mr-2"></i>
+                    Test Proxy
+                </button>
+                <button onclick="enableProxy()" class="btn-secondary">
+                    <i data-lucide="toggle-right" class="w-4 h-4 inline mr-2"></i>
+                    Enable Proxy
+                </button>
+            </div>
+        </div>
+
+        <!-- R2 Bucket Storage -->
+        <div class="settings-card p-6 rounded-lg mb-6">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center space-x-3">
+                    <i data-lucide="hard-drive" class="w-6 h-6 text-purple-600"></i>
+                    <h2 class="text-xl font-semibold text-gray-900">R2 Bucket Storage</h2>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="status-indicator status-online"></span>
+                    <span class="text-sm text-gray-600">Connected</span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Bucket Name</label>
+                    <input type="text" id="r2-bucket" class="input-field" value="duo-automation-storage" placeholder="your-bucket-name">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Access Key ID</label>
+                    <input type="text" id="r2-access-key" class="input-field" value="R2_ACCESS_KEY_ID" placeholder="R2_ACCESS_KEY_ID">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Secret Access Key</label>
+                    <input type="password" id="r2-secret-key" class="input-field" value="R2_SECRET_ACCESS_KEY" placeholder="R2_SECRET_ACCESS_KEY">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Region</label>
+                    <select id="r2-region" class="input-field">
+                        <option value="auto">Auto</option>
+                        <option value="us-east-1">US East</option>
+                        <option value="us-west-2">US West</option>
+                        <option value="eu-west-1">Europe West</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex space-x-4">
+                <button onclick="testR2()" class="btn-primary">
+                    <i data-lucide="check-circle" class="w-4 h-4 inline mr-2"></i>
+                    Test R2
+                </button>
+                <button onclick="getR2Stats()" class="btn-secondary">
+                    <i data-lucide="bar-chart-2" class="w-4 h-4 inline mr-2"></i>
+                    Get Stats
+                </button>
+                <button onclick="listR2Files()" class="btn-secondary">
+                    <i data-lucide="list" class="w-4 h-4 inline mr-2"></i>
+                    List Files
+                </button>
+            </div>
+            
+            <!-- File Upload Section -->
+            <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Upload File</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Choose File</label>
+                        <input type="file" id="r2-file" class="input-field">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">File Path</label>
+                        <input type="text" id="r2-file-path" class="input-field" placeholder="folder/filename.ext">
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="uploadToR2()" class="btn-primary w-full">
+                            <i data-lucide="upload" class="w-4 h-4 inline mr-2"></i>
+                            Upload to R2
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Preferences -->
+        <div class="settings-card p-6 rounded-lg">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center space-x-3">
+                    <i data-lucide="sliders" class="w-6 h-6 text-blue-600"></i>
+                    <h2 class="text-xl font-semibold text-gray-900">Dashboard Preferences</h2>
+                </div>
+            </div>
+            
+            <div class="space-y-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900">Auto-refresh</h3>
+                        <p class="text-sm text-gray-600">Automatically refresh dashboard data</p>
+                    </div>
+                    <div class="toggle-switch active" onclick="toggleSwitch(this)" data-setting="auto-refresh"></div>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900">Sound alerts</h3>
+                        <p class="text-sm text-gray-600">Play sound for notifications</p>
+                    </div>
+                    <div class="toggle-switch" onclick="toggleSwitch(this)" data-setting="sound-alerts"></div>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900">Compact mode</h3>
+                        <p class="text-sm text-gray-600">Use compact layout for dashboard</p>
+                    </div>
+                    <div class="toggle-switch" onclick="toggleSwitch(this)" data-setting="compact-mode"></div>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900">Dark mode</h3>
+                        <p class="text-sm text-gray-600">Use dark theme for dashboard</p>
+                    </div>
+                    <div class="toggle-switch" onclick="toggleSwitch(this)" data-setting="dark-mode"></div>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900">Animations</h3>
+                        <p class="text-sm text-gray-600">Enable dashboard animations</p>
+                    </div>
+                    <div class="toggle-switch active" onclick="toggleSwitch(this)" data-setting="animations"></div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex space-x-4">
+                <button onclick="saveAllSettings()" class="btn-primary">
+                    <i data-lucide="save" class="w-4 h-4 inline mr-2"></i>
+                    Save Settings
+                </button>
+                <button onclick="resetSettings()" class="btn-secondary">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4 inline mr-2"></i>
+                    Reset to Defaults
+                </button>
+                <button onclick="exportSettings()" class="btn-secondary">
+                    <i data-lucide="download" class="w-4 h-4 inline mr-2"></i>
+                    Export Settings
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Theme Manager
+        const themeManager = {
+            currentTheme: 'light',
+            
+            init() {
+                this.loadSavedTheme();
+                this.applyTheme(this.currentTheme);
+                this.setupEventListeners();
+            },
+            
+            toggleTheme() {
+                const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+                this.applyTheme(newTheme);
+                this.saveTheme(newTheme);
+                this.currentTheme = newTheme;
+            },
+            
+            applyTheme(theme) {
+                const body = document.body;
+                if (theme === 'dark') {
+                    body.classList.add('dark');
+                } else {
+                    body.classList.remove('dark');
+                }
+            },
+            
+            saveTheme(theme) {
+                localStorage.setItem('dashboard-settings-theme', theme);
+            },
+            
+            loadSavedTheme() {
+                const saved = localStorage.getItem('dashboard-settings-theme');
+                if (saved) {
+                    this.currentTheme = saved;
+                } else {
+                    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        this.currentTheme = 'dark';
+                    }
+                }
+            },
+            
+            setupEventListeners() {
+                if (window.matchMedia) {
+                    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                    mediaQuery.addListener((e) => {
+                        if (!localStorage.getItem('dashboard-settings-theme')) {
+                            const systemTheme = e.matches ? 'dark' : 'light';
+                            this.applyTheme(systemTheme);
+                            this.currentTheme = systemTheme;
+                        }
+                    });
+                }
+            }
+        };
+
+        // Settings Manager
+        const settingsManager = {
+            settings: {
+                'auto-refresh': true,
+                'sound-alerts': false,
+                'compact-mode': false,
+                'dark-mode': false,
+                'animations': true
+            },
+            
+            init() {
+                this.loadSettings();
+                this.applySettings();
+            },
+            
+            loadSettings() {
+                const saved = localStorage.getItem('dashboard-preferences');
+                if (saved) {
+                    this.settings = { ...this.settings, ...JSON.parse(saved) };
+                }
+            },
+            
+            saveSettings() {
+                localStorage.setItem('dashboard-preferences', JSON.stringify(this.settings));
+            },
+            
+            applySettings() {
+                Object.keys(this.settings).forEach(key => {
+                    const toggle = document.querySelector(`[data-setting="${key}"]`);
+                    if (toggle) {
+                        if (this.settings[key]) {
+                            toggle.classList.add('active');
+                        } else {
+                            toggle.classList.remove('active');
+                        }
+                    }
+                });
+            },
+            
+            updateSetting(key, value) {
+                this.settings[key] = value;
+                this.saveSettings();
+                
+                // Apply specific setting changes
+                if (key === 'dark-mode') {
+                    if (value) {
+                        document.body.classList.add('dark');
+                    } else {
+                        document.body.classList.remove('dark');
+                    }
+                }
+            }
+        };
+
+        // Toggle switch function
+        function toggleSwitch(element) {
+            const setting = element.dataset.setting;
+            const isActive = element.classList.contains('active');
+            
+            if (isActive) {
+                element.classList.remove('active');
+                settingsManager.updateSetting(setting, false);
+            } else {
+                element.classList.add('active');
+                settingsManager.updateSetting(setting, true);
+            }
+        }
+
+        // Test functions
+        async function testDuoIntegration() {
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 inline mr-2 animate-spin"></i>Testing...';
+            button.disabled = true;
+            
+            try {
+                // Simulate API test
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                showNotification('Duo Plus Integration', 'Connection successful!', 'success');
+            } catch (error) {
+                showNotification('Duo Plus Integration', 'Connection failed: ' + error.message, 'error');
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+                lucide.createIcons();
+            }
+        }
+
+        async function testEmail() {
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 inline mr-2 animate-spin"></i>Sending...';
+            button.disabled = true;
+            
+            try {
+                // Simulate email test
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                
+                showNotification('Email Test', 'Test email sent successfully!', 'success');
+            } catch (error) {
+                showNotification('Email Test', 'Failed to send email: ' + error.message, 'error');
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+                lucide.createIcons();
+            }
+        }
+
+        async function testAndroidConnection() {
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 inline mr-2 animate-spin"></i>Testing...';
+            button.disabled = true;
+            
+            try {
+                // Simulate connection test
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                showNotification('Android VM', 'Connection successful!', 'success');
+            } catch (error) {
+                showNotification('Android VM', 'Connection failed: ' + error.message, 'error');
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+                lucide.createIcons();
+            }
+        }
+
+        async function testProxy() {
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 inline mr-2 animate-spin"></i>Testing...';
+            button.disabled = true;
+            
+            try {
+                // Simulate proxy test
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                showNotification('Proxy Server', 'Proxy connection successful!', 'success');
+            } catch (error) {
+                showNotification('Proxy Server', 'Proxy connection failed: ' + error.message, 'error');
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+                lucide.createIcons();
+            }
+        }
+
+        async function testR2() {
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 inline mr-2 animate-spin"></i>Testing...';
+            button.disabled = true;
+            
+            try {
+                // Simulate R2 test
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                showNotification('R2 Storage', 'R2 connection successful!', 'success');
+            } catch (error) {
+                showNotification('R2 Storage', 'R2 connection failed: ' + error.message, 'error');
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+                lucide.createIcons();
+            }
+        }
+
+        // Other functions
+        function syncDuoData() {
+            showNotification('Duo Plus', 'Data sync initiated...', 'info');
+        }
+
+        function verifyEmailSettings() {
+            showNotification('Email Settings', 'Verifying email configuration...', 'info');
+        }
+
+        function restartAndroidVM() {
+            showNotification('Android VM', 'VM restart initiated...', 'info');
+        }
+
+        function getAndroidInfo() {
+            showNotification('Android VM', 'Retrieving device information...', 'info');
+        }
+
+        function enableProxy() {
+            showNotification('Proxy Server', 'Proxy enabled for dashboard...', 'success');
+        }
+
+        function getR2Stats() {
+            showNotification('R2 Storage', 'Retrieving storage statistics...', 'info');
+        }
+
+        function listR2Files() {
+            showNotification('R2 Storage', 'Listing bucket files...', 'info');
+        }
+
+        function uploadToR2() {
+            const fileInput = document.getElementById('r2-file');
+            const filePath = document.getElementById('r2-file-path').value;
+            
+            if (!fileInput.files[0]) {
+                showNotification('Upload', 'Please select a file to upload', 'warning');
+                return;
+            }
+            
+            showNotification('Upload', `Uploading ${fileInput.files[0].name} to ${filePath}...`, 'info');
+        }
+
+        function saveAllSettings() {
+            // Collect all form data
+            const formData = {
+                duo: {
+                    endpoint: document.getElementById('duo-api-endpoint').value,
+                    apiKey: document.getElementById('duo-api-key').value,
+                    environment: document.getElementById('duo-environment').value,
+                    timeout: document.getElementById('duo-timeout').value
+                },
+                email: {
+                    address: document.getElementById('email-address').value,
+                    smtpServer: document.getElementById('smtp-server').value,
+                    port: document.getElementById('smtp-port').value,
+                    username: document.getElementById('smtp-username').value,
+                    encryption: document.getElementById('smtp-encryption').value
+                },
+                android: {
+                    ip: document.getElementById('android-ip').value,
+                    port: document.getElementById('android-port').value,
+                    deviceId: document.getElementById('android-device-id').value,
+                    connection: document.getElementById('android-connection').value
+                },
+                proxy: {
+                    url: document.getElementById('proxy-url').value,
+                    type: document.getElementById('proxy-type').value
+                },
+                r2: {
+                    bucket: document.getElementById('r2-bucket').value,
+                    accessKey: document.getElementById('r2-access-key').value,
+                    region: document.getElementById('r2-region').value
+                },
+                preferences: settingsManager.settings
+            };
+            
+            // Save to localStorage
+            localStorage.setItem('dashboard-settings', JSON.stringify(formData));
+            
+            showNotification('Settings', 'All settings saved successfully!', 'success');
+        }
+
+        function resetSettings() {
+            if (confirm('Are you sure you want to reset all settings to defaults?')) {
+                localStorage.removeItem('dashboard-settings');
+                localStorage.removeItem('dashboard-preferences');
+                
+                // Reset form fields
+                document.getElementById('duo-api-endpoint').value = 'https://api.duoplus.example.com/v2';
+                document.getElementById('email-address').value = 'mikesbighunt123@proton.me';
+                document.getElementById('android-ip').value = '192.168.1.100';
+                document.getElementById('proxy-url').value = 'http://proxy.example.com:8080';
+                document.getElementById('r2-bucket').value = 'duo-automation-storage';
+                
+                // Reset preferences
+                settingsManager.settings = {
+                    'auto-refresh': true,
+                    'sound-alerts': false,
+                    'compact-mode': false,
+                    'dark-mode': false,
+                    'animations': true
+                };
+                settingsManager.applySettings();
+                
+                showNotification('Settings', 'Settings reset to defaults', 'info');
+            }
+        }
+
+        function exportSettings() {
+            const settings = {
+                timestamp: new Date().toISOString(),
+                duo: {
+                    endpoint: document.getElementById('duo-api-endpoint').value,
+                    environment: document.getElementById('duo-environment').value,
+                    timeout: document.getElementById('duo-timeout').value
+                },
+                email: {
+                    address: document.getElementById('email-address').value,
+                    smtpServer: document.getElementById('smtp-server').value,
+                    port: document.getElementById('smtp-port').value,
+                    encryption: document.getElementById('smtp-encryption').value
+                },
+                android: {
+                    ip: document.getElementById('android-ip').value,
+                    port: document.getElementById('android-port').value,
+                    connection: document.getElementById('android-connection').value
+                },
+                proxy: {
+                    url: document.getElementById('proxy-url').value,
+                    type: document.getElementById('proxy-type').value
+                },
+                r2: {
+                    bucket: document.getElementById('r2-bucket').value,
+                    region: document.getElementById('r2-region').value
+                },
+                preferences: settingsManager.settings
+            };
+            
+            const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dashboard-settings-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('Export', 'Settings exported successfully', 'success');
+        }
+
+        function toggleTheme() {
+            themeManager.toggleTheme();
+        }
+
+        function showNotification(title, message, type = 'info') {
+            console.log(`[${type.toUpperCase()}] ${title}: ${message}`);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            themeManager.init();
+            settingsManager.init();
+            
+            // Load saved settings
+            const savedSettings = localStorage.getItem('dashboard-settings');
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                
+                // Populate form fields
+                if (settings.duo) {
+                    document.getElementById('duo-api-endpoint').value = settings.duo.endpoint || '';
+                    document.getElementById('duo-environment').value = settings.duo.environment || 'production';
+                    document.getElementById('duo-timeout').value = settings.duo.timeout || '30';
+                }
+                
+                if (settings.email) {
+                    document.getElementById('email-address').value = settings.email.address || '';
+                    document.getElementById('smtp-server').value = settings.email.smtpServer || '';
+                    document.getElementById('smtp-port').value = settings.email.port || '587';
+                    document.getElementById('smtp-encryption').value = settings.email.encryption || 'tls';
+                }
+                
+                if (settings.android) {
+                    document.getElementById('android-ip').value = settings.android.ip || '';
+                    document.getElementById('android-port').value = settings.android.port || '5555';
+                    document.getElementById('android-connection').value = settings.android.connection || 'adb';
+                }
+                
+                if (settings.proxy) {
+                    document.getElementById('proxy-url').value = settings.proxy.url || '';
+                    document.getElementById('proxy-type').value = settings.proxy.type || 'http';
+                }
+                
+                if (settings.r2) {
+                    document.getElementById('r2-bucket').value = settings.r2.bucket || '';
+                    document.getElementById('r2-region').value = settings.r2.region || 'auto';
+                }
+            }
+            
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+    </script>
+</body>
+</html>

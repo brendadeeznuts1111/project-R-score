@@ -1,0 +1,19 @@
+{
+  "name": "factory-wager-registry-worker",
+  "version": "1.0.0",
+  "description": "Factory Wager Enterprise Registry Worker",
+  "type": "module",
+  "main": "registry-worker.ts",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "tail": "wrangler tail"
+  },
+  "dependencies": {
+    "hono": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "wrangler": "^4.30.0"
+  }
+}

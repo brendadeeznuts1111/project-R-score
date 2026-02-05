@@ -1,0 +1,564 @@
+# k8s/qr-onboarding-deployment.yaml
+# Kubernetes Deployment Manifest for Factory-Wager QR Onboarding System
+# [DOMAIN:DEPLOYMENT][SCOPE:FACTORY-WAGER][TYPE:LIVE-SITE][META:{url:monitor.factory-wager.com/qr}][CLASS:FactoryWagerDeploy][#REF:LIVE-SITE-008]
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: qr-onboarding
+  labels:
+    system: "factory-wager-qr"
+    domain: "ONBOARDING"
+    ref: "LIVE-SITE-008"
+    version: "v2.1"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: qr-secrets
+  namespace: qr-onboarding
+  labels:
+    app: qr-onboarding
+    component: security
+    domain: "ONBOARDING"
+type: Opaque
+data:
+  jwt-secret: <base64-encoded-jwt-secret>
+  mtls-private-key: <base64-encoded-private-key>
+  mtls-public-key: <base64-encoded-public-key>
+  database-url: <base64-encoded-database-url>
+  redis-url: <base64-encoded-redis-url>
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: qr-config
+  namespace: qr-onboarding
+  labels:
+    app: qr-onboarding
+    component: config
+    domain: "ONBOARDING"
+data:
+  ENVIRONMENT: "production"
+  DOMAIN: "factory-wager.com"
+  LOG_LEVEL: "info"
+  QR_EXPIRY: "300"
+  HEALTH_CHECK_INTERVAL: "30"
+  METRICS_ENABLED: "true"
+  HEX_COLORS: "{enterprise:'#3b82f6',success:'#22c55e',warning:'#f59e0b',error:'#ef4444',dark:'#1f2937'}"
+  DASHBOARD_URL: "https://monitor.factory-wager.com/qr-onboard"
+  API_VERSION: "v2.1"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qr-onboarding-api
+  namespace: qr-onboarding
+  labels:
+    app: qr-onboarding
+    component: api
+    domain: "ONBOARDING"
+    ref: "QR-ONBOARD-001"
+    version: "v2.1"
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: qr-onboarding
+      component: api
+  template:
+    metadata:
+      labels:
+        app: qr-onboarding
+        component: api
+        domain: "ONBOARDING"
+        version: "v2.1"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+      - name: qr-api
+        image: factorywager/qr-onboarding:v2.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        - containerPort: 9090
+          name: metrics
+          protocol: TCP
+        env:
+        - name: ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: qr-config
+              key: ENVIRONMENT
+        - name: DOMAIN
+          valueFrom:
+            configMapKeyRef:
+              name: qr-config
+              key: DOMAIN
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: qr-secrets
+              key: jwt-secret
+        - name: MTLS_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: qr-secrets
+              key: mtls-private-key
+        - name: MTLS_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              name: qr-secrets
+              key: mtls-public-key
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: qr-secrets
+              key: database-url
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: qr-secrets
+              key: redis-url
+        - name: HEX_COLORS
+          valueFrom:
+            configMapKeyRef:
+              name: qr-config
+              key: HEX_COLORS
+        - name: QR_EXPIRY
+          valueFrom:
+            configMapKeyRef:
+              name: qr-config
+              key: QR_EXPIRY
+        - name: DASHBOARD_URL
+          valueFrom:
+            configMapKeyRef:
+              name: qr-config
+              key: DASHBOARD_URL
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+          successThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+          successThreshold: 1
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 30
+          successThreshold: 1
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: certs
+          mountPath: /app/certs
+          readOnly: true
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          runAsUser: 1000
+      volumes:
+      - name: tmp
+        emptyDir: {}
+      - name: certs
+        secret:
+          secretName: qr-secrets
+          items:
+          - key: mtls-certificate
+            path: server.crt
+          - key: mtls-private-key
+            path: server.key
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - qr-onboarding
+              topologyKey: kubernetes.io/hostname
+      tolerations:
+      - key: "workload"
+        operator: "Equal"
+        value: "qr-onboarding"
+        effect: "NoSchedule"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qr-onboarding-service
+  namespace: qr-onboarding
+  labels:
+    app: qr-onboarding
+    component: service
+    domain: "ONBOARDING"
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9090"
+    prometheus.io/path: "/metrics"
+spec:
+  selector:
+    app: qr-onboarding
+    component: api
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+  - name: https
+    port: 443
+    targetPort: 8443
+    protocol: TCP
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+    protocol: TCP
+  type: LoadBalancer
+  sessionAffinity: None
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: qr-onboarding-ingress
+  namespace: qr-onboarding
+  labels:
+    app: qr-onboarding
+    component: ingress
+    domain: "ONBOARDING"
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - monitor.factory-wager.com
+    - api.factory-wager.com
+    secretName: factory-wager-tls
+  rules:
+  - host: monitor.factory-wager.com
+    http:
+      paths:
+      - path: /qr
+        pathType: Prefix
+        backend:
+          service:
+            name: qr-onboarding-service
+            port:
+              number: 80
+      - path: /qr-onboard
+        pathType: Prefix
+        backend:
+          service:
+            name: qr-onboarding-service
+            port:
+              number: 80
+      - path: /api/qr
+        pathType: Prefix
+        backend:
+          service:
+            name: qr-onboarding-service
+            port:
+              number: 80
+  - host: api.factory-wager.com
+    http:
+      paths:
+      - path: /v2/qr
+        pathType: Prefix
+        backend:
+          service:
+            name: qr-onboarding-service
+            port:
+              number: 80
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: qr-onboarding-pdb
+  namespace: qr-onboarding
+  labels:
+    app: qr-onboarding
+    component: pdb
+    domain: "ONBOARDING"
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: qr-onboarding
+      component: api
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: qr-onboarding-hpa
+  namespace: qr-onboarding
+  labels:
+    app: qr-onboarding
+    component: hpa
+    domain: "ONBOARDING"
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: qr-onboarding-api
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 10
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+---
+apiVersion: v1
+kind: ServiceMonitor
+metadata:
+  name: qr-onboarding-monitor
+  namespace: qr-onboarding
+  labels:
+    app: qr-onboarding
+    component: monitoring
+    domain: "ONBOARDING"
+spec:
+  selector:
+    matchLabels:
+      app: qr-onboarding
+  endpoints:
+  - port: metrics
+    interval: 30s
+    path: /metrics
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: qr-cleanup-job
+  namespace: qr-onboarding
+  labels:
+    app: qr-onboarding
+    component: cleanup
+    domain: "ONBOARDING"
+spec:
+  schedule: "0 */6 * * *"  # Every 6 hours
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: cleanup
+            image: factorywager/qr-onboarding:v2.1
+            command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Cleaning up expired QR tokens..."
+              curl -X POST http://qr-onboarding-service:80/admin/cleanup
+              echo "Cleaning up stale device sessions..."
+              curl -X POST http://qr-onboarding-service:80/admin/sessions/cleanup
+            env:
+            - name: ENVIRONMENT
+              value: "production"
+            resources:
+              limits:
+                memory: "128Mi"
+                cpu: "100m"
+              requests:
+                memory: "64Mi"
+                cpu: "50m"
+          restartPolicy: OnFailure
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: qr-onboarding-netpol
+  namespace: qr-onboarding
+  labels:
+    app: qr-onboarding
+    component: network-policy
+    domain: "ONBOARDING"
+spec:
+  podSelector:
+    matchLabels:
+      app: qr-onboarding
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 8080
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+    ports:
+    - protocol: TCP
+      port: 9090
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+    ports:
+    - protocol: TCP
+      port: 53
+    - protocol: UDP
+      port: 53
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: database
+    ports:
+    - protocol: TCP
+      port: 5432
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: cache
+    ports:
+    - protocol: TCP
+      port: 6379
+---
+# Redis StatefulSet for caching and session management
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: qr-redis
+  namespace: qr-onboarding
+  labels:
+    app: qr-onboarding
+    component: redis
+    domain: "ONBOARDING"
+spec:
+  serviceName: qr-redis
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qr-onboarding
+      component: redis
+  template:
+    metadata:
+      labels:
+        app: qr-onboarding
+        component: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        ports:
+        - containerPort: 6379
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: redis-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qr-redis
+  namespace: qr-onboarding
+  labels:
+    app: qr-onboarding
+    component: redis
+spec:
+  selector:
+    app: qr-onboarding
+    component: redis
+  ports:
+  - port: 6379
+    targetPort: 6379
+  clusterIP: None

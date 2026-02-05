@@ -1,0 +1,65 @@
+{
+  "$schema": "https://bun.sh/schemas/ui-config.json",
+  "$id": "https://nebula-flow.com/ui-config.json",
+  "meta": {
+    "name": "Nebula-Flow™ Dashboard",
+    "version": "1.4.0",
+    "runtime": "bun@1.3.6",
+    "features": ["topology", "threat-feed", "perf-monitor", "secrets-editor"]
+  },
+  "components": {
+    "topology": {
+      "enabled": true,
+      "render-mode": "webgl",
+      "max-nodes": 10000,
+      "update-interval": 500,
+      "performance-threshold": 1000000,
+      "tooltip": {
+        "show-pattern": true,
+        "show-risk": true,
+        "show-exec-ns": true
+      }
+    },
+    "threat-feed": {
+      "enabled": true,
+      "buffer-size": 1000,
+      "filter-level": "medium",
+      "auto-scroll": true,
+      "time-format": "iso8601"
+    },
+    "perf-monitor": {
+      "enabled": true,
+      "metrics": ["exec-ns", "cache-hit-rate", "mem-delta-kb"],
+      "refresh-rate": 1000,
+      "chart-type": "heatmap"
+    },
+    "secrets-editor": {
+      "enabled": false,
+      "format": "toml",
+      "validation": "strict",
+      "auto-save": false,
+      "bun-secrets-sync": true
+    }
+  },
+  "websocket": {
+    "endpoint": "ws://localhost:8080/dashboard",
+    "reconnect-interval": 5000,
+    "max-reconnect-attempts": 10,
+    "compression": true,
+    "headers": {
+      "X-Nebula-Version": "1.4.0"
+    }
+  },
+  "security": {
+    "csp": "default-src 'self'; script-src 'self'; connect-src ws: wss:;",
+    "sanitization": true,
+    "audit-logging": true,
+    "rate-limit": 60
+  },
+  "performance": {
+    "virtual-scrolling": true,
+    "memoization": true,
+    "debounce-ms": 300,
+    "throttle-fps": 60
+  }
+}

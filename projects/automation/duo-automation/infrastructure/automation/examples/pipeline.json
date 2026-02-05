@@ -1,0 +1,17 @@
+{
+  "name": "Mobile API Regression",
+  "devices": [
+    {
+      "profile": "test-android",
+      "count": 5,
+      "region": "us-west",
+      "os": "android"
+    }
+  ],
+  "test_profile": "integration-tests",
+  "cleanup": true,
+  "notifications": {
+    "slack": "#mobile-ci",
+    "teams": "Mobile Team"
+  }
+}

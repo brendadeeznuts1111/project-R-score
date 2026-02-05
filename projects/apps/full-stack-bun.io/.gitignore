@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+.bun/
+
+# Build
+dist/
+*.exe
+hyperbun-core
+
+# Database
+*.db
+*.sqlite
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
+.DS_Store
+.cursor/
+.vscode/
+*.swp
+
+# Temp
+.shell-temp/
+temp-*.js
+test-results.*
+
+# Logs
+*.log
+drift-report.json

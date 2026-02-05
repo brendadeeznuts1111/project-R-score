@@ -1,0 +1,22 @@
+#!/usr/bin/env node
+
+/**
+ * Empire Pro CLI v4.0 - Enhanced One-Liner Arsenal
+ * Complete Identity Intelligence Matrix
+ */
+
+import { program } from '../../src/cli/empire-pro-cli.js';
+
+// Handle uncaught errors gracefully
+process.on('unhandledRejection', (error) => {
+  console.error('❌ Unhandled Error:', error.message);
+  process.exit(1);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('💥 Uncaught Exception:', error.message);
+  process.exit(1);
+});
+
+// Parse and execute CLI commands
+program.parse();

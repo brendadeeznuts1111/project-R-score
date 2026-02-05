@@ -1,0 +1,47 @@
+#!/bin/sh
+# Fast pre-commit hook for enterprise-dashboard
+# Runs quick checks before allowing commit
+
+set -e
+
+echo "🔍 Pre-commit checks..."
+
+# Quick TypeScript syntax check on staged files only
+STAGED_TS=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx)$' || true)
+
+if [ -n "$STAGED_TS" ]; then
+  echo "📝 Checking TypeScript syntax..."
+  # Fast parse check (no full typecheck)
+  for file in $STAGED_TS; do
+    if [ -f "$file" ]; then
+      bun build "$file" --no-bundle --outdir=/dev/null 2>/dev/null || {
+        echo "❌ Syntax error in $file"
+        exit 1
+      }
+    fi
+  done
+  echo "✅ TypeScript syntax OK"
+fi
+
+# Check for common issues
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+
+if echo "$STAGED_FILES" | grep -qE '\.(ts|tsx|js|jsx)$'; then
+  # Check for console.log (warn only)
+  if git diff --cached | grep -E '^\+.*console\.(log|debug)\(' | grep -v '// ok' > /dev/null 2>&1; then
+    echo "⚠️  Warning: console.log detected (add '// ok' to suppress)"
+  fi
+
+  # Check for TODO/FIXME
+  if git diff --cached | grep -E '^\+.*(TODO|FIXME|XXX):' > /dev/null 2>&1; then
+    echo "📌 Note: TODO/FIXME comments added"
+  fi
+fi
+
+# Check for secrets
+if git diff --cached | grep -iE '(password|secret|api.?key|token)\s*[:=]\s*["\x27][^"\x27]+["\x27]' > /dev/null 2>&1; then
+  echo "🚨 Potential secret detected! Review your changes."
+  exit 1
+fi
+
+echo "✅ Pre-commit checks passed"

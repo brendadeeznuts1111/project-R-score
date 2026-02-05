@@ -1,0 +1,37 @@
+[
+  {
+    "tagRef": "venmo-family",
+    "domain": "VENMO",
+    "scope": "CORE",
+    "productIds": [],
+    "description": "Venmo Family Payment System - Premium features"
+  },
+  {
+    "tagRef": "merchant-pro",
+    "domain": "MERCHANT",
+    "scope": "CORE",
+    "productIds": [],
+    "description": "Merchant Dashboard Pro - Business analytics"
+  },
+  {
+    "tagRef": "qr-enterprise",
+    "domain": "FACTORY-WAGER",
+    "scope": "CORE",
+    "productIds": [],
+    "description": "QR Enterprise Onboarding - Large-scale deployment"
+  },
+  {
+    "tagRef": "analytics-plus",
+    "domain": "ANALYTICS",
+    "scope": "CORE",
+    "productIds": [],
+    "description": "Analytics Plus - Advanced metrics and reporting"
+  },
+  {
+    "tagRef": "security-audit",
+    "domain": "SECURITY",
+    "scope": "ADMIN",
+    "productIds": [],
+    "description": "Security Audit Trail - Compliance features"
+  }
+]

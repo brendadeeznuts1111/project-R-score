@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/brendadeeznuts1111/enterprise-dashboard/colors.schema.json",
+  "title": "Syntax Colors TOML Schema",
+  "description": "Schema for validating syntax-colors.toml language brand colors",
+  "type": "object",
+  "properties": {
+    "colors": {
+      "type": "object",
+      "description": "Language identifier to hex color mapping",
+      "patternProperties": {
+        "^[a-z0-9_+-]+$": {
+          "type": "string",
+          "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+          "description": "Valid hex color (#RGB or #RRGGBB)"
+        }
+      },
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "names": {
+      "type": "object",
+      "description": "Language identifier to display name mapping",
+      "patternProperties": {
+        "^[a-z0-9_+-]+$": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 50,
+          "description": "Human-readable language name"
+        }
+      },
+      "additionalProperties": false
+    },
+    "text_colors": {
+      "type": "object",
+      "description": "Language identifier to text color (for contrast on badge)",
+      "patternProperties": {
+        "^[a-z0-9_+-]+$": {
+          "type": "string",
+          "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+          "description": "Valid hex color for text (#RGB or #RRGGBB)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "settings": {
+      "type": "object",
+      "description": "Fallback and default settings",
+      "properties": {
+        "fallback_bg": {
+          "type": "string",
+          "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+          "default": "#6B7280",
+          "description": "Default background color for unknown languages"
+        },
+        "fallback_text": {
+          "type": "string",
+          "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+          "default": "#FFFFFF",
+          "description": "Default text color for unknown languages"
+        },
+        "fallback_name": {
+          "type": "string",
+          "default": "Code",
+          "description": "Default display name for unknown languages"
+        }
+      },
+      "required": ["fallback_bg", "fallback_text", "fallback_name"],
+      "additionalProperties": true
+    }
+  },
+  "required": ["colors", "settings"],
+  "additionalProperties": false
+}

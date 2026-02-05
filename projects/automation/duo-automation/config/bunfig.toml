@@ -1,0 +1,71 @@
+# bunfig.toml - Configuration for Bun test and package management
+
+[install]
+# Install settings inherited by tests
+registry = "https://registry.npmjs.org/"
+exact = true
+prefer = "offline"
+# Workspace configuration
+workspaces = true
+
+[install.cache]
+# Enable bun's efficient caching
+enable = true
+dir = ".bun-cache"
+
+[install.lockfile]
+# Lockfile settings for workspace consistency
+print = "yarn"
+save = true
+
+[publish]
+# Registry configuration for publishing
+registry = "https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com"
+token = "Basic Njk3NjVkZDczODc2NmJjYTM4YmU2M2U3ZDAxOTJjZjg6MWQ5MzI2ZmZiMGM1OWViZWNiNjEyZjQwMWE4N2Y3MTk0MjU3NDk4NDM3NWZiMjgzZmM0MzU5NjMwZDdkOTI5YQ=="
+
+[test]
+# Test discovery configuration
+root = "tests"
+preload = ["./test-setup.ts", "./test-mocks.ts"]
+
+# Execution settings
+timeout = 15000  # 15 seconds for validation tests
+smol = false    # Use full memory for comprehensive validation
+
+# Coverage configuration
+coverage = true
+coverageReporter = ["text", "lcov"]
+coverageDir = "./coverage"
+coverageThreshold = { lines = 0.85, functions = 0.80, statements = 0.85 }
+coverageSkipTestFiles = true
+coveragePathIgnorePatterns = [
+  "**/*.spec.ts",
+  "**/*.e2e.ts",
+  "tests/**/fixtures/**",
+  "examples/**",
+  "scripts/**",
+  "docs/**",
+  "*.config.js",
+  "*.config.ts",
+  "generated/**"
+]
+
+# Advanced coverage settings
+coverageIgnoreSourcemaps = false
+
+# Test execution settings
+concurrentTestGlob = "**/unit/*.test.ts"
+randomize = false  # Deterministic order for validation tests
+rerunEach = 1
+
+# Reporter configuration
+[test.reporter]
+junit = "./reports/junit.xml"
+
+# Environment-specific test configuration
+[test.ci]
+coverage = true
+coverageThreshold = 0.90
+timeout = 30000
+randomize = true
+rerunEach = 3

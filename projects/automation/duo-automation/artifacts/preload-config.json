@@ -1,0 +1,26 @@
+[
+  {
+    "domain": "apple.factory-wager.com",
+    "cookies": [
+      {
+        "name": "enterprise_session",
+        "value": "${ENTERPRISE_SESSION_TOKEN}",
+        "secure": true,
+        "httpOnly": true,
+        "sameSite": "strict"
+      }
+    ]
+  },
+  {
+    "domain": "api.apple.factory-wager.com",
+    "cookies": [
+      {
+        "name": "auth_token",
+        "value": "${AUTH_TOKEN}",
+        "secure": true,
+        "httpOnly": true,
+        "sameSite": "strict"
+      }
+    ]
+  }
+]

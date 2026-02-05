@@ -1,0 +1,115 @@
+# [DUOPLUS][CONFIG][REGISTRY][HIGH][#REF:BUNFIG-MAIN][BUN:6.1-NATIVE]
+# bunfig.toml - Bun Configuration for DuoPlus Enterprise
+# Compliance: SOC2-Type-II | Standard: ISO-27001
+
+# ═══════════════════════════════════════════════════════════
+# INSTALL CONFIGURATION
+# ═══════════════════════════════════════════════════════════
+
+[install]
+# Registry configuration
+registry = "https://npm.factory-wager.com"
+exact = true
+prefer = "offline"
+
+# Workspace configuration (monorepo support)
+workspaces = true
+
+# E-028: Frozen lockfile enforcement for CI/CD
+# Set via CLI: bun install --frozen-lockfile
+# Or environment: BUN_FROZEN_LOCKFILE=1
+
+# Peer dependency handling
+peer = true
+optional = true
+
+[install.cache]
+# Enable bun's efficient caching
+enable = true
+dir = ".bun-cache"
+
+[install.lockfile]
+# Lockfile settings for workspace consistency
+print = "yarn"
+save = true
+
+# ═══════════════════════════════════════════════════════════
+# SCOPED REGISTRY CONFIGURATION
+# ═══════════════════════════════════════════════════════════
+
+[install.scopes]
+# Scoped packages route to DuoPlus private registry
+# Token loaded from environment: $BUN_REGISTRY_TOKEN
+"@duoplus" = { url = "https://registry.duoplus.bun.sh", token = "$BUN_REGISTRY_TOKEN" }
+"@factorywager" = { url = "https://registry.duoplus.bun.sh", token = "$BUN_REGISTRY_TOKEN" }
+
+# ═══════════════════════════════════════════════════════════
+# BUNDLE CONFIGURATION
+# ═══════════════════════════════════════════════════════════
+
+[bundle]
+# DI Plugin for auto-injecting dependencies in production
+plugins = ["./plugins/di-injector.ts"]
+
+# ═══════════════════════════════════════════════════════════
+# PUBLISH CONFIGURATION (Bun-Native)
+# ═══════════════════════════════════════════════════════════
+
+[publish]
+registry = "https://npm.factory-wager.com"
+# Default access level for published packages
+access = "restricted"
+
+# Default tag for published versions
+tag = "latest"
+
+# Registry for publishing (uses environment token)
+registry = "https://registry.npmjs.org"
+# Token loaded from: $BUN_AUTH_TOKEN or $NPM_TOKEN
+
+[test]
+# Test discovery configuration
+root = "tests"
+preload = ["./tests/test-setup.ts", "./tests/test-mocks.ts"]
+
+# Execution settings
+timeout = 15000  # 15 seconds for validation tests
+smol = false    # Use full memory for comprehensive validation
+
+# Coverage configuration
+coverage = true
+coverageReporter = ["text", "lcov"]
+coverageDir = "./coverage"
+coverageThreshold = { lines = 0.85, functions = 0.80, statements = 0.85 }
+coverageSkipTestFiles = true
+coveragePathIgnorePatterns = [
+  "**/*.spec.ts",
+  "**/*.e2e.ts",
+  "tests/**/fixtures/**",
+  "examples/**",
+  "scripts/**",
+  "docs/**",
+  "*.config.js",
+  "*.config.ts",
+  "generated/**"
+]
+
+# Advanced coverage settings
+coverageIgnoreSourcemaps = false
+
+# Test execution settings
+concurrentTestGlob = "**/unit/*.test.ts"
+randomize = false  # Deterministic order for validation tests
+rerunEach = 1
+
+# Reporter configuration
+[test.reporter]
+junit = "./reports/junit.xml"
+
+# Environment-specific test configuration
+[test.ci]
+coverage = true
+coverageThreshold = 0.90
+timeout = 30000
+randomize = true
+rerunEach = 3

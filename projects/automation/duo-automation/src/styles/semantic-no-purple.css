@@ -1,0 +1,20 @@
+/* src/styles/semantic-no-purple.css (Repo-Enforced) */
+:root {
+  /* NO PURPLE - Enterprise Dark Only */
+  --enterprise-admin: #111827;     /* Slate 900 */
+  --enterprise-secondary: #374151; /* Slate 700 */
+  
+  /* Semantic Status (Purple-Free) */
+  --status-success: #22c55e;
+  --status-performance: #3b82f6;
+  --status-merchant: #92400e;
+  --status-warning: #f97316;
+  --status-critical: #ef4444;
+}
+
+.header-enterprise {
+  background: linear-gradient(90deg, 
+    var(--enterprise-admin), 
+    var(--status-performance));
+  /* Purple-Free Enterprise Header */
+}

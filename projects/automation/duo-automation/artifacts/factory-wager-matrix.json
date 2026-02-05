@@ -1,0 +1,1258 @@
+{
+  "bunVersion": "1.1.40",
+  "performanceTargets": {
+    "latency": {
+      "p50": "50ms",
+      "p90": "100ms",
+      "p95": "150ms",
+      "p99": "200ms",
+      "p99_9": "500ms"
+    },
+    "memory": {
+      "limit": "512MB",
+      "threshold": "400MB",
+      "critical": "480MB"
+    },
+    "heap": {
+      "limit": "256MB",
+      "threshold": "200MB",
+      "critical": "240MB"
+    },
+    "cpu": {
+      "limit": "80%",
+      "threshold": "60%",
+      "critical": "75%"
+    },
+    "throughput": {
+      "requestsPerSecond": 1000,
+      "concurrentConnections": 10000,
+      "burstCapacity": 5000
+    }
+  },
+  "security": {
+    "cors": {
+      "origins": ["https://apple.factory-wager.com", "https://api.apple.factory-wager.com", "https://admin.factory-wager.com"],
+      "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+      "credentials": true,
+      "maxAge": 86400,
+      "exposedHeaders": ["X-Total-Count", "X-Rate-Limit-Remaining"]
+    },
+    "rateLimiting": {
+      "global": {
+        "requests": 1000,
+        "window": "1m",
+        "strategy": "sliding-window"
+      },
+      "perEndpoint": {
+        "GET /status": { "requests": 100, "window": "1m", "burst": 20 },
+        "GET /status/api/data": { "requests": 50, "window": "1m", "burst": 10 },
+        "GET /status/api/bun-native-metrics": { "requests": 25, "window": "1m", "burst": 5 },
+        "POST /api/v1/webhooks/events": { "requests": 200, "window": "1m", "burst": 50 },
+        "GET /api/v1/prometheus/metrics": { "requests": 10, "window": "1m", "burst": 2 }
+      },
+      "whitelist": ["127.0.0.1", "10.0.0.0/8", "172.16.0.0/12"],
+      "penalty": {
+        "exceeded": "429 Too Many Requests",
+        "retryAfter": 60,
+        "backoff": "exponential"
+      }
+    },
+    "authentication": {
+      "publicEndpoints": [
+        "GET /status",
+        "GET /status/api/badge", 
+        "GET /api/v1/health",
+        "GET /api/v1/status"
+      ],
+      "apiKey": {
+        "header": "X-API-Key",
+        "required": ["POST", "PUT", "DELETE", "PATCH"],
+        "rotation": "90d",
+        "length": 32,
+        "prefix": "fw_"
+      },
+      "bearer": {
+        "header": "Authorization",
+        "pattern": "Bearer [jwt-token]",
+        "algorithm": "RS256",
+        "issuer": "factory-wager.com",
+        "audience": "api.factory-wager.com"
+      },
+      "webhook": {
+        "signature": "X-Webhook-Signature",
+        "algorithm": "HMAC-SHA256",
+        "secretRotation": "30d",
+        "tolerance": "5m"
+      },
+      "oauth": {
+        "enabled": true,
+        "providers": ["google", "github", "microsoft"],
+        "scopes": ["read:metrics", "write:webhooks"]
+      },
+      "mfa": {
+        "required": ["admin", "delete"],
+        "methods": ["totp", "sms", "email"]
+      }
+    },
+    "encryption": {
+      "tls": {
+        "version": "1.3",
+        "ciphers": ["TLS_AES_256_GCM_SHA384", "TLS_CHACHA20_POLY1305_SHA256"],
+        "certificate": "wildcard.factory-wager.com",
+        "autoRenewal": true
+      },
+      "atRest": {
+        "algorithm": "AES-256-GCM",
+        "keyRotation": "90d",
+        "hsm": true
+      },
+      "inTransit": {
+        "httpsOnly": true,
+        "hsts": "max-age=31536000; includeSubDomains",
+        "certificatePinning": true
+      }
+    },
+    "compliance": {
+      "standards": ["SOC2", "GDPR", "HIPAA", "PCI-DSS"],
+      "auditLogging": true,
+      "dataRetention": "7y",
+      "rightToErasure": true,
+      "consentManagement": true
+    }
+  },
+  "monitoring": {
+    "alerts": {
+      "pagerDuty": {
+        "enabled": true,
+        "serviceKey": "pd-service-key",
+        "conditions": ["error_rate > 5%", "latency_p99 > 500ms", "memory_usage > 90%"],
+        "escalation": "15m -> 30m -> 1h",
+        "severity": ["critical", "warning", "info"]
+      },
+      "slack": {
+        "enabled": true,
+        "webhook": "https://hooks.slack.com/...",
+        "channel": "#alerts",
+        "threads": true,
+        "reactions": ["warning", "critical"],
+        "mentions": ["@oncall", "@devops"]
+      },
+      "email": {
+        "enabled": true,
+        "recipients": ["admin@factory-wager.com", "devops@factory-wager.com"],
+        "conditions": ["service_down", "security_breach", "data_loss"],
+        "template": "html",
+        "attachments": true
+      },
+      "webhook": {
+        "enabled": true,
+        "endpoints": ["https://internal.factory-wager.com/alerts"],
+        "retry": 3,
+        "timeout": "5s",
+        "authentication": "bearer"
+      },
+      "sms": {
+        "enabled": true,
+        "providers": ["twilio", "aws-sns"],
+        "criticalOnly": true,
+        "rateLimit": "5/hour"
+      }
+    },
+    "observability": {
+      "logging": {
+        "format": "json",
+        "level": "info",
+        "structured": true,
+        "fields": ["timestamp", "level", "message", "trace_id", "span_id", "user_id"],
+        "sampling": 0.1,
+        "retention": "30d",
+        "compression": "gzip"
+      },
+      "tracing": {
+        "openTelemetry": true,
+        "sampling": 0.1,
+        "exporter": "jaeger",
+        "batchSize": 512,
+        "timeout": "5s",
+        "propagation": ["tracecontext", "baggage"]
+      },
+      "metrics": {
+        "prometheus": true,
+        "port": 9090,
+        "path": "/metrics",
+        "scrapeInterval": "15s",
+        "histograms": true,
+        "labels": ["endpoint", "method", "status", "version"]
+      },
+      "profiling": {
+        "cpu": true,
+        "memory": true,
+        "block": true,
+        "mutex": true,
+        "goroutine": true,
+        "interval": "30s"
+      }
+    },
+    "dashboards": {
+      "grafana": {
+        "url": "https://grafana.factory-wager.com",
+        "datasources": ["prometheus", "jaeger", "loki"],
+        "templates": ["system-overview", "api-performance", "error-analysis"],
+        "refresh": "30s"
+      },
+      "kibana": {
+        "url": "https://kibana.factory-wager.com",
+        "index": "factory-wager-*",
+        "retention": "30d"
+      }
+    }
+  },
+  "infrastructure": {
+    "runtime": {
+      "bun": "1.1.40",
+      "architecture": "arm64",
+      "os": "Linux",
+      "distribution": "ubuntu",
+      "version": "22.04",
+      "container": "docker",
+      "kernel": "5.15.0"
+    },
+    "deployment": {
+      "method": "systemd",
+      "clustering": "native",
+      "replicas": 3,
+      "rollingUpdate": true,
+      "strategy": "rolling",
+      "maxSurge": "1",
+      "maxUnavailable": "0",
+      "healthCheck": {
+        "path": "/api/v1/health",
+        "interval": "30s",
+        "timeout": "5s",
+        "retries": 3
+      }
+    },
+    "network": {
+      "loadBalancer": "cloudflare",
+      "cdn": "cloudflare",
+      "unixSocket": "/var/run/app.sock",
+      "ports": {
+        "http": 3000,
+        "https": 3443,
+        "metrics": 9090,
+        "health": 8080,
+        "admin": 9443
+      },
+      "firewall": {
+        "enabled": true,
+        "rules": ["allow 80,443", "allow 22 from admin", "deny all"],
+        "rateLimit": "1000/s"
+      },
+      "dns": {
+        "provider": "cloudflare",
+        "ttl": 300,
+        "geoRouting": true,
+        "failover": true
+      }
+    },
+    "scaling": {
+      "horizontal": {
+        "enabled": true,
+        "minReplicas": 2,
+        "maxReplicas": 10,
+        "targetCPU": 70,
+        "targetMemory": 80,
+        "scaleUpCooldown": "3m",
+        "scaleDownCooldown": "5m"
+      },
+      "vertical": {
+        "enabled": false,
+        "cpu": "auto",
+        "memory": "auto"
+      }
+    },
+    "storage": {
+      "database": {
+        "type": "postgresql",
+        "version": "15",
+        "replicas": 3,
+        "backup": "daily",
+        "retention": "30d"
+      },
+      "cache": {
+        "type": "redis",
+        "version": "7.0",
+        "cluster": true,
+        "eviction": "allkeys-lru"
+      },
+      "objectStorage": {
+        "provider": "aws-s3",
+        "region": "us-east-1",
+        "encryption": "AES256",
+        "lifecycle": "30d -> 90d -> glacier"
+      }
+    },
+    "limits": {
+      "fileDescriptors": 65536,
+      "connections": 10000,
+      "memory": "512MB",
+      "cpu": "2 cores",
+      "disk": "100GB",
+      "bandwidth": "1Gbps"
+    }
+  },
+  "dceConfiguration": {
+    "bundle": {
+      "minify": true,
+      "sourcemap": true,
+      "target": "bun",
+      "splitting": true,
+      "treeshaking": true,
+      "compression": "gzip",
+      "format": "esm"
+    },
+    "deadCodeElimination": {
+      "enabled": true,
+      "aggressive": true,
+      "preserveExports": false,
+      "sideEffects": false,
+      "pureFunctions": true
+    },
+    "features": {
+      "treeShaking": true,
+      "unusedExports": true,
+      "sideEffects": false,
+      "moduleConcatenation": true,
+      "propertyMangling": true
+    },
+    "optimizations": {
+      "inlineModules": true,
+      "compressStrings": true,
+      "removeConsole": false,
+      "removeDebugger": true,
+      "constantFolding": true,
+      "deadCodeElimination": true
+    },
+    "plugins": [
+      "@bun/plugin-optimizer",
+      "@bun/plugin-compression",
+      "@bun/plugin-treeshaking"
+    ]
+  },
+  "business": {
+    "organization": {
+      "name": "Factory Wager Inc.",
+      "domain": "factory-wager.com",
+      "size": "enterprise",
+      "industry": "fintech",
+      "region": "global"
+    },
+    "sla": {
+      "availability": "99.9%",
+      "performance": "p99 < 200ms",
+      "support": "24/7",
+      "responseTime": "1h",
+      "resolutionTime": "4h"
+    },
+    "compliance": {
+      "certifications": ["SOC2 Type II", "ISO 27001", "PCI DSS Level 1"],
+      "audits": "quarterly",
+      "penetrationTesting": "monthly",
+      "vulnerabilityScanning": "weekly"
+    },
+    "billing": {
+      "model": "usage-based",
+      "currency": "USD",
+      "pricing": {
+        "requests": "0.001 per 1000",
+        "storage": "0.023 per GB",
+        "bandwidth": "0.09 per GB"
+      }
+    }
+  },
+  "development": {
+    "versioning": {
+      "scheme": "semantic",
+      "current": "3.7.0",
+      "release": "bi-weekly",
+      "lts": "6 months"
+    },
+    "testing": {
+      "coverage": "95%",
+      "types": ["unit", "integration", "e2e", "performance"],
+      "frameworks": ["bun test", "jest", "playwright"],
+      "ci": "github-actions",
+      "cd": "argocd"
+    },
+    "documentation": {
+      "api": "openapi 3.0",
+      "sdk": ["typescript", "python", "go", "rust"],
+      "examples": ["curl", "bun", "node", "python"],
+      "interactive": "swagger-ui"
+    },
+    "quality": {
+      "linting": ["eslint", "prettier"],
+      "typeChecking": "typescript strict",
+      "securityScanning": "snyk",
+      "dependencyUpdates": "dependabot"
+    }
+  },
+      "endpoints": [
+    {
+      "endpoint": "GET /status",
+      "implementation": "Enhanced status page with Bun Native Metrics",
+      "type": "StatusPage",
+      "category": "status",
+      "properties": ["metrics", "domain", "timestamp", "bunNativeMetrics", "network", "dns", "etag", "performance"],
+      "hexColor": "#28a745",
+      "status": "HEALTHY",
+      "lastSeen": "2026-01-14T22:29:00Z",
+      "url": "https://api.apple.factory-wager.com/status",
+      "network": {
+        "localAddress": "127.0.0.1",
+        "localPort": 3000,
+        "localFamily": "IPv4",
+        "remoteAddress": "127.0.0.1",
+        "remotePort": 52384,
+        "remoteFamily": "IPv4"
+      },
+      "dns": {
+        "resolved": "apple.factory-wager.com",
+        "ttl": 300,
+        "records": ["A", "AAAA", "CNAME"],
+        "resolver": "8.8.8.8"
+      },
+      "etag": {
+        "enabled": true,
+        "algorithm": "sha256",
+        "weak": false,
+        "cacheControl": "max-age=60"
+      },
+      "schema": {
+        "request": {},
+        "response": {
+          "status": "string",
+          "timestamp": "string",
+          "metrics": "object",
+          "domain": "string",
+          "performance": "object"
+        }
+      },
+      "caching": {
+        "strategy": "etag",
+        "ttl": 60,
+        "vary": ["Accept-Encoding"]
+      },
+      "sla": {
+        "availability": "99.9%",
+        "latency": "p99 < 100ms"
+      },
+      "security": {
+        "authentication": "none",
+        "rateLimit": { "requests": 100, "window": "1m" },
+        "cors": "public"
+      }
+    },
+    {
+      "endpoint": "GET /status/api/data",
+      "implementation": "Complete status data including Bun metrics",
+      "type": "StatusData",
+      "category": "api",
+      "properties": ["summary", "metrics", "health", "color", "domainBreakdown", "networkSockets", "dns", "etag", "analytics"],
+      "hexColor": "#28a745",
+      "status": "HEALTHY",
+      "lastSeen": "2026-01-14T22:29:00Z",
+      "url": "https://api.apple.factory-wager.com/status/api/data",
+      "network": {
+        "localAddress": "127.0.0.1",
+        "localPort": 3000,
+        "localFamily": "IPv4",
+        "remoteAddress": "127.0.0.1",
+        "remotePort": 52385,
+        "remoteFamily": "IPv4"
+      },
+      "dns": {
+        "resolved": "api.apple.factory-wager.com",
+        "ttl": 300,
+        "records": ["A", "AAAA"],
+        "resolver": "8.8.8.8"
+      },
+      "etag": {
+        "enabled": true,
+        "algorithm": "sha256",
+        "weak": false,
+        "cacheControl": "max-age=30"
+      },
+      "schema": {
+        "request": {},
+        "response": {
+          "success": "boolean",
+          "data": "object",
+          "timestamp": "string",
+          "analytics": "object"
+        }
+      },
+      "caching": {
+        "strategy": "etag",
+        "ttl": 30,
+        "vary": ["Accept-Encoding", "Authorization"]
+      },
+      "sla": {
+        "availability": "99.9%",
+        "latency": "p99 < 150ms"
+      },
+      "security": {
+        "authentication": "optional",
+        "rateLimit": { "requests": 50, "window": "1m" },
+        "cors": "restricted"
+      }
+    },
+    {
+      "endpoint": "GET /status/api/badge",
+      "implementation": "System status badge with hex colors",
+      "type": "SVGBadge",
+      "category": "status",
+      "properties": ["status", "color", "message", "svg", "networkInfo", "dns", "etag", "badge"],
+      "hexColor": "#28a745",
+      "status": "HEALTHY",
+      "lastSeen": "2026-01-14T22:29:00Z",
+      "url": "https://api.apple.factory-wager.com/status/api/badge",
+      "network": {
+        "localAddress": "127.0.0.1",
+        "localPort": 3000,
+        "localFamily": "IPv4",
+        "remoteAddress": "127.0.0.1",
+        "remotePort": 52386,
+        "remoteFamily": "IPv4"
+      },
+      "dns": {
+        "resolved": "api.apple.factory-wager.com",
+        "ttl": 300,
+        "records": ["A", "AAAA"],
+        "resolver": "8.8.8.8"
+      },
+      "etag": {
+        "enabled": true,
+        "algorithm": "md5",
+        "weak": true,
+        "cacheControl": "max-age=300"
+      },
+      "schema": {
+        "request": {},
+        "response": {
+          "schemaVersion": 1,
+          "label": "string",
+          "message": "string",
+          "color": "string"
+        }
+      },
+      "caching": {
+        "strategy": "cache-first",
+        "ttl": 300,
+        "vary": ["Accept"]
+      },
+      "sla": {
+        "availability": "99.9%",
+        "latency": "p99 < 50ms"
+      },
+      "security": {
+        "authentication": "none",
+        "rateLimit": { "requests": 200, "window": "1m" },
+        "cors": "public"
+      }
+    },
+    {
+      "endpoint": "GET /status/api/bun-native-metrics",
+      "implementation": "Dedicated Bun metrics endpoint",
+      "type": "BunMetrics",
+      "category": "metrics",
+      "properties": ["summary", "metrics", "domainBreakdown", "implementationBreakdown", "topAPIs", "socketMetrics", "dns", "etag", "performance"],
+      "hexColor": "#10B981",
+      "status": "OPERATIONAL",
+      "lastSeen": "2026-01-14T22:29:00Z",
+      "url": "https://api.apple.factory-wager.com/status/api/bun-native-metrics",
+      "network": {
+        "localAddress": "127.0.0.1",
+        "localPort": 3000,
+        "localFamily": "IPv4",
+        "remoteAddress": "127.0.0.1",
+        "remotePort": 52387,
+        "remoteFamily": "IPv4"
+      },
+      "dns": {
+        "resolved": "api.apple.factory-wager.com",
+        "ttl": 300,
+        "records": ["A", "AAAA"],
+        "resolver": "8.8.8.8"
+      },
+      "etag": {
+        "enabled": true,
+        "algorithm": "sha256",
+        "weak": false,
+        "cacheControl": "max-age=15"
+      },
+      "schema": {
+        "request": {},
+        "response": {
+          "success": "boolean",
+          "data": {
+            "summary": "object",
+            "metrics": "array",
+            "health": "string",
+            "performance": "object"
+          }
+        }
+      },
+      "caching": {
+        "strategy": "etag",
+        "ttl": 15,
+        "vary": ["Accept-Encoding", "Authorization"]
+      },
+      "sla": {
+        "availability": "99.9%",
+        "latency": "p99 < 100ms"
+      },
+      "security": {
+        "authentication": "required",
+        "rateLimit": { "requests": 25, "window": "1m" },
+        "cors": "restricted"
+      }
+    },
+    {
+      "endpoint": "GET /status/api/bun-native-badge",
+      "implementation": "Bun metrics badge with hex color",
+      "type": "BunBadge",
+      "category": "metrics",
+      "properties": ["nativeRate", "totalAPIs", "color", "svg", "networkData", "dns", "etag", "badge"],
+      "hexColor": "#10B981",
+      "status": "OPERATIONAL",
+      "lastSeen": "2026-01-14T22:29:00Z",
+      "url": "https://api.apple.factory-wager.com/status/api/bun-native-badge",
+      "network": {
+        "localAddress": "127.0.0.1",
+        "localPort": 3000,
+        "localFamily": "IPv4",
+        "remoteAddress": "127.0.0.1",
+        "remotePort": 52388,
+        "remoteFamily": "IPv4"
+      },
+      "dns": {
+        "resolved": "api.apple.factory-wager.com",
+        "ttl": 300,
+        "records": ["A", "AAAA"],
+        "resolver": "8.8.8.8"
+      },
+      "etag": {
+        "enabled": true,
+        "algorithm": "md5",
+        "weak": true,
+        "cacheControl": "max-age=300"
+      },
+      "schema": {
+        "request": {},
+        "response": {
+          "schemaVersion": 1,
+          "label": "string",
+          "message": "string",
+          "color": "string"
+        }
+      },
+      "caching": {
+        "strategy": "cache-first",
+        "ttl": 300,
+        "vary": ["Accept"]
+      },
+      "sla": {
+        "availability": "99.9%",
+        "latency": "p99 < 50ms"
+      },
+      "security": {
+        "authentication": "none",
+        "rateLimit": { "requests": 100, "window": "1m" },
+        "cors": "public"
+      }
+    },
+    {
+      "endpoint": "GET /api/v1/system-matrix",
+      "implementation": "Complete system overview",
+      "type": "SystemMatrix",
+      "category": "api",
+      "properties": ["components", "services", "health", "performance", "timestamp", "networkTopology", "dns", "etag", "infrastructure"],
+      "hexColor": "#3B82F6",
+      "status": "ACTIVE",
+      "lastSeen": "2026-01-14T22:29:00Z",
+      "url": "https://api.apple.factory-wager.com/api/v1/system-matrix",
+      "network": {
+        "localAddress": "10.0.0.100",
+        "localPort": 8080,
+        "localFamily": "IPv4",
+        "remoteAddress": "10.0.0.1",
+        "remotePort": 443,
+        "remoteFamily": "IPv4"
+      },
+      "dns": {
+        "resolved": "api.apple.factory-wager.com",
+        "ttl": 300,
+        "records": ["A", "AAAA"],
+        "resolver": "8.8.8.8"
+      },
+      "etag": {
+        "enabled": true,
+        "algorithm": "sha256",
+        "weak": false,
+        "cacheControl": "max-age=60"
+      },
+      "schema": {
+        "request": {},
+        "response": {
+          "system": "object",
+          "components": "array",
+          "timestamp": "string",
+          "infrastructure": "object"
+        }
+      },
+      "caching": {
+        "strategy": "etag",
+        "ttl": 60,
+        "vary": ["Accept-Encoding", "Authorization"]
+      },
+      "sla": {
+        "availability": "99.9%",
+        "latency": "p99 < 200ms"
+      },
+      "security": {
+        "authentication": "required",
+        "rateLimit": { "requests": 10, "window": "1m" },
+        "cors": "restricted"
+      }
+    },
+    {
+      "endpoint": "GET /api/v1/health",
+      "implementation": "Health check with domain info",
+      "type": "HealthCheck",
+      "category": "api",
+      "properties": ["status", "domain", "uptime", "dependencies", "version", "networkHealth", "dns", "etag", "monitoring"],
+      "hexColor": "#28a745",
+      "status": "HEALTHY",
+      "lastSeen": "2026-01-14T22:29:00Z",
+      "url": "https://api.apple.factory-wager.com/api/v1/health",
+      "network": {
+        "localAddress": "127.0.0.1",
+        "localPort": 3000,
+        "localFamily": "IPv4",
+        "remoteAddress": "127.0.0.1",
+        "remotePort": 52389,
+        "remoteFamily": "IPv4"
+      },
+      "dns": {
+        "resolved": "api.apple.factory-wager.com",
+        "ttl": 300,
+        "records": ["A", "AAAA"],
+        "resolver": "8.8.8.8"
+      },
+      "etag": {
+        "enabled": true,
+        "algorithm": "sha256",
+        "weak": false,
+        "cacheControl": "max-age=30"
+      },
+      "schema": {
+        "request": {},
+        "response": {
+          "status": "string",
+          "timestamp": "string",
+          "uptime": "number",
+          "monitoring": "object"
+        }
+      },
+      "caching": {
+        "strategy": "no-cache",
+        "ttl": 0,
+        "vary": []
+      },
+      "sla": {
+        "availability": "99.9%",
+        "latency": "p99 < 50ms"
+      },
+      "security": {
+        "authentication": "none",
+        "rateLimit": { "requests": 1000, "window": "1m" },
+        "cors": "public"
+      }
+    },
+    {
+      "endpoint": "GET /api/v1/status",
+      "implementation": "Basic status with domain",
+      "type": "BasicStatus",
+      "category": "api",
+      "properties": ["status", "domain", "version", "timestamp", "networkStatus", "dns", "etag", "system"],
+      "hexColor": "#28a745",
+      "status": "HEALTHY",
+      "lastSeen": "2026-01-14T22:29:00Z",
+      "url": "https://api.apple.factory-wager.com/api/v1/status",
+      "network": {
+        "localAddress": "127.0.0.1",
+        "localPort": 3000,
+        "localFamily": "IPv4",
+        "remoteAddress": "127.0.0.1",
+        "remotePort": 52390,
+        "remoteFamily": "IPv4"
+      },
+      "dns": {
+        "resolved": "api.apple.factory-wager.com",
+        "ttl": 300,
+        "records": ["A", "AAAA"],
+        "resolver": "8.8.8.8"
+      },
+      "etag": {
+        "enabled": true,
+        "algorithm": "sha256",
+        "weak": false,
+        "cacheControl": "max-age=60"
+      },
+      "schema": {
+        "request": {},
+        "response": {
+          "status": "string",
+          "domain": "string",
+          "version": "string",
+          "system": "object"
+        }
+      },
+      "caching": {
+        "strategy": "etag",
+        "ttl": 60,
+        "vary": ["Accept-Encoding"]
+      },
+      "sla": {
+        "availability": "99.9%",
+        "latency": "p99 < 100ms"
+      },
+      "security": {
+        "authentication": "none",
+        "rateLimit": { "requests": 100, "window": "1m" },
+        "cors": "public"
+      }
+    },
+    {
+      "endpoint": "GET /api/v1/domain",
+      "implementation": "Domain configuration",
+      "type": "DomainConfig",
+      "category": "api",
+      "properties": ["domain", "subdomains", "dns", "ssl", "configuration", "networkConfig", "dns", "etag", "security"],
+      "hexColor": "#6366F1",
+      "status": "CONFIGURED",
+      "lastSeen": "2026-01-14T22:29:00Z",
+      "url": "https://api.apple.factory-wager.com/api/v1/domain",
+      "network": {
+        "localAddress": "172.16.0.10",
+        "localPort": 53,
+        "localFamily": "IPv4",
+        "remoteAddress": "8.8.8.8",
+        "remotePort": 53,
+        "remoteFamily": "IPv4"
+      },
+      "dns": {
+        "resolved": "api.apple.factory-wager.com",
+        "ttl": 300,
+        "records": ["A", "AAAA", "MX", "TXT"],
+        "resolver": "8.8.8.8"
+      },
+      "etag": {
+        "enabled": true,
+        "algorithm": "sha256",
+        "weak": false,
+        "cacheControl": "max-age=300"
+      },
+      "schema": {
+        "request": {},
+        "response": {
+          "domain": "string",
+          "configuration": "object",
+          "dns": "object",
+          "security": "object"
+        }
+      },
+      "caching": {
+        "strategy": "cache-first",
+        "ttl": 300,
+        "vary": ["Accept-Encoding", "Authorization"]
+      },
+      "sla": {
+        "availability": "99.9%",
+        "latency": "p99 < 150ms"
+      },
+      "security": {
+        "authentication": "required",
+        "rateLimit": { "requests": 10, "window": "1m" },
+        "cors": "restricted"
+      }
+    },
+    {
+      "endpoint": "GET /api/v1/prometheus/metrics",
+      "implementation": "Prometheus metrics export",
+      "type": "PrometheusMetrics",
+      "category": "metrics",
+      "properties": ["prometheus", "metrics", "export", "timeSeries", "dns", "etag", "monitoring"],
+      "hexColor": "#E534AB",
+      "status": "OPERATIONAL",
+      "lastSeen": "2026-01-14T22:29:00Z",
+      "url": "https://api.apple.factory-wager.com/api/v1/prometheus/metrics",
+      "network": {
+        "localAddress": "127.0.0.1",
+        "localPort": 9090,
+        "localFamily": "IPv4",
+        "remoteAddress": "127.0.0.1",
+        "remotePort": 52391,
+        "remoteFamily": "IPv4"
+      },
+      "dns": {
+        "resolved": "api.apple.factory-wager.com",
+        "ttl": 300,
+        "records": ["A", "AAAA"],
+        "resolver": "8.8.8.8"
+      },
+      "etag": {
+        "enabled": true,
+        "algorithm": "sha256",
+        "weak": false,
+        "cacheControl": "max-age=30"
+      },
+      "schema": {
+        "request": {},
+        "response": {
+          "metrics": "string",
+          "timestamp": "string",
+          "monitoring": "object"
+        }
+      },
+      "caching": {
+        "strategy": "no-cache",
+        "ttl": 0,
+        "vary": []
+      },
+      "sla": {
+        "availability": "99.9%",
+        "latency": "p99 < 100ms"
+      },
+      "security": {
+        "authentication": "required",
+        "rateLimit": { "requests": 10, "window": "1m" },
+        "cors": "restricted"
+      }
+    },
+    {
+      "endpoint": "POST /api/v1/webhooks/events",
+      "implementation": "Event streaming webhook endpoint",
+      "type": "WebhookEndpoint",
+      "category": "api",
+      "properties": ["webhook", "events", "streaming", "signature", "dns", "etag", "integration"],
+      "hexColor": "#F59E0B",
+      "status": "OPERATIONAL",
+      "lastSeen": "2026-01-14T22:29:00Z",
+      "url": "https://api.apple.factory-wager.com/api/v1/webhooks/events",
+      "network": {
+        "localAddress": "127.0.0.1",
+        "localPort": 3000,
+        "localFamily": "IPv4",
+        "remoteAddress": "127.0.0.1",
+        "remotePort": 52392,
+        "remoteFamily": "IPv4"
+      },
+      "dns": {
+        "resolved": "api.apple.factory-wager.com",
+        "ttl": 300,
+        "records": ["A", "AAAA"],
+        "resolver": "8.8.8.8"
+      },
+      "etag": {
+        "enabled": false,
+        "cacheControl": "no-cache"
+      },
+      "schema": {
+        "request": {
+          "event": "string",
+          "data": "object",
+          "timestamp": "string"
+        },
+        "response": {
+          "success": "boolean",
+          "eventId": "string",
+          "integration": "object"
+        }
+      },
+      "caching": {
+        "strategy": "no-cache",
+        "ttl": 0,
+        "vary": []
+      },
+      "sla": {
+        "availability": "99.9%",
+        "latency": "p99 < 200ms"
+      },
+      "security": {
+        "authentication": "signature",
+        "rateLimit": { "requests": 200, "window": "1m" },
+        "cors": "restricted"
+      }
+    },
+    {
+      "endpoint": "GET /api/v1/rate-limits",
+      "implementation": "Rate limiting status and configuration",
+      "type": "RateLimitStatus",
+      "category": "api",
+      "properties": ["rateLimit", "quotas", "usage", "limits", "dns", "etag", "security"],
+      "hexColor": "#EF4444",
+      "status": "OPERATIONAL",
+      "lastSeen": "2026-01-14T22:29:00Z",
+      "url": "https://api.apple.factory-wager.com/api/v1/rate-limits",
+      "network": {
+        "localAddress": "127.0.0.1",
+        "localPort": 3000,
+        "localFamily": "IPv4",
+        "remoteAddress": "127.0.0.1",
+        "remotePort": 52393,
+        "remoteFamily": "IPv4"
+      },
+      "dns": {
+        "resolved": "api.apple.factory-wager.com",
+        "ttl": 300,
+        "records": ["A", "AAAA"],
+        "resolver": "8.8.8.8"
+      },
+      "etag": {
+        "enabled": true,
+        "algorithm": "sha256",
+        "weak": false,
+        "cacheControl": "max-age=60"
+      },
+      "schema": {
+        "request": {},
+        "response": {
+          "limits": "object",
+          "usage": "object",
+          "quotas": "object",
+          "security": "object"
+        }
+      },
+      "caching": {
+        "strategy": "etag",
+        "ttl": 60,
+        "vary": ["Accept-Encoding", "Authorization"]
+      },
+      "sla": {
+        "availability": "99.9%",
+        "latency": "p99 < 50ms"
+      },
+      "security": {
+        "authentication": "required",
+        "rateLimit": { "requests": 50, "window": "1m" },
+        "cors": "restricted"
+      }
+    },
+    {
+      "endpoint": "GET /api/v1/analytics/performance",
+      "implementation": "Advanced performance analytics",
+      "type": "PerformanceAnalytics",
+      "category": "metrics",
+      "properties": ["analytics", "performance", "metrics", "insights", "dns", "etag", "monitoring"],
+      "hexColor": "#8B5CF6",
+      "status": "OPERATIONAL",
+      "lastSeen": "2026-01-14T22:29:00Z",
+      "url": "https://api.apple.factory-wager.com/api/v1/analytics/performance",
+      "network": {
+        "localAddress": "127.0.0.1",
+        "localPort": 3000,
+        "localFamily": "IPv4",
+        "remoteAddress": "127.0.0.1",
+        "remotePort": 52394,
+        "remoteFamily": "IPv4"
+      },
+      "dns": {
+        "resolved": "api.apple.factory-wager.com",
+        "ttl": 300,
+        "records": ["A", "AAAA"],
+        "resolver": "8.8.8.8"
+      },
+      "etag": {
+        "enabled": true,
+        "algorithm": "sha256",
+        "weak": false,
+        "cacheControl": "max-age=300"
+      },
+      "schema": {
+        "request": {},
+        "response": {
+          "analytics": "object",
+          "performance": "object",
+          "insights": "array",
+          "monitoring": "object"
+        }
+      },
+      "caching": {
+        "strategy": "etag",
+        "ttl": 300,
+        "vary": ["Accept-Encoding", "Authorization"]
+      },
+      "sla": {
+        "availability": "99.9%",
+        "latency": "p99 < 500ms"
+      },
+      "security": {
+        "authentication": "required",
+        "rateLimit": { "requests": 20, "window": "1m" },
+        "cors": "restricted"
+      }
+    },
+    {
+      "endpoint": "POST /api/v1/admin/config",
+      "implementation": "Administrative configuration management",
+      "type": "AdminConfig",
+      "category": "api",
+      "properties": ["admin", "config", "management", "settings", "dns", "etag", "security"],
+      "hexColor": "#DC2626",
+      "status": "OPERATIONAL",
+      "lastSeen": "2026-01-14T22:29:00Z",
+      "url": "https://api.apple.factory-wager.com/api/v1/admin/config",
+      "network": {
+        "localAddress": "127.0.0.1",
+        "localPort": 9443,
+        "localFamily": "IPv4",
+        "remoteAddress": "127.0.0.1",
+        "remotePort": 52395,
+        "remoteFamily": "IPv4"
+      },
+      "dns": {
+        "resolved": "admin.factory-wager.com",
+        "ttl": 300,
+        "records": ["A", "AAAA"],
+        "resolver": "8.8.8.8"
+      },
+      "etag": {
+        "enabled": false,
+        "cacheControl": "no-cache"
+      },
+      "schema": {
+        "request": {
+          "config": "object",
+          "settings": "object"
+        },
+        "response": {
+          "success": "boolean",
+          "config": "object",
+          "security": "object"
+        }
+      },
+      "caching": {
+        "strategy": "no-cache",
+        "ttl": 0,
+        "vary": []
+      },
+      "sla": {
+        "availability": "99.9%",
+        "latency": "p99 < 1000ms"
+      },
+      "security": {
+        "authentication": "mfa",
+        "rateLimit": { "requests": 5, "window": "1m" },
+        "cors": "restricted",
+        "adminOnly": true
+      }
+    }
+  ],
+  "domain": "apple.factory-wager.com",
+  "version": "3.7.0",
+  "lastUpdated": "2026-01-14T22:29:00Z",
+  "environment": "production",
+  "region": "us-east-1",
+  "cluster": "main",
+  "status": "OPERATIONAL",
+  "features": {
+    "bunNativeMetrics": true,
+    "hexColorIntegration": true,
+    "domainFiltering": true,
+    "unixSocketTracking": true,
+    "realTimeMonitoring": true,
+    "apiBadges": true,
+    "statusPages": true,
+    "healthChecks": true,
+    "networkSocketTracking": true,
+    "localRemoteAddressTracking": true,
+    "prometheusExport": true,
+    "eventStreaming": true,
+    "webhookIntegration": true,
+    "rateLimiting": true,
+    "dceOptimizations": true,
+    "terminalIntegration": false,
+    "advancedAnalytics": true,
+    "administrativeInterface": true,
+    "multiTenantSupport": true,
+    "gdprCompliance": true,
+    "auditLogging": true,
+    "performanceProfiling": true,
+    "securityScanning": true,
+    "automatedScaling": true,
+    "disasterRecovery": true
+  },
+  "endpointsSummary": {
+    "total": 14,
+    "byCategory": {
+      "status": 3,
+      "api": 8,
+      "metrics": 3
+    },
+    "bySecurity": {
+      "public": 4,
+      "authenticated": 7,
+      "admin": 1,
+      "signature": 1
+    },
+    "healthy": 10,
+    "operational": 4,
+    "configured": 1,
+    "degraded": 0,
+    "unhealthy": 0
+  },
+  "networkSummary": {
+    "totalEndpoints": 14,
+    "ipv4Connections": 14,
+    "ipv6Connections": 0,
+    "localAddresses": ["127.0.0.1", "10.0.0.100", "172.16.0.10"],
+    "remoteAddresses": ["127.0.0.1", "10.0.0.1", "8.8.8.8"],
+    "portRange": {
+      "min": 53,
+      "max": 9443
+    },
+    "families": {
+      "IPv4": 14,
+      "IPv6": 0
+    }
+  },
+  "examples": {
+    "curl": {
+      "status": "curl -H 'Accept: application/json' https://api.apple.factory-wager.com/status",
+      "metrics": "curl -H 'X-API-Key: your-key' https://api.apple.factory-wager.com/status/api/bun-native-metrics",
+      "prometheus": "curl https://api.apple.factory-wager.com/api/v1/prometheus/metrics",
+      "webhook": "curl -X POST -H 'Content-Type: application/json' -H 'X-Webhook-Signature: signature' https://api.apple.factory-wager.com/api/v1/webhooks/events",
+      "admin": "curl -X POST -H 'Authorization: Bearer token' -H 'X-MFA: code' https://api.apple.factory-wager.com/api/v1/admin/config"
+    },
+    "bunFetch": {
+      "basic": "const response = await fetch('https://api.apple.factory-wager.com/status');\nconst data = await response.json();",
+      "withAuth": "const response = await fetch('https://api.apple.factory-wager.com/api/data', {\n  headers: { 'X-API-Key': 'your-key' }\n});",
+      "unixSocket": "const response = await fetch('http://localhost/info', { unix: '/var/run/docker.sock' });",
+      "webhook": "const response = await fetch('https://api.apple.factory-wager.com/api/v1/webhooks/events', {\n  method: 'POST',\n  headers: { 'Content-Type': 'application/json' },\n  body: JSON.stringify({ event: 'test', data: {} })\n});"
+    },
+    "grafana": {
+      "prometheus": "http://your-grafana.com/d/prometheus-overview",
+      "metrics": "bun_native_metrics_total{implementation=\"native\"}",
+      "performance": "http_response_time_seconds_bucket{le=\"0.2\"}",
+      "analytics": "factory_wager_analytics_insights_total"
+    },
+    "sdk": {
+      "typescript": "import { FactoryWagerAPI } from '@factory-wager/sdk';\nconst api = new FactoryWagerAPI({ apiKey: 'your-key' });",
+      "python": "from factory_wager import FactoryWagerAPI\napi = FactoryWagerAPI(api_key='your-key')",
+      "go": "package main\n\nimport \"github.com/factory-wager/go-sdk\"",
+      "rust": "use factory_wager_rs::FactoryWagerClient;\nlet client = FactoryWagerClient::new(\"your-key\");"
+    }
+  }
+}

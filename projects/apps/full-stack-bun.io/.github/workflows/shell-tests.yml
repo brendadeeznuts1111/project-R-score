@@ -1,0 +1,58 @@
+name: Shell Engine Tests
+
+on:
+  push:
+    branches: [main]
+    paths: ['src/entry-point/cli/shell-engine.ts', 'src/entry-point/cli/security-arena.ts']
+  pull_request:
+    paths: ['src/entry-point/cli/shell-engine.ts', 'src/entry-point/cli/security-arena.ts']
+
+env:
+  BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS: 5
+
+jobs:
+  test-shell:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Run shell engine tests
+        run: bun test tests/shell-engine.test.ts
+
+      - name: Test cross-platform shell execution
+        run: |
+          # Test basic shell functionality
+          bun -e "
+            const { ShellExecutionEngine } = await import('./src/entry-point/cli/shell-engine.ts');
+            const engine = new ShellExecutionEngine();
+            const result = await engine.executeScript('echo \\\"Platform test: \\$OSTYPE\\\"', 'test.sh');
+            console.log('Exit code:', result.exitCode);
+            console.log('Output:', result.stdout);
+            if (!result.success) throw new Error('Shell execution failed');
+          "
+
+      - name: Test Bun.which() resolution
+        run: |
+          bun -e "
+            const path = await import('bun').then(bun => bun.which('bun'));
+            if (!path) throw new Error('Bun executable not found');
+            console.log('Bun path:', path);
+          "
+
+      - name: Test global bin directory
+        run: |
+          bun -e "
+            const { ShellExecutionEngine } = await import('./src/entry-point/cli/shell-engine.ts');
+            const engine = new ShellExecutionEngine();
+            const binDir = engine.getGlobalBinDir();
+            console.log('Global bin dir:', binDir);
+            if (!binDir.includes('dist')) throw new Error('Invalid global bin directory');
+          "

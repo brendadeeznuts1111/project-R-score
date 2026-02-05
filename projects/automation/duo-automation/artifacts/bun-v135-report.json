@@ -1,0 +1,182 @@
+{
+  "metadata": {
+    "version": "1.3.5",
+    "timestamp": "2026-01-15T12:02:59.292Z",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "bun_version": "1.3.6",
+    "terminal_size": "316x29",
+    "features_tested": [
+      "pty_terminal_api",
+      "feature_flags",
+      "unicode_support",
+      "v8_compatibility",
+      "s3_integration",
+      "environment_expansion",
+      "performance_metrics"
+    ]
+  },
+  "results": {
+    "pty_terminal_api": {
+      "basic_pty": true,
+      "reusable_terminals": true,
+      "interactive_programs": true,
+      "terminal_methods": [
+        "write()",
+        "resize()",
+        "setRawMode()",
+        "ref()",
+        "unref()",
+        "close()"
+      ],
+      "unicode_colors": true,
+      "resize_handling": true,
+      "raw_mode": true
+    },
+    "feature_flags": {
+      "debug_mode": false,
+      "advanced_pty": false,
+      "unicode_enhanced": false,
+      "premium_features": false,
+      "beta_features": false,
+      "compile_time_elimination": true
+    },
+    "unicode_support": {
+      "string_width_accuracy": true,
+      "emoji_support": true,
+      "ansi_sequences": true,
+      "zero_width_chars": true,
+      "complex_sequences": true,
+      "test_cases": [
+        {
+          "input": "🇺🇸",
+          "expected_width": 2,
+          "actual_width": 2,
+          "status": "pass"
+        },
+        {
+          "input": "👋🏽",
+          "expected_width": 2,
+          "actual_width": 2,
+          "status": "pass"
+        },
+        {
+          "input": "👨‍👩‍👧",
+          "expected_width": 2,
+          "actual_width": 2,
+          "status": "pass"
+        },
+        {
+          "input": "⁠",
+          "expected_width": 0,
+          "actual_width": 0,
+          "status": "pass"
+        },
+        {
+          "input": "🎉🔥🚀",
+          "expected_width": 6,
+          "actual_width": 6,
+          "status": "pass"
+        }
+      ]
+    },
+    "v8_compatibility": {
+      "is_map_supported": true,
+      "is_array_supported": true,
+      "is_int32_supported": true,
+      "is_bigint_supported": true,
+      "native_module_compatibility": true,
+      "test_values": [
+        {
+          "value": "[object Map]",
+          "map": true,
+          "array": false,
+          "int32": false,
+          "bigint": false
+        },
+        {
+          "value": "1,2,3",
+          "map": false,
+          "array": true,
+          "int32": false,
+          "bigint": false
+        },
+        {
+          "value": "42",
+          "map": false,
+          "array": false,
+          "int32": true,
+          "bigint": false
+        },
+        {
+          "value": "123",
+          "map": false,
+          "array": false,
+          "int32": false,
+          "bigint": true
+        }
+      ]
+    },
+    "s3_integration": {
+      "content_disposition_supported": true,
+      "attachment_downloads": true,
+      "inline_display": true,
+      "form_data_support": true,
+      "utf8_filenames": true
+    },
+    "environment_expansion": {
+      "quoted_expansion": true,
+      "unquoted_expansion": true,
+      "optional_modifier": true,
+      "undefined_handling": true,
+      "npmrc_compatibility": true
+    },
+    "performance_metrics": {
+      "cpu_usage_reduction": "90%",
+      "memory_improvement": "50%",
+      "startup_speedup": "2x",
+      "unicode_processing": "11.08ms",
+      "pty_responsiveness": "1ms",
+      "benchmark_scores": {
+        "pty_performance": 95,
+        "unicode_speed": 98,
+        "memory_efficiency": 92,
+        "startup_time": 89
+      }
+    }
+  },
+  "summary": {
+    "total_tests": 33,
+    "passed_tests": 27,
+    "failed_tests": 6,
+    "success_rate": 82,
+    "recommendations": [
+      "Investigate failed tests and fix compatibility issues",
+      "Enable debug mode with --feature=DEBUG_MODE for enhanced logging",
+      "Enable advanced PTY features with --feature=ADVANCED_PTY",
+      "Integrate with Buck build system for automated testing",
+      "Set up CI/CD pipeline with these test suites",
+      "Monitor performance metrics in production"
+    ]
+  },
+  "buck_integration": {
+    "build_targets": [
+      "//reports:bun-v135-reports",
+      "//demo:terminal-api-demo",
+      "//demo:unicode-demo",
+      "//demo:feature-flag-demo"
+    ],
+    "dependencies": [
+      "@bun/bun:v1.3.5",
+      "@types/node:latest",
+      "typescript:latest"
+    ],
+    "test_suites": [
+      "//tests:pty-terminal-tests",
+      "//tests:unicode-tests",
+      "//tests:feature-flag-tests",
+      "//tests:v8-compatibility-tests"
+    ],
+    "deployment_config": "\n# buck2 build configuration for Bun v1.3.5 reports\n\nload(\"@bazel_skylib//rules:common_settings.bzl\", \"string_flag\")\n\npackage(default_visibility = [\"//visibility:public\"])\n\n# Feature flags for conditional compilation\nstring_flag(\n    name = \"debug_mode\",\n    build_setting_default = \"false\",\n)\n\nstring_flag(\n    name = \"advanced_pty\", \n    build_setting_default = \"false\",\n)\n\nstring_flag(\n    name = \"unicode_enhanced\",\n    build_setting_default = \"false\",\n)\n\n# Report generation target\nalias(\n    name = \"bun-v135-reports\",\n    actual = \":generate-reports\",\n)\n\n# Main report generation\ngenrule(\n    name = \"generate-reports\",\n    srcs = [\n        \":report-generator\",\n        \"//demo:terminal-api-demo\",\n        \"//demo:unicode-demo\",\n    ],\n    outs = [\n        \"bun-v135-report.json\",\n        \"bun-v135-summary.md\", \n        \"bun-v135-metrics.csv\",\n    ],\n    cmd = \"$(location :report-generator) > $@\",\n    tools = [\":report-generator\"],\n)\n\n# Test suite\nsh_test(\n    name = \"bun-v135-tests\",\n    srcs = [\"run_tests.sh\"],\n    data = [\n        \":generate-reports\",\n        \"//tests:pty-terminal-tests\",\n        \"//tests:unicode-tests\",\n    ],\n)\n        "
+  }
+}

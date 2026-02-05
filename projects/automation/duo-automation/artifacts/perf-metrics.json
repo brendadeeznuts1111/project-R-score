@@ -1,0 +1,81 @@
+[
+  {
+    "category": "Security",
+    "type": "configuration",
+    "topic": "Path Hardening",
+    "subCat": "Initialization",
+    "id": "getScopedKey",
+    "value": "ENABLED",
+    "pattern": "security_pattern",
+    "locations": "r2-apple-manager.ts",
+    "impact": "Zero traversal protection",
+    "properties": {
+      "scope": "global"
+    }
+  },
+  {
+    "category": "R2",
+    "type": "configuration",
+    "topic": "S3 Client",
+    "subCat": "Initialization",
+    "id": "s3Client",
+    "value": "READY",
+    "pattern": "connection_pattern",
+    "locations": "r2-apple-manager.ts",
+    "impact": "Storage backend ready",
+    "properties": {
+      "bucket": "factory-wager-packages",
+      "endpoint": "https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com"
+    }
+  },
+  {
+    "category": "Security",
+    "type": "configuration",
+    "topic": "Path Hardening",
+    "subCat": "Initialization",
+    "id": "getScopedKey",
+    "value": "ENABLED",
+    "pattern": "security_pattern",
+    "locations": "r2-apple-manager.ts",
+    "impact": "Zero traversal protection",
+    "properties": {
+      "scope": "v37-scope",
+      "endpoint": "https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com",
+      "validation": "strict",
+      "traversal": "blocked"
+    }
+  },
+  {
+    "category": "Security",
+    "type": "validation",
+    "topic": "R2 Hardening",
+    "subCat": "Path Validation",
+    "id": "STRICT",
+    "value": "ENFORCED",
+    "pattern": "security_pattern",
+    "locations": "r2-apple-manager.ts",
+    "impact": "Storage security",
+    "properties": {
+      "checksum": "sha256",
+      "encryption": "aes256",
+      "access": "scoped"
+    }
+  },
+  {
+    "category": "Isolation",
+    "type": "performance",
+    "topic": "Agent Scaling",
+    "subCat": "Performance",
+    "id": "50 @ 19.6ms",
+    "value": "sub-ms deploy",
+    "pattern": "scaling_pattern",
+    "locations": "scale-agent-test.ts",
+    "impact": "High-density deployment",
+    "properties": {
+      "agents": "50",
+      "deployTime": "19.6ms",
+      "isolation": "hard",
+      "memoryPerAgent": "128MB"
+    }
+  }
+]

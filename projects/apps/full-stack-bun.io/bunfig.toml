@@ -1,0 +1,74 @@
+[test]
+root = "."
+
+[build]
+target = "bun"
+minify = true
+sourcemap = "external"
+
+[install]
+exact = true
+registry = "https://npm.factory-wager.com"
+auto-install = true
+# CONFIG.BUNFIG.SECURITY - Enterprise policy: 30-day minimum release age (2592000s)
+# MIN_RELEASE_AGE - Prevents installation of packages newer than 30 days
+minimumReleaseAge = 2592000
+linkWorkspacePackages = false
+globalBinDir = "./my-portal/packages/templates/bun-transformer/dist"
+
+# Selective hoisting for monorepo compatibility (Bun 1.3.6+)
+# publicHoistPattern: Hoists matching packages to root node_modules for tool discovery
+# hoistPattern: Controls hoisting into node_modules/.bun/node_modules
+publicHoistPattern = [
+  "@types/*",
+  "*eslint*",
+  "eslint-*",
+  "@eslint/*",
+  "typescript",
+  "prettier"
+]
+
+# Control internal hoisting into node_modules/.bun/node_modules
+hoistPattern = [
+  "@types/*",
+  "*eslint*",
+  "eslint-*",
+  "@eslint/*"
+]
+
+# Isolated linker for monorepo stability
+linker = "isolated"
+
+[install.registry]
+# Enterprise registry configuration with scoped authentication
+# Scoped tokens for different package scopes
+"@enterprise/*" = "https://registry.enterprise.com/"
+"@internal/*" = "https://registry.internal.com/"
+# Fallback to public registry for all others
+"*" = "https://registry.npmjs.org/"
+
+[install.scoped-tokens]
+# Scoped authentication tokens for private registries
+"@enterprise/*" = "enterprise-token-here"
+"@internal/*" = "internal-token-here"
+
+[install.scopes]
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+# Scope-specific configurations
+"@types" = { "hoist" = true }
+"eslint" = { "hoist" = true }
+
+[install.excludes]
+# Package excludes list for security policy
+# CONFIG.BUNFIG.SECURITY - Enterprise policy excludes
+lodash = true
+moment = true
+request = true
+axios = "^0.20.0"  # Only exclude vulnerable versions
+
+[install.security]
+scanner = "@socketsecurity/bun-security-scanner"
+
+[publish]
+registry = "https://npm.factory-wager.com"

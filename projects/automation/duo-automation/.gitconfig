@@ -1,0 +1,100 @@
+# Git configuration template
+# Copy these settings to your global git config: ~/.gitconfig
+# or run: git config --global <key> <value>
+
+[user]
+	name = Your Name
+	email = your.email@example.com
+
+[core]
+	autocrlf = input
+	safecrlf = true
+	eol = lf
+	excludesfile = ~/.gitignore_global
+	editor = vim
+	pager = less -F -X
+
+[color]
+	ui = auto
+
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+
+[color "status"]
+	added = yellow
+	changed = green
+	untracked = cyan
+
+[push]
+	default = simple
+
+[pull]
+	rebase = false
+
+[init]
+	defaultBranch = main
+
+[alias]
+	st = status
+	co = checkout
+	br = branch
+	ci = commit
+	ca = commit -a
+	unstage = reset HEAD --
+	last = log -1 HEAD
+	visual = !gitk
+	diffc = diff --cached
+	dt = difftool
+	mt = mergetool
+	slog = log --oneline --graph --decorate
+	graph = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	undo = reset --soft HEAD^
+	amend = commit --amend
+	uncommit = reset --soft HEAD~
+	untrack = rm -r --cached .
+	assume = update-index --assume-unchanged
+	unassume = update-index --no-assume-unchanged
+	assumed = !git ls-files -v | grep ^[a-z]
+	please = push --force-with-lease
+	fp = push --force-with-lease
+	praise = blame
+	who = shortlog -sn
+	whatis = show -s --pretty='tformat:%h (%s, %ad)' --date=short
+	snapshot = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"
+	cleanup = !git branch --merged | grep -v "\*\|main\|master" | xargs -n 1 git branch -d
+	prune = !git remote prune origin && git branch -r | awk '{print $1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print $1}' | xargs git branch -d
+
+[help]
+	autocorrect = 1
+
+[merge]
+	tool = vimdiff
+
+[mergetool]
+	keepBackup = false
+
+[diff]
+	tool = vimdiff
+
+[difftool]
+	prompt = false
+
+[commit]
+	template = ~/.gitmessage
+
+[gpg]
+	program = gpg
+
+[tag]
+	forceSignAnnotated = true
+
+[gpg]
+	format = openpgp

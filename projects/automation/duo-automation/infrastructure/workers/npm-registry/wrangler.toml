@@ -1,0 +1,12 @@
+# workers/npm-registry/wrangler.toml
+name = "duo-npm-registry"
+main = "index.ts"
+compatibility_date = "2024-01-01"
+
+[vars]
+REGISTRY_BUCKET_NAME = "factory-wager-packages"
+
+# R2 Bucket Bindings
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "factory-wager-packages"

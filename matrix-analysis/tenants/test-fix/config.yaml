@@ -1,8 +1,0 @@
-tenant:
-  id: test-fix
-  name: Tenant test-fix
-  created: 2026-02-01T03:56:03.477Z
-
-settings:
-  theme: dark
-  timezone: UTC

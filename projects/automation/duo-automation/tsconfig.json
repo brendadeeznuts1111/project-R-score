@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    "target": "ES2018",
+    "lib": [
+      "ES2018",
+      "ES2015",
+      "DOM"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": false,
+    "outDir": "./dist",
+    "rootDir": "./",
+    "baseUrl": "./",
+    "noImplicitAny": false,
+    "paths": {
+      "@/*": [
+        "*"
+      ],
+      "@merchant/*": [
+        "merchant/*"
+      ],
+      "@core/*": [
+        "core/*"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "server/**/*.ts",
+    "cli/**/*.ts",
+    "scripts/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
+}

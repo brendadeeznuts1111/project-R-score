@@ -1,0 +1,16 @@
+name = "ultra-arb"
+main = "src/workers/basketball-worker.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = []
+
+[env.production]
+name = "ultra-arb"
+routes = [
+  { pattern = "ultra-arb.youraccount.workers.dev", zone_name = "youraccount.workers.dev" }
+]
+
+[env.production.vars]
+EDGE_REGION = "sin1"
+
+[vars]
+EDGE_REGION = "sin1"

@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Dashboard Hub | Complete Analytics & Monitoring Suite</title>
+    <meta name="description" content="Central hub for all enterprise dashboards including analytics, monitoring, settings, and Cloudflare management">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes pulse-border {
+            0%, 100% { border-color: rgb(59 130 246 / 0.5); }
+            50% { border-color: rgb(59 130 246 / 1); }
+        }
+        .animate-pulse-border {
+            animation: pulse-border 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .dashboard-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border: 1px solid #3b82f6;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+        }
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite;
+        }
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-online { 
+            background-color: #10b981; 
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+        .status-warning { 
+            background-color: #f59e0b; 
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        }
+        .status-error { 
+            background-color: #ef4444; 
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        }
+        .feature-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.125rem 0.5rem;
+            font-size: 0.625rem;
+            font-weight: 500;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        .feature-badge.analytics {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            color: #3b82f6;
+        }
+        .feature-badge.monitoring {
+            background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+            color: #3b82f6;
+        }
+        .feature-badge.settings {
+            background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+            color: #3b82f6;
+        }
+        .feature-badge.cloudflare {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            color: #3b82f6;
+        }
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .floating-action {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border: 1px solid #3b82f6;
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        /* Dark Mode Styles */
+        .dark {
+            background-color: #3b82f6;
+            color: #3b82f6;
+        }
+        .dark .bg-white {
+            background-color: #3b82f6 !important;
+        }
+        .dark .bg-gray-50 {
+            background-color: #3b82f6 !important;
+        }
+        .dark .text-gray-900 {
+            color: #3b82f6 !important;
+        }
+        .dark .text-gray-600 {
+            color: #3b82f6 !important;
+        }
+        .dark .border-gray-200 {
+            border-color: #3b82f6 !important;
+        }
+        .dark .dashboard-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border-color: #3b82f6;
+        }
+        .dark .metric-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border-color: #3b82f6;
+        }
+        /* Theme transition */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <i data-lucide="layout-dashboard" class="w-8 h-8 text-blue-600"></i>
+                    <h1 class="text-2xl font-bold gradient-text">Enterprise Dashboard Hub</h1>
+                    <span class="text-sm text-gray-600 ml-2">Complete Analytics & Monitoring Suite</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <span class="status-indicator status-online"></span>
+                        <span class="text-sm text-gray-600">All Systems Operational</span>
+                    </div>
+                    <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-gray-100" title="Toggle Theme">
+                        <i data-lucide="moon" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="launchAllDashboards()" class="btn-primary">
+                        <i data-lucide="external-link" class="w-4 h-4 inline mr-2"></i>
+                        Launch All
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Overview Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="metric-card p-6 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Dashboards</p>
+                        <p class="text-2xl font-bold text-gray-900">6</p>
+                        <p class="text-xs text-green-600 mt-1">All active</p>
+                    </div>
+                    <i data-lucide="grid-3x3" class="w-8 h-8 text-blue-500"></i>
+                </div>
+            </div>
+            <div class="metric-card p-6 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Features</p>
+                        <p class="text-2xl font-bold text-gray-900">47+</p>
+                        <p class="text-xs text-green-600 mt-1">Enterprise</p>
+                    </div>
+                    <i data-lucide="zap" class="w-8 h-8 text-purple-500"></i>
+                </div>
+            </div>
+            <div class="metric-card p-6 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Integrations</p>
+                        <p class="text-2xl font-bold text-gray-900">12</p>
+                        <p class="text-xs text-green-600 mt-1">Connected</p>
+                    </div>
+                    <i data-lucide="link" class="w-8 h-8 text-green-500"></i>
+                </div>
+            </div>
+            <div class="metric-card p-6 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Uptime</p>
+                        <p class="text-2xl font-bold text-gray-900">99.9%</p>
+                        <p class="text-xs text-green-600 mt-1">Excellent</p>
+                    </div>
+                    <i data-lucide="activity" class="w-8 h-8 text-orange-500"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Main Dashboard -->
+            <div class="dashboard-card p-6 rounded-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="bar-chart-3" class="w-8 h-8 text-blue-600"></i>
+                        <h3 class="text-lg font-semibold text-gray-900">Main Dashboard</h3>
+                    </div>
+                    <span class="feature-badge analytics">Analytics</span>
+                </div>
+                <p class="text-gray-600 mb-4">Comprehensive analytics dashboard with real-time monitoring, advanced charts, and system performance metrics.</p>
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500 mr-2"></i>
+                        Real-time Analytics
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500 mr-2"></i>
+                        API Documentation
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500 mr-2"></i>
+                        Dark Mode & Activity Tracking
+                    </div>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="openDashboard('main')" class="btn-primary flex-1">
+                        <i data-lucide="external-link" class="w-4 h-4 inline mr-2"></i>
+                        Open
+                    </button>
+                    <button onclick="showDashboardInfo('main')" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50">
+                        <i data-lucide="info" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- URLPattern Routing Dashboard -->
+            <div class="dashboard-card p-6 rounded-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="git-branch" class="w-8 h-8 text-purple-600"></i>
+                        <h3 class="text-lg font-semibold text-gray-900">URLPattern Routing</h3>
+                    </div>
+                    <span class="feature-badge monitoring">Monitoring</span>
+                </div>
+                <p class="text-gray-600 mb-4">Advanced routing dashboard with SCOPE management, middleware monitoring, and comprehensive API testing.</p>
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500 mr-2"></i>
+                        SCOPE Management
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500 mr-2"></i>
+                        7-Layer Middleware
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500 mr-2"></i>
+                        Route Testing & Analytics
+                    </div>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="openDashboard('routing')" class="btn-primary flex-1">
+                        <i data-lucide="external-link" class="w-4 h-4 inline mr-2"></i>
+                        Open
+                    </button>
+                    <button onclick="showDashboardInfo('routing')" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50">
+                        <i data-lucide="info" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- External Services Dashboard -->
+            <div class="dashboard-card p-6 rounded-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="globe" class="w-8 h-8 text-green-600"></i>
+                        <h3 class="text-lg font-semibold text-gray-900">External Services</h3>
+                    </div>
+                    <span class="feature-badge.monitoring">Monitoring</span>
+                </div>
+                <p class="text-gray-600 mb-4">Real-time monitoring dashboard for external services with health checks and performance analytics.</p>
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500 mr-2"></i>
+                        6 Service Monitoring
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500 mr-2"></i>
+                        Health Checks
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500 mr-2"></i>
+                        Performance Analytics
+                    </div>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="openDashboard('external')" class="btn-primary flex-1">
+                        <i data-lucide="external-link" class="w-4 h-4 inline mr-2"></i>
+                        Open
+                    </button>
+                    <button onclick="showDashboardInfo('external')" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50">
+                        <i data-lucide="info" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard Settings -->
+            <div class="dashboard-card p-6 rounded-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="settings" class="w-8 h-8 text-orange-600"></i>
+                        <h3 class="text-lg font-semibold text-gray-900">Dashboard Settings</h3>
+                    </div>
+                    <span class="feature-badge.settings">Configuration</span>
+                </div>
+                <p class="text-gray-600 mb-4">Comprehensive settings page with integrations, email configuration, Android VM, and R2 storage.</p>
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500 mr-2"></i>
+                        Duo Plus Integration
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500 mr-2"></i>
+                        Email & Android VM
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500 mr-2"></i>
+                        R2 Storage & Proxy
+                    </div>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="openDashboard('settings')" class="btn-primary flex-1">
+                        <i data-lucide="external-link" class="w-4 h-4 inline mr-2"></i>
+                        Open
+                    </button>
+                    <button onclick="showDashboardInfo('settings')" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50">
+                        <i data-lucide="info" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Cloudflare Analytics -->
+            <div class="dashboard-card p-6 rounded-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="cloud" class="w-8 h-8 text-orange-500"></i>
+                        <h3 class="text-lg font-semibold text-gray-900">Cloudflare Analytics</h3>
+                    </div>
+                    <span class="feature-badge.cloudflare">CDN</span>
+                </div>
+                <p class="text-gray-600 mb-4">Complete Cloudflare interface for factory-wager.com with analytics, DNS, and security management.</p>
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500 mr-2"></i>
+                        Visitor Analytics
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500 mr-2"></i>
+                        DNS & Security
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500 mr-2"></i>
+                        Domain Management
+                    </div>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="openDashboard('cloudflare')" class="btn-primary flex-1">
+                        <i data-lucide="external-link" class="w-4 h-4 inline mr-2"></i>
+                        Open
+                    </button>
+                    <button onclick="showDashboardInfo('cloudflare')" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50">
+                        <i data-lucide="info" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- System Monitor -->
+            <div class="dashboard-card p-6 rounded-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="monitor" class="w-8 h-8 text-cyan-600"></i>
+                        <h3 class="text-lg font-semibold text-gray-900">System Monitor</h3>
+                    </div>
+                    <span class="feature-badge.monitoring">System</span>
+                </div>
+                <p class="text-gray-600 mb-4">Real-time system monitoring with CPU, memory, network, and storage metrics with alerts.</p>
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500 mr-2"></i>
+                        Resource Monitoring
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500 mr-2"></i>
+                        Performance Metrics
+                    </div>
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-green-500 mr-2"></i>
+                        Alert System
+                    </div>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="openDashboard('system')" class="btn-primary flex-1">
+                        <i data-lucide="external-link" class="w-4 h-4 inline mr-2"></i>
+                        Open
+                    </button>
+                    <button onclick="showDashboardInfo('system')" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50">
+                        <i data-lucide="info" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <button onclick="launchAllDashboards()" class="flex items-center justify-center space-x-2 p-4 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition">
+                    <i data-lucide="external-link" class="w-5 h-5"></i>
+                    <span>Launch All Dashboards</span>
+                </button>
+                <button onclick="refreshAllStatus()" class="flex items-center justify-center space-x-2 p-4 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition">
+                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                    <span>Refresh All Status</span>
+                </button>
+                <button onclick="exportConfiguration()" class="flex items-center justify-center space-x-2 p-4 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition">
+                    <i data-lucide="download" class="w-5 h-5"></i>
+                    <span>Export Configuration</span>
+                </button>
+                <button onclick="showSystemHealth()" class="flex items-center justify-center space-x-2 p-4 bg-orange-50 text-orange-700 rounded-lg hover:bg-orange-100 transition">
+                    <i data-lucide="heart" class="w-5 h-5"></i>
+                    <span>System Health</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Integration Status -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">Integration Status</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="api" class="w-5 h-5 text-blue-500"></i>
+                        <span class="text-sm font-medium text-gray-900">API Gateway</span>
+                    </div>
+                    <span class="status-indicator status-online"></span>
+                </div>
+                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="database" class="w-5 h-5 text-green-500"></i>
+                        <span class="text-sm font-medium text-gray-900">Database</span>
+                    </div>
+                    <span class="status-indicator status-online"></span>
+                </div>
+                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="hard-drive" class="w-5 h-5 text-purple-500"></i>
+                        <span class="text-sm font-medium text-gray-900">R2 Storage</span>
+                    </div>
+                    <span class="status-indicator status-online"></span>
+                </div>
+                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="mail" class="w-5 h-5 text-orange-500"></i>
+                        <span class="text-sm font-medium text-gray-900">Email Service</span>
+                    </div>
+                    <span class="status-indicator status-online"></span>
+                </div>
+                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="smartphone" class="w-5 h-5 text-cyan-500"></i>
+                        <span class="text-sm font-medium text-gray-900">Android VM</span>
+                    </div>
+                    <span class="status-indicator status-warning"></span>
+                </div>
+                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="cloud" class="w-5 h-5 text-orange-600"></i>
+                        <span class="text-sm font-medium text-gray-900">Cloudflare</span>
+                    </div>
+                    <span class="status-indicator status-online"></span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Dashboard URLs
+        const dashboardUrls = {
+            main: 'http://127.0.0.1:8082/dashboard-landing.html',
+            routing: 'http://127.0.0.1:8081/demos/@web/urlpattern-routing-dashboard.html',
+            external: 'http://127.0.0.1:8081/demos/@web/external-services-dashboard.html',
+            settings: 'http://127.0.0.1:8081/demos/@web/dashboard-settings.html',
+            cloudflare: 'http://127.0.0.1:8081/demos/@web/cloudflare-analytics-dashboard.html',
+            system: 'http://127.0.0.1:8081/demos/@web/system-monitor.html'
+        };
+
+        // Theme Manager
+        const themeManager = {
+            currentTheme: 'light',
+            
+            init() {
+                this.loadSavedTheme();
+                this.applyTheme(this.currentTheme);
+                this.setupEventListeners();
+            },
+            
+            toggleTheme() {
+                const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+                this.applyTheme(newTheme);
+                this.saveTheme(newTheme);
+                this.currentTheme = newTheme;
+            },
+            
+            applyTheme(theme) {
+                const body = document.body;
+                if (theme === 'dark') {
+                    body.classList.add('dark');
+                } else {
+                    body.classList.remove('dark');
+                }
+            },
+            
+            saveTheme(theme) {
+                localStorage.setItem('dashboard-hub-theme', theme);
+            },
+            
+            loadSavedTheme() {
+                const saved = localStorage.getItem('dashboard-hub-theme');
+                if (saved) {
+                    this.currentTheme = saved;
+                } else {
+                    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        this.currentTheme = 'dark';
+                    }
+                }
+            },
+            
+            setupEventListeners() {
+                if (window.matchMedia) {
+                    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                    mediaQuery.addListener((e) => {
+                        if (!localStorage.getItem('dashboard-hub-theme')) {
+                            const systemTheme = e.matches ? 'dark' : 'light';
+                            this.applyTheme(systemTheme);
+                            this.currentTheme = systemTheme;
+                        }
+                    });
+                }
+            }
+        };
+
+        // Dashboard functions
+        function openDashboard(dashboardId) {
+            const url = dashboardUrls[dashboardId];
+            if (url) {
+                window.open(url, '_blank');
+                showNotification('Dashboard', `Opening ${dashboardId} dashboard...`, 'info');
+            } else {
+                showNotification('Error', 'Dashboard not found', 'error');
+            }
+        }
+
+        function launchAllDashboards() {
+            Object.values(dashboardUrls).forEach(url => {
+                window.open(url, '_blank');
+            });
+            showNotification('Launch', 'Opening all dashboards...', 'success');
+        }
+
+        function showDashboardInfo(dashboardId) {
+            const info = {
+                main: 'Main Analytics Dashboard with real-time monitoring, API documentation, dark mode, and activity tracking.',
+                routing: 'URLPattern Routing Dashboard with SCOPE management, 7-layer middleware monitoring, and comprehensive API testing.',
+                external: 'External Services Dashboard monitoring 6 services with health checks and performance analytics.',
+                settings: 'Dashboard Settings with Duo Plus integration, email configuration, Android VM, and R2 storage management.',
+                cloudflare: 'Cloudflare Analytics Dashboard for factory-wager.com with visitor analytics, DNS management, and security controls.',
+                system: 'System Monitor with real-time CPU, memory, network, and storage metrics with alert system.'
+            };
+            
+            showNotification('Dashboard Info', info[dashboardId], 'info');
+        }
+
+        function refreshAllStatus() {
+            // Simulate status refresh
+            const indicators = document.querySelectorAll('.status-indicator');
+            indicators.forEach(indicator => {
+                indicator.classList.remove('status-online', 'status-warning', 'status-error');
+                indicator.classList.add('status-checking');
+            });
+            
+            setTimeout(() => {
+                indicators.forEach(indicator => {
+                    indicator.classList.remove('status-checking');
+                    indicator.classList.add(Math.random() > 0.1 ? 'status-online' : 'status-warning');
+                });
+                showNotification('Status', 'All dashboard statuses refreshed', 'success');
+            }, 2000);
+        }
+
+        function exportConfiguration() {
+            const config = {
+                timestamp: new Date().toISOString(),
+                dashboards: Object.keys(dashboardUrls),
+                urls: dashboardUrls,
+                theme: themeManager.currentTheme,
+                features: [
+                    'Real-time Analytics',
+                    'SCOPE Management',
+                    'External Service Monitoring',
+                    'Email Integration',
+                    'Android VM Support',
+                    'R2 Storage',
+                    'Cloudflare Analytics',
+                    'System Monitoring',
+                    'Dark Mode',
+                    'Activity Tracking',
+                    'API Documentation',
+                    'Health Checks'
+                ]
+            };
+            
+            const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dashboard-hub-config-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('Export', 'Configuration exported successfully', 'success');
+        }
+
+        function showSystemHealth() {
+            const health = {
+                overall: 'Excellent',
+                dashboards: 'All Operational',
+                integrations: '6 Connected',
+                uptime: '99.9%',
+                lastCheck: new Date().toLocaleString()
+            };
+            
+            showNotification('System Health', `Overall: ${health.overall}, Dashboards: ${health.dashboards}, Uptime: ${health.uptime}`, 'success');
+        }
+
+        function showNotification(title, message, type = 'info') {
+            console.log(`[${type.toUpperCase()}] ${title}: ${message}`);
+        }
+
+        // Add button styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .btn-primary {
+                background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+                color: white;
+                padding: 0.5rem 1rem;
+                border-radius: 0.5rem;
+                border: none;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-weight: 500;
+            }
+            .btn-primary:hover {
+                background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+                transform: translateY(-1px);
+            }
+            .status-checking {
+                background-color: #3b82f6;
+                animation: pulse 2s infinite;
+            }
+            @keyframes pulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.5; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            themeManager.init();
+            
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+
+        // Global functions
+        function toggleTheme() {
+            themeManager.toggleTheme();
+        }
+    </script>
+</body>
+</html>

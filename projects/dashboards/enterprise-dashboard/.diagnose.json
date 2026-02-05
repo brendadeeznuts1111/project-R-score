@@ -1,0 +1,7 @@
+{
+  "ignore": ["node_modules", "dist", ".git", "__tests__"],
+  "thresholds": {
+    "maxComplexity": 10,
+    "minCoverage": 80
+  }
+}

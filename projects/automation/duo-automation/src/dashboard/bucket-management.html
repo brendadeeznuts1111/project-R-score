@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bucket Management System - Enhanced Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .glass-effect {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .bucket-card {
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        .bucket-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
+        }
+        .status-online { background-color: #10b981; }
+        .status-offline { background-color: #ef4444; }
+        .status-warning { background-color: #f59e0b; }
+        .bucket-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.35s;
+            stroke-dasharray: 251.2 251.2;
+        }
+        .chart-container {
+            position: relative;
+            height: 250px;
+            width: 100%;
+        }
+        .file-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .upload-zone {
+            border: 2px dashed #3b82f6;
+            transition: all 0.3s ease;
+        }
+        .upload-zone:hover {
+            border-color: #3b82f6;
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+        .upload-zone.dragover {
+            border-color: #10b981;
+            background-color: rgba(16, 185, 129, 0.1);
+        }
+        .file-row:hover {
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        .metric-card {
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .storage-bar {
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .file-preview {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen">
+    <!-- Header -->
+    <header class="glass-effect sticky top-0 z-50">
+        <nav class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-6">
+                    <button onclick="window.history.back()" class="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                        <span>Back to Dashboard</span>
+                    </button>
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="cloud" class="w-8 h-8 text-blue-500"></i>
+                        <h1 class="text-2xl font-bold">Bucket Management System</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-3 h-3 rounded-full status-online pulse-animation"></div>
+                        <span class="text-sm">Cloudflare R2 Connected</span>
+                    </div>
+                    <select id="regionFilter" class="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm">
+                        <option value="all">All Regions</option>
+                        <option value="us-east-1">US East</option>
+                        <option value="us-west-2">US West</option>
+                        <option value="eu-west-1">Europe West</option>
+                        <option value="ap-southeast-1">Asia Pacific</option>
+                    </select>
+                    <button onclick="refreshBuckets()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-sm">
+                        <i data-lucide="refresh-cw" class="w-4 h-4 inline mr-2"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Storage Overview -->
+        <section class="mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="glass-effect rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <i data-lucide="hard-drive" class="w-8 h-8 text-blue-500"></i>
+                        <span class="text-2xl font-bold" id="totalBuckets">0</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Total Buckets</p>
+                </div>
+                <div class="glass-effect rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <i data-lucide="file" class="w-8 h-8 text-green-500"></i>
+                        <span class="text-2xl font-bold" id="totalFiles">0</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Total Files</p>
+                </div>
+                <div class="glass-effect rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <i data-lucide="database" class="w-8 h-8 text-purple-500"></i>
+                        <span class="text-2xl font-bold" id="totalStorage">0TB</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Total Storage</p>
+                </div>
+                <div class="glass-effect rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <i data-lucide="upload" class="w-8 h-8 text-orange-500"></i>
+                        <span class="text-2xl font-bold" id="bandwidthUsage">0GB</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Bandwidth Usage</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bucket Grid -->
+        <section class="mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold flex items-center">
+                    <i data-lucide="grid-3x3" class="w-5 h-5 mr-2"></i>
+                    Storage Buckets
+                </h2>
+                <div class="flex items-center space-x-4">
+                    <input 
+                        type="text" 
+                        id="bucketSearch" 
+                        placeholder="Search buckets..."
+                        class="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm"
+                    >
+                    <button onclick="createBucket()" class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors text-sm">
+                        <i data-lucide="plus" class="w-4 h-4 inline mr-2"></i>
+                        Create Bucket
+                    </button>
+                </div>
+            </div>
+            
+            <div id="bucketGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Bucket cards will be dynamically added here -->
+            </div>
+        </section>
+
+        <!-- File Manager -->
+        <section class="mb-8">
+            <div class="glass-effect rounded-xl p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <i data-lucide="folder" class="w-5 h-5 mr-2"></i>
+                        File Manager
+                    </h2>
+                    <div class="flex items-center space-x-4">
+                        <select id="bucketSelector" class="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm">
+                            <option value="">Select a bucket</option>
+                        </select>
+                        <button onclick="uploadFiles()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-sm">
+                            <i data-lucide="upload" class="w-4 h-4 inline mr-2"></i>
+                            Upload Files
+                        </button>
+                        <button onclick="createFolder()" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg transition-colors text-sm">
+                            <i data-lucide="folder-plus" class="w-4 h-4 inline mr-2"></i>
+                            New Folder
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Upload Zone -->
+                <div id="uploadZone" class="upload-zone rounded-lg p-8 mb-6 text-center hidden">
+                    <i data-lucide="cloud-upload" class="w-12 h-12 mx-auto mb-4 text-gray-400"></i>
+                    <p class="text-lg font-medium mb-2">Drag and drop files here</p>
+                    <p class="text-sm text-gray-400 mb-4">or click to browse</p>
+                    <input type="file" id="fileInput" multiple class="hidden">
+                    <button onclick="document.getElementById('fileInput').click()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
+                        Browse Files
+                    </button>
+                </div>
+                
+                <!-- File Browser -->
+                <div id="fileBrowser" class="bg-gray-800 rounded-lg">
+                    <div class="border-b border-gray-700 p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <button onclick="navigateUp()" class="text-gray-400 hover:text-white">
+                                    <i data-lucide="arrow-up" class="w-5 h-5"></i>
+                                </button>
+                                <span class="text-sm text-gray-400" id="currentPath">/</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="setView('grid')" class="p-2 text-gray-400 hover:text-white">
+                                    <i data-lucide="grid" class="w-4 h-4"></i>
+                                </button>
+                                <button onclick="setView('list')" class="p-2 text-blue-400">
+                                    <i data-lucide="list" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="fileList" class="divide-y divide-gray-700">
+                        <!-- Files and folders will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Storage Analytics -->
+        <section class="mb-8">
+            <div class="glass-effect rounded-xl p-6">
+                <h2 class="text-xl font-semibold mb-6 flex items-center">
+                    <i data-lucide="bar-chart" class="w-5 h-5 mr-2"></i>
+                    Storage Analytics
+                </h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Storage Distribution -->
+                    <div>
+                        <h3 class="text-lg font-medium mb-4">Storage Distribution</h3>
+                        <div class="chart-container">
+                            <canvas id="storageChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Upload Trends -->
+                    <div>
+                        <h3 class="text-lg font-medium mb-4">Upload Trends</h3>
+                        <div class="chart-container">
+                            <canvas id="uploadChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- File Types -->
+                    <div>
+                        <h3 class="text-lg font-medium mb-4">File Types</h3>
+                        <div class="chart-container">
+                            <canvas id="fileTypeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section>
+            <div class="glass-effect rounded-xl p-6">
+                <h2 class="text-xl font-semibold mb-6 flex items-center">
+                    <i data-lucide="zap" class="w-5 h-5 mr-2"></i>
+                    Quick Actions
+                </h2>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <button onclick="syncBuckets()" class="p-4 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors">
+                        <i data-lucide="refresh-cw" class="w-6 h-6 mx-auto mb-2"></i>
+                        <span class="text-sm">Sync Buckets</span>
+                    </button>
+                    <button onclick="cleanupFiles()" class="p-4 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors">
+                        <i data-lucide="trash-2" class="w-6 h-6 mx-auto mb-2"></i>
+                        <span class="text-sm">Cleanup Files</span>
+                    </button>
+                    <button onclick="exportData()" class="p-4 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors">
+                        <i data-lucide="download" class="w-6 h-6 mx-auto mb-2"></i>
+                        <span class="text-sm">Export Data</span>
+                    </button>
+                    <button onclick="generateReport()" class="p-4 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors">
+                        <i data-lucide="file-text" class="w-6 h-6 mx-auto mb-2"></i>
+                        <span class="text-sm">Generate Report</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bucket Details Modal -->
+    <div id="bucketModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="glass-effect rounded-xl p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-semibold" id="modalBucketName">Bucket Details</h3>
+                <button onclick="closeBucketModal()" class="text-gray-400 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <div id="modalContent">
+                <!-- Modal content will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- File Preview Modal -->
+    <div id="filePreviewModal" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center">
+        <div class="max-w-4xl w-full mx-4 max-h-[90vh] overflow-auto">
+            <div class="relative">
+                <button onclick="closeFilePreview()" class="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+                <div id="filePreviewContent" class="bg-gray-800 rounded-lg p-4">
+                    <!-- File preview content will be added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Bucket Management System
+        class BucketManagementSystem {
+            constructor() {
+                this.buckets = [];
+                this.filteredBuckets = [];
+                this.currentBucket = null;
+                this.currentPath = '/';
+                this.viewMode = 'list';
+                this.charts = {};
+                this.init();
+            }
+
+            init() {
+                // Initialize Lucide icons
+                lucide.createIcons();
+                
+                // Load bucket data
+                this.loadBuckets();
+                
+                // Set up event listeners
+                this.setupEventListeners();
+                
+                // Initialize charts
+                this.initializeCharts();
+                
+                // Start monitoring
+                this.startMonitoring();
+            }
+
+            setupEventListeners() {
+                // Bucket search
+                document.getElementById('bucketSearch').addEventListener('input', () => {
+                    this.filterBuckets();
+                });
+                
+                // Region filter
+                document.getElementById('regionFilter').addEventListener('change', () => {
+                    this.filterBuckets();
+                });
+                
+                // Bucket selector
+                document.getElementById('bucketSelector').addEventListener('change', (e) => {
+                    this.selectBucket(e.target.value);
+                });
+                
+                // File input
+                document.getElementById('fileInput').addEventListener('change', (e) => {
+                    this.handleFileSelect(e.target.files);
+                });
+                
+                // Upload zone drag and drop
+                const uploadZone = document.getElementById('uploadZone');
+                if (uploadZone) {
+                    uploadZone.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        uploadZone.classList.add('dragover');
+                    });
+                    
+                    uploadZone.addEventListener('dragleave', () => {
+                        uploadZone.classList.remove('dragover');
+                    });
+                    
+                    uploadZone.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        uploadZone.classList.remove('dragover');
+                        this.handleFileSelect(e.dataTransfer.files);
+                    });
+                }
+            }
+
+            async loadBuckets() {
+                try {
+                    // Simulate API call
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    // Mock bucket data
+                    this.buckets = [
+                        {
+                            id: 3,
+                            name: 'npm-registry',
+                            region: 'global',
+                            status: 'active',
+                            size: '1.87MB',
+                            files: 868,
+                            created: '2025-01-14',
+                            lastModified: '2025-01-14',
+                            public: true,
+                            encryption: true,
+                            versioning: true,
+                            icon: { bg: '#8b5cf6', icon: 'package' },
+                            access: 'public',
+                            lifecycle: 'permanent',
+                            url: 'https://duo-npm-registry.utahj4754.workers.dev'
+                        },
+                        {
+                            id: 1,
+                            name: 'user-uploads',
+                            region: 'us-east-1',
+                            status: 'active',
+                            size: '125.4GB',
+                            files: 45678,
+                            created: '2024-01-01',
+                            lastModified: '2024-01-13',
+                            public: false,
+                            encryption: true,
+                            versioning: true,
+                            icon: { bg: '#3b82f6', icon: 'folder' },
+                            access: 'private',
+                            lifecycle: '30 days'
+                        },
+                        {
+                            id: 2,
+                            name: 'cdn-assets',
+                            region: 'us-west-2',
+                            status: 'active',
+                            size: '89.2GB',
+                            files: 12345,
+                            created: '2024-01-05',
+                            lastModified: '2024-01-13',
+                            public: true,
+                            encryption: true,
+                            versioning: false,
+                            icon: { bg: '#10b981', icon: 'globe' },
+                            access: 'public',
+                            lifecycle: 'permanent'
+                        },
+                        {
+                            id: 3,
+                            name: 'backup-storage',
+                            region: 'eu-west-1',
+                            status: 'active',
+                            size: '456.8GB',
+                            files: 89234,
+                            created: '2023-12-15',
+                            lastModified: '2024-01-12',
+                            public: false,
+                            encryption: true,
+                            versioning: true,
+                            icon: { bg: '#f59e0b', icon: 'archive' },
+                            access: 'private',
+                            lifecycle: '90 days'
+                        },
+                        {
+                            id: 4,
+                            name: 'log-files',
+                            region: 'ap-southeast-1',
+                            status: 'active',
+                            size: '23.1GB',
+                            files: 5678,
+                            created: '2024-01-10',
+                            lastModified: '2024-01-13',
+                            public: false,
+                            encryption: true,
+                            versioning: false,
+                            icon: { bg: '#ef4444', icon: 'file-text' },
+                            access: 'private',
+                            lifecycle: '7 days'
+                        }
+                    ];
+                    
+                    this.filteredBuckets = [...this.buckets];
+                    this.updateStatistics();
+                    this.renderBuckets();
+                    this.updateBucketSelector();
+                    this.updateCharts();
+                    
+                } catch (error) {
+                    console.error('Error loading buckets:', error);
+                    this.showNotification('Failed to load bucket data', 'error');
+                }
+            }
+
+            filterBuckets() {
+                const searchTerm = document.getElementById('bucketSearch').value.toLowerCase();
+                const regionFilter = document.getElementById('regionFilter').value;
+                
+                this.filteredBuckets = this.buckets.filter(bucket => {
+                    const matchesSearch = bucket.name.toLowerCase().includes(searchTerm);
+                    const matchesRegion = regionFilter === 'all' || bucket.region === regionFilter;
+                    
+                    return matchesSearch && matchesRegion;
+                });
+                
+                this.renderBuckets();
+            }
+
+            renderBuckets() {
+                const grid = document.getElementById('bucketGrid');
+                
+                if (this.filteredBuckets.length === 0) {
+                    grid.innerHTML = `
+                        <div class="col-span-full text-center py-12">
+                            <i data-lucide="folder" class="w-12 h-12 mx-auto mb-4 text-gray-500"></i>
+                            <p class="text-gray-400">No buckets found</p>
+                        </div>
+                    `;
+                    lucide.createIcons();
+                    return;
+                }
+                
+                grid.innerHTML = this.filteredBuckets.map(bucket => `
+                    <div class="bucket-card glass-effect rounded-xl p-6 cursor-pointer" onclick="showBucketDetails(${bucket.id})">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="bucket-icon" style="background-color: ${bucket.icon.bg}; color: white;">
+                                    <i data-lucide="${bucket.icon.icon}" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-lg">${bucket.name}</h3>
+                                    <p class="text-sm text-gray-400">${bucket.region}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 rounded-full ${this.getStatusClass(bucket.status)}"></div>
+                                ${bucket.public ? '<i data-lucide="globe" class="w-4 h-4 text-blue-400"></i>' : '<i data-lucide="lock" class="w-4 h-4 text-gray-400"></i>'}
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-400">Size</span>
+                                <span class="text-sm font-medium">${bucket.size}</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-400">Files</span>
+                                <span class="text-sm font-medium">${bucket.files.toLocaleString()}</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-400">Access</span>
+                                <span class="text-sm font-medium capitalize">${bucket.access}</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-400">Encryption</span>
+                                <span class="text-sm font-medium">${bucket.encryption ? 'Enabled' : 'Disabled'}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t border-gray-700">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-400">Modified: ${bucket.lastModified}</span>
+                                <button class="text-blue-400 hover:text-blue-300 text-sm">
+                                    Manage →
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                // Re-initialize icons
+                setTimeout(() => lucide.createIcons(), 100);
+            }
+
+            updateStatistics() {
+                const totalBuckets = this.buckets.length;
+                const totalFiles = this.buckets.reduce((sum, bucket) => sum + bucket.files, 0);
+                const totalStorage = this.buckets.reduce((sum, bucket) => {
+                    const size = parseFloat(bucket.size.replace('GB', ''));
+                    return sum + size;
+                }, 0);
+                const bandwidthUsage = totalStorage * 0.15; // Mock bandwidth calculation
+                
+                document.getElementById('totalBuckets').textContent = totalBuckets;
+                document.getElementById('totalFiles').textContent = totalFiles.toLocaleString();
+                document.getElementById('totalStorage').textContent = `${(totalStorage / 1024).toFixed(2)}TB`;
+                document.getElementById('bandwidthUsage').textContent = `${bandwidthUsage.toFixed(1)}GB`;
+            }
+
+            updateBucketSelector() {
+                const selector = document.getElementById('bucketSelector');
+                selector.innerHTML = '<option value="">Select a bucket</option>' +
+                    this.buckets.map(bucket => 
+                        `<option value="${bucket.id}">${bucket.name} (${bucket.size})</option>`
+                    ).join('');
+            }
+
+            selectBucket(bucketId) {
+                if (!bucketId) {
+                    this.currentBucket = null;
+                    this.renderFileBrowser([]);
+                    return;
+                }
+                
+                this.currentBucket = this.buckets.find(b => b.id == bucketId);
+                if (this.currentBucket) {
+                    this.loadBucketFiles();
+                }
+            }
+
+            async loadBucketFiles() {
+                try {
+                    // Simulate loading files
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    // Mock file data
+                    const files = [
+                        { name: 'documents', type: 'folder', size: '-', modified: '2024-01-13', path: '/documents' },
+                        { name: 'images', type: 'folder', size: '-', modified: '2024-01-12', path: '/images' },
+                        { name: 'report.pdf', type: 'file', size: '2.4MB', modified: '2024-01-13', path: '/report.pdf' },
+                        { name: 'data.csv', type: 'file', size: '156KB', modified: '2024-01-12', path: '/data.csv' },
+                        { name: 'presentation.pptx', type: 'file', size: '8.7MB', modified: '2024-01-11', path: '/presentation.pptx' },
+                        { name: 'backup.zip', type: 'file', size: '45.2MB', modified: '2024-01-10', path: '/backup.zip' }
+                    ];
+                    
+                    this.renderFileBrowser(files);
+                    
+                } catch (error) {
+                    console.error('Error loading bucket files:', error);
+                    this.showNotification('Failed to load bucket files', 'error');
+                }
+            }
+
+            renderFileBrowser(files) {
+                const fileList = document.getElementById('fileList');
+                
+                if (files.length === 0) {
+                    fileList.innerHTML = `
+                        <div class="p-8 text-center text-gray-500">
+                            <i data-lucide="folder-open" class="w-12 h-12 mx-auto mb-4"></i>
+                            <p>This bucket is empty</p>
+                        </div>
+                    `;
+                } else {
+                    fileList.innerHTML = files.map(file => `
+                        <div class="file-row flex items-center justify-between p-4 hover:bg-gray-700 cursor-pointer" onclick="${file.type === 'folder' ? `navigateToFolder('${file.path}')` : `previewFile('${file.path}')`}">
+                            <div class="flex items-center space-x-3">
+                                <div class="file-icon ${this.getFileIconClass(file.type)}">
+                                    <i data-lucide="${this.getFileIcon(file.type)}" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium">${file.name}</p>
+                                    <p class="text-sm text-gray-400">${file.modified}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <span class="text-sm text-gray-400">${file.size}</span>
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="event.stopPropagation(); downloadFile('${file.path}')" class="text-blue-400 hover:text-blue-300">
+                                        <i data-lucide="download" class="w-4 h-4"></i>
+                                    </button>
+                                    <button onclick="event.stopPropagation(); deleteFile('${file.path}')" class="text-red-400 hover:text-red-300">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+                
+                // Re-initialize icons
+                setTimeout(() => lucide.createIcons(), 100);
+            }
+
+            getFileIcon(type) {
+                const icons = {
+                    'folder': 'folder',
+                    'file': 'file'
+                };
+                return icons[type] || 'file';
+            }
+
+            getFileIconClass(type) {
+                const classes = {
+                    'folder': 'bg-blue-600 text-white',
+                    'file': 'bg-gray-600 text-white'
+                };
+                return classes[type] || 'bg-gray-600 text-white';
+            }
+
+            handleFileSelect(files) {
+                if (files.length === 0) return;
+                
+                this.showNotification(`Uploading ${files.length} file(s)...`, 'info');
+                
+                // Simulate file upload
+                setTimeout(() => {
+                    this.showNotification('Files uploaded successfully', 'success');
+                    this.loadBucketFiles();
+                }, 2000);
+            }
+
+            initializeCharts() {
+                // Storage Chart
+                const storageCtx = document.getElementById('storageChart').getContext('2d');
+                this.charts.storage = new Chart(storageCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['user-uploads', 'cdn-assets', 'backup-storage', 'log-files'],
+                        datasets: [{
+                            data: [125.4, 89.2, 456.8, 23.1],
+                            backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { color: '#3b82f6' }
+                            }
+                        }
+                    }
+                });
+
+                // Upload Chart
+                const uploadCtx = document.getElementById('uploadChart').getContext('2d');
+                this.charts.upload = new Chart(uploadCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'Files Uploaded',
+                            data: [120, 150, 180, 140, 200, 160, 190],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: { color: '#3b82f6' }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                ticks: { color: '#3b82f6' },
+                                grid: { color: 'rgba(156, 163, 175, 0.1)' }
+                            },
+                            x: {
+                                ticks: { color: '#3b82f6' },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+
+                // File Type Chart
+                const fileTypeCtx = document.getElementById('fileTypeChart').getContext('2d');
+                this.charts.fileType = new Chart(fileTypeCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Images', 'Documents', 'Videos', 'Archives', 'Other'],
+                        datasets: [{
+                            data: [35, 25, 20, 15, 5],
+                            backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#3b82f6'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { color: '#3b82f6' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            updateCharts() {
+                if (this.charts.storage) {
+                    const storageData = this.buckets.map(bucket => parseFloat(bucket.size.replace('GB', '')));
+                    this.charts.storage.data.datasets[0].data = storageData;
+                    this.charts.storage.update();
+                }
+            }
+
+            startMonitoring() {
+                // Simulate real-time monitoring
+                setInterval(() => {
+                    this.updateBucketMetrics();
+                }, 30000);
+            }
+
+            updateBucketMetrics() {
+                // Update random metrics
+                this.buckets.forEach(bucket => {
+                    const sizeChange = (Math.random() - 0.5) * 2;
+                    const currentSize = parseFloat(bucket.size.replace('GB', ''));
+                    const newSize = Math.max(0.1, currentSize + sizeChange);
+                    bucket.size = `${newSize.toFixed(1)}GB`;
+                    
+                    const fileChange = Math.floor((Math.random() - 0.5) * 100);
+                    bucket.files = Math.max(0, bucket.files + fileChange);
+                });
+                
+                this.updateStatistics();
+                this.renderBuckets();
+                this.updateCharts();
+            }
+
+            getStatusClass(status) {
+                const classes = {
+                    'active': 'status-online',
+                    'warning': 'status-warning',
+                    'error': 'status-offline',
+                    'maintenance': 'status-maintenance'
+                };
+                return classes[status] || 'status-offline';
+            }
+
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `fixed top-20 right-4 px-4 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300 translate-x-full`;
+                
+                const colors = {
+                    success: 'bg-green-600 text-white',
+                    error: 'bg-red-600 text-white',
+                    warning: 'bg-yellow-600 text-white',
+                    info: 'bg-blue-600 text-white'
+                };
+                
+                notification.className += ` ${colors[type]}`;
+                notification.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="${type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'info'}" class="w-5 h-5"></i>
+                        <span>${message}</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                lucide.createIcons();
+                
+                setTimeout(() => {
+                    notification.classList.remove('translate-x-full');
+                    notification.classList.add('translate-x-0');
+                }, 100);
+                
+                setTimeout(() => {
+                    notification.classList.add('translate-x-full');
+                    setTimeout(() => notification.remove(), 300);
+                }, 3000);
+            }
+        }
+
+        // Bucket Details Modal
+        function showBucketDetails(bucketId) {
+            const system = window.bucketSystem;
+            const bucket = system.buckets.find(b => b.id === bucketId);
+            
+            if (!bucket) return;
+            
+            document.getElementById('modalBucketName').textContent = bucket.name;
+            
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Basic Information -->
+                    <div>
+                        <h4 class="font-semibold mb-4">Basic Information</h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Name:</span>
+                                <span>${bucket.name}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Region:</span>
+                                <span>${bucket.region}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Status:</span>
+                                <span class="px-2 py-1 rounded text-xs ${system.getStatusClass(bucket.status).replace('status-', 'bg-')} text-white">${bucket.status}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Created:</span>
+                                <span>${bucket.created}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Last Modified:</span>
+                                <span>${bucket.lastModified}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Storage Information -->
+                    <div>
+                        <h4 class="font-semibold mb-4">Storage Information</h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Size:</span>
+                                <span>${bucket.size}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Files:</span>
+                                <span>${bucket.files.toLocaleString()}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Access:</span>
+                                <span class="capitalize">${bucket.access}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Encryption:</span>
+                                <span>${bucket.encryption ? 'Enabled' : 'Disabled'}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Versioning:</span>
+                                <span>${bucket.versioning ? 'Enabled' : 'Disabled'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Storage Usage -->
+                    <div class="lg:col-span-2">
+                        <h4 class="font-semibold mb-4">Storage Usage</h4>
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <div class="flex justify-between mb-2">
+                                <span>Used: ${bucket.size}</span>
+                                <span>Available: ${(1000 - parseFloat(bucket.size.replace('GB', ''))).toFixed(1)}GB</span>
+                            </div>
+                            <div class="storage-bar bg-gray-700">
+                                <div class="bg-blue-500 h-full" style="width: ${(parseFloat(bucket.size.replace('GB', '')) / 10)}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="lg:col-span-2">
+                        <h4 class="font-semibold mb-4">Quick Actions</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <button onclick="browseBucket(${bucket.id})" class="p-3 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm">
+                                <i data-lucide="folder-open" class="w-4 h-4 inline mr-2"></i>
+                                Browse
+                            </button>
+                            <button onclick="syncBucket(${bucket.id})" class="p-3 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm">
+                                <i data-lucide="refresh-cw" class="w-4 h-4 inline mr-2"></i>
+                                Sync
+                            </button>
+                            <button onclick="backupBucket(${bucket.id})" class="p-3 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm">
+                                <i data-lucide="download" class="w-4 h-4 inline mr-2"></i>
+                                Backup
+                            </button>
+                            <button onclick="deleteBucket(${bucket.id})" class="p-3 bg-red-800 hover:bg-red-700 rounded-lg text-sm">
+                                <i data-lucide="trash-2" class="w-4 h-4 inline mr-2"></i>
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('bucketModal').classList.remove('hidden');
+            setTimeout(() => lucide.createIcons(), 100);
+        }
+
+        function closeBucketModal() {
+            document.getElementById('bucketModal').classList.add('hidden');
+        }
+
+        function closeFilePreview() {
+            document.getElementById('filePreviewModal').classList.add('hidden');
+        }
+
+        function refreshBuckets() {
+            const system = window.bucketSystem;
+            system.showNotification('Refreshing buckets...', 'info');
+            
+            setTimeout(() => {
+                system.loadBuckets();
+                system.showNotification('Buckets refreshed successfully', 'success');
+            }, 1000);
+        }
+
+        function createBucket() {
+            const bucketName = prompt('Enter bucket name:');
+            if (bucketName) {
+                window.bucketSystem.showNotification(`Creating bucket "${bucketName}"...`, 'info');
+                setTimeout(() => {
+                    window.bucketSystem.showNotification('Bucket created successfully', 'success');
+                    refreshBuckets();
+                }, 2000);
+            }
+        }
+
+        function uploadFiles() {
+            const uploadZone = document.getElementById('uploadZone');
+            uploadZone.classList.remove('hidden');
+        }
+
+        function createFolder() {
+            const folderName = prompt('Enter folder name:');
+            if (folderName) {
+                window.bucketSystem.showNotification(`Creating folder "${folderName}"...`, 'info');
+                setTimeout(() => {
+                    window.bucketSystem.showNotification('Folder created successfully', 'success');
+                }, 1000);
+            }
+        }
+
+        function setView(mode) {
+            window.bucketSystem.viewMode = mode;
+            // Update view buttons
+            document.querySelectorAll('[onclick^="setView"]').forEach(btn => {
+                btn.classList.remove('text-blue-400');
+                btn.classList.add('text-gray-400');
+            });
+            event.target.classList.remove('text-gray-400');
+            event.target.classList.add('text-blue-400');
+        }
+
+        function navigateToFolder(path) {
+            window.bucketSystem.currentPath = path;
+            document.getElementById('currentPath').textContent = path;
+            window.bucketSystem.loadBucketFiles();
+        }
+
+        function navigateUp() {
+            const path = window.bucketSystem.currentPath;
+            if (path !== '/') {
+                const parentPath = path.split('/').slice(0, -1).join('/') || '/';
+                navigateToFolder(parentPath);
+            }
+        }
+
+        function previewFile(path) {
+            document.getElementById('filePreviewContent').innerHTML = `
+                <div class="text-center">
+                    <i data-lucide="file" class="w-16 h-16 mx-auto mb-4 text-gray-400"></i>
+                    <p class="text-lg font-medium mb-2">${path.split('/').pop()}</p>
+                    <p class="text-gray-400">File preview not available</p>
+                </div>
+            `;
+            document.getElementById('filePreviewModal').classList.remove('hidden');
+            setTimeout(() => lucide.createIcons(), 100);
+        }
+
+        function downloadFile(path) {
+            window.bucketSystem.showNotification(`Downloading ${path}...`, 'info');
+            setTimeout(() => {
+                window.bucketSystem.showNotification('File downloaded successfully', 'success');
+            }, 1500);
+        }
+
+        function deleteFile(path) {
+            if (confirm(`Are you sure you want to delete ${path}?`)) {
+                window.bucketSystem.showNotification(`Deleting ${path}...`, 'warning');
+                setTimeout(() => {
+                    window.bucketSystem.showNotification('File deleted successfully', 'success');
+                    window.bucketSystem.loadBucketFiles();
+                }, 1000);
+            }
+        }
+
+        function syncBuckets() {
+            window.bucketSystem.showNotification('Syncing buckets...', 'info');
+            setTimeout(() => {
+                window.bucketSystem.showNotification('Buckets synced successfully', 'success');
+            }, 2000);
+        }
+
+        function cleanupFiles() {
+            window.bucketSystem.showNotification('Cleaning up files...', 'info');
+            setTimeout(() => {
+                window.bucketSystem.showNotification('File cleanup completed', 'success');
+            }, 3000);
+        }
+
+        function exportData() {
+            window.bucketSystem.showNotification('Exporting data...', 'info');
+            setTimeout(() => {
+                window.bucketSystem.showNotification('Data exported successfully', 'success');
+            }, 1500);
+        }
+
+        function generateReport() {
+            window.bucketSystem.showNotification('Generating report...', 'info');
+            setTimeout(() => {
+                window.bucketSystem.showNotification('Report generated successfully', 'success');
+            }, 2000);
+        }
+
+        function browseBucket(bucketId) {
+            closeBucketModal();
+            document.getElementById('bucketSelector').value = bucketId;
+            window.bucketSystem.selectBucket(bucketId);
+        }
+
+        function syncBucket(bucketId) {
+            window.bucketSystem.showNotification('Syncing bucket...', 'info');
+            setTimeout(() => {
+                window.bucketSystem.showNotification('Bucket synced successfully', 'success');
+            }, 1500);
+        }
+
+        function backupBucket(bucketId) {
+            window.bucketSystem.showNotification('Creating backup...', 'info');
+            setTimeout(() => {
+                window.bucketSystem.showNotification('Backup created successfully', 'success');
+            }, 2500);
+        }
+
+        function deleteBucket(bucketId) {
+            if (confirm('Are you sure you want to delete this bucket? This action cannot be undone.')) {
+                window.bucketSystem.showNotification('Deleting bucket...', 'warning');
+                setTimeout(() => {
+                    window.bucketSystem.showNotification('Bucket deleted successfully', 'success');
+                    closeBucketModal();
+                    refreshBuckets();
+                }, 2000);
+            }
+        }
+
+        // Initialize the system when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            window.bucketSystem = new BucketManagementSystem();
+        });
+    </script>
+
+    <!-- Footer -->
+    <footer class="glass-effect mt-12">
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-6">
+                    <p class="text-sm text-gray-400">© 2026 Duo Automation. All rights reserved.</p>
+                    <div class="flex items-center space-x-4">
+                        <a href="../../REGISTRY_README.md" class="text-gray-400 hover:text-white text-sm">Registry</a>
+                        <a href="../../docs/API.md" class="text-gray-400 hover:text-white text-sm">Documentation</a>
+                        <a href="../../docs/CLI.md" class="text-gray-400 hover:text-white text-sm">Support</a>
+                        <a href="../../docs/API.md" class="text-gray-400 hover:text-white text-sm">API</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs text-gray-400">v2.5.0</span>
+                        <span class="text-xs text-green-400">•</span>
+                        <span class="text-xs text-purple-400">Registry v3.7</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="git-branch" class="w-4 h-4 text-gray-400"></i>
+                        <span class="text-sm text-gray-400">main</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span class="text-xs text-green-400">Production Ready</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

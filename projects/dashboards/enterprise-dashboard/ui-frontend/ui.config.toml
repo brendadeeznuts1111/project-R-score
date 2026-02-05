@@ -1,0 +1,62 @@
+# Nebula-Flow™ UI Styling Configuration
+# TOML format allows comments and trailing commas
+$schema = "https://nebula-flow.com/schemas/ui-style.toml"
+name = "nebula-ui"
+
+[theme]
+mode = "dark"
+accent = "#00d4ff"
+background = "#0a0a0a"
+surface = "#1a1a1a"
+text = "#e0e0e0"
+text-dim = "#888888"
+success = "#10b981"
+warning = "#f59e0b"
+danger = "#ef4444"
+elite = "#10b981"
+strong = "#3b82f6"
+medium = "#f59e0b"
+caution = "#ef4444"
+
+[typography]
+font-family = "'JetBrains Mono', 'Fira Code', monospace"
+font-size = 13
+line-height = 1.5
+tab-size = 2
+
+[layout]
+sidebar-width = 320
+header-height = 48
+padding = 16
+border-radius = 6
+
+[components.topology]
+node-size = 8
+link-width = 2
+link-opacity = 0.6
+charge-strength = -300
+center-force = 0.3
+
+[components.threat-feed]
+row-height = 24
+max-visible = 50
+timestamp-width = 24
+badge-width = 12
+
+[components.perf-monitor]
+cell-size = 12
+cell-gap = 2
+gradient-start = "#1a1a1a"
+gradient-end = "#00d4ff"
+
+[components.secrets-editor]
+line-height = 20
+gutter-width = 48
+folding = true
+minimap = false
+
+[performance]
+redraw-when-visible = true
+lazy-load-components = true
+css-containment = "strict"
+will-change = "transform"

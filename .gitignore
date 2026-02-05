@@ -160,4 +160,5 @@ credentials/
 **/config/
 **/secrets/
 **/auth/
-**/credentials/
+**/credentials/.env.production
+.env.secret

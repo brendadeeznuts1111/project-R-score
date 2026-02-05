@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard with Keyboard Shortcuts Library Integration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .search-tooltip {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1000;
+            pointer-events: none;
+            animation: tooltipFadeIn 0.3s ease;
+        }
+
+        @keyframes tooltipFadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        [data-search-input] {
+            transition: box-shadow 0.2s ease;
+        }
+
+        .dashboard-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-semibold text-gray-900">Dashboard</h1>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="flex-1 max-w-lg mx-8">
+                    <input 
+                        type="text" 
+                        data-search-input
+                        placeholder="Search... (Ctrl+K)"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        Export
+                    </button>
+                    <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                        Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Sample Cards -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Analytics</h3>
+                <p class="text-gray-600">View your dashboard analytics and metrics.</p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Reports</h3>
+                <p class="text-gray-600">Generate and download detailed reports.</p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Settings</h3>
+                <p class="text-gray-600">Configure your dashboard preferences.</p>
+            </div>
+        </div>
+
+        <!-- Keyboard Shortcuts Help -->
+        <div class="mt-8 bg-blue-50 p-6 rounded-lg">
+            <h3 class="text-lg font-medium text-blue-900 mb-4">⌨️ Keyboard Shortcuts</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div><kbd class="px-2 py-1 bg-white rounded">Ctrl+K</kbd> Focus search</div>
+                <div><kbd class="px-2 py-1 bg-white rounded">E</kbd> Export data</div>
+                <div><kbd class="px-2 py-1 bg-white rounded">R</kbd> Refresh data</div>
+                <div><kbd class="px-2 py-1 bg-white rounded">H</kbd> Show help</div>
+                <div><kbd class="px-2 py-1 bg-white rounded">G</kbd> Go to section</div>
+                <div><kbd class="px-2 py-1 bg-white rounded">N</kbd> New item</div>
+                <div><kbd class="px-2 py-1 bg-white rounded">S</kbd> Save data</div>
+                <div><kbd class="px-2 py-1 bg-white rounded">?</kbd> Show shortcuts</div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        // Import our standalone keyboard shortcut library
+        // import { shortcuts, focusWithFeedback } from '../keyboard-shortcuts-lite/dist/index.js';
+
+        // Stub for missing keyboard shortcuts library
+        const shortcuts = {
+            create: (config) => ({
+                add: () => {},
+                remove: () => {},
+                destroy: () => {}
+            })
+        };
+        const focusWithFeedback = (element) => element?.focus();
+        
+        // Enhanced Dashboard Manager with integrated library
+        class DashboardManager {
+            constructor() {
+                this.shortcutManager = null;
+                this.initializeKeyboardShortcuts();
+            }
+            
+            initializeKeyboardShortcuts() {
+                // Initialize our library with dashboard-specific shortcuts
+                this.shortcutManager = shortcuts.create({
+                    // Search shortcuts
+                    'k': () => this.focusSearchInput(),
+                    'ctrl+k': () => this.focusSearchInput(),
+                    'meta+k': () => this.focusSearchInput(),
+                    '?': () => this.showHelp(),
+                    
+                    // Dashboard actions
+                    'e': () => this.exportData(),
+                    'r': () => this.refreshData(),
+                    'h': () => this.showHelp(),
+                    
+                    // Navigation
+                    'g': () => this.goToSection(),
+                    'n': () => this.newItem(),
+                    's': () => this.saveData()
+                }, {
+                    // Library configuration
+                    context: 'dashboard',
+                    debounceMs: 500,
+                    requireModifier: ['e', 'r', 'h', 'g', 'n', 's'], // These need Ctrl/Meta
+                    screenReader: true,
+                    metrics: true
+                });
+                
+                // Initialize the shortcut system
+                this.shortcutManager.init();
+            }
+            
+            focusSearchInput() {
+                const searchInput = document.querySelector('[data-search-input]');
+                if (!searchInput) {
+                    console.error('Search input not found');
+                    this.showAlert('Search unavailable', 'error');
+                    return;
+                }
+                
+                // Use our library's focus utility with enhanced feedback
+                const success = focusWithFeedback(searchInput, {
+                    animation: {
+                        duration: 300,
+                        boxShadow: '0 0 0 2px rgba(59, 130, 246, 0.5)'
+                    },
+                    select: true,
+                    screenReader: 'Search activated, type to filter results',
+                    tooltip: {
+                        message: 'Press Ctrl+K anytime to search',
+                        showOnce: true
+                    }
+                });
+                
+                if (!success) {
+                    this.showAlert('Search input not available', 'warning');
+                }
+            }
+            
+            exportData() {
+                this.showAlert('Exporting data...', 'success');
+                setTimeout(() => {
+                    this.showAlert('Data exported successfully!', 'success');
+                }, 1500);
+            }
+            
+            refreshData() {
+                this.showAlert('Refreshing data...', 'info');
+                setTimeout(() => {
+                    this.showAlert('Data refreshed!', 'success');
+                }, 1000);
+            }
+            
+            showHelp() {
+                const shortcuts = [
+                    'Ctrl+K: Focus search',
+                    'E: Export data',
+                    'R: Refresh data',
+                    'H: Show help',
+                    'G: Go to section',
+                    'N: New item',
+                    'S: Save data',
+                    '?: Show this help'
+                ];
+                
+                this.showAlert('Keyboard Shortcuts:\n' + shortcuts.join('\n'), 'info');
+            }
+            
+            goToSection() {
+                this.showAlert('Section navigation - Use arrow keys to move between cards', 'info');
+                // Add actual section navigation logic here
+            }
+            
+            newItem() {
+                this.showAlert('Creating new item...', 'success');
+                // Add actual new item logic here
+            }
+            
+            saveData() {
+                this.showAlert('Saving data...', 'success');
+                setTimeout(() => {
+                    this.showAlert('Data saved successfully!', 'success');
+                }, 1000);
+            }
+            
+            showAlert(message, type = 'info') {
+                // Create or update alert display
+                let alert = document.querySelector('.dashboard-alert');
+                if (!alert) {
+                    alert = document.createElement('div');
+                    alert.className = 'dashboard-alert';
+                    document.body.appendChild(alert);
+                }
+                
+                // Style based on type
+                const colors = {
+                    success: 'bg-green-500 text-white',
+                    error: 'bg-red-500 text-white',
+                    warning: 'bg-yellow-500 text-black',
+                    info: 'bg-blue-500 text-white'
+                };
+                
+                alert.className = `dashboard-alert ${colors[type]}`;
+                alert.textContent = message;
+                
+                // Auto-hide after 3 seconds
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 300);
+                }, 3000);
+            }
+            
+            // Get library metrics for debugging
+            getShortcutMetrics() {
+                if (this.shortcutManager) {
+                    return this.shortcutManager.getMetrics();
+                }
+                return null;
+            }
+            
+            // Cleanup method
+            destroy() {
+                if (this.shortcutManager) {
+                    this.shortcutManager.destroy();
+                }
+            }
+        }
+        
+        // Initialize dashboard when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            const dashboard = new DashboardManager();
+            
+            // Make dashboard available globally for debugging
+            window.dashboard = dashboard;
+            
+            // Log library metrics after initialization
+            setTimeout(() => {
+                const metrics = dashboard.getShortcutMetrics();
+                console.log('🎹 Keyboard Shortcut Library Metrics:', metrics);
+                
+                // Show welcome message
+                dashboard.showAlert('Welcome! Try pressing Ctrl+K to focus search, or H for help', 'info');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

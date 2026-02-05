@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Phone Dashboard | Integrated Identity & Fintech Intelligence</title>
+    <meta name="description" content="Integrated virtual phone system with identity resolution, fintech intelligence, database, and bucket storage">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --color-primary: #3b82f6;
+            --color-secondary: #3b82f6;
+            --color-accent: #3b82f6;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-error: #ef4444;
+            --color-info: #06b6d4;
+            --color-background: #3b82f6;
+            --color-surface: #3b82f6;
+            --color-text: #3b82f6;
+            --color-text-secondary: #3b82f6;
+            --color-border: #3b82f6;
+            --color-gradient: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            --color-gradient-secondary: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+        }
+
+        .glass-effect {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .status-online { background-color: var(--color-success); }
+        .status-offline { background-color: var(--color-error); }
+        .status-warning { background-color: var(--color-warning); }
+
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .gradient-text {
+            background: var(--color-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .risk-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.125rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 0.25rem;
+        }
+
+        .risk-badge.low { background: linear-gradient(135deg, var(--color-success) 0%, #3b82f6 100%); color: white; }
+        .risk-badge.medium { background: linear-gradient(135deg, var(--color-warning) 0%, #d97706 100%); color: white; }
+        .risk-badge.high { background: linear-gradient(135deg, var(--color-error) 0%, #dc2626 100%); color: white; }
+
+        .confidence-bar {
+            height: 8px;
+            background: linear-gradient(90deg, #ef4444 0%, #f59e0b 50%, #10b981 100%);
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .confidence-indicator {
+            position: absolute;
+            top: -4px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border: 2px solid var(--color-primary);
+            border-radius: 50%;
+            transform: translateX(-50%);
+        }
+
+        .integration-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(29, 78, 216, 0.1) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .integration-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .status-indicator.connected { background-color: var(--color-success); }
+        .status-indicator.disconnected { background-color: var(--color-error); }
+        .status-indicator.syncing { background-color: var(--color-warning); animation: pulse 2s infinite; }
+
+        .metric-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--color-border);
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .phone-input {
+            font-size: 1.25rem;
+            padding: 1rem;
+            border: 2px solid var(--color-border);
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            background: var(--color-surface);
+            color: var(--color-text);
+        }
+
+        .phone-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-primary {
+            background: var(--color-gradient);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-gradient-secondary);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--color-text-secondary) 0%, var(--color-border) 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-1px);
+        }
+
+        .loading-spinner {
+            border: 2px solid var(--color-border);
+            border-top: 2px solid var(--color-primary);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <i data-lucide="phone" class="w-8 h-8 text-blue-600 mr-3"></i>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900">Virtual Phone Dashboard</h1>
+                        <p class="text-sm text-gray-500">Integrated Identity Resolution & Fintech Intelligence</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <span class="status-indicator connected"></span>
+                        <span class="text-sm text-gray-600">System Online</span>
+                    </div>
+                    <button onclick="refreshDashboard()" class="btn-secondary text-sm">
+                        <i data-lucide="refresh-cw" class="w-4 h-4 mr-1"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- System Status Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="metric-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Virtual Phone System</p>
+                        <p class="text-2xl font-bold text-gray-900" id="phoneSystemStatus">Active</p>
+                    </div>
+                    <i data-lucide="phone" class="w-8 h-8 text-blue-500"></i>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Database Connection</p>
+                        <p class="text-2xl font-bold text-gray-900" id="databaseStatus">Connected</p>
+                    </div>
+                    <i data-lucide="database" class="w-8 h-8 text-green-500"></i>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Bucket Storage</p>
+                        <p class="text-2xl font-bold text-gray-900" id="bucketStatus">Ready</p>
+                    </div>
+                    <i data-lucide="hard-drive" class="w-8 h-8 text-purple-500"></i>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Total Records</p>
+                        <p class="text-2xl font-bold text-gray-900" id="totalRecords">0</p>
+                    </div>
+                    <i data-lucide="users" class="w-8 h-8 text-orange-500"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integration Status -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div class="integration-card">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Identity Resolution</h3>
+                    <span class="status-indicator connected"></span>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Status</span>
+                        <span class="text-green-600 font-medium">Active</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Confidence</span>
+                        <span class="text-blue-600 font-medium">90.00%</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Platforms</span>
+                        <span class="text-purple-600 font-medium">3 Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="integration-card">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Fintech Intelligence</h3>
+                    <span class="status-indicator connected"></span>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Risk Assessment</span>
+                        <span class="text-green-600 font-medium">Low</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">KYC Status</span>
+                        <span class="text-blue-600 font-medium">Verified</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Trust Factor</span>
+                        <span class="text-purple-600 font-medium">95%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="integration-card">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Data Storage</h3>
+                    <span class="status-indicator connected"></span>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Database</span>
+                        <span class="text-green-600 font-medium">Synced</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Bucket Storage</span>
+                        <span class="text-blue-600 font-medium">Ready</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Backup Status</span>
+                        <span class="text-purple-600 font-medium">Current</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phone Input and Actions -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Virtual Phone Management</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                    <input type="tel" id="phoneNumberInput" class="phone-input w-full" placeholder="+1-555-123-4567">
+                </div>
+                <div class="flex items-end space-x-4">
+                    <button onclick="createPhoneRecord()" class="btn-primary">
+                        <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
+                        Create Record
+                    </button>
+                    <button onclick="analyzePhone()" class="btn-secondary">
+                        <i data-lucide="search" class="w-4 h-4 mr-2"></i>
+                        Analyze
+                    </button>
+                    <button onclick="syncData()" class="btn-secondary">
+                        <i data-lucide="sync" class="w-4 h-4 mr-2"></i>
+                        Sync
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Dashboard -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Risk Assessment Distribution</h3>
+                <div class="chart-container">
+                    <canvas id="riskChart"></canvas>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Identity Confidence Analysis</h3>
+                <div class="chart-container">
+                    <canvas id="confidenceChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Records -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Recent Phone Records</h3>
+                <button onclick="exportData()" class="btn-secondary text-sm">
+                    <i data-lucide="download" class="w-4 h-4 mr-1"></i>
+                    Export
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone Number</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Carrier</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Identity Confidence</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Risk Level</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">KYC Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Activity</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200" id="recordsTableBody">
+                        <!-- Records will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <i data-lucide="shield" class="w-6 h-6 text-blue-600 mr-2"></i>
+                    <span class="text-sm text-gray-600">Virtual Phone System v3.01.02-beta.0</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-500">8-Tier Hierarchy Active</span>
+                    <span class="text-sm text-gray-500">•</span>
+                    <span class="text-sm text-gray-500">Identity Resolution: 90.00% Confidence</span>
+                    <span class="text-sm text-gray-500">•</span>
+                    <span class="text-sm text-gray-500">Fintech Intelligence: Institutional-Grade</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Global state
+        let phoneRecords = [];
+        let riskChart = null;
+        let confidenceChart = null;
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDashboard();
+            loadPhoneRecords();
+            initializeCharts();
+            updateSystemStatus();
+        });
+
+        function initializeDashboard() {
+            console.log('🚀 Initializing Virtual Phone Dashboard...');
+            
+            // Simulate system initialization
+            setTimeout(() => {
+                showNotification('Virtual Phone System initialized successfully', 'success');
+            }, 1000);
+        }
+
+        function loadPhoneRecords() {
+            // Simulate loading phone records
+            phoneRecords = [
+                {
+                    id: 'phone_1',
+                    phoneNumber: '+1-555-123-4567',
+                    carrier: 'Verizon',
+                    region: 'US-East',
+                    identityConfidence: 90.0,
+                    riskLevel: 'low',
+                    kycStatus: 'verified',
+                    lastActivity: new Date(),
+                    platforms: ['CashApp', 'WhatsApp', 'Telegram']
+                },
+                {
+                    id: 'phone_2',
+                    phoneNumber: '+1-555-987-6543',
+                    carrier: 'AT&T',
+                    region: 'US-West',
+                    identityConfidence: 65.0,
+                    riskLevel: 'medium',
+                    kycStatus: 'pending',
+                    lastActivity: new Date(Date.now() - 86400000),
+                    platforms: ['WhatsApp', 'Telegram']
+                },
+                {
+                    id: 'phone_3',
+                    phoneNumber: '+1-555-456-7890',
+                    carrier: 'T-Mobile',
+                    region: 'US-East',
+                    identityConfidence: 45.0,
+                    riskLevel: 'high',
+                    kycStatus: 'failed',
+                    lastActivity: new Date(Date.now() - 172800000),
+                    platforms: ['Telegram']
+                }
+            ];
+            
+            updateRecordsTable();
+            updateStatistics();
+        }
+
+        function updateRecordsTable() {
+            const tbody = document.getElementById('recordsTableBody');
+            tbody.innerHTML = '';
+            
+            phoneRecords.forEach(record => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        ${record.phoneNumber}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${record.carrier}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <div class="flex items-center">
+                            <div class="confidence-bar w-16 mr-2">
+                                <div class="confidence-indicator" style="left: ${record.identityConfidence}%"></div>
+                            </div>
+                            <span class="font-medium">${record.identityConfidence.toFixed(1)}%</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <span class="risk-badge ${record.riskLevel}">${record.riskLevel.toUpperCase()}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <span class="px-2 py-1 text-xs rounded-full ${
+                            record.kycStatus === 'verified' ? 'bg-green-100 text-green-800' :
+                            record.kycStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-red-100 text-red-800'
+                        }">${record.kycStatus.toUpperCase()}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${formatDate(record.lastActivity)}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <button onclick="viewRecordDetails('${record.id}')" class="text-blue-600 hover:text-blue-900 mr-2">
+                            <i data-lucide="eye" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="editRecord('${record.id}')" class="text-green-600 hover:text-green-900 mr-2">
+                            <i data-lucide="edit" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="deleteRecord('${record.id}')" class="text-red-600 hover:text-red-900">
+                            <i data-lucide="trash" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Re-initialize icons
+            lucide.createIcons();
+        }
+
+        function initializeCharts() {
+            // Risk Assessment Chart
+            const riskCtx = document.getElementById('riskChart').getContext('2d');
+            riskChart = new Chart(riskCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Low Risk', 'Medium Risk', 'High Risk'],
+                    datasets: [{
+                        data: [1, 1, 1],
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(239, 68, 68, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(245, 158, 11, 1)',
+                            'rgba(239, 68, 68, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Confidence Analysis Chart
+            const confidenceCtx = document.getElementById('confidenceChart').getContext('2d');
+            confidenceChart = new Chart(confidenceCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['CashApp', 'WhatsApp', 'Telegram'],
+                    datasets: [{
+                        label: 'Confidence %',
+                        data: [99.2, 65.0, 15.0],
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(245, 158, 11, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(245, 158, 11, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateStatistics() {
+            document.getElementById('totalRecords').textContent = phoneRecords.length;
+            
+            // Update risk chart
+            const riskCounts = {
+                low: phoneRecords.filter(r => r.riskLevel === 'low').length,
+                medium: phoneRecords.filter(r => r.riskLevel === 'medium').length,
+                high: phoneRecords.filter(r => r.riskLevel === 'high').length
+            };
+            
+            if (riskChart) {
+                riskChart.data.datasets[0].data = [riskCounts.low, riskCounts.medium, riskCounts.high];
+                riskChart.update();
+            }
+        }
+
+        function updateSystemStatus() {
+            // Simulate real-time status updates
+            setInterval(() => {
+                const statuses = ['Active', 'Processing', 'Syncing'];
+                const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+                document.getElementById('phoneSystemStatus').textContent = randomStatus;
+            }, 5000);
+        }
+
+        function createPhoneRecord() {
+            const phoneNumber = document.getElementById('phoneNumberInput').value;
+            
+            if (!phoneNumber) {
+                showNotification('Please enter a phone number', 'error');
+                return;
+            }
+
+            showNotification('Creating phone record...', 'info');
+            
+            // Simulate API call
+            setTimeout(() => {
+                const newRecord = {
+                    id: `phone_${Date.now()}`,
+                    phoneNumber: phoneNumber,
+                    carrier: 'Unknown',
+                    region: 'US-East',
+                    identityConfidence: Math.random() * 100,
+                    riskLevel: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)],
+                    kycStatus: ['verified', 'pending', 'failed'][Math.floor(Math.random() * 3)],
+                    lastActivity: new Date(),
+                    platforms: ['CashApp', 'WhatsApp', 'Telegram'].slice(0, Math.floor(Math.random() * 3) + 1)
+                };
+                
+                phoneRecords.unshift(newRecord);
+                updateRecordsTable();
+                updateStatistics();
+                
+                showNotification(`Phone record created for ${phoneNumber}`, 'success');
+                document.getElementById('phoneNumberInput').value = '';
+            }, 1500);
+        }
+
+        function analyzePhone() {
+            const phoneNumber = document.getElementById('phoneNumberInput').value;
+            
+            if (!phoneNumber) {
+                showNotification('Please enter a phone number', 'error');
+                return;
+            }
+
+            showNotification('Analyzing phone number...', 'info');
+            
+            // Simulate analysis
+            setTimeout(() => {
+                showNotification(`Analysis complete for ${phoneNumber}`, 'success');
+                viewRecordDetails('phone_1'); // Show details for demo
+            }, 2000);
+        }
+
+        function syncData() {
+            showNotification('Syncing data with database and buckets...', 'info');
+            
+            setTimeout(() => {
+                showNotification('Data synchronized successfully', 'success');
+            }, 1500);
+        }
+
+        function refreshDashboard() {
+            showNotification('Refreshing dashboard...', 'info');
+            
+            setTimeout(() => {
+                loadPhoneRecords();
+                updateStatistics();
+                showNotification('Dashboard refreshed', 'success');
+            }, 1000);
+        }
+
+        function viewRecordDetails(recordId) {
+            const record = phoneRecords.find(r => r.id === recordId);
+            if (!record) return;
+            
+            // Create modal with record details
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-screen overflow-y-auto">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-bold text-gray-900">Phone Record Details</h3>
+                        <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Phone Number</label>
+                                <p class="text-lg font-semibold">${record.phoneNumber}</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Carrier</label>
+                                <p class="text-lg font-semibold">${record.carrier}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Identity Confidence</label>
+                                <div class="flex items-center">
+                                    <div class="confidence-bar w-24 mr-2">
+                                        <div class="confidence-indicator" style="left: ${record.identityConfidence}%"></div>
+                                    </div>
+                                    <span class="text-lg font-semibold">${record.identityConfidence.toFixed(1)}%</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Risk Level</label>
+                                <span class="risk-badge ${record.riskLevel}">${record.riskLevel.toUpperCase()}</span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Active Platforms</label>
+                            <div class="flex flex-wrap gap-2">
+                                ${record.platforms.map(platform => 
+                                    `<span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">${platform}</span>`
+                                ).join('')}
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">8-Tier Hierarchy Status</label>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="space-y-2">
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">7.x.x.x Identity Resolution</span>
+                                        <span class="text-sm text-green-600 font-medium">✅ Active</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">8.x.x.x Fintech Intelligence</span>
+                                        <span class="text-sm text-green-600 font-medium">✅ Active</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">Overall Confidence</span>
+                                        <span class="text-sm text-blue-600 font-medium">90.00%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 flex justify-end">
+                        <button onclick="this.closest('.fixed').remove()" class="btn-primary">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            lucide.createIcons();
+        }
+
+        function editRecord(recordId) {
+            showNotification('Edit functionality coming soon', 'info');
+        }
+
+        function deleteRecord(recordId) {
+            if (confirm('Are you sure you want to delete this record?')) {
+                phoneRecords = phoneRecords.filter(r => r.id !== recordId);
+                updateRecordsTable();
+                updateStatistics();
+                showNotification('Record deleted successfully', 'success');
+            }
+        }
+
+        function exportData() {
+            showNotification('Exporting data...', 'info');
+            
+            setTimeout(() => {
+                const dataStr = JSON.stringify(phoneRecords, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `phone-records-${new Date().toISOString().split('T')[0]}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+                
+                showNotification('Data exported successfully', 'success');
+            }, 1000);
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+                type === 'success' ? 'bg-green-500 text-white' :
+                type === 'error' ? 'bg-red-500 text-white' :
+                'bg-blue-500 text-white'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i data-lucide="${
+                        type === 'success' ? 'check-circle' :
+                        type === 'error' ? 'x-circle' :
+                        'info'
+                    }" class="w-5 h-5 mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            lucide.createIcons();
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function formatDate(date) {
+            const now = new Date();
+            const diff = now - date;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            
+            if (hours < 1) {
+                const minutes = Math.floor(diff / (1000 * 60));
+                return `${minutes} minutes ago`;
+            } else if (hours < 24) {
+                return `${hours} hours ago`;
+            } else {
+                const days = Math.floor(hours / 24);
+                return `${days} days ago`;
+            }
+        }
+    </script>
+</body>
+</html>

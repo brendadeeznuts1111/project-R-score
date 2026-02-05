@@ -1,0 +1,7 @@
+[
+  {
+    "id": "BROKEN_PATTERN",
+    "pathname": ,  ← INVALID!
+    "hostname": "broken.com"
+  }
+]

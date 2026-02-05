@@ -1,0 +1,111 @@
+{
+  "timestamp": "2026-01-14T16:29:06.055Z",
+  "platform": "darwin",
+  "nodeVersion": "v24.3.0",
+  "results": [
+    {
+      "name": "semver.satisfies",
+      "operations": 100000,
+      "totalTime": 13.008416000000002,
+      "avgTime": 0.00013008416000000002,
+      "opsPerSecond": 7687331.032463905,
+      "memory": 0
+    },
+    {
+      "name": "semver.order",
+      "operations": 50000,
+      "totalTime": 7.214874999999999,
+      "avgTime": 0.0001442975,
+      "opsPerSecond": 6930126.994577177
+    },
+    {
+      "name": "range validation",
+      "operations": 100000,
+      "totalTime": 9.859166000000002,
+      "avgTime": 0.00009859166000000002,
+      "opsPerSecond": 10142845.753890337
+    },
+    {
+      "name": "version comparison",
+      "operations": 50000,
+      "totalTime": 6.5716660000000005,
+      "avgTime": 0.00013143332000000002,
+      "opsPerSecond": 7608420.756623967
+    },
+    {
+      "name": "taxonomy compatibility",
+      "operations": 1000,
+      "totalTime": 0.8447499999999977,
+      "avgTime": 0.0008447499999999976,
+      "opsPerSecond": 1183782.184078133
+    },
+    {
+      "name": "taxonomy upgrade",
+      "operations": 1000,
+      "totalTime": 0.8625830000000008,
+      "avgTime": 0.0008625830000000008,
+      "opsPerSecond": 1159308.7273920297
+    },
+    {
+      "name": "dependency graph",
+      "operations": 1000,
+      "totalTime": 1.4178330000000017,
+      "avgTime": 0.0014178330000000016,
+      "opsPerSecond": 705301.6822150415
+    },
+    {
+      "name": "bulk sort (10k versions)",
+      "operations": 10000,
+      "totalTime": 10.90920899999999,
+      "avgTime": 0.001090920899999999,
+      "opsPerSecond": 916656.7438574153
+    },
+    {
+      "name": "bulk compatibility",
+      "operations": 6,
+      "totalTime": 0.13066600000000506,
+      "avgTime": 0.02177766666666751,
+      "opsPerSecond": 45918.60162551672
+    },
+    {
+      "name": "memory (100 instances)",
+      "operations": 100,
+      "totalTime": 0,
+      "avgTime": 0,
+      "opsPerSecond": 0,
+      "memory": 0
+    },
+    {
+      "name": "concurrent satisfies",
+      "operations": 10000,
+      "totalTime": 1.0997080000000068,
+      "avgTime": 0.00010997080000000069,
+      "opsPerSecond": 9093322.954820678
+    }
+  ],
+  "summary": {
+    "totalBenchmarks": 11,
+    "fastestOp": {
+      "name": "memory (100 instances)",
+      "operations": 100,
+      "totalTime": 0,
+      "avgTime": 0,
+      "opsPerSecond": 0,
+      "memory": 0
+    },
+    "slowestOp": {
+      "name": "bulk compatibility",
+      "operations": 6,
+      "totalTime": 0.13066600000000506,
+      "avgTime": 0.02177766666666751,
+      "opsPerSecond": 45918.60162551672
+    },
+    "highestThroughput": {
+      "name": "range validation",
+      "operations": 100000,
+      "totalTime": 9.859166000000002,
+      "avgTime": 0.00009859166000000002,
+      "opsPerSecond": 10142845.753890337
+    }
+  }
+}

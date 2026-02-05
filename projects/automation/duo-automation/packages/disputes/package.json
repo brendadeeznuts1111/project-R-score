@@ -1,0 +1,71 @@
+{
+  "name": "@duoplus/disputes",
+  "version": "1.0.0",
+  "description": "DuoPlus Dispute System - Enterprise dispute handling with deep links and resolution matrix",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./deep-links": {
+      "import": "./dist/deep-links/index.js",
+      "types": "./dist/deep-links/index.d.ts"
+    },
+    "./matrix": {
+      "import": "./dist/matrix/index.js",
+      "types": "./dist/matrix/index.d.ts"
+    },
+    "./dashboard": {
+      "import": "./dist/dashboard/index.js",
+      "types": "./dist/dashboard/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "bun build src/index.ts --outdir dist --target node --format esm && bun run build:types",
+    "build:types": "tsc --emitDeclarationOnly --outDir dist",
+    "dev": "bun --watch src/index.ts",
+    "test": "bun test",
+    "lint": "bunx eslint src --ext .ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@duoplus/core": "^1.0.0",
+    "crypto": "^1.0.1"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.6",
+    "@types/node": "^25.0.8",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "bun": ">=1.1.40"
+  },
+  "keywords": [
+    "disputes",
+    "deep-links",
+    "resolution-matrix",
+    "enterprise",
+    "customer-service",
+    "payment-disputes"
+  ],
+  "author": "DuoPlus Enterprise Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/duoplus/enterprise-components.git",
+    "directory": "packages/disputes"
+  },
+  "publishConfig": {
+    "registry": "https://registry.duoplus.com",
+    "access": "public"
+  }
+}

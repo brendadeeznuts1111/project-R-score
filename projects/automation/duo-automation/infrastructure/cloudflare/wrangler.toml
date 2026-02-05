@@ -1,0 +1,52 @@
+name = "duoplus-apple-worker"
+main = "qr-worker.ts"
+compatibility_date = "2024-01-01"
+
+# Subdomain-based routing (apple. prefix)
+routes = [
+  { pattern = "api.apple.factory-wager.com/api/*", zone_name = "factory-wager.com" },
+  { pattern = "qr.apple.factory-wager.com/*", zone_name = "factory-wager.com" },
+  { pattern = "ws.apple.factory-wager.com/*", zone_name = "factory-wager.com" },
+  { pattern = "auth.apple.factory-wager.com/*", zone_name = "factory-wager.com" },
+  { pattern = "monitor.apple.factory-wager.com/*", zone_name = "factory-wager.com" },
+  { pattern = "admin.apple.factory-wager.com/*", zone_name = "factory-wager.com" },
+]
+
+# Triggers for scheduled tasks
+[[triggers]]
+crons = ["0 */5 * * *"]  # Every 5 minutes for cleanup
+
+[[triggers]]
+crons = ["0 0 * * *"]   # Daily at midnight for analytics aggregation
+
+[[triggers]]
+crons = ["0 */1 * * *"] # Every hour for health checks
+
+# Bun-native optimizations
+[build]
+command = "bun build qr-worker.ts --outdir=dist --target=bun"
+watch_dir = "infrastructure/cloudflare"
+
+# Performance settings
+[env.production]
+minify = true
+node_compat = false
+
+# Environment variables
+[vars]
+ENVIRONMENT = "production"
+LOG_LEVEL = "info"
+API_VERSION = "v3.1"
+SYSTEM_NAME = "Global QR Device Onboarding"
+ORGANIZATION = "Factory Wager"
+WEBSITE = "https://factory-wager.com"
+SUPPORT_EMAIL = "support@factory-wager.com"
+
+# Variables for secrets (to be set via wrangler secret)
+# wrangler secret put JWT_SECRET
+# wrangler secret put API_ORIGIN
+# wrangler secret put DASHBOARD_ORIGIN
+# wrangler secret put REDIS_URL
+# wrangler secret put SENTRY_DSN
+# wrangler secret put DATABASE_URL
+# wrangler secret put ENCRYPTION_KEY

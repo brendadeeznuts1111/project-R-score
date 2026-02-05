@@ -1,0 +1,179 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Empire Pro §Workflow:97-100",
+    "tags": ["empire-pro", "automation", "workflows"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "§97 Health Score (SVG Gauge)",
+        "type": "stat",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+        "targets": [
+          {
+            "datasource": "EmpirePro",
+            "query": "SELECT healthScore FROM workflow_97 ORDER BY timestamp DESC LIMIT 1",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": 0},
+              {"color": "yellow", "value": 50},
+              {"color": "green", "value": 80}
+            ]
+          },
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "§99 ROI Heatmap",
+        "type": "heatmap",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+        "targets": [
+          {
+            "datasource": "EmpirePro",
+            "query": "SELECT roiMatrix FROM workflow_99 ORDER BY timestamp DESC LIMIT 1",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "colorScale": "turbo",
+          "showValues": true,
+          "calc": "mean"
+        }
+      },
+      {
+        "id": 3,
+        "title": "§100 Autonomic Actions",
+        "type": "stat",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+        "targets": [
+          {
+            "datasource": "EmpirePro",
+            "query": "SELECT healsPerMinute FROM workflow_100 ORDER BY timestamp DESC LIMIT 1",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area",
+          "justifyMode": "auto"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ops",
+            "min": 0
+          }
+        }
+      },
+      {
+        "id": 4,
+        "title": "§97 Degraded Numbers",
+        "type": "stat",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+        "targets": [
+          {
+            "datasource": "EmpirePro",
+            "query": "SELECT degradedNumbers FROM workflow_97 ORDER BY timestamp DESC LIMIT 1",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "min": 0
+          }
+        }
+      },
+      {
+        "id": 5,
+        "title": "§99 Messages Sent",
+        "type": "stat",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+        "targets": [
+          {
+            "datasource": "EmpirePro",
+            "query": "SELECT messagesSent FROM workflow_99 ORDER BY timestamp DESC LIMIT 1",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "colorMode": "background",
+          "graphMode": "area"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "id": 6,
+        "title": "§100 System Health",
+        "type": "stat",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+        "targets": [
+          {
+            "datasource": "EmpirePro",
+            "query": "SELECT systemHealth FROM workflow_100 ORDER BY timestamp DESC LIMIT 1",
+            "refId": "A"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": 0},
+              {"color": "yellow", "value": 0.8},
+              {"color": "green", "value": 0.9}
+            ]
+          }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 1
+          }
+        }
+      }
+    ],
+    "templating": {
+      "list": [
+        {
+          "name": "scope",
+          "type": "custom",
+          "options": ["ENTERPRISE", "DEVELOPMENT", "LOCAL-SANDBOX"],
+          "current": {"value": "ENTERPRISE"},
+          "includeAll": false,
+          "allValue": null
+        }
+      ]
+    },
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "refresh": "5s"
+  }
+}

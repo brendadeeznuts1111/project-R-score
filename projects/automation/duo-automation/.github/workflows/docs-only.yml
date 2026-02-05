@@ -1,0 +1,64 @@
+# [DUOPLUS][CI][AUTO][SKIP][IMPLEMENT][R-005] [BUN:6.1-NATIVE]
+
+name: Docs Only Quick Lint
+
+on:
+  pull_request:
+    paths:
+      - "docs/**/*.md"
+      - "**/*.md"
+      - "**/*.yaml"
+      - "**/*.yml"
+      - "**/*.json"
+      - "**/*.toml"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect docs-only changes
+        id: docs_only
+        run: |
+          changed_files=$(git diff --name-only origin/main...HEAD)
+          if [ -z "$changed_files" ]; then
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          disallowed=$(echo "$changed_files" | grep -vE '^(docs/.*\.md$|.*\.md$|.*\.ya?ml$|.*\.json$|.*\.toml$)' || true)
+          if [ -n "$disallowed" ]; then
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "docs_only=true" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Bun
+        if: steps.docs_only.outputs.docs_only == 'true'
+        uses: oven-sh/setup-bun@v1
+
+      - name: Lint YAML configs
+        if: steps.docs_only.outputs.docs_only == 'true'
+        run: |
+          node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts['lint:yaml'] ? 0 : 1)"
+          if [ $? -eq 0 ]; then
+            bun run lint:yaml
+          else
+            echo "lint:yaml not configured"
+          fi
+
+      - name: Lint Markdown docs
+        if: steps.docs_only.outputs.docs_only == 'true'
+        run: |
+          node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts['lint:md'] ? 0 : 1)"
+          if [ $? -eq 0 ]; then
+            bun run lint:md
+          else
+            echo "lint:md not configured"
+          fi
+
+      - name: Skip tests (docs only)
+        if: steps.docs_only.outputs.docs_only == 'true'
+        run: echo "Docs only; tests skipped." >> $GITHUB_STEP_SUMMARY

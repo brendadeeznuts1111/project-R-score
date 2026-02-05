@@ -1,0 +1,72 @@
+{
+  "name": "@duoplus/status-system",
+  "version": "3.7.0",
+  "description": "DuoPlus Core - 18-endpoint status system with subscription management and real-time monitoring with enterprise-grade reliability",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "build": "bun build index.ts --outdir dist --target=browser",
+    "build:worker": "bun build deployment/workers/status-worker-18-endpoints.ts --outdir dist --target=browser",
+    "deploy": "bunx wrangler deploy deployment/workers/status-worker-18-endpoints.ts --config deployment/cloudflare-status-complete.toml",
+    "dev": "bun --watch deployment/workers/status-worker-18-endpoints.ts",
+    "test": "bun test tests/status-system-matrix-integration.test.ts",
+    "lint": "bun --bun tsc --noEmit"
+  },
+  "dependencies": {
+    "elysia": "catalog:",
+    "typescript": "catalog:"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:",
+    "wrangler": "catalog:status"
+  },
+  "peerDependencies": {
+    "@duoplus/utils": "workspace:*",
+    "@duoplus/cli-core": "workspace:*"
+  },
+  "exports": {
+    ".": "./index.ts",
+    "./worker": "./deployment/workers/status-worker-18-endpoints.ts",
+    "./subscription-manager": "./deployment/workers/subscription-manager.ts",
+    "./matrix": "./src/utils/status-system-matrix.ts",
+    "./constants": "../../config/constants-v37.ts"
+  },
+  "files": [
+    "deployment/workers/",
+    "src/utils/",
+    "tests/"
+  ],
+  "keywords": [
+    "duoplus",
+    "automation",
+    "bun",
+    "typescript",
+    "enterprise",
+    "status-system",
+    "monitoring",
+    "utilities",
+    "terminal",
+    "18-endpoint",
+    "status",
+    "system",
+    "with",
+    "subscription",
+    "management",
+    "real-time"
+  ],
+  "author": "DuoPlus Development Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/duoplus/duo-automation.git",
+    "bugs": "https://github.com/duoplus/duo-automation/issues",
+    "homepage": "https://duoplus.ai"
+  },
+  "bugs": {
+    "url": "https://github.com/duoplus/duo-automation/issues"
+  },
+  "homepage": "https://duoplus.ai/packages/status-system",
+  "contributors": [
+    "DuoPlus Development Team <dev@duoplus.ai>"
+  ]
+}

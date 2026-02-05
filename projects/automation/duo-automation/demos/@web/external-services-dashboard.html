@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>External Services Monitoring Dashboard | Real-time Health & Performance</title>
+    <meta name="description" content="Comprehensive external services monitoring dashboard with real-time health checks, performance metrics, and detailed system information">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+    <style>
+        @keyframes pulse-border {
+            0%, 100% { border-color: rgb(59 130 246 / 0.5); }
+            50% { border-color: rgb(59 130 246 / 1); }
+        }
+        .animate-pulse-border {
+            animation: pulse-border 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .service-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border: 1px solid #3b82f6;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .service-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite;
+        }
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            position: relative;
+        }
+        .status-online { 
+            background-color: #10b981; 
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+        .status-warning { 
+            background-color: #f59e0b; 
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        }
+        .status-error { 
+            background-color: #ef4444; 
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        }
+        .status-checking { 
+            background-color: #3b82f6; 
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .metric-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        .metric-badge.success {
+            background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+            color: #3b82f6;
+        }
+        .metric-badge.warning {
+            background: linear-gradient(135deg, #3b82f6 0%, #f59e0b 100%);
+            color: #3b82f6;
+        }
+        .metric-badge.error {
+            background: linear-gradient(135deg, #3b82f6 0%, #ef4444 100%);
+            color: #3b82f6;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+        }
+        .neon-glow {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+        .floating-action {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        /* SCOPE Badge Styles */
+        .scope-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        .scope-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .scope-badge.enterprise {
+            background: linear-gradient(135deg, #3b82f6 0%, #f59e0b 100%);
+            color: #3b82f6;
+            border-color: rgba(251, 191, 36, 0.3);
+        }
+        .scope-badge.production {
+            background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+            color: #3b82f6;
+            border-color: rgba(52, 211, 153, 0.3);
+        }
+        .scope-badge.monitoring {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            color: #3b82f6;
+            border-color: rgba(96, 165, 250, 0.3);
+        }
+        /* Dark Mode Styles */
+        .dark {
+            background-color: #3b82f6;
+            color: #3b82f6;
+        }
+        .dark .bg-white {
+            background-color: #3b82f6 !important;
+        }
+        .dark .bg-gray-50 {
+            background-color: #3b82f6 !important;
+        }
+        .dark .text-gray-900 {
+            color: #3b82f6 !important;
+        }
+        .dark .text-gray-600 {
+            color: #3b82f6 !important;
+        }
+        .dark .border-gray-200 {
+            border-color: #3b82f6 !important;
+        }
+        .dark .service-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border-color: #3b82f6;
+        }
+        .dark .metric-badge.success {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            color: #3b82f6;
+        }
+        .dark .metric-badge.warning {
+            background: linear-gradient(135deg, #d97706 0%, #3b82f6 100%);
+            color: #fef3c7;
+        }
+        .dark .metric-badge.error {
+            background: linear-gradient(135deg, #dc2626 0%, #3b82f6 100%);
+            color: #fee2e2;
+        }
+        /* Theme transition */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <i data-lucide="globe" class="w-8 h-8 text-blue-600"></i>
+                    <h1 class="text-2xl font-bold gradient-text">External Services Monitor</h1>
+                    
+                    <!-- SCOPE Badges -->
+                    <div class="flex items-center space-x-2 ml-6">
+                        <span class="scope-badge enterprise" onclick="scopeManager.showBadgeInfo('enterprise')" title="Enterprise Tier: Premium features, priority support, advanced analytics">
+                            <i data-lucide="crown" class="w-3 h-3 mr-1"></i>
+                            ENTERPRISE
+                        </span>
+                        <span class="scope-badge production" onclick="scopeManager.showBadgeInfo('production')" title="Production Environment: Live deployment with full monitoring">
+                            <i data-lucide="server" class="w-3 h-3 mr-1"></i>
+                            PRODUCTION
+                        </span>
+                        <span class="scope-badge monitoring" onclick="scopeManager.showBadgeInfo('monitoring')" title="Advanced Monitoring: Real-time health checks and performance metrics">
+                            <i data-lucide="activity" class="w-3 h-3 mr-1"></i>
+                            MONITORING
+                        </span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <span class="status-indicator status-online pulse-dot"></span>
+                        <span class="text-sm text-gray-600">All Systems Operational</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-sm">
+                        <i data-lucide="clock" class="w-4 h-4 text-gray-400"></i>
+                        <span id="server-time" class="text-gray-600">--:--:--</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-sm">
+                        <i data-lucide="zap" class="w-4 h-4 text-green-500"></i>
+                        <span id="response-time" class="text-gray-600">45ms</span>
+                    </div>
+                    <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-gray-100" title="Toggle Theme">
+                        <i data-lucide="moon" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="exportData()" class="p-2 rounded-lg hover:bg-gray-100" title="Export Data">
+                        <i data-lucide="download" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Services Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="service-card p-6 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Services</p>
+                        <p class="text-3xl font-bold text-gray-900">6</p>
+                        <p class="text-xs text-green-600 mt-1">All monitored</p>
+                    </div>
+                    <i data-lucide="server" class="w-10 h-10 text-blue-500"></i>
+                </div>
+            </div>
+            <div class="service-card p-6 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Health Score</p>
+                        <p class="text-3xl font-bold text-gray-900">98.5%</p>
+                        <p class="text-xs text-green-600 mt-1">Excellent</p>
+                    </div>
+                    <i data-lucide="heart" class="w-10 h-10 text-green-500"></i>
+                </div>
+            </div>
+            <div class="service-card p-6 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Avg Response</p>
+                        <p class="text-3xl font-bold text-gray-900">127ms</p>
+                        <p class="text-xs text-green-600 mt-1">Optimal</p>
+                    </div>
+                    <i data-lucide="zap" class="w-10 h-10 text-yellow-500"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- External Services Grid -->
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">External Services Status</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Status API -->
+                <div class="service-card p-6 rounded-lg" id="service-status-api">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="api" class="w-8 h-8 text-blue-600"></i>
+                            <h3 class="text-lg font-semibold text-gray-900">Status API</h3>
+                        </div>
+                        <span class="status-indicator status-online" id="status-api-indicator"></span>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Response Time</span>
+                            <span class="metric-badge success" id="status-api-response">45ms</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Uptime</span>
+                            <span class="metric-badge success">99.9%</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Last Check</span>
+                            <span class="text-xs text-gray-500" id="status-api-last">2s ago</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <button onclick="checkService('status-api')" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                            <i data-lucide="refresh-cw" class="w-4 h-4 inline mr-2"></i>
+                            Check Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Production -->
+                <div class="service-card p-6 rounded-lg" id="service-live-production">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="radio" class="w-8 h-8 text-green-600"></i>
+                            <h3 class="text-lg font-semibold text-gray-900">Live Production</h3>
+                        </div>
+                        <span class="status-indicator status-online" id="live-production-indicator"></span>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Response Time</span>
+                            <span class="metric-badge success" id="live-production-response">89ms</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Active Users</span>
+                            <span class="metric-badge success">1,247</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Last Check</span>
+                            <span class="text-xs text-gray-500" id="live-production-last">5s ago</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <button onclick="checkService('live-production')" class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                            <i data-lucide="refresh-cw" class="w-4 h-4 inline mr-2"></i>
+                            Check Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- R2 Storage -->
+                <div class="service-card p-6 rounded-lg" id="service-r2-storage">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="hard-drive" class="w-8 h-8 text-purple-600"></i>
+                            <h3 class="text-lg font-semibold text-gray-900">R2 Storage</h3>
+                        </div>
+                        <span class="status-indicator status-online" id="r2-storage-indicator"></span>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Response Time</span>
+                            <span class="metric-badge success" id="r2-storage-response">156ms</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Storage Used</span>
+                            <span class="metric-badge warning">2.4TB</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Last Check</span>
+                            <span class="text-xs text-gray-500" id="r2-storage-last">10s ago</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <button onclick="checkService('r2-storage')" class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                            <i data-lucide="refresh-cw" class="w-4 h-4 inline mr-2"></i>
+                            Check Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Asset Bucket -->
+                <div class="service-card p-6 rounded-lg" id="service-asset-bucket">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="package" class="w-8 h-8 text-orange-600"></i>
+                            <h3 class="text-lg font-semibold text-gray-900">Asset Bucket</h3>
+                        </div>
+                        <span class="status-indicator status-online" id="asset-bucket-indicator"></span>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Response Time</span>
+                            <span class="metric-badge success" id="asset-bucket-response">234ms</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Files Count</span>
+                            <span class="metric-badge success">45,231</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Last Check</span>
+                            <span class="text-xs text-gray-500" id="asset-bucket-last">15s ago</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <button onclick="checkService('asset-bucket')" class="w-full px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition">
+                            <i data-lucide="refresh-cw" class="w-4 h-4 inline mr-2"></i>
+                            Check Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- NPM Registry -->
+                <div class="service-card p-6 rounded-lg" id="service-npm-registry">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="package-2" class="w-8 h-8 text-red-600"></i>
+                            <h3 class="text-lg font-semibold text-gray-900">NPM Registry</h3>
+                        </div>
+                        <span class="status-indicator status-warning" id="npm-registry-indicator"></span>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Response Time</span>
+                            <span class="metric-badge warning" id="npm-registry-response">445ms</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Packages</span>
+                            <span class="metric-badge success">2,847</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Last Check</span>
+                            <span class="text-xs text-gray-500" id="npm-registry-last">30s ago</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <button onclick="checkService('npm-registry')" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                            <i data-lucide="refresh-cw" class="w-4 h-4 inline mr-2"></i>
+                            Check Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Package Registry -->
+                <div class="service-card p-6 rounded-lg" id="service-package-registry">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="archive" class="w-8 h-8 text-indigo-600"></i>
+                            <h3 class="text-lg font-semibold text-gray-900">Package Registry</h3>
+                        </div>
+                        <span class="status-indicator status-online" id="package-registry-indicator"></span>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Response Time</span>
+                            <span class="metric-badge success" id="package-registry-response">178ms</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Packages</span>
+                            <span class="metric-badge success">892</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Last Check</span>
+                            <span class="text-xs text-gray-500" id="package-registry-last">20s ago</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <button onclick="checkService('package-registry')" class="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                            <i data-lucide="refresh-cw" class="w-4 h-4 inline mr-2"></i>
+                            Check Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Charts -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Response Time Trends</h3>
+                <div class="chart-container">
+                    <canvas id="responseTimeChart"></canvas>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Service Health Overview</h3>
+                <div class="chart-container">
+                    <canvas id="healthChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Information -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900">System Information</h3>
+                <button onclick="refreshSystemInfo()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    <i data-lucide="refresh-cw" class="w-4 h-4 inline mr-2"></i>
+                    Refresh
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="text-center">
+                    <i data-lucide="cpu" class="w-12 h-12 mx-auto text-blue-500 mb-2"></i>
+                    <h4 class="font-medium text-gray-900">CPU Usage</h4>
+                    <p class="text-2xl font-bold text-gray-900" id="cpu-usage">24%</p>
+                    <p class="text-xs text-green-600">Normal</p>
+                </div>
+                <div class="text-center">
+                    <i data-lucide="memory-stick" class="w-12 h-12 mx-auto text-green-500 mb-2"></i>
+                    <h4 class="font-medium text-gray-900">Memory</h4>
+                    <p class="text-2xl font-bold text-gray-900" id="memory-usage">8.2GB</p>
+                    <p class="text-xs text-green-600">Available</p>
+                </div>
+                <div class="text-center">
+                    <i data-lucide="wifi" class="w-12 h-12 mx-auto text-purple-500 mb-2"></i>
+                    <h4 class="font-medium text-gray-900">Network</h4>
+                    <p class="text-2xl font-bold text-gray-900" id="network-usage">125MB/s</p>
+                    <p class="text-xs text-green-600">Stable</p>
+                </div>
+                <div class="text-center">
+                    <i data-lucide="hard-drive" class="w-12 h-12 mx-auto text-orange-500 mb-2"></i>
+                    <h4 class="font-medium text-gray-900">Storage</h4>
+                    <p class="text-2xl font-bold text-gray-900" id="storage-usage">456GB</p>
+                    <p class="text-xs text-yellow-600">78% Used</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Service Configuration
+        const services = {
+            'status-api': {
+                name: 'Status API',
+                url: 'https://api.status.example.com/health',
+                interval: 5000,
+                timeout: 3000
+            },
+            'live-production': {
+                name: 'Live Production',
+                url: 'https://prod.example.com/api/status',
+                interval: 10000,
+                timeout: 5000
+            },
+            'r2-storage': {
+                name: 'R2 Storage',
+                url: 'https://r2.example.com/health',
+                interval: 15000,
+                timeout: 5000
+            },
+            'asset-bucket': {
+                name: 'Asset Bucket',
+                url: 'https://assets.example.com/health',
+                interval: 20000,
+                timeout: 8000
+            },
+            'npm-registry': {
+                name: 'NPM Registry',
+                url: 'https://npm.example.com/health',
+                interval: 30000,
+                timeout: 10000
+            },
+            'package-registry': {
+                name: 'Package Registry',
+                url: 'https://packages.example.com/health',
+                interval: 25000,
+                timeout: 7000
+            }
+        };
+
+        // Chart instances
+        let responseTimeChart = null;
+        let healthChart = null;
+
+        // Theme Manager
+        const themeManager = {
+            currentTheme: 'light',
+            
+            init() {
+                this.loadSavedTheme();
+                this.applyTheme(this.currentTheme);
+                this.setupEventListeners();
+            },
+            
+            toggleTheme() {
+                const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+                this.applyTheme(newTheme);
+                this.saveTheme(newTheme);
+                this.currentTheme = newTheme;
+                
+                // Update charts for dark mode
+                this.updateCharts(newTheme);
+            },
+            
+            applyTheme(theme) {
+                const body = document.body;
+                if (theme === 'dark') {
+                    body.classList.add('dark');
+                } else {
+                    body.classList.remove('dark');
+                }
+            },
+            
+            updateCharts(theme) {
+                const gridColor = theme === 'dark' ? '#3b82f6' : '#3b82f6';
+                const textColor = theme === 'dark' ? '#3b82f6' : '#3b82f6';
+                
+                if (responseTimeChart) {
+                    responseTimeChart.options.scales.x.grid.color = gridColor;
+                    responseTimeChart.options.scales.y.grid.color = gridColor;
+                    responseTimeChart.options.scales.x.ticks.color = textColor;
+                    responseTimeChart.options.scales.y.ticks.color = textColor;
+                    responseTimeChart.update();
+                }
+                
+                if (healthChart) {
+                    healthChart.options.scales.x.grid.color = gridColor;
+                    healthChart.options.scales.y.grid.color = gridColor;
+                    healthChart.options.scales.x.ticks.color = textColor;
+                    healthChart.options.scales.y.ticks.color = textColor;
+                    healthChart.update();
+                }
+            },
+            
+            saveTheme(theme) {
+                localStorage.setItem('external-services-theme', theme);
+            },
+            
+            loadSavedTheme() {
+                const saved = localStorage.getItem('external-services-theme');
+                if (saved) {
+                    this.currentTheme = saved;
+                } else {
+                    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        this.currentTheme = 'dark';
+                    }
+                }
+            },
+            
+            setupEventListeners() {
+                if (window.matchMedia) {
+                    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                    mediaQuery.addListener((e) => {
+                        if (!localStorage.getItem('external-services-theme')) {
+                            const systemTheme = e.matches ? 'dark' : 'light';
+                            this.applyTheme(systemTheme);
+                            this.currentTheme = systemTheme;
+                        }
+                    });
+                }
+            }
+        };
+
+        // SCOPE Manager
+        const scopeManager = {
+            showBadgeInfo(badgeType) {
+                const info = {
+                    enterprise: 'Enterprise Tier: Premium features, priority support, advanced analytics',
+                    production: 'Production Environment: Live deployment with full monitoring',
+                    monitoring: 'Advanced Monitoring: Real-time health checks and performance metrics'
+                };
+                
+                showNotification('SCOPE Information', info[badgeType], 'info');
+            }
+        };
+
+        // Initialize charts
+        function initCharts() {
+            // Response Time Chart
+            const responseTimeCtx = document.getElementById('responseTimeChart').getContext('2d');
+            responseTimeChart = new Chart(responseTimeCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Status API',
+                            data: [],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Live Production',
+                            data: [],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'R2 Storage',
+                            data: [],
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Time'
+                            }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Response Time (ms)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Health Chart
+            const healthCtx = document.getElementById('healthChart').getContext('2d');
+            healthChart = new Chart(healthCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Healthy', 'Warning', 'Error'],
+                    datasets: [{
+                        data: [5, 1, 0],
+                        backgroundColor: [
+                            '#10b981',
+                            '#f59e0b',
+                            '#ef4444'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+        }
+
+        // Check individual service
+        async function checkService(serviceId) {
+            const service = services[serviceId];
+            const indicator = document.getElementById(`${serviceId}-indicator`);
+            const responseElement = document.getElementById(`${serviceId}-response`);
+            const lastElement = document.getElementById(`${serviceId}-last`);
+            
+            // Set checking status
+            indicator.className = 'status-indicator status-checking';
+            
+            try {
+                const startTime = Date.now();
+                
+                // Simulate health check
+                await new Promise(resolve => setTimeout(resolve, Math.random() * 2000 + 500));
+                
+                const responseTime = Date.now() - startTime;
+                const isHealthy = Math.random() > 0.1; // 90% success rate
+                
+                if (isHealthy) {
+                    indicator.className = 'status-indicator status-online';
+                    responseElement.className = 'metric-badge success';
+                    responseElement.textContent = `${responseTime}ms`;
+                } else {
+                    indicator.className = 'status-indicator status-error';
+                    responseElement.className = 'metric-badge error';
+                    responseElement.textContent = 'Failed';
+                }
+                
+                lastElement.textContent = 'Just now';
+                
+                // Update chart
+                updateCharts(serviceId, responseTime, isHealthy);
+                
+                showNotification('Service Check', `${service.name} is ${isHealthy ? 'healthy' : 'unhealthy'}`, isHealthy ? 'success' : 'error');
+                
+            } catch (error) {
+                indicator.className = 'status-indicator status-error';
+                responseElement.className = 'metric-badge error';
+                responseElement.textContent = 'Error';
+                lastElement.textContent = 'Just now';
+                
+                showNotification('Service Check', `${service.name} check failed`, 'error');
+            }
+        }
+
+        // Update charts with new data
+        function updateCharts(serviceId, responseTime, isHealthy) {
+            const now = new Date().toLocaleTimeString();
+            
+            // Update response time chart
+            if (responseTimeChart) {
+                const datasetIndex = Object.keys(services).indexOf(serviceId);
+                if (datasetIndex < responseTimeChart.data.datasets.length) {
+                    const dataset = responseTimeChart.data.datasets[datasetIndex];
+                    dataset.data.push(responseTime);
+                    
+                    if (dataset.data.length > 20) {
+                        dataset.data.shift();
+                    }
+                    
+                    if (responseTimeChart.data.labels.length > 20) {
+                        responseTimeChart.data.labels.shift();
+                    }
+                    
+                    if (responseTimeChart.data.labels.length <= dataset.data.length) {
+                        responseTimeChart.data.labels.push(now);
+                    }
+                    
+                    responseTimeChart.update('none');
+                }
+            }
+        }
+
+        // Refresh system information
+        function refreshSystemInfo() {
+            // Simulate system info update
+            document.getElementById('cpu-usage').textContent = `${Math.floor(Math.random() * 40 + 10)}%`;
+            document.getElementById('memory-usage').textContent = `${(Math.random() * 4 + 6).toFixed(1)}GB`;
+            document.getElementById('network-usage').textContent = `${Math.floor(Math.random() * 200 + 50)}MB/s`;
+            document.getElementById('storage-usage').textContent = `${Math.floor(Math.random() * 200 + 400)}GB`;
+            
+            showNotification('System Info', 'System information refreshed', 'success');
+        }
+
+        // Export data
+        function exportData() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                services: {},
+                system: {
+                    cpu: document.getElementById('cpu-usage').textContent,
+                    memory: document.getElementById('memory-usage').textContent,
+                    network: document.getElementById('network-usage').textContent,
+                    storage: document.getElementById('storage-usage').textContent
+                }
+            };
+            
+            Object.keys(services).forEach(serviceId => {
+                const indicator = document.getElementById(`${serviceId}-indicator`);
+                const responseElement = document.getElementById(`${serviceId}-response`);
+                
+                data.services[serviceId] = {
+                    status: indicator.classList.contains('status-online') ? 'healthy' : 
+                           indicator.classList.contains('status-warning') ? 'warning' : 'error',
+                    responseTime: responseElement.textContent
+                };
+            });
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `external-services-data-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('Export', 'Service data exported successfully', 'success');
+        }
+
+        // Show notification
+        function showNotification(title, message, type = 'info') {
+            // Simple notification implementation
+            console.log(`[${type.toUpperCase()}] ${title}: ${message}`);
+        }
+
+        // Update server time
+        function updateServerTime() {
+            const now = new Date();
+            document.getElementById('server-time').textContent = now.toLocaleTimeString();
+        }
+
+        // Auto-check services
+        function startAutoCheck() {
+            Object.keys(services).forEach(serviceId => {
+                const service = services[serviceId];
+                setInterval(() => {
+                    checkService(serviceId);
+                }, service.interval);
+                
+                // Initial check
+                checkService(serviceId);
+            });
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize theme manager
+            themeManager.init();
+            
+            // Initialize charts
+            initCharts();
+            
+            // Start auto-check
+            startAutoCheck();
+            
+            // Update server time
+            updateServerTime();
+            setInterval(updateServerTime, 1000);
+            
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
+            // Refresh system info periodically
+            setInterval(refreshSystemInfo, 30000);
+        });
+
+        // Global functions
+        function toggleTheme() {
+            themeManager.toggleTheme();
+        }
+    </script>
+</body>
+</html>

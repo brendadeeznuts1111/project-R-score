@@ -1,0 +1,74 @@
+# Dependencies
+node_modules/
+bun.lock
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+data/*.db
+
+# Logs
+logs/
+*.log
+
+# Exports (generated files)
+exports/data/*.json
+exports/data/*.csv
+exports/data/*.html
+exports/reports/*.json
+exports/reports/*.html
+*.json
+*.csv
+*.html
+!package.json
+!package-lock.json
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Archives
+*.tar.gz
+*.zip
+*.tar
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Keep directory structure but ignore contents
+!exports/data/.gitkeep
+!exports/reports/.gitkeep
+!logs/.gitkeep
+!data/.gitkeep
+
+# Keep documentation files
+!data/README.md
+!logs/README.md
+!exports/README.md
+!scripts/INDEX.md
+!scripts/docs/
+!docs/

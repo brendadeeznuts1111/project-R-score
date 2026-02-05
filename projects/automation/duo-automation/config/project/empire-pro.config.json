@@ -1,0 +1,40 @@
+{
+  "empirePro": {
+    "version": "2.0.0",
+    "patternSystem": {
+      "enabled": true,
+      "matrixPath": "./utils/pattern-matrix.ts",
+      "autoRegister": true,
+      "features": ["VALIDATION"],
+      "validation": {
+        "enabled": true,
+        "failOnError": true,
+        "failOnWarning": false
+      },
+      "lsp": {
+        "enabled": true,
+        "generateTypes": true,
+        "typesPath": "./src/types/pattern-auto-generated.ts"
+      },
+      "constraints": {
+        "enforcePerfBudgets": true,
+        "enforceROIThresholds": true,
+        "enforceSemanticUniqueness": true
+      }
+    },
+    "deployment": {
+      "bucket": "factory-wager",
+      "domain": "factory-wager.com",
+      "cdn": "cloudflare",
+      "autoPurge": true
+    },
+    "monitoring": {
+      "grafanaDashboardId": "empire-pro-phone-intelligence",
+      "performanceThresholds": {
+        "latency": 2.5,
+        "cacheHitRate": 0.85,
+        "errorRate": 0.01
+      }
+    }
+  }
+}

@@ -1,0 +1,203 @@
+{
+  "agent": {
+    "id": "AG004454",
+    "name": "Agent2 Ops2",
+    "department": "phone-intel",
+    "email": "ag004454@phone-intel.duoplus.android",
+    "phone": {
+      "number": "+1 (846) 608-9402",
+      "carrier": "AT&T",
+      "imei": "133883546107815",
+      "model": "OnePlus 10",
+      "os": "Android 13",
+      "plan": "Unlimited Starter",
+      "dataLimit": "16GB",
+      "smsEnabled": true,
+      "mmsEnabled": true,
+      "voicemailPin": "6323",
+      "lastActive": "2026-01-14T07:43:12.563Z",
+      "status": "active",
+      "virtual": {
+        "provider": "Burner",
+        "webhookUrl": "https://webhook.duoplus.android/agent/AG004454/sms"
+      }
+    },
+    "payments": {
+      "venmo": {
+        "username": "mobile-4454",
+        "handle": "@agent-4454",
+        "phoneNumber": "+1 (846) 608-9402",
+        "balance": 4223,
+        "qrCodeUrl": "https://venmo.com/qr/secure-4454",
+        "verified": true,
+        "lastFour": "2064",
+        "limit": 5000
+      },
+      "paypal": {
+        "email": "ag004454@phone-intel.duoplus.android",
+        "phoneNumber": "+1 (846) 608-9402",
+        "balance": 4732,
+        "business": true,
+        "verified": true,
+        "currency": "USD",
+        "apiCredentials": {
+          "clientId": "CLIENT_k5ek89pyjhf",
+          "secret": "SECRET_akb138q87zh"
+        }
+      }
+    },
+    "accountAge": {
+      "created": "2025-12-25T07:43:12.563Z",
+      "lastLogin": "2026-01-14T04:51:25.503Z",
+      "daysOld": 20,
+      "activityScore": 22
+    },
+    "tips": [
+      {
+        "category": "Security",
+        "tip": "Use unique passwords for each payment app and enable 2FA",
+        "priority": "critical",
+        "actionRequired": true,
+        "estimatedTime": "10 minutes"
+      },
+      {
+        "category": "Communication",
+        "tip": "Use encrypted messaging for sensitive communications",
+        "priority": "critical",
+        "actionRequired": true,
+        "estimatedTime": "5 minutes"
+      },
+      {
+        "category": "Onboarding",
+        "tip": "Complete first transaction within 24 hours to establish account",
+        "priority": "critical",
+        "actionRequired": true,
+        "estimatedTime": "5 minutes"
+      },
+      {
+        "category": "Onboarding",
+        "tip": "Verify email and phone on all platforms immediately",
+        "priority": "critical",
+        "actionRequired": true,
+        "estimatedTime": "20 minutes"
+      },
+      {
+        "category": "Security",
+        "tip": "Regularly rotate API keys and access tokens",
+        "priority": "high",
+        "actionRequired": true,
+        "estimatedTime": "5 minutes monthly"
+      },
+      {
+        "category": "Operations",
+        "tip": "Maintain consistent transaction patterns - avoid sudden large transfers",
+        "priority": "high",
+        "actionRequired": true,
+        "estimatedTime": "Ongoing"
+      },
+      {
+        "category": "Security",
+        "tip": "Never share actual location in SMS or social posts",
+        "priority": "high",
+        "actionRequired": true,
+        "estimatedTime": "Ongoing"
+      },
+      {
+        "category": "Onboarding",
+        "tip": "Add profile picture to all social/payment accounts",
+        "priority": "high",
+        "actionRequired": true,
+        "estimatedTime": "10 minutes"
+      },
+      {
+        "category": "Onboarding",
+        "tip": "Make initial small transactions between team accounts",
+        "priority": "high",
+        "actionRequired": true,
+        "estimatedTime": "15 minutes"
+      },
+      {
+        "category": "Social",
+        "tip": "Post occasional updates on social media to maintain account authenticity",
+        "priority": "medium",
+        "actionRequired": true,
+        "estimatedTime": "5 minutes weekly"
+      },
+      {
+        "category": "Communication",
+        "tip": "Regularly send/receive SMS to maintain phone number activity",
+        "priority": "medium",
+        "actionRequired": true,
+        "estimatedTime": "2 minutes daily"
+      },
+      {
+        "category": "Operations",
+        "tip": "Maintain call/SMS logs consistent with timezone",
+        "priority": "medium",
+        "actionRequired": true,
+        "estimatedTime": "Ongoing"
+      }
+    ],
+    "riskAssessment": {
+      "riskLevel": "medium",
+      "factors": [
+        "All accounts are newly created",
+        "No existing transaction history"
+      ],
+      "recommendations": [
+        "Gradually build account history over 30 days",
+        "Start with small transactions ($1-10)"
+      ]
+    },
+    "created": "2026-01-14T07:43:12.563Z"
+  },
+  "setup": {
+    "script": "#!/bin/bash\n# Phone Provisioning Script for ag004454@phone-intel.duoplus.android\n# Generated: 2026-01-14T07:43:12.563Z\n\necho \"📱 Setting up OnePlus 10 for agent...\"\n\n# Install required apps\necho \"Installing messaging apps...\"\nadb install messaging_apps.apk\n\n# Configure phone settings\necho \"Configuring phone settings...\"\nadb shell settings put global airplane_mode_on 0\nadb shell settings put global mobile_data 1\nadb shell settings put global wifi_on 1\n\n# Setup SMS forwarding (if virtual)\nif [ -n \"https://webhook.duoplus.android/agent/AG004454/sms\" ]; then\n  echo \"Configuring SMS forwarding to https://webhook.duoplus.android/agent/AG004454/sms\"\n  adb push sms_forwarding.config /data/local/tmp/\nfi\n\n# Setup voicemail\necho \"Setting up voicemail...\"\nadb shell am start -a android.intent.action.CALL -d tel:18466089402\n\n# Install payment apps\necho \"Installing payment apps...\"\nfor app in venmo cashapp paypal; do\n  adb install ${app}.apk\ndone\n\n# Configure payment apps with agent credentials\necho \"Configuring Venmo...\"\nadb shell input text \"+1 (846) 608-9402\"\nadb shell input keyevent KEYCODE_ENTER\n\necho \"✅ Phone setup complete for +1 (846) 608-9402\"\necho \"📞 Test by calling: +1 (846) 608-9402\"\n",
+    "checklist": "# Agent Setup Checklist: AG004454\n## Phase 1: Immediate (Day 1)\n- [ ] Verify email address on all platforms\n- [ ] Verify phone number for SMS/2FA\n- [ ] Set up unique passwords + 2FA\n- [ ] Complete first small transaction ($5-20)\n- [ ] Add profile picture\n\n## Phase 2: First Week\n- [ ] Make 3-5 transactions across different platforms\n- [ ] Send 10+ SMS messages\n- [ ] Make 2-3 social media posts\n- [ ] Connect with 5+ colleagues on LinkedIn\n\n## Phase 3: Ongoing (Monthly)\n- [ ] Rotate passwords\n- [ ] Review transaction patterns\n- [ ] Update social profiles\n- [ ] Backup account credentials\n\n## Red Flags to Avoid\n❌ Don't make transactions over $500 in first month\n❌ Don't link personal bank accounts\n❌ Don't use same device for multiple agents\n❌ Don't post location or sensitive info\n\n## Success Metrics\n✅ Daily SMS activity\n✅ Weekly transactions\n✅ Monthly social engagement\n✅ Quarterly security review",
+    "dnsRecords": [
+      {
+        "type": "A",
+        "name": "@",
+        "value": "192.168.1.100",
+        "ttl": 3600
+      },
+      {
+        "type": "MX",
+        "name": "@",
+        "value": "mail.duoplus.android",
+        "ttl": 3600
+      },
+      {
+        "type": "TXT",
+        "name": "@",
+        "value": "v=spf1 include:_spf.google.com ~all",
+        "ttl": 3600
+      },
+      {
+        "type": "TXT",
+        "name": "_dmarc",
+        "value": "v=DMARC1; p=none; rua=mailto:dmarc@${domain}",
+        "ttl": 3600
+      },
+      {
+        "type": "CNAME",
+        "name": "mail",
+        "value": "mailserver.duoplus.android",
+        "ttl": 3600
+      },
+      {
+        "type": "CNAME",
+        "name": "web",
+        "value": "webserver.duoplus.android",
+        "ttl": 3600
+      },
+      {
+        "type": "SRV",
+        "name": "_autodiscover._tcp",
+        "value": "0 0 443 autodiscover.${domain}",
+        "ttl": 3600
+      }
+    ],
+    "emailConfig": "# Postfix Configuration for duoplus.android\nmyhostname = mail.duoplus.android\nmydomain = duoplus.android\nmyorigin = $mydomain\ninet_interfaces = all\nmydestination = $myhostname, localhost.$mydomain, localhost, $mydomain\nmynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128\nhome_mailbox = Maildir/\nsmtpd_tls_cert_file = /etc/ssl/certs/ssl-cert-snakeoil.pem\nsmtpd_tls_key_file = /etc/ssl/private/ssl-cert-snakeoil.key\nsmtpd_use_tls = yes\nsmtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache\nsmtp_tls_session_cache_database = btree:${data_directory}/smtp_scache\n\n# Agent mailboxes (auto-created)\nvirtual_alias_maps = hash:/etc/postfix/virtual\n\n# DKIM Signing\nsmtpd_milters = inet:localhost:8891\nnon_smtpd_milters = $smtpd_milters\nmilter_default_action = accept"
+  }
+}

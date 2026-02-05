@@ -1,0 +1,37 @@
+[test]
+root = "."
+
+[build]
+target = "bun"
+
+[install]
+auto-install = true
+# CONFIG.BUNFIG.SECURITY - Enterprise policy: 30-day minimum release age (2592000s)
+# MIN_RELEASE_AGE - Prevents installation of packages newer than 30 days
+# minimumReleaseAge = 2592000
+linkWorkspacePackages = false
+globalBinDir = "./my-portal/packages/templates/bun-transformer/dist"
+
+[install.registry]
+# Enterprise registry configuration with scoped authentication
+# Scoped tokens for different package scopes
+"@enterprise/*" = "https://registry.enterprise.com/"
+"@internal/*" = "https://registry.internal.com/"
+# Fallback to public registry for all others
+"*" = "https://registry.npmjs.org/"
+
+[install.scoped-tokens]
+# Scoped authentication tokens for private registries
+"@enterprise/*" = "enterprise-token-here"
+"@internal/*" = "internal-token-here"
+
+[install.excludes]
+# Package excludes list for security policy
+# CONFIG.BUNFIG.SECURITY - Enterprise policy excludes
+lodash = true
+moment = true
+request = true
+axios = "^0.20.0"  # Only exclude vulnerable versions
+
+[install.security]
+scanner = "@socketsecurity/bun-security-scanner"

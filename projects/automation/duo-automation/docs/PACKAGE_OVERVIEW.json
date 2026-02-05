@@ -1,0 +1,61 @@
+{
+  "name": "DuoPlus Automation",
+  "version": "3.7.0",
+  "description": "Enterprise-grade automation system with Lightning Network payments",
+  "author": "DuoPlus Development Team",
+  "license": "MIT",
+  "packages": [
+    {
+      "name": "@duoplus/status-system",
+      "version": "3.7.0",
+      "description": "18-endpoint status system with subscription management",
+      "type": "core",
+      "features": [
+        "Real-time monitoring",
+        "Subscription management",
+        "Cloudflare Workers integration"
+      ]
+    },
+    {
+      "name": "@duoplus/ui-components",
+      "version": "1.2.4-beta.0",
+      "description": "React components for dashboards with real-time visualization",
+      "type": "platform",
+      "features": [
+        "Real-time charts",
+        "Status indicators",
+        "Interactive controls"
+      ]
+    },
+    {
+      "name": "@duoplus/cli-core",
+      "version": "1.2.4-beta.0",
+      "description": "Command-line interface with enhanced inspection",
+      "type": "tools",
+      "features": [
+        "Regex filtering",
+        "Path exclusion",
+        "Audit logging"
+      ]
+    },
+    {
+      "name": "@duoplus/lightning-network",
+      "version": "1.0.0",
+      "description": "Lightning Network integration with savings optimization",
+      "type": "core",
+      "features": [
+        "Instant payments",
+        "Yield optimization",
+        "Auto-rebalancing"
+      ]
+    }
+  ],
+  "standards": {
+    "packagePrefix": "@duoplus",
+    "classNaming": "PascalCase",
+    "interfaceNaming": "PascalCase with I prefix",
+    "fileNaming": "kebab-case",
+    "functionNaming": "camelCase",
+    "constantNaming": "UPPER_SNAKE_CASE"
+  }
+}

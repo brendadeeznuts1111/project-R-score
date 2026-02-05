@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utilities Dashboard - Enhanced System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .glass-effect {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .utility-card {
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        .utility-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
+        }
+        .status-online { background-color: #10b981; }
+        .status-offline { background-color: #ef4444; }
+        .status-warning { background-color: #f59e0b; }
+        .status-maintenance { background-color: #f97316; }
+        .utility-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.35s;
+            stroke-dasharray: 251.2 251.2;
+        }
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+        }
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        .metric-card {
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+        .log-entry {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        .log-error { color: #ef4444; }
+        .log-warning { color: #f59e0b; }
+        .log-info { color: #3b82f6; }
+        .log-success { color: #10b981; }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen">
+    <!-- Header -->
+    <header class="glass-effect sticky top-0 z-50">
+        <nav class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-6">
+                    <button onclick="window.history.back()" class="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                        <span>Back to Dashboard</span>
+                    </button>
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="settings" class="w-8 h-8 text-blue-500"></i>
+                        <h1 class="text-2xl font-bold">System Utilities Dashboard</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-3 h-3 rounded-full status-online pulse-dot"></div>
+                        <span class="text-sm">All Systems Operational</span>
+                    </div>
+                    <span class="text-sm text-gray-400" id="currentTime">--:--:--</span>
+                    <button onclick="refreshAllUtilities()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-sm">
+                        <i data-lucide="refresh-cw" class="w-4 h-4 inline mr-2"></i>
+                        Refresh All
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- System Overview -->
+        <section class="mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="glass-effect rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <i data-lucide="server" class="w-8 h-8 text-blue-500"></i>
+                        <span class="text-2xl font-bold" id="totalServices">0</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Total Services</p>
+                </div>
+                <div class="glass-effect rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <i data-lucide="check-circle" class="w-8 h-8 text-green-500"></i>
+                        <span class="text-2xl font-bold" id="activeServices">0</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Active Services</p>
+                </div>
+                <div class="glass-effect rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <i data-lucide="cpu" class="w-8 h-8 text-orange-500"></i>
+                        <span class="text-2xl font-bold" id="cpuUsage">0%</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">CPU Usage</p>
+                </div>
+                <div class="glass-effect rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <i data-lucide="hard-drive" class="w-8 h-8 text-purple-500"></i>
+                        <span class="text-2xl font-bold" id="memoryUsage">0%</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Memory Usage</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Utilities Grid -->
+        <section class="mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold flex items-center">
+                    <i data-lucide="grid-3x3" class="w-5 h-5 mr-2"></i>
+                    System Utilities
+                </h2>
+                <div class="flex items-center space-x-4">
+                    <select id="categoryFilter" class="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm">
+                        <option value="all">All Categories</option>
+                        <option value="database">Database</option>
+                        <option value="storage">Storage</option>
+                        <option value="network">Network</option>
+                        <option value="security">Security</option>
+                        <option value="monitoring">Monitoring</option>
+                    </select>
+                    <input 
+                        type="text" 
+                        id="utilitySearch" 
+                        placeholder="Search utilities..."
+                        class="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm"
+                    >
+                </div>
+            </div>
+            
+            <div id="utilitiesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Utility cards will be dynamically added here -->
+            </div>
+        </section>
+
+        <!-- Real-time Monitoring -->
+        <section class="mb-8">
+            <div class="glass-effect rounded-xl p-6">
+                <h2 class="text-xl font-semibold mb-6 flex items-center">
+                    <i data-lucide="activity" class="w-5 h-5 mr-2"></i>
+                    Real-time Monitoring
+                </h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Performance Metrics -->
+                    <div>
+                        <h3 class="text-lg font-medium mb-4">Performance Metrics</h3>
+                        <div class="chart-container">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Resource Usage -->
+                    <div>
+                        <h3 class="text-lg font-medium mb-4">Resource Usage</h3>
+                        <div class="chart-container">
+                            <canvas id="resourceChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Service Health -->
+                    <div>
+                        <h3 class="text-lg font-medium mb-4">Service Health</h3>
+                        <div class="chart-container">
+                            <canvas id="healthChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- System Logs -->
+        <section class="mb-8">
+            <div class="glass-effect rounded-xl p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <i data-lucide="file-text" class="w-5 h-5 mr-2"></i>
+                        System Logs
+                    </h2>
+                    <div class="flex items-center space-x-4">
+                        <select id="logLevel" class="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm">
+                            <option value="all">All Levels</option>
+                            <option value="error">Errors</option>
+                            <option value="warning">Warnings</option>
+                            <option value="info">Info</option>
+                            <option value="success">Success</option>
+                        </select>
+                        <button onclick="clearLogs()" class="px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors text-sm">
+                            Clear Logs
+                        </button>
+                        <button onclick="exportLogs()" class="px-3 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors text-sm">
+                            Export
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="logContainer" class="bg-gray-800 rounded-lg p-4 h-64 overflow-y-auto font-mono text-sm">
+                    <!-- Logs will be dynamically added here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section>
+            <div class="glass-effect rounded-xl p-6">
+                <h2 class="text-xl font-semibold mb-6 flex items-center">
+                    <i data-lucide="zap" class="w-5 h-5 mr-2"></i>
+                    Quick Actions
+                </h2>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <button onclick="restartService()" class="p-4 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors">
+                        <i data-lucide="refresh-cw" class="w-6 h-6 mx-auto mb-2"></i>
+                        <span class="text-sm">Restart Service</span>
+                    </button>
+                    <button onclick="clearCache()" class="p-4 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors">
+                        <i data-lucide="trash-2" class="w-6 h-6 mx-auto mb-2"></i>
+                        <span class="text-sm">Clear Cache</span>
+                    </button>
+                    <button onclick="runDiagnostics()" class="p-4 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors">
+                        <i data-lucide="stethoscope" class="w-6 h-6 mx-auto mb-2"></i>
+                        <span class="text-sm">Run Diagnostics</span>
+                    </button>
+                    <button onclick="backupSystem()" class="p-4 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors">
+                        <i data-lucide="download" class="w-6 h-6 mx-auto mb-2"></i>
+                        <span class="text-sm">Backup System</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Utility Details Modal -->
+    <div id="utilityModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="glass-effect rounded-xl p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-semibold" id="modalUtilityName">Utility Details</h3>
+                <button onclick="closeUtilityModal()" class="text-gray-400 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <div id="modalContent">
+                <!-- Modal content will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Utilities Dashboard System
+        class UtilitiesDashboard {
+            constructor() {
+                this.utilities = [];
+                this.filteredUtilities = [];
+                this.charts = {};
+                this.logs = [];
+                this.metrics = {
+                    cpu: [],
+                    memory: [],
+                    disk: [],
+                    network: []
+                };
+                this.init();
+            }
+
+            init() {
+                // Initialize Lucide icons
+                lucide.createIcons();
+                
+                // Load utilities data
+                this.loadUtilities();
+                
+                // Set up event listeners
+                this.setupEventListeners();
+                
+                // Initialize monitoring
+                this.startMonitoring();
+                
+                // Initialize charts
+                this.initializeCharts();
+                
+                // Update time
+                this.updateTime();
+                setInterval(() => this.updateTime(), 1000);
+            }
+
+            setupEventListeners() {
+                // Search functionality
+                document.getElementById('utilitySearch').addEventListener('input', () => {
+                    this.filterUtilities();
+                });
+                
+                // Category filter
+                document.getElementById('categoryFilter').addEventListener('change', () => {
+                    this.filterUtilities();
+                });
+                
+                // Log level filter
+                document.getElementById('logLevel').addEventListener('change', () => {
+                    this.filterLogs();
+                });
+            }
+
+            async loadUtilities() {
+                try {
+                    // Simulate API call
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    // Mock utilities data
+                    this.utilities = [
+                        {
+                            id: 1,
+                            name: 'PostgreSQL Database',
+                            category: 'database',
+                            status: 'active',
+                            version: '14.5',
+                            uptime: '15d 8h 32m',
+                            cpu: 12,
+                            memory: 45,
+                            connections: 25,
+                            maxConnections: 100,
+                            icon: { bg: '#3b82f6', icon: 'database' },
+                            metrics: {
+                                queries: 1250,
+                                cacheHit: 94.5,
+                                diskUsage: 67
+                            }
+                        },
+                        {
+                            id: 2,
+                            name: 'Redis Cache',
+                            category: 'database',
+                            status: 'active',
+                            version: '7.0.5',
+                            uptime: '15d 8h 32m',
+                            cpu: 5,
+                            memory: 23,
+                            connections: 45,
+                            maxConnections: 1000,
+                            icon: { bg: '#3b82f6', icon: 'layers' },
+                            metrics: {
+                                operations: 8900,
+                                hitRate: 98.2,
+                                memory: 512
+                            }
+                        },
+                        {
+                            id: 3,
+                            name: 'Cloudflare R2',
+                            category: 'storage',
+                            status: 'active',
+                            version: '1.2.0',
+                            uptime: '30d 12h 15m',
+                            cpu: 2,
+                            memory: 8,
+                            connections: 120,
+                            maxConnections: 500,
+                            icon: { bg: '#3b82f6', icon: 'cloud' },
+                            metrics: {
+                                storage: '2.3TB',
+                                objects: 45000,
+                                bandwidth: '125GB'
+                            }
+                        },
+                        {
+                            id: 4,
+                            name: 'Nginx Proxy',
+                            category: 'network',
+                            status: 'active',
+                            version: '1.24.0',
+                            uptime: '45d 3h 22m',
+                            cpu: 8,
+                            memory: 15,
+                            connections: 250,
+                            maxConnections: 1024,
+                            icon: { bg: '#3b82f6', icon: 'globe' },
+                            metrics: {
+                                requests: 15000,
+                                responseTime: 45,
+                                errorRate: 0.02
+                            }
+                        },
+                        {
+                            id: 5,
+                            name: 'Security Manager',
+                            category: 'security',
+                            status: 'active',
+                            version: '2.1.0',
+                            uptime: '15d 8h 32m',
+                            cpu: 3,
+                            memory: 12,
+                            connections: 8,
+                            maxConnections: 50,
+                            icon: { bg: '#ef4444', icon: 'shield' },
+                            metrics: {
+                                threats: 0,
+                                blocked: 156,
+                                scanned: 8900
+                            }
+                        },
+                        {
+                            id: 6,
+                            name: 'Monitoring Service',
+                            category: 'monitoring',
+                            status: 'active',
+                            version: '3.0.1',
+                            uptime: '15d 8h 32m',
+                            cpu: 6,
+                            memory: 18,
+                            connections: 15,
+                            maxConnections: 100,
+                            icon: { bg: '#8b5cf6', icon: 'activity' },
+                            metrics: {
+                                alerts: 2,
+                                uptime: 99.98,
+                                checks: 250
+                            }
+                        }
+                    ];
+                    
+                    this.filteredUtilities = [...this.utilities];
+                    this.updateStatistics();
+                    this.renderUtilities();
+                    this.addLog('info', 'Utilities dashboard loaded successfully');
+                    
+                } catch (error) {
+                    console.error('Error loading utilities:', error);
+                    this.addLog('error', 'Failed to load utilities data');
+                }
+            }
+
+            filterUtilities() {
+                const searchTerm = document.getElementById('utilitySearch').value.toLowerCase();
+                const categoryFilter = document.getElementById('categoryFilter').value;
+                
+                this.filteredUtilities = this.utilities.filter(utility => {
+                    const matchesSearch = utility.name.toLowerCase().includes(searchTerm);
+                    const matchesCategory = categoryFilter === 'all' || utility.category === categoryFilter;
+                    
+                    return matchesSearch && matchesCategory;
+                });
+                
+                this.renderUtilities();
+            }
+
+            renderUtilities() {
+                const grid = document.getElementById('utilitiesGrid');
+                
+                if (this.filteredUtilities.length === 0) {
+                    grid.innerHTML = `
+                        <div class="col-span-full text-center py-12">
+                            <i data-lucide="search-x" class="w-12 h-12 mx-auto mb-4 text-gray-500"></i>
+                            <p class="text-gray-400">No utilities found matching your criteria</p>
+                        </div>
+                    `;
+                    lucide.createIcons();
+                    return;
+                }
+                
+                grid.innerHTML = this.filteredUtilities.map(utility => `
+                    <div class="utility-card glass-effect rounded-xl p-6 cursor-pointer" onclick="showUtilityDetails(${utility.id})">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="utility-icon" style="background-color: ${utility.icon.bg}; color: white;">
+                                    <i data-lucide="${utility.icon.icon}" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-lg">${utility.name}</h3>
+                                    <p class="text-sm text-gray-400">v${utility.version}</p>
+                                </div>
+                            </div>
+                            <div class="w-3 h-3 rounded-full ${this.getStatusClass(utility.status)}"></div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-400">Status</span>
+                                <span class="px-2 py-1 rounded text-xs ${this.getStatusBadgeClass(utility.status)}">${utility.status}</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-400">Uptime</span>
+                                <span class="text-sm font-medium">${utility.uptime}</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-400">CPU</span>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-16 bg-gray-700 rounded-full h-2">
+                                        <div class="h-2 rounded-full ${this.getUsageColor(utility.cpu)}" style="width: ${utility.cpu}%"></div>
+                                    </div>
+                                    <span class="text-sm font-medium">${utility.cpu}%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-400">Memory</span>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-16 bg-gray-700 rounded-full h-2">
+                                        <div class="h-2 rounded-full ${this.getUsageColor(utility.memory)}" style="width: ${utility.memory}%"></div>
+                                    </div>
+                                    <span class="text-sm font-medium">${utility.memory}%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-400">Connections</span>
+                                <span class="text-sm font-medium">${utility.connections}/${utility.maxConnections}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t border-gray-700">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-400">${utility.category}</span>
+                                <button class="text-blue-400 hover:text-blue-300 text-sm">
+                                    View Details →
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                // Re-initialize icons
+                setTimeout(() => lucide.createIcons(), 100);
+            }
+
+            updateStatistics() {
+                const totalServices = this.utilities.length;
+                const activeServices = this.utilities.filter(u => u.status === 'active').length;
+                const avgCpu = Math.round(this.utilities.reduce((sum, u) => sum + u.cpu, 0) / this.utilities.length);
+                const avgMemory = Math.round(this.utilities.reduce((sum, u) => sum + u.memory, 0) / this.utilities.length);
+                
+                document.getElementById('totalServices').textContent = totalServices;
+                document.getElementById('activeServices').textContent = activeServices;
+                document.getElementById('cpuUsage').textContent = `${avgCpu}%`;
+                document.getElementById('memoryUsage').textContent = `${avgMemory}%`;
+            }
+
+            startMonitoring() {
+                // Simulate real-time metrics
+                setInterval(() => {
+                    this.updateMetrics();
+                }, 5000);
+                
+                // Add periodic logs
+                setInterval(() => {
+                    if (Math.random() > 0.8) {
+                        this.generateRandomLog();
+                    }
+                }, 10000);
+            }
+
+            updateMetrics() {
+                // Generate random metrics
+                const cpu = Math.floor(Math.random() * 30) + 10;
+                const memory = Math.floor(Math.random() * 40) + 20;
+                const disk = Math.floor(Math.random() * 20) + 60;
+                const network = Math.floor(Math.random() * 50) + 25;
+                
+                // Update metrics arrays
+                this.metrics.cpu.push(cpu);
+                this.metrics.memory.push(memory);
+                this.metrics.disk.push(disk);
+                this.metrics.network.push(network);
+                
+                // Keep only last 20 data points
+                Object.keys(this.metrics).forEach(key => {
+                    if (this.metrics[key].length > 20) {
+                        this.metrics[key].shift();
+                    }
+                });
+                
+                // Update UI
+                document.getElementById('cpuUsage').textContent = `${cpu}%`;
+                document.getElementById('memoryUsage').textContent = `${memory}%`;
+                
+                // Update charts
+                this.updateCharts();
+            }
+
+            initializeCharts() {
+                // Performance Chart
+                const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+                this.charts.performance = new Chart(performanceCtx, {
+                    type: 'line',
+                    data: {
+                        labels: Array(20).fill('').map((_, i) => `${i * 5}s`),
+                        datasets: [
+                            {
+                                label: 'CPU',
+                                data: this.metrics.cpu,
+                                borderColor: '#ef4444',
+                                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                                tension: 0.4
+                            },
+                            {
+                                label: 'Memory',
+                                data: this.metrics.memory,
+                                borderColor: '#3b82f6',
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                tension: 0.4
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: { color: '#3b82f6' }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                ticks: { color: '#3b82f6' },
+                                grid: { color: 'rgba(156, 163, 175, 0.1)' }
+                            },
+                            x: {
+                                ticks: { color: '#3b82f6', display: false },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+
+                // Resource Chart
+                const resourceCtx = document.getElementById('resourceChart').getContext('2d');
+                this.charts.resource = new Chart(resourceCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['CPU', 'Memory', 'Disk', 'Network'],
+                        datasets: [{
+                            data: [25, 35, 70, 45],
+                            backgroundColor: ['#ef4444', '#3b82f6', '#10b981', '#f59e0b'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { color: '#3b82f6' }
+                            }
+                        }
+                    }
+                });
+
+                // Health Chart
+                const healthCtx = document.getElementById('healthChart').getContext('2d');
+                this.charts.health = new Chart(healthCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Active', 'Warning', 'Error', 'Maintenance'],
+                        datasets: [{
+                            label: 'Services',
+                            data: [5, 1, 0, 0],
+                            backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#f97316'],
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                ticks: { color: '#3b82f6' },
+                                grid: { color: 'rgba(156, 163, 175, 0.1)' }
+                            },
+                            x: {
+                                ticks: { color: '#3b82f6' },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            updateCharts() {
+                if (this.charts.performance) {
+                    this.charts.performance.data.datasets[0].data = this.metrics.cpu;
+                    this.charts.performance.data.datasets[1].data = this.metrics.memory;
+                    this.charts.performance.update();
+                }
+            }
+
+            addLog(level, message) {
+                const timestamp = new Date().toLocaleTimeString();
+                const logEntry = {
+                    timestamp,
+                    level,
+                    message
+                };
+                
+                this.logs.unshift(logEntry);
+                
+                // Keep only last 100 logs
+                if (this.logs.length > 100) {
+                    this.logs.pop();
+                }
+                
+                this.renderLogs();
+            }
+
+            generateRandomLog() {
+                const levels = ['info', 'warning', 'success'];
+                const messages = [
+                    'Health check completed',
+                    'Cache cleared successfully',
+                    'Database backup completed',
+                    'Service restarted',
+                    'New connection established',
+                    'Metrics updated',
+                    'Security scan completed'
+                ];
+                
+                const level = levels[Math.floor(Math.random() * levels.length)];
+                const message = messages[Math.floor(Math.random() * messages.length)];
+                
+                this.addLog(level, message);
+            }
+
+            renderLogs() {
+                const container = document.getElementById('logContainer');
+                const logLevel = document.getElementById('logLevel').value;
+                
+                const filteredLogs = logLevel === 'all' 
+                    ? this.logs 
+                    : this.logs.filter(log => log.level === logLevel);
+                
+                container.innerHTML = filteredLogs.map(log => `
+                    <div class="log-entry log-${log.level}">
+                        <span class="text-gray-500">[${log.timestamp}]</span>
+                        <span class="font-semibold">[${log.level.toUpperCase()}]</span>
+                        <span>${log.message}</span>
+                    </div>
+                `).join('');
+                
+                // Auto-scroll to top
+                container.scrollTop = 0;
+            }
+
+            filterLogs() {
+                this.renderLogs();
+            }
+
+            getStatusClass(status) {
+                const classes = {
+                    'active': 'status-online',
+                    'warning': 'status-warning',
+                    'error': 'status-offline',
+                    'maintenance': 'status-maintenance'
+                };
+                return classes[status] || 'status-offline';
+            }
+
+            getStatusBadgeClass(status) {
+                const classes = {
+                    'active': 'bg-green-600 text-white',
+                    'warning': 'bg-yellow-600 text-white',
+                    'error': 'bg-red-600 text-white',
+                    'maintenance': 'bg-orange-600 text-white'
+                };
+                return classes[status] || 'bg-gray-600 text-white';
+            }
+
+            getUsageColor(usage) {
+                if (usage < 50) return 'bg-green-500';
+                if (usage < 75) return 'bg-yellow-500';
+                if (usage < 90) return 'bg-orange-500';
+                return 'bg-red-500';
+            }
+
+            updateTime() {
+                const now = new Date();
+                document.getElementById('currentTime').textContent = now.toLocaleTimeString();
+            }
+
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `fixed top-20 right-4 px-4 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300 translate-x-full`;
+                
+                const colors = {
+                    success: 'bg-green-600 text-white',
+                    error: 'bg-red-600 text-white',
+                    warning: 'bg-yellow-600 text-white',
+                    info: 'bg-blue-600 text-white'
+                };
+                
+                notification.className += ` ${colors[type]}`;
+                notification.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="${type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'info'}" class="w-5 h-5"></i>
+                        <span>${message}</span>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                lucide.createIcons();
+                
+                setTimeout(() => {
+                    notification.classList.remove('translate-x-full');
+                    notification.classList.add('translate-x-0');
+                }, 100);
+                
+                setTimeout(() => {
+                    notification.classList.add('translate-x-full');
+                    setTimeout(() => notification.remove(), 300);
+                }, 3000);
+            }
+        }
+
+        // Utility Details Modal
+        function showUtilityDetails(utilityId) {
+            const system = window.utilitiesSystem;
+            const utility = system.utilities.find(u => u.id === utilityId);
+            
+            if (!utility) return;
+            
+            document.getElementById('modalUtilityName').textContent = utility.name;
+            
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Basic Information -->
+                    <div>
+                        <h4 class="font-semibold mb-4">Basic Information</h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Version:</span>
+                                <span>${utility.version}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Category:</span>
+                                <span>${utility.category}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Status:</span>
+                                <span class="px-2 py-1 rounded text-xs ${system.getStatusBadgeClass(utility.status)}">${utility.status}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Uptime:</span>
+                                <span>${utility.uptime}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Performance Metrics -->
+                    <div>
+                        <h4 class="font-semibold mb-4">Performance Metrics</h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">CPU Usage:</span>
+                                <span>${utility.cpu}%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Memory Usage:</span>
+                                <span>${utility.memory}%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Connections:</span>
+                                <span>${utility.connections}/${utility.maxConnections}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Detailed Metrics -->
+                    <div class="lg:col-span-2">
+                        <h4 class="font-semibold mb-4">Detailed Metrics</h4>
+                        <div class="grid grid-cols-3 gap-4">
+                            ${Object.entries(utility.metrics).map(([key, value]) => `
+                                <div class="bg-gray-800 rounded-lg p-4 text-center">
+                                    <div class="text-2xl font-bold">${value}</div>
+                                    <div class="text-sm text-gray-400 capitalize">${key.replace(/([A-Z])/g, ' $1').trim()}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('utilityModal').classList.remove('hidden');
+            setTimeout(() => lucide.createIcons(), 100);
+        }
+
+        function closeUtilityModal() {
+            document.getElementById('utilityModal').classList.add('hidden');
+        }
+
+        function refreshAllUtilities() {
+            const system = window.utilitiesSystem;
+            system.showNotification('Refreshing all utilities...', 'info');
+            
+            setTimeout(() => {
+                system.loadUtilities();
+                system.showNotification('All utilities refreshed successfully', 'success');
+            }, 1000);
+        }
+
+        function clearLogs() {
+            const system = window.utilitiesSystem;
+            system.logs = [];
+            system.renderLogs();
+            system.addLog('info', 'Logs cleared by user');
+        }
+
+        function exportLogs() {
+            const system = window.utilitiesSystem;
+            const logText = system.logs.map(log => 
+                `[${log.timestamp}] [${log.level.toUpperCase()}] ${log.message}`
+            ).join('\n');
+            
+            const blob = new Blob([logText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `system-logs-${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            
+            system.showNotification('Logs exported successfully', 'success');
+        }
+
+        function restartService() {
+            const system = window.utilitiesSystem;
+            system.showNotification('Restarting service...', 'info');
+            
+            setTimeout(() => {
+                system.addLog('success', 'Service restarted successfully');
+                system.showNotification('Service restarted successfully', 'success');
+            }, 2000);
+        }
+
+        function clearCache() {
+            const system = window.utilitiesSystem;
+            system.showNotification('Clearing cache...', 'info');
+            
+            setTimeout(() => {
+                system.addLog('success', 'Cache cleared successfully');
+                system.showNotification('Cache cleared successfully', 'success');
+            }, 1500);
+        }
+
+        function runDiagnostics() {
+            const system = window.utilitiesSystem;
+            system.showNotification('Running diagnostics...', 'info');
+            
+            setTimeout(() => {
+                system.addLog('success', 'Diagnostics completed - All systems operational');
+                system.showNotification('Diagnostics completed successfully', 'success');
+            }, 3000);
+        }
+
+        function backupSystem() {
+            const system = window.utilitiesSystem;
+            system.showNotification('Creating system backup...', 'info');
+            
+            setTimeout(() => {
+                system.addLog('success', 'System backup completed successfully');
+                system.showNotification('System backup completed successfully', 'success');
+            }, 4000);
+        }
+
+        // Initialize the system when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            window.utilitiesSystem = new UtilitiesDashboard();
+        });
+    </script>
+</body>
+</html>

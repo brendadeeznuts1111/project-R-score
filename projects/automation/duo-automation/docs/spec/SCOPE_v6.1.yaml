@@ -1,0 +1,35 @@
+# [DUOPLUS][SPEC][SCOPE][FEAT][META:{release:gating}] [BUN:6.1-NATIVE]
+
+release_criteria:
+  mandatory_standards:
+    - PCI DSS v4.0
+    - GDPR Article 32
+    - AML5
+    - SOC2 Type II
+  explicit_out_of_scope:
+    - ISO 27001 (Q2 2025)
+    - FedRAMP (Q3 2025)
+  compliance_requirements:
+    pci_gdpr_mandatory: true
+    tag: "[DUOPLUS][COMPLIANCE][PCI][GDPR][REQUIRED]"
+
+features_gated_by_tags:
+  "[DUO][CLI][INSPECT]":
+    implemented: false
+    acceptance: "Real data, not simulated"
+    tag: "[DUO][CLI][INSPECT][FEAT][CRITICAL][#REF:CLI-INSPECT-001]"
+
+  "[DUO][API][INSPECTOR][QUERY]":
+    implemented: false
+    endpoint: "POST /api/inspector/query"
+    schema: "inspector-query.v1.json"
+    tag: "[DUO][API][INSPECTOR][FEAT][CRITICAL][#REF:API-QUERY-002]"
+
+operational_constraints:
+  cli_fetcher:
+    mode: "sandboxed"
+    allow_list_required: true
+    tag: "[DUOPLUS][CLI][SANDBOX][FEAT][#REF:ALLOW-LIST]"
+  dashboard_assets:
+    bundle_external_assets: true
+    tag: "[DUOPLUS][ASSETS][BUNDLE][REQUIRED]"

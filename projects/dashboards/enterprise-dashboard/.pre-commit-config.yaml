@@ -1,0 +1,47 @@
+# Pre-commit hooks for enterprise-dashboard
+# Install: pip install pre-commit && pre-commit install
+# Run all: pre-commit run --all-files
+
+repos:
+  # Local hooks using Bun
+  - repo: local
+    hooks:
+      - id: colors-lint
+        name: Lint syntax-colors TOML schema
+        entry: bun scripts/colors-lint.ts
+        language: system
+        files: \.toml$
+        pass_filenames: false
+        stages: [commit, push]
+
+      - id: typecheck
+        name: TypeScript type check
+        entry: bun run typecheck
+        language: system
+        files: \.(ts|tsx)$
+        pass_filenames: false
+        stages: [commit]
+
+      - id: test
+        name: Run tests
+        entry: bun test
+        language: system
+        files: \.(ts|tsx)$
+        pass_filenames: false
+        stages: [push]
+
+  # Standard pre-commit hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: \.md$
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-toml
+      - id: check-added-large-files
+        args: ['--maxkb=500']
+      - id: detect-private-key
+      - id: no-commit-to-branch
+        args: ['--branch', 'main', '--branch', 'master']

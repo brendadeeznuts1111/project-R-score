@@ -1,0 +1,16 @@
+{
+  "timestamp": 1768562744477,
+  "filterUsed": true,
+  "filterType": "string",
+  "excludeUsed": false,
+  "fieldUsed": false,
+  "typeUsed": false,
+  "redactionUsed": true,
+  "processingTime": 150.3512499999997,
+  "originalSize": 1374,
+  "filteredSize": 1882,
+  "matchedCount": 11,
+  "totalCount": 25,
+  "userAgent": "cli",
+  "anonymousId": "09c518b911d6"
+}

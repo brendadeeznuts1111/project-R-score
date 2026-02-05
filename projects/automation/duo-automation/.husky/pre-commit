@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# .husky/pre-commit
+# [DUOPLUS][HOOK][ENFORCE][CRITICAL][#REF:HOOK-PRECOMMIT][BUN:6.1-NATIVE]
+
+echo "🚫 Enforcing NO PURPLE AI SLOP policy..."
+
+# ═══════════════════════════════════════════════════════════
+# E-027: Toolchain Purity Check - Prevent npm in Bun ecosystem
+# ═══════════════════════════════════════════════════════════
+echo "🔧 [E-027] Checking toolchain purity..."
+
+# Check for npm publish in package.json scripts (excluding prepublishOnly which is a lifecycle hook)
+if grep -E '"(package|publish)".*npm (publish|pack)' package.json 2>/dev/null; then
+  echo "❌ [E-027] Found 'npm publish/pack' in Bun-native ecosystem"
+  echo "→ Use 'bun publish' or 'bun pm pack' instead"
+  echo "→ Docs: https://bun.sh/docs/cli/publish"
+  exit 1
+fi
+
+# Check for npm commands in shell scripts (excluding node_modules)
+if grep -r "npm publish\|npm pack" . --include="*.sh" --exclude-dir=node_modules 2>/dev/null; then
+  echo "❌ [E-027] Found 'npm publish/pack' in shell scripts"
+  echo "→ Use 'bun publish' or 'bun pm pack' instead"
+  exit 1
+fi
+
+echo "✅ [E-027] Toolchain purity verified (Bun-native)"
+
+# ═══════════════════════════════════════════════════════════
+# E-028: Frozen Lockfile Check - Ensure bun.lockb exists
+# ═══════════════════════════════════════════════════════════
+echo "🔒 [E-028] Checking frozen lockfile..."
+
+if [ ! -f "bun.lockb" ]; then
+  echo "❌ [E-028] bun.lockb not found"
+  echo "→ Run 'bun install' to generate lockfile"
+  echo "→ CI requires --frozen-lockfile for reproducible builds"
+  exit 1
+fi
+
+echo "✅ [E-028] Lockfile exists (bun.lockb)"
+
+# ═══════════════════════════════════════════════════════════
+# Run DuoPlus Tag Enforcement v6.1
+# ═══════════════════════════════════════════════════════════
+echo "🔒 Running DuoPlus Tag Enforcement..."
+ENFORCEMENT_STAGE=pre-commit bun run scripts/git/tag-enforcer-v6.ts
+
+echo "✅ Purple-free repo and tag compliance verified"

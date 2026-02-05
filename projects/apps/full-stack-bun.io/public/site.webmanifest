@@ -1,0 +1,16 @@
+{
+  "name": "Bun 1.3 Developer Experience Showcase",
+  "short_name": "Bun DX Lab",
+  "description": "Interactive playground for Bun 1.3's testing and development features",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1e3a8a",
+  "theme_color": "#161b22",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

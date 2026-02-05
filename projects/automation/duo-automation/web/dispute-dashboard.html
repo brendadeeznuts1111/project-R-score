@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DuoPlus Dispute Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes pulse-red {
+            0%, 100% { background-color: rgb(239 68 68); }
+            50% { background-color: rgb(220 38 38); }
+        }
+        @keyframes pulse-yellow {
+            0%, 100% { background-color: rgb(245 158 11); }
+            50% { background-color: rgb(217 119 6); }
+        }
+        .pulse-critical { animation: pulse-red 2s infinite; }
+        .pulse-warning { animation: pulse-yellow 2s infinite; }
+        .dispute-row { transition: all 0.3s ease; }
+        .dispute-row:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .timeline-step { transition: all 0.3s ease; }
+        .timeline-step.active { border-left: 4px solid #10b981; background: #3b82f6; }
+        .timeline-step.completed { border-left: 4px solid #3b82f6; background: #3b82f6; }
+        .quick-action-card { transition: all 0.3s ease; }
+        .quick-action-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <!-- Header -->
+    <header class="bg-gray-800 border-b border-gray-700">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <i class="fas fa-gavel text-blue-500 text-2xl"></i>
+                    <div>
+                        <h1 class="text-xl font-bold">DuoPlus Dispute Dashboard</h1>
+                        <p class="text-sm text-gray-400">Real-time dispute resolution tracking</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="lastUpdate" class="text-sm text-gray-400">Loading...</span>
+                    <button onclick="refreshDashboard()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
+                        <i class="fas fa-sync-alt mr-2"></i>Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- System Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-400">Total Disputes</p>
+                        <p id="totalDisputes" class="text-3xl font-bold text-blue-500">1,247</p>
+                    </div>
+                    <i class="fas fa-folder-open text-3xl text-blue-500"></i>
+                </div>
+            </div>
+            
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-400">Active Disputes</p>
+                        <p id="activeDisputes" class="text-3xl font-bold text-yellow-500">89</p>
+                    </div>
+                    <i class="fas fa-clock text-3xl text-yellow-500"></i>
+                </div>
+            </div>
+            
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-400">Resolved Today</p>
+                        <p id="resolvedToday" class="text-3xl font-bold text-green-500">23</p>
+                    </div>
+                    <i class="fas fa-check-circle text-3xl text-green-500"></i>
+                </div>
+            </div>
+            
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-400">Avg Resolution</p>
+                        <p id="avgResolution" class="text-3xl font-bold text-purple-500">2.4d</p>
+                    </div>
+                    <i class="fas fa-hourglass-half text-3xl text-purple-500"></i>
+                </div>
+            </div>
+            
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-400">Refund Rate</p>
+                        <p id="refundRate" class="text-3xl font-bold text-cyan-500">67%</p>
+                    </div>
+                    <i class="fas fa-percentage text-3xl text-cyan-500"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Insights Section -->
+        <div id="aiInsights" class="mb-8 hidden">
+            <div class="bg-gradient-to-r from-blue-900 to-purple-900 rounded-lg p-6 border border-blue-700">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold flex items-center">
+                        <i class="fas fa-brain text-blue-400 mr-3"></i>
+                        AI-Powered Insights
+                    </h2>
+                    <div class="flex items-center space-x-4">
+                        <span id="aiRiskLevel" class="px-3 py-1 rounded-full text-sm font-semibold"></span>
+                        <span class="text-sm text-gray-300">
+                            <i class="fas fa-chart-line mr-1"></i>
+                            <span id="aiConfidence">89%</span> confidence
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Predictions -->
+                    <div class="bg-black bg-opacity-30 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold mb-3 text-blue-300">
+                            <i class="fas fa-crystal-ball mr-2"></i>Predictions
+                        </h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Expected Volume</span>
+                                <span id="predictedVolume" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Trend</span>
+                                <span class="text-green-400">
+                                    <i class="fas fa-arrow-up mr-1"></i>+20%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Anomalies -->
+                    <div class="bg-black bg-opacity-30 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold mb-3 text-yellow-300">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>Anomalies
+                        </h3>
+                        <div id="anomalyList" class="space-y-2">
+                            <!-- Anomalies will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Recommendations -->
+                    <div class="bg-black bg-opacity-30 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold mb-3 text-green-300">
+                            <i class="fas fa-lightbulb mr-2"></i>Actions
+                        </h3>
+                        <ul id="recommendedActions" class="space-y-1 text-sm">
+                            <!-- Recommendations will be populated here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scope Information Section -->
+        <div id="scopeInfo" class="mb-8 hidden">
+            <div class="bg-gradient-to-r from-green-900 to-teal-900 rounded-lg p-6 border border-green-700">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold flex items-center">
+                        <i class="fas fa-crosshairs text-green-400 mr-3"></i>
+                        Advanced Scope Configuration
+                    </h2>
+                    <div class="flex items-center space-x-4">
+                        <span id="scopeBadge" class="px-3 py-1 rounded-full text-sm font-semibold"></span>
+                        <span id="environmentBadge" class="px-3 py-1 rounded-full text-sm font-semibold"></span>
+                        <span id="validationBadge" class="px-3 py-1 rounded-full text-sm font-semibold"></span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Environment Info -->
+                    <div class="bg-black bg-opacity-30 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold mb-3 text-green-300">
+                            <i class="fas fa-server mr-2"></i>Environment
+                        </h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Domain</span>
+                                <span id="scopeDomain" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Platform</span>
+                                <span id="scopePlatform" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Scope</span>
+                                <span id="scopeType" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Path Prefix</span>
+                                <span id="pathPrefix" class="font-bold text-white text-xs">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Platform Storage -->
+                    <div class="bg-black bg-opacity-30 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold mb-3 text-blue-300">
+                            <i class="fas fa-database mr-2"></i>Storage & Security
+                        </h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Storage Type</span>
+                                <span id="storageType" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Encryption</span>
+                                <span id="encryptionType" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Isolation</span>
+                                <span id="isolationType" class="font-bold text-white text-xs">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Persist Flag</span>
+                                <span id="persistFlag" class="font-bold text-white">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Connection Pool -->
+                    <div class="bg-black bg-opacity-30 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold mb-3 text-purple-300">
+                            <i class="fas fa-network-wired mr-2"></i>Connections
+                        </h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Max Connections</span>
+                                <span id="maxConnections" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Keep Alive</span>
+                                <span id="keepAlive" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Timeout</span>
+                                <span id="connectionTimeout" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Platform Scope</span>
+                                <span id="platformScope" class="font-bold text-white">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Capabilities -->
+                    <div class="bg-black bg-opacity-30 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold mb-3 text-yellow-300">
+                            <i class="fas fa-brain mr-2"></i>AI Features
+                        </h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">AI Enabled</span>
+                                <span id="aiEnabled" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">ML Models</span>
+                                <span id="mlModelCount" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Real-time</span>
+                                <span id="realTimeEnabled" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Enterprise</span>
+                                <span id="enterpriseSupport" class="font-bold text-white">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Features & Validation -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <!-- Security Features -->
+                    <div class="bg-black bg-opacity-30 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold mb-3 text-cyan-300">
+                            <i class="fas fa-shield-alt mr-2"></i>Security Features
+                        </h3>
+                        <div class="space-y-3">
+                            <div>
+                                <span class="text-gray-300 text-xs">Available:</span>
+                                <div id="securityAvailable" class="text-xs text-green-400 mt-1">
+                                    <!-- Security features will be populated here -->
+                                </div>
+                            </div>
+                            <div>
+                                <span class="text-gray-300 text-xs">Recommended:</span>
+                                <div id="securityRecommended" class="text-xs text-blue-400 mt-1">
+                                    <!-- Recommended features will be populated here -->
+                                </div>
+                            </div>
+                            <div>
+                                <span class="text-gray-300 text-xs">Limitations:</span>
+                                <div id="securityLimitations" class="text-xs text-red-400 mt-1">
+                                    <!-- Limitations will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Validation Results -->
+                    <div class="bg-black bg-opacity-30 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold mb-3 text-orange-300">
+                            <i class="fas fa-check-circle mr-2"></i>Validation Results
+                        </h3>
+                        <div class="space-y-3">
+                            <div>
+                                <span class="text-gray-300 text-xs">Status:</span>
+                                <div id="validationStatus" class="text-xs mt-1">
+                                    <!-- Validation status will be populated here -->
+                                </div>
+                            </div>
+                            <div>
+                                <span class="text-gray-300 text-xs">Errors:</span>
+                                <div id="validationErrors" class="text-xs text-red-400 mt-1">
+                                    <!-- Errors will be populated here -->
+                                </div>
+                            </div>
+                            <div>
+                                <span class="text-gray-300 text-xs">Warnings:</span>
+                                <div id="validationWarnings" class="text-xs text-yellow-400 mt-1">
+                                    <!-- Warnings will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Domain Mappings -->
+                <div class="mt-6">
+                    <h3 class="text-lg font-semibold mb-3 text-indigo-300">
+                        <i class="fas fa-globe mr-2"></i>Domain Mappings
+                    </h3>
+                    <div id="domainMappingsList" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <!-- Domain mappings will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Metrics Section -->
+        <div id="securityMetrics" class="mb-8 hidden">
+            <div class="bg-gradient-to-r from-red-900 to-orange-900 rounded-lg p-6 border border-red-700">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold flex items-center">
+                        <i class="fas fa-shield-alt text-red-400 mr-3"></i>
+                        Security Metrics & Compliance
+                    </h2>
+                    <div class="flex items-center space-x-4">
+                        <span id="securityScore" class="px-3 py-1 rounded-full text-sm font-semibold"></span>
+                        <span id="riskLevel" class="px-3 py-1 rounded-full text-sm font-semibold"></span>
+                        <span id="complianceStatus" class="px-3 py-1 rounded-full text-sm font-semibold"></span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                    <!-- Authentication -->
+                    <div class="bg-black bg-opacity-30 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold mb-3 text-blue-300">
+                            <i class="fas fa-user-lock mr-2"></i>Authentication
+                        </h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">MFA</span>
+                                <span id="authMFA" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Password Policy</span>
+                                <span id="authPassword" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Session Mgmt</span>
+                                <span id="authSession" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Score</span>
+                                <span id="authScore" class="font-bold text-white">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Authorization -->
+                    <div class="bg-black bg-opacity-30 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold mb-3 text-green-300">
+                            <i class="fas fa-user-shield mr-2"></i>Authorization
+                        </h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">RBAC</span>
+                                <span id="authzRBAC" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Rate Limiting</span>
+                                <span id="authzRateLimit" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Access Control</span>
+                                <span id="authzAccess" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Score</span>
+                                <span id="authzScore" class="font-bold text-white">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Encryption -->
+                    <div class="bg-black bg-opacity-30 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold mb-3 text-purple-300">
+                            <i class="fas fa-lock mr-2"></i>Encryption
+                        </h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Data at Rest</span>
+                                <span id="encryptRest" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Data in Transit</span>
+                                <span id="encryptTransit" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Key Management</span>
+                                <span id="encryptKeys" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Score</span>
+                                <span id="encryptScore" class="font-bold text-white">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Monitoring -->
+                    <div class="bg-black bg-opacity-30 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold mb-3 text-yellow-300">
+                            <i class="fas fa-eye mr-2"></i>Monitoring
+                        </h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Audit Logging</span>
+                                <span id="monitorAudit" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Security Monitor</span>
+                                <span id="monitorSecurity" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Alert System</span>
+                                <span id="monitorAlerts" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Score</span>
+                                <span id="monitorScore" class="font-bold text-white">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Compliance -->
+                    <div class="bg-black bg-opacity-30 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold mb-3 text-cyan-300">
+                            <i class="fas fa-certificate mr-2"></i>Compliance
+                        </h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">GDPR</span>
+                                <span id="complianceGDPR" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">SOC2</span>
+                                <span id="complianceSOC2" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Audit Trail</span>
+                                <span id="complianceAudit" class="font-bold text-white">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-300">Score</span>
+                                <span id="complianceScore" class="font-bold text-white">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Trends -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                    <!-- Improving -->
+                    <div class="bg-black bg-opacity-30 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold mb-3 text-green-300">
+                            <i class="fas fa-arrow-up mr-2"></i>Improving
+                        </h3>
+                        <div id="improvingList" class="space-y-1">
+                            <!-- Improving items will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Stable -->
+                    <div class="bg-black bg-opacity-30 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold mb-3 text-yellow-300">
+                            <i class="fas fa-minus mr-2"></i>Stable
+                        </h3>
+                        <div id="stableList" class="space-y-1">
+                            <!-- Stable items will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Degrading -->
+                    <div class="bg-black bg-opacity-30 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold mb-3 text-red-300">
+                            <i class="fas fa-arrow-down mr-2"></i>Degrading
+                        </h3>
+                        <div id="degradingList" class="space-y-1">
+                            <!-- Degrading items will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Metrics Table -->
+                <div class="mt-6">
+                    <h3 class="text-lg font-semibold mb-3 text-orange-300">
+                        <i class="fas fa-table mr-2"></i>Detailed Security Metrics
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-red-700">
+                                    <th class="text-left py-2 px-3">Category</th>
+                                    <th class="text-left py-2 px-3">Topic</th>
+                                    <th class="text-left py-2 px-3">Status</th>
+                                    <th class="text-left py-2 px-3">Score</th>
+                                    <th class="text-left py-2 px-3">Risk</th>
+                                    <th class="text-left py-2 px-3">Compliance</th>
+                                    <th class="text-left py-2 px-3">Last Verified</th>
+                                </tr>
+                            </thead>
+                            <tbody id="securityMetricsTable">
+                                <!-- Security metrics will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dispute Matrix Table -->
+        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700 mb-8">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fas fa-table mr-2 text-blue-500"></i>
+                Dispute Resolution Matrix
+            </h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-gray-700">
+                            <th class="text-left py-3 px-4">Status</th>
+                            <th class="text-left py-3 px-4">Customer Actions</th>
+                            <th class="text-left py-3 px-4">Merchant Actions</th>
+                            <th class="text-left py-3 px-4">System Actions</th>
+                            <th class="text-left py-3 px-4">Timeline</th>
+                            <th class="text-left py-3 px-4">Deep Link</th>
+                        </tr>
+                    </thead>
+                    <tbody id="disputeMatrix">
+                        <!-- Matrix rows will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-bolt mr-2 text-yellow-500"></i>
+                    Quick Actions
+                </h2>
+                <div id="quickActions" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Quick action cards will be populated here -->
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-history mr-2 text-green-500"></i>
+                    Recent Activity
+                </h2>
+                <div id="recentActivity" class="space-y-3">
+                    <!-- Activity items will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Timeline Demo -->
+        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fas fa-route mr-2 text-purple-500"></i>
+                Dispute Status Timeline
+            </h2>
+            <div class="mb-4">
+                <select id="statusSelect" class="bg-gray-700 text-white px-4 py-2 rounded-lg" onchange="updateTimeline()">
+                    <option value="DISPUTE_SUBMITTED">🔴 Dispute Submitted</option>
+                    <option value="MERCHANT_REVIEW">🟡 Merchant Review</option>
+                    <option value="UNDER_INVESTIGATION">🔵 Under Investigation</option>
+                    <option value="VENMO_ESCALATION">🟣 Venmo Escalation</option>
+                    <option value="RESOLVED_REFUND">✅ Resolved - Refund</option>
+                    <option value="RESOLVED_DENIED">❌ Resolved - Denied</option>
+                </select>
+            </div>
+            <div id="statusTimeline" class="space-y-3">
+                <!-- Timeline steps will be populated here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Deep Link Modal -->
+    <div id="deepLinkModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 class="text-xl font-bold mb-4">Dispute Deep Link</h3>
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">Share Link:</label>
+                <div class="flex">
+                    <input type="text" id="shareLink" class="flex-1 bg-gray-700 text-white px-3 py-2 rounded-l-lg" readonly>
+                    <button onclick="copyShareLink()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-r-lg">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">QR Code:</label>
+                <div id="qrCode" class="bg-white p-4 rounded-lg flex justify-center">
+                    <!-- QR code will be generated here -->
+                </div>
+            </div>
+            <div class="flex justify-end space-x-2">
+                <button onclick="closeDeepLinkModal()" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg">
+                    Close
+                </button>
+                <button onclick="openDeepLink()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg">
+                    Open in App
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let dashboardData = null;
+        let currentDeepLink = '';
+
+        async function fetchDashboardData() {
+            try {
+                // Mock data - in real implementation, this would fetch from your API
+                dashboardData = {
+                    matrix: [
+                        {
+                            status: 'DISPUTE_SUBMITTED',
+                            icon: '🔴',
+                            color: '#FF4444',
+                            customerActions: ['Upload evidence', 'Describe issue', 'Choose resolution'],
+                            merchantActions: ['Notified via email/app', '48h to respond'],
+                            systemActions: ['Verify eligibility', 'Freeze funds', 'Create chat channel'],
+                            timeline: '0-2 hours',
+                            deepLink: 'duoplus://dispute/DSP-12345/submitted'
+                        },
+                        {
+                            status: 'MERCHANT_REVIEW',
+                            icon: '🟡',
+                            color: '#FFAA44',
+                            customerActions: ['Add more evidence', 'Message merchant', 'Request escalation'],
+                            merchantActions: ['Accept/Deny fault', 'Upload counter-evidence', 'Propose solution'],
+                            systemActions: ['Moderate chat', 'Escalate if no response'],
+                            timeline: '2-48 hours',
+                            deepLink: 'duoplus://dispute/DSP-12345/merchant-review'
+                        },
+                        {
+                            status: 'UNDER_INVESTIGATION',
+                            icon: '🔵',
+                            color: '#4444FF',
+                            customerActions: ['Cooperate with requests', 'Respond to questions'],
+                            merchantActions: ['Provide transaction logs', 'Submit proof of delivery'],
+                            systemActions: ['AI evidence analysis', 'Manual review', 'Risk assessment'],
+                            timeline: '1-5 days',
+                            deepLink: 'duoplus://dispute/DSP-12345/investigation'
+                        },
+                        {
+                            status: 'VENMO_ESCALATION',
+                            icon: '🟣',
+                            color: '#AA44FF',
+                            customerActions: ['Wait for decision', 'Check Venmo case'],
+                            merchantActions: ['Cooperate with Venmo', 'Submit to Venmo portal'],
+                            systemActions: ['Forward all evidence', 'Monitor Venmo status', 'Sync resolutions'],
+                            timeline: '5-10 days',
+                            deepLink: 'duoplus://dispute/DSP-12345/venmo-case/V987654'
+                        },
+                        {
+                            status: 'RESOLVED_REFUND',
+                            icon: '✅',
+                            color: '#44FF44',
+                            customerActions: ['Receive funds', 'Rate resolution', 'Download receipt'],
+                            merchantActions: ['Accept decision', 'Pay refund fee', 'Update processes'],
+                            systemActions: ['Process refund', 'Update ledgers', 'Generate report'],
+                            timeline: 'Instant',
+                            deepLink: 'duoplus://dispute/DSP-12345/resolved/refund'
+                        },
+                        {
+                            status: 'RESOLVED_DENIED',
+                            icon: '❌',
+                            color: '#FF4444',
+                            customerActions: ['Accept decision', 'Appeal if eligible', 'Leave feedback'],
+                            merchantActions: ['Business as usual', 'No penalty'],
+                            systemActions: ['Close case', 'Release funds', 'Log for compliance'],
+                            timeline: 'Instant',
+                            deepLink: 'duoplus://dispute/DSP-12345/resolved/denied'
+                        },
+                        {
+                            status: 'SUSPENDED_FRAUD',
+                            icon: '⚠️',
+                            color: '#FF8844',
+                            customerActions: ['Verify identity', 'Submit documentation'],
+                            merchantActions: [],
+                            systemActions: ['Freeze all accounts', 'Law enforcement notify', 'Full investigation'],
+                            timeline: '14-30 days',
+                            deepLink: 'duoplus://dispute/DSP-12345/suspected-fraud'
+                        }
+                    ],
+                    quickActions: [
+                        { title: 'Submit New Dispute', description: 'For recent transaction', deepLink: 'duoplus://dispute/new?type=qr', icon: '➕', category: 'customer' },
+                        { title: 'Upload Evidence', description: 'Add photos/documents', deepLink: 'duoplus://dispute/upload', icon: '📤', category: 'customer' },
+                        { title: 'Message Merchant', description: 'Secure chat channel', deepLink: 'duoplus://dispute/chat', icon: '💬', category: 'customer' },
+                        { title: 'Respond to Dispute', description: 'Merchant response required', deepLink: 'duoplus://dispute/respond', icon: '📝', category: 'merchant' },
+                        { title: 'Upload Counter-Evidence', description: 'Provide proof of service', deepLink: 'duoplus://dispute/counter-evidence', icon: '📋', category: 'merchant' },
+                        { title: 'Check Venmo Status', description: 'View Venmo case', deepLink: 'duoplus://dispute/venmo-status', icon: '🔍', category: 'admin' },
+                        { title: 'Download Report', description: 'PDF with all details', deepLink: 'duoplus://dispute/report', icon: '📊', category: 'admin' },
+                        { title: 'Escalate to Review', description: 'Senior review required', deepLink: 'duoplus://dispute/escalate', icon: '⚠️', category: 'admin' }
+                    ],
+                    systemStats: {
+                        totalDisputes: 1247,
+                        activeDisputes: 89,
+                        resolvedToday: 23,
+                        avgResolutionTime: '2.4 days',
+                        refundRate: '67%'
+                    },
+                    recentActivity: [
+                        { id: 'DSP-12345', type: 'dispute_submitted', description: 'New dispute against @coffee-shop', timestamp: new Date(Date.now() - 5 * 60 * 1000), deepLink: 'duoplus://dispute/DSP-12345' },
+                        { id: 'DSP-12344', type: 'merchant_responded', description: '@pizza-place responded to dispute', timestamp: new Date(Date.now() - 15 * 60 * 1000), deepLink: 'duoplus://dispute/DSP-12344' },
+                        { id: 'DSP-12343', type: 'refund_issued', description: 'Refund processed for $45.00', timestamp: new Date(Date.now() - 30 * 60 * 1000), deepLink: 'duoplus://dispute/DSP-12343' },
+                        { id: 'DSP-12342', type: 'evidence_uploaded', description: 'Customer uploaded 3 photos', timestamp: new Date(Date.now() - 45 * 60 * 1000), deepLink: 'duoplus://dispute/DSP-12342' },
+                        { id: 'DSP-12341', type: 'venmo_escalated', description: 'Case escalated to Venmo', timestamp: new Date(Date.now() - 60 * 60 * 1000), deepLink: 'duoplus://dispute/DSP-12341' }
+                    ]
+                };
+                
+                return dashboardData;
+            } catch (error) {
+                console.error('Failed to fetch dashboard data:', error);
+                return null;
+            }
+        }
+
+        function updateDashboard(data) {
+            if (!data) return;
+
+            // Update system stats
+            document.getElementById('totalDisputes').textContent = data.systemStats.totalDisputes.toLocaleString();
+            document.getElementById('activeDisputes').textContent = data.systemStats.activeDisputes.toLocaleString();
+            document.getElementById('resolvedToday').textContent = data.systemStats.resolvedToday.toLocaleString();
+            document.getElementById('avgResolution').textContent = data.systemStats.avgResolutionTime;
+            document.getElementById('refundRate').textContent = data.systemStats.refundRate;
+
+            // Update dispute matrix
+            updateDisputeMatrix(data.matrix);
+
+            // Update quick actions
+            updateQuickActions(data.quickActions);
+
+            // Update recent activity
+            updateRecentActivity(data.recentActivity);
+
+            // Update AI insights if available
+            if (data.aiInsights) {
+                updateAIInsights(data.aiInsights);
+            }
+
+            // Update scope information if available
+            if (data.scopeInfo) {
+                updateScopeInfo(data.scopeInfo);
+            }
+
+            // Update security metrics if available
+            if (data.securityMetrics) {
+                updateSecurityMetrics(data.securityMetrics);
+            }
+        }
+
+        function updateSecurityMetrics(securityMetrics) {
+            const securitySection = document.getElementById('securityMetrics');
+            securitySection.classList.remove('hidden');
+
+            // Update overall security score
+            const securityScore = document.getElementById('securityScore');
+            securityScore.textContent = `${securityMetrics.overallScore}/100`;
+            securityScore.className = 'px-3 py-1 rounded-full text-sm font-semibold';
+            
+            if (securityMetrics.overallScore >= 90) {
+                securityScore.classList.add('bg-green-600', 'text-white');
+            } else if (securityMetrics.overallScore >= 70) {
+                securityScore.classList.add('bg-blue-600', 'text-white');
+            } else if (securityMetrics.overallScore >= 40) {
+                securityScore.classList.add('bg-yellow-600', 'text-black');
+            } else {
+                securityScore.classList.add('bg-red-600', 'text-white');
+            }
+
+            // Update risk level
+            const riskLevel = document.getElementById('riskLevel');
+            riskLevel.textContent = securityMetrics.riskLevel;
+            riskLevel.className = 'px-3 py-1 rounded-full text-sm font-semibold';
+            
+            switch (securityMetrics.riskLevel) {
+                case 'CRITICAL':
+                    riskLevel.classList.add('bg-red-600', 'text-white');
+                    break;
+                case 'HIGH':
+                    riskLevel.classList.add('bg-orange-600', 'text-white');
+                    break;
+                case 'MEDIUM':
+                    riskLevel.classList.add('bg-yellow-600', 'text-black');
+                    break;
+                case 'LOW':
+                    riskLevel.classList.add('bg-green-600', 'text-white');
+                    break;
+            }
+
+            // Update compliance status
+            const complianceStatus = document.getElementById('complianceStatus');
+            complianceStatus.textContent = securityMetrics.complianceStatus.replace('_', ' ');
+            complianceStatus.className = 'px-3 py-1 rounded-full text-sm font-semibold';
+            
+            switch (securityMetrics.complianceStatus) {
+                case 'COMPLIANT':
+                    complianceStatus.classList.add('bg-green-600', 'text-white');
+                    break;
+                case 'PARTIAL':
+                    complianceStatus.classList.add('bg-yellow-600', 'text-black');
+                    break;
+                case 'NON_COMPLIANT':
+                    complianceStatus.classList.add('bg-red-600', 'text-white');
+                    break;
+            }
+
+            // Update category scores
+            updateCategoryScores(securityMetrics.categories);
+
+            // Update trends
+            updateSecurityTrends(securityMetrics.trends);
+
+            // Update detailed metrics table
+            updateSecurityMetricsTable(securityMetrics.metrics);
+        }
+
+        function updateCategoryScores(categories) {
+            // Authentication
+            const authMetrics = categories.authentication;
+            document.getElementById('authMFA').textContent = getMetricStatus(authMetrics.find(m => m.id === 'MFA_STATUS'));
+            document.getElementById('authPassword').textContent = getMetricStatus(authMetrics.find(m => m.id === 'PWD_POLICY'));
+            document.getElementById('authSession').textContent = getMetricStatus(authMetrics.find(m => m.id === 'SESSION_MGMT'));
+            document.getElementById('authScore').textContent = getCategoryScore(authMetrics);
+
+            // Authorization
+            const authzMetrics = categories.authorization;
+            document.getElementById('authzRBAC').textContent = getMetricStatus(authzMetrics.find(m => m.id === 'RBAC_STATUS'));
+            document.getElementById('authzRateLimit').textContent = getMetricStatus(authzMetrics.find(m => m.id === 'RATE_LIMIT'));
+            document.getElementById('authzAccess').textContent = 'ENABLED'; // Simplified
+            document.getElementById('authzScore').textContent = getCategoryScore(authzMetrics);
+
+            // Encryption
+            const encryptMetrics = categories.encryption;
+            document.getElementById('encryptRest').textContent = getMetricStatus(encryptMetrics.find(m => m.id === 'ENCRYPTION_REST'));
+            document.getElementById('encryptTransit').textContent = getMetricStatus(encryptMetrics.find(m => m.id === 'ENCRYPTION_TRANSIT'));
+            document.getElementById('encryptKeys').textContent = 'ENABLED'; // Simplified
+            document.getElementById('encryptScore').textContent = getCategoryScore(encryptMetrics);
+
+            // Monitoring
+            const monitorMetrics = categories.monitoring;
+            document.getElementById('monitorAudit').textContent = getMetricStatus(monitorMetrics.find(m => m.id === 'AUDIT_LOG'));
+            document.getElementById('monitorSecurity').textContent = getMetricStatus(monitorMetrics.find(m => m.id === 'SEC_MONITOR'));
+            document.getElementById('monitorAlerts').textContent = 'ENABLED'; // Simplified
+            document.getElementById('monitorScore').textContent = getCategoryScore(monitorMetrics);
+
+            // Compliance
+            const complianceMetrics = categories.compliance;
+            document.getElementById('complianceGDPR').textContent = getMetricStatus(complianceMetrics.find(m => m.id === 'GDPR_STATUS'));
+            document.getElementById('complianceSOC2').textContent = getMetricStatus(complianceMetrics.find(m => m.id === 'SOC2_STATUS'));
+            document.getElementById('complianceAudit').textContent = 'ENABLED'; // Simplified
+            document.getElementById('complianceScore').textContent = getCategoryScore(complianceMetrics);
+        }
+
+        function getMetricStatus(metric) {
+            if (!metric) return '--';
+            return metric.value === 'ENABLED' ? '✅' : 
+                   metric.value === 'PARTIAL' ? '⚠️' : 
+                   metric.value === 'COMPLIANT' ? '✅' : '❌';
+        }
+
+        function getCategoryScore(metrics) {
+            if (metrics.length === 0) return '--';
+            const avgScore = Math.round(metrics.reduce((sum, m) => sum + m.securityScore, 0) / metrics.length);
+            return `${avgScore}/100`;
+        }
+
+        function updateSecurityTrends(trends) {
+            // Improving
+            const improvingList = document.getElementById('improvingList');
+            if (trends.improving.length > 0) {
+                improvingList.innerHTML = trends.improving.map(item => 
+                    `<div class="text-green-400 text-sm">📈 ${item}</div>`
+                ).join('');
+            } else {
+                improvingList.innerHTML = '<div class="text-gray-400 text-sm">No improving metrics</div>';
+            }
+
+            // Stable
+            const stableList = document.getElementById('stableList');
+            if (trends.stable.length > 0) {
+                stableList.innerHTML = trends.stable.map(item => 
+                    `<div class="text-yellow-400 text-sm">➡️ ${item}</div>`
+                ).join('');
+            } else {
+                stableList.innerHTML = '<div class="text-gray-400 text-sm">No stable metrics</div>';
+            }
+
+            // Degrading
+            const degradingList = document.getElementById('degradingList');
+            if (trends.degrading.length > 0) {
+                degradingList.innerHTML = trends.degrading.map(item => 
+                    `<div class="text-red-400 text-sm">📉 ${item}</div>`
+                ).join('');
+            } else {
+                degradingList.innerHTML = '<div class="text-gray-400 text-sm">No degrading metrics</div>';
+            }
+        }
+
+        function updateSecurityMetricsTable(metrics) {
+            const tableBody = document.getElementById('securityMetricsTable');
+            
+            tableBody.innerHTML = metrics.map(metric => {
+                const riskColor = {
+                    'CRITICAL': 'text-red-400',
+                    'HIGH': 'text-orange-400',
+                    'MEDIUM': 'text-yellow-400',
+                    'LOW': 'text-green-400'
+                }[metric.riskLevel];
+
+                const complianceColor = {
+                    'COMPLIANT': 'text-green-400',
+                    'PARTIAL': 'text-yellow-400',
+                    'NON_COMPLIANT': 'text-red-400'
+                }[metric.complianceStatus];
+
+                const statusIcon = metric.value === 'ENABLED' ? '✅' : 
+                                  metric.value === 'PARTIAL' ? '⚠️' : '❌';
+
+                return `
+                    <tr class="border-b border-gray-700">
+                        <td class="py-2 px-3">
+                            <span class="px-2 py-1 rounded text-xs bg-gray-700">${metric.type}</span>
+                        </td>
+                        <td class="py-2 px-3 text-white">${metric.topic}</td>
+                        <td class="py-2 px-3">${statusIcon} ${metric.value}</td>
+                        <td class="py-2 px-3">
+                            <span class="font-bold ${metric.securityScore >= 80 ? 'text-green-400' : 
+                                                      metric.securityScore >= 60 ? 'text-yellow-400' : 'text-red-400'}">
+                                ${metric.securityScore}/100
+                            </span>
+                        </td>
+                        <td class="py-2 px-3 ${riskColor}">${metric.riskLevel}</td>
+                        <td class="py-2 px-3 ${complianceColor}">${metric.complianceStatus.replace('_', ' ')}</td>
+                        <td class="py-2 px-3 text-gray-400 text-xs">${new Date(metric.lastVerified).toLocaleDateString()}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateScopeInfo(scopeInfo) {
+            const scopeSection = document.getElementById('scopeInfo');
+            scopeSection.classList.remove('hidden');
+
+            // Update scope badge
+            const scopeBadge = document.getElementById('scopeBadge');
+            scopeBadge.textContent = scopeInfo.detectedScope;
+            scopeBadge.className = 'px-3 py-1 rounded-full text-sm font-semibold';
+            
+            switch (scopeInfo.detectedScope) {
+                case 'ENTERPRISE':
+                    scopeBadge.classList.add('bg-purple-600', 'text-white');
+                    break;
+                case 'DEVELOPMENT':
+                    scopeBadge.classList.add('bg-blue-600', 'text-white');
+                    break;
+                case 'LOCAL-SANDBOX':
+                    scopeBadge.classList.add('bg-gray-600', 'text-white');
+                    break;
+            }
+
+            // Update environment badge
+            const environmentBadge = document.getElementById('environmentBadge');
+            environmentBadge.textContent = scopeInfo.environment.toUpperCase();
+            environmentBadge.className = 'px-3 py-1 rounded-full text-sm font-semibold';
+            
+            switch (scopeInfo.environment) {
+                case 'production':
+                    environmentBadge.classList.add('bg-green-600', 'text-white');
+                    break;
+                case 'staging':
+                    environmentBadge.classList.add('bg-yellow-600', 'text-black');
+                    break;
+                case 'development':
+                    environmentBadge.classList.add('bg-gray-600', 'text-white');
+                    break;
+            }
+
+            // Update validation badge
+            const validationBadge = document.getElementById('validationBadge');
+            validationBadge.textContent = scopeInfo.validation.valid ? 'VALID' : 'INVALID';
+            validationBadge.className = 'px-3 py-1 rounded-full text-sm font-semibold';
+            
+            if (scopeInfo.validation.valid) {
+                validationBadge.classList.add('bg-green-600', 'text-white');
+            } else {
+                validationBadge.classList.add('bg-red-600', 'text-white');
+            }
+
+            // Update environment info
+            document.getElementById('scopeDomain').textContent = scopeInfo.servingDomain;
+            document.getElementById('scopePlatform').textContent = scopeInfo.platform;
+            document.getElementById('scopeType').textContent = scopeInfo.detectedScope;
+            document.getElementById('pathPrefix').textContent = scopeInfo.scopeConfig.pathPrefix;
+
+            // Update storage and security info
+            document.getElementById('storageType').textContent = scopeInfo.platformStorage.type;
+            document.getElementById('encryptionType').textContent = scopeInfo.platformStorage.encryption;
+            document.getElementById('isolationType').textContent = scopeInfo.platformStorage.isolation;
+            document.getElementById('persistFlag').textContent = scopeInfo.platformStorage.persist;
+
+            // Update connection pool info
+            document.getElementById('maxConnections').textContent = scopeInfo.connectionPool.maxConnections;
+            document.getElementById('keepAlive').textContent = scopeInfo.connectionPool.keepAlive ? '✅ Yes' : '❌ No';
+            document.getElementById('connectionTimeout').textContent = `${scopeInfo.connectionPool.timeout}ms`;
+            document.getElementById('platformScope').textContent = scopeInfo.scopeConfig.platformScope;
+
+            // Update AI capabilities
+            document.getElementById('aiEnabled').textContent = scopeInfo.aiCapabilities.enabled ? '✅ Yes' : '❌ No';
+            document.getElementById('mlModelCount').textContent = scopeInfo.aiCapabilities.models.length;
+            document.getElementById('realTimeEnabled').textContent = scopeInfo.aiCapabilities.realTimeAnalytics ? '✅ Yes' : '❌ No';
+            document.getElementById('enterpriseSupport').textContent = scopeInfo.validation.valid && scopeInfo.detectedScope === 'ENTERPRISE' ? '✅ Yes' : '❌ No';
+
+            // Update security features
+            const securityAvailable = document.getElementById('securityAvailable');
+            securityAvailable.innerHTML = scopeInfo.securityFeatures.available.slice(0, 3).map(feature => 
+                `<span class="inline-block bg-green-800 bg-opacity-50 px-1 py-0.5 rounded mr-1 mb-1">${feature}</span>`
+            ).join('');
+
+            const securityRecommended = document.getElementById('securityRecommended');
+            securityRecommended.innerHTML = scopeInfo.securityFeatures.recommended.slice(0, 3).map(feature => 
+                `<span class="inline-block bg-blue-800 bg-opacity-50 px-1 py-0.5 rounded mr-1 mb-1">${feature}</span>`
+            ).join('');
+
+            const securityLimitations = document.getElementById('securityLimitations');
+            if (scopeInfo.securityFeatures.limitations.length > 0) {
+                securityLimitations.innerHTML = scopeInfo.securityFeatures.limitations.slice(0, 2).map(limitation => 
+                    `<span class="inline-block bg-red-800 bg-opacity-50 px-1 py-0.5 rounded mr-1 mb-1">${limitation}</span>`
+                ).join('');
+            } else {
+                securityLimitations.innerHTML = '<span class="text-green-400">✅ No limitations</span>';
+            }
+
+            // Update validation results
+            const validationStatus = document.getElementById('validationStatus');
+            validationStatus.innerHTML = scopeInfo.validation.valid ? 
+                '<span class="text-green-400">✅ Configuration is valid</span>' : 
+                '<span class="text-red-400">❌ Configuration has issues</span>';
+
+            const validationErrors = document.getElementById('validationErrors');
+            if (scopeInfo.validation.errors.length > 0) {
+                validationErrors.innerHTML = scopeInfo.validation.errors.map(error => 
+                    `<div class="text-red-400">• ${error}</div>`
+                ).join('');
+            } else {
+                validationErrors.innerHTML = '<span class="text-green-400">✅ No errors</span>';
+            }
+
+            const validationWarnings = document.getElementById('validationWarnings');
+            if (scopeInfo.validation.warnings.length > 0) {
+                validationWarnings.innerHTML = scopeInfo.validation.warnings.map(warning => 
+                    `<div class="text-yellow-400">⚠️ ${warning}</div>`
+                ).join('');
+            } else {
+                validationWarnings.innerHTML = '<span class="text-green-400">✅ No warnings</span>';
+            }
+
+            // Update domain mappings
+            const domainMappingsList = document.getElementById('domainMappingsList');
+            domainMappingsList.innerHTML = scopeInfo.domainMappings.map(mapping => {
+                const isCurrent = mapping.domain === scopeInfo.servingDomain;
+                return `
+                    <div class="bg-black bg-opacity-30 rounded p-3 border ${isCurrent ? 'border-green-500' : 'border-gray-600'}">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="font-semibold text-white ${isCurrent ? 'text-green-400' : ''}">${mapping.domain}</div>
+                                <div class="text-xs text-gray-400">${mapping.scope}</div>
+                            </div>
+                            ${isCurrent ? '<span class="text-xs bg-green-600 px-2 py-1 rounded">CURRENT</span>' : ''}
+                        </div>
+                        <div class="text-xs text-gray-300 mt-2">${mapping.description}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateAIInsights(aiInsights) {
+            const aiSection = document.getElementById('aiInsights');
+            aiSection.classList.remove('hidden');
+
+            // Update risk level
+            const riskLevelElement = document.getElementById('aiRiskLevel');
+            riskLevelElement.textContent = aiInsights.riskLevel.toUpperCase();
+            riskLevelElement.className = 'px-3 py-1 rounded-full text-sm font-semibold';
+            
+            switch (aiInsights.riskLevel) {
+                case 'critical':
+                    riskLevelElement.classList.add('bg-red-600', 'text-white');
+                    break;
+                case 'high':
+                    riskLevelElement.classList.add('bg-orange-600', 'text-white');
+                    break;
+                case 'medium':
+                    riskLevelElement.classList.add('bg-yellow-600', 'text-black');
+                    break;
+                case 'low':
+                    riskLevelElement.classList.add('bg-green-600', 'text-white');
+                    break;
+            }
+
+            // Update confidence
+            document.getElementById('aiConfidence').textContent = 
+                `${Math.round(aiInsights.performanceMetrics.confidence * 100)}%`;
+
+            // Update predictions
+            document.getElementById('predictedVolume').textContent = 
+                aiInsights.predictedVolume.toLocaleString();
+
+            // Update anomalies
+            const anomalyList = document.getElementById('anomalyList');
+            if (aiInsights.anomalyAlerts.length > 0) {
+                anomalyList.innerHTML = aiInsights.anomalyAlerts.map(anomaly => `
+                    <div class="flex items-start space-x-2 p-2 rounded ${
+                        anomaly.severity === 'high' ? 'bg-red-900 bg-opacity-30' : 
+                        anomaly.severity === 'medium' ? 'bg-yellow-900 bg-opacity-30' : 
+                        'bg-blue-900 bg-opacity-30'
+                    }">
+                        <i class="fas fa-exclamation-triangle text-${
+                            anomaly.severity === 'high' ? 'red' : 
+                            anomaly.severity === 'medium' ? 'yellow' : 
+                            'blue'
+                        }-400 mt-1"></i>
+                        <div class="flex-1">
+                            <p class="text-xs text-gray-300">${anomaly.message}</p>
+                            <p class="text-xs text-gray-500">${formatTime(anomaly.timestamp)}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                anomalyList.innerHTML = '<p class="text-green-400 text-sm">✅ No anomalies detected</p>';
+            }
+
+            // Update recommendations
+            const actionsList = document.getElementById('recommendedActions');
+            actionsList.innerHTML = aiInsights.recommendedActions.map(action => `
+                <li class="flex items-start space-x-2">
+                    <i class="fas fa-chevron-right text-green-400 mt-1 text-xs"></i>
+                    <span class="text-gray-300">${action}</span>
+                </li>
+            `).join('');
+        }
+
+            // Update timeline
+            updateTimeline();
+
+            // Update last update time
+            document.getElementById('lastUpdate').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+        }
+
+        function updateDisputeMatrix(matrix) {
+            const tbody = document.getElementById('disputeMatrix');
+            tbody.innerHTML = matrix.map(row => `
+                <tr class="dispute-row border-b border-gray-700 hover:bg-gray-700">
+                    <td class="py-3 px-4">
+                        <div class="flex items-center">
+                            <span class="mr-2">${row.icon}</span>
+                            <span class="font-medium">${row.status.replace(/_/g, ' ')}</span>
+                        </div>
+                    </td>
+                    <td class="py-3 px-4">
+                        <div class="text-xs space-y-1">
+                            ${row.customerActions.map(action => `<div>• ${action}</div>`).join('')}
+                        </div>
+                    </td>
+                    <td class="py-3 px-4">
+                        <div class="text-xs space-y-1">
+                            ${row.merchantActions.map(action => `<div>• ${action}</div>`).join('')}
+                        </div>
+                    </td>
+                    <td class="py-3 px-4">
+                        <div class="text-xs space-y-1">
+                            ${row.systemActions.map(action => `<div>• ${action}</div>`).join('')}
+                        </div>
+                    </td>
+                    <td class="py-3 px-4">
+                        <span class="text-xs px-2 py-1 rounded" style="background-color: ${row.color}20; color: ${row.color}">
+                            ${row.timeline}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4">
+                        <button onclick="showDeepLink('${row.deepLink}')" class="text-blue-400 hover:text-blue-300 text-sm">
+                            <i class="fas fa-link mr-1"></i>Link
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateQuickActions(actions) {
+            const container = document.getElementById('quickActions');
+            container.innerHTML = actions.map(action => `
+                <div class="quick-action-card bg-gray-700 rounded-lg p-4 cursor-pointer hover:bg-gray-600" onclick="showDeepLink('${action.deepLink}')">
+                    <div class="flex items-center mb-2">
+                        <span class="text-2xl mr-3">${action.icon}</span>
+                        <div>
+                            <h4 class="font-medium">${action.title}</h4>
+                            <p class="text-xs text-gray-400">${action.description}</p>
+                        </div>
+                    </div>
+                    <div class="text-xs">
+                        <span class="px-2 py-1 rounded ${action.category === 'customer' ? 'bg-blue-900' : action.category === 'merchant' ? 'bg-green-900' : 'bg-purple-900'}">
+                            ${action.category}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateRecentActivity(activity) {
+            const container = document.getElementById('recentActivity');
+            container.innerHTML = activity.map(item => `
+                <div class="flex items-center justify-between p-3 bg-gray-700 rounded-lg hover:bg-gray-600 cursor-pointer" onclick="showDeepLink('${item.deepLink}')">
+                    <div class="flex items-center">
+                        <div class="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                        <div>
+                            <p class="font-medium text-sm">${item.description}</p>
+                            <p class="text-xs text-gray-400">${item.id} • ${formatTime(item.timestamp)}</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-400"></i>
+                </div>
+            `).join('');
+        }
+
+        function updateTimeline() {
+            const status = document.getElementById('statusSelect').value;
+            const statusOrder = [
+                'DISPUTE_SUBMITTED',
+                'MERCHANT_REVIEW', 
+                'UNDER_INVESTIGATION',
+                'VENMO_ESCALATION',
+                'RESOLVED_REFUND',
+                'RESOLVED_DENIED'
+            ];
+            
+            const currentIndex = statusOrder.indexOf(status);
+            
+            const timeline = statusOrder.map((status, index) => {
+                const row = dashboardData.matrix.find(r => r.status === status);
+                return {
+                    step: index + 1,
+                    status: status.replace(/_/g, ' '),
+                    description: row?.timeline || 'Unknown',
+                    completed: index <= currentIndex,
+                    active: index === currentIndex,
+                    deepLink: row?.deepLink || `duoplus://dispute/status/${status.toLowerCase()}`
+                };
+            });
+            
+            const container = document.getElementById('statusTimeline');
+            container.innerHTML = timeline.map(step => `
+                <div class="timeline-step flex items-center p-4 rounded-lg ${step.active ? 'active' : step.completed ? 'completed' : 'bg-gray-700'}">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${step.active ? 'bg-green-500' : step.completed ? 'bg-gray-500' : 'bg-gray-600'}">
+                        ${step.completed ? '<i class="fas fa-check text-white text-sm"></i>' : step.step}
+                    </div>
+                    <div class="ml-4 flex-1">
+                        <h4 class="font-medium">${step.status}</h4>
+                        <p class="text-sm text-gray-400">${step.description}</p>
+                    </div>
+                    <button onclick="showDeepLink('${step.deepLink}')" class="text-blue-400 hover:text-blue-300">
+                        <i class="fas fa-link"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function showDeepLink(deepLink) {
+            currentDeepLink = deepLink;
+            document.getElementById('shareLink').value = deepLink;
+            
+            // Generate QR code (mock implementation)
+            const qrContainer = document.getElementById('qrCode');
+            qrContainer.innerHTML = `
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(deepLink)}" alt="QR Code" />
+            `;
+            
+            document.getElementById('deepLinkModal').style.display = 'flex';
+        }
+
+        function closeDeepLinkModal() {
+            document.getElementById('deepLinkModal').style.display = 'none';
+        }
+
+        function copyShareLink() {
+            const input = document.getElementById('shareLink');
+            input.select();
+            document.execCommand('copy');
+            
+            // Show feedback
+            const button = event.target.closest('button');
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => {
+                button.innerHTML = originalHTML;
+            }, 2000);
+        }
+
+        function openDeepLink() {
+            window.location.href = currentDeepLink;
+        }
+
+        function formatTime(timestamp) {
+            const now = new Date();
+            const diff = now - timestamp;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            return timestamp.toLocaleDateString();
+        }
+
+        async function refreshDashboard() {
+            const data = await fetchDashboardData();
+            if (data) {
+                updateDashboard(data);
+            }
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', async () => {
+            await refreshDashboard();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(refreshDashboard, 30000);
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('deepLinkModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDeepLinkModal();
+            }
+        });
+    </script>
+</body>
+</html>

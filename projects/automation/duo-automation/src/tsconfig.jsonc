@@ -1,0 +1,32 @@
+{
+  // TypeScript Configuration for Empire Pro
+  // Optimized for Bun v1.3.6 with latest ES features
+  
+  "compilerOptions": {
+    // Environment setup & latest features
+    "lib": ["ESNext", "DOM"], // Use latest JavaScript features
+    "target": "ESNext", // Target modern browsers and Bun
+    "module": "Preserve", // Preserve module structure for bundler
+    "moduleDetection": "force", // Force module detection
+    "jsx": "react-jsx", // Modern JSX transform
+    "allowJs": true, // Allow JavaScript files
+
+    // Bundler mode configuration
+    "moduleResolution": "bundler", // Use bundler's module resolution
+    "allowImportingTsExtensions": true, // Allow .ts imports
+    "verbatimModuleSyntax": true, // Preserve import/export syntax
+    "noEmit": true, // Don't generate output files (Bun handles this)
+
+    // Type checking and best practices
+    "strict": true, // Enable all strict type checking options
+    "skipLibCheck": true, // Skip type checking of declaration files
+    "noFallthroughCasesInSwitch": true, // Report errors for fallthrough cases
+    "noUncheckedIndexedAccess": true, // Check array/object access
+    "noImplicitOverride": true, // Require override annotation
+
+    // Some stricter flags (disabled by default for flexibility)
+    "noUnusedLocals": false, // Allow unused locals for development
+    "noUnusedParameters": false, // Allow unused parameters for development
+    "noPropertyAccessFromIndexSignature": false // Allow flexible property access
+  }
+}

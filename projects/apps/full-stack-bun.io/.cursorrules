@@ -1,0 +1,225 @@
+# 🚀 Cursor Rules v1.3.5 - Full-Stack Bun.io Development Guidelines
+# CURSOR.RULES - IDE configuration and development standards
+
+## 🏗️ Project Architecture
+
+### Domain-Driven Architecture (DDA)
+- **src/core/**: Core business logic and domain models
+- **src/api/**: API endpoints and request handlers
+- **src/shared/**: Shared utilities, types, and macros
+- **src/infra/**: Infrastructure concerns (rate limiting, databases)
+- **src/entry-point/**: Application entry points (CLI, HTTP servers)
+- **src/utils/**: Project-specific utilities
+
+### File Naming Convention
+- **APIs**: `[route].[method].bun.ts` (e.g., `users.get.bun.ts`)
+- **Components**: `[name].html.bun.ts` for HTML components
+- **Macros**: `[feature].macro.ts` in `src/shared/macros/`
+- **Tests**: `[feature].test.ts` in `tests/` directory
+- **Scripts**: `[purpose].ts` in `scripts/` directory
+- **Rule Files**: `[domain].srl.md` in `.cursor/rules/` directory
+
+## 🛠️ Development Workflow
+
+### Bun Runtime (REQUIRED)
+- Use `bun` for all package management: `bun add`, `bun remove`, `bun install`
+- Use `bun run` for all scripts defined in package.json
+- Use `bun test` for running test suites
+- Use `bun build` for compilation and bundling
+
+### Code Quality Standards
+- **TypeScript**: Strict mode enabled, no `any` types without justification
+- **Imports**: Use explicit imports, prefer named imports over default
+- **Error Handling**: Use try/catch with specific error types
+- **Logging**: Use `structuredLog()` from shared utils for consistent logging
+- **Security**: All user inputs validated with Zod schemas
+
+### Git Workflow
+- **Branch Naming**: `feature/`, `bugfix/`, `hotfix/`, `chore/`
+- **Commit Messages**: Use conventional commits with DDA tagging
+  - `feat(api): add user authentication endpoint`
+  - `fix(core): resolve memory leak in performance monitor`
+  - `docs(shared): update macro usage examples`
+- **PR Template**: Include SCOPE, TPE, and DDD tags
+  - `[SCOPE:api][TPE:feature][DDD:add-user-auth]`
+
+## 🔒 Security & Enterprise Policies
+
+### Lockfile Protection
+- **bun.lock**: Never commit changes without explicit approval
+- **Frozen Lockfile**: Use `--frozen-lockfile` in CI environments
+- **Audit**: Run `bun audit` before every deployment
+
+### Enterprise Configuration
+- **bunfig.toml**: Configure minimumReleaseAge for production
+- **Registry**: Use scoped registries for private packages
+- **Security Scanner**: Always use `@socketsecurity/bun-security-scanner`
+
+## 📊 Performance & Monitoring
+
+### Metrics Collection
+- **ODC Integration**: Broadcast metrics to Open Dev Center
+- **Performance Monitoring**: Use PerformanceMonitor for all operations
+- **Baseline Tracking**: Store performance baselines in SQLite
+
+### Macro Usage
+- **Time Macros**: Use `ms()` for compile-time duration constants
+- **Zero Runtime Cost**: Prefer macros over runtime computation
+- **Type Safety**: Macros maintain full TypeScript type checking
+
+## 🧪 Testing Strategy
+
+### Test Organization
+- **Unit Tests**: `tests/*.test.ts` for individual components
+- **Integration Tests**: `tests/*.integration.ts` for API endpoints
+- **E2E Tests**: `tests/*.e2e.ts` for full workflow testing
+
+### Test Execution
+- **Local**: `bun test` with hot reload
+- **CI**: `bun test --coverage` with coverage reporting
+- **Performance**: Include benchmark tests for critical paths
+
+## 🚀 Deployment & CI/CD
+
+### Build Process
+- **Development**: `bun run dev` for hot-reload development
+- **Production**: `bun build --target=bun --minify` for optimized builds
+- **Binary**: `bun build --compile` for standalone executables
+
+### CI Pipeline Requirements
+- **Security Audit**: `bun audit --severity=high` must pass
+- **Type Check**: `bun run type-check` must pass
+- **Test Coverage**: Minimum 80% coverage required
+- **Performance Regression**: Baseline performance checks
+
+## 📝 Documentation Standards
+
+### Code Documentation
+- **JSDoc**: All exported functions must have JSDoc comments
+- **Examples**: Include usage examples in doc comments
+- **Type Definitions**: Use TypeScript interfaces for complex types
+
+### README Structure
+- **Quick Start**: Installation and basic usage
+- **Architecture**: High-level system design
+- **API Reference**: Available endpoints and CLI commands
+- **Contributing**: Development workflow and standards
+
+## 🔧 Tool Configuration
+
+### IDE Settings (Cursor-Specific)
+- **Theme**: Dark mode preferred for reduced eye strain
+- **Font**: Monospace font (Fira Code recommended)
+- **Line Numbers**: Always enabled
+- **Minimap**: Disabled for cleaner interface
+
+### Extensions & Plugins
+- **Bun Extension**: Required for Bun-specific features
+- **TypeScript Importer**: Auto-import TypeScript symbols
+- **Prettier**: Code formatting with Bun configuration
+- **GitLens**: Enhanced Git integration
+
+## 🚨 Code Review Checklist
+
+### Before Committing
+- [ ] All TypeScript types are explicit (no `any`)
+- [ ] Security audit passes: `bun audit`
+- [ ] Tests pass: `bun test`
+- [ ] Code formatted: `bun run format`
+- [ ] Lockfile unchanged (unless intentional)
+
+### During Code Review
+- [ ] Architecture follows DDA principles
+- [ ] Error handling is comprehensive
+- [ ] Performance considerations addressed
+- [ ] Security implications reviewed
+- [ ] Documentation updated
+
+## 🌐 Integration Patterns
+
+### GitHub CLI Integration
+- **Issue Creation**: `gh issue create --title "feat: add user auth"`
+- **PR Creation**: `gh pr create --title "feat(api): user authentication"`
+- **Status Checks**: `gh pr checks` for CI status
+- **Deployment**: `gh workflow run deploy.yml`
+
+### API Design
+- **RESTful**: Follow REST conventions for HTTP APIs
+- **Zod Validation**: All inputs validated with Zod schemas
+- **Error Responses**: Consistent error response format
+- **Rate Limiting**: Implement rate limiting on public endpoints
+
+## 📈 Performance Guidelines
+
+### Runtime Performance
+- **Bundle Size**: Keep production bundles under 1MB
+- **Startup Time**: Target <100ms cold start
+- **Memory Usage**: Monitor heap usage in production
+- **CPU Usage**: Profile hot paths for optimization
+
+### Development Performance
+- **Hot Reload**: <1s reload time for development
+- **Type Checking**: Fast incremental type checking
+- **Test Execution**: <30s for full test suite
+- **Build Time**: <60s for production builds
+
+## 🔐 Access Control
+
+### Repository Permissions
+- **Main Branch**: Protected, requires PR review
+- **Release Branches**: Protected, automated releases only
+- **Feature Branches**: Developer access for feature work
+
+### Secret Management
+- **Environment Variables**: Never commit secrets
+- **GitHub Secrets**: Use encrypted secrets for CI/CD
+- **Token Rotation**: Rotate tokens regularly
+- **Access Logging**: Log all privileged operations
+
+## 📚 Learning Resources
+
+### Bun Ecosystem
+- **Official Docs**: https://bun.sh/docs
+- **API Reference**: https://bun.sh/docs/api
+- **Migration Guide**: From Node.js to Bun
+
+### Development Tools
+- **Cursor IDE**: https://cursor.sh/docs
+- **GitHub CLI**: https://cli.github.com/manual
+- **TypeScript**: https://www.typescriptlang.org/docs
+
+---
+
+## ⚡ Quick Commands
+
+```bash
+# Development
+bun run dev                    # Start development server
+bun test                       # Run test suite
+bun run format                 # Format code
+
+# Security & Audit
+bun audit                      # Security audit
+bun run security:policy        # View security config
+
+# GitHub Integration
+gh pr create                   # Create pull request
+gh issue list                  # List issues
+gh workflow run deploy.yml     # Trigger deployment
+
+# Build & Deploy
+bun build --target=bun         # Production build
+bun build --compile            # Standalone binary
+```
+
+## 🎯 Success Metrics
+
+- **Code Coverage**: >80% test coverage
+- **Performance**: <100ms API response time
+- **Security**: Zero critical vulnerabilities
+- **Reliability**: 99.9% uptime in production
+- **Developer Experience**: <30s test execution time
+
+---
+
+*Generated by Cursor Rules v1.3.5 - Last updated: October 18, 2025*

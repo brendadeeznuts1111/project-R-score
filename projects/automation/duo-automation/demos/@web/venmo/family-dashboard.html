@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏠 DuoPlus Family Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <style>
+        @keyframes slideIn {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .animate-slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .animate-pulse-once {
+            animation: pulse 0.3s ease-in-out;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .status-active {
+            background: rgba(34, 197, 94, 0.1);
+            color: rgb(34, 197, 94);
+        }
+        
+        .status-pending {
+            background: rgba(251, 191, 36, 0.1);
+            color: rgb(251, 191, 36);
+        }
+        
+        .status-suspended {
+            background: rgba(239, 68, 68, 0.1);
+            color: rgb(239, 68, 68);
+        }
+        
+        .qr-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .qr-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .qr-container:hover .qr-overlay {
+            opacity: 1;
+        }
+        
+        .transaction-item {
+            transition: all 0.2s ease;
+        }
+        
+        .transaction-item:hover {
+            background: rgba(99, 102, 241, 0.05);
+            border-left: 3px solid rgb(99, 102, 241);
+            padding-left: calc(1rem - 3px);
+        }
+        
+        .loading-skeleton {
+            background: linear-gradient(90deg, #3b82f6 25%, #3b82f6 50%, #3b82f6 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .notification-dot {
+            width: 8px;
+            height: 8px;
+            background: rgb(239, 68, 68);
+            border-radius: 50%;
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-3">
+                    <i data-lucide="home" class="w-8 h-8"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold">DuoPlus Family</h1>
+                        <p class="text-purple-100 text-sm">Family Account Dashboard</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="relative p-2 hover:bg-white/10 rounded-lg transition">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                        <span class="notification-dot"></span>
+                    </button>
+                    <button class="flex items-center space-x-2 p-2 hover:bg-white/10 rounded-lg transition">
+                        <img src="https://picsum.photos/seed/parent/32/32" alt="Profile" class="w-8 h-8 rounded-full">
+                        <span class="text-sm font-medium">John Doe</span>
+                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Family Balance</p>
+                        <p class="text-2xl font-bold text-gray-900" id="familyBalance">$1,247.50</p>
+                        <p class="text-green-600 text-sm flex items-center mt-1">
+                            <i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>
+                            +12.5% this month
+                        </p>
+                    </div>
+                    <div class="bg-blue-100 p-3 rounded-lg">
+                        <i data-lucide="wallet" class="w-6 h-6 text-blue-600"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Active Members</p>
+                        <p class="text-2xl font-bold text-gray-900" id="activeMembers">4</p>
+                        <p class="text-gray-600 text-sm">2 adults, 2 children</p>
+                    </div>
+                    <div class="bg-green-100 p-3 rounded-lg">
+                        <i data-lucide="users" class="w-6 h-6 text-green-600"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">This Month</p>
+                        <p class="text-2xl font-bold text-gray-900" id="monthlySpending">$847.25</p>
+                        <p class="text-red-600 text-sm flex items-center mt-1">
+                            <i data-lucide="trending-down" class="w-4 h-4 mr-1"></i>
+                            -8.3% vs last month
+                        </p>
+                    </div>
+                    <div class="bg-purple-100 p-3 rounded-lg">
+                        <i data-lucide="credit-card" class="w-6 h-6 text-purple-600"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Pending</p>
+                        <p class="text-2xl font-bold text-gray-900" id="pendingApprovals">3</p>
+                        <p class="text-yellow-600 text-sm">Awaiting approval</p>
+                    </div>
+                    <div class="bg-yellow-100 p-3 rounded-lg">
+                        <i data-lucide="clock" class="w-6 h-6 text-yellow-600"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Family Members Section -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-md">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-lg font-semibold text-gray-900">Family Members</h2>
+                            <button onclick="showAddMemberDialog()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition flex items-center space-x-2">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                                <span>Add Member</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4" id="familyMembersList">
+                            <!-- Family members will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="bg-white rounded-xl shadow-md mt-8">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-lg font-semibold text-gray-900">Recent Transactions</h2>
+                            <button onclick="loadTransactions()" class="text-indigo-600 hover:text-indigo-800 transition flex items-center space-x-1">
+                                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                                <span>Refresh</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-3" id="transactionsList">
+                            <!-- Transactions will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="space-y-8">
+                <!-- QR Code Generator -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Payment QR</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Amount ($)</label>
+                            <input type="number" id="qrAmount" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="0.00" step="0.01">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Recipient</label>
+                            <select id="qrRecipient" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="">Select recipient</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Note (optional)</label>
+                            <input type="text" id="qrNote" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="What's this for?">
+                        </div>
+                        <button onclick="generateQRCode()" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition flex items-center justify-center space-x-2">
+                            <i data-lucide="qr-code" class="w-4 h-4"></i>
+                            <span>Generate QR Code</span>
+                        </button>
+                    </div>
+                    
+                    <div id="qrCodeContainer" class="mt-6 hidden">
+                        <div class="qr-container">
+                            <canvas id="qrCanvas" class="w-full"></canvas>
+                            <div class="qr-overlay">
+                                <button onclick="downloadQRCode()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition flex items-center space-x-2">
+                                    <i data-lucide="download" class="w-4 h-4"></i>
+                                    <span>Download</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+                    <div class="space-y-3">
+                        <button onclick="showSendMoneyDialog()" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                            <span>Send Money</span>
+                        </button>
+                        <button onclick="showRequestMoneyDialog()" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition flex items-center justify-center space-x-2">
+                            <i data-lucide="receive" class="w-4 h-4"></i>
+                            <span>Request Money</span>
+                        </button>
+                        <button onclick="showSplitPaymentDialog()" class="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition flex items-center justify-center space-x-2">
+                            <i data-lucide="split" class="w-4 h-4"></i>
+                            <span>Split Payment</span>
+                        </button>
+                        <button onclick="showPendingApprovals()" class="w-full bg-yellow-600 text-white py-3 rounded-lg hover:bg-yellow-700 transition flex items-center justify-center space-x-2">
+                            <i data-lucide="check-circle" class="w-4 h-4"></i>
+                            <span>Approve Payments (3)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Android Device Status -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Android Device</h2>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Connection Status</span>
+                            <span class="status-badge status-active">Connected</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Device</span>
+                            <span class="text-sm font-medium">Virtual Android</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">SDK Version</span>
+                            <span class="text-sm font-medium">v3.7.0</span>
+                        </div>
+                        <button onclick="testAndroidConnection()" class="w-full bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700 transition flex items-center justify-center space-x-2 mt-4">
+                            <i data-lucide="smartphone" class="w-4 h-4"></i>
+                            <span>Test Connection</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <div id="addMemberModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-6 w-full max-w-md animate-slide-in">
+            <h3 class="text-lg font-semibold mb-4">Add Family Member</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                    <input type="text" id="newMemberName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="newMemberEmail" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                    <select id="newMemberRole" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                        <option value="child">Child</option>
+                        <option value="parent">Parent</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-3 mt-6">
+                <button onclick="hideAddMemberDialog()" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition">Cancel</button>
+                <button onclick="addFamilyMember()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">Add Member</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg hidden animate-slide-in z-50">
+        <div class="flex items-center space-x-2">
+            <i data-lucide="check-circle" class="w-5 h-5"></i>
+            <span id="toastMessage">Success!</span>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let currentFamily = null;
+        let familyMembers = [];
+        let transactions = [];
+        let currentQRData = null;
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            initializeDashboard();
+        });
+
+        async function initializeDashboard() {
+            try {
+                await loadFamilyData();
+                await loadTransactions();
+                setupEventListeners();
+                updateUI();
+            } catch (error) {
+                console.error('Failed to initialize dashboard:', error);
+                showToast('Failed to load dashboard data', 'error');
+            }
+        }
+
+        async function loadFamilyData() {
+            // Simulate API call to load family data
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            currentFamily = {
+                familyId: 'family-123',
+                parentId: 'parent-456',
+                parentEmail: 'john.doe@example.com',
+                balance: 1247.50,
+                createdAt: '2024-01-01T00:00:00Z'
+            };
+
+            familyMembers = [
+                {
+                    memberId: 'parent-456',
+                    name: 'John Doe',
+                    email: 'john.doe@example.com',
+                    role: 'parent',
+                    status: 'active',
+                    spendingLimit: null,
+                    permissions: {
+                        canSendPayments: true,
+                        canReceivePayments: true,
+                        requiresApproval: false,
+                        maxTransactionAmount: Number.MAX_SAFE_INTEGER
+                    },
+                    avatar: 'https://picsum.photos/seed/john/40/40'
+                },
+                {
+                    memberId: 'parent-789',
+                    name: 'Jane Doe',
+                    email: 'jane.doe@example.com',
+                    role: 'parent',
+                    status: 'active',
+                    spendingLimit: null,
+                    permissions: {
+                        canSendPayments: true,
+                        canReceivePayments: true,
+                        requiresApproval: false,
+                        maxTransactionAmount: Number.MAX_SAFE_INTEGER
+                    },
+                    avatar: 'https://picsum.photos/seed/jane/40/40'
+                },
+                {
+                    memberId: 'child-001',
+                    name: 'Jimmy Doe',
+                    email: 'jimmy.doe@example.com',
+                    role: 'child',
+                    status: 'active',
+                    spendingLimit: 50.00,
+                    permissions: {
+                        canSendPayments: true,
+                        canReceivePayments: true,
+                        requiresApproval: true,
+                        maxTransactionAmount: 25.00
+                    },
+                    avatar: 'https://picsum.photos/seed/jimmy/40/40'
+                },
+                {
+                    memberId: 'child-002',
+                    name: 'Sarah Doe',
+                    email: 'sarah.doe@example.com',
+                    role: 'child',
+                    status: 'pending',
+                    spendingLimit: 30.00,
+                    permissions: {
+                        canSendPayments: true,
+                        canReceivePayments: true,
+                        requiresApproval: true,
+                        maxTransactionAmount: 15.00
+                    },
+                    avatar: 'https://picsum.photos/seed/sarah/40/40'
+                }
+            ];
+
+            updateFamilyMembersList();
+            updateRecipientSelect();
+        }
+
+        async function loadTransactions() {
+            // Simulate API call to load transactions
+            await new Promise(resolve => setTimeout(resolve, 800));
+            
+            transactions = [
+                {
+                    transactionId: 'txn-001',
+                    fromMemberId: 'parent-456',
+                    toMemberId: 'child-001',
+                    fromName: 'John Doe',
+                    toName: 'Jimmy Doe',
+                    amount: 25.00,
+                    note: 'Weekly allowance',
+                    status: 'completed',
+                    type: 'payment',
+                    createdAt: '2024-01-15T10:30:00Z'
+                },
+                {
+                    transactionId: 'txn-002',
+                    fromMemberId: 'child-001',
+                    toMemberId: 'parent-456',
+                    fromName: 'Jimmy Doe',
+                    toName: 'John Doe',
+                    amount: 15.50,
+                    note: 'Lunch money',
+                    status: 'pending',
+                    type: 'payment',
+                    requiresApproval: true,
+                    createdAt: '2024-01-15T09:15:00Z'
+                },
+                {
+                    transactionId: 'txn-003',
+                    fromMemberId: 'parent-789',
+                    toMemberId: 'child-002',
+                    fromName: 'Jane Doe',
+                    toName: 'Sarah Doe',
+                    amount: 20.00,
+                    note: 'Book purchase',
+                    status: 'completed',
+                    type: 'payment',
+                    createdAt: '2024-01-14T16:45:00Z'
+                },
+                {
+                    transactionId: 'txn-004',
+                    familyId: 'family-123',
+                    totalAmount: 60.00,
+                    description: 'Family dinner',
+                    status: 'completed',
+                    type: 'split',
+                    participantIds: ['parent-456', 'parent-789'],
+                    createdAt: '2024-01-14T19:30:00Z'
+                }
+            ];
+
+            updateTransactionsList();
+        }
+
+        function updateFamilyMembersList() {
+            const container = document.getElementById('familyMembersList');
+            container.innerHTML = '';
+
+            familyMembers.forEach(member => {
+                const memberElement = createFamilyMemberElement(member);
+                container.appendChild(memberElement);
+            });
+        }
+
+        function createFamilyMemberElement(member) {
+            const div = document.createElement('div');
+            div.className = 'flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition card-hover';
+            
+            const statusClass = member.status === 'active' ? 'status-active' : 
+                               member.status === 'pending' ? 'status-pending' : 'status-suspended';
+            
+            div.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <img src="${member.avatar}" alt="${member.name}" class="w-10 h-10 rounded-full">
+                    <div>
+                        <h3 class="font-medium text-gray-900">${member.name}</h3>
+                        <p class="text-sm text-gray-500">${member.email}</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="text-right">
+                        <span class="status-badge ${statusClass}">${member.status}</span>
+                        ${member.spendingLimit ? `<p class="text-xs text-gray-500 mt-1">Limit: $${member.spendingLimit}</p>` : ''}
+                    </div>
+                    <button onclick="showMemberOptions('${member.memberId}')" class="p-2 hover:bg-gray-200 rounded-lg transition">
+                        <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Re-initialize lucide icons for the new content
+            setTimeout(() => lucide.createIcons(), 10);
+            
+            return div;
+        }
+
+        function updateTransactionsList() {
+            const container = document.getElementById('transactionsList');
+            container.innerHTML = '';
+
+            if (transactions.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-4">No transactions yet</p>';
+                return;
+            }
+
+            transactions.slice(0, 5).forEach(transaction => {
+                const transactionElement = createTransactionElement(transaction);
+                container.appendChild(transactionElement);
+            });
+        }
+
+        function createTransactionElement(transaction) {
+            const div = document.createElement('div');
+            div.className = 'transaction-item flex items-center justify-between p-3 border border-gray-200 rounded-lg';
+            
+            let icon, title, description, statusColor;
+            
+            if (transaction.type === 'split') {
+                icon = 'split';
+                title = 'Split Payment';
+                description = transaction.description;
+                statusColor = transaction.status === 'completed' ? 'text-green-600' : 'text-yellow-600';
+            } else {
+                icon = transaction.fromMemberId === currentFamily?.parentId ? 'send' : 'receive';
+                title = transaction.fromName || 'Unknown';
+                description = `${transaction.type === 'payment' ? 'Payment' : 'Request'} to ${transaction.toName || 'Unknown'}`;
+                statusColor = transaction.status === 'completed' ? 'text-green-600' : 
+                              transaction.status === 'pending' ? 'text-yellow-600' : 'text-red-600';
+            }
+            
+            div.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <div class="bg-gray-100 p-2 rounded-lg">
+                        <i data-lucide="${icon}" class="w-4 h-4 text-gray-600"></i>
+                    </div>
+                    <div>
+                        <p class="font-medium text-gray-900">${title}</p>
+                        <p class="text-sm text-gray-500">${description}</p>
+                        <p class="text-xs text-gray-400">${formatDate(transaction.createdAt)}</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="font-semibold text-gray-900">$${transaction.amount?.toFixed(2) || '0.00'}</p>
+                    <p class="${statusColor} text-sm">${transaction.status}</p>
+                    ${transaction.requiresApproval ? '<p class="text-xs text-orange-600">Needs approval</p>' : ''}
+                </div>
+            `;
+            
+            // Re-initialize lucide icons for the new content
+            setTimeout(() => lucide.createIcons(), 10);
+            
+            return div;
+        }
+
+        function updateRecipientSelect() {
+            const select = document.getElementById('qrRecipient');
+            select.innerHTML = '<option value="">Select recipient</option>';
+            
+            familyMembers.forEach(member => {
+                if (member.status === 'active') {
+                    const option = document.createElement('option');
+                    option.value = member.memberId;
+                    option.textContent = `${member.name} (${member.email})`;
+                    select.appendChild(option);
+                }
+            });
+        }
+
+        function updateUI() {
+            // Update stats
+            document.getElementById('familyBalance').textContent = `$${currentFamily?.balance?.toFixed(2) || '0.00'}`;
+            document.getElementById('activeMembers').textContent = familyMembers.filter(m => m.status === 'active').length;
+            
+            const monthlySpending = transactions
+                .filter(t => t.status === 'completed')
+                .reduce((sum, t) => sum + (t.amount || 0), 0);
+            document.getElementById('monthlySpending').textContent = `$${monthlySpending.toFixed(2)}`;
+            
+            const pendingCount = transactions.filter(t => t.status === 'pending').length;
+            document.getElementById('pendingApprovals').textContent = pendingCount;
+        }
+
+        function setupEventListeners() {
+            // Add any additional event listeners here
+        }
+
+        // QR Code Generation
+        async function generateQRCode() {
+            const amount = document.getElementById('qrAmount').value;
+            const recipientId = document.getElementById('qrRecipient').value;
+            const note = document.getElementById('qrNote').value;
+            
+            if (!amount || !recipientId) {
+                showToast('Please enter amount and select recipient', 'error');
+                return;
+            }
+            
+            const recipient = familyMembers.find(m => m.memberId === recipientId);
+            if (!recipient) {
+                showToast('Invalid recipient selected', 'error');
+                return;
+            }
+            
+            // Generate QR data
+            currentQRData = `duoplus://pay/${currentFamily.familyId}/${amount}/${recipient.email}${note ? '/' + encodeURIComponent(note) : ''}`;
+            
+            // Generate QR code
+            const canvas = document.getElementById('qrCanvas');
+            await QRCode.toCanvas(canvas, currentQRData, {
+                width: 200,
+                margin: 2,
+                color: {
+                    dark: '#3b82f6',
+                    light: '#3b82f6'
+                }
+            });
+            
+            // Show QR code container
+            document.getElementById('qrCodeContainer').classList.remove('hidden');
+            
+            showToast('QR code generated successfully');
+        }
+
+        function downloadQRCode() {
+            const canvas = document.getElementById('qrCanvas');
+            const link = document.createElement('a');
+            link.download = `duoplus-payment-${Date.now()}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+            
+            showToast('QR code downloaded');
+        }
+
+        // Modal functions
+        function showAddMemberDialog() {
+            document.getElementById('addMemberModal').classList.remove('hidden');
+        }
+
+        function hideAddMemberDialog() {
+            document.getElementById('addMemberModal').classList.add('hidden');
+            // Clear form
+            document.getElementById('newMemberName').value = '';
+            document.getElementById('newMemberEmail').value = '';
+            document.getElementById('newMemberRole').value = 'child';
+        }
+
+        async function addFamilyMember() {
+            const name = document.getElementById('newMemberName').value;
+            const email = document.getElementById('newMemberEmail').value;
+            const role = document.getElementById('newMemberRole').value;
+            
+            if (!name || !email) {
+                showToast('Please fill in all fields', 'error');
+                return;
+            }
+            
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            const newMember = {
+                memberId: `member-${Date.now()}`,
+                name,
+                email,
+                role,
+                status: 'pending',
+                spendingLimit: role === 'child' ? 25.00 : null,
+                permissions: {
+                    canSendPayments: true,
+                    canReceivePayments: true,
+                    requiresApproval: role === 'child',
+                    maxTransactionAmount: role === 'child' ? 25.00 : Number.MAX_SAFE_INTEGER
+                },
+                avatar: `https://picsum.photos/seed/${name}/40/40`
+            };
+            
+            familyMembers.push(newMember);
+            updateFamilyMembersList();
+            updateRecipientSelect();
+            updateUI();
+            hideAddMemberDialog();
+            
+            showToast(`${name} added to family successfully`);
+        }
+
+        function showMemberOptions(memberId) {
+            const member = familyMembers.find(m => m.memberId === memberId);
+            if (!member) return;
+            
+            // Create options menu
+            const options = ['Send Money', 'Request Money', 'View Profile', 'Edit Permissions'];
+            
+            // For demo, show simple toast
+            showToast(`Options for ${member.name}`);
+        }
+
+        function showSendMoneyDialog() {
+            showToast('Send money dialog - coming soon');
+        }
+
+        function showRequestMoneyDialog() {
+            showToast('Request money dialog - coming soon');
+        }
+
+        function showSplitPaymentDialog() {
+            showToast('Split payment dialog - coming soon');
+        }
+
+        function showPendingApprovals() {
+            showToast('Pending approvals - coming soon');
+        }
+
+        async function testAndroidConnection() {
+            showToast('Testing Android connection...');
+            
+            // Simulate connection test
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // In real implementation, this would connect to the DuoPlus SDK
+            showToast('Android connection successful!', 'success');
+        }
+
+        // Utility functions
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            
+            // Update toast styling based on type
+            if (type === 'error') {
+                toast.className = toast.className.replace('bg-gray-800', 'bg-red-600');
+            } else {
+                toast.className = toast.className.replace('bg-red-600', 'bg-gray-800');
+            }
+            
+            toast.classList.remove('hidden');
+            
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Monitor | DuoPlus Automation v3.01.02</title>
+    <meta name="description" content="Real-time system monitoring dashboard for DuoPlus Automation with identity resolution and fintech intelligence">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --color-primary: #3b82f6;
+            --color-secondary: #3b82f6;
+            --color-accent: #3b82f6;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-error: #ef4444;
+            --color-info: #06b6d4;
+            --color-background: #3b82f6;
+            --color-surface: #3b82f6;
+            --color-surface-light: #3b82f6;
+            --color-text: #3b82f6;
+            --color-text-secondary: #3b82f6;
+            --color-border: #3b82f6;
+            --color-gradient: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            --color-gradient-secondary: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--color-background);
+            color: var(--color-text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .glass-effect {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(71, 85, 105, 0.5);
+        }
+
+        .status-online { 
+            background: linear-gradient(135deg, var(--color-success) 0%, #3b82f6 100%);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+        }
+        .status-offline { 
+            background: linear-gradient(135deg, var(--color-error) 0%, #dc2626 100%);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+        }
+        .status-warning { 
+            background: linear-gradient(135deg, var(--color-warning) 0%, #d97706 100%);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+        }
+
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .gradient-text {
+            background: var(--color-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .metric-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--color-gradient);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+            border-color: var(--color-accent);
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.connected { background: var(--color-success); }
+        .status-indicator.disconnected { background: var(--color-error); }
+        .status-indicator.syncing { background: var(--color-warning); }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--color-surface-light);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--color-gradient);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .log-entry {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+            padding: 0.5rem;
+            border-left: 3px solid var(--color-border);
+            margin-bottom: 0.5rem;
+            background: var(--color-surface);
+            border-radius: 0.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .log-entry:hover {
+            border-left-color: var(--color-accent);
+            background: var(--color-surface-light);
+        }
+
+        .log-entry.info { border-left-color: var(--color-info); }
+        .log-entry.success { border-left-color: var(--color-success); }
+        .log-entry.warning { border-left-color: var(--color-warning); }
+        .log-entry.error { border-left-color: var(--color-error); }
+
+        .system-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .alert-banner {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-banner.success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .loading-spinner {
+            border: 2px solid var(--color-border);
+            border-top: 2px solid var(--color-primary);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header-gradient {
+            background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-light) 100%);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .performance-gauge {
+            width: 120px;
+            height: 120px;
+            position: relative;
+        }
+
+        .gauge-arc {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+        }
+
+        .gauge-background {
+            stroke: var(--color-surface-light);
+        }
+
+        .gauge-fill {
+            stroke: var(--color-primary);
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .floating-action {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 50;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            font-size: 0.875rem;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .tooltip.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header-gradient sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <i data-lucide="activity" class="w-8 h-8 text-blue-500 mr-3"></i>
+                        <div>
+                            <h1 class="text-xl font-bold gradient-text">System Monitor</h1>
+                            <p class="text-sm text-gray-400">DuoPlus Automation v3.01.02-beta.0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <span class="status-indicator connected"></span>
+                        <span class="text-sm text-gray-400">All Systems Operational</span>
+                    </div>
+                    <div class="text-sm text-gray-400">
+                        <span id="currentTime"></span>
+                    </div>
+                    <button onclick="refreshSystem()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        <span>Refresh</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Alert Banner -->
+    <div id="alertBanner" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="alert-banner success">
+            <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+            <div>
+                <h3 class="font-semibold text-green-400">System Status: All Operational</h3>
+                <p class="text-sm text-green-300">Identity Resolution, Fintech Intelligence, and Virtual Phone systems are running normally</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- System Overview Grid -->
+        <div class="system-grid">
+            <!-- Virtual Phone System -->
+            <div class="metric-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <i data-lucide="phone" class="w-6 h-6 text-blue-500 mr-2"></i>
+                        <h3 class="text-lg font-semibold">Virtual Phone System</h3>
+                    </div>
+                    <span class="status-indicator connected"></span>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Status</span>
+                        <span class="text-green-400 font-medium">Active</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Total Records</span>
+                        <span class="text-white font-medium" id="totalRecords">1,247</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Active Records</span>
+                        <span class="text-white font-medium" id="activeRecords">1,189</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Processing Rate</span>
+                        <span class="text-white font-medium" id="processingRate">124/sec</span>
+                    </div>
+                    <div class="mt-3">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-400">System Load</span>
+                            <span class="text-gray-300" id="systemLoad">45%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="systemLoadBar" style="width: 45%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Identity Resolution -->
+            <div class="metric-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <i data-lucide="users" class="w-6 h-6 text-green-500 mr-2"></i>
+                        <h3 class="text-lg font-semibold">Identity Resolution</h3>
+                    </div>
+                    <span class="status-indicator connected"></span>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Status</span>
+                        <span class="text-green-400 font-medium">Active</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Confidence Level</span>
+                        <span class="text-white font-medium" id="confidenceLevel">90.2%</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Platforms Analyzed</span>
+                        <span class="text-white font-medium" id="platformsAnalyzed">3</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Verification Rate</span>
+                        <span class="text-white font-medium" id="verificationRate">87.3%</span>
+                    </div>
+                    <div class="mt-3">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-400">Resolution Success</span>
+                            <span class="text-gray-300" id="resolutionSuccess">92%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="resolutionSuccessBar" style="width: 92%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fintech Intelligence -->
+            <div class="metric-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <i data-lucide="trending-up" class="w-6 h-6 text-purple-500 mr-2"></i>
+                        <h3 class="text-lg font-semibold">Fintech Intelligence</h3>
+                    </div>
+                    <span class="status-indicator connected"></span>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Status</span>
+                        <span class="text-green-400 font-medium">Active</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Risk Assessment</span>
+                        <span class="text-green-400 font-medium" id="riskAssessment">LOW</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">KYC Verified</span>
+                        <span class="text-white font-medium" id="kycVerified">1,089</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Trust Factor</span>
+                        <span class="text-white font-medium" id="trustFactor">94.7%</span>
+                    </div>
+                    <div class="mt-3">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-400">Compliance Score</span>
+                            <span class="text-gray-300" id="complianceScore">96%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="complianceScoreBar" style="width: 96%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database Integration -->
+            <div class="metric-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <i data-lucide="database" class="w-6 h-6 text-orange-500 mr-2"></i>
+                        <h3 class="text-lg font-semibold">Database Integration</h3>
+                    </div>
+                    <span class="status-indicator connected"></span>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Status</span>
+                        <span class="text-green-400 font-medium">Connected</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Query Performance</span>
+                        <span class="text-white font-medium" id="queryPerformance">45ms</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Active Connections</span>
+                        <span class="text-white font-medium" id="activeConnections">24/50</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Data Size</span>
+                        <span class="text-white font-medium" id="dataSize">2.4GB</span>
+                    </div>
+                    <div class="mt-3">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-400">Connection Pool</span>
+                            <span class="text-gray-300" id="connectionPool">48%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="connectionPoolBar" style="width: 48%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bucket Storage -->
+            <div class="metric-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <i data-lucide="hard-drive" class="w-6 h-6 text-cyan-500 mr-2"></i>
+                        <h3 class="text-lg font-semibold">Bucket Storage</h3>
+                    </div>
+                    <span class="status-indicator connected"></span>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Status</span>
+                        <span class="text-green-400 font-medium">Ready</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Total Objects</span>
+                        <span class="text-white font-medium" id="totalObjects">15,847</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Storage Used</span>
+                        <span class="text-white font-medium" id="storageUsed">847MB</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Last Backup</span>
+                        <span class="text-white font-medium" id="lastBackup">2 min ago</span>
+                    </div>
+                    <div class="mt-3">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-400">Storage Utilization</span>
+                            <span class="text-gray-300" id="storageUtil">34%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="storageUtilBar" style="width: 34%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cloudflare Analytics -->
+            <div class="metric-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <i data-lucide="cloud" class="w-6 h-6 text-blue-400 mr-2"></i>
+                        <h3 class="text-lg font-semibold">Cloudflare Analytics</h3>
+                    </div>
+                    <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">ACTIVE</span>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-sm text-gray-400">Unique Visitors</p>
+                        <p class="text-2xl font-bold text-white">19</p>
+                        <p class="text-xs text-green-400">+12% ↗️</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-400">Total Requests</p>
+                        <p class="text-2xl font-bold text-white">60</p>
+                        <p class="text-xs text-green-400">+8% ↗️</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-400">Cache Hit Rate</p>
+                        <p class="text-2xl font-bold text-yellow-400">2.95%</p>
+                        <p class="text-xs text-yellow-400">⚠️ Optimize</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-400">Data Served</p>
+                        <p class="text-2xl font-bold text-white">221 kB</p>
+                        <p class="text-xs text-green-400">✅ Efficient</p>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-gray-700">
+                    <div class="flex justify-between items-center">
+                        <p class="text-sm text-gray-400">Developer Revenue</p>
+                        <p class="text-sm font-bold text-green-400">$931 MRR</p>
+                    </div>
+                    <div class="flex justify-between items-center mt-2">
+                        <p class="text-sm text-gray-400">Zone ID</p>
+                        <p class="text-xs font-mono text-blue-400">a3b7ba4...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Performance -->
+            <div class="metric-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <i data-lucide="zap" class="w-6 h-6 text-yellow-500 mr-2"></i>
+                        <h3 class="text-lg font-semibold">System Performance</h3>
+                    </div>
+                    <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">OPTIMAL</span>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-sm text-gray-400">CPU Usage</p>
+                        <p class="text-2xl font-bold text-white">32%</p>
+                        <div class="w-full bg-gray-700 rounded-full h-2 mt-2">
+                            <div class="bg-yellow-500 h-2 rounded-full" style="width: 32%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-400">Memory Usage</p>
+                        <p class="text-2xl font-bold text-white">45%</p>
+                        <div class="w-full bg-gray-700 rounded-full h-2 mt-2">
+                            <div class="bg-blue-500 h-2 rounded-full" style="width: 45%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-400">Response Time</p>
+                        <p class="text-2xl font-bold text-white">87ms</p>
+                        <p class="text-xs text-green-400">Sub-100ms ✅</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-400">Uptime</p>
+                        <p class="text-2xl font-bold text-white">99.9%</p>
+                        <p class="text-xs text-green-400">Excellent ✅</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Performance -->
+            <div class="metric-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <i data-lucide="zap" class="w-6 h-6 text-yellow-500 mr-2"></i>
+                        <h3 class="text-lg font-semibold">System Performance</h3>
+                    </div>
+                    <span class="status-indicator connected"></span>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">CPU Usage</span>
+                        <span class="text-white font-medium" id="cpuUsage">32%</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Memory Usage</span>
+                        <span class="text-white font-medium" id="memoryUsage">4.2GB/8GB</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Network I/O</span>
+                        <span class="text-white font-medium" id="networkIO">124MB/s</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">Uptime</span>
+                        <span class="text-white font-medium" id="uptime">14d 7h 23m</span>
+                    </div>
+                    <div class="mt-3">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-400">Performance Score</span>
+                            <span class="text-gray-300" id="perfScore">89%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="perfScoreBar" style="width: 89%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Performance Chart -->
+            <div class="metric-card">
+                <h3 class="text-lg font-semibold mb-4">System Performance</h3>
+                <div class="chart-container">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Identity Resolution Chart -->
+            <div class="metric-card">
+                <h3 class="text-lg font-semibold mb-4">Identity Resolution Analytics</h3>
+                <div class="chart-container">
+                    <canvas id="identityChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-time Logs -->
+        <div class="metric-card">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold">System Logs</h3>
+                <div class="flex items-center space-x-2">
+                    <button onclick="clearLogs()" class="text-sm text-gray-400 hover:text-gray-300">Clear</button>
+                    <button onclick="toggleAutoScroll()" class="text-sm text-gray-400 hover:text-gray-300">Auto-scroll: <span id="autoScrollStatus">ON</span></button>
+                </div>
+            </div>
+            <div id="logContainer" class="space-y-2 max-h-64 overflow-y-auto">
+                <!-- Logs will be populated here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Action Button -->
+    <div class="floating-action">
+        <button onclick="exportSystemReport()" class="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-all hover:scale-110">
+            <i data-lucide="download" class="w-6 h-6"></i>
+        </button>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Global state
+        let autoScroll = true;
+        let performanceChart = null;
+        let identityChart = null;
+        let systemMetrics = {
+            totalRecords: 1247,
+            activeRecords: 1189,
+            processingRate: 124,
+            systemLoad: 45,
+            confidenceLevel: 90.2,
+            platformsAnalyzed: 3,
+            verificationRate: 87.3,
+            resolutionSuccess: 92,
+            riskAssessment: 'LOW',
+            kycVerified: 1089,
+            trustFactor: 94.7,
+            complianceScore: 96,
+            queryPerformance: 45,
+            activeConnections: 24,
+            dataSize: '2.4GB',
+            totalObjects: 15847,
+            storageUsed: '847MB',
+            lastBackup: '2 min ago',
+            storageUtil: 34,
+            cpuUsage: 32,
+            memoryUsage: '4.2GB/8GB',
+            networkIO: '124MB/s',
+            uptime: '14d 7h 23m',
+            perfScore: 89
+        };
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDashboard();
+            startRealTimeUpdates();
+            initializeCharts();
+            addInitialLogs();
+        });
+
+        function initializeDashboard() {
+            updateTime();
+            setInterval(updateTime, 1000);
+            updateMetrics();
+        }
+
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = now.toLocaleString();
+        }
+
+        function updateMetrics() {
+            // Update all metric displays
+            Object.keys(systemMetrics).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.textContent = systemMetrics[key];
+                }
+            });
+
+            // Update progress bars
+            updateProgressBar('systemLoadBar', systemMetrics.systemLoad);
+            updateProgressBar('resolutionSuccessBar', systemMetrics.resolutionSuccess);
+            updateProgressBar('complianceScoreBar', systemMetrics.complianceScore);
+            updateProgressBar('connectionPoolBar', 48);
+            updateProgressBar('storageUtilBar', systemMetrics.storageUtil);
+            updateProgressBar('perfScoreBar', systemMetrics.perfScore);
+        }
+
+        function updateProgressBar(barId, percentage) {
+            const bar = document.getElementById(barId);
+            if (bar) {
+                bar.style.width = percentage + '%';
+            }
+        }
+
+        function initializeCharts() {
+            // Performance Chart
+            const perfCtx = document.getElementById('performanceChart').getContext('2d');
+            performanceChart = new Chart(perfCtx, {
+                type: 'line',
+                data: {
+                    labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                    datasets: [{
+                        label: 'CPU Usage',
+                        data: [25, 28, 35, 42, 38, 32],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Memory Usage',
+                        data: [45, 42, 48, 52, 47, 45],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Network I/O',
+                        data: [120, 115, 125, 140, 130, 124],
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#3b82f6' }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: '#3b82f6' },
+                            ticks: { color: '#3b82f6' }
+                        },
+                        y: {
+                            grid: { color: '#3b82f6' },
+                            ticks: { color: '#3b82f6' }
+                        }
+                    }
+                }
+            });
+
+            // Identity Resolution Chart
+            const identityCtx = document.getElementById('identityChart').getContext('2d');
+            identityChart = new Chart(identityCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['CashApp', 'WhatsApp', 'Telegram'],
+                    datasets: [{
+                        data: [99.2, 65.0, 15.0],
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(245, 158, 11, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(245, 158, 11, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#3b82f6' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function startRealTimeUpdates() {
+            // Update metrics every 5 seconds
+            setInterval(() => {
+                simulateMetricsUpdate();
+                updateMetrics();
+                updateCharts();
+            }, 5000);
+
+            // Add logs every 10 seconds
+            setInterval(() => {
+                addRandomLog();
+            }, 10000);
+        }
+
+        function simulateMetricsUpdate() {
+            // Simulate realistic metric fluctuations
+            systemMetrics.totalRecords += Math.floor(Math.random() * 5) - 2;
+            systemMetrics.activeRecords += Math.floor(Math.random() * 3) - 1;
+            systemMetrics.processingRate += Math.floor(Math.random() * 10) - 5;
+            systemMetrics.systemLoad = Math.max(20, Math.min(80, systemMetrics.systemLoad + Math.floor(Math.random() * 10) - 5));
+            systemMetrics.confidenceLevel = Math.max(85, Math.min(95, systemMetrics.confidenceLevel + (Math.random() * 2 - 1)));
+            systemMetrics.verificationRate = Math.max(80, Math.min(95, systemMetrics.verificationRate + (Math.random() * 2 - 1)));
+            systemMetrics.resolutionSuccess = Math.max(85, Math.min(98, systemMetrics.resolutionSuccess + Math.floor(Math.random() * 3) - 1));
+            systemMetrics.trustFactor = Math.max(90, Math.min(98, systemMetrics.trustFactor + (Math.random() * 1 - 0.5)));
+            systemMetrics.complianceScore = Math.max(92, Math.min(99, systemMetrics.complianceScore + Math.floor(Math.random() * 2) - 1));
+            systemMetrics.queryPerformance = Math.max(30, Math.min(80, systemMetrics.queryPerformance + Math.floor(Math.random() * 10) - 5));
+            systemMetrics.totalObjects += Math.floor(Math.random() * 20) - 10;
+            systemMetrics.storageUtil = Math.max(25, Math.min(60, systemMetrics.storageUtil + Math.floor(Math.random() * 5) - 2));
+            systemMetrics.cpuUsage = Math.max(20, Math.min(70, systemMetrics.cpuUsage + Math.floor(Math.random() * 8) - 4));
+            systemMetrics.perfScore = Math.max(80, Math.min(95, systemMetrics.perfScore + Math.floor(Math.random() * 3) - 1));
+        }
+
+        function updateCharts() {
+            if (performanceChart) {
+                // Add new data point
+                const now = new Date();
+                const timeLabel = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+                
+                performanceChart.data.labels.push(timeLabel);
+                performanceChart.data.labels.shift();
+                
+                performanceChart.data.datasets[0].data.push(systemMetrics.cpuUsage);
+                performanceChart.data.datasets[0].data.shift();
+                
+                performanceChart.data.datasets[1].data.push(systemMetrics.memoryUsage.split('/')[0].replace('GB', '') * 10);
+                performanceChart.data.datasets[1].data.shift();
+                
+                performanceChart.data.datasets[2].data.push(parseInt(systemMetrics.networkIO));
+                performanceChart.data.datasets[2].data.shift();
+                
+                performanceChart.update('none');
+            }
+
+            if (identityChart) {
+                // Update confidence values with small variations
+                identityChart.data.datasets[0].data = [
+                    systemMetrics.confidenceLevel + (Math.random() * 2 - 1),
+                    systemMetrics.verificationRate + (Math.random() * 4 - 2),
+                    15.0 + (Math.random() * 4 - 2)
+                ];
+                identityChart.update('none');
+            }
+        }
+
+        function addInitialLogs() {
+            const initialLogs = [
+                { type: 'info', message: 'System Monitor initialized', timestamp: new Date() },
+                { type: 'success', message: 'Virtual Phone System connected successfully', timestamp: new Date(Date.now() - 30000) },
+                { type: 'info', message: 'Identity Resolution engine started', timestamp: new Date(Date.now() - 60000) },
+                { type: 'success', message: 'Fintech Intelligence system online', timestamp: new Date(Date.now() - 90000) },
+                { type: 'info', message: 'Database connection established', timestamp: new Date(Date.now() - 120000) },
+                { type: 'success', message: 'Bucket storage synchronized', timestamp: new Date(Date.now() - 150000) }
+            ];
+
+            initialLogs.forEach(log => addLog(log.type, log.message, log.timestamp));
+        }
+
+        function addLog(type, message, timestamp = new Date()) {
+            const logContainer = document.getElementById('logContainer');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            
+            const timeStr = timestamp.toLocaleTimeString();
+            const icon = getLogIcon(type);
+            
+            logEntry.innerHTML = `
+                <div class="flex items-start space-x-2">
+                    <span class="text-gray-500">${timeStr}</span>
+                    <i data-lucide="${icon}" class="w-4 h-4 mt-0.5"></i>
+                    <span class="flex-1">${message}</span>
+                </div>
+            `;
+            
+            logContainer.appendChild(logEntry);
+            
+            // Re-initialize icons for new elements
+            lucide.createIcons();
+            
+            // Auto-scroll to bottom
+            if (autoScroll) {
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }
+            
+            // Keep only last 50 logs
+            while (logContainer.children.length > 50) {
+                logContainer.removeChild(logContainer.firstChild);
+            }
+        }
+
+        function getLogIcon(type) {
+            const icons = {
+                info: 'info',
+                success: 'check-circle',
+                warning: 'alert-triangle',
+                error: 'x-circle'
+            };
+            return icons[type] || 'info';
+        }
+
+        function addRandomLog() {
+            const logTypes = ['info', 'success', 'warning'];
+            const messages = [
+                'Identity resolution completed for +1-555-123-4567',
+                'Fintech analysis: Risk assessment updated to LOW',
+                'Virtual phone record created successfully',
+                'Database query executed in 42ms',
+                'Bucket storage backup completed',
+                'System performance optimization applied',
+                'Cross-platform identity correlation updated',
+                'KYC verification completed for new user',
+                'SIM swap protection scan completed',
+                'Account longevity analysis updated'
+            ];
+            
+            const type = logTypes[Math.floor(Math.random() * logTypes.length)];
+            const message = messages[Math.floor(Math.random() * messages.length)];
+            
+            addLog(type, message);
+        }
+
+        function clearLogs() {
+            document.getElementById('logContainer').innerHTML = '';
+            addLog('info', 'System logs cleared');
+        }
+
+        function toggleAutoScroll() {
+            autoScroll = !autoScroll;
+            document.getElementById('autoScrollStatus').textContent = autoScroll ? 'ON' : 'OFF';
+        }
+
+        function refreshSystem() {
+            addLog('info', 'Manual system refresh initiated');
+            
+            // Simulate refresh
+            const refreshBtn = event.target;
+            refreshBtn.disabled = true;
+            refreshBtn.innerHTML = '<div class="loading-spinner inline-block mr-2"></div>Refreshing...';
+            
+            setTimeout(() => {
+                simulateMetricsUpdate();
+                updateMetrics();
+                updateCharts();
+                
+                refreshBtn.disabled = false;
+                refreshBtn.innerHTML = '<i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i><span>Refresh</span>';
+                lucide.createIcons();
+                
+                addLog('success', 'System refresh completed');
+            }, 2000);
+        }
+
+        function exportSystemReport() {
+            addLog('info', 'Generating system report...');
+            
+            const report = {
+                timestamp: new Date().toISOString(),
+                system: 'DuoPlus Automation v3.01.02-beta.0',
+                metrics: systemMetrics,
+                charts: {
+                    performance: performanceChart ? performanceChart.data : null,
+                    identity: identityChart ? identityChart.data : null
+                },
+                logs: Array.from(document.getElementById('logContainer').children).map(log => ({
+                    type: log.className.replace('log-entry ', ''),
+                    message: log.textContent.trim(),
+                    timestamp: new Date().toISOString()
+                }))
+            };
+            
+            const dataStr = JSON.stringify(report, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `system-monitor-report-${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            addLog('success', 'System report exported successfully');
+        }
+    </script>
+</body>
+</html>

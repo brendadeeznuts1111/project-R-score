@@ -1,0 +1,49 @@
+{
+  "name": "@duoplus/testing-framework",
+  "version": "1.2.4-beta.0",
+  "description": "DuoPlus Tools - Testing framework with comprehensive validation and mocking for developer productivity",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "build": "bun build index.ts --outdir dist",
+    "test": "bun test",
+    "test:watch": "bun test --watch"
+  },
+  "devDependencies": {
+    "jest": "catalog:testing",
+    "@types/jest": "catalog:testing",
+    "@types/bun": "catalog:",
+    "typescript": "catalog:"
+  },
+  "author": "DuoPlus Development Team",
+  "license": "MIT",
+  "keywords": [
+    "duoplus",
+    "automation",
+    "bun",
+    "typescript",
+    "enterprise",
+    "cli",
+    "testing",
+    "development",
+    "productivity",
+    "framework",
+    "with",
+    "comprehensive",
+    "validation",
+    "mocking"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/duoplus/duo-automation.git",
+    "bugs": "https://github.com/duoplus/duo-automation/issues",
+    "homepage": "https://duoplus.ai"
+  },
+  "bugs": {
+    "url": "https://github.com/duoplus/duo-automation/issues"
+  },
+  "homepage": "https://duoplus.ai/packages/testing-framework",
+  "contributors": [
+    "DuoPlus Development Team <dev@duoplus.ai>"
+  ]
+}

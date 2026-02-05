@@ -1,0 +1,213 @@
+{
+  "timestamp": "2026-01-15T07:06:24.793Z",
+  "summary": {
+    "uptime": 127,
+    "totalAPIs": 4,
+    "totalCalls": 4,
+    "totalDuration": 126,
+    "averageCallDuration": 31.5,
+    "totalErrors": 0,
+    "errorRate": 0,
+    "nativeAPIs": 4,
+    "fallbackAPIs": 0,
+    "nativeRate": 100
+  },
+  "health": {
+    "overall": "healthy",
+    "counts": {
+      "healthy": 4,
+      "degraded": 0,
+      "unhealthy": 0,
+      "total": 4
+    },
+    "details": [
+      {
+        "api": "fetch",
+        "status": "healthy",
+        "successRate": "100.0",
+        "implementation": "native"
+      },
+      {
+        "api": "Bun.write",
+        "status": "healthy",
+        "successRate": "100.0",
+        "implementation": "native"
+      },
+      {
+        "api": "Bun.file",
+        "status": "healthy",
+        "successRate": "100.0",
+        "implementation": "native"
+      },
+      {
+        "api": "NativeAPIStatusAPI.getStatus",
+        "status": "healthy",
+        "successRate": "100.0",
+        "implementation": "native"
+      }
+    ]
+  },
+  "metrics": [
+    {
+      "apiName": "fetch",
+      "domain": "networking",
+      "callCount": 1,
+      "totalDuration": 125,
+      "averageDuration": 125,
+      "lastCalled": "2026-01-15T07:06:24.791Z",
+      "successCount": 1,
+      "errorCount": 0,
+      "implementation": "native",
+      "implementationSource": {
+        "source": "bun-native",
+        "version": "1.3.6",
+        "performanceTier": "fast",
+        "memoryEfficiency": "optimal"
+      },
+      "metadata": {
+        "endpoint": "example.com"
+      }
+    },
+    {
+      "apiName": "Bun.write",
+      "domain": "filesystem",
+      "callCount": 1,
+      "totalDuration": 1,
+      "averageDuration": 1,
+      "lastCalled": "2026-01-15T07:06:24.792Z",
+      "successCount": 1,
+      "errorCount": 0,
+      "implementation": "native",
+      "implementationSource": {
+        "source": "bun-native",
+        "version": "1.3.6",
+        "performanceTier": "ultra-fast",
+        "memoryEfficiency": "optimal"
+      },
+      "metadata": {
+        "fileType": "json"
+      }
+    },
+    {
+      "apiName": "Bun.file",
+      "domain": "filesystem",
+      "callCount": 1,
+      "totalDuration": 0,
+      "averageDuration": 0,
+      "lastCalled": "2026-01-15T07:06:24.792Z",
+      "successCount": 1,
+      "errorCount": 0,
+      "implementation": "native",
+      "implementationSource": {
+        "source": "bun-native",
+        "version": "1.3.6",
+        "performanceTier": "ultra-fast",
+        "memoryEfficiency": "optimal"
+      },
+      "metadata": {
+        "operation": "read"
+      }
+    },
+    {
+      "apiName": "NativeAPIStatusAPI.getStatus",
+      "domain": "runtime",
+      "callCount": 1,
+      "totalDuration": 0,
+      "averageDuration": 0,
+      "lastCalled": "2026-01-15T07:06:24.792Z",
+      "successCount": 1,
+      "errorCount": 0,
+      "implementation": "native",
+      "implementationSource": {
+        "source": "bun-native",
+        "version": "1.3.6",
+        "performanceTier": "ultra-fast",
+        "memoryEfficiency": "optimal"
+      }
+    }
+  ],
+  "domainAnalysis": {
+    "filesystem": {
+      "totalAPIs": 2,
+      "totalCalls": 2,
+      "averageDuration": 0.5,
+      "nativeRate": 100,
+      "errorRate": 0,
+      "topPerformers": [
+        "Bun.file",
+        "Bun.write"
+      ]
+    },
+    "networking": {
+      "totalAPIs": 1,
+      "totalCalls": 1,
+      "averageDuration": 125,
+      "nativeRate": 100,
+      "errorRate": 0,
+      "topPerformers": [
+        "fetch"
+      ]
+    },
+    "crypto": {
+      "totalAPIs": 0,
+      "totalCalls": 0,
+      "averageDuration": 0,
+      "nativeRate": 0,
+      "errorRate": 0,
+      "topPerformers": []
+    },
+    "cookies": {
+      "totalAPIs": 0,
+      "totalCalls": 0,
+      "averageDuration": 0,
+      "nativeRate": 0,
+      "errorRate": 0,
+      "topPerformers": []
+    },
+    "streams": {
+      "totalAPIs": 0,
+      "totalCalls": 0,
+      "averageDuration": 0,
+      "nativeRate": 0,
+      "errorRate": 0,
+      "topPerformers": []
+    },
+    "binary": {
+      "totalAPIs": 0,
+      "totalCalls": 0,
+      "averageDuration": 0,
+      "nativeRate": 0,
+      "errorRate": 0,
+      "topPerformers": []
+    },
+    "system": {
+      "totalAPIs": 0,
+      "totalCalls": 0,
+      "averageDuration": 0,
+      "nativeRate": 0,
+      "errorRate": 0,
+      "topPerformers": []
+    },
+    "runtime": {
+      "totalAPIs": 1,
+      "totalCalls": 1,
+      "averageDuration": 0,
+      "nativeRate": 100,
+      "errorRate": 0,
+      "topPerformers": [
+        "NativeAPIStatusAPI.getStatus"
+      ]
+    }
+  },
+  "implementationAnalysis": {
+    "native": {
+      "count": 4,
+      "totalCalls": 4,
+      "avgDuration": 31.5,
+      "sources": [
+        "bun-native"
+      ]
+    }
+  },
+  "demoCompleted": true
+}

@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 Enhanced Matrix Topics - Hex Color System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./styles/enhanced-matrix-colors.css">
+    <style>
+        .topic-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .topic-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--topic-gradient);
+        }
+
+        .topic-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .color-swatch {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.1);
+        }
+
+        .color-swatch::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.3) 0%, transparent 50%, rgba(255, 255, 255, 0.1) 100%);
+        }
+
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .hex-display {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .hex-display:hover {
+            background: rgba(0, 0, 0, 0.1);
+            transform: scale(1.02);
+        }
+
+        .gradient-preview {
+            height: 40px;
+            border-radius: 8px;
+            margin: 12px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .topic-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            background: var(--topic-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: float-particle 15s infinite ease-in-out;
+        }
+
+        @keyframes float-particle {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 min-h-screen">
+    <!-- Floating Particles -->
+    <div class="floating-particles">
+        <div class="particle" style="width: 60px; height: 60px; background: #3b82f6; top: 10%; left: 5%; animation-delay: 0s;"></div>
+        <div class="particle" style="width: 40px; height: 40px; background: #8b5cf6; top: 20%; right: 10%; animation-delay: 2s;"></div>
+        <div class="particle" style="width: 50px; height: 50px; background: #ef4444; bottom: 30%; left: 15%; animation-delay: 4s;"></div>
+        <div class="particle" style="width: 30px; height: 30px; background: #f59e0b; bottom: 20%; right: 20%; animation-delay: 6s;"></div>
+        <div class="particle" style="width: 45px; height: 45px; background: #14b8a6; top: 50%; left: 50%; animation-delay: 8s;"></div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                🎨 Enhanced Matrix Topics
+            </h1>
+            <p class="text-xl text-gray-600 mb-2">Comprehensive Hex Color System for DuoPlus Enhancement Matrix</p>
+            <p class="text-sm text-gray-500">Click any hex code to copy • Click color swatches for details</p>
+        </div>
+
+        <!-- Color System Overview -->
+        <div class="bg-white rounded-2xl p-8 mb-12 shadow-xl">
+            <h2 class="text-3xl font-bold mb-6 text-center">🌈 Complete Color System</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                <div class="text-center">
+                    <div class="color-swatch" style="background: linear-gradient(135deg, #3b82f6, #10b981);" onclick="showColorDetails('Performance', '#3b82f6', '#10b981')"></div>
+                    <h3 class="font-bold mt-2">Performance</h3>
+                    <p class="text-sm text-gray-600">Blue → Green</p>
+                </div>
+                <div class="text-center">
+                    <div class="color-swatch" style="background: linear-gradient(135deg, #8b5cf6, #a855f7);" onclick="showColorDetails('TypeScript', '#8b5cf6', '#a855f7')"></div>
+                    <h3 class="font-bold mt-2">TypeScript</h3>
+                    <p class="text-sm text-gray-600">Purple</p>
+                </div>
+                <div class="text-center">
+                    <div class="color-swatch" style="background: linear-gradient(135deg, #ef4444, #f97316);" onclick="showColorDetails('Security', '#ef4444', '#f97316')"></div>
+                    <h3 class="font-bold mt-2">Security</h3>
+                    <p class="text-sm text-gray-600">Red → Orange</p>
+                </div>
+                <div class="text-center">
+                    <div class="color-swatch" style="background: linear-gradient(135deg, #f59e0b, #eab308);" onclick="showColorDetails('Bundler', '#f59e0b', '#eab308')"></div>
+                    <h3 class="font-bold mt-2">Bundler</h3>
+                    <p class="text-sm text-gray-600">Amber → Yellow</p>
+                </div>
+                <div class="text-center">
+                    <div class="color-swatch" style="background: linear-gradient(135deg, #14b8a6, #06b6d4);" onclick="showColorDetails('Fixes', '#14b8a6', '#06b6d4')"></div>
+                    <h3 class="font-bold mt-2">Fixes</h3>
+                    <p class="text-sm text-gray-600">Teal → Cyan</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topic Cards -->
+        <div class="topic-grid">
+            <!-- Performance Topic -->
+            <div class="topic-card" style="--topic-gradient: linear-gradient(135deg, #3b82f6, #10b981);">
+                <div class="topic-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Performance Enhancement</h3>
+                <div class="gradient-preview" style="background: linear-gradient(135deg, #3b82f6, #10b981);"></div>
+                
+                <div class="space-y-3 mb-4">
+                    <div class="flex justify-between items-center">
+                        <span>Primary</span>
+                        <div class="hex-display" onclick="copyHex('#3b82f6')" title="Click to copy">#3b82f6</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Secondary</span>
+                        <div class="hex-display" onclick="copyHex('#10b981')" title="Click to copy">#10b981</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Accent</span>
+                        <div class="hex-display" onclick="copyHex('#06b6d4')" title="Click to copy">#06b6d4</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Light</span>
+                        <div class="hex-display" onclick="copyHex('#dbeafe')" title="Click to copy">#dbeafe</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Dark</span>
+                        <div class="hex-display" onclick="copyHex('#1e40af')" title="Click to copy">#1e40af</div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-2">
+                    <span class="color-badge performance-badge">30x Faster</span>
+                    <span class="color-badge performance-badge">20x Hashing</span>
+                    <span class="color-badge performance-badge">3x JSON</span>
+                </div>
+            </div>
+
+            <!-- TypeScript Topic -->
+            <div class="topic-card" style="--topic-gradient: linear-gradient(135deg, #8b5cf6, #a855f7);">
+                <div class="topic-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">TypeScript Types</h3>
+                <div class="gradient-preview" style="background: linear-gradient(135deg, #8b5cf6, #a855f7);"></div>
+                
+                <div class="space-y-3 mb-4">
+                    <div class="flex justify-between items-center">
+                        <span>Primary</span>
+                        <div class="hex-display" onclick="copyHex('#8b5cf6')" title="Click to copy">#8b5cf6</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Secondary</span>
+                        <div class="hex-display" onclick="copyHex('#a855f7')" title="Click to copy">#a855f7</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Accent</span>
+                        <div class="hex-display" onclick="copyHex('#9333ea')" title="Click to copy">#9333ea</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Light</span>
+                        <div class="hex-display" onclick="copyHex('#ede9fe')" title="Click to copy">#ede9fe</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Dark</span>
+                        <div class="hex-display" onclick="copyHex('#6b21a8')" title="Click to copy">#6b21a8</div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-2">
+                    <span class="color-badge typescript-badge">100% Type Safe</span>
+                    <span class="color-badge typescript-badge">Enhanced IntelliSense</span>
+                    <span class="color-badge typescript-badge">Runtime Safety</span>
+                </div>
+            </div>
+
+            <!-- Security Topic -->
+            <div class="topic-card" style="--topic-gradient: linear-gradient(135deg, #ef4444, #f97316);">
+                <div class="topic-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Security Protection</h3>
+                <div class="gradient-preview" style="background: linear-gradient(135deg, #ef4444, #f97316);"></div>
+                
+                <div class="space-y-3 mb-4">
+                    <div class="flex justify-between items-center">
+                        <span>Primary</span>
+                        <div class="hex-display" onclick="copyHex('#ef4444')" title="Click to copy">#ef4444</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Secondary</span>
+                        <div class="hex-display" onclick="copyHex('#f97316')" title="Click to copy">#f97316</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Accent</span>
+                        <div class="hex-display" onclick="copyHex('#dc2626')" title="Click to copy">#dc2626</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Light</span>
+                        <div class="hex-display" onclick="copyHex('#fee2e2')" title="Click to copy">#fee2e2</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Dark</span>
+                        <div class="hex-display" onclick="copyHex('#991b1b')" title="Click to copy">#991b1b</div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-2">
+                    <span class="color-badge security-badge">Critical Fixes</span>
+                    <span class="color-badge security-badge">Web API</span>
+                    <span class="color-badge security-badge">Vulnerabilities</span>
+                </div>
+            </div>
+
+            <!-- Bundler Topic -->
+            <div class="topic-card" style="--topic-gradient: linear-gradient(135deg, #f59e0b, #eab308);">
+                <div class="topic-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Bundler Enhancement</h3>
+                <div class="gradient-preview" style="background: linear-gradient(135deg, #f59e0b, #eab308);"></div>
+                
+                <div class="space-y-3 mb-4">
+                    <div class="flex justify-between items-center">
+                        <span>Primary</span>
+                        <div class="hex-display" onclick="copyHex('#f59e0b')" title="Click to copy">#f59e0b</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Secondary</span>
+                        <div class="hex-display" onclick="copyHex('#eab308')" title="Click to copy">#eab308</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Accent</span>
+                        <div class="hex-display" onclick="copyHex('#d97706')" title="Click to copy">#d97706</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Light</span>
+                        <div class="hex-display" onclick="copyHex('#fef3c7')" title="Click to copy">#fef3c7</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Dark</span>
+                        <div class="hex-display" onclick="copyHex('#92400e')" title="Click to copy">#92400e</div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-2">
+                    <span class="color-badge bundler-badge">Memory Optimize</span>
+                    <span class="color-badge bundler-badge">Sub-ms Builds</span>
+                    <span class="color-badge bundler-badge">200KB ↓</span>
+                </div>
+            </div>
+
+            <!-- Fixes Topic -->
+            <div class="topic-card" style="--topic-gradient: linear-gradient(135deg, #14b8a6, #06b6d4);">
+                <div class="topic-icon">
+                    <i class="fas fa-wrench"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Latest Fixes</h3>
+                <div class="gradient-preview" style="background: linear-gradient(135deg, #14b8a6, #06b6d4);"></div>
+                
+                <div class="space-y-3 mb-4">
+                    <div class="flex justify-between items-center">
+                        <span>Primary</span>
+                        <div class="hex-display" onclick="copyHex('#14b8a6')" title="Click to copy">#14b8a6</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Secondary</span>
+                        <div class="hex-display" onclick="copyHex('#06b6d4')" title="Click to copy">#06b6d4</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Accent</span>
+                        <div class="hex-display" onclick="copyHex('#0d9488')" title="Click to copy">#0d9488</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Light</span>
+                        <div class="hex-display" onclick="copyHex('#ccfbf1')" title="Click to copy">#ccfbf1</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Dark</span>
+                        <div class="hex-display" onclick="copyHex('#115e59')" title="Click to copy">#115e59</div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-2">
+                    <span class="color-badge fixes-badge">CSS Parser</span>
+                    <span class="color-badge fixes-badge">32 Properties</span>
+                    <span class="color-badge fixes-badge">Type Fixes</span>
+                </div>
+            </div>
+
+            <!-- Success Status Topic -->
+            <div class="topic-card" style="--topic-gradient: linear-gradient(135deg, #22c55e, #16a34a);">
+                <div class="topic-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Success Status</h3>
+                <div class="gradient-preview" style="background: linear-gradient(135deg, #22c55e, #16a34a);"></div>
+                
+                <div class="space-y-3 mb-4">
+                    <div class="flex justify-between items-center">
+                        <span>Primary</span>
+                        <div class="hex-display" onclick="copyHex('#22c55e')" title="Click to copy">#22c55e</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Secondary</span>
+                        <div class="hex-display" onclick="copyHex('#16a34a')" title="Click to copy">#16a34a</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Accent</span>
+                        <div class="hex-display" onclick="copyHex('#15803d')" title="Click to copy">#15803d</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Light</span>
+                        <div class="hex-display" onclick="copyHex('#dcfce7')" title="Click to copy">#dcfce7</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Dark</span>
+                        <div class="hex-display" onclick="copyHex('#14532d')" title="Click to copy">#14532d</div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-2">
+                    <span class="color-badge success-badge">100% Complete</span>
+                    <span class="color-badge success-badge">Production Ready</span>
+                    <span class="color-badge success-badge">Exceptional</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Color Usage Guidelines -->
+        <div class="bg-white rounded-2xl p-8 mt-12 shadow-xl">
+            <h2 class="text-3xl font-bold mb-6 text-center">📋 Color Usage Guidelines</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <h3 class="font-bold text-lg mb-2">Performance Colors</h3>
+                    <p class="text-gray-600 text-sm">Used for speed improvements, optimizations, and performance metrics. Blue to green gradient represents progression from baseline to optimized state.</p>
+                </div>
+                <div class="border-l-4 border-purple-500 pl-4">
+                    <h3 class="font-bold text-lg mb-2">TypeScript Colors</h3>
+                    <p class="text-gray-600 text-sm">Applied to type safety, code quality, and development experience features. Purple represents intelligence and precision.</p>
+                </div>
+                <div class="border-l-4 border-red-500 pl-4">
+                    <h3 class="font-bold text-lg mb-2">Security Colors</h3>
+                    <p class="text-gray-600 text-sm">Reserved for security fixes, vulnerabilities, and protection mechanisms. Red indicates critical importance.</p>
+                </div>
+                <div class="border-l-4 border-amber-500 pl-4">
+                    <h3 class="font-bold text-lg mb-2">Bundler Colors</h3>
+                    <p class="text-gray-600 text-sm">Used for build system enhancements, memory optimizations, and packaging improvements. Amber represents energy and efficiency.</p>
+                </div>
+                <div class="border-l-4 border-teal-500 pl-4">
+                    <h3 class="font-bold text-lg mb-2">Fixes Colors</h3>
+                    <p class="text-gray-600 text-sm">Applied to bug fixes, patches, and maintenance updates. Teal represents stability and reliability.</p>
+                </div>
+                <div class="border-l-4 border-green-500 pl-4">
+                    <h3 class="font-bold text-lg mb-2">Success Colors</h3>
+                    <p class="text-gray-600 text-sm">Used for completion status, successful deployments, and achievements. Green represents success and completion.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Color Palette Export -->
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl p-8 mt-12 text-center">
+            <h2 class="text-3xl font-bold mb-4">🎨 Export Color Palette</h2>
+            <p class="mb-6">Get the complete hex color palette for your projects</p>
+            <div class="flex justify-center gap-4">
+                <button onclick="exportCSS()" class="bg-white text-indigo-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+                    <i class="fas fa-download mr-2"></i>Export CSS
+                </button>
+                <button onclick="exportJSON()" class="bg-white text-purple-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+                    <i class="fas fa-file-code mr-2"></i>Export JSON
+                </button>
+                <button onclick="exportSCSS()" class="bg-white text-pink-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+                    <i class="fas fa-sass mr-2"></i>Export SCSS
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Color Detail Modal -->
+    <div id="colorModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+            <h3 id="modalTitle" class="text-2xl font-bold mb-4"></h3>
+            <div id="modalContent" class="space-y-4"></div>
+            <button onclick="closeModal()" class="mt-6 w-full bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Copy hex color to clipboard
+        function copyHex(hex) {
+            navigator.clipboard.writeText(hex).then(() => {
+                showNotification(`Copied ${hex} to clipboard!`);
+            });
+        }
+
+        // Show color details modal
+        function showColorDetails(topic, primary, secondary) {
+            const modal = document.getElementById('colorModal');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+            
+            title.textContent = `${topic} Color Details`;
+            content.innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <label class="font-semibold">Primary Color:</label>
+                        <div class="flex items-center gap-2 mt-1">
+                            <div class="w-12 h-12 rounded" style="background: ${primary};"></div>
+                            <code class="bg-gray-100 px-2 py-1 rounded">${primary}</code>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="font-semibold">Secondary Color:</label>
+                        <div class="flex items-center gap-2 mt-1">
+                            <div class="w-12 h-12 rounded" style="background: ${secondary};"></div>
+                            <code class="bg-gray-100 px-2 py-1 rounded">${secondary}</code>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="font-semibold">Gradient Preview:</label>
+                        <div class="w-full h-16 rounded mt-1" style="background: linear-gradient(135deg, ${primary}, ${secondary});"></div>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('colorModal').classList.add('hidden');
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Export functions
+        function exportCSS() {
+            const css = `:root {
+  /* Performance Colors */
+  --performance-primary: #3b82f6;
+  --performance-secondary: #10b981;
+  --performance-accent: #06b6d4;
+  
+  /* TypeScript Colors */
+  --typescript-primary: #8b5cf6;
+  --typescript-secondary: #a855f7;
+  --typescript-accent: #9333ea;
+  
+  /* Security Colors */
+  --security-primary: #ef4444;
+  --security-secondary: #f97316;
+  --security-accent: #dc2626;
+  
+  /* Bundler Colors */
+  --bundler-primary: #f59e0b;
+  --bundler-secondary: #eab308;
+  --bundler-accent: #d97706;
+  
+  /* Fixes Colors */
+  --fixes-primary: #14b8a6;
+  --fixes-secondary: #06b6d4;
+  --fixes-accent: #0d9488;
+  
+  /* Success Colors */
+  --success-primary: #22c55e;
+  --success-secondary: #16a34a;
+  --success-accent: #15803d;
+}`;
+            
+            downloadFile('enhanced-matrix-colors.css', css, 'text/css');
+        }
+
+        function exportJSON() {
+            const json = JSON.stringify({
+                performance: {
+                    primary: '#3b82f6',
+                    secondary: '#10b981',
+                    accent: '#06b6d4',
+                    light: '#dbeafe',
+                    dark: '#1e40af'
+                },
+                typescript: {
+                    primary: '#8b5cf6',
+                    secondary: '#a855f7',
+                    accent: '#9333ea',
+                    light: '#ede9fe',
+                    dark: '#6b21a8'
+                },
+                security: {
+                    primary: '#ef4444',
+                    secondary: '#f97316',
+                    accent: '#dc2626',
+                    light: '#fee2e2',
+                    dark: '#991b1b'
+                },
+                bundler: {
+                    primary: '#f59e0b',
+                    secondary: '#eab308',
+                    accent: '#d97706',
+                    light: '#fef3c7',
+                    dark: '#92400e'
+                },
+                fixes: {
+                    primary: '#14b8a6',
+                    secondary: '#06b6d4',
+                    accent: '#0d9488',
+                    light: '#ccfbf1',
+                    dark: '#115e59'
+                },
+                success: {
+                    primary: '#22c55e',
+                    secondary: '#16a34a',
+                    accent: '#15803d',
+                    light: '#dcfce7',
+                    dark: '#14532d'
+                }
+            }, null, 2);
+            
+            downloadFile('enhanced-matrix-colors.json', json, 'application/json');
+        }
+
+        function exportSCSS() {
+            const scss = `// Enhanced Matrix Color System
+$performance-primary: #3b82f6;
+$performance-secondary: #10b981;
+$performance-accent: #06b6d4;
+
+$typescript-primary: #8b5cf6;
+$typescript-secondary: #a855f7;
+$typescript-accent: #9333ea;
+
+$security-primary: #ef4444;
+$security-secondary: #f97316;
+$security-accent: #dc2626;
+
+$bundler-primary: #f59e0b;
+$bundler-secondary: #eab308;
+$bundler-accent: #d97706;
+
+$fixes-primary: #14b8a6;
+$fixes-secondary: #06b6d4;
+$fixes-accent: #0d9488;
+
+$success-primary: #22c55e;
+$success-secondary: #16a34a;
+$success-accent: #15803d;
+
+// Gradient Mixins
+@mixin performance-gradient {
+  background: linear-gradient(135deg, $performance-primary, $performance-secondary);
+}
+
+@mixin typescript-gradient {
+  background: linear-gradient(135deg, $typescript-primary, $typescript-secondary);
+}
+
+@mixin security-gradient {
+  background: linear-gradient(135deg, $security-primary, $security-secondary);
+}
+
+@mixin bundler-gradient {
+  background: linear-gradient(135deg, $bundler-primary, $bundler-secondary);
+}
+
+@mixin fixes-gradient {
+  background: linear-gradient(135deg, $fixes-primary, $fixes-secondary);
+}
+
+@mixin success-gradient {
+  background: linear-gradient(135deg, $success-primary, $success-secondary);
+}`;
+            
+            downloadFile('enhanced-matrix-colors.scss', scss, 'text/x-scss');
+        }
+
+        function downloadFile(filename, content, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification(`Downloaded ${filename}!`);
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Close modal on background click
+        document.getElementById('colorModal').addEventListener('click', (e) => {
+            if (e.target.id === 'colorModal') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

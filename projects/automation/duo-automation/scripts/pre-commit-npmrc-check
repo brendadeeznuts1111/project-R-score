@@ -1,0 +1,35 @@
+#!/bin/sh
+# Git pre-commit hook: Check .npmrc for unguarded environment variable patterns
+# 
+# This hook prevents committing .npmrc files that contain unguarded environment
+# variable patterns like ${TOKEN} or ${API_KEY} which could expose sensitive
+# information in version control.
+#
+# To install: cp scripts/pre-commit-npmrc-check .git/hooks/pre-commit
+# To bypass: git commit --no-verify
+
+echo "🔒 Checking .npmrc for unguarded environment variable patterns..."
+
+# Run the security check script
+bun scripts/check-npmrc-security.ts
+
+# Exit code determines if commit proceeds
+exit_code=$?
+
+if [ $exit_code -eq 0 ]; then
+    echo "✅ .npmrc security check passed"
+    exit 0
+else
+    echo ""
+    echo "🚨 SECURITY VIOLATION DETECTED!"
+    echo "   Unguarded environment variable patterns found in .npmrc"
+    echo ""
+    echo "🛠️  To fix:"
+    echo "   1. Add # prefix to sensitive variables: \${TOKEN} → \${#TOKEN}"
+    echo "   2. Or run: bun scripts/check-npmrc-security.ts --fix"
+    echo "   3. Then run: git add .npmrc"
+    echo ""
+    echo "⚠️  Commit blocked for security reasons"
+    echo "   To bypass this check, use: git commit --no-verify"
+    exit 1
+fi

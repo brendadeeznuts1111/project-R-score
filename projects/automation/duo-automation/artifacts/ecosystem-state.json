@@ -1,0 +1,1272 @@
+{
+  "timestamp": "2026-01-15T03:47:04.400Z",
+  "systems": [
+    {
+      "systemId": "STORAGE-ENTERPRISE-duoplus",
+      "tensionMetrics": {
+        "value": 50,
+        "trend": "stable",
+        "contributors": [],
+        "history": [
+          {
+            "timestamp": 1768448824393,
+            "value": 50,
+            "trend": "stable"
+          }
+        ],
+        "metadata": {
+          "totalWeight": 0,
+          "contributorCount": 0,
+          "lastUpdated": 1768448824393,
+          "analysisConfidence": 0
+        }
+      },
+      "colorSystem": {
+        "value": {
+          "hsl": "hsl(60, 70%, 50%)",
+          "hex": "#D9D926",
+          "rgb": {
+            "r": 217,
+            "g": 217,
+            "b": 38
+          }
+        },
+        "scheme": {
+          "primary": "#D9D926",
+          "secondary": "#2E2EB8",
+          "accent": "#30E8E8",
+          "background": "#f0fff4",
+          "text": "#14532d"
+        },
+        "palette": {
+          "50": "#F6F6EE",
+          "100": "#F5F5C7",
+          "200": "#EFEFA4",
+          "300": "#E9E981",
+          "400": "#E3E35F",
+          "500": "#DDDD3C",
+          "600": "#CCCC24",
+          "700": "#B3B314",
+          "800": "#8E8E10",
+          "900": "#6A6A0C"
+        },
+        "gradient": "linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    )",
+        "classification": "moderate",
+        "description": "Moderate (Yellow)"
+      },
+      "contextInfo": {
+        "type": "STORAGE",
+        "scope": "ENTERPRISE",
+        "domain": "duoplus",
+        "colorInfo": {
+          "hsl": "hsl(60, 70%, 50%)",
+          "hex": "#D9D926",
+          "gradient": "linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    )",
+          "tension": 50,
+          "trend": "stable",
+          "description": "Average & Stable ➡️",
+          "status": "Stressed",
+          "emoji": "🟠",
+          "css": "/* STORAGE ENTERPRISE Context - Tension: 50% (stable) */\n.storage-enterprise {\n  /* Core Colors */\n  --hsl-color: hsl(60, 70%, 50%);\n  --hex-color: #D9D926;\n  --tension-gradient: linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    );\n  --tension-level: 50;\n  --tension-trend: stable;\n  --tension-status: Stressed;\n  \n  /* Color Scheme */\n  --color-primary: #D9D926;\n  --color-secondary: #2E2EB8;\n  --color-accent: #30E8E8;\n  --color-background: #f0fff4;\n  --color-text: #14532d;\n  \n  /* RGB Values */\n  --color-rgb: 217, 217, 38;\n  \n  /* Color Palette */\n  --color-palette-50: #F6F6EE;\n  --color-palette-100: #F5F5C7;\n  --color-palette-200: #EFEFA4;\n  --color-palette-300: #E9E981;\n  --color-palette-400: #E3E35F;\n  --color-palette-500: #DDDD3C;\n  --color-palette-600: #CCCC24;\n  --color-palette-700: #B3B314;\n  --color-palette-800: #8E8E10;\n  --color-palette-900: #6A6A0C;\n  \n  /* Status-based Classes */\n  --status-healthy: none;\n  --status-stable: none;\n  --status-stressed: block;\n  --status-critical: none;\n}\n\n/* Utility Classes for storage-enterprise */\n.storage-enterprise.tension-visual {\n  background: var(--tension-gradient);\n  color: var(--color-text);\n  padding: 8px 16px;\n  border-radius: 6px;\n  font-weight: 500;\n}\n\n.storage-enterprise.status-indicator::before {\n  content: '🟠';\n  margin-right: 8px;\n}\n\n.storage-enterprise.tension-bar {\n  height: 8px;\n  background: #e5e7eb;\n  border-radius: 4px;\n  overflow: hidden;\n}\n\n.storage-enterprise.tension-bar::after {\n  content: '';\n  display: block;\n  height: 100%;\n  width: calc(var(--tension-level) * 1%);\n  background: var(--tension-gradient);\n  transition: width 0.3s ease;\n}\n\n.storage-enterprise.palette-demo {\n  display: flex;\n  gap: 2px;\n  margin: 8px 0;\n}\n\n.storage-enterprise.palette-demo > div {\n  flex: 1;\n  height: 20px;\n  border-radius: 2px;\n}",
+          "palette": {
+            "50": "#F6F6EE",
+            "100": "#F5F5C7",
+            "200": "#EFEFA4",
+            "300": "#E9E981",
+            "400": "#E3E35F",
+            "500": "#DDDD3C",
+            "600": "#CCCC24",
+            "700": "#B3B314",
+            "800": "#8E8E10",
+            "900": "#6A6A0C"
+          },
+          "colorScheme": {
+            "primary": "#D9D926",
+            "secondary": "#2E2EB8",
+            "accent": "#30E8E8",
+            "background": "#f0fff4",
+            "text": "#14532d"
+          },
+          "rgb": {
+            "r": 217,
+            "g": 217,
+            "b": 38
+          },
+          "recommendations": [
+            "📊 Low analysis confidence - add more monitoring metrics"
+          ]
+        },
+        "backend": {
+          "type": "aws-s3",
+          "endpoint": "s3.amazonaws.com",
+          "status": "connected",
+          "lastCheck": "2026-01-15T03:47:04.393Z",
+          "responseTime": 100
+        },
+        "meta": {
+          "createdAt": "2026-01-15T02:47:04.393Z",
+          "lastUpdated": "2026-01-15T03:47:04.393Z",
+          "version": "3.7.0",
+          "environment": "enterprise",
+          "region": "us-east-1",
+          "tags": [
+            "storage",
+            "enterprise",
+            "tension-aware"
+          ]
+        }
+      },
+      "recommendations": [
+        "➡️ TREND STABLE: System performance consistent",
+        "   📊 Continue monitoring for any changes",
+        "   🎯 Consider proactive optimizations",
+        "📊 LOW CONFIDENCE: Analysis confidence below 70%",
+        "   🔍 Collect more comprehensive metrics data",
+        "   📈 Improve monitoring coverage and accuracy",
+        "   🧪 Validate data collection methods",
+        "📊 OBSERVABILITY: Enhance monitoring and alerting",
+        "   🔔 Set up custom alerts for key metrics",
+        "   📈 Implement dashboard for real-time monitoring",
+        "   📋 Create runbooks for common issues",
+        "   🧪 Schedule regular performance reviews",
+        "✅ GOOD: System performing within acceptable parameters",
+        "   📊 Continue monitoring for optimization opportunities"
+      ],
+      "performance": {
+        "responseTime": 550,
+        "throughput": 600,
+        "errorRate": 0.05,
+        "uptime": 98
+      },
+      "lastUpdated": "2026-01-15T03:47:04.393Z"
+    },
+    {
+      "systemId": "STORAGE-DEVELOPMENT-duoplus",
+      "tensionMetrics": {
+        "value": 50,
+        "trend": "stable",
+        "contributors": [],
+        "history": [
+          {
+            "timestamp": 1768448824393,
+            "value": 50,
+            "trend": "stable"
+          }
+        ],
+        "metadata": {
+          "totalWeight": 0,
+          "contributorCount": 0,
+          "lastUpdated": 1768448824393,
+          "analysisConfidence": 0
+        }
+      },
+      "colorSystem": {
+        "value": {
+          "hsl": "hsl(60, 70%, 50%)",
+          "hex": "#D9D926",
+          "rgb": {
+            "r": 217,
+            "g": 217,
+            "b": 38
+          }
+        },
+        "scheme": {
+          "primary": "#D9D926",
+          "secondary": "#2E2EB8",
+          "accent": "#30E8E8",
+          "background": "#f0fff4",
+          "text": "#14532d"
+        },
+        "palette": {
+          "50": "#F6F6EE",
+          "100": "#F5F5C7",
+          "200": "#EFEFA4",
+          "300": "#E9E981",
+          "400": "#E3E35F",
+          "500": "#DDDD3C",
+          "600": "#CCCC24",
+          "700": "#B3B314",
+          "800": "#8E8E10",
+          "900": "#6A6A0C"
+        },
+        "gradient": "linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    )",
+        "classification": "moderate",
+        "description": "Moderate (Yellow)"
+      },
+      "contextInfo": {
+        "type": "STORAGE",
+        "scope": "DEVELOPMENT",
+        "domain": "duoplus",
+        "colorInfo": {
+          "hsl": "hsl(60, 70%, 50%)",
+          "hex": "#D9D926",
+          "gradient": "linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    )",
+          "tension": 50,
+          "trend": "stable",
+          "description": "Average & Stable ➡️",
+          "status": "Stressed",
+          "emoji": "🟠",
+          "css": "/* STORAGE DEVELOPMENT Context - Tension: 50% (stable) */\n.storage-development {\n  /* Core Colors */\n  --hsl-color: hsl(60, 70%, 50%);\n  --hex-color: #D9D926;\n  --tension-gradient: linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    );\n  --tension-level: 50;\n  --tension-trend: stable;\n  --tension-status: Stressed;\n  \n  /* Color Scheme */\n  --color-primary: #D9D926;\n  --color-secondary: #2E2EB8;\n  --color-accent: #30E8E8;\n  --color-background: #f0fff4;\n  --color-text: #14532d;\n  \n  /* RGB Values */\n  --color-rgb: 217, 217, 38;\n  \n  /* Color Palette */\n  --color-palette-50: #F6F6EE;\n  --color-palette-100: #F5F5C7;\n  --color-palette-200: #EFEFA4;\n  --color-palette-300: #E9E981;\n  --color-palette-400: #E3E35F;\n  --color-palette-500: #DDDD3C;\n  --color-palette-600: #CCCC24;\n  --color-palette-700: #B3B314;\n  --color-palette-800: #8E8E10;\n  --color-palette-900: #6A6A0C;\n  \n  /* Status-based Classes */\n  --status-healthy: none;\n  --status-stable: none;\n  --status-stressed: block;\n  --status-critical: none;\n}\n\n/* Utility Classes for storage-development */\n.storage-development.tension-visual {\n  background: var(--tension-gradient);\n  color: var(--color-text);\n  padding: 8px 16px;\n  border-radius: 6px;\n  font-weight: 500;\n}\n\n.storage-development.status-indicator::before {\n  content: '🟠';\n  margin-right: 8px;\n}\n\n.storage-development.tension-bar {\n  height: 8px;\n  background: #e5e7eb;\n  border-radius: 4px;\n  overflow: hidden;\n}\n\n.storage-development.tension-bar::after {\n  content: '';\n  display: block;\n  height: 100%;\n  width: calc(var(--tension-level) * 1%);\n  background: var(--tension-gradient);\n  transition: width 0.3s ease;\n}\n\n.storage-development.palette-demo {\n  display: flex;\n  gap: 2px;\n  margin: 8px 0;\n}\n\n.storage-development.palette-demo > div {\n  flex: 1;\n  height: 20px;\n  border-radius: 2px;\n}",
+          "palette": {
+            "50": "#F6F6EE",
+            "100": "#F5F5C7",
+            "200": "#EFEFA4",
+            "300": "#E9E981",
+            "400": "#E3E35F",
+            "500": "#DDDD3C",
+            "600": "#CCCC24",
+            "700": "#B3B314",
+            "800": "#8E8E10",
+            "900": "#6A6A0C"
+          },
+          "colorScheme": {
+            "primary": "#D9D926",
+            "secondary": "#2E2EB8",
+            "accent": "#30E8E8",
+            "background": "#f0fff4",
+            "text": "#14532d"
+          },
+          "rgb": {
+            "r": 217,
+            "g": 217,
+            "b": 38
+          },
+          "recommendations": [
+            "📊 Low analysis confidence - add more monitoring metrics"
+          ]
+        },
+        "backend": {
+          "type": "minio",
+          "endpoint": "minio.dev.local",
+          "status": "connected",
+          "lastCheck": "2026-01-15T03:47:04.393Z",
+          "responseTime": 62
+        },
+        "meta": {
+          "createdAt": "2026-01-15T02:47:04.393Z",
+          "lastUpdated": "2026-01-15T03:47:04.393Z",
+          "version": "3.7.0",
+          "environment": "development",
+          "region": "local",
+          "tags": [
+            "storage",
+            "development",
+            "tension-aware"
+          ]
+        }
+      },
+      "recommendations": [
+        "➡️ TREND STABLE: System performance consistent",
+        "   📊 Continue monitoring for any changes",
+        "   🎯 Consider proactive optimizations",
+        "📊 LOW CONFIDENCE: Analysis confidence below 70%",
+        "   🔍 Collect more comprehensive metrics data",
+        "   📈 Improve monitoring coverage and accuracy",
+        "   🧪 Validate data collection methods",
+        "📊 OBSERVABILITY: Enhance monitoring and alerting",
+        "   🔔 Set up custom alerts for key metrics",
+        "   📈 Implement dashboard for real-time monitoring",
+        "   📋 Create runbooks for common issues",
+        "   🧪 Schedule regular performance reviews",
+        "✅ GOOD: System performing within acceptable parameters",
+        "   📊 Continue monitoring for optimization opportunities"
+      ],
+      "performance": {
+        "responseTime": 550,
+        "throughput": 600,
+        "errorRate": 0.05,
+        "uptime": 98
+      },
+      "lastUpdated": "2026-01-15T03:47:04.393Z"
+    },
+    {
+      "systemId": "STORAGE-LOCAL-SANDBOX-duoplus",
+      "tensionMetrics": {
+        "value": 50,
+        "trend": "stable",
+        "contributors": [],
+        "history": [
+          {
+            "timestamp": 1768448824393,
+            "value": 50,
+            "trend": "stable"
+          }
+        ],
+        "metadata": {
+          "totalWeight": 0,
+          "contributorCount": 0,
+          "lastUpdated": 1768448824393,
+          "analysisConfidence": 0
+        }
+      },
+      "colorSystem": {
+        "value": {
+          "hsl": "hsl(60, 70%, 50%)",
+          "hex": "#D9D926",
+          "rgb": {
+            "r": 217,
+            "g": 217,
+            "b": 38
+          }
+        },
+        "scheme": {
+          "primary": "#D9D926",
+          "secondary": "#2E2EB8",
+          "accent": "#30E8E8",
+          "background": "#f0fff4",
+          "text": "#14532d"
+        },
+        "palette": {
+          "50": "#F6F6EE",
+          "100": "#F5F5C7",
+          "200": "#EFEFA4",
+          "300": "#E9E981",
+          "400": "#E3E35F",
+          "500": "#DDDD3C",
+          "600": "#CCCC24",
+          "700": "#B3B314",
+          "800": "#8E8E10",
+          "900": "#6A6A0C"
+        },
+        "gradient": "linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    )",
+        "classification": "moderate",
+        "description": "Moderate (Yellow)"
+      },
+      "contextInfo": {
+        "type": "STORAGE",
+        "scope": "LOCAL-SANDBOX",
+        "domain": "duoplus",
+        "colorInfo": {
+          "hsl": "hsl(60, 70%, 50%)",
+          "hex": "#D9D926",
+          "gradient": "linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    )",
+          "tension": 50,
+          "trend": "stable",
+          "description": "Average & Stable ➡️",
+          "status": "Stressed",
+          "emoji": "🟠",
+          "css": "/* STORAGE LOCAL-SANDBOX Context - Tension: 50% (stable) */\n.storage-local-sandbox {\n  /* Core Colors */\n  --hsl-color: hsl(60, 70%, 50%);\n  --hex-color: #D9D926;\n  --tension-gradient: linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    );\n  --tension-level: 50;\n  --tension-trend: stable;\n  --tension-status: Stressed;\n  \n  /* Color Scheme */\n  --color-primary: #D9D926;\n  --color-secondary: #2E2EB8;\n  --color-accent: #30E8E8;\n  --color-background: #f0fff4;\n  --color-text: #14532d;\n  \n  /* RGB Values */\n  --color-rgb: 217, 217, 38;\n  \n  /* Color Palette */\n  --color-palette-50: #F6F6EE;\n  --color-palette-100: #F5F5C7;\n  --color-palette-200: #EFEFA4;\n  --color-palette-300: #E9E981;\n  --color-palette-400: #E3E35F;\n  --color-palette-500: #DDDD3C;\n  --color-palette-600: #CCCC24;\n  --color-palette-700: #B3B314;\n  --color-palette-800: #8E8E10;\n  --color-palette-900: #6A6A0C;\n  \n  /* Status-based Classes */\n  --status-healthy: none;\n  --status-stable: none;\n  --status-stressed: block;\n  --status-critical: none;\n}\n\n/* Utility Classes for storage-local-sandbox */\n.storage-local-sandbox.tension-visual {\n  background: var(--tension-gradient);\n  color: var(--color-text);\n  padding: 8px 16px;\n  border-radius: 6px;\n  font-weight: 500;\n}\n\n.storage-local-sandbox.status-indicator::before {\n  content: '🟠';\n  margin-right: 8px;\n}\n\n.storage-local-sandbox.tension-bar {\n  height: 8px;\n  background: #e5e7eb;\n  border-radius: 4px;\n  overflow: hidden;\n}\n\n.storage-local-sandbox.tension-bar::after {\n  content: '';\n  display: block;\n  height: 100%;\n  width: calc(var(--tension-level) * 1%);\n  background: var(--tension-gradient);\n  transition: width 0.3s ease;\n}\n\n.storage-local-sandbox.palette-demo {\n  display: flex;\n  gap: 2px;\n  margin: 8px 0;\n}\n\n.storage-local-sandbox.palette-demo > div {\n  flex: 1;\n  height: 20px;\n  border-radius: 2px;\n}",
+          "palette": {
+            "50": "#F6F6EE",
+            "100": "#F5F5C7",
+            "200": "#EFEFA4",
+            "300": "#E9E981",
+            "400": "#E3E35F",
+            "500": "#DDDD3C",
+            "600": "#CCCC24",
+            "700": "#B3B314",
+            "800": "#8E8E10",
+            "900": "#6A6A0C"
+          },
+          "colorScheme": {
+            "primary": "#D9D926",
+            "secondary": "#2E2EB8",
+            "accent": "#30E8E8",
+            "background": "#f0fff4",
+            "text": "#14532d"
+          },
+          "rgb": {
+            "r": 217,
+            "g": 217,
+            "b": 38
+          },
+          "recommendations": [
+            "📊 Low analysis confidence - add more monitoring metrics"
+          ]
+        },
+        "backend": {
+          "type": "local",
+          "endpoint": "file://./storage",
+          "status": "connected",
+          "lastCheck": "2026-01-15T03:47:04.393Z",
+          "responseTime": 107
+        },
+        "meta": {
+          "createdAt": "2026-01-15T02:47:04.393Z",
+          "lastUpdated": "2026-01-15T03:47:04.393Z",
+          "version": "3.7.0",
+          "environment": "local-sandbox",
+          "region": "local",
+          "tags": [
+            "storage",
+            "local-sandbox",
+            "tension-aware"
+          ]
+        }
+      },
+      "recommendations": [
+        "➡️ TREND STABLE: System performance consistent",
+        "   📊 Continue monitoring for any changes",
+        "   🎯 Consider proactive optimizations",
+        "📊 LOW CONFIDENCE: Analysis confidence below 70%",
+        "   🔍 Collect more comprehensive metrics data",
+        "   📈 Improve monitoring coverage and accuracy",
+        "   🧪 Validate data collection methods",
+        "📊 OBSERVABILITY: Enhance monitoring and alerting",
+        "   🔔 Set up custom alerts for key metrics",
+        "   📈 Implement dashboard for real-time monitoring",
+        "   📋 Create runbooks for common issues",
+        "   🧪 Schedule regular performance reviews",
+        "✅ GOOD: System performing within acceptable parameters",
+        "   📊 Continue monitoring for optimization opportunities"
+      ],
+      "performance": {
+        "responseTime": 550,
+        "throughput": 600,
+        "errorRate": 0.05,
+        "uptime": 98
+      },
+      "lastUpdated": "2026-01-15T03:47:04.393Z"
+    },
+    {
+      "systemId": "SECRETS-ENTERPRISE-duoplus",
+      "tensionMetrics": {
+        "value": 50,
+        "trend": "stable",
+        "contributors": [],
+        "history": [
+          {
+            "timestamp": 1768448824393,
+            "value": 50,
+            "trend": "stable"
+          }
+        ],
+        "metadata": {
+          "totalWeight": 0,
+          "contributorCount": 0,
+          "lastUpdated": 1768448824393,
+          "analysisConfidence": 0
+        }
+      },
+      "colorSystem": {
+        "value": {
+          "hsl": "hsl(60, 70%, 50%)",
+          "hex": "#D9D926",
+          "rgb": {
+            "r": 217,
+            "g": 217,
+            "b": 38
+          }
+        },
+        "scheme": {
+          "primary": "#D9D926",
+          "secondary": "#2E2EB8",
+          "accent": "#30E8E8",
+          "background": "#f0fff4",
+          "text": "#14532d"
+        },
+        "palette": {
+          "50": "#F6F6EE",
+          "100": "#F5F5C7",
+          "200": "#EFEFA4",
+          "300": "#E9E981",
+          "400": "#E3E35F",
+          "500": "#DDDD3C",
+          "600": "#CCCC24",
+          "700": "#B3B314",
+          "800": "#8E8E10",
+          "900": "#6A6A0C"
+        },
+        "gradient": "linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    )",
+        "classification": "moderate",
+        "description": "Moderate (Yellow)"
+      },
+      "contextInfo": {
+        "type": "SECRETS",
+        "scope": "ENTERPRISE",
+        "domain": "duoplus",
+        "colorInfo": {
+          "hsl": "hsl(60, 70%, 50%)",
+          "hex": "#D9D926",
+          "gradient": "linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    )",
+          "tension": 50,
+          "trend": "stable",
+          "description": "Average & Stable ➡️",
+          "status": "Stressed",
+          "emoji": "🟠",
+          "css": "/* SECRETS ENTERPRISE Context - Tension: 50% (stable) */\n.secrets-enterprise {\n  /* Core Colors */\n  --hsl-color: hsl(60, 70%, 50%);\n  --hex-color: #D9D926;\n  --tension-gradient: linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    );\n  --tension-level: 50;\n  --tension-trend: stable;\n  --tension-status: Stressed;\n  \n  /* Color Scheme */\n  --color-primary: #D9D926;\n  --color-secondary: #2E2EB8;\n  --color-accent: #30E8E8;\n  --color-background: #f0fff4;\n  --color-text: #14532d;\n  \n  /* RGB Values */\n  --color-rgb: 217, 217, 38;\n  \n  /* Color Palette */\n  --color-palette-50: #F6F6EE;\n  --color-palette-100: #F5F5C7;\n  --color-palette-200: #EFEFA4;\n  --color-palette-300: #E9E981;\n  --color-palette-400: #E3E35F;\n  --color-palette-500: #DDDD3C;\n  --color-palette-600: #CCCC24;\n  --color-palette-700: #B3B314;\n  --color-palette-800: #8E8E10;\n  --color-palette-900: #6A6A0C;\n  \n  /* Status-based Classes */\n  --status-healthy: none;\n  --status-stable: none;\n  --status-stressed: block;\n  --status-critical: none;\n}\n\n/* Utility Classes for secrets-enterprise */\n.secrets-enterprise.tension-visual {\n  background: var(--tension-gradient);\n  color: var(--color-text);\n  padding: 8px 16px;\n  border-radius: 6px;\n  font-weight: 500;\n}\n\n.secrets-enterprise.status-indicator::before {\n  content: '🟠';\n  margin-right: 8px;\n}\n\n.secrets-enterprise.tension-bar {\n  height: 8px;\n  background: #e5e7eb;\n  border-radius: 4px;\n  overflow: hidden;\n}\n\n.secrets-enterprise.tension-bar::after {\n  content: '';\n  display: block;\n  height: 100%;\n  width: calc(var(--tension-level) * 1%);\n  background: var(--tension-gradient);\n  transition: width 0.3s ease;\n}\n\n.secrets-enterprise.palette-demo {\n  display: flex;\n  gap: 2px;\n  margin: 8px 0;\n}\n\n.secrets-enterprise.palette-demo > div {\n  flex: 1;\n  height: 20px;\n  border-radius: 2px;\n}",
+          "palette": {
+            "50": "#F6F6EE",
+            "100": "#F5F5C7",
+            "200": "#EFEFA4",
+            "300": "#E9E981",
+            "400": "#E3E35F",
+            "500": "#DDDD3C",
+            "600": "#CCCC24",
+            "700": "#B3B314",
+            "800": "#8E8E10",
+            "900": "#6A6A0C"
+          },
+          "colorScheme": {
+            "primary": "#D9D926",
+            "secondary": "#2E2EB8",
+            "accent": "#30E8E8",
+            "background": "#f0fff4",
+            "text": "#14532d"
+          },
+          "rgb": {
+            "r": 217,
+            "g": 217,
+            "b": 38
+          },
+          "recommendations": [
+            "📊 Low analysis confidence - add more monitoring metrics"
+          ]
+        },
+        "backend": {
+          "type": "aws-secrets-manager",
+          "endpoint": "secretsmanager.us-east-1.amazonaws.com",
+          "status": "connected",
+          "lastCheck": "2026-01-15T03:47:04.394Z",
+          "responseTime": 15
+        },
+        "meta": {
+          "createdAt": "2026-01-15T02:47:04.394Z",
+          "lastUpdated": "2026-01-15T03:47:04.393Z",
+          "version": "3.7.0",
+          "environment": "enterprise",
+          "region": "us-east-1",
+          "tags": [
+            "secrets",
+            "enterprise",
+            "tension-aware"
+          ]
+        }
+      },
+      "recommendations": [
+        "➡️ TREND STABLE: System performance consistent",
+        "   📊 Continue monitoring for any changes",
+        "   🎯 Consider proactive optimizations",
+        "📊 LOW CONFIDENCE: Analysis confidence below 70%",
+        "   🔍 Collect more comprehensive metrics data",
+        "   📈 Improve monitoring coverage and accuracy",
+        "   🧪 Validate data collection methods",
+        "📊 OBSERVABILITY: Enhance monitoring and alerting",
+        "   🔔 Set up custom alerts for key metrics",
+        "   📈 Implement dashboard for real-time monitoring",
+        "   📋 Create runbooks for common issues",
+        "   🧪 Schedule regular performance reviews",
+        "✅ GOOD: System performing within acceptable parameters",
+        "   📊 Continue monitoring for optimization opportunities"
+      ],
+      "performance": {
+        "responseTime": 550,
+        "throughput": 600,
+        "errorRate": 0.05,
+        "uptime": 98
+      },
+      "lastUpdated": "2026-01-15T03:47:04.394Z"
+    },
+    {
+      "systemId": "SECRETS-DEVELOPMENT-duoplus",
+      "tensionMetrics": {
+        "value": 50,
+        "trend": "stable",
+        "contributors": [],
+        "history": [
+          {
+            "timestamp": 1768448824394,
+            "value": 50,
+            "trend": "stable"
+          }
+        ],
+        "metadata": {
+          "totalWeight": 0,
+          "contributorCount": 0,
+          "lastUpdated": 1768448824394,
+          "analysisConfidence": 0
+        }
+      },
+      "colorSystem": {
+        "value": {
+          "hsl": "hsl(60, 70%, 50%)",
+          "hex": "#D9D926",
+          "rgb": {
+            "r": 217,
+            "g": 217,
+            "b": 38
+          }
+        },
+        "scheme": {
+          "primary": "#D9D926",
+          "secondary": "#2E2EB8",
+          "accent": "#30E8E8",
+          "background": "#f0fff4",
+          "text": "#14532d"
+        },
+        "palette": {
+          "50": "#F6F6EE",
+          "100": "#F5F5C7",
+          "200": "#EFEFA4",
+          "300": "#E9E981",
+          "400": "#E3E35F",
+          "500": "#DDDD3C",
+          "600": "#CCCC24",
+          "700": "#B3B314",
+          "800": "#8E8E10",
+          "900": "#6A6A0C"
+        },
+        "gradient": "linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    )",
+        "classification": "moderate",
+        "description": "Moderate (Yellow)"
+      },
+      "contextInfo": {
+        "type": "SECRETS",
+        "scope": "DEVELOPMENT",
+        "domain": "duoplus",
+        "colorInfo": {
+          "hsl": "hsl(60, 70%, 50%)",
+          "hex": "#D9D926",
+          "gradient": "linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    )",
+          "tension": 50,
+          "trend": "stable",
+          "description": "Average & Stable ➡️",
+          "status": "Stressed",
+          "emoji": "🟠",
+          "css": "/* SECRETS DEVELOPMENT Context - Tension: 50% (stable) */\n.secrets-development {\n  /* Core Colors */\n  --hsl-color: hsl(60, 70%, 50%);\n  --hex-color: #D9D926;\n  --tension-gradient: linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    );\n  --tension-level: 50;\n  --tension-trend: stable;\n  --tension-status: Stressed;\n  \n  /* Color Scheme */\n  --color-primary: #D9D926;\n  --color-secondary: #2E2EB8;\n  --color-accent: #30E8E8;\n  --color-background: #f0fff4;\n  --color-text: #14532d;\n  \n  /* RGB Values */\n  --color-rgb: 217, 217, 38;\n  \n  /* Color Palette */\n  --color-palette-50: #F6F6EE;\n  --color-palette-100: #F5F5C7;\n  --color-palette-200: #EFEFA4;\n  --color-palette-300: #E9E981;\n  --color-palette-400: #E3E35F;\n  --color-palette-500: #DDDD3C;\n  --color-palette-600: #CCCC24;\n  --color-palette-700: #B3B314;\n  --color-palette-800: #8E8E10;\n  --color-palette-900: #6A6A0C;\n  \n  /* Status-based Classes */\n  --status-healthy: none;\n  --status-stable: none;\n  --status-stressed: block;\n  --status-critical: none;\n}\n\n/* Utility Classes for secrets-development */\n.secrets-development.tension-visual {\n  background: var(--tension-gradient);\n  color: var(--color-text);\n  padding: 8px 16px;\n  border-radius: 6px;\n  font-weight: 500;\n}\n\n.secrets-development.status-indicator::before {\n  content: '🟠';\n  margin-right: 8px;\n}\n\n.secrets-development.tension-bar {\n  height: 8px;\n  background: #e5e7eb;\n  border-radius: 4px;\n  overflow: hidden;\n}\n\n.secrets-development.tension-bar::after {\n  content: '';\n  display: block;\n  height: 100%;\n  width: calc(var(--tension-level) * 1%);\n  background: var(--tension-gradient);\n  transition: width 0.3s ease;\n}\n\n.secrets-development.palette-demo {\n  display: flex;\n  gap: 2px;\n  margin: 8px 0;\n}\n\n.secrets-development.palette-demo > div {\n  flex: 1;\n  height: 20px;\n  border-radius: 2px;\n}",
+          "palette": {
+            "50": "#F6F6EE",
+            "100": "#F5F5C7",
+            "200": "#EFEFA4",
+            "300": "#E9E981",
+            "400": "#E3E35F",
+            "500": "#DDDD3C",
+            "600": "#CCCC24",
+            "700": "#B3B314",
+            "800": "#8E8E10",
+            "900": "#6A6A0C"
+          },
+          "colorScheme": {
+            "primary": "#D9D926",
+            "secondary": "#2E2EB8",
+            "accent": "#30E8E8",
+            "background": "#f0fff4",
+            "text": "#14532d"
+          },
+          "rgb": {
+            "r": 217,
+            "g": 217,
+            "b": 38
+          },
+          "recommendations": [
+            "📊 Low analysis confidence - add more monitoring metrics"
+          ]
+        },
+        "backend": {
+          "type": "vault",
+          "endpoint": "vault.dev.local:8200",
+          "status": "connected",
+          "lastCheck": "2026-01-15T03:47:04.394Z",
+          "responseTime": 105
+        },
+        "meta": {
+          "createdAt": "2026-01-15T02:47:04.394Z",
+          "lastUpdated": "2026-01-15T03:47:04.394Z",
+          "version": "3.7.0",
+          "environment": "development",
+          "region": "local",
+          "tags": [
+            "secrets",
+            "development",
+            "tension-aware"
+          ]
+        }
+      },
+      "recommendations": [
+        "➡️ TREND STABLE: System performance consistent",
+        "   📊 Continue monitoring for any changes",
+        "   🎯 Consider proactive optimizations",
+        "📊 LOW CONFIDENCE: Analysis confidence below 70%",
+        "   🔍 Collect more comprehensive metrics data",
+        "   📈 Improve monitoring coverage and accuracy",
+        "   🧪 Validate data collection methods",
+        "📊 OBSERVABILITY: Enhance monitoring and alerting",
+        "   🔔 Set up custom alerts for key metrics",
+        "   📈 Implement dashboard for real-time monitoring",
+        "   📋 Create runbooks for common issues",
+        "   🧪 Schedule regular performance reviews",
+        "✅ GOOD: System performing within acceptable parameters",
+        "   📊 Continue monitoring for optimization opportunities"
+      ],
+      "performance": {
+        "responseTime": 550,
+        "throughput": 600,
+        "errorRate": 0.05,
+        "uptime": 98
+      },
+      "lastUpdated": "2026-01-15T03:47:04.394Z"
+    },
+    {
+      "systemId": "SECRETS-LOCAL-SANDBOX-duoplus",
+      "tensionMetrics": {
+        "value": 50,
+        "trend": "stable",
+        "contributors": [],
+        "history": [
+          {
+            "timestamp": 1768448824394,
+            "value": 50,
+            "trend": "stable"
+          }
+        ],
+        "metadata": {
+          "totalWeight": 0,
+          "contributorCount": 0,
+          "lastUpdated": 1768448824394,
+          "analysisConfidence": 0
+        }
+      },
+      "colorSystem": {
+        "value": {
+          "hsl": "hsl(60, 70%, 50%)",
+          "hex": "#D9D926",
+          "rgb": {
+            "r": 217,
+            "g": 217,
+            "b": 38
+          }
+        },
+        "scheme": {
+          "primary": "#D9D926",
+          "secondary": "#2E2EB8",
+          "accent": "#30E8E8",
+          "background": "#f0fff4",
+          "text": "#14532d"
+        },
+        "palette": {
+          "50": "#F6F6EE",
+          "100": "#F5F5C7",
+          "200": "#EFEFA4",
+          "300": "#E9E981",
+          "400": "#E3E35F",
+          "500": "#DDDD3C",
+          "600": "#CCCC24",
+          "700": "#B3B314",
+          "800": "#8E8E10",
+          "900": "#6A6A0C"
+        },
+        "gradient": "linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    )",
+        "classification": "moderate",
+        "description": "Moderate (Yellow)"
+      },
+      "contextInfo": {
+        "type": "SECRETS",
+        "scope": "LOCAL-SANDBOX",
+        "domain": "duoplus",
+        "colorInfo": {
+          "hsl": "hsl(60, 70%, 50%)",
+          "hex": "#D9D926",
+          "gradient": "linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    )",
+          "tension": 50,
+          "trend": "stable",
+          "description": "Average & Stable ➡️",
+          "status": "Stressed",
+          "emoji": "🟠",
+          "css": "/* SECRETS LOCAL-SANDBOX Context - Tension: 50% (stable) */\n.secrets-local-sandbox {\n  /* Core Colors */\n  --hsl-color: hsl(60, 70%, 50%);\n  --hex-color: #D9D926;\n  --tension-gradient: linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    );\n  --tension-level: 50;\n  --tension-trend: stable;\n  --tension-status: Stressed;\n  \n  /* Color Scheme */\n  --color-primary: #D9D926;\n  --color-secondary: #2E2EB8;\n  --color-accent: #30E8E8;\n  --color-background: #f0fff4;\n  --color-text: #14532d;\n  \n  /* RGB Values */\n  --color-rgb: 217, 217, 38;\n  \n  /* Color Palette */\n  --color-palette-50: #F6F6EE;\n  --color-palette-100: #F5F5C7;\n  --color-palette-200: #EFEFA4;\n  --color-palette-300: #E9E981;\n  --color-palette-400: #E3E35F;\n  --color-palette-500: #DDDD3C;\n  --color-palette-600: #CCCC24;\n  --color-palette-700: #B3B314;\n  --color-palette-800: #8E8E10;\n  --color-palette-900: #6A6A0C;\n  \n  /* Status-based Classes */\n  --status-healthy: none;\n  --status-stable: none;\n  --status-stressed: block;\n  --status-critical: none;\n}\n\n/* Utility Classes for secrets-local-sandbox */\n.secrets-local-sandbox.tension-visual {\n  background: var(--tension-gradient);\n  color: var(--color-text);\n  padding: 8px 16px;\n  border-radius: 6px;\n  font-weight: 500;\n}\n\n.secrets-local-sandbox.status-indicator::before {\n  content: '🟠';\n  margin-right: 8px;\n}\n\n.secrets-local-sandbox.tension-bar {\n  height: 8px;\n  background: #e5e7eb;\n  border-radius: 4px;\n  overflow: hidden;\n}\n\n.secrets-local-sandbox.tension-bar::after {\n  content: '';\n  display: block;\n  height: 100%;\n  width: calc(var(--tension-level) * 1%);\n  background: var(--tension-gradient);\n  transition: width 0.3s ease;\n}\n\n.secrets-local-sandbox.palette-demo {\n  display: flex;\n  gap: 2px;\n  margin: 8px 0;\n}\n\n.secrets-local-sandbox.palette-demo > div {\n  flex: 1;\n  height: 20px;\n  border-radius: 2px;\n}",
+          "palette": {
+            "50": "#F6F6EE",
+            "100": "#F5F5C7",
+            "200": "#EFEFA4",
+            "300": "#E9E981",
+            "400": "#E3E35F",
+            "500": "#DDDD3C",
+            "600": "#CCCC24",
+            "700": "#B3B314",
+            "800": "#8E8E10",
+            "900": "#6A6A0C"
+          },
+          "colorScheme": {
+            "primary": "#D9D926",
+            "secondary": "#2E2EB8",
+            "accent": "#30E8E8",
+            "background": "#f0fff4",
+            "text": "#14532d"
+          },
+          "rgb": {
+            "r": 217,
+            "g": 217,
+            "b": 38
+          },
+          "recommendations": [
+            "📊 Low analysis confidence - add more monitoring metrics"
+          ]
+        },
+        "backend": {
+          "type": "env-file",
+          "endpoint": ".env.local",
+          "status": "connected",
+          "lastCheck": "2026-01-15T03:47:04.394Z",
+          "responseTime": 84
+        },
+        "meta": {
+          "createdAt": "2026-01-15T02:47:04.394Z",
+          "lastUpdated": "2026-01-15T03:47:04.394Z",
+          "version": "3.7.0",
+          "environment": "local-sandbox",
+          "region": "local",
+          "tags": [
+            "secrets",
+            "local-sandbox",
+            "tension-aware"
+          ]
+        }
+      },
+      "recommendations": [
+        "➡️ TREND STABLE: System performance consistent",
+        "   📊 Continue monitoring for any changes",
+        "   🎯 Consider proactive optimizations",
+        "📊 LOW CONFIDENCE: Analysis confidence below 70%",
+        "   🔍 Collect more comprehensive metrics data",
+        "   📈 Improve monitoring coverage and accuracy",
+        "   🧪 Validate data collection methods",
+        "📊 OBSERVABILITY: Enhance monitoring and alerting",
+        "   🔔 Set up custom alerts for key metrics",
+        "   📈 Implement dashboard for real-time monitoring",
+        "   📋 Create runbooks for common issues",
+        "   🧪 Schedule regular performance reviews",
+        "✅ GOOD: System performing within acceptable parameters",
+        "   📊 Continue monitoring for optimization opportunities"
+      ],
+      "performance": {
+        "responseTime": 550,
+        "throughput": 600,
+        "errorRate": 0.05,
+        "uptime": 98
+      },
+      "lastUpdated": "2026-01-15T03:47:04.394Z"
+    },
+    {
+      "systemId": "SERVICE-ENTERPRISE-duoplus",
+      "tensionMetrics": {
+        "value": 50,
+        "trend": "stable",
+        "contributors": [],
+        "history": [
+          {
+            "timestamp": 1768448824394,
+            "value": 50,
+            "trend": "stable"
+          }
+        ],
+        "metadata": {
+          "totalWeight": 0,
+          "contributorCount": 0,
+          "lastUpdated": 1768448824394,
+          "analysisConfidence": 0
+        }
+      },
+      "colorSystem": {
+        "value": {
+          "hsl": "hsl(60, 70%, 50%)",
+          "hex": "#D9D926",
+          "rgb": {
+            "r": 217,
+            "g": 217,
+            "b": 38
+          }
+        },
+        "scheme": {
+          "primary": "#D9D926",
+          "secondary": "#2E2EB8",
+          "accent": "#30E8E8",
+          "background": "#f0fff4",
+          "text": "#14532d"
+        },
+        "palette": {
+          "50": "#F6F6EE",
+          "100": "#F5F5C7",
+          "200": "#EFEFA4",
+          "300": "#E9E981",
+          "400": "#E3E35F",
+          "500": "#DDDD3C",
+          "600": "#CCCC24",
+          "700": "#B3B314",
+          "800": "#8E8E10",
+          "900": "#6A6A0C"
+        },
+        "gradient": "linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    )",
+        "classification": "moderate",
+        "description": "Moderate (Yellow)"
+      },
+      "contextInfo": {
+        "type": "SERVICE",
+        "scope": "ENTERPRISE",
+        "domain": "duoplus",
+        "colorInfo": {
+          "hsl": "hsl(60, 70%, 50%)",
+          "hex": "#D9D926",
+          "gradient": "linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    )",
+          "tension": 50,
+          "trend": "stable",
+          "description": "Average & Stable ➡️",
+          "status": "Stressed",
+          "emoji": "🟠",
+          "css": "/* SERVICE ENTERPRISE Context - Tension: 50% (stable) */\n.service-enterprise {\n  /* Core Colors */\n  --hsl-color: hsl(60, 70%, 50%);\n  --hex-color: #D9D926;\n  --tension-gradient: linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    );\n  --tension-level: 50;\n  --tension-trend: stable;\n  --tension-status: Stressed;\n  \n  /* Color Scheme */\n  --color-primary: #D9D926;\n  --color-secondary: #2E2EB8;\n  --color-accent: #30E8E8;\n  --color-background: #f0fff4;\n  --color-text: #14532d;\n  \n  /* RGB Values */\n  --color-rgb: 217, 217, 38;\n  \n  /* Color Palette */\n  --color-palette-50: #F6F6EE;\n  --color-palette-100: #F5F5C7;\n  --color-palette-200: #EFEFA4;\n  --color-palette-300: #E9E981;\n  --color-palette-400: #E3E35F;\n  --color-palette-500: #DDDD3C;\n  --color-palette-600: #CCCC24;\n  --color-palette-700: #B3B314;\n  --color-palette-800: #8E8E10;\n  --color-palette-900: #6A6A0C;\n  \n  /* Status-based Classes */\n  --status-healthy: none;\n  --status-stable: none;\n  --status-stressed: block;\n  --status-critical: none;\n}\n\n/* Utility Classes for service-enterprise */\n.service-enterprise.tension-visual {\n  background: var(--tension-gradient);\n  color: var(--color-text);\n  padding: 8px 16px;\n  border-radius: 6px;\n  font-weight: 500;\n}\n\n.service-enterprise.status-indicator::before {\n  content: '🟠';\n  margin-right: 8px;\n}\n\n.service-enterprise.tension-bar {\n  height: 8px;\n  background: #e5e7eb;\n  border-radius: 4px;\n  overflow: hidden;\n}\n\n.service-enterprise.tension-bar::after {\n  content: '';\n  display: block;\n  height: 100%;\n  width: calc(var(--tension-level) * 1%);\n  background: var(--tension-gradient);\n  transition: width 0.3s ease;\n}\n\n.service-enterprise.palette-demo {\n  display: flex;\n  gap: 2px;\n  margin: 8px 0;\n}\n\n.service-enterprise.palette-demo > div {\n  flex: 1;\n  height: 20px;\n  border-radius: 2px;\n}",
+          "palette": {
+            "50": "#F6F6EE",
+            "100": "#F5F5C7",
+            "200": "#EFEFA4",
+            "300": "#E9E981",
+            "400": "#E3E35F",
+            "500": "#DDDD3C",
+            "600": "#CCCC24",
+            "700": "#B3B314",
+            "800": "#8E8E10",
+            "900": "#6A6A0C"
+          },
+          "colorScheme": {
+            "primary": "#D9D926",
+            "secondary": "#2E2EB8",
+            "accent": "#30E8E8",
+            "background": "#f0fff4",
+            "text": "#14532d"
+          },
+          "rgb": {
+            "r": 217,
+            "g": 217,
+            "b": 38
+          },
+          "recommendations": [
+            "📊 Low analysis confidence - add more monitoring metrics"
+          ]
+        },
+        "backend": {
+          "type": "kubernetes",
+          "endpoint": "k8s.enterprise.com",
+          "status": "connected",
+          "lastCheck": "2026-01-15T03:47:04.394Z",
+          "responseTime": 72
+        },
+        "meta": {
+          "createdAt": "2026-01-15T02:47:04.394Z",
+          "lastUpdated": "2026-01-15T03:47:04.394Z",
+          "version": "3.7.0",
+          "environment": "enterprise",
+          "region": "us-east-1",
+          "tags": [
+            "service",
+            "enterprise",
+            "tension-aware"
+          ]
+        }
+      },
+      "recommendations": [
+        "➡️ TREND STABLE: System performance consistent",
+        "   📊 Continue monitoring for any changes",
+        "   🎯 Consider proactive optimizations",
+        "📊 LOW CONFIDENCE: Analysis confidence below 70%",
+        "   🔍 Collect more comprehensive metrics data",
+        "   📈 Improve monitoring coverage and accuracy",
+        "   🧪 Validate data collection methods",
+        "📊 OBSERVABILITY: Enhance monitoring and alerting",
+        "   🔔 Set up custom alerts for key metrics",
+        "   📈 Implement dashboard for real-time monitoring",
+        "   📋 Create runbooks for common issues",
+        "   🧪 Schedule regular performance reviews",
+        "✅ GOOD: System performing within acceptable parameters",
+        "   📊 Continue monitoring for optimization opportunities"
+      ],
+      "performance": {
+        "responseTime": 550,
+        "throughput": 600,
+        "errorRate": 0.05,
+        "uptime": 98
+      },
+      "lastUpdated": "2026-01-15T03:47:04.394Z"
+    },
+    {
+      "systemId": "SERVICE-DEVELOPMENT-duoplus",
+      "tensionMetrics": {
+        "value": 50,
+        "trend": "stable",
+        "contributors": [],
+        "history": [
+          {
+            "timestamp": 1768448824394,
+            "value": 50,
+            "trend": "stable"
+          }
+        ],
+        "metadata": {
+          "totalWeight": 0,
+          "contributorCount": 0,
+          "lastUpdated": 1768448824394,
+          "analysisConfidence": 0
+        }
+      },
+      "colorSystem": {
+        "value": {
+          "hsl": "hsl(60, 70%, 50%)",
+          "hex": "#D9D926",
+          "rgb": {
+            "r": 217,
+            "g": 217,
+            "b": 38
+          }
+        },
+        "scheme": {
+          "primary": "#D9D926",
+          "secondary": "#2E2EB8",
+          "accent": "#30E8E8",
+          "background": "#f0fff4",
+          "text": "#14532d"
+        },
+        "palette": {
+          "50": "#F6F6EE",
+          "100": "#F5F5C7",
+          "200": "#EFEFA4",
+          "300": "#E9E981",
+          "400": "#E3E35F",
+          "500": "#DDDD3C",
+          "600": "#CCCC24",
+          "700": "#B3B314",
+          "800": "#8E8E10",
+          "900": "#6A6A0C"
+        },
+        "gradient": "linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    )",
+        "classification": "moderate",
+        "description": "Moderate (Yellow)"
+      },
+      "contextInfo": {
+        "type": "SERVICE",
+        "scope": "DEVELOPMENT",
+        "domain": "duoplus",
+        "colorInfo": {
+          "hsl": "hsl(60, 70%, 50%)",
+          "hex": "#D9D926",
+          "gradient": "linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    )",
+          "tension": 50,
+          "trend": "stable",
+          "description": "Average & Stable ➡️",
+          "status": "Stressed",
+          "emoji": "🟠",
+          "css": "/* SERVICE DEVELOPMENT Context - Tension: 50% (stable) */\n.service-development {\n  /* Core Colors */\n  --hsl-color: hsl(60, 70%, 50%);\n  --hex-color: #D9D926;\n  --tension-gradient: linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    );\n  --tension-level: 50;\n  --tension-trend: stable;\n  --tension-status: Stressed;\n  \n  /* Color Scheme */\n  --color-primary: #D9D926;\n  --color-secondary: #2E2EB8;\n  --color-accent: #30E8E8;\n  --color-background: #f0fff4;\n  --color-text: #14532d;\n  \n  /* RGB Values */\n  --color-rgb: 217, 217, 38;\n  \n  /* Color Palette */\n  --color-palette-50: #F6F6EE;\n  --color-palette-100: #F5F5C7;\n  --color-palette-200: #EFEFA4;\n  --color-palette-300: #E9E981;\n  --color-palette-400: #E3E35F;\n  --color-palette-500: #DDDD3C;\n  --color-palette-600: #CCCC24;\n  --color-palette-700: #B3B314;\n  --color-palette-800: #8E8E10;\n  --color-palette-900: #6A6A0C;\n  \n  /* Status-based Classes */\n  --status-healthy: none;\n  --status-stable: none;\n  --status-stressed: block;\n  --status-critical: none;\n}\n\n/* Utility Classes for service-development */\n.service-development.tension-visual {\n  background: var(--tension-gradient);\n  color: var(--color-text);\n  padding: 8px 16px;\n  border-radius: 6px;\n  font-weight: 500;\n}\n\n.service-development.status-indicator::before {\n  content: '🟠';\n  margin-right: 8px;\n}\n\n.service-development.tension-bar {\n  height: 8px;\n  background: #e5e7eb;\n  border-radius: 4px;\n  overflow: hidden;\n}\n\n.service-development.tension-bar::after {\n  content: '';\n  display: block;\n  height: 100%;\n  width: calc(var(--tension-level) * 1%);\n  background: var(--tension-gradient);\n  transition: width 0.3s ease;\n}\n\n.service-development.palette-demo {\n  display: flex;\n  gap: 2px;\n  margin: 8px 0;\n}\n\n.service-development.palette-demo > div {\n  flex: 1;\n  height: 20px;\n  border-radius: 2px;\n}",
+          "palette": {
+            "50": "#F6F6EE",
+            "100": "#F5F5C7",
+            "200": "#EFEFA4",
+            "300": "#E9E981",
+            "400": "#E3E35F",
+            "500": "#DDDD3C",
+            "600": "#CCCC24",
+            "700": "#B3B314",
+            "800": "#8E8E10",
+            "900": "#6A6A0C"
+          },
+          "colorScheme": {
+            "primary": "#D9D926",
+            "secondary": "#2E2EB8",
+            "accent": "#30E8E8",
+            "background": "#f0fff4",
+            "text": "#14532d"
+          },
+          "rgb": {
+            "r": 217,
+            "g": 217,
+            "b": 38
+          },
+          "recommendations": [
+            "📊 Low analysis confidence - add more monitoring metrics"
+          ]
+        },
+        "backend": {
+          "type": "docker-compose",
+          "endpoint": "docker.dev.local",
+          "status": "connected",
+          "lastCheck": "2026-01-15T03:47:04.394Z",
+          "responseTime": 51
+        },
+        "meta": {
+          "createdAt": "2026-01-15T02:47:04.394Z",
+          "lastUpdated": "2026-01-15T03:47:04.394Z",
+          "version": "3.7.0",
+          "environment": "development",
+          "region": "local",
+          "tags": [
+            "service",
+            "development",
+            "tension-aware"
+          ]
+        }
+      },
+      "recommendations": [
+        "➡️ TREND STABLE: System performance consistent",
+        "   📊 Continue monitoring for any changes",
+        "   🎯 Consider proactive optimizations",
+        "📊 LOW CONFIDENCE: Analysis confidence below 70%",
+        "   🔍 Collect more comprehensive metrics data",
+        "   📈 Improve monitoring coverage and accuracy",
+        "   🧪 Validate data collection methods",
+        "📊 OBSERVABILITY: Enhance monitoring and alerting",
+        "   🔔 Set up custom alerts for key metrics",
+        "   📈 Implement dashboard for real-time monitoring",
+        "   📋 Create runbooks for common issues",
+        "   🧪 Schedule regular performance reviews",
+        "✅ GOOD: System performing within acceptable parameters",
+        "   📊 Continue monitoring for optimization opportunities"
+      ],
+      "performance": {
+        "responseTime": 550,
+        "throughput": 600,
+        "errorRate": 0.05,
+        "uptime": 98
+      },
+      "lastUpdated": "2026-01-15T03:47:04.394Z"
+    },
+    {
+      "systemId": "SERVICE-LOCAL-SANDBOX-duoplus",
+      "tensionMetrics": {
+        "value": 50,
+        "trend": "stable",
+        "contributors": [],
+        "history": [
+          {
+            "timestamp": 1768448824394,
+            "value": 50,
+            "trend": "stable"
+          }
+        ],
+        "metadata": {
+          "totalWeight": 0,
+          "contributorCount": 0,
+          "lastUpdated": 1768448824394,
+          "analysisConfidence": 0
+        }
+      },
+      "colorSystem": {
+        "value": {
+          "hsl": "hsl(60, 70%, 50%)",
+          "hex": "#D9D926",
+          "rgb": {
+            "r": 217,
+            "g": 217,
+            "b": 38
+          }
+        },
+        "scheme": {
+          "primary": "#D9D926",
+          "secondary": "#2E2EB8",
+          "accent": "#30E8E8",
+          "background": "#f0fff4",
+          "text": "#14532d"
+        },
+        "palette": {
+          "50": "#F6F6EE",
+          "100": "#F5F5C7",
+          "200": "#EFEFA4",
+          "300": "#E9E981",
+          "400": "#E3E35F",
+          "500": "#DDDD3C",
+          "600": "#CCCC24",
+          "700": "#B3B314",
+          "800": "#8E8E10",
+          "900": "#6A6A0C"
+        },
+        "gradient": "linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    )",
+        "classification": "moderate",
+        "description": "Moderate (Yellow)"
+      },
+      "contextInfo": {
+        "type": "SERVICE",
+        "scope": "LOCAL-SANDBOX",
+        "domain": "duoplus",
+        "colorInfo": {
+          "hsl": "hsl(60, 70%, 50%)",
+          "hex": "#D9D926",
+          "gradient": "linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    )",
+          "tension": 50,
+          "trend": "stable",
+          "description": "Average & Stable ➡️",
+          "status": "Stressed",
+          "emoji": "🟠",
+          "css": "/* SERVICE LOCAL-SANDBOX Context - Tension: 50% (stable) */\n.service-local-sandbox {\n  /* Core Colors */\n  --hsl-color: hsl(60, 70%, 50%);\n  --hex-color: #D9D926;\n  --tension-gradient: linear-gradient(135deg, \n      hsl(60, 80%, 60%), \n      hsl(30, 80%, 40%)\n    );\n  --tension-level: 50;\n  --tension-trend: stable;\n  --tension-status: Stressed;\n  \n  /* Color Scheme */\n  --color-primary: #D9D926;\n  --color-secondary: #2E2EB8;\n  --color-accent: #30E8E8;\n  --color-background: #f0fff4;\n  --color-text: #14532d;\n  \n  /* RGB Values */\n  --color-rgb: 217, 217, 38;\n  \n  /* Color Palette */\n  --color-palette-50: #F6F6EE;\n  --color-palette-100: #F5F5C7;\n  --color-palette-200: #EFEFA4;\n  --color-palette-300: #E9E981;\n  --color-palette-400: #E3E35F;\n  --color-palette-500: #DDDD3C;\n  --color-palette-600: #CCCC24;\n  --color-palette-700: #B3B314;\n  --color-palette-800: #8E8E10;\n  --color-palette-900: #6A6A0C;\n  \n  /* Status-based Classes */\n  --status-healthy: none;\n  --status-stable: none;\n  --status-stressed: block;\n  --status-critical: none;\n}\n\n/* Utility Classes for service-local-sandbox */\n.service-local-sandbox.tension-visual {\n  background: var(--tension-gradient);\n  color: var(--color-text);\n  padding: 8px 16px;\n  border-radius: 6px;\n  font-weight: 500;\n}\n\n.service-local-sandbox.status-indicator::before {\n  content: '🟠';\n  margin-right: 8px;\n}\n\n.service-local-sandbox.tension-bar {\n  height: 8px;\n  background: #e5e7eb;\n  border-radius: 4px;\n  overflow: hidden;\n}\n\n.service-local-sandbox.tension-bar::after {\n  content: '';\n  display: block;\n  height: 100%;\n  width: calc(var(--tension-level) * 1%);\n  background: var(--tension-gradient);\n  transition: width 0.3s ease;\n}\n\n.service-local-sandbox.palette-demo {\n  display: flex;\n  gap: 2px;\n  margin: 8px 0;\n}\n\n.service-local-sandbox.palette-demo > div {\n  flex: 1;\n  height: 20px;\n  border-radius: 2px;\n}",
+          "palette": {
+            "50": "#F6F6EE",
+            "100": "#F5F5C7",
+            "200": "#EFEFA4",
+            "300": "#E9E981",
+            "400": "#E3E35F",
+            "500": "#DDDD3C",
+            "600": "#CCCC24",
+            "700": "#B3B314",
+            "800": "#8E8E10",
+            "900": "#6A6A0C"
+          },
+          "colorScheme": {
+            "primary": "#D9D926",
+            "secondary": "#2E2EB8",
+            "accent": "#30E8E8",
+            "background": "#f0fff4",
+            "text": "#14532d"
+          },
+          "rgb": {
+            "r": 217,
+            "g": 217,
+            "b": 38
+          },
+          "recommendations": [
+            "📊 Low analysis confidence - add more monitoring metrics"
+          ]
+        },
+        "backend": {
+          "type": "localhost",
+          "endpoint": "127.0.0.1",
+          "status": "connected",
+          "lastCheck": "2026-01-15T03:47:04.394Z",
+          "responseTime": 61
+        },
+        "meta": {
+          "createdAt": "2026-01-15T02:47:04.394Z",
+          "lastUpdated": "2026-01-15T03:47:04.394Z",
+          "version": "3.7.0",
+          "environment": "local-sandbox",
+          "region": "local",
+          "tags": [
+            "service",
+            "local-sandbox",
+            "tension-aware"
+          ]
+        }
+      },
+      "recommendations": [
+        "➡️ TREND STABLE: System performance consistent",
+        "   📊 Continue monitoring for any changes",
+        "   🎯 Consider proactive optimizations",
+        "📊 LOW CONFIDENCE: Analysis confidence below 70%",
+        "   🔍 Collect more comprehensive metrics data",
+        "   📈 Improve monitoring coverage and accuracy",
+        "   🧪 Validate data collection methods",
+        "📊 OBSERVABILITY: Enhance monitoring and alerting",
+        "   🔔 Set up custom alerts for key metrics",
+        "   📈 Implement dashboard for real-time monitoring",
+        "   📋 Create runbooks for common issues",
+        "   🧪 Schedule regular performance reviews",
+        "✅ GOOD: System performing within acceptable parameters",
+        "   📊 Continue monitoring for optimization opportunities"
+      ],
+      "performance": {
+        "responseTime": 550,
+        "throughput": 600,
+        "errorRate": 0.05,
+        "uptime": 98
+      },
+      "lastUpdated": "2026-01-15T03:47:04.394Z"
+    }
+  ],
+  "metrics": {
+    "total": 9,
+    "critical": 0,
+    "warning": 0,
+    "healthy": 9,
+    "averageTension": 50,
+    "averageResponseTime": 550,
+    "averageThroughput": 600,
+    "totalErrors": 0.44999999999999996,
+    "uptime": 98
+  },
+  "cookies": {
+    "session": "abc123",
+    "preferences": "theme=dark;lang=en",
+    "test": "value"
+  }
+}

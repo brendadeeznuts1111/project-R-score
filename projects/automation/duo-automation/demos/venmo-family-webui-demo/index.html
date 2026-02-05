@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏠 Venmo Family System - Web UI Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom Animations */
+        @keyframes slideIn {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        
+        /* Animation Classes */
+        .animate-slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .animate-pulse-once {
+            animation: pulse 0.3s ease-in-out;
+        }
+        
+        /* Glass Effect */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Gradient Backgrounds */
+        .gradient-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+        }
+        
+        .gradient-bg-alt {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+        }
+        
+        /* Card Effects */
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .status-active {
+            background: rgba(34, 197, 94, 0.1);
+            color: rgb(34, 197, 94);
+        }
+        
+        .status-pending {
+            background: rgba(251, 191, 36, 0.1);
+            color: rgb(251, 191, 36);
+        }
+        
+        .status-suspended {
+            background: rgba(239, 68, 68, 0.1);
+            color: rgb(239, 68, 68);
+        }
+        
+        /* Loading Skeleton */
+        .loading-skeleton {
+            background: linear-gradient(90deg, #3b82f6 25%, #3b82f6 50%, #3b82f6 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        
+        /* QR Code Container */
+        .qr-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .qr-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .qr-container:hover .qr-overlay {
+            opacity: 1;
+        }
+        
+        /* Notification Dot */
+        .notification-dot {
+            width: 8px;
+            height: 8px;
+            background: rgb(239, 68, 68);
+            border-radius: 50%;
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            animation: pulse 2s infinite;
+        }
+        
+        /* Tab Styling */
+        .tab-active {
+            border-bottom: 2px solid rgb(99, 102, 241);
+            color: rgb(99, 102, 241);
+        }
+        
+        .demo-tab {
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .demo-tab:hover {
+            color: rgb(99, 102, 241);
+            border-bottom-color: rgb(229, 231, 235);
+        }
+        
+        /* Feature Cards */
+        .feature-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Demo Sections */
+        .demo-section {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Counter Animation */
+        .counter {
+            display: inline-block;
+        }
+        
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 150px;
+            }
+        }
+        
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #3b82f6;
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        /* Button Enhancements */
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+        }
+        
+        /* Input Focus States */
+        .input-focus {
+            transition: all 0.2s ease;
+        }
+        
+        .input-focus:focus {
+            border-color: rgb(99, 102, 241);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        /* Loading States */
+        .loading {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-3">
+                    <i data-lucide="home" class="w-8 h-8"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold">Venmo Family System</h1>
+                        <p class="text-purple-100 text-sm">Web UI Demo & Showcase</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleDarkMode()" class="p-2 hover:bg-white/10 rounded-lg transition">
+                        <i data-lucide="moon" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="showNotifications()" class="relative p-2 hover:bg-white/10 rounded-lg transition">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                        <span class="notification-dot"></span>
+                    </button>
+                    <button onclick="showProfile()" class="flex items-center space-x-2 p-2 hover:bg-white/10 rounded-lg transition">
+                        <img src="https://picsum.photos/seed/demo-user/32/32" alt="Profile" class="w-8 h-8 rounded-full">
+                        <span class="text-sm font-medium">Demo User</span>
+                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Hero Section -->
+        <section class="mb-12">
+            <div class="text-center">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">
+                    🏠 Complete Family Payment System
+                </h2>
+                <p class="text-xl text-gray-600 mb-8">
+                    Experience the future of family finance with QR payments, Android integration, and real-time management
+                </p>
+                <div class="flex justify-center space-x-4">
+                    <button onclick="startInteractiveDemo()" class="btn-primary text-white px-8 py-3 rounded-lg flex items-center space-x-2 text-lg font-medium">
+                        <i data-lucide="play" class="w-5 h-5"></i>
+                        <span>Start Interactive Demo</span>
+                    </button>
+                    <button onclick="showFeatures()" class="bg-white text-indigo-600 border-2 border-indigo-600 px-8 py-3 rounded-lg hover:bg-indigo-50 transition flex items-center space-x-2 text-lg font-medium">
+                        <i data-lucide="star" class="w-5 h-5"></i>
+                        <span>View Features</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Overview -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Total Families</p>
+                        <p class="text-2xl font-bold text-gray-900 counter" data-target="1247">0</p>
+                        <p class="text-green-600 text-sm flex items-center mt-1">
+                            <i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>
+                            +23% this month
+                        </p>
+                    </div>
+                    <div class="bg-blue-100 p-3 rounded-lg">
+                        <i data-lucide="users" class="w-6 h-6 text-blue-600"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Active Members</p>
+                        <p class="text-2xl font-bold text-gray-900 counter" data-target="5234">0</p>
+                        <p class="text-gray-600 text-sm">2 adults, 3 children avg</p>
+                    </div>
+                    <div class="bg-green-100 p-3 rounded-lg">
+                        <i data-lucide="user-check" class="w-6 h-6 text-green-600"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Monthly Volume</p>
+                        <p class="text-2xl font-bold text-gray-900">$<span class="counter" data-target="2847650">0</span></p>
+                        <p class="text-red-600 text-sm flex items-center mt-1">
+                            <i data-lucide="trending-down" class="w-4 h-4 mr-1"></i>
+                            -5% vs last month
+                        </p>
+                    </div>
+                    <div class="bg-purple-100 p-3 rounded-lg">
+                        <i data-lucide="dollar-sign" class="w-6 h-6 text-purple-600"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">QR Payments</p>
+                        <p class="text-2xl font-bold text-gray-900 counter" data-target="8934">0</p>
+                        <p class="text-yellow-600 text-sm">This month</p>
+                    </div>
+                    <div class="bg-yellow-100 p-3 rounded-lg">
+                        <i data-lucide="qr-code" class="w-6 h-6 text-yellow-600"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Demo Section -->
+        <section id="demoSection" class="hidden mb-12">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h3 class="text-2xl font-bold text-gray-900 mb-6">🎮 Interactive Demo</h3>
+                
+                <!-- Demo Tabs -->
+                <div class="border-b border-gray-200 mb-6">
+                    <nav class="flex space-x-8">
+                        <button onclick="showDemoTab('family')" class="demo-tab tab-active py-2 px-1 border-b-2 font-medium text-sm">
+                            👨‍👩‍👧‍👦 Family Setup
+                        </button>
+                        <button onclick="showDemoTab('qr')" class="demo-tab py-2 px-1 border-b-2 font-medium text-sm">
+                            📱 QR Payments
+                        </button>
+                        <button onclick="showDemoTab('transactions')" class="demo-tab py-2 px-1 border-b-2 font-medium text-sm">
+                            💳 Transactions
+                        </button>
+                        <button onclick="showDemoTab('android')" class="demo-tab py-2 px-1 border-b-2 font-medium text-sm">
+                            🤖 Android
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Demo Content -->
+                <div id="demoContent">
+                    <!-- Family Setup Demo -->
+                    <div id="familyDemo" class="demo-panel">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="text-lg font-semibold mb-4">Create Your Family</h4>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Parent Name</label>
+                                        <input type="text" id="parentName" class="input-focus w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="John Doe" value="John Doe">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Parent Email</label>
+                                        <input type="email" id="parentEmail" class="input-focus w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="john@example.com" value="john.doe@duoplus.com">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Children (comma-separated)</label>
+                                        <input type="text" id="childrenNames" class="input-focus w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Jimmy Doe, Sarah Doe" value="Jimmy Doe, Sarah Doe">
+                                    </div>
+                                    <button onclick="createDemoFamily()" class="btn-primary w-full text-white py-2 rounded-lg flex items-center justify-center space-x-2">
+                                        <i data-lucide="plus" class="w-4 h-4"></i>
+                                        <span>Create Family</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold mb-4">Family Preview</h4>
+                                <div id="familyPreview" class="bg-gray-50 rounded-lg p-4 min-h-[200px]">
+                                    <div class="text-center text-gray-500">
+                                        <i data-lucide="users" class="w-12 h-12 mx-auto mb-2"></i>
+                                        <p>Create a family to see the preview</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- QR Payments Demo -->
+                    <div id="qrDemo" class="demo-panel hidden">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="text-lg font-semibold mb-4">Generate QR Payment</h4>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Amount ($)</label>
+                                        <input type="number" id="qrAmount" class="input-focus w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="25.00" value="25.00">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Recipient</label>
+                                        <select id="qrRecipient" class="input-focus w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                            <option value="">Select recipient</option>
+                                            <option value="jimmy">Jimmy Doe</option>
+                                            <option value="sarah">Sarah Doe</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Note (optional)</label>
+                                        <input type="text" id="qrNote" class="input-focus w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Weekly allowance" value="Weekly allowance">
+                                    </div>
+                                    <button onclick="generateDemoQR()" class="btn-primary w-full text-white py-2 rounded-lg flex items-center justify-center space-x-2">
+                                        <i data-lucide="qr-code" class="w-4 h-4"></i>
+                                        <span>Generate QR Code</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold mb-4">QR Code</h4>
+                                <div id="qrPreview" class="bg-gray-50 rounded-lg p-4 min-h-[200px] flex items-center justify-center">
+                                    <div class="text-center text-gray-500">
+                                        <i data-lucide="qr-code" class="w-12 h-12 mx-auto mb-2"></i>
+                                        <p>Generate a QR code to see it here</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Transactions Demo -->
+                    <div id="transactionsDemo" class="demo-panel hidden">
+                        <div class="space-y-6">
+                            <div class="flex justify-between items-center">
+                                <h4 class="text-lg font-semibold">Recent Transactions</h4>
+                                <button onclick="addDemoTransaction()" class="btn-primary text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                                    <span>Add Transaction</span>
+                                </button>
+                            </div>
+                            <div id="transactionsList" class="space-y-3">
+                                <!-- Transactions will be added here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Android Demo -->
+                    <div id="androidDemo" class="demo-panel hidden">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="text-lg font-semibold mb-4">Android Device Control</h4>
+                                <div class="space-y-4">
+                                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="font-medium text-green-900">Device Connected</p>
+                                                <p class="text-sm text-green-700">Virtual Android Device</p>
+                                            </div>
+                                            <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                                        </div>
+                                    </div>
+                                    <button onclick="testAndroidConnection()" class="btn-primary w-full text-white py-2 rounded-lg flex items-center justify-center space-x-2">
+                                        <i data-lucide="smartphone" class="w-4 h-4"></i>
+                                        <span>Test Connection</span>
+                                    </button>
+                                    <button onclick="launchQRScanner()" class="bg-blue-600 w-full text-white py-2 rounded-lg hover:bg-blue-700 transition flex items-center justify-center space-x-2">
+                                        <i data-lucide="camera" class="w-4 h-4"></i>
+                                        <span>Launch QR Scanner</span>
+                                    </button>
+                                    <button onclick="sendNotification()" class="bg-purple-600 w-full text-white py-2 rounded-lg hover:bg-purple-700 transition flex items-center justify-center space-x-2">
+                                        <i data-lucide="bell" class="w-4 h-4"></i>
+                                        <span>Send Notification</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold mb-4">Device Logs</h4>
+                                <div id="androidLogs" class="bg-gray-900 text-green-400 rounded-lg p-4 h-64 overflow-y-auto font-mono text-sm custom-scrollbar">
+                                    <div>Android device ready...</div>
+                                    <div>Waiting for commands...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Grid -->
+        <section id="featuresSection" class="mb-12">
+            <h3 class="text-2xl font-bold text-gray-900 mb-8 text-center">🚀 Key Features</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="feature-card rounded-xl p-6 card-hover">
+                    <div class="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                        <i data-lucide="users" class="w-6 h-6 text-blue-600"></i>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">Family Management</h4>
+                    <p class="text-gray-600">Create and manage family accounts with parents and children, set spending limits and permissions.</p>
+                </div>
+                
+                <div class="feature-card rounded-xl p-6 card-hover">
+                    <div class="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                        <i data-lucide="qr-code" class="w-6 h-6 text-green-600"></i>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">QR Code Payments</h4>
+                    <p class="text-gray-600">Generate payment QR codes instantly and scan them with Android devices for quick transactions.</p>
+                </div>
+                
+                <div class="feature-card rounded-xl p-6 card-hover">
+                    <div class="bg-purple-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                        <i data-lucide="smartphone" class="w-6 h-6 text-purple-600"></i>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">Android Integration</h4>
+                    <p class="text-gray-600">Seamless integration with Android virtual devices through the DuoPlus SDK.</p>
+                </div>
+                
+                <div class="feature-card rounded-xl p-6 card-hover">
+                    <div class="bg-yellow-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                        <i data-lucide="shield-check" class="w-6 h-6 text-yellow-600"></i>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">Parental Controls</h4>
+                    <p class="text-gray-600">Set spending limits, require approval for transactions, and monitor family spending.</p>
+                </div>
+                
+                <div class="feature-card rounded-xl p-6 card-hover">
+                    <div class="bg-red-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                        <i data-lucide="split" class="w-6 h-6 text-red-600"></i>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">Split Payments</h4>
+                    <p class="text-gray-600">Automatically split costs among family members for shared expenses.</p>
+                </div>
+                
+                <div class="feature-card rounded-xl p-6 card-hover">
+                    <div class="bg-indigo-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                        <i data-lucide="bar-chart-3" class="w-6 h-6 text-indigo-600"></i>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">Real-time Analytics</h4>
+                    <p class="text-gray-600">Track spending, monitor transactions, and get insights into family finances.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Dashboard Preview -->
+        <section class="mb-12">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h3 class="text-2xl font-bold text-gray-900 mb-6">📊 Live Dashboard Preview</h3>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-lg font-semibold mb-4">Spending Overview</h4>
+                        <div class="chart-container">
+                            <canvas id="spendingChart"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold mb-4">Transaction Types</h4>
+                        <div class="chart-container">
+                            <canvas id="transactionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <p class="text-gray-400">© 2026 DuoPlus Venmo Family System - Web UI Demo</p>
+                <p class="text-gray-500 text-sm mt-2">Built with ❤️ using Bun, TypeScript, and Tailwind CSS</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg hidden animate-slide-in z-50">
+        <div class="flex items-center space-x-2">
+            <i data-lucide="check-circle" class="w-5 h-5"></i>
+            <span id="toastMessage">Success!</span>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let currentFamily = null;
+        let transactions = [];
+        let androidConnected = true;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            initializeCounters();
+            initializeCharts();
+            setupEventListeners();
+        });
+
+        // Initialize animated counters
+        function initializeCounters() {
+            const counters = document.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const duration = 2000;
+                const step = target / (duration / 16);
+                let current = 0;
+                
+                const updateCounter = () => {
+                    current += step;
+                    if (current < target) {
+                        counter.textContent = Math.floor(current).toLocaleString();
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target.toLocaleString();
+                    }
+                };
+                
+                updateCounter();
+            });
+        }
+
+        // Initialize charts
+        function initializeCharts() {
+            // Spending Chart
+            const spendingCtx = document.getElementById('spendingChart').getContext('2d');
+            spendingChart = new Chart(spendingCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Family Spending',
+                        data: [1200, 1900, 1500, 2100, 1800, 2400],
+                        borderColor: 'rgb(99, 102, 241)',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Transaction Chart
+            const transactionCtx = document.getElementById('transactionChart').getContext('2d');
+            transactionChart = new Chart(transactionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Payments', 'QR Scans', 'Split Payments', 'Allowances'],
+                    datasets: [{
+                        data: [45, 25, 20, 10],
+                        backgroundColor: [
+                            'rgb(99, 102, 241)',
+                            'rgb(34, 197, 94)',
+                            'rgb(251, 191, 36)',
+                            'rgb(239, 68, 68)'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#3b82f6'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Add any additional event listeners here
+        }
+
+        // Interactive Demo Functions
+        function startInteractiveDemo() {
+            document.getElementById('demoSection').classList.remove('hidden');
+            document.getElementById('demoSection').scrollIntoView({ behavior: 'smooth' });
+            showToast('Interactive demo started! Try creating a family.', 'success');
+        }
+
+        function showFeatures() {
+            document.getElementById('featuresSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Demo Tab Functions
+        function showDemoTab(tabName) {
+            // Hide all panels
+            document.querySelectorAll('.demo-panel').forEach(panel => {
+                panel.classList.add('hidden');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.demo-tab').forEach(tab => {
+                tab.classList.remove('tab-active');
+            });
+            
+            // Show selected panel
+            document.getElementById(tabName + 'Demo').classList.remove('hidden');
+            
+            // Add active class to selected tab
+            event.target.classList.add('tab-active');
+        }
+
+        // Family Demo Functions
+        function createDemoFamily() {
+            const parentName = document.getElementById('parentName').value;
+            const parentEmail = document.getElementById('parentEmail').value;
+            const childrenNames = document.getElementById('childrenNames').value;
+            
+            if (!parentName || !parentEmail || !childrenNames) {
+                showToast('Please fill in all fields', 'error');
+                return;
+            }
+            
+            const children = childrenNames.split(',').map(name => name.trim());
+            
+            currentFamily = {
+                familyId: `family-${Date.now()}`,
+                parentName,
+                parentEmail,
+                children: children.map((name, index) => ({
+                    name,
+                    role: 'child',
+                    status: 'active',
+                    spendingLimit: 50
+                })),
+                createdAt: new Date().toISOString()
+            };
+            
+            updateFamilyPreview();
+            showToast('Family created successfully!', 'success');
+        }
+
+        function updateFamilyPreview() {
+            const preview = document.getElementById('familyPreview');
+            
+            preview.innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
+                        <i data-lucide="user" class="w-5 h-5 text-blue-600"></i>
+                        <div>
+                            <p class="font-medium">${currentFamily.parentName}</p>
+                            <p class="text-sm text-gray-600">${currentFamily.parentEmail}</p>
+                        </div>
+                        <span class="status-badge status-active">Parent</span>
+                    </div>
+                    ${currentFamily.children.map(child => `
+                        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                            <i data-lucide="user" class="w-5 h-5 text-gray-600"></i>
+                            <div>
+                                <p class="font-medium">${child.name}</p>
+                                <p class="text-sm text-gray-600">Limit: $${child.spendingLimit}</p>
+                            </div>
+                            <span class="status-badge status-active">Child</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            lucide.createIcons();
+        }
+
+        // QR Demo Functions
+        function generateDemoQR() {
+            const amount = document.getElementById('qrAmount').value;
+            const recipient = document.getElementById('qrRecipient').value;
+            const note = document.getElementById('qrNote').value;
+            
+            if (!amount || !recipient) {
+                showToast('Please enter amount and select recipient', 'error');
+                return;
+            }
+            
+            const qrData = `duoplus://pay/demo-family/${amount}/${recipient}${note ? '/' + encodeURIComponent(note) : ''}`;
+            
+            // Generate QR code
+            const canvas = document.createElement('canvas');
+            QRCode.toCanvas(canvas, qrData, {
+                width: 200,
+                margin: 2,
+                color: {
+                    dark: '#3b82f6',
+                    light: '#3b82f6'
+                }
+            }).then(() => {
+                const preview = document.getElementById('qrPreview');
+                preview.innerHTML = `
+                    <div class="text-center">
+                        <div class="qr-container inline-block">
+                            ${canvas.outerHTML}
+                            <div class="qr-overlay">
+                                <button onclick="downloadQR('${qrData}')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition flex items-center space-x-2">
+                                    <i data-lucide="download" class="w-4 h-4"></i>
+                                    <span>Download</span>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="mt-4 text-sm text-gray-600">Amount: $${amount}</p>
+                        <p class="text-sm text-gray-600">Recipient: ${recipient}</p>
+                        ${note ? `<p class="text-sm text-gray-600">Note: ${note}</p>` : ''}
+                    </div>
+                `;
+                lucide.createIcons();
+                showToast('QR code generated successfully!', 'success');
+            });
+        }
+
+        function downloadQR(data) {
+            showToast('QR code downloaded!', 'success');
+        }
+
+        // Transactions Demo Functions
+        function addDemoTransaction() {
+            const types = ['payment', 'qr_scan', 'split', 'allowance'];
+            const randomType = types[Math.floor(Math.random() * types.length)];
+            const randomAmount = Math.floor(Math.random() * 100) + 10;
+            
+            const transaction = {
+                id: `txn-${Date.now()}`,
+                type: randomType,
+                amount: randomAmount,
+                status: 'completed',
+                description: getRandomDescription(randomType),
+                timestamp: new Date().toISOString()
+            };
+            
+            transactions.unshift(transaction);
+            updateTransactionsList();
+            showToast('Transaction added!', 'success');
+        }
+
+        function getRandomDescription(type) {
+            const descriptions = {
+                payment: ['Weekly allowance', 'Lunch money', 'Grocery shopping'],
+                qr_scan: ['Coffee shop', 'Restaurant payment', 'Store purchase'],
+                split: ['Family dinner', 'Movie tickets', 'Group activity'],
+                allowance: ['Monthly allowance', 'Bonus payment', 'Reward']
+            };
+            
+            const typeDescriptions = descriptions[type];
+            return typeDescriptions[Math.floor(Math.random() * typeDescriptions.length)];
+        }
+
+        function updateTransactionsList() {
+            const list = document.getElementById('transactionsList');
+            
+            if (transactions.length === 0) {
+                list.innerHTML = '<p class="text-center text-gray-500 py-8">No transactions yet</p>';
+                return;
+            }
+            
+            list.innerHTML = transactions.slice(0, 5).map(tx => `
+                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-indigo-100 p-2 rounded-lg">
+                            <i data-lucide="${getTransactionIcon(tx.type)}" class="w-4 h-4 text-indigo-600"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium">${tx.description}</p>
+                            <p class="text-sm text-gray-500">${formatDate(tx.timestamp)}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-semibold">$${tx.amount}</p>
+                        <span class="status-badge status-active">${tx.status}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            lucide.createIcons();
+        }
+
+        function getTransactionIcon(type) {
+            const icons = {
+                payment: 'dollar-sign',
+                qr_scan: 'qr-code',
+                split: 'split',
+                allowance: 'gift'
+            };
+            return icons[type] || 'credit-card';
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+
+        // Android Demo Functions
+        function testAndroidConnection() {
+            addAndroidLog('Testing connection...');
+            
+            setTimeout(() => {
+                if (androidConnected) {
+                    addAndroidLog('✅ Connection successful');
+                    showToast('Android device connected!', 'success');
+                } else {
+                    addAndroidLog('❌ Connection failed');
+                    showToast('Android device not connected', 'error');
+                }
+            }, 1500);
+        }
+
+        function launchQRScanner() {
+            addAndroidLog('Launching QR scanner...');
+            showToast('QR scanner launched on Android device', 'success');
+        }
+
+        function sendNotification() {
+            addAndroidLog('Sending notification...');
+            showToast('Notification sent to Android device', 'success');
+        }
+
+        function addAndroidLog(message) {
+            const logs = document.getElementById('androidLogs');
+            const timestamp = new Date().toLocaleTimeString();
+            logs.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        // Utility Functions
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            
+            // Update toast styling based on type
+            if (type === 'error') {
+                toast.className = toast.className.replace('bg-gray-800', 'bg-red-600');
+            } else {
+                toast.className = toast.className.replace('bg-red-600', 'bg-gray-800');
+            }
+            
+            toast.classList.remove('hidden');
+            
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark');
+            showToast('Dark mode toggled', 'success');
+        }
+
+        function showNotifications() {
+            showToast('You have 3 new notifications', 'success');
+        }
+
+        function showProfile() {
+            showToast('Profile menu coming soon', 'success');
+        }
+    </script>
+</body>
+</html>

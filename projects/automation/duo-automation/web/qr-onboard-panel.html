@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Device Onboarding - Factory Wager Enterprise Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        :root {
+            --enterprise-primary: #3b82f6;
+            --enterprise-success: #22c55e;
+            --enterprise-warning: #f59e0b;
+            --enterprise-error: #ef4444;
+            --enterprise-dark: #1f2937;
+            --enterprise-darker: #111827;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--enterprise-dark) 0%, var(--enterprise-darker) 100%);
+        }
+        
+        .enterprise-gradient {
+            background: linear-gradient(135deg, var(--enterprise-primary), #10b981);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        .status-online {
+            animation: pulse-green 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-green {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .qr-container {
+            transition: all 0.3s ease;
+        }
+        
+        .qr-container:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .metric-card {
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .device-status-dot {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .loading-skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .qr-onboard-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2rem;
+            max-width: 500px;
+            margin: 2rem auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .qr-scope-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+        }
+
+        .qr-status {
+            margin-top: 1rem;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: white;
+            width: 100%;
+            text-align: center;
+        }
+
+        .connected-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #14b8a6;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px #14b8a6;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+    <!-- Header -->
+    <header class="glass-effect border-b border-white/10">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-green-500 rounded-lg flex items-center justify-center">
+                        <i data-lucide="qr-code" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">QR Device Onboarding</h1>
+                        <p class="text-sm text-gray-400">Enterprise Dashboard v2.1</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 bg-green-500 rounded-full status-online"></div>
+                        <span class="text-sm">Live</span>
+                    </div>
+                    <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center space-x-2">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        <span>Refresh</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <!-- Status Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="metric-card glass-effect rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                        <i data-lucide="smartphone" class="w-6 h-6 text-blue-400"></i>
+                    </div>
+                    <span class="text-2xl font-bold">47</span>
+                </div>
+                <h3 class="text-gray-400 text-sm mb-1">Total Scans (24h)</h3>
+                <p class="text-xs text-green-400">+12% from yesterday</p>
+            </div>
+            
+            <div class="metric-card glass-effect rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                        <i data-lucide="check-circle" class="w-6 h-6 text-green-400"></i>
+                    </div>
+                    <span class="text-2xl font-bold">42</span>
+                </div>
+                <h3 class="text-gray-400 text-sm mb-1">Successful Pairs</h3>
+                <p class="text-xs text-green-400">89.4% success rate</p>
+            </div>
+            
+            <div class="metric-card glass-effect rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                        <i data-lucide="rocket" class="w-6 h-6 text-purple-400"></i>
+                    </div>
+                    <span class="text-2xl font-bold">38</span>
+                </div>
+                <h3 class="text-gray-400 text-sm mb-1">Production Ready</h3>
+                <p class="text-xs text-green-400">90.5% activation rate</p>
+            </div>
+            
+            <div class="metric-card glass-effect rounded-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
+                        <i data-lucide="clock" class="w-6 h-6 text-yellow-400"></i>
+                    </div>
+                    <span class="text-2xl font-bold">28s</span>
+                </div>
+                <h3 class="text-gray-400 text-sm mb-1">Avg Onboarding</h3>
+                <p class="text-xs text-green-400">-95% time reduction</p>
+            </div>
+        </div>
+
+        <!-- QR Code Section and Device List -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- QR Code Generator -->
+            <div class="glass-effect rounded-xl p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold flex items-center space-x-2">
+                        <i data-lucide="qr-code" class="w-5 h-5"></i>
+                        <span>QR Code Generator</span>
+                    </h2>
+                    <div class="enterprise-gradient px-3 py-1 rounded-full text-xs font-semibold">
+                        ENTERPRISE
+                    </div>
+                </div>
+                
+                <div class="qr-container bg-white rounded-xl p-6 mb-6">
+                    <div class="aspect-square bg-gray-100 rounded-lg flex items-center justify-center mb-4">
+                        <div class="text-center">
+                            <div id="qrcode" class="qr-code"></div>
+                            <div id="qr-status" class="qr-status" style="background: #22c55e">
+                                📱 Ready to Pair Device
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-center space-x-4">
+                        <button onclick="generateQR()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center space-x-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            <span>Generate QR</span>
+                        </button>
+                        <button onclick="bulkGenerate()" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors flex items-center space-x-2">
+                            <i data-lucide="package" class="w-4 h-4"></i>
+                            <span>Bulk Generate</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+                        <span class="text-sm text-gray-400">Device Type</span>
+                        <select id="deviceType" class="bg-white/10 border border-white/20 rounded px-3 py-1 text-sm">
+                            <option value="mobile">📱 Mobile</option>
+                            <option value="tablet">💻 Tablet</option>
+                            <option value="desktop">🖥️ Desktop</option>
+                            <option value="kiosk">🏪 Kiosk</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+                        <span class="text-sm text-gray-400">Expiry</span>
+                        <span class="text-sm font-mono">5 minutes</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+                        <span class="text-sm text-gray-400">Security</span>
+                        <span class="text-sm text-green-400">JWT + mTLS ✅</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Device List -->
+            <div class="glass-effect rounded-xl p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold flex items-center space-x-2">
+                        <i data-lucide="devices" class="w-5 h-5"></i>
+                        <span>Paired Devices</span>
+                    </h2>
+                    <button onclick="refreshDevices()" class="text-blue-400 hover:text-blue-300 transition-colors">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-3" id="deviceList">
+                    <!-- Device items will be populated here -->
+                </div>
+                
+                <div class="device-status mt-6">
+                    <span class="connected-dot"></span>
+                    <span id="paired-count" style="color: #14b8a6">4/4 Devices Paired • Avg: 28s</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Charts -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Performance Chart -->
+            <div class="glass-effect rounded-xl p-6">
+                <h2 class="text-xl font-bold mb-6 flex items-center space-x-2">
+                    <i data-lucide="trending-up" class="w-5 h-5"></i>
+                    <span>Performance Trends</span>
+                </h2>
+                <canvas id="performanceChart" width="400" height="200"></canvas>
+            </div>
+
+            <!-- Device Breakdown -->
+            <div class="glass-effect rounded-xl p-6">
+                <h2 class="text-xl font-bold mb-6 flex items-center space-x-2">
+                    <i data-lucide="pie-chart" class="w-5 h-5"></i>
+                    <span>Device Breakdown</span>
+                </h2>
+                <canvas id="deviceChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- ROI Section -->
+        <div class="glass-effect rounded-xl p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold flex items-center space-x-2">
+                    <i data-lucide="dollar-sign" class="w-5 h-5"></i>
+                    <span>Revenue Impact</span>
+                </h2>
+                <div class="text-green-400 font-bold">+$4,800/month</div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-green-400">+65%</div>
+                    <p class="text-sm text-gray-400">MRR Increase</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-blue-400">$12.1K</div>
+                    <p class="text-sm text-gray-400">Current MRR</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-purple-400">2.3mo</div>
+                    <p class="text-sm text-gray-400">Payback Period</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-yellow-400">320%</div>
+                    <p class="text-sm text-gray-400">ROI</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-effect border-t border-white/10 mt-12">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="text-sm text-gray-400">
+                    © 2024 Factory Wager - QR Onboarding System v2.1
+                </div>
+                <div class="flex items-center space-x-4 text-sm text-gray-400">
+                    <span>🏢 Enterprise Scope Active</span>
+                    <span>•</span>
+                    <span>🔒 Security: JWT + mTLS</span>
+                    <span>•</span>
+                    <span>📊 15 Health Checks</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Mock data
+        const mockDevices = [
+            { id: 'device-001', type: 'mobile', status: 'production-ready', health: 95, lastSeen: '2 min ago' },
+            { id: 'device-002', type: 'tablet', status: 'production-ready', health: 88, lastSeen: '5 min ago' },
+            { id: 'device-003', type: 'desktop', status: 'configuration-needed', health: 72, lastSeen: '15 min ago' },
+            { id: 'device-004', type: 'mobile', status: 'production-ready', health: 91, lastSeen: '1 min ago' }
+        ];
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            renderDevices();
+            initializeCharts();
+            startRealTimeUpdates();
+            initializeQRCode();
+        });
+
+        function initializeQRCode() {
+            // Simulate QR code generation
+            const token = "sig_" + Math.random().toString(36).substring(7);
+            const qrData = `duoplus://onboard?token=${token}&scope=enterprise&domain=factory-wager.com`;
+            
+            new QRCode(document.getElementById("qrcode"), {
+                text: qrData,
+                width: 200,
+                height: 200,
+                colorDark: "#3b82f6",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        function renderDevices() {
+            const deviceList = document.getElementById('deviceList');
+            deviceList.innerHTML = mockDevices.map(device => `
+                <div class="flex items-center justify-between p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-colors">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
+                            ${getDeviceIcon(device.type)}
+                        </div>
+                        <div>
+                            <div class="font-semibold">${device.id}</div>
+                            <div class="text-sm text-gray-400">${device.type} • ${device.lastSeen}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="text-right">
+                            <div class="text-sm font-semibold">${device.health}%</div>
+                            <div class="text-xs text-gray-400">Health</div>
+                        </div>
+                        <div class="w-2 h-2 rounded-full device-status-dot ${getStatusColor(device.status)}"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getDeviceIcon(type) {
+            const icons = {
+                mobile: '<i data-lucide="smartphone" class="w-5 h-5"></i>',
+                tablet: '<i data-lucide="tablet" class="w-5 h-5"></i>',
+                desktop: '<i data-lucide="monitor" class="w-5 h-5"></i>',
+                kiosk: '<i data-lucide="store" class="w-5 h-5"></i>'
+            };
+            return icons[type] || icons.mobile;
+        }
+
+        function getStatusColor(status) {
+            const colors = {
+                'production-ready': 'bg-green-500',
+                'configuration-needed': 'bg-yellow-500',
+                'offline': 'bg-red-500'
+            };
+            return colors[status] || 'bg-gray-500';
+        }
+
+        function initializeCharts() {
+            // Performance Chart
+            const perfCtx = document.getElementById('performanceChart').getContext('2d');
+            new Chart(perfCtx, {
+                type: 'line',
+                data: {
+                    labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                    datasets: [{
+                        label: 'Onboarding Time (s)',
+                        data: [32, 28, 25, 28, 26, 28],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Success Rate (%)',
+                        data: [85, 87, 89, 88, 90, 89.4],
+                        borderColor: '#22c55e',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#fff' }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#fff' }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#fff' }
+                        }
+                    }
+                }
+            });
+
+            // Device Chart
+            const deviceCtx = document.getElementById('deviceChart').getContext('2d');
+            new Chart(deviceCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Mobile', 'Tablet', 'Desktop', 'Kiosk'],
+                    datasets: [{
+                        data: [28, 12, 2, 0],
+                        backgroundColor: ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#fff' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateQR() {
+            const deviceType = document.getElementById('deviceType').value;
+            console.log('Generating QR for:', deviceType);
+            
+            // Show loading state
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = `
+                <div class="flex items-center justify-center h-full">
+                    <div class="text-center">
+                        <div class="animate-spin w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                        <p class="text-gray-600">Generating QR Code...</p>
+                    </div>
+                </div>
+            `;
+            
+            // Simulate QR generation
+            setTimeout(() => {
+                const token = "sig_" + Math.random().toString(36).substring(7);
+                const qrData = `duoplus://onboard?token=${token}&scope=enterprise&domain=factory-wager.com`;
+                
+                new QRCode(document.getElementById("qrcode"), {
+                    text: qrData,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#3b82f6",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                
+                // Show success notification
+                showNotification('QR Code generated successfully!', 'success');
+            }, 2000);
+        }
+
+        function bulkGenerate() {
+            showNotification('Bulk generation feature coming soon!', 'info');
+        }
+
+        function refreshDevices() {
+            showNotification('Refreshing device list...', 'info');
+            setTimeout(() => {
+                renderDevices();
+                showNotification('Device list updated!', 'success');
+            }, 1000);
+        }
+
+        function showNotification(message, type = 'info') {
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                info: 'bg-blue-500',
+                warning: 'bg-yellow-500'
+            };
+            
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all transform translate-x-full`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        function startRealTimeUpdates() {
+            // Simulate real-time updates
+            setInterval(() => {
+                // Update metrics
+                const scans = document.querySelector('.metric-card:nth-child(1) .text-2xl');
+                
+                if (scans && Math.random() > 0.7) {
+                    const currentScans = parseInt(scans.textContent);
+                    scans.textContent = currentScans + 1;
+                }
+            }, 5000);
+
+            // Simulate device status updates
+            let paired = 4;
+            const statusEl = document.getElementById("qr-status");
+            const countEl = document.getElementById("paired-count");
+
+            // Simulate a device being scanned
+            setTimeout(() => {
+                statusEl.textContent = "🔄 Validating Device...";
+                statusEl.style.backgroundColor = "#f59e0b";
+                
+                setTimeout(() => {
+                    statusEl.textContent = "✅ Device Production Ready";
+                    statusEl.style.backgroundColor = "#22c55e";
+                    paired++;
+                    countEl.textContent = `${paired}/5 Devices Paired • Avg: 28s`;
+                }, 3000);
+            }, 10000);
+        }
+    </script>
+</body>
+</html>

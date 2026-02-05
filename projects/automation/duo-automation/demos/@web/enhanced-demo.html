@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Keyboard Shortcuts Library - Next Generation Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes ripple {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(1.2); opacity: 0; }
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(79, 70, 229, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(79, 70, 229, 0.8), 0 0 30px rgba(79, 70, 229, 0.6); }
+        }
+        
+        @keyframes slide {
+            0% { transform: translateY(-10px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .enhanced-focus-ripple {
+            animation: ripple 0.6s ease-out;
+        }
+        
+        .enhanced-focus-glow {
+            animation: glow 2s ease-in-out infinite;
+        }
+        
+        .enhanced-focus-slide {
+            animation: slide 0.3s ease-out;
+        }
+        
+        .enhanced-focus-bounce {
+            animation: bounce 0.5s ease-out;
+        }
+        
+        .enhanced-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .enhanced-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .feature-highlight {
+            background: linear-gradient(45deg, #3b82f6 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .enhanced-button {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .enhanced-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .enhanced-button:active::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .analytics-chart {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            height: 200px;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-bar {
+            position: absolute;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 4px 4px 0 0;
+            transition: height 0.5s ease;
+        }
+        
+        .ai-suggestion {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            animation: slide 0.5s ease-out;
+        }
+        
+        .plugin-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .plugin-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-lg border-b border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold feature-highlight">Enhanced Keyboard Shortcuts</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="aiAssistant" class="enhanced-button px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                        🤖 AI Assistant
+                    </button>
+                    <button id="analyticsBtn" class="enhanced-button px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        📊 Analytics
+                    </button>
+                    <button id="pluginsBtn" class="enhanced-button px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                        🔌 Plugins
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Hero Section -->
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold mb-4">Next Generation Keyboard Shortcuts</h2>
+            <p class="text-xl text-gray-400">Experience the future of user interaction with AI-powered intelligence</p>
+        </div>
+
+        <!-- Enhanced Features Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <!-- AI-Powered Suggestions -->
+            <div class="enhanced-card rounded-lg p-6">
+                <div class="text-3xl mb-4">🤖</div>
+                <h3 class="text-xl font-semibold mb-2">AI-Powered Intelligence</h3>
+                <p class="text-gray-300 mb-4">Smart shortcuts that learn from your behavior and suggest optimizations</p>
+                <button id="aiDemo" class="enhanced-button w-full px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
+                    Try AI Features
+                </button>
+            </div>
+
+            <!-- Advanced Analytics -->
+            <div class="enhanced-card rounded-lg p-6">
+                <div class="text-3xl mb-4">📊</div>
+                <h3 class="text-xl font-semibold mb-2">Real-time Analytics</h3>
+                <p class="text-gray-300 mb-4">Track usage patterns and optimize productivity with actionable insights</p>
+                <button id="analyticsDemo" class="enhanced-button w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                    View Analytics
+                </button>
+            </div>
+
+            <!-- Plugin System -->
+            <div class="enhanced-card rounded-lg p-6">
+                <div class="text-3xl mb-4">🔌</div>
+                <h3 class="text-xl font-semibold mb-2">Plugin Architecture</h3>
+                <p class="text-gray-300 mb-4">Extensible system with unlimited customization possibilities</p>
+                <button id="pluginsDemo" class="enhanced-button w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
+                    Explore Plugins
+                </button>
+            </div>
+
+            <!-- Multi-Modal Input -->
+            <div class="enhanced-card rounded-lg p-6">
+                <div class="text-3xl mb-4">🎤</div>
+                <h3 class="text-xl font-semibold mb-2">Multi-Modal Input</h3>
+                <p class="text-gray-300 mb-4">Keyboard, voice, and gesture recognition for ultimate accessibility</p>
+                <button id="multimodalDemo" class="enhanced-button w-full px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600">
+                    Try Multi-Modal
+                </button>
+            </div>
+
+            <!-- Cloud Sync -->
+            <div class="enhanced-card rounded-lg p-6">
+                <div class="text-3xl mb-4">☁️</div>
+                <h3 class="text-xl font-semibold mb-2">Cloud Synchronization</h3>
+                <p class="text-gray-300 mb-4">Sync your shortcuts across all devices seamlessly</p>
+                <button id="syncDemo" class="enhanced-button w-full px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600">
+                    Enable Sync
+                </button>
+            </div>
+
+            <!-- Advanced Security -->
+            <div class="enhanced-card rounded-lg p-6">
+                <div class="text-3xl mb-4">🔒</div>
+                <h3 class="text-xl font-semibold mb-2">Enhanced Security</h3>
+                <p class="text-gray-300 mb-4">Biometric protection and enterprise-grade encryption</p>
+                <button id="securityDemo" class="enhanced-button w-full px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
+                    Secure Shortcuts
+                </button>
+            </div>
+        </div>
+
+        <!-- Interactive Demo Area -->
+        <div class="bg-gray-800 rounded-lg p-6 mb-8">
+            <h3 class="text-2xl font-semibold mb-4">🎮 Enhanced Interactive Demo</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Enhanced Search -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                        🔍 AI-Enhanced Search (Ctrl+Shift+K)
+                    </label>
+                    <input 
+                        type="text" 
+                        id="enhancedSearch"
+                        placeholder="Try AI-powered search..."
+                        class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white"
+                    >
+                    <div id="searchSuggestions" class="mt-2 text-sm text-gray-400"></div>
+                </div>
+
+                <!-- Command Palette -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                        ⚡ Smart Command Palette (Ctrl+Shift+P)
+                    </label>
+                    <select id="commandPalette" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white">
+                        <option value="">Select a command...</option>
+                        <option value="save">💾 Save Document</option>
+                        <option value="search">🔍 Global Search</option>
+                        <option value="format">📝 Format Code</option>
+                        <option value="run">▶️ Run Tests</option>
+                        <option value="deploy">🚀 Deploy</option>
+                    </select>
+                    <div id="commandInfo" class="mt-2 text-sm text-gray-400"></div>
+                </div>
+            </div>
+
+            <!-- Macro Recording -->
+            <div class="mt-6">
+                <label class="block text-sm font-medium text-gray-300 mb-2">
+                    🎬 Macro Recording Studio
+                </label>
+                <div class="flex space-x-4">
+                    <button id="startRecording" class="enhanced-button px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                        🔴 Start Recording
+                    </button>
+                    <button id="stopRecording" class="enhanced-button px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700" disabled>
+                        ⏹️ Stop Recording
+                    </button>
+                    <button id="playbackMacro" class="enhanced-button px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700" disabled>
+                        ▶️ Playback
+                    </button>
+                </div>
+                <div id="macroStatus" class="mt-2 text-sm text-gray-400"></div>
+            </div>
+        </div>
+
+        <!-- Analytics Dashboard -->
+        <div id="analyticsDashboard" class="bg-gray-800 rounded-lg p-6 mb-8 hidden">
+            <h3 class="text-2xl font-semibold mb-4">📊 Real-time Analytics Dashboard</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-gray-700 rounded-lg p-4">
+                    <h4 class="text-lg font-medium mb-2">Usage Frequency</h4>
+                    <div class="text-3xl font-bold text-green-400">1,247</div>
+                    <p class="text-sm text-gray-400">Shortcuts today</p>
+                </div>
+                <div class="bg-gray-700 rounded-lg p-4">
+                    <h4 class="text-lg font-medium mb-2">Time Saved</h4>
+                    <div class="text-3xl font-bold text-blue-400">2.5h</div>
+                    <p class="text-sm text-gray-400">Productivity gain</p>
+                </div>
+                <div class="bg-gray-700 rounded-lg p-4">
+                    <h4 class="text-lg font-medium mb-2">Efficiency Score</h4>
+                    <div class="text-3xl font-bold text-purple-400">94%</div>
+                    <p class="text-sm text-gray-400">Optimization level</p>
+                </div>
+            </div>
+
+            <div class="analytics-chart">
+                <div class="chart-bar" style="left: 10%; width: 8%; height: 60%;"></div>
+                <div class="chart-bar" style="left: 25%; width: 8%; height: 80%;"></div>
+                <div class="chart-bar" style="left: 40%; width: 8%; height: 45%;"></div>
+                <div class="chart-bar" style="left: 55%; width: 8%; height: 90%;"></div>
+                <div class="chart-bar" style="left: 70%; width: 8%; height: 70%;"></div>
+                <div class="chart-bar" style="left: 85%; width: 8%; height: 85%;"></div>
+            </div>
+        </div>
+
+        <!-- AI Suggestions Panel -->
+        <div id="aiPanel" class="bg-gray-800 rounded-lg p-6 mb-8 hidden">
+            <h3 class="text-2xl font-semibold mb-4">🤖 AI-Powered Suggestions</h3>
+            
+            <div id="aiSuggestions">
+                <div class="ai-suggestion">
+                    <h4 class="font-semibold mb-2">💡 Productivity Tip</h4>
+                    <p>Based on your usage patterns, we suggest creating a custom shortcut for "Save and Run" since you frequently use these together.</p>
+                    <button class="mt-2 px-3 py-1 bg-purple-600 text-white rounded text-sm">Apply Suggestion</button>
+                </div>
+                <div class="ai-suggestion">
+                    <h4 class="font-semibold mb-2">⚡ Efficiency Optimization</h4>
+                    <p>Your search shortcut usage has increased by 45% this week. Consider adding quick filters for faster navigation.</p>
+                    <button class="mt-2 px-3 py-1 bg-purple-600 text-white rounded text-sm">Optimize Now</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Plugin Showcase -->
+        <div id="pluginPanel" class="bg-gray-800 rounded-lg p-6 hidden">
+            <h3 class="text-2xl font-semibold mb-4">🔌 Plugin Ecosystem</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="plugin-card">
+                    <h4 class="font-semibold mb-2">🎨 Design Tools</h4>
+                    <p class="text-sm text-gray-300 mb-2">Advanced shortcuts for designers</p>
+                    <button class="px-3 py-1 bg-green-600 text-white rounded text-sm">Install</button>
+                </div>
+                <div class="plugin-card">
+                    <h4 class="font-semibold mb-2">💻 Developer Suite</h4>
+                    <p class="text-sm text-gray-300 mb-2">Coding productivity enhancements</p>
+                    <button class="px-3 py-1 bg-green-600 text-white rounded text-sm">Install</button>
+                </div>
+                <div class="plugin-card">
+                    <h4 class="font-semibold mb-2">📊 Analytics Pro</h4>
+                    <p class="text-sm text-gray-300 mb-2">Advanced usage analytics</p>
+                    <button class="px-3 py-1 bg-green-600 text-white rounded text-sm">Install</button>
+                </div>
+                <div class="plugin-card">
+                    <h4 class="font-semibold mb-2">🔒 Security Plus</h4>
+                    <p class="text-sm text-gray-300 mb-2">Enhanced security features</p>
+                    <button class="px-3 py-1 bg-green-600 text-white rounded text-sm">Install</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Status Bar -->
+    <footer class="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 px-4 py-2">
+        <div class="max-w-7xl mx-auto flex justify-between items-center text-sm">
+            <div class="flex space-x-6">
+                <span>🚀 Enhanced Mode Active</span>
+                <span>🤖 AI Assistant Ready</span>
+                <span>📊 Analytics Monitoring</span>
+                <span>🔌 4 Plugins Loaded</span>
+            </div>
+            <div class="flex space-x-4">
+                <span id="shortcutCount">0 shortcuts active</span>
+                <span id="performanceMetric">Performance: Excellent</span>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module">
+        // Enhanced keyboard shortcuts library simulation
+        class EnhancedKeyboardShortcuts {
+            constructor() {
+                this.shortcuts = new Map();
+                this.plugins = new Map();
+                this.analytics = {
+                    usage: 0,
+                    timeSaved: 0,
+                    efficiency: 94
+                };
+                this.aiSuggestions = [];
+                this.isRecording = false;
+                this.macro = [];
+                this.initializeEnhancedFeatures();
+            }
+
+            initializeEnhancedFeatures() {
+                this.setupBasicShortcuts();
+                this.setupAIFeatures();
+                this.setupAnalytics();
+                this.setupPluginSystem();
+                this.updateStatusBar();
+            }
+
+            setupBasicShortcuts() {
+                // Enhanced search
+                this.register('ctrl+shift+k', () => this.enhancedSearch());
+                
+                // Command palette
+                this.register('ctrl+shift+p', () => this.openCommandPalette());
+                
+                // Macro controls
+                this.register('ctrl+r', () => this.toggleRecording());
+                
+                // AI assistant
+                this.register('ctrl+shift+a', () => this.openAIAssistant());
+                
+                // Analytics
+                this.register('ctrl+shift+d', () => this.openAnalytics());
+            }
+
+            register(shortcut, callback) {
+                this.shortcuts.set(shortcut, callback);
+                this.updateShortcutCount();
+            }
+
+            enhancedSearch() {
+                const searchInput = document.getElementById('enhancedSearch');
+                this.enhancedFocus(searchInput, 'ripple');
+                
+                // Simulate AI suggestions
+                const suggestions = [
+                    'Recent: keyboard shortcuts configuration',
+                    'Popular: save and run workflow',
+                    'Suggested: optimize performance settings'
+                ];
+                
+                const suggestionsDiv = document.getElementById('searchSuggestions');
+                suggestionsDiv.innerHTML = suggestions.map(s => `<div class="py-1">💡 ${s}</div>`).join('');
+                
+                this.trackUsage('enhanced-search');
+            }
+
+            openCommandPalette() {
+                const palette = document.getElementById('commandPalette');
+                this.enhancedFocus(palette, 'glow');
+                
+                const info = document.getElementById('commandInfo');
+                info.innerHTML = '💡 AI suggests: Save Document (most used this hour)';
+                
+                this.trackUsage('command-palette');
+            }
+
+            toggleRecording() {
+                this.isRecording = !this.isRecording;
+                const startBtn = document.getElementById('startRecording');
+                const stopBtn = document.getElementById('stopRecording');
+                const playbackBtn = document.getElementById('playbackMacro');
+                const status = document.getElementById('macroStatus');
+                
+                if (this.isRecording) {
+                    startBtn.disabled = true;
+                    stopBtn.disabled = false;
+                    this.macro = [];
+                    status.innerHTML = '🔴 Recording... Perform your actions';
+                    status.className = 'mt-2 text-sm text-red-400';
+                } else {
+                    startBtn.disabled = false;
+                    stopBtn.disabled = true;
+                    playbackBtn.disabled = this.macro.length === 0;
+                    status.innerHTML = `✅ Recording stopped. ${this.macro.length} actions captured.`;
+                    status.className = 'mt-2 text-sm text-green-400';
+                }
+                
+                this.trackUsage('macro-recording');
+            }
+
+            openAIAssistant() {
+                const panel = document.getElementById('aiPanel');
+                panel.classList.toggle('hidden');
+                
+                if (!panel.classList.contains('hidden')) {
+                    this.generateAISuggestions();
+                }
+                
+                this.trackUsage('ai-assistant');
+            }
+
+            openAnalytics() {
+                const dashboard = document.getElementById('analyticsDashboard');
+                dashboard.classList.toggle('hidden');
+                
+                if (!dashboard.classList.contains('hidden')) {
+                    this.updateAnalytics();
+                }
+                
+                this.trackUsage('analytics');
+            }
+
+            generateAISuggestions() {
+                const suggestions = [
+                    {
+                        title: '💡 Productivity Tip',
+                        content: 'Based on your usage patterns, we suggest creating a custom shortcut for "Save and Run" since you frequently use these together.',
+                        action: 'Apply Suggestion'
+                    },
+                    {
+                        title: '⚡ Efficiency Optimization',
+                        content: 'Your search shortcut usage has increased by 45% this week. Consider adding quick filters for faster navigation.',
+                        action: 'Optimize Now'
+                    }
+                ];
+                
+                const container = document.getElementById('aiSuggestions');
+                container.innerHTML = suggestions.map(s => `
+                    <div class="ai-suggestion">
+                        <h4 class="font-semibold mb-2">${s.title}</h4>
+                        <p>${s.content}</p>
+                        <button class="mt-2 px-3 py-1 bg-purple-600 text-white rounded text-sm">${s.action}</button>
+                    </div>
+                `).join('');
+            }
+
+            updateAnalytics() {
+                // Simulate real-time updates
+                setInterval(() => {
+                    this.analytics.usage += Math.floor(Math.random() * 5);
+                    this.analytics.timeSaved += Math.random() * 0.1;
+                    this.analytics.efficiency = Math.min(100, this.analytics.efficiency + Math.random() * 0.5);
+                    
+                    // Update chart
+                    const bars = document.querySelectorAll('.chart-bar');
+                    bars.forEach(bar => {
+                        const newHeight = Math.random() * 60 + 40;
+                        bar.style.height = `${newHeight}%`;
+                    });
+                }, 2000);
+            }
+
+            setupAIFeatures() {
+                // Simulate AI learning
+                setInterval(() => {
+                    if (Math.random() > 0.7) {
+                        console.log('🤖 AI: New pattern detected, optimizing shortcuts...');
+                    }
+                }, 10000);
+            }
+
+            setupAnalytics() {
+                // Track all interactions
+                document.addEventListener('click', () => {
+                    this.analytics.usage++;
+                    this.updateStatusBar();
+                });
+            }
+
+            setupPluginSystem() {
+                // Simulate loaded plugins
+                this.plugins.set('design-tools', { loaded: true });
+                this.plugins.set('developer-suite', { loaded: true });
+                this.plugins.set('analytics-pro', { loaded: true });
+                this.plugins.set('security-plus', { loaded: true });
+            }
+
+            enhancedFocus(element, animationType) {
+                element.classList.add(`enhanced-focus-${animationType}`);
+                element.focus();
+                
+                setTimeout(() => {
+                    element.classList.remove(`enhanced-focus-${animationType}`);
+                }, 600);
+            }
+
+            trackUsage(action) {
+                this.analytics.usage++;
+                this.analytics.timeSaved += 0.01; // Simulated time saved
+                this.updateStatusBar();
+            }
+
+            updateStatusBar() {
+                document.getElementById('shortcutCount').textContent = `${this.shortcuts.size} shortcuts active`;
+                document.getElementById('performanceMetric').textContent = `Performance: ${this.analytics.efficiency.toFixed(1)}% efficiency`;
+            }
+        }
+
+        // Initialize enhanced demo
+        document.addEventListener('DOMContentLoaded', () => {
+            const enhancedShortcuts = new EnhancedKeyboardShortcuts();
+            
+            // Setup button handlers
+            document.getElementById('aiAssistant').addEventListener('click', () => {
+                enhancedShortcuts.openAIAssistant();
+            });
+            
+            document.getElementById('analyticsBtn').addEventListener('click', () => {
+                enhancedShortcuts.openAnalytics();
+            });
+            
+            document.getElementById('pluginsBtn').addEventListener('click', () => {
+                document.getElementById('pluginPanel').classList.toggle('hidden');
+            });
+            
+            document.getElementById('aiDemo').addEventListener('click', () => {
+                enhancedShortcuts.openAIAssistant();
+            });
+            
+            document.getElementById('analyticsDemo').addEventListener('click', () => {
+                enhancedShortcuts.openAnalytics();
+            });
+            
+            document.getElementById('pluginsDemo').addEventListener('click', () => {
+                document.getElementById('pluginPanel').classList.toggle('hidden');
+            });
+            
+            document.getElementById('multimodalDemo').addEventListener('click', () => {
+                alert('🎤 Multi-modal input demo: Voice commands, gesture recognition, and haptic feedback would be activated in a real implementation!');
+            });
+            
+            document.getElementById('syncDemo').addEventListener('click', () => {
+                alert('☁️ Cloud sync demo: Your shortcuts would be synchronized across all devices in real-time!');
+            });
+            
+            document.getElementById('securityDemo').addEventListener('click', () => {
+                alert('🔒 Security demo: Biometric authentication and encryption would be activated for sensitive shortcuts!');
+            });
+            
+            document.getElementById('startRecording').addEventListener('click', () => {
+                enhancedShortcuts.toggleRecording();
+            });
+            
+            document.getElementById('stopRecording').addEventListener('click', () => {
+                enhancedShortcuts.toggleRecording();
+            });
+            
+            document.getElementById('playbackMacro').addEventListener('click', () => {
+                alert('▶️ Macro playback: Recorded actions would be executed automatically!');
+            });
+            
+            // Setup keyboard event listeners
+            document.addEventListener('keydown', (event) => {
+                const key = [];
+                if (event.ctrlKey) key.push('ctrl');
+                if (event.shiftKey) key.push('shift');
+                if (event.altKey) key.push('alt');
+                if (event.metaKey) key.push('meta');
+                key.push(event.key.toLowerCase());
+                
+                const shortcut = key.join('+');
+                
+                if (enhancedShortcuts.shortcuts.has(shortcut)) {
+                    event.preventDefault();
+                    enhancedShortcuts.shortcuts.get(shortcut)();
+                }
+            });
+            
+            console.log('🚀 Enhanced Keyboard Shortcuts Demo Initialized!');
+            console.log('🤖 AI Features: Active');
+            console.log('📊 Analytics: Monitoring');
+            console.log('🔌 Plugin System: Ready');
+            console.log('🎮 Try: Ctrl+Shift+K (Search), Ctrl+Shift+P (Commands), Ctrl+R (Record)');
+        });
+    </script>
+</body>
+</html>

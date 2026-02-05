@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise DI System - Development Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes pulse-red {
+            0%, 100% { background-color: rgb(239 68 68); }
+            50% { background-color: rgb(220 38 38); }
+        }
+        @keyframes pulse-yellow {
+            0%, 100% { background-color: rgb(245 158 11); }
+            50% { background-color: rgb(217 119 6); }
+        }
+        .pulse-critical { animation: pulse-red 2s infinite; }
+        .pulse-warning { animation: pulse-yellow 2s infinite; }
+        .metric-card { transition: all 0.3s ease; }
+        .metric-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <!-- Header -->
+    <header class="bg-gray-800 border-b border-gray-700">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <i class="fas fa-cogs text-blue-500 text-2xl"></i>
+                    <div>
+                        <h1 class="text-xl font-bold">Enterprise DI System</h1>
+                        <p class="text-sm text-gray-400">Development Dashboard</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="lastUpdate" class="text-sm text-gray-400">Loading...</span>
+                    <button onclick="refreshDashboard()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
+                        <i class="fas fa-sync-alt mr-2"></i>Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Alerts Section -->
+    <div id="alertsContainer" class="hidden">
+        <div class="container mx-auto px-4 py-4">
+            <div id="alertsList" class="space-y-2"></div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- System Health Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="metric-card bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-400">System Health</p>
+                        <p id="systemHealth" class="text-3xl font-bold text-green-500">100%</p>
+                    </div>
+                    <i id="healthIcon" class="fas fa-heartbeat text-3xl text-green-500"></i>
+                </div>
+            </div>
+            
+            <div class="metric-card bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-400">Total DI Calls</p>
+                        <p id="totalCalls" class="text-3xl font-bold text-blue-500">0</p>
+                    </div>
+                    <i class="fas fa-chart-line text-3xl text-blue-500"></i>
+                </div>
+            </div>
+            
+            <div class="metric-card bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-400">Avg Resolution</p>
+                        <p id="avgResolution" class="text-3xl font-bold text-purple-500">0ms</p>
+                    </div>
+                    <i class="fas fa-tachometer-alt text-3xl text-purple-500"></i>
+                </div>
+            </div>
+            
+            <div class="metric-card bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-400">Error Rate</p>
+                        <p id="errorRate" class="text-3xl font-bold text-yellow-500">0%</p>
+                    </div>
+                    <i class="fas fa-exclamation-triangle text-3xl text-yellow-500"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Metrics -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- DI Functions Performance -->
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-cogs mr-2 text-blue-500"></i>
+                    DI Functions Performance
+                </h2>
+                <div id="functionsList" class="space-y-3">
+                    <p class="text-gray-400">Loading function metrics...</p>
+                </div>
+            </div>
+
+            <!-- Memory Usage -->
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-memory mr-2 text-green-500"></i>
+                    Memory Usage
+                </h2>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <span>DI Metrics Buffer</span>
+                            <span id="memoryUtilization">0%</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-3">
+                            <div id="memoryBar" class="bg-gradient-to-r from-green-500 to-blue-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-400">
+                        <p>Metrics Count: <span id="metricsCount">0</span> / 10,000</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Information -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-server mr-2 text-purple-500"></i>
+                    System Info
+                </h2>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Uptime:</span>
+                        <span id="uptime">0s</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Platform:</span>
+                        <span id="platform">-</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Node Version:</span>
+                        <span id="nodeVersion">-</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Environment:</span>
+                        <span id="environment">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-heartbeat mr-2 text-red-500"></i>
+                    DI System Status
+                </h2>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">DI Available:</span>
+                        <span id="diAvailable" class="text-green-500">✓ Yes</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Mock Leak:</span>
+                        <span id="mockLeak" class="text-green-500">✓ None</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Error Rate High:</span>
+                        <span id="errorRateHigh" class="text-green-500">✓ No</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Slow Functions:</span>
+                        <span id="slowFunctions" class="text-green-500">✓ None</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-chart-pie mr-2 text-yellow-500"></i>
+                    Performance Distribution
+                </h2>
+                <canvas id="performanceChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let performanceChart = null;
+
+        async function fetchDashboardData() {
+            try {
+                const response = await fetch('/dashboard');
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Failed to fetch dashboard data:', error);
+                return null;
+            }
+        }
+
+        function updateDashboard(data) {
+            if (!data) return;
+
+            // Update metrics
+            document.getElementById('systemHealth').textContent = data.systemHealth + '%';
+            document.getElementById('totalCalls').textContent = data.performance.totalCalls.toLocaleString();
+            document.getElementById('avgResolution').textContent = data.performance.avgResolutionTime + 'ms';
+            document.getElementById('errorRate').textContent = data.performance.errorRate;
+            document.getElementById('lastUpdate').textContent = 'Last updated: ' + new Date(data.lastUpdate).toLocaleTimeString();
+
+            // Update health indicator
+            const healthScore = data.systemHealth;
+            const healthIcon = document.getElementById('healthIcon');
+            const systemHealthEl = document.getElementById('systemHealth');
+            
+            if (healthScore >= 90) {
+                healthIcon.className = 'fas fa-heartbeat text-3xl text-green-500';
+                systemHealthEl.className = 'text-3xl font-bold text-green-500';
+            } else if (healthScore >= 70) {
+                healthIcon.className = 'fas fa-heartbeat text-3xl text-yellow-500';
+                systemHealthEl.className = 'text-3xl font-bold text-yellow-500';
+            } else {
+                healthIcon.className = 'fas fa-heartbeat text-3xl text-red-500';
+                systemHealthEl.className = 'text-3xl font-bold text-red-500';
+            }
+
+            // Update alerts
+            updateAlerts(data.alerts);
+
+            // Update functions list
+            updateFunctionsList(data.di.functions);
+
+            // Update memory usage
+            updateMemoryUsage(data.di.memory);
+
+            // Update system info
+            updateSystemInfo(data.system);
+
+            // Update DI status
+            updateDIStatus(data.di.alerts);
+
+            // Update performance chart
+            updatePerformanceChart(data.di.functions);
+        }
+
+        function updateAlerts(alerts) {
+            const container = document.getElementById('alertsContainer');
+            const alertsList = document.getElementById('alertsList');
+            
+            if (alerts && alerts.length > 0) {
+                container.classList.remove('hidden');
+                alertsList.innerHTML = alerts.map(alert => `
+                    <div class="flex items-center p-3 rounded-lg ${
+                        alert.type === 'critical' ? 'bg-red-900 border border-red-700 pulse-critical' :
+                        alert.type === 'warning' ? 'bg-yellow-900 border border-yellow-700 pulse-warning' :
+                        'bg-blue-900 border border-blue-700'
+                    }">
+                        <i class="fas ${
+                            alert.type === 'critical' ? 'fa-exclamation-circle text-red-400' :
+                            alert.type === 'warning' ? 'fa-exclamation-triangle text-yellow-400' :
+                            'fa-info-circle text-blue-400'
+                        } mr-3"></i>
+                        <span class="flex-1">${alert.message}</span>
+                        <span class="text-xs text-gray-400">${new Date(alert.timestamp).toLocaleTimeString()}</span>
+                    </div>
+                `).join('');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        function updateFunctionsList(functions) {
+            const functionsList = document.getElementById('functionsList');
+            
+            if (functions && functions.length > 0) {
+                functionsList.innerHTML = functions.map(fn => `
+                    <div class="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
+                        <div>
+                            <p class="font-medium">${fn.function}</p>
+                            <p class="text-sm text-gray-400">${fn.callCount} calls</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-medium ${fn.avgResolutionMs > 50 ? 'text-red-500' : 'text-green-500'}">
+                                ${fn.avgResolutionMs}ms
+                            </p>
+                            <p class="text-sm text-gray-400">${fn.errorRate}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                functionsList.innerHTML = '<p class="text-gray-400">No DI functions called yet</p>';
+            }
+        }
+
+        function updateMemoryUsage(memory) {
+            const utilization = parseFloat(memory.memoryUtilization || '0');
+            document.getElementById('memoryUtilization').textContent = memory.memoryUtilization;
+            document.getElementById('metricsCount').textContent = memory.metricsCount;
+            
+            const memoryBar = document.getElementById('memoryBar');
+            memoryBar.style.width = utilization + '%';
+            
+            if (utilization > 90) {
+                memoryBar.className = 'bg-gradient-to-r from-red-500 to-red-600 h-3 rounded-full transition-all duration-500';
+            } else if (utilization > 75) {
+                memoryBar.className = 'bg-gradient-to-r from-yellow-500 to-yellow-600 h-3 rounded-full transition-all duration-500';
+            } else {
+                memoryBar.className = 'bg-gradient-to-r from-green-500 to-blue-500 h-3 rounded-full transition-all duration-500';
+            }
+        }
+
+        function updateSystemInfo(system) {
+            document.getElementById('uptime').textContent = formatUptime(system.uptime);
+            document.getElementById('platform').textContent = system.platform || 'Unknown';
+            document.getElementById('nodeVersion').textContent = system.nodeVersion || 'Unknown';
+            document.getElementById('environment').textContent = system.environment || 'development';
+        }
+
+        function updateDIStatus(alerts) {
+            document.getElementById('diAvailable').innerHTML = alerts ? '✓ Yes' : '✗ No';
+            document.getElementById('diAvailable').className = alerts ? 'text-green-500' : 'text-red-500';
+            
+            document.getElementById('mockLeak').innerHTML = alerts?.mockLeakDetected ? '✗ Detected' : '✓ None';
+            document.getElementById('mockLeak').className = alerts?.mockLeakDetected ? 'text-red-500' : 'text-green-500';
+            
+            document.getElementById('errorRateHigh').innerHTML = alerts?.errorRateHigh ? '✗ High' : '✓ No';
+            document.getElementById('errorRateHigh').className = alerts?.errorRateHigh ? 'text-red-500' : 'text-green-500';
+            
+            const slowCount = alerts?.slowFunctions?.length || 0;
+            document.getElementById('slowFunctions').innerHTML = slowCount > 0 ? `✗ ${slowCount} slow` : '✓ None';
+            document.getElementById('slowFunctions').className = slowCount > 0 ? 'text-yellow-500' : 'text-green-500';
+        }
+
+        function updatePerformanceChart(functions) {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            
+            if (performanceChart) {
+                performanceChart.destroy();
+            }
+
+            if (!functions || functions.length === 0) {
+                return;
+            }
+
+            performanceChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: functions.map(fn => fn.function),
+                    datasets: [{
+                        data: functions.map(fn => fn.callCount),
+                        backgroundColor: [
+                            '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6',
+                            '#EC4899', '#14B8A6', '#F97316', '#06B6D4', '#84CC16'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#9CA3AF',
+                                padding: 10,
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function formatUptime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = Math.floor(seconds % 60);
+            
+            if (hours > 0) {
+                return `${hours}h ${minutes}m ${secs}s`;
+            } else if (minutes > 0) {
+                return `${minutes}m ${secs}s`;
+            } else {
+                return `${secs}s`;
+            }
+        }
+
+        async function refreshDashboard() {
+            const data = await fetchDashboardData();
+            if (data) {
+                updateDashboard(data);
+            }
+        }
+
+        // Auto-refresh every 5 seconds
+        setInterval(refreshDashboard, 5000);
+
+        // Initial load
+        refreshDashboard();
+    </script>
+</body>
+</html>

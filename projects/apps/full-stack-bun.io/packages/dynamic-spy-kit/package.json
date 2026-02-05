@@ -1,0 +1,68 @@
+{
+	"name": "@dynamic-spy/kit",
+	"version": "9.0.0",
+	"description": "Bun 1.1+ Dynamic Spies + URLPattern + FakeTimers + Proxy Testing",
+	"module": "src/index.ts",
+	"types": "src/index.ts",
+	"main": "src/index.ts",
+	"bin": {
+		"arb-backwork": "./dist/cli.js",
+		"tick-indexer": "./dist/indexer.js"
+	},
+	"scripts": {
+		"dev": "bun --watch run src/server/arb-server.ts",
+		"build": "bun build src/server/arb-server.ts --compile --outfile dist/arb",
+		"build:standalone": "bash scripts/build-standalone.sh",
+		"deploy": "wrangler deploy",
+		"backfill": "bun run scripts/backfill.ts",
+		"backwork": "bun run scripts/backwork.ts",
+		"test": "bun test --coverage",
+		"test:flaky": "bun test tests/flaky-retry.test.ts --retry=5",
+		"test:stable": "bun test tests/flaky-retry.test.ts --repeats=50",
+		"test:chaos": "bun test tests/flaky-retry.test.ts --retry=3 --repeats=20",
+		"test:compression": "bun test tests/compression-stream.test.ts",
+		"test:fuzzer": "bun test tests/05-fuzzer-v2.test.ts --repeat=1000",
+		"test:core": "bun test tests/01-core-spies.test.ts",
+		"test:ticks": "bun test tests/02-tick-monitor.test.ts",
+		"test:backwork": "bun test tests/03-backwork-engine.test.ts",
+		"test:r2": "bun test tests/04-r2-loader.test.ts",
+		"test:regional": "bun test tests/06-regional-proxy.test.ts",
+		"test:models": "bun test tests/07-model-deployment.test.ts",
+		"test:smoke": "bun test tests/08-prod-smoke.test.ts",
+		"test:ultra-fast": "bun run scripts/test-ultra-fast-router.ts",
+		"ci": "bun test --coverage"
+	},
+	"peerDependencies": {
+		"bun": ">=1.1.0"
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "^4.20241212.0",
+		"@types/bun": "latest"
+	},
+	"dependencies": {
+		"@tensorflow/tfjs-node": "^4.15.0",
+		"ml-regression": "^2.0.1",
+		"graphql": "^16.8.1",
+		"pg": "^8.11.3",
+		"ioredis": "^5.3.2",
+		"lru-cache": "^10.2.0"
+	},
+	"keywords": [
+		"bun",
+		"testing",
+		"spy",
+		"urlpattern",
+		"faketimers",
+		"arbitrage",
+		"dynamic-spy",
+		"jest",
+		"test-utils"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/yourorg/dynamic-spy-kit.git"
+	},
+	"license": "MIT",
+	"author": "Your Org"
+}
+

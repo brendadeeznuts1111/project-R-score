@@ -1,0 +1,11 @@
+{
+  "bundleName": "venmo-family-webui-demo",
+  "version": "1.0.0",
+  "timestamp": "2026-01-15T08:31:54.826Z",
+  "files": {
+    "index.html": "bb0062d79acc4e2",
+    "server.ts": "a075d9b43273ebe5",
+    "demo-launcher.ts": "5f21868a7b767da4"
+  },
+  "bundleHash": "aae3e0a39ca11206"
+}

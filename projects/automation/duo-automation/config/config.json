@@ -1,0 +1,923 @@
+{
+  "original": {
+    "domain": {
+      "name": "factory-wager.com",
+      "subdomain": "apple",
+      "emailFormat": "first.last",
+      "dnsProvider": "cloudflare",
+      "dnsApiKey": "${CF_DNS_API_KEY}",
+      "zoneId": "a3b7ba4bb62cb1b177b04b8675250674",
+      "cpanelHost": "",
+      "cpanelUser": "",
+      "cpanelPassword": "",
+      "mxRecords": [
+        {
+          "priority": 10,
+          "value": "route1.mx.cloudflare.net"
+        },
+        {
+          "priority": 20,
+          "value": "route2.mx.cloudflare.net"
+        }
+      ],
+      "smtp": {
+        "host": "smtp.gmail.com",
+        "port": 587,
+        "secure": false,
+        "auth": {
+          "user": "utahj4754@gmail.com",
+          "pass": "${SMTP_APP_PASSWORD}"
+        }
+      },
+      "imap": {
+        "host": "imap.gmail.com",
+        "port": 993,
+        "secure": true,
+        "auth": {
+          "user": "utahj4754@gmail.com",
+          "pass": "${SMTP_APP_PASSWORD}"
+        }
+      }
+    },
+    "demographics": {
+      "apiKey": "",
+      "sources": {
+        "ipApi": "http://ip-api.com/json/{ip}",
+        "ipinfo": "https://ipinfo.io/{ip}/json",
+        "abstractapi": "https://ipgeolocation.abstractapi.com/v1/"
+      },
+      "nameDatabases": {
+        "US": {
+          "maleFirstNames": [
+            "James",
+            "John",
+            "Robert",
+            "Michael",
+            "William",
+            "David",
+            "Richard",
+            "Joseph",
+            "Thomas",
+            "Charles",
+            "Christopher",
+            "Daniel",
+            "Matthew",
+            "Anthony",
+            "Mark",
+            "Donald",
+            "Steven",
+            "Paul",
+            "Andrew",
+            "Joshua"
+          ],
+          "femaleFirstNames": [
+            "Mary",
+            "Patricia",
+            "Jennifer",
+            "Linda",
+            "Elizabeth",
+            "Barbara",
+            "Susan",
+            "Jessica",
+            "Sarah",
+            "Karen",
+            "Lisa",
+            "Nancy",
+            "Betty",
+            "Helen",
+            "Sandra",
+            "Donna",
+            "Carol",
+            "Ruth",
+            "Sharon",
+            "Michelle"
+          ],
+          "lastNames": [
+            "Smith",
+            "Johnson",
+            "Williams",
+            "Brown",
+            "Jones",
+            "Garcia",
+            "Miller",
+            "Davis",
+            "Rodriguez",
+            "Martinez",
+            "Hernandez",
+            "Lopez",
+            "Gonzalez",
+            "Wilson",
+            "Anderson",
+            "Thomas",
+            "Taylor",
+            "Moore",
+            "Jackson",
+            "Martin"
+          ],
+          "commonCities": [
+            "New York",
+            "Los Angeles",
+            "Chicago",
+            "Houston",
+            "Phoenix",
+            "Philadelphia",
+            "San Antonio",
+            "San Diego",
+            "Dallas",
+            "San Jose",
+            "Austin",
+            "Jacksonville",
+            "Fort Worth",
+            "Columbus",
+            "Charlotte"
+          ]
+        },
+        "UK": {
+          "maleFirstNames": [
+            "James",
+            "John",
+            "Robert",
+            "Michael",
+            "William",
+            "David",
+            "Richard",
+            "Thomas",
+            "Charles",
+            "Daniel",
+            "Matthew",
+            "Anthony",
+            "Mark",
+            "Steven",
+            "Paul",
+            "Andrew",
+            "Joshua",
+            "Kevin",
+            "Brian",
+            "George"
+          ],
+          "femaleFirstNames": [
+            "Mary",
+            "Patricia",
+            "Jennifer",
+            "Linda",
+            "Elizabeth",
+            "Susan",
+            "Margaret",
+            "Dorothy",
+            "Lisa",
+            "Nancy",
+            "Karen",
+            "Betty",
+            "Helen",
+            "Sandra",
+            "Donna",
+            "Carol",
+            "Ruth",
+            "Sharon",
+            "Michelle",
+            "Sarah"
+          ],
+          "lastNames": [
+            "Smith",
+            "Jones",
+            "Williams",
+            "Taylor",
+            "Brown",
+            "Davies",
+            "Evans",
+            "Wilson",
+            "Thomas",
+            "Johnson",
+            "Roberts",
+            "Robinson",
+            "Thompson",
+            "Wright",
+            "Walker",
+            "White",
+            "Hall",
+            "Green",
+            "Harris",
+            "Clarke"
+          ],
+          "commonCities": [
+            "London",
+            "Birmingham",
+            "Manchester",
+            "Liverpool",
+            "Leeds",
+            "Sheffield",
+            "Bristol",
+            "Edinburgh",
+            "Glasgow",
+            "Cardiff",
+            "Belfast",
+            "Leicester",
+            "Coventry",
+            "Nottingham",
+            "Newcastle"
+          ]
+        },
+        "CA": {
+          "maleFirstNames": [
+            "James",
+            "John",
+            "Robert",
+            "Michael",
+            "David",
+            "William",
+            "Richard",
+            "Joseph",
+            "Thomas",
+            "Charles",
+            "Christopher",
+            "Daniel",
+            "Matthew",
+            "Anthony",
+            "Mark",
+            "Steven",
+            "Paul",
+            "Andrew",
+            "Joshua",
+            "Kevin"
+          ],
+          "femaleFirstNames": [
+            "Mary",
+            "Patricia",
+            "Jennifer",
+            "Linda",
+            "Elizabeth",
+            "Barbara",
+            "Susan",
+            "Jessica",
+            "Sarah",
+            "Karen",
+            "Lisa",
+            "Nancy",
+            "Betty",
+            "Margaret",
+            "Sandra",
+            "Dorothy",
+            "Carol",
+            "Ruth",
+            "Sharon",
+            "Michelle"
+          ],
+          "lastNames": [
+            "Smith",
+            "Brown",
+            "Tremblay",
+            "Martin",
+            "Roy",
+            "Gagnon",
+            "Lee",
+            "Wilson",
+            "Johnson",
+            "MacDonald",
+            "Taylor",
+            "Anderson",
+            "Thomas",
+            "Moore",
+            "Jackson",
+            "Campbell",
+            "Thompson",
+            "Graham",
+            "Clarke",
+            "Young"
+          ],
+          "commonCities": [
+            "Toronto",
+            "Montreal",
+            "Vancouver",
+            "Calgary",
+            "Edmonton",
+            "Ottawa",
+            "Winnipeg",
+            "Quebec City",
+            "Hamilton",
+            "Kitchener",
+            "London",
+            "Victoria",
+            "Halifax",
+            "Oshawa",
+            "Windsor"
+          ]
+        },
+        "AU": {
+          "maleFirstNames": [
+            "James",
+            "John",
+            "Michael",
+            "William",
+            "David",
+            "Richard",
+            "Thomas",
+            "Robert",
+            "Joseph",
+            "Daniel",
+            "Matthew",
+            "Anthony",
+            "Mark",
+            "Steven",
+            "Paul",
+            "Andrew",
+            "Joshua",
+            "Kevin",
+            "Brian",
+            "Christopher"
+          ],
+          "femaleFirstNames": [
+            "Mary",
+            "Patricia",
+            "Jennifer",
+            "Linda",
+            "Elizabeth",
+            "Susan",
+            "Margaret",
+            "Jessica",
+            "Sarah",
+            "Karen",
+            "Lisa",
+            "Nancy",
+            "Betty",
+            "Helen",
+            "Sandra",
+            "Donna",
+            "Carol",
+            "Ruth",
+            "Sharon",
+            "Michelle"
+          ],
+          "lastNames": [
+            "Smith",
+            "Jones",
+            "Williams",
+            "Brown",
+            "Wilson",
+            "Taylor",
+            "Johnson",
+            "White",
+            "Martin",
+            "Anderson",
+            "Thomas",
+            "Moore",
+            "Jackson",
+            "Thompson",
+            "Walker",
+            "Hall",
+            "Robinson",
+            "Young",
+            "King",
+            "Wright"
+          ],
+          "commonCities": [
+            "Sydney",
+            "Melbourne",
+            "Brisbane",
+            "Perth",
+            "Adelaide",
+            "Gold Coast",
+            "Canberra",
+            "Newcastle",
+            "Wollongong",
+            "Logan City",
+            "Geelong",
+            "Hobart",
+            "Townsville",
+            "Cairns",
+            "Darwin"
+          ]
+        },
+        "DE": {
+          "maleFirstNames": [
+            "Michael",
+            "Thomas",
+            "Andreas",
+            "Stefan",
+            "Christian",
+            "Matthias",
+            "Alexander",
+            "Daniel",
+            "Markus",
+            "Peter",
+            "Frank",
+            "Wolfgang",
+            "Manfred",
+            "Jürgen",
+            "Klaus",
+            "Hans",
+            "Dirk",
+            "Martin",
+            "Rainer",
+            "Florian"
+          ],
+          "femaleFirstNames": [
+            "Maria",
+            "Ursula",
+            "Monika",
+            "Sabine",
+            "Petra",
+            "Elisabeth",
+            "Susanne",
+            "Andrea",
+            "Claudia",
+            "Anna",
+            "Heike",
+            "Christina",
+            "Helena",
+            "Karin",
+            "Ruth",
+            "Gabriele",
+            "Angelika",
+            "Brigitte",
+            "Sandra",
+            "Nicole"
+          ],
+          "lastNames": [
+            "Müller",
+            "Schmidt",
+            "Schneider",
+            "Fischer",
+            "Weber",
+            "Meyer",
+            "Wagner",
+            "Becker",
+            "Schulz",
+            "Hoffmann",
+            "Schäfer",
+            "Koch",
+            "Bauer",
+            "Richter",
+            "Klein",
+            "Wolf",
+            "Schröder",
+            "Neumann",
+            "Schwarz",
+            "Zimmermann"
+          ],
+          "commonCities": [
+            "Berlin",
+            "Hamburg",
+            "Munich",
+            "Cologne",
+            "Frankfurt",
+            "Stuttgart",
+            "Düsseldorf",
+            "Dortmund",
+            "Essen",
+            "Leipzig",
+            "Bremen",
+            "Dresden",
+            "Hannover",
+            "Nuremberg",
+            "Duisburg"
+          ]
+        }
+      },
+      "ageDistribution": {
+        "US": {
+          "18-24": 12,
+          "25-34": 18,
+          "35-44": 16,
+          "45-54": 15,
+          "55-64": 13,
+          "65+": 16
+        },
+        "UK": {
+          "18-24": 11,
+          "25-34": 17,
+          "35-44": 15,
+          "45-54": 16,
+          "55-64": 14,
+          "65+": 17
+        },
+        "CA": {
+          "18-24": 11,
+          "25-34": 17,
+          "35-44": 16,
+          "45-54": 16,
+          "55-64": 14,
+          "65+": 16
+        },
+        "AU": {
+          "18-24": 12,
+          "25-34": 18,
+          "35-44": 16,
+          "45-54": 15,
+          "55-64": 13,
+          "65+": 16
+        },
+        "DE": {
+          "18-24": 9,
+          "25-34": 14,
+          "35-44": 15,
+          "45-54": 17,
+          "55-64": 16,
+          "65+": 22
+        }
+      }
+    },
+    "email": {
+      "generation": {
+        "formats": [
+          "{firstName}.{lastName}",
+          "{firstName}{lastName}",
+          "{firstName}{lastNameInitial}",
+          "{firstNameInitial}{lastName}",
+          "{firstName}{random3}"
+        ],
+        "avoidDuplicates": true,
+        "maxLength": 30,
+        "blacklist": [
+          "admin",
+          "support",
+          "contact",
+          "webmaster",
+          "info",
+          "no-reply",
+          "root",
+          "mail",
+          "hostmaster",
+          "postmaster",
+          "abuse"
+        ]
+      },
+      "verification": {
+        "timeout": 120000,
+        "checkInterval": 10000,
+        "maxAttempts": 10
+      }
+    },
+    "proxies": {
+      "requireProxy": false,
+      "allowDeviceProxy": true,
+      "deviceProxy": {
+        "host": "98.98.125.9",
+        "port": 26689,
+        "type": "http",
+        "location": {
+          "country": "US",
+          "city": "Reston",
+          "state": "Virginia"
+        },
+        "carrier": "T-Mobile/Verizon"
+      },
+      "sources": {
+        "public": [
+          "https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&timeout=10000&country=all",
+          "https://www.proxy-list.download/api/v1/get?type=http",
+          "https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/http.txt"
+        ],
+        "residential": {
+          "brightdata": {
+            "api": "https://api.brightdata.com/zone",
+            "auth": "Bearer YOUR_TOKEN"
+          },
+          "oxylabs": {
+            "api": "https://proxy.oxylabs.io/all",
+            "auth": "Basic USER:PASS"
+          }
+        },
+        "vpn": {
+          "nordvpn": {
+            "api": "https://api.nordvpn.com/v1/servers"
+          },
+          "expressvpn": {
+            "api": "https://www.expressvpn.com/api/v1/locations"
+          }
+        }
+      },
+      "testing": {
+        "timeout": 10000,
+        "parallelLimit": 10,
+        "staggerDelay": 100
+      }
+    },
+    "automation": {
+      "commandTimeout": 30000,
+      "tapDelay": {
+        "min": 200,
+        "max": 400
+      },
+      "swipeDelay": {
+        "min": 300,
+        "max": 600
+      },
+      "typingDelay": {
+        "min": 100,
+        "max": 200
+      },
+      "ocrEnabled": true,
+      "randomDelays": true,
+      "humanBehavior": {
+        "mouseMovements": true,
+        "typingVariation": true,
+        "scrollPatterns": true,
+        "pauseIntervals": true
+      }
+    },
+    "reporting": {
+      "saveReports": true,
+      "reportDirectory": "./reports",
+      "includeScreenshots": true,
+      "includeDeviceLogs": true,
+      "emailNotifications": false,
+      "webhookUrl": "",
+      "cloudflareR2": {
+        "enabled": true,
+        "accountId": "7a470541a704caaf91e71efccc78fd36",
+        "bucketName": "factory-wager-packages",
+        "accessKeyId": "${R2_ACCESS_KEY_ID}",
+        "secretAccessKey": "${R2_SECRET_ACCESS_KEY}",
+        "region": "auto",
+        "endpoint": "https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com",
+        "backupLocal": true
+      }
+    },
+    "security": {
+      "rateLimiting": {
+        "enabled": true,
+        "maxRequestsPerMinute": 10,
+        "maxAccountsPerHour": 50,
+        "maxAccountsPerDay": 200
+      },
+      "detectionAvoidance": {
+        "rotateUserAgents": true,
+        "randomizeHeaders": true,
+        "varyTiming": true,
+        "proxyRotation": true
+      }
+    }
+  },
+  "enhanced": {
+    "domain": {
+      "primary": "factory-wager.com",
+      "subdomain": "apple",
+      "fullDomain": "apple.factory-wager.com",
+      "accessPoints": [
+        "https://apple.factory-wager.com",
+        "https://www.apple.factory-wager.com",
+        "https://api.apple.factory-wager.com",
+        "https://cdn.apple.factory-wager.com",
+        "https://backup.apple.factory-wager.com"
+      ],
+      "emailRouting": {
+        "primary": "@apple.factory-wager.com",
+        "wildcard": "*.apple.factory-wager.com",
+        "catchAll": "@factory-wager.com",
+        "support": "support@apple.factory-wager.com",
+        "noreply": "noreply@apple.factory-wager.com",
+        "verification": "verify@apple.factory-wager.com"
+      },
+      "dnsRecords": {
+        "aRecords": [
+          {
+            "host": "@",
+            "value": "192.168.1.1",
+            "ttl": 300
+          },
+          {
+            "host": "@",
+            "value": "192.168.1.2",
+            "ttl": 300
+          },
+          {
+            "host": "www",
+            "value": "192.168.1.1",
+            "ttl": 300
+          },
+          {
+            "host": "api",
+            "value": "192.168.1.3",
+            "ttl": 300
+          },
+          {
+            "host": "cdn",
+            "value": "192.168.1.4",
+            "ttl": 300
+          }
+        ],
+        "cnameRecords": [
+          {
+            "host": "backup",
+            "value": "r2.cloudflare.com",
+            "ttl": 300
+          },
+          {
+            "host": "assets",
+            "value": "r2.cloudflare.com",
+            "ttl": 300
+          },
+          {
+            "host": "files",
+            "value": "r2.cloudflare.com",
+            "ttl": 300
+          }
+        ],
+        "txtRecords": [
+          {
+            "host": "@",
+            "value": "v=spf1 include:_spf.google.com ~all",
+            "ttl": 300
+          },
+          {
+            "host": "@",
+            "value": "google-site-verification=your-verification-code",
+            "ttl": 300
+          },
+          {
+            "host": "_dmarc",
+            "value": "v=DMARC1; p=quarantine; rua=mailto:dmarc@factory-wager.com",
+            "ttl": 300
+          }
+        ]
+      }
+    },
+    "bucket": {
+      "primary": "factory-wager-packages",
+      "endpoint": "https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com",
+      "region": "auto",
+      "endpoints": [
+        "https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com",
+        "https://factory-wager-packages.auto.r2.cloudflarestorage.com",
+        "https://r2.cloudflarestorage.com/factory-wager-packages"
+      ],
+      "customDomain": "https://cdn.factory-wager.com",
+      "publicUrls": [
+        "https://pub-dc0e1ef5dd2245be81d6670a9b7b1550.r2.dev",
+        "https://cdn.factory-wager.com"
+      ],
+      "directoryStructure": {
+        "backup": "backup/",
+        "appleIds": "apple-ids/",
+        "successes": "apple-ids/successes/",
+        "failures": "apple-ids/failures/",
+        "reports": "reports/",
+        "logs": "logs/",
+        "errors": "errors/",
+        "screenshots": "screenshots/",
+        "assets": "assets/",
+        "public": "public/",
+        "archives": "archives/",
+        "temp": "temp/"
+      },
+      "accessControl": {
+        "publicRead": [
+          "public/*",
+          "assets/*",
+          "archives/*"
+        ],
+        "private": [
+          "apple-ids/*",
+          "logs/*",
+          "errors/*",
+          "temp/*"
+        ],
+        "signedUrl": [
+          "reports/*",
+          "screenshots/*"
+        ]
+      }
+    },
+    "accessibility": {
+      "apiEndpoints": {
+        "base": "https://api.apple.factory-wager.com/v1",
+        "endpoints": {
+          "upload": "/upload",
+          "download": "/download",
+          "list": "/list",
+          "delete": "/delete",
+          "stats": "/stats",
+          "health": "/health"
+        }
+      },
+      "cdn": {
+        "primary": "https://cdn.apple.factory-wager.com",
+        "fallback": "https://files.apple.factory-wager.com",
+        "edgeLocations": [
+          "us-east",
+          "us-west",
+          "eu-west",
+          "asia-southeast"
+        ],
+        "cacheTtl": {
+          "static": 86400,
+          "assets": 3600,
+          "api": 300,
+          "dynamic": 60
+        }
+      },
+      "shortUrls": {
+        "upload": "https://apple.factory-wager.com/up",
+        "download": "https://apple.factory-wager.com/dl",
+        "status": "https://apple.factory-wager.com/status",
+        "admin": "https://apple.factory-wager.com/admin"
+      },
+      "qrCodes": {
+        "upload": "https://apple.factory-wager.com/qr/upload",
+        "download": "https://apple.factory-wager.com/qr/download",
+        "status": "https://apple.factory-wager.com/qr/status"
+      },
+      "webInterface": {
+        "dashboard": "https://apple.factory-wager.com/dashboard",
+        "admin": "https://apple.factory-wager.com/admin",
+        "files": "https://apple.factory-wager.com/files",
+        "reports": "https://apple.factory-wager.com/reports"
+      }
+    },
+    "availability": {
+      "healthChecks": {
+        "endpoints": [
+          "/health",
+          "/api/health",
+          "/status",
+          "/ping"
+        ],
+        "interval": 30000,
+        "timeout": 5000,
+        "retries": 3
+      },
+      "monitoring": {
+        "uptime": true,
+        "performance": true,
+        "errors": true,
+        "usage": true,
+        "alerts": {
+          "email": true,
+          "sms": false,
+          "webhook": true,
+          "slack": false
+        }
+      },
+      "backup": {
+        "automatic": true,
+        "interval": 3600000,
+        "retention": 30,
+        "locations": [
+          "primary-r2",
+          "secondary-r2",
+          "local-backup"
+        ]
+      },
+      "redundancy": {
+        "active": true,
+        "failover": true,
+        "loadBalancing": true,
+        "regions": [
+          "us-east",
+          "eu-west",
+          "asia-southeast"
+        ]
+      },
+      "scaling": {
+        "enabled": true,
+        "minInstances": 1,
+        "maxInstances": 10,
+        "targetCpu": 70,
+        "targetMemory": 80
+      },
+      "caching": {
+        "enabled": true,
+        "layers": [
+          "edge-cache",
+          "cdn-cache",
+          "application-cache",
+          "database-cache"
+        ],
+        "ttl": {
+          "static": 86400,
+          "dynamic": 300,
+          "api": 60
+        }
+      }
+    }
+  },
+  "timestamp": "2026-01-12T13:00:23.556Z",
+  "version": "2.0.0-enhanced",
+  "quickAccess": {
+    "upload": "https://apple.factory-wager.com/up",
+    "download": "https://apple.factory-wager.com/dl",
+    "status": "https://apple.factory-wager.com/status",
+    "admin": "https://apple.factory-wager.com/admin",
+    "dashboard": "https://apple.factory-wager.com/dashboard",
+    "api": "https://api.apple.factory-wager.com/v1",
+    "files": "https://files.apple.factory-wager.com"
+  },
+  "alwaysAvailable": [
+    "https://cdn.apple.factory-wager.com",
+    "https://files.apple.factory-wager.com",
+    "https://pub-factory-wager-packages.r2.dev",
+    "https://files.apple.factory-wager.com",
+    "https://cdn.apple.factory-wager.com",
+    "https://apple.factory-wager.com",
+    "https://www.apple.factory-wager.com",
+    "https://api.apple.factory-wager.com",
+    "https://cdn.apple.factory-wager.com",
+    "https://backup.apple.factory-wager.com"
+  ],
+  "emergencyAccess": {
+    "directR2": "https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com",
+    "backupDomain": "https://backup.apple.factory-wager.com",
+    "statusPage": "https://status.apple.factory-wager.com",
+    "healthCheck": "https://health.apple.factory-wager.com"
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "name": "Quantum Hash CI/CD",
+  "on": {
+    "push": {
+      "branches": [
+        "main",
+        "develop"
+      ]
+    },
+    "pull_request": {
+      "branches": [
+        "main"
+      ]
+    }
+  },
+  "jobs": {
+    "test": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "name": "Checkout code",
+          "uses": "actions/checkout@v3"
+        },
+        {
+          "name": "Setup Bun",
+          "uses": "oven-sh/setup-bun@v1",
+          "with": {
+            "bun-version": "1.0.0"
+          }
+        },
+        {
+          "name": "Install dependencies",
+          "run": "bun install --frozen-lockfile"
+        },
+        {
+          "name": "Run quantum benchmarks",
+          "run": "bun run quantum:benchmark"
+        },
+        {
+          "name": "Run tests",
+          "run": "bun test"
+        }
+      ]
+    },
+    "build": {
+      "runs-on": "ubuntu-latest",
+      "needs": "test",
+      "steps": [
+        {
+          "name": "Checkout code",
+          "uses": "actions/checkout@v3"
+        },
+        {
+          "name": "Set up Docker Buildx",
+          "uses": "docker/setup-buildx-action@v2"
+        },
+        {
+          "name": "Login to Container Registry",
+          "uses": "docker/login-action@v2",
+          "with": {
+            "registry": "ghcr.io",
+            "username": "${{ github.actor }}",
+            "password": "${{ secrets.GITHUB_TOKEN }}"
+          }
+        },
+        {
+          "name": "Build and push Docker image",
+          "uses": "docker/build-push-action@v4",
+          "with": {
+            "context": ".",
+            "push": true,
+            "tags": "ghcr.io/brendadeeznuts1111/duo-automation/quantum-hash:latest",
+            "cache-from": "type=gha",
+            "cache-to": "type=gha,mode=max"
+          }
+        }
+      ]
+    },
+    "deploy": {
+      "runs-on": "ubuntu-latest",
+      "needs": "build",
+      "if": "github.ref == \"refs/heads/main\"",
+      "steps": [
+        {
+          "name": "Deploy to Kubernetes",
+          "run": "kubectl apply -f k8s/"
+        }
+      ]
+    }
+  }
+}

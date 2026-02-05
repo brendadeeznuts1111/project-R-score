@@ -1,0 +1,5 @@
+Benchmark,Time(ms),BunThroughput,NodeThroughput,Speedup,Savings(%),Cost($),Graph
+Parallel (10),747,13,9,1.5x,-7.0,0,"IDs/s"
+Parallel (100),1043,96,68,1.4x,-7.4,0.000002,"IDs/s"
+Parallel (500),1985,252,261,1.0x,-7.3,0.000008,"IDs/s"
+Parallel (1000),2009,498,468,1.1x,-7.4,0.000015,"IDs/s"

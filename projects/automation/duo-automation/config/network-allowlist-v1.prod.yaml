@@ -1,0 +1,44 @@
+---
+# Network Allow-List Configuration v1.0 (prod override)
+# SOC2 CC6.1 - Restrict egress to approved domains only
+
+metadata:
+  version: "1.0"
+  last_updated: "2024-12-14"
+  approved_by: "security-team@duoplus.com"
+
+default_policy: deny
+
+domains:
+  - name: "*.duoplus.com"
+    environment: "prod"
+    port: "443"
+    protocol: "https"
+    reason: "Primary production domain"
+    approved_by: "CTO"
+    tags: "[DUOPLUS][DOMAIN][ALLOW][PROD]"
+
+  - name: "registry.duoplus.bun.sh"
+    environment: "prod"
+    port: "443"
+    protocol: "https"
+    reason: "Bun registry for packages"
+    approved_by: "devops-lead"
+    tags: "[BUN][REGISTRY][ALLOW][PROD]"
+
+denies:
+  - name: "api.untrusted-service.com"
+    reason: "External service not vetted"
+    cwe: "CWE-918"
+    tags: "[SEC][DOMAIN][DENY]"
+
+rate_limits:
+  - domain: "*.duoplus.com"
+    requests_per_minute: 100
+    burst: 20
+
+logging:
+  allowed: "info"
+  denied: "warn"
+  alert_on_deny: true
+  webhook: "https://hooks.duoplus.com/security/network-deny"

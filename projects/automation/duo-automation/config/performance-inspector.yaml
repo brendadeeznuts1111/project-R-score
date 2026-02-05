@@ -1,0 +1,145 @@
+# Performance Inspector Configuration
+# Hot-reloadable configuration for enhanced master performance inspector
+
+defaults: &defaults
+  inspection:
+    timeout: 5000
+    retries: 3
+    parallelProcessing: true
+  
+  output:
+    format: "table"
+    colors: true
+    timestamps: true
+    emoji: true
+    maxWidth: 120
+
+categories:
+  URI-Inspection:
+    color: "cyan"
+    emoji: "🔍"
+    priority: "high"
+    enabled: true
+  
+  Zero-Width:
+    color: "yellow"
+    emoji: "Ⓩ"
+    priority: "medium"
+    enabled: true
+  
+  Encoding-Anomaly:
+    color: "magenta"
+    emoji: "🔧"
+    priority: "medium"
+    enabled: true
+  
+  Security-Risk:
+    color: "red"
+    emoji: "🚨"
+    priority: "high"
+    enabled: true
+  
+  Performance:
+    color: "green"
+    emoji: "⚡"
+    priority: "low"
+    enabled: true
+
+thresholds:
+  processingTime: 1000  # ms
+  memoryUsage: "512MB"
+  maxUriLength: 2048
+  maxConcurrentInspections: 10
+
+scopes:
+  enterprise:
+    <<: *defaults
+    inspection:
+      timeout: 10000
+      retries: 5
+      parallelProcessing: true
+    features:
+      advancedSecurity: true
+      complianceReporting: true
+      detailedLogging: true
+    thresholds:
+      processingTime: 2000
+      maxConcurrentInspections: 20
+  
+  development:
+    <<: *defaults
+    inspection:
+      timeout: 3000
+      retries: 2
+      parallelProcessing: true
+    features:
+      debugMode: true
+      hotReload: true
+      verboseOutput: true
+    output:
+      format: "table"
+      colors: true
+      timestamps: true
+      emoji: true
+      maxWidth: 150
+  
+  local-sandbox:
+    <<: *defaults
+    inspection:
+      timeout: 2000
+      retries: 1
+      parallelProcessing: false
+    features:
+      mockData: true
+      isolatedMode: true
+      fastMode: true
+    thresholds:
+      processingTime: 500
+      maxConcurrentInspections: 5
+
+featureFlags:
+  advancedUriInspection:
+    enabled: true
+    rolloutPercentage: 100
+    allowedScopes: ["enterprise", "development"]
+  
+  zeroWidthDetection:
+    enabled: true
+    rolloutPercentage: 100
+    allowedScopes: ["enterprise", "development", "local-sandbox"]
+  
+  encodingAnalysis:
+    enabled: true
+    rolloutPercentage: 80
+    allowedScopes: ["enterprise", "development"]
+  
+  securityRiskAssessment:
+    enabled: true
+    rolloutPercentage: 100
+    allowedScopes: ["enterprise", "development"]
+  
+  performanceMetrics:
+    enabled: true
+    rolloutPercentage: 100
+    allowedScopes: ["enterprise", "development", "local-sandbox"]
+
+logging:
+  level: "info"  # debug, info, warn, error
+  format: "pretty"  # pretty, json, structured
+  file: "logs/performance-inspector.log"
+  
+integrations:
+  dashboard:
+    enabled: true
+    port: 3000
+    autoOpen: false
+  
+  metrics:
+    enabled: true
+    exportFormat: "prometheus"
+    interval: 30000  # ms
+  
+  notifications:
+    enabled: false
+    webhook: ""
+    email: ""

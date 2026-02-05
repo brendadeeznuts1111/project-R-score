@@ -1,0 +1,162 @@
+# Nebula Flow Configuration v3.6
+# Generated on 2026-01-24T08:04:28.869Z
+# Total Projects: 10
+
+[metadata]
+version = "3.6.0"
+generated = "2026-01-24T08:04:28.869Z"
+totalProjects = 10
+productionCount = 5
+
+[severityColors]
+critical-infrastructure = "hsl(135, 85%, 52%)"
+high-compliance = "hsl(45, 90%, 52%)"
+financial-critical = "hsl(45, 90%, 52%)"
+devops-critical = "hsl(180, 60%, 50%)"
+frontend-production = "hsl(210, 40%, 65%)"
+tooling-development = "hsl(270, 70%, 60%)"
+testing-quality = "hsl(270, 70%, 60%)"
+research-experimental = "hsl(200, 80%, 55%)"
+demo-educational = "hsl(270, 70%, 60%)"
+information-reference = "hsl(210, 40%, 65%)"
+
+[projects.1]
+name = "🌌 Nebula-Flow™ Core (Primary)"
+rootPath = "/Users/nolarose/d-network"
+group = "Production Systems"
+profile = "nebula-production"
+readableTag = "[NEBULA][CORE][PROD][NEB-CORE-001][v1.4][ACTIVE]"
+grepTag = "[nebula][core][prod][neb-core-001][v1.4][active]"
+enabled = true
+tags = ["primary","nebula-flow-core","fraud-detection","production","bun-runtime-v1.0.25","typescript-es2022","redis-cache","onnx-ml-inference","gdpr-compliant","hardening-pack-v1.4","black-hole-rate-0.2pct","latency-sub-200ms","roi-90k-annual","starlight-id-43k","stardrop-yield-1.75pct","event-horizon-15min"]
+description = "Core fraud detection system with Nebula-Flow™ Hardening Pack"
+statusColorHsl = "hsl(135, 85%, 52%)"
+statusColorHex = "#2ecc71"
+severity = "critical-infrastructure"
+
+[projects.2]
+name = "🤖 AI/ML Development"
+rootPath = "/Users/nolarose/d-network/src/ai"
+group = "AI/ML Systems"
+profile = "ai-development"
+readableTag = "[NEBULA][AI][DEV][NEB-AI-002][v1.2][ACTIVE]"
+grepTag = "[nebula][ai][dev][neb-ai-002][v1.2][active]"
+enabled = true
+tags = ["ai-ml","development","onnx-runtime","anomaly-detection","bun-runtime","research"]
+description = "ONNX-based ML inference engine for fraud detection"
+statusColorHsl = "hsl(200, 80%, 55%)"
+statusColorHex = "#3498db"
+severity = "research-experimental"
+
+[projects.3]
+name = "⚡ CLI Tools Suite"
+rootPath = "/Users/nolarose/d-network/cli"
+group = "Development Tools"
+profile = "cli-development"
+readableTag = "[NEBULA][CLI][DEV][NEB-CLI-003][v1.3][ACTIVE]"
+grepTag = "[nebula][cli][dev][neb-cli-003][v1.3][active]"
+enabled = true
+tags = ["cli-tools","development","bun-runtime","typescript","monitoring","dashboard","lightning-network","device-management","duoplus-api","real-time-metrics","content-management"]
+description = "Comprehensive CLI toolkit for system monitoring, device management, and Lightning Network operations"
+statusColorHsl = "hsl(270, 70%, 60%)"
+statusColorHex = "#9b59b6"
+severity = "tooling-development"
+
+[projects.4]
+name = "🔒 Compliance & Security"
+rootPath = "/Users/nolarose/d-network/src/compliance"
+group = "Security Systems"
+profile = "compliance-production"
+readableTag = "[NEBULA][SEC][PROD][NEB-SEC-004][v1.5][ACTIVE]"
+grepTag = "[nebula][sec][prod][neb-sec-004][v1.5][active]"
+enabled = true
+tags = ["compliance","security","gdpr","kyc","bun-runtime","production","audit","sovereign-identity","passkey-injection","mfa-dashboard","zero-trust"]
+description = "GDPR-compliant security, compliance validation, and sovereign identity management system with comprehensive policy enforcement"
+statusColorHsl = "hsl(45, 90%, 52%)"
+statusColorHex = "#f1c40f"
+severity = "high-compliance"
+
+[projects.5]
+name = "🌐 Web Dashboard"
+rootPath = "/Users/nolarose/d-network/web-app"
+group = "Frontend Systems"
+profile = "web-production"
+readableTag = "[NEBULA][WEB][PROD][NEB-WEB-005][v1.1][ACTIVE]"
+grepTag = "[nebula][web][prod][neb-web-005][v1.1][active]"
+enabled = true
+tags = ["web-dashboard","frontend","bun-runtime","production","monitoring","ui"]
+description = "Production web dashboard for fraud detection monitoring"
+statusColorHsl = "hsl(210, 40%, 65%)"
+statusColorHex = "#95a5a6"
+severity = "frontend-production"
+
+[projects.6]
+name = "🚀 Build & Deployment"
+rootPath = "/Users/nolarose/d-network/scripts"
+group = "DevOps Systems"
+profile = "deployment-production"
+readableTag = "[NEBULA][DEV][OPS][NEB-DEV-006][v1.0][ACTIVE]"
+grepTag = "[nebula][dev][ops][neb-dev-006][v1.0][active]"
+enabled = true
+tags = ["build-tools","deployment","docker","kubernetes","bun-runtime","ci-cd"]
+description = "Complete build and deployment pipeline with Docker/K8s"
+statusColorHsl = "hsl(180, 60%, 50%)"
+statusColorHex = "#1abc9c"
+severity = "devops-critical"
+
+[projects.7]
+name = "🧪 Testing Suite"
+rootPath = "/Users/nolarose/d-network/tests"
+group = "Quality Assurance"
+profile = "testing-development"
+readableTag = "[NEBULA][TEST][QA][NEB-TEST-007][v1.2][ACTIVE]"
+grepTag = "[nebula][test][qa][neb-test-007][v1.2][active]"
+enabled = true
+tags = ["testing","integration-tests","bun-runtime","typescript","jest-compatible","load-testing"]
+description = "Comprehensive testing suite with integration and load tests"
+statusColorHsl = "hsl(270, 70%, 60%)"
+statusColorHex = "#9b59b6"
+severity = "testing-quality"
+
+[projects.8]
+name = "📚 Documentation Hub"
+rootPath = "/Users/nolarose/d-network/docs"
+group = "Documentation"
+profile = "documentation"
+readableTag = "[NEBULA][DOC][INFO][NEB-DOC-008][v1.0][ACTIVE]"
+grepTag = "[nebula][doc][info][neb-doc-008][v1.0][active]"
+enabled = true
+tags = ["documentation","markdown","guides","api-reference","bun-runtime","examples"]
+description = "Complete documentation suite with guides and API references"
+statusColorHsl = "hsl(210, 40%, 65%)"
+statusColorHex = "#95a5a6"
+severity = "information-reference"
+
+[projects.9]
+name = "🎯 Demo & Examples"
+rootPath = "/Users/nolarose/d-network/demos"
+group = "Learning Resources"
+profile = "demo-showcase"
+readableTag = "[NEBULA][DEMO][SHOW][NEB-DEMO-009][v1.1][ACTIVE]"
+grepTag = "[nebula][demo][show][neb-demo-009][v1.1][active]"
+enabled = true
+tags = ["demos","examples","bun-runtime","typescript","showcase","interactive"]
+description = "Interactive demos and examples for the fraud detection system"
+statusColorHsl = "hsl(270, 70%, 60%)"
+statusColorHex = "#9b59b6"
+severity = "demo-educational"
+
+[projects.10]
+name = "💰 Financial Systems"
+rootPath = "/Users/nolarose/d-network/src/finance"
+group = "Financial Systems"
+profile = "finance-production"
+readableTag = "[NEBULA][FIN][PROD][NEB-FIN-010][v1.2][ACTIVE]"
+grepTag = "[nebula][fin][prod][neb-fin-010][v1.2][active]"
+enabled = true
+tags = ["finance","savings-optimizer","yield-calculator","bun-runtime","production","roi-tracking"]
+description = "Financial optimization and yield calculation systems"
+statusColorHsl = "hsl(45, 90%, 52%)"
+statusColorHex = "#f1c40f"
+severity = "financial-critical"
+

@@ -1,0 +1,63 @@
+{
+  "name": "@duoplus/cli-core",
+  "version": "1.2.4-beta.0",
+  "description": "DuoPlus Tools - Command-line interface with enhanced inspection and regex filtering for developer productivity",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "build": "bun build index.ts --outdir dist --target node",
+    "test": "bun test",
+    "lint": "bun --bun tsc --noEmit"
+  },
+  "dependencies": {
+    "commander": "catalog:",
+    "inquirer": "catalog:",
+    "figlet": "catalog:"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:",
+    "@types/inquirer": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@duoplus/utils": "workspace:*",
+    "@duoplus/terminal": "workspace:*"
+  },
+  "exports": {
+    ".": "./index.ts",
+    "./cli": "./index.ts"
+  },
+  "author": "DuoPlus Development Team",
+  "license": "MIT",
+  "keywords": [
+    "duoplus",
+    "automation",
+    "bun",
+    "typescript",
+    "enterprise",
+    "cli",
+    "testing",
+    "development",
+    "productivity",
+    "command-line",
+    "interface",
+    "with",
+    "enhanced",
+    "inspection",
+    "regex",
+    "filtering"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/duoplus/duo-automation.git",
+    "bugs": "https://github.com/duoplus/duo-automation/issues",
+    "homepage": "https://duoplus.ai"
+  },
+  "bugs": {
+    "url": "https://github.com/duoplus/duo-automation/issues"
+  },
+  "homepage": "https://duoplus.ai/packages/cli-core",
+  "contributors": [
+    "DuoPlus Development Team <dev@duoplus.ai>"
+  ]
+}

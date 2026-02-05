@@ -1,0 +1,21 @@
+{
+  // MarkdownLint Configuration for Empire Pro
+  // Optimized for documentation and README files
+  
+  "default": true, // Enable all default rules
+  
+  // Disabled rules for flexibility
+  "MD013": false, // Line length - allow long lines for better readability
+  "MD033": false, // HTML elements - allow custom HTML in markdown
+  "MD041": false, // First line heading - allow flexibility in first line
+  
+  // Files to ignore during linting
+  "ignoreFiles": [
+    "reports/**/*", // Generated reports
+    "node_modules/**/*", // Dependencies
+    "dist/**/*", // Build outputs
+    "config/project/**/*", // Project-specific configs
+    "**/*.min.md", // Minified markdown files
+    "**/*.generated.md" // Auto-generated documentation
+  ]
+}

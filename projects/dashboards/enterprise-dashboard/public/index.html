@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enterprise Dashboard</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>D</text></svg>">
+
+  <!-- Performance Optimizations: Preload critical resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwgknk-4.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwgknk-3.woff2" as="font" type="font/woff2" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Theme: CSS Variables + localStorage (No Tailwind dark mode needed) -->
+  <script>
+    (function() {
+      // 1. Check localStorage first, then cookie, then system preference
+      var saved = localStorage.getItem('theme') ||
+        (document.cookie.match(/theme=(dark|light|midnight|high-contrast)/) || [])[1] ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+      if (saved === 'dark') {
+        document.documentElement.classList.add('dark');
+      }
+      document.documentElement.setAttribute('data-theme', saved);
+
+      // 2. Global toggle function
+      window.toggleTheme = function() {
+        var isDark = document.documentElement.classList.toggle('dark');
+        var theme = isDark ? 'dark' : 'light';
+        localStorage.setItem('theme', theme);
+        document.cookie = 'theme=' + theme + '; path=/; max-age=31536000; SameSite=Lax';
+        document.documentElement.setAttribute('data-theme', theme);
+        return theme;
+      };
+
+      // 3. Get current theme
+      window.getTheme = function() {
+        return document.documentElement.getAttribute('data-theme') || (document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+      };
+
+      // 4. Loading state management
+      window.showLoadingState = function() {
+        const root = document.getElementById('root');
+        if (root && !root.innerHTML.trim()) {
+          root.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:monospace;color:#666;"><div>Loading Enterprise Dashboard...</div></div>';
+        }
+      };
+    })();
+
+    // Show loading state immediately
+    window.showLoadingState();
+  </script>
+
+  <!-- Critical CSS inlined for fastest rendering -->
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #f3f4f6;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: #1f2937;
+      height: 100%;
+      overflow: hidden;
+    }
+    .dark {
+      background: #111827;
+      color: #f9fafb;
+    }
+    #root {
+      height: 100%;
+      width: 100%;
+    }
+    /* Loading state */
+    .loading-state {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: 'JetBrains Mono', monospace;
+      color: #6b7280;
+    }
+    .dark .loading-state {
+      color: #9ca3af;
+    }
+  </style>
+
+  <!-- Optimized CSS loading: preload critical styles -->
+  <link rel="preload" href="/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/styles.css"></noscript>
+  <!-- Theme variables from ui-themes.toml (--theme-* via [data-theme]) -->
+  <link rel="stylesheet" href="/themes.css" id="themes-css">
+</head>
+<body class="bg-gray-100 dark:bg-gray-900">
+  <div id="root">
+    <!-- Loading state will be replaced by React -->
+    <div class="loading-state">Loading Enterprise Dashboard...</div>
+  </div>
+
+  <!-- Optimized JavaScript loading: async module loading -->
+  <script type="module" src="/index.js" async></script>
+
+   <!-- Fallback for browsers without module support -->
+   <script nomodule>
+     document.getElementById('root').innerHTML =
+       '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:monospace;color:#ef4444;">' +
+       'This browser does not support modern JavaScript. Please use a modern browser.</div>';
+   </script>
+
+   <!-- Service Worker Registration for offline caching -->
+   <script>
+     if ('serviceWorker' in navigator) {
+       window.addEventListener('load', () => {
+         navigator.serviceWorker.register('/sw.js')
+           .then(registration => {
+             console.log('Service Worker registered:', registration.scope);
+
+             // Handle updates
+             registration.addEventListener('updatefound', () => {
+               const newWorker = registration.installing;
+               if (newWorker) {
+                 newWorker.addEventListener('statechange', () => {
+                   if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                     // New content available, notify user
+                     if (confirm('New dashboard version available. Reload to update?')) {
+                       window.location.reload();
+                     }
+                   }
+                 });
+               }
+             });
+           })
+           .catch(error => {
+             console.log('Service Worker registration failed:', error);
+           });
+       });
+     }
+   </script>
+</body>
+</html>

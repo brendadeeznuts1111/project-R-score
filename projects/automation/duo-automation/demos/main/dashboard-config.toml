@@ -1,0 +1,38 @@
+# Empire Pro Dashboard Configuration
+# §Types:143 - UI Configuration Matrix
+
+[theme]
+mode = "dark"
+primary_color = "blue-600"
+accent_color = "emerald-500"
+bg_color = "slate-950"
+glass_opacity = 0.03
+blur_intensity = "10px"
+
+[telemetry]
+update_interval_ms = 5000
+sparkline_points = 60
+event_history_limit = 50
+
+[colors]
+status_healthy = "#10b981"
+status_degraded = "#f59e0b"
+status_unhealthy = "#ef4444"
+status_active = "#10b981"
+status_stable = "#60a5fa"
+status_synced = "#a855f7"
+status_guard = "#f59e0b"
+scope_enterprise = "#60a5fa"
+scope_development = "#f472b6"
+mesh_linked = "#10b981"
+mesh_severed = "#ef4444"
+
+[components.metrics]
+heap_max_mb = 1024
+rss_max_mb = 2048
+
+[components.sparkline]
+line_color = "emerald-500"
+empty_color = "white/5"
+bar_gap = "2px"
+height = "4rem"

@@ -1,0 +1,20 @@
+# [TYPE] Brief description (50 chars or less)
+#
+# More detailed explanation (wrap at 72 chars)
+# - What was changed and why
+# - Any breaking changes or migration notes
+# - References to issues or tickets
+#
+# Type can be:
+#   feat: new feature
+#   fix: bug fix
+#   docs: documentation changes
+#   style: formatting, missing semi colons, etc
+#   refactor: code change that neither fixes a bug nor adds a feature
+#   test: adding missing tests
+#   chore: updating build tasks, package manager configs, etc
+#
+# Footer (optional):
+#   Fixes #123
+#   Closes #456
+#   Co-authored-by: Name <email>

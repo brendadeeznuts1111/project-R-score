@@ -1,0 +1,131 @@
+{
+  "name": "factorywager-cli",
+  "version": "2.0.0",
+  "description": "FactoryWager CLI Inspector - Enterprise Deployment with PCI/GDPR Compliance",
+  "bin": {
+    "factorywager": "./dist/cli.js",
+    "fw": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "bun run build.ts",
+    "start": "bun run ./cli/factorywager-inspector-enhanced.ts",
+    "dev": "bun --watch ./cli/factorywager-inspector-enhanced.ts",
+    "test": "bun test",
+    "build:production": "NODE_ENV=production bun run build.ts",
+    "bundle:assets": "bun run scripts/bundle-dashboard-assets.ts",
+    "dashboard:watch": "BUN_PORT=3001 bun --watch server/dashboard-server-v56.ts",
+    "dashboard:hot": "BUN_PORT=3001 bun --hot server/dashboard-server-v56.ts",
+    "dashboard": "BUN_PORT=3001 bun run dashboard:hot",
+    "deploy:global": "bun run ./scripts/deploy-global.ts",
+    "package": "bun run build && bun pm pack",
+    "publish": "bun run build && bun publish",
+    "publish:dry-run": "bun run ./scripts/publish.ts --dry-run",
+    "publish:workflow": "bun run ./scripts/publish.ts",
+    "publish:workspaces": "bun run ./scripts/publish.ts --workspace=all",
+    "publish:ci": "bun run ./scripts/publish.ts --tolerate-republish",
+    "publish:public": "bun run ./scripts/publish.ts --access=public",
+    "prepublishOnly": "bun run tags:enforce && bun test",
+    "tags:ai": "bun run ./scripts/ai-tagger.ts",
+    "tags:ai:train": "bun run ./scripts/ai-tagger.ts --train",
+    "tags:ai:onboarding": "bun run ./scripts/ai-tagger.ts --onboarding",
+    "tags:ai:benchmark": "bun run ./scripts/ai-tagger.ts --benchmark",
+    "tags:ai:accuracy": "bun run ./scripts/ai-tagger.ts --benchmark --ground-truth ./config/ai-tagger-ground-truth.json",
+    "tags:enforce": "ENFORCEMENT_STAGE=pre-commit bun run scripts/git/tag-enforcer-v6.ts",
+    "tags:generate": "bun run scripts/git/tag-remediation.ts generate",
+    "tags:ref": "bun run scripts/git/tag-remediation.ts ref",
+    "tags:sync-types": "bun run scripts/git/tag-remediation.ts sync-types",
+    "tags:compliance": "bun run ./scripts/tags-compliance-dashboard.ts",
+    "tags:compliance:json": "bun run ./scripts/tags-compliance-dashboard.ts --json",
+    "tags:compliance:strict": "bun run ./scripts/tags-compliance-dashboard.ts --strict",
+    "tags:audit": "bun run ./scripts/tags-audit-trail.ts",
+    "tags:audit:verify": "bun run ./scripts/tags-audit-trail.ts --verify",
+    "tags:audit:history": "bun run ./scripts/tags-audit-trail.ts --history",
+    "tags:revenue": "bun run ./scripts/tags-revenue-sync.ts",
+    "tags:revenue:sync": "bun run ./scripts/tags-revenue-sync.ts --sync",
+    "tags:meta:validate": "bun run ./scripts/meta-schema.ts --validate",
+    "tty:demo": "bun run ./scripts/tty-hyperlink.ts",
+    "security:test:mysql": "bun run ./scripts/test-mysql-binary.ts",
+    "security:test:postgres": "bun run ./scripts/test-postgres-arrays.ts",
+    "security:test:large-files": "bun run ./scripts/test-large-files.ts",
+    "security:test:all": "bun run ./scripts/test-mysql-binary.ts && bun run ./scripts/test-postgres-arrays.ts && bun run ./scripts/test-large-files.ts",
+    "cf:zones": "bun run ./scripts/cloudflare-api.ts --zones",
+    "cf:dns:list": "bun run ./scripts/cloudflare-api.ts --dns",
+    "cf:dns:validate": "bun run ./scripts/cloudflare-api.ts --validate",
+    "cf:ssl:status": "bun run ./scripts/cloudflare-api.ts --ssl",
+    "cf:purge": "bun run ./scripts/cf-cache-purge.ts",
+    "r2:status": "bun run ./scripts/cloudflare-api.ts --r2",
+    "r2:sign": "bun run ./scripts/r2-signed-urls.ts",
+    "health": "bun run ./scripts/infrastructure-health.ts",
+    "health:all": "bun run ./scripts/infrastructure-health.ts --all",
+    "health:dns": "bun run ./scripts/infrastructure-health.ts --dns",
+    "health:cdn": "bun run ./scripts/infrastructure-health.ts --cdn",
+    "health:r2": "bun run ./scripts/infrastructure-health.ts --r2",
+    "health:keepalive": "bun run ./scripts/infrastructure-health.ts --keepalive",
+    "health:cache": "bun run ./scripts/infrastructure-health.ts --cache",
+    "health:json": "bun run ./scripts/infrastructure-health.ts --all --json",
+    "cf:cache:apply": "bun run ./scripts/cf-cache-config.ts --apply",
+    "cf:cache:validate": "bun run ./scripts/cf-cache-config.ts --validate",
+    "cf:cache:list": "bun run ./scripts/cf-cache-config.ts --list",
+    "cf:cache:matrix": "bun run ./scripts/cf-cache-config.ts --matrix",
+    "validate:timezones": "bun run ./scripts/validate-timezones.ts",
+    "validate:timezones:check": "bun run ./scripts/validate-timezones.ts --check",
+    "validate:timezones:matrix": "bun run ./scripts/validate-timezones.ts --matrix",
+    "validate:cache": "bun run ./scripts/cf-cache-config.ts --validate",
+    "bench:publish": "bun run ./scripts/bench/publish-bench.ts",
+    "bench:pack": "bun run ./scripts/bench/publish-bench.ts --pack",
+    "bench:compare": "bun run ./scripts/bench/publish-bench.ts --compare",
+    "bench:gzip": "bun run ./scripts/bench/publish-bench.ts --gzip",
+    "bench:publish:json": "bun run ./scripts/bench/publish-bench.ts --json"
+  },
+  "dependencies": {},
+  "optionalDependencies": {
+    "@swc/core": "^1.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "bun-types": "^1.0.0",
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "dist/**/*",
+    "config/**/*",
+    "server/**/*",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "factorywager",
+    "cli",
+    "inspector",
+    "enterprise",
+    "pci",
+    "gdpr",
+    "compliance",
+    "qr-onboarding",
+    "dashboard"
+  ],
+  "author": "DuoPlus Enterprise",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duoplus/factorywager-cli.git"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "bun": ">=1.3.8"
+  },
+  "main": "./dist/index.js",
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "test": "tests"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/duoplus/factorywager-cli/issues"
+  },
+  "homepage": "https://github.com/duoplus/factorywager-cli#readme",
+  "publishConfig": {
+    "registry": "https://npm.factory-wager.com"
+  }
+}

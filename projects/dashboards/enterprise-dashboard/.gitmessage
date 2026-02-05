@@ -1,0 +1,105 @@
+# [DOMAIN][SCOPE][COMPONENT][ACTION] TICKET-XXX: Short summary (50 chars)
+#
+# QUICK EXAMPLES:
+# [API][ENDPOINT][AUTH][ADD] ONE-456: Add /api/auth/login endpoint
+# [UI][TAB][ANALYTICS][OPTIMIZE] ONE-789: Parallelize fetches in AnalyticsTab
+# [DB][QUERY][METRICS][OPTIMIZE] ONE-321: Single UNION ALL instead of 4 COUNTs
+# [NETWORK][SERVICE][DNS][FIX] GH-123: Fix DNS cache invalidation on failure
+# [CONFIG][CORE][HOOKS][ADD] DASH-001: Add commit message validation hook
+#
+# ============================================================================
+# FORMAT: [DOMAIN][SCOPE][COMPONENT][ACTION] TICKET-XXX: Summary
+# ============================================================================
+#
+# DOMAIN (required) - What area of the codebase:
+#   API      - Backend endpoints, routes, middleware
+#   UI       - React components, client-side code, styles
+#   NETWORK  - Network utilities, fetch, DNS, connections
+#   SECURITY - Auth, secrets, validation, permissions
+#   CONFIG   - Config files, bunfig, tsconfig, env
+#   ADAPTER  - External integrations (S3, Redis, DB drivers)
+#   MATRIX   - Analytics dashboards, monitoring views
+#   PTY      - Terminal, pseudo-terminal, shell handling
+#   UTILS    - Shared utilities and helpers
+#   CORE     - Core infrastructure, types, base classes
+#   DB       - Database schemas, queries, migrations
+#   SCRIPT   - Build scripts, CLI tools, automation
+#   TEST     - Test files, fixtures, mocks
+#   DOCS     - Documentation only changes
+#
+# SCOPE (required) - What type of component:
+#   ENDPOINT   - API endpoints
+#   TAB        - Dashboard tabs/views
+#   QUERY      - Database queries
+#   ROUTER     - Routing logic
+#   HANDLER    - Request/event handlers
+#   VALIDATOR  - Input validation
+#   MATRIX     - Matrix/grid components
+#   UTILS      - Utility functions
+#   CORE       - Core modules
+#   HOOK       - React hooks
+#   COMPONENT  - React components
+#   SERVICE    - Backend services
+#   MODEL      - Data models
+#   BENCH      - Benchmarks
+#   FIXTURE    - Test fixtures
+#
+# COMPONENT - Free-form module/file name (optional but recommended)
+#
+# ACTION (required) - What was done:
+#   ADD      - New feature or file
+#   FIX      - Bug fix
+#   REFACTOR - Code restructuring (no behavior change)
+#   OPTIMIZE - Performance improvement
+#   REMOVE   - Deletion of feature or file
+#   UPDATE   - Modification to existing feature
+#   TEST     - Adding or updating tests
+#   CHORE    - Maintenance tasks
+#   DOCS     - Documentation updates
+#   STYLE    - Formatting, whitespace changes
+#   SECURITY - Security-related changes
+#
+# TICKET - Required. Format: [A-Z]+-[0-9]+ (e.g., ONE-123, GH-456, DASH-789)
+#
+# ============================================================================
+
+# Tension score (0.0-1.0): how risky/conflicting is this change?
+# 0.0 = Safe, isolated change | 0.5 = Moderate risk | 1.0 = High risk/breaking
+Tension: 0.1
+
+# Impact summary (what changed for users/system)
+Impact:
+-
+
+# Why this change? (motivation, context)
+Why:
+-
+
+# How was it implemented? (approach, trade-offs)
+How:
+-
+
+# ============================================================================
+# Co-authors (auto-added or manual)
+Co-authored-by: Claude Opus 4.5 <noreply@anthropic.com>
+# ============================================================================
+#
+# SEARCHING COMMITS:
+#
+# By domain:      git log --grep="\[API\]"
+# By scope:       git log --grep="\[ENDPOINT\]"
+# By action:      git log --grep="\[FIX\]"
+# By ticket:      git log --grep="ONE-123"
+# By grepable:    git log --grep="\[api-endpoint-fix\]"
+#
+# Combined:       git log --grep="\[API\].*\[FIX\]"
+#
+# ============================================================================
+# VALIDATION RULES (enforced by commit-msg hook):
+# [REQUIRED] Message must start with [DOMAIN] tag
+# [REQUIRED] [SCOPE] must be one of the defined scopes
+# [REQUIRED] [ACTION] must be one of the defined actions
+# [REQUIRED] Ticket format: [A-Z]+-[0-9]+:
+# [OPTIONAL] Tension: 0.0-1.0
+# [OPTIONAL] Impact, Why, How sections for traceability
+# ============================================================================

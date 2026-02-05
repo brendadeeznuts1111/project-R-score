@@ -1,0 +1,55 @@
+{
+  "roles": {
+    "admin": {
+      "name": "Administrator",
+      "permissions": [
+        "view_metrics",
+        "generate_tasks",
+        "cleanup_storage",
+        "view_logs",
+        "manage_users"
+      ]
+    },
+    "operator": {
+      "name": "Task Operator",
+      "permissions": [
+        "view_metrics",
+        "generate_tasks",
+        "view_logs"
+      ]
+    },
+    "reviewer": {
+      "name": "Metrics Reviewer",
+      "permissions": [
+        "view_metrics",
+        "view_logs"
+      ]
+    }
+  },
+  "users": {
+    "admin-root": {
+      "role": "admin",
+      "token": "sk_live_admin_2026_"
+    },
+    "rev-gamma": {
+      "role": "reviewer",
+      "token": "sk_live_reviewer_2026_"
+    },
+    "new-test-op": {
+      "role": "operator",
+      "token": "sk_live_new_operator_test_2026_"
+    },
+    "failed-op": {
+      "role": "operator",
+      "token": "sk_live_failed_operator_2026_"
+    },
+    "final-test-op": {
+      "role": "operator",
+      "token": "sk_live_final_operator_test_2026_"
+    },
+    "op-beta": {
+      "role": "operator",
+      "token": "sk_live_operator_2026_"
+    }
+  }
+}

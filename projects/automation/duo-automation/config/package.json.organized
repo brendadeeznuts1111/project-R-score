@@ -1,0 +1,152 @@
+{
+  "name": "windsurf-project",
+  "version": "2.4.0",
+  "private": true,
+  "type": "module",
+  "description": "Enhanced CLI with timeout handling, mock modes, and comprehensive testing infrastructure",
+  "bin": {
+    "windsurf-cli": "./cli/bin/windsurf-cli",
+    "windsurf-cli-enhanced": "./cli/bin/windsurf-cli-enhanced",
+    "ep-cli": "./cli/bin/ep-cli"
+  },
+  "scripts": {
+    "start": "bun run src/main.js",
+    "init": "bun run src/main.js init",
+    
+    "=== Testing ===": "",
+    "test": "bun run src/main.js test",
+    "test:enhanced": "bun test --preload ./setup.ts --timeout 10000",
+    "test:fast": "bun test --preload ./setup.ts --timeout 5000 --bail",
+    "test:concurrent": "bun test --preload ./setup.ts --concurrent --timeout 5000",
+    "test:cli": "bun test --preload ./setup.ts tests/dashboard-integration.test.ts --timeout 5000",
+    
+    "=== CLI Commands ===": "",
+    "cli": "bun cli/bin/windsurf-cli",
+    "cli:enhanced": "bun cli/bin/windsurf-cli-enhanced",
+    "ep-cli": "bun cli/bin/ep-cli",
+    "empire": "bun run cli/bin/ep-cli",
+    "windsurf": "bun cli/bin/windsurf-cli",
+    
+    "=== Creation Commands ===": "",
+    "create": "bun run cli/bin/windsurf-cli create",
+    "create-appleid": "bun run cli/bin/windsurf-cli create appleid",
+    "create-cashapp": "bun run cli/bin/windsurf-cli create cashapp",
+    "create-music": "bun run cli/bin/windsurf-cli create music",
+    "create-batch": "bun run cli/bin/windsurf-cli create batch",
+    "create-appleids": "bun run cli/bin/windsurf-cli create appleid --count=3",
+    "create-cashapp-demo": "bun run cli/bin/windsurf-cli create cashapp --demo --count=3",
+    
+    "=== Dashboard Commands ===": "",
+    "dashboard": "bun run cli/bin/windsurf-cli dashboard",
+    "dashboard:enhanced": "bun run cli/bin/windsurf-cli-enhanced dashboard",
+    "dashboard:serve": "bun run cli:enhanced dashboard serve",
+    "dashboard:deploy": "bun run cli:enhanced dashboard deploy",
+    "dashboard:health": "bun run cli:enhanced dashboard health",
+    "dashboard:native": "bun run cli/dashboard.server.js",
+    "dashboard:start": "DASHBOARD_SCOPE=ENTERPRISE bun run cli/dashboard.server.js",
+    
+    "=== Documentation ===": "",
+    "docs:update": "bun run scripts/changelog-parser.ts && git add docs/changelogs/",
+    "changelog:parse": "bun run scripts/changelog-parser.ts",
+    "changelog:stats": "bun run scripts/changelog-parser.ts --stats-only",
+    "changelog:constants": "bun run scripts/changelog-parser.ts --constants-only",
+    
+    "=== Linting & Quality ===": "",
+    "lint:md": "markdownlint '**/*.md' -i reports/ -i node_modules/ -i dist/ -i config/project/",
+    "lint:md:fix": "markdownlint '**/*.md' -i reports/ -i node_modules/ -i dist/ -i config/project/ --fix",
+    "lint:docs": "markdownlint 'docs/**/*.md' 'DEVELOPMENT_NOTES.md' -i reports/",
+    
+    "=== Benchmarks ===": "",
+    "bench": "bun run cli/bin/windsurf-cli bench",
+    "bench:run": "bun run bench/main.ts",
+    "duoplus:benchmark": "bun run utils/android-fingerprint.ts --full",
+    "duoplus:simulate": "bun run utils/android-fingerprint.ts --simulate",
+    "rpa:benchmark": "bun run src/core/rpa/tiktok-warmup.ts",
+    
+    "=== Analytics & Monitoring ===": "",
+    "analytics": "bun run cli/bin/windsurf-cli analytics",
+    "duoplus:parse": "bun run scripts/maintenance/parse-duoplus-log.ts",
+    "duoplus:integrate": "bun run scripts/maintenance/integrate-changelog.ts",
+    "duoplus:full": "bun run scripts/maintenance/integrate-changelog.ts --benchmarks --update-dashboard",
+    
+    "=== System Administration ===": "",
+    "deploy": "bun run cli/bin/windsurf-cli deploy",
+    "storage": "bun run cli/bin/windsurf-cli storage",
+    "secrets": "bun run cli/bin/windsurf-cli secrets",
+    "master:matrix": "bun scripts/maintenance/master-matrix.ts",
+    
+    "=== RPA & Automation ===": "",
+    "rpa:tiktok": "bun src/core/rpa/tiktok-warmup.ts",
+    "rpa:reddit-fp": "bun src/core/rpa/reddit-fingerprint.ts",
+    
+    "=== Demo & Showcase ===": "",
+    "demo:cli": "bun run demos/cli/demo-pipeline.sh",
+    "demo:complete": "bun run demos/cli/complete-pipeline-demo.sh",
+    "demo:hyper": "bun run demos/cli/hyper-arsenal-demo.sh",
+    "demo:width": "bun run demos/cli/stream-width-demo.ts",
+    "demo:unicode": "bun run demos/cli/test-unicode-width.ts",
+    
+    "=== Development ===": "",
+    "dev": "bun run src/main.js dev",
+    "build": "bun build src/main.js --target=bun --outdir=dist",
+    "clean": "rm -rf dist/ temp/ logs/",
+    "health": "bun run cli:enhanced health"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.966.0",
+    "@aws-sdk/lib-storage": "^3.450.0",
+    "@aws-sdk/s3-request-presigner": "^3.966.0",
+    "@supabase/supabase-js": "^2.90.1",
+    "@types/imap": "^0.8.40",
+    "@types/node": "^25.0.8",
+    "@types/nodemailer": "^6.4.0",
+    "chalk": "^5.6.2",
+    "commander": "^10.0.1",
+    "elysia": "^1.4.21",
+    "figlet": "^1.9.4",
+    "https-proxy-agent": "^7.0.0",
+    "imap": "^0.8.19",
+    "libphonenumber-js": "^1.12.34",
+    "mailparser": "^3.6.0",
+    "nodemailer": "^7.0.12",
+    "ora": "^9.0.0",
+    "p-limit": "^7.2.0",
+    "puppeteer": "^24.35.0",
+    "reflect-metadata": "^0.2.2",
+    "socks-proxy-agent": "^8.0.0",
+    "tesseract.js": "^5.0.0",
+    "typescript": "^5",
+    "version": "^2.4.0",
+    "zod": "^4.3.5",
+    "zstd": "^1.0.4"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "markdownlint-cli": "^0.44.0"
+  },
+  "engines": {
+    "bun": ">=1.0.0",
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "cli",
+    "automation",
+    "analytics",
+    "dashboard",
+    "empire-pro",
+    "windsurf",
+    "phone-intelligence",
+    "apple-id",
+    "cash-app"
+  ],
+  "author": "Brenda Anderson",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/duo-automation.git"
+  },
+  "bugs": {
+    "url": "https://github.com/brendadeeznuts1111/duo-automation/issues"
+  },
+  "homepage": "https://github.com/brendadeeznuts1111/duo-automation#readme"
+}

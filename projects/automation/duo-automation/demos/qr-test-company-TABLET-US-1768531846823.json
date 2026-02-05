@@ -1,0 +1,10 @@
+{
+  "merchantId": "test-company",
+  "deviceCategory": "TABLET",
+  "geographicScope": "US",
+  "timestamp": "2026-01-16T02:50:46.821Z",
+  "token": "a6146b31e56c6aaa1eed96cf6cf5e3f55931cf2061df1b2a27a8f50019da0343",
+  "qrCode": "QR-751B6C8166C784AD",
+  "status": "active",
+  "expiresAt": "2026-01-17T02:50:46.823Z"
+}

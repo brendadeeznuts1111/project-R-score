@@ -1,0 +1,16 @@
+{
+  "message": "Bun Native Metrics Integration",
+  "timestamp": "2026-01-15T03:57:50.911Z",
+  "integrationCompleted": true,
+  "finalMetrics": {
+    "uptime": 122,
+    "totalAPIs": 7,
+    "totalCalls": 8,
+    "totalDuration": 121,
+    "averageCallDuration": 15.125,
+    "totalErrors": 0,
+    "errorRate": 0,
+    "nativeAPIs": 5,
+    "nativeRate": 71.42857142857143
+  }
+}

@@ -1,0 +1,2376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DuoPlus Unified Integration Dashboard | Agent Connection Pool & Real-time Monitoring</title>
+    <meta name="description" content="Unified dashboard for DuoPlus integration with agent connection pooling, real-time monitoring, and comprehensive system management">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+    <style>
+        @keyframes pulse-border {
+            0%, 100% { border-color: rgb(59 130 246 / 0.5); }
+            50% { border-color: rgb(59 130 246 / 1); }
+        }
+        .animate-pulse-border {
+            animation: pulse-border 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border: 1px solid #3b82f6;
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-online { background-color: #10b981; }
+        .status-offline { background-color: #ef4444; }
+        .status-warning { background-color: #f59e0b; }
+        .agent-card {
+            background: rgba(17, 24, 39, 0.95);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+        .agent-card:hover {
+            border-color: rgba(59, 130, 246, 0.6);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+        }
+        .connection-pool-item {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border-left: 4px solid #3b82f6;
+            transition: all 0.3s ease;
+        }
+        .connection-pool-item:hover {
+            transform: translateX(4px);
+            border-left-color: #3b82f6;
+        }
+
+        /* SCOPE Badges */
+        .scope-badge {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .scope-enterprise {
+            color: #3b82f6;
+            border-color: #3b82f6;
+            background: rgba(251, 191, 36, 0.1);
+        }
+
+        .scope-production {
+            color: #3b82f6;
+            border-color: #3b82f6;
+            background: rgba(52, 211, 153, 0.1);
+        }
+
+        .scope-multi-tenant {
+            color: #3b82f6;
+            border-color: #3b82f6;
+            background: rgba(96, 165, 250, 0.1);
+        }
+
+        .scope-context-badge {
+            font-size: 9px;
+            font-weight: 600;
+            padding: 1px 4px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            background: rgba(255, 255, 255, 0.15);
+            color: #3b82f6;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .scope-context-badge:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+            transition: all 0.2s ease;
+        }
+
+        /* Enhanced header responsiveness */
+        @media (max-width: 768px) {
+            .scope-badge {
+                font-size: 8px;
+                padding: 1px 4px;
+            }
+            
+            .scope-context-badge {
+                font-size: 7px;
+                padding: 1px 3px;
+            }
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        .loading-spinner {
+            border: 3px solid #3b82f6;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-600 to-purple-600 p-6 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <i data-lucide="layers" class="w-8 h-8"></i>
+                <div>
+                    <div class="flex items-center space-x-3">
+                        <h1 class="text-2xl font-bold gradient-text">DuoPlus Unified Dashboard</h1>
+                        <!-- SCOPE Badges -->
+                        <div class="flex items-center space-x-2">
+                            <span class="scope-badge scope-enterprise">[ENTERPRISE]</span>
+                            <span class="scope-badge scope-production">[PRODUCTION]</span>
+                            <span class="scope-badge scope-multi-tenant">[MULTI-TENANT]</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4 mt-1">
+                        <p class="text-blue-200 text-sm">Agent Connection Pool & Integration Management</p>
+                        <!-- Additional Scope Context -->
+                        <div class="flex items-center space-x-2">
+                            <span class="scope-context-badge">Windows Enterprise</span>
+                            <span class="scope-context-badge">RBAC Enabled</span>
+                            <span class="scope-context-badge">API v2.0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center">
+                    <span class="status-indicator status-online"></span>
+                    <span class="text-sm">System Online</span>
+                </div>
+                
+                <!-- RBAC Toggle Control -->
+                <div class="flex items-center space-x-2 bg-gray-800 px-3 py-2 rounded-lg">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-blue-400"></i>
+                    <span class="text-sm text-gray-300">RBAC</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="rbacToggle" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                </div>
+                
+                <button id="refreshBtn" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    <span>Refresh</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto p-6">
+        <!-- System Metrics -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i data-lucide="activity" class="w-5 h-5 mr-2"></i>
+                System Metrics
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
+                <div class="metric-card p-4 rounded-lg">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-600 text-sm">Active Agents</p>
+                            <p class="text-2xl font-bold text-gray-900" id="activeAgents">0</p>
+                        </div>
+                        <i data-lucide="users" class="w-8 h-8 text-blue-500"></i>
+                    </div>
+                    <div class="mt-2 flex items-center text-sm">
+                        <span class="status-indicator status-online"></span>
+                        <span class="text-green-600">+12% from last hour</span>
+                    </div>
+                </div>
+                
+                <div class="metric-card p-4 rounded-lg">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-600 text-sm">Connection Pool</p>
+                            <p class="text-2xl font-bold text-gray-900" id="connectionPool">0</p>
+                        </div>
+                        <i data-lucide="link" class="w-8 h-8 text-green-500"></i>
+                    </div>
+                    <div class="mt-2 flex items-center text-sm">
+                        <span class="status-indicator status-online"></span>
+                        <span class="text-green-600">85% utilization</span>
+                    </div>
+                </div>
+                
+                <div class="metric-card p-4 rounded-lg">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-600 text-sm">API Requests</p>
+                            <p class="text-2xl font-bold text-gray-900" id="apiRequests">0</p>
+                        </div>
+                        <i data-lucide="zap" class="w-8 h-8 text-yellow-500"></i>
+                    </div>
+                    <div class="mt-2 flex items-center text-sm">
+                        <span class="status-indicator status-warning"></span>
+                        <span class="text-yellow-600">2.3s avg response</span>
+                    </div>
+                </div>
+                
+                <div class="metric-card p-4 rounded-lg">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-600 text-sm">System Health</p>
+                            <p class="text-2xl font-bold text-gray-900" id="systemHealth">98%</p>
+                        </div>
+                        <i data-lucide="heart" class="w-8 h-8 text-red-500"></i>
+                    </div>
+                    <div class="mt-2 flex items-center text-sm">
+                        <span class="status-indicator status-online"></span>
+                        <span class="text-green-600">All systems operational</span>
+                    </div>
+                </div>
+                
+                <!-- Windows Enterprise Status -->
+                <div class="metric-card p-4 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-600 text-sm flex items-center">
+                                🪟 Windows Enterprise
+                            </p>
+                            <p class="text-lg font-bold text-blue-900" id="windowsEnterpriseStatus">Enabled</p>
+                        </div>
+                        <i data-lucide="shield" class="w-8 h-8 text-blue-600"></i>
+                    </div>
+                    <div class="mt-2 text-xs space-y-1">
+                        <div class="flex items-center">
+                            <span class="status-indicator status-online"></span>
+                            <span class="text-blue-700">CRED_PERSIST_ENTERPRISE</span>
+                        </div>
+                        <div class="text-gray-600">
+                            📍 Credential Manager
+                        </div>
+                        <div class="text-gray-600">
+                            🏢 Per-User Scope
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- RBAC Status -->
+                <div class="metric-card p-4 rounded-lg bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-600 text-sm flex items-center">
+                                🛡️ RBAC Control
+                            </p>
+                            <p class="text-lg font-bold text-purple-900" id="rbacStatus">Disabled</p>
+                        </div>
+                        <i data-lucide="shield-check" class="w-8 h-8 text-purple-600"></i>
+                    </div>
+                    <div class="mt-2 text-xs space-y-1">
+                        <div class="flex items-center">
+                            <span id="rbacStatusIndicator" class="status-indicator status-offline"></span>
+                            <span id="rbacStatusText" class="text-red-700">Access Control Off</span>
+                        </div>
+                        <div class="text-gray-600">
+                            👥 All Users
+                        </div>
+                        <div class="text-gray-600">
+                            🔓 No Restrictions
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Role Selector -->
+                <div class="metric-card p-4 rounded-lg bg-gradient-to-br from-indigo-50 to-blue-50 border-indigo-200">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-600 text-sm flex items-center">
+                                👤 Current Role
+                            </p>
+                            <select id="roleSelector" class="mt-1 w-full px-2 py-1 text-sm border border-indigo-300 rounded-md bg-white text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="admin">Admin</option>
+                                <option value="operator">Operator</option>
+                                <option value="viewer">Viewer</option>
+                            </select>
+                        </div>
+                        <i data-lucide="user-check" class="w-8 h-8 text-indigo-600"></i>
+                    </div>
+                    <div class="mt-2 text-xs space-y-1">
+                        <div class="text-gray-600">
+                            📋 Permissions:
+                        </div>
+                        <div id="currentPermissions" class="text-indigo-700 font-medium">
+                            read, write, delete, manage
+                        </div>
+                        <div class="text-gray-600">
+                            🔑 Change role above
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Agent Management -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i data-lucide="user-plus" class="w-5 h-5 mr-2"></i>
+                Agent Management
+            </h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Create New Agent -->
+                <div class="agent-card p-6 rounded-lg">
+                    <h3 class="text-lg font-medium mb-4 flex items-center">
+                        <i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i>
+                        Create New Agent
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Agent Name</label>
+                            <input type="text" id="agentName" placeholder="Enter agent name" 
+                                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Department</label>
+                            <select id="agentDepartment" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="payment-ops">Payment Operations</option>
+                                <option value="phone-intel">Phone Intelligence</option>
+                                <option value="social-ops">Social Operations</option>
+                                <option value="crypto-ops">Crypto Operations</option>
+                                <option value="support">Customer Support</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Device Template</label>
+                            <select id="deviceTemplate" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="standard-mobile">Standard Mobile</option>
+                                <option value="premium-mobile">Premium Mobile</option>
+                                <option value="tablet-device">Tablet Device</option>
+                                <option value="desktop-workstation">Desktop Workstation</option>
+                                <option value="custom-template">Custom Template</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Device Home Configuration</label>
+                            <textarea id="deviceHome" rows="3" placeholder="Enter device home configuration..."
+                                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+                        
+                        <button id="createAgentBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center justify-center">
+                            <i data-lucide="user-plus" class="w-4 h-4 mr-2"></i>
+                            Create Agent
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Agent Selection -->
+                <div class="agent-card p-6 rounded-lg">
+                    <h3 class="text-lg font-medium mb-4 flex items-center">
+                        <i data-lucide="users" class="w-4 h-4 mr-2"></i>
+                        Select Agent
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Available Agents</label>
+                            <select id="agentSelector" size="6" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <!-- Agents will be populated here -->
+                            </select>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-2">
+                            <button id="selectAgentBtn" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-3 rounded-md transition-colors text-sm">
+                                Select
+                            </button>
+                            <button id="deleteAgentBtn" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-3 rounded-md transition-colors text-sm">
+                                Delete
+                            </button>
+                        </div>
+                        
+                        <div class="bg-gray-800 p-3 rounded-md">
+                            <h4 class="text-sm font-medium text-gray-300 mb-2">Selected Agent Info</h4>
+                            <div id="selectedAgentInfo" class="text-xs text-gray-400">
+                                No agent selected
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Device Template Management -->
+                <div class="agent-card p-6 rounded-lg">
+                    <h3 class="text-lg font-medium mb-4 flex items-center">
+                        <i data-lucide="settings" class="w-4 h-4 mr-2"></i>
+                        Device Templates
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Template Library</label>
+                            <select id="templateLibrary" size="4" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="standard-mobile">📱 Standard Mobile - Basic mobile device setup</option>
+                                <option value="premium-mobile">📱 Premium Mobile - Enhanced mobile with VPN</option>
+                                <option value="tablet-device">📱 Tablet Device - Tablet configuration</option>
+                                <option value="desktop-workstation">🖥️ Desktop - Full workstation setup</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Template Details</label>
+                            <div id="templateDetails" class="bg-gray-800 p-3 rounded-md text-xs text-gray-400 h-24 overflow-y-auto">
+                                Select a template to view details
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-2">
+                            <button id="applyTemplateBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-3 rounded-md transition-colors text-sm">
+                                Apply
+                            </button>
+                            <button id="createTemplateBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-3 rounded-md transition-colors text-sm">
+                                New
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Log Management -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i data-lucide="file-text" class="w-5 h-5 mr-2"></i>
+                Log Management & Analytics
+            </h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Log Filters -->
+                <div class="agent-card p-6 rounded-lg">
+                    <h3 class="text-lg font-medium mb-4 flex items-center">
+                        <i data-lucide="filter" class="w-4 h-4 mr-2"></i>
+                        Log Filters
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Log Type</label>
+                            <select id="logTypeFilter" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="all">All Types</option>
+                                <option value="error">Errors Only</option>
+                                <option value="warning">Warnings</option>
+                                <option value="success">Success</option>
+                                <option value="info">Info</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Time Range</label>
+                            <select id="timeRangeFilter" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="all">All Time</option>
+                                <option value="1h">Last Hour</option>
+                                <option value="6h">Last 6 Hours</option>
+                                <option value="24h">Last 24 Hours</option>
+                                <option value="7d">Last 7 Days</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Pattern Search</label>
+                            <input type="text" id="patternSearch" placeholder="Search patterns..." 
+                                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Source</label>
+                            <select id="sourceFilter" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="all">All Sources</option>
+                                <option value="agent">Agent Management</option>
+                                <option value="rbac">RBAC System</option>
+                                <option value="api">DuoPlus API</option>
+                                <option value="system">System</option>
+                            </select>
+                        </div>
+                        
+                        <button id="applyFiltersBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+                            Apply Filters
+                        </button>
+                        
+                        <button id="clearFiltersBtn" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+                            Clear Filters
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Error Analytics -->
+                <div class="agent-card p-6 rounded-lg">
+                    <h3 class="text-lg font-medium mb-4 flex items-center">
+                        <i data-lucide="alert-triangle" class="w-4 h-4 mr-2"></i>
+                        Error Analytics
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-gray-800 p-3 rounded-md">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-300">Total Errors</span>
+                                <span class="text-lg font-bold text-red-400" id="totalErrors">0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-800 p-3 rounded-md">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-300">Error Rate</span>
+                                <span class="text-lg font-bold text-yellow-400" id="errorRate">0%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-800 p-3 rounded-md">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-300">Critical Errors</span>
+                                <span class="text-lg font-bold text-red-500" id="criticalErrors">0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-800 p-3 rounded-md">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-300">Last Error</span>
+                                <span class="text-xs text-gray-400" id="lastErrorTime">Never</span>
+                            </div>
+                        </div>
+                        
+                        <button id="exportErrorReportBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+                            Export Error Report
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Log API Endpoints -->
+                <div class="agent-card p-6 rounded-lg">
+                    <h3 class="text-lg font-medium mb-4 flex items-center">
+                        <i data-lucide="api" class="w-4 h-4 mr-2"></i>
+                        Log API Endpoints
+                    </h3>
+                    
+                    <div class="space-y-3">
+                        <div class="bg-gray-800 p-3 rounded-md">
+                            <div class="text-xs font-mono text-blue-400">GET /api/logs</div>
+                            <div class="text-xs text-gray-400 mt-1">Retrieve all logs with filtering</div>
+                        </div>
+                        
+                        <div class="bg-gray-800 p-3 rounded-md">
+                            <div class="text-xs font-mono text-blue-400">GET /api/logs/errors</div>
+                            <div class="text-xs text-gray-400 mt-1">Get error logs only</div>
+                        </div>
+                        
+                        <div class="bg-gray-800 p-3 rounded-md">
+                            <div class="text-xs font-mono text-blue-400">POST /api/logs/search</div>
+                            <div class="text-xs text-gray-400 mt-1">Search logs by patterns</div>
+                        </div>
+                        
+                        <div class="bg-gray-800 p-3 rounded-md">
+                            <div class="text-xs font-mono text-blue-400">GET /api/logs/export</div>
+                            <div class="text-xs text-gray-400 mt-1">Export logs to file</div>
+                        </div>
+                        
+                        <div class="bg-gray-800 p-3 rounded-md">
+                            <div class="text-xs font-mono text-blue-400">DELETE /api/logs/clear</div>
+                            <div class="text-xs text-gray-400 mt-1">Clear log history</div>
+                        </div>
+                        
+                        <button id="testLogApiBtn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-md transition-colors text-sm">
+                            Test API Endpoints
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Pattern Matching -->
+                <div class="agent-card p-6 rounded-lg">
+                    <h3 class="text-lg font-medium mb-4 flex items-center">
+                        <i data-lucide="search" class="w-4 h-4 mr-2"></i>
+                        Pattern Matching
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Pattern Type</label>
+                            <select id="patternType" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="regex">Regular Expression</option>
+                                <option value="wildcard">Wildcard</option>
+                                <option value="exact">Exact Match</option>
+                                <option value="contains">Contains</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Pattern</label>
+                            <input type="text" id="patternInput" placeholder="Enter pattern..." 
+                                class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Common Patterns</label>
+                            <select id="commonPatterns" class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select pattern...</option>
+                                <option value="error.*failed">Error failures</option>
+                                <option value="agent.*created">Agent creation</option>
+                                <option value="rbac.*denied">RBAC denials</option>
+                                <option value="api.*timeout">API timeouts</option>
+                            </select>
+                        </div>
+                        
+                        <div class="bg-gray-800 p-3 rounded-md">
+                            <div class="text-xs text-gray-400">
+                                <div>Matches: <span id="patternMatches" class="text-green-400 font-bold">0</span></div>
+                                <div>Last matched: <span id="lastMatched" class="text-blue-400">Never</span></div>
+                            </div>
+                        </div>
+                        
+                        <button id="searchPatternBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+                            Search Pattern
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Agent Connection Pool -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i data-lucide="users" class="w-5 h-5 mr-2"></i>
+                Agent Connection Pool
+            </h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Active Connections -->
+                <div class="agent-card p-6 rounded-lg">
+                    <h3 class="text-lg font-medium mb-4 flex items-center">
+                        <i data-lucide="link-2" class="w-4 h-4 mr-2"></i>
+                        Active Connections
+                    </h3>
+                    <div id="connectionPoolList" class="space-y-3 max-h-96 overflow-y-auto">
+                        <!-- Connections will be populated here -->
+                    </div>
+                </div>
+                
+                <!-- Connection Statistics -->
+                <div class="agent-card p-6 rounded-lg">
+                    <h3 class="text-lg font-medium mb-4 flex items-center">
+                        <i data-lucide="bar-chart-2" class="w-4 h-4 mr-2"></i>
+                        Pool Statistics
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="poolChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-time Monitoring -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i data-lucide="monitor" class="w-5 h-5 mr-2"></i>
+                Real-time Monitoring
+            </h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- API Performance -->
+                <div class="agent-card p-6 rounded-lg">
+                    <h3 class="text-lg font-medium mb-4 flex items-center">
+                        <i data-lucide="trending-up" class="w-4 h-4 mr-2"></i>
+                        API Performance
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Agent Activity -->
+                <div class="agent-card p-6 rounded-lg">
+                    <h3 class="text-lg font-medium mb-4 flex items-center">
+                        <i data-lucide="activity" class="w-4 h-4 mr-2"></i>
+                        Agent Activity
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Integration Controls -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i data-lucide="settings" class="w-5 h-5 mr-2"></i>
+                Integration Controls
+            </h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Agent Management -->
+                <div class="agent-card p-6 rounded-lg">
+                    <h3 class="text-lg font-medium mb-4 flex items-center">
+                        <i data-lucide="user-plus" class="w-4 h-4 mr-2"></i>
+                        Agent Management
+                    </h3>
+                    <div class="space-y-3">
+                        <button id="createAgentBtn" class="w-full bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg transition-colors">
+                            Create New Agent
+                        </button>
+                        <button id="batchCreateBtn" class="w-full bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg transition-colors">
+                            Batch Create (10)
+                        </button>
+                        <button id="assessRiskBtn" class="w-full bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-lg transition-colors">
+                            Assess Risk
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Connection Pool Settings -->
+                <div class="agent-card p-6 rounded-lg">
+                    <h3 class="text-lg font-medium mb-4 flex items-center">
+                        <i data-lucide="sliders" class="w-4 h-4 mr-2"></i>
+                        Pool Settings
+                    </h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Max Connections</label>
+                            <input type="number" id="maxConnections" value="50" class="w-full bg-gray-700 px-3 py-2 rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Timeout (ms)</label>
+                            <input type="number" id="connectionTimeout" value="5000" class="w-full bg-gray-700 px-3 py-2 rounded">
+                        </div>
+                        <button id="updatePoolBtn" class="w-full bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded-lg transition-colors">
+                            Update Settings
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- System Actions -->
+                <div class="agent-card p-6 rounded-lg">
+                    <h3 class="text-lg font-medium mb-4 flex items-center">
+                        <i data-lucide="power" class="w-4 h-4 mr-2"></i>
+                        System Actions
+                    </h3>
+                    <div class="space-y-3">
+                        <button id="restartPoolBtn" class="w-full bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-lg transition-colors">
+                            Restart Pool
+                        </button>
+                        <button id="clearCacheBtn" class="w-full bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg transition-colors">
+                            Clear Cache
+                        </button>
+                        <button id="exportLogsBtn" class="w-full bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded-lg transition-colors">
+                            Export Logs
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Activity Log -->
+        <section>
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <i data-lucide="file-text" class="w-5 h-5 mr-2"></i>
+                Activity Log
+            </h2>
+            <div class="agent-card p-6 rounded-lg">
+                <div id="activityLog" class="space-y-2 max-h-64 overflow-y-auto">
+                    <!-- Log entries will be populated here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-full transition-transform duration-300 z-50">
+        <div class="flex items-center">
+            <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>
+            <span id="toastMessage">Operation successful</span>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Connection Pool Manager using Bun HTTP fetch
+        class ConnectionPoolManager {
+            constructor() {
+                this.connections = new Map();
+                this.maxConnections = 50;
+                this.timeout = 5000;
+                this.baseUrl = 'http://localhost:3002';
+                this.apiKey = 'demo-key-super-admin';
+                
+                // Windows Enterprise Configuration
+                this.windowsEnterprise = {
+                    enabled: navigator.platform.includes('Win'),
+                    credentialManagerPath: 'Control Panel → Credential Manager → Windows Credentials',
+                    persistence: 'CRED_PERSIST_ENTERPRISE',
+                    encryption: 'Windows Data Protection API'
+                };
+                
+                // RBAC Configuration
+                this.rbac = {
+                    enabled: false,
+                    permissions: {
+                        admin: ['read', 'write', 'delete', 'manage'],
+                        operator: ['read', 'write'],
+                        viewer: ['read']
+                    },
+                    currentRole: 'admin', // Default role for demo
+                    restrictedEndpoints: ['/api/dashboard/delete', '/api/dashboard/manage']
+                };
+                
+                // Agent Management
+                this.agents = new Map();
+                this.deviceTemplates = new Map();
+                this.selectedAgent = null;
+                
+                // Enhanced Logging System
+                this.logs = [];
+                this.errorLogs = [];
+                this.logFilters = {
+                    type: 'all',
+                    timeRange: 'all',
+                    pattern: '',
+                    source: 'all'
+                };
+                this.logAnalytics = {
+                    totalErrors: 0,
+                    errorRate: 0,
+                    criticalErrors: 0,
+                    lastErrorTime: null
+                };
+                
+                // Dynamic Scope Management
+                this.scope = {
+                    environment: 'production',
+                    tier: 'enterprise',
+                    architecture: 'multi-tenant',
+                    features: {
+                        windowsEnterprise: this.windowsEnterprise.enabled,
+                        rbac: this.rbac.enabled,
+                        apiVersion: '2.0',
+                        securityLevel: 'high'
+                    }
+                };
+                
+                // Initialize device templates
+                this.initializeDeviceTemplates();
+                
+                // Initialize Windows enterprise mode if on Windows
+                if (this.windowsEnterprise.enabled) {
+                    console.log('🪟 Windows Enterprise Mode Enabled');
+                    console.log(`📍 Credential Manager: ${this.windowsEnterprise.credentialManagerPath}`);
+                    console.log(`🔐 Persistence: ${this.windowsEnterprise.persistence}`);
+                    console.log(`🏢 Encryption: ${this.windowsEnterprise.encryption}`);
+                }
+            }
+
+            async createConnection(agentId, agentData) {
+                if (this.connections.size >= this.maxConnections) {
+                    throw new Error('Connection pool full');
+                }
+
+                const connection = {
+                    id: agentId,
+                    data: agentData,
+                    created: new Date(),
+                    lastActive: new Date(),
+                    status: 'active',
+                    requests: 0,
+                    responseTime: 0
+                };
+
+                this.connections.set(agentId, connection);
+                await this.testConnection(agentId);
+                return connection;
+            }
+
+            async testConnection(agentId) {
+                const startTime = Date.now();
+                try {
+                    const response = await this.fetchWithTimeout('/api/dashboard/health', {
+                        headers: {
+                            'X-API-Key': this.apiKey,
+                            'User-Agent': `DuoPlus-Agent-${agentId}`
+                        }
+                    });
+                    
+                    const connection = this.connections.get(agentId);
+                    if (connection) {
+                        connection.responseTime = Date.now() - startTime;
+                        connection.lastActive = new Date();
+                        connection.status = 'active';
+                    }
+                    return true;
+                } catch (error) {
+                    const connection = this.connections.get(agentId);
+                    if (connection) {
+                        connection.status = 'error';
+                    }
+                    return false;
+                }
+            }
+
+            async fetchWithTimeout(url, options = {}) {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
+                try {
+                    const response = await fetch(this.baseUrl + url, {
+                        ...options,
+                        signal: controller.signal
+                    });
+                    clearTimeout(timeoutId);
+                    return response;
+                } catch (error) {
+                    clearTimeout(timeoutId);
+                    throw error;
+                }
+            }
+
+            removeConnection(agentId) {
+                return this.connections.delete(agentId);
+            }
+
+            getActiveConnections() {
+                return Array.from(this.connections.values()).filter(conn => conn.status === 'active');
+            }
+
+            getConnectionStats() {
+                const connections = Array.from(this.connections.values());
+                return {
+                    total: connections.length,
+                    active: connections.filter(c => c.status === 'active').length,
+                    error: connections.filter(c => c.status === 'error').length,
+                    avgResponseTime: connections.reduce((sum, c) => sum + c.responseTime, 0) / connections.length || 0
+                };
+            }
+
+            // RBAC Management Methods
+            toggleRBAC(enabled) {
+                this.rbac.enabled = enabled;
+                console.log(`🛡️ RBAC ${enabled ? 'ENABLED' : 'DISABLED'}`);
+                
+                if (enabled) {
+                    console.log('📋 Role Permissions:');
+                    Object.entries(this.rbac.permissions).forEach(([role, perms]) => {
+                        console.log(`   ${role}: ${perms.join(', ')}`);
+                    });
+                }
+                
+                return this.rbac.enabled;
+            }
+
+            checkPermission(permission) {
+                if (!this.rbac.enabled) {
+                    return true; // Allow all if RBAC is disabled
+                }
+                
+                const rolePermissions = this.rbac.permissions[this.rbac.currentRole];
+                return rolePermissions ? rolePermissions.includes(permission) : false;
+            }
+
+            setCurrentRole(role) {
+                if (this.rbac.permissions[role]) {
+                    this.rbac.currentRole = role;
+                    console.log(`👤 Role changed to: ${role}`);
+                    return true;
+                }
+                return false;
+            }
+
+            getRBACStatus() {
+                return {
+                    enabled: this.rbac.enabled,
+                    currentRole: this.rbac.currentRole,
+                    permissions: this.rbac.permissions[this.rbac.currentRole] || [],
+                    availableRoles: Object.keys(this.rbac.permissions)
+                };
+            }
+
+            // Agent Management Methods
+            initializeDeviceTemplates() {
+                this.deviceTemplates.set('standard-mobile', {
+                    name: 'Standard Mobile',
+                    description: 'Basic mobile device setup with standard configuration',
+                    config: {
+                        os: 'Android 13',
+                        resolution: '1080x2400',
+                        memory: '6GB',
+                        storage: '128GB',
+                        vpn: false,
+                        proxy: false
+                    }
+                });
+                
+                this.deviceTemplates.set('premium-mobile', {
+                    name: 'Premium Mobile',
+                    description: 'Enhanced mobile device with VPN and proxy support',
+                    config: {
+                        os: 'Android 14',
+                        resolution: '1440x3120',
+                        memory: '12GB',
+                        storage: '256GB',
+                        vpn: true,
+                        proxy: true
+                    }
+                });
+                
+                this.deviceTemplates.set('tablet-device', {
+                    name: 'Tablet Device',
+                    description: 'Tablet configuration for larger screen operations',
+                    config: {
+                        os: 'Android 13',
+                        resolution: '1600x2560',
+                        memory: '8GB',
+                        storage: '256GB',
+                        vpn: true,
+                        proxy: false
+                    }
+                });
+                
+                this.deviceTemplates.set('desktop-workstation', {
+                    name: 'Desktop Workstation',
+                    description: 'Full desktop setup for complex operations',
+                    config: {
+                        os: 'Windows 11',
+                        resolution: '1920x1080',
+                        memory: '16GB',
+                        storage: '512GB',
+                        vpn: true,
+                        proxy: true
+                    }
+                });
+            }
+
+            async createAgent(agentData) {
+                // Check RBAC permissions
+                if (!this.checkPermission('write')) {
+                    throw new Error('Insufficient permissions to create agents');
+                }
+                
+                const agentId = `AG${Date.now().toString(36).toUpperCase()}`;
+                const agent = {
+                    id: agentId,
+                    name: agentData.name,
+                    department: agentData.department,
+                    deviceTemplate: agentData.deviceTemplate,
+                    deviceHome: agentData.deviceHome,
+                    status: 'created',
+                    createdAt: new Date(),
+                    createdBy: this.rbac.currentRole
+                };
+                
+                // Store agent
+                this.agents.set(agentId, agent);
+                
+                // Call DuoPlus API to create agent device
+                try {
+                    await this.callDuoPlusAPI('/agents/create', {
+                        agentId,
+                        name: agentData.name,
+                        template: agentData.deviceTemplate,
+                        config: agentData.deviceHome
+                    });
+                    
+                    agent.status = 'active';
+                    console.log(`✅ Agent created: ${agentId} - ${agentData.name}`);
+                } catch (error) {
+                    agent.status = 'error';
+                    console.error(`❌ Failed to create agent in DuoPlus:`, error);
+                }
+                
+                return agent;
+            }
+
+            selectAgent(agentId) {
+                if (!this.checkPermission('read')) {
+                    throw new Error('Insufficient permissions to select agents');
+                }
+                
+                const agent = this.agents.get(agentId);
+                if (agent) {
+                    this.selectedAgent = agent;
+                    console.log(`👤 Selected agent: ${agent.name} (${agentId})`);
+                    return agent;
+                }
+                return null;
+            }
+
+            async deleteAgent(agentId) {
+                // Check RBAC permissions
+                if (!this.checkPermission('delete')) {
+                    throw new Error('Insufficient permissions to delete agents');
+                }
+                
+                const agent = this.agents.get(agentId);
+                if (!agent) {
+                    throw new Error('Agent not found');
+                }
+                
+                try {
+                    // Call DuoPlus API to delete agent device
+                    await this.callDuoPlusAPI('/agents/delete', { agentId });
+                    
+                    // Remove from local storage
+                    this.agents.delete(agentId);
+                    
+                    if (this.selectedAgent?.id === agentId) {
+                        this.selectedAgent = null;
+                    }
+                    
+                    console.log(`🗑️ Agent deleted: ${agentId} - ${agent.name}`);
+                    return true;
+                } catch (error) {
+                    console.error(`❌ Failed to delete agent from DuoPlus:`, error);
+                    throw error;
+                }
+            }
+
+            getAgents() {
+                if (!this.checkPermission('read')) {
+                    throw new Error('Insufficient permissions to view agents');
+                }
+                
+                return Array.from(this.agents.values());
+            }
+
+            getDeviceTemplate(templateId) {
+                return this.deviceTemplates.get(templateId);
+            }
+
+            getDeviceTemplates() {
+                return Array.from(this.deviceTemplates.entries()).map(([id, template]) => ({
+                    id,
+                    ...template
+                }));
+            }
+
+            async callDuoPlusAPI(endpoint, data) {
+                const url = `${this.baseUrl}/api${endpoint}`;
+                
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-API-Key': this.apiKey,
+                            'Authorization': `Bearer ${this.apiKey}`
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`API call failed: ${response.status} ${response.statusText}`);
+                    }
+                    
+                    return await response.json();
+                } catch (error) {
+                    console.error(`DuoPlus API Error (${endpoint}):`, error);
+                    this.logError(`DuoPlus API Error (${endpoint}): ${error.message}`, 'api');
+                    throw error;
+                }
+            }
+
+            // Enhanced Logging Methods
+            addLog(message, type = 'info', source = 'system') {
+                const logEntry = {
+                    id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+                    message,
+                    type,
+                    source,
+                    timestamp: new Date(),
+                    metadata: {
+                        userAgent: navigator.userAgent,
+                        platform: navigator.platform,
+                        role: this.rbac.currentRole,
+                        agentCount: this.agents.size
+                    }
+                };
+                
+                this.logs.unshift(logEntry);
+                
+                // Keep only last 1000 logs
+                if (this.logs.length > 1000) {
+                    this.logs = this.logs.slice(0, 1000);
+                }
+                
+                // Track errors
+                if (type === 'error') {
+                    this.errorLogs.unshift(logEntry);
+                    this.logAnalytics.totalErrors++;
+                    this.logAnalytics.lastErrorTime = new Date();
+                    
+                    if (message.includes('critical') || message.includes('failed')) {
+                        this.logAnalytics.criticalErrors++;
+                    }
+                }
+                
+                // Update error rate
+                this.updateErrorRate();
+                
+                return logEntry;
+            }
+
+            logError(message, source = 'system') {
+                return this.addLog(message, 'error', source);
+            }
+
+            logWarning(message, source = 'system') {
+                return this.addLog(message, 'warning', source);
+            }
+
+            logSuccess(message, source = 'system') {
+                return this.addLog(message, 'success', source);
+            }
+
+            logInfo(message, source = 'system') {
+                return this.addLog(message, 'info', source);
+            }
+
+            updateErrorRate() {
+                const totalLogs = this.logs.length;
+                const errorCount = this.logs.filter(log => log.type === 'error').length;
+                this.logAnalytics.errorRate = totalLogs > 0 ? (errorCount / totalLogs * 100).toFixed(1) : 0;
+            }
+
+            getLogs(filters = {}) {
+                let filteredLogs = [...this.logs];
+                
+                // Filter by type
+                if (filters.type && filters.type !== 'all') {
+                    filteredLogs = filteredLogs.filter(log => log.type === filters.type);
+                }
+                
+                // Filter by source
+                if (filters.source && filters.source !== 'all') {
+                    filteredLogs = filteredLogs.filter(log => log.source === filters.source);
+                }
+                
+                // Filter by time range
+                if (filters.timeRange && filters.timeRange !== 'all') {
+                    const now = new Date();
+                    let cutoffTime;
+                    
+                    switch (filters.timeRange) {
+                        case '1h':
+                            cutoffTime = new Date(now.getTime() - 60 * 60 * 1000);
+                            break;
+                        case '6h':
+                            cutoffTime = new Date(now.getTime() - 6 * 60 * 60 * 1000);
+                            break;
+                        case '24h':
+                            cutoffTime = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                            break;
+                        case '7d':
+                            cutoffTime = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                            break;
+                    }
+                    
+                    if (cutoffTime) {
+                        filteredLogs = filteredLogs.filter(log => log.timestamp >= cutoffTime);
+                    }
+                }
+                
+                // Filter by pattern
+                if (filters.pattern) {
+                    const pattern = filters.pattern.toLowerCase();
+                    filteredLogs = filteredLogs.filter(log => 
+                        log.message.toLowerCase().includes(pattern)
+                    );
+                }
+                
+                return filteredLogs;
+            }
+
+            searchLogs(pattern, patternType = 'contains') {
+                const logs = this.getLogs();
+                const matches = [];
+                
+                logs.forEach(log => {
+                    let isMatch = false;
+                    
+                    switch (patternType) {
+                        case 'regex':
+                            try {
+                                const regex = new RegExp(pattern, 'i');
+                                isMatch = regex.test(log.message);
+                            } catch (e) {
+                                // Invalid regex
+                            }
+                            break;
+                        case 'wildcard':
+                            const wildcardPattern = pattern.replace(/\*/g, '.*');
+                            const wildcardRegex = new RegExp(wildcardPattern, 'i');
+                            isMatch = wildcardRegex.test(log.message);
+                            break;
+                        case 'exact':
+                            isMatch = log.message === pattern;
+                            break;
+                        case 'contains':
+                        default:
+                            isMatch = log.message.toLowerCase().includes(pattern.toLowerCase());
+                            break;
+                    }
+                    
+                    if (isMatch) {
+                        matches.push(log);
+                    }
+                });
+                
+                return matches;
+            }
+
+            getErrorLogs() {
+                return this.logs.filter(log => log.type === 'error');
+            }
+
+            getLogAnalytics() {
+                return { ...this.logAnalytics };
+            }
+
+            exportLogs(format = 'json') {
+                const logs = this.getLogs();
+                
+                switch (format) {
+                    case 'json':
+                        return JSON.stringify(logs, null, 2);
+                    case 'csv':
+                        const headers = ['ID', 'Message', 'Type', 'Source', 'Timestamp'];
+                        const csvRows = [headers.join(',')];
+                        
+                        logs.forEach(log => {
+                            const row = [
+                                log.id,
+                                `"${log.message.replace(/"/g, '""')}"`,
+                                log.type,
+                                log.source,
+                                log.timestamp.toISOString()
+                            ];
+                            csvRows.push(row.join(','));
+                        });
+                        
+                        return csvRows.join('\n');
+                    case 'txt':
+                        return logs.map(log => 
+                            `[${log.timestamp.toISOString()}] [${log.type.toUpperCase()}] [${log.source}] ${log.message}`
+                        ).join('\n');
+                    default:
+                        return logs;
+                }
+            }
+
+            clearLogs() {
+                this.logs = [];
+                this.errorLogs = [];
+                this.logAnalytics = {
+                    totalErrors: 0,
+                    errorRate: 0,
+                    criticalErrors: 0,
+                    lastErrorTime: null
+                };
+            }
+
+            // Log API Endpoints Simulation
+            async handleLogAPIRequest(method, endpoint, data = {}) {
+                switch (method.toUpperCase()) {
+                    case 'GET':
+                        if (endpoint === '/api/logs') {
+                            return { success: true, data: this.getLogs(data.filters || {}) };
+                        } else if (endpoint === '/api/logs/errors') {
+                            return { success: true, data: this.getErrorLogs() };
+                        } else if (endpoint === '/api/logs/analytics') {
+                            return { success: true, data: this.getLogAnalytics() };
+                        } else if (endpoint === '/api/logs/export') {
+                            const format = data.format || 'json';
+                            const exportData = this.exportLogs(format);
+                            return { success: true, data: exportData, format };
+                        }
+                        break;
+                        
+                    case 'POST':
+                        if (endpoint === '/api/logs/search') {
+                            const { pattern, patternType } = data;
+                            const matches = this.searchLogs(pattern, patternType);
+                            return { success: true, data: matches, count: matches.length };
+                        } else if (endpoint === '/api/logs/create') {
+                            const { message, type, source } = data;
+                            const log = this.addLog(message, type, source);
+                            return { success: true, data: log };
+                        }
+                        break;
+                        
+                    case 'DELETE':
+                        if (endpoint === '/api/logs/clear') {
+                            this.clearLogs();
+                            return { success: true, message: 'Logs cleared successfully' };
+                        }
+                        break;
+                }
+                
+                throw new Error(`Unknown API endpoint: ${method} ${endpoint}`);
+            }
+
+            // Scope Management Methods
+            updateScope(updates) {
+                Object.assign(this.scope, updates);
+                this.updateScopeBadges();
+                this.logInfo(`Scope updated: ${JSON.stringify(updates)}`, 'system');
+            }
+
+            updateScopeBadges() {
+                // Update main scope badges
+                const enterpriseBadge = document.querySelector('.scope-enterprise');
+                const productionBadge = document.querySelector('.scope-production');
+                const multiTenantBadge = document.querySelector('.scope-multi-tenant');
+                
+                if (enterpriseBadge) {
+                    enterpriseBadge.textContent = `[${this.scope.tier.toUpperCase()}]`;
+                }
+                
+                if (productionBadge) {
+                    productionBadge.textContent = `[${this.scope.environment.toUpperCase()}]`;
+                }
+                
+                if (multiTenantBadge) {
+                    multiTenantBadge.textContent = `[${this.scope.architecture.toUpperCase().replace('-', '-')}]`;
+                }
+                
+                // Update context badges
+                this.updateContextBadges();
+            }
+
+            updateContextBadges() {
+                const contextBadges = document.querySelectorAll('.scope-context-badge');
+                
+                // Update Windows Enterprise badge
+                if (contextBadges[0]) {
+                    contextBadges[0].textContent = this.scope.features.windowsEnterprise ? 
+                        'Windows Enterprise' : 'Windows Standard';
+                    contextBadges[0].style.color = this.scope.features.windowsEnterprise ? '#3b82f6' : '#3b82f6';
+                }
+                
+                // Update RBAC badge
+                if (contextBadges[1]) {
+                    contextBadges[1].textContent = this.scope.features.rbac ? 
+                        'RBAC Enabled' : 'RBAC Disabled';
+                    contextBadges[1].style.color = this.scope.features.rbac ? '#3b82f6' : '#3b82f6';
+                }
+                
+                // Update API version badge
+                if (contextBadges[2]) {
+                    contextBadges[2].textContent = `API v${this.scope.features.apiVersion}`;
+                }
+            }
+
+            getScope() {
+                return { ...this.scope };
+            }
+
+            setEnvironment(environment) {
+                const validEnvironments = ['development', 'staging', 'production', 'testing'];
+                if (validEnvironments.includes(environment)) {
+                    this.scope.environment = environment;
+                    this.updateScopeBadges();
+                    this.logInfo(`Environment changed to: ${environment}`, 'system');
+                }
+            }
+
+            setTier(tier) {
+                const validTiers = ['basic', 'professional', 'enterprise', 'custom'];
+                if (validTiers.includes(tier)) {
+                    this.scope.tier = tier;
+                    this.updateScopeBadges();
+                    this.logInfo(`Tier changed to: ${tier}`, 'system');
+                }
+            }
+
+            setArchitecture(architecture) {
+                const validArchitectures = ['single-tenant', 'multi-tenant', 'hybrid'];
+                if (validArchitectures.includes(architecture)) {
+                    this.scope.architecture = architecture;
+                    this.updateScopeBadges();
+                    this.logInfo(`Architecture changed to: ${architecture}`, 'system');
+                }
+            }
+
+            toggleFeature(feature) {
+                if (this.scope.features.hasOwnProperty(feature)) {
+                    this.scope.features[feature] = !this.scope.features[feature];
+                    this.updateScopeBadges();
+                    this.logInfo(`Feature ${feature} ${this.scope.features[feature] ? 'enabled' : 'disabled'}`, 'system');
+                }
+            }
+        }
+
+        // Initialize connection pool
+        const poolManager = new ConnectionPoolManager();
+
+        // Chart instances
+        let poolChart, performanceChart, activityChart;
+
+        // Initialize dashboard
+        async function initializeDashboard() {
+            await loadMockData();
+            initializeCharts();
+            setupEventListeners();
+            startRealTimeUpdates();
+            updateWindowsEnterpriseStatus();
+            updateRBACStatus();
+            updateRoleDisplay();
+            updateAgentList();
+            updateTemplateLibrary();
+            updateLogDisplay();
+            updateErrorAnalytics();
+            updateScopeBadges();
+            addLogEntry('Dashboard initialized', 'success');
+            poolManager.logSuccess('Dashboard initialized successfully', 'system');
+        }
+
+        // Update Windows Enterprise Status
+        function updateWindowsEnterpriseStatus() {
+            const statusElement = document.getElementById('windowsEnterpriseStatus');
+            const isWindows = navigator.platform.includes('Win');
+            
+            if (isWindows) {
+                statusElement.textContent = 'Enabled';
+                statusElement.className = 'text-lg font-bold text-green-700';
+                addLogEntry('🪟 Windows Enterprise Mode: CRED_PERSIST_ENTERPRISE enabled', 'info');
+            } else {
+                statusElement.textContent = 'N/A';
+                statusElement.className = 'text-lg font-bold text-gray-500';
+                addLogEntry('Windows Enterprise Mode: Not available on this platform', 'info');
+            }
+        }
+
+        // Update RBAC Status
+        function updateRBACStatus() {
+            const statusElement = document.getElementById('rbacStatus');
+            const indicatorElement = document.getElementById('rbacStatusIndicator');
+            const textElement = document.getElementById('rbacStatusText');
+            const toggleElement = document.getElementById('rbacToggle');
+            
+            const rbacStatus = poolManager.getRBACStatus();
+            
+            if (rbacStatus.enabled) {
+                statusElement.textContent = 'Enabled';
+                statusElement.className = 'text-lg font-bold text-green-700';
+                indicatorElement.className = 'status-indicator status-online';
+                textElement.textContent = 'Access Control Active';
+                textElement.className = 'text-green-700';
+                toggleElement.checked = true;
+                addLogEntry('🛡️ RBAC Enabled - Role-based access control is active', 'info');
+            } else {
+                statusElement.textContent = 'Disabled';
+                statusElement.className = 'text-lg font-bold text-red-700';
+                indicatorElement.className = 'status-indicator status-offline';
+                textElement.textContent = 'Access Control Off';
+                textElement.className = 'text-red-700';
+                toggleElement.checked = false;
+                addLogEntry('🔓 RBAC Disabled - All access permissions granted', 'warning');
+            }
+        }
+
+        // Update Role Display
+        function updateRoleDisplay() {
+            const roleSelector = document.getElementById('roleSelector');
+            const permissionsElement = document.getElementById('currentPermissions');
+            
+            const rbacStatus = poolManager.getRBACStatus();
+            
+            // Update role selector
+            roleSelector.value = rbacStatus.currentRole;
+            
+            // Update permissions display
+            const permissions = rbacStatus.permissions.join(', ');
+            permissionsElement.textContent = permissions;
+            
+            // Update role selector state based on RBAC status
+            roleSelector.disabled = !rbacStatus.enabled;
+            
+            if (rbacStatus.enabled) {
+                roleSelector.className = 'mt-1 w-full px-2 py-1 text-sm border border-indigo-300 rounded-md bg-white text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500';
+                addLogEntry(`👤 Current role: ${rbacStatus.currentRole} (${permissions})`, 'info');
+            } else {
+                roleSelector.className = 'mt-1 w-full px-2 py-1 text-sm border border-gray-300 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed';
+                addLogEntry('🔓 Role selection disabled - RBAC is off', 'info');
+            }
+        }
+
+        // Load mock data
+        async function loadMockData() {
+            // Simulate agent connections
+            const mockAgents = [
+                { id: 'AG001', name: 'Alice Johnson', department: 'payment-ops', status: 'active' },
+                { id: 'AG002', name: 'Bob Smith', department: 'phone-intel', status: 'active' },
+                { id: 'AG003', name: 'Carol Davis', department: 'social-ops', status: 'active' },
+                { id: 'AG004', name: 'David Wilson', department: 'crypto-ops', status: 'warning' },
+                { id: 'AG005', name: 'Eva Brown', department: 'payment-ops', status: 'active' }
+            ];
+
+            for (const agent of mockAgents) {
+                await poolManager.createConnection(agent.id, agent);
+            }
+
+            updateMetrics();
+            updateConnectionPool();
+        }
+
+        // Update metrics
+        function updateMetrics() {
+            const stats = poolManager.getConnectionStats();
+            document.getElementById('activeAgents').textContent = stats.active;
+            document.getElementById('connectionPool').textContent = stats.total;
+            document.getElementById('apiRequests').textContent = Math.floor(Math.random() * 10000) + 5000;
+            document.getElementById('systemHealth').textContent = Math.floor(Math.random() * 5) + 95;
+        }
+
+        // Update connection pool display
+        function updateConnectionPool() {
+            const connections = poolManager.getActiveConnections();
+            const poolList = document.getElementById('connectionPoolList');
+            
+            poolList.innerHTML = connections.map(conn => `
+                <div class="connection-pool-item p-3 rounded-lg">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="font-medium">${conn.data.name}</p>
+                            <p class="text-sm text-gray-400">${conn.data.department}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="status-indicator status-${conn.status}"></span>
+                            <p class="text-sm">${conn.responseTime}ms</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize charts
+        function initializeCharts() {
+            // Pool Statistics Chart
+            const poolCtx = document.getElementById('poolChart').getContext('2d');
+            poolChart = new Chart(poolCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Active', 'Idle', 'Error'],
+                    datasets: [{
+                        data: [3, 1, 1],
+                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Performance Chart
+            const perfCtx = document.getElementById('performanceChart').getContext('2d');
+            performanceChart = new Chart(perfCtx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 10}, (_, i) => `${i}s ago`),
+                    datasets: [{
+                        label: 'Response Time (ms)',
+                        data: Array.from({length: 10}, () => Math.random() * 100 + 50),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Activity Chart
+            const activityCtx = document.getElementById('activityChart').getContext('2d');
+            activityChart = new Chart(activityCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Payment Ops', 'Phone Intel', 'Social Ops', 'Crypto Ops'],
+                    datasets: [{
+                        label: 'Active Agents',
+                        data: [2, 1, 1, 1],
+                        backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#8b5cf6']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Log Management Event Listeners
+            document.getElementById('applyFiltersBtn').addEventListener('click', () => {
+                const filters = {
+                    type: document.getElementById('logTypeFilter').value,
+                    timeRange: document.getElementById('timeRangeFilter').value,
+                    pattern: document.getElementById('patternSearch').value,
+                    source: document.getElementById('sourceFilter').value
+                };
+                
+                const filteredLogs = poolManager.getLogs(filters);
+                updateLogDisplay(filteredLogs);
+                
+                showToast(`📊 Applied filters: ${filteredLogs.length} logs found`, 'success');
+                poolManager.logInfo(`Filters applied: ${filteredLogs.length} logs`, 'system');
+            });
+            
+            document.getElementById('clearFiltersBtn').addEventListener('click', () => {
+                document.getElementById('logTypeFilter').value = 'all';
+                document.getElementById('timeRangeFilter').value = 'all';
+                document.getElementById('patternSearch').value = '';
+                document.getElementById('sourceFilter').value = 'all';
+                
+                const allLogs = poolManager.getLogs();
+                updateLogDisplay(allLogs);
+                
+                showToast('🔄 Filters cleared', 'info');
+                poolManager.logInfo('Log filters cleared', 'system');
+            });
+            
+            document.getElementById('exportErrorReportBtn').addEventListener('click', () => {
+                const errorLogs = poolManager.getErrorLogs();
+                const exportData = poolManager.exportLogs('json');
+                
+                // Create download link
+                const blob = new Blob([exportData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `error-report-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showToast(`📁 Error report exported: ${errorLogs.length} errors`, 'success');
+                poolManager.logSuccess(`Error report exported: ${errorLogs.length} errors`, 'system');
+            });
+            
+            document.getElementById('testLogApiBtn').addEventListener('click', async () => {
+                try {
+                    showToast('🧪 Testing Log API endpoints...', 'info');
+                    
+                    // Test GET /api/logs
+                    const logsResponse = await poolManager.handleLogAPIRequest('GET', '/api/logs');
+                    console.log('Logs API Response:', logsResponse);
+                    
+                    // Test GET /api/logs/errors
+                    const errorsResponse = await poolManager.handleLogAPIRequest('GET', '/api/logs/errors');
+                    console.log('Errors API Response:', errorsResponse);
+                    
+                    // Test POST /api/logs/search
+                    const searchResponse = await poolManager.handleLogAPIRequest('POST', '/api/logs/search', {
+                        pattern: 'error',
+                        patternType: 'contains'
+                    });
+                    console.log('Search API Response:', searchResponse);
+                    
+                    showToast('✅ All Log API endpoints tested successfully', 'success');
+                    poolManager.logSuccess('Log API endpoints tested successfully', 'api');
+                    
+                } catch (error) {
+                    showToast(`❌ API test failed: ${error.message}`, 'error');
+                    poolManager.logError(`Log API test failed: ${error.message}`, 'api');
+                }
+            });
+            
+            document.getElementById('commonPatterns').addEventListener('change', (event) => {
+                const pattern = event.target.value;
+                if (pattern) {
+                    document.getElementById('patternInput').value = pattern;
+                }
+            });
+            
+            document.getElementById('searchPatternBtn').addEventListener('click', () => {
+                const pattern = document.getElementById('patternInput').value;
+                const patternType = document.getElementById('patternType').value;
+                
+                if (!pattern) {
+                    showToast('❌ Please enter a pattern to search', 'error');
+                    return;
+                }
+                
+                try {
+                    const matches = poolManager.searchLogs(pattern, patternType);
+                    
+                    // Update pattern matching stats
+                    document.getElementById('patternMatches').textContent = matches.length;
+                    document.getElementById('lastMatched').textContent = 
+                        matches.length > 0 ? new Date().toLocaleTimeString() : 'Never';
+                    
+                    // Update log display with matches
+                    updateLogDisplay(matches);
+                    
+                    showToast(`🔍 Pattern search complete: ${matches.length} matches`, 'success');
+                    poolManager.logInfo(`Pattern search: "${pattern}" found ${matches.length} matches`, 'system');
+                    
+                } catch (error) {
+                    showToast(`❌ Pattern search failed: ${error.message}`, 'error');
+                    poolManager.logError(`Pattern search failed: ${error.message}`, 'system');
+                }
+            });
+
+            // Agent Management Event Listeners
+            document.getElementById('createAgentBtn').addEventListener('click', async () => {
+                const name = document.getElementById('agentName').value;
+                const department = document.getElementById('agentDepartment').value;
+                const deviceTemplate = document.getElementById('deviceTemplate').value;
+                const deviceHome = document.getElementById('deviceHome').value;
+                
+                if (!name) {
+                    showToast('❌ Please enter an agent name', 'error');
+                    return;
+                }
+                
+                try {
+                    const agent = await poolManager.createAgent({
+                        name,
+                        department,
+                        deviceTemplate,
+                        deviceHome: deviceHome || 'Default configuration'
+                    });
+                    
+                    showToast(`✅ Agent created: ${agent.name} (${agent.id})`, 'success');
+                    addLogEntry(`Agent created: ${agent.name} (${agent.id})`, 'success');
+                    
+                    // Clear form
+                    document.getElementById('agentName').value = '';
+                    document.getElementById('deviceHome').value = '';
+                    
+                    // Update agent list
+                    updateAgentList();
+                    
+                } catch (error) {
+                    showToast(`❌ Failed to create agent: ${error.message}`, 'error');
+                    addLogEntry(`Failed to create agent: ${error.message}`, 'error');
+                }
+            });
+            
+            document.getElementById('selectAgentBtn').addEventListener('click', () => {
+                const agentSelector = document.getElementById('agentSelector');
+                const selectedAgentId = agentSelector.value;
+                
+                if (!selectedAgentId) {
+                    showToast('❌ Please select an agent', 'error');
+                    return;
+                }
+                
+                try {
+                    const agent = poolManager.selectAgent(selectedAgentId);
+                    if (agent) {
+                        updateSelectedAgentInfo(agent);
+                        showToast(`✅ Selected agent: ${agent.name}`, 'success');
+                        addLogEntry(`Agent selected: ${agent.name} (${selectedAgentId})`, 'info');
+                    }
+                } catch (error) {
+                    showToast(`❌ Failed to select agent: ${error.message}`, 'error');
+                    addLogEntry(`Failed to select agent: ${error.message}`, 'error');
+                }
+            });
+            
+            document.getElementById('deleteAgentBtn').addEventListener('click', async () => {
+                const agentSelector = document.getElementById('agentSelector');
+                const selectedAgentId = agentSelector.value;
+                
+                if (!selectedAgentId) {
+                    showToast('❌ Please select an agent to delete', 'error');
+                    return;
+                }
+                
+                if (!confirm('Are you sure you want to delete this agent?')) {
+                    return;
+                }
+                
+                try {
+                    await poolManager.deleteAgent(selectedAgentId);
+                    showToast(`✅ Agent deleted successfully`, 'success');
+                    addLogEntry(`Agent deleted: ${selectedAgentId}`, 'warning');
+                    
+                    // Update agent list and clear selection
+                    updateAgentList();
+                    document.getElementById('selectedAgentInfo').textContent = 'No agent selected';
+                    
+                } catch (error) {
+                    showToast(`❌ Failed to delete agent: ${error.message}`, 'error');
+                    addLogEntry(`Failed to delete agent: ${error.message}`, 'error');
+                }
+            });
+            
+            document.getElementById('templateLibrary').addEventListener('change', (event) => {
+                const templateId = event.target.value;
+                const template = poolManager.getDeviceTemplate(templateId);
+                
+                if (template) {
+                    updateTemplateDetails(template);
+                }
+            });
+            
+            document.getElementById('applyTemplateBtn').addEventListener('click', () => {
+                const templateId = document.getElementById('templateLibrary').value;
+                const template = poolManager.getDeviceTemplate(templateId);
+                
+                if (template) {
+                    document.getElementById('deviceTemplate').value = templateId;
+                    showToast(`✅ Template applied: ${template.name}`, 'success');
+                    addLogEntry(`Template applied: ${template.name}`, 'info');
+                }
+            });
+
+            // RBAC Toggle
+            document.getElementById('rbacToggle').addEventListener('change', (event) => {
+                const isEnabled = event.target.checked;
+                poolManager.toggleRBAC(isEnabled);
+                poolManager.scope.features.rbac = isEnabled;
+                updateRBACStatus();
+                updateScopeBadges();
+                
+                if (isEnabled) {
+                    showToast('🛡️ RBAC Enabled - Access control activated', 'success');
+                    addLogEntry('RBAC toggled ON by user', 'warning');
+                } else {
+                    showToast('🔓 RBAC Disabled - Full access granted', 'warning');
+                    addLogEntry('RBAC toggled OFF by user', 'warning');
+                }
+            });
+
+            // Role Selector
+            document.getElementById('roleSelector').addEventListener('change', (event) => {
+                const newRole = event.target.value;
+                const success = poolManager.setCurrentRole(newRole);
+                
+                if (success) {
+                    updateRoleDisplay();
+                    showToast(`👤 Role changed to: ${newRole}`, 'success');
+                    addLogEntry(`Role changed to: ${newRole}`, 'info');
+                } else {
+                    showToast('❌ Failed to change role', 'error');
+                    addLogEntry('Failed to change role', 'error');
+                }
+            });
+
+            // Refresh button
+            document.getElementById('refreshBtn').addEventListener('click', async () => {
+                await loadMockData();
+                showToast('Dashboard refreshed');
+            });
+
+            // Agent management buttons
+            document.getElementById('createAgentBtn').addEventListener('click', () => {
+                showToast('Creating new agent...');
+                addLogEntry('Agent creation initiated', 'info');
+            });
+
+            document.getElementById('batchCreateBtn').addEventListener('click', () => {
+                showToast('Creating 10 agents...');
+                addLogEntry('Batch agent creation initiated', 'info');
+            });
+
+            document.getElementById('assessRiskBtn').addEventListener('click', () => {
+                showToast('Assessing agent risks...');
+                addLogEntry('Risk assessment initiated', 'warning');
+            });
+
+            // Pool settings
+            document.getElementById('updatePoolBtn').addEventListener('click', () => {
+                const maxConn = document.getElementById('maxConnections').value;
+                const timeout = document.getElementById('connectionTimeout').value;
+                
+                poolManager.maxConnections = parseInt(maxConn);
+                poolManager.timeout = parseInt(timeout);
+                
+                showToast('Pool settings updated');
+                addLogEntry(`Pool settings updated: max=${maxConn}, timeout=${timeout}ms`, 'success');
+            });
+
+            // System actions
+            document.getElementById('restartPoolBtn').addEventListener('click', () => {
+                poolManager.connections.clear();
+                loadMockData();
+                showToast('Connection pool restarted');
+                addLogEntry('Connection pool restarted', 'warning');
+            });
+
+            document.getElementById('clearCacheBtn').addEventListener('click', () => {
+                showToast('Cache cleared');
+                addLogEntry('Cache cleared', 'info');
+            });
+
+            document.getElementById('exportLogsBtn').addEventListener('click', () => {
+                showToast('Logs exported');
+                addLogEntry('Logs exported to file', 'success');
+            });
+        }
+
+        // Start real-time updates
+        function startRealTimeUpdates() {
+            setInterval(() => {
+                updateMetrics();
+                updateCharts();
+            }, 5000);
+        }
+
+        // Update charts with new data
+        function updateCharts() {
+            // Update performance chart
+            if (performanceChart) {
+                performanceChart.data.datasets[0].data.shift();
+                performanceChart.data.datasets[0].data.push(Math.random() * 100 + 50);
+                performanceChart.update('none');
+            }
+
+            // Update pool chart
+            if (poolChart) {
+                const stats = poolManager.getConnectionStats();
+                poolChart.data.datasets[0].data = [stats.active, 0, stats.error];
+                poolChart.update('none');
+            }
+        }
+
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toast.style.transform = 'translateY(0)';
+            
+            setTimeout(() => {
+                toast.style.transform = 'translateY(100%)';
+            }, 3000);
+        }
+
+        // Add log entry
+        function addLogEntry(message, type = 'info') {
+            const log = document.getElementById('activityLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const typeColors = {
+                success: 'text-green-400',
+                warning: 'text-yellow-400',
+                error: 'text-red-400',
+                info: 'text-blue-400'
+            };
+            
+            const entry = document.createElement('div');
+            entry.className = 'flex justify-between items-center p-2 bg-gray-800 rounded';
+            entry.innerHTML = `
+                <span class="${typeColors[type]}">${message}</span>
+                <span class="text-gray-400 text-sm">${timestamp}</span>
+            `;
+            
+            log.insertBefore(entry, log.firstChild);
+            
+            // Keep only last 50 entries
+            while (log.children.length > 50) {
+                log.removeChild(log.lastChild);
+            }
+        }
+
+        // Agent Management UI Helper Functions
+        function updateAgentList() {
+            const agentSelector = document.getElementById('agentSelector');
+            
+            try {
+                const agents = poolManager.getAgents();
+                
+                // Clear existing options
+                agentSelector.innerHTML = '';
+                
+                if (agents.length === 0) {
+                    const option = document.createElement('option');
+                    option.textContent = 'No agents available';
+                    option.disabled = true;
+                    agentSelector.appendChild(option);
+                } else {
+                    agents.forEach(agent => {
+                        const option = document.createElement('option');
+                        option.value = agent.id;
+                        option.textContent = `${agent.name} (${agent.id}) - ${agent.status}`;
+                        agentSelector.appendChild(option);
+                    });
+                }
+                
+                addLogEntry(`Agent list updated: ${agents.length} agents`, 'info');
+            } catch (error) {
+                console.error('Failed to update agent list:', error);
+                addLogEntry(`Failed to update agent list: ${error.message}`, 'error');
+            }
+        }
+
+        function updateSelectedAgentInfo(agent) {
+            const infoElement = document.getElementById('selectedAgentInfo');
+            
+            const info = `
+                <div class="space-y-1">
+                    <div><strong>ID:</strong> ${agent.id}</div>
+                    <div><strong>Name:</strong> ${agent.name}</div>
+                    <div><strong>Department:</strong> ${agent.department}</div>
+                    <div><strong>Template:</strong> ${agent.deviceTemplate}</div>
+                    <div><strong>Status:</strong> <span class="text-green-400">${agent.status}</span></div>
+                    <div><strong>Created:</strong> ${new Date(agent.createdAt).toLocaleString()}</div>
+                    <div><strong>Device Home:</strong> ${agent.deviceHome}</div>
+                </div>
+            `;
+            
+            infoElement.innerHTML = info;
+        }
+
+        function updateTemplateLibrary() {
+            const templateLibrary = document.getElementById('templateLibrary');
+            
+            try {
+                const templates = poolManager.getDeviceTemplates();
+                
+                // Clear existing options
+                templateLibrary.innerHTML = '';
+                
+                templates.forEach(template => {
+                    const option = document.createElement('option');
+                    option.value = template.id;
+                    option.textContent = `${template.name} - ${template.description}`;
+                    templateLibrary.appendChild(option);
+                });
+                
+                // Select first template by default
+                if (templates.length > 0) {
+                    templateLibrary.value = templates[0].id;
+                    updateTemplateDetails(templates[0]);
+                }
+                
+            } catch (error) {
+                console.error('Failed to update template library:', error);
+            }
+        }
+
+        function updateTemplateDetails(template) {
+            const detailsElement = document.getElementById('templateDetails');
+            
+            const config = template.config;
+            const details = `
+                <div class="space-y-1">
+                    <div><strong>OS:</strong> ${config.os}</div>
+                    <div><strong>Resolution:</strong> ${config.resolution}</div>
+                    <div><strong>Memory:</strong> ${config.memory}</div>
+                    <div><strong>Storage:</strong> ${config.storage}</div>
+                    <div><strong>VPN:</strong> ${config.vpn ? '✅ Enabled' : '❌ Disabled'}</div>
+                    <div><strong>Proxy:</strong> ${config.proxy ? '✅ Enabled' : '❌ Disabled'}</div>
+                </div>
+            `;
+            
+            detailsElement.innerHTML = details;
+        }
+
+        // Log Management Helper Functions
+        function updateLogDisplay(logs = null) {
+            const log = document.getElementById('activityLog');
+            const logsToShow = logs || poolManager.getLogs();
+            
+            // Clear existing logs
+            log.innerHTML = '';
+            
+            if (logsToShow.length === 0) {
+                const entry = document.createElement('div');
+                entry.className = 'flex justify-center items-center p-4 bg-gray-800 rounded text-gray-400';
+                entry.textContent = 'No logs found';
+                log.appendChild(entry);
+                return;
+            }
+            
+            // Add logs to display
+            logsToShow.slice(0, 50).forEach(logEntry => {
+                const typeColors = {
+                    success: 'text-green-400',
+                    warning: 'text-yellow-400',
+                    error: 'text-red-400',
+                    info: 'text-blue-400'
+                };
+                
+                const sourceIcons = {
+                    agent: '🤖',
+                    rbac: '🛡️',
+                    api: '🔌',
+                    system: '⚙️'
+                };
+                
+                const entry = document.createElement('div');
+                entry.className = 'flex justify-between items-center p-2 bg-gray-800 rounded border-l-4 border-gray-600 hover:border-blue-500 transition-colors';
+                
+                // Set border color based on type
+                if (logEntry.type === 'error') entry.style.borderLeftColor = '#ef4444';
+                else if (logEntry.type === 'warning') entry.style.borderLeftColor = '#f59e0b';
+                else if (logEntry.type === 'success') entry.style.borderLeftColor = '#10b981';
+                else if (logEntry.type === 'info') entry.style.borderLeftColor = '#3b82f6';
+                
+                entry.innerHTML = `
+                    <div class="flex-1 flex items-center space-x-2">
+                        <span class="text-xs">${sourceIcons[logEntry.source] || '📝'}</span>
+                        <span class="${typeColors[logEntry.type]}">${logEntry.message}</span>
+                    </div>
+                    <span class="text-gray-400 text-xs">${logEntry.timestamp.toLocaleTimeString()}</span>
+                `;
+                
+                log.appendChild(entry);
+            });
+        }
+
+        function updateErrorAnalytics() {
+            const analytics = poolManager.getLogAnalytics();
+            
+            // Update error analytics display
+            document.getElementById('totalErrors').textContent = analytics.totalErrors;
+            document.getElementById('errorRate').textContent = `${analytics.errorRate}%`;
+            document.getElementById('criticalErrors').textContent = analytics.criticalErrors;
+            document.getElementById('lastErrorTime').textContent = 
+                analytics.lastErrorTime ? analytics.lastErrorTime.toLocaleTimeString() : 'Never';
+        }
+
+        function exportLogs(format = 'json') {
+            try {
+                const exportData = poolManager.exportLogs(format);
+                
+                // Create download link
+                const mimeType = format === 'json' ? 'application/json' : 
+                                 format === 'csv' ? 'text/csv' : 'text/plain';
+                
+                const blob = new Blob([exportData], { type: mimeType });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `logs-${new Date().toISOString().split('T')[0]}.${format}`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showToast(`📁 Logs exported in ${format.toUpperCase()} format`, 'success');
+                poolManager.logSuccess(`Logs exported in ${format.toUpperCase()} format`, 'system');
+                
+            } catch (error) {
+                showToast(`❌ Export failed: ${error.message}`, 'error');
+                poolManager.logError(`Log export failed: ${error.message}`, 'system');
+            }
+        }
+
+        function testLogAPI() {
+            const testCases = [
+                { method: 'GET', endpoint: '/api/logs', description: 'Get all logs' },
+                { method: 'GET', endpoint: '/api/logs/errors', description: 'Get error logs' },
+                { method: 'GET', endpoint: '/api/logs/analytics', description: 'Get analytics' },
+                { method: 'POST', endpoint: '/api/logs/search', data: { pattern: 'error' }, description: 'Search logs' },
+                { method: 'GET', endpoint: '/api/logs/export', data: { format: 'json' }, description: 'Export logs' }
+            ];
+            
+            console.group('🧪 Testing Log API Endpoints');
+            
+            testCases.forEach(async (testCase, index) => {
+                try {
+                    console.log(`Testing ${index + 1}. ${testCase.description}...`);
+                    const response = await poolManager.handleLogAPIRequest(
+                        testCase.method, 
+                        testCase.endpoint, 
+                        testCase.data || {}
+                    );
+                    console.log(`✅ ${testCase.description}:`, response);
+                } catch (error) {
+                    console.error(`❌ ${testCase.description}:`, error.message);
+                }
+            });
+            
+            console.groupEnd();
+        }
+
+        // Enhanced addLogEntry function that uses the pool manager
+        function addLogEntry(message, type = 'info', source = 'system') {
+            poolManager.addLog(message, type, source);
+            updateLogDisplay();
+            updateErrorAnalytics();
+        }
+
+        // Update Scope Badges
+        function updateScopeBadges() {
+            poolManager.updateScopeBadges();
+        }
+
+        // Scope Management Functions
+        function changeEnvironment() {
+            const environments = ['development', 'staging', 'production', 'testing'];
+            const currentIndex = environments.indexOf(poolManager.scope.environment);
+            const nextIndex = (currentIndex + 1) % environments.length;
+            poolManager.setEnvironment(environments[nextIndex]);
+        }
+
+        function changeTier() {
+            const tiers = ['basic', 'professional', 'enterprise', 'custom'];
+            const currentIndex = tiers.indexOf(poolManager.scope.tier);
+            const nextIndex = (currentIndex + 1) % tiers.length;
+            poolManager.setTier(tiers[nextIndex]);
+        }
+
+        function changeArchitecture() {
+            const architectures = ['single-tenant', 'multi-tenant', 'hybrid'];
+            const currentIndex = architectures.indexOf(poolManager.scope.architecture);
+            const nextIndex = (currentIndex + 1) % architectures.length;
+            poolManager.setArchitecture(architectures[nextIndex]);
+        }
+
+        // Initialize dashboard when DOM is ready
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
+    </script>
+</body>
+</html>

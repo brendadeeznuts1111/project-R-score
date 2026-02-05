@@ -1,0 +1,15 @@
+[
+  {
+    "host": "101.36.98.74",
+    "port": 80,
+    "type": "direct",
+    "source": "device",
+    "country": "US",
+    "city": "Reston",
+    "username": "",
+    "password": "",
+    "active": true,
+    "tested": true,
+    "working": true
+  }
+]

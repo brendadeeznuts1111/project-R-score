@@ -1,0 +1,54 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Alice Johnson",
+      "email": "alice.johnson@example.com",
+      "phone": "555-123-4567",
+      "balance": 1500.00,
+      "active": true,
+      "risk_score": 0.3,
+      "paymentApps": {
+        "venmo": {
+          "username": "@alicejohnson",
+          "balance": 250.00,
+          "transactions": [
+            { "id": "venmo_001", "amount": 50, "type": "payment", "timestamp": "2024-01-15T10:30:00Z" }
+          ]
+        },
+        "cashapp": {
+          "username": "$alicecash",
+          "balance": 1250.00,
+          "transactions": []
+        }
+      }
+    },
+    {
+      "id": 2,
+      "name": "Bob Smith",
+      "email": "bob.smith@example.com",
+      "phone": "555-987-6543",
+      "balance": 25000.00,
+      "active": true,
+      "risk_score": 0.9,
+      "paymentApps": {
+        "venmo": {
+          "username": "@bobsmith",
+          "balance": 1800.00,
+          "transactions": []
+        },
+        "zelle": {
+          "email": "bob@bank.com",
+          "balance": 950.00,
+          "transactions": []
+        }
+      }
+    }
+  ],
+  "system": {
+    "total_users": 2,
+    "active_users": 2,
+    "total_balance": 26500.00,
+    "last_updated": "2024-01-15T15:00:00Z"
+  }
+}

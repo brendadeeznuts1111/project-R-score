@@ -1,0 +1,53 @@
+# DuoPlus App Factory - Code Owners
+
+# Default owners for everything in the repo
+* @brendadeeznuts1111
+
+# Lightning Network Integration
+/src/services/lightningService.ts @brendadeeznuts1111
+/src/services/lndMockClient.ts @brendadeeznuts1111
+/src/routes/paymentRoutes.ts @brendadeeznuts1111
+
+# Compliance & KYC
+/src/compliance/ @brendadeeznuts1111
+/src/compliance/kycValidator.ts @brendadeeznuts1111
+
+# Device Management (Atlas)
+/src/atlas/ @brendadeeznuts1111
+/src/atlas/agent.ts @brendadeeznuts1111
+/src/atlas/schema.ts @brendadeeznuts1111
+
+# Financial Services
+/src/finance/ @brendadeeznuts1111
+/src/finance/savingsOptimizer.ts @brendadeeznuts1111
+/src/finance/yieldQuest.ts @brendadeeznuts1111
+
+# Nebula-Flow Core
+/src/nebula/ @brendadeeznuts1111
+/src/nebula/cometCollect.ts @brendadeeznuts1111
+/src/nebula/core.ts @brendadeeznuts1111
+/src/nebula/coverStardust.ts @brendadeeznuts1111
+/src/nebula/orbitAssign.ts @brendadeeznuts1111
+
+# Web Application
+/web-app/ @brendadeeznuts1111
+
+# CLI Tools
+/cli/ @brendadeeznuts1111
+
+# Build & Deployment
+/scripts/ @brendadeeznuts1111
+/scripts/build.ts @brendadeeznuts1111
+/scripts/sync-version.ts @brendadeeznuts1111
+
+# Documentation
+/docs/ @brendadeeznuts1111
+README.md @brendadeeznuts1111
+CONTRIBUTING.md @brendadeeznuts1111
+ARCHITECTURE.md @brendadeeznuts1111
+
+# Configuration
+package.json @brendadeeznuts1111
+.env.example @brendadeeznuts1111
+tsconfig.json @brendadeeznuts1111
+

@@ -1,0 +1,69 @@
+<!-- Dashboard Header Component -->
+<!-- Permission Required: header.view -->
+<header class="bg-gradient-to-r from-blue-600 to-purple-600 p-6 shadow-lg" data-component="dashboard-header" data-permission="header.view">
+    <div class="container mx-auto flex justify-between items-center">
+        <div class="flex items-center space-x-4">
+            <i data-lucide="layers" class="w-8 h-8"></i>
+            <div>
+                <div class="flex items-center space-x-3">
+                    <h1 class="text-2xl font-bold gradient-text">DuoPlus Dashboard</h1>
+                    <!-- SCOPE Badges -->
+                    <div class="flex items-center space-x-2">
+                        <span class="scope-badge scope-enterprise" id="tier-badge">[ENTERPRISE]</span>
+                        <span class="scope-badge scope-production" id="environment-badge">[PRODUCTION]</span>
+                        <span class="scope-badge scope-multi-tenant" id="architecture-badge">[MULTI-TENANT]</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4 mt-1">
+                    <p class="text-blue-200 text-sm">Agent Connection Pool & Integration Management</p>
+                    <!-- Additional Scope Context -->
+                    <div class="flex items-center space-x-2">
+                        <span class="scope-context-badge" id="windows-badge">Windows Enterprise</span>
+                        <span class="scope-context-badge" id="rbac-badge">RBAC Enabled</span>
+                        <span class="scope-context-badge" id="api-badge">API v2.0</span>
+                        <!-- Timezone Context -->
+                        <span class="scope-context-badge timezone-badge" id="timezone-badge" title="Active timezone (IANA)">
+                            🕒 <span id="timezone-display">America/New_York</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div class="flex items-center">
+                <span class="status-indicator status-online"></span>
+                <span class="text-sm">System Online</span>
+            </div>
+            
+            <!-- RBAC Toggle Control -->
+            <div class="flex items-center space-x-2 bg-gray-800 px-3 py-2 rounded-lg" data-permission="rbac.view">
+                <i data-lucide="shield-check" class="w-4 h-4 text-blue-400"></i>
+                <span class="text-sm text-gray-300">RBAC</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="rbacToggle" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+            </div>
+            
+            <button id="refreshBtn" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                <span>Refresh</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<script>
+// Header Component Initialization
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.querySelector('[data-component="dashboard-header"]')) {
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Initialize scope badges
+        if (window.DashboardCore) {
+            DashboardCore.updateScopeBadges();
+        }
+    }
+});
+</script>

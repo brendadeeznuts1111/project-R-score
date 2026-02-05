@@ -1,0 +1,203 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+out/
+*.tgz
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+_.log
+report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.test
+.env.production
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+temp/
+tmp/
+.tmp/
+
+# Editor directories and files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Security files - NEVER commit
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.cer
+*.p7b
+*.p7c
+*.p7s
+*.jks
+*.keystore
+*.secret
+*.credentials
+*.auth
+*.token
+*.password
+*.private
+*.rsa
+*.dsa
+*.ec
+
+# Configuration with secrets
+config/secrets/
+config/private/
+config/credentials/
+secrets/
+private/
+credentials/
+
+# Presigned URL files (contain sensitive URLs)
+presigns.json
+presigned-urls.json
+
+# Large test files (these should not be in git)
+*.bin
+test-*.bin
+*.large
+*.testfile
+
+# Generated files and reports
+benchmark-results.json
+docs/changelogs/*.auto.md
+reports/apple-*.json
+reports/*.json
+bench/r2-super-bench-results.*
+bench/r2-performance-report-*.html
+bench/performance-baseline.json
+data/
+!packages/@tools/cli/data/
+!packages/@tools/cli/data/**
+accounts/*.csv
+accounts/*.json
+!accounts/real-sim/
+
+# Privacy cards
+privacy-cards/*.json
+
+# Backup and temporary files
+*.bak
+*.backup
+*.backup.*
+*.old
+*.orig
+*.tmp
+*.temp
+*.temp.*
+
+# Bun specific
+bun.lockb
+.bun-cache/
+
+# Allow specific files
+!README.md
+!LICENSE
+!package*.json
+!tsconfig*.json
+!.markdownlint*
+!bun.lock
+!bunfig.toml
+!.npmrc
+!.gitignore
+!config/
+!.env.registry.template
+!.env.sample
+!docs/

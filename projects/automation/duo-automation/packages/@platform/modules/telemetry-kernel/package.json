@@ -1,0 +1,44 @@
+{
+  "name": "@duoplus/telemetry-kernel",
+  "version": "1.2.4-beta.0",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "bun-types": "catalog:"
+  },
+  "peerDependencies": {
+    "typescript": "catalog:"
+  },
+  "description": "DuoPlus Platform - Telemetry kernel for metrics collection and performance monitoring for scalable infrastructure",
+  "author": "DuoPlus Development Team",
+  "license": "MIT",
+  "keywords": [
+    "duoplus",
+    "automation",
+    "bun",
+    "typescript",
+    "enterprise",
+    "infrastructure",
+    "scalability",
+    "security",
+    "telemetry",
+    "kernel",
+    "metrics",
+    "collection",
+    "performance",
+    "monitoring"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/duoplus/duo-automation.git",
+    "bugs": "https://github.com/duoplus/duo-automation/issues",
+    "homepage": "https://duoplus.ai"
+  },
+  "bugs": {
+    "url": "https://github.com/duoplus/duo-automation/issues"
+  },
+  "homepage": "https://duoplus.ai/packages/telemetry-kernel",
+  "contributors": [
+    "DuoPlus Development Team <dev@duoplus.ai>"
+  ]
+}

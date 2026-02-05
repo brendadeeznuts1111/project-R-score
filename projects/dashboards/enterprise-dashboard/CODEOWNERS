@@ -1,0 +1,41 @@
+# CODEOWNERS - Define code review ownership
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything
+* @nolarose
+
+# Frontend (React components, styles)
+/src/client/ @nolarose
+/public/ @nolarose
+
+# Backend (Bun server, API)
+/src/server/ @nolarose
+/src/types.ts @nolarose
+
+# Database
+/src/server/db.ts @nolarose
+/data/ @nolarose
+
+# Configuration
+/bunfig.toml @nolarose
+/tsconfig.json @nolarose
+/package.json @nolarose
+/.gitmessage @nolarose
+
+# Scripts and tooling
+/scripts/ @nolarose
+
+# Git hooks (require careful review)
+/scripts/hooks/ @nolarose
+
+# Tests
+/src/**/__tests__/ @nolarose
+
+# Security-sensitive files (require extra review)
+/src/server/secrets.ts @nolarose
+/.env* @nolarose
+
+# Documentation
+/docs/ @nolarose
+/README.md @nolarose
+/CODEOWNERS @nolarose

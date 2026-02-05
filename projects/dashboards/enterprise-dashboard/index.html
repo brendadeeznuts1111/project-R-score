@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nebula-Flow™ Dashboard</title>
+
+  <!-- Performance Optimizations: Preload critical resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwgknk-4.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwgknk-3.woff2" as="font" type="font/woff2" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Critical CSS inlined for fastest rendering -->
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #0a0a0a;
+      font-family: 'JetBrains Mono', monospace;
+      color: #e0e0e0;
+      height: 100%;
+      overflow: hidden;
+    }
+    #nebula-dashboard {
+      height: 100%;
+      width: 100%;
+    }
+    /* Loading state */
+    #nebula-dashboard:empty::before {
+      content: "Loading Nebula-Flow™...";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div id="nebula-dashboard"></div>
+
+  <!-- Bundled JavaScript: Single async request instead of 11 blocking requests -->
+  <script type="module" src="./dist/ui-bundle.js" async></script>
+
+  <!-- Fallback for unbundled development (loads after async bundle attempt) -->
+  <script>
+    // Async loading with fallback for development
+    (function() {
+      let loaded = false;
+
+      // Check if app loads within timeout
+      setTimeout(() => {
+        if (!loaded && !window.nebulaApp) {
+          console.log('Loading development version...');
+          import('./ui.js').then(({ main }) => {
+            return main();
+          }).then(app => {
+            window.nebulaApp = app;
+            loaded = true;
+          }).catch(err => {
+            console.error('Failed to load UI:', err);
+            const container = document.getElementById('nebula-dashboard');
+            if (container) {
+              container.innerHTML = '<div style="color: #ff6b6b; padding: 20px; font-family: monospace;">Failed to load dashboard. Check console for details.</div>';
+            }
+          });
+        }
+      }, 100); // Short timeout to prefer bundled version
+
+      // Mark as loaded when bundle succeeds
+      window.addEventListener('load', () => {
+        if (window.nebulaApp) {
+          loaded = true;
+        }
+      });
+     })();
+   </script>
+
+   <!-- Service Worker Registration for offline caching -->
+   <script>
+     if ('serviceWorker' in navigator) {
+       window.addEventListener('load', () => {
+         navigator.serviceWorker.register('/sw.js')
+           .then(registration => {
+             console.log('Service Worker registered:', registration.scope);
+
+             // Handle updates
+             registration.addEventListener('updatefound', () => {
+               const newWorker = registration.installing;
+               if (newWorker) {
+                 newWorker.addEventListener('statechange', () => {
+                   if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                     // New content available, notify user
+                     if (confirm('New dashboard version available. Reload to update?')) {
+                       window.location.reload();
+                     }
+                   }
+                 });
+               }
+             });
+           })
+           .catch(error => {
+             console.log('Service Worker registration failed:', error);
+           });
+       });
+     }
+   </script>
+</body>
+</html>

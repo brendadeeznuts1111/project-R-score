@@ -1,0 +1,344 @@
+# [DUOPLUS][CI][PUBLISH][HIGH][#REF:CI-PUB-DRY][BUN:6.1-NATIVE]
+# Dry-Run Validation Pipeline for Publishing
+# Compliance: SOC2-Type-II | Standard: ISO-27001
+#
+# This workflow validates publishing readiness without actually publishing:
+# - Tag compliance verification
+# - E-027 Toolchain purity (no npm publish/pack)
+# - E-028 Frozen lockfile enforcement
+# - Package metadata validation
+# - Build verification
+# - Dry-run publish simulation
+
+name: Publish Dry-Run Validation
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'package.json'
+      - 'bunfig.toml'
+      - 'bun.lockb'
+      - 'scripts/publish.ts'
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+    inputs:
+      verbose:
+        description: 'Enable verbose output'
+        required: false
+        default: 'false'
+        type: boolean
+
+env:
+  BUN_FROZEN_LOCKFILE: 1
+
+jobs:
+  # ═══════════════════════════════════════════════════════════
+  # JOB 1: Tag Compliance Validation
+  # ═══════════════════════════════════════════════════════════
+  tag-compliance:
+    name: Tag Compliance Check
+    runs-on: ubuntu-latest
+    outputs:
+      compliant: ${{ steps.enforce.outputs.compliant }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies (Frozen Lockfile)
+        run: bun install --frozen-lockfile
+
+      - name: Run Tag Enforcer v6.1
+        id: enforce
+        run: |
+          set +e
+          ENFORCEMENT_STAGE=ci-lint bun run scripts/git/tag-enforcer-v6.ts
+          RESULT=$?
+          if [ $RESULT -eq 0 ]; then
+            echo "compliant=true" >> $GITHUB_OUTPUT
+          else
+            echo "compliant=false" >> $GITHUB_OUTPUT
+          fi
+          exit $RESULT
+
+  # ═══════════════════════════════════════════════════════════
+  # JOB 2: Toolchain Purity (E-027)
+  # ═══════════════════════════════════════════════════════════
+  toolchain-purity:
+    name: E-027 Toolchain Purity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Check for npm publish/pack in package.json
+        run: |
+          echo "🔧 [E-027] Checking toolchain purity..."
+
+          # Check package.json scripts
+          if grep -E '"(package|publish)".*npm (publish|pack)' package.json 2>/dev/null; then
+            echo "❌ [E-027] Found 'npm publish/pack' in package.json scripts"
+            echo "→ Use 'bun publish' or 'bun pm pack' instead"
+            exit 1
+          fi
+
+          # Check shell scripts
+          if grep -r "npm publish\|npm pack" . --include="*.sh" --exclude-dir=node_modules --exclude-dir=.git 2>/dev/null; then
+            echo "❌ [E-027] Found 'npm publish/pack' in shell scripts"
+            exit 1
+          fi
+
+          echo "✅ [E-027] Toolchain purity verified (Bun-native)"
+
+      - name: Verify bunfig.toml exists
+        run: |
+          if [ ! -f "bunfig.toml" ]; then
+            echo "⚠️  bunfig.toml not found - recommended for registry configuration"
+          else
+            echo "✅ bunfig.toml found"
+          fi
+
+  # ═══════════════════════════════════════════════════════════
+  # JOB 3: Frozen Lockfile (E-028)
+  # ═══════════════════════════════════════════════════════════
+  frozen-lockfile:
+    name: E-028 Frozen Lockfile
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Verify Lockfile Exists
+        run: |
+          echo "🔒 [E-028] Verifying frozen lockfile..."
+
+          if [ ! -f "bun.lockb" ]; then
+            echo "❌ [E-028] bun.lockb not found"
+            echo "→ Run 'bun install' to generate lockfile"
+            exit 1
+          fi
+
+          echo "✅ bun.lockb exists"
+
+      - name: Test Frozen Install
+        run: |
+          # This will fail if lockfile doesn't match package.json
+          bun install --frozen-lockfile
+          echo "✅ [E-028] Lockfile is frozen and valid"
+
+  # ═══════════════════════════════════════════════════════════
+  # JOB 4: Package Metadata Validation
+  # ═══════════════════════════════════════════════════════════
+  package-validation:
+    name: Package Metadata
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Validate package.json
+        run: |
+          echo "📦 Validating package.json..."
+
+          # Extract and validate required fields
+          NAME=$(bun -e "console.log(require('./package.json').name || '')")
+          VERSION=$(bun -e "console.log(require('./package.json').version || '')")
+          DESCRIPTION=$(bun -e "console.log(require('./package.json').description || '')")
+
+          ERRORS=0
+
+          if [ -z "$NAME" ]; then
+            echo "❌ Missing required field: name"
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "✅ name: $NAME"
+          fi
+
+          if [ -z "$VERSION" ]; then
+            echo "❌ Missing required field: version"
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "✅ version: $VERSION"
+          fi
+
+          if [ -z "$DESCRIPTION" ]; then
+            echo "❌ Missing required field: description"
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "✅ description: $DESCRIPTION"
+          fi
+
+          if [ $ERRORS -gt 0 ]; then
+            echo "❌ Package validation failed with $ERRORS errors"
+            exit 1
+          fi
+
+          echo "✅ Package metadata validation passed"
+
+      - name: Check Files Field
+        run: |
+          # Verify files field exists and dist directory will be included
+          FILES=$(bun -e "console.log(JSON.stringify(require('./package.json').files || []))")
+          echo "📁 files: $FILES"
+
+  # ═══════════════════════════════════════════════════════════
+  # JOB 5: Build Verification
+  # ═══════════════════════════════════════════════════════════
+  build-verify:
+    name: Build Verification
+    runs-on: ubuntu-latest
+    needs: [frozen-lockfile]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run Build
+        run: |
+          echo "🔨 Running build..."
+          bun run build
+          echo "✅ Build successful"
+
+      - name: Verify Build Output
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "⚠️  dist directory not found after build"
+          else
+            echo "✅ dist directory exists"
+            ls -la dist/
+          fi
+
+  # ═══════════════════════════════════════════════════════════
+  # JOB 6: Dry-Run Publish
+  # ═══════════════════════════════════════════════════════════
+  dry-run-publish:
+    name: Dry-Run Publish
+    runs-on: ubuntu-latest
+    needs: [tag-compliance, toolchain-purity, frozen-lockfile, package-validation, build-verify]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build Package
+        run: bun run build
+
+      - name: Dry-Run Publish
+        run: |
+          echo "🔍 Running dry-run publish..."
+          bun publish --dry-run
+          echo "✅ Dry-run publish successful"
+
+      - name: Generate Publish Report
+        run: |
+          echo "## Publish Dry-Run Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Tag Compliance | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          echo "| Toolchain Purity (E-027) | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          echo "| Frozen Lockfile (E-028) | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          echo "| Package Metadata | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          echo "| Dry-Run Publish | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Ready for publishing** ✨" >> $GITHUB_STEP_SUMMARY
+
+  # ═══════════════════════════════════════════════════════════
+  # JOB 7: Publishing Benchmark
+  # ═══════════════════════════════════════════════════════════
+  benchmark:
+    name: Publishing Benchmark
+    runs-on: ubuntu-latest
+    needs: [dry-run-publish]
+    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run Publishing Benchmark
+        run: |
+          echo "⏱️ Running publishing benchmark..."
+          bun run bench:publish --json > benchmark-results.json
+          cat benchmark-results.json
+
+      - name: Generate Benchmark Report
+        run: |
+          echo "## Publishing Benchmark Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Result |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|--------|" >> $GITHUB_STEP_SUMMARY
+          # Parse JSON and extract metrics
+          TOTAL_TIME=$(cat benchmark-results.json | bun -e "console.log(JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')).totalTime?.toFixed(2) || 'N/A')")
+          echo "| Total Suite Time | ${TOTAL_TIME}ms |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload Benchmark Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: benchmark-results.json
+          retention-days: 30
+
+  # ═══════════════════════════════════════════════════════════
+  # JOB 8: Compliance Summary
+  # ═══════════════════════════════════════════════════════════
+  compliance-summary:
+    name: Compliance Summary
+    runs-on: ubuntu-latest
+    needs: [dry-run-publish]
+    if: always()
+    steps:
+      - name: Generate Compliance Matrix
+        run: |
+          echo "## Publishing Compliance Matrix" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Rule | Description | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| E-027 | Toolchain Purity | ${{ needs.toolchain-purity.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| E-028 | Frozen Lockfile | ${{ needs.frozen-lockfile.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| E-029 | Tag Compliance | ${{ needs.tag-compliance.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| P-001 | Build Success | ${{ needs.build-verify.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "_Generated by DuoPlus Publish Dry-Run Validation_" >> $GITHUB_STEP_SUMMARY

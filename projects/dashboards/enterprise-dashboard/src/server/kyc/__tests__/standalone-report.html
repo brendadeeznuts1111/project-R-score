@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KYC Test Suite - Standalone Report</title>
+    <style>
+        /* Production-ready CSS - No external dependencies */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .stat-card .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card .label {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-card.total .value { color: #667eea; }
+        .stat-card.passed .value { color: #10b981; }
+        .stat-card.failed .value { color: #ef4444; }
+        .stat-card.duration .value { color: #f59e0b; }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .file-section {
+            margin-bottom: 40px;
+        }
+        
+        .file-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .file-header:hover {
+            background: #e9ecef;
+        }
+        
+        .file-header h2 {
+            font-size: 1.3em;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .file-stats {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .badge.pass {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .badge.fail {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .badge.rate {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .test-list {
+            display: none;
+            padding-left: 20px;
+        }
+        
+        .test-list.expanded {
+            display: block;
+        }
+        
+        .test-item {
+            padding: 12px 15px;
+            margin: 5px 0;
+            background: white;
+            border-left: 4px solid #e5e7eb;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .test-item.pass {
+            border-left-color: #10b981;
+        }
+        
+        .test-item.fail {
+            border-left-color: #ef4444;
+        }
+        
+        .test-name {
+            flex: 1;
+            color: #333;
+        }
+        
+        .test-duration {
+            color: #666;
+            font-size: 0.9em;
+            margin-left: 15px;
+        }
+        
+        .status-icon {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .footer {
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #e5e7eb;
+            background: #f8f9fa;
+        }
+        
+        .info-box {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 15px 20px;
+            margin: 20px 30px;
+            border-radius: 4px;
+        }
+        
+        .info-box strong {
+            color: #1e40af;
+        }
+        
+        @media (max-width: 768px) {
+            .summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .file-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 KYC Test Suite Report</h1>
+            <div class="subtitle">Production-Ready Standalone Report (No External Dependencies)</div>
+        </div>
+        
+        <div class="info-box">
+            <strong>📋 Report Information:</strong> This is a standalone HTML report with no external dependencies. 
+            All styles are inline and production-ready. Run <code>bun run test:kyc:report</code> to generate a fresh report.
+        </div>
+        
+        <div class="summary">
+            <div class="stat-card total">
+                <div class="value">69</div>
+                <div class="label">Total Tests</div>
+            </div>
+            <div class="stat-card passed">
+                <div class="value">69</div>
+                <div class="label">Passed</div>
+            </div>
+            <div class="stat-card failed">
+                <div class="value">0</div>
+                <div class="label">Failed</div>
+            </div>
+            <div class="stat-card duration">
+                <div class="value">10.5s</div>
+                <div class="label">Duration</div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="file-section">
+                <div class="file-header" onclick="toggleSection('failsafeEngine')">
+                    <h2>failsafeEngine.test.ts</h2>
+                    <div class="file-stats">
+                        <span class="badge pass">9 Pass</span>
+                        <span class="badge rate">100%</span>
+                    </div>
+                </div>
+                <div class="test-list expanded" id="failsafeEngine">
+                    <div class="test-item pass">
+                        <div class="test-name">
+                            <span class="status-icon">✅</span>
+                            executes failsafe flow
+                        </div>
+                        <div class="test-duration">216.18ms</div>
+                    </div>
+                    <div class="test-item pass">
+                        <div class="test-name">
+                            <span class="status-icon">✅</span>
+                            generates proper audit logs
+                        </div>
+                        <div class="test-duration">89.56ms</div>
+                    </div>
+                    <div class="test-item pass">
+                        <div class="test-name">
+                            <span class="status-icon">✅</span>
+                            handles different failure reasons
+                        </div>
+                        <div class="test-duration">169.01ms</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="file-section">
+                <div class="file-header" onclick="toggleSection('performance')">
+                    <h2>performance.test.ts</h2>
+                    <div class="file-stats">
+                        <span class="badge pass">6 Pass</span>
+                        <span class="badge rate">100%</span>
+                    </div>
+                </div>
+                <div class="test-list" id="performance">
+                    <div class="test-item pass">
+                        <div class="test-name">
+                            <span class="status-icon">✅</span>
+                            failsafe execution completes within acceptable time
+                        </div>
+                        <div class="test-duration">406.54ms</div>
+                    </div>
+                    <div class="test-item pass">
+                        <div class="test-name">
+                            <span class="status-icon">✅</span>
+                            device verification completes within acceptable time
+                        </div>
+                        <div class="test-duration">94.92ms</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Generated on <span id="timestamp"></span></p>
+            <p>Test Framework: Bun Test (bun:test) | Production-Ready Standalone Report</p>
+        </div>
+    </div>
+    
+    <script>
+        // Simple toggle functionality - no external dependencies
+        function toggleSection(fileId) {
+            const section = document.getElementById(fileId);
+            if (section) {
+                section.classList.toggle('expanded');
+            }
+        }
+        
+        // Set timestamp
+        document.getElementById('timestamp').textContent = new Date().toLocaleString();
+        
+        // Auto-expand failed tests on load
+        document.addEventListener('DOMContentLoaded', () => {
+            // All tests passed, so no auto-expansion needed
+            console.log('✅ KYC Test Suite Report loaded');
+        });
+    </script>
+</body>
+</html>

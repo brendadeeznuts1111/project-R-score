@@ -1,0 +1,13 @@
+[
+	{"id":"FEED_X2","pathname":"/feed/:bookie/:sport/*","hostname":"feed.arbitrage.live","priority":1350},
+	{"id":"FEED_X3","pathname":"/live/:event/:odds","hostname":"*.feed.arbitrage.live","priority":1320},
+	{"id":"FEED_X4","pathname":"/api/v3/markets/:marketId/odds","hostname":"api.arbitrage.live","priority":1300},
+	{"id":"FEED_X5","pathname":"/stream/:sport/:league/:gameId","hostname":"stream.arbitrage.live","priority":1280},
+	{"id":"FEED_X6","pathname":"/predictions/:model/:sport/:event","hostname":"ml.arbitrage.live","priority":1260},
+	{"id":"FEED_X7","pathname":"/historical/:sport/:date/:market","hostname":"analytics.arbitrage.live","priority":1240},
+	{"id":"FEED_X8","pathname":"/arbitrage/:bookie1/:bookie2/:event","hostname":"arb.arbitrage.live","priority":1220},
+	{"id":"FEED_X9","pathname":"/odds/:sportId/:marketType/:eventId","hostname":"odds.arbitrage.live","priority":1200},
+	{"id":"FEED_X10","pathname":"/realtime/:provider/:sport/:match","hostname":"realtime.arbitrage.live","priority":1180},
+	{"id":"FEED_X11","pathname":"/batch/:sport/:dateRange/process","hostname":"batch.arbitrage.live","priority":1160}
+]
+

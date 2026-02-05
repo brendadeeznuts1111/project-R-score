@@ -1,0 +1,20 @@
+[
+  {
+    "profile": "prod-api",
+    "count": 3,
+    "region": "us-west",
+    "os": "android"
+  },
+  {
+    "profile": "staging-worker",
+    "count": 2,
+    "region": "eu-west",
+    "os": "android"
+  },
+  {
+    "profile": "test-android",
+    "count": 5,
+    "region": "us-east",
+    "os": "android"
+  }
+]

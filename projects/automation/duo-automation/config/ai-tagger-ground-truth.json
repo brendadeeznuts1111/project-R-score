@@ -1,0 +1,202 @@
+[
+  {
+    "filePath": "demos/@web/venmo/venmo-family-demo.ts",
+    "humanTags": { "DOMAIN": "VENMO", "SCOPE": "UI", "TYPE": "DEMO" }
+  },
+  {
+    "filePath": "demos/@web/venmo/venmo-family-simple-demo.ts",
+    "humanTags": { "DOMAIN": "VENMO", "SCOPE": "UI", "TYPE": "DEMO" }
+  },
+  {
+    "filePath": "demos/venmo-family-webui-demo/server.ts",
+    "humanTags": { "DOMAIN": "VENMO", "SCOPE": "API", "TYPE": "DEMO" }
+  },
+  {
+    "filePath": "demos/venmo-family-webui-demo/health-check.ts",
+    "humanTags": { "DOMAIN": "VENMO", "SCOPE": "API", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "src/dashboard/dev-dashboard.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "UI", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "src/dashboard/global-enterprise-dashboard.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "UI", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "src/dashboard/admin-dashboard-server.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "API", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "src/dashboard/simple-admin-dashboard.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "UI", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "src/dashboard/dispute-dashboard.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "UI", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "src/dashboard/cloudflare-integration-dashboard.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "UI", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "src/merchant/dashboard/dashboard-manager.ts",
+    "humanTags": { "DOMAIN": "MERCHANT", "SCOPE": "UI", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "src/merchant/dashboard/merchant-dashboard-manager.ts",
+    "humanTags": { "DOMAIN": "MERCHANT", "SCOPE": "UI", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "packages/@tools/cli/package/index.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CLI", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "packages/@tools/cli/package/commands/dashboard.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CLI", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "packages/@tools/cli/package/commands/secrets.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CLI", "TYPE": "SECURITY" }
+  },
+  {
+    "filePath": "packages/@tools/cli/package/commands/bench.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CLI", "TYPE": "PERFORMANCE" }
+  },
+  {
+    "filePath": "packages/@tools/cli/package/commands/cache.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CLI", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "packages/@tools/cli/package/commands/registry.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CLI", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "src/cli/interactive-cli.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CLI", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "src/cli/cashapp-cli.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CLI", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "tests/unit/cli/empire-patterns.test.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CLI", "TYPE": "TEST" }
+  },
+  {
+    "filePath": "tests/unit/cli/intelligence-pipeline.test.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CLI", "TYPE": "TEST" }
+  },
+  {
+    "filePath": "tests/integration/dashboard/dashboard-integration.test.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "UI", "TYPE": "TEST" }
+  },
+  {
+    "filePath": "tests/performance/performance.test.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CORE", "TYPE": "TEST" }
+  },
+  {
+    "filePath": "tests/security/compliance-timestamp.test.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CORE", "TYPE": "TEST" }
+  },
+  {
+    "filePath": "tests/security/feature-flags.test.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CORE", "TYPE": "TEST" }
+  },
+  {
+    "filePath": "src/security/auditor.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CORE", "TYPE": "SECURITY" }
+  },
+  {
+    "filePath": "src/security/deeplink-validator.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CORE", "TYPE": "SECURITY" }
+  },
+  {
+    "filePath": "src/security/token-exchange.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CORE", "TYPE": "SECURITY" }
+  },
+  {
+    "filePath": "src/security/websocket-auth.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "API", "TYPE": "SECURITY" }
+  },
+  {
+    "filePath": "src/@core/security/manager.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CORE", "TYPE": "SECURITY" }
+  },
+  {
+    "filePath": "src/@core/security/simd-matcher.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CORE", "TYPE": "PERFORMANCE" }
+  },
+  {
+    "filePath": "security/rate-limiter.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CORE", "TYPE": "SECURITY" }
+  },
+  {
+    "filePath": "security/unicode-dashboard.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "UI", "TYPE": "SECURITY" }
+  },
+  {
+    "filePath": "src/api/status-server.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "API", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "src/api/status-api.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "API", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "src/api/dns-manager.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "API", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "src/api/marketplace-server.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "API", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "scripts/ai-tagger.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CORE", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "scripts/tag-system.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CORE", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "scripts/validate-tags.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CORE", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "scripts/audit-tags.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CORE", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "scripts/security/scan-secrets.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CORE", "TYPE": "SECURITY" }
+  },
+  {
+    "filePath": "scripts/dashboard/open-dashboard.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CLI", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "scripts/dashboard/sync-intelligence-dashboard.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CLI", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "packages/disputes/dashboard/dispute-dashboard.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "UI", "TYPE": "FEATURE" }
+  },
+  {
+    "filePath": "tests/integration/integration.test.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CORE", "TYPE": "TEST" }
+  },
+  {
+    "filePath": "tests/unit/config/config.test.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CORE", "TYPE": "TEST" }
+  },
+  {
+    "filePath": "tests/stress-test.test.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CORE", "TYPE": "TEST" }
+  },
+  {
+    "filePath": "tests/performance-monitor.test.ts",
+    "humanTags": { "DOMAIN": "DUOPLUS", "SCOPE": "CORE", "TYPE": "TEST" }
+  }
+]

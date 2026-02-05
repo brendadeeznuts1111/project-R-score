@@ -1,0 +1,396 @@
+[
+	{
+		"id": "AI_FEED_2",
+		"pathname": "/predict/:model/:game",
+		"hostname": "ai-odds.stream",
+		"priority": 1250,
+		"environment": "prod",
+		"type": "ai-generated",
+		"region": "global",
+		"_meta": {
+			"description": "Model-based outright winner / money-line prediction",
+			"semver": "v2.4.1",
+			"owner": "ml-ops@ai-odds.stream",
+			"slack": "#feed-alerts",
+			"lifecycle": "stable",
+			"cacheTtl": 30,
+			"timeoutMs": 2500,
+			"retry": { "max": 3, "backoff": "exponential" },
+			"rateLimit": { "rpm": 1200, "rps": 20 },
+			"features": ["x-request-id", "if-none-match", "gzip"]
+		},
+		"contracts": {
+			"pathParams": {
+				"model": { "type": "string", "enum": ["xgb-v3", "nn-v2", "cat-v1"] },
+				"game": { "type": "uuid" }
+			},
+			"queryParams": {
+				"oddsFormat": { "type": "string", "enum": ["decimal", "american"], "default": "decimal" },
+				"depth": { "type": "integer", "minimum": 1, "maximum": 5, "default": 3 }
+			}
+		},
+		"monitoring": {
+			"slo": { "p99": 2000, "p95": 1200, "p50": 400, "errorRate": 0.1 },
+			"alerts": ["latency", "4xx", "5xx", "stale"]
+		},
+		"examples": [
+			{
+				"url": "https://ai-odds.stream/predict/xgb-v3/8f3e2b1a-4c5d-6e7f-8a9b-0c1d2e3f4g5h?oddsFormat=american&depth=3",
+				"method": "GET",
+				"response": {
+					"gameId": "8f3e2b1a-…",
+					"market": "moneyline",
+					"outcomes": [
+						{ "name": "LAL", "price": "-210" },
+						{ "name": "BOS", "price": "+175" }
+					],
+					"modelConfidence": 0.74,
+					"generatedAt": "2025-12-09T14:23:45Z"
+				}
+			}
+		],
+		"_http": {
+			"contentType": {
+				"default": "application/json; charset=utf-8",
+				"alternatives": {
+					"msgpack": "application/msgpack",
+					"protobuf": "application/x-protobuf"
+				}
+			},
+			"etag": {
+				"type": "weak",
+				"algorithm": "murmur3",
+				"sourceFields": ["outcomes.price", "generatedAt"]
+			},
+			"cachePolicy": {
+				"cdn": "public, max-age=30, stale-while-revalidate=60",
+				"edge": "public, max-age=15, stale-if-error=30",
+				"browser": "private, max-age=5"
+			},
+			"lastModifiedField": "generatedAt",
+			"rateLimitHeaders": true,
+			"securityHeaders": true
+		}
+	},
+	{
+		"id": "AI_FEED_3",
+		"pathname": "/ml/:provider/:sport/*",
+		"hostname": "*.ai-odds.stream",
+		"priority": 1220,
+		"environment": "prod",
+		"type": "ai-generated",
+		"region": "global",
+		"_meta": {
+			"description": "Generic ML-provider bridge (plug-in)",
+			"semver": "v1.8.0",
+			"owner": "platform@ai-odds.stream",
+			"lifecycle": "stable",
+			"cacheTtl": 60,
+			"timeoutMs": 3000,
+			"retry": { "max": 2, "backoff": "linear" },
+			"rateLimit": { "rpm": 600, "rps": 10 },
+			"features": ["x-request-id", "gzip", "deflate"]
+		},
+		"contracts": {
+			"pathParams": {
+				"provider": { "type": "string", "pattern": "^[a-z0-9-]{3,20}$" },
+				"sport": { "type": "string", "enum": ["soccer", "basketball", "tennis", "american-football", "baseball", "hockey"] },
+				"*": { "type": "string" }
+			},
+			"queryParams": {
+				"market": { "type": "string", "default": "match-winner" },
+				"format": { "type": "string", "enum": ["json", "msgpack"], "default": "json" }
+			}
+		},
+		"monitoring": {
+			"slo": { "p99": 2500, "p95": 1500, "p50": 500, "errorRate": 0.2 },
+			"alerts": ["latency", "4xx", "5xx"]
+		},
+		"examples": [
+			{
+				"url": "https://opta.ai-odds.stream/ml/opta/soccer/premier-league?market=over-under&format=msgpack",
+				"method": "GET"
+			}
+		],
+		"_http": {
+			"contentType": {
+				"default": "application/json; charset=utf-8",
+				"alternatives": {
+					"msgpack": "application/msgpack",
+					"protobuf": "application/x-protobuf"
+				}
+			},
+			"etag": {
+				"type": "strong",
+				"algorithm": "sha256",
+				"sourceFields": ["provider", "sport", "market"]
+			},
+			"cachePolicy": {
+				"cdn": "public, max-age=60, stale-while-revalidate=120",
+				"edge": "public, max-age=30, stale-if-error=60",
+				"browser": "private, max-age=10"
+			},
+			"rateLimitHeaders": true,
+			"securityHeaders": true
+		}
+	},
+	{
+		"id": "AI_FEED_4",
+		"pathname": "/api/v2/odds/:sportId/:marketId",
+		"hostname": "ai-odds.stream",
+		"priority": 1200,
+		"environment": "prod",
+		"type": "ai-generated",
+		"region": "global",
+		"_meta": {
+			"description": "Canonical odds snapshot API (v2)",
+			"semver": "v2.9.3",
+			"owner": "api-team@ai-odds.stream",
+			"lifecycle": "stable",
+			"cacheTtl": 15,
+			"timeoutMs": 1500,
+			"retry": { "max": 3, "backoff": "exponential" },
+			"rateLimit": { "rpm": 3000, "rps": 50 },
+			"features": ["etag", "gzip", "range-requests"]
+		},
+		"contracts": {
+			"pathParams": {
+				"sportId": { "type": "integer", "minimum": 1, "maximum": 99 },
+				"marketId": { "type": "integer", "minimum": 1, "maximum": 999 }
+			},
+			"queryParams": {
+				"bookmakers": { "type": "string", "pattern": "^[a-z,]{3,}$" },
+				"oddsFormat": { "type": "string", "enum": ["decimal", "american", "hong-kong", "malay", "indo"], "default": "decimal" },
+				"date": { "type": "string", "format": "date" }
+			}
+		},
+		"monitoring": {
+			"slo": { "p99": 1200, "p95": 800, "p50": 200, "errorRate": 0.05 },
+			"alerts": ["latency", "4xx", "5xx", "stale"]
+		},
+		"examples": [
+			{
+				"url": "https://ai-odds.stream/api/v2/odds/1/3?bookmakers=draftkings,fanduel&oddsFormat=american&date=2025-12-09",
+				"method": "GET"
+			}
+		],
+		"_http": {
+			"contentType": {
+				"default": "application/json; charset=utf-8"
+			},
+			"etag": {
+				"type": "strong",
+				"algorithm": "murmur3",
+				"sourceFields": ["sportId", "marketId", "bookmakers", "date"]
+			},
+			"cachePolicy": {
+				"cdn": "public, max-age=15, stale-while-revalidate=30",
+				"edge": "public, max-age=10, stale-if-error=20",
+				"browser": "private, max-age=3"
+			},
+			"lastModifiedField": "date",
+			"rateLimitHeaders": true,
+			"securityHeaders": true
+		}
+	},
+	{
+		"id": "AI_FEED_5",
+		"pathname": "/stream/:bookie/:event/:market",
+		"hostname": "realtime.ai-odds.stream",
+		"priority": 1180,
+		"environment": "prod",
+		"type": "ai-generated",
+		"region": "global",
+		"_meta": {
+			"description": "WebSocket/fire-hose for per-book odds deltas",
+			"semver": "v3.0.0",
+			"owner": "realtime@ai-odds.stream",
+			"lifecycle": "stable",
+			"cacheTtl": 0,
+			"timeoutMs": 0,
+			"retry": { "max": 0 },
+			"rateLimit": { "connections": 5000, "msgsPerSec": 1000 },
+			"features": ["websocket", "jwt-auth", "per-message-deflate"]
+		},
+		"contracts": {
+			"pathParams": {
+				"bookie": { "type": "string", "enum": ["draftkings", "fanduel", "bet365", "williamhill", "pinnacle"] },
+				"event": { "type": "uuid" },
+				"market": { "type": "string", "pattern": "^[a-z-]{3,40}$" }
+			},
+			"queryParams": {
+				"token": { "type": "string", "format": "jwt" }
+			}
+		},
+		"monitoring": {
+			"slo": { "p99": 100, "p95": 50, "p50": 20, "errorRate": 0.01 },
+			"alerts": ["drop-rate", "conn-failures", "lag"]
+		},
+		"examples": [
+			{
+				"url": "wss://realtime.ai-odds.stream/stream/draftkings/7e8f9a0b-1c2d-3e4f-5a6b-7c8d9e0f1a2b/moneyline?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+				"method": "WS"
+			}
+		],
+		"_http": {
+			"contentType": {
+				"default": ""
+			},
+			"cachePolicy": {
+				"cdn": "no-cache, no-store, must-revalidate",
+				"edge": "no-cache, no-store, must-revalidate",
+				"browser": "no-cache, no-store, must-revalidate"
+			},
+			"rateLimitHeaders": true,
+			"securityHeaders": true
+		}
+	},
+	{
+		"id": "AI_FEED_6",
+		"pathname": "/live/:sport/:league/:matchId",
+		"hostname": "live.ai-odds.stream",
+		"priority": 1150,
+		"environment": "prod",
+		"type": "ai-generated",
+		"region": "global",
+		"_meta": {
+			"description": "Live in-game probabilities & stats",
+			"semver": "v2.5.2",
+			"owner": "live-team@ai-odds.stream",
+			"lifecycle": "stable",
+			"cacheTtl": 5,
+			"timeoutMs": 1200,
+			"retry": { "max": 3, "backoff": "exponential" },
+			"rateLimit": { "rpm": 2000, "rps": 30 },
+			"features": ["server-sent-events", "gzip", "last-event-id"]
+		},
+		"contracts": {
+			"pathParams": {
+				"sport": { "type": "string", "enum": ["soccer", "basketball", "tennis"] },
+				"league": { "type": "string", "pattern": "^[a-z-]{3,30}$" },
+				"matchId": { "type": "uuid" }
+			},
+			"queryParams": {
+				"fields": { "type": "string", "pattern": "^[a-z,]{3,}$" },
+				"format": { "type": "string", "enum": ["json", "sse"], "default": "json" }
+			}
+		},
+		"monitoring": {
+			"slo": { "p99": 1000, "p95": 600, "p50": 150, "errorRate": 0.08 },
+			"alerts": ["latency", "4xx", "5xx", "stale"]
+		},
+		"examples": [
+			{
+				"url": "https://live.ai-odds.stream/live/basketball/nba/9f3e2b1a-4c5d-6e7f-8a9b-0c1d2e3f4g5h?fields=score,prob,pace&format=sse",
+				"method": "GET"
+			}
+		],
+		"_http": {
+			"contentType": {
+				"default": "application/json; charset=utf-8",
+				"alternatives": {
+					"sse": "text/event-stream; charset=utf-8"
+				}
+			},
+			"etag": {
+				"type": "weak",
+				"algorithm": "murmur3",
+				"sourceFields": ["score", "prob", "pace"]
+			},
+			"cachePolicy": {
+				"cdn": "public, max-age=5, stale-while-revalidate=10",
+				"edge": "public, max-age=3, stale-if-error=5",
+				"browser": "private, max-age=1"
+			},
+			"lastModifiedField": "timestamp",
+			"rateLimitHeaders": true,
+			"securityHeaders": true
+		}
+	},
+	{
+		"id": "AI_FEED_7",
+		"pathname": "/batch/:sport/:dateRange",
+		"hostname": "analytics.ai-odds.stream",
+		"priority": 1120,
+		"environment": "prod",
+		"type": "ai-generated",
+		"region": "global",
+		"_meta": {
+			"description": "Batch market analytics & historical data processing",
+			"semver": "v1.2.0",
+			"owner": "analytics@ai-odds.stream",
+			"slack": "#analytics-feed",
+			"lifecycle": "stable",
+			"cacheTtl": 300,
+			"timeoutMs": 5000,
+			"retry": { "max": 2, "backoff": "linear" },
+			"rateLimit": { "rpm": 300, "rps": 5 },
+			"features": ["x-request-id", "gzip", "rapid-hash", "parallel-processing"]
+		},
+		"contracts": {
+			"pathParams": {
+				"sport": { "type": "string", "enum": ["basketball", "soccer", "tennis", "american-football", "baseball", "hockey"] },
+				"dateRange": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}_\\d{4}-\\d{2}-\\d{2}$" }
+			},
+			"queryParams": {
+				"markets": { "type": "string", "pattern": "^[a-z,]{3,}$", "default": "all" },
+				"aggregation": { "type": "string", "enum": ["hourly", "daily", "weekly"], "default": "daily" },
+				"format": { "type": "string", "enum": ["json", "ndjson", "csv"], "default": "json" },
+				"limit": { "type": "integer", "minimum": 1, "maximum": 50000, "default": 10000 }
+			}
+		},
+		"monitoring": {
+			"slo": { "p99": 4000, "p95": 2500, "p50": 800, "errorRate": 0.15 },
+			"alerts": ["latency", "4xx", "5xx", "timeout", "memory"]
+		},
+		"examples": [
+			{
+				"url": "https://analytics.ai-odds.stream/batch/basketball/2025-12-01_2025-12-09?markets=moneyline,spread&aggregation=daily&format=ndjson&limit=25000",
+				"method": "GET",
+				"response": {
+					"sport": "basketball",
+					"dateRange": "2025-12-01_2025-12-09",
+					"totalMarkets": 25000,
+					"processedAt": "2025-12-09T14:30:00Z",
+					"processingTimeMs": 1200,
+					"markets": [
+						{
+							"marketId": "8f3e2b1a-4c5d-6e7f-8a9b-0c1d2e3f4g5h",
+							"date": "2025-12-01",
+							"game": "Lakers-Celtics",
+							"market": "moneyline",
+							"avgOdds": { "home": 1.95, "away": 1.96 },
+							"arbitrageOpportunities": 3,
+							"volume": 125000
+						}
+					],
+					"aggregation": "daily",
+					"hash": "9166712279701818032"
+				}
+			}
+		],
+		"_http": {
+			"contentType": {
+				"default": "application/json; charset=utf-8",
+				"alternatives": {
+					"ndjson": "application/x-ndjson",
+					"csv": "text/csv"
+				}
+			},
+			"etag": {
+				"type": "strong",
+				"algorithm": "rapidhash",
+				"sourceFields": ["sport", "dateRange", "markets", "aggregation"]
+			},
+			"cachePolicy": {
+				"cdn": "public, max-age=300, stale-while-revalidate=600",
+				"edge": "public, max-age=180, stale-if-error=300",
+				"browser": "private, max-age=60"
+			},
+			"lastModifiedField": "processedAt",
+			"rateLimitHeaders": true,
+			"securityHeaders": true,
+			"compression": ["gzip", "brotli"]
+		}
+	}
+]

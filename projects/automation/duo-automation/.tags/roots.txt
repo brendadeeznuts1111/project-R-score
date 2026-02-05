@@ -1,0 +1,6 @@
+# DuoPlus Tag System Merkle Roots
+# Format: commit:merkleRoot:timestamp
+# Sorted by timestamp (oldest first)
+
+e36a79e7ae6266d42cb39037d668d214d0db14c2:f2515c94bffce39d5833f99dec8acd2fd8078db525f64c7704d7b3411ed06979:2026-01-16T07:51:15.185Z
+6dc30a09aeaef70542d6a15cbacaf771cea3370e:7f508f4eb64d83261d8f1a19209da8fa0e1c1bd49ca467abf83ff174d97dfb95:2026-01-16T08:39:31.678Z

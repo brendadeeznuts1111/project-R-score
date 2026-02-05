@@ -1,0 +1,30 @@
+# bunfig.toml - Bun 1.3.6 Workspace Optimization
+
+[install]
+exact = true
+registry = "https://npm.factory-wager.com"
+# Selective hoisting for type safety and linting across packages
+publicHoistPattern = ["@types*", "*eslint*", "typescript-eslint*"]
+
+# Production builds: disable .env auto-loading (explicit is better)
+# env = false  # Uncomment for production
+
+[serve.static]
+# Note: Static files served via routes in src/server/index.ts
+
+[test]
+# Use happy-dom for React component tests
+preload = ["./happydom.ts"]
+
+# Clean CI output: only show failures
+# onlyFailures = true  # Enable for CI
+
+# Retry flaky tests (useful for timing-sensitive benchmarks)
+# retry = 3
+
+[publish]
+registry = "https://npm.factory-wager.com"
+
+[install.scopes]
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }

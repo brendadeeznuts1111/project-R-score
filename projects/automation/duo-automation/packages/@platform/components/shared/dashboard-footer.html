@@ -1,0 +1,181 @@
+<!-- Dashboard Footer Component -->
+<!-- Permission Required: footer.view -->
+<footer class="bg-gray-800 border-t border-gray-700 p-6 mt-8" data-component="dashboard-footer" data-permission="footer.view">
+    <div class="container mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <!-- System Information -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                    <i data-lucide="info" class="w-4 h-4 mr-2"></i>
+                    System Information
+                </h3>
+                <div class="space-y-2 text-sm text-gray-400">
+                    <div>Version: <span id="system-version" class="text-white">v2.1.0</span></div>
+                    <div>Build: <span id="build-number" class="text-white">2026.01.14</span></div>
+                    <div>Environment: <span id="footer-environment" class="text-white">Production</span></div>
+                    <div>Uptime: <span id="system-uptime" class="text-white">24h 15m</span></div>
+                    <!-- Timezone Information -->
+                    <div>Scope: <span id="footer-scope" class="text-white">ENTERPRISE</span></div>
+                    <div>Timezone: <span id="footer-timezone" class="text-white">America/New_York</span></div>
+                    <div>Current Time: <span id="footer-current-time" class="text-white">--:--:--</span></div>
+                    <div>Platform: <span id="footer-platform" class="text-white">Windows</span></div>
+                </div>
+            </div>
+            
+            <!-- Quick Links -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                    <i data-lucide="link" class="w-4 h-4 mr-2"></i>
+                    Quick Links
+                </h3>
+                <div class="space-y-2">
+                    <a href="#documentation" class="block text-sm text-blue-400 hover:text-blue-300 transition-colors">
+                        📚 Documentation
+                    </a>
+                    <a href="#api-reference" class="block text-sm text-blue-400 hover:text-blue-300 transition-colors">
+                        🔌 API Reference
+                    </a>
+                    <a href="#support" class="block text-sm text-blue-400 hover:text-blue-300 transition-colors">
+                        💬 Support
+                    </a>
+                    <a href="#changelog" class="block text-sm text-blue-400 hover:text-blue-300 transition-colors">
+                        📋 Changelog
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Resources -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                    <i data-lucide="book-open" class="w-4 h-4 mr-2"></i>
+                    Resources
+                </h3>
+                <div class="space-y-2">
+                    <a href="#user-guide" class="block text-sm text-blue-400 hover:text-blue-300 transition-colors">
+                        📖 User Guide
+                    </a>
+                    <a href="#tutorials" class="block text-sm text-blue-400 hover:text-blue-300 transition-colors">
+                        🎓 Tutorials
+                    </a>
+                    <a href="#best-practices" class="block text-sm text-blue-400 hover:text-blue-300 transition-colors">
+                        ✨ Best Practices
+                    </a>
+                    <a href="#troubleshooting" class="block text-sm text-blue-400 hover:text-blue-300 transition-colors">
+                        🔧 Troubleshooting
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Contact & Support -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 flex items-center">
+                    <i data-lucide="headphones" class="w-4 h-4 mr-2"></i>
+                    Contact & Support
+                </h3>
+                <div class="space-y-2 text-sm text-gray-400">
+                    <div>📧 support@duoplus.com</div>
+                    <div>📞 +1 (555) 123-4567</div>
+                    <div>💬 Live Chat Available</div>
+                    <div>🕐 24/7 Support</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Bar -->
+        <div class="border-t border-gray-700 mt-6 pt-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-sm text-gray-400">
+                    © 2026 DuoPlus. All rights reserved. | 
+                    <a href="#privacy" class="text-blue-400 hover:text-blue-300">Privacy Policy</a> | 
+                    <a href="#terms" class="text-blue-400 hover:text-blue-300">Terms of Service</a>
+                </div>
+                <div class="flex items-center space-x-4 mt-4 md:mt-0">
+                    <span class="text-sm text-gray-400">Last Updated: <span id="last-updated" class="text-white"></span></span>
+                    <div class="flex items-center space-x-2">
+                        <span class="status-indicator status-online"></span>
+                        <span class="text-sm text-green-400">All Systems Operational</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+// Footer Component Initialization
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.querySelector('[data-component="dashboard-footer"]')) {
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Initialize timezone context from server-provided config
+        const initializeTimezoneContext = () => {
+            // Get timezone info from server config or fallback
+            const dashboardConfig = window.DASHBOARD_CONFIG || {
+                DASHBOARD_SCOPE: 'ENTERPRISE',
+                TIMEZONE: 'America/New_York',
+                PLATFORM: 'Windows',
+                TIMEZONE_DISPLAY: 'America/New_York (UTC-05:00)'
+            };
+            
+            // Update timezone display elements
+            const scopeElement = document.getElementById('footer-scope');
+            const timezoneElement = document.getElementById('footer-timezone');
+            const platformElement = document.getElementById('footer-platform');
+            
+            if (scopeElement) scopeElement.textContent = dashboardConfig.DASHBOARD_SCOPE;
+            if (timezoneElement) timezoneElement.textContent = dashboardConfig.TIMEZONE_DISPLAY || dashboardConfig.TIMEZONE;
+            if (platformElement) platformElement.textContent = dashboardConfig.PLATFORM;
+            
+            // Update header timezone display with displayName
+            const headerTimezoneDisplay = document.getElementById('timezone-display');
+            if (headerTimezoneDisplay) {
+                headerTimezoneDisplay.textContent = dashboardConfig.TIMEZONE_DISPLAY || dashboardConfig.TIMEZONE;
+            }
+            
+            // Update current time in configured timezone
+            const updateCurrentTime = () => {
+                const timeElement = document.getElementById('footer-current-time');
+                if (timeElement) {
+                    const now = new Date();
+                    const timeString = now.toLocaleString('en-US', {
+                        timeZone: dashboardConfig.TIMEZONE,
+                        timeZoneName: 'short',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                    timeElement.textContent = timeString;
+                }
+            };
+            
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 1000); // Update every second
+        };
+        
+        // Update last updated time
+        const lastUpdated = document.getElementById('last-updated');
+        if (lastUpdated) {
+            lastUpdated.textContent = new Date().toLocaleString();
+        }
+        
+        // Update system uptime (simulated)
+        const updateUptime = () => {
+            const uptimeElement = document.getElementById('system-uptime');
+            if (uptimeElement) {
+                const hours = Math.floor(Math.random() * 72) + 1;
+                const minutes = Math.floor(Math.random() * 60);
+                uptimeElement.textContent = `${hours}h ${minutes}m`;
+            }
+        };
+        
+        // Initialize timezone context
+        initializeTimezoneContext();
+        
+        updateUptime();
+        setInterval(updateUptime, 60000); // Update every minute
+    }
+});
+</script>

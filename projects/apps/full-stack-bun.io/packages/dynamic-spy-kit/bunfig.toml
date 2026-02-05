@@ -1,0 +1,23 @@
+# bunfig.toml - LIVE streaming + private registry
+# Production config for @dynamic-spy/kit v3.3
+
+[install]
+registry = "https://registry.yourarb.com"
+token = "bunxpm_yourtoken123"
+cache = true
+frozen-lockfile = true
+
+[install.scopes]
+"@yourorg" = "https://registry.yourarb.com"
+
+[module]
+cache-path = "./cache"
+production = true
+
+# LIVE SYNC - Every 30 seconds
+# Note: Bun doesn't have built-in cron, but you can use external schedulers
+# [scheduledTasks]
+# syncSports = "*/30 * * * * *"
+# syncOdds = "*/5 * * * *"
+# cleanupCache = "0 0 * * *"
+

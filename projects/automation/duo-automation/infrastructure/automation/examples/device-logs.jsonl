@@ -1,0 +1,7 @@
+{"deviceId":"device-001","timestamp":"2026-01-27T10:00:00Z","event":"provisioned","region":"us-west","androidVersion":"12B"}
+{"deviceId":"device-001","timestamp":"2026-01-27T10:01:00Z","event":"configured","profile":"prod-api","status":"success"}
+{"deviceId":"device-001","timestamp":"2026-01-27T10:02:00Z","event":"app_installed","package":"com.example.production","status":"success"}
+{"deviceId":"device-002","timestamp":"2026-01-27T10:00:30Z","event":"provisioned","region":"us-west","androidVersion":"12B"}
+{"deviceId":"device-002","timestamp":"2026-01-27T10:01:30Z","event":"configured","profile":"prod-api","status":"success"}
+{"deviceId":"device-001","timestamp":"2026-01-27T10:05:00Z","event":"test_started","testProfile":"integration-tests"}
+{"deviceId":"device-001","timestamp":"2026-01-27T10:07:00Z","event":"test_completed","passed":true,"failures":0}

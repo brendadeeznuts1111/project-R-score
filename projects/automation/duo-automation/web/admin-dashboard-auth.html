@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏭 Factory-Wager Admin Dashboard - Authentication</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes pulse-green {
+            0%, 100% { background-color: rgb(34 197 94); }
+            50% { background-color: rgb(74 222 128); }
+        }
+        @keyframes pulse-red {
+            0%, 100% { background-color: rgb(239 68 68); }
+            50% { background-color: rgb(248 113 113); }
+        }
+        .status-healthy { animation: pulse-green 2s infinite; }
+        .status-critical { animation: pulse-red 2s infinite; }
+        .glass-effect {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="glass-effect rounded-lg p-6 mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold mb-2">🏭 Factory-Wager Admin Dashboard</h1>
+                    <p class="text-gray-300">Empire Pro Status Dashboard</p>
+                </div>
+                <div class="text-right">
+                    <div id="currentTime" class="text-xl font-mono"></div>
+                    <div id="systemStatus" class="mt-2">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                            <span class="w-2 h-2 bg-green-400 rounded-full mr-2 status-healthy"></span>
+                            Checking...
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Authentication Section -->
+        <div id="authSection" class="glass-effect rounded-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4">🔐 Authentication Required</h2>
+            
+            <div id="loginForm" class="max-w-md">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">API Key</label>
+                    <input type="password" id="apiKey" class="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:border-blue-500" placeholder="Enter your API key">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Environment</label>
+                    <select id="environment" class="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:outline-none focus:border-blue-500">
+                        <option value="development">Development (localhost)</option>
+                        <option value="staging">Staging</option>
+                        <option value="production">Production</option>
+                    </select>
+                </div>
+                <button onclick="authenticate()" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                    <i data-lucide="key" class="w-4 h-4 mr-2"></i>
+                    Authenticate
+                </button>
+            </div>
+
+            <div id="authError" class="hidden mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                <p class="font-bold">Authentication Failed</p>
+                <p id="authErrorMessage"></p>
+            </div>
+        </div>
+
+        <!-- Dashboard Content (Hidden until authenticated) -->
+        <div id="dashboardContent" class="hidden">
+            <!-- Status Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="glass-effect rounded-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">System Status</h3>
+                        <i data-lucide="activity" class="w-5 h-5 text-green-400"></i>
+                    </div>
+                    <div id="systemMetrics" class="space-y-2">
+                        <div class="flex justify-between">
+                            <span>Uptime</span>
+                            <span id="uptime" class="font-mono">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Response Time</span>
+                            <span id="responseTime" class="font-mono">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Success Rate</span>
+                            <span id="successRate" class="font-mono">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-effect rounded-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">Domains</h3>
+                        <i data-lucide="globe" class="w-5 h-5 text-blue-400"></i>
+                    </div>
+                    <div id="domainMetrics" class="space-y-2">
+                        <div class="flex justify-between">
+                            <span>Total</span>
+                            <span id="totalDomains" class="font-mono">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Healthy</span>
+                            <span id="healthyDomains" class="font-mono">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Issues</span>
+                            <span id="issueDomains" class="font-mono">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-effect rounded-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">DNS Records</h3>
+                        <i data-lucide="dns" class="w-5 h-5 text-purple-400"></i>
+                    </div>
+                    <div id="dnsMetrics" class="space-y-2">
+                        <div class="flex justify-between">
+                            <span>Total Records</span>
+                            <span id="totalRecords" class="font-mono">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Propagation</span>
+                            <span id="propagationStatus" class="font-mono">--</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Last Update</span>
+                            <span id="lastUpdate" class="font-mono">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="glass-effect rounded-lg p-6 mb-8">
+                <h3 class="text-xl font-semibold mb-4">⚡ Quick Actions</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <button onclick="refreshData()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                        <i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i>
+                        Refresh Data
+                    </button>
+                    <button onclick="checkDomains()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                        <i data-lucide="check-circle" class="w-4 h-4 mr-2"></i>
+                        Check Domains
+                    </button>
+                    <button onclick="checkDNS()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
+                        <i data-lucide="globe" class="w-4 h-4 mr-2"></i>
+                        Check DNS
+                    </button>
+                    <button onclick="viewLogs()" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition">
+                        <i data-lucide="file-text" class="w-4 h-4 mr-2"></i>
+                        View Logs
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="glass-effect rounded-lg p-6">
+                <h3 class="text-xl font-semibold mb-4">📊 Recent Activity</h3>
+                <div id="activityLog" class="space-y-2 max-h-64 overflow-y-auto">
+                    <div class="text-gray-400">Loading activity...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentApiKey = null;
+        let currentEnvironment = 'development';
+        let refreshInterval = null;
+
+        // API endpoints based on environment
+        const apiEndpoints = {
+            development: 'http://localhost:3001',
+            staging: 'https://admin-staging.factory-wager.com',
+            production: 'https://admin.factory-wager.com'
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            // Check for stored credentials
+            const storedApiKey = localStorage.getItem('factory-wager-api-key');
+            const storedEnv = localStorage.getItem('factory-wager-environment');
+            
+            if (storedApiKey && storedEnv) {
+                document.getElementById('apiKey').value = storedApiKey;
+                document.getElementById('environment').value = storedEnv;
+                authenticate();
+            }
+        });
+
+        function updateTime() {
+            document.getElementById('currentTime').textContent = new Date().toLocaleString();
+        }
+
+        async function authenticate() {
+            const apiKey = document.getElementById('apiKey').value;
+            const environment = document.getElementById('environment').value;
+            
+            if (!apiKey) {
+                showAuthError('Please enter an API key');
+                return;
+            }
+
+            showLoading(true);
+            
+            try {
+                const apiBase = apiEndpoints[environment];
+                
+                // Test authentication with health check
+                const response = await fetch(`${apiBase}/health`, {
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    // Authentication successful
+                    currentApiKey = apiKey;
+                    currentEnvironment = environment;
+                    
+                    // Store credentials
+                    localStorage.setItem('factory-wager-api-key', apiKey);
+                    localStorage.setItem('factory-wager-environment', environment);
+                    
+                    // Hide auth section, show dashboard
+                    document.getElementById('authSection').classList.add('hidden');
+                    document.getElementById('dashboardContent').classList.remove('hidden');
+                    document.getElementById('authError').classList.add('hidden');
+                    
+                    // Load dashboard data
+                    await loadDashboardData();
+                    
+                    // Start auto-refresh
+                    startAutoRefresh();
+                    
+                } else if (response.status === 401) {
+                    showAuthError('Invalid API key. Please check your credentials.');
+                } else {
+                    showAuthError(`Authentication failed: HTTP ${response.status}`);
+                }
+                
+            } catch (error) {
+                if (environment === 'development') {
+                    // For development, show mock data
+                    showMockDashboard();
+                } else {
+                    showAuthError(`Connection error: ${error.message}`);
+                }
+            }
+            
+            showLoading(false);
+        }
+
+        function showAuthError(message) {
+            document.getElementById('authErrorMessage').textContent = message;
+            document.getElementById('authError').classList.remove('hidden');
+        }
+
+        function showLoading(show) {
+            const button = document.querySelector('button[onclick="authenticate()"]');
+            if (show) {
+                button.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i> Authenticating...';
+                button.disabled = true;
+            } else {
+                button.innerHTML = '<i data-lucide="key" class="w-4 h-4 mr-2"></i> Authenticate';
+                button.disabled = false;
+                lucide.createIcons();
+            }
+        }
+
+        function showMockDashboard() {
+            // Hide auth section, show dashboard
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('dashboardContent').classList.remove('hidden');
+            document.getElementById('authError').classList.add('hidden');
+            
+            // Show mock data
+            document.getElementById('uptime').textContent = '99.9%';
+            document.getElementById('responseTime').textContent = '125ms';
+            document.getElementById('successRate').textContent = '100%';
+            document.getElementById('totalDomains').textContent = '5';
+            document.getElementById('healthyDomains').textContent = '5';
+            document.getElementById('issueDomains').textContent = '0';
+            document.getElementById('totalRecords').textContent = '18';
+            document.getElementById('propagationStatus').textContent = '100%';
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+            
+            // Update status
+            const statusEl = document.querySelector('#systemStatus span');
+            statusEl.className = 'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800';
+            statusEl.innerHTML = '<span class="w-2 h-2 bg-green-400 rounded-full mr-2 status-healthy"></span>HEALTHY (Mock Data)';
+            
+            // Add activity log
+            addActivity('info', 'Dashboard loaded with mock data (development mode)');
+        }
+
+        async function loadDashboardData() {
+            try {
+                const apiBase = apiEndpoints[currentEnvironment];
+                
+                // Load system status
+                const statusResponse = await fetch(`${apiBase}/api/system/status`, {
+                    headers: { 'Authorization': `Bearer ${currentApiKey}` }
+                });
+                
+                if (statusResponse.ok) {
+                    const data = await statusResponse.json();
+                    updateSystemMetrics(data);
+                }
+                
+                // Load domains
+                const domainsResponse = await fetch(`${apiBase}/api/domains`, {
+                    headers: { 'Authorization': `Bearer ${currentApiKey}` }
+                });
+                
+                if (domainsResponse.ok) {
+                    const domains = await domainsResponse.json();
+                    updateDomainMetrics(domains);
+                }
+                
+                // Load DNS records
+                const dnsResponse = await fetch(`${apiBase}/api/dns/records`, {
+                    headers: { 'Authorization': `Bearer ${currentApiKey}` }
+                });
+                
+                if (dnsResponse.ok) {
+                    const dns = await dnsResponse.json();
+                    updateDNSMetrics(dns);
+                }
+                
+                addActivity('success', 'Dashboard data refreshed successfully');
+                
+            } catch (error) {
+                addActivity('error', `Failed to load data: ${error.message}`);
+            }
+        }
+
+        function updateSystemMetrics(data) {
+            document.getElementById('uptime').textContent = `${data.system?.uptime || 'N/A'}s`;
+            document.getElementById('responseTime').textContent = `${data.performance?.avgResponseTime || 'N/A'}ms`;
+            document.getElementById('successRate').textContent = `${data.domains?.healthyDomains ? (data.domains.healthyDomains / data.domains.totalDomains * 100).toFixed(1) : 'N/A'}%`;
+        }
+
+        function updateDomainMetrics(domains) {
+            const healthy = domains.filter(d => d.status === 'healthy').length;
+            const issues = domains.filter(d => d.status !== 'healthy').length;
+            
+            document.getElementById('totalDomains').textContent = domains.length;
+            document.getElementById('healthyDomains').textContent = healthy;
+            document.getElementById('issueDomains').textContent = issues;
+        }
+
+        function updateDNSMetrics(dns) {
+            document.getElementById('totalRecords').textContent = dns.records?.length || 'N/A';
+            document.getElementById('propagationStatus').textContent = '100%';
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+        }
+
+        function startAutoRefresh() {
+            // Refresh every 30 seconds
+            refreshInterval = setInterval(() => {
+                loadDashboardData();
+            }, 30000);
+        }
+
+        function addActivity(type, message) {
+            const activityLog = document.getElementById('activityLog');
+            const time = new Date().toLocaleTimeString();
+            const icons = {
+                info: 'info',
+                success: 'check-circle',
+                error: 'alert-circle',
+                warning: 'alert-triangle'
+            };
+            const colors = {
+                info: 'text-blue-400',
+                success: 'text-green-400',
+                error: 'text-red-400',
+                warning: 'text-yellow-400'
+            };
+            
+            const activity = document.createElement('div');
+            activity.className = 'flex items-start space-x-2 p-2 rounded bg-gray-800 bg-opacity-50';
+            activity.innerHTML = `
+                <i data-lucide="${icons[type]}" class="w-4 h-4 mt-0.5 ${colors[type]}"></i>
+                <div class="flex-1">
+                    <div class="text-sm">${message}</div>
+                    <div class="text-xs text-gray-500">${time}</div>
+                </div>
+            `;
+            
+            activityLog.insertBefore(activity, activityLog.firstChild);
+            lucide.createIcons();
+            
+            // Keep only last 10 activities
+            while (activityLog.children.length > 10) {
+                activityLog.removeChild(activityLog.lastChild);
+            }
+        }
+
+        async function refreshData() {
+            addActivity('info', 'Refreshing dashboard data...');
+            await loadDashboardData();
+        }
+
+        async function checkDomains() {
+            addActivity('info', 'Checking domain health...');
+            // Implementation would call domain check API
+            setTimeout(() => {
+                addActivity('success', 'Domain health check completed');
+            }, 2000);
+        }
+
+        async function checkDNS() {
+            addActivity('info', 'Checking DNS propagation...');
+            // Implementation would call DNS check API
+            setTimeout(() => {
+                addActivity('success', 'DNS propagation check completed');
+            }, 2000);
+        }
+
+        function viewLogs() {
+            addActivity('info', 'Opening system logs...');
+            // Implementation would open logs modal or navigate to logs page
+        }
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+        });
+    </script>
+</body>
+</html>

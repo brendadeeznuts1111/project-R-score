@@ -1,0 +1,43 @@
+name = "global-qr-worker"
+main = "qr-worker-simple.ts"
+compatibility_date = "2024-01-15"
+compatibility_flags = ["nodejs_compat"]
+
+# Routes for QR system
+[[routes]]
+pattern = "api.apple.factory-wager.com/*"
+zone_name = "factory-wager.com"
+
+[[routes]]
+pattern = "qr.apple.factory-wager.com/*"
+zone_name = "factory-wager.com"
+
+[[routes]]
+pattern = "ws.apple.factory-wager.com/*"
+zone_name = "factory-wager.com"
+
+[[routes]]
+pattern = "auth.apple.factory-wager.com/*"
+zone_name = "factory-wager.com"
+
+[[routes]]
+pattern = "analytics.apple.factory-wager.com/*"
+zone_name = "factory-wager.com"
+
+[[routes]]
+pattern = "monitor.apple.factory-wager.com/*"
+zone_name = "factory-wager.com"
+
+[[routes]]
+pattern = "admin.apple.factory-wager.com/*"
+zone_name = "factory-wager.com"
+
+# Environment variables
+[vars]
+ENVIRONMENT = "production"
+LOG_LEVEL = "info"
+API_VERSION = "v3.1"
+SYSTEM_NAME = "Global QR Device Onboarding"
+ORGANIZATION = "Factory Wager"
+WEBSITE = "https://factory-wager.com"
+SUPPORT_EMAIL = "support@factory-wager.com"

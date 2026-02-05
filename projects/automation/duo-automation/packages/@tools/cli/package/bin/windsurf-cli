@@ -1,0 +1,51 @@
+#!/usr/bin/env bun
+
+// Windsurf Project CLI - Main Entry Point
+
+import { Command } from 'commander';
+import { createCommand } from '../commands/create.js';
+import { analyticsCommand } from '../commands/analytics.js';
+import { storageCommand } from '../commands/storage.js';
+import { deployCommand } from '../commands/deploy.js';
+import { dashboardCommand } from '../commands/dashboard.ts';
+import { queryCommand } from '../commands/query.ts';
+import { benchCommand } from '../commands/bench.ts';
+import { secretsCommand } from '../commands/secrets.ts';
+import { registryCommand } from '../commands/registry.ts';
+import { phoneDeployCommand } from '../commands/phone-deploy.ts';
+import { phoneEmergencyCommand } from '../commands/phone-emergency.ts';
+import { ptyCommand } from '../commands/pty.ts';
+import { AuthManager, DEFAULT_CLI_ADMIN } from '../../src/rbac/auth-context';
+
+const program = new Command();
+
+// Initialize Auth for CLI
+AuthManager.setUser(DEFAULT_CLI_ADMIN);
+
+program
+  .name('windsurf-cli')
+  .description('Windsurf Project CLI - Apple ID & Analytics Management')
+  .version('1.0.0');
+
+// Add subcommands
+program.addCommand(createCommand);
+program.addCommand(analyticsCommand);
+program.addCommand(storageCommand);
+program.addCommand(deployCommand);
+program.addCommand(dashboardCommand);
+program.addCommand(queryCommand);
+program.addCommand(benchCommand);
+program.addCommand(secretsCommand);
+program.addCommand(ptyCommand);
+
+// Add phone intelligence commands directly
+program.addCommand(phoneDeployCommand);
+program.addCommand(phoneEmergencyCommand);
+
+// Parse arguments
+program.parse();
+
+// Show help if no command provided
+if (!process.argv.slice(2).length) {
+  program.outputHelp();
+}

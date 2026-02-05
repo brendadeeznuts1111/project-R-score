@@ -1,0 +1,261 @@
+<!-- Dashboard Sidebar Component -->
+<!-- Permission Required: sidebar.view -->
+<aside class="w-64 bg-gray-800 min-h-screen border-r border-gray-700" data-component="dashboard-sidebar" data-permission="sidebar.view">
+    <div class="p-4">
+        <!-- User Profile Section -->
+        <div class="mb-6 p-4 bg-gray-700 rounded-lg">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                    <i data-lucide="user" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <div class="font-semibold" id="user-name">Admin User</div>
+                    <div class="text-sm text-gray-400" id="user-role">Administrator</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation Menu -->
+        <nav class="space-y-2">
+            <!-- Dashboard -->
+            <div class="nav-section" data-permission="dashboard.view">
+                <a href="#dashboard" class="nav-item active">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span>Dashboard</span>
+                </a>
+            </div>
+            
+            <!-- Agent Management -->
+            <div class="nav-section" data-permission="agents.view">
+                <div class="nav-section-header" onclick="toggleNavSection('agent-section')">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                    <span>Agent Management</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 ml-auto transition-transform" id="agent-section-chevron"></i>
+                </div>
+                <div class="nav-subsection" id="agent-section">
+                    <a href="#agents" class="nav-item" data-permission="agents.view">
+                        <i data-lucide="list" class="w-4 h-4"></i>
+                        <span>Agent List</span>
+                    </a>
+                    <a href="#create-agent" class="nav-item" data-permission="agents.create">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>Create Agent</span>
+                    </a>
+                    <a href="#device-templates" class="nav-item" data-permission="agents.manage">
+                        <i data-lucide="cpu" class="w-4 h-4"></i>
+                        <span>Device Templates</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Connection Pool -->
+            <div class="nav-section" data-permission="connections.view">
+                <a href="#connections" class="nav-item">
+                    <i data-lucide="link" class="w-5 h-5"></i>
+                    <span>Connection Pool</span>
+                </a>
+            </div>
+            
+            <!-- Logs & Monitoring -->
+            <div class="nav-section" data-permission="logs.view">
+                <div class="nav-section-header" onclick="toggleNavSection('logs-section')">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                    <span>Logs & Monitoring</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 ml-auto transition-transform" id="logs-section-chevron"></i>
+                </div>
+                <div class="nav-subsection" id="logs-section">
+                    <a href="#activity-log" class="nav-item" data-permission="logs.view">
+                        <i data-lucide="activity" class="w-4 h-4"></i>
+                        <span>Activity Log</span>
+                    </a>
+                    <a href="#log-management" class="nav-item" data-permission="logs.advanced">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                        <span>Log Management</span>
+                    </a>
+                    <a href="#error-analytics" class="nav-item" data-permission="logs.advanced">
+                        <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                        <span>Error Analytics</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- System Configuration -->
+            <div class="nav-section" data-permission="system.config">
+                <div class="nav-section-header" onclick="toggleNavSection('system-section')">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                    <span>System</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 ml-auto transition-transform" id="system-section-chevron"></i>
+                </div>
+                <div class="nav-subsection" id="system-section">
+                    <a href="#rbac" class="nav-item" data-permission="rbac.view">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i>
+                        <span>RBAC Settings</span>
+                    </a>
+                    <a href="#api-config" class="nav-item" data-permission="api.config">
+                        <i data-lucide="api" class="w-4 h-4"></i>
+                        <span>API Configuration</span>
+                    </a>
+                    <a href="#windows-enterprise" class="nav-item" data-permission="system.config">
+                        <i data-lucide="monitor" class="w-4 h-4"></i>
+                        <span>Windows Enterprise</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Analytics -->
+            <div class="nav-section" data-permission="analytics.view">
+                <a href="#analytics" class="nav-item">
+                    <i data-lucide="bar-chart" class="w-5 h-5"></i>
+                    <span>Analytics</span>
+                </a>
+            </div>
+            
+            <!-- Admin Section -->
+            <div class="nav-section" data-permission="sidebar.admin">
+                <div class="nav-section-header" onclick="toggleNavSection('admin-section')">
+                    <i data-lucide="shield" class="w-5 h-5"></i>
+                    <span>Administration</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 ml-auto transition-transform" id="admin-section-chevron"></i>
+                </div>
+                <div class="nav-subsection" id="admin-section">
+                    <a href="#user-management" class="nav-item" data-permission="admin.users">
+                        <i data-lucide="users-2" class="w-4 h-4"></i>
+                        <span>User Management</span>
+                    </a>
+                    <a href="#system-backup" class="nav-item" data-permission="admin.backup">
+                        <i data-lucide="database" class="w-4 h-4"></i>
+                        <span>System Backup</span>
+                    </a>
+                    <a href="#security-audit" class="nav-item" data-permission="admin.security">
+                        <i data-lucide="lock" class="w-4 h-4"></i>
+                        <span>Security Audit</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Quick Actions -->
+        <div class="mt-8 p-4 bg-gray-700 rounded-lg">
+            <h3 class="text-sm font-semibold mb-3 text-gray-300">Quick Actions</h3>
+            <div class="space-y-2">
+                <button onclick="refreshDashboard()" class="w-full text-left px-3 py-2 bg-gray-600 hover:bg-gray-500 rounded text-sm transition-colors flex items-center">
+                    <i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i>
+                    Refresh Dashboard
+                </button>
+                <button onclick="exportLogs()" class="w-full text-left px-3 py-2 bg-gray-600 hover:bg-gray-500 rounded text-sm transition-colors flex items-center" data-permission="logs.export">
+                    <i data-lucide="download" class="w-4 h-4 mr-2"></i>
+                    Export Logs
+                </button>
+                <button onclick="openSupport()" class="w-full text-left px-3 py-2 bg-gray-600 hover:bg-gray-500 rounded text-sm transition-colors flex items-center">
+                    <i data-lucide="help-circle" class="w-4 h-4 mr-2"></i>
+                    Get Support
+                </button>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<style>
+/* Sidebar Component Styles */
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: #3b82f6;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    margin-bottom: 0.25rem;
+}
+
+.nav-item:hover {
+    background-color: #3b82f6;
+    color: #3b82f6;
+}
+
+.nav-item.active {
+    background-color: #3b82f6;
+    color: #3b82f6;
+}
+
+.nav-section-header {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: #3b82f6;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    margin-bottom: 0.25rem;
+}
+
+.nav-section-header:hover {
+    background-color: #3b82f6;
+    color: #3b82f6;
+}
+
+.nav-subsection {
+    margin-left: 1rem;
+    margin-bottom: 0.5rem;
+    display: none;
+}
+
+.nav-subsection.show {
+    display: block;
+}
+
+.nav-subsection .nav-item {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+}
+</style>
+
+<script>
+// Sidebar Component JavaScript
+function toggleNavSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    const chevron = document.getElementById(sectionId + '-chevron');
+    
+    if (section) {
+        section.classList.toggle('show');
+        if (chevron) {
+            chevron.style.transform = section.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+    }
+}
+
+function refreshDashboard() {
+    if (window.DashboardCore) {
+        DashboardCore.refresh();
+    }
+}
+
+function exportLogs() {
+    if (window.DashboardCore) {
+        DashboardCore.exportLogs();
+    }
+}
+
+function openSupport() {
+    window.open('#support', '_blank');
+}
+
+// Initialize sidebar
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.querySelector('[data-component="dashboard-sidebar"]')) {
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Filter menu items based on permissions
+        if (window.PermissionsChecker) {
+            const menuItems = document.querySelectorAll('[data-permission]');
+            menuItems.forEach(item => {
+                const permission = item.dataset.permission;
+                if (!PermissionsChecker.hasPermission(permission, window.userPermissions)) {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    }
+});
+</script>

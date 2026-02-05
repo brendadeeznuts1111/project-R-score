@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "strict": true,
+    "noEmit": true,
+    "types": ["bun-types"],
+    "baseUrl": ".",
+    "paths": {
+      "@core/*": ["src/@core/*"],
+      "@api/*": ["src/@api/*"],
+      "@automation/*": ["src/@automation/*"],
+      "@venmo/*": ["src/@automation/@venmo/*"],
+      "@payment/*": ["src/@automation/@payment/*"],
+      "@production/*": ["src/@automation/@production/*"],
+      "@tools/*": ["packages/@tools/*"],
+      "@platform/*": ["packages/@platform/*"],
+      "@monitoring/*": ["ops/monitoring/*", "src/monitoring/*"],
+      "@infra/*": ["infrastructure/*"],
+      "@research/*": ["research/*"],
+      "@labs/*": ["labs/*"],
+      "@config/*": ["config/*"],
+      "@test/*": ["tests/*"],
+      "@demo/*": ["demos/*"]
+    }
+  },
+  "include": [
+    "src/**/*",
+    "packages/**/*",
+    "tests/**/*",
+    "demos/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "build",
+    "dist",
+    ".cache"
+  ]
+}

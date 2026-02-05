@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗂️ Empire Pro Private Registry Catalog</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .catalog-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .catalog-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .catalog-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .catalog-subtitle {
+            font-size: 16px;
+            color: #3b82f6;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: #3b82f6;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #3b82f6;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .search-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .search-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #3b82f6;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .search-group input,
+        .search-group select {
+            padding: 10px;
+            border: 1px solid #3b82f6;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .search-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3b82f6;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #3b82f6;
+        }
+
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .catalog-item {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .catalog-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .item-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #3b82f6;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .item-version {
+            font-size: 12px;
+            color: #3b82f6;
+            background: #3b82f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .item-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-deprecated {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .status-experimental {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .status-archived {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .item-description {
+            font-size: 14px;
+            color: #3b82f6;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .item-meta {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 12px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .meta-label {
+            font-weight: 600;
+            color: #3b82f6;
+        }
+
+        .meta-value {
+            color: #3b82f6;
+        }
+
+        .item-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            background: #3b82f6;
+            color: #3b82f6;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn.primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .action-btn.secondary {
+            background: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 18px;
+        }
+
+        .action-btn.tertiary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .action-btn.tertiary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* Cross-reference styles */
+        .cross-ref-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .summary-value {
+            color: white;
+            font-weight: 500;
+        }
+
+        .cross-ref-list {
+            margin-bottom: 25px;
+        }
+
+        .cross-ref-list h3 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .cross-ref-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .cross-ref-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .cross-ref-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .cross-ref-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cross-ref-score {
+            background: linear-gradient(135deg, #4CAF50, #3b82f6);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .cross-ref-description {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .cross-ref-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .cross-ref-relationship {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        .cross-ref-downloads,
+        .cross-ref-stars {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9em;
+        }
+
+        .cross-ref-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .cross-ref-metadata {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .cross-ref-metadata h3 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .metadata-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .metadata-label {
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .metadata-value {
+            color: white;
+            font-weight: 500;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1em;
+        }
+
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #991b1b;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #3b82f6;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #3b82f6;
+        }
+
+        .modal-body {
+            color: #3b82f6;
+            line-height: 1.6;
+        }
+
+        .detail-section {
+            margin-bottom: 20px;
+        }
+
+        .detail-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #3b82f6;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #3b82f6;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #3b82f6;
+        }
+
+        .detail-value {
+            color: #3b82f6;
+        }
+
+        @media (max-width: 768px) {
+            .catalog-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .item-meta {
+                grid-template-columns: 1fr;
+            }
+            
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="catalog-container">
+        <!-- Catalog Header -->
+        <header class="catalog-header">
+            <h1 class="catalog-title">
+                <span>🗂️</span>
+                Empire Pro Private Registry Catalog
+            </h1>
+            <p class="catalog-subtitle">Browse and manage components, endpoints, services, and packages</p>
+            
+            <div class="stats-grid" id="stats-grid">
+                <!-- Stats will be populated here -->
+            </div>
+        </header>
+
+        <!-- Search Section -->
+        <section class="search-section">
+            <h2>🔍 Search Catalog</h2>
+            <div class="search-controls">
+                <div class="search-group">
+                    <label>Text Search</label>
+                    <input type="text" id="search-text" placeholder="Search name, description, type...">
+                </div>
+                <div class="search-group">
+                    <label>Category</label>
+                    <select id="search-category">
+                        <option value="">All Categories</option>
+                        <option value="component">🧩 Components</option>
+                        <option value="endpoint">🔗 Endpoints</option>
+                        <option value="service">⚙️ Services</option>
+                        <option value="package">📦 Packages</option>
+                        <option value="tool">🔧 Tools</option>
+                    </select>
+                </div>
+                <div class="search-group">
+                    <label>Status</label>
+                    <select id="search-status">
+                        <option value="">All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="deprecated">Deprecated</option>
+                        <option value="experimental">Experimental</option>
+                        <option value="archived">Archived</option>
+                    </select>
+                </div>
+                <div class="search-group">
+                    <label>Visibility</label>
+                    <select id="search-visibility">
+                        <option value="">All</option>
+                        <option value="public">Public</option>
+                        <option value="private">Private</option>
+                        <option value="internal">Internal</option>
+                    </select>
+                </div>
+            </div>
+            <div class="search-actions">
+                <button class="btn btn-secondary" onclick="clearSearch()">Clear</button>
+                <button class="btn btn-primary" onclick="performSearch()">Search</button>
+            </div>
+        </section>
+
+        <!-- Loading State -->
+        <div id="loading" class="loading">
+            <div>🔄 Loading catalog...</div>
+        </div>
+
+        <!-- Error State -->
+        <div id="error" class="error" style="display: none;">
+            <div>❌ Failed to load catalog</div>
+            <div id="error-message"></div>
+        </div>
+
+        <!-- Catalog Grid -->
+        <div id="catalog-grid" class="catalog-grid" style="display: none;">
+            <!-- Catalog items will be populated here -->
+        </div>
+
+        <!-- Detail Modal -->
+        <div class="modal" id="detail-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modal-title">Item Details</h2>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    <!-- Details will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Catalog data (in real app, this would come from API)
+        const catalogData = [
+            {
+                id: 'master-perf-inspector',
+                name: 'MASTER_PERF Inspector',
+                version: '3.7.0',
+                category: 'component',
+                type: 'performance-monitoring',
+                description: 'Dual-mode performance inspector with rich ANSI colors and clean exports',
+                status: 'active',
+                visibility: 'public',
+                repository: {
+                    url: 'https://github.com/duo-automation/master-perf',
+                    branch: 'main',
+                    path: 'src/inspection/master-perf-inspector.ts'
+                },
+                dependencies: ['bun', 'typescript'],
+                dependents: ['status-dashboard', 'performance-cli'],
+                metrics: {
+                    downloads: 1250,
+                    stars: 42,
+                    lastUpdated: '2026-01-15T07:43:31Z',
+                    size: '45KB'
+                },
+                tags: ['performance', 'monitoring', 'ansi', 'colors', 'bun-native'],
+                maintainer: 'Empire Pro Team',
+                license: 'MIT',
+                documentation: {
+                    url: 'https://docs.empire-pro-cli.com/master-perf',
+                    examples: 12,
+                    api: true
+                },
+                testing: {
+                    coverage: 98,
+                    tests: 45,
+                    lastRun: '2026-01-15T07:45:00Z',
+                    status: 'passing'
+                },
+                security: {
+                    vulnerabilities: 0,
+                    lastAudit: '2026-01-15T07:00:00Z',
+                    score: 'A'
+                },
+                deployment: {
+                    environments: ['development', 'staging', 'production'],
+                    versioning: 'semantic',
+                    rollback: true
+                }
+            },
+            {
+                id: 'status-worker-18-endpoints',
+                name: 'Status Worker (18 Endpoints)',
+                version: '3.7.0',
+                category: 'service',
+                type: 'cloudflare-worker',
+                description: 'Complete status system with 18 endpoints, CORS support, and real-time monitoring',
+                status: 'active',
+                visibility: 'public',
+                repository: {
+                    url: 'https://github.com/duo-automation/status-worker',
+                    branch: 'main',
+                    path: 'deployment/workers/status-worker-18-endpoints.ts'
+                },
+                dependencies: ['cloudflare-workers', 'durable-objects'],
+                dependents: ['status-dashboard', 'monitoring-system'],
+                metrics: {
+                    downloads: 890,
+                    stars: 28,
+                    lastUpdated: '2026-01-15T07:31:00Z',
+                    size: '63KB'
+                },
+                tags: ['cloudflare', 'monitoring', 'api', 'cors', 'endpoints'],
+                maintainer: 'Empire Pro Team',
+                license: 'MIT',
+                documentation: {
+                    url: 'https://docs.empire-pro-cli.com/status-worker',
+                    examples: 8,
+                    api: true
+                },
+                testing: {
+                    coverage: 95,
+                    tests: 72,
+                    lastRun: '2026-01-15T07:32:00Z',
+                    status: 'passing'
+                },
+                security: {
+                    vulnerabilities: 0,
+                    lastAudit: '2026-01-15T07:00:00Z',
+                    score: 'A'
+                },
+                deployment: {
+                    environments: ['production'],
+                    versioning: 'semantic',
+                    rollback: true
+                }
+            },
+            {
+                id: 'empire-cli',
+                name: 'Empire Pro CLI',
+                version: '3.7.0',
+                category: 'tool',
+                type: 'command-line-interface',
+                description: 'Complete CLI with secrets management, status monitoring, and deployment tools',
+                status: 'active',
+                visibility: 'public',
+                repository: {
+                    url: 'https://github.com/duo-automation/empire-cli',
+                    branch: 'main',
+                    path: 'packages/cli/index.ts'
+                },
+                dependencies: ['commander', 'inquirer', 'bun-secrets'],
+                dependents: ['developer-tools', 'deployment-scripts'],
+                metrics: {
+                    downloads: 3200,
+                    stars: 89,
+                    lastUpdated: '2026-01-15T06:00:00Z',
+                    size: '193KB'
+                },
+                tags: ['cli', 'secrets', 'deployment', 'management', 'bun'],
+                maintainer: 'Empire Pro Team',
+                license: 'MIT',
+                documentation: {
+                    url: 'https://docs.empire-pro-cli.com/cli',
+                    examples: 25,
+                    api: true
+                },
+                testing: {
+                    coverage: 92,
+                    tests: 68,
+                    lastRun: '2026-01-15T06:15:00Z',
+                    status: 'passing'
+                },
+                security: {
+                    vulnerabilities: 0,
+                    lastAudit: '2026-01-15T06:00:00Z',
+                    score: 'A'
+                },
+                deployment: {
+                    environments: ['development', 'production'],
+                    versioning: 'semantic',
+                    rollback: true
+                }
+            },
+            {
+                id: 'secrets-service',
+                name: 'Bun Secrets Service',
+                version: '3.7.0',
+                category: 'service',
+                type: 'secrets-management',
+                description: 'Enterprise secrets management using Bun.secrets with CLI integration',
+                status: 'active',
+                visibility: 'private',
+                repository: {
+                    url: 'https://github.com/duo-automation/secrets-service',
+                    branch: 'main',
+                    path: 'packages/cli/services/secrets.service.ts'
+                },
+                dependencies: ['bun-secrets', 'enterprise-security'],
+                dependents: ['empire-cli', 'deployment-system'],
+                metrics: {
+                    downloads: 0,
+                    stars: 15,
+                    lastUpdated: '2026-01-15T05:30:00Z',
+                    size: '38KB'
+                },
+                tags: ['secrets', 'security', 'enterprise', 'bun-native', 'cli'],
+                maintainer: 'Empire Pro Team',
+                license: 'PROPRIETARY',
+                documentation: {
+                    url: 'https://internal.docs.empire-pro-cli.com/secrets',
+                    examples: 8,
+                    api: true
+                },
+                testing: {
+                    coverage: 96,
+                    tests: 38,
+                    lastRun: '2026-01-15T05:45:00Z',
+                    status: 'passing'
+                },
+                security: {
+                    vulnerabilities: 0,
+                    lastAudit: '2026-01-15T05:00:00Z',
+                    score: 'A+'
+                },
+                deployment: {
+                    environments: ['production'],
+                    versioning: 'semantic',
+                    rollback: true
+                }
+            },
+            {
+                id: 'status-dashboard-ui',
+                name: 'Status Dashboard UI',
+                version: '3.7.0',
+                category: 'component',
+                type: 'react-components',
+                description: 'React dashboard components with real-time updates and TypeScript support',
+                status: 'active',
+                visibility: 'public',
+                repository: {
+                    url: 'https://github.com/duo-automation/status-ui',
+                    branch: 'main',
+                    path: 'packages/ui-components/status-dashboard.ts'
+                },
+                dependencies: ['react', 'typescript', 'tailwindcss'],
+                dependents: ['status-web-app', 'monitoring-dashboard'],
+                metrics: {
+                    downloads: 650,
+                    stars: 31,
+                    lastUpdated: '2026-01-15T07:00:00Z',
+                    size: '125KB'
+                },
+                tags: ['react', 'typescript', 'dashboard', 'ui', 'real-time'],
+                maintainer: 'Empire Pro Team',
+                license: 'MIT',
+                documentation: {
+                    url: 'https://docs.empire-pro-cli.com/ui-components',
+                    examples: 15,
+                    api: true
+                },
+                testing: {
+                    coverage: 88,
+                    tests: 42,
+                    lastRun: '2026-01-15T07:10:00Z',
+                    status: 'passing'
+                },
+                security: {
+                    vulnerabilities: 0,
+                    lastAudit: '2026-01-15T07:00:00Z',
+                    score: 'A'
+                },
+                deployment: {
+                    environments: ['development', 'staging', 'production'],
+                    versioning: 'semantic',
+                    rollback: true
+                }
+            }
+        ];
+
+        let currentItems = [...catalogData];
+
+        // Initialize catalog
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCatalog();
+            setupEventListeners();
+        });
+
+        function loadCatalog() {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const grid = document.getElementById('catalog-grid');
+
+            try {
+                loading.style.display = 'block';
+                error.style.display = 'none';
+                grid.style.display = 'none';
+
+                // Simulate API call
+                setTimeout(() => {
+                    currentItems = [...catalogData];
+                    displayItems(currentItems);
+                    updateStats();
+                    
+                    loading.style.display = 'none';
+                    grid.style.display = 'grid';
+                }, 500);
+            } catch (err) {
+                console.error('Catalog load error:', err);
+                loading.style.display = 'none';
+                error.style.display = 'block';
+                document.getElementById('error-message').textContent = err.message;
+            }
+        }
+
+        function setupEventListeners() {
+            // Add enter key support for search
+            document.getElementById('search-text').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+        }
+
+        function displayItems(items) {
+            const grid = document.getElementById('catalog-grid');
+            
+            if (items.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: white;">No items found matching your search criteria.</div>';
+                return;
+            }
+
+            grid.innerHTML = items.map(item => createItemCard(item)).join('');
+        }
+
+        function createItemCard(item) {
+            const categoryIcons = {
+                component: '🧩',
+                endpoint: '🔗',
+                service: '⚙️',
+                package: '📦',
+                tool: '🔧'
+            };
+
+            return `
+                <div class="catalog-item" onclick="showDetails('${item.id}')">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title">
+                                <span>${categoryIcons[item.category] || '📦'}</span>
+                                ${item.name}
+                            </div>
+                            <div class="item-version">v${item.version}</div>
+                        </div>
+                        <div class="item-status status-${item.status}">${item.status}</div>
+                    </div>
+                    
+                    <div class="item-description">${item.description}</div>
+                    
+                    <div class="item-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Type:</span>
+                            <span class="meta-value">${item.type}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Downloads:</span>
+                            <span class="meta-value">${item.metrics.downloads.toLocaleString()}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Stars:</span>
+                            <span class="meta-value">⭐ ${item.metrics.stars}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Cross-Refs:</span>
+                            <span class="meta-value" id="crossref-${item.id}">🔍 Loading...</span>
+                        </div>
+                    </div>
+                    
+                    <div class="item-tags">
+                        ${item.tags.map(tag => `<span class="tag">#${tag}</span>`).join('')}
+                    </div>
+                    
+                    <div class="item-actions">
+                        <button class="action-btn primary" onclick="event.stopPropagation(); showDetails('${item.id}')">Details</button>
+                        <button class="action-btn secondary" onclick="event.stopPropagation(); openRepository('${item.repository.url}')">Repository</button>
+                        <button class="action-btn tertiary" onclick="event.stopPropagation(); showCrossReferences('${item.id}')">🔗 Cross-Refs</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateStats() {
+            const stats = {
+                total: currentItems.length,
+                categories: {},
+                statuses: {},
+                active: currentItems.filter(item => item.status === 'active').length
+            };
+
+            currentItems.forEach(item => {
+                stats.categories[item.category] = (stats.categories[item.category] || 0) + 1;
+                stats.statuses[item.status] = (stats.statuses[item.status] || 0) + 1;
+            });
+
+            const statsGrid = document.getElementById('stats-grid');
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${stats.total}</div>
+                    <div class="stat-label">Total Items</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.active}</div>
+                    <div class="stat-label">Active</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${Object.keys(stats.categories).length}</div>
+                    <div class="stat-label">Categories</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${currentItems.reduce((sum, item) => sum + item.metrics.stars, 0)}</div>
+                    <div class="stat-label">Total Stars</div>
+                </div>
+            `;
+        }
+
+        function performSearch() {
+            const searchText = document.getElementById('search-text').value.toLowerCase();
+            const category = document.getElementById('search-category').value;
+            const status = document.getElementById('search-status').value;
+            const visibility = document.getElementById('search-visibility').value;
+
+            let filtered = catalogData.filter(item => {
+                if (searchText && !(
+                    item.name.toLowerCase().includes(searchText) ||
+                    item.description.toLowerCase().includes(searchText) ||
+                    item.type.toLowerCase().includes(searchText)
+                )) {
+                    return false;
+                }
+
+                if (category && item.category !== category) {
+                    return false;
+                }
+
+                if (status && item.status !== status) {
+                    return false;
+                }
+
+                if (visibility && item.visibility !== visibility) {
+                    return false;
+                }
+
+                return true;
+            });
+
+            currentItems = filtered;
+            displayItems(currentItems);
+            updateStats();
+        }
+
+        function clearSearch() {
+            document.getElementById('search-text').value = '';
+            document.getElementById('search-category').value = '';
+            document.getElementById('search-status').value = '';
+            document.getElementById('search-visibility').value = '';
+            
+            currentItems = [...catalogData];
+            displayItems(currentItems);
+            updateStats();
+        }
+
+        function showDetails(itemId) {
+            const item = catalogData.find(i => i.id === itemId);
+            if (!item) return;
+
+            const modal = document.getElementById('detail-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBody = document.getElementById('modal-body');
+
+            modalTitle.textContent = item.name;
+            modalBody.innerHTML = `
+                <div class="detail-section">
+                    <h3>📝 Overview</h3>
+                    <p>${item.description}</p>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Version:</span>
+                            <span class="detail-value">v${item.version}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Category:</span>
+                            <span class="detail-value">${item.category}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Type:</span>
+                            <span class="detail-value">${item.type}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Status:</span>
+                            <span class="detail-value">${item.status}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Visibility:</span>
+                            <span class="detail-value">${item.visibility}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">License:</span>
+                            <span class="detail-value">${item.license}</span>
+                        </div>
+                            <span class="detail-label">Size:</span>
+                            <span class="detail-value">${item.metrics.size}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Updated:</span>
+                            <span class="detail-value">${new Date(item.metrics.lastUpdated).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>🧪 Testing</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Coverage:</span>
+                            <span class="detail-value">${item.testing.coverage}%</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Tests:</span>
+                            <span class="detail-value">${item.testing.tests}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Status:</span>
+                            <span class="detail-value">${item.testing.status}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Last Run:</span>
+                            <span class="detail-value">${new Date(item.testing.lastRun).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>🔒 Security</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Score:</span>
+                            <span class="detail-value">${item.security.score}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Vulnerabilities:</span>
+                            <span class="detail-value">${item.security.vulnerabilities}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Last Audit:</span>
+                            <span class="detail-value">${new Date(item.security.lastAudit).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>🏷️ Tags</h3>
+                    <div class="item-tags">
+                        ${item.tags.map(tag => `<span class="tag">#${tag}</span>`).join('')}
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>🔗 Dependencies</h3>
+                    <p><strong>Requires:</strong> ${item.dependencies.join(', ')}</p>
+                    <p><strong>Used by:</strong> ${item.dependents.join(', ')}</p>
+                </div>
+
+                <div class="detail-section">
+                    <h3>📚 Documentation</h3>
+                    <p><strong>URL:</strong> <a href="${item.documentation.url}" target="_blank">${item.documentation.url}</a></p>
+                    <p><strong>Examples:</strong> ${item.documentation.examples}</p>
+                    <p><strong>API:</strong> ${item.documentation.api ? 'Available' : 'Not Available'}</p>
+                </div>
+            `;
+
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('detail-modal').classList.remove('active');
+        }
+
+        function openRepository(url) {
+            window.open(url, '_blank');
+        }
+
+        // Cross-reference functions
+        async function showCrossReferences(itemId) {
+            try {
+                // Simulate cross-reference API call
+                const crossRefs = await getCrossReferences(itemId);
+                displayCrossReferences(itemId, crossRefs);
+            } catch (error) {
+                console.error('Failed to load cross-references:', error);
+                alert('Failed to load cross-references');
+            }
+        }
+
+        async function getCrossReferences(itemId) {
+            // Simulate API call with mock data
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({
+                        itemId: itemId,
+                        crossReferences: [
+                            {
+                                id: 'related-item-1',
+                                name: 'Related Component',
+                                version: '2.0.0',
+                                category: 'component',
+                                type: 'ui-component',
+                                relevanceScore: 85,
+                                relationship: 'similar',
+                                description: 'A similar component with related functionality',
+                                tags: ['ui', 'component'],
+                                metrics: {
+                                    downloads: 500,
+                                    stars: 25,
+                                    compatibility: 95,
+                                    usage: 500
+                                }
+                            },
+                            {
+                                id: 'related-item-2',
+                                name: 'Dependency Package',
+                                version: '1.5.0',
+                                category: 'package',
+                                type: 'utility',
+                                relevanceScore: 92,
+                                relationship: 'dependency',
+                                description: 'Required dependency for this component',
+                                tags: ['utility', 'dependency'],
+                                metrics: {
+                                    downloads: 1200,
+                                    stars: 45,
+                                    compatibility: 100,
+                                    usage: 1200
+                                }
+                            }
+                        ],
+                        relatedBy: 'similar',
+                        strength: 88,
+                        metadata: {
+                            sharedTags: ['performance', 'monitoring'],
+                            sharedCategory: true,
+                            dependencyChain: ['dependency-package', itemId],
+                            usagePatterns: [`${itemId}: 1250 downloads`],
+                            compatibility: 97
+                        }
+                    });
+                }, 500);
+            });
+        }
+
+        function displayCrossReferences(itemId, crossRefs) {
+            const modal = document.getElementById('detail-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBody = document.getElementById('modal-body');
+
+            modalTitle.textContent = `🔗 Cross-References: ${crossRefs.itemId}`;
+            
+            let html = `
+                <div class="cross-ref-summary">
+                    <div class="summary-item">
+                        <span class="summary-label">Related By:</span>
+                        <span class="summary-value">${crossRefs.relatedBy}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Strength:</span>
+                        <span class="summary-value">${crossRefs.strength}/100</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">References:</span>
+                        <span class="summary-value">${crossRefs.crossReferences.length} items</span>
+                    </div>
+                </div>
+                
+                <div class="cross-ref-list">
+                    <h3>🔗 Related Items</h3>
+            `;
+
+            if (crossRefs.crossReferences.length > 0) {
+                crossRefs.crossReferences.forEach((ref, index) => {
+                    const icon = ref.relationship === 'dependency' ? '🔗' : 
+                                ref.relationship === 'dependent' ? '🔌' :
+                                ref.relationship === 'similar' ? '🔍' :
+                                ref.relationship === 'category' ? '📂' : '🏷️';
+                    
+                    html += `
+                        <div class="cross-ref-item">
+                            <div class="cross-ref-header">
+                                <div class="cross-ref-title">
+                                    <span>${icon}</span>
+                                    ${ref.name} v${ref.version}
+                                </div>
+                                <div class="cross-ref-score">${ref.relevanceScore}%</div>
+                            </div>
+                            <div class="cross-ref-description">${ref.description}</div>
+                            <div class="cross-ref-meta">
+                                <span class="cross-ref-relationship">${ref.relationship}</span>
+                                <span class="cross-ref-downloads">📊 ${ref.metrics.downloads.toLocaleString()} downloads</span>
+                                <span class="cross-ref-stars">⭐ ${ref.metrics.stars}</span>
+                            </div>
+                            <div class="cross-ref-tags">
+                                ${ref.tags.map(tag => `<span class="tag">#${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                html += '<div class="no-results">📭 No cross-references found for this item.</div>';
+            }
+
+            html += `
+                </div>
+                
+                <div class="cross-ref-metadata">
+                    <h3>📊 Cross-Reference Metadata</h3>
+                    <div class="metadata-grid">
+                        <div class="metadata-item">
+                            <span class="metadata-label">Shared Tags:</span>
+                            <span class="metadata-value">${crossRefs.metadata.sharedTags.map(tag => `#${tag}`).join(', ')}</span>
+                        </div>
+                        <div class="metadata-item">
+                            <span class="metadata-label">Same Category:</span>
+                            <span class="metadata-value">${crossRefs.metadata.sharedCategory ? 'Yes' : 'No'}</span>
+                        </div>
+                        <div class="metadata-item">
+                            <span class="metadata-label">Dependency Chain:</span>
+                            <span class="metadata-value">${crossRefs.metadata.dependencyChain.join(' → ') || 'None'}</span>
+                        </div>
+                        <div class="metadata-item">
+                            <span class="metadata-label">Compatibility:</span>
+                            <span class="metadata-value">${crossRefs.metadata.compatibility}%</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modalBody.innerHTML = html;
+            modal.style.display = 'flex';
+        }
+
+        // Load cross-reference counts for all items
+        async function loadCrossReferenceCounts() {
+            const items = currentItems;
+            for (const item of items) {
+                try {
+                    const crossRefs = await getCrossReferences(item.id);
+                    const countElement = document.getElementById(`crossref-${item.id}`);
+                    if (countElement) {
+                        countElement.textContent = `🔗 ${crossRefs.crossReferences.length}`;
+                    }
+                } catch (error) {
+                    const countElement = document.getElementById(`crossref-${item.id}`);
+                    if (countElement) {
+                        countElement.textContent = '🔗 0';
+                    }
+                }
+            }
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Close modal on background click
+        document.getElementById('detail-modal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

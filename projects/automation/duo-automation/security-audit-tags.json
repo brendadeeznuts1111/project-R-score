@@ -1,0 +1,45 @@
+[
+  {
+    "filePath": "src/venmo-family/api.ts",
+    "tags": {
+      "DOMAIN": "VENMO",
+      "SCOPE": "API",
+      "TYPE": "FEATURE",
+      "META": {
+        "complexity": "medium",
+        "performance": true
+      },
+      "CLASS": "MEDIUM",
+      "REF": "a9f3k2p1",
+      "BUN": "4.1-NATIVE"
+    }
+  },
+  {
+    "filePath": "src/duoplus/dashboard.tsx",
+    "tags": {
+      "DOMAIN": "DUOPLUS",
+      "SCOPE": "UI",
+      "TYPE": "FEATURE",
+      "META": {
+        "complexity": "high"
+      },
+      "CLASS": "HIGH",
+      "REF": "b8g4l3q2",
+      "BUN": "4.1-NATIVE"
+    }
+  },
+  {
+    "filePath": "src/factory-wager/cli.ts",
+    "tags": {
+      "DOMAIN": "FACTORY-WAGER",
+      "SCOPE": "CLI",
+      "TYPE": "FEATURE",
+      "META": {
+        "complexity": "low"
+      },
+      "CLASS": "MEDIUM",
+      "REF": "c7h5m4r3",
+      "BUN": "4.1-NATIVE"
+    }
+  }
+]

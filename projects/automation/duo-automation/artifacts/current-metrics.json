@@ -1,0 +1,138 @@
+{
+  "timestamp": 1768534150204,
+  "system": {
+    "timestamp": 1768534150204,
+    "memory": {
+      "used": 412925952,
+      "free": 0,
+      "total": 825851904,
+      "heapUsed": 2135109,
+      "heapTotal": 2609152
+    },
+    "disk": {
+      "used": 0,
+      "free": 0,
+      "total": 0
+    },
+    "cpu": {
+      "usage": 0,
+      "loadAverage": [
+        0,
+        0,
+        0
+      ]
+    },
+    "operations": [
+      {
+        "timestamp": 1768534150173,
+        "operation": "scan",
+        "duration": 0,
+        "filesProcessed": 0,
+        "bytesProcessed": 0,
+        "success": false,
+        "errors": [],
+        "method": "find"
+      },
+      {
+        "timestamp": 1768534150186,
+        "operation": "delete",
+        "duration": 1,
+        "filesProcessed": 0,
+        "bytesProcessed": 0,
+        "success": false,
+        "errors": [
+          "File too recent: 0s old (min: 60s)"
+        ],
+        "method": "readdir"
+      },
+      {
+        "timestamp": 1768534150187,
+        "operation": "delete",
+        "duration": 1,
+        "filesProcessed": 0,
+        "bytesProcessed": 0,
+        "success": false,
+        "errors": [
+          "File too recent: 0s old (min: 60s)"
+        ],
+        "method": "readdir"
+      },
+      {
+        "timestamp": 1768534150188,
+        "operation": "delete",
+        "duration": 1,
+        "filesProcessed": 0,
+        "bytesProcessed": 0,
+        "success": false,
+        "errors": [
+          "File too recent: 0s old (min: 60s)"
+        ],
+        "method": "readdir"
+      },
+      {
+        "timestamp": 1768534150191,
+        "operation": "delete",
+        "duration": 0,
+        "filesProcessed": 0,
+        "bytesProcessed": 0,
+        "success": false,
+        "errors": [
+          "File too recent: 0s old (min: 60s)"
+        ],
+        "method": "readdir"
+      },
+      {
+        "timestamp": 1768534150191,
+        "operation": "delete",
+        "duration": 1,
+        "filesProcessed": 0,
+        "bytesProcessed": 0,
+        "success": false,
+        "errors": [
+          "File too recent: 0s old (min: 60s)"
+        ],
+        "method": "readdir"
+      },
+      {
+        "timestamp": 1768534150192,
+        "operation": "delete",
+        "duration": 1,
+        "filesProcessed": 0,
+        "bytesProcessed": 0,
+        "success": true,
+        "errors": [],
+        "method": "readdir"
+      }
+    ],
+    "patterns": [],
+    "performance": {
+      "filesPerSecond": 0,
+      "bytesPerSecond": 0,
+      "averageOperationTime": 0.7142857142857143,
+      "errorRate": 0
+    }
+  },
+  "patterns": {
+    "summary": {
+      "totalPatterns": 0,
+      "highRiskPatterns": 0,
+      "mostActivePattern": "",
+      "largestPattern": ""
+    },
+    "recommendations": [],
+    "trends": {
+      "growing": [],
+      "stable": [],
+      "declining": []
+    }
+  },
+  "configuration": {
+    "enableRealTimeCollection": true,
+    "enablePatternAnalysis": true,
+    "enablePerformanceTracking": true,
+    "enableRiskAssessment": true,
+    "retentionDays": 30,
+    "exportFormat": "json",
+    "aggregationInterval": 60000
+  }
+}

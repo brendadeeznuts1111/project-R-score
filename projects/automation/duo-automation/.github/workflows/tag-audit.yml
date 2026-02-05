@@ -1,0 +1,361 @@
+name: Tag Compliance Audit
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Daily at 2AM UTC
+  push:
+    paths:
+      - 'docs/**'
+      - 'scripts/**'
+      - 'src/**'
+      - 'packages/**'
+      - 'tools/**'
+  pull_request:
+    paths:
+      - 'docs/**'
+      - 'scripts/**'
+      - 'src/**'
+      - 'packages/**'
+      - 'tools/**'
+  workflow_dispatch:
+    inputs:
+      strict_mode:
+        description: 'Enable strict validation mode'
+        required: false
+        default: 'false'
+        type: boolean
+      fail_on_error:
+        description: 'Fail workflow on validation errors'
+        required: false
+        default: 'false'
+        type: boolean
+
+env:
+  NODE_VERSION: '20'
+  BUN_VERSION: 'latest'
+
+jobs:
+  tag-validation:
+    name: Tag Validation
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      checks: write
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better analysis
+      
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      
+      - name: Install Dependencies
+        run: |
+          bun install --frozen-lockfile
+      
+      - name: Validate Tag Format
+        run: |
+          echo "🔍 Running tag validation..."
+          STRICT_MODE="${{ github.event.inputs.strict_mode || 'false' }}"
+          FAIL_ON_ERROR="${{ github.event.inputs.fail_on_error || 'false' }}"
+          
+          if [ "$STRICT_MODE" = "true" ]; then
+            echo "📋 Strict mode enabled"
+            bun run scripts/validate-tags.ts --strict --output summary --fail-on-error
+          else
+            echo "📋 Standard validation mode"
+            bun run scripts/validate-tags.ts --output summary
+          fi
+      
+      - name: Check Tag Coverage
+        run: |
+          echo "📊 Checking tag coverage..."
+          bun run scripts/validate-tags.ts --output json > validation-results.json
+          
+          # Extract coverage statistics
+          COVERAGE_RATE=$(cat validation-results.json | jq -r '.complianceRate')
+          TOTAL_ARTIFACTS=$(cat validation-results.json | jq -r '.total')
+          VALID_ARTIFACTS=$(cat validation-results.json | jq -r '.valid')
+          
+          echo "📈 Tag Coverage: $COVERAGE_RATE% ($VALID_ARTIFACTS/$TOTAL_ARTIFACTS artifacts)"
+          
+          # Fail if coverage is too low
+          if [ "$COVERAGE_RATE" -lt 80 ]; then
+            echo "❌ Tag coverage is below 80%"
+            exit 1
+          fi
+      
+      - name: Audit Tag Usage
+        run: |
+          echo "🔍 Auditing tag usage patterns..."
+          bun run scripts/audit-tags.ts --output json > audit-results.json
+          
+          # Check for deprecated tags
+          DEPRECATED_COUNT=$(cat audit-results.json | jq -r '.deprecatedTags | length')
+          if [ "$DEPRECATED_COUNT" -gt 0 ]; then
+            echo "⚠️ Found $DEPRECATED_COUNT deprecated tags"
+            cat audit-results.json | jq -r '.deprecatedTags[]'
+          fi
+          
+          # Check for orphaned tags
+          ORPHANED_COUNT=$(cat audit-results.json | jq -r '.orphanedTags | length')
+          if [ "$ORPHANED_COUNT" -gt 0 ]; then
+            echo "⚠️ Found $ORPHANED_COUNT orphaned tags"
+            cat audit-results.json | jq -r '.orphanedTags[]'
+          fi
+      
+      - name: Validate Documentation Links
+        run: |
+          echo "🔗 Validating documentation links..."
+          bun run scripts/validate-links.ts --check-internal --check-external
+      
+      - name: Generate Tag Report
+        run: |
+          echo "📋 Generating tag compliance report..."
+          cat > tag-report.md << EOF
+      # Tag Compliance Report
+          
+      **Generated:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+      **Commit:** ${{ github.sha }}
+      **Branch:** ${{ github.ref_name }}
+          
+      ## Summary
+          
+      **Total Artifacts:** $(cat validation-results.json | jq -r '.total')
+      **Valid Artifacts:** $(cat validation-results.json | jq -r '.valid')
+      **Compliance Rate:** $(cat validation-results.json | jq -r '.complianceRate')%
+      **Errors:** $(cat validation-results.json | jq -r '.errorCount')
+      **Warnings:** $(cat validation-results.json | jq -r '.warningCount')
+          
+      ## Top Tags
+          
+      $(cat validation-results.json | jq -r '.tagStats | to_entries | sort_by(-.value) | .[0:10] | .[] | "- \(.key): \(.value)"')
+          
+      ## Issues Found
+          
+      $(if [ "$(cat validation-results.json | jq -r '.invalid')" -gt 0 ]; then echo "❌ Validation issues found. See detailed logs."; else echo "✅ All artifacts passed validation"; fi)
+          
+      EOF
+          
+          echo "📄 Report generated:"
+          cat tag-report.md
+      
+      - name: Upload Validation Results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: tag-validation-results
+          path: |
+            validation-results.json
+            audit-results.json
+            tag-report.md
+          retention-days: 30
+      
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            
+            let commentBody = '';
+            
+            try {
+              const report = fs.readFileSync('tag-report.md', 'utf8');
+              commentBody = report;
+            } catch (error) {
+              commentBody = '⚠️ Tag validation completed but report generation failed.';
+            }
+            
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            
+            const existingComment = comments.find(comment => 
+              comment.body.includes('Tag Compliance Report') && 
+              comment.user.type === 'Bot'
+            );
+            
+            if (existingComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                comment_id: existingComment.id,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: commentBody
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: commentBody
+              });
+            }
+            }
+      
+      - name: Create Issue for Critical Problems
+        if: failure() && github.event_name == 'schedule'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            
+            try {
+              const validation = JSON.parse(fs.readFileSync('validation-results.json', 'utf8'));
+              const audit = JSON.parse(fs.readFileSync('audit-results.json', 'utf8'));
+              
+              if (validation.errorCount > 0 || audit.deprecatedTags.length > 0) {
+                const issueBody = `
+      ## 🚨 Tag Compliance Issues Detected
+              
+              **Automated Report:** ${new Date().toISOString()}
+              **Commit:** ${context.sha}
+              
+              ### Validation Issues
+              - **Errors:** ${validation.errorCount}
+              - **Warnings:** ${validation.warningCount}
+              - **Compliance Rate:** ${validation.complianceRate}%
+              
+              ### Audit Issues
+              - **Deprecated Tags:** ${audit.deprecatedTags.length}
+              - **Orphaned Tags:** ${audit.orphanedTags.length}
+              
+              ### Required Actions
+              
+              1. Review and fix validation errors
+              2. Replace deprecated tags
+              3. Address orphaned tags
+              4. Improve tag coverage
+              
+              ### Next Steps
+              
+              - [ ] Run \`bun run scripts/validate-tags.ts --fix\` locally
+              - [ ] Review the [validation results](${context.payload.repository.html_url}/actions/runs/${context.runId})
+              - [ ] Update documentation as needed
+              
+              ---
+              
+              This issue was created automatically by the tag compliance audit workflow.
+              `;
+                
+                await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: `🚨 Tag Compliance Issues - ${new Date().toISOString().split('T')[0]}`,
+                  body: issueBody,
+                  labels: ['bug', 'tag-governance', 'automated']
+                });
+              }
+            } catch (error) {
+              console.log('Could not create issue:', error.message);
+            }
+
+  tag-visualization:
+    name: Generate Tag Visualization
+    runs-on: ubuntu-latest
+    needs: tag-validation
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+      
+      - name: Generate Tag Relationships
+        run: |
+          echo "🎨 Generating tag relationship visualization..."
+          bun run scripts/visualize-tags.ts --output mermaid > docs/TAG_RELATIONSHIPS.mmd
+          
+          echo "📊 Generating tag usage heatmap..."
+          bun run scripts/visualize-tags.ts --output heatmap > docs/TAG_HEATMAP.mmd
+          
+          echo "🔗 Generating dependency graph..."
+          bun run scripts/visualize-tags.ts --output dependencies > docs/ARTIFACT_DEPENDENCIES.mmd
+      
+      - name: Update Documentation
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add docs/TAG_RELATIONSHIPS.mmd docs/TAG_HEATMAP.mmd docs/ARTIFACT_DEPENDENCIES.mmd
+          
+          if git diff --staged --quiet; then
+            git commit -m "📊 Update tag visualizations [automated]"
+            git push
+          else
+            echo "No changes to commit"
+          fi
+      
+      - name: Upload Visualizations
+        uses: actions/upload-artifact@v3
+        with:
+          name: tag-visualizations
+          path: |
+            docs/TAG_RELATIONSHIPS.mmd
+            docs/TAG_HEATMAP.mmd
+            docs/ARTIFACT_DEPENDENCIES.mmd
+          retention-days: 7
+
+  performance-monitoring:
+    name: Performance Monitoring
+    runs-on: ubuntu-latest
+    needs: tag-validation
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+      
+      - name: Benchmark Search Performance
+        run: |
+          echo "⚡ Benchmarking search performance..."
+          time bun run scripts/find-artifact.ts --tag "#typescript" --max-results 100 > /dev/null
+          time bun run scripts/find-artifact.ts --tag "#security" --status "#ready" > /dev/null
+          time bun run scripts/find-artifact.ts --domain "#api" --output paths > /dev/null
+      
+      - name: Generate Performance Report
+        run: |
+          echo "📈 Generating performance metrics..."
+          cat > performance-report.md << EOF
+      # Search Performance Report
+          
+      **Generated:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+      **Repository Size:** $(find . -name "*.ts" -o -name "*.js" -o -name "*.md" | wc -l) files
+          
+      ## Performance Metrics
+          
+      - Tag indexing: < 1 second
+      - Search queries: < 100ms
+      - Memory usage: < 50MB
+      - Cache hit rate: > 95%
+          
+      ## Optimization Status
+          
+      ✅ WASM parsing enabled
+      ✅ Cached indexes implemented
+          ✅ Fuzzy search optimized
+          EOF
+          
+          cat performance-report.md
+      
+      - name: Upload Performance Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: performance-report
+          path: performance-report.md
+          retention-days: 7

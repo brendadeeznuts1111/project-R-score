@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Suite - Modular Dashboard System</title>
+    <meta name="description" content="Complete modular dashboard system with scope and type management for factory-wager.com + DuoPlus unified platform">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --color-primary: #3b82f6;
+            --color-secondary: #3b82f6;
+            --color-accent: #3b82f6;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-error: #ef4444;
+            --color-info: #06b6d4;
+            --color-background: #3b82f6;
+            --color-surface: #3b82f6;
+            --color-surface-light: #3b82f6;
+            --color-text: #3b82f6;
+            --color-text-secondary: #3b82f6;
+            --color-border: #3b82f6;
+            --color-gradient: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            --color-gradient-secondary: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--color-background);
+            color: var(--color-text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .enterprise-suite {
+            --enterprise-primary: #3b82f6;
+            --enterprise-secondary: #3b82f6;
+            --enterprise-accent: #3b82f6;
+            --enterprise-success: #10b981;
+            --enterprise-warning: #f59e0b;
+            --enterprise-error: #ef4444;
+        }
+
+        .glass-effect {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(71, 85, 105, 0.5);
+        }
+
+        .metric-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--color-gradient);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+            border-color: var(--color-accent);
+        }
+
+        .scope-enterprise { border-left: 4px solid #3b82f6; }
+        .scope-development { border-left: 4px solid #10b981; }
+        .scope-production { border-left: 4px solid #f59e0b; }
+        .scope-local-sandbox { border-left: 4px solid #8b5cf6; }
+
+        .type-analytics { background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(29, 78, 216, 0.1) 100%); }
+        .type-merchant { background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%); }
+        .type-developer { background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(109, 40, 217, 0.1) 100%); }
+        .type-security { background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%); }
+        .type-revenue { background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%); }
+        .type-monitoring { background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(8, 145, 178, 0.1) 100%); }
+
+        .enhanced-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 50%, #3b82f6 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .enhanced-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6 0%, #3b82f6 50%, #3b82f6 100%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        .enhanced-header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .scope-type-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .scope-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .scope-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(59, 130, 246, 0.6);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
+        }
+
+        .scope-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+            animation: pulse-green 2s infinite;
+        }
+
+        .type-badge {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(29, 78, 216, 0.2) 100%);
+            color: #3b82f6;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .type-badge:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(29, 78, 216, 0.3) 100%);
+            transform: scale(1.05);
+        }
+
+        .status-bar {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse-green 2s infinite;
+        }
+
+        .header-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 50%, #3b82f6 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-subtitle {
+            color: #3b82f6;
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #3b82f6;
+            font-size: 0.875rem;
+        }
+
+        .meta-item i {
+            color: #3b82f6;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .scope-badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-tag {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen p-4 enterprise-suite">
+        <!-- Enhanced Header -->
+        <header class="max-w-7xl mx-auto">
+            <div class="enhanced-header">
+                <div>
+                    <h1 class="header-title">Enterprise Suite</h1>
+                    <p class="header-subtitle">Modular Dashboard System with Scope & Type Management</p>
+                    
+                    <!-- Scope & Type Information Grid -->
+                    <div class="scope-type-grid">
+                        <div class="scope-card">
+                            <div class="flex items-center mb-2">
+                                <div class="scope-indicator" style="background: #3b82f6;"></div>
+                                <h4 class="font-semibold text-white">Current Scope</h4>
+                            </div>
+                            <p class="text-blue-400 font-medium">Enterprise Scope</p>
+                            <p class="text-gray-400 text-sm">Admin, Analytics, Security, Revenue</p>
+                            <p class="text-gray-500 text-xs mt-1">America/New_York</p>
+                        </div>
+                        
+                        <div class="scope-card">
+                            <div class="flex items-center mb-2">
+                                <div class="scope-indicator" style="background: #10b981;"></div>
+                                <h4 class="font-semibold text-white">Active Types</h4>
+                            </div>
+                            <p class="text-green-400 font-medium">All Types</p>
+                            <p class="text-gray-400 text-sm">Analytics, Merchant, Developer</p>
+                            <p class="text-gray-500 text-xs mt-1">Security, Revenue, Monitoring</p>
+                        </div>
+                        
+                        <div class="scope-card">
+                            <div class="flex items-center mb-2">
+                                <div class="scope-indicator" style="background: #f59e0b;"></div>
+                                <h4 class="font-semibold text-white">Available Modules</h4>
+                            </div>
+                            <p class="text-yellow-400 font-medium">6 Total</p>
+                            <p class="text-gray-400 text-sm">Enterprise, Development, Production</p>
+                            <p class="text-gray-500 text-xs mt-1">Local Sandbox Available</p>
+                        </div>
+                        
+                        <div class="scope-card">
+                            <div class="flex items-center mb-2">
+                                <div class="scope-indicator" style="background: #8b5cf6;"></div>
+                                <h4 class="font-semibold text-white">System Components</h4>
+                            </div>
+                            <p class="text-purple-400 font-medium">12 Active</p>
+                            <p class="text-gray-400 text-sm">Charts, Metrics, Tables</p>
+                            <p class="text-gray-500 text-xs mt-1">Real-time Updates</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Status Bar -->
+                    <div class="status-bar">
+                        <div class="flex items-center gap-6">
+                            <div class="status-item">
+                                <div class="status-dot" style="background: #10b981;"></div>
+                                <span class="text-green-400 font-medium">System Operational</span>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-dot" style="background: #3b82f6;"></div>
+                                <span class="text-blue-400">99.9% Uptime</span>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-dot" style="background: #f59e0b;"></div>
+                                <span class="text-yellow-400">85% Cache Hit</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-4">
+                            <span class="type-badge">Enterprise</span>
+                            <span class="type-badge">All Types</span>
+                            <span class="text-gray-400 text-sm">factory-wager.com + duoplus.com</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Header Meta Information -->
+                <div class="header-meta">
+                    <div class="meta-item">
+                        <i data-lucide="layers" class="w-4 h-4"></i>
+                        <span>6 Modules</span>
+                    </div>
+                    <div class="meta-item">
+                        <i data-lucide="target" class="w-4 h-4"></i>
+                        <span>4 Scopes</span>
+                    </div>
+                    <div class="meta-item">
+                        <i data-lucide="component" class="w-4 h-4"></i>
+                        <span>12 Components</span>
+                    </div>
+                    <div class="meta-item">
+                        <i data-lucide="zap" class="w-4 h-4"></i>
+                        <span>Live</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto">
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="metric-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <i data-lucide="layers" class="w-6 h-6 text-blue-400"></i>
+                        <span class="text-2xl font-bold">6</span>
+                    </div>
+                    <h3 class="text-sm text-gray-400">Active Modules</h3>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <i data-lucide="target" class="w-6 h-6 text-green-400"></i>
+                        <span class="text-2xl font-bold">4</span>
+                    </div>
+                    <h3 class="text-sm text-gray-400">Scopes</h3>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <i data-lucide="component" class="w-6 h-6 text-purple-400"></i>
+                        <span class="text-2xl font-bold">12</span>
+                    </div>
+                    <h3 class="text-sm text-gray-400">Components</h3>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="flex items-center justify-between mb-2">
+                        <i data-lucide="zap" class="w-6 h-6 text-yellow-400"></i>
+                        <span class="text-2xl font-bold">99.9%</span>
+                    </div>
+                    <h3 class="text-sm text-gray-400">Uptime</h3>
+                </div>
+            </div>
+
+            <!-- Module Dashboard Grid -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold mb-6 flex items-center">
+                    <i data-lucide="grid-3x3" class="w-6 h-6 mr-2"></i>
+                    Available Dashboards
+                </h2>
+                
+                <div class="module-grid">
+                    <!-- Enterprise Dashboard -->
+                    <div class="metric-card scope-enterprise type-analytics">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <i data-lucide="bar-chart-3" class="w-6 h-6 text-blue-400 mr-2"></i>
+                                <h3 class="text-lg font-semibold">Enterprise Dashboard</h3>
+                            </div>
+                            <div class="scope-badge">ENTERPRISE</div>
+                        </div>
+                        
+                        <p class="text-gray-400 mb-4">Complete enterprise analytics with revenue tracking, merchant metrics, and security monitoring.</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="feature-tag">Analytics</span>
+                            <span class="feature-tag">Revenue</span>
+                            <span class="feature-tag">Security</span>
+                            <span class="feature-tag">Merchant</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center text-sm text-gray-400 mb-4">
+                            <span>4 Modules</span>
+                            <span>8 Components</span>
+                            <span>Active</span>
+                        </div>
+                        
+                        <a href="index.html" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-center">
+                            Launch Dashboard
+                        </a>
+                    </div>
+
+                    <!-- Development Scope -->
+                    <div class="metric-card scope-development type-developer">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <i data-lucide="code" class="w-6 h-6 text-green-400 mr-2"></i>
+                                <h3 class="text-lg font-semibold">Development Scope</h3>
+                            </div>
+                            <div class="scope-badge">DEVELOPMENT</div>
+                        </div>
+                        
+                        <p class="text-gray-400 mb-4">Developer-focused dashboard with SDK metrics, API usage, and debugging tools.</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="feature-tag">Developer</span>
+                            <span class="feature-tag">SDK</span>
+                            <span class="feature-tag">API</span>
+                            <span class="feature-tag">Debug</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center text-sm text-gray-400 mb-4">
+                            <span>1 Module</span>
+                            <span>2 Components</span>
+                            <span>Active</span>
+                        </div>
+                        
+                        <a href="development.html" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-center">
+                            Launch Dashboard
+                        </a>
+                    </div>
+
+                    <!-- Production Scope -->
+                    <div class="metric-card scope-production type-monitoring">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <i data-lucide="activity" class="w-6 h-6 text-yellow-400 mr-2"></i>
+                                <h3 class="text-lg font-semibold">Production Monitoring</h3>
+                            </div>
+                            <div class="scope-badge">PRODUCTION</div>
+                        </div>
+                        
+                        <p class="text-gray-400 mb-4">Production system monitoring with performance metrics, health status, and alerts.</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="feature-tag">Monitoring</span>
+                            <span class="feature-tag">Performance</span>
+                            <span class="feature-tag">Health</span>
+                            <span class="feature-tag">Alerts</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center text-sm text-gray-400 mb-4">
+                            <span>1 Module</span>
+                            <span>2 Components</span>
+                            <span>Active</span>
+                        </div>
+                        
+                        <a href="production.html" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-center">
+                            Launch Dashboard
+                        </a>
+                    </div>
+
+                    <!-- Merchant Dashboard -->
+                    <div class="metric-card scope-enterprise type-merchant">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <i data-lucide="store" class="w-6 h-6 text-emerald-400 mr-2"></i>
+                                <h3 class="text-lg font-semibold">Merchant Dashboard</h3>
+                            </div>
+                            <div class="scope-badge">ENTERPRISE</div>
+                        </div>
+                        
+                        <p class="text-gray-400 mb-4">Merchant-focused dashboard with dispute resolution, identity verification, and KYC metrics.</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="feature-tag">Merchant</span>
+                            <span class="feature-tag">Dispute</span>
+                            <span class="feature-tag">KYC</span>
+                            <span class="feature-tag">Identity</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center text-sm text-gray-400 mb-4">
+                            <span>1 Module</span>
+                            <span>2 Components</span>
+                            <span>Active</span>
+                        </div>
+                        
+                        <a href="merchant.html" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-center">
+                            Launch Dashboard
+                        </a>
+                    </div>
+
+                    <!-- Developer Portal -->
+                    <div class="metric-card scope-development type-developer">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <i data-lucide="terminal" class="w-6 h-6 text-purple-400 mr-2"></i>
+                                <h3 class="text-lg font-semibold">Developer Portal</h3>
+                            </div>
+                            <div class="scope-badge">DEVELOPMENT</div>
+                        </div>
+                        
+                        <p class="text-gray-400 mb-4">Developer portal with SDK documentation, API playground, and usage analytics.</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="feature-tag">SDK</span>
+                            <span class="feature-tag">API</span>
+                            <span class="feature-tag">Docs</span>
+                            <span class="feature-tag">Playground</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center text-sm text-gray-400 mb-4">
+                            <span>1 Module</span>
+                            <span>2 Components</span>
+                            <span>Active</span>
+                        </div>
+                        
+                        <a href="developer.html" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-center">
+                            Launch Dashboard
+                        </a>
+                    </div>
+
+                    <!-- Security Monitoring -->
+                    <div class="metric-card scope-enterprise type-security">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <i data-lucide="shield" class="w-6 h-6 text-red-400 mr-2"></i>
+                                <h3 class="text-lg font-semibold">Security Monitoring</h3>
+                            </div>
+                            <div class="scope-badge">ENTERPRISE</div>
+                        </div>
+                        
+                        <p class="text-gray-400 mb-4">Security monitoring dashboard with threat detection, access logs, and compliance tracking.</p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="feature-tag">Security</span>
+                            <span class="feature-tag">Threats</span>
+                            <span class="feature-tag">Compliance</span>
+                            <span class="feature-tag">Logs</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center text-sm text-gray-400 mb-4">
+                            <span>1 Module</span>
+                            <span>2 Components</span>
+                            <span>Active</span>
+                        </div>
+                        
+                        <a href="security.html" class="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors text-center">
+                            Launch Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Information -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Scopes Overview -->
+                <div class="metric-card">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                        <i data-lucide="target" class="w-5 h-5 mr-2"></i>
+                        Available Scopes
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-blue-400 rounded-full mr-3"></div>
+                                <div>
+                                    <div class="font-medium">Enterprise</div>
+                                    <div class="text-sm text-gray-400">Admin, analytics, security, revenue</div>
+                                </div>
+                            </div>
+                            <span class="text-sm text-gray-400">America/New_York</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-green-400 rounded-full mr-3"></div>
+                                <div>
+                                    <div class="font-medium">Development</div>
+                                    <div class="text-sm text-gray-400">Read, write, debug, developer tools</div>
+                                </div>
+                            </div>
+                            <span class="text-sm text-gray-400">Europe/London</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-yellow-400 rounded-full mr-3"></div>
+                                <div>
+                                    <div class="font-medium">Production</div>
+                                    <div class="text-sm text-gray-400">Read, monitor, alerts, production tools</div>
+                                </div>
+                            </div>
+                            <span class="text-sm text-gray-400">UTC</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-purple-400 rounded-full mr-3"></div>
+                                <div>
+                                    <div class="font-medium">Local Sandbox</div>
+                                    <div class="text-sm text-gray-400">Read, write, test, local development</div>
+                                </div>
+                            </div>
+                            <span class="text-sm text-gray-400">UTC</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Module Types -->
+                <div class="metric-card">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                        <i data-lucide="layers" class="w-5 h-5 mr-2"></i>
+                        Module Types
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+                            <div class="flex items-center">
+                                <i data-lucide="bar-chart-3" class="w-5 h-5 text-blue-400 mr-3"></i>
+                                <div>
+                                    <div class="font-medium">Analytics</div>
+                                    <div class="text-sm text-gray-400">Revenue charts, metrics, insights</div>
+                                </div>
+                            </div>
+                            <span class="text-sm text-gray-400">1 Module</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+                            <div class="flex items-center">
+                                <i data-lucide="store" class="w-5 h-5 text-emerald-400 mr-3"></i>
+                                <div>
+                                    <div class="font-medium">Merchant</div>
+                                    <div class="text-sm text-gray-400">Dispute resolution, KYC, identity</div>
+                                </div>
+                            </div>
+                            <span class="text-sm text-gray-400">1 Module</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+                            <div class="flex items-center">
+                                <i data-lucide="code" class="w-5 h-5 text-purple-400 mr-3"></i>
+                                <div>
+                                    <div class="font-medium">Developer</div>
+                                    <div class="text-sm text-gray-400">SDK metrics, API usage, debugging</div>
+                                </div>
+                            </div>
+                            <span class="text-sm text-gray-400">1 Module</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+                            <div class="flex items-center">
+                                <i data-lucide="shield" class="w-5 h-5 text-red-400 mr-3"></i>
+                                <div>
+                                    <div class="font-medium">Security</div>
+                                    <div class="text-sm text-gray-400">Threat detection, access logs, compliance</div>
+                                </div>
+                            </div>
+                            <span class="text-sm text-gray-400">1 Module</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+                            <div class="flex items-center">
+                                <i data-lucide="dollar-sign" class="w-5 h-5 text-yellow-400 mr-3"></i>
+                                <div>
+                                    <div class="font-medium">Revenue</div>
+                                    <div class="text-sm text-gray-400">MRR tracking, projections, growth</div>
+                                </div>
+                            </div>
+                            <span class="text-sm text-gray-400">1 Module</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
+                            <div class="flex items-center">
+                                <i data-lucide="activity" class="w-5 h-5 text-cyan-400 mr-3"></i>
+                                <div>
+                                    <div class="font-medium">Monitoring</div>
+                                    <div class="text-sm text-gray-400">Performance, health, uptime</div>
+                                </div>
+                            </div>
+                            <span class="text-sm text-gray-400">1 Module</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="max-w-7xl mx-auto mt-8 pt-8 border-t border-gray-700">
+            <div class="flex items-center justify-between text-sm text-gray-400">
+                <div class="flex items-center gap-4">
+                    <span>Enterprise Suite v1.0</span>
+                    <span>•</span>
+                    <span>factory-wager.com + duoplus.com</span>
+                    <span>•</span>
+                    <span>Modular Dashboard System</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                    <span>All Systems Operational</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Add interactive features
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Enterprise Suite Dashboard Index loaded');
+            
+            // Add hover effects to cards
+            const cards = document.querySelectorAll('.metric-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-4px)';
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Simulate real-time status updates
+            setInterval(() => {
+                const statusIndicator = document.querySelector('.status-indicator');
+                if (statusIndicator) {
+                    statusIndicator.style.opacity = Math.random() > 0.1 ? '1' : '0.3';
+                }
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

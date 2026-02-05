@@ -1,0 +1,50 @@
+{
+  "timestamp": "2026-01-12T13:18:00.119Z",
+  "overview": {
+    "totalProfiles": 2,
+    "successRate": "50.0%",
+    "storageUsed": "0 B",
+    "totalObjects": 0
+  },
+  "breakdown": {
+    "profiles": {
+      "successful": 1,
+      "failed": 1,
+      "successRate": "50.0%"
+    },
+    "storage": {
+      "used": "0 B",
+      "objects": 0,
+      "reports": 0,
+      "logs": 1,
+      "errors": 1,
+      "screenshots": 0
+    },
+    "localFiles": {
+      "accounts": {
+        "count": 0,
+        "files": [],
+        "totalSize": 0
+      },
+      "reports": {
+        "count": 3,
+        "files": [
+          "batch_2026-01-12T11-56-19-845Z.json",
+          "batch_2026-01-12T11-56-47-533Z.json",
+          "batch_2026-01-12T11-56-38-117Z.csv"
+        ],
+        "totalSize": 0
+      },
+      "logs": {
+        "count": 0,
+        "files": [],
+        "totalSize": 0
+      },
+      "screenshots": {
+        "count": 0,
+        "files": [],
+        "totalSize": 0
+      }
+    }
+  }
+}

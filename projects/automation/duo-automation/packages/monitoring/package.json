@@ -1,0 +1,70 @@
+{
+  "name": "@duoplus/monitoring",
+  "version": "1.0.0",
+  "description": "DuoPlus Monitoring - Enterprise system monitoring, health checks, and dashboards",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./health": {
+      "import": "./dist/health/index.js",
+      "types": "./dist/health/index.d.ts"
+    },
+    "./metrics": {
+      "import": "./dist/metrics/index.js",
+      "types": "./dist/metrics/index.d.ts"
+    },
+    "./dashboards": {
+      "import": "./dist/dashboards/index.js",
+      "types": "./dist/dashboards/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "bun build src/index.ts --outdir dist --target node --format esm && bun run build:types",
+    "build:types": "tsc --emitDeclarationOnly --outDir dist",
+    "dev": "bun --watch src/index.ts",
+    "test": "bun test",
+    "lint": "bunx eslint src --ext .ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@duoplus/core": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.6",
+    "@types/node": "^25.0.8",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "bun": ">=1.1.40"
+  },
+  "keywords": [
+    "monitoring",
+    "health-checks",
+    "metrics",
+    "dashboards",
+    "enterprise",
+    "observability"
+  ],
+  "author": "DuoPlus Enterprise Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/duoplus/enterprise-components.git",
+    "directory": "packages/monitoring"
+  },
+  "publishConfig": {
+    "registry": "https://registry.duoplus.com",
+    "access": "public"
+  }
+}

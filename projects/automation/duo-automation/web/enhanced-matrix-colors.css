@@ -1,0 +1,552 @@
+/* ============================================================================
+   ENHANCED MATRIX TABLE - HEX COLOR LABELS & TOPICS
+   factory-wager.com → $1B ARR Trajectory
+   ============================================================================ */
+
+/* CSS Custom Properties for Hex Color System */
+:root {
+  /* Performance Category - Blue to Green Gradient */
+  --performance-primary: #3b82f6;    /* Blue 500 */
+  --performance-secondary: #10b981;   /* Emerald 500 */
+  --performance-accent: #06b6d4;      /* Cyan 500 */
+  --performance-light: #dbeafe;       /* Blue 100 */
+  --performance-dark: #1e40af;        /* Blue 800 */
+  --performance-gradient: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+  
+  /* TypeScript Category - Purple/Violet Gradient */
+  --typescript-primary: #8b5cf6;      /* Violet 500 */
+  --typescript-secondary: #a855f7;    /* Purple 500 */
+  --typescript-accent: #9333ea;       /* Violet 600 */
+  --typescript-light: #ede9fe;        /* Violet 100 */
+  --typescript-dark: #6b21a8;         /* Violet 800 */
+  --typescript-gradient: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+  
+  /* Security Category - Red/Orange Gradient */
+  --security-primary: #ef4444;        /* Red 500 */
+  --security-secondary: #f97316;      /* Orange 500 */
+  --security-accent: #dc2626;         /* Red 600 */
+  --security-light: #fee2e2;          /* Red 100 */
+  --security-dark: #991b1b;           /* Red 800 */
+  --security-gradient: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+  
+  /* Bundler Category - Amber/Yellow Gradient */
+  --bundler-primary: #f59e0b;         /* Amber 500 */
+  --bundler-secondary: #eab308;       /* Yellow 500 */
+  --bundler-accent: #d97706;          /* Amber 600 */
+  --bundler-light: #fef3c7;           /* Amber 100 */
+  --bundler-dark: #92400e;            /* Amber 800 */
+  --bundler-gradient: linear-gradient(135deg, #f59e0b 0%, #eab308 100%);
+  
+  /* Fixes Category - Teal/Cyan Gradient */
+  --fixes-primary: #14b8a6;           /* Teal 500 */
+  --fixes-secondary: #06b6d4;         /* Cyan 500 */
+  --fixes-accent: #0d9488;            /* Teal 600 */
+  --fixes-light: #ccfbf1;             /* Teal 100 */
+  --fixes-dark: #115e59;              /* Teal 800 */
+  --fixes-gradient: linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%);
+  
+  /* Success Status - Green Gradient */
+  --success-primary: #22c55e;         /* Green 500 */
+  --success-secondary: #16a34a;       /* Green 600 */
+  --success-accent: #15803d;          /* Green 700 */
+  --success-light: #dcfce7;           /* Green 100 */
+  --success-dark: #14532d;            /* Green 900 */
+  --success-gradient: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  
+  /* Status Colors */
+  --status-complete: #22c55e;         /* Complete - Green */
+  --status-progress: #f59e0b;         /* In Progress - Amber */
+  --status-blocked: #ef4444;          /* Blocked - Red */
+  --status-ready: #3b82f6;            /* Ready - Blue */
+  --status-pending: #3b82f6;          /* Pending - Gray */
+  
+  /* Enterprise Suite Colors */
+  --enterprise-primary: #3b82f6;      /* Indigo 500 */
+  --enterprise-secondary: #8b5cf6;    /* Violet 500 */
+  --enterprise-accent: #3b82f6;       /* Pink 500 */
+  --enterprise-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #3b82f6 100%);
+  
+  /* Matrix Table Specific Colors */
+  --matrix-header: #3b82f6;           /* Indigo 600 */
+  --matrix-border: #3b82f6;           /* Gray 200 */
+  --matrix-hover: #3b82f6;            /* Gray 100 */
+  --matrix-stripe: #3b82f6;           /* Gray 50 */
+  
+  /* Improvement Indicators */
+  --improvement-high: #dc2626;        /* High Impact - Red */
+  --improvement-medium: #f59e0b;      /* Medium Impact - Amber */
+  --improvement-low: #10b981;         /* Low Impact - Green */
+}
+
+/* ============================================================================
+   MATRIX TABLE STYLES WITH HEX COLORS
+   ============================================================================ */
+
+.matrix-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: white;
+}
+
+.matrix-table th {
+  background: var(--matrix-header);
+  color: white;
+  font-weight: 600;
+  text-align: left;
+  padding: 16px;
+  position: relative;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.matrix-table th::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--enterprise-gradient);
+}
+
+.matrix-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--matrix-border);
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.matrix-table tr:hover td {
+  background-color: var(--matrix-hover);
+  transform: translateX(2px);
+}
+
+.matrix-table tr:nth-child(even) td {
+  background-color: var(--matrix-stripe);
+}
+
+.matrix-table tr:nth-child(even):hover td {
+  background-color: var(--matrix-hover);
+}
+
+/* ============================================================================
+   COLOR BADGE SYSTEM WITH HEX CODES
+   ============================================================================ */
+
+.color-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.color-badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.color-badge:hover::before {
+  left: 100%;
+}
+
+.color-badge:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Performance Badge */
+.performance-badge {
+  background: var(--performance-gradient);
+  color: white;
+  border: 1px solid var(--performance-primary);
+}
+
+.performance-badge:hover {
+  box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* TypeScript Badge */
+.typescript-badge {
+  background: var(--typescript-gradient);
+  color: white;
+  border: 1px solid var(--typescript-primary);
+}
+
+.typescript-badge:hover {
+  box-shadow: 0 6px 12px rgba(139, 92, 246, 0.3);
+}
+
+/* Security Badge */
+.security-badge {
+  background: var(--security-gradient);
+  color: white;
+  border: 1px solid var(--security-primary);
+}
+
+.security-badge:hover {
+  box-shadow: 0 6px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Bundler Badge */
+.bundler-badge {
+  background: var(--bundler-gradient);
+  color: white;
+  border: 1px solid var(--bundler-primary);
+}
+
+.bundler-badge:hover {
+  box-shadow: 0 6px 12px rgba(245, 158, 11, 0.3);
+}
+
+/* Fixes Badge */
+.fixes-badge {
+  background: var(--fixes-gradient);
+  color: white;
+  border: 1px solid var(--fixes-primary);
+}
+
+.fixes-badge:hover {
+  box-shadow: 0 6px 12px rgba(20, 184, 166, 0.3);
+}
+
+/* Success Badge */
+.success-badge {
+  background: var(--success-gradient);
+  color: white;
+  border: 1px solid var(--success-primary);
+}
+
+.success-badge:hover {
+  box-shadow: 0 6px 12px rgba(34, 197, 94, 0.3);
+}
+
+/* Status Badges */
+.status-complete {
+  background: var(--status-complete);
+  color: white;
+  border: 1px solid var(--status-complete);
+}
+
+.status-progress {
+  background: var(--status-progress);
+  color: white;
+  border: 1px solid var(--status-progress);
+}
+
+.status-blocked {
+  background: var(--status-blocked);
+  color: white;
+  border: 1px solid var(--status-blocked);
+}
+
+.status-ready {
+  background: var(--status-ready);
+  color: white;
+  border: 1px solid var(--status-ready);
+}
+
+/* ============================================================================
+   HEX COLOR DISPLAY
+   ============================================================================ */
+
+.hex-color {
+  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.1);
+  color: #3b82f6;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-block;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.hex-color:hover {
+  background: rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+}
+
+.hex-color.copied {
+  background: var(--success-primary);
+  color: white;
+  border-color: var(--success-primary);
+}
+
+/* ============================================================================
+   IMPROVEMENT INDICATORS
+   ============================================================================ */
+
+.improvement-cell {
+  font-weight: 700;
+  font-size: 14px;
+  text-align: center;
+  padding: 8px;
+  border-radius: 8px;
+  position: relative;
+}
+
+.improvement-high {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(239, 68, 68, 0.1));
+  color: var(--improvement-high);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.improvement-medium {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.1));
+  color: var(--improvement-medium);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.improvement-low {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(34, 197, 94, 0.1));
+  color: var(--improvement-low);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* ============================================================================
+   METRIC VALUES
+   ============================================================================ */
+
+.metric-value {
+  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+  font-weight: 600;
+  font-size: 13px;
+  color: #3b82f6;
+  background: rgba(0, 0, 0, 0.02);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.metric-value.highlight {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(16, 185, 129, 0.1));
+  color: var(--success-primary);
+  border-color: rgba(34, 197, 94, 0.2);
+  font-weight: 700;
+}
+
+/* ============================================================================
+   CATEGORY HEADERS
+   ============================================================================ */
+
+.category-header {
+  background: var(--enterprise-gradient);
+  color: white;
+  font-weight: 700;
+  font-size: 18px;
+  padding: 20px;
+  margin: 30px 0 20px 0;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.category-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* ============================================================================
+   COLOR LEGEND
+   ============================================================================ */
+
+.color-legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.legend-item:hover {
+  transform: translateX(6px);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.legend-color {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.legend-color::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.3) 0%, transparent 50%, rgba(255, 255, 255, 0.1) 100%);
+}
+
+/* ============================================================================
+   PULSE ANIMATIONS
+   ============================================================================ */
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.02); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.pulse-slow {
+  animation: pulse-slow 3s infinite;
+}
+
+@keyframes pulse-slow {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .matrix-table {
+    font-size: 12px;
+  }
+  
+  .matrix-table th,
+  .matrix-table td {
+    padding: 8px 12px;
+  }
+  
+  .color-badge {
+    font-size: 10px;
+    padding: 4px 10px;
+  }
+  
+  .hex-color {
+    font-size: 9px;
+    padding: 2px 6px;
+  }
+  
+  .category-header {
+    font-size: 16px;
+    padding: 16px;
+  }
+  
+  .color-legend {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 16px;
+  }
+}
+
+/* ============================================================================
+   DARK MODE SUPPORT
+   ============================================================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --matrix-header: #3b82f6;
+    --matrix-border: #3b82f6;
+    --matrix-hover: #3b82f6;
+    --matrix-stripe: #3b82f6;
+  }
+  
+  .matrix-table {
+    background: #3b82f6;
+    color: #3b82f6;
+  }
+  
+  .hex-color {
+    background: rgba(255, 255, 255, 0.1);
+    color: #3b82f6;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .metric-value {
+    background: rgba(255, 255, 255, 0.05);
+    color: #3b82f6;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* ============================================================================
+   PRINT STYLES
+   ============================================================================ */
+
+@media print {
+  .color-badge {
+    background: white !important;
+    color: black !important;
+    border: 1px solid black !important;
+  }
+  
+  .hex-color {
+    background: transparent !important;
+    color: black !important;
+    border: 1px solid black !important;
+  }
+  
+  .matrix-table {
+    box-shadow: none !important;
+  }
+  
+  .pulse {
+    animation: none !important;
+  }
+}

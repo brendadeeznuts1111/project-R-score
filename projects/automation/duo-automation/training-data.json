@@ -1,0 +1,51 @@
+{
+  "version": "4.1.0",
+  "examples": [
+    {
+      "filePath": "src/venmo-family/api.ts",
+      "expectedTags": {
+        "DOMAIN": "VENMO",
+        "SCOPE": "API",
+        "TYPE": "FEATURE"
+      }
+    },
+    {
+      "filePath": "src/duoplus/dashboard.tsx",
+      "expectedTags": {
+        "DOMAIN": "DUOPLUS",
+        "SCOPE": "UI",
+        "TYPE": "FEATURE"
+      }
+    },
+    {
+      "filePath": "src/factory-wager/cli.ts",
+      "expectedTags": {
+        "DOMAIN": "FACTORY-WAGER",
+        "SCOPE": "CLI",
+        "TYPE": "FEATURE"
+      }
+    }
+  ],
+  "heuristics": {
+    "domains": [
+      "VENMO",
+      "DUOPLUS",
+      "FACTORY-WAGER",
+      "MERCHANT"
+    ],
+    "scopes": [
+      "API",
+      "UI",
+      "CLI",
+      "DATABASE",
+      "CORE"
+    ],
+    "types": [
+      "FEATURE",
+      "TEST",
+      "DEMO",
+      "PERFORMANCE",
+      "SECURITY"
+    ]
+  }
+}

@@ -1,0 +1,1031 @@
+{
+  "$schema": "./METADATA_SCHEMA.json",
+  "version": "1.01.01",
+  "lastUpdated": "2026-01-16T14:32:00Z",
+  "description": "Comprehensive tag registry with definitions, usage guidelines, and relationships for the Duo Automation project",
+  "tags": {},
+  "deprecated": [],
+  "relationships": {
+    "tagGroups": {
+      "status": [
+        "#ready",
+        "#wip",
+        "#review",
+        "#blocked",
+        "#deprecated"
+      ],
+      "priority": [
+        "#critical",
+        "#high",
+        "#medium",
+        "#low"
+      ],
+      "environment": [
+        "#production",
+        "#staging",
+        "#development"
+      ],
+      "audience": [
+        "#developers",
+        "#devops",
+        "#security",
+        "#users",
+        "#admins",
+        "#all"
+      ],
+      "technology": [
+        "#typescript",
+        "#javascript",
+        "#bun",
+        "#react",
+        "#vue",
+        "#docker"
+      ],
+      "domain": [
+        "#security",
+        "#config-management",
+        "#devops",
+        "#monitoring",
+        "#api",
+        "#ui",
+        "#database",
+        "#testing",
+        "#documentation",
+        "#performance"
+      ],
+      "type": [
+        "#api",
+        "#cli",
+        "#dashboard",
+        "#library",
+        "#component",
+        "#service",
+        "#utility",
+        "#config",
+        "#script",
+        "#documentation",
+        "#test",
+        "#mock",
+        "#middleware",
+        "#plugin",
+        "#extension"
+      ]
+    },
+    "commonCombinations": [
+      {
+        "combination": [
+          "#typescript",
+          "#api",
+          "#security",
+          "#ready"
+        ],
+        "description": "Production-ready TypeScript API with security features",
+        "useCase": "Secure backend services"
+      },
+      {
+        "combination": [
+          "#devops",
+          "#bun",
+          "#cli",
+          "#critical"
+        ],
+        "description": "Critical DevOps CLI tool built with Bun",
+        "useCase": "Infrastructure automation"
+      },
+      {
+        "combination": [
+          "#documentation",
+          "#markdown",
+          "#developers",
+          "#ready"
+        ],
+        "description": "Complete documentation for developers",
+        "useCase": "Technical documentation"
+      },
+      {
+        "combination": [
+          "#testing",
+          "#typescript",
+          "#automation",
+          "#high"
+        ],
+        "description": "High-priority automated testing framework",
+        "useCase": "Quality assurance"
+      },
+      {
+        "combination": [
+          "#config-management",
+          "#production",
+          "#security",
+          "#critical"
+        ],
+        "description": "Critical production configuration with security",
+        "useCase": "Production deployment"
+      }
+    ],
+    "workflows": {
+      "development": [
+        "#wip",
+        "#development",
+        "#typescript"
+      ],
+      "review": [
+        "#review",
+        "#testing",
+        "#validation"
+      ],
+      "production": [
+        "#ready",
+        "#production",
+        "#monitoring"
+      ],
+      "maintenance": [
+        "#deprecated",
+        "#migration",
+        "#documentation"
+      ]
+    }
+  },
+  "governance": {
+    "approvalProcess": {
+      "newTags": "PR with justification required",
+      "modifications": "Maintainer review required",
+      "deprecation": "30-day notice period"
+    },
+    "maintenance": {
+      "reviewFrequency": "quarterly",
+      "cleanupSchedule": "monthly",
+      "auditSchedule": "weekly"
+    },
+    "quality": {
+      "minTagUsage": 3,
+      "maxTagUsage": 100,
+      "requiredCategories": [
+        "type",
+        "domain",
+        "status"
+      ],
+      "maxTagsPerArtifact": 10
+    }
+  },
+  "archived": {
+    "#devops": {
+      "category": "audience",
+      "definition": "DevOps audience",
+      "usage": "Artifacts for DevOps engineers and system administrators",
+      "examples": [
+        "Deployment scripts",
+        "Infrastructure code",
+        "Monitoring tools",
+        "Automation utilities"
+      ],
+      "related": [
+        "#operations",
+        "#infrastructure",
+        "#automation"
+      ],
+      "aliases": [
+        "#ops",
+        "#operations",
+        "#infrastructure"
+      ],
+      "expertise": "Advanced",
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "DevOps Team",
+        "reviewFrequency": "monthly"
+      }
+    },
+    "#ready": {
+      "category": "status",
+      "definition": "Artifact is ready for use",
+      "usage": "Indicates that the artifact has been completed, tested, and validated for production use",
+      "examples": [
+        "Production-ready APIs",
+        "Completed documentation",
+        "Validated configuration files",
+        "Tested and deployed services"
+      ],
+      "related": [
+        "#wip",
+        "#review",
+        "#production",
+        "#validated"
+      ],
+      "aliases": [
+        "#complete",
+        "#done"
+      ],
+      "transitions": {
+        "from": [
+          "#review",
+          "#wip"
+        ],
+        "to": [
+          "#production",
+          "#deprecated"
+        ]
+      },
+      "requirements": [
+        "Must have passed all tests",
+        "Documentation must be complete",
+        "Code review must be approved",
+        "Security validation must pass"
+      ],
+      "governance": {
+        "approvalRequired": true,
+        "maintainer": "Team Lead",
+        "reviewFrequency": "as-needed"
+      }
+    },
+    "#wip": {
+      "category": "status",
+      "definition": "Work in progress",
+      "usage": "Artifact is currently being developed or modified",
+      "examples": [
+        "Features under development",
+        "Draft documentation",
+        "Experimental implementations",
+        "Code being refactored"
+      ],
+      "related": [
+        "#development",
+        "#experimental",
+        "#draft"
+      ],
+      "aliases": [
+        "#in-progress",
+        "#developing"
+      ],
+      "transitions": {
+        "from": [
+          "#ready",
+          "#blocked"
+        ],
+        "to": [
+          "#review",
+          "#ready",
+          "#blocked"
+        ]
+      },
+      "requirements": [
+        "Should have basic functionality",
+        "May have incomplete tests",
+        "Documentation may be draft",
+        "Not ready for production"
+      ],
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "Developer",
+        "reviewFrequency": "weekly"
+      }
+    },
+    "#review": {
+      "category": "status",
+      "definition": "Awaiting review or approval",
+      "usage": "Artifact is ready for review by team members or stakeholders",
+      "examples": [
+        "Pull requests awaiting review",
+        "Documentation pending approval",
+        "Configurations needing validation",
+        "Design proposals"
+      ],
+      "related": [
+        "#wip",
+        "#ready",
+        "#validation",
+        "#approval"
+      ],
+      "aliases": [
+        "#pending-review",
+        "#awaiting-approval"
+      ],
+      "transitions": {
+        "from": [
+          "#wip"
+        ],
+        "to": [
+          "#ready",
+          "#wip",
+          "#blocked"
+        ]
+      },
+      "requirements": [
+        "Must be functionally complete",
+        "Tests should be written",
+        "Documentation should be drafted",
+        "Ready for team review"
+      ],
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "Reviewer",
+        "reviewFrequency": "daily"
+      }
+    },
+    "#blocked": {
+      "category": "status",
+      "definition": "Blocked by dependencies or issues",
+      "usage": "Artifact cannot progress due to external blockers or dependencies",
+      "examples": [
+        "Features waiting for dependencies",
+        "Code blocked by external APIs",
+        "Documentation waiting for approvals",
+        "Infrastructure blocked by resources"
+      ],
+      "related": [
+        "#wip",
+        "#dependency",
+        "#issue",
+        "#waiting"
+      ],
+      "aliases": [
+        "#blocked",
+        "#stuck"
+      ],
+      "transitions": {
+        "from": [
+          "#wip",
+          "#review"
+        ],
+        "to": [
+          "#wip",
+          "#deprecated"
+        ]
+      },
+      "requirements": [
+        "Must document blocking issues",
+        "Should have dependency tracking",
+        "Needs regular status updates",
+        "Requires escalation plan"
+      ],
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "Project Manager",
+        "reviewFrequency": "weekly"
+      }
+    },
+    "#deprecated": {
+      "category": "status",
+      "definition": "Deprecated and planned for removal",
+      "usage": "Artifact is no longer recommended and will be removed in future versions",
+      "examples": [
+        "Legacy API endpoints",
+        "Old configuration formats",
+        "Deprecated utility functions",
+        "Outdated documentation"
+      ],
+      "related": [
+        "#legacy",
+        "#old",
+        "#removal",
+        "#migration"
+      ],
+      "aliases": [
+        "#obsolete",
+        "#legacy"
+      ],
+      "transitions": {
+        "from": [
+          "#ready",
+          "#blocked"
+        ],
+        "to": [
+          "#removed"
+        ]
+      },
+      "requirements": [
+        "Must have migration guide",
+        "Should have deprecation timeline",
+        "Needs communication plan",
+        "Requires replacement identification"
+      ],
+      "governance": {
+        "approvalRequired": true,
+        "maintainer": "Architecture Team",
+        "reviewFrequency": "monthly"
+      }
+    },
+    "#typescript": {
+      "category": "technology",
+      "definition": "TypeScript programming language",
+      "usage": "Artifacts implemented in TypeScript or related to TypeScript development",
+      "examples": [
+        "src/**/*.ts files",
+        "TypeScript configuration",
+        "Type definitions",
+        "TS-specific utilities"
+      ],
+      "related": [
+        "#javascript",
+        "#bun",
+        "#api",
+        "#cli",
+        "#library"
+      ],
+      "aliases": [
+        "#ts"
+      ],
+      "compatibility": {
+        "browsers": [
+          "Chrome",
+          "Firefox",
+          "Safari",
+          "Edge"
+        ],
+        "node": ">=18.0.0",
+        "bun": ">=1.0.0"
+      },
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "TypeScript Team",
+        "reviewFrequency": "quarterly"
+      }
+    },
+    "#bun": {
+      "category": "technology",
+      "definition": "Bun runtime and tooling",
+      "usage": "Artifacts using Bun runtime, Bun-specific features, or Bun tooling",
+      "examples": [
+        "Bun-specific APIs",
+        "Bun configuration files",
+        "Performance optimizations",
+        "Bun-native utilities"
+      ],
+      "related": [
+        "#typescript",
+        "#javascript",
+        "#performance",
+        "#runtime"
+      ],
+      "aliases": [
+        "#bun-runtime"
+      ],
+      "compatibility": {
+        "bun": ">=1.0.0",
+        "node": "compatible via polyfills"
+      },
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "Bun Team",
+        "reviewFrequency": "monthly"
+      }
+    },
+    "#security": {
+      "category": "audience",
+      "definition": "Security team audience",
+      "usage": "Artifacts for security professionals and auditors",
+      "examples": [
+        "Security policies",
+        "Compliance documentation",
+        "Security tools",
+        "Audit reports"
+      ],
+      "related": [
+        "#compliance",
+        "#audit",
+        "#risk"
+      ],
+      "aliases": [
+        "#sec-team",
+        "#audit"
+      ],
+      "expertise": "Specialized",
+      "governance": {
+        "approvalRequired": true,
+        "maintainer": "Security Team",
+        "reviewFrequency": "monthly"
+      }
+    },
+    "#config-management": {
+      "category": "domain",
+      "definition": "Configuration management and deployment",
+      "usage": "Artifacts for configuration, deployment, and environment management",
+      "examples": [
+        "Configuration files",
+        "Deployment scripts",
+        "Environment management",
+        "Feature flags"
+      ],
+      "related": [
+        "#devops",
+        "#deployment",
+        "#environment",
+        "#infrastructure"
+      ],
+      "aliases": [
+        "#config",
+        "#deployment"
+      ],
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "DevOps Team",
+        "reviewFrequency": "quarterly"
+      }
+    },
+    "#api": {
+      "category": "type",
+      "definition": "API endpoints and services",
+      "usage": "REST APIs, GraphQL endpoints, and API-related functionality",
+      "examples": [
+        "REST API endpoints",
+        "GraphQL schemas",
+        "API middleware",
+        "API documentation"
+      ],
+      "related": [
+        "#typescript",
+        "#security",
+        "#database",
+        "#monitoring"
+      ],
+      "aliases": [
+        "#rest",
+        "#graphql",
+        "#endpoint"
+      ],
+      "standards": [
+        "OpenAPI 3.0",
+        "GraphQL"
+      ],
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "API Team",
+        "reviewFrequency": "as-needed"
+      }
+    },
+    "#cli": {
+      "category": "type",
+      "definition": "Command-line interface tools",
+      "usage": "CLI applications, scripts, and command-line utilities",
+      "examples": [
+        "Command-line tools",
+        "Build scripts",
+        "Deployment utilities",
+        "Admin CLI"
+      ],
+      "related": [
+        "#typescript",
+        "#bun",
+        "#automation",
+        "#devops"
+      ],
+      "aliases": [
+        "#command-line",
+        "#terminal"
+      ],
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "CLI Team",
+        "reviewFrequency": "monthly"
+      }
+    },
+    "#monitoring": {
+      "category": "domain",
+      "definition": "Monitoring and observability",
+      "usage": "Logging, metrics, tracing, and monitoring functionality",
+      "examples": [
+        "Logging utilities",
+        "Metrics collection",
+        "Performance monitoring",
+        "Alerting systems"
+      ],
+      "related": [
+        "#devops",
+        "#observability",
+        "#logging",
+        "#metrics"
+      ],
+      "aliases": [
+        "#observability",
+        "#logging",
+        "#metrics"
+      ],
+      "standards": [
+        "OpenTelemetry",
+        "Prometheus",
+        "Grafana"
+      ],
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "Observability Team",
+        "reviewFrequency": "quarterly"
+      }
+    },
+    "#testing": {
+      "category": "domain",
+      "definition": "Testing and quality assurance",
+      "usage": "Unit tests, integration tests, E2E tests, and testing utilities",
+      "examples": [
+        "Unit test suites",
+        "Integration tests",
+        "E2E test scenarios",
+        "Testing utilities"
+      ],
+      "related": [
+        "#typescript",
+        "#quality",
+        "#automation",
+        "#ci"
+      ],
+      "aliases": [
+        "#qa",
+        "#tests",
+        "#quality"
+      ],
+      "frameworks": [
+        "Jest",
+        "Vitest",
+        "Playwright",
+        "Cypress"
+      ],
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "QA Team",
+        "reviewFrequency": "monthly"
+      }
+    },
+    "#documentation": {
+      "category": "type",
+      "definition": "Documentation and guides",
+      "usage": "Technical documentation, user guides, API docs, and instructional content",
+      "examples": [
+        "README files",
+        "API documentation",
+        "User guides",
+        "Technical specifications"
+      ],
+      "related": [
+        "#markdown",
+        "#guides",
+        "#api",
+        "#examples"
+      ],
+      "aliases": [
+        "#docs",
+        "#guides",
+        "#markdown"
+      ],
+      "standards": [
+        "Markdown",
+        "OpenAPI",
+        "JSDoc"
+      ],
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "Documentation Team",
+        "reviewFrequency": "monthly"
+      }
+    },
+    "#performance": {
+      "category": "domain",
+      "definition": "Performance optimization and analysis",
+      "usage": "Performance improvements, optimizations, and performance monitoring",
+      "examples": [
+        "Performance optimizations",
+        "Benchmarking tools",
+        "Performance analysis",
+        "Caching implementations"
+      ],
+      "related": [
+        "#optimization",
+        "#monitoring",
+        "#bun",
+        "#typescript"
+      ],
+      "aliases": [
+        "#optimization",
+        "#speed",
+        "#caching"
+      ],
+      "metrics": [
+        "response-time",
+        "throughput",
+        "memory-usage",
+        "cpu-usage"
+      ],
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "Performance Team",
+        "reviewFrequency": "quarterly"
+      }
+    },
+    "#critical": {
+      "category": "priority",
+      "definition": "Critical priority artifacts",
+      "usage": "Artifacts that are critical for system operation or business continuity",
+      "examples": [
+        "Core business logic",
+        "Security fixes",
+        "Production incidents",
+        "Blocking dependencies"
+      ],
+      "related": [
+        "#high",
+        "#urgent",
+        "#production",
+        "#blocking"
+      ],
+      "aliases": [
+        "#urgent",
+        "#blocking"
+      ],
+      "sla": {
+        "responseTime": "1 hour",
+        "resolutionTime": "24 hours",
+        "availability": "99.9%"
+      },
+      "governance": {
+        "approvalRequired": true,
+        "maintainer": "Incident Commander",
+        "reviewFrequency": "daily"
+      }
+    },
+    "#high": {
+      "category": "priority",
+      "definition": "High priority artifacts",
+      "usage": "Important artifacts that should be prioritized in current sprint",
+      "examples": [
+        "Feature implementations",
+        "Important bug fixes",
+        "Performance improvements",
+        "Documentation updates"
+      ],
+      "related": [
+        "#critical",
+        "#medium",
+        "#priority"
+      ],
+      "aliases": [
+        "#important",
+        "#priority"
+      ],
+      "sla": {
+        "responseTime": "1 day",
+        "resolutionTime": "1 week",
+        "availability": "99%"
+      },
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "Team Lead",
+        "reviewFrequency": "weekly"
+      }
+    },
+    "#medium": {
+      "category": "priority",
+      "definition": "Medium priority artifacts",
+      "usage": "Standard priority artifacts for regular backlog items",
+      "examples": [
+        "Standard features",
+        "Routine maintenance",
+        "Documentation improvements",
+        "Code refactoring"
+      ],
+      "related": [
+        "#high",
+        "#low",
+        "#normal"
+      ],
+      "aliases": [
+        "#normal",
+        "#standard"
+      ],
+      "sla": {
+        "responseTime": "3 days",
+        "resolutionTime": "2 weeks",
+        "availability": "95%"
+      },
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "Developer",
+        "reviewFrequency": "bi-weekly"
+      }
+    },
+    "#low": {
+      "category": "priority",
+      "definition": "Low priority artifacts",
+      "usage": "Nice-to-have features and improvements",
+      "examples": [
+        "Minor enhancements",
+        "Code cleanup",
+        "Optional features",
+        "Future improvements"
+      ],
+      "related": [
+        "#medium",
+        "#nice-to-have",
+        "#backlog"
+      ],
+      "aliases": [
+        "#nice-to-have",
+        "#backlog"
+      ],
+      "sla": {
+        "responseTime": "1 week",
+        "resolutionTime": "1 month",
+        "availability": "90%"
+      },
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "Developer",
+        "reviewFrequency": "monthly"
+      }
+    },
+    "#production": {
+      "category": "environment",
+      "definition": "Production environment",
+      "usage": "Artifacts deployed to or intended for production use",
+      "examples": [
+        "Production configurations",
+        "Live APIs",
+        "Production monitoring",
+        "Production deployments"
+      ],
+      "related": [
+        "#staging",
+        "#ready",
+        "#critical"
+      ],
+      "aliases": [
+        "#prod",
+        "#live"
+      ],
+      "requirements": [
+        "Must be thoroughly tested",
+        "Requires monitoring",
+        "Needs rollback plan",
+        "Must have documentation"
+      ],
+      "governance": {
+        "approvalRequired": true,
+        "maintainer": "DevOps Team",
+        "reviewFrequency": "daily"
+      }
+    },
+    "#staging": {
+      "category": "environment",
+      "definition": "Staging environment",
+      "usage": "Pre-production environment for testing and validation",
+      "examples": [
+        "Staging configurations",
+        "Pre-production APIs",
+        "Staging deployments",
+        "Integration testing"
+      ],
+      "related": [
+        "#production",
+        "#development",
+        "#testing"
+      ],
+      "aliases": [
+        "#pre-prod",
+        "#pre-production"
+      ],
+      "requirements": [
+        "Mirrors production",
+        "Used for testing",
+        "Performance validation",
+        "Integration testing"
+      ],
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "QA Team",
+        "reviewFrequency": "weekly"
+      }
+    },
+    "#development": {
+      "category": "environment",
+      "definition": "Development environment",
+      "usage": "Local development and development tools",
+      "examples": [
+        "Development scripts",
+        "Local configurations",
+        "Development tools",
+        "Debug utilities"
+      ],
+      "related": [
+        "#local",
+        "#staging",
+        "#testing"
+      ],
+      "aliases": [
+        "#dev",
+        "#local"
+      ],
+      "requirements": [
+        "Developer-friendly",
+        "Fast feedback",
+        "Debug capabilities",
+        "Hot reload"
+      ],
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "Developer",
+        "reviewFrequency": "as-needed"
+      }
+    },
+    "#developers": {
+      "category": "audience",
+      "definition": "Developer audience",
+      "usage": "Artifacts intended for developer consumption",
+      "examples": [
+        "API documentation",
+        "Development tools",
+        "Code examples",
+        "Technical guides"
+      ],
+      "related": [
+        "#technical",
+        "#api",
+        "#documentation"
+      ],
+      "aliases": [
+        "#dev",
+        "#technical"
+      ],
+      "expertise": "Intermediate to advanced",
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "Development Team",
+        "reviewFrequency": "monthly"
+      }
+    },
+    "#users": {
+      "category": "audience",
+      "definition": "End user audience",
+      "usage": "Artifacts intended for end users",
+      "examples": [
+        "User documentation",
+        "User interfaces",
+        "User guides",
+        "Help documentation"
+      ],
+      "related": [
+        "#ui",
+        "#documentation",
+        "#guides"
+      ],
+      "aliases": [
+        "#end-user",
+        "#customer"
+      ],
+      "expertise": "Beginner to intermediate",
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "Product Team",
+        "reviewFrequency": "monthly"
+      }
+    },
+    "#admins": {
+      "category": "audience",
+      "definition": "Administrator audience",
+      "usage": "Artifacts for system administrators",
+      "examples": [
+        "Admin documentation",
+        "Configuration guides",
+        "Admin tools",
+        "System management"
+      ],
+      "related": [
+        "#devops",
+        "#operations",
+        "#configuration"
+      ],
+      "aliases": [
+        "#administrator",
+        "#sysadmin"
+      ],
+      "expertise": "Intermediate to advanced",
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "Operations Team",
+        "reviewFrequency": "monthly"
+      }
+    },
+    "#all": {
+      "category": "audience",
+      "definition": "General audience",
+      "usage": "Artifacts suitable for all audiences",
+      "examples": [
+        "General documentation",
+        "Overview guides",
+        "Getting started",
+        "General announcements"
+      ],
+      "related": [
+        "#documentation",
+        "#guides",
+        "#overview"
+      ],
+      "aliases": [
+        "#general",
+        "#everyone"
+      ],
+      "expertise": "All levels",
+      "governance": {
+        "approvalRequired": false,
+        "maintainer": "Documentation Team",
+        "reviewFrequency": "monthly"
+      }
+    }
+  }
+}

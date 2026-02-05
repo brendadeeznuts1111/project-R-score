@@ -1,0 +1,287 @@
+digraph RouteTopology {
+  rankdir=LR;
+  node [shape=box, style=rounded];
+
+  subgraph cluster_health {
+    label="💚 health";
+    style=filled;
+    fillcolor="#22c55e20";
+    "route:/health" [label="/health", color="#22c55e", fillcolor="#22c55e20"];
+    "route:/api/health-check" [label="/api/health-check", color="#22c55e", fillcolor="#22c55e20"];
+  }
+
+  subgraph cluster_dashboard {
+    label="📊 dashboard";
+    style=filled;
+    fillcolor="#22c55e20";
+    "route:/api/dashboard" [label="/api/dashboard", color="#22c55e", fillcolor="#22c55e20"];
+    "route:/api/stats" [label="/api/stats", color="#22c55e", fillcolor="#22c55e20"];
+  }
+
+  subgraph cluster_api {
+    label="🔌 api";
+    style=filled;
+    fillcolor="#06b6d420";
+    "route:/api/routes" [label="/api/routes", color="#22c55e", fillcolor="#22c55e20"];
+    "route:/api/rescan" [label="/api/rescan", color="#06b6d4", fillcolor="#06b6d420"];
+  }
+
+  subgraph cluster_projects {
+    label="📁 projects";
+    style=filled;
+    fillcolor="#ef444420";
+    "route:/api/projects" [label="/api/projects 🔒", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/projects/:id" [label="/api/projects/:id 🔒", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/projects/:id/open" [label="/api/projects/:id/open 🔒", color="#a855f7", fillcolor="#a855f720"];
+    "route:/api/projects/:id/git" [label="/api/projects/:id/git 🔒", color="#ef4444", fillcolor="#ef444420"];
+    "route:/api/integrity/:name" [label="/api/integrity/:name 🔒", color="#06b6d4", fillcolor="#06b6d420"];
+  }
+
+  subgraph cluster_system {
+    label="⚙️ system";
+    style=filled;
+    fillcolor="#a855f720";
+    "route:/api/system" [label="/api/system 🔒", color="#eab308", fillcolor="#eab30820"];
+    "route:/api/system/live" [label="/api/system/live 🔒", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/system/port/:port" [label="/api/system/port/:port 🔒", color="#eab308", fillcolor="#eab30820"];
+    "route:/api/system/gc" [label="/api/system/gc 🔒", color="#a855f7", fillcolor="#a855f720"];
+    "route:/api/system/enhanced" [label="/api/system/enhanced 🔒", color="#eab308", fillcolor="#eab30820"];
+    "route:/api/system/queue" [label="/api/system/queue 🔒", color="#06b6d4", fillcolor="#06b6d420"];
+  }
+
+  subgraph cluster_network {
+    label="🌐 network";
+    style=filled;
+    fillcolor="#eab30820";
+    "route:/api/network/stats" [label="/api/network/stats", color="#22c55e", fillcolor="#22c55e20"];
+    "route:/api/network/status" [label="/api/network/status", color="#22c55e", fillcolor="#22c55e20"];
+    "route:/api/network/prefetch" [label="/api/network/prefetch", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/network/preconnect" [label="/api/network/preconnect", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/network/prefetch/batch" [label="/api/network/prefetch/batch", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/network/probe/:hostId" [label="/api/network/probe/:hostId", color="#eab308", fillcolor="#eab30820"];
+    "route:/api/network/latency-test" [label="/api/network/latency-test", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/network/clear" [label="/api/network/clear", color="#eab308", fillcolor="#eab30820"];
+    "route:/api/network/optimizations" [label="/api/network/optimizations", color="#22c55e", fillcolor="#22c55e20"];
+  }
+
+  subgraph cluster_database {
+    label="🗄️ database";
+    style=filled;
+    fillcolor="#ef444420";
+    "route:/api/db/stats" [label="/api/db/stats 🔒", color="#eab308", fillcolor="#eab30820"];
+    "route:/api/db/metrics" [label="/api/db/metrics 🔒", color="#eab308", fillcolor="#eab30820"];
+    "route:/api/db/activity" [label="/api/db/activity 🔒", color="#eab308", fillcolor="#eab30820"];
+    "route:/api/db/settings" [label="/api/db/settings 🔒", color="#eab308", fillcolor="#eab30820"];
+    "route:/api/db/settings/:key" [label="/api/db/settings/:key 🔒", color="#a855f7", fillcolor="#a855f720"];
+    "route:/api/db/cleanup" [label="/api/db/cleanup 🔒", color="#ef4444", fillcolor="#ef444420"];
+    "route:/api/db/vacuum" [label="/api/db/vacuum 🔒", color="#ef4444", fillcolor="#ef444420"];
+  }
+
+  subgraph cluster_pty {
+    label="💻 pty";
+    style=filled;
+    fillcolor="#dc262620";
+    "route:/api/pty/sessions" [label="/api/pty/sessions 🔒", color="#a855f7", fillcolor="#a855f720"];
+    "route:/api/pty/create" [label="/api/pty/create 🔒", color="#dc2626", fillcolor="#dc262620"];
+    "route:/api/pty/session/:id" [label="/api/pty/session/:id 🔒", color="#a855f7", fillcolor="#a855f720"];
+    "route:/api/pty/session/:id/output" [label="/api/pty/session/:id/output 🔒", color="#a855f7", fillcolor="#a855f720"];
+    "route:/api/pty/session/:id/write" [label="/api/pty/session/:id/write 🔒", color="#dc2626", fillcolor="#dc262620"];
+    "route:/api/pty/session/:id/resize" [label="/api/pty/session/:id/resize 🔒", color="#eab308", fillcolor="#eab30820"];
+    "route:/api/pty/session/:id/kill" [label="/api/pty/session/:id/kill 🔒", color="#a855f7", fillcolor="#a855f720"];
+    "route:/api/pty/exec" [label="/api/pty/exec 🔒", color="#dc2626", fillcolor="#dc262620"];
+  }
+
+  subgraph cluster_admin {
+    label="🔐 admin";
+    style=filled;
+    fillcolor="#dc262620";
+    "route:/api/admin/sessions" [label="/api/admin/sessions 🔒", color="#ef4444", fillcolor="#ef444420"];
+    "route:/api/admin/api-keys" [label="/api/admin/api-keys 🔒", color="#dc2626", fillcolor="#dc262620"];
+    "route:/api/admin/api-keys/:id" [label="/api/admin/api-keys/:id 🔒", color="#dc2626", fillcolor="#dc262620"];
+  }
+
+  subgraph cluster_urlpattern {
+    label="🔀 urlpattern";
+    style=filled;
+    fillcolor="#eab30820";
+    "route:/api/urlpattern/analyze" [label="/api/urlpattern/analyze 🔒", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/urlpattern/test" [label="/api/urlpattern/test", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/urlpattern/report" [label="/api/urlpattern/report 🔒", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/urlpattern/patterns" [label="/api/urlpattern/patterns 🔒", color="#eab308", fillcolor="#eab30820"];
+  }
+
+  subgraph cluster_peek_cache {
+    label="⚡ peek-cache";
+    style=filled;
+    fillcolor="#eab30820";
+    "route:/api/peek-cache/stats" [label="/api/peek-cache/stats 🔒", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/peek-cache/warm" [label="/api/peek-cache/warm 🔒", color="#eab308", fillcolor="#eab30820"];
+    "route:/api/peek-cache/clear" [label="/api/peek-cache/clear 🔒", color="#eab308", fillcolor="#eab30820"];
+  }
+
+  subgraph cluster_configs {
+    label="📝 configs";
+    style=filled;
+    fillcolor="#a855f720";
+    "route:/api/configs" [label="/api/configs", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/configs/:name" [label="/api/configs/:name", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/configs/validate/:name" [label="/api/configs/validate/:name", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/configs/schema/:name" [label="/api/configs/schema/:name", color="#22c55e", fillcolor="#22c55e20"];
+    "route:/api/configs/reload" [label="/api/configs/reload", color="#a855f7", fillcolor="#a855f720"];
+  }
+
+  subgraph cluster_metrics {
+    label="📈 metrics";
+    style=filled;
+    fillcolor="#06b6d420";
+    "route:/api/metrics/enterprise" [label="/api/metrics/enterprise", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/metrics/enterprise.json" [label="/api/metrics/enterprise.json", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/server/metrics" [label="/api/server/metrics", color="#06b6d4", fillcolor="#06b6d420"];
+  }
+
+  subgraph cluster_analytics {
+    label="📉 analytics";
+    style=filled;
+    fillcolor="#06b6d420";
+    "route:/api/analytics/matrix" [label="/api/analytics/matrix", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/analytics/endpoint" [label="/api/analytics/endpoint", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/analytics/projects" [label="/api/analytics/projects", color="#06b6d4", fillcolor="#06b6d420"];
+  }
+
+  subgraph cluster_anomalies {
+    label="🔍 anomalies";
+    style=filled;
+    fillcolor="#06b6d420";
+    "route:/api/anomalies/detect" [label="/api/anomalies/detect", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/anomalies/model" [label="/api/anomalies/model", color="#22c55e", fillcolor="#22c55e20"];
+  }
+
+  subgraph cluster_snapshots {
+    label="📸 snapshots";
+    style=filled;
+    fillcolor="#eab30820";
+    "route:/api/snapshot" [label="/api/snapshot", color="#eab308", fillcolor="#eab30820"];
+    "route:/api/snapshots" [label="/api/snapshots", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/snapshots/:filename" [label="/api/snapshots/:filename", color="#eab308", fillcolor="#eab30820"];
+  }
+
+  subgraph cluster_session {
+    label="👤 session";
+    style=filled;
+    fillcolor="#06b6d420";
+    "route:/api/theme" [label="/api/theme", color="#22c55e", fillcolor="#22c55e20"];
+    "route:/api/session" [label="/api/session", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/ui-state" [label="/api/ui-state", color="#22c55e", fillcolor="#22c55e20"];
+    "route:/api/logout" [label="/api/logout", color="#06b6d4", fillcolor="#06b6d420"];
+    "route:/api/sync" [label="/api/sync", color="#06b6d4", fillcolor="#06b6d420"];
+  }
+
+  subgraph cluster_export {
+    label="📤 export";
+    style=filled;
+    fillcolor="#a855f720";
+    "route:/api/export/s3" [label="/api/export/s3", color="#a855f7", fillcolor="#a855f720"];
+  }
+
+  subgraph cluster_logs {
+    label="📋 logs";
+    style=filled;
+    fillcolor="#eab30820";
+    "route:/api/logs/search" [label="/api/logs/search", color="#eab308", fillcolor="#eab30820"];
+  }
+
+  subgraph cluster_topology {
+    label="🗺️ topology";
+    style=filled;
+    fillcolor="#22c55e20";
+    "route:/api/topology" [label="/api/topology", color="#22c55e", fillcolor="#22c55e20"];
+  }
+
+  subgraph cluster_debug {
+    label="🐛 debug";
+    style=filled;
+    fillcolor="#a855f720";
+    "route:/api/debug/cookies" [label="/api/debug/cookies", color="#eab308", fillcolor="#eab30820"];
+    "route:/api/debug/parse-cookie" [label="/api/debug/parse-cookie", color="#eab308", fillcolor="#eab30820"];
+    "route:/api/debug/create-cookie" [label="/api/debug/create-cookie", color="#a855f7", fillcolor="#a855f720"];
+  }
+
+  "group:health" -> "route:/health";
+  "group:dashboard" -> "route:/api/dashboard";
+  "group:dashboard" -> "route:/api/stats";
+  "group:api" -> "route:/api/routes";
+  "group:health" -> "route:/api/health-check";
+  "group:api" -> "route:/api/rescan";
+  "group:projects" -> "route:/api/projects";
+  "group:projects" -> "route:/api/projects/:id";
+  "group:projects" -> "route:/api/projects/:id/open";
+  "group:projects" -> "route:/api/projects/:id/git";
+  "group:projects" -> "route:/api/integrity/:name";
+  "group:system" -> "route:/api/system";
+  "group:system" -> "route:/api/system/live";
+  "group:system" -> "route:/api/system/port/:port";
+  "group:system" -> "route:/api/system/gc";
+  "group:system" -> "route:/api/system/enhanced";
+  "group:system" -> "route:/api/system/queue";
+  "group:network" -> "route:/api/network/stats";
+  "group:network" -> "route:/api/network/status";
+  "group:network" -> "route:/api/network/prefetch";
+  "group:network" -> "route:/api/network/preconnect";
+  "group:network" -> "route:/api/network/prefetch/batch";
+  "group:network" -> "route:/api/network/probe/:hostId";
+  "group:network" -> "route:/api/network/latency-test";
+  "group:network" -> "route:/api/network/clear";
+  "group:network" -> "route:/api/network/optimizations";
+  "group:database" -> "route:/api/db/stats";
+  "group:database" -> "route:/api/db/metrics";
+  "group:database" -> "route:/api/db/activity";
+  "group:database" -> "route:/api/db/settings";
+  "group:database" -> "route:/api/db/settings/:key";
+  "group:database" -> "route:/api/db/cleanup";
+  "group:database" -> "route:/api/db/vacuum";
+  "group:pty" -> "route:/api/pty/sessions";
+  "group:pty" -> "route:/api/pty/create";
+  "group:pty" -> "route:/api/pty/session/:id";
+  "group:pty" -> "route:/api/pty/session/:id/output";
+  "group:pty" -> "route:/api/pty/session/:id/write";
+  "group:pty" -> "route:/api/pty/session/:id/resize";
+  "group:pty" -> "route:/api/pty/session/:id/kill";
+  "group:pty" -> "route:/api/pty/exec";
+  "group:admin" -> "route:/api/admin/sessions";
+  "group:admin" -> "route:/api/admin/api-keys";
+  "group:admin" -> "route:/api/admin/api-keys/:id";
+  "group:urlpattern" -> "route:/api/urlpattern/analyze";
+  "group:urlpattern" -> "route:/api/urlpattern/test";
+  "group:urlpattern" -> "route:/api/urlpattern/report";
+  "group:urlpattern" -> "route:/api/urlpattern/patterns";
+  "group:peek-cache" -> "route:/api/peek-cache/stats";
+  "group:peek-cache" -> "route:/api/peek-cache/warm";
+  "group:peek-cache" -> "route:/api/peek-cache/clear";
+  "group:configs" -> "route:/api/configs";
+  "group:configs" -> "route:/api/configs/:name";
+  "group:configs" -> "route:/api/configs/validate/:name";
+  "group:configs" -> "route:/api/configs/schema/:name";
+  "group:configs" -> "route:/api/configs/reload";
+  "group:metrics" -> "route:/api/metrics/enterprise";
+  "group:metrics" -> "route:/api/metrics/enterprise.json";
+  "group:metrics" -> "route:/api/server/metrics";
+  "group:analytics" -> "route:/api/analytics/matrix";
+  "group:analytics" -> "route:/api/analytics/endpoint";
+  "group:analytics" -> "route:/api/analytics/projects";
+  "group:anomalies" -> "route:/api/anomalies/detect";
+  "group:anomalies" -> "route:/api/anomalies/model";
+  "group:snapshots" -> "route:/api/snapshot";
+  "group:snapshots" -> "route:/api/snapshots";
+  "group:snapshots" -> "route:/api/snapshots/:filename";
+  "group:session" -> "route:/api/theme";
+  "group:session" -> "route:/api/session";
+  "group:session" -> "route:/api/ui-state";
+  "group:session" -> "route:/api/logout";
+  "group:session" -> "route:/api/sync";
+  "group:export" -> "route:/api/export/s3";
+  "group:logs" -> "route:/api/logs/search";
+  "group:topology" -> "route:/api/topology";
+  "group:debug" -> "route:/api/debug/cookies";
+  "group:debug" -> "route:/api/debug/parse-cookie";
+  "group:debug" -> "route:/api/debug/create-cookie";
+}

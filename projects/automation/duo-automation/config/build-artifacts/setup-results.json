@@ -1,0 +1,186 @@
+{
+  "score": 54,
+  "max": 56,
+  "checks": [
+    {
+      "name": "env",
+      "score": 7,
+      "max": 7
+    },
+    {
+      "name": "deps",
+      "score": 2,
+      "max": 2
+    },
+    {
+      "name": "r2perf",
+      "score": 5,
+      "max": 5
+    },
+    {
+      "name": "s3native",
+      "score": 3,
+      "max": 3
+    },
+    {
+      "name": "inline",
+      "score": 4,
+      "max": 4
+    },
+    {
+      "name": "binary",
+      "score": 4,
+      "max": 4
+    },
+    {
+      "name": "files",
+      "score": 6,
+      "max": 6
+    },
+    {
+      "name": "filter",
+      "score": 3,
+      "max": 3
+    },
+    {
+      "name": "bulkconfig",
+      "score": 3,
+      "max": 3
+    },
+    {
+      "name": "readable",
+      "score": 3,
+      "max": 3
+    },
+    {
+      "name": "build",
+      "score": 4,
+      "max": 4
+    }
+  ],
+  "perfMetrics": [
+    {
+      "category": "Setup",
+      "type": "benchmark",
+      "topic": "Setup Score",
+      "subCat": "Score",
+      "id": "54/56",
+      "value": "96%",
+      "pattern": "percentage",
+      "locations": "setup-check.ts",
+      "impact": "Pre-bench gate",
+      "properties": {
+        "threshold": "80%",
+        "status": "READY"
+      }
+    },
+    {
+      "category": "R2",
+      "type": "performance",
+      "topic": "R2 Latency",
+      "subCat": "Live_500",
+      "id": "727ms",
+      "value": "init+upload+download",
+      "pattern": "sum(nanoseconds)",
+      "locations": "bench-r2-real.ts",
+      "impact": "Phase 1 I/O",
+      "properties": {
+        "bucket": "factory-wager-packages",
+        "endpoint": "https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com"
+      }
+    },
+    {
+      "category": "R2",
+      "type": "performance",
+      "topic": "R2 Throughput",
+      "subCat": "Throughput",
+      "id": "2.9/11.2",
+      "value": "KB/s",
+      "pattern": "bytes/time",
+      "locations": "Upload/Download",
+      "impact": "Prod bulk",
+      "properties": {
+        "uploadKBps": "2.9",
+        "downloadKBps": "11.2",
+        "unit": "KB/s"
+      }
+    },
+    {
+      "category": "Zstd",
+      "type": "validation",
+      "topic": "Zstd Compression",
+      "subCat": "RoundTrip",
+      "id": "-17%",
+      "value": "savings",
+      "pattern": "compression_ratio",
+      "locations": "JSON payloads",
+      "impact": "80% size win",
+      "properties": {
+        "original": "52",
+        "compressed": "61",
+        "savings": "-17"
+      }
+    },
+    {
+      "category": "CLI",
+      "type": "performance",
+      "topic": "CLI Filter",
+      "subCat": "Perf",
+      "id": "SIMD_FILTER",
+      "value": "filterData",
+      "pattern": "regex",
+      "locations": "cli-filter.ts",
+      "impact": "Sub-100μs",
+      "properties": {
+        "ops": "=,!=,>,<,in"
+      }
+    },
+    {
+      "category": "Build",
+      "type": "utility",
+      "topic": "Bun Build",
+      "subCat": "Minify",
+      "id": "30.4KB",
+      "value": "31082",
+      "pattern": "bytes",
+      "locations": "setup-check.ts",
+      "impact": "5.6x startup",
+      "properties": {
+        "target": "bun",
+        "minify": "whitespace+identifiers+syntax"
+      }
+    },
+    {
+      "category": "Stream",
+      "type": "performance",
+      "topic": "Readable Stream",
+      "subCat": "Readable_Blob",
+      "id": "readableToInlineBlob",
+      "value": "Node Stream→R2",
+      "pattern": "zero-copy",
+      "locations": "readable-blob-farm.ts",
+      "impact": "Gig no-mem",
+      "properties": {
+        "disposition": "inline",
+        "type": "image/png"
+      }
+    },
+    {
+      "category": "Bench",
+      "type": "utility",
+      "topic": "Benchmark Cleanup",
+      "subCat": "Cleanup",
+      "id": "--clean",
+      "value": "flag",
+      "pattern": "boolean",
+      "locations": "Test artifacts",
+      "impact": "Safe prod",
+      "properties": {
+        "mode": "INACTIVE"
+      }
+    }
+  ],
+  "percent": "96",
+  "totalMs": "2334",
+  "timestamp": "2026-01-13T05:04:24.930Z"
+}

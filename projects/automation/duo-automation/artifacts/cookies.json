@@ -1,0 +1,1 @@
+[["session",{"name":"session","value":"abc123","domain":"localhost","path":"/","expires":"2026-01-16T03:48:22.074Z","secure":true,"sameSite":"strict","httpOnly":true,"partitioned":false}],["preferences",{"name":"preferences","value":"theme=dark;lang=en","path":"/","maxAge":3600,"secure":false,"sameSite":"lax","httpOnly":false,"partitioned":false}]]

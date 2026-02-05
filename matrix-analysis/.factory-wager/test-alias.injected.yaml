@@ -1,9 +1,0 @@
-# Test YAML with alias
-api:
-  key: demo-registry-token-12345678901234567890
-
-database:
-  secret: demo-r2-secret-key-123456789012345678901234567890
-
-ssl:
-  cert: demo-ssl-certificate-1234567890123456789012345678901234567890123456789012345678901234567890

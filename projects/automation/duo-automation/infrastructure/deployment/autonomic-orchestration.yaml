@@ -1,0 +1,225 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: empire-pro-autonomic
+  namespace: empire-pro
+  labels:
+    app: autonomic-intelligence
+    version: v1.0.0
+    pattern: "101-105"
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: autonomic-intelligence
+  template:
+    metadata:
+      labels:
+        app: autonomic-intelligence
+        version: v1.0.0
+      annotations:
+        autonomic-patterns: "101,102,103,104,105"
+    spec:
+      serviceAccountName: empire-pro-autonomic
+      containers:
+      - name: autonomic-core
+        image: empirepro/autonomic-intelligence:1.0.0
+        ports:
+        - containerPort: 8080
+          name: http
+        - containerPort: 9090
+          name: metrics
+        env:
+        - name: CASH_APP_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: empire-pro-secrets
+              key: cashAppApiKey
+        - name: DUOPLUS_PATH
+          value: "/usr/local/bin/duoplus"
+        - name: OUR_APP_AUTH_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: empire-pro-secrets
+              key: ourAppAuthToken
+        - name: ENABLE_AUTONOMIC
+          value: "true"
+        - name: ENABLE_SELF_HEALING
+          value: "true"
+        - name: ENABLE_BEHAVIORAL_ANALYSIS
+          value: "true"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 1
+        volumeMounts:
+        - name: screenshots
+          mountPath: /app/screenshots
+        - name: config
+          mountPath: /app/config
+      volumes:
+      - name: screenshots
+        persistentVolumeClaim:
+          claimName: empire-pro-screenshots
+      - name: config
+        configMap:
+          name: empire-pro-autonomic-config
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - autonomic-intelligence
+              topologyKey: kubernetes.io/hostname
+      tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "empire-pro"
+        effect: "NoSchedule"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: empire-pro-autonomic
+  namespace: empire-pro
+spec:
+  selector:
+    app: autonomic-intelligence
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+  - name: metrics
+    port: 9090
+    targetPort: 9090
+  type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: empire-pro-autonomic-hpa
+  namespace: empire-pro
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: empire-pro-autonomic
+  minReplicas: 3
+  maxReplicas: 50
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Pods
+    pods:
+      metric:
+        name: processing_latency_p95
+      target:
+        type: AverageValue
+        averageValue: 100ms
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Pods
+        value: 2
+        periodSeconds: 60
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+      selectPolicy: Max
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Pods
+        value: 1
+        periodSeconds: 180
+      - type: Percent
+        value: 20
+        periodSeconds: 180
+      selectPolicy: Max
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: empire-pro-autonomic-healing
+  namespace: empire-pro
+spec:
+  schedule: "*/5 * * * *" # Every 5 minutes
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 200
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: healing-orchestrator
+            image: empirepro/autonomic-healing:1.0.0
+            env:
+            - name: HEALING_MODE
+              value: "AUTOMATIC"
+            resources:
+              requests:
+                memory: "256Mi"
+                cpu: "100m"
+              limits:
+                memory: "512Mi"
+                cpu: "200m"
+          restartPolicy: OnFailure
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: empire-pro-autonomic-monitor
+  namespace: empire-pro
+spec:
+  selector:
+    matchLabels:
+      app: autonomic-intelligence
+  endpoints:
+  - port: metrics
+    interval: 15s
+    scrapeTimeout: 10s
+    path: /metrics
+    metricRelabelings:
+    - sourceLabels: [__name__]
+      regex: '(autonomic_processing_time|circuit_health_score|behavioral_anomaly_score)'
+      action: keep

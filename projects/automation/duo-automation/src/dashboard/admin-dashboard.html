@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FactoryWager Dashboard - admin</title>
+    <meta name="description" content="{DASHBOARD_DESCRIPTION}">
+    <meta name="author" content="FactoryWager Team">
+    
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="components/styles/dashboard-base.css">
+    <link rel="stylesheet" href="components/styles/components.css">
+    <link rel="stylesheet" href="components/styles/responsive.css">
+    
+    <!-- External Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <!-- Theme -->
+    <style>
+        /* Custom theme variables */
+        :root {
+            --dashboard-primary: #3b82f6;
+            --dashboard-secondary: #8b5cf6;
+            --dashboard-success: #10b981;
+            --dashboard-warning: #f59e0b;
+            --dashboard-error: #ef4444;
+        }
+        
+        /* Custom animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .loading-content {
+            text-align: center;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #3b82f6;
+            border-top: 4px solid var(--dashboard-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h2 class="text-xl font-semibold mb-2">Loading FactoryWager Dashboard</h2>
+            <p class="text-gray-400">Initializing components and permissions...</p>
+        </div>
+    </div>
+
+    <!-- Header Container -->
+    <div id="header-container">
+        <div data-component="dashboard-header" data-permission="header.view"></div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="flex">
+        <!-- Sidebar Container -->
+        <div id="sidebar-container">
+            <div data-component="dashboard-sidebar" data-permission="sidebar.view"></div>
+        </div>
+        
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <!-- Page Header -->
+            <div class="mb-6 fade-in">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold">Admin Dashboard</h1>
+                        <p class="text-gray-400 mt-1">Full system administration and management</p>
+                    </div>
+                    
+                    <!-- Page Actions -->
+                    <div class="flex items-center space-x-3">
+                        <!-- Last Updated -->
+                        <div class="text-sm text-gray-400">
+                            Last updated: <span id="last-updated" class="text-white">Never</span>
+                        </div>
+                        
+                        <!-- Quick Actions -->
+                        <button onclick="DashboardCore.refresh()" class="btn btn-primary" data-permission="dashboard.refresh">
+                            <i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i>
+                            Refresh
+                        </button>
+                        
+                        <!-- Export -->
+                        <button onclick="DashboardCore.exportLogs()" class="btn btn-secondary" data-permission="logs.export">
+                            <i data-lucide="download" class="w-4 h-4 mr-2"></i>
+                            Export
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Component Container -->
+            <div id="component-container" class="space-y-6">
+                <!-- Components will be loaded here based on permissions -->
+                
+                <!-- System Metrics Grid -->
+                <div id="metrics-grid" data-component="metrics-grid" data-permission="metrics.view">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="metric-card p-6 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-400">Total Connections</p>
+                                    <p class="text-2xl font-bold" id="metric-totalConnections">0</p>
+                                </div>
+                                <i data-lucide="link" class="w-8 h-8 text-blue-500"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card p-6 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-400">Active Agents</p>
+                                    <p class="text-2xl font-bold" id="metric-activeConnections">0</p>
+                                </div>
+                                <i data-lucide="users" class="w-8 h-8 text-green-500"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card p-6 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-400">Error Rate</p>
+                                    <p class="text-2xl font-bold" id="metric-errorRate">0%</p>
+                                </div>
+                                <i data-lucide="alert-triangle" class="w-8 h-8 text-yellow-500"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card p-6 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-400">Response Time</p>
+                                    <p class="text-2xl font-bold" id="metric-responseTime">0ms</p>
+                                </div>
+                                <i data-lucide="clock" class="w-8 h-8 text-purple-500"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Main Content Area -->
+                <div id="main-content" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Left Column -->
+                    <div class="space-y-6">
+                        <!-- Activity Log -->
+                        <div id="activity-log" data-component="activity-log" data-permission="logs.view">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title flex items-center">
+                                        <i data-lucide="activity" class="w-5 h-5 mr-2"></i>
+                                        Activity Log
+                                    </h3>
+                                </div>
+                                <div class="activity-log" id="activity-log-content">
+                                    <div class="log-entry">
+                                        <span class="text-gray-400">No activity logged yet</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column -->
+                    <div class="space-y-6">
+                        <!-- System Status -->
+                        <div id="system-status" data-component="system-status" data-permission="system.view">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title flex items-center">
+                                        <i data-lucide="monitor" class="w-5 h-5 mr-2"></i>
+                                        System Status
+                                    </h3>
+                                </div>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <span>Connection Status</span>
+                                        <span id="connection-status">
+                                            <span class="status-indicator status-online"></span>
+                                            Online
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span>API Status</span>
+                                        <span id="api-status">
+                                            <span class="status-indicator status-online"></span>
+                                            Operational
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span>Database</span>
+                                        <span id="database-status">
+                                            <span class="status-indicator status-online"></span>
+                                            Connected
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Additional Components -->
+                <div id="additional-components">
+                    <!-- Components will be loaded here based on dashboard type -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer Container -->
+    <div id="footer-container">
+        <div data-component="dashboard-footer" data-permission="footer.view"></div>
+    </div>
+
+    <!-- Core Scripts -->
+    <script src="components/scripts/permissions-checker.js"></script>
+    <script src="components/scripts/component-loader.js"></script>
+    <script src="components/scripts/dashboard-core.js"></script>
+    
+    <!-- Dashboard Configuration -->
+    <script>
+        // Dashboard configuration
+        window.dashboardConfig = {
+            dashboardType: 'admin',
+            userRole: 'admin',
+            permissions: ["*"],
+            apiBaseUrl: 'http://localhost:3002',
+            refreshInterval: 30000,
+            enableRealTimeUpdates: true,
+            enableErrorTracking: true
+        };
+        
+        // Initialize dashboard when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            // Hide loading overlay
+            setTimeout(() => {
+                const loadingOverlay = document.getElementById('loading-overlay');
+                if (loadingOverlay) {
+                    loadingOverlay.style.opacity = '0';
+                    setTimeout(() => loadingOverlay.remove(), 300);
+                }
+            }, 1000);
+            
+            // Update last updated time
+            const updateLastUpdated = () => {
+                const lastUpdated = document.getElementById('last-updated');
+                if (lastUpdated) {
+                    lastUpdated.textContent = new Date().toLocaleString();
+                }
+            };
+            
+            updateLastUpdated();
+            setInterval(updateLastUpdated, 60000); // Update every minute
+            
+            // Add fade-in animation to components
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.card, .metric-card').forEach(el => {
+                observer.observe(el);
+            });
+        });
+        
+        // Global error handler
+        window.addEventListener('error', (event) => {
+            console.error('Global error:', event.error);
+            if (window.DashboardCore) {
+                DashboardCore._logEvent(`Global error: ${event.error.message}`, 'error');
+            }
+        });
+        
+        // Global unhandled promise rejection handler
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('Unhandled promise rejection:', event.reason);
+            if (window.DashboardCore) {
+                DashboardCore._logEvent(`Unhandled rejection: ${event.reason}`, 'error');
+            }
+        });
+    </script>
+</body>
+</html>

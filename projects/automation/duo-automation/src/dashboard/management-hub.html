@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FactoryWager Management Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { background-color: #3b82f6; color: #3b82f6; font-family: 'Inter', sans-serif; }
+        .card { background-color: #3b82f6; border: 1px solid #3b82f6; border-radius: 0.5rem; padding: 1.5rem; }
+        .status-online { color: #10b981; }
+        .status-offline { color: #ef4444; }
+        .btn-shutdown { background-color: #ef4444; color: white; padding: 0.5rem 1rem; border-radius: 0.25rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-shutdown:hover { background-color: #dc2626; }
+        .badge { font-size: 0.75rem; font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 9999px; text-transform: uppercase; }
+        .badge-scope { background-color: #3b82f6; color: white; }
+    </style>
+</head>
+<body class="p-8">
+    <header class="mb-8 flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold flex items-center">
+                <i data-lucide="layout-grid" class="mr-3 text-blue-500"></i>
+                FactoryWager Management Hub
+            </h1>
+            <p class="text-slate-400">IPC Process Governance & Multi-Tenant Metrics Overflow</p>
+        </div>
+        <div class="flex space-x-4">
+            <button onclick="refreshData()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded flex items-center transition">
+                <i data-lucide="refresh-cw" class="w-4 h-4 mr-2" id="refresh-icon"></i>
+                Refresh
+            </button>
+            <button onclick="shutdownAll()" class="btn-shutdown flex items-center">
+                <i data-lucide="power" class="w-4 h-4 mr-2"></i>
+                Shutdown All
+            </button>
+        </div>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" id="hub-stats">
+        <div class="card">
+            <p class="text-slate-400 text-sm uppercase font-bold tracking-wider mb-1">Active Dashboards</p>
+            <p class="text-4xl font-bold" id="total-processes">0</p>
+        </div>
+        <div class="card">
+            <p class="text-slate-400 text-sm uppercase font-bold tracking-wider mb-1">Total System Load</p>
+            <p class="text-4xl font-bold" id="system-load">0 MB</p>
+        </div>
+        <div class="card">
+            <p class="text-slate-400 text-sm uppercase font-bold tracking-wider mb-1">IPC Health</p>
+            <p class="text-4xl font-bold text-emerald-400">Optimal</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="text-xl font-bold mb-4 flex items-center">
+            <i data-lucide="cpu" class="mr-2 text-blue-400"></i>
+            Managed Processes
+        </h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-slate-800 text-slate-400 text-xs uppercase">
+                    <tr>
+                        <th class="p-4">PID</th>
+                        <th class="p-4">Scope</th>
+                        <th class="p-4">Entry Point</th>
+                        <th class="p-4">Status</th>
+                        <th class="p-4">Memory</th>
+                        <th class="p-4">Uptime</th>
+                        <th class="p-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="process-list" class="divide-y divide-slate-700">
+                    <!-- Processes will be injected here -->
+                    <tr>
+                        <td colspan="7" class="p-8 text-center text-slate-500 italic">Scanning for active dashboard children...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function fetchData(endpoint) {
+            try {
+                const res = await fetch(`/api/hub/${endpoint}`);
+                return await res.json();
+            } catch (e) {
+                console.error(`Failed to fetch ${endpoint}:`, e);
+                return { success: false };
+            }
+        }
+
+        async function refreshData() {
+            const icon = document.getElementById('refresh-icon');
+            icon.classList.add('animate-spin');
+            
+            const [procRes, metricRes] = await Promise.all([
+                fetchData('processes'),
+                fetchData('metrics')
+            ]);
+
+            document.getElementById('total-processes').innerText = procRes.count || 0;
+
+            const tbody = document.getElementById('process-list');
+            tbody.innerHTML = '';
+
+            if (!procRes.processes || procRes.processes.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-slate-500 italic">No active dashboard children found.</td></tr>';
+            } else {
+                let totalMem = 0;
+                
+                procRes.processes.forEach(proc => {
+                    const metrics = metricRes.metrics[proc.scope] || {};
+                    const memStr = metrics.memory?.heapUsed || 'N/A';
+                    const uptimeStr = metrics.uptimeHuman || 'N/A';
+                    
+                    // Sum memory if detectable
+                    if (metrics.memory?.heapUsed) {
+                        const mb = parseInt(metrics.memory.heapUsed);
+                        if (!isNaN(mb)) totalMem += mb;
+                    }
+
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-800/50 transition';
+                    tr.innerHTML = `
+                        <td class="p-4 font-mono text-sm">${proc.pid}</td>
+                        <td class="p-4"><span class="badge badge-scope">${proc.scope}</span></td>
+                        <td class="p-4 text-slate-300 text-sm">${proc.entryPoint}</td>
+                        <td class="p-4"><span class="text-emerald-400 flex items-center"><span class="w-2 h-2 bg-emerald-400 rounded-full mr-2"></span>ONLINE</span></td>
+                        <td class="p-4 text-sm font-semibold">${memStr}</td>
+                        <td class="p-4 text-sm">${uptimeStr}</td>
+                        <td class="p-4 text-right space-x-3">
+                            <button onclick="sendCommand(${proc.pid}, 'self-heal')" class="text-xs text-emerald-400 hover:text-emerald-300 font-bold uppercase tracking-tighter">Heal</button>
+                            <button onclick="shutdownProcess(${proc.pid}, '${proc.scope}')" class="text-xs text-red-400 hover:text-red-300 font-bold uppercase tracking-tighter">Kill</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                
+                document.getElementById('system-load').innerText = `${totalMem} MB`;
+            }
+
+            setTimeout(() => icon.classList.remove('animate-spin'), 500);
+            lucide.createIcons();
+        }
+
+        async function shutdownProcess(pid, scope) {
+            if (!confirm(`Confirm termination of process ${pid} [${scope}]?`)) return;
+            
+            try {
+                const res = await fetch('/api/hub/shutdown', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pid })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    refreshData();
+                } else {
+                    alert('Shutdown failed: ' + data.error);
+                }
+            } catch (e) {
+                alert('Shutdown error.');
+            }
+        }
+
+        async function sendCommand(pid, command, payload = {}) {
+            try {
+                const res = await fetch('/api/hub/command', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pid, command, payload })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert(`Command '${command}' sent successfully.`);
+                } else {
+                    alert('Command failed: ' + data.error);
+                }
+            } catch (e) {
+                alert('Command error.');
+            }
+        }
+
+        async function shutdownAll() {
+            if (!confirm('Are you sure you want to terminate ALL dashboard processes?')) return;
+            
+            try {
+                const res = await fetch('/api/hub/shutdown', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ scope: 'all' })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert('Shutdown command propagated successfully.');
+                    refreshData();
+                }
+            } catch (e) {
+                alert('Shutdown failed.');
+            }
+        }
+
+        // Initialize icons and data
+        lucide.createIcons();
+        refreshData();
+        setInterval(refreshData, 5000);
+    </script>
+</body>
+</html>

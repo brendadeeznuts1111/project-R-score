@@ -1,0 +1,14 @@
+name = "type-dashboard"
+main = "src/workers/type-dashboard-worker.ts"
+compatibility_date = "2024-01-01"
+
+[env.production]
+routes = [
+	{ pattern = "type-dashboard.workers.dev", zone_name = "workers.dev" }
+]
+
+[vars]
+EDGE_REGION = "sin1"
+
+
+

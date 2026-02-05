@@ -1,0 +1,281 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://duo-automation.com/schemas/metadata-schema.json",
+  "title": "Artifact Metadata Schema",
+  "description": "Schema for validating artifact metadata and tags in the Duo Automation project",
+  "type": "object",
+  "required": ["tags", "status"],
+  "properties": {
+    "tags": {
+      "type": "array",
+      "description": "Array of tags describing the artifact",
+      "items": {
+        "type": "string",
+        "pattern": "^#[a-z0-9-]+$",
+        "minLength": 2,
+        "maxLength": 50
+      },
+      "minItems": 3,
+      "maxItems": 10,
+      "uniqueItems": true
+    },
+    "status": {
+      "type": "string",
+      "description": "Current workflow status of the artifact",
+      "enum": ["#ready", "#wip", "#review", "#blocked", "#deprecated"]
+    },
+    "audience": {
+      "type": "array",
+      "description": "Target audience for this artifact",
+      "items": {
+        "type": "string",
+        "enum": ["#developers", "#devops", "#security", "#users", "#admins", "#all"]
+      },
+      "uniqueItems": true
+    },
+    "priority": {
+      "type": "string",
+      "description": "Priority level of the artifact",
+      "enum": ["#critical", "#high", "#medium", "#low"]
+    },
+    "domain": {
+      "type": "array",
+      "description": "Business domain(s) the artifact belongs to",
+      "items": {
+        "type": "string",
+        "enum": [
+          "#security", "#config-management", "#devops", "#monitoring",
+          "#api", "#ui", "#database", "#testing", "#documentation",
+          "#performance", "#authentication", "#authorization", "#networking"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "technology": {
+      "type": "array",
+      "description": "Technology stack used by the artifact",
+      "items": {
+        "type": "string",
+        "enum": [
+          "#typescript", "#javascript", "#bun", "#react", "#vue", "#svelte",
+          "#docker", "#kubernetes", "#aws", "#gcp", "azure", "#terraform",
+          "#postgresql", "#redis", "#mongodb", "#mysql", "#sqlite",
+          "#graphql", "#rest", "#grpc", "#websocket", "#http"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "environment": {
+      "type": "array",
+      "description": "Target environment(s) for the artifact",
+      "items": {
+        "type": "string",
+        "enum": ["#production", "#staging", "#development", "#local", "#testing"]
+      },
+      "uniqueItems": true
+    },
+    "type": {
+      "type": "array",
+      "description": "Type of artifact",
+      "items": {
+        "type": "string",
+        "enum": [
+          "#api", "#cli", "#dashboard", "#library", "#component",
+          "#service", "#utility", "#config", "#script", "#documentation",
+          "#test", "#mock", "#middleware", "#plugin", "#extension"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "dependencies": {
+      "type": "array",
+      "description": "Other artifacts this depends on",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9._/-]+\\.(ts|js|md|json|yaml|yml)$"
+      }
+    },
+    "related": {
+      "type": "array",
+      "description": "Related artifacts",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9._/-]+\\.(ts|js|md|json|yaml|yml)$"
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata about the artifact",
+      "properties": {
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation date of the artifact"
+        },
+        "updated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update date of the artifact"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9]+)?$",
+          "description": "Version of the artifact"
+        },
+        "author": {
+          "type": "string",
+          "description": "Author or team responsible for the artifact"
+        },
+        "owner": {
+          "type": "string",
+          "description": "Current owner of the artifact"
+        },
+        "reviewers": {
+          "type": "array",
+          "description": "List of reviewers",
+          "items": {
+            "type": "string"
+          }
+        },
+        "complexity": {
+          "type": "string",
+          "enum": ["simple", "moderate", "complex", "expert"],
+          "description": "Complexity level of the artifact"
+        },
+        "stability": {
+          "type": "string",
+          "enum": ["experimental", "unstable", "stable", "locked"],
+          "description": "Stability level of the artifact"
+        },
+        "maintenance": {
+          "type": "string",
+          "enum": ["active", "maintenance", "deprecated", "archived"],
+          "description": "Maintenance status of the artifact"
+        },
+        "documentation": {
+          "type": "object",
+          "description": "Documentation information",
+          "properties": {
+            "hasReadme": {
+              "type": "boolean",
+              "description": "Whether the artifact has a README"
+            },
+            "hasExamples": {
+              "type": "boolean",
+              "description": "Whether the artifact has usage examples"
+            },
+            "hasApiDocs": {
+              "type": "boolean",
+              "description": "Whether the artifact has API documentation"
+            },
+            "hasTests": {
+              "type": "boolean",
+              "description": "Whether the artifact has test coverage"
+            }
+          }
+        },
+        "performance": {
+          "type": "object",
+          "description": "Performance characteristics",
+          "properties": {
+            "responseTime": {
+              "type": "string",
+              "pattern": "^\\d+ms$",
+              "description": "Expected response time"
+            },
+            "throughput": {
+              "type": "string",
+              "pattern": "^\\d+/s$",
+              "description": "Expected throughput"
+            },
+            "memoryUsage": {
+              "type": "string",
+              "pattern": "^\\d+MB$",
+              "description": "Expected memory usage"
+            },
+            "cpuUsage": {
+              "type": "string",
+              "pattern": "^\\d+%",
+              "description": "Expected CPU usage"
+            }
+          }
+        },
+        "security": {
+          "type": "object",
+          "description": "Security information",
+          "properties": {
+            "hasAuth": {
+              "type": "boolean",
+              "description": "Whether the artifact handles authentication"
+            },
+            "hasEncryption": {
+              "type": "boolean",
+              "description": "Whether the artifact handles encryption"
+            },
+            "hasAudit": {
+              "type": "boolean",
+              "description": "Whether the artifact has audit logging"
+            },
+            "compliance": {
+              "type": "array",
+              "description": "Compliance standards met",
+              "items": {
+                "type": "string",
+                "enum": ["GDPR", "SOC2", "HIPAA", "PCI-DSS", "ISO27001"]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "tags": ["#api", "#security", "#typescript", "#ready"],
+      "status": "#ready",
+      "audience": ["#developers"],
+      "priority": "#high",
+      "domain": ["#security", "#api"],
+      "technology": ["#typescript", "#bun"],
+      "environment": ["#production", "#staging"],
+      "type": ["#api", "#service"],
+      "metadata": {
+        "version": "1.2.0",
+        "author": "Security Team",
+        "complexity": "moderate",
+        "stability": "stable",
+        "documentation": {
+          "hasReadme": true,
+          "hasExamples": true,
+          "hasApiDocs": true,
+          "hasTests": true
+        },
+        "security": {
+          "hasAuth": true,
+          "hasEncryption": true,
+          "hasAudit": true,
+          "compliance": ["GDPR", "SOC2"]
+        }
+      }
+    },
+    {
+      "tags": ["#cli", "#devops", "#javascript", "#wip"],
+      "status": "#wip",
+      "audience": ["#devops"],
+      "priority": "#medium",
+      "domain": ["#devops"],
+      "technology": ["#javascript", "#bun"],
+      "environment": ["#development", "#local"],
+      "type": ["#cli", "#script"],
+      "metadata": {
+        "version": "0.1.0",
+        "author": "DevOps Team",
+        "complexity": "simple",
+        "stability": "experimental"
+      }
+    }
+  ]
+}

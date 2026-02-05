@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple ID Grading System - Duo Automation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .glass-effect {
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .grade-a-plus { background: linear-gradient(135deg, #10b981, #3b82f6); }
+        .grade-a { background: linear-gradient(135deg, #3b82f6, #3b82f6); }
+        .grade-b { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .grade-c { background: linear-gradient(135deg, #f97316, #3b82f6); }
+        .grade-f { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .tier-premium { border-left: 4px solid #10b981; }
+        .tier-professional { border-left: 4px solid #3b82f6; }
+        .tier-business { border-left: 4px solid #f59e0b; }
+        .tier-budget { border-left: 4px solid #ef4444; }
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+        .success-high { color: #10b981; }
+        .success-medium { color: #f59e0b; }
+        .success-low { color: #ef4444; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- Header -->
+    <header class="bg-gray-800 border-b border-gray-700">
+        <nav class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-6">
+                    <button onclick="window.history.back()" class="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                        <span>Back to Dashboard</span>
+                    </button>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
+                            <i data-lucide="apple" class="w-7 h-7"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold">Apple ID Grading System</h1>
+                            <p class="text-sm text-gray-400">AI-Powered Optimization</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-sm text-gray-400" id="currentTime">--:--:--</div>
+                    <button onclick="refreshData()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center">
+                        <i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Configuration Analyzer -->
+        <section class="mb-12">
+            <div class="glass-effect rounded-xl p-8">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center">
+                    <i data-lucide="settings" class="w-6 h-6 mr-3 text-blue-500"></i>
+                    Configuration Analyzer
+                </h2>
+
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Budget per Account ($)</label>
+                        <input type="number" id="budgetInput" value="50" min="5" max="500"
+                               class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Timeline</label>
+                        <select id="timelineSelect" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                            <option value="7 days">7 days</option>
+                            <option value="30 days" selected>30 days</option>
+                            <option value="60 days">60 days</option>
+                            <option value="90 days">90 days</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Account Value ($)</label>
+                        <input type="number" id="valueInput" value="50" min="10" max="1000"
+                               class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Automation Level</label>
+                        <select id="automationLevelSelect" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                            <option value="basic">Basic</option>
+                            <option value="advanced" selected>Advanced</option>
+                            <option value="enterprise">Enterprise</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- DuoPlus Integration Toggle -->
+                <div class="mb-8">
+                    <div class="flex items-center justify-between p-4 bg-gray-800 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mr-4">
+                                <i data-lucide="cloud" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold">DuoPlus Integration</h3>
+                                <p class="text-sm text-gray-400">Enable DuoPlus cloud devices and RPA automation</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="duoPlusToggle" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
+
+                    <div id="duoPlusOptions" class="hidden mt-4 p-4 bg-purple-900/20 border border-purple-700 rounded-lg">
+                        <h4 class="text-md font-semibold mb-3 text-purple-400">DuoPlus Features Enabled:</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            <div class="flex items-center">
+                                <i data-lucide="smartphone" class="w-4 h-4 mr-2 text-green-500"></i>
+                                <span>Cloud Device Management</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i data-lucide="zap" class="w-4 h-4 mr-2 text-yellow-500"></i>
+                                <span>RPA Automation Workflows</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i data-lucide="cloud" class="w-4 h-4 mr-2 text-blue-500"></i>
+                                <span>Cloud Number Integration</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-3">
+                            DuoPlus integration adds cloud-managed devices and automated workflows, typically increasing success rates by 5-8% with faster setup times.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <button onclick="analyzeConfiguration()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center">
+                        <i data-lucide="search" class="w-5 h-5 mr-2"></i>
+                        Analyze Configuration
+                    </button>
+                    <button onclick="showComparison()" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 rounded-lg transition-colors flex items-center">
+                        <i data-lucide="bar-chart-3" class="w-5 h-5 mr-2"></i>
+                        Compare Budgets
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analysis Results -->
+        <section class="mb-12" id="analysisSection" style="display: none;">
+            <div class="glass-effect rounded-xl p-8">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center">
+                    <i data-lucide="check-circle" class="w-6 h-6 mr-3 text-green-500"></i>
+                    Analysis Results
+                </h2>
+
+                <div id="analysisResults">
+                    <!-- Results will be populated here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Configuration Tiers -->
+        <section class="mb-12">
+            <div class="glass-effect rounded-xl p-8">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center">
+                    <i data-lucide="layers" class="w-6 h-6 mr-3 text-purple-500"></i>
+                    Configuration Tiers
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="tiersGrid">
+                    <!-- Tiers will be populated here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Cost-Benefit Analysis -->
+        <section class="mb-12">
+            <div class="glass-effect rounded-xl p-8">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center">
+                    <i data-lucide="trending-up" class="w-6 h-6 mr-3 text-green-500"></i>
+                    Cost-Benefit Analysis
+                </h2>
+
+                <div class="mb-6">
+                    <canvas id="roiChart" width="400" height="200"></canvas>
+                </div>
+
+                <div id="costBenefitTable">
+                    <!-- Table will be populated here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- DuoPlus Status -->
+        <section class="mb-12">
+            <div class="glass-effect rounded-xl p-8">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center">
+                    <i data-lucide="cloud" class="w-6 h-6 mr-3 text-blue-500"></i>
+                    DuoPlus Cloud Status
+                </h2>
+
+                <div id="duoPlusStatus" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-400">System Status</p>
+                                <p class="text-2xl font-bold text-green-500" id="duoPlusHealth">Checking...</p>
+                            </div>
+                            <i data-lucide="activity" class="w-8 h-8 text-green-500"></i>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-400">Active Workflows</p>
+                                <p class="text-2xl font-bold text-blue-500" id="activeWorkflows">--</p>
+                            </div>
+                            <i data-lucide="zap" class="w-8 h-8 text-blue-500"></i>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-400">Cloud Devices</p>
+                                <p class="text-2xl font-bold text-purple-500" id="totalDevices">--</p>
+                            </div>
+                            <i data-lucide="smartphone" class="w-8 h-8 text-purple-500"></i>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-400">Monthly Cost</p>
+                                <p class="text-2xl font-bold text-orange-500" id="monthlyCost">--</p>
+                            </div>
+                            <i data-lucide="dollar-sign" class="w-8 h-8 text-orange-500"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4">Quick Actions</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <button onclick="checkDuoPlusStatus()" class="px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center justify-center">
+                            <i data-lucide="refresh-cw" class="w-5 h-5 mr-2"></i>
+                            Check Status
+                        </button>
+                        <button onclick="deployWorkflow()" class="px-4 py-3 bg-green-600 hover:bg-green-700 rounded-lg transition-colors flex items-center justify-center">
+                            <i data-lucide="play" class="w-5 h-5 mr-2"></i>
+                            Deploy Workflow
+                        </button>
+                        <button onclick="getDeviceRecommendations()" class="px-4 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors flex items-center justify-center">
+                            <i data-lucide="settings" class="w-5 h-5 mr-2"></i>
+                            Device Config
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Performance Analytics -->
+        <section class="mb-12">
+            <div class="glass-effect rounded-xl p-8">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center">
+                    <i data-lucide="bar-chart-3" class="w-6 h-6 mr-3 text-purple-500"></i>
+                    Performance Analytics
+                </h2>
+
+                <!-- Performance Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8" id="performanceOverview">
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-400">Total Records</p>
+                                <p class="text-2xl font-bold text-blue-500" id="totalRecords">--</p>
+                            </div>
+                            <i data-lucide="database" class="w-8 h-8 text-blue-500"></i>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-400">Avg Accuracy</p>
+                                <p class="text-2xl font-bold text-green-500" id="avgAccuracy">--%</p>
+                            </div>
+                            <i data-lucide="target" class="w-8 h-8 text-green-500"></i>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-400">Avg ROI</p>
+                                <p class="text-2xl font-bold text-purple-500" id="avgROI">--%</p>
+                            </div>
+                            <i data-lucide="trending-up" class="w-8 h-8 text-purple-500"></i>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-400">Success Rate</p>
+                                <p class="text-2xl font-bold text-emerald-500" id="overallSuccess">--%</p>
+                            </div>
+                            <i data-lucide="check-circle" class="w-8 h-8 text-emerald-500"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Charts -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Accuracy Trends</h3>
+                        <canvas id="accuracyChart" width="300" height="200"></canvas>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">ROI Trends</h3>
+                        <canvas id="roiTrendChart" width="300" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- Performance Recommendations -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold mb-4">AI Recommendations</h3>
+                    <div id="performanceRecommendations" class="space-y-3">
+                        <!-- Recommendations will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Record Performance -->
+                <div class="border-t border-gray-700 pt-8">
+                    <h3 class="text-lg font-semibold mb-4">Record Performance Results</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Configuration</label>
+                            <select id="recordConfigSelect" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg">
+                                <option value="">Select a configuration...</option>
+                                <!-- Will be populated with recent analyses -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Accounts Created</label>
+                            <input type="number" id="accountsCreated" min="1"
+                                   class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Accounts Successful</label>
+                            <input type="number" id="accountsSuccessful" min="0"
+                                   class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Avg Creation Time (sec)</label>
+                            <input type="number" id="creationTime" step="0.1" min="0"
+                                   class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Operator</label>
+                            <input type="text" id="operatorName" placeholder="Your name"
+                                   class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Batch ID (optional)</label>
+                            <input type="text" id="batchId" placeholder="batch-001"
+                                   class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Environment</label>
+                            <select id="environment" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg">
+                                <option value="production">Production</option>
+                                <option value="testing">Testing</option>
+                                <option value="development">Development</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-2">Notes (optional)</label>
+                        <textarea id="performanceNotes" rows="3" placeholder="Additional context about this performance run..."
+                                  class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg"></textarea>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <button onclick="recordPerformance()" class="px-6 py-3 bg-green-600 hover:bg-green-700 rounded-lg transition-colors flex items-center">
+                            <i data-lucide="save" class="w-5 h-5 mr-2"></i>
+                            Record Performance
+                        </button>
+                        <button onclick="exportPerformanceData()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center">
+                            <i data-lucide="download" class="w-5 h-5 mr-2"></i>
+                            Export Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Case Recommendations -->
+        <section>
+            <div class="glass-effect rounded-xl p-8">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center">
+                    <i data-lucide="target" class="w-6 h-6 mr-3 text-orange-500"></i>
+                    Use Case Recommendations
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="recommendationsGrid">
+                    <!-- Recommendations will be populated here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Budget Comparison Modal -->
+    <div id="comparisonModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="glass-effect rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-2xl font-semibold">Budget Comparison</h3>
+                        <button onclick="closeComparison()" class="text-gray-400 hover:text-white">
+                            <i data-lucide="x" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Budgets to Compare ($)</label>
+                            <input type="text" id="compareBudgets" value="20,50,100,200"
+                                   class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                   placeholder="20,50,100,200">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Timeline</label>
+                            <select id="compareTimeline" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                <option value="30 days" selected>30 days</option>
+                                <option value="60 days">60 days</option>
+                                <option value="90 days">90 days</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="runComparison()" class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center justify-center">
+                                <i data-lucide="bar-chart-3" class="w-5 h-5 mr-2"></i>
+                                Compare
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="comparisonResults">
+                        <!-- Comparison results will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Apple ID Grading Dashboard Controller
+        class AppleIDGradingDashboard {
+            constructor() {
+                this.charts = {};
+                this.recentConfigurations = [];
+                this.init();
+            }
+
+            async init() {
+                this.updateTime();
+                setInterval(() => this.updateTime(), 1000);
+
+                // Initialize DuoPlus toggle
+                this.initializeDuoPlusToggle();
+
+                // Load initial data
+                await this.loadTiers();
+                await this.loadRecommendations();
+                await this.loadCostBenefitAnalysis();
+                await this.loadPerformanceAnalytics();
+                await this.checkDuoPlusStatus();
+
+                // Initialize Lucide icons
+                lucide.createIcons();
+            }
+
+            updateTime() {
+                const now = new Date();
+                document.getElementById('currentTime').textContent = now.toLocaleTimeString();
+            }
+
+            initializeDuoPlusToggle() {
+                const toggle = document.getElementById('duoPlusToggle');
+                const options = document.getElementById('duoPlusOptions');
+
+                toggle.addEventListener('change', () => {
+                    if (toggle.checked) {
+                        options.classList.remove('hidden');
+                    } else {
+                        options.classList.add('hidden');
+                    }
+                });
+            }
+
+            async analyzeConfiguration() {
+                const budget = document.getElementById('budgetInput').value;
+                const timeline = document.getElementById('timelineSelect').value;
+                const accountValue = document.getElementById('valueInput').value;
+                const duoPlusEnabled = document.getElementById('duoPlusToggle').checked;
+                const automationLevel = document.getElementById('automationLevelSelect').value;
+
+                try {
+                    const response = await fetch('/api/apple-id/analyze', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            budget: parseFloat(budget),
+                            timeline,
+                            accountValue: parseFloat(accountValue),
+                            duoPlusEnabled,
+                            automationLevel
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.displayAnalysisResults(data.data);
+                        this.updateRecentConfigurations(data.data.configuration);
+                        document.getElementById('analysisSection').style.display = 'block';
+                    } else {
+                        this.showError('Analysis failed: ' + data.error);
+                    }
+                } catch (error) {
+                    this.showError('Network error: ' + error.message);
+                }
+            }
+
+            displayAnalysisResults(data) {
+                const config = data.configuration;
+                const analysis = data.analysis;
+
+                const isDuoPlus = config.duoPlusDevice !== undefined;
+                const resultsHtml = `
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                        <!-- DuoPlus Status Banner (if enabled) -->
+                        ${isDuoPlus ? `
+                        <div class="lg:col-span-2 mb-6">
+                            <div class="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg p-4 text-white">
+                                <div class="flex items-center">
+                                    <i data-lucide="cloud" class="w-6 h-6 mr-3"></i>
+                                    <div>
+                                        <h4 class="font-semibold">DuoPlus Enhanced Configuration</h4>
+                                        <p class="text-sm opacity-90">Cloud-managed devices with RPA automation workflows</p>
+                                    </div>
+                                    <div class="ml-auto text-right">
+                                        <div class="text-lg font-bold">${config.automationWorkflow.replace('-', ' ').toUpperCase()}</div>
+                                        <div class="text-xs opacity-75">Automation Level</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        ` : ''}
+                        <!-- Financial Analysis -->
+                        <div class="bg-gray-800 rounded-lg p-6">
+                            <h3 class="text-xl font-semibold mb-4 ${isDuoPlus ? 'text-purple-500' : 'text-green-500'}">
+                                ${isDuoPlus ? '☁️ DuoPlus Financial Analysis' : '💰 Financial Analysis'}
+                            </h3>
+                            <div class="space-y-3">
+                                ${isDuoPlus ? `
+                                <div class="flex justify-between">
+                                    <span>Base Configuration:</span>
+                                    <span class="font-bold">$${(config.totalCost - config.totalDuoPlusCost).toFixed(2)}</span>
+                                </div>
+                                <div class="flex justify-between text-purple-400">
+                                    <span>DuoPlus Services:</span>
+                                    <span class="font-bold">$${config.totalDuoPlusCost.toFixed(2)}</span>
+                                </div>
+                                <div class="border-t border-gray-600 pt-2 mt-2">
+                                ` : ''}
+                                <div class="flex justify-between">
+                                    <span>Total Cost per Account:</span>
+                                    <span class="font-bold">$${config.totalCost.toFixed(2)}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Expected Success Rate:</span>
+                                    <span class="font-bold success-high">${(config.expectedSuccessRate * 100).toFixed(1)}%</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Return on Investment:</span>
+                                    <span class="font-bold ${config.roi > 100 ? 'success-high' : config.roi > 50 ? 'success-medium' : 'success-low'}">${config.roi.toFixed(1)}%</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Overall Grade:</span>
+                                    <span class="font-bold px-3 py-1 rounded-full ${
+                                        config.grade === 'Premium' ? 'bg-green-600' :
+                                        config.grade === 'Professional' ? 'bg-blue-600' :
+                                        config.grade === 'Business' ? 'bg-yellow-600' : 'bg-red-600'
+                                    }">${config.grade}</span>
+                                </div>
+                                ${isDuoPlus ? `
+                                <div class="flex justify-between text-sm text-gray-400 mt-3 pt-2 border-t border-gray-600">
+                                    <span>Setup Time:</span>
+                                    <span>${config.setupTime} minutes</span>
+                                </div>
+                                <div class="flex justify-between text-sm text-gray-400">
+                                    <span>Automation Level:</span>
+                                    <span>${config.automationWorkflow.replace('-', ' ').toUpperCase()}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <!-- Component Breakdown -->
+                        <div class="bg-gray-800 rounded-lg p-6">
+                            <h3 class="text-xl font-semibold mb-4 text-blue-500">🧩 Component Breakdown</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i data-lucide="smartphone" class="w-5 h-5 mr-3 text-gray-400"></i>
+                                        <div>
+                                            <div class="font-medium">Phone: ${config.phone.provider}</div>
+                                            <div class="text-sm text-gray-400">${config.phone.notes}</div>
+                                        </div>
+                                    </div>
+                                    <span class="px-2 py-1 text-xs rounded-full grade-${config.phone.grade.toLowerCase().replace('+', '-plus')} text-white">
+                                        ${config.phone.grade}
+                                    </span>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i data-lucide="user" class="w-5 h-5 mr-3 text-gray-400"></i>
+                                        <div>
+                                            <div class="font-medium">Identity: ${config.identity.type.replace('_', ' ')}</div>
+                                            <div class="text-sm text-gray-400">${config.identity.notes}</div>
+                                        </div>
+                                    </div>
+                                    <span class="px-2 py-1 text-xs rounded-full grade-${config.identity.grade.toLowerCase()} text-white">
+                                        ${config.identity.grade}
+                                    </span>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i data-lucide="zap" class="w-5 h-5 mr-3 text-gray-400"></i>
+                                        <div>
+                                            <div class="font-medium">Warm-up: ${config.warmup.duration} days</div>
+                                            <div class="text-sm text-gray-400">${config.warmup.notes}</div>
+                                        </div>
+                                    </div>
+                                    <span class="px-2 py-1 text-xs rounded-full grade-${config.warmup.grade.toLowerCase()} text-white">
+                                        ${config.warmup.grade}
+                                    </span>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i data-lucide="${isDuoPlus ? 'cloud' : 'monitor'}" class="w-5 h-5 mr-3 ${isDuoPlus ? 'text-purple-400' : 'text-gray-400'}"></i>
+                                        <div>
+                                            <div class="font-medium">
+                                                ${isDuoPlus ? `DuoPlus ${config.duoPlusDevice.duoPlusModel.toUpperCase()}` : `Device: ${config.device.type}`}
+                                            </div>
+                                            <div class="text-sm text-gray-400">
+                                                ${isDuoPlus ? `${config.duoPlusDevice.age} days aged • ${config.duoPlusDevice.automationLevel} automation` : config.device.notes}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span class="px-2 py-1 text-xs rounded-full grade-${(isDuoPlus ? config.duoPlusDevice.grade : config.device.grade).toLowerCase()} text-white">
+                                        ${isDuoPlus ? config.duoPlusDevice.grade : config.device.grade}
+                                    </span>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i data-lucide="${isDuoPlus ? 'cloud' : 'wifi'}" class="w-5 h-5 mr-3 ${isDuoPlus ? 'text-blue-400' : 'text-gray-400'}"></i>
+                                        <div>
+                                            <div class="font-medium">
+                                                ${isDuoPlus ? `Cloud Number: ${config.duoPlusNumber.provider}` : `SIM: ${config.sim.type} ${config.sim.carrier}`}
+                                            </div>
+                                            <div class="text-sm text-gray-400">
+                                                ${isDuoPlus ? `${config.duoPlusNumber.age} months • ${config.duoPlusNumber.rpaEnabled ? 'RPA enabled' : 'Manual'}` : config.sim.notes}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span class="px-2 py-1 text-xs rounded-full grade-${(isDuoPlus ? config.duoPlusNumber.grade : config.sim.grade).toLowerCase().replace('+', '-plus')} text-white">
+                                        ${isDuoPlus ? config.duoPlusNumber.grade : config.sim.grade}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-purple-500">🎯 Recommendation</h3>
+                        <div class="flex items-center">
+                            ${config.recommended ?
+                                '<i data-lucide="check-circle" class="w-6 h-6 text-green-500 mr-3"></i><span class="text-green-500 font-medium">This configuration is recommended for production use!</span>' :
+                                '<i data-lucide="alert-triangle" class="w-6 h-6 text-yellow-500 mr-3"></i><span class="text-yellow-500 font-medium">Consider increasing budget for better success rates.</span>'
+                            }
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('analysisResults').innerHTML = resultsHtml;
+                lucide.createIcons();
+            }
+
+            async loadTiers() {
+                try {
+                    const response = await fetch('/api/apple-id/tiers');
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.displayTiers(data.data.tiers);
+                    }
+                } catch (error) {
+                    console.error('Failed to load tiers:', error);
+                }
+            }
+
+            displayTiers(tiers) {
+                const grid = document.getElementById('tiersGrid');
+                grid.innerHTML = tiers.map(tier => `
+                    <div class="tier-${tier.name.toLowerCase()} bg-gray-800 rounded-lg p-6 border-l-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold">${tier.name} Tier</h3>
+                            <span class="px-3 py-1 text-sm rounded-full ${
+                                tier.name === 'Premium' ? 'bg-green-600' :
+                                tier.name === 'Professional' ? 'bg-blue-600' :
+                                tier.name === 'Business' ? 'bg-yellow-600' : 'bg-red-600'
+                            } text-white">${tier.successRate}</span>
+                        </div>
+                        <div class="space-y-2 text-sm text-gray-300">
+                            <div><strong>Budget:</strong> ${tier.budget}</div>
+                            <div><strong>ROI:</strong> ${tier.roi}</div>
+                            <div><strong>Use Case:</strong> ${tier.useCase}</div>
+                            <div><strong>Components:</strong> ${tier.components}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            async loadRecommendations() {
+                const useCases = ['premium', 'production', 'testing', 'budget'];
+
+                for (const useCase of useCases) {
+                    try {
+                        const response = await fetch(`/api/apple-id/recommend/${useCase}`);
+                        const data = await response.json();
+
+                        if (data.success) {
+                            this.displayRecommendations(useCase, data.data.recommendations);
+                        }
+                    } catch (error) {
+                        console.error(`Failed to load ${useCase} recommendations:`, error);
+                    }
+                }
+            }
+
+            displayRecommendations(useCase, recommendations) {
+                const grid = document.getElementById('recommendationsGrid');
+                const existingCard = grid.querySelector(`[data-usecase="${useCase}"]`);
+
+                if (existingCard) {
+                    existingCard.remove();
+                }
+
+                const cardHtml = `
+                    <div class="bg-gray-800 rounded-lg p-6" data-usecase="${useCase}">
+                        <h3 class="text-lg font-semibold mb-4 capitalize">${useCase} Operations</h3>
+                        <div class="space-y-3">
+                            ${recommendations.slice(0, 2).map(rec => `
+                                <div class="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
+                                    <div>
+                                        <div class="font-medium">${rec.grade} Configuration</div>
+                                        <div class="text-sm text-gray-400">$${rec.totalCost} • ${(rec.expectedSuccessRate * 100).toFixed(1)}% success</div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-bold text-green-500">${rec.roi.toFixed(0)}% ROI</div>
+                                        <div class="text-xs text-gray-400">${rec.recommended ? '✅ Recommended' : '⚠️ Review'}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+
+                grid.insertAdjacentHTML('beforeend', cardHtml);
+            }
+
+            async loadCostBenefitAnalysis() {
+                try {
+                    const response = await fetch('/api/apple-id/cost-benefit');
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.displayCostBenefitAnalysis(data.data.analysis);
+                    }
+                } catch (error) {
+                    console.error('Failed to load cost-benefit analysis:', error);
+                }
+            }
+
+            async loadPerformanceAnalytics() {
+                try {
+                    const response = await fetch('/api/apple-id/performance/analytics');
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.displayPerformanceOverview(data.data.analytics);
+                        this.displayPerformanceTrends(data.data.analytics.trends);
+                        this.displayPerformanceRecommendations(data.data.recommendations);
+                    }
+                } catch (error) {
+                    console.error('Failed to load performance analytics:', error);
+                }
+            }
+
+            displayPerformanceOverview(analytics) {
+                const overview = document.getElementById('performanceOverview');
+
+                const stats = [
+                    {
+                        label: 'Total Records',
+                        value: analytics.overall.totalRecords,
+                        icon: 'database',
+                        color: 'blue'
+                    },
+                    {
+                        label: 'Avg Accuracy',
+                        value: `${(analytics.overall.averageAccuracy * 100).toFixed(1)}%`,
+                        icon: 'target',
+                        color: 'green'
+                    },
+                    {
+                        label: 'Avg ROI',
+                        value: `${analytics.overall.averageROI.toFixed(1)}%`,
+                        icon: 'trending-up',
+                        color: 'purple'
+                    },
+                    {
+                        label: 'Overall Success',
+                        value: `${(analytics.overall.overallSuccessRate * 100).toFixed(1)}%`,
+                        icon: 'check-circle',
+                        color: 'emerald'
+                    }
+                ];
+
+                overview.innerHTML = stats.map(stat => `
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-400">${stat.label}</p>
+                                <p class="text-2xl font-bold text-${stat.color}-500">${stat.value}</p>
+                            </div>
+                            <div class="w-12 h-12 bg-${stat.color}-600 rounded-lg flex items-center justify-center">
+                                <i data-lucide="${stat.icon}" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                lucide.createIcons();
+            }
+
+            displayPerformanceTrends(trends) {
+                // Accuracy Chart
+                const accuracyCtx = document.getElementById('accuracyChart').getContext('2d');
+                this.charts.accuracyTrend = new Chart(accuracyCtx, {
+                    type: 'line',
+                    data: {
+                        labels: trends.accuracyOverTime.map(d => d.date),
+                        datasets: [{
+                            label: 'Prediction Accuracy (%)',
+                            data: trends.accuracyOverTime.map(d => d.accuracy * 100),
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        }
+                    }
+                });
+
+                // ROI Chart
+                const roiCtx = document.getElementById('roiTrendChart').getContext('2d');
+                this.charts.roiTrend = new Chart(roiCtx, {
+                    type: 'line',
+                    data: {
+                        labels: trends.roiOverTime.map(d => d.date),
+                        datasets: [{
+                            label: 'Average ROI (%)',
+                            data: trends.roiOverTime.map(d => d.roi),
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            displayPerformanceRecommendations(recommendations) {
+                const container = document.getElementById('performanceRecommendations');
+
+                if (recommendations.length === 0) {
+                    container.innerHTML = '<p class="text-gray-400">No recommendations available yet. Record some performance data to get AI-powered insights.</p>';
+                    return;
+                }
+
+                container.innerHTML = recommendations.map(rec => `
+                    <div class="flex items-start p-4 bg-gray-800 rounded-lg">
+                        <i data-lucide="lightbulb" class="w-5 h-5 text-yellow-500 mr-3 mt-0.5 flex-shrink-0"></i>
+                        <p class="text-gray-300">${rec}</p>
+                    </div>
+                `).join('');
+
+                lucide.createIcons();
+            }
+
+            async recordPerformance() {
+                const configSelect = document.getElementById('recordConfigSelect');
+                const accountsCreated = document.getElementById('accountsCreated').value;
+                const accountsSuccessful = document.getElementById('accountsSuccessful').value;
+                const creationTime = document.getElementById('creationTime').value;
+                const operator = document.getElementById('operatorName').value;
+                const batchId = document.getElementById('batchId').value;
+                const environment = document.getElementById('environment').value;
+                const notes = document.getElementById('performanceNotes').value;
+
+                if (!configSelect.value || !accountsCreated || accountsSuccessful === '') {
+                    this.showError('Please fill in all required fields');
+                    return;
+                }
+
+                // Find the selected configuration from recent analyses
+                const selectedConfig = this.recentConfigurations.find(c =>
+                    `${c.grade} (${c.totalCost})` === configSelect.value
+                );
+
+                if (!selectedConfig) {
+                    this.showError('Selected configuration not found');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/api/apple-id/performance/record', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            configuration: selectedConfig,
+                            accountsCreated: parseInt(accountsCreated),
+                            accountsSuccessful: parseInt(accountsSuccessful),
+                            averageCreationTime: parseFloat(creationTime) || 0,
+                            operator: operator || 'dashboard-user',
+                            batchId,
+                            environment,
+                            notes
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.showSuccess('Performance data recorded successfully!');
+                        this.loadPerformanceAnalytics(); // Refresh analytics
+                        this.clearPerformanceForm();
+                    } else {
+                        this.showError('Failed to record performance: ' + data.error);
+                    }
+                } catch (error) {
+                    this.showError('Network error: ' + error.message);
+                }
+            }
+
+            clearPerformanceForm() {
+                document.getElementById('accountsCreated').value = '';
+                document.getElementById('accountsSuccessful').value = '';
+                document.getElementById('creationTime').value = '';
+                document.getElementById('batchId').value = '';
+                document.getElementById('performanceNotes').value = '';
+            }
+
+            async exportPerformanceData() {
+                try {
+                    const response = await fetch('/api/apple-id/performance/export');
+                    const csv = await response.text();
+
+                    // Create download link
+                    const blob = new Blob([csv], { type: 'text/csv' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'apple-id-performance-data.csv';
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+
+                    this.showSuccess('Performance data exported successfully!');
+                } catch (error) {
+                    this.showError('Export failed: ' + error.message);
+                }
+            }
+
+            updateRecentConfigurations(config) {
+                this.recentConfigurations.unshift(config);
+                if (this.recentConfigurations.length > 10) {
+                    this.recentConfigurations = this.recentConfigurations.slice(0, 10);
+                }
+                this.updateConfigSelect();
+            }
+
+            updateConfigSelect() {
+                const select = document.getElementById('recordConfigSelect');
+                select.innerHTML = '<option value="">Select a configuration...</option>' +
+                    this.recentConfigurations.map(config =>
+                        `<option value="${config.grade} ($${config.totalCost})">${config.grade} - $${config.totalCost} (${(config.expectedSuccessRate * 100).toFixed(1)}% predicted)</option>`
+                    ).join('');
+            }
+
+            displayCostBenefitAnalysis(analysis) {
+                // Create ROI chart
+                const ctx = document.getElementById('roiChart').getContext('2d');
+
+                // Parse the markdown analysis and extract data
+                const lines = analysis.split('\n');
+                const dataPoints = [];
+
+                lines.forEach(line => {
+                    const match = line.match(/\| \$(\d+) \| ([\d.]+)% \| \$(\d+) \| ([\d.]+)% \| (\w+) \| (✅|❌) \|/);
+                    if (match) {
+                        dataPoints.push({
+                            budget: parseInt(match[1]),
+                            successRate: parseFloat(match[2]),
+                            cost: parseInt(match[3]),
+                            roi: parseFloat(match[4]),
+                            grade: match[5],
+                            recommended: match[6] === '✅'
+                        });
+                    }
+                });
+
+                this.charts.roi = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: dataPoints.map(d => `$${d.budget}`),
+                        datasets: [{
+                            label: 'ROI (%)',
+                            data: dataPoints.map(d => d.roi),
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4
+                        }, {
+                            label: 'Success Rate (%)',
+                            data: dataPoints.map(d => d.successRate),
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Budget vs ROI & Success Rate'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                // Display table
+                const tableHtml = `
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-gray-700">
+                                    <th class="text-left py-3">Budget</th>
+                                    <th class="text-left py-3">Success Rate</th>
+                                    <th class="text-left py-3">Total Cost</th>
+                                    <th class="text-left py-3">ROI</th>
+                                    <th class="text-left py-3">Grade</th>
+                                    <th class="text-left py-3">Recommended</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${dataPoints.map(point => `
+                                    <tr class="border-b border-gray-800">
+                                        <td class="py-3">$${point.budget}</td>
+                                        <td class="py-3">${point.successRate}%</td>
+                                        <td class="py-3">$${point.cost}</td>
+                                        <td class="py-3 ${point.roi > 100 ? 'text-green-500' : point.roi > 50 ? 'text-yellow-500' : 'text-red-500'}">${point.roi}%</td>
+                                        <td class="py-3">
+                                            <span class="px-2 py-1 text-xs rounded-full ${
+                                                point.grade === 'Premium' ? 'bg-green-600' :
+                                                point.grade === 'Professional' ? 'bg-blue-600' :
+                                                point.grade === 'Business' ? 'bg-yellow-600' : 'bg-red-600'
+                                            } text-white">${point.grade}</span>
+                                        </td>
+                                        <td class="py-3">${point.recommended ? '✅' : '❌'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+
+                document.getElementById('costBenefitTable').innerHTML = tableHtml;
+            }
+
+            showComparison() {
+                document.getElementById('comparisonModal').classList.remove('hidden');
+            }
+
+            closeComparison() {
+                document.getElementById('comparisonModal').classList.add('hidden');
+            }
+
+            showSuccess(message) {
+                this.showNotification(message, 'success');
+            }
+
+            async checkDuoPlusStatus() {
+                try {
+                    const response = await fetch('/api/duoplus/status');
+                    const data = await response.json();
+
+                    if (data.success) {
+                        document.getElementById('duoPlusHealth').textContent = data.data.status === 'operational' ? 'Operational' : 'Degraded';
+                        document.getElementById('duoPlusHealth').className = data.data.status === 'operational' ? 'text-2xl font-bold text-green-500' : 'text-2xl font-bold text-red-500';
+
+                        document.getElementById('activeWorkflows').textContent = data.data.performance?.activeWorkflows || '0';
+                        document.getElementById('totalDevices').textContent = `${data.data.performance?.activeDevices || 0}/${data.data.performance?.totalDevices || 0}`;
+                        document.getElementById('monthlyCost').textContent = `$${data.data.performance?.totalMonthlyCost || 0}`;
+
+                        this.showSuccess('DuoPlus status updated successfully');
+                    } else {
+                        this.showError('Failed to check DuoPlus status');
+                    }
+                } catch (error) {
+                    this.showError('Network error checking DuoPlus status');
+                }
+            }
+
+            async deployWorkflow() {
+                const config = this.recentConfigurations[this.recentConfigurations.length - 1];
+
+                if (!config) {
+                    this.showError('No recent configuration found. Please analyze a configuration first.');
+                    return;
+                }
+
+                const batchSize = prompt('Enter batch size for workflow deployment:', '10');
+                if (!batchSize || isNaN(parseInt(batchSize))) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/api/duoplus/deploy-workflow', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            configuration: config,
+                            batchSize: parseInt(batchSize)
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.showSuccess(`Workflow deployed successfully! Workflow ID: ${data.data.workflowId}`);
+                    } else {
+                        this.showError('Failed to deploy workflow: ' + data.error);
+                    }
+                } catch (error) {
+                    this.showError('Network error deploying workflow');
+                }
+            }
+
+            async getDeviceRecommendations() {
+                const useCase = prompt('Enter use case (premium/production/testing/budget):', 'production');
+                if (!useCase) return;
+
+                try {
+                    const response = await fetch(`/api/duoplus/device-recommendations/${useCase}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        const recommendations = data.data.recommendations;
+                        let message = `Device recommendations for ${useCase}:\n\n`;
+
+                        recommendations.forEach((rec, index) => {
+                            message += `${index + 1}. ${rec.type} (${rec.automationLevel} automation)\n`;
+                            message += `   Cost: $${rec.cost}, Success: ${(rec.successRate * 100).toFixed(1)}%\n`;
+                            message += `   Features: ${rec.rpaTemplates?.join(', ') || 'Basic'}\n\n`;
+                        });
+
+                        alert(message);
+                    } else {
+                        this.showError('Failed to get device recommendations');
+                    }
+                } catch (error) {
+                    this.showError('Network error getting recommendations');
+                }
+            }
+
+            showError(message) {
+                this.showNotification(message, 'error');
+            }
+
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                const colors = {
+                    success: 'bg-green-600',
+                    error: 'bg-red-600',
+                    info: 'bg-blue-600'
+                };
+
+                notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-6 py-4 rounded-lg shadow-lg z-50 max-w-md`;
+                notification.innerHTML = `
+                    <div class="flex items-center">
+                        <i data-lucide="${type === 'success' ? 'check-circle' : type === 'error' ? 'alert-circle' : 'info'}" class="w-5 h-5 mr-3"></i>
+                        <span>${message}</span>
+                        <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+
+                document.body.appendChild(notification);
+                lucide.createIcons();
+
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 5000);
+            }
+
+            async runComparison() {
+                const budgets = document.getElementById('compareBudgets').value.split(',').map(b => parseFloat(b.trim()));
+                const timeline = document.getElementById('compareTimeline').value;
+
+                try {
+                    const response = await fetch('/api/apple-id/compare', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ budgets, timeline })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.displayComparisonResults(data.data);
+                    } else {
+                        this.showError('Comparison failed: ' + data.error);
+                    }
+                } catch (error) {
+                    this.showError('Network error: ' + error.message);
+                }
+            }
+
+            displayComparisonResults(data) {
+                const resultsHtml = `
+                    <div class="mb-6">
+                        <h4 class="text-lg font-semibold mb-4">Best Option: ${data.bestOption.grade} Tier</h4>
+                        <div class="bg-gray-800 rounded-lg p-4 mb-6">
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                                <div>
+                                    <div class="text-2xl font-bold text-green-500">${data.bestOption.roi.toFixed(0)}%</div>
+                                    <div class="text-sm text-gray-400">ROI</div>
+                                </div>
+                                <div>
+                                    <div class="text-2xl font-bold text-blue-500">${(data.bestOption.expectedSuccessRate * 100).toFixed(1)}%</div>
+                                    <div class="text-sm text-gray-400">Success Rate</div>
+                                </div>
+                                <div>
+                                    <div class="text-2xl font-bold text-purple-500">$${data.bestOption.totalCost}</div>
+                                    <div class="text-sm text-gray-400">Cost</div>
+                                </div>
+                                <div>
+                                    <div class="text-2xl font-bold text-orange-500">${data.bestOption.grade}</div>
+                                    <div class="text-sm text-gray-400">Grade</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        ${data.comparisons.map((config, index) => `
+                            <div class="bg-gray-800 rounded-lg p-6 ${config.grade === data.bestOption.grade && config.totalCost === data.bestOption.totalCost ? 'ring-2 ring-green-500' : ''}">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-semibold">$${data.budgets[index]} Budget</h4>
+                                    <span class="px-3 py-1 text-sm rounded-full ${
+                                        config.grade === 'Premium' ? 'bg-green-600' :
+                                        config.grade === 'Professional' ? 'bg-blue-600' :
+                                        config.grade === 'Business' ? 'bg-yellow-600' : 'bg-red-600'
+                                    } text-white">${config.grade}</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                        <span>Success Rate:</span>
+                                        <span class="font-medium">${(config.expectedSuccessRate * 100).toFixed(1)}%</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span>ROI:</span>
+                                        <span class="font-medium ${config.roi > 100 ? 'text-green-500' : config.roi > 50 ? 'text-yellow-500' : 'text-red-500'}">${config.roi.toFixed(1)}%</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span>Total Cost:</span>
+                                        <span class="font-medium">$${config.totalCost}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+
+                document.getElementById('comparisonResults').innerHTML = resultsHtml;
+                lucide.createIcons();
+            }
+
+            showError(message) {
+                // Create a temporary error notification
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-4 right-4 bg-red-600 text-white px-6 py-4 rounded-lg shadow-lg z-50';
+                notification.innerHTML = `
+                    <div class="flex items-center">
+                        <i data-lucide="alert-circle" class="w-5 h-5 mr-3"></i>
+                        <span>${message}</span>
+                        <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-red-200 hover:text-white">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+
+                document.body.appendChild(notification);
+                lucide.createIcons();
+
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 5000);
+            }
+        }
+
+        // Global functions for button handlers
+        function analyzeConfiguration() {
+            window.appleIDDashboard.analyzeConfiguration();
+        }
+
+        function showComparison() {
+            window.appleIDDashboard.showComparison();
+        }
+
+        function closeComparison() {
+            window.appleIDDashboard.closeComparison();
+        }
+
+        function runComparison() {
+            window.appleIDDashboard.runComparison();
+        }
+
+        function recordPerformance() {
+            window.appleIDDashboard.recordPerformance();
+        }
+
+        function exportPerformanceData() {
+            window.appleIDDashboard.exportPerformanceData();
+        }
+
+        function refreshData() {
+            window.appleIDDashboard.init();
+        }
+
+        // Initialize dashboard when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            window.appleIDDashboard = new AppleIDGradingDashboard();
+        });
+    </script>
+</body>
+</html>

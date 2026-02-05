@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empire Pro Status Dashboard | Enterprise Monitoring</title>
+    <meta name="description" content="Comprehensive enterprise status dashboard with system monitoring, performance metrics, and service health tracking">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @keyframes pulse-border {
+            0%, 100% { border-color: rgb(59 130 246 / 0.5); }
+            50% { border-color: rgb(59 130 246 / 1); }
+        }
+        .animate-pulse-border {
+            animation: pulse-border 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .empire-purple {
+            color: #3b82f6;
+        }
+        .status-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border: 1px solid #3b82f6;
+            transition: all 0.3s ease;
+        }
+        .status-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .service-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border: 1px solid #3b82f6;
+            transition: all 0.3s ease;
+        }
+        .service-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-operational { background-color: #10b981; }
+        .status-degraded { background-color: #f59e0b; }
+        .status-outage { background-color: #ef4444; }
+        .status-maintenance { background-color: #3b82f6; }
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .metric-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.125rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 0.25rem;
+        }
+        .metric-badge.excellent { background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%); color: white; }
+        .metric-badge.good { background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%); color: white; }
+        .metric-badge.warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; }
+        .metric-badge.critical { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+        .uptime-bar {
+            width: 100%;
+            height: 8px;
+            background: #3b82f6;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .uptime-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #3b82f6);
+            transition: width 0.3s ease;
+        }
+        /* Dark Mode Styles */
+        .dark {
+            background-color: #3b82f6;
+            color: #3b82f6;
+        }
+        .dark .bg-white {
+            background-color: #3b82f6 !important;
+        }
+        .dark .bg-gray-50 {
+            background-color: #3b82f6 !important;
+        }
+        .dark .text-gray-900 {
+            color: #3b82f6 !important;
+        }
+        .dark .text-gray-600 {
+            color: #3b82f6 !important;
+        }
+        .dark .border-gray-200 {
+            border-color: #3b82f6 !important;
+        }
+        .dark .status-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border-color: #3b82f6;
+        }
+        .dark .service-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border-color: #3b82f6;
+        }
+        .dark .uptime-bar {
+            background: #3b82f6;
+        }
+        /* Theme transition */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <i data-lucide="activity" class="w-8 h-8 empire-purple"></i>
+                    <h1 class="text-2xl font-bold gradient-text">Empire Pro Status</h1>
+                    <span class="text-sm text-gray-600 ml-2">Enterprise Monitoring Dashboard</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <span class="status-indicator status-operational"></span>
+                        <span class="text-sm text-gray-600">All Systems Operational</span>
+                    </div>
+                    <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-gray-100" title="Toggle Theme">
+                        <i data-lucide="moon" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="refreshStatus()" class="btn-primary">
+                        <i data-lucide="refresh-cw" class="w-4 h-4 inline mr-2"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Status Info Bar -->
+    <div class="bg-indigo-50 border-b border-indigo-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm font-medium text-indigo-800">Status Endpoint:</span>
+                    <code class="text-sm bg-indigo-100 px-2 py-1 rounded">https://empire-pro-status.utahj4754.workers.dev/</code>
+                    <button onclick="copyEndpointUrl()" class="text-indigo-600 hover:text-indigo-800 text-sm">
+                        <i data-lucide="copy" class="w-4 h-4 inline"></i>
+                    </button>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-indigo-600">Last Updated: <span id="last-updated">Just now</span></span>
+                    <button onclick="subscribeToUpdates()" class="text-sm text-indigo-600 hover:text-indigo-800">
+                        <i data-lucide="bell" class="w-4 h-4 inline mr-1"></i>
+                        Subscribe
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- System Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="service-card p-6 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">System Status</p>
+                        <p class="text-3xl font-bold text-gray-900">Operational</p>
+                        <p class="text-xs text-green-600 mt-1">99.9% uptime</p>
+                    </div>
+                    <i data-lucide="check-circle" class="w-8 h-8 text-green-500"></i>
+                </div>
+                <div class="mt-3">
+                    <div class="uptime-bar">
+                        <div class="uptime-fill" style="width: 99.9%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="service-card p-6 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Active Services</p>
+                        <p class="text-3xl font-bold text-gray-900">24</p>
+                        <p class="text-xs text-green-600 mt-1">All online</p>
+                    </div>
+                    <i data-lucide="server" class="w-8 h-8 text-blue-500"></i>
+                </div>
+            </div>
+            <div class="service-card p-6 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Response Time</p>
+                        <p class="text-3xl font-bold text-gray-900">127ms</p>
+                        <p class="text-xs text-green-600 mt-1">Excellent</p>
+                    </div>
+                    <i data-lucide="zap" class="w-8 h-8 text-yellow-500"></i>
+                </div>
+            </div>
+            <div class="service-card p-6 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Error Rate</p>
+                        <p class="text-3xl font-bold text-gray-900">0.03%</p>
+                        <p class="text-xs text-green-600 mt-1">Below threshold</p>
+                    </div>
+                    <i data-lucide="alert-triangle" class="w-8 h-8 text-orange-500"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Status -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold text-gray-900">Service Status</h2>
+                <div class="flex items-center space-x-4">
+                    <select id="time-range" class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                        <option value="24h">Last 24 Hours</option>
+                        <option value="7d">Last 7 Days</option>
+                        <option value="30d">Last 30 Days</option>
+                        <option value="90d">Last 90 Days</option>
+                    </select>
+                    <button onclick="viewIncidents()" class="text-indigo-600 hover:text-indigo-800 text-sm">
+                        View Incidents →
+                    </button>
+                </div>
+            </div>
+            
+            <div class="space-y-4">
+                <!-- API Gateway -->
+                <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <span class="status-indicator status-operational"></span>
+                        <div>
+                            <h3 class="font-medium text-gray-900">API Gateway</h3>
+                            <p class="text-sm text-gray-600">Core API services and routing</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="metric-badge excellent">99.99% Uptime</span>
+                        <span class="text-sm text-gray-500">45ms avg response</span>
+                        <button onclick="viewServiceDetails('api-gateway')" class="p-2 rounded-lg hover:bg-gray-100">
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Database Services -->
+                <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <span class="status-indicator status-operational"></span>
+                        <div>
+                            <h3 class="font-medium text-gray-900">Database Services</h3>
+                            <p class="text-sm text-gray-600">PostgreSQL, Redis, and caching layers</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="metric-badge excellent">99.95% Uptime</span>
+                        <span class="text-sm text-gray-500">12ms avg query</span>
+                        <button onclick="viewServiceDetails('database')" class="p-2 rounded-lg hover:bg-gray-100">
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Authentication -->
+                <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <span class="status-indicator status-operational"></span>
+                        <div>
+                            <h3 class="font-medium text-gray-900">Authentication Service</h3>
+                            <p class="text-sm text-gray-600">User authentication and authorization</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="metric-badge excellent">99.98% Uptime</span>
+                        <span class="text-sm text-gray-500">89ms avg response</span>
+                        <button onclick="viewServiceDetails('auth')" class="p-2 rounded-lg hover:bg-gray-100">
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Storage Services -->
+                <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <span class="status-indicator status-degraded"></span>
+                        <div>
+                            <h3 class="font-medium text-gray-900">Storage Services</h3>
+                            <p class="text-sm text-gray-600">R2 storage, CDN, and file management</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="metric-badge warning">98.5% Uptime</span>
+                        <span class="text-sm text-gray-500">234ms avg response</span>
+                        <button onclick="viewServiceDetails('storage')" class="p-2 rounded-lg hover:bg-gray-100">
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Monitoring -->
+                <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <span class="status-indicator status-operational"></span>
+                        <div>
+                            <h3 class="font-medium text-gray-900">Monitoring & Analytics</h3>
+                            <p class="text-sm text-gray-600">Metrics collection and analysis</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="metric-badge excellent">99.99% Uptime</span>
+                        <span class="text-sm text-gray-500">67ms avg response</span>
+                        <button onclick="viewServiceDetails('monitoring')" class="p-2 rounded-lg hover:bg-gray-100">
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Response Time Trends</h3>
+                <div class="chart-container">
+                    <canvas id="responseTimeChart"></canvas>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Service Availability</h3>
+                <div class="chart-container">
+                    <canvas id="availabilityChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Incidents -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold text-gray-900">Recent Incidents</h2>
+                <button onclick="viewAllIncidents()" class="text-indigo-600 hover:text-indigo-800 text-sm">
+                    View all incidents →
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="flex items-start space-x-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-600 mt-0.5"></i>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-medium text-gray-900">Storage Services Degradation</h3>
+                            <span class="text-sm text-gray-500">2 hours ago</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-1">Experienced increased latency in R2 storage services. Issue has been resolved.</p>
+                        <div class="flex items-center space-x-4 mt-2">
+                            <span class="text-xs text-yellow-600">Resolved</span>
+                            <span class="text-xs text-gray-500">Duration: 45 minutes</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-3 p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <i data-lucide="check-circle" class="w-5 h-5 text-green-600 mt-0.5"></i>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-medium text-gray-900">Scheduled Maintenance Complete</h3>
+                            <span class="text-sm text-gray-500">1 day ago</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-1">Database maintenance completed successfully. Performance improved by 15%.</p>
+                        <div class="flex items-center space-x-4 mt-2">
+                            <span class="text-xs text-green-600">Completed</span>
+                            <span class="text-sm text-gray-500">Duration: 2 hours</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <button onclick="runHealthCheck()" class="flex items-center justify-center space-x-2 p-4 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition">
+                    <i data-lucide="heart" class="w-5 h-5"></i>
+                    <span>Run Health Check</span>
+                </button>
+                <button onclick="downloadReport()" class="flex items-center justify-center space-x-2 p-4 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition">
+                    <i data-lucide="download" class="w-5 h-5"></i>
+                    <span>Download Report</span>
+                </button>
+                <button onclick="testEndpoints()" class="flex items-center justify-center space-x-2 p-4 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition">
+                    <i data-lucide="zap" class="w-5 h-5"></i>
+                    <span>Test Endpoints</span>
+                </button>
+                <button onclick="contactSupport()" class="flex items-center justify-center space-x-2 p-4 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition">
+                    <i data-lucide="headphones" class="w-5 h-5"></i>
+                    <span>Contact Support</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Chart instances
+        let responseTimeChart = null;
+        let availabilityChart = null;
+
+        // Theme Manager
+        const themeManager = {
+            currentTheme: 'light',
+            
+            init() {
+                this.loadSavedTheme();
+                this.applyTheme(this.currentTheme);
+                this.setupEventListeners();
+            },
+            
+            toggleTheme() {
+                const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+                this.applyTheme(newTheme);
+                this.saveTheme(newTheme);
+                this.currentTheme = newTheme;
+            },
+            
+            applyTheme(theme) {
+                const body = document.body;
+                if (theme === 'dark') {
+                    body.classList.add('dark');
+                } else {
+                    body.classList.remove('dark');
+                }
+            },
+            
+            updateCharts(theme) {
+                if (responseTimeChart) {
+                    const gridColor = theme === 'dark' ? '#3b82f6' : '#3b82f6';
+                    const textColor = theme === 'dark' ? '#3b82f6' : '#3b82f6';
+                    
+                    responseTimeChart.options.scales.x.grid.color = gridColor;
+                    responseTimeChart.options.scales.y.grid.color = gridColor;
+                    responseTimeChart.options.scales.x.ticks.color = textColor;
+                    responseTimeChart.options.scales.y.ticks.color = textColor;
+                    responseTimeChart.update();
+                }
+                
+                if (availabilityChart) {
+                    availabilityChart.options.plugins.legend.labels.color = theme === 'dark' ? '#3b82f6' : '#3b82f6';
+                    availabilityChart.update();
+                }
+            },
+            
+            saveTheme(theme) {
+                localStorage.setItem('empire-pro-status-theme', theme);
+            },
+            
+            loadSavedTheme() {
+                const saved = localStorage.getItem('empire-pro-status-theme');
+                if (saved) {
+                    this.currentTheme = saved;
+                } else {
+                    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        this.currentTheme = 'dark';
+                    }
+                }
+            },
+            
+            setupEventListeners() {
+                if (window.matchMedia) {
+                    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                    mediaQuery.addListener((e) => {
+                        if (!localStorage.getItem('empire-pro-status-theme')) {
+                            const systemTheme = e.matches ? 'dark' : 'light';
+                            this.applyTheme(systemTheme);
+                            this.currentTheme = systemTheme;
+                            this.updateCharts(systemTheme);
+                        }
+                    });
+                }
+            }
+        };
+
+        // Initialize charts
+        function initCharts() {
+            // Response Time Chart
+            const responseTimeCtx = document.getElementById('responseTimeChart').getContext('2d');
+            responseTimeChart = new Chart(responseTimeCtx, {
+                type: 'line',
+                data: {
+                    labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+                    datasets: [{
+                        label: 'Response Time (ms)',
+                        data: [125, 132, 128, 145, 127, 134, 127],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Response Time (ms)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Availability Chart
+            const availabilityCtx = document.getElementById('availabilityChart').getContext('2d');
+            availabilityChart = new Chart(availabilityCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Operational', 'Degraded', 'Outage'],
+                    datasets: [{
+                        data: [98.5, 1.2, 0.3],
+                        backgroundColor: [
+                            '#10b981',
+                            '#f59e0b',
+                            '#ef4444'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Status functions
+        function copyEndpointUrl() {
+            const url = 'https://empire-pro-status.utahj4754.workers.dev/';
+            navigator.clipboard.writeText(url).then(() => {
+                showNotification('Copied', 'Status endpoint URL copied to clipboard', 'success');
+            });
+        }
+
+        function subscribeToUpdates() {
+            showNotification('Subscription', 'Subscribed to status updates', 'success');
+        }
+
+        function refreshStatus() {
+            showNotification('Refreshing', 'Updating status information...', 'info');
+            
+            // Simulate refresh
+            setTimeout(() => {
+                updateLastUpdated();
+                showNotification('Updated', 'Status information refreshed', 'success');
+            }, 2000);
+        }
+
+        function updateLastUpdated() {
+            const now = new Date();
+            document.getElementById('last-updated').textContent = now.toLocaleTimeString();
+        }
+
+        function viewServiceDetails(service) {
+            showNotification('Service Details', `Opening details for ${service}...`, 'info');
+        }
+
+        function viewIncidents() {
+            showNotification('Incidents', 'Opening incident history...', 'info');
+        }
+
+        function viewAllIncidents() {
+            showNotification('All Incidents', 'Loading complete incident history...', 'info');
+        }
+
+        function runHealthCheck() {
+            showNotification('Health Check', 'Running comprehensive health check...', 'info');
+            
+            setTimeout(() => {
+                showNotification('Health Check', 'All systems healthy', 'success');
+            }, 3000);
+        }
+
+        function downloadReport() {
+            const report = {
+                timestamp: new Date().toISOString(),
+                systemStatus: 'Operational',
+                uptime: '99.9%',
+                activeServices: 24,
+                responseTime: '127ms',
+                errorRate: '0.03%',
+                services: [
+                    { name: 'API Gateway', status: 'Operational', uptime: '99.99%' },
+                    { name: 'Database Services', status: 'Operational', uptime: '99.95%' },
+                    { name: 'Authentication', status: 'Operational', uptime: '99.98%' },
+                    { name: 'Storage Services', status: 'Degraded', uptime: '98.5%' }
+                ]
+            };
+            
+            const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `empire-pro-status-report-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('Report Downloaded', 'Status report exported successfully', 'success');
+        }
+
+        function testEndpoints() {
+            showNotification('Testing', 'Testing all service endpoints...', 'info');
+            
+            setTimeout(() => {
+                showNotification('Tests Complete', 'All endpoints responding normally', 'success');
+            }, 4000);
+        }
+
+        function contactSupport() {
+            showNotification('Support', 'Opening support contact options...', 'info');
+        }
+
+        function showNotification(title, message, type = 'info') {
+            console.log(`[${type.toUpperCase()}] ${title}: ${message}`);
+        }
+
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            updateLastUpdated();
+        }, 30000);
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            themeManager.init();
+            initCharts();
+            
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+
+        // Global functions
+        function toggleTheme() {
+            themeManager.toggleTheme();
+        }
+    </script>
+</body>
+</html>

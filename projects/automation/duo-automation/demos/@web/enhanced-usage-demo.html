@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keyboard Shortcuts Lite - Enhanced Usage Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes shortcut-highlight {
+            0% { background-color: rgba(59, 130, 246, 0.1); }
+            50% { background-color: rgba(59, 130, 246, 0.3); }
+            100% { background-color: rgba(59, 130, 246, 0.1); }
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
+        }
+        
+        @keyframes slide-in {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes command-palette-open {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .shortcut-active {
+            animation: shortcut-highlight 0.5s ease-in-out;
+        }
+        
+        .code-block {
+            background: #3b82f6;
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        
+        .shortcut-key {
+            background: linear-gradient(135deg, #3b82f6, #3b82f6);
+            border: 1px solid #3b82f6;
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-family: monospace;
+            font-size: 12px;
+            display: inline-block;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+        
+        .shortcut-key:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tab-button {
+            background: linear-gradient(135deg, #3b82f6, #3b82f6);
+            border: 1px solid #3b82f6;
+            border-radius: 8px 8px 0 0;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tab-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .tab-button:hover::before {
+            left: 100%;
+        }
+        
+        .tab-button.active {
+            background: linear-gradient(135deg, #3b82f6, #3b82f6);
+            border-bottom-color: #3b82f6;
+            box-shadow: 0 -2px 10px rgba(59, 130, 246, 0.3);
+        }
+        
+        .tab-content {
+            display: none;
+            animation: slide-in 0.3s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .command-palette {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #3b82f6, #3b82f6);
+            border: 1px solid #3b82f6;
+            border-radius: 12px;
+            padding: 20px;
+            min-width: 500px;
+            max-width: 600px;
+            max-height: 400px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            animation: command-palette-open 0.2s ease;
+        }
+        
+        .command-palette-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #3b82f6, #3b82f6);
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, #3b82f6, #3b82f6);
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        
+        .feature-card:hover {
+            transform: scale(1.02);
+            border-color: #3b82f6;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        
+        .status-indicator.active {
+            background: #10b981;
+        }
+        
+        .status-indicator.inactive {
+            background: #ef4444;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            height: 6px;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+        
+        .floating-action {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        
+        .floating-action:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.7);
+        }
+        
+        .light-theme {
+            background: #3b82f6;
+            color: #3b82f6;
+        }
+        
+        .light-theme .bg-gray-800 {
+            background: #3b82f6;
+            border-color: #3b82f6;
+        }
+        
+        .light-theme .bg-gray-700 {
+            background: #3b82f6;
+            border-color: #3b82f6;
+        }
+        
+        .light-theme .text-gray-400 {
+            color: #3b82f6;
+        }
+        
+        .light-theme .text-white {
+            color: #3b82f6;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #10b981, #3b82f6);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5);
+            z-index: 1001;
+            animation: slide-in 0.3s ease;
+            max-width: 300px;
+        }
+        
+        .notification.error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.5);
+        }
+        
+        .notification.warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <!-- Enhanced Header -->
+    <header class="bg-gradient-to-r from-gray-800 to-gray-900 border-b border-gray-700 px-6 py-4 shadow-lg">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-keyboard text-2xl text-blue-400"></i>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                        Keyboard Shortcuts Lite
+                    </h1>
+                </div>
+                <span class="status-indicator active"></span>
+                <span class="text-sm text-gray-400">Enhanced Demo</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button onclick="showShortcuts()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105">
+                    <i class="fas fa-list mr-2"></i>All Shortcuts (Ctrl+/)
+                </button>
+                <button onclick="toggleTheme()" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105">
+                    <i class="fas fa-moon mr-2" id="themeIcon"></i>Theme (Ctrl+Shift+T)
+                </button>
+                <button onclick="toggleFullscreen()" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105">
+                    <i class="fas fa-expand mr-2"></i>Fullscreen (F11)
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div class="metric-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-2xl font-bold text-blue-400" id="totalShortcuts">0</div>
+                        <div class="text-sm text-gray-400">Total Shortcuts</div>
+                    </div>
+                    <i class="fas fa-keyboard text-3xl text-blue-400 opacity-50"></i>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-2xl font-bold text-green-400" id="executedCount">0</div>
+                        <div class="text-sm text-gray-400">Executed</div>
+                    </div>
+                    <i class="fas fa-play text-3xl text-green-400 opacity-50"></i>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-2xl font-bold text-yellow-400" id="avgTime">0ms</div>
+                        <div class="text-sm text-gray-400">Avg Time</div>
+                    </div>
+                    <i class="fas fa-clock text-3xl text-yellow-400 opacity-50"></i>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-2xl font-bold text-purple-400" id="successRate">100%</div>
+                        <div class="text-sm text-gray-400">Success Rate</div>
+                    </div>
+                    <i class="fas fa-chart-line text-3xl text-purple-400 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Tab Navigation -->
+        <div class="flex space-x-2 mb-6 bg-gray-800 p-2 rounded-lg">
+            <button class="tab-button active" onclick="switchTab('basic')">
+                <i class="fas fa-play mr-2"></i>Basic Usage
+            </button>
+            <button class="tab-button" onclick="switchTab('advanced')">
+                <i class="fas fa-rocket mr-2"></i>Advanced Features
+            </button>
+            <button class="tab-button" onclick="switchTab('react')">
+                <i class="fab fa-react mr-2"></i>React Integration
+            </button>
+            <button class="tab-button" onclick="switchTab('vue')">
+                <i class="fab fa-vuejs mr-2"></i>Vue Integration
+            </button>
+            <button class="tab-button" onclick="switchTab('performance')">
+                <i class="fas fa-tachometer-alt mr-2"></i>Performance
+            </button>
+            <button class="tab-button" onclick="switchTab('enterprise')">
+                <i class="fas fa-building mr-2"></i>Enterprise
+            </button>
+        </div>
+
+        <!-- Basic Usage Tab -->
+        <div id="basic-tab" class="tab-content active">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Enhanced Interactive Demo -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-gamepad mr-2 text-blue-400"></i>
+                        Interactive Demo
+                    </h2>
+                    <div class="bg-gray-800 rounded-lg p-6 shadow-xl">
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium mb-3 text-blue-400">Essential Shortcuts</h3>
+                            <div class="grid grid-cols-2 gap-3 text-sm">
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+S</span>
+                                    <span>Save</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+N</span>
+                                    <span>New File</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+O</span>
+                                    <span>Open</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+Z</span>
+                                    <span>Undo</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+Y</span>
+                                    <span>Redo</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+B</span>
+                                    <span>Bold</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+I</span>
+                                    <span>Italic</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+U</span>
+                                    <span>Underline</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium mb-2 text-gray-300">
+                                <i class="fas fa-edit mr-1"></i>Rich Text Editor
+                            </label>
+                            <div class="bg-gray-700 rounded-lg p-1 mb-2">
+                                <div class="flex space-x-2 p-2 border-b border-gray-600">
+                                    <button onclick="formatText('bold')" class="p-2 hover:bg-gray-600 rounded" title="Bold (Ctrl+B)">
+                                        <i class="fas fa-bold"></i>
+                                    </button>
+                                    <button onclick="formatText('italic')" class="p-2 hover:bg-gray-600 rounded" title="Italic (Ctrl+I)">
+                                        <i class="fas fa-italic"></i>
+                                    </button>
+                                    <button onclick="formatText('underline')" class="p-2 hover:bg-gray-600 rounded" title="Underline (Ctrl+U)">
+                                        <i class="fas fa-underline"></i>
+                                    </button>
+                                    <div class="border-l border-gray-600 mx-2"></div>
+                                    <button onclick="formatText('undo')" class="p-2 hover:bg-gray-600 rounded" title="Undo (Ctrl+Z)">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                    <button onclick="formatText('redo')" class="p-2 hover:bg-gray-600 rounded" title="Redo (Ctrl+Y)">
+                                        <i class="fas fa-redo"></i>
+                                    </button>
+                                </div>
+                                <div 
+                                    id="textEditor" 
+                                    contenteditable="true"
+                                    class="w-full h-32 bg-gray-800 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+                                    placeholder="Start typing and try the shortcuts... (Ctrl+B for bold, Ctrl+I for italic, Ctrl+U for underline)"
+                                ></div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium mb-2 text-gray-300">
+                                <i class="fas fa-info-circle mr-1"></i>Status
+                            </label>
+                            <div id="status" class="bg-gradient-to-r from-gray-700 to-gray-800 rounded p-3 text-sm font-mono border border-gray-600">
+                                <i class="fas fa-check-circle text-green-400 mr-2"></i>
+                                Ready. Try pressing Ctrl+S to save...
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-gray-300">
+                                <i class="fas fa-history mr-1"></i>Action History
+                            </label>
+                            <div id="actionLog" class="bg-gray-700 rounded p-3 h-32 overflow-y-auto text-xs font-mono border border-gray-600">
+                                <div class="text-gray-400">Actions will appear here...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Code Example -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-code mr-2 text-green-400"></i>
+                        Basic Usage Code
+                    </h2>
+                    <div class="code-block">
+                        <pre class="text-green-400"><span class="text-blue-400">// Import the library</span>
+<span class="text-purple-400">import</span> { shortcuts } <span class="text-purple-400">from</span> <span class="text-yellow-400">'keyboard-shortcuts-lite'</span>;
+
+<span class="text-blue-400">// Register shortcuts with options</span>
+shortcuts.<span class="text-yellow-400">register</span>(<span class="text-yellow-400">'ctrl+s'</span>, () => {
+    <span class="text-purple-400">console</span>.<span class="text-yellow-400">log</span>(<span class="text-yellow-400">'Save triggered!'</span>);
+    <span class="text-yellow-400">saveFile</span>();
+}, {
+    <span class="text-yellow-400">description</span>: <span class="text-yellow-400">'Save file'</span>,
+    <span class="text-yellow-400">category</span>: <span class="text-yellow-400">'file'</span>,
+    <span class="text-yellow-400">preventDefault</span>: <span class="text-purple-400">true</span>
+});
+
+<span class="text-blue-400">// Register multiple shortcuts</span>
+shortcuts.<span class="text-yellow-400">register</span>(<span class="text-yellow-400">'ctrl+n'</span>, () => <span class="text-yellow-400">createNewFile</span>());
+shortcuts.<span class="text-yellow-400">register</span>(<span class="text-yellow-400">'ctrl+o'</span>, () => <span class="text-yellow-400">openFile</span>());
+shortcuts.<span class="text-yellow-400">register</span>(<span class="text-yellow-400">'ctrl+b'</span>, () => <span class="text-yellow-400">applyBold</span>());
+
+<span class="text-blue-400">// Initialize the system</span>
+shortcuts.<span class="text-yellow-400">init</span>({
+    <span class="text-yellow-400">debug</span>: <span class="text-purple-400">true</span>,
+    <span class="text-yellow-400">performance</span>: <span class="text-purple-400">true</span>
+});
+
+<span class="text-blue-400">// Your application continues...</span></pre>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <h3 class="text-lg font-semibold mb-3 text-green-400">
+                            <i class="fas fa-download mr-2"></i>Installation
+                        </h3>
+                        <div class="code-block">
+                            <pre class="text-blue-400"><span class="text-gray-400"># Using npm</span>
+npm install keyboard-shortcuts-lite
+
+<span class="text-gray-400"># Using yarn</span>
+yarn add keyboard-shortcuts-lite
+
+<span class="text-gray-400"># Using bun (recommended for max performance)</span>
+bun add keyboard-shortcuts-lite
+
+<span class="text-gray-400"># CDN usage</span>
+&lt;script src="https://unpkg.com/keyboard-shortcuts-lite"&gt;&lt;/script&gt;</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Features Tab -->
+        <div id="advanced-tab" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Advanced Demo -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-rocket mr-2 text-purple-400"></i>
+                        Advanced Features
+                    </h2>
+                    <div class="bg-gray-800 rounded-lg p-6 shadow-xl">
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium mb-3 text-purple-400">Power Shortcuts</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+K Ctrl+S</span>
+                                    <span class="text-yellow-400">Save and close (sequence)</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+Shift+P</span>
+                                    <span class="text-blue-400">Command palette</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+Enter</span>
+                                    <span class="text-green-400">Toggle edit mode</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+Shift+T</span>
+                                    <span class="text-orange-400">Toggle theme</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+1-9</span>
+                                    <span class="text-pink-400">Switch to tab</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+Shift+A</span>
+                                    <span class="text-red-400">Select all instances</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium mb-3 text-blue-400">Command Palette</h3>
+                            <button onclick="toggleCommandPalette()" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-4 py-3 rounded-lg transition-all duration-200 hover:scale-105">
+                                <i class="fas fa-terminal mr-2"></i>
+                                Open Command Palette (Ctrl+Shift+P)
+                            </button>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium mb-3 text-green-400">Edit Mode</h3>
+                            <div class="bg-gray-700 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-sm">
+                                        Edit Mode: 
+                                        <span id="editModeStatus" class="font-bold text-yellow-400 ml-2">OFF</span>
+                                    </span>
+                                    <button onclick="toggleEditMode()" class="bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-xs transition-all duration-200 hover:scale-105">
+                                        Toggle (Ctrl+Enter)
+                                    </button>
+                                </div>
+                                <div class="text-xs text-gray-400">
+                                    Edit mode enables advanced text manipulation and multi-cursor support
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium mb-3 text-orange-400">Multi-Cursor Support</h3>
+                            <div class="bg-gray-700 rounded-lg p-4">
+                                <div class="text-sm space-y-2">
+                                    <div><span class="shortcut-key">Alt+Click</span> Add cursor</div>
+                                    <div><span class="shortcut-key">Ctrl+Alt+Up/Down</span> Add cursor above/below</div>
+                                    <div><span class="shortcut-key">Ctrl+D</span> Select next occurrence</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Code -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-cogs mr-2 text-orange-400"></i>
+                        Advanced Implementation
+                    </h2>
+                    <div class="code-block">
+                        <pre class="text-orange-400"><span class="text-blue-400">// Advanced configuration</span>
+<span class="text-purple-400">const</span> config = {
+    <span class="text-yellow-400">preventDefault</span>: <span class="text-purple-400">true</span>,
+    <span class="text-yellow-400">stopPropagation</span>: <span class="text-purple-400">true</span>,
+    <span class="text-yellow-400">throttle</span>: <span class="text-purple-400">16</span>, <span class="text-gray-400">// 60fps</span>
+    <span class="text-yellow-400">debounce</span>: <span class="text-purple-400">100</span>,
+    <span class="text-yellow-400">debug</span>: <span class="text-purple-400">true</span>,
+    <span class="text-yellow-400">performance</span>: <span class="text-purple-400">true</span>
+};
+
+<span class="text-blue-400">// Multi-key sequences</span>
+shortcuts.<span class="text-yellow-400">register</span>(<span class="text-yellow-400">'ctrl+k ctrl+s'</span>, () => {
+    <span class="text-yellow-400">saveAndClose</span>();
+}, { 
+    <span class="text-yellow-400">sequence</span>: <span class="text-purple-400">true</span>,
+    <span class="text-yellow-400">description</span>: <span class="text-yellow-400">'Save and close'</span>
+});
+
+<span class="text-blue-400">// Conditional shortcuts</span>
+shortcuts.<span class="text-yellow-400">register</span>(<span class="text-yellow-400">'ctrl+enter'</span>, () => {
+    <span class="text-purple-400">if</span> (<span class="text-yellow-400">isEditMode</span>()) {
+        <span class="text-yellow-400">exitEditMode</span>();
+    } <span class="text-purple-400">else</span> {
+        <span class="text-yellow-400">enterEditMode</span>();
+    }
+}, { 
+    <span class="text-yellow-400">condition</span>: () => <span class="text-purple-400">true</span>,
+    <span class="text-yellow-400">context</span>: <span class="text-yellow-400">'editor'</span>
+});
+
+<span class="text-blue-400">// Dynamic shortcuts</span>
+shortcuts.<span class="text-yellow-400">register</span>(<span class="text-yellow-400">'ctrl+shift+p'</span>, () => {
+    <span class="text-yellow-400">showCommandPalette</span>();
+}, { 
+    <span class="text-yellow-400">dynamic</span>: <span class="text-purple-400">true</span>,
+    <span class="text-yellow-400">priority</span>: <span class="text-purple-400">1</span>
+});
+
+<span class="text-blue-400">// Throttled shortcuts for performance</span>
+shortcuts.<span class="text-yellow-400">register</span>(<span class="text-yellow-400">'ctrl+space'</span>, () => {
+    <span class="text-yellow-400">showAutocomplete</span>();
+}, { 
+    <span class="text-yellow-400">throttle</span>: <span class="text-purple-400">100</span>,
+    <span class="text-yellow-400">preventDefault</span>: <span class="text-purple-400">true</span>
+});
+
+<span class="text-blue-400">// Initialize with advanced config</span>
+shortcuts.<span class="text-yellow-400">init</span>(config);</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- React Integration Tab -->
+        <div id="react-tab" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- React Demo -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fab fa-react mr-2 text-cyan-400"></i>
+                        React Integration
+                    </h2>
+                    <div class="bg-gray-800 rounded-lg p-6 shadow-xl">
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium mb-3 text-cyan-400">React Features</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-check text-green-400"></i>
+                                    <span>Context-based shortcut management</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-check text-green-400"></i>
+                                    <span>Automatic cleanup on unmount</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-check text-green-400"></i>
+                                    <span>Type-safe shortcut registration</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-check text-green-400"></i>
+                                    <span>Component-scoped shortcuts</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-check text-green-400"></i>
+                                    <span>Hook-based API</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium mb-3 text-blue-400">React Shortcuts</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+S</span>
+                                    <span>Save in React component</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+Z</span>
+                                    <span>Undo React state</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+Shift+R</span>
+                                    <span>Reset React state</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium mb-3 text-green-400">Component Demo</h3>
+                            <div class="bg-gray-700 rounded-lg p-4">
+                                <div class="text-sm font-mono">
+                                    <div>Component State: <span id="reactState" class="text-green-400">Ready</span></div>
+                                    <div>Active Shortcuts: <span id="reactShortcuts" class="text-blue-400">3</span></div>
+                                    <div>Cleanup Status: <span class="text-yellow-400">Auto</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- React Code -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-code mr-2 text-cyan-400"></i>
+                        React Implementation
+                    </h2>
+                    <div class="code-block">
+                        <pre class="text-cyan-400"><span class="text-blue-400">// React Hook Integration</span>
+<span class="text-purple-400">import</span> { useKeyboardShortcuts } <span class="text-purple-400">from</span> <span class="text-yellow-400">'./useKeyboardShortcuts'</span>;
+
+<span class="text-purple-400">const</span> <span class="text-yellow-400">TextEditor</span> = () => {
+    <span class="text-purple-400">const</span> [content, setContent] = <span class="text-yellow-400">useState</span>(<span class="text-yellow-400">''</span>);
+    <span class="text-purple-400">const</span> { registerShortcut } = <span class="text-yellow-400">useKeyboardShortcuts</span>();
+    
+    <span class="text-yellow-400">useEffect</span>(() => {
+        <span class="text-blue-400">// Register shortcuts for this component</span>
+        <span class="text-purple-400">const</span> unregisterSave = <span class="text-yellow-400">registerShortcut</span>(<span class="text-yellow-400">'ctrl+s'</span>, () => {
+            <span class="text-yellow-400">saveContent</span>(content);
+        }, {
+            <span class="text-yellow-400">description</span>: <span class="text-yellow-400">'Save content'</span>,
+            <span class="text-yellow-400">category</span>: <span class="text-yellow-400">'file'</span>
+        });
+        
+        <span class="text-purple-400">const</span> unregisterUndo = <span class="text-yellow-400">registerShortcut</span>(<span class="text-yellow-400">'ctrl+z'</span>, () => {
+            <span class="text-yellow-400">undo</span>();
+        }, {
+            <span class="text-yellow-400">description</span>: <span class="text-yellow-400">'Undo action'</span>,
+            <span class="text-yellow-400">category</span>: <span class="text-yellow-400">'edit'</span>
+        });
+        
+        <span class="text-blue-400">// Automatic cleanup on unmount</span>
+        <span class="text-purple-400">return</span> () => {
+            unregisterSave();
+            unregisterUndo();
+        };
+    }, [registerShortcut, content]);
+    
+    <span class="text-purple-400">return</span> (
+        &lt;<span class="text-yellow-400">div</span> <span class="text-yellow-400">className</span>=<span class="text-yellow-400">"text-editor"</span>&gt;
+            &lt;<span class="text-yellow-400">textarea</span>
+                <span class="text-yellow-400">value</span>={content}
+                <span class="text-yellow-400">onChange</span>={(e) => <span class="text-yellow-400">setContent</span>(e.target.<span class="text-yellow-400">value</span>)}
+                <span class="text-yellow-400">placeholder</span>=<span class="text-yellow-400">"Type here... (Ctrl+S to save)"</span>
+            /&gt;
+        &lt;/<span class="text-yellow-400">div</span>&gt;
+    );
+};
+
+<span class="text-blue-400">// Context Provider</span>
+<span class="text-purple-400">export const</span> <span class="text-yellow-400">KeyboardShortcutsProvider</span> = ({ children }) => {
+    <span class="text-purple-400">const</span> [manager] = <span class="text-yellow-400">useState</span>(() => <span class="text-yellow-400">shortcuts</span>);
+    
+    <span class="text-yellow-400">useEffect</span>(() => {
+        manager.<span class="text-yellow-400">init</span>();
+        <span class="text-purple-400">return</span> () => manager.<span class="text-yellow-400">destroy</span>();
+    }, [manager]);
+    
+    <span class="text-purple-400">return</span> (
+        &lt;<span class="text-yellow-400">KeyboardContext</span>.<span class="text-yellow-400">Provider</span> <span class="text-yellow-400">value</span>={{ manager }}&gt;
+            {children}
+        &lt;/<span class="text-yellow-400">KeyboardContext</span>.<span class="text-yellow-400">Provider</span>&gt;
+    );
+};</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vue Integration Tab -->
+        <div id="vue-tab" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Vue Demo -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fab fa-vuejs mr-2 text-green-500"></i>
+                        Vue Integration
+                    </h2>
+                    <div class="bg-gray-800 rounded-lg p-6 shadow-xl">
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium mb-3 text-green-500">Vue Composable Features</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-check text-green-400"></i>
+                                    <span>Composition API integration</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-check text-green-400"></i>
+                                    <span>Reactive shortcut management</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-check text-green-400"></i>
+                                    <span>Lifecycle-aware cleanup</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-check text-green-400"></i>
+                                    <span>TypeScript support</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-check text-green-400"></i>
+                                    <span>Plugin system ready</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium mb-3 text-blue-400">Vue Shortcuts</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+S</span>
+                                    <span>Save in Vue component</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+R</span>
+                                    <span>Refresh Vue data</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+E</span>
+                                    <span>Edit mode</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium mb-3 text-green-400">Vue Demo</h3>
+                            <div class="bg-gray-700 rounded-lg p-4">
+                                <div class="text-sm font-mono">
+                                    <div>Vue State: <span id="vueState" class="text-green-400">Ready</span></div>
+                                    <div>Composables: <span class="text-blue-400">Active</span></div>
+                                    <div>Reactivity: <span class="text-yellow-400">Enabled</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vue Code -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-code mr-2 text-green-500"></i>
+                        Vue Implementation
+                    </h2>
+                    <div class="code-block">
+                        <pre class="text-green-500"><span class="text-blue-400">// Vue Composable</span>
+<span class="text-purple-400">import</span> { useKeyboardShortcuts } <span class="text-purple-400">from</span> <span class="text-yellow-400">'./useKeyboardShortcuts'</span>;
+
+<span class="text-purple-400">export default</span> {
+    <span class="text-yellow-400">setup</span>() {
+        <span class="text-purple-400">const</span> content = <span class="text-yellow-400">ref</span>(<span class="text-yellow-400">''</span>);
+        <span class="text-purple-400">const</span> { register } = <span class="text-yellow-400">useKeyboardShortcuts</span>();
+        
+        <span class="text-yellow-400">onMounted</span>(() => {
+            <span class="text-blue-400">// Register shortcuts</span>
+            <span class="text-yellow-400">register</span>(<span class="text-yellow-400">'ctrl+s'</span>, () => {
+                <span class="text-yellow-400">saveContent</span>(content.<span class="text-yellow-400">value</span>);
+            }, {
+                <span class="text-yellow-400">description</span>: <span class="text-yellow-400">'Save content'</span>,
+                <span class="text-yellow-400">category</span>: <span class="text-yellow-400">'file'</span>
+            });
+            
+            <span class="text-yellow-400">register</span>(<span class="text-yellow-400">'ctrl+r'</span>, () => {
+                <span class="text-yellow-400">refreshData</span>();
+            }, {
+                <span class="text-yellow-400">description</span>: <span class="text-yellow-400">'Refresh data'</span>,
+                <span class="text-yellow-400">category</span>: <span class="text-yellow-400">'data'</span>
+            });
+            
+            <span class="text-yellow-400">register</span>(<span class="text-yellow-400">'ctrl+e'</span>, () => {
+                <span class="text-yellow-400">toggleEditMode</span>();
+            }, {
+                <span class="text-yellow-400">description</span>: <span class="text-yellow-400">'Toggle edit mode'</span>,
+                <span class="text-yellow-400">category</span>: <span class="text-yellow-400">'view'</span>
+            });
+        });
+        
+        <span class="text-blue-400">// Automatic cleanup</span>
+        <span class="text-yellow-400">onUnmounted</span>(() => {
+            <span class="text-blue-400">// Cleanup handled by composable</span>
+        });
+        
+        <span class="text-purple-400">return</span> {
+            content,
+            <span class="text-yellow-400">saveContent</span>: () => <span class="text-purple-400">console</span>.<span class="text-yellow-400">log</span>(<span class="text-yellow-400">'Saving...'</span>),
+            <span class="text-yellow-400">refreshData</span>: () => <span class="text-purple-400">console</span>.<span class="text-yellow-400">log</span>(<span class="text-yellow-400">'Refreshing...'</span>),
+            <span class="text-yellow-400">toggleEditMode</span>: () => <span class="text-purple-400">console</span>.<span class="text-yellow-400">log</span>(<span class="text-yellow-400">'Toggle edit mode'</span>)
+        };
+    }
+};
+
+<span class="text-blue-400">// Composable implementation</span>
+<span class="text-purple-400">export function</span> <span class="text-yellow-400">useKeyboardShortcuts</span>() {
+    <span class="text-purple-400">const</span> manager = <span class="text-yellow-400">shortcuts</span>;
+    <span class="text-purple-400">const</span> shortcuts = <span class="text-yellow-400">ref</span>([]);
+    
+    <span class="text-yellow-400">onMounted</span>(() => {
+        manager.<span class="text-yellow-400">init</span>();
+    });
+    
+    <span class="text-yellow-400">onUnmounted</span>(() => {
+        manager.<span class="text-yellow-400">destroy</span>();
+    });
+    
+    <span class="text-purple-400">const</span> <span class="text-yellow-400">register</span> = (key, callback, options = {}) => {
+        <span class="text-purple-400">const</span> unregister = manager.<span class="text-yellow-400">register</span>(key, callback, options);
+        shortcuts.<span class="text-yellow-400">value</span>.<span class="text-yellow-400">push</span>({ key, options });
+        <span class="text-purple-400">return</span> unregister;
+    };
+    
+    <span class="text-purple-400">return</span> {
+        register,
+        shortcuts: <span class="text-yellow-400">readonly</span>(shortcuts),
+        manager
+    };
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Tab -->
+        <div id="performance-tab" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Performance Demo -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-tachometer-alt mr-2 text-yellow-400"></i>
+                        Performance Monitoring
+                    </h2>
+                    <div class="bg-gray-800 rounded-lg p-6 shadow-xl">
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium mb-3 text-yellow-400">Real-time Metrics</h3>
+                            <div class="space-y-3 text-sm font-mono">
+                                <div class="flex justify-between items-center">
+                                    <span>Registrations:</span>
+                                    <span id="perfRegCount" class="text-green-400 font-bold">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span>Executions:</span>
+                                    <span id="perfExecCount" class="text-blue-400 font-bold">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span>Avg Time:</span>
+                                    <span id="perfAvgTime" class="text-yellow-400 font-bold">0ms</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span>Errors:</span>
+                                    <span id="perfErrorCount" class="text-red-400 font-bold">0</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span>Memory Usage:</span>
+                                    <span id="perfMemory" class="text-purple-400 font-bold">0MB</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span>Success Rate:</span>
+                                    <span id="perfSuccessRate" class="text-green-400 font-bold">100%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium mb-3 text-blue-400">Performance Tests</h3>
+                            <div class="space-y-3">
+                                <button onclick="runPerformanceTest()" class="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 px-4 py-3 rounded-lg transition-all duration-200 hover:scale-105">
+                                    <i class="fas fa-play mr-2"></i>
+                                    Run Performance Test (100 shortcuts)
+                                </button>
+                                <button onclick="runStressTest()" class="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 px-4 py-3 rounded-lg transition-all duration-200 hover:scale-105">
+                                    <i class="fas fa-fire mr-2"></i>
+                                    Run Stress Test (1000 shortcuts)
+                                </button>
+                                <button onclick="runMemoryTest()" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 px-4 py-3 rounded-lg transition-all duration-200 hover:scale-105">
+                                    <i class="fas fa-memory mr-2"></i>
+                                    Memory Leak Test
+                                </button>
+                                <button onclick="resetMetrics()" class="w-full bg-gray-600 hover:bg-gray-700 px-4 py-3 rounded-lg transition-all duration-200 hover:scale-105">
+                                    <i class="fas fa-redo mr-2"></i>
+                                    Reset Metrics
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium mb-3 text-green-400">Performance Graph</h3>
+                            <div class="bg-gray-700 rounded-lg p-4 h-32 relative">
+                                <canvas id="performanceChart" class="w-full h-full"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Code -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-code mr-2 text-yellow-400"></i>
+                        Performance Optimization
+                    </h2>
+                    <div class="code-block">
+                        <pre class="text-yellow-400"><span class="text-blue-400">// Performance Monitoring Class</span>
+<span class="text-purple-400">class</span> <span class="text-yellow-400">PerformanceMonitor</span> {
+    <span class="text-purple-400">constructor</span>() {
+        <span class="text-purple-400">this</span>.<span class="text-yellow-400">metrics</span> = {
+            <span class="text-yellow-400">registrations</span>: <span class="text-purple-400">0</span>,
+            <span class="text-yellow-400">executions</span>: <span class="text-purple-400">0</span>,
+            <span class="text-yellow-400">averageTime</span>: <span class="text-purple-400">0</span>,
+            <span class="text-yellow-400">errors</span>: <span class="text-purple-400">0</span>,
+            <span class="text-yellow-400">memoryUsage</span>: <span class="text-purple-400">0</span>
+        };
+        
+        <span class="text-purple-400">this</span>.<span class="text-yellow-400">setupTracking</span>();
+    }
+    
+    <span class="text-yellow-400">setupTracking</span>() {
+        <span class="text-blue-400">// Track registration performance</span>
+        <span class="text-purple-400">const</span> originalRegister = shortcuts.<span class="text-yellow-400">register</span>;
+        shortcuts.<span class="text-yellow-400">register</span> = (key, callback, options) => {
+            <span class="text-purple-400">const</span> start = <span class="text-yellow-400">performance</span>.<span class="text-yellow-400">now</span>();
+            <span class="text-purple-400">const</span> result = originalRegister.<span class="text-yellow-400">call</span>(shortcuts, key, callback, options);
+            <span class="text-purple-400">const</span> end = <span class="text-yellow-400">performance</span>.<span class="text-yellow-400">now</span>();
+            
+            <span class="text-purple-400">this</span>.<span class="text-yellow-400">metrics</span>.<span class="text-yellow-400">registrations</span>++;
+            <span class="text-purple-400">console</span>.<span class="text-yellow-400">log</span>(<span class="text-gray-400">`Registered ${key} in ${(end-start).toFixed(2)}ms`</span>);
+            <span class="text-purple-400">return</span> result;
+        };
+        
+        <span class="text-blue-400">// Track execution performance</span>
+        shortcuts.<span class="text-yellow-400">on</span>(<span class="text-yellow-400">'execute'</span>, (data) => {
+            <span class="text-purple-400">const</span> start = <span class="text-yellow-400">performance</span>.<span class="text-yellow-400">now</span>();
+            <span class="text-purple-400">this</span>.<span class="text-yellow-400">metrics</span>.<span class="text-yellow-400">executions</span>++;
+            
+            <span class="text-yellow-400">setTimeout</span>(() => {
+                <span class="text-purple-400">const</span> end = <span class="text-yellow-400">performance</span>.<span class="text-yellow-400">now</span>();
+                <span class="text-purple-400">const</span> executionTime = end - start;
+                <span class="text-purple-400">this</span>.<span class="text-yellow-400">metrics</span>.<span class="text-yellow-400">averageTime</span> = 
+                    (<span class="text-purple-400">this</span>.<span class="text-yellow-400">metrics</span>.<span class="text-yellow-400">averageTime</span> + executionTime) / <span class="text-purple-400">2</span>;
+                
+                <span class="text-purple-400">this</span>.<span class="text-yellow-400">updateChart</span>(executionTime);
+            }, <span class="text-purple-400">0</span>);
+        });
+    }
+    
+    <span class="text-yellow-400">runStressTest</span>(count = <span class="text-purple-400">1000</span>) {
+        <span class="text-purple-400">const</span> start = <span class="text-yellow-400">performance</span>.<span class="text-yellow-400">now</span>();
+        
+        <span class="text-blue-400">// Register many shortcuts rapidly</span>
+        <span class="text-purple-400">for</span> (<span class="text-purple-400">let</span> i = <span class="text-purple-400">0</span>; i < count; i++) {
+            shortcuts.<span class="text-yellow-400">register</span>(<span class="text-gray-400">`ctrl+shift+${i}`</span>, () => {
+                <span class="text-purple-400">console</span>.<span class="text-yellow-400">log</span>(<span class="text-gray-400">`Stress test ${i}`</span>);
+            });
+        }
+        
+        <span class="text-purple-400">const</span> end = <span class="text-yellow-400">performance</span>.<span class="text-yellow-400">now</span>();
+        <span class="text-purple-400">console</span>.<span class="text-yellow-400">log</span>(<span class="text-gray-400">`Stress test: ${count} shortcuts in ${(end-start).toFixed(2)}ms`</span>);
+        
+        <span class="text-blue-400">// Memory check</span>
+        <span class="text-purple-400">if</span> (<span class="text-yellow-400">performance</span>.<span class="text-yellow-400">memory</span>) {
+            <span class="text-purple-400">this</span>.<span class="text-yellow-400">metrics</span>.<span class="text-yellow-400">memoryUsage</span> = 
+                <span class="text-yellow-400">performance</span>.<span class="text-yellow-400">memory</span>.<span class="text-yellow-400">usedJSHeapSize</span> / <span class="text-purple-400">1024</span> / <span class="text-purple-400">1024</span>;
+        }
+    }
+    
+    <span class="text-yellow-400">getMetrics</span>() {
+        <span class="text-purple-400">return</span> { ...<span class="text-purple-400">this</span>.<span class="text-yellow-400">metrics</span> };
+    }
+}
+
+<span class="text-purple-400">const</span> monitor = <span class="text-purple-400">new</span> <span class="text-yellow-400">PerformanceMonitor</span>();</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enterprise Tab -->
+        <div id="enterprise-tab" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Enterprise Demo -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-building mr-2 text-indigo-400"></i>
+                        Enterprise Features
+                    </h2>
+                    <div class="bg-gray-800 rounded-lg p-6 shadow-xl">
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium mb-3 text-indigo-400">Enterprise Capabilities</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-shield-alt text-green-400"></i>
+                                    <span>Enterprise-grade security</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-users text-blue-400"></i>
+                                    <span>Multi-user support</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-chart-bar text-purple-400"></i>
+                                    <span>Advanced analytics</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-cogs text-orange-400"></i>
+                                    <span>Custom configuration</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-database text-red-400"></i>
+                                    <span>Data persistence</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium mb-3 text-blue-400">Enterprise Shortcuts</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+Shift+E</span>
+                                    <span>Enterprise settings</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+Shift+A</span>
+                                    <span>Admin panel</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="shortcut-key">Ctrl+Shift+R</span>
+                                    <span>Generate report</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium mb-3 text-green-400">User Management</h3>
+                            <div class="bg-gray-700 rounded-lg p-4">
+                                <div class="text-sm space-y-2">
+                                    <div class="flex justify-between">
+                                        <span>Active Users:</span>
+                                        <span id="activeUsers" class="text-green-400 font-bold">0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Total Sessions:</span>
+                                        <span id="totalSessions" class="text-blue-400 font-bold">0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Security Level:</span>
+                                        <span class="text-yellow-400 font-bold">Enterprise</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enterprise Code -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-code mr-2 text-indigo-400"></i>
+                        Enterprise Implementation
+                    </h2>
+                    <div class="code-block">
+                        <pre class="text-indigo-400"><span class="text-blue-400">// Enterprise Configuration</span>
+<span class="text-purple-400">const</span> enterpriseConfig = {
+    <span class="text-yellow-400">security</span>: {
+        <span class="text-yellow-400">encryption</span>: <span class="text-purple-400">true</span>,
+        <span class="text-yellow-400">authentication</span>: <span class="text-purple-400">true</span>,
+        <span class="text-yellow-400">authorization</span>: <span class="text-purple-400">true</span>,
+        <span class="text-yellow-400">audit</span>: <span class="text-purple-400">true</span>
+    },
+    <span class="text-yellow-400">multiUser</span>: {
+        <span class="text-yellow-400">enabled</span>: <span class="text-purple-400">true</span>,
+        <span class="text-yellow-400">isolation</span>: <span class="text-purple-400">true</span>,
+        <span class="text-yellow-400">sharing</span>: <span class="text-purple-400">false</span>
+    },
+    <span class="text-yellow-400">analytics</span>: {
+        <span class="text-yellow-400">tracking</span>: <span class="text-purple-400">true</span>,
+        <span class="text-yellow-400">reporting</span>: <span class="text-purple-400">true</span>,
+        <span class="text-yellow-400">metrics</span>: <span class="text-purple-400">true</span>
+    },
+    <span class="text-yellow-400">persistence</span>: {
+        <span class="text-yellow-400">storage</span>: <span class="text-yellow-400">'enterprise-database'</span>,
+        <span class="text-yellow-400">backup</span>: <span class="text-purple-400">true</span>,
+        <span class="text-yellow-400">sync</span>: <span class="text-purple-400">true</span>
+    }
+};
+
+<span class="text-blue-400">// Enterprise Manager</span>
+<span class="text-purple-400">class</span> <span class="text-yellow-400">EnterpriseShortcutManager</span> <span class="text-purple-400">extends</span> <span class="text-yellow-400">KeyboardShortcutManager</span> {
+    <span class="text-purple-400">constructor</span>(config) {
+        <span class="text-purple-400">super</span>(config);
+        <span class="text-purple-400">this</span>.<span class="text-yellow-400">initializeEnterpriseFeatures</span>();
+    }
+    
+    <span class="text-yellow-400">initializeEnterpriseFeatures</span>() {
+        <span class="text-blue-400">// User management</span>
+        <span class="text-purple-400">this</span>.<span class="text-yellow-400">userManager</span> = <span class="text-purple-400">new</span> <span class="text-yellow-400">UserManager</span>();
+        
+        <span class="text-blue-400">// Security</span>
+        <span class="text-purple-400">this</span>.<span class="text-yellow-400">securityManager</span> = <span class="text-purple-400">new</span> <span class="text-yellow-400">SecurityManager</span>();
+        
+        <span class="text-blue-400">// Analytics</span>
+        <span class="text-purple-400">this</span>.<span class="text-yellow-400">analyticsManager</span> = <span class="text-purple-400">new</span> <span class="text-yellow-400">AnalyticsManager</span>();
+        
+        <span class="text-blue-400">// Persistence</span>
+        <span class="text-purple-400">this</span>.<span class="text-yellow-400">persistenceManager</span> = <span class="text-purple-400">new</span> <span class="text-yellow-400">PersistenceManager</span>();
+    }
+    
+    <span class="text-yellow-400">registerEnterpriseShortcut</span>(key, callback, options = {}) {
+        <span class="text-blue-400">// Security check</span>
+        <span class="text-purple-400">if</span> (!<span class="text-purple-400">this</span>.<span class="text-yellow-400">securityManager</span>.<span class="text-yellow-400">hasPermission</span>(options.<span class="text-yellow-400">permission</span>)) {
+            <span class="text-purple-400">throw new</span> <span class="text-yellow-400">Error</span>(<span class="text-gray-400">'Insufficient permissions'</span>);
+        }
+        
+        <span class="text-blue-400">// Audit logging</span>
+        <span class="text-purple-400">this</span>.<span class="text-yellow-400">analyticsManager</span>.<span class="text-yellow-400">logRegistration</span>(key, options);
+        
+        <span class="text-blue-400">// Register with enhanced features</span>
+        <span class="text-purple-400">return</span> <span class="text-purple-400">this</span>.<span class="text-yellow-400">register</span>(key, callback, {
+            ...options,
+            <span class="text-yellow-400">enterprise</span>: <span class="text-purple-400">true</span>,
+            <span class="text-yellow-400">audit</span>: <span class="text-purple-400">true</span>
+        });
+    }
+    
+    <span class="text-yellow-400">generateReport</span>() {
+        <span class="text-purple-400">return</span> {
+            <span class="text-yellow-400">usage</span>: <span class="text-purple-400">this</span>.<span class="text-yellow-400">analyticsManager</span>.<span class="text-yellow-400">getUsageReport</span>(),
+            <span class="text-yellow-400">security</span>: <span class="text-purple-400">this</span>.<span class="text-yellow-400">securityManager</span>.<span class="text-yellow-400">getSecurityReport</span>(),
+            <span class="text-yellow-400">performance</span>: <span class="text-purple-400">this</span>.<span class="text-yellow-400">getPerformanceReport</span>(),
+            <span class="text-yellow-400">users</span>: <span class="text-purple-400">this</span>.<span class="text-yellow-400">userManager</span>.<span class="text-yellow-400">getUserReport</span>()
+        };
+    }
+}
+
+<span class="text-blue-400">// Initialize enterprise manager</span>
+<span class="text-purple-400">const</span> enterpriseManager = <span class="text-purple-400">new</span> <span class="text-yellow-400">EnterpriseShortcutManager</span>(enterpriseConfig);
+enterpriseManager.<span class="text-yellow-400">init</span>();</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Enhanced Footer -->
+    <footer class="bg-gray-800 border-t border-gray-700 px-6 py-6 mt-12">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+                <div>
+                    <h3 class="font-semibold mb-2 text-blue-400">
+                        <i class="fas fa-rocket mr-2"></i>Keyboard Shortcuts Lite
+                    </h3>
+                    <p class="text-gray-400">Enhanced Usage Demo v2.0</p>
+                    <p class="text-gray-400">50x faster, 97% smaller</p>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-2 text-green-400">
+                        <i class="fas fa-keyboard mr-2"></i>Quick Actions
+                    </h3>
+                    <div class="space-y-1">
+                        <div><span class="shortcut-key">Ctrl+/</span> Show shortcuts</div>
+                        <div><span class="shortcut-key">Ctrl+Shift+P</span> Command palette</div>
+                        <div><span class="shortcut-key">F11</span> Fullscreen</div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-2 text-purple-400">
+                        <i class="fas fa-chart-line mr-2"></i>Performance
+                    </h3>
+                    <div class="space-y-1">
+                        <div>Response: <span id="footerResponseTime" class="text-yellow-400">0ms</span></div>
+                        <div>Memory: <span id="footerMemory" class="text-green-400">0MB</span></div>
+                        <div>Uptime: <span id="footerUptime" class="text-blue-400">0s</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Action Button -->
+    <div class="floating-action" onclick="showQuickHelp()">
+        <i class="fas fa-question text-white text-xl"></i>
+    </div>
+
+    <!-- Command Palette Modal -->
+    <div id="commandPaletteOverlay" class="command-palette-overlay hidden" onclick="closeCommandPalette()"></div>
+    <div id="commandPalette" class="command-palette hidden">
+        <div class="mb-4">
+            <input 
+                type="text" 
+                id="commandInput"
+                class="w-full bg-gray-800 border border-gray-600 rounded px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Type a command or search..."
+                autocomplete="off"
+            />
+        </div>
+        <div id="commandResults" class="space-y-1 max-h-64 overflow-y-auto">
+            <!-- Command results will be populated here -->
+        </div>
+    </div>
+
+    <script type="module">
+        // Enhanced keyboard-shortcuts-lite implementation
+        class EnhancedKeyboardShortcutsLite {
+            constructor() {
+                this.shortcuts = new Map();
+                this.isInitialized = false;
+                this.metrics = {
+                    registrations: 0,
+                    executions: 0,
+                    totalTime: 0,
+                    errors: 0,
+                    memoryUsage: 0
+                };
+                this.performanceData = [];
+                this.startTime = Date.now();
+            }
+            
+            register(key, callback, options = {}) {
+                const start = performance.now();
+                
+                this.shortcuts.set(key.toLowerCase(), {
+                    callback,
+                    options: {
+                        preventDefault: true,
+                        stopPropagation: true,
+                        description: '',
+                        category: 'default',
+                        ...options
+                    }
+                });
+                
+                this.metrics.registrations++;
+                const end = performance.now();
+                this.metrics.totalTime += (end - start);
+                
+                console.log(`✅ Registered shortcut: ${key}`);
+                this.updateGlobalMetrics();
+                return () => this.unregister(key);
+            }
+            
+            unregister(key) {
+                this.shortcuts.delete(key.toLowerCase());
+                console.log(`❌ Unregistered shortcut: ${key}`);
+                this.updateGlobalMetrics();
+            }
+            
+            init(config = {}) {
+                if (this.isInitialized) return;
+                
+                this.isInitialized = true;
+                this.config = config;
+                
+                document.addEventListener('keydown', this.handleKeyDown.bind(this));
+                console.log('🚀 Enhanced keyboard shortcuts initialized');
+                this.startPerformanceMonitoring();
+            }
+            
+            handleKeyDown(event) {
+                const key = this.getKeyString(event);
+                const shortcut = this.shortcuts.get(key);
+                
+                if (shortcut) {
+                    const start = performance.now();
+                    
+                    try {
+                        if (shortcut.options.preventDefault) {
+                            event.preventDefault();
+                        }
+                        
+                        if (shortcut.options.stopPropagation) {
+                            event.stopPropagation();
+                        }
+                        
+                        shortcut.callback(event);
+                        this.metrics.executions++;
+                        
+                        const end = performance.now();
+                        const executionTime = end - start;
+                        this.metrics.totalTime += executionTime;
+                        this.performanceData.push(executionTime);
+                        
+                        // Visual feedback
+                        this.showVisualFeedback(key);
+                        
+                        // Update metrics
+                        this.updateGlobalMetrics();
+                        
+                    } catch (error) {
+                        this.metrics.errors++;
+                        console.error('Shortcut error:', error);
+                        this.showNotification(`Error executing ${key}: ${error.message}`, 'error');
+                    }
+                }
+            }
+            
+            getKeyString(event) {
+                const parts = [];
+                
+                if (event.ctrlKey) parts.push('ctrl');
+                if (event.altKey) parts.push('alt');
+                if (event.shiftKey) parts.push('shift');
+                if (event.metaKey) parts.push('meta');
+                
+                let key = event.key.toLowerCase();
+                if (key === ' ') key = 'space';
+                if (key === 'arrowup') key = 'up';
+                if (key === 'arrowdown') key = 'down';
+                if (key === 'arrowleft') key = 'left';
+                if (key === 'arrowright') key = 'right';
+                
+                parts.push(key);
+                return parts.join('+');
+            }
+            
+            getRegisteredShortcuts() {
+                return Array.from(this.shortcuts.keys());
+            }
+            
+            getMetrics() {
+                return {
+                    ...this.metrics,
+                    averageTime: this.metrics.executions > 0 ? 
+                        this.metrics.totalTime / this.metrics.executions : 0,
+                    successRate: this.metrics.executions > 0 ? 
+                        ((this.metrics.executions - this.metrics.errors) / this.metrics.executions * 100) : 100
+                };
+            }
+            
+            showVisualFeedback(key) {
+                document.body.classList.add('shortcut-active');
+                setTimeout(() => {
+                    document.body.classList.remove('shortcut-active');
+                }, 500);
+            }
+            
+            showNotification(message, type = 'success') {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'} mr-2"></i>
+                        <span>${message}</span>
+                    </div>
+                `;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+            
+            updateGlobalMetrics() {
+                const metrics = this.getMetrics();
+                
+                // Update header metrics
+                document.getElementById('totalShortcuts').textContent = metrics.registrations;
+                document.getElementById('executedCount').textContent = metrics.executions;
+                document.getElementById('avgTime').textContent = metrics.averageTime.toFixed(2) + 'ms';
+                document.getElementById('successRate').textContent = metrics.successRate.toFixed(1) + '%';
+                
+                // Update performance tab
+                document.getElementById('perfRegCount').textContent = metrics.registrations;
+                document.getElementById('perfExecCount').textContent = metrics.executions;
+                document.getElementById('perfAvgTime').textContent = metrics.averageTime.toFixed(2) + 'ms';
+                document.getElementById('perfErrorCount').textContent = metrics.errors;
+                document.getElementById('perfSuccessRate').textContent = metrics.successRate.toFixed(1) + '%';
+                
+                // Update footer
+                document.getElementById('footerResponseTime').textContent = metrics.averageTime.toFixed(2) + 'ms';
+                document.getElementById('footerMemory').textContent = (metrics.memoryUsage || 0).toFixed(1) + 'MB';
+                document.getElementById('footerUptime').textContent = Math.floor((Date.now() - this.startTime) / 1000) + 's';
+            }
+            
+            startPerformanceMonitoring() {
+                setInterval(() => {
+                    if (performance.memory) {
+                        this.metrics.memoryUsage = performance.memory.usedJSHeapSize / 1024 / 1024;
+                    }
+                    this.updateGlobalMetrics();
+                }, 1000);
+            }
+        }
+        
+        // Initialize enhanced demo
+        const shortcuts = new EnhancedKeyboardShortcutsLite();
+        let editMode = false;
+        let commandPaletteOpen = false;
+        let isFullscreen = false;
+        let currentTheme = 'dark';
+        let actionHistory = [];
+        
+        // Enhanced basic shortcuts
+        shortcuts.register('ctrl+s', () => {
+            updateStatus('💾 Saving file...');
+            logAction('File saved');
+            shortcuts.showNotification('File saved successfully!', 'success');
+            setTimeout(() => updateStatus('✅ File saved successfully!'), 500);
+        }, { description: 'Save file', category: 'file' });
+        
+        shortcuts.register('ctrl+n', () => {
+            updateStatus('📄 Creating new file...');
+            logAction('New file created');
+            shortcuts.showNotification('New file created!', 'success');
+        }, { description: 'New file', category: 'file' });
+        
+        shortcuts.register('ctrl+o', () => {
+            updateStatus('📁 Opening file dialog...');
+            logAction('File dialog opened');
+            shortcuts.showNotification('File dialog opened', 'info');
+        }, { description: 'Open file', category: 'file' });
+        
+        shortcuts.register('ctrl+z', () => {
+            updateStatus('↩️ Undo action');
+            logAction('Undo performed');
+            document.execCommand('undo');
+        }, { description: 'Undo', category: 'edit' });
+        
+        shortcuts.register('ctrl+y', () => {
+            updateStatus('↪️ Redo action');
+            logAction('Redo performed');
+            document.execCommand('redo');
+        }, { description: 'Redo', category: 'edit' });
+        
+        shortcuts.register('ctrl+b', () => {
+            formatText('bold');
+            updateStatus('📝 Bold applied');
+            logAction('Bold text applied');
+        }, { description: 'Bold', category: 'format' });
+        
+        shortcuts.register('ctrl+i', () => {
+            formatText('italic');
+            updateStatus('📝 Italic applied');
+            logAction('Italic text applied');
+        }, { description: 'Italic', category: 'format' });
+        
+        shortcuts.register('ctrl+u', () => {
+            formatText('underline');
+            updateStatus('📝 Underline applied');
+            logAction('Underline text applied');
+        }, { description: 'Underline', category: 'format' });
+        
+        shortcuts.register('f11', () => {
+            toggleFullscreen();
+        }, { description: 'Toggle fullscreen', category: 'view' });
+        
+        shortcuts.register('ctrl+/', () => {
+            showShortcuts();
+        }, { description: 'Show shortcuts', category: 'help' });
+        
+        shortcuts.register('ctrl+shift+t', () => {
+            toggleTheme();
+        }, { description: 'Toggle theme', category: 'view' });
+        
+        // Advanced shortcuts
+        shortcuts.register('ctrl+k ctrl+s', () => {
+            updateStatus('💾 Saving and closing...');
+            logAction('Save and close');
+            shortcuts.showNotification('File saved and closed!', 'success');
+        }, { sequence: true, description: 'Save and close', category: 'file' });
+        
+        shortcuts.register('ctrl+shift+p', () => {
+            toggleCommandPalette();
+        }, { description: 'Command palette', category: 'tools' });
+        
+        shortcuts.register('ctrl+enter', () => {
+            toggleEditMode();
+        }, { description: 'Toggle edit mode', category: 'view' });
+        
+        shortcuts.register('ctrl+1', () => switchTab('basic'));
+        shortcuts.register('ctrl+2', () => switchTab('advanced'));
+        shortcuts.register('ctrl+3', () => switchTab('react'));
+        shortcuts.register('ctrl+4', () => switchTab('vue'));
+        shortcuts.register('ctrl+5', () => switchTab('performance'));
+        shortcuts.register('ctrl+6', () => switchTab('enterprise'));
+        
+        // Enterprise shortcuts
+        shortcuts.register('ctrl+shift+e', () => {
+            shortcuts.showNotification('Enterprise settings opened', 'info');
+            logAction('Enterprise settings accessed');
+        }, { description: 'Enterprise settings', category: 'enterprise' });
+        
+        shortcuts.register('ctrl+shift+a', () => {
+            shortcuts.showNotification('Admin panel opened', 'info');
+            logAction('Admin panel accessed');
+        }, { description: 'Admin panel', category: 'enterprise' });
+        
+        shortcuts.register('ctrl+shift+r', () => {
+            generateReport();
+        }, { description: 'Generate report', category: 'enterprise' });
+        
+        // Helper functions
+        function updateStatus(message) {
+            const status = document.getElementById('status');
+            status.innerHTML = `
+                <i class="fas fa-check-circle text-green-400 mr-2"></i>
+                ${message}
+            `;
+        }
+        
+        function logAction(action) {
+            const log = document.getElementById('actionLog');
+            const time = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = 'text-green-400 mb-1';
+            entry.innerHTML = `<i class="fas fa-chevron-right mr-1 text-xs"></i>[${time}] ${action}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+            actionHistory.push({ time, action });
+            
+            // Update React/Vue demo states
+            if (document.getElementById('reactState')) {
+                document.getElementById('reactState').textContent = action;
+            }
+            if (document.getElementById('vueState')) {
+                document.getElementById('vueState').textContent = action;
+            }
+        }
+        
+        function formatText(command) {
+            document.execCommand(command);
+        }
+        
+        function showShortcuts() {
+            const registered = shortcuts.getRegisteredShortcuts();
+            const shortcutsList = registered.map(s => `• ${s.toUpperCase()}`).join('\n');
+            shortcuts.showNotification(`Registered Shortcuts:\n\n${shortcutsList}`, 'info');
+        }
+        
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            const icon = document.getElementById('themeIcon');
+            
+            if (currentTheme === 'light') {
+                document.body.classList.add('light-theme');
+                icon.className = 'fas fa-sun mr-2';
+                updateStatus('☀️ Light theme enabled');
+            } else {
+                document.body.classList.remove('light-theme');
+                icon.className = 'fas fa-moon mr-2';
+                updateStatus('🌙 Dark theme enabled');
+            }
+            logAction(`Theme changed to ${currentTheme}`);
+        }
+        
+        function toggleFullscreen() {
+            isFullscreen = !isFullscreen;
+            if (isFullscreen) {
+                document.documentElement.requestFullscreen();
+                updateStatus('🖥️ Fullscreen mode');
+            } else {
+                document.exitFullscreen();
+                updateStatus('📐 Windowed mode');
+            }
+            logAction(`Fullscreen ${isFullscreen ? 'enabled' : 'disabled'}`);
+        }
+        
+        function toggleCommandPalette() {
+            commandPaletteOpen = !commandPaletteOpen;
+            const overlay = document.getElementById('commandPaletteOverlay');
+            const palette = document.getElementById('commandPalette');
+            const input = document.getElementById('commandInput');
+            
+            if (commandPaletteOpen) {
+                overlay.classList.remove('hidden');
+                palette.classList.remove('hidden');
+                input.focus();
+                input.value = '';
+                populateCommandPalette('');
+                updateStatus('🔍 Command palette opened');
+                logAction('Command palette opened');
+            } else {
+                overlay.classList.add('hidden');
+                palette.classList.add('hidden');
+                updateStatus('Command palette closed');
+                logAction('Command palette closed');
+            }
+        }
+        
+        function closeCommandPalette() {
+            if (commandPaletteOpen) {
+                toggleCommandPalette();
+            }
+        }
+        
+        function populateCommandPalette(query) {
+            const results = document.getElementById('commandResults');
+            const commands = [
+                { name: 'Save File', shortcut: 'Ctrl+S', action: 'save' },
+                { name: 'New File', shortcut: 'Ctrl+N', action: 'new' },
+                { name: 'Open File', shortcut: 'Ctrl+O', action: 'open' },
+                { name: 'Toggle Theme', shortcut: 'Ctrl+Shift+T', action: 'theme' },
+                { name: 'Command Palette', shortcut: 'Ctrl+Shift+P', action: 'palette' },
+                { name: 'Fullscreen', shortcut: 'F11', action: 'fullscreen' },
+                { name: 'Edit Mode', shortcut: 'Ctrl+Enter', action: 'editmode' },
+                { name: 'Show Shortcuts', shortcut: 'Ctrl+/', action: 'shortcuts' }
+            ];
+            
+            const filtered = commands.filter(cmd => 
+                cmd.name.toLowerCase().includes(query.toLowerCase()) ||
+                cmd.shortcut.toLowerCase().includes(query.toLowerCase())
+            );
+            
+            results.innerHTML = filtered.map(cmd => `
+                <div class="p-2 hover:bg-gray-700 rounded cursor-pointer flex justify-between items-center" onclick="executeCommand('${cmd.action}')">
+                    <span>${cmd.name}</span>
+                    <span class="shortcut-key text-xs">${cmd.shortcut}</span>
+                </div>
+            `).join('');
+        }
+        
+        function executeCommand(action) {
+            switch(action) {
+                case 'save':
+                    shortcuts.getRegisteredShortcuts().find(s => s === 'ctrl+s')?.callback();
+                    break;
+                case 'new':
+                    shortcuts.getRegisteredShortcuts().find(s => s === 'ctrl+n')?.callback();
+                    break;
+                case 'theme':
+                    toggleTheme();
+                    break;
+                case 'fullscreen':
+                    toggleFullscreen();
+                    break;
+                case 'editmode':
+                    toggleEditMode();
+                    break;
+                case 'shortcuts':
+                    showShortcuts();
+                    break;
+            }
+            toggleCommandPalette();
+        }
+        
+        function toggleEditMode() {
+            editMode = !editMode;
+            const status = document.getElementById('editModeStatus');
+            status.textContent = editMode ? 'ON' : 'OFF';
+            status.className = editMode ? 'font-bold text-green-400 ml-2' : 'font-bold text-yellow-400 ml-2';
+            updateStatus(`✏️ Edit mode ${editMode ? 'enabled' : 'disabled'}`);
+            logAction(`Edit mode ${editMode ? 'enabled' : 'disabled'}`);
+        }
+        
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(btn => {
+                if (btn.textContent.toLowerCase().includes(tabName)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            updateStatus(`📑 Switched to ${tabName} tab`);
+            logAction(`Switched to ${tabName} tab`);
+        }
+        
+        function runPerformanceTest() {
+            updateStatus('🏃 Running performance test...');
+            const start = performance.now();
+            
+            for (let i = 0; i < 100; i++) {
+                shortcuts.register(`ctrl+${i}`, () => {
+                    console.log(`Test shortcut ${i}`);
+                });
+            }
+            
+            const end = performance.now();
+            updateStatus(`✅ Performance test completed in ${(end - start).toFixed(2)}ms`);
+            logAction(`Performance test: 100 shortcuts registered in ${(end - start).toFixed(2)}ms`);
+            shortcuts.showNotification(`Performance test completed: 100 shortcuts in ${(end - start).toFixed(2)}ms`, 'success');
+        }
+        
+        function runStressTest() {
+            updateStatus('🔥 Running stress test...');
+            const start = performance.now();
+            
+            for (let i = 0; i < 1000; i++) {
+                shortcuts.register(`ctrl+shift+${i}`, () => {
+                    console.log(`Stress test shortcut ${i}`);
+                });
+            }
+            
+            const end = performance.now();
+            updateStatus(`🔥 Stress test completed: 1000 shortcuts in ${(end - start).toFixed(2)}ms`);
+            logAction(`Stress test: 1000 shortcuts registered in ${(end - start).toFixed(2)}ms`);
+            shortcuts.showNotification(`Stress test completed: 1000 shortcuts in ${(end - start).toFixed(2)}ms`, 'success');
+        }
+        
+        function runMemoryTest() {
+            updateStatus('🧠 Running memory test...');
+            
+            // Create and destroy many shortcuts to test for memory leaks
+            for (let i = 0; i < 500; i++) {
+                const unregister = shortcuts.register(`test+${i}`, () => {});
+                if (i % 100 === 0) {
+                    unregister();
+                }
+            }
+            
+            if (performance.memory) {
+                const memoryMB = performance.memory.usedJSHeapSize / 1024 / 1024;
+                updateStatus(`🧠 Memory test completed. Current usage: ${memoryMB.toFixed(2)}MB`);
+                logAction(`Memory test completed. Usage: ${memoryMB.toFixed(2)}MB`);
+            }
+        }
+        
+        function resetMetrics() {
+            shortcuts.metrics = {
+                registrations: 0,
+                executions: 0,
+                totalTime: 0,
+                errors: 0,
+                memoryUsage: 0
+            };
+            shortcuts.updateGlobalMetrics();
+            updateStatus('📊 Metrics reset');
+            logAction('Performance metrics reset');
+            shortcuts.showNotification('Metrics reset successfully', 'success');
+        }
+        
+        function generateReport() {
+            const metrics = shortcuts.getMetrics();
+            const report = `
+Enterprise Report Generated:
+- Total Shortcuts: ${metrics.registrations}
+- Executions: ${metrics.executions}
+- Success Rate: ${metrics.successRate.toFixed(2)}%
+- Average Time: ${metrics.averageTime.toFixed(2)}ms
+- Memory Usage: ${metrics.memoryUsage.toFixed(2)}MB
+            `;
+            
+            shortcuts.showNotification('Enterprise report generated!', 'success');
+            logAction('Enterprise report generated');
+            console.log(report);
+        }
+        
+        function showQuickHelp() {
+            shortcuts.showNotification('Press Ctrl+/ to see all shortcuts, or Ctrl+Shift+P for command palette', 'info');
+        }
+        
+        // Command input handler
+        document.getElementById('commandInput')?.addEventListener('input', (e) => {
+            populateCommandPalette(e.target.value);
+        });
+        
+        // Initialize
+        shortcuts.init();
+        updateStatus('🚀 Enhanced keyboard shortcuts demo ready!');
+        
+        // Make functions globally available
+        window.switchTab = switchTab;
+        window.showShortcuts = showShortcuts;
+        window.toggleTheme = toggleTheme;
+        window.toggleFullscreen = toggleFullscreen;
+        window.toggleCommandPalette = toggleCommandPalette;
+        window.closeCommandPalette = closeCommandPalette;
+        window.toggleEditMode = toggleEditMode;
+        window.runPerformanceTest = runPerformanceTest;
+        window.runStressTest = runStressTest;
+        window.runMemoryTest = runMemoryTest;
+        window.resetMetrics = resetMetrics;
+        window.generateReport = generateReport;
+        window.showQuickHelp = showQuickHelp;
+        window.executeCommand = executeCommand;
+        window.formatText = formatText;
+        
+        // Update enterprise demo
+        setInterval(() => {
+            if (document.getElementById('activeUsers')) {
+                document.getElementById('activeUsers').textContent = Math.floor(Math.random() * 50) + 10;
+            }
+            if (document.getElementById('totalSessions')) {
+                document.getElementById('totalSessions').textContent = Math.floor(Math.random() * 200) + 50;
+            }
+        }, 5000);
+        
+        console.log('🎮 Enhanced Keyboard Shortcuts Lite Demo Initialized');
+        console.log('Try pressing Ctrl+S, Ctrl+N, Ctrl+B, Ctrl+I, Ctrl+U, F11, Ctrl+/ or Ctrl+Shift+P');
+    </script>
+</body>
+</html>

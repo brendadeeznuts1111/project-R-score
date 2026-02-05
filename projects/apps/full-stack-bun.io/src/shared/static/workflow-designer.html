@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursor Workflow Designer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #161b22;
+            padding: 1rem;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #58a6ff;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        button {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        button:hover {
+            background: #2ea043;
+        }
+
+        button.danger {
+            background: #da3633;
+        }
+
+        button.danger:hover {
+            background: #b62324;
+        }
+
+        .main {
+            display: flex;
+            height: calc(100vh - 70px);
+        }
+
+        .sidebar {
+            width: 300px;
+            background: #161b22;
+            border-right: 1px solid #30363d;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .sidebar h3 {
+            margin-bottom: 1rem;
+            color: #58a6ff;
+        }
+
+        .component-palette {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+        }
+
+        .component-item {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 0.75rem;
+            cursor: grab;
+            transition: all 0.2s;
+        }
+
+        .component-item:hover {
+            border-color: #58a6ff;
+            background: #161b22;
+        }
+
+        .component-item.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+
+        .canvas {
+            flex: 1;
+            position: relative;
+            background: #0d1117;
+            overflow: hidden;
+        }
+
+        .canvas-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(177, 186, 196, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(177, 186, 196, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .workflow-node {
+            position: absolute;
+            background: #161b22;
+            border: 2px solid #30363d;
+            border-radius: 8px;
+            padding: 1rem;
+            min-width: 200px;
+            cursor: move;
+            transition: all 0.2s;
+        }
+
+        .workflow-node:hover {
+            border-color: #58a6ff;
+        }
+
+        .workflow-node.selected {
+            border-color: #238636;
+            box-shadow: 0 0 10px rgba(35, 134, 54, 0.3);
+        }
+
+        .workflow-node.trigger {
+            border-color: #bb2bcf;
+        }
+
+        .workflow-node.action {
+            border-color: #238636;
+        }
+
+        .workflow-node.condition {
+            border-color: #d29922;
+        }
+
+        .workflow-node.approval {
+            border-color: #f85149;
+        }
+
+        .node-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .node-title {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .node-type {
+            font-size: 0.7rem;
+            background: #30363d;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
+
+        .node-content {
+            font-size: 0.8rem;
+            color: #8b949e;
+        }
+
+        .connection-point {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #58a6ff;
+            border: 2px solid #0d1117;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .connection-point.input {
+            left: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .connection-point.output {
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .connection {
+            position: absolute;
+            pointer-events: none;
+            stroke: #58a6ff;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .properties-panel {
+            width: 300px;
+            background: #161b22;
+            border-left: 1px solid #30363d;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .properties-panel h3 {
+            margin-bottom: 1rem;
+            color: #58a6ff;
+        }
+
+        .property-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .property-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .property-group input,
+        .property-group select,
+        .property-group textarea {
+            width: 100%;
+            padding: 0.5rem;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            color: #c9d1d9;
+            font-size: 0.9rem;
+        }
+
+        .property-group input:focus,
+        .property-group select:focus,
+        .property-group textarea:focus {
+            outline: none;
+            border-color: #58a6ff;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #161b22;
+            border-top: 1px solid #30363d;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            color: #8b949e;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal h2 {
+            margin-bottom: 1rem;
+            color: #58a6ff;
+        }
+
+        .modal textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 1rem;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            color: #c9d1d9;
+            padding: 0.5rem;
+            resize: vertical;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .minimap {
+            position: absolute;
+            bottom: 40px;
+            right: 10px;
+            width: 200px;
+            height: 150px;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .minimap-view {
+            width: 100%;
+            height: 100%;
+            background: #0d1117;
+            position: relative;
+        }
+
+        .minimap-node {
+            position: absolute;
+            background: #30363d;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🛠️ Cursor Workflow Designer</h1>
+        <div class="toolbar">
+            <button id="new-workflow">New Workflow</button>
+            <button id="load-workflow">Load YAML</button>
+            <button id="save-workflow">Save YAML</button>
+            <button id="export-workflow">Export</button>
+            <button id="prompt-convert" class="danger">🤖 Prompt → Workflow</button>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="sidebar">
+            <h3>📦 Component Palette</h3>
+            <div class="component-palette">
+                <div class="component-item" data-type="trigger" data-subtype="push">
+                    <div class="node-title">Git Push Trigger</div>
+                    <div class="node-content">Triggers on git push events</div>
+                </div>
+                <div class="component-item" data-type="trigger" data-subtype="pr">
+                    <div class="node-title">Pull Request Trigger</div>
+                    <div class="node-content">Triggers on PR events</div>
+                </div>
+                <div class="component-item" data-type="action" data-subtype="command">
+                    <div class="node-title">Run Command</div>
+                    <div class="node-content">Execute shell command</div>
+                </div>
+                <div class="component-item" data-type="action" data-subtype="agent">
+                    <div class="node-title">Run Agent</div>
+                    <div class="node-content">Execute AI agent</div>
+                </div>
+                <div class="component-item" data-type="condition" data-subtype="branch">
+                    <div class="node-title">Branch Condition</div>
+                    <div class="node-content">Check git branch</div>
+                </div>
+                <div class="component-item" data-type="condition" data-subtype="status">
+                    <div class="node-title">Status Check</div>
+                    <div class="node-content">Check previous step status</div>
+                </div>
+                <div class="component-item" data-type="approval" data-subtype="human">
+                    <div class="node-title">Human Approval</div>
+                    <div class="node-content">Require human approval</div>
+                </div>
+                <div class="component-item" data-type="action" data-subtype="parallel">
+                    <div class="node-title">Parallel Execution</div>
+                    <div class="node-content">Run steps in parallel</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="canvas">
+            <div class="canvas-grid" id="canvas"></div>
+            <svg id="connections" class="connections"></svg>
+            <div class="minimap">
+                <div class="minimap-view" id="minimap"></div>
+            </div>
+        </div>
+
+        <div class="properties-panel">
+            <h3>⚙️ Properties</h3>
+            <div id="properties-content">
+                <p style="color: #8b949e;">Select a node to edit its properties</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-bar">
+        <span id="status">Ready</span>
+    </div>
+
+    <!-- Modals -->
+    <div id="prompt-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>🤖 Prompt-to-Workflow Converter</h2>
+            <p>Describe your workflow in natural language:</p>
+            <textarea id="prompt-input" placeholder="e.g., deploy to production after tests pass with manual approval"></textarea>
+            <div class="modal-buttons">
+                <button id="prompt-cancel">Cancel</button>
+                <button id="prompt-convert-btn">Convert</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class WorkflowDesigner {
+            constructor() {
+                this.canvas = document.getElementById('canvas');
+                this.connections = document.getElementById('connections');
+                this.properties = document.getElementById('properties-content');
+                this.status = document.getElementById('status');
+                this.minimap = document.getElementById('minimap');
+
+                this.nodes = [];
+                this.connections = [];
+                this.selectedNode = null;
+                this.draggedElement = null;
+                this.connectionStart = null;
+                this.scale = 1;
+                this.offsetX = 0;
+                this.offsetY = 0;
+
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.updateMinimap();
+                this.setStatus('Workflow designer ready');
+            }
+
+            setupEventListeners() {
+                // Component palette drag
+                document.querySelectorAll('.component-item').forEach(item => {
+                    item.addEventListener('dragstart', (e) => this.handleDragStart(e));
+                });
+
+                // Canvas events
+                this.canvas.addEventListener('dragover', (e) => e.preventDefault());
+                this.canvas.addEventListener('drop', (e) => this.handleDrop(e));
+                this.canvas.addEventListener('click', (e) => this.handleCanvasClick(e));
+
+                // Toolbar buttons
+                document.getElementById('new-workflow').addEventListener('click', () => this.newWorkflow());
+                document.getElementById('save-workflow').addEventListener('click', () => this.saveWorkflow());
+                document.getElementById('prompt-convert').addEventListener('click', () => this.showPromptModal());
+
+                // Modal events
+                document.getElementById('prompt-cancel').addEventListener('click', () => this.hidePromptModal());
+                document.getElementById('prompt-convert-btn').addEventListener('click', () => this.convertPrompt());
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => this.handleKeyDown(e));
+            }
+
+            handleDragStart(e) {
+                const item = e.target.closest('.component-item');
+                e.dataTransfer.setData('text/plain', JSON.stringify({
+                    type: item.dataset.type,
+                    subtype: item.dataset.subtype,
+                    title: item.querySelector('.node-title').textContent,
+                    content: item.querySelector('.node-content').textContent
+                }));
+                item.classList.add('dragging');
+            }
+
+            handleDrop(e) {
+                e.preventDefault();
+                const rect = this.canvas.getBoundingClientRect();
+                const x = (e.clientX - rect.left - this.offsetX) / this.scale;
+                const y = (e.clientY - rect.top - this.offsetY) / this.scale;
+
+                try {
+                    const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                    this.createNode(data.type, data.subtype, data.title, data.content, x, y);
+                } catch (error) {
+                    console.error('Failed to parse drop data:', error);
+                }
+
+                document.querySelectorAll('.component-item.dragging').forEach(item => {
+                    item.classList.remove('dragging');
+                });
+            }
+
+            createNode(type, subtype, title, content, x, y) {
+                const node = {
+                    id: `node-${Date.now()}`,
+                    type,
+                    subtype,
+                    title,
+                    content,
+                    x,
+                    y,
+                    properties: this.getDefaultProperties(type, subtype)
+                };
+
+                this.nodes.push(node);
+                this.renderNode(node);
+                this.updateMinimap();
+                this.setStatus(`Created ${type} node: ${title}`);
+            }
+
+            renderNode(node) {
+                const nodeElement = document.createElement('div');
+                nodeElement.className = `workflow-node ${node.type}`;
+                nodeElement.id = node.id;
+                nodeElement.style.left = `${node.x}px`;
+                nodeElement.style.top = `${node.y}px`;
+
+                nodeElement.innerHTML = `
+                    <div class="node-header">
+                        <div class="node-title">${node.title}</div>
+                        <div class="node-type">${node.subtype}</div>
+                    </div>
+                    <div class="node-content">${node.content}</div>
+                    <div class="connection-point input" data-node-id="${node.id}"></div>
+                    <div class="connection-point output" data-node-id="${node.id}"></div>
+                `;
+
+                // Make node draggable
+                nodeElement.addEventListener('mousedown', (e) => this.startDrag(e, nodeElement, node));
+                nodeElement.addEventListener('click', (e) => this.selectNode(e, node));
+
+                // Connection point events
+                nodeElement.querySelectorAll('.connection-point').forEach(point => {
+                    point.addEventListener('mousedown', (e) => this.startConnection(e, point));
+                });
+
+                this.canvas.appendChild(nodeElement);
+            }
+
+            startDrag(e, element, node) {
+                if (e.target.classList.contains('connection-point')) return;
+
+                this.draggedElement = element;
+                const startX = e.clientX - node.x;
+                const startY = e.clientY - node.y;
+
+                const handleMouseMove = (e) => {
+                    node.x = e.clientX - startX;
+                    node.y = e.clientY - startY;
+                    element.style.left = `${node.x}px`;
+                    element.style.top = `${node.y}px`;
+                    this.updateConnections();
+                    this.updateMinimap();
+                };
+
+                const handleMouseUp = () => {
+                    document.removeEventListener('mousemove', handleMouseMove);
+                    document.removeEventListener('mouseup', handleMouseUp);
+                    this.draggedElement = null;
+                };
+
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', handleMouseUp);
+            }
+
+            selectNode(e, node) {
+                e.stopPropagation();
+
+                // Deselect previous
+                if (this.selectedNode) {
+                    document.getElementById(this.selectedNode.id)?.classList.remove('selected');
+                }
+
+                // Select new
+                this.selectedNode = node;
+                document.getElementById(node.id)?.classList.add('selected');
+
+                this.showNodeProperties(node);
+            }
+
+            handleCanvasClick(e) {
+                // Deselect node
+                if (this.selectedNode) {
+                    document.getElementById(this.selectedNode.id)?.classList.remove('selected');
+                    this.selectedNode = null;
+                    this.properties.innerHTML = '<p style="color: #8b949e;">Select a node to edit its properties</p>';
+                }
+            }
+
+            showNodeProperties(node) {
+                const properties = node.properties;
+                let html = `<h4>${node.title}</h4>`;
+
+                Object.entries(properties).forEach(([key, value]) => {
+                    const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+
+                    if (typeof value === 'boolean') {
+                        html += `
+                            <div class="property-group">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="${key}" ${value ? 'checked' : ''}>
+                                    <label for="${key}">${label}</label>
+                                </div>
+                            </div>
+                        `;
+                    } else if (Array.isArray(value)) {
+                        html += `
+                            <div class="property-group">
+                                <label for="${key}">${label}</label>
+                                <select id="${key}" multiple>
+                                    ${value.map(option => `<option value="${option}" ${properties[key]?.includes(option) ? 'selected' : ''}>${option}</option>`).join('')}
+                                </select>
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <div class="property-group">
+                                <label for="${key}">${label}</label>
+                                <input type="${typeof value === 'number' ? 'number' : 'text'}" id="${key}" value="${value || ''}">
+                            </div>
+                        `;
+                    }
+                });
+
+                html += `<button onclick="updateNodeProperties('${node.id}')">Update</button>`;
+                this.properties.innerHTML = html;
+            }
+
+            getDefaultProperties(type, subtype) {
+                const defaults = {
+                    trigger: {
+                        branches: ['main', 'develop'],
+                        events: ['push', 'pull_request']
+                    },
+                    action: {
+                        command: 'echo "Hello World"',
+                        timeout: '300',
+                        workingDirectory: '.'
+                    },
+                    condition: {
+                        expression: 'status == "success"',
+                        operator: 'AND'
+                    },
+                    approval: {
+                        reviewers: ['team-lead'],
+                        timeout: '86400',
+                        requiredApprovals: 1
+                    }
+                };
+
+                return defaults[type] || {};
+            }
+
+            startConnection(e, point) {
+                e.stopPropagation();
+                this.connectionStart = point;
+                // TODO: Implement connection drawing
+            }
+
+            updateConnections() {
+                // TODO: Update connection lines between nodes
+            }
+
+            updateMinimap() {
+                const minimap = document.getElementById('minimap');
+                minimap.innerHTML = '';
+
+                const canvasRect = this.canvas.getBoundingClientRect();
+                const scale = Math.min(200 / canvasRect.width, 150 / canvasRect.height);
+
+                this.nodes.forEach(node => {
+                    const miniNode = document.createElement('div');
+                    miniNode.className = 'minimap-node';
+                    miniNode.style.left = `${node.x * scale}px`;
+                    miniNode.style.top = `${node.y * scale}px`;
+                    miniNode.style.width = `${200 * scale}px`;
+                    miniNode.style.height = `${60 * scale}px`;
+                    minimap.appendChild(miniNode);
+                });
+            }
+
+            newWorkflow() {
+                if (confirm('Clear current workflow and start new?')) {
+                    this.nodes = [];
+                    this.connections = [];
+                    this.canvas.querySelectorAll('.workflow-node').forEach(node => node.remove());
+                    this.properties.innerHTML = '<p style="color: #8b949e;">Select a node to edit its properties</p>';
+                    this.updateMinimap();
+                    this.setStatus('New workflow created');
+                }
+            }
+
+            saveWorkflow() {
+                const workflow = {
+                    name: 'Generated Workflow',
+                    version: '1.0.0',
+                    nodes: this.nodes,
+                    connections: this.connections
+                };
+
+                const yaml = this.workflowToYAML(workflow);
+                console.log('Generated YAML:');
+                console.log(yaml);
+
+                // Download file
+                const blob = new Blob([yaml], { type: 'text/yaml' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'workflow.yaml';
+                a.click();
+                URL.revokeObjectURL(url);
+
+                this.setStatus('Workflow exported as YAML');
+            }
+
+            workflowToYAML(workflow) {
+                let yaml = `# ${workflow.name}\n# Generated by Cursor Workflow Designer\n\n`;
+                yaml += `name: ${workflow.name}\nversion: ${workflow.version}\n\n`;
+
+                if (workflow.nodes.length > 0) {
+                    yaml += `steps:\n`;
+                    workflow.nodes.forEach(node => {
+                        yaml += `  - name: ${node.id}\n`;
+                        yaml += `    type: ${node.type}\n`;
+                        yaml += `    subtype: ${node.subtype}\n`;
+
+                        Object.entries(node.properties).forEach(([key, value]) => {
+                            yaml += `    ${key}: ${JSON.stringify(value)}\n`;
+                        });
+                        yaml += '\n';
+                    });
+                }
+
+                return yaml;
+            }
+
+            showPromptModal() {
+                document.getElementById('prompt-modal').classList.remove('hidden');
+            }
+
+            hidePromptModal() {
+                document.getElementById('prompt-modal').classList.add('hidden');
+            }
+
+            async convertPrompt() {
+                const prompt = document.getElementById('prompt-input').value;
+                if (!prompt.trim()) return;
+
+                try {
+                    const response = await fetch('/api/workflow/convert-prompt', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prompt })
+                    });
+
+                    const result = await response.json();
+                    console.log('Converted workflow:', result.yaml);
+
+                    this.hidePromptModal();
+                    this.setStatus('Workflow generated from prompt');
+                } catch (error) {
+                    console.error('Prompt conversion failed:', error);
+                    this.setStatus('Prompt conversion failed');
+                }
+            }
+
+            handleKeyDown(e) {
+                if (e.key === 'Delete' && this.selectedNode) {
+                    this.deleteNode(this.selectedNode);
+                }
+            }
+
+            deleteNode(node) {
+                const index = this.nodes.indexOf(node);
+                if (index > -1) {
+                    this.nodes.splice(index, 1);
+                    document.getElementById(node.id)?.remove();
+                    this.selectedNode = null;
+                    this.properties.innerHTML = '<p style="color: #8b949e;">Select a node to edit its properties</p>';
+                    this.updateMinimap();
+                    this.setStatus(`Deleted node: ${node.title}`);
+                }
+            }
+
+            setStatus(message) {
+                this.status.textContent = message;
+            }
+        }
+
+        // Global function for property updates
+        function updateNodeProperties(nodeId) {
+            console.log('Updating properties for node:', nodeId);
+            // TODO: Implement property updates
+        }
+
+        // Initialize the designer
+        const designer = new WorkflowDesigner();
+    </script>
+</body>
+</html>

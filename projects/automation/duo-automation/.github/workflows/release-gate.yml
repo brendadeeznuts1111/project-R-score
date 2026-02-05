@@ -1,0 +1,42 @@
+# [DUOPLUS][RELEASE][GATE][FEAT][META:{compliance:true}] [CRITICAL] [BUN:6.1-NATIVE]
+
+name: release-gate
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  release-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.1.8"
+
+      - name: CR-001 CLI uses real data
+        run: grep -r "mockResults" cli/ && exit 1 || echo "PASS"
+
+      - name: CR-002 API endpoints exist
+        run: bun run test:api-endpoints --schema=inspector-query.v1.json
+
+      - name: CR-003 PTY broadcasts
+        run: bun run test:pty-bridge --clients=3
+
+      - name: CR-004 Compliance redaction correct
+        run: bun run test:redaction --fixture=credit-card-4111.json
+
+      - name: CR-005 Entry points valid
+        run: node -e "require('./dist/index.js'); require('./dist/cli.js');"
+
+      - name: CR-006 Dashboard assets exist
+        run: test -f dist/dashboard.html && test -f vendor/tailwindcss.js
+
+      - name: Tag release
+        run: echo "[DUOPLUS][RELEASE][SUCCESS][META:{version:6.1}] [#REF:RELEASE-6.1]" >> "$GITHUB_STEP_SUMMARY"

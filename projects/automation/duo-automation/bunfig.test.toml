@@ -1,0 +1,7 @@
+# [DUOPLUS][CONFIG][TEST][FEAT][META:{coverage:override}] [BUN:6.1-NATIVE]
+
+[test]
+coverage = true
+
+coverageThreshold = { lines = 0.60, functions = 0.55, statements = 0.60 }
+coverageSkipTestFiles = true

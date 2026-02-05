@@ -1,0 +1,3004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="dashboard-scope" content="LOCAL-SANDBOX">
+    <meta name="dashboard-timezone" content="UTC">
+    <meta name="dashboard-platform" content="darwin">
+    <meta name="dashboard-version" content="v3.7">
+    <title>DuoPlus Dashboard - LOCAL-SANDBOX - UTC</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        // Inject timezone configuration
+        window.DUOPLUS_CONFIG = {
+            scope: "LOCAL-SANDBOX",
+            timezone: "UTC",
+            platform: "darwin",
+            version: "v3.7"
+        };
+        window.DASHBOARD_SCOPE = "LOCAL-SANDBOX";
+        window.TIMEZONE = "UTC";
+        window.PLATFORM = "darwin";
+    </script>
+    <style>
+        /* Reset and base styles - Pure CSS with Bun optimization */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        /* Header */
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: white;
+            padding: 2rem 0;
+        }
+        
+        /* Enhanced Cards with Animations */
+        .card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+        
+        .gradient-card-1 { 
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%); 
+            color: white;
+        }
+        .gradient-card-2 { 
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%); 
+            color: white;
+        }
+        .gradient-card-3 { 
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 50%, #0e7490 100%); 
+            color: white;
+        }
+        .gradient-card-4 { 
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%); 
+            color: white;
+        }
+        .gradient-card-5 { 
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%); 
+            color: white;
+        }
+        .gradient-card-6 { 
+            background: linear-gradient(135deg, #64748b 0%, #475569 50%, #334155 100%); 
+            color: white;
+        }
+        
+        /* Enhanced Grid System */
+        .grid {
+            display: grid;
+            gap: 2rem;
+        }
+        
+        .grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+        .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+        
+        /* Responsive Grid */
+        @media (min-width: 768px) {
+            .grid-cols-4-md { grid-template-columns: repeat(4, 1fr); }
+            .grid-cols-3-md { grid-template-columns: repeat(3, 1fr); }
+            .grid-cols-2-md { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        /* Flexbox */
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .items-start { align-items: flex-start; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        
+        /* Spacing */
+        .p-4 { padding: 1rem; }
+        .p-6 { padding: 1.5rem; }
+        .p-8 { padding: 2rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+        .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mr-2 { margin-right: 0.5rem; }
+        .mr-3 { margin-right: 0.75rem; }
+        .mr-4 { margin-right: 1rem; }
+        .mt-1 { margin-top: 0.25rem; }
+        
+        /* Text */
+        .text-center { text-align: center; }
+        .text-sm { font-size: 0.875rem; }
+        .text-xs { font-size: 0.75rem; }
+        .text-lg { font-size: 1.125rem; }
+        .text-xl { font-size: 1.25rem; }
+        .text-2xl { font-size: 1.5rem; }
+        .text-4xl { font-size: 2.25rem; }
+        .font-bold { font-weight: 700; }
+        .font-medium { font-weight: 500; }
+        .font-semibold { font-weight: 600; }
+        .text-white { color: white; }
+        .text-gray-500 { color: #3b82f6; }
+        .text-gray-600 { color: #3b82f6; }
+        .text-gray-700 { color: #3b82f6; }
+        .text-gray-900 { color: #3b82f6; }
+        
+        /* Colors */
+        .bg-white { background-color: white; }
+        .bg-gray-50 { background-color: #3b82f6; }
+        .bg-gray-100 { background-color: #3b82f6; }
+        .bg-green-100 { background-color: #3b82f6; }
+        .bg-green-600 { background-color: #16a34a; }
+        .bg-blue-100 { background-color: #dbeafe; }
+        .bg-blue-600 { background-color: #3b82f6; }
+        .bg-orange-100 { background-color: #3b82f6; }
+        .bg-orange-600 { background-color: #3b82f6; }
+        .bg-red-100 { background-color: #fee2e2; }
+        .bg-red-600 { background-color: #dc2626; }
+        .bg-indigo-600 { background-color: #3b82f6; }
+        .bg-cyan-100 { background-color: #3b82f6; }
+        .bg-cyan-600 { background-color: #3b82f6; }
+        .bg-purple-100 { background-color: #3b82f6; }
+        .bg-purple-600 { background-color: #9333ea; }
+        .bg-yellow-100 { background-color: #fef3c7; }
+        .bg-yellow-600 { background-color: #3b82f6; }
+        
+        /* Text colors */
+        .text-green-800 { color: #3b82f6; }
+        .text-green-600 { color: #16a34a; }
+        .text-blue-600 { color: #3b82f6; }
+        .text-orange-800 { color: #3b82f6; }
+        .text-red-800 { color: #991b1b; }
+        .text-indigo-600 { color: #3b82f6; }
+        .text-cyan-600 { color: #3b82f6; }
+        .text-purple-600 { color: #9333ea; }
+        .text-yellow-600 { color: #3b82f6; }
+        
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 9999px;
+        }
+        
+        .badge-green {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        
+        .badge-blue {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .badge-orange {
+            background-color: #fed7aa;
+            color: #c2410c;
+        }
+        
+        .badge-cyan {
+            background-color: #ecfeff;
+            color: #155e75;
+        }
+        
+        .badge-yellow {
+            background-color: #fef3c7;
+            color: #a16207;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        
+        .btn-blue {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .btn-blue:hover {
+            background-color: #2563eb;
+        }
+        
+        .btn-orange {
+            background-color: #f59e0b;
+            color: white;
+        }
+        
+        .btn-orange:hover {
+            background-color: #d97706;
+        }
+        
+        .btn-green {
+            background-color: #16a34a;
+            color: white;
+        }
+        
+        .btn-green:hover {
+            background-color: #15803d;
+        }
+        
+        .btn-red {
+            background-color: #dc2626;
+            color: white;
+        }
+        
+        .btn-red:hover {
+            background-color: #b91c1c;
+        }
+        
+        .btn-indigo {
+            background-color: #6366f1;
+            color: white;
+        }
+        
+        .btn-indigo:hover {
+            background-color: #4f46e5;
+        }
+        
+        /* Tables */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        .table th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #1e293b;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .table tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        /* Tabs */
+        .tabs {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+        
+        .tab-nav {
+            display: flex;
+            border-bottom: 1px solid #3b82f6;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .tab-buttons {
+            display: flex;
+        }
+        
+        .tab-button {
+            padding: 1rem 1.5rem;
+            border: none;
+            background: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #3b82f6;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .tab-button:hover {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+        }
+        
+        .tab-button.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+        }
+        
+        .tab-content {
+            display: block;
+        }
+        
+        .tab-content.hidden {
+            display: none;
+        }
+        
+        /* Overflow */
+        .overflow-x-auto {
+            overflow-x: auto;
+        }
+        
+        /* Border */
+        .border {
+            border: 1px solid #3b82f6;
+        }
+        
+        .rounded-lg {
+            border-radius: 0.5rem;
+        }
+        
+        .rounded-xl {
+            border-radius: 0.75rem;
+        }
+        
+        .rounded-full {
+            border-radius: 50%;
+        }
+        
+        /* Shadow */
+        .shadow {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .shadow-lg {
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        
+        /* Width */
+        .w-4 { width: 1rem; }
+        .w-6 { width: 1.5rem; }
+        .w-8 { width: 2rem; }
+        .w-12 { width: 3rem; }
+        .w-16 { width: 4rem; }
+        .w-24 { width: 6rem; }
+        .w-full { width: 100%; }
+        
+        /* Height */
+        .h-2 { height: 0.5rem; }
+        .h-4 { height: 1rem; }
+        .h-6 { height: 1.5rem; }
+        .h-8 { height: 2rem; }
+        
+        /* Position */
+        .relative { position: relative; }
+        .absolute { position: absolute; }
+        .top-4 { top: 1rem; }
+        .left-4 { left: 1rem; }
+        
+        /* Animation */
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* Number badges */
+        .number-badge {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: white;
+        }
+        
+        /* Icon containers */
+        .icon-container {
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .icon-blue { background-color: #dbeafe; }
+        .icon-green { background-color: #3b82f6; }
+        .icon-orange { background-color: #3b82f6; }
+        .icon-red { background-color: #fee2e2; }
+        .icon-cyan { background-color: #3b82f6; }
+        .icon-purple { background-color: #3b82f6; }
+        .icon-yellow { background-color: #fef3c7; }
+        
+        /* Responsive */
+        @media (min-width: 768px) {
+            .grid-cols-1-md { grid-template-columns: repeat(1, 1fr); }
+            .grid-cols-2-md { grid-template-columns: repeat(2, 1fr); }
+            .grid-cols-3-md { grid-template-columns: repeat(3, 1fr); }
+            .grid-cols-4-md { grid-template-columns: repeat(4, 1fr); }
+        }
+        
+        @media (min-width: 1024px) {
+            .grid-cols-1-lg { grid-template-columns: repeat(1, 1fr); }
+            .grid-cols-2-lg { grid-template-columns: repeat(2, 1fr); }
+            .grid-cols-3-lg { grid-template-columns: repeat(3, 1fr); }
+            .grid-cols-4-lg { grid-template-columns: repeat(4, 1fr); }
+        }
+        
+        /* Custom utility classes */
+        .whitespace-nowrap { white-space: nowrap; }
+        .uppercase { text-transform: uppercase; }
+        .tracking-wider { letter-spacing: 0.05em; }
+        .leading-relaxed { line-height: 1.625; }
+        
+        /* External Services Integration */
+        .external-service {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 1px solid #cbd5e1;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .external-service:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .service-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .service-live {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        
+        .service-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        
+        /* Enterprise Color Scheme */
+        .enterprise-blue { color: #3b82f6; }
+        .enterprise-green { color: #22c55e; }
+        .enterprise-cyan { color: #06b6d4; }
+        .enterprise-orange { color: #f59e0b; }
+        .enterprise-red { color: #ef4444; }
+        .enterprise-gray { color: #64748b; }
+        
+        .enterprise-bg-blue { background-color: #3b82f6; }
+        .enterprise-bg-green { background-color: #22c55e; }
+        .enterprise-bg-cyan { background-color: #06b6d4; }
+        .enterprise-bg-orange { background-color: #f59e0b; }
+        .enterprise-bg-red { background-color: #ef4444; }
+        .enterprise-bg-gray { background-color: #64748b; }
+        
+        /* Hide purple elements for enterprise compliance */
+        .purple-compliance { display: none !important; }
+        
+        /* Enhanced Loading States */
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* Enhanced Matrix View */
+        .matrix-table {
+            font-size: 0.875rem;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .matrix-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.75rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .matrix-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+        
+        .matrix-table tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        .matrix-badge {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 9999px;
+            margin: 0.125rem;
+        }
+        
+        /* Space between flex items */
+        .space-x-2 > * + * { margin-left: 0.5rem; }
+        .space-x-4 > * + * { margin-left: 1rem; }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Dashboard Header -->
+    <header class="bg-gradient-to-r from-slate-900 to-slate-800 text-white shadow-xl sticky top-0 z-50 backdrop-blur-lg">
+        <div class="container mx-auto px-4 py-4">
+            <!-- Main Header Row -->
+            <div class="flex items-center justify-between">
+                <!-- Left: Logo + Title + Version -->
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                            <i data-lucide="layers-3" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold">DuoPlus Dashboard</h1>
+                            <p class="text-sm text-slate-300">v3.7 Deterministic Multi-Tenant System</p>
+                        </div>
+                    </div>
+                    <!-- Scope Badge -->
+                    <div class="flex items-center space-x-2">
+                        <span class="px-3 py-1 bg-red-500/20 text-red-300 border border-red-500/30 rounded-full text-sm font-medium animate-pulse">
+                            LOCAL-SANDBOX
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Right: Environment Indicators -->
+                <div class="flex items-center space-x-3">
+                    <!-- Timezone Indicator -->
+                    <div class="flex items-center space-x-2 px-3 py-2 bg-slate-700/50 rounded-lg border border-slate-600/30 hover:bg-slate-700/70 transition-all" title="Active timezone: UTC (IANA)">
+                        <span class="text-lg">🕒</span>
+                        <span class="font-mono text-sm">UTC</span>
+                    </div>
+
+                    <!-- Current Time -->
+                    <div class="flex items-center space-x-2 px-3 py-2 bg-slate-700/50 rounded-lg border border-slate-600/30 hover:bg-slate-700/70 transition-all" title="Current time in UTC">
+                        <span class="text-lg">⏰</span>
+                        <span class="font-mono text-sm" id="current-time">Loading...</span>
+                    </div>
+
+                    <!-- Platform Indicator -->
+                    <div class="flex items-center space-x-2 px-3 py-2 bg-slate-700/50 rounded-lg border border-slate-600/30 hover:bg-slate-700/70 transition-all" title="Platform: auto-detected">
+                        <span class="text-lg" data-platform-icon>🍎</span>
+                        <span class="font-mono text-sm" data-platform>darwin</span>
+                    </div>
+
+                    <!-- Version -->
+                    <div class="flex items-center space-x-2 px-3 py-2 bg-slate-700/50 rounded-lg border border-slate-600/30 hover:bg-slate-700/70 transition-all" title="Version: v3.7">
+                        <span class="text-lg">🏷️</span>
+                        <span class="font-mono text-sm">v3.7</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Environment Context Bar -->
+            <div class="mt-3 pt-3 border-t border-slate-700/50">
+                <div class="flex items-center justify-between text-xs text-slate-400">
+                    <div class="flex items-center space-x-4">
+                        <span class="flex items-center">
+                            <span class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
+                            Scope: <strong class="text-white ml-1">LOCAL-SANDBOX</strong>
+                        </span>
+                        <span>Timezone: <strong class="text-white">UTC</strong></span>
+                        <span>Platform: <strong class="text-white" data-platform>darwin</strong></span>
+                        <span>Environment: <strong class="text-green-400">Development</strong></span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="flex items-center">
+                            <span class="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>
+                            Deterministic v3.7
+                        </span>
+                        <span>•</span>
+                        <span class="flex items-center">
+                            <span class="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>
+                            Multi-Tenant Ready
+                        </span>
+                        <span>•</span>
+                        <span class="flex items-center">
+                            <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                            Audit Compliant
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container py-8">
+        <!-- Enhanced Quick Stats -->
+        <section class="mb-12">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">System Overview</h2>
+                <div class="flex items-center space-x-2">
+                    <span class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                    </span>
+                    <span class="text-sm text-gray-600">Live Updates</span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 grid-cols-4-md gap-6">
+                <div class="metric-card card p-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="bg-green-100 p-3 rounded-xl mr-4">
+                                <i data-lucide="check-circle" class="w-6 h-6 text-green-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500 font-medium">System Status</div>
+                                <div class="text-2xl font-bold text-green-600">Operational</div>
+                                <div class="text-xs text-gray-400 mt-1">99.97% Uptime</div>
+                            </div>
+                        </div>
+                        <div class="text-green-500">
+                            <i data-lucide="trending-up" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="metric-card card p-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="bg-blue-100 p-3 rounded-xl mr-4">
+                                <i data-lucide="server" class="w-6 h-6 text-blue-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500 font-medium">Cloudflare</div>
+                                <div class="text-2xl font-bold text-blue-600">Workers Live</div>
+                                <div class="text-xs text-gray-400 mt-1">12 Regions</div>
+                            </div>
+                        </div>
+                        <div class="text-blue-500">
+                            <i data-lucide="globe" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="metric-card card p-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="bg-purple-100 p-3 rounded-xl mr-4">
+                                <i data-lucide="package" class="w-6 h-6 text-purple-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500 font-medium">Packages</div>
+                                <div class="text-2xl font-bold text-purple-600">13 Workspaces</div>
+                                <div class="text-xs text-gray-400 mt-1">156 Modules</div>
+                            </div>
+                        </div>
+                        <div class="text-purple-500">
+                            <i data-lucide="box" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="metric-card card p-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="bg-orange-100 p-3 rounded-xl mr-4">
+                                <i data-lucide="activity" class="w-6 h-6 text-orange-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500 font-medium">Performance</div>
+                                <div class="text-2xl font-bold text-orange-600">Excellent</div>
+                                <div class="text-xs text-gray-400 mt-1">< 100ms Response</div>
+                            </div>
+                        </div>
+                        <div class="text-orange-500">
+                            <i data-lucide="zap" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Enhanced Dashboard Categories -->
+        <section class="mb-12">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">🎯 System Dashboards</h2>
+                <div class="flex items-center space-x-4">
+                    <button onclick="refreshDashboard()" class="btn btn-blue">
+                        <i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i>
+                        Refresh
+                    </button>
+                    <button onclick="toggleView()" class="btn btn-green">
+                        <i data-lucide="layout" class="w-4 h-4 mr-2"></i>
+                        Toggle View
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Enhanced Tab Navigation -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+                <div class="flex border-b border-gray-200">
+                    <button onclick="switchTab('overview')" id="overviewTab" class="tab-button active px-6 py-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 focus:outline-none">
+                        <i data-lucide="layout-grid" class="w-4 h-4 inline mr-2"></i>
+                        Overview
+                    </button>
+                    <button onclick="switchTab('analytics')" id="analyticsTab" class="tab-button px-6 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 focus:outline-none">
+                        <i data-lucide="bar-chart" class="w-4 h-4 inline mr-2"></i>
+                        Analytics
+                    </button>
+                    <button onclick="switchTab('monitoring')" id="monitoringTab" class="tab-button px-6 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 focus:outline-none">
+                        <i data-lucide="activity" class="w-4 h-4 inline mr-2"></i>
+                        Monitoring
+                    </button>
+                    <button onclick="switchTab('security')" id="securityTab" class="tab-button px-6 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 focus:outline-none">
+                        <i data-lucide="shield" class="w-4 h-4 inline mr-2"></i>
+                        Security
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab Content -->
+            <div id="tabContent" class="mt-6">
+                <!-- Overview Tab -->
+                <div id="overviewContent" class="tab-pane">
+                    <div class="grid grid-cols-1 grid-cols-3-md gap-6">
+                        <div class="gradient-card-1 card p-6 text-white">
+                            <div class="flex items-center justify-between mb-4">
+                                <i data-lucide="layers-3" class="w-8 h-8"></i>
+                                <span class="bg-white/20 px-2 py-1 rounded text-xs">Active</span>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Global Dashboard</h3>
+                            <p class="text-white/80 mb-4">Enterprise monitoring with real-time metrics and multi-regional deployment.</p>
+                            <button onclick="window.open('http://localhost:8090/', '_blank')" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm transition">
+                                Launch Dashboard →
+                            </button>
+                        </div>
+
+                        <div class="gradient-card-2 card p-6 text-white">
+                            <div class="flex items-center justify-between mb-4">
+                                <i data-lucide="qr-code" class="w-8 h-8"></i>
+                                <span class="bg-white/20 px-2 py-1 rounded text-xs">99.8% Success</span>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">QR Onboarding</h3>
+                            <p class="text-white/80 mb-4">28-second target onboarding with 15 mandatory health checks.</p>
+                            <button onclick="window.open('http://localhost:8090/qr-onboard', '_blank')" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm transition">
+                                View QR System →
+                            </button>
+                        </div>
+
+                        <div class="gradient-card-3 card p-6 text-white">
+                            <div class="flex items-center justify-between mb-4">
+                                <i data-lucide="smartphone" class="w-8 h-8"></i>
+                                <span class="bg-white/20 px-2 py-1 rounded text-xs">3 Devices</span>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">Phone Monitoring</h3>
+                            <p class="text-white/80 mb-4">Real-time device tracking with carrier and signal monitoring.</p>
+                            <button onclick="window.open('http://localhost:8090/phone-info', '_blank')" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm transition">
+                                Monitor Phones →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Tab -->
+                <div id="analyticsContent" class="tab-pane hidden">
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-semibold mb-4">📊 Performance Analytics</h3>
+                        <div class="grid grid-cols-1 grid-cols-2-md gap-6">
+                            <div class="border-l-4 border-blue-500 pl-4">
+                                <h4 class="font-medium text-gray-800">Response Time</h4>
+                                <p class="text-2xl font-bold text-blue-600">87ms</p>
+                                <p class="text-sm text-gray-500">Average over 24h</p>
+                            </div>
+                            <div class="border-l-4 border-green-500 pl-4">
+                                <h4 class="font-medium text-gray-800">Success Rate</h4>
+                                <p class="text-2xl font-bold text-green-600">99.8%</p>
+                                <p class="text-sm text-gray-500">Last 1,247 requests</p>
+                            </div>
+                            <div class="border-l-4 border-purple-500 pl-4">
+                                <h4 class="font-medium text-gray-800">Total Requests</h4>
+                                <p class="text-2xl font-bold text-purple-600">45.2K</p>
+                                <p class="text-sm text-gray-500">Past 30 days</p>
+                            </div>
+                            <div class="border-l-4 border-orange-500 pl-4">
+                                <h4 class="font-medium text-gray-800">Error Rate</h4>
+                                <p class="text-2xl font-bold text-orange-600">0.02%</p>
+                                <p class="text-sm text-gray-500">Below threshold</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monitoring Tab -->
+                <div id="monitoringContent" class="tab-pane hidden">
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-semibold mb-4">🔍 System Monitoring</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                                    <span class="font-medium">API Gateway</span>
+                                </div>
+                                <span class="text-green-600 font-medium">Operational</span>
+                            </div>
+                            <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                                    <span class="font-medium">Database</span>
+                                </div>
+                                <span class="text-green-600 font-medium">Healthy</span>
+                            </div>
+                            <div class="flex items-center justify-between p-4 bg-yellow-50 rounded-lg">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-yellow-500 rounded-full mr-3"></div>
+                                    <span class="font-medium">Cache Layer</span>
+                                </div>
+                                <span class="text-yellow-600 font-medium">Warning</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Tab -->
+                <div id="securityContent" class="tab-pane hidden">
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-semibold mb-4">🛡️ Security Status</h3>
+                        <div class="grid grid-cols-1 grid-cols-2-md gap-6">
+                            <div class="bg-green-50 p-4 rounded-lg">
+                                <h4 class="font-medium text-green-800 mb-2">✅ Compliance</h4>
+                                <ul class="text-sm text-green-700 space-y-1">
+                                    <li>• PCI DSS v4.0 Compliant</li>
+                                    <li>• GDPR Article 32</li>
+                                    <li>• SOC 2 Type II</li>
+                                    <li>• ISO 27001</li>
+                                </ul>
+                            </div>
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <h4 class="font-medium text-blue-800 mb-2">🔐 Security</h4>
+                                <ul class="text-sm text-blue-700 space-y-1">
+                                    <li>• mTLS Enabled</li>
+                                    <li>• JWT 5min Expiry</li>
+                                    <li>• Biometric Auth</li>
+                                    <li>• Zero Trust Model</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Enhanced Footer -->
+        <footer class="bg-gray-900 text-white mt-16">
+            <div class="container mx-auto px-4 py-12">
+                <div class="grid grid-cols-1 grid-cols-4-md gap-8">
+                    <!-- Company Info -->
+                    <div class="col-span-1">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                                <i data-lucide="layers-3" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">DuoPlus</h3>
+                                <p class="text-sm text-gray-400">Enterprise Automation</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Deterministic multi-tenant system with real-time monitoring, 
+                            enterprise security, and global deployment capabilities.
+                        </p>
+                        <div class="flex items-center space-x-2 mt-4">
+                            <span class="relative flex h-3 w-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                            </span>
+                            <span class="text-sm text-green-400">System Operational</span>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="col-span-1">
+                        <h4 class="font-semibold mb-4 text-gray-200">Quick Links</h4>
+                        <ul class="space-y-2">
+                            <li><a href="http://localhost:8090/" class="text-gray-400 hover:text-white transition" target="_blank">🏠 Main Dashboard</a></li>
+                            <li><a href="http://localhost:8090/qr-onboard" class="text-gray-400 hover:text-white transition" target="_blank">📱 QR Onboarding</a></li>
+                            <li><a href="http://localhost:8090/phone-info" class="text-gray-400 hover:text-white transition" target="_blank">📞 Phone Monitoring</a></li>
+                            <li><a href="http://localhost:8090/admin" class="text-gray-400 hover:text-white transition" target="_blank">⚙️ Admin Panel</a></li>
+                            <li><a href="/docs" class="text-gray-400 hover:text-white transition" target="_blank">📚 Documentation</a></li>
+                            <li><a href="/api" class="text-gray-400 hover:text-white transition" target="_blank">🔌 API Reference</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- System Status -->
+                    <div class="col-span-1">
+                        <h4 class="font-semibold mb-4 text-gray-200">System Status</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-400">API Gateway</span>
+                                <span class="text-green-400 text-sm">● Operational</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-400">Database</span>
+                                <span class="text-green-400 text-sm">● Healthy</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-400">Cloudflare</span>
+                                <span class="text-green-400 text-sm">● Active</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-400">Response Time</span>
+                                <span class="text-blue-400 text-sm">87ms</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-400">Uptime</span>
+                                <span class="text-green-400 text-sm">99.97%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Environment Info -->
+                    <div class="col-span-1">
+                        <h4 class="font-semibold mb-4 text-gray-200">Environment</h4>
+                        <div class="bg-gray-800 rounded-lg p-4 space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Scope:</span>
+                                <span class="text-red-400 font-mono text-sm">LOCAL-SANDBOX</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Timezone:</span>
+                                <span class="text-blue-400 font-mono text-sm">UTC</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Platform:</span>
+                                <span class="text-green-400 font-mono text-sm">darwin</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Version:</span>
+                                <span class="text-purple-400 font-mono text-sm">v3.7</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Build:</span>
+                                <span class="text-orange-400 font-mono text-sm" id="build-time">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Bar -->
+                <div class="border-t border-gray-800 mt-8 pt-8">
+                    <div class="flex flex-col md:flex-row justify-between items-center">
+                        <div class="text-gray-400 text-sm mb-4 md:mb-0">
+                            © 2026 DuoPlus Enterprise. All rights reserved. | Version 3.7 | 
+                            <span id="footer-current-time">Loading...</span>
+                        </div>
+                        <div class="flex items-center space-x-6 text-sm">
+                            <a href="#" class="text-gray-400 hover:text-white transition">Privacy Policy</a>
+                            <a href="#" class="text-gray-400 hover:text-white transition">Terms of Service</a>
+                            <a href="#" class="text-gray-400 hover:text-white transition">SLA</a>
+                            <a href="#" class="text-gray-400 hover:text-white transition">Support</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        // Update current time every second
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('en-US', {
+                timeZone: 'UTC',
+                timeZoneName: 'short',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+            
+            const detailedTimeString = now.toLocaleString('en-US', {
+                timeZone: 'UTC',
+                timeZoneName: 'long',
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+            
+            // Update header time
+            const headerTimeElement = document.getElementById('current-time');
+            if (headerTimeElement) {
+                headerTimeElement.textContent = timeString;
+            }
+            
+            // Update footer time
+            const footerTimeElement = document.getElementById('footer-current-time');
+            if (footerTimeElement) {
+                footerTimeElement.textContent = detailedTimeString;
+            }
+            
+            // Update debug info
+            const timezoneDebugElement = document.getElementById('timezone-debug');
+            if (timezoneDebugElement) {
+                timezoneDebugElement.textContent = `IANA: UTC
+Offset: UTC+0
+Current: ${detailedTimeString}
+UTC: ${now.toISOString()}`;
+            }
+        }
+        
+        // Initialize time updates
+        updateCurrentTime();
+        setInterval(updateCurrentTime, 1000);
+        
+        // Enhanced Tab Switching
+        function switchTab(tabName) {
+            // Hide all tab contents
+            const allContents = document.querySelectorAll('.tab-pane');
+            allContents.forEach(content => content.classList.add('hidden'));
+            
+            // Remove active class from all tabs
+            const allTabs = document.querySelectorAll('.tab-button');
+            allTabs.forEach(tab => {
+                tab.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
+                tab.classList.add('text-gray-500');
+            });
+            
+            // Show selected content
+            const selectedContent = document.getElementById(tabName + 'Content');
+            if (selectedContent) {
+                selectedContent.classList.remove('hidden');
+            }
+            
+            // Add active class to selected tab
+            const selectedTab = document.getElementById(tabName + 'Tab');
+            if (selectedTab) {
+                selectedTab.classList.remove('text-gray-500');
+                selectedTab.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+            }
+            
+            // Add animation
+            if (selectedContent) {
+                selectedContent.style.opacity = '0';
+                selectedContent.style.transform = 'translateY(10px)';
+                setTimeout(() => {
+                    selectedContent.style.transition = 'all 0.3s ease';
+                    selectedContent.style.opacity = '1';
+                    selectedContent.style.transform = 'translateY(0)';
+                }, 50);
+            }
+        }
+        
+        // Refresh Dashboard
+        function refreshDashboard() {
+            const refreshBtn = event.target.closest('button');
+            const originalContent = refreshBtn.innerHTML;
+            
+            // Show loading state
+            refreshBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i>Refreshing...';
+            refreshBtn.disabled = true;
+            
+            // Simulate refresh
+            setTimeout(() => {
+                refreshBtn.innerHTML = originalContent;
+                refreshBtn.disabled = false;
+                
+                // Re-initialize Lucide icons
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+                
+                // Show success notification
+                showNotification('Dashboard refreshed successfully!', 'success');
+            }, 1500);
+        }
+        
+        // Toggle View
+        function toggleView() {
+            const container = document.getElementById('tabContent');
+            if (container.classList.contains('grid-view')) {
+                container.classList.remove('grid-view');
+                container.classList.add('list-view');
+                showNotification('Switched to list view', 'info');
+            } else {
+                container.classList.remove('list-view');
+                container.classList.add('grid-view');
+                showNotification('Switched to grid view', 'info');
+            }
+        }
+        
+        // Show Notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 transform translate-x-full`;
+            
+            const colors = {
+                success: 'bg-green-500 text-white',
+                error: 'bg-red-500 text-white',
+                info: 'bg-blue-500 text-white',
+                warning: 'bg-yellow-500 text-white'
+            };
+            
+            notification.classList.add(...colors[type].split(' '));
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i data-lucide="${type === 'success' ? 'check-circle' : 'info'}" class="w-5 h-5 mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+                notification.classList.add('translate-x-0');
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('translate-x-0');
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        // External Services Integration
+        function initializeExternalServices() {
+            // Simulate live status updates for external services
+            setInterval(() => {
+                updateExternalServiceStatus();
+            }, 5000);
+            
+            console.log('🌐 External services integration initialized');
+        }
+        
+        function updateExternalServiceStatus() {
+            // Update Status API
+            const statusApiIndicator = document.getElementById('status-api-indicator');
+            const statusApiResponse = document.getElementById('status-api-response');
+            
+            if (statusApiIndicator && statusApiResponse) {
+                const responseTime = Math.floor(Math.random() * 50) + 70; // 70-120ms
+                statusApiResponse.textContent = `${responseTime}ms`;
+                
+                // Update status based on response time
+                if (responseTime < 100) {
+                    statusApiIndicator.className = 'service-status service-live';
+                    statusApiIndicator.innerHTML = '<div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>Live';
+                } else {
+                    statusApiIndicator.className = 'service-status service-error';
+                    statusApiIndicator.innerHTML = '<div class="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>Slow';
+                }
+            }
+            
+            // Update R2 Storage
+            const r2StorageUsed = document.getElementById('r2-storage-used');
+            if (r2StorageUsed) {
+                const storageUsed = (Math.random() * 2 + 1.5).toFixed(1); // 1.5-3.5GB
+                r2StorageUsed.textContent = `${storageUsed}GB`;
+            }
+        }
+        
+        // Enterprise Color Validation
+        function validateEnterpriseColors() {
+            // Remove purple elements for enterprise compliance
+            const purpleElements = document.querySelectorAll('.purple-compliance, .text-purple-600, .bg-purple-600');
+            purpleElements.forEach(element => {
+                element.classList.add('hidden');
+            });
+            
+            console.log('🎨 Enterprise color scheme validated (no purple policy)');
+        }
+        
+        // Enhanced Dashboard Initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
+            // Platform Detection and Display
+            detectAndUpdatePlatform();
+            
+            // Initialize real-time clock with enhanced features
+            initializeRealTimeClock();
+            
+            // Initialize external services
+            initializeExternalServices();
+            
+            // Validate enterprise colors
+            validateEnterpriseColors();
+            
+            // Add click handlers to dashboard cards
+            const cards = document.querySelectorAll('.gradient-card-1, .gradient-card-2, .gradient-card-3');
+            cards.forEach((card, index) => {
+                card.addEventListener('click', function() {
+                    const dashboards = ['http://localhost:8090/', 'http://localhost:8090/qr-onboard', 'http://localhost:8090/phone-info'];
+                    showNotification(`Opening dashboard ${index + 1}...`, 'info');
+                    setTimeout(() => {
+                        window.open(dashboards[index], '_blank');
+                    }, 500);
+                });
+            });
+            
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    switch(e.key) {
+                        case '1':
+                            e.preventDefault();
+                            switchTab('overview');
+                            break;
+                        case '2':
+                            e.preventDefault();
+                            switchTab('analytics');
+                            break;
+                        case '3':
+                            e.preventDefault();
+                            switchTab('monitoring');
+                            break;
+                        case '4':
+                            e.preventDefault();
+                            switchTab('security');
+                            break;
+                        case 'r':
+                            e.preventDefault();
+                            refreshDashboard();
+                            break;
+                    }
+                }
+            });
+            
+            // Set build time
+            const buildTimeElement = document.getElementById('build-time');
+            if (buildTimeElement) {
+                buildTimeElement.textContent = new Date().toISOString().split('T')[0];
+            }
+            
+            // Initialize performance monitoring
+            initializePerformanceMonitoring();
+        });
+        
+        // Platform Detection Function
+        function detectAndUpdatePlatform() {
+            const platform = navigator.platform.toLowerCase();
+            const userAgent = navigator.userAgent.toLowerCase();
+            let detectedPlatform = 'unknown';
+            let platformIcon = '🖥️';
+            
+            // Detect platform
+            if (platform.includes('mac') || userAgent.includes('mac')) {
+                detectedPlatform = 'darwin';
+                platformIcon = '🍎';
+            } else if (platform.includes('win') || userAgent.includes('win')) {
+                detectedPlatform = 'windows';
+                platformIcon = '🪟';
+            } else if (platform.includes('linux') || userAgent.includes('linux')) {
+                detectedPlatform = 'linux';
+                platformIcon = '🐧';
+            } else if (platform.includes('iphone') || userAgent.includes('iphone')) {
+                detectedPlatform = 'ios';
+                platformIcon = '📱';
+            } else if (platform.includes('android') || userAgent.includes('android')) {
+                detectedPlatform = 'android';
+                platformIcon = '🤖';
+            }
+            
+            // Update platform displays
+            const platformElements = document.querySelectorAll('[data-platform]');
+            platformElements.forEach(element => {
+                element.textContent = detectedPlatform;
+            });
+            
+            // Update platform icons
+            const platformIcons = document.querySelectorAll('[data-platform-icon]');
+            platformIcons.forEach(icon => {
+                icon.textContent = platformIcon;
+            });
+            
+            console.log(`🖥️ Platform detected: ${detectedPlatform} (${platformIcon})`);
+        }
+        
+        // Performance Monitoring
+        function initializePerformanceMonitoring() {
+            // Monitor page load performance
+            if ('performance' in window) {
+                window.addEventListener('load', function() {
+                    const perfData = performance.getEntriesByType('navigation')[0];
+                    const loadTime = perfData.loadEventEnd - perfData.loadEventStart;
+                    
+                    console.log(`📊 Page load time: ${loadTime.toFixed(2)}ms`);
+                    
+                    // Show performance notification if load time is good
+                    if (loadTime < 500) {
+                        showNotification('Dashboard loaded successfully with excellent performance!', 'success');
+                    }
+                });
+            }
+            
+            // Monitor dashboard interactions
+            let interactionCount = 0;
+            document.addEventListener('click', function() {
+                interactionCount++;
+                if (interactionCount % 10 === 0) {
+                    console.log(`🖱️ Dashboard interactions: ${interactionCount}`);
+                }
+            });
+        }
+        
+        // Open Dashboard Function
+        function openDashboard(url) {
+            showNotification('Opening dashboard...', 'info');
+            setTimeout(() => {
+                window.open(url, '_blank');
+            }, 300);
+        }
+        
+        // Placeholder Function
+        function placeholderFunction() {
+            showNotification('This dashboard is coming soon!', 'warning');
+        }
+        
+        // Enhanced Real-time Clock
+        function initializeRealTimeClock() {
+            function updateClock() {
+                const now = new Date();
+                
+                // Header time (short format)
+                const timeString = now.toLocaleString('en-US', {
+                    timeZone: 'UTC',
+                    timeZoneName: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                });
+                
+                // Footer time (detailed format)
+                const detailedTimeString = now.toLocaleString('en-US', {
+                    timeZone: 'UTC',
+                    timeZoneName: 'long',
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true
+                });
+                
+                // Update header time
+                const headerTimeElement = document.getElementById('current-time');
+                if (headerTimeElement) {
+                    headerTimeElement.textContent = timeString;
+                }
+                
+                // Update footer time
+                const footerTimeElement = document.getElementById('footer-current-time');
+                if (footerTimeElement) {
+                    footerTimeElement.textContent = detailedTimeString;
+                }
+                
+                // Update debug info if available
+                const timezoneDebugElement = document.getElementById('timezone-debug');
+                if (timezoneDebugElement) {
+                    timezoneDebugElement.textContent = `IANA: UTC
+Offset: UTC+0
+Current: ${detailedTimeString}
+UTC: ${now.toISOString()}`;
+                }
+                
+                // Add subtle animation to time display
+                if (headerTimeElement) {
+                    headerTimeElement.style.transition = 'color 0.3s ease';
+                    headerTimeElement.style.color = now.getSeconds() % 2 === 0 ? '#60a5fa' : '#93c5fd';
+                }
+            }
+            
+            // Initialize immediately and then update every second
+            updateClock();
+            setInterval(updateClock, 1000);
+            
+            console.log('⏰ Real-time UTC clock initialized (1s refresh)');
+        }
+    </script>
+</body>
+</html>
+                                            <span class="badge badge-gray">@core</span>
+                                            <span class="badge badge-blue">Main Catalog</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 mb-4">Centralized view of all system components, status monitoring, and performance metrics.</p>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center text-sm text-gray-500">
+                                        <i data-lucide="layers" class="w-4 h-4 mr-1"></i>
+                                        All Systems
+                                    </div>
+                                    <button onclick="openDashboard('../demos/main/dashboard-config-injection.html')" class="btn btn-purple">
+                                        Launch
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Environment Variables -->
+                        <div class="card card-hover relative">
+                            <div class="gradient-card-3 h-2"></div>
+                            <div class="absolute top-4 left-4 number-badge bg-cyan-600">
+                                3
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center mb-4">
+                                    <div class="icon-container icon-cyan mr-3">
+                                        <i data-lucide="settings" class="w-6 h-6 text-cyan-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900">Environment Variables</h4>
+                                        <div class="flex items-center space-x-2 mt-1">
+                                            <span class="badge badge-green">Live</span>
+                                            <span class="badge badge-gray">scripts</span>
+                                            <span class="badge badge-blue">Main Catalog</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 mb-4">System configuration, environment management, and variable monitoring dashboard.</p>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center text-sm text-gray-500">
+                                        <i data-lucide="database" class="w-4 h-4 mr-1"></i>
+                                        39 Variables
+                                    </div>
+                                    <button onclick="openDashboard('../scripts/env-vars-dashboard.html')" class="btn btn-cyan">
+                                        Launch
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics & Monitoring -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+                        <i data-lucide="bar-chart" class="w-5 h-5 mr-2"></i>
+                        Analytics & Monitoring
+                    </h3>
+                    <div class="grid grid-cols-1 grid-cols-3-md gap-6">
+                        <!-- Status Dashboard UI -->
+                        <div class="card card-hover relative">
+                            <div class="gradient-card-4 h-2"></div>
+                            <div class="absolute top-4 left-4 number-badge bg-green-600">
+                                4
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center mb-4">
+                                    <div class="icon-container icon-green mr-3">
+                                        <i data-lucide="activity" class="w-6 h-6 text-green-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900">Status Dashboard UI</h4>
+                                        <div class="flex items-center space-x-2 mt-1">
+                                            <span class="badge badge-green">Live</span>
+                                            <span class="badge badge-gray">@status</span>
+                                            <span class="badge badge-orange">Status Catalog</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 mb-4">Real-time system status, health monitoring, and performance indicators.</p>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center text-sm text-gray-500">
+                                        <i data-lucide="pulse" class="w-4 h-4 mr-1"></i>
+                                        Real-time
+                                    </div>
+                                    <button onclick="openDashboard('../src/dashboard/status-dashboard-ui.html')" class="btn btn-green">
+                                        Launch
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Complete Endpoints -->
+                        <div class="card card-hover relative">
+                            <div class="gradient-card-5 h-2"></div>
+                            <div class="absolute top-4 left-4 number-badge bg-orange-600">
+                                5
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center mb-4">
+                                    <div class="icon-container icon-orange mr-3">
+                                        <i data-lucide="plug-zap" class="w-6 h-6 text-orange-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900">Complete Endpoints</h4>
+                                        <div class="flex items-center space-x-2 mt-1">
+                                            <span class="badge badge-green">Live</span>
+                                            <span class="badge badge-gray">@tools</span>
+                                            <span class="badge badge-blue">Main Catalog</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 mb-4">Complete API endpoint documentation, testing interface, and monitoring.</p>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center text-sm text-gray-500">
+                                        <i data-lucide="plug-zap" class="w-4 h-4 mr-1"></i>
+                                        Full API
+                                    </div>
+                                    <button onclick="openDashboard('../demos/@web/analytics/complete-endpoints-dashboard.html')" class="btn btn-orange">
+                                        Launch
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Analytics Dashboard -->
+                        <div class="card card-hover relative">
+                            <div class="gradient-card-6 h-2"></div>
+                            <div class="absolute top-4 left-4 number-badge bg-red-600">
+                                6
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center mb-4">
+                                    <div class="icon-container icon-red mr-3">
+                                        <i data-lucide="bar-chart-2" class="w-6 h-6 text-red-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900">Analytics Dashboard</h4>
+                                        <div class="flex items-center space-x-2 mt-1">
+                                            <span class="badge badge-green">Live</span>
+                                            <span class="badge badge-gray">@tools</span>
+                                            <span class="badge badge-purple">Analytics Catalog</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 mb-4">Data visualization, metrics analysis, and performance analytics dashboard.</p>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center text-sm text-gray-500">
+                                        <i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>
+                                        Insights
+                                    </div>
+                                    <button onclick="openDashboard('../demos/analytics/analytics-dashboard.html')" class="btn btn-red">
+                                        Launch
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Development & Testing -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+                        <i data-lucide="code" class="w-5 h-5 mr-2"></i>
+                        Development & Testing
+                    </h3>
+                    <div class="grid grid-cols-1 grid-cols-2-md gap-6">
+                        <!-- Credential Dashboard -->
+                        <div class="card card-hover relative">
+                            <div class="gradient-card-1 h-2"></div>
+                            <div class="absolute top-4 left-4 number-badge bg-purple-600">
+                                7
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center mb-4">
+                                    <div class="icon-container icon-purple mr-3">
+                                        <i data-lucide="key" class="w-6 h-6 text-purple-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900">Credential Dashboard</h4>
+                                        <span class="badge badge-purple">Security</span>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 mb-4">Secure credential management, API key storage, and access control.</p>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center text-sm text-gray-500">
+                                        <i data-lucide="shield" class="w-4 h-4 mr-1"></i>
+                                        Secure
+                                    </div>
+                                    <button onclick="openDashboard('../src/dashboard/credential-dashboard.html')" class="btn btn-purple">
+                                        Launch
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Admin Dashboard -->
+                        <div class="card card-hover relative">
+                            <div class="gradient-card-2 h-2"></div>
+                            <div class="absolute top-4 left-4 number-badge bg-green-600">
+                                8
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center mb-4">
+                                    <div class="icon-container icon-green mr-3">
+                                        <i data-lucide="shield-check" class="w-6 h-6 text-green-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900">Admin Dashboard</h4>
+                                        <span class="badge badge-green">Admin</span>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 mb-4">System administration, user management, and administrative controls.</p>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center text-sm text-gray-500">
+                                        <i data-lucide="settings" class="w-4 h-4 mr-1"></i>
+                                        Admin
+                                    </div>
+                                    <button onclick="openDashboard('../src/dashboard/admin-dashboard.html')" class="btn btn-green">
+                                        Launch
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Development Tools -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+                        <i data-lucide="tool" class="w-5 h-5 mr-2"></i>
+                        Development Tools
+                    </h3>
+                    <div class="grid grid-cols-1 grid-cols-2-md gap-6">
+                        <!-- URL Pattern Routing -->
+                        <div class="card card-hover relative">
+                            <div class="gradient-card-3 h-2"></div>
+                            <div class="absolute top-4 left-4 number-badge bg-cyan-600">
+                                9
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center mb-4">
+                                    <div class="icon-container icon-cyan mr-3">
+                                        <i data-lucide="link" class="w-6 h-6 text-cyan-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900">URL Pattern Routing</h4>
+                                        <span class="badge badge-cyan">Routing</span>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 mb-4">URL pattern matching, routing configuration, and path management tools.</p>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center text-sm text-gray-500">
+                                        <i data-lucide="route" class="w-4 h-4 mr-1"></i>
+                                        Patterns
+                                    </div>
+                                    <button onclick="openDashboard('../src/dashboard/url-pattern-routing.html')" class="btn btn-cyan">
+                                        Launch
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Phone Info Template -->
+                        <div class="card card-hover relative">
+                            <div class="gradient-card-4 h-2"></div>
+                            <div class="absolute top-4 left-4 number-badge bg-orange-600">
+                                10
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center mb-4">
+                                    <div class="icon-container icon-orange mr-3">
+                                        <i data-lucide="smartphone" class="w-6 h-6 text-orange-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900">Phone Info Template</h4>
+                                        <span class="badge badge-orange">Mobile</span>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 mb-4">Phone information display, device detection, and mobile analytics.</p>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center text-sm text-gray-500">
+                                        <i data-lucide="smartphone" class="w-4 h-4 mr-1"></i>
+                                        Mobile
+                                    </div>
+                                    <button onclick="openDashboard('../src/dashboard/phone-info-template.html')" class="btn btn-orange">
+                                        Launch
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CLI & Development Tools -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+                        <i data-lucide="terminal" class="w-5 h-5 mr-2"></i>
+                        CLI & Development Tools
+                    </h3>
+                    <div class="grid grid-cols-1 grid-cols-2-md gap-6">
+                        <!-- CLI Security Demo -->
+                        <div class="card card-hover relative">
+                            <div class="gradient-card-1 h-2"></div>
+                            <div class="absolute top-4 left-4 number-badge enterprise-bg-blue">
+                                13
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center mb-4">
+                                    <div class="icon-container icon-blue mr-3">
+                                        <i data-lucide="shield" class="w-6 h-6 enterprise-blue"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900">CLI Security Demo</h4>
+                                        <div class="flex items-center space-x-2 mt-1">
+                                            <span class="badge badge-green">Interactive</span>
+                                            <span class="badge badge-gray">@security</span>
+                                            <span class="badge badge-blue">CLI</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 mb-4">Interactive CLI security testing with enterprise-grade validation and compliance checks.</p>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center text-sm text-gray-500">
+                                        <i data-lucide="terminal" class="w-4 h-4 mr-1"></i>
+                                        Command Line
+                                    </div>
+                                    <button onclick="openDashboard('../demos/@web/cli-security-demo.html')" class="btn btn-blue">
+                                        Launch
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bundle Analyzer -->
+                        <div class="card card-hover relative">
+                            <div class="gradient-card-2 h-2"></div>
+                            <div class="absolute top-4 left-4 number-badge enterprise-bg-green">
+                                14
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center mb-4">
+                                    <div class="icon-container icon-green mr-3">
+                                        <i data-lucide="package" class="w-6 h-6 enterprise-green"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900">Bundle Analyzer</h4>
+                                        <div class="flex items-center space-x-2 mt-1">
+                                            <span class="badge badge-green">Analysis</span>
+                                            <span class="badge badge-gray">@tools</span>
+                                            <span class="badge badge-orange">Optimization</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 mb-4">Dependency analysis, bundle optimization, and performance monitoring tools.</p>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center text-sm text-gray-500">
+                                        <i data-lucide="package" class="w-4 h-4 mr-1"></i>
+                                        Dependencies
+                                    </div>
+                                    <button onclick="openDashboard('../tools/bundler/bundle-analyzer.html')" class="btn btn-green">
+                                        Launch
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- External Services Integration -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+                        <i data-lucide="cloud" class="w-5 h-5 mr-2"></i>
+                        External Services Integration
+                    </h3>
+                    <div class="grid grid-cols-1 grid-cols-2-md gap-6">
+                        <!-- Status API Service -->
+                        <div class="external-service">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 enterprise-bg-blue rounded-lg flex items-center justify-center mr-3">
+                                        <i data-lucide="server" class="w-5 h-5 text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900">Status API Service</h4>
+                                        <p class="text-sm text-gray-500">empire-pro-status.workers.dev</p>
+                                    </div>
+                                </div>
+                                <div id="status-api-indicator" class="service-status service-live">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                                    Live
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4 text-sm">
+                                <div>
+                                    <div class="text-gray-500">Response Time</div>
+                                    <div class="font-semibold enterprise-blue" id="status-api-response">87ms</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500">Uptime</div>
+                                    <div class="font-semibold enterprise-green">99.97%</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500">Regions</div>
+                                    <div class="font-semibold enterprise-cyan">12</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- R2 Storage Service -->
+                        <div class="external-service">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 enterprise-bg-orange rounded-lg flex items-center justify-center mr-3">
+                                        <i data-lucide="hard-drive" class="w-5 h-5 text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900">R2 Storage Service</h4>
+                                        <p class="text-sm text-gray-500">empire-pro-r2.workers.dev</p>
+                                    </div>
+                                </div>
+                                <div id="r2-storage-indicator" class="service-status service-live">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                                    Live
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4 text-sm">
+                                <div>
+                                    <div class="text-gray-500">Storage Used</div>
+                                    <div class="font-semibold enterprise-orange" id="r2-storage-used">2.4GB</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500">Objects</div>
+                                    <div class="font-semibold enterprise-blue">1,247</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-500">Bandwidth</div>
+                                    <div class="font-semibold enterprise-cyan">45GB</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Matrix View -->
+            <div id="matrixView" class="tab-content hidden">
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Dashboard Matrix Overview</h3>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm text-gray-500">12 dashboards</span>
+                                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th class="px-4 py-3 text-left">#</th>
+                                        <th class="px-4 py-3 text-left">Dashboard</th>
+                                        <th class="px-4 py-3 text-left">Description</th>
+                                        <th class="px-4 py-3 text-left">Scope</th>
+                                        <th class="px-4 py-3 text-left">Domain</th>
+                                        <th class="px-4 py-3 text-left">Category</th>
+                                        <th class="px-4 py-3 text-left">Type</th>
+                                        <th class="px-4 py-3 text-left">Tags</th>
+                                        <th class="px-4 py-3 text-left">Status</th>
+                                        <th class="px-4 py-3 text-left">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Row 1: Venmo Family System -->
+                                    <tr>
+                                        <td>
+                                            <div class="number-badge bg-blue-600">1</div>
+                                        </td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <i data-lucide="users" class="w-4 h-4 text-blue-600 mr-2"></i>
+                                                <span class="text-sm font-medium text-gray-900">Venmo Family System</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-sm text-gray-500">Family Payments</td>
+                                        <td><span class="badge badge-gray">@platform</span></td>
+                                        <td><span class="badge badge-blue">localhost</span></td>
+                                        <td><span class="badge badge-blue">Main</span></td>
+                                        <td>
+                                            <div class="flex flex-wrap gap-1">
+                                                <span class="badge badge-gray">venmo-api</span>
+                                                <span class="badge badge-gray">qr-generator</span>
+                                                <span class="badge badge-gray">family-db</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge badge-green">Web UI</span></td>
+                                        <td><span class="badge badge-orange">Mobile Ready</span></td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <div class="w-2 h-2 rounded-full mr-2 bg-green-500"></div>
+                                                <span class="text-xs text-green-600">Live</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button onclick="openDashboard('../dist/venmo-family-webui-demo/index.html')" class="btn btn-blue">Launch</button>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Row 2: Unified Dashboard -->
+                                    <tr>
+                                        <td>
+                                            <div class="number-badge bg-purple-600">2</div>
+                                        </td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <i data-lucide="layout-dashboard" class="w-4 h-4 text-purple-600 mr-2"></i>
+                                                <span class="text-sm font-medium text-gray-900">Unified Dashboard</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-sm text-gray-500">System Overview</td>
+                                        <td><span class="badge badge-gray">@dashboard</span></td>
+                                        <td><span class="badge badge-purple">localhost</span></td>
+                                        <td><span class="badge badge-purple">Main</span></td>
+                                        <td>
+                                            <div class="flex flex-wrap gap-1">
+                                                <span class="badge badge-gray">real-time</span>
+                                                <span class="badge badge-gray">analytics</span>
+                                                <span class="badge badge-gray">monitoring</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge badge-green">Web UI</span></td>
+                                        <td><span class="badge badge-orange">Real-time</span></td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <div class="w-2 h-2 rounded-full mr-2 bg-green-500"></div>
+                                                <span class="text-xs text-green-600">Live</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button onclick="openDashboard('../dist/unified-dashboard-demo/index.html')" class="btn btn-purple">Launch</button>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Row 3: Environment Variables -->
+                                    <tr>
+                                        <td>
+                                            <div class="number-badge bg-cyan-600">3</div>
+                                        </td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <i data-lucide="settings" class="w-4 h-4 text-cyan-600 mr-2"></i>
+                                                <span class="text-sm font-medium text-gray-900">Environment Variables</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-sm text-gray-500">Configuration</td>
+                                        <td><span class="badge badge-gray">@config</span></td>
+                                        <td><span class="badge badge-cyan">localhost</span></td>
+                                        <td><span class="badge badge-blue">Main</span></td>
+                                        <td>
+                                            <div class="flex flex-wrap gap-1">
+                                                <span class="badge badge-gray">commander</span>
+                                                <span class="badge badge-gray">typescript</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge badge-green">Dashboard</span></td>
+                                        <td><span class="badge badge-orange">39 Variables</span></td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <div class="w-2 h-2 rounded-full mr-2 bg-green-500"></div>
+                                                <span class="text-xs text-green-600">Live</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button onclick="openDashboard('../scripts/env-vars-dashboard.html')" class="btn btn-cyan">Launch</button>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Row 4: Status Dashboard UI -->
+                                    <tr>
+                                        <td>
+                                            <div class="number-badge bg-green-600">4</div>
+                                        </td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <i data-lucide="activity" class="w-4 h-4 text-green-600 mr-2"></i>
+                                                <span class="text-sm font-medium text-gray-900">Status Dashboard UI</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-sm text-gray-500">Health Monitoring</td>
+                                        <td><span class="badge badge-gray">@status</span></td>
+                                        <td><span class="badge badge-green">localhost</span></td>
+                                        <td><span class="badge badge-orange">Status</span></td>
+                                        <td>
+                                            <div class="flex flex-wrap gap-1">
+                                                <span class="badge badge-gray">health-check</span>
+                                                <span class="badge badge-gray">metrics</span>
+                                                <span class="badge badge-gray">uptime</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge badge-green">Dashboard</span></td>
+                                        <td><span class="badge badge-orange">Real-time</span></td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <div class="w-2 h-2 rounded-full mr-2 bg-green-500"></div>
+                                                <span class="text-xs text-green-600">Live</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button onclick="openDashboard('../src/dashboard/status-dashboard-ui.html')" class="btn btn-green">Launch</button>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Row 5: Complete Endpoints -->
+                                    <tr>
+                                        <td>
+                                            <div class="number-badge bg-orange-600">5</div>
+                                        </td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <i data-lucide="plug-zap" class="w-4 h-4 text-orange-600 mr-2"></i>
+                                                <span class="text-sm font-medium text-gray-900">Complete Endpoints</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-sm text-gray-500">API Documentation</td>
+                                        <td><span class="badge badge-gray">@api</span></td>
+                                        <td><span class="badge badge-orange">localhost</span></td>
+                                        <td><span class="badge badge-blue">Main</span></td>
+                                        <td>
+                                            <div class="flex flex-wrap gap-1">
+                                                <span class="badge badge-gray">api-router</span>
+                                                <span class="badge badge-gray">endpoints</span>
+                                                <span class="badge badge-gray">swagger</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge badge-green">Web UI</span></td>
+                                        <td><span class="badge badge-orange">Full API</span></td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <div class="w-2 h-2 rounded-full mr-2 bg-green-500"></div>
+                                                <span class="text-xs text-green-600">Live</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button onclick="openDashboard('../demos/@web/analytics/complete-endpoints-dashboard.html')" class="btn btn-orange">Launch</button>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Row 6: Analytics Dashboard -->
+                                    <tr>
+                                        <td>
+                                            <div class="number-badge bg-red-600">6</div>
+                                        </td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <i data-lucide="bar-chart-2" class="w-4 h-4 text-red-600 mr-2"></i>
+                                                <span class="text-sm font-medium text-gray-900">Analytics Dashboard</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-sm text-gray-500">Data Analytics</td>
+                                        <td><span class="badge badge-gray">@analytics</span></td>
+                                        <td><span class="badge badge-red">localhost</span></td>
+                                        <td><span class="badge badge-purple">Analytics</span></td>
+                                        <td>
+                                            <div class="flex flex-wrap gap-1">
+                                                <span class="badge badge-gray">metrics</span>
+                                                <span class="badge badge-gray">charts</span>
+                                                <span class="badge badge-gray">insights</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge badge-green">Dashboard</span></td>
+                                        <td><span class="badge badge-orange">Insights</span></td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <div class="w-2 h-2 rounded-full mr-2 bg-green-500"></div>
+                                                <span class="text-xs text-green-600">Live</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button onclick="openDashboard('../demos/analytics/analytics-dashboard.html')" class="btn btn-red">Launch</button>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Row 7: Credential Dashboard -->
+                                    <tr>
+                                        <td>
+                                            <div class="number-badge bg-purple-600">7</div>
+                                        </td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <i data-lucide="key" class="w-4 h-4 text-purple-600 mr-2"></i>
+                                                <span class="text-sm font-medium text-gray-900">Credential Dashboard</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-sm text-gray-500">Security Management</td>
+                                        <td><span class="badge badge-gray">@security</span></td>
+                                        <td><span class="badge badge-purple">localhost</span></td>
+                                        <td><span class="badge badge-purple">Security</span></td>
+                                        <td>
+                                            <div class="flex flex-wrap gap-1">
+                                                <span class="badge badge-gray">secrets</span>
+                                                <span class="badge badge-gray">auth</span>
+                                                <span class="badge badge-gray">encryption</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge badge-green">Dashboard</span></td>
+                                        <td><span class="badge badge-orange">Secure</span></td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <div class="w-2 h-2 rounded-full mr-2 bg-yellow-500"></div>
+                                                <span class="text-xs text-yellow-600">Dev</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button onclick="placeholderFunction()" class="btn btn-purple">Coming Soon</button>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Row 8: Admin Dashboard -->
+                                    <tr>
+                                        <td>
+                                            <div class="number-badge bg-green-600">8</div>
+                                        </td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <i data-lucide="shield-check" class="w-4 h-4 text-green-600 mr-2"></i>
+                                                <span class="text-sm font-medium text-gray-900">Admin Dashboard</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-sm text-gray-500">System Administration</td>
+                                        <td><span class="badge badge-gray">@admin</span></td>
+                                        <td><span class="badge badge-green">localhost</span></td>
+                                        <td>
+                                            <div class="flex flex-wrap gap-1">
+                                                <span class="badge badge-gray">users</span>
+                                                <span class="badge badge-gray">permissions</span>
+                                                <span class="badge badge-gray">logs</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge badge-green">Dashboard</span></td>
+                                        <td><span class="badge badge-orange">Admin</span></td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <div class="w-2 h-2 rounded-full mr-2 bg-yellow-500"></div>
+                                                <span class="text-xs text-yellow-600">Dev</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button onclick="placeholderFunction()" class="btn btn-green">Coming Soon</button>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Row 9: URL Pattern Routing -->
+                                    <tr>
+                                        <td>
+                                            <div class="number-badge bg-cyan-600">9</div>
+                                        </td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <i data-lucide="link" class="w-4 h-4 text-cyan-600 mr-2"></i>
+                                                <span class="text-sm font-medium text-gray-900">URL Pattern Routing</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-sm text-gray-500">Routing System</td>
+                                        <td><span class="badge badge-gray">@routing</span></td>
+                                        <td><span class="badge badge-cyan">localhost</span></td>
+                                        <td><span class="badge badge-cyan">Routing</span></td>
+                                        <td>
+                                            <div class="flex flex-wrap gap-1">
+                                                <span class="badge badge-gray">patterns</span>
+                                                <span class="badge badge-gray">matcher</span>
+                                                <span class="badge badge-gray">router</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge badge-green">Dashboard</span></td>
+                                        <td><span class="badge badge-orange">Patterns</span></td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <div class="w-2 h-2 rounded-full mr-2 bg-yellow-500"></div>
+                                                <span class="text-xs text-yellow-600">Dev</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button onclick="placeholderFunction()" class="btn btn-cyan">Coming Soon</button>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Row 10: Phone Info Template -->
+                                    <tr>
+                                        <td>
+                                            <div class="number-badge bg-orange-600">10</div>
+                                        </td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <i data-lucide="smartphone" class="w-4 h-4 text-orange-600 mr-2"></i>
+                                                <span class="text-sm font-medium text-gray-900">Phone Info Template</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-sm text-gray-500">Mobile Detection</td>
+                                        <td><span class="badge badge-gray">@mobile</span></td>
+                                        <td><span class="badge badge-orange">localhost</span></td>
+                                        <td><span class="badge badge-orange">Mobile</span></td>
+                                        <td>
+                                            <div class="flex flex-wrap gap-1">
+                                                <span class="badge badge-gray">device-detect</span>
+                                                <span class="badge badge-gray">phone-info</span>
+                                                <span class="badge badge-gray">mobile</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge badge-green">Template</span></td>
+                                        <td><span class="badge badge-orange">Mobile</span></td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <div class="w-2 h-2 rounded-full mr-2 bg-yellow-500"></div>
+                                                <span class="text-xs text-yellow-600">Dev</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button onclick="placeholderFunction()" class="btn btn-orange">Coming Soon</button>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Row 11: Database Management -->
+                                    <tr>
+                                        <td>
+                                            <div class="number-badge bg-orange-600">11</div>
+                                        </td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <i data-lucide="database" class="w-4 h-4 text-orange-600 mr-2"></i>
+                                                <span class="text-sm font-medium text-gray-900">Database Management</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-sm text-gray-500">Database Admin</td>
+                                        <td><span class="badge badge-gray">@database</span></td>
+                                        <td><span class="badge badge-orange">localhost</span></td>
+                                        <td><span class="badge badge-orange">Database</span></td>
+                                        <td>
+                                            <div class="flex flex-wrap gap-1">
+                                                <span class="badge badge-gray">sql</span>
+                                                <span class="badge badge-gray">nosql</span>
+                                                <span class="badge badge-gray">migrations</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge badge-green">Dashboard</span></td>
+                                        <td><span class="badge badge-orange">SQL/NoSQL</span></td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <div class="w-2 h-2 rounded-full mr-2 bg-yellow-500"></div>
+                                                <span class="text-xs text-yellow-600">Dev</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button onclick="placeholderFunction()" class="btn btn-orange">Coming Soon</button>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Row 12: Bucket Management -->
+                                    <tr>
+                                        <td>
+                                            <div class="number-badge bg-red-600">12</div>
+                                        </td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <i data-lucide="hard-drive" class="w-4 h-4 text-red-600 mr-2"></i>
+                                                <span class="text-sm font-medium text-gray-900">Bucket Management</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-sm text-gray-500">Storage Management</td>
+                                        <td><span class="badge badge-gray">@storage</span></td>
+                                        <td><span class="badge badge-red">localhost</span></td>
+                                        <td>
+                                            <div class="flex flex-wrap gap-1">
+                                                <span class="badge badge-gray">r2</span>
+                                                <span class="badge badge-gray">s3</span>
+                                                <span class="badge badge-gray">cloud-storage</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge badge-green">Dashboard</span></td>
+                                        <td><span class="badge badge-orange">R2 Storage</span></td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <div class="w-2 h-2 rounded-full mr-2 bg-yellow-500"></div>
+                                                <span class="text-xs text-yellow-600">Dev</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button onclick="placeholderFunction()" class="btn btn-red">Coming Soon</button>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Row 13: CLI Security Demo -->
+                                    <tr>
+                                        <td>
+                                            <div class="number-badge bg-purple-600">13</div>
+                                        </td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <i data-lucide="shield" class="w-4 h-4 text-purple-600 mr-2"></i>
+                                                <span class="text-sm font-medium text-gray-900">CLI Security Demo</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-sm text-gray-500">Security Operations</td>
+                                        <td><span class="badge badge-gray">@security</span></td>
+                                        <td><span class="badge badge-purple">localhost</span></td>
+                                        <td><span class="badge badge-purple">Security</span></td>
+                                        <td>
+                                            <div class="flex flex-wrap gap-1">
+                                                <span class="badge badge-gray">cli</span>
+                                                <span class="badge badge-gray">security</span>
+                                                <span class="badge badge-gray">bun</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge badge-green">Demo</span></td>
+                                        <td><span class="badge badge-orange">Interactive</span></td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <div class="w-2 h-2 rounded-full mr-2 bg-green-500"></div>
+                                                <span class="text-xs text-green-600">Live</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button onclick="runCliSecurityDemo()" class="btn btn-purple">Run Demo</button>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Row 14: Bundle Analyzer -->
+                                    <tr>
+                                        <td>
+                                            <div class="number-badge bg-orange-600">14</div>
+                                        </td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <i data-lucide="package" class="w-4 h-4 text-orange-600 mr-2"></i>
+                                                <span class="text-sm font-medium text-gray-900">Bundle Analyzer</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-sm text-gray-500">Bundle Analysis</td>
+                                        <td><span class="badge badge-gray">@tools</span></td>
+                                        <td><span class="badge badge-orange">localhost</span></td>
+                                        <td><span class="badge badge-orange">Analytics</span></td>
+                                        <td>
+                                            <div class="flex flex-wrap gap-1">
+                                                <span class="badge badge-gray">bun</span>
+                                                <span class="badge badge-gray">metafile</span>
+                                                <span class="badge badge-gray">tension</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge badge-green">Dashboard</span></td>
+                                        <td><span class="badge badge-orange">Real-time</span></td>
+                                        <td>
+                                            <div class="flex items-center">
+                                                <div class="w-2 h-2 rounded-full mr-2 bg-green-500"></div>
+                                                <span class="text-xs text-green-600">Live</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button onclick="openBundleAnalyzer()" class="btn btn-orange">Launch</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- External Links -->
+        <section class="mb-8">
+            <h3 class="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+                <i data-lucide="external-link" class="w-5 h-5 mr-2"></i>
+                External Services
+            </h3>
+            <div class="grid grid-cols-1 grid-cols-2-md gap-4">
+                <a href="https://empire-pro-status.utahj4754.workers.dev/" target="_blank" class="card card-hover">
+                    <div class="p-6 flex items-center">
+                        <div class="icon-container icon-blue mr-4">
+                            <i data-lucide="activity" class="w-6 h-6 text-blue-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-gray-900">Status API</h4>
+                            <p class="text-sm text-gray-500">Live status monitoring</p>
+                        </div>
+                        <i data-lucide="external-link" class="w-4 h-4 text-gray-400"></i>
+                    </div>
+                </a>
+                
+                <a href="https://empire-pro-r2.utahj4754.workers.dev/" target="_blank" class="card card-hover">
+                    <div class="p-6 flex items-center">
+                        <div class="icon-container icon-orange mr-4">
+                            <i data-lucide="hard-drive" class="w-6 h-6 text-orange-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-gray-900">R2 Storage</h4>
+                            <p class="text-sm text-gray-500">Cloud storage endpoint</p>
+                        </div>
+                        <i data-lucide="external-link" class="w-4 h-4 text-gray-400"></i>
+                    </div>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="container">
+            <div class="text-center">
+                <p class="text-sm opacity-75">Powered by Bun • DuoPlus Automation v3.7.0</p>
+                <p class="text-xs opacity-50 mt-2">Enterprise-grade performance monitoring and status system</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Tab switching functionality
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Remove active state from all tabs
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + 'View').classList.remove('hidden');
+            
+            // Add active state to selected tab
+            const activeTab = document.getElementById(tabName + 'Tab');
+            activeTab.classList.add('active');
+            
+            // Reinitialize Lucide icons for the newly shown content
+            lucide.createIcons();
+        }
+        
+        // Refresh dashboard functionality
+        function refreshDashboard() {
+            // Find the refresh button
+            const refreshBtn = document.querySelector('button[onclick="refreshDashboard()"]');
+            if (!refreshBtn) return;
+            
+            const icon = refreshBtn.querySelector('i');
+            if (!icon) return;
+            
+            // Add spinning animation
+            icon.classList.add('animate-spin');
+            
+            // Simulate refresh with loading state
+            setTimeout(() => {
+                // Reinitialize all Lucide icons
+                lucide.createIcons();
+                
+                // Remove spinning animation
+                icon.classList.remove('animate-spin');
+                
+                // Show success feedback briefly
+                const originalText = refreshBtn.innerHTML;
+                refreshBtn.innerHTML = '<i data-lucide="check" class="w-4 h-4 mr-2"></i>Refreshed';
+                refreshBtn.classList.remove('btn-indigo');
+                refreshBtn.classList.add('btn-green');
+                
+                setTimeout(() => {
+                    refreshBtn.innerHTML = originalText;
+                    refreshBtn.classList.remove('btn-green');
+                    refreshBtn.classList.add('btn-indigo');
+                    lucide.createIcons();
+                }, 1000);
+            }, 500);
+        }
+
+        // Open dashboard function
+        function openDashboard(url) {
+            window.open(url, '_blank');
+        }
+
+        // Placeholder function for coming soon dashboards
+        function placeholderFunction() {
+            alert('This dashboard is currently in development. Check back soon!');
+        }
+
+        // Run CLI Security Demo function
+        function runCliSecurityDemo() {
+            // Create a modal or alert with instructions
+            const message = `🔐 CLI Security Demo Instructions:
+
+To run the CLI Security Demo, open your terminal and execute:
+
+bun run cli-security-demo-working.ts
+
+This will demonstrate:
+• Type-safe command execution
+• Secure environment handling  
+• Memory-efficient operations
+• Sandboxed runtime environment
+• Error handling and validation
+• No external security dependencies
+
+The demo shows the security features of the DuoPlus CLI system using the inspection CLI.`;
+
+            alert(message);
+            
+            // Optionally, open a new tab with the demo file
+            window.open('cli-security-demo-working.ts', '_blank');
+        }
+
+        // Open Bundle Analyzer function
+        function openBundleAnalyzer() {
+            // Create a modal or alert with instructions
+            const message = `📦 Bundle Analyzer Instructions:
+
+To launch the Bundle Analyzer, open your terminal and execute:
+
+bun run bundle-analyzer-simple.ts
+
+This will demonstrate:
+• Real-time bundle tension analysis
+• Circular dependency detection
+• Interactive dependency graph
+• Health scoring with color coding
+• Export to JSON, CSV, PNG
+
+Features:
+• Bun.build() with metafile option
+• Virtual files via Bun.build files option
+• Bundle analysis with tension metrics
+• HSL/HEX color coding
+• Dependency analysis
+
+The analyzer uses Bun's native metafile feature for comprehensive bundle analysis.`;
+
+            alert(message);
+            
+            // Open the bundle analyzer in a new tab
+            window.open('bundle-analyzer-simple.ts', '_blank');
+        }
+
+        // Add some interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate cards on scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-float');
+                    }
+                });
+            });
+
+            document.querySelectorAll('.card').forEach(card => {
+                observer.observe(card);
+            });
+        });
+    </script>
+
+    <!-- Timezone-Aware Footer -->
+    <footer class="border-t bg-slate-100 dark:bg-slate-900 mt-auto">
+        <div class="container mx-auto px-4 py-4">
+            <!-- Primary Footer Row -->
+            <div class="flex items-center justify-between text-sm mb-2">
+                <!-- Left: Environment Context -->
+                <div class="flex items-center space-x-4 font-mono text-xs">
+                    <span class="text-slate-600 dark:text-slate-400">Scope:</span>
+                    <span class="font-semibold text-slate-900 dark:text-slate-100">LOCAL-SANDBOX</span>
+                    
+                    <span class="text-slate-600 dark:text-slate-400">•</span>
+                    
+                    <span class="text-slate-600 dark:text-slate-400">TZ:</span>
+                    <span class="font-semibold text-slate-900 dark:text-slate-100" title="IANA: UTC | Offset: UTC+0">
+                        UTC
+                    </span>
+                    
+                    <span class="text-slate-600 dark:text-slate-400">•</span>
+                    
+                    <span class="text-slate-600 dark:text-slate-400">Platform:</span>
+                    <span class="font-semibold text-slate-900 dark:text-slate-100">darwin</span>
+                </div>
+
+                <!-- Right: Version Info -->
+                <div class="flex items-center space-x-4 font-mono text-xs">
+                    <span class="text-slate-600 dark:text-slate-400">v3.7</span>
+                    <span class="text-slate-600 dark:text-slate-400">•</span>
+                    <span class="text-slate-600 dark:text-slate-400">Development</span>
+                </div>
+            </div>
+
+            <!-- Secondary Footer Row - Detailed Context -->
+            <div class="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 border-t pt-2">
+                <!-- Left: Current Time Display -->
+                <div class="flex items-center space-x-2">
+                    <span>🕒</span>
+                    <span>Current Time (UTC):</span>
+                    <span class="font-mono font-semibold text-slate-900 dark:text-slate-100" id="footer-current-time">
+                        Loading...
+                    </span>
+                </div>
+
+                <!-- Center: Build Information -->
+                <div class="flex items-center space-x-4">
+                    <span class="font-mono">
+                        Built: <span id="build-time">2026-01-15T13:01:00.000Z</span>
+                    </span>
+                    <span class="font-mono">
+                        Runtime: Bun <span id="bun-version">1.3.6</span>
+                    </span>
+                </div>
+
+                <!-- Right: Audit Trail -->
+                <div class="flex items-center space-x-2">
+                    <span>🔐</span>
+                    <span>Deterministic v3.7</span>
+                    <span>•</span>
+                    <span>Audit Ready</span>
+                </div>
+            </div>
+
+            <!-- Debug Information (Hidden by default) -->
+            <div class="hidden debug-info mt-2 pt-2 border-t text-xs font-mono" id="debug-info">
+                <details>
+                    <summary class="cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100">
+                        Debug Information
+                    </summary>
+                    <div class="mt-2 grid grid-cols-2 gap-4">
+                        <div>
+                            <strong>Environment Variables:</strong>
+                            <pre class="mt-1 text-xs bg-slate-100 dark:bg-slate-800 p-2 rounded">
+DASHBOARD_SCOPE=LOCAL-SANDBOX
+TZ=UTC
+NODE_ENV=development
+PLATFORM=darwin
+                            </pre>
+                        </div>
+                        <div>
+                            <strong>Timezone Details:</strong>
+                            <pre class="mt-1 text-xs bg-slate-100 dark:bg-slate-800 p-2 rounded" id="timezone-debug">
+IANA: UTC
+Offset: UTC+0
+Current: Loading...
+UTC: Loading...
+                            </pre>
+                        </div>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Timezone Update Script -->
+    <script>
+        // Update current time every second
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('en-US', {
+                timeZone: 'UTC',
+                timeZoneName: 'short',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+            
+            const detailedTimeString = now.toLocaleString('en-US', {
+                timeZone: 'UTC',
+                timeZoneName: 'long',
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+            
+            // Update header time
+            const headerTimeElement = document.getElementById('current-time');
+            if (headerTimeElement) {
+                headerTimeElement.textContent = timeString;
+            }
+            
+            // Update footer time
+            const footerTimeElement = document.getElementById('footer-current-time');
+            if (footerTimeElement) {
+                footerTimeElement.textContent = detailedTimeString;
+            }
+            
+            // Update debug info
+            const timezoneDebugElement = document.getElementById('timezone-debug');
+            if (timezoneDebugElement) {
+                timezoneDebugElement.textContent = `IANA: UTC
+Offset: UTC+0
+Current: ${detailedTimeString}
+UTC: ${now.toISOString()}`;
+            }
+        }
+        
+        // Initialize time updates
+        updateCurrentTime();
+        setInterval(updateCurrentTime, 1000);
+        
+        // Enhanced Tab Switching
+        function switchTab(tabName) {
+            // Hide all tab contents
+            const allContents = document.querySelectorAll('.tab-pane');
+            allContents.forEach(content => content.classList.add('hidden'));
+            
+            // Remove active class from all tabs
+            const allTabs = document.querySelectorAll('.tab-button');
+            allTabs.forEach(tab => {
+                tab.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
+                tab.classList.add('text-gray-500');
+            });
+            
+            // Show selected content
+            const selectedContent = document.getElementById(tabName + 'Content');
+            if (selectedContent) {
+                selectedContent.classList.remove('hidden');
+            }
+            
+            // Add active class to selected tab
+            const selectedTab = document.getElementById(tabName + 'Tab');
+            if (selectedTab) {
+                selectedTab.classList.remove('text-gray-500');
+                selectedTab.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+            }
+            
+            // Add animation
+            if (selectedContent) {
+                selectedContent.style.opacity = '0';
+                selectedContent.style.transform = 'translateY(10px)';
+                setTimeout(() => {
+                    selectedContent.style.transition = 'all 0.3s ease';
+                    selectedContent.style.opacity = '1';
+                    selectedContent.style.transform = 'translateY(0)';
+                }, 50);
+            }
+        }
+        
+        // Refresh Dashboard
+        function refreshDashboard() {
+            const refreshBtn = event.target.closest('button');
+            const originalContent = refreshBtn.innerHTML;
+            
+            // Show loading state
+            refreshBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i>Refreshing...';
+            refreshBtn.disabled = true;
+            
+            // Simulate refresh
+            setTimeout(() => {
+                refreshBtn.innerHTML = originalContent;
+                refreshBtn.disabled = false;
+                
+                // Re-initialize Lucide icons
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+                
+                // Show success notification
+                showNotification('Dashboard refreshed successfully!', 'success');
+            }, 1500);
+        }
+        
+        // Toggle View
+        function toggleView() {
+            const container = document.getElementById('tabContent');
+            if (container.classList.contains('grid-view')) {
+                container.classList.remove('grid-view');
+                container.classList.add('list-view');
+                showNotification('Switched to list view', 'info');
+            } else {
+                container.classList.remove('list-view');
+                container.classList.add('grid-view');
+                showNotification('Switched to grid view', 'info');
+            }
+        }
+        
+        // Show Notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 transform translate-x-full`;
+            
+            const colors = {
+                success: 'bg-green-500 text-white',
+                error: 'bg-red-500 text-white',
+                info: 'bg-blue-500 text-white',
+                warning: 'bg-yellow-500 text-white'
+            };
+            
+            notification.classList.add(...colors[type].split(' '));
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i data-lucide="${type === 'success' ? 'check-circle' : 'info'}" class="w-5 h-5 mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+                notification.classList.add('translate-x-0');
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('translate-x-0');
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Add hover effects to cards
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
+            // Add click handlers to dashboard cards
+            const cards = document.querySelectorAll('.gradient-card-1, .gradient-card-2, .gradient-card-3');
+            cards.forEach((card, index) => {
+                card.addEventListener('click', function() {
+                    const dashboards = ['http://localhost:8090/', 'http://localhost:8090/qr-onboard', 'http://localhost:8090/phone-info'];
+                    showNotification(`Opening dashboard ${index + 1}...`, 'info');
+                    setTimeout(() => {
+                        window.open(dashboards[index], '_blank');
+                    }, 500);
+                });
+            });
+            
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    switch(e.key) {
+                        case '1':
+                            e.preventDefault();
+                            switchTab('overview');
+                            break;
+                        case '2':
+                            e.preventDefault();
+                            switchTab('analytics');
+                            break;
+                        case '3':
+                            e.preventDefault();
+                            switchTab('monitoring');
+                            break;
+                        case '4':
+                            e.preventDefault();
+                            switchTab('security');
+                            break;
+                        case 'r':
+                            e.preventDefault();
+                            refreshDashboard();
+                            break;
+                    }
+                }
+            });
+        });
+        
+        // Show debug info if URL contains ?debug=true
+        if (window.location.search.includes('debug=true')) {
+            const debugInfo = document.getElementById('debug-info');
+            if (debugInfo) {
+                debugInfo.classList.remove('hidden');
+            }
+        }
+        
+        // Set build time
+        const buildTimeElement = document.getElementById('build-time');
+        if (buildTimeElement) {
+            buildTimeElement.textContent = new Date().toISOString();
+        }
+        
+        // Set Bun version (if available)
+        const bunVersionElement = document.getElementById('bun-version');
+        if (bunVersionElement && typeof Bun !== 'undefined') {
+            bunVersionElement.textContent = Bun.version;
+        }
+    </script>
+</body>
+</html>

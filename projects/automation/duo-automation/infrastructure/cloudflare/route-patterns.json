@@ -1,0 +1,482 @@
+{
+  "domain": "factory-wager.com",
+  "workerName": "global-qr-worker",
+  "routePatterns": {
+    "api": {
+      "pattern": "api.factory-wager.com/*",
+      "description": "Main API endpoints for QR generation, validation, and device onboarding",
+      "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      "security": {
+        "cors": true,
+        "rateLimit": true,
+        "authentication": "JWT",
+        "waf": true
+      },
+      "endpoints": {
+        "qr-generate": {
+          "path": "/api/qr/generate",
+          "method": "POST",
+          "description": "Generate QR code for device onboarding",
+          "rateLimit": {
+            "requests": 50,
+            "window": "60s"
+          },
+          "authentication": "required",
+          "validation": {
+            "merchantId": "required|string|3-50",
+            "deviceCategory": "required|enum:MOBILE,TABLET,DESKTOP,KIOSK,IOT,WEARABLE",
+            "geographicScope": "optional|enum:US,EU,APAC,LATAM,GLOBAL"
+          }
+        },
+        "qr-validate": {
+          "path": "/api/qr/validate",
+          "method": "POST",
+          "description": "Validate QR token and process device onboarding",
+          "rateLimit": {
+            "requests": 100,
+            "window": "60s"
+          },
+          "authentication": "required",
+          "validation": {
+            "token": "required|string|jwt",
+            "deviceInfo": "required|object"
+          }
+        },
+        "device-onboard": {
+          "path": "/api/device/onboard",
+          "method": "POST",
+          "description": "Process device onboarding request",
+          "rateLimit": {
+            "requests": 100,
+            "window": "60s"
+          },
+          "authentication": "required",
+          "validation": {
+            "authenticationToken": "required|string",
+            "deviceSpecification": "required|object",
+            "geographicLocation": "required|object"
+          }
+        },
+        "dashboard-data": {
+          "path": "/api/dashboard/data",
+          "method": "GET",
+          "description": "Get dashboard data and metrics",
+          "rateLimit": {
+            "requests": 200,
+            "window": "60s"
+          },
+          "authentication": "required",
+          "validation": {
+            "merchantId": "required|string|query"
+          }
+        }
+      }
+    },
+    "qr": {
+      "pattern": "qr.factory-wager.com/*",
+      "description": "QR service endpoints and static assets",
+      "methods": ["GET", "POST", "OPTIONS"],
+      "security": {
+        "cors": true,
+        "rateLimit": true,
+        "cache": "aggressive"
+      },
+      "endpoints": {
+        "qr-service": {
+          "path": "/qr/generate",
+          "method": "POST",
+          "description": "Direct QR generation service",
+          "rateLimit": {
+            "requests": 50,
+            "window": "60s"
+          },
+          "cache": {
+            "ttl": 300,
+            "vary": ["merchantId", "deviceCategory"]
+          }
+        },
+        "static-assets": {
+          "path": "/qr-onboard",
+          "method": "GET",
+          "description": "Main dashboard HTML page",
+          "cache": {
+            "ttl": 3600,
+            "bypass": ["auth", "geo"]
+          }
+        }
+      }
+    },
+    "ws": {
+      "pattern": "ws.factory-wager.com/*",
+      "description": "WebSocket connections for real-time dashboard updates",
+      "methods": ["GET", "OPTIONS"],
+      "security": {
+        "websockets": true,
+        "authentication": "JWT",
+        "rateLimit": true
+      },
+      "endpoints": {
+        "dashboard-websocket": {
+          "path": "/ws/dashboard",
+          "method": "GET",
+          "description": "WebSocket connection for real-time dashboard updates",
+          "authentication": "required",
+          "rateLimit": {
+            "connections": 10,
+            "window": "300s"
+          },
+          "protocols": ["wss://"],
+          "heartbeat": {
+            "interval": 30,
+            "timeout": 10
+          }
+        }
+      }
+    },
+    "auth": {
+      "pattern": "auth.factory-wager.com/*",
+      "description": "Authentication and token management service",
+      "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      "security": {
+        "cors": true,
+        "rateLimit": true,
+        "hsts": true,
+        "waf": true
+      },
+      "endpoints": {
+        "token-generate": {
+          "path": "/auth/token/generate",
+          "method": "POST",
+          "description": "Generate authentication token",
+          "rateLimit": {
+            "requests": 20,
+            "window": "60s"
+          },
+          "authentication": "api-key"
+        },
+        "token-validate": {
+          "path": "/auth/token/validate",
+          "method": "POST",
+          "description": "Validate authentication token",
+          "rateLimit": {
+            "requests": 100,
+            "window": "60s"
+          }
+        },
+        "token-refresh": {
+          "path": "/auth/token/refresh",
+          "method": "POST",
+          "description": "Refresh authentication token",
+          "rateLimit": {
+            "requests": 50,
+            "window": "60s"
+          },
+          "authentication": "required"
+        }
+      }
+    },
+    "analytics": {
+      "pattern": "analytics.factory-wager.com/*",
+      "description": "Analytics and ROI tracking service",
+      "methods": ["GET", "POST", "OPTIONS"],
+      "security": {
+        "cors": true,
+        "rateLimit": true,
+        "cache": "moderate"
+      },
+      "endpoints": {
+        "track-event": {
+          "path": "/analytics/track",
+          "method": "POST",
+          "description": "Track analytics events",
+          "rateLimit": {
+            "requests": 500,
+            "window": "60s"
+          },
+          "validation": {
+            "event": "required|string",
+            "data": "required|object",
+            "merchantId": "required|string"
+          }
+        },
+        "get-metrics": {
+          "path": "/analytics/metrics",
+          "method": "GET",
+          "description": "Get analytics metrics",
+          "rateLimit": {
+            "requests": 100,
+            "window": "60s"
+          },
+          "cache": {
+            "ttl": 300,
+            "vary": ["merchantId", "timeRange"]
+          }
+        }
+      }
+    },
+    "monitor": {
+      "pattern": "monitor.factory-wager.com/api/*",
+      "description": "Monitoring and health check endpoints",
+      "methods": ["GET", "OPTIONS"],
+      "security": {
+        "cors": true,
+        "rateLimit": false,
+        "cache": "minimal"
+      },
+      "endpoints": {
+        "health-check": {
+          "path": "/monitor/api/health",
+          "method": "GET",
+          "description": "System health check",
+          "cache": {
+            "ttl": 30
+          }
+        },
+        "system-status": {
+          "path": "/monitor/api/status",
+          "method": "GET",
+          "description": "Detailed system status",
+          "authentication": "optional",
+          "cache": {
+            "ttl": 60
+          }
+        },
+        "metrics": {
+          "path": "/monitor/api/metrics",
+          "method": "GET",
+          "description": "System performance metrics",
+          "authentication": "required",
+          "cache": {
+            "ttl": 60
+          }
+        }
+      }
+    }
+  },
+  "geoRouting": {
+    "enabled": true,
+    "strategy": "latency-based",
+    "regions": {
+      "north-america": {
+        "countries": ["US", "CA", "MX"],
+        "primaryWorker": "global-qr-worker-us-east",
+        "failoverWorker": "global-qr-worker-us-west",
+        "latencyThreshold": 150
+      },
+      "europe": {
+        "countries": ["GB", "DE", "FR", "IT", "ES", "NL", "BE", "AT", "CH"],
+        "primaryWorker": "global-qr-worker-eu-west",
+        "failoverWorker": "global-qr-worker-eu-central",
+        "latencyThreshold": 100
+      },
+      "asia-pacific": {
+        "countries": ["JP", "SG", "AU", "IN", "KR", "TH", "MY", "PH"],
+        "primaryWorker": "global-qr-worker-ap-southeast",
+        "failoverWorker": "global-qr-worker-ap-northeast",
+        "latencyThreshold": 200
+      },
+      "latin-america": {
+        "countries": ["BR", "AR", "CL", "CO", "PE", "MX", "VE"],
+        "primaryWorker": "global-qr-worker-sa-east",
+        "failoverWorker": "global-qr-worker-us-east",
+        "latencyThreshold": 250
+      }
+    }
+  },
+  "loadBalancing": {
+    "algorithm": "weighted_round_robin",
+    "weights": {
+      "us-east-1": 40,
+      "eu-west-2": 30,
+      "ap-southeast-1": 20,
+      "sa-east-1": 10
+    },
+    "healthChecks": {
+      "enabled": true,
+      "path": "/health",
+      "interval": 30,
+      "timeout": 5,
+      "retries": 3,
+      "expectedStatus": [200, 204]
+    },
+    "stickySessions": {
+      "enabled": true,
+      "duration": 3600,
+      "cookieName": "qr_session_affinity",
+      "cookieAttributes": {
+        "secure": true,
+        "httpOnly": true,
+        "sameSite": "Strict"
+      }
+    }
+  },
+  "security": {
+    "cors": {
+      "enabled": true,
+      "allowedOrigins": [
+        "https://monitor.factory-wager.com",
+        "https://factory-wager.com",
+        "https://qr.factory-wager.com"
+      ],
+      "allowedMethods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      "allowedHeaders": [
+        "Content-Type",
+        "Authorization",
+        "X-Merchant-ID",
+        "X-Device-ID",
+        "X-Geographic-Scope"
+      ],
+      "maxAge": 86400,
+      "credentials": true
+    },
+    "rateLimiting": {
+      "enabled": true,
+      "strategy": "sliding-window",
+      "defaultLimits": {
+        "requests": 100,
+        "window": "60s"
+      },
+      "endpointLimits": {
+        "/api/qr/generate": { "requests": 50, "window": "60s" },
+        "/auth/token/generate": { "requests": 20, "window": "60s" },
+        "/analytics/track": { "requests": 500, "window": "60s" }
+      },
+      "whitelist": [
+        "192.168.1.0/24",
+        "10.0.0.0/8"
+      ]
+    },
+    "waf": {
+      "enabled": true,
+      "ruleset": "OWASP ModSecurity Core Rule Set",
+      "customRules": [
+        {
+          "name": "Block SQL Injection",
+          "expression": "http.request.uri.query contains \"union\" and http.request.uri.query contains \"select\"",
+          "action": "block"
+        },
+        {
+          "name": "Block XSS Attempts",
+          "expression": "http.request.uri.query contains \"<script\"",
+          "action": "block"
+        },
+        {
+          "name": "Protect QR Generation",
+          "expression": "http.request.uri.path matches \"/api/qr/generate\" and http.request.headers.authorization absent",
+          "action": "challenge"
+        }
+      ]
+    },
+    "botManagement": {
+      "enabled": true,
+      "fightMode": true,
+      "scoreThreshold": 30,
+      "whitelist": [
+        "googlebot",
+        "bingbot",
+        "facebookexternalhit"
+      ]
+    }
+  },
+  "caching": {
+    "enabled": true,
+    "strategy": "cache-first",
+    "rules": [
+      {
+        "pattern": "/monitor/api/health",
+        "ttl": 30,
+        "bypass": ["auth"]
+      },
+      {
+        "pattern": "/qr-onboard",
+        "ttl": 3600,
+        "bypass": ["auth", "geo"]
+      },
+      {
+        "pattern": "/api/dashboard/data",
+        "ttl": 300,
+        "vary": ["merchantId", "timeRange"]
+      },
+      {
+        "pattern": "/analytics/metrics",
+        "ttl": 300,
+        "vary": ["merchantId", "timeRange"]
+      }
+    ],
+    "edgeCacheTTL": {
+      "default": 3600,
+      "api": 300,
+      "static": 86400,
+      "websocket": 0
+    }
+  },
+  "monitoring": {
+    "enabled": true,
+    "analytics": {
+      "enabled": true,
+      "retention": 365,
+      "export": {
+        "s3": {
+          "enabled": true,
+          "bucket": "factory-wager-worker-logs",
+          "prefix": "cloudflare-logs/"
+        }
+      }
+    },
+    "alerts": {
+      "highErrorRate": {
+        "enabled": true,
+        "threshold": 5,
+        "window": "5m",
+        "recipients": ["ops@factory-wager.com"]
+      },
+      "highLatency": {
+        "enabled": true,
+        "threshold": 1000,
+        "window": "5m",
+        "recipients": ["ops@factory-wager.com", "performance@factory-wager.com"]
+      },
+      "workerErrors": {
+        "enabled": true,
+        "threshold": 10,
+        "window": "1m",
+        "recipients": ["ops@factory-wager.com", "sre@factory-wager.com"]
+      }
+    }
+  },
+  "deployment": {
+    "environments": {
+      "production": {
+        "domains": [
+          "api.factory-wager.com",
+          "qr.factory-wager.com",
+          "ws.factory-wager.com",
+          "auth.factory-wager.com",
+          "analytics.factory-wager.com"
+        ],
+        "workers": [
+          "global-qr-worker-production"
+        ]
+      },
+      "staging": {
+        "domains": [
+          "api-staging.factory-wager.com",
+          "qr-staging.factory-wager.com",
+          "ws-staging.factory-wager.com"
+        ],
+        "workers": [
+          "global-qr-worker-staging"
+        ]
+      },
+      "development": {
+        "domains": [
+          "api-dev.factory-wager.com",
+          "qr-dev.factory-wager.com"
+        ],
+        "workers": [
+          "global-qr-worker-development"
+        ]
+      }
+    }
+  }
+}

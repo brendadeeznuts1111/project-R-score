@@ -1,0 +1,10 @@
+[
+  {"trustScore": 85, "phone": "+15551234567", "auditUrl": "https://r2.dev/audit/15551234567"},
+  {"trustScore": 45, "phone": "+15552345678", "auditUrl": "https://r2.dev/audit/15552345678"},
+  {"trustScore": 72, "phone": "+15553456789", "auditUrl": "https://r2.dev/audit/15553456789"},
+  {"trustScore": 38, "phone": "+15554567890", "auditUrl": "https://r2.dev/audit/15554567890"},
+  {"trustScore": 91, "phone": "+15555678901", "auditUrl": "https://r2.dev/audit/15555678901"},
+  {"trustScore": 62, "phone": "+15556789012", "auditUrl": "https://r2.dev/audit/15556789012"},
+  {"trustScore": 77, "phone": "+15557890123", "auditUrl": "https://r2.dev/audit/15557890123"},
+  {"trustScore": 41, "phone": "+15558901234", "auditUrl": "https://r2.dev/audit/15558901234"}
+]

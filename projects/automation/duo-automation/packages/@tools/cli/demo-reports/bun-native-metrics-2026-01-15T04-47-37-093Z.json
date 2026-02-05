@@ -1,0 +1,105 @@
+{
+  "timestamp": "2026-01-15T04:47:37.093Z",
+  "summary": {
+    "totalAPIs": 4,
+    "totalCalls": 159,
+    "nativeImplementationRate": 75,
+    "averageResponseTime": 5.764203412777791,
+    "errorRate": 5.660377358490567,
+    "uptime": 10202
+  },
+  "domainBreakdown": {
+    "filesystem": [
+      {
+        "apiName": "Bun.file",
+        "domain": "filesystem",
+        "callCount": 50,
+        "implementation": "native",
+        "averageDuration": 0.0025500600000333408,
+        "totalDuration": 0.12750300000166703,
+        "minDuration": 0.0003329999999550637,
+        "maxDuration": 0.016999999999825377,
+        "errorCount": 0,
+        "lastCalled": "2026-01-15T04:47:32.990Z",
+        "performanceTier": "fast",
+        "memoryEfficiency": "optimal",
+        "metadata": {
+          "path": "/tmp/test.txt"
+        }
+      }
+    ],
+    "networking": [
+      {
+        "apiName": "fetch",
+        "domain": "networking",
+        "callCount": 50,
+        "implementation": "native",
+        "averageDuration": 22.994554979999986,
+        "totalDuration": 1149.7277489999992,
+        "minDuration": 1.1224999999994907,
+        "maxDuration": 50.0491669999999,
+        "errorCount": 0,
+        "lastCalled": "2026-01-15T04:47:32.990Z",
+        "performanceTier": "moderate",
+        "memoryEfficiency": "high",
+        "metadata": {
+          "url": "https://api.example.com"
+        }
+      },
+      {
+        "apiName": "fetch.error",
+        "domain": "networking",
+        "callCount": 9,
+        "implementation": "fallback",
+        "averageDuration": 0.05936111111110323,
+        "totalDuration": 0.5342499999999291,
+        "minDuration": 0.01558300000010604,
+        "maxDuration": 0.29404199999999037,
+        "errorCount": 9,
+        "lastCalled": "2026-01-15T04:47:31.661Z",
+        "performanceTier": "fast",
+        "memoryEfficiency": "optimal"
+      }
+    ],
+    "crypto": [
+      {
+        "apiName": "crypto.hash",
+        "domain": "crypto",
+        "callCount": 50,
+        "implementation": "native",
+        "averageDuration": 0.0003475000000415207,
+        "totalDuration": 0.017375000002076035,
+        "minDuration": 0.00004199999966658652,
+        "maxDuration": 0.00216700000000003,
+        "errorCount": 0,
+        "lastCalled": "2026-01-15T04:47:32.990Z",
+        "performanceTier": "fast",
+        "memoryEfficiency": "optimal",
+        "metadata": {
+          "algorithm": "sha256"
+        }
+      }
+    ],
+    "cookies": [],
+    "streams": [],
+    "binary": [],
+    "system": [],
+    "database": [],
+    "build": [],
+    "web": [],
+    "workers": [],
+    "utilities": [],
+    "events": [],
+    "timing": [],
+    "text": [],
+    "nodejs": [],
+    "javascript": [],
+    "runtime": []
+  },
+  "performanceMetrics": {
+    "fastestAPI": "crypto.hash",
+    "slowestAPI": "fetch",
+    "mostUsedAPI": "fetch",
+    "leastUsedAPI": "fetch.error"
+  }
+}

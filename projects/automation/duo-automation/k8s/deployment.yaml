@@ -1,0 +1,100 @@
+{
+  "apiVersion": "apps/v1",
+  "kind": "Deployment",
+  "metadata": {
+    "name": "quantum-hash-app",
+    "labels": {
+      "app": "quantum-hash",
+      "version": "v1.0.0"
+    }
+  },
+  "spec": {
+    "replicas": 3,
+    "selector": {
+      "matchLabels": {
+        "app": "quantum-hash"
+      }
+    },
+    "template": {
+      "metadata": {
+        "labels": {
+          "app": "quantum-hash",
+          "version": "v1.0.0"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "name": "quantum-hash",
+            "image": "duoplus/quantum-hash:latest",
+            "ports": [
+              {
+                "containerPort": 3000
+              }
+            ],
+            "env": [
+              {
+                "name": "NODE_ENV",
+                "value": "production"
+              },
+              {
+                "name": "QUANTUM_HASH_ENABLED",
+                "value": "true"
+              },
+              {
+                "name": "BUN_RUNTIME",
+                "value": "bun"
+              },
+              {
+                "name": "PERFORMANCE_MODE",
+                "value": "quantum"
+              }
+            ],
+            "resources": {
+              "requests": {
+                "memory": "256Mi",
+                "cpu": "250m"
+              },
+              "limits": {
+                "memory": "512Mi",
+                "cpu": "500m"
+              }
+            },
+            "livenessProbe": {
+              "httpGet": {
+                "path": "/health",
+                "port": 3000
+              },
+              "initialDelaySeconds": 30,
+              "periodSeconds": 30,
+              "timeoutSeconds": 10,
+              "failureThreshold": 3
+            },
+            "readinessProbe": {
+              "httpGet": {
+                "path": "/ready",
+                "port": 3000
+              },
+              "initialDelaySeconds": 5,
+              "periodSeconds": 10,
+              "timeoutSeconds": 5,
+              "failureThreshold": 3
+            },
+            "volumeMounts": [
+              {
+                "name": "cache-volume",
+                "mountPath": "/app/cache"
+              }
+            ]
+          }
+        ],
+        "volumes": [
+          {
+            "name": "cache-volume",
+            "emptyDir": {}
+          }
+        ]
+      }
+    }
+  }
+}

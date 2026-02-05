@@ -1,0 +1,26 @@
+name = "factory-wager-registry"
+main = "./registry-worker.ts"
+compatibility_date = "2023-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+# R2 Buckets
+[[r2_buckets]]
+binding = "REGISTRY_BUCKET"
+bucket_name = "factory-wager-registry"
+
+[[r2_buckets]]
+binding = "PACKAGES_BUCKET"
+bucket_name = "factory-wager-packages"
+
+[[r2_buckets]]
+binding = "METADATA_BUCKET"
+bucket_name = "factory-wager-metadata"
+
+# Environment Variables
+[vars]
+REGISTRY_URL = "https://registry.factory-wager-registry.utahj4754.workers.dev"
+API_VERSION = "v1"
+REGISTRY_NAME = "Factory Wager Enterprise Registry"
+ORGANIZATION = "Factory Wager"
+WEBSITE = "https://factory-wager-registry.utahj4754.workers.dev"
+SUPPORT_EMAIL = "registry@factory-wager-registry.utahj4754.workers.dev"

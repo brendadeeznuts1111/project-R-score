@@ -1,0 +1,48 @@
+{
+  // Production API Profile Configuration
+  // Supports comments, trailing commas, and unquoted keys (JSON5 format)
+  
+  env: {
+    API_KEY: "your-api-key-here",
+    ENVIRONMENT: "production",
+    API_ENDPOINT: "https://api.example.com",
+    LOG_LEVEL: "info",
+  },
+  
+  mobile: {
+    // Package name for the mobile app
+    package_name: "com.example.production",
+    
+    // Main activity to launch
+    main_activity: ".MainActivity",
+    
+    // Apps to install and configure
+    apps: [
+      {
+        name: "Production App",
+        package: "com.example.production",
+        url: "https://example.com/apps/production.apk",
+        configurable: true,
+      },
+      // Add more apps as needed
+    ],
+    
+    // Permissions to grant
+    permissions: [
+      "camera",
+      "storage",
+      "location",
+      "internet",
+    ],
+    
+    // Auto-start the app after configuration
+    auto_start: true,
+  },
+  
+  // Additional metadata
+  metadata: {
+    created: "2026-01-27",
+    version: "1.0.0",
+    description: "Production API profile for automated device provisioning",
+  },
+}

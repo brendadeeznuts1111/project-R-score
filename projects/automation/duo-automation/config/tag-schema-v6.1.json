@@ -1,0 +1,177 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://duoplus.dev/schemas/tag-v6.1.json",
+  "title": "DuoPlus Tag Schema v6.1",
+  "description": "JSON Schema for validating DuoPlus tagging system compliance",
+  "type": "object",
+  "definitions": {
+    "domain": {
+      "type": "string",
+      "enum": [
+        "BUN", "NODE", "WEB", "SQL", "S3", "SEC", "PERF", "TEST", "BUILD", "DUO",
+        "IDENTITY", "PAYMENT", "ANALYTICS", "CLOUDFLARE", "INFRASTRUCTURE",
+        "AI", "GEN", "POC", "EXPERIMENT", "DUOPLUS"
+      ],
+      "description": "Primary domain classification"
+    },
+    "scope": {
+      "type": "string",
+      "pattern": "^[A-Z0-9_]+$",
+      "description": "Scope within domain (e.g., WRITE, SPAWN, WORKER)"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["FEAT", "BUG", "SEC", "PERF", "BREAK", "COMPAT", "DTYPES", "FUNCTION", "GENERATED", "MODIFIED", "ASSISTED", "EXEMPT", "HOTFIX"],
+      "description": "Change type classification"
+    },
+    "class": {
+      "type": "string",
+      "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "NORMAL"],
+      "description": "Severity/priority classification"
+    },
+    "ref": {
+      "type": "string",
+      "pattern": "^[A-Z0-9_-]{4,16}$",
+      "description": "Unique reference identifier"
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "cwe": {
+          "type": "string",
+          "pattern": "^CWE-\\d+$",
+          "description": "Common Weakness Enumeration ID"
+        },
+        "arr": {
+          "type": "string",
+          "pattern": "^\\$?[0-9,]+(\\.\\d{2})?$",
+          "description": "Annual Recurring Revenue impact"
+        },
+        "model": {
+          "type": "string",
+          "description": "AI model used (for AI-generated code)"
+        },
+        "prompt_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{6,64}$",
+          "description": "Hash of AI prompt used"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "deprecated", "obsolete", "purged"]
+        },
+        "replace": {
+          "type": "string",
+          "pattern": "^#REF:[A-Z0-9_-]+$",
+          "description": "Replacement tag reference"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "domain": { "$ref": "#/definitions/domain" },
+    "scope": { "$ref": "#/definitions/scope" },
+    "type": { "$ref": "#/definitions/type" },
+    "class": { "$ref": "#/definitions/class" },
+    "ref": { "$ref": "#/definitions/ref" },
+    "meta": { "$ref": "#/definitions/meta" },
+    "description": {
+      "type": "string",
+      "maxLength": 80,
+      "description": "Brief description of the change"
+    }
+  },
+  "required": ["domain", "scope", "type", "class", "ref"],
+  "allOf": [
+    {
+      "if": {
+        "properties": { "domain": { "const": "SEC" } }
+      },
+      "then": {
+        "properties": { "type": { "const": "SEC" } }
+      },
+      "description": "SEC domain must have SEC type"
+    },
+    {
+      "if": {
+        "properties": { "domain": { "const": "PERF" } }
+      },
+      "then": {
+        "properties": { "type": { "const": "PERF" } }
+      },
+      "description": "PERF domain must have PERF type"
+    },
+    {
+      "if": {
+        "properties": { "type": { "const": "SEC" } }
+      },
+      "then": {
+        "properties": {
+          "class": { "enum": ["CRITICAL", "HIGH"] }
+        }
+      },
+      "description": "Security fixes must be CRITICAL or HIGH"
+    },
+    {
+      "if": {
+        "properties": { "domain": { "const": "AI" } }
+      },
+      "then": {
+        "properties": {
+          "type": { "enum": ["GENERATED", "MODIFIED", "ASSISTED"] },
+          "meta": {
+            "required": ["model"]
+          }
+        }
+      },
+      "description": "AI domain requires model metadata"
+    }
+  ],
+  "validCombinations": {
+    "description": "Reference matrix for valid domain/type combinations",
+    "BUN": ["FEAT", "BUG", "SEC", "PERF", "BREAK", "COMPAT"],
+    "NODE": ["COMPAT", "BUG"],
+    "WEB": ["FEAT", "BUG", "SEC", "PERF"],
+    "SQL": ["FEAT", "BUG", "SEC"],
+    "S3": ["FEAT", "BUG"],
+    "SEC": ["SEC"],
+    "PERF": ["PERF"],
+    "TEST": ["FEAT", "BUG"],
+    "BUILD": ["FEAT", "BUG"],
+    "DUO": ["FEAT", "BUG"],
+    "AI": ["GENERATED", "MODIFIED", "ASSISTED"],
+    "IDENTITY": ["FEAT", "BUG", "SEC"],
+    "PAYMENT": ["FEAT", "BUG", "SEC"],
+    "ANALYTICS": ["FEAT", "BUG"],
+    "CLOUDFLARE": ["FEAT", "BUG", "SEC"],
+    "INFRASTRUCTURE": ["FEAT", "BUG", "SEC"]
+  },
+  "approvalMatrix": {
+    "description": "Approval requirements by class",
+    "CRITICAL": {
+      "approvers": 2,
+      "requiredRoles": ["Security Team", "CTO"],
+      "gpgRequired": true,
+      "blockchainProof": true
+    },
+    "HIGH": {
+      "approvers": 2,
+      "requiredRoles": ["Team Lead", "Security Engineer"],
+      "gpgRequired": true,
+      "blockchainProof": false
+    },
+    "MEDIUM": {
+      "approvers": 1,
+      "requiredRoles": ["Team Lead"],
+      "gpgRequired": false,
+      "blockchainProof": false
+    },
+    "LOW": {
+      "approvers": 1,
+      "requiredRoles": ["Any Engineer"],
+      "gpgRequired": false,
+      "blockchainProof": false
+    }
+  }
+}

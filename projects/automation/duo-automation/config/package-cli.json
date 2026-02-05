@@ -1,0 +1,214 @@
+{
+  "name": "duoplus-cli",
+  "version": "3.01.02-beta.0",
+  "description": "DuoPlus CLI v3.01.02 - Enhanced with Identity Resolution & Fintech Intelligence",
+  "main": "cli.ts",
+  "type": "module",
+  "scripts": {
+    "start": "bun run cli.ts --interactive",
+    "start:premium": "bun --feature=PREMIUM --feature=TERMINAL_PTY --feature=ARTIFACT_INTEGRATION --feature=IDENTITY_RESOLUTION --feature=FINTECH_INTELLIGENCE run cli.ts --interactive",
+    "start:basic": "bun --feature=BASIC --feature=TERMINAL_PTY run cli.ts --interactive",
+    "start:dev": "bun --feature=DEBUG --feature=DEVELOPMENT --feature=TERMINAL_PTY --feature=ARTIFACT_INTEGRATION --feature=IDENTITY_RESOLUTION --feature=FINTECH_INTELLIGENCE run cli.ts --interactive",
+    "start:artifacts": "bun --feature=ARTIFACT_INTEGRATION --feature=DEBUG run cli.ts --artifact-integration",
+    "start:terminal": "bun --feature=TERMINAL_PTY --feature=DEBUG run cli.ts --interactive",
+    "start:identity": "bun --feature=IDENTITY_RESOLUTION --feature=FINTECH_INTELLIGENCE --feature=DEBUG run cli.ts --identity-resolution",
+    "start:fintech": "bun --feature=FINTECH_INTELLIGENCE --feature=IDENTITY_RESOLUTION --feature=DEBUG run cli.ts --fintech-intelligence",
+    
+    "build": "bun run build.ts --profile production",
+    "build:premium": "bun run build.ts --profile premium",
+    "build:basic": "bun run build.ts --profile basic",
+    "build:dev": "bun run build.ts --profile development",
+    "build:artifacts": "bun run build.ts --profile artifacts-only",
+    "build:terminal": "bun run build.ts --profile terminal-only",
+    "build:identity": "bun run build.ts --profile identity-resolution",
+    "build:fintech": "bun run build.ts --profile fintech-intelligence",
+    "build:custom": "bun run build.ts --features",
+    
+    "search": "bun run cli.ts --search",
+    "validate": "bun run cli.ts --validate",
+    "audit": "bun run cli.ts --audit",
+    "visualize": "bun run cli.ts --visualize",
+    "stats": "bun run cli.ts --stats",
+    
+    "artifacts:search": "bun run scripts/find-artifact.ts",
+    "artifacts:validate": "bun run scripts/enhanced-validate-tags.ts",
+    "artifacts:audit": "bun run scripts/audit-tags.ts",
+    "artifacts:visualize": "bun run scripts/visualize-tags.ts",
+    "artifacts:maintenance": "bun run scripts/automated-maintenance.ts",
+    
+    "identity:resolve": "bun run scripts/identity-resolution.ts resolve --target=\"$johnsmith\" --confidence-threshold=85",
+    "identity:matrix": "bun run scripts/identity-resolution.ts matrix --export=json --include-hashes=true",
+    "identity:correlate": "bun run scripts/identity-resolution.ts correlate --platforms=\"cashapp,whatsapp,telegram\"",
+    "identity:footprint": "bun run scripts/identity-resolution.ts resolve --target=\"$johnsmith\" --verify-proof-of-life",
+    "identity:verify": "bun run scripts/identity-resolution.ts verify --kyc-integration --compliance=aml5",
+    "identity:init": "bun run scripts/identity-resolution.ts init --confidence-threshold=85",
+    
+    "fintech:analyze": "bun run scripts/fintech-analysis.ts analyze --platform=cashapp --risk-assessment",
+    "fintech:cashapp": "bun run scripts/fintech-analysis.ts cashapp --verify-cashtag --check-transactions",
+    "fintech:risk": "bun run scripts/fintech-analysis.ts risk --kyc-integration --compliance=aml5",
+    "fintech:sim": "bun run scripts/fintech-analysis.ts sim --cross-reference-cell-tower",
+    "fintech:longevity": "bun run scripts/fintech-analysis.ts longevity --min-years=2 --trust-factor",
+    "fintech:init": "bun run scripts/fintech-analysis.ts analyze --platform=cashapp --risk-assessment",
+    
+    "test": "bun test",
+    "test:features": "bun test --feature=DEBUG --feature=MOCK_API",
+    "test:artifacts": "bun test tests/artifacts/",
+    "test:terminal": "bun test tests/terminal/",
+    "test:identity": "bun test tests/identity/",
+    "test:fintech": "bun test tests/fintech/",
+    
+    "lint": "bun lint .",
+    "format": "bun format .",
+    "type-check": "bun tsc --noEmit",
+    
+    "docs:generate": "bun run scripts/automated-maintenance.ts --reports",
+    "docs:serve": "bun run docs/server.ts",
+    "docs:identity": "bun run docs/identity-resolution-guide.ts",
+    "docs:fintech": "bun run docs/fintech-intelligence-guide.ts",
+    
+    "clean": "rm -rf dist/ cache/ reports/ maintenance-backups/",
+    "clean:artifacts": "rm -rf cache/search-index.json reports/validation-*.json",
+    "clean:identity": "rm -rf cache/identity-cache.json reports/identity-*.json",
+    "clean:fintech": "rm -rf cache/fintech-cache.json reports/fintech-*.json",
+    
+    "dev": "bun --watch run cli.ts --interactive --artifact-integration --identity-resolution --fintech-intelligence",
+    "dev:terminal": "bun --watch run cli.ts --interactive",
+    "dev:artifacts": "bun --watch run cli.ts --artifact-integration",
+    "dev:identity": "bun --watch run cli.ts --identity-resolution",
+    "dev:fintech": "bun --watch run cli.ts --fintech-intelligence",
+    
+    "monitor": "bun run monitoring/dashboard-server.ts",
+    "monitor:identity": "bun run monitoring/identity-monitor.ts",
+    "monitor:fintech": "bun run monitoring/fintech-monitor.ts",
+    "metrics": "bun run monitoring/metrics-collector.ts",
+    "health:report": "bun run monitoring/health-reporter.ts"
+  },
+  "keywords": [
+    "cli",
+    "terminal",
+    "pty",
+    "artifact-management",
+    "tag-system",
+    "search",
+    "validation",
+    "visualization",
+    "identity-resolution",
+    "fintech-intelligence",
+    "kyc-compliance",
+    "cross-platform-correlation",
+    "confidence-analysis",
+    "risk-assessment",
+    "bun",
+    "typescript"
+  ],
+  "author": "DuoPlus Enterprise Team",
+  "license": "MIT",
+  "dependencies": {
+    "bun-types": "latest",
+    "@types/node": "latest"
+  },
+  "devDependencies": {
+    "bun": "latest",
+    "typescript": "latest",
+    "eslint": "latest",
+    "prettier": "latest"
+  },
+  "engines": {
+    "bun": ">=1.0.0",
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/duoplus/cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/duoplus/cli/issues"
+  },
+  "homepage": "https://github.com/duoplus/cli#readme",
+  "bin": {
+    "duoplus": "./dist/cli.js",
+    "duoplus-artifacts": "./dist/artifacts-cli.js",
+    "duoplus-identity": "./dist/identity-cli.js",
+    "duoplus-fintech": "./dist/fintech-cli.js"
+  },
+  "files": [
+    "dist/",
+    "cli/",
+    "scripts/",
+    "docs/",
+    "src/dashboard/",
+    "src/identity/",
+    "src/fintech/",
+    "monitoring/",
+    "README.md",
+    "LICENSE"
+  ],
+  "bun": {
+    "entrypoints": {
+      "cli": "./cli.ts",
+      "artifacts": "./scripts/find-artifact.ts",
+      "identity": "./scripts/identity-resolution.ts",
+      "fintech": "./scripts/fintech-analysis.ts"
+    },
+    "features": {
+      "premium": ["PREMIUM", "TERMINAL_PTY", "ARTIFACT_INTEGRATION", "S3_UPLOAD", "IDENTITY_RESOLUTION", "FINTECH_INTELLIGENCE"],
+      "basic": ["BASIC", "TERMINAL_PTY"],
+      "development": ["DEBUG", "DEVELOPMENT", "TERMINAL_PTY", "ARTIFACT_INTEGRATION", "IDENTITY_RESOLUTION", "FINTECH_INTELLIGENCE"],
+      "artifacts": ["ARTIFACT_INTEGRATION", "DEBUG"],
+      "terminal": ["TERMINAL_PTY", "DEBUG"],
+      "identity": ["IDENTITY_RESOLUTION", "FINTECH_INTELLIGENCE", "DEBUG"],
+      "fintech": ["FINTECH_INTELLIGENCE", "IDENTITY_RESOLUTION", "DEBUG"]
+    }
+  },
+  "featureFlags": {
+    "TERMINAL_PTY": {
+      "description": "PTY support for interactive terminal",
+      "default": true
+    },
+    "ARTIFACT_INTEGRATION": {
+      "description": "Artifact search and management system",
+      "default": false
+    },
+    "IDENTITY_RESOLUTION": {
+      "description": "Cross-platform identity resolution with confidence analysis",
+      "default": false
+    },
+    "FINTECH_INTELLIGENCE": {
+      "description": "Fintech intelligence and risk assessment with KYC integration",
+      "default": false
+    },
+    "PREMIUM": {
+      "description": "Premium features and capabilities",
+      "default": false
+    },
+    "DEBUG": {
+      "description": "Debug mode and verbose logging",
+      "default": false
+    },
+    "S3_UPLOAD": {
+      "description": "S3 file upload/download support",
+      "default": false
+    },
+    "DEVELOPMENT": {
+      "description": "Development-specific features",
+      "default": false
+    },
+    "BASIC": {
+      "description": "Basic functionality only",
+      "default": false
+    }
+  },
+  "identityResolution": {
+    "confidenceThreshold": 85,
+    "platforms": ["cashapp", "whatsapp", "telegram"],
+    "algorithms": ["fuzzy-matching", "correlation", "verification"],
+    "compliance": ["FIDO2", "AML5", "OSINT"]
+  },
+  "fintechIntelligence": {
+    "riskAssessment": true,
+    "kycIntegration": true,
+    "compliance": ["AML5", "PCI-DSS", "GDPR"],
+    "platforms": ["cashapp", "venmo", "paypal", "zelle"],
+    "analysis": ["transaction-patterns", "risk-scoring", "sim-protection"]
+  }
+}

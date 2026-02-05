@@ -1,8 +1,0 @@
-tenant:
-  id: test-metadata-fix
-  name: Tenant test-metadata-fix
-  created: 2026-02-01T03:56:15.847Z
-
-settings:
-  theme: dark
-  timezone: UTC

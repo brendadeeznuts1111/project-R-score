@@ -1,0 +1,14 @@
+{
+  "buildTime": "2026-01-13T21:32:11Z",
+  "buildType": "development",
+  "feature": "CONFIG_SHARED",
+  "gitCommit": "7902f5f73bd4d0d51136067e414ebb9311909031",
+  "nodeVersion": "v25.2.1",
+  "bunVersion": "1.3.6",
+  "configuration": {
+    "ports": 18,
+    "services": 6,
+    "dashboards": 5,
+    "environmentFiles": 3
+  }
+}

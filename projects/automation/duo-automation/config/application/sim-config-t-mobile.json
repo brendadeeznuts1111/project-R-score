@@ -1,0 +1,74 @@
+[
+  {
+    "id": "t-mobile_1",
+    "carrier": "t-mobile",
+    "status": "activated",
+    "phoneNumber": "+13156004066",
+    "activationDate": "2026-01-12T14:00:00.000Z",
+    "purchaseDate": "2026-01-12T13:58:15.785Z",
+    "renewalDate": "2026-02-12T14:00:00.000Z",
+    "costs": {
+      "sim": 10,
+      "monthly": 3,
+      "totalFirstMonth": 13
+    },
+    "configuration": {
+      "apn": "fast.t-mobile.com",
+      "zipCode": "10001",
+      "activationUrl": "https://prepaid.t-mobile.com/"
+    },
+    "usage": {
+      "accountsCreated": 0,
+      "lastUsed": null,
+      "successRate": 0
+    }
+  },
+  {
+    "id": "t-mobile_2",
+    "carrier": "t-mobile",
+    "status": "pending_activation",
+    "phoneNumber": null,
+    "activationDate": null,
+    "purchaseDate": "2026-01-12T13:58:15.786Z",
+    "renewalDate": null,
+    "costs": {
+      "sim": 10,
+      "monthly": 3,
+      "totalFirstMonth": 13
+    },
+    "configuration": {
+      "apn": "fast.t-mobile.com",
+      "zipCode": "10001",
+      "activationUrl": "https://prepaid.t-mobile.com/"
+    },
+    "usage": {
+      "accountsCreated": 0,
+      "lastUsed": null,
+      "successRate": 0
+    }
+  },
+  {
+    "id": "t-mobile_3",
+    "carrier": "t-mobile",
+    "status": "pending_activation",
+    "phoneNumber": null,
+    "activationDate": null,
+    "purchaseDate": "2026-01-12T13:58:15.786Z",
+    "renewalDate": null,
+    "costs": {
+      "sim": 10,
+      "monthly": 3,
+      "totalFirstMonth": 13
+    },
+    "configuration": {
+      "apn": "fast.t-mobile.com",
+      "zipCode": "10001",
+      "activationUrl": "https://prepaid.t-mobile.com/"
+    },
+    "usage": {
+      "accountsCreated": 0,
+      "lastUsed": null,
+      "successRate": 0
+    }
+  }
+]

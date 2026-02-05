@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R2 Storage Dashboard | Cloudflare R2 Management</title>
+    <meta name="description" content="Comprehensive R2 storage dashboard with file management, analytics, bucket operations, and storage monitoring">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @keyframes pulse-border {
+            0%, 100% { border-color: rgb(59 130 246 / 0.5); }
+            50% { border-color: rgb(59 130 246 / 1); }
+        }
+        .animate-pulse-border {
+            animation: pulse-border 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .r2-orange {
+            color: #3b82f6;
+        }
+        .storage-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border: 1px solid #3b82f6;
+            transition: all 0.3s ease;
+        }
+        .storage-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .file-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border: 1px solid #3b82f6;
+            transition: all 0.3s ease;
+        }
+        .file-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-online { background-color: #3b82f6; }
+        .status-warning { background-color: #f59e0b; }
+        .status-error { background-color: #ef4444; }
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .file-type-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.125rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 0.25rem;
+        }
+        .file-type-badge.image { background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%); color: white; }
+        .file-type-badge.document { background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%); color: white; }
+        .file-type-badge.video { background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%); color: white; }
+        .file-type-badge.archive { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; }
+        .file-type-badge.code { background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%); color: white; }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #3b82f6;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #3b82f6);
+            transition: width 0.3s ease;
+        }
+        /* Dark Mode Styles */
+        .dark {
+            background-color: #3b82f6;
+            color: #3b82f6;
+        }
+        .dark .bg-white {
+            background-color: #3b82f6 !important;
+        }
+        .dark .bg-gray-50 {
+            background-color: #3b82f6 !important;
+        }
+        .dark .text-gray-900 {
+            color: #3b82f6 !important;
+        }
+        .dark .text-gray-600 {
+            color: #3b82f6 !important;
+        }
+        .dark .border-gray-200 {
+            border-color: #3b82f6 !important;
+        }
+        .dark .storage-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border-color: #3b82f6;
+        }
+        .dark .file-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            border-color: #3b82f6;
+        }
+        .dark .progress-bar {
+            background: #3b82f6;
+        }
+        /* Theme transition */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <i data-lucide="hard-drive" class="w-8 h-8 r2-orange"></i>
+                    <h1 class="text-2xl font-bold gradient-text">R2 Storage Dashboard</h1>
+                    <span class="text-sm text-gray-600 ml-2">Cloudflare R2 Management</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <span class="status-indicator status-online"></span>
+                        <span class="text-sm text-gray-600">Storage Active</span>
+                    </div>
+                    <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-gray-100" title="Toggle Theme">
+                        <i data-lucide="moon" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="uploadFiles()" class="btn-primary">
+                        <i data-lucide="upload" class="w-4 h-4 inline mr-2"></i>
+                        Upload
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Storage Info Bar -->
+    <div class="bg-orange-50 border-b border-orange-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm font-medium text-orange-800">R2 Endpoint:</span>
+                    <code class="text-sm bg-orange-100 px-2 py-1 rounded">https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com/</code>
+                    <button onclick="copyEndpointUrl()" class="text-orange-600 hover:text-orange-800 text-sm">
+                        <i data-lucide="copy" class="w-4 h-4 inline"></i>
+                    </button>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="configureAccess()" class="text-sm text-orange-600 hover:text-orange-800">
+                        <i data-lucide="key" class="w-4 h-4 inline mr-1"></i>
+                        Configure Access
+                    </button>
+                    <button onclick="viewDocumentation()" class="text-sm text-orange-600 hover:text-orange-800">
+                        <i data-lucide="book-open" class="w-4 h-4 inline mr-1"></i>
+                        Documentation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Storage Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="file-card p-6 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Storage</p>
+                        <p class="text-3xl font-bold text-gray-900">2.4TB</p>
+                        <p class="text-xs text-green-600 mt-1">78% used</p>
+                    </div>
+                    <i data-lucide="database" class="w-8 h-8 text-orange-500"></i>
+                </div>
+                <div class="mt-3">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 78%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="file-card p-6 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total Files</p>
+                        <p class="text-3xl font-bold text-gray-900">45,231</p>
+                        <p class="text-xs text-green-600 mt-1">+234 today</p>
+                    </div>
+                    <i data-lucide="file-text" class="w-8 h-8 text-blue-500"></i>
+                </div>
+            </div>
+            <div class="file-card p-6 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Bandwidth</p>
+                        <p class="text-3xl font-bold text-gray-900">125GB</p>
+                        <p class="text-xs text-green-600 mt-1">This month</p>
+                    </div>
+                    <i data-lucide="activity" class="w-8 h-8 text-green-500"></i>
+                </div>
+            </div>
+            <div class="file-card p-6 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Operations</p>
+                        <p class="text-3xl font-bold text-gray-900">1.2M</p>
+                        <p class="text-xs text-green-600 mt-1">+45K today</p>
+                    </div>
+                    <i data-lucide="zap" class="w-8 h-8 text-purple-500"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <button onclick="uploadFiles()" class="flex items-center justify-center space-x-2 p-4 bg-orange-50 text-orange-700 rounded-lg hover:bg-orange-100 transition">
+                    <i data-lucide="upload" class="w-5 h-5"></i>
+                    <span>Upload Files</span>
+                </button>
+                <button onclick="createFolder()" class="flex items-center justify-center space-x-2 p-4 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition">
+                    <i data-lucide="folder-plus" class="w-5 h-5"></i>
+                    <span>Create Folder</span>
+                </button>
+                <button onclick="syncStorage()" class="flex items-center justify-center space-x-2 p-4 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition">
+                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                    <span>Sync Storage</span>
+                </button>
+                <button onclick="manageAccess()" class="flex items-center justify-center space-x-2 p-4 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition">
+                    <i data-lucide="shield" class="w-5 h-5"></i>
+                    <span>Manage Access</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- File Browser -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold text-gray-900">File Browser</h2>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2 text-sm text-gray-600">
+                        <i data-lucide="folder" class="w-4 h-4"></i>
+                        <span>/</span>
+                    </div>
+                    <select id="sort-by" class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                        <option value="name">Name</option>
+                        <option value="size">Size</option>
+                        <option value="modified">Modified</option>
+                        <option value="type">Type</option>
+                    </select>
+                    <button onclick="toggleView()" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50">
+                        <i data-lucide="grid" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- File List -->
+            <div class="space-y-2">
+                <!-- Folder -->
+                <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="folder" class="w-5 h-5 text-blue-500"></i>
+                        <span class="font-medium text-gray-900">documents</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-500">—</span>
+                        <span class="text-sm text-gray-500">2 days ago</span>
+                        <button class="p-1 rounded hover:bg-gray-200">
+                            <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Files -->
+                <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="file-text" class="w-5 h-5 text-blue-500"></i>
+                        <span class="font-medium text-gray-900">report-2024.pdf</span>
+                        <span class="file-type-badge document">PDF</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-500">2.4 MB</span>
+                        <span class="text-sm text-gray-500">1 hour ago</span>
+                        <button class="p-1 rounded hover:bg-gray-200">
+                            <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="image" class="w-5 h-5 text-green-500"></i>
+                        <span class="font-medium text-gray-900">dashboard-screenshot.png</span>
+                        <span class="file-type-badge image">PNG</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-500">856 KB</span>
+                        <span class="text-sm text-gray-500">3 hours ago</span>
+                        <button class="p-1 rounded hover:bg-gray-200">
+                            <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="file-code" class="w-5 h-5 text-purple-500"></i>
+                        <span class="font-medium text-gray-900">app-bundle.zip</span>
+                        <span class="file-type-badge archive">ZIP</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-500">15.7 MB</span>
+                        <span class="text-sm text-gray-500">1 day ago</span>
+                        <button class="p-1 rounded hover:bg-gray-200">
+                            <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="video" class="w-5 h-5 text-red-500"></i>
+                        <span class="font-medium text-gray-900">tutorial-video.mp4</span>
+                        <span class="file-type-badge video">MP4</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-500">125.3 MB</span>
+                        <span class="text-sm text-gray-500">2 days ago</span>
+                        <button class="p-1 rounded hover:bg-gray-200">
+                            <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex justify-between items-center">
+                <span class="text-sm text-gray-600">Showing 5 of 45,231 files</span>
+                <div class="flex space-x-2">
+                    <button class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">Previous</button>
+                    <button class="px-3 py-1 bg-orange-600 text-white rounded-lg text-sm">1</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">2</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">3</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">Upload Files</h2>
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-orange-500 transition cursor-pointer" onclick="document.getElementById('file-input').click()">
+                <i data-lucide="cloud-upload" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
+                <p class="text-lg font-medium text-gray-900 mb-2">Drop files here or click to upload</p>
+                <p class="text-sm text-gray-600">Support for images, documents, videos, and archives</p>
+                <input type="file" id="file-input" multiple class="hidden" onchange="handleFileSelect(event)">
+            </div>
+            <div id="upload-list" class="mt-4 space-y-2"></div>
+        </div>
+
+        <!-- Analytics Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Storage Usage Over Time</h3>
+                <div class="chart-container">
+                    <canvas id="storageChart"></canvas>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">File Type Distribution</h3>
+                <div class="chart-container">
+                    <canvas id="fileTypeChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bucket Management -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold text-gray-900">Bucket Management</h2>
+                <button onclick="createBucket()" class="btn-primary">
+                    <i data-lucide="plus" class="w-4 h-4 inline mr-2"></i>
+                    Create Bucket
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="storage-card p-6 rounded-lg">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">duo-automation-storage</h3>
+                        <span class="status-indicator status-online"></span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Files:</span>
+                            <span class="font-medium">45,231</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Size:</span>
+                            <span class="font-medium">2.4TB</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Region:</span>
+                            <span class="font-medium">Auto</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex space-x-2">
+                        <button onclick="manageBucket('duo-automation-storage')" class="btn-secondary flex-1 text-sm">
+                            Manage
+                        </button>
+                        <button onclick="viewBucketStats('duo-automation-storage')" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50">
+                            <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="storage-card p-6 rounded-lg">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">backup-storage</h3>
+                        <span class="status-indicator status-online"></span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Files:</span>
+                            <span class="font-medium">12,847</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Size:</span>
+                            <span class="font-medium">856GB</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Region:</span>
+                            <span class="font-medium">US East</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex space-x-2">
+                        <button onclick="manageBucket('backup-storage')" class="btn-secondary flex-1 text-sm">
+                            Manage
+                        </button>
+                        <button onclick="viewBucketStats('backup-storage')" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50">
+                            <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="storage-card p-6 rounded-lg">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">cdn-assets</h3>
+                        <span class="status-indicator status-online"></span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Files:</span>
+                            <span class="font-medium">8,234</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Size:</span>
+                            <span class="font-medium">234GB</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Region:</span>
+                            <span class="font-medium">Global</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex space-x-2">
+                        <button onclick="manageBucket('cdn-assets')" class="btn-secondary flex-1 text-sm">
+                            Manage
+                        </button>
+                        <button onclick="viewBucketStats('cdn-assets')" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50">
+                            <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Chart instances
+        let storageChart = null;
+        let fileTypeChart = null;
+
+        // Theme Manager
+        const themeManager = {
+            currentTheme: 'light',
+            
+            init() {
+                this.loadSavedTheme();
+                this.applyTheme(this.currentTheme);
+                this.setupEventListeners();
+            },
+            
+            toggleTheme() {
+                const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+                this.applyTheme(newTheme);
+                this.saveTheme(newTheme);
+                this.currentTheme = newTheme;
+            },
+            
+            applyTheme(theme) {
+                const body = document.body;
+                if (theme === 'dark') {
+                    body.classList.add('dark');
+                } else {
+                    body.classList.remove('dark');
+                }
+            },
+            
+            updateCharts(theme) {
+                if (storageChart) {
+                    const gridColor = theme === 'dark' ? '#3b82f6' : '#3b82f6';
+                    const textColor = theme === 'dark' ? '#3b82f6' : '#3b82f6';
+                    
+                    storageChart.options.scales.x.grid.color = gridColor;
+                    storageChart.options.scales.y.grid.color = gridColor;
+                    storageChart.options.scales.x.ticks.color = textColor;
+                    storageChart.options.scales.y.ticks.color = textColor;
+                    storageChart.update();
+                }
+                
+                if (fileTypeChart) {
+                    fileTypeChart.options.plugins.legend.labels.color = theme === 'dark' ? '#3b82f6' : '#3b82f6';
+                    fileTypeChart.update();
+                }
+            },
+            
+            saveTheme(theme) {
+                localStorage.setItem('r2-storage-theme', theme);
+            },
+            
+            loadSavedTheme() {
+                const saved = localStorage.getItem('r2-storage-theme');
+                if (saved) {
+                    this.currentTheme = saved;
+                } else {
+                    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        this.currentTheme = 'dark';
+                    }
+                }
+            },
+            
+            setupEventListeners() {
+                if (window.matchMedia) {
+                    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                    mediaQuery.addListener((e) => {
+                        if (!localStorage.getItem('r2-storage-theme')) {
+                            const systemTheme = e.matches ? 'dark' : 'light';
+                            this.applyTheme(systemTheme);
+                            this.currentTheme = systemTheme;
+                            this.updateCharts(systemTheme);
+                        }
+                    });
+                }
+            }
+        };
+
+        // Initialize charts
+        function initCharts() {
+            // Storage Usage Chart
+            const storageCtx = document.getElementById('storageChart').getContext('2d');
+            storageChart = new Chart(storageCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                    datasets: [{
+                        label: 'Storage Usage (TB)',
+                        data: [1.2, 1.5, 1.8, 2.0, 2.1, 2.3, 2.4],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(244, 129, 31, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // File Type Chart
+            const fileTypeCtx = document.getElementById('fileTypeChart').getContext('2d');
+            fileTypeChart = new Chart(fileTypeCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Images', 'Documents', 'Videos', 'Archives', 'Code', 'Other'],
+                    datasets: [{
+                        data: [35, 25, 20, 10, 7, 3],
+                        backgroundColor: [
+                            '#10b981',
+                            '#3b82f6',
+                            '#8b5cf6',
+                            '#f59e0b',
+                            '#3b82f6',
+                            '#ef4444'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Storage functions
+        function copyEndpointUrl() {
+            const url = 'https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com/';
+            navigator.clipboard.writeText(url).then(() => {
+                showNotification('Copied', 'R2 endpoint URL copied to clipboard', 'success');
+            });
+        }
+
+        function configureAccess() {
+            const config = `# R2 Configuration
+R2_ACCOUNT_ID=7a470541a704caaf91e71efccc78fd36
+R2_ACCESS_KEY_ID=your_access_key_here
+R2_SECRET_ACCESS_KEY=your_secret_key_here
+R2_ENDPOINT=https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com/`;
+            
+            navigator.clipboard.writeText(config).then(() => {
+                showNotification('Configuration', 'R2 configuration copied to clipboard', 'success');
+            });
+        }
+
+        function viewDocumentation() {
+            showNotification('Documentation', 'Opening R2 storage documentation...', 'info');
+        }
+
+        function uploadFiles() {
+            document.getElementById('file-input').click();
+        }
+
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            const uploadList = document.getElementById('upload-list');
+            
+            uploadList.innerHTML = '';
+            
+            Array.from(files).forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg';
+                fileItem.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="file" class="w-5 h-5 text-gray-500"></i>
+                        <div>
+                            <p class="font-medium text-gray-900">${file.name}</p>
+                            <p class="text-sm text-gray-500">${formatFileSize(file.size)}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-green-600">Ready to upload</span>
+                        <button onclick="removeFile(this)" class="p-1 rounded hover:bg-gray-200">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+                uploadList.appendChild(fileItem);
+            });
+            
+            // Re-initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        function removeFile(button) {
+            button.closest('.flex').remove();
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function createFolder() {
+            const folderName = prompt('Enter folder name:');
+            if (folderName) {
+                showNotification('Creating', `Creating folder "${folderName}"...`, 'info');
+                setTimeout(() => {
+                    showNotification('Success', `Folder "${folderName}" created successfully`, 'success');
+                }, 2000);
+            }
+        }
+
+        function syncStorage() {
+            showNotification('Syncing', 'Syncing R2 storage...', 'info');
+            setTimeout(() => {
+                showNotification('Success', 'Storage synced successfully', 'success');
+            }, 3000);
+        }
+
+        function manageAccess() {
+            showNotification('Access Management', 'Opening access control panel...', 'info');
+        }
+
+        function toggleView() {
+            showNotification('View', 'Toggling file view...', 'info');
+        }
+
+        function createBucket() {
+            const bucketName = prompt('Enter bucket name:');
+            if (bucketName) {
+                showNotification('Creating', `Creating bucket "${bucketName}"...`, 'info');
+                setTimeout(() => {
+                    showNotification('Success', `Bucket "${bucketName}" created successfully`, 'success');
+                }, 2000);
+            }
+        }
+
+        function manageBucket(bucketName) {
+            showNotification('Bucket Management', `Opening management for "${bucketName}"...`, 'info');
+        }
+
+        function viewBucketStats(bucketName) {
+            showNotification('Analytics', `Loading statistics for "${bucketName}"...`, 'info');
+        }
+
+        function showNotification(title, message, type = 'info') {
+            console.log(`[${type.toUpperCase()}] ${title}: ${message}`);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            themeManager.init();
+            initCharts();
+            
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+
+        // Global functions
+        function toggleTheme() {
+            themeManager.toggleTheme();
+        }
+    </script>
+</body>
+</html>

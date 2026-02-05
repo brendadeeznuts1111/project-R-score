@@ -1,0 +1,764 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Suite - Modular Dashboard | ENTERPRISE ALL</title>
+    <meta name="description" content="Enterprise modular dashboard system with scope and type management">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --color-primary: #3b82f6;
+            --color-secondary: #3b82f6;
+            --color-accent: #3b82f6;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-error: #ef4444;
+            --color-info: #06b6d4;
+            --color-background: #3b82f6;
+            --color-surface: #3b82f6;
+            --color-surface-light: #3b82f6;
+            --color-text: #3b82f6;
+            --color-text-secondary: #3b82f6;
+            --color-border: #3b82f6;
+            --color-gradient: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            --color-gradient-secondary: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--color-background);
+            color: var(--color-text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .enterprise-suite {
+            --enterprise-primary: #3b82f6;
+            --enterprise-secondary: #3b82f6;
+            --enterprise-accent: #3b82f6;
+            --enterprise-success: #10b981;
+            --enterprise-warning: #f59e0b;
+            --enterprise-error: #ef4444;
+        }
+
+        .glass-effect {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(71, 85, 105, 0.5);
+        }
+
+        .status-active { 
+            background: linear-gradient(135deg, var(--color-success) 0%, #3b82f6 100%);
+            animation: pulse-green 2s infinite;
+        }
+
+        .status-loading { 
+            background: linear-gradient(135deg, var(--color-warning) 0%, #d97706 100%);
+            animation: pulse-yellow 2s infinite;
+        }
+
+        .status-inactive { 
+            background: linear-gradient(135deg, var(--color-error) 0%, #dc2626 100%);
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes pulse-yellow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .metric-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--color-gradient);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+            border-color: var(--color-accent);
+        }
+
+        .scope-enterprise { border-left: 4px solid #3b82f6; }
+        .scope-development { border-left: 4px solid #10b981; }
+        .scope-production { border-left: 4px solid #f59e0b; }
+        .scope-local-sandbox { border-left: 4px solid #8b5cf6; }
+
+        .type-analytics { background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(29, 78, 216, 0.1) 100%); }
+        .type-merchant { background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%); }
+        .type-developer { background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(109, 40, 217, 0.1) 100%); }
+        .type-security { background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%); }
+        .type-revenue { background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%); }
+        .type-monitoring { background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(8, 145, 178, 0.1) 100%); }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .enhanced-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 50%, #3b82f6 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .enhanced-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6 0%, #3b82f6 50%, #3b82f6 100%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        .enhanced-header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .scope-type-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .scope-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .scope-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(59, 130, 246, 0.6);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
+        }
+
+        .scope-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+            animation: pulse-green 2s infinite;
+        }
+
+        .type-badge {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(29, 78, 216, 0.2) 100%);
+            color: #3b82f6;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .type-badge:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(29, 78, 216, 0.3) 100%);
+            transform: scale(1.05);
+        }
+
+        .status-bar {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse-green 2s infinite;
+        }
+
+        .header-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 50%, #3b82f6 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-subtitle {
+            color: #3b82f6;
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #3b82f6;
+            font-size: 0.875rem;
+        }
+
+        .meta-item i {
+            color: #3b82f6;
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .draggable {
+            cursor: move;
+        }
+
+        .draggable:active {
+            cursor: grabbing;
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen p-4 enterprise-suite">
+        <!-- Enhanced Header -->
+        <header class="max-w-7xl mx-auto">
+            <div class="enhanced-header">
+                <div>
+                    <h1 class="header-title">Enterprise Suite - Modular Dashboard</h1>
+                    <p class="header-subtitle">Advanced Scope & Type Management System</p>
+                    
+                    <!-- Scope & Type Information Grid -->
+                    <div class="scope-type-grid">
+                        <div class="scope-card">
+                            <div class="flex items-center mb-2">
+                                <div class="scope-indicator" style="background: #3b82f6;"></div>
+                                <h4 class="font-semibold text-white">Current Scope</h4>
+                            </div>
+                            <p class="text-blue-400 font-medium">Enterprise Scope</p>
+                            <p class="text-gray-400 text-sm">Admin, Analytics, Security, Revenue</p>
+                            <p class="text-gray-500 text-xs mt-1">America/New_York</p>
+                        </div>
+                        
+                        <div class="scope-card">
+                            <div class="flex items-center mb-2">
+                                <div class="scope-indicator" style="background: #10b981;"></div>
+                                <h4 class="font-semibold text-white">Active Types</h4>
+                            </div>
+                            <p class="text-green-400 font-medium">All Types</p>
+                            <p class="text-gray-400 text-sm">Analytics, Merchant, Developer</p>
+                            <p class="text-gray-500 text-xs mt-1">Security, Revenue, Monitoring</p>
+                        </div>
+                        
+                        <div class="scope-card">
+                            <div class="flex items-center mb-2">
+                                <div class="scope-indicator" style="background: #f59e0b;"></div>
+                                <h4 class="font-semibold text-white">Modules</h4>
+                            </div>
+                            <p class="text-yellow-400 font-medium">4 Active</p>
+                            <p class="text-gray-400 text-sm">Enterprise, Merchant, Security</p>
+                            <p class="text-gray-500 text-xs mt-1">Revenue Tracking</p>
+                        </div>
+                        
+                        <div class="scope-card">
+                            <div class="flex items-center mb-2">
+                                <div class="scope-indicator" style="background: #8b5cf6;"></div>
+                                <h4 class="font-semibold text-white">Components</h4>
+                            </div>
+                            <p class="text-purple-400 font-medium">8 Total</p>
+                            <p class="text-gray-400 text-sm">Charts, Metrics, Tables</p>
+                            <p class="text-gray-500 text-xs mt-1">Real-time Updates</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Status Bar -->
+                    <div class="status-bar">
+                        <div class="flex items-center gap-6">
+                            <div class="status-item">
+                                <div class="status-dot" style="background: #10b981;"></div>
+                                <span class="text-green-400 font-medium">System Operational</span>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-dot" style="background: #3b82f6;"></div>
+                                <span class="text-blue-400">99.9% Uptime</span>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-dot" style="background: #f59e0b;"></div>
+                                <span class="text-yellow-400">85% Cache Hit</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-4">
+                            <span class="type-badge">Enterprise</span>
+                            <span class="type-badge">All Types</span>
+                            <span class="text-gray-400 text-sm">Generated: 1/15/2026, 7:19 PM</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Header Meta Information -->
+                <div class="header-meta">
+                    <div class="meta-item">
+                        <i data-lucide="layers" class="w-4 h-4"></i>
+                        <span>4 Modules</span>
+                    </div>
+                    <div class="meta-item">
+                        <i data-lucide="component" class="w-4 h-4"></i>
+                        <span>8 Components</span>
+                    </div>
+                    <div class="meta-item">
+                        <i data-lucide="target" class="w-4 h-4"></i>
+                        <span>Enterprise</span>
+                    </div>
+                    <div class="meta-item">
+                        <i data-lucide="zap" class="w-4 h-4"></i>
+                        <span>Live</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto">
+            <!-- Module Grid -->
+            <div class="component-grid mb-8">
+                
+        <div class="metric-card scope-enterprise type-analytics draggable">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center">
+                    <i data-lucide="bar-chart-3" class="w-6 h-6 mr-2 text-blue-400"></i>
+                    <h3 class="text-lg font-semibold">Enterprise Analytics</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm">
+                        Enterprise Scope
+                    </span>
+                    <span class="px-3 py-1 status-active text-white rounded-full text-sm">
+                        ACTIVE
+                    </span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+            <div class="bg-gray-700/50 rounded-lg p-4 md:col-span-2">
+                <h4 class="text-sm text-gray-400 mb-2">Revenue Growth Chart</h4>
+                <div class="chart-container" style="height: 200px;">
+                    <canvas id="chart-revenue-chart"></canvas>
+                </div>
+            </div>
+        
+            <div class="bg-gray-700/50 rounded-lg p-4 ">
+                <h4 class="text-sm text-gray-400 mb-2">Merchant Metrics</h4>
+                <div class="text-2xl font-bold text-white">merchants: 19 | mrr: 7000 | growth: +26.7%</div>
+            </div>
+        
+            </div>
+            
+            <div class="mt-4 pt-4 border-t border-gray-700">
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-gray-400">Components: 2</span>
+                    <span class="text-gray-400">Type: analytics</span>
+                    <span class="text-gray-400">Refresh: 30000ms</span>
+                </div>
+            </div>
+        </div>
+    
+        <div class="metric-card scope-enterprise type-merchant draggable">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center">
+                    <i data-lucide="store" class="w-6 h-6 mr-2 text-blue-400"></i>
+                    <h3 class="text-lg font-semibold">Merchant Dashboard</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm">
+                        Enterprise Scope
+                    </span>
+                    <span class="px-3 py-1 status-active text-white rounded-full text-sm">
+                        ACTIVE
+                    </span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+            <div class="bg-gray-700/50 rounded-lg p-4 md:col-span-2">
+                <h4 class="text-sm text-gray-400 mb-2">Dispute Resolution</h4>
+                <div class="text-sm text-gray-300">
+                    <div class="flex justify-between"><span>cases:</span><span></span></div><div class="flex justify-between"><span>total:</span><span>1247</span></div>
+                </div>
+            </div>
+        
+            <div class="bg-gray-700/50 rounded-lg p-4 ">
+                <h4 class="text-sm text-gray-400 mb-2">Identity Verification</h4>
+                <div class="text-2xl font-bold text-white">successRate: 90.2 | verified: $johnsmith</div>
+            </div>
+        
+            </div>
+            
+            <div class="mt-4 pt-4 border-t border-gray-700">
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-gray-400">Components: 2</span>
+                    <span class="text-gray-400">Type: merchant</span>
+                    <span class="text-gray-400">Refresh: 15000ms</span>
+                </div>
+            </div>
+        </div>
+    
+        <div class="metric-card scope-enterprise type-security draggable">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center">
+                    <i data-lucide="shield" class="w-6 h-6 mr-2 text-blue-400"></i>
+                    <h3 class="text-lg font-semibold">Security Monitoring</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm">
+                        Enterprise Scope
+                    </span>
+                    <span class="px-3 py-1 status-active text-white rounded-full text-sm">
+                        ACTIVE
+                    </span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+            <div class="bg-gray-700/50 rounded-lg p-4 ">
+                <h4 class="text-sm text-gray-400 mb-2">Threat Detection</h4>
+                <div class="chart-container" style="height: 200px;">
+                    <canvas id="chart-threat-detection"></canvas>
+                </div>
+            </div>
+        
+            <div class="bg-gray-700/50 rounded-lg p-4 md:col-span-2">
+                <h4 class="text-sm text-gray-400 mb-2">Access Logs</h4>
+                <div class="text-sm text-gray-300">
+                    <div class="flex justify-between"><span>logs:</span><span></span></div><div class="flex justify-between"><span>total:</span><span>0</span></div>
+                </div>
+            </div>
+        
+            </div>
+            
+            <div class="mt-4 pt-4 border-t border-gray-700">
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-gray-400">Components: 2</span>
+                    <span class="text-gray-400">Type: security</span>
+                    <span class="text-gray-400">Refresh: 10000ms</span>
+                </div>
+            </div>
+        </div>
+    
+        <div class="metric-card scope-enterprise type-revenue draggable">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center">
+                    <i data-lucide="dollar-sign" class="w-6 h-6 mr-2 text-blue-400"></i>
+                    <h3 class="text-lg font-semibold">Revenue Tracking</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm">
+                        Enterprise Scope
+                    </span>
+                    <span class="px-3 py-1 status-active text-white rounded-full text-sm">
+                        ACTIVE
+                    </span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+            <div class="bg-gray-700/50 rounded-lg p-4 md:col-span-2">
+                <h4 class="text-sm text-gray-400 mb-2">MRR Breakdown</h4>
+                <div class="chart-container" style="height: 200px;">
+                    <canvas id="chart-mrr-breakdown"></canvas>
+                </div>
+            </div>
+        
+            <div class="bg-gray-700/50 rounded-lg p-4 ">
+                <h4 class="text-sm text-gray-400 mb-2">Revenue Projections</h4>
+                <div class="text-2xl font-bold text-white">current: 22500 | projected: 28500000 | growth: +26.7%</div>
+            </div>
+        
+            </div>
+            
+            <div class="mt-4 pt-4 border-t border-gray-700">
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-gray-400">Components: 2</span>
+                    <span class="text-gray-400">Type: revenue</span>
+                    <span class="text-gray-400">Refresh: 300000ms</span>
+                </div>
+            </div>
+        </div>
+    
+            </div>
+
+            <!-- System Overview -->
+            <div class="metric-card">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold">System Overview</h3>
+                    <div class="flex items-center gap-2">
+                        <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">
+                            4 Modules Active
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <h4 class="text-sm text-gray-400 mb-3">Active Scopes</h4>
+                        <div class="space-y-2">
+                            
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                                    <span class="text-sm">Enterprise Scope</span>
+                                </div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-sm text-gray-400 mb-3">Module Types</h4>
+                        <div class="space-y-2">
+                            
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+                                    <span class="text-sm">analytics (1)</span>
+                                </div>
+                            
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+                                    <span class="text-sm">merchant (1)</span>
+                                </div>
+                            
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+                                    <span class="text-sm">security (1)</span>
+                                </div>
+                            
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+                                    <span class="text-sm">revenue (1)</span>
+                                </div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-sm text-gray-400 mb-3">System Status</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                                <span class="text-sm">All Systems Operational</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+                                <span class="text-sm">Performance: 99.9%</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                                <span class="text-sm">Cache Hit: 85%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Dashboard System
+        class EnterpriseDashboard {
+            constructor() {
+                this.modules = [{"id":"enterprise-analytics","name":"Enterprise Analytics","type":"analytics","scope":{"id":"enterprise","name":"Enterprise Scope","level":"ENTERPRISE","permissions":["admin","read","write","delete","manage"],"features":["analytics","security","revenue","monitoring","merchant","developer"],"timezone":"America/New_York"},"components":[{"id":"revenue-chart","name":"Revenue Growth Chart","type":"chart","data":{"type":"line","datasets":[]},"config":{"size":"large","position":{"x":0,"y":0},"draggable":true,"resizable":true,"theme":"auto"},"dependencies":["revenue-api","analytics-service"]},{"id":"merchant-metrics","name":"Merchant Metrics","type":"metric","data":{"merchants":19,"mrr":7000,"growth":"+26.7%"},"config":{"size":"medium","position":{"x":2,"y":0},"draggable":true,"resizable":false,"theme":"auto"},"dependencies":["merchant-api"]}]},{"id":"merchant-dashboard","name":"Merchant Dashboard","type":"merchant","scope":{"id":"enterprise","name":"Enterprise Scope","level":"ENTERPRISE","permissions":["admin","read","write","delete","manage"],"features":["analytics","security","revenue","monitoring","merchant","developer"],"timezone":"America/New_York"},"components":[{"id":"dispute-resolution","name":"Dispute Resolution","type":"table","data":{"cases":[],"total":1247},"config":{"size":"large","position":{"x":0,"y":2},"draggable":true,"resizable":true,"theme":"auto"},"dependencies":["dispute-api"]},{"id":"identity-verification","name":"Identity Verification","type":"metric","data":{"successRate":90.2,"verified":"$johnsmith"},"config":{"size":"medium","position":{"x":2,"y":2},"draggable":true,"resizable":false,"theme":"auto"},"dependencies":["identity-api"]}]},{"id":"security-monitoring","name":"Security Monitoring","type":"security","scope":{"id":"enterprise","name":"Enterprise Scope","level":"ENTERPRISE","permissions":["admin","read","write","delete","manage"],"features":["analytics","security","revenue","monitoring","merchant","developer"],"timezone":"America/New_York"},"components":[{"id":"threat-detection","name":"Threat Detection","type":"chart","data":{"threats":0,"blocked":0,"level":"low"},"config":{"size":"medium","position":{"x":0,"y":0},"draggable":true,"resizable":true,"theme":"auto"},"dependencies":["security-api"]},{"id":"access-logs","name":"Access Logs","type":"table","data":{"logs":[],"total":0},"config":{"size":"large","position":{"x":1,"y":0},"draggable":true,"resizable":true,"theme":"auto"},"dependencies":["logging-api"]}]},{"id":"revenue-tracking","name":"Revenue Tracking","type":"revenue","scope":{"id":"enterprise","name":"Enterprise Scope","level":"ENTERPRISE","permissions":["admin","read","write","delete","manage"],"features":["analytics","security","revenue","monitoring","merchant","developer"],"timezone":"America/New_York"},"components":[{"id":"mrr-breakdown","name":"MRR Breakdown","type":"chart","data":{"factoryWager":7000,"duoPlus":15500,"total":22500},"config":{"size":"large","position":{"x":0,"y":0},"draggable":true,"resizable":true,"theme":"auto"},"dependencies":["revenue-api"]},{"id":"projections","name":"Revenue Projections","type":"metric","data":{"current":22500,"projected":28500000,"growth":"+26.7%"},"config":{"size":"medium","position":{"x":2,"y":0},"draggable":true,"resizable":false,"theme":"auto"},"dependencies":["analytics-api"]}]}];
+                this.initializeComponents();
+                this.setupInteractions();
+            }
+
+            initializeComponents() {
+                // Initialize charts
+                this.modules.forEach(module => {
+                    module.components.forEach(component => {
+                        if (component.type === 'chart') {
+                            this.initializeChart(component);
+                        }
+                    });
+                });
+            }
+
+            initializeChart(component) {
+                const canvas = document.getElementById(`chart-${component.id}`);
+                if (canvas) {
+                    new Chart(canvas, {
+                        type: component.data.type || 'line',
+                        data: component.data,
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    labels: { color: '#3b82f6' }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    ticks: { color: '#3b82f6' },
+                                    grid: { color: '#3b82f6' }
+                                },
+                                y: {
+                                    ticks: { color: '#3b82f6' },
+                                    grid: { color: '#3b82f6' }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            setupInteractions() {
+                // Make components draggable
+                document.querySelectorAll('.draggable').forEach(element => {
+                    this.makeDraggable(element);
+                });
+
+                // Setup refresh intervals
+                this.setupRefreshIntervals();
+            }
+
+            makeDraggable(element) {
+                let isDragging = false;
+                let startX, startY, initialX, initialY;
+
+                element.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    initialX = element.offsetLeft;
+                    initialY = element.offsetTop;
+                    element.style.cursor = 'grabbing';
+                    element.style.zIndex = '1000';
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    
+                    const dx = e.clientX - startX;
+                    const dy = e.clientY - startY;
+                    
+                    element.style.left = (initialX + dx) + 'px';
+                    element.style.top = (initialY + dy) + 'px';
+                });
+
+                document.addEventListener('mouseup', () => {
+                    if (isDragging) {
+                        isDragging = false;
+                        element.style.cursor = 'move';
+                        element.style.zIndex = '';
+                    }
+                });
+            }
+
+            setupRefreshIntervals() {
+                // Auto-refresh metrics every 30 seconds
+                setInterval(() => {
+                    this.refreshMetrics();
+                }, 30000);
+            }
+
+            refreshMetrics() {
+                // Simulate metric refresh
+                console.log('Refreshing metrics...');
+                // In production, this would fetch real data from APIs
+            }
+        }
+
+        // Initialize dashboard when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            const dashboard = new EnterpriseDashboard();
+            console.log('Enterprise Suite Dashboard initialized');
+        });
+    </script>
+</body>
+</html>

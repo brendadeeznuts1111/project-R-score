@@ -1,0 +1,64 @@
+{
+  "ignore": [
+    "node_modules",
+    "dist",
+    ".git",
+    "__tests__",
+    "build",
+    ".bun",
+    "coverage",
+    "*.config.ts",
+    "*.d.ts",
+    "scripts/__mocks__",
+    "**/*.spec.ts.snap",
+    ".vinxi",
+    ".output"
+  ],
+  "thresholds": {
+    "maxComplexity": 8,
+    "minCoverage": 85,
+    "maxFileLines": 400,
+    "maxFileLinesWarning": 800,
+    "maxFunctionLines": 50,
+    "maxParameters": 4,
+    "maxNestedCallbacks": 3,
+    "minTypeCoverage": 95,
+    "maxDuplicateLines": 5,
+    "maxDependencyDepth": 3
+  },
+  "overrides": [
+    {
+      "pattern": "scripts/__tests__/**/*.ts",
+      "thresholds": {
+        "maxComplexity": 15,
+        "maxFileLines": 2000,
+        "minCoverage": 0
+      }
+    },
+    {
+      "pattern": "**/*.types.test.ts",
+      "thresholds": {
+        "maxFileLines": 3000,
+        "minTypeCoverage": 100
+      }
+    },
+    {
+      "pattern": "**/v8-bindings/**/*",
+      "thresholds": {
+        "maxComplexity": 12,
+        "maxParameters": 6,
+        "allowUnsafe": true
+      }
+    }
+  ],
+  "bun": {
+    "ignoreTestFilesInCoverage": true,
+    "checkLockfileIntegrity": true,
+    "verifyNativeAddons": true
+  },
+  "v8": {
+    "maxArrayBufferSize": 1073741824,
+    "warnOnSlowTypes": true,
+    "checkExternalReferences": true
+  }
+}

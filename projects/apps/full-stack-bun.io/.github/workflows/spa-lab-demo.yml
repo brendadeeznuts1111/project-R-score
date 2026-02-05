@@ -1,0 +1,40 @@
+name: SPA Lab Demo
+
+on:
+  push:
+    branches: [main]
+    paths: ['my-portal/packages/templates/bun-transformer/spa-lab-app.ts']
+  pull_request:
+    paths: ['my-portal/packages/templates/bun-transformer/spa-lab-app.ts']
+
+env:
+  BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS: 5
+
+jobs:
+  test-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Run SPA Lab tests
+        run: bun test tests/spa-lab.test.ts
+
+      - name: Build demo binary
+        run: bun build --compile my-portal/packages/templates/bun-transformer/spa-lab-app.ts --outfile spa-lab-demo
+
+      - name: Verify binary
+        run: |
+          file spa-lab-demo
+          ./spa-lab-demo --version || true
+          ls -lh spa-lab-demo
+
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: spa-lab-demo-binary
+          path: spa-lab-demo
+          retention-days: 1

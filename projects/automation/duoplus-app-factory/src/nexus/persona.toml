@@ -1,0 +1,29 @@
+# 🧬 SOVEREIGN IDENTITY BLUEPRINT - PERSONA CONSTANTS
+# Centralized Secret Silo Configuration
+# Generated: January 22, 2026 | Nebula-Flow™ v3.5.0
+
+[bio]
+genders = ["Female", "Male", "Non-binary"]
+age_range = [22, 45]
+name_pool = ["Sarah", "Emma", "Olivia", "Ava", "Isabella", "Mia", "Charlotte", "Amelia"]
+
+[locales]
+cities = ["New York", "Los Angeles", "Chicago", "Miami", "Austin", "Seattle", "Denver", "Boston"]
+states = ["NY", "CA", "IL", "FL", "TX", "WA", "CO", "MA"]
+street_suffixes = ["St", "Ave", "Blvd", "Rd", "Ln", "Ct", "Pl", "Way"]
+
+[security]
+mfa_methods = ["TOTP", "SMS", "Passkey"]
+recovery_hint_pool = ["First pet?", "Mother's maiden name?", "Street you grew up on?", "Favorite teacher?", "First car?"]
+totp_interval = 30
+passkey_length = 32
+
+[recovery]
+email_domains = ["protonmail.com", "tutanota.com", "pm.me", "skiff.com"]
+email_prefixes = ["backup", "recovery", "secure", "vault", "silo"]
+
+[metadata]
+version = "1.0.0"
+generated = "2026-01-22T09:44:00Z"
+bun-version = "1.3.6"
+nebula-flow-version = "3.5.0"

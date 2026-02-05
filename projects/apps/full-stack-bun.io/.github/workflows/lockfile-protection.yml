@@ -1,0 +1,92 @@
+# LOCKFILE.FROZEN - GitHub Actions Workflow for Lockfile Protection
+# Ensures lockfile integrity and prevents accidental modifications
+
+name: Lockfile Protection
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'bun.lock'
+      - 'package.json'
+  pull_request:
+    paths:
+      - 'bun.lock'
+      - 'package.json'
+
+env:
+  BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS: 5
+
+jobs:
+  lockfile-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: Install dependencies (frozen)
+        run: bun install --frozen-lockfile
+
+      - name: Verify lockfile integrity
+        run: bun run lockfile:check check
+
+      - name: Check for uncommitted changes
+        run: bun run lockfile:check git-check
+
+      - name: Verify lockfile consistency
+        run: bun run lockfile:check verify
+
+      - name: Comprehensive audit
+        run: bun run lockfile:check audit
+
+  security-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Security audit
+        run: bun audit --severity=high
+
+      - name: Enterprise policy check
+        run: bun run security:policy
+
+  cursor-rules-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate Cursor Rules compliance
+        run: |
+          # Check for required files
+          test -f .cursorrules || (echo "❌ Missing .cursorrules file" && exit 1)
+
+          # Check for conventional commit format in recent commits
+          if git log --oneline -10 | grep -v -E '^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: .{1,}'; then
+            echo "⚠️ Some commits don't follow conventional format"
+          else
+            echo "✅ Commit messages follow conventional format"
+          fi
+
+          # Check file naming conventions
+          if find src -name "*.ts" | grep -v -E '\.(test|spec|macro)\.ts$' | xargs ls -1 | grep -v -E '(api/.*\.(get|post|put|delete)\.bun\.ts|html\.bun\.ts|repository\.bun\.ts)$'; then
+            echo "⚠️ Some files don't follow naming conventions"
+          else
+            echo "✅ File naming conventions followed"
+          fi

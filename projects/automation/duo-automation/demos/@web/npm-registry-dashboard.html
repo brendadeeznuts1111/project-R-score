@@ -1,0 +1,939 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Duo NPM Registry Dashboard | Package Management & Analytics</title>
+    <meta
+      name="description"
+      content="Comprehensive NPM registry dashboard for package management, publishing, analytics, and administration"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+      @keyframes pulse-border {
+        0%,
+        100% {
+          border-color: rgb(59 130 246 / 0.5);
+        }
+        50% {
+          border-color: rgb(59 130 246 / 1);
+        }
+      }
+      .animate-pulse-border {
+        animation: pulse-border 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      .gradient-text {
+        background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .npm-red {
+        color: #3b82f6;
+      }
+      .registry-card {
+        background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+        border: 1px solid #3b82f6;
+        transition: all 0.3s ease;
+      }
+      .registry-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+      .status-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+      }
+      .status-online {
+        background-color: #3b82f6;
+      }
+      .status-warning {
+        background-color: #f59e0b;
+      }
+      .status-error {
+        background-color: #ef4444;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+        transform: translateY(-1px);
+      }
+      .btn-secondary {
+        background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .btn-secondary:hover {
+        background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+        transform: translateY(-1px);
+      }
+      .version-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.125rem 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: 0.375rem;
+        background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+        color: white;
+        font-family: 'JetBrains Mono', monospace;
+      }
+      .version-badge.deprecated {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      }
+      .version-badge.beta {
+        background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+      }
+      .download-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.125rem 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        border-radius: 0.375rem;
+        background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+        color: white;
+      }
+      .chart-container {
+        position: relative;
+        height: 300px;
+        margin: 20px 0;
+      }
+      .action-btn {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #3b82f6;
+        border-radius: 0.5rem;
+        background: white;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .action-btn:hover {
+        background: #3b82f6;
+        border-color: #3b82f6;
+      }
+      .action-btn svg {
+        width: 1rem;
+        height: 1rem;
+      }
+
+      .table-container {
+        background: white;
+        border-radius: 0.75rem;
+        border: 1px solid #3b82f6;
+        overflow: hidden;
+      }
+
+      .details-panel {
+        position: fixed;
+        top: 0;
+        right: -480px;
+        width: 480px;
+        height: 100vh;
+        background: white;
+        box-shadow: -4px 0 24px rgba(0, 0, 0, 0.12);
+        z-index: 1000;
+        transition: right 0.3s ease;
+        overflow-y: auto;
+      }
+      .details-panel.open {
+        right: 0;
+      }
+      .details-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #3b82f6;
+        background: linear-gradient(135deg, #3b82f6 0%, #fff 100%);
+      }
+      .details-content {
+        padding: 1.5rem;
+      }
+      .details-section {
+        margin-bottom: 1.5rem;
+      }
+      .details-section h4 {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #3b82f6;
+        margin-bottom: 0.5rem;
+      }
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #3b82f6;
+      }
+      .detail-label {
+        color: #3b82f6;
+        font-size: 0.875rem;
+      }
+      .detail-value {
+        font-weight: 500;
+        color: #3b82f6;
+        font-size: 0.875rem;
+      }
+
+      .toast-container {
+        position: fixed;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      .toast {
+        padding: 1rem 1.25rem;
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        min-width: 320px;
+        max-width: 420px;
+        animation: slideIn 0.3s ease;
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(100%);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      .toast.success {
+        border-left: 4px solid #10b981;
+      }
+      .toast.error {
+        border-left: 4px solid #ef4444;
+      }
+      .toast.warning {
+        border-left: 4px solid #f59e0b;
+      }
+      .toast.info {
+        border-left: 4px solid #3b82f6;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9998;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s ease;
+      }
+      .modal-overlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+      .modal {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        max-width: 480px;
+        width: 90%;
+        transform: scale(0.95);
+        transition: transform 0.2s ease;
+      }
+      .modal-overlay.open .modal {
+        transform: scale(1);
+      }
+      .code-block {
+        background: #3b82f6;
+        color: #3b82f6;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.875rem;
+        margin: 1rem 0;
+        overflow-x: auto;
+      }
+
+      .dark {
+        background-color: #3b82f6;
+        color: #3b82f6;
+      }
+      .dark .bg-white {
+        background-color: #3b82f6 !important;
+      }
+      .dark .bg-gray-50 {
+        background-color: #3b82f6 !important;
+      }
+      .dark .text-gray-900 {
+        color: #3b82f6 !important;
+      }
+      .dark .text-gray-600 {
+        color: #3b82f6 !important;
+      }
+      .dark .border-gray-200 {
+        border-color: #3b82f6 !important;
+      }
+      .dark .registry-card {
+        background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+        border-color: #3b82f6;
+      }
+      .dark .table-container {
+        background: #3b82f6;
+        border-color: #3b82f6;
+      }
+      .dark .btn-secondary {
+        background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+      }
+      .dark .action-btn {
+        background: #3b82f6;
+        border-color: #3b82f6;
+      }
+      .dark .action-btn:hover {
+        background: rgba(203, 56, 55, 0.15);
+        border-color: #3b82f6;
+      }
+      .dark .details-panel {
+        background: #3b82f6;
+      }
+      .dark .details-header {
+        background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+      }
+      .dark .modal {
+        background: #3b82f6;
+        color: #3b82f6;
+      }
+      .dark .code-block {
+        background: #3b82f6;
+      }
+
+      * {
+        transition:
+          background-color 0.3s ease,
+          color 0.3s ease,
+          border-color 0.3s ease;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 font-sans antialiased">
+    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-3">
+              <i data-lucide="package-2" class="w-8 h-8 npm-red"></i>
+              <div>
+                <h1 class="text-xl font-bold gradient-text">Duo NPM Registry</h1>
+                <p class="text-xs text-gray-500">Package Management & Analytics</p>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2 px-3 py-1.5 bg-gray-100 rounded-full">
+              <span class="status-indicator status-online animate-pulse"></span>
+              <span class="text-sm font-medium text-gray-700">Online</span>
+            </div>
+            <button
+              onclick="toggleTheme()"
+              class="p-2 rounded-lg hover:bg-gray-100"
+              title="Toggle Theme"
+            >
+              <i data-lucide="moon" class="w-5 h-5 text-gray-600"></i>
+            </button>
+            <button onclick="openPublishModal()" class="btn-primary">
+              <i data-lucide="upload" class="w-4 h-4"></i>
+              Publish Package
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="bg-gradient-to-r from-red-50 to-red-100 border-b border-red-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center space-x-3">
+            <span class="text-sm font-semibold text-red-800">Registry:</span>
+            <code class="text-xs bg-white/80 px-3 py-1.5 rounded-lg border border-red-200 font-mono"
+              >https://duo-npm-registry.utahj4754.workers.dev/</code
+            >
+            <button
+              onclick="copyRegistryUrl()"
+              class="p-1.5 rounded-lg hover:bg-white/50 text-red-600 transition"
+              title="Copy URL"
+            >
+              <i data-lucide="copy" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button
+              onclick="configureNPM()"
+              class="flex items-center space-x-1.5 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-white/50 rounded-lg transition"
+            >
+              <i data-lucide="terminal" class="w-4 h-4"></i>
+              <span>Configure NPM</span>
+            </button>
+            <button
+              onclick="viewDocumentation()"
+              class="flex items-center space-x-1.5 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-white/50 rounded-lg transition"
+            >
+              <i data-lucide="book-open" class="w-4 h-4"></i>
+              <span>Docs</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div
+          class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow"
+        >
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-500">Total Packages</p>
+              <p class="text-3xl font-bold text-gray-900 mt-1" id="total-packages">247</p>
+              <p class="text-xs text-green-600 mt-2 flex items-center gap-1">
+                <i data-lucide="trending-up" class="w-3 h-3"></i>
+                +12 this week
+              </p>
+            </div>
+            <div class="p-3 bg-red-100 rounded-xl">
+              <i data-lucide="package" class="w-6 h-6 text-red-600"></i>
+            </div>
+          </div>
+        </div>
+        <div
+          class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow"
+        >
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-500">Downloads Today</p>
+              <p class="text-3xl font-bold text-gray-900 mt-1" id="total-downloads">18.2K</p>
+              <p class="text-xs text-green-600 mt-2 flex items-center gap-1">
+                <i data-lucide="arrow-up" class="w-3 h-3"></i>
+                +1.2K today
+              </p>
+            </div>
+            <div class="p-3 bg-blue-100 rounded-xl">
+              <i data-lucide="download" class="w-6 h-6 text-blue-600"></i>
+            </div>
+          </div>
+        </div>
+        <div
+          class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow"
+        >
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-500">Active Publishers</p>
+              <p class="text-3xl font-bold text-gray-900 mt-1">42</p>
+              <p class="text-xs text-blue-600 mt-2 flex items-center gap-1">
+                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                3 online now
+              </p>
+            </div>
+            <div class="p-3 bg-green-100 rounded-xl">
+              <i data-lucide="users" class="w-6 h-6 text-green-600"></i>
+            </div>
+          </div>
+        </div>
+        <div
+          class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow"
+        >
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-500">Storage Used</p>
+              <p class="text-3xl font-bold text-gray-900 mt-1">2.4GB</p>
+              <p class="text-xs text-amber-600 mt-2">78% of quota</p>
+            </div>
+            <div class="p-3 bg-amber-100 rounded-xl">
+              <i data-lucide="hard-drive" class="w-6 h-6 text-amber-600"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <button
+          onclick="openPublishModal()"
+          class="flex items-center gap-3 p-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all shadow-sm hover:shadow-md"
+        >
+          <i data-lucide="upload-cloud" class="w-5 h-5"></i>
+          <span class="font-medium">Publish</span>
+        </button>
+        <button
+          onclick="
+            tableInstance?.setFilter('');
+            showToast('Search', 'Click table header to search', 'info');
+          "
+          class="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-all shadow-sm"
+        >
+          <i data-lucide="search" class="w-5 h-5 text-blue-600"></i>
+          <span class="font-medium text-gray-700">Search</span>
+        </button>
+        <button
+          onclick="viewAnalytics()"
+          class="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-all shadow-sm"
+        >
+          <i data-lucide="bar-chart-3" class="w-5 h-5 text-green-600"></i>
+          <span class="font-medium text-gray-700">Analytics</span>
+        </button>
+        <button
+          onclick="manageAccess()"
+          class="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-all shadow-sm"
+        >
+          <i data-lucide="shield" class="w-5 h-5 text-purple-600"></i>
+          <span class="font-medium text-gray-700">Access</span>
+        </button>
+      </div>
+
+      <div class="mb-8">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-lg font-semibold text-gray-900">All Packages</h2>
+            <p class="text-sm text-gray-500">Browse and manage registry packages</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              onclick="tableInstance?.selectAll()"
+              class="text-sm text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition"
+            >
+              Select All
+            </button>
+            <button
+              onclick="tableInstance?.clearSelection()"
+              class="text-sm text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition"
+            >
+              Clear
+            </button>
+            <div class="h-6 w-px bg-gray-300 mx-2"></div>
+            <button onclick="exportSelectedPackages()" class="btn-secondary text-sm">
+              <i data-lucide="download" class="w-4 h-4"></i>
+              Export Selected
+            </button>
+          </div>
+        </div>
+        <div id="package-table-container" class="table-container"></div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">Download Trends</h3>
+            <select id="chart-range" class="text-sm border border-gray-200 rounded-lg px-3 py-1.5">
+              <option value="7d">Last 7 Days</option>
+              <option value="30d">Last 30 Days</option>
+              <option value="90d">Last 90 Days</option>
+            </select>
+          </div>
+          <div class="chart-container">
+            <canvas id="downloadChart"></canvas>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">Package Categories</h3>
+          </div>
+          <div class="chart-container">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div id="details-panel" class="details-panel">
+      <div class="details-header">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-bold text-gray-900" id="panel-package-name">@duoplus/core</h3>
+          <button onclick="closeDetailsPanel()" class="p-2 hover:bg-gray-100 rounded-lg transition">
+            <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
+          </button>
+        </div>
+        <p class="text-sm text-gray-500 mt-1" id="panel-package-description">
+          Core framework package
+        </p>
+      </div>
+      <div class="details-content">
+        <div class="details-section">
+          <h4>Version Info</h4>
+          <div class="detail-row">
+            <span class="detail-label">Latest</span>
+            <span class="version-badge" id="panel-latest">v2.4.1</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Published</span>
+            <span class="detail-value" id="panel-published">Jan 10, 2026</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">License</span>
+            <span class="detail-value" id="panel-license">MIT</span>
+          </div>
+        </div>
+        <div class="details-section">
+          <h4>Statistics</h4>
+          <div class="detail-row">
+            <span class="detail-label">Total Downloads</span>
+            <span class="detail-value font-mono" id="panel-downloads">52,341</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Weekly Downloads</span>
+            <span class="detail-value font-mono" id="panel-weekly">1,247</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">File Size</span>
+            <span class="detail-value" id="panel-size">245 KB</span>
+          </div>
+        </div>
+        <div class="details-section">
+          <h4>Author</h4>
+          <div class="flex items-center gap-3 mt-2">
+            <div
+              class="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white font-semibold"
+              id="panel-avatar"
+            >
+              D
+            </div>
+            <div>
+              <p class="font-medium text-gray-900" id="panel-author">DuoPlus Team</p>
+              <p class="text-sm text-gray-500" id="panel-author-email">team@duoplus.dev</p>
+            </div>
+          </div>
+        </div>
+        <div class="details-section">
+          <h4>Install Command</h4>
+          <div class="code-block" id="panel-install">npm install @duoplus/core</div>
+          <button onclick="copyInstallCommand()" class="btn-primary w-full justify-center">
+            <i data-lucide="copy" class="w-4 h-4"></i>
+            Copy Command
+          </button>
+        </div>
+        <div class="details-section">
+          <h4>Tags</h4>
+          <div class="flex flex-wrap gap-2 mt-2" id="panel-tags">
+            <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-md">framework</span>
+            <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-md">core</span>
+          </div>
+        </div>
+        <div class="details-section">
+          <h4>Actions</h4>
+          <div class="grid grid-cols-2 gap-3 mt-2">
+            <button onclick="viewOnRegistry()" class="action-btn w-full justify-center gap-2">
+              <i data-lucide="external-link" class="w-4 h-4"></i>
+              View on Registry
+            </button>
+            <button onclick="viewVersionHistory()" class="action-btn w-full justify-center gap-2">
+              <i data-lucide="history" class="w-4 h-4"></i>
+              Version History
+            </button>
+            <button
+              onclick="managePackageSettings()"
+              class="action-btn w-full justify-center gap-2"
+            >
+              <i data-lucide="settings" class="w-4 h-4"></i>
+              Settings
+            </button>
+            <button onclick="subscribeToUpdates()" class="action-btn w-full justify-center gap-2">
+              <i data-lucide="bell" class="w-4 h-4"></i>
+              Subscribe
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <div id="modal-overlay" class="modal-overlay">
+      <div class="modal">
+        <h3 class="text-lg font-semibold text-gray-900 mb-2" id="modal-title">
+          Copy Install Command
+        </h3>
+        <p class="text-sm text-gray-500 mb-4" id="modal-description">
+          Use this command to install the package
+        </p>
+        <div class="code-block" id="modal-code">npm install @duoplus/core</div>
+        <div class="flex justify-end gap-3">
+          <button
+            onclick="closeModal()"
+            class="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition"
+          >
+            Cancel
+          </button>
+          <button onclick="copyModalCode()" class="btn-primary">
+            <i data-lucide="copy" class="w-4 h-4"></i>Copy
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { BunTable } from '../../src/components/bun-table.ts';
+
+      const packages = [
+          { name: '@duoplus/core', version: '2.4.1', downloads: 5241, weekly: 1247, updated: '2d ago', author: 'DuoPlus Team', license: 'MIT', description: 'Core framework with enhanced matrix system and timezone management', type: 'latest' },
+          { name: '@duoplus/cli', version: '1.8.3', downloads: 3812, weekly: 892, updated: '1w ago', author: 'DuoPlus Team', license: 'MIT', description: 'Command-line interface for DuoPlus deployment', type: 'latest' },
+          { name: '@duoplus/auth', version: '3.1.0', downloads: 2156, weekly: 534, updated: '3d ago', author: 'Security Team', license: 'MIT', description: 'Enterprise-grade authentication system', type: 'latest' },
+          { name: '@duoplus/database', version: '1.5.2', downloads: 1734, weekly: 412, updated: '5d ago', author: 'DuoPlus Team', license: 'MIT', description: 'Database abstraction layer with multi-engine support', type: 'latest' },
+          { name: '@duoplus/testing', version: '2.0.1', downloads: 1423, weekly: 356, updated: '1d ago', author: 'QA Team', license: 'MIT', description: 'Comprehensive testing framework', type: 'latest' },
+          { name: '@duoplus/logger', version: '1.3.0', downloads: 987, weekly: 234, updated: '4d ago', author: 'DuoPlus Team', license: 'MIT', description: 'Advanced structured logging system', type: 'latest' },
+          { name: '@duoplus/http', version: '1.2.1', downloads: 876, weekly: 198, updated: '6d ago', author: 'DuoPlus Team', license: 'MIT', description: 'HTTP client with retry and caching', type: 'latest' },
+          { name: '@duoplus/cache', version: '1.1.0', downloads: 654, weekly: 145, updated: '1w ago', author: 'DuoPlus Team', license: 'MIT', description: 'Multi-layer caching solution', type: 'beta' },
+          { name: '@duoplus/queue', version: '0.9.5', downloads: 543, weekly: 123, updated: '2w ago', author: 'DuoPlus Team', license: 'MIT', description: 'Message queue implementation', type: 'deprecated' },
+          { name: '@duoplus/config', version: '1.4.2', downloads: 432, weekly: 98, updated: '5d ago', author: 'DuoPlus Team', license: 'MIT', description: 'Configuration management system', type: 'latest' },
+      ];
+
+      const themeManager = {
+          currentTheme: 'light',
+          init() {
+              const saved = localStorage.getItem('npm-registry-theme');
+              if (saved) {
+                  this.currentTheme = saved;
+                  this.applyTheme(saved);
+              } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                  this.currentTheme = 'dark';
+                  this.applyTheme('dark');
+              }
+          },
+          toggleTheme() {
+              const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+              this.applyTheme(newTheme);
+              this.currentTheme = newTheme;
+              localStorage.setItem('npm-registry-theme', newTheme);
+          },
+          applyTheme(theme) {
+              const body = document.body;
+              const container = document.getElementById('package-table-container');
+              if (theme === 'dark') {
+                  body.classList.add('dark');
+                  container?.classList.add('dark');
+              } else {
+                  body.classList.remove('dark');
+                  container?.classList.remove('dark');
+              }
+              if (tableInstance) tableInstance.setData(packages);
+          }
+      };
+
+      let tableInstance;
+
+      function initTable() {
+          const columns = [
+              {
+                  key: 'name',
+                  label: 'Package',
+                  sortable: true,
+                  render: (value, row) => `
+                      <div class="flex items-center gap-3">
+                          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white text-xs font-bold">${value.split('/')[1]?.[0]?.toUpperCase() || 'P'}</div>
+                          <div>
+                              <div class="font-semibold text-gray-900">${value}</div>
+                              <div class="text-xs text-gray-500 truncate max-w-xs">${row.description}</div>
+                          </div>
+                      </div>
+                  `
+              },
+              {
+                  key: 'version',
+                  label: 'Version',
+                  sortable: true,
+                  width: '100px',
+                  render: (value, row) => {
+                      const badgeClass = row.type === 'beta' ? 'beta' : row.type === 'deprecated' ? 'deprecated' : '';
+                      return `<span class="version-badge ${badgeClass}">v${value}</span>`;
+                  }
+              },
+              {
+                  key: 'downloads',
+                  label: 'Downloads',
+                  sortable: true,
+                  width: '120px',
+                  align: 'right',
+                  render: (value) => `<span class="flex items-center justify-end gap-1 font-mono text-blue-600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>${value.toLocaleString()}</span>`
+              },
+              {
+                  key: 'weekly',
+                  label: 'Weekly',
+                  sortable: true,
+                  width: '100px',
+                  align: 'right',
+                  render: (value) => `<span class="font-mono text-gray-600">${value.toLocaleString()}</span>`
+              },
+              {
+                  key: 'author',
+                  label: 'Author',
+                  sortable: true,
+                  width: '150px',
+                  render: (value) => `<div class="flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white text-xs font-semibold">${value[0]}</div><span class="text-sm text-gray-700">${value}</span></div>`
+              },
+              {
+                  key: 'updated',
+                  label: 'Updated',
+                  sortable: true,
+                  width: '100px',
+                  render: (value) => `<span class="text-sm text-gray-500">${value}</span>`
+              },
+              {
+                  key: 'license',
+                  label: 'License',
+                  width: '80px',
+                  render: (value) => `<span class="text-xs font-mono px-2 py-1 bg-gray-100 rounded text-gray-600">${value}</span>`
+              }
+          ];
+
+          tableInstance = new BunTable({
+              containerId: 'package-table-container',
+              columns,
+              data: packages,
+              theme: 'npm',
+              sortable: true,
+              filterable: true,
+              pagination: true,
+              selectable: true,
+              striped: true,
+              hoverable: true,
+              compact: false
+          });
+
+          tableInstance.on('row:click', (row) => openDetailsPanel(row));
+          tableInstance.on('row:action', (action, row) => {
+              if (action === 'install') openCopyModal(row);
+              else if (action === 'view') openDetailsPanel(row);
+              else if (action === 'history') viewVersionHistory(row);
+          });
+      }
+
+      let downloadChart, categoryChart;
+
+      function initCharts() {
+          const downloadCtx = document.getElementById('downloadChart').getContext('2d');
+          downloadChart = new Chart(downloadCtx, {
+              type: 'line',
+              data: {
+                  labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                  datasets: [{ label: 'Downloads', data: [2450, 2680, 2890, 3200, 3100, 2900, 2750], borderColor: '#3b82f6', backgroundColor: 'rgba(203, 56, 55, 0.1)', tension: 0.4, fill: true }]
+              },
+              options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { beginAtZero: true } } }
+          });
+
+          const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+          categoryChart = new Chart(categoryCtx, {
+              type: 'doughnut',
+              data: {
+                  labels: ['Core Framework', 'CLI Tools', 'Authentication', 'Database', 'Testing', 'Utilities'],
+                  datasets: [{ data: [35, 25, 15, 10, 8, 7], backgroundColor: ['#3b82f6', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#3b82f6'], borderWidth: 0 }]
+              },
+              options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 15, usePointStyle: true } } } }
+          });
+      }
+
+      function openDetailsPanel(row) {
+          const panel = document.getElementById('details-panel');
+          document.getElementById('panel-package-name').textContent = row.name;
+          document.getElementById('panel-package-description').textContent = row.description;
+          document.getElementById('panel-latest').textContent = `v${row.version}`;
+          document.getElementById('panel-published').textContent = row.updated;
+          document.getElementById('panel-license').textContent = row.license;
+          document.getElementById('panel-downloads').textContent = row.downloads.toLocaleString();
+          document.getElementById('panel-weekly').textContent = row.weekly.toLocaleString();
+          document.getElementById('panel-size').textContent = `${Math.floor(Math.random() * 200 + 100)} KB`;
+          document.getElementById('panel-author').textContent = row.author;
+          document.getElementById('panel-author-email').textContent = `${row.author.toLowerCase().replace(/\s/g, '')}@duoplus.dev`;
+          document.getElementById('panel-avatar').textContent = row.author[0];
+          document.getElementById('panel-install').textContent = `npm install ${row.name}`;
+          panel.classList.add('open');
+      }
+
+      function closeDetailsPanel() { document.getElementById('details-panel').classList.remove('open'); }
+
+      function showToast(title, message, type = 'info') {
+          const container = document.getElementById('toast-container');
+          const toast = document.createElement('div');
+          toast.className = `toast ${type}`;
+          const iconColor = type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : type === 'warning' ? '#f59e0b' : '#3b82f6';
+          toast.innerHTML = `<div class="p-2 rounded-full" style="background: ${iconColor}15;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="2">${type === 'success' ? '<path d="M20 6L9 17l-5-5"/>' : '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div><div><p class="font-medium text-gray-900">${title}</p><p class="text-sm text-gray-500">${message}</p></div>`;
+          container.appendChild(toast);
+          setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(100%)'; setTimeout(() => toast.remove(), 300); }, 4000);
+      }
+
+      function openCopyModal(row) {
+          const overlay = document.getElementById('modal-overlay');
+          document.getElementById('modal-title').textContent = `Install ${row.name}`;
+          document.getElementById('modal-description').textContent = 'Copy this command to install the package:';
+          document.getElementById('modal-code').textContent = `npm install ${row.name}`;
+          overlay.classList.add('open');
+      }
+
+      function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+
+      function copyModalCode() {
+          const code = document.getElementById('modal-code').textContent;
+          navigator.clipboard.writeText(code).then(() => { showToast('Copied', 'Install command copied to clipboard', 'success'); closeModal(); });
+      }
+
+      function copyInstallCommand() {
+          const command = document.getElementById('panel-install').textContent;
+          navigator.clipboard.writeText(command).then(() => { showToast('Copied', 'Install command copied to clipboard', 'success'); });
+      }
+
+      window.copyRegistryUrl = () => { navigator.clipboard.writeText('https://duo-npm-registry.utahj4754.workers.dev/'); showToast('Copied', 'Registry URL copied', 'success'); };
+      window.configureNPM = () => { const config = 'npm config set registry https://duo-npm-registry.utahj4754.workers.dev/\nnpm config set @duoplus:registry https://duo-npm-registry.utahj4754.workers.dev/'; navigator.clipboard.writeText(config).then(() => { showToast('Copied', 'NPM configuration copied', 'success'); }); };
+      window.viewDocumentation = () => { showToast('Documentation', 'Opening registry documentation...', 'info'); };
+      window.toggleTheme = () => themeManager.toggleTheme();
+      window.openPublishModal = () => { showToast('Coming Soon', 'Package publishing will be available soon', 'info'); };
+      window.viewAnalytics = () => { showToast('Analytics', 'Opening detailed analytics...', 'info'); };
+      window.manageAccess = () => { showToast('Access Control', 'Opening access management...', 'info'); };
+      window.closeDetailsPanel = closeDetailsPanel;
+      window.copyInstallCommand = copyInstallCommand;
+      window.copyModalCode = copyModalCode;
+      window.closeModal = closeModal;
+      window.viewOnRegistry = () => { showToast('External Link', 'Opening package on registry...', 'info'); };
+      window.viewVersionHistory = (row) => { showToast('Version History', `Viewing history for ${row.name}`, 'info'); };
+      window.managePackageSettings = () => { showToast('Settings', 'Opening package settings...', 'info'); };
+      window.subscribeToUpdates = () => { showToast('Subscribed', 'You will be notified of updates', 'success'); };
+      window.exportSelectedPackages = () => { const selected = tableInstance?.getSelectedRows(); if (selected?.length) { showToast('Exporting', `Exporting ${selected.length} packages...`, 'info'); } else { showToast('Select Packages', 'Please select packages to export', 'warning'); } };
+
+      document.addEventListener('DOMContentLoaded', () => {
+          themeManager.init();
+          initTable();
+          initCharts();
+          if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+      });
+    </script>
+  </body>
+</html>

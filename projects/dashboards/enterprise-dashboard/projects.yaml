@@ -1,0 +1,19 @@
+# Enterprise Dashboard Configuration
+# YAML 1.2 compliant - 'on', 'off', 'yes', 'no' are strings, not booleans
+
+settings:
+  refreshInterval: 30000  # ms (or 100 with --fast flag)
+  scanDepth: 3
+  autoRefresh: false
+
+# Optional: explicitly list projects (overrides auto-scan)
+# projects:
+#   - name: "api-gateway"
+#     path: "~/Projects/api-gateway"
+#     enabled: true
+#   - name: "frontend-app"
+#     path: "~/Projects/frontend-app"
+#     enabled: true
+#   - name: "Service: on"  # YAML 1.2: 'on' is a string, not boolean
+#     path: "~/Projects/service-on"
+#     enabled: false  # Disabled project

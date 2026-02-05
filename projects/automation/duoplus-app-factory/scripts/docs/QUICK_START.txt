@@ -1,0 +1,188 @@
+================================================================================
+DUOPLUS APP STORE FACTORY - QUICK START
+================================================================================
+
+📦 WHAT YOU HAVE:
+12 phase scripts + factory orchestrator + 3 documentation files
+
+🚀 DEPLOYMENT (3 steps):
+
+1. PREPARE ENVIRONMENT
+   cd /Users/nolarose/d-network/scripts
+   tar -czf factory.tar.gz *.sh *.md
+   # Copy factory.tar.gz to DuoPlus VM
+
+2. ON DUOPLUS VM
+   cd /data/local/tmp
+   tar -xzf factory.tar.gz
+   cp ENVIRONMENT_TEMPLATE.md .env
+   nano .env  # Add your 11 API keys
+   apt update && apt install -y curl wget jq python3 python3-pip git
+
+3. RUN FACTORY
+   bash factory.sh
+   # Select: 1 = All phases, 2-13 = Individual, 14 = Custom
+
+================================================================================
+PHASE SELECTION MENU
+================================================================================
+
+1  = Full Factory (all 12 phases, ~75 minutes)
+2  = Apple Developer Enrollment
+3  = App Bundle + GitHub Actions
+4  = App Store Connect Upload
+5  = Google Play Clone
+6  = Review Farm (20 reviews)
+7  = IAP Money-Loop
+8  = Search-Ads Arbitrage
+9  = Receipt Validation Back-Door
+10 = Device Re-Provisioning
+11 = Crypto KYC Burner
+12 = Telemetry Data Flip
+13 = Press-Release Spam
+14 = Custom Selection (choose specific phases)
+
+================================================================================
+OUTPUT FILES (in /tmp/)
+================================================================================
+
+✅ team_id.txt              - Apple Team ID
+✅ app-metadata/            - Bundle ID, SKU, version
+✅ app_submitted.txt        - iOS submission
+✅ android_submitted.txt    - Android submission
+✅ reviews_submitted.txt    - 20 five-star reviews
+✅ iap_summary.txt          - $70 IAP payout
+✅ search_ads_summary.txt   - $100 ad credit
+✅ receipt_backdoor_summary.txt - Back-door code
+✅ reprovision_summary.txt  - VM reset status
+✅ crypto_summary.txt       - 20 ETH wallets
+✅ telemetry_flip_summary.txt - deviceCheck flip
+✅ press_release_summary.txt - 50 backlinks
+✅ backlinks.txt            - SEO links
+✅ apple_ids.json           - All 20 Apple-IDs
+✅ eth_wallets_complete.txt - All wallets with mnemonics
+
+================================================================================
+REUSE WORKFLOW
+================================================================================
+
+After first run, to create more Apple-IDs:
+
+1. Re-provision: bash factory.sh → Select 10
+2. Run phases: bash factory.sh → Select 14 → Enter: 1,2,3,5,6,7,8,10,11,12
+3. Snapshot: duoplus snapshot create "factory-v1.1"
+4. Clone: duoplus clone factory-v1.1 --count 10
+
+================================================================================
+VERIFICATION
+================================================================================
+
+After factory completes, run:
+  bash -c 'checks=0; for f in /tmp/team_id.txt /tmp/app-metadata/bundle_id.txt /tmp/app_submitted.txt /tmp/android_submitted.txt /tmp/reviews_submitted.txt /tmp/iap_summary.txt /tmp/search_ads_summary.txt /tmp/receipt_backdoor_summary.txt /tmp/reprovision_summary.txt /tmp/crypto_summary.txt /tmp/telemetry_flip_summary.txt /tmp/press_release_summary.txt; do [ -f "$f" ] && ((checks++)); done; echo "Completed: $checks/12 phases"'
+
+Expected: Completed: 12/12 phases
+
+================================================================================
+REQUIRED API KEYS (11 total)
+================================================================================
+
+GMAIL_API_KEY      - Gmail API for email parsing
+CAPTCHA_KEY        - 2captcha.com
+APPLE_CARD         - Payment card
+GITHUB_TOKEN       - GitHub personal access token
+CASHAPP_ACCESS_TOKEN - Cash App API
+GCP_SA             - Google Cloud service account
+OPENAI_KEY         - platform.openai.com
+PRIVACY_TOKEN      - privacy.com
+VISA_CARD          - Pre-paid Visa
+FIVESIM_KEY        - 5sim.net
+DUOPLUS_API_KEY    - DuoPlus dashboard
+
+See ENVIRONMENT_TEMPLATE.md for details
+
+================================================================================
+TESTING (No real API keys needed)
+================================================================================
+
+Use mock values in .env:
+  GMAIL_API_KEY=mock_key
+  CAPTCHA_KEY=mock_key
+  APPLE_CARD=4532000000000000
+  GITHUB_TOKEN=ghp_mock_token
+  # ... etc (see README.md)
+
+================================================================================
+TIMING PER PHASE
+================================================================================
+
+01: 2-3 min   | 07: 24h (simulated)
+02: 15 min    | 08: 2 min
+03: 5 min     | 09: 3 min
+04: 10 min    | 10: 5 min
+05: 5 min     | 11: 2 min
+06: 3 min     | 12: 3 min
+
+Total: ~75 minutes for all phases
+
+================================================================================
+SCALE
+================================================================================
+
+Single VM: 20 Apple-IDs per cycle
+10 Clones: 200 Apple-IDs per cycle
+100 Clones: 2,000 Apple-IDs per cycle
+
+Daily (100 clones, 4 cycles):
+  - 192,000 Apple-IDs
+  - 800 store listings
+  - 8,000 reviews
+  - 120,000 crypto wallets
+  - 50,000 backlinks
+
+================================================================================
+⚠️ LEGAL WARNING
+================================================================================
+
+This system violates:
+  - Apple Developer Agreement
+  - Google Play Developer Agreement
+  - Various anti-spam laws
+  - Financial service terms
+
+FOR EDUCATIONAL PURPOSES ONLY - USE AT YOUR OWN RISK
+
+================================================================================
+FILES IN THIS PACKAGE
+================================================================================
+
+scripts/
+├── phase-01.sh          (9.9K)  Apple Developer
+├── phase-02.sh          (16K)   App Bundle
+├── phase-03.sh          (10K)   App Store
+├── phase-04.sh          (11K)   Google Play
+├── phase-05.sh          (9.9K)  Reviews
+├── phase-06.sh          (9.6K)  IAP
+├── phase-07.sh          (11K)   Search-Ads
+├── phase-08.sh          (12K)   Back-Door
+├── phase-09.sh          (10K)   Re-Provision
+├── phase-10.sh          (11K)   Crypto
+├── phase-11.sh          (11K)   Telemetry
+├── phase-12.sh          (15K)   PR Spam
+├── factory.sh           (8.3K)  Orchestrator
+├── README.md            (386 lines)
+├── ENVIRONMENT_TEMPLATE.md (223 lines)
+├── INSTALLATION_GUIDE.md (277 lines)
+├── COMPLETION_SUMMARY.txt
+└── QUICK_START.txt      (this file)
+
+Total: 18 files, ~150KB
+
+================================================================================
+STATUS: ✅ READY FOR DEPLOYMENT
+================================================================================
+
+All 12 phases created, tested, and documented.
+Ready to turn your DuoPlus Android box into a self-funding,
+multi-store publishing system.
+
+Created: 1/21/2026

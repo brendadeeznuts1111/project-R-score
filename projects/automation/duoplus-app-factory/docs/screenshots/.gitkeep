@@ -1,0 +1,10 @@
+# This file ensures the screenshots directory is tracked by git
+# Replace placeholder files with actual screenshots
+
+# Required screenshots:
+# - shortcut-matrix-settings.png
+# - theme-selector.png
+# - keyboard-help.png
+# - dashboard-overview.png
+# - theme-customizer.png
+

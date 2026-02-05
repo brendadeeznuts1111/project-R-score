@@ -1,0 +1,63 @@
+# Bun Configuration File
+# https://bun.sh/docs/runtime/bunfig
+
+[install]
+# Cache configuration
+cache = true
+cacheDir = ".bun-cache"
+
+# Registry configuration
+registry = "https://registry.npmjs.org"
+
+# Lockfile format (use newer binary format)
+lockfile = true
+
+# Performance optimizations
+# lockfile format: "yarn" for text, "bun" for binary (default)
+# print = "yarn"
+
+[install.scopes]
+# Scope-specific registries if needed
+# "@myorg" = "https://registry.myorg.com"
+
+[run]
+# Shell configuration (supported: bun, system)
+shell = "system"
+
+# Environment variables for scripts
+[run.env]
+NODE_ENV = "development"
+
+[build]
+# Build configuration
+target = "bun"
+outdir = "dist"
+
+[dev]
+# Development server configuration
+hot = true
+port = 3000
+
+[test]
+# Test configuration for Empire Pro Dashboard Integration
+coverage = true
+coverageDir = "coverage"
+coverageReporters = ["text", "html", "json"]
+# Ignore patterns for code coverage
+coveragePathIgnorePatterns = ["node_modules/**", "dist/**", "examples/**"]
+# Test timeout in milliseconds (increased for integration tests)
+timeout = 30000
+# Run tests in parallel (disabled for integration tests)
+concurrent = false
+# Verbose test output for better debugging
+verbose = true
+# Preload test setup file
+preload = ["./tests/setup.ts"]
+
+[define]
+# Global constants
+# GLOBAL_VALUE = "\"some value\""
+
+[loader]
+# Custom loaders for different file types
+# ".custom": { "loader": "custom-loader" }

@@ -1,0 +1,10 @@
+{
+  "merchantId": "factory-wager",
+  "deviceCategory": "MOBILE",
+  "geographicScope": "GLOBAL",
+  "timestamp": "2026-01-16T03:05:09.481Z",
+  "token": "81882238b9e6928d5f4cc9f521143e2aace7e7594a11d3d3ea63ce4143b022d2",
+  "qrCode": "QR-2C8C1CB810BD9DF5",
+  "status": "active",
+  "expiresAt": "2026-01-17T03:05:09.483Z"
+}

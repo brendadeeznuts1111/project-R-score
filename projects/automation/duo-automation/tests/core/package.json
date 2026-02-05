@@ -1,0 +1,38 @@
+{
+  "name": "duo-automation-tests",
+  "scripts": {
+    "test": "bun test",
+    "test:config": "bun test tests/config.test.ts",
+    "test:config-manager": "bun test tests/config-manager.test.ts", 
+    "test:environment": "bun test tests/environment.test.ts",
+    "test:integration": "bun test tests/integration.test.ts",
+    "test:all": "bun test tests/*.test.ts",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage",
+    
+    "matrix": "bun run tests/matrix-test-runner.ts",
+    "matrix:critical": "ENABLE_CRITICAL=true ENABLE_HIGH=false ENABLE_MEDIUM=false ENABLE_LOW=false bun run tests/matrix-test-runner.ts",
+    "matrix:core": "ENABLE_CORE=true bun run tests/matrix-test-runner.ts --category \"Core Functionality\"",
+    "matrix:config": "ENABLE_CONFIG=true bun run tests/matrix-test-runner.ts --category Configuration",
+    "matrix:security": "ENABLE_SECURITY=true bun run tests/matrix-test-runner.ts --category Security",
+    "matrix:performance": "ENABLE_PERFORMANCE=true bun run tests/matrix-test-runner.ts --category Performance",
+    "matrix:integration": "ENABLE_INTEGRATION=true bun run tests/matrix-test-runner.ts --category Integration",
+    "matrix:e2e": "ENABLE_E2E=true bun run tests/matrix-test-runner.ts --category E2E",
+    "matrix:parallel": "ENABLE_ALL_TESTS=true bun run tests/matrix-test-runner.ts --parallel",
+    "matrix:sequential": "ENABLE_ALL_TESTS=true bun run tests/matrix-test-runner.ts",
+    "matrix:dry-run": "bun run tests/matrix-test-runner.ts --dry-run",
+    "matrix:help": "bun run tests/matrix-test-runner.ts --help",
+    
+    "matrix:timeout": "BUN_TEST_TIMEOUT=10000 bun run tests/matrix-test-runner.ts",
+    "matrix:rerun": "BUN_TEST_RERUN_EACH=3 bun run tests/matrix-test-runner.ts",
+    "matrix:concurrent": "BUN_TEST_CONCURRENT=true bun run tests/matrix-test-runner.ts",
+    "matrix:random": "BUN_TEST_RANDOMIZE=true BUN_TEST_SEED=12345 bun run tests/matrix-test-runner.ts",
+    "matrix:bail": "BUN_TEST_BAIL=2 bun run tests/matrix-test-runner.ts",
+    "matrix:max-concurrency": "BUN_TEST_MAX_CONCURRENCY=8 bun run tests/matrix-test-runner.ts",
+    "matrix:stress": "BUN_TEST_RERUN_EACH=3 BUN_TEST_CONCURRENT=true BUN_TEST_MAX_CONCURRENCY=8 bun run tests/matrix-test-runner.ts --parallel",
+    "matrix:reliable": "BUN_TEST_RERUN_EACH=3 BUN_TEST_BAIL=1 BUN_TEST_TIMEOUT=15000 bun run tests/matrix-test-runner.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

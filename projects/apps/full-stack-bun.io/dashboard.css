@@ -1,0 +1,257 @@
+/* dashboard.css - View Transitions + @layer */
+/* [ARB-DASH-V2][VIEW-TRANSITIONS][CSS-LAYER][60FPS] */
+
+@layer base {
+	:root {
+		--buncss-light: #f8fafc;     /* ✅ Minifier injects */
+		--buncss-dark: #0f172a;
+		--arb-green: #10b981;
+		--arb-green-dark: #059669;
+		--arb-blue: #3b82f6;
+		--arb-purple: #8b5cf6;
+		--text-light: #1e293b;
+		--text-dark: #f1f5f9;
+		--bg-light: #ffffff;
+		--bg-dark: #0f172a;
+	}
+
+	* {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+
+	body {
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+		background: var(--buncss-light);
+		color: var(--text-light);
+		line-height: 1.6;
+	}
+}
+
+@layer components {
+	.arb-dashboard {
+		min-height: 100vh;
+		padding: 24px;
+		max-width: 1400px;
+		margin: 0 auto;
+	}
+
+	.dashboard-header {
+		margin-bottom: 32px;
+		padding-bottom: 24px;
+		border-bottom: 2px solid var(--arb-green);
+	}
+
+	.dashboard-header h1 {
+		font-size: 2.5rem;
+		font-weight: 700;
+		color: var(--arb-green);
+		margin-bottom: 16px;
+	}
+
+	.metrics-bar {
+		display: flex;
+		gap: 32px;
+		flex-wrap: wrap;
+	}
+
+	.metric {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.metric-label {
+		font-size: 0.875rem;
+		color: #64748b;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	.metric-value {
+		font-size: 1.5rem;
+		font-weight: 700;
+		color: var(--arb-green);
+	}
+
+	.arb-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+		gap: 24px;
+	}
+
+	.arb-edge {
+		background: linear-gradient(135deg, var(--arb-green), var(--arb-green-dark));
+		border-radius: 16px;
+		padding: 24px;
+		box-shadow: 0 20px 40px rgba(16, 185, 129, 0.3);
+		transition: all 0.3s cubic-bezier(0.4, 0, 0.6, 1);
+		color: white;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.arb-edge::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: -100%;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+		animation: shimmer 2s infinite;
+	}
+
+	.arb-edge:hover {
+		transform: translateY(-4px);
+		box-shadow: 0 24px 48px rgba(16, 185, 129, 0.4);
+	}
+
+	.arb-edge.pulse {
+		animation: pulse 1.5s infinite;
+	}
+
+	.edge-pct {
+		font-size: 2.5rem;
+		font-weight: 800;
+		margin-bottom: 8px;
+		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	}
+
+	.market {
+		font-size: 1.125rem;
+		font-weight: 600;
+		margin-bottom: 12px;
+		opacity: 0.95;
+	}
+
+	.value {
+		font-size: 1.5rem;
+		font-weight: 700;
+		margin-bottom: 16px;
+	}
+
+	.bookies {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin-bottom: 16px;
+		font-size: 0.875rem;
+		opacity: 0.9;
+	}
+
+	.bookie {
+		background: rgba(255, 255, 255, 0.2);
+		padding: 4px 12px;
+		border-radius: 8px;
+		font-weight: 600;
+	}
+
+	.vs {
+		opacity: 0.7;
+	}
+
+	.execute-btn {
+		width: 100%;
+		padding: 12px 24px;
+		background: rgba(255, 255, 255, 0.2);
+		border: 2px solid white;
+		border-radius: 8px;
+		color: white;
+		font-weight: 700;
+		font-size: 1rem;
+		cursor: pointer;
+		transition: all 0.2s;
+		backdrop-filter: blur(10px);
+	}
+
+	.execute-btn:hover {
+		background: white;
+		color: var(--arb-green);
+		transform: scale(1.02);
+	}
+
+	.execute-btn:active {
+		transform: scale(0.98);
+	}
+
+	/* ✅ FIXED - Class selector arguments */
+	::view-transition-old(.arb-slide-out) {
+		animation: slide-out 0.2s ease-out;
+		transform: translateX(0);
+	}
+
+	::view-transition-new(.arb-slide-in) {
+		animation: slide-in 0.2s ease-in;
+		transform: translateX(100%);
+	}
+
+	::view-transition-group(.profit-card) {
+		view-transition-name: profit-card;
+	}
+
+	::view-transition-image-pair(.odds-pair) {
+		view-transition-name: odds-pair;
+	}
+}
+
+@keyframes slide-in {
+	from {
+		transform: translateX(100%);
+		opacity: 0;
+	}
+	to {
+		transform: translateX(0);
+		opacity: 1;
+	}
+}
+
+@keyframes slide-out {
+	from {
+		transform: translateX(0);
+		opacity: 1;
+	}
+	to {
+		transform: translateX(-100%);
+		opacity: 0;
+	}
+}
+
+@keyframes pulse {
+	0%, 100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	50% {
+		opacity: 0.9;
+		transform: scale(1.02);
+	}
+}
+
+@keyframes shimmer {
+	0% {
+		left: -100%;
+	}
+	100% {
+		left: 100%;
+	}
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+	.arb-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.dashboard-header h1 {
+		font-size: 2rem;
+	}
+
+	.metrics-bar {
+		gap: 16px;
+	}
+}
+
+
+

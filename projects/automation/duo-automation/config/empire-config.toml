@@ -1,0 +1,73 @@
+# Empire Pro Configuration
+# TOML format for enhanced configuration management
+
+[service]
+name = "empire-pro-config-empire"
+version = "1.0.0"
+environment = "production"
+debug = false
+
+[database]
+url = "${DATABASE_URL:-postgresql://user:pass@localhost:5432/empire_pro}"
+pool_size = 20
+timeout = 30
+ssl_enabled = true
+
+[redis]
+url = "${REDIS_URL:-redis://localhost:6379}"
+pool_size = 10
+timeout = 5
+
+[api]
+host = "0.0.0.0"
+port = 3001
+cors_enabled = true
+rate_limit = 1000
+
+[security]
+jwt_secret = "your-jwt-secret-key-here"
+encryption_key = "your-encryption-key-here"
+session_timeout = 3600
+
+[cloudflare]
+r2_endpoint = "https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com"
+r2_access_key_id = "69765dd738766bca38be63e7d0192cf8"
+r2_secret_access_key = "1d9326ffb0c59ebecb612f401a87f71942574984375fb283fc4359630d7d929a"
+r2_bucket = "factory-wager-packages"
+r2_region = "auto"
+
+[logging]
+level = "info"
+format = "json"
+output = "stdout"
+file_path = "/var/log/empire-pro.log"
+
+[features]
+einstein_similarity = true
+real_time_monitoring = true
+advanced_analytics = true
+debug_mode = false
+
+[monitoring]
+metrics_enabled = true
+health_check_interval = 30
+performance_tracking = true
+alert_webhook = "https://hooks.slack.com/your-webhook"
+
+[[services]]
+name = "user-service"
+url = "https://user-service.empire-pro.com"
+timeout = 10
+retries = 3
+
+[[services]]
+name = "payment-service"
+url = "https://payment.empire-pro.com"
+timeout = 15
+retries = 5
+
+[[services]]
+name = "analytics-service"
+url = "https://analytics.empire-pro.com"
+timeout = 20
+retries = 3

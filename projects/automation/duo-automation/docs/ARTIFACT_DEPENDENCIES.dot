@@ -1,0 +1,103 @@
+digraph ArtifactDependencies {
+  rankdir=LR;
+  node [shape=box, style=filled];
+  edge [color=gray];
+
+  subgraph cluster_other {
+    label="other";
+    bgcolor="#95afc020";
+    "#10b981" [label="#10b981\n55 artifacts", fillcolor="#95afc0"];
+    "#f59e0b" [label="#f59e0b\n48 artifacts", fillcolor="#95afc0"];
+    "#ef4444" [label="#ef4444\n47 artifacts", fillcolor="#95afc0"];
+    "#3b82f6" [label="#3b82f6\n36 artifacts", fillcolor="#95afc0"];
+    "#667eea" [label="#667eea\n30 artifacts", fillcolor="#95afc0"];
+  }
+
+  subgraph cluster_priority {
+    label="priority";
+    bgcolor="#feca5720";
+    "#critical" [label="#critical\n9 artifacts", fillcolor="#feca57"];
+    "#high" [label="#high\n8 artifacts", fillcolor="#feca57"];
+    "#low" [label="#low\n8 artifacts", fillcolor="#feca57"];
+    "#medium" [label="#medium\n7 artifacts", fillcolor="#feca57"];
+  }
+
+  subgraph cluster_status {
+    label="status";
+    bgcolor="#ff6b6b20";
+    "#ready" [label="#ready\n11 artifacts", fillcolor="#ff6b6b"];
+    "#wip" [label="#wip\n10 artifacts", fillcolor="#ff6b6b"];
+    "#deprecated" [label="#deprecated\n9 artifacts", fillcolor="#ff6b6b"];
+    "#blocked" [label="#blocked\n7 artifacts", fillcolor="#ff6b6b"];
+    "#review" [label="#review\n7 artifacts", fillcolor="#ff6b6b"];
+  }
+
+  subgraph cluster_domain {
+    label="domain";
+    bgcolor="#4ecdc420";
+    "#security" [label="#security\n13 artifacts", fillcolor="#4ecdc4"];
+    "#api" [label="#api\n13 artifacts", fillcolor="#4ecdc4"];
+    "#documentation" [label="#documentation\n11 artifacts", fillcolor="#4ecdc4"];
+    "#monitoring" [label="#monitoring\n10 artifacts", fillcolor="#4ecdc4"];
+    "#testing" [label="#testing\n10 artifacts", fillcolor="#4ecdc4"];
+  }
+
+  subgraph cluster_technology {
+    label="technology";
+    bgcolor="#45b7d120";
+    "#typescript" [label="#typescript\n11 artifacts", fillcolor="#45b7d1"];
+    "#bun" [label="#bun\n7 artifacts", fillcolor="#45b7d1"];
+    "#docker" [label="#docker\n7 artifacts", fillcolor="#45b7d1"];
+    "#javascript" [label="#javascript\n7 artifacts", fillcolor="#45b7d1"];
+    "#react" [label="#react\n7 artifacts", fillcolor="#45b7d1"];
+  }
+
+  subgraph cluster_audience {
+    label="audience";
+    bgcolor="#ff9ff320";
+    "#developers" [label="#developers\n10 artifacts", fillcolor="#ff9ff3"];
+    "#users" [label="#users\n8 artifacts", fillcolor="#ff9ff3"];
+    "#admins" [label="#admins\n7 artifacts", fillcolor="#ff9ff3"];
+    "#all" [label="#all\n7 artifacts", fillcolor="#ff9ff3"];
+  }
+
+  subgraph cluster_type {
+    label="type";
+    bgcolor="#96ceb420";
+    "#dashboard" [label="#dashboard\n10 artifacts", fillcolor="#96ceb4"];
+    "#cli" [label="#cli\n9 artifacts", fillcolor="#96ceb4"];
+    "#library" [label="#library\n7 artifacts", fillcolor="#96ceb4"];
+    "#component" [label="#component\n5 artifacts", fillcolor="#96ceb4"];
+    "#service" [label="#service\n5 artifacts", fillcolor="#96ceb4"];
+  }
+
+  subgraph cluster_environment {
+    label="environment";
+    bgcolor="#54a0ff20";
+    "#development" [label="#development\n8 artifacts", fillcolor="#54a0ff"];
+    "#production" [label="#production\n8 artifacts", fillcolor="#54a0ff"];
+    "#staging" [label="#staging\n8 artifacts", fillcolor="#54a0ff"];
+    "#local" [label="#local\n5 artifacts", fillcolor="#54a0ff"];
+  }
+
+  "#007" -> "#28a745" [penwidth=5];
+  "#007" -> "#333" [penwidth=5];
+  "#007" -> "#666" [penwidth=5];
+  "#007" -> "#e8f5e8" [penwidth=5];
+  "#007" -> "#f5f5f5" [penwidth=5];
+  "#007" -> "#f8f9fa" [penwidth=5];
+  "#28a745" -> "#333" [penwidth=5];
+  "#28a745" -> "#666" [penwidth=5];
+  "#28a745" -> "#e8f5e8" [penwidth=5];
+  "#28a745" -> "#f5f5f5" [penwidth=5];
+  "#28a745" -> "#f8f9fa" [penwidth=5];
+  "#333" -> "#666" [penwidth=5];
+  "#333" -> "#e8f5e8" [penwidth=5];
+  "#333" -> "#f5f5f5" [penwidth=5];
+  "#333" -> "#f8f9fa" [penwidth=5];
+  "#666" -> "#e8f5e8" [penwidth=5];
+  "#666" -> "#f5f5f5" [penwidth=5];
+  "#666" -> "#f8f9fa" [penwidth=5];
+  "#e8f5e8" -> "#f5f5f5" [penwidth=5];
+  "#e8f5e8" -> "#f8f9fa" [penwidth=5];
+}

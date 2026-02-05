@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keyboard Shortcuts Library - Side-by-Side Comparison</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .code-block {
+            background: linear-gradient(135deg, #3b82f6 0%, #3b82f6 100%);
+            padding: 2px;
+            border-radius: 8px;
+        }
+        
+        .code-content {
+            background: #3b82f6;
+            color: #3b82f6;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .highlight {
+            color: #3b82f6;
+        }
+        
+        .keyword { color: #3b82f6; }
+        .string { color: #3b82f6; }
+        .function { color: #3b82f6; }
+        .comment { color: #3b82f6; }
+        .number { color: #3b82f6; }
+        
+        .demo-section {
+            transition: all 0.3s ease;
+        }
+        
+        .demo-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .active-demo {
+            border: 2px solid #3b82f6;
+            background: #3b82f6;
+        }
+        
+        .shortcut-key {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: #3b82f6;
+            border: 1px solid #3b82f6;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.875rem;
+            box-shadow: 0 2px 0 #3b82f6;
+        }
+        
+        .success-indicator {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-semibold text-gray-900">⌨️ Usage Pattern Comparison</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="resetBtn" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">
+                        🔄 Reset Demo
+                    </button>
+                    <button id="testBtn" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                        🧪 Test Both
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Introduction -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+            <h2 class="text-lg font-medium text-blue-900 mb-2">🎯 Interactive Comparison</h2>
+            <p class="text-blue-800">
+                This demo shows both usage patterns side by side. Try the keyboard shortcuts to see how each pattern works!
+            </p>
+        </div>
+
+        <!-- Side-by-Side Comparison -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Basic Usage -->
+            <div id="basicDemo" class="demo-section bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-medium text-gray-900">🔧 Basic Usage</h3>
+                    <span id="basicStatus" class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                        Active
+                    </span>
+                </div>
+                
+                <!-- Code Example -->
+                <div class="code-block mb-6">
+                    <div class="code-content">
+                        <span class="comment">// Basic Usage Pattern</span><br>
+                        <span class="keyword">import</span> { shortcuts } <span class="keyword">from</span> <span class="string">'keyboard-shortcuts-lite'</span>;<br><br>
+                        
+                        shortcuts.<span class="function">register</span>(<span class="string">'ctrl+s'</span>, () => <span class="function">save</span>());<br>
+                        shortcuts.<span class="function">register</span>(<span class="string">'ctrl+k'</span>, () => <span class="function">focusSearch</span>());<br>
+                        shortcuts.<span class="function">register</span>(<span class="string">'ctrl+h'</span>, () => <span class="function">showHelp</span>());<br><br>
+                        
+                        shortcuts.<span class="function">init</span>({<br>
+                        &nbsp;&nbsp;context: <span class="string">'basic-app'</span>,<br>
+                        &nbsp;&nbsp;screenReader: <span class="keyword">true</span><br>
+                        });
+                    </div>
+                </div>
+
+                <!-- Available Shortcuts -->
+                <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                    <h4 class="font-medium text-gray-900 mb-2">Available Shortcuts:</h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span><span class="shortcut-key">Ctrl+S</span></span>
+                            <span class="text-gray-600">Save data</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span><span class="shortcut-key">Ctrl+K</span></span>
+                            <span class="text-gray-600">Focus search</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span><span class="shortcut-key">Ctrl+H</span></span>
+                            <span class="text-gray-600">Show help</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Display -->
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <h4 class="font-medium text-blue-900 mb-2">📊 Status</h4>
+                    <div id="basicStatusDisplay" class="text-sm text-blue-800">
+                        <p>✅ Manager initialized</p>
+                        <p>🎹 3 shortcuts registered</p>
+                        <p>📊 Context: basic-app</p>
+                        <p>🛡️ Screen reader: enabled</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Usage -->
+            <div id="advancedDemo" class="demo-section bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-medium text-gray-900">⚡ Advanced Usage</h3>
+                    <span id="advancedStatus" class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
+                        Active
+                    </span>
+                </div>
+                
+                <!-- Code Example -->
+                <div class="code-block mb-6">
+                    <div class="code-content">
+                        <span class="comment">// Advanced Usage Pattern</span><br>
+                        <span class="keyword">import</span> { KeyboardShortcutManager } <span class="keyword">from</span> <span class="string">'keyboard-shortcuts-lite'</span>;<br><br>
+                        
+                        <span class="keyword">const</span> manager = <span class="keyword">new</span> <span class="function">KeyboardShortcutManager</span>();<br><br>
+                        
+                        manager.<span class="function">register</span>(<span class="string">'ctrl+s'</span>, () => <span class="function">save</span>(), {<br>
+                        &nbsp;&nbsp;requireModifier: <span class="keyword">true</span>,<br>
+                        &nbsp;&nbsp;debounceMs: <span class="number">500</span><br>
+                        });<br><br>
+                        
+                        manager.<span class="function">register</span>(<span class="string">'k'</span>, () => <span class="function">focusSearch</span>());<br>
+                        manager.<span class="function">register</span>(<span class="string">'t'</span>, () => <span class="function">testFeatures</span>());<br><br>
+                        
+                        manager.<span class="function">init</span>({<br>
+                        &nbsp;&nbsp;context: <span class="string">'advanced-app'</span>,<br>
+                        &nbsp;&nbsp;debounceMs: <span class="number">300</span>,<br>
+                        &nbsp;&nbsp;requireModifier: [<span class="string">'save'</span>],<br>
+                        &nbsp;&nbsp;screenReader: <span class="keyword">true</span><br>
+                        });
+                    </div>
+                </div>
+
+                <!-- Available Shortcuts -->
+                <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                    <h4 class="font-medium text-gray-900 mb-2">Available Shortcuts:</h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span><span class="shortcut-key">Ctrl+S</span></span>
+                            <span class="text-gray-600">Save (debounced)</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span><span class="shortcut-key">K</span></span>
+                            <span class="text-gray-600">Focus search (no modifier)</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span><span class="shortcut-key">T</span></span>
+                            <span class="text-gray-600">Test features</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Display -->
+                <div class="bg-purple-50 rounded-lg p-4">
+                    <h4 class="font-medium text-purple-900 mb-2">📊 Status</h4>
+                    <div id="advancedStatusDisplay" class="text-sm text-purple-800">
+                        <p>✅ Custom manager initialized</p>
+                        <p>🎹 3 shortcuts registered</p>
+                        <p>📊 Context: advanced-app</p>
+                        <p>⚡ Debounce: 300ms</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Demo Area -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">🎮 Interactive Demo Area</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Search Input -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Search Input (try Ctrl+K or K)
+                    </label>
+                    <input 
+                        type="text" 
+                        id="searchInput"
+                        placeholder="Search... (Ctrl+K or K)"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                </div>
+
+                <!-- Action Buttons -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Actions (try Ctrl+S or T)
+                    </label>
+                    <div class="flex space-x-4">
+                        <button id="saveBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            💾 Save
+                        </button>
+                        <button id="testBtn" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                            🧪 Test
+                        </button>
+                        <button id="helpBtn" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                            ❓ Help
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Output Log -->
+            <div class="mt-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    📋 Event Log
+                </label>
+                <div id="eventLog" class="bg-gray-900 text-green-400 p-4 rounded-lg h-32 overflow-y-auto font-mono text-sm">
+                    <div>🎹 Demo initialized. Try keyboard shortcuts!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Summary -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">📊 Pattern Comparison</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center">
+                    <div class="text-2xl mb-2">🔧</div>
+                    <h4 class="font-medium text-gray-900 mb-2">Basic Pattern</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>✅ Quick setup</li>
+                        <li>✅ Simple API</li>
+                        <li>✅ Default instance</li>
+                        <li>✅ Great for prototypes</li>
+                    </ul>
+                </div>
+                
+                <div class="text-center">
+                    <div class="text-2xl mb-2">⚡</div>
+                    <h4 class="font-medium text-gray-900 mb-2">Advanced Pattern</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>✅ Full control</li>
+                        <li>✅ Custom configuration</li>
+                        <li>✅ Multiple managers</li>
+                        <li>✅ Enterprise features</li>
+                    </ul>
+                </div>
+                
+                <div class="text-center">
+                    <div class="text-2xl mb-2">🎯</div>
+                    <h4 class="font-medium text-gray-900 mb-2">Choose When</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        <li>🔧 Simple apps</li>
+                        <li>🔧 Quick development</li>
+                        <li>⚡ Complex apps</li>
+                        <li>⚡ Enterprise needs</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Screen Reader Announcements -->
+    <div id="srAnnouncements" class="sr-only" role="status" aria-live="polite"></div>
+
+    <script type="module">
+        // Import the keyboard shortcut library
+        import { shortcuts, KeyboardShortcutManager, focusWithFeedback } from './keyboard-shortcuts-lite/dist/index.js';
+
+        console.log('🎹 Keyboard Shortcuts Library - Side-by-Side Comparison');
+        console.log('==========================================================');
+
+        // Demo Application Class
+        class ComparisonDemo {
+            constructor() {
+                this.basicManager = null;
+                this.advancedManager = null;
+                this.eventLog = document.getElementById('eventLog');
+                this.initializeBasicPattern();
+                this.initializeAdvancedPattern();
+                this.setupUI();
+            }
+
+            // Initialize Basic Usage Pattern
+            initializeBasicPattern() {
+                console.log('🔧 Initializing Basic Pattern...');
+                
+                // Use the default shortcuts instance
+                shortcuts.register('ctrl+s', () => this.basicSave());
+                shortcuts.register('ctrl+k', () => this.basicFocusSearch());
+                shortcuts.register('ctrl+h', () => this.basicShowHelp());
+                
+                // Initialize with basic configuration
+                shortcuts.init({
+                    context: 'basic-app',
+                    screenReader: true,
+                    metrics: true
+                });
+                
+                this.basicManager = shortcuts;
+                this.logEvent('✅ Basic pattern initialized with 3 shortcuts');
+            }
+
+            // Initialize Advanced Usage Pattern
+            initializeAdvancedPattern() {
+                console.log('⚡ Initializing Advanced Pattern...');
+                
+                // Create a new manager instance
+                this.advancedManager = new KeyboardShortcutManager();
+                
+                // Register shortcuts with advanced options
+                this.advancedManager.register('ctrl+s', () => this.advancedSave(), {
+                    requireModifier: true,
+                    debounceMs: 500
+                });
+                
+                this.advancedManager.register('k', () => this.advancedFocusSearch());
+                this.advancedManager.register('t', () => this.advancedTestFeatures());
+                
+                // Initialize with advanced configuration
+                this.advancedManager.init({
+                    context: 'advanced-app',
+                    debounceMs: 300,
+                    requireModifier: ['save'],
+                    screenReader: true,
+                    metrics: true
+                });
+                
+                this.logEvent('✅ Advanced pattern initialized with 3 shortcuts');
+            }
+
+            // Setup UI event listeners
+            setupUI() {
+                // Button click handlers
+                document.getElementById('saveBtn').addEventListener('click', () => {
+                    this.basicSave();
+                    this.advancedSave();
+                });
+                
+                document.getElementById('testBtn').addEventListener('click', () => {
+                    this.advancedTestFeatures();
+                });
+                
+                document.getElementById('helpBtn').addEventListener('click', () => {
+                    this.basicShowHelp();
+                });
+                
+                document.getElementById('resetBtn').addEventListener('click', () => {
+                    this.resetDemo();
+                });
+                
+                document.getElementById('testBtn').addEventListener('click', () => {
+                    this.testBothPatterns();
+                });
+                
+                console.log('✅ UI setup complete');
+            }
+
+            // Basic Pattern Methods
+            basicSave() {
+                this.logEvent('🔧 Basic: Save action triggered (Ctrl+S)');
+                this.announceToScreenReader('Basic pattern: Data saved');
+                this.highlightDemo('basicDemo');
+            }
+
+            basicFocusSearch() {
+                const searchInput = document.getElementById('searchInput');
+                
+                const success = focusWithFeedback(searchInput, {
+                    animation: {
+                        duration: 300,
+                        boxShadow: '0 0 0 2px rgba(59, 130, 246, 0.5)'
+                    },
+                    select: true,
+                    screenReader: 'Basic pattern: Search focused',
+                    tooltip: {
+                        message: 'Basic pattern: Search activated',
+                        showOnce: false
+                    }
+                });
+                
+                if (success) {
+                    this.logEvent('🔧 Basic: Search focused (Ctrl+K)');
+                    this.highlightDemo('basicDemo');
+                }
+            }
+
+            basicShowHelp() {
+                const helpText = `
+🔧 Basic Pattern Help:
+  Ctrl+S - Save data
+  Ctrl+K - Focus search
+  Ctrl+H - Show this help
+  
+Features:
+  ✅ Quick setup
+  ✅ Simple API
+  ✅ Default instance
+  ✅ Great for prototypes
+                `;
+                
+                this.logEvent('🔧 Basic: Help displayed (Ctrl+H)');
+                this.announceToScreenReader('Basic pattern help opened');
+                alert(helpText.trim());
+                this.highlightDemo('basicDemo');
+            }
+
+            // Advanced Pattern Methods
+            advancedSave() {
+                this.logEvent('⚡ Advanced: Save action triggered (Ctrl+S, debounced)');
+                this.announceToScreenReader('Advanced pattern: Data saved with debounce');
+                this.highlightDemo('advancedDemo');
+            }
+
+            advancedFocusSearch() {
+                const searchInput = document.getElementById('searchInput');
+                
+                const success = focusWithFeedback(searchInput, {
+                    animation: {
+                        duration: 200,
+                        boxShadow: '0 0 0 2px rgba(147, 51, 234, 0.5)'
+                    },
+                    select: true,
+                    screenReader: 'Advanced pattern: Search focused',
+                    tooltip: {
+                        message: 'Advanced pattern: Search activated (no modifier needed)',
+                        showOnce: false
+                    }
+                });
+                
+                if (success) {
+                    this.logEvent('⚡ Advanced: Search focused (K, no modifier required)');
+                    this.highlightDemo('advancedDemo');
+                }
+            }
+
+            advancedTestFeatures() {
+                const basicMetrics = this.basicManager.getMetrics();
+                const advancedMetrics = this.advancedManager.getMetrics();
+                
+                const testResults = `
+⚡ Advanced Pattern Test Results:
+
+✅ Basic Manager:
+  Context: ${basicMetrics.context}
+  Shortcuts: ${basicMetrics.shortcuts?.size || 0}
+  Metrics: ${basicMetrics.metrics ? 'enabled' : 'disabled'}
+
+✅ Advanced Manager:
+  Context: ${advancedMetrics.context}
+  Shortcuts: ${advancedMetrics.shortcuts?.size || 0}
+  Debounce: 300ms
+  Require Modifier: ['save']
+  Metrics: ${advancedMetrics.metrics ? 'enabled' : 'disabled'}
+
+✅ Advanced Features Working:
+  - Custom manager instance ✓
+  - Advanced configuration ✓
+  - Debounce protection ✓
+  - Modifier requirements ✓
+  - Focus utilities ✓
+                `;
+                
+                this.logEvent('⚡ Advanced: Features tested (T)');
+                this.announceToScreenReader('Advanced pattern tests completed');
+                alert(testResults.trim());
+                this.highlightDemo('advancedDemo');
+            }
+
+            // Utility Methods
+            testBothPatterns() {
+                this.logEvent('🧪 Testing both patterns simultaneously...');
+                
+                // Test basic pattern
+                this.logEvent('🔧 Basic: Testing shortcut registration');
+                
+                // Test advanced pattern
+                this.logEvent('⚡ Advanced: Testing advanced features');
+                
+                // Show comparison
+                setTimeout(() => {
+                    this.logEvent('✅ Both patterns working correctly!');
+                    this.announceToScreenReader('Both patterns tested successfully');
+                }, 1000);
+            }
+
+            resetDemo() {
+                // Clear event log
+                this.eventLog.innerHTML = '<div>🎹 Demo reset. Try keyboard shortcuts!</div>';
+                
+                // Remove highlights
+                document.getElementById('basicDemo').classList.remove('active-demo');
+                document.getElementById('advancedDemo').classList.remove('active-demo');
+                
+                this.logEvent('🔄 Demo reset complete');
+                this.announceToScreenReader('Demo reset complete');
+            }
+
+            highlightDemo(demoId) {
+                // Remove previous highlights
+                document.getElementById('basicDemo').classList.remove('active-demo');
+                document.getElementById('advancedDemo').classList.remove('active-demo');
+                
+                // Add highlight to active demo
+                document.getElementById(demoId).classList.add('active-demo');
+                
+                // Remove highlight after 2 seconds
+                setTimeout(() => {
+                    document.getElementById(demoId).classList.remove('active-demo');
+                }, 2000);
+            }
+
+            logEvent(message) {
+                const timestamp = new Date().toLocaleTimeString();
+                const logEntry = document.createElement('div');
+                logEntry.textContent = `[${timestamp}] ${message}`;
+                this.eventLog.appendChild(logEntry);
+                
+                // Auto-scroll to bottom
+                this.eventLog.scrollTop = this.eventLog.scrollHeight;
+                
+                // Limit log to 50 entries
+                while (this.eventLog.children.length > 50) {
+                    this.eventLog.removeChild(this.eventLog.firstChild);
+                }
+            }
+
+            announceToScreenReader(message) {
+                const announcer = document.getElementById('srAnnouncements');
+                announcer.textContent = message;
+                
+                setTimeout(() => {
+                    announcer.textContent = '';
+                }, 1000);
+            }
+        }
+
+        // Initialize the demo when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Starting side-by-side comparison demo...');
+            
+            const demo = new ComparisonDemo();
+            
+            // Make demo available globally for debugging
+            window.demo = demo;
+            
+            // Show welcome message
+            setTimeout(() => {
+                demo.logEvent('🎉 Welcome! Try keyboard shortcuts to see both patterns in action:');
+                demo.logEvent('🔧 Basic: Ctrl+S (save), Ctrl+K (search), Ctrl+H (help)');
+                demo.logEvent('⚡ Advanced: Ctrl+S (save, debounced), K (search), T (test)');
+            }, 1000);
+            
+            console.log('✅ Side-by-side comparison demo initialized successfully!');
+        });
+    </script>
+</body>
+</html>

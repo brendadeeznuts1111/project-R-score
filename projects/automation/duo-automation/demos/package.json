@@ -1,0 +1,13 @@
+{
+  "name": "windsurf-project-config",
+  "version": "2.4.0",
+  "type": "module",
+  "main": "./config/index.js",
+  "exports": {
+    "./config": "./config/index.js",
+    "./ports": "./config/ports.js"
+  },
+  "dependencies": {
+    "typescript": "^5.9.3"
+  }
+}

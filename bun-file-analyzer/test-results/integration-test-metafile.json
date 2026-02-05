@@ -1,1 +1,0 @@
-{"outputs":{"index.js":{"bytes":2048000,"imports":[]},"styles.css":{"bytes":102400,"imports":[]},"vendor.js":{"bytes":3072000,"imports":[]}},"inputs":{"src/index.ts":{"bytes":10000},"node_modules/react/index.js":{"bytes":200000},"node_modules/lodash/index.js":{"bytes":150000}}}

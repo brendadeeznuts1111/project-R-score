@@ -1,0 +1,18 @@
+Category,Test,Result,Details
+PTY Terminal API,Basic PTY,true,Command execution
+PTY Terminal API,Reusable Terminals,true,Memory efficient
+PTY Terminal API,Interactive Programs,true,vim/htop support
+PTY Terminal API,Unicode Colors,true,ANSI support
+Feature Flags,Debug Mode,false,Enhanced logging
+Feature Flags,Advanced PTY,false,Extended features
+Feature Flags,Unicode Enhanced,false,Improved handling
+Unicode Support,String Width Accuracy,true,Complex emoji
+Unicode Support,Emoji Support,true,Flag emojis
+Unicode Support,ANSI Sequences,true,Escape codes
+V8 Compatibility,IsMap Supported,true,Map detection
+V8 Compatibility,IsArray Supported,true,Array detection
+V8 Compatibility,Native Modules,true,Node.js addons
+Summary,Total Tests,33,All categories
+Summary,Passed Tests,27,Successful
+Summary,Failed Tests,6,Issues found
+Summary,Success Rate,82%,Overall score

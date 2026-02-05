@@ -1,0 +1,36 @@
+---
+# Network Allow-List Configuration v1.0 (staging)
+# SOC2 CC6.1 - Restrict egress to approved domains only
+
+metadata:
+  version: "1.0"
+  last_updated: "2024-12-14"
+  approved_by: "security-team@duoplus.com"
+
+default_policy: deny
+
+domains:
+  - name: "*.staging.duoplus.com"
+    environment: "staging"
+    port: "443"
+    protocol: "https"
+    reason: "Staging environment"
+    approved_by: "vp-engineering"
+    tags: "[DUOPLUS][DOMAIN][ALLOW][STAGING]"
+
+denies:
+  - name: "api.untrusted-service.com"
+    reason: "External service not vetted"
+    cwe: "CWE-918"
+    tags: "[SEC][DOMAIN][DENY]"
+
+rate_limits:
+  - domain: "*.staging.duoplus.com"
+    requests_per_minute: 100
+    burst: 20
+
+logging:
+  allowed: "info"
+  denied: "warn"
+  alert_on_deny: true
+  webhook: "https://hooks.duoplus.com/security/network-deny"
