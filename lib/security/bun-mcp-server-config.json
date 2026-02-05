@@ -148,11 +148,11 @@
             },
             "version": {
               "type": "string",
-              "description": "Filter to specific version (e.g., '4.5', '4.0', '3.0')"
+              "description": "Filter to specific version (e.g., 'v4.5', 'v4.0', 'v3.0')"
             },
             "language": {
               "type": "string",
-              "description": "Filter to specific language code (e.g., 'en', 'zh', 'es'). Defaults to 'en'"
+              "description": "Filter to specific language code (e.g., 'zh', 'es'). Defaults to 'en'"
             },
             "apiReferenceOnly": {
               "type": "boolean",

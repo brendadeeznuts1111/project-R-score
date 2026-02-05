@@ -439,11 +439,11 @@ class Tier1380SecurityMCPServer {
               },
               "version": {
                 "type": "string",
-                "description": "Filter to specific version (e.g., '4.5', '4.0', '3.0')"
+                "description": "Filter to specific version (e.g., 'v4.5', 'v4.0', 'v3.0')"
               },
               "language": {
                 "type": "string",
-                "description": "Filter to specific language code (e.g., 'en', 'zh', 'es'). Defaults to 'en'"
+                "description": "Filter to specific language code (e.g., 'zh', 'es'). Defaults to 'en'"
               },
               "apiReferenceOnly": {
                 "type": "boolean",
@@ -1134,8 +1134,8 @@ class Tier1380SecurityMCPServer {
     let results = securityKnowledgeBase.filter(item => {
       const matchesQuery = item.title.toLowerCase().includes(query.toLowerCase()) ||
                          item.description.toLowerCase().includes(query.toLowerCase());
-      const matchesVersion = !version || item.version === version;
-      const matchesLanguage = item.language === language;
+      const matchesVersion = !version || item.version === version || item.version === version.replace('v', '');
+      const matchesLanguage = !language || language === 'en' || item.language === language;
       const matchesCategory = category === 'all' || item.category === category;
       const matchesSeverity = severity === 'all' || item.severity === severity;
       const matchesApiFilter = !apiReferenceOnly || item.isApiReference;
