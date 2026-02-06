@@ -223,7 +223,36 @@
     "primary": "https://cdn.factory-wager.com",
     "assets": "https://assets.factory-wager.com",
     "static": "https://static.factory-wager.com",
-    "media": "https://media.factory-wager.com"
+    "media": "https://media.factory-wager.com",
+    "regions": {
+      "us-east": "https://cdn-us-east.factory-wager.com",
+      "us-west": "https://cdn-us-west.factory-wager.com",
+      "eu-west": "https://cdn-eu.factory-wager.com",
+      "asia-pacific": "https://cdn-ap.factory-wager.com"
+    },
+    "cache": {
+      "assets": "1y",
+      "static": "30d",
+      "media": "90d",
+      "api": "5m"
+    },
+    "compression": {
+      "enabled": true,
+      "algorithms": ["gzip", "brotli", "zstd"],
+      "level": "maximum"
+    },
+    "security": {
+      "https": true,
+      "cors": {
+        "origins": ["https://factory-wager.com", "https://docs.factory-wager.com"],
+        "methods": ["GET", "HEAD", "OPTIONS"]
+      },
+      "headers": {
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "X-XSS-Protection": "1; mode=block"
+      }
+    }
   },
   "buckets": {
     "storage": "factorywager-storage",
