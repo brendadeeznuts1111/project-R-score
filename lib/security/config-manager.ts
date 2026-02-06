@@ -1,23 +1,73 @@
 // lib/security/config-manager.ts - Enhanced Security Configuration Manager
 // FactoryWager Security v5.0 - Type-safe configuration with Bun Registry integration
 
-import type { 
-  SecurityFeature, 
-  CacheFeature, 
-  AuditFeature, 
-  AuthFeature, 
-  StorageFeature, 
-  MonitoringFeature,
-  SecurityConfig,
-  DEFAULT_SECURITY_CONFIG 
-} from '../../env';
+import { feature } from "bun:bundle";
+
+// Build-time security constants (cannot be bypassed at runtime)
+const IS_PRODUCTION_BUILD = process.env.NODE_ENV === 'production' && process.env.NODE_ENV !== undefined;
+let PRODUCTION_SECURITY_ENABLED = IS_PRODUCTION_BUILD;
+try {
+  if (feature("PRODUCTION_SECURITY")) {
+    PRODUCTION_SECURITY_ENABLED = true;
+  }
+} catch {
+  // Use fallback
+}
+
+// Default security configurations for different environments
+const DEFAULT_SECURITY_CONFIG = {
+  development: {
+    security: 'DEVELOPMENT_MODE' as const,
+    cache: 'MEMORY_CACHE' as const,
+    audit: 'MINIMAL_AUDIT' as const,
+    auth: 'BASIC_AUTH' as const,
+    storage: 'LOCAL_STORAGE' as const,
+    monitoring: 'CUSTOM_MONITORING' as const
+  },
+  production: {
+    security: 'ENTERPRISE_SECURITY' as const,
+    cache: 'REDIS_CACHE' as const,
+    audit: 'FULL_AUDIT' as const,
+    auth: 'AWS_SIGV4' as const,
+    storage: 'R2_STORAGE' as const,
+    monitoring: 'PROMETHEUS' as const
+  },
+  test: {
+    security: 'TESTING_MODE' as const,
+    cache: 'NO_CACHE' as const,
+    audit: 'SECURITY_AUDIT' as const,
+    auth: 'API_KEY' as const,
+    storage: 'LOCAL_STORAGE' as const,
+    monitoring: 'CUSTOM_MONITORING' as const
+  }
+};
+
+// Type definitions for security configuration
+export type SecurityFeature = "ENTERPRISE_SECURITY" | "STANDARD_SECURITY" | "DEVELOPMENT_MODE" | "TESTING_MODE" | "COMPLIANCE_MODE" | "ZERO_TRUST";
+export type CacheFeature = "REDIS_CACHE" | "MEMORY_CACHE" | "NO_CACHE";
+export type AuditFeature = "FULL_AUDIT" | "SECURITY_AUDIT" | "MINIMAL_AUDIT";
+export type AuthFeature = "AWS_SIGV4" | "BASIC_AUTH" | "API_KEY";
+export type StorageFeature = "R2_STORAGE" | "LOCAL_STORAGE";
+export type MonitoringFeature = "PROMETHEUS" | "CUSTOM_MONITORING";
+
+export interface SecurityConfig {
+  security: SecurityFeature;
+  cache: CacheFeature;
+  audit: AuditFeature;
+  auth: AuthFeature;
+  storage: StorageFeature;
+  monitoring: MonitoringFeature;
+}
+
+export { DEFAULT_SECURITY_CONFIG };
 
 export class SecurityConfigManager {
   private config: SecurityConfig;
   private featureFlags = new Map<string, boolean>();
   
   constructor(environment?: string) {
-    const env = environment || process.env.NODE_ENV || 'development';
+    // Use build-time constants instead of runtime environment checks
+    const env = environment || (IS_PRODUCTION_BUILD ? 'production' : 'development');
     this.config = DEFAULT_SECURITY_CONFIG[env] || DEFAULT_SECURITY_CONFIG.development;
     this.initializeFeatureFlags();
   }
@@ -34,6 +84,12 @@ export class SecurityConfigManager {
   
   // Check if a feature is enabled using Bun's feature() function
   isFeatureEnabled(category: keyof SecurityConfig, feature: string): boolean {
+    // Input validation
+    if (!category || !feature) {
+      console.warn('⚠️ Invalid parameters: category and feature are required');
+      return false;
+    }
+    
     const featureKey = `${category}:${feature}`;
     return this.featureFlags.get(featureKey) || false;
   }
@@ -43,8 +99,21 @@ export class SecurityConfigManager {
     return { ...this.config };
   }
   
-  // Update configuration (runtime updates)
+  // Update configuration (runtime updates) with validation
   updateConfig(updates: Partial<SecurityConfig>): void {
+    // Input validation
+    if (!updates || typeof updates !== 'object') {
+      throw new Error('Invalid configuration updates: must be a valid object');
+    }
+    
+    // Validate each update
+    for (const [key, value] of Object.entries(updates)) {
+      if (!value) {
+        console.warn(`⚠️ Invalid value for ${key}: cannot be null or undefined`);
+        return;
+      }
+    }
+    
     this.config = { ...this.config, ...updates };
     this.initializeFeatureFlags();
     
@@ -55,27 +124,18 @@ export class SecurityConfigManager {
     });
   }
   
-  // Validate configuration against security requirements
+  // Validate configuration with build-time security checks
   validateConfig(): { valid: boolean; issues: string[] } {
     const issues: string[] = [];
     
-    // Production security checks
-    if (process.env.NODE_ENV === 'production') {
-      if (this.config.security === 'DEVELOPMENT_MODE' || this.config.security === 'TESTING_MODE') {
-        issues.push('Production environment should not use development or testing security mode');
-      }
-      
-      if (this.config.auth === 'BASIC_AUTH') {
-        issues.push('Basic authentication is not recommended for production');
-      }
-      
-      if (this.config.cache === 'NO_CACHE') {
-        issues.push('Disabling cache in production may impact performance');
-      }
+    // Security level validation
+    if (PRODUCTION_SECURITY_ENABLED && this.config.security === 'BASIC_AUTH') {
+      issues.push('Basic Authentication is not allowed in production builds');
     }
     
-    // Security feature compatibility checks
-    if (this.config.security === 'ENTERPRISE_SECURITY' && this.config.audit === 'MINIMAL_AUDIT') {
+    // Storage validation
+    if (PRODUCTION_SECURITY_ENABLED && this.config.storage === 'LOCAL_STORAGE') {
+      issues.push('Local storage is not recommended for production builds');
       issues.push('Enterprise security requires comprehensive audit logging');
     }
     

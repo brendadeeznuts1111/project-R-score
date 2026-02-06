@@ -93,6 +93,34 @@ SERVER_NAME="Barbershop Local" HOST=127.0.0.1 PORT=3010 PUBLIC_BASE_URL=http://1
 bun run test:barbershop
 ```
 
+```bash
+bun run build:barbershop:meta
+```
+
+```bash
+bun run profile:barbershop:sampling
+```
+
+```bash
+bun run profile:barbershop:sampling --upload-r2=true --require-r2=true
+```
+
+```bash
+bun run profile:barbershop:quick
+ bun run profile:barbershop:shot
+bun run profile:barbershop:shot:r2
+bun run profile:barbershop:local
+bun run profile:barbershop:r2
+bun run profile:barbershop:latest
+bun run profile:barbershop:status
+bun run profile:barbershop:upload-latest
+bun run profile:barbershop:list-r2
+```
+
+Profiler R2 upload accepts either env style:
+- `R2_ACCOUNT_ID` + `R2_BUCKET_NAME` + `R2_ACCESS_KEY_ID` + `R2_SECRET_ACCESS_KEY`
+- or `R2_ENDPOINT` + `R2_BUCKET` + `R2_ACCESS_KEY_ID` + `R2_SECRET_ACCESS_KEY`
+
 ## Demo Flows
 
 1. Open admin dashboard: `http://localhost:3000/admin`
@@ -135,6 +163,10 @@ bun run test:barbershop
 ## Bun References
 
 - [Bun.file (runtime file I/O)](https://bun.com/docs/runtime/file-io#reading-files-bun-file)
+- [Bun.Archive API (v1.3.6)](https://bun.com/blog/bun-v1.3.6#bun-archive-api-creates-extracts-tarballs)
+- [Bun.JSONC.parse (v1.3.6)](https://bun.com/blog/bun-v1.3.6#bun-jsonc-api-for-parsing-json-with-comments)
+- [Bun.build metafile (v1.3.6)](https://bun.com/blog/bun-v1.3.6#metafile-in-bun-build)
+- [Bun.jsc.SamplingProfile](https://bun.com/reference/bun/jsc/SamplingProfile)
 - [HTTP file uploads (`Request.formData`)](https://bun.com/docs/guides/http/file-uploads)
 - [HTTP proxy options in `fetch`](https://bun.com/docs/guides/http/proxy)
 - [Bun.serve reference](https://bun.com/reference/bun/serve)
@@ -145,4 +177,7 @@ bun run test:barbershop
 - `barbershop-tickets.ts`: ticketing and assignment flow demo.
 - `barber-server.ts`: telemetry, WS, auth/cookie + report endpoints.
 - `manifest.toml`: demo manifest and route/script index.
+- `runtime.config.jsonc`: optional JSONC runtime metadata used by docs/status endpoints.
+- `build-metadata.ts`: Bun build metafile generator (`barbershop/dist/meta.json`).
+- `sampling-profile.ts`: on-demand CPU sampling profile capture with `bun:jsc`.
 - `tests/`: barbershop-focused test suite.
