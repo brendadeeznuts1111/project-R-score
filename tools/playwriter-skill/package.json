@@ -1,0 +1,40 @@
+{
+  "name": "@factorywager/playwriter-skill",
+  "version": "1.0.0",
+  "description": "Browser automation skill for Kimi CLI via Playwriter",
+  "type": "module",
+  "bin": {
+    "playwriter-skill": "./bin/playwriter-skill.js",
+    "pw": "./bin/playwriter-skill.js"
+  },
+  "scripts": {
+    "install-skill": "bun add -g playwriter",
+    "setup": "bash install.sh",
+    "mcp-server": "bun run mcp-server.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "peerDependencies": {
+    "playwriter": ">=1.0.0"
+  },
+  "keywords": [
+    "playwright",
+    "browser-automation",
+    "kimi-skill",
+    "mcp",
+    "playwriter"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/factorywager/playwriter-skill"
+  },
+  "files": [
+    "bin/",
+    "mcp-server.ts",
+    "mcp.json",
+    "SKILL.md",
+    "README.md"
+  ]
+}

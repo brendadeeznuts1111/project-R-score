@@ -1,0 +1,145 @@
+{
+  "name": "playwriter",
+  "description": "Browser automation via Playwright API using Chrome extension + CLI",
+  "version": "1.0.0",
+  "tools": [
+    {
+      "name": "browser_execute",
+      "description": "Execute Playwright code in the browser",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session": {
+            "type": "number",
+            "description": "Session ID (create with 'session new')"
+          },
+          "code": {
+            "type": "string",
+            "description": "JavaScript code to execute. Available: page, context, state, require"
+          }
+        },
+        "required": ["session", "code"]
+      }
+    },
+    {
+      "name": "browser_screenshot",
+      "description": "Take a screenshot of the current page",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session": {
+            "type": "number",
+            "description": "Session ID"
+          },
+          "path": {
+            "type": "string",
+            "description": "Path to save screenshot"
+          },
+          "labels": {
+            "type": "boolean",
+            "description": "Add accessibility labels to screenshot",
+            "default": true
+          }
+        },
+        "required": ["session"]
+      }
+    },
+    {
+      "name": "browser_navigate",
+      "description": "Navigate to a URL",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session": {
+            "type": "number",
+            "description": "Session ID"
+          },
+          "url": {
+            "type": "string",
+            "description": "URL to navigate to"
+          }
+        },
+        "required": ["session", "url"]
+      }
+    },
+    {
+      "name": "browser_click",
+      "description": "Click an element on the page",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session": {
+            "type": "number",
+            "description": "Session ID"
+          },
+          "selector": {
+            "type": "string",
+            "description": "Element selector (CSS, aria-ref, etc.)"
+          }
+        },
+        "required": ["session", "selector"]
+      }
+    },
+    {
+      "name": "browser_fill",
+      "description": "Fill a form field",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session": {
+            "type": "number",
+            "description": "Session ID"
+          },
+          "selector": {
+            "type": "string",
+            "description": "Input selector"
+          },
+          "value": {
+            "type": "string",
+            "description": "Value to fill"
+          }
+        },
+        "required": ["session", "selector", "value"]
+      }
+    },
+    {
+      "name": "browser_get_text",
+      "description": "Extract text content from elements",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "session": {
+            "type": "number",
+            "description": "Session ID"
+          },
+          "selector": {
+            "type": "string",
+            "description": "Element selector"
+          }
+        },
+        "required": ["session", "selector"]
+      }
+    },
+    {
+      "name": "browser_session_new",
+      "description": "Create a new browser session",
+      "parameters": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "browser_session_list",
+      "description": "List active browser sessions",
+      "parameters": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  ],
+  "command": "playwriter",
+  "setup": {
+    "extension": "https://chrome.google.com/webstore/detail/playwriter/...",
+    "cli": "bun add -g playwriter"
+  }
+}
