@@ -1,0 +1,23 @@
+# bun.yaml - FactoryWager GOV Ripgrep v4.0
+rules:
+  ripgrep:
+    schema:
+      scope: [FACTORY, LINK, CODE, BUN, PURGE, AI]
+      type: [SCAN, VALIDATE, FIX, TRANSMUTE, OPTIMIZE, AGENT]
+      variant: [EXPANDED, THREAD, DASHBOARD, COMPRESSED]
+      hash_algo: 'SHA-256'
+      id: pattern: '^[A-Z]{3}-RIP-[0-9]{3}$'
+      ai_prefix: 'PUR_'
+    defaults:
+      scope: FACTORY
+      type: SCAN
+      version: v4.0
+      status: ACTIVE
+    grep:
+      all-tags: '\[([A-Z]+)-([A-Z]+)-([A-Z]+)-([A-Z]{3}-RIP-[0-9]{3})-([vV][0-9]+\.[0-9]+)-\[([A-Z]+)\]-([a-f0-9]{64})\]'
+      rg-flags: '--type js --mmap --pcre2-unicode --hyper-accurate'
+      validate:
+        hooks:
+          - parallel-purge: true
+          - link-verify: true
+          - ai-transmute: true
