@@ -884,6 +884,258 @@
       }
     }
   },
+  "versioning": {
+    "scheme": "semantic",
+    "current": "5.1.0",
+    "format": "MAJOR.MINOR.PATCH",
+    "prerelease_format": "MAJOR.MINOR.PATCH-PRERELEASE",
+    "build_format": "MAJOR.MINOR.PATCH+BUILD",
+    "changelog_format": "conventional",
+    "auto_increment": {
+      "enabled": true,
+      "patch_on_fix": true,
+      "minor_on_feature": true,
+      "major_on_breaking": true
+    }
+  },
+  "release": {
+    "strategy": {
+      "type": "continuous",
+      "frequency": "weekly",
+      "day": "friday",
+      "time": "14:00 UTC",
+      "auto_deploy": {
+        "patch": true,
+        "minor": true,
+        "major": false
+      }
+    },
+    "branches": {
+      "main": {
+        "purpose": "production",
+        "protected": true,
+        "auto_merge": false,
+        "required_reviews": 2,
+        "required_status_checks": ["ci", "security", "performance"]
+      },
+      "develop": {
+        "purpose": "integration",
+        "protected": true,
+        "auto_merge": true,
+        "required_reviews": 1,
+        "required_status_checks": ["ci", "lint"]
+      },
+      "feature/*": {
+        "purpose": "feature development",
+        "protected": false,
+        "auto_merge": false,
+        "required_reviews": 1,
+        "required_status_checks": ["ci"]
+      },
+      "hotfix/*": {
+        "purpose": "emergency fixes",
+        "protected": true,
+        "auto_merge": false,
+        "required_reviews": 2,
+        "required_status_checks": ["ci", "security", "performance"]
+      }
+    },
+    "workflow": {
+      "pre_release": {
+        "tests": ["unit", "integration", "e2e"],
+        "security_scan": true,
+        "performance_test": true,
+        "documentation_check": true,
+        "dependency_audit": true
+      },
+      "release": {
+        "version_bump": "automated",
+        "changelog_generation": true,
+        "tag_creation": true,
+        "release_notes": true,
+        "artifact_creation": true,
+        "documentation_update": true
+      },
+      "post_release": {
+        "deployment": "staging_then_production",
+        "monitoring": "enhanced",
+        "rollback_plan": "automated",
+        "notification": "slack_and_email"
+      }
+    }
+  },
+  "changelog": {
+    "format": "conventional",
+    "sections": {
+      "features": {
+        "title": "Features",
+        "types": ["feat"],
+        "order": 1
+      },
+      "fixes": {
+        "title": "Bug Fixes",
+        "types": ["fix"],
+        "order": 2
+      },
+      "performance": {
+        "title": "Performance",
+        "types": ["perf"],
+        "order": 3
+      },
+      "breaking": {
+        "title": "Breaking Changes",
+        "types": ["breaking"],
+        "order": 4
+      },
+      "security": {
+        "title": "Security",
+        "types": ["security"],
+        "order": 5
+      },
+      "dependencies": {
+        "title": "Dependencies",
+        "types": ["deps"],
+        "order": 6
+      },
+      "other": {
+        "title": "Other",
+        "types": ["chore", "docs", "style", "refactor", "test"],
+        "order": 7
+      }
+    },
+    "generation": {
+      "auto_generate": true,
+      "from_commits": true,
+      "from_tags": true,
+      "include_scope": true,
+      "include_author": false,
+      "include_time": true,
+      "max_commits": 100
+    },
+    "output": {
+      "formats": ["markdown", "json", "html"],
+      "files": {
+        "markdown": "CHANGELOG.md",
+        "json": "changelog.json",
+        "html": "changelog.html"
+      },
+      "template": "conventional"
+    }
+  },
+  "compatibility": {
+    "api": {
+      "versioning": "semantic",
+      "current": "v1",
+      "supported_versions": ["v1"],
+      "deprecated_versions": [],
+      "breaking_changes": {
+        "v2": {
+          "planned": "2026-06-01",
+          "migration_guide": "/docs/api/v2-migration",
+          "support_until": "2026-12-01"
+        }
+      }
+    },
+    "database": {
+      "schema_version": "5.1.0",
+      "migration_strategy": "automatic",
+      "rollback_support": true,
+      "backward_compatibility": "2_versions"
+    },
+    "sdk": {
+      "javascript": {
+        "current": "5.1.0",
+        "supported": ["5.0.x", "5.1.x"],
+        "deprecated": ["4.x.x"],
+        "npm_package": "@factorywager/sdk"
+      },
+      "python": {
+        "current": "5.1.0",
+        "supported": ["5.0.x", "5.1.x"],
+        "deprecated": ["4.x.x"],
+        "pip_package": "factorywager-sdk"
+      },
+      "go": {
+        "current": "v5.1.0",
+        "supported": ["v5.0.x", "v5.1.x"],
+        "deprecated": ["v4.x.x"],
+        "go_module": "github.com/factorywager/go-sdk"
+      }
+    },
+    "browsers": {
+      "chrome": ">= 90",
+      "firefox": ">= 88",
+      "safari": ">= 14",
+      "edge": ">= 90"
+    },
+    "node": {
+      "minimum": "18.0.0",
+      "recommended": "20.0.0",
+      "lts": true
+    },
+    "bun": {
+      "minimum": "1.0.0",
+      "recommended": "1.3.8",
+      "features": ["sqlite", "file-system", "http-server"]
+    }
+  },
+  "deprecation": {
+    "policy": {
+      "notice_period": "90 days",
+      "warning_period": "30 days",
+      "removal_period": "180 days",
+      "communication_channels": ["email", "in_app", "blog", "changelog"]
+    },
+    "current_deprecations": [
+      {
+        "feature": "legacy_api_v1",
+        "deprecation_date": "2026-01-01",
+        "removal_date": "2026-07-01",
+        "alternative": "api_v2",
+        "migration_guide": "/docs/migration/api-v1-to-v2"
+      }
+    ],
+    "notifications": {
+      "email": {
+        "template": "deprecation_notice",
+        "timing": ["deprecation", "warning", "removal"]
+      },
+      "in_app": {
+        "banner": true,
+        "modal": false,
+        "frequency": "weekly"
+      },
+      "api": {
+        "deprecation_header": "X-Deprecation-Warning",
+        "sunset_header": "X-Sunset"
+      }
+    }
+  },
+  "migration": {
+    "tools": {
+      "database": {
+        "cli_command": "bun run migrate",
+        "auto_backup": true,
+        "dry_run": true,
+        "rollback": true
+      },
+      "api": {
+        "proxy": "api-proxy.factory-wager.com",
+        "version_header": "API-Version",
+        "auto_translation": false
+      },
+      "config": {
+        "validator": "config-validator",
+        "migrator": "config-migrator",
+        "backup_format": "json"
+      }
+    },
+    "testing": {
+      "compatibility_suite": "bun run test:compatibility",
+      "migration_tests": "bun run test:migration",
+      "performance_tests": "bun run test:performance"
+    }
+  },
   "license": "MIT",
   "keywords": [
     "bun",
