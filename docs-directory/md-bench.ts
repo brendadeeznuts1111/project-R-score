@@ -73,4 +73,29 @@ console.log("\n💾 Results saved to md-profile.json");
 const memoryEstimate = large.size * 2.5; // Rough estimate based on docs
 console.log(`💾 Memory Efficiency: ~${(memoryEstimate/1024).toFixed(1)}KB peak`);
 
+// =============================================================================
+// Ablation: Options Performance Impact
+// =============================================================================
+
+console.log("\n🔬 ABLATION: Options Perf Impact");
+console.log("=".repeat(60));
+
+const massiveMd = results[2] ? '# Hi\n| A | B |\n- [x] Task\n$ E=mc^2 $'.repeat(100) : '# Fallback\n| A | B |\n|---|---|\n| 1 | 2 |';
+const ABLATION_ITER = 10000;
+
+const optsSets = [
+  { label: 'Baseline (no tables)', opts: { tables: false } },
+  { label: '+Tables', opts: { tables: true } },
+  { label: 'Full GFM', opts: { tables: true, tasklists: true, latexMath: true } },
+];
+
+for (const { label, opts } of optsSets) {
+  const t0 = performance.now();
+  for (let i = 0; i < ABLATION_ITER; i++) {
+    Bun.markdown.html(massiveMd, opts);
+  }
+  const avgMs = (performance.now() - t0) / ABLATION_ITER;
+  console.log(`  ${label}: ${avgMs.toFixed(3)}ms  ${JSON.stringify(opts)}`);
+}
+
 console.log("\n🎊 Bun.markdown = UNRIVALED PERFORMANCE! 🚀");
