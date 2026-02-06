@@ -2,6 +2,32 @@
   "name": "factorywager-enterprise",
   "version": "5.1.0",
   "description": "🚀 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
+  "homepage": "https://factory-wager.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/factorywager/factorywager-enterprise.git"
+  },
+  "bugs": {
+    "url": "https://github.com/factorywager/factorywager-enterprise/issues"
+  },
+  "author": {
+    "name": "FactoryWager Team",
+    "email": "team@factory-wager.com",
+    "url": "https://factory-wager.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "bun",
+    "typescript",
+    "enterprise",
+    "performance",
+    "api",
+    "dashboard",
+    "security",
+    "ripgrep",
+    "ai",
+    "factorywager"
+  ],
   "type": "module",
   "scripts": {
     "dev": "bun run --watch server/server-enhanced.ts",
