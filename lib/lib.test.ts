@@ -500,6 +500,14 @@ describe("Repo Hygiene", () => {
       expect(STRAY_PATTERNS.some((p: RegExp) => p.test("hierarchy-report-1770398067150.json"))).toBe(true);
     });
 
+    it("catches timestamped Markdown files", () => {
+      expect(STRAY_PATTERNS.some((p: RegExp) => p.test("senior-1770412138259.md"))).toBe(true);
+    });
+
+    it("catches md-profile.json", () => {
+      expect(STRAY_PATTERNS.some((p: RegExp) => p.test("md-profile.json"))).toBe(true);
+    });
+
     it("catches date-stamped output files", () => {
       expect(STRAY_PATTERNS.some((p: RegExp) => p.test("enterprise-audit-2026-02-06.jsonl"))).toBe(true);
     });
@@ -515,6 +523,8 @@ describe("Repo Hygiene", () => {
     it("does not flag legitimate files", () => {
       expect(STRAY_PATTERNS.some((p: RegExp) => p.test("package.json"))).toBe(false);
       expect(STRAY_PATTERNS.some((p: RegExp) => p.test("tsconfig.json"))).toBe(false);
+      expect(STRAY_PATTERNS.some((p: RegExp) => p.test("README.md"))).toBe(false);
+      expect(STRAY_PATTERNS.some((p: RegExp) => p.test("CHANGELOG.md"))).toBe(false);
     });
   });
 

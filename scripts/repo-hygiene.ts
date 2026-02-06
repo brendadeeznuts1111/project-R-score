@@ -21,8 +21,12 @@ const ROOT = join(import.meta.dir, "..");
 const STRAY_PATTERNS = [
   // Timestamped output JSONs (e.g. junior-1770398161888.json, hierarchy-report-1770398067150.json)
   /^[a-z][a-z-]*-\d{10,}\.json$/,
+  // Timestamped output Markdown (e.g. senior-1770412138259.md)
+  /^[a-z][a-z-]*-\d{10,}\.md$/,
   // Date-stamped outputs (e.g. enterprise-audit-2026-02-06.jsonl)
   /^.*-\d{4}-\d{2}-\d{2}\.(json|jsonl)$/,
+  // Pipeline profile outputs (e.g. md-profile.json)
+  /^md-profile\.json$/,
   // Any .jsonl file
   /\.jsonl$/,
   // Log files
@@ -52,7 +56,7 @@ async function findStrayFiles(): Promise<Violation[]> {
 
   for (const dir of SCAN_DIRS) {
     const absDir = join(ROOT, dir);
-    const glob = new Glob("*.{json,jsonl,log}");
+    const glob = new Glob("*.{json,jsonl,log,md}");
 
     for await (const file of glob.scan({ cwd: absDir, absolute: false })) {
       for (const pattern of STRAY_PATTERNS) {
