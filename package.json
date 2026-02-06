@@ -18,7 +18,7 @@
   "team": {
     "leads": {
       "engineering": "lead-engineer@factory-wager.com",
-      "security": "lead-security@factory-wager.com", 
+      "security": "lead-security@factory-wager.com",
       "product": "lead-product@factory-wager.com",
       "operations": "lead-ops@factory-wager.com"
     },
@@ -27,22 +27,40 @@
         "role": "Lead Developer",
         "email": "nola@factory-wager.com",
         "github": "https://github.com/nolarose",
-        "specialties": ["bun", "typescript", "enterprise-architecture", "performance"]
+        "specialties": [
+          "bun",
+          "typescript",
+          "enterprise-architecture",
+          "performance"
+        ]
       },
       "security-team": {
         "role": "Security Engineering",
         "email": "security@factory-wager.com",
-        "specialties": ["security-auditing", "penetration-testing", "compliance"]
+        "specialties": [
+          "security-auditing",
+          "penetration-testing",
+          "compliance"
+        ]
       },
       "infrastructure": {
         "role": "Infrastructure Team",
-        "email": "infra@factory-wager.com", 
-        "specialties": ["devops", "cloud-architecture", "monitoring", "scaling"]
+        "email": "infra@factory-wager.com",
+        "specialties": [
+          "devops",
+          "cloud-architecture",
+          "monitoring",
+          "scaling"
+        ]
       },
       "ai-research": {
         "role": "AI Research Team",
         "email": "ai@factory-wager.com",
-        "specialties": ["machine-learning", "llama-integration", "ai-operations"]
+        "specialties": [
+          "machine-learning",
+          "llama-integration",
+          "ai-operations"
+        ]
       }
     }
   },
@@ -55,7 +73,11 @@
           "LOG_LEVEL": "debug",
           "HOT_RELOAD": "true"
         },
-        "scripts": ["dev", "test:watch", "lint:fix"]
+        "scripts": [
+          "dev",
+          "test:watch",
+          "lint:fix"
+        ]
       },
       "production": {
         "description": "Production environment profile",
@@ -64,7 +86,11 @@
           "LOG_LEVEL": "error",
           "HOT_RELOAD": "false"
         },
-        "scripts": ["build", "start", "security:check"]
+        "scripts": [
+          "build",
+          "start",
+          "security:check"
+        ]
       },
       "testing": {
         "description": "Testing environment profile",
@@ -73,42 +99,74 @@
           "LOG_LEVEL": "silent",
           "COVERAGE": "true"
         },
-        "scripts": ["test", "test:coverage", "lint"]
+        "scripts": [
+          "test",
+          "test:coverage",
+          "lint"
+        ]
       }
     },
     "benchmarks": {
       "performance": {
         "description": "Performance benchmarking profile",
-        "scripts": ["benchmark", "profile:barbershop"],
-        "metrics": ["cpu", "memory", "throughput", "latency"]
+        "scripts": [
+          "benchmark",
+          "profile:barbershop"
+        ],
+        "metrics": [
+          "cpu",
+          "memory",
+          "throughput",
+          "latency"
+        ]
       },
       "load": {
         "description": "Load testing profile",
-        "scripts": ["test:load", "test:stress"],
-        "metrics": ["concurrent-users", "response-time", "error-rate"]
+        "scripts": [
+          "test:load",
+          "test:stress"
+        ],
+        "metrics": [
+          "concurrent-users",
+          "response-time",
+          "error-rate"
+        ]
       },
       "security": {
         "description": "Security benchmarking profile",
-        "scripts": ["security:audit", "security:check"],
-        "metrics": ["vulnerabilities", "compliance-score", "security-posture"]
+        "scripts": [
+          "security:audit",
+          "security:check"
+        ],
+        "metrics": [
+          "vulnerabilities",
+          "compliance-score",
+          "security-posture"
+        ]
       }
     },
     "testing": {
       "unit": {
         "description": "Unit testing profile",
-        "scripts": ["test:unit"],
+        "scripts": [
+          "test:unit"
+        ],
         "coverage": ">= 80%",
         "framework": "bun-test"
       },
       "integration": {
         "description": "Integration testing profile",
-        "scripts": ["test:integration"],
+        "scripts": [
+          "test:integration"
+        ],
         "coverage": ">= 70%",
         "framework": "bun-test"
       },
       "e2e": {
         "description": "End-to-end testing profile",
-        "scripts": ["test:e2e"],
+        "scripts": [
+          "test:e2e"
+        ],
         "coverage": ">= 60%",
         "framework": "playwright"
       }
@@ -118,34 +176,70 @@
     "cli": {
       "admin": {
         "description": "Full administrative access",
-        "commands": ["*"],
-        "scopes": ["read", "write", "delete", "admin"]
+        "commands": [
+          "*"
+        ],
+        "scopes": [
+          "read",
+          "write",
+          "delete",
+          "admin"
+        ]
       },
       "developer": {
         "description": "Developer access",
-        "commands": ["dev", "test", "lint", "build"],
-        "scopes": ["read", "write"]
+        "commands": [
+          "dev",
+          "test",
+          "lint",
+          "build"
+        ],
+        "scopes": [
+          "read",
+          "write"
+        ]
       },
       "viewer": {
         "description": "Read-only access",
-        "commands": ["dashboard", "logs:view", "status"],
-        "scopes": ["read"]
+        "commands": [
+          "dashboard",
+          "logs:view",
+          "status"
+        ],
+        "scopes": [
+          "read"
+        ]
       }
     },
     "api": {
       "public": {
-        "endpoints": ["/api/public/*"],
-        "methods": ["GET"],
+        "endpoints": [
+          "/api/public/*"
+        ],
+        "methods": [
+          "GET"
+        ],
         "rate-limit": "100/hour"
       },
       "authenticated": {
-        "endpoints": ["/api/user/*", "/api/data/*"],
-        "methods": ["GET", "POST", "PUT"],
+        "endpoints": [
+          "/api/user/*",
+          "/api/data/*"
+        ],
+        "methods": [
+          "GET",
+          "POST",
+          "PUT"
+        ],
         "rate-limit": "1000/hour"
       },
       "admin": {
-        "endpoints": ["/api/admin/*"],
-        "methods": ["*"],
+        "endpoints": [
+          "/api/admin/*"
+        ],
+        "methods": [
+          "*"
+        ],
         "rate-limit": "unlimited"
       }
     }
@@ -349,14 +443,25 @@
     },
     "compression": {
       "enabled": true,
-      "algorithms": ["gzip", "brotli", "zstd"],
+      "algorithms": [
+        "gzip",
+        "brotli",
+        "zstd"
+      ],
       "level": "maximum"
     },
     "security": {
       "https": true,
       "cors": {
-        "origins": ["https://factory-wager.com", "https://docs.factory-wager.com"],
-        "methods": ["GET", "HEAD", "OPTIONS"]
+        "origins": [
+          "https://factory-wager.com",
+          "https://docs.factory-wager.com"
+        ],
+        "methods": [
+          "GET",
+          "HEAD",
+          "OPTIONS"
+        ]
       },
       "headers": {
         "X-Content-Type-Options": "nosniff",
@@ -367,7 +472,7 @@
   },
   "buckets": {
     "storage": "factorywager-storage",
-    "backups": "factorywager-backups", 
+    "backups": "factorywager-backups",
     "logs": "factorywager-logs",
     "cache": "factorywager-cache",
     "uploads": "factorywager-uploads",
@@ -388,26 +493,38 @@
     "types": {
       "service": {
         "description": "Service-to-service authentication",
-        "permissions": ["read", "write"],
+        "permissions": [
+          "read",
+          "write"
+        ],
         "rate-limit": "10000/hour",
         "auto-rotate": true
       },
       "user": {
         "description": "User-specific API keys",
-        "permissions": ["read"],
+        "permissions": [
+          "read"
+        ],
         "rate-limit": "1000/hour",
         "auto-rotate": false
       },
       "admin": {
         "description": "Administrative access keys",
-        "permissions": ["read", "write", "delete", "admin"],
+        "permissions": [
+          "read",
+          "write",
+          "delete",
+          "admin"
+        ],
         "rate-limit": "unlimited",
         "auto-rotate": true,
         "requires-approval": true
       },
       "readonly": {
         "description": "Read-only access for monitoring",
-        "permissions": ["read"],
+        "permissions": [
+          "read"
+        ],
         "rate-limit": "500/hour",
         "auto-rotate": false
       }
@@ -435,8 +552,16 @@
       },
       "notifications": {
         "slack": "#api-keys",
-        "email": ["admin@factory-wager.com", "security@factory-wager.com"],
-        "events": ["created", "rotated", "expired", "revoked"]
+        "email": [
+          "admin@factory-wager.com",
+          "security@factory-wager.com"
+        ],
+        "events": [
+          "created",
+          "rotated",
+          "expired",
+          "revoked"
+        ]
       }
     }
   },
@@ -446,9 +571,24 @@
       "endpoint": "https://metrics.factory-wager.com",
       "retention": "30d",
       "metrics": {
-        "application": ["cpu", "memory", "throughput", "latency"],
-        "business": ["users", "transactions", "conversions", "revenue"],
-        "infrastructure": ["disk", "network", "database", "cache"]
+        "application": [
+          "cpu",
+          "memory",
+          "throughput",
+          "latency"
+        ],
+        "business": [
+          "users",
+          "transactions",
+          "conversions",
+          "revenue"
+        ],
+        "infrastructure": [
+          "disk",
+          "network",
+          "database",
+          "cache"
+        ]
       }
     },
     "logging": {
@@ -466,12 +606,20 @@
       "provider": "jaeger",
       "endpoint": "https://tracing.factory-wager.com",
       "sampling": "0.1",
-      "services": ["api", "auth", "database", "cache", "queue"]
+      "services": [
+        "api",
+        "auth",
+        "database",
+        "cache",
+        "queue"
+      ]
     },
     "alerts": {
       "channels": {
         "slack": "#alerts",
-        "email": ["ops@factory-wager.com"],
+        "email": [
+          "ops@factory-wager.com"
+        ],
         "pagerduty": "factorywager-operations"
       },
       "rules": {
@@ -503,7 +651,11 @@
         }
       },
       "production": {
-        "regions": ["us-east-1", "us-west-2", "eu-west-1"],
+        "regions": [
+          "us-east-1",
+          "us-west-2",
+          "eu-west-1"
+        ],
         "cluster": "factorywager-prod",
         "replicas": 5,
         "resources": {
@@ -600,7 +752,14 @@
         "enterprise": -1
       },
       "default_timezone": "UTC",
-      "supported_locales": ["en", "es", "fr", "de", "ja", "zh"],
+      "supported_locales": [
+        "en",
+        "es",
+        "fr",
+        "de",
+        "ja",
+        "zh"
+      ],
       "currency": "USD",
       "tax_rate": 0.08
     },
@@ -646,7 +805,11 @@
       "last_updated": "2026-02-06",
       "maintainer": "FactoryWager Team",
       "review_cycle": "quarterly",
-      "compliance": ["SOC2", "GDPR", "HIPAA"]
+      "compliance": [
+        "SOC2",
+        "GDPR",
+        "HIPAA"
+      ]
     },
     "sections": {
       "api": {
@@ -655,28 +818,58 @@
         "url": "https://docs.factory-wager.com/api",
         "format": "OpenAPI 3.0",
         "interactive": true,
-        "sdk_support": ["javascript", "python", "go", "java"]
+        "sdk_support": [
+          "javascript",
+          "python",
+          "go",
+          "java"
+        ]
       },
       "guides": {
         "title": "User Guides",
         "description": "Step-by-step tutorials and best practices",
         "url": "https://docs.factory-wager.com/guides",
-        "categories": ["getting-started", "advanced", "troubleshooting"],
-        "difficulty_levels": ["beginner", "intermediate", "advanced"]
+        "categories": [
+          "getting-started",
+          "advanced",
+          "troubleshooting"
+        ],
+        "difficulty_levels": [
+          "beginner",
+          "intermediate",
+          "advanced"
+        ]
       },
       "reference": {
         "title": "Technical Reference",
         "description": "In-depth technical documentation",
         "url": "https://docs.factory-wager.com/reference",
-        "includes": ["architecture", "database-schema", "security-model"],
-        "diagrams": ["architecture", "data-flow", "security"]
+        "includes": [
+          "architecture",
+          "database-schema",
+          "security-model"
+        ],
+        "diagrams": [
+          "architecture",
+          "data-flow",
+          "security"
+        ]
       },
       "examples": {
         "title": "Code Examples",
         "description": "Practical code samples and implementations",
         "url": "https://docs.factory-wager.com/examples",
-        "languages": ["typescript", "javascript", "python", "bash"],
-        "categories": ["basic", "intermediate", "advanced"]
+        "languages": [
+          "typescript",
+          "javascript",
+          "python",
+          "bash"
+        ],
+        "categories": [
+          "basic",
+          "intermediate",
+          "advanced"
+        ]
       },
       "changelog": {
         "title": "Changelog",
@@ -689,7 +882,12 @@
         "title": "Frequently Asked Questions",
         "description": "Common questions and answers",
         "url": "https://docs.factory-wager.com/faq",
-        "categories": ["general", "technical", "billing", "security"],
+        "categories": [
+          "general",
+          "technical",
+          "billing",
+          "security"
+        ],
         "search_enabled": true
       }
     },
@@ -727,7 +925,11 @@
         "template_required": true,
         "peer_review": true,
         "technical_review": true,
-        "approval_process": ["author", "reviewer", "maintainer"]
+        "approval_process": [
+          "author",
+          "reviewer",
+          "maintainer"
+        ]
       },
       "updates": {
         "minor_changes": "author_only",
@@ -902,8 +1104,14 @@
       },
       "records": {
         "mx": [
-          {"priority": 10, "server": "mail.factory-wager.com"},
-          {"priority": 20, "server": "backup.factory-wager.com"}
+          {
+            "priority": 10,
+            "server": "mail.factory-wager.com"
+          },
+          {
+            "priority": 20,
+            "server": "backup.factory-wager.com"
+          }
         ],
         "spf": "v=spf1 include:_spf.factory-wager.com ~all",
         "dkim": "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...",
@@ -1052,14 +1260,21 @@
         "protected": true,
         "auto_merge": false,
         "required_reviews": 2,
-        "required_status_checks": ["ci", "security", "performance"]
+        "required_status_checks": [
+          "ci",
+          "security",
+          "performance"
+        ]
       },
       "develop": {
         "purpose": "integration",
         "protected": true,
         "auto_merge": true,
         "required_reviews": 1,
-        "required_status_checks": ["ci", "lint"]
+        "required_status_checks": [
+          "ci",
+          "lint"
+        ]
       },
       "feature": {
         "pattern": "feature/*",
@@ -1067,7 +1282,9 @@
         "protected": false,
         "auto_merge": false,
         "required_reviews": 1,
-        "required_status_checks": ["ci"]
+        "required_status_checks": [
+          "ci"
+        ]
       },
       "hotfix": {
         "pattern": "hotfix/*",
@@ -1075,12 +1292,20 @@
         "protected": true,
         "auto_merge": false,
         "required_reviews": 2,
-        "required_status_checks": ["ci", "security", "performance"]
+        "required_status_checks": [
+          "ci",
+          "security",
+          "performance"
+        ]
       }
     },
     "workflow": {
       "pre_release": {
-        "tests": ["unit", "integration", "e2e"],
+        "tests": [
+          "unit",
+          "integration",
+          "e2e"
+        ],
         "security_scan": true,
         "performance_test": true,
         "documentation_check": true,
@@ -1107,37 +1332,55 @@
     "sections": {
       "features": {
         "title": "Features",
-        "types": ["feat"],
+        "types": [
+          "feat"
+        ],
         "order": 1
       },
       "fixes": {
         "title": "Bug Fixes",
-        "types": ["fix"],
+        "types": [
+          "fix"
+        ],
         "order": 2
       },
       "performance": {
         "title": "Performance",
-        "types": ["perf"],
+        "types": [
+          "perf"
+        ],
         "order": 3
       },
       "breaking": {
         "title": "Breaking Changes",
-        "types": ["breaking"],
+        "types": [
+          "breaking"
+        ],
         "order": 4
       },
       "security": {
         "title": "Security",
-        "types": ["security"],
+        "types": [
+          "security"
+        ],
         "order": 5
       },
       "dependencies": {
         "title": "Dependencies",
-        "types": ["deps"],
+        "types": [
+          "deps"
+        ],
         "order": 6
       },
       "other": {
         "title": "Other",
-        "types": ["chore", "docs", "style", "refactor", "test"],
+        "types": [
+          "chore",
+          "docs",
+          "style",
+          "refactor",
+          "test"
+        ],
         "order": 7
       }
     },
@@ -1151,7 +1394,11 @@
       "max_commits": 100
     },
     "output": {
-      "formats": ["markdown", "json", "html"],
+      "formats": [
+        "markdown",
+        "json",
+        "html"
+      ],
       "files": {
         "markdown": "CHANGELOG.md",
         "json": "changelog.json",
@@ -1164,7 +1411,9 @@
     "api": {
       "versioning": "semantic",
       "current": "v1",
-      "supported_versions": ["v1"],
+      "supported_versions": [
+        "v1"
+      ],
       "deprecated_versions": [],
       "breaking_changes": {
         "v2": {
@@ -1183,20 +1432,35 @@
     "sdk": {
       "javascript": {
         "current": "5.1.0",
-        "supported": ["5.0.x", "5.1.x"],
-        "deprecated": ["4.x.x"],
+        "supported": [
+          "5.0.x",
+          "5.1.x"
+        ],
+        "deprecated": [
+          "4.x.x"
+        ],
         "npm_package": "@factorywager/sdk"
       },
       "python": {
         "current": "5.1.0",
-        "supported": ["5.0.x", "5.1.x"],
-        "deprecated": ["4.x.x"],
+        "supported": [
+          "5.0.x",
+          "5.1.x"
+        ],
+        "deprecated": [
+          "4.x.x"
+        ],
         "pip_package": "factorywager-sdk"
       },
       "go": {
         "current": "v5.1.0",
-        "supported": ["v5.0.x", "v5.1.x"],
-        "deprecated": ["v4.x.x"],
+        "supported": [
+          "v5.0.x",
+          "v5.1.x"
+        ],
+        "deprecated": [
+          "v4.x.x"
+        ],
         "go_module": "github.com/factorywager/go-sdk"
       }
     },
@@ -1214,7 +1478,11 @@
     "bun": {
       "minimum": "1.0.0",
       "recommended": "1.3.8",
-      "features": ["sqlite", "file-system", "http-server"]
+      "features": [
+        "sqlite",
+        "file-system",
+        "http-server"
+      ]
     }
   },
   "deprecation": {
@@ -1222,7 +1490,12 @@
       "notice_period": "90 days",
       "warning_period": "30 days",
       "removal_period": "180 days",
-      "communication_channels": ["email", "in_app", "blog", "changelog"]
+      "communication_channels": [
+        "email",
+        "in_app",
+        "blog",
+        "changelog"
+      ]
     },
     "current_deprecations": [
       {
@@ -1236,7 +1509,11 @@
     "notifications": {
       "email": {
         "template": "deprecation_notice",
-        "timing": ["deprecation", "warning", "removal"]
+        "timing": [
+          "deprecation",
+          "warning",
+          "removal"
+        ]
       },
       "in_app": {
         "banner": true,
@@ -1292,21 +1569,15 @@
   "scripts": {
     "dev": "bun run --watch server/server-enhanced.ts",
     "start": "bun run server/server-enhanced.ts",
-    
-    "# Core Servers": "",
     "start:payments": "bun run server/payment-webhook-server.ts",
     "start:payments:v2": "bun run server/payment-webhook-server-v2.ts",
     "start:content-type": "bun run server/content-type-server.ts",
     "mcp:security": "bun run lib/security/mcp-server.ts --http --port=3000",
-    
-    "# P2P Proxy Servers": "",
     "start:p2p-proxy": "bun run server/p2p-proxy-server.ts",
     "start:p2p-proxy:v2": "bun run server/p2p-proxy-server-enhanced.ts",
     "start:p2p-proxy:bun": "bun run server/p2p-proxy-bun-native.ts",
     "start:p2p-proxy:v3": "bun run server/p2p-proxy-server-with-continuity.ts",
     "setup:p2p": "bun run scripts/setup-p2p-proxy.ts",
-    
-    "# Dashboards": "",
     "start:p2p-dashboard": "bun run dashboard/p2p-dashboard.ts",
     "start:business-registry": "bun run dashboard/business-registry.ts",
     "start:profile-dash": "bun run dashboard-profile/app.ts",
@@ -1316,8 +1587,6 @@
     "dashboard:web": "bun run examples/dashboard-demo.ts web",
     "dashboard:ansi": "bun run lib/ansi-dashboard.ts",
     "dashboard:live": "bun run examples/dashboard-demo.ts live",
-    
-    "# Barbershop Services": "",
     "start:barbershop:dashboard": "bun run barbershop/barbershop-dashboard.ts",
     "start:barbershop:dashboard:3001": "PORT=3001 bun run barbershop/barbershop-dashboard.ts",
     "dev:barbershop:dashboard": "bun run --watch barbershop/barbershop-dashboard.ts",
@@ -1327,19 +1596,13 @@
     "setup:barbershop:secrets": "bun run barbershop/setup-secrets.ts",
     "doctor:barbershop:secrets": "bun run barbershop/secrets-doctor.ts",
     "doctor:barbershop:secrets:store": "USE_BUN_SECRETS=true bun run barbershop/secrets-doctor.ts",
-    
-    "# HTTP Client Diagnostics & Fixes": "",
     "http:debug": "bun run examples/debug-http-deep.ts",
     "http:fix": "bun run examples/migrate-http-client.ts",
     "http:test": "bun run examples/test-http-coverage.ts",
     "http:analyze": "bun run examples/http-client-fixes.ts && bun run test-fixed-client",
     "http:migrate": "bun run examples/migrate-http-client.ts && bun run http:test",
-    
-    "# HTTP Playground": "",
     "playground:http": "bun run http:debug",
     "playground:fix": "bun run http:migrate",
-    
-    "# Testing": "",
     "test": "bun test",
     "test:coverage": "bun test --coverage",
     "test:watch": "bun test --watch",
@@ -1351,30 +1614,22 @@
     "test:habits": "bun run tests/habits-test.ts",
     "test:barbershop": "bun test barbershop/tests/*.ts",
     "test:content-types": "bun run tests/test-content-types.ts",
-    
-    "# Enhanced Cheatsheet System": "",
     "cheatsheet:integrated": "bun run scripts/cheatsheet-integrated.js",
     "cheatsheet:rss": "bun run scripts/cheatsheet-rss.js",
     "cheatsheet:github": "bun run scripts/cheatsheet-github.js",
     "cheatsheet:github:advanced": "bun run scripts/cheatsheet-github-integrator.js",
     "cheatsheet:rss:monitor": "bun run scripts/cheatsheet-rss-monitor-v2.js",
     "cheatsheet:report": "bun run scripts/cheatsheet-report-generator.js",
-    
-    "# Cheatsheet Quick Commands": "",
     "cheatsheet:dashboard": "bun run cheatsheet:integrated dashboard",
     "updates": "bun run cheatsheet:integrated updates",
     "commits": "bun run cheatsheet:integrated commits",
     "docs": "bun run cheatsheet:integrated docs",
     "news": "bun run cheatsheet:integrated news",
     "sync": "bun run cheatsheet:integrated sync",
-    
-    "# RSS Commands": "",
     "rss:news": "bun run scripts/cheatsheet-rss-monitor-v2.js news",
     "rss:stats": "bun run scripts/cheatsheet-rss-monitor-v2.js stats",
     "rss:search": "bun run scripts/cheatsheet-rss-monitor-v2.js search",
     "rss:monitor": "bun run scripts/cheatsheet-rss-monitor-v2.js monitor",
-    
-    "# GitHub Commands": "",
     "github:commits": "bun run cheatsheet:github commits",
     "github:commit": "bun run cheatsheet:github commit",
     "github:releases": "bun run cheatsheet:github releases",
@@ -1390,8 +1645,6 @@
     "test:endpoints": "curl http://localhost:3000/test/fetch | bun -p",
     "test:r2": "bun run lib/mcp/r2-integration.ts",
     "ci:validate": "bun run standards:check && bun run test:all",
-    
-    "# FactoryWager RIPGREP v4.0": "",
     "rules:config": "bun run scripts/bun-rules.ts config",
     "rules:validate": "bun run scripts/bun-rules.ts validate",
     "rules:enhanced": "bun run scripts/bun-rules.ts enhanced",
@@ -1400,8 +1653,6 @@
     "grep:non-bun": "rg --type js --type ts 'require\\(|module\\.exports|fs\\.|child_process\\.|path\\.' .",
     "index:rg": "echo 'Building ripgrep index...' && rg --files --type js --type ts . | head -20",
     "rip-conform": "bun run scripts/rip-conform.ts",
-    
-    "# Code Quality & Linting": "",
     "lint": "bun run eslint lib/ --ext .ts",
     "lint:fix": "bun run eslint lib/ --ext .ts --fix",
     "format": "bun run prettier --write lib/**/*.ts",
@@ -1410,20 +1661,14 @@
     "standards:check": "bun run url:check && bun run lint && bun run type-check",
     "guard:bun-first": "bun run lib/guards/bun-first-guard.ts lib/**/*.ts",
     "guard:bun-first:strict": "bun run lib/guards/bun-first-guard.ts lib/**/*.ts tools/**/*.ts cli/**/*.ts",
-    
-    "# Build & Clean": "",
     "build": "bun run scripts/build.ts",
     "clean": "rm -rf dist/ .cache/ coverage/",
     "setup": "bun install && bun run build",
     "build:barbershop:meta": "bun run barbershop/build-metadata.ts",
-    
-    "# Security": "",
     "security:audit": "bun audit",
     "security:check": "bun run scripts/security-check.ts",
     "validate:bun-urls": "bun run scripts/validate-bun-urls.ts",
     "validate:github": "bun run scripts/bun-github-validation.ts",
-    
-    "# Performance & Benchmarking": "",
     "benchmark": "bun run scripts/benchmark.ts",
     "profile:barbershop": "bun run barbershop/profile-cli.ts run",
     "profile:barbershop:quick": "bun run barbershop/profile-cli.ts quick",
@@ -1438,14 +1683,10 @@
     "profile:barbershop:cpu-md": "bun run barbershop/profile-cli.ts cpu-md",
     "profile:barbershop:heap-md": "bun run barbershop/profile-cli.ts heap-md",
     "profile:barbershop:sampling": "bun run barbershop/sampling-profile.ts",
-    
-    "# Repository Hygiene": "",
     "hygiene": "bun scripts/repo-hygiene.ts",
     "hygiene:staged": "bun scripts/repo-hygiene.ts --staged",
     "check:claude": "bun scripts/claude-health.ts",
     "health": "bun scripts/claude-health.ts",
-    
-    "# Documentation": "",
     "docs:build": "bun run scripts/build-docs.ts",
     "docs:serve": "bun run scripts/serve-docs.ts",
     "docs:init": "bun run cli/integrated-cli.ts init",
@@ -1464,8 +1705,6 @@
     "docs:fetch": "bun run lib/registry/package-docs.ts",
     "docs:sync": "bun run lib/registry/docs-sync.ts",
     "docs:rss": "bun run lib/registry/rss-aggregator.ts",
-    
-    "# Cheatsheet": "",
     "cheatsheet": "bun run scripts/cheatsheet.js",
     "cheatsheet:search": "bun run scripts/cheatsheet.js search",
     "cheatsheet:tip": "bun run scripts/cheatsheet.js tip",
@@ -1482,8 +1721,6 @@
     "cheatsheet:analytics": "bun run scripts/cheatsheet-auto-version.js analytics",
     "cheatsheet:version-report": "bun run scripts/cheatsheet-auto-version.js report",
     "cheatsheet:demo:nanoseconds": "bun run scripts/bun-nanoseconds-demo.ts",
-    
-    "# Markdown Processing": "",
     "markdown:ansi": "bun run lib/enhanced-markdown.ts README.md ansi",
     "markdown:styled": "bun run lib/enhanced-markdown.ts docs/styling-demo.md ansi",
     "markdown:html": "bun run lib/enhanced-markdown.ts README.md html",
@@ -1495,15 +1732,11 @@
     "markdown:gfm": "bun run lib/official-markdown-options.ts gfm",
     "markdown:extended": "bun run lib/official-markdown-options.ts extended",
     "urls:extract": "bun -e \"const urls=[];Bun.markdown.render(await Bun.file(process.argv[2]||'docs/api.md').text(),{link:(t,{href})=>{urls.push(href);return null;},paragraph:()=>null,heading:()=>null});console.log(urls.join('\\n'));\"",
-    
-    "# URL Management": "",
     "url:validate": "bun run scripts/url-validator.ts check",
     "url:check": "bun run scripts/url-validator-focused.ts quick",
     "url:report": "bun run scripts/url-validator.ts check && cat docs/data/url-validation-report.json",
     "url:optimize": "bun run scripts/optimize-examples-prefetch.ts optimize",
     "url:localhost-to-example": "bun run scripts/localhost-to-example.ts convert",
-    
-    "# Version & Release Management": "",
     "version": "bun run lib/registry/version-manager.ts",
     "version:parse": "bun run lib/registry/version-manager.ts parse",
     "version:compare": "bun run lib/registry/version-manager.ts compare",
@@ -1522,20 +1755,14 @@
     "bump:all": "bun run scripts/bump-all.ts",
     "pack:all": "bun run scripts/pack-all.ts",
     "npm:token": "bun run scripts/npm-token.ts",
-    
-    "# Deployment": "",
     "deploy:staging": "bun run deployment/deploy-staging.sh",
     "deploy:production": "bun run deployment/deploy-production.sh",
-    
-    "# MCP (Model Context Protocol)": "",
     "mcp:bun": "bun run lib/mcp/bun-mcp-server.ts",
     "mcp:tools": "bun run scripts/fw-tools-mcp.ts",
     "mcp:bridge": "bun run scripts/mcp-bridge.ts",
     "setup:mcp": "bash scripts/setup-mcp.sh",
     "mcp-monitor": "bun run scripts/mcp-monitor.ts",
     "demo:r2": "bun run scripts/demo-r2-mcp.ts",
-    
-    "# R2 Storage": "",
     "r2": "bun run lib/r2/r2-enhanced-cli.ts",
     "r2:events": "bun run lib/r2/r2-enhanced-cli.ts events",
     "r2:batch": "bun run lib/r2/r2-enhanced-cli.ts batch",
@@ -1548,8 +1775,6 @@
     "r2:pipeline": "bun run lib/r2/r2-enhanced-cli.ts pipeline",
     "r2:webhook": "bun run lib/r2/r2-enhanced-cli.ts webhook",
     "r2:status": "bun run lib/r2/r2-enhanced-cli.ts status",
-    
-    "# Package Registry": "",
     "registry": "bun run lib/registry/cli.ts",
     "registry:start": "bun run lib/registry/cli.ts start",
     "registry:publish": "bun run lib/registry/cli.ts publish",
@@ -1564,8 +1789,6 @@
     "registry:config:load": "bun run lib/registry/config-loader.ts load",
     "registry:config:init": "bun run lib/registry/config-loader.ts init",
     "registry:config:save": "bun run lib/registry/config-loader.ts save",
-    
-    "# Package Management": "",
     "pkg:fetch": "bun run lib/registry/package-docs.ts fetch",
     "pkg:search": "bun run lib/registry/package-docs.ts search",
     "pkg:local": "bun run lib/registry/package-docs.ts local",
@@ -1573,16 +1796,12 @@
     "sync:upload": "bun run lib/registry/docs-sync.ts sync",
     "sync:docset:create": "bun run lib/registry/docs-sync.ts docset:create",
     "sync:docset:list": "bun run lib/registry/docs-sync.ts docset:list",
-    
-    "# RSS Feeds": "",
     "rss:fetch": "bun run lib/registry/rss-aggregator.ts fetch",
     "rss:list": "bun run lib/registry/rss-aggregator.ts list",
     "rss:feeds": "bun run lib/registry/rss-aggregator.ts feeds",
     "rss:add": "bun run lib/registry/rss-aggregator.ts add",
     "rss:html": "bun run lib/registry/rss-aggregator.ts html",
     "rss": "bun run examples/rss-demo.ts feed",
-    
-    "# Secrets Management": "",
     "secrets": "bun run lib/registry/secrets-manager.ts",
     "secrets:init": "bun run lib/registry/secrets-manager.ts init",
     "secrets:set": "bun run lib/registry/secrets-manager.ts set",
@@ -1596,8 +1815,6 @@
     "bun:secrets:list": "R2_BUCKET_NAME=bun-secrets bun run lib/r2/bun-secrets-cli.ts list",
     "bun:secrets:sync": "R2_BUCKET_NAME=bun-secrets bun run lib/r2/bun-secrets-cli.ts sync",
     "bun:secrets:backup": "R2_BUCKET_NAME=bun-secrets bun run lib/r2/bun-secrets-cli.ts backup",
-    
-    "# Wiki Management": "",
     "wiki:generate": "bun run lib/mcp/wiki-generator-mcp.ts generate",
     "wiki:templates": "bun run lib/mcp/wiki-generator-mcp.ts templates",
     "wiki:template": "bun run lib/mcp/wiki-generator-mcp.ts template",
@@ -1607,21 +1824,13 @@
     "wiki:interactive": "bun run scripts/wiki-matrix-cli.ts interactive",
     "wiki:pipe": "bun run scripts/wiki-matrix-pipe.ts",
     "wiki:filter": "bun run scripts/wiki-matrix-filter.ts",
-    
-    "# Validation & Pointers": "",
     "validate:pointers:save": "bun scripts/validate-pointers.ts --save",
     "validate:pointers:compare": "bun scripts/validate-pointers.ts --compare",
-    
-    "# Status & Monitoring": "",
     "status:check": "bun run cli/endpoint-status.ts check",
     "status:watch": "bun run cli/endpoint-status.ts watch",
     "status:matrix": "bun run cli/endpoint-status.ts matrix",
-    
-    "# System Information": "",
     "info": "bun run scripts/bun-system-info.ts",
     "quick-info": "bun run scripts/quick-info.ts",
-    
-    "# AI & Demos": "",
     "ai-demo": "bun run scripts/ai-demo.ts",
     "github-integration": "bun run scripts/github-integration.ts",
     "deep-links": "bun run scripts/deep-links.ts",
@@ -1631,42 +1840,28 @@
     "quick-wins:compact": "bun run scripts/bun-quick-wins-table.ts compact",
     "quick-wins:detailed": "bun run scripts/bun-quick-wins-table.ts detailed",
     "demo:markdown": "bun run tools/markdown-demo.ts",
-    
-    "# Color Tools": "",
     "color:palette": "bun run lib/utils/color-palette-cli.ts",
     "color:contrast": "bun run lib/utils/color-contrast-cli.ts",
     "color:demo": "bun run lib/utils/advanced-hsl-demo.ts",
     "color:examples": "bun run lib/utils/bun-color-examples.ts",
-    
-    "# Reports & Metrics": "",
     "report:generate": "bun run lib/report-generator.ts",
     "metrics:generate": "bun run scripts/generate-metrics.ts",
-    
-    "# Fetch & API Demos": "",
     "fetch:docs": "bun run examples/fetch-example.js",
     "fetch:advanced": "bun run services/advanced-fetch-service.ts",
     "content-type": "bun run services/content-type-demo.ts",
     "verbose": "bun run services/verbose-fetch-demo.ts",
     "urls": "bun run examples/api-demo.ts urls",
     "demo": "bun run examples/api-demo.ts advanced",
-    
-    "# MyBunDocs": "",
     "mybundocs11:create": "bun run cli/mybundocs11.ts create",
     "mybundocs11:launch": "bun run cli/mybundocs11.ts launch",
     "mybundocs11:open": "bun run cli/mybundocs11.ts open",
     "mybundocs11:info": "bun run cli/mybundocs11.ts info",
-    
-    "# Semver Demo": "",
     "semver:demo": "bun run examples/bun-semver-demo.ts",
-    
-    "# BunX Integration": "",
     "bunx": "bun run lib/registry/bunx-integration.ts",
     "bunx:run": "bun run lib/registry/bunx-integration.ts run",
     "bunx:resolve": "bun run lib/registry/bunx-integration.ts resolve",
     "bunx:cache": "bun run lib/registry/bunx-integration.ts cache",
     "bunx:clean": "bun run lib/registry/bunx-integration.ts clean",
-    
-    "# Interactive Tools": "",
     "fw-docs": "bun run scripts/fw-docs.ts",
     "interactive-docs": "bun run scripts/interactive-docs.ts"
   },

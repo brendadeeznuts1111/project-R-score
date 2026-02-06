@@ -21,36 +21,56 @@ const COL_THRESHOLDS = { enterprise: 30, lead: 15, senior: 5, junior: 1 };
 function detectTableColumns(markdown: string, opts: { multiTable: 'max' | 'sum' } = { multiTable: 'max' }): { cols: number; tables: number; detectTime: number } {
   const start = performance.now();
   
-  // ENHANCED Regex: Nested aligns, spans, colspan hints
-  const tableSeparatorRegex = /^\|[\s\-:|\s]*\|[\s\-:|\s]*\|$/gm;  // Robust!
+  // Simplified Regex: Basic table separators
+  const tableSeparatorRegex = /^\|[\s\-\|:]+\|$/gm;  
   const allTableLines = markdown.match(/^\|[^\r\n]*\|$/gm) || [];
   
   if (allTableLines.length === 0) return { cols: DEFAULT_COLS, tables: 0, detectTime: performance.now() - start };
   
   const tables: number[] = [];
   let currentTable: string[] = [];
+  let lastWasSeparator = false;
   
   allTableLines.forEach(line => {
-    if (tableSeparatorRegex.test(line)) {  // Separator → End table
+    const isSeparator = tableSeparatorRegex.test(line);
+    
+    if (isSeparator) {
+      // Separator is part of current table, not a terminator
+      currentTable.push(line);
+      lastWasSeparator = true;
+    } else if (lastWasSeparator && currentTable.length > 2) {
+      // New table after previous one ended (header + separator + at least one row)
       if (currentTable.length > 0) {
         const validRows = currentTable.filter(l => !tableSeparatorRegex.test(l));
         if (validRows.length > 0) {
           const colCounts = validRows.map(l => Math.max(1, (l.match(/\|/g) || []).length - 1));
           tables.push(Math.max(...colCounts));
         }
-        currentTable = [];
       }
+      currentTable = [line]; // Start new table
+      lastWasSeparator = false;
     } else {
       currentTable.push(line);
+      lastWasSeparator = false;
     }
   });
+  
   // Final table
   if (currentTable.length > 0) {
     const validRows = currentTable.filter(l => !tableSeparatorRegex.test(l));
-    if (validRows.length > 0) tables.push(Math.max(...validRows.map(l => Math.max(1, (l.match(/\|/g) || []).length - 1))));
+    if (validRows.length > 0) {
+      const colCounts = validRows.map(l => Math.max(1, (l.match(/\|/g) || []).length - 1));
+      tables.push(Math.max(...colCounts));
+    }
   }
   
   const totalTables = tables.length;
+  
+  // TUNED: Single table fast-path - No false multi-table detection
+  if (totalTables === 1) {
+    return { cols: tables[0], tables: 1, detectTime: performance.now() - start };
+  }
+  
   let cols = opts.multiTable === 'sum' ? tables.reduce((a, b) => a + b, 0) : Math.max(...tables, DEFAULT_COLS);
   
   return { cols: Math.min(cols, 100), tables: totalTables, detectTime: performance.now() - start };  // Cap crave!
@@ -123,9 +143,10 @@ export function scanFeatures(markdown: string): { features: ExtendedFeatureCount
     gfmScore: 0  // Calc later
   };
   
-  // GFM Score: Detected / Expected max (heuristic)
+  // GFM Score: Detected / Expected max (heuristic) - v2.7: Capped at 100
   const totalPossible = 12;  // headings+tables+code+links+images+tasks+strike+quotes+lists.o+u+math+wiki
-  features.gfmScore = Math.round((Object.values(features).reduce((sum, v) => sum + (typeof v === 'object' ? (v as any).ordered + (v as any).unordered : v), 0) / totalPossible) * 100);
+  const totalHits = Object.values(features).reduce((sum, v) => sum + (typeof v === 'object' ? (v as any).ordered + (v as any).unordered : v), 0);
+  features.gfmScore = Math.min(100, Math.round(totalHits / totalPossible * 100));
   
   return { features, scanTime: performance.now() - start };
 }
@@ -150,7 +171,12 @@ function validateFilePath(filePath: string): string {
  * Junior-friendly markdown profiling with hyper-enhanced table detection
  * Simple, structured, no complex decisions required
  */
-async function juniorProfile(mdFile: string): Promise<LeadSpecProfile> {
+async function juniorProfile(mdFile: string, options: { lspSafe?: boolean } = {}): Promise<LeadSpecProfile> {
+  const { lspSafe = false } = options;
+  
+  if (lspSafe) {
+    console.log('\x1b[1;32m🛡️ LSP-SAFE MODE: No preview, fast scan\x1b[0m');
+  }
   console.log(`\x1b[1;34m👤 Junior Runner: Processing ${mdFile}\x1b[0m`);
   
   // Junior Step 1: Validate and load file
@@ -273,7 +299,7 @@ async function juniorProfile(mdFile: string): Promise<LeadSpecProfile> {
 /**
  * Junior-friendly terminal output
  */
-function displayJuniorDashboard(profile: LeadSpecProfile, mdFile: string, md: string): void {
+function displayJuniorDashboard(profile: LeadSpecProfile, mdFile: string, md: string, lspSafe: boolean = false): void {
   console.log('\n\x1b[1;32m👤 Junior Dashboard\x1b[0m');
   console.log('\x1b[1;36m' + '='.repeat(50) + '\x1b[0m');
   
@@ -312,16 +338,20 @@ function displayJuniorDashboard(profile: LeadSpecProfile, mdFile: string, md: st
     }
   });
   
-  // ANSI preview (first 500 chars)
-  console.log('\n\x1b[1;35m📝 ANSI Preview (first 500 chars):\x1b[0m');
-  const ansiOutput = Bun.markdown.render(md.slice(0, 500), {
-    heading: (children, { level }) => `\x1b[1;3${level}m${children}\x1b[0m`,
-    table: children => `\x1b[7m${children}\x1b[27m`,
-    code: (children) => `\x1b[36m${children}\x1b[0m`,
-    strong: (children) => `\x1b[1m${children}\x1b[0m`,
-    emphasis: (children) => `\x1b[3m${children}\x1b[0m`
-  });
-  console.log(ansiOutput + '\x1b[0m...');
+  // ANSI preview (first 500 chars) - Skip in LSP-safe mode
+  if (!lspSafe) {
+    console.log('\n\x1b[1;35m📝 ANSI Preview (first 500 chars):\x1b[0m');
+    const ansiOutput = Bun.markdown.render(md.slice(0, 500), {
+      heading: (children, { level }) => `\x1b[1;3${level}m${children}\x1b[0m`,
+      table: children => `\x1b[7m${children}\x1b[27m`,
+      code: (children) => `\x1b[36m${children}\x1b[0m`,
+      strong: (children) => `\x1b[1m${children}\x1b[0m`,
+      emphasis: (children) => `\x1b[3m${children}\x1b[0m`
+    });
+    console.log(ansiOutput + '\x1b[0m...');
+  } else {
+    console.log('\n\x1b[1;32m🛡️ LSP-SAFE: ANSI preview skipped for performance\x1b[0m');
+  }
   
   // Wide table alert
   if (tableCols >= ENTERPRISE_COLS_THRESHOLD) {
@@ -354,17 +384,19 @@ async function main() {
   const args = process.argv.slice(2);
   
   if (args.length === 0) {
-    console.log('\x1b[1;31m❌ Usage: junior-run <markdown-file>\x1b[0m');
+    console.log('\x1b[1;31m❌ Usage: junior-run <markdown-file> [--lsp-safe]\x1b[0m');
     console.log('\x1b[1;36mExample: junior-run demo.md\x1b[0m');
+    console.log('\x1b[1;36mExample: junior-run huge-50col.md --lsp-safe\x1b[0m');
     process.exit(1);
   }
   
   const mdFile = args[0];
+  const lspSafe = args.includes('--lsp-safe');
   
   try {
-    const profile = await juniorProfile(mdFile);
+    const profile = await juniorProfile(mdFile, { lspSafe });
     const md = await Bun.file(mdFile).text();
-    displayJuniorDashboard(profile, mdFile, md);
+    displayJuniorDashboard(profile, mdFile, md, lspSafe);
     await exportForSeniors(profile);
   } catch (error) {
     console.error('\x1b[1;31m❌ Junior Error:\x1b[0m', error.message);
@@ -377,5 +409,5 @@ if (import.meta.main) {
   main();
 }
 
-// Export for use in hierarchy benchmark
-export { juniorProfile };
+// Export for use in hierarchy benchmark and debugging
+export { juniorProfile, detectTableColumns };
