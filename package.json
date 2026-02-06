@@ -23,6 +23,20 @@
     "blog": "https://blog.factory-wager.com",
     "status": "https://status.factory-wager.com"
   },
+  "cdn": {
+    "primary": "https://cdn.factory-wager.com",
+    "assets": "https://assets.factory-wager.com",
+    "static": "https://static.factory-wager.com",
+    "media": "https://media.factory-wager.com"
+  },
+  "buckets": {
+    "storage": "factorywager-storage",
+    "backups": "factorywager-backups", 
+    "logs": "factorywager-logs",
+    "cache": "factorywager-cache",
+    "uploads": "factorywager-uploads",
+    "secrets": "factorywager-secrets"
+  },
   "license": "MIT",
   "keywords": [
     "bun",
