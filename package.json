@@ -28,6 +28,7 @@
     "ai",
     "factorywager"
   ],
+  "status": "active",
   "type": "module",
   "scripts": {
     "dev": "bun run --watch server/server-enhanced.ts",
