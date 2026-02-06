@@ -5,6 +5,7 @@
 console.log('🛡️ HEADER-DEFAULTS_BASE - Comprehensive Test Suite\n');
 
 import { StrongDefaultsHttpClient } from './strong-defaults-http-client';
+import '../lib/http'; // Ensure lib/http is included
 
 // Test configuration
 const TEST_ENDPOINTS = {

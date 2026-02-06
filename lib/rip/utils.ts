@@ -143,12 +143,27 @@ export async function scanDirectory(
   const allResults: ScanResult[] = [];
   let totalFiles = 0;
 
-  // Count total files first
+  // Count total TypeScript/JavaScript files first
   try {
-    const countResult = await executeRipgrep('.', directory, ['--count', '--files-with-matches']);
+    // Use a pattern that matches any content in the files
+    const countResult = await executeRipgrep('import|export|function|class|const|let|var', directory, ['--files-with-matches', '--type', 'js', '--type', 'ts', '--type', 'jsx', '--type', 'tsx']);
     totalFiles = countResult.length;
   } catch (error) {
-    console.warn('⚠️  Could not count total files');
+    console.warn('⚠️  Could not count total files with pattern, trying file list');
+    // Fallback: use a simple pattern that matches anything
+    try {
+      const listResult = await executeRipgrep('\\w', directory, ['--files-with-matches', '--type', 'js', '--type', 'ts', '--type', 'jsx', '--type', 'tsx']);
+      totalFiles = listResult.length;
+    } catch (listError) {
+      console.warn('⚠️  Could not list files either');
+      // Final fallback: try to find any files with common patterns
+      try {
+        const fallbackResult = await executeRipgrep('.', directory, ['--files-with-matches', '--type', 'js', '--type', 'ts', '--type', 'jsx', '--type', 'tsx']);
+        totalFiles = fallbackResult.length;
+      } catch (fallbackError) {
+        console.warn('⚠️  Could not count files with fallback pattern');
+      }
+    }
   }
 
   // Scan for each pattern type
@@ -325,13 +340,5 @@ export async function checkRipgrepAvailability(): Promise<boolean> {
 // EXPORTS
 // ============================================================================
 
-export { PATTERNS };
-export default {
-  executeRipgrep,
-  parseRipgrepOutput,
-  scanDirectory,
-  generateSuggestions,
-  formatReport,
-  checkRipgrepAvailability,
-  PATTERNS
-};
+// All exports are already declared above with 'export' keyword
+// No need for re-export block

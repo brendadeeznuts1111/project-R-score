@@ -58,6 +58,122 @@ class RulesEngine {
   }
 
   /**
+   * Enhanced validation with detailed Bun pattern checking
+   */
+  async enhancedCommand(directory: string = '.'): Promise<void> {
+    console.log('🔍 FACTORYWAGER RULES v4.0 - Enhanced Validation');
+    console.log('═══════════════════════════════════════════════════════════════');
+
+    try {
+      // Check ripgrep availability
+      const hasRipgrep = await checkRipgrepAvailability();
+      if (!hasRipgrep) {
+        console.error('❌ Ripgrep not available. Please install ripgrep first.');
+        process.exit(1);
+      }
+
+      console.log(`📁 Scanning directory: ${directory}`);
+      console.log('⚡ Performing enhanced Bun pattern validation...');
+
+      const startTime = Date.now();
+      const report = await scanDirectory(directory);
+      const scanTime = Date.now() - startTime;
+
+      console.log(`\n📊 Enhanced Validation Results:`);
+      console.log(`  Scan Time: ${scanTime}ms`);
+      console.log(`  Files Scanned: ${report.totalFiles}`);
+      console.log(`  Issues Found: ${report.issuesFound}`);
+
+      // Detailed pattern analysis
+      console.log('\n🔍 Pattern Compliance Analysis:');
+      
+      const patternStats = {
+        bunFileUsage: 0,
+        bunServeUsage: 0,
+        bunYamlUsage: 0,
+        bunSemverUsage: 0,
+        bunHashUsage: 0,
+        bunSpawnUsage: 0,
+        nonBunPatterns: 0,
+        securityIssues: 0
+      };
+
+      // Analyze each result
+      for (const result of report.scanResults) {
+        if (result.content.includes('Bun.file')) patternStats.bunFileUsage++;
+        if (result.content.includes('Bun.serve')) patternStats.bunServeUsage++;
+        if (result.content.includes('YAML.parse') || result.content.includes('Bun.YAML')) patternStats.bunYamlUsage++;
+        if (result.content.includes('semver.') || result.content.includes('Bun.semver')) patternStats.bunSemverUsage++;
+        if (result.content.includes('Bun.hash') || result.content.includes('Bun.CryptoHasher')) patternStats.bunHashUsage++;
+        if (result.content.includes('Bun.spawn')) patternStats.bunSpawnUsage++;
+        if (result.type === 'nonbun') patternStats.nonBunPatterns++;
+        if (result.content.includes('eval(') || result.content.includes('innerHTML')) patternStats.securityIssues++;
+      }
+
+      console.log(`  ✅ Bun.file() Usage: ${patternStats.bunFileUsage}`);
+      console.log(`  ✅ Bun.serve() Usage: ${patternStats.bunServeUsage}`);
+      console.log(`  ✅ Bun.YAML Usage: ${patternStats.bunYamlUsage}`);
+      console.log(`  ✅ Bun.semver Usage: ${patternStats.bunSemverUsage}`);
+      console.log(`  ✅ Bun.hash Usage: ${patternStats.bunHashUsage}`);
+      console.log(`  ✅ Bun.spawn Usage: ${patternStats.bunSpawnUsage}`);
+      
+      if (patternStats.nonBunPatterns > 0) {
+        console.log(`  ⚠️  Non-Bun Patterns: ${patternStats.nonBunPatterns}`);
+      }
+      if (patternStats.securityIssues > 0) {
+        console.log(`  🚨 Security Issues: ${patternStats.securityIssues}`);
+      }
+
+      if (report.issuesFound > 0) {
+        console.log('\n🔧 Detailed Issue Breakdown:');
+        
+        // Group by type
+        const grouped = report.scanResults.reduce((acc, result) => {
+          if (!acc[result.type]) acc[result.type] = [];
+          acc[result.type].push(result);
+          return acc;
+        }, {} as Record<string, typeof report.scanResults>);
+
+        for (const [type, issues] of Object.entries(grouped)) {
+          console.log(`\n  ${type.toUpperCase()} (${issues.length}):`);
+          for (const issue of issues.slice(0, 3)) {
+            const suggestion = this.generateFixSuggestion(issue);
+            console.log(`    📝 ${issue.file}:${issue.line}`);
+            console.log(`       Current: ${issue.content.substring(0, 60)}...`);
+            console.log(`       Suggested: ${suggestion}`);
+          }
+          if (issues.length > 3) {
+            console.log(`    ... and ${issues.length - 3} more ${type} issues`);
+          }
+        }
+      }
+
+      // Generate compliance score
+      const totalFiles = report.totalFiles;
+      const compliantFiles = totalFiles - report.issuesFound;
+      const complianceScore = totalFiles > 0 ? Math.round((compliantFiles / totalFiles) * 100) : 100;
+      
+      console.log(`\n📈 Compliance Score: ${complianceScore}%`);
+      
+      if (complianceScore >= 90) {
+        console.log('  🌟 Excellent - Nearly perfect Bun pattern adoption!');
+      } else if (complianceScore >= 75) {
+        console.log('  ✅ Good - Strong Bun pattern adoption with room for improvement');
+      } else if (complianceScore >= 50) {
+        console.log('  ⚠️  Fair - Mixed pattern adoption, needs attention');
+      } else {
+        console.log('  🚨 Poor - Low Bun pattern adoption, immediate action required');
+      }
+
+    } catch (error) {
+      console.error('❌ Enhanced validation failed:', error.message);
+      process.exit(1);
+    }
+
+    console.log('\n═══════════════════════════════════════════════════════════════');
+  }
+
+  /**
    * Hyper-validate with purge check
    */
   async validateCommand(directory: string = '.'): Promise<void> {
@@ -212,13 +328,43 @@ class RulesEngine {
     
     if (issue.type === 'nonbun') {
       if (content.includes('require(')) {
-        return 'Replace with ES6 import statement';
+        return 'Replace with ES6 import statement: import { module } from "package";';
       }
       if (content.includes('fs.')) {
-        return 'Replace with Bun.file() API';
+        return 'Replace with Bun.file() API: const content = await Bun.file("./path").text();';
+      }
+      if (content.includes('fs.readFileSync')) {
+        return 'Replace with Bun.file() API: const content = await Bun.file("./path").text();';
+      }
+      if (content.includes('fs.writeFile')) {
+        return 'Replace with Bun.write() API: await Bun.write("./path", content);';
       }
       if (content.includes('module.exports')) {
-        return 'Replace with ES6 export statement';
+        return 'Replace with ES6 export statement: export default value;';
+      }
+      if (content.includes('process.exit')) {
+        return 'Replace with Bun.exit() API: Bun.exit(code);';
+      }
+      if (content.includes('child_process.spawn')) {
+        return 'Replace with Bun.spawn() API: const proc = Bun.spawn(["cmd"], { cwd: "." });';
+      }
+      if (content.includes('crypto.createHash')) {
+        return 'Replace with Bun.hash() API: const hash = Bun.hash("data");';
+      }
+      if (content.includes('crypto.createHmac')) {
+        return 'Replace with Bun.CryptoHasher API: const hasher = new Bun.CryptoHasher("sha256", secret);';
+      }
+      if (content.includes('http.createServer')) {
+        return 'Replace with Bun.serve() API: Bun.serve({ port: 3000, fetch(req) { return new Response("Hello"); } });';
+      }
+      if (content.includes('JSON.parse') && content.includes('fs.')) {
+        return 'Replace with Bun.file().json() API: const data = await Bun.file("./data.json").json();';
+      }
+      if (content.includes('require("yaml")') || content.includes('require("js-yaml")')) {
+        return 'Replace with Bun.YAML API: import { YAML } from "bun"; const data = YAML.parse(yamlText);';
+      }
+      if (content.includes('require("semver")')) {
+        return 'Replace with Bun.semver API: import { semver } from "bun"; semver.satisfies(version, range);';
       }
     }
     
@@ -231,7 +377,7 @@ class RulesEngine {
     }
     
     if (content.includes('innerHTML')) {
-      return 'Use safer DOM manipulation';
+      return 'Use safer DOM manipulation or Bun.escapeHTML()';
     }
     
     return 'Review and update code';
@@ -249,6 +395,11 @@ async function main() {
   switch (command) {
     case 'config':
       await engine.configCommand();
+      break;
+      
+    case 'enhanced':
+      const enhancedDir = args[0] || '.';
+      await engine.enhancedCommand(enhancedDir);
       break;
       
     case 'validate':
@@ -276,6 +427,7 @@ USAGE:
 
 COMMANDS:
   config              Load and display v4.0 schema configuration
+  enhanced [dir]      Enhanced validation with detailed pattern analysis
   validate [dir]      Hyper-validate codebase with purge check
   fix [dir]           Auto-purge code issues (requires --auto or --dry-run)
   help                Show this help message
@@ -286,6 +438,7 @@ OPTIONS:
 
 EXAMPLES:
   bun run scripts/bun-rules.ts config
+  bun run scripts/bun-rules.ts enhanced ./src
   bun run scripts/bun-rules.ts validate ./src
   bun run scripts/bun-rules.ts fix ./src --dry-run
   bun run scripts/bun-rules.ts fix ./src --auto

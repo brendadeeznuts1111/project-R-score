@@ -6,6 +6,8 @@
  * Prevents common content-type and header mistakes
  */
 
+import '../lib/http'; // Ensure lib/http is included
+
 export interface SafeFetchOptions extends RequestInit {
   // Auto-detect and set appropriate headers
   autoHeaders?: boolean;

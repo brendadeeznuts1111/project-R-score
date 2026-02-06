@@ -3,6 +3,8 @@
 
 console.log('🛡️ Strong Defaults HTTP Client - Better defaults for production\n');
 
+import '../lib/http'; // Ensure lib/http is included
+
 export interface StrongDefaultsConfig {
   // Enhanced default headers
   defaultHeaders?: Record<string, string>;

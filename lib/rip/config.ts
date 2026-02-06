@@ -361,17 +361,5 @@ rules:
 // EXPORTS
 // ============================================================================
 
-export {
-  DEFAULT_SCHEMA,
-  DEFAULT_DEFAULTS,
-  DEFAULT_GREP_CONFIG,
-  DEFAULT_CONFIG,
-  PRESET_CONFIGS
-};
-
-export default {
-  ConfigValidator,
-  ConfigManager,
-  DEFAULT_CONFIG,
-  PRESET_CONFIGS
-};
+// All exports are already declared above with 'export' keyword
+// No need for re-export block
