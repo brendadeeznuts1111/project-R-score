@@ -46,6 +46,171 @@
       }
     }
   },
+  "profiles": {
+    "code": {
+      "development": {
+        "description": "Development environment profile",
+        "env": {
+          "NODE_ENV": "development",
+          "LOG_LEVEL": "debug",
+          "HOT_RELOAD": "true"
+        },
+        "scripts": ["dev", "test:watch", "lint:fix"]
+      },
+      "production": {
+        "description": "Production environment profile",
+        "env": {
+          "NODE_ENV": "production",
+          "LOG_LEVEL": "error",
+          "HOT_RELOAD": "false"
+        },
+        "scripts": ["build", "start", "security:check"]
+      },
+      "testing": {
+        "description": "Testing environment profile",
+        "env": {
+          "NODE_ENV": "test",
+          "LOG_LEVEL": "silent",
+          "COVERAGE": "true"
+        },
+        "scripts": ["test", "test:coverage", "lint"]
+      }
+    },
+    "benchmarks": {
+      "performance": {
+        "description": "Performance benchmarking profile",
+        "scripts": ["benchmark", "profile:barbershop"],
+        "metrics": ["cpu", "memory", "throughput", "latency"]
+      },
+      "load": {
+        "description": "Load testing profile",
+        "scripts": ["test:load", "test:stress"],
+        "metrics": ["concurrent-users", "response-time", "error-rate"]
+      },
+      "security": {
+        "description": "Security benchmarking profile",
+        "scripts": ["security:audit", "security:check"],
+        "metrics": ["vulnerabilities", "compliance-score", "security-posture"]
+      }
+    },
+    "testing": {
+      "unit": {
+        "description": "Unit testing profile",
+        "scripts": ["test:unit"],
+        "coverage": ">= 80%",
+        "framework": "bun-test"
+      },
+      "integration": {
+        "description": "Integration testing profile",
+        "scripts": ["test:integration"],
+        "coverage": ">= 70%",
+        "framework": "bun-test"
+      },
+      "e2e": {
+        "description": "End-to-end testing profile",
+        "scripts": ["test:e2e"],
+        "coverage": ">= 60%",
+        "framework": "playwright"
+      }
+    }
+  },
+  "permissions": {
+    "cli": {
+      "admin": {
+        "description": "Full administrative access",
+        "commands": ["*"],
+        "scopes": ["read", "write", "delete", "admin"]
+      },
+      "developer": {
+        "description": "Developer access",
+        "commands": ["dev", "test", "lint", "build"],
+        "scopes": ["read", "write"]
+      },
+      "viewer": {
+        "description": "Read-only access",
+        "commands": ["dashboard", "logs:view", "status"],
+        "scopes": ["read"]
+      }
+    },
+    "api": {
+      "public": {
+        "endpoints": ["/api/public/*"],
+        "methods": ["GET"],
+        "rate-limit": "100/hour"
+      },
+      "authenticated": {
+        "endpoints": ["/api/user/*", "/api/data/*"],
+        "methods": ["GET", "POST", "PUT"],
+        "rate-limit": "1000/hour"
+      },
+      "admin": {
+        "endpoints": ["/api/admin/*"],
+        "methods": ["*"],
+        "rate-limit": "unlimited"
+      }
+    }
+  },
+  "cheatsheets": {
+    "cli": {
+      "development": {
+        "description": "Development workflow commands",
+        "commands": {
+          "Start Development": "bun run dev",
+          "Run Tests": "bun run test",
+          "Lint Code": "bun run lint",
+          "Fix Linting": "bun run lint:fix",
+          "Build Project": "bun run build"
+        }
+      },
+      "security": {
+        "description": "Security and compliance commands",
+        "commands": {
+          "Security Audit": "bun run security:audit",
+          "Security Check": "bun run security:check",
+          "Validate URLs": "bun run validate:bun-urls",
+          "GitHub Validation": "bun run validate:github"
+        }
+      },
+      "performance": {
+        "description": "Performance and benchmarking commands",
+        "commands": {
+          "Run Benchmarks": "bun run benchmark",
+          "Profile Barbershop": "bun run profile:barbershop",
+          "Quick Profile": "bun run profile:barbershop:quick"
+        }
+      },
+      "ripgrep": {
+        "description": "FactoryWager RIPGREP v4.0 commands",
+        "commands": {
+          "Show Config": "bun run rules:config",
+          "Validate Code": "bun run rules:validate",
+          "Fix Issues": "bun run rules:fix",
+          "AI Purge": "bun run ai:purge",
+          "Generate Rule": "bun run rip-conform --pattern 'fs\\.'",
+          "Grep Non-Bun": "bun run grep:non-bun",
+          "Rebuild Index": "bun run index:rg"
+        }
+      }
+    },
+    "code": {
+      "typescript": {
+        "description": "TypeScript patterns and examples",
+        "examples": {
+          "Async Function": "async function fetchData(): Promise<Data> { return await fetch('/api/data'); }",
+          "Error Handling": "try { await riskyOperation(); } catch (error) { console.error('Operation failed:', error); }",
+          "Type Guard": "function isString(value: unknown): value is string { return typeof value === 'string'; }"
+        }
+      },
+      "bun": {
+        "description": "Bun-specific patterns",
+        "examples": {
+          "File Read": "const content = await Bun.file('./data.txt').text();",
+          "HTTP Server": "const server = Bun.serve({ port: 3000, fetch(req) { return new Response('Hello'); } });",
+          "SQLite": "const db = new Database('data.db'); const results = db.query('SELECT * FROM users').all();"
+        }
+      }
+    }
+  },
   "subdomains": {
     "api": "https://api.factory-wager.com",
     "docs": "https://docs.factory-wager.com",
