@@ -529,6 +529,175 @@
       "ssl": "/etc/ssl"
     }
   },
+  "documentation": {
+    "constants": {
+      "version": "v5.1.0",
+      "last_updated": "2026-02-06",
+      "maintainer": "FactoryWager Team",
+      "review_cycle": "quarterly",
+      "compliance": ["SOC2", "GDPR", "HIPAA"]
+    },
+    "sections": {
+      "api": {
+        "title": "API Documentation",
+        "description": "Complete REST API reference with examples",
+        "url": "https://docs.factory-wager.com/api",
+        "format": "OpenAPI 3.0",
+        "interactive": true,
+        "sdk_support": ["javascript", "python", "go", "java"]
+      },
+      "guides": {
+        "title": "User Guides",
+        "description": "Step-by-step tutorials and best practices",
+        "url": "https://docs.factory-wager.com/guides",
+        "categories": ["getting-started", "advanced", "troubleshooting"],
+        "difficulty_levels": ["beginner", "intermediate", "advanced"]
+      },
+      "reference": {
+        "title": "Technical Reference",
+        "description": "In-depth technical documentation",
+        "url": "https://docs.factory-wager.com/reference",
+        "includes": ["architecture", "database-schema", "security-model"],
+        "diagrams": ["architecture", "data-flow", "security"]
+      },
+      "examples": {
+        "title": "Code Examples",
+        "description": "Practical code samples and implementations",
+        "url": "https://docs.factory-wager.com/examples",
+        "languages": ["typescript", "javascript", "python", "bash"],
+        "categories": ["basic", "intermediate", "advanced"]
+      },
+      "changelog": {
+        "title": "Changelog",
+        "description": "Version history and release notes",
+        "url": "https://docs.factory-wager.com/changelog",
+        "format": "semver",
+        "auto_generated": true
+      },
+      "faq": {
+        "title": "Frequently Asked Questions",
+        "description": "Common questions and answers",
+        "url": "https://docs.factory-wager.com/faq",
+        "categories": ["general", "technical", "billing", "security"],
+        "search_enabled": true
+      }
+    },
+    "standards": {
+      "writing_style": {
+        "tone": "professional",
+        "voice": "helpful",
+        "readability_level": "8th grade",
+        "max_sentence_length": 25,
+        "use_active_voice": true
+      },
+      "formatting": {
+        "markdown": "GitHub Flavored",
+        "code_blocks": "typescript",
+        "diagrams": "mermaid",
+        "tables": "github_format",
+        "images": "webp",
+        "max_image_size": "2mb"
+      },
+      "accessibility": {
+        "alt_text_required": true,
+        "contrast_ratio": "4.5:1",
+        "screen_reader_friendly": true,
+        "keyboard_navigable": true
+      },
+      "seo": {
+        "meta_descriptions": true,
+        "open_graph": true,
+        "structured_data": true,
+        "sitemap": "auto_generated"
+      }
+    },
+    "workflow": {
+      "creation": {
+        "template_required": true,
+        "peer_review": true,
+        "technical_review": true,
+        "approval_process": ["author", "reviewer", "maintainer"]
+      },
+      "updates": {
+        "minor_changes": "author_only",
+        "major_changes": "full_review",
+        "breaking_changes": "team_approval",
+        "security_updates": "immediate"
+      },
+      "publishing": {
+        "auto_deploy": true,
+        "staging_review": true,
+        "production_approval": "maintainer",
+        "rollback_procedure": "automated"
+      }
+    },
+    "tools": {
+      "generators": {
+        "api_docs": "OpenAPI Generator",
+        "schema_docs": "JSON Schema Generator",
+        "code_examples": "TSDoc",
+        "diagrams": "Mermaid Live Editor"
+      },
+      "validation": {
+        "link_checker": "automated",
+        "spell_check": "enabled",
+        "grammar_check": "enabled",
+        "accessibility_check": "automated"
+      },
+      "analytics": {
+        "page_views": "Google Analytics",
+        "search_queries": "Algolia",
+        "user_feedback": "Hotjar",
+        "documentation_usage": "Custom tracking"
+      }
+    },
+    "maintenance": {
+      "schedule": {
+        "link_checking": "weekly",
+        "content_review": "monthly",
+        "accessibility_audit": "quarterly",
+        "full_audit": "semi-annually"
+      },
+      "responsibilities": {
+        "content_creators": "Development Team",
+        "technical_reviewers": "Senior Engineers",
+        "maintainers": "Documentation Team",
+        "approvers": "Product Managers"
+      },
+      "quality_metrics": {
+        "accuracy_target": "95%",
+        "completeness_target": "90%",
+        "user_satisfaction_target": "4.5/5",
+        "response_time_target": "24h"
+      }
+    },
+    "integration": {
+      "platforms": {
+        "github": {
+          "docs_in_repo": true,
+          "issue_templates": true,
+          "pr_templates": true,
+          "wiki_integration": true
+        },
+        "slack": {
+          "notifications": true,
+          "doc_updates": "#documentation",
+          "feedback_channel": "#doc-feedback"
+        },
+        "confluence": {
+          "sync_enabled": true,
+          "space_key": "FW",
+          "parent_page": "Documentation"
+        }
+      },
+      "apis": {
+        "search": "Algolia",
+        "analytics": "Google Analytics",
+        "feedback": "UserVoice",
+        "notifications": "Slack API"
+      }
+    }
+  },
   "license": "MIT",
   "keywords": [
     "bun",
