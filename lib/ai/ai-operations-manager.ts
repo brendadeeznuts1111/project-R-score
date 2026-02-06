@@ -22,7 +22,7 @@
  * - Race condition prevention
  */
 
-import { logger } from '../monitoring/structured-logger';
+import { logger } from '../core/structured-logger';
 import { globalCaches } from '../performance/cache-manager';
 import { nanoseconds, deepEquals, openInEditor } from 'bun';
 import * as yaml from 'js-yaml'; // Use js-yaml instead of bun.yaml

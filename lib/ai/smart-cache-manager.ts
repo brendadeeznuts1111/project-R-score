@@ -9,7 +9,7 @@
 
 import { CacheManager } from '../performance/cache-manager';
 import { aiOperations } from './ai-operations-manager';
-import { logger } from '../monitoring/structured-logger';
+import { logger } from '../core/structured-logger';
 import { Mutex } from '../core/safe-concurrency';
 
 interface AccessPattern {
@@ -78,7 +78,7 @@ export class SmartCacheManager<K = string, V = any> {
    * Get value with AI-enhanced caching
    */
   async get(key: K): Promise<V | undefined> {
-    return await this.mutex.run(async () => {
+    return await this.mutex.withLock(async () => {
       const startTime = Date.now();
 
       // Record access pattern
@@ -117,7 +117,7 @@ export class SmartCacheManager<K = string, V = any> {
    * Set value with intelligent caching strategy
    */
   async set(key: K, value: V, ttl?: number): Promise<void> {
-    await this.mutex.run(async () => {
+    await this.mutex.withLock(async () => {
       const size = this.calculateSize(value);
 
       // Get AI recommendation for TTL
@@ -268,7 +268,7 @@ export class SmartCacheManager<K = string, V = any> {
    * Record access pattern for learning
    */
   private async recordAccess(key: K, size?: number): Promise<void> {
-    await this.patternMutex.run(async () => {
+    await this.patternMutex.withLock(async () => {
       const now = Date.now();
       let pattern = this.accessPatterns.get(key);
 

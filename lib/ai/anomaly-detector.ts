@@ -8,7 +8,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { logger } from '../monitoring/structured-logger';
+import { logger } from '../core/structured-logger';
 import { auditLogger } from '../security/secret-audit-logger';
 
 export interface Anomaly {
