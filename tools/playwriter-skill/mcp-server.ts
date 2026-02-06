@@ -15,6 +15,10 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
+import { PlaywriterR2Integration } from './r2-integration';
+
+// Check if R2 is configured
+const R2_ENABLED = !!(process.env.R2_ACCOUNT_ID && process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY);
 
 // Tool definitions
 const TOOLS = [
@@ -112,6 +116,50 @@ const TOOLS = [
     inputSchema: {
       type: 'object',
       properties: {},
+    },
+  },
+  {
+    name: 'browser_screenshot_r2',
+    description: R2_ENABLED 
+      ? 'Take a screenshot and upload to R2 storage'
+      : 'Upload screenshot to R2 (R2 not configured - set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY)',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        session: { type: 'number', description: 'Session ID' },
+        fullPage: { type: 'boolean', description: 'Capture full page', default: true },
+        labels: { type: 'boolean', description: 'Add accessibility labels', default: false },
+        bucket: { type: 'string', description: 'R2 bucket name (optional)' },
+      },
+      required: ['session'],
+    },
+  },
+  {
+    name: 'browser_snapshot_r2',
+    description: R2_ENABLED
+      ? 'Capture accessibility snapshot and upload to R2'
+      : 'Upload snapshot to R2 (R2 not configured)',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        session: { type: 'number', description: 'Session ID' },
+        bucket: { type: 'string', description: 'R2 bucket name (optional)' },
+      },
+      required: ['session'],
+    },
+  },
+  {
+    name: 'browser_list_artifacts',
+    description: R2_ENABLED
+      ? 'List all artifacts stored in R2 for a session'
+      : 'List artifacts (R2 not configured)',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        session: { type: 'number', description: 'Session ID' },
+        bucket: { type: 'string', description: 'R2 bucket name (optional)' },
+      },
+      required: ['session'],
     },
   },
 ];
@@ -231,6 +279,134 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             { type: 'text', text: result.stderr || '' },
           ],
         };
+      }
+
+      case 'browser_screenshot_r2': {
+        if (!R2_ENABLED) {
+          return {
+            content: [{ type: 'text', text: 'R2 not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY' }],
+            isError: true,
+          };
+        }
+
+        const { session, fullPage = true, labels = false, bucket } = args as { session: number; fullPage?: boolean; labels?: boolean; bucket?: string };
+        
+        try {
+          const r2 = new PlaywriterR2Integration({ sessionId: session, bucket });
+          
+          // Take screenshot via playwriter
+          let code: string;
+          if (labels) {
+            code = `const buffer = await screenshotWithAccessibilityLabels({ page }); console.log('SCREENSHOT_BASE64:' + buffer.toString('base64'));`;
+          } else {
+            code = `const buffer = await page.screenshot({ fullPage: ${fullPage} }); console.log('SCREENSHOT_BASE64:' + buffer.toString('base64'));`;
+          }
+          
+          const result = await executePlaywriter(['-s', String(session), '-e', code]);
+          const match = result.stdout.match(/SCREENSHOT_BASE64:([A-Za-z0-9+/=]+)/);
+          
+          if (!match) {
+            return {
+              content: [{ type: 'text', text: 'Failed to capture screenshot' }],
+              isError: true,
+            };
+          }
+          
+          const buffer = Buffer.from(match[1], 'base64');
+          const url = await r2.uploadScreenshot(new Uint8Array(buffer), {
+            url: 'captured via playwriter',
+            timestamp: new Date().toISOString(),
+            width: 1920,
+            height: 1080,
+            fullPage,
+            labels,
+          });
+          
+          return {
+            content: [
+              { type: 'text', text: `Screenshot uploaded to R2` },
+              { type: 'text', text: `URL: ${url}` },
+            ],
+          };
+        } catch (error) {
+          return {
+            content: [{ type: 'text', text: `R2 upload error: ${error instanceof Error ? error.message : String(error)}` }],
+            isError: true,
+          };
+        }
+      }
+
+      case 'browser_snapshot_r2': {
+        if (!R2_ENABLED) {
+          return {
+            content: [{ type: 'text', text: 'R2 not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY' }],
+            isError: true,
+          };
+        }
+
+        const { session, bucket } = args as { session: number; bucket?: string };
+        
+        try {
+          const r2 = new PlaywriterR2Integration({ sessionId: session, bucket });
+          
+          // Get accessibility snapshot
+          const code = `const snapshot = await accessibilitySnapshot({ page }); console.log('SNAPSHOT_JSON:' + JSON.stringify(snapshot));`;
+          const result = await executePlaywriter(['-s', String(session), '-e', code]);
+          const match = result.stdout.match(/SNAPSHOT_JSON:(.+)/);
+          
+          if (!match) {
+            return {
+              content: [{ type: 'text', text: 'Failed to capture snapshot' }],
+              isError: true,
+            };
+          }
+          
+          const url = await r2.uploadSnapshot(match[1]);
+          
+          return {
+            content: [
+              { type: 'text', text: `Snapshot uploaded to R2` },
+              { type: 'text', text: `URL: ${url}` },
+            ],
+          };
+        } catch (error) {
+          return {
+            content: [{ type: 'text', text: `R2 upload error: ${error instanceof Error ? error.message : String(error)}` }],
+            isError: true,
+          };
+        }
+      }
+
+      case 'browser_list_artifacts': {
+        if (!R2_ENABLED) {
+          return {
+            content: [{ type: 'text', text: 'R2 not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY' }],
+            isError: true,
+          };
+        }
+
+        const { session, bucket } = args as { session: number; bucket?: string };
+        
+        try {
+          const r2 = new PlaywriterR2Integration({ sessionId: session, bucket });
+          const artifacts = await r2.listArtifacts();
+          
+          const formatted = artifacts.map(a => 
+            `- ${a.key} (${(a.size / 1024).toFixed(2)} KB, ${a.lastModified.toISOString()})`
+          ).join('\n');
+          
+          return {
+            content: [
+              { type: 'text', text: `Artifacts for session ${session}:` },
+              { type: 'text', text: formatted || 'No artifacts found' },
+            ],
+          };
+        } catch (error) {
+          return {
+            content: [{ type: 'text', text: `R2 list error: ${error instanceof Error ? error.message : String(error)}` }],
+            isError: true,
+          };
+        }
       }
 
       default:
