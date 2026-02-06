@@ -329,6 +329,99 @@
       }
     }
   },
+  "monitoring": {
+    "observability": {
+      "provider": "prometheus",
+      "endpoint": "https://metrics.factory-wager.com",
+      "retention": "30d",
+      "metrics": {
+        "application": ["cpu", "memory", "throughput", "latency"],
+        "business": ["users", "transactions", "conversions", "revenue"],
+        "infrastructure": ["disk", "network", "database", "cache"]
+      }
+    },
+    "logging": {
+      "level": "info",
+      "format": "json",
+      "destinations": {
+        "console": true,
+        "file": "/var/log/factorywager/app.log",
+        "elasticsearch": "https://logs.factory-wager.com",
+        "cloudwatch": "arn:aws:logs:us-east-1:123456789:log-group:/factorywager"
+      },
+      "retention": "90d"
+    },
+    "tracing": {
+      "provider": "jaeger",
+      "endpoint": "https://tracing.factory-wager.com",
+      "sampling": "0.1",
+      "services": ["api", "auth", "database", "cache", "queue"]
+    },
+    "alerts": {
+      "channels": {
+        "slack": "#alerts",
+        "email": ["ops@factory-wager.com"],
+        "pagerduty": "factorywager-operations"
+      },
+      "rules": {
+        "high-error-rate": "error_rate > 5% for 5m",
+        "high-latency": "p95_latency > 1000ms for 10m",
+        "memory-usage": "memory_usage > 90% for 2m",
+        "disk-space": "disk_usage > 85%"
+      }
+    }
+  },
+  "deployment": {
+    "environments": {
+      "development": {
+        "region": "us-east-1",
+        "cluster": "factorywager-dev",
+        "replicas": 1,
+        "resources": {
+          "cpu": "500m",
+          "memory": "512Mi"
+        }
+      },
+      "staging": {
+        "region": "us-east-1",
+        "cluster": "factorywager-staging",
+        "replicas": 2,
+        "resources": {
+          "cpu": "1000m",
+          "memory": "1Gi"
+        }
+      },
+      "production": {
+        "regions": ["us-east-1", "us-west-2", "eu-west-1"],
+        "cluster": "factorywager-prod",
+        "replicas": 5,
+        "resources": {
+          "cpu": "2000m",
+          "memory": "2Gi"
+        },
+        "autoscaling": {
+          "min": 3,
+          "max": 20,
+          "target-cpu": "70%",
+          "target-memory": "80%"
+        }
+      }
+    },
+    "strategy": {
+      "type": "rolling",
+      "max-unavailable": "25%",
+      "max-surge": "25%",
+      "progress-deadline": "600s"
+    },
+    "health-checks": {
+      "readiness": "/health/ready",
+      "liveness": "/health/live",
+      "startup": "/health/startup",
+      "interval": "30s",
+      "timeout": "5s",
+      "threshold": 3
+    }
+  },
   "license": "MIT",
   "keywords": [
     "bun",
