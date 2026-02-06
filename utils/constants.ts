@@ -263,7 +263,7 @@ export const BENCHMARK_CONSTANTS = {
 } as const;
 
 // Export individual constants for backward compatibility
-export const { 
+export const {
   ENTERPRISE_COLS_THRESHOLD,
   LEAD_COLS_THRESHOLD,
   SENIOR_COLS_THRESHOLD,
@@ -278,3 +278,280 @@ export const {
   TIER_PERFORMANCE_SPECS,
   EDGE_CASE_SPECS
 } = BENCHMARK_CONSTANTS;
+
+// =============================================================================
+// Markdown Presets — production-ready configs for Bun.markdown
+// =============================================================================
+
+// MARKDOWN FEATURE PRESETS
+export const MARKDOWN_FEATURES = {
+  GFM: {
+    tables: true,
+    strikethrough: true,
+    tasklists: true,
+    autolinks: true,
+    hardSoftBreaks: false,
+    tagFilter: false
+  },
+
+  BLOG: {
+    tables: true,
+    strikethrough: true,
+    tasklists: true,
+    autolinks: true,
+    headings: { ids: true },
+    hardSoftBreaks: false,
+    underline: false,
+    collapseWhitespace: true
+  },
+
+  DOCS: {
+    tables: true,
+    strikethrough: true,
+    tasklists: true,
+    autolinks: true,
+    headings: { ids: true, autolink: true },
+    wikiLinks: true,
+    hardSoftBreaks: false
+  },
+
+  TERMINAL: {
+    tables: true,
+    strikethrough: true,
+    autolinks: true,
+    hardSoftBreaks: true,
+    collapseWhitespace: true,
+    permissiveAtxHeaders: false
+  },
+
+  WIKI: {
+    tables: true,
+    strikethrough: true,
+    tasklists: true,
+    autolinks: true,
+    headings: { ids: true },
+    wikiLinks: true,
+    hardSoftBreaks: false
+  }
+};
+
+// SECURITY PRESETS
+export const MARKDOWN_SECURITY = {
+  STRICT: {
+    tagFilter: true,
+    noHtmlBlocks: true,
+    noHtmlSpans: true,
+    autolinks: false,
+    wikiLinks: false,
+    latexMath: false,
+    noIndentedCodeBlocks: false,
+    hardSoftBreaks: false
+  },
+
+  MODERATE: {
+    tagFilter: true,
+    noHtmlBlocks: false,
+    noHtmlSpans: false,
+    autolinks: { url: true, www: true, email: false },
+    wikiLinks: false,
+    latexMath: false
+  },
+
+  DEVELOPER: {
+    tagFilter: false,
+    noHtmlBlocks: false,
+    noHtmlSpans: false,
+    autolinks: true,
+    wikiLinks: true,
+    latexMath: true
+  }
+};
+
+// DOMAIN-SPECIFIC PRESETS
+export const MARKDOWN_DOMAINS = {
+  EMAIL: {
+    tables: false,
+    strikethrough: false,
+    tasklists: false,
+    autolinks: true,
+    headings: { ids: false },
+    hardSoftBreaks: true,
+    noHtmlBlocks: true,
+    noHtmlSpans: true
+  },
+
+  REACT_APP: {
+    tables: true,
+    strikethrough: true,
+    tasklists: true,
+    autolinks: true,
+    headings: { ids: true },
+    noHtmlBlocks: true,
+    noHtmlSpans: true
+  }
+};
+
+// HTML RENDERER TEMPLATES
+export const HTML_RENDERERS = {
+  SEMANTIC: {
+    heading: (children: string, { level, id }: { level: number; id?: string }) =>
+      `<h${level} id="${id || ''}">${children}</h${level}>`,
+    paragraph: (children: string) => `<p>${children}</p>`,
+    strong: (children: string) => `<strong>${children}</strong>`,
+    emphasis: (children: string) => `<em>${children}</em>`,
+    link: (children: string, { href, title }: { href: string; title?: string }) =>
+      `<a href="${href}"${title ? ` title="${title}"` : ''}>${children}</a>`
+  },
+
+  TAILWIND: {
+    heading: (children: string, { level, id }: { level: number; id?: string }) =>
+      `<h${level} id="${id || ''}" class="font-bold ${level === 1 ? 'text-3xl' : level === 2 ? 'text-2xl' : 'text-xl'} mb-4">${children}</h${level}>`,
+    paragraph: (children: string) => `<p class="mb-4 text-gray-700 leading-relaxed">${children}</p>`,
+    strong: (children: string) => `<strong class="font-bold">${children}</strong>`,
+    emphasis: (children: string) => `<em class="italic">${children}</em>`,
+    link: (children: string, { href }: { href: string }) =>
+      `<a href="${href}" class="text-blue-600 hover:underline hover:text-blue-800">${children}</a>`,
+    code: (children: string, { language }: { language?: string }) =>
+      `<pre class="bg-gray-100 rounded-lg p-4 overflow-x-auto mb-4"><code class="language-${language || 'text'}">${children}</code></pre>`,
+    codespan: (children: string) =>
+      `<code class="bg-gray-100 rounded px-1 py-0.5 font-mono text-sm">${children}</code>`
+  }
+};
+
+// TERMINAL RENDERERS
+export const TERMINAL_RENDERERS = {
+  COLOR: {
+    heading: (children: string, { level }: { level: number }) => {
+      const colors = ['\x1b[1;36m', '\x1b[1;35m', '\x1b[1;34m', '\x1b[1;33m', '\x1b[1;32m', '\x1b[1;31m'];
+      return `${colors[level - 1] || '\x1b[1m'}${children}\x1b[0m\n`;
+    },
+    paragraph: (children: string) => `\x1b[0m${children}\n`,
+    strong: (children: string) => `\x1b[1m${children}\x1b[22m`,
+    emphasis: (children: string) => `\x1b[3m${children}\x1b[23m`,
+    link: (children: string, { href }: { href: string }) => `\x1b[4;94m${children}\x1b[0m (\x1b[90m${href}\x1b[0m)`,
+    code: (children: string) => `\x1b[48;5;235m${children}\x1b[0m`,
+    codespan: (children: string) => `\x1b[48;5;236m\x1b[37m${children}\x1b[0m`
+  }
+};
+
+// REACT_COMPONENTS (TAILWIND_TYPOGRAPHY) live in BunMarkdownComponents.tsx
+// Import from there when React is available
+
+// CACHE FACTORIES
+export const MarkdownCache = {
+  createMemoryCache: (maxSize = 100) => {
+    const cache = new Map<string, string>();
+
+    return {
+      get: (key: string) => cache.get(key),
+      set: (key: string, value: string) => {
+        if (cache.size >= maxSize) {
+          const firstKey = cache.keys().next().value;
+          if (firstKey) cache.delete(firstKey);
+        }
+        cache.set(key, value);
+      },
+      clear: () => cache.clear()
+    };
+  },
+
+  createLRUCache: (maxSize = 100, ttl = 3600000) => {
+    const cache = new Map<string, string>();
+    const timestamps = new Map<string, number>();
+
+    return {
+      get: (key: string) => {
+        if (!cache.has(key)) return null;
+
+        const timestamp = timestamps.get(key)!;
+        if (Date.now() - timestamp > ttl) {
+          cache.delete(key);
+          timestamps.delete(key);
+          return null;
+        }
+
+        const value = cache.get(key)!;
+        cache.delete(key);
+        cache.set(key, value);
+        return value;
+      },
+
+      set: (key: string, value: string) => {
+        if (cache.size >= maxSize) {
+          const firstKey = cache.keys().next().value;
+          if (firstKey) {
+            cache.delete(firstKey);
+            timestamps.delete(firstKey);
+          }
+        }
+
+        cache.set(key, value);
+        timestamps.set(key, Date.now());
+      }
+    };
+  }
+};
+
+// CONFIGURATION MATRIX
+export const CONFIG_MATRIX = {
+  'User Comments': {
+    features: MARKDOWN_FEATURES.BLOG,
+    security: MARKDOWN_SECURITY.STRICT,
+    renderer: HTML_RENDERERS.SEMANTIC,
+    cache: MarkdownCache.createLRUCache(1000, 3600000)
+  },
+
+  'Technical Documentation': {
+    features: MARKDOWN_FEATURES.DOCS,
+    security: MARKDOWN_SECURITY.MODERATE,
+    renderer: HTML_RENDERERS.TAILWIND,
+    cache: MarkdownCache.createMemoryCache(500)
+  },
+
+  'Internal Wiki': {
+    features: MARKDOWN_FEATURES.WIKI,
+    security: MARKDOWN_SECURITY.DEVELOPER,
+    renderer: HTML_RENDERERS.TAILWIND,
+    // components: import REACT_COMPONENTS from './BunMarkdownComponents' when React is available
+  },
+
+  'CLI Tool Output': {
+    features: MARKDOWN_FEATURES.TERMINAL,
+    security: MARKDOWN_SECURITY.MODERATE,
+    renderer: TERMINAL_RENDERERS.COLOR,
+    cache: null
+  },
+
+  'Email Newsletter': {
+    features: MARKDOWN_DOMAINS.EMAIL,
+    security: MARKDOWN_SECURITY.STRICT,
+    renderer: HTML_RENDERERS.SEMANTIC,
+    cache: MarkdownCache.createMemoryCache(100)
+  }
+};
+
+// FACTORY FUNCTIONS
+export const MarkdownPresets = {
+  html: (preset: keyof typeof MARKDOWN_FEATURES = 'GFM', security: keyof typeof MARKDOWN_SECURITY = 'MODERATE') => (markdown: string) => {
+    const options = {
+      ...MARKDOWN_FEATURES[preset],
+      ...MARKDOWN_SECURITY[security]
+    };
+    return (Bun as any).markdown.html(markdown, options);
+  },
+
+  render: (format: keyof typeof HTML_RENDERERS = 'TAILWIND', options = {}) => (markdown: string) => {
+    const renderer = HTML_RENDERERS[format];
+    const featureOpts = { ...MARKDOWN_FEATURES.GFM, ...options };
+    return (Bun as any).markdown.render(markdown, renderer, featureOpts);
+  },
+
+  react: (components: Record<string, any>, options = {}) => (markdown: string) => {
+    const featureOpts = {
+      ...MARKDOWN_FEATURES.GFM,
+      ...MARKDOWN_DOMAINS.REACT_APP,
+      ...options
+    };
+    return (Bun as any).markdown.react(markdown, components, featureOpts);
+  }
+};
