@@ -7,7 +7,7 @@
  * @version 4.5
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, spyOn } from "bun:test";
 
 import { isPtySupported, createTerminal, spawnWithTerminal, DEFAULT_TERMINAL_CONFIG } from "./cli/pty-terminal";
 import { isTerminalUISupported, createSpinner, createProgress, displayTable, DeploymentUI, smartDeploy } from "./cli/terminal-tui";
@@ -75,6 +75,14 @@ describe("PTY Terminal", () => {
 // ============================================================================
 
 describe("Terminal TUI", () => {
+  // TUI components write spinners, tables, and errors to stdout during tests.
+  // Suppress via spyOn to keep test output clean.
+  beforeEach(() => {
+    spyOn(console, "log").mockImplementation(() => {});
+    spyOn(console, "error").mockImplementation(() => {});
+    spyOn(process.stdout, "write").mockImplementation(() => true);
+  });
+
   describe("isTerminalUISupported", () => {
     it("returns false on non-macOS platforms", () => {
       if (process.platform !== "darwin") {
