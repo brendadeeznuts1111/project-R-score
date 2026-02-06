@@ -8,7 +8,7 @@
 
 import { FACTORYWAGER_CONFIG } from './config';
 
-import type { Severity, PerformanceMetrics } from './types';
+import type { Severity, PerformanceMetrics } from '../core/fw-types';
 
 // Performance utilities
 export class PerformanceUtils {
@@ -68,15 +68,24 @@ export class StringUtils {
    * Pad string to specified length
    */
   static pad(str: string, length: number, padChar: string = ' '): string {
-    return str.padEnd(length, padChar);
+    const diff = length - Bun.stringWidth(str);
+    return diff > 0 ? str + padChar.repeat(diff) : str;
   }
 
   /**
    * Truncate string with ellipsis
    */
   static truncate(str: string, maxLength: number): string {
-    if (str.length <= maxLength) return str;
-    return str.substring(0, maxLength - 3) + '...';
+    if (Bun.stringWidth(str) <= maxLength) return str;
+    let width = 0;
+    let i = 0;
+    for (const ch of str) {
+      const cw = Bun.stringWidth(ch);
+      if (width + cw + 3 > maxLength) break;
+      width += cw;
+      i += ch.length;
+    }
+    return str.slice(0, i) + '...';
   }
 
   /**

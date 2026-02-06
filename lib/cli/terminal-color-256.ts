@@ -255,6 +255,18 @@ export function toAnsi256(colorInput: any): string | null {
   return rgbToAnsi256(r, g, b);
 }
 
+/** Pad string to target visual width (left-aligned) */
+function swPad(str: string, width: number, char = ' '): string {
+  const diff = width - Bun.stringWidth(str);
+  return diff > 0 ? str + char.repeat(diff) : str;
+}
+
+/** Pad string to target visual width (right-aligned) */
+function swPadStart(str: string, width: number, char = ' '): string {
+  const diff = width - Bun.stringWidth(str);
+  return diff > 0 ? char.repeat(diff) + str : str;
+}
+
 // ============================================================================
 // CLI Demo
 // ============================================================================
@@ -286,7 +298,7 @@ if (import.meta.main) {
     const info = get256ColorInfo(idx);
 
     console.log(
-      `${name.padEnd(12)} rgb(${r},${g},${b}) → idx ${idx.toString().padStart(3)} ${info.type.padEnd(7)} ${info.description}`
+      `${swPad(name, 12)} rgb(${r},${g},${b}) → idx ${swPadStart(idx.toString(), 3)} ${swPad(info.type, 7)} ${info.description}`
     );
     console.log(`             ANSI: ${JSON.stringify(ansi)}`);
     console.log();
@@ -307,7 +319,7 @@ if (import.meta.main) {
 
   for (const input of inputs) {
     const result = toAnsi256(input);
-    console.log(`${JSON.stringify(input).padEnd(25)} → ${result}`);
+    console.log(`${swPad(JSON.stringify(input), 25)} → ${result}`);
   }
 
   console.log();

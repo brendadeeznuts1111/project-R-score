@@ -10,6 +10,12 @@
  * @see https://bun.sh/docs/api/terminal
  */
 
+/** Pad string to target visual width (left-aligned) */
+function swPad(str: string, width: number, char = ' '): string {
+  const diff = width - Bun.stringWidth(str);
+  return diff > 0 ? str + char.repeat(diff) : str;
+}
+
 /**
  * Check if Bun.Terminal TUI is supported
  * Currently only macOS has full support
@@ -175,14 +181,14 @@ export function displayTable(rows: string[][]): void {
   const colWidths: number[] = [];
   rows.forEach(row => {
     row.forEach((cell, i) => {
-      colWidths[i] = Math.max(colWidths[i] || 0, cell.length);
+      colWidths[i] = Math.max(colWidths[i] || 0, Bun.stringWidth(cell));
     });
   });
 
   // Print table
   console.log();
   rows.forEach((row, rowIndex) => {
-    const line = row.map((cell, i) => cell.padEnd(colWidths[i] + 2)).join('│');
+    const line = row.map((cell, i) => swPad(cell, colWidths[i] + 2)).join('│');
 
     console.log(`│ ${line} │`);
 
