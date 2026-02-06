@@ -1,13 +1,13 @@
 #!/usr/bin/env bun
 
 /**
- * 🧪 Concurrent Operations Unit Tests
- * 
+ * Concurrent Operations Unit Tests
+ *
  * Comprehensive tests for race conditions, transactions, and batch processing
  */
 
-import { describe, it, mock, testUtils } from '../lib/core/unit-test-framework.ts';
-import { 
+import { describe, test, expect, beforeEach } from "bun:test";
+import {
   ConcurrentOperationsManager,
   BatchProcessor,
   ConcurrentMap,
@@ -25,7 +25,7 @@ describe('ConcurrentOperationsManager', () => {
   });
 
   describe('executeConcurrently', () => {
-    it('should execute operations concurrently', async (assert) => {
+    test('should execute operations concurrently', async () => {
       const operations = [
         () => Promise.resolve('result1'),
         () => Promise.resolve('result2'),
@@ -33,15 +33,15 @@ describe('ConcurrentOperationsManager', () => {
       ];
 
       const results = await manager.executeConcurrently(operations);
-      
-      assert.equal(results.length, 3);
-      assert.isTrue(results.every(r => r.success));
-      assert.equal(results[0].data, 'result1');
-      assert.equal(results[1].data, 'result2');
-      assert.equal(results[2].data, 'result3');
+
+      expect(results.length).toBe(3);
+      expect(results.every(r => r.success)).toBe(true);
+      expect(results[0].data).toBe('result1');
+      expect(results[1].data).toBe('result2');
+      expect(results[2].data).toBe('result3');
     });
 
-    it('should handle individual operation failures', async (assert) => {
+    test('should handle individual operation failures', async () => {
       const operations = [
         () => Promise.resolve('success'),
         () => Promise.reject(new Error('failure')),
@@ -49,17 +49,17 @@ describe('ConcurrentOperationsManager', () => {
       ];
 
       const results = await manager.executeConcurrently(operations, { failFast: false });
-      
-      assert.equal(results.length, 3);
-      assert.isTrue(results[0].success);
-      assert.isFalse(results[1].success);
-      assert.isTrue(results[2].success);
-      assert.isTrue(results[1].error?.includes('failure'));
+
+      expect(results.length).toBe(3);
+      expect(results[0].success).toBe(true);
+      expect(results[1].success).toBe(false);
+      expect(results[2].success).toBe(true);
+      expect(results[1].error?.includes('failure')).toBe(true);
     });
 
-    it('should fail fast when configured', async (assert) => {
+    test('should fail fast when configured', async () => {
       const operations = [
-        () => testUtils.wait(100).then(() => 'slow'),
+        () => Bun.sleep(100).then(() => 'slow'),
         () => Promise.reject(new Error('fast failure')),
         () => Promise.resolve('never reached')
       ];
@@ -69,52 +69,52 @@ describe('ConcurrentOperationsManager', () => {
       const duration = Date.now() - startTime;
 
       // Should fail quickly, not wait for slow operation
-      assert.isTrue(duration < 200);
-      assert.isTrue(results.some(r => !r.success));
+      expect(duration < 200).toBe(true);
+      expect(results.some(r => !r.success)).toBe(true);
     });
 
-    it('should handle timeouts', async (assert) => {
+    test('should handle timeouts', async () => {
       const operations = [
-        () => testUtils.wait(200).then(() => 'too slow'),
+        () => Bun.sleep(200).then(() => 'too slow'),
         () => Promise.resolve('fast')
       ];
 
-      const results = await manager.executeConcurrently(operations, { 
+      const results = await manager.executeConcurrently(operations, {
         timeout: 100,
-        failFast: false 
+        failFast: false
       });
-      
-      assert.equal(results.length, 2);
-      assert.isFalse(results[0].success); // Should timeout
-      assert.isTrue(results[1].success);
-      assert.isTrue(results[0].error?.includes('timed out'));
+
+      expect(results.length).toBe(2);
+      expect(results[0].success).toBe(false); // Should timeout
+      expect(results[1].success).toBe(true);
+      expect(results[0].error?.includes('timed out')).toBe(true);
     });
 
-    it('should respect concurrency limits', async (assert) => {
+    test('should respect concurrency limits', async () => {
       let concurrentCount = 0;
       let maxConcurrent = 0;
 
-      const operations = Array.from({ length: 10 }, (_, i) => 
+      const operations = Array.from({ length: 10 }, (_, i) =>
         async () => {
           concurrentCount++;
           maxConcurrent = Math.max(maxConcurrent, concurrentCount);
-          await testUtils.wait(50);
+          await Bun.sleep(50);
           concurrentCount--;
           return `result-${i}`;
         }
       );
 
       await manager.executeConcurrently(operations);
-      
+
       // Should not exceed concurrency limit
-      assert.isTrue(maxConcurrent <= 5);
+      expect(maxConcurrent <= 5).toBe(true);
     });
   });
 
   describe('executeWithDependencies', () => {
-    it('should resolve dependencies correctly', async (assert) => {
+    test('should resolve dependencies correctly', async () => {
       const results: string[] = [];
-      
+
       const operations: TransactionOperation<string>[] = [
         {
           id: 'op1',
@@ -142,13 +142,13 @@ describe('ConcurrentOperationsManager', () => {
       ];
 
       const operationResults = await manager.executeWithDependencies(operations);
-      
+
       // Should execute in dependency order
-      assert.deepEqual(results, ['op1', 'op2', 'op3']);
-      assert.isTrue(operationResults.every(r => r.success));
+      expect(results).toEqual(['op1', 'op2', 'op3']);
+      expect(operationResults.every(r => r.success)).toBe(true);
     });
 
-    it('should handle dependency failures', async (assert) => {
+    test('should handle dependency failures', async () => {
       const operations: TransactionOperation<string>[] = [
         {
           id: 'op1',
@@ -164,13 +164,13 @@ describe('ConcurrentOperationsManager', () => {
       ];
 
       const results = await manager.executeWithDependencies(operations);
-      
-      assert.equal(results.length, 2);
-      assert.isFalse(results[0].success);
-      assert.isFalse(results[1].success); // Should not execute due to failed dependency
+
+      expect(results.length).toBe(2);
+      expect(results[0].success).toBe(false);
+      expect(results[1].success).toBe(false); // Should not execute due to failed dependency
     });
 
-    it('should detect circular dependencies', async (assert) => {
+    test('should detect circular dependencies', async () => {
       const operations: TransactionOperation<string>[] = [
         {
           id: 'op1',
@@ -185,16 +185,16 @@ describe('ConcurrentOperationsManager', () => {
       ];
 
       const results = await manager.executeWithDependencies(operations);
-      
+
       // Should not execute any operations due to circular dependency
-      assert.equal(results.length, 0);
+      expect(results.length).toBe(0);
     });
   });
 
   describe('executeTransaction', () => {
-    it('should commit successful transaction', async (assert) => {
+    test('should commit successful transaction', async () => {
       const rollbackLog: string[] = [];
-      
+
       const operations: TransactionOperation<string>[] = [
         {
           id: 'op1',
@@ -213,15 +213,15 @@ describe('ConcurrentOperationsManager', () => {
       ];
 
       const result = await manager.executeTransaction(operations);
-      
-      assert.isTrue(result.success);
-      assert.equal(result.results.length, 2);
-      assert.equal(rollbackLog.length, 0); // No rollbacks on success
+
+      expect(result.success).toBe(true);
+      expect(result.results.length).toBe(2);
+      expect(rollbackLog.length).toBe(0); // No rollbacks on success
     });
 
-    it('should rollback failed transaction', async (assert) => {
+    test('should rollback failed transaction', async () => {
       const rollbackLog: string[] = [];
-      
+
       const operations: TransactionOperation<string>[] = [
         {
           id: 'op1',
@@ -249,15 +249,15 @@ describe('ConcurrentOperationsManager', () => {
       ];
 
       const result = await manager.executeTransaction(operations);
-      
-      assert.isFalse(result.success);
-      assert.isTrue(result.rolledBack);
-      assert.isTrue(rollbackLog.includes('rollback-op1-result1'));
+
+      expect(result.success).toBe(false);
+      expect(result.rolledBack).toBe(true);
+      expect(rollbackLog).toContain('rollback-op1-result1');
       // op2 should not be rolled back as it failed
-      assert.isFalse(rollbackLog.includes('rollback-op2'));
+      expect(rollbackLog).not.toContain('rollback-op2');
     });
 
-    it('should handle rollback failures gracefully', async (assert) => {
+    test('should handle rollback failures gracefully', async () => {
       const operations: TransactionOperation<string>[] = [
         {
           id: 'op1',
@@ -275,20 +275,20 @@ describe('ConcurrentOperationsManager', () => {
       ];
 
       const result = await manager.executeTransaction(operations);
-      
-      assert.isFalse(result.success);
+
+      expect(result.success).toBe(false);
       // Should not throw despite rollback failure
-      assert.isTrue(result.rolledBack);
+      expect(result.rolledBack).toBe(true);
     });
   });
 
   describe('duplicate operation detection', () => {
-    it('should prevent concurrent execution of same operation', async (assert) => {
+    test('should prevent concurrent execution of same operation', async () => {
       let executionCount = 0;
-      
+
       const operation = async () => {
         executionCount++;
-        await testUtils.wait(100);
+        await Bun.sleep(100);
         return 'result';
       };
 
@@ -299,26 +299,26 @@ describe('ConcurrentOperationsManager', () => {
       ];
 
       const results = await Promise.allSettled(promises);
-      
+
       // One should succeed, one should fail
       const successCount = results.filter(r => r.status === 'fulfilled').length;
       const failureCount = results.filter(r => r.status === 'rejected').length;
-      
-      assert.equal(successCount, 1);
-      assert.equal(failureCount, 1);
-      assert.equal(executionCount, 1);
+
+      expect(successCount).toBe(1);
+      expect(failureCount).toBe(1);
+      expect(executionCount).toBe(1);
     });
   });
 });
 
 describe('BatchProcessor', () => {
-  it('should process items in batches', async (assert) => {
+  test('should process items in batches', async () => {
     const processedBatches: number[][] = [];
-    
+
     const processor = new BatchProcessor(
       async (batch: number[]) => {
         processedBatches.push([...batch]);
-        await testUtils.wait(10);
+        await Bun.sleep(10);
       },
       3, // batch size
       2  // max concurrency
@@ -326,17 +326,17 @@ describe('BatchProcessor', () => {
 
     const items = Array.from({ length: 10 }, (_, i) => i);
     const result = await processor.process(items);
-    
-    assert.equal(result.processed, 4); // 3 + 3 + 3 + 1 = 4 batches
-    assert.equal(result.errors, 0);
-    assert.equal(processedBatches.length, 4);
-    assert.deepEqual(processedBatches[0], [0, 1, 2]);
-    assert.deepEqual(processedBatches[1], [3, 4, 5]);
-    assert.deepEqual(processedBatches[2], [6, 7, 8]);
-    assert.deepEqual(processedBatches[3], [9]);
+
+    expect(result.processed).toBe(4); // 3 + 3 + 3 + 1 = 4 batches
+    expect(result.errors).toBe(0);
+    expect(processedBatches.length).toBe(4);
+    expect(processedBatches[0]).toEqual([0, 1, 2]);
+    expect(processedBatches[1]).toEqual([3, 4, 5]);
+    expect(processedBatches[2]).toEqual([6, 7, 8]);
+    expect(processedBatches[3]).toEqual([9]);
   });
 
-  it('should handle batch processing failures', async (assert) => {
+  test('should handle batch processing failures', async () => {
     const processor = new BatchProcessor(
       async (batch: number[]) => {
         if (batch[0] === 3) {
@@ -349,9 +349,9 @@ describe('BatchProcessor', () => {
 
     const items = [1, 2, 3, 4, 5, 6];
     const result = await processor.process(items);
-    
-    assert.isTrue(result.processed > 0);
-    assert.isTrue(result.errors > 0);
+
+    expect(result.processed > 0).toBe(true);
+    expect(result.errors > 0).toBe(true);
   });
 });
 
@@ -362,75 +362,75 @@ describe('ConcurrentMap', () => {
     concurrentMap = new ConcurrentMap<string, string>();
   });
 
-  it('should handle concurrent access safely', async (assert) => {
-    const promises = Array.from({ length: 10 }, (_, i) => 
+  test('should handle concurrent access safely', async () => {
+    const promises = Array.from({ length: 10 }, (_, i) =>
       concurrentMap.set(`key${i}`, `value${i}`)
     );
 
     await Promise.all(promises);
-    
+
     // Verify all values were set
     for (let i = 0; i < 10; i++) {
       const value = await concurrentMap.get(`key${i}`);
-      assert.equal(value, `value${i}`);
+      expect(value).toBe(`value${i}`);
     }
   });
 
-  it('should serialize operations on same key', async (assert) => {
+  test('should serialize operations on same key', async () => {
     let operationOrder: string[] = [];
-    
+
     const promises = [
       concurrentMap.withLock('test-key', async () => {
         operationOrder.push('op1-start');
-        await testUtils.wait(50);
+        await Bun.sleep(50);
         operationOrder.push('op1-end');
         return 'result1';
       }),
       concurrentMap.withLock('test-key', async () => {
         operationOrder.push('op2-start');
-        await testUtils.wait(10);
+        await Bun.sleep(10);
         operationOrder.push('op2-end');
         return 'result2';
       })
     ];
 
     const results = await Promise.all(promises);
-    
+
     // Operations should be serialized
-    assert.deepEqual(operationOrder, [
+    expect(operationOrder).toEqual([
       'op1-start', 'op1-end', 'op2-start', 'op2-end'
     ]);
-    assert.equal(results[0], 'result1');
-    assert.equal(results[1], 'result2');
+    expect(results[0]).toBe('result1');
+    expect(results[1]).toBe('result2');
   });
 
-  it('should allow concurrent operations on different keys', async (assert) => {
+  test('should allow concurrent operations on different keys', async () => {
     let operationOrder: string[] = [];
-    
+
     const promises = [
       concurrentMap.withLock('key1', async () => {
         operationOrder.push('key1-start');
-        await testUtils.wait(50);
+        await Bun.sleep(50);
         operationOrder.push('key1-end');
       }),
       concurrentMap.withLock('key2', async () => {
         operationOrder.push('key2-start');
-        await testUtils.wait(10);
+        await Bun.sleep(10);
         operationOrder.push('key2-end');
       })
     ];
 
     await Promise.all(promises);
-    
+
     // Operations on different keys can run concurrently
-    assert.deepEqual(operationOrder, [
+    expect(operationOrder).toEqual([
       'key1-start', 'key2-start', 'key2-end', 'key1-end'
     ]);
   });
 });
 
 describe('Utility Functions', () => {
-  it('should provide safe concurrent execution', async (assert) => {
+  test('should provide safe concurrent execution', async () => {
     const operations = [
       () => Promise.resolve('result1'),
       () => Promise.reject(new Error('failure')),
@@ -438,53 +438,54 @@ describe('Utility Functions', () => {
     ];
 
     const results = await safeConcurrent(operations);
-    
-    assert.equal(results.length, 3);
-    assert.equal(results.filter(r => r.success).length, 2);
-    assert.equal(results.filter(r => !r.success).length, 1);
+
+    expect(results.length).toBe(3);
+    expect(results.filter(r => r.success).length).toBe(2);
+    expect(results.filter(r => !r.success).length).toBe(1);
   });
 
-  it('should create batch processors', (assert) => {
+  test('should create batch processors', () => {
     const processor = createBatchProcessor(
       async (batch: string[]) => {
         // Process batch
       },
       5
     );
-    
-    assert.isTrue(processor instanceof BatchProcessor);
+
+    expect(processor).toBeInstanceOf(BatchProcessor);
   });
 });
 
 describe('Edge Cases', () => {
-  it('should handle empty operation lists', async (assert) => {
+  test('should handle empty operation lists', async () => {
     const manager = new ConcurrentOperationsManager();
     const results = await manager.executeConcurrently([]);
-    
-    assert.equal(results.length, 0);
+
+    expect(results.length).toBe(0);
   });
 
-  it('should handle operations that return undefined', async (assert) => {
+  test('should handle operations that return undefined', async () => {
+    const manager = new ConcurrentOperationsManager();
     const operations = [
       () => Promise.resolve(undefined),
       () => Promise.resolve(null)
     ];
 
     const results = await manager.executeConcurrently(operations);
-    
-    assert.equal(results.length, 2);
-    assert.isTrue(results.every(r => r.success));
-    assert.equal(results[0].data, undefined);
-    assert.equal(results[1].data, null);
+
+    expect(results.length).toBe(2);
+    expect(results.every(r => r.success)).toBe(true);
+    expect(results[0].data).toBe(undefined);
+    expect(results[1].data).toBe(null);
   });
 
-  it('should handle very long-running operations', async (assert) => {
+  test('should handle very long-running operations', async () => {
     const manager = new ConcurrentOperationsManager(2);
-    
+
     const operations = [
-      () => testUtils.wait(200).then(() => 'slow1'),
-      () => testUtils.wait(200).then(() => 'slow2'),
-      () => testUtils.wait(200).then(() => 'slow3')
+      () => Bun.sleep(200).then(() => 'slow1'),
+      () => Bun.sleep(200).then(() => 'slow2'),
+      () => Bun.sleep(200).then(() => 'slow3')
     ];
 
     const startTime = Date.now();
@@ -492,29 +493,29 @@ describe('Edge Cases', () => {
     const duration = Date.now() - startTime;
 
     // Should take longer due to concurrency limit
-    assert.isTrue(duration >= 300);
-    assert.isTrue(duration < 500);
-    assert.equal(results.filter(r => r.success).length, 3);
+    expect(duration).toBeGreaterThanOrEqual(300);
+    expect(duration < 500).toBe(true);
+    expect(results.filter(r => r.success).length).toBe(3);
   });
 
-  it('should handle rapid successive operations', async (assert) => {
+  test('should handle rapid successive operations', async () => {
     const manager = new ConcurrentOperationsManager(10);
-    
-    const operations = Array.from({ length: 100 }, (_, i) => 
+
+    const operations = Array.from({ length: 100 }, (_, i) =>
       () => Promise.resolve(`result-${i}`)
     );
 
     const results = await manager.executeConcurrently(operations);
-    
-    assert.equal(results.length, 100);
-    assert.isTrue(results.every(r => r.success));
+
+    expect(results.length).toBe(100);
+    expect(results.every(r => r.success)).toBe(true);
   });
 
-  it('should handle memory pressure with many operations', async (assert) => {
+  test('should handle memory pressure with many operations', async () => {
     const manager = new ConcurrentOperationsManager(5);
-    
+
     // Create operations that use memory
-    const operations = Array.from({ length: 50 }, (_, i) => 
+    const operations = Array.from({ length: 50 }, (_, i) =>
       () => {
         const largeData = new Array(10000).fill(i);
         return Promise.resolve(largeData);
@@ -522,21 +523,15 @@ describe('Edge Cases', () => {
     );
 
     const results = await manager.executeConcurrently(operations);
-    
-    assert.equal(results.length, 50);
-    assert.isTrue(results.every(r => r.success));
-    
+
+    expect(results.length).toBe(50);
+    expect(results.every(r => r.success)).toBe(true);
+
     // Verify data integrity
     for (let i = 0; i < 50; i++) {
       const data = results[i].data;
-      assert.isTrue(Array.isArray(data));
-      assert.equal(data[0], i);
+      expect(Array.isArray(data)).toBe(true);
+      expect(data[0]).toBe(i);
     }
   });
 });
-
-// Run tests if this file is executed directly
-if (import.meta.main) {
-  const { runTests } = await import('../lib/core/unit-test-framework.ts');
-  await runTests();
-}

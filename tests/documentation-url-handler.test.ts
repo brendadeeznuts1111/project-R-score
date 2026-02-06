@@ -1,46 +1,46 @@
 #!/usr/bin/env bun
 
 /**
- * 🧪 Documentation URL Handler Tests
- * 
+ * Documentation URL Handler Tests
+ *
  * Comprehensive tests for documentation URL handling with fragment support
  */
 
-import { describe, it, testUtils } from '../lib/core/unit-test-framework.ts';
-import { 
+import { describe, test, expect } from "bun:test";
+import {
   DocumentationURLHandler,
-  type DocumentationURLConfig 
+  type DocumentationURLConfig
 } from '../lib/core/documentation-url-handler.ts';
-import { 
+import {
   docs,
   buildDocsUrl,
   buildInteractiveDocsUrl,
   buildExampleDocsUrl,
   DocReferenceResolver
 } from '../lib/docs/reference.ts';
-import { 
+import {
   UtilityFactory,
-  UtilsCategory 
+  UtilsCategory
 } from '../lib/documentation/constants/utils.ts';
-import { 
+import {
   CLIDocumentationHandler,
-  CLICategory 
+  CLICategory
 } from '../lib/core/cli-documentation-handler.ts';
 import { URLHandler, URLFragmentUtils } from '../lib/core/url-handler.ts';
 
 describe('DocumentationURLHandler', () => {
   describe('generateDocumentationURL', () => {
-    it('should generate basic Bun documentation URL', (assert) => {
+    test('should generate basic Bun documentation URL', () => {
       const config: DocumentationURLConfig = {
         type: 'bun'
       };
 
       const url = DocumentationURLHandler.generateDocumentationURL(config);
-      assert.isTrue(url.includes('bun.sh'));
-      assert.isTrue(url.includes('/docs'));
+      expect(url.includes('bun.sh')).toBe(true);
+      expect(url.includes('/docs')).toBe(true);
     });
 
-    it('should generate URL with fragment', (assert) => {
+    test('should generate URL with fragment', () => {
       const config: DocumentationURLConfig = {
         type: 'bun',
         fragment: {
@@ -50,23 +50,23 @@ describe('DocumentationURLHandler', () => {
       };
 
       const url = DocumentationURLHandler.generateDocumentationURL(config);
-      assert.isTrue(url.includes('#'));
-      assert.isTrue(url.includes('view=overview'));
-      assert.isTrue(url.includes('theme=dark'));
+      expect(url.includes('#')).toBe(true);
+      expect(url.includes('view=overview')).toBe(true);
+      expect(url.includes('theme=dark')).toBe(true);
     });
 
-    it('should generate utils documentation URL', (assert) => {
+    test('should generate utils documentation URL', () => {
       const config: DocumentationURLConfig = {
         type: 'utils',
         category: UtilsCategory.FILE_SYSTEM
       };
 
       const url = DocumentationURLHandler.generateDocumentationURL(config);
-      assert.isTrue(url.includes('bun.sh'));
-      assert.isTrue(url.includes('utils'));
+      expect(url.includes('bun.sh')).toBe(true);
+      expect(url.includes('utils')).toBe(true);
     });
 
-    it('should generate CLI documentation URL', (assert) => {
+    test('should generate CLI documentation URL', () => {
       const config: DocumentationURLConfig = {
         type: 'cli',
         category: CLICategory.COMMANDS,
@@ -74,11 +74,11 @@ describe('DocumentationURLHandler', () => {
       };
 
       const url = DocumentationURLHandler.generateDocumentationURL(config);
-      assert.isTrue(url.includes('bun.sh'));
-      assert.isTrue(url.includes('cli'));
+      expect(url.includes('bun.sh')).toBe(true);
+      expect(url.includes('cli')).toBe(true);
     });
 
-    it('should generate URL with search parameters', (assert) => {
+    test('should generate URL with search parameters', () => {
       const config: DocumentationURLConfig = {
         type: 'bun',
         search: {
@@ -88,12 +88,12 @@ describe('DocumentationURLHandler', () => {
       };
 
       const url = DocumentationURLHandler.generateDocumentationURL(config);
-      assert.isTrue(url.includes('?'));
-      assert.isTrue(url.includes('q=fetch'));
-      assert.isTrue(url.includes('sort=relevance'));
+      expect(url.includes('?')).toBe(true);
+      expect(url.includes('q=fetch')).toBe(true);
+      expect(url.includes('sort=relevance')).toBe(true);
     });
 
-    it('should handle anchor and fragment together', (assert) => {
+    test('should handle anchor and fragment together', () => {
       const config: DocumentationURLConfig = {
         type: 'bun',
         anchor: 'section1',
@@ -103,112 +103,112 @@ describe('DocumentationURLHandler', () => {
       };
 
       const url = DocumentationURLHandler.generateDocumentationURL(config);
-      assert.isTrue(url.includes('#'));
-      assert.isTrue(url.includes('section1'));
-      assert.isTrue(url.includes('view=detailed'));
+      expect(url.includes('#')).toBe(true);
+      expect(url.includes('section1')).toBe(true);
+      expect(url.includes('view=detailed')).toBe(true);
     });
   });
 
   describe('parseDocumentationURL', () => {
-    it('should parse basic Bun documentation URL', (assert) => {
+    test('should parse basic Bun documentation URL', () => {
       const url = 'https://bun.sh/docs';
       const parsed = DocumentationURLHandler.parseDocumentationURL(url);
 
-      assert.isTrue(parsed.valid);
-      assert.equal(parsed.type, 'bun');
+      expect(parsed.valid).toBe(true);
+      expect(parsed.type).toBe('bun');
     });
 
-    it('should parse URL with fragment', (assert) => {
+    test('should parse URL with fragment', () => {
       const url = 'https://bun.sh/docs#view=overview&theme=dark';
       const parsed = DocumentationURLHandler.parseDocumentationURL(url);
 
-      assert.isTrue(parsed.valid);
-      assert.equal(parsed.type, 'bun');
-      assert.deepEqual(parsed.fragment, {
+      expect(parsed.valid).toBe(true);
+      expect(parsed.type).toBe('bun');
+      expect(parsed.fragment).toEqual({
         view: 'overview',
         theme: 'dark'
       });
     });
 
-    it('should parse utils documentation URL', (assert) => {
+    test('should parse utils documentation URL', () => {
       const url = 'https://bun.sh/docs/api/utils#file-system';
       const parsed = DocumentationURLHandler.parseDocumentationURL(url);
 
-      assert.isTrue(parsed.valid);
-      assert.equal(parsed.type, 'utils');
+      expect(parsed.valid).toBe(true);
+      expect(parsed.type).toBe('utils');
     });
 
-    it('should parse CLI documentation URL', (assert) => {
+    test('should parse CLI documentation URL', () => {
       const url = 'https://bun.sh/docs/cli/test#example=basic';
       const parsed = DocumentationURLHandler.parseDocumentationURL(url);
 
-      assert.isTrue(parsed.valid);
-      assert.equal(parsed.type, 'cli');
+      expect(parsed.valid).toBe(true);
+      expect(parsed.type).toBe('cli');
     });
 
-    it('should parse URL with search parameters', (assert) => {
+    test('should parse URL with search parameters', () => {
       const url = 'https://bun.sh/docs?q=fetch&sort=relevance#view=list';
       const parsed = DocumentationURLHandler.parseDocumentationURL(url);
 
-      assert.isTrue(parsed.valid);
-      assert.deepEqual(parsed.search, {
+      expect(parsed.valid).toBe(true);
+      expect(parsed.search).toEqual({
         q: 'fetch',
         sort: 'relevance'
       });
-      assert.deepEqual(parsed.fragment, {
+      expect(parsed.fragment).toEqual({
         view: 'list'
       });
     });
 
-    it('should handle invalid URL gracefully', (assert) => {
+    test('should handle invalid URL gracefully', () => {
       const url = 'not-a-valid-url';
       const parsed = DocumentationURLHandler.parseDocumentationURL(url);
 
-      assert.isFalse(parsed.valid);
+      expect(parsed.valid).toBe(false);
     });
 
-    it('should extract anchor from fragment', (assert) => {
+    test('should extract anchor from fragment', () => {
       const url = 'https://bun.sh/docs#view=overview&anchor=section1';
       const parsed = DocumentationURLHandler.parseDocumentationURL(url);
 
-      assert.isTrue(parsed.valid);
-      assert.equal(parsed.anchor, 'section1');
-      assert.deepEqual(parsed.fragment, {
+      expect(parsed.valid).toBe(true);
+      expect(parsed.anchor).toBe('section1');
+      expect(parsed.fragment).toEqual({
         view: 'overview'
       });
     });
   });
 
   describe('validateDocumentationURL', () => {
-    it('should validate valid Bun URL', (assert) => {
+    test('should validate valid Bun URL', () => {
       const url = 'https://bun.sh/docs';
       const isValid = DocumentationURLHandler.validateDocumentationURL(url);
-      assert.isTrue(isValid);
+      expect(isValid).toBe(true);
     });
 
-    it('should validate URL with fragment', (assert) => {
+    test('should validate URL with fragment', () => {
       const url = 'https://bun.sh/docs#view=overview';
       const isValid = DocumentationURLHandler.validateDocumentationURL(url);
-      assert.isTrue(isValid);
+      expect(isValid).toBe(true);
     });
 
-    it('should reject invalid URL', (assert) => {
+    test('should reject invalid URL', () => {
       const url = 'http://malicious.com/docs';
       const isValid = DocumentationURLHandler.validateDocumentationURL(url);
-      assert.isFalse(isValid);
+      expect(isValid).toBe(false);
     });
 
-    it('should reject non-HTTPS URL', (assert) => {
+    test('should reject non-HTTPS URL', () => {
       const url = 'http://bun.sh/docs';
       const isValid = DocumentationURLHandler.validateDocumentationURL(url, {
         requireHTTPS: true
       });
-      assert.isFalse(isValid);
+      expect(isValid).toBe(false);
     });
   });
 
   describe('generateShareableLink', () => {
-    it('should generate shareable link with timestamp', (assert) => {
+    test('should generate shareable link with timestamp', () => {
       const config: DocumentationURLConfig = {
         type: 'bun',
         category: 'api'
@@ -217,12 +217,12 @@ describe('DocumentationURLHandler', () => {
       const url = DocumentationURLHandler.generateShareableLink(config);
       const parsed = DocumentationURLHandler.parseDocumentationURL(url);
 
-      assert.isTrue(parsed.valid);
-      assert.isTrue(parsed.fragment?.shareable === 'true');
-      assert.isTrue(parsed.fragment?.timestamp !== undefined);
+      expect(parsed.valid).toBe(true);
+      expect(parsed.fragment?.shareable === 'true').toBe(true);
+      expect(parsed.fragment?.timestamp !== undefined).toBe(true);
     });
 
-    it('should generate shareable link with expiration', (assert) => {
+    test('should generate shareable link with expiration', () => {
       const config: DocumentationURLConfig = {
         type: 'bun'
       };
@@ -230,62 +230,62 @@ describe('DocumentationURLHandler', () => {
       const url = DocumentationURLHandler.generateShareableLink(config, 3600);
       const parsed = DocumentationURLHandler.parseDocumentationURL(url);
 
-      assert.isTrue(parsed.valid);
-      assert.isTrue(parsed.fragment?.expires !== undefined);
+      expect(parsed.valid).toBe(true);
+      expect(parsed.fragment?.expires !== undefined).toBe(true);
     });
   });
 
   describe('generateBreadcrumbs', () => {
-    it('should generate breadcrumbs for basic URL', (assert) => {
+    test('should generate breadcrumbs for basic URL', () => {
       const url = 'https://bun.sh/docs';
       const breadcrumbs = DocumentationURLHandler.generateBreadcrumbs(url);
 
-      assert.isTrue(breadcrumbs.length >= 1);
-      assert.equal(breadcrumbs[0].name, 'Documentation');
-      assert.equal(breadcrumbs[0].type, 'bun');
+      expect(breadcrumbs.length >= 1).toBe(true);
+      expect(breadcrumbs[0].name).toBe('Documentation');
+      expect(breadcrumbs[0].type).toBe('bun');
     });
 
-    it('should generate breadcrumbs for utils URL', (assert) => {
+    test('should generate breadcrumbs for utils URL', () => {
       const url = 'https://bun.sh/docs/api/utils#file-system';
       const breadcrumbs = DocumentationURLHandler.generateBreadcrumbs(url);
 
-      assert.isTrue(breadcrumbs.length >= 2);
-      assert.equal(breadcrumbs[0].name, 'Documentation');
-      assert.equal(breadcrumbs[1].name, 'Utils');
+      expect(breadcrumbs.length >= 2).toBe(true);
+      expect(breadcrumbs[0].name).toBe('Documentation');
+      expect(breadcrumbs[1].name).toBe('Utils');
     });
 
-    it('should generate breadcrumbs for CLI URL', (assert) => {
+    test('should generate breadcrumbs for CLI URL', () => {
       const url = 'https://bun.sh/docs/cli/test#example=basic';
       const breadcrumbs = DocumentationURLHandler.generateBreadcrumbs(url);
 
-      assert.isTrue(breadcrumbs.length >= 2);
-      assert.equal(breadcrumbs[0].name, 'Documentation');
-      assert.equal(breadcrumbs[1].name, 'Cli');
+      expect(breadcrumbs.length >= 2).toBe(true);
+      expect(breadcrumbs[0].name).toBe('Documentation');
+      expect(breadcrumbs[1].name).toBe('Cli');
     });
   });
 
   describe('generateSearchURL', () => {
-    it('should generate search URL', (assert) => {
+    test('should generate search URL', () => {
       const url = DocumentationURLHandler.generateSearchURL('fetch');
       const parsed = DocumentationURLHandler.parseDocumentationURL(url);
 
-      assert.isTrue(parsed.valid);
-      assert.equal(parsed.fragment?.search, 'fetch');
-      assert.equal(parsed.fragment?.type, 'documentation-search');
+      expect(parsed.valid).toBe(true);
+      expect(parsed.fragment?.search).toBe('fetch');
+      expect(parsed.fragment?.type).toBe('documentation-search');
     });
 
-    it('should generate typed search URL', (assert) => {
+    test('should generate typed search URL', () => {
       const url = DocumentationURLHandler.generateSearchURL('test', 'cli');
       const parsed = DocumentationURLHandler.parseDocumentationURL(url);
 
-      assert.isTrue(parsed.valid);
-      assert.equal(parsed.fragment?.search, 'test');
-      assert.equal(parsed.fragment?.docType, 'cli');
+      expect(parsed.valid).toBe(true);
+      expect(parsed.fragment?.search).toBe('test');
+      expect(parsed.fragment?.docType).toBe('cli');
     });
   });
 
   describe('generateExampleURL', () => {
-    it('should generate example URL', (assert) => {
+    test('should generate example URL', () => {
       const config: DocumentationURLConfig & {
         example: string;
         language?: string;
@@ -300,16 +300,16 @@ describe('DocumentationURLHandler', () => {
       const url = DocumentationURLHandler.generateExampleURL(config);
       const parsed = DocumentationURLHandler.parseDocumentationURL(url);
 
-      assert.isTrue(parsed.valid);
-      assert.equal(parsed.fragment?.example, 'console.log("Hello")');
-      assert.equal(parsed.fragment?.language, 'javascript');
-      assert.equal(parsed.fragment?.highlight, 'true');
-      assert.equal(parsed.fragment?.type, 'code-example');
+      expect(parsed.valid).toBe(true);
+      expect(parsed.fragment?.example).toBe('console.log("Hello")');
+      expect(parsed.fragment?.language).toBe('javascript');
+      expect(parsed.fragment?.highlight).toBe('true');
+      expect(parsed.fragment?.type).toBe('code-example');
     });
   });
 
   describe('generateComparisonURL', () => {
-    it('should generate comparison URL', (assert) => {
+    test('should generate comparison URL', () => {
       const configs = [
         { name: 'Bun', url: 'https://bun.sh/docs', type: 'bun' as const },
         { name: 'Node', url: 'https://nodejs.org/docs', type: 'custom' as const }
@@ -318,47 +318,47 @@ describe('DocumentationURLHandler', () => {
       const url = DocumentationURLHandler.generateComparisonURL(configs);
       const parsed = DocumentationURLHandler.parseDocumentationURL(url);
 
-      assert.isTrue(parsed.valid);
-      assert.equal(parsed.fragment?.type, 'comparison');
-      assert.equal(parsed.fragment?.items, 'Bun:bun,Node:custom');
-      assert.equal(parsed.fragment?.count, '2');
+      expect(parsed.valid).toBe(true);
+      expect(parsed.fragment?.type).toBe('comparison');
+      expect(parsed.fragment?.items).toBe('Bun:bun,Node:custom');
+      expect(parsed.fragment?.count).toBe('2');
     });
   });
 
   describe('getAvailableCategories', () => {
-    it('should return utils categories', (assert) => {
+    test('should return utils categories', () => {
       const categories = DocumentationURLHandler.getAvailableCategories('utils');
-      assert.isTrue(categories.length > 0);
-      assert.isTrue(categories.every(cat => cat.type === 'utils'));
+      expect(categories.length > 0).toBe(true);
+      expect(categories.every(cat => cat.type === 'utils')).toBe(true);
     });
 
-    it('should return CLI categories', (assert) => {
+    test('should return CLI categories', () => {
       const categories = DocumentationURLHandler.getAvailableCategories('cli');
-      assert.isTrue(categories.length > 0);
-      assert.isTrue(categories.every(cat => cat.type === 'cli'));
+      expect(categories.length > 0).toBe(true);
+      expect(categories.every(cat => cat.type === 'cli')).toBe(true);
     });
 
-    it('should return all categories when no type specified', (assert) => {
+    test('should return all categories when no type specified', () => {
       const categories = DocumentationURLHandler.getAvailableCategories();
-      assert.isTrue(categories.length > 0);
+      expect(categories.length > 0).toBe(true);
     });
   });
 
   describe('generateQuickReferenceURLs', () => {
-    it('should generate quick reference URLs', (assert) => {
+    test('should generate quick reference URLs', () => {
       const urls = DocumentationURLHandler.generateQuickReferenceURLs();
-      
-      assert.isTrue(urls.bunMain !== undefined);
-      assert.isTrue(urls.utilsMain !== undefined);
-      assert.isTrue(urls.bunCLI !== undefined);
-      assert.isTrue(urls.githubRepo !== undefined);
-      assert.isTrue(urls.search !== undefined);
-      assert.isTrue(urls.examples !== undefined);
+
+      expect(urls.bunMain !== undefined).toBe(true);
+      expect(urls.utilsMain !== undefined).toBe(true);
+      expect(urls.bunCLI !== undefined).toBe(true);
+      expect(urls.githubRepo !== undefined).toBe(true);
+      expect(urls.search !== undefined).toBe(true);
+      expect(urls.examples !== undefined).toBe(true);
 
       // Validate all URLs
       Object.values(urls).forEach(url => {
         const isValid = DocumentationURLHandler.validateDocumentationURL(url);
-        assert.isTrue(isValid, `URL should be valid: ${url}`);
+        expect(isValid).toBe(true);
       });
     });
   });
@@ -366,78 +366,78 @@ describe('DocumentationURLHandler', () => {
 
 describe('Enhanced Docs Reference', () => {
   describe('buildUrl with fragments', () => {
-    it('should build URL with fragment', (assert) => {
+    test('should build URL with fragment', () => {
       const url = buildDocsUrl('/docs/api/utils', undefined, {
         example: 'readFile',
         interactive: 'true'
       });
 
-      assert.isTrue(url.includes('bun.sh'));
-      assert.isTrue(url.includes('#'));
-      assert.isTrue(url.includes('example=readFile'));
-      assert.isTrue(url.includes('interactive=true'));
+      expect(url.includes('bun.sh')).toBe(true);
+      expect(url.includes('#')).toBe(true);
+      expect(url.includes('example=readFile')).toBe(true);
+      expect(url.includes('interactive=true')).toBe(true);
     });
 
-    it('should build URL with hash and fragment', (assert) => {
+    test('should build URL with hash and fragment', () => {
       const url = buildDocsUrl('/docs/api/utils', 'section1', {
         view: 'detailed'
       });
 
-      assert.isTrue(url.includes('#section1'));
-      assert.isTrue(url.includes('view=detailed'));
+      expect(url.includes('#section1')).toBe(true);
+      expect(url.includes('view=detailed')).toBe(true);
     });
   });
 
   describe('buildInteractiveDocsUrl', () => {
-    it('should build interactive URL', (assert) => {
+    test('should build interactive URL', () => {
       const url = buildInteractiveDocsUrl('/docs/api/utils', {
         theme: 'dark',
         editable: true
       });
 
-      assert.isTrue(url.includes('#'));
-      assert.isTrue(url.includes('interactive=true'));
-      assert.isTrue(url.includes('theme=dark'));
-      assert.isTrue(url.includes('editable=true'));
+      expect(url.includes('#')).toBe(true);
+      expect(url.includes('interactive=true')).toBe(true);
+      expect(url.includes('theme=dark')).toBe(true);
+      expect(url.includes('editable=true')).toBe(true);
     });
   });
 
   describe('buildExampleDocsUrl', () => {
-    it('should build example URL', (assert) => {
+    test('should build example URL', () => {
       const url = buildExampleDocsUrl('/docs/api/utils', 'console.log("test")', 'javascript');
 
-      assert.isTrue(url.includes('#'));
-      assert.isTrue(url.includes('example=console.log("test")'));
-      assert.isTrue(url.includes('language=javascript'));
-      assert.isTrue(url.includes('highlight=true'));
-      assert.isTrue(url.includes('runnable=true'));
+      expect(url.includes('#')).toBe(true);
+      expect(url.includes('example=console.log("test")')).toBe(true);
+      expect(url.includes('language=javascript')).toBe(true);
+      expect(url.includes('highlight=true')).toBe(true);
+      expect(url.includes('runnable=true')).toBe(true);
     });
   });
 
   describe('parseUrlWithFragments', () => {
-    it('should parse URL with fragments', (assert) => {
+    test('should parse URL with fragments', () => {
       const url = 'https://bun.sh/docs/api/utils#example=readFile&interactive=true&anchor=section1';
       const parsed = docs.parseUrlWithFragments(url);
 
-      assert.isTrue(parsed.valid);
-      assert.deepEqual(parsed.fragment, {
+      expect(parsed.valid).toBe(true);
+      expect(parsed.fragment).toEqual({
         example: 'readFile',
         interactive: 'true'
       });
-      assert.equal(parsed.anchor, 'section1');
+      expect(parsed.anchor).toBe('section1');
     });
   });
 
   describe('generateInteractiveLinks', () => {
-    it('should generate interactive links', (assert) => {
+    test('should generate interactive links', () => {
       const links = docs.generateInteractiveLinks();
-      assert.isTrue(links.length > 0);
+      expect(links.length > 0).toBe(true);
 
       links.forEach(link => {
-        assert.isTrue(link.url.includes('bun.sh'));
-        assert.isTrue(link.fragment.interactive === 'true');
-        assert.isTrue(link.name.length > 0);
-        assert.isTrue(link.description.length > 0);
+        expect(link.url.includes('bun.sh')).toBe(true);
+        expect(link.fragment.interactive === 'true').toBe(true);
+        expect(link.name.length > 0).toBe(true);
+        expect(link.description.length > 0).toBe(true);
       });
     });
   });
@@ -445,51 +445,51 @@ describe('Enhanced Docs Reference', () => {
 
 describe('DocReferenceResolver', () => {
   describe('resolve with fragments', () => {
-    it('should resolve reference with fragment', (assert) => {
+    test('should resolve reference with fragment', () => {
       const url = DocReferenceResolver.resolve('bun.docs', {
         view: 'overview',
         theme: 'dark'
       });
 
-      assert.isTrue(url.includes('bun.sh/docs'));
-      assert.isTrue(url.includes('#'));
-      assert.isTrue(url.includes('view=overview'));
-      assert.isTrue(url.includes('theme=dark'));
+      expect(url.includes('bun.sh/docs')).toBe(true);
+      expect(url.includes('#')).toBe(true);
+      expect(url.includes('view=overview')).toBe(true);
+      expect(url.includes('theme=dark')).toBe(true);
     });
 
-    it('should resolve reference without fragment', (assert) => {
+    test('should resolve reference without fragment', () => {
       const url = DocReferenceResolver.resolve('bun.docs');
-      assert.isTrue(url.includes('bun.sh/docs'));
-      assert.isFalse(url.includes('#'));
+      expect(url.includes('bun.sh/docs')).toBe(true);
+      expect(url.includes('#')).toBe(false);
     });
   });
 
   describe('resolveWithFragment', () => {
-    it('should resolve with fragment', (assert) => {
+    test('should resolve with fragment', () => {
       const url = DocReferenceResolver.resolveWithFragment('bun.api.utils', {
         example: 'fetch',
         interactive: 'true'
       });
 
-      assert.isTrue(url.includes('bun.sh/docs/api/utils'));
-      assert.isTrue(url.includes('#'));
-      assert.isTrue(url.includes('example=fetch'));
-      assert.isTrue(url.includes('interactive=true'));
+      expect(url.includes('bun.sh/docs/api/utils')).toBe(true);
+      expect(url.includes('#')).toBe(true);
+      expect(url.includes('example=fetch')).toBe(true);
+      expect(url.includes('interactive=true')).toBe(true);
     });
   });
 
   describe('generateInteractiveReferences', () => {
-    it('should generate interactive references', (assert) => {
+    test('should generate interactive references', () => {
       const refs = DocReferenceResolver.generateInteractiveReferences();
-      assert.isTrue(refs.length > 0);
+      expect(refs.length > 0).toBe(true);
 
       refs.forEach(ref => {
-        assert.isTrue(ref.url.includes('bun.sh'));
-        assert.isTrue(ref.interactiveUrl.includes('bun.sh'));
-        assert.isTrue(ref.interactiveUrl.includes('#'));
-        assert.isTrue(ref.interactiveUrl.includes('interactive=true'));
-        assert.isTrue(ref.key.length > 0);
-        assert.isTrue(ref.description.length > 0);
+        expect(ref.url.includes('bun.sh')).toBe(true);
+        expect(ref.interactiveUrl.includes('bun.sh')).toBe(true);
+        expect(ref.interactiveUrl.includes('#')).toBe(true);
+        expect(ref.interactiveUrl.includes('interactive=true')).toBe(true);
+        expect(ref.key.length > 0).toBe(true);
+        expect(ref.description.length > 0).toBe(true);
       });
     });
   });
@@ -497,7 +497,7 @@ describe('DocReferenceResolver', () => {
 
 describe('Enhanced Utility Factory', () => {
   describe('create with fragments', () => {
-    it('should create utility with fragment', (assert) => {
+    test('should create utility with fragment', () => {
       const utility = UtilityFactory.create({
         id: 'test_utility',
         name: 'Test Utility',
@@ -511,11 +511,11 @@ describe('Enhanced Utility Factory', () => {
         }
       });
 
-      assert.equal(utility.id, 'test_utility');
-      assert.isTrue(utility.docUrl.includes('#'));
-      assert.isTrue(utility.docUrl.includes('example=basic'));
-      assert.isTrue(utility.docUrl.includes('interactive=true'));
-      assert.deepEqual(utility.fragment, {
+      expect(utility.id).toBe('test_utility');
+      expect(utility.docUrl.includes('#')).toBe(true);
+      expect(utility.docUrl.includes('example=basic')).toBe(true);
+      expect(utility.docUrl.includes('interactive=true')).toBe(true);
+      expect(utility.fragment).toEqual({
         example: 'basic',
         interactive: 'true'
       });
@@ -523,7 +523,7 @@ describe('Enhanced Utility Factory', () => {
   });
 
   describe('createInteractive', () => {
-    it('should create interactive utility', (assert) => {
+    test('should create interactive utility', () => {
       const utility = UtilityFactory.createInteractive({
         id: 'interactive_utility',
         name: 'Interactive Utility',
@@ -538,16 +538,16 @@ describe('Enhanced Utility Factory', () => {
         }
       });
 
-      assert.isTrue(utility.docUrl.includes('#'));
-      assert.isTrue(utility.docUrl.includes('interactive=true'));
-      assert.isTrue(utility.docUrl.includes('runnable=true'));
-      assert.isTrue(utility.docUrl.includes('editable=true'));
-      assert.isTrue(utility.docUrl.includes('theme=dark'));
+      expect(utility.docUrl.includes('#')).toBe(true);
+      expect(utility.docUrl.includes('interactive=true')).toBe(true);
+      expect(utility.docUrl.includes('runnable=true')).toBe(true);
+      expect(utility.docUrl.includes('editable=true')).toBe(true);
+      expect(utility.docUrl.includes('theme=dark')).toBe(true);
     });
   });
 
   describe('createWithExample', () => {
-    it('should create utility with example', (assert) => {
+    test('should create utility with example', () => {
       const utility = UtilityFactory.createWithExample({
         id: 'example_utility',
         name: 'Example Utility',
@@ -559,17 +559,17 @@ describe('Enhanced Utility Factory', () => {
         language: 'typescript'
       });
 
-      assert.isTrue(utility.docUrl.includes('#'));
-      assert.isTrue(utility.docUrl.includes('example=string-validation'));
-      assert.isTrue(utility.docUrl.includes('language=typescript'));
-      assert.isTrue(utility.docUrl.includes('highlight=true'));
+      expect(utility.docUrl.includes('#')).toBe(true);
+      expect(utility.docUrl.includes('example=string-validation')).toBe(true);
+      expect(utility.docUrl.includes('language=typescript')).toBe(true);
+      expect(utility.docUrl.includes('highlight=true')).toBe(true);
     });
   });
 });
 
 describe('CLI Documentation Handler Integration', () => {
   describe('generateDocumentationURL integration', () => {
-    it('should work with CLI documentation', (assert) => {
+    test('should work with CLI documentation', () => {
       const url = CLIDocumentationHandler.generateDocumentationURL(
         CLICategory.COMMANDS,
         'TEST',
@@ -579,22 +579,22 @@ describe('CLI Documentation Handler Integration', () => {
         }
       );
 
-      assert.isTrue(url.includes('bun.sh'));
-      assert.isTrue(url.includes('#'));
-      assert.isTrue(url.includes('example=basic'));
-      assert.isTrue(url.includes('highlight=true'));
+      expect(url.includes('bun.sh')).toBe(true);
+      expect(url.includes('#')).toBe(true);
+      expect(url.includes('example=basic')).toBe(true);
+      expect(url.includes('highlight=true')).toBe(true);
     });
   });
 
   describe('parseDocumentationURL integration', () => {
-    it('should parse CLI documentation URL', (assert) => {
+    test('should parse CLI documentation URL', () => {
       const url = 'https://bun.sh/docs/cli/test#example=basic&highlight=true';
       const parsed = CLIDocumentationHandler.parseDocumentationURL(url);
 
-      assert.isTrue(parsed.valid);
-      assert.equal(parsed.category, CLICategory.COMMANDS);
-      assert.equal(parsed.page, 'TEST');
-      assert.deepEqual(parsed.fragment, {
+      expect(parsed.valid).toBe(true);
+      expect(parsed.category).toBe(CLICategory.COMMANDS);
+      expect(parsed.page).toBe('TEST');
+      expect(parsed.fragment).toEqual({
         example: 'basic',
         highlight: 'true'
       });
@@ -603,18 +603,18 @@ describe('CLI Documentation Handler Integration', () => {
 });
 
 describe('Edge Cases and Error Handling', () => {
-  it('should handle empty fragment gracefully', (assert) => {
+  test('should handle empty fragment gracefully', () => {
     const config: DocumentationURLConfig = {
       type: 'bun',
       fragment: {}
     };
 
     const url = DocumentationURLHandler.generateDocumentationURL(config);
-    assert.isTrue(url.includes('bun.sh'));
-    assert.isFalse(url.includes('#'));
+    expect(url.includes('bun.sh')).toBe(true);
+    expect(url.includes('#')).toBe(false);
   });
 
-  it('should handle malformed URLs in parsing', (assert) => {
+  test('should handle malformed URLs in parsing', () => {
     const malformedURLs = [
       'not-a-url',
       'ftp://invalid.protocol.com',
@@ -624,11 +624,11 @@ describe('Edge Cases and Error Handling', () => {
 
     malformedURLs.forEach(url => {
       const parsed = DocumentationURLHandler.parseDocumentationURL(url);
-      assert.isFalse(parsed.valid, `Should be invalid: ${url}`);
+      expect(parsed.valid).toBe(false);
     });
   });
 
-  it('should handle special characters in fragments', (assert) => {
+  test('should handle special characters in fragments', () => {
     const config: DocumentationURLConfig = {
       type: 'bun',
       fragment: {
@@ -641,13 +641,13 @@ describe('Edge Cases and Error Handling', () => {
     const url = DocumentationURLHandler.generateDocumentationURL(config);
     const parsed = DocumentationURLHandler.parseDocumentationURL(url);
 
-    assert.isTrue(parsed.valid);
-    assert.equal(parsed.fragment?.query, 'hello world & special chars!');
-    assert.equal(parsed.fragment?.filter, 'test@example.com');
-    assert.equal(parsed.fragment?.unicode, '测试');
+    expect(parsed.valid).toBe(true);
+    expect(parsed.fragment?.query).toBe('hello world & special chars!');
+    expect(parsed.fragment?.filter).toBe('test@example.com');
+    expect(parsed.fragment?.unicode).toBe('测试');
   });
 
-  it('should handle very long fragments', (assert) => {
+  test('should handle very long fragments', () => {
     const longValue = 'a'.repeat(1000);
     const config: DocumentationURLConfig = {
       type: 'bun',
@@ -660,16 +660,16 @@ describe('Edge Cases and Error Handling', () => {
     const url = DocumentationURLHandler.generateDocumentationURL(url);
     const parsed = DocumentationURLHandler.parseDocumentationURL(url);
 
-    assert.isTrue(parsed.valid);
-    assert.equal(parsed.fragment?.long, longValue);
-    assert.equal(parsed.fragment?.normal, 'test');
+    expect(parsed.valid).toBe(true);
+    expect(parsed.fragment?.long).toBe(longValue);
+    expect(parsed.fragment?.normal).toBe('test');
   });
 });
 
 describe('Performance Tests', () => {
-  it('should handle rapid URL generation', (assert) => {
+  test('should handle rapid URL generation', () => {
     const startTime = performance.now();
-    
+
     for (let i = 0; i < 1000; i++) {
       const config: DocumentationURLConfig = {
         type: 'bun',
@@ -678,33 +678,27 @@ describe('Performance Tests', () => {
           random: Math.random().toString()
         }
       };
-      
+
       DocumentationURLHandler.generateDocumentationURL(config);
     }
-    
+
     const endTime = performance.now();
     const duration = endTime - startTime;
-    
-    assert.isTrue(duration < 1000, `Should generate 1000 URLs in less than 1 second, took ${duration}ms`);
+
+    expect(duration < 1000).toBe(true);
   });
 
-  it('should handle rapid URL parsing', (assert) => {
+  test('should handle rapid URL parsing', () => {
     const testURL = 'https://bun.sh/docs#test=value&example=basic';
     const startTime = performance.now();
-    
+
     for (let i = 0; i < 1000; i++) {
       DocumentationURLHandler.parseDocumentationURL(testURL);
     }
-    
+
     const endTime = performance.now();
     const duration = endTime - startTime;
-    
-    assert.isTrue(duration < 500, `Should parse 1000 URLs in less than 500ms, took ${duration}ms`);
+
+    expect(duration < 500).toBe(true);
   });
 });
-
-// Run tests if this file is executed directly
-if (import.meta.main) {
-  const { runTests } = await import('../lib/core/unit-test-framework.ts');
-  await runTests();
-}

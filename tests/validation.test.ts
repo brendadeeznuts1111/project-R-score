@@ -1,390 +1,390 @@
 #!/usr/bin/env bun
 
 /**
- * 🧪 Validation System Unit Tests
- * 
+ * Validation System Unit Tests
+ *
  * Comprehensive tests for input validation, sanitization, and edge cases
  */
 
-import { describe, it, testUtils } from '../lib/core/unit-test-framework.ts';
-import { 
-  Validator, 
-  InputSanitizer, 
+import { describe, test, expect } from "bun:test";
+import {
+  Validator,
+  InputSanitizer,
   validateRequest,
   validateR2Key,
   validateDomain,
-  validateEvidenceId 
+  validateEvidenceId
 } from '../lib/core/validation.ts';
 import { ValidationError } from '../lib/core/error-handling.ts';
 
 describe('InputSanitizer', () => {
   describe('sanitizeString', () => {
-    it('should sanitize basic strings', (assert) => {
+    test('should sanitize basic strings', () => {
       const result = InputSanitizer.sanitizeString('  Hello World  ');
-      assert.equal(result, 'Hello World');
+      expect(result).toBe('Hello World');
     });
 
-    it('should remove HTML tags', (assert) => {
+    test('should remove HTML tags', () => {
       const result = InputSanitizer.sanitizeString('<script>alert("xss")</script>Hello');
-      assert.equal(result, 'alert("xss")Hello');
+      expect(result).toBe('alert("xss")Hello');
     });
 
-    it('should remove JavaScript protocols', (assert) => {
+    test('should remove JavaScript protocols', () => {
       const result = InputSanitizer.sanitizeString('javascript:alert("xss")');
-      assert.equal(result, 'alert("xss")');
+      expect(result).toBe('alert("xss")');
     });
 
-    it('should remove data URLs', (assert) => {
+    test('should remove data URLs', () => {
       const result = InputSanitizer.sanitizeString('data:text/html,<script>alert("xss")</script>');
-      assert.equal(result, 'text/html,<script>alert("xss")</script>');
+      expect(result).toBe('text/html,<script>alert("xss")</script>');
     });
 
-    it('should limit string length', (assert) => {
+    test('should limit string length', () => {
       const longString = 'a'.repeat(2000);
       const result = InputSanitizer.sanitizeString(longString);
-      assert.equal(result.length, 1000);
+      expect(result.length).toBe(1000);
     });
 
-    it('should handle non-string inputs', (assert) => {
-      assert.equal(InputSanitizer.sanitizeString(123), '123');
-      assert.equal(InputSanitizer.sanitizeString(null), '');
-      assert.equal(InputSanitizer.sanitizeString(undefined), '');
+    test('should handle non-string inputs', () => {
+      expect(InputSanitizer.sanitizeString(123)).toBe('123');
+      expect(InputSanitizer.sanitizeString(null)).toBe('');
+      expect(InputSanitizer.sanitizeString(undefined)).toBe('');
     });
   });
 
   describe('sanitizeNumber', () => {
-    it('should sanitize valid numbers', (assert) => {
-      assert.equal(InputSanitizer.sanitizeNumber(42), 42);
-      assert.equal(InputSanitizer.sanitizeNumber('123'), 123);
+    test('should sanitize valid numbers', () => {
+      expect(InputSanitizer.sanitizeNumber(42)).toBe(42);
+      expect(InputSanitizer.sanitizeNumber('123')).toBe(123);
     });
 
-    it('should handle invalid numbers', (assert) => {
-      assert.equal(InputSanitizer.sanitizeNumber('invalid'), 0);
-      assert.equal(InputSanitizer.sanitizeNumber(NaN), 0);
-      assert.equal(InputSanitizer.sanitizeNumber(null), 0);
+    test('should handle invalid numbers', () => {
+      expect(InputSanitizer.sanitizeNumber('invalid')).toBe(0);
+      expect(InputSanitizer.sanitizeNumber(NaN)).toBe(0);
+      expect(InputSanitizer.sanitizeNumber(null)).toBe(0);
     });
   });
 
   describe('sanitizeBoolean', () => {
-    it('should sanitize boolean values', (assert) => {
-      assert.isTrue(InputSanitizer.sanitizeBoolean(true));
-      assert.isFalse(InputSanitizer.sanitizeBoolean(false));
+    test('should sanitize boolean values', () => {
+      expect(InputSanitizer.sanitizeBoolean(true)).toBe(true);
+      expect(InputSanitizer.sanitizeBoolean(false)).toBe(false);
     });
 
-    it('should sanitize string booleans', (assert) => {
-      assert.isTrue(InputSanitizer.sanitizeBoolean('true'));
-      assert.isTrue(InputSanitizer.sanitizeBoolean('TRUE'));
-      assert.isFalse(InputSanitizer.sanitizeBoolean('false'));
-      assert.isFalse(InputSanitizer.sanitizeBoolean('FALSE'));
+    test('should sanitize string booleans', () => {
+      expect(InputSanitizer.sanitizeBoolean('true')).toBe(true);
+      expect(InputSanitizer.sanitizeBoolean('TRUE')).toBe(true);
+      expect(InputSanitizer.sanitizeBoolean('false')).toBe(false);
+      expect(InputSanitizer.sanitizeBoolean('FALSE')).toBe(false);
     });
 
-    it('should sanitize other values', (assert) => {
-      assert.isTrue(InputSanitizer.sanitizeBoolean(1));
-      assert.isTrue(InputSanitizer.sanitizeBoolean('non-empty'));
-      assert.isFalse(InputSanitizer.sanitizeBoolean(0));
-      assert.isFalse(InputSanitizer.sanitizeBoolean(''));
+    test('should sanitize other values', () => {
+      expect(InputSanitizer.sanitizeBoolean(1)).toBe(true);
+      expect(InputSanitizer.sanitizeBoolean('non-empty')).toBe(true);
+      expect(InputSanitizer.sanitizeBoolean(0)).toBe(false);
+      expect(InputSanitizer.sanitizeBoolean('')).toBe(false);
     });
   });
 
-  describe('sanitizeArray', (assert) => {
-    it('should sanitize arrays', (assert) => {
+  describe('sanitizeArray', () => {
+    test('should sanitize arrays', () => {
       const result = InputSanitizer.sanitizeArray([1, 2, null, undefined, 3]);
-      assert.deepEqual(result, [1, 2, 3]);
+      expect(result).toEqual([1, 2, 3]);
     });
 
-    it('should limit array size', (assert) => {
+    test('should limit array size', () => {
       const largeArray = Array.from({ length: 200 }, (_, i) => i);
       const result = InputSanitizer.sanitizeArray(largeArray);
-      assert.equal(result.length, 100);
+      expect(result.length).toBe(100);
     });
 
-    it('should handle non-array inputs', (assert) => {
-      assert.deepEqual(InputSanitizer.sanitizeArray('not an array'), []);
-      assert.deepEqual(InputSanitizer.sanitizeArray(null), []);
+    test('should handle non-array inputs', () => {
+      expect(InputSanitizer.sanitizeArray('not an array')).toEqual([]);
+      expect(InputSanitizer.sanitizeArray(null)).toEqual([]);
     });
   });
 
   describe('sanitizeObject', () => {
-    it('should sanitize objects', (assert) => {
+    test('should sanitize objects', () => {
       const obj = { a: 1, b: 2, c: 3 };
       const result = InputSanitizer.sanitizeObject(obj);
-      assert.deepEqual(result, obj);
+      expect(result).toEqual(obj);
     });
 
-    it('should limit object size', (assert) => {
+    test('should limit object size', () => {
       const largeObj = {};
       for (let i = 0; i < 100; i++) {
         largeObj[`key${i}`] = i;
       }
       const result = InputSanitizer.sanitizeObject(largeObj);
-      assert.isTrue(Object.keys(result).length <= 50);
+      expect(Object.keys(result).length <= 50).toBe(true);
     });
 
-    it('should handle invalid inputs', (assert) => {
-      assert.deepEqual(InputSanitizer.sanitizeObject(null), {});
-      assert.deepEqual(InputSanitizer.sanitizeObject('not an object'), {});
-      assert.deepEqual(InputSanitizer.sanitizeObject([]), {});
+    test('should handle invalid inputs', () => {
+      expect(InputSanitizer.sanitizeObject(null)).toEqual({});
+      expect(InputSanitizer.sanitizeObject('not an object')).toEqual({});
+      expect(InputSanitizer.sanitizeObject([])).toEqual({});
     });
   });
 });
 
 describe('Validator', () => {
   describe('string validator', () => {
-    it('should validate required strings', (assert) => {
+    test('should validate required strings', () => {
       const validator = Validator.string({ required: true });
-      
+
       const result1 = validator('hello');
-      assert.isTrue(result1.isValid);
-      assert.equal(result1.data, 'hello');
-      
+      expect(result1.isValid).toBe(true);
+      expect(result1.data).toBe('hello');
+
       const result2 = validator(null);
-      assert.isFalse(result2.isValid);
-      assert.isTrue(result2.errors.includes('Field is required'));
+      expect(result2.isValid).toBe(false);
+      expect(result2.errors.includes('Field is required')).toBe(true);
     });
 
-    it('should validate string length', (assert) => {
-      const validator = Validator.string({ 
-        minLength: 3, 
-        maxLength: 10 
+    test('should validate string length', () => {
+      const validator = Validator.string({
+        minLength: 3,
+        maxLength: 10
       });
-      
+
       const result1 = validator('hello');
-      assert.isTrue(result1.isValid);
-      
+      expect(result1.isValid).toBe(true);
+
       const result2 = validator('hi');
-      assert.isFalse(result2.isValid);
-      assert.isTrue(result2.errors.includes('Must be at least 3 characters'));
-      
+      expect(result2.isValid).toBe(false);
+      expect(result2.errors.includes('Must be at least 3 characters')).toBe(true);
+
       const result3 = validator('this is too long');
-      assert.isFalse(result3.isValid);
-      assert.isTrue(result3.errors.includes('Must be no more than 10 characters'));
+      expect(result3.isValid).toBe(false);
+      expect(result3.errors.includes('Must be no more than 10 characters')).toBe(true);
     });
 
-    it('should validate patterns', (assert) => {
-      const validator = Validator.string({ 
-        pattern: /^[a-z]+$/ 
+    test('should validate patterns', () => {
+      const validator = Validator.string({
+        pattern: /^[a-z]+$/
       });
-      
+
       const result1 = validator('hello');
-      assert.isTrue(result1.isValid);
-      
+      expect(result1.isValid).toBe(true);
+
       const result2 = validator('Hello123');
-      assert.isFalse(result2.isValid);
-      assert.isTrue(result2.errors.includes('Invalid format'));
+      expect(result2.isValid).toBe(false);
+      expect(result2.errors.includes('Invalid format')).toBe(true);
     });
 
-    it('should validate enums', (assert) => {
-      const validator = Validator.string({ 
-        enum: ['red', 'green', 'blue'] 
+    test('should validate enums', () => {
+      const validator = Validator.string({
+        enum: ['red', 'green', 'blue']
       });
-      
+
       const result1 = validator('red');
-      assert.isTrue(result1.isValid);
-      
+      expect(result1.isValid).toBe(true);
+
       const result2 = validator('yellow');
-      assert.isFalse(result2.isValid);
-      assert.isTrue(result2.errors.includes('Must be one of: red, green, blue'));
+      expect(result2.isValid).toBe(false);
+      expect(result2.errors.includes('Must be one of: red, green, blue')).toBe(true);
     });
 
-    it('should sanitize when requested', (assert) => {
+    test('should sanitize when requested', () => {
       const validator = Validator.string({ sanitize: true });
-      
+
       const result = validator('  <script>alert("xss")</script>hello  ');
-      assert.isTrue(result1.isValid);
-      assert.equal(result.data, 'alert("xss")hello');
-      assert.isTrue(result.warnings.includes('Input was sanitized'));
+      expect(result1.isValid).toBe(true);
+      expect(result.data).toBe('alert("xss")hello');
+      expect(result.warnings.includes('Input was sanitized')).toBe(true);
     });
   });
 
   describe('number validator', () => {
-    it('should validate required numbers', (assert) => {
+    test('should validate required numbers', () => {
       const validator = Validator.number({ required: true });
-      
+
       const result1 = validator(42);
-      assert.isTrue(result1.isValid);
-      assert.equal(result1.data, 42);
-      
+      expect(result1.isValid).toBe(true);
+      expect(result1.data).toBe(42);
+
       const result2 = validator(null);
-      assert.isFalse(result2.isValid);
-      assert.isTrue(result2.errors.includes('Field is required'));
+      expect(result2.isValid).toBe(false);
+      expect(result2.errors.includes('Field is required')).toBe(true);
     });
 
-    it('should validate number ranges', (assert) => {
+    test('should validate number ranges', () => {
       const validator = Validator.number({ min: 0, max: 100 });
-      
+
       const result1 = validator(50);
-      assert.isTrue(result1.isValid);
-      
+      expect(result1.isValid).toBe(true);
+
       const result2 = validator(-10);
-      assert.isFalse(result2.isValid);
-      assert.isTrue(result2.errors.includes('Must be at least 0'));
-      
+      expect(result2.isValid).toBe(false);
+      expect(result2.errors.includes('Must be at least 0')).toBe(true);
+
       const result3 = validator(150);
-      assert.isFalse(result3.isValid);
-      assert.isTrue(result3.errors.includes('Must be no more than 100'));
+      expect(result3.isValid).toBe(false);
+      expect(result3.errors.includes('Must be no more than 100')).toBe(true);
     });
 
-    it('should validate integers', (assert) => {
+    test('should validate integers', () => {
       const validator = Validator.number({ integer: true });
-      
+
       const result1 = validator(42);
-      assert.isTrue(result1.isValid);
-      
+      expect(result1.isValid).toBe(true);
+
       const result2 = validator(3.14);
-      assert.isFalse(result2.isValid);
-      assert.isTrue(result2.errors.includes('Must be an integer'));
+      expect(result2.isValid).toBe(false);
+      expect(result2.errors.includes('Must be an integer')).toBe(true);
     });
 
-    it('should handle invalid numbers', (assert) => {
+    test('should handle invalid numbers', () => {
       const validator = Validator.number();
-      
+
       const result = validator('not a number');
-      assert.isFalse(result.isValid);
-      assert.isTrue(result.errors.includes('Must be a valid number'));
+      expect(result.isValid).toBe(false);
+      expect(result.errors.includes('Must be a valid number')).toBe(true);
     });
   });
 
   describe('boolean validator', () => {
-    it('should validate boolean values', (assert) => {
+    test('should validate boolean values', () => {
       const validator = Validator.boolean();
-      
+
       const result1 = validator(true);
-      assert.isTrue(result1.isValid);
-      assert.isTrue(result1.data);
-      
+      expect(result1.isValid).toBe(true);
+      expect(result1.data).toBe(true);
+
       const result2 = validator(false);
-      assert.isTrue(result2.isValid);
-      assert.isFalse(result2.data);
+      expect(result2.isValid).toBe(true);
+      expect(result2.data).toBe(false);
     });
 
-    it('should convert string booleans', (assert) => {
+    test('should convert string booleans', () => {
       const validator = Validator.boolean();
-      
+
       const result1 = validator('true');
-      assert.isTrue(result1.isValid);
-      assert.isTrue(result1.data);
-      
+      expect(result1.isValid).toBe(true);
+      expect(result1.data).toBe(true);
+
       const result2 = validator('false');
-      assert.isTrue(result2.isValid);
-      assert.isFalse(result2.data);
+      expect(result2.isValid).toBe(true);
+      expect(result2.data).toBe(false);
     });
   });
 
   describe('array validator', () => {
-    it('should validate arrays', (assert) => {
+    test('should validate arrays', () => {
       const stringValidator = Validator.string();
       const arrayValidator = Validator.array(stringValidator);
-      
+
       const result1 = arrayValidator(['a', 'b', 'c']);
-      assert.isTrue(result1.isValid);
-      assert.deepEqual(result1.data, ['a', 'b', 'c']);
-      
+      expect(result1.isValid).toBe(true);
+      expect(result1.data).toEqual(['a', 'b', 'c']);
+
       const result2 = arrayValidator('not an array');
-      assert.isFalse(result2.isValid);
-      assert.isTrue(result2.errors.includes('Must be an array'));
+      expect(result2.isValid).toBe(false);
+      expect(result2.errors.includes('Must be an array')).toBe(true);
     });
 
-    it('should validate array length', (assert) => {
-      const validator = Validator.array(Validator.string(), { 
-        minLength: 2, 
-        maxLength: 5 
+    test('should validate array length', () => {
+      const validator = Validator.array(Validator.string(), {
+        minLength: 2,
+        maxLength: 5
       });
-      
+
       const result1 = validator(['a', 'b', 'c']);
-      assert.isTrue(result1.isValid);
-      
+      expect(result1.isValid).toBe(true);
+
       const result2 = validator(['a']);
-      assert.isFalse(result2.isValid);
-      assert.isTrue(result2.errors.includes('Must have at least 2 items'));
-      
+      expect(result2.isValid).toBe(false);
+      expect(result2.errors.includes('Must have at least 2 items')).toBe(true);
+
       const result3 = validator(['a', 'b', 'c', 'd', 'e', 'f']);
-      assert.isFalse(result3.isValid);
-      assert.isTrue(result3.errors.includes('Must have no more than 5 items'));
+      expect(result3.isValid).toBe(false);
+      expect(result3.errors.includes('Must have no more than 5 items')).toBe(true);
     });
 
-    it('should validate array items', (assert) => {
+    test('should validate array items', () => {
       const stringValidator = Validator.string({ minLength: 3 });
       const arrayValidator = Validator.array(stringValidator);
-      
+
       const result = arrayValidator(['ab', 'cde', 'f']);
-      assert.isFalse(result.isValid);
-      assert.isTrue(result.errors.some(e => e.includes('Item 0')));
+      expect(result.isValid).toBe(false);
+      expect(result.errors.some(e => e.includes('Item 0'))).toBe(true);
     });
   });
 
   describe('object validator', () => {
-    it('should validate objects', (assert) => {
+    test('should validate objects', () => {
       const schema = {
         name: { type: 'string', required: true },
         age: { type: 'number', min: 0 },
         email: { type: 'string', pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ }
       };
-      
+
       const validator = Validator.object(schema);
-      
+
       const result1 = validator({
         name: 'John',
         age: 30,
         email: 'john@example.com'
       });
-      assert.isTrue(result1.isValid);
-      
+      expect(result1.isValid).toBe(true);
+
       const result2 = validator({
         age: -5,
         email: 'invalid-email'
       });
-      assert.isFalse(result2.isValid);
-      assert.isTrue(result2.errors.some(e => e.includes('name')));
-      assert.isTrue(result2.errors.some(e => e.includes('age')));
-      assert.isTrue(result2.errors.some(e => e.includes('email')));
+      expect(result2.isValid).toBe(false);
+      expect(result2.errors.some(e => e.includes('name'))).toBe(true);
+      expect(result2.errors.some(e => e.includes('age'))).toBe(true);
+      expect(result2.errors.some(e => e.includes('email'))).toBe(true);
     });
 
-    it('should handle missing required fields', (assert) => {
+    test('should handle missing required fields', () => {
       const schema = {
         required: { type: 'string', required: true },
         optional: { type: 'string' }
       };
-      
+
       const validator = Validator.object(schema);
-      
+
       const result = validator({ optional: 'value' });
-      assert.isFalse(result.isValid);
-      assert.isTrue(result.errors.includes('required: Field is required'));
+      expect(result.isValid).toBe(false);
+      expect(result.errors.includes('required: Field is required')).toBe(true);
     });
   });
 
   describe('custom validator', () => {
-    it('should support custom validation logic', (assert) => {
+    test('should support custom validation logic', () => {
       const validator = Validator.custom((input) => {
         if (typeof input !== 'string' || !input.includes('@')) {
           return { isValid: false, error: 'Must contain @ symbol' };
         }
         return { isValid: true, data: input.toLowerCase() };
       });
-      
+
       const result1 = validator('USER@EXAMPLE.COM');
-      assert.isTrue(result1.isValid);
-      assert.equal(result1.data, 'user@example.com');
-      
+      expect(result1.isValid).toBe(true);
+      expect(result1.data).toBe('user@example.com');
+
       const result2 = validator('invalid');
-      assert.isFalse(result2.isValid);
-      assert.isTrue(result2.errors.includes('Must contain @ symbol'));
+      expect(result2.isValid).toBe(false);
+      expect(result2.errors.includes('Must contain @ symbol')).toBe(true);
     });
   });
 });
 
 describe('Built-in Validators', () => {
   describe('validateR2Key', () => {
-    it('should validate valid R2 keys', (assert) => {
+    test('should validate valid R2 keys', () => {
       const result1 = validateR2Key('valid-key-123');
-      assert.isTrue(result1.isValid);
-      assert.equal(result1.data, 'valid-key-123');
-      
+      expect(result1.isValid).toBe(true);
+      expect(result1.data).toBe('valid-key-123');
+
       const result2 = validateR2Key('path/to/object.json');
-      assert.isTrue(result1.isValid);
+      expect(result1.isValid).toBe(true);
     });
 
-    it('should reject invalid R2 keys', (assert) => {
+    test('should reject invalid R2 keys', () => {
       const invalidKeys = [
         '',
         'a'.repeat(1025), // Too long
@@ -394,36 +394,36 @@ describe('Built-in Validators', () => {
         'key>with>brackets',
         'key|with|pipes'
       ];
-      
+
       for (const key of invalidKeys) {
         const result = validateR2Key(key);
-        assert.isFalse(result.isValid, `Should reject key: ${key}`);
+        expect(result.isValid).toBe(false);
       }
     });
 
-    it('should reject non-string inputs', (assert) => {
+    test('should reject non-string inputs', () => {
       const result = validateR2Key(123);
-      assert.isFalse(result.isValid);
-      assert.isTrue(result.errors.includes('R2 key must be a string'));
+      expect(result.isValid).toBe(false);
+      expect(result.errors.includes('R2 key must be a string')).toBe(true);
     });
   });
 
   describe('validateDomain', () => {
-    it('should validate valid domains', (assert) => {
+    test('should validate valid domains', () => {
       const validDomains = [
         'example.com',
         'sub.example.com',
         'test-site.co.uk',
         'a.b.c.d.e.f.g'
       ];
-      
+
       for (const domain of validDomains) {
         const result = validateDomain(domain);
-        assert.isTrue(result.isValid, `Should validate domain: ${domain}`);
+        expect(result.isValid).toBe(true);
       }
     });
 
-    it('should reject invalid domains', (assert) => {
+    test('should reject invalid domains', () => {
       const invalidDomains = [
         '',
         'a', // Too short
@@ -434,30 +434,30 @@ describe('Built-in Validators', () => {
         'domain with spaces.com',
         'domain.with_underscore.com'
       ];
-      
+
       for (const domain of invalidDomains) {
         const result = validateDomain(domain);
-        assert.isFalse(result.isValid, `Should reject domain: ${domain}`);
+        expect(result.isValid).toBe(false);
       }
     });
   });
 
   describe('validateEvidenceId', () => {
-    it('should validate valid evidence IDs', (assert) => {
+    test('should validate valid evidence IDs', () => {
       const validIds = [
         'evidence-123',
         'evidence_456',
         'id123',
         'VALID-ID'
       ];
-      
+
       for (const id of validIds) {
         const result = validateEvidenceId(id);
-        assert.isTrue(result.isValid, `Should validate ID: ${id}`);
+        expect(result.isValid).toBe(true);
       }
     });
 
-    it('should reject invalid evidence IDs', (assert) => {
+    test('should reject invalid evidence IDs', () => {
       const invalidIds = [
         '',
         'a'.repeat(101), // Too long
@@ -466,17 +466,17 @@ describe('Built-in Validators', () => {
         'id/with/slashes',
         'id<with>brackets'
       ];
-      
+
       for (const id of invalidIds) {
         const result = validateEvidenceId(id);
-        assert.isFalse(result.isValid, `Should reject ID: ${id}`);
+        expect(result.isValid).toBe(false);
       }
     });
   });
 });
 
 describe('validateRequest', () => {
-  it('should validate valid request objects', (assert) => {
+  test('should validate valid request objects', () => {
     const validRequest = {
       headers: {
         authorization: 'Bearer token',
@@ -486,16 +486,16 @@ describe('validateRequest', () => {
       url: '/api/test',
       body: { test: true }
     };
-    
-    assert.isTrue(validateRequest(validRequest));
+
+    expect(validateRequest(validRequest)).toBe(true);
   });
 
-  it('should validate minimal request objects', (assert) => {
+  test('should validate minimal request objects', () => {
     const minimalRequest = {};
-    assert.isTrue(validateRequest(minimalRequest));
+    expect(validateRequest(minimalRequest)).toBe(true);
   });
 
-  it('should reject invalid request objects', (assert) => {
+  test('should reject invalid request objects', () => {
     const invalidRequests = [
       null,
       undefined,
@@ -504,76 +504,70 @@ describe('validateRequest', () => {
       [],
       new Date()
     ];
-    
+
     for (const request of invalidRequests) {
-      assert.isFalse(validateRequest(request), `Should reject: ${typeof request}`);
+      expect(validateRequest(request)).toBe(false);
     }
   });
 
-  it('should handle request with invalid header types', (assert) => {
+  test('should handle request with invalid header types', () => {
     const requestWithInvalidHeaders = {
       headers: 'not an object'
     };
-    
-    assert.isTrue(validateRequest(requestWithInvalidHeaders));
+
+    expect(validateRequest(requestWithInvalidHeaders)).toBe(true);
   });
 });
 
 describe('Edge Cases', () => {
-  it('should handle extreme values in string validation', (assert) => {
+  test('should handle extreme values in string validation', () => {
     const validator = Validator.string({ maxLength: 10 });
-    
+
     const result = validator('a'.repeat(1000));
-    assert.isFalse(result.isValid);
-    assert.isTrue(result.errors.includes('Must be no more than 10 characters'));
+    expect(result.isValid).toBe(false);
+    expect(result.errors.includes('Must be no more than 10 characters')).toBe(true);
   });
 
-  it('should handle NaN in number validation', (assert) => {
+  test('should handle NaN in number validation', () => {
     const validator = Validator.number();
-    
+
     const result = validator(NaN);
-    assert.isFalse(result.isValid);
-    assert.isTrue(result.errors.includes('Must be a valid number'));
+    expect(result.isValid).toBe(false);
+    expect(result.errors.includes('Must be a valid number')).toBe(true);
   });
 
-  it('should handle infinite values in number validation', (assert) => {
+  test('should handle infinite values in number validation', () => {
     const validator = Validator.number({ max: 100 });
-    
+
     const result1 = validator(Infinity);
-    assert.isFalse(result1.isValid);
-    
+    expect(result1.isValid).toBe(false);
+
     const result2 = validator(-Infinity);
-    assert.isFalse(result2.isValid);
+    expect(result2.isValid).toBe(false);
   });
 
-  it('should handle circular references in object validation', (assert) => {
+  test('should handle circular references in object validation', () => {
     const validator = Validator.object({});
-    
+
     const circular: any = { a: 1 };
     circular.self = circular;
-    
+
     // Should not crash
     const result = validator(circular);
-    assert.isTrue(result.isValid);
+    expect(result.isValid).toBe(true);
   });
 
-  it('should handle very deep nesting', (assert) => {
+  test('should handle very deep nesting', () => {
     const validator = Validator.object({});
-    
+
     // Create deeply nested object
     let deep: any = { value: 'deep' };
     for (let i = 0; i < 100; i++) {
       deep = { nested: deep };
     }
-    
+
     // Should not crash
     const result = validator(deep);
-    assert.isTrue(result.isValid);
+    expect(result.isValid).toBe(true);
   });
 });
-
-// Run tests if this file is executed directly
-if (import.meta.main) {
-  const { runTests } = await import('../lib/core/unit-test-framework.ts');
-  await runTests();
-}

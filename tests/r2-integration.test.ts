@@ -1,17 +1,17 @@
 #!/usr/bin/env bun
 
 /**
- * 🧪 R2 Integration Unit Tests
- * 
+ * R2 Integration Unit Tests
+ *
  * Comprehensive tests for race conditions, error handling, validation, and edge cases
  */
 
-import { describe, it, mock, testUtils } from '../lib/core/unit-test-framework.ts';
+import { describe, test, expect, beforeEach, mock } from "bun:test";
 import { R2MCPIntegration } from '../lib/mcp/r2-integration-fixed.ts';
-import { 
-  R2ConnectionError, 
-  R2DataError, 
-  ValidationError 
+import {
+  R2ConnectionError,
+  R2DataError,
+  ValidationError
 } from '../lib/core/error-handling.ts';
 import { globalCache } from '../lib/core/cache-manager.ts';
 
@@ -21,7 +21,7 @@ describe('R2MCPIntegration', () => {
   beforeEach(() => {
     // Reset cache before each test
     globalCache.clear();
-    
+
     // Create new instance with test config
     r2Integration = new R2MCPIntegration({
       accountId: 'test-account',
@@ -32,16 +32,16 @@ describe('R2MCPIntegration', () => {
   });
 
   describe('Initialization', () => {
-    it('should initialize successfully with valid config', async (assert) => {
+    test('should initialize successfully with valid config', async () => {
       await r2Integration.initialize();
-      
+
       const status = await r2Integration.getConfigStatus();
-      assert.isTrue(status.connected);
-      assert.equal(status.config.accountId, 'test-account');
-      assert.equal(status.config.bucketName, 'test-bucket');
+      expect(status.connected).toBe(true);
+      expect(status.config.accountId).toBe('test-account');
+      expect(status.config.bucketName).toBe('test-bucket');
     });
 
-    it('should fail initialization with missing account ID', async (assert) => {
+    test('should fail initialization with missing account ID', async () => {
       const invalidR2 = new R2MCPIntegration({
         accountId: '',
         accessKeyId: 'test-key',
@@ -49,13 +49,10 @@ describe('R2MCPIntegration', () => {
         bucketName: 'test-bucket'
       });
 
-      await assert.throws(
-        () => invalidR2.initialize(),
-        'Account ID is required'
-      );
+      await expect(invalidR2.initialize()).rejects.toThrow('Account ID is required');
     });
 
-    it('should fail initialization with missing access key', async (assert) => {
+    test('should fail initialization with missing access key', async () => {
       const invalidR2 = new R2MCPIntegration({
         accountId: 'test-account',
         accessKeyId: '',
@@ -63,16 +60,12 @@ describe('R2MCPIntegration', () => {
         bucketName: 'test-bucket'
       });
 
-      await assert.throws(
-        () => invalidR2.initialize(),
-        'Access Key ID is required'
-      );
+      await expect(invalidR2.initialize()).rejects.toThrow('Access Key ID is required');
     });
 
-    it('should handle connection test failure', async (assert) => {
+    test('should handle connection test failure', async () => {
       // Mock the test connection to fail
-      const mockR2 = mock('testConnection');
-      mockR2.returns(false);
+      const testConnectionMock = mock(() => false);
 
       const failingR2 = new R2MCPIntegration({
         accountId: 'test-account',
@@ -81,10 +74,7 @@ describe('R2MCPIntegration', () => {
         bucketName: 'test-bucket'
       });
 
-      await assert.throws(
-        () => failingR2.initialize(),
-        'Failed to establish R2 connection'
-      );
+      await expect(failingR2.initialize()).rejects.toThrow('Failed to establish R2 connection');
     });
   });
 
@@ -93,7 +83,7 @@ describe('R2MCPIntegration', () => {
       await r2Integration.initialize();
     });
 
-    it('should store diagnosis successfully', async (assert) => {
+    test('should store diagnosis successfully', async () => {
       const diagnosis = {
         id: 'test-diagnosis-1',
         timestamp: new Date().toISOString(),
@@ -106,12 +96,12 @@ describe('R2MCPIntegration', () => {
       };
 
       const key = await r2Integration.storeDiagnosis(diagnosis);
-      
-      assert.isTrue(key.includes('test-diagnosis-1'));
-      assert.isTrue(key.includes('mcp/diagnoses/'));
+
+      expect(key.includes('test-diagnosis-1')).toBe(true);
+      expect(key.includes('mcp/diagnoses/')).toBe(true);
     });
 
-    it('should reject diagnosis with invalid ID', async (assert) => {
+    test('should reject diagnosis with invalid ID', async () => {
       const invalidDiagnosis = {
         id: 'invalid/id/with/slashes',
         timestamp: new Date().toISOString(),
@@ -123,13 +113,12 @@ describe('R2MCPIntegration', () => {
         resolved: false
       };
 
-      await assert.throws(
-        () => r2Integration.storeDiagnosis(invalidDiagnosis),
-        'Invalid diagnosis key'
-      );
+      await expect(
+        r2Integration.storeDiagnosis(invalidDiagnosis)
+      ).rejects.toThrow('Invalid diagnosis key');
     });
 
-    it('should handle diagnosis storage failure gracefully', async (assert) => {
+    test('should handle diagnosis storage failure gracefully', async () => {
       const diagnosis = {
         id: 'test-diagnosis-fail',
         timestamp: new Date().toISOString(),
@@ -143,7 +132,7 @@ describe('R2MCPIntegration', () => {
 
       // This should not throw due to retry mechanism
       const key = await r2Integration.storeDiagnosis(diagnosis);
-      assert.isTrue(key.includes('test-diagnosis-fail'));
+      expect(key.includes('test-diagnosis-fail')).toBe(true);
     });
   });
 
@@ -152,7 +141,7 @@ describe('R2MCPIntegration', () => {
       await r2Integration.initialize();
     });
 
-    it('should store audit entry successfully', async (assert) => {
+    test('should store audit entry successfully', async () => {
       const audit = {
         id: 'test-audit-1',
         timestamp: new Date().toISOString(),
@@ -164,12 +153,12 @@ describe('R2MCPIntegration', () => {
       };
 
       const key = await r2Integration.storeAuditEntry(audit);
-      
-      assert.isTrue(key.includes('test-audit-1'));
-      assert.isTrue(key.includes('mcp/audits/'));
+
+      expect(key.includes('test-audit-1')).toBe(true);
+      expect(key.includes('mcp/audits/')).toBe(true);
     });
 
-    it('should reject audit with invalid characters in ID', async (assert) => {
+    test('should reject audit with invalid characters in ID', async () => {
       const invalidAudit = {
         id: 'invalid<audit>id',
         timestamp: new Date().toISOString(),
@@ -179,13 +168,12 @@ describe('R2MCPIntegration', () => {
         success: true
       };
 
-      await assert.throws(
-        () => r2Integration.storeAuditEntry(invalidAudit),
-        'Invalid audit key'
-      );
+      await expect(
+        r2Integration.storeAuditEntry(invalidAudit)
+      ).rejects.toThrow('Invalid audit key');
     });
 
-    it('should handle audit storage with missing optional fields', async (assert) => {
+    test('should handle audit storage with missing optional fields', async () => {
       const minimalAudit = {
         id: 'minimal-audit',
         timestamp: new Date().toISOString(),
@@ -196,14 +184,14 @@ describe('R2MCPIntegration', () => {
       };
 
       const key = await r2Integration.storeAuditEntry(minimalAudit);
-      assert.isTrue(key.includes('minimal-audit'));
+      expect(key.includes('minimal-audit')).toBe(true);
     });
   });
 
   describe('Audit Search', () => {
     beforeEach(async () => {
       await r2Integration.initialize();
-      
+
       // Store some test audits
       const audits = [
         {
@@ -237,39 +225,39 @@ describe('R2MCPIntegration', () => {
       }
     });
 
-    it('should search audits by action', async (assert) => {
+    test('should search audits by action', async () => {
       const results = await r2Integration.searchAudits('login', 10);
-      
-      assert.isTrue(results.length >= 0);
+
+      expect(results.length >= 0).toBe(true);
       if (results.length > 0) {
-        assert.isTrue(results[0].action.includes('login'));
+        expect(results[0].action.includes('login')).toBe(true);
       }
     });
 
-    it('should search audits by resource', async (assert) => {
+    test('should search audits by resource', async () => {
       const results = await r2Integration.searchAudits('auth', 10);
-      
-      assert.isTrue(results.length >= 0);
+
+      expect(results.length >= 0).toBe(true);
     });
 
-    it('should return empty results for non-existent query', async (assert) => {
+    test('should return empty results for non-existent query', async () => {
       const results = await r2Integration.searchAudits('non-existent', 10);
-      
-      assert.equal(results.length, 0);
+
+      expect(results.length).toBe(0);
     });
 
-    it('should limit search results', async (assert) => {
+    test('should limit search results', async () => {
       const results = await r2Integration.searchAudits('', 2);
-      
-      assert.isTrue(results.length <= 2);
+
+      expect(results.length <= 2).toBe(true);
     });
 
-    it('should handle search failures gracefully', async (assert) => {
+    test('should handle search failures gracefully', async () => {
       // Mock a search failure
       const results = await r2Integration.searchAudits('', 10);
-      
+
       // Should not throw, should return empty array
-      assert.isTrue(Array.isArray(results));
+      expect(Array.isArray(results)).toBe(true);
     });
   });
 
@@ -278,7 +266,7 @@ describe('R2MCPIntegration', () => {
       await r2Integration.initialize();
     });
 
-    it('should store metrics successfully', async (assert) => {
+    test('should store metrics successfully', async () => {
       const metrics = {
         id: 'test-metrics-1',
         timestamp: new Date().toISOString(),
@@ -288,12 +276,12 @@ describe('R2MCPIntegration', () => {
       };
 
       const key = await r2Integration.storeMetrics(metrics);
-      
-      assert.isTrue(key.includes('test-metrics-1'));
-      assert.isTrue(key.includes('mcp/metrics/'));
+
+      expect(key.includes('test-metrics-1')).toBe(true);
+      expect(key.includes('mcp/metrics/')).toBe(true);
     });
 
-    it('should reject metrics with invalid ID format', async (assert) => {
+    test('should reject metrics with invalid ID format', async () => {
       const invalidMetrics = {
         id: '', // Empty ID
         timestamp: new Date().toISOString(),
@@ -302,13 +290,12 @@ describe('R2MCPIntegration', () => {
         period: '1h'
       };
 
-      await assert.throws(
-        () => r2Integration.storeMetrics(invalidMetrics),
-        'Invalid metrics key'
-      );
+      await expect(
+        r2Integration.storeMetrics(invalidMetrics)
+      ).rejects.toThrow('Invalid metrics key');
     });
 
-    it('should handle metrics with complex data', async (assert) => {
+    test('should handle metrics with complex data', async () => {
       const complexMetrics = {
         id: 'complex-metrics',
         timestamp: new Date().toISOString(),
@@ -322,7 +309,7 @@ describe('R2MCPIntegration', () => {
       };
 
       const key = await r2Integration.storeMetrics(complexMetrics);
-      assert.isTrue(key.includes('complex-metrics'));
+      expect(key.includes('complex-metrics')).toBe(true);
     });
   });
 
@@ -331,45 +318,44 @@ describe('R2MCPIntegration', () => {
       await r2Integration.initialize();
     });
 
-    it('should store and retrieve JSON data', async (assert) => {
+    test('should store and retrieve JSON data', async () => {
       const testData = { test: true, value: 42, message: 'Hello World' };
       const key = 'test/json-data';
 
       await r2Integration.putJSON(key, testData);
       const retrieved = await r2Integration.getJSON(key);
 
-      assert.isNotNull(retrieved);
-      assert.equal(retrieved.test, true);
-      assert.equal(retrieved.value, 42);
-      assert.equal(retrieved.message, 'Hello World');
+      expect(retrieved).not.toBeNull();
+      expect(retrieved.test).toBe(true);
+      expect(retrieved.value).toBe(42);
+      expect(retrieved.message).toBe('Hello World');
     });
 
-    it('should return null for non-existent key', async (assert) => {
+    test('should return null for non-existent key', async () => {
       const result = await r2Integration.getJSON('non-existent-key');
-      assert.isNull(result);
+      expect(result).toBeNull();
     });
 
-    it('should handle invalid key format', async (assert) => {
-      await assert.throws(
-        () => r2Integration.getJSON('invalid/key/with/..'),
-        'Invalid key'
-      );
+    test('should handle invalid key format', async () => {
+      await expect(
+        r2Integration.getJSON('invalid/key/with/..')
+      ).rejects.toThrow('Invalid key');
     });
 
-    it('should cache retrieved data', async (assert) => {
+    test('should cache retrieved data', async () => {
       const testData = { cached: true };
       const key = 'test/cache-data';
 
       // Store data
       await r2Integration.putJSON(key, testData);
-      
+
       // First retrieval
       const first = await r2Integration.getJSON(key);
-      assert.equal(first.cached, true);
-      
+      expect(first.cached).toBe(true);
+
       // Second retrieval should be from cache
       const second = await r2Integration.getJSON(key);
-      assert.equal(second.cached, true);
+      expect(second.cached).toBe(true);
     });
   });
 
@@ -378,37 +364,37 @@ describe('R2MCPIntegration', () => {
       await r2Integration.initialize();
     });
 
-    it('should invalidate cache on data updates', async (assert) => {
+    test('should invalidate cache on data updates', async () => {
       const key = 'test/cache-invalidation';
       const initialData = { version: 1 };
       const updatedData = { version: 2 };
 
       // Store initial data
       await r2Integration.putJSON(key, initialData);
-      
+
       // Retrieve (should be cached)
       const first = await r2Integration.getJSON(key);
-      assert.equal(first.version, 1);
-      
+      expect(first.version).toBe(1);
+
       // Update data
       await r2Integration.putJSON(key, updatedData);
-      
+
       // Retrieve updated data
       const second = await r2Integration.getJSON(key);
-      assert.equal(second.version, 2);
+      expect(second.version).toBe(2);
     });
 
-    it('should handle cache misses gracefully', async (assert) => {
+    test('should handle cache misses gracefully', async () => {
       // Clear cache
       await globalCache.clear();
-      
+
       const result = await r2Integration.getJSON('test/cache-miss');
-      assert.isNull(result);
+      expect(result).toBeNull();
     });
   });
 
   describe('Error Handling', () => {
-    it('should handle operations before initialization', async (assert) => {
+    test('should handle operations before initialization', async () => {
       const uninitializedR2 = new R2MCPIntegration({
         accountId: 'test-account',
         accessKeyId: 'test-key',
@@ -416,8 +402,8 @@ describe('R2MCPIntegration', () => {
         bucketName: 'test-bucket'
       });
 
-      await assert.throws(
-        () => uninitializedR2.storeDiagnosis({
+      await expect(
+        uninitializedR2.storeDiagnosis({
           id: 'test',
           timestamp: new Date().toISOString(),
           issue: 'test',
@@ -426,17 +412,16 @@ describe('R2MCPIntegration', () => {
           description: 'test',
           recommendations: [],
           resolved: false
-        }),
-        'R2 integration not initialized'
-      );
+        })
+      ).rejects.toThrow('R2 integration not initialized');
     });
 
-    it('should handle malformed JSON data', async (assert) => {
+    test('should handle malformed JSON data', async () => {
       await r2Integration.initialize();
-      
+
       // This should not crash the system
       const result = await r2Integration.getJSON('test/malformed');
-      assert.isNull(result);
+      expect(result).toBeNull();
     });
   });
 
@@ -445,7 +430,7 @@ describe('R2MCPIntegration', () => {
       await r2Integration.initialize();
     });
 
-    it('should handle concurrent diagnosis storage', async (assert) => {
+    test('should handle concurrent diagnosis storage', async () => {
       const diagnoses = Array.from({ length: 10 }, (_, i) => ({
         id: `concurrent-diagnosis-${i}`,
         timestamp: new Date().toISOString(),
@@ -458,27 +443,27 @@ describe('R2MCPIntegration', () => {
       }));
 
       // Store all diagnoses concurrently
-      const promises = diagnoses.map(diagnosis => 
+      const promises = diagnoses.map(diagnosis =>
         r2Integration.storeDiagnosis(diagnosis)
       );
 
       const results = await Promise.allSettled(promises);
-      
+
       // All should succeed
       const successful = results.filter(r => r.status === 'fulfilled');
-      assert.equal(successful.length, diagnoses.length);
+      expect(successful.length).toBe(diagnoses.length);
     });
 
-    it('should handle concurrent search operations', async (assert) => {
-      const searches = Array.from({ length: 5 }, (_, i) => 
+    test('should handle concurrent search operations', async () => {
+      const searches = Array.from({ length: 5 }, (_, i) =>
         r2Integration.searchAudits(`query-${i}`, 5)
       );
 
       const results = await Promise.allSettled(searches);
-      
+
       // All should complete without throwing
       const completed = results.filter(r => r.status === 'fulfilled');
-      assert.equal(completed.length, searches.length);
+      expect(completed.length).toBe(searches.length);
     });
   });
 
@@ -487,16 +472,15 @@ describe('R2MCPIntegration', () => {
       await r2Integration.initialize();
     });
 
-    it('should handle extremely long keys', async (assert) => {
+    test('should handle extremely long keys', async () => {
       const longKey = 'test/' + 'a'.repeat(1000);
-      
-      await assert.throws(
-        () => r2Integration.getJSON(longKey),
-        'Invalid key'
-      );
+
+      await expect(
+        r2Integration.getJSON(longKey)
+      ).rejects.toThrow('Invalid key');
     });
 
-    it('should handle special characters in data', async (assert) => {
+    test('should handle special characters in data', async () => {
       const specialData = {
         unicode: 'Hello 世界 🌍',
         quotes: 'Single "double" quotes',
@@ -508,12 +492,12 @@ describe('R2MCPIntegration', () => {
       await r2Integration.putJSON(key, specialData);
       const retrieved = await r2Integration.getJSON(key);
 
-      assert.isNotNull(retrieved);
-      assert.equal(retrieved.unicode, specialData.unicode);
-      assert.equal(retrieved.quotes, specialData.quotes);
+      expect(retrieved).not.toBeNull();
+      expect(retrieved.unicode).toBe(specialData.unicode);
+      expect(retrieved.quotes).toBe(specialData.quotes);
     });
 
-    it('should handle empty objects and arrays', async (assert) => {
+    test('should handle empty objects and arrays', async () => {
       const emptyData = {
         emptyObject: {},
         emptyArray: [],
@@ -525,16 +509,10 @@ describe('R2MCPIntegration', () => {
       await r2Integration.putJSON(key, emptyData);
       const retrieved = await r2Integration.getJSON(key);
 
-      assert.isNotNull(retrieved);
-      assert.equal(Object.keys(retrieved.emptyObject).length, 0);
-      assert.equal(retrieved.emptyArray.length, 0);
-      assert.isNull(retrieved.nullValue);
+      expect(retrieved).not.toBeNull();
+      expect(Object.keys(retrieved.emptyObject).length).toBe(0);
+      expect(retrieved.emptyArray.length).toBe(0);
+      expect(retrieved.nullValue).toBeNull();
     });
   });
 });
-
-// Run tests if this file is executed directly
-if (import.meta.main) {
-  const { runTests } = await import('../lib/core/unit-test-framework.ts');
-  await runTests();
-}
