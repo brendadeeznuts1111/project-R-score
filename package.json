@@ -230,7 +230,7 @@
     "rss:feeds": "bun run lib/registry/rss-aggregator.ts feeds",
     "rss:add": "bun run lib/registry/rss-aggregator.ts add",
     "rss:html": "bun run lib/registry/rss-aggregator.ts html",
-    "rss": "curl http://localhost:3000/feed/rss | bun -p",
+    "rss": "bun run examples/rss-demo.ts feed",
     
     "# Secrets Management": "",
     "secrets": "bun run lib/registry/secrets-manager.ts",
