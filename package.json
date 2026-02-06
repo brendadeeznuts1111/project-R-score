@@ -309,6 +309,13 @@
       "audit-log": true
     },
     "integration": {
+      "bun-secrets": {
+        "enabled": true,
+        "store": "factorywager-secrets",
+        "namespace": "api-keys",
+        "sync": "real-time",
+        "encryption": "AES-256-GCM"
+      },
       "wiki": {
         "endpoint": "https://docs.factory-wager.com",
         "api-path": "/api/v1/keys",
