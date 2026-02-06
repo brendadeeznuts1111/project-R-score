@@ -35,6 +35,7 @@ out/
 # IDE-specific configs
 .claude/*
 !.claude/agents/
+!.claude/commands/
 .cursor/
 .windsurf/
 
