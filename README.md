@@ -73,6 +73,7 @@ This monorepo is organized into specialized directories:
 ### Core Directories
 - **`projects/`** - All project implementations organized by category
 - **`lib/`** - Shared libraries and utilities
+- **`bun-markdown-constants/`** - Enterprise markdown constants package with bun link demo
 - **`tools/`** - Standalone development tools
 - **`utils/`** - Utility scripts and helpers
 - **`deployment/`** - Deployment configurations
@@ -89,6 +90,33 @@ This monorepo is organized into specialized directories:
 - **`apps/`** - Application projects
 - **`enterprise/`** - Enterprise-grade solutions
 - **`development/`** - Development tools and utilities
+
+### 📦 Featured Package: `@bun-tools/markdown-constants`
+
+Located in `bun-markdown-constants/`, this package demonstrates:
+
+- **Enterprise-grade markdown constants** for Bun's built-in parser
+- **Complete bun link workflow** demonstration
+- **Optional React support** with graceful fallback
+- **Comprehensive documentation** and usage examples
+
+#### Quick Start with bun link:
+```bash
+# Link the package locally
+cd bun-markdown-constants
+bun link
+
+# Use in your project
+cd your-project
+bun link @bun-tools/markdown-constants
+
+# Test functionality
+bun run test-linked-package.ts
+
+# Unlink when done
+cd bun-markdown-constants
+bun unlink
+```
 
 ## 📌 Documentation Hygiene
 
@@ -140,7 +168,96 @@ Built with modern technologies centered around **Bun** - the fast, incrementally
 - **Code Quality**: ESLint + Prettier
 - **Bundling**: Bun's built-in production bundler with tree-shaking
 
-## 📊 Features
+## � bun link - Local Package Development
+
+This project includes a complete demonstration of Bun's `bun link` functionality for local package development.
+
+### 📦 Featured Package: `@bun-tools/markdown-constants`
+
+A production-ready package showcasing:
+- Enterprise-grade markdown constants for Bun's built-in parser
+- Optional React support with graceful fallback
+- Comprehensive error handling and validation
+- Complete documentation and examples
+
+### 🚀 Quick Start
+
+```bash
+# 1. Link the package locally
+cd bun-markdown-constants
+bun link
+
+# 2. Use in your project
+cd your-project
+bun link @bun-tools/markdown-constants
+
+# 3. Test the functionality
+import { MarkdownPresets, MARKDOWN_SECURITY } from '@bun-tools/markdown-constants';
+
+const html = MarkdownPresets.html('GFM', 'MODERATE')('# Hello **World**');
+console.log(html); // <h1>Hello <strong>World</strong></h1>
+
+# 4. Unlink when done
+cd bun-markdown-constants
+bun unlink
+```
+
+### ⚙️ Advanced bun link Features
+
+#### Installation Control
+```bash
+# Force fresh installation
+bun link --force
+
+# Use specific backend
+bun link --backend symlink    # clonefile|hardlink|symlink|copyfile
+
+# Linker strategy
+bun link --linker isolated    # isolated|hoisted
+```
+
+#### Global Configuration
+```bash
+# Use custom config
+bun link --config ./bunfig.toml
+
+# Set working directory
+bun link --cwd ./packages/shared
+```
+
+#### Installation Scope
+```bash
+# Local linking (default)
+bun link
+
+# Global linking for CLI tools
+bun link -g
+```
+
+### 📚 Configuration Example
+
+Create `bunfig.toml` for team consistency:
+
+```toml
+[install]
+cache = "./.bun-cache"
+backend = "symlink"
+
+[link]
+linker = "isolated"
+trustedDependencies = ["react", "typescript"]
+```
+
+### 🎯 Use Cases
+
+| Scenario | Command | Description |
+|----------|---------|-------------|
+| **Package Development** | `bun link` | Link libraries to projects |
+| **CLI Tools** | `bun link -g` | System-wide tool availability |
+| **Monorepos** | `bun link --linker isolated` | Dependency isolation |
+| **Team Work** | `bun link --config ./team-config/bunfig.toml` | Consistent environments |
+
+## �📊 Features
 
 - **Enterprise Dashboards** - Real-time monitoring and analytics
 - **Automation Frameworks** - Streamlined workflow automation
@@ -160,17 +277,26 @@ This project leverages Bun's extensive built-in APIs and tooling:
 - **Shell Commands** - Execute shell scripts with `Bun.$` 
 - **Password Hashing** - Built-in security utilities
 - **YAML/JSON Processing** - Native configuration file handling
+- **Markdown Parser** - World's fastest CommonMark + GFM parser (v1.3.8)
+
+### Package Management Features
+- **bun link** - Local package development with symlinks
+- **Installation Control** - Multiple backends (clonefile, hardlink, symlink, copyfile)
+- **Global Configuration** - bunfig.toml support for team consistency
+- **Dependency Management** - Fast installs with trusted dependencies
 
 ### Performance Benefits
 - **Hot Module Replacement** - Instant development updates without refresh
 - **Production Bundling** - Optimized builds with tree-shaking and minification
 - **Fast Package Installs** - 30x faster dependency management
 - **Speedy Test Execution** - Run tests 10-30x faster than traditional runners
+- **Local Development** - bun link provides instant package updates
 
 ### Developer Experience
 - **Zero Configuration** - TypeScript, JSX, and imports work immediately
 - **Built-in Tooling** - Everything needed without additional setup
 - **Incremental Adoption** - Use individual tools or the complete stack
+- **Local Package Development** - Seamless bun link workflow for package authors
 
 ## 🏷️ Version History
 
