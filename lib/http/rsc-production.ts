@@ -1,14 +1,14 @@
 /**
  * Production RSC Handler - Native Fetch Parallelization
- * 
+ *
  * 🎯 R-Score Strategy: P_ratio 1.000-1.050 with zero complexity
- * 
+ *
  * Uses native fetch + Promise.all for optimal performance:
  * - Immediate +0.167 P_ratio gain (0.833 → 1.000)
  * - Zero custom implementation
  * - 100% production reliability
  * - Built-in connection pooling
- * 
+ *
  * @see {@link https://bun.sh/docs/api/fetch} Native fetch with keep-alive
  */
 
@@ -42,38 +42,38 @@ export class ProductionRSCHandler {
    */
   async fetchRSC(request: ProductionRSCRequest): Promise<ProductionRSCResponse> {
     const { url, headers = {}, rscKey } = request;
-    
+
     // Build full URL
     const fullUrl = url.startsWith('http') ? url : `${this.baseUrl}${url}`;
-    
+
     // Add query parameters for RSC
     const urlObj = new URL(fullUrl);
     if (rscKey) {
       urlObj.searchParams.set('_rsc', rscKey);
     }
-    
+
     // Production RSC headers
     const rscHeaders = {
-      'accept': '*/*',
-      'rsc': '1',
-      ...headers
+      accept: '*/*',
+      rsc: '1',
+      ...headers,
     };
-    
+
     const response = await fetch(urlObj.toString(), { headers: rscHeaders });
-    
+
     return {
       url: urlObj.toString(),
       status: response.status,
       headers: Object.fromEntries(response.headers.entries()),
       body: response.body,
       ok: response.ok,
-      rscKey
+      rscKey,
     };
   }
 
   /**
    * Parallel RSC batch fetch - achieves P_ratio 1.000-1.050
-   * 
+   *
    * This is the production optimization that delivers:
    * - +0.167 P_ratio gain over serial requests
    * - Zero complexity (native fetch)
@@ -81,26 +81,26 @@ export class ProductionRSCHandler {
    */
   async fetchBatch(requests: ProductionRSCRequest[]): Promise<ProductionRSCResponse[]> {
     if (requests.length === 0) return [];
-    
+
     console.log(`🚀 Production RSC Batch: ${requests.length} parallel requests`);
     console.time('rsc-batch');
-    
+
     // Fire all requests in parallel - native connection pooling
     const promises = requests.map(request => this.fetchRSC(request));
     const responses = await Promise.all(promises);
-    
+
     console.timeEnd('rsc-batch');
-    
+
     const successful = responses.filter(r => r.ok);
     const failed = responses.filter(r => !r.ok);
-    
+
     console.log(`📊 Results: ${successful.length}/${requests.length} successful`);
-    
+
     if (failed.length > 0) {
       console.warn(`⚠️ Failed requests: ${failed.length}`);
       failed.forEach(r => console.warn(`  ${r.url}: ${r.status}`));
     }
-    
+
     return responses;
   }
 
@@ -109,16 +109,16 @@ export class ProductionRSCHandler {
    */
   async prefetchBatch(requests: ProductionRSCRequest[]): Promise<void> {
     console.log(`🖱️ RSC Prefetch: ${requests.length} background requests`);
-    
+
     // Add prefetch headers
     const prefetchRequests = requests.map(request => ({
       ...request,
       headers: {
         ...request.headers,
-        'next-router-prefetch': '1'
-      }
+        'next-router-prefetch': '1',
+      },
     }));
-    
+
     // Fire and forget for prefetch (don't block on results)
     this.fetchBatch(prefetchRequests).catch(error => {
       console.warn('RSC prefetch failed:', error);
@@ -130,7 +130,7 @@ export class ProductionRSCHandler {
    */
   getRScoreMetrics() {
     return {
-      p_ratio: 1.000, // Achieved with native parallelization
+      p_ratio: 1.0, // Achieved with native parallelization
       complexity: 'Zero',
       reliability: 'Production',
       implementation: 'Native fetch + Promise.all',
@@ -138,11 +138,11 @@ export class ProductionRSCHandler {
       maintenance: 'None (built-in)',
       features: [
         'Connection pooling',
-        'Parallel execution', 
+        'Parallel execution',
         'Standard error handling',
         'Type safety',
-        'Zero dependencies'
-      ]
+        'Zero dependencies',
+      ],
     };
   }
 }
@@ -154,15 +154,18 @@ export class ProductionRSCHandler {
 /**
  * Quick parallel RSC fetch - achieves P_ratio 1.000
  */
-export async function fetchRSCParallel(urls: string[], rscKey?: string): Promise<ProductionRSCResponse[]> {
+export async function fetchRSCParallel(
+  urls: string[],
+  rscKey?: string
+): Promise<ProductionRSCResponse[]> {
   const handler = new ProductionRSCHandler();
-  
+
   const requests = urls.map(url => ({
     url,
     rscKey,
-    headers: { 'next-router-prefetch': '1' }
+    headers: { 'next-router-prefetch': '1' },
   }));
-  
+
   return await handler.fetchBatch(requests);
 }
 
@@ -171,24 +174,26 @@ export async function fetchRSCParallel(urls: string[], rscKey?: string): Promise
  */
 export async function optimizedRSCFetch(urls: string[]): Promise<ProductionRSCResponse[]> {
   console.time('h1-parallel');
-  
+
   const responses = await Promise.all(
-    urls.map(url => 
+    urls.map(url =>
       fetch(url.startsWith('http') ? url : `https://bun.sh${url}`, {
-        headers: { 'rsc': '1' }
+        headers: { rsc: '1' },
       }).then(async response => ({
         url: response.url,
         status: response.status,
         headers: Object.fromEntries(response.headers.entries()),
         body: response.body,
-        ok: response.ok
+        ok: response.ok,
       }))
     )
   );
-  
+
   console.timeEnd('h1-parallel');
-  console.log(`✅ ${responses.length} streams, Status: ${responses[0]?.status}, R-Score P_ratio: 1.000`);
-  
+  console.log(
+    `✅ ${responses.length} streams, Status: ${responses[0]?.status}, R-Score P_ratio: 1.000`
+  );
+
   return responses;
 }
 
@@ -197,16 +202,16 @@ export async function optimizedRSCFetch(urls: string[]): Promise<ProductionRSCRe
  */
 export async function nextJSPrefetch(paths: string[]): Promise<void> {
   const handler = new ProductionRSCHandler();
-  
+
   const requests = paths.map(path => ({
     url: path,
     rscKey: 'prefetch',
     headers: {
       'next-router-prefetch': '1',
-      'priority': 'i'
-    }
+      priority: 'i',
+    },
   }));
-  
+
   await handler.prefetchBatch(requests);
 }
 
@@ -222,30 +227,29 @@ export async function productionRSCBatch(
 }> {
   const handler = new ProductionRSCHandler();
   const startTime = performance.now();
-  
+
   try {
     const responses = await handler.fetchBatch(requests);
     const endTime = performance.now();
-    
+
     const successful = responses.filter(r => r.ok);
     const failed = responses.filter(r => !r.ok);
-    
+
     return {
       successful,
       failed,
       metrics: {
         total: responses.length,
         successRate: successful.length / responses.length,
-        avgLatency: (endTime - startTime) / responses.length
-      }
+        avgLatency: (endTime - startTime) / responses.length,
+      },
     };
-    
   } catch (error) {
     console.error('Production RSC batch failed:', error);
     return {
       successful: [],
       failed: [],
-      metrics: { total: 0, successRate: 0 }
+      metrics: { total: 0, successRate: 0 },
     };
   }
 }

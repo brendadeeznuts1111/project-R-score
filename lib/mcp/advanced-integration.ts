@@ -2,7 +2,7 @@
 
 /**
  * 🚀 Advanced FactoryWager Integration System
- * 
+ *
  * Deep integration of all advanced features:
  * - Cookies compression with R2 storage
  * - Bun.secrets enterprise management
@@ -106,36 +106,36 @@ export class AdvancedIntegrationSystem {
           total_objects: 0,
           total_size_mb: 0,
           compression_ratio: 0,
-          operations_per_second: 0
+          operations_per_second: 0,
         },
         secrets_management: {
           total_secrets: 0,
           versioned_secrets: 0,
           master_tokens: 0,
           enterprise_secrets: 0,
-          rotation_frequency: 0
+          rotation_frequency: 0,
         },
         domain_management: {
           total_subdomains: 16,
           healthy_subdomains: 16,
           dns_records: 26,
           ssl_certificates: 14,
-          security_score: 95
+          security_score: 95,
         },
         performance: {
           avg_response_time: 85,
           cache_hit_rate: 85.5,
           compression_savings: 65.2,
           header_preservation: 100,
-          ansi_rendering: 98
-        }
+          ansi_rendering: 98,
+        },
       },
       cross_domain_intelligence: {
         shared_knowledge_base: 2048,
         correlated_incidents: 12,
         automated_fixes: 8,
-        confidence_score: 92
-      }
+        confidence_score: 92,
+      },
     };
   }
 
@@ -178,8 +178,8 @@ export class AdvancedIntegrationSystem {
         expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
         secure: true,
         httpOnly: true,
-        sameSite: 'Strict'
-      }
+        sameSite: 'Strict',
+      },
     };
 
     // Store compressed cookie configuration
@@ -192,10 +192,10 @@ export class AdvancedIntegrationSystem {
         theme: 'dark',
         language: 'en',
         notifications: true,
-        dashboard_layout: 'grid'
+        dashboard_layout: 'grid',
       }),
       auth_token: 'Bearer ' + crypto.randomUUID().replace(/-/g, ''),
-      analytics_id: crypto.randomUUID()
+      analytics_id: crypto.randomUUID(),
     };
 
     const compressedCookies = await this.compressCookies(sampleCookies);
@@ -209,18 +209,21 @@ export class AdvancedIntegrationSystem {
    */
   private async compressCookies(cookies: Record<string, any>): Promise<any> {
     const cookieString = JSON.stringify(cookies);
-    
+
     // Simulate compression for demo (in real implementation, use actual compression)
     const compressedSize = Math.floor(cookieString.length * 0.65); // 65% compression ratio
-    const compressionRatio = ((cookieString.length - compressedSize) / cookieString.length * 100).toFixed(2);
-    
+    const compressionRatio = (
+      ((cookieString.length - compressedSize) / cookieString.length) *
+      100
+    ).toFixed(2);
+
     return {
       original_size: cookieString.length,
       compressed_size: compressedSize,
       compression_ratio: compressionRatio,
       compression_method: 'gzip',
       timestamp: new Date().toISOString(),
-      data: Buffer.from(cookieString).toString('base64')
+      data: Buffer.from(cookieString).toString('base64'),
     };
   }
 
@@ -232,7 +235,11 @@ export class AdvancedIntegrationSystem {
 
     // Store enterprise secrets
     await this.secrets.set('r2', 'access_key', 'a37de699062200db61373309ad166d46');
-    await this.secrets.set('r2', 'secret_key', 'fe3ee8ac4ca2c44bc76c59801f9394f7d63bff0822208fe64d0d266905061681');
+    await this.secrets.set(
+      'r2',
+      'secret_key',
+      'fe3ee8ac4ca2c44bc76c59801f9394f7d63bff0822208fe64d0d266905061681'
+    );
     await this.secrets.set('cloudflare', 'api_token', 'YxweuHoM3mYnibQGNCu2Ui_mHev5U1oh0GLec3X9');
     await this.secrets.set('factorywager', 'master_key', crypto.randomUUID());
 
@@ -241,7 +248,7 @@ export class AdvancedIntegrationSystem {
     for (const [service, name] of [
       ['r2', 'access_key'],
       ['r2', 'secret_key'],
-      ['cloudflare', 'api_token']
+      ['cloudflare', 'api_token'],
     ]) {
       const value = await this.secrets.get(service, name);
       if (value) {
@@ -254,7 +261,7 @@ export class AdvancedIntegrationSystem {
       stored_secrets: storedSecrets,
       enterprise_ready: true,
       platform: process.platform,
-      persistence: this.getPlatformPersistence()
+      persistence: this.getPlatformPersistence(),
     });
 
     console.log(styled('✅ Enterprise secrets management initialized', 'success'));
@@ -265,10 +272,14 @@ export class AdvancedIntegrationSystem {
    */
   private getPlatformPersistence(): string {
     switch (process.platform) {
-      case 'win32': return 'CRED_PERSIST_ENTERPRISE (per-user roaming)';
-      case 'darwin': return 'Keychain (login keychain)';
-      case 'linux': return 'libsecret (GNOME Keyring/KWallet)';
-      default: return 'Unknown';
+      case 'win32':
+        return 'CRED_PERSIST_ENTERPRISE (per-user roaming)';
+      case 'darwin':
+        return 'Keychain (login keychain)';
+      case 'linux':
+        return 'libsecret (GNOME Keyring/KWallet)';
+      default:
+        return 'Unknown';
     }
   }
 
@@ -282,10 +293,10 @@ export class AdvancedIntegrationSystem {
     const testHeaders = {
       'Content-Type': 'application/json',
       'X-FactoryWager-Token': 'test-token',
-      'Authorization': 'Bearer test',
+      Authorization: 'Bearer test',
       'X-Custom-Header': 'preserved-case',
       'Content-Encoding': 'gzip',
-      'Accept-Language': 'en-US,en;q=0.9'
+      'Accept-Language': 'en-US,en;q=0.9',
     };
 
     // Store header preservation test
@@ -294,7 +305,7 @@ export class AdvancedIntegrationSystem {
       test_headers: testHeaders,
       preservation_enabled: true,
       bun_version: Bun.version,
-      compliance: 'HTTP/1.1 Header Case Preservation'
+      compliance: 'HTTP/1.1 Header Case Preservation',
     });
 
     console.log(styled('✅ Header case preservation initialized', 'success'));
@@ -313,24 +324,15 @@ export class AdvancedIntegrationSystem {
         warning: FW_COLORS.warning,
         error: FW_COLORS.error,
         accent: FW_COLORS.accent,
-        muted: FW_COLORS.muted
+        muted: FW_COLORS.muted,
       },
       duoplus_theme: {
         primary: '#8b5cf6',
         secondary: '#a78bfa',
-        accent: '#fbbf24'
+        accent: '#fbbf24',
       },
-      styling_methods: [
-        'styled()',
-        'colorWrap()',
-        'ansiEscape()',
-        'themeApply()'
-      ],
-      render_engines: [
-        'terminal',
-        'claude_desktop',
-        'web_dashboard'
-      ]
+      styling_methods: ['styled()', 'colorWrap()', 'ansiEscape()', 'themeApply()'],
+      render_engines: ['terminal', 'claude_desktop', 'web_dashboard'],
     };
 
     await this.r2.putJSON('integrations/ansi-styling/config.json', ansiConfig);
@@ -351,7 +353,7 @@ export class AdvancedIntegrationSystem {
       bun_constants_version: '1.0.1',
       total_constants: 89, // From BUN_CONSTANTS_VERSION.json
       tier1380_compliant: true,
-      enterprise_ready: true
+      enterprise_ready: true,
     };
 
     await this.r2.putJSON('integrations/constants/registry.json', constantsData);
@@ -373,8 +375,8 @@ export class AdvancedIntegrationSystem {
         level: 'CRITICAL',
         tags: {
           'version-scheme': 'semantic',
-          'rotation-schedule': '90d'
-        }
+          'rotation-schedule': '90d',
+        },
       });
 
       await this.versionedSecrets.set('database-url', 'postgresql://...', {
@@ -383,8 +385,8 @@ export class AdvancedIntegrationSystem {
         level: 'HIGH',
         tags: {
           'version-scheme': 'date',
-          'environment': 'production'
-        }
+          environment: 'production',
+        },
       });
     } catch (error) {
       console.log(styled(`   Versioned secrets demo: ${error.message}`, 'muted'));
@@ -395,7 +397,7 @@ export class AdvancedIntegrationSystem {
       total_versioned_secrets: 2,
       rollback_enabled: true,
       lifecycle_management: true,
-      audit_trail: true
+      audit_trail: true,
     };
 
     await this.r2.putJSON('integrations/versioned-secrets/status.json', versionedStatus);
@@ -425,7 +427,7 @@ export class AdvancedIntegrationSystem {
       active_tokens: masterTokenManager.listTokens().length,
       token_types: ['mcp-server', 'claude-desktop', 'cli-user'],
       rotation_enabled: true,
-      audit_logging: true
+      audit_logging: true,
     };
 
     await this.r2.putJSON('integrations/master-tokens/status.json', tokenStatus);
@@ -446,7 +448,7 @@ export class AdvancedIntegrationSystem {
       header_preservation: true,
       redirect_handling: true,
       timeout_ms: 10000,
-      user_agent: 'FactoryWager-Advanced-Integration/1.0'
+      user_agent: 'FactoryWager-Advanced-Integration/1.0',
     };
 
     await this.r2.putJSON('integrations/hardened-fetch/config.json', hardenedConfig);
@@ -466,19 +468,19 @@ export class AdvancedIntegrationSystem {
         total_subdomains: this.cloudflare.getAllSubdomains().length,
         enterprise_subdomains: this.cloudflare.getEnterpriseSubdomains().length,
         dns_records: 26,
-        ssl_certificates: 14
+        ssl_certificates: 14,
       },
       duoplus_domain: {
         family_accounts_enabled: true,
         venmo_integration: true,
         purple_theme: true,
-        cross_domain_sync: true
+        cross_domain_sync: true,
       },
       cloudflare_integration: {
         account_id: '7a470541a704caaf91e71efccc78fd36',
         api_token_valid: true,
-        dashboard_accessible: true
-      }
+        dashboard_accessible: true,
+      },
     };
 
     await this.r2.putJSON('integrations/domain-intelligence/status.json', domainStatus);
@@ -498,16 +500,13 @@ export class AdvancedIntegrationSystem {
       pattern_recognition: true,
       automated_fixes: true,
       confidence_threshold: 85,
-      learning_domains: [
-        'factory-wager.com',
-        'duoplus.com'
-      ],
+      learning_domains: ['factory-wager.com', 'duoplus.com'],
       shared_intelligence: {
         error_patterns: true,
         security_incidents: true,
         performance_metrics: true,
-        user_behavior: true
-      }
+        user_behavior: true,
+      },
     };
 
     await this.r2.putJSON('integrations/cross-domain-learning/config.json', learningConfig);
@@ -544,31 +543,60 @@ export class AdvancedIntegrationSystem {
     console.log(styled('\n🍪 Cookie Compression Demo:', 'info'));
     const cookies = await this.compressCookies({
       session: crypto.randomUUID(),
-      preferences: { theme: 'dark', lang: 'en' }
+      preferences: { theme: 'dark', lang: 'en' },
     });
     console.log(styled(`   Compression: ${cookies.compression_ratio}% savings`, 'success'));
 
     // 2. Secrets management demo
     console.log(styled('\n🔐 Secrets Management Demo:', 'info'));
     const secretValue = await this.secrets.get('r2', 'access_key');
-    console.log(styled(`   R2 Access Key: ${secretValue ? '✅ Stored securely' : '❌ Not found'}`, secretValue ? 'success' : 'error'));
+    console.log(
+      styled(
+        `   R2 Access Key: ${secretValue ? '✅ Stored securely' : '❌ Not found'}`,
+        secretValue ? 'success' : 'error'
+      )
+    );
 
     // 3. Domain intelligence demo
     console.log(styled('\n🌐 Domain Intelligence Demo:', 'info'));
     const subdomains = this.cloudflare.getAllSubdomains();
     console.log(styled(`   Total Subdomains: ${subdomains.length}`, 'muted'));
-    console.log(styled(`   Enterprise Tier: ${this.cloudflare.getEnterpriseSubdomains().length}`, 'muted'));
+    console.log(
+      styled(`   Enterprise Tier: ${this.cloudflare.getEnterpriseSubdomains().length}`, 'muted')
+    );
 
     // 4. Cross-domain learning demo
     console.log(styled('\n🧠 Cross-Domain Learning Demo:', 'info'));
-    console.log(styled(`   Knowledge Base: ${this.metrics.cross_domain_intelligence.shared_knowledge_base} entries`, 'muted'));
-    console.log(styled(`   Confidence Score: ${this.metrics.cross_domain_intelligence.confidence_score}%`, 'muted'));
+    console.log(
+      styled(
+        `   Knowledge Base: ${this.metrics.cross_domain_intelligence.shared_knowledge_base} entries`,
+        'muted'
+      )
+    );
+    console.log(
+      styled(
+        `   Confidence Score: ${this.metrics.cross_domain_intelligence.confidence_score}%`,
+        'muted'
+      )
+    );
 
     // 5. Performance metrics demo
     console.log(styled('\n📊 Performance Metrics Demo:', 'info'));
-    console.log(styled(`   Avg Response Time: ${this.metrics.systems.performance.avg_response_time}ms`, 'muted'));
-    console.log(styled(`   Cache Hit Rate: ${this.metrics.systems.performance.cache_hit_rate}%`, 'muted'));
-    console.log(styled(`   Compression Savings: ${this.metrics.systems.performance.compression_savings}%`, 'muted'));
+    console.log(
+      styled(
+        `   Avg Response Time: ${this.metrics.systems.performance.avg_response_time}ms`,
+        'muted'
+      )
+    );
+    console.log(
+      styled(`   Cache Hit Rate: ${this.metrics.systems.performance.cache_hit_rate}%`, 'muted')
+    );
+    console.log(
+      styled(
+        `   Compression Savings: ${this.metrics.systems.performance.compression_savings}%`,
+        'muted'
+      )
+    );
   }
 
   /**
@@ -591,16 +619,50 @@ export class AdvancedIntegrationSystem {
     console.log(styled('  🧠 Cross-Domain Learning: ✅ Active', 'success'));
 
     console.log(styled('\n📈 System Metrics:', 'info'));
-    console.log(styled(`  R2 Storage: ${this.metrics.systems.r2_storage.total_objects} objects`, 'muted'));
-    console.log(styled(`  Secrets: ${this.metrics.systems.secrets_management.total_secrets} total`, 'muted'));
-    console.log(styled(`  Domains: ${this.metrics.systems.domain_management.total_subdomains} subdomains`, 'muted'));
-    console.log(styled(`  Performance: ${this.metrics.systems.performance.avg_response_time}ms avg response`, 'muted'));
+    console.log(
+      styled(`  R2 Storage: ${this.metrics.systems.r2_storage.total_objects} objects`, 'muted')
+    );
+    console.log(
+      styled(`  Secrets: ${this.metrics.systems.secrets_management.total_secrets} total`, 'muted')
+    );
+    console.log(
+      styled(
+        `  Domains: ${this.metrics.systems.domain_management.total_subdomains} subdomains`,
+        'muted'
+      )
+    );
+    console.log(
+      styled(
+        `  Performance: ${this.metrics.systems.performance.avg_response_time}ms avg response`,
+        'muted'
+      )
+    );
 
     console.log(styled('\n🧠 Intelligence Metrics:', 'info'));
-    console.log(styled(`  Knowledge Base: ${this.metrics.cross_domain_intelligence.shared_knowledge_base} entries`, 'muted'));
-    console.log(styled(`  Correlated Incidents: ${this.metrics.cross_domain_intelligence.correlated_incidents}`, 'muted'));
-    console.log(styled(`  Automated Fixes: ${this.metrics.cross_domain_intelligence.automated_fixes}`, 'muted'));
-    console.log(styled(`  Confidence Score: ${this.metrics.cross_domain_intelligence.confidence_score}%`, 'muted'));
+    console.log(
+      styled(
+        `  Knowledge Base: ${this.metrics.cross_domain_intelligence.shared_knowledge_base} entries`,
+        'muted'
+      )
+    );
+    console.log(
+      styled(
+        `  Correlated Incidents: ${this.metrics.cross_domain_intelligence.correlated_incidents}`,
+        'muted'
+      )
+    );
+    console.log(
+      styled(
+        `  Automated Fixes: ${this.metrics.cross_domain_intelligence.automated_fixes}`,
+        'muted'
+      )
+    );
+    console.log(
+      styled(
+        `  Confidence Score: ${this.metrics.cross_domain_intelligence.confidence_score}%`,
+        'muted'
+      )
+    );
   }
 }
 
@@ -610,11 +672,11 @@ export const advancedIntegration = new AdvancedIntegrationSystem();
 // CLI interface
 if (import.meta.main) {
   const advanced = advancedIntegration;
-  
+
   await advanced.initialize();
   await advanced.demonstrateIntegration();
   await advanced.displayStatus();
-  
+
   console.log(styled('\n🎉 Advanced integration system complete!', 'success'));
   console.log(styled('All FactoryWager systems are now deeply integrated! 🚀', 'info'));
 }

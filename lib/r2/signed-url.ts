@@ -1,18 +1,17 @@
 #!/usr/bin/env bun
 /**
  * 🏭 FactoryWager R2 Signed URLs v1.2 - Hardened, Time-Bound Access Layer
- * 
+ *
  * Production-grade signed URL generation with strict security posture,
  * automatic expiry, custom metadata, and full observability hooks.
  */
 
-import type { R2Bucket } from "bun";
-
+import type { R2Bucket } from 'bun';
 
 interface SignedURLOptions {
-  expiresInSeconds?: number;      // default: 3600 (1h)
+  expiresInSeconds?: number; // default: 3600 (1h)
   customMetadata?: Record<string, string>;
-  contentDisposition?: string;    // e.g. "attachment; filename=report.pdf"
+  contentDisposition?: string; // e.g. "attachment; filename=report.pdf"
   responseContentType?: string;
 }
 
@@ -33,32 +32,32 @@ export async function getSignedR2URL(
     expiresInSeconds = 3600,
     customMetadata = {},
     contentDisposition,
-    responseContentType = "application/octet-stream"
+    responseContentType = 'application/octet-stream',
   } = options;
 
   // Safety guard: never sign > 7 days
   if (expiresInSeconds > 604800) {
-    throw new Error("Maximum signed URL lifetime is 7 days (604800 seconds)");
+    throw new Error('Maximum signed URL lifetime is 7 days (604800 seconds)');
   }
 
   // Build metadata (checksum + context always included)
   const finalMetadata = {
-    "signed-at": new Date().toISOString(),
-    "expires-in": `${expiresInSeconds}s`,
-    "bucket": bucket.bucketName || "unknown",
-    "key": key,
-    ...customMetadata
+    'signed-at': new Date().toISOString(),
+    'expires-in': `${expiresInSeconds}s`,
+    bucket: bucket.bucketName || 'unknown',
+    key: key,
+    ...customMetadata,
   };
 
   // Generate signed URL
   const url = await bucket.createSignedUrl(key, {
-    action: "read",
+    action: 'read',
     expiresInSeconds,
     httpMetadata: {
       contentType: responseContentType,
-      contentDisposition
+      contentDisposition,
     },
-    customMetadata: finalMetadata
+    customMetadata: finalMetadata,
   });
 
   // Determine security level based on expiry time
@@ -72,7 +71,7 @@ export async function getSignedR2URL(
     key,
     expiresIn: `${expiresInSeconds}s`,
     metadata: finalMetadata,
-    securityLevel
+    securityLevel,
   };
 }
 
@@ -85,11 +84,11 @@ export async function getScannerCookieSignedURL(
   return getSignedR2URL(bucket, key, {
     ...options,
     customMetadata: {
-      bucket: "scanner-cookies",
-      context: "tier1380-headers-csrf",
-      variant: "production-live",
-      ...options.customMetadata
-    }
+      bucket: 'scanner-cookies',
+      context: 'tier1380-headers-csrf',
+      variant: 'production-live',
+      ...options.customMetadata,
+    },
   });
 }
 
@@ -97,12 +96,12 @@ export async function getScannerCookieSignedURL(
 export default {
   async fetch(request: Request, env: { R2_BUCKET: R2Bucket }): Promise<Response> {
     const url = new URL(request.url);
-    const key = url.searchParams.get("key");
-    
+    const key = url.searchParams.get('key');
+
     if (!key) {
       return Response.json(
-        { error: "Missing ?key= parameter" },
-        { status: 400, headers: { "Content-Type": "application/json" } }
+        { error: 'Missing ?key= parameter' },
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
@@ -110,32 +109,32 @@ export default {
       const signed = await getScannerCookieSignedURL(env.R2_BUCKET, key, {
         expiresInSeconds: 1800, // 30 minutes for most use cases
         customMetadata: {
-          requestedBy: request.headers.get("CF-Connecting-IP") || "unknown",
+          requestedBy: request.headers.get('CF-Connecting-IP') || 'unknown',
           requestId: crypto.randomUUID().slice(0, 8),
-          userAgent: request.headers.get("user-agent") || "unknown"
+          userAgent: request.headers.get('user-agent') || 'unknown',
         },
-        contentDisposition: `attachment; filename="${key.split('/').pop()}"`
+        contentDisposition: `attachment; filename="${key.split('/').pop()}"`,
       });
 
       return Response.json({
         signedUrl: signed,
         key,
-        expiresIn: "30 minutes",
+        expiresIn: '30 minutes',
         securityLevel: signed.securityLevel,
         metadata: signed.metadata,
-        "✅": "R2 Signed URL generated"
+        '✅': 'R2 Signed URL generated',
       });
     } catch (err) {
       return Response.json(
-        { 
+        {
           error: (err as Error).message,
-          code: "SIGNED_URL_ERROR"
+          code: 'SIGNED_URL_ERROR',
         },
-        { status: 500, headers: { "Content-Type": "application/json" } }
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
       );
     }
-  }
-}
+  },
+};
 
 /**
  * 💡 Performance Tip: For better performance, consider:

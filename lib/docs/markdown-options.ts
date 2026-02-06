@@ -3,38 +3,44 @@
 
 export interface HTMLOptions {
   // GFM Extensions (default: true)
-  tables?: boolean;           // GFM tables
-  strikethrough?: boolean;    // GFM strikethrough  
-  tasklists?: boolean;        // GFM task lists
-  
+  tables?: boolean; // GFM tables
+  strikethrough?: boolean; // GFM strikethrough
+  tasklists?: boolean; // GFM task lists
+
   // Link processing
-  autolinks?: boolean | {     // Autolink URLs, emails, and www links
-    url?: boolean;
-    www?: boolean;
-    email?: boolean;
-  };
-  
+  autolinks?:
+    | boolean
+    | {
+        // Autolink URLs, emails, and www links
+        url?: boolean;
+        www?: boolean;
+        email?: boolean;
+      };
+
   // Heading features
-  headings?: boolean | {      // Heading IDs and autolinks
-    ids?: boolean;
-    autolink?: boolean;
-  };
-  
+  headings?:
+    | boolean
+    | {
+        // Heading IDs and autolinks
+        ids?: boolean;
+        autolink?: boolean;
+      };
+
   // Extended features
-  wikiLinks?: boolean;        // [[wiki links]]
-  underline?: boolean;        // __text__ -> <u>text</u>
-  latexMath?: boolean;        // $inline$ and $$display$$ math
-  
+  wikiLinks?: boolean; // [[wiki links]]
+  underline?: boolean; // __text__ -> <u>text</u>
+  latexMath?: boolean; // $inline$ and $$display$$ math
+
   // Parsing behavior
-  hardSoftBreaks?: boolean;   // Line break handling
+  hardSoftBreaks?: boolean; // Line break handling
   collapseWhitespace?: boolean;
   permissiveAtxHeaders?: boolean;
-  
+
   // HTML filtering
   noIndentedCodeBlocks?: boolean;
   noHtmlBlocks?: boolean;
   noHtmlSpans?: boolean;
-  tagFilter?: boolean;        // GFM tag filter for disallowed HTML tags
+  tagFilter?: boolean; // GFM tag filter for disallowed HTML tags
 }
 
 export class OfficialMarkdownRenderer {
@@ -53,12 +59,12 @@ export class OfficialMarkdownRenderer {
     noIndentedCodeBlocks: false,
     noHtmlBlocks: false,
     noHtmlSpans: false,
-    tagFilter: true
+    tagFilter: true,
   };
 
   renderHTML(markdown: string, options: HTMLOptions = {}): string {
     const opts = { ...this.defaultOptions, ...options };
-    
+
     return Bun.markdown.html(markdown, opts);
   }
 
@@ -159,52 +165,52 @@ Visit https://bun.sh or www.example.com`;
   generateComparison(): string {
     const combinations = [
       { name: 'Default (All GFM)', options: this.defaultOptions },
-      { 
-        name: 'Minimal', 
-        options: { 
-          tables: false, 
-          strikethrough: false, 
-          tasklists: false, 
+      {
+        name: 'Minimal',
+        options: {
+          tables: false,
+          strikethrough: false,
+          tasklists: false,
           autolinks: false,
           headings: false,
           wikiLinks: false,
           underline: false,
           latexMath: false,
-          tagFilter: false
-        } 
+          tagFilter: false,
+        },
       },
-      { 
-        name: 'GFM Only', 
-        options: { 
-          tables: true, 
-          strikethrough: true, 
-          tasklists: true, 
+      {
+        name: 'GFM Only',
+        options: {
+          tables: true,
+          strikethrough: true,
+          tasklists: true,
           autolinks: true,
           headings: { ids: true },
           wikiLinks: false,
           underline: false,
           latexMath: false,
-          tagFilter: true
-        } 
+          tagFilter: true,
+        },
       },
-      { 
-        name: 'Extended Features', 
-        options: { 
-          tables: true, 
-          strikethrough: true, 
-          tasklists: true, 
+      {
+        name: 'Extended Features',
+        options: {
+          tables: true,
+          strikethrough: true,
+          tasklists: true,
           autolinks: true,
           headings: { ids: true, autolink: true },
           wikiLinks: true,
           underline: true,
           latexMath: true,
-          tagFilter: true
-        } 
-      }
+          tagFilter: true,
+        },
+      },
     ];
 
     let comparison = '# Bun.markdown.html() Options Comparison\n\n';
-    
+
     combinations.forEach(({ name, options }) => {
       comparison += `## ${name}\n\n`;
       comparison += this.testOptionCombination(name, options);
@@ -219,7 +225,7 @@ Visit https://bun.sh or www.example.com`;
 if (import.meta.main) {
   const renderer = new OfficialMarkdownRenderer();
   const command = process.argv[2] || 'demo';
-  
+
   switch (command) {
     case 'demo':
       console.log(renderer.demoAllOptions());
@@ -228,37 +234,45 @@ if (import.meta.main) {
       console.log(renderer.generateComparison());
       break;
     case 'minimal':
-      console.log(renderer.testOptionCombination('Minimal Options', {
-        tables: false,
-        strikethrough: false,
-        tasklists: false,
-        autolinks: false,
-        headings: false
-      }));
+      console.log(
+        renderer.testOptionCombination('Minimal Options', {
+          tables: false,
+          strikethrough: false,
+          tasklists: false,
+          autolinks: false,
+          headings: false,
+        })
+      );
       break;
     case 'gfm':
-      console.log(renderer.testOptionCombination('GFM Only', {
-        tables: true,
-        strikethrough: true,
-        tasklists: true,
-        autolinks: true,
-        headings: { ids: true }
-      }));
+      console.log(
+        renderer.testOptionCombination('GFM Only', {
+          tables: true,
+          strikethrough: true,
+          tasklists: true,
+          autolinks: true,
+          headings: { ids: true },
+        })
+      );
       break;
     case 'extended':
-      console.log(renderer.testOptionCombination('Extended Features', {
-        tables: true,
-        strikethrough: true,
-        tasklists: true,
-        autolinks: true,
-        headings: { ids: true, autolink: true },
-        wikiLinks: true,
-        underline: true,
-        latexMath: true
-      }));
+      console.log(
+        renderer.testOptionCombination('Extended Features', {
+          tables: true,
+          strikethrough: true,
+          tasklists: true,
+          autolinks: true,
+          headings: { ids: true, autolink: true },
+          wikiLinks: true,
+          underline: true,
+          latexMath: true,
+        })
+      );
       break;
     default:
-      console.log('Usage: bun run lib/official-markdown-options.ts [demo|compare|minimal|gfm|extended]');
+      console.log(
+        'Usage: bun run lib/official-markdown-options.ts [demo|compare|minimal|gfm|extended]'
+      );
       process.exit(1);
   }
 }

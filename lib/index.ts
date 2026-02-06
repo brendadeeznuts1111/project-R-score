@@ -46,6 +46,16 @@ export { PackageManager, type PackageInfo, type PackageDependencyGraph } from '.
 export { R2Storage, type R2StorageConfig } from './r2/r2-storage-enhanced';
 export { RSSManager, type RSSFeed, type RSSFeedItem, type FeedSubscription } from './rss/rss-manager';
 
+// HTTP utilities with HSL health endpoints
+export {
+  createHealthEndpoint,
+  createBunHealthEndpoint,
+  type HealthCheck,
+  type HealthCheckResult,
+  type HealthStatus,
+  type HealthEndpointConfig
+} from './http/health-endpoint';
+
 /**
  * FactoryWager Library Info
  */
@@ -107,6 +117,12 @@ export const FW = {
   // RSS Management (NEW)
   rss: {
     manager: RSSManager,
+  },
+  
+  // HTTP Health Endpoints (NEW)
+  http: {
+    createHealthEndpoint,
+    createBunHealthEndpoint,
   },
   
   // Types

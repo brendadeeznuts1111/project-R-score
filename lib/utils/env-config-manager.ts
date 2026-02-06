@@ -1,16 +1,16 @@
 /**
  * 🛠️ Environment Configuration Manager
- * 
+ *
  * Centralized environment configuration management with validation,
  * type safety, and support for multiple environment sources.
- * 
+ *
  * Features:
  * - Type-safe environment variable access
  * - Support for .env file loading with priority
  * - Environment validation
  * - Default value management
  * - Environment-specific configuration
- * 
+ *
  * @version 1.0.0
  */
 
@@ -83,7 +83,7 @@ export class EnvConfigManager {
 
     // Determine environment
     const env = this.determineEnvironment();
-    
+
     // Initialize config with defaults
     this.config = { ...DEFAULT_CONFIG };
     this.config.environment = env;
@@ -128,12 +128,8 @@ export class EnvConfigManager {
   async loadEnvFiles(): Promise<void> {
     const cwd = process.cwd();
     const env = this.config.environment;
-    
-    const envFiles = [
-      '.env.local',
-      `.env.${env}`,
-      '.env',
-    ];
+
+    const envFiles = ['.env.local', `.env.${env}`, '.env'];
 
     for (const file of envFiles) {
       const filePath = `${cwd}/${file}`;
@@ -158,7 +154,7 @@ export class EnvConfigManager {
   private parseEnvContent(content: string): void {
     for (const line of content.split('\n')) {
       const trimmed = line.trim();
-      
+
       // Skip comments and empty lines
       if (!trimmed || trimmed.startsWith('#')) {
         continue;
@@ -270,7 +266,7 @@ export class EnvConfigManager {
     logger.info(`  Cache Directory:   ${this.config.cacheDir}`);
     logger.info(`  Debug Mode:        ${this.config.debug}`);
     logger.info(`  Log Level:         ${this.config.logLevel}`);
-    
+
     if (this.loadedEnvFiles.length > 0) {
       logger.info(`  Loaded Env Files:  ${this.loadedEnvFiles.join(', ')}`);
     }
@@ -311,14 +307,14 @@ export function getEnvConfig(): EnvironmentConfig {
  */
 export async function initializeEnvConfig(options?: EnvConfigOptions): Promise<EnvConfigManager> {
   const manager = new EnvConfigManager(options);
-  
-    // Load env files if enabled
+
+  // Load env files if enabled
   if (options?.loadEnvFiles !== false) {
     await manager.loadEnvFiles();
     // Reload config after env files are loaded
     manager.reloadFromEnvironment();
   }
-  
+
   instance = manager;
   return manager;
 }

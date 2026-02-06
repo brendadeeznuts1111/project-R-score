@@ -2,12 +2,12 @@
 
 /**
  * 📊 Structured Logger
- * 
+ *
  * Comprehensive logging system with structured output,
  * correlation tracking, and performance monitoring.
  */
 
-import { AtomicFileOperations } from "../core/atomic-file-operations";
+import { AtomicFileOperations } from '../core/atomic-file-operations';
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 
@@ -54,7 +54,7 @@ class StructuredLogger {
     info: 1,
     warn: 2,
     error: 3,
-    fatal: 4
+    fatal: 4,
   };
 
   constructor(config: Partial<LoggerConfig> = {}) {
@@ -67,7 +67,7 @@ class StructuredLogger {
       enableMetrics: config.enableMetrics ?? true,
       correlationIdHeader: config.correlationIdHeader ?? 'x-correlation-id',
       maxFileSize: config.maxFileSize ?? 10 * 1024 * 1024, // 10MB
-      maxFiles: config.maxFiles ?? 5
+      maxFiles: config.maxFiles ?? 5,
     };
   }
 
@@ -144,7 +144,7 @@ class StructuredLogger {
     if (unit) {
       metrics[`${name}_unit`] = unit;
     }
-    
+
     this.log('info', `Metric: ${name}`, { ...metadata, metrics }, ['metric']);
   }
 
@@ -162,22 +162,31 @@ class StructuredLogger {
     try {
       const result = await operation();
       const duration = Date.now() - startTime;
-      
-      this.info(`Completed ${functionName}`, {
-        ...metadata,
-        duration,
-        success: true
-      }, ['execution', 'success']);
+
+      this.info(
+        `Completed ${functionName}`,
+        {
+          ...metadata,
+          duration,
+          success: true,
+        },
+        ['execution', 'success']
+      );
 
       return result;
     } catch (error) {
       const duration = Date.now() - startTime;
-      
-      this.error(`Failed ${functionName}`, error instanceof Error ? error : new Error(String(error)), {
-        ...metadata,
-        duration,
-        success: false
-      }, ['execution', 'error']);
+
+      this.error(
+        `Failed ${functionName}`,
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          ...metadata,
+          duration,
+          success: false,
+        },
+        ['execution', 'error']
+      );
 
       throw error;
     }
@@ -205,7 +214,7 @@ class StructuredLogger {
       correlationId: this.currentCorrelationId,
       service: this.config.service,
       metadata,
-      tags
+      tags,
     };
 
     // Add error information if provided
@@ -214,7 +223,7 @@ class StructuredLogger {
         name: error.name,
         message: error.message,
         stack: error.stack,
-        code: (error as any).code
+        code: (error as any).code,
       };
     }
 
@@ -249,10 +258,10 @@ class StructuredLogger {
   private outputToConsole(entry: LogEntry): void {
     const colorMap = {
       debug: '\x1b[36m', // cyan
-      info: '\x1b[32m',  // green
-      warn: '\x1b[33m',  // yellow
+      info: '\x1b[32m', // green
+      warn: '\x1b[33m', // yellow
       error: '\x1b[31m', // red
-      fatal: '\x1b[35m'  // magenta
+      fatal: '\x1b[35m', // magenta
     };
 
     const reset = '\x1b[0m';
@@ -260,9 +269,9 @@ class StructuredLogger {
     const prefix = `${color}[${entry.level.toUpperCase()}]${reset}`;
     const timestamp = entry.timestamp.substring(11, 23); // HH:mm:ss.sss
     const correlation = entry.correlationId ? ` [${entry.correlationId}]` : '';
-    
+
     let message = `${prefix} ${timestamp}${correlation} ${entry.message}`;
-    
+
     if (entry.metadata && Object.keys(entry.metadata).length > 0) {
       message += ` ${JSON.stringify(entry.metadata)}`;
     }
@@ -289,23 +298,28 @@ class StructuredLogger {
   /**
    * Query log entries
    */
-  async queryLogs(filters: {
-    level?: LogLevel;
-    startDate?: Date;
-    endDate?: Date;
-    correlationId?: string;
-    service?: string;
-    tags?: string[];
-    limit?: number;
-  } = {}): Promise<LogEntry[]> {
+  async queryLogs(
+    filters: {
+      level?: LogLevel;
+      startDate?: Date;
+      endDate?: Date;
+      correlationId?: string;
+      service?: string;
+      tags?: string[];
+      limit?: number;
+    } = {}
+  ): Promise<LogEntry[]> {
     if (!this.config.enableFile || !this.config.logFile) {
       return [];
     }
 
     try {
       const content = await AtomicFileOperations.readSafe(this.config.logFile);
-      const lines = content.trim().split('\n').filter(line => line.length > 0);
-      
+      const lines = content
+        .trim()
+        .split('\n')
+        .filter(line => line.length > 0);
+
       let entries: LogEntry[] = lines
         .map(line => {
           try {
@@ -333,14 +347,12 @@ class StructuredLogger {
         entries = entries.filter(e => e.service === filters.service);
       }
       if (filters.tags && filters.tags.length > 0) {
-        entries = entries.filter(e => 
-          filters.tags!.some(tag => e.tags?.includes(tag))
-        );
+        entries = entries.filter(e => filters.tags!.some(tag => e.tags?.includes(tag)));
       }
 
       // Sort by timestamp (newest first) and apply limit
       entries.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-      
+
       if (filters.limit) {
         entries = entries.slice(0, filters.limit);
       }
@@ -366,7 +378,7 @@ class StructuredLogger {
   }> {
     const now = new Date();
     const startTime = new Date();
-    
+
     switch (timeframe) {
       case 'hour':
         startTime.setHours(now.getHours() - 1);
@@ -380,13 +392,13 @@ class StructuredLogger {
     }
 
     const entries = await this.queryLogs({ startDate: startTime, endDate: now });
-    
+
     const byLevel: Record<LogLevel, number> = {
       debug: 0,
       info: 0,
       warn: 0,
       error: 0,
-      fatal: 0
+      fatal: 0,
     };
 
     let totalDuration = 0;
@@ -395,12 +407,12 @@ class StructuredLogger {
 
     for (const entry of entries) {
       byLevel[entry.level]++;
-      
+
       if (entry.duration) {
         totalDuration += entry.duration;
         durationCount++;
       }
-      
+
       if (entry.module) {
         moduleCounts[entry.module] = (moduleCounts[entry.module] || 0) + 1;
       }
@@ -416,7 +428,7 @@ class StructuredLogger {
       byLevel,
       errors: byLevel.error + byLevel.fatal,
       avgDuration: durationCount > 0 ? totalDuration / durationCount : undefined,
-      topModules
+      topModules,
     };
   }
 
@@ -432,11 +444,14 @@ class StructuredLogger {
       const logFile = this.config.logFile;
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const rotatedFile = `${logFile}.${timestamp}`;
-      
+
       // Move current log to rotated file
-      await AtomicFileOperations.writeSafe(rotatedFile, await AtomicFileOperations.readSafe(logFile));
+      await AtomicFileOperations.writeSafe(
+        rotatedFile,
+        await AtomicFileOperations.readSafe(logFile)
+      );
       await AtomicFileOperations.writeSafe(logFile, '');
-      
+
       // Clean up old log files
       await this.cleanupOldLogs();
     } catch (error) {
@@ -459,19 +474,29 @@ export const logger = new StructuredLogger({
   service: 'factorywager-platform',
   enableConsole: true,
   enableFile: true,
-  level: 'info'
+  level: 'info',
 });
 
 // Export convenience functions
 export const log = {
-  debug: (message: string, metadata?: Record<string, any>, tags?: string[]) => logger.debug(message, metadata, tags),
-  info: (message: string, metadata?: Record<string, any>, tags?: string[]) => logger.info(message, metadata, tags),
-  warn: (message: string, metadata?: Record<string, any>, tags?: string[]) => logger.warn(message, metadata, tags),
-  error: (message: string, error?: Error, metadata?: Record<string, any>, tags?: string[]) => logger.error(message, error, metadata, tags),
-  fatal: (message: string, error?: Error, metadata?: Record<string, any>, tags?: string[]) => logger.fatal(message, error, metadata, tags),
-  metric: (name: string, value: number, unit?: string, metadata?: Record<string, any>) => logger.metric(name, value, unit, metadata),
-  execution: <T>(functionName: string, operation: () => Promise<T>, metadata?: Record<string, any>) => logger.logExecution(functionName, operation, metadata),
+  debug: (message: string, metadata?: Record<string, any>, tags?: string[]) =>
+    logger.debug(message, metadata, tags),
+  info: (message: string, metadata?: Record<string, any>, tags?: string[]) =>
+    logger.info(message, metadata, tags),
+  warn: (message: string, metadata?: Record<string, any>, tags?: string[]) =>
+    logger.warn(message, metadata, tags),
+  error: (message: string, error?: Error, metadata?: Record<string, any>, tags?: string[]) =>
+    logger.error(message, error, metadata, tags),
+  fatal: (message: string, error?: Error, metadata?: Record<string, any>, tags?: string[]) =>
+    logger.fatal(message, error, metadata, tags),
+  metric: (name: string, value: number, unit?: string, metadata?: Record<string, any>) =>
+    logger.metric(name, value, unit, metadata),
+  execution: <T>(
+    functionName: string,
+    operation: () => Promise<T>,
+    metadata?: Record<string, any>
+  ) => logger.logExecution(functionName, operation, metadata),
   setCorrelationId: (id: string) => logger.setCorrelationId(id),
   generateCorrelationId: () => logger.generateCorrelationId(),
-  clearCorrelationId: () => logger.clearCorrelationId()
+  clearCorrelationId: () => logger.clearCorrelationId(),
 };

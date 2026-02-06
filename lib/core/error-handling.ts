@@ -2,7 +2,7 @@
 
 /**
  * 🛡️ Standardized Error Handling System
- * 
+ *
  * Comprehensive error handling with proper types, logging, and recovery strategies
  */
 
@@ -20,7 +20,7 @@ export class R2IntegrationError extends Error {
   ) {
     super(message);
     this.name = 'R2IntegrationError';
-    
+
     // Maintain proper stack trace
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, R2IntegrationError);
@@ -66,7 +66,7 @@ export enum ErrorSeverity {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 /**
@@ -87,21 +87,25 @@ export class ErrorHandler {
   /**
    * Handle and log errors with proper sanitization
    */
-  handle(error: unknown, context: string, severity: ErrorSeverity = ErrorSeverity.MEDIUM): R2IntegrationError {
+  handle(
+    error: unknown,
+    context: string,
+    severity: ErrorSeverity = ErrorSeverity.MEDIUM
+  ): R2IntegrationError {
     const sanitizedError = this.sanitizeError(error);
     const errorCode = this.generateErrorCode(sanitizedError, context);
-    
+
     // Track error frequency
     this.trackError(errorCode);
-    
+
     // Log the error
     this.logError(sanitizedError, context, severity, errorCode);
-    
+
     // Determine if error should be thrown or handled gracefully
     if (severity === ErrorSeverity.CRITICAL || !this.isRecoverable(sanitizedError)) {
       throw sanitizedError;
     }
-    
+
     return sanitizedError;
   }
 
@@ -115,7 +119,7 @@ export class ErrorHandler {
 
     const message = error instanceof Error ? error.message : 'Unknown error occurred';
     const sanitizedMessage = this.sanitizeMessage(message);
-    
+
     return new R2IntegrationError(
       sanitizedMessage,
       'UNKNOWN_ERROR',
@@ -136,7 +140,7 @@ export class ErrorHandler {
       /secret\s*[:=]\s*['"]?[a-zA-Z0-9+/=]{20,}['"]?/gi,
       /\/home\/[^\/\s]+/gi,
       /\/Users\/[^\/\s]+/gi,
-      /C:\\Users\\[^\\]+/gi
+      /C:\\Users\\[^\\]+/gi,
     ];
 
     let sanitized = message;
@@ -169,29 +173,26 @@ export class ErrorHandler {
    * Log error with appropriate styling
    */
   private logError(
-    error: R2IntegrationError, 
-    context: string, 
-    severity: ErrorSeverity, 
+    error: R2IntegrationError,
+    context: string,
+    severity: ErrorSeverity,
     errorCode: string
   ): void {
     const severityColors = {
       [ErrorSeverity.LOW]: 'muted',
       [ErrorSeverity.MEDIUM]: 'warning',
       [ErrorSeverity.HIGH]: 'error',
-      [ErrorSeverity.CRITICAL]: 'error'
+      [ErrorSeverity.CRITICAL]: 'error',
     };
 
     const color = severityColors[severity];
     const count = this.errorCounts.get(errorCode) || 1;
     const countText = count > 1 ? ` (${count}x)` : '';
 
-    console.log(styled(
-      `❌ ${error.name}${countText} [${errorCode}]`,
-      color as any
-    ));
+    console.log(styled(`❌ ${error.name}${countText} [${errorCode}]`, color as any));
     console.log(styled(`   Context: ${context}`, 'muted'));
     console.log(styled(`   Message: ${error.message}`, 'muted'));
-    
+
     if (error.context && Object.keys(error.context).length > 0) {
       console.log(styled(`   Context: ${JSON.stringify(error.context, null, 2)}`, 'muted'));
     }
@@ -201,9 +202,7 @@ export class ErrorHandler {
    * Determine if error is recoverable
    */
   private isRecoverable(error: R2IntegrationError): boolean {
-    return error.recoverable || 
-           error.code === 'R2_DATA_ERROR' || 
-           error.code === 'CACHE_ERROR';
+    return error.recoverable || error.code === 'R2_DATA_ERROR' || error.code === 'CACHE_ERROR';
   }
 
   /**
@@ -211,12 +210,12 @@ export class ErrorHandler {
    */
   getErrorStats(): Record<string, { count: number; lastSeen: Date }> {
     const stats: Record<string, { count: number; lastSeen: Date }> = {};
-    
+
     for (const [code, count] of this.errorCounts) {
       const lastSeen = this.lastErrors.get(code) || new Date();
       stats[code] = { count, lastSeen };
     }
-    
+
     return stats;
   }
 
@@ -233,8 +232,8 @@ export class ErrorHandler {
  * Standardized error handler function
  */
 export function handleError(
-  error: unknown, 
-  context: string, 
+  error: unknown,
+  context: string,
   severity: ErrorSeverity = ErrorSeverity.MEDIUM
 ): R2IntegrationError {
   return ErrorHandler.getInstance().handle(error, context, severity);
@@ -267,23 +266,23 @@ export async function safeAsyncWithRetry<T>(
   fallback?: T
 ): Promise<T | undefined> {
   let lastError: unknown;
-  
+
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       return await operation();
     } catch (error) {
       lastError = error;
-      
+
       if (attempt === maxRetries) {
         handleError(error, context, ErrorSeverity.HIGH);
         return fallback;
       }
-      
+
       // Wait before retry
       await Bun.sleep(retryDelay * attempt);
     }
   }
-  
+
   handleError(lastError, context, ErrorSeverity.HIGH);
   return fallback;
 }

@@ -2,14 +2,14 @@
 
 /**
  * 📚 CLI Documentation MCP Server
- * 
+ *
  * MCP server for CLI documentation with advanced URL handling and fragment support
  */
 
-import { 
-  CLIDocumentationHandler, 
-  CLIExampleGenerator, 
-  CLIDocumentationSearch 
+import {
+  CLIDocumentationHandler,
+  CLIExampleGenerator,
+  CLIDocumentationSearch,
 } from '../core/cli-documentation-handler';
 import { CLICategory, CLI_COMMAND_EXAMPLES } from '../documentation/constants/cli';
 import { URLHandler, URLFragmentUtils } from '../core/url-handler';
@@ -50,12 +50,11 @@ export class CLIDocumentationMCPServer {
   ): Promise<{ url: string; valid: boolean }> {
     try {
       this.ensureInitialized();
-      
+
       const url = CLIDocumentationHandler.generateDocumentationURL(category, page, fragment);
       const valid = CLIDocumentationHandler.validateDocumentationURL(url);
 
       return { url, valid };
-
     } catch (error) {
       handleError(error, 'CLIDocumentationMCPServer.getDocumentationURL', 'medium');
       return { url: '', valid: false };
@@ -74,7 +73,6 @@ export class CLIDocumentationMCPServer {
     try {
       this.ensureInitialized();
       return CLIDocumentationHandler.parseDocumentationURL(url);
-
     } catch (error) {
       handleError(error, 'CLIDocumentationMCPServer.parseDocumentationURL', 'medium');
       return { valid: false };
@@ -95,12 +93,11 @@ export class CLIDocumentationMCPServer {
   }> {
     try {
       this.ensureInitialized();
-      
+
       const results = CLIDocumentationSearch.searchCommands(query);
       const searchURL = CLIDocumentationSearch.generateSearchResultsURL(query, results);
 
       return { results, searchURL };
-
     } catch (error) {
       handleError(error, 'CLIDocumentationMCPServer.searchDocumentation', 'medium');
       return { results: [], searchURL: '' };
@@ -117,12 +114,15 @@ export class CLIDocumentationMCPServer {
   ): Promise<{ url: string; valid: boolean }> {
     try {
       this.ensureInitialized();
-      
-      const url = CLIExampleGenerator.generateExampleWithHighlighting(category, commandName, command);
+
+      const url = CLIExampleGenerator.generateExampleWithHighlighting(
+        category,
+        commandName,
+        command
+      );
       const valid = CLIDocumentationHandler.validateDocumentationURL(url);
 
       return { url, valid };
-
     } catch (error) {
       handleError(error, 'CLIDocumentationMCPServer.generateCommandExample', 'medium');
       return { url: '', valid: false };
@@ -132,15 +132,16 @@ export class CLIDocumentationMCPServer {
   /**
    * Generate navigation structure
    */
-  async getNavigationStructure(): Promise<Array<{
-    category: CLICategory;
-    title: string;
-    pages: Array<{ name: string; url: string; fragment?: Record<string, string> }>;
-  }>> {
+  async getNavigationStructure(): Promise<
+    Array<{
+      category: CLICategory;
+      title: string;
+      pages: Array<{ name: string; url: string; fragment?: Record<string, string> }>;
+    }>
+  > {
     try {
       this.ensureInitialized();
       return CLIDocumentationHandler.generateNavigationStructure();
-
     } catch (error) {
       handleError(error, 'CLIDocumentationMCPServer.getNavigationStructure', 'medium');
       return [];
@@ -154,7 +155,6 @@ export class CLIDocumentationMCPServer {
     try {
       this.ensureInitialized();
       return CLIDocumentationHandler.generateQuickReferenceURLs();
-
     } catch (error) {
       handleError(error, 'CLIDocumentationMCPServer.getQuickReferenceURLs', 'medium');
       return {};
@@ -168,7 +168,6 @@ export class CLIDocumentationMCPServer {
     try {
       this.ensureInitialized();
       return CLIDocumentationHandler.generateBreadcrumbs(url);
-
     } catch (error) {
       handleError(error, 'CLIDocumentationMCPServer.getBreadcrumbs', 'medium');
       return [];
@@ -190,12 +189,11 @@ export class CLIDocumentationMCPServer {
   ): Promise<{ url: string; valid: boolean }> {
     try {
       this.ensureInitialized();
-      
+
       const url = CLIDocumentationHandler.createShareableLink(context, expiresIn);
       const valid = CLIDocumentationHandler.validateDocumentationURL(url);
 
       return { url, valid };
-
     } catch (error) {
       handleError(error, 'CLIDocumentationMCPServer.createShareableLink', 'medium');
       return { url: '', valid: false };
@@ -215,16 +213,15 @@ export class CLIDocumentationMCPServer {
   ): Promise<{ url: string; valid: boolean }> {
     try {
       this.ensureInitialized();
-      
+
       const url = CLIExampleGenerator.generateInteractiveExampleURL(command, options);
       const valid = URLHandler.validate(url, {
         allowedHosts: ['bun.sh'],
         requireHTTPS: true,
-        allowFragments: true
+        allowFragments: true,
       });
 
       return { url, valid };
-
     } catch (error) {
       handleError(error, 'CLIDocumentationMCPServer.generateInteractiveExample', 'medium');
       return { url: '', valid: false };
@@ -241,16 +238,15 @@ export class CLIDocumentationMCPServer {
   ): Promise<{ url: string; valid: boolean }> {
     try {
       this.ensureInitialized();
-      
+
       const url = CLIExampleGenerator.generateComparisonURL(bunCommand, npmCommand, fragment);
       const valid = URLHandler.validate(url, {
         allowedHosts: ['bun.sh'],
         requireHTTPS: true,
-        allowFragments: true
+        allowFragments: true,
       });
 
       return { url, valid };
-
     } catch (error) {
       handleError(error, 'CLIDocumentationMCPServer.generateComparisonExample', 'medium');
       return { url: '', valid: false };
@@ -286,7 +282,6 @@ export class CLIDocumentationMCPServer {
       });
 
       console.log(styled('\n✅ CLI Documentation server is ready for use!', 'success'));
-
     } catch (error) {
       handleError(error, 'CLIDocumentationMCPServer.displayStatus', 'medium');
     }
@@ -302,16 +297,16 @@ export class CLIDocumentationMCPServer {
 
       // Generate documentation URLs
       console.log(styled('\n📖 Generating Documentation URLs:', 'info'));
-      
+
       const installURL = await this.getDocumentationURL(CLICategory.INSTALLATION, 'WINDOWS', {
         platform: 'windows',
-        version: 'latest'
+        version: 'latest',
       });
       console.log(`  Installation (Windows): ${installURL.url}`);
 
       const testURL = await this.getDocumentationURL(CLICategory.COMMANDS, 'TEST', {
         example: 'basic',
-        highlight: 'true'
+        highlight: 'true',
       });
       console.log(`  Test Command: ${testURL.url}`);
 
@@ -331,7 +326,7 @@ export class CLIDocumentationMCPServer {
       const interactiveURL = await this.generateInteractiveExample('bun run dev', {
         runnable: true,
         editable: true,
-        theme: 'dark'
+        theme: 'dark',
       });
       console.log(`  Interactive Example: ${interactiveURL.url}`);
 
@@ -345,7 +340,6 @@ export class CLIDocumentationMCPServer {
       }
 
       console.log(styled('\n✅ Feature demonstration completed!', 'success'));
-
     } catch (error) {
       handleError(error, 'CLIDocumentationMCPServer.demonstrateFeatures', 'medium');
     }
@@ -418,10 +412,10 @@ export class CLIDocumentationCLI {
     }
 
     const results = await this.server.searchDocumentation(query);
-    
+
     console.log(styled(`\n🔍 Search results for "${query}":`, 'info'));
     console.log(styled(`Found ${results.results.length} results`, 'muted'));
-    
+
     results.results.forEach(result => {
       console.log(styled(`\n  📋 ${result.command}`, 'accent'));
       console.log(styled(`     Category: ${result.category}`, 'muted'));
@@ -447,7 +441,7 @@ export class CLIDocumentationCLI {
     }
 
     const result = await this.server.getDocumentationURL(category, page);
-    
+
     if (result.valid) {
       console.log(styled(`\n📖 Documentation URL:`, 'success'));
       console.log(result.url);
@@ -467,10 +461,10 @@ export class CLIDocumentationCLI {
     }
 
     const result = await this.server.parseDocumentationURL(url);
-    
+
     console.log(styled(`\n🔍 Parsed URL:`, 'info'));
     console.log(`  Valid: ${result.valid ? '✅' : '❌'}`);
-    
+
     if (result.valid) {
       console.log(`  Category: ${result.category}`);
       console.log(`  Page: ${result.page}`);
@@ -493,7 +487,7 @@ export class CLIDocumentationCLI {
     }
 
     const result = await this.server.generateCommandExample(category, commandName, command);
-    
+
     if (result.valid) {
       console.log(styled(`\n💡 Example URL:`, 'success'));
       console.log(result.url);
@@ -506,7 +500,9 @@ export class CLIDocumentationCLI {
    * Show help information
    */
   private showHelp(): void {
-    console.log(styled(`
+    console.log(
+      styled(
+        `
 📚 CLI Documentation MCP Server CLI
 
 Usage: cli-docs <command> [options]
@@ -528,7 +524,10 @@ Examples:
 
 Categories:
   installation, commands, options, debugging, integration
-`, 'muted'));
+`,
+        'muted'
+      )
+    );
   }
 }
 

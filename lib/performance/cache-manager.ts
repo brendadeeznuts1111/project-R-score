@@ -2,12 +2,12 @@
 
 /**
  * ⚡ Cache Manager
- * 
+ *
  * High-performance caching system with LRU eviction, TTL support,
  * and comprehensive monitoring capabilities.
  */
 
-import { ConcurrencyManagers } from "../core/safe-concurrency";
+import { ConcurrencyManagers } from '../core/safe-concurrency';
 
 interface CacheEntry<T> {
   value: T;
@@ -50,9 +50,9 @@ export class CacheManager<K = string, V = any> {
     currentSize: 0,
     maxSize: 0,
     hitRate: 0,
-    memoryUsage: 0
+    memoryUsage: 0,
   };
-  
+
   private options: Required<CacheOptions>;
   private cleanupTimer?: ReturnType<typeof setInterval>;
   private currentMemoryUsage = 0;
@@ -63,11 +63,11 @@ export class CacheManager<K = string, V = any> {
       defaultTtl: options.defaultTtl ?? 300000, // 5 minutes
       maxSizeBytes: options.maxSizeBytes ?? 100 * 1024 * 1024, // 100MB
       cleanupInterval: options.cleanupInterval ?? 60000, // 1 minute
-      enableMetrics: options.enableMetrics ?? true
+      enableMetrics: options.enableMetrics ?? true,
     };
 
     this.stats.maxSize = this.options.maxSize;
-    
+
     if (this.options.cleanupInterval > 0) {
       this.startCleanupTimer();
     }
@@ -79,7 +79,7 @@ export class CacheManager<K = string, V = any> {
   async get(key: K): Promise<V | undefined> {
     return await ConcurrencyManagers.fileOperations.withLock(async () => {
       const entry = this.cache.get(key);
-      
+
       if (!entry) {
         if (this.options.enableMetrics) {
           this.stats.misses++;
@@ -93,7 +93,7 @@ export class CacheManager<K = string, V = any> {
         this.cache.delete(key);
         this.removeFromAccessOrder(key);
         this.updateMemoryUsage(-entry.size);
-        
+
         if (this.options.enableMetrics) {
           this.stats.misses++;
           this.stats.evictions++;
@@ -133,7 +133,7 @@ export class CacheManager<K = string, V = any> {
         ttl: ttl ?? this.options.defaultTtl,
         accessCount: 1,
         lastAccessed: now,
-        size
+        size,
       };
 
       // Remove old entry if exists
@@ -256,7 +256,7 @@ export class CacheManager<K = string, V = any> {
         this.cache.delete(key);
         this.removeFromAccessOrder(key);
         this.updateMemoryUsage(-entry.size);
-        
+
         if (this.options.enableMetrics) {
           this.stats.evictions++;
         }
@@ -278,14 +278,14 @@ export class CacheManager<K = string, V = any> {
     remainingTtl?: number;
   }> {
     const now = Date.now();
-    
+
     return Array.from(this.cache.entries()).map(([key, entry]) => ({
       key,
       size: entry.size,
       accessCount: entry.accessCount,
       age: now - entry.timestamp,
       ttl: entry.ttl,
-      remainingTtl: entry.ttl ? Math.max(0, entry.ttl - (now - entry.timestamp)) : undefined
+      remainingTtl: entry.ttl ? Math.max(0, entry.ttl - (now - entry.timestamp)) : undefined,
     }));
   }
 
@@ -294,7 +294,10 @@ export class CacheManager<K = string, V = any> {
    */
   private async ensureCapacity(requiredSize: number): Promise<void> {
     // Check memory limit
-    while (this.currentMemoryUsage + requiredSize > this.options.maxSizeBytes && this.cache.size > 0) {
+    while (
+      this.currentMemoryUsage + requiredSize > this.options.maxSizeBytes &&
+      this.cache.size > 0
+    ) {
       await this.evictLRU();
     }
 
@@ -314,11 +317,11 @@ export class CacheManager<K = string, V = any> {
 
     const lruKey = this.accessOrder[0];
     const entry = this.cache.get(lruKey);
-    
+
     if (entry) {
       this.cache.delete(lruKey);
       this.updateMemoryUsage(-entry.size);
-      
+
       if (this.options.enableMetrics) {
         this.stats.evictions++;
       }
@@ -413,19 +416,19 @@ export class CacheManager<K = string, V = any> {
 
 // Global cache instances for common use cases
 export const globalCaches = {
-  secrets: new CacheManager<string, any>({ 
-    maxSize: 500, 
+  secrets: new CacheManager<string, any>({
+    maxSize: 500,
     defaultTtl: 300000, // 5 minutes
-    maxSizeBytes: 50 * 1024 * 1024 // 50MB
+    maxSizeBytes: 50 * 1024 * 1024, // 50MB
   }),
-  config: new CacheManager<string, any>({ 
-    maxSize: 100, 
+  config: new CacheManager<string, any>({
+    maxSize: 100,
     defaultTtl: 600000, // 10 minutes
-    maxSizeBytes: 10 * 1024 * 1024 // 10MB
+    maxSizeBytes: 10 * 1024 * 1024, // 10MB
   }),
-  apiResponses: new CacheManager<string, any>({ 
-    maxSize: 1000, 
+  apiResponses: new CacheManager<string, any>({
+    maxSize: 1000,
     defaultTtl: 60000, // 1 minute
-    maxSizeBytes: 100 * 1024 * 1024 // 100MB
-  })
+    maxSizeBytes: 100 * 1024 * 1024, // 100MB
+  }),
 };

@@ -1,40 +1,41 @@
 /**
  * 🚀 Tier1380Deployer - Production-Grade Deployment System
- * 
+ *
  * Enterprise deployment orchestrator with Bun Shell integration,
  * Runtime Hardening v4.5 features, and comprehensive rollback safety.
- * 
+ *
  * @version 4.5
  * @see lib/r2/signed-url.ts for R2 signed URL generation
  * @see lib/s3-content-encoding.ts for compression support
  */
 
-import { $ } from "bun";
-
+import { $ } from 'bun';
 
 export class Tier1380Deployer {
-  private static readonly BACKUP_DIR = "./backups";
-  private static readonly METRICS_FILE = "deployment-metrics.json";
-  
-  static async deploySnapshot(snapshotId: string, options: {
-    contentEncoding?: 'gzip' | 'br' | 'deflate';
-    preserveHeaders?: boolean;
-    signedUrl?: boolean;
-  } = {}): Promise<DeploymentResult> {
-    
+  private static readonly BACKUP_DIR = './backups';
+  private static readonly METRICS_FILE = 'deployment-metrics.json';
+
+  static async deploySnapshot(
+    snapshotId: string,
+    options: {
+      contentEncoding?: 'gzip' | 'br' | 'deflate';
+      preserveHeaders?: boolean;
+      signedUrl?: boolean;
+    } = {}
+  ): Promise<DeploymentResult> {
     // 🔐 Enhanced error handling with rollback safety
     try {
       // 1. Validate inputs using Bun Shell safety features
       if (!snapshotId.match(/^[a-zA-Z0-9_-]+$/)) {
         throw new Error(`Invalid snapshotId: ${snapshotId}`);
       }
-      
+
       // 2. Create timestamped backup directory
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const backupPath = `${this.BACKUP_DIR}/${snapshotId}_${timestamp}`;
-      
+
       await $`mkdir -p ${backupPath}`;
-      
+
       // 3. Backup with progress and checksum
       console.log(`📦 Creating backup to ${backupPath}...`);
       const backupResult = await $`
@@ -44,14 +45,15 @@ export class Tier1380Deployer {
           ${backupPath}/ \
         2>&1 | tee ${backupPath}/backup.log
       `.nothrow();
-      
+
       if (backupResult.exitCode !== 0) {
         // Sanitize stderr to prevent information leakage
-        const sanitizedError = backupResult.stderr?.toString().slice(0, 200).replace(/\s+/g, ' ') || 'Unknown error';
+        const sanitizedError =
+          backupResult.stderr?.toString().slice(0, 200).replace(/\s+/g, ' ') || 'Unknown error';
         console.error(`Backup failed: ${sanitizedError}`);
         throw new Error(`Backup failed: Check backup.log for details`);
       }
-      
+
       // 4. Enhanced metrics with deployment metadata
       const metrics = {
         timestamp: new Date().toISOString(),
@@ -59,28 +61,25 @@ export class Tier1380Deployer {
         system: {
           node: process.version,
           bun: Bun.version,
-          platform: process.platform
+          platform: process.platform,
         },
         deployment: {
           contentEncoding: options.contentEncoding,
           preserveHeaders: options.preserveHeaders,
-          signedUrl: options.signedUrl
+          signedUrl: options.signedUrl,
         },
         performance: {
           memory: process.memoryUsage(),
-          uptime: process.uptime()
-        }
+          uptime: process.uptime(),
+        },
       };
-      
+
       // Use Bun.write for safer file operations
-      await Bun.write(
-        `${backupPath}/${this.METRICS_FILE}`,
-        JSON.stringify(metrics, null, 2)
-      );
-      
+      await Bun.write(`${backupPath}/${this.METRICS_FILE}`, JSON.stringify(metrics, null, 2));
+
       // 5. Run deployment with enhanced monitoring
       console.log(`🚀 Deploying snapshot ${snapshotId}...`);
-      
+
       const deployment = await $`
         # Set deployment environment variables
         export TIER1380_SNAPSHOT_ID=${snapshotId}
@@ -94,28 +93,29 @@ export class Tier1380Deployer {
         
         # Capture deployment checksum for verification
         sha256sum ${backupPath}/**/*.json 2>/dev/null | head -5
-      `.env({
-        ...process.env,
-        NODE_ENV: 'production',
-        BUN_ENV: 'tier1380'
-      }).cwd(process.cwd());
-      
+      `
+        .env({
+          ...process.env,
+          NODE_ENV: 'production',
+          BUN_ENV: 'tier1380',
+        })
+        .cwd(process.cwd());
+
       // 6. Parse and validate deployment output
       const output = deployment.stdout.toString();
       const lines = output.split('\n');
-      
-      const success = lines.some(l => 
-        l.includes('Deployment complete') || 
-        l.includes('SUCCESS') ||
-        l.includes('Snapshot deployed')
+
+      const success = lines.some(
+        l =>
+          l.includes('Deployment complete') ||
+          l.includes('SUCCESS') ||
+          l.includes('Snapshot deployed')
       );
-      
-      const errors = lines.filter(l => 
-        l.includes('ERROR') || 
-        l.includes('FAILED') || 
-        l.includes('WARNING:')
+
+      const errors = lines.filter(
+        l => l.includes('ERROR') || l.includes('FAILED') || l.includes('WARNING:')
       );
-      
+
       // 7. Generate signed URL if requested (v4.5 feature)
       let signedUrl: string | undefined;
       if (options.signedUrl && success) {
@@ -126,19 +126,21 @@ export class Tier1380Deployer {
             --key ${snapshotId} \
             ${options.contentEncoding ? `--content-encoding ${options.contentEncoding}` : ''} \
             --expires 3600
-        `.quiet().text();
-        
+        `
+          .quiet()
+          .text();
+
         signedUrl = r2Signed.trim();
       }
-      
+
       // 8. Health check post-deployment
       if (success) {
         const health = await this.healthCheck(snapshotId);
-        
+
         if (!health.healthy) {
           console.warn(`⚠️  Health check warnings: ${health.warnings?.join(', ')}`);
         }
-        
+
         return {
           success: true,
           snapshotId,
@@ -148,37 +150,36 @@ export class Tier1380Deployer {
           output: {
             stdout: output,
             errors,
-            health
+            health,
           },
-          metrics
+          metrics,
         };
       } else {
         throw new Error(`Deployment incomplete: ${errors.join('; ')}`);
       }
-      
     } catch (error) {
       // 🚨 Enhanced rollback with diagnostics
       console.error(`❌ Deployment failed: ${error.message}`);
-      
+
       await this.emergencyRollback(snapshotId, error);
-      
+
       throw new DeploymentError({
         message: `Deployment failed for ${snapshotId}`,
         cause: error,
         timestamp: new Date().toISOString(),
-        rollbackInitiated: true
+        rollbackInitiated: true,
       });
     }
   }
-  
+
   /**
    * Enhanced rollback with diagnostics and cleanup
    */
   private static async emergencyRollback(snapshotId: string, error: Error): Promise<void> {
     console.log(`🔄 Initiating rollback for ${snapshotId}...`);
-    
+
     const rollbackLog = `/tmp/tier1380-rollback-${Date.now()}.log`;
-    
+
     const result = await $`
       # Run rollback with detailed logging
       ./rollback.sh ${snapshotId} \
@@ -192,15 +193,15 @@ export class Tier1380Deployer {
       # Report rollback completion
       echo "ROLLBACK_COMPLETE $(date -u +%Y-%m-%dT%H:%M:%SZ)"
     `.nothrow();
-    
+
     if (result.exitCode !== 0) {
       console.error(`⚠️  Rollback encountered issues: ${result.stderr.toString()}`);
     }
-    
+
     // Send rollback notification
     await this.notifyRollback(snapshotId, error, result);
   }
-  
+
   /**
    * Post-deployment health check
    */
@@ -215,25 +216,27 @@ export class Tier1380Deployer {
       
       # Check system resources
       free -m | awk 'NR==2{printf "%.1f", $3*100/$2}'
-    `.quiet().text();
-    
+    `
+      .quiet()
+      .text();
+
     const [httpStatus, snapshotStatus, memoryUsage] = health.trim().split('\n');
-    
+
     return {
       healthy: httpStatus === '200' && snapshotStatus === 'OK',
       httpStatus: parseInt(httpStatus) || 0,
       snapshotStatus,
       memoryUsage: parseFloat(memoryUsage) || 0,
-      warnings: httpStatus !== '200' ? ['R2 bucket inaccessible'] : undefined
+      warnings: httpStatus !== '200' ? ['R2 bucket inaccessible'] : undefined,
     };
   }
-  
+
   /**
    * Send rollback notification
    */
   private static async notifyRollback(
-    snapshotId: string, 
-    error: Error, 
+    snapshotId: string,
+    error: Error,
     rollbackResult: ShellResult
   ): Promise<void> {
     const notification = {
@@ -242,15 +245,15 @@ export class Tier1380Deployer {
       snapshotId,
       error: {
         message: error.message,
-        stack: error.stack
+        stack: error.stack,
       },
       rollback: {
         stdout: rollbackResult.stdout?.toString().slice(-500), // Last 500 chars
         stderr: rollbackResult.stderr?.toString().slice(-500),
-        exitCode: rollbackResult.exitCode
-      }
+        exitCode: rollbackResult.exitCode,
+      },
     };
-    
+
     // Send to webhook if configured
     if (process.env.TIER1380_WEBHOOK_URL) {
       await fetch(process.env.TIER1380_WEBHOOK_URL, {
@@ -258,15 +261,13 @@ export class Tier1380Deployer {
         headers: {
           'Content-Type': 'application/json',
           'X-Tier1380-Event': 'rollback',
-          'Authorization': `Bearer ${process.env.TIER1380_API_KEY}` 
+          Authorization: `Bearer ${process.env.TIER1380_API_KEY}`,
         },
-        body: JSON.stringify(notification)
-      }).catch(err => 
-        console.error(`Failed to send notification: ${err.message}`)
-      );
+        body: JSON.stringify(notification),
+      }).catch(err => console.error(`Failed to send notification: ${err.message}`));
     }
   }
-  
+
   /**
    * List recent deployments
    */
@@ -277,8 +278,10 @@ export class Tier1380Deployer {
         | xargs cat 2>/dev/null \
         | jq -s 'sort_by(.timestamp) | reverse | .[0:${limit}]' \
         || echo "[]"
-    `.quiet().text();
-    
+    `
+      .quiet()
+      .text();
+
     try {
       return JSON.parse(output);
     } catch {
@@ -324,12 +327,14 @@ interface ShellResult {
 }
 
 export class DeploymentError extends Error {
-  constructor(public details: {
-    message: string;
-    cause: Error;
-    timestamp: string;
-    rollbackInitiated: boolean;
-  }) {
+  constructor(
+    public details: {
+      message: string;
+      cause: Error;
+      timestamp: string;
+      rollbackInitiated: boolean;
+    }
+  ) {
     super(details.message);
     this.name = 'DeploymentError';
   }
@@ -339,21 +344,23 @@ export class DeploymentError extends Error {
 if (import.meta.main) {
   // CLI usage example
   const snapshotId = process.argv[2] || 'snapshot-' + Date.now();
-  
+
   Tier1380Deployer.deploySnapshot(snapshotId, {
     contentEncoding: 'gzip',
     preserveHeaders: true,
-    signedUrl: true
-  }).then(result => {
-    console.log('✅ Deployment successful!');
-    console.log(`📊 Backup: ${result.backupPath}`);
-    if (result.signedUrl) {
-      console.log(`🔗 Signed URL: ${result.signedUrl}`);
-    }
-  }).catch(error => {
-    console.error('❌ Deployment failed:', error.message);
-    process.exit(1);
-  });
+    signedUrl: true,
+  })
+    .then(result => {
+      console.log('✅ Deployment successful!');
+      console.log(`📊 Backup: ${result.backupPath}`);
+      if (result.signedUrl) {
+        console.log(`🔗 Signed URL: ${result.signedUrl}`);
+      }
+    })
+    .catch(error => {
+      console.error('❌ Deployment failed:', error.message);
+      process.exit(1);
+    });
 }
 
 export { Tier1380Deployer as default };

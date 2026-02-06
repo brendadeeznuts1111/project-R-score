@@ -1,9 +1,9 @@
 /**
  * 🖥️ Bun.Terminal PTY API - Bun v1.3.5+ Implementation
- * 
+ *
  * Production-grade pseudo-terminal support for interactive applications.
  * Enables running vim, htop, bash, and other TTY-dependent programs.
- * 
+ *
  * @version 4.5
  * @requires Bun >= 1.3.5
  * @platform POSIX only (Linux, macOS)
@@ -15,7 +15,7 @@
  * Note: Windows is not yet supported
  */
 export function isPtySupported(): boolean {
-  return process.platform !== "win32";
+  return process.platform !== 'win32';
 }
 
 /**
@@ -77,7 +77,7 @@ export interface TerminalProcess {
 
 /**
  * Create a reusable terminal instance
- * 
+ *
  * @example
  * ```typescript
  * await using terminal = createTerminal({
@@ -87,20 +87,18 @@ export interface TerminalProcess {
  *     process.stdout.write(data);
  *   }
  * });
- * 
+ *
  * // Reuse across multiple spawns
  * const proc1 = Bun.spawn(["echo", "first"], { terminal });
  * await proc1.exited;
- * 
+ *
  * const proc2 = Bun.spawn(["echo", "second"], { terminal });
  * await proc2.exited;
  * ```
  */
 export function createTerminal(options: TerminalOptions): BunTerminalInstance {
   if (!isPtySupported()) {
-    throw new Error(
-      "PTY support is only available on POSIX systems (Linux, macOS)"
-    );
+    throw new Error('PTY support is only available on POSIX systems (Linux, macOS)');
   }
 
   // @ts-expect-error - Bun.Terminal is a runtime API (Bun v1.3.5+)
@@ -109,7 +107,7 @@ export function createTerminal(options: TerminalOptions): BunTerminalInstance {
 
 /**
  * Spawn a process with inline PTY terminal
- * 
+ *
  * @example
  * ```typescript
  * const proc = spawnWithTerminal(["bash"], {
@@ -119,7 +117,7 @@ export function createTerminal(options: TerminalOptions): BunTerminalInstance {
  *     process.stdout.write(data);
  *   }
  * });
- * 
+ *
  * await proc.exited;
  * proc.terminal.close();
  * ```
@@ -133,9 +131,7 @@ export function spawnWithTerminal(
   } = {}
 ): TerminalProcess {
   if (!isPtySupported()) {
-    throw new Error(
-      "PTY support is only available on POSIX systems (Linux, macOS)"
-    );
+    throw new Error('PTY support is only available on POSIX systems (Linux, macOS)');
   }
 
   const proc = Bun.spawn(command, {
@@ -155,14 +151,14 @@ export function spawnWithTerminal(
 
 /**
  * Spawn a process with a reusable terminal
- * 
+ *
  * @example
  * ```typescript
  * await using terminal = createTerminal({ cols: 80, rows: 24, data: handler });
- * 
+ *
  * const proc1 = spawnWithReusableTerminal(["echo", "first"], terminal);
  * await proc1.exited;
- * 
+ *
  * const proc2 = spawnWithReusableTerminal(["echo", "second"], terminal);
  * await proc2.exited;
  * ```
@@ -184,7 +180,7 @@ export function spawnWithReusableTerminal(
 /**
  * Run an interactive program (vim, htop, etc.)
  * Handles terminal resize and stdin forwarding automatically
- * 
+ *
  * @example
  * ```typescript
  * await runInteractiveProgram(["vim", "file.txt"]);
@@ -196,9 +192,7 @@ export async function runInteractiveProgram(
   options: Partial<TerminalDimensions> = {}
 ): Promise<number> {
   if (!isPtySupported()) {
-    throw new Error(
-      "PTY support is only available on POSIX systems (Linux, macOS)"
-    );
+    throw new Error('PTY support is only available on POSIX systems (Linux, macOS)');
   }
 
   const cols = options.cols ?? process.stdout.columns ?? 80;
@@ -216,12 +210,9 @@ export async function runInteractiveProgram(
 
   // Handle terminal resize
   const resizeHandler = () => {
-    proc.terminal?.resize(
-      process.stdout.columns ?? 80,
-      process.stdout.rows ?? 24
-    );
+    proc.terminal?.resize(process.stdout.columns ?? 80, process.stdout.rows ?? 24);
   };
-  process.stdout.on("resize", resizeHandler);
+  process.stdout.on('resize', resizeHandler);
 
   // Forward stdin to terminal
   process.stdin.setRawMode?.(true);
@@ -235,7 +226,7 @@ export async function runInteractiveProgram(
 
   const exitCode = await proc.exited;
   proc.terminal?.close();
-  process.stdout.off("resize", resizeHandler);
+  process.stdout.off('resize', resizeHandler);
   process.stdin.setRawMode?.(false);
 
   return exitCode;
@@ -244,7 +235,7 @@ export async function runInteractiveProgram(
 /**
  * Execute shell commands with PTY support
  * Useful for running command sequences in a proper shell
- * 
+ *
  * @example
  * ```typescript
  * await runShellSession([
@@ -259,14 +250,12 @@ export async function runShellSession(
   options: Partial<TerminalDimensions> = {}
 ): Promise<number> {
   if (!isPtySupported()) {
-    throw new Error(
-      "PTY support is only available on POSIX systems (Linux, macOS)"
-    );
+    throw new Error('PTY support is only available on POSIX systems (Linux, macOS)');
   }
 
   const cols = options.cols ?? 80;
   const rows = options.rows ?? 24;
-  const shell = process.env.SHELL || "/bin/bash";
+  const shell = process.env.SHELL || '/bin/bash';
 
   const commandsQueue = [...commands];
 
@@ -279,10 +268,10 @@ export async function runShellSession(
         process.stdout.write(data);
 
         // Auto-execute commands when prompt appears
-        if (text.includes("$") || text.includes("#") || text.includes(">")) {
+        if (text.includes('$') || text.includes('#') || text.includes('>')) {
           const cmd = commandsQueue.shift();
           if (cmd) {
-            setTimeout(() => terminal.write(cmd + "\n"), 50);
+            setTimeout(() => terminal.write(cmd + '\n'), 50);
           }
         }
       },
@@ -306,7 +295,7 @@ if (import.meta.main) {
 ║  Bun v${Bun.version} - ${process.platform}                                    ║
 ╚═══════════════════════════════════════════════════════════╝
 
-PTY Support: ${isPtySupported() ? "✅ Available" : "❌ Not available (Windows)"}
+PTY Support: ${isPtySupported() ? '✅ Available' : '❌ Not available (Windows)'}
 
 Usage:
   bun lib/pty-terminal.ts [command]
@@ -318,14 +307,14 @@ Examples:
 `);
 
   if (!isPtySupported()) {
-    console.error("PTY is not supported on Windows. Please use WSL or a Linux VM.");
+    console.error('PTY is not supported on Windows. Please use WSL or a Linux VM.');
     process.exit(1);
   }
 
   const command = process.argv.slice(2);
   if (command.length === 0) {
-    console.log("No command specified, starting bash shell...");
-    runInteractiveProgram(["bash"]).then(code => process.exit(code));
+    console.log('No command specified, starting bash shell...');
+    runInteractiveProgram(['bash']).then(code => process.exit(code));
   } else {
     runInteractiveProgram(command).then(code => process.exit(code));
   }

@@ -1,18 +1,18 @@
 #!/usr/bin/env bun
 /**
  * 🔍 Error Handling Demonstration
- * 
+ *
  * Shows how errors are handled throughout our documentation system
  */
 
 // Safe execution with error handling
 async function demonstrateErrorHandling() {
   console.log('🔍 COMPREHENSIVE ERROR HANDLING DEMONSTRATION');
-  console.log('=' .repeat(60));
+  console.log('='.repeat(60));
 
   // 1. IMPORT ERROR HANDLING
   console.log('\n📦 1. IMPORT ERROR HANDLING:');
-  
+
   try {
     const docs = await import('./documentation');
     console.log('✅ Documentation module imported successfully');
@@ -20,7 +20,7 @@ async function demonstrateErrorHandling() {
     console.log('❌ Import failed - handled gracefully');
     console.log('   Error type:', error.constructor.name);
     console.log('   Message:', error.message);
-    
+
     // Fallback strategy
     console.log('🔄 Using fallback imports...');
     const cliConstants = await import('./documentation/constants/cli.ts');
@@ -29,56 +29,57 @@ async function demonstrateErrorHandling() {
 
   // 2. VALIDATION ERROR HANDLING
   console.log('\n✅ 2. VALIDATION ERROR HANDLING:');
-  
+
   try {
     const { EnhancedDocumentationURLValidator } = await import('./documentation');
-    
+
     // Test invalid CLI command
     const invalidCommand = 'invalid-command';
     const validation = EnhancedDocumentationURLValidator.validateCLICommand(invalidCommand);
-    
+
     if (!validation.isValid) {
       console.log('✅ Invalid command detected and handled');
       console.log('   Errors:', validation.errors);
     }
-    
+
     // Test invalid URL
     const invalidURL = 'not-a-url';
     const urlValidation = EnhancedDocumentationURLValidator.validateBunDocumentationURL(invalidURL);
-    
+
     if (!urlValidation.isValid) {
       console.log('✅ Invalid URL detected and handled');
     }
-    
   } catch (error) {
     console.log('❌ Validation error - using fallback');
-    
+
     // Simple fallback validation
     const simpleValidation = (command: string) => {
-      return command.startsWith('bun') ? { isValid: true } : { isValid: false, errors: ['Must start with bun'] };
+      return command.startsWith('bun')
+        ? { isValid: true }
+        : { isValid: false, errors: ['Must start with bun'] };
     };
-    
+
     const result = simpleValidation('test');
     console.log('✅ Fallback validation working:', result);
   }
 
   // 3. ASYNC ERROR HANDLING
   console.log('\n⚡ 3. ASYNC ERROR HANDLING:');
-  
+
   const asyncOperation = async (shouldFail: boolean) => {
     if (shouldFail) {
       throw new Error('Async operation failed');
     }
     return 'Success';
   };
-  
+
   // Test failing async operation
   try {
     await asyncOperation(true);
   } catch (error) {
     console.log('✅ Async error caught and handled');
     console.log('   Error:', error.message);
-    
+
     // Retry logic
     try {
       const result = await asyncOperation(false);
@@ -90,18 +91,18 @@ async function demonstrateErrorHandling() {
 
   // 4. FILE OPERATION ERROR HANDLING
   console.log('\n📁 4. FILE OPERATION ERROR HANDLING:');
-  
+
   try {
     const nonExistentFile = './non-existent-file.json';
     const file = Bun.file(nonExistentFile);
-    
+
     if (await file.exists()) {
       const content = await file.text();
       console.log('✅ File read successfully');
     } else {
       console.log('✅ File not found - handled gracefully');
       console.log('   Creating fallback content...');
-      
+
       // Create fallback
       await Bun.write(nonExistentFile, '{"fallback": true}');
       console.log('✅ Fallback file created');
@@ -112,14 +113,14 @@ async function demonstrateErrorHandling() {
 
   // 5. NETWORK REQUEST ERROR HANDLING
   console.log('\n🌐 5. NETWORK REQUEST ERROR HANDLING:');
-  
+
   try {
     const response = // 🚀 Prefetch hint: Consider preconnecting to 'https://bun.sh/docs/cli' domain
- await fetch('https://bun.sh/docs/cli', {
-      method: 'HEAD',
-      timeout: 5000
-    });
-    
+      await fetch('https://bun.sh/docs/cli', {
+        method: 'HEAD',
+        timeout: 5000,
+      });
+
     if (response.ok) {
       console.log('✅ Network request successful');
     } else {
@@ -128,7 +129,7 @@ async function demonstrateErrorHandling() {
   } catch (error) {
     console.log('✅ Network error handled gracefully');
     console.log('   Error:', error.message);
-    
+
     // Fallback URL
     console.log('🔄 Using fallback documentation URL...');
     console.log('   Fallback: https://docs.bun.sh');
@@ -136,7 +137,7 @@ async function demonstrateErrorHandling() {
 
   // 6. TYPE ERROR HANDLING
   console.log('\n🔷 6. TYPE ERROR HANDLING:');
-  
+
   try {
     const processData = (data: unknown) => {
       if (typeof data === 'string') {
@@ -147,10 +148,10 @@ async function demonstrateErrorHandling() {
       }
       throw new Error('Unsupported data type');
     };
-    
+
     // Test with different types
     const testValues = ['hello', 42, null, undefined, { invalid: 'object' }];
-    
+
     testValues.forEach((value, index) => {
       try {
         const result = processData(value);
@@ -159,14 +160,13 @@ async function demonstrateErrorHandling() {
         console.log(`⚠️ Test ${index + 1}: ${typeof value} → ${error.message}`);
       }
     });
-    
   } catch (error) {
     console.log('❌ Type error handling failed:', error.message);
   }
 
   // 7. GRACEFUL DEGRADATION
   console.log('\n🛡️ 7. GRACEFUL DEGRADATION:');
-  
+
   const loadWithFallback = async () => {
     const strategies = [
       async () => {
@@ -182,17 +182,17 @@ async function demonstrateErrorHandling() {
       },
       async () => {
         // Strategy 3: Minimal fallback
-        return { 
-          source: 'minimal-fallback', 
-          data: { 
-            CLI_CATEGORIES: 8, 
+        return {
+          source: 'minimal-fallback',
+          data: {
+            CLI_CATEGORIES: 8,
             UTILS_CATEGORIES: 10,
-            STATUS: 'fallback-mode'
-          } 
+            STATUS: 'fallback-mode',
+          },
         };
-      }
+      },
     ];
-    
+
     for (let i = 0; i < strategies.length; i++) {
       try {
         console.log(`🔄 Trying strategy ${i + 1}...`);
@@ -208,7 +208,7 @@ async function demonstrateErrorHandling() {
       }
     }
   };
-  
+
   try {
     const result = await loadWithFallback();
     console.log('🎯 Final result loaded from:', result.source);
@@ -218,7 +218,7 @@ async function demonstrateErrorHandling() {
 
   // 8. ERROR LOGGING AND REPORTING
   console.log('\n📊 8. ERROR LOGGING AND REPORTING:');
-  
+
   const errorLogger = {
     log: (error: Error, context: string) => {
       const logEntry = {
@@ -226,33 +226,33 @@ async function demonstrateErrorHandling() {
         context,
         message: error.message,
         stack: error.stack,
-        type: error.constructor.name
+        type: error.constructor.name,
       };
-      
+
       console.log('📝 Error logged:', {
         context: logEntry.context,
         message: logEntry.message,
-        type: logEntry.type
+        type: logEntry.type,
       });
-      
+
       return logEntry;
-    }
+    },
   };
-  
+
   // Simulate various errors
   const testErrors = [
     new Error('Test validation error'),
     new Error('Test network error'),
-    new Error('Test file error')
+    new Error('Test file error'),
   ];
-  
+
   testErrors.forEach((error, index) => {
     errorLogger.log(error, `Test scenario ${index + 1}`);
   });
 
   // 9. RECOVERY MECHANISMS
   console.log('\n🔄 9. RECOVERY MECHANISMS:');
-  
+
   const withRetry = async <T>(
     operation: () => Promise<T>,
     maxRetries: number = 3,
@@ -264,19 +264,19 @@ async function demonstrateErrorHandling() {
         return await operation();
       } catch (error) {
         console.log(`❌ Attempt ${attempt} failed:`, error.message);
-        
+
         if (attempt === maxRetries) {
           throw error;
         }
-        
+
         // Wait before retry
         await Bun.sleep(delay);
       }
     }
-    
+
     throw new Error('All retries exhausted');
   };
-  
+
   try {
     let attempts = 0;
     const flakyOperation = async () => {
@@ -286,7 +286,7 @@ async function demonstrateErrorHandling() {
       }
       return 'Success after retries!';
     };
-    
+
     const result = await withRetry(flakyOperation, 3, 100);
     console.log('✅ Retry mechanism successful:', result);
   } catch (error) {
@@ -304,7 +304,7 @@ async function demonstrateErrorHandling() {
   console.log('✅ System failures: Multiple fallback strategies');
   console.log('✅ Error logging: Structured error reporting');
   console.log('✅ Recovery: Automatic retry mechanisms');
-  
+
   console.log('\n🎯 Error handling is comprehensive and robust!');
 }
 

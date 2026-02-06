@@ -1,15 +1,19 @@
 /**
  * CLI Tool Self-Validation Integration
- * 
+ *
  * Provides easy integration for CLI tools to validate themselves
  * before execution, with automatic error handling and fixes.
- * 
+ *
  * @version 1.0.0
  * @author Enterprise Platform Team
  */
 
-import { CLIToolValidator, URLValidator, ConstantValidator, AutoHealer } from './cli-constants-validation';
-
+import {
+  CLIToolValidator,
+  URLValidator,
+  ConstantValidator,
+  AutoHealer,
+} from './cli-constants-validation';
 
 // ============================================================================
 // SELF-VALIDATION INTERFACE
@@ -62,17 +66,17 @@ export class CLISelfValidator {
           config.args || [],
           config.env || process.env
         );
-        
+
         if (healResult.success) {
           healedIssues.push(...healResult.appliedFixes);
-          
+
           // Re-validate after healing
           const revalidation = await CLIToolValidator.validateTool(
             config.toolName,
             healResult.fixedArgs,
             healResult.fixedEnv
           );
-          
+
           if (revalidation.isValid) {
             // Clear previous errors if healing was successful
             errors.length = 0;
@@ -86,7 +90,7 @@ export class CLISelfValidator {
     if (config.requiredURLs) {
       for (const urlName of config.requiredURLs) {
         const urlValidation = await URLValidator.validateURL(urlName);
-        
+
         if (!urlValidation.isValid) {
           errors.push(`URL validation failed: ${urlName}`);
           fixes.push(...urlValidation.fixes);
@@ -106,7 +110,7 @@ export class CLISelfValidator {
     if (config.requiredConstants) {
       for (const constantName of config.requiredConstants) {
         const constantValidation = ConstantValidator.validateConstant(constantName);
-        
+
         if (!constantValidation.isValid) {
           errors.push(`Constant validation failed: ${constantName}`);
           fixes.push(...constantValidation.fixes);
@@ -132,7 +136,7 @@ export class CLISelfValidator {
       canProceed,
       errors,
       fixes,
-      healedIssues
+      healedIssues,
     };
   }
 
@@ -157,7 +161,7 @@ export class CLISelfValidator {
         success: false,
         errors: validation.errors,
         fixes: validation.fixes,
-        healedIssues: validation.healedIssues
+        healedIssues: validation.healedIssues,
       };
     }
 
@@ -169,14 +173,14 @@ export class CLISelfValidator {
         result,
         errors: [],
         fixes: [],
-        healedIssues: validation.healedIssues
+        healedIssues: validation.healedIssues,
       };
     } catch (error) {
       return {
         success: false,
         errors: [`Execution failed: ${error}`],
         fixes: validation.fixes,
-        healedIssues: validation.healedIssues
+        healedIssues: validation.healedIssues,
       };
     }
   }
@@ -197,9 +201,9 @@ export async function quickValidate(
   const result = await CLISelfValidator.validateBeforeExecution({
     toolName,
     args,
-    autoHeal
+    autoHeal,
   });
-  
+
   return result.canProceed;
 }
 
@@ -212,7 +216,7 @@ export async function validateAndReport(
   autoHeal: boolean = true
 ): Promise<void> {
   console.log(`🔍 Validating ${toolName}...`);
-  
+
   const result = await CLISelfValidator.validateBeforeExecution({
     toolName,
     args,
@@ -227,14 +231,14 @@ export async function validateAndReport(
     },
     onValidationSuccess: () => {
       console.log('✅ Validation passed!');
-    }
+    },
   });
-  
+
   if (result.healedIssues.length > 0) {
     console.log('🔧 Issues healed:');
     result.healedIssues.forEach(issue => console.log(`   ${issue}`));
   }
-  
+
   if (!result.canProceed) {
     console.log('\n💡 To fix manually:');
     result.fixes.forEach(fix => console.log(`   ${fix}`));
@@ -255,12 +259,12 @@ export function validateCLI(config: Partial<SelfValidationConfig> = {}) {
 
     descriptor.value = async function (...args: any[]) {
       const toolName = config.toolName || propertyName;
-      
+
       const validation = await CLISelfValidator.validateBeforeExecution({
         toolName,
         args,
         autoHeal: config.autoHeal ?? true,
-        ...config
+        ...config,
       });
 
       if (!validation.canProceed) {
@@ -289,5 +293,5 @@ export default {
   CLISelfValidator,
   quickValidate,
   validateAndReport,
-  validateCLI
+  validateCLI,
 };

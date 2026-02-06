@@ -2,7 +2,7 @@
 
 /**
  * ☁️ Cloudflare Domain Manager for FactoryWager
- * 
+ *
  * Manages all factory-wager.com subdomains through Cloudflare API
  * and integrates them with the R2 MCP system for comprehensive monitoring.
  */
@@ -133,7 +133,7 @@ export class CloudflareDomainManager {
         dependencies: ['auth.factory-wager.com'],
         health_check_url: 'https://npm.factory-wager.com',
         ssl_required: true,
-        enterprise_tier: true
+        enterprise_tier: true,
       },
       {
         subdomain: 'api',
@@ -147,7 +147,7 @@ export class CloudflareDomainManager {
         dependencies: ['database.factory-wager.com', 'redis.factory-wager.com'],
         health_check_url: 'https://api.factory-wager.com/health',
         ssl_required: true,
-        enterprise_tier: true
+        enterprise_tier: true,
       },
       {
         subdomain: 'cdn',
@@ -161,7 +161,7 @@ export class CloudflareDomainManager {
         dependencies: ['storage.factory-wager.com'],
         health_check_url: 'https://cdn.factory-wager.com/healthz',
         ssl_required: true,
-        enterprise_tier: true
+        enterprise_tier: true,
       },
       {
         subdomain: 'monitor',
@@ -175,7 +175,7 @@ export class CloudflareDomainManager {
         dependencies: ['api.factory-wager.com'],
         health_check_url: 'https://monitor.factory-wager.com/status',
         ssl_required: true,
-        enterprise_tier: true
+        enterprise_tier: true,
       },
       {
         subdomain: 'docs',
@@ -189,7 +189,7 @@ export class CloudflareDomainManager {
         dependencies: ['cdn.factory-wager.com'],
         health_check_url: 'https://docs.factory-wager.com',
         ssl_required: true,
-        enterprise_tier: true
+        enterprise_tier: true,
       },
       {
         subdomain: 'rss',
@@ -203,7 +203,7 @@ export class CloudflareDomainManager {
         dependencies: ['storage.factory-wager.com', 'api.factory-wager.com'],
         health_check_url: 'https://rss.factory-wager.com/feed',
         ssl_required: true,
-        enterprise_tier: true
+        enterprise_tier: true,
       },
       {
         subdomain: 'config',
@@ -217,7 +217,7 @@ export class CloudflareDomainManager {
         dependencies: ['vault.factory-wager.com'],
         health_check_url: 'https://config.factory-wager.com/health',
         ssl_required: true,
-        enterprise_tier: true
+        enterprise_tier: true,
       },
       {
         subdomain: 'admin',
@@ -231,7 +231,7 @@ export class CloudflareDomainManager {
         dependencies: ['api.factory-wager.com', 'auth.factory-wager.com'],
         health_check_url: 'https://admin.factory-wager.com/status',
         ssl_required: true,
-        enterprise_tier: true
+        enterprise_tier: true,
       },
       {
         subdomain: 'auth',
@@ -245,7 +245,7 @@ export class CloudflareDomainManager {
         dependencies: ['database.factory-wager.com'],
         health_check_url: 'https://auth.factory-wager.com/health',
         ssl_required: true,
-        enterprise_tier: true
+        enterprise_tier: true,
       },
       {
         subdomain: 'database',
@@ -259,7 +259,7 @@ export class CloudflareDomainManager {
         dependencies: [],
         health_check_url: `http://database.factory-wager.com:${process.env.DATABASE_PORT || '5432'}/health`,
         ssl_required: false,
-        enterprise_tier: true
+        enterprise_tier: true,
       },
       {
         subdomain: 'storage',
@@ -273,7 +273,7 @@ export class CloudflareDomainManager {
         dependencies: [],
         health_check_url: 'https://storage.factory-wager.com',
         ssl_required: true,
-        enterprise_tier: true
+        enterprise_tier: true,
       },
       {
         subdomain: 'vault',
@@ -287,7 +287,7 @@ export class CloudflareDomainManager {
         dependencies: [],
         health_check_url: 'https://vault.factory-wager.com/v1/sys/health',
         ssl_required: true,
-        enterprise_tier: true
+        enterprise_tier: true,
       },
       {
         subdomain: 'redis',
@@ -301,7 +301,7 @@ export class CloudflareDomainManager {
         dependencies: [],
         health_check_url: `http://redis.factory-wager.com:${process.env.REDIS_PORT || '6379'}/health`,
         ssl_required: false,
-        enterprise_tier: true
+        enterprise_tier: true,
       },
       {
         subdomain: 'www',
@@ -315,7 +315,7 @@ export class CloudflareDomainManager {
         dependencies: ['cdn.factory-wager.com'],
         health_check_url: 'https://www.factory-wager.com',
         ssl_required: true,
-        enterprise_tier: true
+        enterprise_tier: true,
       },
       {
         subdomain: 'blog',
@@ -329,7 +329,7 @@ export class CloudflareDomainManager {
         dependencies: ['cdn.factory-wager.com'],
         health_check_url: 'https://blog.factory-wager.com',
         ssl_required: true,
-        enterprise_tier: false
+        enterprise_tier: false,
       },
       {
         subdomain: 'support',
@@ -343,8 +343,8 @@ export class CloudflareDomainManager {
         dependencies: ['api.factory-wager.com'],
         health_check_url: 'https://support.factory-wager.com',
         ssl_required: true,
-        enterprise_tier: true
-      }
+        enterprise_tier: true,
+      },
     ];
 
     return new Map(subdomains.map(sub => [sub.subdomain, sub]));
@@ -359,13 +359,13 @@ export class CloudflareDomainManager {
 
     // Store subdomain configuration in R2
     await this.storeSubdomainConfiguration();
-    
+
     // Initialize health monitoring for all subdomains
     await this.initializeSubdomainHealthMonitoring();
-    
+
     // Setup SSL certificate monitoring
     await this.initializeSSLMonitoring();
-    
+
     // Create domain analytics dashboard
     await this.createAnalyticsDashboard();
 
@@ -384,13 +384,16 @@ export class CloudflareDomainManager {
       primary_domain: 'factory-wager.com',
       total_subdomains: this.knownSubdomains.size,
       subdomains: Array.from(this.knownSubdomains.values()),
-      enterprise_tier_count: Array.from(this.knownSubdomains.values()).filter(s => s.enterprise_tier).length,
-      ssl_required_count: Array.from(this.knownSubdomains.values()).filter(s => s.ssl_required).length
+      enterprise_tier_count: Array.from(this.knownSubdomains.values()).filter(
+        s => s.enterprise_tier
+      ).length,
+      ssl_required_count: Array.from(this.knownSubdomains.values()).filter(s => s.ssl_required)
+        .length,
     };
 
     const key = `domains/factory-wager/cloudflare/subdomains.json`;
     await this.r2.putJSON(key, config);
-    
+
     console.log(styled(`✅ Subdomain config stored: ${key}`, 'success'));
   }
 
@@ -414,14 +417,14 @@ export class CloudflareDomainManager {
         ssl_expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
         dependencies_status: sub.dependencies.map(dep => ({
           dependency: dep,
-          status: 'healthy'
-        }))
-      }))
+          status: 'healthy',
+        })),
+      })),
     };
 
     const key = `domains/factory-wager/cloudflare/health/${new Date().toISOString().split('T')[0]}.json`;
     await this.r2.putJSON(key, healthData);
-    
+
     console.log(styled(`✅ Health monitoring data stored: ${key}`, 'success'));
   }
 
@@ -437,7 +440,7 @@ export class CloudflareDomainManager {
         total_certificates: this.knownSubdomains.size,
         valid_certificates: this.knownSubdomains.size,
         expiring_soon: 0,
-        expired: 0
+        expired: 0,
       },
       certificates: Array.from(this.knownSubdomains.values()).map(sub => ({
         domain: sub.full_domain,
@@ -447,13 +450,13 @@ export class CloudflareDomainManager {
         issued_on: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
         expires_on: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
         days_until_expiry: 90,
-        auto_renewal: true
-      }))
+        auto_renewal: true,
+      })),
     };
 
     const key = `domains/factory-wager/cloudflare/ssl/${new Date().toISOString().split('T')[0]}.json`;
     await this.r2.putJSON(key, sslData);
-    
+
     console.log(styled(`✅ SSL monitoring data stored: ${key}`, 'success'));
   }
 
@@ -467,22 +470,24 @@ export class CloudflareDomainManager {
       timestamp: new Date().toISOString(),
       dashboard_summary: {
         total_subdomains: this.knownSubdomains.size,
-        enterprise_subdomains: Array.from(this.knownSubdomains.values()).filter(s => s.enterprise_tier).length,
+        enterprise_subdomains: Array.from(this.knownSubdomains.values()).filter(
+          s => s.enterprise_tier
+        ).length,
         ssl_enabled: Array.from(this.knownSubdomains.values()).filter(s => s.ssl_required).length,
-        proxied_subdomains: Array.from(this.knownSubdomains.values()).filter(s => s.proxied).length
+        proxied_subdomains: Array.from(this.knownSubdomains.values()).filter(s => s.proxied).length,
       },
       traffic_analytics: {
         total_requests: Math.floor(Math.random() * 1000000) + 500000,
         cached_requests: Math.floor(Math.random() * 800000) + 400000,
         bandwidth_saved: Math.floor(Math.random() * 500) + 200, // GB
         threats_blocked: Math.floor(Math.random() * 10000) + 5000,
-        unique_visitors: Math.floor(Math.random() * 50000) + 25000
+        unique_visitors: Math.floor(Math.random() * 50000) + 25000,
       },
       performance_metrics: {
         avg_response_time: Math.random() * 100 + 50,
         uptime_percentage: 99.9,
         error_rate: 0.1,
-        cache_hit_rate: 85.5
+        cache_hit_rate: 85.5,
       },
       subdomain_breakdown: Array.from(this.knownSubdomains.values()).map(sub => ({
         subdomain: sub.subdomain,
@@ -490,13 +495,13 @@ export class CloudflareDomainManager {
         requests: Math.floor(Math.random() * 100000) + 10000,
         bandwidth: Math.floor(Math.random() * 50) + 5, // GB
         response_time: Math.random() * 200 + 50,
-        uptime: 99.5 + Math.random() * 0.4
-      }))
+        uptime: 99.5 + Math.random() * 0.4,
+      })),
     };
 
     const key = `domains/factory-wager/cloudflare/analytics/${new Date().toISOString().split('T')[0]}.json`;
     await this.r2.putJSON(key, analytics);
-    
+
     console.log(styled(`✅ Analytics dashboard stored: ${key}`, 'success'));
   }
 
@@ -544,7 +549,7 @@ export class CloudflareDomainManager {
       error: {
         name: error.name || 'SubdomainError',
         message: error.message || 'Subdomain operation failed',
-        stack: error.stack
+        stack: error.stack,
       },
       fix,
       context: `cloudflare-${subdomain}-${context}`,
@@ -555,8 +560,8 @@ export class CloudflareDomainManager {
         ssl_required: subConfig.ssl_required,
         enterprise_tier: subConfig.enterprise_tier,
         proxied: subConfig.proxied,
-        health_check_url: subConfig.health_check_url
-      }
+        health_check_url: subConfig.health_check_url,
+      },
     };
 
     return await this.r2.storeDiagnosis(diagnosis);
@@ -598,7 +603,7 @@ export class CloudflareDomainManager {
    */
   getDashboardUrls(): Record<string, string> {
     const baseUrl = `https://dash.cloudflare.com/${this.accountId}`;
-    
+
     return {
       overview: `${baseUrl}`,
       dns: `${baseUrl}/dns/factory-wager.com`,
@@ -612,7 +617,7 @@ export class CloudflareDomainManager {
       r2: `${baseUrl}/r2`,
       pages: `${baseUrl}/pages`,
       stream: `${baseUrl}/stream`,
-      email: `${baseUrl}/email`
+      email: `${baseUrl}/email`,
     };
   }
 
@@ -622,20 +627,25 @@ export class CloudflareDomainManager {
   async displayStatus(): Promise<void> {
     console.log(styled('\n☁️ Cloudflare Domain Manager Status', 'accent'));
     console.log(styled('===================================', 'accent'));
-    
+
     console.log(styled(`Account ID: ${this.accountId}`, 'info'));
     console.log(styled(`Primary Domain: factory-wager.com`, 'info'));
     console.log(styled(`Total Subdomains: ${this.knownSubdomains.size}`, 'info'));
     console.log(styled(`Enterprise Tier: ${this.getEnterpriseSubdomains().length}`, 'info'));
-    
+
     console.log(styled('\n📡 Subdomains:', 'info'));
     for (const [name, config] of this.knownSubdomains) {
       const status = config.enterprise_tier ? '🏢' : '🌐';
       const ssl = config.ssl_required ? '🔒' : '🔓';
       const proxy = config.proxied ? '🌍' : '🔗';
-      console.log(styled(`  ${status} ${ssl} ${proxy} ${name}.${config.full_domain.split('.').slice(1).join('.')} - ${config.purpose}`, 'muted'));
+      console.log(
+        styled(
+          `  ${status} ${ssl} ${proxy} ${name}.${config.full_domain.split('.').slice(1).join('.')} - ${config.purpose}`,
+          'muted'
+        )
+      );
     }
-    
+
     console.log(styled('\n🔗 Dashboard URLs:', 'info'));
     const urls = this.getDashboardUrls();
     Object.entries(urls).forEach(([key, url]) => {
@@ -650,10 +660,10 @@ export const cloudflareDomainManager = new CloudflareDomainManager();
 // CLI interface
 if (import.meta.main) {
   const manager = cloudflareDomainManager;
-  
+
   await manager.initialize();
   await manager.displayStatus();
-  
+
   console.log(styled('\n🎉 Cloudflare domain management complete!', 'success'));
   console.log(styled('All subdomains integrated with R2 MCP system.', 'info'));
 }

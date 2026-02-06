@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Code Benchmark: Minimal Resource</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#1a1a2e,#16213e);color:#e0e0e0;min-height:100vh;padding:20px}
+    .dashboard{max-width:1200px;margin:0 auto}
+    header{background:rgba(255,255,255,.05);border-radius:16px;padding:30px;margin-bottom:24px;border:1px solid rgba(255,255,255,.1)}
+    h1{font-size:28px;margin-bottom:8px;background:linear-gradient(90deg,#00d4ff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .subtitle{color:#9ca3af}
+    .summary-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+    .summary-card{background:rgba(255,255,255,.05);border-radius:12px;padding:20px;text-align:center;border:1px solid rgba(255,255,255,.1)}
+    .summary-value{font-size:32px;font-weight:700;margin-bottom:4px}
+    .summary-label{font-size:13px;color:#9ca3af}
+    .metrics-section{background:rgba(255,255,255,.03);border-radius:12px;padding:24px;margin-bottom:20px}
+    .metrics-section h2{font-size:18px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.1)}
+    .metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+    .metric-card{background:rgba(255,255,255,.05);border-radius:8px;padding:16px;border-left:4px solid}
+    .metric-card.excellent{border-color:#10b981}.metric-card.good{border-color:#3b82f6}.metric-card.average{border-color:#f59e0b}.metric-card.poor{border-color:#ef4444}
+    .metric-name{font-size:14px;color:#9ca3af;margin-bottom:8px}
+    .metric-value{font-size:24px;font-weight:700;margin-bottom:4px}
+    .metric-unit{font-size:12px;color:#6b7280}
+    .recommendations{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:12px;padding:24px;margin-bottom:20px}
+    .recommendations h2{font-size:18px;color:#34d399;margin-bottom:16px}
+    .recommendations ul{padding-left:20px}
+    .recommendations li{margin:8px 0;color:#d1d5db}
+    .config-section{background:rgba(255,255,255,.03);border-radius:12px;padding:24px}
+    .config-section h2{font-size:18px;margin-bottom:16px}
+    pre{background:rgba(0,0,0,.3);border-radius:8px;padding:16px;overflow-x:auto;font-size:12px;line-height:1.5}
+    footer{text-align:center;padding:20px;color:#6b7280;font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <header>
+      <h1>📊 Claude Code Configuration Benchmark</h1>
+      <p class="subtitle">Custom configuration</p>
+    </header>
+    <section class="summary-cards">
+      
+      <div class="summary-card"><div class="summary-value" style="color:#3b82f6">44.96ms</div><div class="summary-label">Avg Latency</div></div>
+      <div class="summary-card"><div class="summary-value" style="color:#10b981">25%</div><div class="summary-label">Token Efficiency</div></div>
+      <div class="summary-card"><div class="summary-value" style="color:#f59e0b">72.1MB</div><div class="summary-label">Memory Usage</div></div>
+      <div class="summary-card"><div class="summary-value" style="color:#7c3aed">70%</div><div class="summary-label">Cache Hit Rate</div></div>
+    </section>
+    
+      <section class="metrics-section">
+        <h2>⚡ Latency</h2>
+        <div class="metrics-grid">
+          <div class="metric-card excellent"><div class="metric-name">Average Latency</div><div class="metric-value">44.96</div><div class="metric-unit">ms</div></div><div class="metric-card excellent"><div class="metric-name">P95 Latency</div><div class="metric-value">45.11</div><div class="metric-unit">ms</div></div><div class="metric-card excellent"><div class="metric-name">Throughput</div><div class="metric-value">22.24</div><div class="metric-unit">req/s</div></div>
+        </div>
+      </section>
+      <section class="metrics-section">
+        <h2>🔢 Token</h2>
+        <div class="metrics-grid">
+          <div class="metric-card average"><div class="metric-name">Token Efficiency</div><div class="metric-value">25</div><div class="metric-unit">%</div></div><div class="metric-card good"><div class="metric-name">Context Utilization</div><div class="metric-value">25</div><div class="metric-unit">%</div></div><div class="metric-card excellent"><div class="metric-name">Compression Ratio</div><div class="metric-value">2.5</div><div class="metric-unit">x</div></div>
+        </div>
+      </section>
+      <section class="metrics-section">
+        <h2>💾 Memory</h2>
+        <div class="metrics-grid">
+          <div class="metric-card excellent"><div class="metric-name">Estimated Memory Usage</div><div class="metric-value">72.1</div><div class="metric-unit">MB</div></div><div class="metric-card excellent"><div class="metric-name">Context Memory</div><div class="metric-value">4.1</div><div class="metric-unit">MB</div></div><div class="metric-card good"><div class="metric-name">Cache Memory</div><div class="metric-value">18</div><div class="metric-unit">MB</div></div>
+        </div>
+      </section>
+      <section class="metrics-section">
+        <h2>🗃️ Cache</h2>
+        <div class="metrics-grid">
+          <div class="metric-card excellent"><div class="metric-name">Average Cache Time</div><div class="metric-value">18.5</div><div class="metric-unit">ms</div></div><div class="metric-card good"><div class="metric-name">Cache Hit Rate</div><div class="metric-value">70</div><div class="metric-unit">%</div></div><div class="metric-card good"><div class="metric-name">TTL Utilization</div><div class="metric-value">30</div><div class="metric-unit">%</div></div>
+        </div>
+      </section>
+    
+    <section class="config-section">
+      <h2>⚙️ Configuration</h2>
+      <pre>{
+  &quot;maxTokens&quot;: 1024,
+  &quot;temperature&quot;: 0.2,
+  &quot;topP&quot;: 0.8,
+  &quot;presencePenalty&quot;: 0.2,
+  &quot;frequencyPenalty&quot;: 0.2,
+  &quot;cacheEnabled&quot;: true,
+  &quot;cacheTTL&quot;: 180000,
+  &quot;contextCompression&quot;: true,
+  &quot;contextWindow&quot;: 4096,
+  &quot;streamingEnabled&quot;: false,
+  &quot;parallelProcessing&quot;: false,
+  &quot;maxConcurrentRequests&quot;: 1,
+  &quot;requestTimeout&quot;: 15000
+}</pre>
+    </section>
+    <footer><p>Generated: 2026-02-06T00:39:21.866Z</p></footer>
+  </div>
+</body>
+</html>

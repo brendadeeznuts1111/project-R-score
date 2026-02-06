@@ -1,17 +1,17 @@
 /**
  * 🎨 Terminal Color Quantization Utility
- * 
+ *
  * tmux-style RGB to 256-color palette conversion for maximum terminal compatibility.
  * Useful when Bun.color("ansi") auto-detection isn't sufficient.
- * 
+ *
  * Based on tmux colour.c implementation:
  * https://github.com/tmux/tmux/blob/dae2868d1227b95fd076fb4a5efa6256c7245943/colour.c#L44-L55
- * 
+ *
  * xterm 256-color palette:
  * - 6x6x6 color cube: indices 16-231
  * - 24 grey levels: indices 232-255
  * - 16 standard colors: indices 0-15
- * 
+ *
  * @version 1.0
  */
 
@@ -36,8 +36,12 @@ function rgbTo6Cube(v: number): number {
  * tmux colour_dist_sq() logic
  */
 function colorDistanceSquared(
-  r1: number, g1: number, b1: number,
-  r2: number, g2: number, b2: number
+  r1: number,
+  g1: number,
+  b1: number,
+  r2: number,
+  g2: number,
+  b2: number
 ): number {
   const dr = r1 - r2;
   const dg = g1 - g2;
@@ -47,12 +51,12 @@ function colorDistanceSquared(
 
 /**
  * Convert RGB to xterm 256-color palette index (16-255)
- * 
+ *
  * Algorithm:
  * 1. Map RGB to nearest point in 6x6x6 color cube
  * 2. Find nearest grey (average of RGB)
  * 3. Return whichever (color cube index OR grey index) is closer
- * 
+ *
  * @param r - Red component (0-255)
  * @param g - Green component (0-255)
  * @param b - Blue component (0-255)
@@ -68,14 +72,14 @@ export function rgbTo256(r: number, g: number, b: number): number {
   const qr = rgbTo6Cube(r);
   const qg = rgbTo6Cube(g);
   const qb = rgbTo6Cube(b);
-  
+
   const cr = COLOR_CUBE_LEVELS[qr];
   const cg = COLOR_CUBE_LEVELS[qg];
   const cb = COLOR_CUBE_LEVELS[qb];
 
   // Exact match in color cube
   if (cr === r && cg === g && cb === b) {
-    return 16 + (36 * qr) + (6 * qg) + qb;
+    return 16 + 36 * qr + 6 * qg + qb;
   }
 
   // Find nearest grey (average of RGB)
@@ -86,7 +90,7 @@ export function rgbTo256(r: number, g: number, b: number): number {
   } else {
     greyIdx = Math.floor((greyAvg - 3) / 10);
   }
-  const grey = 8 + (10 * greyIdx);
+  const grey = 8 + 10 * greyIdx;
 
   // Calculate distances
   const colorDist = colorDistanceSquared(cr, cg, cb, r, g, b);
@@ -96,13 +100,13 @@ export function rgbTo256(r: number, g: number, b: number): number {
   if (greyDist < colorDist) {
     return 232 + greyIdx; // Grey index (232-255)
   } else {
-    return 16 + (36 * qr) + (6 * qg) + qb; // Color cube index (16-231)
+    return 16 + 36 * qr + 6 * qg + qb; // Color cube index (16-231)
   }
 }
 
 /**
  * Convert RGB to 256-color ANSI escape code
- * 
+ *
  * @param r - Red component (0-255)
  * @param g - Green component (0-255)
  * @param b - Blue component (0-255)
@@ -135,12 +139,26 @@ export function get256ColorInfo(idx: number): {
 
   if (idx < 16) {
     const standardColors = [
-      'black', 'maroon', 'green', 'olive', 'navy', 'purple', 'teal', 'silver',
-      'grey', 'red', 'lime', 'yellow', 'blue', 'fuchsia', 'aqua', 'white'
+      'black',
+      'maroon',
+      'green',
+      'olive',
+      'navy',
+      'purple',
+      'teal',
+      'silver',
+      'grey',
+      'red',
+      'lime',
+      'yellow',
+      'blue',
+      'fuchsia',
+      'aqua',
+      'white',
     ];
     return {
       type: 'standard',
-      description: standardColors[idx] || 'unknown'
+      description: standardColors[idx] || 'unknown',
     };
   }
 
@@ -150,22 +168,22 @@ export function get256ColorInfo(idx: number): {
     const r = Math.floor(cubeIdx / 36) % 6;
     const g = Math.floor(cubeIdx / 6) % 6;
     const b = cubeIdx % 6;
-    
+
     return {
       type: 'cube',
       rgb: [COLOR_CUBE_LEVELS[r], COLOR_CUBE_LEVELS[g], COLOR_CUBE_LEVELS[b]],
-      description: `cube(${r},${g},${b}) = rgb(${COLOR_CUBE_LEVELS[r]},${COLOR_CUBE_LEVELS[g]},${COLOR_CUBE_LEVELS[b]})`
+      description: `cube(${r},${g},${b}) = rgb(${COLOR_CUBE_LEVELS[r]},${COLOR_CUBE_LEVELS[g]},${COLOR_CUBE_LEVELS[b]})`,
     };
   }
 
   // Grey scale (232-255)
   const greyIdx = idx - 232;
-  const grey = 8 + (10 * greyIdx);
-  
+  const grey = 8 + 10 * greyIdx;
+
   return {
     type: 'grey',
     rgb: [grey, grey, grey],
-    description: `grey(${greyIdx}) = rgb(${grey},${grey},${grey})`
+    description: `grey(${greyIdx}) = rgb(${grey},${grey},${grey})`,
   };
 }
 
@@ -177,7 +195,7 @@ export function toAnsi256(colorInput: any): string | null {
   // Try Bun.color first if available and supports ansi-256
   // Note: Bun.color returns "" if terminal doesn't support colors, null on parse error
   try {
-    const bunResult = Bun.color(colorInput, "ansi-256");
+    const bunResult = Bun.color(colorInput, 'ansi-256');
     if (bunResult && bunResult.length > 0) return bunResult;
     // If bunResult is "", terminal doesn't support colors, fall through to manual
   } catch {
@@ -212,7 +230,7 @@ export function toAnsi256(colorInput: any): string | null {
       b = parseInt(match[3]);
     } else {
       // CSS color names - use Bun.color fallback
-      const num = Bun.color(colorInput, "number");
+      const num = Bun.color(colorInput, 'number');
       if (num === null) return null;
       r = (num >> 16) & 0xff;
       g = (num >> 8) & 0xff;
@@ -260,42 +278,38 @@ if (import.meta.main) {
   ];
 
   console.log('RGB to 256-color conversions:');
-  console.log('=' .repeat(50));
-  
+  console.log('='.repeat(50));
+
   for (const { name, r, g, b } of testColors) {
     const idx = rgbTo256(r, g, b);
     const ansi = rgbToAnsi256(r, g, b);
     const info = get256ColorInfo(idx);
-    
-    console.log(`${name.padEnd(12)} rgb(${r},${g},${b}) → idx ${idx.toString().padStart(3)} ${info.type.padEnd(7)} ${info.description}`);
+
+    console.log(
+      `${name.padEnd(12)} rgb(${r},${g},${b}) → idx ${idx.toString().padStart(3)} ${info.type.padEnd(7)} ${info.description}`
+    );
     console.log(`             ANSI: ${JSON.stringify(ansi)}`);
     console.log();
   }
 
   // Test color palette info
   console.log('256-color palette structure:');
-  console.log('=' .repeat(50));
+  console.log('='.repeat(50));
   console.log('0-15:    Standard colors');
   console.log('16-231:  6x6x6 color cube');
   console.log('232-255: 24 grey levels');
   console.log();
-  
+
   // Demo toAnsi256 with various inputs
   console.log('Universal color input conversion:');
-  console.log('=' .repeat(50));
-  const inputs = [
-    '#ff0000',
-    'rgb(255, 0, 0)',
-    0xff0000,
-    [255, 0, 0],
-    { r: 255, g: 0, b: 0 }
-  ];
-  
+  console.log('='.repeat(50));
+  const inputs = ['#ff0000', 'rgb(255, 0, 0)', 0xff0000, [255, 0, 0], { r: 255, g: 0, b: 0 }];
+
   for (const input of inputs) {
     const result = toAnsi256(input);
     console.log(`${JSON.stringify(input).padEnd(25)} → ${result}`);
   }
-  
+
   console.log();
   console.log('✅ All conversions complete');
 }

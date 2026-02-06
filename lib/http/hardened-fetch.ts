@@ -1,19 +1,18 @@
 /**
  * Hardened Fetch - Bun.connect with TLS certificate pinning
- * 
+ *
  * Implements S_hardening by enforcing strict TLS verification and optional
  * certificate fingerprint pinning for enhanced security.
- * 
+ *
  * v4.5: Header case preservation - headers now preserved exactly as received
  * (compliant with Bun v1.3.7+ header preservation guarantees)
- * 
+ *
  * @see {@link https://bun.sh/docs/api/fetch#hardened} Hardened fetch documentation
  * @see {@link https://bun.sh/docs/api/fetch#redirects} Redirect handling documentation
  * @see {@link https://bun.sh/docs/runtime/shell} TLS verification in Bun
  */
 
 import { type Socket, connect } from 'bun';
-
 
 interface HardenedFetchOptions {
   url: string;
@@ -32,24 +31,24 @@ export async function hardenedFetch(options: HardenedFetchOptions): Promise<Resp
   const { followRedirects = 3 } = options;
   let currentUrl = options.url;
   let redirects = 0;
-  
+
   while (redirects < followRedirects) {
     const response = await executeRequest(currentUrl, options);
-    
+
     // Handle 301, 302, 307, 308 redirects
     if ([301, 302, 307, 308].includes(response.status)) {
       const location = response.headers.get('location');
       if (!location) throw new Error(`Redirect ${response.status} without Location header`);
-      
+
       currentUrl = new URL(location, currentUrl).toString();
       redirects++;
       console.log(`🔄 Following ${response.status} redirect to: ${currentUrl}`);
       continue;
     }
-    
+
     return response;
   }
-  
+
   throw new Error(`Too many redirects (${followRedirects})`);
 }
 
@@ -98,7 +97,7 @@ async function executeRequest(url: string, options: HardenedFetchOptions): Promi
           socketRef = socket;
           const method = options.method || 'HEAD';
           socket.write(
-            `${method} ${pathname} HTTP/1.1\r\nHost: ${hostname}\r\nConnection: close\r\nUser-Agent: Bun-Native-Validator/1.0\r\n\r\n`,
+            `${method} ${pathname} HTTP/1.1\r\nHost: ${hostname}\r\nConnection: close\r\nUser-Agent: Bun-Native-Validator/1.0\r\n\r\n`
           );
         },
         data(socket: Socket, data: Buffer) {
@@ -135,7 +134,7 @@ async function executeRequest(url: string, options: HardenedFetchOptions): Promi
                     new Response(null, {
                       status: statusCode,
                       headers: new Headers(headers),
-                    }),
+                    })
                   );
                 }
               }
@@ -168,7 +167,7 @@ async function executeRequest(url: string, options: HardenedFetchOptions): Promi
                 new Response(bodyParts.join('\r\n\r\n'), {
                   status: statusCode,
                   headers: new Headers(headers),
-                }),
+                })
               );
             }
           }

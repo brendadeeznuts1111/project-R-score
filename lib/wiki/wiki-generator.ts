@@ -67,12 +67,12 @@ function getExample(category: UtilsCategory, utilName: string): string | undefin
   // Safe type mapping - ensure all enum values have corresponding examples
   const categoryKey = category.toUpperCase() as keyof typeof BUN_UTILS_EXAMPLES;
   const categoryExamples = BUN_UTILS_EXAMPLES[categoryKey];
-  
+
   if (!categoryExamples) {
     console.warn(`No examples found for category: ${category}`);
     return undefined;
   }
-  
+
   const example = categoryExamples[utilName as keyof typeof categoryExamples];
   return example || undefined;
 }
@@ -90,7 +90,7 @@ const DEFAULT_CONFIG: WikiConfig = {
   workspace: 'bun-utilities',
   format: 'markdown',
   includeExamples: true,
-  includeValidation: true
+  includeValidation: true,
 };
 
 function generateWikiURLs(config: Partial<WikiConfig> = {}): WikiData {
@@ -336,7 +336,7 @@ function generateJSONWiki(wikiData: WikiData): string {
       total: wikiData.total,
       categories: Object.keys(wikiData.categories).length,
       generated: new Date().toISOString(),
-      version: '1.0.0'
+      version: '1.0.0',
     },
     categories: wikiData.categories,
     pages: wikiData.wikiPages,
@@ -346,9 +346,9 @@ function generateJSONWiki(wikiData: WikiData): string {
         list_pages: '/pages',
         get_page: '/pages/{id}',
         search: '/search?q={query}',
-        category: '/categories/{category}'
-      }
-    }
+        category: '/categories/{category}',
+      },
+    },
   };
 
   return JSON.stringify(jsonData, null, 2);
@@ -413,7 +413,11 @@ async function createWikiFiles(config: Partial<WikiConfig> = {}): Promise<void> 
   console.log(`\nWiki files created in '${outputDir}/'`);
 }
 
-function generateUtilityPage(category: UtilsCategory, utility: string, config: Partial<WikiConfig> = {}): string {
+function generateUtilityPage(
+  category: UtilsCategory,
+  utility: string,
+  config: Partial<WikiConfig> = {}
+): string {
   const finalConfig = { ...DEFAULT_CONFIG, ...config };
 
   if (!BUN_UTILS_URLS[category]?.[utility]) {
@@ -566,7 +570,7 @@ export {
   generateHTMLWiki,
   generateJSONWiki,
   createWikiFiles,
-  generateUtilityPage
+  generateUtilityPage,
 };
 
 // Backwards compatibility - class wrapper for existing imports
@@ -576,7 +580,7 @@ const WikiURLGenerator = {
   generateHTMLWiki,
   generateJSONWiki,
   createWikiFiles,
-  generateUtilityPage
+  generateUtilityPage,
 };
 
 if (import.meta.main) {

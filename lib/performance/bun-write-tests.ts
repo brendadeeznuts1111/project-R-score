@@ -16,7 +16,7 @@ if (import.meta.main) {
   console.log('ℹ️  Script was imported, not executed directly');
 }
 
-import { write } from "bun";
+import { write } from 'bun';
 import { OptimizedFetch } from '../http/port-management-system';
 
 // ============================================================================
@@ -29,7 +29,7 @@ class BunWriteTest {
    */
   static async testBunWriteDocumentation(): Promise<void> {
     console.log('📝 BUN.WRITE DOCUMENTATION COMPLIANCE TEST');
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
 
     const testUrl = 'https://httpbin.org/json';
     const outputPath = '/tmp/bun-write-test.txt';
@@ -46,12 +46,15 @@ class BunWriteTest {
 
       // Step 2: Use exact Bun.write pattern from documentation with streaming optimization
       console.log(`   Writing response to: ${outputPath}`);
-      
+
       // For large responses, use streaming to avoid loading entire response into memory
-      if (response.headers.get('content-length') && 
-          parseInt(response.headers.get('content-length')!) > 10 * 1024 * 1024) { // 10MB threshold
+      if (
+        response.headers.get('content-length') &&
+        parseInt(response.headers.get('content-length')!) > 10 * 1024 * 1024
+      ) {
+        // 10MB threshold
         console.log('   Using streaming write for large response...');
-        
+
         // Create writable stream for large files
         const fileWriter = Bun.file(outputPath).writer();
         try {
@@ -69,13 +72,13 @@ class BunWriteTest {
       // Step 3: Verify the file was written correctly
       const file = Bun.file(outputPath);
       const exists = await file.exists();
-      
+
       if (exists) {
         const content = await file.text();
         console.log('✅ File verification successful:');
         console.log(`   File size: ${content.length} characters`);
         console.log(`   Content preview: ${content.substring(0, 100)}...`);
-        
+
         // Verify it's valid JSON
         try {
           JSON.parse(content);
@@ -92,10 +95,10 @@ class BunWriteTest {
       const outputPath2 = '/tmp/bun-write-test-2.txt';
       console.log(`\n   Testing OptimizedFetch.fetchAndBuffer...`);
       await OptimizedFetch.fetchAndBuffer(testUrl, outputPath2);
-      
+
       const file2 = Bun.file(outputPath2);
       const exists2 = await file2.exists();
-      
+
       if (exists2) {
         const content2 = await file2.text();
         console.log('✅ OptimizedFetch.fetchAndBuffer successful:');
@@ -112,7 +115,6 @@ class BunWriteTest {
       // Cleanup
       await write(outputPath, '');
       await write(outputPath2, '');
-
     } catch (error) {
       console.error(`❌ Bun.write test failed: ${error.message}`);
     }
@@ -123,42 +125,42 @@ class BunWriteTest {
    */
   static async testBunWriteResponseTypes(): Promise<void> {
     console.log('\n🔄 BUN.WRITE RESPONSE TYPES TEST');
-    console.log('=' .repeat(50));
+    console.log('='.repeat(50));
 
     const testCases = [
       {
         url: 'https://httpbin.org/json',
         type: 'JSON',
-        expectedSize: 100
+        expectedSize: 100,
       },
       {
         url: 'https://httpbin.org/uuid',
         type: 'UUID',
-        expectedSize: 50
+        expectedSize: 50,
       },
       {
         url: 'https://httpbin.org/ip',
         type: 'IP Address',
-        expectedSize: 30
-      }
+        expectedSize: 30,
+      },
     ];
 
     for (const testCase of testCases) {
       try {
         console.log(`\nTesting ${testCase.type} response...`);
-        
+
         const response = await OptimizedFetch.fetch(testCase.url);
         const outputPath = `/tmp/bun-write-${testCase.type.toLowerCase().replace(' ', '-')}.txt`;
-        
+
         await write(outputPath, response);
-        
+
         const file = Bun.file(outputPath);
         const exists = await file.exists();
-        
+
         if (exists) {
           const content = await file.text();
           console.log(`✅ ${testCase.type}: ${content.length} characters written`);
-          
+
           if (content.length >= testCase.expectedSize) {
             console.log(`   Size validation: PASSED`);
           } else {
@@ -167,10 +169,9 @@ class BunWriteTest {
         } else {
           console.log(`❌ ${testCase.type}: File not created`);
         }
-        
+
         // Cleanup
         await write(outputPath, '');
-        
       } catch (error) {
         console.log(`❌ ${testCase.type} test failed: ${error.message}`);
       }
@@ -182,44 +183,43 @@ class BunWriteTest {
    */
   static async testBunWritePerformance(): Promise<void> {
     console.log('\n⚡ BUN.WRITE PERFORMANCE TEST');
-    console.log('=' .repeat(40));
+    console.log('='.repeat(40));
 
     const testUrl = 'https://httpbin.org/bytes/1024'; // 1KB of data
     const iterations = 5;
 
     try {
       console.log(`Testing ${iterations} iterations with 1KB responses...`);
-      
+
       const times: number[] = [];
-      
+
       for (let i = 0; i < iterations; i++) {
         const startTime = performance.now();
-        
+
         const response = await OptimizedFetch.fetch(testUrl);
         const outputPath = `/tmp/perf-test-${i}.txt`;
-        
+
         await write(outputPath, response);
-        
+
         const endTime = performance.now();
         const duration = endTime - startTime;
         times.push(duration);
-        
+
         // Cleanup
         await write(outputPath, '');
-        
+
         console.log(`   Iteration ${i + 1}: ${duration.toFixed(2)}ms`);
       }
-      
+
       const avgTime = times.reduce((a, b) => a + b, 0) / times.length;
       const minTime = Math.min(...times);
       const maxTime = Math.max(...times);
-      
+
       console.log('\n📊 Performance Results:');
       console.log(`   Average: ${avgTime.toFixed(2)}ms`);
       console.log(`   Min: ${minTime.toFixed(2)}ms`);
       console.log(`   Max: ${maxTime.toFixed(2)}ms`);
       console.log('✅ Bun.write performance test completed');
-      
     } catch (error) {
       console.log(`❌ Performance test failed: ${error.message}`);
     }
@@ -233,7 +233,7 @@ class BunWriteTest {
 class BunWriteTestRunner {
   static async runAllTests(): Promise<void> {
     console.log('🧪 BUN.WRITE RESPONSE BUFFERING TEST SUITE');
-    console.log('=' .repeat(70));
+    console.log('='.repeat(70));
     console.log('Testing exact Bun.write implementation from documentation\n');
 
     try {
@@ -258,7 +258,6 @@ class BunWriteTestRunner {
       console.log('   • Input: Response object from fetch()');
       console.log('   • Output: File with buffered response content');
       console.log('   • Integration: OptimizedFetch.fetchAndBuffer()');
-
     } catch (error) {
       console.error('\n❌ Test suite failed:', error);
       process.exit(1);

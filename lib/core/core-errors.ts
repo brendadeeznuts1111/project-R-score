@@ -1,15 +1,14 @@
 /**
  * Enterprise Error Handling System
- * 
+ *
  * Standardized error creation, handling, and management
  * for enterprise-grade applications.
- * 
+ *
  * @version 1.0.0
  * @author Enterprise Platform Team
  */
 
 import { EnterpriseError, SecurityRiskLevel, OperationStatus } from './core-types';
-
 
 // ============================================================================
 // ERROR CODES
@@ -24,37 +23,37 @@ export enum EnterpriseErrorCode {
   SYSTEM_CONFIGURATION_INVALID = 'SYS_1001',
   SYSTEM_RESOURCE_EXHAUSTED = 'SYS_1002',
   SYSTEM_TIMEOUT = 'SYS_1003',
-  
+
   // Validation Errors (2000-2999)
   VALIDATION_INPUT_INVALID = 'VAL_2000',
   VALIDATION_TYPE_MISMATCH = 'VAL_2001',
   VALIDATION_CONSTRAINT_VIOLATION = 'VAL_2002',
   VALIDATION_SCHEMA_INVALID = 'VAL_2003',
-  
+
   // Network Errors (3000-3999)
   NETWORK_CONNECTION_FAILED = 'NET_3000',
   NETWORK_TIMEOUT = 'NET_3001',
   NETWORK_PROTOCOL_ERROR = 'NET_3002',
   NETWORK_UNREACHABLE = 'NET_3003',
-  
+
   // Security Errors (4000-4999)
   SECURITY_UNAUTHORIZED = 'SEC_4000',
   SECURITY_FORBIDDEN = 'SEC_4001',
   SECURITY_TOKEN_INVALID = 'SEC_4002',
   SECURITY_ENCRYPTION_FAILED = 'SEC_4003',
   SECURITY_SIGNATURE_INVALID = 'SEC_4004',
-  
+
   // Resource Errors (5000-5999)
   RESOURCE_NOT_FOUND = 'RES_5000',
   RESOURCE_ALREADY_EXISTS = 'RES_5001',
   RESOURCE_LOCKED = 'RES_5002',
   RESOURCE_CORRUPTED = 'RES_5003',
-  
+
   // Business Logic Errors (6000-6999)
   BUSINESS_RULE_VIOLATION = 'BIZ_6000',
   BUSINESS_STATE_INVALID = 'BIZ_6001',
   BUSINESS_PERMISSION_DENIED = 'BIZ_6002',
-  BUSINESS_QUOTA_EXCEEDED = 'BIZ_6003'
+  BUSINESS_QUOTA_EXCEEDED = 'BIZ_6003',
 }
 
 // ============================================================================
@@ -99,7 +98,7 @@ export abstract class BaseEnterpriseError extends Error {
       severity: this.severity,
       timestamp: this.timestamp,
       context: this.context,
-      stack: this.stack
+      stack: this.stack,
     };
   }
 
@@ -122,11 +121,7 @@ export abstract class BaseEnterpriseError extends Error {
  * System-related errors
  */
 export class SystemError extends BaseEnterpriseError {
-  constructor(
-    code: EnterpriseErrorCode,
-    message: string,
-    context?: Record<string, unknown>
-  ) {
+  constructor(code: EnterpriseErrorCode, message: string, context?: Record<string, unknown>) {
     super(code, message, SecurityRiskLevel.HIGH, context);
   }
 }
@@ -178,11 +173,7 @@ export class NetworkError extends BaseEnterpriseError {
  * Security-related errors
  */
 export class SecurityError extends BaseEnterpriseError {
-  constructor(
-    code: EnterpriseErrorCode,
-    message: string,
-    context?: Record<string, unknown>
-  ) {
+  constructor(code: EnterpriseErrorCode, message: string, context?: Record<string, unknown>) {
     super(code, message, SecurityRiskLevel.CRITICAL, context);
   }
 }
@@ -315,18 +306,14 @@ export class EnterpriseErrorFactory {
     }
 
     if (error instanceof Error) {
-      return new SystemError(
-        EnterpriseErrorCode.SYSTEM_INITIALIZATION_FAILED,
-        error.message,
-        { originalError: error.name, stack: error.stack }
-      );
+      return new SystemError(EnterpriseErrorCode.SYSTEM_INITIALIZATION_FAILED, error.message, {
+        originalError: error.name,
+        stack: error.stack,
+      });
     }
 
     if (typeof error === 'string') {
-      return new SystemError(
-        EnterpriseErrorCode.SYSTEM_INITIALIZATION_FAILED,
-        error
-      );
+      return new SystemError(EnterpriseErrorCode.SYSTEM_INITIALIZATION_FAILED, error);
     }
 
     return new SystemError(
@@ -387,11 +374,11 @@ export class EnterpriseErrorHandler {
    */
   private defaultErrorHandler(error: BaseEnterpriseError): void {
     console.error(`[${error.severity.toUpperCase()}] ${error.code}: ${error.message}`);
-    
+
     if (error.context) {
       console.error('Context:', error.context);
     }
-    
+
     if (error.stack && error.isCritical()) {
       console.error('Stack trace:', error.stack);
     }
@@ -452,7 +439,14 @@ export const createNetworkError = (
   protocol?: string,
   context?: Record<string, unknown>
 ): NetworkError => {
-  return EnterpriseErrorFactory.createNetworkError(code, message, hostname, port, protocol, context);
+  return EnterpriseErrorFactory.createNetworkError(
+    code,
+    message,
+    hostname,
+    port,
+    protocol,
+    context
+  );
 };
 
 /**
@@ -476,7 +470,13 @@ export const createResourceError = (
   resourceId?: string,
   context?: Record<string, unknown>
 ): ResourceError => {
-  return EnterpriseErrorFactory.createResourceError(code, message, resourceType, resourceId, context);
+  return EnterpriseErrorFactory.createResourceError(
+    code,
+    message,
+    resourceType,
+    resourceId,
+    context
+  );
 };
 
 /**

@@ -1,11 +1,10 @@
 /**
  * Tier-1380 Metrics RSS Feed Generator
- * 
+ *
  * Provides RSS feed and endpoint push for R-Score metrics to Tier-1380 dashboard.
  */
 
 import { type Serve } from 'bun';
-
 
 export interface MetricPayload {
   timestamp: number;
@@ -48,7 +47,7 @@ export class Tier1380MetricsFeed {
     const items = this.metrics
       .slice(-50)
       .map(
-        (m) => `
+        m => `
     <item>
       <title>R-Score ${m.rscore.current} @ ${m.git.tag}</title>
       <link>https://factorywager.io/metrics/${m.git.commit}</link>
@@ -63,7 +62,7 @@ export class Tier1380MetricsFeed {
       ]]></description>
       <category>performance</category>
       <category>rscore</category>
-    </item>`,
+    </item>`
       )
       .join('');
 
@@ -81,10 +80,7 @@ export class Tier1380MetricsFeed {
 </rss>`;
   }
 
-  async pushToEndpoint(
-    endpoint: string,
-    secret: string,
-  ): Promise<Response> {
+  async pushToEndpoint(endpoint: string, secret: string): Promise<Response> {
     const latest = this.metrics[this.metrics.length - 1];
     if (!latest) {
       throw new Error('No metrics to push');
@@ -104,7 +100,7 @@ export class Tier1380MetricsFeed {
   serve(port = 1380): ReturnType<Serve> {
     return Bun.serve({
       port,
-      fetch: (req) => {
+      fetch: req => {
         const url = new URL(req.url);
         if (url.pathname === '/metrics/rss.xml') {
           return new Response(this.toRSS(), {

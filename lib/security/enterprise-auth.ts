@@ -1,8 +1,8 @@
 /**
  * 🔐 Tier-1380 Enterprise Authentication System
- * 
+ *
  * Complete authentication flow with password security, rate limiting, and audit trails
- * 
+ *
  * @version 4.5
  */
 
@@ -63,47 +63,43 @@ export class Tier1380EnterpriseAuth {
     password: string,
     context: AuthenticationContext
   ): Promise<AuthenticationResult> {
-    
     // 1. Rate limiting
     await this.checkRateLimit(username, context.ipAddress);
-    
+
     // 2. Retrieve password hash from Windows Credential Manager
-    const passwordResult = await Tier1380PasswordSecurity.verifyPassword(
-      password, 
-      username
-    );
-    
+    const passwordResult = await Tier1380PasswordSecurity.verifyPassword(password, username);
+
     if (!passwordResult.valid) {
       await this.logFailedAttempt(username, context);
       throw new AuthenticationError('Invalid credentials') as AuthenticationError;
     }
-    
+
     // 3. Check if password needs rehashing
     if (passwordResult.needsRehash) {
       await this.rehashPassword(username, password);
     }
-    
+
     // 4. Generate secure session token
     const session = await this.createSession(username, {
       passwordScore: passwordResult.score,
-      ...context
+      ...context,
     });
-    
+
     // 5. Update security audit log
     await this.auditLogin(username, {
       success: true,
       score: passwordResult.score,
-      ...context
+      ...context,
     });
-    
+
     return {
       success: true,
       session,
       warnings: passwordResult.warnings,
       metadata: {
         lastPasswordChange: await this.getLastPasswordChange(username),
-        passwordScore: passwordResult.score
-      }
+        passwordScore: passwordResult.score,
+      },
     };
   }
 
@@ -114,29 +110,31 @@ export class Tier1380EnterpriseAuth {
     const key = `${username}:${ipAddress}`;
     const now = new Date();
     const existing = this.rateLimitStore.get(key);
-    
+
     if (!existing) {
       this.rateLimitStore.set(key, { attempts: 1, lastAttempt: now });
       return;
     }
-    
+
     // Reset if last attempt was more than 15 minutes ago
     if (now.getTime() - existing.lastAttempt.getTime() > 15 * 60 * 1000) {
       this.rateLimitStore.set(key, { attempts: 1, lastAttempt: now });
       return;
     }
-    
+
     // Increment attempts
     existing.attempts++;
     existing.lastAttempt = now;
     this.rateLimitStore.set(key, existing);
-    
+
     // Lock account after 5 failed attempts
     if (existing.attempts >= 5) {
       await this.lockAccount(username, 'Too many failed attempts');
-      throw new AuthenticationError('Account locked due to too many failed attempts') as AuthenticationError;
+      throw new AuthenticationError(
+        'Account locked due to too many failed attempts'
+      ) as AuthenticationError;
     }
-    
+
     // Add delay to slow down brute force attempts
     const delay = Math.min(existing.attempts * 1000, 5000); // Max 5 seconds
     await Bun.sleep(delay);
@@ -149,13 +147,12 @@ export class Tier1380EnterpriseAuth {
     username: string,
     metadata: Record<string, any>
   ): Promise<SessionToken> {
-    
     const token = this.generateSecureToken();
     const expiresAt = new Date(Date.now() + 8 * 60 * 60 * 1000); // 8 hours
-    
+
     // Get user permissions (would be from database/AD)
     const permissions = await this.getUserPermissions(username);
-    
+
     const session: SessionToken = {
       token,
       userId: username,
@@ -164,13 +161,13 @@ export class Tier1380EnterpriseAuth {
       metadata: {
         ...metadata,
         createdAt: new Date(),
-        lastActivity: new Date()
-      }
+        lastActivity: new Date(),
+      },
     };
-    
+
     // Store session (in production, would use secure session store)
     await this.storeSession(session);
-    
+
     return session;
   }
 
@@ -188,7 +185,7 @@ export class Tier1380EnterpriseAuth {
   private static async storeSession(session: SessionToken): Promise<void> {
     const key = `TIER1380_SESSION_${session.token}`;
     const sessionData = JSON.stringify(session);
-    
+
     // In production, would use secure session store or database
     console.log(`Storing session for user: ${session.userId}`);
   }
@@ -199,22 +196,22 @@ export class Tier1380EnterpriseAuth {
   private static async retrieveSession(token: string): Promise<SessionToken | null> {
     const key = `TIER1380_SESSION_${token}`;
     const sessionData = await Tier1380SecretManager.getSecret(key);
-    
+
     if (!sessionData) return null;
-    
+
     try {
       const session = JSON.parse(sessionData);
-      
+
       // Check if expired
       if (new Date() > session.expiresAt) {
         await this.removeSession(token);
         return null;
       }
-      
+
       // Update last activity
       session.metadata.lastActivity = new Date();
       await this.storeSession(session);
-      
+
       return session;
     } catch {
       return null;
@@ -244,7 +241,7 @@ export class Tier1380EnterpriseAuth {
     // For demo, return basic permissions based on username
     const adminUsers = ['admin', 'administrator', 'root'];
     const powerUsers = ['poweruser', 'developer', 'ops'];
-    
+
     if (adminUsers.includes(username.toLowerCase())) {
       return ['admin', 'read', 'write', 'delete', 'deploy', 'audit'];
     } else if (powerUsers.includes(username.toLowerCase())) {
@@ -261,7 +258,6 @@ export class Tier1380EnterpriseAuth {
     username: string,
     context: AuthenticationContext
   ): Promise<void> {
-    
     const logEntry = {
       timestamp: new Date(),
       userId: username,
@@ -270,12 +266,12 @@ export class Tier1380EnterpriseAuth {
       ipAddress: context.ipAddress,
       userAgent: context.userAgent,
       metadata: {
-        location: context.location
-      }
+        location: context.location,
+      },
     };
-    
+
     this.auditLog.push(logEntry);
-    
+
     // In production, would send to SIEM system
     console.log(`🚨 Authentication failed for ${username} from ${context.ipAddress}`);
   }
@@ -283,11 +279,7 @@ export class Tier1380EnterpriseAuth {
   /**
    * Log successful authentication
    */
-  private static async auditLogin(
-    username: string,
-    metadata: Record<string, any>
-  ): Promise<void> {
-    
+  private static async auditLogin(username: string, metadata: Record<string, any>): Promise<void> {
     const logEntry = {
       timestamp: new Date(),
       userId: username,
@@ -295,11 +287,11 @@ export class Tier1380EnterpriseAuth {
       success: true,
       ipAddress: metadata.ipAddress,
       userAgent: metadata.userAgent,
-      metadata
+      metadata,
     };
-    
+
     this.auditLog.push(logEntry);
-    
+
     console.log(`✅ Authentication successful for ${username}`);
   }
 
@@ -332,13 +324,13 @@ export class Tier1380EnterpriseAuth {
       locked: true,
       reason,
       lockedAt: new Date(),
-      lockExpires: new Date(Date.now() + 30 * 60 * 1000) // 30 minutes
+      lockExpires: new Date(Date.now() + 30 * 60 * 1000), // 30 minutes
     });
-    
+
     await Tier1380SecretManager.setSecret(lockKey, lockData, {
-      persistEnterprise: true
+      persistEnterprise: true,
     });
-    
+
     console.log(`🔒 Locked account ${username}: ${reason}`);
   }
 
@@ -348,18 +340,18 @@ export class Tier1380EnterpriseAuth {
   private static async isAccountLocked(username: string): Promise<boolean> {
     const lockKey = `TIER1380_LOCK_${username}`;
     const lockData = await Tier1380SecretManager.getSecret(lockKey);
-    
+
     if (!lockData) return false;
-    
+
     try {
       const lock = JSON.parse(lockData);
-      
+
       // Check if lock has expired
       if (new Date() > lock.lockExpires) {
         await this.unlockAccount(username);
         return false;
       }
-      
+
       return lock.locked;
     } catch {
       return false;
@@ -407,11 +399,11 @@ export class Tier1380EnterpriseAuth {
     const last24Hours = this.auditLog.filter(
       entry => now.getTime() - entry.timestamp.getTime() < 24 * 60 * 60 * 1000
     );
-    
+
     const successfulLogins = last24Hours.filter(entry => entry.success);
     const failedLogins = last24Hours.filter(entry => !entry.success);
     const uniqueUsers = new Set(last24Hours.map(entry => entry.userId));
-    
+
     const report = {
       timestamp: now,
       period: '24 hours',
@@ -419,22 +411,25 @@ export class Tier1380EnterpriseAuth {
       successfulLogins: successfulLogins.length,
       failedLogins: failedLogins.length,
       uniqueUsers: uniqueUsers.size,
-      successRate: last24Hours.length > 0 ? (successfulLogins.length / last24Hours.length * 100).toFixed(1) : '0',
+      successRate:
+        last24Hours.length > 0
+          ? ((successfulLogins.length / last24Hours.length) * 100).toFixed(1)
+          : '0',
       topFailedIPs: this.getTopFailedIPs(failedLogins),
-      recommendations: this.generateRecommendations(failedLogins)
+      recommendations: this.generateRecommendations(failedLogins),
     };
-    
+
     return report;
   }
 
   private static getTopFailedIPs(failedLogins: any[]): Array<{ ip: string; count: number }> {
     const ipCounts = new Map<string, number>();
-    
+
     failedLogins.forEach(entry => {
       const count = ipCounts.get(entry.ipAddress) || 0;
       ipCounts.set(entry.ipAddress, count + 1);
     });
-    
+
     return Array.from(ipCounts.entries())
       .map(([ip, count]) => ({ ip, count }))
       .sort((a, b) => b.count - a.count)
@@ -443,28 +438,30 @@ export class Tier1380EnterpriseAuth {
 
   private static generateRecommendations(failedLogins: any[]): string[] {
     const recommendations: string[] = [];
-    
+
     // Check for suspicious patterns
     const topIPs = this.getTopFailedIPs(failedLogins);
     if (topIPs.length > 0 && topIPs[0].count > 10) {
-      recommendations.push(`Consider blocking IP: ${topIPs[0].ip} (${topIPs[0].count} failed attempts)`);
+      recommendations.push(
+        `Consider blocking IP: ${topIPs[0].ip} (${topIPs[0].count} failed attempts)`
+      );
     }
-    
+
     // Check for high failure rate users
     const userFailures = new Map<string, number>();
     failedLogins.forEach(entry => {
       const count = userFailures.get(entry.userId) || 0;
       userFailures.set(entry.userId, count + 1);
     });
-    
+
     const highFailureUsers = Array.from(userFailures.entries())
       .filter(([, count]) => count > 5)
       .map(([userId]) => userId);
-    
+
     if (highFailureUsers.length > 0) {
       recommendations.push(`Users with high failure rates: ${highFailureUsers.join(', ')}`);
     }
-    
+
     return recommendations;
   }
 }
@@ -472,7 +469,12 @@ export class Tier1380EnterpriseAuth {
 export default Tier1380EnterpriseAuth;
 
 export class AuthenticationError extends Error {
-  constructor(message: string, public code?: string, public score?: number, public userId?: string) {
+  constructor(
+    message: string,
+    public code?: string,
+    public score?: number,
+    public userId?: string
+  ) {
     super(message);
     this.name = 'AuthenticationError';
   }

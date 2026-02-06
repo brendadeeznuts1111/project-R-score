@@ -2,7 +2,7 @@
 
 /**
  * 🔄 R2 Multi-Bucket Sync Service
- * 
+ *
  * Cross-bucket and cross-region synchronization with:
  * - Bi-directional sync with conflict resolution
  * - Real-time and scheduled synchronization
@@ -16,7 +16,12 @@ import { r2EventSystem } from './r2-event-system';
 import { r2BatchOperations } from './r2-batch-operations';
 
 export type SyncDirection = 'one-way' | 'bi-directional' | 'multi-master';
-export type ConflictStrategy = 'source-wins' | 'target-wins' | 'timestamp-wins' | 'manual' | 'merge';
+export type ConflictStrategy =
+  | 'source-wins'
+  | 'target-wins'
+  | 'timestamp-wins'
+  | 'manual'
+  | 'merge';
 export type SyncMode = 'realtime' | 'scheduled' | 'manual';
 
 export interface SyncJob {
@@ -125,10 +130,10 @@ export class R2SyncService {
    */
   async initialize(): Promise<void> {
     console.log(styled('🔄 Initializing R2 Sync Service', 'accent'));
-    
+
     // Restore jobs from storage if available
     await this.restoreJobs();
-    
+
     // Start scheduled jobs
     for (const job of this.jobs.values()) {
       if (job.mode === 'scheduled' && job.status !== 'paused') {
@@ -156,13 +161,13 @@ export class R2SyncService {
         bytesTransferred: 0,
         conflictsResolved: 0,
         lastDuration: 0,
-        averageDuration: 0
+        averageDuration: 0,
       },
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
 
     this.jobs.set(job.id, job);
-    
+
     if (job.mode === 'scheduled') {
       this.scheduleJob(job);
     }
@@ -172,7 +177,7 @@ export class R2SyncService {
       type: 'bucket:sync-started',
       bucket: job.source.bucket,
       source: 'R2SyncService',
-      metadata: { jobId: job.id, direction: job.direction }
+      metadata: { jobId: job.id, direction: job.direction },
     });
 
     console.log(styled(`📋 Created sync job: ${job.name} (${job.id})`, 'success'));
@@ -201,7 +206,7 @@ export class R2SyncService {
       objects: [],
       conflicts: [],
       duration: 0,
-      bytesTransferred: 0
+      bytesTransferred: 0,
     };
 
     try {
@@ -216,7 +221,6 @@ export class R2SyncService {
       if (result.objects.some(o => o.error)) {
         result.status = result.objects.some(o => !o.error) ? 'partial' : 'failed';
       }
-
     } catch (error) {
       result.status = 'failed';
       console.error(styled(`❌ Sync failed: ${error.message}`, 'error'));
@@ -224,10 +228,10 @@ export class R2SyncService {
 
     result.duration = Date.now() - startTime;
     this.activeSyncs.delete(jobId);
-    
+
     // Update job stats
     this.updateJobStats(job, result);
-    
+
     // Store result
     this.syncHistory.push(result);
     if (this.syncHistory.length > this.maxHistorySize) {
@@ -244,16 +248,20 @@ export class R2SyncService {
       type: result.status === 'success' ? 'bucket:sync-completed' : 'bucket:sync-failed',
       bucket: job.source.bucket,
       source: 'R2SyncService',
-      metadata: { 
-        jobId, 
+      metadata: {
+        jobId,
         status: result.status,
         objects: result.objects.length,
-        conflicts: result.conflicts.length
-      }
+        conflicts: result.conflicts.length,
+      },
     });
 
-    console.log(styled(`✅ Sync completed: ${result.objects.length} objects, ${result.conflicts.length} conflicts (${result.duration}ms)`, 
-      result.status === 'success' ? 'success' : 'warning'));
+    console.log(
+      styled(
+        `✅ Sync completed: ${result.objects.length} objects, ${result.conflicts.length} conflicts (${result.duration}ms)`,
+        result.status === 'success' ? 'success' : 'warning'
+      )
+    );
 
     return result;
   }
@@ -270,7 +278,7 @@ export class R2SyncService {
     const result: Partial<SyncResult> = {
       objects: [],
       conflicts: [],
-      bytesTransferred: 0
+      bytesTransferred: 0,
     };
 
     // List source objects
@@ -285,7 +293,7 @@ export class R2SyncService {
       if (!this.matchesPatterns(sourceObj.key, config)) continue;
 
       const targetObj = targetMap.get(sourceObj.key);
-      
+
       if (!targetObj) {
         // Object doesn't exist in target - create
         await this.copyObject(source, target, sourceObj.key);
@@ -293,7 +301,7 @@ export class R2SyncService {
           key: sourceObj.key,
           action: 'created',
           size: sourceObj.size,
-          duration: 0
+          duration: 0,
         });
         result.bytesTransferred! += sourceObj.size;
       } else if (sourceObj.etag !== targetObj.etag) {
@@ -305,14 +313,14 @@ export class R2SyncService {
             source: {
               etag: sourceObj.etag,
               lastModified: sourceObj.lastModified,
-              size: sourceObj.size
+              size: sourceObj.size,
             },
             target: {
               etag: targetObj.etag,
               lastModified: targetObj.lastModified,
-              size: targetObj.size
+              size: targetObj.size,
             },
-            detectedAt: new Date().toISOString()
+            detectedAt: new Date().toISOString(),
           };
 
           const resolution = await this.resolveConflict(conflict, config.conflictStrategy);
@@ -320,14 +328,14 @@ export class R2SyncService {
             key: sourceObj.key,
             sourceVersion: conflict.source.etag,
             targetVersion: conflict.target.etag,
-            resolution
+            resolution,
           });
 
           result.objects!.push({
             key: sourceObj.key,
             action: 'conflict',
             size: 0,
-            duration: 0
+            duration: 0,
           });
         } else {
           // Update target
@@ -336,7 +344,7 @@ export class R2SyncService {
             key: sourceObj.key,
             action: 'updated',
             size: sourceObj.size,
-            duration: 0
+            duration: 0,
           });
           result.bytesTransferred! += sourceObj.size;
         }
@@ -346,7 +354,7 @@ export class R2SyncService {
           key: sourceObj.key,
           action: 'skipped',
           size: 0,
-          duration: 0
+          duration: 0,
         });
       }
     }
@@ -361,7 +369,7 @@ export class R2SyncService {
             key: targetObj.key,
             action: 'deleted',
             size: 0,
-            duration: 0
+            duration: 0,
           });
         }
       }
@@ -409,7 +417,7 @@ export class R2SyncService {
           this.executeJob(job.id).catch(console.error);
         }
       }, job.schedule.interval * 1000);
-      
+
       this.timers.set(job.id, timer);
     }
   }
@@ -434,7 +442,7 @@ export class R2SyncService {
     if (!job || job.status === 'running') return false;
 
     job.status = 'paused';
-    
+
     // Clear timer
     const timer = this.timers.get(jobId);
     if (timer) {
@@ -453,7 +461,7 @@ export class R2SyncService {
     if (!job || job.status !== 'paused') return false;
 
     job.status = 'pending';
-    
+
     if (job.mode === 'scheduled') {
       this.scheduleJob(job);
     }
@@ -521,7 +529,7 @@ export class R2SyncService {
       pausedJobs: jobs.filter(j => j.status === 'paused').length,
       totalObjectsSynced: jobs.reduce((sum, j) => sum + j.stats.objectsSynced, 0),
       totalBytesTransferred: jobs.reduce((sum, j) => sum + j.stats.bytesTransferred, 0),
-      totalConflicts: jobs.reduce((sum, j) => sum + j.stats.conflictsResolved, 0)
+      totalConflicts: jobs.reduce((sum, j) => sum + j.stats.conflictsResolved, 0),
     };
   }
 
@@ -538,7 +546,12 @@ export class R2SyncService {
     console.log(styled(`  Active Syncs: ${stats.activeJobs}`, 'muted'));
     console.log(styled(`  Paused Jobs: ${stats.pausedJobs}`, 'muted'));
     console.log(styled(`  Objects Synced: ${stats.totalObjectsSynced.toLocaleString()}`, 'muted'));
-    console.log(styled(`  Data Transferred: ${(stats.totalBytesTransferred / 1024 / 1024 / 1024).toFixed(2)} GB`, 'muted'));
+    console.log(
+      styled(
+        `  Data Transferred: ${(stats.totalBytesTransferred / 1024 / 1024 / 1024).toFixed(2)} GB`,
+        'muted'
+      )
+    );
 
     console.log(styled('\n📋 Sync Jobs:', 'info'));
     for (const job of this.jobs.values()) {
@@ -547,11 +560,16 @@ export class R2SyncService {
         running: '🔄',
         completed: '✅',
         failed: '❌',
-        paused: '⏸️'
+        paused: '⏸️',
       }[job.status];
-      
+
       console.log(styled(`  ${statusIcon} ${job.name} (${job.id})`, 'muted'));
-      console.log(styled(`     Direction: ${job.direction} | Mode: ${job.mode} | Runs: ${job.stats.totalRuns}`, 'muted'));
+      console.log(
+        styled(
+          `     Direction: ${job.direction} | Mode: ${job.mode} | Runs: ${job.stats.totalRuns}`,
+          'muted'
+        )
+      );
       if (job.lastRun) {
         console.log(styled(`     Last Run: ${new Date(job.lastRun).toLocaleString()}`, 'muted'));
       }
@@ -564,12 +582,14 @@ export class R2SyncService {
     // In production, would load from persistent storage
   }
 
-  private async listObjects(endpoint: SyncEndpoint): Promise<Array<{
-    key: string;
-    etag: string;
-    size: number;
-    lastModified: string;
-  }>> {
+  private async listObjects(endpoint: SyncEndpoint): Promise<
+    Array<{
+      key: string;
+      etag: string;
+      size: number;
+      lastModified: string;
+    }>
+  > {
     // Mock implementation
     return [];
   }
@@ -585,16 +605,16 @@ export class R2SyncService {
   private matchesPatterns(key: string, config: SyncConfig): boolean {
     // Check include patterns
     if (config.includePatterns && config.includePatterns.length > 0) {
-      const included = config.includePatterns.some(pattern => 
-        key.includes(pattern) || this.matchGlob(key, pattern)
+      const included = config.includePatterns.some(
+        pattern => key.includes(pattern) || this.matchGlob(key, pattern)
       );
       if (!included) return false;
     }
 
     // Check exclude patterns
     if (config.excludePatterns) {
-      const excluded = config.excludePatterns.some(pattern => 
-        key.includes(pattern) || this.matchGlob(key, pattern)
+      const excluded = config.excludePatterns.some(
+        pattern => key.includes(pattern) || this.matchGlob(key, pattern)
       );
       if (excluded) return false;
     }
@@ -609,7 +629,7 @@ export class R2SyncService {
 
   private updateJobStats(job: SyncJob, result: SyncResult): void {
     job.stats.totalRuns++;
-    
+
     if (result.status === 'success') {
       job.stats.successfulRuns++;
     } else {
@@ -621,12 +641,11 @@ export class R2SyncService {
     job.stats.bytesTransferred += result.bytesTransferred;
     job.stats.conflictsResolved += result.conflicts.length;
     job.stats.lastDuration = result.duration;
-    
+
     // Update average duration
-    job.stats.averageDuration = (
-      (job.stats.averageDuration * (job.stats.totalRuns - 1) + result.duration) / 
-      job.stats.totalRuns
-    );
+    job.stats.averageDuration =
+      (job.stats.averageDuration * (job.stats.totalRuns - 1) + result.duration) /
+      job.stats.totalRuns;
 
     job.status = result.status === 'failed' ? 'failed' : 'pending';
   }
@@ -653,8 +672,8 @@ if (import.meta.main) {
     config: {
       conflictStrategy: 'source-wins',
       deleteOnTarget: false,
-      preserveMetadata: true
-    }
+      preserveMetadata: true,
+    },
   });
 
   console.log(styled(`\n📋 Created job: ${job.name}`, 'success'));

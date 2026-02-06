@@ -16,14 +16,10 @@ import {
   ResourceState,
   ResourceUtilization,
   PerformanceMetrics,
-  OperationStatus
+  OperationStatus,
 } from '../core/core-types';
 
-import {
-  EnterpriseErrorCode,
-  createResourceError,
-  createSystemError
-} from '../core/core-errors';
+import { EnterpriseErrorCode, createResourceError, createSystemError } from '../core/core-errors';
 import { validateOrThrow, StringValidators, NumberValidators } from '../core/core-validation';
 
 export class BunMemoryPool {
@@ -34,7 +30,7 @@ export class BunMemoryPool {
   private allocations = 0;
   private expanding = false;
   private targetUtilization = 0.65;
-  
+
   // Atomics for proper thread synchronization
   private lockBuffer: SharedArrayBuffer;
   private lockView: Int32Array;
@@ -45,7 +41,7 @@ export class BunMemoryPool {
     this.size = sizeMB * 1024 * 1024;
     this.buffer = new SharedArrayBuffer(this.size);
     this.view = new DataView(this.buffer);
-    
+
     // Initialize atomic lock
     this.lockBuffer = new SharedArrayBuffer(4);
     this.lockView = new Int32Array(this.lockBuffer);
@@ -59,17 +55,17 @@ export class BunMemoryPool {
     while (true) {
       // Try to acquire lock atomically
       const previousValue = Atomics.compareExchange(
-        this.lockView, 
-        0, 
-        BunMemoryPool.UNLOCKED, 
+        this.lockView,
+        0,
+        BunMemoryPool.UNLOCKED,
         BunMemoryPool.LOCKED
       );
-      
+
       if (previousValue === BunMemoryPool.UNLOCKED) {
         // Successfully acquired lock
         return;
       }
-      
+
       // Lock is held, wait for it to be released
       Atomics.wait(this.lockView, 0, BunMemoryPool.LOCKED);
     }
@@ -159,7 +155,7 @@ export class BunMemoryPool {
     // Use Bun.file.arrayBuffer() for true zero-copy operation
     // This is the most efficient way to read files into SharedArrayBuffer
     const fileBuffer = await file.arrayBuffer();
-    
+
     // Copy file data into pool using zero-copy approach
     const sourceArray = new Uint8Array(fileBuffer);
     const targetView = new Uint8Array(this.buffer, slot.ptr, size);
@@ -168,7 +164,7 @@ export class BunMemoryPool {
     return {
       ptr: slot.ptr,
       size,
-      view: slot.view
+      view: slot.view,
     };
   }
 
@@ -181,7 +177,7 @@ export class BunMemoryPool {
   async writeFile(filePath: string, ptr: number, size: number): Promise<void> {
     // Create view of data in pool
     const sourceView = new Uint8Array(this.buffer, ptr, size);
-    
+
     // Use Bun.write with Uint8Array for optimal performance
     await Bun.write(filePath, sourceView);
   }
@@ -217,10 +213,10 @@ export class BunMemoryPool {
    */
   optimizePoolSize(): void {
     const current = this.stats.utilization;
-    if (current < 0.30) {
+    if (current < 0.3) {
       // Under-utilized: shrink pool next iteration
       console.log(`📉 Pool under-utilized (${current}), consider smaller allocation`);
-    } else if (current > 0.80) {
+    } else if (current > 0.8) {
       // Fragmentation risk: defragment or expand
       console.log(`📈 Pool high utilization (${current}), expanding buffer`);
       this.expand();

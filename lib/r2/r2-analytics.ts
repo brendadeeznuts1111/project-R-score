@@ -2,7 +2,7 @@
 
 /**
  * 📊 R2 Analytics & Metrics Dashboard
- * 
+ *
  * Comprehensive analytics for R2 storage with:
  * - Real-time metrics collection and aggregation
  * - Usage patterns and trend analysis
@@ -140,37 +140,37 @@ export class R2Analytics {
    */
   private setupEventListeners(): void {
     // Storage operations
-    r2EventSystem.on('object:created', (event) => {
+    r2EventSystem.on('object:created', event => {
       this.recordMetric('storage.writes', 1, { bucket: event.bucket });
       if (event.metadata?.size) {
         this.recordMetric('storage.size', event.metadata.size, { bucket: event.bucket });
       }
     });
 
-    r2EventSystem.on('object:accessed', (event) => {
+    r2EventSystem.on('object:accessed', event => {
       this.recordMetric('storage.reads', 1, { bucket: event.bucket, key: event.key });
     });
 
-    r2EventSystem.on('object:deleted', (event) => {
+    r2EventSystem.on('object:deleted', event => {
       this.recordMetric('storage.deletes', 1, { bucket: event.bucket });
     });
 
     // Sync operations
-    r2EventSystem.on('bucket:sync-completed', (event) => {
+    r2EventSystem.on('bucket:sync-completed', event => {
       this.recordMetric('sync.operations', 1, { bucket: event.bucket, status: 'success' });
     });
 
-    r2EventSystem.on('bucket:sync-failed', (event) => {
+    r2EventSystem.on('bucket:sync-failed', event => {
       this.recordMetric('sync.operations', 1, { bucket: event.bucket, status: 'failed' });
     });
 
     // Backup operations
-    r2EventSystem.on('backup:completed', (event) => {
+    r2EventSystem.on('backup:completed', event => {
       this.recordMetric('backup.operations', 1, { bucket: event.bucket, status: 'success' });
     });
 
     // Lifecycle events
-    r2EventSystem.on('lifecycle:expired', (event) => {
+    r2EventSystem.on('lifecycle:expired', event => {
       this.recordMetric('lifecycle.expired', 1, { bucket: event.bucket });
     });
   }
@@ -195,7 +195,7 @@ export class R2Analytics {
   private collectSystemMetrics(): void {
     // In production, would query R2 API for actual metrics
     this.recordMetric('system.uptime', 1, {});
-    
+
     // Cleanup old data
     this.cleanupOldMetrics();
   }
@@ -205,12 +205,12 @@ export class R2Analytics {
    */
   recordMetric(name: string, value: number, labels: Record<string, string>): void {
     const timestamp = new Date().toISOString();
-    
+
     if (!this.metrics.has(name)) {
       this.metrics.set(name, {
         name,
         unit: this.inferUnit(name),
-        data: []
+        data: [],
       });
     }
 
@@ -218,7 +218,7 @@ export class R2Analytics {
     series.data.push({
       timestamp,
       value,
-      labels
+      labels,
     });
 
     // Check alerts
@@ -230,14 +230,16 @@ export class R2Analytics {
    */
   getMetrics(timeRange?: { from: string; to: string }): R2Metrics {
     const now = new Date();
-    const from = timeRange ? new Date(timeRange.from) : new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    const from = timeRange
+      ? new Date(timeRange.from)
+      : new Date(now.getTime() - 24 * 60 * 60 * 1000);
     const to = timeRange ? new Date(timeRange.to) : now;
 
     return {
       storage: this.calculateStorageMetrics(from, to),
       operations: this.calculateOperationMetrics(from, to),
       bandwidth: this.calculateBandwidthMetrics(from, to),
-      costs: this.calculateCostMetrics(from, to)
+      costs: this.calculateCostMetrics(from, to),
     };
   }
 
@@ -258,7 +260,7 @@ export class R2Analytics {
     });
 
     const totalSize = Object.values(byBucket).reduce((a, b) => a + b, 0);
-    
+
     // Calculate growth rate
     const dayAgo = new Date(to.getTime() - 24 * 60 * 60 * 1000);
     const recent = filtered.filter(d => new Date(d.timestamp) > dayAgo);
@@ -270,7 +272,7 @@ export class R2Analytics {
       sizeByBucket: byBucket,
       objectsByBucket: {}, // Would calculate from object counts
       sizeByClass: {}, // Would calculate from storage class metrics
-      growthRate
+      growthRate,
     };
   }
 
@@ -301,8 +303,8 @@ export class R2Analytics {
       latency: {
         p50: this.percentile(latencies, 50),
         p95: this.percentile(latencies, 95),
-        p99: this.percentile(latencies, 99)
-      }
+        p99: this.percentile(latencies, 99),
+      },
     };
   }
 
@@ -314,7 +316,7 @@ export class R2Analytics {
     const egress = this.aggregateMetric('bandwidth.egress', from, to);
 
     const byBucket: Record<string, { in: number; out: number }> = {};
-    
+
     // Aggregate by bucket
     ['storage.writes', 'storage.reads'].forEach(metricName => {
       const series = this.metrics.get(metricName);
@@ -352,8 +354,10 @@ export class R2Analytics {
     // R2 pricing (simplified)
     const storageCost = (storage.totalSize / 1024 / 1024 / 1024) * 0.015; // $0.015/GB/month
     const operationCost = (operations.reads + operations.writes + operations.deletes) * 0.0000004; // $0.36 per million
-    const bandwidthCost = bandwidth.egress > 10 * 1024 * 1024 * 1024 ? 
-      ((bandwidth.egress - 10 * 1024 * 1024 * 1024) / 1024 / 1024 / 1024) * 0.09 : 0; // Free first 10GB
+    const bandwidthCost =
+      bandwidth.egress > 10 * 1024 * 1024 * 1024
+        ? ((bandwidth.egress - 10 * 1024 * 1024 * 1024) / 1024 / 1024 / 1024) * 0.09
+        : 0; // Free first 10GB
 
     const totalCost = storageCost + operationCost + bandwidthCost;
     const daysDiff = (to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24);
@@ -364,7 +368,7 @@ export class R2Analytics {
       operationCost,
       bandwidthCost,
       totalCost,
-      projectedMonthly
+      projectedMonthly,
     };
   }
 
@@ -406,7 +410,7 @@ export class R2Analytics {
       frequency: reads.length,
       peakHours,
       popularKeys,
-      accessTrend: reads.length > 1000 ? 'increasing' : 'stable'
+      accessTrend: reads.length > 1000 ? 'increasing' : 'stable',
     });
 
     return patterns;
@@ -418,7 +422,7 @@ export class R2Analytics {
   createAlert(rule: Omit<AlertRule, 'id'>): AlertRule {
     const alert: AlertRule = {
       ...rule,
-      id: `alert-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`
+      id: `alert-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
     };
 
     this.alerts.set(alert.id, alert);
@@ -435,7 +439,7 @@ export class R2Analytics {
       if (alert.condition.metric !== metricName) continue;
 
       const triggered = this.evaluateCondition(alert.condition, value);
-      
+
       if (triggered) {
         alert.lastTriggered = new Date().toISOString();
         this.triggerAlert(alert, value, labels);
@@ -446,17 +450,20 @@ export class R2Analytics {
   /**
    * Evaluate alert condition
    */
-  private evaluateCondition(
-    condition: AlertRule['condition'],
-    value: number
-  ): boolean {
+  private evaluateCondition(condition: AlertRule['condition'], value: number): boolean {
     switch (condition.operator) {
-      case 'gt': return value > condition.threshold;
-      case 'lt': return value < condition.threshold;
-      case 'eq': return value === condition.threshold;
-      case 'gte': return value >= condition.threshold;
-      case 'lte': return value <= condition.threshold;
-      default: return false;
+      case 'gt':
+        return value > condition.threshold;
+      case 'lt':
+        return value < condition.threshold;
+      case 'eq':
+        return value === condition.threshold;
+      case 'gte':
+        return value >= condition.threshold;
+      case 'lte':
+        return value <= condition.threshold;
+      default:
+        return false;
     }
   }
 
@@ -469,7 +476,9 @@ export class R2Analytics {
     for (const action of alert.actions) {
       switch (action.type) {
         case 'log':
-          console.log(styled(`[ALERT] ${alert.name}: ${action.message || 'Threshold exceeded'}`, 'warning'));
+          console.log(
+            styled(`[ALERT] ${alert.name}: ${action.message || 'Threshold exceeded'}`, 'warning')
+          );
           break;
         case 'webhook':
           // Would send webhook
@@ -494,9 +503,9 @@ export class R2Analytics {
       widgets: widgets.map((w, i) => ({ ...w, id: `widget-${i}` })),
       timeRange: {
         from: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-        to: new Date().toISOString()
+        to: new Date().toISOString(),
       },
-      refreshInterval: 30000
+      refreshInterval: 30000,
     };
 
     this.dashboards.set(dashboard.id, dashboard);
@@ -524,7 +533,7 @@ export class R2Analytics {
         priority: 'medium',
         title: 'Enable lifecycle policies',
         description: 'Configure automatic transition to cheaper storage classes',
-        potentialSavings: metrics.costs.storageCost * 0.5
+        potentialSavings: metrics.costs.storageCost * 0.5,
       });
     }
 
@@ -534,7 +543,7 @@ export class R2Analytics {
         type: 'performance',
         priority: 'high',
         title: 'High latency detected',
-        description: 'P95 latency exceeds 500ms. Consider using CDN or edge caching.'
+        description: 'P95 latency exceeds 500ms. Consider using CDN or edge caching.',
       });
     }
 
@@ -545,7 +554,7 @@ export class R2Analytics {
         type: 'security',
         priority: 'high',
         title: 'Public objects detected',
-        description: `${publicAccess.length} objects may have public access. Review permissions.`
+        description: `${publicAccess.length} objects may have public access. Review permissions.`,
       });
     }
 
@@ -631,7 +640,7 @@ export class R2Analytics {
 
   private cleanupOldMetrics(): void {
     const cutoff = new Date(Date.now() - this.retentionDays * 24 * 60 * 60 * 1000);
-    
+
     for (const series of this.metrics.values()) {
       series.data = series.data.filter(d => new Date(d.timestamp) > cutoff);
     }
@@ -644,10 +653,10 @@ export class R2Analytics {
         metric: 'costs.total',
         operator: 'gt',
         threshold: 100,
-        duration: 3600
+        duration: 3600,
       },
       actions: [{ type: 'log', target: 'console' }],
-      enabled: true
+      enabled: true,
     });
 
     this.createAlert({
@@ -656,18 +665,39 @@ export class R2Analytics {
         metric: 'storage.errors',
         operator: 'gt',
         threshold: 10,
-        duration: 300
+        duration: 300,
       },
       actions: [{ type: 'log', target: 'console' }],
-      enabled: true
+      enabled: true,
     });
   }
 
   private createDefaultDashboard(): void {
     this.createDashboard('R2 Overview', [
-      { type: 'stat', title: 'Storage Size', metric: 'storage.totalSize', query: '', refreshInterval: 60000, config: {} },
-      { type: 'chart', title: 'Operations', metric: 'storage.operations', query: '', refreshInterval: 60000, config: { type: 'line' } },
-      { type: 'gauge', title: 'Cost', metric: 'costs.total', query: '', refreshInterval: 3600000, config: { max: 100 } }
+      {
+        type: 'stat',
+        title: 'Storage Size',
+        metric: 'storage.totalSize',
+        query: '',
+        refreshInterval: 60000,
+        config: {},
+      },
+      {
+        type: 'chart',
+        title: 'Operations',
+        metric: 'storage.operations',
+        query: '',
+        refreshInterval: 60000,
+        config: { type: 'line' },
+      },
+      {
+        type: 'gauge',
+        title: 'Cost',
+        metric: 'costs.total',
+        query: '',
+        refreshInterval: 3600000,
+        config: { max: 100 },
+      },
     ]);
   }
 }
@@ -691,7 +721,9 @@ if (import.meta.main) {
   // Get metrics
   const metrics = analytics.getMetrics();
   console.log(styled('\n📈 Current Metrics:', 'info'));
-  console.log(styled(`  Storage: ${(metrics.storage.totalSize / 1024 / 1024).toFixed(2)} MB`, 'muted'));
+  console.log(
+    styled(`  Storage: ${(metrics.storage.totalSize / 1024 / 1024).toFixed(2)} MB`, 'muted')
+  );
   console.log(styled(`  Objects: ${metrics.storage.objectCount}`, 'muted'));
   console.log(styled(`  Reads: ${metrics.operations.reads}`, 'muted'));
   console.log(styled(`  Writes: ${metrics.operations.writes}`, 'muted'));
@@ -700,7 +732,12 @@ if (import.meta.main) {
   const recommendations = analytics.getRecommendations();
   console.log(styled('\n💡 Recommendations:', 'info'));
   for (const rec of recommendations) {
-    console.log(styled(`  [${rec.priority.toUpperCase()}] ${rec.title}`, rec.priority === 'high' ? 'error' : 'warning'));
+    console.log(
+      styled(
+        `  [${rec.priority.toUpperCase()}] ${rec.title}`,
+        rec.priority === 'high' ? 'error' : 'warning'
+      )
+    );
     console.log(styled(`     ${rec.description}`, 'muted'));
   }
 }

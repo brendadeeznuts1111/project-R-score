@@ -1,0 +1,11 @@
+{
+  "name": "test",
+  "version": "1.1.0",
+  "description": "Run test suites for the registry. Use when running tests, checking unit tests, integration tests, performance tests, regression tests, or validating code changes with coverage.",
+  "integrity": "sha256-fcb53d24a27ae3493be56bf8327863bd2069983133dd8dec0f5a5d9b6f0ce26f",
+  "features": ["grep", "grep-invert", "tag", "watch", "coverage", "bail", "quiet"],
+  "entry": "./index.ts",
+  "author": "Registry MCP Team",
+  "permissions": ["bash:execute"],
+  "routes": []
+}

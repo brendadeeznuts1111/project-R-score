@@ -8,7 +8,7 @@ animate_progress() {
   for i in {1..3}; do
     for color in "${colors[@]}"; do
       printf "\r%s" $(bun run - <(echo "
-        import { styled } from './lib/theme/colors.ts';
+        import { styled } from '../lib/theme/colors.ts';
         console.log(styled('${message} ${"▁▂▃▄▅▆▇█":$i:8}', '${color}'));
       "))
       sleep 0.1
@@ -23,7 +23,7 @@ CPU_OUTPUT=$(bun --cpu-prof-md worker.ts 2>/dev/null)
 
 # Colorize and save CPU profile
 echo "$CPU_OUTPUT" | bun run - <(echo '
-  import { styled } from "./lib/theme/colors.ts";
+  import { styled } from "../lib/theme/colors.ts";
   const md = await new Response(Bun.stdin).text();
   const colored = Bun.color(md, "ansi256"); // Convert markdown to ANSI
   Bun.write("cpu-profile.md", md);
@@ -34,7 +34,7 @@ echo "$CPU_OUTPUT" | bun run - <(echo '
 animate_progress "🧠 Profiling Heap"
 bun --heap-prof-md leak.ts 2>/dev/null | \
   bun run - <(echo '
-    import { styled, log, FW_COLORS } from "./lib/theme/colors.ts";
+    import { styled, log, FW_COLORS } from "../lib/theme/colors.ts";
     
     const md = await new Response(Bun.stdin).text();
     

@@ -1,6 +1,6 @@
 /**
  * Input Validation Utilities
- * 
+ *
  * Provides comprehensive input validation for API endpoints
  * with security-focused sanitization and type checking
  */
@@ -56,12 +56,7 @@ class SecurityPatterns {
   ];
 
   // Path traversal patterns
-  static readonly PATH_TRAVERSAL_PATTERNS = [
-    /\.\./g,
-    /%2e%2e/gi,
-    /%252e%252e/gi,
-    /\//g,
-  ];
+  static readonly PATH_TRAVERSAL_PATTERNS = [/\.\./g, /%2e%2e/gi, /%252e%252e/gi, /\//g];
 
   // Command injection patterns
   static readonly COMMAND_INJECTION_PATTERNS = [
@@ -88,7 +83,7 @@ class SecurityPatterns {
    */
   static sanitize(input: string): string {
     let sanitized = input;
-    
+
     // Remove XSS patterns
     this.XSS_PATTERNS.forEach(pattern => {
       sanitized = sanitized.replace(pattern, '');
@@ -197,7 +192,7 @@ export class InputValidator {
     return {
       isValid: errors.length === 0,
       errors,
-      sanitized
+      sanitized,
     };
   }
 
@@ -211,7 +206,7 @@ export class InputValidator {
     // Validate each field in schema
     for (const [fieldName, rule] of Object.entries(schema)) {
       const result = this.validateField(data[fieldName], rule, fieldName);
-      
+
       if (!result.isValid) {
         allErrors.push(...result.errors);
       } else {
@@ -229,7 +224,7 @@ export class InputValidator {
     return {
       isValid: allErrors.length === 0,
       errors: allErrors,
-      sanitized
+      sanitized,
     };
   }
 
@@ -238,7 +233,7 @@ export class InputValidator {
    */
   static validateUrlParams(url: URL, schema: ValidationSchema): ValidationResult {
     const params: any = {};
-    
+
     // Extract parameters from URL
     for (const [key, value] of url.searchParams.entries()) {
       params[key] = value;
@@ -250,14 +245,17 @@ export class InputValidator {
   /**
    * Validate JSON request body
    */
-  static async validateJsonBody(request: Request, schema: ValidationSchema): Promise<ValidationResult> {
+  static async validateJsonBody(
+    request: Request,
+    schema: ValidationSchema
+  ): Promise<ValidationResult> {
     try {
       const data = await request.json();
       return this.validate(data, schema);
     } catch (error) {
       return {
         isValid: false,
-        errors: ['Invalid JSON in request body']
+        errors: ['Invalid JSON in request body'],
       };
     }
   }
@@ -276,8 +274,8 @@ export const CommonSchemas = {
       minLength: 1,
       maxLength: 100,
       pattern: /^[a-zA-Z0-9_-]+$/,
-      sanitize: true
-    } as ValidationRule
+      sanitize: true,
+    } as ValidationRule,
   },
 
   // Secret management schemas
@@ -287,15 +285,15 @@ export const CommonSchemas = {
       type: 'string',
       minLength: 1,
       maxLength: 255,
-      sanitize: true
+      sanitize: true,
     } as ValidationRule,
     name: {
       required: true,
       type: 'string',
       minLength: 1,
       maxLength: 255,
-      sanitize: true
-    } as ValidationRule
+      sanitize: true,
+    } as ValidationRule,
   },
 
   secretSet: {
@@ -304,21 +302,21 @@ export const CommonSchemas = {
       type: 'string',
       minLength: 1,
       maxLength: 255,
-      sanitize: true
+      sanitize: true,
     } as ValidationRule,
     name: {
       required: true,
       type: 'string',
       minLength: 1,
       maxLength: 255,
-      sanitize: true
+      sanitize: true,
     } as ValidationRule,
     value: {
       required: true,
       type: 'string',
       maxLength: 10000,
-      sanitize: false // Don't sanitize secret values
-    } as ValidationRule
+      sanitize: false, // Don't sanitize secret values
+    } as ValidationRule,
   },
 
   // Pagination schemas
@@ -327,14 +325,14 @@ export const CommonSchemas = {
       required: false,
       type: 'number',
       min: 1,
-      max: 1000
+      max: 1000,
     } as ValidationRule,
     limit: {
       required: false,
       type: 'number',
       min: 1,
-      max: 100
-    } as ValidationRule
+      max: 100,
+    } as ValidationRule,
   },
 
   // Environment variable schemas
@@ -345,13 +343,13 @@ export const CommonSchemas = {
       minLength: 1,
       maxLength: 100,
       pattern: /^[a-zA-Z0-9_-]+$/,
-      sanitize: true
+      sanitize: true,
     } as ValidationRule,
     env: {
       required: false,
-      type: 'object'
-    } as ValidationRule
-  }
+      type: 'object',
+    } as ValidationRule,
+  },
 };
 
 // ============================================================================
@@ -408,7 +406,7 @@ export class ValidationMiddleware {
       return {
         isValid: allErrors.length === 0,
         errors: allErrors,
-        sanitized
+        sanitized,
       };
     };
   }

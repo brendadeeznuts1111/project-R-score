@@ -1,14 +1,13 @@
 /**
  * 🔐 Tier-1380 Secret Manager v4.5
- * 
+ *
  * Cross-platform enterprise secret storage with Windows Credential Manager,
  * macOS Keychain, and Linux libsecret integration
- * 
+ *
  * @version 4.5
  */
 
 import { styled, log } from '../theme/colors';
-
 
 interface SecretStorageOptions {
   persistEnterprise?: boolean;
@@ -26,35 +25,30 @@ interface CredentialMetadata {
 export class Tier1380SecretManager {
   private static instance: Tier1380SecretManager;
   private platform: 'windows' | 'macos' | 'linux';
-  
+
   constructor() {
     this.platform = this.detectPlatform();
   }
-  
+
   static getInstance(): Tier1380SecretManager {
     if (!this.instance) {
       this.instance = new Tier1380SecretManager();
     }
     return this.instance;
   }
-  
+
   /**
    * Store secret in platform-specific secure storage
    */
-  async setSecret(
-    key: string, 
-    value: string, 
-    options: SecretStorageOptions = {}
-  ): Promise<void> {
-    
+  async setSecret(key: string, value: string, options: SecretStorageOptions = {}): Promise<void> {
     const { persistEnterprise = false, delete: deleteOption = false } = options;
-    
+
     try {
       if (deleteOption) {
         await this.deleteSecret(key);
         return;
       }
-      
+
       switch (this.platform) {
         case 'windows':
           await this.setWindowsSecret(key, value, { persistEnterprise });
@@ -68,15 +62,14 @@ export class Tier1380SecretManager {
         default:
           throw new Error(`Unsupported platform: ${this.platform}`);
       }
-      
+
       log.success(`Stored secret: ${key}`);
-      
     } catch (error) {
       log.error(`Failed to store secret ${key}: ${error.message}`);
       throw error;
     }
   }
-  
+
   /**
    * Retrieve secret from platform-specific secure storage
    */
@@ -97,7 +90,7 @@ export class Tier1380SecretManager {
       return null;
     }
   }
-  
+
   /**
    * Delete secret from platform-specific secure storage
    */
@@ -116,15 +109,14 @@ export class Tier1380SecretManager {
         default:
           throw new Error(`Unsupported platform: ${this.platform}`);
       }
-      
+
       log.info(`Deleted secret: ${key}`);
-      
     } catch (error) {
       log.error(`Failed to delete secret ${key}: ${error.message}`);
       throw error;
     }
   }
-  
+
   /**
    * List all secrets with Tier-1380 prefix
    */
@@ -145,16 +137,15 @@ export class Tier1380SecretManager {
       return [];
     }
   }
-  
+
   /**
    * Windows Credential Manager integration
    */
   private async setWindowsSecret(
-    key: string, 
-    value: string, 
+    key: string,
+    value: string,
     options: { persistEnterprise?: boolean }
   ): Promise<void> {
-    
     // Use PowerShell to interact with Windows Credential Manager
     const persistFlag = options.persistEnterprise ? 'PersistEnterprise' : 'LocalMachine';
     const powershellScript = `
@@ -166,18 +157,18 @@ export class Tier1380SecretManager {
         exit 1
       }
     `;
-    
+
     const result = Bun.spawnSync(['powershell', '-Command', powershellScript], {
       stdout: 'pipe',
-      stderr: 'pipe'
+      stderr: 'pipe',
     });
-    
+
     if (result.exitCode !== 0) {
       const error = await new Response(result.stderr).text();
       throw new Error(`Windows Credential Manager error: ${error.trim()}`);
     }
   }
-  
+
   private async getWindowsSecret(key: string): Promise<string | null> {
     const powershellScript = `
       try {
@@ -194,20 +185,20 @@ export class Tier1380SecretManager {
         exit 1
       }
     `;
-    
+
     const result = Bun.spawnSync(['powershell', '-Command', powershellScript], {
       stdout: 'pipe',
-      stderr: 'pipe'
+      stderr: 'pipe',
     });
-    
+
     if (result.exitCode !== 0) {
       return null;
     }
-    
+
     const output = await new Response(result.stdout).text();
     return output.trim();
   }
-  
+
   private async deleteWindowsSecret(key: string): Promise<void> {
     const powershellScript = `
       try {
@@ -223,18 +214,18 @@ export class Tier1380SecretManager {
         exit 1
       }
     `;
-    
+
     const result = Bun.spawnSync(['powershell', '-Command', powershellScript], {
       stdout: 'pipe',
-      stderr: 'pipe'
+      stderr: 'pipe',
     });
-    
+
     if (result.exitCode !== 0) {
       const error = await new Response(result.stderr).text();
       throw new Error(`Failed to delete Windows credential: ${error.trim()}`);
     }
   }
-  
+
   private async listWindowsSecrets(): Promise<string[]> {
     const powershellScript = `
       try {
@@ -251,181 +242,188 @@ export class Tier1380SecretManager {
         exit 1
       }
     `;
-    
+
     const result = Bun.spawnSync(['powershell', '-Command', powershellScript], {
       stdout: 'pipe',
-      stderr: 'pipe'
+      stderr: 'pipe',
     });
-    
+
     if (result.exitCode !== 0) {
       return [];
     }
-    
+
     const output = await new Response(result.stdout).text();
-    return output.trim().split('\n').filter(line => line.trim());
+    return output
+      .trim()
+      .split('\n')
+      .filter(line => line.trim());
   }
-  
+
   /**
    * macOS Keychain integration
    */
   private async setMacOSSecret(
-    key: string, 
-    value: string, 
+    key: string,
+    value: string,
     options: { persistEnterprise?: boolean }
   ): Promise<void> {
-    
     const account = options.persistEnterprise ? 'Tier1380Enterprise' : 'Tier1380';
     const securityCommand = `security add-generic-password -a "${account}" -s "${key}" -w "${value}" -U`;
-    
+
     const result = Bun.spawnSync(['bash', '-c', securityCommand], {
       stdout: 'pipe',
-      stderr: 'pipe'
+      stderr: 'pipe',
     });
-    
+
     if (result.exitCode !== 0) {
       const error = await new Response(result.stderr).text();
       throw new Error(`macOS Keychain error: ${error.trim()}`);
     }
   }
-  
+
   private async getMacOSSecret(key: string): Promise<string | null> {
     const securityCommand = `security find-generic-password -a "Tier1380" -s "${key}" -w 2>/dev/null || security find-generic-password -a "Tier1380Enterprise" -s "${key}" -w 2>/dev/null`;
-    
+
     const result = Bun.spawnSync(['bash', '-c', securityCommand], {
       stdout: 'pipe',
-      stderr: 'pipe'
+      stderr: 'pipe',
     });
-    
+
     if (result.exitCode !== 0) {
       return null;
     }
-    
+
     const output = await new Response(result.stdout).text();
     return output.trim();
   }
-  
+
   private async deleteMacOSSecret(key: string): Promise<void> {
     const securityCommand = `security delete-generic-password -a "Tier1380" -s "${key}" 2>/dev/null || security delete-generic-password -a "Tier1380Enterprise" -s "${key}" 2>/dev/null`;
-    
+
     const result = Bun.spawnSync(['bash', '-c', securityCommand], {
       stdout: 'pipe',
-      stderr: 'pipe'
+      stderr: 'pipe',
     });
-    
+
     if (result.exitCode !== 0) {
       throw new Error('Failed to delete macOS Keychain password');
     }
   }
-  
+
   private async listMacOSSecrets(): Promise<string[]> {
     const securityCommand = `security dump-keychain | grep "0x00000007" -A1 | grep "Tier1380" | grep -o '"[^"]*"' | tr -d '"'`;
-    
+
     const result = Bun.spawnSync(['bash', '-c', securityCommand], {
       stdout: 'pipe',
-      stderr: 'pipe'
+      stderr: 'pipe',
     });
-    
+
     if (result.exitCode !== 0) {
       return [];
     }
-    
+
     const output = await new Response(result.stdout).text();
-    return output.trim().split('\n').filter(line => line.trim());
+    return output
+      .trim()
+      .split('\n')
+      .filter(line => line.trim());
   }
-  
+
   /**
    * Linux libsecret integration
    */
   private async setLinuxSecret(
-    key: string, 
-    value: string, 
+    key: string,
+    value: string,
     options: { persistEnterprise?: boolean }
   ): Promise<void> {
-    
     const label = options.persistEnterprise ? 'Tier1380 Enterprise Secret' : 'Tier1380 Secret';
-    
+
     // Try using secret-tool (part of libsecret)
     const secretCommand = `echo "${value}" | secret-tool store --label="${label}" tier1380 "${key}"`;
-    
+
     const result = Bun.spawnSync(['bash', '-c', secretCommand], {
       stdout: 'pipe',
-      stderr: 'pipe'
+      stderr: 'pipe',
     });
-    
+
     if (result.exitCode !== 0) {
       // Fallback to encrypted file storage
       await this.setLinuxFileSecret(key, value, options);
     }
   }
-  
+
   private async getLinuxSecret(key: string): Promise<string | null> {
     const secretCommand = `secret-tool lookup tier1380 "${key}"`;
-    
+
     const result = Bun.spawnSync(['bash', '-c', secretCommand], {
       stdout: 'pipe',
-      stderr: 'pipe'
+      stderr: 'pipe',
     });
-    
+
     if (result.exitCode !== 0) {
       // Fallback to encrypted file storage
       return await this.getLinuxFileSecret(key);
     }
-    
+
     const output = await new Response(result.stdout).text();
     return output.trim() || null;
   }
-  
+
   private async deleteLinuxSecret(key: string): Promise<void> {
     const secretCommand = `secret-tool clear tier1380 "${key}"`;
-    
+
     const result = Bun.spawnSync(['bash', '-c', secretCommand], {
       stdout: 'pipe',
-      stderr: 'pipe'
+      stderr: 'pipe',
     });
-    
+
     if (result.exitCode !== 0) {
       // Fallback to encrypted file storage
       await this.deleteLinuxFileSecret(key);
     }
   }
-  
+
   private async listLinuxSecrets(): Promise<string[]> {
     const secretCommand = `secret-tool search tier1380 "" | grep "label" | cut -d'=' -f2 | tr -d ' '`;
-    
+
     const result = Bun.spawnSync(['bash', '-c', secretCommand], {
       stdout: 'pipe',
-      stderr: 'pipe'
+      stderr: 'pipe',
     });
-    
+
     if (result.exitCode !== 0) {
       return [];
     }
-    
+
     const output = await new Response(result.stdout).text();
-    return output.trim().split('\n').filter(line => line.trim());
+    return output
+      .trim()
+      .split('\n')
+      .filter(line => line.trim());
   }
-  
+
   /**
    * Fallback encrypted file storage for Linux
    */
   private async setLinuxFileSecret(key: string, value: string, options: any): Promise<void> {
     const configDir = `${process.env.HOME}/.config/tier1380`;
     const secretsFile = `${configDir}/secrets.enc`;
-    
+
     // Ensure config directory exists
     await Bun.write(configDir, '');
-    
+
     // Simple encryption using Bun's built-in crypto
     const encrypted = Bun.CryptoHash('sha256', value).toString('hex');
-    
+
     // Store in encrypted format (simplified for demo)
     const secretData = JSON.stringify({ [key]: encrypted });
     await Bun.write(secretsFile, secretData);
   }
-  
+
   private async getLinuxFileSecret(key: string): Promise<string | null> {
     const secretsFile = `${process.env.HOME}/.config/tier1380/secrets.enc`;
-    
+
     try {
       const data = await Bun.file(secretsFile).text();
       const secrets = JSON.parse(data);
@@ -434,10 +432,10 @@ export class Tier1380SecretManager {
       return null;
     }
   }
-  
+
   private async deleteLinuxFileSecret(key: string): Promise<void> {
     const secretsFile = `${process.env.HOME}/.config/tier1380/secrets.enc`;
-    
+
     try {
       const data = await Bun.file(secretsFile).text();
       const secrets = JSON.parse(data);
@@ -447,13 +445,13 @@ export class Tier1380SecretManager {
       // File doesn't exist, nothing to delete
     }
   }
-  
+
   /**
    * Platform detection
    */
   private detectPlatform(): 'windows' | 'macos' | 'linux' {
     const platform = process.platform;
-    
+
     if (platform === 'win32') {
       return 'windows';
     } else if (platform === 'darwin') {
@@ -461,40 +459,39 @@ export class Tier1380SecretManager {
     } else if (platform === 'linux') {
       return 'linux';
     }
-    
+
     throw new Error(`Unsupported platform: ${platform}`);
   }
-  
+
   /**
    * Test secret storage functionality
    */
   async testStorage(): Promise<{ platform: string; working: boolean; message: string }> {
     const testKey = 'TIER1380_TEST_CONNECTION';
     const testValue = 'test_value_' + Date.now();
-    
+
     try {
       // Test write
       await this.setSecret(testKey, testValue);
-      
+
       // Test read
       const retrieved = await this.getSecret(testKey);
-      
+
       // Test delete
       await this.deleteSecret(testKey);
-      
+
       const working = retrieved && retrieved.includes(testKey);
-      
+
       return {
         platform: this.platform,
         working,
-        message: working ? 'Secret storage working correctly' : 'Secret storage test failed'
+        message: working ? 'Secret storage working correctly' : 'Secret storage test failed',
       };
-      
     } catch (error) {
       return {
         platform: this.platform,
         working: false,
-        message: `Test failed: ${error.message}`
+        message: `Test failed: ${error.message}`,
       };
     }
   }

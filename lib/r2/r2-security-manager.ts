@@ -2,7 +2,7 @@
 
 /**
  * 🔐 R2 Security & Access Control Manager
- * 
+ *
  * Comprehensive security management for R2:
  * - Fine-grained access control policies
  * - IAM-style permissions and roles
@@ -14,12 +14,7 @@
 import { styled, FW_COLORS } from '../theme/colors';
 import { r2EventSystem } from './r2-event-system';
 
-export type Permission = 
-  | 'r2:Read' 
-  | 'r2:Write' 
-  | 'r2:Delete' 
-  | 'r2:List' 
-  | 'r2:Admin';
+export type Permission = 'r2:Read' | 'r2:Write' | 'r2:Delete' | 'r2:List' | 'r2:Admin';
 
 export interface AccessPolicy {
   id: string;
@@ -148,7 +143,7 @@ export class R2SecurityManager {
       effect: 'allow',
       principal: 'role:readonly',
       actions: ['r2:Read', 'r2:List'],
-      resources: ['*']
+      resources: ['*'],
     });
 
     // Write policy
@@ -157,7 +152,7 @@ export class R2SecurityManager {
       effect: 'allow',
       principal: 'role:readwrite',
       actions: ['r2:Read', 'r2:Write', 'r2:List'],
-      resources: ['*']
+      resources: ['*'],
     });
 
     // Admin policy
@@ -166,7 +161,7 @@ export class R2SecurityManager {
       effect: 'allow',
       principal: 'role:admin',
       actions: ['r2:*'],
-      resources: ['*']
+      resources: ['*'],
     });
 
     // Deny public access policy
@@ -177,8 +172,8 @@ export class R2SecurityManager {
       actions: ['r2:Read', 'r2:Write', 'r2:Delete'],
       resources: ['*'],
       conditions: {
-        encryptionRequired: false
-      }
+        encryptionRequired: false,
+      },
     });
   }
 
@@ -190,21 +185,21 @@ export class R2SecurityManager {
       name: 'Viewer',
       description: 'Read-only access to all R2 resources',
       permissions: ['r2:Read', 'r2:List'],
-      policies: []
+      policies: [],
     });
 
     this.createRole({
       name: 'Developer',
       description: 'Read and write access for development',
       permissions: ['r2:Read', 'r2:Write', 'r2:List'],
-      policies: []
+      policies: [],
     });
 
     this.createRole({
       name: 'Admin',
       description: 'Full administrative access',
       permissions: ['r2:Read', 'r2:Write', 'r2:Delete', 'r2:List', 'r2:Admin'],
-      policies: []
+      policies: [],
     });
   }
 
@@ -212,23 +207,41 @@ export class R2SecurityManager {
    * Setup audit event listeners
    */
   private setupAuditListeners(): void {
-    r2EventSystem.on('object:created', (event) => {
-      this.audit('CreateObject', event.metadata?.principal || 'system', event.key || event.bucket, 'success', {
-        bucket: event.bucket,
-        metadata: event.metadata
-      });
+    r2EventSystem.on('object:created', event => {
+      this.audit(
+        'CreateObject',
+        event.metadata?.principal || 'system',
+        event.key || event.bucket,
+        'success',
+        {
+          bucket: event.bucket,
+          metadata: event.metadata,
+        }
+      );
     });
 
-    r2EventSystem.on('object:accessed', (event) => {
-      this.audit('AccessObject', event.metadata?.principal || 'system', event.key || event.bucket, 'success', {
-        bucket: event.bucket
-      });
+    r2EventSystem.on('object:accessed', event => {
+      this.audit(
+        'AccessObject',
+        event.metadata?.principal || 'system',
+        event.key || event.bucket,
+        'success',
+        {
+          bucket: event.bucket,
+        }
+      );
     });
 
-    r2EventSystem.on('object:deleted', (event) => {
-      this.audit('DeleteObject', event.metadata?.principal || 'system', event.key || event.bucket, 'success', {
-        bucket: event.bucket
-      });
+    r2EventSystem.on('object:deleted', event => {
+      this.audit(
+        'DeleteObject',
+        event.metadata?.principal || 'system',
+        event.key || event.bucket,
+        'success',
+        {
+          bucket: event.bucket,
+        }
+      );
     });
   }
 
@@ -241,7 +254,7 @@ export class R2SecurityManager {
       ...policy,
       id: `policy-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
     };
 
     this.policies.set(newPolicy.id, newPolicy);
@@ -255,7 +268,7 @@ export class R2SecurityManager {
   createRole(role: Omit<Role, 'id'>): Role {
     const newRole: Role = {
       ...role,
-      id: `role-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`
+      id: `role-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
     };
 
     this.roles.set(newRole.id, newRole);
@@ -273,7 +286,7 @@ export class R2SecurityManager {
   ): { key: AccessKey; secret: string } {
     const accessKeyId = `R2AK${crypto.randomUUID().replace(/-/g, '').toUpperCase().slice(0, 16)}`;
     const secretAccessKey = crypto.randomUUID().replace(/-/g, '');
-    
+
     const key: AccessKey = {
       id: `key-${Date.now()}`,
       name,
@@ -281,18 +294,20 @@ export class R2SecurityManager {
       secretAccessKeyHash: Bun.hash(secretAccessKey).toString(),
       status: 'active',
       createdAt: new Date().toISOString(),
-      expiresAt: options?.expiresInDays 
+      expiresAt: options?.expiresInDays
         ? new Date(Date.now() + options.expiresInDays * 24 * 60 * 60 * 1000).toISOString()
         : undefined,
       permissions,
-      rateLimit: options?.rateLimit ? {
-        requestsPerSecond: options.rateLimit.rps,
-        burstSize: options.rateLimit.burst
-      } : undefined
+      rateLimit: options?.rateLimit
+        ? {
+            requestsPerSecond: options.rateLimit.rps,
+            burstSize: options.rateLimit.burst,
+          }
+        : undefined,
     };
 
     this.accessKeys.set(key.id, key);
-    
+
     this.audit('CreateAccessKey', 'admin', key.id, 'success', { name, permissions });
 
     console.log(styled(`🔑 Created access key: ${accessKeyId}`, 'success'));
@@ -331,7 +346,7 @@ export class R2SecurityManager {
       return {
         allowed: false,
         reason: `Denied by policy: ${denyPolicy.name}`,
-        policies: applicablePolicies.map(p => p.id)
+        policies: applicablePolicies.map(p => p.id),
       };
     }
 
@@ -340,7 +355,7 @@ export class R2SecurityManager {
     if (allowPolicy) {
       return {
         allowed: true,
-        policies: applicablePolicies.map(p => p.id)
+        policies: applicablePolicies.map(p => p.id),
       };
     }
 
@@ -348,7 +363,7 @@ export class R2SecurityManager {
     return {
       allowed: false,
       reason: 'No matching allow policy found',
-      policies: []
+      policies: [],
     };
   }
 
@@ -369,7 +384,7 @@ export class R2SecurityManager {
       keyData,
       createdAt: new Date().toISOString(),
       status: 'active',
-      keyRotationDays: 90
+      keyRotationDays: 90,
     };
 
     this.encryptionKeys.set(key.id, key);
@@ -381,7 +396,10 @@ export class R2SecurityManager {
   /**
    * Encrypt data
    */
-  async encrypt(data: Uint8Array, keyId: string): Promise<{
+  async encrypt(
+    data: Uint8Array,
+    keyId: string
+  ): Promise<{
     ciphertext: Uint8Array;
     iv: Uint8Array;
     tag?: Uint8Array;
@@ -405,11 +423,7 @@ export class R2SecurityManager {
   /**
    * Decrypt data
    */
-  async decrypt(
-    ciphertext: Uint8Array,
-    keyId: string,
-    iv: Uint8Array
-  ): Promise<Uint8Array> {
+  async decrypt(ciphertext: Uint8Array, keyId: string, iv: Uint8Array): Promise<Uint8Array> {
     const key = this.encryptionKeys.get(keyId);
     if (!key) throw new Error(`Encryption key not found: ${keyId}`);
 
@@ -442,7 +456,7 @@ export class R2SecurityManager {
       ipAddress: details.ip || 'unknown',
       userAgent: details.userAgent || 'unknown',
       details,
-      riskScore: this.calculateRiskScore(action, principal, result)
+      riskScore: this.calculateRiskScore(action, principal, result),
     };
 
     this.auditLog.push(entry);
@@ -458,7 +472,7 @@ export class R2SecurityManager {
         type: 'error:occurred',
         bucket: resource.split('/')[0] || 'unknown',
         source: 'R2SecurityManager',
-        metadata: { action, principal, result, riskScore: entry.riskScore }
+        metadata: { action, principal, result, riskScore: entry.riskScore },
       });
     }
   }
@@ -476,10 +490,10 @@ export class R2SecurityManager {
         activeKeys: Array.from(this.accessKeys.values()).filter(k => k.status === 'active').length,
         publicObjects: 0, // Would scan for public objects
         unencryptedObjects: 0, // Would scan for unencrypted objects
-        violations: 0
+        violations: 0,
       },
       findings: [],
-      complianceStatus: {}
+      complianceStatus: {},
     };
 
     // Check for security issues
@@ -493,7 +507,7 @@ export class R2SecurityManager {
           title: 'Old access key',
           description: `Access key ${key.name} is older than 90 days`,
           resource: key.id,
-          recommendation: 'Rotate the access key'
+          recommendation: 'Rotate the access key',
         });
         report.summary.violations++;
       }
@@ -506,7 +520,7 @@ export class R2SecurityManager {
           title: 'No expiration on access key',
           description: `Access key ${key.name} has no expiration date`,
           resource: key.id,
-          recommendation: 'Set an expiration date for the key'
+          recommendation: 'Set an expiration date for the key',
         });
       }
     }
@@ -514,7 +528,7 @@ export class R2SecurityManager {
     // Check encryption key rotation
     for (const key of this.encryptionKeys.values()) {
       if (key.status === 'active' && key.keyRotationDays) {
-        const daysSinceRotation = key.rotatedAt 
+        const daysSinceRotation = key.rotatedAt
           ? (Date.now() - new Date(key.rotatedAt).getTime()) / (1000 * 60 * 60 * 24)
           : (Date.now() - new Date(key.createdAt).getTime()) / (1000 * 60 * 60 * 24);
 
@@ -525,7 +539,7 @@ export class R2SecurityManager {
             title: 'Encryption key rotation overdue',
             description: `Key ${key.name} should be rotated every ${key.keyRotationDays} days`,
             resource: key.id,
-            recommendation: 'Rotate the encryption key immediately'
+            recommendation: 'Rotate the encryption key immediately',
           });
           report.summary.violations++;
         }
@@ -534,9 +548,10 @@ export class R2SecurityManager {
 
     // Compliance checks
     report.complianceStatus = {
-      'SOC2': report.summary.violations === 0 ? 'pass' : 'fail',
-      'ISO27001': report.findings.filter(f => f.severity === 'critical').length === 0 ? 'pass' : 'warning',
-      'GDPR': report.summary.unencryptedObjects === 0 ? 'pass' : 'fail'
+      SOC2: report.summary.violations === 0 ? 'pass' : 'fail',
+      ISO27001:
+        report.findings.filter(f => f.severity === 'critical').length === 0 ? 'pass' : 'warning',
+      GDPR: report.summary.unencryptedObjects === 0 ? 'pass' : 'fail',
     };
 
     return report;
@@ -594,7 +609,7 @@ export class R2SecurityManager {
 
     key.status = 'inactive';
     this.audit('RevokeAccessKey', 'admin', keyId, 'success', { name: key.name });
-    
+
     console.log(styled(`🚫 Revoked access key: ${key.accessKeyId}`, 'warning'));
     return true;
   }
@@ -619,14 +634,18 @@ export class R2SecurityManager {
     console.log(styled(`  Active: ${activeKeys.length} / ${this.accessKeys.size}`, 'muted'));
 
     console.log(styled('\n🔐 Encryption Keys:', 'info'));
-    const activeEncKeys = Array.from(this.encryptionKeys.values()).filter(k => k.status === 'active');
+    const activeEncKeys = Array.from(this.encryptionKeys.values()).filter(
+      k => k.status === 'active'
+    );
     console.log(styled(`  Active: ${activeEncKeys.length}`, 'muted'));
 
     console.log(styled('\n📝 Recent Audit Entries:', 'info'));
     const recent = this.getAuditLog({ limit: 5 });
     for (const entry of recent) {
       const icon = entry.result === 'success' ? '✅' : entry.result === 'denied' ? '❌' : '⚠️';
-      console.log(styled(`  ${icon} ${entry.action} by ${entry.principal} on ${entry.resource}`, 'muted'));
+      console.log(
+        styled(`  ${icon} ${entry.action} by ${entry.principal} on ${entry.resource}`, 'muted')
+      );
     }
   }
 
@@ -635,7 +654,7 @@ export class R2SecurityManager {
   private principalMatches(policyPrincipal: string, actualPrincipal: string): boolean {
     if (policyPrincipal === '*') return true;
     if (policyPrincipal === actualPrincipal) return true;
-    
+
     // Check role membership
     if (policyPrincipal.startsWith('role:')) {
       const roleName = policyPrincipal.slice(5);
@@ -715,11 +734,9 @@ if (import.meta.main) {
   console.log(styled('===========================', 'accent'));
 
   // Create access key
-  const { key, secret } = security.createAccessKey(
-    'test-key',
-    ['r2:Read', 'r2:List'],
-    { expiresInDays: 30 }
-  );
+  const { key, secret } = security.createAccessKey('test-key', ['r2:Read', 'r2:List'], {
+    expiresInDays: 30,
+  });
 
   // Check access
   const access = security.checkAccess('user:developer', 'r2:Write', 'scanner-cookies/test.json');
@@ -734,7 +751,12 @@ if (import.meta.main) {
   console.log(styled(`\n📊 Security Report:`, 'info'));
   console.log(styled(`  Policies: ${report.summary.totalPolicies}`, 'muted'));
   console.log(styled(`  Roles: ${report.summary.totalRoles}`, 'muted'));
-  console.log(styled(`  Violations: ${report.summary.violations}`, report.summary.violations > 0 ? 'error' : 'success'));
+  console.log(
+    styled(
+      `  Violations: ${report.summary.violations}`,
+      report.summary.violations > 0 ? 'error' : 'success'
+    )
+  );
 
   if (report.findings.length > 0) {
     console.log(styled('\n⚠️  Findings:', 'warning'));

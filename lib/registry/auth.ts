@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * 🔐 Registry Authentication Middleware
- * 
+ *
  * Supports: none, basic, token, and JWT auth modes
  */
 
@@ -203,16 +203,19 @@ export class RegistryAuth {
    * Generate authentication challenge response
    */
   challenge(): Response {
-    return new Response(JSON.stringify({
-      error: 'Unauthorized',
-      message: 'Authentication required',
-    }), {
-      status: 401,
-      headers: {
-        'Content-Type': 'application/json',
-        'WWW-Authenticate': this.config.type === 'basic' ? 'Basic' : 'Bearer',
-      },
-    });
+    return new Response(
+      JSON.stringify({
+        error: 'Unauthorized',
+        message: 'Authentication required',
+      }),
+      {
+        status: 401,
+        headers: {
+          'Content-Type': 'application/json',
+          'WWW-Authenticate': this.config.type === 'basic' ? 'Basic' : 'Bearer',
+        },
+      }
+    );
   }
 
   /**
@@ -228,20 +231,14 @@ export class RegistryAuth {
   /**
    * Create auth token for user
    */
-  createToken(
-    username: string, 
-    readonly: boolean = false, 
-    expiresIn?: number
-  ): string {
+  createToken(username: string, readonly: boolean = false, expiresIn?: number): string {
     const token = crypto.randomUUID().replace(/-/g, '');
     const tokenData: AuthToken = {
       token,
       user: username,
       readonly,
       created: new Date().toISOString(),
-      expires: expiresIn 
-        ? new Date(Date.now() + expiresIn * 1000).toISOString() 
-        : undefined,
+      expires: expiresIn ? new Date(Date.now() + expiresIn * 1000).toISOString() : undefined,
     };
 
     if (!this.config.tokens) {
@@ -276,7 +273,7 @@ export class RegistryAuth {
 
     const headerB64 = btoa(JSON.stringify(header)).replace(/=/g, '');
     const payloadB64 = btoa(JSON.stringify(payload)).replace(/=/g, '');
-    
+
     // In production, use proper HMAC-SHA256 signing
     const signature = btoa(`${headerB64}.${payloadB64}.${secret}`).replace(/=/g, '');
 
@@ -339,31 +336,47 @@ if (import.meta.main) {
   console.log(styled('🔐 Registry Auth Test', 'accent'));
   console.log(styled('=====================', 'accent'));
 
-  const TEST_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || process.env.HOST || 'localhost';
+  const TEST_HOST =
+    process.env.REGISTRY_HOST || process.env.SERVER_HOST || process.env.HOST || 'localhost';
 
   // Test no auth
   const noAuth = new RegistryAuth(AuthConfigs.none());
   const ctx1 = await noAuth.authenticate(new Request(`http://${TEST_HOST}`));
-  console.log(styled(`\nNo Auth: ${ctx1.authenticated ? '✅' : '❌'}`, ctx1.authenticated ? 'success' : 'error'));
+  console.log(
+    styled(
+      `\nNo Auth: ${ctx1.authenticated ? '✅' : '❌'}`,
+      ctx1.authenticated ? 'success' : 'error'
+    )
+  );
 
   // Test basic auth
   const basicAuth = new RegistryAuth(AuthConfigs.basic('testpass'));
   const req = new Request(`http://${TEST_HOST}`, {
     headers: {
-      'Authorization': `Basic ${btoa('admin:testpass')}`,
+      Authorization: `Basic ${btoa('admin:testpass')}`,
     },
   });
   const ctx2 = await basicAuth.authenticate(req);
-  console.log(styled(`Basic Auth: ${ctx2.authenticated ? '✅' : '❌'}`, ctx2.authenticated ? 'success' : 'error'));
+  console.log(
+    styled(
+      `Basic Auth: ${ctx2.authenticated ? '✅' : '❌'}`,
+      ctx2.authenticated ? 'success' : 'error'
+    )
+  );
 
   // Test JWT
   const jwtAuth = new RegistryAuth(AuthConfigs.jwt('test-secret'));
   const token = jwtAuth.createJwt('admin');
   const jwtReq = new Request(`http://${TEST_HOST}`, {
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
   const ctx3 = await jwtAuth.authenticate(jwtReq);
-  console.log(styled(`JWT Auth: ${ctx3.authenticated ? '✅' : '❌'}`, ctx3.authenticated ? 'success' : 'error'));
+  console.log(
+    styled(
+      `JWT Auth: ${ctx3.authenticated ? '✅' : '❌'}`,
+      ctx3.authenticated ? 'success' : 'error'
+    )
+  );
 }

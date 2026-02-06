@@ -1,9 +1,9 @@
 /**
  * Enterprise Core Type Definitions
- * 
+ *
  * Centralized type definitions for consistent enterprise-grade naming
  * and type safety across all library components.
- * 
+ *
  * @version 1.0.0
  * @author Enterprise Platform Team
  */
@@ -21,7 +21,7 @@ export enum OperationStatus {
   COMPLETED = 'completed',
   FAILED = 'failed',
   CANCELLED = 'cancelled',
-  TIMEOUT = 'timeout'
+  TIMEOUT = 'timeout',
 }
 
 /**
@@ -32,7 +32,7 @@ export enum SecurityRiskLevel {
   HIGH = 'high',
   MEDIUM = 'medium',
   LOW = 'low',
-  MINIMAL = 'minimal'
+  MINIMAL = 'minimal',
 }
 
 /**
@@ -43,7 +43,7 @@ export enum PerformanceTier {
   GOOD = 'good',
   ACCEPTABLE = 'acceptable',
   POOR = 'poor',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 /**
@@ -54,7 +54,7 @@ export enum ResourceState {
   IDLE = 'idle',
   EXHAUSTED = 'exhausted',
   CORRUPTED = 'corrupted',
-  UNAVAILABLE = 'unavailable'
+  UNAVAILABLE = 'unavailable',
 }
 
 /**
@@ -65,7 +65,7 @@ export enum NetworkProtocol {
   HTTPS = 'https',
   HTTP2 = 'http2',
   WS = 'ws',
-  WSS = 'wss'
+  WSS = 'wss',
 }
 
 /**
@@ -76,7 +76,7 @@ export enum DataEncoding {
   UTF16 = 'utf16',
   ASCII = 'ascii',
   BASE64 = 'base64',
-  HEX = 'hex'
+  HEX = 'hex',
 }
 
 /**
@@ -87,7 +87,7 @@ export enum CryptoAlgorithm {
   AES_CBC = 'aes-cbc',
   SHA256 = 'sha256',
   SHA512 = 'sha512',
-  PBKDF2 = 'pbkdf2'
+  PBKDF2 = 'pbkdf2',
 }
 
 // ============================================================================
@@ -180,15 +180,14 @@ export interface CryptoConfiguration {
 /**
  * Standardized result type for operations
  */
-export type EnterpriseResult<T, E = EnterpriseError> = 
+export type EnterpriseResult<T, E = EnterpriseError> =
   | { success: true; data: T; error?: never }
   | { success: false; data?: never; error: E };
 
 /**
  * Async enterprise result type
  */
-export type AsyncEnterpriseResult<T, E = EnterpriseError> = 
-  Promise<EnterpriseResult<T, E>>;
+export type AsyncEnterpriseResult<T, E = EnterpriseError> = Promise<EnterpriseResult<T, E>>;
 
 /**
  * Event handler type
@@ -223,7 +222,7 @@ export const ENTERPRISE_TIMEOUTS = {
   CRYPTO_OPERATION: 5000,
   DATABASE_QUERY: 15000,
   CACHE_OPERATION: 1000,
-  DEFAULT: 5000
+  DEFAULT: 5000,
 } as const;
 
 /**
@@ -235,7 +234,7 @@ export const ENTERPRISE_LIMITS = {
   MAX_RESPONSE_SIZE: 100 * 1024 * 1024, // 100MB
   MAX_CONCURRENT_CONNECTIONS: 1000,
   MAX_RETRY_ATTEMPTS: 3,
-  MAX_CACHE_SIZE: 1024 * 1024 * 1024 // 1GB
+  MAX_CACHE_SIZE: 1024 * 1024 * 1024, // 1GB
 } as const;
 
 /**
@@ -258,7 +257,7 @@ export const ENTERPRISE_HTTP_STATUS = {
   NOT_IMPLEMENTED: 501,
   BAD_GATEWAY: 502,
   SERVICE_UNAVAILABLE: 503,
-  GATEWAY_TIMEOUT: 504
+  GATEWAY_TIMEOUT: 504,
 } as const;
 
 // ============================================================================

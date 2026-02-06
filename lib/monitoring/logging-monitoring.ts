@@ -1,6 +1,6 @@
 /**
  * Comprehensive Logging and Monitoring System
- * 
+ *
  * Provides structured logging, metrics collection, and monitoring capabilities
  * with support for multiple log levels, output formats, and monitoring backends
  */
@@ -14,7 +14,7 @@ export enum LogLevel {
   INFO = 1,
   WARN = 2,
   ERROR = 3,
-  FATAL = 4
+  FATAL = 4,
 }
 
 export interface LogEntry {
@@ -95,7 +95,7 @@ export class Logger {
       enableFile: false,
       enableMetrics: true,
       structuredFormat: true,
-      ...config
+      ...config,
     };
 
     this.startTime = Date.now();
@@ -124,12 +124,12 @@ export class Logger {
 
   error(message: string, error?: Error, context?: Record<string, any>, requestId?: string): void {
     const logContext = { ...context };
-    
+
     if (error) {
       logContext.error = {
         name: error.name,
         message: error.message,
-        stack: this.config.environment === 'development' ? error.stack : undefined
+        stack: this.config.environment === 'development' ? error.stack : undefined,
       };
     }
 
@@ -157,15 +157,20 @@ export class Logger {
   ): void {
     const level = statusCode >= 400 ? LogLevel.WARN : LogLevel.INFO;
     const message = `${method} ${url} ${statusCode} - ${duration}ms`;
-    
-    this.log(level, message, {
-      method,
-      url,
-      statusCode,
-      duration,
-      userId,
-      type: 'request'
-    }, requestId);
+
+    this.log(
+      level,
+      message,
+      {
+        method,
+        url,
+        statusCode,
+        duration,
+        userId,
+        type: 'request',
+      },
+      requestId
+    );
 
     // Update metrics
     this.metrics.requests.total++;
@@ -174,8 +179,7 @@ export class Logger {
     } else {
       this.metrics.requests.error++;
     }
-    this.metrics.requests.avgResponseTime = 
-      (this.metrics.requests.avgResponseTime + duration) / 2;
+    this.metrics.requests.avgResponseTime = (this.metrics.requests.avgResponseTime + duration) / 2;
   }
 
   /**
@@ -190,31 +194,37 @@ export class Logger {
   ): void {
     const level = success ? LogLevel.DEBUG : LogLevel.ERROR;
     const message = `DB ${operation} on ${table} - ${duration}ms`;
-    
-    this.log(level, message, {
-      operation,
-      table,
-      duration,
-      success,
-      type: 'database'
-    }, requestId);
+
+    this.log(
+      level,
+      message,
+      {
+        operation,
+        table,
+        duration,
+        success,
+        type: 'database',
+      },
+      requestId
+    );
   }
 
   /**
    * Log cache operation
    */
-  logCache(
-    operation: 'hit' | 'miss' | 'set' | 'delete',
-    key: string,
-    requestId?: string
-  ): void {
+  logCache(operation: 'hit' | 'miss' | 'set' | 'delete', key: string, requestId?: string): void {
     const message = `Cache ${operation}: ${key}`;
-    
-    this.log(LogLevel.DEBUG, message, {
-      operation,
-      key,
-      type: 'cache'
-    }, requestId);
+
+    this.log(
+      LogLevel.DEBUG,
+      message,
+      {
+        operation,
+        key,
+        type: 'cache',
+      },
+      requestId
+    );
 
     // Update metrics
     if (operation === 'hit') {
@@ -236,17 +246,27 @@ export class Logger {
     requestId?: string,
     userId?: string
   ): void {
-    const level = severity === 'critical' ? LogLevel.FATAL : 
-                  severity === 'high' ? LogLevel.ERROR :
-                  severity === 'medium' ? LogLevel.WARN : LogLevel.INFO;
-    
-    this.log(level, `SECURITY: ${event}`, {
-      event,
-      severity,
-      details,
-      userId,
-      type: 'security'
-    }, requestId);
+    const level =
+      severity === 'critical'
+        ? LogLevel.FATAL
+        : severity === 'high'
+          ? LogLevel.ERROR
+          : severity === 'medium'
+            ? LogLevel.WARN
+            : LogLevel.INFO;
+
+    this.log(
+      level,
+      `SECURITY: ${event}`,
+      {
+        event,
+        severity,
+        details,
+        userId,
+        type: 'security',
+      },
+      requestId
+    );
   }
 
   // ============================================================================
@@ -271,8 +291,8 @@ export class Logger {
       metadata: {
         version: this.config.version,
         environment: this.config.environment,
-        pid: process.pid
-      }
+        pid: process.pid,
+      },
     };
 
     // Add to buffer
@@ -295,21 +315,23 @@ export class Logger {
   private outputToConsole(entry: LogEntry): void {
     const levelName = LogLevel[entry.level];
     const timestamp = entry.timestamp;
-    
+
     if (this.config.structuredFormat) {
-      console.log(JSON.stringify({
-        timestamp,
-        level: levelName,
-        service: entry.service,
-        message: entry.message,
-        requestId: entry.requestId,
-        ...entry.context
-      }));
+      console.log(
+        JSON.stringify({
+          timestamp,
+          level: levelName,
+          service: entry.service,
+          message: entry.message,
+          requestId: entry.requestId,
+          ...entry.context,
+        })
+      );
     } else {
       const prefix = `[${timestamp}] ${levelName} ${entry.service}`;
       const suffix = entry.requestId ? ` [${entry.requestId}]` : '';
       console.log(`${prefix}${suffix}: ${entry.message}`);
-      
+
       if (entry.context && Object.keys(entry.context).length > 0) {
         console.log('  Context:', entry.context);
       }
@@ -336,8 +358,8 @@ export class Logger {
       system: {
         memoryUsage: process.memoryUsage().heapUsed,
         cpuUsage: 0,
-        uptime: 0
-      }
+        uptime: 0,
+      },
     };
   }
 
@@ -416,7 +438,7 @@ export class Logger {
       clearInterval(this.metricsInterval);
       this.metricsInterval = undefined;
     }
-    
+
     this.logBuffer = [];
     console.log('🗑️ Logger destroyed and resources cleaned up');
   }
@@ -470,14 +492,18 @@ export class LoggingMiddleware {
     return (request: Request, response: Response, requestId?: string, userId?: string) => {
       const start = Date.now();
       const url = new URL(request.url);
-      
+
       // Log request start
-      logger.info(`${request.method} ${url.pathname} started`, {
-        method: request.method,
-        path: url.pathname,
-        userAgent: request.headers.get('user-agent'),
-        ip: request.headers.get('x-forwarded-for') || 'unknown'
-      }, requestId);
+      logger.info(
+        `${request.method} ${url.pathname} started`,
+        {
+          method: request.method,
+          path: url.pathname,
+          userAgent: request.headers.get('user-agent'),
+          ip: request.headers.get('x-forwarded-for') || 'unknown',
+        },
+        requestId
+      );
 
       // Log response when it finishes
       setTimeout(() => {
@@ -506,7 +532,7 @@ export class LoggingMiddleware {
         {
           method: request.method,
           path: url.pathname,
-          userAgent: request.headers.get('user-agent')
+          userAgent: request.headers.get('user-agent'),
         },
         requestId
       );
@@ -522,5 +548,5 @@ export const defaultLogger = new Logger({
   service: 'bun-platform',
   level: Bun.env.NODE_ENV === 'production' ? LogLevel.INFO : LogLevel.DEBUG,
   enableConsole: true,
-  enableMetrics: true
+  enableMetrics: true,
 });

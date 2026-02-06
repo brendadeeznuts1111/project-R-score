@@ -18,7 +18,7 @@ import { serve } from "bun";
  * 
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { ABTestingManager } from "./lib/ab-testing/cookie-manager.ts";
+import { ABTestingManager } from "../lib/ab-testing/cookie-manager.ts";
 
 // Create global A/B testing manager instance
 const abManager = new ABTestingManager();

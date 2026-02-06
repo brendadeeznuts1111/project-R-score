@@ -1,7 +1,7 @@
 // lib/tier1380-directories-enhanced.ts — Bun-optimized directory scanner
-import { readdir } from "node:fs/promises";
+import { readdir } from 'node:fs/promises';
 
-import { join, relative } from "node:path";
+import { join, relative } from 'node:path';
 
 /**
  * BUN-NATIVE DIRECTORY SCANNER OPTIMIZATIONS
@@ -28,11 +28,11 @@ const MICRO_RISK = 1e-6;
 const MILLI_RISK = 1e-3;
 
 const RISK = {
-  NODE_FS: 2.010005001,    // node:fs/promises readdir/mkdir
-  BUN_GLOB: 1.000001000,   // Bun.Glob native scan
-  BUN_EXISTS: 1.000000500,  // Bun.file().exists()
-  BUN_WRITE: 1.000002000,   // Bun.write()
-  FILESINK: 1.500002000,    // FileSink streaming
+  NODE_FS: 2.010005001, // node:fs/promises readdir/mkdir
+  BUN_GLOB: 1.000001, // Bun.Glob native scan
+  BUN_EXISTS: 1.0000005, // Bun.file().exists()
+  BUN_WRITE: 1.000002, // Bun.write()
+  FILESINK: 1.500002, // FileSink streaming
 } as const;
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -40,8 +40,8 @@ const RISK = {
 // ═══════════════════════════════════════════════════════════════════════════════
 interface TreeEntry {
   name: string;
-  path: string;          // Full path — derive parent via string ops if needed
-  type: "dir" | "file";
+  path: string; // Full path — derive parent via string ops if needed
+  type: 'dir' | 'file';
   size: number;
   children: number;
   depth: number;
@@ -69,10 +69,7 @@ interface GlobMetrics {
 // ═══════════════════════════════════════════════════════════════════════════════
 // GENERATOR PATTERN — Lazy tree materialization (Optimization #8)
 // ═══════════════════════════════════════════════════════════════════════════════
-async function* scanGenerator(
-  rootPath: string,
-  maxDepth: number = 3
-): AsyncGenerator<TreeEntry> {
+async function* scanGenerator(rootPath: string, maxDepth: number = 3): AsyncGenerator<TreeEntry> {
   // BFS queue — no recursion, no stack overflow on deep dirs
   const queue: { dir: string; depth: number }[] = [{ dir: rootPath, depth: 0 }];
 
@@ -86,7 +83,7 @@ async function* scanGenerator(
       let hasPkg = false;
 
       for (const entry of entries) {
-        if (entry.name === "node_modules" || entry.name === ".git") continue;
+        if (entry.name === 'node_modules' || entry.name === '.git') continue;
 
         const fullPath = join(dir, entry.name);
 
@@ -94,18 +91,18 @@ async function* scanGenerator(
           childCount++;
           queue.push({ dir: fullPath, depth: depth + 1 });
         } else {
-          if (entry.name === "package.json") hasPkg = true;
+          if (entry.name === 'package.json') hasPkg = true;
         }
       }
 
       yield {
-        name: relative(rootPath, dir) || ".",
+        name: relative(rootPath, dir) || '.',
         path: dir,
-        type: "dir",
+        type: 'dir',
         size: entries.length,
         children: childCount,
         depth,
-        hasPackageJson: hasPkg
+        hasPackageJson: hasPkg,
       };
     } catch {
       // Permission denied
@@ -116,7 +113,10 @@ async function* scanGenerator(
 // ═══════════════════════════════════════════════════════════════════════════════
 // TREE SCAN — node:fs readdir (documented Bun approach)
 // ═══════════════════════════════════════════════════════════════════════════════
-async function scanTree(rootPath: string, maxDepth: number = 2): Promise<{
+async function scanTree(
+  rootPath: string,
+  maxDepth: number = 2
+): Promise<{
   tree: TreeEntry[];
   metrics: TreeMetrics;
 }> {
@@ -143,7 +143,7 @@ async function scanTree(rootPath: string, maxDepth: number = 2): Promise<{
     maxDepth: maxDepthSeen,
     latencyNs,
     riskScore: RISK.NODE_FS,
-    api: "node:fs/promises"
+    api: 'node:fs/promises',
   };
 
   return { tree, metrics };
@@ -152,7 +152,10 @@ async function scanTree(rootPath: string, maxDepth: number = 2): Promise<{
 // ═══════════════════════════════════════════════════════════════════════════════
 // BUN.GLOB SCAN — Native C++ globbing, 5-8x faster (Optimization #5)
 // ═══════════════════════════════════════════════════════════════════════════════
-async function globScan(rootPath: string, pattern: string = "**/*.ts"): Promise<{
+async function globScan(
+  rootPath: string,
+  pattern: string = '**/*.ts'
+): Promise<{
   files: string[];
   metrics: GlobMetrics;
 }> {
@@ -173,8 +176,8 @@ async function globScan(rootPath: string, pattern: string = "**/*.ts"): Promise<
       matches: files.length,
       latencyNs,
       riskScore: RISK.BUN_GLOB,
-      api: "Bun.Glob"
-    }
+      api: 'Bun.Glob',
+    },
   };
 }
 
@@ -190,18 +193,18 @@ async function hybridProjectScan(rootPath: string): Promise<{
   const { tree, metrics: dirMetrics } = await scanTree(rootPath, 1);
 
   // Step 2: Bun.Glob for .ts files - Risk: 1.00
-  const { metrics: globMetrics } = await globScan(rootPath, "**/*.ts");
+  const { metrics: globMetrics } = await globScan(rootPath, '**/*.ts');
 
   // Step 3: Bun.file().exists() for package.json - Risk: 1.00
   const dirs = tree.filter(e => e.depth === 1);
   const projects = await Promise.all(
-    dirs.slice(0, 20).map(async (dir) => {
+    dirs.slice(0, 20).map(async dir => {
       const s = Bun.nanoseconds();
-      const hasPackageJson = await Bun.file(join(dir.path, "package.json")).exists();
+      const hasPackageJson = await Bun.file(join(dir.path, 'package.json')).exists();
       return {
         name: dir.name,
         hasPackageJson,
-        latencyNs: Number(Bun.nanoseconds() - s)
+        latencyNs: Number(Bun.nanoseconds() - s),
       };
     })
   );
@@ -212,7 +215,10 @@ async function hybridProjectScan(rootPath: string): Promise<{
 // ═══════════════════════════════════════════════════════════════════════════════
 // FILESINK STREAMING — For large listings (Optimization #4)
 // ═══════════════════════════════════════════════════════════════════════════════
-async function streamTreeToFile(rootPath: string, outputPath: string): Promise<{
+async function streamTreeToFile(
+  rootPath: string,
+  outputPath: string
+): Promise<{
   entries: number;
   bytes: number;
   latencyNs: number;
@@ -221,13 +227,13 @@ async function streamTreeToFile(rootPath: string, outputPath: string): Promise<{
   const sink = Bun.file(outputPath).writer({ highWaterMark: 256 * 1024 });
   let entries = 0;
 
-  sink.write("[\n");
+  sink.write('[\n');
   for await (const entry of scanGenerator(rootPath, 3)) {
-    if (entries > 0) sink.write(",\n");
+    if (entries > 0) sink.write(',\n');
     sink.write(JSON.stringify(entry));
     entries++;
   }
-  sink.write("\n]");
+  sink.write('\n]');
   await sink.end();
 
   const latencyNs = Number(Bun.nanoseconds() - startNs);
@@ -253,40 +259,79 @@ function flattenTree(entries: TreeEntry[]): TreeEntry[] {
 // RENDER MATRIX
 // ═══════════════════════════════════════════════════════════════════════════════
 function renderTreeMatrix(tree: TreeEntry[], metrics: TreeMetrics): void {
-  console.log(`\n\x1b[36m▵⟂⥂══════════════════════════════════════════════════════════════════════════════════════▵⟂⥂\x1b[0m`);
-  console.log(`\x1b[36m  📁  DIRECTORY TREE SCAN — Bun-Optimized (node:fs + Bun.Glob + Bun.file)\x1b[0m`);
-  console.log(`\x1b[36m▵⟂⥂══════════════════════════════════════════════════════════════════════════════════════▵⟂⥸\x1b[0m\n`);
+  console.log(
+    `\n\x1b[36m▵⟂⥂══════════════════════════════════════════════════════════════════════════════════════▵⟂⥂\x1b[0m`
+  );
+  console.log(
+    `\x1b[36m  📁  DIRECTORY TREE SCAN — Bun-Optimized (node:fs + Bun.Glob + Bun.file)\x1b[0m`
+  );
+  console.log(
+    `\x1b[36m▵⟂⥂══════════════════════════════════════════════════════════════════════════════════════▵⟂⥸\x1b[0m\n`
+  );
 
-  const topLevel = tree
-    .filter(e => e.depth <= 1 && e.name !== ".")
-    .slice(0, 20);
+  const topLevel = tree.filter(e => e.depth <= 1 && e.name !== '.').slice(0, 20);
 
   const table = topLevel.map(e => ({
-    Directory: "  ".repeat(e.depth) + e.name.split("/").pop(),
+    Directory: '  '.repeat(e.depth) + e.name.split('/').pop(),
     Entries: e.size,
     Subdirs: e.children,
     Depth: e.depth,
-    "pkg.json": e.hasPackageJson ? "\x1b[32m✓\x1b[0m" : "\x1b[90m-\x1b[0m",
-    API: "\x1b[33mnode:fs\x1b[0m"
+    'pkg.json': e.hasPackageJson ? '\x1b[32m✓\x1b[0m' : '\x1b[90m-\x1b[0m',
+    API: '\x1b[33mnode:fs\x1b[0m',
   }));
 
   console.log(Bun.inspect.table(table, { colors: true }));
 
-  console.log(`\n\x1b[36m◉ Summary:\x1b[0m ${metrics.totalDirs} dirs │ ${metrics.totalFiles} files │ ${metrics.totalPackageJsons} package.json │ depth ${metrics.maxDepth}`);
-  console.log(`\x1b[36m◉ Latency:\x1b[0m ${(metrics.latencyNs / 1e6).toFixed(2)}ms │ \x1b[36mAPI:\x1b[0m ${metrics.api} │ \x1b[36mRisk:\x1b[0m ${metrics.riskScore.toFixed(9)}`);
+  console.log(
+    `\n\x1b[36m◉ Summary:\x1b[0m ${metrics.totalDirs} dirs │ ${metrics.totalFiles} files │ ${metrics.totalPackageJsons} package.json │ depth ${metrics.maxDepth}`
+  );
+  console.log(
+    `\x1b[36m◉ Latency:\x1b[0m ${(metrics.latencyNs / 1e6).toFixed(2)}ms │ \x1b[36mAPI:\x1b[0m ${metrics.api} │ \x1b[36mRisk:\x1b[0m ${metrics.riskScore.toFixed(9)}`
+  );
 }
 
 function renderGlobMatrix(metrics: GlobMetrics): void {
-  console.log(`\n\x1b[36m◉ Bun.Glob:\x1b[0m "${metrics.pattern}" │ ${metrics.matches} matches │ ${(metrics.latencyNs / 1e6).toFixed(2)}ms │ \x1b[32mRisk: ${metrics.riskScore.toFixed(9)}\x1b[0m`);
+  console.log(
+    `\n\x1b[36m◉ Bun.Glob:\x1b[0m "${metrics.pattern}" │ ${metrics.matches} matches │ ${(metrics.latencyNs / 1e6).toFixed(2)}ms │ \x1b[32mRisk: ${metrics.riskScore.toFixed(9)}\x1b[0m`
+  );
 }
 
 function renderComparisonTable(dirMetrics: TreeMetrics, globMetrics: GlobMetrics): void {
-  console.log(Bun.inspect.table([
-    { API: "node:fs readdir", Operation: "Directory tree", Latency: `${(dirMetrics.latencyNs / 1e6).toFixed(2)}ms`, Risk: RISK.NODE_FS.toFixed(9), Status: "\x1b[33m◉ NODE\x1b[0m" },
-    { API: "Bun.Glob", Operation: `Glob "${globMetrics.pattern}"`, Latency: `${(globMetrics.latencyNs / 1e6).toFixed(2)}ms`, Risk: RISK.BUN_GLOB.toFixed(9), Status: "\x1b[32m◉ NATIVE\x1b[0m" },
-    { API: "Bun.file().exists()", Operation: "File existence", Latency: "per-call", Risk: RISK.BUN_EXISTS.toFixed(9), Status: "\x1b[32m◉ NATIVE\x1b[0m" },
-    { API: "FileSink .writer()", Operation: "Stream listing", Latency: "streaming", Risk: RISK.FILESINK.toFixed(9), Status: "\x1b[32m◉ NATIVE\x1b[0m" },
-  ], { colors: true }));
+  console.log(
+    Bun.inspect.table(
+      [
+        {
+          API: 'node:fs readdir',
+          Operation: 'Directory tree',
+          Latency: `${(dirMetrics.latencyNs / 1e6).toFixed(2)}ms`,
+          Risk: RISK.NODE_FS.toFixed(9),
+          Status: '\x1b[33m◉ NODE\x1b[0m',
+        },
+        {
+          API: 'Bun.Glob',
+          Operation: `Glob "${globMetrics.pattern}"`,
+          Latency: `${(globMetrics.latencyNs / 1e6).toFixed(2)}ms`,
+          Risk: RISK.BUN_GLOB.toFixed(9),
+          Status: '\x1b[32m◉ NATIVE\x1b[0m',
+        },
+        {
+          API: 'Bun.file().exists()',
+          Operation: 'File existence',
+          Latency: 'per-call',
+          Risk: RISK.BUN_EXISTS.toFixed(9),
+          Status: '\x1b[32m◉ NATIVE\x1b[0m',
+        },
+        {
+          API: 'FileSink .writer()',
+          Operation: 'Stream listing',
+          Latency: 'streaming',
+          Risk: RISK.FILESINK.toFixed(9),
+          Status: '\x1b[32m◉ NATIVE\x1b[0m',
+        },
+      ],
+      { colors: true }
+    )
+  );
 }
 
 export const scanner = {
@@ -299,5 +344,5 @@ export const scanner = {
   renderTreeMatrix,
   renderGlobMatrix,
   renderComparisonTable,
-  RISK
+  RISK,
 };

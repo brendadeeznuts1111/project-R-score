@@ -1,15 +1,14 @@
 /**
  * CLI Validation Integration Helper
- * 
+ *
  * Minimal integration for existing CLI tools to add validation
  * with just a few lines of code.
- * 
+ *
  * @version 1.0.0
  * @author Enterprise Platform Team
  */
 
 import { quickValidate, validateAndReport } from './cli-self-validation';
-
 
 // ============================================================================
 // MINIMAL INTEGRATION FUNCTIONS
@@ -17,7 +16,7 @@ import { quickValidate, validateAndReport } from './cli-self-validation';
 
 /**
  * Add validation to any CLI tool with one line
- * 
+ *
  * Usage: await validateOrExit('my-tool', ['--help']);
  */
 export async function validateOrExit(
@@ -26,7 +25,7 @@ export async function validateOrExit(
   autoHeal: boolean = true
 ): Promise<void> {
   const isValid = await quickValidate(toolName, args, autoHeal);
-  
+
   if (!isValid) {
     console.error(`❌ Validation failed for ${toolName}`);
     console.error('💡 Run with --heal flag to auto-fix issues');
@@ -37,14 +36,14 @@ export async function validateOrExit(
 
 /**
  * Add validation with detailed reporting
- * 
+ *
  * Usage: await validateAndReport('my-tool', ['--help']);
  */
 export { validateAndReport };
 
 /**
  * Validate with custom error handling
- * 
+ *
  * Usage: await validateWithFallback('primary-tool', ['--arg'], 'fallback-tool');
  */
 export async function validateWithFallback(
@@ -55,24 +54,24 @@ export async function validateWithFallback(
 ): Promise<{ tool: string; valid: boolean }> {
   // Try primary tool
   const primaryValid = await quickValidate(primaryTool, args, autoHeal);
-  
+
   if (primaryValid) {
     return { tool: primaryTool, valid: true };
   }
-  
+
   console.warn(`⚠️  Primary tool '${primaryTool}' validation failed`);
-  
+
   // Try fallback if provided
   if (fallbackTool) {
     console.log(`🔄 Trying fallback tool: ${fallbackTool}`);
     const fallbackValid = await quickValidate(fallbackTool, args, autoHeal);
-    
+
     if (fallbackValid) {
       console.log(`✅ Using fallback tool: ${fallbackTool}`);
       return { tool: fallbackTool, valid: true };
     }
   }
-  
+
   return { tool: primaryTool, valid: false };
 }
 
@@ -85,7 +84,7 @@ export async function validateWithFallback(
  */
 export function validateEnvironment(requiredVars: string[]): void {
   const missing = requiredVars.filter(varName => !process.env[varName]);
-  
+
   if (missing.length > 0) {
     console.error('❌ Missing required environment variables:');
     missing.forEach(varName => console.error(`   • ${varName}`));
@@ -99,7 +98,7 @@ export function validateEnvironment(requiredVars: string[]): void {
  */
 export function setDefaults(defaults: Record<string, string>): void {
   let setCount = 0;
-  
+
   for (const [key, value] of Object.entries(defaults)) {
     if (!process.env[key]) {
       process.env[key] = value;
@@ -107,7 +106,7 @@ export function setDefaults(defaults: Record<string, string>): void {
       setCount++;
     }
   }
-  
+
   if (setCount > 0) {
     console.log(`✅ Applied ${setCount} default environment variables`);
   }
@@ -183,5 +182,5 @@ export default {
   validateWithFallback,
   validateEnvironment,
   setDefaults,
-  showIntegrationHelp
+  showIntegrationHelp,
 };

@@ -53,7 +53,10 @@ export function classifyHabits(txns: Transaction[]): HabitsData {
   };
 }
 
-export function calculateBonus(amount: number, habits: HabitsData | null): {
+export function calculateBonus(
+  amount: number,
+  habits: HabitsData | null
+): {
   bonus: number;
   bonusPercent: number;
   reason: string;
@@ -65,13 +68,13 @@ export function calculateBonus(amount: number, habits: HabitsData | null): {
   switch (habits.tier) {
     case 'whale':
       return {
-        bonus: amount * 0.20,
+        bonus: amount * 0.2,
         bonusPercent: 20,
         reason: 'VIP Whale bonus (20%)',
       };
     case 'high-volume':
       return {
-        bonus: amount * 0.10,
+        bonus: amount * 0.1,
         bonusPercent: 10,
         reason: 'High-volume bonus (10%)',
       };

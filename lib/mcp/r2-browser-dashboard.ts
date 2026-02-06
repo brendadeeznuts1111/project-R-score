@@ -2,7 +2,7 @@
 
 /**
  * 🌐 R2 Browser & Dashboard System
- * 
+ *
  * Comprehensive R2 data visualization, browser interface, and dashboard
  * for the complete FactoryWager ecosystem integration.
  */
@@ -27,11 +27,14 @@ export interface DashboardMetrics {
   timestamp: string;
   totalObjects: number;
   totalSize: number;
-  categories: Record<string, {
-    count: number;
-    size: number;
-    lastUpdated: string;
-  }>;
+  categories: Record<
+    string,
+    {
+      count: number;
+      size: number;
+      lastUpdated: string;
+    }
+  >;
   recentActivity: Array<{
     action: string;
     key: string;
@@ -72,9 +75,9 @@ export class R2BrowserDashboard {
         errorCount: 0,
         performance: {
           avgResponseTime: 0,
-          throughput: 0
-        }
-      }
+          throughput: 0,
+        },
+      },
     };
   }
 
@@ -87,13 +90,13 @@ export class R2BrowserDashboard {
 
     // Test R2 connection
     await this.testR2Connection();
-    
+
     // Load all R2 data
     await this.loadAllR2Data();
-    
+
     // Generate dashboard metrics
     await this.generateMetrics();
-    
+
     // Store dashboard data
     await this.storeDashboardData();
 
@@ -109,7 +112,7 @@ export class R2BrowserDashboard {
     try {
       const configStatus = await this.r2.getConfigStatus();
       this.metrics.systemHealth.r2Connection = configStatus.connected;
-      
+
       if (configStatus.connected) {
         console.log(styled('✅ R2 connection established', 'success'));
       } else {
@@ -129,34 +132,39 @@ export class R2BrowserDashboard {
     console.log(styled('📊 Loading all R2 data...', 'info'));
 
     const categories = {
-      'mcp': { count: 0, size: 0, lastUpdated: '' },
-      'domains': { count: 0, size: 0, lastUpdated: '' },
-      'integrations': { count: 0, size: 0, lastUpdated: '' },
-      'ai': { count: 0, size: 0, lastUpdated: '' },
-      'security': { count: 0, size: 0, lastUpdated: '' },
-      'analytics': { count: 0, size: 0, lastUpdated: '' },
-      'monitoring': { count: 0, size: 0, lastUpdated: '' },
-      'other': { count: 0, size: 0, lastUpdated: '' }
+      mcp: { count: 0, size: 0, lastUpdated: '' },
+      domains: { count: 0, size: 0, lastUpdated: '' },
+      integrations: { count: 0, size: 0, lastUpdated: '' },
+      ai: { count: 0, size: 0, lastUpdated: '' },
+      security: { count: 0, size: 0, lastUpdated: '' },
+      analytics: { count: 0, size: 0, lastUpdated: '' },
+      monitoring: { count: 0, size: 0, lastUpdated: '' },
+      other: { count: 0, size: 0, lastUpdated: '' },
     };
 
     // Simulate loading data from R2 (in production, would list all objects)
     const simulatedData = await this.getSimulatedR2Data();
-    
+
     for (const item of simulatedData) {
       const category = this.categorizeKey(item.key);
       categories[category].count++;
       categories[category].size += item.size;
-      
+
       if (item.lastModified > categories[category].lastUpdated) {
         categories[category].lastUpdated = item.lastModified;
       }
-      
+
       this.metrics.totalObjects++;
       this.metrics.totalSize += item.size;
     }
 
     this.metrics.categories = categories;
-    console.log(styled(`✅ Loaded ${this.metrics.totalObjects} objects across ${Object.keys(categories).length} categories`, 'success'));
+    console.log(
+      styled(
+        `✅ Loaded ${this.metrics.totalObjects} objects across ${Object.keys(categories).length} categories`,
+        'success'
+      )
+    );
   }
 
   /**
@@ -165,36 +173,144 @@ export class R2BrowserDashboard {
   private async getSimulatedR2Data(): Promise<R2DataItem[]> {
     return [
       // MCP data
-      { key: 'mcp/diagnoses/2024-01-01.json', size: 2048, lastModified: new Date().toISOString(), etag: 'abc123', type: 'json' },
-      { key: 'mcp/audits/audit-001.json', size: 1024, lastModified: new Date().toISOString(), etag: 'def456', type: 'json' },
-      { key: 'mcp/metrics/performance.json', size: 4096, lastModified: new Date().toISOString(), etag: 'ghi789', type: 'json' },
-      
+      {
+        key: 'mcp/diagnoses/2024-01-01.json',
+        size: 2048,
+        lastModified: new Date().toISOString(),
+        etag: 'abc123',
+        type: 'json',
+      },
+      {
+        key: 'mcp/audits/audit-001.json',
+        size: 1024,
+        lastModified: new Date().toISOString(),
+        etag: 'def456',
+        type: 'json',
+      },
+      {
+        key: 'mcp/metrics/performance.json',
+        size: 4096,
+        lastModified: new Date().toISOString(),
+        etag: 'ghi789',
+        type: 'json',
+      },
+
       // Domain data
-      { key: 'domains/factory-wager/config.json', size: 3072, lastModified: new Date().toISOString(), etag: 'jkl012', type: 'json' },
-      { key: 'domains/duoplus/config.json', size: 2048, lastModified: new Date().toISOString(), etag: 'mno345', type: 'json' },
-      { key: 'domains/factory-wager/health/status.json', size: 1536, lastModified: new Date().toISOString(), etag: 'pqr678', type: 'json' },
-      
+      {
+        key: 'domains/factory-wager/config.json',
+        size: 3072,
+        lastModified: new Date().toISOString(),
+        etag: 'jkl012',
+        type: 'json',
+      },
+      {
+        key: 'domains/duoplus/config.json',
+        size: 2048,
+        lastModified: new Date().toISOString(),
+        etag: 'mno345',
+        type: 'json',
+      },
+      {
+        key: 'domains/factory-wager/health/status.json',
+        size: 1536,
+        lastModified: new Date().toISOString(),
+        etag: 'pqr678',
+        type: 'json',
+      },
+
       // Integration data
-      { key: 'integrations/cookie-compression/config.json', size: 1024, lastModified: new Date().toISOString(), etag: 'stu901', type: 'json' },
-      { key: 'integrations/secrets-management/status.json', size: 2048, lastModified: new Date().toISOString(), etag: 'vwx234', type: 'json' },
-      { key: 'integrations/advanced-metrics/latest.json', size: 4096, lastModified: new Date().toISOString(), etag: 'yza567', type: 'json' },
-      
+      {
+        key: 'integrations/cookie-compression/config.json',
+        size: 1024,
+        lastModified: new Date().toISOString(),
+        etag: 'stu901',
+        type: 'json',
+      },
+      {
+        key: 'integrations/secrets-management/status.json',
+        size: 2048,
+        lastModified: new Date().toISOString(),
+        etag: 'vwx234',
+        type: 'json',
+      },
+      {
+        key: 'integrations/advanced-metrics/latest.json',
+        size: 4096,
+        lastModified: new Date().toISOString(),
+        etag: 'yza567',
+        type: 'json',
+      },
+
       // AI data
-      { key: 'integrations/ai/configuration.json', size: 3072, lastModified: new Date().toISOString(), etag: 'bcd890', type: 'json' },
-      { key: 'integrations/ai/analyses/factory-wager.com/demo-001.json', size: 5120, lastModified: new Date().toISOString(), etag: 'efg123', type: 'json' },
-      { key: 'integrations/ai/cross-domain-intelligence.json', size: 4096, lastModified: new Date().toISOString(), etag: 'hij456', type: 'json' },
-      
+      {
+        key: 'integrations/ai/configuration.json',
+        size: 3072,
+        lastModified: new Date().toISOString(),
+        etag: 'bcd890',
+        type: 'json',
+      },
+      {
+        key: 'integrations/ai/analyses/factory-wager.com/demo-001.json',
+        size: 5120,
+        lastModified: new Date().toISOString(),
+        etag: 'efg123',
+        type: 'json',
+      },
+      {
+        key: 'integrations/ai/cross-domain-intelligence.json',
+        size: 4096,
+        lastModified: new Date().toISOString(),
+        etag: 'hij456',
+        type: 'json',
+      },
+
       // Security data
-      { key: 'security/master-tokens/tokens.json', size: 2048, lastModified: new Date().toISOString(), etag: 'klm789', type: 'json' },
-      { key: 'security/versioned-secrets/history.json', size: 3072, lastModified: new Date().toISOString(), etag: 'nop012', type: 'json' },
-      
+      {
+        key: 'security/master-tokens/tokens.json',
+        size: 2048,
+        lastModified: new Date().toISOString(),
+        etag: 'klm789',
+        type: 'json',
+      },
+      {
+        key: 'security/versioned-secrets/history.json',
+        size: 3072,
+        lastModified: new Date().toISOString(),
+        etag: 'nop012',
+        type: 'json',
+      },
+
       // Analytics data
-      { key: 'analytics/domain-performance/metrics.json', size: 4096, lastModified: new Date().toISOString(), etag: 'qrs345', type: 'json' },
-      { key: 'analytics/user-behavior/patterns.json', size: 3072, lastModified: new Date().toISOString(), etag: 'tuv678', type: 'json' },
-      
+      {
+        key: 'analytics/domain-performance/metrics.json',
+        size: 4096,
+        lastModified: new Date().toISOString(),
+        etag: 'qrs345',
+        type: 'json',
+      },
+      {
+        key: 'analytics/user-behavior/patterns.json',
+        size: 3072,
+        lastModified: new Date().toISOString(),
+        etag: 'tuv678',
+        type: 'json',
+      },
+
       // Monitoring data
-      { key: 'monitoring/system-health/status.json', size: 2048, lastModified: new Date().toISOString(), etag: 'wxy901', type: 'json' },
-      { key: 'monitoring/alerts/recent.json', size: 1536, lastModified: new Date().toISOString(), etag: 'zab234', type: 'json' }
+      {
+        key: 'monitoring/system-health/status.json',
+        size: 2048,
+        lastModified: new Date().toISOString(),
+        etag: 'wxy901',
+        type: 'json',
+      },
+      {
+        key: 'monitoring/alerts/recent.json',
+        size: 1536,
+        lastModified: new Date().toISOString(),
+        etag: 'zab234',
+        type: 'json',
+      },
     ];
   }
 
@@ -228,26 +344,26 @@ export class R2BrowserDashboard {
         action: 'AI Analysis Completed',
         key: 'integrations/ai/analyses/factory-wager.com/demo-001.json',
         timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString(), // 5 minutes ago
-        size: 5120
+        size: 5120,
       },
       {
         action: 'Domain Health Check',
         key: 'domains/factory-wager/health/status.json',
         timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(), // 15 minutes ago
-        size: 1536
+        size: 1536,
       },
       {
         action: 'Security Token Created',
         key: 'security/master-tokens/tokens.json',
         timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 minutes ago
-        size: 2048
+        size: 2048,
       },
       {
         action: 'Metrics Updated',
         key: 'analytics/domain-performance/metrics.json',
         timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(), // 1 hour ago
-        size: 4096
-      }
+        size: 4096,
+      },
     ];
 
     console.log(styled('✅ Dashboard metrics generated', 'success'));
@@ -262,7 +378,7 @@ export class R2BrowserDashboard {
     try {
       // Store main dashboard data
       await this.r2.putJSON('dashboard/metrics.json', this.metrics);
-      
+
       // Store category breakdown
       const categoryBreakdown = {
         timestamp: new Date().toISOString(),
@@ -273,18 +389,18 @@ export class R2BrowserDashboard {
           category: name,
           count: data.count,
           size: data.size,
-          percentage: ((data.size / this.metrics.totalSize) * 100).toFixed(2)
-        }))
+          percentage: ((data.size / this.metrics.totalSize) * 100).toFixed(2),
+        })),
       };
-      
+
       await this.r2.putJSON('dashboard/categories.json', categoryBreakdown);
-      
+
       // Store recent activity
       await this.r2.putJSON('dashboard/activity.json', this.metrics.recentActivity);
-      
+
       // Store system health
       await this.r2.putJSON('dashboard/health.json', this.metrics.systemHealth);
-      
+
       console.log(styled('✅ Dashboard data stored in R2', 'success'));
     } catch (error) {
       console.log(styled(`❌ Failed to store dashboard data: ${error.message}`, 'error'));
@@ -429,7 +545,9 @@ export class R2BrowserDashboard {
             <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-lg font-medium mb-4">Recent Activity</h3>
                 <div class="space-y-3">
-                    ${this.metrics.recentActivity.map(activity => `
+                    ${this.metrics.recentActivity
+                      .map(
+                        activity => `
                         <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                             <div class="flex items-center">
                                 <div class="w-2 h-2 bg-fw-success rounded-full mr-3"></div>
@@ -443,7 +561,9 @@ export class R2BrowserDashboard {
                                 ${activity.size ? `<p class="text-xs fw-muted">${activity.size} bytes</p>` : ''}
                             </div>
                         </div>
-                    `).join('')}
+                    `
+                      )
+                      .join('')}
                 </div>
             </div>
         </div>
@@ -465,7 +585,9 @@ export class R2BrowserDashboard {
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        ${Object.entries(this.metrics.categories).map(([category, data]) => `
+                        ${Object.entries(this.metrics.categories)
+                          .map(
+                            ([category, data]) => `
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 fw-primary">
@@ -483,7 +605,9 @@ export class R2BrowserDashboard {
                                     </button>
                                 </td>
                             </tr>
-                        `).join('')}
+                        `
+                          )
+                          .join('')}
                     </tbody>
                 </table>
             </div>
@@ -555,8 +679,8 @@ export class R2BrowserDashboard {
     console.log(styled(`🔍 Browsing category: ${category}`, 'info'));
 
     // In production, would fetch actual R2 data for the category
-    const categoryData = this.getSimulatedR2Data().filter(item => 
-      this.categorizeKey(item.key) === category
+    const categoryData = this.getSimulatedR2Data().filter(
+      item => this.categorizeKey(item.key) === category
     );
 
     return categoryData;
@@ -572,13 +696,13 @@ export class R2BrowserDashboard {
       // In production, would fetch actual object from R2
       const simulatedData = this.getSimulatedR2Data();
       const item = simulatedData.find(item => item.key === key);
-      
+
       if (item) {
         // Add simulated content
         item.content = { message: `Content for ${key}`, timestamp: new Date().toISOString() };
         return item;
       }
-      
+
       return null;
     } catch (error) {
       console.log(styled(`❌ Failed to get object: ${error.message}`, 'error'));
@@ -598,23 +722,27 @@ export class R2BrowserDashboard {
    */
   getR2BrowserURL(category?: string, objectKey?: string): string {
     const fragment: Record<string, string> = {};
-    
+
     if (objectKey) {
       fragment.key = objectKey;
       fragment.view = 'object';
       fragment.timestamp = new Date().toISOString();
     }
-    
+
     return FactoryWagerURLUtils.createR2BrowserURL(category, fragment);
   }
 
   /**
    * Parse dashboard URL fragments
    */
-  parseDashboardURL(url: string): { valid: boolean; section?: string; fragment?: Record<string, string> } {
+  parseDashboardURL(url: string): {
+    valid: boolean;
+    section?: string;
+    fragment?: Record<string, string>;
+  } {
     try {
       const parsed = URLHandler.parse(url);
-      
+
       if (!FactoryWagerURLUtils.validateFactoryWagerURL(url)) {
         return { valid: false };
       }
@@ -624,16 +752,15 @@ export class R2BrowserDashboard {
         return { valid: false };
       }
 
-      const fragment = parsed.hasFragment() 
+      const fragment = parsed.hasFragment()
         ? URLFragmentUtils.parseFragment(parsed.fragment)
         : undefined;
 
       return {
         valid: true,
         section: parsed.pathname.replace(/^\//, '') || undefined,
-        fragment
+        fragment,
       };
-
     } catch (error) {
       handleError(error, 'R2BrowserDashboard.parseDashboardURL', 'medium');
       return { valid: false };
@@ -650,37 +777,37 @@ export class R2BrowserDashboard {
   /**
    * Generate navigation links with proper fragments
    */
-  generateNavigationLinks(): Array<{ 
-    name: string; 
-    url: string; 
-    fragment?: Record<string, string> 
+  generateNavigationLinks(): Array<{
+    name: string;
+    url: string;
+    fragment?: Record<string, string>;
   }> {
     const links = [
       {
         name: 'Dashboard',
         url: this.getDashboardURL(),
-        fragment: { section: 'overview' }
+        fragment: { section: 'overview' },
       },
       {
         name: 'Diagnoses',
         url: this.getR2BrowserURL('diagnoses'),
-        fragment: { view: 'list', sort: 'timestamp' }
+        fragment: { view: 'list', sort: 'timestamp' },
       },
       {
         name: 'Audits',
         url: this.getR2BrowserURL('audits'),
-        fragment: { view: 'list', sort: 'timestamp' }
+        fragment: { view: 'list', sort: 'timestamp' },
       },
       {
         name: 'Metrics',
         url: this.getR2BrowserURL('metrics'),
-        fragment: { view: 'analytics' }
+        fragment: { view: 'analytics' },
       },
       {
         name: 'Analytics',
         url: this.getDashboardURL('analytics'),
-        fragment: { tab: 'overview', period: '7d' }
-      }
+        fragment: { tab: 'overview', period: '7d' },
+      },
     ];
 
     return links;
@@ -691,19 +818,19 @@ export class R2BrowserDashboard {
    */
   generateHTMLWithNavigation(): string {
     const navigation = this.generateNavigationLinks();
-    const navHTML = navigation.map(link => {
-      const fragmentStr = link.fragment 
-        ? URLFragmentUtils.buildFragment(link.fragment)
-        : '';
-      
-      return `
+    const navHTML = navigation
+      .map(link => {
+        const fragmentStr = link.fragment ? URLFragmentUtils.buildFragment(link.fragment) : '';
+
+        return `
         <a href="${link.url}${fragmentStr}" 
            class="nav-link" 
            data-section="${link.name.toLowerCase()}">
           ${link.name}
         </a>
       `;
-    }).join('');
+      })
+      .join('');
 
     return `
       <nav class="dashboard-nav">
@@ -720,14 +847,21 @@ export class R2BrowserDashboard {
     console.log(styled('=================================', 'accent'));
 
     console.log(styled('\n🔧 System Components:', 'info'));
-    console.log(styled(`  🌐 R2 Connection: ${this.metrics.systemHealth.r2Connection ? '✅ Active' : '❌ Inactive'}`, this.metrics.systemHealth.r2Connection ? 'success' : 'error'));
+    console.log(
+      styled(
+        `  🌐 R2 Connection: ${this.metrics.systemHealth.r2Connection ? '✅ Active' : '❌ Inactive'}`,
+        this.metrics.systemHealth.r2Connection ? 'success' : 'error'
+      )
+    );
     console.log(styled(`  📊 Dashboard: ✅ Generated`, 'success'));
     console.log(styled(`  🔍 Browser: ✅ Ready`, 'success'));
     console.log(styled(`  📈 Metrics: ✅ Collected`, 'success'));
 
     console.log(styled('\n📊 Storage Overview:', 'info'));
     console.log(styled(`  Total Objects: ${this.metrics.totalObjects.toLocaleString()}`, 'muted'));
-    console.log(styled(`  Total Size: ${(this.metrics.totalSize / 1024 / 1024).toFixed(2)} MB`, 'muted'));
+    console.log(
+      styled(`  Total Size: ${(this.metrics.totalSize / 1024 / 1024).toFixed(2)} MB`, 'muted')
+    );
     console.log(styled(`  Categories: ${Object.keys(this.metrics.categories).length}`, 'muted'));
 
     console.log(styled('\n📂 Category Breakdown:', 'info'));
@@ -736,13 +870,28 @@ export class R2BrowserDashboard {
         console.log(styled(`  ${category}:`, 'muted'));
         console.log(styled(`    Objects: ${data.count}`, 'muted'));
         console.log(styled(`    Size: ${(data.size / 1024).toFixed(2)} KB`, 'muted'));
-        console.log(styled(`    Last Updated: ${data.lastUpdated ? new Date(data.lastUpdated).toLocaleString() : 'Never'}`, 'muted'));
+        console.log(
+          styled(
+            `    Last Updated: ${data.lastUpdated ? new Date(data.lastUpdated).toLocaleString() : 'Never'}`,
+            'muted'
+          )
+        );
       }
     }
 
     console.log(styled('\n⚡ Performance:', 'info'));
-    console.log(styled(`  Response Time: ${this.metrics.systemHealth.performance.avgResponseTime.toFixed(0)}ms`, 'muted'));
-    console.log(styled(`  Throughput: ${this.metrics.systemHealth.performance.throughput.toFixed(0)} ops/sec`, 'muted'));
+    console.log(
+      styled(
+        `  Response Time: ${this.metrics.systemHealth.performance.avgResponseTime.toFixed(0)}ms`,
+        'muted'
+      )
+    );
+    console.log(
+      styled(
+        `  Throughput: ${this.metrics.systemHealth.performance.throughput.toFixed(0)} ops/sec`,
+        'muted'
+      )
+    );
     console.log(styled(`  Error Count: ${this.metrics.systemHealth.errorCount}`, 'muted'));
 
     console.log(styled('\n🔗 Access URLs:', 'info'));
@@ -758,11 +907,11 @@ export const r2BrowserDashboard = new R2BrowserDashboard();
 // CLI interface
 if (import.meta.main) {
   const dashboard = r2BrowserDashboard;
-  
+
   await dashboard.initialize();
   await dashboard.generateHTMLDashboard();
   await dashboard.displayStatus();
-  
+
   console.log(styled('\n🎉 R2 Browser & Dashboard complete!', 'success'));
   console.log(styled('Access your dashboard at: https://dashboard.factory-wager.com 🌐', 'info'));
 }

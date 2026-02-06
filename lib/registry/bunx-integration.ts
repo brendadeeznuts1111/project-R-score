@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * 🚀 bun x Integration for Registry Packages
- * 
+ *
  * Features:
  * - Execute packages from private registry
  * - Version resolution with bun.semver
@@ -79,7 +79,7 @@ export class BunXIntegration {
 
       // Check cache
       let cached = await this.getCachedPackage(pkgName, resolvedVersion);
-      
+
       if (!cached || options.force) {
         // Download and cache
         cached = await this.downloadAndCache(pkgName, resolvedVersion);
@@ -107,7 +107,7 @@ export class BunXIntegration {
   async resolveVersion(pkgName: string, range?: string): Promise<string | null> {
     // Get available versions from registry
     const versions = await this.getPackageVersions(pkgName);
-    
+
     if (versions.length === 0) {
       return null;
     }
@@ -120,7 +120,7 @@ export class BunXIntegration {
     try {
       const validVersions = versions.filter(v => semver.valid(v));
       const maxSatisfying = semver.maxSatisfying?.(validVersions, range);
-      
+
       if (maxSatisfying) {
         return maxSatisfying;
       }
@@ -141,7 +141,7 @@ export class BunXIntegration {
    */
   async getPackageVersions(pkgName: string): Promise<string[]> {
     const cacheKey = `versions:${pkgName}`;
-    
+
     if (this.metadataCache.has(cacheKey)) {
       return this.metadataCache.get(cacheKey);
     }
@@ -149,9 +149,9 @@ export class BunXIntegration {
     try {
       const registry = process.env.REGISTRY_URL || 'https://npm.factory-wager.com';
       const credentials = await this.secretsManager.getRegistryCredentials(registry);
-      
+
       const headers: Record<string, string> = {
-        'Accept': 'application/json',
+        Accept: 'application/json',
       };
 
       if (credentials?.token) {
@@ -159,14 +159,14 @@ export class BunXIntegration {
       }
 
       const response = await fetch(`${registry}/${pkgName}`, { headers });
-      
+
       if (!response.ok) {
         return [];
       }
 
       const manifest = await response.json();
       const versions = Object.keys(manifest.versions || {});
-      
+
       // Sort by semver (highest first)
       versions.sort((a, b) => {
         const semverA = semver.parse?.(a);
@@ -192,10 +192,10 @@ export class BunXIntegration {
     try {
       const registry = process.env.REGISTRY_URL || 'https://npm.factory-wager.com';
       const credentials = await this.secretsManager.getRegistryCredentials(registry);
-      
+
       // Get manifest
       const manifestResponse = await fetch(`${registry}/${pkgName}`, {
-        headers: credentials?.token ? { 'Authorization': `Bearer ${credentials.token}` } : {},
+        headers: credentials?.token ? { Authorization: `Bearer ${credentials.token}` } : {},
       });
 
       if (!manifestResponse.ok) {
@@ -204,7 +204,7 @@ export class BunXIntegration {
 
       const manifest = await manifestResponse.json();
       const versionData = manifest.versions?.[version];
-      
+
       if (!versionData?.dist?.tarball) {
         return null;
       }
@@ -214,7 +214,7 @@ export class BunXIntegration {
       console.log(styled(`📥 Downloading from ${tarballUrl}`, 'info'));
 
       const tarballResponse = await fetch(tarballUrl, {
-        headers: credentials?.token ? { 'Authorization': `Bearer ${credentials.token}` } : {},
+        headers: credentials?.token ? { Authorization: `Bearer ${credentials.token}` } : {},
       });
 
       if (!tarballResponse.ok) {
@@ -261,7 +261,7 @@ export class BunXIntegration {
     try {
       const metadataPath = `${this.cacheDir}/.${pkgName}@${version}.json`;
       const metadata = await Bun.file(metadataPath).json();
-      
+
       if (metadata) {
         // Verify still exists
         const exists = await Bun.file(metadata.path).exists();
@@ -269,7 +269,7 @@ export class BunXIntegration {
           return metadata as CachedPackage;
         }
       }
-      
+
       return null;
     } catch {
       return null;
@@ -298,10 +298,10 @@ export class BunXIntegration {
   private async extractTarball(tarballPath: string, destPath: string): Promise<void> {
     // Ensure cache directory exists
     await Bun.$`mkdir -p ${destPath}`;
-    
+
     // Extract using tar
     await Bun.$`tar -xzf ${tarballPath} -C ${destPath} --strip-components=1`;
-    
+
     // Remove tarball
     await Bun.$`rm ${tarballPath}`;
   }
@@ -311,7 +311,7 @@ export class BunXIntegration {
    */
   private async findBinPath(cachePath: string, manifest: any): Promise<string | undefined> {
     const packageJsonPath = `${cachePath}/package.json`;
-    
+
     try {
       const packageJson = await Bun.file(packageJsonPath).json();
       const bin = packageJson.bin;
@@ -345,7 +345,7 @@ export class BunXIntegration {
    * Run the package
    */
   private async runPackage(
-    cached: CachedPackage, 
+    cached: CachedPackage,
     args: string[],
     quiet?: boolean
   ): Promise<{ exitCode: number; output?: string }> {
@@ -363,7 +363,7 @@ export class BunXIntegration {
       });
 
       const exitCode = await proc.exited;
-      
+
       return { exitCode };
     } catch (error) {
       console.error(styled(`❌ Execution failed: ${error.message}`, 'error'));
@@ -376,9 +376,7 @@ export class BunXIntegration {
    */
   async cleanCache(maxAgeDays: number = 30): Promise<number> {
     try {
-      const entries = await Array.fromAsync(
-        new Bun.Glob(`${this.cacheDir}/.*.json`).scan()
-      );
+      const entries = await Array.fromAsync(new Bun.Glob(`${this.cacheDir}/.*.json`).scan());
 
       let cleaned = 0;
       const maxAge = maxAgeDays * 24 * 60 * 60 * 1000;
@@ -386,7 +384,7 @@ export class BunXIntegration {
       for (const entry of entries) {
         const metadata = await Bun.file(entry).json();
         const lastUsed = new Date(metadata.lastUsed).getTime();
-        
+
         if (Date.now() - lastUsed > maxAge) {
           // Remove cached package
           await Bun.$`rm -rf ${metadata.path}`;
@@ -408,9 +406,7 @@ export class BunXIntegration {
    */
   async listCache(): Promise<CachedPackage[]> {
     try {
-      const entries = await Array.fromAsync(
-        new Bun.Glob(`${this.cacheDir}/.*.json`).scan()
-      );
+      const entries = await Array.fromAsync(new Bun.Glob(`${this.cacheDir}/.*.json`).scan());
 
       const packages: CachedPackage[] = [];
       for (const entry of entries) {
@@ -418,8 +414,8 @@ export class BunXIntegration {
         packages.push(metadata);
       }
 
-      return packages.sort((a, b) => 
-        new Date(b.lastUsed).getTime() - new Date(a.lastUsed).getTime()
+      return packages.sort(
+        (a, b) => new Date(b.lastUsed).getTime() - new Date(a.lastUsed).getTime()
       );
     } catch {
       return [];
@@ -459,7 +455,7 @@ if (import.meta.main) {
     case 'resolve': {
       const pkgSpec = args[1];
       const range = args[2];
-      
+
       if (!pkgSpec) {
         console.error(styled('Usage: bunx resolve <package> [range]', 'error'));
         process.exit(1);
@@ -479,11 +475,13 @@ if (import.meta.main) {
     case 'cache': {
       const packages = await bunx.listCache();
       console.log(styled(`\n📦 Cached Packages (${packages.length}):`, 'info'));
-      
+
       for (const pkg of packages) {
         const size = (pkg.size / 1024 / 1024).toFixed(2);
         const lastUsed = new Date(pkg.lastUsed).toLocaleDateString();
-        console.log(styled(`  • ${pkg.name}@${pkg.version} (${size} MB) - Last used: ${lastUsed}`, 'muted'));
+        console.log(
+          styled(`  • ${pkg.name}@${pkg.version} (${size} MB) - Last used: ${lastUsed}`, 'muted')
+        );
       }
       break;
     }

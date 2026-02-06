@@ -1,7 +1,6 @@
 // lib/ansi-dashboard.ts
 import { CONTENT_TYPES } from '../config/content-types';
 
-
 // Mock metrics feed (would integrate with your tier1380-metrics.ts)
 interface MetricsData {
   rscore: {
@@ -20,19 +19,20 @@ const mockMetrics: MetricsData = {
   rscore: {
     current: 0.874,
     components: {
-      p_ratio: 1.000,
-      m_impact: 0.590,
+      p_ratio: 1.0,
+      m_impact: 0.59,
       s_hardening: 0.982,
-      e_elimination: 0.875
-    }
+      e_elimination: 0.875,
+    },
   },
-  timestamp: new Date().toISOString()
+  timestamp: new Date().toISOString(),
 };
 
 export function renderMetricsANSI(): string {
   const latest = mockMetrics;
-  
-  return Bun.markdown.render(`
+
+  return Bun.markdown.render(
+    `
 # R-Score Performance Report
 
 ## Current Metrics
@@ -46,27 +46,30 @@ export function renderMetricsANSI(): string {
 **Total R-Score: ${latest.rscore.current.toFixed(3)}**
 
 *Generated: ${latest.timestamp}*
-  `, {
-    heading: (children, { level }) => {
-      const colors = ['\x1b[1;36m', '\x1b[1;35m', '\x1b[1;33m', '\x1b[1;32m'];
-      return `${colors[level-1] || '\x1b[1m'}${children}\x1b[0m\n`;
-    },
-    paragraph: children => children + '\n',
-    strong: children => `\x1b[1m${children}\x1b[22m`,
-    table: children => children,
-    td: children => {
-      // Color code based on content
-      if (children.includes('✅')) return `\x1b[32m${children}\x1b[0m | `;
-      if (children.includes('⚠️')) return `\x1b[33m${children}\x1b[0m | `;
-      return `\x1b[37m${children}\x1b[0m | `;
-    },
-    th: children => `\x1b[1;4m${children}\x1b[0m | `,
-    tr: children => `| ${children}\n`,
-  });
+  `,
+    {
+      heading: (children, { level }) => {
+        const colors = ['\x1b[1;36m', '\x1b[1;35m', '\x1b[1;33m', '\x1b[1;32m'];
+        return `${colors[level - 1] || '\x1b[1m'}${children}\x1b[0m\n`;
+      },
+      paragraph: children => children + '\n',
+      strong: children => `\x1b[1m${children}\x1b[22m`,
+      table: children => children,
+      td: children => {
+        // Color code based on content
+        if (children.includes('✅')) return `\x1b[32m${children}\x1b[0m | `;
+        if (children.includes('⚠️')) return `\x1b[33m${children}\x1b[0m | `;
+        return `\x1b[37m${children}\x1b[0m | `;
+      },
+      th: children => `\x1b[1;4m${children}\x1b[0m | `,
+      tr: children => `| ${children}\n`,
+    }
+  );
 }
 
 export function renderProjectDashboardANSI(): string {
-  return Bun.markdown.render(`
+  return Bun.markdown.render(
+    `
 # 🗂️ Project Management Dashboard
 
 ## Active Services
@@ -85,23 +88,26 @@ export function renderProjectDashboardANSI(): string {
 - **Start Services**: bun run dev && bun run start:content-type
 
 *Last updated: ${new Date().toISOString()}*
-  `, {
-    heading: (children, { level }) => {
-      const colors = ['\x1b[1;36m', '\x1b[1;35m', '\x1b[1;33m'];
-      return `${colors[level-1] || '\x1b[1m'}${children}\x1b[0m\n`;
-    },
-    paragraph: children => children + '\n',
-    strong: children => `\x1b[1m${children}\x1b[22m`,
-    table: children => children,
-    td: children => {
-      if (children.includes('✅')) return `\x1b[32m${children}\x1b[0m | `;
-      if (children.includes('🟡')) return `\x1b[33m${children}\x1b[0m | `;
-      if (children.includes('3000') || children.includes('3001')) return `\x1b[34m${children}\x1b[0m | `;
-      return `\x1b[37m${children}\x1b[0m | `;
-    },
-    th: children => `\x1b[1;4m${children}\x1b[0m | `,
-    tr: children => `| ${children}\n`,
-  });
+  `,
+    {
+      heading: (children, { level }) => {
+        const colors = ['\x1b[1;36m', '\x1b[1;35m', '\x1b[1;33m'];
+        return `${colors[level - 1] || '\x1b[1m'}${children}\x1b[0m\n`;
+      },
+      paragraph: children => children + '\n',
+      strong: children => `\x1b[1m${children}\x1b[22m`,
+      table: children => children,
+      td: children => {
+        if (children.includes('✅')) return `\x1b[32m${children}\x1b[0m | `;
+        if (children.includes('🟡')) return `\x1b[33m${children}\x1b[0m | `;
+        if (children.includes('3000') || children.includes('3001'))
+          return `\x1b[34m${children}\x1b[0m | `;
+        return `\x1b[37m${children}\x1b[0m | `;
+      },
+      th: children => `\x1b[1;4m${children}\x1b[0m | `,
+      tr: children => `| ${children}\n`,
+    }
+  );
 }
 
 // Live dashboard that updates every 5 seconds

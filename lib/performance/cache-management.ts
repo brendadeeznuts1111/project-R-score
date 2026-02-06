@@ -1,6 +1,6 @@
 /**
  * Advanced Cache Management with Eviction Policies
- * 
+ *
  * Implements LRU, TTL-based, and size-limited caching with automatic cleanup
  */
 
@@ -55,7 +55,7 @@ export class AdvancedCache<T> {
       ttl: 5 * 60 * 1000, // 5 minutes default
       cleanupInterval: 60 * 1000, // 1 minute default
       evictionPolicy: 'lru',
-      ...options
+      ...options,
     };
 
     // Start periodic cleanup
@@ -67,7 +67,7 @@ export class AdvancedCache<T> {
    */
   get(key: string): T | undefined {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       this.missCount++;
       return undefined;
@@ -111,7 +111,7 @@ export class AdvancedCache<T> {
       timestamp: now,
       accessCount: 1,
       lastAccessed: now,
-      size
+      size,
     };
 
     this.cache.set(key, entry);
@@ -137,12 +137,12 @@ export class AdvancedCache<T> {
   has(key: string): boolean {
     const entry = this.cache.get(key);
     if (!entry) return false;
-    
+
     if (this.isExpired(entry)) {
       this.delete(key);
       return false;
     }
-    
+
     return true;
   }
 
@@ -169,7 +169,7 @@ export class AdvancedCache<T> {
       hitCount: this.hitCount,
       missCount: this.missCount,
       hitRate: totalRequests > 0 ? this.hitCount / totalRequests : 0,
-      evictions: this.evictionCount
+      evictions: this.evictionCount,
     };
   }
 
@@ -205,7 +205,7 @@ export class AdvancedCache<T> {
       clearInterval(this.cleanupInterval);
       this.cleanupInterval = undefined;
     }
-    
+
     this.clear();
     console.log('🗑️ Cache destroyed and resources cleaned up');
   }
@@ -248,7 +248,8 @@ export class AdvancedCache<T> {
     // Evict based on size limits
     while (
       (this.options.maxSize > 0 && this.cache.size >= this.options.maxSize) ||
-      (this.options.maxMemorySize > 0 && this.memoryUsage + requiredSize > this.options.maxMemorySize)
+      (this.options.maxMemorySize > 0 &&
+        this.memoryUsage + requiredSize > this.options.maxMemorySize)
     ) {
       this.evictEntry();
     }
@@ -266,15 +267,15 @@ export class AdvancedCache<T> {
       case 'lru':
         keyToEvict = this.accessOrder[0];
         break;
-      
+
       case 'lfu':
         keyToEvict = this.findLeastFrequentlyUsed();
         break;
-      
+
       case 'ttl':
         keyToEvict = this.findOldestEntry();
         break;
-      
+
       case 'size':
         keyToEvict = this.findLargestEntry();
         break;
@@ -342,11 +343,11 @@ export class AdvancedCache<T> {
    */
   private calculateSize(value: T): number {
     if (value === null || value === undefined) return 0;
-    
+
     if (typeof value === 'string') {
       return value.length * 2; // UTF-16 characters
     }
-    
+
     if (typeof value === 'object') {
       try {
         return JSON.stringify(value).length * 2;
@@ -354,7 +355,7 @@ export class AdvancedCache<T> {
         return 1024; // Fallback size
       }
     }
-    
+
     return 8; // Primitive types
   }
 
@@ -384,7 +385,7 @@ export class CacheFactory {
       maxSize: 500,
       maxMemorySize: 100 * 1024 * 1024, // 100MB
       ttl: 5 * 60 * 1000, // 5 minutes
-      evictionPolicy: 'lru'
+      evictionPolicy: 'lru',
     });
   }
 
@@ -396,7 +397,7 @@ export class CacheFactory {
       maxSize: 1000,
       maxMemorySize: 50 * 1024 * 1024, // 50MB
       ttl: 30 * 60 * 1000, // 30 minutes
-      evictionPolicy: 'lfu'
+      evictionPolicy: 'lfu',
     });
   }
 
@@ -408,7 +409,7 @@ export class CacheFactory {
       maxSize: 10000,
       maxMemorySize: 10 * 1024 * 1024, // 10MB
       ttl: 10 * 60 * 1000, // 10 minutes
-      evictionPolicy: 'ttl'
+      evictionPolicy: 'ttl',
     });
   }
 
@@ -420,7 +421,7 @@ export class CacheFactory {
       maxSize: 100,
       maxMemorySize: 10 * 1024 * 1024, // 10MB
       ttl: 60 * 1000, // 1 minute
-      evictionPolicy: 'lru'
+      evictionPolicy: 'lru',
     });
   }
 }

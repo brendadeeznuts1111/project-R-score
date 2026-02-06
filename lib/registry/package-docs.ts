@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * 📚 Package Documentation Fetcher
- * 
+ *
  * Fetches and caches package documentation from npm, GitHub, and other sources.
  * Integrates with R2 for cross-device sync and caching.
  */
@@ -42,9 +42,24 @@ export interface PackageManager {
 }
 
 export const PACKAGE_MANAGERS: PackageManager[] = [
-  { name: 'npm', registry: 'https://registry.npmjs.org', lockfile: 'package-lock.json', command: 'npm' },
-  { name: 'yarn', registry: 'https://registry.yarnpkg.com', lockfile: 'yarn.lock', command: 'yarn' },
-  { name: 'pnpm', registry: 'https://registry.npmjs.org', lockfile: 'pnpm-lock.yaml', command: 'pnpm' },
+  {
+    name: 'npm',
+    registry: 'https://registry.npmjs.org',
+    lockfile: 'package-lock.json',
+    command: 'npm',
+  },
+  {
+    name: 'yarn',
+    registry: 'https://registry.yarnpkg.com',
+    lockfile: 'yarn.lock',
+    command: 'yarn',
+  },
+  {
+    name: 'pnpm',
+    registry: 'https://registry.npmjs.org',
+    lockfile: 'pnpm-lock.yaml',
+    command: 'pnpm',
+  },
   { name: 'bun', registry: 'https://registry.npmjs.org', lockfile: 'bun.lock', command: 'bun' },
 ];
 
@@ -65,16 +80,16 @@ export class PackageDocumentationFetcher {
    * Fetch documentation for a package
    */
   async fetchDocs(
-    packageName: string, 
+    packageName: string,
     version?: string,
-    options: { 
+    options: {
       forceRefresh?: boolean;
       preferCached?: boolean;
       ttl?: number;
     } = {}
   ): Promise<PackageDoc | null> {
     const cacheKey = `${packageName}@${version || 'latest'}`;
-    
+
     // Try R2 cache first
     if (!options.forceRefresh) {
       const cached = await this.getCachedDocs(cacheKey);
@@ -91,12 +106,12 @@ export class PackageDocumentationFetcher {
     // Fetch from npm registry
     try {
       const doc = await this.fetchFromNpm(packageName, version);
-      
+
       if (doc) {
         // Cache in R2
         await this.cacheDocs(cacheKey, doc, options.ttl || this.defaultTtl);
       }
-      
+
       return doc;
     } catch (error) {
       console.error(styled(`❌ Failed to fetch docs: ${error.message}`, 'error'));
@@ -109,7 +124,7 @@ export class PackageDocumentationFetcher {
    */
   private async fetchFromNpm(packageName: string, version?: string): Promise<PackageDoc | null> {
     const registryUrl = process.env.NPM_REGISTRY || 'https://registry.npmjs.org';
-    const url = version 
+    const url = version
       ? `${registryUrl}/${packageName}/${version}`
       : `${registryUrl}/${packageName}`;
 
@@ -117,7 +132,7 @@ export class PackageDocumentationFetcher {
 
     const response = await fetch(url, {
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'User-Agent': 'factorywager-docs-fetcher/1.0',
       },
     });
@@ -134,10 +149,11 @@ export class PackageDocumentationFetcher {
     const versionData = data.versions?.[pkgVersion] || data;
 
     // Fetch README from unpkg for better formatting
-    const readme = await this.fetchReadme(packageName, pkgVersion) || 
-                   data.readme || 
-                   versionData.readme || 
-                   'No README available';
+    const readme =
+      (await this.fetchReadme(packageName, pkgVersion)) ||
+      data.readme ||
+      versionData.readme ||
+      'No README available';
 
     return {
       name: packageName,
@@ -147,13 +163,9 @@ export class PackageDocumentationFetcher {
       metadata: {
         description: data.description || versionData.description,
         homepage: data.homepage || versionData.homepage,
-        repository: typeof data.repository === 'string' 
-          ? data.repository 
-          : data.repository?.url,
+        repository: typeof data.repository === 'string' ? data.repository : data.repository?.url,
         license: data.license || versionData.license,
-        author: typeof data.author === 'string' 
-          ? data.author 
-          : data.author?.name,
+        author: typeof data.author === 'string' ? data.author : data.author?.name,
         keywords: data.keywords || versionData.keywords,
       },
       fetchedAt: new Date().toISOString(),
@@ -167,20 +179,20 @@ export class PackageDocumentationFetcher {
   private async fetchReadme(packageName: string, version: string): Promise<string | null> {
     try {
       const url = `https://unpkg.com/${packageName}@${version}/README.md`;
-      const response = await fetch(url, { 
-        headers: { 'User-Agent': 'factorywager-docs-fetcher/1.0' }
+      const response = await fetch(url, {
+        headers: { 'User-Agent': 'factorywager-docs-fetcher/1.0' },
       });
-      
+
       if (response.ok) {
         return await response.text();
       }
 
       // Try lowercase
       const url2 = `https://unpkg.com/${packageName}@${version}/readme.md`;
-      const response2 = await fetch(url2, { 
-        headers: { 'User-Agent': 'factorywager-docs-fetcher/1.0' }
+      const response2 = await fetch(url2, {
+        headers: { 'User-Agent': 'factorywager-docs-fetcher/1.0' },
       });
-      
+
       if (response2.ok) {
         return await response2.text();
       }
@@ -216,7 +228,7 @@ export class PackageDocumentationFetcher {
 
       // Store in R2
       // await this.r2Storage.putJSON(`${key}.json`, cacheEntry);
-      
+
       console.log(styled(`💾 Cached: ${key}`, 'muted'));
     } catch (error) {
       console.warn(styled(`⚠️ Failed to cache: ${error.message}`, 'warning'));
@@ -226,20 +238,25 @@ export class PackageDocumentationFetcher {
   /**
    * Search packages across registries
    */
-  async searchPackages(query: string, limit: number = 20): Promise<Array<{
-    name: string;
-    description: string;
-    version: string;
-    keywords?: string[];
-  }>> {
+  async searchPackages(
+    query: string,
+    limit: number = 20
+  ): Promise<
+    Array<{
+      name: string;
+      description: string;
+      version: string;
+      keywords?: string[];
+    }>
+  > {
     const registryUrl = process.env.NPM_REGISTRY || 'https://registry.npmjs.org';
-    
+
     try {
       const response = await fetch(
         `${registryUrl}/-/v1/search?text=${encodeURIComponent(query)}&size=${limit}`,
         {
           headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
             'User-Agent': 'factorywager-docs-fetcher/1.0',
           },
         }
@@ -250,7 +267,7 @@ export class PackageDocumentationFetcher {
       }
 
       const data = await response.json();
-      
+
       return data.objects.map((obj: any) => ({
         name: obj.package.name,
         description: obj.package.description,
@@ -266,11 +283,13 @@ export class PackageDocumentationFetcher {
   /**
    * Get installed packages from local project
    */
-  async getLocalPackages(projectPath: string = '.'): Promise<Array<{
-    name: string;
-    version: string;
-    isDev?: boolean;
-  }>> {
+  async getLocalPackages(projectPath: string = '.'): Promise<
+    Array<{
+      name: string;
+      version: string;
+      isDev?: boolean;
+    }>
+  > {
     try {
       const packageJsonPath = `${projectPath}/package.json`;
       const packageJson = await Bun.file(packageJsonPath).json();
@@ -439,7 +458,7 @@ if (import.meta.main) {
     case 'fetch': {
       const packageName = args[1];
       const version = args[2];
-      
+
       if (!packageName) {
         console.error(styled('Usage: package-docs fetch <package> [version]', 'error'));
         process.exit(1);
@@ -467,7 +486,7 @@ if (import.meta.main) {
 
       const results = await fetcher.searchPackages(query, 10);
       console.log(styled(`\n🔍 Search results for "${query}":`, 'info'));
-      
+
       for (const pkg of results) {
         console.log(styled(`\n  📦 ${pkg.name}@${pkg.version}`, 'success'));
         console.log(styled(`     ${pkg.description || 'No description'}`, 'muted'));
@@ -478,9 +497,9 @@ if (import.meta.main) {
     case 'local': {
       const projectPath = args[1] || '.';
       const packages = await fetcher.getLocalPackages(projectPath);
-      
+
       console.log(styled(`\n📦 Installed packages (${packages.length}):`, 'info'));
-      
+
       for (const pkg of packages) {
         const devBadge = pkg.isDev ? styled(' [dev]', 'warning') : '';
         console.log(styled(`  • ${pkg.name}@${pkg.version}${devBadge}`, 'muted'));

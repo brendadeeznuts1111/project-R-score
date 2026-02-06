@@ -1,10 +1,10 @@
 /**
  * Enterprise Documentation Constants and URL Management
- * 
+ *
  * Centralized, enterprise-grade documentation URL management with
  * type safety, validation, and comprehensive coverage of all
  * enterprise documentation resources.
- * 
+ *
  * @version 1.0.0
  * @author Enterprise Platform Team
  */
@@ -14,8 +14,8 @@ import { createValidationError, EnterpriseErrorCode } from './core-errors';
 import {
   ENTERPRISE_DOCUMENTATION_BASE_URLS as _CANONICAL_URLS,
   SIGNIFICANT_COMMITS as _CANONICAL_COMMITS,
-  TEXT_FRAGMENT_PATTERNS as _CANONICAL_FRAGMENTS,
 } from '../documentation/constants/domains';
+import { TEXT_FRAGMENT_PATTERNS as _CANONICAL_FRAGMENTS } from '../documentation/constants/fragments';
 
 // ============================================================================
 // DOCUMENTATION PROVIDERS ENUM
@@ -26,30 +26,30 @@ import {
  */
 export enum DocumentationProvider {
   // Primary documentation sources
-  BUN_OFFICIAL = 'bun_official',        // bun.sh/docs - Technical docs
-  BUN_REFERENCE = 'bun_reference',      // bun.com/reference - API reference portal
-  BUN_GUIDES = 'bun_guides',            // bun.com/guides - Tutorials & guides
-  BUN_RSS = 'bun_rss',                  // RSS feeds
-  
+  BUN_OFFICIAL = 'bun_official', // bun.sh/docs - Technical docs
+  BUN_REFERENCE = 'bun_reference', // bun.com/reference - API reference portal
+  BUN_GUIDES = 'bun_guides', // bun.com/guides - Tutorials & guides
+  BUN_RSS = 'bun_rss', // RSS feeds
+
   // GitHub sources (critical for development)
-  GITHUB_PUBLIC = 'github_public',      // oven-sh/bun public repo
+  GITHUB_PUBLIC = 'github_public', // oven-sh/bun public repo
   GITHUB_ENTERPRISE = 'github_enterprise', // Enterprise/internal GitHub
-  GITHUB_GIST = 'github_gist',          // GitHub Gists
-  
+  GITHUB_GIST = 'github_gist', // GitHub Gists
+
   // Package and type definitions
-  BUN_TYPES = 'bun_types',              // TypeScript definitions
-  NPM_PACKAGES = 'npm_packages',        // npm package registry
-  
+  BUN_TYPES = 'bun_types', // TypeScript definitions
+  NPM_PACKAGES = 'npm_packages', // npm package registry
+
   // External references
   MDN_WEB_DOCS = 'mdn_web_docs',
   NODE_JS = 'node_js',
   WEB_STANDARDS = 'web_standards',
-  
+
   // Specialized
   PERFORMANCE_GUIDES = 'performance_guides',
   SECURITY_DOCS = 'security_docs',
   API_REFERENCE = 'api_reference',
-  COMMUNITY_BLOG = 'community_blog'
+  COMMUNITY_BLOG = 'community_blog',
 }
 
 /**
@@ -70,7 +70,7 @@ export enum DocumentationCategory {
   MIGRATION_GUIDES = 'migration_guides',
   PACKAGE_MANAGER = 'package_manager',
   BUNDLER = 'bundler',
-  COMMUNITY_RESOURCES = 'community_resources'
+  COMMUNITY_RESOURCES = 'community_resources',
 }
 
 /**
@@ -82,7 +82,7 @@ export enum DocumentationFormat {
   PDF = 'pdf',
   JSON = 'json',
   RSS = 'rss',
-  XML = 'xml'
+  XML = 'xml',
 }
 
 /**
@@ -117,18 +117,18 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       MACOS: '/docs/install/macos',
       LINUX: '/docs/install/linux',
       DOCKER: '/docs/install/docker',
-      CI_CD: '/docs/install/ci-cd'
+      CI_CD: '/docs/install/ci-cd',
     },
-    
+
     [DocumentationCategory.QUICKSTART]: {
       MAIN: '/docs/quickstart',
       TYPESCRIPT: '/docs/quickstart/typescript',
       JAVASCRIPT: '/docs/quickstart/javascript',
       REACT: '/docs/quickstart/react',
       NEXT_JS: '/docs/quickstart/nextjs',
-      API_SERVER: '/docs/quickstart/api'
+      API_SERVER: '/docs/quickstart/api',
     },
-    
+
     [DocumentationCategory.API_REFERENCE]: {
       OVERVIEW: '/docs/api',
       UTILS: '/docs/api/utils',
@@ -139,9 +139,9 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       SQL: '/docs/api/sql',
       TEST: '/docs/api/test',
       BUILD: '/docs/api/build',
-      PLUGINS: '/docs/api/plugins'
+      PLUGINS: '/docs/api/plugins',
     },
-    
+
     [DocumentationCategory.RUNTIME_FEATURES]: {
       OVERVIEW: '/docs/runtime',
       FILESYSTEM: '/docs/runtime/filesystem',
@@ -152,9 +152,9 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       MODULES: '/docs/runtime/modules',
       ENVIRONMENT: '/docs/runtime/environment',
       PERF_HOOKS: '/docs/runtime/perf-hooks',
-      INSPECTOR: '/docs/runtime/inspector'
+      INSPECTOR: '/docs/runtime/inspector',
     },
-    
+
     [DocumentationCategory.PACKAGE_MANAGER]: {
       OVERVIEW: '/docs/pm',
       // Core Commands
@@ -185,9 +185,9 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       OVERRIDES_AND_RESOLUTIONS: '/docs/pm/overrides-and-resolutions',
       SECURITY_SCANNER_API: '/docs/pm/security-scanner-api',
       NPMRC_SUPPORT: '/docs/pm/npmrc-support',
-      CONFIGURATION: '/docs/pm/configuration'
+      CONFIGURATION: '/docs/pm/configuration',
     },
-    
+
     [DocumentationCategory.BUNDLER]: {
       OVERVIEW: '/docs/bundler',
       BUILD: '/docs/bundler/cli/build',
@@ -199,10 +199,10 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       FRAMEWORKS: '/docs/bundler/frameworks',
       OPTIMIZATION: '/docs/bundler/optimization',
       TARGETS: '/docs/bundler/targets',
-      OUTPUT: '/docs/bundler/output'
-    }
+      OUTPUT: '/docs/bundler/output',
+    },
   },
-  
+
   // Guides and tutorials
   GUIDES: {
     [DocumentationCategory.EXAMPLES_TUTORIALS]: {
@@ -214,27 +214,27 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       AUTHENTICATION: '/guides/authentication',
       DEPLOYMENT: '/guides/deployment',
       TESTING: '/guides/testing',
-      DEBUGGING: '/guides/debugging'
+      DEBUGGING: '/guides/debugging',
     },
-    
+
     [DocumentationCategory.BEST_PRACTICES]: {
       PERFORMANCE: '/guides/performance',
       SECURITY: '/guides/security',
       ERROR_HANDLING: '/guides/error-handling',
       LOGGING: '/guides/logging',
       MONITORING: '/guides/monitoring',
-      SCALING: '/guides/scaling'
+      SCALING: '/guides/scaling',
     },
-    
+
     [DocumentationCategory.MIGRATION_GUIDES]: {
       FROM_NODE: '/guides/migrate-from-node',
       FROM_DENO: '/guides/migrate-from-deno',
       FROM_WEBPACK: '/guides/migrate-from-webpack',
       FROM_VITE: '/guides/migrate-from-vite',
-      VERSION_UPGRADE: '/guides/version-upgrade'
-    }
+      VERSION_UPGRADE: '/guides/version-upgrade',
+    },
   },
-  
+
   // bun.com/reference paths (reference portal)
   BUN_REFERENCE: {
     [DocumentationCategory.API_REFERENCE]: {
@@ -244,56 +244,56 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       CONFIG: '/reference/config',
       ENVIRONMENT: '/reference/environment',
       PACKAGES: '/reference/packages',
-      TEMPLATES: '/reference/templates'
+      TEMPLATES: '/reference/templates',
     },
-    
+
     [DocumentationCategory.EXAMPLES_TUTORIALS]: {
       TUTORIALS: '/reference/tutorials',
       COOKBOOK: '/reference/cookbook',
       SAMPLES: '/reference/samples',
-      DEMOS: '/reference/demos'
+      DEMOS: '/reference/demos',
     },
-    
+
     [DocumentationCategory.BEST_PRACTICES]: {
       CHEATSHEET: '/reference/cheatsheet',
       PATTERNS: '/reference/patterns',
       ANTI_PATTERNS: '/reference/anti-patterns',
-      OPTIMIZATIONS: '/reference/optimizations'
-    }
+      OPTIMIZATIONS: '/reference/optimizations',
+    },
   },
-  
+
   // bun.com/guides paths (guides portal)
   BUN_GUIDES: {
     [DocumentationCategory.QUICKSTART]: {
       MAIN: '/guides',
       GETTING_STARTED: '/guides/getting-started',
       FIRST_APP: '/guides/first-app',
-      HELLO_WORLD: '/guides/hello-world'
+      HELLO_WORLD: '/guides/hello-world',
     },
-    
+
     [DocumentationCategory.EXAMPLES_TUTORIALS]: {
       TUTORIALS: '/guides/tutorials',
       STEP_BY_STEP: '/guides/step-by-step',
       VIDEO_TUTORIALS: '/guides/video-tutorials',
-      INTERACTIVE: '/guides/interactive'
+      INTERACTIVE: '/guides/interactive',
     },
-    
+
     [DocumentationCategory.MIGRATION_GUIDES]: {
       FROM_NODE: '/guides/migrate-from-node',
       FROM_DENO: '/guides/migrate-from-deno',
       FROM_WEBPACK: '/guides/migrate-from-webpack',
-      FROM_VITE: '/guides/migrate-from-vite'
+      FROM_VITE: '/guides/migrate-from-vite',
     },
-    
+
     [DocumentationCategory.TROUBLESHOOTING]: {
       COMMON_ISSUES: '/guides/troubleshooting/common-issues',
       DEBUGGING: '/guides/troubleshooting/debugging',
       PERFORMANCE: '/guides/troubleshooting/performance',
       ERRORS: '/guides/troubleshooting/errors',
-      FAQ: '/guides/faq'
-    }
+      FAQ: '/guides/faq',
+    },
   },
-  
+
   // RSS feed paths
   BUN_RSS: {
     [DocumentationCategory.COMMUNITY_RESOURCES]: {
@@ -301,10 +301,10 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       BLOG_RSS: '/blog/rss.xml',
       RELEASES_RSS: '/releases/rss.xml',
       SECURITY_RSS: '/security/rss.xml',
-      COMMUNITY_RSS: '/community/rss.xml'
-    }
+      COMMUNITY_RSS: '/community/rss.xml',
+    },
   },
-  
+
   // Internal enterprise paths
   ENTERPRISE: {
     [DocumentationCategory.SECURITY_GUIDELINES]: {
@@ -313,18 +313,18 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       AUTHORIZATION: '/security/authorization',
       ENCRYPTION: '/security/encryption',
       AUDITING: '/security/auditing',
-      COMPLIANCE: '/security/compliance'
+      COMPLIANCE: '/security/compliance',
     },
-    
+
     [DocumentationCategory.DEPLOYMENT_GUIDES]: {
       DOCKER: '/deployment/docker',
       KUBERNETES: '/deployment/kubernetes',
       AWS: '/deployment/aws',
       AZURE: '/deployment/azure',
       GCP: '/deployment/gcp',
-      CI_CD: '/deployment/ci-cd'
-    }
-  }
+      CI_CD: '/deployment/ci-cd',
+    },
+  },
 } as const;
 
 /**
@@ -332,8 +332,8 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
  */
 export type DocumentationPaths = typeof ENTERPRISE_DOCUMENTATION_PATHS;
 export type CategoryPaths<C extends DocumentationCategory> = {
-  [K in keyof DocumentationPaths]: DocumentationPaths[K][C] extends object 
-    ? DocumentationPaths[K][C] 
+  [K in keyof DocumentationPaths]: DocumentationPaths[K][C] extends object
+    ? DocumentationPaths[K][C]
     : never;
 };
 
@@ -353,9 +353,9 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     EXAMPLES: 'examples' as const,
     BUFFER: 'buffer' as const,
     DATA_VIEW: 'dataview' as const,
-    SHARED_ARRAY_BUFFER: 'sharedarraybuffer' as const
+    SHARED_ARRAY_BUFFER: 'sharedarraybuffer' as const,
   },
-  
+
   // Networking fragments
   NETWORKING: {
     FETCH: 'fetch' as const,
@@ -365,9 +365,9 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     UNIX_SOCKETS: 'unix-sockets' as const,
     TLS: 'tls' as const,
     PROXY: 'proxy' as const,
-    DNS: 'dns' as const
+    DNS: 'dns' as const,
   },
-  
+
   // Performance optimization fragments
   PERFORMANCE: {
     ZERO_COPY: 'zero-copy' as const,
@@ -376,9 +376,9 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     CACHING: 'caching' as const,
     COMPRESSION: 'compression' as const,
     STREAMING: 'streaming' as const,
-    LAZY_LOADING: 'lazy-loading' as const
+    LAZY_LOADING: 'lazy-loading' as const,
   },
-  
+
   // Security fragments
   SECURITY: {
     AUTHENTICATION: 'authentication' as const,
@@ -388,9 +388,9 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     VALIDATION: 'validation' as const,
     CORS: 'cors' as const,
     CSP: 'csp' as const,
-    RATE_LIMITING: 'rate-limiting' as const
+    RATE_LIMITING: 'rate-limiting' as const,
   },
-  
+
   // API-specific fragments
   API: {
     QUERY_PARAMS: 'query-params' as const,
@@ -400,9 +400,9 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     ERROR_HANDLING: 'error-handling' as const,
     PAGINATION: 'pagination' as const,
     SORTING: 'sorting' as const,
-    FILTERING: 'filtering' as const
+    FILTERING: 'filtering' as const,
   },
-  
+
   // CLI-specific fragments
   CLI: {
     USAGE: 'cli-usage' as const,
@@ -411,9 +411,9 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     CONFIGURATION: 'configuration' as const,
     ENVIRONMENT_VARIABLES: 'environment-variables' as const,
     EXIT_CODES: 'exit-codes' as const,
-    TROUBLESHOOTING: 'troubleshooting' as const
+    TROUBLESHOOTING: 'troubleshooting' as const,
   },
-  
+
   // Reference portal specific fragments
   REFERENCE: {
     BUN_API_REFERENCE: 'bun-api-reference' as const,
@@ -430,9 +430,9 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     INTERFACES: 'interfaces' as const,
     CLASSES: 'classes' as const,
     FUNCTIONS: 'functions' as const,
-    CONSTANTS: 'constants' as const
+    CONSTANTS: 'constants' as const,
   },
-  
+
   // GitHub-specific fragments
   GITHUB: {
     TREE: 'tree' as const,
@@ -442,9 +442,9 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     PULL: 'pull' as const,
     BRANCH: 'branch' as const,
     TAG: 'tag' as const,
-    RELEASE: 'release' as const
+    RELEASE: 'release' as const,
   },
-  
+
   // TypeScript and package fragments
   TYPESCRIPT: {
     INTERFACE: 'interface' as const,
@@ -452,17 +452,17 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     NAMESPACE: 'namespace' as const,
     ENUM: 'enum' as const,
     FUNCTION: 'function' as const,
-    CLASS: 'class' as const
+    CLASS: 'class' as const,
   },
-  
+
   // Text fragments (for bun.com/reference)
   TEXT_FRAGMENTS: {
     NODE_ZLIB: 'node:zlib' as const,
     BUN_API_REFERENCE: 'Bun API Reference' as const,
     TYPED_ARRAY_METHODS: 'TypedArray methods' as const,
     FETCH_TIMEOUT: 'fetch timeout' as const,
-    WEBSOCKET_EXAMPLE: 'WebSocket example' as const
-  }
+    WEBSOCKET_EXAMPLE: 'WebSocket example' as const,
+  },
 } as const;
 
 /**
@@ -482,18 +482,18 @@ export type FragmentValue<T extends FragmentType> = keyof URLFragments[T];
 export const GITHUB_URL_PATTERNS = {
   // Pattern: /:owner/:repo/tree/:commit/:path
   TREE_VIEW: /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/tree\/([^/]+)(?:\/(.*))?$/,
-  
+
   // Pattern: /:owner/:repo/blob/:commit/:path
   BLOB_VIEW: /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)(?:\/(.*))?$/,
-  
+
   // Pattern: /:owner/:repo/commit/:hash
   COMMIT_VIEW: /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/commit\/([^/]+)$/,
-  
+
   // Pattern: /:owner/:repo/issues/:number
   ISSUE_VIEW: /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/issues\/(\d+)$/,
-  
+
   // Pattern: /:owner/:repo/pull/:number
-  PULL_REQUEST_VIEW: /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)$/
+  PULL_REQUEST_VIEW: /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)$/,
 } as const;
 
 /**
@@ -515,182 +515,198 @@ export interface GitHubURLParseResult {
 /**
  * Fragment metadata with descriptions and related links
  */
-export const FRAGMENT_METADATA: Record<string, {
-  description: string;
-  relatedFragments: string[];
-  examples: string[];
-  seeAlso?: string[];
-}> = {
-  'typedarray': {
+export const FRAGMENT_METADATA: Record<
+  string,
+  {
+    description: string;
+    relatedFragments: string[];
+    examples: string[];
+    seeAlso?: string[];
+  }
+> = {
+  typedarray: {
     description: 'JavaScript TypedArray objects for handling binary data',
     relatedFragments: ['methods', 'conversion', 'buffer', 'dataview'],
     examples: ['Uint8Array', 'Int32Array', 'Float64Array'],
-    seeAlso: ['ArrayBuffer', 'DataView', 'SharedArrayBuffer']
+    seeAlso: ['ArrayBuffer', 'DataView', 'SharedArrayBuffer'],
   },
-  
+
   'zero-copy': {
     description: 'Techniques to avoid copying data between memory spaces',
     relatedFragments: ['streaming', 'performance'],
     examples: ['sendfile syscall', 'memory-mapped files'],
-    seeAlso: ['multiplexing', 'connection-pooling']
+    seeAlso: ['multiplexing', 'connection-pooling'],
   },
-  
-  'fetch': {
+
+  fetch: {
     description: 'Web Fetch API for making HTTP requests',
     relatedFragments: ['http', 'tls', 'proxy'],
     examples: ['GET requests', 'POST with JSON', 'file uploads'],
-    seeAlso: ['websocket', 'streaming']
+    seeAlso: ['websocket', 'streaming'],
   },
-  
+
   'cli-usage': {
     description: 'Command-line interface usage examples and syntax',
     relatedFragments: ['options', 'examples', 'configuration'],
     examples: ['bun install', 'bun run', 'bun build'],
-    seeAlso: ['environment-variables', 'exit-codes']
+    seeAlso: ['environment-variables', 'exit-codes'],
   },
-  
+
   'bun-api-reference': {
     description: 'Complete Bun API reference documentation',
     relatedFragments: ['node-compatibility', 'types', 'interfaces'],
     examples: ['Bun.serve', 'Bun.file', 'Bun.write', 'Bun.spawn'],
-    seeAlso: ['node:fs', 'node:crypto', 'node:zlib']
+    seeAlso: ['node:fs', 'node:crypto', 'node:zlib'],
   },
-  
+
   'node:zlib': {
     description: 'Node.js zlib module compatibility in Bun',
     relatedFragments: ['node-compatibility', 'bun-api-reference'],
     examples: ['zlib.createGzip', 'zlib.createGunzip', 'zlib.gzipSync'],
-    seeAlso: ['node:fs', 'node:crypto', 'node:stream']
+    seeAlso: ['node:fs', 'node:crypto', 'node:stream'],
   },
-  
+
   'node-compatibility': {
     description: 'Node.js built-in modules compatibility layer',
     relatedFragments: ['node:fs', 'node:path', 'node:crypto', 'node:zlib'],
     examples: ['import fs from "node:fs"', 'import path from "node:path"'],
-    seeAlso: ['bun-api-reference', 'types']
+    seeAlso: ['bun-api-reference', 'types'],
   },
-  
+
   // GitHub-specific fragments
-  'tree': {
+  tree: {
     description: 'GitHub tree view - directory listing for a specific commit/branch',
     relatedFragments: ['blob', 'commit', 'branch'],
-    examples: ['https://github.com/oven-sh/bun/tree/main', 'https://github.com/oven-sh/bun/tree/v1.3.8/packages/bun-types'],
-    seeAlso: ['blob', 'commit']
+    examples: [
+      'https://github.com/oven-sh/bun/tree/main',
+      'https://github.com/oven-sh/bun/tree/v1.3.8/packages/bun-types',
+    ],
+    seeAlso: ['blob', 'commit'],
   },
-  
-  'blob': {
+
+  blob: {
     description: 'GitHub blob view - file content viewer with syntax highlighting',
     relatedFragments: ['tree', 'commit', 'line-numbers'],
-    examples: ['https://github.com/oven-sh/bun/blob/main/README.md', 'https://github.com/oven-sh/bun/blob/main/packages/bun-types/index.d.ts'],
-    seeAlso: ['tree', 'raw-content']
+    examples: [
+      'https://github.com/oven-sh/bun/blob/main/README.md',
+      'https://github.com/oven-sh/bun/blob/main/packages/bun-types/index.d.ts',
+    ],
+    seeAlso: ['tree', 'raw-content'],
   },
-  
-  'commit': {
+
+  commit: {
     description: 'GitHub commit view - detailed commit information and file changes',
     relatedFragments: ['tree', 'blob', 'diff'],
     examples: ['https://github.com/oven-sh/bun/commit/main'],
-    seeAlso: ['tree', 'pull', 'branch']
+    seeAlso: ['tree', 'pull', 'branch'],
   },
-  
-  'issue': {
+
+  issue: {
     description: 'GitHub issue tracker - bug reports and feature requests',
     relatedFragments: ['pull', 'label', 'milestone'],
     examples: ['https://github.com/oven-sh/bun/issues/1234'],
-    seeAlso: ['pull', 'discussions']
+    seeAlso: ['pull', 'discussions'],
   },
-  
-  'pull': {
+
+  pull: {
     description: 'GitHub pull request - code review and merge discussions',
     relatedFragments: ['commit', 'issue', 'review'],
     examples: ['https://github.com/oven-sh/bun/pull/5678'],
-    seeAlso: ['commit', 'issue']
+    seeAlso: ['commit', 'issue'],
   },
-  
-  'branch': {
+
+  branch: {
     description: 'Git branch - parallel line of development',
     relatedFragments: ['tree', 'commit', 'tag'],
     examples: ['main', 'develop', 'feature/typed-array-perf'],
-    seeAlso: ['tree', 'tag']
+    seeAlso: ['tree', 'tag'],
   },
-  
-  'tag': {
+
+  tag: {
     description: 'Git tag - version marker and release point',
     relatedFragments: ['branch', 'release', 'commit'],
     examples: ['v1.3.8', 'v1.3.7', 'latest'],
-    seeAlso: ['release', 'branch']
+    seeAlso: ['release', 'branch'],
   },
-  
-  'release': {
+
+  release: {
     description: 'GitHub release - versioned distribution with assets',
     relatedFragments: ['tag', 'download', 'changelog'],
     examples: ['https://github.com/oven-sh/bun/releases/tag/v1.3.8'],
-    seeAlso: ['tag', 'download']
+    seeAlso: ['tag', 'download'],
   },
-  
+
   // TypeScript-specific fragments
-  'interface': {
+  interface: {
     description: 'TypeScript interface - type contract definition',
     relatedFragments: ['type', 'class', 'namespace'],
     examples: ['interface BunFile { size: number; }', 'interface ServerOptions { port?: number; }'],
-    seeAlso: ['type', 'class']
+    seeAlso: ['type', 'class'],
   },
-  
-  'type': {
+
+  type: {
     description: 'TypeScript type alias - named type definition',
     relatedFragments: ['interface', 'enum', 'union'],
     examples: ['type FilePath = string;', 'type HTTPMethod = "GET" | "POST" | "PUT" | "DELETE";'],
-    seeAlso: ['interface', 'enum']
+    seeAlso: ['interface', 'enum'],
   },
-  
-  'namespace': {
+
+  namespace: {
     description: 'TypeScript namespace - logical grouping of related code',
     relatedFragments: ['module', 'interface', 'function'],
     examples: ['namespace Bun { export const version: string; }'],
-    seeAlso: ['module', 'interface']
+    seeAlso: ['module', 'interface'],
   },
-  
-  'enum': {
+
+  enum: {
     description: 'TypeScript enum - set of named constants',
     relatedFragments: ['type', 'union', 'const'],
     examples: ['enum LogLevel { DEBUG, INFO, WARN, ERROR; }'],
-    seeAlso: ['type', 'const']
+    seeAlso: ['type', 'const'],
   },
-  
-  'function': {
+
+  function: {
     description: 'TypeScript function - reusable code block with parameters',
     relatedFragments: ['method', 'arrow', 'async'],
-    examples: ['function serve(options: ServerOptions): Server', 'const readFile = (path: string): Promise<Buffer>'],
-    seeAlso: ['method', 'class']
+    examples: [
+      'function serve(options: ServerOptions): Server',
+      'const readFile = (path: string): Promise<Buffer>',
+    ],
+    seeAlso: ['method', 'class'],
   },
-  
-  'class': {
+
+  class: {
     description: 'TypeScript class - blueprint for object creation with methods',
     relatedFragments: ['interface', 'constructor', 'method'],
     examples: ['class BunServer { constructor(options: ServerOptions) {} }'],
-    seeAlso: ['interface', 'constructor']
+    seeAlso: ['interface', 'constructor'],
   },
-  
+
   // Enhanced text fragments
   'typedarray-methods': {
     description: 'TypedArray method reference and usage examples',
     relatedFragments: ['typedarray', 'buffer', 'dataview'],
-    examples: ['Int8Array.from()', 'Float32Array.prototype.slice()', 'DataView.prototype.getInt32()'],
-    seeAlso: ['typedarray', 'buffer']
+    examples: [
+      'Int8Array.from()',
+      'Float32Array.prototype.slice()',
+      'DataView.prototype.getInt32()',
+    ],
+    seeAlso: ['typedarray', 'buffer'],
   },
-  
+
   'fetch-timeout': {
     description: 'Fetch API timeout configuration and error handling',
     relatedFragments: ['fetch', 'http', 'error-handling'],
     examples: ['fetch(url, { signal: AbortSignal.timeout(5000) })', 'fetch with timeout handling'],
-    seeAlso: ['fetch', 'http']
+    seeAlso: ['fetch', 'http'],
   },
-  
+
   'websocket-example': {
     description: 'WebSocket implementation examples and best practices',
     relatedFragments: ['websocket', 'server', 'real-time'],
     examples: ['new WebSocket("ws://example.com:3000")', 'WebSocket server with Bun.serve'],
-    seeAlso: ['websocket', 'server']
-  }
+    seeAlso: ['websocket', 'server'],
+  },
 } as const;
 
 // ============================================================================
@@ -773,7 +789,7 @@ export class EnterpriseDocumentationURLBuilder {
 
     // Build complete URL
     const url = new URL(path.startsWith('/') ? path.slice(1) : path, baseUrl);
-    
+
     if (fragment) {
       url.hash = fragment.startsWith('#') ? fragment : `#${fragment}`;
     }
@@ -785,15 +801,15 @@ export class EnterpriseDocumentationURLBuilder {
    * Build Bun documentation URL with alternative domain support
    */
   public buildBunURLWithDomain(
-    path: string, 
-    fragment?: string, 
+    path: string,
+    fragment?: string,
     useAlternativeDomain: boolean = false
   ): string {
     const baseConfig = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_OFFICIAL];
-    const baseUrl = useAlternativeDomain 
+    const baseUrl = useAlternativeDomain
       ? baseConfig.ALTERNATIVE_DOCS || baseConfig.DOCS
       : baseConfig.DOCS;
-    
+
     const url = new URL(path.startsWith('/') ? path.slice(1) : path, baseUrl);
     if (fragment) {
       url.hash = fragment.startsWith('#') ? fragment : `#${fragment}`;
@@ -805,15 +821,15 @@ export class EnterpriseDocumentationURLBuilder {
    * Build package manager documentation URL with domain support
    */
   public buildPackageManagerURLWithDomain(
-    path: string, 
-    fragment?: string, 
+    path: string,
+    fragment?: string,
     useAlternativeDomain: boolean = false
   ): string {
     const baseConfig = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_OFFICIAL];
-    const baseUrl = useAlternativeDomain 
+    const baseUrl = useAlternativeDomain
       ? baseConfig.ALTERNATIVE_DOCS || baseConfig.DOCS
       : baseConfig.DOCS;
-    
+
     const url = new URL(path.startsWith('/') ? path.slice(1) : path, baseUrl);
     if (fragment) {
       url.hash = fragment.startsWith('#') ? fragment : `#${fragment}`;
@@ -873,7 +889,8 @@ export class EnterpriseDocumentationURLBuilder {
    * Build GitHub raw content URL
    */
   public buildGitHubRawURL(owner: string, repo: string, path: string, ref?: string): string {
-    const baseUrl = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.GITHUB_ENTERPRISE].RAW_CONTENT;
+    const baseUrl =
+      ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.GITHUB_ENTERPRISE].RAW_CONTENT;
     const refPart = ref || 'main';
     return `${baseUrl}/${owner}/${repo}/${refPart}/${path}`;
   }
@@ -882,7 +899,8 @@ export class EnterpriseDocumentationURLBuilder {
    * Build GitHub Gist URL
    */
   public buildGitHubGistURL(gistId: string): string {
-    const baseUrl = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.GITHUB_ENTERPRISE].GIST;
+    const baseUrl =
+      ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.GITHUB_ENTERPRISE].GIST;
     return `${baseUrl}/${gistId}`;
   }
 
@@ -940,8 +958,15 @@ export class EnterpriseDocumentationURLBuilder {
   /**
    * Build Web.dev Performance URL
    */
-  public buildWebDevURL(section: 'metrics' | 'optimization' | 'tools', path?: string, fragment?: string): string {
-    const baseUrl = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.PERFORMANCE_GUIDES][section.toUpperCase() as keyof typeof ENTERPRISE_DOCUMENTATION_BASE_URLS[typeof DocumentationProvider.PERFORMANCE_GUIDES]];
+  public buildWebDevURL(
+    section: 'metrics' | 'optimization' | 'tools',
+    path?: string,
+    fragment?: string
+  ): string {
+    const baseUrl =
+      ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.PERFORMANCE_GUIDES][
+        section.toUpperCase() as keyof (typeof ENTERPRISE_DOCUMENTATION_BASE_URLS)[typeof DocumentationProvider.PERFORMANCE_GUIDES]
+      ];
     const fullPath = path ? `${baseUrl}/${path}` : baseUrl;
     const url = new URL(fullPath);
     if (fragment) url.hash = fragment.startsWith('#') ? fragment : `#${fragment}`;
@@ -1027,7 +1052,7 @@ export class EnterpriseDocumentationURLBuilder {
   ): string {
     const pathConfig = ENTERPRISE_DOCUMENTATION_PATHS[pathSection];
     const categoryPaths = pathConfig[category];
-    
+
     if (!categoryPaths || typeof categoryPaths !== 'object') {
       throw createValidationError(
         EnterpriseErrorCode.VALIDATION_INPUT_INVALID,
@@ -1036,7 +1061,7 @@ export class EnterpriseDocumentationURLBuilder {
         category
       );
     }
-    
+
     const path = (categoryPaths as any)[pathKey];
     if (!path) {
       throw createValidationError(
@@ -1046,7 +1071,7 @@ export class EnterpriseDocumentationURLBuilder {
         pathKey
       );
     }
-    
+
     return this.buildURL(provider, category, path);
   }
 
@@ -1055,7 +1080,7 @@ export class EnterpriseDocumentationURLBuilder {
    */
   public getPathsByCategory(category: DocumentationCategory): Record<string, string> {
     const result: Record<string, string> = {};
-    
+
     Object.entries(ENTERPRISE_DOCUMENTATION_PATHS).forEach(([sectionName, section]) => {
       const categoryPaths = section[category];
       if (categoryPaths && typeof categoryPaths === 'object') {
@@ -1064,7 +1089,7 @@ export class EnterpriseDocumentationURLBuilder {
         });
       }
     });
-    
+
     return result;
   }
 
@@ -1092,52 +1117,69 @@ export class EnterpriseDocumentationURLBuilder {
   /**
    * Get package manager core command paths
    */
-  public getPackageManagerCoreCommands(): Pick<typeof ENTERPRISE_DOCUMENTATION_PATHS.BUN_CORE[DocumentationCategory.PACKAGE_MANAGER], 
-    'INSTALL' | 'ADD' | 'REMOVE' | 'UPDATE' | 'BUNX'> {
+  public getPackageManagerCoreCommands(): Pick<
+    (typeof ENTERPRISE_DOCUMENTATION_PATHS.BUN_CORE)[DocumentationCategory.PACKAGE_MANAGER],
+    'INSTALL' | 'ADD' | 'REMOVE' | 'UPDATE' | 'BUNX'
+  > {
     const pmPaths = ENTERPRISE_DOCUMENTATION_PATHS.BUN_CORE[DocumentationCategory.PACKAGE_MANAGER];
     return {
       INSTALL: pmPaths.INSTALL,
       ADD: pmPaths.ADD,
       REMOVE: pmPaths.REMOVE,
       UPDATE: pmPaths.UPDATE,
-      BUNX: pmPaths.BUNX
+      BUNX: pmPaths.BUNX,
     };
   }
 
   /**
    * Get package manager publishing & analysis paths
    */
-  public getPackageManagerPublishingAnalysis(): Pick<typeof ENTERPRISE_DOCUMENTATION_PATHS.BUN_CORE[DocumentationCategory.PACKAGE_MANAGER],
-    'PUBLISH' | 'OUTDATED' | 'WHY' | 'AUDIT' | 'INFO'> {
+  public getPackageManagerPublishingAnalysis(): Pick<
+    (typeof ENTERPRISE_DOCUMENTATION_PATHS.BUN_CORE)[DocumentationCategory.PACKAGE_MANAGER],
+    'PUBLISH' | 'OUTDATED' | 'WHY' | 'AUDIT' | 'INFO'
+  > {
     const pmPaths = ENTERPRISE_DOCUMENTATION_PATHS.BUN_CORE[DocumentationCategory.PACKAGE_MANAGER];
     return {
       PUBLISH: pmPaths.PUBLISH,
       OUTDATED: pmPaths.OUTDATED,
       WHY: pmPaths.WHY,
       AUDIT: pmPaths.AUDIT,
-      INFO: pmPaths.INFO
+      INFO: pmPaths.INFO,
     };
   }
 
   /**
    * Get package manager workspace management paths
    */
-  public getPackageManagerWorkspaceManagement(): Pick<typeof ENTERPRISE_DOCUMENTATION_PATHS.BUN_CORE[DocumentationCategory.PACKAGE_MANAGER],
-    'WORKSPACES' | 'CATALOGS' | 'LINK' | 'PM'> {
+  public getPackageManagerWorkspaceManagement(): Pick<
+    (typeof ENTERPRISE_DOCUMENTATION_PATHS.BUN_CORE)[DocumentationCategory.PACKAGE_MANAGER],
+    'WORKSPACES' | 'CATALOGS' | 'LINK' | 'PM'
+  > {
     const pmPaths = ENTERPRISE_DOCUMENTATION_PATHS.BUN_CORE[DocumentationCategory.PACKAGE_MANAGER];
     return {
       WORKSPACES: pmPaths.WORKSPACES,
       CATALOGS: pmPaths.CATALOGS,
       LINK: pmPaths.LINK,
-      PM: pmPaths.PM
+      PM: pmPaths.PM,
     };
   }
 
   /**
    * Get package manager advanced configuration paths
    */
-  public getPackageManagerAdvancedConfiguration(): Pick<typeof ENTERPRISE_DOCUMENTATION_PATHS.BUN_CORE[DocumentationCategory.PACKAGE_MANAGER],
-    'PATCH' | 'FILTER' | 'GLOBAL_CACHE' | 'ISOLATED_INSTALLS' | 'LOCKFILE' | 'LIFECYCLE_SCRIPTS' | 'SCOPES_AND_REGISTRIES' | 'OVERRIDES_AND_RESOLUTIONS' | 'SECURITY_SCANNER_API' | 'NPMRC_SUPPORT'> {
+  public getPackageManagerAdvancedConfiguration(): Pick<
+    (typeof ENTERPRISE_DOCUMENTATION_PATHS.BUN_CORE)[DocumentationCategory.PACKAGE_MANAGER],
+    | 'PATCH'
+    | 'FILTER'
+    | 'GLOBAL_CACHE'
+    | 'ISOLATED_INSTALLS'
+    | 'LOCKFILE'
+    | 'LIFECYCLE_SCRIPTS'
+    | 'SCOPES_AND_REGISTRIES'
+    | 'OVERRIDES_AND_RESOLUTIONS'
+    | 'SECURITY_SCANNER_API'
+    | 'NPMRC_SUPPORT'
+  > {
     const pmPaths = ENTERPRISE_DOCUMENTATION_PATHS.BUN_CORE[DocumentationCategory.PACKAGE_MANAGER];
     return {
       PATCH: pmPaths.PATCH,
@@ -1149,7 +1191,7 @@ export class EnterpriseDocumentationURLBuilder {
       SCOPES_AND_REGISTRIES: pmPaths.SCOPES_AND_REGISTRIES,
       OVERRIDES_AND_RESOLUTIONS: pmPaths.OVERRIDES_AND_RESOLUTIONS,
       SECURITY_SCANNER_API: pmPaths.SECURITY_SCANNER_API,
-      NPMRC_SUPPORT: pmPaths.NPMRC_SUPPORT
+      NPMRC_SUPPORT: pmPaths.NPMRC_SUPPORT,
     };
   }
 
@@ -1199,17 +1241,17 @@ export class EnterpriseDocumentationURLBuilder {
   ): string {
     const baseConfig = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_REFERENCE];
     const baseUrl = baseConfig.REFERENCE;
-    
+
     const url = new URL(section, baseUrl);
     if (fragment) {
       url.hash = fragment.startsWith('#') ? fragment : `#${fragment}`;
     }
-    
+
     // Add language preference
     if (options?.language) {
       url.searchParams.set('lang', options.language);
     }
-    
+
     return url.toString();
   }
 
@@ -1223,22 +1265,22 @@ export class EnterpriseDocumentationURLBuilder {
   ): string {
     const baseConfig = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_GUIDES];
     const baseUrl = baseConfig.GUIDES;
-    
+
     const url = new URL(guideName, baseUrl);
     if (fragment) {
       url.hash = fragment.startsWith('#') ? fragment : `#${fragment}`;
     }
-    
+
     // Add step parameter
     if (options?.step) {
       url.searchParams.set('step', String(options.step));
     }
-    
+
     // Add interactive mode
     if (options?.interactive) {
       url.searchParams.set('interactive', 'true');
     }
-    
+
     return url.toString();
   }
 
@@ -1249,16 +1291,16 @@ export class EnterpriseDocumentationURLBuilder {
     feedType: 'main' | 'blog' | 'releases' | 'technical' | 'security' | 'community'
   ): string {
     const baseConfig = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_RSS];
-    
+
     const feedMap = {
       main: baseConfig.MAIN_RSS,
       blog: baseConfig.BLOG_RSS,
       releases: baseConfig.RELEASES_RSS,
       technical: baseConfig.TECHNICAL_RSS,
       security: baseConfig.SECURITY_RSS,
-      community: baseConfig.COMMUNITY_RSS
+      community: baseConfig.COMMUNITY_RSS,
     };
-    
+
     return feedMap[feedType];
   }
 
@@ -1270,8 +1312,22 @@ export class EnterpriseDocumentationURLBuilder {
     repo: string,
     path?: string,
     ref?: string,
-    options?: { 
-      viewType?: 'tree' | 'blob' | 'commits' | 'issues' | 'pulls' | 'actions' | 'projects' | 'wiki' | 'security' | 'insights' | 'settings' | 'releases' | 'packages' | 'discussions';
+    options?: {
+      viewType?:
+        | 'tree'
+        | 'blob'
+        | 'commits'
+        | 'issues'
+        | 'pulls'
+        | 'actions'
+        | 'projects'
+        | 'wiki'
+        | 'security'
+        | 'insights'
+        | 'settings'
+        | 'releases'
+        | 'packages'
+        | 'discussions';
       lineNumbers?: { start: number; end?: number };
       pathType?: 'file' | 'dir' | 'submodule' | 'symlink';
       action?: 'new' | 'edit' | 'delete' | 'find' | 'compare';
@@ -1281,17 +1337,32 @@ export class EnterpriseDocumentationURLBuilder {
   ): string {
     const baseConfig = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.GITHUB_ENTERPRISE];
     const baseUrl = baseConfig.BASE;
-    
+
     let urlPath = `/${owner}/${repo}`;
-    
+
     // Handle special view types that come before ref
-    if (options?.viewType && ['issues', 'pulls', 'actions', 'projects', 'wiki', 'security', 'insights', 'settings', 'releases', 'packages', 'discussions'].includes(options.viewType)) {
+    if (
+      options?.viewType &&
+      [
+        'issues',
+        'pulls',
+        'actions',
+        'projects',
+        'wiki',
+        'security',
+        'insights',
+        'settings',
+        'releases',
+        'packages',
+        'discussions',
+      ].includes(options.viewType)
+    ) {
       urlPath += `/${options.viewType}`;
     } else if (options?.viewType) {
       // Standard view types (tree, blob, commits)
       urlPath += `/${options.viewType}`;
     }
-    
+
     // Add reference (branch, tag, or commit)
     if (options?.branch) {
       urlPath += `/${options.branch}`;
@@ -1303,7 +1374,7 @@ export class EnterpriseDocumentationURLBuilder {
       // Default to main for tree/blob/commits if no ref specified
       urlPath += '/main';
     }
-    
+
     // Add action-specific paths
     if (options?.action) {
       if (options.action === 'new') {
@@ -1314,14 +1385,14 @@ export class EnterpriseDocumentationURLBuilder {
         urlPath += '/compare';
       }
     }
-    
+
     // Add file/directory path
     if (path) {
       urlPath += `/${path}`;
     }
-    
+
     const url = new URL(urlPath, baseUrl);
-    
+
     // Add line numbers for file views
     if (options?.lineNumbers && options.viewType === 'blob') {
       if (options.lineNumbers.end) {
@@ -1330,36 +1401,28 @@ export class EnterpriseDocumentationURLBuilder {
         url.hash = `L${options.lineNumbers.start}`;
       }
     }
-    
+
     return url.toString();
   }
 
   /**
    * Build GitHub raw content URL
    */
-  public buildGitHubRawURL(
-    owner: string,
-    repo: string,
-    path: string,
-    ref?: string
-  ): string {
+  public buildGitHubRawURL(owner: string, repo: string, path: string, ref?: string): string {
     const baseConfig = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.GITHUB_ENTERPRISE];
     const baseUrl = baseConfig.RAW_CONTENT;
     const reference = ref || 'main';
-    
+
     return `${baseUrl}/${owner}/${repo}/${reference}/${path}`;
   }
 
   /**
    * Build GitHub API URL
    */
-  public buildGitHubAPIURL(
-    endpoint: string,
-    apiVersion?: 'v3' | 'v4'
-  ): string {
+  public buildGitHubAPIURL(endpoint: string, apiVersion?: 'v3' | 'v4'): string {
     const baseConfig = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.GITHUB_ENTERPRISE];
     const baseUrl = apiVersion === 'v4' ? baseConfig.API_V4 : baseConfig.API_V3;
-    
+
     return `${baseUrl}/${endpoint}`;
   }
 
@@ -1373,13 +1436,13 @@ export class EnterpriseDocumentationURLBuilder {
   ): string {
     const baseConfig = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.GITHUB_ENTERPRISE];
     const baseUrl = baseConfig.GIST;
-    
+
     let urlPath = `/${gistId}`;
-    
+
     if (revision) {
       urlPath += `/${revision}`;
     }
-    
+
     if (action === 'raw') {
       urlPath += '/raw';
     } else if (action === 'download') {
@@ -1387,7 +1450,7 @@ export class EnterpriseDocumentationURLBuilder {
     } else if (action === 'edit') {
       urlPath += '/edit';
     }
-    
+
     return new URL(urlPath, baseUrl).toString();
   }
 
@@ -1396,7 +1459,14 @@ export class EnterpriseDocumentationURLBuilder {
    */
   public buildGitHubSearchURL(
     query: string,
-    searchType?: 'repositories' | 'code' | 'commits' | 'issues' | 'discussions' | 'users' | 'topics',
+    searchType?:
+      | 'repositories'
+      | 'code'
+      | 'commits'
+      | 'issues'
+      | 'discussions'
+      | 'users'
+      | 'topics',
     options?: {
       language?: string;
       owner?: string;
@@ -1408,37 +1478,37 @@ export class EnterpriseDocumentationURLBuilder {
   ): string {
     const baseUrl = 'https://github.com/search';
     const url = new URL('', baseUrl);
-    
+
     // Build search query
     let searchQuery = query;
-    
+
     if (options?.language) {
       searchQuery += ` language:${options.language}`;
     }
-    
+
     if (options?.owner) {
       searchQuery += ` user:${options.owner}`;
     }
-    
+
     if (options?.repo) {
       searchQuery += ` repo:${options.owner || ''}/${options.repo}`;
     }
-    
+
     if (options?.path) {
       searchQuery += ` path:${options.path}`;
     }
-    
+
     url.searchParams.set('q', searchQuery);
     url.searchParams.set('type', searchType || 'repositories');
-    
+
     if (options?.sort) {
       url.searchParams.set('s', options.sort);
     }
-    
+
     if (options?.order) {
       url.searchParams.set('o', options.order);
     }
-    
+
     return url.toString();
   }
 
@@ -1452,19 +1522,19 @@ export class EnterpriseDocumentationURLBuilder {
     action?: 'runs' | 'new'
   ): string {
     const baseUrl = 'https://github.com';
-    
+
     if (action === 'new') {
       return `${baseUrl}/${owner}/${repo}/actions/new`;
     }
-    
+
     let urlPath = `/${owner}/${repo}/actions`;
-    
+
     if (workflowFile) {
       urlPath += `/workflows/${workflowFile}`;
     } else if (action === 'runs') {
       urlPath += '/runs';
     }
-    
+
     return `${baseUrl}${urlPath}`;
   }
 
@@ -1478,13 +1548,13 @@ export class EnterpriseDocumentationURLBuilder {
     action?: 'latest' | 'new' | 'edit'
   ): string {
     const baseUrl = 'https://github.com';
-    
+
     if (action === 'new') {
       return `${baseUrl}/${owner}/${repo}/releases/new`;
     }
-    
+
     let urlPath = `/${owner}/${repo}/releases`;
-    
+
     if (action === 'latest') {
       urlPath += '/latest';
     } else if (action === 'edit' && tagName) {
@@ -1492,7 +1562,7 @@ export class EnterpriseDocumentationURLBuilder {
     } else if (tagName) {
       urlPath += `/tag/${tagName}`;
     }
-    
+
     return `${baseUrl}${urlPath}`;
   }
 
@@ -1508,10 +1578,10 @@ export class EnterpriseDocumentationURLBuilder {
   ): string {
     const baseUrl = 'https://github.com';
     let urlPath = `/${owner}/${repo}/commit/${commitHash}`;
-    
+
     if (filePath) {
       urlPath += `#diff-${Buffer.from(filePath).toString('base64')}`;
-      
+
       if (options?.lineNumbers) {
         if (options.lineNumbers.end) {
           urlPath += `L${options.lineNumbers.start}-L${options.lineNumbers.end}`;
@@ -1520,7 +1590,7 @@ export class EnterpriseDocumentationURLBuilder {
         }
       }
     }
-    
+
     return `${baseUrl}${urlPath}`;
   }
 
@@ -1536,21 +1606,18 @@ export class EnterpriseDocumentationURLBuilder {
   ): string {
     const baseUrl = 'https://github.com';
     let urlPath = `/${owner}/${repo}/compare/${baseRef}...${headRef}`;
-    
+
     if (filePath) {
       urlPath += `#diff-${Buffer.from(filePath).toString('base64')}`;
     }
-    
+
     return `${baseUrl}${urlPath}`;
   }
 
   /**
    * Build bun-types repository URL
    */
-  public buildBunTypesURL(
-    path?: string,
-    commitHash?: string
-  ): string {
+  public buildBunTypesURL(path?: string, commitHash?: string): string {
     return this.buildGitHubRepositoryURL(
       'oven-sh',
       'bun',
@@ -1570,21 +1637,21 @@ export class EnterpriseDocumentationURLBuilder {
   ): string {
     const baseConfig = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_REFERENCE];
     const baseUrl = baseConfig.REFERENCE;
-    
+
     const url = new URL(section, baseUrl);
-    
+
     // Add text fragment for Chrome/Edge text search
     if (textFragment) {
       // URL encode the text fragment for proper formatting
       const encodedText = encodeURIComponent(textFragment);
       url.hash = `:~:text=${encodedText}`;
     }
-    
+
     // Add language preference
     if (options?.language) {
       url.searchParams.set('lang', options.language);
     }
-    
+
     return url.toString();
   }
 
@@ -1594,8 +1661,22 @@ export class EnterpriseDocumentationURLBuilder {
   public buildGitHubPublicURL(
     path?: string,
     ref?: string,
-    options?: { 
-      viewType?: 'tree' | 'blob' | 'commits' | 'issues' | 'pulls' | 'actions' | 'projects' | 'wiki' | 'security' | 'insights' | 'settings' | 'releases' | 'packages' | 'discussions';
+    options?: {
+      viewType?:
+        | 'tree'
+        | 'blob'
+        | 'commits'
+        | 'issues'
+        | 'pulls'
+        | 'actions'
+        | 'projects'
+        | 'wiki'
+        | 'security'
+        | 'insights'
+        | 'settings'
+        | 'releases'
+        | 'packages'
+        | 'discussions';
       lineNumbers?: { start: number; end?: number };
       pathType?: 'file' | 'dir' | 'submodule' | 'symlink';
       action?: 'new' | 'edit' | 'delete' | 'find' | 'compare';
@@ -1627,15 +1708,16 @@ export class EnterpriseDocumentationURLBuilder {
     ref?: string
   ): string {
     const baseConfig = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.GITHUB_PUBLIC];
-    const packagePath = baseConfig.PACKAGES[`BUN_${packageName.toUpperCase()}` as keyof typeof baseConfig.PACKAGES];
-    
+    const packagePath =
+      baseConfig.PACKAGES[`BUN_${packageName.toUpperCase()}` as keyof typeof baseConfig.PACKAGES];
+
     if (!packagePath) {
       throw new Error(`Unknown package: ${packageName}`);
     }
-    
+
     const fullPath = path ? `${packagePath.replace(/\/tree\/[^\/]+/, '')}/${path}` : packagePath;
     const refPart = ref ? ref : 'main';
-    
+
     return fullPath.replace(/\/tree\/[^\/]+/, `/tree/${refPart}`);
   }
 
@@ -1664,12 +1746,12 @@ export class EnterpriseDocumentationURLBuilder {
     raw: string;
   } {
     const path = filePath || '';
-    
+
     return {
       tree: this.buildGitHubPublicURL(path, commitHash, { viewType: 'tree' }),
       blob: this.buildGitHubPublicURL(path, commitHash, { viewType: 'blob' }),
       commit: `https://github.com/oven-sh/bun/commit/${commitHash}${filePath ? `#diff-${Buffer.from(filePath).toString('base64')}` : ''}`,
-      raw: `https://raw.githubusercontent.com/oven-sh/bun/${commitHash}/${path}`
+      raw: `https://raw.githubusercontent.com/oven-sh/bun/${commitHash}/${path}`,
     };
   }
 
@@ -1683,18 +1765,18 @@ export class EnterpriseDocumentationURLBuilder {
       { regex: GITHUB_URL_PATTERNS.BLOB_VIEW, type: 'blob' as const },
       { regex: GITHUB_URL_PATTERNS.COMMIT_VIEW, type: 'commit' as const },
       { regex: GITHUB_URL_PATTERNS.ISSUE_VIEW, type: 'issue' as const },
-      { regex: GITHUB_URL_PATTERNS.PULL_REQUEST_VIEW, type: 'pull' as const }
+      { regex: GITHUB_URL_PATTERNS.PULL_REQUEST_VIEW, type: 'pull' as const },
     ];
 
     for (const { regex, type } of patterns) {
       const match = url.match(regex);
       if (match) {
         const [, owner, repo, refOrNumber, path] = match;
-        
+
         const result: GitHubURLParseResult = {
           owner,
           repo,
-          type
+          type,
         };
 
         if (type === 'tree' || type === 'blob') {
@@ -1759,13 +1841,13 @@ export class EnterpriseDocumentationURLBuilder {
   ): string {
     const fragmentValue = ENTERPRISE_URL_FRAGMENTS.TYPESCRIPT[fragment];
     const baseConfig = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_REFERENCE];
-    
+
     const url = new URL(`${section || 'typescript'}/${fragmentValue}`, baseConfig.REFERENCE);
-    
+
     if (options?.language) {
       url.searchParams.set('lang', options.language);
     }
-    
+
     return url.toString();
   }
 
@@ -1792,14 +1874,14 @@ export class EnterpriseDocumentationURLBuilder {
     viewType: 'tree' | 'blob' = 'tree'
   ): string {
     const baseConfig = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.GITHUB_PUBLIC];
-    
+
     if (viewType === 'blob') {
       return `https://github.com/${owner}/${repo}/blob/${commitHash}${path ? `/${path}` : ''}`;
     }
-    
+
     return `https://github.com/${owner}/${repo}/tree/${commitHash}${path ? `/${path}` : ''}`;
   }
-  
+
   /**
    * Build bun-types package URL
    */
@@ -1811,10 +1893,10 @@ export class EnterpriseDocumentationURLBuilder {
       'oven-sh',
       'bun',
       commitHash,
-      `packages/bun-types${path ? `/${path}` : ''}` 
+      `packages/bun-types${path ? `/${path}` : ''}`
     );
   }
-  
+
   /**
    * Build URL with text fragment (for bun.com/reference#:~:text=...)
    */
@@ -1829,34 +1911,34 @@ export class EnterpriseDocumentationURLBuilder {
     }
   ): string {
     const url = new URL(baseURL);
-    
+
     // Build text fragment according to spec: #:~:text=[prefix-,]textStart[,textEnd][,-suffix]
     let fragment = ':~:text=';
-    
+
     if (options?.prefix) {
       fragment += `${encodeURIComponent(options.prefix)}-`;
     }
-    
+
     fragment += encodeURIComponent(options?.textStart || textFragment);
-    
+
     if (options?.textEnd) {
       fragment += `,${encodeURIComponent(options.textEnd)}`;
     }
-    
+
     if (options?.suffix) {
       fragment += `,-${encodeURIComponent(options.suffix)}`;
     }
-    
+
     // Append to existing hash or create new
     if (url.hash && !url.hash.includes(':~:')) {
       url.hash = `${url.hash}${fragment}`;
     } else {
       url.hash = fragment;
     }
-    
+
     return url.toString();
   }
-  
+
   /**
    * Build bun.com/reference URL with text fragment
    */
@@ -1869,42 +1951,41 @@ export class EnterpriseDocumentationURLBuilder {
       textEnd?: string;
     }
   ): string {
-    const baseURL = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_REFERENCE].REFERENCE;
+    const baseURL =
+      ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_REFERENCE].REFERENCE;
     return this.buildURLWithTextFragment(baseURL, text, options);
   }
-  
+
   /**
    * Get the specific commit URL you provided
    */
   public getExampleCommitURL(): string {
-    return ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.GITHUB_PUBLIC].EXAMPLE_COMMIT_AF76296;
+    return ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.GITHUB_PUBLIC]
+      .EXAMPLE_COMMIT_AF76296;
   }
-  
+
   /**
    * Build GitHub raw URL for direct file access
    */
-  public buildGitHubRawURL(
-    commitHash: string,
-    filePath: string
-  ): string {
+  public buildGitHubRawURL(commitHash: string, filePath: string): string {
     return `https://raw.githubusercontent.com/oven-sh/bun/${commitHash}/${filePath}`;
   }
-  
+
   /**
    * Get TypeScript definition file URLs
    */
   public getTypeDefinitionURLs(): Record<string, string> {
     const baseConfig = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_TYPES];
-    
+
     return {
       npmPackage: baseConfig.NPM_PACKAGE,
       githubPackage: baseConfig.GITHUB_PACKAGE,
       latestTypes: `https://github.com/oven-sh/bun/tree/main/packages/bun-types`,
       exampleCommit: this.getExampleCommitURL(),
-      typescriptPlayground: baseConfig.TYPESCRIPT_PLAYGROUND
+      typescriptPlayground: baseConfig.TYPESCRIPT_PLAYGROUND,
     };
   }
-  
+
   /**
    * Get all GitHub-related URLs for a package
    */
@@ -1913,7 +1994,7 @@ export class EnterpriseDocumentationURLBuilder {
     commitHash: string = SIGNIFICANT_COMMITS.LATEST_RELEASE
   ): Record<string, string> {
     const base = `https://github.com/oven-sh/bun/tree/${commitHash}/packages`;
-    
+
     return {
       packageRoot: `${base}/${packageName}`,
       packageJson: `${base}/${packageName}/package.json`,
@@ -1924,22 +2005,25 @@ export class EnterpriseDocumentationURLBuilder {
       ...(packageName === 'bun-types' && {
         index: `${base}/${packageName}/index.d.ts`,
         bun: `${base}/${packageName}/bun.d.ts`,
-        globals: `${base}/${packageName}/globals.d.ts` 
-      })
+        globals: `${base}/${packageName}/globals.d.ts`,
+      }),
     };
   }
-  
+
   /**
    * Quick access to common text fragment URLs
    */
   public getCommonTextFragmentURLs(): Record<string, string> {
     const base = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_REFERENCE].REFERENCE;
-    
+
     return {
       nodeZlib: this.buildURLWithTextFragment(base, TEXT_FRAGMENT_PATTERNS.NODE_ZLIB),
-      bunAPIReference: this.buildURLWithTextFragment(base, TEXT_FRAGMENT_PATTERNS.BUN_API_REFERENCE),
+      bunAPIReference: this.buildURLWithTextFragment(
+        base,
+        TEXT_FRAGMENT_PATTERNS.BUN_API_REFERENCE
+      ),
       typedArray: this.buildURLWithTextFragment(base, TEXT_FRAGMENT_PATTERNS.TYPED_ARRAY),
-      fetchAPI: this.buildURLWithTextFragment(base, TEXT_FRAGMENT_PATTERNS.FETCH_API)
+      fetchAPI: this.buildURLWithTextFragment(base, TEXT_FRAGMENT_PATTERNS.FETCH_API),
     };
   }
 
@@ -1949,52 +2033,52 @@ export class EnterpriseDocumentationURLBuilder {
   public getAllDocumentationForTopic(topic: string): Record<string, string> {
     const topicLower = topic.toLowerCase();
     const urls: Record<string, string> = {};
-    
+
     // Known topic mappings
     const topicMappings = {
-      'typedarray': {
+      typedarray: {
         technical: 'https://bun.sh/docs/cli/runtime/binary-data#typedarray',
         reference: 'https://bun.com/reference/api/binary-data#typedarray',
-        guide: 'https://bun.com/guides/working-with-binary-data'
+        guide: 'https://bun.com/guides/working-with-binary-data',
       },
-      'fetch': {
+      fetch: {
         technical: 'https://bun.sh/docs/cli/runtime/networking/fetch',
         reference: 'https://bun.com/reference/api/fetch',
-        guide: 'https://bun.com/guides/making-http-requests'
+        guide: 'https://bun.com/guides/making-http-requests',
       },
-      'rss': {
+      rss: {
         main: 'https://bun.com/rss.xml',
         technical: 'https://bun.sh/rss.xml',
         blog: 'https://bun.com/blog/rss.xml',
-        releases: 'https://bun.com/releases/rss.xml'
+        releases: 'https://bun.com/releases/rss.xml',
       },
       'getting-started': {
         quickstart: 'https://bun.sh/docs/cli/quickstart',
         guide: 'https://bun.com/guides/getting-started',
-        tutorial: 'https://bun.com/guides/tutorials/beginner'
+        tutorial: 'https://bun.com/guides/tutorials/beginner',
       },
-      'api': {
+      api: {
         overview: 'https://bun.sh/docs/cli/api',
         portal: 'https://bun.com/reference',
-        interactive: 'https://bun.com/reference/api'
+        interactive: 'https://bun.com/reference/api',
       },
       'node:zlib': {
         reference: 'https://bun.com/reference#node:zlib',
         compatibility: 'https://bun.com/reference/node-compatibility#node:zlib',
-        github: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types'
-      }
+        github: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types',
+      },
     };
-    
+
     if (topicMappings[topicLower as keyof typeof topicMappings]) {
       return topicMappings[topicLower as keyof typeof topicMappings];
     }
-    
+
     // Fallback: return base URLs for all bun providers
     urls.bun_sh_docs = 'https://bun.sh/docs/cli';
     urls.bun_com_reference = 'https://bun.com/reference';
     urls.bun_com_guides = 'https://bun.com/guides';
     urls.bun_com_rss = 'https://bun.com/rss.xml';
-    
+
     return urls;
   }
 }
@@ -2026,13 +2110,13 @@ export class DocumentationURLValidator {
   } {
     try {
       const parsed = new URL(url);
-      
+
       if (!parsed.hostname.includes('github.com')) {
         return { isValid: false };
       }
-      
+
       const pathParts = parsed.pathname.split('/').filter(Boolean);
-      
+
       // Check for different GitHub URL patterns
       for (const [type, pattern] of Object.entries(GITHUB_URL_PATTERNS)) {
         const match = url.match(pattern);
@@ -2046,9 +2130,9 @@ export class DocumentationURLValidator {
                 repo: match[2],
                 commitHash: match[3],
                 path: match[4] || '',
-                file: match[4]?.split('/').pop()
+                file: match[4]?.split('/').pop(),
               };
-              
+
             case 'BLOB_VIEW':
               const blobResult = {
                 isValid: true,
@@ -2057,9 +2141,9 @@ export class DocumentationURLValidator {
                 repo: match[2],
                 commitHash: match[3],
                 path: match[4] || '',
-                file: match[4]?.split('/').pop()
+                file: match[4]?.split('/').pop(),
               };
-              
+
               // Check for line number in hash
               if (parsed.hash.startsWith('#L')) {
                 const lineMatch = parsed.hash.match(/#L(\d+)(?:-L(\d+))?/);
@@ -2067,39 +2151,39 @@ export class DocumentationURLValidator {
                   blobResult.lineNumber = parseInt(lineMatch[1], 10);
                 }
               }
-              
+
               return blobResult;
-              
+
             case 'COMMIT_VIEW':
               return {
                 isValid: true,
                 type: 'commit',
                 owner: match[1],
                 repo: match[2],
-                commitHash: match[3]
+                commitHash: match[3],
               };
-              
+
             case 'ISSUE_VIEW':
               return {
                 isValid: true,
                 type: 'issue',
                 owner: match[1],
                 repo: match[2],
-                issueNumber: parseInt(match[3], 10)
+                issueNumber: parseInt(match[3], 10),
               };
-              
+
             case 'PULL_REQUEST_VIEW':
               return {
                 isValid: true,
                 type: 'pull',
                 owner: match[1],
                 repo: match[2],
-                pullNumber: parseInt(match[3], 10)
+                pullNumber: parseInt(match[3], 10),
               };
           }
         }
       }
-      
+
       // Check for release/tag
       if (pathParts[2] === 'releases' && pathParts[3] === 'tag') {
         return {
@@ -2107,10 +2191,10 @@ export class DocumentationURLValidator {
           type: 'release',
           owner: pathParts[0],
           repo: pathParts[1],
-          tag: pathParts[4]
+          tag: pathParts[4],
         };
       }
-      
+
       // Check for branch
       if (pathParts[2] === 'tree' && !/^[a-f0-9]{40}$/.test(pathParts[3])) {
         return {
@@ -2119,17 +2203,16 @@ export class DocumentationURLValidator {
           owner: pathParts[0],
           repo: pathParts[1],
           branch: pathParts[3],
-          path: pathParts.slice(4).join('/')
+          path: pathParts.slice(4).join('/'),
         };
       }
-      
+
       return { isValid: true, type: 'unknown' };
-      
     } catch {
       return { isValid: false };
     }
   }
-  
+
   /**
    * Extract text fragment from URL
    */
@@ -2147,32 +2230,32 @@ export class DocumentationURLValidator {
     try {
       const parsed = new URL(url);
       const hash = parsed.hash;
-      
+
       if (!hash.includes(':~:text=')) {
         return { hasTextFragment: false };
       }
-      
+
       const match = hash.match(/:\~:text=([^&]+)/);
       if (!match) {
         return { hasTextFragment: false };
       }
-      
+
       const rawFragment = match[1];
       const decodedText = decodeURIComponent(rawFragment);
-      
+
       // Parse the text fragment components
       const components: any = {};
-      
+
       // Pattern: [prefix-,]textStart[,textEnd][,-suffix]
       const parts = decodedText.split(',');
-      
+
       if (parts[0].endsWith('-')) {
         components.prefix = parts[0].slice(0, -1);
         components.textStart = parts[1] || '';
       } else {
         components.textStart = parts[0];
       }
-      
+
       if (parts.length > 1 && parts[parts.length - 1].startsWith('-')) {
         components.suffix = parts[parts.length - 1].slice(1);
         if (parts.length > 2) {
@@ -2181,30 +2264,31 @@ export class DocumentationURLValidator {
       } else if (parts.length > 1) {
         components.textEnd = parts[parts.length - 1];
       }
-      
+
       return {
         hasTextFragment: true,
         rawFragment,
         decodedText,
-        components
+        components,
       };
-      
     } catch {
       return { hasTextFragment: false };
     }
   }
-  
+
   /**
    * Check if URL is a specific commit reference
    */
   public static isSpecificCommitURL(url: string): boolean {
     const parsed = this.parseGitHubURL(url);
-    return parsed.isValid && 
-           (parsed.type === 'tree' || parsed.type === 'blob') && 
-           !!parsed.commitHash &&
-           /^[a-f0-9]{40}$/.test(parsed.commitHash);
+    return (
+      parsed.isValid &&
+      (parsed.type === 'tree' || parsed.type === 'blob') &&
+      !!parsed.commitHash &&
+      /^[a-f0-9]{40}$/.test(parsed.commitHash)
+    );
   }
-  
+
   /**
    * Get commit hash from GitHub URL
    */
@@ -2212,15 +2296,17 @@ export class DocumentationURLValidator {
     const parsed = this.parseGitHubURL(url);
     return parsed.commitHash || null;
   }
-  
+
   /**
    * Check if URL is a bun-types reference
    */
   public static isBunTypesURL(url: string): boolean {
     const parsed = this.parseGitHubURL(url);
-    return parsed.isValid && 
-           parsed.repo === 'bun' && 
-           parsed.path?.includes('packages/bun-types') === true;
+    return (
+      parsed.isValid &&
+      parsed.repo === 'bun' &&
+      parsed.path?.includes('packages/bun-types') === true
+    );
   }
   /**
    * Validate if URL is a valid documentation URL
@@ -2228,7 +2314,7 @@ export class DocumentationURLValidator {
   public static isValidDocumentationURL(url: string): boolean {
     try {
       const parsed = new URL(url);
-      
+
       // Check if it's a known documentation provider
       const knownHosts = [
         'bun.sh',
@@ -2241,9 +2327,9 @@ export class DocumentationURLValidator {
         'wiki.enterprise.com',
         'api.enterprise.com',
         'performance.enterprise.com',
-        'security.enterprise.com'
+        'security.enterprise.com',
       ];
-      
+
       return knownHosts.includes(parsed.hostname);
     } catch {
       return false;
@@ -2262,7 +2348,7 @@ export class DocumentationURLValidator {
   } {
     try {
       const parsed = new URL(url);
-      
+
       // Determine provider
       let provider: DocumentationProvider | undefined;
       switch (parsed.hostname) {
@@ -2305,7 +2391,7 @@ export class DocumentationURLValidator {
         provider,
         path,
         fragment,
-        isValid: true
+        isValid: true,
       };
     } catch {
       return { isValid: false };
@@ -2322,62 +2408,56 @@ export class DocumentationURLValidator {
   ): string {
     const baseURLs = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_OFFICIAL];
     let path = `/docs/cli/${subcommand.toLowerCase()}`;
-    
+
     if (options?.includeExamples) {
       path += '?examples=true';
     }
-    
+
     const url = new URL(path, baseURLs.DOCS);
     if (fragment) {
       url.hash = fragment;
     }
-    
+
     return url.toString();
   }
-  
+
   /**
    * Build Bun.utils documentation URL
    */
-  public buildUtilsDocumentationURL(
-    utilityFunction?: string,
-    fragment?: string
-  ): string {
+  public buildUtilsDocumentationURL(utilityFunction?: string, fragment?: string): string {
     const baseURLs = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_OFFICIAL];
     let url = new URL('/docs/api/utils', baseURLs.API);
-    
+
     if (utilityFunction) {
       url.hash = utilityFunction;
     } else if (fragment) {
       url.hash = fragment;
     }
-    
+
     return url.toString();
   }
-  
+
   /**
    * Get CLI fragment URLs
    */
   public getCLIFragmentURLs(): Record<string, string> {
     const base = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_OFFICIAL].DOCS;
-    
+
     return {
       run: `${base}/docs/cli/run#examples`,
       test: `${base}/docs/cli/test#configuration`,
       build: `${base}/docs/cli/build#options`,
       install: `${base}/docs/cli/install-command#dependencies`,
-      add: `${base}/docs/cli/add#packages` 
+      add: `${base}/docs/cli/add#packages`,
     };
   }
-  
+
   /**
    * Build CLI command example
    */
-  public buildCLICommandExample(
-    command: string,
-    options: Record<string, any> = {}
-  ): string {
+  public buildCLICommandExample(command: string, options: Record<string, any> = {}): string {
     let cmd = `bun ${command}`;
-    
+
     // Add positional arguments
     if (options.script) {
       cmd += ` ${options.script}`;
@@ -2391,7 +2471,7 @@ export class DocumentationURLValidator {
     if (options.entry) {
       cmd += ` ${options.entry}`;
     }
-    
+
     // Add flags
     Object.entries(options).forEach(([key, value]) => {
       if (!['script', 'package', 'version', 'entry'].includes(key)) {
@@ -2402,10 +2482,10 @@ export class DocumentationURLValidator {
         }
       }
     });
-    
+
     return cmd;
   }
-  
+
   /**
    * Get cheatsheet URLs
    */
@@ -2417,19 +2497,19 @@ export class DocumentationURLValidator {
           {
             name: 'run',
             example: 'bun run dev',
-            docs: 'https://bun.sh/docs/cli/cli/run'
+            docs: 'https://bun.sh/docs/cli/cli/run',
           },
           {
             name: 'test',
             example: 'bun test --watch',
-            docs: 'https://bun.sh/docs/cli/cli/test'
+            docs: 'https://bun.sh/docs/cli/cli/test',
           },
           {
             name: 'build',
             example: 'bun build ./src/index.ts',
-            docs: 'https://bun.sh/docs/cli/cli/build'
-          }
-        ]
+            docs: 'https://bun.sh/docs/cli/cli/build',
+          },
+        ],
       },
       utils: {
         main: 'https://bun.sh/docs/cli/api/utils',
@@ -2437,42 +2517,42 @@ export class DocumentationURLValidator {
           {
             name: 'readFile',
             example: "await readFile('file.txt', 'utf-8')",
-            docs: 'https://bun.sh/docs/cli/api/utils#readFile'
+            docs: 'https://bun.sh/docs/cli/api/utils#readFile',
           },
           {
             name: 'isTypedArray',
             example: 'isTypedArray(new Uint8Array())',
-            docs: 'https://bun.sh/docs/cli/api/utils#isTypedArray'
+            docs: 'https://bun.sh/docs/cli/api/utils#isTypedArray',
           },
           {
             name: 'toBuffer',
             example: 'toBuffer("Hello")',
-            docs: 'https://bun.sh/docs/cli/api/utils#toBuffer'
-          }
+            docs: 'https://bun.sh/docs/cli/api/utils#toBuffer',
+          },
         ],
         validation: [
           {
             name: 'isTypedArray',
             test: 'new Uint8Array([1, 2, 3])',
-            result: 'true'
+            result: 'true',
           },
           {
             name: 'isString',
             test: '"Hello"',
-            result: 'true'
+            result: 'true',
           },
           {
             name: 'isArray',
             test: '[1, 2, 3]',
-            result: 'true'
-          }
-        ]
+            result: 'true',
+          },
+        ],
       },
       api: {
         main: 'https://bun.sh/docs/cli/api',
         typedArray: 'https://bun.sh/docs/cli/runtime/binary-data#typedarray',
-        fetch: 'https://bun.sh/docs/cli/runtime/networking/fetch'
-      }
+        fetch: 'https://bun.sh/docs/cli/runtime/networking/fetch',
+      },
     };
   }
 }
@@ -2494,7 +2574,7 @@ export function getBunReferenceWithTextFragment(): {
 } {
   return {
     nodeZlib: docsURL.buildBunReferenceWithTextFragment('node:zlib'),
-    bunAPIReference: docsURL.buildBunReferenceWithTextFragment('Bun API Reference')
+    bunAPIReference: docsURL.buildBunReferenceWithTextFragment('Bun API Reference'),
   };
 }
 
@@ -2519,37 +2599,37 @@ export function getAllCriticalURLs(): Record<string, any> {
       main: 'https://bun.com/reference',
       api: 'https://bun.com/reference/api',
       cli: 'https://bun.com/reference/cli',
-      textFragments: docsURL.getCommonTextFragmentURLs()
+      textFragments: docsURL.getCommonTextFragmentURLs(),
     },
-    
+
     guidesPortal: {
       main: 'https://bun.com/guides',
-      gettingStarted: 'https://bun.com/guides/getting-started'
+      gettingStarted: 'https://bun.com/guides/getting-started',
     },
-    
+
     rssFeeds: {
       main: 'https://bun.com/rss.xml',
       blog: 'https://bun.com/blog/rss.xml',
-      technical: 'https://bun.sh/rss.xml'
+      technical: 'https://bun.sh/rss.xml',
     },
-    
+
     // GitHub resources
     github: {
       repository: 'https://github.com/oven-sh/bun',
       bunTypes: {
         latest: docsURL.buildBunTypesURL(),
         specificCommit: docsURL.getExampleCommitURL(),
-        npm: ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.NPM_PACKAGES].BUN_TYPES
+        npm: ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.NPM_PACKAGES].BUN_TYPES,
       },
-      packages: docsURL.getGitHubPackageURLs('bun-types')
+      packages: docsURL.getGitHubPackageURLs('bun-types'),
     },
-    
+
     // Technical documentation
     technicalDocs: {
       typedArray: docsURL.buildTypedArrayURL('OVERVIEW'),
       fetchAPI: docsURL.buildFetchAPIDocsURL(),
-      binaryData: 'https://bun.sh/docs/cli/runtime/binary-data'
-    }
+      binaryData: 'https://bun.sh/docs/cli/runtime/binary-data',
+    },
   };
 }
 
@@ -2558,10 +2638,11 @@ export function getAllCriticalURLs(): Record<string, any> {
  */
 export const exampleCommit = {
   hash: SIGNIFICANT_COMMITS.AF762966,
-  url: ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.GITHUB_PUBLIC].EXAMPLE_COMMIT_AF76296,
+  url: ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.GITHUB_PUBLIC]
+    .EXAMPLE_COMMIT_AF76296,
   shortHash: 'af76296' as const,
   date: '2023-08-15' as const, // Example date - would need actual commit date
-  description: 'Example commit showing bun-types package structure'
+  description: 'Example commit showing bun-types package structure',
 } as const;
 
 /**
@@ -2576,25 +2657,38 @@ export const docsURL = EnterpriseDocumentationURLBuilder.getInstance();
 /**
  * Quick URL builders
  */
-export const buildBunDocsURL = (path: string, fragment?: string) => 
+export const buildBunDocsURL = (path: string, fragment?: string) =>
   docsURL.buildBunURL(path, fragment);
 
-export const buildBunURLWithDomain = (path: string, fragment?: string, useAlternativeDomain: boolean = false) => 
-  docsURL.buildBunURLWithDomain(path, fragment, useAlternativeDomain);
+export const buildBunURLWithDomain = (
+  path: string,
+  fragment?: string,
+  useAlternativeDomain: boolean = false
+) => docsURL.buildBunURLWithDomain(path, fragment, useAlternativeDomain);
 
-export const buildPackageManagerURLWithDomain = (path: string, fragment?: string, useAlternativeDomain: boolean = false) => 
-  docsURL.buildPackageManagerURLWithDomain(path, fragment, useAlternativeDomain);
+export const buildPackageManagerURLWithDomain = (
+  path: string,
+  fragment?: string,
+  useAlternativeDomain: boolean = false
+) => docsURL.buildPackageManagerURLWithDomain(path, fragment, useAlternativeDomain);
 
-export const buildReferencePortalURL = (section: string, fragment?: string, options?: { language?: string }) => 
-  docsURL.buildReferencePortalURL(section, fragment, options);
+export const buildReferencePortalURL = (
+  section: string,
+  fragment?: string,
+  options?: { language?: string }
+) => docsURL.buildReferencePortalURL(section, fragment, options);
 
-export const buildGuideURL = (guideName: string, fragment?: string, options?: { step?: number; interactive?: boolean }) => 
-  docsURL.buildGuideURL(guideName, fragment, options);
+export const buildGuideURL = (
+  guideName: string,
+  fragment?: string,
+  options?: { step?: number; interactive?: boolean }
+) => docsURL.buildGuideURL(guideName, fragment, options);
 
-export const buildRSSFeedURL = (feedType: 'main' | 'blog' | 'releases' | 'technical' | 'security' | 'community') => 
-  docsURL.buildRSSFeedURL(feedType);
+export const buildRSSFeedURL = (
+  feedType: 'main' | 'blog' | 'releases' | 'technical' | 'security' | 'community'
+) => docsURL.buildRSSFeedURL(feedType);
 
-export const getAllDocumentationForTopic = (topic: string) => 
+export const getAllDocumentationForTopic = (topic: string) =>
   docsURL.getAllDocumentationForTopic(topic);
 
 export const buildGitHubRepositoryURL = (
@@ -2602,8 +2696,22 @@ export const buildGitHubRepositoryURL = (
   repo: string,
   path?: string,
   ref?: string,
-  options?: { 
-    viewType?: 'tree' | 'blob' | 'commits' | 'issues' | 'pulls' | 'actions' | 'projects' | 'wiki' | 'security' | 'insights' | 'settings' | 'releases' | 'packages' | 'discussions';
+  options?: {
+    viewType?:
+      | 'tree'
+      | 'blob'
+      | 'commits'
+      | 'issues'
+      | 'pulls'
+      | 'actions'
+      | 'projects'
+      | 'wiki'
+      | 'security'
+      | 'insights'
+      | 'settings'
+      | 'releases'
+      | 'packages'
+      | 'discussions';
     lineNumbers?: { start: number; end?: number };
     pathType?: 'file' | 'dir' | 'submodule' | 'symlink';
     action?: 'new' | 'edit' | 'delete' | 'find' | 'compare';
@@ -2611,7 +2719,6 @@ export const buildGitHubRepositoryURL = (
     tag?: string;
   }
 ) => docsURL.buildGitHubRepositoryURL(owner, repo, path, ref, options);
-
 
 export const buildGitHubCommitURL = (
   owner?: string,
@@ -2621,10 +2728,8 @@ export const buildGitHubCommitURL = (
   viewType?: 'tree' | 'blob'
 ) => docsURL.buildGitHubCommitURL(owner, repo, commitHash, path, viewType);
 
-export const buildBunTypesURL = (
-  commitHash?: string,
-  path?: string
-) => docsURL.buildBunTypesURL(commitHash, path);
+export const buildBunTypesURL = (commitHash?: string, path?: string) =>
+  docsURL.buildBunTypesURL(commitHash, path);
 
 export const buildURLWithTextFragment = (
   baseURL: string,
@@ -2647,113 +2752,103 @@ export const buildBunReferenceWithTextFragment = (
   }
 ) => docsURL.buildBunReferenceWithTextFragment(text, options);
 
-export const getExampleCommitURL = () => 
-  docsURL.getExampleCommitURL();
+export const getExampleCommitURL = () => docsURL.getExampleCommitURL();
 
-export const getTypeDefinitionURLs = () => 
-  docsURL.getTypeDefinitionURLs();
+export const getTypeDefinitionURLs = () => docsURL.getTypeDefinitionURLs();
 
-export const getGitHubPackageURLs = (
-  packageName: string,
-  commitHash?: string
-) => docsURL.getGitHubPackageURLs(packageName, commitHash);
+export const getGitHubPackageURLs = (packageName: string, commitHash?: string) =>
+  docsURL.getGitHubPackageURLs(packageName, commitHash);
 
-export const getCommonTextFragmentURLs = () => 
-  docsURL.getCommonTextFragmentURLs();
+export const getCommonTextFragmentURLs = () => docsURL.getCommonTextFragmentURLs();
 
 // Enhanced validator convenience functions
-export const parseGitHubURL = (url: string) => 
-  DocumentationURLValidator.parseGitHubURL(url);
+export const parseGitHubURL = (url: string) => DocumentationURLValidator.parseGitHubURL(url);
 
-export const extractTextFragment = (url: string) => 
+export const extractTextFragment = (url: string) =>
   DocumentationURLValidator.extractTextFragment(url);
 
-export const isSpecificCommitURL = (url: string) => 
+export const isSpecificCommitURL = (url: string) =>
   DocumentationURLValidator.isSpecificCommitURL(url);
 
-export const extractCommitHash = (url: string) => 
-  DocumentationURLValidator.extractCommitHash(url);
+export const extractCommitHash = (url: string) => DocumentationURLValidator.extractCommitHash(url);
 
-export const isBunTypesURL = (url: string) => 
-  DocumentationURLValidator.isBunTypesURL(url);
+export const isBunTypesURL = (url: string) => DocumentationURLValidator.isBunTypesURL(url);
 
-export const buildBunRSSFeedURL = () => 
-  docsURL.buildBunRSSFeedURL();
+export const buildBunRSSFeedURL = () => docsURL.buildBunRSSFeedURL();
 
-export const buildGitHubEnterpriseURL = (path: string, fragment?: string) => 
+export const buildGitHubEnterpriseURL = (path: string, fragment?: string) =>
   docsURL.buildGitHubEnterpriseURL(path, fragment);
 
-export const buildGitHubRawURL = (owner: string, repo: string, path: string, ref?: string) => 
+export const buildGitHubRawURL = (owner: string, repo: string, path: string, ref?: string) =>
   docsURL.buildGitHubRawURL(owner, repo, path, ref);
 
-export const buildGitHubGistURL = (gistId: string) => 
-  docsURL.buildGitHubGistURL(gistId);
+export const buildGitHubGistURL = (gistId: string) => docsURL.buildGitHubGistURL(gistId);
 
-export const buildEnterpriseAPIURL = (path: string, fragment?: string) => 
+export const buildEnterpriseAPIURL = (path: string, fragment?: string) =>
   docsURL.buildEnterpriseAPIURL(path, fragment);
 
-export const buildInternalWikiURL = (path: string, fragment?: string) => 
+export const buildInternalWikiURL = (path: string, fragment?: string) =>
   docsURL.buildInternalWikiURL(path, fragment);
 
-export const buildMDNWebDocsURL = (path: string, fragment?: string) => 
+export const buildMDNWebDocsURL = (path: string, fragment?: string) =>
   docsURL.buildMDNWebDocsURL(path, fragment);
 
-export const buildMDNEnglishURL = (path: string, fragment?: string) => 
+export const buildMDNEnglishURL = (path: string, fragment?: string) =>
   docsURL.buildMDNEnglishURL(path, fragment);
 
-export const buildMDNSearchURL = (query: string) => 
-  docsURL.buildMDNSearchURL(query);
+export const buildMDNSearchURL = (query: string) => docsURL.buildMDNSearchURL(query);
 
-export const buildWebDevURL = (section: 'metrics' | 'optimization' | 'tools', path?: string, fragment?: string) => 
-  docsURL.buildWebDevURL(section, path, fragment);
+export const buildWebDevURL = (
+  section: 'metrics' | 'optimization' | 'tools',
+  path?: string,
+  fragment?: string
+) => docsURL.buildWebDevURL(section, path, fragment);
 
-export const buildEnterpriseWikiURL = (path: string, fragment?: string) => 
+export const buildEnterpriseWikiURL = (path: string, fragment?: string) =>
   docsURL.buildEnterpriseWikiURL(path, fragment);
 
-export const buildPerformanceURL = (path: string, fragment?: string) => 
+export const buildPerformanceURL = (path: string, fragment?: string) =>
   docsURL.buildPerformanceURL(path, fragment);
 
-export const buildSecurityURL = (path: string, fragment?: string) => 
+export const buildSecurityURL = (path: string, fragment?: string) =>
   docsURL.buildSecurityURL(path, fragment);
 
-export const buildPackageManagerURL = (path: string, fragment?: string) => 
+export const buildPackageManagerURL = (path: string, fragment?: string) =>
   docsURL.buildPackageManagerURL(path, fragment);
 
-export const buildBundlerURL = (path: string, fragment?: string) => 
+export const buildBundlerURL = (path: string, fragment?: string) =>
   docsURL.buildBundlerURL(path, fragment);
 
 /**
  * Package manager categorized convenience functions
  */
-export const getPackageManagerCoreCommands = () => 
-  docsURL.getPackageManagerCoreCommands();
+export const getPackageManagerCoreCommands = () => docsURL.getPackageManagerCoreCommands();
 
-export const getPackageManagerPublishingAnalysis = () => 
+export const getPackageManagerPublishingAnalysis = () =>
   docsURL.getPackageManagerPublishingAnalysis();
 
-export const getPackageManagerWorkspaceManagement = () => 
+export const getPackageManagerWorkspaceManagement = () =>
   docsURL.getPackageManagerWorkspaceManagement();
 
-export const getPackageManagerAdvancedConfiguration = () => 
+export const getPackageManagerAdvancedConfiguration = () =>
   docsURL.getPackageManagerAdvancedConfiguration();
 
 /**
  * URL validation
  */
-export const isValidDocumentationURL = (url: string) => 
+export const isValidDocumentationURL = (url: string) =>
   DocumentationURLValidator.isValidDocumentationURL(url);
 
-export const extractDocumentationMetadata = (url: string) => 
+export const extractDocumentationMetadata = (url: string) =>
   DocumentationURLValidator.extractDocumentationMetadata(url);
 
 /**
  * Metadata retrieval convenience functions
  */
-export const getDocumentationMetadata = (provider: DocumentationProvider) => 
+export const getDocumentationMetadata = (provider: DocumentationProvider) =>
   docsURL.getDocumentationMetadata(provider);
 
-export const getBunDocumentationMetadata = () => 
-  docsURL.getBunDocumentationMetadata();
+export const getBunDocumentationMetadata = () => docsURL.getBunDocumentationMetadata();
 
 /**
  * Fragment convenience functions
@@ -2766,14 +2861,12 @@ export const buildURLWithFragment = <T extends FragmentType>(
   fragmentValue: FragmentValue<T>
 ) => docsURL.buildURLWithFragment(provider, category, path, fragmentType, fragmentValue);
 
-export const getFragmentMetadata = (fragment: string) => 
-  docsURL.getFragmentMetadata(fragment);
+export const getFragmentMetadata = (fragment: string) => docsURL.getFragmentMetadata(fragment);
 
-export const getFragmentsByCategory = <T extends FragmentType>(category: T) => 
+export const getFragmentsByCategory = <T extends FragmentType>(category: T) =>
   docsURL.getFragmentsByCategory(category);
 
-export const getRelatedFragments = (fragment: string) => 
-  docsURL.getRelatedFragments(fragment);
+export const getRelatedFragments = (fragment: string) => docsURL.getRelatedFragments(fragment);
 
 /**
  * Structured path convenience functions
@@ -2785,11 +2878,10 @@ export const buildStructuredURL = <T extends keyof DocumentationPaths>(
   pathKey: keyof DocumentationPaths[T][DocumentationCategory]
 ) => docsURL.buildStructuredURL(provider, pathSection, category, pathKey);
 
-export const getPathsByCategory = (category: DocumentationCategory) => 
+export const getPathsByCategory = (category: DocumentationCategory) =>
   docsURL.getPathsByCategory(category);
 
-export const getBunCorePaths = () => 
-  docsURL.getBunCorePaths();
+export const getBunCorePaths = () => docsURL.getBunCorePaths();
 
 // CLI and Utils convenience functions
 export const buildCLIDocumentationURL = (
@@ -2798,27 +2890,19 @@ export const buildCLIDocumentationURL = (
   options?: { includeExamples?: boolean }
 ) => docsURL.buildCLIDocumentationURL(subcommand, fragment, options);
 
-export const buildUtilsDocumentationURL = (
-  utilityFunction?: string,
-  fragment?: string
-) => docsURL.buildUtilsDocumentationURL(utilityFunction, fragment);
+export const buildUtilsDocumentationURL = (utilityFunction?: string, fragment?: string) =>
+  docsURL.buildUtilsDocumentationURL(utilityFunction, fragment);
 
-export const getCLIFragmentURLs = () => 
-  docsURL.getCLIFragmentURLs();
+export const getCLIFragmentURLs = () => docsURL.getCLIFragmentURLs();
 
-export const buildCLICommandExample = (
-  command: string,
-  options: Record<string, any> = {}
-) => docsURL.buildCLICommandExample(command, options);
+export const buildCLICommandExample = (command: string, options: Record<string, any> = {}) =>
+  docsURL.buildCLICommandExample(command, options);
 
-export const getCheatsheetURLs = () => 
-  docsURL.getCheatsheetURLs();
+export const getCheatsheetURLs = () => docsURL.getCheatsheetURLs();
 
-export const getGuidePaths = () => 
-  docsURL.getGuidePaths();
+export const getGuidePaths = () => docsURL.getGuidePaths();
 
-export const getEnterprisePaths = () => 
-  docsURL.getEnterprisePaths();
+export const getEnterprisePaths = () => docsURL.getEnterprisePaths();
 
 /**
  * 💡 Performance Tip: For better performance, consider:
@@ -2840,7 +2924,7 @@ export const BUN_DOCS_BUILDERS = {
     api: () => buildBunDocsURL('docs/api/bun-secrets'),
     getOptions: () => buildBunDocsURL('docs/api/bun-secrets#get'),
     versioning: () => buildBunDocsURL('docs/runtime/bun-secrets#versioning'),
-    rollback: () => buildBunDocsURL('docs/runtime/bun-secrets#rollback')
+    rollback: () => buildBunDocsURL('docs/runtime/bun-secrets#rollback'),
   },
 
   // Runtime documentation
@@ -2854,7 +2938,7 @@ export const BUN_DOCS_BUILDERS = {
     formatNumbers: () => buildBunDocsURL('docs/api/color#numbers'),
     formatHex: () => buildBunDocsURL('docs/api/color#hex'),
     getChannels: () => buildBunDocsURL('docs/api/color#channels'),
-    bundleTime: () => buildBunDocsURL('docs/api/color#bundle-time')
+    bundleTime: () => buildBunDocsURL('docs/api/color#bundle-time'),
   },
 
   // File I/O documentation
@@ -2862,7 +2946,7 @@ export const BUN_DOCS_BUILDERS = {
     main: () => buildBunDocsURL('docs/api/file-io'),
     binary: () => buildBunDocsURL('docs/runtime/binary-data'),
     watcher: () => buildBunDocsURL('docs/api/file-watcher'),
-    path: () => buildBunDocsURL('docs/api/path')
+    path: () => buildBunDocsURL('docs/api/path'),
   },
 
   // Network documentation
@@ -2870,7 +2954,7 @@ export const BUN_DOCS_BUILDERS = {
     fetch: () => buildBunDocsURL('docs/api/fetch'),
     websocket: () => buildBunDocsURL('docs/api/websocket'),
     proxy: () => buildBunDocsURL('docs/runtime/proxy'),
-    tls: () => buildBunDocsURL('docs/runtime/tls')
+    tls: () => buildBunDocsURL('docs/runtime/tls'),
   },
 
   // Bundler documentation
@@ -2878,7 +2962,7 @@ export const BUN_DOCS_BUILDERS = {
     main: () => buildBunDocsURL('docs/bundler'),
     server: () => buildBunDocsURL('docs/bundler#dev-server'),
     static: () => buildBunDocsURL('docs/bundler#static'),
-    plugins: () => buildBunDocsURL('docs/bundler#plugins')
+    plugins: () => buildBunDocsURL('docs/bundler#plugins'),
   },
 
   // Deployment documentation
@@ -2886,7 +2970,7 @@ export const BUN_DOCS_BUILDERS = {
     docker: () => buildBunDocsURL('docs/deployment/docker'),
     aws: () => buildBunDocsURL('docs/deployment/aws'),
     vercel: () => buildBunDocsURL('docs/deployment/vercel'),
-    railway: () => buildBunDocsURL('docs/deployment/railway')
+    railway: () => buildBunDocsURL('docs/deployment/railway'),
   },
 
   // API documentation
@@ -2894,7 +2978,7 @@ export const BUN_DOCS_BUILDERS = {
     main: () => buildBunDocsURL('docs/api'),
     utils: () => buildBunDocsURL('docs/api/utils'),
     crypto: () => buildBunDocsURL('docs/api/crypto'),
-    hashing: () => buildBunDocsURL('docs/runtime/hashing')
+    hashing: () => buildBunDocsURL('docs/runtime/hashing'),
   },
 
   // Guides
@@ -2902,6 +2986,6 @@ export const BUN_DOCS_BUILDERS = {
     gettingStarted: () => buildBunDocsURL('docs/guides'),
     migration: () => buildBunDocsURL('docs/guides/migration'),
     performance: () => buildBunDocsURL('docs/guides/performance'),
-    testing: () => buildBunDocsURL('docs/guides/testing')
-  }
+    testing: () => buildBunDocsURL('docs/guides/testing'),
+  },
 };

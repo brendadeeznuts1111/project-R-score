@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Automated Validation System
- * 
+ *
  * Provides automated validation for CI/CD integration and
  * continuous monitoring of repository health.
  */
@@ -42,7 +42,7 @@ class AutomatedValidationSystem {
     maxTotalTime: 60000, // 60 seconds
     maxUrlResponseTime: 5000, // 5 seconds
     maxMemoryUsage: 512 * 1024 * 1024, // 512MB
-    minSuccessRate: 0.95 // 95%
+    minSuccessRate: 0.95, // 95%
   };
 
   /**
@@ -53,13 +53,13 @@ class AutomatedValidationSystem {
     const startMemory = process.memoryUsage().heapUsed;
 
     console.log('🤖 AUTOMATED VALIDATION SYSTEM');
-    console.log('=' .repeat(50));
+    console.log('='.repeat(50));
 
     const results: ValidationResult['results'] = {
       urls: { total: 0, valid: 0, invalid: 0, errors: [] },
       constants: { total: 0, valid: 0, invalid: 0, errors: [] },
       documentation: { total: 0, valid: 0, invalid: 0, errors: [] },
-      files: { total: 0, tracked: 0, untracked: 0, recommendations: [] }
+      files: { total: 0, tracked: 0, untracked: 0, recommendations: [] },
     };
 
     const recommendations: string[] = [];
@@ -71,16 +71,16 @@ class AutomatedValidationSystem {
         URLValidator.validateURL('bun-official-docs'),
         URLValidator.validateURL('github-api'),
         URLValidator.validateURL('bun-cli-installation'),
-        URLValidator.validateURL('bun-utils-documentation')
+        URLValidator.validateURL('bun-utils-documentation'),
       ];
-      
+
       // Add timeout to prevent blocking
-      const urlResults = await Promise.race([
+      const urlResults = (await Promise.race([
         Promise.all(urlValidationPromises),
-        new Promise((_, reject) => 
+        new Promise((_, reject) =>
           setTimeout(() => reject(new Error('URL validation timeout')), 30000)
-        )
-      ]) as any[];
+        ),
+      ])) as any[];
 
       results.urls.total = urlResults.length;
       results.urls.valid = urlResults.filter(r => r.isValid).length;
@@ -92,9 +92,7 @@ class AutomatedValidationSystem {
       // 2. Constants Validation
       console.log('\n📊 Running Constants Validation...');
       const constantNames = ['default-timeout', 'max-retries', 'cli-categories-count'];
-      const constantResults = constantNames.map(name => 
-        ConstantValidator.validateConstant(name)
-      );
+      const constantResults = constantNames.map(name => ConstantValidator.validateConstant(name));
 
       results.constants.total = constantResults.length;
       results.constants.valid = constantResults.filter(r => r.isValid).length;
@@ -111,7 +109,9 @@ class AutomatedValidationSystem {
         results.documentation.valid = docResults.valid;
         results.documentation.invalid = docResults.total - docResults.valid;
         results.documentation.errors = docResults.errors;
-        console.log(`   Documentation: ${results.documentation.valid}/${results.documentation.total} valid`);
+        console.log(
+          `   Documentation: ${results.documentation.valid}/${results.documentation.total} valid`
+        );
       } catch (error) {
         results.documentation.errors.push(`Documentation validation failed: ${error}`);
         console.log(`   Documentation: Validation failed`);
@@ -128,7 +128,7 @@ class AutomatedValidationSystem {
           .filter(f => f.recommendation === 'track')
           .slice(0, 5)
           .map(f => f.path);
-        
+
         console.log(`   Files: ${results.files.untracked} untracked analyzed`);
       } catch (error) {
         results.files.errors.push(`Files analysis failed: ${error}`);
@@ -137,7 +137,7 @@ class AutomatedValidationSystem {
 
       // Generate recommendations
       const overallSuccessRate = this.calculateSuccessRate(results);
-      
+
       if (overallSuccessRate < this.PERFORMANCE_THRESHOLDS.minSuccessRate) {
         recommendations.push('Overall success rate below threshold - investigate failures');
       }
@@ -147,13 +147,14 @@ class AutomatedValidationSystem {
       }
 
       if (results.constants.invalid > 0) {
-        recommendations.push(`${results.constants.invalid} constants failed validation - update configurations`);
+        recommendations.push(
+          `${results.constants.invalid} constants failed validation - update configurations`
+        );
       }
 
       if (results.files.untracked > 50) {
         recommendations.push('High number of untracked files - consider cleaning repository');
       }
-
     } catch (error) {
       console.error('Validation error:', error);
       recommendations.push(`Validation system error: ${error}`);
@@ -169,9 +170,9 @@ class AutomatedValidationSystem {
       performance: {
         totalTime: endTime - startTime,
         urlResponseTime: results.urls.total > 0 ? 1000 : 0, // Placeholder
-        memoryUsage: endMemory - startMemory
+        memoryUsage: endMemory - startMemory,
       },
-      recommendations
+      recommendations,
     };
   }
 
@@ -181,7 +182,7 @@ class AutomatedValidationSystem {
   private static calculateSuccessRate(results: ValidationResult['results']): number {
     const totalChecks = results.urls.total + results.constants.total + results.documentation.total;
     const totalValid = results.urls.valid + results.constants.valid + results.documentation.valid;
-    
+
     return totalChecks > 0 ? totalValid / totalChecks : 0;
   }
 
@@ -190,7 +191,7 @@ class AutomatedValidationSystem {
    */
   static generateCIOutput(result: ValidationResult): void {
     console.log('\n📋 CI/CD VALIDATION REPORT');
-    console.log('=' .repeat(50));
+    console.log('='.repeat(50));
 
     // Exit code based on success
     if (!result.success) {
@@ -203,8 +204,12 @@ class AutomatedValidationSystem {
     // Detailed results
     console.log(`\n📊 RESULTS:`);
     console.log(`   URLs: ${result.results.urls.valid}/${result.results.urls.total} valid`);
-    console.log(`   Constants: ${result.results.constants.valid}/${result.results.constants.total} valid`);
-    console.log(`   Documentation: ${result.results.documentation.valid}/${result.results.documentation.total} valid`);
+    console.log(
+      `   Constants: ${result.results.constants.valid}/${result.results.constants.total} valid`
+    );
+    console.log(
+      `   Documentation: ${result.results.documentation.valid}/${result.results.documentation.total} valid`
+    );
     console.log(`   Files: ${result.results.files.untracked} untracked`);
 
     // Performance metrics
@@ -221,14 +226,18 @@ class AutomatedValidationSystem {
     // Output JSON for CI systems
     console.log(`\n📄 JSON OUTPUT:`);
     try {
-      const jsonOutput = JSON.stringify({
-        success: result.success,
-        timestamp: result.timestamp,
-        metrics: {
-          successRate: this.calculateSuccessRate(result.results),
-          ...result.performance
-        }
-      }, null, 2);
+      const jsonOutput = JSON.stringify(
+        {
+          success: result.success,
+          timestamp: result.timestamp,
+          metrics: {
+            successRate: this.calculateSuccessRate(result.results),
+            ...result.performance,
+          },
+        },
+        null,
+        2
+      );
       console.log(jsonOutput);
     } catch (error) {
       console.log('{"error": "Failed to serialize output to JSON"}');
@@ -314,7 +323,9 @@ jobs:
     try {
       require('fs').mkdirSync('.github/workflows', { recursive: true });
       require('fs').writeFileSync('.github/workflows/automated-validation.yml', workflow);
-      console.log('   ✅ GitHub Actions workflow created: .github/workflows/automated-validation.yml');
+      console.log(
+        '   ✅ GitHub Actions workflow created: .github/workflows/automated-validation.yml'
+      );
     } catch (error) {
       console.log(`   ❌ Failed to create GitHub Actions workflow: ${error}`);
     }
@@ -332,40 +343,40 @@ jobs:
           type: 'metric',
           title: 'URL Validation Success Rate',
           query: 'validation_success_rate{type="urls"}',
-          threshold: 0.95
+          threshold: 0.95,
         },
         {
           type: 'metric',
           title: 'Constants Validation Success Rate',
           query: 'validation_success_rate{type="constants"}',
-          threshold: 1.0
+          threshold: 1.0,
         },
         {
           type: 'metric',
           title: 'Documentation Validation Success Rate',
           query: 'validation_success_rate{type="documentation"}',
-          threshold: 0.90
+          threshold: 0.9,
         },
         {
           type: 'metric',
           title: 'Validation Response Time',
           query: 'validation_duration_ms',
-          threshold: 30000
+          threshold: 30000,
         },
         {
           type: 'alert',
           title: 'Critical Failures',
-          conditions: [
-            'validation_success_rate < 0.90',
-            'validation_duration_ms > 60000'
-          ]
-        }
-      ]
+          conditions: ['validation_success_rate < 0.90', 'validation_duration_ms > 60000'],
+        },
+      ],
     };
 
     try {
       require('fs').mkdirSync('config', { recursive: true });
-      require('fs').writeFileSync('config/monitoring-dashboard.json', JSON.stringify(dashboard, null, 2));
+      require('fs').writeFileSync(
+        'config/monitoring-dashboard.json',
+        JSON.stringify(dashboard, null, 2)
+      );
       console.log('   ✅ Monitoring dashboard config created: config/monitoring-dashboard.json');
     } catch (error) {
       console.log(`   ❌ Failed to create monitoring dashboard: ${error}`);
@@ -377,7 +388,7 @@ jobs:
    */
   static async setupSystem(): Promise<void> {
     console.log('🚀 SETTING UP AUTOMATED VALIDATION SYSTEM');
-    console.log('=' .repeat(50));
+    console.log('='.repeat(50));
 
     // Run validation
     const result = await this.runCompleteValidation();

@@ -39,7 +39,7 @@ export class SecretLifecycleManager {
       author: 'lifecycle-manager',
       description: `Auto-rotation: ${reason}`,
       level: 'HIGH',
-      tags: { 'factorywager:auto-rotated': 'true' }
+      tags: { 'factorywager:auto-rotated': 'true' },
     });
 
     return result;
@@ -87,7 +87,7 @@ export class SecretLifecycleManager {
     try {
       const raw = await readFile(path, 'utf8');
       const data = JSON.parse(raw) as Array<{ key: string; expiresAt?: string }>;
-      data.forEach((entry) => this.registry.set(entry.key, { expiresAt: entry.expiresAt }));
+      data.forEach(entry => this.registry.set(entry.key, { expiresAt: entry.expiresAt }));
     } catch {
       // No registry file; leave empty
     }
@@ -97,14 +97,14 @@ export class SecretLifecycleManager {
     const report = {
       generated: new Date().toISOString(),
       count: expiring.length,
-      critical: expiring.filter((e) => e.daysLeft <= 3).length,
-      warnings: expiring.filter((e) => e.daysLeft > 3 && e.daysLeft <= 7).length,
-      secrets: expiring.map((e) => ({
+      critical: expiring.filter(e => e.daysLeft <= 3).length,
+      warnings: expiring.filter(e => e.daysLeft > 3 && e.daysLeft <= 7).length,
+      secrets: expiring.map(e => ({
         key: e.key,
         daysLeft: e.daysLeft,
         severity: e.daysLeft <= 3 ? 'CRITICAL' : 'WARNING',
-        action: e.daysLeft <= 1 ? 'ROTATE_NOW' : 'SCHEDULE_ROTATION'
-      }))
+        action: e.daysLeft <= 1 ? 'ROTATE_NOW' : 'SCHEDULE_ROTATION',
+      })),
     };
 
     const date = new Date().toISOString().split('T')[0];
@@ -118,8 +118,8 @@ export class SecretLifecycleManager {
         customMetadata: {
           'report:type': 'secret-expirations',
           'report:date': report.generated,
-          'report:critical-count': report.critical.toString()
-        }
+          'report:critical-count': report.critical.toString(),
+        },
       });
     }
 
@@ -129,8 +129,8 @@ export class SecretLifecycleManager {
         customMetadata: {
           'report:type': 'secret-expirations',
           'report:format': 'html',
-          'report:date': report.generated
-        }
+          'report:date': report.generated,
+        },
       });
     }
 
@@ -153,9 +153,11 @@ export class SecretLifecycleManager {
   }
 
   private generateExpirationHtml(report: any) {
-    const rows = report.secrets.map((s: any) => {
-      return `<tr><td>${s.key}</td><td>${s.daysLeft}</td><td>${s.severity}</td><td>${s.action}</td></tr>`;
-    }).join('');
+    const rows = report.secrets
+      .map((s: any) => {
+        return `<tr><td>${s.key}</td><td>${s.daysLeft}</td><td>${s.severity}</td><td>${s.action}</td></tr>`;
+      })
+      .join('');
     return `<!doctype html>
 <html><head><meta charset="utf-8"><title>Secret Expiration Report</title>
 <style>

@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * URL Fixer and Performance Optimizer
- * 
+ *
  * Fixes broken URLs and optimizes performance issues identified
  * in the comprehensive repository review.
  */
@@ -22,7 +22,7 @@ import { join } from 'path';
 class URLFixerOptimizer {
   private static readonly BROKEN_URLS = {
     'https://registry.npmjs.org': 'https://registry.npmjs.org',
-    'https://registry.npmjs.org/': 'https://registry.npmjs.org/'
+    'https://registry.npmjs.org/': 'https://registry.npmjs.org/',
   };
 
   private static readonly PERFORMANCE_OPTIMIZATIONS = {
@@ -40,14 +40,14 @@ class URLFixerOptimizer {
     errors: string[];
   }> {
     console.log('🔧 FIXING BROKEN URLs...');
-    
+
     const filesToCheck = [
       'package.json',
       '.npmrc',
       'bunfig.toml',
       'my-bun-app/package.json',
       'my-bun-app/.npmrc',
-      'my-bun-app/bunfig.toml'
+      'my-bun-app/bunfig.toml',
     ];
 
     let filesFixed = 0;
@@ -91,7 +91,6 @@ class URLFixerOptimizer {
           writeFileSync(filePath, content);
           filesFixed++;
         }
-
       } catch (error) {
         errors.push(`Failed to process ${filePath}: ${error}`);
       }
@@ -108,8 +107,8 @@ class URLFixerOptimizer {
     changes: string[];
   }> {
     console.log('📚 UPDATING DOCUMENTATION CONSTANTS...');
-    
-    const constantsFile = 'BUN_CONSTANTS_VERSION.json';
+
+    const constantsFile = './config/BUN_CONSTANTS_VERSION.json';
     const changes: string[] = [];
 
     try {
@@ -137,7 +136,6 @@ class URLFixerOptimizer {
       }
 
       return { updated, changes };
-
     } catch (error) {
       return { updated: false, changes: [`Error updating constants: ${error}`] };
     }
@@ -148,27 +146,27 @@ class URLFixerOptimizer {
    */
   static createPerformanceMonitoring(): void {
     console.log('📊 CREATING PERFORMANCE MONITORING...');
-    
+
     const monitoringConfig = {
       urls: [
         { url: 'https://bun.sh/docs/cli', threshold: 2000, category: 'documentation' },
         { url: 'https://bun.sh/docs/cli/api', threshold: 1000, category: 'documentation' },
         { url: 'https://bun.sh/docs/cli/cli', threshold: 1000, category: 'documentation' },
         { url: 'https://github.com/oven-sh/bun', threshold: 1500, category: 'github' },
-        { url: 'https://registry.npmjs.org', threshold: 1000, category: 'registry' }
+        { url: 'https://registry.npmjs.org', threshold: 1000, category: 'registry' },
       ],
       monitoring: {
         interval: 300000, // 5 minutes
         retries: 3,
         timeout: 10000,
-        alertThreshold: 5000 // Alert if URL takes more than 5 seconds
+        alertThreshold: 5000, // Alert if URL takes more than 5 seconds
       },
       optimization: {
         caching: true,
         cacheTTL: 300000, // 5 minutes
         compression: true,
-        cdn: 'cloudflare'
-      }
+        cdn: 'cloudflare',
+      },
     };
 
     const configPath = 'config/url-performance-monitoring.json';
@@ -185,35 +183,35 @@ class URLFixerOptimizer {
    */
   static generateOptimizationReport(): void {
     console.log('📋 GENERATING OPTIMIZATION REPORT...');
-    
+
     const report = {
       timestamp: new Date().toISOString(),
       fixes: {
         brokenURLs: Object.entries(this.BROKEN_URLS).map(([broken, fixed]) => ({
           broken,
           fixed,
-          status: 'completed'
-        }))
+          status: 'completed',
+        })),
       },
       optimizations: {
         performance: Object.entries(this.PERFORMANCE_OPTIMIZATIONS).map(([slow, fast]) => ({
           original: slow,
           optimized: fast,
-          improvement: 'Reduced load time'
-        }))
+          improvement: 'Reduced load time',
+        })),
       },
       monitoring: {
         enabled: true,
         configuration: 'config/url-performance-monitoring.json',
-        coverage: '5 critical URLs monitored'
+        coverage: '5 critical URLs monitored',
       },
       recommendations: [
         'Implement regular URL validation in CI/CD pipeline',
         'Set up performance monitoring alerts',
         'Consider CDN optimization for documentation URLs',
         'Add fallback URLs for critical resources',
-        'Implement caching for frequently accessed URLs'
-      ]
+        'Implement caching for frequently accessed URLs',
+      ],
     };
 
     const reportPath = 'URL_OPTIMIZATION_REPORT.md';
@@ -226,14 +224,14 @@ Generated: ${report.timestamp}
 ## 🔧 Fixes Applied
 
 ### Broken URLs
-${report.fixes.brokenURLs.map(fix => 
-  `- \`${fix.broken}\` → \`${fix.fixed}\` (${fix.status})`
-).join('\n')}
+${report.fixes.brokenURLs
+  .map(fix => `- \`${fix.broken}\` → \`${fix.fixed}\` (${fix.status})`)
+  .join('\n')}
 
 ### Performance Optimizations
-${report.optimizations.performance.map(opt => 
-  `- \`${opt.original}\` → \`${opt.optimized}\` (${opt.improvement})`
-).join('\n')}
+${report.optimizations.performance
+  .map(opt => `- \`${opt.original}\` → \`${opt.optimized}\` (${opt.improvement})`)
+  .join('\n')}
 
 ## 📈 Monitoring
 
@@ -263,12 +261,14 @@ ${report.recommendations.map(rec => `- ${rec}`).join('\n')}
    */
   static async runOptimization(): Promise<void> {
     console.log('🚀 URL FIXER AND PERFORMANCE OPTIMIZER');
-    console.log('=' .repeat(50));
+    console.log('='.repeat(50));
 
     // Fix broken URLs
     const urlFixes = await this.fixBrokenURLs();
-    console.log(`\n📊 URL Fixes: ${urlFixes.filesFixed} files, ${urlFixes.urlsReplaced} URLs replaced`);
-    
+    console.log(
+      `\n📊 URL Fixes: ${urlFixes.filesFixed} files, ${urlFixes.urlsReplaced} URLs replaced`
+    );
+
     if (urlFixes.errors.length > 0) {
       console.log('Errors:');
       urlFixes.errors.forEach(error => console.log(`   • ${error}`));
@@ -277,7 +277,7 @@ ${report.recommendations.map(rec => `- ${rec}`).join('\n')}
     // Update documentation constants
     const constantUpdates = await this.updateDocumentationConstants();
     console.log(`\n📚 Constants Updated: ${constantUpdates.updated ? 'Yes' : 'No'}`);
-    
+
     if (constantUpdates.changes.length > 0) {
       constantUpdates.changes.forEach(change => console.log(`   • ${change}`));
     }

@@ -1,7 +1,7 @@
 // lib/tier1380-directories.ts — Node:fs integration for directory ops
-import { readdir, mkdir, stat } from "node:fs/promises";
+import { readdir, mkdir, stat } from 'node:fs/promises';
 
-import { join, resolve } from "node:path";
+import { join, resolve } from 'node:path';
 
 /**
  * DIRECTORY OPERATION RISK ASSESSMENT
@@ -18,12 +18,12 @@ import { join, resolve } from "node:path";
  */
 
 interface DirectoryMetrics {
-  operation: "readdir" | "mkdir" | "stat";
+  operation: 'readdir' | 'mkdir' | 'stat';
   path: string;
   entries: number;
   latencyNs: number;
   riskScore: number;
-  fallback: "node:fs/promises";
+  fallback: 'node:fs/promises';
 }
 
 export class Tier1380DirectoryScanner {
@@ -38,19 +38,17 @@ export class Tier1380DirectoryScanner {
 
     // Node:fs readdir (documented Bun approach)
     const entries = await readdir(rootPath, { withFileTypes: true });
-    const dirs = entries
-      .filter(e => e.isDirectory())
-      .map(e => join(rootPath, e.name));
+    const dirs = entries.filter(e => e.isDirectory()).map(e => join(rootPath, e.name));
 
     const latencyNs = Number(Bun.nanoseconds() - startNs);
 
     const metrics: DirectoryMetrics = {
-      operation: "readdir",
+      operation: 'readdir',
       path: rootPath,
       entries: dirs.length,
       latencyNs,
       riskScore: 2.010005001, // Node:fs = higher risk tier
-      fallback: "node:fs/promises"
+      fallback: 'node:fs/promises',
     };
 
     return { projects: dirs, metrics };
@@ -68,12 +66,12 @@ export class Tier1380DirectoryScanner {
     const latencyNs = Number(Bun.nanoseconds() - startNs);
 
     return {
-      operation: "mkdir",
+      operation: 'mkdir',
       path,
       entries: 0,
       latencyNs,
       riskScore: 2.010005001,
-      fallback: "node:fs/promises"
+      fallback: 'node:fs/promises',
     };
   }
 
@@ -93,24 +91,34 @@ export class Tier1380DirectoryScanner {
    * 20-Column Directory Matrix
    */
   renderDirectoryMatrix(metrics: DirectoryMetrics[]): void {
-    console.log(`\n\x1b[36m▵⟂⥂══════════════════════════════════════════════════════════════════════════════════════▵⟂⥂\x1b[0m`);
-    console.log(`\x1b[36m  📁  DIRECTORY OPERATIONS — Node:fs Integration (Bun-native pending)\x1b[0m`);
-    console.log(`\x1b[36m▵⟂⥂══════════════════════════════════════════════════════════════════════════════════════▵⟂⥸\x1b[0m\n`);
-    console.log(`\x1b[90mNote: Bun-native directory API not yet implemented. Using node:fs/promises.\x1b[0m\n`);
+    console.log(
+      `\n\x1b[36m▵⟂⥂══════════════════════════════════════════════════════════════════════════════════════▵⟂⥂\x1b[0m`
+    );
+    console.log(
+      `\x1b[36m  📁  DIRECTORY OPERATIONS — Node:fs Integration (Bun-native pending)\x1b[0m`
+    );
+    console.log(
+      `\x1b[36m▵⟂⥂══════════════════════════════════════════════════════════════════════════════════════▵⟂⥸\x1b[0m\n`
+    );
+    console.log(
+      `\x1b[90mNote: Bun-native directory API not yet implemented. Using node:fs/promises.\x1b[0m\n`
+    );
 
     const table = metrics.map(m => ({
       Operation: m.operation,
-      Path: m.path.split("/").pop() || "/",
-      Entries: m.entries || "-",
+      Path: m.path.split('/').pop() || '/',
+      Entries: m.entries || '-',
       Latency: `${(m.latencyNs / 1e3).toFixed(2)}µs`,
       Risk: m.riskScore.toFixed(9),
-      API: "\x1b[33mnode:fs\x1b[0m" // Yellow for non-native
+      API: '\x1b[33mnode:fs\x1b[0m', // Yellow for non-native
     }));
 
     console.log(Bun.inspect.table(table, { colors: true }));
 
     const totalNs = metrics.reduce((a, m) => a + m.latencyNs, 0);
-    console.log(`\n\x1b[36m◉ Total:\x1b[0m ${(totalNs / 1e6).toFixed(2)}ms │ \x1b[36mAPI:\x1b[0m node:fs/promises (documented) │ \x1b[36mRisk:\x1b[0m 2.010005001`);
+    console.log(
+      `\n\x1b[36m◉ Total:\x1b[0m ${(totalNs / 1e6).toFixed(2)}ms │ \x1b[36mAPI:\x1b[0m node:fs/promises (documented) │ \x1b[36mRisk:\x1b[0m 2.010005001`
+    );
   }
 }
 
@@ -125,15 +133,16 @@ export async function hybridProjectScan(rootPath: string) {
 
   // Step 2: File operations (Bun-native) - Risk: 1.00
   const fileMetrics = [];
-  for (const project of projects.slice(0, 5)) { // Sample first 5
-    const pkgPath = join(project, "package.json");
+  for (const project of projects.slice(0, 5)) {
+    // Sample first 5
+    const pkgPath = join(project, 'package.json');
     const s = Bun.nanoseconds();
     const exists = await Bun.file(pkgPath).exists();
     fileMetrics.push({
-      project: project.split("/").pop(),
+      project: project.split('/').pop(),
       exists,
       latency: Number(Bun.nanoseconds() - s),
-      risk: 1.000001000 // Bun-native
+      risk: 1.000001, // Bun-native
     });
   }
 

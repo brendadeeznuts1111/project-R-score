@@ -29,28 +29,28 @@ class ReferenceManager {
       url: BUN_DOCS_EXTENDED.runtime.secrets.versioning.com,
       title: 'Secrets Versioning',
       category: 'runtime',
-      domain: 'com'
+      domain: 'com',
     });
 
     this.references.set('secrets-lifecycle', {
       url: BUN_DOCS_EXTENDED.runtime.secrets.lifecycle.com,
       title: 'Secrets Lifecycle Management',
       category: 'runtime',
-      domain: 'com'
+      domain: 'com',
     });
 
     this.references.set('secrets-rollback', {
       url: BUN_DOCS_EXTENDED.runtime.secrets.rollback.com,
       title: 'Secrets Rollback',
       category: 'runtime',
-      domain: 'com'
+      domain: 'com',
     });
 
     this.references.set('factorywager-secrets', {
       url: 'https://factorywager.com/docs/secrets',
       title: 'FactoryWager Secrets',
       category: 'enterprise',
-      domain: 'com'
+      domain: 'com',
     });
   }
 

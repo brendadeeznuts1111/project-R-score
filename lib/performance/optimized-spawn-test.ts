@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Optimized Spawn Performance Test
- * 
+ *
  * Replaces the slow spawnSync performance test with optimized alternatives
  * that meet the ≤5ms target performance requirement.
  */
@@ -38,15 +38,20 @@ class OptimizedSpawn {
     if (!command || typeof command !== 'string') {
       throw new Error('Invalid command: command must be a non-empty string');
     }
-    
-    if (command.includes('..') || command.includes(';') || command.includes('&&') || command.includes('||')) {
+
+    if (
+      command.includes('..') ||
+      command.includes(';') ||
+      command.includes('&&') ||
+      command.includes('||')
+    ) {
       throw new Error('Security error: potentially dangerous characters in command');
     }
-    
+
     if (!Array.isArray(args)) {
       throw new Error('Invalid args: args must be an array');
     }
-    
+
     for (const arg of args) {
       if (typeof arg !== 'string') {
         throw new Error('Invalid args: all arguments must be strings');
@@ -57,19 +62,19 @@ class OptimizedSpawn {
     }
 
     const startTime = performance.now();
-    
+
     let proc: ReturnType<typeof Bun.spawn> | null = null;
-    
+
     try {
       proc = Bun.spawn([command, ...args], {
         stdout: 'pipe',
         stderr: 'pipe',
-        stdin: 'inherit'
+        stdin: 'inherit',
       });
 
       const [stdout, stderr] = await Promise.all([
         new Response(proc.stdout).text(),
-        new Response(proc.stderr).text()
+        new Response(proc.stderr).text(),
       ]);
 
       await proc.exited;
@@ -79,12 +84,11 @@ class OptimizedSpawn {
         stdout: stdout.trim(),
         stderr: stderr.trim(),
         exitCode: proc.exitCode,
-        executionTime
+        executionTime,
       };
-
     } catch (error) {
       const executionTime = performance.now() - startTime;
-      
+
       // Ensure process cleanup on error
       if (proc && !(await proc.exited)) {
         try {
@@ -94,10 +98,10 @@ class OptimizedSpawn {
           console.error(`Failed to kill process: ${killError.message}`);
         }
       }
-      
+
       throw {
         error: error.message,
-        executionTime
+        executionTime,
       };
     } finally {
       // Final cleanup check
@@ -114,41 +118,45 @@ class OptimizedSpawn {
   /**
    * Fast async spawn with timeout protection
    */
-  static async fastSpawn(command: string, args: string[] = [], timeout: number = 5000): Promise<SpawnResult> {
+  static async fastSpawn(
+    command: string,
+    args: string[] = [],
+    timeout: number = 5000
+  ): Promise<SpawnResult> {
     const startTime = performance.now();
-    
+
     return new Promise((resolve, reject) => {
       const proc = spawn(command, args, {
         stdio: ['pipe', 'pipe', 'pipe'],
-        timeout
+        timeout,
       });
 
       let stdout = '';
       let stderr = '';
 
-      proc.stdout?.on('data', (data) => {
+      proc.stdout?.on('data', data => {
         stdout += data.toString();
       });
 
-      proc.stderr?.on('data', (data) => {
+      proc.stderr?.on('data', data => {
         stderr += data.toString();
       });
 
-      proc.on('close', (code) => {
+      proc.on('close', code => {
         const executionTime = performance.now() - startTime;
         resolve({
           stdout: stdout.trim(),
           stderr: stderr.trim(),
           exitCode: code || 0,
-          executionTime
+          executionTime,
         });
       });
 
-      proc.on('error', (error) => {
+      proc.on('error', error => {
         const executionTime = performance.now() - startTime;
         reject({
           error: error.message,
-          executionTime
+          executionTime,
         });
       });
     });
@@ -164,8 +172,8 @@ class OptimizedSpawn {
     // Use JSON.stringify to prevent cache key collisions
     const cacheKey = `${command}:${JSON.stringify(args)}`;
     const cached = this.spawnCache.get(cacheKey);
-    
-    if (cached && (Date.now() - cached.executionTime) < this.CACHE_TTL) {
+
+    if (cached && Date.now() - cached.executionTime < this.CACHE_TTL) {
       return { ...cached, executionTime: performance.now() }; // Return cached with new time
     }
 
@@ -188,7 +196,7 @@ class SpawnPerformanceTest {
    */
   static async testEchoCommand(): Promise<void> {
     console.log('📢 ECHO COMMAND PERFORMANCE');
-    console.log('=' .repeat(40));
+    console.log('='.repeat(40));
 
     const tests = [
       {
@@ -197,25 +205,25 @@ class SpawnPerformanceTest {
           const start = performance.now();
           const result = execSync('echo "test"', { encoding: 'utf8' }).trim();
           return { stdout: result, executionTime: performance.now() - start };
-        }
+        },
       },
       {
         name: 'Optimized Bun.spawn',
-        fn: () => OptimizedSpawn.bunSpawn('echo', ['test'])
+        fn: () => OptimizedSpawn.bunSpawn('echo', ['test']),
       },
       {
         name: 'Fast async spawn',
-        fn: () => OptimizedSpawn.fastSpawn('echo', ['test'])
+        fn: () => OptimizedSpawn.fastSpawn('echo', ['test']),
       },
       {
         name: 'Cached spawn',
-        fn: () => OptimizedSpawn.cachedSpawn('echo', ['test'])
-      }
+        fn: () => OptimizedSpawn.cachedSpawn('echo', ['test']),
+      },
     ];
 
     for (const test of tests) {
       const times: number[] = [];
-      
+
       for (let i = 0; i < this.ITERATIONS; i++) {
         try {
           const result = await test.fn();
@@ -229,12 +237,12 @@ class SpawnPerformanceTest {
         const avg = times.reduce((a, b) => a + b, 0) / times.length;
         const min = Math.min(...times);
         const max = Math.max(...times);
-        
+
         console.log(`${test.name}:`);
         console.log(`   Average: ${avg.toFixed(2)}ms`);
         console.log(`   Min: ${min.toFixed(2)}ms`);
         console.log(`   Max: ${max.toFixed(2)}ms`);
-        
+
         if (avg <= this.TARGET_TIME) {
           console.log(`   ✅ MEETS TARGET (≤${this.TARGET_TIME}ms)`);
         } else {
@@ -250,11 +258,11 @@ class SpawnPerformanceTest {
    */
   static async testSpawnWithArguments(): Promise<void> {
     console.log('📝 SPAWN WITH ARGUMENTS PERFORMANCE');
-    console.log('=' .repeat(40));
+    console.log('='.repeat(40));
 
     const args = ['test', 'with', 'multiple', 'arguments'];
     const times: number[] = [];
-    
+
     for (let i = 0; i < this.ITERATIONS; i++) {
       try {
         const result = await OptimizedSpawn.bunSpawn('echo', args);
@@ -268,13 +276,14 @@ class SpawnPerformanceTest {
       const avg = times.reduce((a, b) => a + b, 0) / times.length;
       const min = Math.min(...times);
       const max = Math.max(...times);
-      
+
       console.log(`Bun.spawn with arguments:`);
       console.log(`   Average: ${avg.toFixed(2)}ms`);
       console.log(`   Min: ${min.toFixed(2)}ms`);
       console.log(`   Max: ${max.toFixed(2)}ms`);
-      
-      if (avg <= 200) { // Target for args is 200ms
+
+      if (avg <= 200) {
+        // Target for args is 200ms
         console.log(`   ✅ MEETS TARGET (≤200ms)`);
       } else {
         console.log(`   ⚠️  EXCEEDS TARGET (${avg.toFixed(2)}ms > 200ms)`);
@@ -288,11 +297,11 @@ class SpawnPerformanceTest {
    */
   static async testSpawnWithEnvironment(): Promise<void> {
     console.log('🌍 SPAWN WITH ENVIRONMENT VARIABLES PERFORMANCE');
-    console.log('=' .repeat(40));
+    console.log('='.repeat(40));
 
     const env = { ...process.env, TEST_VAR: 'test_value' };
     const times: number[] = [];
-    
+
     for (let i = 0; i < this.ITERATIONS; i++) {
       try {
         const result = await OptimizedSpawn.fastSpawn('echo', ['$TEST_VAR'], 5000);
@@ -306,13 +315,14 @@ class SpawnPerformanceTest {
       const avg = times.reduce((a, b) => a + b, 0) / times.length;
       const min = Math.min(...times);
       const max = Math.max(...times);
-      
+
       console.log(`Spawn with environment variables:`);
       console.log(`   Average: ${avg.toFixed(2)}ms`);
       console.log(`   Min: ${min.toFixed(2)}ms`);
       console.log(`   Max: ${max.toFixed(2)}ms`);
-      
-      if (avg <= 4) { // Target for env vars is 4ms
+
+      if (avg <= 4) {
+        // Target for env vars is 4ms
         console.log(`   ✅ MEETS TARGET (≤4ms)`);
       } else {
         console.log(`   ⚠️  EXCEEDS TARGET (${avg.toFixed(2)}ms > 4ms)`);
@@ -326,12 +336,12 @@ class SpawnPerformanceTest {
    */
   static async testConcurrentSpawn(): Promise<void> {
     console.log('⚡ CONCURRENT SPAWN PERFORMANCE');
-    console.log('=' .repeat(40));
+    console.log('='.repeat(40));
 
     const concurrency = 10;
     const startTime = performance.now();
-    
-    const promises = Array.from({ length: concurrency }, () => 
+
+    const promises = Array.from({ length: concurrency }, () =>
       OptimizedSpawn.bunSpawn('echo', ['concurrent_test'])
     );
 
@@ -339,12 +349,12 @@ class SpawnPerformanceTest {
       const results = await Promise.all(promises);
       const totalTime = performance.now() - startTime;
       const avgTime = results.reduce((sum, r) => sum + r.executionTime, 0) / results.length;
-      
+
       console.log(`Concurrent spawn (${concurrency} operations):`);
       console.log(`   Total time: ${totalTime.toFixed(2)}ms`);
       console.log(`   Average per operation: ${avgTime.toFixed(2)}ms`);
       console.log(`   Throughput: ${(concurrency / (totalTime / 1000)).toFixed(0)} ops/sec`);
-      
+
       if (avgTime <= this.TARGET_TIME) {
         console.log(`   ✅ MEETS TARGET (≤${this.TARGET_TIME}ms per op)`);
       } else {
@@ -361,7 +371,7 @@ class SpawnPerformanceTest {
    */
   static async runAllTests(): Promise<void> {
     console.log('🚀 OPTIMIZED SPAWN PERFORMANCE TEST SUITE');
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
     console.log(`Target performance: ≤${this.TARGET_TIME}ms for basic operations\n`);
 
     try {
@@ -376,7 +386,6 @@ class SpawnPerformanceTest {
       console.log('   • With arguments: 59ms → ≤200ms (maintained)');
       console.log('   • With env vars: 27ms → ≤4ms (7x improvement)');
       console.log('   • Concurrent: High throughput with low latency');
-
     } catch (error) {
       console.error('❌ Test suite failed:', error);
       process.exit(1);

@@ -15,7 +15,7 @@ export const BUN_CONSTANTS_VERSION = '1.0.1';
 const BUN_PLATFORM_HOME = process.env.BUN_PLATFORM_HOME ?? join(import.meta.dir, '../..');
 const SCANNER_ROOT = join(BUN_PLATFORM_HOME, 'scanner');
 const BUN_MCP_DOCS_ROOT = join(BUN_PLATFORM_HOME, 'matrix-analysis', 'mcp-bun-docs');
-const REGISTRY_FILE = join(BUN_PLATFORM_HOME, 'BUN_CONSTANTS_VERSION.json');
+const REGISTRY_FILE = join(BUN_PLATFORM_HOME, '..', '..', '..', 'config', 'BUN_CONSTANTS_VERSION.json');
 
 interface ConstantMatch {
 	name: string;

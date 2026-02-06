@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 
-import { ConcurrencyManagers } from "./safe-concurrency";
+import { ConcurrencyManagers } from './safe-concurrency';
 
 /**
  * Atomic file operations with proper locking
@@ -22,7 +22,9 @@ export class AtomicFileOperations {
     try {
       await this.writeAtomic(filePath, content);
     } catch (error) {
-      throw new Error(`Failed to write file ${filePath}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to write file ${filePath}: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -35,15 +37,17 @@ export class AtomicFileOperations {
         // Read existing content
         const existingFile = Bun.file(filePath);
         let existingContent = '';
-        
+
         if (await existingFile.exists()) {
           existingContent = await existingFile.text();
         }
-        
+
         // Write combined content directly (already in mutex)
         await Bun.write(filePath, existingContent + content);
       } catch (error) {
-        throw new Error(`Failed to append to file ${filePath}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        throw new Error(
+          `Failed to append to file ${filePath}: ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
       }
     });
   }
@@ -59,7 +63,9 @@ export class AtomicFileOperations {
       }
       return await file.text();
     } catch (error) {
-      throw new Error(`Failed to read file ${filePath}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to read file ${filePath}: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -74,7 +80,9 @@ export class AtomicFileOperations {
           await file.delete();
         }
       } catch (error) {
-        throw new Error(`Failed to delete file ${filePath}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        throw new Error(
+          `Failed to delete file ${filePath}: ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
       }
     });
   }

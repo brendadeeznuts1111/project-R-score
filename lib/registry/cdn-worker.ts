@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * 🌐 Registry CDN Worker
- * 
+ *
  * Cloudflare Worker for edge-cached npm registry
  * - Serves packages from R2 with caching
  * - Provides signed URLs for private packages
@@ -20,10 +20,10 @@ export interface Env {
 
 // Cache configuration
 const CACHE_CONFIG = {
-  manifest: 60,      // 1 minute for manifests (can change)
-  tarball: 86400,    // 24 hours for tarballs (immutable)
-  search: 300,       // 5 minutes for search results
-  static: 3600,      // 1 hour for static content
+  manifest: 60, // 1 minute for manifests (can change)
+  tarball: 86400, // 24 hours for tarballs (immutable)
+  search: 300, // 5 minutes for search results
+  static: 3600, // 1 hour for static content
 };
 
 export default {
@@ -75,10 +75,13 @@ export default {
       return jsonResponse({ error: 'Not found' }, 404);
     } catch (error) {
       console.error('Worker error:', error);
-      return jsonResponse({ 
-        error: 'Internal server error',
-        message: error.message 
-      }, 500);
+      return jsonResponse(
+        {
+          error: 'Internal server error',
+          message: error.message,
+        },
+        500
+      );
     }
   },
 };
@@ -115,13 +118,16 @@ function handlePing(): Response {
  */
 async function handleLogin(request: Request, env: Env): Promise<Response> {
   const body = await request.json().catch(() => ({}));
-  
+
   // In production, validate against stored credentials
   // For now, issue a JWT token
-  const token = await createJWT({ 
-    sub: body.name || 'anonymous',
-    readonly: false,
-  }, env.JWT_SECRET);
+  const token = await createJWT(
+    {
+      sub: body.name || 'anonymous',
+      readonly: false,
+    },
+    env.JWT_SECRET
+  );
 
   return jsonResponse({ ok: true, token });
 }
@@ -157,7 +163,7 @@ async function handleSearch(request: Request, env: Env): Promise<Response> {
   // List packages from R2
   const prefix = 'packages/';
   const objects = await env.R2_BUCKET.list({ prefix, delimiter: '/' });
-  
+
   const results = [];
   for (const prefix of objects.delimitedPrefixes || []) {
     const pkgName = prefix.replace('packages/', '').replace(/%2f/g, '/').replace(/\/$/, '');
@@ -192,7 +198,7 @@ async function handleSearch(request: Request, env: Env): Promise<Response> {
 
   // Cache the response
   ctx?.waitUntil?.(cache.put(cacheKey, response.clone()));
-  
+
   return response;
 }
 
@@ -200,8 +206,8 @@ async function handleSearch(request: Request, env: Env): Promise<Response> {
  * Handle package manifest request
  */
 async function handlePackage(
-  request: Request, 
-  env: Env, 
+  request: Request,
+  env: Env,
   packageName: string,
   ctx?: ExecutionContext
 ): Promise<Response> {
@@ -228,17 +234,17 @@ async function handlePackage(
   // Rewrite tarball URLs to use CDN
   const url = new URL(request.url);
   const baseUrl = `${url.protocol}//${url.host}`;
-  
+
   for (const version of Object.values(manifest.versions)) {
     const filename = version.dist.tarball.split('/-/').pop() || 'package.tgz';
     version.dist.tarball = `${baseUrl}/${manifest.name}/-/${filename}`;
   }
 
   const response = jsonResponse(manifest);
-  
+
   // Add cache headers
   response.headers.set('Cache-Control', `public, max-age=${CACHE_CONFIG.manifest}`);
-  
+
   // Cache in edge
   if (ctx) {
     ctx.waitUntil(cache.put(cacheKey, response.clone()));
@@ -250,11 +256,7 @@ async function handlePackage(
 /**
  * Handle dist-tags
  */
-async function handleDistTags(
-  request: Request, 
-  env: Env, 
-  packageName: string
-): Promise<Response> {
+async function handleDistTags(request: Request, env: Env, packageName: string): Promise<Response> {
   const manifest = await getManifest(env, packageName);
   if (!manifest) {
     return jsonResponse({ error: 'Package not found' }, 404);
@@ -292,13 +294,10 @@ async function handleTarball(
   try {
     // Try to get from R2
     const object = await env.R2_BUCKET.get(key);
-    
+
     if (!object) {
       // If not found locally, redirect to npm registry
-      return Response.redirect(
-        `https://registry.npmjs.org/${packageName}/-/${filename}`,
-        302
-      );
+      return Response.redirect(`https://registry.npmjs.org/${packageName}/-/${filename}`, 302);
     }
 
     const headers = new Headers();
@@ -329,11 +328,11 @@ async function handleTarball(
  */
 async function getManifest(env: Env, packageName: string): Promise<PackageManifest | null> {
   const key = `packages/${sanitizePackageName(packageName)}/manifest.json`;
-  
+
   try {
     const object = await env.R2_BUCKET.get(key);
     if (!object) return null;
-    
+
     return await object.json<PackageManifest>();
   } catch {
     return null;
@@ -343,9 +342,12 @@ async function getManifest(env: Env, packageName: string): Promise<PackageManife
 /**
  * Authenticate request
  */
-async function authenticate(request: Request, env: Env): Promise<{ authenticated: boolean; user?: string; readonly?: boolean }> {
+async function authenticate(
+  request: Request,
+  env: Env
+): Promise<{ authenticated: boolean; user?: string; readonly?: boolean }> {
   const authHeader = request.headers.get('Authorization');
-  
+
   if (!authHeader) {
     return { authenticated: false };
   }
@@ -371,7 +373,7 @@ async function authenticate(request: Request, env: Env): Promise<{ authenticated
 async function createJWT(payload: any, secret: string): Promise<string> {
   const header = { alg: 'HS256', typ: 'JWT' };
   const now = Math.floor(Date.now() / 1000);
-  
+
   const fullPayload = {
     ...payload,
     iat: now,
@@ -380,9 +382,9 @@ async function createJWT(payload: any, secret: string): Promise<string> {
 
   const headerB64 = btoa(JSON.stringify(header)).replace(/=/g, '');
   const payloadB64 = btoa(JSON.stringify(fullPayload)).replace(/=/g, '');
-  
+
   const data = `${headerB64}.${payloadB64}`;
-  
+
   // Sign with HMAC-SHA256
   const encoder = new TextEncoder();
   const key = await crypto.subtle.importKey(
@@ -392,7 +394,7 @@ async function createJWT(payload: any, secret: string): Promise<string> {
     false,
     ['sign']
   );
-  
+
   const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(data));
   const signatureB64 = btoa(String.fromCharCode(...new Uint8Array(signature))).replace(/=/g, '');
 
@@ -402,7 +404,10 @@ async function createJWT(payload: any, secret: string): Promise<string> {
 /**
  * Verify JWT token
  */
-async function verifyJWT(token: string, secret: string): Promise<{ authenticated: boolean; user?: string; readonly?: boolean }> {
+async function verifyJWT(
+  token: string,
+  secret: string
+): Promise<{ authenticated: boolean; user?: string; readonly?: boolean }> {
   try {
     const [headerB64, payloadB64, signatureB64] = token.split('.');
     if (!headerB64 || !payloadB64 || !signatureB64) {
@@ -458,10 +463,13 @@ function jsonResponse(data: any, status: number = 200): Response {
  * Send authentication challenge
  */
 function challenge(): Response {
-  return jsonResponse({
-    error: 'Unauthorized',
-    message: 'Authentication required',
-  }, 401);
+  return jsonResponse(
+    {
+      error: 'Unauthorized',
+      message: 'Authentication required',
+    },
+    401
+  );
 }
 
 // TypeScript types for Cloudflare Workers

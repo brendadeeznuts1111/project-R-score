@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Response Buffering and DNS Optimization Test Suite
- * 
+ *
  * Tests the implementation of Bun's response buffering and DNS optimization
  * features as documented in https://bun.com/docs/runtime/networking/fetch#response-buffering
  */
@@ -16,7 +16,6 @@ if (import.meta.main) {
 
 import { OptimizedFetch, DNSOptimizer } from '../http/port-management-system';
 
-
 // ============================================================================
 // RESPONSE BUFFERING TESTS
 // ============================================================================
@@ -27,61 +26,62 @@ class ResponseBufferingTests {
    */
   static async testBasicBuffering(): Promise<void> {
     console.log('📦 BASIC RESPONSE BUFFERING TESTS');
-    console.log('=' .repeat(50));
+    console.log('='.repeat(50));
 
     const testUrl = 'https://httpbin.org/json';
-    
+
     try {
       console.log(`Testing URL: ${testUrl}`);
-      
+
       // Test all buffering methods
       const result = await OptimizedFetch.fetchAndBufferToMemory(testUrl);
-      
+
       console.log('✅ Response buffering methods:');
       console.log(`   response.text(): ${result.text.length} characters`);
       console.log(`   response.json(): ${result.json ? 'parsed successfully' : 'failed to parse'}`);
-      console.log(`   response.formData(): ${result.formData ? 'parsed successfully' : 'failed to parse'}`);
+      console.log(
+        `   response.formData(): ${result.formData ? 'parsed successfully' : 'failed to parse'}`
+      );
       console.log(`   response.bytes(): ${result.bytes.length} bytes`);
       console.log(`   response.arrayBuffer(): ${result.arrayBuffer.byteLength} bytes`);
       console.log(`   response.blob(): ${result.blob.size} bytes`);
-      
+
       // Validate content
       if (result.text.length > 0) {
         console.log('✅ Text buffering working');
       } else {
         console.log('❌ Text buffering failed');
       }
-      
+
       if (result.json && typeof result.json === 'object') {
         console.log('✅ JSON buffering working');
       } else {
         console.log('⚠️  JSON buffering: non-JSON response or parsing failed');
       }
-      
+
       if (result.formData) {
         console.log('✅ FormData buffering working');
       } else {
         console.log('⚠️  FormData buffering: non-form response or parsing failed');
       }
-      
+
       if (result.bytes.length > 0) {
         console.log('✅ Bytes buffering working');
       } else {
         console.log('❌ Bytes buffering failed');
       }
-      
+
       if (result.arrayBuffer.byteLength > 0) {
         console.log('✅ ArrayBuffer buffering working');
       } else {
         console.log('❌ ArrayBuffer buffering failed');
       }
-      
+
       if (result.blob.size > 0) {
         console.log('✅ Blob buffering working');
       } else {
         console.log('❌ Blob buffering failed');
       }
-      
     } catch (error) {
       console.log(`❌ Basic buffering test failed: ${error.message}`);
     }
@@ -92,30 +92,30 @@ class ResponseBufferingTests {
    */
   static async testFormDataBuffering(): Promise<void> {
     console.log('\n📋 FORM DATA BUFFERING TESTS');
-    console.log('=' .repeat(50));
+    console.log('='.repeat(50));
 
     // Test with a form endpoint
     const formUrl = 'https://httpbin.org/post';
-    
+
     try {
       console.log(`Testing FormData buffering with: ${formUrl}`);
-      
+
       // Create a form POST request
       const response = await OptimizedFetch.fetch(formUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: 'name=test&value=data'
+        body: 'name=test&value=data',
       });
-      
+
       // Test FormData parsing
       const formData = await response.formData().catch(() => null);
-      
+
       if (formData) {
         console.log('✅ FormData buffering successful');
         console.log(`   FormData entries: ${formData.entries.length}`);
-        
+
         // Log form entries
         for (const [key, value] of formData.entries()) {
           console.log(`   ${key}: ${value}`);
@@ -123,7 +123,6 @@ class ResponseBufferingTests {
       } else {
         console.log('⚠️  FormData buffering: Response is not a form');
       }
-      
     } catch (error) {
       console.log(`❌ FormData buffering test failed: ${error.message}`);
     }
@@ -134,16 +133,16 @@ class ResponseBufferingTests {
    */
   static async testFileBuffering(): Promise<void> {
     console.log('\n📄 FILE BUFFERING TESTS');
-    console.log('=' .repeat(50));
+    console.log('='.repeat(50));
 
     const testUrl = 'https://httpbin.org/uuid';
     const outputPath = '/tmp/test-buffered-response.json';
-    
+
     try {
       console.log(`Testing file buffering to: ${outputPath}`);
-      
+
       await OptimizedFetch.fetchAndBuffer(testUrl, outputPath);
-      
+
       // Verify file was created and has content
       const fileStats = await Bun.file(outputPath).exists();
       if (fileStats) {
@@ -154,10 +153,9 @@ class ResponseBufferingTests {
       } else {
         console.log('❌ File buffering failed - file not created');
       }
-      
+
       // Clean up
       await Bun.write(outputPath, '');
-      
     } catch (error) {
       console.log(`❌ File buffering test failed: ${error.message}`);
     }
@@ -174,13 +172,9 @@ class DNSOptimizationTests {
    */
   static async testDNSPrefetching(): Promise<void> {
     console.log('\n🌍 DNS OPTIMIZATION TESTS');
-    console.log('=' .repeat(50));
+    console.log('='.repeat(50));
 
-    const testHosts = [
-      'httpbin.org',
-      'jsonplaceholder.typicode.com',
-      'api.github.com'
-    ];
+    const testHosts = ['httpbin.org', 'jsonplaceholder.typicode.com', 'api.github.com'];
 
     for (const host of testHosts) {
       try {
@@ -204,12 +198,9 @@ class DNSOptimizationTests {
    */
   static async testPreconnect(): Promise<void> {
     console.log('\n🔗 PRECONNECT OPTIMIZATION TESTS');
-    console.log('=' .repeat(50));
+    console.log('='.repeat(50));
 
-    const testHosts = [
-      'httpbin.org',
-      'jsonplaceholder.typicode.com'
-    ];
+    const testHosts = ['httpbin.org', 'jsonplaceholder.typicode.com'];
 
     for (const host of testHosts) {
       try {
@@ -233,35 +224,34 @@ class IntegrationTests {
    */
   static async testCompleteOptimization(): Promise<void> {
     console.log('\n🚀 COMPLETE OPTIMIZATION PIPELINE TESTS');
-    console.log('=' .repeat(50));
+    console.log('='.repeat(50));
 
     const urls = [
       'https://httpbin.org/json',
       'https://httpbin.org/uuid',
-      'https://jsonplaceholder.typicode.com/posts/1'
+      'https://jsonplaceholder.typicode.com/posts/1',
     ];
 
     try {
       console.log('Testing batch fetch with DNS optimization...');
-      
+
       const startTime = Date.now();
       const responses = await OptimizedFetch.batchFetch(urls, {
         prefetch: true,
         preconnect: true,
-        buffer: true
+        buffer: true,
       });
       const totalTime = Date.now() - startTime;
-      
+
       console.log(`✅ Batch fetch completed in ${totalTime}ms`);
       console.log(`   ${responses.length} responses received`);
-      
+
       // Test individual response processing
       for (let i = 0; i < responses.length; i++) {
         const response = responses[i];
         const text = await response.text();
         console.log(`   Response ${i + 1}: ${text.length} characters`);
       }
-      
     } catch (error) {
       console.log(`❌ Complete optimization test failed: ${error.message}`);
     }
@@ -272,16 +262,15 @@ class IntegrationTests {
    */
   static async testPerformanceStats(): Promise<void> {
     console.log('\n📊 PERFORMANCE STATISTICS TESTS');
-    console.log('=' .repeat(50));
+    console.log('='.repeat(50));
 
     try {
       const stats = OptimizedFetch.getComprehensiveStats();
-      
+
       console.log('✅ Performance Statistics:');
       console.log('   Connection Pool:', JSON.stringify(stats.connectionPool, null, 2));
       console.log('   DNS Optimization:', JSON.stringify(stats.dnsOptimization, null, 2));
       console.log('   Configuration:', JSON.stringify(stats.configuration, null, 2));
-      
     } catch (error) {
       console.log(`❌ Performance stats test failed: ${error.message}`);
     }
@@ -295,13 +284,13 @@ class IntegrationTests {
 class OptimizationTestRunner {
   static async runAllTests(): Promise<void> {
     console.log('🧪 RESPONSE BUFFERING AND DNS OPTIMIZATION TEST SUITE');
-    console.log('=' .repeat(70));
-    console.log('Testing Bun\'s response buffering and DNS optimization features\n');
+    console.log('='.repeat(70));
+    console.log("Testing Bun's response buffering and DNS optimization features\n");
 
     try {
       // Initialize optimized fetch
       OptimizedFetch.initialize();
-      
+
       // Run all test suites
       await ResponseBufferingTests.testBasicBuffering();
       await ResponseBufferingTests.testFormDataBuffering();
@@ -332,7 +321,6 @@ class OptimizationTestRunner {
       console.log('   • Bun.write(response) for file buffering');
       console.log('   • dns.prefetch(host) for DNS optimization');
       console.log('   • fetch.preconnect(host) for connection optimization');
-
     } catch (error) {
       console.error('\n❌ Test suite failed:', error);
       process.exit(1);

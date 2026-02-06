@@ -2,7 +2,7 @@
 
 /**
  * 🌐 DNS Synchronization for FactoryWager
- * 
+ *
  * Synchronizes Cloudflare DNS records with R2 MCP system
  * and provides real-time DNS management capabilities.
  */
@@ -72,13 +72,13 @@ export class DNSSynchronization {
 
     // Get current DNS records from Cloudflare
     await this.syncDNSRecords();
-    
+
     // Analyze DNS health
     await this.analyzeDNSHealth();
-    
+
     // Store DNS configuration in R2
     await this.storeDNSConfiguration();
-    
+
     // Setup DNS monitoring
     await this.setupDNSMonitoring();
 
@@ -91,7 +91,7 @@ export class DNSSynchronization {
   async syncDNSRecords(): Promise<void> {
     console.log(styled('🔄 Syncing DNS records from Cloudflare...', 'info'));
 
-    // Since we don't have the actual zone in this account, 
+    // Since we don't have the actual zone in this account,
     // let's create a comprehensive DNS record set based on the subdomains
     const dnsRecords = this.generateDNSRecords();
 
@@ -104,12 +104,12 @@ export class DNSSynchronization {
       records: dnsRecords,
       record_types: this.getRecordTypeSummary(dnsRecords),
       proxied_records: dnsRecords.filter(r => r.proxied).length,
-      enterprise_records: dnsRecords.filter(r => this.isEnterpriseRecord(r.name)).length
+      enterprise_records: dnsRecords.filter(r => this.isEnterpriseRecord(r.name)).length,
     };
 
     const key = `domains/factory-wager/cloudflare/dns/records.json`;
     await this.r2.putJSON(key, syncData);
-    
+
     console.log(styled(`✅ DNS records synced: ${key}`, 'success'));
     console.log(styled(`   Total records: ${dnsRecords.length}`, 'muted'));
   }
@@ -126,7 +126,7 @@ export class DNSSynchronization {
       name: 'factory-wager.com',
       content: '192.168.1.1',
       ttl: 300,
-      proxied: true
+      proxied: true,
     });
 
     records.push({
@@ -134,7 +134,7 @@ export class DNSSynchronization {
       name: 'factory-wager.com',
       content: '2001:db8::1',
       ttl: 300,
-      proxied: true
+      proxied: true,
     });
 
     // WWW subdomain
@@ -143,12 +143,12 @@ export class DNSSynchronization {
       name: 'www',
       content: 'factory-wager.com',
       ttl: 300,
-      proxied: true
+      proxied: true,
     });
 
     // Subdomain records based on CloudflareDomainManager
     const subdomains = cloudflareDomainManager.getAllSubdomains();
-    
+
     subdomains.forEach(sub => {
       if (sub.type === 'CNAME') {
         records.push({
@@ -156,7 +156,7 @@ export class DNSSynchronization {
           name: sub.subdomain,
           content: sub.content,
           ttl: sub.ttl,
-          proxied: sub.proxied
+          proxied: sub.proxied,
         });
       } else if (sub.type === 'A') {
         records.push({
@@ -164,7 +164,7 @@ export class DNSSynchronization {
           name: sub.subdomain,
           content: sub.content,
           ttl: sub.ttl,
-          proxied: sub.proxied
+          proxied: sub.proxied,
         });
       }
     });
@@ -176,7 +176,7 @@ export class DNSSynchronization {
       content: 'mx1.factory-wager.com',
       ttl: 300,
       proxied: false,
-      priority: 10
+      priority: 10,
     });
 
     records.push({
@@ -185,7 +185,7 @@ export class DNSSynchronization {
       content: 'mx2.factory-wager.com',
       ttl: 300,
       proxied: false,
-      priority: 20
+      priority: 20,
     });
 
     // TXT records for verification and security
@@ -194,7 +194,7 @@ export class DNSSynchronization {
       name: 'factory-wager.com',
       content: 'v=spf1 include:_spf.google.com ~all',
       ttl: 300,
-      proxied: false
+      proxied: false,
     });
 
     records.push({
@@ -202,7 +202,7 @@ export class DNSSynchronization {
       name: '_dmarc.factory-wager.com',
       content: 'v=DMARC1; p=quarantine; rua=mailto:dmarc@factory-wager.com',
       ttl: 300,
-      proxied: false
+      proxied: false,
     });
 
     records.push({
@@ -210,7 +210,7 @@ export class DNSSynchronization {
       name: '_domainkey.factory-wager.com',
       content: 'v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQ...',
       ttl: 300,
-      proxied: false
+      proxied: false,
     });
 
     // CAA records for certificate authority
@@ -219,7 +219,7 @@ export class DNSSynchronization {
       name: 'factory-wager.com',
       content: 'caa issue "letsencrypt.org"',
       ttl: 300,
-      proxied: false
+      proxied: false,
     });
 
     // SRV records for services
@@ -234,7 +234,7 @@ export class DNSSynchronization {
       port: 443,
       service: '_http',
       protocol: '_tcp',
-      target: 'api.factory-wager.com'
+      target: 'api.factory-wager.com',
     });
 
     return records;
@@ -245,7 +245,7 @@ export class DNSSynchronization {
    */
   private getRecordTypeSummary(records: DNSRecord[]): Record<string, number> {
     const summary: Record<string, number> = {};
-    
+
     records.forEach(record => {
       summary[record.type] = (summary[record.type] || 0) + 1;
     });
@@ -279,7 +279,7 @@ export class DNSSynchronization {
         response_time: Math.random() * 100 + 20,
         last_check: new Date().toISOString(),
         ttl_status: sub.ttl <= 300 ? 'optimal' : sub.ttl <= 3600 ? 'high' : 'low',
-        proxy_status: sub.proxied ? 'active' : 'disabled'
+        proxy_status: sub.proxied ? 'active' : 'disabled',
       };
 
       // Simulate some issues for demonstration
@@ -297,13 +297,14 @@ export class DNSSynchronization {
       healthy_records: healthStatus.filter(h => h.status === 'healthy').length,
       warning_records: healthStatus.filter(h => h.status === 'warning').length,
       critical_records: healthStatus.filter(h => h.status === 'critical').length,
-      avg_response_time: healthStatus.reduce((sum, h) => sum + (h.response_time || 0), 0) / healthStatus.length,
-      health_status: healthStatus
+      avg_response_time:
+        healthStatus.reduce((sum, h) => sum + (h.response_time || 0), 0) / healthStatus.length,
+      health_status: healthStatus,
     };
 
     const key = `domains/factory-wager/cloudflare/dns/health/${new Date().toISOString().split('T')[0]}.json`;
     await this.r2.putJSON(key, healthData);
-    
+
     console.log(styled(`✅ DNS health analysis stored: ${key}`, 'success'));
   }
 
@@ -320,30 +321,27 @@ export class DNSSynchronization {
       dashboard_urls: {
         dns_records: `https://dash.cloudflare.com/${this.accountId}/dns/${this.zoneName}/records`,
         dns_overview: `https://dash.cloudflare.com/${this.accountId}/dns/${this.zoneName}`,
-        dns_settings: `https://dash.cloudflare.com/${this.accountId}/dns/${this.zoneName}/settings`
+        dns_settings: `https://dash.cloudflare.com/${this.accountId}/dns/${this.zoneName}/settings`,
       },
-      nameservers: [
-        'dina.ns.cloudflare.com',
-        'josh.ns.cloudflare.com'
-      ],
+      nameservers: ['dina.ns.cloudflare.com', 'josh.ns.cloudflare.com'],
       dns_features: {
         dnssec: 'enabled',
         cname_flattening: 'enabled',
         query_log_sharing: 'disabled',
         ipv6_support: 'enabled',
-        http3_support: 'enabled'
+        http3_support: 'enabled',
       },
       enterprise_settings: {
         advanced_ddos_protection: true,
         bot_management: true,
         web_application_firewall: true,
-        rate_limiting: true
-      }
+        rate_limiting: true,
+      },
     };
 
     const key = `domains/factory-wager/cloudflare/dns/config.json`;
     await this.r2.putJSON(key, config);
-    
+
     console.log(styled(`✅ DNS configuration stored: ${key}`, 'success'));
   }
 
@@ -362,29 +360,26 @@ export class DNSSynchronization {
         alert_thresholds: {
           response_time: 500, // ms
           ttl_threshold: 3600, // seconds
-          failure_rate: 0.05 // 5%
-        }
+          failure_rate: 0.05, // 5%
+        },
       },
       alerts: {
         email_enabled: true,
         slack_enabled: true,
         webhook_enabled: true,
-        alert_recipients: [
-          'admin@factory-wager.com',
-          'ops@factory-wager.com'
-        ]
+        alert_recipients: ['admin@factory-wager.com', 'ops@factory-wager.com'],
       },
       integration: {
         r2_storage: true,
         mcp_integration: true,
         claude_desktop: true,
-        analytics_dashboard: true
-      }
+        analytics_dashboard: true,
+      },
     };
 
     const key = `domains/factory-wager/cloudflare/dns/monitoring.json`;
     await this.r2.putJSON(key, monitoring);
-    
+
     console.log(styled(`✅ DNS monitoring setup stored: ${key}`, 'success'));
   }
 
@@ -406,7 +401,7 @@ export class DNSSynchronization {
       error: {
         name: error.name || 'DNSError',
         message: error.message || 'DNS resolution failed',
-        code: error.code || 'DNS_ERROR'
+        code: error.code || 'DNS_ERROR',
       },
       fix,
       context: 'cloudflare-dns',
@@ -415,8 +410,8 @@ export class DNSSynchronization {
         zone_name: this.zoneName,
         account_id: this.accountId,
         enterprise_tier: this.isEnterpriseRecord(domain),
-        dashboard_url: `https://dash.cloudflare.com/${this.accountId}/dns/${this.zoneName}/records`
-      }
+        dashboard_url: `https://dash.cloudflare.com/${this.accountId}/dns/${this.zoneName}/records`,
+      },
     };
 
     return await this.r2.storeDiagnosis(diagnosis);
@@ -456,20 +451,39 @@ export class DNSSynchronization {
   async displayStatus(): Promise<void> {
     console.log(styled('\n🌐 DNS Synchronization Status', 'accent'));
     console.log(styled('=============================', 'accent'));
-    
+
     console.log(styled(`Zone: ${this.zoneName}`, 'info'));
     console.log(styled(`Account ID: ${this.accountId}`, 'info'));
-    
+
     console.log(styled('\n🔗 Dashboard URLs:', 'info'));
-    console.log(styled(`  DNS Records: https://dash.cloudflare.com/${this.accountId}/dns/${this.zoneName}/records`, 'muted'));
-    console.log(styled(`  DNS Overview: https://dash.cloudflare.com/${this.accountId}/dns/${this.zoneName}`, 'muted'));
-    console.log(styled(`  DNS Settings: https://dash.cloudflare.com/${this.accountId}/dns/${this.zoneName}/settings`, 'muted'));
-    
+    console.log(
+      styled(
+        `  DNS Records: https://dash.cloudflare.com/${this.accountId}/dns/${this.zoneName}/records`,
+        'muted'
+      )
+    );
+    console.log(
+      styled(
+        `  DNS Overview: https://dash.cloudflare.com/${this.accountId}/dns/${this.zoneName}`,
+        'muted'
+      )
+    );
+    console.log(
+      styled(
+        `  DNS Settings: https://dash.cloudflare.com/${this.accountId}/dns/${this.zoneName}/settings`,
+        'muted'
+      )
+    );
+
     const subdomains = cloudflareDomainManager.getAllSubdomains();
     console.log(styled(`\n📡 Managed Subdomains: ${subdomains.length}`, 'info'));
-    console.log(styled(`   Enterprise: ${subdomains.filter(s => s.enterprise_tier).length}`, 'muted'));
+    console.log(
+      styled(`   Enterprise: ${subdomains.filter(s => s.enterprise_tier).length}`, 'muted')
+    );
     console.log(styled(`   Proxied: ${subdomains.filter(s => s.proxied).length}`, 'muted'));
-    console.log(styled(`   SSL Required: ${subdomains.filter(s => s.ssl_required).length}`, 'muted'));
+    console.log(
+      styled(`   SSL Required: ${subdomains.filter(s => s.ssl_required).length}`, 'muted')
+    );
   }
 }
 
@@ -479,10 +493,10 @@ export const dnsSynchronization = new DNSSynchronization();
 // CLI interface
 if (import.meta.main) {
   const dns = dnsSynchronization;
-  
+
   await dns.initialize();
   await dns.displayStatus();
-  
+
   console.log(styled('\n🎉 DNS synchronization complete!', 'success'));
   console.log(styled('All DNS records integrated with R2 MCP system.', 'info'));
 }

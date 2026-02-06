@@ -2,23 +2,23 @@
 
 /**
  * 📚 Enterprise Documentation System Index & Cross-Reference
- * 
+ *
  * Comprehensive cross-reference index for all documentation components,
  * ensuring proper location pointing and navigation across the system.
- * 
+ *
  * @author Enterprise Documentation Team
  * @version 2.0.0
  * @since 1.0.0
  */
 
-import { 
-  DocumentationProvider, 
+import {
+  DocumentationProvider,
   DocumentationCategory,
   DocumentationDomain,
   DocumentationURLType,
   DocumentationUserType,
   ENTERPRISE_DOCUMENTATION_BASE_URLS,
-  DOCUMENTATION_URL_MAPPINGS
+  DOCUMENTATION_URL_MAPPINGS,
 } from './constants/domains';
 import { ENTERPRISE_URL_FRAGMENTS } from './constants/fragments';
 import { ENTERPRISE_DOCUMENTATION_PATHS } from './constants/categories';
@@ -66,8 +66,8 @@ export class DocumentationSystemIndex {
       categories: {},
       providers: {},
       domains: {},
-      tags: {}
-    }
+      tags: {},
+    },
   };
 
   public static getInstance(): DocumentationSystemIndex {
@@ -87,19 +87,19 @@ export class DocumentationSystemIndex {
   private buildIndex(): void {
     // Index domains
     this.indexDomains();
-    
+
     // Index providers
     this.indexProviders();
-    
+
     // Index categories
     this.indexCategories();
-    
+
     // Index URL fragments
     this.indexFragments();
-    
+
     // Index paths
     this.indexPaths();
-    
+
     // Build cross-references
     this.buildCrossReferences();
   }
@@ -112,13 +112,14 @@ export class DocumentationSystemIndex {
       {
         id: 'domain-bun-sh',
         title: 'Bun.sh - Main Technical Documentation',
-        description: 'Primary domain for Bun technical documentation, API reference, and runtime features',
+        description:
+          'Primary domain for Bun technical documentation, API reference, and runtime features',
         location: { file: '/lib/documentation/constants/domains.ts', line: 14 },
         url: 'https://bun.sh',
         domain: DocumentationDomain.BUN_SH,
         type: 'technical_docs' as DocumentationURLType,
         audience: ['developers', 'enterprise_admins'] as DocumentationUserType[],
-        tags: ['main', 'technical', 'api', 'runtime']
+        tags: ['main', 'technical', 'api', 'runtime'],
       },
       {
         id: 'domain-bun-com',
@@ -129,7 +130,7 @@ export class DocumentationSystemIndex {
         domain: DocumentationDomain.BUN_COM,
         type: 'tutorials' as DocumentationURLType,
         audience: ['beginners', 'educators', 'all_users'] as DocumentationUserType[],
-        tags: ['reference', 'guides', 'tutorials', 'community']
+        tags: ['reference', 'guides', 'tutorials', 'community'],
       },
       {
         id: 'domain-bun-dev',
@@ -140,8 +141,8 @@ export class DocumentationSystemIndex {
         domain: DocumentationDomain.BUN_DEV,
         type: 'technical_docs' as DocumentationURLType,
         audience: ['developers'] as DocumentationUserType[],
-        tags: ['development', 'api', 'focus']
-      }
+        tags: ['development', 'api', 'focus'],
+      },
     ];
 
     domains.forEach(domain => {
@@ -164,7 +165,7 @@ export class DocumentationSystemIndex {
         type: 'technical_docs' as DocumentationURLType,
         audience: ['developers', 'enterprise_admins'] as DocumentationUserType[],
         tags: ['official', 'technical', 'api'],
-        related: ['domain-bun-sh', 'category-api-reference', 'category-runtime-features']
+        related: ['domain-bun-sh', 'category-api-reference', 'category-runtime-features'],
       },
       {
         id: 'provider-bun-api-docs',
@@ -176,7 +177,7 @@ export class DocumentationSystemIndex {
         type: 'api_reference' as DocumentationURLType,
         audience: ['developers'] as DocumentationUserType[],
         tags: ['api', 'reference', 'technical'],
-        related: ['domain-bun-sh', 'category-api-reference', 'fragment-api']
+        related: ['domain-bun-sh', 'category-api-reference', 'fragment-api'],
       },
       {
         id: 'provider-bun-runtime-docs',
@@ -188,8 +189,12 @@ export class DocumentationSystemIndex {
         type: 'technical_docs' as DocumentationURLType,
         audience: ['developers', 'devops_engineers'] as DocumentationUserType[],
         tags: ['runtime', 'performance', 'optimization'],
-        related: ['domain-bun-sh', 'category-runtime-features', 'category-performance-optimization']
-      }
+        related: [
+          'domain-bun-sh',
+          'category-runtime-features',
+          'category-performance-optimization',
+        ],
+      },
     ];
 
     providers.forEach(provider => {
@@ -211,7 +216,7 @@ export class DocumentationSystemIndex {
         type: 'api_reference' as DocumentationURLType,
         audience: ['developers', 'educators'] as DocumentationUserType[],
         tags: ['api', 'reference', 'complete'],
-        related: ['provider-bun-api-docs', 'provider-bun-reference', 'fragment-api']
+        related: ['provider-bun-api-docs', 'provider-bun-reference', 'fragment-api'],
       },
       {
         id: 'category-runtime-features',
@@ -222,7 +227,7 @@ export class DocumentationSystemIndex {
         type: 'technical_docs' as DocumentationURLType,
         audience: ['developers', 'devops_engineers'] as DocumentationUserType[],
         tags: ['runtime', 'features', 'performance'],
-        related: ['provider-bun-runtime-docs', 'fragment-typed-array', 'fragment-networking']
+        related: ['provider-bun-runtime-docs', 'fragment-typed-array', 'fragment-networking'],
       },
       {
         id: 'category-performance-optimization',
@@ -233,8 +238,8 @@ export class DocumentationSystemIndex {
         type: 'performance' as DocumentationURLType,
         audience: ['developers', 'devops_engineers'] as DocumentationUserType[],
         tags: ['performance', 'optimization', 'tuning'],
-        related: ['provider-bun-runtime-docs', 'fragment-performance', 'syscall-optimization']
-      }
+        related: ['provider-bun-runtime-docs', 'fragment-performance', 'syscall-optimization'],
+      },
     ];
 
     categories.forEach(category => {
@@ -256,7 +261,7 @@ export class DocumentationSystemIndex {
         type: 'technical_docs' as DocumentationURLType,
         audience: ['developers'] as DocumentationUserType[],
         tags: ['typed-array', 'binary', 'overview'],
-        related: ['category-runtime-features', 'typed-array-methods', 'typed-array-conversion']
+        related: ['category-runtime-features', 'typed-array-methods', 'typed-array-conversion'],
       },
       {
         id: 'fragment-networking-fetch',
@@ -267,8 +272,8 @@ export class DocumentationSystemIndex {
         type: 'api_reference' as DocumentationURLType,
         audience: ['developers'] as DocumentationUserType[],
         tags: ['networking', 'fetch', 'api'],
-        related: ['category-runtime-features', 'fragment-networking-websocket']
-      }
+        related: ['category-runtime-features', 'fragment-networking-websocket'],
+      },
     ];
 
     fragments.forEach(fragment => {
@@ -285,24 +290,30 @@ export class DocumentationSystemIndex {
         id: 'path-runtime-binary-data',
         title: 'Runtime Binary Data',
         description: 'Binary data handling, typed arrays, and buffer operations',
-        location: { file: '/lib/documentation/constants/categories.ts', section: 'RUNTIME_FEATURES' },
+        location: {
+          file: '/lib/documentation/constants/categories.ts',
+          section: 'RUNTIME_FEATURES',
+        },
         url: '/runtime/binary-data',
         type: 'technical_docs' as DocumentationURLType,
         audience: ['developers'] as DocumentationUserType[],
         tags: ['runtime', 'binary', 'typed-array'],
-        related: ['category-runtime-features', 'fragment-typed-array-overview']
+        related: ['category-runtime-features', 'fragment-typed-array-overview'],
       },
       {
         id: 'path-runtime-syscall-optimization',
         title: 'Syscall Optimization',
         description: 'Low-level syscall optimization and performance tuning',
-        location: { file: '/lib/documentation/constants/categories.ts', section: 'PERFORMANCE_OPTIMIZATION' },
+        location: {
+          file: '/lib/documentation/constants/categories.ts',
+          section: 'PERFORMANCE_OPTIMIZATION',
+        },
         url: '/runtime/syscall-optimization',
         type: 'performance' as DocumentationURLType,
         audience: ['developers', 'devops_engineers'] as DocumentationUserType[],
         tags: ['runtime', 'syscall', 'optimization'],
-        related: ['category-performance-optimization', 'syscall-optimization']
-      }
+        related: ['category-performance-optimization', 'syscall-optimization'],
+      },
     ];
 
     paths.forEach(path => {
@@ -315,39 +326,43 @@ export class DocumentationSystemIndex {
    */
   private buildCrossReferences(): void {
     const mainRef = this.crossRef.main;
-    
+
     // Build category mappings
     mainRef.categories = {
-      'api': ['provider-bun-api-docs', 'provider-bun-reference', 'category-api-reference'],
-      'runtime': ['provider-bun-runtime-docs', 'category-runtime-features', 'path-runtime-binary-data'],
-      'performance': ['category-performance-optimization', 'fragment-performance-optimization'],
-      'networking': ['fragment-networking-fetch', 'path-runtime-networking'],
+      api: ['provider-bun-api-docs', 'provider-bun-reference', 'category-api-reference'],
+      runtime: [
+        'provider-bun-runtime-docs',
+        'category-runtime-features',
+        'path-runtime-binary-data',
+      ],
+      performance: ['category-performance-optimization', 'fragment-performance-optimization'],
+      networking: ['fragment-networking-fetch', 'path-runtime-networking'],
       'binary-data': ['fragment-typed-array-overview', 'path-runtime-binary-data'],
-      'optimization': ['category-performance-optimization', 'syscall-optimization']
+      optimization: ['category-performance-optimization', 'syscall-optimization'],
     };
 
     // Build provider mappings
     mainRef.providers = {
       'bun-official': ['provider-bun-official', 'domain-bun-sh'],
       'bun-api': ['provider-bun-api-docs', 'category-api-reference'],
-      'bun-runtime': ['provider-bun-runtime-docs', 'category-runtime-features']
+      'bun-runtime': ['provider-bun-runtime-docs', 'category-runtime-features'],
     };
 
     // Build domain mappings
     mainRef.domains = {
       'bun.sh': ['domain-bun-sh', 'provider-bun-official', 'provider-bun-api-docs'],
       'bun.com': ['domain-bun-com', 'provider-bun-reference', 'provider-bun-guides'],
-      'bun.dev': ['domain-bun-dev']
+      'bun.dev': ['domain-bun-dev'],
     };
 
     // Build tag mappings
     mainRef.tags = {
-      'api': ['provider-bun-api-docs', 'category-api-reference', 'fragment-api'],
-      'runtime': ['provider-bun-runtime-docs', 'category-runtime-features'],
-      'performance': ['category-performance-optimization', 'fragment-performance-optimization'],
+      api: ['provider-bun-api-docs', 'category-api-reference', 'fragment-api'],
+      runtime: ['provider-bun-runtime-docs', 'category-runtime-features'],
+      performance: ['category-performance-optimization', 'fragment-performance-optimization'],
       'typed-array': ['fragment-typed-array-overview', 'fragment-typed-array-methods'],
-      'networking': ['fragment-networking-fetch', 'path-runtime-networking'],
-      'optimization': ['category-performance-optimization', 'syscall-optimization']
+      networking: ['fragment-networking-fetch', 'path-runtime-networking'],
+      optimization: ['category-performance-optimization', 'syscall-optimization'],
     };
 
     // Store all entries
@@ -357,13 +372,16 @@ export class DocumentationSystemIndex {
   /**
    * Search the documentation index
    */
-  public search(query: string, options?: {
-    type?: DocumentationURLType;
-    audience?: DocumentationUserType;
-    provider?: DocumentationProvider;
-    category?: DocumentationCategory;
-    tags?: string[];
-  }): DocumentationIndexEntry[] {
+  public search(
+    query: string,
+    options?: {
+      type?: DocumentationURLType;
+      audience?: DocumentationUserType;
+      provider?: DocumentationProvider;
+      category?: DocumentationCategory;
+      tags?: string[];
+    }
+  ): DocumentationIndexEntry[] {
     const results: DocumentationIndexEntry[] = [];
     const lowerQuery = query.toLowerCase();
 
@@ -381,7 +399,8 @@ export class DocumentationSystemIndex {
       if (options?.tags && !options.tags.some(tag => entry.tags.includes(tag))) continue;
 
       // Search in title, description, and tags
-      const searchText = `${entry.title} ${entry.description} ${entry.tags.join(' ')}`.toLowerCase();
+      const searchText =
+        `${entry.title} ${entry.description} ${entry.tags.join(' ')}`.toLowerCase();
       if (searchText.includes(lowerQuery)) {
         results.push(entry);
       }
@@ -391,13 +410,13 @@ export class DocumentationSystemIndex {
       // Prioritize exact title matches
       if (a.title.toLowerCase() === lowerQuery) return -1;
       if (b.title.toLowerCase() === lowerQuery) return 1;
-      
+
       // Then prioritize title contains
       const aTitleContains = a.title.toLowerCase().includes(lowerQuery);
       const bTitleContains = b.title.toLowerCase().includes(lowerQuery);
       if (aTitleContains && !bTitleContains) return -1;
       if (!aTitleContains && bTitleContains) return 1;
-      
+
       return 0;
     });
   }
@@ -471,7 +490,7 @@ export class DocumentationSystemIndex {
         url: entry.url!,
         title: entry.title,
         description: entry.description,
-        lastModified: new Date().toISOString()
+        lastModified: new Date().toISOString(),
       }));
   }
 }

@@ -1,0 +1,11 @@
+{
+  "name": "bench",
+  "version": "1.0.0",
+  "description": "Run performance benchmarks for the registry",
+  "integrity": "sha256-c426ec1f61b1d2f39aec3e58df22dd827e96e8bc8568989a3a7868f419e3d509",
+  "features": [],
+  "entry": "./index.ts",
+  "author": "Registry MCP Team",
+  "permissions": ["bash:execute"],
+  "routes": []
+}

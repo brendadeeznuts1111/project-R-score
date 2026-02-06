@@ -1,14 +1,22 @@
 /**
  * Enterprise Validation System
- * 
+ *
  * Comprehensive validation utilities for enterprise-grade
  * input validation, type checking, and constraint enforcement.
- * 
+ *
  * @version 1.0.0
  * @author Enterprise Platform Team
  */
 
-import { Validator, EnterpriseResult, SafeString, Base64String, HexString, UUID, ISO8601String } from './core-types';
+import {
+  Validator,
+  EnterpriseResult,
+  SafeString,
+  Base64String,
+  HexString,
+  UUID,
+  ISO8601String,
+} from './core-types';
 
 import { EnterpriseErrorCode, createValidationError } from './core-errors';
 
@@ -85,14 +93,16 @@ export const StringValidators = {
   /**
    * Check if string is a valid email
    */
-  isEmail: (value: string): boolean => 
+  isEmail: (value: string): boolean =>
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value),
 
   /**
    * Check if string is a valid URL
    */
   isURL: (value: string): boolean =>
-    /^https?:\/\/(?:[-\w.])+(?:\:[0-9]+)?(?:\/(?:[\w/_.])*(?:\?(?:[\w&=%.])*)?(?:\#(?:[\w.])*)?)?$/.test(value),
+    /^https?:\/\/(?:[-\w.])+(?:\:[0-9]+)?(?:\/(?:[\w/_.])*(?:\?(?:[\w&=%.])*)?(?:\#(?:[\w.])*)?)?$/.test(
+      value
+    ),
 
   /**
    * Check if string is a valid UUID
@@ -103,20 +113,18 @@ export const StringValidators = {
   /**
    * Check if string is valid base64
    */
-  isBase64: (value: string): boolean =>
-    /^[A-Za-z0-9+/]*={0,2}$/.test(value),
+  isBase64: (value: string): boolean => /^[A-Za-z0-9+/]*={0,2}$/.test(value),
 
   /**
    * Check if string is valid hex
    */
-  isHex: (value: string): boolean =>
-    /^[0-9a-fA-F]+$/.test(value),
+  isHex: (value: string): boolean => /^[0-9a-fA-F]+$/.test(value),
 
   /**
    * Check if string is valid ISO8601 date
    */
   isISO8601: (value: string): boolean =>
-    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?$/.test(value)
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?$/.test(value),
 };
 
 /**
@@ -157,7 +165,7 @@ export const NumberValidators = {
    */
   isDivisibleBy: (divisor: number): Validator<number> => {
     return (value: number): boolean => value % divisor === 0;
-  }
+  },
 };
 
 /**
@@ -206,7 +214,7 @@ export const ArrayValidators = {
       }
       return true;
     };
-  }
+  },
 };
 
 /**
@@ -217,11 +225,13 @@ export const ObjectValidators = {
    * Check if value is a plain object
    */
   isPlainObject: (value: unknown): boolean => {
-    return value !== null && 
-           typeof value === 'object' && 
-           !Array.isArray(value) && 
-           !(value instanceof Date) &&
-           !(value instanceof RegExp);
+    return (
+      value !== null &&
+      typeof value === 'object' &&
+      !Array.isArray(value) &&
+      !(value instanceof Date) &&
+      !(value instanceof RegExp)
+    );
   },
 
   /**
@@ -252,7 +262,7 @@ export const ObjectValidators = {
     return (value: object): boolean => {
       return validator(value[property]);
     };
-  }
+  },
 };
 
 // ============================================================================
@@ -336,14 +346,15 @@ export class EnterpriseValidationEngine {
         try {
           const isValid = rule.validator(value);
           if (!isValid) {
-            const message = rule.message || `Field '${field}' failed validation rule '${rule.name}'`;
+            const message =
+              rule.message || `Field '${field}' failed validation rule '${rule.name}'`;
             const error = createValidationError(
               EnterpriseErrorCode.VALIDATION_INPUT_INVALID,
               message,
               field,
               value
             );
-            
+
             if (rule.severity === 'warning') {
               warnings.push(message);
             } else {
@@ -376,7 +387,7 @@ export class EnterpriseValidationEngine {
       errors,
       warnings,
       fieldErrors,
-      validFields
+      validFields,
     };
   }
 
@@ -417,7 +428,7 @@ export class EnterpriseValidationEngine {
             field,
             value
           );
-          
+
           if (rule.severity === 'warning') {
             warnings.push(message);
           } else {
@@ -439,7 +450,7 @@ export class EnterpriseValidationEngine {
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 }
@@ -456,10 +467,12 @@ export const TypeGuards = {
    * Check if value is a safe string
    */
   isSafeString: (value: unknown): value is SafeString => {
-    return typeof value === 'string' && 
-           value.length > 0 && 
-           value.length <= 10000 &&
-           !/[<>\"'&]/.test(value);
+    return (
+      typeof value === 'string' &&
+      value.length > 0 &&
+      value.length <= 10000 &&
+      !/[<>\"'&]/.test(value)
+    );
   },
 
   /**
@@ -488,7 +501,7 @@ export const TypeGuards = {
    */
   isISO8601String: (value: unknown): value is ISO8601String => {
     return typeof value === 'string' && StringValidators.isISO8601(value);
-  }
+  },
 };
 
 // ============================================================================
@@ -512,18 +525,14 @@ export const createValidationRule = <T>(
     validator,
     message: options?.message,
     severity: options?.severity || 'error',
-    required: options?.required || false
+    required: options?.required || false,
   };
 };
 
 /**
  * Validate and throw if invalid
  */
-export const validateOrThrow = <T>(
-  value: T,
-  validator: Validator<T>,
-  message?: string
-): void => {
+export const validateOrThrow = <T>(value: T, validator: Validator<T>, message?: string): void => {
   if (!validator(value)) {
     throw createValidationError(
       EnterpriseErrorCode.VALIDATION_INPUT_INVALID,
@@ -542,32 +551,32 @@ export const validateForResult = <T>(
   validator: Validator<T>,
   message?: string
 ): EnterpriseResult<T> => {
-    try {
-      if (!validator(value)) {
-        return {
-          success: false,
-          error: createValidationError(
-            EnterpriseErrorCode.VALIDATION_INPUT_INVALID,
-            message || 'Validation failed',
-            undefined,
-            value
-          )
-        };
-      }
-      return { success: true, data: value };
-    } catch (error) {
+  try {
+    if (!validator(value)) {
       return {
         success: false,
         error: createValidationError(
           EnterpriseErrorCode.VALIDATION_INPUT_INVALID,
-          'Validation error occurred',
+          message || 'Validation failed',
           undefined,
-          value,
-          { originalError: error }
-        )
+          value
+        ),
       };
     }
-  };
+    return { success: true, data: value };
+  } catch (error) {
+    return {
+      success: false,
+      error: createValidationError(
+        EnterpriseErrorCode.VALIDATION_INPUT_INVALID,
+        'Validation error occurred',
+        undefined,
+        value,
+        { originalError: error }
+      ),
+    };
+  }
+};
 
 // ============================================================================
 // GLOBAL VALIDATION ENGINE INSTANCE

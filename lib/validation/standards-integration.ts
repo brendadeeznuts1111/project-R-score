@@ -1,12 +1,11 @@
 /**
  * 🎯 Standards Integration Automation
- * 
+ *
  * Automated implementation and enforcement of development standards
  * across all critical development areas
  */
 
-import { read, write } from "bun";
-
+import { read, write } from 'bun';
 
 // ============================================================================
 // STANDARDS INTEGRATION CORE
@@ -364,83 +363,82 @@ Build a complete feature demonstrating:
     const quiz = {
       typescript: [
         {
-          question: "What are the 5 TypeScript strict mode rules that must be followed?",
+          question: 'What are the 5 TypeScript strict mode rules that must be followed?',
           options: [
-            "noImplicitAny, strictNullChecks, strictFunctionTypes, noImplicitReturns, noImplicitThis",
-            "noUnusedLocals, noUnusedParameters, exactOptionalPropertyTypes, noImplicitOverride, noPropertyAccessFromIndexSignature",
-            "allowUnreachableCode, allowUnusedLabels, noFallthroughCasesInSwitch, noUncheckedIndexedAccess, noImplicitAny",
-            "strict, alwaysStrict, noImplicitAny, strictNullChecks, strictFunctionTypes"
+            'noImplicitAny, strictNullChecks, strictFunctionTypes, noImplicitReturns, noImplicitThis',
+            'noUnusedLocals, noUnusedParameters, exactOptionalPropertyTypes, noImplicitOverride, noPropertyAccessFromIndexSignature',
+            'allowUnreachableCode, allowUnusedLabels, noFallthroughCasesInSwitch, noUncheckedIndexedAccess, noImplicitAny',
+            'strict, alwaysStrict, noImplicitAny, strictNullChecks, strictFunctionTypes',
           ],
-          correct: 0
+          correct: 0,
         },
         {
-          question: "When should you use the Result pattern instead of try/catch?",
+          question: 'When should you use the Result pattern instead of try/catch?',
           options: [
-            "Never, always use try/catch",
-            "For expected error conditions that are part of normal flow",
-            "Only for async functions",
-            "Only for critical errors"
+            'Never, always use try/catch',
+            'For expected error conditions that are part of normal flow',
+            'Only for async functions',
+            'Only for critical errors',
           ],
-          correct: 1
-        }
+          correct: 1,
+        },
       ],
       performance: [
         {
-          question: "What are the bundle size limits according to standards?",
+          question: 'What are the bundle size limits according to standards?',
           options: [
-            "Utility: 50KB, Component: 100KB, Application: 500KB",
-            "Utility: 100KB, Component: 200KB, Application: 1MB",
-            "Utility: 200KB, Component: 500KB, Application: 2MB",
-            "Utility: 25KB, Component: 50KB, Application: 250KB"
+            'Utility: 50KB, Component: 100KB, Application: 500KB',
+            'Utility: 100KB, Component: 200KB, Application: 1MB',
+            'Utility: 200KB, Component: 500KB, Application: 2MB',
+            'Utility: 25KB, Component: 50KB, Application: 250KB',
           ],
-          correct: 1
+          correct: 1,
         },
         {
-          question: "What is the maximum allowed runtime for utility functions?",
-          options: [
-            "5ms", "10ms", "25ms", "50ms"
-          ],
-          correct: 1
-        }
+          question: 'What is the maximum allowed runtime for utility functions?',
+          options: ['5ms', '10ms', '25ms', '50ms'],
+          correct: 1,
+        },
       ],
       security: [
         {
-          question: "Which functions are prohibited in code according to security standards?",
+          question: 'Which functions are prohibited in code according to security standards?',
           options: [
-            "console.log, alert, prompt",
-            "eval, Function constructor, setTimeout with string",
-            "JSON.parse, JSON.stringify",
-            "require, import, export"
+            'console.log, alert, prompt',
+            'eval, Function constructor, setTimeout with string',
+            'JSON.parse, JSON.stringify',
+            'require, import, export',
           ],
-          correct: 1
+          correct: 1,
         },
         {
-          question: "What URL edge cases must be handled according to standards?",
+          question: 'What URL edge cases must be handled according to standards?',
           options: [
-            "Only HTTPS URLs",
-            "Multiple slashes, missing protocols, trailing slashes, whitespace",
-            "Only HTTP and HTTPS",
-            "Only same-origin URLs"
+            'Only HTTPS URLs',
+            'Multiple slashes, missing protocols, trailing slashes, whitespace',
+            'Only HTTP and HTTPS',
+            'Only same-origin URLs',
           ],
-          correct: 1
-        }
+          correct: 1,
+        },
       ],
       testing: [
         {
-          question: "What is the minimum required test coverage percentage?",
-          options: [
-            "70%", "80%", "90%", "95%"
-          ],
-          correct: 2
+          question: 'What is the minimum required test coverage percentage?',
+          options: ['70%', '80%', '90%', '95%'],
+          correct: 2,
         },
         {
-          question: "What test structure pattern is required by standards?",
+          question: 'What test structure pattern is required by standards?',
           options: [
-            "Given-When-Then", "Arrange-Act-Assert", "Setup-Execute-Verify", "Prepare-Run-Check"
+            'Given-When-Then',
+            'Arrange-Act-Assert',
+            'Setup-Execute-Verify',
+            'Prepare-Run-Check',
           ],
-          correct: 1
-        }
-      ]
+          correct: 1,
+        },
+      ],
     };
 
     await write('standards-quiz.json', JSON.stringify(quiz, null, 2));
@@ -658,7 +656,7 @@ async function main() {
 
 main().catch(console.error);
 `,
-      
+
       'standards-report': `#!/usr/bin/env bun
 /**
  * Standards Compliance Report Generator
@@ -735,7 +733,7 @@ async function main() {
 }
 
 main().catch(console.error);
-`
+`,
     };
 
     // Write scripts
@@ -749,12 +747,13 @@ main().catch(console.error);
         'standards:check': 'bun scripts/standards-check',
         'standards:report': 'bun scripts/standards-report',
         'standards:gate': 'bun scripts/standards-check && bun scripts/standards-report',
-        'security:check-prohibited': 'grep -r "eval\\|Function(" src/ || echo "No prohibited functions found"',
+        'security:check-prohibited':
+          'grep -r "eval\\|Function(" src/ || echo "No prohibited functions found"',
         'check:bundle-size': 'bun run build && du -h dist/*',
         'test:quality': 'bun test && bun run test:coverage',
         'docs:check': 'bun run docs:generate && git diff --exit-code docs/',
-        'performance:check-standards': 'bun run benchmark && bun run check:bundle-size'
-      }
+        'performance:check-standards': 'bun run benchmark && bun run check:bundle-size',
+      },
     };
 
     console.log('✅ Quality assurance automation scripts generated');
@@ -976,7 +975,6 @@ main().catch(console.error);
       console.log('  3. Update team onboarding process');
       console.log('  4. Start using ADR template for decisions');
       console.log('  5. Monitor compliance reports');
-
     } catch (error) {
       console.error('❌ Implementation failed:', error);
       throw error;
@@ -984,12 +982,7 @@ main().catch(console.error);
   }
 
   private async ensureDirectories(): Promise<void> {
-    const directories = [
-      '.github',
-      '.github/workflows',
-      'docs',
-      'scripts'
-    ];
+    const directories = ['.github', '.github/workflows', 'docs', 'scripts'];
 
     for (const dir of directories) {
       try {

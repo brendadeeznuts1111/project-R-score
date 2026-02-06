@@ -2,7 +2,7 @@
 
 /**
  * 📰 RSS Feed Integration with Caching
- * 
+ *
  * Manages RSS feeds for packages, with caching, R2 storage integration,
  * and package-specific feed generation.
  */
@@ -39,7 +39,7 @@ export interface FeedSubscription {
 export class RSSManager {
   private feeds: Map<string, RSSFeed>;
   private subscriptions: FeedSubscription[];
-  private cache: Map<string, {feed: RSSFeed, timestamp: number}>;
+  private cache: Map<string, { feed: RSSFeed; timestamp: number }>;
   private r2Storage?: any; // R2Storage type
 
   constructor(r2Storage?: any) {
@@ -56,12 +56,12 @@ export class RSSManager {
       name,
       category,
       lastFetched: new Date(),
-      updateFrequency: 60 // 1 hour default
+      updateFrequency: 60, // 1 hour default
     };
 
     this.subscriptions.push(subscription);
     await this.saveSubscriptions();
-    
+
     // Fetch immediately
     await this.fetchFeed(feedUrl);
   }
@@ -76,40 +76,42 @@ export class RSSManager {
     try {
       const response = await fetch(feedUrl, {
         headers: {
-          'User-Agent': 'Bun-Docs-RSS/1.0'
-        }
+          'User-Agent': 'Bun-Docs-RSS/1.0',
+        },
       });
-      
+
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      
+
       const xml = await response.text();
       const feed = this.parseRSS(xml);
-      
+
       // Cache for 5 minutes
       this.cache.set(feedUrl, { feed, timestamp: Date.now() });
-      
+
       // Store in R2 if available
       if (this.r2Storage) {
         await this.r2Storage.putJson(`rss/${feedUrl.replace(/[^a-zA-Z0-9]/g, '-')}.json`, feed);
       }
-      
+
       return feed;
     } catch (error) {
       console.error(`Failed to fetch RSS feed ${feedUrl}:`, error);
-      
+
       // Try to get from R2 cache
       if (this.r2Storage) {
-        const cachedFeed = await this.r2Storage.getJson(`rss/${feedUrl.replace(/[^a-zA-Z0-9]/g, '-')}.json`);
+        const cachedFeed = await this.r2Storage.getJson(
+          `rss/${feedUrl.replace(/[^a-zA-Z0-9]/g, '-')}.json`
+        );
         if (cachedFeed) return cachedFeed;
       }
-      
+
       throw error;
     }
   }
 
   async fetchAll(): Promise<Map<string, RSSFeed>> {
     const results = new Map();
-    
+
     for (const subscription of this.subscriptions) {
       try {
         const feed = await this.fetchFeed(subscription.url);
@@ -119,21 +121,21 @@ export class RSSManager {
         console.error(`Failed to fetch ${subscription.name}:`, error);
       }
     }
-    
+
     await this.saveSubscriptions();
     return results;
   }
 
   async getPackageFeeds(packageName: string): Promise<RSSFeed[]> {
     const feeds: RSSFeed[] = [];
-    
+
     // Common RSS feeds for packages
     const potentialFeeds = [
       `https://www.npmjs.com/package/${packageName}/rss`,
       `https://github.com/${packageName}/releases.atom`,
-      `https://github.com/${packageName}/commits.atom`
+      `https://github.com/${packageName}/commits.atom`,
     ];
-    
+
     for (const feedUrl of potentialFeeds) {
       try {
         const feed = await this.fetchFeed(feedUrl);
@@ -142,7 +144,7 @@ export class RSSManager {
         // Ignore failed feeds
       }
     }
-    
+
     return feeds;
   }
 
@@ -153,7 +155,7 @@ export class RSSManager {
       description: `Documentation updates for ${packageName}`,
       items: [],
       lastBuildDate: new Date().toISOString(),
-      ttl: 1440 // 24 hours
+      ttl: 1440, // 24 hours
     };
 
     // Add Bun API documentation as feed items
@@ -165,7 +167,7 @@ export class RSSManager {
           description: `Documentation for ${doc.api} API used in ${packageName}`,
           pubDate: new Date().toISOString(),
           category: [doc.category],
-          guid: `bun:${packageName}:${doc.api}`
+          guid: `bun:${packageName}:${doc.api}`,
         });
       }
     }
@@ -178,7 +180,7 @@ export class RSSManager {
         description: `Package depends on ${dep} version ${version}`,
         pubDate: new Date().toISOString(),
         category: ['dependencies'],
-        guid: `dep:${packageName}:${dep}:${version}`
+        guid: `dep:${packageName}:${dep}:${version}`,
       });
     }
 
@@ -192,9 +194,9 @@ export class RSSManager {
 
     const xml = this.generateRSS(feed);
     const bucket = await this.r2Storage.getOrCreateBucket(packageName);
-    
+
     await this.r2Storage.put(bucket, `feeds/${packageName}.rss`, Buffer.from(xml));
-    
+
     return `https://${bucket}.${this.r2Storage['config'].accountId}.r2.dev/feeds/${packageName}.rss`;
   }
 
@@ -203,34 +205,34 @@ export class RSSManager {
     const title = xml.match(/<title>([^<]+)<\/title>/)?.[1] || 'Untitled';
     const link = xml.match(/<link>([^<]+)<\/link>/)?.[1] || '';
     const description = xml.match(/<description>([^<]+)<\/description>/)?.[1] || '';
-    
+
     const items: RSSFeedItem[] = [];
     const itemMatches = xml.match(/<item>[\s\S]*?<\/item>/g) || [];
-    
+
     for (const item of itemMatches) {
       const itemTitle = item.match(/<title>([^<]+)<\/title>/)?.[1];
       const itemLink = item.match(/<link>([^<]+)<\/link>/)?.[1];
       const itemDesc = item.match(/<description>([^<]+)<\/description>/)?.[1];
       const itemDate = item.match(/<pubDate>([^<]+)<\/pubDate>/)?.[1];
-      
+
       if (itemTitle && itemLink) {
         items.push({
           title: itemTitle,
           link: itemLink,
           description: itemDesc || '',
           pubDate: itemDate || new Date().toISOString(),
-          guid: itemLink
+          guid: itemLink,
         });
       }
     }
-    
+
     return {
       title,
       link,
       description,
       items,
       lastBuildDate: new Date().toISOString(),
-      ttl: 60
+      ttl: 60,
     };
   }
 
@@ -244,7 +246,9 @@ export class RSSManager {
     <lastBuildDate>${feed.lastBuildDate}</lastBuildDate>
     <ttl>${feed.ttl}</ttl>
     
-    ${feed.items.map(item => `
+    ${feed.items
+      .map(
+        item => `
     <item>
       <title>${item.title}</title>
       <link>${item.link}</link>
@@ -253,7 +257,9 @@ export class RSSManager {
       <guid>${item.guid}</guid>
       ${item.category ? `<category>${item.category.join(', ')}</category>` : ''}
     </item>
-    `).join('')}
+    `
+      )
+      .join('')}
   </channel>
 </rss>`;
   }
@@ -263,7 +269,7 @@ export class RSSManager {
       const homeDir = process.env.HOME || process.env.USERPROFILE || '/tmp';
       const subscriptionsFile = Bun.file(`${homeDir}/.config/bun-docs/subscriptions.json`);
       if (await subscriptionsFile.exists()) {
-        this.subscriptions = await subscriptionsFile.json() as FeedSubscription[];
+        this.subscriptions = (await subscriptionsFile.json()) as FeedSubscription[];
       }
     } catch (error) {
       console.warn('Failed to load subscriptions:', error);

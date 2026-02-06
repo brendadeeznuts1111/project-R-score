@@ -2,7 +2,7 @@
 
 /**
  * 📚 Documentation URL Handler with Fragment Support
- * 
+ *
  * Enhanced URL handling system specifically for documentation references
  * with fragment support, validation, and integration with existing constants
  */
@@ -44,7 +44,7 @@ export class DocumentationURLHandler {
     utils: DOCS.BUN.BASE,
     cli: DOCS.BUN.BASE,
     github: DOCS.RSYS.BASE,
-    custom: ''
+    custom: '',
   } as const;
 
   /**
@@ -90,13 +90,12 @@ export class DocumentationURLHandler {
         if (config.anchor) {
           fragmentData.anchor = config.anchor;
         }
-        
+
         const fragment = URLFragmentUtils.buildFragment(fragmentData);
         url = URLHandler.addFragment(url, fragment);
       }
 
       return url;
-
     } catch (error) {
       handleError(error, 'DocumentationURLHandler.generateDocumentationURL', 'medium');
       return this.BASE_URLS.bun;
@@ -123,15 +122,15 @@ export class DocumentationURLHandler {
    */
   private static buildUtilsURL(config: DocumentationURLHandlerConfig, baseUrl: string): string {
     const category = config.category as UtilsCategory;
-    
+
     if (category && BUN_UTILS_URLS[category]) {
       const categoryUrls = BUN_UTILS_URLS[category];
       const page = config.page?.toUpperCase();
-      
+
       if (page && categoryUrls[page as keyof typeof categoryUrls]) {
         return new URL(categoryUrls[page as keyof typeof categoryUrls], baseUrl).toString();
       }
-      
+
       return new URL(categoryUrls.MAIN, baseUrl).toString();
     }
 
@@ -143,15 +142,15 @@ export class DocumentationURLHandler {
    */
   private static buildCLIURL(config: DocumentationURLHandlerConfig, baseUrl: string): string {
     const category = config.category as CLICategory;
-    
+
     if (category && CLI_DOCUMENTATION_URLS[category]) {
       const categoryUrls = CLI_DOCUMENTATION_URLS[category];
       const page = config.page?.toUpperCase();
-      
+
       if (page && categoryUrls[page as keyof typeof categoryUrls]) {
         return new URL(categoryUrls[page as keyof typeof categoryUrls], baseUrl).toString();
       }
-      
+
       return new URL(categoryUrls.MAIN, baseUrl).toString();
     }
 
@@ -183,7 +182,7 @@ export class DocumentationURLHandler {
     try {
       const parsed = URLHandler.parse(url);
       const fragment = parsed.hasFragment() ? URLFragmentUtils.parseFragment(parsed.fragment) : {};
-      
+
       // Extract search parameters
       const search: Record<string, string> = {};
       parsed.searchParams.forEach((value, key) => {
@@ -197,26 +196,26 @@ export class DocumentationURLHandler {
 
       if (parsed.hostname === 'bun.sh') {
         type = 'bun';
-        
+
         // Check for utils documentation
         if (parsed.pathname.includes('/docs/api/utils')) {
           type = 'utils';
           // Extract category from path
           const utilsMatch = parsed.pathname.match(/\/docs\/api\/utils#([a-z_]+)/);
           if (utilsMatch) {
-            category = Object.values(UtilsCategory).find(cat => 
+            category = Object.values(UtilsCategory).find(cat =>
               BUN_UTILS_URLS[cat as UtilsCategory]?.MAIN.includes(utilsMatch[1])
             );
           }
         }
-        
+
         // Check for CLI documentation
         if (parsed.pathname.includes('/docs/cli')) {
           type = 'cli';
           // Extract category from path
           const cliMatch = parsed.pathname.match(/\/docs\/cli\/([a-z]+)/);
           if (cliMatch) {
-            category = Object.values(CLICategory).find(cat => 
+            category = Object.values(CLICategory).find(cat =>
               CLI_DOCUMENTATION_URLS[cat as CLICategory]?.MAIN.includes(cliMatch[1])
             );
           }
@@ -233,15 +232,15 @@ export class DocumentationURLHandler {
       // Try to match URL patterns
       let pattern: string | undefined;
       let groups: Record<string, string> | undefined;
-      
+
       for (const [patternName, urlPattern] of Object.entries(URL_PATTERNS)) {
         const match = urlPattern.exec(url);
         if (match) {
           pattern = patternName;
-          groups = { 
-            ...match.pathname.groups, 
-            ...match.search.groups, 
-            ...match.hash.groups 
+          groups = {
+            ...match.pathname.groups,
+            ...match.search.groups,
+            ...match.hash.groups,
           };
           break;
         }
@@ -256,9 +255,8 @@ export class DocumentationURLHandler {
         anchor,
         search: Object.keys(search).length > 0 ? search : undefined,
         pattern,
-        groups
+        groups,
       };
-
     } catch (error) {
       handleError(error, 'DocumentationURLHandler.parseDocumentationURL', 'medium');
       return { valid: false };
@@ -268,17 +266,19 @@ export class DocumentationURLHandler {
   /**
    * Validate documentation URL
    */
-  static validateDocumentationURL(url: string, config?: DocumentationURLHandlerConfig['validation']): boolean {
+  static validateDocumentationURL(
+    url: string,
+    config?: DocumentationURLHandlerConfig['validation']
+  ): boolean {
     try {
       const validationOptions = {
         allowedHosts: ['bun.sh', 'github.com'],
         requireHTTPS: true,
         allowFragments: true,
-        ...config
+        ...config,
       };
 
       return URLHandler.validate(url, validationOptions);
-
     } catch {
       return false;
     }
@@ -287,14 +287,11 @@ export class DocumentationURLHandler {
   /**
    * Generate shareable documentation link
    */
-  static generateShareableLink(
-    config: DocumentationURLHandlerConfig,
-    expiresIn?: number
-  ): string {
+  static generateShareableLink(config: DocumentationURLHandlerConfig, expiresIn?: number): string {
     const fragment = {
       ...config.fragment,
       shareable: 'true',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     if (expiresIn) {
@@ -303,7 +300,7 @@ export class DocumentationURLHandler {
 
     return this.generateDocumentationURL({
       ...config,
-      fragment
+      fragment,
     });
   }
 
@@ -324,19 +321,19 @@ export class DocumentationURLHandler {
       const breadcrumbs: Array<{ name: string; url: string; type: DocumentationType }> = [];
 
       // Base documentation
-      breadcrumbs.push({ 
-        name: 'Documentation', 
-        url: 'https://bun.sh/docs', 
-        type: parsed.type || 'bun' 
+      breadcrumbs.push({
+        name: 'Documentation',
+        url: 'https://bun.sh/docs',
+        type: parsed.type || 'bun',
       });
 
       // Type-specific breadcrumb
       if (parsed.type && parsed.type !== 'bun') {
         const typeUrl = this.BASE_URLS[parsed.type];
-        breadcrumbs.push({ 
-          name: parsed.type.charAt(0).toUpperCase() + parsed.type.slice(1), 
-          url: typeUrl, 
-          type: parsed.type 
+        breadcrumbs.push({
+          name: parsed.type.charAt(0).toUpperCase() + parsed.type.slice(1),
+          url: typeUrl,
+          type: parsed.type,
         });
       }
 
@@ -344,12 +341,12 @@ export class DocumentationURLHandler {
       if (parsed.category) {
         const categoryUrl = this.generateDocumentationURL({
           type: parsed.type || 'bun',
-          category: parsed.category
+          category: parsed.category,
         });
-        breadcrumbs.push({ 
-          name: parsed.category.replace(/[_-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), 
-          url: categoryUrl, 
-          type: parsed.type || 'bun' 
+        breadcrumbs.push({
+          name: parsed.category.replace(/[_-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+          url: categoryUrl,
+          type: parsed.type || 'bun',
         });
       }
 
@@ -358,17 +355,16 @@ export class DocumentationURLHandler {
         const pageUrl = this.generateDocumentationURL({
           type: parsed.type || 'bun',
           category: parsed.category,
-          page: parsed.page
+          page: parsed.page,
         });
-        breadcrumbs.push({ 
-          name: parsed.page.replace(/[_-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), 
-          url: pageUrl, 
-          type: parsed.type || 'bun' 
+        breadcrumbs.push({
+          name: parsed.page.replace(/[_-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+          url: pageUrl,
+          type: parsed.type || 'bun',
         });
       }
 
       return breadcrumbs;
-
     } catch (error) {
       handleError(error, 'DocumentationURLHandler.generateBreadcrumbs', 'medium');
       return [{ name: 'Documentation', url: 'https://bun.sh/docs', type: 'bun' }];
@@ -389,7 +385,7 @@ export class DocumentationURLHandler {
     const searchFragment = {
       ...options?.fragment,
       search: query,
-      type: 'documentation-search'
+      type: 'documentation-search',
     };
 
     if (type) {
@@ -402,7 +398,7 @@ export class DocumentationURLHandler {
 
     return this.generateDocumentationURL({
       type: type || 'bun',
-      fragment: searchFragment
+      fragment: searchFragment,
     });
   }
 
@@ -421,12 +417,12 @@ export class DocumentationURLHandler {
       example: config.example,
       language: config.language || 'typescript',
       highlight: config.highlight ? 'true' : 'false',
-      type: 'code-example'
+      type: 'code-example',
     };
 
     return this.generateDocumentationURL({
       ...config,
-      fragment: exampleFragment
+      fragment: exampleFragment,
     });
   }
 
@@ -445,12 +441,12 @@ export class DocumentationURLHandler {
       ...fragment,
       type: 'comparison',
       items: configs.map(c => `${c.name}:${c.type}`).join(','),
-      count: configs.length.toString()
+      count: configs.length.toString(),
     };
 
     return this.generateDocumentationURL({
       type: 'bun',
-      fragment: comparisonFragment
+      fragment: comparisonFragment,
     });
   }
 
@@ -477,7 +473,7 @@ export class DocumentationURLHandler {
             type: 'utils',
             category,
             url: this.generateDocumentationURL({ type: 'utils', category }),
-            description: `${category} utilities documentation`
+            description: `${category} utilities documentation`,
           });
         });
         break;
@@ -488,7 +484,7 @@ export class DocumentationURLHandler {
             type: 'cli',
             category,
             url: this.generateDocumentationURL({ type: 'cli', category }),
-            description: `${category} CLI documentation`
+            description: `${category} CLI documentation`,
           });
         });
         break;
@@ -513,38 +509,38 @@ export class DocumentationURLHandler {
       bunAPI: this.generateDocumentationURL({ type: 'bun', category: 'api' }),
       bunRuntime: this.generateDocumentationURL({ type: 'bun', category: 'runtime' }),
       bunCLI: this.generateDocumentationURL({ type: 'cli' }),
-      
+
       // Utilities documentation
       utilsMain: this.generateDocumentationURL({ type: 'utils' }),
-      utilsFileSystem: this.generateDocumentationURL({ 
-        type: 'utils', 
-        category: UtilsCategory.FILE_SYSTEM 
+      utilsFileSystem: this.generateDocumentationURL({
+        type: 'utils',
+        category: UtilsCategory.FILE_SYSTEM,
       }),
-      utilsNetworking: this.generateDocumentationURL({ 
-        type: 'utils', 
-        category: UtilsCategory.NETWORKING 
+      utilsNetworking: this.generateDocumentationURL({
+        type: 'utils',
+        category: UtilsCategory.NETWORKING,
       }),
-      utilsValidation: this.generateDocumentationURL({ 
-        type: 'utils', 
-        category: UtilsCategory.VALIDATION 
+      utilsValidation: this.generateDocumentationURL({
+        type: 'utils',
+        category: UtilsCategory.VALIDATION,
       }),
-      
+
       // GitHub repository
-      githubRepo: this.generateDocumentationURL({ 
-        type: 'github', 
-        category: '' 
+      githubRepo: this.generateDocumentationURL({
+        type: 'github',
+        category: '',
       }),
-      githubIssues: this.generateDocumentationURL({ 
-        type: 'github', 
-        category: 'issues' 
+      githubIssues: this.generateDocumentationURL({
+        type: 'github',
+        category: 'issues',
       }),
-      
+
       // Search and examples
       search: this.generateSearchURL('documentation'),
-      examples: this.generateDocumentationURL({ 
-        type: 'bun', 
-        fragment: { type: 'examples' } 
-      })
+      examples: this.generateDocumentationURL({
+        type: 'bun',
+        fragment: { type: 'examples' },
+      }),
     };
   }
 }

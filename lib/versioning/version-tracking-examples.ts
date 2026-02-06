@@ -1,12 +1,11 @@
 /**
  * 📚 Version Tracking System - Usage Examples
- * 
+ *
  * Comprehensive examples showing how to use the version tracking
  * and rollback system for endpoints and components
  */
 
 import VersionTracker, { UtilsCategory } from './version-tracking';
-
 
 // ============================================================================
 // BASIC USAGE EXAMPLES
@@ -19,24 +18,20 @@ async function basicVersionRegistration() {
   const tracker = new VersionTracker({
     storagePath: './versions',
     maxVersionsPerComponent: 5,
-    enableAuditLog: true
+    enableAuditLog: true,
   });
 
   // Register a new version for a component
-  const versionId = await tracker.registerVersion(
-    '/api/users/v1',
-    '1.2.3',
-    {
-      author: 'john.doe@company.com',
-      description: 'Added user profile endpoints',
-      dependencies: {
-        'database': '2.1.0',
-        'auth-service': '1.5.2'
-      },
-      environment: 'production',
-      tags: ['feature', 'user-management', 'api']
-    }
-  );
+  const versionId = await tracker.registerVersion('/api/users/v1', '1.2.3', {
+    author: 'john.doe@company.com',
+    description: 'Added user profile endpoints',
+    dependencies: {
+      database: '2.1.0',
+      'auth-service': '1.5.2',
+    },
+    environment: 'production',
+    tags: ['feature', 'user-management', 'api'],
+  });
 
   console.log(`Version registered with ID: ${versionId}`);
 
@@ -61,7 +56,7 @@ async function manualRollbackExample() {
     description: 'Major refactor with breaking changes',
     dependencies: { 'payment-service': '3.0.0' },
     environment: 'production',
-    tags: ['major', 'breaking-change']
+    tags: ['major', 'breaking-change'],
   });
 
   await tracker.registerVersion('/api/orders/v1', '2.0.1', {
@@ -69,7 +64,7 @@ async function manualRollbackExample() {
     description: 'Bug fixes for v2.0.0',
     dependencies: { 'payment-service': '3.0.1' },
     environment: 'production',
-    tags: ['patch', 'bugfix']
+    tags: ['patch', 'bugfix'],
   });
 
   // Now rollback to previous version
@@ -95,28 +90,24 @@ async function endpointManagementExample() {
       autoRollbackOnError: true,
       healthCheckThreshold: 5.0,
       rollbackTimeout: 300,
-      requireApproval: false
-    }
+      requireApproval: false,
+    },
   });
 
   // Register component versions
   await tracker.registerVersion('/components/user-service', '1.5.0', {
     author: 'dev-team@company.com',
     description: 'User service with enhanced caching',
-    dependencies: { 'redis': '6.2.0' },
+    dependencies: { redis: '6.2.0' },
     environment: 'production',
-    tags: ['performance', 'caching']
+    tags: ['performance', 'caching'],
   });
 
   // Register endpoint that uses the component
-  await tracker.registerEndpoint(
-    '/api/users/profile',
-    '/components/user-service',
-    {
-      autoRollbackOnError: true,
-      healthCheckThreshold: 3.0
-    }
-  );
+  await tracker.registerEndpoint('/api/users/profile', '/components/user-service', {
+    autoRollbackOnError: true,
+    healthCheckThreshold: 3.0,
+  });
 
   // Rollback the entire endpoint
   const endpointRollback = await tracker.rollbackEndpoint(
@@ -143,8 +134,8 @@ async function healthMonitoringExample() {
       enabled: true,
       autoRollbackOnError: true,
       healthCheckThreshold: 10.0, // 10% error rate threshold
-      rollbackTimeout: 180
-    }
+      rollbackTimeout: 180,
+    },
   });
 
   // Register a version
@@ -153,17 +144,17 @@ async function healthMonitoringExample() {
     description: 'New payment gateway integration',
     dependencies: { 'stripe-sdk': '12.0.0' },
     environment: 'production',
-    tags: ['payment', 'gateway']
+    tags: ['payment', 'gateway'],
   });
 
   // Simulate health degradation
   console.log('Simulating health issues...');
-  
+
   // Update health metrics (this would typically come from monitoring systems)
   await tracker.updateHealthMetrics('/api/payment/v2', {
     healthStatus: 'degraded',
     errorRate: 15.5, // Above threshold of 10%
-    uptimePercentage: 84.5
+    uptimePercentage: 84.5,
   });
 
   // The system should automatically trigger a rollback
@@ -178,7 +169,7 @@ async function healthMonitoringExample() {
 async function auditExample() {
   const tracker = new VersionTracker({
     enableAuditLog: true,
-    storagePath: './secure-versions'
+    storagePath: './secure-versions',
   });
 
   // Perform various operations
@@ -187,7 +178,7 @@ async function auditExample() {
     description: 'Security patches applied',
     dependencies: { 'encryption-lib': '5.1.0' },
     environment: 'production',
-    tags: ['security', 'patch']
+    tags: ['security', 'patch'],
   });
 
   await tracker.rollbackToVersion(
@@ -202,7 +193,7 @@ async function auditExample() {
   const auditLog = tracker.getAuditLog({
     componentUri: '/api/secure/data',
     action: 'rollback',
-    startDate: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString() // Last 24 hours
+    startDate: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // Last 24 hours
   });
 
   console.log('Audit log for security component:', auditLog);
@@ -212,7 +203,7 @@ async function auditExample() {
     totalChanges: auditLog.length,
     emergencyRollbacks: auditLog.filter(entry => entry.details.includes('emergency')).length,
     lastChange: auditLog[0]?.timestamp,
-    components: auditLog.map(entry => entry.componentUri)
+    components: auditLog.map(entry => entry.componentUri),
   };
 
   console.log('Compliance report:', complianceReport);
@@ -227,8 +218,8 @@ async function multiComponentDeploymentExample() {
     rollbackPolicy: {
       enabled: true,
       requireApproval: true,
-      approvedBy: ['dev-lead@company.com', 'ops-lead@company.com']
-    }
+      approvedBy: ['dev-lead@company.com', 'ops-lead@company.com'],
+    },
   });
 
   // Define a microservices deployment
@@ -241,8 +232,8 @@ async function multiComponentDeploymentExample() {
         description: 'OAuth 2.1 support added',
         dependencies: { 'jwt-lib': '9.0.0' },
         environment: 'production' as const,
-        tags: ['auth', 'oauth', 'security']
-      }
+        tags: ['auth', 'oauth', 'security'],
+      },
     },
     {
       component: '/components/user-service',
@@ -250,10 +241,10 @@ async function multiComponentDeploymentExample() {
       metadata: {
         author: 'user-team@company.com',
         description: 'Enhanced user profile management',
-        dependencies: { 'database': '14.2.0' },
+        dependencies: { database: '14.2.0' },
         environment: 'production' as const,
-        tags: ['users', 'profile', 'database']
-      }
+        tags: ['users', 'profile', 'database'],
+      },
     },
     {
       component: '/components/notification-service',
@@ -263,9 +254,9 @@ async function multiComponentDeploymentExample() {
         description: 'Real-time notifications with WebSockets',
         dependencies: { 'websocket-lib': '2.1.0' },
         environment: 'production' as const,
-        tags: ['notifications', 'websocket', 'realtime']
-      }
-    }
+        tags: ['notifications', 'websocket', 'realtime'],
+      },
+    },
   ];
 
   // Deploy all components
@@ -275,11 +266,11 @@ async function multiComponentDeploymentExample() {
       const versionId = await tracker.registerVersion(component, version, metadata);
       deploymentResults.push({ component, version, success: true, versionId });
     } catch (error) {
-      deploymentResults.push({ 
-        component, 
-        version, 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+      deploymentResults.push({
+        component,
+        version,
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
     }
   }
@@ -290,7 +281,7 @@ async function multiComponentDeploymentExample() {
   const failedDeployments = deploymentResults.filter(r => !r.success);
   if (failedDeployments.length > 0) {
     console.log('Deployment failures detected, initiating rollback...');
-    
+
     for (const { component } of deployment) {
       const history = tracker.getVersionHistory(component);
       if (history.length > 1) {
@@ -337,7 +328,7 @@ class MonitoringDashboard {
 
   private async performHealthChecks() {
     const healthStatus = this.tracker.getHealthStatus();
-    
+
     for (const [component, status] of Object.entries(healthStatus)) {
       // Simulate health check (in real implementation, this would ping the service)
       const mockHealthCheck = Math.random() > 0.1; // 90% chance of healthy
@@ -347,7 +338,7 @@ class MonitoringDashboard {
       await this.tracker.updateHealthMetrics(component, {
         healthStatus: mockHealthCheck ? 'healthy' : 'degraded',
         errorRate: mockErrorRate,
-        uptimePercentage: mockUptime
+        uptimePercentage: mockUptime,
       });
 
       // Alert if health is poor
@@ -362,24 +353,25 @@ class MonitoringDashboard {
     console.log(`   Error rate: ${errorRate.toFixed(2)}%`);
     console.log(`   Health status: ${status.healthStatus}`);
     console.log(`   Uptime: ${status.uptimePercentage.toFixed(2)}%`);
-    
+
     // In real implementation, this would send to Slack, PagerDuty, etc.
   }
 
   getDashboardData() {
     const healthStatus = this.tracker.getHealthStatus();
     const rollbackReport = this.tracker.generateRollbackReport();
-    
+
     return {
       timestamp: new Date().toISOString(),
       components: Object.entries(healthStatus).map(([uri, status]) => ({
         uri,
         ...status,
-        status: status.errorRate > 5 ? 'critical' : status.errorRate > 2 ? 'warning' : 'healthy'
+        status: status.errorRate > 5 ? 'critical' : status.errorRate > 2 ? 'warning' : 'healthy',
       })),
       rollbackStats: rollbackReport,
       totalComponents: Object.keys(healthStatus).length,
-      healthyComponents: Object.values(healthStatus).filter(s => s.healthStatus === 'healthy').length
+      healthyComponents: Object.values(healthStatus).filter(s => s.healthStatus === 'healthy')
+        .length,
     };
   }
 }
@@ -393,8 +385,8 @@ async function monitoringDashboardExample() {
     rollbackPolicy: {
       enabled: true,
       autoRollbackOnError: true,
-      healthCheckThreshold: 8.0
-    }
+      healthCheckThreshold: 8.0,
+    },
   });
 
   // Set up some test components
@@ -403,7 +395,7 @@ async function monitoringDashboardExample() {
     description: 'Dashboard API with real-time updates',
     dependencies: { 'websocket-lib': '2.0.0' },
     environment: 'production',
-    tags: ['dashboard', 'api', 'realtime']
+    tags: ['dashboard', 'api', 'realtime'],
   });
 
   await tracker.registerVersion('/api/analytics/v1', '2.3.0', {
@@ -411,7 +403,7 @@ async function monitoringDashboardExample() {
     description: 'Enhanced analytics with machine learning',
     dependencies: { 'ml-lib': '1.5.0' },
     environment: 'production',
-    tags: ['analytics', 'ml', 'data']
+    tags: ['analytics', 'ml', 'data'],
   });
 
   // Start monitoring
@@ -422,7 +414,7 @@ async function monitoringDashboardExample() {
   setTimeout(() => {
     const dashboardData = dashboard.getDashboardData();
     console.log('Dashboard Data:', JSON.stringify(dashboardData, null, 2));
-    
+
     dashboard.stopMonitoring();
   }, 20000); // Run for 20 seconds
 }
@@ -438,26 +430,28 @@ async function generateSystemReport(tracker: VersionTracker) {
   const healthStatus = tracker.getHealthStatus();
   const rollbackReport = tracker.generateRollbackReport();
   const auditLog = tracker.getAuditLog({
-    startDate: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString() // Last 24 hours
+    startDate: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // Last 24 hours
   });
 
   return {
     timestamp: new Date().toISOString(),
     summary: {
       totalComponents: Object.keys(healthStatus).length,
-      healthyComponents: Object.values(healthStatus).filter(s => s.healthStatus === 'healthy').length,
-      degradedComponents: Object.values(healthStatus).filter(s => s.healthStatus === 'degraded').length,
-      failedComponents: Object.values(healthStatus).filter(s => s.healthStatus === 'failed').length
+      healthyComponents: Object.values(healthStatus).filter(s => s.healthStatus === 'healthy')
+        .length,
+      degradedComponents: Object.values(healthStatus).filter(s => s.healthStatus === 'degraded')
+        .length,
+      failedComponents: Object.values(healthStatus).filter(s => s.healthStatus === 'failed').length,
     },
     healthStatus,
     rollbackMetrics: {
       totalRollbacks: rollbackReport.totalRollbacks,
       successRate: rollbackReport.successRate,
       averageRollbackTime: rollbackReport.averageRollbackTime,
-      recentRollbacks: rollbackReport.recentRollbacks.slice(0, 5)
+      recentRollbacks: rollbackReport.recentRollbacks.slice(0, 5),
     },
     recentActivity: auditLog.slice(0, 10),
-    recommendations: generateRecommendations(healthStatus, rollbackReport)
+    recommendations: generateRecommendations(healthStatus, rollbackReport),
   };
 }
 
@@ -465,17 +459,21 @@ function generateRecommendations(healthStatus: any, rollbackReport: any): string
   const recommendations: string[] = [];
 
   // Health-based recommendations
-  const failedComponents = Object.entries(healthStatus).filter(([, status]: [string, any]) => 
-    status.healthStatus === 'failed'
+  const failedComponents = Object.entries(healthStatus).filter(
+    ([, status]: [string, any]) => status.healthStatus === 'failed'
   );
-  
+
   if (failedComponents.length > 0) {
-    recommendations.push(`${failedComponents.length} component(s) have failed. Consider immediate rollback or investigation.`);
+    recommendations.push(
+      `${failedComponents.length} component(s) have failed. Consider immediate rollback or investigation.`
+    );
   }
 
   // Rollback-based recommendations
   if (rollbackReport.successRate < 90) {
-    recommendations.push('Rollback success rate is below 90%. Review rollback procedures and testing.');
+    recommendations.push(
+      'Rollback success rate is below 90%. Review rollback procedures and testing.'
+    );
   }
 
   if (rollbackReport.averageRollbackTime > 30000) {
@@ -483,12 +481,14 @@ function generateRecommendations(healthStatus: any, rollbackReport: any): string
   }
 
   // Error rate recommendations
-  const highErrorComponents = Object.entries(healthStatus).filter(([, status]: [string, any]) => 
-    status.errorRate > 5
+  const highErrorComponents = Object.entries(healthStatus).filter(
+    ([, status]: [string, any]) => status.errorRate > 5
   );
 
   if (highErrorComponents.length > 0) {
-    recommendations.push(`${highErrorComponents.length} component(s) have high error rates (>5%). Consider investigation.`);
+    recommendations.push(
+      `${highErrorComponents.length} component(s) have high error rates (>5%). Consider investigation.`
+    );
   }
 
   return recommendations;
@@ -507,15 +507,17 @@ export {
   multiComponentDeploymentExample,
   monitoringDashboardExample,
   generateSystemReport,
-  MonitoringDashboard
+  MonitoringDashboard,
 };
 
 // Run examples if this file is executed directly
 if (import.meta.main) {
   console.log('🚀 Running Version Tracking Examples...\n');
-  
+
   // Run basic example
-  basicVersionRegistration().then(() => {
-    console.log('\n✅ Basic example completed');
-  }).catch(console.error);
+  basicVersionRegistration()
+    .then(() => {
+      console.log('\n✅ Basic example completed');
+    })
+    .catch(console.error);
 }

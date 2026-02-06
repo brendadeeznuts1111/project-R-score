@@ -2,16 +2,16 @@
 
 /**
  * 🔐 Zero-Trust Security Manager
- * 
+ *
  * Implements zero-trust security principles with
  * continuous authentication, micro-segmentation,
  * and policy enforcement.
  */
 
-import { EventEmitter } from "events";
-import { logger } from "../monitoring/structured-logger";
-import { auditLogger } from "./secret-audit-logger";
-import { createHash, timingSafeEqual } from "crypto";
+import { EventEmitter } from 'events';
+import { logger } from '../monitoring/structured-logger';
+import { auditLogger } from './secret-audit-logger';
+import { createHash, timingSafeEqual } from 'crypto';
 
 export interface Identity {
   id: string;
@@ -110,7 +110,7 @@ export class ZeroTrustManager extends EventEmitter {
     const fullIdentity: Identity = {
       ...identity,
       trustScore: 50, // Start with neutral trust
-      lastVerified: Date.now()
+      lastVerified: Date.now(),
     };
 
     this.identities.set(identity.id, fullIdentity);
@@ -123,14 +123,18 @@ export class ZeroTrustManager extends EventEmitter {
       identityId: identity.id,
       context: this.createMockContext(),
       result: 'success',
-      reason: 'Identity registered'
+      reason: 'Identity registered',
     });
 
-    logger.info('Identity registered', {
-      identityId: identity.id,
-      type: identity.type,
-      trustScore: fullIdentity.trustScore
-    }, ['zero-trust', 'identity']);
+    logger.info(
+      'Identity registered',
+      {
+        identityId: identity.id,
+        type: identity.type,
+        trustScore: fullIdentity.trustScore,
+      },
+      ['zero-trust', 'identity']
+    );
 
     return identity.id;
   }
@@ -159,7 +163,7 @@ export class ZeroTrustManager extends EventEmitter {
         identityId,
         context,
         result: 'failure',
-        reason: 'Identity not found'
+        reason: 'Identity not found',
       });
       return { success: false, trustScore: 0, reason: 'Identity not found' };
     }
@@ -176,23 +180,23 @@ export class ZeroTrustManager extends EventEmitter {
         identityId,
         context,
         result: 'failure',
-        reason: 'Invalid credentials'
+        reason: 'Invalid credentials',
       });
       return { success: false, trustScore: identity.trustScore, reason: 'Invalid credentials' };
     }
 
     // Calculate risk score
     const riskScore = await this.calculateRiskScore(identityId, context);
-    
+
     // Check if MFA is required
     const requiresMFA = await this.checkMFARequirement(identityId, context, riskScore);
-    
+
     if (requiresMFA) {
       return {
         success: false,
         trustScore: identity.trustScore,
         requiresMFA: true,
-        reason: 'Multi-factor authentication required'
+        reason: 'Multi-factor authentication required',
       };
     }
 
@@ -203,7 +207,7 @@ export class ZeroTrustManager extends EventEmitter {
       identityId,
       sessionId,
       timestamp: Date.now(),
-      riskScore
+      riskScore,
     });
 
     // Update trust score based on successful authentication
@@ -217,20 +221,24 @@ export class ZeroTrustManager extends EventEmitter {
       identityId,
       context,
       result: 'success',
-      reason: 'Authentication successful'
+      reason: 'Authentication successful',
     });
 
-    logger.info('Authentication successful', {
-      identityId,
-      sessionId,
-      trustScore: identity.trustScore,
-      riskScore
-    }, ['zero-trust', 'auth']);
+    logger.info(
+      'Authentication successful',
+      {
+        identityId,
+        sessionId,
+        trustScore: identity.trustScore,
+        riskScore,
+      },
+      ['zero-trust', 'auth']
+    );
 
     return {
       success: true,
       sessionId,
-      trustScore: identity.trustScore
+      trustScore: identity.trustScore,
     };
   }
 
@@ -266,7 +274,7 @@ export class ZeroTrustManager extends EventEmitter {
 
     // Evaluate access policies
     const policyResult = await this.evaluateAccessPolicies(identity, session, resource, action);
-    
+
     await this.logSecurityEvent({
       id: this.generateEventId(),
       type: 'authorization',
@@ -277,7 +285,7 @@ export class ZeroTrustManager extends EventEmitter {
       resource,
       action,
       result: policyResult.allowed ? 'success' : 'blocked',
-      reason: policyResult.reason
+      reason: policyResult.reason,
     });
 
     if (policyResult.allowed) {
@@ -292,14 +300,17 @@ export class ZeroTrustManager extends EventEmitter {
       allowed: policyResult.allowed,
       reason: policyResult.reason,
       policyId: policyResult.policyId,
-      riskScore: session.riskScore
+      riskScore: session.riskScore,
     };
   }
 
   /**
    * Challenge with MFA
    */
-  async challengeMFA(identityId: string, sessionId: string): Promise<{
+  async challengeMFA(
+    identityId: string,
+    sessionId: string
+  ): Promise<{
     challengeId: string;
     methods: string[];
     expires: number;
@@ -318,20 +329,23 @@ export class ZeroTrustManager extends EventEmitter {
       identityId,
       context: this.sessions.get(sessionId) || this.createMockContext(),
       result: 'success',
-      reason: 'MFA challenge issued'
+      reason: 'MFA challenge issued',
     });
 
     return {
       challengeId,
       methods: ['totp', 'sms', 'email'],
-      expires
+      expires,
     };
   }
 
   /**
    * Verify MFA response
    */
-  async verifyMFA(challengeId: string, response: string): Promise<{
+  async verifyMFA(
+    challengeId: string,
+    response: string
+  ): Promise<{
     success: boolean;
     sessionId?: string;
     reason?: string;
@@ -375,14 +389,14 @@ export class ZeroTrustManager extends EventEmitter {
       authorization: 0,
       access: 0,
       violation: 0,
-      anomaly: 0
+      anomaly: 0,
     };
 
     const eventsBySeverity = {
       low: 0,
       medium: 0,
       high: 0,
-      critical: 0
+      critical: 0,
     };
 
     for (const event of this.events) {
@@ -391,12 +405,16 @@ export class ZeroTrustManager extends EventEmitter {
     }
 
     const trustScores = Array.from(this.identities.values()).map(i => i.trustScore);
-    const avgTrustScore = trustScores.length > 0 ? 
-      trustScores.reduce((sum, score) => sum + score, 0) / trustScores.length : 0;
+    const avgTrustScore =
+      trustScores.length > 0
+        ? trustScores.reduce((sum, score) => sum + score, 0) / trustScores.length
+        : 0;
 
     const riskScores = Array.from(this.sessions.values()).map(s => s.riskScore);
-    const avgRiskScore = riskScores.length > 0 ? 
-      riskScores.reduce((sum, score) => sum + score, 0) / riskScores.length : 0;
+    const avgRiskScore =
+      riskScores.length > 0
+        ? riskScores.reduce((sum, score) => sum + score, 0) / riskScores.length
+        : 0;
 
     return {
       totalIdentities: this.identities.size,
@@ -406,7 +424,7 @@ export class ZeroTrustManager extends EventEmitter {
       averageTrustScore: avgTrustScore,
       averageRiskScore: avgRiskScore,
       eventsByType,
-      eventsBySeverity
+      eventsBySeverity,
     };
   }
 
@@ -424,11 +442,11 @@ export class ZeroTrustManager extends EventEmitter {
       conditions: {
         trustScoreMin: 80,
         riskScoreMax: 30,
-        mfaRequired: true
+        mfaRequired: true,
       },
       effect: 'allow',
       priority: 100,
-      enabled: true
+      enabled: true,
     });
 
     // User access policy
@@ -440,11 +458,11 @@ export class ZeroTrustManager extends EventEmitter {
       actions: ['read', 'update'],
       conditions: {
         trustScoreMin: 50,
-        riskScoreMax: 60
+        riskScoreMax: 60,
       },
       effect: 'allow',
       priority: 50,
-      enabled: true
+      enabled: true,
     });
 
     // High-risk operations policy
@@ -458,11 +476,11 @@ export class ZeroTrustManager extends EventEmitter {
         trustScoreMin: 90,
         riskScoreMax: 20,
         mfaRequired: true,
-        timeWindow: { start: '09:00', end: '17:00' }
+        timeWindow: { start: '09:00', end: '17:00' },
       },
       effect: 'allow',
       priority: 90,
-      enabled: true
+      enabled: true,
     });
   }
 
@@ -491,7 +509,8 @@ export class ZeroTrustManager extends EventEmitter {
 
       // Re-calculate risk score
       const newRiskScore = await this.calculateRiskScore(session.identityId, session);
-      if (newRiskScore > session.riskScore + 20) { // Significant risk increase
+      if (newRiskScore > session.riskScore + 20) {
+        // Significant risk increase
         await this.logSecurityEvent({
           id: this.generateEventId(),
           type: 'anomaly',
@@ -500,7 +519,7 @@ export class ZeroTrustManager extends EventEmitter {
           identityId: session.identityId,
           context: session,
           result: 'success',
-          reason: 'Significant risk score increase detected'
+          reason: 'Significant risk score increase detected',
         });
       }
 
@@ -538,7 +557,7 @@ export class ZeroTrustManager extends EventEmitter {
         identityId: identity.id,
         context: this.createMockContext(),
         result: 'failure',
-        reason: 'Credentials expired'
+        reason: 'Credentials expired',
       });
       return false;
     }
@@ -553,39 +572,48 @@ export class ZeroTrustManager extends EventEmitter {
             Buffer.from(inputHash, 'hex'),
             Buffer.from(identity.credentials.hash, 'hex')
           );
-        
+
         case 'token':
           if (!credentials.token) return false;
           // Verify token format and signature
           const tokenParts = credentials.token.split('.');
           if (tokenParts.length !== 3) return false;
-          
+
           // In production, verify JWT signature with proper key
           // For now, verify basic structure
           const payload = JSON.parse(Buffer.from(tokenParts[1], 'base64').toString());
           return payload.exp > Date.now() / 1000 && payload.sub === identity.id;
-        
+
         case 'certificate':
           if (!credentials.certificate) return false;
           // Basic certificate validation - in production use proper X.509 validation
-          return credentials.certificate.includes(identity.id) && 
-                 credentials.certificate.includes('BEGIN CERTIFICATE');
-        
+          return (
+            credentials.certificate.includes(identity.id) &&
+            credentials.certificate.includes('BEGIN CERTIFICATE')
+          );
+
         case 'biometric':
           if (!credentials.biometricData) return false;
           // Biometric verification should use specialized secure comparison
           // This is a placeholder for proper biometric verification
-          return createHash('sha256').update(credentials.biometricData).digest('hex') === 
-                 identity.credentials.hash;
-        
+          return (
+            createHash('sha256').update(credentials.biometricData).digest('hex') ===
+            identity.credentials.hash
+          );
+
         default:
           return false;
       }
     } catch (error) {
-      logger.error('Credential verification error', error instanceof Error ? error : new Error(String(error)), {
-        identityId: identity.id,
-        credentialType: identity.credentials.type
-      }, ['zero-trust', 'security']);
+      logger.error(
+        'Credential verification error',
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          identityId: identity.id,
+          credentialType: identity.credentials.type,
+        },
+        ['zero-trust', 'security']
+      );
       return false;
     }
   }
@@ -606,7 +634,8 @@ export class ZeroTrustManager extends EventEmitter {
 
     // Time-based risk
     const hour = new Date().getHours();
-    if (hour < 6 || hour > 22) { // Unusual hours
+    if (hour < 6 || hour > 22) {
+      // Unusual hours
       riskScore += 15;
     }
 
@@ -619,12 +648,11 @@ export class ZeroTrustManager extends EventEmitter {
     }
 
     // Recent failures
-    const recentFailures = this.events
-      .filter(e => e.identityId === identityId && 
-                  e.result === 'failure' && 
-                  Date.now() - e.timestamp < 300000) // Last 5 minutes
-      .length;
-    
+    const recentFailures = this.events.filter(
+      e =>
+        e.identityId === identityId && e.result === 'failure' && Date.now() - e.timestamp < 300000
+    ).length; // Last 5 minutes
+
     riskScore += recentFailures * 10;
 
     return Math.min(100, Math.max(0, riskScore));
@@ -669,25 +697,24 @@ export class ZeroTrustManager extends EventEmitter {
 
     for (const policy of sortedPolicies) {
       // Check resource match
-      const resourceMatch = policy.resources.includes('*') || 
-                           policy.resources.includes(resource);
+      const resourceMatch = policy.resources.includes('*') || policy.resources.includes(resource);
       if (!resourceMatch) continue;
 
       // Check action match
-      const actionMatch = policy.actions.includes('*') || 
-                        policy.actions.includes(action);
+      const actionMatch = policy.actions.includes('*') || policy.actions.includes(action);
       if (!actionMatch) continue;
 
       // Check conditions
       const conditionsMet = await this.evaluatePolicyConditions(policy, identity, context);
-      
+
       if (conditionsMet) {
         return {
           allowed: policy.effect === 'allow',
-          reason: policy.effect === 'allow' ? 
-            `Access granted by policy: ${policy.name}` : 
-            `Access denied by policy: ${policy.name}`,
-          policyId: policy.id
+          reason:
+            policy.effect === 'allow'
+              ? `Access granted by policy: ${policy.name}`
+              : `Access denied by policy: ${policy.name}`,
+          policyId: policy.id,
         };
       }
     }
@@ -695,7 +722,7 @@ export class ZeroTrustManager extends EventEmitter {
     // Default deny
     return {
       allowed: false,
-      reason: 'No matching policy found - default deny'
+      reason: 'No matching policy found - default deny',
     };
   }
 
@@ -724,7 +751,7 @@ export class ZeroTrustManager extends EventEmitter {
       const currentHour = new Date().getHours();
       const startHour = parseInt(conditions.timeWindow.start.split(':')[0]);
       const endHour = parseInt(conditions.timeWindow.end.split(':')[0]);
-      
+
       if (currentHour < startHour || currentHour > endHour) {
         return false;
       }
@@ -752,16 +779,18 @@ export class ZeroTrustManager extends EventEmitter {
    */
   private async verifySession(session: SecurityContext): Promise<boolean> {
     // Check session age
-    if (Date.now() - session.timestamp > 3600000) { // 1 hour
+    if (Date.now() - session.timestamp > 3600000) {
+      // 1 hour
       return false;
     }
 
     // Check for security events related to this session
-    const recentViolations = this.events
-      .filter(e => e.identityId === session.identityId && 
-                  e.type === 'violation' && 
-                  Date.now() - e.timestamp < 300000) // Last 5 minutes
-      .length;
+    const recentViolations = this.events.filter(
+      e =>
+        e.identityId === session.identityId &&
+        e.type === 'violation' &&
+        Date.now() - e.timestamp < 300000
+    ).length; // Last 5 minutes
 
     if (recentViolations > 0) {
       return false;
@@ -786,7 +815,7 @@ export class ZeroTrustManager extends EventEmitter {
    */
   private async logSecurityEvent(event: SecurityEvent): Promise<void> {
     this.events.push(event);
-    
+
     // Keep only recent events (last 10000)
     if (this.events.length > 10000) {
       this.events = this.events.slice(-10000);
@@ -804,7 +833,7 @@ export class ZeroTrustManager extends EventEmitter {
       {
         userId: event.identityId,
         sessionId: event.sessionId,
-        ipAddress: event.context.ipAddress
+        ipAddress: event.context.ipAddress,
       }
     );
   }
@@ -827,7 +856,7 @@ export class ZeroTrustManager extends EventEmitter {
       sessionId: 'unknown',
       ipAddress: '127.0.0.1',
       timestamp: Date.now(),
-      riskScore: 50
+      riskScore: 50,
     };
   }
 

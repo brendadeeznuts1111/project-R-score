@@ -28,14 +28,35 @@ export function perceivedBrightness(h: number, s: number, l: number): number {
   const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
   const m = lNorm - c / 2;
 
-  let r = m, g = m, b = m;
+  let r = m,
+    g = m,
+    b = m;
 
-  if (0 <= h && h < 60) { r += c; g += x; b += 0; }
-  else if (60 <= h && h < 120) { r += x; g += c; b += 0; }
-  else if (120 <= h && h < 180) { r += 0; g += c; b += x; }
-  else if (180 <= h && h < 240) { r += 0; g += x; b += c; }
-  else if (240 <= h && h < 300) { r += x; g += 0; b += c; }
-  else if (300 <= h && h < 360) { r += c; g += 0; b += x; }
+  if (0 <= h && h < 60) {
+    r += c;
+    g += x;
+    b += 0;
+  } else if (60 <= h && h < 120) {
+    r += x;
+    g += c;
+    b += 0;
+  } else if (120 <= h && h < 180) {
+    r += 0;
+    g += c;
+    b += x;
+  } else if (180 <= h && h < 240) {
+    r += 0;
+    g += x;
+    b += c;
+  } else if (240 <= h && h < 300) {
+    r += x;
+    g += 0;
+    b += c;
+  } else if (300 <= h && h < 360) {
+    r += c;
+    g += 0;
+    b += x;
+  }
 
   // W3C relative luminance
   const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
@@ -52,10 +73,10 @@ export function generateHarmoniousPalette(
   scheme: 'analogous' | 'complementary' | 'triadic' | 'tetradic' = 'analogous'
 ): Array<{ hsl: string; hex: string; rgb: string }> {
   const offsets = {
-    analogous: [0, 30, -30, 15, -15],          // adjacent hues
-    complementary: [0, 180, 15, -15, 195],     // opposite + variants
-    triadic: [0, 120, 240, 15, -15],           // 120° apart
-    tetradic: [0, 90, 180, 270, 15]            // square
+    analogous: [0, 30, -30, 15, -15], // adjacent hues
+    complementary: [0, 180, 15, -15, 195], // opposite + variants
+    triadic: [0, 120, 240, 15, -15], // 120° apart
+    tetradic: [0, 90, 180, 270, 15], // square
   };
 
   return offsets[scheme].map(hueOffset => {
@@ -63,8 +84,8 @@ export function generateHarmoniousPalette(
     const hsl = `hsl(${hue}, ${baseSaturation}%, ${baseLightness}%)`;
     return {
       hsl,
-      hex: color(hsl, "hex") || "#000000",
-      rgb: color(hsl, "rgb") || "rgb(0,0,0)"
+      hex: color(hsl, 'hex') || '#000000',
+      rgb: color(hsl, 'rgb') || 'rgb(0,0,0)',
     };
   });
 }
@@ -81,18 +102,18 @@ export function generateTintsAndShades(
 
   // Tints: increase lightness, decrease saturation slightly
   for (let i = 1; i <= steps; i++) {
-    const lightness = Math.min(95, baseHsl.l + (i * 6));
-    const saturation = Math.max(20, baseHsl.s - (i * 8));
+    const lightness = Math.min(95, baseHsl.l + i * 6);
+    const saturation = Math.max(20, baseHsl.s - i * 8);
     const hsl = `hsl(${baseHsl.h}, ${saturation}%, ${lightness}%)`;
-    tints.push(color(hsl, "hex") || "#ffffff");
+    tints.push(color(hsl, 'hex') || '#ffffff');
   }
 
   // Shades: decrease lightness, maintain saturation
   for (let i = 1; i <= steps; i++) {
-    const lightness = Math.max(8, baseHsl.l - (i * 8));
-    const saturation = Math.min(100, baseHsl.s + (i * 2));
+    const lightness = Math.max(8, baseHsl.l - i * 8);
+    const saturation = Math.min(100, baseHsl.s + i * 2);
     const hsl = `hsl(${baseHsl.h}, ${saturation}%, ${lightness}%)`;
-    shades.push(color(hsl, "hex") || "#000000");
+    shades.push(color(hsl, 'hex') || '#000000');
   }
 
   return { tints, shades };
@@ -111,22 +132,22 @@ export function getDynamicStatusColor(
   context: 'light' | 'dark' = 'dark'
 ): string {
   const baseHues = {
-    success: 135,   // green
-    warning: 45,    // amber
-    error: 0,       // red
-    info: 210       // blue
+    success: 135, // green
+    warning: 45, // amber
+    error: 0, // red
+    info: 210, // blue
   };
 
   const severityMultipliers = {
     low: { saturation: 0.7, lightness: 1.1 },
     medium: { saturation: 1.0, lightness: 1.0 },
     high: { saturation: 1.2, lightness: 0.9 },
-    critical: { saturation: 1.4, lightness: 0.8 }
+    critical: { saturation: 1.4, lightness: 0.8 },
   };
 
   const contextAdjustments = {
     light: { lightness: 1.2, saturation: 0.9 },
-    dark: { lightness: 1.0, saturation: 1.0 }
+    dark: { lightness: 1.0, saturation: 1.0 },
   };
 
   const baseHue = baseHues[status];
@@ -138,7 +159,7 @@ export function getDynamicStatusColor(
   const lightness = Math.min(85, Math.max(35, 65 * severityMult.lightness * contextAdj.lightness));
 
   // Add slight hue shift for severity (more extreme colors)
-  const hueShift = (severity === 'critical') ? 5 : (severity === 'high') ? 3 : 0;
+  const hueShift = severity === 'critical' ? 5 : severity === 'high' ? 3 : 0;
   const finalHue = (baseHue + hueShift) % 360;
 
   return `hsl(${finalHue}, ${saturation}%, ${lightness}%)`;
@@ -162,7 +183,7 @@ export function ensureContrast(
     fg: `hsl(${foregroundHsl.h}, ${foregroundHsl.s}%, ${foregroundHsl.l}%)`,
     bg: `hsl(${backgroundHsl.h}, ${backgroundHsl.s}%, ${backgroundHsl.l}%)`,
     ratio: contrast,
-    compliant: contrast >= requiredRatio
+    compliant: contrast >= requiredRatio,
   };
 }
 
@@ -224,17 +245,17 @@ export function advancedColorize(
       const fgHsl = {
         h: parseInt(hslMatch[1]),
         s: parseInt(hslMatch[2]),
-        l: parseInt(hslMatch[3])
+        l: parseInt(hslMatch[3]),
       };
 
       const adjustedFg = autoAdjustContrast(fgHsl, options.backgroundHsl);
       const adjustedHsl = `hsl(${adjustedFg.h}, ${adjustedFg.s}%, ${adjustedFg.l}%)`;
-      const ansi = color(adjustedHsl, "ansi") || "";
+      const ansi = color(adjustedHsl, 'ansi') || '';
       return `${options.bold ? '\x1b[1m' : ''}${ansi}${text}\x1b[0m`;
     }
   }
 
-  const ansi = color(hslString, "ansi") || "";
+  const ansi = color(hslString, 'ansi') || '';
   return `${options.bold ? '\x1b[1m' : ''}${ansi}${text}\x1b[0m`;
 }
 
@@ -268,14 +289,24 @@ export function demoAdvancedHSL(): void {
 
   // Dynamic status coloring
   console.log(colorize('📊 Dynamic Status Colors:', 'green', true));
-  const statuses: Array<'success' | 'warning' | 'error' | 'info'> = ['success', 'warning', 'error', 'info'];
-  const severities: Array<'low' | 'medium' | 'high' | 'critical'> = ['low', 'medium', 'high', 'critical'];
+  const statuses: Array<'success' | 'warning' | 'error' | 'info'> = [
+    'success',
+    'warning',
+    'error',
+    'info',
+  ];
+  const severities: Array<'low' | 'medium' | 'high' | 'critical'> = [
+    'low',
+    'medium',
+    'high',
+    'critical',
+  ];
 
   statuses.forEach(status => {
     console.log(`${status.toUpperCase()}:`);
     severities.forEach(severity => {
       const hsl = getDynamicStatusColor(status, severity);
-      const hex = color(hsl, "hex");
+      const hex = color(hsl, 'hex');
       console.log(`  ${severity}: ${hex} (${hsl})`);
     });
     console.log();
@@ -284,17 +315,17 @@ export function demoAdvancedHSL(): void {
   // Perceptual brightness demo
   console.log(colorize('💡 Perceptual Brightness:', 'blue', true));
   const testColors = [
-    { h: 0, s: 100, l: 50 },   // pure red
-    { h: 0, s: 100, l: 25 },   // dark red
-    { h: 0, s: 100, l: 75 },   // light red
-    { h: 60, s: 100, l: 50 },  // pure yellow
+    { h: 0, s: 100, l: 50 }, // pure red
+    { h: 0, s: 100, l: 25 }, // dark red
+    { h: 0, s: 100, l: 75 }, // light red
+    { h: 60, s: 100, l: 50 }, // pure yellow
     { h: 240, s: 100, l: 50 }, // pure blue
   ];
 
   testColors.forEach(color => {
     const brightness = perceivedBrightness(color.h, color.s, color.l);
     const hsl = `hsl(${color.h}, ${color.s}%, ${color.l}%)`;
-    const hex = Bun.color(hsl, "hex");
+    const hex = Bun.color(hsl, 'hex');
     console.log(`${hex}: Brightness = ${(brightness * 100).toFixed(1)}%`);
   });
 }

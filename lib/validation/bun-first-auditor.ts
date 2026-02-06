@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * 🦌 BUN-FIRST POLICY & COMPLIANCE AUDITOR
- * 
+ *
  * Ensures all code follows Bun-first principles:
  * 1. Use Bun APIs over Node.js APIs
  * 2. Use Bun-specific optimizations
@@ -15,8 +15,7 @@ if (import.meta.main) {
   console.log('ℹ️  Bun-First Auditor imported, not executed directly');
 }
 
-import { write } from "bun";
-
+import { write } from 'bun';
 
 // ============================================================================
 // BUN-FIRST POLICY DEFINITIONS
@@ -27,42 +26,42 @@ const BUN_FIRST_POLICY = {
   fileSystem: {
     bun: ['Bun.file()', 'Bun.write()', 'Bun.read()', 'await Bun.file().exists()'],
     node: ['fs.readFileSync', 'fs.writeFileSync', 'fs.existsSync', 'require("fs")'],
-    priority: 'CRITICAL'
+    priority: 'CRITICAL',
   },
-  
+
   // HTTP Operations
   http: {
     bun: ['Bun.serve()', 'Bun.fetch()', 'fetch()', 'Response', 'Request'],
     node: ['http.createServer', 'https.createServer', 'require("http")'],
-    priority: 'CRITICAL'
+    priority: 'CRITICAL',
   },
-  
+
   // Process Operations
   process: {
     bun: ['Bun.spawn()', 'Bun.spawnSync()', 'Bun.which()'],
     node: ['child_process.spawn', 'child_process.execSync', 'require("child_process")'],
-    priority: 'HIGH'
+    priority: 'HIGH',
   },
-  
+
   // Path Operations
   path: {
     bun: ['import.meta.path', 'import.meta.dir', 'Bun.main'],
     node: ['path.join', 'path.resolve', 'require("path")'],
-    priority: 'MEDIUM'
+    priority: 'MEDIUM',
   },
-  
+
   // Environment Variables
   env: {
     bun: ['process.env', 'import.meta.env'],
     node: ['process.env'],
-    priority: 'LOW'
-  }
+    priority: 'LOW',
+  },
 };
 
 // Node.js APIs that should be replaced with Bun equivalents
 const NODE_API_VIOLATIONS = [
   'require("fs")',
-  'require("http")', 
+  'require("http")',
   'require("https")',
   'require("child_process")',
   'require("path")',
@@ -74,19 +73,19 @@ const NODE_API_VIOLATIONS = [
   'child_process.spawn',
   'child_process.execSync',
   'path.join',
-  'path.resolve'
+  'path.resolve',
 ];
 
 // Bun-first best practices
 const BUN_BEST_PRACTICES = [
   'Bun.file()',
-  'Bun.write()', 
+  'Bun.write()',
   'Bun.serve()',
   'Bun.fetch()',
   'Bun.spawn()',
   'import.meta.path',
   'import.meta.dir',
-  'import.meta.main'
+  'import.meta.main',
 ];
 
 class BunFirstAuditor {
@@ -108,7 +107,7 @@ class BunFirstAuditor {
     bySeverity: Record<string, number>;
   }> {
     console.log('🦌 AUDITING @[lib] DIRECTORY FOR BUN-FIRST COMPLIANCE...');
-    
+
     const libFiles = [
       'performance-optimizer.ts',
       'optimized-server.ts',
@@ -123,44 +122,47 @@ class BunFirstAuditor {
       'hardened-fetch.ts',
       'rsc-enhanced.ts',
       'memory-pool.ts',
-      'http2-multiplexer.ts'
+      'http2-multiplexer.ts',
     ];
-    
+
     let totalFiles = 0;
-    
+
     for (const fileName of libFiles) {
       const filePath = `./lib/${fileName}`;
-      
+
       try {
         const fileExists = await Bun.file(filePath).exists();
         if (!fileExists) continue;
-        
+
         const content = await Bun.file(filePath).text();
         const lines = content.split('\n');
-        
+
         totalFiles++;
         console.log(`   📁 Auditing ${fileName}...`);
-        
+
         // Check for Node.js API violations
         lines.forEach((line, index) => {
           this.checkLineForViolations(line, fileName, index + 1);
         });
-        
       } catch (error) {
         console.log(`   ⚠️  Could not audit ${fileName}: ${error.message}`);
       }
     }
-    
-    const bySeverity = this.violations.reduce((acc, v) => {
-      acc[v.severity] = (acc[v.severity] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-    
-    const compliance = totalFiles > 0 ? ((totalFiles - this.violations.length) / totalFiles) * 100 : 100;
-    
+
+    const bySeverity = this.violations.reduce(
+      (acc, v) => {
+        acc[v.severity] = (acc[v.severity] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+
+    const compliance =
+      totalFiles > 0 ? ((totalFiles - this.violations.length) / totalFiles) * 100 : 100;
+
     console.log(`   📊 Results: ${totalFiles} files, ${this.violations.length} violations`);
     console.log(`   ✅ Compliance: ${compliance.toFixed(1)}%`);
-    
+
     return { totalFiles, violations: this.violations.length, compliance, bySeverity };
   }
 
@@ -169,42 +171,71 @@ class BunFirstAuditor {
    */
   private static checkLineForViolations(line: string, fileName: string, lineNumber: number): void {
     const trimmedLine = line.trim();
-    
+
     // Check for Node.js require statements
     if (trimmedLine.includes('require(')) {
       const match = trimmedLine.match(/require\(["']([^"']+)["']\)/);
       if (match) {
         const module = match[1];
-        if (module.startsWith('fs') || module.startsWith('http') || module.startsWith('child_process') || module.startsWith('path')) {
-          this.addViolation(fileName, lineNumber, `require("${module}")`, 'CRITICAL', this.getBunAlternative(module));
+        if (
+          module.startsWith('fs') ||
+          module.startsWith('http') ||
+          module.startsWith('child_process') ||
+          module.startsWith('path')
+        ) {
+          this.addViolation(
+            fileName,
+            lineNumber,
+            `require("${module}")`,
+            'CRITICAL',
+            this.getBunAlternative(module)
+          );
         }
       }
     }
-    
+
     // Check for Node.js API usage
     NODE_API_VIOLATIONS.forEach(violation => {
       if (trimmedLine.includes(violation)) {
         const severity = this.getViolationSeverity(violation);
-        this.addViolation(fileName, lineNumber, violation, severity, this.getBunAlternative(violation));
+        this.addViolation(
+          fileName,
+          lineNumber,
+          violation,
+          severity,
+          this.getBunAlternative(violation)
+        );
       }
     });
-    
+
     // Check for missing Bun optimizations
     if (trimmedLine.includes('fetch(') && !trimmedLine.includes('Bun.fetch')) {
-      this.addViolation(fileName, lineNumber, 'Generic fetch()', 'MEDIUM', 'Use Bun.fetch() for better performance');
+      this.addViolation(
+        fileName,
+        lineNumber,
+        'Generic fetch()',
+        'MEDIUM',
+        'Use Bun.fetch() for better performance'
+      );
     }
   }
 
   /**
    * Add violation to the list
    */
-  private static addViolation(file: string, line: number, violation: string, severity: string, suggestion: string): void {
+  private static addViolation(
+    file: string,
+    line: number,
+    violation: string,
+    severity: string,
+    suggestion: string
+  ): void {
     this.violations.push({
       file,
       line,
       violation,
       severity: severity as any,
-      suggestion
+      suggestion,
     });
   }
 
@@ -214,7 +245,8 @@ class BunFirstAuditor {
   private static getViolationSeverity(violation: string): 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' {
     if (violation.includes('fs.') || violation.includes('require("fs")')) return 'CRITICAL';
     if (violation.includes('http.') || violation.includes('require("http")')) return 'CRITICAL';
-    if (violation.includes('child_process.') || violation.includes('require("child_process")')) return 'HIGH';
+    if (violation.includes('child_process.') || violation.includes('require("child_process")'))
+      return 'HIGH';
     if (violation.includes('path.') || violation.includes('require("path")')) return 'MEDIUM';
     return 'LOW';
   }
@@ -238,9 +270,9 @@ class BunFirstAuditor {
       'require("path")': 'Use import.meta.path and import.meta.dir',
       'path.join': 'Use template literals with import.meta.path',
       'path.resolve': 'Use new URL() with import.meta.path',
-      'Generic fetch()': 'Use Bun.fetch() for better performance'
+      'Generic fetch()': 'Use Bun.fetch() for better performance',
     };
-    
+
     return alternatives[nodeApi] || 'Use Bun equivalent API';
   }
 
@@ -249,27 +281,34 @@ class BunFirstAuditor {
    */
   static generateReport(auditResults: any): void {
     console.log('\n🦌 BUN-FIRST COMPLIANCE REPORT');
-    console.log('=' .repeat(60));
-    
+    console.log('='.repeat(60));
+
     console.log('\n📊 AUDIT SUMMARY:');
     console.log(`   Files Audited: ${auditResults.totalFiles}`);
     console.log(`   Violations Found: ${auditResults.violations}`);
     console.log(`   Compliance Rate: ${auditResults.compliance.toFixed(1)}%`);
-    
+
     console.log('\n🚨 VIOLATIONS BY SEVERITY:');
     Object.entries(auditResults.bySeverity).forEach(([severity, count]) => {
-      const icon = severity === 'CRITICAL' ? '🔴' : severity === 'HIGH' ? '🟡' : severity === 'MEDIUM' ? '🟠' : '🔵';
+      const icon =
+        severity === 'CRITICAL'
+          ? '🔴'
+          : severity === 'HIGH'
+            ? '🟡'
+            : severity === 'MEDIUM'
+              ? '🟠'
+              : '🔵';
       console.log(`   ${icon} ${severity}: ${count}`);
     });
-    
+
     if (this.violations.length > 0) {
       console.log('\n📋 DETAILED VIOLATIONS:');
-      
+
       const criticalViolations = this.violations.filter(v => v.severity === 'CRITICAL');
       const highViolations = this.violations.filter(v => v.severity === 'HIGH');
       const mediumViolations = this.violations.filter(v => v.severity === 'MEDIUM');
       const lowViolations = this.violations.filter(v => v.severity === 'LOW');
-      
+
       if (criticalViolations.length > 0) {
         console.log('\n   🔴 CRITICAL VIOLATIONS:');
         criticalViolations.forEach(v => {
@@ -277,7 +316,7 @@ class BunFirstAuditor {
           console.log(`         💡 ${v.suggestion}`);
         });
       }
-      
+
       if (highViolations.length > 0) {
         console.log('\n   🟡 HIGH VIOLATIONS:');
         highViolations.forEach(v => {
@@ -286,7 +325,7 @@ class BunFirstAuditor {
         });
       }
     }
-    
+
     console.log('\n🦌 BUN-FIRST BEST PRACTICES:');
     console.log('   ✅ Use Bun.file() instead of fs APIs');
     console.log('   ✅ Use Bun.serve() instead of http.createServer');
@@ -295,7 +334,7 @@ class BunFirstAuditor {
     console.log('   ✅ Use Bun.fetch() for better HTTP performance');
     console.log('   ✅ Use await Bun.write() for file operations');
     console.log('   ✅ Use import.meta.main for entry detection');
-    
+
     console.log('\n💡 RECOMMENDATIONS:');
     if (auditResults.compliance < 80) {
       console.log('   🚨 URGENT: Low compliance rate! Fix violations immediately.');
@@ -304,11 +343,11 @@ class BunFirstAuditor {
     } else {
       console.log('   ✅ GOOD: High compliance rate! Continue following Bun-first principles.');
     }
-    
+
     console.log('   📚 Add Bun-first validation to CI/CD pipeline');
     console.log('   🔧 Create Bun API migration guide for team');
     console.log('   📊 Monitor compliance regularly');
-    
+
     console.log('\n' + '='.repeat(60));
     console.log('🦌 BUN-FIRST AUDIT COMPLETE!');
   }
@@ -318,7 +357,7 @@ class BunFirstAuditor {
    */
   static createMigrationGuide(): void {
     console.log('\n📚 CREATING BUN-FIRST MIGRATION GUIDE...');
-    
+
     const guide = `# 🦌 Bun-First Migration Guide
 
 ## 🎯 Policy: Always Use Bun First
@@ -420,17 +459,17 @@ const child = Bun.spawn(['echo', 'hello']);
   static async runCompleteAudit(): Promise<void> {
     console.log('🦌 BUN-FIRST POLICY & COMPLIANCE AUDITOR');
     console.log('Ensuring all code follows Bun-first principles');
-    console.log('=' .repeat(60));
-    
+    console.log('='.repeat(60));
+
     // Audit @[lib] directory
     const auditResults = await this.auditLibDirectory();
-    
+
     // Generate report
     this.generateReport(auditResults);
-    
+
     // Create migration guide
     this.createMigrationGuide();
-    
+
     // Final assessment
     console.log('\n🎯 FINAL ASSESSMENT:');
     if (auditResults.compliance >= 95) {
@@ -440,7 +479,7 @@ const child = Bun.spawn(['echo', 'hello']);
     } else {
       console.log('🔴 NEEDS WORK: Low compliance, immediate action required');
     }
-    
+
     console.log('\n🦌 Remember: ALWAYS USE BUN FIRST! 🦌');
   }
 }

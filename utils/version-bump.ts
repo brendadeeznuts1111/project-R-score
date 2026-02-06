@@ -17,7 +17,7 @@ import { join } from "path";
 import { logger } from "../lib/utils/logger.ts";
 import { safeReadFile, safeWriteFile } from "../lib/utils/safe-file-operations.ts";
 
-const REGISTRY_FILE = join(import.meta.dir, "BUN_CONSTANTS_VERSION.json");
+const REGISTRY_FILE = join(import.meta.dir, "..", "config", "BUN_CONSTANTS_VERSION.json");
 const EXTRACT_SCRIPT = join(import.meta.dir, "scanner", "scripts", "extract-bun-constants.ts");
 
 interface VersionRegistry {

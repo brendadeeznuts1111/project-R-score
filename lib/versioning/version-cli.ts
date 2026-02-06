@@ -1,11 +1,11 @@
 #!/usr/bin/env bun
 /**
  * 🔄 Version Tracking CLI Tool
- * 
+ *
  * Command-line interface for managing versions, rollbacks, and monitoring
  */
 
-import { write, read } from "bun";
+import { write, read } from 'bun';
 
 import VersionTracker from './version-tracking';
 
@@ -99,7 +99,10 @@ class VersionCLI {
           process.exit(1);
       }
     } catch (error) {
-      console.error(`❌ Error executing ${command}:`, error instanceof Error ? error.message : error);
+      console.error(
+        `❌ Error executing ${command}:`,
+        error instanceof Error ? error.message : error
+      );
       if (options.verbose) {
         console.error(error);
       }
@@ -126,7 +129,7 @@ class VersionCLI {
       description: description || `Version ${version} deployment`,
       dependencies: {}, // Would be parsed from package.json in real implementation
       environment: environment || 'development',
-      tags: tags || []
+      tags: tags || [],
     });
 
     console.log(`✅ Version registered successfully!`);
@@ -190,7 +193,7 @@ class VersionCLI {
       console.log(`   Endpoint: ${endpoint}`);
       console.log(`   Success: ${result.success}`);
       console.log(`   Message: ${result.message}`);
-      
+
       if (result.components.length > 0) {
         console.log(`   Affected Components:`);
         for (const comp of result.components) {
@@ -212,11 +215,13 @@ class VersionCLI {
       } else if (format === 'csv') {
         console.log('Version,Timestamp,Author,Description,Environment,Tags');
         for (const version of history) {
-          console.log(`"${version.version}","${version.timestamp}","${version.author}","${version.description}","${version.environment}","${version.tags.join(';')}"`);
+          console.log(
+            `"${version.version}","${version.timestamp}","${version.author}","${version.description}","${version.environment}","${version.tags.join(';')}"`
+          );
         }
       } else {
         console.log(`📋 Version History for ${component}\n`);
-        
+
         if (current) {
           console.log(`📍 Current Version: ${current.version} (${current.timestamp})`);
           console.log(`   Author: ${current.author}`);
@@ -247,17 +252,23 @@ class VersionCLI {
         for (const component of components) {
           const current = this.tracker.getCurrentVersion(component);
           const status = healthStatus[component];
-          console.log(`"${component}","${current?.version || 'N/A'}","${status.healthStatus}","${status.errorRate}%","${status.uptimePercentage}%"`);
+          console.log(
+            `"${component}","${current?.version || 'N/A'}","${status.healthStatus}","${status.errorRate}%","${status.uptimePercentage}%"`
+          );
         }
       } else {
         console.log(`📋 All Components (${components.length})\n`);
-        
+
         for (const component of components) {
           const current = this.tracker.getCurrentVersion(component);
           const status = healthStatus[component];
-          const healthIcon = status.healthStatus === 'healthy' ? '✅' : 
-                           status.healthStatus === 'degraded' ? '⚠️' : '❌';
-          
+          const healthIcon =
+            status.healthStatus === 'healthy'
+              ? '✅'
+              : status.healthStatus === 'degraded'
+                ? '⚠️'
+                : '❌';
+
           console.log(`${healthIcon} ${component}`);
           console.log(`    📍 Version: ${current?.version || 'N/A'}`);
           console.log(`    🏥 Health: ${status.healthStatus} (${status.errorRate}% error rate)`);
@@ -280,7 +291,7 @@ class VersionCLI {
         console.log(JSON.stringify({ current, health, rollbacks }, null, 2));
       } else {
         console.log(`📊 Status for ${component}\n`);
-        
+
         if (current) {
           console.log(`📍 Current Version:`);
           console.log(`    Version: ${current.version}`);
@@ -312,15 +323,23 @@ class VersionCLI {
 
       const totalComponents = Object.keys(healthStatus).length;
       const healthy = Object.values(healthStatus).filter(s => s.healthStatus === 'healthy').length;
-      const degraded = Object.values(healthStatus).filter(s => s.healthStatus === 'degraded').length;
+      const degraded = Object.values(healthStatus).filter(
+        s => s.healthStatus === 'degraded'
+      ).length;
       const failed = Object.values(healthStatus).filter(s => s.healthStatus === 'failed').length;
 
       if (format === 'json') {
-        console.log(JSON.stringify({
-          summary: { totalComponents, healthy, degraded, failed },
-          healthStatus,
-          rollbackReport
-        }, null, 2));
+        console.log(
+          JSON.stringify(
+            {
+              summary: { totalComponents, healthy, degraded, failed },
+              healthStatus,
+              rollbackReport,
+            },
+            null,
+            2
+          )
+        );
       } else {
         console.log(`📊 System Status Overview\n`);
         console.log(`📈 Summary:`);
@@ -336,8 +355,12 @@ class VersionCLI {
 
         console.log(`🏥 Component Health:`);
         for (const [component, status] of Object.entries(healthStatus)) {
-          const icon = status.healthStatus === 'healthy' ? '✅' : 
-                      status.healthStatus === 'degraded' ? '⚠️' : '❌';
+          const icon =
+            status.healthStatus === 'healthy'
+              ? '✅'
+              : status.healthStatus === 'degraded'
+                ? '⚠️'
+                : '❌';
           console.log(`    ${icon} ${component}: ${status.errorRate}% error rate`);
         }
       }
@@ -351,7 +374,7 @@ class VersionCLI {
       await this.tracker.updateHealthMetrics(component, {
         healthStatus: 'healthy',
         errorRate: Math.random() * 2,
-        uptimePercentage: 95 + Math.random() * 5
+        uptimePercentage: 95 + Math.random() * 5,
       });
       console.log(`✅ Health metrics updated for ${component}`);
     } else {
@@ -361,11 +384,15 @@ class VersionCLI {
         console.log(JSON.stringify(healthStatus, null, 2));
       } else {
         console.log(`🏥 Health Status Dashboard\n`);
-        
+
         for (const [component, status] of Object.entries(healthStatus)) {
-          const icon = status.healthStatus === 'healthy' ? '✅' : 
-                      status.healthStatus === 'degraded' ? '⚠️' : '❌';
-          
+          const icon =
+            status.healthStatus === 'healthy'
+              ? '✅'
+              : status.healthStatus === 'degraded'
+                ? '⚠️'
+                : '❌';
+
           console.log(`${icon} ${component}`);
           console.log(`    Status: ${status.healthStatus}`);
           console.log(`    Error Rate: ${status.errorRate.toFixed(2)}%`);
@@ -378,7 +405,7 @@ class VersionCLI {
 
   private async handleAudit(options: CLIOptions): Promise<void> {
     const { component, author, format } = options;
-    
+
     const filter: any = {};
     if (component) filter.componentUri = component;
     if (author) filter.author = author;
@@ -390,16 +417,23 @@ class VersionCLI {
     } else if (format === 'csv') {
       console.log('Timestamp,Action,Component,Version,Author,Details');
       for (const entry of auditLog) {
-        console.log(`"${entry.timestamp}","${entry.action}","${entry.componentUri}","${entry.version}","${entry.author}","${entry.details}"`);
+        console.log(
+          `"${entry.timestamp}","${entry.action}","${entry.componentUri}","${entry.version}","${entry.author}","${entry.details}"`
+        );
       }
     } else {
       console.log(`📋 Audit Log (${auditLog.length} entries)\n`);
-      
+
       for (const entry of auditLog) {
-        const actionIcon = entry.action === 'rollback' ? '🔄' :
-                          entry.action === 'version_registered' ? '📝' :
-                          entry.action === 'rollback_failed' ? '❌' : '📋';
-        
+        const actionIcon =
+          entry.action === 'rollback'
+            ? '🔄'
+            : entry.action === 'version_registered'
+              ? '📝'
+              : entry.action === 'rollback_failed'
+                ? '❌'
+                : '📋';
+
         console.log(`${actionIcon} ${entry.timestamp}`);
         console.log(`    Action: ${entry.action}`);
         console.log(`    Component: ${entry.componentUri}`);
@@ -420,7 +454,7 @@ class VersionCLI {
       timestamp: new Date().toISOString(),
       component: component || 'all',
       rollbackMetrics: rollbackReport,
-      healthSnapshot: component ? healthStatus[component] : healthStatus
+      healthSnapshot: component ? healthStatus[component] : healthStatus,
     };
 
     if (output) {
@@ -480,11 +514,17 @@ class VersionCLI {
       console.log(`🔍 Real-time Monitoring - ${timestamp}\n`);
 
       for (const [component, status] of Object.entries(healthStatus)) {
-        const icon = status.healthStatus === 'healthy' ? '✅' : 
-                    status.healthStatus === 'degraded' ? '⚠️' : '❌';
-        
+        const icon =
+          status.healthStatus === 'healthy'
+            ? '✅'
+            : status.healthStatus === 'degraded'
+              ? '⚠️'
+              : '❌';
+
         console.log(`${icon} ${component}`);
-        console.log(`   Error Rate: ${status.errorRate.toFixed(2)}% | Uptime: ${status.uptimePercentage.toFixed(2)}%`);
+        console.log(
+          `   Error Rate: ${status.errorRate.toFixed(2)}% | Uptime: ${status.uptimePercentage.toFixed(2)}%`
+        );
       }
 
       console.log('\nPress Ctrl+C to stop');
@@ -584,7 +624,7 @@ function parseArgs(): CLIOptions {
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
-    
+
     switch (arg) {
       case 'register':
       case 'rollback':

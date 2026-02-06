@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Fixed Implementation Audit using Documentation Constants
- * 
+ *
  * Based on Bun documentation constants and GitHub issue solutions:
  * - BUN_DOCS_VERSION: "1.3.7"
  * - BUN_DOCS_MIN_VERSION: "1.3.6"
@@ -10,12 +10,12 @@
  */
 
 console.log('🔍 DOCUMENTATION CONSTANTS-BASED AUDIT');
-console.log('=' .repeat(50));
+console.log('='.repeat(50));
 
 // Documentation constants from BUN_CONSTANTS_VERSION.json
-const BUN_VERSION = "1.3.7+";
-const BUN_DOCS_VERSION = "1.3.7";
-const BUN_DOCS_MIN_VERSION = "1.3.6";
+const BUN_VERSION = '1.3.7+';
+const BUN_DOCS_VERSION = '1.3.7';
+const BUN_DOCS_MIN_VERSION = '1.3.6';
 
 console.log(`📋 Using Bun ${BUN_VERSION} (docs: ${BUN_DOCS_VERSION})`);
 
@@ -29,7 +29,7 @@ async function runFixedAudit() {
   const currentBunVersion = Bun.version;
   console.log(`   Current Bun version: ${currentBunVersion}`);
   console.log(`   Required minimum: ${BUN_DOCS_MIN_VERSION}`);
-  
+
   if (currentBunVersion >= BUN_DOCS_MIN_VERSION) {
     console.log('   ✅ Version compatibility: PASSED');
     passedChecks++;
@@ -43,9 +43,9 @@ async function runFixedAudit() {
   console.log('\n📁 STEP 2: FILE EXISTENCE (Bun.file API)');
   const files = [
     './performance-optimizer.ts',
-    './optimized-server.ts', 
+    './optimized-server.ts',
     './port-management-system.ts',
-    './bun-implementation-details.ts'
+    './bun-implementation-details.ts',
   ];
 
   for (const file of files) {
@@ -53,7 +53,7 @@ async function runFixedAudit() {
       const fileHandle = Bun.file(file);
       const exists = await fileHandle.exists();
       const size = await fileHandle.size;
-      
+
       if (exists && size > 0) {
         console.log(`   ${file}: ✅ EXISTS (${size} bytes)`);
         passedChecks++;
@@ -70,11 +70,13 @@ async function runFixedAudit() {
 
   // Check 3: Export statements using Bun.write pattern (from documentation)
   console.log('\n📤 STEP 3: EXPORT STATEMENTS');
-  
+
   try {
     const optimizerContent = await Bun.file('./performance-optimizer.ts').text();
     const hasOptimizerExports = optimizerContent.includes('export { SpawnOptimizer');
-    console.log(`   Performance Optimizer exports: ${hasOptimizerExports ? '✅ FOUND' : '❌ MISSING'}`);
+    console.log(
+      `   Performance Optimizer exports: ${hasOptimizerExports ? '✅ FOUND' : '❌ MISSING'}`
+    );
     if (hasOptimizerExports) {
       passedChecks++;
       results.push('✅ Performance Optimizer Exports');
@@ -97,15 +99,15 @@ async function runFixedAudit() {
 
   // Check 4: Key methods implementation
   console.log('\n🔧 STEP 4: KEY METHODS IMPLEMENTATION');
-  
+
   try {
     const portContent = await Bun.file('./port-management-system.ts').text();
-    
+
     const methods = [
       { name: 'validatePort()', pattern: 'validatePort' },
       { name: 'fetchAndBufferToMemory()', pattern: 'fetchAndBufferToMemory' },
       { name: 'prefetchDNS()', pattern: 'prefetchDNS' },
-      { name: 'Bun.write integration', pattern: 'Bun.write' }
+      { name: 'Bun.write integration', pattern: 'Bun.write' },
     ];
 
     for (const method of methods) {
@@ -122,7 +124,7 @@ async function runFixedAudit() {
 
   // Check 5: Response buffering methods (all 6)
   console.log('\n📦 STEP 5: RESPONSE BUFFERING METHODS');
-  
+
   try {
     const portContent = await Bun.file('./port-management-system.ts').text();
     const bufferingMethods = [
@@ -131,7 +133,7 @@ async function runFixedAudit() {
       'response.formData()',
       'response.bytes()',
       'response.arrayBuffer()',
-      'response.blob()'
+      'response.blob()',
     ];
 
     let allMethodsFound = true;
@@ -154,7 +156,7 @@ async function runFixedAudit() {
 
   // Check 6: Environment variable integration
   console.log('\n🌍 STEP 6: ENVIRONMENT VARIABLE INTEGRATION');
-  
+
   try {
     const portContent = await Bun.file('./port-management-system.ts').text();
     const hasEnvIntegration = portContent.includes('BUN_CONFIG_MAX_HTTP_REQUESTS');
@@ -169,10 +171,11 @@ async function runFixedAudit() {
 
   // Check 7: Security features
   console.log('\n🔒 STEP 7: SECURITY FEATURES');
-  
+
   try {
     const portContent = await Bun.file('./port-management-system.ts').text();
-    const hasValidation = portContent.includes('ValidationUtils') && portContent.includes('validatePort');
+    const hasValidation =
+      portContent.includes('ValidationUtils') && portContent.includes('validatePort');
     console.log(`   Security validation: ${hasValidation ? '✅ IMPLEMENTED' : '❌ MISSING'}`);
     if (hasValidation) {
       passedChecks++;
@@ -184,10 +187,10 @@ async function runFixedAudit() {
 
   // Final summary
   console.log('\n📊 AUDIT SUMMARY');
-  console.log('=' .repeat(30));
-  
+  console.log('='.repeat(30));
+
   const successRate = ((passedChecks / totalChecks) * 100).toFixed(1);
-  
+
   console.log(`✅ Passed Checks: ${passedChecks}/${totalChecks}`);
   console.log(`📈 Success Rate: ${successRate}%`);
   console.log(`🔧 Bun Version: ${currentBunVersion}`);
@@ -214,13 +217,13 @@ async function runFixedAudit() {
   console.log('   • Applied Bun 1.3.6+ best practices');
 
   console.log('\n✅ AUDIT COMPLETED SUCCESSFULLY!');
-  
-  return { 
-    passed: passedChecks, 
-    total: totalChecks, 
+
+  return {
+    passed: passedChecks,
+    total: totalChecks,
     rate: successRate,
     version: currentBunVersion,
-    results 
+    results,
   };
 }
 

@@ -2,7 +2,7 @@
 
 /**
  * FactoryWager Bun MCP Server
- * 
+ *
  * Core MCP server providing Bun documentation access with FactoryWager enhancements.
  * This server connects to Bun's official documentation and provides context-aware
  * responses tailored for FactoryWager's ecosystem.
@@ -198,26 +198,26 @@ class BunMCPServer {
     });
 
     // Handle tool calls
-    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    this.server.setRequestHandler(CallToolRequestSchema, async request => {
       const { name, arguments: args } = request.params;
 
       try {
         switch (name) {
           case 'SearchBun':
             return await this.handleSearchBun(args);
-            
+
           case 'ExplainCode':
             return await this.handleExplainCode(args);
-            
+
           case 'ValidateCode':
             return await this.handleValidateCode(args);
-            
+
           case 'GetAPIReference':
             return await this.handleGetAPIReference(args);
-            
+
           case 'GenerateFactoryWagerExample':
             return await this.handleGenerateFactoryWagerExample(args);
-            
+
           default:
             throw new Error(`Unknown tool: ${name}`);
         }
@@ -268,23 +268,23 @@ class BunMCPServer {
     });
 
     // Handle resource reads
-    this.server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+    this.server.setRequestHandler(ReadResourceRequestSchema, async request => {
       const { uri } = request.params;
 
       try {
         switch (uri) {
           case 'bun://docs/latest':
             return await this.getBunDocumentation();
-            
+
           case 'bun://api/reference':
             return await this.getAPIReference();
-            
+
           case 'bun://examples':
             return await this.getCodeExamples();
-            
+
           case 'factorywager://patterns':
             return await this.getFactoryWagerPatterns();
-            
+
           default:
             throw new Error(`Unknown resource: ${uri}`);
         }
@@ -305,10 +305,10 @@ class BunMCPServer {
   // Tool handlers
   private async handleSearchBun(args: any): Promise<any> {
     const { query, version = 'v1.4', type, context, includeExamples = true } = args;
-    
+
     // Simulate searching Bun documentation
     const results = await this.searchBunDocs(query, { version, type, context, includeExamples });
-    
+
     // Enhance with FactoryWager context
     const enhancedResults = results.map(result => ({
       ...result,
@@ -320,17 +320,21 @@ class BunMCPServer {
       content: [
         {
           type: 'text',
-          text: JSON.stringify({
-            query,
-            version,
-            context,
-            results: enhancedResults,
-            totalResults: enhancedResults.length,
-            metadata: {
-              searchTime: Date.now(),
-              hasContext: !!context,
+          text: JSON.stringify(
+            {
+              query,
+              version,
+              context,
+              results: enhancedResults,
+              totalResults: enhancedResults.length,
+              metadata: {
+                searchTime: Date.now(),
+                hasContext: !!context,
+              },
             },
-          }, null, 2),
+            null,
+            2
+          ),
         },
       ],
     };
@@ -338,10 +342,10 @@ class BunMCPServer {
 
   private async handleExplainCode(args: any): Promise<any> {
     const { code, context = 'general', generateExample = false } = args;
-    
+
     // Analyze the code
     const analysis = this.analyzeCode(code);
-    
+
     // Get relevant documentation
     const docs = await this.searchBunDocs(analysis.apiCalls.join(' '), {
       context,
@@ -350,7 +354,7 @@ class BunMCPServer {
 
     // Generate explanation
     const explanation = this.generateExplanation(code, analysis, docs, context);
-    
+
     // Generate improved example if requested
     let improvedExample = null;
     if (generateExample) {
@@ -361,15 +365,19 @@ class BunMCPServer {
       content: [
         {
           type: 'text',
-          text: JSON.stringify({
-            originalCode: code,
-            explanation,
-            analysis,
-            relatedDocs: docs.slice(0, 3),
-            improvedExample,
-            context,
-            recommendations: this.getRecommendations(analysis, context),
-          }, null, 2),
+          text: JSON.stringify(
+            {
+              originalCode: code,
+              explanation,
+              analysis,
+              relatedDocs: docs.slice(0, 3),
+              improvedExample,
+              context,
+              recommendations: this.getRecommendations(analysis, context),
+            },
+            null,
+            2
+          ),
         },
       ],
     };
@@ -377,21 +385,25 @@ class BunMCPServer {
 
   private async handleValidateCode(args: any): Promise<any> {
     const { code, strict = false } = args;
-    
+
     const validation = this.validateBunCode(code, strict);
-    
+
     return {
       content: [
         {
           type: 'text',
-          text: JSON.stringify({
-            valid: validation.valid,
-            errors: validation.errors,
-            warnings: validation.warnings,
-            suggestions: validation.suggestions,
-            score: validation.score,
-            strictMode: strict,
-          }, null, 2),
+          text: JSON.stringify(
+            {
+              valid: validation.valid,
+              errors: validation.errors,
+              warnings: validation.warnings,
+              suggestions: validation.suggestions,
+              score: validation.score,
+              strictMode: strict,
+            },
+            null,
+            2
+          ),
         },
       ],
     };
@@ -399,9 +411,9 @@ class BunMCPServer {
 
   private async handleGetAPIReference(args: any): Promise<any> {
     const { api, version = 'v1.4', includeExamples = true } = args;
-    
+
     const reference = await this.getAPIReferenceForFunction(api, version);
-    
+
     if (includeExamples) {
       reference.examples = await this.getExamplesForAPI(api, version);
     }
@@ -418,7 +430,7 @@ class BunMCPServer {
 
   private async handleGenerateFactoryWagerExample(args: any): Promise<any> {
     const { api, context = 'general', includeSecurity = true, includeErrorHandling = true } = args;
-    
+
     const baseExample = await this.getBaseExampleForAPI(api);
     const enhancedExample = this.enhanceExampleForFactoryWager(
       baseExample,
@@ -431,18 +443,24 @@ class BunMCPServer {
       content: [
         {
           type: 'text',
-          text: JSON.stringify({
-            api,
-            context,
-            example: enhancedExample,
-            features: {
-              hasSecurity: includeSecurity,
-              hasErrorHandling: includeErrorHandling,
-              hasFactoryWagerPatterns: true,
+          text: JSON.stringify(
+            {
+              api,
+              context,
+              example: enhancedExample,
+              features: {
+                hasSecurity: includeSecurity,
+                hasErrorHandling: includeErrorHandling,
+                hasFactoryWagerPatterns: true,
+              },
+              bestPractices: this.getBestPracticesForContext(context),
+              securityConsiderations: includeSecurity
+                ? this.getSecurityConsiderations(api, context)
+                : [],
             },
-            bestPractices: this.getBestPracticesForContext(context),
-            securityConsiderations: includeSecurity ? this.getSecurityConsiderations(api, context) : [],
-          }, null, 2),
+            null,
+            2
+          ),
         },
       ],
     };
@@ -455,16 +473,20 @@ class BunMCPServer {
         {
           uri: 'bun://docs/latest',
           mimeType: 'application/json',
-          text: JSON.stringify({
-            version: 'v1.4',
-            lastUpdated: new Date().toISOString(),
-            sections: [
-              { name: 'Runtime', path: '/docs/runtime' },
-              { name: 'Bundler', path: '/docs/bundler' },
-              { name: 'Test Runner', path: '/docs/test-runner' },
-              { name: 'Package Manager', path: '/docs/installer' },
-            ],
-          }, null, 2),
+          text: JSON.stringify(
+            {
+              version: 'v1.4',
+              lastUpdated: new Date().toISOString(),
+              sections: [
+                { name: 'Runtime', path: '/docs/runtime' },
+                { name: 'Bundler', path: '/docs/bundler' },
+                { name: 'Test Runner', path: '/docs/test-runner' },
+                { name: 'Package Manager', path: '/docs/installer' },
+              ],
+            },
+            null,
+            2
+          ),
         },
       ],
     };
@@ -476,20 +498,32 @@ class BunMCPServer {
         {
           uri: 'bun://api/reference',
           mimeType: 'application/json',
-          text: JSON.stringify({
-            apis: [
-              'Bun.file', 'Bun.write', 'Bun.serve', 'Bun.fetch',
-              'Bun.secrets', 'Bun.sql', 'Bun.password', 'Bun.gzip',
-              'Bun.stdin', 'Bun.stdout', 'Bun.stderr'
-            ],
-            categories: {
-              'File System': ['Bun.file', 'Bun.write', 'Bun.stdin'],
-              'Network': ['Bun.serve', 'Bun.fetch'],
-              'Security': ['Bun.secrets', 'Bun.password'],
-              'Database': ['Bun.sql'],
-              'Utilities': ['Bun.gzip', 'Bun.stdout', 'Bun.stderr'],
+          text: JSON.stringify(
+            {
+              apis: [
+                'Bun.file',
+                'Bun.write',
+                'Bun.serve',
+                'Bun.fetch',
+                'Bun.secrets',
+                'Bun.sql',
+                'Bun.password',
+                'Bun.gzip',
+                'Bun.stdin',
+                'Bun.stdout',
+                'Bun.stderr',
+              ],
+              categories: {
+                'File System': ['Bun.file', 'Bun.write', 'Bun.stdin'],
+                Network: ['Bun.serve', 'Bun.fetch'],
+                Security: ['Bun.secrets', 'Bun.password'],
+                Database: ['Bun.sql'],
+                Utilities: ['Bun.gzip', 'Bun.stdout', 'Bun.stderr'],
+              },
             },
-          }, null, 2),
+            null,
+            2
+          ),
         },
       ],
     };
@@ -501,20 +535,24 @@ class BunMCPServer {
         {
           uri: 'bun://examples',
           mimeType: 'application/json',
-          text: JSON.stringify({
-            examples: [
-              {
-                api: 'Bun.serve',
-                title: 'HTTP Server',
-                description: 'Create a simple HTTP server',
-              },
-              {
-                api: 'Bun.file',
-                title: 'File Operations',
-                description: 'Read and write files efficiently',
-              },
-            ],
-          }, null, 2),
+          text: JSON.stringify(
+            {
+              examples: [
+                {
+                  api: 'Bun.serve',
+                  title: 'HTTP Server',
+                  description: 'Create a simple HTTP server',
+                },
+                {
+                  api: 'Bun.file',
+                  title: 'File Operations',
+                  description: 'Read and write files efficiently',
+                },
+              ],
+            },
+            null,
+            2
+          ),
         },
       ],
     };
@@ -594,30 +632,30 @@ class BunMCPServer {
       profiling: '📊 Performance: Add monitoring and performance tracking',
       general: '📝 General: Follow FactoryWager best practices',
     };
-    
+
     return contextMap[context] || contextMap.general;
   }
 
   private calculateConfidence(result: BunDocResult, query: string): number {
     let confidence = result.relevance;
-    
+
     // Boost confidence for exact matches
     if (result.title.toLowerCase().includes(query.toLowerCase())) {
       confidence += 0.1;
     }
-    
+
     // Boost confidence for API docs
     if (result.type === 'api') {
       confidence += 0.05;
     }
-    
+
     return Math.min(confidence, 1.0);
   }
 
   private analyzeCode(code: string): any {
     // Simple code analysis
     const apiCalls = [];
-    
+
     if (code.includes('Bun.file')) apiCalls.push('Bun.file');
     if (code.includes('Bun.serve')) apiCalls.push('Bun.serve');
     if (code.includes('Bun.fetch')) apiCalls.push('Bun.fetch');
@@ -632,9 +670,14 @@ class BunMCPServer {
     };
   }
 
-  private generateExplanation(code: string, analysis: any, docs: BunDocResult[], context: string): string {
+  private generateExplanation(
+    code: string,
+    analysis: any,
+    docs: BunDocResult[],
+    context: string
+  ): string {
     let explanation = `This code uses the following Bun APIs: ${analysis.apiCalls.join(', ')}.\n\n`;
-    
+
     if (docs.length > 0) {
       explanation += `According to the documentation:\n`;
       docs.slice(0, 2).forEach(doc => {
@@ -649,7 +692,11 @@ class BunMCPServer {
     return explanation;
   }
 
-  private async generateImprovedExample(code: string, analysis: any, context: string): Promise<string> {
+  private async generateImprovedExample(
+    code: string,
+    analysis: any,
+    context: string
+  ): Promise<string> {
     // Generate an improved version of the code
     let improved = code;
 
@@ -658,7 +705,8 @@ class BunMCPServer {
     }
 
     if (context === 'scanner') {
-      improved += '\n\n// Scanner-specific additions\nconst isValidUrl = (url) => {\n  try {\n    new URL(url);\n    return true;\n  } catch {\n    return false;\n  }\n};';
+      improved +=
+        '\n\n// Scanner-specific additions\nconst isValidUrl = (url) => {\n  try {\n    new URL(url);\n    return true;\n  } catch {\n    return false;\n  }\n};';
     }
 
     return improved;
@@ -666,15 +714,15 @@ class BunMCPServer {
 
   private getRecommendations(analysis: any, context: string): string[] {
     const recommendations = [];
-    
+
     if (!analysis.hasErrorHandling) {
       recommendations.push('Add error handling with try/catch blocks');
     }
-    
+
     if (!analysis.hasAsync && analysis.apiCalls.length > 0) {
       recommendations.push('Consider using async/await for better performance');
     }
-    
+
     if (context === 'security' || context === 'secrets') {
       recommendations.push('Implement proper security measures');
     }
@@ -705,7 +753,10 @@ class BunMCPServer {
       suggestions.push('Consider using await with async operations');
     }
 
-    const score = Math.max(0, 100 - (errors.length * 20) - (warnings.length * 10) - (suggestions.length * 5));
+    const score = Math.max(
+      0,
+      100 - errors.length * 20 - warnings.length * 10 - suggestions.length * 5
+    );
 
     return {
       valid: errors.length === 0,
@@ -769,7 +820,8 @@ const data = await response.json();`,
     }
 
     if (includeSecurity) {
-      enhanced += '\n\n// Security considerations\n// Validate inputs\n// Use secure defaults\n// Implement proper access controls';
+      enhanced +=
+        '\n\n// Security considerations\n// Validate inputs\n// Use secure defaults\n// Implement proper access controls';
     }
 
     if (context !== 'general') {
@@ -813,7 +865,7 @@ const data = await response.json();`,
   }
 
   private setupErrorHandling(): void {
-    process.on('uncaughtException', (error) => {
+    process.on('uncaughtException', error => {
       console.error('Uncaught exception:', error);
       process.exit(1);
     });
@@ -827,7 +879,7 @@ const data = await response.json();`,
   async start(): Promise<void> {
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
-    
+
     // Server is now running and handling requests
     // Graceful shutdown
     process.on('SIGINT', async () => {

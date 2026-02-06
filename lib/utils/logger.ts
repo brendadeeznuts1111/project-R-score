@@ -1,9 +1,9 @@
 /**
  * 🛠️ Enhanced Logger Utility
- * 
+ *
  * Centralized logging utility with structured logging, different levels,
  * timestamps, and integration with error handling.
- * 
+ *
  * @version 2.0.0
  */
 
@@ -69,7 +69,7 @@ export class Logger {
       includeModule: true,
       jsonOutput: process.env.JSON_LOGS === 'true',
       colors: process.env.NO_COLORS !== 'true' && Bun.env.NODE_ENV !== 'production',
-      maxLogSize: 10000
+      maxLogSize: 10000,
     };
   }
 
@@ -81,9 +81,9 @@ export class Logger {
       debug: 0,
       info: 1,
       warn: 2,
-      error: 3
+      error: 3,
     };
-    
+
     return levels[level] >= levels[this.config.level];
   }
 
@@ -103,7 +103,9 @@ export class Logger {
     }
 
     // Add level with colors
-    const levelStr = this.config.colors ? this.colorizeLevel(entry.level) : entry.level.toUpperCase();
+    const levelStr = this.config.colors
+      ? this.colorizeLevel(entry.level)
+      : entry.level.toUpperCase();
     parts.push(`${levelStr}:`);
 
     // Add module/function context
@@ -131,10 +133,10 @@ export class Logger {
    */
   private colorizeLevel(level: LogLevel): string {
     const colors = {
-      debug: '\x1b[36mDEBUG\x1b[0m',    // Cyan
-      info: '\x1b[32mINFO\x1b[0m',      // Green
-      warn: '\x1b[33mWARN\x1b[0m',      // Yellow
-      error: '\x1b[31mERROR\x1b[0m'     // Red
+      debug: '\x1b[36mDEBUG\x1b[0m', // Cyan
+      info: '\x1b[32mINFO\x1b[0m', // Green
+      warn: '\x1b[33mWARN\x1b[0m', // Yellow
+      error: '\x1b[31mERROR\x1b[0m', // Red
     };
     return colors[level];
   }
@@ -157,7 +159,7 @@ export class Logger {
       timestamp: new Date().toISOString(),
       level,
       message,
-      ...context
+      ...context,
     };
 
     // Add to buffer (for debugging/monitoring)
@@ -172,13 +174,16 @@ export class Logger {
   /**
    * Log debug message
    */
-  debug(message: string, context?: {
-    module?: string;
-    function?: string;
-    requestId?: string;
-    userId?: string;
-    metadata?: Record<string, any>;
-  }): void {
+  debug(
+    message: string,
+    context?: {
+      module?: string;
+      function?: string;
+      requestId?: string;
+      userId?: string;
+      metadata?: Record<string, any>;
+    }
+  ): void {
     if (!this.shouldLog('debug')) return;
 
     const entry = this.createLogEntry('debug', message, context);
@@ -188,13 +193,16 @@ export class Logger {
   /**
    * Log info message
    */
-  info(message: string, context?: {
-    module?: string;
-    function?: string;
-    requestId?: string;
-    userId?: string;
-    metadata?: Record<string, any>;
-  }): void {
+  info(
+    message: string,
+    context?: {
+      module?: string;
+      function?: string;
+      requestId?: string;
+      userId?: string;
+      metadata?: Record<string, any>;
+    }
+  ): void {
     if (!this.shouldLog('info')) return;
 
     const entry = this.createLogEntry('info', message, context);
@@ -204,13 +212,16 @@ export class Logger {
   /**
    * Log warning message
    */
-  warn(message: string, context?: {
-    module?: string;
-    function?: string;
-    requestId?: string;
-    userId?: string;
-    metadata?: Record<string, any>;
-  }): void {
+  warn(
+    message: string,
+    context?: {
+      module?: string;
+      function?: string;
+      requestId?: string;
+      userId?: string;
+      metadata?: Record<string, any>;
+    }
+  ): void {
     if (!this.shouldLog('warn')) return;
 
     const entry = this.createLogEntry('warn', message, context);
@@ -220,18 +231,21 @@ export class Logger {
   /**
    * Log error message
    */
-  error(message: string, context?: {
-    module?: string;
-    function?: string;
-    requestId?: string;
-    userId?: string;
-    metadata?: Record<string, any>;
-    error?: Error | unknown;
-  }): void {
+  error(
+    message: string,
+    context?: {
+      module?: string;
+      function?: string;
+      requestId?: string;
+      userId?: string;
+      metadata?: Record<string, any>;
+      error?: Error | unknown;
+    }
+  ): void {
     if (!this.shouldLog('error')) return;
 
     const entry = this.createLogEntry('error', message, context);
-    
+
     // Add error details if provided
     if (context?.error) {
       if (context.error instanceof Error) {
@@ -239,12 +253,12 @@ export class Logger {
           ...entry.metadata,
           errorName: context.error.name,
           errorMessage: context.error.message,
-          stackTrace: context.error.stack
+          stackTrace: context.error.stack,
         };
       } else {
         entry.metadata = {
           ...entry.metadata,
-          error: String(context.error)
+          error: String(context.error),
         };
       }
     }
@@ -279,7 +293,7 @@ export class Logger {
       debug: 0,
       info: 0,
       warn: 0,
-      error: 0
+      error: 0,
     };
 
     this.logBuffer.forEach(entry => {
@@ -290,7 +304,7 @@ export class Logger {
       total: this.logBuffer.length,
       byLevel,
       oldestEntry: this.logBuffer[0]?.timestamp,
-      newestEntry: this.logBuffer[this.logBuffer.length - 1]?.timestamp
+      newestEntry: this.logBuffer[this.logBuffer.length - 1]?.timestamp,
     };
   }
 }

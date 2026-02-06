@@ -13,9 +13,9 @@ export class CleanupManager {
       cleanup();
       return () => {};
     }
-    
+
     this.cleanups.add(cleanup);
-    
+
     // Return unregister function
     return () => {
       this.cleanups.delete(cleanup);
@@ -24,7 +24,7 @@ export class CleanupManager {
 
   cleanup(): void {
     if (this.isCleaned) return;
-    
+
     for (const cleanup of this.cleanups) {
       try {
         cleanup();
@@ -32,7 +32,7 @@ export class CleanupManager {
         // Ignore cleanup errors
       }
     }
-    
+
     this.cleanups.clear();
     this.isCleaned = true;
   }
@@ -50,12 +50,12 @@ if (typeof process !== 'undefined') {
   process.on('exit', () => {
     globalCleanupManager.cleanup();
   });
-  
+
   process.on('SIGINT', () => {
     globalCleanupManager.cleanup();
     process.exit(0);
   });
-  
+
   process.on('SIGTERM', () => {
     globalCleanupManager.cleanup();
     process.exit(0);

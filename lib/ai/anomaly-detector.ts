@@ -2,14 +2,14 @@
 
 /**
  * 🛡️ Anomaly Detection System
- * 
+ *
  * ML-based anomaly detection for security threats,
  * performance issues, and operational anomalies.
  */
 
-import { EventEmitter } from "events";
-import { logger } from "../monitoring/structured-logger";
-import { auditLogger } from "../security/secret-audit-logger";
+import { EventEmitter } from 'events';
+import { logger } from '../monitoring/structured-logger';
+import { auditLogger } from '../security/secret-audit-logger';
 
 export interface Anomaly {
   id: string;
@@ -41,14 +41,17 @@ export interface MetricData {
 
 export interface BaselineProfile {
   source: string;
-  metrics: Record<string, {
-    mean: number;
-    stdDev: number;
-    min: number;
-    max: number;
-    trend: number;
-    seasonality?: number;
-  }>;
+  metrics: Record<
+    string,
+    {
+      mean: number;
+      stdDev: number;
+      min: number;
+      max: number;
+      trend: number;
+      seasonality?: number;
+    }
+  >;
   lastUpdated: number;
   sampleSize: number;
 }
@@ -103,7 +106,7 @@ export class AnomalyDetector extends EventEmitter {
    */
   async submitMetrics(data: MetricData): Promise<void> {
     this.recentData.push(data);
-    
+
     // Keep only recent data
     if (this.recentData.length > this.maxDataPoints) {
       this.recentData = this.recentData.slice(-this.maxDataPoints);
@@ -142,9 +145,8 @@ export class AnomalyDetector extends EventEmitter {
     }
 
     if (filter?.timeRange) {
-      filtered = filtered.filter(a => 
-        a.timestamp >= filter.timeRange!.start && 
-        a.timestamp <= filter.timeRange!.end
+      filtered = filtered.filter(
+        a => a.timestamp >= filter.timeRange!.start && a.timestamp <= filter.timeRange!.end
       );
     }
 
@@ -163,11 +165,15 @@ export class AnomalyDetector extends EventEmitter {
    */
   addRule(rule: DetectionRule): void {
     this.rules.set(rule.id, rule);
-    logger.info('Anomaly detection rule added', {
-      ruleId: rule.id,
-      name: rule.name,
-      type: rule.type
-    }, ['anomaly', 'rule']);
+    logger.info(
+      'Anomaly detection rule added',
+      {
+        ruleId: rule.id,
+        name: rule.name,
+        type: rule.type,
+      },
+      ['anomaly', 'rule']
+    );
   }
 
   /**
@@ -230,14 +236,14 @@ export class AnomalyDetector extends EventEmitter {
       security: 0,
       performance: 0,
       operational: 0,
-      behavioral: 0
+      behavioral: 0,
     };
 
     const anomaliesBySeverity = {
       low: 0,
       medium: 0,
       high: 0,
-      critical: 0
+      critical: 0,
     };
 
     for (const anomaly of this.anomalies) {
@@ -252,7 +258,7 @@ export class AnomalyDetector extends EventEmitter {
       baselinesActive: this.baselines.size,
       rulesActive: Array.from(this.rules.values()).filter(r => r.enabled).length,
       detectionAccuracy: this.calculateAccuracy(),
-      falsePositiveRate: this.calculateFalsePositiveRate()
+      falsePositiveRate: this.calculateFalsePositiveRate(),
     };
   }
 
@@ -265,26 +271,22 @@ export class AnomalyDetector extends EventEmitter {
       id: 'sec-001',
       name: 'Multiple Failed Login Attempts',
       type: 'security',
-      conditions: [
-        { metric: 'failed_login_count', operator: '>', threshold: 5 }
-      ],
+      conditions: [{ metric: 'failed_login_count', operator: '>', threshold: 5 }],
       severity: 'high',
       enabled: true,
       autoResponse: {
         action: 'lock_account_temporarily',
-        conditions: ['failed_login_count > 10']
-      }
+        conditions: ['failed_login_count > 10'],
+      },
     });
 
     this.addRule({
       id: 'sec-002',
       name: 'Unusual Access Pattern',
       type: 'security',
-      conditions: [
-        { metric: 'access_pattern_deviation', operator: '>', threshold: 2.0 }
-      ],
+      conditions: [{ metric: 'access_pattern_deviation', operator: '>', threshold: 2.0 }],
       severity: 'medium',
-      enabled: true
+      enabled: true,
     });
 
     // Performance rules
@@ -292,22 +294,18 @@ export class AnomalyDetector extends EventEmitter {
       id: 'perf-001',
       name: 'High Response Time',
       type: 'performance',
-      conditions: [
-        { metric: 'response_time_ms', operator: '>', threshold: 1000 }
-      ],
+      conditions: [{ metric: 'response_time_ms', operator: '>', threshold: 1000 }],
       severity: 'medium',
-      enabled: true
+      enabled: true,
     });
 
     this.addRule({
       id: 'perf-002',
       name: 'High Error Rate',
       type: 'performance',
-      conditions: [
-        { metric: 'error_rate_percent', operator: '>', threshold: 5 }
-      ],
+      conditions: [{ metric: 'error_rate_percent', operator: '>', threshold: 5 }],
       severity: 'high',
-      enabled: true
+      enabled: true,
     });
 
     // Operational rules
@@ -315,22 +313,18 @@ export class AnomalyDetector extends EventEmitter {
       id: 'ops-001',
       name: 'High Memory Usage',
       type: 'operational',
-      conditions: [
-        { metric: 'memory_usage_percent', operator: '>', threshold: 85 }
-      ],
+      conditions: [{ metric: 'memory_usage_percent', operator: '>', threshold: 85 }],
       severity: 'medium',
-      enabled: true
+      enabled: true,
     });
 
     this.addRule({
       id: 'ops-002',
       name: 'High CPU Usage',
       type: 'operational',
-      conditions: [
-        { metric: 'cpu_usage_percent', operator: '>', threshold: 90 }
-      ],
+      conditions: [{ metric: 'cpu_usage_percent', operator: '>', threshold: 90 }],
       severity: 'high',
-      enabled: true
+      enabled: true,
     });
   }
 
@@ -342,7 +336,10 @@ export class AnomalyDetector extends EventEmitter {
       try {
         await this.runDetection();
       } catch (error) {
-        logger.error('Anomaly detection error', error instanceof Error ? error : new Error(String(error)));
+        logger.error(
+          'Anomaly detection error',
+          error instanceof Error ? error : new Error(String(error))
+        );
       }
     }, this.detectionInterval);
   }
@@ -355,7 +352,7 @@ export class AnomalyDetector extends EventEmitter {
     if (sourceData.length < 10) return; // Need minimum data points
 
     const metrics: Record<string, number[]> = {};
-    
+
     // Collect metric values
     for (const data of sourceData) {
       for (const [metricName, value] of Object.entries(data.metrics)) {
@@ -370,15 +367,16 @@ export class AnomalyDetector extends EventEmitter {
     const baselineMetrics: Record<string, any> = {};
     for (const [metricName, values] of Object.entries(metrics)) {
       const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
-      const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
+      const variance =
+        values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
       const stdDev = Math.sqrt(variance);
-      
+
       baselineMetrics[metricName] = {
         mean,
         stdDev,
         min: Math.min(...values),
         max: Math.max(...values),
-        trend: this.calculateTrend(values)
+        trend: this.calculateTrend(values),
       };
     }
 
@@ -386,7 +384,7 @@ export class AnomalyDetector extends EventEmitter {
       source,
       metrics: baselineMetrics,
       lastUpdated: Date.now(),
-      sampleSize: sourceData.length
+      sampleSize: sourceData.length,
     };
 
     this.baselines.set(source, baseline);
@@ -404,8 +402,9 @@ export class AnomalyDetector extends EventEmitter {
 
       // Calculate z-score
       const zScore = Math.abs((value - baselineMetric.mean) / baselineMetric.stdDev);
-      
-      if (zScore > 2.0) { // 2 standard deviations
+
+      if (zScore > 2.0) {
+        // 2 standard deviations
         const anomaly = await this.createAnomaly(data, baseline, metricName, value, zScore);
         anomalies.push(anomaly);
       }
@@ -434,7 +433,7 @@ export class AnomalyDetector extends EventEmitter {
   ): Promise<Anomaly> {
     const severity = this.calculateSeverity(deviation);
     const type = this.determineAnomalyType(metricName);
-    
+
     return {
       id: `anomaly-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
       type,
@@ -447,8 +446,12 @@ export class AnomalyDetector extends EventEmitter {
       metrics: { [metricName]: value },
       baseline: { [metricName]: baseline.metrics[metricName].mean },
       deviation,
-      recommendations: this.generateRecommendations(metricName, value, baseline.metrics[metricName]),
-      relatedEvents: await this.findRelatedEvents(data, metricName)
+      recommendations: this.generateRecommendations(
+        metricName,
+        value,
+        baseline.metrics[metricName]
+      ),
+      relatedEvents: await this.findRelatedEvents(data, metricName),
     };
   }
 
@@ -469,7 +472,7 @@ export class AnomalyDetector extends EventEmitter {
       baseline: {},
       deviation: 0,
       recommendations: this.generateRuleRecommendations(rule),
-      relatedEvents: []
+      relatedEvents: [],
     };
   }
 
@@ -477,13 +480,17 @@ export class AnomalyDetector extends EventEmitter {
    * Handle detected anomaly
    */
   private async handleAnomaly(anomaly: Anomaly): Promise<void> {
-    logger.warn('Anomaly detected', {
-      anomalyId: anomaly.id,
-      type: anomaly.type,
-      severity: anomaly.severity,
-      title: anomaly.title,
-      confidence: anomaly.confidence
-    }, ['anomaly', 'detected']);
+    logger.warn(
+      'Anomaly detected',
+      {
+        anomalyId: anomaly.id,
+        type: anomaly.type,
+        severity: anomaly.severity,
+        title: anomaly.title,
+        confidence: anomaly.confidence,
+      },
+      ['anomaly', 'detected']
+    );
 
     // Emit event for listeners
     this.emit('anomaly-detected', anomaly);
@@ -504,10 +511,14 @@ export class AnomalyDetector extends EventEmitter {
    */
   private async executeAutoResponse(anomaly: Anomaly): Promise<void> {
     // In a real implementation, execute the actual response
-    logger.info('Executing auto-response', {
-      anomalyId: anomaly.id,
-      action: anomaly.autoResponse!.action
-    }, ['anomaly', 'response']);
+    logger.info(
+      'Executing auto-response',
+      {
+        anomalyId: anomaly.id,
+        action: anomaly.autoResponse!.action,
+      },
+      ['anomaly', 'response']
+    );
 
     anomaly.autoResponse.executed = true;
     anomaly.autoResponse.result = 'success';
@@ -531,10 +542,10 @@ export class AnomalyDetector extends EventEmitter {
    */
   private async checkImmediateAnomalies(data: MetricData): Promise<void> {
     const criticalThresholds = {
-      'cpu_usage_percent': 95,
-      'memory_usage_percent': 95,
-      'error_rate_percent': 10,
-      'response_time_ms': 5000
+      cpu_usage_percent: 95,
+      memory_usage_percent: 95,
+      error_rate_percent: 10,
+      response_time_ms: 5000,
     };
 
     for (const [metric, threshold] of Object.entries(criticalThresholds)) {
@@ -553,7 +564,7 @@ export class AnomalyDetector extends EventEmitter {
           baseline: { [metric]: threshold },
           deviation: 0,
           recommendations: [`Immediately investigate ${metric}`, `Consider scaling resources`],
-          relatedEvents: []
+          relatedEvents: [],
         };
 
         this.anomalies.push(anomaly);
@@ -567,13 +578,13 @@ export class AnomalyDetector extends EventEmitter {
    */
   private calculateTrend(values: number[]): number {
     if (values.length < 2) return 0;
-    
+
     const n = values.length;
     const sumX = (n * (n - 1)) / 2;
     const sumY = values.reduce((sum, val) => sum + val, 0);
     const sumXY = values.reduce((sum, val, i) => sum + val * i, 0);
     const sumX2 = (n * (n - 1) * (2 * n - 1)) / 6;
-    
+
     return (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
   }
 
@@ -591,13 +602,25 @@ export class AnomalyDetector extends EventEmitter {
    * Determine anomaly type from metric
    */
   private determineAnomalyType(metricName: string): Anomaly['type'] {
-    if (metricName.includes('login') || metricName.includes('auth') || metricName.includes('security')) {
+    if (
+      metricName.includes('login') ||
+      metricName.includes('auth') ||
+      metricName.includes('security')
+    ) {
       return 'security';
     }
-    if (metricName.includes('response') || metricName.includes('throughput') || metricName.includes('error')) {
+    if (
+      metricName.includes('response') ||
+      metricName.includes('throughput') ||
+      metricName.includes('error')
+    ) {
       return 'performance';
     }
-    if (metricName.includes('cpu') || metricName.includes('memory') || metricName.includes('disk')) {
+    if (
+      metricName.includes('cpu') ||
+      metricName.includes('memory') ||
+      metricName.includes('disk')
+    ) {
       return 'operational';
     }
     return 'behavioral';
@@ -606,11 +629,7 @@ export class AnomalyDetector extends EventEmitter {
   /**
    * Generate recommendations for anomaly
    */
-  private generateRecommendations(
-    metricName: string,
-    value: number,
-    baseline: any
-  ): string[] {
+  private generateRecommendations(metricName: string, value: number, baseline: any): string[] {
     const recommendations: string[] = [];
 
     if (value > baseline.mean * 1.5) {

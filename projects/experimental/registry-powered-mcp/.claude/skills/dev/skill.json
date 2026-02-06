@@ -1,0 +1,11 @@
+{
+  "name": "dev",
+  "version": "1.0.0",
+  "description": "Start and manage the MCP registry development server",
+  "integrity": "sha256-pending",
+  "features": [],
+  "entry": "./index.ts",
+  "author": "Registry MCP Team",
+  "permissions": ["bash:execute"],
+  "routes": []
+}

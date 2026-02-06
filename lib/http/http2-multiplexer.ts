@@ -14,14 +14,10 @@ import {
   NetworkProtocol,
   NetworkConfiguration,
   OperationStatus,
-  ResourceState
+  ResourceState,
 } from '../core/core-types';
 
-import {
-  EnterpriseErrorCode,
-  createNetworkError,
-  createSystemError
-} from '../core/core-errors';
+import { EnterpriseErrorCode, createNetworkError, createSystemError } from '../core/core-errors';
 import { validateOrThrow, StringValidators, NumberValidators } from '../core/core-validation';
 
 import { type Socket, connect } from 'bun';
@@ -133,7 +129,7 @@ export class BunHTTP2Multiplexer {
     method: string,
     path: string,
     headers: Record<string, string> = {},
-    hostname?: string,
+    hostname?: string
   ): Promise<Response> {
     if (this.isDestroyed) {
       throw new Error('Multiplexer has been destroyed');
@@ -223,7 +219,7 @@ export class BunHTTP2Multiplexer {
               new Response(body, {
                 status: 200,
                 headers: stream.headers,
-              }),
+              })
             );
             this.streams.delete(streamId);
           }
@@ -234,14 +230,10 @@ export class BunHTTP2Multiplexer {
     }
   }
 
-  private buildFrame(
-    type: number,
-    flags: number,
-    streamId: number,
-    payload: Buffer,
-  ): Buffer {
+  private buildFrame(type: number, flags: number, streamId: number, payload: Buffer): Buffer {
     // Validate payload size to prevent buffer overflow
-    if (payload.length > 16384) { // HTTP/2 max frame size
+    if (payload.length > 16384) {
+      // HTTP/2 max frame size
       throw new Error(`Frame payload too large: ${payload.length} bytes`);
     }
 

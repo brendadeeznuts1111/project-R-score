@@ -1,5 +1,5 @@
 // lib/token-cookie-bridge.ts — Cookie-based token persistence with proper crypto (Risk: 2.501100000)
-import { Cookie, CookieMap } from "bun";
+import { Cookie, CookieMap } from 'bun';
 
 import { SecurityError, EnterpriseErrorCode } from '../core/core-errors';
 
@@ -20,7 +20,7 @@ interface CookieTokenConfig {
   scope?: string;
   maxAge?: number; // seconds, defaults to 3600 (1 hour)
   secure?: boolean;
-  sameSite?: "strict" | "lax" | "none";
+  sameSite?: 'strict' | 'lax' | 'none';
 }
 
 // Secure encryption key management
@@ -29,7 +29,7 @@ class EncryptionKeyManager {
   private static readonly KEY_LENGTH = 256;
   private static readonly IV_LENGTH = 12;
   private static readonly TAG_LENGTH = 16;
-  
+
   // Cache dev key for process lifetime to ensure token decryptability
   private static devKeyCache: Uint8Array | null = null;
 
@@ -55,7 +55,7 @@ class EncryptionKeyManager {
     // SECURITY: Require environment-specific key material
     // In production, this MUST be loaded from secure storage (keychain, secrets manager, etc.)
     const seed = process.env.TOKEN_ENCRYPTION_SEED;
-    
+
     if (!seed) {
       const isDev = Bun.env.NODE_ENV === 'development' || Bun.env.NODE_ENV === 'dev';
       if (!isDev) {
@@ -66,7 +66,9 @@ class EncryptionKeyManager {
       }
       // In development only, use cached key or generate and cache one
       if (!EncryptionKeyManager.devKeyCache) {
-        console.warn('⚠️  SECURITY WARNING: Using insecure dev-only encryption seed. Set TOKEN_ENCRYPTION_SEED for secure operation. Tokens will be invalidated on process restart.');
+        console.warn(
+          '⚠️  SECURITY WARNING: Using insecure dev-only encryption seed. Set TOKEN_ENCRYPTION_SEED for secure operation. Tokens will be invalidated on process restart.'
+        );
         EncryptionKeyManager.devKeyCache = crypto.getRandomValues(new Uint8Array(32));
       }
       return EncryptionKeyManager.devKeyCache;
@@ -76,20 +78,16 @@ class EncryptionKeyManager {
     const data = encoder.encode(seed);
 
     // Use PBKDF2 to derive a proper key
-    const importedKey = await crypto.subtle.importKey(
-      'raw',
-      data,
-      { name: 'PBKDF2' },
-      false,
-      ['deriveBits']
-    );
+    const importedKey = await crypto.subtle.importKey('raw', data, { name: 'PBKDF2' }, false, [
+      'deriveBits',
+    ]);
 
     const bits = await crypto.subtle.deriveBits(
       {
         name: 'PBKDF2',
         salt: encoder.encode('token-bridge-salt'),
         iterations: 100000,
-        hash: 'SHA-256'
+        hash: 'SHA-256',
       },
       importedKey,
       EncryptionKeyManager.KEY_LENGTH
@@ -105,11 +103,11 @@ class EncryptionKeyManager {
 
 export class CookieTokenBridge {
   private cookieMap: CookieMap;
-  private readonly COOKIE_PREFIX = "fw_token"; // factory-wager
+  private readonly COOKIE_PREFIX = 'fw_token'; // factory-wager
   private readonly keyManager = new EncryptionKeyManager();
 
   constructor(requestHeaders?: Headers) {
-    const cookieHeader = requestHeaders?.get("cookie") || "";
+    const cookieHeader = requestHeaders?.get('cookie') || '';
     this.cookieMap = new CookieMap(cookieHeader);
   }
 
@@ -117,9 +115,12 @@ export class CookieTokenBridge {
    * Store token in cookie with UTI-scoped name and proper encryption
    * Cookie name: fw_token.{projectSlug}.{scope}
    */
-  async storeToken(token: string, config: CookieTokenConfig): Promise<{ headers: string[]; riskScore: number }> {
+  async storeToken(
+    token: string,
+    config: CookieTokenConfig
+  ): Promise<{ headers: string[]; riskScore: number }> {
     const startNs = Bun.nanoseconds();
-    const cookieName = `${this.COOKIE_PREFIX}.${config.projectSlug}.${config.scope || "default"}`;
+    const cookieName = `${this.COOKIE_PREFIX}.${config.projectSlug}.${config.scope || 'default'}`;
 
     // Validate input
     if (!token || typeof token !== 'string') {
@@ -137,7 +138,7 @@ export class CookieTokenBridge {
       maxAge: config.maxAge || 3600,
       httpOnly: true,
       secure: config.secure !== false,
-      sameSite: config.sameSite || "strict",
+      sameSite: config.sameSite || 'strict',
       partitioned: true,
     });
 
@@ -157,10 +158,10 @@ export class CookieTokenBridge {
    */
   async retrieveToken(
     projectSlug: string,
-    scope?: string,
-  ): Promise<{ token: string | null; source: "cookie" | "keychain" | "none"; latencyNs: number }> {
+    scope?: string
+  ): Promise<{ token: string | null; source: 'cookie' | 'keychain' | 'none'; latencyNs: number }> {
     const startNs = Bun.nanoseconds();
-    const cookieName = `${this.COOKIE_PREFIX}.${projectSlug}.${scope || "default"}`;
+    const cookieName = `${this.COOKIE_PREFIX}.${projectSlug}.${scope || 'default'}`;
     const encrypted = this.cookieMap.get(cookieName);
 
     if (encrypted) {
@@ -169,7 +170,7 @@ export class CookieTokenBridge {
         if (token) {
           return {
             token,
-            source: "cookie",
+            source: 'cookie',
             latencyNs: Number(Bun.nanoseconds() - startNs),
           };
         }
@@ -181,7 +182,7 @@ export class CookieTokenBridge {
 
     return {
       token: null,
-      source: "keychain",
+      source: 'keychain',
       latencyNs: Number(Bun.nanoseconds() - startNs) + 50000,
     };
   }
@@ -190,7 +191,7 @@ export class CookieTokenBridge {
    * Delete token (logout/cleanup)
    */
   deleteToken(projectSlug: string, scope?: string): string[] {
-    const cookieName = `${this.COOKIE_PREFIX}.${projectSlug}.${scope || "default"}`;
+    const cookieName = `${this.COOKIE_PREFIX}.${projectSlug}.${scope || 'default'}`;
     this.cookieMap.delete({
       name: cookieName,
       path: `/projects/${projectSlug}`,
@@ -203,9 +204,13 @@ export class CookieTokenBridge {
    * 20-Column Cookie Audit Matrix
    */
   renderCookieMatrix(): void {
-    console.log(`\n\x1b[36m◈══════════════════════════════════════════════════════════════════════════════════════◈\x1b[0m`);
+    console.log(
+      `\n\x1b[36m◈══════════════════════════════════════════════════════════════════════════════════════◈\x1b[0m`
+    );
     console.log(`\x1b[36m  COOKIE TOKEN MATRIX — Secure Browser Persistence\x1b[0m`);
-    console.log(`\x1b[36m◈══════════════════════════════════════════════════════════════════════════════════════◈\x1b[0m\n`);
+    console.log(
+      `\x1b[36m◈══════════════════════════════════════════════════════════════════════════════════════◈\x1b[0m\n`
+    );
 
     const entries: Array<[string, string]> = [];
     for (const [name, value] of this.cookieMap) {
@@ -213,16 +218,16 @@ export class CookieTokenBridge {
     }
 
     if (entries.length === 0) {
-      console.log("\x1b[90m  No factory-wager tokens in cookie store\x1b[0m");
+      console.log('\x1b[90m  No factory-wager tokens in cookie store\x1b[0m');
       return;
     }
 
     const tableData = entries.map(([name, value]) => ({
-      "UTI Cookie": name.slice(0, 30),
-      Project: name.split(".")[2] || "unknown",
-      Scope: name.split(".")[3] || "default",
+      'UTI Cookie': name.slice(0, 30),
+      Project: name.split('.')[2] || 'unknown',
+      Scope: name.split('.')[3] || 'default',
       Encrypted: value.length > 20 ? `${value.slice(0, 8)}...${value.slice(-8)}` : value,
-      Security: "httpOnly+secure",
+      Security: 'httpOnly+secure',
     }));
 
     console.log(Bun.inspect.table(tableData, { colors: true }));
@@ -235,11 +240,7 @@ export class CookieTokenBridge {
     const encoder = new TextEncoder();
     const data = encoder.encode(token);
 
-    const encrypted = await crypto.subtle.encrypt(
-      { name: 'AES-GCM', iv },
-      key,
-      data
-    );
+    const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, data);
 
     // Combine IV and encrypted data for storage
     const combined = new Uint8Array(iv.length + encrypted.byteLength);
@@ -252,7 +253,9 @@ export class CookieTokenBridge {
   private async decryptToken(encrypted: string): Promise<string> {
     try {
       const combined = new Uint8Array(
-        atob(encrypted).split('').map(char => char.charCodeAt(0))
+        atob(encrypted)
+          .split('')
+          .map(char => char.charCodeAt(0))
       );
 
       if (combined.length < EncryptionKeyManager.IV_LENGTH) {
@@ -263,23 +266,21 @@ export class CookieTokenBridge {
       const data = combined.slice(EncryptionKeyManager.IV_LENGTH);
 
       const key = await this.keyManager.getMasterKey();
-      const decrypted = await crypto.subtle.decrypt(
-        { name: 'AES-GCM', iv },
-        key,
-        data
-      );
+      const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
 
       const decoder = new TextDecoder();
       return decoder.decode(decrypted);
     } catch (error) {
-      throw new Error(`Decryption failed: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Decryption failed: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 }
 
 function withSetCookieHeaders(headers: string[]): Headers {
-  const out = new Headers({ "Content-Type": "application/json" });
-  for (const h of headers) out.append("Set-Cookie", h);
+  const out = new Headers({ 'Content-Type': 'application/json' });
+  for (const h of headers) out.append('Set-Cookie', h);
   return out;
 }
 
@@ -288,8 +289,8 @@ export function createTokenServer() {
   return Bun.serve({
     port: TOKEN_SERVER_PORT,
     routes: {
-      "/api/tokens/:project": {
-        POST: async (req) => {
+      '/api/tokens/:project': {
+        POST: async req => {
           const project = req.params.project;
           const body = await req.json();
           const bridge = new CookieTokenBridge(req.headers);
@@ -307,17 +308,17 @@ export function createTokenServer() {
               project,
               timestamp: Bun.nanoseconds(),
             }),
-            { headers: withSetCookieHeaders(headers) },
+            { headers: withSetCookieHeaders(headers) }
           );
         },
 
-        GET: async (req) => {
+        GET: async req => {
           const project = req.params.project;
           const bridge = new CookieTokenBridge(req.headers);
           const { token, source, latencyNs } = await bridge.retrieveToken(project);
 
           if (!token) {
-            return new Response(JSON.stringify({ error: "Token not found" }), { status: 404 });
+            return new Response(JSON.stringify({ error: 'Token not found' }), { status: 404 });
           }
 
           return new Response(
@@ -325,13 +326,13 @@ export function createTokenServer() {
               token: `${token.slice(0, 8)}...${token.slice(-4)}`,
               source,
               latencyNs,
-              riskScore: source === "cookie" ? 2.501100000 : 1.000001000,
+              riskScore: source === 'cookie' ? 2.5011 : 1.000001,
             }),
-            { headers: { "Content-Type": "application/json" } },
+            { headers: { 'Content-Type': 'application/json' } }
           );
         },
 
-        DELETE: (req) => {
+        DELETE: req => {
           const project = req.params.project;
           const bridge = new CookieTokenBridge(req.headers);
           const headers = bridge.deleteToken(project);
@@ -342,10 +343,10 @@ export function createTokenServer() {
         },
       },
 
-      "/api/tokens/audit": (req) => {
+      '/api/tokens/audit': req => {
         const bridge = new CookieTokenBridge(req.headers);
         bridge.renderCookieMatrix();
-        return new Response("Audit logged to console");
+        return new Response('Audit logged to console');
       },
     },
   });

@@ -1,10 +1,10 @@
 #!/usr/bin/env bun
 /**
  * Performance Optimization Suite
- * 
+ *
  * Addresses critical performance bottlenecks identified in benchmark testing:
  * 1. spawnSync Base Performance (21x slower than target)
- * 2. Environment Variables Overhead (7x slower than target)  
+ * 2. Environment Variables Overhead (7x slower than target)
  * 3. Server Response Time (3.3x slower than target)
  */
 
@@ -22,31 +22,33 @@ class SpawnOptimizer {
     if (!command || typeof command !== 'string') {
       throw new Error('Invalid command: command must be a non-empty string');
     }
-    
+
     // Comprehensive dangerous character check
     const dangerousPatterns = [
-      /[;|&]/,           // ; || && & |
-      /\$\(/,            // $(command)
-      /`/,                // `command`
-      /\$\{/,            // ${variable}
-      /[<>]/,            // redirection
-      /\\x00/,           // null byte
-      /\n/,              // newline
-      /\r/,              // carriage return
-      /\.\./,             // path traversal
+      /[;|&]/, // ; || && & |
+      /\$\(/, // $(command)
+      /`/, // `command`
+      /\$\{/, // ${variable}
+      /[<>]/, // redirection
+      /\\x00/, // null byte
+      /\n/, // newline
+      /\r/, // carriage return
+      /\.\./, // path traversal
     ];
-    
+
     for (const pattern of dangerousPatterns) {
       if (pattern.test(command)) {
-        throw new Error(`Security error: potentially dangerous characters in command: ${pattern.exec(command)?.[0]}`);
+        throw new Error(
+          `Security error: potentially dangerous characters in command: ${pattern.exec(command)?.[0]}`
+        );
       }
     }
-    
+
     // Validate args
     if (!Array.isArray(args)) {
       throw new Error('Invalid args: args must be an array');
     }
-    
+
     for (const arg of args) {
       if (typeof arg !== 'string') {
         throw new Error('Invalid args: all arguments must be strings');
@@ -62,7 +64,11 @@ class SpawnOptimizer {
   /**
    * Optimized spawn with performance monitoring and security validation
    */
-  static async optimizedSpawn(command: string, args: string[] = [], options: Omit<Parameters<typeof Bun.spawn>[1], 'stdio' | 'timeout'> = {}): Promise<{
+  static async optimizedSpawn(
+    command: string,
+    args: string[] = [],
+    options: Omit<Parameters<typeof Bun.spawn>[1], 'stdio' | 'timeout'> = {}
+  ): Promise<{
     stdout: string;
     stderr: string;
     exitCode: number;
@@ -73,19 +79,19 @@ class SpawnOptimizer {
 
     const startTime = performance.now();
     let proc: ReturnType<typeof Bun.spawn> | null = null;
-    
+
     try {
       // Use Bun.spawn with proper response streaming
       proc = Bun.spawn([command, ...args], {
         stdio: ['pipe', 'pipe', 'pipe'],
         timeout: 10000,
-        ...options
+        ...options,
       });
 
       // Use Bun's Response API for efficient output collection
       const [stdout, stderr] = await Promise.all([
         new Response(proc.stdout).text(),
-        new Response(proc.stderr).text()
+        new Response(proc.stderr).text(),
       ]);
 
       // Wait for completion
@@ -96,12 +102,11 @@ class SpawnOptimizer {
         stdout: stdout.trim(),
         stderr: stderr.trim(),
         exitCode,
-        executionTime
+        executionTime,
       };
-
     } catch (error: any) {
       const executionTime = performance.now() - startTime;
-      
+
       // Ensure process cleanup on error
       if (proc && proc.exitCode === null) {
         try {
@@ -112,7 +117,9 @@ class SpawnOptimizer {
         }
       }
 
-      throw new Error(`Spawn failed after ${executionTime.toFixed(2)}ms: ${error?.message || String(error)}`);
+      throw new Error(
+        `Spawn failed after ${executionTime.toFixed(2)}ms: ${error?.message || String(error)}`
+      );
     } finally {
       // Final cleanup check
       if (proc && proc.exitCode === null) {
@@ -134,18 +141,18 @@ class SpawnOptimizer {
 
     const startTime = performance.now();
     let proc: ReturnType<typeof Bun.spawn> | null = null;
-    
+
     try {
       // Use Bun.spawn for maximum performance
       proc = Bun.spawn([command, ...args], {
         stdout: 'pipe',
         stderr: 'pipe',
-        stdin: 'inherit'
+        stdin: 'inherit',
       });
 
       const [stdout, stderr] = await Promise.all([
         new Response(proc.stdout).text(),
-        new Response(proc.stderr).text()
+        new Response(proc.stderr).text(),
       ]);
 
       await proc.exited;
@@ -156,10 +163,9 @@ class SpawnOptimizer {
       }
 
       return stdout.trim();
-
     } catch (error) {
       const executionTime = performance.now() - startTime;
-      
+
       // Ensure process cleanup on error
       if (proc && proc.exitCode === null) {
         try {
@@ -170,7 +176,9 @@ class SpawnOptimizer {
         }
       }
 
-      throw new Error(`Fast spawn failed after ${executionTime.toFixed(2)}ms: ${(error as Error).message}`);
+      throw new Error(
+        `Fast spawn failed after ${executionTime.toFixed(2)}ms: ${(error as Error).message}`
+      );
     } finally {
       // Final cleanup check
       if (proc && proc.exitCode === null) {
@@ -188,26 +196,26 @@ class SpawnOptimizer {
    */
   static async benchmarkSpawn(): Promise<void> {
     console.log('🚀 SPAWN PERFORMANCE BENCHMARK');
-    console.log('=' .repeat(50));
+    console.log('='.repeat(50));
 
     const tests = [
       {
         name: 'Standard Bun.spawnSync',
-        fn: () => Bun.spawnSync(['echo', 'test']).stdout.toString().trim()
+        fn: () => Bun.spawnSync(['echo', 'test']).stdout.toString().trim(),
       },
       {
         name: 'Optimized async spawn',
-        fn: () => this.optimizedSpawn('echo', ['test'])
+        fn: () => this.optimizedSpawn('echo', ['test']),
       },
       {
         name: 'Ultra-fast Bun.spawn',
-        fn: () => this.fastSpawn('echo', ['test'])
-      }
+        fn: () => this.fastSpawn('echo', ['test']),
+      },
     ];
 
     for (const test of tests) {
       const times: number[] = [];
-      
+
       for (let i = 0; i < 10; i++) {
         const start = performance.now();
         try {
@@ -222,7 +230,7 @@ class SpawnOptimizer {
         const avg = times.reduce((a, b) => a + b, 0) / times.length;
         const min = Math.min(...times);
         const max = Math.max(...times);
-        
+
         console.log(`${test.name}:`);
         console.log(`   Average: ${avg.toFixed(2)}ms`);
         console.log(`   Min: ${min.toFixed(2)}ms`);
@@ -246,7 +254,7 @@ class EnvironmentOptimizer {
    */
   static getOptimizedEnv(key: string): string | undefined {
     const cached = this.ENV_CACHE.get(key);
-    if (cached && (Date.now() - cached.timestamp) < this.ENV_CACHE_TTL) {
+    if (cached && Date.now() - cached.timestamp < this.ENV_CACHE_TTL) {
       return cached.value;
     }
 
@@ -264,14 +272,14 @@ class EnvironmentOptimizer {
   static cleanupExpiredCache(): number {
     const now = Date.now();
     let cleaned = 0;
-    
+
     for (const [key, cached] of this.ENV_CACHE.entries()) {
-      if ((now - cached.timestamp) >= this.ENV_CACHE_TTL) {
+      if (now - cached.timestamp >= this.ENV_CACHE_TTL) {
         this.ENV_CACHE.delete(key);
         cleaned++;
       }
     }
-    
+
     return cleaned;
   }
 
@@ -280,11 +288,11 @@ class EnvironmentOptimizer {
    */
   static getBatchEnv(keys: string[]): Record<string, string | undefined> {
     const result: Record<string, string | undefined> = {};
-    
+
     for (const key of keys) {
       result[key] = this.getOptimizedEnv(key);
     }
-    
+
     return result;
   }
 
@@ -298,7 +306,7 @@ class EnvironmentOptimizer {
       'USER',
       'NODE_ENV',
       'BUN_FEATURE_FLAG_DISABLE_NATIVE_DEPENDENCY_LINKER',
-      'BUN_FEATURE_FLAG_DISABLE_IGNORE_SCRIPTS'
+      'BUN_FEATURE_FLAG_DISABLE_IGNORE_SCRIPTS',
     ];
 
     this.getBatchEnv(criticalVars);
@@ -310,7 +318,7 @@ class EnvironmentOptimizer {
    */
   static async benchmarkEnvAccess(): Promise<void> {
     console.log('🌍 ENVIRONMENT VARIABLE BENCHMARK');
-    console.log('=' .repeat(50));
+    console.log('='.repeat(50));
 
     const testVar = 'PATH';
     const iterations = 10000;
@@ -352,19 +360,19 @@ class ServerOptimizer {
   static createOptimizedServer(port: number = 3000): ReturnType<typeof Bun.serve> {
     const server = Bun.serve({
       port,
-      fetch: async (req) => {
+      fetch: async req => {
         const start = performance.now();
-        
+
         try {
           // Check cache first
           const cacheKey = `${req.method}:${req.url}`;
           const cached = this.responseCache.get(cacheKey);
-          
-          if (cached && (Date.now() - cached.timestamp) < this.CACHE_TTL) {
+
+          if (cached && Date.now() - cached.timestamp < this.CACHE_TTL) {
             const responseTime = performance.now() - start;
             console.log(`Cache hit in ${responseTime.toFixed(2)}ms`);
             return new Response(JSON.stringify(cached.data), {
-              headers: { 'Content-Type': 'application/json' }
+              headers: { 'Content-Type': 'application/json' },
             });
           }
 
@@ -373,35 +381,35 @@ class ServerOptimizer {
             message: 'Optimized response',
             timestamp: Date.now(),
             url: req.url,
-            method: req.method
+            method: req.method,
           };
 
           // Only cache GET responses
-          if (req.method === 'GET') this.responseCache.set(cacheKey, {
-            data,
-            timestamp: Date.now()
-          });
+          if (req.method === 'GET')
+            this.responseCache.set(cacheKey, {
+              data,
+              timestamp: Date.now(),
+            });
 
           const responseTime = performance.now() - start;
           console.log(`Response generated in ${responseTime.toFixed(2)}ms`);
 
           return new Response(JSON.stringify(data), {
-            headers: { 
+            headers: {
               'Content-Type': 'application/json',
-              'X-Response-Time': `${responseTime.toFixed(2)}ms`
-            }
+              'X-Response-Time': `${responseTime.toFixed(2)}ms`,
+            },
           });
-
         } catch (error) {
           const responseTime = performance.now() - start;
           console.log(`Error in ${responseTime.toFixed(2)}ms: ${error.message}`);
-          
+
           return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
             status: 500,
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
           });
         }
-      }
+      },
     });
 
     this.server = server;
@@ -414,25 +422,25 @@ class ServerOptimizer {
    */
   static async benchmarkServer(): Promise<void> {
     console.log('🌐 SERVER PERFORMANCE BENCHMARK');
-    console.log('=' .repeat(50));
+    console.log('='.repeat(50));
 
     const server = this.createOptimizedServer(3001);
-    
+
     // Wait for server to start
     await Bun.sleep(100);
 
     const testUrls = [
       'http://localhost:3001/',
       'http://localhost:3001/test',
-      'http://localhost:3001/api/data'
+      'http://localhost:3001/api/data',
     ];
 
     for (const url of testUrls) {
       const times: number[] = [];
-      
+
       for (let i = 0; i < 20; i++) {
         const start = performance.now();
-        
+
         try {
           const response = await fetch(url);
           await response.text();
@@ -446,7 +454,7 @@ class ServerOptimizer {
         const avg = times.reduce((a, b) => a + b, 0) / times.length;
         const min = Math.min(...times);
         const max = Math.max(...times);
-        
+
         console.log(`${url}:`);
         console.log(`   Average: ${avg.toFixed(2)}ms`);
         console.log(`   Min: ${min.toFixed(2)}ms`);
@@ -475,7 +483,7 @@ class ServerOptimizer {
 class OptimizationRunner {
   static async runAllOptimizations(): Promise<void> {
     console.log('🔧 PERFORMANCE OPTIMIZATION SUITE');
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
     console.log('Addressing critical performance bottlenecks...\n');
 
     try {
@@ -496,7 +504,6 @@ class OptimizationRunner {
       console.log('   • spawnSync: 21x → 2-3x faster');
       console.log('   • Environment vars: 7x → 1-2x faster');
       console.log('   • Server response: 3.3x → <1x faster');
-
     } catch (error) {
       console.error('❌ Optimization failed:', error);
       process.exit(1);
@@ -517,7 +524,7 @@ export { SpawnOptimizer, EnvironmentOptimizer, ServerOptimizer, OptimizationRunn
 async function main(): Promise<void> {
   // Preload environment variables
   EnvironmentOptimizer.preloadCriticalEnv();
-  
+
   // Run all optimizations
   await OptimizationRunner.runAllOptimizations();
 }

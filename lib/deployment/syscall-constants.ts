@@ -11,7 +11,6 @@
 
 import { PerformanceTier } from '../core/core-types';
 
-
 /**
  * System call platforms enumeration
  */
@@ -19,7 +18,7 @@ export enum SyscallPlatform {
   LINUX = 'linux',
   DARWIN = 'darwin',
   WINDOWS = 'windows',
-  FALLBACK = 'fallback'
+  FALLBACK = 'fallback',
 }
 
 /**
@@ -32,18 +31,18 @@ export enum SyscallOperation {
   CLONE_FILE = 'clone_file',
   FCOPY_FILE = 'fcopyfile',
   FALLBACK_WRITE = 'fallback_write',
-  FILE_SINK_STREAM = 'file_sink_stream'
+  FILE_SINK_STREAM = 'file_sink_stream',
 }
 
 /**
  * Performance tiers for system call evaluation
  */
 export enum PerformanceTier {
-  EXCELLENT = 'excellent',    // Optimal performance
-  GOOD = 'good',             // Good performance
-  AVERAGE = 'average',       // Acceptable performance
-  POOR = 'poor',             // Suboptimal, avoid when possible
-  LEGACY = 'legacy'          // Deprecated, only for compatibility
+  EXCELLENT = 'excellent', // Optimal performance
+  GOOD = 'good', // Good performance
+  AVERAGE = 'average', // Acceptable performance
+  POOR = 'poor', // Suboptimal, avoid when possible
+  LEGACY = 'legacy', // Deprecated, only for compatibility
 }
 
 /**
@@ -51,7 +50,7 @@ export enum PerformanceTier {
  */
 export interface SyscallMetadata {
   platform: SyscallPlatform;
-  riskScore: number;  // 0-10, lower is better
+  riskScore: number; // 0-10, lower is better
   performanceTier: PerformanceTier;
   description: string;
   optimization: string;
@@ -74,7 +73,7 @@ export const ENTERPRISE_SYSCALL_CONSTANTS: Record<SyscallOperation, SyscallMetad
     useCase: 'Large file transfers, backup operations, data migration',
     alternatives: [SyscallOperation.SEND_FILE, SyscallOperation.SPLICE],
     requirements: ['Linux kernel >= 4.5', 'Both FDs must be regular files'],
-    limitations: ['Linux only', 'Cannot copy between non-regular files']
+    limitations: ['Linux only', 'Cannot copy between non-regular files'],
   },
 
   [SyscallOperation.SEND_FILE]: {
@@ -86,7 +85,7 @@ export const ENTERPRISE_SYSCALL_CONSTANTS: Record<SyscallOperation, SyscallMetad
     useCase: 'Static file serving, media streaming, file downloads',
     alternatives: [SyscallOperation.COPY_FILE_RANGE, SyscallOperation.SPLICE],
     requirements: ['Linux kernel >= 2.2', 'Source must be mmap-able file'],
-    limitations: ['Source must be file, destination must be socket']
+    limitations: ['Source must be file, destination must be socket'],
   },
 
   [SyscallOperation.SPLICE]: {
@@ -98,7 +97,7 @@ export const ENTERPRISE_SYSCALL_CONSTANTS: Record<SyscallOperation, SyscallMetad
     useCase: 'Proxy servers, data piping, in-memory transfers',
     alternatives: [SyscallOperation.COPY_FILE_RANGE, SyscallOperation.SEND_FILE],
     requirements: ['Linux kernel >= 2.6.17', 'Pipe buffer available'],
-    limitations: ['Requires pipe setup', 'More complex error handling']
+    limitations: ['Requires pipe setup', 'More complex error handling'],
   },
 
   [SyscallOperation.CLONE_FILE]: {
@@ -110,7 +109,7 @@ export const ENTERPRISE_SYSCALL_CONSTANTS: Record<SyscallOperation, SyscallMetad
     useCase: 'Snapshot creation, VM images, database backups',
     alternatives: [SyscallOperation.FCOPY_FILE],
     requirements: ['Linux kernel >= 4.5', 'Btrfs or XFS filesystem'],
-    limitations: ['Filesystem dependent', 'Not all filesystems support CoW']
+    limitations: ['Filesystem dependent', 'Not all filesystems support CoW'],
   },
 
   [SyscallOperation.FCOPY_FILE]: {
@@ -122,7 +121,7 @@ export const ENTERPRISE_SYSCALL_CONSTANTS: Record<SyscallOperation, SyscallMetad
     useCase: 'MacOS applications, iOS development, APFS volumes',
     alternatives: [SyscallOperation.CLONE_FILE],
     requirements: ['MacOS >= 10.12', 'APFS filesystem'],
-    limitations: ['MacOS only', 'APFS requirement']
+    limitations: ['MacOS only', 'APFS requirement'],
   },
 
   [SyscallOperation.FALLBACK_WRITE]: {
@@ -134,7 +133,7 @@ export const ENTERPRISE_SYSCALL_CONSTANTS: Record<SyscallOperation, SyscallMetad
     useCase: 'Cross-platform compatibility, unsupported filesystems',
     alternatives: [],
     requirements: [],
-    limitations: ['User-space copies', 'Higher memory usage', 'Slower performance']
+    limitations: ['User-space copies', 'Higher memory usage', 'Slower performance'],
   },
 
   [SyscallOperation.FILE_SINK_STREAM]: {
@@ -146,8 +145,8 @@ export const ENTERPRISE_SYSCALL_CONSTANTS: Record<SyscallOperation, SyscallMetad
     useCase: 'Log streaming, real-time data capture, monitoring systems',
     alternatives: [SyscallOperation.SPLICE],
     requirements: ['Linux kernel >= 3.10', 'aio support'],
-    limitations: ['Complex setup', 'Requires careful buffer management']
-  }
+    limitations: ['Complex setup', 'Requires careful buffer management'],
+  },
 } as const;
 
 // Platform detection and optimal syscall selection
@@ -191,23 +190,22 @@ export class SyscallOptimizer {
     // Filter by use case
     let filtered = availableSyscalls.filter(op => {
       const meta = ENTERPRISE_SYSCALL_CONSTANTS[op];
-      return meta.useCase.toLowerCase().includes(useCase.toLowerCase()) ||
-             useCase.toLowerCase().includes(meta.useCase.toLowerCase());
+      return (
+        meta.useCase.toLowerCase().includes(useCase.toLowerCase()) ||
+        useCase.toLowerCase().includes(meta.useCase.toLowerCase())
+      );
     });
 
     // Apply additional filters
     if (options) {
       if (options.sourceType === 'file' && options.destinationType === 'socket') {
-        filtered = filtered.filter(op =>
-          op === SyscallOperation.SEND_FILE ||
-          op === SyscallOperation.FALLBACK_WRITE
+        filtered = filtered.filter(
+          op => op === SyscallOperation.SEND_FILE || op === SyscallOperation.FALLBACK_WRITE
         );
       }
 
       if (options.filesystem === 'apfs') {
-        filtered = filtered.filter(op =>
-          op === SyscallOperation.FCOPY_FILE
-        );
+        filtered = filtered.filter(op => op === SyscallOperation.FCOPY_FILE);
       }
     }
 
@@ -224,7 +222,7 @@ export class SyscallOptimizer {
           [PerformanceTier.GOOD]: 1,
           [PerformanceTier.AVERAGE]: 2,
           [PerformanceTier.POOR]: 3,
-          [PerformanceTier.LEGACY]: 4
+          [PerformanceTier.LEGACY]: 4,
         };
 
         if (tierOrder[metaA.performanceTier] !== tierOrder[metaB.performanceTier]) {
@@ -250,7 +248,10 @@ export class SyscallOptimizer {
   }
 
   // Compare two syscalls
-  public static compareSyscalls(a: SyscallOperation, b: SyscallOperation): {
+  public static compareSyscalls(
+    a: SyscallOperation,
+    b: SyscallOperation
+  ): {
     better: SyscallOperation | 'equal';
     metrics: {
       performance: number; // -1 = worse, 0 = equal, 1 = better
@@ -266,7 +267,7 @@ export class SyscallOptimizer {
       [PerformanceTier.GOOD]: 1,
       [PerformanceTier.AVERAGE]: 2,
       [PerformanceTier.POOR]: 3,
-      [PerformanceTier.LEGACY]: 4
+      [PerformanceTier.LEGACY]: 4,
     };
 
     const performance = tierOrder[metaB.performanceTier] - tierOrder[metaA.performanceTier];
@@ -289,8 +290,8 @@ export class SyscallOptimizer {
       metrics: {
         performance,
         risk,
-        platformSupport
-      }
+        platformSupport,
+      },
     };
   }
 }
@@ -306,7 +307,7 @@ export const SYSCALL_RISKS = {
   DARWIN_CLONEFILE: ENTERPRISE_SYSCALL_CONSTANTS[SyscallOperation.CLONE_FILE].riskScore,
   DARWIN_FCOPYFILE: ENTERPRISE_SYSCALL_CONSTANTS[SyscallOperation.FCOPY_FILE].riskScore,
   FALLBACK_WRITE: ENTERPRISE_SYSCALL_CONSTANTS[SyscallOperation.FALLBACK_WRITE].riskScore,
-  FILESINK_STREAM: ENTERPRISE_SYSCALL_CONSTANTS[SyscallOperation.FILE_SINK_STREAM].riskScore
+  FILESINK_STREAM: ENTERPRISE_SYSCALL_CONSTANTS[SyscallOperation.FILE_SINK_STREAM].riskScore,
 } as const;
 
 /**
@@ -327,7 +328,7 @@ export type EnterpriseSyscallName = keyof typeof ENTERPRISE_SYSCALL_RISKS;
 /**
  * Enterprise system call risk type
  */
-export type EnterpriseSyscallRisk = typeof ENTERPRISE_SYSCALL_RISKS[EnterpriseSyscallName];
+export type EnterpriseSyscallRisk = (typeof ENTERPRISE_SYSCALL_RISKS)[EnterpriseSyscallName];
 
 /**
  * Legacy syscall name type for backward compatibility
@@ -364,7 +365,10 @@ export function getSyscallMetadata(syscall: SyscallOperation): SyscallMetadata {
  */
 export function getSyscallsByPlatform(platform: SyscallPlatform): SyscallOperation[] {
   return Object.entries(ENTERPRISE_SYSCALL_CONSTANTS)
-    .filter(([_, metadata]) => metadata.platform === platform || metadata.platform === SyscallPlatform.FALLBACK)
+    .filter(
+      ([_, metadata]) =>
+        metadata.platform === platform || metadata.platform === SyscallPlatform.FALLBACK
+    )
     .map(([name]) => name as SyscallOperation);
 }
 

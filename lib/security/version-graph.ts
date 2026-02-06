@@ -26,8 +26,8 @@ export class VersionGraph {
       visual: {
         color: this.getColorForAction(node.action),
         icon: this.getIconForAction(node.action),
-        theme: `factorywager-version-${node.action.toLowerCase()}`
-      }
+        theme: `factorywager-version-${node.action.toLowerCase()}`,
+      },
     });
 
     await this.r2Bucket.put(graphKey, JSON.stringify(graph, null, 2), {
@@ -36,8 +36,8 @@ export class VersionGraph {
         'graph:key': key,
         'graph:versions': graph.length.toString(),
         'graph:latest': node.version,
-        'visual:render': 'force-directed'
-      }
+        'visual:render': 'force-directed',
+      },
     });
 
     await this.generateVisualization(key, graph);
@@ -64,11 +64,11 @@ export class VersionGraph {
     const d3Key = `versions/viz/${key}/d3.json`;
 
     await this.r2Bucket.put(mermaidKey, mermaid, {
-      customMetadata: { 'viz:format': 'mermaid', 'viz:type': 'graph' }
+      customMetadata: { 'viz:format': 'mermaid', 'viz:type': 'graph' },
     });
 
     await this.r2Bucket.put(d3Key, JSON.stringify(d3Data, null, 2), {
-      customMetadata: { 'viz:format': 'd3', 'viz:type': 'graph' }
+      customMetadata: { 'viz:format': 'd3', 'viz:type': 'graph' },
     });
 
     let mermaidUrl: string | undefined;
@@ -106,16 +106,16 @@ export class VersionGraph {
 
   private generateD3Data(graph: VersionNode[]) {
     return {
-      nodes: graph.map((node) => ({
+      nodes: graph.map(node => ({
         id: node.id,
         label: node.version,
-        action: node.action
+        action: node.action,
       })),
       links: graph.slice(1).map((node, i) => ({
         source: graph[i].id,
         target: node.id,
-        action: node.action
-      }))
+        action: node.action,
+      })),
     };
   }
 

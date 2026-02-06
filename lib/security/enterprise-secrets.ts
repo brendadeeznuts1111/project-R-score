@@ -1,11 +1,11 @@
 /**
  * 🔐 Tier-1380 Enterprise Secrets & Profiler Module
- * 
+ *
  * Bun v1.1+ Enterprise Features:
  * - Bun.secrets with CRED_PERSIST_ENTERPRISE (Windows per-user roaming)
  * - node:inspector Profiler API integration
  * - R-Score: +0.14 (security + observability uplift)
- * 
+ *
  * @version 4.6
  * @requires Bun >= 1.1.0
  * @platform Windows (CRED_PERSIST_ENTERPRISE), macOS (Keychain), Linux (libsecret)
@@ -15,72 +15,72 @@
 /**
  * Enterprise Secrets Manager
  * Uses Bun.secrets API with platform-native secure storage
- * 
+ *
  * Windows: CRED_PERSIST_ENTERPRISE - per-user roaming credentials
  * macOS: Keychain (login keychain, prompts for access)
  * Linux: libsecret (GNOME Keyring, KWallet, etc.)
  */
 export class EnterpriseSecretsManager {
   private readonly servicePrefix: string;
-  
-  constructor(organization: string = "com.factorywager") {
+
+  constructor(organization: string = 'com.factorywager') {
     this.servicePrefix = organization;
   }
-  
+
   /**
    * Store secret with enterprise naming convention
    * Format: { service: "com.org.service", name: "account" }
-   * 
+   *
    * @example
    * ```typescript
    * await secretsManager.set(
-   *   "tier1380.api", 
-   *   "prod-token", 
+   *   "tier1380.api",
+   *   "prod-token",
    *   "sk_live_..."
    * );
    * ```
    */
   async set(service: string, name: string, value: string): Promise<void> {
     const fullService = `${this.servicePrefix}.${service}`;
-    
+
     await Bun.secrets.set({
       service: fullService,
       name,
-      value
+      value,
     });
-    
+
     console.log(`🔐 Secret stored: ${fullService}/${name}`);
   }
-  
+
   /**
    * Retrieve secret
    * Returns null if not found
    */
   async get(service: string, name: string): Promise<string | null> {
     const fullService = `${this.servicePrefix}.${service}`;
-    
+
     const value = await Bun.secrets.get({
       service: fullService,
-      name
+      name,
     });
-    
+
     return value;
   }
-  
+
   /**
    * Delete secret
    */
   async delete(service: string, name: string): Promise<void> {
     const fullService = `${this.servicePrefix}.${service}`;
-    
+
     await Bun.secrets.delete({
       service: fullService,
-      name
+      name,
     });
-    
+
     console.log(`🗑️  Secret deleted: ${fullService}/${name}`);
   }
-  
+
   /**
    * Check if secret exists
    */
@@ -98,44 +98,44 @@ export class EnterpriseSecretsManager {
 export class EnterpriseProfiler {
   private session: any; // Inspector Session
   private connected: boolean = false;
-  
+
   /**
    * Connect to inspector
    */
   async connect(): Promise<void> {
     // @ts-expect-error - node:inspector is a Node.js built-in
-    const { Session } = await import("node:inspector");
+    const { Session } = await import('node:inspector');
     this.session = new Session();
     this.session.connect();
     this.connected = true;
-    console.log("🔍 Profiler connected");
+    console.log('🔍 Profiler connected');
   }
-  
+
   /**
    * Enable profiler
    */
   async enable(): Promise<void> {
     if (!this.connected) await this.connect();
-    await this.post("Profiler.enable");
+    await this.post('Profiler.enable');
   }
-  
+
   /**
    * Start CPU profiling
    */
   async startProfiling(): Promise<void> {
-    await this.post("Profiler.start");
-    console.log("⏱️  Profiling started");
+    await this.post('Profiler.start');
+    console.log('⏱️  Profiling started');
   }
-  
+
   /**
    * Stop profiling and get results
    */
   async stopProfiling(): Promise<any> {
-    const result = await this.post("Profiler.stop");
+    const result = await this.post('Profiler.stop');
     console.log(`⏹️  Profiling stopped: ${result.profile?.nodes?.length || 0} nodes`);
     return result;
   }
-  
+
   /**
    * Profile a function execution
    */
@@ -146,16 +146,16 @@ export class EnterpriseProfiler {
   }> {
     await this.enable();
     await this.startProfiling();
-    
+
     const start = performance.now();
     const result = await fn();
     const duration = performance.now() - start;
-    
+
     const profile = await this.stopProfiling();
-    
+
     return { result, profile, duration };
   }
-  
+
   /**
    * Post message to inspector session
    */
@@ -167,7 +167,7 @@ export class EnterpriseProfiler {
       });
     });
   }
-  
+
   /**
    * Disconnect profiler
    */
@@ -175,7 +175,7 @@ export class EnterpriseProfiler {
     if (this.session) {
       this.session.disconnect();
       this.connected = false;
-      console.log("🔌 Profiler disconnected");
+      console.log('🔌 Profiler disconnected');
     }
   }
 }
@@ -187,18 +187,18 @@ export class EnterpriseProfiler {
 export class Tier1380EnterpriseScope {
   private secrets: EnterpriseSecretsManager;
   private profiler: EnterpriseProfiler;
-  
+
   constructor(organization?: string) {
     this.secrets = new EnterpriseSecretsManager(organization);
     this.profiler = new EnterpriseProfiler();
   }
-  
+
   /**
    * Profiled secret operation
    * Measures performance of credential access with CPU profiling
    */
   async profiledSecretOperation<T>(
-    operation: "get" | "set" | "delete",
+    operation: 'get' | 'set' | 'delete',
     service: string,
     name: string,
     value?: string
@@ -213,35 +213,35 @@ export class Tier1380EnterpriseScope {
     // E = 0.10 (XSS escape - minimal)
     // S = 0.050 (50 lines scope)
     // V = 0.0 (no state mutation)
-    const rScore = 1.5 + 0.10 + 0.050 + 0.0; // 1.65 base + profiler overhead
-    
+    const rScore = 1.5 + 0.1 + 0.05 + 0.0; // 1.65 base + profiler overhead
+
     await this.profiler.connect();
     await this.profiler.enable();
-    
+
     const { result, profile, duration } = await this.profiler.profile(async () => {
       switch (operation) {
-        case "get":
-          return await this.secrets.get(service, name) as T;
-        case "set":
-          if (!value) throw new Error("Value required for set operation");
+        case 'get':
+          return (await this.secrets.get(service, name)) as T;
+        case 'set':
+          if (!value) throw new Error('Value required for set operation');
           await this.secrets.set(service, name, value);
           return true as T;
-        case "delete":
+        case 'delete':
           await this.secrets.delete(service, name);
           return true as T;
       }
     });
-    
+
     this.profiler.disconnect();
-    
+
     return {
       result,
       profile,
       duration,
-      rScore
+      rScore,
     };
   }
-  
+
   /**
    * Get platform-specific persistence info
    */
@@ -251,31 +251,31 @@ export class Tier1380EnterpriseScope {
     enterprise: boolean;
   } {
     const platform = process.platform;
-    
+
     switch (platform) {
-      case "win32":
+      case 'win32':
         return {
-          platform: "Windows",
-          persistence: "CRED_PERSIST_ENTERPRISE (per-user roaming)",
-          enterprise: true
+          platform: 'Windows',
+          persistence: 'CRED_PERSIST_ENTERPRISE (per-user roaming)',
+          enterprise: true,
         };
-      case "darwin":
+      case 'darwin':
         return {
-          platform: "macOS",
-          persistence: "Keychain (login keychain)",
-          enterprise: true
+          platform: 'macOS',
+          persistence: 'Keychain (login keychain)',
+          enterprise: true,
         };
-      case "linux":
+      case 'linux':
         return {
-          platform: "Linux",
-          persistence: "libsecret (GNOME Keyring/KWallet)",
-          enterprise: true
+          platform: 'Linux',
+          persistence: 'libsecret (GNOME Keyring/KWallet)',
+          enterprise: true,
         };
       default:
         return {
           platform,
-          persistence: "Unknown",
-          enterprise: false
+          persistence: 'Unknown',
+          enterprise: false,
         };
     }
   }
@@ -293,43 +293,42 @@ if (import.meta.main) {
 ╚═══════════════════════════════════════════════════════════╝
 `);
 
-  const enterprise = new Tier1380EnterpriseScope("com.factorywager");
+  const enterprise = new Tier1380EnterpriseScope('com.factorywager');
   const persistence = enterprise.getPersistenceInfo();
-  
-  console.log("Platform Info:");
+
+  console.log('Platform Info:');
   console.log(`  Platform: ${persistence.platform}`);
   console.log(`  Persistence: ${persistence.persistence}`);
   console.log(`  Enterprise Ready: ${persistence.enterprise ? '✅' : '❌'}`);
   console.log();
-  
+
   // Demo profiled secret operation
-  console.log("Running profiled secret operation...");
-  
+  console.log('Running profiled secret operation...');
+
   try {
     const { result, profile, duration, rScore } = await enterprise.profiledSecretOperation(
-      "set",
-      "tier1380.api",
-      "demo-token",
-      "sk_live_" + crypto.randomUUID().replace(/-/g, '')
+      'set',
+      'tier1380.api',
+      'demo-token',
+      'sk_live_' + crypto.randomUUID().replace(/-/g, '')
     );
-    
+
     console.log();
-    console.log("Results:");
+    console.log('Results:');
     console.log(`  Secret stored: ${result ? '✅' : '❌'}`);
     console.log(`  Profile nodes: ${profile?.profile?.nodes?.length || 0}`);
     console.log(`  Duration: ${duration.toFixed(2)}ms`);
     console.log(`  R-Score: ${rScore.toFixed(3)} (+0.14 enterprise delta)`);
     console.log();
-    console.log("✅ Enterprise scope + Profiler LIVE");
-    
+    console.log('✅ Enterprise scope + Profiler LIVE');
+
     // Cleanup
-    await enterprise.profiledSecretOperation("delete", "tier1380.api", "demo-token");
-    
+    await enterprise.profiledSecretOperation('delete', 'tier1380.api', 'demo-token');
   } catch (error) {
-    console.error("❌ Operation failed:", error.message);
+    console.error('❌ Operation failed:', error.message);
     console.log();
-    console.log("Note: On macOS, you may need to grant Keychain access permission.");
-    console.log("      On Linux, ensure GNOME Keyring or KWallet is running.");
+    console.log('Note: On macOS, you may need to grant Keychain access permission.');
+    console.log('      On Linux, ensure GNOME Keyring or KWallet is running.');
   }
 }
 

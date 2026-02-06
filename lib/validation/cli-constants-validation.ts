@@ -1,9 +1,9 @@
 /**
  * CLI and Constants Validation System
- * 
+ *
  * Provides comprehensive validation, error handling, and auto-fixing
  * for CLI tools, links, and constants used across the platform.
- * 
+ *
  * @version 1.0.0
  * @author Enterprise Platform Team
  */
@@ -71,7 +71,11 @@ export class CLIToolValidator {
   /**
    * Validate a CLI tool before execution
    */
-  static async validateTool(toolName: string, args: string[] = [], env: Record<string, string> = {}): Promise<{
+  static async validateTool(
+    toolName: string,
+    args: string[] = [],
+    env: Record<string, string> = {}
+  ): Promise<{
     isValid: boolean;
     errors: string[];
     fixes: string[];
@@ -83,7 +87,7 @@ export class CLIToolValidator {
         isValid: false,
         errors: [`Unknown CLI tool: ${toolName}`],
         fixes: ['Register the tool using CLIToolValidator.registerTool()'],
-        warnings: []
+        warnings: [],
       };
     }
 
@@ -127,14 +131,18 @@ export class CLIToolValidator {
       isValid: errors.length === 0,
       errors,
       fixes,
-      warnings
+      warnings,
     };
   }
 
   /**
    * Auto-fix common CLI tool issues
    */
-  static async autoFix(toolName: string, args: string[], env: Record<string, string>): Promise<{
+  static async autoFix(
+    toolName: string,
+    args: string[],
+    env: Record<string, string>
+  ): Promise<{
     success: boolean;
     fixedArgs: string[];
     fixedEnv: Record<string, string>;
@@ -151,7 +159,7 @@ export class CLIToolValidator {
         success: false,
         fixedArgs,
         fixedEnv,
-        appliedFixes: ['Unknown tool - cannot auto-fix']
+        appliedFixes: ['Unknown tool - cannot auto-fix'],
       };
     }
 
@@ -179,17 +187,17 @@ export class CLIToolValidator {
       success: validation.errors.length === appliedFixes.length,
       fixedArgs,
       fixedEnv,
-      appliedFixes
+      appliedFixes,
     };
   }
 
   private static getDefaultEnvValue(envVar: string): string {
     const defaults: Record<string, string> = {
-      'NODE_ENV': 'development',
-      'BUN_FEATURE_FLAG_DISABLE_NATIVE_DEPENDENCY_LINKER': '1',
-      'BUN_FEATURE_FLAG_DISABLE_IGNORE_SCRIPTS': '1',
-      'PATH': process.env.PATH || '',
-      'HOME': process.env.HOME || '',
+      NODE_ENV: 'development',
+      BUN_FEATURE_FLAG_DISABLE_NATIVE_DEPENDENCY_LINKER: '1',
+      BUN_FEATURE_FLAG_DISABLE_IGNORE_SCRIPTS: '1',
+      PATH: process.env.PATH || '',
+      HOME: process.env.HOME || '',
     };
     return defaults[envVar] || '';
   }
@@ -226,7 +234,7 @@ export class URLValidator {
         isValid: false,
         errors: [`Unknown URL: ${urlName}`],
         fixes: ['Register URL using URLValidator.registerURL()'],
-        warnings: []
+        warnings: [],
       };
     }
 
@@ -247,12 +255,17 @@ export class URLValidator {
 
     // Protocol validation
     if (config.requiredProtocol && !config.requiredProtocol.includes(parsedUrl.protocol)) {
-      errors.push(`Invalid protocol: ${parsedUrl.protocol} (required: ${config.requiredProtocol.join(', ')})`);
+      errors.push(
+        `Invalid protocol: ${parsedUrl.protocol} (required: ${config.requiredProtocol.join(', ')})`
+      );
       fixes.push(`Change protocol to one of: ${config.requiredProtocol.join(', ')}`);
     }
 
     // Localhost validation
-    if (!config.allowLocalhost && (parsedUrl.hostname === 'example.com' || parsedUrl.hostname === '127.0.0.1')) {
+    if (
+      !config.allowLocalhost &&
+      (parsedUrl.hostname === 'example.com' || parsedUrl.hostname === '127.0.0.1')
+    ) {
       warnings.push(`Localhost URL detected in production: ${config.url}`);
     }
 
@@ -261,7 +274,7 @@ export class URLValidator {
       const startTime = performance.now();
       const response = await fetch(config.url, {
         method: 'HEAD',
-        signal: AbortSignal.timeout(config.timeout || 10000)
+        signal: AbortSignal.timeout(config.timeout || 10000),
       });
       const responseTime = performance.now() - startTime;
 
@@ -276,7 +289,7 @@ export class URLValidator {
         fixes,
         warnings,
         statusCode: response.status,
-        responseTime
+        responseTime,
       };
     } catch (error) {
       errors.push(`Connection failed: ${error}`);
@@ -297,7 +310,7 @@ export class URLValidator {
     if (!config) {
       return {
         success: false,
-        appliedFixes: ['Unknown URL - cannot auto-fix']
+        appliedFixes: ['Unknown URL - cannot auto-fix'],
       };
     }
 
@@ -325,7 +338,7 @@ export class URLValidator {
     return {
       success: appliedFixes.length > 0,
       fixedURL,
-      appliedFixes
+      appliedFixes,
     };
   }
 }
@@ -362,7 +375,7 @@ export class ConstantValidator {
         isValid: false,
         errors: [`Unknown constant: ${constantName}`],
         fixes: ['Register constant using ConstantValidator.registerConstant()'],
-        warnings: []
+        warnings: [],
       };
     }
 
@@ -391,7 +404,10 @@ export class ConstantValidator {
     }
 
     // Required validation
-    if (config.required && (config.value === null || config.value === undefined || config.value === '')) {
+    if (
+      config.required &&
+      (config.value === null || config.value === undefined || config.value === '')
+    ) {
       errors.push(`Required constant is empty: ${constantName}`);
       if (config.fix) {
         fixedValue = config.fix();
@@ -405,7 +421,7 @@ export class ConstantValidator {
       errors,
       fixes,
       warnings,
-      fixedValue: fixedValue !== config.value ? fixedValue : undefined
+      fixedValue: fixedValue !== config.value ? fixedValue : undefined,
     };
   }
 
@@ -441,7 +457,7 @@ export class ConstantValidator {
       totalConstants: this.REGISTERED_CONSTANTS.size,
       fixedConstants,
       appliedFixes,
-      errors
+      errors,
     };
   }
 }
@@ -455,13 +471,13 @@ CLIToolValidator.registerTool({
   name: 'bun',
   path: 'bun',
   requiredEnvVars: ['NODE_ENV'],
-  validatesInput: true
+  validatesInput: true,
 });
 
 CLIToolValidator.registerTool({
   name: 'overseer-cli',
   path: 'tools/overseer-cli.ts',
-  maxExecutionTime: 30000
+  maxExecutionTime: 30000,
 });
 
 // Register common URLs
@@ -469,14 +485,14 @@ URLValidator.registerURL({
   name: 'bun-official-docs',
   url: 'https://bun.sh/docs',
   requiredProtocol: ['https:'],
-  timeout: 10000
+  timeout: 10000,
 });
 
 URLValidator.registerURL({
   name: 'github-api',
   url: 'https://api.github.com',
   requiredProtocol: ['https:'],
-  timeout: 15000
+  timeout: 15000,
 });
 
 // Register documentation URLs from constants
@@ -484,21 +500,21 @@ URLValidator.registerURL({
   name: 'bun-cli-installation',
   url: 'https://bun.sh/docs/cli/install',
   requiredProtocol: ['https:'],
-  timeout: 10000
+  timeout: 10000,
 });
 
 URLValidator.registerURL({
   name: 'bun-cli-commands',
   url: 'https://bun.sh/docs/cli',
   requiredProtocol: ['https:'],
-  timeout: 10000
+  timeout: 10000,
 });
 
 URLValidator.registerURL({
   name: 'bun-utils-documentation',
   url: 'https://bun.sh/docs/api/utils',
   requiredProtocol: ['https:'],
-  timeout: 10000
+  timeout: 10000,
 });
 
 // Register docs-reference URLs
@@ -506,63 +522,63 @@ URLValidator.registerURL({
   name: 'bun-main-docs',
   url: 'https://bun.sh/docs',
   requiredProtocol: ['https:'],
-  timeout: 10000
+  timeout: 10000,
 });
 
 URLValidator.registerURL({
   name: 'bun-api-docs',
   url: 'https://bun.sh/docs/api',
   requiredProtocol: ['https:'],
-  timeout: 10000
+  timeout: 10000,
 });
 
 URLValidator.registerURL({
   name: 'bun-runtime-docs',
   url: 'https://bun.sh/docs/runtime',
   requiredProtocol: ['https:'],
-  timeout: 10000
+  timeout: 10000,
 });
 
 URLValidator.registerURL({
   name: 'bun-guides',
   url: 'https://bun.sh/docs/guides',
   requiredProtocol: ['https:'],
-  timeout: 10000
+  timeout: 10000,
 });
 
 URLValidator.registerURL({
   name: 'bun-blog',
   url: 'https://bun.sh/blog',
   requiredProtocol: ['https:'],
-  timeout: 10000
+  timeout: 10000,
 });
 
 URLValidator.registerURL({
   name: 'bun-rss-feed',
   url: 'https://bun.sh/rss.xml',
   requiredProtocol: ['https:'],
-  timeout: 10000
+  timeout: 10000,
 });
 
 URLValidator.registerURL({
   name: 'github-repo',
   url: 'https://github.com/oven-sh/bun',
   requiredProtocol: ['https:'],
-  timeout: 15000
+  timeout: 15000,
 });
 
 URLValidator.registerURL({
   name: 'github-issues',
   url: 'https://github.com/oven-sh/bun/issues',
   requiredProtocol: ['https:'],
-  timeout: 15000
+  timeout: 15000,
 });
 
 URLValidator.registerURL({
   name: 'github-prs',
   url: 'https://github.com/oven-sh/bun/pulls',
   requiredProtocol: ['https:'],
-  timeout: 15000
+  timeout: 15000,
 });
 
 // Register common constants
@@ -571,8 +587,8 @@ ConstantValidator.registerConstant({
   value: 10000,
   type: 'number',
   required: true,
-  validation: (value) => value > 0 && value < 60000,
-  fix: () => 10000
+  validation: value => value > 0 && value < 60000,
+  fix: () => 10000,
 });
 
 ConstantValidator.registerConstant({
@@ -580,8 +596,8 @@ ConstantValidator.registerConstant({
   value: 3,
   type: 'number',
   required: true,
-  validation: (value) => value >= 0 && value <= 10,
-  fix: () => 3
+  validation: value => value >= 0 && value <= 10,
+  fix: () => 3,
 });
 
 // Register documentation constants for validation
@@ -590,8 +606,8 @@ ConstantValidator.registerConstant({
   value: 8, // Number of CLICategory enum values
   type: 'number',
   required: true,
-  validation: (value) => value > 0 && value <= 20,
-  fix: () => 8
+  validation: value => value > 0 && value <= 20,
+  fix: () => 8,
 });
 
 ConstantValidator.registerConstant({
@@ -599,8 +615,8 @@ ConstantValidator.registerConstant({
   value: 10, // Number of UtilsCategory enum values
   type: 'number',
   required: true,
-  validation: (value) => value > 0 && value <= 20,
-  fix: () => 10
+  validation: value => value > 0 && value <= 20,
+  fix: () => 10,
 });
 
 ConstantValidator.registerConstant({
@@ -608,8 +624,8 @@ ConstantValidator.registerConstant({
   value: 'https://bun.sh',
   type: 'string',
   required: true,
-  validation: (value) => typeof value === 'string' && value.startsWith('https://'),
-  fix: () => 'https://bun.sh'
+  validation: value => typeof value === 'string' && value.startsWith('https://'),
+  fix: () => 'https://bun.sh',
 });
 
 ConstantValidator.registerConstant({
@@ -617,8 +633,8 @@ ConstantValidator.registerConstant({
   value: 'https://github.com/oven-sh/bun',
   type: 'string',
   required: true,
-  validation: (value) => typeof value === 'string' && value.startsWith('https://github.com'),
-  fix: () => 'https://github.com/oven-sh/bun'
+  validation: value => typeof value === 'string' && value.startsWith('https://github.com'),
+  fix: () => 'https://github.com/oven-sh/bun',
 });
 
 ConstantValidator.registerConstant({
@@ -626,8 +642,8 @@ ConstantValidator.registerConstant({
   value: 6, // Number of main sections in DOCS (BASE, DOCS, API, RUNTIME, GUIDES, CLI, BLOG)
   type: 'number',
   required: true,
-  validation: (value) => value > 0 && value <= 20,
-  fix: () => 6
+  validation: value => value > 0 && value <= 20,
+  fix: () => 6,
 });
 
 ConstantValidator.registerConstant({
@@ -635,8 +651,8 @@ ConstantValidator.registerConstant({
   value: 11, // Number of URL_PATTERNS defined
   type: 'number',
   required: true,
-  validation: (value) => value > 0 && value <= 20,
-  fix: () => 11
+  validation: value => value > 0 && value <= 20,
+  fix: () => 11,
 });
 
 ConstantValidator.registerConstant({
@@ -644,8 +660,8 @@ ConstantValidator.registerConstant({
   value: 11, // Number of DOC_PATHS defined
   type: 'number',
   required: true,
-  validation: (value) => value > 0 && value <= 20,
-  fix: () => 11
+  validation: value => value > 0 && value <= 20,
+  fix: () => 11,
 });
 
 // ============================================================================
@@ -668,7 +684,7 @@ export class ValidationReporter {
     // Validate CLI tools
     const cliResults = await Promise.all([
       CLIToolValidator.validateTool('bun', [], process.env),
-      CLIToolValidator.validateTool('overseer-cli', [], process.env)
+      CLIToolValidator.validateTool('overseer-cli', [], process.env),
     ]);
 
     const cliErrors = cliResults.flatMap(r => r.errors);
@@ -689,30 +705,28 @@ export class ValidationReporter {
       URLValidator.validateURL('bun-rss-feed'),
       URLValidator.validateURL('github-repo'),
       URLValidator.validateURL('github-issues'),
-      URLValidator.validateURL('github-prs')
+      URLValidator.validateURL('github-prs'),
     ]);
 
     const urlErrors = urlResults.flatMap(r => r.errors);
     const urlValid = urlResults.filter(r => r.isValid).length;
-    const avgResponseTime = urlResults
-      .filter(r => r.responseTime)
-      .reduce((sum, r) => sum + (r.responseTime || 0), 0) / urlResults.length;
+    const avgResponseTime =
+      urlResults.filter(r => r.responseTime).reduce((sum, r) => sum + (r.responseTime || 0), 0) /
+      urlResults.length;
 
     // Validate constants
     const constantNames = [
-      'default-timeout', 
-      'max-retries', 
-      'cli-categories-count', 
-      'utils-categories-count', 
+      'default-timeout',
+      'max-retries',
+      'cli-categories-count',
+      'utils-categories-count',
       'documentation-base-url',
       'github-base-url',
       'documentation-sections-count',
       'url-patterns-count',
-      'doc-paths-count'
+      'doc-paths-count',
     ];
-    const constantResults = constantNames.map(name => 
-      ConstantValidator.validateConstant(name)
-    );
+    const constantResults = constantNames.map(name => ConstantValidator.validateConstant(name));
 
     const constantErrors = constantResults.flatMap(r => r.errors);
     const constantValid = constantResults.filter(r => r.isValid).length;
@@ -721,8 +735,10 @@ export class ValidationReporter {
     const criticalIssues = urlErrors.length; // URL issues are critical
 
     const recommendations: string[] = [];
-    if (cliErrors.length > 0) recommendations.push('Install missing CLI tools and set required environment variables');
-    if (urlErrors.length > 0) recommendations.push('Fix URL connectivity issues and update broken links');
+    if (cliErrors.length > 0)
+      recommendations.push('Install missing CLI tools and set required environment variables');
+    if (urlErrors.length > 0)
+      recommendations.push('Fix URL connectivity issues and update broken links');
     if (constantErrors.length > 0) recommendations.push('Review and fix constant values');
 
     return {
@@ -730,7 +746,7 @@ export class ValidationReporter {
       cli: { total: cliResults.length, valid: cliValid, errors: cliErrors },
       urls: { total: urlResults.length, valid: urlValid, errors: urlErrors, avgResponseTime },
       constants: { total: constantResults.length, valid: constantValid, errors: constantErrors },
-      summary: { totalIssues, criticalIssues, recommendations }
+      summary: { totalIssues, criticalIssues, recommendations },
     };
   }
 
@@ -739,18 +755,18 @@ export class ValidationReporter {
    */
   static async printReport(): Promise<void> {
     const report = await this.generateReport();
-    
+
     console.log('\n🔍 PLATFORM VALIDATION REPORT');
-    console.log('=' .repeat(50));
+    console.log('='.repeat(50));
     console.log(`📅 Generated: ${report.timestamp}`);
-    
+
     console.log('\n🛠️  CLI Tools:');
     console.log(`   Valid: ${report.cli.valid}/${report.cli.total}`);
     if (report.cli.errors.length > 0) {
       console.log('   Errors:');
       report.cli.errors.forEach(error => console.log(`     ❌ ${error}`));
     }
-    
+
     console.log('\n🌐 URLs:');
     console.log(`   Valid: ${report.urls.valid}/${report.urls.total}`);
     if (report.urls.avgResponseTime) {
@@ -760,23 +776,23 @@ export class ValidationReporter {
       console.log('   Errors:');
       report.urls.errors.forEach(error => console.log(`     ❌ ${error}`));
     }
-    
+
     console.log('\n📊 Constants:');
     console.log(`   Valid: ${report.constants.valid}/${report.constants.total}`);
     if (report.constants.errors.length > 0) {
       console.log('   Errors:');
       report.constants.errors.forEach(error => console.log(`     ❌ ${error}`));
     }
-    
+
     console.log('\n📋 Summary:');
     console.log(`   Total Issues: ${report.summary.totalIssues}`);
     console.log(`   Critical Issues: ${report.summary.criticalIssues}`);
-    
+
     if (report.summary.recommendations.length > 0) {
       console.log('\n💡 Recommendations:');
       report.summary.recommendations.forEach(rec => console.log(`   • ${rec}`));
     }
-    
+
     console.log('\n' + '='.repeat(50));
   }
 }
@@ -832,7 +848,7 @@ export class AutoHealer {
       urlFixes,
       constantFixes,
       totalFixes,
-      success
+      success,
     };
   }
 
@@ -841,33 +857,33 @@ export class AutoHealer {
    */
   static async healAndReport(): Promise<void> {
     console.log('\n🚀 STARTING AUTO-HEALING...');
-    
+
     const result = await this.healAll();
-    
+
     console.log('\n🔧 AUTO-HEALING RESULTS:');
     console.log(`   Total Fixes Applied: ${result.totalFixes}`);
-    
+
     if (result.cliFixes.length > 0) {
       console.log('\n   CLI Fixes:');
       result.cliFixes.forEach(fix => console.log(`     ✅ ${fix}`));
     }
-    
+
     if (result.urlFixes.length > 0) {
       console.log('\n   URL Fixes:');
       result.urlFixes.forEach(fix => console.log(`     ✅ ${fix}`));
     }
-    
+
     if (result.constantFixes.length > 0) {
       console.log('\n   Constant Fixes:');
       result.constantFixes.forEach(fix => console.log(`     ✅ ${fix}`));
     }
-    
+
     if (result.success) {
       console.log('\n✅ Auto-healing completed successfully!');
     } else {
       console.log('\n⚠️  Some issues could not be auto-fixed');
     }
-    
+
     console.log('\n' + '='.repeat(50));
   }
 }

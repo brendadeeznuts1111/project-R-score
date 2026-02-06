@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Bun Implementation Details Analysis and Updates
- * 
+ *
  * Based on Bun v1.3.6 release notes and implementation details:
  * - Memory leak fixes for ReadableStream in fetch()
  * - Null byte injection prevention (CWE-158)
@@ -19,7 +19,6 @@ if (import.meta.main) {
 
 import { OptimizedFetch, DNSOptimizer } from '../http/port-management-system';
 
-
 // ============================================================================
 // IMPLEMENTATION DETAILS UPDATES
 // ============================================================================
@@ -30,7 +29,7 @@ class ImplementationDetailsUpdater {
    */
   static applyBun136Updates(): void {
     console.log('🔧 APPLYING BUN V1.3.6 IMPLEMENTATION UPDATES');
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
 
     console.log('\n📋 Key Implementation Details from Bun v1.3.6:');
     console.log('   ✅ Memory leak fixes for ReadableStream in fetch()');
@@ -122,9 +121,9 @@ class EnhancedOptimizedFetch {
       // Add Bun v1.3.6 specific optimizations
       headers: {
         'User-Agent': 'Bun/1.3.6 Enhanced-OptimizedFetch',
-        'Connection': 'keep-alive',
-        ...options.headers
-      }
+        Connection: 'keep-alive',
+        ...options.headers,
+      },
     });
   }
 
@@ -155,9 +154,13 @@ class EnhancedOptimizedFetch {
   /**
    * Enhanced file buffering with large file support
    */
-  static async enhancedFetchAndBuffer(url: string, outputPath: string, options: RequestInit = {}): Promise<void> {
+  static async enhancedFetchAndBuffer(
+    url: string,
+    outputPath: string,
+    options: RequestInit = {}
+  ): Promise<void> {
     const response = await this.enhancedFetch(url, options);
-    
+
     try {
       // Use Bun.write with improved large file handling
       if (typeof Bun !== 'undefined' && Bun.write) {
@@ -177,9 +180,12 @@ class EnhancedOptimizedFetch {
   /**
    * Memory-safe streaming for large responses
    */
-  static async *streamResponse(url: string, options: RequestInit = {}): AsyncGenerator<Uint8Array, void, unknown> {
+  static async *streamResponse(
+    url: string,
+    options: RequestInit = {}
+  ): AsyncGenerator<Uint8Array, void, unknown> {
     const response = await this.enhancedFetch(url, options);
-    
+
     if (!response.body) {
       throw new Error('Response has no body to stream');
     }
@@ -187,14 +193,14 @@ class EnhancedOptimizedFetch {
     try {
       // Stream response body with proper cleanup (Bun v1.3.6 memory leak fix)
       const reader = response.body.getReader();
-      
+
       while (true) {
         const { done, value } = await reader.read();
-        
+
         if (done) {
           break;
         }
-        
+
         yield value;
       }
     } finally {
@@ -220,12 +226,12 @@ class ImplementationDetailsTests {
    */
   static async testSecurityImprovements(): Promise<void> {
     console.log('\n🔒 TESTING BUN V1.3.6 SECURITY IMPROVEMENTS');
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
 
     // Test null byte prevention (CWE-158)
     try {
       console.log('Testing null byte injection prevention...');
-      
+
       // This should throw an error
       await EnhancedOptimizedFetch.enhancedFetch('https://httpbin.org/json\0');
       console.log('❌ Null byte injection prevention failed');
@@ -240,9 +246,9 @@ class ImplementationDetailsTests {
     // Test header validation
     try {
       console.log('Testing header null byte prevention...');
-      
+
       await EnhancedOptimizedFetch.enhancedFetch('https://httpbin.org/json', {
-        headers: { 'X-Test': 'value\0' }
+        headers: { 'X-Test': 'value\0' },
       });
       console.log('❌ Header null byte prevention failed');
     } catch (error) {
@@ -259,22 +265,21 @@ class ImplementationDetailsTests {
    */
   static async testMemoryLeakFixes(): Promise<void> {
     console.log('\n🧠 TESTING MEMORY LEAK FIXES');
-    console.log('=' .repeat(40));
+    console.log('='.repeat(40));
 
     try {
       console.log('Testing ReadableStream cleanup...');
-      
+
       // Test streaming with proper cleanup
       const stream = EnhancedOptimizedFetch.streamResponse('https://httpbin.org/bytes/1024');
-      
+
       let totalBytes = 0;
       for await (const chunk of stream) {
         totalBytes += chunk.length;
       }
-      
+
       console.log(`✅ Streamed ${totalBytes} bytes with proper cleanup`);
       console.log('✅ ReadableStream memory leak fixes working');
-      
     } catch (error) {
       console.log('❌ Memory leak test failed:', error.message);
     }
@@ -285,33 +290,35 @@ class ImplementationDetailsTests {
    */
   static async testLargeFileHandling(): Promise<void> {
     console.log('\n📁 TESTING LARGE FILE HANDLING');
-    console.log('=' .repeat(40));
+    console.log('='.repeat(40));
 
     try {
       console.log('Testing enhanced file buffering...');
-      
+
       const outputPath = '/tmp/enhanced-large-file-test.txt';
-      await EnhancedOptimizedFetch.enhancedFetchAndBuffer('https://httpbin.org/bytes/10240', outputPath);
-      
+      await EnhancedOptimizedFetch.enhancedFetchAndBuffer(
+        'https://httpbin.org/bytes/10240',
+        outputPath
+      );
+
       const file = Bun.file(outputPath);
       const exists = await file.exists();
-      
+
       if (exists) {
         const size = await file.size;
         console.log(`✅ Enhanced file buffering: ${size} bytes written`);
-        
+
         if (size === 10240) {
           console.log('✅ Large file handling working correctly');
         } else {
           console.log(`⚠️  Expected 10240 bytes, got ${size}`);
         }
-        
+
         // Cleanup
         await Bun.write(outputPath, '');
       } else {
         console.log('❌ Large file test failed - file not created');
       }
-      
     } catch (error) {
       console.log('❌ Large file test failed:', error.message);
     }
@@ -325,13 +332,13 @@ class ImplementationDetailsTests {
 class ImplementationDetailsTestRunner {
   static async runAllTests(): Promise<void> {
     console.log('🧪 BUN IMPLEMENTATION DETAILS TEST SUITE');
-    console.log('=' .repeat(70));
+    console.log('='.repeat(70));
     console.log('Testing Bun v1.3.6 implementation details and improvements\n');
 
     try {
       // Apply implementation updates
       ImplementationDetailsUpdater.applyBun136Updates();
-      
+
       // Run tests
       await ImplementationDetailsTests.testSecurityImprovements();
       await ImplementationDetailsTests.testMemoryLeakFixes();
@@ -351,7 +358,6 @@ class ImplementationDetailsTestRunner {
       console.log('   • Security hardening against CWE-158 vulnerabilities');
       console.log('   • Memory-safe streaming and response handling');
       console.log('   • Production-ready with latest Bun optimizations');
-
     } catch (error) {
       console.error('\n❌ Test suite failed:', error);
       process.exit(1);

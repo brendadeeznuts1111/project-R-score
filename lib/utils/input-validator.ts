@@ -1,6 +1,6 @@
 /**
  * Input Validation Utilities
- * 
+ *
  * Provides comprehensive input validation for API endpoints and user inputs
  * with type safety and security considerations.
  */
@@ -107,7 +107,7 @@ export class SecureInputValidator implements InputValidator {
       isValid: errors.length === 0,
       value: processedValue,
       errors,
-      sanitized: wasSanitized
+      sanitized: wasSanitized,
     };
   }
 
@@ -136,7 +136,7 @@ export class SecureInputValidator implements InputValidator {
 
     try {
       const url = new URL(value);
-      
+
       // Protocol validation
       const allowedProtocols = ['http:', 'https:'];
       if (!allowedProtocols.includes(url.protocol)) {
@@ -152,11 +152,11 @@ export class SecureInputValidator implements InputValidator {
       if (Bun.env.NODE_ENV === 'production') {
         const DEFAULT_HOST = process.env.SERVER_HOST || process.env.HOST || 'localhost';
         const localhostPatterns = [
-          'localhost', 
-          '127.0.0.1', 
-          '0.0.0.0', 
+          'localhost',
+          '127.0.0.1',
+          '0.0.0.0',
           '[::1]',
-          ...(DEFAULT_HOST !== 'localhost' ? [] : [])
+          ...(DEFAULT_HOST !== 'localhost' ? [] : []),
         ];
         if (localhostPatterns.some(pattern => url.hostname.includes(pattern))) {
           errors.push('Localhost URLs are not allowed in production');
@@ -172,9 +172,8 @@ export class SecureInputValidator implements InputValidator {
         isValid: errors.length === 0,
         value: value,
         errors,
-        sanitized: false
+        sanitized: false,
       };
-
     } catch (error) {
       errors.push('Invalid URL format');
       return { isValid: false, errors, sanitized: false };
@@ -212,7 +211,7 @@ export class SecureInputValidator implements InputValidator {
       isValid: errors.length === 0,
       value: sanitized,
       errors,
-      sanitized: sanitized !== value
+      sanitized: sanitized !== value,
     };
   }
 
@@ -238,7 +237,7 @@ export class SecureInputValidator implements InputValidator {
       isValid: errors.length === 0,
       value: sanitized,
       errors,
-      sanitized: sanitized !== value
+      sanitized: sanitized !== value,
     };
   }
 
@@ -250,19 +249,20 @@ export class SecureInputValidator implements InputValidator {
 
     try {
       JSON.parse(value);
-      
+
       // Size validation
       if (value.length > SecureInputValidator.DEFAULT_MAX_LENGTH) {
-        errors.push(`JSON is too large (max ${SecureInputValidator.DEFAULT_MAX_LENGTH} characters)`);
+        errors.push(
+          `JSON is too large (max ${SecureInputValidator.DEFAULT_MAX_LENGTH} characters)`
+        );
       }
 
       return {
         isValid: errors.length === 0,
         value,
         errors,
-        sanitized: false
+        sanitized: false,
       };
-
     } catch (error) {
       errors.push('Invalid JSON format');
       return { isValid: false, errors, sanitized: false };

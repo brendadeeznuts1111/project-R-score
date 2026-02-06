@@ -39,24 +39,48 @@ export interface MarkdownOptions {
 // HTML sanitization utilities
 class HTMLSanitizer {
   private static readonly DEFAULT_ALLOWED_TAGS = [
-    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-    'p', 'br', 'strong', 'em', 'u', 's', 'del',
-    'ul', 'ol', 'li',
-    'blockquote', 'code', 'pre',
-    'a', 'img',
-    'table', 'thead', 'tbody', 'tr', 'th', 'td',
-    'hr'
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'p',
+    'br',
+    'strong',
+    'em',
+    'u',
+    's',
+    'del',
+    'ul',
+    'ol',
+    'li',
+    'blockquote',
+    'code',
+    'pre',
+    'a',
+    'img',
+    'table',
+    'thead',
+    'tbody',
+    'tr',
+    'th',
+    'td',
+    'hr',
   ];
 
   private static readonly DEFAULT_ALLOWED_ATTRIBUTES = {
-    'a': ['href', 'title'],
-    'img': ['src', 'alt', 'title', 'width', 'height'],
-    'th': ['align'],
-    'td': ['align'],
-    '*': ['class', 'id']
+    a: ['href', 'title'],
+    img: ['src', 'alt', 'title', 'width', 'height'],
+    th: ['align'],
+    td: ['align'],
+    '*': ['class', 'id'],
   };
 
-  static sanitize(html: string, options?: { allowedTags?: string[], allowedAttributes?: Record<string, string[]> }): string {
+  static sanitize(
+    html: string,
+    options?: { allowedTags?: string[]; allowedAttributes?: Record<string, string[]> }
+  ): string {
     const allowedTags = options?.allowedTags || this.DEFAULT_ALLOWED_TAGS;
     const allowedAttributes = options?.allowedAttributes || this.DEFAULT_ALLOWED_ATTRIBUTES;
 
@@ -92,7 +116,11 @@ class HTMLSanitizer {
     return sanitized;
   }
 
-  private static sanitizeAttributes(attributes: string, tagName: string, allowed: Record<string, string[]>): string {
+  private static sanitizeAttributes(
+    attributes: string,
+    tagName: string,
+    allowed: Record<string, string[]>
+  ): string {
     if (!attributes.trim()) return '';
 
     const attrRegex = /(\w+)=["']([^"']*)["']/g;
@@ -136,10 +164,10 @@ class HTMLSanitizer {
       '>': '&gt;',
       '"': '&quot;',
       "'": '&#x27;',
-      '/': '&#x2F;'
+      '/': '&#x2F;',
     };
 
-    return text.replace(/[&<>"'/]/g, (match) => htmlEscapes[match]);
+    return text.replace(/[&<>"'/]/g, match => htmlEscapes[match]);
   }
 }
 
@@ -166,7 +194,7 @@ export class EnhancedMarkdownRenderer {
       headings: { ids: true, autolink: true },
       tagFilter: true,
 
-      ...options
+      ...options,
     };
   }
 
@@ -179,7 +207,8 @@ export class EnhancedMarkdownRenderer {
     }
 
     // Limit input size to prevent DoS
-    if (markdown.length > 10_000_000) { // 10MB limit
+    if (markdown.length > 10_000_000) {
+      // 10MB limit
       throw new Error('Markdown input too large (max 10MB)');
     }
 
@@ -206,13 +235,13 @@ export class EnhancedMarkdownRenderer {
       code: (children, meta) => {
         if (opts.enableSyntaxHighlighting && meta?.language) {
           const langColors: Record<string, string> = {
-            'js': '\x1b[93m',    // Yellow for JavaScript
-            'ts': '\x1b[94m',    // Blue for TypeScript
-            'bash': '\x1b[92m',  // Green for Bash
-            'json': '\x1b[96m',  // Cyan for JSON
-            'html': '\x1b[91m',  // Red for HTML
-            'css': '\x1b[95m',   // Magenta for CSS
-            'md': '\x1b[97m',    // White for Markdown
+            js: '\x1b[93m', // Yellow for JavaScript
+            ts: '\x1b[94m', // Blue for TypeScript
+            bash: '\x1b[92m', // Green for Bash
+            json: '\x1b[96m', // Cyan for JSON
+            html: '\x1b[91m', // Red for HTML
+            css: '\x1b[95m', // Magenta for CSS
+            md: '\x1b[97m', // White for Markdown
           };
           const color = langColors[meta.language] || opts.codeColor;
           return `${color}${children}\x1b[0m\n`;
@@ -226,9 +255,12 @@ export class EnhancedMarkdownRenderer {
       },
 
       listItem: (children, meta) => {
-        const bullet = meta?.checked !== undefined ?
-          (meta.checked ? '\x1b[32m✓\x1b[0m' : '\x1b[31m○\x1b[0m') :
-          '\x1b[95m•\x1b[0m';
+        const bullet =
+          meta?.checked !== undefined
+            ? meta.checked
+              ? '\x1b[32m✓\x1b[0m'
+              : '\x1b[31m○\x1b[0m'
+            : '\x1b[95m•\x1b[0m';
         return `${bullet} ${children.trim()}\n`;
       },
 
@@ -298,7 +330,7 @@ export class EnhancedMarkdownRenderer {
       text: children => children,
 
       // Apply any custom callbacks
-      ...opts.customCallbacks
+      ...opts.customCallbacks,
     });
   }
 
@@ -329,83 +361,90 @@ export class EnhancedMarkdownRenderer {
         noHtmlSpans: this.options.noHtmlSpans,
       };
 
-      html = Bun.markdown.render(validatedInput, {
-        heading: (children, meta) => {
-          const level = meta?.level || 1;
-          return `<h${level} class="heading heading-${level}">${HTMLSanitizer.escapeHtml(children)}</h${level}>`;
+      html = Bun.markdown.render(
+        validatedInput,
+        {
+          heading: (children, meta) => {
+            const level = meta?.level || 1;
+            return `<h${level} class="heading heading-${level}">${HTMLSanitizer.escapeHtml(children)}</h${level}>`;
+          },
+
+          paragraph: children => `<p class="paragraph">${HTMLSanitizer.escapeHtml(children)}</p>`,
+
+          blockquote: children =>
+            `<blockquote class="blockquote">${HTMLSanitizer.escapeHtml(children)}</blockquote>`,
+
+          code: (children, meta) => {
+            const lang = meta?.language || '';
+            const langClass = lang ? ` language-${lang}` : '';
+            return `<pre class="code-block${langClass}"><code class="code${langClass}">${HTMLSanitizer.escapeHtml(children)}</code></pre>`;
+          },
+
+          list: (children, meta) => {
+            const type = meta?.ordered ? 'ol' : 'ul';
+            const start = meta?.start ? ` start="${meta.start}"` : '';
+            return `<${type} class="list"${start}>${HTMLSanitizer.escapeHtml(children)}</${type}>`;
+          },
+
+          listItem: (children, meta) => {
+            const checked = meta?.checked !== undefined ? ` data-checked="${meta.checked}"` : '';
+            return `<li class="list-item"${checked}>${HTMLSanitizer.escapeHtml(children)}</li>`;
+          },
+
+          table: children => `<table class="table">${HTMLSanitizer.escapeHtml(children)}</table>`,
+
+          th: (children, meta) => {
+            const align = meta?.align || '';
+            const alignClass = align ? ` text-${align}` : '';
+            return `<th class="table-header${alignClass}">${HTMLSanitizer.escapeHtml(children)}</th>`;
+          },
+
+          td: (children, meta) => {
+            const align = meta?.align || '';
+            const alignClass = align ? ` text-${align}` : '';
+            return `<td class="table-cell${alignClass}">${HTMLSanitizer.escapeHtml(children)}</td>`;
+          },
+
+          strong: children => `<strong class="bold">${HTMLSanitizer.escapeHtml(children)}</strong>`,
+
+          emphasis: children => `<em class="italic">${HTMLSanitizer.escapeHtml(children)}</em>`,
+
+          link: (text, meta) => {
+            const href = meta?.href || '';
+            const title = meta?.title ? ` title="${HTMLSanitizer.escapeHtml(meta.title)}"` : '';
+
+            // Validate URL
+            if (href && !HTMLSanitizer.isValidURL(href)) {
+              return `<span class="invalid-link">${HTMLSanitizer.escapeHtml(text)}</span>`;
+            }
+
+            return `<a href="${HTMLSanitizer.escapeHtml(href)}" class="link"${title}>${HTMLSanitizer.escapeHtml(text)}</a>`;
+          },
+
+          image: (alt, meta) => {
+            const src = meta?.src || '';
+            const title = meta?.title ? ` title="${HTMLSanitizer.escapeHtml(meta.title)}"` : '';
+
+            // Validate image URL
+            if (src && !HTMLSanitizer.isValidURL(src)) {
+              return `<span class="invalid-image">${HTMLSanitizer.escapeHtml(alt || 'image')}</span>`;
+            }
+
+            return `<img src="${HTMLSanitizer.escapeHtml(src)}" alt="${HTMLSanitizer.escapeHtml(alt || '')}" class="image"${title}>`;
+          },
+
+          codespan: children =>
+            `<code class="inline-code">${HTMLSanitizer.escapeHtml(children)}</code>`,
+
+          strikethrough: children =>
+            `<del class="strikethrough">${HTMLSanitizer.escapeHtml(children)}</del>`,
+
+          hr: () => '<hr class="divider">',
+
+          html: children => (this.options.sanitizeHTML ? '' : children), // Preserve HTML only if sanitization is disabled
         },
-
-        paragraph: children => `<p class="paragraph">${HTMLSanitizer.escapeHtml(children)}</p>`,
-
-        blockquote: children => `<blockquote class="blockquote">${HTMLSanitizer.escapeHtml(children)}</blockquote>`,
-
-        code: (children, meta) => {
-          const lang = meta?.language || '';
-          const langClass = lang ? ` language-${lang}` : '';
-          return `<pre class="code-block${langClass}"><code class="code${langClass}">${HTMLSanitizer.escapeHtml(children)}</code></pre>`;
-        },
-
-        list: (children, meta) => {
-          const type = meta?.ordered ? 'ol' : 'ul';
-          const start = meta?.start ? ` start="${meta.start}"` : '';
-          return `<${type} class="list"${start}>${HTMLSanitizer.escapeHtml(children)}</${type}>`;
-        },
-
-        listItem: (children, meta) => {
-          const checked = meta?.checked !== undefined ? ` data-checked="${meta.checked}"` : '';
-          return `<li class="list-item"${checked}>${HTMLSanitizer.escapeHtml(children)}</li>`;
-        },
-
-        table: children => `<table class="table">${HTMLSanitizer.escapeHtml(children)}</table>`,
-
-        th: (children, meta) => {
-          const align = meta?.align || '';
-          const alignClass = align ? ` text-${align}` : '';
-          return `<th class="table-header${alignClass}">${HTMLSanitizer.escapeHtml(children)}</th>`;
-        },
-
-        td: (children, meta) => {
-          const align = meta?.align || '';
-          const alignClass = align ? ` text-${align}` : '';
-          return `<td class="table-cell${alignClass}">${HTMLSanitizer.escapeHtml(children)}</td>`;
-        },
-
-        strong: children => `<strong class="bold">${HTMLSanitizer.escapeHtml(children)}</strong>`,
-
-        emphasis: children => `<em class="italic">${HTMLSanitizer.escapeHtml(children)}</em>`,
-
-        link: (text, meta) => {
-          const href = meta?.href || '';
-          const title = meta?.title ? ` title="${HTMLSanitizer.escapeHtml(meta.title)}"` : '';
-
-          // Validate URL
-          if (href && !HTMLSanitizer.isValidURL(href)) {
-            return `<span class="invalid-link">${HTMLSanitizer.escapeHtml(text)}</span>`;
-          }
-
-          return `<a href="${HTMLSanitizer.escapeHtml(href)}" class="link"${title}>${HTMLSanitizer.escapeHtml(text)}</a>`;
-        },
-
-        image: (alt, meta) => {
-          const src = meta?.src || '';
-          const title = meta?.title ? ` title="${HTMLSanitizer.escapeHtml(meta.title)}"` : '';
-
-          // Validate image URL
-          if (src && !HTMLSanitizer.isValidURL(src)) {
-            return `<span class="invalid-image">${HTMLSanitizer.escapeHtml(alt || 'image')}</span>`;
-          }
-
-          return `<img src="${HTMLSanitizer.escapeHtml(src)}" alt="${HTMLSanitizer.escapeHtml(alt || '')}" class="image"${title}>`;
-        },
-
-        codespan: children => `<code class="inline-code">${HTMLSanitizer.escapeHtml(children)}</code>`,
-
-        strikethrough: children => `<del class="strikethrough">${HTMLSanitizer.escapeHtml(children)}</del>`,
-
-        hr: () => '<hr class="divider">',
-
-        html: children => this.options.sanitizeHTML ? '' : children // Preserve HTML only if sanitization is disabled
-      }, parserOptions);
+        parserOptions
+      );
     } else {
       // Use default HTML rendering with parser options
       const parserOptions = {
@@ -433,7 +472,7 @@ export class EnhancedMarkdownRenderer {
     if (this.options.sanitizeHTML) {
       html = HTMLSanitizer.sanitize(html, {
         allowedTags: this.options.allowedTags,
-        allowedAttributes: this.options.allowedAttributes
+        allowedAttributes: this.options.allowedAttributes,
       });
     }
 
@@ -453,7 +492,7 @@ export class EnhancedMarkdownRenderer {
             links.push({
               text: HTMLSanitizer.escapeHtml(text),
               href: HTMLSanitizer.escapeHtml(meta.href),
-              title: meta?.title ? HTMLSanitizer.escapeHtml(meta.title) : undefined
+              title: meta?.title ? HTMLSanitizer.escapeHtml(meta.title) : undefined,
             });
           }
         }
@@ -466,7 +505,7 @@ export class EnhancedMarkdownRenderer {
             links.push({
               text: HTMLSanitizer.escapeHtml(alt || 'image'),
               href: HTMLSanitizer.escapeHtml(meta.src),
-              title: meta?.title ? HTMLSanitizer.escapeHtml(meta.title) : undefined
+              title: meta?.title ? HTMLSanitizer.escapeHtml(meta.title) : undefined,
             });
           }
         }
@@ -491,7 +530,7 @@ export class EnhancedMarkdownRenderer {
       tbody: () => null,
       strikethrough: () => null,
       text: () => null,
-      html: () => null
+      html: () => null,
     });
 
     return links;
@@ -506,7 +545,7 @@ export class EnhancedMarkdownRenderer {
         headings.push({
           level: meta?.level || 1,
           text: children,
-          id: meta?.id
+          id: meta?.id,
         });
         return null; // Don't render
       },
@@ -530,7 +569,7 @@ export class EnhancedMarkdownRenderer {
       image: () => null,
       strikethrough: () => null,
       text: () => null,
-      html: () => null
+      html: () => null,
     });
 
     return headings;
@@ -559,7 +598,7 @@ export class EnhancedMarkdownRenderer {
       tbody: children => children,
       strikethrough: children => children,
       text: children => children,
-      html: () => '' // Remove HTML
+      html: () => '', // Remove HTML
     });
   }
 }

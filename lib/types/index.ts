@@ -1,13 +1,16 @@
 /**
  * 🏷️ FactoryWager Type Definitions
- * 
+ *
  * Central type definitions for the monorepo
- * 
+ *
  * @version 1.0.0
  */
 
 // Re-export core types
 export * from '../core/core-types';
+
+// Endpoint status types with HSL color integration
+export * from './endpoint-status';
 
 // FactoryWager specific types
 export type Severity = 'success' | 'warning' | 'error' | 'muted';
@@ -15,9 +18,9 @@ export type ProfileType = 'cpu' | 'heap' | 'diagnostic' | 'dual-cpu-heap';
 export type ColorFormat = 'hex' | 'rgb' | 'hsl' | 'ansi256' | 'number';
 
 // Project categories
-export type ProjectCategory = 
+export type ProjectCategory =
   | 'games'
-  | 'automation' 
+  | 'automation'
   | 'analysis'
   | 'utilities'
   | 'enterprise'

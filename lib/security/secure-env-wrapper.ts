@@ -2,13 +2,17 @@
 
 /**
  * 🔒 Secure Environment Wrapper
- * 
+ *
  * Replaces direct process.env access with validated, type-safe,
  * and audited environment variable management.
  */
 
-import { SimpleValidator, ValidationSchema, Schemas as ValidationSchemas } from "../utils/simple-validation";
-import { auditLogger } from "./secret-audit-logger";
+import {
+  SimpleValidator,
+  ValidationSchema,
+  Schemas as ValidationSchemas,
+} from '../utils/simple-validation';
+import { auditLogger } from './secret-audit-logger';
 
 export interface EnvVarConfig<T = string> {
   name: string;
@@ -46,7 +50,7 @@ class SecureEnvManager {
    */
   initialize(context?: SecurityContext): void {
     const errors: string[] = [];
-    
+
     for (const [name, config] of this.schemas) {
       try {
         this.validateAndGet(name, context);
@@ -67,7 +71,9 @@ class SecureEnvManager {
    */
   get<T>(name: string, context?: SecurityContext): T {
     if (!this.initialized) {
-      throw new Error('SecureEnvManager must be initialized before accessing environment variables');
+      throw new Error(
+        'SecureEnvManager must be initialized before accessing environment variables'
+      );
     }
 
     return this.validateAndGet<T>(name, context);
@@ -76,9 +82,14 @@ class SecureEnvManager {
   /**
    * Get environment variable with default (no registration required)
    */
-  getWithDefault<T>(name: string, defaultValue: T, schema?: ValidationSchema<T>, context?: SecurityContext): T {
+  getWithDefault<T>(
+    name: string,
+    defaultValue: T,
+    schema?: ValidationSchema<T>,
+    context?: SecurityContext
+  ): T {
     const rawValue = process.env[name];
-    
+
     if (rawValue === undefined) {
       return defaultValue;
     }
@@ -88,8 +99,15 @@ class SecureEnvManager {
       this.auditAccess(name, true, context);
       return value;
     } catch (error) {
-      this.auditAccess(name, false, context, error instanceof Error ? error.message : 'Unknown error');
-      throw new Error(`Invalid environment variable ${name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      this.auditAccess(
+        name,
+        false,
+        context,
+        error instanceof Error ? error.message : 'Unknown error'
+      );
+      throw new Error(
+        `Invalid environment variable ${name}: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -103,12 +121,17 @@ class SecureEnvManager {
   /**
    * Get all registered environment variables (non-sensitive)
    */
-  getRegisteredVars(): Array<{ name: string; required: boolean; sensitive: boolean; description?: string }> {
+  getRegisteredVars(): Array<{
+    name: string;
+    required: boolean;
+    sensitive: boolean;
+    description?: string;
+  }> {
     return Array.from(this.schemas.entries()).map(([name, config]) => ({
       name,
       required: config.required ?? false,
       sensitive: config.sensitive ?? false,
-      description: config.description
+      description: config.description,
     }));
   }
 
@@ -128,19 +151,19 @@ class SecureEnvManager {
     }
 
     const rawValue = process.env[name];
-    
+
     if (rawValue === undefined) {
       if (config.required && config.defaultValue === undefined) {
         this.auditAccess(name, false, context, 'Required environment variable not found');
         throw new Error(`Required environment variable '${name}' is not set`);
       }
-      
+
       if (config.defaultValue !== undefined) {
         this.cache.set(name, config.defaultValue);
         this.auditAccess(name, true, context);
         return config.defaultValue as T;
       }
-      
+
       this.auditAccess(name, false, context, 'Environment variable not found');
       throw new Error(`Environment variable '${name}' is not set`);
     }
@@ -151,24 +174,38 @@ class SecureEnvManager {
       this.auditAccess(name, true, context);
       return value;
     } catch (error) {
-      this.auditAccess(name, false, context, error instanceof Error ? error.message : 'Unknown error');
-      throw new Error(`Invalid environment variable '${name}': ${error instanceof Error ? error.message : 'Unknown error'}`);
+      this.auditAccess(
+        name,
+        false,
+        context,
+        error instanceof Error ? error.message : 'Unknown error'
+      );
+      throw new Error(
+        `Invalid environment variable '${name}': ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
   /**
    * Audit environment variable access
    */
-  private auditAccess(name: string, success: boolean, context?: SecurityContext, errorMessage?: string): void {
-    auditLogger.logSecretAccess(
-      success ? 'read' : 'access_attempt',
-      name,
-      'environment',
-      success,
-      context,
-      undefined,
-      errorMessage
-    ).catch(console.error);
+  private auditAccess(
+    name: string,
+    success: boolean,
+    context?: SecurityContext,
+    errorMessage?: string
+  ): void {
+    auditLogger
+      .logSecretAccess(
+        success ? 'read' : 'access_attempt',
+        name,
+        'environment',
+        success,
+        context,
+        undefined,
+        errorMessage
+      )
+      .catch(console.error);
   }
 
   /**
@@ -190,7 +227,9 @@ class SecureEnvManager {
   } {
     const required = Array.from(this.schemas.values()).filter(config => config.required).length;
     const sensitive = Array.from(this.schemas.values()).filter(config => config.sensitive).length;
-    const configured = Array.from(this.schemas.keys()).filter(name => process.env[name] !== undefined).length;
+    const configured = Array.from(this.schemas.keys()).filter(
+      name => process.env[name] !== undefined
+    ).length;
     const missing = Array.from(this.schemas.entries())
       .filter(([name, config]) => config.required && process.env[name] === undefined)
       .map(([name]) => name);
@@ -200,7 +239,7 @@ class SecureEnvManager {
       required,
       sensitive,
       configured,
-      missing
+      missing,
     };
   }
 }
@@ -225,7 +264,7 @@ export const Schemas = {
   jwtSecret: ValidationSchemas.jwtSecret(),
   encryptionKey: ValidationSchemas.encryptionKey(),
   logLevel: ValidationSchemas.logLevel(),
-  environment: ValidationSchemas.environment()
+  environment: ValidationSchemas.environment(),
 };
 
 // Helper function to create common environment variable configs
@@ -245,7 +284,7 @@ export function createEnvConfig<T>(
     required: options.required ?? false,
     defaultValue: options.defaultValue,
     sensitive: options.sensitive ?? false,
-    description: options.description
+    description: options.description,
   };
 }
 
@@ -254,42 +293,42 @@ export const CommonEnvVars = {
   NODE_ENV: createEnvConfig('NODE_ENV', Schemas.environment, {
     required: true,
     defaultValue: 'development',
-    description: 'Node.js environment'
+    description: 'Node.js environment',
   }),
-  
+
   PORT: createEnvConfig('PORT', Schemas.port, {
     required: false,
     defaultValue: 3000,
-    description: 'Server port'
+    description: 'Server port',
   }),
-  
+
   LOG_LEVEL: createEnvConfig('LOG_LEVEL', Schemas.logLevel, {
     required: false,
     defaultValue: 'info',
-    description: 'Logging level'
+    description: 'Logging level',
   }),
-  
+
   DATABASE_URL: createEnvConfig('DATABASE_URL', Schemas.databaseUrl, {
     required: false,
     sensitive: true,
-    description: 'Database connection URL'
+    description: 'Database connection URL',
   }),
-  
+
   JWT_SECRET: createEnvConfig('JWT_SECRET', Schemas.jwtSecret, {
     required: false,
     sensitive: true,
-    description: 'JWT signing secret'
+    description: 'JWT signing secret',
   }),
-  
+
   API_KEY: createEnvConfig('API_KEY', Schemas.apiKey, {
     required: false,
     sensitive: true,
-    description: 'External API key'
+    description: 'External API key',
   }),
-  
+
   ENCRYPTION_KEY: createEnvConfig('ENCRYPTION_KEY', Schemas.encryptionKey, {
     required: false,
     sensitive: true,
-    description: 'Encryption key (64-character hex string)'
-  })
+    description: 'Encryption key (64-character hex string)',
+  }),
 };

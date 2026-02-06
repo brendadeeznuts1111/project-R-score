@@ -1,21 +1,20 @@
 #!/usr/bin/env bun
 /**
  * 🦌 BUN-FIRST POLICY & COMPLIANCE AUDITOR
- * 
+ *
  * Ensures all code follows Bun-first principles
  */
 
-import { write } from "bun";
-
+import { write } from 'bun';
 
 console.log('🦌 BUN-FIRST POLICY & COMPLIANCE AUDITOR');
 console.log('Ensuring all code follows Bun-first principles');
-console.log('=' .repeat(60));
+console.log('='.repeat(60));
 
 // Node.js APIs that should be replaced with Bun equivalents
 const NODE_API_VIOLATIONS = [
   'require("fs")',
-  'require("http")', 
+  'require("http")',
   'require("https")',
   'require("child_process")',
   'require("path")',
@@ -27,7 +26,7 @@ const NODE_API_VIOLATIONS = [
   'child_process.spawn',
   'child_process.execSync',
   'path.join',
-  'path.resolve'
+  'path.resolve',
 ];
 
 const violations: Array<{
@@ -40,7 +39,7 @@ const violations: Array<{
 
 async function auditLibDirectory() {
   console.log('\n📁 AUDITING @[lib] DIRECTORY FOR BUN-FIRST COMPLIANCE...');
-  
+
   const libFiles = [
     'performance-optimizer.ts',
     'optimized-server.ts',
@@ -55,51 +54,61 @@ async function auditLibDirectory() {
     'hardened-fetch.ts',
     'rsc-enhanced.ts',
     'memory-pool.ts',
-    'http2-multiplexer.ts'
+    'http2-multiplexer.ts',
   ];
-  
+
   let totalFiles = 0;
-  
+
   for (const fileName of libFiles) {
     const filePath = `./lib/${fileName}`;
-    
+
     try {
       const fileExists = await Bun.file(filePath).exists();
       if (!fileExists) continue;
-      
+
       const content = await Bun.file(filePath).text();
       const lines = content.split('\n');
-      
+
       totalFiles++;
       console.log(`   📁 Auditing ${fileName}...`);
-      
+
       // Check for Node.js API violations
       lines.forEach((line, index) => {
         checkLineForViolations(line, fileName, index + 1);
       });
-      
     } catch (error) {
       console.log(`   ⚠️  Could not audit ${fileName}: ${error.message}`);
     }
   }
-  
+
   return totalFiles;
 }
 
 function checkLineForViolations(line: string, fileName: string, lineNumber: number): void {
   const trimmedLine = line.trim();
-  
+
   // Check for Node.js require statements
   if (trimmedLine.includes('require(')) {
     const match = trimmedLine.match(/require\(["']([^"']+)["']\)/);
     if (match) {
       const module = match[1];
-      if (module.startsWith('fs') || module.startsWith('http') || module.startsWith('child_process') || module.startsWith('path')) {
-        addViolation(fileName, lineNumber, `require("${module}")`, 'CRITICAL', getBunAlternative(module));
+      if (
+        module.startsWith('fs') ||
+        module.startsWith('http') ||
+        module.startsWith('child_process') ||
+        module.startsWith('path')
+      ) {
+        addViolation(
+          fileName,
+          lineNumber,
+          `require("${module}")`,
+          'CRITICAL',
+          getBunAlternative(module)
+        );
       }
     }
   }
-  
+
   // Check for Node.js API usage
   NODE_API_VIOLATIONS.forEach(violation => {
     if (trimmedLine.includes(violation)) {
@@ -107,27 +116,40 @@ function checkLineForViolations(line: string, fileName: string, lineNumber: numb
       addViolation(fileName, lineNumber, violation, severity, getBunAlternative(violation));
     }
   });
-  
+
   // Check for missing Bun optimizations
   if (trimmedLine.includes('fetch(') && !trimmedLine.includes('Bun.fetch')) {
-    addViolation(fileName, lineNumber, 'Generic fetch()', 'MEDIUM', 'Use Bun.fetch() for better performance');
+    addViolation(
+      fileName,
+      lineNumber,
+      'Generic fetch()',
+      'MEDIUM',
+      'Use Bun.fetch() for better performance'
+    );
   }
 }
 
-function addViolation(file: string, line: number, violation: string, severity: string, suggestion: string): void {
+function addViolation(
+  file: string,
+  line: number,
+  violation: string,
+  severity: string,
+  suggestion: string
+): void {
   violations.push({
     file,
     line,
     violation,
     severity: severity as any,
-    suggestion
+    suggestion,
   });
 }
 
 function getViolationSeverity(violation: string): 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' {
   if (violation.includes('fs.') || violation.includes('require("fs")')) return 'CRITICAL';
   if (violation.includes('http.') || violation.includes('require("http")')) return 'CRITICAL';
-  if (violation.includes('child_process.') || violation.includes('require("child_process")')) return 'HIGH';
+  if (violation.includes('child_process.') || violation.includes('require("child_process")'))
+    return 'HIGH';
   if (violation.includes('path.') || violation.includes('require("path")')) return 'MEDIUM';
   return 'LOW';
 }
@@ -148,41 +170,51 @@ function getBunAlternative(nodeApi: string): string {
     'require("path")': 'Use import.meta.path and import.meta.dir',
     'path.join': 'Use template literals with import.meta.path',
     'path.resolve': 'Use new URL() with import.meta.path',
-    'Generic fetch()': 'Use Bun.fetch() for better performance'
+    'Generic fetch()': 'Use Bun.fetch() for better performance',
   };
-  
+
   return alternatives[nodeApi] || 'Use Bun equivalent API';
 }
 
 function generateReport(totalFiles: number): void {
   console.log('\n🦌 BUN-FIRST COMPLIANCE REPORT');
-  console.log('=' .repeat(60));
-  
+  console.log('='.repeat(60));
+
   const compliance = totalFiles > 0 ? ((totalFiles - violations.length) / totalFiles) * 100 : 100;
-  
+
   console.log('\n📊 AUDIT SUMMARY:');
   console.log(`   Files Audited: ${totalFiles}`);
   console.log(`   Violations Found: ${violations.length}`);
   console.log(`   Compliance Rate: ${compliance.toFixed(1)}%`);
-  
-  const bySeverity = violations.reduce((acc, v) => {
-    acc[v.severity] = (acc[v.severity] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-  
+
+  const bySeverity = violations.reduce(
+    (acc, v) => {
+      acc[v.severity] = (acc[v.severity] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
+
   console.log('\n🚨 VIOLATIONS BY SEVERITY:');
   Object.entries(bySeverity).forEach(([severity, count]) => {
-    const icon = severity === 'CRITICAL' ? '🔴' : severity === 'HIGH' ? '🟡' : severity === 'MEDIUM' ? '🟠' : '🔵';
+    const icon =
+      severity === 'CRITICAL'
+        ? '🔴'
+        : severity === 'HIGH'
+          ? '🟡'
+          : severity === 'MEDIUM'
+            ? '🟠'
+            : '🔵';
     console.log(`   ${icon} ${severity}: ${count}`);
   });
-  
+
   if (violations.length > 0) {
     console.log('\n📋 DETAILED VIOLATIONS:');
-    
+
     const criticalViolations = violations.filter(v => v.severity === 'CRITICAL');
     const highViolations = violations.filter(v => v.severity === 'HIGH');
     const mediumViolations = violations.filter(v => v.severity === 'MEDIUM');
-    
+
     if (criticalViolations.length > 0) {
       console.log('\n   🔴 CRITICAL VIOLATIONS:');
       criticalViolations.forEach(v => {
@@ -190,7 +222,7 @@ function generateReport(totalFiles: number): void {
         console.log(`         💡 ${v.suggestion}`);
       });
     }
-    
+
     if (highViolations.length > 0) {
       console.log('\n   🟡 HIGH VIOLATIONS:');
       highViolations.forEach(v => {
@@ -199,7 +231,7 @@ function generateReport(totalFiles: number): void {
       });
     }
   }
-  
+
   console.log('\n🦌 BUN-FIRST BEST PRACTICES:');
   console.log('   ✅ Use Bun.file() instead of fs APIs');
   console.log('   ✅ Use Bun.serve() instead of http.createServer');
@@ -208,7 +240,7 @@ function generateReport(totalFiles: number): void {
   console.log('   ✅ Use Bun.fetch() for better HTTP performance');
   console.log('   ✅ Use await Bun.write() for file operations');
   console.log('   ✅ Use import.meta.main for entry detection');
-  
+
   console.log('\n💡 RECOMMENDATIONS:');
   if (compliance < 80) {
     console.log('   🚨 URGENT: Low compliance rate! Fix violations immediately.');
@@ -217,18 +249,18 @@ function generateReport(totalFiles: number): void {
   } else {
     console.log('   ✅ GOOD: High compliance rate! Continue following Bun-first principles.');
   }
-  
+
   console.log('   📚 Add Bun-first validation to CI/CD pipeline');
   console.log('   🔧 Create Bun API migration guide for team');
   console.log('   📊 Monitor compliance regularly');
-  
+
   console.log('\n' + '='.repeat(60));
   console.log('🦌 BUN-FIRST AUDIT COMPLETE!');
 }
 
 async function createMigrationGuide(): Promise<void> {
   console.log('\n📚 CREATING BUN-FIRST MIGRATION GUIDE...');
-  
+
   const guide = `# 🦌 Bun-First Migration Guide
 
 ## 🎯 Policy: Always Use Bun First
@@ -329,16 +361,16 @@ async function main(): Promise<void> {
   try {
     // Audit @[lib] directory
     const totalFiles = await auditLibDirectory();
-    
+
     // Generate report
     generateReport(totalFiles);
-    
+
     // Create migration guide
     await createMigrationGuide();
-    
+
     // Final assessment
     const compliance = totalFiles > 0 ? ((totalFiles - violations.length) / totalFiles) * 100 : 100;
-    
+
     console.log('\n🎯 FINAL ASSESSMENT:');
     if (compliance >= 95) {
       console.log('🟢 EXCELLENT: High Bun-first compliance!');
@@ -347,9 +379,8 @@ async function main(): Promise<void> {
     } else {
       console.log('🔴 NEEDS WORK: Low compliance, immediate action required');
     }
-    
+
     console.log('\n🦌 Remember: ALWAYS USE BUN FIRST! 🦌');
-    
   } catch (error) {
     console.error('\n❌ Bun-first audit failed:', error);
     process.exit(1);

@@ -1,0 +1,24 @@
+{
+  "name": "registry-helper",
+  "version": "1.0.0",
+  "description": "MCP registry package lookup and version resolution skill",
+  "integrity": "sha256-9977042e0221587b8f3922fee5ecf22732d58b1ea1027c0102b1c78573ba6fdb",
+  "features": ["CATALOG_RESOLUTION"],
+  "entry": "./index.ts",
+  "author": "Registry MCP Team",
+  "permissions": ["filesystem:read", "network:fetch"],
+  "routes": [
+    {
+      "pattern": "/mcp/skills/registry/lookup",
+      "method": "GET",
+      "handler": "handleLookup",
+      "description": "Look up package information from the registry"
+    },
+    {
+      "pattern": "/mcp/skills/registry/resolve/:package",
+      "method": "GET",
+      "handler": "handleResolve",
+      "description": "Resolve package version and dependencies"
+    }
+  ]
+}

@@ -28,7 +28,7 @@ import {join} from 'path';
 // Import CLI constants for fix projections display
 const CLI_CONSTANTS_PATH = join(import.meta.dir, '..', 'src', 'cli-constants.ts');
 
-const REGISTRY_FILE = join(import.meta.dir, '..', '..', 'BUN_CONSTANTS_VERSION.json');
+const REGISTRY_FILE = join(import.meta.dir, '..', '..', '..', '..', 'config', 'BUN_CONSTANTS_VERSION.json');
 const OUTPUT_DIR = join(import.meta.dir, '..', '..', 'docs', 'visual');
 const DASHBOARD_FILE = join(OUTPUT_DIR, 'dashboard.html');
 const BADGES_DIR = join(OUTPUT_DIR, 'badges');

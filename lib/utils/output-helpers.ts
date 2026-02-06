@@ -1,13 +1,16 @@
 /**
  * Output Helpers - Colored console output using Bun.stdout and Bun.color()
- * 
+ *
  * Provides styled output for validation results and diagnostics.
  */
 
 /**
  * Write colored text to stdout
  */
-export function writeColored(text: string, color: 'blue' | 'green' | 'yellow' | 'red' | 'cyan' | 'magenta' | 'white' = 'white'): void {
+export function writeColored(
+  text: string,
+  color: 'blue' | 'green' | 'yellow' | 'red' | 'cyan' | 'magenta' | 'white' = 'white'
+): void {
   const colored = Bun.color(color, 'ansi');
   const reset = '\x1b[0m';
   Bun.write(Bun.stdout, colored + text + reset);
@@ -16,7 +19,10 @@ export function writeColored(text: string, color: 'blue' | 'green' | 'yellow' | 
 /**
  * Write colored line to stdout
  */
-export function writeLine(text: string, color?: 'blue' | 'green' | 'yellow' | 'red' | 'cyan' | 'magenta' | 'white'): void {
+export function writeLine(
+  text: string,
+  color?: 'blue' | 'green' | 'yellow' | 'red' | 'cyan' | 'magenta' | 'white'
+): void {
   writeColored(text + '\n', color);
 }
 
@@ -48,6 +54,7 @@ export function formatRScore(score: number): string {
  */
 export function writeRScore(score: number): void {
   const formatted = formatRScore(score);
-  const color: 'green' | 'yellow' | 'red' = score >= 0.95 ? 'green' : score >= 0.85 ? 'yellow' : 'red';
+  const color: 'green' | 'yellow' | 'red' =
+    score >= 0.95 ? 'green' : score >= 0.85 ? 'yellow' : 'red';
   writeLine(formatted, color);
 }

@@ -2,15 +2,15 @@
 
 /**
  * 🧠 Smart Cache Manager
- * 
+ *
  * AI-enhanced caching system with predictive capabilities,
  * access pattern learning, and intelligent optimization.
  */
 
-import { CacheManager } from "../performance/cache-manager";
-import { aiOperations } from "./ai-operations-manager";
-import { logger } from "../monitoring/structured-logger";
-import { Mutex } from "../core/safe-concurrency";
+import { CacheManager } from '../performance/cache-manager';
+import { aiOperations } from './ai-operations-manager';
+import { logger } from '../monitoring/structured-logger';
+import { Mutex } from '../core/safe-concurrency';
 
 interface AccessPattern {
   key: string;
@@ -57,13 +57,13 @@ export class SmartCacheManager<K = string, V = any> {
       predictionWindow: config.predictionWindow ?? 60, // 1 hour
       minConfidence: config.minConfidence ?? 0.7,
       maxPatternHistory: config.maxPatternHistory ?? 1000,
-      autoOptimization: config.autoOptimization ?? true
+      autoOptimization: config.autoOptimization ?? true,
     };
 
     this.cache = new CacheManager<K, V>({
       maxSize: 1000,
       defaultTtl: 300000, // 5 minutes
-      enableMetrics: true
+      enableMetrics: true,
     });
 
     // Initialize mutexes for thread safety
@@ -80,30 +80,34 @@ export class SmartCacheManager<K = string, V = any> {
   async get(key: K): Promise<V | undefined> {
     return await this.mutex.run(async () => {
       const startTime = Date.now();
-      
+
       // Record access pattern
       await this.recordAccess(key);
-      
+
       // Get value from cache
       const value = await this.cache.get(key);
-      
+
       // Update learning model
       if (this.learningEnabled) {
         await this.updateLearningModel(key, value !== undefined);
       }
-      
+
       // Check if we should preload related items
       if (value !== undefined && this.config.enablePredictions) {
         await this.considerPreload(key);
       }
-      
+
       const duration = Date.now() - startTime;
-      logger.debug('Smart cache get', {
-        key: String(key),
-        hit: value !== undefined,
-        duration,
-        predictions: this.predictions.size
-      }, ['cache', 'smart']);
+      logger.debug(
+        'Smart cache get',
+        {
+          key: String(key),
+          hit: value !== undefined,
+          duration,
+          predictions: this.predictions.size,
+        },
+        ['cache', 'smart']
+      );
 
       return value;
     });
@@ -115,27 +119,31 @@ export class SmartCacheManager<K = string, V = any> {
   async set(key: K, value: V, ttl?: number): Promise<void> {
     await this.mutex.run(async () => {
       const size = this.calculateSize(value);
-      
+
       // Get AI recommendation for TTL
       const recommendedTtl = await this.getRecommendedTTL(key, size);
       const finalTtl = ttl ?? recommendedTtl;
-      
+
       await this.cache.set(key, value, finalTtl);
-      
+
       // Record access pattern
       await this.recordAccess(key, size);
-      
+
       // Update predictions
       if (this.config.enablePredictions) {
         await this.updatePredictions(key);
       }
-      
-      logger.debug('Smart cache set', {
-        key: String(key),
-        ttl: finalTtl,
-        size,
-        recommended: recommendedTtl
-      }, ['cache', 'smart']);
+
+      logger.debug(
+        'Smart cache set',
+        {
+          key: String(key),
+          ttl: finalTtl,
+          size,
+          recommended: recommendedTtl,
+        },
+        ['cache', 'smart']
+      );
     });
   }
 
@@ -155,10 +163,16 @@ export class SmartCacheManager<K = string, V = any> {
       this.predictions.set(key, prediction);
     }
 
-    logger.info('Cache access predictions generated', {
-      totalPredictions: predictions.size,
-      highConfidence: Array.from(predictions.values()).filter(p => p.confidence >= this.config.minConfidence).length
-    }, ['cache', 'prediction']);
+    logger.info(
+      'Cache access predictions generated',
+      {
+        totalPredictions: predictions.size,
+        highConfidence: Array.from(predictions.values()).filter(
+          p => p.confidence >= this.config.minConfidence
+        ).length,
+      },
+      ['cache', 'prediction']
+    );
 
     return predictions;
   }
@@ -176,7 +190,7 @@ export class SmartCacheManager<K = string, V = any> {
       itemsPreloaded: 0,
       itemsEvicted: 0,
       itemsPromoted: 0,
-      performanceImprovement: 0
+      performanceImprovement: 0,
     };
 
     if (!this.config.enablePredictions) {
@@ -188,8 +202,10 @@ export class SmartCacheManager<K = string, V = any> {
 
     // Preload high-confidence items
     for (const [key, prediction] of this.predictions) {
-      if (prediction.recommendedAction === 'preload' && 
-          prediction.confidence >= this.config.minConfidence) {
+      if (
+        prediction.recommendedAction === 'preload' &&
+        prediction.confidence >= this.config.minConfidence
+      ) {
         // In a real implementation, preload from data source
         results.itemsPreloaded++;
       }
@@ -197,8 +213,10 @@ export class SmartCacheManager<K = string, V = any> {
 
     // Evict low-confidence items
     for (const [key, prediction] of this.predictions) {
-      if (prediction.recommendedAction === 'evict' && 
-          prediction.confidence >= this.config.minConfidence) {
+      if (
+        prediction.recommendedAction === 'evict' &&
+        prediction.confidence >= this.config.minConfidence
+      ) {
         await this.cache.delete(key);
         results.itemsEvicted++;
       }
@@ -206,7 +224,8 @@ export class SmartCacheManager<K = string, V = any> {
 
     // Promote frequently accessed items
     for (const [key, pattern] of this.accessPatterns) {
-      if (pattern.frequency > 10 && pattern.recency < 300000) { // 5 minutes
+      if (pattern.frequency > 10 && pattern.recency < 300000) {
+        // 5 minutes
         // Promote by extending TTL
         results.itemsPromoted++;
       }
@@ -232,15 +251,16 @@ export class SmartCacheManager<K = string, V = any> {
     hitRateImprovement: number;
   } {
     const cacheStats = this.cache.getStats();
-    const highConfidencePredictions = Array.from(this.predictions.values())
-      .filter(p => p.confidence >= this.config.minConfidence).length;
+    const highConfidencePredictions = Array.from(this.predictions.values()).filter(
+      p => p.confidence >= this.config.minConfidence
+    ).length;
 
     return {
       patternsLearned: this.accessPatterns.size,
       predictionsActive: highConfidencePredictions,
       accuracy: this.calculatePredictionAccuracy(),
       optimizationSavings: this.calculateOptimizationSavings(),
-      hitRateImprovement: cacheStats.hitRate
+      hitRateImprovement: cacheStats.hitRate,
     };
   }
 
@@ -259,7 +279,7 @@ export class SmartCacheManager<K = string, V = any> {
           recency: now,
           periodicity: 0,
           size: size ?? 0,
-          accessTimes: []
+          accessTimes: [],
         };
         this.accessPatterns.set(key, pattern);
       }
@@ -279,7 +299,8 @@ export class SmartCacheManager<K = string, V = any> {
         for (let i = 1; i < pattern.accessTimes.length; i++) {
           intervals.push(pattern.accessTimes[i] - pattern.accessTimes[i - 1]);
         }
-        pattern.periodicity = intervals.reduce((sum, interval) => sum + interval, 0) / intervals.length;
+        pattern.periodicity =
+          intervals.reduce((sum, interval) => sum + interval, 0) / intervals.length;
       }
     });
   }
@@ -296,11 +317,12 @@ export class SmartCacheManager<K = string, V = any> {
     if (prediction && prediction.predictNextAccess) {
       const actualAccess = Date.now();
       const error = Math.abs(actualAccess - prediction.predictNextAccess);
-      
+
       // Adjust confidence based on prediction accuracy
-      const accuracy = Math.max(0, 1 - (error / (this.config.predictionWindow * 60000)));
-      prediction.confidence = prediction.confidence * (1 - this.config.learningRate) + 
-                           accuracy * this.config.learningRate;
+      const accuracy = Math.max(0, 1 - error / (this.config.predictionWindow * 60000));
+      prediction.confidence =
+        prediction.confidence * (1 - this.config.learningRate) +
+        accuracy * this.config.learningRate;
     }
   }
 
@@ -309,14 +331,14 @@ export class SmartCacheManager<K = string, V = any> {
    */
   private async predictAccess(pattern: AccessPattern): Promise<CachePrediction> {
     const now = Date.now();
-    
+
     if (pattern.frequency < 2) {
       return {
         key: pattern.key,
         willBeAccessed: false,
         confidence: 0.1,
         nextAccessTime: 0,
-        recommendedAction: 'evict'
+        recommendedAction: 'evict',
       };
     }
 
@@ -330,7 +352,7 @@ export class SmartCacheManager<K = string, V = any> {
       const timeSinceLastAccess = now - pattern.recency;
       const periodsSinceLast = Math.floor(timeSinceLastAccess / pattern.periodicity);
       nextAccessTime = pattern.recency + (periodsSinceLast + 1) * pattern.periodicity;
-      
+
       const timeToNextAccess = nextAccessTime - now;
       if (timeToNextAccess <= this.config.predictionWindow * 60000) {
         willBeAccessed = true;
@@ -338,14 +360,16 @@ export class SmartCacheManager<K = string, V = any> {
       }
     } else {
       // Predict based on frequency and recency
-      const avgInterval = pattern.accessTimes.length > 1 ? 
-        (pattern.accessTimes[pattern.accessTimes.length - 1] - pattern.accessTimes[0]) / 
-        (pattern.accessTimes.length - 1) : 0;
-      
+      const avgInterval =
+        pattern.accessTimes.length > 1
+          ? (pattern.accessTimes[pattern.accessTimes.length - 1] - pattern.accessTimes[0]) /
+            (pattern.accessTimes.length - 1)
+          : 0;
+
       if (avgInterval > 0) {
         nextAccessTime = pattern.recency + avgInterval;
         const timeToNextAccess = nextAccessTime - now;
-        
+
         if (timeToNextAccess <= this.config.predictionWindow * 60000) {
           willBeAccessed = true;
           confidence = Math.min(0.8, pattern.frequency / 5);
@@ -368,7 +392,7 @@ export class SmartCacheManager<K = string, V = any> {
       willBeAccessed,
       confidence,
       nextAccessTime,
-      recommendedAction
+      recommendedAction,
     };
   }
 
@@ -389,10 +413,14 @@ export class SmartCacheManager<K = string, V = any> {
   private async considerPreload(key: K): Promise<void> {
     // In a real implementation, use ML to find related keys
     // For now, just log the consideration
-    logger.debug('Considering preload for related items', {
-      key: String(key),
-      patternsAnalyzed: this.accessPatterns.size
-    }, ['cache', 'preload']);
+    logger.debug(
+      'Considering preload for related items',
+      {
+        key: String(key),
+        patternsAnalyzed: this.accessPatterns.size,
+      },
+      ['cache', 'preload']
+    );
   }
 
   /**
@@ -409,11 +437,13 @@ export class SmartCacheManager<K = string, V = any> {
       ttl *= 2; // Frequently accessed items stay longer
     }
 
-    if (pattern.recency > Date.now() - 60000) { // Accessed in last minute
+    if (pattern.recency > Date.now() - 60000) {
+      // Accessed in last minute
       ttl *= 1.5; // Recently accessed items stay longer
     }
 
-    if (size > 1024 * 1024) { // Large items (>1MB)
+    if (size > 1024 * 1024) {
+      // Large items (>1MB)
       ttl *= 0.5; // Large items expire faster
     }
 
@@ -455,7 +485,9 @@ export class SmartCacheManager<K = string, V = any> {
    */
   private estimatePerformanceImprovement(results: any): number {
     // Simple estimation based on actions taken
-    return (results.itemsPreloaded * 5 + results.itemsEvicted * 2 + results.itemsPromoted * 3) * 0.1;
+    return (
+      (results.itemsPreloaded * 5 + results.itemsEvicted * 2 + results.itemsPromoted * 3) * 0.1
+    );
   }
 
   /**
@@ -483,29 +515,29 @@ export class SmartCacheManager<K = string, V = any> {
       clearInterval(this.optimizationTimer);
       this.optimizationTimer = undefined;
     }
-    
+
     await this.cache.destroy();
     this.learningEnabled = false;
-    
+
     logger.info('Smart cache manager stopped', {}, ['cache', 'smart']);
   }
 }
 
 // Export enhanced global caches with AI capabilities
 export const smartCaches = {
-  secrets: new SmartCacheManager<string, any>({ 
+  secrets: new SmartCacheManager<string, any>({
     enablePredictions: true,
     autoOptimization: true,
-    predictionWindow: 120 // 2 hours for secrets
+    predictionWindow: 120, // 2 hours for secrets
   }),
-  config: new SmartCacheManager<string, any>({ 
+  config: new SmartCacheManager<string, any>({
     enablePredictions: true,
     autoOptimization: true,
-    predictionWindow: 60 // 1 hour for config
+    predictionWindow: 60, // 1 hour for config
   }),
-  apiResponses: new SmartCacheManager<string, any>({ 
+  apiResponses: new SmartCacheManager<string, any>({
     enablePredictions: true,
     autoOptimization: true,
-    predictionWindow: 30 // 30 minutes for API responses
-  })
+    predictionWindow: 30, // 30 minutes for API responses
+  }),
 };

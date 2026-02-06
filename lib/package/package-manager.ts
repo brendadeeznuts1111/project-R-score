@@ -2,7 +2,7 @@
 
 /**
  * 📦 Package Management Integration Layer
- * 
+ *
  * Analyzes packages for Bun API usage, generates documentation,
  * and integrates with R2 storage and RSS feeds.
  */
@@ -50,22 +50,22 @@ export class PackageManager {
 
   async analyzePackage(): Promise<PackageInfo> {
     const packageJsonPath = `${this.projectRoot}/package.json`;
-    
+
     if (!(await Bun.file(packageJsonPath).exists())) {
       throw new Error('No package.json found');
     }
 
-    const pkg = await Bun.file(packageJsonPath).json() as any;
-    
+    const pkg = (await Bun.file(packageJsonPath).json()) as any;
+
     // Scan for Bun-specific APIs used
     const bunApis = await this.scanForBunAPIs();
-    
+
     // Generate R2 configuration
     const r2Config = await this.generateR2Config(pkg.name);
-    
+
     // Check for RSS feeds in dependencies
     const rssFeed = await this.findRSSFeeds(pkg);
-    
+
     return {
       name: pkg.name || 'unknown',
       version: pkg.version || '1.0.0',
@@ -74,25 +74,25 @@ export class PackageManager {
       devDependencies: pkg.devDependencies || {},
       bunDocs: bunApis,
       r2Config,
-      rssFeed
+      rssFeed,
     };
   }
 
-  private async scanForBunAPIs(): Promise<Array<{api: string, url: string, category: string}>> {
-    const apis: Array<{api: string, url: string, category: string}> = [];
-    
+  private async scanForBunAPIs(): Promise<Array<{ api: string; url: string; category: string }>> {
+    const apis: Array<{ api: string; url: string; category: string }> = [];
+
     try {
       // Scan project files for Bun API usage
-      const scanner = new Bun.Glob("**/*.{ts,js,tsx,jsx}");
-      
+      const scanner = new Bun.Glob('**/*.{ts,js,tsx,jsx}');
+
       for await (const file of scanner.scan({ cwd: this.projectRoot, absolute: false })) {
         try {
           const content = await Bun.file(`${this.projectRoot}/${file}`).text();
-          
+
           // Match Bun.xxx patterns
           const bunMatches = content.match(/Bun\.(\w+)/g) || [];
           const apiMatches = content.match(/import.*from ['"]bun['"]/g) || [];
-          
+
           // Map to documentation
           for (const match of [...bunMatches, ...apiMatches]) {
             const api = match.replace('Bun.', '').replace(/import.*from ['"]bun['"]/, 'bun');
@@ -108,22 +108,24 @@ export class PackageManager {
     } catch {
       // If scanning fails, return empty array
     }
-    
+
     return apis;
   }
 
-  private async getAPIDocumentation(api: string): Promise<{api: string, url: string, category: string} | null> {
+  private async getAPIDocumentation(
+    api: string
+  ): Promise<{ api: string; url: string; category: string } | null> {
     try {
       // Try to import the docs fetcher
       const { EnhancedDocsFetcher } = await import('../docs/index-fetcher-enhanced.ts');
       const fetcher = new EnhancedDocsFetcher();
       const results = await fetcher.search(api);
-      
+
       if (results.length > 0) {
         return {
           api,
           url: results[0].domains?.com || `https://bun.sh/docs/api/${api}`,
-          category: results[0].category || 'api'
+          category: results[0].category || 'api',
         };
       }
     } catch {
@@ -131,10 +133,10 @@ export class PackageManager {
       return {
         api,
         url: `https://bun.sh/docs/api/${api}`,
-        category: 'api'
+        category: 'api',
       };
     }
-    
+
     return null;
   }
 
@@ -142,18 +144,18 @@ export class PackageManager {
     const sanitizedName = packageName.replace(/[@/]/g, '-');
     return {
       bucket: `bun-docs-${sanitizedName}`,
-      prefix: `v${Date.now()}`
+      prefix: `v${Date.now()}`,
     };
   }
 
   private async findRSSFeeds(pkg: any): Promise<string | undefined> {
     // Check for RSS feed in package.json
     if (pkg.rss) return pkg.rss;
-    
+
     // Check dependencies for known RSS-capable packages
     const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
     const rssPackages = ['rss-parser', 'feed', 'rss-feed-emitter'];
-    
+
     for (const dep of Object.keys(allDeps)) {
       if (rssPackages.includes(dep)) {
         // Try to get RSS feed from package documentation
@@ -164,13 +166,13 @@ export class PackageManager {
 
   async generateDependencyGraph(): Promise<PackageDependencyGraph> {
     const pkg = await this.analyzePackage();
-    
+
     const graph: PackageDependencyGraph = {
       name: pkg.name,
       version: pkg.version,
       dependencies: [],
       size: 0,
-      docsUrls: pkg.bunDocs?.map(d => d.url) || []
+      docsUrls: pkg.bunDocs?.map(d => d.url) || [],
     };
 
     // Analyze dependencies
@@ -188,44 +190,37 @@ export class PackageManager {
     try {
       const response = await fetch(`https://registry.npmjs.org/${name}/${version}`);
       if (response.ok) {
-        const pkg = await response.json() as any;
-        
+        const pkg = (await response.json()) as any;
+
         return {
           name,
           version,
           dependencies: [],
           size: pkg.dist?.size || 0,
-          docsUrls: [`https://www.npmjs.com/package/${name}`]
+          docsUrls: [`https://www.npmjs.com/package/${name}`],
         };
       }
     } catch {
       // Fallback if fetch fails
     }
-    
+
     return {
       name,
       version,
       dependencies: [],
       size: 0,
-      docsUrls: []
+      docsUrls: [],
     };
   }
 
   async installMissingDocs(): Promise<void> {
     console.log('📦 Installing documentation dependencies...');
-    
+
     const pkg = await this.analyzePackage();
-    const docsDependencies = [
-      '@types/bun',
-      'bun-types',
-      'rss-parser',
-      '@cloudflare/wrangler'
-    ];
+    const docsDependencies = ['@types/bun', 'bun-types', 'rss-parser', '@cloudflare/wrangler'];
 
     const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
-    const missing = docsDependencies.filter(dep => 
-      !allDeps[dep]
-    );
+    const missing = docsDependencies.filter(dep => !allDeps[dep]);
 
     if (missing.length > 0) {
       console.log(`Installing: ${missing.join(', ')}`);

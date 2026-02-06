@@ -1,6 +1,6 @@
 /**
  * 🚪 Standardized Exit Codes for FactoryWager Applications
- * 
+ *
  * Provides consistent exit codes across all CLI tools for better
  * automation and error handling.
  */
@@ -19,7 +19,7 @@ export const EXIT_CODES = {
   CONFIGURATION_ERROR: 10,
 } as const;
 
-export type ExitCode = typeof EXIT_CODES[keyof typeof EXIT_CODES];
+export type ExitCode = (typeof EXIT_CODES)[keyof typeof EXIT_CODES];
 
 /**
  * Get a human-readable description for an exit code
@@ -38,7 +38,7 @@ export function getExitCodeDescription(code: ExitCode): string {
     [EXIT_CODES.MEMORY_ERROR]: 'Memory allocation failed',
     [EXIT_CODES.CONFIGURATION_ERROR]: 'Configuration error',
   };
-  
+
   return descriptions[code] || `Unknown exit code: ${code}`;
 }
 
@@ -53,6 +53,6 @@ export function exitWithCode(code: ExitCode, message?: string): never {
       console.error(message);
     }
   }
-  
+
   process.exit(code);
 }

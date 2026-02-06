@@ -1,13 +1,13 @@
 #!/usr/bin/env bun
 /**
  * 🚨 CODEBASE-WIDE SILENT KILLER DETECTION AND FIX
- * 
+ *
  * This script identifies and fixes the deadly pattern that's killing async operations
  * across the entire codebase.
  */
 
 console.log('🚨 SILENT KILLER DETECTION AND FIX');
-console.log('=' .repeat(60));
+console.log('='.repeat(60));
 
 const problematicFiles = [];
 const fixedFiles = [];
@@ -18,13 +18,13 @@ async function scanAndFixCodebase() {
   // Files that need immediate fixing
   const criticalFiles = [
     './lib/performance-optimizer.ts',
-    './lib/optimized-server.ts', 
+    './lib/optimized-server.ts',
     './lib/port-management-system.ts',
     './lib/bun-implementation-details.ts',
     './lib/response-buffering-tests.ts',
     './lib/bun-write-tests.ts',
     './lib/security-stability-test.ts',
-    './lib/optimized-spawn-test.ts'
+    './lib/optimized-spawn-test.ts',
   ];
 
   for (const file of criticalFiles) {
@@ -33,10 +33,10 @@ async function scanAndFixCodebase() {
 
   // Show summary
   console.log('\n📊 SCAN SUMMARY');
-  console.log('=' .repeat(40));
+  console.log('='.repeat(40));
   console.log(`🚨 Problematic files found: ${problematicFiles.length}`);
   console.log(`✅ Files fixed: ${fixedFiles.length}`);
-  
+
   if (problematicFiles.length > 0) {
     console.log('\n🚨 CRITICAL: SILENT KILLERS DETECTED!');
     console.log('These files have the deadly pattern that kills async operations:');
@@ -60,13 +60,14 @@ async function scanAndFixCodebase() {
 async function checkAndFixFile(filePath) {
   try {
     const content = await Bun.file(filePath).text();
-    
+
     // Check for the deadly pattern
-    const deadlyPattern = /if\s*\(import\.meta\.path\s*!==\s*Bun\.main\)\s*\{\s*process\.exit\(0\);?\s*\}/;
-    
+    const deadlyPattern =
+      /if\s*\(import\.meta\.path\s*!==\s*Bun\.main\)\s*\{\s*process\.exit\(0\);?\s*\}/;
+
     if (deadlyPattern.test(content)) {
       problematicFiles.push(filePath);
-      
+
       // Fix the file
       const fixedContent = content.replace(
         deadlyPattern,
@@ -77,10 +78,10 @@ async function checkAndFixFile(filePath) {
   console.log('ℹ️  Script was imported, not executed directly');
 }`
       );
-      
+
       await Bun.write(filePath, fixedContent);
       fixedFiles.push(filePath);
-      
+
       console.log(`🔧 FIXED: ${filePath}`);
     }
   } catch (error) {
@@ -91,7 +92,7 @@ async function checkAndFixFile(filePath) {
 // Create a safe entry guard utility
 async function createSafeEntryGuard() {
   console.log('\n🛡️  CREATING SAFE ENTRY GUARD UTILITY...\n');
-  
+
   const safeEntryGuardContent = `#!/usr/bin/env bun
 /**
  * SAFE Entry Guard Utility
@@ -190,7 +191,7 @@ if (import.meta.main) {
 async function main() {
   const scanResults = await scanAndFixCodebase();
   await createSafeEntryGuard();
-  
+
   console.log('\n🎯 FINAL STATUS:');
   if (scanResults.problematic > 0) {
     console.log(`🔴 CRITICAL: Fixed ${scanResults.fixed} files with silent killer patterns`);
@@ -198,11 +199,11 @@ async function main() {
   } else {
     console.log('🟢 GOOD: No silent killer patterns found in critical files');
   }
-  
+
   console.log('\n🛡️  SAFE ENTRY GUARD CREATED:');
   console.log('   Use ./shared/tools/safe-entry-guard.ts for new CLI tools');
   console.log('   Update existing tools to use safe patterns');
-  
+
   console.log('\n✅ SILENT KILLER ELIMINATION COMPLETE!');
 }
 

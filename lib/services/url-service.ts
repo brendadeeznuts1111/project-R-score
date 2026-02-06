@@ -1,12 +1,11 @@
 /**
  * 🌐 Standardized URL Service
- * 
+ *
  * Centralized URL management with normalization, validation,
  * and environment-based configuration
  */
 
 import { URLNormalizer } from '../documentation/constants/utils';
-
 
 // ============================================================================
 // ENVIRONMENT CONFIGURATION
@@ -27,7 +26,7 @@ export const DEFAULT_URL_CONFIG: UrlConfig = {
   monitoringUrl: process.env.MONITORING_URL || 'http://example.com',
   abTestingUrl: process.env.AB_TESTING_URL || 'http://example.com',
   contentServiceUrl: process.env.CONTENT_SERVICE_URL || 'http://example.com',
-  verboseServiceUrl: process.env.VERBOSE_SERVICE_URL || 'http://example.com'
+  verboseServiceUrl: process.env.VERBOSE_SERVICE_URL || 'http://example.com',
 };
 
 // ============================================================================
@@ -103,10 +102,10 @@ export class UrlService {
   async validateUrl(url: string): Promise<{ valid: boolean; error?: string; status?: number }> {
     try {
       const normalizedUrl = this.normalizeAndCache(url);
-      
+
       // Basic format validation
       new URL(normalizedUrl);
-      
+
       // Optional: Check if URL is accessible (for external URLs only)
       if (normalizedUrl.startsWith('http') && !normalizedUrl.includes('example.com')) {
         try {
@@ -114,19 +113,19 @@ export class UrlService {
           return {
             valid: response.ok,
             status: response.status,
-            error: response.ok ? undefined : `HTTP ${response.status}`
+            error: response.ok ? undefined : `HTTP ${response.status}`,
           };
         } catch {
           // Network error, but format is valid
           return { valid: true };
         }
       }
-      
+
       return { valid: true };
     } catch (error) {
       return {
         valid: false,
-        error: error instanceof Error ? error.message : 'Invalid URL format'
+        error: error instanceof Error ? error.message : 'Invalid URL format',
       };
     }
   }
@@ -161,8 +160,8 @@ export class UrlService {
       size: this.normalizedCache.size,
       entries: Array.from(this.normalizedCache.entries()).map(([key, value]) => ({
         key: key.length > 50 ? key.substring(0, 47) + '...' : key,
-        value
-      }))
+        value,
+      })),
     };
   }
 
@@ -242,7 +241,9 @@ export function getWikiUrl(path: string = ''): string {
 /**
  * Validate URL (convenience function)
  */
-export async function validateUrl(url: string): Promise<{ valid: boolean; error?: string; status?: number }> {
+export async function validateUrl(
+  url: string
+): Promise<{ valid: boolean; error?: string; status?: number }> {
   return urlService.validateUrl(url);
 }
 
@@ -253,13 +254,16 @@ export async function validateUrl(url: string): Promise<{ valid: boolean; error?
 /**
  * Build URL with query parameters
  */
-export function buildUrlWithQuery(baseUrl: string, params: Record<string, string | number | boolean>): string {
+export function buildUrlWithQuery(
+  baseUrl: string,
+  params: Record<string, string | number | boolean>
+): string {
   const url = new URL(baseUrl);
-  
+
   Object.entries(params).forEach(([key, value]) => {
     url.searchParams.set(key, String(value));
   });
-  
+
   return urlService.getExternalUrl(url.toString());
 }
 
@@ -267,10 +271,12 @@ export function buildUrlWithQuery(baseUrl: string, params: Record<string, string
  * Build URL with path segments
  */
 export function buildUrlWithSegments(baseUrl: string, ...segments: string[]): string {
-  const normalizedSegments = segments.map(segment => 
-    segment.replace(/^\/+|\/+$/g, '') // Remove leading/trailing slashes
-  ).filter(Boolean); // Remove empty segments
-  
+  const normalizedSegments = segments
+    .map(
+      segment => segment.replace(/^\/+|\/+$/g, '') // Remove leading/trailing slashes
+    )
+    .filter(Boolean); // Remove empty segments
+
   const path = normalizedSegments.length > 0 ? '/' + normalizedSegments.join('/') : '';
   return urlService.getExternalUrl(baseUrl + path);
 }
@@ -281,7 +287,7 @@ export function buildUrlWithSegments(baseUrl: string, ...segments: string[]): st
 
 export function getEnvironment(): 'development' | 'staging' | 'production' {
   const nodeEnv = Bun.env.NODE_ENV?.toLowerCase();
-  
+
   if (nodeEnv === 'production') return 'production';
   if (nodeEnv === 'staging') return 'staging';
   return 'development';

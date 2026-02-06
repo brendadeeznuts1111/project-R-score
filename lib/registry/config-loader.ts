@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * ⚙️ Registry Configuration Loader
- * 
+ *
  * Supports JSON, JSON5, and JSONL config files (Bun v1.3.7+)
  */
 
@@ -21,7 +21,7 @@ export async function loadRegistryConfig(
   options: ConfigLoadOptions = {}
 ): Promise<RegistryConfig | null> {
   const configPath = options.path || findConfigFile();
-  
+
   if (!configPath) {
     console.log(styled('ℹ️ No config file found, using defaults', 'muted'));
     return getDefaultConfig();
@@ -29,8 +29,8 @@ export async function loadRegistryConfig(
 
   try {
     const file = Bun.file(configPath);
-    
-    if (!await file.exists()) {
+
+    if (!(await file.exists())) {
       return getDefaultConfig();
     }
 
@@ -45,15 +45,17 @@ export async function loadRegistryConfig(
         config = Bun.JSON5.parse(content);
         console.log(styled(`📄 Loaded JSON5 config: ${configPath}`, 'success'));
         break;
-      
+
       case 'jsonl':
         // Bun v1.3.7: Native JSONL support
         const lines = Bun.JSONL.parse(content);
         // Use last line as config (for incremental updates)
         config = lines[lines.length - 1] || {};
-        console.log(styled(`📄 Loaded JSONL config: ${configPath} (${lines.length} entries)`, 'success'));
+        console.log(
+          styled(`📄 Loaded JSONL config: ${configPath} (${lines.length} entries)`, 'success')
+        );
         break;
-      
+
       case 'json':
       default:
         config = JSON.parse(content);
@@ -86,7 +88,7 @@ export async function saveRegistryConfig(
       // Bun v1.3.7: JSON5 stringify
       // Note: Bun.JSON5.stringify may not support options parameter
       content = Bun.JSON5.stringify(config, null, 2);
-      
+
       // Add header comment
       content = `// FactoryWager Registry Configuration
 // Generated: ${new Date().toISOString()}
@@ -114,7 +116,7 @@ ${content}`;
  */
 function findConfigFile(): string | null {
   const candidates = [
-    './registry.config.json5',  // Bun v1.3.7: JSON5 preferred
+    './registry.config.json5', // Bun v1.3.7: JSON5 preferred
     './registry.config.json',
     './config/registry.config.json5',
     './config/registry.config.json',
@@ -176,7 +178,7 @@ function getDefaultConfig(): RegistryConfig {
  */
 function mergeWithDefaults(config: Partial<RegistryConfig>): RegistryConfig {
   const defaults = getDefaultConfig();
-  
+
   return {
     ...defaults,
     ...config,
@@ -229,11 +231,11 @@ if (import.meta.main) {
     case 'load': {
       const path = args[1];
       const config = await loadRegistryConfig({ path });
-      
+
       if (config) {
         console.log(styled('\n📋 Configuration:', 'info'));
         console.log(styled(JSON.stringify(config, null, 2), 'muted'));
-        
+
         const validation = validateConfig(config);
         if (!validation.valid) {
           console.log(styled('\n❌ Validation errors:', 'error'));
@@ -247,14 +249,14 @@ if (import.meta.main) {
       const path = args[1] || './registry.config.json5';
       const config = getDefaultConfig();
       config.name = args[2] || config.name;
-      
+
       await saveRegistryConfig(config, { path });
       break;
     }
 
     case 'init': {
       const path = args[1] || './registry.config.json5';
-      
+
       // JSON5 example with comments
       const example = `// FactoryWager Registry Configuration
 // Bun v1.3.7+: Supports JSON5 with comments and trailing commas
@@ -303,7 +305,7 @@ if (import.meta.main) {
   ],
 }
 `;
-      
+
       await Bun.write(path, example);
       console.log(styled(`✅ Created ${path}`, 'success'));
       break;

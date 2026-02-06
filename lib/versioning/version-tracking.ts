@@ -1,12 +1,11 @@
 /**
  * 🔄 Version Tracking & Rollback System
- * 
+ *
  * Comprehensive version management for endpoints and component URIs
  * with rollback capabilities, audit trails, and deployment tracking
  */
 
-import { write, read } from "bun";
-
+import { write, read } from 'bun';
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -97,12 +96,12 @@ export class VersionTracker {
         autoRollbackOnError: true,
         healthCheckThreshold: 5.0,
         rollbackTimeout: 300,
-        requireApproval: false
+        requireApproval: false,
       },
       enableAuditLog: true,
       enableHealthChecks: true,
       backupStrategy: 'local',
-      ...config
+      ...config,
     };
 
     this.loadFromStorage();
@@ -122,12 +121,12 @@ export class VersionTracker {
   ): Promise<string> {
     const versionId = this.generateVersionId(componentUri, version);
     const checksum = await this.calculateChecksum(componentUri);
-    
+
     const versionMetadata: VersionMetadata = {
       version,
       timestamp: new Date().toISOString(),
       checksum,
-      ...metadata
+      ...metadata,
     };
 
     // Get or create component
@@ -144,8 +143,8 @@ export class VersionTracker {
           deploymentId: this.generateDeploymentId(),
           healthStatus: 'healthy',
           uptimePercentage: 100,
-          errorRate: 0
-        }
+          errorRate: 0,
+        },
       };
       this.components.set(componentUri, component);
     }
@@ -156,7 +155,10 @@ export class VersionTracker {
 
     // Enforce version limit
     if (component.versions.length > this.config.maxVersionsPerComponent) {
-      const removedVersions = component.versions.splice(0, component.versions.length - this.config.maxVersionsPerComponent);
+      const removedVersions = component.versions.splice(
+        0,
+        component.versions.length - this.config.maxVersionsPerComponent
+      );
       await this.cleanupOldVersions(componentUri, removedVersions);
     }
 
@@ -167,7 +169,7 @@ export class VersionTracker {
       version,
       timestamp: versionMetadata.timestamp,
       author: metadata.author,
-      details: `Registered version ${version} for component ${componentUri}`
+      details: `Registered version ${version} for component ${componentUri}`,
     });
 
     await this.saveToStorage();
@@ -211,18 +213,18 @@ export class VersionTracker {
       return {
         success: false,
         rollbackId: '',
-        message: `Component ${componentUri} not found`
+        message: `Component ${componentUri} not found`,
       };
     }
 
     const currentVersion = component.currentVersion;
     const targetVersionData = component.versions.find(v => v.version === targetVersion);
-    
+
     if (!targetVersionData) {
       return {
         success: false,
         rollbackId: '',
-        message: `Version ${targetVersion} not found for component ${componentUri}`
+        message: `Version ${targetVersion} not found for component ${componentUri}`,
       };
     }
 
@@ -231,7 +233,7 @@ export class VersionTracker {
       return {
         success: false,
         rollbackId: '',
-        message: 'Rollback is disabled by policy'
+        message: 'Rollback is disabled by policy',
       };
     }
 
@@ -242,7 +244,7 @@ export class VersionTracker {
         return {
           success: false,
           rollbackId: '',
-          message: 'Rollback requires approval'
+          message: 'Rollback requires approval',
         };
       }
     }
@@ -266,7 +268,7 @@ export class VersionTracker {
         author,
         rollbackType,
         success: true,
-        rollbackDuration
+        rollbackDuration,
       });
 
       // Log audit entry
@@ -276,7 +278,7 @@ export class VersionTracker {
         version: targetVersion,
         timestamp: new Date().toISOString(),
         author,
-        details: `Rollback from ${currentVersion} to ${targetVersion}: ${reason}`
+        details: `Rollback from ${currentVersion} to ${targetVersion}: ${reason}`,
       });
 
       await this.saveToStorage();
@@ -284,9 +286,8 @@ export class VersionTracker {
       return {
         success: true,
         rollbackId,
-        message: `Successfully rolled back ${componentUri} from ${currentVersion} to ${targetVersion}`
+        message: `Successfully rolled back ${componentUri} from ${currentVersion} to ${targetVersion}`,
       };
-
     } catch (error) {
       const rollbackDuration = Date.now() - startTime;
 
@@ -299,7 +300,7 @@ export class VersionTracker {
         author,
         rollbackType,
         success: false,
-        rollbackDuration
+        rollbackDuration,
       });
 
       this.addAuditEntry({
@@ -308,7 +309,7 @@ export class VersionTracker {
         version: targetVersion,
         timestamp: new Date().toISOString(),
         author,
-        details: `Failed rollback from ${currentVersion} to ${targetVersion}: ${error instanceof Error ? error.message : 'Unknown error'}`
+        details: `Failed rollback from ${currentVersion} to ${targetVersion}: ${error instanceof Error ? error.message : 'Unknown error'}`,
       });
 
       await this.saveToStorage();
@@ -316,7 +317,7 @@ export class VersionTracker {
       return {
         success: false,
         rollbackId,
-        message: `Rollback failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        message: `Rollback failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       };
     }
   }
@@ -324,11 +325,14 @@ export class VersionTracker {
   /**
    * Automatic rollback based on health metrics
    */
-  async autoRollback(componentUri: string, reason: string): Promise<{ success: boolean; message: string }> {
+  async autoRollback(
+    componentUri: string,
+    reason: string
+  ): Promise<{ success: boolean; message: string }> {
     if (!this.config.rollbackPolicy.autoRollbackOnError) {
       return {
         success: false,
-        message: 'Auto-rollback is disabled'
+        message: 'Auto-rollback is disabled',
       };
     }
 
@@ -336,7 +340,7 @@ export class VersionTracker {
     if (!component) {
       return {
         success: false,
-        message: `Component ${componentUri} not found`
+        message: `Component ${componentUri} not found`,
       };
     }
 
@@ -344,7 +348,7 @@ export class VersionTracker {
     if (component.deploymentStatus.errorRate < this.config.rollbackPolicy.healthCheckThreshold) {
       return {
         success: false,
-        message: `Error rate ${component.deploymentStatus.errorRate}% is below threshold ${this.config.rollbackPolicy.healthCheckThreshold}%`
+        message: `Error rate ${component.deploymentStatus.errorRate}% is below threshold ${this.config.rollbackPolicy.healthCheckThreshold}%`,
       };
     }
 
@@ -356,7 +360,7 @@ export class VersionTracker {
     if (goodVersions.length === 0) {
       return {
         success: false,
-        message: 'No previous versions available for rollback'
+        message: 'No previous versions available for rollback',
       };
     }
 
@@ -371,9 +375,9 @@ export class VersionTracker {
 
     return {
       success: result.success,
-      message: result.success 
+      message: result.success
         ? `Auto-rollback to ${targetVersion} completed: ${result.message}`
-        : `Auto-rollback failed: ${result.message}`
+        : `Auto-rollback failed: ${result.message}`,
     };
   }
 
@@ -390,13 +394,13 @@ export class VersionTracker {
     rollbackPolicy?: Partial<RollbackPolicy>
   ): Promise<void> {
     let endpointVersion = this.endpoints.get(endpoint);
-    
+
     if (!endpointVersion) {
       endpointVersion = {
         endpoint,
         component: componentUri,
         versions: [],
-        globalRollbackPolicy: { ...this.config.rollbackPolicy, ...rollbackPolicy }
+        globalRollbackPolicy: { ...this.config.rollbackPolicy, ...rollbackPolicy },
       };
       this.endpoints.set(endpoint, endpointVersion);
     }
@@ -418,13 +422,17 @@ export class VersionTracker {
     targetVersion: string,
     reason: string,
     author: string
-  ): Promise<{ success: boolean; message: string; components: Array<{ uri: string; success: boolean; message: string }> }> {
+  ): Promise<{
+    success: boolean;
+    message: string;
+    components: Array<{ uri: string; success: boolean; message: string }>;
+  }> {
     const endpointData = this.endpoints.get(endpoint);
     if (!endpointData) {
       return {
         success: false,
         message: `Endpoint ${endpoint} not found`,
-        components: []
+        components: [],
       };
     }
 
@@ -433,20 +441,27 @@ export class VersionTracker {
       return {
         success: false,
         message: `Component ${endpointData.component} not found`,
-        components: []
+        components: [],
       };
     }
 
-    const result = await this.rollbackToVersion(endpointData.component, targetVersion, reason, author);
+    const result = await this.rollbackToVersion(
+      endpointData.component,
+      targetVersion,
+      reason,
+      author
+    );
 
     return {
       success: result.success,
       message: result.message,
-      components: [{
-        uri: endpointData.component,
-        success: result.success,
-        message: result.message
-      }]
+      components: [
+        {
+          uri: endpointData.component,
+          success: result.success,
+          message: result.message,
+        },
+      ],
     };
   }
 
@@ -467,9 +482,14 @@ export class VersionTracker {
     Object.assign(component.deploymentStatus, metrics);
 
     // Check if auto-rollback is needed
-    if (metrics.errorRate !== undefined && 
-        metrics.errorRate > this.config.rollbackPolicy.healthCheckThreshold) {
-      await this.autoRollback(componentUri, `Error rate ${metrics.errorRate}% exceeded threshold ${this.config.rollbackPolicy.healthCheckThreshold}%`);
+    if (
+      metrics.errorRate !== undefined &&
+      metrics.errorRate > this.config.rollbackPolicy.healthCheckThreshold
+    ) {
+      await this.autoRollback(
+        componentUri,
+        `Error rate ${metrics.errorRate}% exceeded threshold ${this.config.rollbackPolicy.healthCheckThreshold}%`
+      );
     }
 
     await this.saveToStorage();
@@ -480,7 +500,7 @@ export class VersionTracker {
    */
   getHealthStatus(): Record<string, DeploymentStatus> {
     const status: Record<string, DeploymentStatus> = {};
-    
+
     for (const [uri, component] of this.components) {
       status[uri] = { ...component.deploymentStatus };
     }
@@ -559,12 +579,13 @@ export class VersionTracker {
 
     return {
       totalRollbacks: allRollbacks.length,
-      successRate: allRollbacks.length > 0 ? (successfulRollbacks.length / allRollbacks.length) * 100 : 0,
+      successRate:
+        allRollbacks.length > 0 ? (successfulRollbacks.length / allRollbacks.length) * 100 : 0,
       averageRollbackTime: allRollbacks.length > 0 ? totalRollbackTime / allRollbacks.length : 0,
       rollbackByType,
       recentRollbacks: allRollbacks
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-        .slice(0, 10)
+        .slice(0, 10),
     };
   }
 
@@ -594,21 +615,28 @@ export class VersionTracker {
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  private async performRollback(componentUri: string, fromVersion: string, toVersion: string): Promise<void> {
+  private async performRollback(
+    componentUri: string,
+    fromVersion: string,
+    toVersion: string
+  ): Promise<void> {
     // In a real implementation, this would:
     // 1. Stop the current deployment
     // 2. Restore the previous version from backup/storage
     // 3. Update configuration files
     // 4. Restart services
     // 5. Run health checks
-    
+
     console.log(`Performing rollback for ${componentUri}: ${fromVersion} -> ${toVersion}`);
-    
+
     // Simulate rollback delay
     await Bun.sleep(100);
   }
 
-  private async cleanupOldVersions(componentUri: string, versions: VersionMetadata[]): Promise<void> {
+  private async cleanupOldVersions(
+    componentUri: string,
+    versions: VersionMetadata[]
+  ): Promise<void> {
     // Clean up old version files, backups, etc.
     console.log(`Cleaning up ${versions.length} old versions for ${componentUri}`);
   }
@@ -616,7 +644,7 @@ export class VersionTracker {
   private addAuditEntry(entry: AuditEntry): void {
     if (this.config.enableAuditLog) {
       this.auditLog.push(entry);
-      
+
       // Keep audit log size manageable
       if (this.auditLog.length > 10000) {
         this.auditLog = this.auditLog.slice(-5000);
@@ -630,7 +658,7 @@ export class VersionTracker {
         components: Object.fromEntries(this.components),
         endpoints: Object.fromEntries(this.endpoints),
         auditLog: this.auditLog,
-        config: this.config
+        config: this.config,
       };
 
       await write(`${this.config.storagePath}/version-tracker.json`, JSON.stringify(data, null, 2));
@@ -643,11 +671,11 @@ export class VersionTracker {
     try {
       const data = await read(`${this.config.storagePath}/version-tracker.json`);
       const parsed = JSON.parse(data.toString());
-      
+
       this.components = new Map(Object.entries(parsed.components || {}));
       this.endpoints = new Map(Object.entries(parsed.endpoints || {}));
       this.auditLog = parsed.auditLog || [];
-      
+
       // Update config with stored values
       if (parsed.config) {
         this.config = { ...this.config, ...parsed.config };

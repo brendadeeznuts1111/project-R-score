@@ -1,27 +1,26 @@
 /**
  * 🪣 S3 ContentEncoding Support - Bun v1.3.7+ Compatible
- * 
+ *
  * Ensures contentEncoding is properly propagated to S3 uploads,
  * allowing browsers to correctly handle gzip/br compressed content.
- * 
+ *
  * @version 4.5
  * @see https://bun.sh/docs/api/s3#content-encoding
  */
 
-import { S3Client, S3File } from "bun";
-
+import { S3Client, S3File } from 'bun';
 
 interface S3UploadOptions {
   contentType?: string;
-  contentEncoding?: "gzip" | "br" | "deflate" | "identity" | string;
+  contentEncoding?: 'gzip' | 'br' | 'deflate' | 'identity' | string;
   contentDisposition?: string;
   metadata?: Record<string, string>;
-  acl?: "private" | "public-read";
+  acl?: 'private' | 'public-read';
 }
 
 /**
  * Upload pre-compressed data to S3 with proper encoding hints
- * 
+ *
  * @example
  * ```ts
  * // Gzip compressed JSON
@@ -30,7 +29,7 @@ interface S3UploadOptions {
  *   contentType: "application/json",
  *   contentEncoding: "gzip"
  * });
- * 
+ *
  * // Brotli compressed markdown
  * const brotli = Bun.brotliCompressSync(markdown);
  * await uploadCompressedS3(s3File, brotli, {
@@ -46,22 +45,22 @@ export async function uploadCompressedS3(
   options: S3UploadOptions
 ): Promise<{ etag: string; versionId?: string }> {
   const {
-    contentType = "application/octet-stream",
+    contentType = 'application/octet-stream',
     contentEncoding,
     contentDisposition,
     metadata = {},
-    acl = "private"
+    acl = 'private',
   } = options;
 
   // Validate encoding
-  const validEncodings = ["gzip", "br", "deflate", "identity"];
+  const validEncodings = ['gzip', 'br', 'deflate', 'identity'];
   if (contentEncoding && !validEncodings.includes(contentEncoding)) {
     console.warn(`⚠️ Uncommon contentEncoding: ${contentEncoding}. Browser may not decompress.`);
   }
 
   const writeOptions: Parameters<typeof file.write>[1] = {
     type: contentType,
-    acl
+    acl,
   };
 
   // Bun v1.3.7+ contentEncoding support
@@ -78,9 +77,9 @@ export async function uploadCompressedS3(
   if (Object.keys(metadata).length > 0) {
     // @ts-expect-error - metadata support
     writeOptions.metadata = {
-      "uploaded-by": "factorywager-v4.5",
-      "uploaded-at": new Date().toISOString(),
-      ...metadata
+      'uploaded-by': 'factorywager-v4.5',
+      'uploaded-at': new Date().toISOString(),
+      ...metadata,
     };
   }
 
@@ -106,7 +105,7 @@ export function createCompressedS3File(
   upload: (data: Buffer | Uint8Array) => Promise<{ etag: string }>;
 } {
   const file = client.file(key);
-  
+
   return {
     file,
     upload: async (data: Buffer | Uint8Array) => {
@@ -115,11 +114,11 @@ export function createCompressedS3File(
         const compressed = Bun.gzipSync(data);
         return uploadCompressedS3(file, compressed, {
           ...options,
-          contentEncoding: "gzip"
+          contentEncoding: 'gzip',
         });
       }
       return uploadCompressedS3(file, data, options);
-    }
+    },
   };
 }
 
@@ -134,26 +133,27 @@ export async function uploadTier1380(
     tier1380?: {
       auditId?: string;
       checksum?: string;
-    }
+    };
   } = {}
 ): Promise<{ etag: string; url: string }> {
   const file = bucket.file(key);
-  
+
   const metadata = {
     ...options.metadata,
-    "tier1380-version": "4.5",
-    "tier1380-timestamp": new Date().toISOString(),
-    ...(options.tier1380?.auditId && { "audit-id": options.tier1380.auditId }),
-    ...(options.tier1380?.checksum && { "content-checksum": options.tier1380.checksum })
+    'tier1380-version': '4.5',
+    'tier1380-timestamp': new Date().toISOString(),
+    ...(options.tier1380?.auditId && { 'audit-id': options.tier1380.auditId }),
+    ...(options.tier1380?.checksum && { 'content-checksum': options.tier1380.checksum }),
   };
 
-  const result = await uploadCompressedS3(file, 
-    typeof data === "string" ? Buffer.from(data) : data,
+  const result = await uploadCompressedS3(
+    file,
+    typeof data === 'string' ? Buffer.from(data) : data,
     { ...options, metadata }
   );
 
   return {
     ...result,
-    url: `s3://${bucket.bucketName || "unknown"}/${key}`
+    url: `s3://${bucket.bucketName || 'unknown'}/${key}`,
   };
 }

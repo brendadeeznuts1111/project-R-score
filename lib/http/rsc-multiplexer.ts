@@ -1,15 +1,14 @@
 /**
  * React Server Components (RSC) HTTP/2 Multiplexer
- * 
+ *
  * Optimizes Next.js RSC prefetch requests using HTTP/2 multiplexing.
  * Perfect for the frequent small requests to the same origin.
- * 
+ *
  * @see {@link https://bun.sh/docs/api/http#multiplexing} HTTP/2 multiplexing documentation
  * @see {@link https://bun.sh/docs/api/fetch#hardened} Hardened fetch integration
  */
 
 import { BunHTTP2Multiplexer } from './http2-multiplexer';
-
 
 interface RSCRequestOptions {
   pathname: string;
@@ -72,7 +71,7 @@ export class RSCMultiplexer {
     const cacheKey = this.generateCacheKey(routerState);
     const queryString = new URLSearchParams({
       ...(cacheKey && { _rsc: cacheKey }),
-      ...(prefetch && { _prefetch: '1' })
+      ...(prefetch && { _prefetch: '1' }),
     }).toString();
 
     const fullPath = `${pathname}${queryString ? '?' + queryString : ''}`;
@@ -80,15 +79,15 @@ export class RSCMultiplexer {
     // Build RSC-specific headers
     const rscHeaders: Record<string, string> = {
       ':authority': this.hostname,
-      'accept': '*/*',
+      accept: '*/*',
       'content-type': 'text/x-component',
       ...(prefetch && { 'next-router-prefetch': '1' }),
-      'rsc': '1',
+      rsc: '1',
       'next-router-priority': priority,
-      ...(routerState && { 
-        'next-router-state-tree': encodeURIComponent(JSON.stringify(routerState)) 
+      ...(routerState && {
+        'next-router-state-tree': encodeURIComponent(JSON.stringify(routerState)),
       }),
-      ...headers
+      ...headers,
     };
 
     try {
@@ -101,7 +100,7 @@ export class RSCMultiplexer {
         headers: response.headers,
         body: response.body,
         cacheKey,
-        latency: endTime - startTime
+        latency: endTime - startTime,
       };
     } catch (error) {
       console.error(`❌ RSC request failed for ${pathname}:`, error);
@@ -126,14 +125,14 @@ export class RSCMultiplexer {
         const response = await this.fetchRSCComponent({
           ...request,
           prefetch: true,
-          priority: request.priority || 'i'
+          priority: request.priority || 'i',
         });
 
         return {
           ...response,
           // Add batch metadata
           batchIndex: index,
-          batchSize: requests.length
+          batchSize: requests.length,
         };
       } catch (error) {
         return {
@@ -144,18 +143,20 @@ export class RSCMultiplexer {
           latency: 0,
           error: error instanceof Error ? error.message : String(error),
           batchIndex: index,
-          batchSize: requests.length
+          batchSize: requests.length,
         } as RSCResponse & { error: string; batchIndex: number; batchSize: number };
       }
     });
 
     const results = await Promise.all(streamPromises);
-    
+
     // Log batch performance
     const successful = results.filter(r => !('error' in r));
     const avgLatency = successful.reduce((sum, r) => sum + (r.latency || 0), 0) / successful.length;
-    
-    console.log(`📊 RSC batch complete: ${successful.length}/${requests.length} successful, ${avgLatency.toFixed(2)}ms avg latency`);
+
+    console.log(
+      `📊 RSC batch complete: ${successful.length}/${requests.length} successful, ${avgLatency.toFixed(2)}ms avg latency`
+    );
 
     return results;
   }
@@ -178,7 +179,7 @@ export class RSCMultiplexer {
    */
   private generateCacheKey(routerState?: object): string {
     if (!routerState) return '';
-    
+
     // Create a hash of the router state for caching
     const stateString = JSON.stringify(routerState);
     return Bun.hash(stateString).toString(36);
@@ -195,7 +196,7 @@ export class RSCMultiplexer {
     return {
       connected: this.connected,
       hostname: this.hostname,
-      ...this.mux.getStats()
+      ...this.mux.getStats(),
     };
   }
 
@@ -235,7 +236,7 @@ export class RSCMultiplexer {
     const multiplexedTime = performance.now() - multiplexStart;
 
     const speedup = serialTime / multiplexedTime;
-    const p_ratio = Math.min(speedup * 0.833, 1.150); // Scale to P_ratio range
+    const p_ratio = Math.min(speedup * 0.833, 1.15); // Scale to P_ratio range
 
     console.log(`📈 Performance Results:`);
     console.log(`  Serial HTTP/1.1: ${serialTime.toFixed(2)}ms`);
@@ -250,12 +251,13 @@ export class RSCMultiplexer {
 /**
  * Convenience function for RSC multiplexing
  */
-export async function fetchRSCBatch(pathnames: string[], hostname: string = 'bun.sh'): Promise<RSCResponse[]> {
+export async function fetchRSCBatch(
+  pathnames: string[],
+  hostname: string = 'bun.sh'
+): Promise<RSCResponse[]> {
   const mux = new RSCMultiplexer(hostname);
   try {
-    const results = await mux.prefetchRSCBatch(
-      pathnames.map(pathname => ({ pathname }))
-    );
+    const results = await mux.prefetchRSCBatch(pathnames.map(pathname => ({ pathname })));
     return results;
   } finally {
     mux.disconnect();
@@ -271,7 +273,7 @@ export function parseCapturedRSCRequest(encodedStateTree: string): {
   metadata: Record<string, any>;
 } {
   const routerState = new RSCMultiplexer().parseRouterStateTree(encodedStateTree);
-  
+
   // Extract pathname from router state
   const extractPathname = (state: any): string => {
     if (Array.isArray(state)) {
@@ -291,7 +293,7 @@ export function parseCapturedRSCRequest(encodedStateTree: string): {
     metadata: {
       encodedLength: encodedStateTree.length,
       decodedLength: JSON.stringify(routerState).length,
-      compressionRatio: encodedStateTree.length / JSON.stringify(routerState).length
-    }
+      compressionRatio: encodedStateTree.length / JSON.stringify(routerState).length,
+    },
   };
 }

@@ -1,6 +1,6 @@
 /**
  * 🔐 FactoryWager Secrets Manager
- * 
+ *
  * Simple secrets management for the MCP system
  */
 
