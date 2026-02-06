@@ -47,6 +47,39 @@ export class EnhancedSecurityManager {
   private readonly IP_RATE_LIMIT_MAX_REQUESTS = 50; // 50 requests per 5 minutes per IP
   private readonly IP_BLOCK_DURATION = 3600000; // 1 hour block for abusive IPs
   
+  // Performance optimization for high-volume operations
+  private performanceMetrics = {
+    averageResponseTime: 0,
+    peakConcurrentOperations: 0,
+    totalOperationsProcessed: 0,
+    cacheHitRatio: 0,
+    memoryUsage: 0,
+    cpuUsage: 0
+  };
+  
+  // Advanced monitoring dashboard data
+  private monitoringData = {
+    securityEvents: new Map<string, number>(), // Event type -> count
+    threatLevels: new Map<string, number>(),  // Threat level -> count
+    responseTimeHistory: [] as number[],     // Last 100 response times
+    blockedIpsHistory: [] as string[],       // History of blocked IPs
+    systemHealth: {
+      status: 'healthy' as 'healthy' | 'degraded' | 'unhealthy',
+      lastCheck: new Date(),
+      issues: [] as string[]
+    }
+  };
+  
+  // Performance optimization settings
+  private readonly PERFORMANCE_CONFIG = {
+    MAX_CONCURRENT_OPERATIONS: 1000,
+    RESPONSE_TIME_THRESHOLD_MS: 100,
+    MEMORY_THRESHOLD_MB: 512,
+    CPU_THRESHOLD_PERCENT: 80,
+    CACHE_SIZE_LIMIT: 10000,
+    AUDIT_BATCH_SIZE: 50
+  };
+  
   // Persistent audit storage
   private auditLogBuffer: Array<{
     id: string;
@@ -307,12 +340,79 @@ export class EnhancedSecurityManager {
     const tracking = this.activeOperations.get(correlationId);
     if (tracking) {
       this.activeOperations.delete(correlationId);
+      const duration = Date.now() - tracking.startTime;
+      
+      // Update performance metrics
+      this.updatePerformanceMetrics(duration);
+      
       return {
-        duration: Date.now() - tracking.startTime,
+        duration,
         operation: tracking.operation
       };
     }
     return null;
+  }
+  
+  // Performance monitoring and optimization
+  private updatePerformanceMetrics(operationDuration: number): void {
+    // Update average response time
+    const totalOps = this.performanceMetrics.totalOperationsProcessed;
+    this.performanceMetrics.averageResponseTime = 
+      (this.performanceMetrics.averageResponseTime * totalOps + operationDuration) / (totalOps + 1);
+    
+    // Update total operations
+    this.performanceMetrics.totalOperationsProcessed++;
+    
+    // Update peak concurrent operations
+    const currentOps = this.activeOperations.size;
+    if (currentOps > this.performanceMetrics.peakConcurrentOperations) {
+      this.performanceMetrics.peakConcurrentOperations = currentOps;
+    }
+    
+    // Update response time history (keep last 100)
+    this.monitoringData.responseTimeHistory.push(operationDuration);
+    if (this.monitoringData.responseTimeHistory.length > 100) {
+      this.monitoringData.responseTimeHistory.shift();
+    }
+    
+    // Update cache hit ratio
+    const totalCacheOps = this.metrics.cacheHits + this.metrics.cacheMisses;
+    if (totalCacheOps > 0) {
+      this.performanceMetrics.cacheHitRatio = this.metrics.cacheHits / totalCacheOps;
+    }
+  }
+  
+  // System health monitoring
+  private async performHealthCheck(): Promise<void> {
+    const issues: string[] = [];
+    
+    // Check memory usage
+    if (typeof process !== 'undefined' && process.memoryUsage) {
+      const memUsage = process.memoryUsage();
+      const memUsageMB = memUsage.heapUsed / 1024 / 1024;
+      this.performanceMetrics.memoryUsage = memUsageMB;
+      
+      if (memUsageMB > this.PERFORMANCE_CONFIG.MEMORY_THRESHOLD_MB) {
+        issues.push(`High memory usage: ${memUsageMB.toFixed(2)}MB`);
+      }
+    }
+    
+    // Check response times
+    if (this.performanceMetrics.averageResponseTime > this.PERFORMANCE_CONFIG.RESPONSE_TIME_THRESHOLD_MS) {
+      issues.push(`High average response time: ${this.performanceMetrics.averageResponseTime.toFixed(2)}ms`);
+    }
+    
+    // Check concurrent operations
+    if (this.activeOperations.size > this.PERFORMANCE_CONFIG.MAX_CONCURRENT_OPERATIONS) {
+      issues.push(`High concurrent operations: ${this.activeOperations.size}`);
+    }
+    
+    // Update system health status
+    this.monitoringData.systemHealth = {
+      status: issues.length === 0 ? 'healthy' : issues.length <= 2 ? 'degraded' : 'unhealthy',
+      lastCheck: new Date(),
+      issues
+    };
   }
   
   // Enhanced audit logging with correlation tracking and persistent storage
@@ -342,7 +442,39 @@ export class EnhancedSecurityManager {
     // Add to persistent audit storage
     this.addToAuditLog(event, service, name, correlationId, metadata || {}, ip, userAgent);
     
+    // Update security analytics
+    this.updateSecurityAnalytics(event, metadata || {});
+    
     await this.updateMetric('auditEvents');
+  }
+  
+  // Advanced security analytics
+  private updateSecurityAnalytics(event: string, metadata: Record<string, any>): void {
+    // Update security events count
+    const currentCount = this.monitoringData.securityEvents.get(event) || 0;
+    this.monitoringData.securityEvents.set(event, currentCount + 1);
+    
+    // Update threat levels
+    let threatLevel = 'low';
+    if (event.includes('BLOCKED') || event.includes('FAILURE')) {
+      threatLevel = 'high';
+    } else if (event.includes('RATE_LIMIT') || event.includes('EXCEEDED')) {
+      threatLevel = 'medium';
+    }
+    
+    const threatCount = this.monitoringData.threatLevels.get(threatLevel) || 0;
+    this.monitoringData.threatLevels.set(threatLevel, threatCount + 1);
+    
+    // Track blocked IPs
+    if (metadata.ip && event.includes('BLOCKED')) {
+      if (!this.monitoringData.blockedIpsHistory.includes(metadata.ip)) {
+        this.monitoringData.blockedIpsHistory.push(metadata.ip);
+        // Keep only last 100 blocked IPs
+        if (this.monitoringData.blockedIpsHistory.length > 100) {
+          this.monitoringData.blockedIpsHistory.shift();
+        }
+      }
+    }
   }
   
   // Ensure initialization is complete before any operations
@@ -367,19 +499,22 @@ export class EnhancedSecurityManager {
       // Validate configuration
       const validation = securityConfig.validateConfig();
       if (!validation.valid) {
-        console.warn('⚠️ Security configuration issues:', validation.issues);
+        throw new Error(`Invalid security configuration: ${validation.errors.join(', ')}`);
       }
       
-      // Get security level
-      const securityLevel = securityConfig.getSecurityLevel();
-      console.log(`🛡️ Security Level: ${securityLevel.level} (Score: ${securityLevel.score})`);
+      // Initialize audit log flush interval
+      this.auditFlushInterval = setInterval(() => {
+        this.flushAuditLog().catch(console.error);
+      }, 60000); // Flush every minute
       
-      // Initialize based on feature flags
-      await this.initializeFeatureBasedComponents();
+      // Start health monitoring
+      this.startHealthMonitoring();
+      
+      // Initialize performance tracking
+      (this as any).initializedTime = Date.now();
       
       this.isInitialized = true;
       console.log('✅ Enhanced Security Manager initialized successfully');
-      
     } catch (error) {
       console.error('❌ Failed to initialize Enhanced Security Manager:', error.message);
       throw error;
@@ -846,6 +981,93 @@ export class EnhancedSecurityManager {
         this.ipRateLimitMap.delete(ip);
       }
     }
+  }
+  
+  // Get comprehensive monitoring dashboard
+  getMonitoringDashboard() {
+    return {
+      performance: {
+        ...this.performanceMetrics,
+        currentConcurrentOperations: this.activeOperations.size,
+        responseTimeHistory: this.monitoringData.responseTimeHistory.slice(-20), // Last 20
+        cacheEfficiency: {
+          hits: this.metrics.cacheHits,
+          misses: this.metrics.cacheMisses,
+          ratio: this.performanceMetrics.cacheHitRatio
+        }
+      },
+      security: {
+        events: Object.fromEntries(this.monitoringData.securityEvents),
+        threatLevels: Object.fromEntries(this.monitoringData.threatLevels),
+        blockedIps: {
+          current: this.metrics.blockedIps?.length || 0,
+          history: this.monitoringData.blockedIpsHistory.slice(-10) // Last 10
+        },
+        rateLimiting: {
+          activeEntries: this.rateLimitMap.size,
+          ipEntries: this.ipRateLimitMap.size,
+          blockedCount: this.metrics.blockedIps?.length || 0
+        }
+      },
+      system: {
+        health: this.monitoringData.systemHealth,
+        uptime: Date.now() - (this as any).initializedTime || 0,
+        auditLog: this.getAuditLogStats(),
+        metrics: this.metrics
+      },
+      alerts: this.generateSecurityAlerts()
+    };
+  }
+  
+  // Generate security alerts based on current state
+  private generateSecurityAlerts(): Array<{
+    level: 'info' | 'warning' | 'critical';
+    message: string;
+    timestamp: Date;
+    metadata?: Record<string, any>;
+  }> {
+    const alerts = [];
+    
+    // Performance alerts
+    if (this.performanceMetrics.averageResponseTime > this.PERFORMANCE_CONFIG.RESPONSE_TIME_THRESHOLD_MS) {
+      alerts.push({
+        level: 'warning',
+        message: `High response time detected: ${this.performanceMetrics.averageResponseTime.toFixed(2)}ms`,
+        timestamp: new Date(),
+        metadata: { threshold: this.PERFORMANCE_CONFIG.RESPONSE_TIME_THRESHOLD_MS }
+      });
+    }
+    
+    // Security alerts
+    const blockedIpCount = this.metrics.blockedIps?.length || 0;
+    if (blockedIpCount > 10) {
+      alerts.push({
+        level: 'critical',
+        message: `High number of blocked IPs: ${blockedIpCount}`,
+        timestamp: new Date(),
+        metadata: { blockedIpCount }
+      });
+    }
+    
+    // System health alerts
+    if (this.monitoringData.systemHealth.status !== 'healthy') {
+      alerts.push({
+        level: this.monitoringData.systemHealth.status === 'unhealthy' ? 'critical' : 'warning',
+        message: `System health: ${this.monitoringData.systemHealth.status}`,
+        timestamp: new Date(),
+        metadata: { issues: this.monitoringData.systemHealth.issues }
+      });
+    }
+    
+    return alerts;
+  }
+  
+  // Start periodic health monitoring
+  private startHealthMonitoring(): void {
+    // Perform health check every 30 seconds
+    setInterval(async () => {
+      await this.performHealthCheck();
+    }, 30000);
   }
 }
 

@@ -1395,6 +1395,23 @@ const server = serve({
         requestIP: address ? { address: address.address, port: address.port } : null
       });
     },
+    '/ops/status': (req) => {
+      const address = server.requestIP(req);
+      return Response.json({
+        ok: true,
+        name: SERVER_NAME,
+        host: SERVER_HOST,
+        port: server.port,
+        protocol: server.protocol,
+        pendingRequests: server.pendingRequests,
+        pendingWebSockets: server.pendingWebSockets,
+        subscribers: {
+          telemetry: server.subscriberCount('telemetry'),
+          eod: server.subscriberCount('eod')
+        },
+        requestIP: address ? { address: address.address, port: address.port } : null
+      });
+    },
     '/ops/r2-status': async () => {
       let statusConnected = r2MirrorState.connected;
       if (r2MirrorConfig.mode === 'bun-r2') {

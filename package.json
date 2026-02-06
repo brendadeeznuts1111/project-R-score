@@ -78,6 +78,8 @@
     "profile:barbershop:status": "bun run barbershop/profile-cli.ts status",
     "profile:barbershop:upload-latest": "bun run barbershop/profile-cli.ts upload-latest",
     "profile:barbershop:list-r2": "bun run barbershop/profile-cli.ts list-r2",
+    "profile:barbershop:cpu-md": "bun run barbershop/profile-cli.ts cpu-md",
+    "profile:barbershop:heap-md": "bun run barbershop/profile-cli.ts heap-md",
     "profile:barbershop:sampling": "bun run barbershop/sampling-profile.ts",
     "fetch:docs": "bun run examples/fetch-example.js",
     "fetch:advanced": "bun run services/advanced-fetch-service.ts",

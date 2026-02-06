@@ -107,7 +107,7 @@ bun run profile:barbershop:sampling --upload-r2=true --require-r2=true
 
 ```bash
 bun run profile:barbershop:quick
- bun run profile:barbershop:shot
+bun run profile:barbershop:shot
 bun run profile:barbershop:shot:r2
 bun run profile:barbershop:local
 bun run profile:barbershop:r2
@@ -115,6 +115,8 @@ bun run profile:barbershop:latest
 bun run profile:barbershop:status
 bun run profile:barbershop:upload-latest
 bun run profile:barbershop:list-r2
+bun run profile:barbershop:cpu-md
+bun run profile:barbershop:heap-md
 ```
 
 Profiler R2 upload accepts either env style:
@@ -146,6 +148,8 @@ Profiler R2 upload accepts either env style:
 - Startup logs include resolved host/port/base URL and server protocol.
 - Main docs/html/api responses include keep-alive + `X-Server-Name` headers.
 - Shared `fetchWithDefaults()` utility is available in `/Users/nolarose/Projects/barbershop/fetch-utils.ts`.
+- Profile CLI uses `Bun.wrapAnsi()` when available for ANSI-safe wrapped terminal output.
+- Runtime profiling shortcuts generate markdown via `--cpu-prof-md` and `--heap-prof-md` into `logs/profiles/runtime`.
 - Diagnostics endpoint: `GET /ops/fetch-check?url=https://example.com`.
 - Per-request verbose debugging: add `&verbose=1` to `/ops/fetch-check` in Bun.
 - Runtime metrics endpoint: `GET /ops/runtime`.

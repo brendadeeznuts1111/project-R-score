@@ -3,6 +3,16 @@
 import { createHash, createHmac } from 'node:crypto';
 import { getFactorySecret } from './factory-secrets';
 
+function wrapAnsiLine(text: string, columns = Number(process.env.COLUMNS || 120)) {
+  const wrap = (Bun as unknown as {
+    wrapAnsi?: (input: string, width: number, options?: { hard?: boolean; wordWrap?: boolean; trim?: boolean }) => string;
+  }).wrapAnsi;
+  if (typeof wrap === 'function') {
+    return wrap(text, columns, { wordWrap: true, trim: false });
+  }
+  return text;
+}
+
 function arg(name: string, fallback = '') {
   const prefix = `--${name}=`;
   const found = Bun.argv.find((a) => a.startsWith(prefix));
@@ -170,5 +180,5 @@ if (json) {
 
 console.log(`[list-r2-profiles] prefix=${effectivePrefix} count=${items.length}`);
 for (const item of items) {
-  console.log(`${item.lastModified || '-'}\t${item.size}\t${item.key}`);
+  console.log(wrapAnsiLine(`${item.lastModified || '-'}\t${item.size}\t${item.key}`));
 }

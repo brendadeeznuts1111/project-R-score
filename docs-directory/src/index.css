@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-gray-200 dark:border-gray-700;
+  }
+  body {
+    @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+  }
+}
+
+@layer components {
+  .docs-card {
+    @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-lg dark:hover:shadow-gray-900 transition-all duration-200 hover:border-cloudflare-orange hover:-translate-y-1 cursor-pointer;
+  }
+  
+  .docs-card-title {
+    @apply text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2;
+  }
+  
+  .docs-card-description {
+    @apply text-sm text-gray-600 dark:text-gray-400 line-clamp-2;
+  }
+  
+  .search-highlight {
+    @apply bg-yellow-200 dark:bg-yellow-800 text-gray-900 dark:text-gray-100;
+  }
+}
