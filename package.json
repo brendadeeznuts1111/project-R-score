@@ -422,6 +422,113 @@
       "threshold": 3
     }
   },
+  "constants": {
+    "application": {
+      "name": "FactoryWager Enterprise",
+      "version": "5.1.0",
+      "description": "Bun Native High-Performance Applications",
+      "author": "FactoryWager Team",
+      "license": "MIT"
+    },
+    "performance": {
+      "max_concurrent_requests": 10000,
+      "request_timeout": "30s",
+      "connection_pool_size": 100,
+      "cache_ttl": "300s",
+      "rate_limit_window": "3600s",
+      "max_request_size": "10mb"
+    },
+    "security": {
+      "jwt_expiry": "15m",
+      "refresh_token_expiry": "7d",
+      "max_login_attempts": 5,
+      "lockout_duration": "15m",
+      "password_min_length": 12,
+      "session_timeout": "30m",
+      "api_key_length": 64
+    },
+    "database": {
+      "max_connections": 100,
+      "connection_timeout": "10s",
+      "query_timeout": "30s",
+      "pool_timeout": "5s",
+      "idle_timeout": "300s",
+      "max_retries": 3,
+      "retry_delay": "1s"
+    },
+    "cache": {
+      "default_ttl": "3600s",
+      "max_memory": "1gb",
+      "eviction_policy": "lru",
+      "compression": true,
+      "max_keys": 1000000,
+      "cleanup_interval": "600s"
+    },
+    "api": {
+      "version": "v1",
+      "base_path": "/api",
+      "page_size": 50,
+      "max_page_size": 1000,
+      "rate_limit_per_minute": 1000,
+      "cors_max_age": "86400s",
+      "compression_threshold": "1kb"
+    },
+    "monitoring": {
+      "metrics_interval": "60s",
+      "health_check_interval": "30s",
+      "log_retention_days": 90,
+      "alert_cooldown": "300s",
+      "dashboard_refresh": "5s",
+      "tracing_sample_rate": 0.1
+    },
+    "business": {
+      "trial_period_days": 14,
+      "max_users_per_plan": {
+        "starter": 5,
+        "professional": 50,
+        "enterprise": -1
+      },
+      "default_timezone": "UTC",
+      "supported_locales": ["en", "es", "fr", "de", "ja", "zh"],
+      "currency": "USD",
+      "tax_rate": 0.08
+    },
+    "limits": {
+      "max_file_upload_size": "100mb",
+      "max_api_calls_per_hour": 10000,
+      "max_concurrent_sessions": 1000,
+      "max_storage_per_user": "10gb",
+      "max_bandwidth_per_month": "1tb",
+      "max_webhook_retries": 5
+    },
+    "features": {
+      "enable_analytics": true,
+      "enable_real_time": true,
+      "enable_ai_features": true,
+      "enable_advanced_search": true,
+      "enable_custom_domains": true,
+      "enable_sso": true,
+      "enable_audit_logs": true,
+      "enable_export": true
+    },
+    "timeouts": {
+      "database": "30s",
+      "cache": "5s",
+      "external_api": "10s",
+      "file_upload": "300s",
+      "webhook": "30s",
+      "email": "60s",
+      "backup": "1800s"
+    },
+    "paths": {
+      "uploads": "/var/uploads",
+      "logs": "/var/logs",
+      "temp": "/var/tmp",
+      "backups": "/var/backups",
+      "cache": "/var/cache",
+      "ssl": "/etc/ssl"
+    }
+  },
   "license": "MIT",
   "keywords": [
     "bun",
