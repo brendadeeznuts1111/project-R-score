@@ -5,6 +5,8 @@
  * for Bun's built-in Markdown parser.
  */
 
+import React from 'react';
+
 // ============================================================================
 // CORE PRESETS
 // ============================================================================
@@ -370,26 +372,76 @@ export const MarkdownPresets = {
   /** Create HTML renderer with security */
   html: (preset: keyof typeof MARKDOWN_FEATURES = 'GFM', security: keyof typeof MARKDOWN_SECURITY = 'MODERATE') => 
     (markdown: string) => {
+      // Runtime check for Bun API availability
+      if (typeof Bun?.markdown?.html !== 'function') {
+        throw new Error('Bun.markdown.html is not available. Please ensure you are running in Bun environment.');
+      }
+      
+      // Input validation
+      if (typeof markdown !== 'string') {
+        throw new Error('Markdown content must be a string');
+      }
+      
+      if (markdown.length > VALIDATION.MAX_SIZES.DOCUMENT) {
+        throw new Error(ERRORS.MESSAGES.SIZE_ERROR);
+      }
+      
       const options = {
         ...MARKDOWN_FEATURES[preset],
         ...MARKDOWN_SECURITY[security]
       };
       
-      return Bun.markdown.html(markdown, options);
+      try {
+        return Bun.markdown.html(markdown, options);
+      } catch (error) {
+        throw new Error(`${ERRORS.CODES.PARSE_ERROR}: ${error.message}`);
+      }
     },
   
   /** Create renderer with specific output format */
   render: (format: keyof typeof HTML_RENDERERS = 'TAILWIND', options: Record<string, any> = {}) => 
     (markdown: string) => {
+      // Runtime check for Bun API availability
+      if (typeof Bun?.markdown?.render !== 'function') {
+        throw new Error('Bun.markdown.render is not available. Please ensure you are running in Bun environment.');
+      }
+      
+      // Input validation
+      if (typeof markdown !== 'string') {
+        throw new Error('Markdown content must be a string');
+      }
+      
+      if (markdown.length > VALIDATION.MAX_SIZES.DOCUMENT) {
+        throw new Error(ERRORS.MESSAGES.SIZE_ERROR);
+      }
+      
       const renderer = HTML_RENDERERS[format];
       const featureOpts = { ...MARKDOWN_FEATURES.GFM, ...options };
       
-      return Bun.markdown.render(markdown, renderer, featureOpts);
+      try {
+        return Bun.markdown.render(markdown, renderer, featureOpts);
+      } catch (error) {
+        throw new Error(`${ERRORS.CODES.PARSE_ERROR}: ${error.message}`);
+      }
     },
   
   /** Create React component with framework */
   react: (framework: keyof typeof REACT_COMPONENTS = 'TAILWIND_TYPOGRAPHY', options: Record<string, any> = {}) => 
     (markdown: string) => {
+      // Runtime check for Bun API availability
+      if (typeof Bun?.markdown?.react !== 'function') {
+        throw new Error('Bun.markdown.react is not available. Please ensure you are running in Bun environment.');
+      }
+      
+      // Input validation
+      if (typeof markdown !== 'string') {
+        throw new Error('Markdown content must be a string');
+      }
+      
+      if (markdown.length > VALIDATION.MAX_SIZES.DOCUMENT) {
+        throw new Error(ERRORS.MESSAGES.SIZE_ERROR);
+      }
+      
       const components = REACT_COMPONENTS[framework];
       const featureOpts = { 
         ...MARKDOWN_FEATURES.GFM, 
@@ -397,12 +449,28 @@ export const MarkdownPresets = {
         ...options 
       };
       
-      return Bun.markdown.react(markdown, components, featureOpts);
+      try {
+        return Bun.markdown.react(markdown, components, featureOpts);
+      } catch (error) {
+        throw new Error(`${ERRORS.CODES.PARSE_ERROR}: ${error.message}`);
+      }
     }
 } as const;
 
 /** Cache factory functions */
 export const MarkdownCache = {
+  /** Generate secure cache key to prevent collisions */
+  generateSecureCacheKey: (content: string, prefix = 'md'): string => {
+    // Use a simple hash function for better key generation
+    let hash = 0;
+    for (let i = 0; i < content.length; i++) {
+      const char = content.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    return `${prefix}:${Math.abs(hash).toString(36)}:${content.length}`;
+  },
+  
   /** Simple in-memory cache */
   createMemoryCache: (maxSize = 100) => {
     const cache = new Map<string, any>();
@@ -432,18 +500,20 @@ export const MarkdownCache = {
       get: (key: string) => {
         if (!cache.has(key)) return null;
         
-        const timestamp = timestamps.get(key)!;
-        if (Date.now() - timestamp > ttl) {
+        const timestamp = timestamps.get(key);
+        if (!timestamp || Date.now() - timestamp > ttl) {
           cache.delete(key);
           timestamps.delete(key);
           return null;
         }
         
         const value = cache.get(key);
-        // Refresh position
-        cache.delete(key);
-        cache.set(key, value);
-        return value;
+        if (value !== undefined) {
+          // Refresh position - move to end (LRU behavior)
+          cache.delete(key);
+          cache.set(key, value);
+        }
+        return value || null;
       },
       
       set: (key: string, value: any) => {
@@ -465,8 +535,8 @@ export const MarkdownCache = {
       has: (key: string) => {
         if (!cache.has(key)) return false;
         
-        const timestamp = timestamps.get(key)!;
-        if (Date.now() - timestamp > ttl) {
+        const timestamp = timestamps.get(key);
+        if (!timestamp || Date.now() - timestamp > ttl) {
           cache.delete(key);
           timestamps.delete(key);
           return false;
@@ -542,6 +612,16 @@ export const Sanitizers = {
   /** Validate URL */
   validateUrl: (url: string) => {
     try {
+      // Input validation
+      if (typeof url !== 'string' || url.trim().length === 0) {
+        return false;
+      }
+      
+      // Length check to prevent extremely long URLs
+      if (url.length > VALIDATION.MAX_SIZES.LINK_TEXT * 10) {
+        return false;
+      }
+      
       const parsed = new URL(url, 'http://localhost');
       
       // Check protocol
