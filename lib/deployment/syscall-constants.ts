@@ -9,7 +9,7 @@
  * @author Enterprise Platform Team
  */
 
-import { PerformanceTier } from './core-types';
+import { PerformanceTier } from '../core/core-types';
 
 
 /**

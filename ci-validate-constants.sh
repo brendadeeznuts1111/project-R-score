@@ -9,7 +9,7 @@ echo "🚀 CI Constants Validation"
 
 # Quick structure validation
 echo "📋 Checking constants structure..."
-bun -e 'import { ENTERPRISE_DOCUMENTATION_BASE_URLS, BUN_DOCS } from "./lib/core-documentation.ts"; console.log("✅ ENTERPRISE_DOCUMENTATION_BASE_URLS:", Object.keys(ENTERPRISE_DOCUMENTATION_BASE_URLS).length, "providers"); console.log("✅ BUN_DOCS:", Object.keys(BUN_DOCS).length, "APIs")'
+bun -e 'import { ENTERPRISE_DOCUMENTATION_BASE_URLS, BUN_DOCS } from "./lib/core/core-documentation.ts"; console.log("✅ ENTERPRISE_DOCUMENTATION_BASE_URLS:", Object.keys(ENTERPRISE_DOCUMENTATION_BASE_URLS).length, "providers"); console.log("✅ BUN_DOCS:", Object.keys(BUN_DOCS).length, "APIs")'
 
 # Critical URL validation
 echo "🔗 Testing critical URLs..."
@@ -38,7 +38,7 @@ fi
 # BUN_DOCS functionality test
 echo "🛠️  Testing BUN_DOCS functionality..."
 bun -e '
-import { BUN_DOCS } from "./lib/core-documentation.ts";
+import { BUN_DOCS } from "./lib/core/core-documentation.ts";
 const tests = [
     () => BUN_DOCS.secrets.overview(),
     () => BUN_DOCS.runtime("api"),

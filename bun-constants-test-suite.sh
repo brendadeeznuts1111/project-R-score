@@ -9,32 +9,32 @@ echo ""
 
 # 1. Count all providers
 echo "1. Provider Count:"
-bun -e 'import { ENTERPRISE_DOCUMENTATION_BASE_URLS } from "./lib/core-documentation.ts"; console.log("   " + Object.keys(ENTERPRISE_DOCUMENTATION_BASE_URLS).length + " providers defined")'
+bun -e 'import { ENTERPRISE_DOCUMENTATION_BASE_URLS } from "./lib/core/core-documentation.ts"; console.log("   " + Object.keys(ENTERPRISE_DOCUMENTATION_BASE_URLS).length + " providers defined")'
 echo ""
 
 # 2. Check BUN_OFFICIAL provider structure
 echo "2. BUN_OFFICIAL Provider Keys:"
-bun -e 'import { ENTERPRISE_DOCUMENTATION_BASE_URLS } from "./lib/core-documentation.ts"; const p=ENTERPRISE_DOCUMENTATION_BASE_URLS.bun_official; console.log("   " + (p ? Object.keys(p).join(", ") : "MISSING"))'
+bun -e 'import { ENTERPRISE_DOCUMENTATION_BASE_URLS } from "./lib/core/core-documentation.ts"; const p=ENTERPRISE_DOCUMENTATION_BASE_URLS.bun_official; console.log("   " + (p ? Object.keys(p).join(", ") : "MISSING"))'
 echo ""
 
 # 3. Test BUN_DOCS existence and structure
 echo "3. BUN_DOCS API Structure:"
-bun -e 'import { BUN_DOCS } from "./lib/core-documentation.ts"; console.log("   Available APIs: " + Object.keys(BUN_DOCS).join(", "))'
+bun -e 'import { BUN_DOCS } from "./lib/core/core-documentation.ts"; console.log("   Available APIs: " + Object.keys(BUN_DOCS).join(", "))'
 echo ""
 
 # 4. Test BUN_DOCS runtime function
 echo "4. BUN_DOCS.runtime() Test:"
-bun -e 'import { BUN_DOCS } from "./lib/core-documentation.ts"; const url = BUN_DOCS.runtime("fetch"); console.log("   BUN_DOCS.runtime(\"fetch\") = " + url)'
+bun -e 'import { BUN_DOCS } from "./lib/core/core-documentation.ts"; const url = BUN_DOCS.runtime("fetch"); console.log("   BUN_DOCS.runtime(\"fetch\") = " + url)'
 echo ""
 
 # 5. Test BUN_DOCS secrets API
 echo "5. BUN_DOCS.secrets API:"
-bun -e 'import { BUN_DOCS } from "./lib/core-documentation.ts"; console.log("   secrets.overview = " + BUN_DOCS.secrets.overview())'
+bun -e 'import { BUN_DOCS } from "./lib/core/core-documentation.ts"; console.log("   secrets.overview = " + BUN_DOCS.secrets.overview())'
 echo ""
 
 # 6. Environment variable override test
 echo "6. Environment Override Test:"
-bun -e 'import { ENTERPRISE_DOCUMENTATION_BASE_URLS } from "./lib/core-documentation.ts"; const original = ENTERPRISE_DOCUMENTATION_BASE_URLS.bun_official.BASE; process.env.BUN_DOCS_BASE_URL="https://test.bun"; console.log("   Original BASE: " + original); console.log("   With env override: " + ENTERPRISE_DOCUMENTATION_BASE_URLS.bun_official.BASE)'
+bun -e 'import { ENTERPRISE_DOCUMENTATION_BASE_URLS } from "./lib/core/core-documentation.ts"; const original = ENTERPRISE_DOCUMENTATION_BASE_URLS.bun_official.BASE; process.env.BUN_DOCS_BASE_URL="https://test.bun"; console.log("   Original BASE: " + original); console.log("   With env override: " + ENTERPRISE_DOCUMENTATION_BASE_URLS.bun_official.BASE)'
 echo ""
 
 # 7. RSS Feed validation
@@ -71,7 +71,7 @@ echo ""
 # 10. BUN_DOCS method validation
 echo "10. BUN_DOCS Method Validation:"
 bun -e '
-import { BUN_DOCS } from "./lib/core-documentation.ts";
+import { BUN_DOCS } from "./lib/core/core-documentation.ts";
 
 const tests = [
     { name: "secrets.overview()", fn: () => BUN_DOCS.secrets.overview() },
@@ -94,7 +94,7 @@ echo ""
 # 11. Provider completeness check
 echo "11. Provider Completeness Check:"
 bun -e '
-import { ENTERPRISE_DOCUMENTATION_BASE_URLS } from "./lib/core-documentation.ts";
+import { ENTERPRISE_DOCUMENTATION_BASE_URLS } from "./lib/core/core-documentation.ts";
 
 const providers = Object.keys(ENTERPRISE_DOCUMENTATION_BASE_URLS);
 let totalUrls = 0;

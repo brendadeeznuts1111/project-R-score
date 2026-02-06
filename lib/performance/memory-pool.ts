@@ -17,14 +17,14 @@ import {
   ResourceUtilization,
   PerformanceMetrics,
   OperationStatus
-} from './core-types';
+} from '../core/core-types';
 
 import {
   EnterpriseErrorCode,
   createResourceError,
   createSystemError
-} from './core-errors';
-import { validateOrThrow, StringValidators, NumberValidators } from './core-validation';
+} from '../core/core-errors';
+import { validateOrThrow, StringValidators, NumberValidators } from '../core/core-validation';
 
 export class BunMemoryPool {
   private size: number;

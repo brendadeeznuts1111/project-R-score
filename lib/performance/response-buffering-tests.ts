@@ -14,7 +14,7 @@ if (import.meta.main) {
   console.log('ℹ️  Script was imported, not executed directly');
 }
 
-import { OptimizedFetch, DNSOptimizer } from './port-management-system';
+import { OptimizedFetch, DNSOptimizer } from '../http/port-management-system';
 
 
 // ============================================================================

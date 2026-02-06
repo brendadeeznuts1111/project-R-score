@@ -13,8 +13,8 @@ if (import.meta.path !== Bun.main) {
 
 import { URLValidator, ConstantValidator, ValidationReporter } from './cli-constants-validation';
 
-import { DocumentationValidator } from './documentation-validator';
-import { UntrackedFilesAnalyzer } from './untracked-files-analyzer';
+import { DocumentationValidator } from '../docs/documentation-validator';
+import { UntrackedFilesAnalyzer } from '../docs/untracked-files-analyzer';
 
 // ============================================================================
 // AUTOMATED VALIDATION SYSTEM

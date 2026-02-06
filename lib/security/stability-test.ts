@@ -14,10 +14,10 @@ if (import.meta.main) {
   console.log('ℹ️  Script was imported, not executed directly');
 }
 
-import { SpawnOptimizer, EnvironmentOptimizer } from './performance-optimizer';
+import { SpawnOptimizer, EnvironmentOptimizer } from '../performance/optimizer';
 
-import { OptimizedServer } from './optimized-server';
-import { OptimizedSpawn } from './optimized-spawn-test';
+import { OptimizedServer } from '../performance/optimized-server';
+import { OptimizedSpawn } from '../performance/optimized-spawn-test';
 
 // ============================================================================
 // SECURITY TESTS

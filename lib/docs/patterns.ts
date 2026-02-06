@@ -6,7 +6,7 @@
  * @version 1.0.0
  */
 
-import { BUN_DOCS_BUILDERS as BUN_DOCS } from '../core-documentation';
+import { BUN_DOCS_BUILDERS as BUN_DOCS } from '../core/core-documentation';
 
 
 export const DOC_PATTERNS = {

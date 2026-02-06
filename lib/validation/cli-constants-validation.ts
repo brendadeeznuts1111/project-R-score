@@ -8,10 +8,10 @@
  * @author Enterprise Platform Team
  */
 
-import { validateOrThrow, StringValidators, NumberValidators } from './core-validation';
+import { validateOrThrow, StringValidators, NumberValidators } from '../core/core-validation';
 
-import { createValidationError, EnterpriseErrorCode, createSystemError } from './core-errors';
-import { DOCUMENTATION_PROVIDERS, DocumentationProvider } from './core-documentation';
+import { createValidationError, EnterpriseErrorCode, createSystemError } from '../core/core-errors';
+import { DOCUMENTATION_PROVIDERS, DocumentationProvider } from '../core/core-documentation';
 
 // ============================================================================
 // VALIDATION CONFIGURATIONS

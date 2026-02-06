@@ -28,7 +28,7 @@ import {
 
 
 // Import documentation validator for integration
-import { DocumentationValidator } from './documentation-validator';
+import { DocumentationValidator } from '../docs/documentation-validator';
 
 // ============================================================================
 // CLI ARGUMENT PARSING

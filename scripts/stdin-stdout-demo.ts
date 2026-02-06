@@ -9,7 +9,7 @@
  *   bun scripts/stdin-stdout-demo.ts  # Then type and press Ctrl+D (EOF)
  */
 
-import { StatusOutput, writeColored, writeLine } from '../lib/output-helpers';
+import { StatusOutput, writeColored, writeLine } from '../lib/utils/output-helpers';
 
 async function main() {
   StatusOutput.rocket('Bun.stdin/stdout/stderr Demo');

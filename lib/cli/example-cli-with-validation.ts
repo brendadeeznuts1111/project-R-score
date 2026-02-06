@@ -15,7 +15,7 @@ if (import.meta.path !== Bun.main) {
   process.exit(0);
 }
 
-import { validateAndReport, quickValidate, CLISelfValidator } from './cli-self-validation';
+import { validateAndReport, quickValidate, CLISelfValidator } from '../validation/cli-self-validation';
 
 
 // ============================================================================

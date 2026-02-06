@@ -20,7 +20,7 @@ if (import.meta.main) {
 
 import { performance } from 'perf_hooks';
 
-import { PortManager, ConnectionPool, OptimizedFetch } from './port-management-system';
+import { PortManager, ConnectionPool, OptimizedFetch } from '../http/port-management-system';
 
 // ============================================================================
 // OPTIMIZED SERVER IMPLEMENTATION

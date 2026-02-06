@@ -15,7 +15,7 @@ import {
   ENTERPRISE_DOCUMENTATION_BASE_URLS as _CANONICAL_URLS,
   SIGNIFICANT_COMMITS as _CANONICAL_COMMITS,
   TEXT_FRAGMENT_PATTERNS as _CANONICAL_FRAGMENTS,
-} from './documentation/constants/domains';
+} from '../documentation/constants/domains';
 
 // ============================================================================
 // DOCUMENTATION PROVIDERS ENUM

@@ -17,15 +17,15 @@ if (import.meta.path !== Bun.main) {
   process.exit(0);
 }
 
-import { 
-  URLValidator, 
-  ConstantValidator, 
-  ValidationReporter, 
-  AutoHealer 
-} from './cli-constants-validation';
+import {
+  URLValidator,
+  ConstantValidator,
+  ValidationReporter,
+  AutoHealer
+} from '../validation/cli-constants-validation';
 
 
-import { CLICategory, CLI_DOCUMENTATION_URLS } from './documentation/constants/cli';
+import { CLICategory, CLI_DOCUMENTATION_URLS } from '../documentation/constants/cli';
 import { UtilsCategory, BUN_UTILS_URLS } from './documentation/constants/utils';
 
 // ============================================================================

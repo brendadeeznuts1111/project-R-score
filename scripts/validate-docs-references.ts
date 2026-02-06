@@ -9,7 +9,7 @@
 import { readFile, writeFile } from 'fs/promises';
 import { readdir } from 'fs/promises';
 import { join } from 'path';
-import { docs, validateDocUrl } from '../lib/docs-reference';
+import { docs, validateDocUrl } from '../lib/docs/reference';
 
 // Configuration
 const CONFIG = {

@@ -21,11 +21,11 @@ if (import.meta.path !== Bun.main) {
 // IMPORT ALL COMPONENTS FOR AUDIT
 // ============================================================================
 
-import { SpawnOptimizer, EnvironmentOptimizer, ServerOptimizer } from './performance-optimizer';
+import { SpawnOptimizer, EnvironmentOptimizer, ServerOptimizer } from '../performance/optimizer';
 
-import { OptimizedServer } from './optimized-server';
-import { OptimizedSpawn } from './optimized-spawn-test';
-import { PortManager, ConnectionPool, OptimizedFetch, ProjectServer, DNSOptimizer, ValidationUtils } from './port-management-system';
+import { OptimizedServer } from '../performance/optimized-server';
+import { OptimizedSpawn } from '../performance/optimized-spawn-test';
+import { PortManager, ConnectionPool, OptimizedFetch, ProjectServer, DNSOptimizer, ValidationUtils } from '../http/port-management-system';
 import { write } from 'bun';
 
 // ============================================================================

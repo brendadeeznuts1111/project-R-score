@@ -7,7 +7,7 @@
  */
 
 import { EnhancedDocsFetcher, BunApiIndex } from './index-fetcher-enhanced'
-import { ChromeAppManager } from '../chrome-integration'
+import { ChromeAppManager } from '../cli/chrome-integration'
 
 export interface InteractiveConfig {
   maxResults: number

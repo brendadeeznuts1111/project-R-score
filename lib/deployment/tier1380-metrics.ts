@@ -5,7 +5,7 @@
  * Integrates with validate-pointers.ts to track performance improvements.
  */
 
-import { globalPool } from './memory-pool';
+import { globalPool } from '../performance/memory-pool';
 
 
 export interface RScoreMetrics {

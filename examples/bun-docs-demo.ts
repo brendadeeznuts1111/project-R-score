@@ -5,7 +5,7 @@
  */
 
 import { EnhancedDocsFetcher } from '../lib/docs/index-fetcher-enhanced'
-import { ChromeAppManager } from '../lib/chrome-integration'
+import { ChromeAppManager } from '../lib/cli/chrome-integration'
 import { ScannerWithDocs } from '../scanner-integration'
 
 async function demoDocsSystem() {

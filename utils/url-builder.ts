@@ -9,7 +9,7 @@
  */
 
 import { config, ApiEndpoint, GuideName, CliCommand, TypedArrayFragment, ApiFragment } from './doc-urls-config.ts';
-import { docs as docsRef, validateDocUrl } from '../lib/docs-reference.ts';
+import { docs as docsRef, validateDocUrl } from '../lib/docs/reference.ts';
 
 export interface CacheEntry {
   url: string;

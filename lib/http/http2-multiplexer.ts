@@ -15,14 +15,14 @@ import {
   NetworkConfiguration,
   OperationStatus,
   ResourceState
-} from './core-types';
+} from '../core/core-types';
 
 import {
   EnterpriseErrorCode,
   createNetworkError,
   createSystemError
-} from './core-errors';
-import { validateOrThrow, StringValidators, NumberValidators } from './core-validation';
+} from '../core/core-errors';
+import { validateOrThrow, StringValidators, NumberValidators } from '../core/core-validation';
 
 import { type Socket, connect } from 'bun';
 

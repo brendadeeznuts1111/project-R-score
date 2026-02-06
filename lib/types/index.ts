@@ -7,7 +7,7 @@
  */
 
 // Re-export core types
-export * from '../core-types';
+export * from '../core/core-types';
 
 // FactoryWager specific types
 export type Severity = 'success' | 'warning' | 'error' | 'muted';

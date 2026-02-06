@@ -14,7 +14,7 @@ if (import.meta.path !== Bun.main) {
   process.exit(0);
 }
 
-import { validateOrExit, setDefaults, showIntegrationHelp } from './cli-validation-integration';
+import { validateOrExit, setDefaults, showIntegrationHelp } from '../validation/cli-validation-integration';
 
 
 async function main() {

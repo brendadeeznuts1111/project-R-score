@@ -6,7 +6,7 @@
  * with zero complexity and better reliability.
  */
 
-import { SmartRSCHandler } from '../lib/rsc-handler';
+import { SmartRSCHandler } from '../lib/http/rsc-handler';
 
 /**
  * 🚀 Prefetch Optimizations
@@ -18,7 +18,7 @@ import { SmartRSCHandler } from '../lib/rsc-handler';
  * 
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { quickFetchBatch } from '../lib/rsc-simple';
+import { quickFetchBatch } from '../lib/http/rsc-simple';
 
 const TEST_URLS = [
   '/docs?_rsc=jflv3',

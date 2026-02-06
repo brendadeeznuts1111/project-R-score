@@ -11,14 +11,14 @@
  */
 
 // Core infrastructure
-export * from './core-types';
-export * from './core-errors';
-export * from './core-validation';
-export * from './core-documentation';
+export * from './core/core-types';
+export * from './core/core-errors';
+export * from './core/core-validation';
+export * from './core/core-documentation';
 
 // Theme and styling
 export * from './theme/colors';
-export * from './terminal-color-256';
+export * from './cli/terminal-color-256';
 
 // Documentation
 export * from './docs';
@@ -27,7 +27,7 @@ export * from './docs';
 export * from './security';
 
 // Version tracking system
-export * from './version-tracking';
+export * from './versioning/version-tracking';
 
 // Constants and configuration
 export * from './constants';
@@ -41,7 +41,7 @@ export { styled, log, FW_COLORS } from './theme/colors';
 export { Utils } from './utils';
 export { DOC_PATTERNS, DocumentationUtils } from './docs';
 export { VersionedSecretManager, SecurityUtils } from './security';
-export { VersionTracker, URLNormalizer, UtilityFactory, UtilityRegistry } from './version-tracking';
+export { VersionTracker, URLNormalizer, UtilityFactory, UtilityRegistry } from './versioning/version-tracking';
 export { PackageManager, type PackageInfo, type PackageDependencyGraph } from './package/package-manager';
 export { R2Storage, type R2StorageConfig } from './r2/r2-storage-enhanced';
 export { RSSManager, type RSSFeed, type RSSFeedItem, type FeedSubscription } from './rss/rss-manager';

@@ -1,7 +1,7 @@
 // lib/token-cookie-bridge.ts — Cookie-based token persistence with proper crypto (Risk: 2.501100000)
 import { Cookie, CookieMap } from "bun";
 
-import { SecurityError, EnterpriseErrorCode } from './core-errors';
+import { SecurityError, EnterpriseErrorCode } from '../core/core-errors';
 
 /**
  * COOKIE-BACKED TOKEN STORAGE — Tier-1380 Security Profile

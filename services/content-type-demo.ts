@@ -12,7 +12,7 @@ import { BUN_DOCS, TYPED_ARRAY_URLS, RSS_URLS } from '../config/urls.ts';
  * Generated automatically by optimize-examples-prefetch.ts
  */
 import { CONTENT_TYPES, ContentTypeHandler } from '../config/content-types.ts';
-import { buildEnterpriseAPIURL } from '../lib/core-documentation.ts';
+import { buildEnterpriseAPIURL } from '../lib/core/core-documentation.ts';
 
 // Use existing API URL pattern
 const API_BASE_URL = process.env.API_BASE_URL || 'http://example.com';

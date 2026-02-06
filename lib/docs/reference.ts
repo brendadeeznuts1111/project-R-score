@@ -6,8 +6,8 @@
  * Enhanced with fragment support for deep linking and state management.
  */
 
-import { URLHandler, URLFragmentUtils } from './core/url-handler';
-import { DocumentationURLHandler } from './core/documentation-url-handler';
+import { URLHandler, URLFragmentUtils } from '../core/url-handler';
+import { DocumentationURLHandler } from '../core/documentation-url-handler';
 
 // Base URLs as constants
 export const DOCS = {
