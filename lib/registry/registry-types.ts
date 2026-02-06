@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * 📦 Private NPM Registry Types
- * 
+ *
  * Type definitions for the R2-backed private registry
  */
 
@@ -94,11 +94,14 @@ export interface PackageManifest {
   contributors?: Array<{ name: string; email?: string; url?: string }>;
   _id: string;
   _rev?: string;
-  _attachments?: Record<string, {
-    content_type: string;
-    data: string;
-    length: number;
-  }>;
+  _attachments?: Record<
+    string,
+    {
+      content_type: string;
+      data: string;
+      length: number;
+    }
+  >;
 }
 
 export interface SearchResult {
@@ -171,7 +174,7 @@ export interface RegistryConfig {
     url: string;
     cache?: boolean;
     cacheMaxAge?: number;
-  }>;  
+  }>;
   packages: Array<{
     pattern: string;
     access: 'all' | 'authenticated' | 'restricted';
@@ -204,10 +207,13 @@ export interface PublishRequest {
     shasum: string;
     integrity: string;
   };
-  attachments?: Record<string, {
-    content_type: string;
-    data: string;
-  }>;
+  attachments?: Record<
+    string,
+    {
+      content_type: string;
+      data: string;
+    }
+  >;
   'dist-tags'?: Record<string, string>;
   maintainers?: Array<{ name: string; email: string }>;
   readme?: string;

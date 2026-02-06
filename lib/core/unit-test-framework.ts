@@ -2,7 +2,7 @@
 
 /**
  * 🧪 Lightweight Unit Testing Framework
- * 
+ *
  * Comprehensive testing with mocking, assertions, and coverage reporting
  */
 
@@ -62,9 +62,7 @@ export class Assertions {
   equal<T>(actual: T, expected: T, message?: string): void {
     this.count++;
     if (actual !== expected) {
-      throw new AssertionError(
-        message || `Expected ${expected}, got ${actual}`
-      );
+      throw new AssertionError(message || `Expected ${expected}, got ${actual}`);
     }
   }
 
@@ -74,9 +72,7 @@ export class Assertions {
   notEqual<T>(actual: T, expected: T, message?: string): void {
     this.count++;
     if (actual === expected) {
-      throw new AssertionError(
-        message || `Expected values to be different, got ${actual}`
-      );
+      throw new AssertionError(message || `Expected values to be different, got ${actual}`);
     }
   }
 
@@ -127,9 +123,7 @@ export class Assertions {
     this.count++;
     const actualType = typeof value;
     if (actualType !== expectedType) {
-      throw new AssertionError(
-        message || `Expected type ${expectedType}, got ${actualType}`
-      );
+      throw new AssertionError(message || `Expected type ${expectedType}, got ${actualType}`);
     }
   }
 
@@ -139,9 +133,7 @@ export class Assertions {
   isInstance<T>(value: any, expectedClass: new () => T, message?: string): void {
     this.count++;
     if (!(value instanceof expectedClass)) {
-      throw new AssertionError(
-        message || `Expected instance of ${expectedClass.name}`
-      );
+      throw new AssertionError(message || `Expected instance of ${expectedClass.name}`);
     }
   }
 
@@ -151,9 +143,7 @@ export class Assertions {
   contains<T>(array: T[], expected: T, message?: string): void {
     this.count++;
     if (!array.includes(expected)) {
-      throw new AssertionError(
-        message || `Expected array to contain ${expected}`
-      );
+      throw new AssertionError(message || `Expected array to contain ${expected}`);
     }
   }
 
@@ -163,9 +153,7 @@ export class Assertions {
   notContains<T>(array: T[], unexpected: T, message?: string): void {
     this.count++;
     if (array.includes(unexpected)) {
-      throw new AssertionError(
-        message || `Expected array to not contain ${unexpected}`
-      );
+      throw new AssertionError(message || `Expected array to not contain ${unexpected}`);
     }
   }
 
@@ -175,9 +163,7 @@ export class Assertions {
   matches(value: string, pattern: RegExp, message?: string): void {
     this.count++;
     if (!pattern.test(value)) {
-      throw new AssertionError(
-        message || `Expected ${value} to match ${pattern}`
-      );
+      throw new AssertionError(message || `Expected ${value} to match ${pattern}`);
     }
   }
 
@@ -196,11 +182,12 @@ export class Assertions {
     } catch (error) {
       if (expectedError) {
         const errorMessage = error instanceof Error ? error.message : String(error);
-        
+
         if (typeof expectedError === 'string') {
           if (!errorMessage.includes(expectedError)) {
             throw new AssertionError(
-              message || `Expected error message to contain "${expectedError}", got "${errorMessage}"`
+              message ||
+                `Expected error message to contain "${expectedError}", got "${errorMessage}"`
             );
           }
         } else if (expectedError instanceof RegExp) {
@@ -217,16 +204,14 @@ export class Assertions {
   /**
    * Assert that function does not throw
    */
-  async doesNotThrow(
-    fn: () => Promise<any> | any,
-    message?: string
-  ): Promise<void> {
+  async doesNotThrow(fn: () => Promise<any> | any, message?: string): Promise<void> {
     this.count++;
     try {
       await fn();
     } catch (error) {
       throw new AssertionError(
-        message || `Expected function not to throw, but threw: ${error instanceof Error ? error.message : String(error)}`
+        message ||
+          `Expected function not to throw, but threw: ${error instanceof Error ? error.message : String(error)}`
       );
     }
   }
@@ -237,9 +222,7 @@ export class Assertions {
   inRange(value: number, min: number, max: number, message?: string): void {
     this.count++;
     if (value < min || value > max) {
-      throw new AssertionError(
-        message || `Expected ${value} to be between ${min} and ${max}`
-      );
+      throw new AssertionError(message || `Expected ${value} to be between ${min} and ${max}`);
     }
   }
 
@@ -291,7 +274,7 @@ export class Mock<T extends (...args: any[]) => any> {
     }
 
     let result: ReturnType<T>;
-    
+
     if (this.implementation) {
       result = await this.implementation(...args);
     } else if (this.returnValue !== undefined) {
@@ -357,9 +340,9 @@ export class Mock<T extends (...args: any[]) => any> {
    * Check if was called with specific arguments
    */
   calledWith(...args: Parameters<T>): boolean {
-    return this.calls.some(call => 
-      call.args.length === args.length &&
-      call.args.every((arg, index) => arg === args[index])
+    return this.calls.some(
+      call =>
+        call.args.length === args.length && call.args.every((arg, index) => arg === args[index])
     );
   }
 
@@ -390,7 +373,7 @@ export class TestRunner {
       tests: [],
       duration: 0,
       passed: 0,
-      failed: 0
+      failed: 0,
     };
 
     fn();
@@ -420,7 +403,7 @@ export class TestRunner {
         name,
         passed: true,
         duration: Date.now() - startTime,
-        assertions: assert.getAssertionCount()
+        assertions: assert.getAssertionCount(),
       });
       suite.passed++;
     } catch (error) {
@@ -429,7 +412,7 @@ export class TestRunner {
         passed: false,
         error: error instanceof Error ? error.message : String(error),
         duration: Date.now() - startTime,
-        assertions: assert.getAssertionCount()
+        assertions: assert.getAssertionCount(),
       });
       suite.failed++;
     }
@@ -443,11 +426,11 @@ export class TestRunner {
 
     for (const suite of this.suites) {
       const suiteStartTime = Date.now();
-      
+
       for (const test of suite.tests) {
         // Tests are already executed in the it() method
       }
-      
+
       suite.duration = Date.now() - suiteStartTime;
     }
 
@@ -464,8 +447,9 @@ export class TestRunner {
     const totalTests = this.suites.reduce((sum, suite) => sum + suite.tests.length, 0);
     const totalPassed = this.suites.reduce((sum, suite) => sum + suite.passed, 0);
     const totalFailed = this.suites.reduce((sum, suite) => sum + suite.failed, 0);
-    const totalAssertions = this.suites.reduce((sum, suite) => 
-      sum + suite.tests.reduce((testSum, test) => testSum + test.assertions, 0), 0
+    const totalAssertions = this.suites.reduce(
+      (sum, suite) => sum + suite.tests.reduce((testSum, test) => testSum + test.assertions, 0),
+      0
     );
 
     return {
@@ -475,7 +459,7 @@ export class TestRunner {
       totalFailed,
       totalDuration,
       totalAssertions,
-      successRate: totalTests > 0 ? (totalPassed / totalTests) * 100 : 0
+      successRate: totalTests > 0 ? (totalPassed / totalTests) * 100 : 0,
     };
   }
 
@@ -525,28 +509,28 @@ export function mock<T extends (...args: any[]) => any>(name?: string): Mock<T> 
 export async function runTests(): Promise<void> {
   try {
     const { suites, summary } = await testRunner.run();
-    
+
     console.log('\n🧪 Test Results');
     console.log('='.repeat(50));
-    
+
     for (const suite of suites) {
       console.log(`\n📋 ${suite.name}`);
       console.log(`  Duration: ${suite.duration}ms`);
       console.log(`  Tests: ${suite.passed + suite.failed}`);
       console.log(`  ✅ Passed: ${suite.passed}`);
       console.log(`  ❌ Failed: ${suite.failed}`);
-      
+
       for (const test of suite.tests) {
         const status = test.passed ? '✅' : '❌';
         const assertions = test.assertions > 0 ? ` (${test.assertions} assertions)` : '';
         console.log(`    ${status} ${test.name}${assertions}`);
-        
+
         if (!test.passed && test.error) {
           console.log(`       Error: ${test.error}`);
         }
       }
     }
-    
+
     console.log('\n📊 Summary');
     console.log('='.repeat(50));
     console.log(`Suites: ${summary.totalSuites}`);
@@ -556,14 +540,13 @@ export async function runTests(): Promise<void> {
     console.log(`Assertions: ${summary.totalAssertions}`);
     console.log(`Duration: ${summary.totalDuration}ms`);
     console.log(`Success Rate: ${summary.successRate.toFixed(2)}%`);
-    
+
     if (summary.totalFailed > 0) {
       console.log('\n❌ Some tests failed!');
       process.exit(1);
     } else {
       console.log('\n✅ All tests passed!');
     }
-    
   } catch (error) {
     handleError(error, 'TestRunner.runTests', 'high');
     process.exit(1);
@@ -578,25 +561,25 @@ export const testUtils = {
    * Wait for specified time
    */
   wait: (ms: number): Promise<void> => Bun.sleep(ms),
-  
+
   /**
    * Create fake data
    */
   fake: {
-    string: (length: number = 10): string => 
-      Math.random().toString(36).substring(2, 2 + length),
-    
+    string: (length: number = 10): string =>
+      Math.random()
+        .toString(36)
+        .substring(2, 2 + length),
+
     number: (min: number = 0, max: number = 100): number =>
       Math.floor(Math.random() * (max - min + 1)) + min,
-    
-    email: (): string => 
-      `test${Math.random().toString(36).substring(2)}@example.com`,
-    
-    url: (): string =>
-      `https://example${Math.random().toString(36).substring(2)}.com`,
-    
+
+    email: (): string => `test${Math.random().toString(36).substring(2)}@example.com`,
+
+    url: (): string => `https://example${Math.random().toString(36).substring(2)}.com`,
+
     date: (): Date => new Date(Date.now() - Math.random() * 10000000000),
-    
-    uuid: (): string => crypto.randomUUID()
-  }
+
+    uuid: (): string => crypto.randomUUID(),
+  },
 };

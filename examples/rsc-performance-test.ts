@@ -6,7 +6,7 @@
  * Demonstrates the P_ratio improvement from 0.833 to 1.150.
  */
 
-import { RSCMultiplexer, parseCapturedRSCRequest, fetchRSCBatch } from '../lib/rsc-multiplexer';
+import { RSCMultiplexer, parseCapturedRSCRequest, fetchRSCBatch } from '../lib/http/rsc-multiplexer';
 
 /**
  * 🚀 Prefetch Optimizations

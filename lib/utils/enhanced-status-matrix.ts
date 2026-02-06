@@ -7,7 +7,12 @@
  * dynamic severity colors, and WCAG compliance.
  */
 
-import { getDynamicStatusColor, ensureContrast, autoAdjustContrast, perceivedBrightness } from './advanced-hsl-system';
+import {
+  getDynamicStatusColor,
+  ensureContrast,
+  autoAdjustContrast,
+  perceivedBrightness,
+} from './advanced-hsl-system';
 import { colorize, ColorStatus } from './color-system';
 
 export type SeverityLevel = 'low' | 'medium' | 'high' | 'critical';
@@ -33,10 +38,7 @@ export interface StatusDisplay {
 /**
  * Enhanced status display with advanced HSL features
  */
-export function createEnhancedStatus(
-  config: StatusConfig,
-  customText?: string
-): StatusDisplay {
+export function createEnhancedStatus(config: StatusConfig, customText?: string): StatusDisplay {
   const { status, severity, context, ensureWCAG, backgroundHsl } = config;
 
   // Get dynamic HSL color based on status and severity
@@ -52,7 +54,7 @@ export function createEnhancedStatus(
   const hslValues = {
     h: parseInt(hslMatch[1]),
     s: parseInt(hslMatch[2]),
-    l: parseInt(hslMatch[3])
+    l: parseInt(hslMatch[3]),
   };
 
   // Apply WCAG auto-adjustment if requested
@@ -67,8 +69,8 @@ export function createEnhancedStatus(
 
   // Generate final color string
   const finalHslString = `hsl(${finalHsl.h}, ${finalHsl.s}%, ${finalHsl.l}%)`;
-  const hex = Bun.color(finalHslString, "hex") || "#000000";
-  const ansi = Bun.color(finalHslString, "ansi") || "";
+  const hex = Bun.color(finalHslString, 'hex') || '#000000';
+  const ansi = Bun.color(finalHslString, 'ansi') || '';
 
   // Calculate perceived brightness
   const brightness = perceivedBrightness(finalHsl.h, finalHsl.s, finalHsl.l);
@@ -84,7 +86,7 @@ export function createEnhancedStatus(
     hsl: finalHslString,
     hex,
     brightness,
-    wcagCompliant: compliant
+    wcagCompliant: compliant,
   };
 }
 
@@ -107,13 +109,13 @@ export function generateStatusMatrix(
         severity,
         context,
         ensureWCAG: !!backgroundHsl,
-        backgroundHsl
+        backgroundHsl,
       });
 
       matrix.push({
         ...display,
         status,
-        severity
+        severity,
       });
     }
   }
@@ -132,7 +134,12 @@ export function displayStatusMatrix(
 
   console.log(colorize(`🎯 ENHANCED STATUS MATRIX (${context.toUpperCase()})`, 'cyan', true));
   if (backgroundHsl) {
-    console.log(colorize(`Background: hsl(${backgroundHsl.h}, ${backgroundHsl.s}%, ${backgroundHsl.l}%)`, 'gray'));
+    console.log(
+      colorize(
+        `Background: hsl(${backgroundHsl.h}, ${backgroundHsl.s}%, ${backgroundHsl.l}%)`,
+        'gray'
+      )
+    );
   }
   console.log(colorize('═'.repeat(80), 'gray'));
   console.log();
@@ -163,10 +170,14 @@ export function displayStatusMatrix(
   console.log(colorize('📊 MATRIX STATISTICS', 'magenta', true));
   console.log(`Total Combinations: ${total}`);
   if (backgroundHsl) {
-    console.log(`WCAG AA Compliant: ${wcagCompliant}/${total} (${((wcagCompliant/total)*100).toFixed(1)}%)`);
+    console.log(
+      `WCAG AA Compliant: ${wcagCompliant}/${total} (${((wcagCompliant / total) * 100).toFixed(1)}%)`
+    );
   }
   console.log(`Average Brightness: ${(avgBrightness * 100).toFixed(1)}%`);
-  console.log(`Perceptual Range: ${(Math.max(...matrix.map(m => m.brightness)) - Math.min(...matrix.map(m => m.brightness))) * 100} points`);
+  console.log(
+    `Perceptual Range: ${(Math.max(...matrix.map(m => m.brightness)) - Math.min(...matrix.map(m => m.brightness))) * 100} points`
+  );
 }
 
 /**
@@ -174,20 +185,29 @@ export function displayStatusMatrix(
  */
 function getSeverityIcon(severity: SeverityLevel): string {
   switch (severity) {
-    case 'low': return '🟢';
-    case 'medium': return '🟡';
-    case 'high': return '🟠';
-    case 'critical': return '🔴';
+    case 'low':
+      return '🟢';
+    case 'medium':
+      return '🟡';
+    case 'high':
+      return '🟠';
+    case 'critical':
+      return '🔴';
   }
 }
 
 function getStatusIcon(status: ColorStatus): string {
   switch (status) {
-    case 'success': return '✅';
-    case 'warning': return '⚠️';
-    case 'error': return '❌';
-    case 'info': return 'ℹ️';
-    default: return '○';
+    case 'success':
+      return '✅';
+    case 'warning':
+      return '⚠️';
+    case 'error':
+      return '❌';
+    case 'info':
+      return 'ℹ️';
+    default:
+      return '○';
   }
 }
 

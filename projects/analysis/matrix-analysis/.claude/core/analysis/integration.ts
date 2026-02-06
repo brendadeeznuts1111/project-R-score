@@ -1,0 +1,198 @@
+/**
+ * Integration Script for BunX Phone Management System
+ *
+ * Scans the entire codebase for variable naming conflicts
+ * and generates comprehensive reports for CI/CD integration
+ */
+
+// File operations using Bun native APIs for performance
+import { coreLogger as logger } from "../shared/logger.js";
+import { ScopeScanner } from "./scope-scanner";
+
+interface ScanReport {
+	timestamp: string;
+	totalFiles: number;
+	totalScopes: number;
+	totalConflicts: number;
+	problematicFiles: Array<{
+		filePath: string;
+		conflicts: number;
+		worstSimilarity: number;
+	}>;
+	recommendations: string[];
+}
+
+export class CodebaseAnalyzerSystem {
+	private ScannerClass: typeof ScopeScanner;
+
+	constructor() {
+		this.ScannerClass = ScopeScanner;
+	}
+
+	// Scan entire TypeScript/JavaScript codebase
+	async scanCodebase(rootPath: string): Promise<ScanReport> {
+		logger.info("🔍 Starting comprehensive codebase scan...\n");
+
+		const tsFiles = await this.getAllTsFiles(rootPath);
+		const report: ScanReport = {
+			timestamp: new Date().toISOString(),
+			totalFiles: tsFiles.length,
+			totalScopes: 0,
+			totalConflicts: 0,
+			problematicFiles: [],
+			recommendations: [],
+		};
+
+		for (const filePath of tsFiles) {
+			try {
+				const content = await Bun.file(filePath).text();
+				const scanner = new this.ScannerClass();
+				const results = scanner.scanFile(content, filePath);
+
+				let fileConflicts = 0;
+				let worstSimilarity = 0;
+
+				for (const result of results) {
+					report.totalScopes++;
+					if (result.hasConflicts) {
+						fileConflicts += result.conflicts.length;
+						for (const conflict of result.conflicts) {
+							worstSimilarity = Math.max(worstSimilarity, conflict.similarity);
+						}
+					}
+				}
+
+				if (fileConflicts > 0) {
+					report.problematicFiles.push({
+						filePath,
+						conflicts: fileConflicts,
+						worstSimilarity,
+					});
+					report.totalConflicts += fileConflicts;
+				}
+			} catch (error: unknown) {
+				const message = error instanceof Error ? error.message : String(error);
+				logger.warn(`⚠️  Could not scan ${filePath}: ${message}`);
+			}
+		}
+
+		// Generate recommendations
+		report.recommendations = this.generateRecommendations(report);
+
+		return report;
+	}
+
+	// Get all TypeScript files recursively using Bun.Glob
+	private async getAllTsFiles(dir: string): Promise<string[]> {
+		const glob = new Bun.Glob("**/*.{ts,js}");
+		const files: string[] = [];
+
+		for await (const file of glob.scan({ cwd: dir, absolute: true })) {
+			// Skip node_modules and hidden directories
+			if (file.includes("node_modules") || file.includes("/.")) continue;
+			files.push(file);
+		}
+
+		return files;
+	}
+
+	// Generate actionable recommendations
+	private generateRecommendations(report: ScanReport): string[] {
+		const recommendations: string[] = [];
+
+		if (report.totalConflicts > 0) {
+			recommendations.push(
+				`🔧 Found ${report.totalConflicts} variable naming conflicts across ${report.problematicFiles.length} files`,
+			);
+
+			// Most problematic files
+			const worstFiles = report.problematicFiles
+				.sort((a, b) => b.conflicts - a.conflicts)
+				.slice(0, 5);
+
+			recommendations.push("\n📋 Priority files to fix:");
+			for (const file of worstFiles) {
+				recommendations.push(`   • ${file.filePath} (${file.conflicts} conflicts)`);
+			}
+
+			recommendations.push("\n💡 Naming best practices:");
+			recommendations.push(
+				"   • Use descriptive prefixes (primary_, backup_, fallback_)",
+			);
+			recommendations.push(
+				"   • Avoid similar abbreviations (addr vs address, num vs number)",
+			);
+			recommendations.push(
+				"   • Consider domain-specific naming (sms_, email_, proxy_)",
+			);
+			recommendations.push("   • Use consistent naming patterns across the codebase");
+		} else {
+			recommendations.push("✅ No variable naming conflicts detected!");
+			recommendations.push("   Your codebase follows excellent naming conventions.");
+		}
+
+		return recommendations;
+	}
+
+	// Export report for CI/CD
+	exportReport(report: ScanReport, format: "json" | "markdown" = "json"): string {
+		if (format === "json") {
+			return JSON.stringify(report, null, 2);
+		}
+
+		// Markdown format
+		return `# Codebase Variable Analysis Report
+
+**Generated:** ${report.timestamp}
+**Files Scanned:** ${report.totalFiles}
+**Total Scopes:** ${report.totalScopes}
+**Conflicts Found:** ${report.totalConflicts}
+
+## Summary
+
+${report.totalConflicts === 0 ? "✅ **PASS** - No naming conflicts detected" : "❌ **FAIL** - Naming conflicts require attention"}
+
+## Problematic Files
+
+${
+	report.problematicFiles.length === 0
+		? "None"
+		: report.problematicFiles
+				.map(
+					(file) =>
+						`- **${file.filePath}**: ${file.conflicts} conflicts (worst: ${(file.worstSimilarity * 100).toFixed(1)}% similarity)`,
+				)
+				.join("\n")
+}
+
+## Recommendations
+
+${report.recommendations.join("\n")}
+
+---
+*Generated by BunX Levenshtein Scope Analyzer*
+`;
+	}
+}
+
+// CLI integration
+async function main() {
+	const analyzer = new CodebaseAnalyzerSystem();
+	const report = await analyzer.scanCodebase("./src");
+
+	logger.info(`\n${analyzer.exportReport(report, "markdown")}`);
+
+	// Exit with error code if conflicts found (for CI/CD)
+	if (report.totalConflicts > 0) {
+		process.exit(1);
+	}
+}
+
+if (import.meta.main) {
+	main().catch((err) => {
+		console.error(err);
+		process.exit(1);
+	});
+}
+
+export { CodebaseAnalyzerSystem as CodebaseAnalyzer };

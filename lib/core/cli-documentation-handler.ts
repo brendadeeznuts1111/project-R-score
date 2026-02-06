@@ -2,11 +2,15 @@
 
 /**
  * 📚 CLI Documentation Handler with Fragment Support
- * 
+ *
  * Advanced CLI documentation navigation with deep linking and state management
  */
 
-import { CLICategory, CLI_DOCUMENTATION_URLS, CLI_COMMAND_EXAMPLES } from '../documentation/constants/cli';
+import {
+  CLICategory,
+  CLI_DOCUMENTATION_URLS,
+  CLI_COMMAND_EXAMPLES,
+} from '../documentation/constants/cli';
 import { URLHandler, URLFragmentUtils, FactoryWagerURLUtils } from './url-handler';
 import { handleError } from './error-handling';
 
@@ -15,7 +19,7 @@ import { handleError } from './error-handling';
  */
 export class CLIDocumentationHandler {
   private static readonly BASE_URL = 'https://bun.sh';
-  
+
   /**
    * Generate CLI documentation URL with navigation fragments
    */
@@ -32,18 +36,18 @@ export class CLIDocumentationHandler {
       }
 
       // Determine the specific page
-      const pagePath = page && categoryURLs[page as keyof typeof categoryURLs] 
-        ? categoryURLs[page as keyof typeof categoryURLs]
-        : categoryURLs.MAIN;
+      const pagePath =
+        page && categoryURLs[page as keyof typeof categoryURLs]
+          ? categoryURLs[page as keyof typeof categoryURLs]
+          : categoryURLs.MAIN;
 
       // Build full URL
       const baseURL = `${this.BASE_URL}${pagePath}`;
-      
+
       // Add fragment if provided
-      return fragment 
+      return fragment
         ? URLHandler.addFragment(baseURL, URLFragmentUtils.buildFragment(fragment))
         : baseURL;
-
     } catch (error) {
       handleError(error, 'CLIDocumentationHandler.generateDocumentationURL', 'medium');
       return `${this.BASE_URL}/docs/cli`;
@@ -53,10 +57,7 @@ export class CLIDocumentationHandler {
   /**
    * Generate command-specific documentation URL
    */
-  static generateCommandURL(
-    command: string,
-    fragment?: Record<string, string>
-  ): string {
+  static generateCommandURL(command: string, fragment?: Record<string, string>): string {
     return this.generateDocumentationURL(CLICategory.COMMANDS, command.toUpperCase(), fragment);
   }
 
@@ -67,7 +68,11 @@ export class CLIDocumentationHandler {
     platform: 'windows' | 'macos' | 'linux' | 'docker' | 'ci-cd',
     fragment?: Record<string, string>
   ): string {
-    return this.generateDocumentationURL(CLICategory.INSTALLATION, platform.toUpperCase(), fragment);
+    return this.generateDocumentationURL(
+      CLICategory.INSTALLATION,
+      platform.toUpperCase(),
+      fragment
+    );
   }
 
   /**
@@ -91,7 +96,7 @@ export class CLIDocumentationHandler {
   } {
     try {
       const parsed = URLHandler.parse(url);
-      
+
       // Validate it's a bun.sh URL
       if (parsed.hostname !== 'bun.sh') {
         return { valid: false };
@@ -99,8 +104,8 @@ export class CLIDocumentationHandler {
 
       // Extract path and determine category
       const path = parsed.pathname;
-      const fragment = parsed.hasFragment() 
-        ? URLFragmentUtils.parseFragment(parsed.fragment) 
+      const fragment = parsed.hasFragment()
+        ? URLFragmentUtils.parseFragment(parsed.fragment)
         : undefined;
 
       // Find matching category and page
@@ -111,14 +116,13 @@ export class CLIDocumentationHandler {
               valid: true,
               category: category as CLICategory,
               page: pageName,
-              fragment
+              fragment,
             };
           }
         }
       }
 
       return { valid: false };
-
     } catch (error) {
       handleError(error, 'CLIDocumentationHandler.parseDocumentationURL', 'medium');
       return { valid: false };
@@ -137,7 +141,7 @@ export class CLIDocumentationHandler {
       ...fragment,
       example: command,
       category: 'cli-examples',
-      highlight: 'true'
+      highlight: 'true',
     };
 
     return this.generateDocumentationURL(CLICategory.COMMANDS, undefined, exampleFragment);
@@ -158,7 +162,7 @@ export class CLIDocumentationHandler {
   ): string {
     const fragment: Record<string, string> = {
       context: 'cli-docs',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     if (context.command) fragment.command = context.command;
@@ -187,13 +191,13 @@ export class CLIDocumentationHandler {
       const categoryPages = Object.entries(pages).map(([name, path]) => ({
         name: name.toLowerCase().replace(/_/g, ' '),
         url: `${this.BASE_URL}${path}`,
-        fragment: { category, page: name }
+        fragment: { category, page: name },
       }));
 
       navigation.push({
         category: category as CLICategory,
         title: category.charAt(0).toUpperCase() + category.slice(1),
-        pages: categoryPages
+        pages: categoryPages,
       });
     }
 
@@ -211,7 +215,7 @@ export class CLIDocumentationHandler {
     const searchFragment = {
       ...fragment,
       search: query,
-      type: 'cli-search'
+      type: 'cli-search',
     };
 
     if (category) {
@@ -234,7 +238,9 @@ export class CLIDocumentationHandler {
       testing: this.generateDocumentationURL(CLICategory.COMMANDS, 'TEST', { quick: 'true' }),
       building: this.generateDocumentationURL(CLICategory.COMMANDS, 'BUILD', { quick: 'true' }),
       debugging: this.generateDebuggingURL('logging', { quick: 'true' }),
-      configuration: this.generateDocumentationURL(CLICategory.OPTIONS, 'CONFIG_FILE', { quick: 'true' })
+      configuration: this.generateDocumentationURL(CLICategory.OPTIONS, 'CONFIG_FILE', {
+        quick: 'true',
+      }),
     };
   }
 
@@ -260,28 +266,25 @@ export class CLIDocumentationHandler {
         return [{ name: 'CLI Documentation', url: `${this.BASE_URL}/docs/cli` }];
       }
 
-      const breadcrumbs = [
-        { name: 'CLI Documentation', url: `${this.BASE_URL}/docs/cli` }
-      ];
+      const breadcrumbs = [{ name: 'CLI Documentation', url: `${this.BASE_URL}/docs/cli` }];
 
       if (parsed.category) {
         const categoryURL = this.generateDocumentationURL(parsed.category);
-        breadcrumbs.push({ 
-          name: parsed.category.charAt(0).toUpperCase() + parsed.category.slice(1), 
-          url: categoryURL 
+        breadcrumbs.push({
+          name: parsed.category.charAt(0).toUpperCase() + parsed.category.slice(1),
+          url: categoryURL,
         });
       }
 
       if (parsed.page) {
         const pageURL = this.generateDocumentationURL(parsed.category!, parsed.page);
-        breadcrumbs.push({ 
-          name: parsed.page.toLowerCase().replace(/_/g, ' '), 
-          url: pageURL 
+        breadcrumbs.push({
+          name: parsed.page.toLowerCase().replace(/_/g, ' '),
+          url: pageURL,
         });
       }
 
       return breadcrumbs;
-
     } catch (error) {
       handleError(error, 'CLIDocumentationHandler.generateBreadcrumbs', 'medium');
       return [{ name: 'CLI Documentation', url: `${this.BASE_URL}/docs/cli` }];
@@ -306,7 +309,7 @@ export class CLIExampleGenerator {
       category: 'cli-examples',
       highlight: 'true',
       syntax: 'bash',
-      line: '1'
+      line: '1',
     };
 
     return CLIDocumentationHandler.generateExampleURL(category, commandName, fragment);
@@ -326,7 +329,7 @@ export class CLIExampleGenerator {
     const fragment = {
       command,
       interactive: 'true',
-      ...options
+      ...options,
     };
 
     return URLHandler.addFragment(
@@ -347,7 +350,7 @@ export class CLIExampleGenerator {
       ...fragment,
       bun: bunCommand,
       npm: npmCommand,
-      type: 'comparison'
+      type: 'comparison',
     };
 
     return URLHandler.addFragment(
@@ -382,13 +385,15 @@ export class CLIDocumentationSearch {
     // Search in command URLs
     for (const [category, pages] of Object.entries(CLI_DOCUMENTATION_URLS)) {
       for (const [pageName, pagePath] of Object.entries(pages)) {
-        if (pageName.toLowerCase().includes(keywordLower) || 
-            pagePath.toLowerCase().includes(keywordLower)) {
+        if (
+          pageName.toLowerCase().includes(keywordLower) ||
+          pagePath.toLowerCase().includes(keywordLower)
+        ) {
           results.push({
             command: pageName,
             category: category as CLICategory,
             url: `${CLIDocumentationHandler['BASE_URL']}${pagePath}`,
-            description: `${category} - ${pageName}`
+            description: `${category} - ${pageName}`,
           });
         }
       }
@@ -397,13 +402,18 @@ export class CLIDocumentationSearch {
     // Search in command examples
     for (const [category, commands] of Object.entries(CLI_COMMAND_EXAMPLES)) {
       for (const [name, command] of Object.entries(commands)) {
-        if (command.toLowerCase().includes(keywordLower) || 
-            name.toLowerCase().includes(keywordLower)) {
+        if (
+          command.toLowerCase().includes(keywordLower) ||
+          name.toLowerCase().includes(keywordLower)
+        ) {
           results.push({
             command: name,
             category: CLICategory.COMMANDS,
-            url: CLIDocumentationHandler.generateExampleURL(category as keyof typeof CLI_COMMAND_EXAMPLES, name),
-            description: `Example: ${command}`
+            url: CLIDocumentationHandler.generateExampleURL(
+              category as keyof typeof CLI_COMMAND_EXAMPLES,
+              name
+            ),
+            description: `Example: ${command}`,
           });
         }
       }
@@ -423,7 +433,7 @@ export class CLIDocumentationSearch {
       search: query,
       results: results.map(r => r.command).join(','),
       count: results.length.toString(),
-      type: 'search-results'
+      type: 'search-results',
     };
 
     return CLIDocumentationHandler.generateSearchURL(query, undefined, fragment);

@@ -6,9 +6,9 @@
  * with time-bound access and security validation
  */
 
-import { getSignedR2URL } from "./lib/r2/signed-url.ts";
-import { handleError, ErrorHandler } from "../lib/utils/error-handler.ts";
-import { validateKey, validateURL } from "../lib/utils/input-validator.ts";
+import { getSignedR2URL } from "../lib/r2/signed-url.ts";
+import { handleError, ErrorHandler } from ".../lib/utils/error-handler.ts";
+import { validateKey, validateURL } from ".../lib/utils/input-validator.ts";
 
 /**
  * 🚀 Prefetch Optimizations

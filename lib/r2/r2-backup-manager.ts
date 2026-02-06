@@ -2,7 +2,7 @@
 
 /**
  * 💾 R2 Backup & Restore Manager
- * 
+ *
  * Enterprise-grade backup and disaster recovery:
  * - Incremental and full backups
  * - Point-in-time recovery
@@ -149,10 +149,10 @@ export class R2BackupManager {
    */
   async initialize(): Promise<void> {
     console.log(styled('💾 Initializing R2 Backup Manager', 'accent'));
-    
+
     // Restore saved jobs and snapshots
     await this.restoreState();
-    
+
     // Start scheduled jobs
     for (const job of this.jobs.values()) {
       if (job.schedule) {
@@ -177,13 +177,13 @@ export class R2BackupManager {
         objectsFailed: 0,
         totalSize: 0,
         duration: 0,
-        throughput: 0
+        throughput: 0,
       },
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
 
     this.jobs.set(job.id, job);
-    
+
     if (job.schedule) {
       this.scheduleJob(job);
     }
@@ -212,7 +212,7 @@ export class R2BackupManager {
       type: 'backup:started',
       bucket: job.source.bucket,
       source: 'R2BackupManager',
-      metadata: { jobId, type: forceFull ? 'full' : job.type }
+      metadata: { jobId, type: forceFull ? 'full' : job.type },
     });
 
     try {
@@ -243,8 +243,8 @@ export class R2BackupManager {
           backupType,
           jobId,
           compression: job.options.compression,
-          encryption: job.options.encryption
-        }
+          encryption: job.options.encryption,
+        },
       };
 
       // Perform backup
@@ -259,7 +259,7 @@ export class R2BackupManager {
         manifest,
         status: 'completed',
         size: job.stats.totalSize,
-        checksum: await this.calculateChecksum(manifest)
+        checksum: await this.calculateChecksum(manifest),
       };
 
       this.snapshots.set(snapshot.id, snapshot);
@@ -283,26 +283,30 @@ export class R2BackupManager {
         type: 'backup:completed',
         bucket: job.source.bucket,
         source: 'R2BackupManager',
-        metadata: { 
-          jobId, 
+        metadata: {
+          jobId,
           snapshotId: snapshot.id,
           objects: objectsToBackup.length,
-          size: snapshot.size
-        }
+          size: snapshot.size,
+        },
       });
 
-      console.log(styled(`✅ Backup completed: ${snapshot.id} (${objectsToBackup.length} objects, ${(snapshot.size / 1024 / 1024).toFixed(2)} MB)`, 'success'));
+      console.log(
+        styled(
+          `✅ Backup completed: ${snapshot.id} (${objectsToBackup.length} objects, ${(snapshot.size / 1024 / 1024).toFixed(2)} MB)`,
+          'success'
+        )
+      );
 
       return snapshot;
-
     } catch (error) {
       job.status = 'failed';
-      
+
       r2EventSystem.emit({
         type: 'backup:failed',
         bucket: job.source.bucket,
         source: 'R2BackupManager',
-        metadata: { jobId, error: error.message }
+        metadata: { jobId, error: error.message },
       });
 
       throw error;
@@ -333,9 +337,9 @@ export class R2BackupManager {
         restoredObjects: 0,
         failedObjects: 0,
         bytesRestored: 0,
-        estimatedTimeRemaining: 0
+        estimatedTimeRemaining: 0,
       },
-      startedAt: new Date().toISOString()
+      startedAt: new Date().toISOString(),
     };
 
     console.log(styled(`🔄 Starting restore: ${snapshotId} → ${target.bucket}`, 'info'));
@@ -368,10 +372,11 @@ export class R2BackupManager {
       job.status = job.progress.failedObjects > 0 ? 'completed' : 'completed';
       job.completedAt = new Date().toISOString();
 
-      console.log(styled(`✅ Restore completed: ${job.progress.restoredObjects} objects restored`, 'success'));
+      console.log(
+        styled(`✅ Restore completed: ${job.progress.restoredObjects} objects restored`, 'success')
+      );
 
       return job;
-
     } catch (error) {
       job.status = 'failed';
       throw error;
@@ -396,12 +401,12 @@ export class R2BackupManager {
       valid: true,
       checkedObjects: 0,
       failedObjects: 0,
-      errors: [] as string[]
+      errors: [] as string[],
     };
 
     for (const obj of snapshot.manifest.objects) {
       result.checkedObjects++;
-      
+
       // Verify object exists and checksum matches
       const exists = await this.verifyObjectExists(snapshot, obj);
       if (!exists) {
@@ -412,7 +417,12 @@ export class R2BackupManager {
     }
 
     const status = result.valid ? 'success' : 'error';
-    console.log(styled(`Verification ${result.valid ? 'passed' : 'failed'}: ${result.checkedObjects} checked, ${result.failedObjects} failed`, status));
+    console.log(
+      styled(
+        `Verification ${result.valid ? 'passed' : 'failed'}: ${result.checkedObjects} checked, ${result.failedObjects} failed`,
+        status
+      )
+    );
 
     return result;
   }
@@ -425,8 +435,8 @@ export class R2BackupManager {
     if (jobId) {
       snapshots = snapshots.filter(s => s.jobId === jobId);
     }
-    return snapshots.sort((a, b) => 
-      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    return snapshots.sort(
+      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     );
   }
 
@@ -469,7 +479,7 @@ export class R2BackupManager {
       activeBackups: this.activeBackups.size,
       totalSnapshots: snapshots.length,
       totalDataProtected: totalData,
-      lastBackupTime: lastBackup
+      lastBackupTime: lastBackup,
     };
   }
 
@@ -485,19 +495,34 @@ export class R2BackupManager {
     console.log(styled(`  Total Jobs: ${stats.totalJobs}`, 'muted'));
     console.log(styled(`  Active Backups: ${stats.activeBackups}`, 'muted'));
     console.log(styled(`  Total Snapshots: ${stats.totalSnapshots}`, 'muted'));
-    console.log(styled(`  Data Protected: ${(stats.totalDataProtected / 1024 / 1024 / 1024).toFixed(2)} GB`, 'muted'));
+    console.log(
+      styled(
+        `  Data Protected: ${(stats.totalDataProtected / 1024 / 1024 / 1024).toFixed(2)} GB`,
+        'muted'
+      )
+    );
     if (stats.lastBackupTime) {
-      console.log(styled(`  Last Backup: ${new Date(stats.lastBackupTime).toLocaleString()}`, 'muted'));
+      console.log(
+        styled(`  Last Backup: ${new Date(stats.lastBackupTime).toLocaleString()}`, 'muted')
+      );
     }
 
     console.log(styled('\n📋 Backup Jobs:', 'info'));
     for (const job of this.jobs.values()) {
       const typeIcon = job.type === 'full' ? '📦' : job.type === 'incremental' ? '📈' : '📊';
-      const statusIcon = { pending: '⏳', running: '🔄', completed: '✅', failed: '❌', verifying: '🔍' }[job.status];
-      
+      const statusIcon = {
+        pending: '⏳',
+        running: '🔄',
+        completed: '✅',
+        failed: '❌',
+        verifying: '🔍',
+      }[job.status];
+
       console.log(styled(`  ${typeIcon} ${statusIcon} ${job.name}`, 'muted'));
       console.log(styled(`     Source: ${job.source.bucket}/${job.source.prefix || ''}`, 'muted'));
-      console.log(styled(`     Destination: ${job.destination.bucket}/${job.destination.prefix}`, 'muted'));
+      console.log(
+        styled(`     Destination: ${job.destination.bucket}/${job.destination.prefix}`, 'muted')
+      );
       if (job.schedule) {
         console.log(styled(`     Schedule: ${job.schedule.type}`, 'muted'));
       }
@@ -529,7 +554,7 @@ export class R2BackupManager {
           this.executeBackup(job.id).catch(console.error);
         }
       }, job.schedule.interval * 1000);
-      
+
       this.timers.set(job.id, timer);
     }
   }
@@ -537,19 +562,32 @@ export class R2BackupManager {
   private async listSourceObjects(source: BackupSource): Promise<BackupManifest['objects']> {
     // Mock implementation
     return [
-      { key: 'test/file1.json', etag: '"abc123"', size: 1024, lastModified: new Date().toISOString(), checksum: 'sha256:abc' },
-      { key: 'test/file2.json', etag: '"def456"', size: 2048, lastModified: new Date().toISOString(), checksum: 'sha256:def' }
+      {
+        key: 'test/file1.json',
+        etag: '"abc123"',
+        size: 1024,
+        lastModified: new Date().toISOString(),
+        checksum: 'sha256:abc',
+      },
+      {
+        key: 'test/file2.json',
+        etag: '"def456"',
+        size: 2048,
+        lastModified: new Date().toISOString(),
+        checksum: 'sha256:def',
+      },
     ];
   }
 
   private async determineBackupType(job: BackupJob): Promise<BackupType> {
     const snapshots = this.listSnapshots(job.id);
     const lastFull = snapshots.find(s => s.type === 'full');
-    
+
     if (!lastFull) return 'full';
-    
-    const daysSinceFull = (Date.now() - new Date(lastFull.timestamp).getTime()) / (1000 * 60 * 60 * 24);
-    
+
+    const daysSinceFull =
+      (Date.now() - new Date(lastFull.timestamp).getTime()) / (1000 * 60 * 60 * 24);
+
     if (daysSinceFull >= 7) return 'full';
     if (job.type === 'incremental') return 'incremental';
     return 'differential';
@@ -565,7 +603,7 @@ export class R2BackupManager {
     lastSnapshot: BackupSnapshot
   ): BackupManifest['objects'] {
     const lastObjects = new Map(lastSnapshot.manifest.objects.map(o => [o.key, o]));
-    
+
     return current.filter(obj => {
       const last = lastObjects.get(obj.key);
       return !last || last.etag !== obj.etag || last.lastModified !== obj.lastModified;
@@ -579,7 +617,7 @@ export class R2BackupManager {
   ): Promise<void> {
     // In production, would copy objects to destination
     job.stats.objectsProcessed = objects.length;
-    
+
     // Store manifest
     const manifestKey = `${job.destination.prefix}/${manifest.createdAt}/manifest.json`;
     console.log(styled(`  Writing manifest: ${manifestKey}`, 'muted'));
@@ -604,7 +642,8 @@ export class R2BackupManager {
   }
 
   private async calculateChecksum(data: any): Promise<string> {
-    const hash = await crypto.subtle.digest('SHA-256', 
+    const hash = await crypto.subtle.digest(
+      'SHA-256',
       new TextEncoder().encode(JSON.stringify(data))
     );
     return Array.from(new Uint8Array(hash))
@@ -630,19 +669,21 @@ export class R2BackupManager {
 
     // Apply retention rules
     for (const [type, snaps] of byType) {
-      const sorted = snaps.sort((a, b) => 
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      const sorted = snaps.sort(
+        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
       );
 
       let keepCount = 0;
       for (const snap of sorted) {
         const age = (now.getTime() - new Date(snap.timestamp).getTime()) / (1000 * 60 * 60 * 24);
-        
+
         let shouldKeep = false;
         if (policy.keepLastN && keepCount < policy.keepLastN) shouldKeep = true;
         if (policy.keepDailyFor && age <= policy.keepDailyFor) shouldKeep = true;
-        if (policy.keepWeeklyFor && age <= policy.keepWeeklyFor && type === 'full') shouldKeep = true;
-        if (policy.keepMonthlyFor && age <= policy.keepMonthlyFor && type === 'full') shouldKeep = true;
+        if (policy.keepWeeklyFor && age <= policy.keepWeeklyFor && type === 'full')
+          shouldKeep = true;
+        if (policy.keepMonthlyFor && age <= policy.keepMonthlyFor && type === 'full')
+          shouldKeep = true;
 
         if (shouldKeep) {
           keepCount++;
@@ -658,7 +699,9 @@ export class R2BackupManager {
     }
 
     if (toDelete.length > 0) {
-      console.log(styled(`🗑️ Cleaned up ${toDelete.length} old snapshots per retention policy`, 'info'));
+      console.log(
+        styled(`🗑️ Cleaned up ${toDelete.length} old snapshots per retention policy`, 'info')
+      );
     }
   }
 }
@@ -680,22 +723,22 @@ if (import.meta.main) {
     type: 'incremental',
     source: {
       bucket: 'scanner-cookies',
-      prefix: 'mcp/'
+      prefix: 'mcp/',
     },
     destination: {
       bucket: 'scanner-cookies-backup',
       prefix: 'backups/mcp/',
-      storageClass: 'GLACIER'
+      storageClass: 'GLACIER',
     },
     retention: {
       keepLastN: 10,
       keepDailyFor: 30,
-      keepWeeklyFor: 90
+      keepWeeklyFor: 90,
     },
     options: {
       compression: true,
-      verifyAfterBackup: true
-    }
+      verifyAfterBackup: true,
+    },
   });
 
   console.log(styled(`\n📋 Created backup job: ${job.name}`, 'success'));
@@ -708,5 +751,7 @@ if (import.meta.main) {
   console.log(styled('\n📊 Backup Stats:', 'info'));
   console.log(styled(`  Jobs: ${stats.totalJobs}`, 'muted'));
   console.log(styled(`  Snapshots: ${stats.totalSnapshots}`, 'muted'));
-  console.log(styled(`  Data Protected: ${(stats.totalDataProtected / 1024 / 1024).toFixed(2)} MB`, 'muted'));
+  console.log(
+    styled(`  Data Protected: ${(stats.totalDataProtected / 1024 / 1024).toFixed(2)} MB`, 'muted')
+  );
 }

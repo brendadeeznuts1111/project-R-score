@@ -1,0 +1,15 @@
+{
+	"version": "3.29.0",
+	"cli": {
+		"defaultOutput": "table",
+		"colors": true,
+		"pager": false,
+		"jsonCompact": false
+	},
+	"favorites": [],
+	"aliases": {},
+	"shortcuts": {},
+	"secrets": {
+		"api_key": "$argon2id$v=19$m=65536,t=2,p=1$T2D/S7M0JPtOudt3m8H4aKmh3HXpZ3M8Yxi4uFJrdFY$NNDg8BU5RPDRiBFbSM+nwHFsMOnUcUUwlvL6zs2Ka24"
+	}
+}

@@ -2,7 +2,7 @@
 
 /**
  * 🎨 MAX PERFORMANCE Color System
- * 
+ *
  * High-contrast, cached color system using HSL for maximum visual impact
  * across all FactoryWager daily routine scripts.
  */
@@ -14,27 +14,41 @@ import { color } from 'bun';
 // ──────────────────────────────────────────────────────────────────────────────
 const COLOR_CACHE = new Map<string, string>();
 
-export type ColorStatus = "success" | "warning" | "error" | "info" | "cyan" | "magenta" | "gray" | "white" | "yellow" | "blue" | "green" | "red";
+export type ColorStatus =
+  | 'success'
+  | 'warning'
+  | 'error'
+  | 'info'
+  | 'cyan'
+  | 'magenta'
+  | 'gray'
+  | 'white'
+  | 'yellow'
+  | 'blue'
+  | 'green'
+  | 'red';
 
 const getBaseHue = (status: ColorStatus): number => {
   const baseHues = {
-    success: 135,    // vivid green
-    warning: 45,     // vivid orange  
-    error: 0,        // vivid red
-    info: 210,       // vivid blue
-    cyan: 180,       // cyan
-    magenta: 300,    // magenta
-    gray: 0,         // gray (will be desaturated)
-    white: 0,        // white (will be light)
-    yellow: 60,      // yellow
-    blue: 220,       // blue
-    green: 135,      // green
-    red: 0           // red
+    success: 135, // vivid green
+    warning: 45, // vivid orange
+    error: 0, // vivid red
+    info: 210, // vivid blue
+    cyan: 180, // cyan
+    magenta: 300, // magenta
+    gray: 0, // gray (will be desaturated)
+    white: 0, // white (will be light)
+    yellow: 60, // yellow
+    blue: 220, // blue
+    green: 135, // green
+    red: 0, // red
   };
   return baseHues[status] || 0;
 };
 
-const getColorConfig = (status: ColorStatus): { hue: number; saturation: number; lightness: number } => {
+const getColorConfig = (
+  status: ColorStatus
+): { hue: number; saturation: number; lightness: number } => {
   switch (status) {
     case 'success':
     case 'green':
@@ -61,8 +75,8 @@ const getColorConfig = (status: ColorStatus): { hue: number; saturation: number;
 };
 
 export const colorize = (
-  text: string, 
-  status: ColorStatus, 
+  text: string,
+  status: ColorStatus,
   bold: boolean = false,
   hueShift: number = 0
 ): string => {
@@ -75,10 +89,10 @@ export const colorize = (
   const config = getColorConfig(status);
   const hue = (config.hue + hueShift) % 360;
   const hslString = `hsl(${hue}, ${config.saturation}%, ${config.lightness}%)`;
-  
-  let ansi = color(hslString, "ansi") || "";
+
+  let ansi = color(hslString, 'ansi') || '';
   if (bold) ansi = `\x1b[1m${ansi}`;
-  
+
   COLOR_CACHE.set(cacheKey, ansi);
   return `${ansi}${text}\x1b[0m`;
 };
@@ -99,7 +113,7 @@ export const c = {
   blue: (text: string) => colorize(text, 'blue'),
   green: (text: string) => colorize(text, 'green'),
   red: (text: string) => colorize(text, 'red'),
-  
+
   // Bold variants
   bold: {
     success: (text: string) => colorize(text, 'success', true),
@@ -114,7 +128,7 @@ export const c = {
     blue: (text: string) => colorize(text, 'blue', true),
     green: (text: string) => colorize(text, 'green', true),
     red: (text: string) => colorize(text, 'red', true),
-  }
+  },
 };
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -125,7 +139,7 @@ export const getProfileTheme = (profile: string): { hueShift: number; name: stri
     production: { hueShift: 135, name: 'Production Green' },
     staging: { hueShift: 45, name: 'Staging Orange' },
     development: { hueShift: 210, name: 'Dev Blue' },
-    local: { hueShift: 180, name: 'Local Cyan' }
+    local: { hueShift: 180, name: 'Local Cyan' },
   };
   return themes[profile as keyof typeof themes] || themes.local;
 };
@@ -149,5 +163,5 @@ export const glyphs = {
   check: '✓',
   cross: '✗',
   triangle: '▵',
-  diamond: '◆'
+  diamond: '◆',
 };

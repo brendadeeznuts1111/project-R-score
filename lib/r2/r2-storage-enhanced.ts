@@ -2,7 +2,7 @@
 
 /**
  * ☁️ Enhanced R2 Storage with Package Integration
- * 
+ *
  * Provides R2 storage operations specifically for package documentation,
  * with compression, caching, and package-specific bucket management.
  */
@@ -37,25 +37,25 @@ export class R2Storage {
   async createBucketForPackage(packageName: string): Promise<string> {
     const sanitized = packageName.replace(/[@/]/g, '-');
     const bucketName = `bun-docs-${sanitized}-${Date.now().toString(36)}`;
-    
+
     await this.createBucket(bucketName);
-    
+
     // Store bucket info in package config
     const packageConfig = {
       bucket: bucketName,
       created: new Date().toISOString(),
-      package: packageName
+      package: packageName,
     };
-    
+
     await this.putJson(`_config/${packageName}/bucket.json`, packageConfig);
-    
+
     return bucketName;
   }
 
   async uploadPackageDocs(packageName: string, docs: any): Promise<string> {
     const bucketName = await this.getOrCreateBucket(packageName);
     const key = `packages/${packageName}/${Date.now()}/docs.json`;
-    
+
     // Compress with Bun's zstd
     try {
       const compressed = Bun.zstdCompressSync(JSON.stringify(docs));
@@ -64,11 +64,11 @@ export class R2Storage {
       // Fallback to uncompressed if zstd not available
       await this.put(bucketName, key, Buffer.from(JSON.stringify(docs)));
     }
-    
+
     // Generate and upload static HTML docs
     const html = await this.generateHtmlDocs(packageName, docs);
     await this.put(bucketName, `packages/${packageName}/index.html`, Buffer.from(html));
-    
+
     return `https://${bucketName}.${this.config.accountId}.r2.dev/packages/${packageName}/`;
   }
 
@@ -104,51 +104,49 @@ export class R2Storage {
     </script>
 </body>
 </html>`;
-    
+
     return template;
   }
 
   async syncPackageCache(packageName: string, localCache: Map<string, any>): Promise<void> {
     console.log(`🔄 Syncing ${packageName} cache to R2...`);
-    
+
     const bucket = await this.getOrCreateBucket(packageName);
-    const batch: Array<{key: string, value: Buffer}> = [];
-    
+    const batch: Array<{ key: string; value: Buffer }> = [];
+
     for (const [key, value] of localCache.entries()) {
       try {
         const compressed = Bun.zstdCompressSync(JSON.stringify(value));
         batch.push({
           key: `cache/${packageName}/${key}`,
-          value: compressed
+          value: compressed,
         });
       } catch {
         batch.push({
           key: `cache/${packageName}/${key}`,
-          value: Buffer.from(JSON.stringify(value))
+          value: Buffer.from(JSON.stringify(value)),
         });
       }
     }
-    
+
     // Upload in batches of 100
     for (let i = 0; i < batch.length; i += 100) {
       const chunk = batch.slice(i, i + 100);
-      await Promise.all(
-        chunk.map(item => this.put(bucket, item.key, item.value))
-      );
+      await Promise.all(chunk.map(item => this.put(bucket, item.key, item.value)));
       console.log(`Uploaded ${Math.min(i + 100, batch.length)}/${batch.length} items`);
     }
-    
+
     console.log('✅ Cache sync complete');
   }
 
   async getPackageDocs(packageName: string, version?: string): Promise<any> {
-    const key = version 
+    const key = version
       ? `packages/${packageName}/${version}/docs.json`
       : `packages/${packageName}/latest/docs.json`;
-    
+
     const data = await this.get(await this.getOrCreateBucket(packageName), key);
     if (!data) return null;
-    
+
     try {
       const decompressed = Bun.zstdDecompressSync(data);
       return JSON.parse(decompressed.toString());
@@ -157,22 +155,24 @@ export class R2Storage {
     }
   }
 
-  async listPackages(): Promise<Array<{name: string, versions: string[], lastUpdated: string}>> {
+  async listPackages(): Promise<Array<{ name: string; versions: string[]; lastUpdated: string }>> {
     const packages = await this.listObjects('_config/');
-    
+
     return Promise.all(
-      packages.filter(p => p.Key?.includes('bucket.json')).map(async p => {
-        const config = await this.getJson(p.Key!);
-        const docs = await this.listObjects(`packages/${config.package}/`);
-        
-        return {
-          name: config.package,
-          versions: docs
-            .filter(d => d.Key?.endsWith('/docs.json'))
-            .map(d => d.Key?.split('/').slice(-2, -1)[0] || 'unknown'),
-          lastUpdated: config.created
-        };
-      })
+      packages
+        .filter(p => p.Key?.includes('bucket.json'))
+        .map(async p => {
+          const config = await this.getJson(p.Key!);
+          const docs = await this.listObjects(`packages/${config.package}/`);
+
+          return {
+            name: config.package,
+            versions: docs
+              .filter(d => d.Key?.endsWith('/docs.json'))
+              .map(d => d.Key?.split('/').slice(-2, -1)[0] || 'unknown'),
+            lastUpdated: config.created,
+          };
+        })
     );
   }
 
@@ -182,9 +182,9 @@ export class R2Storage {
     const response = await fetch(`${this.endpoint}/buckets`, {
       method: 'POST',
       headers: this.getAuthHeaders('POST', '/buckets'),
-      body: JSON.stringify({ bucket: bucketName })
+      body: JSON.stringify({ bucket: bucketName }),
     });
-    
+
     if (!response.ok) throw new Error(`Failed to create bucket: ${response.statusText}`);
   }
 
@@ -192,15 +192,15 @@ export class R2Storage {
     await fetch(`${this.endpoint}/${bucket}/${key}`, {
       method: 'PUT',
       headers: this.getAuthHeaders('PUT', `/${bucket}/${key}`),
-      body: data
+      body: data,
     });
   }
 
   private async get(bucket: string, key: string): Promise<Buffer | null> {
     const response = await fetch(`${this.endpoint}/${bucket}/${key}`, {
-      headers: this.getAuthHeaders('GET', `/${bucket}/${key}`)
+      headers: this.getAuthHeaders('GET', `/${bucket}/${key}`),
     });
-    
+
     if (!response.ok) return null;
     return Buffer.from(await response.arrayBuffer());
   }
@@ -216,9 +216,9 @@ export class R2Storage {
 
   private async listObjects(prefix: string): Promise<any[]> {
     const response = await fetch(`${this.endpoint}/${this.config.defaultBucket}?prefix=${prefix}`, {
-      headers: this.getAuthHeaders('GET', `/${this.config.defaultBucket}`)
+      headers: this.getAuthHeaders('GET', `/${this.config.defaultBucket}`),
     });
-    
+
     const xml = await response.text();
     // Parse XML response
     return this.parseListObjectsResponse(xml);
@@ -226,14 +226,14 @@ export class R2Storage {
 
   async getOrCreateBucket(packageName: string): Promise<string> {
     const config = await this.getJson(`_config/${packageName}/bucket.json`);
-    return config?.bucket || await this.createBucketForPackage(packageName);
+    return config?.bucket || (await this.createBucketForPackage(packageName));
   }
 
   private getAuthHeaders(method: string, path: string): HeadersInit {
     // Simplified auth headers for R2
     return {
-      'Authorization': `Bearer ${this.config.accessKeyId}:${this.config.secretAccessKey}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${this.config.accessKeyId}:${this.config.secretAccessKey}`,
+      'Content-Type': 'application/json',
     };
   }
 
@@ -241,10 +241,10 @@ export class R2Storage {
     // Simplified XML parsing
     const keys = xml.match(/<Key>([^<]+)<\/Key>/g) || [];
     const sizes = xml.match(/<Size>([^<]+)<\/Size>/g) || [];
-    
+
     return keys.map((key, i) => ({
       Key: key.replace(/<\/?Key>/g, ''),
-      Size: sizes[i] ? parseInt(sizes[i].replace(/<\/?Size>/g, '')) : 0
+      Size: sizes[i] ? parseInt(sizes[i].replace(/<\/?Size>/g, '')) : 0,
     }));
   }
 }

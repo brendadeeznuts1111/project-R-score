@@ -25,7 +25,7 @@ export type VersionNode = {
 const FW_COLORS: Record<string, string> = {
   STANDARD: '#3B82F6',
   HIGH: '#F59E0B',
-  CRITICAL: '#EF4444'
+  CRITICAL: '#EF4444',
 };
 
 export class VersionedSecretManager {
@@ -44,11 +44,14 @@ export class VersionedSecretManager {
     if (metadata?.tags?.['factorywager:version']) return metadata.tags['factorywager:version'];
     if (previous && previous.startsWith('v')) {
       const parts = previous.replace(/^v/, '').split('.').map(Number);
-      if (parts.length === 3 && parts.every((n) => !Number.isNaN(n))) {
+      if (parts.length === 3 && parts.every(n => !Number.isNaN(n))) {
         return `v${parts[0]}.${parts[1]}.${parts[2] + 1}`;
       }
     }
-    const stamp = new Date().toISOString().replace(/[-:TZ.]/g, '').slice(0, 12);
+    const stamp = new Date()
+      .toISOString()
+      .replace(/[-:TZ.]/g, '')
+      .slice(0, 12);
     return `v${stamp}`;
   }
 
@@ -64,8 +67,8 @@ export class VersionedSecretManager {
         'factorywager:version': newVersion,
         'factorywager:previous': current?.version || 'none',
         'factorywager:author': metadata.author || 'system',
-        'visual:color': FW_COLORS[metadata.level || 'STANDARD']
-      }
+        'visual:color': FW_COLORS[metadata.level || 'STANDARD'],
+      },
     });
 
     const node: VersionNode = {
@@ -77,14 +80,14 @@ export class VersionedSecretManager {
       hash: Bun.hash.sha256(value).toString('hex'),
       previous: current?.version,
       metadata,
-      action: 'SET'
+      action: 'SET',
     };
 
     await this.graph.update(key, node);
 
     await secrets.set(key, value, {
       description: `Current: ${newVersion} - ${metadata.description || 'No description'}`,
-      tags: { 'factorywager:current-version': newVersion }
+      tags: { 'factorywager:current-version': newVersion },
     });
 
     return { version: newVersion, key: versionedKey };
@@ -106,7 +109,7 @@ export class VersionedSecretManager {
       return { value, version, metadata };
     } catch {
       const history = await this.getHistory(key, 100);
-      const found = history.find((v) => v.version === version);
+      const found = history.find(v => v.version === version);
       if (found?.archivedKey && env.R2_BUCKET) {
         const archived = await env.R2_BUCKET.get(found.archivedKey);
         return { value: await archived?.text(), version, metadata: found };
@@ -115,7 +118,11 @@ export class VersionedSecretManager {
     }
   }
 
-  async rollback(key: string, targetVersion: string, options: { confirm?: boolean; reason?: string; dryRun?: boolean } = {}) {
+  async rollback(
+    key: string,
+    targetVersion: string,
+    options: { confirm?: boolean; reason?: string; dryRun?: boolean } = {}
+  ) {
     const { confirm = true, reason = 'Manual rollback', dryRun = false } = options;
     const target = await this.getWithVersion(key, targetVersion);
     const current = await this.getWithVersion(key);
@@ -133,8 +140,8 @@ export class VersionedSecretManager {
           'factorywager:current-version': targetVersion,
           'factorywager:rollback-from': current.version,
           'factorywager:rollback-reason': reason,
-          'factorywager:rollback-timestamp': new Date().toISOString()
-        }
+          'factorywager:rollback-timestamp': new Date().toISOString(),
+        },
       });
 
       const node: VersionNode = {
@@ -145,7 +152,7 @@ export class VersionedSecretManager {
         description: reason,
         hash: Bun.hash.sha256(target.value).toString('hex'),
         previous: current.version,
-        action: 'ROLLBACK'
+        action: 'ROLLBACK',
       };
 
       await this.graph.update(key, node);
@@ -174,7 +181,7 @@ export class VersionedSecretManager {
       changed: oldHash !== newHash,
       lengthChange: newVal.length - oldVal.length,
       oldHash,
-      newHash
+      newHash,
     };
   }
 }

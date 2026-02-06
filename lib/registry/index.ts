@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * 🏭 FactoryWager Registry & Documentation System (Bun v1.4+ Complete)
- * 
+ *
  * Unified export for all registry-related modules:
  * - NPM Registry Server
  * - Package Documentation Fetcher
@@ -26,14 +26,10 @@ export { DocumentationSync } from './docs-sync';
 export { RSSAggregator, DEFAULT_FEEDS } from './rss-aggregator';
 
 // Export config loader (Bun v1.3.7 JSON5/JSONL)
-export { 
-  loadRegistryConfig, 
-  saveRegistryConfig, 
-  validateConfig 
-} from './config-loader';
+export { loadRegistryConfig, saveRegistryConfig, validateConfig } from './config-loader';
 
 // Export NEW: Version Manager (bun.semver)
-export { 
+export {
   VersionManager,
   type VersionNode,
   type VersionGraph,
@@ -42,7 +38,7 @@ export {
 } from './version-manager';
 
 // Export NEW: Secrets Manager (bun.secrets)
-export { 
+export {
   RegistrySecretsManager,
   type SecretEntry,
   type SecretVersion,
@@ -51,11 +47,7 @@ export {
 } from './secrets-manager';
 
 // Export NEW: bun x Integration
-export { 
-  BunXIntegration,
-  type BunXOptions,
-  type CachedPackage,
-} from './bunx-integration';
+export { BunXIntegration, type BunXOptions, type CachedPackage } from './bunx-integration';
 
 // Version
 export const VERSION = '1.1.0';

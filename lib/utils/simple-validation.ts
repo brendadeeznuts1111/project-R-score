@@ -2,12 +2,23 @@
 
 /**
  * 🔧 Simple Validation System
- * 
+ *
  * Lightweight validation implementation to avoid external dependencies
  * during development and testing.
  */
 
-export type ValidationType = 'string' | 'number' | 'boolean' | 'email' | 'url' | 'port' | 'apiKey' | 'jwtSecret' | 'encryptionKey' | 'logLevel' | 'environment';
+export type ValidationType =
+  | 'string'
+  | 'number'
+  | 'boolean'
+  | 'email'
+  | 'url'
+  | 'port'
+  | 'apiKey'
+  | 'jwtSecret'
+  | 'encryptionKey'
+  | 'logLevel'
+  | 'environment';
 
 export interface ValidationSchema<T = any> {
   type: ValidationType;
@@ -159,7 +170,9 @@ export class SimpleValidator {
           throw new ValidationError('Expected encryption key string');
         }
         if (validatedValue.length !== 64) {
-          throw new ValidationError('Encryption key must be exactly 64 characters (256-bit in hex)');
+          throw new ValidationError(
+            'Encryption key must be exactly 64 characters (256-bit in hex)'
+          );
         }
         if (!/^[a-fA-F0-9]+$/.test(validatedValue)) {
           throw new ValidationError('Encryption key must be hexadecimal');
@@ -201,11 +214,14 @@ export class SimpleValidator {
   /**
    * Create a validation schema
    */
-  static schema<T>(type: ValidationType, options: Partial<ValidationSchema<T>> = {}): ValidationSchema<T> {
+  static schema<T>(
+    type: ValidationType,
+    options: Partial<ValidationSchema<T>> = {}
+  ): ValidationSchema<T> {
     return {
       type,
       required: false,
-      ...options
+      ...options,
     } as ValidationSchema<T>;
   }
 }
@@ -217,14 +233,19 @@ export const Schemas = {
   boolean: () => SimpleValidator.schema<boolean>('boolean'),
   email: () => SimpleValidator.schema<string>('email'),
   url: () => SimpleValidator.schema<string>('url'),
-  port: () => SimpleValidator.schema<number>('port', { transform: (val: any) => typeof val === 'string' ? parseInt(val, 10) : val }),
+  port: () =>
+    SimpleValidator.schema<number>('port', {
+      transform: (val: any) => (typeof val === 'string' ? parseInt(val, 10) : val),
+    }),
   apiKey: () => SimpleValidator.schema<string>('apiKey'),
   jwtSecret: () => SimpleValidator.schema<string>('jwtSecret'),
   encryptionKey: () => SimpleValidator.schema<string>('encryptionKey'),
   logLevel: () => SimpleValidator.schema<string>('logLevel'),
   environment: () => SimpleValidator.schema<string>('environment'),
   nonEmptyString: () => SimpleValidator.schema<string>('string', { min: 1 }),
-  boundedString: (min: number, max: number) => SimpleValidator.schema<string>('string', { min, max }),
-  boundedNumber: (min: number, max: number) => SimpleValidator.schema<number>('number', { min, max }),
-  enum: (values: string[]) => SimpleValidator.schema<string>('string', { enum: values })
+  boundedString: (min: number, max: number) =>
+    SimpleValidator.schema<string>('string', { min, max }),
+  boundedNumber: (min: number, max: number) =>
+    SimpleValidator.schema<number>('number', { min, max }),
+  enum: (values: string[]) => SimpleValidator.schema<string>('string', { enum: values }),
 };

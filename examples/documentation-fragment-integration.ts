@@ -17,7 +17,7 @@ import {
   buildInteractiveDocsUrl, 
   buildExampleDocsUrl,
   DocReferenceResolver 
-} from '../lib/docs-reference.ts';
+} from '../lib/docs/reference.ts';
 import { 
   UtilityFactory,
   UtilsCategory,

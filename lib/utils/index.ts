@@ -1,14 +1,14 @@
 /**
  * 🛠️ FactoryWager Utilities
- * 
+ *
  * Central utility functions for the monorepo
- * 
+ *
  * @version 1.0.0
  */
 
 import { FACTORYWAGER_CONFIG } from './config';
 
-import type { Severity, PerformanceMetrics } from './types';
+import type { Severity, PerformanceMetrics } from '../core/fw-types';
 
 // Performance utilities
 export class PerformanceUtils {
@@ -16,21 +16,25 @@ export class PerformanceUtils {
    * Analyze performance metrics and determine severity
    */
   static analyzePerformance(metrics: Partial<PerformanceMetrics>): Severity {
-    if (metrics.cpu?.severity === 'error' || 
-        metrics.memory?.severity === 'error' || 
-        metrics.network?.severity === 'error') {
+    if (
+      metrics.cpu?.severity === 'error' ||
+      metrics.memory?.severity === 'error' ||
+      metrics.network?.severity === 'error'
+    ) {
       return 'error';
     }
-    
-    if (metrics.cpu?.severity === 'warning' || 
-        metrics.memory?.severity === 'warning' || 
-        metrics.network?.severity === 'warning') {
+
+    if (
+      metrics.cpu?.severity === 'warning' ||
+      metrics.memory?.severity === 'warning' ||
+      metrics.network?.severity === 'warning'
+    ) {
       return 'warning';
     }
-    
+
     return 'success';
   }
-  
+
   /**
    * Format bytes to human readable format
    */
@@ -38,15 +42,15 @@ export class PerformanceUtils {
     const units = ['B', 'KB', 'MB', 'GB', 'TB'];
     let size = bytes;
     let unitIndex = 0;
-    
+
     while (size >= 1024 && unitIndex < units.length - 1) {
       size /= 1024;
       unitIndex++;
     }
-    
+
     return `${size.toFixed(2)} ${units[unitIndex]}`;
   }
-  
+
   /**
    * Format milliseconds to human readable format
    */
@@ -64,17 +68,26 @@ export class StringUtils {
    * Pad string to specified length
    */
   static pad(str: string, length: number, padChar: string = ' '): string {
-    return str.padEnd(length, padChar);
+    const diff = length - Bun.stringWidth(str);
+    return diff > 0 ? str + padChar.repeat(diff) : str;
   }
-  
+
   /**
    * Truncate string with ellipsis
    */
   static truncate(str: string, maxLength: number): string {
-    if (str.length <= maxLength) return str;
-    return str.substring(0, maxLength - 3) + '...';
+    if (Bun.stringWidth(str) <= maxLength) return str;
+    let width = 0;
+    let i = 0;
+    for (const ch of str) {
+      const cw = Bun.stringWidth(ch);
+      if (width + cw + 3 > maxLength) break;
+      width += cw;
+      i += ch.length;
+    }
+    return str.slice(0, i) + '...';
   }
-  
+
   /**
    * Capitalize first letter
    */
@@ -95,24 +108,27 @@ export class ArrayUtils {
     }
     return chunks;
   }
-  
+
   /**
    * Remove duplicates from array
    */
   static unique<T>(array: T[]): T[] {
     return [...new Set(array)];
   }
-  
+
   /**
    * Group array by key
    */
   static groupBy<T>(array: T[], key: keyof T): Record<string, T[]> {
-    return array.reduce((groups, item) => {
-      const groupKey = String(item[key]);
-      groups[groupKey] = groups[groupKey] || [];
-      groups[groupKey].push(item);
-      return groups;
-    }, {} as Record<string, T[]>);
+    return array.reduce(
+      (groups, item) => {
+        const groupKey = String(item[key]);
+        groups[groupKey] = groups[groupKey] || [];
+        groups[groupKey].push(item);
+        return groups;
+      },
+      {} as Record<string, T[]>
+    );
   }
 }
 
@@ -123,20 +139,24 @@ export class ObjectUtils {
    */
   static deepMerge<T extends Record<string, any>>(target: T, source: Partial<T>): T {
     const result = { ...target };
-    
+
     for (const key in source) {
       if (source[key] !== undefined) {
-        if (typeof source[key] === 'object' && source[key] !== null && !Array.isArray(source[key])) {
+        if (
+          typeof source[key] === 'object' &&
+          source[key] !== null &&
+          !Array.isArray(source[key])
+        ) {
           result[key] = this.deepMerge(result[key] || {}, source[key] as any);
         } else {
           result[key] = source[key] as any;
         }
       }
     }
-    
+
     return result;
   }
-  
+
   /**
    * Pick specific keys from object
    */
@@ -149,7 +169,7 @@ export class ObjectUtils {
     }
     return result;
   }
-  
+
   /**
    * Omit specific keys from object
    */
@@ -171,7 +191,7 @@ export class ValidationUtils {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   }
-  
+
   /**
    * Validate URL format
    */
@@ -183,7 +203,7 @@ export class ValidationUtils {
       return false;
     }
   }
-  
+
   /**
    * Validate hex color
    */
@@ -201,14 +221,14 @@ export class TimeUtils {
   static now(): number {
     return Math.floor(Date.now() / 1000);
   }
-  
+
   /**
    * Format timestamp as ISO string
    */
   static isoTimestamp(date?: Date): string {
     return (date || new Date()).toISOString();
   }
-  
+
   /**
    * Get relative time string
    */
@@ -218,7 +238,7 @@ export class TimeUtils {
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
-    
+
     if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
     if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
     if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;

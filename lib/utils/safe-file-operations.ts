@@ -1,11 +1,20 @@
 /**
  * Safe File Operations Utility
- * 
+ *
  * Provides comprehensive error handling for file system operations
  * with proper validation, logging, and graceful fallbacks.
  */
 
-import { readFile, writeFile, appendFile, mkdir, stat, unlink, copyFile, rename } from 'fs/promises';
+import {
+  readFile,
+  writeFile,
+  appendFile,
+  mkdir,
+  stat,
+  unlink,
+  copyFile,
+  rename,
+} from 'fs/promises';
 import { existsSync } from 'fs';
 import { join, dirname, basename, extname } from 'path';
 import { ErrorHandler } from './error-handler';
@@ -43,7 +52,7 @@ export class SafeFileOperations {
     backup: false,
     maxRetries: 3,
     retryDelay: 1000,
-    validateContent: true
+    validateContent: true,
   };
 
   /**
@@ -62,7 +71,7 @@ export class SafeFileOperations {
         return {
           success: false,
           error: `Invalid file path: ${pathValidation.errors.join(', ')}`,
-          path: filePath
+          path: filePath,
         };
       }
 
@@ -71,7 +80,7 @@ export class SafeFileOperations {
         return {
           success: false,
           error: 'File does not exist',
-          path: filePath
+          path: filePath,
         };
       }
 
@@ -81,7 +90,7 @@ export class SafeFileOperations {
         return {
           success: false,
           error: 'Path is not a file',
-          path: filePath
+          path: filePath,
         };
       }
 
@@ -110,7 +119,7 @@ export class SafeFileOperations {
         return {
           success: false,
           error: 'File content validation failed',
-          path: filePath
+          path: filePath,
         };
       }
 
@@ -123,22 +132,21 @@ export class SafeFileOperations {
           created: stats.birthtime,
           modified: stats.mtime,
           isFile: stats.isFile(),
-          isDirectory: stats.isDirectory()
-        }
+          isDirectory: stats.isDirectory(),
+        },
       };
-
     } catch (error) {
       const standardizedError = ErrorHandler.handle(error, {
         module: 'SafeFileOperations',
         function: 'readFile',
         operation: 'file-read',
-        filePath
+        filePath,
       });
 
       return {
         success: false,
         error: standardizedError.message,
-        path: filePath
+        path: filePath,
       };
     }
   }
@@ -160,7 +168,7 @@ export class SafeFileOperations {
         return {
           success: false,
           error: `Invalid file path: ${pathValidation.errors.join(', ')}`,
-          path: filePath
+          path: filePath,
         };
       }
 
@@ -169,7 +177,7 @@ export class SafeFileOperations {
         return {
           success: false,
           error: 'Content validation failed',
-          path: filePath
+          path: filePath,
         };
       }
 
@@ -208,21 +216,20 @@ export class SafeFileOperations {
 
       return {
         success: true,
-        path: filePath
+        path: filePath,
       };
-
     } catch (error) {
       const standardizedError = ErrorHandler.handle(error, {
         module: 'SafeFileOperations',
         function: 'writeFile',
         operation: 'file-write',
-        filePath
+        filePath,
       });
 
       return {
         success: false,
         error: standardizedError.message,
-        path: filePath
+        path: filePath,
       };
     }
   }
@@ -244,7 +251,7 @@ export class SafeFileOperations {
         return {
           success: false,
           error: `Invalid file path: ${pathValidation.errors.join(', ')}`,
-          path: filePath
+          path: filePath,
         };
       }
 
@@ -277,21 +284,20 @@ export class SafeFileOperations {
 
       return {
         success: true,
-        path: filePath
+        path: filePath,
       };
-
     } catch (error) {
       const standardizedError = ErrorHandler.handle(error, {
         module: 'SafeFileOperations',
         function: 'appendFile',
         operation: 'file-append',
-        filePath
+        filePath,
       });
 
       return {
         success: false,
         error: standardizedError.message,
-        path: filePath
+        path: filePath,
       };
     }
   }
@@ -299,9 +305,7 @@ export class SafeFileOperations {
   /**
    * Safely delete a file with error handling
    */
-  static async deleteFile(
-    filePath: string
-  ): Promise<FileOperationResult<void>> {
+  static async deleteFile(filePath: string): Promise<FileOperationResult<void>> {
     try {
       // Validate file path
       const pathValidation = this.validatePath(filePath);
@@ -309,7 +313,7 @@ export class SafeFileOperations {
         return {
           success: false,
           error: `Invalid file path: ${pathValidation.errors.join(', ')}`,
-          path: filePath
+          path: filePath,
         };
       }
 
@@ -317,7 +321,7 @@ export class SafeFileOperations {
       if (!existsSync(filePath)) {
         return {
           success: true, // Deleting non-existent file is considered success
-          path: filePath
+          path: filePath,
         };
       }
 
@@ -325,21 +329,20 @@ export class SafeFileOperations {
 
       return {
         success: true,
-        path: filePath
+        path: filePath,
       };
-
     } catch (error) {
       const standardizedError = ErrorHandler.handle(error, {
         module: 'SafeFileOperations',
         function: 'deleteFile',
         operation: 'file-delete',
-        filePath
+        filePath,
       });
 
       return {
         success: false,
         error: standardizedError.message,
-        path: filePath
+        path: filePath,
       };
     }
   }
@@ -368,7 +371,7 @@ export class SafeFileOperations {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -409,5 +412,4 @@ export const safeWriteFile = (filePath: string, content: string, options?: FileO
 export const safeAppendFile = (filePath: string, content: string, options?: FileOperationOptions) =>
   SafeFileOperations.appendFile(filePath, content, options);
 
-export const safeDeleteFile = (filePath: string) =>
-  SafeFileOperations.deleteFile(filePath);
+export const safeDeleteFile = (filePath: string) => SafeFileOperations.deleteFile(filePath);

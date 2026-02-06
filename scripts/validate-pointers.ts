@@ -9,13 +9,13 @@
  */
 
 import { join } from 'path';
-import { globalPool } from '../lib/memory-pool';
-import { hardenedFetch } from '../lib/hardened-fetch';
-import { generatePointerId as generatePointerIdLib, getConceptual as getConceptualLib } from '../lib/pointer-id';
-import { metricsFeed } from '../lib/tier1380-metrics-feed';
-import { BunHTTP2Multiplexer } from '../lib/http2-multiplexer';
-import { StatusOutput, writeRScore, writeColored } from '../lib/output-helpers';
-import { loadJSON, saveJSON } from '../lib/json-loader';
+import { globalPool } from '../lib/performance/memory-pool';
+import { hardenedFetch } from '../lib/http/hardened-fetch';
+import { generatePointerId as generatePointerIdLib, getConceptual as getConceptualLib } from '../lib/utils/pointer-id';
+import { metricsFeed } from '../lib/deployment/tier1380-metrics-feed';
+import { BunHTTP2Multiplexer } from '../lib/http/http2-multiplexer';
+import { StatusOutput, writeRScore, writeColored } from '../lib/utils/output-helpers';
+import { loadJSON, saveJSON } from '../lib/utils/json-loader';
 
 // CONSTANTS
 const README_PATH = join(import.meta.dir, '..', 'README.md');

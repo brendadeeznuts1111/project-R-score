@@ -4,7 +4,7 @@
  * A dedicated Chrome app for accessing Bun documentation
  */
 
-import { ChromeAppManager } from '../lib/chrome-app-manager'
+import { ChromeAppManager } from '../lib/cli/chrome-app-manager'
 
 class MYBUNDOCS11 {
   private manager: ChromeAppManager

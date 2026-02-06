@@ -2,7 +2,7 @@
 
 /**
  * 📦 R2 Batch Operations - Efficient Bulk Data Operations
- * 
+ *
  * High-performance batch processing for R2 with:
  * - Parallel upload/download with concurrency control
  * - Automatic compression for large batches
@@ -83,7 +83,7 @@ export class R2BatchOperations {
       enableCompression: config.enableCompression ?? true,
       compressionThreshold: config.compressionThreshold || 1024 * 10, // 10KB
       progressInterval: config.progressInterval || 1000,
-      abortOnError: config.abortOnError ?? false
+      abortOnError: config.abortOnError ?? false,
     };
   }
 
@@ -101,7 +101,7 @@ export class R2BatchOperations {
       type: 'upload',
       key: item.key,
       data: item.data,
-      metadata: item.metadata
+      metadata: item.metadata,
     }));
 
     return this.executeBatch(bucket, operations, config);
@@ -119,7 +119,7 @@ export class R2BatchOperations {
     const operations: BatchOperation[] = keys.map((key, index) => ({
       id: `op-${Date.now()}-${index}`,
       type: 'download',
-      key
+      key,
     }));
 
     return this.executeBatch(bucket, operations, config);
@@ -137,7 +137,7 @@ export class R2BatchOperations {
     const operations: BatchOperation[] = keys.map((key, index) => ({
       id: `op-${Date.now()}-${index}`,
       type: 'delete',
-      key
+      key,
     }));
 
     return this.executeBatch(bucket, operations, config);
@@ -157,7 +157,7 @@ export class R2BatchOperations {
       id: `op-${Date.now()}-${index}`,
       type: 'copy',
       key: mapping.sourceKey,
-      options: { destBucket, destKey: mapping.destKey }
+      options: { destBucket, destKey: mapping.destKey },
     }));
 
     return this.executeBatch(sourceBucket, operations, config);
@@ -177,7 +177,7 @@ export class R2BatchOperations {
       id: `op-${Date.now()}-${index}`,
       type: 'move',
       key: mapping.sourceKey,
-      options: { destBucket, destKey: mapping.destKey }
+      options: { destBucket, destKey: mapping.destKey },
     }));
 
     return this.executeBatch(sourceBucket, operations, config);
@@ -192,7 +192,7 @@ export class R2BatchOperations {
     config: BatchConfig
   ): Promise<BatchJob> {
     const batchId = `batch-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`;
-    
+
     const job: BatchJob = {
       id: batchId,
       status: 'pending',
@@ -206,9 +206,9 @@ export class R2BatchOperations {
         inProgress: 0,
         percentComplete: 0,
         bytesTransferred: 0,
-        estimatedTimeRemaining: 0
+        estimatedTimeRemaining: 0,
       },
-      config
+      config,
     };
 
     this.jobs.set(batchId, job);
@@ -228,7 +228,7 @@ export class R2BatchOperations {
       type: 'batch:started',
       bucket,
       source: 'R2BatchOperations',
-      metadata: { batchId, operationCount: operations.length }
+      metadata: { batchId, operationCount: operations.length },
     });
 
     // Execute with concurrency control
@@ -244,11 +244,11 @@ export class R2BatchOperations {
       type: job.status === 'failed' ? 'batch:failed' : 'batch:completed',
       bucket,
       source: 'R2BatchOperations',
-      metadata: { 
-        batchId, 
+      metadata: {
+        batchId,
         completed: job.progress.completed,
-        failed: job.progress.failed 
-      }
+        failed: job.progress.failed,
+      },
     });
 
     return job;
@@ -299,7 +299,7 @@ export class R2BatchOperations {
               key: operation.key,
               error: error.message,
               duration: 0,
-              retries: 0
+              retries: 0,
             });
             job.progress.failed++;
           })
@@ -357,7 +357,6 @@ export class R2BatchOperations {
         result.duration = Date.now() - startTime;
         result.retries = retries;
         return result;
-
       } catch (error) {
         retries++;
         if (retries > config.retryAttempts!) {
@@ -367,7 +366,7 @@ export class R2BatchOperations {
             key: operation.key,
             error: error.message,
             duration: Date.now() - startTime,
-            retries
+            retries,
           };
         }
         await Bun.sleep(config.retryDelay! * retries);
@@ -380,7 +379,7 @@ export class R2BatchOperations {
       key: operation.key,
       error: 'Max retries exceeded',
       duration: Date.now() - startTime,
-      retries
+      retries,
     };
   }
 
@@ -400,7 +399,7 @@ export class R2BatchOperations {
       bucket,
       key: operation.key,
       source: 'R2BatchOperations',
-      metadata: { size, batchOperation: true }
+      metadata: { size, batchOperation: true },
     });
 
     return {
@@ -410,14 +409,11 @@ export class R2BatchOperations {
       size,
       etag: `"${crypto.randomUUID().slice(0, 16)}"`,
       duration: 0,
-      retries: 0
+      retries: 0,
     };
   }
 
-  private async executeDownload(
-    operation: BatchOperation,
-    bucket: string
-  ): Promise<BatchResult> {
+  private async executeDownload(operation: BatchOperation, bucket: string): Promise<BatchResult> {
     // Simulate download
     const size = 1024; // Mock size
 
@@ -425,7 +421,7 @@ export class R2BatchOperations {
       type: 'object:accessed',
       bucket,
       key: operation.key,
-      source: 'R2BatchOperations'
+      source: 'R2BatchOperations',
     });
 
     return {
@@ -434,19 +430,16 @@ export class R2BatchOperations {
       key: operation.key,
       size,
       duration: 0,
-      retries: 0
+      retries: 0,
     };
   }
 
-  private async executeDelete(
-    operation: BatchOperation,
-    bucket: string
-  ): Promise<BatchResult> {
+  private async executeDelete(operation: BatchOperation, bucket: string): Promise<BatchResult> {
     r2EventSystem.emit({
       type: 'object:deleted',
       bucket,
       key: operation.key,
-      source: 'R2BatchOperations'
+      source: 'R2BatchOperations',
     });
 
     return {
@@ -454,29 +447,23 @@ export class R2BatchOperations {
       success: true,
       key: operation.key,
       duration: 0,
-      retries: 0
+      retries: 0,
     };
   }
 
-  private async executeCopy(
-    operation: BatchOperation,
-    bucket: string
-  ): Promise<BatchResult> {
+  private async executeCopy(operation: BatchOperation, bucket: string): Promise<BatchResult> {
     const { destBucket, destKey } = operation.options || {};
-    
+
     return {
       operationId: operation.id,
       success: true,
       key: operation.key,
       duration: 0,
-      retries: 0
+      retries: 0,
     };
   }
 
-  private async executeMove(
-    operation: BatchOperation,
-    bucket: string
-  ): Promise<BatchResult> {
+  private async executeMove(operation: BatchOperation, bucket: string): Promise<BatchResult> {
     // Copy then delete
     const copyResult = await this.executeCopy(operation, bucket);
     if (copyResult.success) {
@@ -525,18 +512,18 @@ export class R2BatchOperations {
    */
   async waitForJob(jobId: string, timeout: number = 300000): Promise<BatchJob> {
     const startTime = Date.now();
-    
+
     while (Date.now() - startTime < timeout) {
       const job = this.jobs.get(jobId);
       if (!job) throw new Error(`Job not found: ${jobId}`);
-      
+
       if (job.status === 'completed' || job.status === 'failed' || job.status === 'cancelled') {
         return job;
       }
-      
+
       await Bun.sleep(100);
     }
-    
+
     throw new Error(`Timeout waiting for job: ${jobId}`);
   }
 
@@ -555,12 +542,12 @@ export class R2BatchOperations {
 
     // Use Bun's native gzip
     const compressed = Bun.gzipSync(data);
-    
+
     return {
       compressed: true,
       data: compressed,
       originalSize,
-      compressedSize: compressed.length
+      compressedSize: compressed.length,
     };
   }
 
@@ -571,9 +558,10 @@ export class R2BatchOperations {
     const job = this.jobs.get(jobId);
     if (!job) return `Job not found: ${jobId}`;
 
-    const duration = job.completedAt && job.startedAt
-      ? new Date(job.completedAt).getTime() - new Date(job.startedAt).getTime()
-      : 0;
+    const duration =
+      job.completedAt && job.startedAt
+        ? new Date(job.completedAt).getTime() - new Date(job.startedAt).getTime()
+        : 0;
 
     return `
 📦 Batch Operation Report: ${jobId}
@@ -599,7 +587,7 @@ export const r2BatchOperations = new R2BatchOperations();
 // CLI interface
 if (import.meta.main) {
   const batch = r2BatchOperations;
-  
+
   console.log(styled('📦 R2 Batch Operations Demo', 'accent'));
   console.log(styled('==========================', 'accent'));
 
@@ -613,7 +601,7 @@ if (import.meta.main) {
   console.log(styled('\n🚀 Starting batch upload...', 'info'));
   const job = await batch.batchUpload('scanner-cookies', uploadItems, {
     concurrency: 2,
-    retryAttempts: 2
+    retryAttempts: 2,
   });
 
   console.log(styled(`\n📊 Job ID: ${job.id}`, 'muted'));
@@ -621,6 +609,6 @@ if (import.meta.main) {
 
   await batch.waitForJob(job.id);
   const completedJob = batch.getJob(job.id);
-  
+
   console.log(styled('\n' + batch.generateReport(job.id), 'success'));
 }

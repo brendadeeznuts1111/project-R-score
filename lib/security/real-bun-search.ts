@@ -1,6 +1,6 @@
 /**
  * 🌐 Real Bun Documentation Search
- * 
+ *
  * This would actually search Bun's documentation at bun.com
  */
 
@@ -28,7 +28,7 @@ export class RealBunSearchServer {
   }
 
   private setupToolHandlers(): void {
-    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    this.server.setRequestHandler(CallToolRequestSchema, async request => {
       const { name, arguments: args } = request.params;
 
       try {
@@ -40,24 +40,21 @@ export class RealBunSearchServer {
               content: [
                 {
                   type: 'text',
-                  text: `🔍 Bun Documentation Search Results:\n${searchResults.map(result => 
-                    `📄 ${result.title}\n   📝 ${result.description}\n   🔗 ${result.url}\n   📚 ${result.category}`
-                  ).join('\n')}`
+                  text: `🔍 Bun Documentation Search Results:\n${searchResults
+                    .map(
+                      result =>
+                        `📄 ${result.title}\n   📝 ${result.description}\n   🔗 ${result.url}\n   📚 ${result.category}`
+                    )
+                    .join('\n')}`,
                 },
               ],
             };
 
           default:
-            throw new McpError(
-              ErrorCode.MethodNotFound,
-              `Unknown tool: ${name}`
-            );
+            throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
         }
       } catch (error) {
-        throw new McpError(
-          ErrorCode.InternalError,
-          `Tool execution failed: ${error.message}`
-        );
+        throw new McpError(ErrorCode.InternalError, `Tool execution failed: ${error.message}`);
       }
     });
   }
@@ -65,73 +62,77 @@ export class RealBunSearchServer {
   /**
    * ACTUALLY search Bun's documentation
    */
-  private async searchRealBunDocs(query: string): Promise<Array<{
-    title: string;
-    description: string;
-    url: string;
-    category: string;
-  }>> {
-    
+  private async searchRealBunDocs(query: string): Promise<
+    Array<{
+      title: string;
+      description: string;
+      url: string;
+      category: string;
+    }>
+  > {
     // Option 1: Scrape bun.com documentation
     const bunDocsResults = await this.scrapeBunDocumentation(query);
-    
+
     // Option 2: Use Bun's API if they have one
     // const apiResults = await this.callBunSearchAPI(query);
-    
+
     // Option 3: Use a search index
     // const indexResults = await this.searchBunIndex(query);
-    
+
     return bunDocsResults;
   }
 
   /**
    * Scrape Bun's actual documentation
    */
-  private async scrapeBunDocumentation(query: string): Promise<Array<{
-    title: string;
-    description: string;
-    url: string;
-    category: string;
-  }>> {
-    
+  private async scrapeBunDocumentation(query: string): Promise<
+    Array<{
+      title: string;
+      description: string;
+      url: string;
+      category: string;
+    }>
+  > {
     // This would ACTUALLY fetch and parse bun.com
     const response = // 🚀 Prefetch hint: Consider preconnecting to `https://bun.sh/docs?q=${encodeURIComponent(query)}` domain
- await fetch(`https://bun.sh/docs?q=${encodeURIComponent(query)}`);
+      await fetch(`https://bun.sh/docs?q=${encodeURIComponent(query)}`);
     const html = await response.text();
-    
+
     // Parse the HTML to extract search results
     const results = this.parseBunSearchResults(html, query);
-    
+
     return results;
   }
 
   /**
    * Parse HTML results from Bun's documentation
    */
-  private parseBunSearchResults(html: string, query: string): Array<{
+  private parseBunSearchResults(
+    html: string,
+    query: string
+  ): Array<{
     title: string;
     description: string;
     url: string;
     category: string;
   }> {
-    
     // This would parse the actual HTML from bun.com
     // and extract real search results
-    
+
     // For now, return mock results
     return [
       {
         title: 'Bun.password - Password Hashing',
         description: 'Hash passwords using Argon2id, bcrypt, or scrypt',
         url: 'https://bun.sh/docs/api/password',
-        category: 'API Reference'
+        category: 'API Reference',
       },
       {
         title: 'Bun.serve - HTTP Server',
         description: 'Create HTTP servers with built-in WebSocket and file serving',
         url: 'https://bun.sh/docs/api/http',
-        category: 'API Reference'
-      }
+        category: 'API Reference',
+      },
     ];
   }
 

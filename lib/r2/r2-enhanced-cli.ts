@@ -2,7 +2,7 @@
 
 /**
  * 🚀 R2 Enhanced CLI - Unified Command Interface
- * 
+ *
  * Comprehensive CLI for all R2 enhancement features:
  * - Event system management
  * - Batch operations
@@ -17,26 +17,38 @@ import { r2EventSystem } from './r2-event-system';
 import { r2BatchOperations, BatchConfig } from './r2-batch-operations';
 import { r2LifecycleManager, LifecycleRule, StorageClass } from './r2-lifecycle-manager';
 import { r2SearchEngine, SearchQuery } from './r2-search-engine';
-import { r2SyncService, SyncJob, SyncDirection, SyncMode, ConflictStrategy } from './r2-sync-service';
-import { r2BackupManager, BackupJob, BackupType, BackupSource, BackupDestination } from './r2-backup-manager';
+import {
+  r2SyncService,
+  SyncJob,
+  SyncDirection,
+  SyncMode,
+  ConflictStrategy,
+} from './r2-sync-service';
+import {
+  r2BackupManager,
+  BackupJob,
+  BackupType,
+  BackupSource,
+  BackupDestination,
+} from './r2-backup-manager';
 import { r2Analytics } from './r2-analytics';
 import { r2SecurityManager } from './r2-security-manager';
 import { r2TransformPipeline } from './r2-transform-pipeline';
 import { r2WebhookManager } from './r2-webhook-manager';
 
 const COMMANDS = {
-  'events': 'Manage R2 Event System',
-  'batch': 'Execute batch operations',
-  'lifecycle': 'Manage data lifecycle',
-  'search': 'Search R2 data',
-  'sync': 'Manage sync jobs',
-  'backup': 'Manage backups',
-  'analytics': 'View analytics and metrics',
-  'security': 'Manage security and access',
-  'pipeline': 'Manage data transformation pipelines',
-  'webhook': 'Manage webhooks and integrations',
-  'status': 'Show overall status',
-  'help': 'Show help'
+  events: 'Manage R2 Event System',
+  batch: 'Execute batch operations',
+  lifecycle: 'Manage data lifecycle',
+  search: 'Search R2 data',
+  sync: 'Manage sync jobs',
+  backup: 'Manage backups',
+  analytics: 'View analytics and metrics',
+  security: 'Manage security and access',
+  pipeline: 'Manage data transformation pipelines',
+  webhook: 'Manage webhooks and integrations',
+  status: 'Show overall status',
+  help: 'Show help',
 };
 
 class R2EnhancedCLI {
@@ -121,10 +133,12 @@ class R2EnhancedCLI {
 
       case 'watch':
         console.log(styled('\n👀 Watching events (Press Ctrl+C to stop)...', 'info'));
-        const unsubscribe = r2EventSystem.onAll((event) => {
-          console.log(styled(`[${event.timestamp}] ${event.type}: ${event.key || event.bucket}`, 'muted'));
+        const unsubscribe = r2EventSystem.onAll(event => {
+          console.log(
+            styled(`[${event.timestamp}] ${event.type}: ${event.key || event.bucket}`, 'muted')
+          );
         });
-        
+
         // Keep running
         await new Promise(() => {});
         break;
@@ -134,7 +148,9 @@ class R2EnhancedCLI {
         const history = r2EventSystem.getEventHistory({ limit });
         console.log(styled(`\n📜 Last ${limit} Events:`, 'accent'));
         for (const event of history) {
-          console.log(styled(`  [${event.timestamp}] ${event.type}: ${event.key || event.bucket}`, 'muted'));
+          console.log(
+            styled(`  [${event.timestamp}] ${event.type}: ${event.key || event.bucket}`, 'muted')
+          );
         }
         break;
 
@@ -170,14 +186,21 @@ class R2EnhancedCLI {
         console.log(styled('\n📦 Batch Operations Status', 'accent'));
         console.log(styled(`  Active Jobs: ${activeJobs.length}`, 'muted'));
         for (const job of activeJobs) {
-          console.log(styled(`    ${job.id}: ${job.progress.completed}/${job.progress.total} (${job.progress.percentComplete.toFixed(1)}%)`, 'muted'));
+          console.log(
+            styled(
+              `    ${job.id}: ${job.progress.completed}/${job.progress.total} (${job.progress.percentComplete.toFixed(1)}%)`,
+              'muted'
+            )
+          );
         }
         break;
 
       default:
         console.log(styled('\n📦 Batch Commands:', 'accent'));
         console.log(styled('  upload <bucket> --files <paths>  - Upload files in batch', 'muted'));
-        console.log(styled('  delete <bucket> --keys <keys>    - Delete objects in batch', 'muted'));
+        console.log(
+          styled('  delete <bucket> --keys <keys>    - Delete objects in batch', 'muted')
+        );
         console.log(styled('  status                           - Show batch job status', 'muted'));
     }
   }
@@ -194,7 +217,12 @@ class R2EnhancedCLI {
         const report = await r2LifecycleManager.performLifecycleScan();
         console.log(styled(`  Deleted: ${report.objectsDeleted}`, 'muted'));
         console.log(styled(`  Transitioned: ${report.objectsTransitioned}`, 'muted'));
-        console.log(styled(`  Space Reclaimed: ${(report.spaceReclaimed / 1024 / 1024).toFixed(2)} MB`, 'muted'));
+        console.log(
+          styled(
+            `  Space Reclaimed: ${(report.spaceReclaimed / 1024 / 1024).toFixed(2)} MB`,
+            'muted'
+          )
+        );
         break;
 
       case 'rules':
@@ -213,11 +241,16 @@ class R2EnhancedCLI {
             name: options.name,
             enabled: true,
             prefix: options.prefix,
-            ttl: options.ttl ? { deleteAfterDays: parseInt(options.ttl) } : undefined
+            ttl: options.ttl ? { deleteAfterDays: parseInt(options.ttl) } : undefined,
           });
           console.log(styled(`\n✅ Added rule: ${options.name}`, 'success'));
         } else {
-          console.log(styled('\n❌ Usage: lifecycle add-rule --name <name> --prefix <prefix> [--ttl <days>]', 'error'));
+          console.log(
+            styled(
+              '\n❌ Usage: lifecycle add-rule --name <name> --prefix <prefix> [--ttl <days>]',
+              'error'
+            )
+          );
         }
         break;
 
@@ -244,12 +277,14 @@ class R2EnhancedCLI {
         const results = r2SearchEngine.search({
           q: query,
           limit: parseInt(options.limit) || 20,
-          filters: options.bucket ? { bucket: options.bucket } : undefined
+          filters: options.bucket ? { bucket: options.bucket } : undefined,
         });
 
         console.log(styled(`  Found ${results.total} results (${results.took}ms)`, 'success'));
         for (const result of results.results) {
-          console.log(styled(`    📄 ${result.document.key} (score: ${result.score.toFixed(2)})`, 'muted'));
+          console.log(
+            styled(`    📄 ${result.document.key} (score: ${result.score.toFixed(2)})`, 'muted')
+          );
           if (result.highlights.length > 0) {
             console.log(styled(`       "${result.highlights[0].slice(0, 80)}..."`, 'muted'));
           }
@@ -277,7 +312,9 @@ class R2EnhancedCLI {
       default:
         console.log(styled('\n🔍 Search Commands:', 'accent'));
         console.log(styled('  query <query> [--bucket <bucket>]  - Search R2 data', 'muted'));
-        console.log(styled('  stats                              - Show index statistics', 'muted'));
+        console.log(
+          styled('  stats                              - Show index statistics', 'muted')
+        );
         console.log(styled('  index --bucket <b> --key <k>       - Index an object', 'muted'));
     }
   }
@@ -306,12 +343,17 @@ class R2EnhancedCLI {
             source: { bucket: options.source },
             targets: [{ bucket: options.target }],
             config: {
-              conflictStrategy: (options.strategy || 'source-wins') as ConflictStrategy
-            }
+              conflictStrategy: (options.strategy || 'source-wins') as ConflictStrategy,
+            },
           });
           console.log(styled(`\n✅ Created sync job: ${job.id}`, 'success'));
         } else {
-          console.log(styled('\n❌ Usage: sync create --name <name> --source <bucket> --target <bucket>', 'error'));
+          console.log(
+            styled(
+              '\n❌ Usage: sync create --name <name> --source <bucket> --target <bucket>',
+              'error'
+            )
+          );
         }
         break;
 
@@ -319,7 +361,12 @@ class R2EnhancedCLI {
         if (options.jobId) {
           console.log(styled(`\n🚀 Running sync: ${options.jobId}`, 'info'));
           const result = await r2SyncService.executeJob(options.jobId);
-          console.log(styled(`  Status: ${result.status}`, result.status === 'success' ? 'success' : 'warning'));
+          console.log(
+            styled(
+              `  Status: ${result.status}`,
+              result.status === 'success' ? 'success' : 'warning'
+            )
+          );
           console.log(styled(`  Objects: ${result.objects.length}`, 'muted'));
           console.log(styled(`  Conflicts: ${result.conflicts.length}`, 'muted'));
         } else {
@@ -347,7 +394,12 @@ class R2EnhancedCLI {
         const snapshots = r2BackupManager.listSnapshots(options.jobId);
         console.log(styled('\n💾 Snapshots:', 'accent'));
         for (const snap of snapshots.slice(0, 10)) {
-          console.log(styled(`  📸 ${snap.id} (${snap.type}) - ${new Date(snap.timestamp).toLocaleString()}`, 'muted'));
+          console.log(
+            styled(
+              `  📸 ${snap.id} (${snap.type}) - ${new Date(snap.timestamp).toLocaleString()}`,
+              'muted'
+            )
+          );
         }
         break;
 
@@ -359,23 +411,31 @@ class R2EnhancedCLI {
             source: { bucket: options.source },
             destination: { bucket: options.dest, prefix: options.prefix || 'backups/' },
             retention: {
-              keepLastN: parseInt(options.keep) || 10
+              keepLastN: parseInt(options.keep) || 10,
             },
             options: {
               compression: options.compression !== 'false',
-              verifyAfterBackup: options.verify === 'true'
-            }
+              verifyAfterBackup: options.verify === 'true',
+            },
           });
           console.log(styled(`\n✅ Created backup job: ${job.id}`, 'success'));
         } else {
-          console.log(styled('\n❌ Usage: backup create --name <n> --source <bucket> --dest <bucket>', 'error'));
+          console.log(
+            styled(
+              '\n❌ Usage: backup create --name <n> --source <bucket> --dest <bucket>',
+              'error'
+            )
+          );
         }
         break;
 
       case 'run':
         if (options.jobId) {
           console.log(styled(`\n🚀 Running backup: ${options.jobId}`, 'info'));
-          const snapshot = await r2BackupManager.executeBackup(options.jobId, options.full === 'true');
+          const snapshot = await r2BackupManager.executeBackup(
+            options.jobId,
+            options.full === 'true'
+          );
           console.log(styled(`  Snapshot: ${snapshot.id}`, 'success'));
           console.log(styled(`  Objects: ${snapshot.manifest.objects.length}`, 'muted'));
           console.log(styled(`  Size: ${(snapshot.size / 1024 / 1024).toFixed(2)} MB`, 'muted'));
@@ -387,14 +447,15 @@ class R2EnhancedCLI {
       case 'restore':
         if (options.snapshotId && options.target) {
           console.log(styled(`\n🔄 Restoring: ${options.snapshotId} → ${options.target}`, 'info'));
-          const job = await r2BackupManager.restoreBackup(
-            options.snapshotId,
-            { bucket: options.target }
-          );
+          const job = await r2BackupManager.restoreBackup(options.snapshotId, {
+            bucket: options.target,
+          });
           console.log(styled(`  Status: ${job.status}`, 'success'));
           console.log(styled(`  Restored: ${job.progress.restoredObjects} objects`, 'muted'));
         } else {
-          console.log(styled('\n❌ Usage: backup restore --snapshotId <id> --target <bucket>', 'error'));
+          console.log(
+            styled('\n❌ Usage: backup restore --snapshotId <id> --target <bucket>', 'error')
+          );
         }
         break;
 
@@ -414,11 +475,28 @@ class R2EnhancedCLI {
       case 'metrics':
         const metrics = r2Analytics.getMetrics();
         console.log(styled('\n📊 R2 Metrics (24h)', 'accent'));
-        console.log(styled(`  Storage: ${(metrics.storage.totalSize / 1024 / 1024 / 1024).toFixed(2)} GB`, 'muted'));
+        console.log(
+          styled(
+            `  Storage: ${(metrics.storage.totalSize / 1024 / 1024 / 1024).toFixed(2)} GB`,
+            'muted'
+          )
+        );
         console.log(styled(`  Objects: ${metrics.storage.objectCount.toLocaleString()}`, 'muted'));
-        console.log(styled(`  Operations - Reads: ${metrics.operations.reads}, Writes: ${metrics.operations.writes}`, 'muted'));
-        console.log(styled(`  Latency - P50: ${metrics.operations.latency.p50}ms, P95: ${metrics.operations.latency.p95}ms`, 'muted'));
-        console.log(styled(`  Estimated Cost: $${metrics.costs.projectedMonthly.toFixed(2)}/month`, 'muted'));
+        console.log(
+          styled(
+            `  Operations - Reads: ${metrics.operations.reads}, Writes: ${metrics.operations.writes}`,
+            'muted'
+          )
+        );
+        console.log(
+          styled(
+            `  Latency - P50: ${metrics.operations.latency.p50}ms, P95: ${metrics.operations.latency.p95}ms`,
+            'muted'
+          )
+        );
+        console.log(
+          styled(`  Estimated Cost: $${metrics.costs.projectedMonthly.toFixed(2)}/month`, 'muted')
+        );
         break;
 
       case 'patterns':
@@ -436,10 +514,17 @@ class R2EnhancedCLI {
         const recommendations = r2Analytics.getRecommendations();
         console.log(styled('\n💡 Optimization Recommendations', 'accent'));
         for (const rec of recommendations) {
-          console.log(styled(`  [${rec.priority.toUpperCase()}] ${rec.title}`, rec.priority === 'high' ? 'error' : 'warning'));
+          console.log(
+            styled(
+              `  [${rec.priority.toUpperCase()}] ${rec.title}`,
+              rec.priority === 'high' ? 'error' : 'warning'
+            )
+          );
           console.log(styled(`    ${rec.description}`, 'muted'));
           if (rec.potentialSavings) {
-            console.log(styled(`    Potential Savings: $${rec.potentialSavings.toFixed(2)}/month`, 'success'));
+            console.log(
+              styled(`    Potential Savings: $${rec.potentialSavings.toFixed(2)}/month`, 'success')
+            );
           }
         }
         break;
@@ -471,13 +556,22 @@ class R2EnhancedCLI {
         console.log(styled('\n🔐 Security Report', 'accent'));
         console.log(styled(`  Policies: ${report.summary.totalPolicies}`, 'muted'));
         console.log(styled(`  Roles: ${report.summary.totalRoles}`, 'muted'));
-        console.log(styled(`  Active Keys: ${report.summary.activeKeys}/${report.summary.totalKeys}`, 'muted'));
-        console.log(styled(`  Violations: ${report.summary.violations}`, report.summary.violations > 0 ? 'error' : 'success'));
-        
+        console.log(
+          styled(`  Active Keys: ${report.summary.activeKeys}/${report.summary.totalKeys}`, 'muted')
+        );
+        console.log(
+          styled(
+            `  Violations: ${report.summary.violations}`,
+            report.summary.violations > 0 ? 'error' : 'success'
+          )
+        );
+
         if (report.findings.length > 0) {
           console.log(styled('\n  Findings:', 'warning'));
           for (const finding of report.findings.slice(0, 5)) {
-            console.log(styled(`    [${finding.severity.toUpperCase()}] ${finding.title}`, 'error'));
+            console.log(
+              styled(`    [${finding.severity.toUpperCase()}] ${finding.title}`, 'error')
+            );
           }
         }
         break;
@@ -488,7 +582,9 @@ class R2EnhancedCLI {
         for (const entry of entries) {
           const icon = entry.result === 'success' ? '✅' : entry.result === 'denied' ? '❌' : '⚠️';
           console.log(styled(`  ${icon} ${entry.action} by ${entry.principal}`, 'muted'));
-          console.log(styled(`     Resource: ${entry.resource} | Risk: ${entry.riskScore}`, 'muted'));
+          console.log(
+            styled(`     Resource: ${entry.resource} | Risk: ${entry.riskScore}`, 'muted')
+          );
         }
         break;
 
@@ -496,19 +592,26 @@ class R2EnhancedCLI {
         if (options.name) {
           const perms = (options.permissions || 'r2:Read').split(',');
           const { key } = r2SecurityManager.createAccessKey(options.name, perms, {
-            expiresInDays: parseInt(options.expires) || undefined
+            expiresInDays: parseInt(options.expires) || undefined,
           });
           console.log(styled(`\n✅ Created access key: ${key.accessKeyId}`, 'success'));
           console.log(styled('⚠️  Save the secret key - it will not be shown again!', 'warning'));
         } else {
-          console.log(styled('\n❌ Usage: security create-key --name <name> [--permissions <perms>] [--expires <days>]', 'error'));
+          console.log(
+            styled(
+              '\n❌ Usage: security create-key --name <name> [--permissions <perms>] [--expires <days>]',
+              'error'
+            )
+          );
         }
         break;
 
       default:
         console.log(styled('\n🔐 Security Commands:', 'accent'));
         console.log(styled('  status                          - Show security status', 'muted'));
-        console.log(styled('  report                          - Generate security report', 'muted'));
+        console.log(
+          styled('  report                          - Generate security report', 'muted')
+        );
         console.log(styled('  audit [--limit <n>]             - View audit log', 'muted'));
         console.log(styled('  create-key --name <n> [...]     - Create access key', 'muted'));
     }
@@ -526,7 +629,9 @@ class R2EnhancedCLI {
         console.log(styled('\n📋 Pipelines:', 'accent'));
         for (const pipeline of pipelines) {
           const statusIcon = pipeline.status === 'active' ? '✅' : '⏸️';
-          console.log(styled(`  ${statusIcon} ${pipeline.name}: ${pipeline.steps.length} steps`, 'muted'));
+          console.log(
+            styled(`  ${statusIcon} ${pipeline.name}: ${pipeline.steps.length} steps`, 'muted')
+          );
         }
         break;
 
@@ -534,7 +639,9 @@ class R2EnhancedCLI {
         if (options.id) {
           console.log(styled(`\n🚀 Running pipeline: ${options.id}`, 'info'));
           const run = await r2TransformPipeline.executePipeline(options.id);
-          console.log(styled(`  Status: ${run.status}`, run.status === 'completed' ? 'success' : 'error'));
+          console.log(
+            styled(`  Status: ${run.status}`, run.status === 'completed' ? 'success' : 'error')
+          );
           console.log(styled(`  Processed: ${run.outputObjects}/${run.inputObjects}`, 'muted'));
           console.log(styled(`  Time: ${run.metrics.processingTime}ms`, 'muted'));
         } else {
@@ -562,7 +669,12 @@ class R2EnhancedCLI {
         console.log(styled('\n🔗 Webhooks:', 'accent'));
         for (const wh of webhooks) {
           const status = wh.status === 'active' ? '✅' : '⏸️';
-          console.log(styled(`  ${status} ${wh.name}: ${wh.stats.successfulDeliveries}/${wh.stats.totalDeliveries} deliveries`, 'muted'));
+          console.log(
+            styled(
+              `  ${status} ${wh.name}: ${wh.stats.successfulDeliveries}/${wh.stats.totalDeliveries} deliveries`,
+              'muted'
+            )
+          );
         }
         break;
 
@@ -577,12 +689,14 @@ class R2EnhancedCLI {
             retryConfig: {
               maxRetries: 3,
               backoffMultiplier: 2,
-              initialDelay: 1000
-            }
+              initialDelay: 1000,
+            },
           });
           console.log(styled(`\n✅ Created webhook: ${wh.id}`, 'success'));
         } else {
-          console.log(styled('\n❌ Usage: webhook create --name <n> --url <url> --events <e1,e2>', 'error'));
+          console.log(
+            styled('\n❌ Usage: webhook create --name <n> --url <url> --events <e1,e2>', 'error')
+          );
         }
         break;
 
@@ -613,7 +727,9 @@ class R2EnhancedCLI {
         console.log(styled('  list                              - List webhooks', 'muted'));
         console.log(styled('  create --name <n> --url <u> --events <e>', 'muted'));
         console.log(styled('  test --id <id>                    - Test webhook', 'muted'));
-        console.log(styled('  templates                         - List integration templates', 'muted'));
+        console.log(
+          styled('  templates                         - List integration templates', 'muted')
+        );
     }
   }
 
@@ -625,7 +741,12 @@ class R2EnhancedCLI {
     // Event System
     const eventStats = r2EventSystem.getStats();
     console.log(styled('📢 Event System:', 'info'));
-    console.log(styled(`  Events: ${eventStats.totalEvents} | Connections: ${eventStats.activeConnections}`, 'muted'));
+    console.log(
+      styled(
+        `  Events: ${eventStats.totalEvents} | Connections: ${eventStats.activeConnections}`,
+        'muted'
+      )
+    );
 
     // Batch Operations
     const activeBatches = r2BatchOperations.getActiveJobs().length;
@@ -635,23 +756,45 @@ class R2EnhancedCLI {
     // Lifecycle
     const lifecycleMetrics = r2LifecycleManager.getMetrics();
     console.log(styled('\n⏰ Lifecycle Manager:', 'info'));
-    console.log(styled(`  Objects: ${lifecycleMetrics.totalObjects} | Expired: ${lifecycleMetrics.expiredObjects}`, 'muted'));
+    console.log(
+      styled(
+        `  Objects: ${lifecycleMetrics.totalObjects} | Expired: ${lifecycleMetrics.expiredObjects}`,
+        'muted'
+      )
+    );
 
     // Search
     const searchStats = r2SearchEngine.getStats();
     console.log(styled('\n🔍 Search Engine:', 'info'));
-    console.log(styled(`  Documents: ${searchStats.totalDocuments} | Terms: ${searchStats.totalTerms}`, 'muted'));
+    console.log(
+      styled(
+        `  Documents: ${searchStats.totalDocuments} | Terms: ${searchStats.totalTerms}`,
+        'muted'
+      )
+    );
 
     // Sync
     const syncStats = r2SyncService.getStats();
     console.log(styled('\n🔄 Sync Service:', 'info'));
-    console.log(styled(`  Jobs: ${syncStats.totalJobs} | Objects Synced: ${syncStats.totalObjectsSynced}`, 'muted'));
+    console.log(
+      styled(
+        `  Jobs: ${syncStats.totalJobs} | Objects Synced: ${syncStats.totalObjectsSynced}`,
+        'muted'
+      )
+    );
 
     // Backup
     const backupStats = r2BackupManager.getStats();
     console.log(styled('\n💾 Backup Manager:', 'info'));
-    console.log(styled(`  Jobs: ${backupStats.totalJobs} | Snapshots: ${backupStats.totalSnapshots}`, 'muted'));
-    console.log(styled(`  Data Protected: ${(backupStats.totalDataProtected / 1024 / 1024 / 1024).toFixed(2)} GB`, 'muted'));
+    console.log(
+      styled(`  Jobs: ${backupStats.totalJobs} | Snapshots: ${backupStats.totalSnapshots}`, 'muted')
+    );
+    console.log(
+      styled(
+        `  Data Protected: ${(backupStats.totalDataProtected / 1024 / 1024 / 1024).toFixed(2)} GB`,
+        'muted'
+      )
+    );
 
     // Analytics
     const analyticsStats = r2Analytics.getStats();
@@ -687,10 +830,16 @@ class R2EnhancedCLI {
     }
 
     console.log(styled('\nExamples:', 'info'));
-    console.log(styled('  r2-cli status                              # Show system status', 'muted'));
-    console.log(styled('  r2-cli events watch                        # Watch events in real-time', 'muted'));
+    console.log(
+      styled('  r2-cli status                              # Show system status', 'muted')
+    );
+    console.log(
+      styled('  r2-cli events watch                        # Watch events in real-time', 'muted')
+    );
     console.log(styled('  r2-cli search query "error handling"        # Search R2 data', 'muted'));
-    console.log(styled('  r2-cli lifecycle scan                      # Run lifecycle scan', 'muted'));
+    console.log(
+      styled('  r2-cli lifecycle scan                      # Run lifecycle scan', 'muted')
+    );
     console.log(styled('  r2-cli backup list                         # List backups', 'muted'));
     console.log(styled('  r2-cli analytics metrics                   # View metrics', 'muted'));
     console.log(styled('  r2-cli security report                     # Security audit', 'muted'));
@@ -701,7 +850,7 @@ class R2EnhancedCLI {
   // Parse command line options
   private parseOptions(args: string[]): any {
     const options: any = { _: [] };
-    
+
     for (let i = 0; i < args.length; i++) {
       const arg = args[i];
       if (arg.startsWith('--')) {
@@ -716,7 +865,7 @@ class R2EnhancedCLI {
         options._.push(arg);
       }
     }
-    
+
     return options;
   }
 }

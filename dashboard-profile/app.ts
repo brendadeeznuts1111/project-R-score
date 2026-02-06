@@ -38,6 +38,30 @@ const html = `<!doctype html>
       overflow-x: hidden;
     }
 
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(81, 246, 214, 0.18), transparent 60%);
+      filter: blur(10px);
+      opacity: 0.6;
+      z-index: 0;
+    }
+
+    body::before {
+      top: -120px;
+      right: -80px;
+    }
+
+    body::after {
+      bottom: -140px;
+      left: -60px;
+      background: radial-gradient(circle, rgba(140, 123, 255, 0.2), transparent 60%);
+    }
+
     .noise {
       pointer-events: none;
       position: fixed;
@@ -50,7 +74,7 @@ const html = `<!doctype html>
     header {
       position: relative;
       z-index: 2;
-      padding: 32px clamp(20px, 4vw, 52px) 12px;
+      padding: 36px clamp(20px, 4vw, 52px) 16px;
     }
 
     .title {
@@ -60,6 +84,7 @@ const html = `<!doctype html>
       display: flex;
       gap: 12px;
       align-items: center;
+      text-transform: uppercase;
     }
 
     .pulse {
@@ -94,6 +119,9 @@ const html = `<!doctype html>
       padding: 18px 18px 16px;
       box-shadow: 0 20px 40px var(--shadow);
       backdrop-filter: blur(16px);
+      position: relative;
+      overflow: hidden;
+      animation: panelIn 0.7s ease both;
     }
 
     .panel h2 {
@@ -102,6 +130,18 @@ const html = `<!doctype html>
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--accent);
+    }
+
+    .panel::after {
+      content: "";
+      position: absolute;
+      inset: auto 16px 16px auto;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 184, 107, 0.18), transparent 60%);
+      opacity: 0.35;
+      pointer-events: none;
     }
 
     .stat-grid {
@@ -170,6 +210,13 @@ const html = `<!doctype html>
       border-radius: 10px;
       cursor: pointer;
       font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 0 0 rgba(81, 246, 214, 0.0);
+    }
+
+    .controls button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px rgba(81, 246, 214, 0.2);
     }
 
     .controls label {
@@ -233,6 +280,8 @@ const html = `<!doctype html>
       border-radius: 12px;
       overflow: hidden;
       border: 1px solid rgba(148, 176, 220, 0.2);
+      display: block;
+      overflow-x: auto;
     }
 
     .fusion-table th,
@@ -257,6 +306,55 @@ const html = `<!doctype html>
       color: var(--accent);
       font-weight: 600;
       white-space: nowrap;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      padding: 8px clamp(20px, 4vw, 52px) 0;
+      position: relative;
+      z-index: 2;
+    }
+
+    .tab-btn {
+      background: rgba(12, 22, 38, 0.7);
+      border: 1px solid rgba(148, 176, 220, 0.25);
+      color: var(--muted);
+      padding: 8px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active {
+      color: var(--ink);
+      border-color: rgba(81, 246, 214, 0.45);
+      box-shadow: 0 10px 24px rgba(81, 246, 214, 0.2);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .profile-json {
+      margin-top: 10px;
+      padding: 12px;
+      background: rgba(6, 9, 18, 0.6);
+      border: 1px solid rgba(148, 176, 220, 0.2);
+      border-radius: 12px;
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 12px;
+      color: var(--ink);
+      max-height: 320px;
+      overflow: auto;
+      white-space: pre-wrap;
     }
 
     .safety-table {
@@ -320,6 +418,11 @@ const html = `<!doctype html>
       pointer-events: none;
     }
 
+    @keyframes panelIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .viz-fallback {
       position: absolute;
       inset: 0;
@@ -371,8 +474,16 @@ const html = `<!doctype html>
     <p class="subtitle">Real-time profile fusion stream with 3D preference topology</p>
   </header>
 
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="overview" type="button">Overview</button>
+    <button class="tab-btn" data-tab="profile" type="button">Profile</button>
+    <button class="tab-btn" data-tab="fusion" type="button">Fusion Map</button>
+    <button class="tab-btn" data-tab="payments" type="button">Payments</button>
+  </div>
+
   <main>
-    <section class="panel">
+    <section class="tab-panel active" data-tab="overview">
+      <section class="panel">
       <h2>Profile Signal</h2>
       <div class="stat-grid">
         <div class="stat">
@@ -411,9 +522,32 @@ const html = `<!doctype html>
     </div>
     <div class="badge-row" id="badgeRow"></div>
   </div>
+      </section>
+
+      <section class="panel viz">
+      <canvas id="viz"></canvas>
+      <div class="viz-overlay">
+        <div class="viz-chip">3D Profile Topology</div>
+        <div>Latency <span id="latency">0.6ms</span></div>
+      </div>
+      </section>
     </section>
 
-    <section class="panel">
+    <section class="tab-panel" data-tab="profile">
+      <section class="panel">
+        <h2>Profile Details</h2>
+        <div class="controls">
+          <label>User
+            <input id="profileInput" type="text" value="@ashschaeffer1" />
+          </label>
+          <button id="profileFetchBtn" type="button">Fetch Profile</button>
+        </div>
+        <pre id="profileJson" class="profile-json">{}</pre>
+      </section>
+    </section>
+
+    <section class="tab-panel" data-tab="fusion">
+      <section class="panel">
       <h2>Fusion Data Map</h2>
       <div class="fusion-table">
         <h3>Fusion Data Map (Venmo/PayPal)</h3>
@@ -515,9 +649,12 @@ const html = `<!doctype html>
           </tbody>
         </table>
       </div>
+      </div>
+      </section>
     </section>
 
-    <section class="panel">
+    <section class="tab-panel" data-tab="payments">
+      <section class="panel">
       <h2>Payments Impact (Read-Only)</h2>
       <p class="subtitle" style="margin-top: 4px;">
         Short answer: Super-profile fusion is read-only and should not affect receiving payments when using approved, read-only scopes.
@@ -565,14 +702,7 @@ const html = `<!doctype html>
           <span>SAFE FLOW</span>
         </div>
       </div>
-    </section>
-
-    <section class="panel viz">
-      <canvas id="viz"></canvas>
-      <div class="viz-overlay">
-        <div class="viz-chip">3D Profile Topology</div>
-        <div>Latency <span id="latency">0.6ms</span></div>
-      </div>
+      </section>
     </section>
   </main>
 
@@ -591,6 +721,11 @@ const html = `<!doctype html>
     let paused = false;
     let ws = null;
     const latencyEl = document.getElementById('latency');
+    const tabButtons = Array.from(document.querySelectorAll('.tab-btn'));
+    const tabPanels = Array.from(document.querySelectorAll('.tab-panel'));
+    const profileInput = document.getElementById('profileInput');
+    const profileFetchBtn = document.getElementById('profileFetchBtn');
+    const profileJson = document.getElementById('profileJson');
 
     function pushStream(event) {
       const item = document.createElement('div');
@@ -677,6 +812,24 @@ const html = `<!doctype html>
     });
 
     connect();
+
+    tabButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-tab');
+        tabButtons.forEach((b) => b.classList.toggle('active', b === btn));
+        tabPanels.forEach((p) => p.classList.toggle('active', p.getAttribute('data-tab') === target));
+      });
+    });
+
+    async function fetchProfile() {
+      const value = profileInput.value.trim() || '@ashschaeffer1';
+      const res = await fetch('/profile/' + encodeURIComponent(value));
+      const data = await res.json();
+      profileJson.textContent = JSON.stringify(data, null, 2);
+    }
+
+    profileFetchBtn.addEventListener('click', fetchProfile);
+    fetchProfile().catch(() => {});
 
     // Minimal WebGL2 profile topology
     const canvas = document.getElementById('viz');
@@ -1006,13 +1159,44 @@ const server = Bun.serve({
     }
 
     if (url.pathname.startsWith('/profile/')) {
-      const userId = url.pathname.split('/').pop() ?? 'unknown';
+      const raw = url.pathname.split('/').pop() ?? 'unknown';
+      const userId = decodeURIComponent(raw);
+      const now = Date.now();
       const payload = {
         userId,
         score: 0.9991,
         drift: 0.0021,
         gateway: 'venmo',
-        updatedAt: BigInt(Date.now())
+        updatedAtMs: now,
+        updatedAt: new Date(now).toISOString(),
+        risk: 'low',
+        status: 'active',
+        version: 'v10.1.1',
+        source: 'dashboard-profile',
+        customer: {
+          type: 'new',
+          payments: 12,
+          netIn: 4820.55,
+          netOut: 2310.12
+        },
+        contact: {
+          phoneNumber: '+1******1234',
+          cashtag: '$ashschaeffer',
+          venmotag: '@ashschaeffer1'
+        },
+        rating: 0.987,
+        safeToSendTo: true,
+        routingInformation: {
+          bankName: 'unknown',
+          routingNumberMasked: '*****6789',
+          accountMasked: '****4321',
+          source: 'not_looked_up'
+        },
+        lookup: {
+          performed: false,
+          sources: [],
+          missing: ['routingInformation']
+        }
       };
       return new Response(safeStringify(payload), {
         headers: { 'Content-Type': 'application/json' }

@@ -39,21 +39,21 @@ export class ErrorHandler {
     const {
       logLevel = 'error',
       rethrow = false,
-      fallbackMessage = 'An unexpected error occurred'
+      fallbackMessage = 'An unexpected error occurred',
     } = options;
 
     const errorMessage = error instanceof Error ? error.message : String(error);
     const errorName = error instanceof Error ? error.name : 'UnknownError';
-    
+
     const standardizedError: StandardizedError = {
       message: errorMessage || fallbackMessage,
       code: errorName,
       context: {
         module: this.DEFAULT_MODULE,
-        ...context
+        ...context,
       },
       timestamp: new Date().toISOString(),
-      originalError: error
+      originalError: error,
     };
 
     // Log the error with consistent format
@@ -64,7 +64,7 @@ export class ErrorHandler {
       operation: standardizedError.context?.operation,
       requestId: standardizedError.context?.requestId,
       userId: standardizedError.context?.userId,
-      error
+      error,
     };
 
     switch (logLevel) {
@@ -107,9 +107,9 @@ export class ErrorHandler {
         message: error.message,
         code: error.code,
         timestamp: error.timestamp,
-        requestId: error.context?.requestId
+        requestId: error.context?.requestId,
       },
-      status: statusCode
+      status: statusCode,
     };
   }
 
@@ -130,7 +130,7 @@ export class ErrorHandler {
     } catch (error) {
       const standardizedError = this.handle(error, context, {
         logLevel: options.logLevel || 'error',
-        rethrow: false
+        rethrow: false,
       });
       return { success: false, error: standardizedError };
     }

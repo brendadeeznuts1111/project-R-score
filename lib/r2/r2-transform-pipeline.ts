@@ -2,7 +2,7 @@
 
 /**
  * 🔄 R2 Data Transformation Pipeline
- * 
+ *
  * ETL-style data processing for R2:
  * - Streaming data transformation
  * - Format conversion (JSON, CSV, Parquet, etc.)
@@ -14,10 +14,10 @@
 import { styled, FW_COLORS } from '../theme/colors';
 import { r2EventSystem } from './r2-event-system';
 
-export type TransformOperation = 
-  | 'compress' 
-  | 'decompress' 
-  | 'encrypt' 
+export type TransformOperation =
+  | 'compress'
+  | 'decompress'
+  | 'encrypt'
   | 'decrypt'
   | 'convert-format'
   | 'validate'
@@ -115,37 +115,38 @@ export class R2TransformPipeline {
   private loadDefaultValidators(): void {
     this.validators.set('json-schema', {
       name: 'JSON Schema Validator',
-      validate: (data) => {
+      validate: data => {
         try {
           JSON.stringify(data);
           return { valid: true, errors: [] };
         } catch (e) {
           return { valid: false, errors: [e.message] };
         }
-      }
+      },
     });
 
     this.validators.set('required-fields', {
       name: 'Required Fields Validator',
-      validate: (data) => {
+      validate: data => {
         const errors: string[] = [];
         if (typeof data !== 'object' || data === null) {
           errors.push('Data must be an object');
           return { valid: false, errors };
         }
         return { valid: true, errors };
-      }
+      },
     });
 
     this.validators.set('size-limit', {
       name: 'Size Limit Validator',
-      validate: (data) => {
+      validate: data => {
         const size = JSON.stringify(data).length;
-        if (size > 10 * 1024 * 1024) { // 10MB limit
+        if (size > 10 * 1024 * 1024) {
+          // 10MB limit
           return { valid: false, errors: [`Size ${size} exceeds 10MB limit`] };
         }
         return { valid: true, errors: [] };
-      }
+      },
     });
   }
 
@@ -162,14 +163,14 @@ export class R2TransformPipeline {
       steps: [
         { id: '1', operation: 'validate', config: { validator: 'json-schema' } },
         { id: '2', operation: 'convert-format', config: { from: 'json', to: 'parquet' } },
-        { id: '3', operation: 'compress', config: { algorithm: 'zstd' } }
+        { id: '3', operation: 'compress', config: { algorithm: 'zstd' } },
       ],
       options: {
         preserveOriginal: true,
         onError: 'quarantine',
         parallelProcessing: true,
-        maxConcurrency: 5
-      }
+        maxConcurrency: 5,
+      },
     });
 
     // Data sanitization pipeline
@@ -181,14 +182,14 @@ export class R2TransformPipeline {
       steps: [
         { id: '1', operation: 'sanitize', config: { removeFields: ['email', 'phone', 'ssn'] } },
         { id: '2', operation: 'validate', config: { validator: 'required-fields' } },
-        { id: '3', operation: 'encrypt', config: { keyId: 'default' } }
+        { id: '3', operation: 'encrypt', config: { keyId: 'default' } },
       ],
       options: {
         preserveOriginal: false,
         onError: 'abort',
         parallelProcessing: false,
-        maxConcurrency: 1
-      }
+        maxConcurrency: 1,
+      },
     });
 
     // Log aggregation pipeline
@@ -199,15 +200,15 @@ export class R2TransformPipeline {
       destination: { bucket: 'logs', prefix: 'aggregated/', namingPattern: 'logs-{date}.gz' },
       steps: [
         { id: '1', operation: 'aggregate', config: { window: '1h', groupBy: 'service' } },
-        { id: '2', operation: 'compress', config: { algorithm: 'gzip' } }
+        { id: '2', operation: 'compress', config: { algorithm: 'gzip' } },
       ],
       schedule: { type: 'cron', value: '0 * * * *' }, // Hourly
       options: {
         preserveOriginal: true,
         onError: 'skip',
         parallelProcessing: true,
-        maxConcurrency: 10
-      }
+        maxConcurrency: 10,
+      },
     });
   }
 
@@ -219,7 +220,7 @@ export class R2TransformPipeline {
       ...config,
       id: `pipeline-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
       status: 'active',
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
 
     this.pipelines.set(pipeline.id, pipeline);
@@ -230,7 +231,10 @@ export class R2TransformPipeline {
   /**
    * Execute a pipeline
    */
-  async executePipeline(pipelineId: string, options?: { objects?: string[] }): Promise<PipelineRun> {
+  async executePipeline(
+    pipelineId: string,
+    options?: { objects?: string[] }
+  ): Promise<PipelineRun> {
     const pipeline = this.pipelines.get(pipelineId);
     if (!pipeline) throw new Error(`Pipeline not found: ${pipelineId}`);
     if (pipeline.status === 'paused') throw new Error(`Pipeline is paused: ${pipelineId}`);
@@ -247,8 +251,8 @@ export class R2TransformPipeline {
       metrics: {
         bytesIn: 0,
         bytesOut: 0,
-        processingTime: 0
-      }
+        processingTime: 0,
+      },
     };
 
     this.runs.set(runId, run);
@@ -260,7 +264,7 @@ export class R2TransformPipeline {
 
     try {
       // Get input objects
-      const inputObjects = options?.objects || await this.listInputObjects(pipeline.source);
+      const inputObjects = options?.objects || (await this.listInputObjects(pipeline.source));
       run.inputObjects = inputObjects.length;
 
       // Process each object
@@ -275,7 +279,7 @@ export class R2TransformPipeline {
           run.errors.push({
             object: objectKey,
             step: 'unknown',
-            error: error.message
+            error: error.message,
           });
 
           if (pipeline.options.onError === 'abort') {
@@ -297,12 +301,13 @@ export class R2TransformPipeline {
           pipelineId,
           runId,
           inputObjects: run.inputObjects,
-          outputObjects: run.outputObjects
-        }
+          outputObjects: run.outputObjects,
+        },
       });
 
-      console.log(styled(`✅ Pipeline completed: ${run.outputObjects}/${run.inputObjects} objects`, 'success'));
-
+      console.log(
+        styled(`✅ Pipeline completed: ${run.outputObjects}/${run.inputObjects} objects`, 'success')
+      );
     } catch (error) {
       run.status = 'failed';
       run.completedAt = new Date().toISOString();
@@ -334,7 +339,7 @@ export class R2TransformPipeline {
         run.errors.push({
           object: objectKey,
           step: step.id,
-          error: error.message
+          error: error.message,
         });
 
         if (pipeline.options.onError === 'quarantine') {
@@ -479,11 +484,14 @@ export class R2TransformPipeline {
   /**
    * Aggregate data
    */
-  private async aggregateData(data: any[], config: { window: string; groupBy: string }): Promise<any> {
+  private async aggregateData(
+    data: any[],
+    config: { window: string; groupBy: string }
+  ): Promise<any> {
     if (!Array.isArray(data)) return data;
 
     const groups = new Map<string, any[]>();
-    
+
     for (const item of data) {
       const key = item[config.groupBy] || 'unknown';
       if (!groups.has(key)) groups.set(key, []);
@@ -494,7 +502,7 @@ export class R2TransformPipeline {
     for (const [key, items] of groups) {
       result[key] = {
         count: items.length,
-        items: items
+        items: items,
       };
     }
 
@@ -523,7 +531,7 @@ export class R2TransformPipeline {
     return {
       ...data,
       _enriched: true,
-      _enrichedAt: new Date().toISOString()
+      _enrichedAt: new Date().toISOString(),
     };
   }
 
@@ -535,7 +543,7 @@ export class R2TransformPipeline {
     return [
       `${source.prefix || ''}test1.json`,
       `${source.prefix || ''}test2.json`,
-      `${source.prefix || ''}test3.json`
+      `${source.prefix || ''}test3.json`,
     ];
   }
 
@@ -569,7 +577,7 @@ export class R2TransformPipeline {
   private generateOutputKey(pipeline: Pipeline, inputKey: string): string {
     const filename = inputKey.split('/').pop() || 'output';
     const baseName = filename.replace(/\.[^/.]+$/, '');
-    
+
     if (pipeline.destination.namingPattern) {
       return pipeline.destination.namingPattern
         .replace('{date}', new Date().toISOString().split('T')[0])
@@ -602,9 +610,7 @@ export class R2TransformPipeline {
     if (pipelineId) {
       runs = runs.filter(r => r.pipelineId === pipelineId);
     }
-    return runs.sort((a, b) => 
-      new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime()
-    );
+    return runs.sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
   }
 
   /**
@@ -636,9 +642,15 @@ export class R2TransformPipeline {
 
     console.log(styled('\n📋 Pipelines:', 'info'));
     for (const pipeline of this.pipelines.values()) {
-      const statusIcon = pipeline.status === 'active' ? '✅' : pipeline.status === 'paused' ? '⏸️' : '❌';
+      const statusIcon =
+        pipeline.status === 'active' ? '✅' : pipeline.status === 'paused' ? '⏸️' : '❌';
       console.log(styled(`  ${statusIcon} ${pipeline.name} (${pipeline.id})`, 'muted'));
-      console.log(styled(`     Steps: ${pipeline.steps.length} | Last Run: ${pipeline.lastRun || 'Never'}`, 'muted'));
+      console.log(
+        styled(
+          `     Steps: ${pipeline.steps.length} | Last Run: ${pipeline.lastRun || 'Never'}`,
+          'muted'
+        )
+      );
     }
 
     console.log(styled('\n▶️ Active Runs:', 'info'));
@@ -654,11 +666,18 @@ export class R2TransformPipeline {
     }
 
     console.log(styled('\n✅ Recent Completed Runs:', 'info'));
-    const recent = this.getRuns().filter(r => r.status !== 'running').slice(0, 5);
+    const recent = this.getRuns()
+      .filter(r => r.status !== 'running')
+      .slice(0, 5);
     for (const run of recent) {
       const pipeline = this.pipelines.get(run.pipelineId);
       const icon = run.status === 'completed' ? '✅' : '❌';
-      console.log(styled(`  ${icon} ${pipeline?.name || run.pipelineId}: ${run.outputObjects} objects (${run.metrics.processingTime}ms)`, 'muted'));
+      console.log(
+        styled(
+          `  ${icon} ${pipeline?.name || run.pipelineId}: ${run.outputObjects} objects (${run.metrics.processingTime}ms)`,
+          'muted'
+        )
+      );
     }
   }
 }

@@ -1,0 +1,27 @@
+# Skills Directory Configuration v1.0
+# Local skills for registry-powered-mcp project
+
+version = "1.0.0"
+enabled = true
+hot_reload = false
+integrity_check = "warn"
+feature_propagation = true
+load_timeout_ms = 5000
+
+[[skills]]
+name = "registry-helper"
+path = "registry-helper"
+enabled = true
+priority = 100
+
+[[skills]]
+name = "bench"
+path = "bench"
+enabled = true
+priority = 90
+
+[[skills]]
+name = "test"
+path = "test"
+enabled = true
+priority = 90

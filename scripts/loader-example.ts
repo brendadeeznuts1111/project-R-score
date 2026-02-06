@@ -11,8 +11,8 @@
  * - Blob-like behavior
  */
 
-import { loadJSON, saveJSON, loadJSONRequired } from '../lib/json-loader';
-import { StatusOutput, writeColored, writeLine } from '../lib/output-helpers';
+import { loadJSON, saveJSON, loadJSONRequired } from '../lib/utils/json-loader';
+import { StatusOutput, writeColored, writeLine } from '../lib/utils/output-helpers';
 
 // ============================================================================
 // Example 0: Original Pattern - Simple JSON Load with Default Creation

@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * 🔄 Documentation Sync Service
- * 
+ *
  * Syncs cached documentation, user preferences, and reading progress across devices.
  * Uses R2 as the central sync backend.
  */
@@ -95,7 +95,7 @@ export class DocumentationSync {
    */
   async syncToCloud(data: Partial<SyncData>): Promise<boolean> {
     const syncData: SyncData = {
-      preferences: data.preferences || await this.getDefaultPreferences(),
+      preferences: data.preferences || (await this.getDefaultPreferences()),
       progress: data.progress || [],
       docSets: data.docSets || [],
       cachedPackages: data.cachedPackages || [],
@@ -109,7 +109,7 @@ export class DocumentationSync {
       const response = await fetch(`${this.baseUrl}/${this.r2Bucket}/${key}`, {
         method: 'PUT',
         headers: {
-          'Authorization': this.getAuthHeader(),
+          Authorization: this.getAuthHeader(),
           'Content-Type': 'application/json',
           'x-amz-meta-device': this.deviceId,
           'x-amz-meta-synced': syncData.lastSyncedAt,
@@ -138,7 +138,7 @@ export class DocumentationSync {
     try {
       const response = await fetch(`${this.baseUrl}/${this.r2Bucket}/${key}`, {
         headers: {
-          'Authorization': this.getAuthHeader(),
+          Authorization: this.getAuthHeader(),
         },
       });
 
@@ -170,7 +170,7 @@ export class DocumentationSync {
       const response = await fetch(`${this.baseUrl}/${this.r2Bucket}/${key}`, {
         method: 'PUT',
         headers: {
-          'Authorization': this.getAuthHeader(),
+          Authorization: this.getAuthHeader(),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(progress, null, 2),
@@ -192,7 +192,7 @@ export class DocumentationSync {
     try {
       const response = await fetch(`${this.baseUrl}/${this.r2Bucket}/${key}`, {
         headers: {
-          'Authorization': this.getAuthHeader(),
+          Authorization: this.getAuthHeader(),
         },
       });
 
@@ -231,7 +231,7 @@ export class DocumentationSync {
       await fetch(`${this.baseUrl}/${this.r2Bucket}/${key}`, {
         method: 'PUT',
         headers: {
-          'Authorization': this.getAuthHeader(),
+          Authorization: this.getAuthHeader(),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(docSet, null, 2),
@@ -253,7 +253,7 @@ export class DocumentationSync {
         `${this.baseUrl}/${this.r2Bucket}?list-type=2&prefix=docsets/${this.userId}/`,
         {
           headers: {
-            'Authorization': this.getAuthHeader(),
+            Authorization: this.getAuthHeader(),
           },
         }
       );
@@ -268,7 +268,7 @@ export class DocumentationSync {
       const docSets: DocSet[] = [];
       for (const key of keys) {
         const dsResponse = await fetch(`${this.baseUrl}/${this.r2Bucket}/${key}`, {
-          headers: { 'Authorization': this.getAuthHeader() },
+          headers: { Authorization: this.getAuthHeader() },
         });
         if (dsResponse.ok) {
           docSets.push(await dsResponse.json());
@@ -289,7 +289,7 @@ export class DocumentationSync {
     try {
       const docSets = await this.getDocSets();
       const docSet = docSets.find(ds => ds.id === docSetId);
-      
+
       if (!docSet) return null;
 
       // Generate share URL
@@ -306,7 +306,7 @@ export class DocumentationSync {
       await fetch(`${this.baseUrl}/${this.r2Bucket}/${key}`, {
         method: 'PUT',
         headers: {
-          'Authorization': this.getAuthHeader(),
+          Authorization: this.getAuthHeader(),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -321,7 +321,7 @@ export class DocumentationSync {
       await fetch(`${this.baseUrl}/${this.r2Bucket}/${dsKey}`, {
         method: 'PUT',
         headers: {
-          'Authorization': this.getAuthHeader(),
+          Authorization: this.getAuthHeader(),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(docSet, null, 2),
@@ -373,7 +373,7 @@ export class DocumentationSync {
   }> {
     try {
       const data = await this.syncFromCloud();
-      
+
       if (!data) {
         return { lastSynced: null, deviceCount: 0, totalPackages: 0 };
       }
@@ -416,7 +416,12 @@ if (import.meta.main) {
       };
 
       const success = await sync.syncToCloud(data);
-      console.log(styled(`\n${success ? '✅' : '❌'} Sync ${success ? 'successful' : 'failed'}`, success ? 'success' : 'error'));
+      console.log(
+        styled(
+          `\n${success ? '✅' : '❌'} Sync ${success ? 'successful' : 'failed'}`,
+          success ? 'success' : 'error'
+        )
+      );
       break;
     }
 
@@ -432,7 +437,7 @@ if (import.meta.main) {
     case 'docset:create': {
       const name = args[1];
       const packages = args[2]?.split(',') || [];
-      
+
       if (!name) {
         console.error(styled('Usage: docs-sync docset:create <name> <pkg1,pkg2,...>', 'error'));
         process.exit(1);
@@ -448,7 +453,7 @@ if (import.meta.main) {
     case 'docset:list': {
       const docSets = await sync.getDocSets();
       console.log(styled(`\n📚 Documentation Sets (${docSets.length}):`, 'info'));
-      
+
       for (const ds of docSets) {
         const sharedBadge = ds.shared ? styled(' [shared]', 'success') : '';
         console.log(styled(`\n  📁 ${ds.name}${sharedBadge}`, 'muted'));

@@ -2,7 +2,7 @@
 
 /**
  * ⏰ R2 Data Lifecycle Manager - TTL, Archival, and Cleanup
- * 
+ *
  * Comprehensive data lifecycle management with:
  * - Automatic TTL-based expiration
  * - Tiered storage (hot/warm/cold/archive)
@@ -23,27 +23,27 @@ export interface LifecycleRule {
   enabled: boolean;
   prefix?: string;
   tags?: Record<string, string>;
-  
+
   // TTL Rules
   ttl?: {
     days?: number;
     date?: string;
     deleteAfterDays?: number;
   };
-  
+
   // Storage Class Transitions
   transitions?: Array<{
     storageClass: StorageClass;
     days: number;
   }>;
-  
+
   // Cleanup Rules
   cleanup?: {
     incompleteUploads?: number; // days
     oldVersions?: number; // days
     deleteExpired?: boolean;
   };
-  
+
   // Compliance
   compliance?: {
     retainDays: number;
@@ -108,10 +108,10 @@ export class R2LifecycleManager {
    */
   async initialize(): Promise<void> {
     console.log(styled('⏰ Initializing R2 Lifecycle Manager', 'accent'));
-    
+
     // Start background scanning
     this.startBackgroundScan();
-    
+
     console.log(styled('✅ Lifecycle manager initialized', 'success'));
   }
 
@@ -125,7 +125,7 @@ export class R2LifecycleManager {
       name: 'Default 30-Day TTL',
       enabled: true,
       prefix: 'temp/',
-      ttl: { deleteAfterDays: 30 }
+      ttl: { deleteAfterDays: 30 },
     });
 
     // Log archival rule
@@ -137,9 +137,9 @@ export class R2LifecycleManager {
       transitions: [
         { storageClass: 'warm', days: 7 },
         { storageClass: 'cold', days: 30 },
-        { storageClass: 'archive', days: 90 }
+        { storageClass: 'archive', days: 90 },
       ],
-      cleanup: { oldVersions: 365 }
+      cleanup: { oldVersions: 365 },
     });
 
     // MCP data lifecycle
@@ -150,9 +150,9 @@ export class R2LifecycleManager {
       prefix: 'mcp/',
       transitions: [
         { storageClass: 'warm', days: 30 },
-        { storageClass: 'cold', days: 90 }
+        { storageClass: 'cold', days: 90 },
       ],
-      cleanup: { incompleteUploads: 1 }
+      cleanup: { incompleteUploads: 1 },
     });
 
     // Diagnostics cleanup
@@ -161,7 +161,7 @@ export class R2LifecycleManager {
       name: 'Old Diagnostics Cleanup',
       enabled: true,
       prefix: 'mcp/diagnoses/',
-      ttl: { deleteAfterDays: 180 }
+      ttl: { deleteAfterDays: 180 },
     });
   }
 
@@ -216,7 +216,7 @@ export class R2LifecycleManager {
     tags: Record<string, string> = {}
   ): ObjectLifecycleState {
     const existing = this.objectStates.get(`${bucket}/${key}`);
-    
+
     const state: ObjectLifecycleState = {
       key,
       bucket,
@@ -226,12 +226,12 @@ export class R2LifecycleManager {
       size: parseInt(metadata['content-length'] || '0'),
       transitions: existing?.transitions || [],
       metadata,
-      tags
+      tags,
     };
 
     // Apply matching rules
     this.applyRulesToObject(state);
-    
+
     this.objectStates.set(`${bucket}/${key}`, state);
     return state;
   }
@@ -250,7 +250,7 @@ export class R2LifecycleManager {
         expiresAt.setDate(expiresAt.getDate() + rule.ttl.deleteAfterDays);
         state.ttl = {
           expiresAt: expiresAt.toISOString(),
-          ruleId: rule.id
+          ruleId: rule.id,
         };
       }
 
@@ -284,13 +284,15 @@ export class R2LifecycleManager {
    */
   private startBackgroundScan(): void {
     if (this.isRunning) return;
-    
+
     this.isRunning = true;
     this.intervalId = setInterval(() => {
       this.performLifecycleScan();
     }, this.scanInterval);
 
-    console.log(styled(`🔄 Background scan started (interval: ${this.scanInterval / 60000}min)`, 'info'));
+    console.log(
+      styled(`🔄 Background scan started (interval: ${this.scanInterval / 60000}min)`, 'info')
+    );
   }
 
   /**
@@ -310,7 +312,7 @@ export class R2LifecycleManager {
    */
   async performLifecycleScan(): Promise<CleanupReport> {
     console.log(styled('🔍 Performing lifecycle scan...', 'info'));
-    
+
     const report: CleanupReport = {
       timestamp: new Date().toISOString(),
       objectsDeleted: 0,
@@ -318,7 +320,7 @@ export class R2LifecycleManager {
       objectsTransitioned: 0,
       spaceReclaimed: 0,
       errors: [],
-      rulesApplied: []
+      rulesApplied: [],
     };
 
     const now = new Date();
@@ -334,12 +336,12 @@ export class R2LifecycleManager {
           objectsToDelete.push(state.key);
           report.objectsDeleted++;
           report.spaceReclaimed += state.size;
-          
+
           r2EventSystem.emit({
             type: 'lifecycle:expired',
             bucket: state.bucket,
             key: state.key,
-            source: 'R2LifecycleManager'
+            source: 'R2LifecycleManager',
           });
           continue;
         }
@@ -348,25 +350,32 @@ export class R2LifecycleManager {
       // Check transitions
       for (const rule of this.rules.values()) {
         if (!rule.enabled || !this.objectMatchesRule(state, rule)) continue;
-        
+
         if (rule.transitions) {
           for (const transition of rule.transitions) {
-            const daysSinceCreation = (now.getTime() - new Date(state.createdAt).getTime()) / (1000 * 60 * 60 * 24);
-            
-            if (daysSinceCreation >= transition.days && state.storageClass !== transition.storageClass) {
+            const daysSinceCreation =
+              (now.getTime() - new Date(state.createdAt).getTime()) / (1000 * 60 * 60 * 24);
+
+            if (
+              daysSinceCreation >= transition.days &&
+              state.storageClass !== transition.storageClass
+            ) {
               // Check if already transitioned to this class
-              const alreadyTransitioned = state.transitions.some(t => 
-                t.toClass === transition.storageClass
+              const alreadyTransitioned = state.transitions.some(
+                t => t.toClass === transition.storageClass
               );
-              
+
               if (!alreadyTransitioned) {
                 objectsToTransition.push({
                   key: state.key,
-                  toClass: transition.storageClass
+                  toClass: transition.storageClass,
                 });
                 report.objectsTransitioned++;
-                
-                if (transition.storageClass === 'archive' || transition.storageClass === 'deep-archive') {
+
+                if (
+                  transition.storageClass === 'archive' ||
+                  transition.storageClass === 'deep-archive'
+                ) {
                   report.objectsArchived++;
                 }
               }
@@ -411,8 +420,13 @@ export class R2LifecycleManager {
       .filter(r => r.enabled)
       .map(r => r.id);
 
-    console.log(styled(`✅ Lifecycle scan complete: ${report.objectsDeleted} deleted, ${report.objectsTransitioned} transitioned`, 'success'));
-    
+    console.log(
+      styled(
+        `✅ Lifecycle scan complete: ${report.objectsDeleted} deleted, ${report.objectsTransitioned} transitioned`,
+        'success'
+      )
+    );
+
     return report;
   }
 
@@ -424,12 +438,12 @@ export class R2LifecycleManager {
     if (!state) throw new Error(`Object not found: ${key}`);
 
     const fromClass = state.storageClass;
-    
+
     // Update state
     state.storageClass = toClass;
     state.transitions.push({
       toClass,
-      transitionedAt: new Date().toISOString()
+      transitionedAt: new Date().toISOString(),
     });
 
     // Emit event
@@ -438,7 +452,7 @@ export class R2LifecycleManager {
       bucket: state.bucket,
       key: state.key,
       source: 'R2LifecycleManager',
-      metadata: { fromClass, toClass }
+      metadata: { fromClass, toClass },
     });
 
     console.log(styled(`📦 Transitioned ${key}: ${fromClass} → ${toClass}`, 'info'));
@@ -463,7 +477,7 @@ export class R2LifecycleManager {
       pendingTransitions: 0,
       totalSize: 0,
       sizeByClass: { hot: 0, warm: 0, cold: 0, archive: 0, 'deep-archive': 0 },
-      estimatedSavings: 0
+      estimatedSavings: 0,
     };
 
     const now = new Date();
@@ -497,10 +511,10 @@ export class R2LifecycleManager {
 
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + days);
-    
+
     state.ttl = {
       expiresAt: expiresAt.toISOString(),
-      ruleId: 'manual'
+      ruleId: 'manual',
     };
 
     return true;
@@ -542,11 +556,13 @@ export class R2LifecycleManager {
   } {
     const metrics = this.getMetrics();
     const recommendations: string[] = [];
-    
+
     // Analyze storage distribution
     const hotRatio = metrics.byStorageClass.hot / metrics.totalObjects;
     if (hotRatio > 0.5) {
-      recommendations.push('Consider transitioning more objects to warm/cold storage to reduce costs');
+      recommendations.push(
+        'Consider transitioning more objects to warm/cold storage to reduce costs'
+      );
     }
 
     // Check for expired objects
@@ -565,10 +581,10 @@ export class R2LifecycleManager {
         hot: { count: metrics.byStorageClass.hot, size: metrics.sizeByClass.hot },
         warm: { count: metrics.byStorageClass.warm, size: metrics.sizeByClass.warm },
         cold: { count: metrics.byStorageClass.cold, size: metrics.sizeByClass.cold },
-        archive: { count: metrics.byStorageClass.archive, size: metrics.sizeByClass.archive }
+        archive: { count: metrics.byStorageClass.archive, size: metrics.sizeByClass.archive },
       },
       complianceStatus,
-      recommendations
+      recommendations,
     };
   }
 
@@ -596,9 +612,16 @@ export class R2LifecycleManager {
     const metrics = this.getMetrics();
     console.log(styled('\n📊 Storage Metrics:', 'info'));
     console.log(styled(`  Total Objects: ${metrics.totalObjects}`, 'muted'));
-    console.log(styled(`  Total Size: ${(metrics.totalSize / 1024 / 1024).toFixed(2)} MB`, 'muted'));
-    console.log(styled(`  Expired Objects: ${metrics.expiredObjects}`, metrics.expiredObjects > 0 ? 'warning' : 'muted'));
-    
+    console.log(
+      styled(`  Total Size: ${(metrics.totalSize / 1024 / 1024).toFixed(2)} MB`, 'muted')
+    );
+    console.log(
+      styled(
+        `  Expired Objects: ${metrics.expiredObjects}`,
+        metrics.expiredObjects > 0 ? 'warning' : 'muted'
+      )
+    );
+
     console.log(styled('\n📦 Storage Distribution:', 'info'));
     for (const [cls, count] of Object.entries(metrics.byStorageClass)) {
       if (count > 0) {
@@ -621,17 +644,23 @@ if (import.meta.main) {
   console.log(styled('============================', 'accent'));
 
   // Register some test objects
-  lifecycle.registerObject('temp/file1.json', 'scanner-cookies', 
-    { 'content-length': '1024' }, 
+  lifecycle.registerObject(
+    'temp/file1.json',
+    'scanner-cookies',
+    { 'content-length': '1024' },
     { type: 'temp' }
   );
-  
-  lifecycle.registerObject('logs/app-2024-01-01.log', 'scanner-cookies',
+
+  lifecycle.registerObject(
+    'logs/app-2024-01-01.log',
+    'scanner-cookies',
     { 'content-length': '10485760' },
     { type: 'log' }
   );
 
-  lifecycle.registerObject('mcp/diagnoses/test.json', 'scanner-cookies',
+  lifecycle.registerObject(
+    'mcp/diagnoses/test.json',
+    'scanner-cookies',
     { 'content-length': '2048' },
     { type: 'diagnosis' }
   );
@@ -642,15 +671,22 @@ if (import.meta.main) {
   // Perform cleanup
   console.log(styled('\n🧹 Running cleanup scan...', 'info'));
   const report = await lifecycle.performLifecycleScan();
-  
+
   console.log(styled('\n📋 Cleanup Report:', 'info'));
   console.log(styled(`  Objects Deleted: ${report.objectsDeleted}`, 'muted'));
   console.log(styled(`  Objects Transitioned: ${report.objectsTransitioned}`, 'muted'));
-  console.log(styled(`  Space Reclaimed: ${(report.spaceReclaimed / 1024 / 1024).toFixed(2)} MB`, 'muted'));
+  console.log(
+    styled(`  Space Reclaimed: ${(report.spaceReclaimed / 1024 / 1024).toFixed(2)} MB`, 'muted')
+  );
 
   // Compliance report
   const compliance = lifecycle.generateComplianceReport();
-  console.log(styled('\n📜 Compliance Status:', compliance.complianceStatus === 'compliant' ? 'success' : 'warning'));
+  console.log(
+    styled(
+      '\n📜 Compliance Status:',
+      compliance.complianceStatus === 'compliant' ? 'success' : 'warning'
+    )
+  );
   console.log(styled(`  Status: ${compliance.complianceStatus.toUpperCase()}`, 'muted'));
   compliance.recommendations.forEach(rec => {
     console.log(styled(`  💡 ${rec}`, 'info'));

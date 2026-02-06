@@ -6,7 +6,7 @@
  * Integrates with examples/corrected-docs-constants.ts pattern.
  */
 
-import { DOCS } from '../lib/docs-reference.ts';
+import { DOCS } from '../lib/docs/reference.ts';
 
 /**
  * Profiling documentation URLs following corrected-docs-constants.ts pattern

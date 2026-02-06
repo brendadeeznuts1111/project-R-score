@@ -14,7 +14,7 @@ export const DOC_DOMAINS = {
   bun_sh: 'https://bun.sh',
   bun_com: 'https://bun.com',
   bun_dev: 'https://bun.dev',
-  bun_io: 'https://bun.io'
+  bun_io: 'https://bun.io',
 } as const;
 
 // Helper function to build runtime documentation URLs
@@ -24,9 +24,7 @@ export const runtimeDoc = (
   domain: 'sh' | 'com' = 'sh'
 ): string => {
   const base = DOC_DOMAINS[`bun_${domain}`];
-  const path = subsection
-    ? `/docs/runtime/${section}/${subsection}`
-    : `/docs/runtime/${section}`;
+  const path = subsection ? `/docs/runtime/${section}/${subsection}` : `/docs/runtime/${section}`;
   return `${base}${path}`;
 };
 
@@ -62,8 +60,8 @@ export const BUN_DOCS_EXTENDED = {
         versioning: runtimeDoc('secrets', 'versioning', 'com'),
         lifecycle: runtimeDoc('secrets', 'lifecycle-management', 'com'),
         rollback: runtimeDoc('secrets', 'rollback', 'com'),
-        visualization: runtimeDoc('secrets', 'version-visualization', 'com')
-      }
+        visualization: runtimeDoc('secrets', 'version-visualization', 'com'),
+      },
     },
 
     // Other runtime features
@@ -72,7 +70,7 @@ export const BUN_DOCS_EXTENDED = {
     concurrency: runtimeDoc('concurrency'),
     testing: runtimeDoc('testing'),
     bundling: runtimeDoc('bundling'),
-    plugins: runtimeDoc('plugins')
+    plugins: runtimeDoc('plugins'),
   },
 
   // Guides and tutorials
@@ -86,8 +84,8 @@ export const BUN_DOCS_EXTENDED = {
     secrets: {
       basic: `${DOC_DOMAINS.bun_com}/guides/secrets-basic`,
       versioning: `${DOC_DOMAINS.bun_com}/guides/secrets-versioning`,
-      production: `${DOC_DOMAINS.bun_com}/guides/secrets-production`
-    }
+      production: `${DOC_DOMAINS.bun_com}/guides/secrets-production`,
+    },
   },
 
   // Reference documentation
@@ -102,8 +100,8 @@ export const BUN_DOCS_EXTENDED = {
       api: `${DOC_DOMAINS.bun_com}/reference/secrets/api`,
       versioning: `${DOC_DOMAINS.bun_com}/reference/secrets/versioning`,
       lifecycle: `${DOC_DOMAINS.bun_com}/reference/secrets/lifecycle`,
-      rollback: `${DOC_DOMAINS.bun_com}/reference/secrets/rollback`
-    }
+      rollback: `${DOC_DOMAINS.bun_com}/reference/secrets/rollback`,
+    },
   },
 
   // Helper for version-specific docs
@@ -116,7 +114,7 @@ export const BUN_DOCS_EXTENDED = {
     github: 'https://github.com/oven-sh/bun',
     issues: 'https://github.com/oven-sh/bun/issues',
     discussions: 'https://github.com/oven-sh/bun/discussions',
-    stackoverflow: 'https://stackoverflow.com/questions/tagged/bun'
+    stackoverflow: 'https://stackoverflow.com/questions/tagged/bun',
   },
 
   // FactoryWager specific extensions
@@ -125,9 +123,9 @@ export const BUN_DOCS_EXTENDED = {
       versioning: 'https://factorywager.com/docs/secrets/versioning',
       lifecycle: 'https://factorywager.com/docs/secrets/lifecycle',
       rollback: 'https://factorywager.com/docs/secrets/rollback',
-      visualization: 'https://factorywager.com/docs/secrets/visualization'
-    }
-  }
+      visualization: 'https://factorywager.com/docs/secrets/visualization',
+    },
+  },
 } as const;
 
 // Quick access functions for common documentation URLs
@@ -149,4 +147,3 @@ export const getLifecycleDocs = (domain: 'sh' | 'com' = 'com'): string => {
 export const getRollbackDocs = (domain: 'sh' | 'com' = 'com'): string => {
   return BUN_DOCS_EXTENDED.runtime.secrets[domain === 'com' ? 'com' : 'overview'].rollback;
 };
-

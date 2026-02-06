@@ -1,8 +1,8 @@
 /**
  * 📚 FactoryWager Constants Index
- * 
+ *
  * Central hub for all constants used across the monorepo
- * 
+ *
  * @version 1.0.0
  */
 

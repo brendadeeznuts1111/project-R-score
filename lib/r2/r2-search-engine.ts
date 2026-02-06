@@ -2,7 +2,7 @@
 
 /**
  * 🔍 R2 Full-Text Search Engine
- * 
+ *
  * Advanced search capabilities for R2 storage:
  * - Full-text indexing of JSON and text content
  * - Fuzzy matching and relevance scoring
@@ -84,8 +84,8 @@ export class R2SearchEngine {
     stats: {
       totalDocuments: 0,
       totalTerms: 0,
-      lastUpdated: new Date().toISOString()
-    }
+      lastUpdated: new Date().toISOString(),
+    },
   };
 
   private config: IndexConfig;
@@ -98,7 +98,7 @@ export class R2SearchEngine {
       maxTermLength: config.maxTermLength || 50,
       stemming: config.stemming ?? true,
       ngramSize: config.ngramSize || 3,
-      ...config
+      ...config,
     };
 
     this.stopWords = config.stopWords || this.loadDefaultStopWords();
@@ -110,21 +110,21 @@ export class R2SearchEngine {
    */
   async initialize(): Promise<void> {
     console.log(styled('🔍 Initializing R2 Search Engine', 'accent'));
-    
+
     // Subscribe to R2 events for real-time index updates
-    r2EventSystem.on('object:created', (event) => {
+    r2EventSystem.on('object:created', event => {
       if (event.key && event.metadata?.indexable !== false) {
         this.queueForIndexing(event.bucket, event.key, event.metadata);
       }
     });
 
-    r2EventSystem.on('object:updated', (event) => {
+    r2EventSystem.on('object:updated', event => {
       if (event.key) {
         this.updateIndex(event.bucket, event.key, event.metadata);
       }
     });
 
-    r2EventSystem.on('object:deleted', (event) => {
+    r2EventSystem.on('object:deleted', event => {
       if (event.key) {
         this.removeFromIndex(event.bucket, event.key);
       }
@@ -144,7 +144,7 @@ export class R2SearchEngine {
   ): Promise<void> {
     const id = `${bucket}/${key}`;
     const contentStr = this.extractText(content);
-    
+
     const doc: SearchDocument = {
       id,
       key,
@@ -153,7 +153,7 @@ export class R2SearchEngine {
       metadata,
       indexedAt: new Date().toISOString(),
       contentType: metadata.contentType || 'application/json',
-      size: metadata.size || Buffer.byteLength(contentStr)
+      size: metadata.size || Buffer.byteLength(contentStr),
     };
 
     // Remove old index if exists
@@ -180,7 +180,7 @@ export class R2SearchEngine {
       bucket,
       key,
       source: 'R2SearchEngine',
-      metadata: { terms: termFreq.size }
+      metadata: { terms: termFreq.size },
     });
   }
 
@@ -189,7 +189,7 @@ export class R2SearchEngine {
    */
   search(query: SearchQuery): SearchResponse {
     const startTime = Date.now();
-    
+
     // Tokenize query
     const queryTerms = this.tokenize(query.q);
     if (queryTerms.length === 0) {
@@ -197,7 +197,7 @@ export class R2SearchEngine {
         query: query.q,
         total: 0,
         results: [],
-        took: Date.now() - startTime
+        took: Date.now() - startTime,
       };
     }
 
@@ -221,7 +221,7 @@ export class R2SearchEngine {
         document: doc,
         score,
         highlights,
-        matchedTerms
+        matchedTerms,
       });
     }
 
@@ -249,7 +249,7 @@ export class R2SearchEngine {
       results,
       facets,
       took: Date.now() - startTime,
-      suggestions
+      suggestions,
     };
   }
 
@@ -262,7 +262,7 @@ export class R2SearchEngine {
 
     for (const token of tokens) {
       expandedTerms.push(token);
-      
+
       // Find similar terms in index
       for (const [term, _] of this.index.terms) {
         if (this.levenshteinDistance(token, term) <= tolerance) {
@@ -273,7 +273,7 @@ export class R2SearchEngine {
 
     return this.search({
       q: expandedTerms.join(' '),
-      limit: 20
+      limit: 20,
     });
   }
 
@@ -283,7 +283,7 @@ export class R2SearchEngine {
   removeFromIndex(bucket: string, key: string): void {
     const id = `${bucket}/${key}`;
     const doc = this.index.documents.get(id);
-    
+
     if (!doc) return;
 
     // Remove from term index
@@ -320,10 +320,11 @@ export class R2SearchEngine {
     return {
       totalDocuments: this.index.stats.totalDocuments,
       totalTerms: this.index.stats.totalTerms,
-      avgDocSize: this.index.stats.totalDocuments > 0 
-        ? Math.round(totalSize / this.index.stats.totalDocuments)
-        : 0,
-      lastUpdated: this.index.stats.lastUpdated
+      avgDocSize:
+        this.index.stats.totalDocuments > 0
+          ? Math.round(totalSize / this.index.stats.totalDocuments)
+          : 0,
+      lastUpdated: this.index.stats.lastUpdated,
     };
   }
 
@@ -334,7 +335,7 @@ export class R2SearchEngine {
     this.index.terms.clear();
     this.index.documents.clear();
     this.updateStats();
-    
+
     console.log(styled('🗑️ Search index cleared', 'warning'));
   }
 
@@ -345,7 +346,7 @@ export class R2SearchEngine {
     const exportData = {
       documents: Array.from(this.index.documents.entries()),
       stats: this.index.stats,
-      exportedAt: new Date().toISOString()
+      exportedAt: new Date().toISOString(),
     };
 
     // In production, would save to R2
@@ -366,13 +367,69 @@ export class R2SearchEngine {
 
   private loadDefaultStopWords(): Set<string> {
     return new Set([
-      'a', 'an', 'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
-      'of', 'with', 'by', 'from', 'up', 'about', 'into', 'through', 'during',
-      'before', 'after', 'above', 'below', 'between', 'among', 'is', 'are',
-      'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do',
-      'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might',
-      'must', 'can', 'this', 'that', 'these', 'those', 'i', 'you', 'he',
-      'she', 'it', 'we', 'they', 'them', 'their', 'there', 'then', 'than'
+      'a',
+      'an',
+      'the',
+      'and',
+      'or',
+      'but',
+      'in',
+      'on',
+      'at',
+      'to',
+      'for',
+      'of',
+      'with',
+      'by',
+      'from',
+      'up',
+      'about',
+      'into',
+      'through',
+      'during',
+      'before',
+      'after',
+      'above',
+      'below',
+      'between',
+      'among',
+      'is',
+      'are',
+      'was',
+      'were',
+      'be',
+      'been',
+      'being',
+      'have',
+      'has',
+      'had',
+      'do',
+      'does',
+      'did',
+      'will',
+      'would',
+      'could',
+      'should',
+      'may',
+      'might',
+      'must',
+      'can',
+      'this',
+      'that',
+      'these',
+      'those',
+      'i',
+      'you',
+      'he',
+      'she',
+      'it',
+      'we',
+      'they',
+      'them',
+      'their',
+      'there',
+      'then',
+      'than',
     ]);
   }
 
@@ -382,7 +439,7 @@ export class R2SearchEngine {
       ['fix', ['solution', 'repair', 'correct', 'resolve']],
       ['config', ['configuration', 'settings', 'prefs', 'preferences']],
       ['auth', ['authentication', 'login', 'credential']],
-      ['docs', ['documentation', 'guide', 'manual', 'reference']]
+      ['docs', ['documentation', 'guide', 'manual', 'reference']],
     ]);
   }
 
@@ -396,7 +453,8 @@ export class R2SearchEngine {
 
   private tokenize(text: string): string[] {
     // Normalize and split
-    const normalized = text.toLowerCase()
+    const normalized = text
+      .toLowerCase()
       .replace(/[^\w\s]/g, ' ')
       .replace(/\s+/g, ' ')
       .trim();
@@ -406,8 +464,7 @@ export class R2SearchEngine {
 
     for (const word of words) {
       // Filter by length
-      if (word.length < this.config.minTermLength! || 
-          word.length > this.config.maxTermLength!) {
+      if (word.length < this.config.minTermLength! || word.length > this.config.maxTermLength!) {
         continue;
       }
 
@@ -443,7 +500,7 @@ export class R2SearchEngine {
 
   private findCandidateDocuments(queryTerms: string[]): Set<string> {
     const candidates = new Set<string>();
-    
+
     for (const term of queryTerms) {
       const docs = this.index.terms.get(term);
       if (docs) {
@@ -479,8 +536,7 @@ export class R2SearchEngine {
         // TF-IDF scoring
         const tf = freq / docTokens.length;
         const idf = Math.log(
-          this.index.stats.totalDocuments / 
-          (this.index.terms.get(term)?.size || 1)
+          this.index.stats.totalDocuments / (this.index.terms.get(term)?.size || 1)
         );
         score += tf * idf;
 
@@ -515,13 +571,17 @@ export class R2SearchEngine {
     return queryTerms.filter(term => lowerContent.includes(term));
   }
 
-  private sortResults(results: SearchResult[], sort: 'relevance' | 'date' | 'size'): SearchResult[] {
+  private sortResults(
+    results: SearchResult[],
+    sort: 'relevance' | 'date' | 'size'
+  ): SearchResult[] {
     switch (sort) {
       case 'relevance':
         return results.sort((a, b) => b.score - a.score);
       case 'date':
-        return results.sort((a, b) => 
-          new Date(b.document.indexedAt).getTime() - new Date(a.document.indexedAt).getTime()
+        return results.sort(
+          (a, b) =>
+            new Date(b.document.indexedAt).getTime() - new Date(a.document.indexedAt).getTime()
         );
       case 'size':
         return results.sort((a, b) => b.document.size - a.document.size);
@@ -542,7 +602,8 @@ export class R2SearchEngine {
 
     for (const result of results) {
       for (const facet of facets) {
-        const value = result.document.metadata[facet] || result.document[facet as keyof SearchDocument];
+        const value =
+          result.document.metadata[facet] || result.document[facet as keyof SearchDocument];
         if (value) {
           const key = String(value);
           facetData[facet].set(key, (facetData[facet].get(key) || 0) + 1);
@@ -609,7 +670,7 @@ export class R2SearchEngine {
     this.index.stats = {
       totalDocuments: this.index.documents.size,
       totalTerms: this.index.terms.size,
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
   }
 
@@ -642,9 +703,9 @@ if (import.meta.main) {
       content: {
         error: 'TypeError: Cannot read property of undefined',
         fix: 'Add null check before accessing property',
-        context: 'scanner'
+        context: 'scanner',
       },
-      metadata: { contentType: 'application/json', size: 512 }
+      metadata: { contentType: 'application/json', size: 512 },
     },
     {
       bucket: 'scanner-cookies',
@@ -652,16 +713,17 @@ if (import.meta.main) {
       content: {
         type: 'security',
         finding: 'Missing authentication on API endpoint',
-        severity: 'high'
+        severity: 'high',
       },
-      metadata: { contentType: 'application/json', size: 1024 }
+      metadata: { contentType: 'application/json', size: 1024 },
     },
     {
       bucket: 'scanner-cookies',
       key: 'docs/configuration.md',
-      content: 'Configuration guide for the FactoryWager MCP system including settings for R2 integration.',
-      metadata: { contentType: 'text/markdown', size: 2048 }
-    }
+      content:
+        'Configuration guide for the FactoryWager MCP system including settings for R2 integration.',
+      metadata: { contentType: 'text/markdown', size: 2048 },
+    },
   ];
 
   console.log(styled('\n📝 Indexing documents...', 'info'));
@@ -679,10 +741,12 @@ if (import.meta.main) {
   // Perform search
   console.log(styled('\n🔍 Searching for "error handling"...', 'info'));
   const results = search.search({ q: 'error handling', limit: 10 });
-  
+
   console.log(styled(`  Found ${results.total} results (${results.took}ms)`, 'success'));
   for (const result of results.results) {
-    console.log(styled(`    📄 ${result.document.key} (score: ${result.score.toFixed(2)})`, 'muted'));
+    console.log(
+      styled(`    📄 ${result.document.key} (score: ${result.score.toFixed(2)})`, 'muted')
+    );
     if (result.highlights.length > 0) {
       console.log(styled(`       "${result.highlights[0].slice(0, 80)}..."`, 'muted'));
     }
@@ -692,7 +756,7 @@ if (import.meta.main) {
   console.log(styled('\n🔍 Fuzzy search for "configur"...', 'info'));
   const fuzzy = search.fuzzySearch('configur', 2);
   console.log(styled(`  Found ${fuzzy.total} results`, 'success'));
-  
+
   if (fuzzy.suggestions) {
     console.log(styled('  💡 Suggestions:', 'info'));
     fuzzy.suggestions.forEach(s => console.log(styled(`     ${s}`, 'muted')));

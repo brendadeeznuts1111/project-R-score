@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * 📦 NPM Registry CLI (Bun v1.3.7+ Optimized)
- * 
+ *
  * Command-line interface for managing the private registry
  * Uses Bun.wrapAnsi() for 33-88x faster ANSI text wrapping
  */
@@ -28,20 +28,21 @@ function wrapText(text: string, columns: number = 80): string {
 
 const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
 const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
-const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
+const DEFAULT_REGISTRY_URL =
+  process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
 
 const COMMANDS = {
-  'start': 'Start the registry server',
-  'publish': 'Publish a package to the registry',
-  'unpublish': 'Remove a package from the registry',
-  'info': 'Show package information',
-  'search': 'Search for packages',
-  'list': 'List all packages',
-  'users': 'Manage registry users',
-  'tokens': 'Manage auth tokens',
-  'stats': 'Show registry statistics',
-  'config': 'Show registry configuration',
-  'help': 'Show this help',
+  start: 'Start the registry server',
+  publish: 'Publish a package to the registry',
+  unpublish: 'Remove a package from the registry',
+  info: 'Show package information',
+  search: 'Search for packages',
+  list: 'List all packages',
+  users: 'Manage registry users',
+  tokens: 'Manage auth tokens',
+  stats: 'Show registry statistics',
+  config: 'Show registry configuration',
+  help: 'Show this help',
 };
 
 class RegistryCLI {
@@ -132,12 +133,10 @@ class RegistryCLI {
 
     try {
       // Read package.json
-      const pkgPath = packagePath === '.' 
-        ? './package.json' 
-        : `${packagePath}/package.json`;
-      
+      const pkgPath = packagePath === '.' ? './package.json' : `${packagePath}/package.json`;
+
       const pkg = await Bun.file(pkgPath).json();
-      
+
       console.log(styled(`Package: ${pkg.name}@${pkg.version}`, 'info'));
       console.log(styled(`Registry: ${registry}`, 'info'));
 
@@ -165,7 +164,7 @@ class RegistryCLI {
         repository: pkg.repository,
         bugs: pkg.bugs,
         homepage: pkg.homepage,
-        readme: pkg.readme || await this.readReadme(packagePath),
+        readme: pkg.readme || (await this.readReadme(packagePath)),
         readmeFilename: 'README.md',
         'dist-tags': {
           latest: pkg.version,
@@ -188,7 +187,7 @@ class RegistryCLI {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': this.getAuthHeader(options),
+          Authorization: this.getAuthHeader(options),
         },
         body: JSON.stringify(publishData),
       });
@@ -221,7 +220,9 @@ class RegistryCLI {
       return;
     }
 
-    console.log(styled(`\n🗑️ Unpublishing ${packageName}${version ? `@${version}` : ''}...`, 'warning'));
+    console.log(
+      styled(`\n🗑️ Unpublishing ${packageName}${version ? `@${version}` : ''}...`, 'warning')
+    );
 
     try {
       if (version) {
@@ -229,7 +230,7 @@ class RegistryCLI {
         const response = await fetch(`${registry}/${packageName}/-/${version}`, {
           method: 'DELETE',
           headers: {
-            'Authorization': this.getAuthHeader(options),
+            Authorization: this.getAuthHeader(options),
           },
         });
 
@@ -244,7 +245,7 @@ class RegistryCLI {
         const response = await fetch(`${registry}/${packageName}`, {
           method: 'DELETE',
           headers: {
-            'Authorization': this.getAuthHeader(options),
+            Authorization: this.getAuthHeader(options),
           },
         });
 
@@ -274,7 +275,7 @@ class RegistryCLI {
 
     try {
       const response = await fetch(`${registry}/${packageName}`);
-      
+
       if (!response.ok) {
         console.error(styled(`❌ Package not found: ${packageName}`, 'error'));
         return;
@@ -284,7 +285,7 @@ class RegistryCLI {
 
       console.log(styled(`\n📦 ${manifest.name}`, 'accent'));
       console.log(styled('='.repeat(50), 'accent'));
-      
+
       console.log(styled(`\n📋 Description:`, 'info'));
       console.log(styled(`  ${manifest.description || 'N/A'}`, 'muted'));
 
@@ -303,9 +304,7 @@ class RegistryCLI {
       }
 
       if (manifest.author) {
-        const author = typeof manifest.author === 'string' 
-          ? manifest.author 
-          : manifest.author.name;
+        const author = typeof manifest.author === 'string' ? manifest.author : manifest.author.name;
         console.log(styled(`\n👤 Author:`, 'info'));
         console.log(styled(`  ${author}`, 'muted'));
       }
@@ -317,9 +316,8 @@ class RegistryCLI {
 
       if (manifest.repository) {
         console.log(styled(`\n🔗 Repository:`, 'info'));
-        const repo = typeof manifest.repository === 'string' 
-          ? manifest.repository 
-          : manifest.repository.url;
+        const repo =
+          typeof manifest.repository === 'string' ? manifest.repository : manifest.repository.url;
         console.log(styled(`  ${repo}`, 'muted'));
       }
 
@@ -417,7 +415,9 @@ class RegistryCLI {
 
       default:
         console.log(styled('\n👤 User Commands:', 'accent'));
-        console.log(styled('  registry users add <username> [--email <email>] [--password <pass>]', 'muted'));
+        console.log(
+          styled('  registry users add <username> [--email <email>] [--password <pass>]', 'muted')
+        );
         console.log(styled('  registry users list', 'muted'));
         console.log(styled('  registry users remove <username>', 'muted'));
     }
@@ -459,17 +459,24 @@ class RegistryCLI {
    */
   private async handleStats(): Promise<void> {
     const status = this.storage.getConfigStatus();
-    
+
     console.log(styled('\n📊 Registry Statistics', 'accent'));
     console.log(styled('=====================', 'accent'));
-    
+
     console.log(styled('\n🪣 Storage:', 'info'));
     console.log(styled(`  Bucket: ${status.bucket}`, 'muted'));
-    console.log(styled(`  Configured: ${status.configured ? '✅' : '❌'}`, status.configured ? 'success' : 'error'));
+    console.log(
+      styled(
+        `  Configured: ${status.configured ? '✅' : '❌'}`,
+        status.configured ? 'success' : 'error'
+      )
+    );
 
     if (status.configured) {
       const connected = await this.storage.testConnection();
-      console.log(styled(`  Connected: ${connected ? '✅' : '❌'}`, connected ? 'success' : 'error'));
+      console.log(
+        styled(`  Connected: ${connected ? '✅' : '❌'}`, connected ? 'success' : 'error')
+      );
 
       if (connected) {
         const packages = await this.storage.listPackages();
@@ -489,7 +496,7 @@ class RegistryCLI {
   private async handleConfig(): Promise<void> {
     console.log(styled('\n⚙️  Registry Configuration', 'accent'));
     console.log(styled('==========================', 'accent'));
-    
+
     console.log(styled('\n🌐 Server:', 'info'));
     console.log(styled(`  Port: ${process.env.REGISTRY_PORT || '4873'}`, 'muted'));
     console.log(styled(`  Auth: ${process.env.REGISTRY_AUTH || 'none'}`, 'muted'));
@@ -519,14 +526,16 @@ class RegistryCLI {
     console.log(styled('\n📦 NPM Registry CLI', 'accent'));
     console.log(styled('===================', 'accent'));
     console.log(styled('\nCommands:', 'info'));
-    
+
     for (const [cmd, desc] of Object.entries(COMMANDS)) {
       console.log(styled(`  registry ${cmd.padEnd(12)} ${desc}`, 'muted'));
     }
 
     console.log(styled('\nExamples:', 'info'));
     console.log(styled('  registry start --port 4873 --auth basic', 'muted'));
-    console.log(styled(`  registry publish ./my-package --registry ${DEFAULT_REGISTRY_URL}`, 'muted'));
+    console.log(
+      styled(`  registry publish ./my-package --registry ${DEFAULT_REGISTRY_URL}`, 'muted')
+    );
     console.log(styled('  registry info my-package', 'muted'));
     console.log(styled('  registry search utils', 'muted'));
     console.log(styled('  registry tokens create admin', 'muted'));
@@ -545,7 +554,7 @@ class RegistryCLI {
 
     const chunks: Uint8Array[] = [];
     const reader = proc.stdout.getReader();
-    
+
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
@@ -568,10 +577,8 @@ class RegistryCLI {
    * Read README file
    */
   private async readReadme(packagePath: string): Promise<string> {
-    const readmePath = packagePath === '.' 
-      ? './README.md' 
-      : `${packagePath}/README.md`;
-    
+    const readmePath = packagePath === '.' ? './README.md' : `${packagePath}/README.md`;
+
     try {
       return await Bun.file(readmePath).text();
     } catch {
@@ -615,7 +622,7 @@ class RegistryCLI {
    */
   private parseOptions(args: string[]): any {
     const options: any = { _: [] };
-    
+
     for (let i = 0; i < args.length; i++) {
       const arg = args[i];
       if (arg.startsWith('--')) {
@@ -630,7 +637,7 @@ class RegistryCLI {
         options._.push(arg);
       }
     }
-    
+
     return options;
   }
 }

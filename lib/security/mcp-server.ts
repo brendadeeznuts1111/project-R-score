@@ -1,10 +1,10 @@
 /**
  * 🔐 Tier-1380 Security MCP Server (Bun-Optimized)
- * 
+ *
  * Model Context Protocol server for enterprise security operations
  * Built with Bun runtime for maximum performance and native integration
  * Exposes security tools, resources, and prompts to LLM applications
- * 
+ *
  * @version 4.5
  */
 
@@ -84,8 +84,11 @@ class Tier1380SecurityMCPServer {
 
     const server = Bun.serve({
       port,
-      fetch: async (req) => {
-        if (req.method === 'POST' && req.headers.get('content-type')?.includes('application/json')) {
+      fetch: async req => {
+        if (
+          req.method === 'POST' &&
+          req.headers.get('content-type')?.includes('application/json')
+        ) {
           try {
             const body = await req.json();
             const response = await this.handleHttpRequest(body);
@@ -93,21 +96,21 @@ class Tier1380SecurityMCPServer {
               headers: { 'Content-Type': 'application/json' },
             });
           } catch (error) {
-            return new Response(
-              JSON.stringify({ error: error.message }),
-              { status: 400, headers: { 'Content-Type': 'application/json' } }
-            );
+            return new Response(JSON.stringify({ error: error.message }), {
+              status: 400,
+              headers: { 'Content-Type': 'application/json' },
+            });
           }
         }
-        
+
         // Health check endpoint
         if (req.url === '/health') {
           return new Response(
-            JSON.stringify({ 
-              status: 'healthy', 
+            JSON.stringify({
+              status: 'healthy',
               server: 'tier1380-security',
               version: '4.5.0',
-              bunVersion: BUN_VERSION 
+              bunVersion: BUN_VERSION,
             }),
             { headers: { 'Content-Type': 'application/json' } }
           );
@@ -118,7 +121,10 @@ class Tier1380SecurityMCPServer {
     });
 
     console.error(`🔐 Tier-1380 Security MCP Server running on HTTP port ${port}`);
-    const MCP_SERVER_HOST = validateHost(process.env.MCP_SERVER_HOST) || validateHost(process.env.SERVER_HOST) || 'localhost';
+    const MCP_SERVER_HOST =
+      validateHost(process.env.MCP_SERVER_HOST) ||
+      validateHost(process.env.SERVER_HOST) ||
+      'localhost';
     console.log(`📊 Health check: http://${MCP_SERVER_HOST}:${port}/health`);
   }
 
@@ -134,7 +140,7 @@ class Tier1380SecurityMCPServer {
       port,
       fetch: async (req, server) => {
         const url = new URL(req.url);
-        
+
         if (url.pathname === '/mcp') {
           // Upgrade to SSE for MCP communication
           const transport = new SSEServerTransport('/message', req);
@@ -161,25 +167,37 @@ class Tier1380SecurityMCPServer {
 
     try {
       let result;
-      
+
       switch (method) {
         case 'tools/list':
           result = await this.server.request({ method: 'tools/list' }, ListToolsRequestSchema);
           break;
         case 'tools/call':
-          result = await this.server.request({ method: 'tools/call', params }, CallToolRequestSchema);
+          result = await this.server.request(
+            { method: 'tools/call', params },
+            CallToolRequestSchema
+          );
           break;
         case 'resources/list':
-          result = await this.server.request({ method: 'resources/list' }, ListResourcesRequestSchema);
+          result = await this.server.request(
+            { method: 'resources/list' },
+            ListResourcesRequestSchema
+          );
           break;
         case 'resources/read':
-          result = await this.server.request({ method: 'resources/read', params }, ReadResourceRequestSchema);
+          result = await this.server.request(
+            { method: 'resources/read', params },
+            ReadResourceRequestSchema
+          );
           break;
         case 'prompts/list':
           result = await this.server.request({ method: 'prompts/list' }, ListPromptsRequestSchema);
           break;
         case 'prompts/get':
-          result = await this.server.request({ method: 'prompts/get', params }, GetPromptRequestSchema);
+          result = await this.server.request(
+            { method: 'prompts/get', params },
+            GetPromptRequestSchema
+          );
           break;
         default:
           throw new McpError(ErrorCode.MethodNotFound, `Unknown method: ${method}`);
@@ -432,53 +450,54 @@ class Tier1380SecurityMCPServer {
         },
         {
           name: 'search_security_docs',
-          description: 'Search across the Tier-1380 security knowledge base to find relevant information, code examples, API references, and guides. Use this tool when you need to answer questions about enterprise security, find specific security documentation, understand how features work, or locate implementation details. The search returns contextual content with titles and direct links to the documentation pages.',
+          description:
+            'Search across the Tier-1380 security knowledge base to find relevant information, code examples, API references, and guides. Use this tool when you need to answer questions about enterprise security, find specific security documentation, understand how features work, or locate implementation details. The search returns contextual content with titles and direct links to the documentation pages.',
           inputSchema: {
-            "type": "object",
-            "properties": {
-              "query": {
-                "type": "string",
-                "description": "A query to search the content with."
+            type: 'object',
+            properties: {
+              query: {
+                type: 'string',
+                description: 'A query to search the content with.',
               },
-              "version": {
-                "type": "string",
-                "description": "Filter to specific version (e.g., 'v4.5', 'v4.0', 'v3.0')"
+              version: {
+                type: 'string',
+                description: "Filter to specific version (e.g., 'v4.5', 'v4.0', 'v3.0')",
               },
-              "language": {
-                "type": "string",
-                "description": "Filter to specific language code (e.g., 'zh', 'es'). Defaults to 'en'"
+              language: {
+                type: 'string',
+                description:
+                  "Filter to specific language code (e.g., 'zh', 'es'). Defaults to 'en'",
               },
-              "apiReferenceOnly": {
-                "type": "boolean",
-                "description": "Only return API reference docs"
+              apiReferenceOnly: {
+                type: 'boolean',
+                description: 'Only return API reference docs',
               },
-              "codeOnly": {
-                "type": "boolean",
-                "description": "Only return code snippets"
+              codeOnly: {
+                type: 'boolean',
+                description: 'Only return code snippets',
               },
-              "category": {
-                "type": "string",
-                "description": "Filter to specific security category (e.g., \"secrets\", \"auth\", \"deployment\", \"mcp\")",
-                "enum": ["secrets", "auth", "deployment", "mcp", "audit", "all"],
-                "default": "all"
+              category: {
+                type: 'string',
+                description:
+                  'Filter to specific security category (e.g., "secrets", "auth", "deployment", "mcp")',
+                enum: ['secrets', 'auth', 'deployment', 'mcp', 'audit', 'all'],
+                default: 'all',
               },
-              "severity": {
-                "type": "string",
-                "description": "Filter by security severity level",
-                "enum": ["critical", "high", "medium", "low", "all"],
-                "default": "all"
-              }
+              severity: {
+                type: 'string',
+                description: 'Filter by security severity level',
+                enum: ['critical', 'high', 'medium', 'low', 'all'],
+                default: 'all',
+              },
             },
-            "required": [
-              "query"
-            ]
+            required: ['query'],
           },
-          "operationId": "Tier1380SecuritySearch"
+          operationId: 'Tier1380SecuritySearch',
         },
       ],
     }));
 
-    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    this.server.setRequestHandler(CallToolRequestSchema, async request => {
       const { name, arguments: args } = request.params;
 
       try {
@@ -541,13 +560,10 @@ class Tier1380SecurityMCPServer {
             };
 
           case 'hash_password':
-            const hashResult = await Tier1380PasswordSecurity.hashPassword(
-              args.password,
-              {
-                algorithm: args.algorithm,
-                userId: args.userId,
-              }
-            );
+            const hashResult = await Tier1380PasswordSecurity.hashPassword(args.password, {
+              algorithm: args.algorithm,
+              userId: args.userId,
+            });
             return {
               content: [
                 {
@@ -629,10 +645,7 @@ class Tier1380SecurityMCPServer {
             }
 
           case 'rotate_secret':
-            const rotateResult = await this.lifecycleManager.rotateNow(
-              args.key,
-              args.reason
-            );
+            const rotateResult = await this.lifecycleManager.rotateNow(args.key, args.reason);
             if (rotateResult.success) {
               return {
                 content: [
@@ -710,9 +723,12 @@ class Tier1380SecurityMCPServer {
               content: [
                 {
                   type: 'text',
-                  text: `🔍 Security Documentation Search Results:\n${searchResults.map(result => 
-                    `📄 ${result.title}\n   📝 ${result.description}\n   🔗 ${result.url || result.reference}\n   🏷️  ${result.category} | ${result.severity} | ${result.version}\n${result.codeExample ? `   💻 Code: ${result.codeExample}\n` : ''}`
-                  ).join('\n')}`
+                  text: `🔍 Security Documentation Search Results:\n${searchResults
+                    .map(
+                      result =>
+                        `📄 ${result.title}\n   📝 ${result.description}\n   🔗 ${result.url || result.reference}\n   🏷️  ${result.category} | ${result.severity} | ${result.version}\n${result.codeExample ? `   💻 Code: ${result.codeExample}\n` : ''}`
+                    )
+                    .join('\n')}`,
                 },
               ],
             };
@@ -723,12 +739,14 @@ class Tier1380SecurityMCPServer {
               runtime: BUN_RUNTIME ? 'Bun' : 'Node.js',
               platform: process.platform,
               arch: process.arch,
-              cryptoCapabilities: args.include_crypto ? {
-                passwordHashing: typeof Bun?.password !== 'undefined',
-                randomBytes: typeof Bun?.random !== 'undefined',
-                cryptoHash: typeof Bun?.CryptoHash !== 'undefined',
-                sha256: typeof Bun?.hash?.sha256 !== 'undefined',
-              } : undefined,
+              cryptoCapabilities: args.include_crypto
+                ? {
+                    passwordHashing: typeof Bun?.password !== 'undefined',
+                    randomBytes: typeof Bun?.random !== 'undefined',
+                    cryptoHash: typeof Bun?.CryptoHash !== 'undefined',
+                    sha256: typeof Bun?.hash?.sha256 !== 'undefined',
+                  }
+                : undefined,
               performance: {
                 startupTime: Date.now(),
                 memoryUsage: BUN_RUNTIME ? process.memoryUsage() : 'N/A',
@@ -744,16 +762,10 @@ class Tier1380SecurityMCPServer {
             };
 
           default:
-            throw new McpError(
-              ErrorCode.MethodNotFound,
-              `Unknown tool: ${name}`
-            );
+            throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
         }
       } catch (error) {
-        throw new McpError(
-          ErrorCode.InternalError,
-          `Tool execution failed: ${error.message}`
-        );
+        throw new McpError(ErrorCode.InternalError, `Tool execution failed: ${error.message}`);
       }
     });
   }
@@ -782,7 +794,7 @@ class Tier1380SecurityMCPServer {
       ],
     }));
 
-    this.server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+    this.server.setRequestHandler(ReadResourceRequestSchema, async request => {
       const { uri } = request.params;
 
       switch (uri) {
@@ -795,7 +807,7 @@ class Tier1380SecurityMCPServer {
                 mimeType: 'text/plain',
                 text: `Security Audit Log (Last 20 entries):\n${auditLog
                   .map(
-                    (entry) =>
+                    entry =>
                       `${entry.timestamp} - ${entry.action} - ${entry.userId} - ${entry.success ? 'SUCCESS' : 'FAILED'}`
                   )
                   .join('\n')}`,
@@ -834,10 +846,7 @@ class Tier1380SecurityMCPServer {
           };
 
         default:
-          throw new McpError(
-            ErrorCode.NotFound,
-            `Resource not found: ${uri}`
-          );
+          throw new McpError(ErrorCode.NotFound, `Resource not found: ${uri}`);
       }
     });
   }
@@ -896,14 +905,14 @@ class Tier1380SecurityMCPServer {
       ],
     }));
 
-    this.server.setRequestHandler(GetPromptRequestSchema, async (request) => {
+    this.server.setRequestHandler(GetPromptRequestSchema, async request => {
       const { name, arguments: args } = request.params;
 
       switch (name) {
         case 'security-audit':
           const timeframe = args?.timeframe || '24h';
           const includeRecommendations = args?.include_recommendations !== 'false';
-          
+
           return {
             description: `Security audit report for the last ${timeframe}`,
             messages: [
@@ -924,7 +933,7 @@ class Tier1380SecurityMCPServer {
         case 'secret-rotation-plan':
           const pattern = args?.secret_pattern || '*';
           const interval = args?.rotation_interval || '90d';
-          
+
           return {
             description: `Secret rotation plan for ${pattern} secrets`,
             messages: [
@@ -941,7 +950,7 @@ class Tier1380SecurityMCPServer {
         case 'deployment-security-checklist':
           const environment = args?.environment || 'production';
           const complianceLevel = args?.compliance_level || 'enterprise';
-          
+
           return {
             description: `Security checklist for ${environment} deployment (${complianceLevel} compliance)`,
             messages: [
@@ -956,10 +965,7 @@ class Tier1380SecurityMCPServer {
           };
 
         default:
-          throw new McpError(
-            ErrorCode.NotFound,
-            `Prompt not found: ${name}`
-          );
+          throw new McpError(ErrorCode.NotFound, `Prompt not found: ${name}`);
       }
     });
   }
@@ -975,46 +981,52 @@ class Tier1380SecurityMCPServer {
     codeOnly: boolean = false,
     category: string = 'all',
     severity: string = 'all'
-  ): Promise<Array<{
-    title: string;
-    description: string;
-    url: string;
-    reference: string;
-    category: string;
-    severity: string;
-    version: string;
-    language: string;
-    codeExample?: string;
-  }>> {
-    
+  ): Promise<
+    Array<{
+      title: string;
+      description: string;
+      url: string;
+      reference: string;
+      category: string;
+      severity: string;
+      version: string;
+      language: string;
+      codeExample?: string;
+    }>
+  > {
     const securityKnowledgeBase = [
       {
         title: 'Enterprise Password Security with Bun.password',
-        description: 'Learn how to implement enterprise-grade password hashing using Bun.password API with Argon2id and bcrypt algorithms. Comprehensive guide with code examples and best practices.',
+        description:
+          'Learn how to implement enterprise-grade password hashing using Bun.password API with Argon2id and bcrypt algorithms. Comprehensive guide with code examples and best practices.',
         url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/enterprise-password-security.ts',
         reference: 'lib/security/enterprise-password-security.ts',
         category: 'secrets',
         severity: 'critical',
         version: '4.5',
         language: 'en',
-        codeExample: 'await Tier1380PasswordSecurity.hashPassword(password, { algorithm: "argon2id" })',
-        isApiReference: true
+        codeExample:
+          'await Tier1380PasswordSecurity.hashPassword(password, { algorithm: "argon2id" })',
+        isApiReference: true,
       },
       {
         title: 'Cross-Platform Secret Storage Implementation',
-        description: 'Store secrets securely across Windows Credential Manager, macOS Keychain, and Linux libsecret. Complete implementation guide with enterprise persistence support.',
+        description:
+          'Store secrets securely across Windows Credential Manager, macOS Keychain, and Linux libsecret. Complete implementation guide with enterprise persistence support.',
         url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/tier1380-secret-manager.ts',
         reference: 'lib/security/tier1380-secret-manager.ts',
         category: 'secrets',
         severity: 'critical',
         version: '4.5',
         language: 'en',
-        codeExample: 'await Tier1380SecretManager.setSecret(key, value, { persistEnterprise: true })',
-        isApiReference: true
+        codeExample:
+          'await Tier1380SecretManager.setSecret(key, value, { persistEnterprise: true })',
+        isApiReference: true,
       },
       {
         title: 'Enterprise Authentication System Guide',
-        description: 'Implement user authentication with rate limiting, audit trails, and session management. Complete security framework with compliance features.',
+        description:
+          'Implement user authentication with rate limiting, audit trails, and session management. Complete security framework with compliance features.',
         url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/enterprise-auth.ts',
         reference: 'lib/security/enterprise-auth.ts',
         category: 'auth',
@@ -1022,23 +1034,26 @@ class Tier1380SecurityMCPServer {
         version: '4.5',
         language: 'en',
         codeExample: 'await Tier1380EnterpriseAuth.authenticate(username, password, context)',
-        isApiReference: true
+        isApiReference: true,
       },
       {
         title: 'Secure Deployment Pipeline Documentation',
-        description: 'Deploy applications with enterprise security validation and monitoring. Complete deployment workflow with authentication and audit trails.',
+        description:
+          'Deploy applications with enterprise security validation and monitoring. Complete deployment workflow with authentication and audit trails.',
         url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/secure-deployment.ts',
         reference: 'lib/security/secure-deployment.ts',
         category: 'deployment',
         severity: 'high',
         version: '4.5',
         language: 'en',
-        codeExample: 'await Tier1380SecureDeployment.deployWithPasswordAuth(snapshotId, credentials)',
-        isApiReference: true
+        codeExample:
+          'await Tier1380SecureDeployment.deployWithPasswordAuth(snapshotId, credentials)',
+        isApiReference: true,
       },
       {
         title: 'Secret Lifecycle Management System',
-        description: 'Automate secret rotation, expiration monitoring, and compliance management. Enterprise-grade lifecycle automation with scheduling.',
+        description:
+          'Automate secret rotation, expiration monitoring, and compliance management. Enterprise-grade lifecycle automation with scheduling.',
         url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/secret-lifecycle.ts',
         reference: 'lib/security/secret-lifecycle.ts',
         category: 'secrets',
@@ -1046,23 +1061,26 @@ class Tier1380SecurityMCPServer {
         version: '4.5',
         language: 'en',
         codeExample: 'await lifecycleManager.rotateNow(key, reason)',
-        isApiReference: true
+        isApiReference: true,
       },
       {
         title: 'Versioned Secrets with Rollback Capabilities',
-        description: 'Manage secret versions with audit trails and safe rollback capabilities. Complete versioning system with metadata tracking.',
+        description:
+          'Manage secret versions with audit trails and safe rollback capabilities. Complete versioning system with metadata tracking.',
         url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/versioned-secrets.ts',
         reference: 'lib/security/versioned-secrets.ts',
         category: 'secrets',
         severity: 'medium',
         version: '4.5',
         language: 'en',
-        codeExample: 'await versionManager.rollback(key, targetVersion, { reason: "Security issue" })',
-        isApiReference: true
+        codeExample:
+          'await versionManager.rollback(key, targetVersion, { reason: "Security issue" })',
+        isApiReference: true,
       },
       {
         title: 'Security MCP Server Implementation',
-        description: 'Model Context Protocol server for enterprise security operations with HTTP transport. Complete MCP server with tools, resources, and prompts.',
+        description:
+          'Model Context Protocol server for enterprise security operations with HTTP transport. Complete MCP server with tools, resources, and prompts.',
         url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/mcp-server.ts',
         reference: 'lib/security/mcp-server.ts',
         category: 'mcp',
@@ -1070,11 +1088,12 @@ class Tier1380SecurityMCPServer {
         version: '4.5',
         language: 'en',
         codeExample: 'bun run mcp-server.ts --http --port=3000',
-        isApiReference: true
+        isApiReference: true,
       },
       {
         title: 'Security Audit and Monitoring Guide',
-        description: 'Generate comprehensive security reports and monitor authentication events. Complete audit system with compliance reporting.',
+        description:
+          'Generate comprehensive security reports and monitor authentication events. Complete audit system with compliance reporting.',
         url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/enterprise-auth.ts#getAuditLog',
         reference: 'lib/security/enterprise-auth.ts#getAuditLog',
         category: 'audit',
@@ -1082,11 +1101,12 @@ class Tier1380SecurityMCPServer {
         version: '4.5',
         language: 'en',
         codeExample: 'const auditLog = Tier1380EnterpriseAuth.getAuditLog(20)',
-        isApiReference: true
+        isApiReference: true,
       },
       {
         title: 'Bun Runtime Security Integration',
-        description: 'Leverage Bun\'s native cryptographic APIs for maximum security performance. Complete integration guide with performance optimizations.',
+        description:
+          "Leverage Bun's native cryptographic APIs for maximum security performance. Complete integration guide with performance optimizations.",
         url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/enterprise-password-security.ts#Bun.password',
         reference: 'lib/security/enterprise-password-security.ts#Bun.password',
         category: 'secrets',
@@ -1094,23 +1114,25 @@ class Tier1380SecurityMCPServer {
         version: '4.5',
         language: 'en',
         codeExample: 'const hash = await Bun.password.hash(password, { algorithm: "argon2id" })',
-        isApiReference: true
+        isApiReference: true,
       },
       {
         title: 'HTTP Transport Security for MCP',
-        description: 'Secure HTTP transport for MCP protocol with JSON-RPC 2.0 compliance. Complete HTTP server implementation with health checks.',
+        description:
+          'Secure HTTP transport for MCP protocol with JSON-RPC 2.0 compliance. Complete HTTP server implementation with health checks.',
         url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/mcp-server.ts#HTTP',
         reference: 'lib/security/mcp-server.ts#HTTP',
         category: 'mcp',
         severity: 'medium',
         version: '4.5',
         language: 'en',
-        codeExample: `curl -X POST ${process.env.API_BASE_URL || "http://example.com"} -d '{"jsonrpc":"2.0","method":"tools/list"}'`,
-        isApiReference: true
+        codeExample: `curl -X POST ${process.env.API_BASE_URL || 'http://example.com'} -d '{"jsonrpc":"2.0","method":"tools/list"}'`,
+        isApiReference: true,
       },
       {
         title: 'Security Integration Test Suite',
-        description: 'Comprehensive test suite for all security components. Integration testing with coverage reports and validation.',
+        description:
+          'Comprehensive test suite for all security components. Integration testing with coverage reports and validation.',
         url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/test-integration.ts',
         reference: 'lib/security/test-integration.ts',
         category: 'audit',
@@ -1118,11 +1140,12 @@ class Tier1380SecurityMCPServer {
         version: '4.5',
         language: 'en',
         codeExample: 'bun run test-integration.ts',
-        isApiReference: false
+        isApiReference: false,
       },
       {
         title: 'MCP Configuration and Deployment',
-        description: 'Complete configuration guide for MCP server deployment. HTTP transport setup and client configuration examples.',
+        description:
+          'Complete configuration guide for MCP server deployment. HTTP transport setup and client configuration examples.',
         url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/bun-mcp-server-config.json',
         reference: 'lib/security/bun-mcp-server-config.json',
         category: 'mcp',
@@ -1130,21 +1153,30 @@ class Tier1380SecurityMCPServer {
         version: '4.5',
         language: 'en',
         codeExample: 'bun run mcp-server.ts --http --port=3000',
-        isApiReference: false
-      }
+        isApiReference: false,
+      },
     ];
 
     // Filter based on search criteria
     let results = securityKnowledgeBase.filter(item => {
-      const matchesQuery = item.title.toLowerCase().includes(query.toLowerCase()) ||
-                         item.description.toLowerCase().includes(query.toLowerCase());
-      const matchesVersion = !version || item.version === version || item.version === version.replace('v', '');
+      const matchesQuery =
+        item.title.toLowerCase().includes(query.toLowerCase()) ||
+        item.description.toLowerCase().includes(query.toLowerCase());
+      const matchesVersion =
+        !version || item.version === version || item.version === version.replace('v', '');
       const matchesLanguage = !language || language === 'en' || item.language === language;
       const matchesCategory = category === 'all' || item.category === category;
       const matchesSeverity = severity === 'all' || item.severity === severity;
       const matchesApiFilter = !apiReferenceOnly || item.isApiReference;
-      
-      return matchesQuery && matchesVersion && matchesLanguage && matchesCategory && matchesSeverity && matchesApiFilter;
+
+      return (
+        matchesQuery &&
+        matchesVersion &&
+        matchesLanguage &&
+        matchesCategory &&
+        matchesSeverity &&
+        matchesApiFilter
+      );
     });
 
     // Apply code-only filter
@@ -1156,10 +1188,10 @@ class Tier1380SecurityMCPServer {
     results.sort((a, b) => {
       const aTitleMatch = a.title.toLowerCase().includes(query.toLowerCase());
       const bTitleMatch = b.title.toLowerCase().includes(query.toLowerCase());
-      
+
       if (aTitleMatch && !bTitleMatch) return -1;
       if (!aTitleMatch && bTitleMatch) return 1;
-      
+
       return 0;
     });
 
@@ -1167,10 +1199,15 @@ class Tier1380SecurityMCPServer {
   }
 
   async run(): Promise<void> {
-    const transport = process.argv.includes('--http') ? 'http' : 
-                     process.argv.includes('--sse') ? 'sse' : 'stdio';
-  
-    const port = parseInt(process.argv.find(arg => arg.startsWith('--port='))?.split('=')[1] || '3000');
+    const transport = process.argv.includes('--http')
+      ? 'http'
+      : process.argv.includes('--sse')
+        ? 'sse'
+        : 'stdio';
+
+    const port = parseInt(
+      process.argv.find(arg => arg.startsWith('--port='))?.split('=')[1] || '3000'
+    );
 
     switch (transport) {
       case 'http':

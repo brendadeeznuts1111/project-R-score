@@ -1,18 +1,20 @@
 import type { CookieInit } from 'bun';
 
-
 export class ABTestManager {
   private cookies: Bun.CookieMap;
-  private tests = new Map<string, {
-    id: string;
-    variants: string[];
-    weights: number[];          // must sum to 100
-    cookieName: string;
-    maxAgeDays: number;
-    secure: boolean;
-    sameSite: 'strict' | 'lax' | 'none';
-    httpOnly: boolean;
-  }>();
+  private tests = new Map<
+    string,
+    {
+      id: string;
+      variants: string[];
+      weights: number[]; // must sum to 100
+      cookieName: string;
+      maxAgeDays: number;
+      secure: boolean;
+      sameSite: 'strict' | 'lax' | 'none';
+      httpOnly: boolean;
+    }
+  >();
 
   constructor(cookieHeader: string | null = null) {
     this.cookies = new Bun.CookieMap(cookieHeader ?? '');
@@ -21,7 +23,7 @@ export class ABTestManager {
   registerTest(config: {
     id: string;
     variants: string[];
-    weights?: number[];           // defaults to equal distribution
+    weights?: number[]; // defaults to equal distribution
     cookieName?: string;
     maxAgeDays?: number;
     secure?: boolean;
@@ -36,7 +38,7 @@ export class ABTestManager {
       maxAgeDays = 30,
       secure = Bun.env.NODE_ENV === 'production',
       sameSite = 'lax',
-      httpOnly = true
+      httpOnly = true,
     } = config;
 
     // Validate weights sum to 100
@@ -53,7 +55,7 @@ export class ABTestManager {
       maxAgeDays,
       secure,
       sameSite,
-      httpOnly
+      httpOnly,
     });
   }
 
@@ -79,7 +81,7 @@ export class ABTestManager {
       secure: test.secure,
       sameSite: test.sameSite,
       httpOnly: test.httpOnly,
-      partitioned: false
+      partitioned: false,
     };
 
     this.cookies.set(init);
@@ -127,7 +129,7 @@ export class ABTestManager {
       maxAge: test.maxAgeDays * 24 * 60 * 60,
       secure: test.secure,
       sameSite: test.sameSite,
-      httpOnly: test.httpOnly
+      httpOnly: test.httpOnly,
     };
 
     this.cookies.set(init);

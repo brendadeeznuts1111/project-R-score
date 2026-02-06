@@ -21,7 +21,7 @@ import {
   getRecommendation,
   applyVipRiskOverride,
   type HabitsData 
-} from '../lib/habits-classifier.ts';
+} from '../lib/business/habits-classifier.ts';
 
 // ============================================================================
 // Configuration

@@ -1,13 +1,12 @@
 /**
  * 📚 Documentation Patterns and Relationships
- * 
+ *
  * Centralized documentation URL management and pattern matching
- * 
+ *
  * @version 1.0.0
  */
 
-import { BUN_DOCS_BUILDERS as BUN_DOCS } from '../core-documentation';
-
+import { BUN_DOCS_BUILDERS as BUN_DOCS } from '../core/core-documentation';
 
 export const DOC_PATTERNS = {
   // URL pattern matching
@@ -19,13 +18,13 @@ export const DOC_PATTERNS = {
     '/runtime/network': 'network',
     '/runtime/process': 'process',
     '/runtime/hashing': 'hashing',
-    
+
     // API patterns
     '/api/bun': 'bun-api',
     '/api/bun-serve': 'serve-api',
     '/api/bun-write': 'write-api',
     '/api/bun-spawn': 'spawn-api',
-    
+
     // Guide patterns
     '/guides/getting-started': 'getting-started',
     '/guides/deployment': 'deployment',
@@ -43,21 +42,21 @@ export const DOC_PATTERNS = {
         BUN_DOCS.secrets.rollback,
         BUN_DOCS.runtime('binary-data'),
         BUN_DOCS.runtime('typescript'),
-        BUN_DOCS.runtime('hashing') // Added hashing docs
+        BUN_DOCS.runtime('hashing'), // Added hashing docs
       ];
       return related;
     }
-    
+
     if (url.includes('/runtime/hashing')) {
       const related = [
         BUN_DOCS.runtime('hashing'),
         BUN_DOCS.runtime('secrets'),
         BUN_DOCS.runtime('binary-data'),
-        BUN_DOCS.runtime('crypto')
+        BUN_DOCS.runtime('crypto'),
       ];
       return related;
     }
-    
+
     if (url.includes('/runtime/color')) {
       const related = [
         BUN_DOCS.color.main,
@@ -66,51 +65,51 @@ export const DOC_PATTERNS = {
         BUN_DOCS.color.formatNumbers,
         BUN_DOCS.color.formatHex,
         BUN_DOCS.color.getChannels,
-        BUN_DOCS.color.bundleTime
+        BUN_DOCS.color.bundleTime,
       ];
       return related;
     }
-    
+
     if (url.includes('/runtime/file-system')) {
       const related = [
         BUN_DOCS.runtime('file-io'),
         BUN_DOCS.runtime('binary-data'),
         BUN_DOCS.runtime('watcher'),
-        BUN_DOCS.runtime('path')
+        BUN_DOCS.runtime('path'),
       ];
       return related;
     }
-    
+
     if (url.includes('/runtime/network')) {
       const related = [
         BUN_DOCS.runtime('fetch'),
         BUN_DOCS.runtime('websocket'),
         BUN_DOCS.runtime('proxy'),
-        BUN_DOCS.runtime('tls')
+        BUN_DOCS.runtime('tls'),
       ];
       return related;
     }
-    
+
     if (url.includes('/api/bun-serve')) {
       const related = [
         BUN_DOCS.bundler.main,
         BUN_DOCS.bundler.server,
         BUN_DOCS.bundler.static,
-        BUN_DOCS.bundler.plugins
+        BUN_DOCS.bundler.plugins,
       ];
       return related;
     }
-    
+
     if (url.includes('/guides/deployment')) {
       const related = [
         BUN_DOCS.deployment.docker,
         BUN_DOCS.deployment.aws,
         BUN_DOCS.deployment.vercel,
-        BUN_DOCS.deployment.railway
+        BUN_DOCS.deployment.railway,
       ];
       return related;
     }
-    
+
     return [];
   },
 
@@ -130,16 +129,16 @@ export const DOC_PATTERNS = {
       '/runtime/secrets',
       '/runtime/color',
       '/api/bun',
-      '/guides/getting-started'
+      '/guides/getting-started',
     ];
-    
+
     const mediumPriority = [
       '/runtime/file-system',
       '/runtime/network',
       '/api/bun-serve',
-      '/guides/deployment'
+      '/guides/deployment',
     ];
-    
+
     if (highPriority.some(pattern => url.includes(pattern))) return 'high';
     if (mediumPriority.some(pattern => url.includes(pattern))) return 'medium';
     return 'low';
@@ -149,16 +148,14 @@ export const DOC_PATTERNS = {
   generateBreadcrumbs: (url: string): string[] => {
     const parts = url.split('/').filter(Boolean);
     const breadcrumbs = ['Home'];
-    
+
     let currentPath = '';
     for (const part of parts) {
       currentPath += '/' + part;
-      const name = part
-        .replace(/-/g, ' ')
-        .replace(/\b\w/g, l => l.toUpperCase());
+      const name = part.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
       breadcrumbs.push(name);
     }
-    
+
     return breadcrumbs;
   },
 
@@ -169,12 +166,10 @@ export const DOC_PATTERNS = {
       ...Object.values(BUN_DOCS.color),
       ...Object.values(BUN_DOCS.runtime),
       ...Object.values(BUN_DOCS.api),
-      ...Object.values(BUN_DOCS.guides)
+      ...Object.values(BUN_DOCS.guides),
     ];
-    
-    return allDocs.filter(doc => 
-      doc.toLowerCase().includes(query.toLowerCase())
-    );
+
+    return allDocs.filter(doc => doc.toLowerCase().includes(query.toLowerCase()));
   },
 
   // Validate documentation URL
@@ -195,9 +190,9 @@ export const DOC_PATTERNS = {
       priority: DOC_PATTERNS.getPriority(url),
       related: DOC_PATTERNS.getRelatedDocs(url),
       breadcrumbs: DOC_PATTERNS.generateBreadcrumbs(url),
-      isValid: DOC_PATTERNS.isValidURL(url)
+      isValid: DOC_PATTERNS.isValidURL(url),
     };
-  }
+  },
 } as const;
 
 export default DOC_PATTERNS;

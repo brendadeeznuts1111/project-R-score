@@ -5,7 +5,7 @@
  * for typed array methods and related features.
  */
 
-import { docs } from '../lib/docs-reference.ts';
+import { docs } from '../lib/docs/reference.ts';
 
 /**
  * 🚀 Prefetch Optimizations

@@ -2,7 +2,7 @@
 
 /**
  * 🔔 R2 Event System - Real-time Notifications & WebSocket Integration
- * 
+ *
  * Provides event-driven architecture for R2 operations with:
  * - WebSocket-based live updates
  * - Event streaming for real-time monitoring
@@ -80,7 +80,7 @@ export class R2EventSystem {
       path: config.path || '/r2-events',
       heartbeatInterval: config.heartbeatInterval || 30000,
       maxConnections: config.maxConnections || 100,
-      authentication: config.authentication ?? false
+      authentication: config.authentication ?? false,
     };
   }
 
@@ -91,16 +91,22 @@ export class R2EventSystem {
     if (this.isRunning) return;
 
     console.log(styled('🔔 Initializing R2 Event System', 'accent'));
-    
+
     // Start WebSocket server
     await this.startWebSocketServer();
-    
+
     // Start heartbeat
     this.startHeartbeat();
-    
+
     this.isRunning = true;
-    const EVENT_SYSTEM_HOST = process.env.EVENT_SYSTEM_HOST || process.env.SERVER_HOST || 'localhost';
-    console.log(styled(`✅ Event system running on ws://${EVENT_SYSTEM_HOST}:${this.config.port}${this.config.path}`, 'success'));
+    const EVENT_SYSTEM_HOST =
+      process.env.EVENT_SYSTEM_HOST || process.env.SERVER_HOST || 'localhost';
+    console.log(
+      styled(
+        `✅ Event system running on ws://${EVENT_SYSTEM_HOST}:${this.config.port}${this.config.path}`,
+        'success'
+      )
+    );
   }
 
   /**
@@ -114,39 +120,45 @@ export class R2EventSystem {
           const url = new URL(req.url);
           if (url.pathname === this.config.path) {
             const upgraded = server.upgrade(req, {
-              data: { 
+              data: {
                 clientId: crypto.randomUUID(),
-                connectedAt: new Date().toISOString()
-              }
+                connectedAt: new Date().toISOString(),
+              },
             });
             if (upgraded) return undefined;
           }
           return new Response('R2 Event System', { status: 200 });
         },
         websocket: {
-          open: (ws) => {
+          open: ws => {
             if (this.wsClients.size >= this.config.maxConnections!) {
               ws.close(1008, 'Maximum connections reached');
               return;
             }
             this.wsClients.add(ws);
-            console.log(styled(`🔌 WebSocket client connected (${this.wsClients.size} total)`, 'info'));
-            
+            console.log(
+              styled(`🔌 WebSocket client connected (${this.wsClients.size} total)`, 'info')
+            );
+
             // Send welcome message
-            ws.send(JSON.stringify({
-              type: 'connection:established',
-              clientId: ws.data.clientId,
-              timestamp: new Date().toISOString()
-            }));
+            ws.send(
+              JSON.stringify({
+                type: 'connection:established',
+                clientId: ws.data.clientId,
+                timestamp: new Date().toISOString(),
+              })
+            );
           },
-          close: (ws) => {
+          close: ws => {
             this.wsClients.delete(ws);
-            console.log(styled(`🔌 WebSocket client disconnected (${this.wsClients.size} remaining)`, 'muted'));
+            console.log(
+              styled(`🔌 WebSocket client disconnected (${this.wsClients.size} remaining)`, 'muted')
+            );
           },
           message: (ws, message) => {
             this.handleWebSocketMessage(ws, message);
-          }
-        }
+          },
+        },
       });
 
       console.log(styled(`🌐 WebSocket server started on port ${this.config.port}`, 'success'));
@@ -161,30 +173,32 @@ export class R2EventSystem {
   private handleWebSocketMessage(ws: WebSocket, message: string | Buffer): void {
     try {
       const data = JSON.parse(message.toString());
-      
+
       switch (data.action) {
         case 'subscribe':
           ws.data.subscriptions = data.types || ['*'];
-          ws.send(JSON.stringify({
-            type: 'subscription:confirmed',
-            subscriptions: ws.data.subscriptions
-          }));
+          ws.send(
+            JSON.stringify({
+              type: 'subscription:confirmed',
+              subscriptions: ws.data.subscriptions,
+            })
+          );
           break;
-          
+
         case 'unsubscribe':
           ws.data.subscriptions = [];
           ws.send(JSON.stringify({ type: 'subscription:cleared' }));
           break;
-          
+
         case 'ping':
           ws.send(JSON.stringify({ type: 'pong', timestamp: new Date().toISOString() }));
           break;
-          
+
         case 'history':
-          const history = this.getEventHistory({ 
+          const history = this.getEventHistory({
             types: data.types,
             since: data.since ? new Date(data.since) : undefined,
-            limit: data.limit || 100
+            limit: data.limit || 100,
           });
           ws.send(JSON.stringify({ type: 'history', events: history }));
           break;
@@ -202,9 +216,9 @@ export class R2EventSystem {
       const heartbeat = {
         type: 'heartbeat',
         timestamp: new Date().toISOString(),
-        connections: this.wsClients.size
+        connections: this.wsClients.size,
       };
-      
+
       this.broadcastToWebSockets(heartbeat);
     }, this.config.heartbeatInterval);
   }
@@ -236,7 +250,7 @@ export class R2EventSystem {
     const fullEvent: R2Event = {
       ...event,
       id: `evt-${Date.now()}-${++this.eventCounter}`,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     // Store in history
@@ -304,8 +318,8 @@ export class R2EventSystem {
    * Subscribe to events once
    */
   once(type: R2EventType): Promise<R2Event> {
-    return new Promise((resolve) => {
-      const unsubscribe = this.on(type, (event) => {
+    return new Promise(resolve => {
+      const unsubscribe = this.on(type, event => {
         unsubscribe();
         resolve(event);
       });
@@ -316,7 +330,7 @@ export class R2EventSystem {
    * Wait for specific event condition
    */
   async waitFor(
-    type: R2EventType, 
+    type: R2EventType,
     condition: (event: R2Event) => boolean,
     timeout: number = 30000
   ): Promise<R2Event> {
@@ -326,7 +340,7 @@ export class R2EventSystem {
         reject(new Error(`Timeout waiting for event: ${type}`));
       }, timeout);
 
-      const unsubscribe = this.on(type, (event) => {
+      const unsubscribe = this.on(type, event => {
         if (condition(event)) {
           clearTimeout(timer);
           unsubscribe();
@@ -349,9 +363,11 @@ export class R2EventSystem {
       events = events.filter(e => filter.buckets!.includes(e.bucket));
     }
     if (filter?.keys) {
-      events = events.filter(e => e.key && filter.keys!.some(pattern => 
-        e.key!.includes(pattern) || this.matchGlob(e.key!, pattern)
-      ));
+      events = events.filter(
+        e =>
+          e.key &&
+          filter.keys!.some(pattern => e.key!.includes(pattern) || this.matchGlob(e.key!, pattern))
+      );
     }
     if (filter?.sources) {
       events = events.filter(e => filter.sources!.includes(e.source));
@@ -380,7 +396,7 @@ export class R2EventSystem {
     const buffer: R2Event[] = [];
     let resolveNext: ((event: R2Event) => void) | null = null;
 
-    const unsubscribe = this.onAll((event) => {
+    const unsubscribe = this.onAll(event => {
       if (this.matchesFilter(event, filter)) {
         if (resolveNext) {
           resolveNext(event);
@@ -429,7 +445,7 @@ export class R2EventSystem {
       eventsByType,
       eventsByBucket,
       activeConnections: this.wsClients.size,
-      uptime: Date.now() - (this as any).startTime || 0
+      uptime: Date.now() - (this as any).startTime || 0,
     };
   }
 
@@ -442,7 +458,7 @@ export class R2EventSystem {
       type: 'cache:invalidated',
       bucket: 'system',
       source: 'R2EventSystem',
-      metadata: { action: 'history-cleared' }
+      metadata: { action: 'history-cleared' },
     });
   }
 
@@ -451,7 +467,7 @@ export class R2EventSystem {
    */
   async shutdown(): Promise<void> {
     console.log(styled('🛑 Shutting down R2 Event System', 'warning'));
-    
+
     // Close all WebSocket connections
     this.wsClients.forEach(ws => {
       ws.close(1000, 'Server shutting down');
@@ -474,22 +490,27 @@ export class R2EventSystem {
       'object:deleted',
       'bucket:sync-failed',
       'backup:failed',
-      'error:occurred'
+      'error:occurred',
     ].includes(type);
   }
 
   private matchesFilter(event: R2Event, filter?: EventFilter): boolean {
     if (!filter) return true;
-    
+
     if (filter.types && !filter.types.includes(event.type)) return false;
     if (filter.buckets && !filter.buckets.includes(event.bucket)) return false;
     if (filter.sources && !filter.sources.includes(event.source)) return false;
-    if (filter.keys && event.key && !filter.keys.some(pattern => 
-      event.key!.includes(pattern) || this.matchGlob(event.key!, pattern)
-    )) return false;
+    if (
+      filter.keys &&
+      event.key &&
+      !filter.keys.some(
+        pattern => event.key!.includes(pattern) || this.matchGlob(event.key!, pattern)
+      )
+    )
+      return false;
     if (filter.since && new Date(event.timestamp) < filter.since) return false;
     if (filter.until && new Date(event.timestamp) > filter.until) return false;
-    
+
     return true;
   }
 
@@ -509,7 +530,7 @@ export function emitObjectCreated(bucket: string, key: string, metadata?: any): 
     bucket,
     key,
     metadata,
-    source: 'R2Client'
+    source: 'R2Client',
   });
 }
 
@@ -519,7 +540,7 @@ export function emitObjectUpdated(bucket: string, key: string, metadata?: any): 
     bucket,
     key,
     metadata,
-    source: 'R2Client'
+    source: 'R2Client',
   });
 }
 
@@ -528,7 +549,7 @@ export function emitObjectDeleted(bucket: string, key: string): void {
     type: 'object:deleted',
     bucket,
     key,
-    source: 'R2Client'
+    source: 'R2Client',
   });
 }
 
@@ -541,14 +562,16 @@ if (import.meta.main) {
   console.log(styled('=======================', 'accent'));
 
   // Subscribe to all events
-  events.onAll((event) => {
-    console.log(styled(`[${event.timestamp}] ${event.type}: ${event.key || event.bucket}`, 'muted'));
+  events.onAll(event => {
+    console.log(
+      styled(`[${event.timestamp}] ${event.type}: ${event.key || event.bucket}`, 'muted')
+    );
   });
 
   // Emit test events
   emitObjectCreated('scanner-cookies', 'test/object1.json', { size: 1024 });
   emitObjectUpdated('scanner-cookies', 'test/object2.json', { size: 2048 });
-  
+
   console.log(styled('\n📈 Event Stats:', 'info'));
   const stats = events.getStats();
   console.log(styled(`  Total Events: ${stats.totalEvents}`, 'muted'));
@@ -556,7 +579,7 @@ if (import.meta.main) {
 
   // Keep running
   console.log(styled('\n🌐 WebSocket server running. Press Ctrl+C to stop.', 'info'));
-  
+
   // Graceful shutdown
   process.on('SIGINT', async () => {
     await events.shutdown();

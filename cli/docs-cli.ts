@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 import { EnhancedDocsFetcher } from '../lib/docs/index-fetcher-enhanced'
-import { ChromeAppManager } from '../lib/chrome-integration'
+import { ChromeAppManager } from '../lib/cli/chrome-integration'
 import { InteractiveDocsExplorer } from '../lib/docs/interactive-docs'
 
 class EnhancedDocsCLI {

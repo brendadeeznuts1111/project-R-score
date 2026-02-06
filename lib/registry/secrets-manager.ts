@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * 🔐 Registry Secrets Manager with bun.secrets Integration
- * 
+ *
  * Features:
  * - bun.secrets for secure credential storage
  * - R2-backed versioned secrets
@@ -55,9 +55,7 @@ export class RegistrySecretsManager {
   private cacheExpiry = new Map<string, number>();
   private CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-  constructor(
-    r2Config?: ConstructorParameters<typeof R2StorageAdapter>[0]
-  ) {
+  constructor(r2Config?: ConstructorParameters<typeof R2StorageAdapter>[0]) {
     this.storage = new R2StorageAdapter({
       ...r2Config,
       bucketName: r2Config?.bucketName || process.env.R2_SECRETS_BUCKET || 'npm-registry',
@@ -80,8 +78,8 @@ export class RegistrySecretsManager {
    * Store a secret (creates new version)
    */
   async setSecret(
-    key: string, 
-    value: string, 
+    key: string,
+    value: string,
     options: {
       createdBy?: string;
       tags?: string[];
@@ -104,7 +102,7 @@ export class RegistrySecretsManager {
 
     // Store in R2
     await this.storeToR2(key, entry);
-    
+
     // Store version history
     const versionEntry: SecretVersion = {
       version,
@@ -237,9 +235,9 @@ export class RegistrySecretsManager {
       const response = await fetch(
         `${(this.storage as any).baseUrl}/${(this.storage as any).config.bucketName}?list-type=2&prefix=secrets/${key}/versions/`
       );
-      
+
       if (!response.ok) return [];
-      
+
       // Parse and return versions
       return [];
     } catch {
@@ -290,7 +288,7 @@ export class RegistrySecretsManager {
    */
   generateVersionGraph(key: string, versions: SecretVersion[]): string {
     const lines: string[] = [];
-    
+
     lines.push(styled(`\n🔐 ${key} - Version History`, 'accent'));
     lines.push(styled('═'.repeat(50), 'accent'));
     lines.push('');
@@ -298,22 +296,28 @@ export class RegistrySecretsManager {
     for (let i = 0; i < versions.length; i++) {
       const v = versions[i];
       const isLast = i === versions.length - 1;
-      
-      const actionIcon = v.action === 'create' ? '✨' :
-                         v.action === 'update' ? '📝' :
-                         v.action === 'rotate' ? '🔄' :
-                         v.action === 'rollback' ? '⏮️' : '📦';
+
+      const actionIcon =
+        v.action === 'create'
+          ? '✨'
+          : v.action === 'update'
+            ? '📝'
+            : v.action === 'rotate'
+              ? '🔄'
+              : v.action === 'rollback'
+                ? '⏮️'
+                : '📦';
 
       const connector = isLast ? '└──' : '├──';
       const versionStr = styled(` v${v.version} `, isLast ? 'success' : 'muted');
-      
+
       lines.push(`${connector}${versionStr} ${actionIcon} ${v.action}`);
       lines.push(`│   📅 ${new Date(v.createdAt).toLocaleString()}`);
-      
+
       if (v.createdBy) {
         lines.push(`│   👤 ${v.createdBy}`);
       }
-      
+
       if (!isLast) {
         lines.push('│');
       }
@@ -336,7 +340,7 @@ export class RegistrySecretsManager {
   ): Promise<void> {
     const key = `registry:${registry}`;
     const value = JSON.stringify(credentials);
-    
+
     await this.setSecret(key, value, {
       tags: ['registry', 'credentials'],
       useBunSecrets: true,
@@ -351,9 +355,9 @@ export class RegistrySecretsManager {
   async getRegistryCredentials(registry: string): Promise<Record<string, string> | null> {
     const key = `registry:${registry}`;
     const entry = await this.getSecret(key);
-    
+
     if (!entry) return null;
-    
+
     try {
       return JSON.parse(entry.value);
     } catch {

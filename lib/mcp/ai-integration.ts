@@ -2,7 +2,7 @@
 
 /**
  * 🤖 FactoryWager AI Integration System
- * 
+ *
  * Integrates the Bun Native AI Analyzer with the advanced FactoryWager ecosystem
  * for intelligent dispute resolution, evidence analysis, and cross-domain learning.
  */
@@ -15,12 +15,12 @@ import { masterTokenManager } from '../security/master-token';
 import { styled, FW_COLORS } from '../theme/colors';
 
 // Import the AI analyzer from the duo-automation project
-import { 
-  BunNativeAIAnalyzer, 
-  Evidence, 
-  EvidenceAnalysis, 
+import {
+  BunNativeAIAnalyzer,
+  Evidence,
+  EvidenceAnalysis,
   BatchAnalysis,
-  AIConfig 
+  AIConfig,
 } from '../../projects/automation/duo-automation/src/ai/bun-native-ai-analyzer';
 
 export interface AIDomainIntegration {
@@ -41,11 +41,14 @@ export interface CrossDomainIntelligence {
     frequency: number;
     recommendedActions: string[];
   }>;
-  modelPerformance: Record<string, {
-    accuracy: number;
-    processingTime: number;
-    confidence: number;
-  }>;
+  modelPerformance: Record<
+    string,
+    {
+      accuracy: number;
+      processingTime: number;
+      confidence: number;
+    }
+  >;
   threatIntelligence: Array<{
     threatType: string;
     severity: 'low' | 'medium' | 'high' | 'critical';
@@ -92,53 +95,57 @@ export class AIIntegrationSystem {
     return {
       sharedPatterns: [
         {
-          pattern: "receipt_manipulation",
-          domains: ["factory-wager.com", "duoplus.com"],
+          pattern: 'receipt_manipulation',
+          domains: ['factory-wager.com', 'duoplus.com'],
           confidence: 0.92,
           frequency: 45,
-          recommendedActions: ["EXIF_analysis", "blockchain_verification", "manual_review"]
+          recommendedActions: ['EXIF_analysis', 'blockchain_verification', 'manual_review'],
         },
         {
-          pattern: "identity_spoofing",
-          domains: ["factory-wager.com", "duoplus.com"],
+          pattern: 'identity_spoofing',
+          domains: ['factory-wager.com', 'duoplus.com'],
           confidence: 0.87,
           frequency: 23,
-          recommendedActions: ["biometric_verification", "document_cross_check", "identity_validation"]
+          recommendedActions: [
+            'biometric_verification',
+            'document_cross_check',
+            'identity_validation',
+          ],
         },
         {
-          pattern: "location_forgery",
-          domains: ["duoplus.com"],
+          pattern: 'location_forgery',
+          domains: ['duoplus.com'],
           confidence: 0.78,
           frequency: 12,
-          recommendedActions: ["GPS_verification", "IP_geolocation", "timestamp_analysis"]
-        }
+          recommendedActions: ['GPS_verification', 'IP_geolocation', 'timestamp_analysis'],
+        },
       ],
       modelPerformance: {
-        "image-analysis": { accuracy: 0.95, processingTime: 150, confidence: 0.89 },
-        "text-analysis": { accuracy: 0.88, processingTime: 80, confidence: 0.85 },
-        "fraud-detection": { accuracy: 0.92, processingTime: 200, confidence: 0.91 },
-        "object-detection": { accuracy: 0.89, processingTime: 120, confidence: 0.87 }
+        'image-analysis': { accuracy: 0.95, processingTime: 150, confidence: 0.89 },
+        'text-analysis': { accuracy: 0.88, processingTime: 80, confidence: 0.85 },
+        'fraud-detection': { accuracy: 0.92, processingTime: 200, confidence: 0.91 },
+        'object-detection': { accuracy: 0.89, processingTime: 120, confidence: 0.87 },
       },
       threatIntelligence: [
         {
-          threatType: "synthetic_identity",
-          severity: "high",
-          affectedDomains: ["factory-wager.com", "duoplus.com"],
-          detectionCount: 8
+          threatType: 'synthetic_identity',
+          severity: 'high',
+          affectedDomains: ['factory-wager.com', 'duoplus.com'],
+          detectionCount: 8,
         },
         {
-          threatType: "deepfake_media",
-          severity: "critical",
-          affectedDomains: ["duoplus.com"],
-          detectionCount: 3
+          threatType: 'deepfake_media',
+          severity: 'critical',
+          affectedDomains: ['duoplus.com'],
+          detectionCount: 3,
         },
         {
-          threatType: "document_forgery",
-          severity: "medium",
-          affectedDomains: ["factory-wager.com"],
-          detectionCount: 15
-        }
-      ]
+          threatType: 'document_forgery',
+          severity: 'medium',
+          affectedDomains: ['factory-wager.com'],
+          detectionCount: 15,
+        },
+      ],
     };
   }
 
@@ -151,7 +158,7 @@ export class AIIntegrationSystem {
         totalProcessed: 0,
         averageProcessingTime: 0,
         gpuEnabled: false,
-        workerPoolSize: 0
+        workerPoolSize: 0,
       },
       domainIntegrations: [],
       crossDomainIntelligence: this.crossDomainIntelligence,
@@ -159,8 +166,8 @@ export class AIIntegrationSystem {
         throughput: 0,
         accuracy: 0,
         latency: 0,
-        errorRate: 0
-      }
+        errorRate: 0,
+      },
     };
   }
 
@@ -173,13 +180,13 @@ export class AIIntegrationSystem {
 
     // Initialize the AI analyzer
     await this.aiAnalyzer.initialize();
-    
+
     // Initialize domain integrations
     await this.initializeDomainIntegrations();
-    
+
     // Setup cross-domain learning
     await this.setupCrossDomainLearning();
-    
+
     // Store AI configuration in R2
     await this.storeAIConfiguration();
 
@@ -200,7 +207,7 @@ export class AIIntegrationSystem {
       processingCapacity: 100,
       averageConfidence: 0.91,
       totalProcessed: 1247,
-      successRate: 0.94
+      successRate: 0.94,
     };
 
     // DuoPlus domain integration
@@ -211,7 +218,7 @@ export class AIIntegrationSystem {
       processingCapacity: 75,
       averageConfidence: 0.88,
       totalProcessed: 892,
-      successRate: 0.91
+      successRate: 0.91,
     };
 
     this.domains.set('factory-wager.com', factoryWagerIntegration);
@@ -221,7 +228,10 @@ export class AIIntegrationSystem {
       timestamp: new Date().toISOString(),
       integrations: Array.from(this.domains.values()),
       totalDomains: this.domains.size,
-      totalCapacity: Array.from(this.domains.values()).reduce((sum, d) => sum + d.processingCapacity, 0)
+      totalCapacity: Array.from(this.domains.values()).reduce(
+        (sum, d) => sum + d.processingCapacity,
+        0
+      ),
     });
 
     console.log(styled('✅ Domain AI integrations initialized', 'success'));
@@ -241,18 +251,18 @@ export class AIIntegrationSystem {
       patternRecognition: {
         enabled: true,
         confidenceThreshold: 0.8,
-        minFrequency: 5
+        minFrequency: 5,
       },
       threatIntelligence: {
         enabled: true,
         sharingLevel: 'high',
-        alertThreshold: 3
+        alertThreshold: 3,
       },
       modelImprovement: {
         enabled: true,
         feedbackLoop: true,
-        retrainingInterval: '7d'
-      }
+        retrainingInterval: '7d',
+      },
     };
 
     await this.r2.putJSON('integrations/ai/cross-domain-learning.json', learningConfig);
@@ -268,33 +278,35 @@ export class AIIntegrationSystem {
 
     // Update metrics with current AI analyzer status
     const modelStatus = this.aiAnalyzer.getModelStatus();
-    this.metrics.aiSystem.modelsLoaded = Array.from(modelStatus.values()).filter(m => m.loaded).length;
-    this.metrics.aiSystem.gpuEnabled = process.env.ENABLE_GPU === "true";
-    this.metrics.aiSystem.workerPoolSize = parseInt(process.env.AI_MAX_CONCURRENCY || "4");
+    this.metrics.aiSystem.modelsLoaded = Array.from(modelStatus.values()).filter(
+      m => m.loaded
+    ).length;
+    this.metrics.aiSystem.gpuEnabled = process.env.ENABLE_GPU === 'true';
+    this.metrics.aiSystem.workerPoolSize = parseInt(process.env.AI_MAX_CONCURRENCY || '4');
     this.metrics.domainIntegrations = Array.from(this.domains.values());
 
     await this.r2.putJSON('integrations/ai/configuration.json', {
       timestamp: new Date().toISOString(),
       aiConfig: {
         models: {
-          imageAnalysis: "evidence-analyzer-v2",
-          textAnalysis: "text-analyzer-v1",
-          fraudDetection: "fraud-detector-v3",
-          objectDetection: "yolo-v8"
+          imageAnalysis: 'evidence-analyzer-v2',
+          textAnalysis: 'text-analyzer-v1',
+          fraudDetection: 'fraud-detector-v3',
+          objectDetection: 'yolo-v8',
         },
         gpu: {
           enabled: this.metrics.aiSystem.gpuEnabled,
-          memory: process.env.GPU_MEMORY || "4G",
-          device: process.env.GPU_DEVICE || "auto"
+          memory: process.env.GPU_MEMORY || '4G',
+          device: process.env.GPU_DEVICE || 'auto',
         },
         performance: {
-          batchSize: parseInt(process.env.AI_BATCH_SIZE || "10"),
+          batchSize: parseInt(process.env.AI_BATCH_SIZE || '10'),
           maxConcurrency: this.metrics.aiSystem.workerPoolSize,
-          timeout: parseInt(process.env.AI_TIMEOUT || "30000")
-        }
+          timeout: parseInt(process.env.AI_TIMEOUT || '30000'),
+        },
       },
       modelStatus: Object.fromEntries(modelStatus),
-      metrics: this.metrics
+      metrics: this.metrics,
     });
 
     console.log(styled('✅ AI configuration stored', 'success'));
@@ -309,27 +321,26 @@ export class AIIntegrationSystem {
     try {
       // Perform AI analysis
       const analysis = await this.aiAnalyzer.analyzeEvidence(evidence);
-      
+
       // Enhance with domain-specific intelligence
       const enhancedAnalysis = await this.enhanceWithDomainIntelligence(analysis, domain);
-      
+
       // Store in R2 with domain context
       await this.storeAnalysisResults(evidence, enhancedAnalysis, domain);
-      
+
       // Update cross-domain learning
       await this.updateCrossDomainLearning(evidence, enhancedAnalysis, domain);
-      
+
       // Update metrics
       this.updateMetrics(enhancedAnalysis);
-      
-      return enhancedAnalysis;
 
+      return enhancedAnalysis;
     } catch (error) {
       console.error(styled(`❌ AI analysis failed for ${evidence.id}: ${error.message}`, 'error'));
-      
+
       // Store error in R2 for learning
       await this.storeAnalysisError(evidence, error, domain);
-      
+
       throw error;
     }
   }
@@ -338,7 +349,7 @@ export class AIIntegrationSystem {
    * Enhance analysis with domain-specific intelligence
    */
   private async enhanceWithDomainIntelligence(
-    analysis: EvidenceAnalysis, 
+    analysis: EvidenceAnalysis,
     domain: string
   ): Promise<EvidenceAnalysis> {
     const domainIntegration = this.domains.get(domain);
@@ -353,7 +364,7 @@ export class AIIntegrationSystem {
 
     // Enhance recommendations based on domain patterns
     const enhancedRecommendations = [...analysis.recommendations];
-    
+
     for (const pattern of matchedPatterns) {
       if (Math.random() < pattern.confidence) {
         enhancedRecommendations.push(...pattern.recommendedActions);
@@ -372,8 +383,8 @@ export class AIIntegrationSystem {
         ...analysis.metadata,
         domain,
         domainIntegration: domainIntegration,
-        matchedPatterns: matchedPatterns.map(p => p.pattern)
-      }
+        matchedPatterns: matchedPatterns.map(p => p.pattern),
+      },
     };
   }
 
@@ -381,8 +392,8 @@ export class AIIntegrationSystem {
    * Store analysis results in R2
    */
   private async storeAnalysisResults(
-    evidence: Evidence, 
-    analysis: EvidenceAnalysis, 
+    evidence: Evidence,
+    analysis: EvidenceAnalysis,
     domain: string
   ): Promise<void> {
     const result = {
@@ -392,7 +403,7 @@ export class AIIntegrationSystem {
       analysis,
       processingTime: analysis.processingTime,
       confidence: analysis.confidence,
-      recommendations: analysis.recommendations
+      recommendations: analysis.recommendations,
     };
 
     const key = `integrations/ai/analyses/${domain}/${evidence.id}.json`;
@@ -402,7 +413,11 @@ export class AIIntegrationSystem {
   /**
    * Store analysis error for learning
    */
-  private async storeAnalysisError(evidence: Evidence, error: Error, domain: string): Promise<void> {
+  private async storeAnalysisError(
+    evidence: Evidence,
+    error: Error,
+    domain: string
+  ): Promise<void> {
     const errorResult = {
       timestamp: new Date().toISOString(),
       domain,
@@ -410,13 +425,13 @@ export class AIIntegrationSystem {
       error: {
         name: error.name,
         message: error.message,
-        stack: error.stack
+        stack: error.stack,
       },
       evidenceMetadata: {
         type: evidence.type,
         size: evidence.size,
-        mimeType: evidence.mimeType
-      }
+        mimeType: evidence.mimeType,
+      },
     };
 
     const key = `integrations/ai/errors/${domain}/${evidence.id}.json`;
@@ -427,15 +442,16 @@ export class AIIntegrationSystem {
    * Update cross-domain learning with new analysis
    */
   private async updateCrossDomainLearning(
-    evidence: Evidence, 
-    analysis: EvidenceAnalysis, 
+    evidence: Evidence,
+    analysis: EvidenceAnalysis,
     domain: string
   ): Promise<void> {
     // Update pattern frequencies
     for (const pattern of this.crossDomainIntelligence.sharedPatterns) {
       if (pattern.domains.includes(domain)) {
         // Simulate pattern matching and frequency update
-        if (Math.random() < 0.3) { // 30% chance of pattern match
+        if (Math.random() < 0.3) {
+          // 30% chance of pattern match
           pattern.frequency += 1;
           pattern.confidence = Math.min(pattern.confidence + 0.01, 1.0);
         }
@@ -445,7 +461,7 @@ export class AIIntegrationSystem {
     // Store updated intelligence
     await this.r2.putJSON('integrations/ai/cross-domain-intelligence.json', {
       timestamp: new Date().toISOString(),
-      intelligence: this.crossDomainIntelligence
+      intelligence: this.crossDomainIntelligence,
     });
   }
 
@@ -454,9 +470,9 @@ export class AIIntegrationSystem {
    */
   private updateMetrics(analysis: EvidenceAnalysis): void {
     this.metrics.aiSystem.totalProcessed += 1;
-    this.metrics.performance.accuracy = 
+    this.metrics.performance.accuracy =
       (this.metrics.performance.accuracy + analysis.confidence) / 2;
-    this.metrics.performance.latency = 
+    this.metrics.performance.latency =
       (this.metrics.performance.latency + analysis.processingTime) / 2;
   }
 
@@ -467,7 +483,7 @@ export class AIIntegrationSystem {
     // Update current metrics
     this.metrics.timestamp = new Date().toISOString();
     this.metrics.aiSystem.processingQueue = 0; // Would get from actual queue
-    this.metrics.performance.throughput = 
+    this.metrics.performance.throughput =
       this.metrics.aiSystem.totalProcessed / (Date.now() / 1000); // Simplified
 
     return this.metrics;
@@ -491,7 +507,7 @@ export class AIIntegrationSystem {
       size: 1024000,
       hash: 'abc123',
       uploadedAt: new Date(),
-      data: new ArrayBuffer(1024000) // Simulated image data
+      data: new ArrayBuffer(1024000), // Simulated image data
     };
 
     try {
@@ -509,16 +525,24 @@ export class AIIntegrationSystem {
 
       // Show cross-domain intelligence
       console.log(styled('\n🧠 Cross-Domain Intelligence:', 'info'));
-      console.log(styled(`   Shared Patterns: ${this.crossDomainIntelligence.sharedPatterns.length}`, 'muted'));
-      console.log(styled(`   Threat Intelligence: ${this.crossDomainIntelligence.threatIntelligence.length} threats`, 'muted'));
+      console.log(
+        styled(`   Shared Patterns: ${this.crossDomainIntelligence.sharedPatterns.length}`, 'muted')
+      );
+      console.log(
+        styled(
+          `   Threat Intelligence: ${this.crossDomainIntelligence.threatIntelligence.length} threats`,
+          'muted'
+        )
+      );
 
       // Show AI system metrics
       const status = await this.getAIStatus();
       console.log(styled('\n📊 AI System Metrics:', 'info'));
       console.log(styled(`   Models Loaded: ${status.aiSystem.modelsLoaded}`, 'muted'));
       console.log(styled(`   Total Processed: ${status.aiSystem.totalProcessed}`, 'muted'));
-      console.log(styled(`   Average Accuracy: ${(status.performance.accuracy * 100).toFixed(1)}%`, 'muted'));
-
+      console.log(
+        styled(`   Average Accuracy: ${(status.performance.accuracy * 100).toFixed(1)}%`, 'muted')
+      );
     } catch (error) {
       console.error(styled(`❌ Demonstration failed: ${error.message}`, 'error'));
     }
@@ -543,7 +567,9 @@ export class AIIntegrationSystem {
     console.log(styled(`  Models Loaded: ${status.aiSystem.modelsLoaded}`, 'muted'));
     console.log(styled(`  Processing Queue: ${status.aiSystem.processingQueue}`, 'muted'));
     console.log(styled(`  Total Processed: ${status.aiSystem.totalProcessed}`, 'muted'));
-    console.log(styled(`  Throughput: ${status.performance.throughput.toFixed(2)} analyses/sec`, 'muted'));
+    console.log(
+      styled(`  Throughput: ${status.performance.throughput.toFixed(2)} analyses/sec`, 'muted')
+    );
     console.log(styled(`  Accuracy: ${(status.performance.accuracy * 100).toFixed(1)}%`, 'muted'));
     console.log(styled(`  Latency: ${status.performance.latency.toFixed(2)}ms`, 'muted'));
 
@@ -552,13 +578,27 @@ export class AIIntegrationSystem {
       console.log(styled(`  ${domain}:`, 'muted'));
       console.log(styled(`    Dispute Types: ${integration.disputeTypes.length}`, 'muted'));
       console.log(styled(`    AI Models: ${integration.aiModels.length}`, 'muted'));
-      console.log(styled(`    Success Rate: ${(integration.successRate * 100).toFixed(1)}%`, 'muted'));
+      console.log(
+        styled(`    Success Rate: ${(integration.successRate * 100).toFixed(1)}%`, 'muted')
+      );
     }
 
     console.log(styled('\n🧠 Intelligence Summary:', 'info'));
-    console.log(styled(`  Shared Patterns: ${this.crossDomainIntelligence.sharedPatterns.length}`, 'muted'));
-    console.log(styled(`  Model Performance: ${Object.keys(this.crossDomainIntelligence.modelPerformance).length} models`, 'muted'));
-    console.log(styled(`  Threat Intelligence: ${this.crossDomainIntelligence.threatIntelligence.length} threats`, 'muted'));
+    console.log(
+      styled(`  Shared Patterns: ${this.crossDomainIntelligence.sharedPatterns.length}`, 'muted')
+    );
+    console.log(
+      styled(
+        `  Model Performance: ${Object.keys(this.crossDomainIntelligence.modelPerformance).length} models`,
+        'muted'
+      )
+    );
+    console.log(
+      styled(
+        `  Threat Intelligence: ${this.crossDomainIntelligence.threatIntelligence.length} threats`,
+        'muted'
+      )
+    );
   }
 }
 
@@ -568,11 +608,13 @@ export const aiIntegrationSystem = new AIIntegrationSystem();
 // CLI interface
 if (import.meta.main) {
   const aiSystem = aiIntegrationSystem;
-  
+
   await aiSystem.initialize();
   await aiSystem.demonstrateAIIntegration();
   await aiSystem.displayStatus();
-  
+
   console.log(styled('\n🎉 AI integration system complete!', 'success'));
-  console.log(styled('AI-powered dispute resolution is now integrated across all domains! 🤖', 'info'));
+  console.log(
+    styled('AI-powered dispute resolution is now integrated across all domains! 🤖', 'info')
+  );
 }

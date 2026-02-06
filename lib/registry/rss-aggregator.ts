@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * 📰 RSS Aggregator for Package Updates & Bun Blog
- * 
+ *
  * Aggregates RSS feeds from:
  * - Bun blog and updates
  * - Package changelogs
@@ -164,7 +164,7 @@ export class RSSAggregator {
     const response = await fetch(feed.url, {
       headers: {
         'User-Agent': 'factorywager-rss-aggregator/1.0',
-        'Accept': 'application/rss+xml, application/atom+xml, application/xml, text/xml',
+        Accept: 'application/rss+xml, application/atom+xml, application/xml, text/xml',
       },
     });
 
@@ -211,7 +211,9 @@ export class RSSAggregator {
   private parseRSSItem(xml: string, feedId: string): RSSItem | null {
     const title = xml.match(/<title>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/)?.[1]?.trim();
     const link = xml.match(/<link>(.*?)<\/link>/)?.[1];
-    const description = xml.match(/<description>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/description>/)?.[1];
+    const description = xml.match(
+      /<description>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/description>/
+    )?.[1];
     const pubDate = xml.match(/<pubDate>(.*?)<\/pubDate>/)?.[1];
     const guid = xml.match(/<guid.*?>(.*?)<\/guid>/)?.[1];
     const author = xml.match(/<author>(.*?)<\/author>/)?.[1];
@@ -280,13 +282,15 @@ export class RSSAggregator {
   /**
    * Get items with filtering
    */
-  getItems(options: {
-    feedId?: string;
-    category?: string;
-    unreadOnly?: boolean;
-    starredOnly?: boolean;
-    limit?: number;
-  } = {}): RSSItem[] {
+  getItems(
+    options: {
+      feedId?: string;
+      category?: string;
+      unreadOnly?: boolean;
+      starredOnly?: boolean;
+      limit?: number;
+    } = {}
+  ): RSSItem[] {
     let items = [...this.items];
 
     if (options.feedId) {
@@ -395,7 +399,7 @@ export class RSSAggregator {
    */
   generateHtml(): string {
     const unreadCount = this.getUnreadCount();
-    
+
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -493,11 +497,17 @@ export class RSSAggregator {
         <div class="stat">⭐ ${this.getStarredCount()} Starred</div>
       </div>
     </header>
-    ${this.items.slice(0, 50).map(item => {
-      const feed = this.getFeed(item.feedId);
-      const feedClass = feed?.type === 'bun' ? 'badge-bun' : 
-                        feed?.type === 'github' ? 'badge-github' : 'badge-package';
-      return `
+    ${this.items
+      .slice(0, 50)
+      .map(item => {
+        const feed = this.getFeed(item.feedId);
+        const feedClass =
+          feed?.type === 'bun'
+            ? 'badge-bun'
+            : feed?.type === 'github'
+              ? 'badge-github'
+              : 'badge-package';
+        return `
     <div class="feed-item ${item.read ? 'read' : ''} ${item.starred ? 'starred' : ''}">
       <div class="feed-header">
         <a href="${item.link}" target="_blank" class="feed-title">${item.title}</a>
@@ -512,7 +522,8 @@ export class RSSAggregator {
         ${item.author ? `<span>•</span><span>${item.author}</span>` : ''}
       </div>
     </div>`;
-    }).join('')}
+      })
+      .join('')}
   </div>
 </body>
 </html>`;
@@ -537,12 +548,14 @@ if (import.meta.main) {
     case 'list': {
       const items = aggregator.getItems({ limit: 20 });
       console.log(styled(`\n📄 Recent Items (${items.length}):`, 'info'));
-      
+
       for (const item of items) {
         const feed = aggregator.getFeed(item.feedId);
         const readBadge = item.read ? '' : styled(' [NEW]', 'success');
         console.log(styled(`\n  📰 ${item.title}${readBadge}`, 'muted'));
-        console.log(styled(`     ${feed?.name} • ${new Date(item.pubDate).toLocaleDateString()}`, 'muted'));
+        console.log(
+          styled(`     ${feed?.name} • ${new Date(item.pubDate).toLocaleDateString()}`, 'muted')
+        );
         console.log(styled(`     ${item.link}`, 'info'));
       }
       break;
@@ -551,11 +564,11 @@ if (import.meta.main) {
     case 'feeds': {
       const feeds = aggregator.getFeeds();
       console.log(styled(`\n📡 Subscribed Feeds (${feeds.length}):`, 'info'));
-      
+
       for (const feed of feeds) {
         const statusBadge = feed.enabled ? styled('●', 'success') : styled('○', 'muted');
-        const lastFetched = feed.lastFetched 
-          ? new Date(feed.lastFetched).toLocaleDateString() 
+        const lastFetched = feed.lastFetched
+          ? new Date(feed.lastFetched).toLocaleDateString()
           : 'Never';
         console.log(styled(`\n  ${statusBadge} ${feed.name}`, 'muted'));
         console.log(styled(`     Type: ${feed.type} • Category: ${feed.category}`, 'muted'));
@@ -568,7 +581,7 @@ if (import.meta.main) {
     case 'add': {
       const url = args[1];
       const name = args[2];
-      
+
       if (!url || !name) {
         console.error(styled('Usage: rss-aggregator add <url> <name>', 'error'));
         process.exit(1);

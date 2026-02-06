@@ -6,7 +6,7 @@
  * and atomic R2 snapshots for production-grade deployment
  */
 
-import { loadABTestConfig, compressAndHashData, ABTestCache } from "./lib/config/env-loader.ts";
+import { loadABTestConfig, compressAndHashData, ABTestCache } from "../lib/config/env-loader.ts";
 
 /**
  * 🚀 Prefetch Optimizations
@@ -19,7 +19,7 @@ import { loadABTestConfig, compressAndHashData, ABTestCache } from "./lib/config
  * Generated automatically by optimize-examples-prefetch.ts
  */
 import { createHash } from "crypto";
-import { getSignedR2URL } from "./lib/r2/signed-url.ts";
+import { getSignedR2URL } from "../lib/r2/signed-url.ts";
 
 interface Tier1380EnhancedConfig {
   r2Bucket: string;

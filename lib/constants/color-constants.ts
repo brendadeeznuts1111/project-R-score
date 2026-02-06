@@ -1,9 +1,9 @@
 /**
  * 🎨 Bun.color Documentation Constants
- * 
+ *
  * URL: https://bun.sh/docs/runtime/color
  * API: Bun.color(input, outputFormat?)
- * 
+ *
  * Format colors as CSS, ANSI, numbers, hex strings, and more
  * @version Bun 1.0+
  */
@@ -18,7 +18,7 @@ export const COLOR_OUTPUT_FORMATS = {
   ANSI_16: 'ansi-16' as const,
   ANSI_256: 'ansi-256' as const,
   ANSI_16M: 'ansi-16m' as const,
-  
+
   // CSS formats
   CSS: 'css' as const,
   RGB: 'rgb' as const,
@@ -26,18 +26,18 @@ export const COLOR_OUTPUT_FORMATS = {
   HSL: 'hsl' as const,
   HEX: 'hex' as const,
   HEX_UPPERCASE: 'HEX' as const,
-  
+
   // Object/array formats
   RGB_OBJECT: '{rgb}' as const,
   RGBA_OBJECT: '{rgba}' as const,
   RGB_ARRAY: '[rgb]' as const,
   RGBA_ARRAY: '[rgba]' as const,
-  
+
   // Database-friendly
   NUMBER: 'number' as const,
 } as const;
 
-export type ColorOutputFormat = typeof COLOR_OUTPUT_FORMATS[keyof typeof COLOR_OUTPUT_FORMATS];
+export type ColorOutputFormat = (typeof COLOR_OUTPUT_FORMATS)[keyof typeof COLOR_OUTPUT_FORMATS];
 
 // ============================================================================
 // DOCUMENTATION URLS
@@ -45,7 +45,7 @@ export type ColorOutputFormat = typeof COLOR_OUTPUT_FORMATS[keyof typeof COLOR_O
 
 export const COLOR_DOCUMENTATION_URLS = {
   MAIN: '/docs/runtime/color',
-  
+
   // Sections
   FLEXIBLE_INPUT: '/docs/runtime/color#flexible-input',
   FORMAT_CSS: '/docs/runtime/color#format-colors-as-css',
@@ -71,17 +71,18 @@ Bun.color([255, 0, 0], "number");      // 16711680
 Bun.color("rgb(255, 0, 0)", "number"); // 16711680
 Bun.color("hsl(0, 100%, 50%)", "number"); // 16711680`,
   },
-  
+
   // Terminal colors (auto-detects color depth)
   ANSI: {
-    description: 'Format colors for terminal output. Auto-detects color depth (ansi-16m, ansi-256, ansi-16) based on environment. Returns empty string if stdout does not support ANSI colors.',
+    description:
+      'Format colors for terminal output. Auto-detects color depth (ansi-16m, ansi-256, ansi-16) based on environment. Returns empty string if stdout does not support ANSI colors.',
     code: `Bun.color("red", "ansi");      // "\\u001b[38;2;255;0;0m" (24-bit)
 Bun.color("#00ff00", "ansi-256"); // "\\u001b[38;5;46m" (256 color)
 Bun.color("blue", "ansi-16");     // "\\u001b[38;5;4m" (16 color)
 // Returns "" if terminal doesn't support colors
 // Returns null if input fails to parse`,
   },
-  
+
   // CSS formats
   CSS: {
     description: 'Normalize to CSS color names',
@@ -89,7 +90,7 @@ Bun.color("blue", "ansi-16");     // "\\u001b[38;5;4m" (16 color)
 Bun.color(0xff0000, "css");      // "red"
 Bun.color("rgb(255,0,0)", "css");  // "red"`,
   },
-  
+
   // Object extraction
   OBJECTS: {
     description: 'Extract RGB/RGBA components',
@@ -152,17 +153,15 @@ export const COLOR_USE_CASES = {
 
 export class ColorDocumentationURLBuilder {
   private static readonly BASE_URL = 'https://bun.sh';
-  
+
   /**
    * Build color documentation URL
    */
   static buildURL(section?: string): string {
-    const path = section 
-      ? `/docs/runtime/color${section}`
-      : '/docs/runtime/color';
+    const path = section ? `/docs/runtime/color${section}` : '/docs/runtime/color';
     return new URL(path, this.BASE_URL).toString();
   }
-  
+
   /**
    * Build URL with text fragment
    */
@@ -171,7 +170,7 @@ export class ColorDocumentationURLBuilder {
     url.hash = `:~:text=${encodeURIComponent(fragment)}`;
     return url.toString();
   }
-  
+
   /**
    * Get all color documentation URLs
    */
@@ -201,13 +200,17 @@ if (import.meta.main) {
 ╚═══════════════════════════════════════════════════════════╝
 
 Output Formats:
-${Object.entries(COLOR_OUTPUT_FORMATS).map(([k, v]) => `  ${k.padEnd(15)} "${v}"`).join('\n')}
+${Object.entries(COLOR_OUTPUT_FORMATS)
+  .map(([k, v]) => `  ${k.padEnd(15)} "${v}"`)
+  .join('\n')}
 
 Examples:
 ${COLOR_EXAMPLES.NUMBER.code}
 
 All URLs:
-${Object.entries(ColorDocumentationURLBuilder.getAllURLs()).map(([k, v]) => `  ${k}: ${v}`).join('\n')}
+${Object.entries(ColorDocumentationURLBuilder.getAllURLs())
+  .map(([k, v]) => `  ${k}: ${v}`)
+  .join('\n')}
 `);
 }
 

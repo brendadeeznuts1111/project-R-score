@@ -2,7 +2,7 @@
 
 /**
  * 🔄 Safe Concurrent Operations Manager
- * 
+ *
  * Handles race conditions, provides transaction-like behavior, and ensures data consistency
  */
 
@@ -56,7 +56,7 @@ export class ConcurrentOperationsManager {
       retryAttempts: 3,
       retryDelay: 1000,
       failFast: false,
-      timeout: 30000
+      timeout: 30000,
     };
   }
 
@@ -69,12 +69,10 @@ export class ConcurrentOperationsManager {
   ): Promise<OperationResult<T>[]> {
     const finalConfig = { ...this.defaultConfig, ...config };
     const results: OperationResult<T>[] = [];
-    
+
     // Use Promise.allSettled to handle individual failures
     const settledResults = await Promise.allSettled(
-      operations.map((op, index) => 
-        this.executeOperation(op, `op-${index}`, finalConfig)
-      )
+      operations.map((op, index) => this.executeOperation(op, `op-${index}`, finalConfig))
     );
 
     // Convert settled results to operation results
@@ -88,7 +86,7 @@ export class ConcurrentOperationsManager {
           success: true,
           data: settled.value,
           operationId,
-          duration: Date.now() - startTime
+          duration: Date.now() - startTime,
         });
       } else {
         const error = settled.reason;
@@ -96,7 +94,7 @@ export class ConcurrentOperationsManager {
           success: false,
           error: error instanceof Error ? error.message : 'Unknown error',
           operationId,
-          duration: Date.now() - startTime
+          duration: Date.now() - startTime,
         });
 
         // Fail fast if configured and this is an error
@@ -124,10 +122,11 @@ export class ConcurrentOperationsManager {
     // Continue until all operations are completed or failed
     while (completed.size + failed.size < operations.length) {
       // Find operations that can be executed (all dependencies completed)
-      const readyOperations = operations.filter(op => 
-        !completed.has(op.id) && 
-        !failed.has(op.id) &&
-        (!op.dependencies || op.dependencies.every(dep => completed.has(dep)))
+      const readyOperations = operations.filter(
+        op =>
+          !completed.has(op.id) &&
+          !failed.has(op.id) &&
+          (!op.dependencies || op.dependencies.every(dep => completed.has(dep)))
       );
 
       if (readyOperations.length === 0) {
@@ -151,7 +150,7 @@ export class ConcurrentOperationsManager {
           results.push(result);
         } else {
           failed.add(operation.id);
-          
+
           // Rollback if rollback function is available
           if (operation.rollback && result.data) {
             try {
@@ -160,7 +159,7 @@ export class ConcurrentOperationsManager {
               handleError(rollbackError, `rollback-${operation.id}`, 'medium');
             }
           }
-          
+
           results.push(result);
         }
       }
@@ -177,7 +176,7 @@ export class ConcurrentOperationsManager {
   ): Promise<{ success: boolean; results: OperationResult<T>[]; rolledBack: boolean }> {
     const results = await this.executeWithDependencies(operations);
     const hasFailures = results.some(r => !r.success);
-    
+
     if (hasFailures) {
       // Rollback all successful operations
       const rolledBack = await this.rollbackSuccessfulOperations(operations, results);
@@ -227,11 +226,13 @@ export class ConcurrentOperationsManager {
   ): Promise<T> {
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
-        reject(new R2IntegrationError(
-          `Operation ${operationId} timed out after ${timeout}ms`,
-          'OPERATION_TIMEOUT',
-          { operationId, timeout }
-        ));
+        reject(
+          new R2IntegrationError(
+            `Operation ${operationId} timed out after ${timeout}ms`,
+            'OPERATION_TIMEOUT',
+            { operationId, timeout }
+          )
+        );
       }, timeout);
 
       operation()
@@ -260,7 +261,7 @@ export class ConcurrentOperationsManager {
     for (let i = successfulResults.length - 1; i >= 0; i--) {
       const result = successfulResults[i];
       const operation = operations.find(op => op.id === result.operationId);
-      
+
       if (operation && operation.rollback && result.data) {
         try {
           await operation.rollback(result.data);
@@ -313,7 +314,7 @@ export class BatchProcessor<T> {
    */
   async process(items: T[]): Promise<{ processed: number; errors: number }> {
     const batches: T[][] = [];
-    
+
     // Create batches
     for (let i = 0; i < items.length; i += this.batchSize) {
       batches.push(items.slice(i, i + this.batchSize));

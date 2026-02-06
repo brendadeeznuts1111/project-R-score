@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * 📊 Package Version Manager with bun.semver Integration
- * 
+ *
  * Features:
  * - bun.semver for version parsing and comparison
  * - Visual version graphs (Mermaid, ASCII, JSON)
@@ -67,9 +67,7 @@ export class VersionManager {
   private storage: R2StorageAdapter;
   private versionPrefix = 'versions/';
 
-  constructor(
-    r2Config?: ConstructorParameters<typeof R2StorageAdapter>[0]
-  ) {
+  constructor(r2Config?: ConstructorParameters<typeof R2StorageAdapter>[0]) {
     this.storage = new R2StorageAdapter({
       ...r2Config,
       bucketName: r2Config?.bucketName || process.env.R2_VERSIONS_BUCKET || 'npm-registry',
@@ -112,14 +110,14 @@ export class VersionManager {
   getVersionType(from: string, to: string): 'patch' | 'minor' | 'major' | 'prerelease' | 'unknown' {
     const fromParsed = semver.parse(from);
     const toParsed = semver.parse(to);
-    
+
     if (!fromParsed || !toParsed) return 'unknown';
 
     if (toParsed.major !== fromParsed.major) return 'major';
     if (toParsed.minor !== fromParsed.minor) return 'minor';
     if (toParsed.patch !== fromParsed.patch) return 'patch';
     if (toParsed.prerelease?.length || fromParsed.prerelease?.length) return 'prerelease';
-    
+
     return 'unknown';
   }
 
@@ -128,13 +126,13 @@ export class VersionManager {
    */
   async storeVersion(packageName: string, node: VersionNode): Promise<void> {
     const key = `${packageName}/${node.version}.json`;
-    
+
     try {
-      await this.storage.putJSON?.(key, node) || await this.putToR2(key, node);
-      
+      (await this.storage.putJSON?.(key, node)) || (await this.putToR2(key, node));
+
       // Update version graph
       await this.updateVersionGraph(packageName, node);
-      
+
       console.log(styled(`✅ Stored version: ${packageName}@${node.version}`, 'success'));
     } catch (error) {
       console.error(styled(`❌ Failed to store version: ${error.message}`, 'error'));
@@ -147,9 +145,9 @@ export class VersionManager {
    */
   async getVersion(packageName: string, version: string): Promise<VersionNode | null> {
     const key = `${packageName}/${version}.json`;
-    
+
     try {
-      return await this.storage.getJSON?.(key) || await this.getFromR2(key);
+      return (await this.storage.getJSON?.(key)) || (await this.getFromR2(key));
     } catch {
       return null;
     }
@@ -162,10 +160,10 @@ export class VersionManager {
     try {
       const prefix = `${packageName}/`;
       const versions: VersionNode[] = [];
-      
+
       // List all version files
       const keys = await this.listVersionKeys(packageName);
-      
+
       for (const key of keys) {
         const version = key.replace(prefix, '').replace('.json', '');
         const node = await this.getVersion(packageName, version);
@@ -187,15 +185,15 @@ export class VersionManager {
    */
   async buildVersionGraph(packageName: string): Promise<VersionGraph> {
     const versions = await this.getVersions(packageName);
-    
+
     const nodes: VersionNode[] = versions;
     const edges: VersionGraph['edges'] = [];
-    
+
     // Build edges between versions
     for (let i = 0; i < versions.length - 1; i++) {
       const current = versions[i];
       const previous = versions[i + 1];
-      
+
       edges.push({
         from: previous.version,
         to: current.version,
@@ -216,25 +214,32 @@ export class VersionManager {
    * Generate Mermaid diagram
    */
   generateMermaidGraph(graph: VersionGraph): string {
-    const lines = [
-      '```mermaid',
-      'graph TD',
-      '',
-      'subgraph "Version History"',
-    ];
+    const lines = ['```mermaid', 'graph TD', '', 'subgraph "Version History"'];
 
     // Add nodes
     for (const node of graph.nodes) {
-      const shape = node.status === 'current' ? '[Current]' : 
-                    node.status === 'rollback' ? '(Rollback)' : 
-                    node.status === 'deprecated' ? '{Deprecated}' : '[[Archived]]';
-      
-      const color = node.status === 'current' ? 'style fill:#4ade80' :
-                    node.status === 'rollback' ? 'style fill:#fbbf24' :
-                    node.status === 'deprecated' ? 'style fill:#f87171' : 'style fill:#94a3b8';
-      
-      lines.push(`  v${node.version.replace(/\./g, '_')}["${node.version}${node.tags.length ? ' 🏷️' : ''}"]${shape}`);
-      
+      const shape =
+        node.status === 'current'
+          ? '[Current]'
+          : node.status === 'rollback'
+            ? '(Rollback)'
+            : node.status === 'deprecated'
+              ? '{Deprecated}'
+              : '[[Archived]]';
+
+      const color =
+        node.status === 'current'
+          ? 'style fill:#4ade80'
+          : node.status === 'rollback'
+            ? 'style fill:#fbbf24'
+            : node.status === 'deprecated'
+              ? 'style fill:#f87171'
+              : 'style fill:#94a3b8';
+
+      lines.push(
+        `  v${node.version.replace(/\./g, '_')}["${node.version}${node.tags.length ? ' 🏷️' : ''}"]${shape}`
+      );
+
       if (node.tags.length) {
         lines.push(`  v${node.version.replace(/\./g, '_')} ${color}`);
       }
@@ -246,23 +251,28 @@ export class VersionManager {
     for (const edge of graph.edges) {
       const fromId = `v${edge.from.replace(/\./g, '_')}`;
       const toId = `v${edge.to.replace(/\./g, '_')}`;
-      const label = edge.type === 'major' ? '|major|' : 
-                    edge.type === 'minor' ? '|minor|' : 
-                    edge.type === 'prerelease' ? '|prerelease|' : '|patch|';
-      
+      const label =
+        edge.type === 'major'
+          ? '|major|'
+          : edge.type === 'minor'
+            ? '|minor|'
+            : edge.type === 'prerelease'
+              ? '|prerelease|'
+              : '|patch|';
+
       lines.push(`  ${fromId} -->${label} ${toId}`);
     }
 
     lines.push('');
     lines.push('subgraph "Tags"');
-    
+
     // Add tag references
     for (const node of graph.nodes) {
       for (const tag of node.tags) {
         lines.push(`  ${tag}["${tag}"] --> v${node.version.replace(/\./g, '_')}`);
       }
     }
-    
+
     lines.push('end');
     lines.push('```');
 
@@ -274,46 +284,51 @@ export class VersionManager {
    */
   generateAsciiGraph(graph: VersionGraph): string {
     const lines: string[] = [];
-    
+
     lines.push(styled(`\n📦 ${graph.packageName}`, 'accent'));
-    lines.push(styled('=' .repeat(50), 'accent'));
+    lines.push(styled('='.repeat(50), 'accent'));
     lines.push('');
-    
+
     for (let i = 0; i < graph.nodes.length; i++) {
       const node = graph.nodes[i];
       const isLast = i === graph.nodes.length - 1;
-      
+
       // Version box
-      const statusColor = node.status === 'current' ? 'success' :
-                          node.status === 'rollback' ? 'warning' :
-                          node.status === 'deprecated' ? 'error' : 'muted';
-      
+      const statusColor =
+        node.status === 'current'
+          ? 'success'
+          : node.status === 'rollback'
+            ? 'warning'
+            : node.status === 'deprecated'
+              ? 'error'
+              : 'muted';
+
       const connector = isLast ? '└──' : '├──';
       const versionStr = styled(` ${node.version.padEnd(12)} `, statusColor);
-      
+
       lines.push(`${connector}${versionStr}`);
-      
+
       // Tags
       if (node.tags.length) {
         lines.push(`│   🏷️  ${node.tags.join(', ')}`);
       }
-      
+
       // Timestamp
       if (node.timestamp) {
         const date = new Date(node.timestamp).toLocaleDateString();
         lines.push(`│   📅 ${date}`);
       }
-      
+
       // Author
       if (node.author) {
         lines.push(`│   👤 ${node.author}`);
       }
-      
+
       if (!isLast) {
         lines.push('│');
       }
     }
-    
+
     lines.push('');
     return lines.join('\n');
   }
@@ -350,7 +365,7 @@ export class VersionManager {
     try {
       const versions = await this.getVersions(packageName);
       const targetVersion = versions.find(v => v.version === toVersion);
-      
+
       if (!targetVersion) {
         console.error(styled(`❌ Version ${toVersion} not found`, 'error'));
         return false;
@@ -428,24 +443,30 @@ export class VersionManager {
   private async putToR2(key: string, data: any): Promise<void> {
     // Implementation using R2StorageAdapter
     const fullKey = `${this.versionPrefix}${key}`;
-    await fetch(`${(this.storage as any).baseUrl}/${(this.storage as any).config.bucketName}/${fullKey}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': (this.storage as any).getAuthHeader(),
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
+    await fetch(
+      `${(this.storage as any).baseUrl}/${(this.storage as any).config.bucketName}/${fullKey}`,
+      {
+        method: 'PUT',
+        headers: {
+          Authorization: (this.storage as any).getAuthHeader(),
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      }
+    );
   }
 
   private async getFromR2(key: string): Promise<any> {
     const fullKey = `${this.versionPrefix}${key}`;
-    const response = await fetch(`${(this.storage as any).baseUrl}/${(this.storage as any).config.bucketName}/${fullKey}`, {
-      headers: {
-        'Authorization': (this.storage as any).getAuthHeader(),
-      },
-    });
-    
+    const response = await fetch(
+      `${(this.storage as any).baseUrl}/${(this.storage as any).config.bucketName}/${fullKey}`,
+      {
+        headers: {
+          Authorization: (this.storage as any).getAuthHeader(),
+        },
+      }
+    );
+
     if (!response.ok) return null;
     return await response.json();
   }
@@ -461,7 +482,11 @@ export class VersionManager {
     await this.putToR2(key, graph);
   }
 
-  private async updateManifestDistTag(packageName: string, tag: string, version: string): Promise<void> {
+  private async updateManifestDistTag(
+    packageName: string,
+    tag: string,
+    version: string
+  ): Promise<void> {
     // Implementation would update the package manifest
   }
 
@@ -485,7 +510,9 @@ if (import.meta.main) {
     case 'parse': {
       const version = args[1];
       const result = manager.parseVersion(version);
-      console.log(styled(`\n${result.valid ? '✅' : '❌'} ${version}`, result.valid ? 'success' : 'error'));
+      console.log(
+        styled(`\n${result.valid ? '✅' : '❌'} ${version}`, result.valid ? 'success' : 'error')
+      );
       if (result.parsed) {
         console.log(styled(`  Major: ${result.parsed.major}`, 'muted'));
         console.log(styled(`  Minor: ${result.parsed.minor}`, 'muted'));
@@ -514,9 +541,9 @@ if (import.meta.main) {
     case 'graph': {
       const pkg = args[1];
       const format = args[2] || 'ascii';
-      
+
       const graph = await manager.buildVersionGraph(pkg);
-      
+
       if (format === 'mermaid') {
         console.log(manager.generateMermaidGraph(graph));
       } else if (format === 'json') {

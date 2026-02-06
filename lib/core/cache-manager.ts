@@ -2,7 +2,7 @@
 
 /**
  * 💾 Advanced Cache Management System
- * 
+ *
  * Intelligent caching with versioning, invalidation, and performance optimization
  */
 
@@ -52,7 +52,7 @@ export enum InvalidationStrategy {
   TTL = 'ttl',
   LRU = 'lru',
   LFU = 'lfu',
-  MANUAL = 'manual'
+  MANUAL = 'manual',
 }
 
 /**
@@ -68,9 +68,9 @@ export class CacheManager {
     hitRate: 0,
     memoryUsage: 0,
     oldestEntry: 0,
-    newestEntry: 0
+    newestEntry: 0,
   };
-  
+
   private config: CacheConfig;
   private cleanupTimer?: NodeJS.Timeout;
   private version: string = '1.0.0';
@@ -82,7 +82,7 @@ export class CacheManager {
       cleanupInterval: 60000, // 1 minute
       enableStats: true,
       enableCompression: false,
-      ...config
+      ...config,
     };
 
     // Start cleanup timer
@@ -95,7 +95,7 @@ export class CacheManager {
   async get<T = any>(key: string): Promise<T | null> {
     try {
       const entry = this.cache.get(key);
-      
+
       if (!entry) {
         this.updateMissStats();
         return null;
@@ -112,10 +112,9 @@ export class CacheManager {
       // Update access statistics
       entry.accessCount++;
       entry.lastAccessed = Date.now();
-      
+
       this.updateHitStats();
       return entry.data as T;
-
     } catch (error) {
       handleError(error, 'CacheManager.get', 'medium');
       return null;
@@ -126,8 +125,8 @@ export class CacheManager {
    * Set value in cache
    */
   async set<T = any>(
-    key: string, 
-    data: T, 
+    key: string,
+    data: T,
     options: {
       ttl?: number;
       tags?: string[];
@@ -151,13 +150,12 @@ export class CacheManager {
         version,
         tags,
         accessCount: 0,
-        lastAccessed: Date.now()
+        lastAccessed: Date.now(),
       };
 
       this.cache.set(key, entry);
       this.updateTagIndex(key, tags, true);
       this.updateStats();
-
     } catch (error) {
       handleError(error, 'CacheManager.set', 'medium');
     }
@@ -177,7 +175,6 @@ export class CacheManager {
       this.updateTagIndex(key, entry.tags, false);
       this.updateStats();
       return true;
-
     } catch (error) {
       handleError(error, 'CacheManager.delete', 'medium');
       return false;
@@ -221,7 +218,6 @@ export class CacheManager {
       }
 
       return invalidated;
-
     } catch (error) {
       handleError(error, 'CacheManager.invalidateByTags', 'medium');
       return 0;
@@ -249,7 +245,6 @@ export class CacheManager {
       }
 
       return invalidated;
-
     } catch (error) {
       handleError(error, 'CacheManager.invalidateByPattern', 'medium');
       return 0;
@@ -277,12 +272,11 @@ export class CacheManager {
 
       // Generate new value
       const value = await factory();
-      
+
       // Store in cache
       await this.set(key, value, options);
-      
-      return value;
 
+      return value;
     } catch (error) {
       handleError(error, 'CacheManager.getOrSet', 'medium');
       throw error;
@@ -301,11 +295,11 @@ export class CacheManager {
    */
   getEntriesInfo(): Array<{ key: string; entry: CacheEntry }> {
     const entries: Array<{ key: string; entry: CacheEntry }> = [];
-    
+
     for (const [key, entry] of this.cache) {
       entries.push({ key, entry: { ...entry } });
     }
-    
+
     return entries;
   }
 
@@ -325,7 +319,6 @@ export class CacheManager {
       }
 
       return true;
-
     } catch (error) {
       handleError(error, 'CacheManager.has', 'medium');
       return false;
@@ -354,7 +347,6 @@ export class CacheManager {
       });
 
       await Promise.allSettled(promises);
-
     } catch (error) {
       handleError(error, 'CacheManager.warmUp', 'medium');
     }
@@ -376,20 +368,22 @@ export class CacheManager {
   /**
    * Import cache data (for restoration)
    */
-  async import(data: { entries: Array<{ key: string; entry: CacheEntry }>; version: string }): Promise<void> {
+  async import(data: {
+    entries: Array<{ key: string; entry: CacheEntry }>;
+    version: string;
+  }): Promise<void> {
     try {
       await this.clear();
-      
+
       for (const { key, entry } of data.entries) {
         if (!this.isExpired(entry)) {
           this.cache.set(key, entry);
           this.updateTagIndex(key, entry.tags, true);
         }
       }
-      
+
       this.version = data.version;
       this.updateStats();
-
     } catch (error) {
       handleError(error, 'CacheManager.import', 'medium');
     }
@@ -407,13 +401,13 @@ export class CacheManager {
    */
   private evictEntries(): void {
     const entries = Array.from(this.cache.entries());
-    
+
     // Sort by last accessed time (LRU)
     entries.sort((a, b) => a[1].lastAccessed - b[1].lastAccessed);
-    
+
     // Evict oldest 25% of entries
     const evictCount = Math.floor(this.config.maxSize * 0.25);
-    
+
     for (let i = 0; i < evictCount && i < entries.length; i++) {
       const [key, entry] = entries[i];
       this.cache.delete(key);
@@ -429,14 +423,14 @@ export class CacheManager {
       if (!this.tagIndex.has(tag)) {
         this.tagIndex.set(tag, new Set());
       }
-      
+
       const taggedKeys = this.tagIndex.get(tag)!;
-      
+
       if (add) {
         taggedKeys.add(key);
       } else {
         taggedKeys.delete(key);
-        
+
         // Clean up empty tag sets
         if (taggedKeys.size === 0) {
           this.tagIndex.delete(tag);
@@ -452,19 +446,19 @@ export class CacheManager {
     if (!this.config.enableStats) return;
 
     this.stats.totalEntries = this.cache.size;
-    
+
     // Calculate memory usage (rough estimate)
     this.stats.memoryUsage = this.cache.size * 1024; // Estimate 1KB per entry
-    
+
     // Find oldest and newest entries
     let oldest = Date.now();
     let newest = 0;
-    
+
     for (const entry of this.cache.values()) {
       oldest = Math.min(oldest, entry.timestamp);
       newest = Math.max(newest, entry.timestamp);
     }
-    
+
     this.stats.oldestEntry = oldest;
     this.stats.newestEntry = newest;
   }
@@ -474,7 +468,7 @@ export class CacheManager {
    */
   private updateHitStats(): void {
     if (!this.config.enableStats) return;
-    
+
     this.stats.hitCount++;
     this.stats.hitRate = this.stats.hitCount / (this.stats.hitCount + this.stats.missCount);
   }
@@ -484,7 +478,7 @@ export class CacheManager {
    */
   private updateMissStats(): void {
     if (!this.config.enableStats) return;
-    
+
     this.stats.missCount++;
     this.stats.hitRate = this.stats.hitCount / (this.stats.hitCount + this.stats.missCount);
   }
@@ -500,7 +494,7 @@ export class CacheManager {
       hitRate: 0,
       memoryUsage: 0,
       oldestEntry: 0,
-      newestEntry: 0
+      newestEntry: 0,
     };
   }
 
@@ -542,7 +536,7 @@ export class CacheManager {
     if (this.cleanupTimer) {
       clearInterval(this.cleanupTimer);
     }
-    
+
     this.cache.clear();
     this.tagIndex.clear();
   }
@@ -556,7 +550,7 @@ export const globalCache = new CacheManager({
   defaultTTL: 300000, // 5 minutes
   cleanupInterval: 60000, // 1 minute
   enableStats: true,
-  enableCompression: false
+  enableCompression: false,
 });
 
 /**
@@ -573,18 +567,14 @@ export function cached<T extends (...args: any[]) => Promise<any>>(
     const method = descriptor.value;
 
     descriptor.value = async function (...args: Parameters<T>) {
-      const key = options.keyGenerator 
+      const key = options.keyGenerator
         ? options.keyGenerator(...args)
         : `${target.constructor.name}.${propertyName}.${JSON.stringify(args)}`;
 
-      return globalCache.getOrSet(
-        key,
-        () => method.apply(this, args),
-        {
-          ttl: options.ttl,
-          tags: options.tags
-        }
-      );
+      return globalCache.getOrSet(key, () => method.apply(this, args), {
+        ttl: options.ttl,
+        tags: options.tags,
+      });
     };
 
     return descriptor;

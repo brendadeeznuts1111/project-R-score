@@ -11,7 +11,7 @@ import {
   getRecommendation, 
   applyVipRiskOverride,
   type HabitsData 
-} from '../lib/habits-pure.ts';
+} from '../lib/business/habits-pure.ts';
 
 console.log('╔════════════════════════════════════════════════════════════╗');
 console.log('║  🎯 Habits Classification Test                             ║');

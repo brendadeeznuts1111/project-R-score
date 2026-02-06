@@ -2,7 +2,7 @@
 
 /**
  * 🔗 Advanced URL Handler with Fragment Support
- * 
+ *
  * Comprehensive URL parsing, validation, and fragment handling for the FactoryWager ecosystem
  */
 
@@ -52,7 +52,7 @@ export class EnhancedURL {
   private parseURL(url: string, base?: string): URLComponents {
     try {
       const fullURL = base ? new URL(url, base) : new URL(url);
-      
+
       return {
         protocol: fullURL.protocol,
         hostname: fullURL.hostname,
@@ -61,7 +61,7 @@ export class EnhancedURL {
         search: fullURL.search,
         fragment: fullURL.hash.slice(1), // Remove # prefix
         searchParams: fullURL.searchParams,
-        hash: fullURL.hash
+        hash: fullURL.hash,
       };
     } catch (error) {
       handleError(error, 'EnhancedURL.parseURL', 'medium');
@@ -198,7 +198,7 @@ export class URLHandler {
     allowedProtocols: ['http:', 'https:', 'ws:', 'wss:'],
     requireHTTPS: false,
     allowFragments: true,
-    maxLength: 2048
+    maxLength: 2048,
   };
 
   /**
@@ -208,7 +208,7 @@ export class URLHandler {
     const validation = Validator.string({
       required: true,
       maxLength: this.defaultOptions.maxLength,
-      sanitize: true
+      sanitize: true,
     });
 
     const result = validation(url);
@@ -365,7 +365,7 @@ export class URLHandler {
   static normalize(url: string): string {
     try {
       const enhancedURL = new EnhancedURL(url);
-      
+
       // Normalize hostname to lowercase
       if (enhancedURL.hostname) {
         enhancedURL.components.hostname = enhancedURL.hostname.toLowerCase();
@@ -380,14 +380,14 @@ export class URLHandler {
       if (enhancedURL.searchParams.toString()) {
         const params = new URLSearchParams();
         const keys = Array.from(enhancedURL.searchParams.keys()).sort();
-        
+
         for (const key of keys) {
           const values = enhancedURL.searchParams.getAll(key);
           for (const value of values) {
             params.append(key, value);
           }
         }
-        
+
         enhancedURL.components.search = params.toString();
       }
 
@@ -455,24 +455,24 @@ export class URLFragmentUtils {
    */
   static parseFragment(fragment: string): Record<string, string> {
     const params: Record<string, string> = {};
-    
+
     if (!fragment) {
       return params;
     }
 
     // Remove # if present
     const cleanFragment = fragment.startsWith('#') ? fragment.slice(1) : fragment;
-    
+
     // Parse key=value pairs separated by &
     const pairs = cleanFragment.split('&');
-    
+
     for (const pair of pairs) {
       const [key, value] = pair.split('=');
       if (key) {
         params[decodeURIComponent(key)] = decodeURIComponent(value || '');
       }
     }
-    
+
     return params;
   }
 
@@ -483,7 +483,7 @@ export class URLFragmentUtils {
     const pairs = Object.entries(params)
       .filter(([key]) => key.length > 0)
       .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
-    
+
     return pairs.length > 0 ? `#${pairs.join('&')}` : '';
   }
 
@@ -513,11 +513,11 @@ export class URLFragmentUtils {
     const fragment = URLHandler.getFragment(url);
     const params = this.parseFragment(fragment);
     delete params[key];
-    
+
     if (Object.keys(params).length === 0) {
       return URLHandler.removeFragment(url);
     }
-    
+
     return URLHandler.addFragment(url, this.buildFragment(params).slice(1));
   }
 
@@ -542,7 +542,7 @@ export class FactoryWagerURLUtils {
     'dashboard.factory-wager.com',
     'r2.factory-wager.com',
     'api.factory-wager.com',
-    'wiki.factory-wager.com'
+    'wiki.factory-wager.com',
   ];
 
   /**
@@ -550,12 +550,12 @@ export class FactoryWagerURLUtils {
    */
   static createAPIURL(path: string, params?: Record<string, string>): string {
     let url = `${this.BASE_URL}/api${path.startsWith('/') ? path : `/${path}`}`;
-    
+
     if (params) {
       const searchParams = new URLSearchParams(params);
       url += `?${searchParams.toString()}`;
     }
-    
+
     return url;
   }
 
@@ -564,15 +564,15 @@ export class FactoryWagerURLUtils {
    */
   static createDashboardURL(section?: string, fragment?: Record<string, string>): string {
     let url = 'https://dashboard.factory-wager.com';
-    
+
     if (section) {
       url += `/${section}`;
     }
-    
+
     if (fragment) {
       url += URLFragmentUtils.buildFragment(fragment);
     }
-    
+
     return url;
   }
 
@@ -581,15 +581,15 @@ export class FactoryWagerURLUtils {
    */
   static createR2BrowserURL(category?: string, fragment?: Record<string, string>): string {
     let url = 'https://r2.factory-wager.com';
-    
+
     if (category) {
       url += `/${category}`;
     }
-    
+
     if (fragment) {
       url += URLFragmentUtils.buildFragment(fragment);
     }
-    
+
     return url;
   }
 
@@ -600,7 +600,7 @@ export class FactoryWagerURLUtils {
     return URLHandler.validate(url, {
       allowedHosts: this.ALLOWED_HOSTS,
       requireHTTPS: true,
-      allowFragments: true
+      allowFragments: true,
     });
   }
 
@@ -611,13 +611,13 @@ export class FactoryWagerURLUtils {
     try {
       const enhancedURL = URLHandler.parse(url);
       const hostname = enhancedURL.hostname;
-      
+
       if (hostname.includes('dashboard')) return 'dashboard';
       if (hostname.includes('r2')) return 'r2';
       if (hostname.includes('api')) return 'api';
       if (hostname.includes('wiki')) return 'wiki';
       if (hostname.includes('duoplus')) return 'duoplus';
-      
+
       return 'main';
     } catch {
       return 'unknown';

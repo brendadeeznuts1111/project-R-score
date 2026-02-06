@@ -1,9 +1,9 @@
 #!/usr/bin/env bun
 /**
  * 🔐 bun.secrets CLI for R2 Integration
- * 
+ *
  * Uses S3-compatible API with proper AWS signature v4 authentication
- * 
+ *
  * Usage:
  *   bun run bun:secrets:init          - Initialize bun.secrets with R2
  *   bun run bun:secrets:set <k> <v>   - Store secret in R2 via bun.secrets
@@ -45,7 +45,11 @@ async function signRequest(
 ): Promise<Record<string, string>> {
   const date = new Date();
   const dateStamp = date.toISOString().slice(0, 10).replace(/-/g, '');
-  const amzDate = date.toISOString().replace(/[:\-]|\.[0-9]{3}/g, '').slice(0, 15) + 'Z';
+  const amzDate =
+    date
+      .toISOString()
+      .replace(/[:\-]|\.[0-9]{3}/g, '')
+      .slice(0, 15) + 'Z';
   const region = 'auto';
   const service = 's3';
 
@@ -53,58 +57,104 @@ async function signRequest(
   const host = `${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
   const canonicalUri = encodeURI(path);
   const canonicalQuerystring = '';
-  
+
   const signedHeaders = 'host;x-amz-content-sha256;x-amz-date';
-  const payloadHash = body 
-    ? await crypto.subtle.digest('SHA-256', new TextEncoder().encode(body))
-        .then(buf => Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join(''))
+  const payloadHash = body
+    ? await crypto.subtle.digest('SHA-256', new TextEncoder().encode(body)).then(buf =>
+        Array.from(new Uint8Array(buf))
+          .map(b => b.toString(16).padStart(2, '0'))
+          .join('')
+      )
     : 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
 
   const canonicalHeaders = `host:${host}\nx-amz-content-sha256:${payloadHash}\nx-amz-date:${amzDate}\n`;
-  
+
   const canonicalRequest = [
     method,
     canonicalUri,
     canonicalQuerystring,
     canonicalHeaders,
     signedHeaders,
-    payloadHash
+    payloadHash,
   ].join('\n');
 
   // Create string to sign
   const credentialScope = `${dateStamp}/${region}/${service}/aws4_request`;
-  const canonicalRequestHash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(canonicalRequest))
-    .then(buf => Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join(''));
-  
-  const stringToSign = [
-    'AWS4-HMAC-SHA256',
-    amzDate,
-    credentialScope,
-    canonicalRequestHash
-  ].join('\n');
+  const canonicalRequestHash = await crypto.subtle
+    .digest('SHA-256', new TextEncoder().encode(canonicalRequest))
+    .then(buf =>
+      Array.from(new Uint8Array(buf))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('')
+    );
+
+  const stringToSign = ['AWS4-HMAC-SHA256', amzDate, credentialScope, canonicalRequestHash].join(
+    '\n'
+  );
 
   // Calculate signature
-  const getSignatureKey = async (key: string, dateStamp: string, regionName: string, serviceName: string): Promise<ArrayBuffer> => {
-    const kDate = await crypto.subtle.sign('HMAC', await crypto.subtle.importKey('raw', new TextEncoder().encode('AWS4' + key), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']), new TextEncoder().encode(dateStamp));
-    const kRegion = await crypto.subtle.sign('HMAC', await crypto.subtle.importKey('raw', kDate, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']), new TextEncoder().encode(regionName));
-    const kService = await crypto.subtle.sign('HMAC', await crypto.subtle.importKey('raw', kRegion, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']), new TextEncoder().encode(serviceName));
-    const kSigning = await crypto.subtle.sign('HMAC', await crypto.subtle.importKey('raw', kService, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']), new TextEncoder().encode('aws4_request'));
+  const getSignatureKey = async (
+    key: string,
+    dateStamp: string,
+    regionName: string,
+    serviceName: string
+  ): Promise<ArrayBuffer> => {
+    const kDate = await crypto.subtle.sign(
+      'HMAC',
+      await crypto.subtle.importKey(
+        'raw',
+        new TextEncoder().encode('AWS4' + key),
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['sign']
+      ),
+      new TextEncoder().encode(dateStamp)
+    );
+    const kRegion = await crypto.subtle.sign(
+      'HMAC',
+      await crypto.subtle.importKey('raw', kDate, { name: 'HMAC', hash: 'SHA-256' }, false, [
+        'sign',
+      ]),
+      new TextEncoder().encode(regionName)
+    );
+    const kService = await crypto.subtle.sign(
+      'HMAC',
+      await crypto.subtle.importKey('raw', kRegion, { name: 'HMAC', hash: 'SHA-256' }, false, [
+        'sign',
+      ]),
+      new TextEncoder().encode(serviceName)
+    );
+    const kSigning = await crypto.subtle.sign(
+      'HMAC',
+      await crypto.subtle.importKey('raw', kService, { name: 'HMAC', hash: 'SHA-256' }, false, [
+        'sign',
+      ]),
+      new TextEncoder().encode('aws4_request')
+    );
     return kSigning;
   };
 
   const signingKey = await getSignatureKey(R2_SECRET_ACCESS_KEY, dateStamp, region, service);
-  const signature = await crypto.subtle.sign('HMAC', await crypto.subtle.importKey('raw', signingKey, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']), new TextEncoder().encode(stringToSign));
-  const signatureHex = Array.from(new Uint8Array(signature)).map(b => b.toString(16).padStart(2, '0')).join('');
+  const signature = await crypto.subtle.sign(
+    'HMAC',
+    await crypto.subtle.importKey('raw', signingKey, { name: 'HMAC', hash: 'SHA-256' }, false, [
+      'sign',
+    ]),
+    new TextEncoder().encode(stringToSign)
+  );
+  const signatureHex = Array.from(new Uint8Array(signature))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
 
   // Build authorization header
   const authorizationHeader = `AWS4-HMAC-SHA256 Credential=${R2_ACCESS_KEY_ID}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signatureHex}`;
 
   return {
     ...headers,
-    'Host': host,
+    Host: host,
     'X-Amz-Date': amzDate,
     'X-Amz-Content-SHA256': payloadHash,
-    'Authorization': authorizationHeader,
+    Authorization: authorizationHeader,
   };
 }
 
@@ -118,17 +168,19 @@ class BunSecretsR2CLI {
       { 'Content-Type': 'application/json', ...options.headers },
       body
     );
-    
+
     return fetch(url, { ...options, headers });
   }
 
   async init() {
     console.log(styled('🔐 Initializing bun.secrets with R2...\n', 'accent'));
-    
+
     // Validate credentials are present
     if (!R2_ACCOUNT_ID || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY) {
       console.error(styled('❌ Missing required R2 credentials', 'error'));
-      console.error(styled('🚨 SECURITY: All R2 credentials must be set as environment variables', 'error'));
+      console.error(
+        styled('🚨 SECURITY: All R2 credentials must be set as environment variables', 'error')
+      );
       console.log('Required environment variables:');
       console.log('  export R2_ACCOUNT_ID="your-account-id"');
       console.log('  export R2_ACCESS_KEY_ID="your-access-key-id"');
@@ -195,11 +247,11 @@ class BunSecretsR2CLI {
         method: 'PUT',
         body: JSON.stringify(entry),
       });
-      
+
       if (!resp.ok) {
         throw new Error(`Status ${resp.status}`);
       }
-      
+
       console.log(styled(`☁️  Stored in R2: ${key}`, 'success'));
     } catch (e: any) {
       console.error(styled(`❌ R2 store failed: ${e.message}`, 'error'));
@@ -222,7 +274,9 @@ class BunSecretsR2CLI {
         if (value) {
           console.log(styled(`\n🔑 ${key}`, 'accent'));
           console.log(styled(`   Source: bun.secrets (local)`, 'muted'));
-          console.log(styled(`   Value:  ${value.slice(0, 50)}${value.length > 50 ? '...' : ''}`, 'info'));
+          console.log(
+            styled(`   Value:  ${value.slice(0, 50)}${value.length > 50 ? '...' : ''}`, 'info')
+          );
           return;
         }
       } catch {
@@ -237,8 +291,13 @@ class BunSecretsR2CLI {
         const entry: SecretEntry = await resp.json();
         console.log(styled(`\n🔑 ${key}`, 'accent'));
         console.log(styled(`   Source: R2`, 'muted'));
-        console.log(styled(`   Value:  ${entry.value.slice(0, 50)}${entry.value.length > 50 ? '...' : ''}`, 'info'));
-        
+        console.log(
+          styled(
+            `   Value:  ${entry.value.slice(0, 50)}${entry.value.length > 50 ? '...' : ''}`,
+            'info'
+          )
+        );
+
         // Note: bun.secrets local caching disabled due to API version differences
       } else if (resp.status === 404) {
         console.log(styled(`❌ Secret "${key}" not found`, 'error'));
@@ -257,7 +316,7 @@ class BunSecretsR2CLI {
     // List local bun.secrets
     if (secrets) {
       try {
-        const keys = await secrets.list?.() || [];
+        const keys = (await secrets.list?.()) || [];
         console.log(styled(`💾 bun.secrets (${keys.length}):`, 'info'));
         for (const key of keys) {
           console.log(styled(`   • ${key}`, 'muted'));
@@ -276,7 +335,7 @@ class BunSecretsR2CLI {
         const keys = [...xml.matchAll(/<Key>([^<]+)<\/Key>/g)]
           .map(m => m[1].replace(SECRETS_PREFIX, '').replace('.json', ''))
           .filter(k => !k.includes('/'));
-        
+
         console.log(styled(`☁️  R2 secrets (${keys.length}):`, 'info'));
         for (const key of keys) {
           console.log(styled(`   • ${key}`, 'muted'));
@@ -291,7 +350,7 @@ class BunSecretsR2CLI {
 
   async sync() {
     console.log(styled('🔄 Syncing local bun.secrets to R2...\n', 'accent'));
-    
+
     if (!secrets) {
       console.error(styled('❌ bun.secrets not available', 'error'));
       process.exit(1);
@@ -301,13 +360,13 @@ class BunSecretsR2CLI {
       // Try to get keys from bun.secrets
       let keys: string[] = [];
       try {
-        keys = await secrets.list?.() || [];
+        keys = (await secrets.list?.()) || [];
       } catch {
         console.log(styled('⚠️  bun.secrets.list() not available', 'warning'));
         console.log(styled('   Provide keys manually or use set command', 'muted'));
         process.exit(1);
       }
-      
+
       console.log(styled(`Found ${keys.length} local secrets\n`, 'info'));
 
       let successCount = 0;
@@ -345,7 +404,9 @@ class BunSecretsR2CLI {
         const xml = await resp.text();
         const keys = [...xml.matchAll(/<Key>([^<]+)<\/Key>/g)]
           .map(m => m[1])
-          .filter(k => k.startsWith(SECRETS_PREFIX) && !k.includes('/backups/') && k.endsWith('.json'));
+          .filter(
+            k => k.startsWith(SECRETS_PREFIX) && !k.includes('/backups/') && k.endsWith('.json')
+          );
 
         console.log(styled(`Found ${keys.length} secrets to backup`, 'info'));
 
@@ -390,7 +451,7 @@ class BunSecretsR2CLI {
 
 // CLI
 const cli = new BunSecretsR2CLI();
-const [,, cmd, ...args] = process.argv;
+const [, , cmd, ...args] = process.argv;
 
 switch (cmd) {
   case 'init':

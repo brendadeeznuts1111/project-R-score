@@ -1,0 +1,70 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Tier1380: Generate Commit Message",
+			"type": "shell",
+			"command": "bun",
+			"args": ["${workspaceFolder}/scripts/generate-message.ts"],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Tier1380: Run Pre-commit Checks",
+			"type": "shell",
+			"command": "bun",
+			"args": ["${workspaceFolder}/scripts/pre-commit-hook.ts"],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Tier1380: Run Tests",
+			"type": "shell",
+			"command": "bun",
+			"args": ["test"],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Tier1380: Open Dashboard",
+			"type": "shell",
+			"command": "bun",
+			"args": ["${workspaceFolder}/scripts/governance-dashboard.ts", "--once"],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Tier1380: Validate Current Branch",
+			"type": "shell",
+			"command": "bun",
+			"args": ["${workspaceFolder}/scripts/branch-validator.ts"],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		}
+	]
+}

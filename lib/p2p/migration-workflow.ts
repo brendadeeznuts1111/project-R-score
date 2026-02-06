@@ -7,7 +7,7 @@ import { BusinessContinuity } from './business-continuity';
 import Redis from 'ioredis';
 
 const redis = new Redis(Bun.env.REDIS_URL ?? 'redis://localhost:6379', {
-  retryStrategy: (times) => Math.min(times * 50, 2000),
+  retryStrategy: times => Math.min(times * 50, 2000),
   maxRetriesPerRequest: 3,
 });
 
@@ -43,36 +43,36 @@ export async function executeBusinessMigration(
   options: MigrationOptions
 ): Promise<MigrationReport> {
   console.log('🔄 Starting Business Migration Workflow');
-  
+
   // Step 1: Verify old business exists
   const oldBusinessId = await redis.hget(`alias:${oldAlias}`, 'businessId');
   if (!oldBusinessId) {
     throw new Error(`Business "${oldAlias}" not found`);
   }
-  
+
   // Step 2: Check for pending payments
   const pendingKey = `pending:${oldAlias}`;
   const pendingCount = await redis.scard(pendingKey);
   if (pendingCount > 0) {
     console.warn(`⚠️ ${pendingCount} pending payments found. Consider waiting.`);
   }
-  
+
   // Step 3: Execute migration
   const migrationResult = await BusinessContinuity.migrateBusiness(oldAlias, {
     name: newName,
     alias: newAlias,
     reason: options.reason,
     forwardPayments: options.forwardPayments,
-    forwardDays: options.forwardDuration
+    forwardDays: options.forwardDuration,
   });
-  
+
   console.log(`✅ Business migrated: ${oldAlias} → ${newAlias}`);
-  
+
   // Step 4: Generate new QR codes if needed
   if (options.updateQRs) {
     await generateNewQRCodes(newAlias);
   }
-  
+
   // Step 5: Create migration report
   const report: MigrationReport = {
     migrationId: crypto.randomUUID(),
@@ -85,9 +85,9 @@ export async function executeBusinessMigration(
     customersNotified: options.notifyCustomers,
     oldBusinessId: migrationResult.oldBusinessId,
     newBusinessId: migrationResult.newBusinessId,
-    redirectSetup: migrationResult.redirectSetup
+    redirectSetup: migrationResult.redirectSetup,
   };
-  
+
   // Save report
   const reportsDir = 'migrations';
   try {
@@ -95,13 +95,13 @@ export async function executeBusinessMigration(
   } catch {
     // Directory might already exist
   }
-  
+
   const reportName = `migration-${oldAlias}-${newAlias}-${Date.now()}.json`;
   await Bun.write(`${reportsDir}/${reportName}`, JSON.stringify(report, null, 2));
-  
+
   // Step 6: Update any external systems
   await updateExternalServices(oldAlias, newAlias);
-  
+
   console.log(`
 🎉 Migration Complete!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -117,7 +117,7 @@ Next Steps:
 3. Monitor forwarded payments
 4. Run follow-up notification in 30 days
 `);
-  
+
   return report;
 }
 
@@ -126,22 +126,22 @@ Next Steps:
  */
 async function generateNewQRCodes(alias: string): Promise<void> {
   const amounts = [20, 30, 50, 75, 100];
-  
+
   try {
     const businessInfo = await BusinessContinuity.getCurrentPaymentHandles(alias);
-    
+
     for (const amount of amounts) {
       const qrCode = {
         alias,
         amount,
         handles: businessInfo.handles,
         generated: new Date().toISOString(),
-        url: `http://localhost:3002/pay?alias=${alias}&amount=${amount}`
+        url: `http://localhost:3002/pay?alias=${alias}&amount=${amount}`,
       };
-      
+
       await redis.set(`qr:${alias}:${amount}`, JSON.stringify(qrCode), 'EX', 365 * 24 * 60 * 60); // 1 year
     }
-    
+
     console.log(`📸 Generated ${amounts.length} new QR codes for ${alias}`);
   } catch (error) {
     console.error('Error generating QR codes:', error);
@@ -157,16 +157,19 @@ async function updateExternalServices(oldAlias: string, newAlias: string): Promi
   // - Social media APIs
   // - Email marketing platforms
   // - Analytics systems
-  
+
   console.log(`🔗 Would update external services: ${oldAlias} → ${newAlias}`);
-  
+
   // Store update task
-  await redis.lpush('external_updates', JSON.stringify({
-    oldAlias,
-    newAlias,
-    timestamp: new Date().toISOString(),
-    status: 'pending'
-  }));
+  await redis.lpush(
+    'external_updates',
+    JSON.stringify({
+      oldAlias,
+      newAlias,
+      timestamp: new Date().toISOString(),
+      status: 'pending',
+    })
+  );
 }
 
 /**
@@ -179,35 +182,39 @@ export async function handlePaymentAccountLoss(
   emergencyContact: string
 ): Promise<any> {
   console.log(`🚨 EMERGENCY: ${provider} account lost for ${alias}`);
-  
+
   // 1. Immediately disable the affected provider
   const businessId = await redis.hget(`alias:${alias}`, 'businessId');
   if (!businessId) {
     throw new Error('Business not found');
   }
-  
+
   const handlesStr = await redis.hget(`business:${businessId}`, 'paymentHandles');
   if (!handlesStr) {
     throw new Error('Payment handles not found');
   }
-  
+
   const handles = JSON.parse(handlesStr);
   handles[provider] = 'DISABLED-' + Date.now();
-  
+
   await redis.hset(`business:${businessId}`, 'paymentHandles', JSON.stringify(handles));
-  
+
   // 2. Set emergency flag
   await redis.hmset(`emergency:${alias}:${provider}`, [
-    'lostAt', new Date().toISOString(),
-    'newHandle', newHandle,
-    'contact', emergencyContact,
-    'status', 'recovering'
+    'lostAt',
+    new Date().toISOString(),
+    'newHandle',
+    newHandle,
+    'contact',
+    emergencyContact,
+    'status',
+    'recovering',
   ]);
-  
+
   // 3. Notify customers who paid via this provider recently
   const paymentKeys = await redis.keys(`payment:*`);
   const recentPayments: string[] = [];
-  
+
   for (const key of paymentKeys.slice(0, 100)) {
     const payment = await redis.hgetall(key);
     if (payment && payment.businessAlias === alias && payment.provider === provider) {
@@ -216,7 +223,7 @@ export async function handlePaymentAccountLoss(
       }
     }
   }
-  
+
   // 4. Generate recovery instructions
   const recovery = {
     alias,
@@ -227,21 +234,21 @@ export async function handlePaymentAccountLoss(
       'Update physical QR codes',
       'Update digital payment links',
       'Contact affected customers',
-      'Monitor for fraudulent activity'
-    ]
+      'Monitor for fraudulent activity',
+    ],
   };
-  
+
   try {
     await Bun.mkdir('emergency', { recursive: true });
   } catch {
     // Directory might already exist
   }
-  
+
   await Bun.write(
     `emergency/${alias}-${provider}-${Date.now()}.json`,
     JSON.stringify(recovery, null, 2)
   );
-  
+
   console.log(`✅ Emergency response initiated for ${alias}`);
   return recovery;
 }

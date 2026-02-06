@@ -2,7 +2,7 @@
 
 /**
  * 🎭 DuoPlus Integration with R2 MCP
- * 
+ *
  * Integrates duoplus.com domain operations, Venmo family integrations,
  * and purple color scheme theming with the MCP system.
  */
@@ -105,33 +105,33 @@ export class DuoPlusIntegration {
       domain: {
         primary: 'duoplus.com',
         environment: 'production',
-        tier: 'family'
+        tier: 'family',
       },
       integrations: {
         venmo: {
           enabled: true,
           family_accounts: true,
           dispute_handling: true,
-          payment_routing: true
+          payment_routing: true,
         },
         factory_wager: {
           sync_enabled: true,
           data_sharing: true,
-          cross_domain_auth: true
-        }
+          cross_domain_auth: true,
+        },
       },
       theme: {
         primary_color: '#8b5cf6', // Purple
         secondary_color: '#a78bfa', // Light purple
-        accent_color: '#fbbf24',   // Yellow accent
-        color_scheme: 'purple'
+        accent_color: '#fbbf24', // Yellow accent
+        color_scheme: 'purple',
       },
       metrics: {
         family_account_metrics: true,
         dispute_resolution_tracking: true,
         payment_analytics: true,
-        cross_domain_metrics: true
-      }
+        cross_domain_metrics: true,
+      },
     };
   }
 
@@ -144,13 +144,13 @@ export class DuoPlusIntegration {
 
     // Store DuoPlus configuration in R2
     await this.storeDuoPlusConfig();
-    
+
     // Initialize Venmo family account tracking
     await this.initializeVenmoFamilyTracking();
-    
+
     // Setup cross-domain metrics with factory-wager
     await this.setupCrossDomainMetrics();
-    
+
     // Initialize dispute handling system
     await this.initializeDisputeHandling();
 
@@ -162,7 +162,7 @@ export class DuoPlusIntegration {
    */
   async storeDuoPlusConfig(): Promise<void> {
     const key = `domains/duoplus/config.json`;
-    
+
     try {
       await this.r2.putJSON(key, this.config);
       console.log(styled(`✅ DuoPlus config stored: ${key}`, 'success'));
@@ -185,14 +185,19 @@ export class DuoPlusIntegration {
         members: [
           { id: 'user-001', name: 'John Johnson', role: 'admin', permissions: ['full_access'] },
           { id: 'user-002', name: 'Jane Johnson', role: 'admin', permissions: ['full_access'] },
-          { id: 'user-003', name: 'Teen Johnson', role: 'member', permissions: ['send_receive', 'view_history'] },
-          { id: 'user-004', name: 'Kid Johnson', role: 'child', permissions: ['request_only'] }
+          {
+            id: 'user-003',
+            name: 'Teen Johnson',
+            role: 'member',
+            permissions: ['send_receive', 'view_history'],
+          },
+          { id: 'user-004', name: 'Kid Johnson', role: 'child', permissions: ['request_only'] },
         ],
         created_at: '2024-01-15T10:00:00Z',
         last_activity: new Date().toISOString(),
         balance: 1250.75,
         dispute_count: 2,
-        resolution_rate: 100.0
+        resolution_rate: 100.0,
       },
       {
         id: 'family-002',
@@ -201,19 +206,24 @@ export class DuoPlusIntegration {
         members: [
           { id: 'user-005', name: 'Bob Smith', role: 'admin', permissions: ['full_access'] },
           { id: 'user-006', name: 'Alice Smith', role: 'admin', permissions: ['full_access'] },
-          { id: 'user-007', name: 'Teen Smith', role: 'member', permissions: ['send_receive', 'view_history'] }
+          {
+            id: 'user-007',
+            name: 'Teen Smith',
+            role: 'member',
+            permissions: ['send_receive', 'view_history'],
+          },
         ],
         created_at: '2024-02-01T14:30:00Z',
         last_activity: new Date().toISOString(),
-        balance: 845.20,
+        balance: 845.2,
         dispute_count: 0,
-        resolution_rate: 0.0
-      }
+        resolution_rate: 0.0,
+      },
     ];
 
     const key = `domains/duoplus/venmo/family-accounts.json`;
     await this.r2.putJSON(key, mockFamilyAccounts);
-    
+
     console.log(styled(`✅ Family accounts stored: ${key}`, 'success'));
   }
 
@@ -231,25 +241,25 @@ export class DuoPlusIntegration {
         'user_authentication',
         'payment_processing',
         'dispute_handling',
-        'analytics_sharing'
+        'analytics_sharing',
       ],
       shared_metrics: {
         cross_domain_users: 1250,
         shared_disputes: 45,
         joint_payment_volume: 75000,
-        unified_resolution_rate: 94.5
+        unified_resolution_rate: 94.5,
       },
       mcp_integration: {
         factory_wager_diagnoses: 12,
         duoplus_diagnoses: 8,
         shared_knowledge_base: 2048,
-        cross_domain_confidence: 87
-      }
+        cross_domain_confidence: 87,
+      },
     };
 
     const key = `domains/cross-domain/metrics/${new Date().toISOString().split('T')[0]}.json`;
     await this.r2.putJSON(key, crossDomainMetrics);
-    
+
     console.log(styled(`✅ Cross-domain metrics stored: ${key}`, 'success'));
   }
 
@@ -268,32 +278,32 @@ export class DuoPlusIntegration {
           amount_thresholds: {
             auto_resolve: 100,
             require_review: 500,
-            escalate: 1000
-          }
+            escalate: 1000,
+          },
         },
         resolution_patterns: [
           'family_misunderstanding',
           'permission_error',
           'technical_glitch',
-          'fraud_suspicion'
-        ]
+          'fraud_suspicion',
+        ],
       },
       integration_with_factory_wager: {
         shared_dispute_database: true,
         unified_resolution_strategies: true,
-        cross_domain_escalation: true
+        cross_domain_escalation: true,
       },
       mcp_learning: {
         pattern_recognition: true,
         resolution_suggestions: true,
         confidence_scoring: true,
-        continuous_improvement: true
-      }
+        continuous_improvement: true,
+      },
     };
 
     const key = `domains/duoplus/dispute-handling/config.json`;
     await this.r2.putJSON(key, disputeHandling);
-    
+
     console.log(styled(`✅ Dispute handling config stored: ${key}`, 'success'));
   }
 
@@ -314,7 +324,7 @@ export class DuoPlusIntegration {
       error: {
         name: error.name || 'VenmoError',
         message: error.message || 'Venmo integration error',
-        stack: error.stack
+        stack: error.stack,
       },
       fix,
       context: `venmo-family-${context}`,
@@ -323,8 +333,8 @@ export class DuoPlusIntegration {
         integration_type: 'venmo_family',
         dispute_handling: this.config.integrations.venmo.dispute_handling,
         factory_wager_sync: this.config.integrations.factory_wager.sync_enabled,
-        purple_theme_applied: this.config.theme.color_scheme === 'purple'
-      }
+        purple_theme_applied: this.config.theme.color_scheme === 'purple',
+      },
     };
 
     return await this.r2.storeDiagnosis(diagnosis);
@@ -369,27 +379,27 @@ export class DuoPlusIntegration {
         total_accounts: 245,
         active_accounts: 198,
         total_members: 892,
-        avg_family_size: 3.6
+        avg_family_size: 3.6,
       },
       disputes: {
         total_disputes: 67,
         resolved_disputes: 63,
         resolution_rate: 94.0,
         avg_resolution_time: 2.4, // hours
-        family_disputes: 45
+        family_disputes: 45,
       },
       payments: {
         total_volume: 285000,
         family_payments: 125000,
         cross_domain_payments: 45000,
-        success_rate: 98.5
+        success_rate: 98.5,
       },
       mcp_integration: {
         diagnoses_stored: 8,
         venmo_patterns_learned: 15,
         dispute_resolution_suggestions: 23,
-        confidence_score: 89
-      }
+        confidence_score: 89,
+      },
     };
 
     // Store metrics in R2
@@ -407,7 +417,7 @@ export class DuoPlusIntegration {
       success: this.config.theme.primary_color,
       error: '#ef4444',
       info: this.config.theme.secondary_color,
-      warning: this.config.theme.accent_color
+      warning: this.config.theme.accent_color,
     };
 
     return styled(content, type, colors[type]);
@@ -425,24 +435,24 @@ export class DuoPlusIntegration {
       factory_wager: {
         domain: 'factory-wager.com',
         data_shared: ['user_profiles', 'dispute_patterns', 'resolution_strategies'],
-        last_sync: new Date().toISOString()
+        last_sync: new Date().toISOString(),
       },
       duoplus: {
         domain: 'duoplus.com',
         data_shared: ['family_accounts', 'venmo_patterns', 'payment_flows'],
-        last_sync: new Date().toISOString()
+        last_sync: new Date().toISOString(),
       },
       shared_benefits: [
         'Unified user experience',
         'Cross-domain dispute resolution',
         'Shared knowledge base',
-        'Integrated analytics'
-      ]
+        'Integrated analytics',
+      ],
     };
 
     const key = `domains/cross-domain/sync/${new Date().toISOString().split('T')[0]}.json`;
     await this.r2.putJSON(key, syncData);
-    
+
     console.log(styled(`✅ Cross-domain sync stored: ${key}`, 'success'));
   }
 
@@ -452,16 +462,31 @@ export class DuoPlusIntegration {
   async displayStatus(): Promise<void> {
     console.log(styled('\n🎭 DuoPlus Integration Status', 'accent'));
     console.log(styled('=============================', 'accent'));
-    
+
     console.log(styled(`Domain: ${this.config.domain.primary}`, 'info'));
     console.log(styled(`Tier: ${this.config.domain.tier}`, 'info'));
     console.log(styled(`Environment: ${this.config.domain.environment}`, 'info'));
-    
+
     console.log(styled('\n🔗 Integrations:', 'info'));
-    console.log(styled(`  Venmo Family Accounts: ${this.config.integrations.venmo.enabled ? '✅' : '❌'}`, this.config.integrations.venmo.enabled ? 'success' : 'error'));
-    console.log(styled(`  Dispute Handling: ${this.config.integrations.venmo.dispute_handling ? '✅' : '❌'}`, this.config.integrations.venmo.dispute_handling ? 'success' : 'error'));
-    console.log(styled(`  Factory-Wager Sync: ${this.config.integrations.factory_wager.sync_enabled ? '✅' : '❌'}`, this.config.integrations.factory_wager.sync_enabled ? 'success' : 'error'));
-    
+    console.log(
+      styled(
+        `  Venmo Family Accounts: ${this.config.integrations.venmo.enabled ? '✅' : '❌'}`,
+        this.config.integrations.venmo.enabled ? 'success' : 'error'
+      )
+    );
+    console.log(
+      styled(
+        `  Dispute Handling: ${this.config.integrations.venmo.dispute_handling ? '✅' : '❌'}`,
+        this.config.integrations.venmo.dispute_handling ? 'success' : 'error'
+      )
+    );
+    console.log(
+      styled(
+        `  Factory-Wager Sync: ${this.config.integrations.factory_wager.sync_enabled ? '✅' : '❌'}`,
+        this.config.integrations.factory_wager.sync_enabled ? 'success' : 'error'
+      )
+    );
+
     console.log(styled('\n🎨 Theme Configuration:', 'info'));
     console.log(styled(`  Color Scheme: ${this.config.theme.color_scheme}`, 'muted'));
     console.log(styled(`  Primary: ${this.config.theme.primary_color}`, 'muted'));
@@ -483,11 +508,11 @@ export const duoplusIntegration = new DuoPlusIntegration();
 // CLI interface
 if (import.meta.main) {
   const duoplus = duoplusIntegration;
-  
+
   await duoplus.initialize();
   await duoplus.syncWithFactoryWager();
   await duoplus.displayStatus();
-  
+
   console.log(styled('\n🎉 DuoPlus integration complete!', 'success'));
   console.log(styled('Purple theme applied and Venmo family integrations active.', 'info'));
 }

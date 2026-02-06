@@ -1,0 +1,65 @@
+name: Tier-1380 OMEGA Commit Governance
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+
+jobs:
+  commit-governance:
+    name: Commit Governance Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Validate commit messages
+        if: github.event_name == 'pull_request'
+        run: |
+          # Validate all commits in the PR
+          bun ~/.kimi/skills/tier1380-commit-flow/scripts/validate-commits.ts \
+            ${{ github.event.pull_request.base.sha }} \
+            ${{ github.event.pull_request.head.sha }}
+
+      - name: Run pre-commit checks
+        run: |
+          bun ~/.kimi/skills/tier1380-commit-flow/scripts/pre-commit-hook.ts
+
+      - name: Run governance checks
+        run: |
+          bun ~/.kimi/skills/tier1380-commit-flow/scripts/governance-check.ts all
+
+      - name: Upload analytics
+        if: always()
+        run: |
+          bun ~/.kimi/skills/tier1380-commit-flow/scripts/commit-history.ts sync
+
+  branch-validation:
+    name: Branch Name Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Validate branch name
+        run: |
+          bun ~/.kimi/skills/tier1380-commit-flow/scripts/branch-validator.ts \
+            ${{ github.head_ref || github.ref_name }}

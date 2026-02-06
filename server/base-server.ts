@@ -32,13 +32,13 @@ import {
   BunApiIndex 
 } from '../lib/docs/index-fetcher-enhanced.ts';
 
-import { ChromeAppManager } from '../lib/chrome-integration';
+import { ChromeAppManager } from '../lib/cli/chrome-integration';
 
 // Import RSS integration service
 import { RSSIntegrationService, RSSFeedItem } from '../services/rss-integration';
 
 // Import advanced cache management
-import { CacheFactory, CacheMiddleware } from '../lib/cache-management.ts';
+import { CacheFactory, CacheMiddleware } from '../lib/performance/cache-management.ts';
 
 // Import security middleware
 import { 
@@ -46,7 +46,7 @@ import {
   SecurityPresets, 
   createCORSHeaders,
   createSecurityMiddleware 
-} from '../lib/rate-limiting-security.ts';
+} from '../lib/security/rate-limiting-security.ts';
 
 // Initialize services
 const docsFetcher = new EnhancedDocsFetcher({

@@ -1,6 +1,6 @@
 /**
  * 🔐 FactoryWager MCP Authentication Middleware
- * 
+ *
  * Secure authentication layer for MCP servers using master tokens
  */
 
@@ -29,7 +29,7 @@ export class MCPAuthMiddleware {
       requiredPermissions: [],
       allowAnonymous: false,
       logAttempts: true,
-      ...options
+      ...options,
     };
   }
 
@@ -48,8 +48,8 @@ export class MCPAuthMiddleware {
           tokenId: 'anonymous',
           permissions: ['anonymous'],
           expiresAt: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
-          ...context
-        }
+          ...context,
+        },
       };
     }
 
@@ -75,8 +75,8 @@ export class MCPAuthMiddleware {
 
       // Check required permissions
       if (this.options.requiredPermissions) {
-        const hasAllPermissions = this.options.requiredPermissions.every(
-          permission => validation.permissions?.includes(permission)
+        const hasAllPermissions = this.options.requiredPermissions.every(permission =>
+          validation.permissions?.includes(permission)
         );
 
         if (!hasAllPermissions) {
@@ -84,7 +84,12 @@ export class MCPAuthMiddleware {
             perm => !validation.permissions?.includes(perm)
           );
           if (this.options.logAttempts) {
-            console.log(styled(`🔒 Authentication failed: Missing permissions: ${missing.join(', ')}`, 'error'));
+            console.log(
+              styled(
+                `🔒 Authentication failed: Missing permissions: ${missing.join(', ')}`,
+                'error'
+              )
+            );
           }
           return { success: false, error: `Missing permissions: ${missing.join(', ')}` };
         }
@@ -94,15 +99,16 @@ export class MCPAuthMiddleware {
         tokenId: validation.tokenId!,
         permissions: validation.permissions!,
         expiresAt: validation.expiresAt!,
-        ...context
+        ...context,
       };
 
       if (this.options.logAttempts) {
-        console.log(styled(`✅ Authentication successful for token: ${validation.tokenId}`, 'success'));
+        console.log(
+          styled(`✅ Authentication successful for token: ${validation.tokenId}`, 'success')
+        );
       }
 
       return { success: true, authContext };
-
     } catch (error) {
       const errorMessage = `Authentication error: ${error.message}`;
       if (this.options.logAttempts) {
@@ -135,9 +141,12 @@ export class MCPAuthMiddleware {
   ) {
     const middleware = new MCPAuthMiddleware(options);
 
-    return async (args: T, context?: { ip?: string; userAgent?: string; token?: string }): Promise<R> => {
+    return async (
+      args: T,
+      context?: { ip?: string; userAgent?: string; token?: string }
+    ): Promise<R> => {
       const auth = await middleware.authenticate(context?.token, context);
-      
+
       if (!auth.success) {
         throw new Error(`Authentication failed: ${auth.error}`);
       }
@@ -154,7 +163,7 @@ export class MCPAuthMiddleware {
       const token = req.headers['authorization']?.replace('Bearer ', '') || req.query.token;
       const context = {
         ip: req.ip || req.connection.remoteAddress,
-        userAgent: req.headers['user-agent']
+        userAgent: req.headers['user-agent'],
       };
 
       const auth = await this.authenticate(token, context);
@@ -162,7 +171,7 @@ export class MCPAuthMiddleware {
       if (!auth.success) {
         return res.status(401).json({
           error: 'Authentication failed',
-          message: auth.error
+          message: auth.error,
         });
       }
 
@@ -177,38 +186,38 @@ export const mcpAuthMiddleware = {
   // For read-only operations
   readOnly: new MCPAuthMiddleware({
     requiredPermissions: ['search:docs', 'read:metrics'],
-    logAttempts: true
+    logAttempts: true,
   }),
 
   // For write operations
   readWrite: new MCPAuthMiddleware({
     requiredPermissions: ['search:docs', 'store:diagnosis', 'write:metrics'],
-    logAttempts: true
+    logAttempts: true,
   }),
 
   // For administrative operations
   admin: new MCPAuthMiddleware({
     requiredPermissions: ['manage:tokens', 'read:audits', 'system:admin'],
-    logAttempts: true
+    logAttempts: true,
   }),
 
   // For Claude Desktop
   claudeDesktop: new MCPAuthMiddleware({
     requiredPermissions: ['search:docs', 'store:diagnosis', 'audit:search', 'metrics:read'],
-    logAttempts: true
+    logAttempts: true,
   }),
 
   // For CLI tools
   cliTools: new MCPAuthMiddleware({
     requiredPermissions: ['search:docs', 'generate:examples', 'validate:code'],
-    logAttempts: true
+    logAttempts: true,
   }),
 
   // Allow anonymous for public endpoints
   public: new MCPAuthMiddleware({
     allowAnonymous: true,
-    logAttempts: false
-  })
+    logAttempts: false,
+  }),
 };
 
 // Helper function to extract token from various sources
@@ -282,14 +291,14 @@ if (import.meta.main) {
           }
 
           console.log('🔍 Testing authentication...');
-          
+
           // Test different permission levels
           const tests = [
             { name: 'Read-only', middleware: mcpAuthMiddleware.readOnly },
             { name: 'Read-write', middleware: mcpAuthMiddleware.readWrite },
             { name: 'Admin', middleware: mcpAuthMiddleware.admin },
             { name: 'Claude Desktop', middleware: mcpAuthMiddleware.claudeDesktop },
-            { name: 'CLI Tools', middleware: mcpAuthMiddleware.cliTools }
+            { name: 'CLI Tools', middleware: mcpAuthMiddleware.cliTools },
           ];
 
           for (const test of tests) {
@@ -309,7 +318,7 @@ if (import.meta.main) {
           const mockRequest = {
             headers: { authorization: `Bearer ${token}` },
             query: {},
-            body: {}
+            body: {},
           };
 
           const extracted = extractTokenFromRequest(mockRequest);

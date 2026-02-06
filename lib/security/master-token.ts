@@ -1,6 +1,6 @@
 /**
  * 🔐 FactoryWager Master Token System v5.0
- * 
+ *
  * Enterprise-grade token management for MCP authentication
  * with rotating tokens, secure storage, and audit logging.
  */
@@ -65,12 +65,12 @@ export class MasterTokenManager {
       secret,
       expiresAt,
       permissions,
-      metadata
+      metadata,
     };
 
     this.tokens.set(tokenId, tokenConfig);
     await this.saveTokensToStorage();
-    
+
     // Log creation
     await this.logAudit('create', tokenId, true, undefined, undefined, 'Token created');
 
@@ -80,29 +80,60 @@ export class MasterTokenManager {
   /**
    * Validate a master token
    */
-  async validateToken(token: string, context?: { ip?: string; userAgent?: string }): Promise<TokenValidation> {
+  async validateToken(
+    token: string,
+    context?: { ip?: string; userAgent?: string }
+  ): Promise<TokenValidation> {
     try {
       const decoded = this.decodeToken(token);
-      
+
       if (!decoded) {
-        await this.logAudit('validate', 'unknown', false, context?.ip, context?.userAgent, 'Invalid token format');
+        await this.logAudit(
+          'validate',
+          'unknown',
+          false,
+          context?.ip,
+          context?.userAgent,
+          'Invalid token format'
+        );
         return { valid: false, reason: 'Invalid token format' };
       }
 
       const tokenConfig = this.tokens.get(decoded.tokenId);
-      
+
       if (!tokenConfig) {
-        await this.logAudit('validate', decoded.tokenId, false, context?.ip, context?.userAgent, 'Token not found');
+        await this.logAudit(
+          'validate',
+          decoded.tokenId,
+          false,
+          context?.ip,
+          context?.userAgent,
+          'Token not found'
+        );
         return { valid: false, reason: 'Token not found' };
       }
 
       if (tokenConfig.secret !== decoded.secret) {
-        await this.logAudit('validate', decoded.tokenId, false, context?.ip, context?.userAgent, 'Invalid secret');
+        await this.logAudit(
+          'validate',
+          decoded.tokenId,
+          false,
+          context?.ip,
+          context?.userAgent,
+          'Invalid secret'
+        );
         return { valid: false, reason: 'Invalid secret' };
       }
 
       if (new Date() > tokenConfig.expiresAt) {
-        await this.logAudit('validate', decoded.tokenId, false, context?.ip, context?.userAgent, 'Token expired');
+        await this.logAudit(
+          'validate',
+          decoded.tokenId,
+          false,
+          context?.ip,
+          context?.userAgent,
+          'Token expired'
+        );
         return { valid: false, reason: 'Token expired' };
       }
 
@@ -112,11 +143,17 @@ export class MasterTokenManager {
         valid: true,
         tokenId: decoded.tokenId,
         permissions: tokenConfig.permissions,
-        expiresAt: tokenConfig.expiresAt
+        expiresAt: tokenConfig.expiresAt,
       };
-
     } catch (error) {
-      await this.logAudit('validate', 'unknown', false, context?.ip, context?.userAgent, `Validation error: ${error.message}`);
+      await this.logAudit(
+        'validate',
+        'unknown',
+        false,
+        context?.ip,
+        context?.userAgent,
+        `Validation error: ${error.message}`
+      );
       return { valid: false, reason: `Validation error: ${error.message}` };
     }
   }
@@ -126,7 +163,7 @@ export class MasterTokenManager {
    */
   async hasPermission(token: string, permission: string): Promise<boolean> {
     const validation = await this.validateToken(token);
-    return validation.valid && validation.permissions?.includes(permission) || false;
+    return (validation.valid && validation.permissions?.includes(permission)) || false;
   }
 
   /**
@@ -134,16 +171,16 @@ export class MasterTokenManager {
    */
   async revokeToken(tokenId: string, reason?: string): Promise<boolean> {
     const tokenConfig = this.tokens.get(tokenId);
-    
+
     if (!tokenConfig) {
       return false;
     }
 
     this.tokens.delete(tokenId);
     await this.saveTokensToStorage();
-    
+
     await this.logAudit('revoke', tokenId, true, undefined, undefined, reason || 'Token revoked');
-    
+
     return true;
   }
 
@@ -152,13 +189,13 @@ export class MasterTokenManager {
    */
   async rotateToken(oldToken: string, reason?: string): Promise<string> {
     const decoded = this.decodeToken(oldToken);
-    
+
     if (!decoded) {
       throw new Error('Invalid token for rotation');
     }
 
     const oldConfig = this.tokens.get(decoded.tokenId);
-    
+
     if (!oldConfig) {
       throw new Error('Token not found for rotation');
     }
@@ -167,7 +204,7 @@ export class MasterTokenManager {
     const newToken = await this.createToken(oldConfig.permissions, {
       ...oldConfig.metadata,
       rotatedFrom: decoded.tokenId,
-      rotationReason: reason
+      rotationReason: reason,
     });
 
     // Revoke old token
@@ -185,7 +222,7 @@ export class MasterTokenManager {
       .filter(([_, config]) => config.expiresAt > now)
       .map(([tokenId, config]) => ({
         tokenId,
-        ...config
+        ...config,
       }));
   }
 
@@ -213,7 +250,14 @@ export class MasterTokenManager {
 
     for (const tokenId of expiredTokens) {
       this.tokens.delete(tokenId);
-      await this.logAudit('revoke', tokenId, true, undefined, undefined, 'Token expired and cleaned up');
+      await this.logAudit(
+        'revoke',
+        tokenId,
+        true,
+        undefined,
+        undefined,
+        'Token expired and cleaned up'
+      );
     }
 
     if (expiredTokens.length > 0) {
@@ -239,7 +283,9 @@ export class MasterTokenManager {
     return Buffer.from(`${payload}.${signature}`).toString('base64');
   }
 
-  private decodeToken(token: string): { tokenId: string; secret: string; timestamp: number } | null {
+  private decodeToken(
+    token: string
+  ): { tokenId: string; secret: string; timestamp: number } | null {
     try {
       const decoded = Buffer.from(token, 'base64').toString();
       const [payload, signature] = decoded.split('.');
@@ -249,13 +295,15 @@ export class MasterTokenManager {
       }
 
       // Verify signature
-      const expectedSignature = createHmac('sha256', this.getHmacKey()).update(payload).digest('hex');
+      const expectedSignature = createHmac('sha256', this.getHmacKey())
+        .update(payload)
+        .digest('hex');
       if (signature !== expectedSignature) {
         return null;
       }
 
       const [tokenId, secret, timestampStr] = payload.split(':');
-      
+
       if (!tokenId || !secret || !timestampStr) {
         return null;
       }
@@ -276,7 +324,14 @@ export class MasterTokenManager {
     return process.env.MASTER_TOKEN_HMAC_KEY || 'factorywager-mcp-default-key-change-in-production';
   }
 
-  private async logAudit(action: AuditLog['action'], tokenId: string, success: boolean, ip?: string, userAgent?: string, reason?: string): Promise<void> {
+  private async logAudit(
+    action: AuditLog['action'],
+    tokenId: string,
+    success: boolean,
+    ip?: string,
+    userAgent?: string,
+    reason?: string
+  ): Promise<void> {
     const logEntry: AuditLog = {
       timestamp: new Date().toISOString(),
       tokenId,
@@ -284,7 +339,7 @@ export class MasterTokenManager {
       success,
       ip,
       userAgent,
-      reason
+      reason,
     };
 
     this.auditLogs.push(logEntry);
@@ -309,8 +364,8 @@ export class MasterTokenManager {
           success,
           ip,
           userAgent,
-          reason
-        }
+          reason,
+        },
       });
     } catch {
       // R2 not available, continue with local logging
@@ -321,7 +376,7 @@ export class MasterTokenManager {
     try {
       const tokenData = {
         tokens: Object.fromEntries(this.tokens),
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       };
 
       await r2MCPIntegration.storeDiagnosis({
@@ -329,14 +384,14 @@ export class MasterTokenManager {
         timestamp: new Date().toISOString(),
         error: {
           name: 'TokenBackup',
-          message: 'Regular token backup'
+          message: 'Regular token backup',
         },
         fix: '',
         relatedAudits: [],
         relatedDocs: [],
         confidence: 1.0,
         context: 'security',
-        metadata: tokenData
+        metadata: tokenData,
       });
     } catch {
       // R2 not available, tokens remain in memory
@@ -346,11 +401,14 @@ export class MasterTokenManager {
   private loadTokensFromStorage(): void {
     // In production, load from secure storage
     // For now, tokens are kept in memory with R2 backup
-    
+
     // Set up automatic cleanup
-    setInterval(() => {
-      this.cleanupExpiredTokens();
-    }, 60 * 60 * 1000); // Check every hour
+    setInterval(
+      () => {
+        this.cleanupExpiredTokens();
+      },
+      60 * 60 * 1000
+    ); // Check every hour
   }
 }
 
@@ -363,7 +421,7 @@ export const DEFAULT_PERMISSIONS = {
   'mcp:write': ['search:docs', 'store:diagnosis', 'write:metrics'],
   'mcp:admin': ['search:docs', 'store:diagnosis', 'write:metrics', 'manage:tokens', 'read:audits'],
   'claude:desktop': ['search:docs', 'store:diagnosis', 'audit:search', 'metrics:read'],
-  'cli:user': ['search:docs', 'generate:examples', 'validate:code']
+  'cli:user': ['search:docs', 'generate:examples', 'validate:code'],
 };
 
 // CLI interface for token management

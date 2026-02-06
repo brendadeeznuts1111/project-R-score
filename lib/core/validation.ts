@@ -2,7 +2,7 @@
 
 /**
  * 🔍 Comprehensive Input Validation System
- * 
+ *
  * Type-safe validation with detailed error reporting and sanitization
  */
 
@@ -52,7 +52,7 @@ export class InputSanitizer {
     if (typeof input !== 'string') {
       return String(input || '');
     }
-    
+
     return input
       .trim()
       .replace(/[<>]/g, '') // Remove potential HTML tags
@@ -87,10 +87,8 @@ export class InputSanitizer {
     if (!Array.isArray(input)) {
       return [];
     }
-    
-    return input
-      .filter(item => item !== null && item !== undefined)
-      .slice(0, 100); // Limit array size
+
+    return input.filter(item => item !== null && item !== undefined).slice(0, 100); // Limit array size
   }
 
   /**
@@ -100,16 +98,16 @@ export class InputSanitizer {
     if (!input || typeof input !== 'object' || Array.isArray(input)) {
       return {};
     }
-    
+
     const sanitized: Record<string, any> = {};
     const keys = Object.keys(input).slice(0, 50); // Limit object size
-    
+
     for (const key of keys) {
       if (typeof key === 'string' && key.length <= 100) {
         sanitized[key] = input[key];
       }
     }
-    
+
     return sanitized;
   }
 }
@@ -121,37 +119,39 @@ export class Validator {
   /**
    * Validate string input
    */
-  static string(options: {
-    required?: boolean;
-    minLength?: number;
-    maxLength?: number;
-    pattern?: RegExp;
-    enum?: string[];
-    sanitize?: boolean;
-  } = {}): Validator<string> {
+  static string(
+    options: {
+      required?: boolean;
+      minLength?: number;
+      maxLength?: number;
+      pattern?: RegExp;
+      enum?: string[];
+      sanitize?: boolean;
+    } = {}
+  ): Validator<string> {
     return (input: unknown): ValidationResult<string> => {
       const errors: string[] = [];
       const warnings: string[] = [];
-      
+
       // Check if required
       if (options.required && (input === null || input === undefined)) {
         errors.push('Field is required');
         return { isValid: false, errors, warnings };
       }
-      
+
       // Allow empty if not required
       if (input === null || input === undefined) {
         return { isValid: true, data: '', errors, warnings };
       }
-      
+
       // Type check
       if (typeof input !== 'string') {
         errors.push('Must be a string');
         return { isValid: false, errors, warnings };
       }
-      
+
       let value = input;
-      
+
       // Sanitize if requested
       if (options.sanitize) {
         value = InputSanitizer.sanitizeString(input);
@@ -159,31 +159,31 @@ export class Validator {
           warnings.push('Input was sanitized');
         }
       }
-      
+
       // Length validation
       if (options.minLength !== undefined && value.length < options.minLength) {
         errors.push(`Must be at least ${options.minLength} characters`);
       }
-      
+
       if (options.maxLength !== undefined && value.length > options.maxLength) {
         errors.push(`Must be no more than ${options.maxLength} characters`);
       }
-      
+
       // Pattern validation
       if (options.pattern && !options.pattern.test(value)) {
         errors.push('Invalid format');
       }
-      
+
       // Enum validation
       if (options.enum && !options.enum.includes(value)) {
         errors.push(`Must be one of: ${options.enum.join(', ')}`);
       }
-      
+
       return {
         isValid: errors.length === 0,
         data: value,
         errors,
-        warnings
+        warnings,
       };
     };
   }
@@ -191,33 +191,35 @@ export class Validator {
   /**
    * Validate number input
    */
-  static number(options: {
-    required?: boolean;
-    min?: number;
-    max?: number;
-    integer?: boolean;
-    sanitize?: boolean;
-  } = {}): Validator<number> {
+  static number(
+    options: {
+      required?: boolean;
+      min?: number;
+      max?: number;
+      integer?: boolean;
+      sanitize?: boolean;
+    } = {}
+  ): Validator<number> {
     return (input: unknown): ValidationResult<number> => {
       const errors: string[] = [];
       const warnings: string[] = [];
-      
+
       if (options.required && (input === null || input === undefined)) {
         errors.push('Field is required');
         return { isValid: false, errors, warnings };
       }
-      
+
       if (input === null || input === undefined) {
         return { isValid: true, data: 0, errors, warnings };
       }
-      
+
       let value = Number(input);
-      
+
       if (isNaN(value)) {
         errors.push('Must be a valid number');
         return { isValid: false, errors, warnings };
       }
-      
+
       if (options.sanitize) {
         const sanitized = InputSanitizer.sanitizeNumber(input);
         if (sanitized !== value) {
@@ -225,24 +227,24 @@ export class Validator {
           warnings.push('Input was sanitized');
         }
       }
-      
+
       if (options.min !== undefined && value < options.min) {
         errors.push(`Must be at least ${options.min}`);
       }
-      
+
       if (options.max !== undefined && value > options.max) {
         errors.push(`Must be no more than ${options.max}`);
       }
-      
+
       if (options.integer && !Number.isInteger(value)) {
         errors.push('Must be an integer');
       }
-      
+
       return {
         isValid: errors.length === 0,
         data: value,
         errors,
-        warnings
+        warnings,
       };
     };
   }
@@ -250,25 +252,27 @@ export class Validator {
   /**
    * Validate boolean input
    */
-  static boolean(options: {
-    required?: boolean;
-    sanitize?: boolean;
-  } = {}): Validator<boolean> {
+  static boolean(
+    options: {
+      required?: boolean;
+      sanitize?: boolean;
+    } = {}
+  ): Validator<boolean> {
     return (input: unknown): ValidationResult<boolean> => {
       const errors: string[] = [];
       const warnings: string[] = [];
-      
+
       if (options.required && (input === null || input === undefined)) {
         errors.push('Field is required');
         return { isValid: false, errors, warnings };
       }
-      
+
       if (input === null || input === undefined) {
         return { isValid: true, data: false, errors, warnings };
       }
-      
+
       let value: boolean;
-      
+
       if (typeof input === 'boolean') {
         value = input;
       } else if (typeof input === 'string') {
@@ -276,7 +280,7 @@ export class Validator {
       } else {
         value = Boolean(input);
       }
-      
+
       if (options.sanitize) {
         const sanitized = InputSanitizer.sanitizeBoolean(input);
         if (sanitized !== value) {
@@ -284,12 +288,12 @@ export class Validator {
           warnings.push('Input was sanitized');
         }
       }
-      
+
       return {
         isValid: true,
         data: value,
         errors,
-        warnings
+        warnings,
       };
     };
   }
@@ -297,47 +301,50 @@ export class Validator {
   /**
    * Validate array input
    */
-  static array<T>(itemValidator: Validator<T>, options: {
-    required?: boolean;
-    minLength?: number;
-    maxLength?: number;
-    sanitize?: boolean;
-  } = {}): Validator<T[]> {
+  static array<T>(
+    itemValidator: Validator<T>,
+    options: {
+      required?: boolean;
+      minLength?: number;
+      maxLength?: number;
+      sanitize?: boolean;
+    } = {}
+  ): Validator<T[]> {
     return (input: unknown): ValidationResult<T[]> => {
       const errors: string[] = [];
       const warnings: string[] = [];
-      
+
       if (options.required && (input === null || input === undefined)) {
         errors.push('Field is required');
         return { isValid: false, errors, warnings };
       }
-      
+
       if (input === null || input === undefined) {
         return { isValid: true, data: [], errors, warnings };
       }
-      
+
       if (!Array.isArray(input)) {
         errors.push('Must be an array');
         return { isValid: false, errors, warnings };
       }
-      
+
       let value = input;
-      
+
       if (options.sanitize) {
         value = InputSanitizer.sanitizeArray(input);
         if (value.length !== input.length) {
           warnings.push('Array was sanitized');
         }
       }
-      
+
       if (options.minLength !== undefined && value.length < options.minLength) {
         errors.push(`Must have at least ${options.minLength} items`);
       }
-      
+
       if (options.maxLength !== undefined && value.length > options.maxLength) {
         errors.push(`Must have no more than ${options.maxLength} items`);
       }
-      
+
       // Validate each item
       const validatedItems: T[] = [];
       for (let i = 0; i < value.length; i++) {
@@ -351,12 +358,12 @@ export class Validator {
           warnings.push(`Item ${i}: ${itemResult.warnings.join(', ')}`);
         }
       }
-      
+
       return {
         isValid: errors.length === 0,
         data: validatedItems,
         errors,
-        warnings
+        warnings,
       };
     };
   }
@@ -368,20 +375,20 @@ export class Validator {
     return (input: unknown): ValidationResult<Record<string, any>> => {
       const errors: string[] = [];
       const warnings: string[] = [];
-      
+
       if (!input || typeof input !== 'object' || Array.isArray(input)) {
         errors.push('Must be an object');
         return { isValid: false, errors, warnings };
       }
-      
+
       const obj = input as Record<string, any>;
       const validated: Record<string, any> = {};
-      
+
       // Validate each field in schema
       for (const [key, rules] of Object.entries(schema)) {
         const value = obj[key];
         let validator: Validator;
-        
+
         // Create validator based on type
         switch (rules.type) {
           case 'string':
@@ -391,7 +398,7 @@ export class Validator {
               maxLength: rules.maxLength,
               pattern: rules.pattern,
               enum: rules.enum,
-              sanitize: rules.sanitize
+              sanitize: rules.sanitize,
             });
             break;
           case 'number':
@@ -399,19 +406,19 @@ export class Validator {
               required: rules.required,
               min: rules.min,
               max: rules.max,
-              sanitize: rules.sanitize
+              sanitize: rules.sanitize,
             });
             break;
           case 'boolean':
             validator = Validator.boolean({
               required: rules.required,
-              sanitize: rules.sanitize
+              sanitize: rules.sanitize,
             });
             break;
           case 'array':
             validator = Validator.array(Validator.string(), {
               required: rules.required,
-              sanitize: rules.sanitize
+              sanitize: rules.sanitize,
             });
             break;
           case 'object':
@@ -420,29 +427,29 @@ export class Validator {
           default:
             validator = Validator.string({ required: rules.required, sanitize: rules.sanitize });
         }
-        
+
         // Apply custom validator if provided
         if (rules.custom) {
           validator = rules.custom;
         }
-        
+
         const result = validator(value);
         if (!result.isValid) {
           errors.push(`${key}: ${result.errors.join(', ')}`);
         } else {
           validated[key] = result.data;
         }
-        
+
         if (result.warnings.length > 0) {
           warnings.push(`${key}: ${result.warnings.join(', ')}`);
         }
       }
-      
+
       return {
         isValid: errors.length === 0,
         data: validated,
         errors,
-        warnings
+        warnings,
       };
     };
   }
@@ -457,27 +464,27 @@ export class Validator {
     return (input: unknown): ValidationResult<T> => {
       const errors: string[] = [];
       const warnings: string[] = [];
-      
+
       if (options.required && (input === null || input === undefined)) {
         errors.push('Field is required');
         return { isValid: false, errors, warnings };
       }
-      
+
       if (input === null || input === undefined) {
         return { isValid: true, data: undefined, errors, warnings };
       }
-      
+
       const result = validatorFn(input);
-      
+
       if (!result.isValid) {
         errors.push(result.error || 'Validation failed');
       }
-      
+
       return {
         isValid: errors.length === 0,
         data: result.data,
         errors,
-        warnings
+        warnings,
       };
     };
   }
@@ -486,7 +493,7 @@ export class Validator {
 /**
  * Validate request object structure
  */
-export function validateRequest(request: unknown): request is { 
+export function validateRequest(request: unknown): request is {
   headers?: { authorization?: string; [key: string]: any };
   method?: string;
   url?: string;
@@ -495,9 +502,9 @@ export function validateRequest(request: unknown): request is {
   if (!request || typeof request !== 'object') {
     return false;
   }
-  
+
   const req = request as any;
-  
+
   // Check that it has reasonable request properties
   return (
     (typeof req.headers === 'object' || req.headers === undefined) &&
@@ -509,26 +516,29 @@ export function validateRequest(request: unknown): request is {
 /**
  * Validate R2 key format
  */
-export const validateR2Key = Validator.custom((input: unknown) => {
-  if (typeof input !== 'string') {
-    return { isValid: false, error: 'R2 key must be a string' };
-  }
-  
-  // R2 key restrictions
-  if (input.length === 0 || input.length > 1024) {
-    return { isValid: false, error: 'R2 key must be 1-1024 characters' };
-  }
-  
-  if (!/^[a-zA-Z0-9._/-]+$/.test(input)) {
-    return { isValid: false, error: 'R2 key contains invalid characters' };
-  }
-  
-  if (input.startsWith('/') || input.endsWith('/')) {
-    return { isValid: false, error: 'R2 key cannot start or end with /' };
-  }
-  
-  return { isValid: true, data: input };
-}, { required: true });
+export const validateR2Key = Validator.custom(
+  (input: unknown) => {
+    if (typeof input !== 'string') {
+      return { isValid: false, error: 'R2 key must be a string' };
+    }
+
+    // R2 key restrictions
+    if (input.length === 0 || input.length > 1024) {
+      return { isValid: false, error: 'R2 key must be 1-1024 characters' };
+    }
+
+    if (!/^[a-zA-Z0-9._/-]+$/.test(input)) {
+      return { isValid: false, error: 'R2 key contains invalid characters' };
+    }
+
+    if (input.startsWith('/') || input.endsWith('/')) {
+      return { isValid: false, error: 'R2 key cannot start or end with /' };
+    }
+
+    return { isValid: true, data: input };
+  },
+  { required: true }
+);
 
 /**
  * Validate domain name
@@ -537,8 +547,9 @@ export const validateDomain = Validator.string({
   required: true,
   minLength: 3,
   maxLength: 253,
-  pattern: /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
-  sanitize: true
+  pattern:
+    /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+  sanitize: true,
 });
 
 /**
@@ -549,5 +560,5 @@ export const validateEvidenceId = Validator.string({
   minLength: 1,
   maxLength: 100,
   pattern: /^[a-zA-Z0-9_-]+$/,
-  sanitize: true
+  sanitize: true,
 });

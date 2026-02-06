@@ -2,7 +2,7 @@
 
 /**
  * 🔄 Safe Concurrency Manager
- * 
+ *
  * Provides mutex, semaphore, and controlled concurrency patterns
  * for critical operations like secret management and file access.
  */
@@ -15,7 +15,7 @@ export class Mutex {
   private waiters: Array<() => void> = [];
 
   async acquire(): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       if (!this.locked) {
         this.locked = true;
         resolve();
@@ -56,7 +56,7 @@ export class Semaphore {
   }
 
   async acquire(): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       if (this.permits > 0) {
         this.permits--;
         resolve();
@@ -156,15 +156,15 @@ export async function safeConcurrent<T>(
     try {
       const result = await Promise.race([
         semaphore.withPermit(operation),
-        new Promise<never>((_, reject) => 
+        new Promise<never>((_, reject) =>
           setTimeout(() => reject(new Error('Operation timeout')), timeout)
-        )
+        ),
       ]);
       results[index] = { success: true, data: result };
     } catch (error) {
-      results[index] = { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+      results[index] = {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   });

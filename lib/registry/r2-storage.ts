@@ -1,17 +1,17 @@
 #!/usr/bin/env bun
 /**
  * 🪣 R2 Storage Adapter for NPM Registry (Bun v1.3.7+ Optimized)
- * 
+ *
  * Handles package storage, retrieval, and metadata management in Cloudflare R2
  * Leverages Bun v1.3.7 features: contentEncoding, signed URLs, header preservation
  */
 
 import { styled, FW_COLORS } from '../theme/colors';
-import type { 
-  PackageManifest, 
-  PackageVersion, 
+import type {
+  PackageManifest,
+  PackageVersion,
   RegistryStats,
-  PackageStats 
+  PackageStats,
 } from './registry-types';
 
 export interface R2StorageConfig {
@@ -48,8 +48,8 @@ export class R2StorageAdapter {
       compression: config.compression || null,
     };
 
-    this.baseUrl = this.config.endpoint || 
-      `https://${this.config.accountId}.r2.cloudflarestorage.com`;
+    this.baseUrl =
+      this.config.endpoint || `https://${this.config.accountId}.r2.cloudflarestorage.com`;
     this.publicUrl = `https://pub-${this.config.accountId}.r2.dev`;
   }
 
@@ -81,11 +81,11 @@ export class R2StorageAdapter {
    */
   async storeManifest(manifest: PackageManifest): Promise<void> {
     const key = this.getManifestKey(manifest.name);
-    
+
     try {
       const body = JSON.stringify(manifest, null, 2);
       const headers: Record<string, string> = {
-        'Authorization': this.getAuthHeader(),
+        Authorization: this.getAuthHeader(),
         'Content-Type': 'application/json',
         'x-amz-meta-modified': new Date().toISOString(),
       };
@@ -117,13 +117,13 @@ export class R2StorageAdapter {
    */
   async getManifest(packageName: string): Promise<PackageManifest | null> {
     const key = this.getManifestKey(packageName);
-    
+
     try {
       // Bun v1.3.7: Headers are preserved with original casing
       const response = await fetch(`${this.baseUrl}/${this.config.bucketName}/${key}`, {
         headers: {
-          'Authorization': this.getAuthHeader(),
-          'Accept': 'application/json',
+          Authorization: this.getAuthHeader(),
+          Accept: 'application/json',
         },
       });
 
@@ -149,8 +149,8 @@ export class R2StorageAdapter {
    * Store package tarball in R2 with optional compression
    */
   async storeTarball(
-    packageName: string, 
-    version: string, 
+    packageName: string,
+    version: string,
     data: Buffer | Uint8Array,
     options: {
       compress?: boolean;
@@ -158,12 +158,12 @@ export class R2StorageAdapter {
     } = {}
   ): Promise<{ url: string; size: number; compressed?: boolean }> {
     const key = this.getTarballKey(packageName, version);
-    
+
     try {
       // Bun v1.3.7: Support contentEncoding for compression
       let body: Buffer | Uint8Array = data;
       const headers: Record<string, string> = {
-        'Authorization': this.getAuthHeader(),
+        Authorization: this.getAuthHeader(),
         'Content-Type': 'application/octet-stream',
         'Content-Length': data.length.toString(),
         'x-amz-meta-package': packageName,
@@ -193,10 +193,12 @@ export class R2StorageAdapter {
       }
 
       const url = `${this.publicUrl}/${this.config.bucketName}/${key}`;
-      console.log(styled(`✅ Stored tarball: ${key} (${(data.length / 1024).toFixed(2)} KB)`, 'success'));
-      
-      return { 
-        url, 
+      console.log(
+        styled(`✅ Stored tarball: ${key} (${(data.length / 1024).toFixed(2)} KB)`, 'success')
+      );
+
+      return {
+        url,
         size: data.length,
         compressed: !!headers['Content-Encoding'],
       };
@@ -211,12 +213,12 @@ export class R2StorageAdapter {
    * Bun v1.3.7: Enhanced signed URL support with contentDisposition
    */
   async getTarballUrl(
-    packageName: string, 
+    packageName: string,
     version: string,
     options: SignedUrlOptions = {}
   ): Promise<string> {
     const key = this.getTarballKey(packageName, version);
-    
+
     if (!options.expiresIn) {
       return `${this.publicUrl}/${this.config.bucketName}/${key}`;
     }
@@ -232,21 +234,21 @@ export class R2StorageAdapter {
   private async generateSignedUrl(key: string, options: SignedUrlOptions): Promise<string> {
     const expiresIn = options.expiresIn || 3600;
     const expiry = Math.floor(Date.now() / 1000) + expiresIn;
-    
+
     const url = new URL(`${this.baseUrl}/${this.config.bucketName}/${key}`);
-    
+
     // Add query parameters for signed URL
     url.searchParams.set('X-Amz-Expires', expiresIn.toString());
     url.searchParams.set('X-Amz-Date', new Date().toISOString().replace(/[:\-]|\.\d{3}/g, ''));
-    
+
     // Bun v1.3.7: Support response-content-disposition for downloads
     if (options.responseContentDisposition || options.contentDisposition) {
       url.searchParams.set(
-        'response-content-disposition', 
+        'response-content-disposition',
         options.responseContentDisposition || options.contentDisposition!
       );
     }
-    
+
     // Bun v1.3.7: Support response-content-type
     if (options.responseContentType || options.contentType) {
       url.searchParams.set(
@@ -254,7 +256,7 @@ export class R2StorageAdapter {
         options.responseContentType || options.contentType!
       );
     }
-    
+
     // Note: In production, you'd sign this URL with AWS Signature V4
     // For now, return with expiry parameter
     return `${this.publicUrl}/${this.config.bucketName}/${key}?Expires=${expiry}`;
@@ -266,13 +268,13 @@ export class R2StorageAdapter {
   async deleteVersion(packageName: string, version: string): Promise<void> {
     const manifestKey = this.getManifestKey(packageName);
     const tarballKey = this.getTarballKey(packageName, version);
-    
+
     try {
       // Delete tarball
       await fetch(`${this.baseUrl}/${this.config.bucketName}/${tarballKey}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': this.getAuthHeader(),
+          Authorization: this.getAuthHeader(),
         },
       });
 
@@ -281,7 +283,7 @@ export class R2StorageAdapter {
       if (manifest) {
         delete manifest.versions[version];
         delete manifest.time?.[version];
-        
+
         // Update dist-tags if needed
         for (const [tag, tagVersion] of Object.entries(manifest['dist-tags'])) {
           if (tagVersion === version) {
@@ -304,14 +306,14 @@ export class R2StorageAdapter {
    */
   async deletePackage(packageName: string): Promise<void> {
     const prefix = this.getPackagePrefix(packageName);
-    
+
     try {
       // List and delete all objects with this prefix
       const listResponse = await fetch(
         `${this.baseUrl}/${this.config.bucketName}?list-type=2&prefix=${encodeURIComponent(prefix)}`,
         {
           headers: {
-            'Authorization': this.getAuthHeader(),
+            Authorization: this.getAuthHeader(),
           },
         }
       );
@@ -328,7 +330,7 @@ export class R2StorageAdapter {
         await fetch(`${this.baseUrl}/${this.config.bucketName}/${key}`, {
           method: 'DELETE',
           headers: {
-            'Authorization': this.getAuthHeader(),
+            Authorization: this.getAuthHeader(),
           },
         });
       }
@@ -349,7 +351,7 @@ export class R2StorageAdapter {
         `${this.baseUrl}/${this.config.bucketName}?list-type=2&prefix=${this.config.prefix}&delimiter=/`,
         {
           headers: {
-            'Authorization': this.getAuthHeader(),
+            Authorization: this.getAuthHeader(),
           },
         }
       );
@@ -474,11 +476,14 @@ export class R2StorageAdapter {
    */
   async testConnection(): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/${this.config.bucketName}?list-type=2&max-keys=1`, {
-        headers: {
-          'Authorization': this.getAuthHeader(),
-        },
-      });
+      const response = await fetch(
+        `${this.baseUrl}/${this.config.bucketName}?list-type=2&max-keys=1`,
+        {
+          headers: {
+            Authorization: this.getAuthHeader(),
+          },
+        }
+      );
 
       return response.ok;
     } catch (error) {
@@ -490,9 +495,9 @@ export class R2StorageAdapter {
   /**
    * Get configuration status
    */
-  getConfigStatus(): { 
-    configured: boolean; 
-    missing: string[]; 
+  getConfigStatus(): {
+    configured: boolean;
+    missing: string[];
     bucket: string;
     compression?: string | null;
   } {
@@ -516,22 +521,29 @@ export const r2Storage = new R2StorageAdapter();
 // CLI interface
 if (import.meta.main) {
   const storage = new R2StorageAdapter();
-  
+
   console.log(styled('🪣 R2 Storage Adapter Test (Bun v1.3.7+)', 'accent'));
   console.log(styled('=========================================', 'accent'));
-  
+
   const status = storage.getConfigStatus();
   console.log(styled(`\nConfiguration:`, 'info'));
   console.log(styled(`  Bucket: ${status.bucket}`, 'muted'));
   console.log(styled(`  Compression: ${status.compression || 'none'}`, 'muted'));
-  console.log(styled(`  Configured: ${status.configured ? '✅' : '❌'}`, status.configured ? 'success' : 'error'));
-  
+  console.log(
+    styled(
+      `  Configured: ${status.configured ? '✅' : '❌'}`,
+      status.configured ? 'success' : 'error'
+    )
+  );
+
   if (status.missing.length > 0) {
     console.log(styled(`\nMissing:`, 'warning'));
     status.missing.forEach(v => console.log(styled(`  - ${v}`, 'warning')));
   } else {
     console.log(styled(`\nTesting connection...`, 'info'));
     const connected = await storage.testConnection();
-    console.log(styled(`  Connection: ${connected ? '✅ OK' : '❌ Failed'}`, connected ? 'success' : 'error'));
+    console.log(
+      styled(`  Connection: ${connected ? '✅ OK' : '❌ Failed'}`, connected ? 'success' : 'error')
+    );
   }
 }

@@ -1,6 +1,6 @@
 /**
  * Configuration Validation Utilities
- * 
+ *
  * Provides comprehensive configuration validation with type safety,
  * environment variable validation, and schema validation.
  */
@@ -66,7 +66,7 @@ export class ConfigValidator {
 
     logger.info('Starting configuration validation', {
       module: context?.module,
-      configKeys: Object.keys(schema)
+      configKeys: Object.keys(schema),
     });
 
     for (const [key, rule] of Object.entries(schema)) {
@@ -82,13 +82,13 @@ export class ConfigValidator {
             validatedConfig[key] = envValue;
             logger.debug(`Using environment variable for ${key}`, {
               module: context?.module,
-              envVar
+              envVar,
             });
           } else if (rule.default !== undefined) {
             validatedConfig[key] = rule.default;
             logger.debug(`Using default value for ${key}`, {
               module: context?.module,
-              defaultValue: rule.default
+              defaultValue: rule.default,
             });
           } else {
             errors.push(`${key} is required but not provided`);
@@ -167,13 +167,12 @@ export class ConfigValidator {
             errors.push(`${key} must be a valid file path: ${pathValidation.errors.join(', ')}`);
           }
         }
-
       } catch (error) {
         const errorMsg = ErrorHandler.handle(error, {
           module: 'ConfigValidator',
           function: 'validate',
           operation: 'config-validation',
-          configKey: key
+          configKey: key,
         });
         errors.push(`Failed to validate ${key}: ${errorMsg.message}`);
       }
@@ -183,20 +182,20 @@ export class ConfigValidator {
       isValid: errors.length === 0,
       errors,
       warnings,
-      config: validatedConfig
+      config: validatedConfig,
     };
 
     // Log validation results
     if (result.isValid) {
       logger.info('Configuration validation passed', {
         module: context?.module,
-        configKeys: Object.keys(validatedConfig)
+        configKeys: Object.keys(validatedConfig),
       });
     } else {
       logger.error('Configuration validation failed', {
         module: context?.module,
         errors: result.errors,
-        warnings: result.warnings
+        warnings: result.warnings,
       });
     }
 
@@ -229,15 +228,15 @@ export class ConfigValidator {
    */
   private validateURL(value: string): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
-    
+
     try {
       const url = new URL(value);
       const allowedProtocols = ['http:', 'https:'];
-      
+
       if (!allowedProtocols.includes(url.protocol)) {
         errors.push('Only HTTP and HTTPS URLs are allowed');
       }
-      
+
       return { isValid: errors.length === 0, errors };
     } catch {
       errors.push('Invalid URL format');
@@ -251,11 +250,11 @@ export class ConfigValidator {
   private validateEmail(value: string): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
+
     if (!emailPattern.test(value)) {
       errors.push('Invalid email format');
     }
-    
+
     return { isValid: errors.length === 0, errors };
   }
 
@@ -264,18 +263,18 @@ export class ConfigValidator {
    */
   private validatePath(value: string): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
-    
+
     // Check for path traversal
     if (value.includes('..')) {
       errors.push('Path traversal not allowed');
     }
-    
+
     // Check for invalid characters
     const invalidChars = /[<>:"|?*]/;
     if (invalidChars.test(value)) {
       errors.push('Path contains invalid characters');
     }
-    
+
     return { isValid: errors.length === 0, errors };
   }
 
@@ -310,14 +309,14 @@ export const COMMON_SCHEMAS = {
       min: 1,
       max: 65535,
       description: 'Server port number',
-      envVar: 'PORT'
+      envVar: 'PORT',
     },
     host: {
       type: 'string' as const,
       required: false,
       default: process.env.SERVER_HOST || process.env.HOST || 'localhost',
       description: 'Server host',
-      envVar: 'HOST'
+      envVar: 'HOST',
     },
     environment: {
       type: 'string' as const,
@@ -325,8 +324,8 @@ export const COMMON_SCHEMAS = {
       default: 'development',
       enum: ['development', 'staging', 'production'],
       description: 'Environment',
-      envVar: 'NODE_ENV'
-    }
+      envVar: 'NODE_ENV',
+    },
   },
 
   database: {
@@ -334,14 +333,14 @@ export const COMMON_SCHEMAS = {
       type: 'url' as const,
       required: true,
       description: 'Database connection URL',
-      envVar: 'DATABASE_URL'
+      envVar: 'DATABASE_URL',
     },
     ssl: {
       type: 'boolean' as const,
       required: false,
       default: false,
       description: 'Use SSL for database connection',
-      envVar: 'DATABASE_SSL'
+      envVar: 'DATABASE_SSL',
     },
     timeout: {
       type: 'number' as const,
@@ -350,8 +349,8 @@ export const COMMON_SCHEMAS = {
       min: 1000,
       max: 300000,
       description: 'Database connection timeout (ms)',
-      envVar: 'DATABASE_TIMEOUT'
-    }
+      envVar: 'DATABASE_TIMEOUT',
+    },
   },
 
   security: {
@@ -360,23 +359,23 @@ export const COMMON_SCHEMAS = {
       required: true,
       minLength: 16,
       description: 'Session secret key',
-      envVar: 'SESSION_SECRET'
+      envVar: 'SESSION_SECRET',
     },
     jwtSecret: {
       type: 'string' as const,
       required: false,
       minLength: 32,
       description: 'JWT signing secret',
-      envVar: 'JWT_SECRET'
+      envVar: 'JWT_SECRET',
     },
     corsOrigins: {
       type: 'string' as const,
       required: false,
       default: '*',
       description: 'CORS allowed origins',
-      envVar: 'CORS_ORIGINS'
-    }
-  }
+      envVar: 'CORS_ORIGINS',
+    },
+  },
 };
 
 // Export singleton instance

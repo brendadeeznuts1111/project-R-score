@@ -1,10 +1,10 @@
 #!/usr/bin/env bun
 /**
  * 📦 NPM Registry Server (Bun v1.3.7+ Optimized)
- * 
+ *
  * Private npm registry implementation with R2 storage backend
  * Supports: package publishing, downloading, search, dist-tags
- * 
+ *
  * Bun v1.3.7 Features Used:
  * - Header casing preservation in fetch()
  * - Increased HTTP header limit (200 headers)
@@ -58,7 +58,9 @@ export class NPMRegistryServer {
         this.auth = new RegistryAuth(AuthConfigs.basic(this.options.authSecret || 'admin'));
         break;
       case 'jwt':
-        this.auth = new RegistryAuth(AuthConfigs.jwt(this.options.authSecret || crypto.randomUUID()));
+        this.auth = new RegistryAuth(
+          AuthConfigs.jwt(this.options.authSecret || crypto.randomUUID())
+        );
         break;
       case 'token':
         this.auth = new RegistryAuth(AuthConfigs.token());
@@ -77,14 +79,16 @@ export class NPMRegistryServer {
     this.server = Bun.serve({
       port,
       hostname: this.options.hostname,
-      fetch: (request) => this.handleRequest(request),
+      fetch: request => this.handleRequest(request),
     });
 
     console.log(styled(`\n📦 NPM Registry Server`, 'accent'));
     console.log(styled(`=====================`, 'accent'));
     const REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
     console.log(styled(`🌐 URL: http://${REGISTRY_HOST}:${port}`, 'info'));
-    console.log(styled(`🪣 Storage: ${this.options.storage?.bucketName || 'npm-registry'}`, 'info'));
+    console.log(
+      styled(`🪣 Storage: ${this.options.storage?.bucketName || 'npm-registry'}`, 'info')
+    );
     console.log(styled(`🔐 Auth: ${this.options.auth}`, 'info'));
     console.log(styled(`📡 Proxy: ${this.options.allowProxy ? 'Enabled' : 'Disabled'}`, 'info'));
     console.log(styled(`\n✅ Registry ready!\n`, 'success'));
@@ -168,9 +172,9 @@ export class NPMRegistryServer {
       const scopedTarballMatch = path.match(/^\/(@[^/]+)\/([^/]+)\/\-\/([^/]+\.(tgz|tar\.gz))$/);
       if (scopedTarballMatch) {
         return this.handleDownload(
-          request, 
-          `${scopedTarballMatch[1]}/${scopedTarballMatch[2]}`, 
-          scopedTarballMatch[3], 
+          request,
+          `${scopedTarballMatch[1]}/${scopedTarballMatch[2]}`,
+          scopedTarballMatch[3],
           corsHeaders
         );
       }
@@ -179,10 +183,14 @@ export class NPMRegistryServer {
       return this.jsonResponse({ error: 'Not found' }, 404, corsHeaders);
     } catch (error) {
       console.error(styled(`❌ Error: ${error.message}`, 'error'));
-      return this.jsonResponse({ 
-        error: 'Internal server error',
-        message: error.message 
-      }, 500, corsHeaders);
+      return this.jsonResponse(
+        {
+          error: 'Internal server error',
+          message: error.message,
+        },
+        500,
+        corsHeaders
+      );
     }
   }
 
@@ -190,31 +198,42 @@ export class NPMRegistryServer {
    * Handle ping endpoint
    */
   private handlePing(request: Request, corsHeaders: Record<string, string>): Response {
-    return this.jsonResponse({ 
-      ok: true,
-      registry: 'factorywager-private-registry',
-      version: '1.0.0',
-    }, 200, corsHeaders);
+    return this.jsonResponse(
+      {
+        ok: true,
+        registry: 'factorywager-private-registry',
+        version: '1.0.0',
+      },
+      200,
+      corsHeaders
+    );
   }
 
   /**
    * Handle login
    */
-  private async handleLogin(request: Request, corsHeaders: Record<string, string>): Promise<Response> {
+  private async handleLogin(
+    request: Request,
+    corsHeaders: Record<string, string>
+  ): Promise<Response> {
     const body = await request.json().catch(() => ({}));
-    
+
     // In production, validate credentials
-    return this.jsonResponse({
-      ok: true,
-      token: this.auth.createJwt(body.name || 'anonymous', false),
-    }, 200, corsHeaders);
+    return this.jsonResponse(
+      {
+        ok: true,
+        token: this.auth.createJwt(body.name || 'anonymous', false),
+      },
+      200,
+      corsHeaders
+    );
   }
 
   /**
    * Handle whoami
    */
   private handleWhoami(
-    request: Request, 
+    request: Request,
     authContext: Awaited<ReturnType<typeof this.auth.authenticate>>,
     corsHeaders: Record<string, string>
   ): Response {
@@ -222,15 +241,22 @@ export class NPMRegistryServer {
       return this.auth.challenge();
     }
 
-    return this.jsonResponse({
-      username: authContext.user?.name || 'anonymous',
-    }, 200, corsHeaders);
+    return this.jsonResponse(
+      {
+        username: authContext.user?.name || 'anonymous',
+      },
+      200,
+      corsHeaders
+    );
   }
 
   /**
    * Handle package search
    */
-  private async handleSearch(request: Request, corsHeaders: Record<string, string>): Promise<Response> {
+  private async handleSearch(
+    request: Request,
+    corsHeaders: Record<string, string>
+  ): Promise<Response> {
     const url = new URL(request.url);
     const query = url.searchParams.get('text') || '';
     const size = parseInt(url.searchParams.get('size') || '20');
@@ -263,17 +289,24 @@ export class NPMRegistryServer {
       }
     }
 
-    return this.jsonResponse({
-      objects: results.slice(0, size),
-      total: results.length,
-      time: new Date().toISOString(),
-    }, 200, corsHeaders);
+    return this.jsonResponse(
+      {
+        objects: results.slice(0, size),
+        total: results.length,
+        time: new Date().toISOString(),
+      },
+      200,
+      corsHeaders
+    );
   }
 
   /**
    * Handle list all packages
    */
-  private async handleAllPackages(request: Request, corsHeaders: Record<string, string>): Promise<Response> {
+  private async handleAllPackages(
+    request: Request,
+    corsHeaders: Record<string, string>
+  ): Promise<Response> {
     const packages = await this.storage.listPackages();
     return this.jsonResponse({ packages }, 200, corsHeaders);
   }
@@ -332,18 +365,26 @@ export class NPMRegistryServer {
 
       // Validate package name matches URL
       if (publishData.name !== packageName) {
-        return this.jsonResponse({ 
-          error: 'Package name mismatch' 
-        }, 400, corsHeaders);
+        return this.jsonResponse(
+          {
+            error: 'Package name mismatch',
+          },
+          400,
+          corsHeaders
+        );
       }
 
       // Check if version already exists
       const exists = await this.storage.exists(packageName, version);
       if (exists) {
-        return this.jsonResponse({
-          error: 'Conflict',
-          reason: `${packageName}@${version} already exists`,
-        }, 409, corsHeaders);
+        return this.jsonResponse(
+          {
+            error: 'Conflict',
+            reason: `${packageName}@${version} already exists`,
+          },
+          409,
+          corsHeaders
+        );
       }
 
       // Handle tarball attachment
@@ -352,7 +393,7 @@ export class NPMRegistryServer {
       if (attachmentKey && publishData.attachments?.[attachmentKey]) {
         const attachment = publishData.attachments[attachmentKey];
         const tarballData = Buffer.from(attachment.data, 'base64');
-        
+
         const result = await this.storage.storeTarball(packageName, version, tarballData);
         tarballUrl = result.url;
       }
@@ -384,7 +425,7 @@ export class NPMRegistryServer {
           integrity: publishData.dist.integrity,
         },
         _id: `${packageName}@${version}`,
-        _npmUser: authContext.user 
+        _npmUser: authContext.user
           ? { name: authContext.user.name, email: authContext.user.email || '' }
           : undefined,
         maintainers: publishData.maintainers,
@@ -411,18 +452,25 @@ export class NPMRegistryServer {
 
       console.log(styled(`📦 Published: ${packageName}@${version}`, 'success'));
 
-      return this.jsonResponse({
-        ok: true,
-        id: packageName,
-        version,
-      }, 201, corsHeaders);
-
+      return this.jsonResponse(
+        {
+          ok: true,
+          id: packageName,
+          version,
+        },
+        201,
+        corsHeaders
+      );
     } catch (error) {
       console.error(styled(`❌ Publish failed: ${error.message}`, 'error'));
-      return this.jsonResponse({
-        error: 'Publish failed',
-        reason: error.message,
-      }, 500, corsHeaders);
+      return this.jsonResponse(
+        {
+          error: 'Publish failed',
+          reason: error.message,
+        },
+        500,
+        corsHeaders
+      );
     }
   }
 
@@ -485,7 +533,7 @@ export class NPMRegistryServer {
     try {
       // Try to get from local storage
       const manifest = await this.storage.getManifest(packageName);
-      
+
       if (manifest) {
         // Find the version that matches this tarball
         for (const version of Object.values(manifest.versions)) {
@@ -527,7 +575,11 @@ export class NPMRegistryServer {
   /**
    * Helper: Send JSON response
    */
-  private jsonResponse(data: any, status: number = 200, extraHeaders: Record<string, string> = {}): Response {
+  private jsonResponse(
+    data: any,
+    status: number = 200,
+    extraHeaders: Record<string, string> = {}
+  ): Response {
     return new Response(JSON.stringify(data, null, 2), {
       status,
       headers: {

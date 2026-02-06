@@ -1,6 +1,6 @@
 /**
  * 🌐 FactoryWager MCP Wiki Generator Integration
- * 
+ *
  * Integrates the existing wiki generator with the MCP ecosystem
  * for automated documentation generation and management.
  */
@@ -67,7 +67,7 @@ export class MCPWikiGenerator {
             success: false,
             files: {},
             metadata: { total: 0, categories: 0, generated: '', baseUrl: '', workspace: '' },
-            error: 'Authentication failed'
+            error: 'Authentication failed',
           };
         }
       }
@@ -80,7 +80,7 @@ export class MCPWikiGenerator {
         workspace: request.workspace || 'bun-utilities',
         format: request.format as 'markdown' | 'html' | 'json',
         includeExamples: request.includeExamples ?? true,
-        includeValidation: request.includeValidation ?? true
+        includeValidation: request.includeValidation ?? true,
       };
 
       const wikiResult = WikiURLGenerator.generateWikiURLs(wikiConfig);
@@ -108,8 +108,8 @@ export class MCPWikiGenerator {
           categories: wikiResult.categories,
           generated: new Date().toISOString(),
           baseUrl: wikiConfig.baseUrl,
-          workspace: wikiConfig.workspace
-        }
+          workspace: wikiConfig.workspace,
+        },
       };
 
       // Store in R2 if available
@@ -120,7 +120,7 @@ export class MCPWikiGenerator {
           timestamp: new Date().toISOString(),
           error: {
             name: 'WikiGeneration',
-            message: `Generated ${request.format} wiki for ${wikiConfig.workspace}`
+            message: `Generated ${request.format} wiki for ${wikiConfig.workspace}`,
           },
           fix: JSON.stringify(result, null, 2),
           relatedAudits: [],
@@ -131,13 +131,13 @@ export class MCPWikiGenerator {
             wikiGeneration: true,
             format: request.format,
             workspace: wikiConfig.workspace,
-            totalUtilities: wikiResult.total
-          }
+            totalUtilities: wikiResult.total,
+          },
         });
 
         result.r2Stored = {
           key: r2Key,
-          url: await r2MCPIntegration.getSignedURL(r2Key, 3600)
+          url: await r2MCPIntegration.getSignedURL(r2Key, 3600),
         };
 
         console.log(styled('📦 Wiki content stored in R2', 'success'));
@@ -145,16 +145,20 @@ export class MCPWikiGenerator {
         console.log(styled('⚠️ R2 storage not available, using local only', 'warning'));
       }
 
-      console.log(styled(`✅ Wiki generated: ${wikiResult.total} utilities in ${wikiResult.categories} categories`, 'success'));
+      console.log(
+        styled(
+          `✅ Wiki generated: ${wikiResult.total} utilities in ${wikiResult.categories} categories`,
+          'success'
+        )
+      );
       return result;
-
     } catch (error) {
       console.error(styled(`❌ Wiki generation failed: ${error.message}`, 'error'));
       return {
         success: false,
         files: {},
         metadata: { total: 0, categories: 0, generated: '', baseUrl: '', workspace: '' },
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -171,7 +175,7 @@ export class MCPWikiGenerator {
         workspace: 'engineering/bun-utilities',
         format: 'markdown',
         includeExamples: true,
-        customSections: ['## Integration Notes', '## API Examples']
+        customSections: ['## Integration Notes', '## API Examples'],
       },
       {
         name: 'Notion API',
@@ -180,7 +184,7 @@ export class MCPWikiGenerator {
         workspace: 'development/bun-docs',
         format: 'json',
         includeExamples: true,
-        customSections: ['## Usage Guidelines', '## Best Practices']
+        customSections: ['## Usage Guidelines', '## Best Practices'],
       },
       {
         name: 'GitHub Wiki',
@@ -189,7 +193,7 @@ export class MCPWikiGenerator {
         workspace: 'utilities',
         format: 'markdown',
         includeExamples: true,
-        customSections: ['## Contributing', '## Changelog']
+        customSections: ['## Contributing', '## Changelog'],
       },
       {
         name: 'Internal Portal',
@@ -198,7 +202,7 @@ export class MCPWikiGenerator {
         workspace: 'bun',
         format: 'html',
         includeExamples: true,
-        customSections: ['## Related Documentation', '## Support']
+        customSections: ['## Related Documentation', '## Support'],
       },
       {
         name: 'API Documentation',
@@ -207,8 +211,8 @@ export class MCPWikiGenerator {
         workspace: 'api/bun-utilities',
         format: 'json',
         includeExamples: false,
-        customSections: ['## API Endpoints', '## Schema Definitions']
-      }
+        customSections: ['## API Endpoints', '## Schema Definitions'],
+      },
     ];
   }
 
@@ -227,7 +231,7 @@ export class MCPWikiGenerator {
         success: false,
         files: {},
         metadata: { total: 0, categories: 0, generated: '', baseUrl: '', workspace: '' },
-        error: `Template '${templateName}' not found`
+        error: `Template '${templateName}' not found`,
       };
     }
 
@@ -238,7 +242,7 @@ export class MCPWikiGenerator {
       includeExamples: template.includeExamples,
       includeValidation: true,
       context: `template-${templateName.toLowerCase().replace(/\s+/g, '-')}`,
-      ...customizations
+      ...customizations,
     };
 
     return MCPWikiGenerator.generateWiki(request);
@@ -247,13 +251,15 @@ export class MCPWikiGenerator {
   /**
    * Get wiki generation history from R2
    */
-  static async getWikiHistory(limit: number = 10): Promise<Array<{
-    id: string;
-    timestamp: string;
-    workspace: string;
-    format: string;
-    totalUtilities: number;
-  }>> {
+  static async getWikiHistory(limit: number = 10): Promise<
+    Array<{
+      id: string;
+      timestamp: string;
+      workspace: string;
+      format: string;
+      totalUtilities: number;
+    }>
+  > {
     try {
       // Search for wiki generation entries in R2
       const wikiEntries = await r2MCPIntegration.searchSimilarErrors(
@@ -267,9 +273,8 @@ export class MCPWikiGenerator {
         timestamp: entry.timestamp,
         workspace: entry.metadata?.workspace || 'unknown',
         format: entry.metadata?.format || 'unknown',
-        totalUtilities: entry.metadata?.totalUtilities || 0
+        totalUtilities: entry.metadata?.totalUtilities || 0,
       }));
-
     } catch (error) {
       console.log(styled('⚠️ Could not retrieve wiki history from R2', 'warning'));
       return [];
@@ -293,7 +298,7 @@ export class MCPWikiGenerator {
       workspace: `mcp/${context}`,
       includeExamples: true,
       includeValidation: true,
-      context: `factorywager-${context}`
+      context: `factorywager-${context}`,
     };
 
     const result = await MCPWikiGenerator.generateWiki(request);
@@ -320,9 +325,10 @@ export class MCPWikiGenerator {
    * Add security notes to wiki content
    */
   private static addSecurityNotes(content: string, format: string): string {
-    const securitySection = format === 'json' ? 
-      '"security_notes": "Always validate inputs and use secure defaults"' :
-      '\n\n## 🔐 Security Notes\n\n• Always validate user inputs\n• Use secure authentication mechanisms\n• Implement proper error handling\n• Audit sensitive operations\n';
+    const securitySection =
+      format === 'json'
+        ? '"security_notes": "Always validate inputs and use secure defaults"'
+        : '\n\n## 🔐 Security Notes\n\n• Always validate user inputs\n• Use secure authentication mechanisms\n• Implement proper error handling\n• Audit sensitive operations\n';
 
     return content + securitySection;
   }
@@ -331,9 +337,10 @@ export class MCPWikiGenerator {
    * Add performance tips to wiki content
    */
   private static addPerformanceTips(content: string, format: string): string {
-    const performanceSection = format === 'json' ?
-      '"performance_tips": "Monitor performance metrics and optimize bottlenecks"' :
-      '\n\n## ⚡ Performance Tips\n\n• Monitor response times\n• Use caching for frequently accessed data\n• Optimize database queries\n• Implement proper error handling\n';
+    const performanceSection =
+      format === 'json'
+        ? '"performance_tips": "Monitor performance metrics and optimize bottlenecks"'
+        : '\n\n## ⚡ Performance Tips\n\n• Monitor response times\n• Use caching for frequently accessed data\n• Optimize database queries\n• Implement proper error handling\n';
 
     return content + performanceSection;
   }
@@ -342,9 +349,10 @@ export class MCPWikiGenerator {
    * Add FactoryWager patterns to wiki content
    */
   private static addFactoryWagerPatterns(content: string, format: string): string {
-    const patternsSection = format === 'json' ?
-      '"factorywager_patterns": "Apply proven FactoryWager resolution patterns"' :
-      '\n\n## 🏛️ FactoryWager Patterns\n\n• Apply proven patterns from audit history\n• Use standardized error handling\n• Follow naming conventions\n• Implement proper logging\n';
+    const patternsSection =
+      format === 'json'
+        ? '"factorywager_patterns": "Apply proven FactoryWager resolution patterns"'
+        : '\n\n## 🏛️ FactoryWager Patterns\n\n• Apply proven patterns from audit history\n• Use standardized error handling\n• Follow naming conventions\n• Implement proper logging\n';
 
     return content + patternsSection;
   }
@@ -360,15 +368,17 @@ export class MCPWikiGenerator {
     const intervals = {
       hourly: 60 * 60 * 1000,
       daily: 24 * 60 * 60 * 1000,
-      weekly: 7 * 24 * 60 * 60 * 1000
+      weekly: 7 * 24 * 60 * 60 * 1000,
     };
 
     const interval = setInterval(async () => {
       console.log(styled(`🔄 Scheduled wiki generation (${schedule})`, 'info'));
       const result = await MCPWikiGenerator.generateFromTemplate(template, customizations);
-      
+
       if (result.success) {
-        console.log(styled(`✅ Scheduled wiki generated: ${result.metadata.total} utilities`, 'success'));
+        console.log(
+          styled(`✅ Scheduled wiki generated: ${result.metadata.total} utilities`, 'success')
+        );
       } else {
         console.error(styled(`❌ Scheduled wiki generation failed: ${result.error}`, 'error'));
       }
@@ -389,15 +399,20 @@ if (import.meta.main) {
     try {
       switch (command) {
         case 'generate':
-          const format = args.find(arg => arg.startsWith('--format='))?.split('=')[1] as 'markdown' | 'html' | 'json' | 'all' || 'markdown';
+          const format =
+            (args.find(arg => arg.startsWith('--format='))?.split('=')[1] as
+              | 'markdown'
+              | 'html'
+              | 'json'
+              | 'all') || 'markdown';
           const baseUrl = args.find(arg => arg.startsWith('--base-url='))?.split('=')[1];
           const workspace = args.find(arg => arg.startsWith('--workspace='))?.split('=')[1];
-          
+
           const result = await MCPWikiGenerator.generateWiki({
             format,
             baseUrl,
             workspace,
-            context: 'cli-generation'
+            context: 'cli-generation',
           });
 
           if (result.success) {
@@ -406,7 +421,7 @@ if (import.meta.main) {
             console.log(styled(`📂 Categories: ${result.metadata.categories}`, 'info'));
             console.log(styled(`🌐 Base URL: ${result.metadata.baseUrl}`, 'muted'));
             console.log(styled(`📁 Workspace: ${result.metadata.workspace}`, 'muted'));
-            
+
             if (result.r2Stored) {
               console.log(styled(`📦 Stored in R2: ${result.r2Stored.key}`, 'success'));
             }
@@ -421,7 +436,9 @@ if (import.meta.main) {
           templates.forEach((template, index) => {
             console.log(styled(`\n${index + 1}. ${template.name}`, 'accent'));
             console.log(styled(`   ${template.description}`, 'muted'));
-            console.log(styled(`   Format: ${template.format} | Workspace: ${template.workspace}`, 'info'));
+            console.log(
+              styled(`   Format: ${template.format} | Workspace: ${template.workspace}`, 'info')
+            );
           });
           break;
 
@@ -437,21 +454,25 @@ if (import.meta.main) {
             console.log(styled(`✅ Wiki generated from template: ${templateName}`, 'success'));
             console.log(styled(`📊 Total utilities: ${templateResult.metadata.total}`, 'info'));
           } else {
-            console.error(styled(`❌ Template generation failed: ${templateResult.error}`, 'error'));
+            console.error(
+              styled(`❌ Template generation failed: ${templateResult.error}`, 'error')
+            );
           }
           break;
 
         case 'history':
           const limit = parseInt(args[0]) || 10;
           const history = await MCPWikiGenerator.getWikiHistory(limit);
-          
+
           if (history.length === 0) {
             console.log(styled('📭 No wiki generation history found', 'muted'));
           } else {
             console.log(styled(`📋 Wiki Generation History (Last ${limit}):`, 'primary'));
             history.forEach((entry, index) => {
               console.log(styled(`\n${index + 1}. ${entry.id}`, 'accent'));
-              console.log(styled(`   Time: ${new Date(entry.timestamp).toLocaleString()}`, 'muted'));
+              console.log(
+                styled(`   Time: ${new Date(entry.timestamp).toLocaleString()}`, 'muted')
+              );
               console.log(styled(`   Workspace: ${entry.workspace}`, 'info'));
               console.log(styled(`   Format: ${entry.format}`, 'info'));
               console.log(styled(`   Utilities: ${entry.totalUtilities}`, 'primary'));
@@ -464,17 +485,21 @@ if (import.meta.main) {
           const fwResult = await MCPWikiGenerator.generateFactoryWagerWiki(context, {
             includeSecurityNotes: true,
             includePerformanceTips: true,
-            includeFactoryWagerPatterns: true
+            includeFactoryWagerPatterns: true,
           });
 
           if (fwResult.success) {
-            console.log(styled(`✅ FactoryWager wiki generated for context: ${context}`, 'success'));
+            console.log(
+              styled(`✅ FactoryWager wiki generated for context: ${context}`, 'success')
+            );
             console.log(styled(`📊 Total utilities: ${fwResult.metadata.total}`, 'info'));
             console.log(styled('🔐 Security notes added', 'success'));
             console.log(styled('⚡ Performance tips added', 'success'));
             console.log(styled('🏛️ FactoryWager patterns added', 'success'));
           } else {
-            console.error(styled(`❌ FactoryWager wiki generation failed: ${fwResult.error}`, 'error'));
+            console.error(
+              styled(`❌ FactoryWager wiki generation failed: ${fwResult.error}`, 'error')
+            );
           }
           break;
 
@@ -483,16 +508,35 @@ if (import.meta.main) {
           console.log(styled('==================================', 'accent'));
           console.log('');
           console.log(styled('Commands:', 'primary'));
-          console.log(styled('  generate [--format=markdown|html|json|all] [--base-url=URL] [--workspace=NAME]', 'info'));
+          console.log(
+            styled(
+              '  generate [--format=markdown|html|json|all] [--base-url=URL] [--workspace=NAME]',
+              'info'
+            )
+          );
           console.log(styled('  templates                    - List available templates', 'info'));
           console.log(styled('  template <name>             - Generate from template', 'info'));
           console.log(styled('  history [limit]              - Show generation history', 'info'));
-          console.log(styled('  factorywager [context]       - Generate with FactoryWager enhancements', 'info'));
+          console.log(
+            styled(
+              '  factorywager [context]       - Generate with FactoryWager enhancements',
+              'info'
+            )
+          );
           console.log('');
           console.log(styled('Examples:', 'primary'));
-          console.log(styled('  bun run lib/mcp/wiki-generator-mcp.ts generate --format=all', 'muted'));
-          console.log(styled('  bun run lib/mcp/wiki-generator-mcp.ts template "Confluence Integration"', 'muted'));
-          console.log(styled('  bun run lib/mcp/wiki-generator-mcp.ts factorywager security', 'muted'));
+          console.log(
+            styled('  bun run lib/mcp/wiki-generator-mcp.ts generate --format=all', 'muted')
+          );
+          console.log(
+            styled(
+              '  bun run lib/mcp/wiki-generator-mcp.ts template "Confluence Integration"',
+              'muted'
+            )
+          );
+          console.log(
+            styled('  bun run lib/mcp/wiki-generator-mcp.ts factorywager security', 'muted')
+          );
       }
     } catch (error) {
       console.error(styled(`❌ CLI error: ${error.message}`, 'error'));

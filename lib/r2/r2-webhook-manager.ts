@@ -2,7 +2,7 @@
 
 /**
  * 🔗 R2 Webhook & External Integration Manager
- * 
+ *
  * Webhook management and external service integrations:
  * - Event-driven webhooks
  * - Retry logic with exponential backoff
@@ -14,9 +14,9 @@
 import { styled, FW_COLORS } from '../theme/colors';
 import { r2EventSystem } from './r2-event-system';
 
-export type WebhookEvent = 
-  | 'object:created' 
-  | 'object:updated' 
+export type WebhookEvent =
+  | 'object:created'
+  | 'object:updated'
   | 'object:deleted'
   | 'object:accessed'
   | 'backup:completed'
@@ -115,19 +115,19 @@ export class R2WebhookManager {
       icon: '💬',
       defaultConfig: {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         retryConfig: {
           maxRetries: 3,
           backoffMultiplier: 2,
-          initialDelay: 1000
-        }
+          initialDelay: 1000,
+        },
       },
       setupInstructions: [
         'Create a Slack webhook URL at https://api.slack.com/messaging/webhooks',
         'Copy the webhook URL',
-        'Configure events to monitor'
-      ]
+        'Configure events to monitor',
+      ],
     });
 
     this.templates.set('discord', {
@@ -136,19 +136,19 @@ export class R2WebhookManager {
       icon: '🎮',
       defaultConfig: {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         retryConfig: {
           maxRetries: 3,
           backoffMultiplier: 2,
-          initialDelay: 1000
-        }
+          initialDelay: 1000,
+        },
       },
       setupInstructions: [
         'Go to Server Settings > Integrations > Webhooks',
         'Create a new webhook',
-        'Copy the webhook URL'
-      ]
+        'Copy the webhook URL',
+      ],
     });
 
     this.templates.set('zapier', {
@@ -159,14 +159,14 @@ export class R2WebhookManager {
         retryConfig: {
           maxRetries: 5,
           backoffMultiplier: 2,
-          initialDelay: 2000
-        }
+          initialDelay: 2000,
+        },
       },
       setupInstructions: [
         'Create a new Zap',
         'Choose Webhooks by Zapier as trigger',
-        'Copy the webhook URL'
-      ]
+        'Copy the webhook URL',
+      ],
     });
 
     this.templates.set('github', {
@@ -175,19 +175,19 @@ export class R2WebhookManager {
       icon: '🐙',
       defaultConfig: {
         headers: {
-          'Accept': 'application/vnd.github.v3+json'
+          Accept: 'application/vnd.github.v3+json',
         },
         retryConfig: {
           maxRetries: 3,
           backoffMultiplier: 2,
-          initialDelay: 1000
-        }
+          initialDelay: 1000,
+        },
       },
       setupInstructions: [
         'Create a repository dispatch webhook in GitHub',
         'Generate a personal access token',
-        'Configure the webhook URL'
-      ]
+        'Configure the webhook URL',
+      ],
     });
 
     this.templates.set('datadog', {
@@ -196,19 +196,19 @@ export class R2WebhookManager {
       icon: '🐶',
       defaultConfig: {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         retryConfig: {
           maxRetries: 5,
           backoffMultiplier: 1.5,
-          initialDelay: 1000
-        }
+          initialDelay: 1000,
+        },
       },
       setupInstructions: [
         'Get your Datadog API key',
         'Configure the Datadog site URL',
-        'Set up metric naming'
-      ]
+        'Set up metric naming',
+      ],
     });
   }
 
@@ -217,7 +217,7 @@ export class R2WebhookManager {
    */
   private setupEventListeners(): void {
     // Subscribe to all events and route to matching webhooks
-    r2EventSystem.onAll((event) => {
+    r2EventSystem.onAll(event => {
       this.routeEvent(event);
     });
   }
@@ -236,7 +236,8 @@ export class R2WebhookManager {
       // Check filter
       if (webhook.filter) {
         if (webhook.filter.bucket && event.bucket !== webhook.filter.bucket) continue;
-        if (webhook.filter.prefix && event.key && !event.key.startsWith(webhook.filter.prefix)) continue;
+        if (webhook.filter.prefix && event.key && !event.key.startsWith(webhook.filter.prefix))
+          continue;
       }
 
       // Create delivery
@@ -255,8 +256,8 @@ export class R2WebhookManager {
       stats: {
         totalDeliveries: 0,
         successfulDeliveries: 0,
-        failedDeliveries: 0
-      }
+        failedDeliveries: 0,
+      },
     };
 
     this.webhooks.set(webhook.id, webhook);
@@ -283,7 +284,7 @@ export class R2WebhookManager {
       events,
       ...template.defaultConfig,
       ...customConfig,
-      status: 'active'
+      status: 'active',
     });
   }
 
@@ -297,11 +298,11 @@ export class R2WebhookManager {
       event: {
         type: event.type,
         timestamp: event.timestamp,
-        data: event
+        data: event,
       },
       status: 'pending',
       attempts: [],
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
 
     this.deliveries.set(delivery.id, delivery);
@@ -343,9 +344,7 @@ export class R2WebhookManager {
     if (!webhook) return;
 
     const payload = this.buildPayload(delivery);
-    const signature = webhook.secret 
-      ? this.generateSignature(payload, webhook.secret)
-      : undefined;
+    const signature = webhook.secret ? this.generateSignature(payload, webhook.secret) : undefined;
 
     let success = false;
     let lastError: string | undefined;
@@ -360,9 +359,9 @@ export class R2WebhookManager {
             ...webhook.headers,
             ...(signature ? { 'X-Webhook-Signature': signature } : {}),
             'X-Webhook-ID': delivery.id,
-            'X-Webhook-Attempt': (attempt + 1).toString()
+            'X-Webhook-Attempt': (attempt + 1).toString(),
           },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
         });
 
         const duration = Date.now() - startTime;
@@ -370,7 +369,7 @@ export class R2WebhookManager {
         delivery.attempts.push({
           timestamp: new Date().toISOString(),
           statusCode: response.status,
-          duration
+          duration,
         });
 
         if (response.ok) {
@@ -381,20 +380,20 @@ export class R2WebhookManager {
         } else {
           lastError = `HTTP ${response.status}`;
         }
-
       } catch (error) {
         const duration = Date.now() - startTime;
         delivery.attempts.push({
           timestamp: new Date().toISOString(),
           error: error.message,
-          duration
+          duration,
         });
         lastError = error.message;
       }
 
       // Wait before retry
       if (attempt < webhook.retryConfig.maxRetries) {
-        const delay = webhook.retryConfig.initialDelay * 
+        const delay =
+          webhook.retryConfig.initialDelay *
           Math.pow(webhook.retryConfig.backoffMultiplier, attempt);
         await Bun.sleep(delay);
       }
@@ -420,8 +419,8 @@ export class R2WebhookManager {
       data: delivery.event.data,
       delivery: {
         id: delivery.id,
-        webhook: delivery.webhookId
-      }
+        webhook: delivery.webhookId,
+      },
     };
   }
 
@@ -445,14 +444,16 @@ export class R2WebhookManager {
   /**
    * Test webhook
    */
-  async testWebhook(webhookId: string): Promise<{ success: boolean; statusCode?: number; error?: string }> {
+  async testWebhook(
+    webhookId: string
+  ): Promise<{ success: boolean; statusCode?: number; error?: string }> {
     const webhook = this.webhooks.get(webhookId);
     if (!webhook) throw new Error(`Webhook not found: ${webhookId}`);
 
     const testPayload = {
       event: 'test',
       timestamp: new Date().toISOString(),
-      data: { message: 'This is a test webhook delivery' }
+      data: { message: 'This is a test webhook delivery' },
     };
 
     try {
@@ -461,19 +462,19 @@ export class R2WebhookManager {
         headers: {
           ...webhook.headers,
           'Content-Type': 'application/json',
-          'X-Webhook-Test': 'true'
+          'X-Webhook-Test': 'true',
         },
-        body: JSON.stringify(testPayload)
+        body: JSON.stringify(testPayload),
       });
 
       return {
         success: response.ok,
-        statusCode: response.status
+        statusCode: response.status,
       };
     } catch (error) {
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -548,15 +549,19 @@ export class R2WebhookManager {
 
     console.log(styled('\n📡 Webhooks:', 'info'));
     for (const webhook of this.webhooks.values()) {
-      const statusIcon = webhook.status === 'active' ? '✅' : webhook.status === 'paused' ? '⏸️' : '❌';
-      const success = webhook.stats.totalDeliveries > 0
-        ? ((webhook.stats.successfulDeliveries / webhook.stats.totalDeliveries) * 100).toFixed(1)
-        : 'N/A';
-      
+      const statusIcon =
+        webhook.status === 'active' ? '✅' : webhook.status === 'paused' ? '⏸️' : '❌';
+      const success =
+        webhook.stats.totalDeliveries > 0
+          ? ((webhook.stats.successfulDeliveries / webhook.stats.totalDeliveries) * 100).toFixed(1)
+          : 'N/A';
+
       console.log(styled(`  ${statusIcon} ${webhook.name}`, 'muted'));
       console.log(styled(`     URL: ${webhook.url.slice(0, 50)}...`, 'muted'));
       console.log(styled(`     Events: ${webhook.events.join(', ')}`, 'muted'));
-      console.log(styled(`     Deliveries: ${webhook.stats.totalDeliveries} (${success}% success)`, 'muted'));
+      console.log(
+        styled(`     Deliveries: ${webhook.stats.totalDeliveries} (${success}% success)`, 'muted')
+      );
     }
 
     console.log(styled('\n📋 Integration Templates:', 'info'));
@@ -569,8 +574,11 @@ export class R2WebhookManager {
     const recent = this.getDeliveries(undefined, 5);
     for (const delivery of recent) {
       const webhook = this.webhooks.get(delivery.webhookId);
-      const icon = delivery.status === 'success' ? '✅' : delivery.status === 'pending' ? '⏳' : '❌';
-      console.log(styled(`  ${icon} ${webhook?.name || delivery.webhookId}: ${delivery.event.type}`, 'muted'));
+      const icon =
+        delivery.status === 'success' ? '✅' : delivery.status === 'pending' ? '⏳' : '❌';
+      console.log(
+        styled(`  ${icon} ${webhook?.name || delivery.webhookId}: ${delivery.event.type}`, 'muted')
+      );
     }
   }
 }
@@ -595,8 +603,8 @@ if (import.meta.main) {
     retryConfig: {
       maxRetries: 3,
       backoffMultiplier: 2,
-      initialDelay: 1000
-    }
+      initialDelay: 1000,
+    },
   });
 
   console.log(styled(`\n✅ Created webhook: ${webhook.name}`, 'success'));
