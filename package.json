@@ -925,14 +925,16 @@
         "required_reviews": 1,
         "required_status_checks": ["ci", "lint"]
       },
-      "feature/*": {
+      "feature": {
+        "pattern": "feature/*",
         "purpose": "feature development",
         "protected": false,
         "auto_merge": false,
         "required_reviews": 1,
         "required_status_checks": ["ci"]
       },
-      "hotfix/*": {
+      "hotfix": {
+        "pattern": "hotfix/*",
         "purpose": "emergency fixes",
         "protected": true,
         "auto_merge": false,
