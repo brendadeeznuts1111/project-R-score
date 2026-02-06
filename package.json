@@ -698,6 +698,192 @@
       }
     }
   },
+  "domains": {
+    "constants": {
+      "primary_domain": "factory-wager.com",
+      "company_name": "FactoryWager",
+      "brand_name": "FactoryWager Enterprise",
+      "support_email": "support@factory-wager.com",
+      "legal_entity": "FactoryWager Inc.",
+      "established_year": "2024"
+    },
+    "production": {
+      "main": {
+        "domain": "factory-wager.com",
+        "protocol": "https",
+        "port": 443,
+        "cdn": "cdn.factory-wager.com",
+        "api": "api.factory-wager.com",
+        "status": "status.factory-wager.com"
+      },
+      "services": {
+        "dashboard": "dashboard.factory-wager.com",
+        "admin": "admin.factory-wager.com",
+        "docs": "docs.factory-wager.com",
+        "blog": "blog.factory-wager.com",
+        "api": "api.factory-wager.com",
+        "cdn": "cdn.factory-wager.com",
+        "assets": "assets.factory-wager.com",
+        "media": "media.factory-wager.com",
+        "static": "static.factory-wager.com"
+      },
+      "regional": {
+        "us_east": "us-east.factory-wager.com",
+        "us_west": "us-west.factory-wager.com",
+        "europe": "eu.factory-wager.com",
+        "asia": "asia.factory-wager.com",
+        "australia": "au.factory-wager.com"
+      }
+    },
+    "development": {
+      "local": {
+        "domain": "localhost",
+        "protocol": "http",
+        "port": 3000,
+        "api_port": 3001,
+        "dashboard_port": 3002
+      },
+      "staging": {
+        "domain": "staging.factory-wager.com",
+        "protocol": "https",
+        "port": 443,
+        "api": "api-staging.factory-wager.com",
+        "dashboard": "dashboard-staging.factory-wager.com"
+      },
+      "testing": {
+        "domain": "test.factory-wager.com",
+        "protocol": "https",
+        "port": 443,
+        "api": "api-test.factory-wager.com"
+      }
+    },
+    "security": {
+      "ssl": {
+        "provider": "Let's Encrypt",
+        "auto_renewal": true,
+        "certificate_duration": "90d",
+        "renewal_window": "30d"
+      },
+      "dns": {
+        "provider": "Cloudflare",
+        "dnssec": true,
+        "ttl": {
+          "a": 300,
+          "cname": 300,
+          "mx": 3600,
+          "txt": 3600,
+          "ns": 86400
+        }
+      },
+      "headers": {
+        "hsts": "max-age=31536000; includeSubDomains; preload",
+        "csp": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'",
+        "x_frame_options": "DENY",
+        "x_content_type_options": "nosniff",
+        "referrer_policy": "strict-origin-when-cross-origin"
+      }
+    },
+    "email": {
+      "domains": {
+        "primary": "factory-wager.com",
+        "transactional": "mail.factory-wager.com",
+        "marketing": "news.factory-wager.com"
+      },
+      "records": {
+        "mx": [
+          {"priority": 10, "server": "mail.factory-wager.com"},
+          {"priority": 20, "server": "backup.factory-wager.com"}
+        ],
+        "spf": "v=spf1 include:_spf.factory-wager.com ~all",
+        "dkim": "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...",
+        "dmarc": "v=DMARC1; p=quarantine; rua=mailto:dmarc@factory-wager.com; ruf=mailto:dmarc@factory-wager.com"
+      }
+    },
+    "analytics": {
+      "tracking": {
+        "google_analytics": "GA-XXXXXXXXX",
+        "domain": "factory-wager.com",
+        "cookie_domain": ".factory-wager.com"
+      },
+      "search": {
+        "algolia_app_id": "XXXXXXXXX",
+        "algolia_api_key": "XXXXXXXXX",
+        "index_name": "factorywager_docs"
+      },
+      "monitoring": {
+        "uptime_robot": "https://uptime.robot/api/v1",
+        "pingdom": "https://api.pingdom.com/api/3.1",
+        "status_page": "status.factory-wager.com"
+      }
+    },
+    "social": {
+      "platforms": {
+        "github": "https://github.com/factorywager",
+        "twitter": "https://twitter.com/factorywager",
+        "linkedin": "https://linkedin.com/company/factorywager",
+        "youtube": "https://youtube.com/@factorywager",
+        "discord": "https://discord.gg/factorywager"
+      },
+      "metadata": {
+        "twitter_handle": "@factorywager",
+        "facebook_app_id": "XXXXXXXXX",
+        "og_image": "https://factory-wager.com/images/og-default.jpg"
+      }
+    },
+    "legal": {
+      "pages": {
+        "privacy": "https://factory-wager.com/privacy",
+        "terms": "https://factory-wager.com/terms",
+        "cookies": "https://factory-wager.com/cookies",
+        "gdpr": "https://factory-wager.com/gdpr",
+        "compliance": "https://factory-wager.com/compliance"
+      },
+      "compliance": {
+        "gdpr": true,
+        "ccpa": true,
+        "soc2": true,
+        "hipaa": false,
+        "dpo_email": "dpo@factory-wager.com"
+      }
+    },
+    "branding": {
+      "colors": {
+        "primary": "#3b82f6",
+        "secondary": "#22c55e",
+        "accent": "#f59e0b",
+        "danger": "#ef4444",
+        "dark": "#1f2937",
+        "light": "#f9fafb"
+      },
+      "logos": {
+        "primary": "https://factory-wager.com/logo.svg",
+        "dark": "https://factory-wager.com/logo-dark.svg",
+        "light": "https://factory-wager.com/logo-light.svg",
+        "favicon": "https://factory-wager.com/favicon.ico"
+      },
+      "fonts": {
+        "primary": "Inter",
+        "secondary": "JetBrains Mono",
+        "cdn": "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      }
+    },
+    "redirects": {
+      "www": {
+        "from": "www.factory-wager.com",
+        "to": "factory-wager.com",
+        "permanent": true
+      },
+      "legacy": {
+        "old-site.com": "factory-wager.com",
+        "legacy-api.com": "api.factory-wager.com"
+      },
+      "campaign": {
+        "launch": "factory-wager.com/launch",
+        "beta": "factory-wager.com/beta",
+        "early-access": "factory-wager.com/early-access"
+      }
+    }
+  },
   "license": "MIT",
   "keywords": [
     "bun",
