@@ -15,6 +15,37 @@
     "email": "team@factory-wager.com",
     "url": "https://factory-wager.com"
   },
+  "team": {
+    "leads": {
+      "engineering": "lead-engineer@factory-wager.com",
+      "security": "lead-security@factory-wager.com", 
+      "product": "lead-product@factory-wager.com",
+      "operations": "lead-ops@factory-wager.com"
+    },
+    "profiles": {
+      "nola": {
+        "role": "Lead Developer",
+        "email": "nola@factory-wager.com",
+        "github": "https://github.com/nolarose",
+        "specialties": ["bun", "typescript", "enterprise-architecture", "performance"]
+      },
+      "security-team": {
+        "role": "Security Engineering",
+        "email": "security@factory-wager.com",
+        "specialties": ["security-auditing", "penetration-testing", "compliance"]
+      },
+      "infrastructure": {
+        "role": "Infrastructure Team",
+        "email": "infra@factory-wager.com", 
+        "specialties": ["devops", "cloud-architecture", "monitoring", "scaling"]
+      },
+      "ai-research": {
+        "role": "AI Research Team",
+        "email": "ai@factory-wager.com",
+        "specialties": ["machine-learning", "llama-integration", "ai-operations"]
+      }
+    }
+  },
   "subdomains": {
     "api": "https://api.factory-wager.com",
     "docs": "https://docs.factory-wager.com",
