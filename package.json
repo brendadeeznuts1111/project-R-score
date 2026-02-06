@@ -262,6 +262,66 @@
     "uploads": "factorywager-uploads",
     "secrets": "factorywager-secrets"
   },
+  "apiKeys": {
+    "management": {
+      "provider": "internal-wiki",
+      "endpoint": "https://docs.factory-wager.com/api/keys",
+      "rotation": "90d",
+      "lifecycle": {
+        "creation": "automatic",
+        "expiration": "90d",
+        "renewal": "7d-before-expiry",
+        "revocation": "immediate"
+      }
+    },
+    "types": {
+      "service": {
+        "description": "Service-to-service authentication",
+        "permissions": ["read", "write"],
+        "rate-limit": "10000/hour",
+        "auto-rotate": true
+      },
+      "user": {
+        "description": "User-specific API keys",
+        "permissions": ["read"],
+        "rate-limit": "1000/hour",
+        "auto-rotate": false
+      },
+      "admin": {
+        "description": "Administrative access keys",
+        "permissions": ["read", "write", "delete", "admin"],
+        "rate-limit": "unlimited",
+        "auto-rotate": true,
+        "requires-approval": true
+      },
+      "readonly": {
+        "description": "Read-only access for monitoring",
+        "permissions": ["read"],
+        "rate-limit": "500/hour",
+        "auto-rotate": false
+      }
+    },
+    "security": {
+      "encryption": "AES-256-GCM",
+      "hashing": "SHA-256",
+      "min-length": 32,
+      "require-special-chars": true,
+      "audit-log": true
+    },
+    "integration": {
+      "wiki": {
+        "endpoint": "https://docs.factory-wager.com",
+        "api-path": "/api/v1/keys",
+        "documentation": "/api-keys",
+        "sync": "real-time"
+      },
+      "notifications": {
+        "slack": "#api-keys",
+        "email": ["admin@factory-wager.com", "security@factory-wager.com"],
+        "events": ["created", "rotated", "expired", "revoked"]
+      }
+    }
+  },
   "license": "MIT",
   "keywords": [
     "bun",
