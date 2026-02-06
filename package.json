@@ -37,6 +37,8 @@
     "format:check": "bun run prettier --check lib/**/*.ts",
     "type-check": "bun run tsc --noEmit",
     "clean": "rm -rf dist/ .cache/ coverage/",
+    "hygiene": "bun scripts/repo-hygiene.ts",
+    "hygiene:staged": "bun scripts/repo-hygiene.ts --staged",
     "setup": "bun install && bun run build",
     "security:audit": "bun audit",
     "security:check": "bun run scripts/security-check.ts",

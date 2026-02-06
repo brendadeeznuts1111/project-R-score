@@ -3,7 +3,19 @@
 
 import { runESLint } from './eslint.config.ts';
 
-// Run ESLint on staged files
+// 1. Repo hygiene — block stray outputs and secrets from being committed
+const hygiene = Bun.spawn(['bun', 'scripts/repo-hygiene.ts', '--staged'], {
+  cwd: import.meta.dir + '/..',
+  stdout: 'inherit',
+  stderr: 'inherit',
+});
+const hygieneCode = await hygiene.exited;
+if (hygieneCode !== 0) {
+  console.error('❌ Repo hygiene check failed');
+  process.exit(1);
+}
+
+// 2. Run ESLint on staged files
 const result = await runESLint({
   fix: true,
   maxWarnings: 50,
@@ -15,4 +27,4 @@ if (result !== 0) {
   process.exit(1);
 }
 
-console.log('✅ ESLint check passed');
+console.log('✅ Pre-commit checks passed');

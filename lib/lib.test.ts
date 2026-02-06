@@ -487,4 +487,48 @@ describe("Performance", () => {
   });
 });
 
+// ============================================================================
+// Repo Hygiene Tests
+// ============================================================================
+
+describe("Repo Hygiene", () => {
+  const { STRAY_PATTERNS, SECRETS_FILES } = require("../scripts/repo-hygiene.ts");
+
+  describe("STRAY_PATTERNS", () => {
+    it("catches timestamped JSON files", () => {
+      expect(STRAY_PATTERNS.some((p: RegExp) => p.test("junior-1770398161888.json"))).toBe(true);
+      expect(STRAY_PATTERNS.some((p: RegExp) => p.test("hierarchy-report-1770398067150.json"))).toBe(true);
+    });
+
+    it("catches date-stamped output files", () => {
+      expect(STRAY_PATTERNS.some((p: RegExp) => p.test("enterprise-audit-2026-02-06.jsonl"))).toBe(true);
+    });
+
+    it("catches all .jsonl files", () => {
+      expect(STRAY_PATTERNS.some((p: RegExp) => p.test("anything.jsonl"))).toBe(true);
+    });
+
+    it("catches .log files", () => {
+      expect(STRAY_PATTERNS.some((p: RegExp) => p.test("application.log"))).toBe(true);
+    });
+
+    it("does not flag legitimate files", () => {
+      expect(STRAY_PATTERNS.some((p: RegExp) => p.test("package.json"))).toBe(false);
+      expect(STRAY_PATTERNS.some((p: RegExp) => p.test("tsconfig.json"))).toBe(false);
+    });
+  });
+
+  describe("SECRETS_FILES", () => {
+    it("includes .bunfig.toml", () => {
+      expect(SECRETS_FILES).toContain(".bunfig.toml");
+    });
+
+    it("includes .env variants", () => {
+      expect(SECRETS_FILES).toContain(".env");
+      expect(SECRETS_FILES).toContain(".env.production");
+      expect(SECRETS_FILES).toContain(".env.secret");
+    });
+  });
+});
+
 console.log("🧪 Test suite loaded. Run with: bun test lib/lib.test.ts");
