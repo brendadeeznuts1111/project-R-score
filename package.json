@@ -297,8 +297,8 @@
     "fetch:advanced": "bun run services/advanced-fetch-service.ts",
     "content-type": "bun run services/content-type-demo.ts",
     "verbose": "bun run services/verbose-fetch-demo.ts",
-    "urls": "curl http://localhost:3000/api/typedarray/urls | bun -p",
-    "demo": "curl http://localhost:3000/api/advanced-demo",
+    "urls": "bun run examples/api-demo.ts urls",
+    "demo": "bun run examples/api-demo.ts advanced",
     
     "# MyBunDocs": "",
     "mybundocs11:create": "bun run cli/mybundocs11.ts create",
