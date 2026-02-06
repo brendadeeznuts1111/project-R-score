@@ -265,17 +265,17 @@ export const safeFetchAPI = {
 
   // POST JSON
   async postJSON(url: string, data: any, options: Omit<SafeFetchOptions, 'method' | 'headers'> = {}): Promise<any> {
-    // Destructure to remove any method property (even though TypeScript should prevent it)
-    const { method, ...restOptions } = options || {} as any;
+    // BETTER FIX - Completely isolate method
+    const { method, ...cleanOptions } = options || {} as any;
     
     const response = await safeFetch(url, {
-      ...restOptions,
+      method: 'POST',
+      ...cleanOptions,
       body: typeof data === 'string' ? data : JSON.stringify(data),
-      method: 'POST', // Always POST - cannot be overridden
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        ...restOptions.headers
+        ...cleanOptions.headers
       }
     });
     
@@ -288,18 +288,18 @@ export const safeFetchAPI = {
 
   // POST Form
   async postForm(url: string, data: URLSearchParams | Record<string, string>, options: Omit<SafeFetchOptions, 'method' | 'headers'> = {}): Promise<any> {
-    // Destructure to remove any method property (even though TypeScript should prevent it)
-    const { method, ...restOptions } = options || {} as any;
+    // BETTER FIX - Completely isolate method
+    const { method, ...cleanOptions } = options || {} as any;
     const body = data instanceof URLSearchParams ? data : new URLSearchParams(data);
     
     const response = await safeFetch(url, {
-      ...restOptions,
+      method: 'POST',
+      ...cleanOptions,
       body,
-      method: 'POST', // Always POST - cannot be overridden
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Accept': 'application/json',
-        ...restOptions.headers
+        ...cleanOptions.headers
       }
     });
     
@@ -312,18 +312,18 @@ export const safeFetchAPI = {
 
   // Upload File
   async uploadFile(url: string, file: File | Blob, fieldName: string = 'file', options: Omit<SafeFetchOptions, 'method' | 'headers'> = {}): Promise<any> {
-    // Destructure to remove any method property (even though TypeScript should prevent it)
-    const { method, ...restOptions } = options || {} as any;
+    // BETTER FIX - Completely isolate method
+    const { method, ...cleanOptions } = options || {} as any;
     const formData = new FormData();
     formData.append(fieldName, file);
     
     const response = await safeFetch(url, {
-      ...restOptions,
+      method: 'POST',
+      ...cleanOptions,
       body: formData,
-      method: 'POST', // Always POST - cannot be overridden
       headers: {
         'Accept': 'application/json',
-        ...restOptions.headers
+        ...cleanOptions.headers
       }
     });
     
