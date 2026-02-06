@@ -16,6 +16,8 @@ import { uploadCompressedS3, createCompressedS3File, uploadTier1380 } from "./ut
 import { StringValidators, NumberValidators, EnterpriseValidationEngine, TypeGuards } from "./core/core-validation";
 import { EnterpriseErrorCode, createValidationError, createSecurityError } from "./core/core-errors";
 import { verifyFFIEnvironment, FFI_EXAMPLES } from "./utils/ffi-environment";
+import { ABTestManager } from "./ab-testing/manager";
+import { ABTestingManager } from "./ab-testing/cookie-manager";
 
 // ============================================================================
 // PTY Terminal Tests
@@ -538,6 +540,246 @@ describe("Repo Hygiene", () => {
       expect(SECRETS_FILES).toContain(".env.production");
       expect(SECRETS_FILES).toContain(".env.secret");
     });
+  });
+});
+
+// ============================================================================
+// AB Testing - ABTestManager
+// ============================================================================
+
+describe("ABTestManager", () => {
+  let manager: ABTestManager;
+
+  beforeEach(() => {
+    manager = new ABTestManager();
+  });
+
+  describe("registerTest", () => {
+    it("registers a test with equal weight defaults", () => {
+      manager.registerTest({ id: "test-1", variants: ["a", "b"] });
+      const variant = manager.getVariant("test-1");
+      expect(["a", "b"]).toContain(variant);
+    });
+
+    it("registers a test with custom weights", () => {
+      manager.registerTest({ id: "test-2", variants: ["control", "treatment"], weights: [80, 20] });
+      const variant = manager.getVariant("test-2");
+      expect(["control", "treatment"]).toContain(variant);
+    });
+
+    it("rejects weights that don't sum to 100", () => {
+      expect(() => {
+        manager.registerTest({ id: "bad", variants: ["a", "b"], weights: [30, 30] });
+      }).toThrow("must sum to 100");
+    });
+
+    it("registers with custom cookie name", () => {
+      manager.registerTest({ id: "cust", variants: ["x", "y"], cookieName: "my_cookie" });
+      manager.getVariant("cust");
+      const headers = manager.getSetCookieHeaders();
+      expect(headers.some(h => h.includes("my_cookie="))).toBe(true);
+    });
+
+    it("auto-generates cookie name from test id", () => {
+      manager.registerTest({ id: "my-test", variants: ["a", "b"] });
+      manager.getVariant("my-test");
+      const headers = manager.getSetCookieHeaders();
+      expect(headers.some(h => h.includes("ab_my_test="))).toBe(true);
+    });
+  });
+
+  describe("getVariant", () => {
+    it("throws for unregistered test", () => {
+      expect(() => manager.getVariant("nonexistent")).toThrow("not registered");
+    });
+
+    it("returns consistent variant on repeated calls", () => {
+      manager.registerTest({ id: "sticky", variants: ["a", "b", "c"] });
+      const first = manager.getVariant("sticky");
+      const second = manager.getVariant("sticky");
+      const third = manager.getVariant("sticky");
+      expect(second).toBe(first);
+      expect(third).toBe(first);
+    });
+
+    it("returns valid variant from registered set", () => {
+      const variants = ["alpha", "beta", "gamma"];
+      manager.registerTest({ id: "multi", variants });
+      for (let i = 0; i < 20; i++) {
+        const m = new ABTestManager();
+        m.registerTest({ id: "multi", variants });
+        expect(variants).toContain(m.getVariant("multi"));
+      }
+    });
+  });
+
+  describe("cookie persistence", () => {
+    it("restores variant from cookie header", () => {
+      manager.registerTest({ id: "persist", variants: ["a", "b"], cookieName: "ab_persist" });
+      const restored = new ABTestManager("ab_persist=b");
+      restored.registerTest({ id: "persist", variants: ["a", "b"], cookieName: "ab_persist" });
+      expect(restored.getVariant("persist")).toBe("b");
+    });
+
+    it("ignores invalid cookie values", () => {
+      const m = new ABTestManager("ab_test=invalid_variant");
+      m.registerTest({ id: "test", variants: ["a", "b"], cookieName: "ab_test" });
+      const variant = m.getVariant("test");
+      expect(["a", "b"]).toContain(variant);
+    });
+
+    it("generates Set-Cookie headers", () => {
+      manager.registerTest({ id: "hdr", variants: ["x", "y"] });
+      manager.getVariant("hdr");
+      const headers = manager.getSetCookieHeaders();
+      expect(headers.length).toBeGreaterThan(0);
+      expect(headers[0]).toContain("ab_hdr=");
+    });
+
+    it("sets httpOnly and sameSite defaults", () => {
+      manager.registerTest({ id: "sec", variants: ["a", "b"] });
+      manager.getVariant("sec");
+      const headers = manager.getSetCookieHeaders();
+      const header = headers.find(h => h.includes("ab_sec="))!;
+      expect(header.toLowerCase()).toContain("httponly");
+      expect(header.toLowerCase()).toContain("samesite=lax");
+    });
+  });
+
+  describe("forceAssign", () => {
+    it("overrides the assigned variant", () => {
+      manager.registerTest({ id: "force", variants: ["a", "b"] });
+      manager.forceAssign("force", "b");
+      expect(manager.getVariant("force")).toBe("b");
+    });
+
+    it("throws for unregistered test", () => {
+      expect(() => manager.forceAssign("nope", "a")).toThrow("not registered");
+    });
+
+    it("throws for invalid variant", () => {
+      manager.registerTest({ id: "val", variants: ["a", "b"] });
+      expect(() => manager.forceAssign("val", "c")).toThrow("Invalid variant");
+    });
+  });
+
+  describe("getAllAssignments", () => {
+    it("returns all assigned variants", () => {
+      manager.registerTest({ id: "t1", variants: ["a", "b"] });
+      manager.registerTest({ id: "t2", variants: ["x", "y"] });
+      manager.getVariant("t1");
+      manager.getVariant("t2");
+      const assignments = manager.getAllAssignments();
+      expect(Object.keys(assignments)).toHaveLength(2);
+      expect(["a", "b"]).toContain(assignments["t1"]);
+      expect(["x", "y"]).toContain(assignments["t2"]);
+    });
+
+    it("returns empty object when no variants assigned", () => {
+      manager.registerTest({ id: "unassigned", variants: ["a", "b"] });
+      expect(manager.getAllAssignments()).toEqual({});
+    });
+  });
+
+  describe("clear", () => {
+    it("clears a specific test assignment", () => {
+      manager.registerTest({ id: "clr", variants: ["a", "b"] });
+      manager.getVariant("clr");
+      expect(Object.keys(manager.getAllAssignments())).toHaveLength(1);
+      manager.clear("clr");
+      expect(manager.getAllAssignments()).toEqual({});
+    });
+
+    it("clears all assignments when no id given", () => {
+      manager.registerTest({ id: "c1", variants: ["a", "b"] });
+      manager.registerTest({ id: "c2", variants: ["x", "y"] });
+      manager.getVariant("c1");
+      manager.getVariant("c2");
+      expect(Object.keys(manager.getAllAssignments())).toHaveLength(2);
+      manager.clear();
+      expect(manager.getAllAssignments()).toEqual({});
+    });
+  });
+
+  describe("weighted distribution", () => {
+    it("heavily weighted variant dominates over many trials", () => {
+      const counts: Record<string, number> = { heavy: 0, light: 0 };
+      for (let i = 0; i < 200; i++) {
+        const m = new ABTestManager();
+        m.registerTest({ id: "dist", variants: ["heavy", "light"], weights: [95, 5] });
+        counts[m.getVariant("dist")]++;
+      }
+      // With 95/5 split over 200 trials, heavy should win most
+      expect(counts["heavy"]).toBeGreaterThan(counts["light"]);
+    });
+
+    it("supports 3+ variants with custom weights", () => {
+      manager.registerTest({
+        id: "tri",
+        variants: ["a", "b", "c"],
+        weights: [50, 30, 20],
+      });
+      const variant = manager.getVariant("tri");
+      expect(["a", "b", "c"]).toContain(variant);
+    });
+  });
+});
+
+// ============================================================================
+// AB Testing - ABTestingManager (backward-compatible wrapper)
+// ============================================================================
+
+describe("ABTestingManager (legacy wrapper)", () => {
+  let legacy: ABTestingManager;
+
+  beforeEach(() => {
+    legacy = new ABTestingManager();
+  });
+
+  it("registers and gets variant with positional args", () => {
+    legacy.registerTest("legacy-1", ["a", "b"]);
+    const variant = legacy.getVariant("legacy-1");
+    expect(["a", "b"]).toContain(variant);
+  });
+
+  it("supports custom weights via options", () => {
+    legacy.registerTest("weighted", ["control", "treatment"], { weights: [70, 30] });
+    expect(["control", "treatment"]).toContain(legacy.getVariant("weighted"));
+  });
+
+  it("supports custom cookie name", () => {
+    legacy.registerTest("custom", ["a", "b"], { cookieName: "my_ab" });
+    legacy.getVariant("custom");
+    const headers = legacy.getResponseHeaders();
+    expect(headers.some(h => h.includes("my_ab="))).toBe(true);
+  });
+
+  it("force assigns and reads back", () => {
+    legacy.registerTest("force", ["a", "b"]);
+    legacy.forceAssignVariant("force", "b");
+    expect(legacy.getVariant("force")).toBe("b");
+  });
+
+  it("clears assignment", () => {
+    legacy.registerTest("clr", ["a", "b"]);
+    legacy.getVariant("clr");
+    expect(Object.keys(legacy.getAllAssignments())).toHaveLength(1);
+    legacy.clearAssignment("clr");
+    expect(legacy.getAllAssignments()).toEqual({});
+  });
+
+  it("restores from cookie string", () => {
+    const restored = new ABTestingManager("ab_restore=b");
+    restored.registerTest("restore", ["a", "b"], { cookieName: "ab_restore" });
+    expect(restored.getVariant("restore")).toBe("b");
+  });
+
+  it("getResponseHeaders returns Set-Cookie strings", () => {
+    legacy.registerTest("hdr", ["x", "y"]);
+    legacy.getVariant("hdr");
+    const headers = legacy.getResponseHeaders();
+    expect(headers.length).toBeGreaterThan(0);
+    expect(typeof headers[0]).toBe("string");
   });
 });
 
