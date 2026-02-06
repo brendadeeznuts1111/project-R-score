@@ -1,0 +1,15 @@
+# Configuration for @bun-tools/markdown-constants development
+
+[install]
+# Use local cache for faster development
+cache = "./.bun-cache"
+
+[link]
+# Use symlinks for best development experience
+backend = "symlink"
+
+# Trusted dependencies for this package
+trustedDependencies = [
+  "react",
+  "typescript"
+]
