@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Search, Book, Cloud, Shield, Zap, Server, Network, Users, Code, Activity, FileText, Bell } from 'lucide-react';
+import { Search, Book, Cloud, Shield, Zap, Server, Network, Users, Code, Activity, FileText, Bell, Hash, FileText as FileTextIcon } from 'lucide-react';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { FavoritesProvider } from './contexts/FavoritesContext';
 import SearchModal from './components/SearchModal';
@@ -9,6 +9,8 @@ import FilterBar from './components/FilterBar';
 import Breadcrumbs from './components/Breadcrumbs';
 import InternalWikiViewer from './components/InternalWikiViewer';
 import BunAPIsViewer from './components/BunAPIsViewer';
+import BunCryptoHasherDemo from './components/BunCryptoHasherDemo';
+import BunMarkdownOfficialShowcase from './components/BunMarkdownOfficialShowcase';
 import { docsData } from './data/docsData';
 import { DocCategory } from './types';
 
@@ -218,6 +220,22 @@ function AppContent() {
                 <Code className="w-4 h-4" />
                 <span>Bun APIs</span>
               </button>
+
+              {/* CryptoHasher Demo */}
+              <button
+                onClick={() => window.location.hash = 'crypto-hasher'}
+                className="flex items-center space-x-2 text-sm text-green-600 dark:text-green-400 hover:text-green-500 transition-colors whitespace-nowrap font-medium"
+              >
+                <Hash className="w-4 h-4" />
+                <span>CryptoHasher</span>
+              </button>
+              <button
+                onClick={() => window.location.hash = 'bun-markdown-official'}
+                className="flex items-center space-x-2 text-sm text-orange-600 dark:text-orange-400 hover:text-orange-500 transition-colors whitespace-nowrap font-medium"
+              >
+                <FileTextIcon className="w-4 h-4" />
+                <span>Bun.markdown</span>
+              </button>
             </div>
           </div>
         </section>
@@ -229,6 +247,10 @@ function AppContent() {
             <InternalWikiViewer />
           ) : window.location.hash === '#bun-apis' ? (
             <BunAPIsViewer />
+          ) : window.location.hash === '#crypto-hasher' ? (
+            <BunCryptoHasherDemo />
+          ) : window.location.hash === '#bun-markdown-official' ? (
+            <BunMarkdownOfficialShowcase />
           ) : (
             <>
               {/* Breadcrumbs */}

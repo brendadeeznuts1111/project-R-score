@@ -1,0 +1,591 @@
+/**
+ * Comprehensive CSS styles for Bun Markdown React Components
+ * Production-ready styles with accessibility and responsive design
+ */
+
+/* ==========================================================================
+   Base Markdown Container
+   ========================================================================== */
+
+.markdown-content {
+  line-height: 1.6;
+  color: #333;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.markdown-content * {
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+.markdown-heading {
+  margin-top: 2em;
+  margin-bottom: 1em;
+  font-weight: 600;
+  line-height: 1.25;
+  position: relative;
+  scroll-margin-top: 20px;
+}
+
+.markdown-h1 { font-size: 2.5em; border-bottom: 2px solid #eaeaea; padding-bottom: 0.5em; }
+.markdown-h2 { font-size: 2em; border-bottom: 1px solid #eaeaea; padding-bottom: 0.3em; }
+.markdown-h3 { font-size: 1.5em; }
+.markdown-h4 { font-size: 1.25em; }
+.markdown-h5 { font-size: 1.1em; }
+.markdown-h6 { font-size: 1em; color: #666; }
+
+.markdown-paragraph {
+  margin-bottom: 1em;
+  text-align: justify;
+}
+
+.markdown-blockquote {
+  margin: 1.5em 0;
+  padding: 0.5em 1.5em;
+  border-left: 5px solid #ddd;
+  background-color: #f9f9f9;
+  color: #666;
+  font-style: italic;
+}
+
+.markdown-blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+.markdown-link {
+  color: #0066cc;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.markdown-link:hover {
+  color: #0052a3;
+  border-bottom-color: #0052a3;
+}
+
+.markdown-link:focus {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+.markdown-external-indicator {
+  font-size: 0.8em;
+  opacity: 0.7;
+  margin-left: 2px;
+}
+
+/* ==========================================================================
+   Images
+   ========================================================================== */
+
+.markdown-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin: 1em 0;
+}
+
+.markdown-image:focus {
+  outline: 3px solid #0066cc;
+  outline-offset: 2px;
+}
+
+.markdown-blocked-image {
+  display: inline-block;
+  padding: 4px 8px;
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 4px;
+  color: #856404;
+  font-size: 0.9em;
+  font-style: italic;
+}
+
+/* ==========================================================================
+   Code
+   ========================================================================== */
+
+.markdown-inline-code {
+  background-color: #f6f8fa;
+  color: #d73a49;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'Menlo', monospace;
+  font-size: 0.9em;
+  word-wrap: break-word;
+}
+
+.markdown-code-block {
+  margin: 1.5em 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.markdown-code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: #f6f8fa;
+  border-bottom: 1px solid #e1e4e8;
+  font-size: 0.9em;
+}
+
+.markdown-language-tag {
+  color: #586069;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8em;
+}
+
+.markdown-copy-button {
+  padding: 4px 8px;
+  background-color: #0366d6;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8em;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.markdown-copy-button:hover:not(:disabled) {
+  background-color: #005cc5;
+}
+
+.markdown-copy-button:disabled {
+  background-color: #28a745;
+  cursor: default;
+}
+
+.markdown-tooltip {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  padding: 4px 8px;
+  background-color: #28a745;
+  color: white;
+  border-radius: 4px;
+  font-size: 0.8em;
+  white-space: nowrap;
+  z-index: 1000;
+}
+
+.markdown-code-content {
+  margin: 0;
+  padding: 16px;
+  background-color: #f6f8fa;
+  color: #24292e;
+  font-family: 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'Menlo', monospace;
+  font-size: 0.9em;
+  line-height: 1.45;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* Syntax highlighting themes */
+.markdown-code-content.language-javascript { color: #d73a49; }
+.markdown-code-content.language-python { color: #3572A5; }
+.markdown-code-content.language-typescript { color: #2b7489; }
+.markdown-code-content.language-json { color: #022e81; }
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+.markdown-list {
+  margin-bottom: 1em;
+  padding-left: 2em;
+}
+
+.markdown-unordered { list-style-type: disc; }
+.markdown-ordered { list-style-type: decimal; }
+
+.markdown-list-item {
+  margin-bottom: 0.5em;
+  display: flex;
+  align-items: flex-start;
+}
+
+.markdown-task-checkbox {
+  margin-right: 0.5em;
+  margin-top: 0.25em;
+  accent-color: #0366d6;
+}
+
+.markdown-list-content {
+  flex: 1;
+}
+
+.markdown-list-item.checked .markdown-list-content {
+  text-decoration: line-through;
+  color: #666;
+}
+
+/* Nested lists */
+.markdown-list .markdown-list {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+.markdown-table-wrapper {
+  overflow-x: auto;
+  margin: 1.5em 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.markdown-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  font-size: 0.9em;
+}
+
+.markdown-th,
+.markdown-td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #e1e4e8;
+}
+
+.markdown-th {
+  background-color: #f6f8fa;
+  font-weight: 600;
+  color: #24292e;
+}
+
+.markdown-th-left { text-align: left; }
+.markdown-th-center { text-align: center; }
+.markdown-th-right { text-align: right; }
+
+.markdown-td-left { text-align: left; }
+.markdown-td-center { text-align: center; }
+.markdown-td-right { text-align: right; }
+
+.markdown-tr:last-child .markdown-td {
+  border-bottom: none;
+}
+
+.markdown-tr:hover {
+  background-color: #f6f8fa;
+}
+
+/* ==========================================================================
+   Horizontal Rule
+   ========================================================================== */
+
+.markdown-hr {
+  border: none;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #ddd, transparent);
+  margin: 2em 0;
+}
+
+/* ==========================================================================
+   Other Elements
+   ========================================================================== */
+
+.markdown-em {
+  font-style: italic;
+  color: #555;
+}
+
+.markdown-strong {
+  font-weight: 600;
+  color: #24292e;
+}
+
+.markdown-del {
+  text-decoration: line-through;
+  color: #666;
+}
+
+.markdown-br {
+  display: block;
+  margin: 0.5em 0;
+}
+
+/* ==========================================================================
+   Anchor Links
+   ========================================================================== */
+
+.markdown-anchor {
+  position: absolute;
+  left: -1.5em;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1em;
+  height: 1em;
+  color: #0366d6;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  font-weight: normal;
+}
+
+.markdown-anchor:hover,
+.markdown-anchor:focus {
+  opacity: 1;
+}
+
+.markdown-anchor:focus {
+  outline: none;
+}
+
+.markdown-heading:hover .markdown-anchor.visible {
+  opacity: 0.7;
+}
+
+/* ==========================================================================
+   Error Handling
+   ========================================================================== */
+
+.markdown-error {
+  padding: 1em;
+  background-color: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: 8px;
+  color: #c53030;
+}
+
+.markdown-error p {
+  margin: 0 0 0.5em 0;
+  font-weight: 600;
+}
+
+.markdown-error-details {
+  background-color: #f7fafc;
+  padding: 0.5em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  color: #4a5568;
+}
+
+/* ==========================================================================
+   Dark Mode Support
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  .markdown-content {
+    color: #e1e4e8;
+  }
+  
+  .markdown-heading {
+    color: #f0f6fc;
+  }
+  
+  .markdown-h1,
+  .markdown-h2 {
+    border-bottom-color: #30363d;
+  }
+  
+  .markdown-paragraph {
+    color: #e1e4e8;
+  }
+  
+  .markdown-blockquote {
+    background-color: #161b22;
+    border-left-color: #30363d;
+    color: #8b949e;
+  }
+  
+  .markdown-link {
+    color: #58a6ff;
+  }
+  
+  .markdown-link:hover {
+    color: #79c0ff;
+  }
+  
+  .markdown-inline-code {
+    background-color: #161b22;
+    color: #ff7b72;
+  }
+  
+  .markdown-code-header {
+    background-color: #161b22;
+    border-bottom-color: #30363d;
+  }
+  
+  .markdown-language-tag {
+    color: #8b949e;
+  }
+  
+  .markdown-code-content {
+    background-color: #0d1117;
+    color: #e1e4e8;
+  }
+  
+  .markdown-table {
+    background-color: #0d1117;
+  }
+  
+  .markdown-th {
+    background-color: #161b22;
+    color: #f0f6fc;
+  }
+  
+  .markdown-th,
+  .markdown-td {
+    border-bottom-color: #30363d;
+  }
+  
+  .markdown-tr:hover {
+    background-color: #161b22;
+  }
+  
+  .markdown-hr {
+    background: linear-gradient(to right, transparent, #30363d, transparent);
+  }
+  
+  .markdown-strong {
+    color: #f0f6fc;
+  }
+  
+  .markdown-error {
+    background-color: #2d1b1b;
+    border-color: #822c2c;
+    color: #f85149;
+  }
+  
+  .markdown-error-details {
+    background-color: #0d1117;
+    color: #8b949e;
+  }
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .markdown-content {
+    font-size: 16px;
+  }
+  
+  .markdown-h1 { font-size: 2em; }
+  .markdown-h2 { font-size: 1.75em; }
+  .markdown-h3 { font-size: 1.5em; }
+  .markdown-h4 { font-size: 1.25em; }
+  
+  .markdown-heading {
+    scroll-margin-top: 60px; /* Account for mobile headers */
+  }
+  
+  .markdown-th,
+  .markdown-td {
+    padding: 8px 12px;
+    font-size: 0.8em;
+  }
+  
+  .markdown-code-content {
+    padding: 12px;
+    font-size: 0.8em;
+  }
+  
+  .markdown-anchor {
+    left: -1.2em;
+  }
+}
+
+@media (max-width: 480px) {
+  .markdown-content {
+    font-size: 15px;
+  }
+  
+  .markdown-list {
+    padding-left: 1.5em;
+  }
+  
+  .markdown-th,
+  .markdown-td {
+    padding: 6px 8px;
+  }
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+  .markdown-content {
+    color: black;
+    font-size: 12pt;
+  }
+  
+  .markdown-link {
+    color: black;
+    text-decoration: underline;
+  }
+  
+  .markdown-anchor {
+    display: none;
+  }
+  
+  .markdown-copy-button {
+    display: none;
+  }
+  
+  .markdown-tooltip {
+    display: none;
+  }
+  
+  .markdown-code-block {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+  
+  .markdown-table-wrapper {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+}
+
+/* ==========================================================================
+   Accessibility
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .markdown-link,
+  .markdown-anchor,
+  .markdown-copy-button {
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .markdown-link {
+    text-decoration: underline;
+  }
+  
+  .markdown-code-block {
+    border: 2px solid currentColor;
+  }
+  
+  .markdown-table-wrapper {
+    border: 2px solid currentColor;
+  }
+}
