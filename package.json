@@ -27,9 +27,9 @@
     "start:profile-dash:live": "bun run dashboard-profile/app-integrated.ts",
     "dashboard": "bun run dashboard/mcp-overview.ts status",
     "dashboard:monitor": "bun run dashboard/mcp-overview.ts monitor",
-    "dashboard:web": "open dashboard/web-dashboard.html",
+    "dashboard:web": "bun run examples/dashboard-demo.ts web",
     "dashboard:ansi": "bun run lib/ansi-dashboard.ts",
-    "dashboard:live": "bun -e \"import('./lib/ansi-dashboard.ts').then(m=>m.startLiveDashboard())\"",
+    "dashboard:live": "bun run examples/dashboard-demo.ts live",
     
     "# Barbershop Services": "",
     "start:barbershop:dashboard": "bun run barbershop/barbershop-dashboard.ts",
