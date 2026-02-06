@@ -12,7 +12,7 @@
 
 #### **1. Dynamic Promo Type Selection**
 
-```
+```text
 🎨 PROMO TYPE MANAGEMENT
 • Promo Credit: Flexible promotional credit with wagering requirements
 • Free Play: Free play bonus for specific games with usage limits
@@ -23,7 +23,7 @@
 
 #### **2. Advanced Promo Allocation**
 
-```
+```text
 💰 PROMO ALLOCATION SYSTEM
 • Amount validation with min/max limits per promo type
 • Business rule validation (daily/monthly limits, per-player limits)
@@ -34,7 +34,7 @@
 
 #### **3. Promo Credit Management**
 
-```
+```text
 🎯 PROMO CREDIT FEATURES
 • Wagering requirement tracking and progress monitoring
 • Rollover requirement management
@@ -45,7 +45,7 @@
 
 #### **4. Free Play Bonus System**
 
-```
+```text
 🎮 FREE PLAY MANAGEMENT
 • Game-specific restrictions and allowances
 • Usage count limits and tracking
@@ -56,7 +56,7 @@
 
 #### **5. Validation & Security**
 
-```
+```text
 🔒 VALIDATION & SECURITY
 • Real-time amount validation with visual feedback
 • Business rule enforcement (allocation limits, risk assessment)
@@ -67,7 +67,7 @@
 
 #### **6. Analytics & Reporting**
 
-```
+```text
 📊 PROMO ANALYTICS
 • Real-time allocation tracking and metrics
 • Redemption rate analysis and conversion tracking

@@ -4,7 +4,7 @@ This directory contains all command-line interface tools for the windsurf projec
 
 ## Directory Structure
 
-```
+```text
 cli/
 ├── README.md                    # This file
 ├── admin/                       # Administrative and management tools

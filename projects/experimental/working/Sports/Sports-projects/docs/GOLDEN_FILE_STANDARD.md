@@ -214,7 +214,7 @@ For complex documentation areas (e.g., optimizations, protocols, standards), use
 
 #### Phase-Based Organization Pattern
 
-```
+```text
 Documentation-Area/
 ├── README.md                    # Master Index (Entry Point) - REQUIRED
 ├── Protocol/                    # Protocol Documentation (if applicable)
@@ -448,7 +448,7 @@ This tag provides arbitrary, flexible metadata and **must** appear in `component
 
 #### Format
 
-```
+```text
 [#META:key1=value1,key2=value2,key3=value3]
 ```
 
@@ -472,7 +472,7 @@ This tag provides arbitrary, flexible metadata and **must** appear in `component
 #### Examples
 
 **Valid:**
-```
+```text
 [#META:OWNER_TEAM=dev-team-a,PRIORITY=high]
 [#META:AUDIENCE=operators,SECTION=intro]
 [#META:CRITICAL_PATH=true,DEPLOYMENT_ENV=prod]
@@ -480,7 +480,7 @@ This tag provides arbitrary, flexible metadata and **must** appear in `component
 ```
 
 **Invalid:**
-```
+```text
 [#META:KEY1 = value1, KEY2=value2]  ❌ Whitespace around equals/comma
 [#META:invalid-key=value]          ❌ Key not UPPER_SNAKE_CASE (after normalization)
 [#META:KEY1=value1, ]              ❌ Empty pair

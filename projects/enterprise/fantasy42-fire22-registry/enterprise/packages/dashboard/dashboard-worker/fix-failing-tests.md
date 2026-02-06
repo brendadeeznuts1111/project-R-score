@@ -6,7 +6,7 @@ Based on the test results, here are the specific issues and solutions:
 
 ### **1. Authentication Tests (2/2 failed)**
 
-```
+```text
 ❌ Test login without credentials - HTTP 404: Not Found
 ❌ Test protected endpoint without token - HTTP 404: Not Found
 ```
@@ -114,7 +114,7 @@ if (url.pathname === '/api/auth/verify') {
 
 ### **2. Error Handling Test (1/2 failed)**
 
-```
+```text
 ❌ Test malformed request - Malformed request should be rejected
 ```
 
@@ -178,7 +178,7 @@ if (url.pathname === '/api/manager/getWeeklyFigureByAgent') {
 
 ### **3. Sync Operations Test (1/2 failed)**
 
-```
+```text
 ❌ Test Fire22 customer sync - HTTP 400: Bad Request
 ```
 

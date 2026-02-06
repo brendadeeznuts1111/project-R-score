@@ -37,7 +37,7 @@ commit message validation system and need department assignment.
 
 ### Files Created:
 
-```
+```text
 .testpolicy                           # Policy configuration
 scripts/test-policy-enforcer.ts      # Main enforcement engine
 scripts/test-emergency-bypass.ts     # Emergency procedures

@@ -43,7 +43,7 @@ Registry is organized into the following **7 core domains**:
 
 ### **📁 Package Structure:**
 
-```
+```text
 packages/core-security/
 ├── package.json                 # Main package configuration
 ├── dist/                        # Built distribution files
@@ -102,7 +102,7 @@ packages/core-security/
 
 ### **📁 Package Structure:**
 
-```
+```text
 packages/compliance-core/
 ├── package.json                 # Package configuration
 ├── src/                         # Source files
@@ -148,7 +148,7 @@ packages/compliance-core/
 
 ### **📁 Package Structure:**
 
-```
+```text
 packages/analytics-dashboard/
 ├── package.json                 # Package configuration
 ├── src/                         # Source files
@@ -197,7 +197,7 @@ packages/analytics-dashboard/
 
 ### **📁 Package Structure:**
 
-```
+```text
 enterprise/packages/betting/betting-engine/
 ├── package.json                 # Main package configuration
 ├── src/                         # Source files
@@ -322,7 +322,7 @@ enterprise/packages/betting/betting-engine/
 
 ### **📁 Sub-module Structure:**
 
-```
+```text
 packages/core-security/fraud-detection/
 ├── build.ts                     # Build script
 ├── package.json                 # Sub-package configuration
@@ -345,7 +345,7 @@ packages/core-security/fraud-detection/
 
 #### **Fire22 Core Packages** (`/fire22-core-packages/`)
 
-```
+```text
 fire22-core-packages/
 ├── packages/
 │   ├── core/                   # @fire22/core
@@ -369,7 +369,7 @@ fire22-core-packages/
 
 #### **Fire22 Wager System** (`/fire22-wager-system/`)
 
-```
+```text
 fire22-wager-system/
 ├── packages/
 │   └── wager-system/           # @fire22/wager-system
@@ -391,7 +391,7 @@ fire22-wager-system/
 
 ### **📊 Dependency Graph:**
 
-```
+```text
 @fire22-registry/compliance-core
     └── @fire22-registry/core-security (workspace:*)
 
@@ -416,7 +416,7 @@ fire22-wager-system/
 
 ### **🏗️ Infrastructure Dependencies:**
 
-```
+```text
 @fire22/wager-system
     ├── @fire22/core
     └── @fire22/middleware

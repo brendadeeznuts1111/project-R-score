@@ -174,7 +174,7 @@ bun stage:rollback --id=DEPLOY-123 # Rollback specific deploy
 
 ## 🏗️ **Architecture**
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │ Bun 1.3 Runtime (CCS + Staging) │
 │ ┌─────────────────────────────────────────────────────┐ │
@@ -212,7 +212,7 @@ bun stage:rollback --id=DEPLOY-123 # Rollback specific deploy
 
 ## 📝 **File Structure**
 
-```
+```text
 command/
   ├── control.ts       # CCS core handler with Bun.serve
   └── validate.ts      # Validation engine

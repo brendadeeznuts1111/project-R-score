@@ -2,7 +2,7 @@
 
 ## Phase 1: Data Flow Mapping
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                         DATA FLOW ARCHITECTURE                              │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -69,7 +69,7 @@ await pubsub.connect().catch(e => {
 ### 2. Security Lead
 **Status:** 🔴 CRITICAL
 
-```
+```text
 VULNERABILITIES FOUND:
 ┌────────────────────────────────────────────────────────────────────────┐
 │ 1. Hardcoded Secrets in Source Code                                    │
@@ -166,7 +166,7 @@ pubsub.subscribe('eod', async (message) => {
 ### 5. Error Handling & Recovery
 **Status:** 🔴 CRITICAL
 
-```
+```text
 UNHANDLED FAILURE MODES:
 ┌────────────────────────────────────────────────────────────────────┐
 │ 1. Redis Connection Drop                                           │
@@ -222,7 +222,7 @@ console.log(JSON.stringify({
 ### 7. Testability Lead
 **Status:** ⚠️ NEEDS ATTENTION
 
-```
+```text
 TEST GAPS:
 ┌────────────────────────────────────────────────────────────────────┐
 │ 1. No Unit Tests                                                   │
@@ -257,7 +257,7 @@ TEST GAPS:
 ### 9. Maintainability/Tech Debt
 **Status:** ⚠️ NEEDS ATTENTION
 
-```
+```text
 TECH DEBT ITEMS:
 ┌────────────────────────────────────────────────────────────────────┐
 │ 1. HTML Templates in Source Code                                   │
@@ -303,7 +303,7 @@ TECH DEBT ITEMS:
 ### 12. Prod Risks Lead
 **Status:** 🔴 CRITICAL
 
-```
+```text
 PRODUCTION BLOCKERS:
 ┌────────────────────────────────────────────────────────────────────┐
 │ 1. SQLite 3.51.2 Bugs                                              │

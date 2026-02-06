@@ -4,7 +4,7 @@ This implementation provides a **production-grade RSS fetching system** that ful
 
 ## 📁 Project Structure
 
-```
+```text
 src/
 ├── services/
 │   └── rss-fetcher-v1.3.7.js     # Core RSS fetching with v1.3.7 optimizations
@@ -210,7 +210,7 @@ bun run rss:profile:long
 ```
 
 ### Benchmark Results
-```
+```text
 📊 v1.3.7 Performance Gains:
    Buffer.from(): Up to 92.2% faster
    array.flat(): Up to 97.0% faster

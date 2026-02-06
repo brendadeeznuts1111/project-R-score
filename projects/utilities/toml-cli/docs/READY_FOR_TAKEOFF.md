@@ -174,7 +174,7 @@ bun run ./dist/enterprise/registry-features.js
 
 ## 🔗 Documentation Connection Map
 
-```
+```text
 docs/README.md (Hub)
 ├── TABLE_FORMAT_STANDARD.md (Master format rules)
 ├── FEATURE_FLAGS_DEVELOPER_GUIDE.md (Quick start)
@@ -194,7 +194,7 @@ docs/README.md (Hub)
 
 **All documentation now uses standardized master columns:**
 
-```
+```text
 | Name | Type | Category | Domain | Scope | Tier | Size/Impact | Release/Status | Approval |
 ```
 

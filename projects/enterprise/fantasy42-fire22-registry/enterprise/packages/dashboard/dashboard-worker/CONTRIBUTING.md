@@ -126,7 +126,7 @@ We welcome the following types of contributions:
 
 Follow [Conventional Commits](https://conventionalcommits.org/):
 
-```
+```text
 <type>(<scope>): <subject>
 
 <body>

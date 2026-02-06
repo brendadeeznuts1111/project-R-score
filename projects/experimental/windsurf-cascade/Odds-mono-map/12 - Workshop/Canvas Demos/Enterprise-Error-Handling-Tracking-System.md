@@ -97,7 +97,7 @@ ERR_1763517225608_9CN3DT          // Error correlation ID
 - **Operation Chains**: Follow request flow through system
 
 **Real-time Tracking Output**:
-```
+```text
 01:53:45.607 DEBUG CORR_1763517225 EnterpriseCanvasIntegrator File read and parsed successfully
 01:53:45.608 ERROR ERR_1763517225608_9CN3DT ErrorHandler Canvas missing nodes array - Untitled.canvas
 01:53:45.608 INFO  CORR_1763517225609 PerformanceMonitor Performance monitoring completed
@@ -142,7 +142,7 @@ FATAL = 5  // Critical system failures
 ```
 
 **Console Output Format**:
-```
+```text
 🔍 01:53:45.607 TRACE CORR_1763517225 EnterpriseCanvasIntegrator validateFile         [FS_1001] File validation passed
 ℹ️  01:53:45.608 INFO  CORR_1763517225 PerformanceMonitor   completeMonitoring        [SUCCESS_2001] Performance monitoring completed
 ⚠️  01:53:45.608 WARN  CORR_1763517225 EnterpriseCanvasIntegrator validateCanvasStructure [CANVAS_1203] Canvas is empty
@@ -183,7 +183,7 @@ FATAL = 5  // Critical system failures
 ```
 
 **Performance Analysis Results**:
-```
+```text
 📈 PERFORMANCE SUMMARY
 ⏱️  Average Processing Time: 0.80ms
 💾 Average Memory Usage: 0.65MB
@@ -238,7 +238,7 @@ FATAL = 5  // Critical system failures
 ```
 
 **Error Severity Breakdown**:
-```
+```text
 📈 ERROR SEVERITY BREAKDOWN
 🟠 HIGH: 2 errors
 
@@ -255,7 +255,7 @@ FATAL = 5  // Critical system failures
 ### **📈 Enterprise-Grade Analytics**
 
 **Multi-Component Analysis**:
-```
+```text
 📊 ENTERPRISE LOG REPORT
 📝 Total Log Entries: 41
 
@@ -276,7 +276,7 @@ ErrorHandler: 2 entries
 ```
 
 **Executive Summary**:
-```
+```text
 🎯 EXECUTIVE SUMMARY
 ✅ Integration completed with enterprise-grade monitoring and error handling.
 📊 All operations tracked with detailed performance metrics and error analysis.

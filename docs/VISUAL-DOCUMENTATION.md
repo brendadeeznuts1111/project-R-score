@@ -69,7 +69,7 @@ bun scripts/generate-visual-docs.ts --serve
 
 ## 📁 File Structure
 
-```
+```text
 docs/visual/
 ├── dashboard.html              # Interactive dashboard
 ├── badges/

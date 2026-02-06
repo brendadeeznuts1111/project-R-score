@@ -52,7 +52,7 @@ REQUIRE_DEPENDENCY_AUDIT=true   # Dependency audit required
 
 ## ⚡ Example Policy Enforcement Flow
 
-```
+```text
 🚀 User runs: bun test
          ↓
 📋 Test Policy Enforcer Activated
@@ -71,7 +71,7 @@ REQUIRE_DEPENDENCY_AUDIT=true   # Dependency audit required
 
 ## ❌ Failure Scenario
 
-```
+```text
 🚀 User runs: bun test
          ↓
 📋 Test Policy Enforcer Activated

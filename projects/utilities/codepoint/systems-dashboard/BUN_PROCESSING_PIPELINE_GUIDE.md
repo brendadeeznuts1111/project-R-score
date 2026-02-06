@@ -325,7 +325,7 @@ export function App() {
 ## 📁 **Project Structure**
 
 ### **Recommended Structure**
-```
+```text
 my-app/
 ├── src/
 │   ├── components/

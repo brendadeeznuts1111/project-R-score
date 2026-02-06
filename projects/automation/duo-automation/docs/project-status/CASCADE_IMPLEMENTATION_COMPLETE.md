@@ -48,7 +48,7 @@ The Cascade Customization System for QR Device Onboarding is now **fully impleme
 - ✅ **ROI Optimization** - Continuous performance improvement
 
 ### **📈 Performance Impact:**
-```
+```text
 🎯 BUSINESS IMPACT ACHIEVED:
 ├── QR Generation Speed: +42% improvement
 ├── Health Check Time: -35% faster  

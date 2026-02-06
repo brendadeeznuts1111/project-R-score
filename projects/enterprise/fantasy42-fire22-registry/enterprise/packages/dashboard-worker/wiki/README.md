@@ -7,7 +7,7 @@ coordination documentation for the Fire22 Dashboard Worker system.
 
 ## 📁 Wiki Structure
 
-```
+```text
 wiki/
 ├── README.md                           # This file
 ├── departments/                        # Department definition documents
@@ -113,7 +113,7 @@ git push origin feature/department-live-casino-ops
 
 ### Commit Message Format
 
-```
+```text
 type(scope): brief description
 
 - Detailed change 1

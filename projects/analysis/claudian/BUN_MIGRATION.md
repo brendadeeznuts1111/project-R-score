@@ -39,7 +39,7 @@ transform: {
 
 ### 5. **.npmrc Update**
 Added explicit registry to use public npm:
-```
+```text
 registry=https://registry.npmjs.org/
 ```
 

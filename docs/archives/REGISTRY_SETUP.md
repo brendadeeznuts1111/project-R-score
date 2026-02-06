@@ -13,7 +13,7 @@ A private npm registry implementation backed by Cloudflare R2 with CDN support.
 
 ## 🏗️ Architecture
 
-```
+```text
 ┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
 │   npm Client    │────▶│  Cloudflare CDN  │────▶│   R2 Storage    │
 │  (publish/get)  │     │  (Worker/Cache)  │     │ (npm-registry)  │
@@ -190,7 +190,7 @@ wrangler deploy -c registry-wrangler.toml --env production
 ### Configure DNS
 
 Add DNS record for `npm.factory-wager.com`:
-```
+```text
 Type: CNAME
 Name: npm
 Target: npm-registry-cdn.your-account.workers.dev

@@ -97,7 +97,7 @@ for the complete registry of all 50+ employee subdomains.
 
 ### Cloudflare Worker Structure
 
-```
+```text
 📁 personal-subdomains/
 ├── 📄 wrangler.toml          # Worker configuration
 ├── 📁 src/

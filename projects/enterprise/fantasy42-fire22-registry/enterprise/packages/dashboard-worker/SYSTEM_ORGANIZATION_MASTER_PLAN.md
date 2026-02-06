@@ -111,7 +111,7 @@
 
 ### **Primary Data Pipelines:**
 
-```
+```text
 1. 🎯 Customer Activity → Agent Assignment → Commission Calculation
 2. 💰 Bet Placement → Risk Validation → Wager Creation → Settlement
 3. 📊 Performance Data → Analytics Engine → Dashboard Updates

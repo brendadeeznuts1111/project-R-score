@@ -178,7 +178,7 @@
 
 ## 📡 Proposed RSS Feed Structure
 
-```
+```text
 /feeds/
 ├── finance-rss.xml
 ├── finance-atom.xml

@@ -276,14 +276,14 @@ const metadata = URLFragmentUtils.parseFragment(parsed.fragment);
 ## 📁 **Files Created/Modified**
 
 ### **New Core Infrastructure**:
-```
+```text
 lib/core/
 ├── url-handler.ts              ✅ Advanced URL and fragment handling
 └── [existing core files...]
 ```
 
 ### **Enhanced R2 Integration**:
-```
+```text
 lib/mcp/
 ├── r2-integration-fixed.ts     ✅ Added URL handling methods
 ├── r2-browser-dashboard.ts     ✅ Enhanced with fragment navigation
@@ -291,14 +291,14 @@ lib/mcp/
 ```
 
 ### **Comprehensive Test Suite**:
-```
+```text
 tests/
 ├── url-handler.test.ts         ✅ 50+ URL handling tests
 └── [existing test files...]
 ```
 
 ### **Usage Examples**:
-```
+```text
 examples/
 └── url-fragment-usage.ts       ✅ Comprehensive usage examples
 ```

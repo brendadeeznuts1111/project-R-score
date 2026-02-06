@@ -242,7 +242,7 @@ Notifications are sent for:
 
 ## Architecture
 
-```
+```text
 matrix-automation.ts    # Main automation class
 ├── notifications.ts     # Slack/Teams integration
 ├── cost-tracker.ts     # Cost tracking and reporting

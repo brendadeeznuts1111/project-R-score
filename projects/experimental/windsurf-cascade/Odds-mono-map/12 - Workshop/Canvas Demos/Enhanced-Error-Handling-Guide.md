@@ -136,7 +136,7 @@ if (!CanvasValidator.isProcessableCanvas(canvas)) {
 ### **🔍 Detailed Error Analysis**
 
 **Error Detection Results**:
-```
+```text
 📊 Error Analysis Report:
 ==================================================
 
@@ -154,7 +154,7 @@ if (!CanvasValidator.isProcessableCanvas(canvas)) {
 ```
 
 **Processing Summary**:
-```
+```text
 📊 Processing Summary:
   Total files: 5
   ✅ Successful: 3
@@ -353,7 +353,7 @@ if (error.message.includes('nodes')) {
 ### **🔧 Common Issues & Solutions**
 
 **Issue: "undefined is not an object (evaluating 'canvas.nodes.length')"**
-```
+```text
 ❌ Cause: Canvas file is empty ({}) or missing required structure
 ✅ Solution: 
   1. Check if file contains valid canvas data
@@ -362,7 +362,7 @@ if (error.message.includes('nodes')) {
 ```
 
 **Issue: "Unexpected token } in JSON at position 1"**
-```
+```text
 ❌ Cause: Malformed JSON syntax
 ✅ Solution:
   1. Check for missing commas
@@ -372,7 +372,7 @@ if (error.message.includes('nodes')) {
 ```
 
 **Issue: "ENOENT: no such file or directory"**
-```
+```text
 ❌ Cause: File path incorrect or file deleted
 ✅ Solution:
   1. Verify file path exists
@@ -381,7 +381,7 @@ if (error.message.includes('nodes')) {
 ```
 
 **Issue: Processing hangs or takes too long**
-```
+```text
 ❌ Cause: Large canvas file or infinite loop
 ✅ Solution:
   1. Check file size (should be <10MB)

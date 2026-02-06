@@ -58,17 +58,17 @@ console.log(formatSocketInfo(info));
 ## Examples
 
 ### IPv4 Connection
-```
+```text
 10.0.0.24:59876 → 104.21.8.212:443 (IPv4)
 ```
 
 ### IPv6 Connection
-```
+```text
 2600:1700:66d0:4c60:5b5:3e79:b63e:83db:51778 → 2600:1406:bc00:53::b81e:94ce:80 (IPv6)
 ```
 
 ### Localhost Connection
-```
+```text
 127.0.0.1:54321 → 127.0.0.1:3000 (IPv4)
 ```
 

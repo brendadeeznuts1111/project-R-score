@@ -22,7 +22,7 @@ author: system
 
 *Consolidated from: ### ** Numbered sections with icons***
 
-```
+```text
 01 - 📚 Daily Notes/
 02 - 🏗️ Architecture/
 03 - 💻 Development/
@@ -163,7 +163,7 @@ FROM ""
 WHERE file.folder = this.file.folder
 AND file.name != this.file.name
 SORT file.name ASC
-```
+```text
 
 ## 📊 Statistics
 

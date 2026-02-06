@@ -7,21 +7,21 @@ The status page is now properly configured to use your existing **Cloudflare DNS
 ## 📋 **Domain Configuration**
 
 ### **Development Environment**
-```
+```text
 Domain: localhost:3000
 Usage: Local development and testing
 Access: http://localhost:3000/api/v1/system-matrix
 ```
 
 ### **Staging Environment**
-```
+```text
 Domain: staging.apple.factory-wager.com:3001
 Cloudflare: ✅ Configured
 Access: https://staging.apple.factory-wager.com/api/v1/system-matrix
 ```
 
 ### **Production Environment**
-```
+```text
 Domain: api.apple.factory-wager.com:3002
 Cloudflare: ✅ Configured
 Access: https://api.apple.factory-wager.com/api/v1/system-matrix
@@ -32,7 +32,7 @@ Access: https://api.apple.factory-wager.com/api/v1/system-matrix
 Your existing Cloudflare setup includes these DNS records:
 
 ### **Required Records for Status Page**
-```
+```text
 Type: CNAME
 Name: status.apple.factory-wager.com
 Content: apple.factory-wager.com
@@ -87,7 +87,7 @@ bun status-server.ts
 - `/api/v1/docs` - API documentation
 
 ### **Example URLs**
-```
+```text
 https://api.apple.factory-wager.com/api/v1/system-matrix
 https://api.apple.factory-wager.com/api/v1/health
 https://api.apple.factory-wager.com/api/v1/status
@@ -132,7 +132,7 @@ curl https://api.apple.factory-wager.com/api/v1/domain
 ## ⚙️ **Cloudflare Settings**
 
 ### **SSL/TLS Configuration**
-```
+```text
 Mode: Full (Strict)
 Certificate: Valid for *.apple.factory-wager.com
 HTTPS Redirect: Always On
@@ -140,7 +140,7 @@ HSTS: Enabled
 ```
 
 ### **Performance Settings**
-```
+```text
 Cache Level: Standard
 Browser Cache TTL: 4 hours
 Always Online: On
@@ -148,7 +148,7 @@ Auto Minify: HTML, CSS, JavaScript
 ```
 
 ### **Security Settings**
-```
+```text
 Security Level: Medium
 Bot Fight Mode: Off
 DDoS Protection: On

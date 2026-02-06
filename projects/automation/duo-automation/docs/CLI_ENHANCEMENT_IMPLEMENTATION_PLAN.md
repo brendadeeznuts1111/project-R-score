@@ -28,7 +28,7 @@ This document outlines the comprehensive implementation plan for enhancing the F
 ## 🏗️ Architecture Overview
 
 ### Current State
-```
+```text
 Ultimate CLI (v2.0)
 ├── inspect command
 │   ├── Query Engines (JSONPath, JQ-lite)
@@ -45,7 +45,7 @@ Ultimate CLI (v2.0)
 ```
 
 ### Enhanced State
-```
+```text
 Ultimate CLI (v2.1)
 ├── inspect command (existing)
 ├── audit command (NEW)
@@ -250,7 +250,7 @@ interface Recommendation {
 - `fw risk-assessment report --export=<file>` - Generate report
 
 **Risk Scoring Model**:
-```
+```text
 Risk Score = (Likelihood × Impact × Exploitability) × Data Sensitivity
 
 - Likelihood: 0.1 (rare) to 1.0 (certain)
@@ -471,7 +471,7 @@ async function readDataFile(path: string) {
 - `--format=syslog` - Syslog-compatible format
 
 **Example Output**:
-```
+```text
 # Human Format
 📋 AUDIT LOG REPORT
 ═══════════════════════════════════════
@@ -650,7 +650,7 @@ const redactedEntry = {
 
 ## 📝 Phase 7: File Structure
 
-```
+```text
 src/@inspection/commands/
 ├── audit-engine.ts              (NEW - 400 lines)
 ├── compliance-engine.ts         (NEW - 600 lines)

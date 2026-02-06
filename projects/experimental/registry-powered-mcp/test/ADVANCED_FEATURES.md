@@ -316,7 +316,7 @@ test.failing.each([
 ### When Test Starts Passing
 
 If a `test.failing` test passes, Bun will fail the test with a message:
-```
+```text
 Expected test to fail, but it passed
 ```
 
@@ -363,7 +363,7 @@ describe("User Management", () => {
 
 ### Test Output
 
-```
+```text
 ✓ should create user
 ⊘ should update user profile (todo)
 ⊘ should delete user (todo)

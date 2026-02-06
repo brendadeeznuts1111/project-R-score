@@ -7,7 +7,7 @@ up the Fire22 Dashboard Worker system.
 
 The system has been modularized into focused, single-responsibility packages:
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    dashboard-worker/                        │
 │                     package.json                           │

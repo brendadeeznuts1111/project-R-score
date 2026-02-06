@@ -360,7 +360,7 @@ bun test test/security.test.ts
 
 ### **✅ Validation Results**
 
-```
+```text
 🛡️ INTEGRITY VALIDATION RESULTS
 ┌─────────────────────────────────────────┐
 │ Script Injection Detection: ✅ PASS     │
@@ -546,7 +546,7 @@ MIT License - [LICENSE](LICENSE)
 
 ## **🎯 EMPIRE STATUS**
 
-```
+```text
 🛡️ TIER-1380 LIFECYCLE INTEGRITY EMPIRE
 ┌─────────────────────────────────────────┐
 │ Status: ✅ OPERATIONAL                  │

@@ -93,7 +93,7 @@ export const LATTICE_PERFORMANCE: PerformanceMatrix = {
 - ✅ Fail-fast for missing critical APIs
 
 **Boot Sequence**:
-```
+```text
 Phase 1: Native API Audit
   ✅ JUMP_TABLE: Switch Statement
   ✅ CPP_HASH_TABLE: Map
@@ -186,7 +186,7 @@ async initialize(): Promise<void> {
 ```
 
 **Audit Output**:
-```
+```text
 ═══════════════════════════════════════════════════════
 🔒 NATIVE API AUDIT - Hardened Performance Contract
 ═══════════════════════════════════════════════════════
@@ -363,7 +363,7 @@ bun packages/core/src/examples/hardened-contract-demo.ts
 - **Type-safe access**: See [CLAUDE.md](../CLAUDE.md#common-patterns) for development workflows
 
 **Expected Output**:
-```
+```text
 ✅ AUDIT PASSED: All native APIs available
    Contract Status: ENFORCED
    Baseline: HARDENED

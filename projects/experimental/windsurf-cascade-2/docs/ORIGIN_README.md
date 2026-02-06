@@ -330,7 +330,7 @@ ColorSchemeManager.applyTheme();
 ## 🧪 **Development**
 
 ### **Project Structure**
-```
+```text
 ├── src/
 │   ├── orchestration/
 │   │   ├── dashboard-orchestrator.ts    # Main orchestrator

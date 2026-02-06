@@ -141,14 +141,14 @@ const width = stringWidth(status); // Correctly excludes all escape sequences
 ## Technical Details
 
 ### CSI Sequence Format
-```
+```text
 ESC [ <parameters> <final-byte>
 ```
 - Final byte range: `@` (0x40) to `~` (0x7E)
 - All are now properly excluded from width calculation
 
 ### OSC Sequence Format
-```
+```text
 ESC ] <command> ; <data> <terminator>
 ```
 - Terminators: BEL (`\x07`) or ST (`\x1b\\`)

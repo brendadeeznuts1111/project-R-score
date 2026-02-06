@@ -4,7 +4,7 @@ This document provides a high-level architectural overview of the geelark projec
 
 ## 📊 System Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────────────────────┐
 │                                 GEELARK ARCHITECTURE                                   │
 ├─────────────────────────────────────────────────────────────────────────────────────────┤
@@ -45,7 +45,7 @@ This document provides a high-level architectural overview of the geelark projec
 
 ## 📁 Directory Structure
 
-```
+```text
 geelark/
 ├── bin/                          # CLI entry points
 │   ├── dev-hq-cli.ts             # Main CLI application
@@ -109,7 +109,7 @@ geelark/
 
 ### CLI Command Execution Flow
 
-```
+```text
 User Input
    │
    ▼
@@ -149,7 +149,7 @@ Formatted Output to Console
 
 ### HTTP Request Flow (Bun.serve)
 
-```
+```text
 HTTP Request
    │
    ▼
@@ -181,7 +181,7 @@ HTTP Response with Security Headers
 
 ### Config Loading Flow
 
-```
+```text
 Config Request (loadConfig)
    │
    ▼
@@ -240,7 +240,7 @@ const secured = createSecurityHeaders()(response);
 
 ## 🔐 Security Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │  Security Layers                                             │
 ├─────────────────────────────────────────────────────────────┤
@@ -285,7 +285,7 @@ const secured = createSecurityHeaders()(response);
 
 ### 1. Flag Separation Pattern
 
-```
+```text
 bun --hot --watch dev-hq-cli.ts insights --table --json
 │   │      │      │                │        │
 │   Bun      │      Entry Point       CLI Flags
@@ -327,7 +327,7 @@ const server = new BunServe({ port: 3000 })
 
 ## 📦 Module Dependencies
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │  Dependency Graph (Simplified)                             │
 ├─────────────────────────────────────────────────────────────┤

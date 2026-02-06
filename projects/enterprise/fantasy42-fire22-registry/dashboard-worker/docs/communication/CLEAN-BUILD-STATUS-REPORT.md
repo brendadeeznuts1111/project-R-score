@@ -122,7 +122,7 @@ content.
 
 ### **Active Documentation Structure**
 
-```
+```text
 docs/
 ├── intro.md                    # ✅ Clean (with placeholder)
 ├── getting-started.md          # ✅ Clean (with placeholder)
@@ -137,7 +137,7 @@ docs/
 
 ### **Archive System**
 
-```
+```text
 docs-archive/
 ├── API.md                     # Original with complex expressions
 ├── FIRE22-SECURITY-REGISTRY-INTEGRATION.md  # Original with JSX errors

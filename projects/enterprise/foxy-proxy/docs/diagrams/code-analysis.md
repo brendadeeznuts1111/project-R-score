@@ -39,7 +39,7 @@
 
 #### **Current State Issues:**
 
-```
+```text
 📁 Current Structure Problems:
 ├── 📄 pages/ProxiesPage.tsx (3.2)     ← UI + Business Logic
 ├── 🎣 hooks/useProxyData/index.ts (5.1) ← Data Fetching
@@ -49,7 +49,7 @@
 
 #### **Proposed Feature Structure:**
 
-```
+```text
 📁 features/proxies/                    🆕
 ├── 📄 components/
 │   ├── ProxyCard.tsx                   ← Extracted from pages
@@ -71,7 +71,7 @@
 
 #### **Identified Duplications to Extract:**
 
-```
+```text
 🔄 Current Duplications:
 ├── HTTP Client Logic (6.1, 6.2) → 📁 shared/services/httpClient.ts
 ├── Error Handling (6.x, 9.x) → 📁 shared/services/errorService.ts

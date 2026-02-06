@@ -7,7 +7,7 @@ bun test config-manager.test.ts
 ```
 
 **Expected output:**
-```
+```text
 bun test v1.3.6 (d530ed99)
 
 config-manager.test.ts:

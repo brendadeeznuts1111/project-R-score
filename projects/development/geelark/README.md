@@ -43,7 +43,7 @@ A powerful developer toolkit built with **Bun 1.3.6+**, featuring comprehensive 
 - Disabled features: 0% (complete elimination)
 
 **API Endpoints**:
-```
+```text
 POST /api/upload/initiate       # Start new upload
 GET  /api/upload/status/:id     # Get upload progress
 GET  /api/uploads/active        # List active uploads
@@ -225,7 +225,7 @@ bun --hot --watch dev-hq-cli.ts insights --table --json
 
 ## Project Structure
 
-```
+```text
 geelark/                  # Root directory
 ├── README.md             # Main project documentation
 ├── LICENSE               # MIT License
@@ -674,7 +674,7 @@ Also see:
 
 ### Compliance Status
 
-```
+```text
 Total Constants:        55+
 Compliant Constants:    55/55 ✅
 Compliance Rate:        100%

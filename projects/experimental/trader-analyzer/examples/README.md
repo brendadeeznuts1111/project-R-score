@@ -12,7 +12,7 @@ This directory contains comprehensive examples demonstrating Bun's native APIs, 
 
 **Ripgrep**: `rg "6\.0\.0\.0\.0\.0\.0" examples/README.md`
 
-```
+```text
 examples/
 ├── README.md                    # 6.0.0.0.0.0.0: Main examples index
 ├── COMMANDS.md                  # 6.0.1.0.0.0.0: Command reference

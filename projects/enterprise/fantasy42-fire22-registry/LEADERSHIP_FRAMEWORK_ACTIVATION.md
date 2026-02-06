@@ -153,7 +153,7 @@ gh pr view --json reviews  # Verify approval requirements
 
 ### **Day 1: Communication Launch**
 
-```
+```text
 9:00 AM - Executive Team Alignment Meeting
 10:00 AM - Notification Preparation & Review
 2:00 PM - Department Head Notification Distribution
@@ -162,7 +162,7 @@ gh pr view --json reviews  # Verify approval requirements
 
 ### **Day 2: Follow-up & Clarification**
 
-```
+```text
 9:00 AM - Individual Department Head Check-ins
 11:00 AM - Address Questions & Concerns
 2:00 PM - GitHub Access Verification Setup
@@ -171,7 +171,7 @@ gh pr view --json reviews  # Verify approval requirements
 
 ### **Day 3: CODEOWNERS Validation**
 
-```
+```text
 9:00 AM - GitHub Access Audit
 11:00 AM - CODEOWNERS File Review
 2:00 PM - Approval Workflow Testing
@@ -180,7 +180,7 @@ gh pr view --json reviews  # Verify approval requirements
 
 ### **Day 4: Technical Setup Completion**
 
-```
+```text
 9:00 AM - Backup Access Configuration
 11:00 AM - Emergency Access Procedures
 2:00 PM - Monitoring Setup
@@ -189,7 +189,7 @@ gh pr view --json reviews  # Verify approval requirements
 
 ### **Day 5: Task Reassignment Begin**
 
-```
+```text
 9:00 AM - Project Board Audit
 11:00 AM - Issue Reassignment Planning
 2:00 PM - Priority Matrix Updates
@@ -198,7 +198,7 @@ gh pr view --json reviews  # Verify approval requirements
 
 ### **Day 6: Meeting Coordination**
 
-```
+```text
 9:00 AM - Meeting Scheduling
 11:00 AM - Agenda Preparation
 2:00 PM - Stakeholder Coordination
@@ -207,7 +207,7 @@ gh pr view --json reviews  # Verify approval requirements
 
 ### **Day 7: Framework Activation**
 
-```
+```text
 9:00 AM - Final Status Review
 11:00 AM - Activation Checklist Verification
 2:00 PM - Leadership Framework Go-Live

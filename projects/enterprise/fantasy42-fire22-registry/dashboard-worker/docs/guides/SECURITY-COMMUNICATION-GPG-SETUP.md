@@ -184,7 +184,7 @@ above trigger automatic critical escalation procedures.
 
 **Reply Template**:
 
-```
+```text
 Subject: GPG Setup Complete - [DEPARTMENT] Department
 
 Security Team,

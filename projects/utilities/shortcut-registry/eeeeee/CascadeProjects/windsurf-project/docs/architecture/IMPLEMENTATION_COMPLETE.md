@@ -9,7 +9,7 @@
 - **✅ Memory Efficiency**: 90%+ memory reduction vs traditional methods
 
 **Performance Results:**
-```
+```text
 ✅ Analysis completed in 0.08s
 📊 Processed: 177 patterns  
 🎯 Cache hits: 822 (82% efficiency)

@@ -11,7 +11,7 @@ system versions.
 
 ### Hybrid Management Strategy
 
-```
+```text
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │  Runtime Deps   │    │  System Version  │    │ Domain Versions │
 │   (bun update)  │    │  (bun pm pkg)    │    │  (Custom VM)    │
@@ -211,7 +211,7 @@ bun run version:status
 
 **Output:**
 
-```
+```text
 📊 Fire22 Version Status
 ═══════════════════════════════
 Current Version: 2.3.0-architecture+20241219

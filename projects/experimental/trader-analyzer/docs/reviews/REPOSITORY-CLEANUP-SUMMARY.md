@@ -65,7 +65,7 @@ Moved 15+ demo scripts:
 - `test/circular-buffer.test.ts` ✅ Test file
 
 ### 4. Directory Structure Created ✅
-```
+```text
 examples/
   └── demos/          # Demo scripts and examples
 
@@ -133,7 +133,7 @@ git checkout -b feat/utils-updates
 
 ### 3. Commit Message Verification
 **Status**: ✅ RSS fix commit follows format:
-```
+```text
 fix(api): RSS feed async/await fix and error registry update
 
 - Fix RSS feed generation async/await issue (generateRSSFeed not async)

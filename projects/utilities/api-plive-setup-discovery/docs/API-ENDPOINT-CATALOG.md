@@ -91,7 +91,7 @@ bun rules:pr API-OPENAPI    # Auto-branch + lint + OpenAPI sync
 
 ## Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │ Bun 1.3 Runtime (REST + WS)                                 │
 │ ┌─────────────────────────────────────────────────────┐     │

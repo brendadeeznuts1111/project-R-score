@@ -12,7 +12,7 @@ Bun.env.get('OBSIDIAN_ENABLE_CACHE') // Native env API
 crypto.subtle // Signature on opt JSON
 Bun.file('.obsidian/app.json').text() // Parse
 spawn('obsidian-cli', ['settings', 'detect-extensions']) // Status
-```
+```text
 
 ### Cloudflare Workers Deployment
 
@@ -32,7 +32,7 @@ binding = "TES_CORE_KV"
 
 [vars]
 OBSIDIAN_ENABLE_CACHE = "true"
-```
+```text
 
 ### Core Settings Format
 
@@ -56,7 +56,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
   "wikilinks_enabled": true,
   "auto_update_links": true
 }
-```
+```text
 
 ---
 
@@ -92,7 +92,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
   "detectAllFileExtensions": false,
   "allowedFileExtensions": [".md", ".canvas"]
 }
-```
+```text
 
 **Performance**: 40-50s → <0.1s via file limit  
 **Meta Tag**: `[META: LIMIT]`  
@@ -113,7 +113,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
   "updateLinks": true,
   "autoUpdateLinks": true
 }
-```
+```text
 
 **Performance**: Faster than markdown links  
 **Meta Tag**: `[META: LINKS]`  
@@ -140,7 +140,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
     "Thumbs.db"
   ]
 }
-```
+```text
 
 **Performance**: 3× render boost  
 **Meta Tag**: `[META: EXCLUDE]`  
@@ -159,7 +159,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
   "newFileLocation": "folder",
   "newFileFolderPath": "00-Inbox"
 }
-```
+```text
 
 **Performance**: Prevents root clutter  
 **Meta Tag**: `[META: INBOX]`  
@@ -177,7 +177,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
 {
   "useMarkdownLinks": false
 }
-```
+```text
 
 **Performance**: Wikilinks faster than markdown  
 **Meta Tag**: `[META: PREF]`  
@@ -195,7 +195,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
 {
   "strictLineBreaks": false
 }
-```
+```text
 
 **Performance**: Improved editing experience  
 **Meta Tag**: `[META: BREAKS]`  
@@ -213,7 +213,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
 {
   "legacyEditor": false
 }
-```
+```text
 
 **Performance**: New editor faster than legacy  
 **Meta Tag**: `[META: EDITOR]`  
@@ -231,7 +231,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
 {
   "readableLineLength": true
 }
-```
+```text
 
 **Performance**: Better performance with readable length  
 **Meta Tag**: `[META: LENGTH]`  
@@ -250,7 +250,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
   "showFrontmatter": true,
   "frontmatterInDocument": "minimal"
 }
-```
+```text
 
 **Performance**: Better metadata visibility  
 **Meta Tag**: `[META: FRONT]`  
@@ -268,7 +268,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
 {
   "showLineNumber": false
 }
-```
+```text
 
 **Performance**: Reduced rendering overhead  
 **Meta Tag**: `[META: NUMBERS]`  
@@ -286,7 +286,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
 {
   "showIndentGuide": false
 }
-```
+```text
 
 **Performance**: Reduced rendering overhead  
 **Meta Tag**: `[META: GUIDES]`  
@@ -304,7 +304,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
 {
   "searchOnOpen": false
 }
-```
+```text
 
 **Performance**: Faster startup time  
 **Meta Tag**: `[META: SEARCH]`  
@@ -332,13 +332,13 @@ OBSIDIAN_ENABLE_CACHE = "true"
 **Log Format**:
 ```
 [THREAD_GROUP:VAULT] [META:KEY-VERSION:2] [HSL-PHASE:CORE [[3A86FF]]]
-```
+```text
 
 **Verification Command**:
 ```bash
 rg '"\\[META:VANILLA\\\\]":' logs/worker-events.log
 # Result: 12 matches / 0.00001s
-```
+```text
 
 ---
 
@@ -349,7 +349,7 @@ rg '"\\[META:VANILLA\\\\]":' logs/worker-events.log
 **Deployment Command**:
 ```bash
 bunx wrangler deploy --env=production
-```
+```text
 
 **Status**: ✅ **0 warnings**  
 **Configuration**: `[[kv_namespaces]]` + `[vars] OBSIDIAN_ENABLE_CACHE=true`  
@@ -377,7 +377,7 @@ Telemetry (0x5002)
 Alert (0x5003) via Event CH3 Magenta [[FF00FF]]
   ↓
 WebSocket (0x7001 [[9D4EDD]]) for real-time velocity streams
-```
+```text
 
 ### Ruin-Proof Design
 

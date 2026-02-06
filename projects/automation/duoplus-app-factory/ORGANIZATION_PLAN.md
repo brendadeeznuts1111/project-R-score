@@ -99,7 +99,7 @@ The project has some organization (docs/, scripts/, src/, etc.) but the root dir
 
 ## New Root Structure After Organization
 
-```
+```text
 d-network/
 ├── README.md                   # Main entry point
 ├── ORGANIZATION.md             # Organization reference

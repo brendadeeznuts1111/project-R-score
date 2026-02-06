@@ -8,7 +8,7 @@ The Odds-mono-map scripts have been successfully organized from a chaotic flat c
 
 ## 📁 **New Structure Implemented**
 
-```
+```text
 scripts/
 ├── analytics/     # 📊 12 files - Analysis and reporting tools
 ├── demos/         # 🎨 32 files - Feature demonstrations and examples  

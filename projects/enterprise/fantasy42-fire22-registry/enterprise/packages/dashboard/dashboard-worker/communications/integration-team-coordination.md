@@ -108,7 +108,7 @@ Integration Support Tiers:
 
 ### **📞 Emergency Escalation Chain**
 
-```
+```text
 Integration Emergency → Amanda Garcia (Integration Lead) → Chris Brown (CTO) → Executive Team
 Timeline: 15 min → 30 min → 1 hour → Board notification
 ```

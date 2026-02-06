@@ -100,7 +100,7 @@ console.log(result.url);
 
 The generated URL follows this format:
 
-```
+```text
 https://mermaid.live/edit#pako:{base64}&crc={hash}
 ```
 

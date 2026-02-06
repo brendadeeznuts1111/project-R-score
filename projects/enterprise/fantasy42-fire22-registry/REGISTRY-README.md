@@ -310,7 +310,7 @@ bun run registry:publish
 
 ### Commit Message Format
 
-```
+```text
 🚀 Release v2.1.0 - [Date]
 
 📦 Updated packages:

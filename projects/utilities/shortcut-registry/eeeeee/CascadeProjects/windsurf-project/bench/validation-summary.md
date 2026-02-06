@@ -82,7 +82,7 @@ bombardier -c 256 -n 10000 http://localhost:3002/api/health
 ### Browser Network Tab Validation
 
 **Without Preconnect:**
-```
+```text
 DNS Lookup:        40ms
 Initial Connection: 60ms
 SSL Negotiation:    50ms
@@ -90,7 +90,7 @@ Total Wait:        150ms
 ```
 
 **With Preconnect:**
-```
+```text
 DNS Lookup:         0ms ✅
 Initial Connection:  0ms ✅
 SSL Negotiation:     0ms ✅

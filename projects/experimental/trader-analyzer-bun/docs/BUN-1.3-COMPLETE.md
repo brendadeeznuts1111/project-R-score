@@ -86,7 +86,7 @@ Hyper-Bun has been fully updated to leverage **all Bun 1.3 features** while main
 
 ## 📁 Complete File Structure
 
-```
+```text
 src/
 ├── constants/
 │   └── cookie-expiration.ts          # Cookie expiration constants

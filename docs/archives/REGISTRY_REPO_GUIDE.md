@@ -26,7 +26,7 @@ Given the scope and production requirements, a dedicated repository is recommend
 
 ### Option A: Dedicated Registry Repo (Recommended)
 
-```
+```text
 factorywager-registry/          # NEW REPO
 ├── 📦 Core Registry
 │   ├── packages/
@@ -80,7 +80,7 @@ factorywager-registry/          # NEW REPO
 
 If staying in current repo, use workspaces:
 
-```
+```text
 Projects/
 ├── apps/
 │   ├── factorywager/           # Current main app
@@ -249,7 +249,7 @@ git submodule add git@github.com:factorywager/registry.git packages/registry
 
 ### Dedicated Registry Repo
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                  factorywager/registry                          │
 │                      (GitHub)                                   │

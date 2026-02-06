@@ -6,7 +6,7 @@ Our benchmark structure is aligned with [Bun's official benchmark directory](htt
 
 ## Directory Structure
 
-```
+```text
 scripts/bench/
 ├── package.json          # Benchmark package.json (aligned with Bun's structure)
 ├── utils.ts              # Mitata wrapper (aligned with Bun's runner.mjs)

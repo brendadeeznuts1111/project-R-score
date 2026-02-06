@@ -109,7 +109,7 @@ All code uses Bun-native APIs. No Node.js compatibility shims needed.
 
 ### Health Score Calculation
 
-```
+```text
 Component Average: 8.2/10
 Lockfile Penalty:  -0.5
 ─────────────────────────

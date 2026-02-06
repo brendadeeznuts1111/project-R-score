@@ -84,7 +84,7 @@ cd packages/@graph/layer4
 
 ### All Available Commands
 
-```
+```text
 # Team Mini-Apps
 /sports_correlation - 🏀 Open Sports Correlation Mini-App
 /market_analytics - 📊 Open Market Analytics Mini-App

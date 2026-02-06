@@ -400,28 +400,28 @@ graph TB
 
 ### **Import Simplification**
 
-```
+```text
 🔴 Before: import { useProxyData } from '../hooks/useProxyData'
 🟢 After:  import { ProxiesFeature } from '../features/proxies'
 ```
 
 ### **Code Co-location**
 
-```
+```text
 🔴 Before: pages/ + hooks/ + utils/ (scattered)
 🟢 After:  features/proxies/ (co-located)
 ```
 
 ### **Reusability**
 
-```
+```text
 🔴 Before: Duplicate API clients (6.1, 6.2)
 🟢 After:  Shared BaseAPIClient + specialized implementations
 ```
 
 ### **Maintainability**
 
-```
+```text
 🔴 Before: Changes affect 3-4 different directories
 🟢 After:  Changes contained within feature directory
 ```

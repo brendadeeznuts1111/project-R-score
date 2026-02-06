@@ -52,7 +52,7 @@ bun run optimization-recommender.ts [source-directory]
 ```
 
 **Example Output:**
-```
+```text
 🚀 Performance Optimization Report
 ==================================================
 
@@ -248,7 +248,7 @@ Regressions are detected when performance degrades by more than 10% from baselin
 
 ## 📁 Project Structure
 
-```
+```text
 2048/
 ├── profile-analyzer.ts              # CPU profile analysis
 ├── optimization-recommender.ts       # Code pattern analysis
@@ -499,7 +499,7 @@ jobs:
 ## 📊 Sample Results
 
 ### Test Output
-```
+```text
 ✅ PASS fibonacci-recursive
    Duration: 33.10ms
    Ops/sec: 30
@@ -526,7 +526,7 @@ jobs:
 ```
 
 ### Optimization Report
-```
+```text
 🚨 CRITICAL: Address 1 high-priority issues immediately
 🟡 IMPORTANT: Review 7 medium-priority optimizations
 🧠 MEMORY: Implement proper cleanup for event listeners and intervals

@@ -68,7 +68,7 @@ bun run path:audit
 ```
 
 **Expected Output**:
-```
+```text
 🔍 Bun PATH Security Audit
 ============================================================
 📊 Total PATH segments: 16

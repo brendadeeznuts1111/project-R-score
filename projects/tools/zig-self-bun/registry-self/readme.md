@@ -302,7 +302,7 @@ async function upgrade() {
 
 ## **🎯 The Meta-Architecture: Bun is the Runtime and the Product**
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                       Bun Runtime (Zig)                     │
 │  - Spawns processes (Bun.spawn)                             │

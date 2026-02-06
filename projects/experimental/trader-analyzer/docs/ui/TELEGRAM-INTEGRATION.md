@@ -19,7 +19,7 @@ The Telegram integration provides:
 
 ## Architecture
 
-```
+```text
 ┌─────────────────────────────────────────┐
 │         Application Layer              │
 │  (CLI, API Routes, Dashboard)          │

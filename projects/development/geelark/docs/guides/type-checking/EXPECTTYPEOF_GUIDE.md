@@ -495,7 +495,7 @@ test("type guard assertions", () => {
 
 ### Implementation in geelark
 
-```
+```text
 tests/unit/type-testing/
 ├── advanced-expectTypeOf.test.ts    # Comprehensive examples
 ├── basic-expectTypeOf.test.ts        # Basic usage patterns

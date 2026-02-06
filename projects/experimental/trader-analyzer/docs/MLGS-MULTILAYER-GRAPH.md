@@ -4,7 +4,7 @@
 
 ## 🎯 **Interface → Sportsbook Mapping**
 
-```
+```text
 L1 DIRECT: BookieA ↔ BookieB arb (2.5%+)
 L2 MARKET: Spread ↔ Total correlation  
 L3 EVENT:  Q1 steam → Q4 line move
@@ -202,7 +202,7 @@ curl http://localhost:3000/api/mlgs/shadow-scan/nfl | jq
 
 ## 📊 **Output Format**
 
-```
+```text
 [MLGS][SHADOW-GRAPH][HIDDEN-EDGES:17][LIVE-ARBS:8]
 [L4-CROSS-SPORT:NBA→NFL][3.8%][EXECUTE:IMMEDIATE]
 ```

@@ -47,7 +47,7 @@ bun run --feature=DEBUG app.ts
 ```
 
 **Results:**
-```
+```text
 📊 Feature Status:
 ❌ PREMIUM: Disabled
 ✅ DEBUG: Enabled
@@ -67,7 +67,7 @@ bun run --feature=PREMIUM --feature=DEBUG app.ts
 ```
 
 **Results:**
-```
+```text
 📊 Feature Status:
 ✅ PREMIUM: Enabled
    - Advanced dashboard
@@ -95,7 +95,7 @@ bun test --feature=MOCK_API app.test.ts
 ```
 
 **Results:**
-```
+```text
 🧪 Testing Mock API
 ✅ Mock API enabled - testing with mock data
 
@@ -117,7 +117,7 @@ bun test --feature=MOCK_API --feature=PREMIUM --feature=DEBUG app.test.ts
 ```
 
 **Results:**
-```
+```text
 🧪 Testing Premium Features
 ✅ Premium features available
    - Advanced analytics
@@ -145,7 +145,7 @@ bun test --feature=MOCK_API --feature=PREMIUM --feature=DEBUG app.test.ts
 ## **📊 Dead-Code Elimination Evidence**
 
 ### **Bundle Size Comparison**
-```
+```text
 Basic build:    2.5KB (no features)
 Premium build:  3.0KB (+20% with PREMIUM)
 Multiple build: 3.5KB (+40% with PREMIUM + DEBUG)

@@ -35,7 +35,7 @@ Type validation ensures data integrity, type safety, and system reliability thro
 
 ### **Core Validation Components**
 
-```
+```text
 🔍 Validation Framework
 ├── 📋 Validation Rules Engine
 ├── 🧪 Type Checkers

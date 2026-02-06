@@ -6,7 +6,7 @@
 
 Every table must include these columns (when applicable to the context):
 
-```
+```text
 | Name | Type | Category | Scope | Domain | Tier | Status | Notes |
 |------|------|----------|-------|--------|------|--------|-------|
 ```

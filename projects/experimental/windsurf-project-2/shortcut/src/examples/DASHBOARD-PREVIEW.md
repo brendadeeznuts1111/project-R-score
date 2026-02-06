@@ -128,12 +128,12 @@ Your comprehensive security dashboard is now live at **http://localhost:3000**
 ## 🌐 **Access Information**
 
 ### **📱 Dashboard URL**
-```
+```text
 http://localhost:3000
 ```
 
 ### **🔗 API Endpoint**
-```
+```text
 http://localhost:3000/api/security-data
 ```
 

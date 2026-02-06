@@ -53,7 +53,7 @@ usage: Reference guide for understanding meta tag formats and HSL color mappings
 
 ### Format Structure
 
-```
+```text
 [META: KEY-VALUE]
 ```
 

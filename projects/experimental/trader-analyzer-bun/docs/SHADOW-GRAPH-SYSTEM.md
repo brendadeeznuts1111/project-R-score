@@ -546,7 +546,7 @@ Efficient storage of research scan results using Zstandard compression.
 - File size metrics in Telegram reports
 
 **Example Output**:
-```
+```text
 📦 Wrote 23 events to ${SHADOW_GRAPH_PATHS.COVERT_STEAM_LOG}
    Compressed size: 45.23 KB
    Uncompressed size: 234.56 KB
@@ -732,7 +732,7 @@ Comprehensive research and analysis engine for shadow graph data.
 Architecture diagram showing data flow between UI, APIs, and research engine.
 
 **Data Flow**:
-```
+```text
 User-Facing UI Layer (1.1.1.1.1.9.1)
     ↕ (HTTP/WebSocket)
 Public API (500ms Delay) (1.1.1.1.1.9.2)

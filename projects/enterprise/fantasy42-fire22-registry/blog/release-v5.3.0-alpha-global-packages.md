@@ -174,7 +174,7 @@ Multi-registry support with priority:
 
 Our performance testing shows dramatic improvements:
 
-```
+```text
 BunX Execution Benchmark:
 - Cold start: 12ms
 - Warm start: 7ms

@@ -115,7 +115,7 @@ bun --heap-prof --heap-prof-dir ./profiles --heap-prof-name=my-snapshot.heapsnap
 grep 'type=Function' profile.md      # Find all Function objects
 grep 'size=[0-9]\{5,\}' profile.md   # Find objects >= 10KB
 grep 'gcroot=1' profile.md           # Find all GC roots
-```
+```text
 
 ## 🚀 Demo Script
 
@@ -130,7 +130,7 @@ bun --heap-prof-md examples/profiling/markdown-profile-demo.ts
 
 # Both CPU and heap profiling
 bun --cpu-prof-md --heap-prof-md examples/profiling/markdown-profile-demo.ts
-```
+```text
 
 ## 📈 Benefits of Markdown Format
 
@@ -167,7 +167,7 @@ grep -E "MB|KB" Heap.*.md | sort -k4 -nr
 
 # Compare two profiles
 diff CPU-before.md CPU-after.md
-```
+```text
 
 ### Automated Reporting
 
@@ -180,7 +180,7 @@ cat CPU.*.md >> report.md
 echo "" >> report.md
 echo "## Heap Profile" >> report.md  
 cat Heap.*.md >> report.md
-```
+```text
 
 ## 🎯 Best Practices
 
@@ -188,27 +188,27 @@ cat Heap.*.md >> report.md
 ```bash
 bun --cpu-prof-md --cpu-prof-name=api-endpoint-profile api.js
 bun --heap-prof-md --heap-prof-name=memory-leak-check app.js
-```
+```text
 
 ### 2. **Organize Output**
 ```bash
 mkdir -p profiles/cpu profiles/heap
 bun --cpu-prof-md --cpu-prof-dir=./profiles/cpu app.js
 bun --heap-prof-md --heap-prof-dir=./profiles/heap app.js
-```
+```text
 
 ### 3. **Combine Formats**
 ```bash
 # Get both visual (Chrome DevTools) and shareable (Markdown) formats
 bun --cpu-prof --cpu-prof-md --heap-prof --heap-prof-md app.js
-```
+```text
 
 ### 4. **Version Control**
 ```bash
 # Track performance over time
 git add profiles/*.md
 git commit -m "Performance profile: feature-x implementation"
-```
+```text
 
 ## 📚 Integration Examples
 
@@ -218,13 +218,13 @@ git commit -m "Performance profile: feature-x implementation"
   run: |
     bun --cpu-prof-md --cpu-prof-name=ci-profile src/main.ts
     cat profiles/CI-PROFILE.md >> $GITHUB_STEP_SUMMARY
-```
+```text
 
 ### Performance Monitoring
 ```bash
 # Daily performance check
 0 9 * * * cd /app && bun --cpu-prof-md --cpu-prof-name=daily-$(date +%Y%m%d) src/main.ts
-```
+```text
 
 ### Before/After Optimization
 ```bash
@@ -236,7 +236,7 @@ bun --cpu-prof-md --cpu-prof-name=after src/optimized-function.ts
 
 # Compare
 diff profiles/before.md profiles/after.md
-```
+```text
 
 ## 🔧 Advanced Usage
 
@@ -255,7 +255,7 @@ const hotFunctions = lines
 
 console.log('🔥 Top 5 Hot Functions:');
 hotFunctions.forEach(fn => console.log(fn));
-```
+```text
 
 ### Memory Leak Detection
 ```bash
@@ -264,7 +264,7 @@ for run in {1..5}; do
   bun --heap-prof-md --heap-prof-name=run-$run app.js
   grep "Total Objects" profiles/RUN-$run.md
 done
-```
+```text
 
 ---
 

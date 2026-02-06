@@ -19,7 +19,7 @@ bun add -D typescript bun-types @biomejs/biome
 ```
 
 ### **1.2 Project Structure (Zero-Collateral Architecture)**
-```
+```text
 surgical-precision-ops/
 ├── bun.lockb                    # Immutable lockfile
 ├── tsconfig.json                # Strict TypeScript configuration

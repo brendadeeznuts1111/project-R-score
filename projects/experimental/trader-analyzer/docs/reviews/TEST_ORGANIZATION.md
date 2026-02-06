@@ -5,7 +5,7 @@ This project uses a hybrid test organization pattern combining co-located unit t
 
 ## Directory Structure
 
-```
+```text
 trader-analyzer/
 ├── src/                          # Source code with co-located unit tests
 │   ├── api/

@@ -107,7 +107,7 @@ Comprehensive Bun-native RSS 2.0 feed scraper with token-based content analysis,
 
 ## 📊 Test Results
 
-```
+```text
 ✅ 23 total tests
 ✅ 9 RSS scraper tests
 ✅ 14 token matcher tests
@@ -194,7 +194,7 @@ bun rss-analyzer --url https://bun.com/rss.xml --analyze
 
 ## 📁 File Structure
 
-```
+```text
 bun-inspect-utils/
 ├── src/
 │   ├── networking/

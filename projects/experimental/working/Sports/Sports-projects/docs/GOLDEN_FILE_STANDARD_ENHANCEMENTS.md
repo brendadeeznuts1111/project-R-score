@@ -9,7 +9,7 @@ status: active
   complexity_reduction: "-80%"
   latency_p99: "25ms"
   error_rate: "0.01"
-```
+```text
 
 **Required Fields** (for optimization docs):
 - `pre_optimization`: Baseline performance description
@@ -48,7 +48,7 @@ Each color in the palette **must** include semantic meaning mappings:
     "semantic_meanings": ["action", "execution", "command", "operation"]
   }
 }
-```
+```text
 
 **Usage**: Colors should be selected based on semantic meaning, not just visual preference.
 
@@ -66,7 +66,7 @@ For optimization documentation, follow this structure:
 Optimization-Name/
 ├── EXECUTION-LOG.md            # Complete execution log
 └── GUIDE.md                    # Practical guide
-```
+```text
 
 **EXECUTION-LOG.md Required Sections**:
 1. Executive Summary
@@ -127,7 +127,7 @@ For optimization documentation, use standardized cross-reference format:
 - **[[../Phase-X/Other-Opt/EXECUTION-LOG|Other Optimization]]** - Related optimization
 - **[[../../Standards/STANDARD-NAME|Standard Name]]** - Related standard
 - **[[../../../docs/GOLDEN_FILE_STANDARD|Golden File Standard]]** - Standard compliance
-```
+```text
 
 **Pattern**: Always include relative paths, execution log, guide, related optimizations, standards, and Golden File Standard reference.
 

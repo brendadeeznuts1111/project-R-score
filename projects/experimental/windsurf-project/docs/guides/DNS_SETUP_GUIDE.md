@@ -49,7 +49,7 @@ bun run scripts/setup-dns.ts validate
 3. Use "Custom token" template
 4. Configure permissions:
 
-```
+```text
 Zone : Zone : Edit : apple.factory-wager.com
 Zone : DNS : Edit : apple.factory-wager.com
 ```

@@ -32,7 +32,7 @@ usage: ""
 What is this note about?
 
 ## 💻 Technical Details
-```
+```text
 Code or technical details here
 ```
 

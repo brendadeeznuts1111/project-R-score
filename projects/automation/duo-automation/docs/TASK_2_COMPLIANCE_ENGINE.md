@@ -26,7 +26,7 @@ Implement the `compliance-check` command engine with multi-standard compliance v
 ## 🎯 Implementation Requirements
 
 ### File Location
-```
+```text
 src/@inspection/commands/compliance-engine.ts
 ```
 

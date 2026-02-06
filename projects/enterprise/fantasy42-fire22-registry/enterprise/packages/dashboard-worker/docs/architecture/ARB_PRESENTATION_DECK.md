@@ -39,7 +39,7 @@ Board:** Architecture Review Board (ARB) **Duration:** 45 minutes
 
 ### **Business Impact**
 
-```
+```text
 ❌ 70% of settlement processing time in message serialization
 ❌ 50% slower inter-domain communication during peak hours
 ❌ Complex debugging delays feature delivery by 2-3 days
@@ -66,7 +66,7 @@ domain communication.
 
 ### **Key Benefits**
 
-```
+```text
 ✅ 70-80% reduction in communication latency
 ✅ 3-5x improvement in message throughput
 ✅ Enhanced developer experience with readable formats
@@ -290,7 +290,7 @@ gantt
 
 ### **Performance Improvements**
 
-```
+```text
 🚀 Latency Reduction: 70-80% faster inter-domain communication
 📈 Throughput Increase: 3-5x more messages per second
 💰 Cost Savings: $180K annual infrastructure reduction
@@ -309,7 +309,7 @@ gantt
 
 ### **Investment Overview**
 
-```
+```text
 Implementation Cost: $45K (4 weeks development)
 Annual ROI: 15x return on investment
 Payback Period: 1 week

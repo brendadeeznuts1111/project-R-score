@@ -6,7 +6,7 @@ This document tracks known issues, their formal identification tokens, and their
 
 All issues use the following formal token format:
 
-```
+```text
 [TYPE]-[CATEGORY]-[ID]-[SEVERITY]
 ```
 
@@ -266,7 +266,7 @@ $ bun run build:basic
 
 ### Example Token Creation:
 
-```
+```text
 Issue: Mobile template selection crashes
 Type: BUG
 Category: UI

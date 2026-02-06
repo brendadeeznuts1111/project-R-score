@@ -232,7 +232,7 @@ Your Apple ID creation system tracks **comprehensive data** at multiple levels f
 
 ### **Directory Structure Based on Status**
 
-```
+```text
 factory-wager-packages/
 ├── apple-ids/successes/     # success: true
 ├── apple-ids/failures/      # success: false

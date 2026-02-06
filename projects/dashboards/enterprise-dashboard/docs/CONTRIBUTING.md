@@ -21,13 +21,13 @@ We use structured commit messages for automated changelog generation and easy se
 
 ### Format
 
-```
+```text
 [DOMAIN][SCOPE][COMPONENT][ACTION] TICKET-XXX: Summary
 ```
 
 ### Example
 
-```
+```text
 [API][ENDPOINT][AUTH][ADD] ONE-456: Add /api/auth/login endpoint
 
 Tension: 0.2
@@ -166,7 +166,7 @@ The pre-commit hook automatically runs:
 
 ## Project Structure
 
-```
+```text
 enterprise-dashboard/
 ├── src/
 │   ├── client/           # React frontend

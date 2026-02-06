@@ -254,23 +254,23 @@ BUN_CONFIG_MAX_HTTP_REQUESTS=512
 // Type-safe environment variable access
 ```javascript
 export function getEnvVar(name: string): string;
-````
+````text
 
 ```javascript
 export function getEnvVarOptional(name: string, defaultValue?: string): string | undefined;
-```
+```text
 
 ```javascript
 export function getEnvVarNumber(name: string, defaultValue?: number): number;
-```
+```text
 
 ```javascript
 export function getEnvVarBoolean(name: string, defaultValue?: boolean): boolean;
-```
+```text
 
 ```javascript
 export function validateRequiredEnvVars(vars: string[]): void;
-```
+```text
 
 ````
 
@@ -413,7 +413,7 @@ const buildConfig = {
 
 ### Build Output Structure
 
-```
+```text
 dist/executables/
 ├── api-client/
 │   ├── windows/

@@ -222,7 +222,7 @@ bunx dotenv bun install
 
 Add to `.gitignore`:
 
-```
+```text
 .env
 .env.local
 .env.*.local

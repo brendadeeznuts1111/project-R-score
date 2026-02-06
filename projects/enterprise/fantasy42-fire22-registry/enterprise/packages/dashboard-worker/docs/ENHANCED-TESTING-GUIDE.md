@@ -147,7 +147,7 @@ Tests are prioritized based on:
 
 ### 📁 Report Locations
 
-```
+```text
 reports/
 ├── benchmarks/
 │   ├── test-performance-history.json     # Historical performance data

@@ -182,14 +182,14 @@ bun run casino:stats
 
 ### **Enhanced Permissions Health**
 
-```
+```text
 GET /api/health/permissions
 Response: Enhanced permissions health with live casino integration
 ```
 
 ### **Enhanced Matrix Health**
 
-```
+```text
 GET /api/health/permissions-matrix
 Response: Matrix health with live casino matrix statistics
 ```

@@ -27,7 +27,7 @@ Implement the `risk-assessment` command engine with threat modeling, vulnerabili
 ## 🎯 Implementation Requirements
 
 ### File Location
-```
+```text
 src/@inspection/commands/risk-assessment-engine.ts
 ```
 

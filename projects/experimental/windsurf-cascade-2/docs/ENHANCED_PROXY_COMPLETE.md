@@ -22,14 +22,14 @@ The Enhanced HTTP Proxy provides **strict validation** for all X-Bun-* headers a
 ## 🏗️ **Architecture**
 
 ### **Validation Pipeline**
-```
+```text
 Incoming Request → Header Extraction → Format Validation → Range Validation → Checksum Verification → Token Validation → DNS Resolution → Connection
       ↓                    ↓                    ↓                  ↓                    ↓                ↓              ↓
   Parse Headers    Regex Patterns    Numeric Bounds    XOR Checksum    JWT Verify    Cache Lookup    TCP Connect
 ```
 
 ### **Component Structure**
-```
+```text
 src/proxy/
 ├── validator.ts      # Strict header validation engine
 ├── dns.ts           # DNS cache and resolution
@@ -79,7 +79,7 @@ src/proxy/
 - **Size**: Dynamic based on usage
 
 ### **Resolution Flow**
-```
+```text
 Hostname Request → Cache Lookup → Hit? → Return IP (50ns)
                       ↓
                  Miss? → DNS Resolve → Cache + Return IP (5ms)
@@ -118,7 +118,7 @@ await warmupDNSCache([
 | Cache Hit Rate | >80% | 90%+ | ✅ Excellent |
 
 ### **Overall Request Flow**
-```
+```text
 Validation (8.8μs) + DNS (50ns-5ms) + Connection (RTT) = Total Latency
 ```
 
@@ -212,7 +212,7 @@ Validation (8.8μs) + DNS (50ns-5ms) + Connection (RTT) = Total Latency
 - **Performance**: SLA validation and timing
 
 ### **Test Results**
-```
+```text
 ✅ Header Validation: 25/33 tests passing
 ✅ Token Validation: 4/4 tests passing  
 ✅ DNS Resolution: All tests passing

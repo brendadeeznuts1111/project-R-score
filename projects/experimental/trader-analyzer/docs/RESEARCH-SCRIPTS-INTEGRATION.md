@@ -342,7 +342,7 @@ All reports include RFC 001 compliant deep-links that transform Telegram notific
 - **Auto-Trader** → `/dashboard/trading/execution/` with execution metrics
 
 **Example Report:**
-```
+```text
 🚨 <b>Nightly Covert Steam Scan Complete</b>
 📅 2025-01-XX 02:15:00Z
 📊 Type: covert-steam-scan

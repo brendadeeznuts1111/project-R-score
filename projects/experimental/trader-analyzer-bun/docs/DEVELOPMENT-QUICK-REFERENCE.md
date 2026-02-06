@@ -188,7 +188,7 @@ bun run test:verbose         # Verbose tests (depth=10)
 
 ## 📁 Project Structure
 
-```
+```text
 trader-analyzer/
 ├── src/              # Source code
 ├── test/             # Integration tests

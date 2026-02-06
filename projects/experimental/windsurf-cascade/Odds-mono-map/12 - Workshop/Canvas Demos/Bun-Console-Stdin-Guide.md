@@ -93,7 +93,7 @@ async function additionCalculator() {
 ```
 
 ### **📊 Live Output Example**
-```
+```text
 🧮 Addition Calculator
 Enter numbers to add them to the running total
 Type "reset" to clear total, "exit" to quit
@@ -311,7 +311,7 @@ class TodoManager {
 ```
 
 ### **🎮 Todo Manager Usage**
-```
+```text
 📝 Interactive Todo Manager
 Commands:
   add <task>     - Add a new todo item

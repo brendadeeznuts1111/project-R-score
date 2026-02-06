@@ -10,7 +10,7 @@
 
 ### **1. XPath Element Handler**
 
-```
+```text
 🎯 TARGET ELEMENT
 Path: /html/body/div[3]/div[5]/div/div[5]/section/section/div/div/div/div[2]/div/div
 Purpose: Fantasy402 Player Notes Textarea
@@ -19,7 +19,7 @@ Actions: Read, Write, Update, Validate, Monitor
 
 ### **2. Fantasy402 Notes Manager**
 
-```
+```text
 📝 PLAYER NOTES INTEGRATION
 • Automatic element detection and monitoring
 • Real-time sync with Fantasy402 API
@@ -30,7 +30,7 @@ Actions: Read, Write, Update, Validate, Monitor
 
 ### **3. Practical Examples**
 
-```
+```text
 🔧 USAGE EXAMPLES
 • Direct XPath manipulation
 • Agent workflow automation
@@ -138,7 +138,7 @@ const submitResult = await handleFantasy42Element('submit');
 
 **Step 1: Session Start**
 
-```
+```text
 🎯 AGENT SESSION STARTED
 Customer: Bob Johnson (BBB9901)
 Agent: Support Agent Alpha
@@ -152,7 +152,7 @@ Agent: Support Agent Alpha
 
 **Step 2: Notes Synchronization**
 
-```
+```text
 📝 NOTES SYNC ACTIVATED
 • Loading existing notes from Fantasy402 API
 • Populating textarea element
@@ -167,7 +167,7 @@ Monitor for lottery addiction signs."
 
 **Step 3: Real-Time Interaction**
 
-```
+```text
 🎯 REAL-TIME MONITORING ACTIVE
 • Input changes detected
 • Character count: 185/5000
@@ -183,7 +183,7 @@ Agent types: "Updated lottery limits to $500 daily based on VIP status"
 
 **Step 4: Advanced Features**
 
-```
+```text
 🔧 ADVANCED FEATURES ACTIVATED
 • Keyboard shortcuts: Ctrl+S (save), Ctrl+Z (undo)
 • Auto-save on blur

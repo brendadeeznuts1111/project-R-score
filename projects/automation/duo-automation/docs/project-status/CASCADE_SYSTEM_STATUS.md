@@ -53,7 +53,7 @@
 
 ### **📈 Verified Performance Impact:**
 
-```
+```text
 🎯 BUSINESS IMPACT ACHIEVED:
 ├── QR Generation Speed: +42% (100ms → 58ms) ✅
 ├── Health Check Time: -35% (45s → 29s) ✅

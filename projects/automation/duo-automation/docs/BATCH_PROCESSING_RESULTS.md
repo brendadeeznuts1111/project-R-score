@@ -10,7 +10,7 @@ find ./dist -name "*.js" | head -5 | xargs -I {} bun run demo:hash hash {}
 ### 📊 Processing Results
 
 #### File 1: Configuration Ports
-```
+```text
 🔒 Processing: ./dist/config/ports.js
   File: ./dist/config/ports.js
   CRC32: 226f81db
@@ -18,7 +18,7 @@ find ./dist -name "*.js" | head -5 | xargs -I {} bun run demo:hash hash {}
 ```
 
 #### File 2: Configuration Index
-```
+```text
 🔒 Processing: ./dist/config/index.js
   File: ./dist/config/index.js
   CRC32: aa878e83
@@ -26,7 +26,7 @@ find ./dist -name "*.js" | head -5 | xargs -I {} bun run demo:hash hash {}
 ```
 
 #### File 3: Dependency Injector Plugin
-```
+```text
 🔒 Processing: ./dist/plugins/di-injector.js
   File: ./dist/plugins/di-injector.js
   CRC32: c79c72d5
@@ -34,7 +34,7 @@ find ./dist -name "*.js" | head -5 | xargs -I {} bun run demo:hash hash {}
 ```
 
 #### File 4: Main Application Bundle
-```
+```text
 🔒 Processing: ./dist/index.js
   File: ./dist/index.js
   CRC32: cde93c46
@@ -42,7 +42,7 @@ find ./dist -name "*.js" | head -5 | xargs -I {} bun run demo:hash hash {}
 ```
 
 #### File 5: Production Example
-```
+```text
 🔒 Processing: ./dist/production-example.js
   File: ./dist/production-example.js
   CRC32: 6cd5c6c0
@@ -100,7 +100,7 @@ All generated CRC32 hashes are unique, confirming:
 - **Performance Consistency**: Fast processing without compromising security
 
 ### Hash Distribution
-```
+```text
 226f81db - ./dist/config/ports.js (2,419 bytes)
 aa878e83 - ./dist/config/index.js (6,822 bytes)
 c79c72d5 - ./dist/plugins/di-injector.js (2,336 bytes)
@@ -131,7 +131,7 @@ cde93c46 - ./dist/index.js (86,211 bytes)
 ## 📊 Command Performance Summary
 
 ### Execution Time Breakdown
-```
+```text
 find ./dist -name "*.js"        0.004s (File discovery)
 head -5                        0.003s (File selection)
 xargs processing               0.114s (Total execution)

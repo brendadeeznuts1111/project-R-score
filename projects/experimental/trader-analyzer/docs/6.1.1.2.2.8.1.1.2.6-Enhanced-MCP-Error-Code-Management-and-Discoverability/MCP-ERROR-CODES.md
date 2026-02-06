@@ -107,7 +107,7 @@ Hyper-Bun's MCP subsystem enables sophisticated tool orchestration, research aut
 
 MCP error codes use the **`NX-MCP-XXX`** prefix format for better clarity and organization. The prefix structure is:
 
-```
+```text
 NX-MCP-{CATEGORY}{NUMBER}
 ```
 
@@ -197,7 +197,7 @@ Each error code entry includes comprehensive information for rapid diagnosis and
 - `docs/runbooks/circuit-breaker.md` - On-call engineer runbook for API failures
 
 **Example Log Output**:
-```
+```text
 2025-01-15 14:23:45.123 | ERROR | NX-MCP-001 | MCPServer | Tool execution failed: research-build-multi-layer-graph
   executionId: exec-abc123
   toolName: research-build-multi-layer-graph
@@ -230,7 +230,7 @@ Each error code entry includes comprehensive information for rapid diagnosis and
 **Real-World Scenarios**:
 
 **Scenario 1: Database Connection Pool Exhaustion**
-```
+```text
 Incident: Multiple NX-MCP-001 errors for research-build-multi-layer-graph tool
 Time: 2025-01-15 14:20-14:30
 Pattern: All errors show DatabaseConnectionError
@@ -242,7 +242,7 @@ MTTR: 12 minutes (would have been 45+ minutes without error codes)
 ```
 
 **Scenario 2: Tool Timeout During Peak Load**
-```
+```text
 Incident: NX-MCP-002 errors for research-build-shadow-graph tool
 Time: 2025-01-15 18:00-18:15 (peak trading hours)
 Pattern: Timeout errors correlate with high system load
@@ -254,7 +254,7 @@ MTTR: 8 minutes (rapid identification via error code)
 ```
 
 **Scenario 3: Invalid Arguments from Client**
-```
+```text
 Incident: NX-MCP-020 errors from frontend dashboard
 Time: 2025-01-15 10:00-10:30
 Pattern: All errors show invalid "eventId" format
@@ -320,7 +320,7 @@ MTTR: 5 minutes (error details showed exact issue)
 ```
 
 **Example Log Output**:
-```
+```text
 2025-01-15 14:40:15.789 | ERROR | NX-MCP-002 | MCPServer | Tool execution timeout: research-build-multi-layer-graph
   toolName: research-build-multi-layer-graph
   timeoutMs: 30000
@@ -430,7 +430,7 @@ MTTR: 5 minutes (error details showed exact issue)
 ```
 
 **Example Log Output**:
-```
+```text
 2025-01-15 14:30:12.456 | ERROR | NX-MCP-010 | MCPServer | Tool not found: research-build-multi-layer-graph
   requestedTool: research-build-multi-layer-graph
   availableTools: ["research-build-shadow-graph", "research-scan-covert-steam", "tooling-diagnostics"]
@@ -531,7 +531,7 @@ MTTR: 5 minutes (error details showed exact issue)
 ```
 
 **Example Log Output**:
-```
+```text
 2025-01-15 14:50:15.123 | WARN | NX-MCP-012 | MCPClient | Server not available: http://localhost:3001
   serverEndpoint: http://localhost:3001 // Uses DEEP_LINK_DEFAULTS.API_PORT
   connectionAttempt: 2025-01-15T14:50:00Z
@@ -610,7 +610,7 @@ MTTR: 5 minutes (error details showed exact issue)
 ```
 
 **Example Log Output**:
-```
+```text
 2025-01-15 14:35:22.789 | WARN | NX-MCP-020 | MCPServer | Invalid tool arguments: research-build-multi-layer-graph
   toolName: research-build-multi-layer-graph
   invalidArgs: {"eventId": "Expected string, received number", "depth": "Expected number between 1-10, received 15"}
@@ -676,7 +676,7 @@ MTTR: 5 minutes (error details showed exact issue)
 ```
 
 **Example Log Output**:
-```
+```text
 2025-01-15 14:42:33.456 | WARN | NX-MCP-021 | MCPServer | Missing required parameter: research-build-multi-layer-graph
   toolName: research-build-multi-layer-graph
   missingParameters: ["eventId", "depth"]
@@ -758,7 +758,7 @@ MTTR: 5 minutes (error details showed exact issue)
 ```
 
 **Example Log Output**:
-```
+```text
 2025-01-15 14:45:12.789 | WARN | NX-MCP-022 | MCPServer | Invalid input schema: research-build-multi-layer-graph
   toolName: research-build-multi-layer-graph
   schemaErrors: ["Expected object, received array", "Missing required field: config"]
@@ -848,7 +848,7 @@ async function executeWithRetry(fn: () => Promise<any>, maxRetries = 3) {
 ```
 
 **Example Log Output**:
-```
+```text
 2025-01-15 14:38:45.123 | ERROR | NX-MCP-030 | MCPServer | Server unavailable: Overloaded
   reason: Server overloaded
   activeConnections: 150
@@ -922,7 +922,7 @@ async function executeWithRetry(fn: () => Promise<any>, maxRetries = 3) {
 ```
 
 **Example Log Output**:
-```
+```text
 2025-01-15 14:50:00.000 | FATAL | NX-MCP-031 | MCPServer | Server initialization failed
   failurePoint: database_connection
   error: Connection refused: database server not accessible
@@ -999,7 +999,7 @@ async function executeWithRetry(fn: () => Promise<any>, maxRetries = 3) {
 ```
 
 **Example Log Output**:
-```
+```text
 2025-01-15 14:55:00.000 | ERROR | NX-MCP-032 | MCPServer | Tool registration failed: research-build-multi-layer-graph
   toolName: research-build-multi-layer-graph
   failureReason: Duplicate tool name
@@ -1167,12 +1167,12 @@ This ensures that MCP error codes are not isolated, but seamlessly woven into Hy
 All MCP error logs emitted (e.g., from `src/errors/index.ts`) strictly adhere to the **`16.1.0.0.0.0.0 Standardized Clean Log Format`**. The format `YYYY-MM-DD HH:MM:SS.ms | ERROR | NX-MCP-XXX | MCPServer | ...` is **machine-parseable and human-readable**—the holy grail for operational intelligence.
 
 **Format**:
-```
+```text
 YYYY-MM-DD HH:MM:SS.ms | LEVEL | CODE | MODULE | Message
 ```
 
 **Example - Tool Execution Error**:
-```
+```text
 2025-01-15 14:23:45.123 | ERROR | NX-MCP-001 | MCPServer | Tool execution failed: research-build-multi-layer-graph
   executionId: exec-abc123
   toolName: research-build-multi-layer-graph
@@ -1181,7 +1181,7 @@ YYYY-MM-DD HH:MM:SS.ms | LEVEL | CODE | MODULE | Message
 ```
 
 **Example - Resource Not Found**:
-```
+```text
 2025-01-15 14:25:12.456 | ERROR | NX-MCP-011 | MCPServer | Requested resource not found
   resourceUri: mcp://tools/research-build-multi-layer-graph
   requestId: req-xyz789
@@ -1252,7 +1252,7 @@ mlgs.mcp.errorDocs("NX-MCP-011");
 ```
 
 **Output Format**:
-```
+```text
 ┌─────────────────┬──────────────────────────────┬─────────────┬──────────────┐
 │ Timestamp       │ Tool Name                    │ Error Type   │ Recoverable  │
 ├─────────────────┼──────────────────────────────┼─────────────┼──────────────┤
@@ -1451,7 +1451,7 @@ interface MCPServerErrorCode {
 **Purpose**: Run weekly to detect **drift** between defined codes and observed codes in logs.
 
 **Output**:
-```
+```text
 Error Code Audit Report - 2025-01-15
 =====================================
 ✅ NX-MCP-001: Active (observed 1,234 times in last 7 days)
@@ -1932,7 +1932,7 @@ async function executeMCPTool(toolName: string, args: any) {
 
 ### In Logs
 
-```
+```text
 2025-01-15 14:23:45.123 | ERROR | NX-MCP-001 | MCPServer | Tool execution failed: research-build-multi-layer-graph
   executionId: exec-abc123
   toolName: research-build-multi-layer-graph

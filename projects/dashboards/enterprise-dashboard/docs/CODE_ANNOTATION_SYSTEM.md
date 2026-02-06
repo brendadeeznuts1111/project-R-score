@@ -9,7 +9,7 @@ Structured code annotation system for tagging code with domain, scope, type, met
 
 ## Annotation Format
 
-```
+```text
 [DOMAIN][SCOPE][TYPE][META:{PROPERTY}][CLASS][FUNCTION][INTERFACE][#REF:*][BUN-NATIVE]
 ```
 

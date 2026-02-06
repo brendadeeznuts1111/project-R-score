@@ -99,7 +99,7 @@ echo "PORT=3000" > .env
 
 The setup script automatically creates:
 
-```
+```text
 data/
 ├── streams/          # Trade stream data
 ├── telegram-logs/    # Telegram integration logs

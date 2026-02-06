@@ -142,7 +142,7 @@ function renderAlignedRow(label: string, value: string, maxWidth: number = 50): 
 ### **✅ Advanced Attack Detection**
 
 #### **Zero-Width Character Attacks Detected:**
-```
+```text
 ⚠️ SUSPICIOUS: https://test​‌‍example.com/path
    Zero-Width Characters: 3 detected Ⓩ
    Display Width: 28 characters
@@ -155,7 +155,7 @@ function renderAlignedRow(label: string, value: string, maxWidth: number = 50): 
 ```
 
 #### **Encoding Anomaly Detection:**
-```
+```text
 ❌ FAIL: https://example.com/path%2520to%2520file
    Encoding Anomalies: Double encoding detected, Mixed encoding pattern ⚠️
    Decoded URI: https://example.com/path%20to%20file
@@ -173,7 +173,7 @@ function renderAlignedRow(label: string, value: string, maxWidth: number = 50): 
 
 ### **✅ Real-Time Performance Analysis**
 
-```
+```text
 📈 Inspection Metrics:
    Total Inspections: 12
    Security Issues: 8

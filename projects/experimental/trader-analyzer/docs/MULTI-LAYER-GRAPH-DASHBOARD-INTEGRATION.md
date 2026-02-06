@@ -136,7 +136,7 @@ window.open('/mlgs-developer-dashboard.html', '_blank');
 
 ## 🔄 Integration Flow
 
-```
+```text
 Page Load
   ↓
 fetchCSRFToken()

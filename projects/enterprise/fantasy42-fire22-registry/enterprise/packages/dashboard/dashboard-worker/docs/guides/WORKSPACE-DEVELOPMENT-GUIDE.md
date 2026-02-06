@@ -107,7 +107,7 @@ bun run all:clean
 
 ### Current Fire22 Workspaces (15 total)
 
-```
+```text
 📦 Fire22 Workspaces:
   → @fire22-api-client          # API client library
   → @fire22-api-consolidated    # Consolidated API endpoints

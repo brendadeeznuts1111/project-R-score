@@ -77,7 +77,7 @@ PORT=3001 bun run start
 
 ### Required for All
 
-```
+```text
 NODE_ENV=production
 PORT=3000
 TZ=America/New_York
@@ -85,21 +85,21 @@ TZ=America/New_York
 
 ### IPFoxy Integration
 
-```
+```text
 IPFOXY_API_TOKEN=xxx
 IPFOXY_API_ID=xxx
 ```
 
 ### DuoPlus Integration
 
-```
+```text
 DUOPLUS_API_KEY=xxx
 DUOPLUS_WEBHOOK_SECRET=xxx
 ```
 
 ### CashApp Scaling (if used)
 
-```
+```text
 CASHAPP_EMAIL_DOMAIN=your-domain.net
 CASHAPP_BATCH_SIZE=25
 CASHAPP_SMS_PROVIDER=twilio (or custom)
@@ -107,7 +107,7 @@ CASHAPP_SMS_PROVIDER=twilio (or custom)
 
 ### Cloud Storage (R2)
 
-```
+```text
 R2_ACCOUNT_ID=xxx
 R2_ACCESS_KEY=xxx
 R2_SECRET_KEY=xxx

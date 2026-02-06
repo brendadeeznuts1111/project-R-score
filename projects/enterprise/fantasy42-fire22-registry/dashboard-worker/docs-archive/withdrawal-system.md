@@ -69,7 +69,7 @@ ALTER TABLE players ADD COLUMN telegram_chat_id TEXT;
 // Enhanced withdrawal processor with Bun runtime integration
 ```javascript
 import { randomUUIDv7 } from "bun";
-````
+````text
 
 class EnhancedWithdrawalProcessor { async processWithdrawalRequest(request:
 WithdrawalRequest): Promise<WithdrawalResult> { const startTime =
@@ -128,7 +128,7 @@ limiting await Bun.sleep(ms); } }
 
 ### **Status Flow**
 
-```
+```text
 
 Request → Pending → [Approve/Reject] ↓ Approved → Complete (after payment
 processing) ↓ Rejected (with reason)

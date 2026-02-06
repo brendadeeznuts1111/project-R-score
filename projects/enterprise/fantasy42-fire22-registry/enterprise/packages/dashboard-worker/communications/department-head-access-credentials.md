@@ -535,7 +535,7 @@ Please confirm receipt and proper setup of all credentials:
 
 **Confirmation Email Template:**
 
-```
+```text
 Subject: CONFIRMED - Department Head Credentials Setup - [DEPARTMENT_NAME]
 
 Dear Fire22 Security Team,

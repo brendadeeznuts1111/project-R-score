@@ -47,7 +47,7 @@ All folders now use consistent numbered prefixes:
 
 ## 📊 Final Structure
 
-```
+```text
 00-Inbox/              # New files for review
 01-Configuration/      # Configuration files
 02-Dashboards/         # Dashboard files

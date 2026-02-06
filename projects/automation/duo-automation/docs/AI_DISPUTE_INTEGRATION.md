@@ -31,21 +31,21 @@ Successfully integrated the **AI-Powered Enhanced Matrix System** with the **Dis
 ## 📊 **AI CAPABILITIES DEMONSTRATED**
 
 ### **🔮 Predictive Analytics**
-```
+```text
 Current Volume: 1,247 disputes
 Predicted Volume: 1,489 disputes (+19% increase)
 Confidence: 89%
 ```
 
 ### **🚨 Anomaly Detection**
-```
+```text
 Detected: Refund rate anomaly (67% vs 15% threshold)
 Severity: MEDIUM
 Recommendation: Review refund policies
 ```
 
 ### **💡 Smart Recommendations**
-```
+```text
 Risk Level: MEDIUM
 Actions:
 • Review recent dispute trends

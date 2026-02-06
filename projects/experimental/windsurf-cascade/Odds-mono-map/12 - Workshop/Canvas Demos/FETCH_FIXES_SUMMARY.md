@@ -7,7 +7,7 @@ Based on your feedback, I identified and fixed two key issues in the fetch docum
 ### **Issue 1: `fetch.preconnect()` "Invalid port" Error**
 
 **Original Error:**
-```
+```text
 📋 Preconnect - exact syntax:
 📋 import { fetch } from "bun"; fetch.preconnect("https://bun.com");
    🔄 Preconnecting to jsonplaceholder.typicode.com...
@@ -52,7 +52,7 @@ try {
 ### **Issue 2: Unix Domain Socket Syntax Clarity**
 
 **Original Issue:**
-```
+```text
 📋 const response = await fetch("https://hostname/a/path", { unix: "/var/run/path/to/unix.sock" });
    ⚠️  Note: Unix domain sockets require actual socket file 
 ```
@@ -103,7 +103,7 @@ console.log('   📋 });');
 ## 📊 Fixed Implementation Results
 
 ### **Preconnect Fix Results:**
-```
+```text
 📋 Preconnect - exact syntax:
 📋 import { fetch } from "bun"; fetch.preconnect("https://bun.com");
    🔄 Preconnecting to jsonplaceholder.typicode.com...
@@ -121,7 +121,7 @@ console.log('   📋 });');
 ```
 
 ### **Unix Domain Socket Fix Results:**
-```
+```text
 🔌 7. Unix Domain Sockets - Exact Syntax:
 ==========================================
 📋 Unix domain socket - exact syntax:

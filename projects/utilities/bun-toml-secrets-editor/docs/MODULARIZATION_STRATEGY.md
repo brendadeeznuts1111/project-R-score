@@ -6,7 +6,7 @@ This document outlines the strategy for splitting the Golden Template into modul
 
 ## Current State (Monolith)
 
-```
+```text
 bun-toml-secrets-editor/
 ├── src/
 │   ├── config/          # Secrets resolution + templates
@@ -30,7 +30,7 @@ bun-toml-secrets-editor/
 
 ### Structure
 
-```
+```text
 golden-template-workspace/
 ├── packages/
 │   ├── @golden/core/           # Secrets + config resolver
@@ -167,7 +167,7 @@ golden-template-workspace/
 
 ## Option 2: Separate Repos (Not Recommended)
 
-```
+```text
 golden-core/          # Separate repo
 golden-rss/           # Separate repo  
 golden-cli/           # Separate repo
@@ -248,7 +248,7 @@ export function printLogo() {
 
 ### Option B: External Assets
 
-```
+```text
 package/
 ├── dist/
 ├── assets/

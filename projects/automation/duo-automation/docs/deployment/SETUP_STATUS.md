@@ -150,7 +150,7 @@ bun run create-appleid.js --country=US --proxy=residential
 
 ### **📧 Expected Results:**
 
-```
+```text
 ✅ SUCCESS!
 📧 Apple ID: james.smith@apple.factory-wager.com
 👤 User: James Smith

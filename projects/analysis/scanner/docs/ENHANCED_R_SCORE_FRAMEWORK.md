@@ -140,7 +140,7 @@ const table = formatRScoreTable(
 
 **Example Output:**
 
-```
+```text
 ┌─────────────────────┬───────────┬─────────────┬──────────────┐
 │ Component           │   Value   │   Weight    │ Contribution │
 ├─────────────────────┼───────────┼─────────────┼──────────────┤

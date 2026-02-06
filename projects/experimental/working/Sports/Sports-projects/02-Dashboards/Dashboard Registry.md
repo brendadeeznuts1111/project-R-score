@@ -171,7 +171,7 @@ Registered dashboards served by the platform:
 
 ### Dashboard Flow
 
-```
+```text
 Codebase Development
   ↓
 System Registration (config/dashboards.json)

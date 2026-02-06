@@ -44,7 +44,7 @@ The Surgical Precision Platform features an advanced interactive dashboard with 
 - **🗜️ Compression Operations**: Data optimization (108 tests, 7ms avg)
 
 #### **Benchmark Results Summary**
-```
+```text
 Total Categories: 13
 Total Tests: 922
 Success Rate: 98.5% (872/922 passed)
@@ -225,7 +225,7 @@ const health = coordinator.checkSystemHealth();
 
 ### Component Initialization Performance
 
-```
+```text
 Average Bun-native Manager Init: 45μs (vs ~150μs Node.js baseline)
 SQLite Operations: < 30μs per transaction
 Memory Efficiency: < 100MB for 100 concurrent components

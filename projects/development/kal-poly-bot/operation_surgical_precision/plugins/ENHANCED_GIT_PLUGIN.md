@@ -71,7 +71,7 @@
 ## Demo Results
 
 ### Working Features Demonstrated:
-```
+```text
 ✅ Plugin loading with persistent config
 ✅ Git CLI detection
 ✅ Repository scanning with exclusions
@@ -87,7 +87,7 @@
 ```
 
 ### Repository Status Example:
-```
+```text
 1. poly-kalshi-arb
    Branch: detached
    Status: ✅ Clean

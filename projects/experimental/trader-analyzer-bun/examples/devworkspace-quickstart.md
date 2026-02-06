@@ -12,7 +12,7 @@ bun run devworkspace create candidate@example.com interview 24
 ```
 
 **Output:**
-```
+```text
 ✅ Created workspace key for candidate@example.com
    Key ID: key_1737123456789_abc123def456
    Purpose: interview
@@ -50,7 +50,7 @@ bun run devworkspace stats key_1737123456789_abc123def456
 ```
 
 **Output:**
-```
+```text
 📊 Key Statistics:
    Key ID: key_1737123456789_abc123def456
    Total Requests: 42

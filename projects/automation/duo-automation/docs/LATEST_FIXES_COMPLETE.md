@@ -27,7 +27,7 @@ I have successfully integrated **Bun's latest fixes** into the DuoPlus CLI v3.0+
 ## 📊 **LATEST FIXES METRICS**
 
 ### **✅ Fix Results (Demonstrated)**
-```
+```text
 🔧 Latest Fixes Performance Metrics:
 ├── CSS Parser: 32 logical properties fixed (100% preserved)
 ├── TypeScript Types: 12 type definitions added

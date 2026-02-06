@@ -59,7 +59,7 @@ const crc32 = Bun.hash.crc32(data); // 21.3x faster!
 ## 🚀 Performance Results
 
 ### Benchmark Results
-```
+```text
 📊 BENCHMARK RESULTS
 ════════════════════════════════════════════════════
 SMALL   :        1,024 bytes |     0.37ms |   273,411 ops/sec
@@ -77,7 +77,7 @@ BATCH   :        1,000 bytes |     2.81ms |   356,448 ops/sec
 | **Batch (1000x1KB)** | 2.6 ms | 0.13 ms | **20x faster** |
 
 ### Real-world Performance
-```
+```text
 🔒 Quantum hashing ./dist/index.js...
 ✅ Quantum hash complete in 1.12ms
 📊 File size: 84.19 KB
@@ -298,7 +298,7 @@ const cache = quantumHash.createContentCache({
 ```
 
 ### Cache Statistics
-```
+```text
 📊 QUANTUM CACHE STATISTICS
 ══════════════════════════════════════════════════
 Total operations: 2,101
@@ -428,7 +428,7 @@ process.env.MAX_CACHE_SIZE = '1000';
 ## 📊 Performance Dashboard
 
 ### Real-time Metrics
-```
+```text
 🚀 QUANTUM HASH PERFORMANCE DASHBOARD
 ══════════════════════════════════════════════════
 📊 Operations: 2,101,234

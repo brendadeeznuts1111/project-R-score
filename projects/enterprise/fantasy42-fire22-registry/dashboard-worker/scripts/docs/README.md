@@ -5,7 +5,7 @@ comprehensive automation and management toolkit for the Fire22 platform.
 
 ## 📁 **Enhanced Directory Structure**
 
-```
+```text
 scripts/
 ├── 📁 categories/           # Scripts organized by purpose
 │   ├── 🏗️ build/           # Build automation & compilation

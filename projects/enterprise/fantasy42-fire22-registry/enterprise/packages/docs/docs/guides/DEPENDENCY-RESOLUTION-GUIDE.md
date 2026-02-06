@@ -4,7 +4,7 @@
 
 Bun resolves package versions with this priority hierarchy:
 
-```
+```text
 1️⃣ devDependencies     (highest priority)
 2️⃣ optionalDependencies
 3️⃣ dependencies
@@ -206,7 +206,7 @@ bun pm pkg set peerDependencies.react="^18.0.0"
 
 ## 📊 **Current Fire22 Project Status**
 
-```
+```text
 📦 Dependencies: 12 packages
 🔧 DevDependencies: 13 packages
 🔌 OptionalDependencies: 0 packages

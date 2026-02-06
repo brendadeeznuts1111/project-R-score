@@ -75,7 +75,7 @@ bun run build:release
 ```
 
 **Watch for these build outputs:**
-```
+```text
 [ 95%] Building CXX object CMakeFiles/bun.dir/src/bun.js/api/ffi.zig.o
 [100%] Linking CXX executable bun
 ```
@@ -213,7 +213,7 @@ git push origin feat/ffi-env-paths
 
 ## Expected Output
 
-```
+```text
 C_INCLUDE_PATH: /nix/store/...-libxml2-2.12.0-dev/include/libxml2:...
 LIBRARY_PATH: /nix/store/...-libxml2-2.12.0/lib:...
 

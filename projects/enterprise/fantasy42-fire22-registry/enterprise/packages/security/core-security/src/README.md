@@ -115,7 +115,7 @@ bun run scripts/security-cli.ts audit --environment production
 
 ## 🏗️ Architecture
 
-```
+```text
 Fantasy42 User-Agent Security Suite
 ├── 🔐 User-Agent Registry
 │   ├── Enterprise Agent Generation

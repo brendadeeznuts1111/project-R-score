@@ -17,7 +17,7 @@ with the internal L-Key mapping system, enabling:
   operations
 - **Flow Mapping**: End-to-end betting flow tracking with L-Key sequences
 
-```
+```text
 Fantasy42 Domain → L-Key Mapping → Internal Systems
     ↓                    ↓                    ↓
 ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐

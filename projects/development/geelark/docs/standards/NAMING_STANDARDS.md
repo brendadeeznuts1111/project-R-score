@@ -185,7 +185,7 @@ const access = false;   // Ambiguous
 ### ✅ Directory Names - `kebab-case`
 **Rule**: All lowercase with hyphens. Consistent across all platforms.
 
-```
+```text
 ✅ CORRECT:
 src/
   utils/
@@ -210,7 +210,7 @@ src/
 ### 🔧 File Names - `PascalCase` or `kebab-case`
 **Rule**: Either match the main class export OR use kebab-case. Be consistent within each directory.
 
-```
+```text
 ✅ APPROACH 1 - Match Class Name:
 src/FeatureRegistry.ts      // exports class FeatureRegistry
 src/ConfigLoader.ts         // exports class ConfigLoader

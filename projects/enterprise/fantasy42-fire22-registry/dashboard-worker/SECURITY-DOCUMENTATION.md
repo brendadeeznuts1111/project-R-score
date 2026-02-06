@@ -55,7 +55,7 @@ excellent developer experience.
 
 ### Component Overview
 
-```
+```text
 ┌─────────────────────────────────────────────────────┐
 │                 Fire22 Security System               │
 ├─────────────────────────────────────────────────────┤
@@ -88,7 +88,7 @@ excellent developer experience.
 
 ### Package Structure
 
-```
+```text
 packages/
 ├── security-core/          # Core security utilities
 │   ├── src/
@@ -359,7 +359,7 @@ const validatedFeed = ThreatFeedSchema.parse(threatFeedData);
 
 ### Scope Hierarchy
 
-```
+```text
 Trust Level: AUTO-TRUST → HIGH → MEDIUM → VERIFY → BLOCK
 
 @fire22/*           [AUTO-TRUST]  Private registry, no scanning

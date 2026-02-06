@@ -93,7 +93,7 @@
 
 ### 🎯 **SYSTEM HEALTH SCORE**
 
-```
+```text
 Component          | Status     | Score | Priority
 -------------------|------------|-------|----------
 RSS Feeds         | ✅ Working  | 100%  | Complete

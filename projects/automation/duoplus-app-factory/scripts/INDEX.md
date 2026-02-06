@@ -4,7 +4,7 @@ Organized scripts for building, deploying, and managing the Nebula-Flow™ proje
 
 ## Directory Structure
 
-```
+```text
 scripts/
 ├── build.ts                    # Main build script
 ├── sync-version.ts             # Version synchronization utility

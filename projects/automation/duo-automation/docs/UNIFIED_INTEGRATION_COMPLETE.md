@@ -58,7 +58,7 @@ interface R2Config {
 ## 🚀 Performance Results
 
 ### Hardware Acceleration Benchmarks
-```
+```text
 🚀 Hardware Acceleration Benchmark:
   Average time: 0.10ms
   Total time: 10.34ms
@@ -159,7 +159,7 @@ const r2Config = {
 ## 📊 Real-time Dashboard
 
 ### Dashboard Features
-```
+```text
 📊 Unified Production Dashboard
 =================================
 
@@ -297,7 +297,7 @@ bun run unified monitor
 ## 🚀 Production Readiness
 
 ### System Status
-```
+```text
 📊 Unified System Status
 ========================
 

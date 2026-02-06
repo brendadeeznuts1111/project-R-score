@@ -31,7 +31,7 @@ database management for the Fire22 Dashboard system.
 
 ### Database Architecture
 
-```
+```text
 [Application Layer] → [Drizzle ORM] → [SQLite/D1] → [Storage]
        ↓                   ↓              ↓           ↓
    Business Logic    Query Builder    SQL Engine   Data Files

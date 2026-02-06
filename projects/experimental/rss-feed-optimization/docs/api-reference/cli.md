@@ -21,7 +21,7 @@ chmod +x cli.js
 
 ## Command Structure
 
-```
+```text
 cli.js <command> [options]
 
 Commands:

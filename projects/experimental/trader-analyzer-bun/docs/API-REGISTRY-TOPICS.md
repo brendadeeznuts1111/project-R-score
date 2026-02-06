@@ -2,7 +2,7 @@
 
 ## Endpoint
 
-```
+```text
 GET /api/registry/topics
 ```
 
@@ -230,6 +230,6 @@ PORT=8080 bun run dev
 ```
 
 Then access:
-```
+```text
 http://localhost:8080/api/registry/topics
 ```

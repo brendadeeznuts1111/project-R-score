@@ -6,7 +6,7 @@
 
 ## **📊 VALIDATION RESULTS: PERFECT 100% ✅**
 
-```
+```text
 🖥️ Official Bun.color ANSI Format Specification Validation
 ==========================================================
 
@@ -191,7 +191,7 @@
 ### **✅ Real-World Canvas Terminal Dashboard**
 
 **Canvas Service Colors with ANSI Formats:**
-```
+```text
 🖥️ Canvas Terminal Dashboard with ANSI Colors:
 
 1. Bridge Service:
@@ -245,7 +245,7 @@
 
 ### **✅ Performance Characteristics**
 
-```
+```text
 🔍 ANSI Format Performance Analysis:
 ──────────────────────────────────────────────────
 • General ANSI: Fast escape sequence generation
@@ -342,7 +342,7 @@ const healthColors = {
 
 ## **🎉 FINAL ANSI VALIDATION SUMMARY**
 
-```
+```text
 🏆 FINAL ANSI VALIDATION RESULT
 ──────────────────────────────────────────────────
 🎉 PERFECT ANSI COMPLIANCE ACHIEVED!

@@ -322,7 +322,7 @@ const server = serve({
     "/api/hello": { GET: () => Response.json({ message: "Hello from API" }) },
   },
 });
-```
+```text
 **HTML Bundling Example:**
 ```typescript
 import { serve } from "bun";
@@ -334,13 +334,13 @@ const server = serve({
     "/api/hello": { GET: () => Response.json({ message: "Hello from API" }) },
   },
 });
-```
+```text
 
 #### MIME Type Generation
 To update the internal MIME database, run the generation script:
 ```bash
 bun run src/scripts/generate-mime.ts
-```
+```text
 This script fetches the latest `mime-db`, adds TypeScript/Bun-specific extensions, and generates a optimized JSON mapping for the bundler.
   workers: {
     support: true,
@@ -496,7 +496,7 @@ const envPlugin: BunPlugin = {
     });
   },
 };
-```
+```text
 **Plugin Example:**
 ```typescript
 const envPlugin: BunPlugin = {
@@ -511,13 +511,13 @@ const envPlugin: BunPlugin = {
     });
   },
 };
-```
+```text
 
 #### Unicode Table Generation
 To update the optimized Unicode lookup tables (Zig-compatible), run:
 ```bash
 bun run src/scripts/generate-unicode.ts
-```
+```text
 This script uses a two-stage lookup strategy for O(1) property checks, essential for high-performance lexing and transpilation.
   plugins: {
     plugins: [/* BunPlugin instances */],

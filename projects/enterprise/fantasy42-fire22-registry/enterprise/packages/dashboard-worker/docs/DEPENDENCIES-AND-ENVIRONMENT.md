@@ -65,7 +65,7 @@ environment configurations for the Fire22 Dashboard Worker system.
 
 #### Dependency Hierarchy
 
-```
+```text
 @fire22/pattern-system (Zero dependencies - Foundation)
     ↓
 @fire22/api-client
@@ -94,7 +94,7 @@ environment configurations for the Fire22 Dashboard Worker system.
 
 ### Environment Files Structure
 
-```
+```text
 dashboard-worker/
 ├── .env                      # Local development (git ignored)
 ├── .env.example             # Template with all variables
@@ -321,7 +321,7 @@ bun build ./src/index.ts \
 
 ### Size Impact
 
-```
+```text
 Production Dependencies:    ~45MB
 Development Dependencies:   ~120MB
 Optional Dependencies:      ~25MB

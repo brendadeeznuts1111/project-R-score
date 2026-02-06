@@ -294,7 +294,7 @@ bash scripts/validate-production-config.sh
 ```
 
 Expected output:
-```
+```text
 🔍 Production Configuration Validation
 ✅ Network permissions restricted
 ✅ Development mode disabled

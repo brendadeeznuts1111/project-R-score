@@ -130,7 +130,7 @@ Generate comprehensive security audit reports with actionable insights and recom
 ```
 
 #### **Generated Report Structure**
-```
+```text
 🔍 Security Audit Report - Last 7d
 
 📊 Executive Summary:
@@ -206,7 +206,7 @@ Create automated secret rotation plans with scheduling, risk assessment, and com
 ```
 
 #### **Generated Plan Structure**
-```
+```text
 🔄 Secret Rotation Plan - API_* Secrets (30d interval)
 
 📋 Secret Inventory:
@@ -287,7 +287,7 @@ Generate comprehensive security checklists for deployments with environment-spec
 ```
 
 #### **Generated Checklist Structure**
-```
+```text
 🚀 Deployment Security Checklist - Production (Enterprise Compliance)
 
 🔐 Pre-Deployment Security Checks:

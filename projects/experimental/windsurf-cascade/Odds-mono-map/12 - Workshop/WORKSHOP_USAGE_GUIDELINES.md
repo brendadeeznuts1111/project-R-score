@@ -52,7 +52,7 @@ validation_rules:
 
 ### **🗂️ Directory Structure Standards**
 
-```
+```text
 11 - Workshop/
 ├── 📋 README.md                              # Main overview and navigation
 ├── 📊 WORKSHOP_INVENTORY.md                  # Complete feature catalog
@@ -91,7 +91,7 @@ validation_rules:
 ### **🏷️ File Naming Conventions**
 
 #### **Documentation Files**
-```
+```text
 Pattern: [CATEGORY]-[TYPE]-[SPECIFIC-TOPIC].md
 
 Examples:
@@ -106,7 +106,7 @@ Examples:
 ```
 
 #### **Demo Scripts**
-```
+```text
 Pattern: [CATEGORY]-demo-[SPECIFIC-FEATURE].ts
 
 Examples:
@@ -117,7 +117,7 @@ Examples:
 ```
 
 #### **Tool Scripts**
-```
+```text
 Pattern: [CATEGORY]-tool-[SPECIFIC-PURPOSE].ts
 
 Examples:

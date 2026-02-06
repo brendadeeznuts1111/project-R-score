@@ -83,7 +83,7 @@ provisioning.**
 
 ### **Subdomain Naming Convention**
 
-```
+```text
 Pattern: [identifier].fire22.workers.dev
 Examples:
 - john-smith.fire22.workers.dev (standard)
@@ -212,7 +212,7 @@ All employee entries in `src/communications/team-directory.json` MUST include:
 
 ### **New Employee Subdomain Request Form**
 
-```
+```text
 FIRE22 PERSONAL SUBDOMAIN REQUEST
 
 Employee Information:

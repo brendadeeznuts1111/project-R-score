@@ -7,7 +7,7 @@ Successfully implemented a comprehensive DNS cache effectiveness demonstration t
 ## 🎯 Problem Resolution
 
 ### **Original Issue Identified**
-```
+```text
 📊 Cache stats after second lookup:
    • Cache hits: 5
    • Cache misses: 8
@@ -60,7 +60,7 @@ if (isCacheWorking) {
 | Error Rate | Clean | Clean | ✅ Perfect |
 
 ### **3. Enhanced Cache Monitoring Dashboard**
-```
+```text
 📊 Final cache state:
    • Cache size: 6
    • Cache hits completed: 3

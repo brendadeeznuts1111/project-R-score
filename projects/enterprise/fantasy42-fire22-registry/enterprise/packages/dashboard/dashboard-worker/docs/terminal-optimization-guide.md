@@ -659,7 +659,7 @@ class AccessibleFormValidator {
 
 **VoiceOver (macOS):**
 
-```
+```text
 VO + Right Arrow    - Navigate to next item
 VO + U             - Open rotor
 VO + Space         - Activate item
@@ -668,7 +668,7 @@ VO + A             - Read all
 
 **NVDA (Windows):**
 
-```
+```text
 Insert + Down      - Say all
 Insert + T         - Read title
 Insert + F7        - List elements

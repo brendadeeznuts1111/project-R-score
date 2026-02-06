@@ -19,7 +19,7 @@ The Clean Console Demo showcases **Bun's enhanced console features** with a focu
 
 ## **📁 Project Structure**
 
-```
+```text
 clean-bun-console-demo.ts
 ├── Imports and Dependencies
 ├── Types and Interfaces

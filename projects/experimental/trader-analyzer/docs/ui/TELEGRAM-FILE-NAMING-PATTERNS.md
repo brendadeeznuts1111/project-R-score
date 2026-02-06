@@ -20,7 +20,7 @@ All files follow `kebab-case.ts` convention ✅
 
 ### 2.2. [FILES.COMPLETE.LIST.RG] Complete File List
 
-```
+```text
 bookmaker-router.ts
 changelog-poster.ts
 check-topics.ts

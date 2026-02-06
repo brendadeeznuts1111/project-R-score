@@ -68,7 +68,7 @@ bun endpoint-aware-validator.ts --dry-run --check-hierarchy
 ## **📊 Dry Run Output Examples**
 
 ### **Failure Handler Dry Run Output**
-```
+```text
 🔧 Failure Handler & Fix Manager
 DRY RUN MODE: No changes will be applied
 
@@ -91,7 +91,7 @@ Files that would be modified:
 ```
 
 ### **Endpoint Validator Dry Run Output**
-```
+```text
 🔍 Endpoint-Aware URL Validator
 DRY RUN MODE: Showing what would be validated
 
@@ -249,7 +249,7 @@ git diff   # Should show no changes
 ## **📊 Dry Run vs Actual Execution**
 
 ### **Dry Run Mode**
-```
+```text
 🔍 DRY RUN MODE
 ├── ✅ Analyzes what would happen
 ├── ✅ Predicts success/failure
@@ -261,7 +261,7 @@ git diff   # Should show no changes
 ```
 
 ### **Actual Execution Mode**
-```
+```text
 🤖 AUTO-FIX MODE
 ├── ✅ Performs actual changes
 ├── ✅ Modifies files

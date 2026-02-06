@@ -87,7 +87,7 @@ bun run verify:sitemap
 ```
 
 ### Query via MCP (Claude Code / Cursor)
-```
+```text
 "AI, generate component sitemap"
 "AI, list all components"
 "AI, get dependencies for EnhancedTelegramClient"

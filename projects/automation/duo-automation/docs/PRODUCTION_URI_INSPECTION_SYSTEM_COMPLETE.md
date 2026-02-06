@@ -10,7 +10,7 @@ I have successfully created a **comprehensive production URI inspection system**
 
 ### **✅ Complete CLI Tool Architecture**
 
-```
+```text
 🔍 Production URI Inspector
 ├── Core Inspection Engine
 │   ├── Zero-Width Character Detection
@@ -160,7 +160,7 @@ function calculateSecurityRisk(
 
 ### **✅ Real-World Inspection Results**
 
-```
+```text
 🔍 URI Inspection Result:
 ⚠️ https%3A%2F%2Fex%E2%80%8Bample.com │ Security issues detected: 1 zero-width character(s), 1 encoding anomaly(ies) [MEDIUM] Ⓩ×1 ⚠️×1
 
@@ -176,7 +176,7 @@ function calculateSecurityRisk(
 
 ### **✅ Comprehensive Test Suite Results**
 
-```
+```text
 📊 Inspection Report Summary
 ==================================================
 Total Inspections: 8

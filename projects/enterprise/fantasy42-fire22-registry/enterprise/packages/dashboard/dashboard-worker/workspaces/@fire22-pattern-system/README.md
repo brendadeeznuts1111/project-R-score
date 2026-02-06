@@ -62,7 +62,7 @@ This workspace uses Bun's isolated install strategy which:
 
 ### Directory Structure
 
-```
+```text
 node_modules/
 ├── .bun/                          # Central package store
 │   ├── package@1.0.0/             # Versioned package installations

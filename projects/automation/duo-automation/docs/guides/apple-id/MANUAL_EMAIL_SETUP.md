@@ -15,7 +15,7 @@ Visit: <https://dash.cloudflare.com/7a470541a704caaf91e71efccc78fd36/factory-wag
 
 ### **Rule 1: Catch-All for Apple IDs**
 
-```
+```text
 Type: Custom address
 Address: *@apple.factory-wager.com
 Forward to: your-gmail@gmail.com
@@ -24,7 +24,7 @@ Tag: apple-id-catch-all
 
 ### **Rule 2: Admin Address**
 
-```
+```text
 Type: Custom address  
 Address: admin@apple.factory-wager.com
 Forward to: your-gmail@gmail.com
@@ -33,7 +33,7 @@ Tag: apple-admin
 
 ### **Rule 3: Verification Address**
 
-```
+```text
 Type: Custom address
 Address: verification@apple.factory-wager.com  
 Forward to: your-gmail@gmail.com
@@ -42,7 +42,7 @@ Tag: apple-verification
 
 ### **Rule 4: Support Address**
 
-```
+```text
 Type: Custom address
 Address: support@apple.factory-wager.com
 Forward to: your-gmail@gmail.com
@@ -57,7 +57,7 @@ Add these MX records:
 
 ### **MX Record 1**
 
-```
+```text
 Type: MX
 Name: apple
 Content: route1.mx.cloudflare.net
@@ -68,7 +68,7 @@ Proxy status: DNS only
 
 ### **MX Record 2**
 
-```
+```text
 Type: MX
 Name: apple  
 Content: route2.mx.cloudflare.net
@@ -87,7 +87,7 @@ dig MX apple.factory-wager.com
 
 Should return:
 
-```
+```text
 apple.factory-wager.com. 300 IN MX 10 route1.mx.cloudflare.net.
 apple.factory-wager.com. 300 IN MX 20 route2.mx.cloudflare.net.
 ```

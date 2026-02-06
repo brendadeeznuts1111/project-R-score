@@ -86,7 +86,7 @@ bun run package:bunx
 
 ### **Core Package Information**
 
-```
+```text
 🔥 Fire22 Dashboard - Core Package Information
 ==============================================
 
@@ -104,7 +104,7 @@ bun run package:bunx
 
 ### **Matrix Health Commands**
 
-```
+```text
 🔍 Matrix Health System Status
 ================================
 
@@ -126,7 +126,7 @@ bun run package:bunx
 
 ### **Bunx Examples with --package Flag**
 
-```
+```text
 ⚡ Bunx Examples with --package Flag
 =====================================
 

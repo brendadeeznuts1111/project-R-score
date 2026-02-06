@@ -172,7 +172,7 @@ bun rss-analyzer --url https://bun.com/rss.xml --analyze --patterns
 
 ## 📁 File Structure
 
-```
+```text
 bun-inspect-utils/
 ├── src/
 │   ├── networking/

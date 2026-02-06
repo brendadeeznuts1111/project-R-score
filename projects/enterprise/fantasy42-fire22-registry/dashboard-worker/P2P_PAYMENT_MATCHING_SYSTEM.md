@@ -12,7 +12,7 @@
 
 **Step 1: Bob Messages the Telegram Bot**
 
-```
+```text
 /deposit
 ```
 
@@ -20,7 +20,7 @@ _Bot responds: How much would you like to deposit?_
 
 **Step 2: Bob Specifies Amount**
 
-```
+```text
 595
 ```
 
@@ -28,13 +28,13 @@ _Bot responds: Which payment method? (Venmo, Cash App, PayPal, Zelle)_
 
 **Step 3: Bob Chooses Payment Method**
 
-```
+```text
 Venmo
 ```
 
 **Step 4: INSTANT MATCH! 🎉**
 
-```
+```text
 🎉 IMMEDIATE MATCH FOUND!
 
 💰 Deposit Request Matched
@@ -81,7 +81,7 @@ This match expires in 30 minutes.
 
 ### **✅ Complete P2P Matching Ecosystem**
 
-```
+```text
 dashboard-worker/
 ├── 💰 core/payments/
 │   ├── p2p-payment-matching.ts           # Core P2P system
@@ -103,7 +103,7 @@ dashboard-worker/
 
 #### **Available Commands**
 
-```
+```text
 /start     - Get started and link account
 /deposit   - Start deposit request
 /withdraw  - Start withdrawal request
@@ -115,7 +115,7 @@ dashboard-worker/
 
 #### **Smart Conversation Flow**
 
-```
+```text
 User: /deposit
 Bot: How much to deposit?
 

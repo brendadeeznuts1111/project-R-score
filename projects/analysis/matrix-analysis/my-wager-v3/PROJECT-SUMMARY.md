@@ -8,7 +8,7 @@ The Tension Field System is a comprehensive enterprise-grade platform for analyz
 
 ## 📁 Project Structure
 
-```
+```text
 my-wager-v3/
 ├── src/
 │   ├── tension-field/

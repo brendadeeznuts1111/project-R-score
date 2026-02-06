@@ -210,7 +210,7 @@ bun pattern-evolve 'eval(' --git-history --frequency-analysis --predict-next
 
 #### Output
 
-```
+```text
 📈 Pattern Evolution Report:
 
 Pattern: eval(

@@ -277,7 +277,7 @@ const server = createServer({
 ## 📊 Testing Results
 
 ### **Environment Testing**
-```
+```text
 🔹 Testing development environment:
    Environment: development
    Server: api.example.com
@@ -300,14 +300,14 @@ const server = createServer({
 ```
 
 ### **Environment Variable Interpolation**
-```
+```text
 🔹 Testing Environment Variable Interpolation:
    Database Host: staging-db.example.com
    JWT Secret: ***configured***
 ```
 
 ### **Configuration Validation**
-```
+```text
 ✅ Configuration validation passed
    Valid: ✅
 ```

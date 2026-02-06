@@ -13,7 +13,7 @@ advanced versioning
 
 ### **Reference Format**
 
-```
+```text
 PAY-{timestamp}-{random}
 Example: PAY-20241219-001-A1B2C3
 ```
@@ -93,7 +93,7 @@ performance:
 // Enhanced payment processing with Bun runtime
 ```javascript
 import { randomUUIDv7 } from "bun";
-````
+````text
 
 class EnhancedPaymentProcessor { async createPayment(amount: number, notes:
 string, userId: string) { const startTime = performance.now();
@@ -149,7 +149,7 @@ bun run payment:test
 
 ### **Example Usage**
 
-```
+```text
 /payment-status PAY-20241219-001-A1B2C3
 /create-payment 50.00 "Premium subscription"
 /payment-history
@@ -415,7 +415,7 @@ bun run env:integration
 
 ### **Payment Creation Response**
 
-```
+```text
 ✅ Payment Created Successfully!
 
 📋 Reference: PAY-20241219-004-I9J0K1
@@ -429,7 +429,7 @@ You will receive updates when the status changes.
 
 ### **Payment Status Response**
 
-```
+```text
 🔍 Payment Status: PAY-20241219-001-A1B2C3
 
 💰 Amount: USD 150.00
@@ -441,7 +441,7 @@ You will receive updates when the status changes.
 
 ### **Payment History Response**
 
-```
+```text
 📚 Your Payment History (3 payments)
 
 1. PAY-20241219-001-A1B2C3

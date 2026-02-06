@@ -24,7 +24,7 @@ consolidated CSS architecture using Bun's native bundling capabilities.
 
 ## File Structure
 
-```
+```text
 public/css/
 ├── styles.css      # Main consolidated CSS (264KB)
 ├── index.css       # Bundled core styles (60KB)

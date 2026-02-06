@@ -24,7 +24,7 @@ bun run tags:ai --export         # Tag export functionality
 ### **AI Tagger Core Features**
 
 **1. Domain Detection**
-```
+```text
 venmo-family → VENMO
 duoplus → DUOPLUS  
 factory-wager → FACTORY-WAGER
@@ -32,7 +32,7 @@ merchant → MERCHANT
 ```
 
 **2. Scope Classification**
-```
+```text
 API endpoints → API
 UI components → UI
 CLI tools → CLI
@@ -41,7 +41,7 @@ Core utilities → CORE
 ```
 
 **3. Type Inference**
-```
+```text
 Test files → TEST
 Demo files → DEMO
 Performance code → PERFORMANCE
@@ -61,7 +61,7 @@ Features → FEATURE
 ```
 
 **5. Priority Classification**
-```
+```text
 Critical/Urgent → HIGH
 Important/Features → MEDIUM
 Default → LOW
@@ -88,7 +88,7 @@ Default → LOW
 ## 📈 **Performance Metrics**
 
 ### **Benchmark Results**
-```
+```text
 🎯 AI Tagger v4.1 Benchmark Results:
 ├── Files Processed: 4/4 (100% success)
 ├── Tag Generation: <50ms per file

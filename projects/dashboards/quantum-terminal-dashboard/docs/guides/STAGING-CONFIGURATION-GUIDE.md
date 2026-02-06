@@ -42,7 +42,7 @@ staging:
 
 ## 📊 Testing Results
 
-```
+```text
 🚀 Testing Staging Configuration
 
 ✅ Basic Staging Configuration Loading - PASSED
@@ -61,7 +61,7 @@ staging:
 ```
 
 ### **Key Test Results**
-```
+```text
 Environment: staging
 Server: staging.quantum-lattice.com:443
 Database: quantum_lattice_staging
@@ -410,7 +410,7 @@ const redisConnectionString = config.getRedisConnectionString();
 - ✅ Full reporting
 
 ### **Configuration Report**
-```
+```text
 🚀 STAGING CONFIGURATION REPORT
 ============================================================
 

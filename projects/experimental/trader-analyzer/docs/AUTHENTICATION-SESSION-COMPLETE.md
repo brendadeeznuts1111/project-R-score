@@ -91,7 +91,7 @@ curl http://localhost:3002/api/protected \
 
 ## 📚 Documentation Structure
 
-```
+```text
 docs/
 ├── 10.0.0.0.0.0.0-AUTHENTICATION-SESSION-MANAGEMENT.md  # Main documentation
 ├── 10.1-IMPLEMENTATION-GUIDE.md                        # Implementation guide

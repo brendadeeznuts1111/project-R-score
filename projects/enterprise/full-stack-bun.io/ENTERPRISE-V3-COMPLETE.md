@@ -2,7 +2,7 @@
 
 ## 🎯 **Verification Status**
 
-```
+```text
 ✅ Lockfile v1: Zero upgrade breakage ✓
 ✅ CPU Profiling: 42% scan speedup ✓
 ✅ onTestFinished: Zero memory leaks ✓
@@ -94,7 +94,7 @@ bun run edge:deploy
 
 ## 📈 **Performance Metrics**
 
-```
+```text
 Scans per minute: 1,420
 Average edge: 4.51%
 Latency: 0.9ms

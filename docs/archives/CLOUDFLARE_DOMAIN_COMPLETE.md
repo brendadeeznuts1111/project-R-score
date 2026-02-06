@@ -17,7 +17,7 @@ Your complete Cloudflare-managed domain infrastructure is now integrated with yo
 - **DDoS Protection**: Advanced Enterprise
 
 ### **Complete Subdomain Infrastructure (16 Total)**
-```
+```text
 🏢 Enterprise Subdomains (15):
 ├── npm.factory-wager.com     → Package Registry (CNAME → npmjs.org)
 ├── api.factory-wager.com      → Backend API Services (A → 192.168.1.100)
@@ -65,7 +65,7 @@ Your complete Cloudflare-managed domain infrastructure is now integrated with yo
 ## ☁️ **Cloudflare Integration URLs**
 
 ### **Your Dashboard Access**
-```
+```text
 🏠 Overview:     https://dash.cloudflare.com/7a470541a704caaf91e71efccc78fd36
 🌐 DNS Records:  https://dash.cloudflare.com/7a470541a704caaf91e71efccc78fd36/factory-wager.com/dns/records
 🔒 SSL/TLS:      https://dash.cloudflare.com/7a470541a704caaf91e71efccc78fd36/ssl/factory-wager.com
@@ -85,7 +85,7 @@ Your complete Cloudflare-managed domain infrastructure is now integrated with yo
 ## 📊 **R2 Storage Structure**
 
 ### **Complete Domain Data in `scanner-cookies` Bucket**
-```
+```text
 scanner-cookies/
 ├── domains/
 │   ├── factory-wager/
@@ -117,7 +117,7 @@ scanner-cookies/
 ## 🚀 **MCP Integration Capabilities**
 
 ### **Claude Desktop Tools for Domain Management**
-```
+```text
 🔍 SearchDomainRecords      → Search DNS records with context
 📊 GetDomainAnalytics       → Real-time traffic & performance data
 🏥 GetSubdomainHealth       → Health status for all 16 subdomains
@@ -131,7 +131,7 @@ scanner-cookies/
 ```
 
 ### **Usage Examples in Claude Desktop**
-```
+```text
 Claude: "Get health status for all factory-wager.com subdomains"
 
 Claude: "Analyze DNS performance for api.factory-wager.com"

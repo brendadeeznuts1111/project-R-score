@@ -399,7 +399,7 @@ CSS modules support modern CSS features including nesting:
 
 ## File Structure
 
-```
+```text
 styles/
 ├── components/
 │   ├── button.module.css

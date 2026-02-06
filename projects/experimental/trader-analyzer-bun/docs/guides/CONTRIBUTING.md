@@ -106,7 +106,7 @@ bun run lint
 ## 4. [CONTRIBUTING.COMMITS.RG] Commit Message Convention
 
 ### 4.1. [COMMITS.FORMAT.RG] Format
-```
+```text
 <type>[optional scope]: <subject>
 
 [optional body]
@@ -437,7 +437,7 @@ git push origin feature/my-feature --force-with-lease
 ### 6.2. [PR.CREATION.RG] Creating PR
 
 #### 6.2.1. [PR.TITLE.RG] PR Title Format
-```
+```text
 <type>[optional scope]: <description>
 ```
 

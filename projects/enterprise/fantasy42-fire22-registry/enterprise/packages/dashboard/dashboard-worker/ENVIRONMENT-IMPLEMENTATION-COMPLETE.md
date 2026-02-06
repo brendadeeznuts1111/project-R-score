@@ -72,7 +72,7 @@ management system** with comprehensive CLI tools and bun pm integration!
 
 ### **`.env.development`** ✅
 
-```
+```text
 NODE_ENV=development
 DATABASE_URL=file:./dev.db
 API_BASE_URL=http://localhost:3000/api
@@ -87,7 +87,7 @@ PORT=3000
 
 ### **`.env.production`** ✅
 
-```
+```text
 NODE_ENV=production
 DATABASE_URL=file:./prod.db
 API_BASE_URL=https://api.fire22.com
@@ -98,7 +98,7 @@ LOG_LEVEL=info
 
 ### **`.env.test`** ✅
 
-```
+```text
 NODE_ENV=test
 DATABASE_URL=file:./test.db
 API_BASE_URL=http://localhost:3001/api
@@ -111,7 +111,7 @@ LOG_LEVEL=error
 
 ### **Comprehensive System Test** ✅
 
-```
+```text
 🧪 Testing Fire22 Dashboard Environment System
 
 1️⃣ Testing Environment Check... ✅ PASSED (Health: 90% Excellent)

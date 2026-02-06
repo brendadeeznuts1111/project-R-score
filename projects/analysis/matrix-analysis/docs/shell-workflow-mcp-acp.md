@@ -2,7 +2,7 @@
 
 ## Architecture Overview
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                           USER INTERFACE LAYER                               │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐ │
@@ -73,7 +73,7 @@
 
 ### 2. MCP Tool Call Flow
 
-```
+```text
 User Request → Kimi Shell → MCP Client → unified-shell-bridge.ts
                                               │
                                               ▼
@@ -167,7 +167,7 @@ const command: ACPMessage = {
 
 ### 2. ACP Bridge Flow
 
-```
+```text
 ┌─────────────┐     ACP Command      ┌──────────────┐
 │ Kimi Shell  │ ───────────────────> │ OpenClaw ACP │
 │   (MCP)     │                      │   Server     │
@@ -300,7 +300,7 @@ await $`bun ~/.matrix/matrix-agent.ts log "Gateway restarted"`;
 
 ## Environment Flow
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    Environment Resolution                    │
 └─────────────────────────────────────────────────────────────┘

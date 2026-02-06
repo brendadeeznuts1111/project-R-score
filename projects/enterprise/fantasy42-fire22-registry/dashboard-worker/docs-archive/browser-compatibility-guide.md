@@ -302,7 +302,7 @@ function checkPerformance() `{
     }
     requestAnimationFrame(checkPerformance);
 }
-````
+````text
 
 if (window.requestAnimationFrame) { requestAnimationFrame(checkPerformance); }
 

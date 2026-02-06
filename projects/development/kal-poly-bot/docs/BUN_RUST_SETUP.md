@@ -26,7 +26,7 @@ You now have a complete, production-ready **Polymarket-Kalshi Arbitrage Bot** wi
 
 ## 📁 Files Created
 
-```
+```text
 /Users/nolarose/Projects/kal-poly-bot/
 ├── docs/SETUP_STATUS.md         ← Comprehensive setup guide
 └── poly-kalshi-arb/
@@ -122,7 +122,7 @@ const { stdout, stderr } = proc;
 ## 📈 How the Bot Makes Money
 
 **Example Trade:**
-```
+```text
 Market: "Will Bitcoin hit $100k?"
 
 Kalshi: 
@@ -169,7 +169,7 @@ cat /Users/nolarose/Projects/kal-poly-bot/poly-kalshi-arb/.clob_market_cache.jso
 ## 📊 Monitoring
 
 The bot logs every 60 seconds:
-```
+```text
 💓 Heartbeat | Markets: 45 total, 35 w/Kalshi, 40 w/Poly, 30 w/Both
 📊 Best: Will Trump win? | P_yes(42¢) + K_no(56¢) = 98¢ | gap=-2¢
 ```

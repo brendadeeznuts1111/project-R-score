@@ -138,7 +138,7 @@ bun scripts/enhanced-executable-builder.ts   # Build all executables
 
 ## 📂 Key File Locations
 
-```
+```text
 workspaces/@fire22-api-client/
 ├── src/
 │   ├── index.ts              # Main entry point

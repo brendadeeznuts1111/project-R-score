@@ -136,7 +136,7 @@
 
 ### By Department (Last 30 Days)
 
-```
+```text
 💻 Technology:     45% (Infrastructure & Security)
 👥 Contributors:   20% (Development Tools)
 💰 Finance:        12% (Transaction Systems)
@@ -149,7 +149,7 @@
 
 ### By Feature Type
 
-```
+```text
 🔧 Infrastructure:  35%
 📊 API Integration: 25%
 🎨 UI/UX:          15%

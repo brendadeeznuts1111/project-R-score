@@ -2,7 +2,7 @@
 
 ## System Layers
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    APPLICATION LAYER                            │
 │  (User code, Cloudflare Workers, CLI tools, Dashboards)        │
@@ -55,7 +55,7 @@
 
 ## Module Dependencies
 
-```
+```text
 index.ts
 ├── core/
 │   ├── inspect.ts
@@ -71,7 +71,7 @@ index.ts
 ## Data Flow
 
 ### Inspection Flow
-```
+```text
 User Input
     ↓
 inspect(value, options)
@@ -84,7 +84,7 @@ Return formatted string
 ```
 
 ### Comparison Flow
-```
+```text
 Object A, Object B
     ↓
 deepEquals(a, b)
@@ -97,7 +97,7 @@ Return boolean + differences
 ```
 
 ### Table Flow
-```
+```text
 Array of objects
     ↓
 table(data, properties)
@@ -111,7 +111,7 @@ Return formatted string
 
 ## Type System
 
-```
+```text
 InspectOptions
 ├── depth: number
 ├── colors: boolean
@@ -145,7 +145,7 @@ PeekResult<T>
 
 ## Configuration Hierarchy
 
-```
+```text
 bunfig.toml
 ├── [inspect]
 │   ├── protocol
@@ -181,7 +181,7 @@ bunfig.toml
 
 ## Deployment Architecture
 
-```
+```text
 ┌─────────────────────────────────────────┐
 │   Cloudflare Workers                    │
 │  ┌───────────────────────────────────┐  │

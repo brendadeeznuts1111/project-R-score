@@ -59,7 +59,7 @@ bun run cli secrets list
 
 ## 📁 **Organized Documentation Structure**
 
-```
+```text
 📦 docs/
 ├── 📄 README.md                    # Main documentation (this file)
 ├── 📁 getting-started/             # Quick start and setup guides

@@ -173,7 +173,7 @@ After organizing the root directory, we've now organized deeper subdirectories (
 
 ## Directory Structure
 
-```
+```text
 src/
 ├── server/
 │   ├── services/        # Service layer

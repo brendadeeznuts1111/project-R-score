@@ -23,7 +23,7 @@ bun --hot --watch dev-hq-cli.ts insights --table --json
 
 ## 🔍 **Flow Demonstration**
 
-```
+```text
 User Command
     ↓
 Bun Executable

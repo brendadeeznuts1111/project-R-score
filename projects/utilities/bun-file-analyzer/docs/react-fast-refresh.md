@@ -86,7 +86,7 @@ Based on our testing:
 
 ### Build Comparison
 
-```
+```text
 With React Fast Refresh: 1,002,190 bytes
 Without React Fast Refresh: 1,001,806 bytes
 Difference: 384 bytes (0.04% increase)

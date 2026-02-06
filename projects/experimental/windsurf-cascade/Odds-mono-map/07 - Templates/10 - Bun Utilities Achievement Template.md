@@ -197,7 +197,7 @@ const ansiOverhead = actualWidth - visualWidth;
 ### **🛠️ Architecture Innovation**
 
 #### **Component Integration Architecture**:
-```
+```text
 Bun Utilities Mastery System
 ├── Bun.inspect.table()     // Core table formatting engine
 ├── Bun.stringWidth()       // Precision width calculation

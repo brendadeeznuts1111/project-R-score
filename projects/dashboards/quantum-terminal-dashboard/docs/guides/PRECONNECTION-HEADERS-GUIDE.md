@@ -86,7 +86,7 @@ Pragma: no-cache
 ## 📊 Performance Benefits
 
 ### **Latency Reduction**
-```
+```text
 Without Preconnection:
 ├── DNS Lookup: 50-150ms
 ├── TCP Connection: 50-100ms  
@@ -148,7 +148,7 @@ curl -w "@curl-format.txt" \
 ```
 
 #### **curl-format.txt**
-```
+```text
      time_namelookup:  %{time_namelookup}s\n
         time_connect:  %{time_connect}s\n
      time_appconnect:  %{time_appconnect}s\n

@@ -97,7 +97,7 @@ git config commit.template .gitmessage
 
 Use the provided `.gitmessage` template:
 
-```
+```text
 [TYPE] Brief description (50 chars or less)
 
 More detailed explanation (wrap at 72 chars)

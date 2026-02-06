@@ -59,7 +59,7 @@ Successfully integrated the **v2.01.05 Self-Heal System** with **Autonomic Self-
 ## 📊 Performance Metrics
 
 ### **Demonstrated Performance**
-```
+```text
 📊 HEAL METRICS REPORT v2.01.05
 =================================
 Duration: 45ms

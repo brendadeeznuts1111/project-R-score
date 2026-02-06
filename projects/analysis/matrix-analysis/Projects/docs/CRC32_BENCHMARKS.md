@@ -25,7 +25,7 @@
 ## Scanner Integration
 
 ### Cache Hit Performance
-```
+```text
 File Scan + CRC32 Hash
 Before (Software CRC32):  264ms (100 files)
 After (Hardware CRC32):   12ms (100 files)
@@ -96,7 +96,7 @@ const checksum = Bun.hash.crc32(manifestBuffer).toString(16);
 
 ### Real-World Scenario: 1000 Files Monorepo
 
-```
+```text
 Scenario: Scan 1000 TypeScript files (avg 50KB each)
 
 Without CRC32 acceleration:
@@ -114,7 +114,7 @@ Time saved: 4.95s (95% reduction)
 
 ### Large File Scenario: 100MB Report
 
-```
+```text
 Scenario: Generate secure report for 100MB scan results
 
 Without CRC32:

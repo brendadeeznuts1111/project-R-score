@@ -55,7 +55,7 @@ This is a **Bun-based monorepo-lite platform** demonstrating project isolation u
 
 ## Project Structure
 
-```
+```text
 /Users/nolarose/Projects/          # $BUN_PLATFORM_HOME
 ├── tools/                        # Root tooling CLIs and utilities
 │   ├── overseer-cli.ts           # Monorepo manager - discover and run commands in sub-projects

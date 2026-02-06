@@ -172,7 +172,7 @@ curl https://your-worker.your-subdomain.workers.dev/registry/health
 
 ## 📁 **Project Structure**
 
-```
+```text
 fire22-dashboard-worker/
 ├── src/
 │   ├── index.ts                 # 🔄 UPDATED: Integrated APIs

@@ -18,7 +18,7 @@ In a world of temporary solutions, we chose **13 bytes that last forever**.
 
 ### Every Decision is a Number
 
-```
+```text
 version: u8 = 1
 registry_hash: u32 = 0x3b8b5a5a
 feature_flags: u32 = 0x00000000

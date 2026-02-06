@@ -38,7 +38,7 @@ This production-grade execution engine provides:
 
 ## 📊 Architecture
 
-```
+```text
 Backtester (#41) → Pattern Ingestion Service → Live Execution Engine → Execution Bridge → Rust Engines
      ↓                    ↓                            ↓                    ↓                ↓
 Validation       Streaming API                 Risk Assessment     Process Pool     Order Execution

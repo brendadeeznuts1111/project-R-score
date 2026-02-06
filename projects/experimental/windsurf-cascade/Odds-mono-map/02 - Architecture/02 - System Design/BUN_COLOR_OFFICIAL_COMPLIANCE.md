@@ -6,7 +6,7 @@
 
 ## **📊 VALIDATION RESULTS: 100% COMPLIANT ✅**
 
-```
+```text
 🔍 Bun.color Implementation Validation
 =====================================
 

@@ -193,7 +193,7 @@ bun test src/utils/token-matcher.test.ts
 
 ## 📁 File Structure
 
-```
+```text
 src/
 ├── networking/
 │   ├── rss-scraper.ts       # Core RSS scraper

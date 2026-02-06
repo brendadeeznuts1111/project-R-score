@@ -28,7 +28,7 @@ grep -E "nebula.local|api.duoplus.local" /etc/hosts
 ```
 
 You should see:
-```
+```text
 127.0.0.1 nebula.local
 127.0.0.1 api.duoplus.local
 ```

@@ -13,7 +13,7 @@ A production-grade system for detecting coordinated betting patterns across NBA 
 
 ## Architecture
 
-```
+```text
 nba-swarm001/
 ├── src/                    # Core modules
 │   ├── types/             # Type definitions

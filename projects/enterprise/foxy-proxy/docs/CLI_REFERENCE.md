@@ -43,7 +43,7 @@ IPFOXY_API_TOKEN=xxx DUOPLUS_API_KEY=yyy bun --hot src/main.tsx
 
 **Expected Output:**
 
-```
+```text
 $ bun --hot src/main.tsx
 ▲ [watch] src
 ▲ [server] Listening on http://localhost:3000
@@ -678,7 +678,7 @@ log stream --predicate 'eventMessage contains[cd] "foxy"'
 
 **Quick Reference Card:**
 
-```
+```text
 Development:      bun --hot src/main.tsx
 Testing:          bun test
 Build:            bun build src/main.tsx --outdir dist

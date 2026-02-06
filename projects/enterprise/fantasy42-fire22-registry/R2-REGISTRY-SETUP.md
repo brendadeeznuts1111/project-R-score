@@ -61,7 +61,7 @@ wrangler pages deployment tail
 
 ## Registry Structure
 
-```
+```text
 fire22-registry/
 ├── dashboards/     # HTML dashboards
 ├── designs/        # Design artifacts

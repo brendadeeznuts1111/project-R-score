@@ -2,7 +2,7 @@
 
 ## 📁 Root Directory Organization
 
-```
+```text
 b-react-hmr-refresh/
 ├── 📄 Configuration
 │   ├── package.json          # Dependencies & npm scripts

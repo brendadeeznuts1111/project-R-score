@@ -457,7 +457,7 @@ export class CanvasColorValidator {
 ### **🔍 Validation Results**
 
 **Sample Canvas Validation**:
-```
+```text
 ✅ service:api:production    (HEX) #10B981
 ✅ integration:bridge:beta   (HEX) #EAB308  
 ✅ core:database:production  (HEX) #059669
@@ -563,14 +563,14 @@ export class ObsidianCanvasIntegration {
 ### **A. Performance Metrics**
 
 **⚡ Color Processing Performance**:
-```
+```text
 1000 color conversions: 0.65ms
 Average per conversion: 0.0007ms
 Performance rating: 🟢 Excellent
 ```
 
 **💾 Memory Efficiency**:
-```
+```text
 HEX color storage: 7 characters per color
 Legacy storage: 1 character per color
 Storage overhead: +600% (negligible for typical canvases)

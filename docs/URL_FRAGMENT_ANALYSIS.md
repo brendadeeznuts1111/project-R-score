@@ -46,7 +46,7 @@ const validation = validateURLWithFragment(url);
 ## **🔍 Fragment Analysis Results**
 
 ### **Current URL Fragment Status**
-```
+```text
 📊 Total URLs: 75
 🔗 URLs with Fragments: 42 (56%)
 📄 URLs without Fragments: 33 (44%)
@@ -58,27 +58,27 @@ const validation = validateURLWithFragment(url);
 ### **Fragment Distribution by Category**
 
 #### **📁 File System (9 fragments)**
-```
+```text
 file-system, readfile, writefile, readdir, stat, copyfile, movefile, deletefile, fileexists
 ```
 
 #### **🌐 Networking (7 fragments)**
-```
+```text
 networking, fetch-utility, serve, websocket, tcp, udp, dns
 ```
 
 #### **⚙️ Process (7 fragments)**
-```
+```text
 process, spawn, exec, fork, kill, pid, signals
 ```
 
 #### **✅ Validation (10 fragments)**
-```
+```text
 validation, isstring, isnumber, isboolean, isarray, isobject, isfunction, ispromise, isbuffer, istypedarray
 ```
 
 #### **🔄 Conversion (9 fragments)**
-```
+```text
 conversion, tobuffer, tostring, tonumber, toboolean, toarray, toobject, jsonparse, jsonstringify
 ```
 
@@ -166,7 +166,7 @@ bun enhanced-status-checker.ts --check-fragments --json
 ## **📈 Fragment Quality Metrics**
 
 ### **Validation Results**
-```
+```text
 ✅ Base URL Validation: 75/75 (100%)
 ✅ Fragment Validation: 42/42 (100%)
 ✅ Overall URL Health: 75/75 (100%)
@@ -237,7 +237,7 @@ bun enhanced-status-checker.ts --check-fragments --json
 ## **📊 Implementation Summary**
 
 ### **Before Enhancement**
-```
+```text
 ❌ Original CLI: Base URL validation only
 ❌ Fragment checking: Not implemented
 ❌ Fragment analysis: Not available
@@ -245,7 +245,7 @@ bun enhanced-status-checker.ts --check-fragments --json
 ```
 
 ### **After Enhancement**
-```
+```text
 ✅ Enhanced CLI: Base + Fragment validation
 ✅ Fragment checking: Fully implemented
 ✅ Fragment analysis: Detailed statistics

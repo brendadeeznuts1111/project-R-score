@@ -17,7 +17,7 @@ The **CashApp Name Generator** is a production-ready system for generating uniqu
 
 ### 🏗️ **Architecture**
 
-```
+```text
 CashAppNameGenerator
 ├── Name Database (200+ US names)
 ├── Demographic Engine (age-appropriate)

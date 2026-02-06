@@ -89,7 +89,7 @@ Track usage statistics via the status dashboard:
 ## API Endpoints
 
 ### Status Endpoint
-```
+```text
 GET /api/obsidian/status
 ```
 
@@ -100,7 +100,7 @@ Returns:
 - Recent usage log
 
 ### Usage Endpoint
-```
+```text
 GET /api/obsidian/usage
 ```
 
@@ -109,7 +109,7 @@ Returns:
 - Recent request log
 
 ### Clear Usage Log
-```
+```text
 POST /api/obsidian/usage/clear
 ```
 

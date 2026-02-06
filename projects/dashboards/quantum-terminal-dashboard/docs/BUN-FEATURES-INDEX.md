@@ -157,7 +157,7 @@ await ws.connectWithAuth("http://proxy:8080", "user", "pass");
 
 ## 📊 Test Results
 
-```
+```text
 ✅ 21 pass
 ❌ 0 fail
 ⏱️  38.00ms total
@@ -209,7 +209,7 @@ await ws.connectWithAuth("http://proxy:8080", "user", "pass");
 
 ## 📚 Documentation Structure
 
-```
+```text
 BUN-NEW-FEATURES-SUMMARY.md
 ├── Overview of all 5 features
 ├── Implementation details

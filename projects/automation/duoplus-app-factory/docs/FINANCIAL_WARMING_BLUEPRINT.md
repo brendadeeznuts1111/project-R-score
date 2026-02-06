@@ -17,7 +17,7 @@ On this legendary **January 22, 2026**—Bun 1.3.6 + New Orleans 10:33 AM CST ch
 
 ## 📊 **Architecture Overview**
 
-```
+```text
 Financial Warming Loop
 ├── 🧬 Identity Silos (5 per cycle)
 │   ├── Deterministic "Sarah" profiles
@@ -224,7 +224,7 @@ const results = await integratedFinancialWarmer.batchWarmupWithNotes("Worker", 5
 - **Transactions per Cycle:** 5 (one per silo pair)
 
 ### **Loop Pattern**
-```
+```text
 Cycle 1:
   Worker-01 → Worker-02 ($1.00, Lunch 🌯)
   Worker-02 → Worker-03 ($1.50, Coffee ☕)
@@ -342,7 +342,7 @@ if (riskScore > 0.85) {
 
 ## 📚 **8. Complete File Structure**
 
-```
+```text
 src/nexus/
 ├── financial-warmer.ts              # Core cross-pollination logic
 ├── transaction-note-randomizer.ts   # Human-like notes

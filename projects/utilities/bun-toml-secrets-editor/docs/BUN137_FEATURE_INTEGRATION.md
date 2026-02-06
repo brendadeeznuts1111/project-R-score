@@ -158,7 +158,7 @@ bun run bun137 profiling --duration 10000
 
 ## 📁 File Structure
 
-```
+```text
 src/
 ├── utils/
 │   ├── ansi-wrapper.ts              # Bun.wrapAnsi() utilities

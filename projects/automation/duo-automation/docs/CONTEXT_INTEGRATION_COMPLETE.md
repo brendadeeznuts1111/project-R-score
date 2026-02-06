@@ -106,7 +106,7 @@ I have successfully integrated our advanced URI inspection systems into the DuoP
 
 ### **✅ Context-Driven Inspection Flow**
 
-```
+```text
 🔍 Security Query → Context System
 ├── @core (Priority 1)
 │   ├── Zero-width character detection

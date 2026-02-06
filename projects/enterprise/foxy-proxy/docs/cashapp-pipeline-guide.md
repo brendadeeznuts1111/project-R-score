@@ -21,7 +21,7 @@ Successfully implemented a comprehensive CashApp scaling pipeline that integrate
 
 ### **Data Flow**
 
-```
+```text
 Email Strategy → Device Creation → Account Setup → Verification → Profile Completion → 2FA Setup → Monitoring
 ```
 

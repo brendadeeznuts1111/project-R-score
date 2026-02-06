@@ -27,7 +27,7 @@ The implementation uses the standard logger utility (`src/utils/logger`) with th
 - **Parameter Validation**: Logs validation failures with details
 
 #### Success Logging
-```
+```text
 [api/correlation-graph] Request req-1234567890-abc123: Success - 
   28 nodes, 52 edges, aggregation=245.32ms, total=267.45ms
 ```
@@ -59,7 +59,7 @@ Logs detailed performance metrics for each phase:
 - Total aggregation time
 
 Example:
-```
+```text
 [correlation-graph] Performance breakdown: 
   query=123.45ms, nodes=45.67ms, edges=78.90ms, 
   layers=12.34ms, stats=5.67ms
@@ -99,22 +99,22 @@ All frontend logging uses `console.log`, `console.error`, etc. with `[correlatio
 ## Log Format
 
 ### Backend Log Format
-```
+```text
 {timestamp} [correlation-graph] [LEVEL] {message} {optional JSON data}
 ```
 
 Example:
-```
+```text
 2025-01-15T12:34:56.789Z [correlation-graph] [INFO] Aggregating graph data for eventId=nba-lakers-warriors-2024-01-15, timeWindow=24h
 ```
 
 ### Frontend Log Format
-```
+```text
 [correlation-graph] {message}
 ```
 
 Example:
-```
+```text
 [correlation-graph] Loading graph data: eventId=nba-lakers-warriors-2024-01-15, timeWindow=24h
 ```
 
@@ -211,7 +211,7 @@ For production, consider:
 ## Example Log Flow
 
 ### Successful Request
-```
+```text
 [INFO] Request req-123: event_id=nba-lakers-warriors-2024-01-15, time_window=24, client=192.168.1.1
 [DEBUG] Cache miss for correlation-graph:nba-lakers-warriors-2024-01-15:24, querying database
 [DEBUG] Opening database: ./data/research.db
@@ -226,14 +226,14 @@ For production, consider:
 ```
 
 ### Cached Request
-```
+```text
 [INFO] Request req-124: event_id=nba-lakers-warriors-2024-01-15, time_window=24, client=192.168.1.2
 [DEBUG] Cache hit for correlation-graph:nba-lakers-warriors-2024-01-15:24 (age: 120s)
 [INFO] Request req-124: Success - 5 nodes, 8 edges, aggregation=0.12ms, total=2.34ms
 ```
 
 ### Error Request
-```
+```text
 [INFO] Request req-125: event_id=invalid, time_window=24, client=192.168.1.3
 [WARN] Request req-125: Invalid event_id format (length=7, matches=false)
 [ERROR] Request req-125: Error after 1.23ms - Invalid event_id format

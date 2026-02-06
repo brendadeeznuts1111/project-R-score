@@ -50,7 +50,7 @@ author: system
 ```markdown
 ```typescript
 const example = "code";
-```
+```text
 ```
 
 ### Lists
@@ -170,7 +170,7 @@ Additional considerations.
 - **Folders**: Numbered prefix system
 - **Templates**: End with "Template.md"
 
-```
+```text
 00 - Dashboard.md           # Main command center
 01 - Daily Notes/            # Chronological logs
 ├── 01 - Reports/            # Daily reports

@@ -84,7 +84,7 @@ bun run index.ts
 ```
 
 **Output**:
-```
+```text
 /path/to/index.ts  (from index.ts - Bun.main)
 /path/to/index.ts  (from index.ts - import.meta.path)
 /path/to/index.ts  (from foo.ts - Bun.main, same as entrypoint)
@@ -92,7 +92,7 @@ bun run index.ts
 ```
 
 **Verified Test Results**:
-```
+```text
 [HELPER MODULE]
 Bun.main (entrypoint): /path/to/test-bun-main.ts
 import.meta.path (current file): /path/to/test-bun-main-helper.ts

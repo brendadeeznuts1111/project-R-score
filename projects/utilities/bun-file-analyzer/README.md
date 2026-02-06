@@ -90,7 +90,7 @@ bun run start:prod     # Serve production build
 ## 🏗️ Architecture
 
 ### **Project Structure**
-```
+```text
 bun-enhanced-file-analyzer/
 ├── 📁 src/
 │   ├── 📁 components/           # React components

@@ -35,7 +35,7 @@ bun lib/wiki-generator-cli.ts --base-url https://wiki.ourcompany.com --workspace
 ```
 
 ### **Generated Files**
-```
+```text
 internal-wiki/
 ├── README.md                    # Usage instructions and statistics
 ├── bun-utilities-wiki.md        # Markdown format for Confluence/Notion
@@ -96,7 +96,7 @@ bun lib/wiki-generator-cli.ts --format html --base-url https://docs.ourcompany.c
 ## 📊 Generated Content Examples
 
 ### **Internal Wiki URLs Generated**
-```
+```text
 https://wiki.ourcompany.com/bun-docs/file_system/read_file
 https://wiki.ourcompany.com/bun-docs/networking/fetch
 https://wiki.ourcompany.com/bun-docs/process/spawn

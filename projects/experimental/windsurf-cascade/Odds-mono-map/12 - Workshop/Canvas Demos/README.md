@@ -51,7 +51,7 @@ This directory contains the **complete HEX color integration system** that trans
 
 ### **🗂️ File Organization**
 
-```
+```text
 11 - Workshop/Canvas Demos/
 ├── 📋 README.md                                    # This file - Getting started guide
 ├── 🎨 HEX-Color-Integration-Workshop.md           # Main workshop index
@@ -83,13 +83,13 @@ Bun Optimization Tools (Root Level):
 ### **🌟 From Legacy to HEX**
 
 **Before (Legacy Colors)**:
-```
+```text
 "0" = Gray    "1" = Blue    "2" = Green
 "3" = Yellow  "4" = Orange  "5" = Red
 ```
 
 **After (HEX Colors with Intelligence)**:
-```
+```text
 #6366F1 = Integration (Indigo)
 #14B8A6 = Service (Teal)  
 #059669 = Core (Emerald)
@@ -283,7 +283,7 @@ const ODDS_PROTOCOL_COLORS = {
 ### **🎯 Migration Success**
 
 **Canvas Files Processed**:
-```
+```text
 ✅ Integration Ecosystem.canvas     - 9 nodes enhanced
 ✅ System Design Canvas.canvas      - 7 nodes enhanced  
 ✅ Canvas-Vault Integration Demo    - 9 nodes migrated

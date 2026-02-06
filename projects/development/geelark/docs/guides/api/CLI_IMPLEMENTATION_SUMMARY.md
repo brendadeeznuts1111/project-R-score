@@ -37,7 +37,7 @@ The `--perf` flag provides:
 - **Files/Second**: Processing throughput
 
 Example output:
-```
+```text
 ⚡ Performance:
   Analysis Time: 16.03ms
   Memory Used: 1.00 MB

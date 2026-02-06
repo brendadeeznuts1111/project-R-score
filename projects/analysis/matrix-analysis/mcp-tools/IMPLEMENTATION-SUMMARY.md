@@ -53,7 +53,7 @@ Production-grade MCP Tool Registry with `Bun.deepMatch` runtime validation succe
 ## 🧪 Validation Results
 
 All tests passing:
-```
+```text
 🧪 MCP Tool Registry Validation Tests
 ✅ Test 1: Valid RSS query
 ✅ Test 2: Invalid RSS query - missing required pattern  

@@ -266,7 +266,7 @@ bun table-doctor --help
 
 ### Output Example
 
-```
+```text
 📊 Analyzing files matching: src/**/*.ts
 
 📄 src/core/table.ts

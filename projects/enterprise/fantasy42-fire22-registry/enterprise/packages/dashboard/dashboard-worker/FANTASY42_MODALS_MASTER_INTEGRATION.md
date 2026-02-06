@@ -12,7 +12,7 @@
 
 #### **1. Teaser Configuration Modal - Enhanced**
 
-```
+```text
 🎯 TEASER CONFIGURATION INTELLIGENCE
 • AI Suggestions: Popular combinations, market trends, risk-optimized
 • Predictive Analytics: Market volatility, player exposure, configuration risk
@@ -26,7 +26,7 @@
 
 #### **2. Parlay Configuration Modal - Enhanced**
 
-```
+```text
 🎲 PARLAY CONFIGURATION INTELLIGENCE
 • AI Suggestions: Correlation-based, value-driven, market efficiency
 • Payout Calculator: Real-time payout calculations with bet amounts
@@ -40,7 +40,7 @@
 
 #### **3. Point Buying Setup Modal - Enhanced**
 
-```
+```text
 🏈 POINT BUYING INTELLIGENCE
 • Sport-Specific Config: NFL, College Football, Basketball sections
 • AI Suggestions: Line movement, sharp money, public perception
@@ -54,7 +54,7 @@
 
 #### **4. Agent Password Modal - Enhanced**
 
-```
+```text
 🔐 PASSWORD SECURITY INTELLIGENCE
 • Password Strength: Real-time strength meter and requirements
 • Security Validation: Breach checking and common password detection
@@ -67,7 +67,7 @@
 
 #### **5. Information Modals - Enhanced**
 
-```
+```text
 ℹ️ INFORMATION MODAL INTELLIGENCE
 • Auto-Guidance: Step-by-step resolution instructions
 • Player Search: Integrated player lookup and status checking

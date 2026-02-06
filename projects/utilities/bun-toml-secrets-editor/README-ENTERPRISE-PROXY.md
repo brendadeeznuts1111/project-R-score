@@ -20,7 +20,7 @@ The enterprise dashboard now includes native $HTTPS_PROXY integration with live 
 - **Detection Status**: 🔒 PROXY or 🌐 DIRECT
 
 ### **Live Endpoints:**
-```
+```text
 🏢 http://localhost:3138/           → Enterprise Dashboard
 🔒 /proxy-status                  → {"HTTPS_PROXY":"...", "detected":"🔒 PROXY"}
 📰 /rss                           → bun.sh RSS (via $HTTPS_PROXY)
@@ -32,7 +32,7 @@ The enterprise dashboard now includes native $HTTPS_PROXY integration with live 
 
 The dashboard now displays a 5-column gauge panel with live proxy status:
 
-```
+```text
 🔒 PROXY MODE    🔌 TDP    🧠 Heap    🌐 Proxy    📈 QPS
 corporate...     78W      156MB      14ms      2.1k/s
 ```

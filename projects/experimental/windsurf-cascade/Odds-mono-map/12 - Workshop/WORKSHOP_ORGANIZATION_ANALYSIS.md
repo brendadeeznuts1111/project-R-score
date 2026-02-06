@@ -30,7 +30,7 @@ validation_rules:
 
 ### **🗂️ File Distribution Overview**
 
-```
+```text
 11 - Workshop/
 ├── README.md                                    # Main workshop documentation
 ├── WORKSHOP_ACHIEVEMENT_SUMMARY.md             # Success metrics
@@ -77,7 +77,7 @@ validation_rules:
 
 ### **📁 Systematic Directory Structure**
 
-```
+```text
 11 - Workshop/
 ├── 📋 README.md                              # Main workshop overview
 ├── 📊 WORKSHOP_INVENTORY.md                  # Complete feature inventory

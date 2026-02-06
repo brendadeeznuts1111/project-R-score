@@ -133,7 +133,7 @@ interface ProvisioningRecord {
 
 ### Class Hierarchy
 
-```
+```text
 MatrixAutomation
 ├── Dependencies:
 │   ├── DuoPlusSDK (external)

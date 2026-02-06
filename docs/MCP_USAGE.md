@@ -58,7 +58,7 @@ Configuration created at: `~/.config/claude/mcp.json`
 - `ValidateCode` - Code validation against best practices
 
 **Usage Examples:**
-```
+```text
 Search for Bun.secrets.get documentation with secrets management context
 Generate a FactoryWager-style example for Bun.file with R2 integration
 Diagnose this error: "TypeError: Cannot read property" with audit history
@@ -76,7 +76,7 @@ R2_BUCKET_NAME=scanner-cookies
 ```
 
 ### R2 Storage Structure
-```
+```text
 scanner-cookies/
 ├── mcp/diagnoses/     # Error diagnoses with fixes
 ├── mcp/audits/        # Audit trail entries  
@@ -129,12 +129,12 @@ bun run scripts/r2-cli.ts put-json mcp/diagnoses/error-001.json diagnosis.json -
 ```
 
 ### Generate FactoryWager Examples
-```
+```text
 Claude: "Generate a FactoryWager-style example for Bun.serve with security headers and error handling"
 ```
 
 ### Search with Context
-```
+```text
 Claude: "Search for Bun.secrets.get with enterprise security context and R2 integration patterns"
 ```
 

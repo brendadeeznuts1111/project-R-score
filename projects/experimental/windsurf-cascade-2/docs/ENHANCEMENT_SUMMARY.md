@@ -141,7 +141,7 @@ I have successfully enhanced the existing Local-First Private Registry system wi
 ## 🏗️ Architecture Enhancements
 
 ### Modular Design
-```
+```text
 src/
 ├── security/          # Security middleware
 ├── monitoring/        # Performance monitoring

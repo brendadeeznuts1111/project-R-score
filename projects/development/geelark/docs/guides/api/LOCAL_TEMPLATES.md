@@ -7,12 +7,12 @@ Bun's templater supports custom templates from your local file system, allowing 
 ## Template Locations
 
 ### Global Templates (System-wide)
-```
+```text
 $HOME/.bun-create/<name>/
 ```
 
 ### Project-Specific Templates
-```
+```text
 <project root>/.bun-create/<name>/
 ```
 
@@ -24,7 +24,7 @@ export BUN_CREATE_DIR=/path/to/templates
 
 ## Priority Order
 
-```
+```text
 1. Project-specific (.bun-create/)
 2. Global ($HOME/.bun-create/)
 3. Custom path ($BUN_CREATE_DIR/)
@@ -71,7 +71,7 @@ I've created a complete template at `~/.bun-create/geelark-upload/`:
 
 ### Template Structure
 
-```
+```text
 ~/.bun-create/geelark-upload/
 ├── package.json          # Template package.json with placeholders
 ├── README.md             # Template README with placeholders
@@ -246,7 +246,7 @@ bun create my-template my-app
 ## Template Best Practices
 
 ### 1. Keep Templates Minimal
-```
+```text
 ✅ Include:
   - package.json
   - tsconfig.json

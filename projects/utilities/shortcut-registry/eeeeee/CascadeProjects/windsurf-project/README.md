@@ -373,7 +373,7 @@ kubectl apply -f k8s/sovereign/
 
 ## 📁 **Project Structure**
 
-```
+```text
 📁 Sovereign Unit \[01\] Ecosystem
 ├── 🏛️ src/pools/
 │   ├── sovereign-apy-leaderboard.ts    # Core Sovereign architecture

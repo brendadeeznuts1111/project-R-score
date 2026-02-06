@@ -150,7 +150,7 @@ Returns JSON health check with Bun server metrics.
 Returns Prometheus-formatted metrics including Bun server metrics.
 
 **Response** (Prometheus format):
-```
+```text
 # HELP bun_server_pending_requests Active HTTP requests
 # TYPE bun_server_pending_requests gauge
 bun_server_pending_requests 5

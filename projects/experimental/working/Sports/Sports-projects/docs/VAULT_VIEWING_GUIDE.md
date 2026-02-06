@@ -125,7 +125,7 @@ component_ref: "[#REF:SUGGESTION_110]"
 
 ### File Tree in Obsidian
 
-```
+```text
 📁 feed (vault root)
 ├── 📄 suggestion.json                    ← Main config
 ├── 📁 config/

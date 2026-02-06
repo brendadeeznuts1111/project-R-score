@@ -3,7 +3,7 @@
 ## Problem
 The Content Manager CLI was failing when trying to create blog posts because it attempted to upload files to Cloudflare R2 without proper credentials configured:
 
-```
+```text
 ❌ Upload error for blog/getting-started-with-duoplus.json: 
 error: Upload failed: 
       at uploadFile (/Users/nolarose/d-network/src/services/r2StorageService.ts:75:19)
@@ -51,7 +51,7 @@ Made R2 uploads optional with automatic fallback to local file storage, allowing
 
 ### ✅ Tests Passing
 All 29 tests pass with 0 failures:
-```
+```text
 bun run test:services
 ✅ 29 pass, 0 fail, 78 expect() calls
 ```
@@ -68,7 +68,7 @@ bun run content createPost "Getting Started with DuoPlus" "dev@duoplus.com"
 ```
 
 Output:
-```
+```text
 ✅ Post created: getting-started-with-duoplus
    ID: post_1769039740066_vwbr4wsfzom
    Status: draft

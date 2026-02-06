@@ -6,7 +6,7 @@
 
 ## **📊 IMPLEMENTATION VALIDATION: 100% COMPLETE ✅**
 
-```
+```text
 🎨 Complete Bun.color Format Demonstration
 ==========================================
 
@@ -41,7 +41,7 @@ Bun.color([255, 0, 0], "css"); // "red"
 ```
 
 **Our Implementation Results:**
-```
+```text
 1. "red"                     → "red" ✅
 2. 16711680                  → "#f000" ✅
 3. "#f00"                    → "red" ✅
@@ -81,7 +81,7 @@ Bun.color("red", "ansi-16"); // "\u001b[38;5;\tm"
 ```
 
 **Our Implementation Results:**
-```
+```text
 Auto-detecting terminal capabilities...
 Manual ANSI format selection:
 ansi      : ● #10B981 ✅
@@ -116,7 +116,7 @@ Bun.color("rgb(255, 0, 0)", "number"); // 16711680
 ```
 
 **Our Implementation Results:**
-```
+```text
 Compact database representations:
 1. "red"                     → 16711680 ✅
 2. "#ff0000"                 → 16711680 ✅
@@ -126,7 +126,7 @@ Compact database representations:
 ```
 
 **Enhanced Canvas Integration:**
-```
+```text
 🗄️  Canvas Database Storage:
 Storing colors as numbers in database:
 service:bridge      : 1096065
@@ -146,7 +146,7 @@ Bun.color("hsl(0, 0%, 50%)", "{rgba}"); // { r: 128, g: 128, b: 128, a: 1 }
 ```
 
 **Our Implementation Results:**
-```
+```text
 RGB object extraction:
 1. red                  → {"r":255,"g":0,"b":0} ✅
 2. hsl(0, 0%, 50%)      → {"r":128,"g":128,"b":128} ✅
@@ -159,7 +159,7 @@ RGBA object extraction:
 ```
 
 **Enhanced Canvas Integration:**
-```
+```text
 🎨 Canvas Color Analysis:
 Input: #10B981
 Normalized: #10b981
@@ -178,7 +178,7 @@ Bun.color("hsl(0, 0%, 50%)", "[rgba]"); // [128, 128, 128, 255]
 ```
 
 **Our Implementation Results:**
-```
+```text
 RGB array extraction (all values 0-255):
 1. red                  → [255, 0, 0] ✅
 2. hsl(0, 0%, 50%)      → [128, 128, 128] ✅
@@ -191,7 +191,7 @@ RGBA array extraction (alpha as 0-255):
 ```
 
 **Enhanced Canvas Integration:**
-```
+```text
 🎨 Canvas Color Processing:
 Processing canvas colors for image generation:
 service:bridge      : [16, 185, 129, 255]
@@ -211,7 +211,7 @@ Bun.color("hsl(0, 0%, 50%)", "hex"); // "#808080"
 ```
 
 **Our Implementation Results:**
-```
+```text
 Lowercase hex strings:
 1. red                  → #ff0000 ✅
 2. hsl(0, 0%, 50%)      → #808080 ✅
@@ -224,7 +224,7 @@ Uppercase hex strings:
 ```
 
 **Enhanced Canvas Integration:**
-```
+```text
 🌐 Canvas Web Integration:
 Generating hex colors for web components:
 active         : #10b981 / #10B981
@@ -241,7 +241,7 @@ experimental   : #8b5cf6 / #8B5CF6
 > "If the input is unknown or fails to parse, Bun.color returns null."
 
 **Our Implementation Results:**
-```
+```text
 Testing invalid inputs (should return null):
 1. "not-a-color"             → null ✅
 2. ""                        → null ✅
@@ -253,7 +253,7 @@ Testing invalid inputs (should return null):
 ```
 
 **Enhanced Canvas Integration:**
-```
+```text
 🎨 Canvas Error Handling:
 valid     : #ff0000 ✅
 invalid   : null ❌
@@ -277,7 +277,7 @@ empty     : null ❌
 | **[rgba]** | Not specified | **9,847,773 ops/sec** | ✅ Excellent |
 
 ### **🚀 Performance Test Results**
-```
+```text
 ⚡ 8. Performance Comparison
 ──────────────────────────────────────────────────
 Testing format conversion performance:
@@ -401,7 +401,7 @@ const displayColor = Bun.color(canvasColors["service:bridge"], "hex");
 
 ## **🎉 FINAL VALIDATION SUMMARY**
 
-```
+```text
 🎯 9. Canvas Integration Summary
 ──────────────────────────────────────────────────
 📋 How our canvas system uses each format:

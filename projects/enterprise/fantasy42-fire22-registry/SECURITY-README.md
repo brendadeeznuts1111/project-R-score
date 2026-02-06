@@ -229,7 +229,7 @@ bun run security:pre-commit
 
 ### Report Locations
 
-```
+```text
 security-reports/
 ├── security-audit-YYYY-MM-DD.json    # Full security reports
 ├── snyk-report.json                  # Snyk vulnerability scan

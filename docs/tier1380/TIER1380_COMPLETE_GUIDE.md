@@ -437,7 +437,7 @@ console.log("Compression ratio:", snapshot.compressionRatio);
 
 ## 📁 **Complete File Structure**
 
-```
+```text
 /Users/nolarose/Projects/
 ├── tier1380-config-manager.ts          # Configuration management system
 ├── tier1380-enhanced-citadel.ts         # Enhanced Tier-1380 implementation

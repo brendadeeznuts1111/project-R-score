@@ -23,7 +23,7 @@
 ## **🚨 Current Failure Status**
 
 ### **Failure Summary**
-```
+```text
 📊 Total Failures: 3 categories
 🔴 Critical: 0
 🟡 High: 2
@@ -104,7 +104,7 @@ bun endpoint-aware-validator.ts --check-consistency
 ## **📋 Detailed Failure Breakdown**
 
 ### **1. 🔴 Endpoint Uniqueness (High Priority)**
-```
+```text
 Issue: 42 endpoints share same base URL (/docs/api/utils)
 Impact: Navigation difficulty, SEO issues, bookmarking problems
 Affected: All utils endpoints
@@ -112,7 +112,7 @@ Affected: All utils endpoints
 
 **Fix Options:**
 #### **Option A: Restructure to Direct URLs** (Recommended)
-```
+```text
 Type: Manual
 Time: 2-4 hours
 Risk: Medium
@@ -129,7 +129,7 @@ Files to modify:
 ```
 
 #### **Option B: Add Main Utils Page**
-```
+```text
 Type: Manual
 Time: 1-2 hours
 Risk: Low
@@ -145,14 +145,14 @@ Files to modify:
 ```
 
 ### **2. 🔴 Hierarchy Structure (High Priority)**
-```
+```text
 Issue: Fragment endpoints without corresponding main pages
 Impact: Broken navigation, poor user experience
 Affected: Utils documentation structure
 ```
 
 **Fix Option:**
-```
+```text
 Type: Manual
 Time: 3-5 hours
 Risk: Medium
@@ -168,7 +168,7 @@ Files to modify:
 ```
 
 ### **3. 🟠 Consistency Patterns (Medium Priority)**
-```
+```text
 Issue: Inconsistent endpoint patterns (CLI vs Utils)
 Impact: Inconsistent user experience, maintenance complexity
 Affected: Overall documentation system
@@ -176,7 +176,7 @@ Affected: Overall documentation system
 
 **Fix Options:**
 #### **Option A: Standardize Patterns** (Comprehensive)
-```
+```text
 Type: Manual
 Time: 4-6 hours
 Risk: High
@@ -193,7 +193,7 @@ Files to modify:
 ```
 
 #### **Option B: Document Differences** (Quick Fix)
-```
+```text
 Type: Auto-fix available
 Time: 1-2 hours
 Risk: Low
@@ -288,7 +288,7 @@ bun endpoint-aware-validator.ts --check-consistency
 ## **📊 Progress Tracking**
 
 ### **Before Fixes**
-```
+```text
 📊 Validation Summary
 Total Tests: 4
 Passed: 1
@@ -297,7 +297,7 @@ Success Rate: 25.0%
 ```
 
 ### **After Quick Fixes (Expected)**
-```
+```text
 📊 Validation Summary
 Total Tests: 4
 Passed: 2
@@ -306,7 +306,7 @@ Success Rate: 50.0%
 ```
 
 ### **After All Fixes (Expected)**
-```
+```text
 📊 Validation Summary
 Total Tests: 4
 Passed: 4

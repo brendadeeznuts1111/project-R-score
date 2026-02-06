@@ -203,7 +203,7 @@ finance.duoplus.android. IN A 192.168.1.103
 ## Deployment Architecture
 
 ### Single Domain Strategy
-```
+```text
 duoplus.android
 ├── ops.duoplus.android (operations)
 ├── finance.duoplus.android (payments)
@@ -212,7 +212,7 @@ duoplus.android
 ```
 
 ### Phone Allocation
-```
+```text
 Total Agents: 100
 ├── Virtual Numbers: 80 (Twilio, Google Voice)
 ├── Physical SIMs: 20 (Mint Mobile, Google Fi)
@@ -220,7 +220,7 @@ Total Agents: 100
 ```
 
 ### Cost Structure
-```
+```text
 Monthly Costs (100 agents):
 ├── Virtual Phones: $400 ($4-5 each)
 ├── Physical SIMs: $600 ($30 each)

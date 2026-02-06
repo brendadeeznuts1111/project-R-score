@@ -60,7 +60,7 @@
 
 ## 📁 Final Directory Structure
 
-```
+```text
 quantum-terminal-dashboard/
 ├── README.md                          # Main entry point
 ├── package.json

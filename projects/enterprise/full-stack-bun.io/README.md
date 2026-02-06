@@ -1443,7 +1443,7 @@ bun run gh:workflow deploy staging
 # Lockfile protection
 bun run lockfile:check         # Full audit
 bun run lockfile:baseline      # Establish baseline
-```
+```text
 
 ### **GH.WORKFLOW - GitHub CLI Integration**
 
@@ -1454,7 +1454,7 @@ Automated GitHub operations with DDA tagging and Cursor Rules compliance:
 bun run gh:workflow pr feature/auth "add authentication" "Implements user login with JWT"
 
 # Result: [SCOPE:api][TPE:feature][DDD:authentication] add authentication
-```
+```text
 
 **Features:**
 - **DDA Tagging**: Automatic `[SCOPE:type][TPE:category][DDD:domain]` tagging
@@ -1475,7 +1475,7 @@ bun run lockfile:check
 
 # Comprehensive audit
 bun run lockfile:check audit
-```
+```text
 
 **Protection Mechanisms:**
 - **SHA-256 Integrity**: Cryptographic verification against baseline
@@ -1498,7 +1498,7 @@ The `.git/hooks/pre-commit` hook enforces Cursor Rules compliance:
 ✅ Type checking
 
 🎉 All checks passed! Ready to commit.
-```
+```text
 
 **Enforced Checks:**
 - Lockfile integrity verification
@@ -1527,7 +1527,7 @@ rg 'AGENT\.CODER\.RULE' --type md
 
 # Search for specific rule patterns
 sg -p 'rule:$R' -f md
-```
+```text
 
 #### **Available Agent Rules:**
 
@@ -1551,7 +1551,7 @@ const code = await coder("implement user authentication", "JWT-based auth");
 const review = await reviewer("function validateUser() { ... }", "security,performance");
 const install = await install("zod", { dev: true });
 const result = await workflow("map-reduce", { input: ["file1", "file2"] });
-```
+```text
 
 **Available Commands:**
 - `/coder` - Code generation and implementation
@@ -1563,7 +1563,7 @@ const result = await workflow("map-reduce", { input: ["file1", "file2"] });
 # Find command spawn patterns
 sg -p '\[CMD\]\[$C\]\[SPAWN\]' -f ts
 rg 'CMD\.\w+\.SPAWN' --type ts
-```
+```text
 
 ### **Command Registry - Slash Command Management**
 
@@ -1587,7 +1587,7 @@ bun run commands:registry help
 
 # Export for Cursor IDE
 bun run commands:registry export
-```
+```text
 
 **Command Structure:**
 ```json
@@ -1599,7 +1599,7 @@ bun run commands:registry export
   "examples": [...],
   "tags": ["CMD", "CODER", "SPAWN"]
 }
-```
+```text
 
 ### **Decentralized Agent Store - IPFS + On-Chain Registry**
 
@@ -1620,7 +1620,7 @@ bun run agent:store check-perms "file-system-read,network-access"
 
 # Execute in sandbox environment
 bun run agent:store sandbox-exec @nolarose/security-scanner@1.0.0 '{"target": "."}'
-```
+```text
 
 **Decentralized Features:**
 - **IPFS Storage**: Content-addressed storage with CID-based integrity
@@ -1639,7 +1639,7 @@ bun run ipfs:client get QmCID123 output.ts
 
 # Pin content for persistence
 bun run ipfs:client pin QmCID123
-```
+```text
 
 **Blockchain Registry:**
 ```bash
@@ -1654,7 +1654,7 @@ bun run blockchain:registry versions alice my-agent
 
 # Registry statistics
 bun run blockchain:registry stats
-```
+```text
 
 ```bash
 # Find agent bundle references
@@ -1664,7 +1664,7 @@ rg '@\w+/\w+@\d+\.\d+\.\d+' --type json
 # Find capability declarations
 sg -p 'capabilities:\n  - $CAP' -f yaml
 rg 'STORE\.\w+\.CAP' --type yaml
-```
+```text
 
 ### **YAML Workflow Engine - Map-Reduce & Automation**
 
@@ -1675,7 +1675,7 @@ rg 'STORE\.\w+\.CAP' --type yaml
 bun run workflow:run map-reduce '{"input": ["file1", "file2", "file3"]}'
 bun run workflow:run reviewer-chain '{"code": "function() {}"}'
 bun run workflow:run release-bot '{"version": "1.2.0"}'
-```
+```text
 
 #### **Available Workflows:**
 
@@ -1696,7 +1696,7 @@ bun run workflow:run release-bot '{"version": "1.2.0"}'
 # Find workflow definitions
 sg -p 'workflow:$W' -f yaml
 rg 'WORKFLOW\.\w+\.YAML' --type yaml
-```
+```text
 
 ### **Visual Workflow Designer - Drag-Drop YAML Creation**
 
@@ -1713,7 +1713,7 @@ bun run workflow:prompt convert "deploy to production after tests pass"
 
 # Save generated workflow
 bun run workflow:prompt save my-deployment "deploy main branch after CI passes"
-```
+```text
 
 **Designer Features:**
 - **Drag & Drop**: Visual component palette with triggers, actions, conditions, approvals
@@ -1743,7 +1743,7 @@ bun run workflow:prompt save my-deployment "deploy main branch after CI passes"
 
 # Release Process
 "build artifacts, run integration tests, then deploy with approval"
-```
+```text
 
 **HITL Configuration:**
 ```yaml
@@ -1753,13 +1753,13 @@ bun run workflow:prompt save my-deployment "deploy main branch after CI passes"
   timeout: 24h
   criteria: ['security-audit', 'performance-test']
   auto_reject: ['vulnerabilities_found']
-```
+```text
 
 ```bash
 # Find HITL workflow patterns
 sg -p 'humanApproval:$BOOL' -f yaml
 rg 'WORKFLOW\.\w+\.HITL' --type yaml
-```
+```text
 
 ### **AST Rewriter Agent - Code Transformation**
 
@@ -1777,7 +1777,7 @@ bun run ast:rewrite dry-run src/app.ts react-memo-optimization
 
 # List available transformation rules
 bun run ast:rewrite list-rules react typescript
-```
+```text
 
 **Built-in Rules:**
 - `react-class-to-functional` - Convert React class components to functional components
@@ -1790,7 +1790,7 @@ bun run ast:rewrite list-rules react typescript
 ```bash
 # Create custom transformation rule
 bun run ast:rewrite create-rule '{"id":"custom-rule","name":"Custom Transform","pattern":"old_pattern","replacement":"new_code","language":"javascript"}'
-```
+```text
 
 ### **Temporal Engine - Cron-Based Rule Scheduling**
 
@@ -1808,7 +1808,7 @@ bun run temporal:engine list-rules
 
 # Generate schedule report
 bun run temporal:engine report
-```
+```text
 
 **Cron Rule Format:**
 ```srl
@@ -1825,7 +1825,7 @@ REACT:
   - retry: exponential_backoff
 AUDIT_TRAIL:
   - v1.0.0: Daily security audit automation
-```
+```text
 
 **Temporal Workflows:**
 - **Workflow Scheduling**: Cron-based workflow execution
@@ -1847,7 +1847,7 @@ bun run voice:streamer list-sessions
 
 # Generate voice session report
 bun run voice:streamer report
-```
+```text
 
 **Voice Commands:**
 - **"implement user authentication"** → Code generation
@@ -1879,7 +1879,7 @@ ws.onmessage = (event) => {
     console.log('Executed:', data.command.intent);
   }
 };
-```
+```text
 
 **Voice Features:**
 - **Real-time Streaming**: Continuous audio processing over WebSocket
@@ -1924,7 +1924,7 @@ scripts/
 ├── temporal-engine.ts       # Cron-based rule scheduling
 ├── voice-streamer.ts        # Voice channel streaming
 └── prompt-to-workflow.ts    # NL-to-workflow converter
-```
+```text
 
 ### **Quick Start Examples**
 
@@ -1956,7 +1956,7 @@ bun run ast:rewrite list-rules                    # AST transformation rules
 bun run temporal:engine start                     # Cron-based scheduling
 bun run ipfs:client add src/agent.ts              # IPFS storage
 bun run voice:streamer start-session client-123   # Voice streaming
-```
+```text
 
 ---
 
@@ -2015,7 +2015,7 @@ export class SPALabMetrics {
     `).all();
   }
 }
-```
+```text
 
 ## 🎉 **Final Verification**
 
@@ -2048,7 +2048,7 @@ bun build --compile my-portal/packages/templates/bun-transformer/spa-lab-app.ts 
 
 # 5. Check performance metrics
 sqlite3 spa-lab-metrics.db "SELECT * FROM spa_lab_metrics ORDER BY timestamp DESC LIMIT 10;"
-```
+```text
 
 **This is truly a world-class demonstration of Bun 1.3's capabilities!** The SPA Lab perfectly showcases the revolutionary "HTML imports + hot-reload + unified routing + full-stack compile" story in an interactive, production-ready package. 🚀
 

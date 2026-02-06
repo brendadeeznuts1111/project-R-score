@@ -95,7 +95,7 @@ cp main.js manifest.json styles.css ~/.obsidian/plugins/claudian/
 
 ## 📁 Build Artifacts
 
-```
+```text
 main.js          1.4 MB   Compiled plugin
 manifest.json    332 B    Plugin metadata
 styles.css       93 KB    Plugin styles

@@ -176,7 +176,7 @@ if (result.success) {
 
 ### **📈 Expected Performance**
 
-```
+```text
 Phase 1 (Week 1): 20 devices → 19-20 accounts (95-98% success)
 Phase 2 (Week 2): 50 devices → 48-49 accounts (96-98% success)
 Phase 3 (Month 1): 200 devices → 190-196 accounts (95-98% success)

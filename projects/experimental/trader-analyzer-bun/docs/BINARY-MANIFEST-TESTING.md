@@ -213,7 +213,7 @@ performanceCategory: "fast" | "medium" | "slow"
 
 ### Default Run (Seed 42)
 
-```
+```text
 ✅ 23 pass
 ✅ 0 fail
 ✅ 12 snapshots
@@ -222,7 +222,7 @@ performanceCategory: "fast" | "medium" | "slow"
 
 ### With Different Seed
 
-```
+```text
 ✅ Non-snapshot tests: Pass
 ⚠️ Snapshot tests: Fail (expected - different seed produces different results)
 ```
@@ -283,7 +283,7 @@ bun test test/binary-manifest.test.ts -t "8.2.6.6.2.3.0"
 
 ### Successful Run
 
-```
+```text
 bun test v1.3.3
 
 test/binary-manifest.test.ts:
@@ -301,7 +301,7 @@ Ran 23 tests across 1 file. [25.00ms]
 
 ### Snapshot Mismatch
 
-```
+```text
 (fail) 8.2.6.6.1.2.0: computeHash with seed-based content produces snapshot
 - Expected: "1156018f5367a133..."
 + Received: "different-hash-value..."

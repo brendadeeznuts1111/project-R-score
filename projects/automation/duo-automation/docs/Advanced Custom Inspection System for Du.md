@@ -263,7 +263,7 @@ console.log(monitor.getDashboard());
 
 ### 📊 Expected Output
 
-```
+```text
 🏢 ENTERPRISE SCOPE
 ──────────────────────────────────────────────────
 🌐 Domain:    apple.factory-wager.com
@@ -475,7 +475,7 @@ console.log(scope);
 ```
 
 **Output:**
-```
+```text
 🏢 ENTERPRISE SCOPE
 ──────────────────────────────────────────────────
 🌐 Domain:    apple.factory-wager.com
@@ -516,7 +516,7 @@ console.log(summary);
 ```
 
 **Output:**
-```
+```text
 ┌────────────────────────────────────────────────┐
 │ Connection Summary                            │
 ├────────────────────────────────────────────────┤
@@ -595,7 +595,7 @@ The inspection system is optimized for performance:
 
 ### Performance Benchmark Results
 
-```
+```text
 Running 1000 iterations per object type...
 Scope               : 0.0028ms avg (2.80ms total)
 ConnectionStats     : 0.0016ms avg (1.65ms total)

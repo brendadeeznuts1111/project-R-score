@@ -10,7 +10,7 @@ The RSS Feed Optimization project uses Bun's built-in test runner for comprehens
 
 ### Test Organization
 
-```
+```text
 tests/
 ├── unit/                 # Unit tests
 │   ├── rss-generator.test.js

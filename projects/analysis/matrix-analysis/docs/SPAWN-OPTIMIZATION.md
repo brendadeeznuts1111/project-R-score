@@ -59,7 +59,7 @@ bun run spawn:check
 ### Expected Results
 
 **Linux with close_range():**
-```
+```text
 ⏱️  Spawn Performance (100 iterations)
   Min:    0.38ms
   Median: 0.42ms
@@ -71,7 +71,7 @@ Status: ✅ Excellent
 ```
 
 **macOS ARM64:**
-```
+```text
 ⏱️  Spawn Performance (100 iterations)
   Min:    0.65ms
   Median: 0.72ms

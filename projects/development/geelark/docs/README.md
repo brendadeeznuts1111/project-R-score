@@ -184,7 +184,7 @@ Production deployment and DevOps.
 
 ## 📂 Directory Structure
 
-```
+```text
 docs/
 ├── getting-started/       # 🚀 Setup, user guide, deployment
 ├── guides/                # 📚 Feature guides and tutorials

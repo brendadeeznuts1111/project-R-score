@@ -21,7 +21,7 @@ $XDG_CONFIG_HOME/.bunfig.toml
 
 ### **Configuration Hierarchy**
 
-```
+```text
 CLI Flags > Local bunfig.toml > Global bunfig.toml > Defaults
 ```
 

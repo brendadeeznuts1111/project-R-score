@@ -13,7 +13,7 @@ regulatory compliance.
 
 ### Domain Vision
 
-```
+```text
 Raw Transactions → Business Intelligence → Regulatory Compliance → Strategic Insights
      ↓                    ↓                        ↓                    ↓
 Collections     Financial Reporting         Regulatory Filings     Executive Dashboards

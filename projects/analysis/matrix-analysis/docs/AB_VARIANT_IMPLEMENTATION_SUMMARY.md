@@ -136,7 +136,7 @@ bun run ab:build:prod
 
 **Build Comparison Results**:
 
-```
+```text
 Variant A: 0.58 KB
 Variant B: 0.58 KB
 Diff:      0 bytes (0.00%)
@@ -220,13 +220,13 @@ bun run ab:build:compare
 
 **Cookie Present**:
 
-```
+```text
 Parse: 396ns + Extract: 84ns = 480ns total
 ```
 
 **Cookie Missing (Build-Time Fallback)**:
 
-```
+```text
 Define lookup: 0ns (literal inlined!)
 ```
 
@@ -266,7 +266,7 @@ bun -e 'let h="ab-variant-"+Array.from({length:10},(_,i)=>`v${i}=${i%2?"on":"off
 
 ### Test Suite: 12/12 Passed ✅
 
-```
+```text
 ✓ Parse empty cookie
 ✓ Parse single A/B cookie
 ✓ Parse prefixed filter
@@ -415,7 +415,7 @@ export default {
 
 ## 📦 File Manifest
 
-```
+```text
 examples/
   ab-variant-cookies.ts          # Core A/B cookie system (421 lines)
   ab-variant-omega-pools.ts      # Omega pools integration (454 lines)

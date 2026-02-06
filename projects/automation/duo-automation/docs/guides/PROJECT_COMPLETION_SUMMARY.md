@@ -96,7 +96,7 @@ The DuoPlus Bun Workspaces & Catalogs project has been **successfully completed*
 ## 🚀 **Production Deployment**
 
 ### **🌐 Deployment URLs**
-```
+```text
 Enhanced Status Page: https://api.apple.factory-wager.com/status
 Status Badge: https://api.apple.factory-wager.com/status/api/badge
 System Matrix: https://api.apple.factory-wager.com/api/v1/system-matrix
@@ -107,7 +107,7 @@ Local: http://localhost:3000/status
 ```
 
 ### **📊 Available Endpoints**
-```
+```text
 GET /status                              - Enhanced status page UI
 GET /status/api/data                     - JSON status data
 GET /status/api/badge                    - SVG status badge

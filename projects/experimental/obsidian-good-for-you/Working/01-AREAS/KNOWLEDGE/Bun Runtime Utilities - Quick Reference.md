@@ -26,7 +26,7 @@ Bun.inspect.table(data);
 ```
 
 **Output:**
-```
+```text
 ┌───┬─────────┬─────┬─────────┬───────────┬────────┬────────┬────────┬──────┬─────────┬────────┬────────┬────────┬─────────┬────────┐
 │ # │  name   │ age │  days   │ months  │   role    │ salary │ height │ weight │ sex  │ miles   │   km   │transport│  feet  │   HSL   │  HEX   │
 ├───┼─────────┼─────┼─────────┼───────────┼────────┼────────┼────────┼──────┼─────────┼────────┼────────┼────────┼─────────┼────────┤
@@ -123,7 +123,7 @@ Bun.inspect.table(summaryData);
 ```
 
 **Statistics Output:**
-```
+```text
 📊 Salary Statistics Summary:
 ┌───┬─────────────────┬─────────────────┐
 │ # │     metric      │      value       │
@@ -1128,7 +1128,7 @@ Bun.inspect.table(data, {
   showHeader: true,
   showIndex: true
 });
-```
+```text
 
 ---
 
@@ -1146,7 +1146,7 @@ const stream = Bun.file("large.txt").stream();
 for await (const chunk of stream) {
   console.log(chunk);
 }
-```
+```text
 
 ### **File Writing**
 ```javascript
@@ -1158,7 +1158,7 @@ await Bun.write("data.json", JSON.stringify(data));
 
 // Write binary data
 await Bun.write("binary.bin", new Uint8Array([1, 2, 3]));
-```
+```text
 
 ### **File Information**
 ```javascript
@@ -1166,7 +1166,7 @@ const file = Bun.file("example.txt");
 console.log(file.size);     // File size in bytes
 console.log(file.type);     // MIME type
 console.log(file.lastModified); // Timestamp
-```
+```text
 
 ---
 
@@ -1195,7 +1195,7 @@ const server = Bun.serve({
     return new Response("Not found", { status: 404 });
   }
 });
-```
+```text
 
 ### **HTTP Client**
 ```javascript
@@ -1209,7 +1209,7 @@ const result = await fetch("https://api.example.com/submit", {
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ key: "value" })
 });
-```
+```text
 
 ---
 
@@ -1224,7 +1224,7 @@ await Bun.sleep(1000); // Sleep 1 second
 const controller = new AbortController();
 setTimeout(() => controller.abort(), 500);
 await Bun.sleep(1000, controller.signal); // Will abort after 500ms
-```
+```text
 
 ### **Bun.spawn()**
 ```javascript
@@ -1237,7 +1237,7 @@ const proc = Bun.spawn(["ls", "-la"], {
 // Get output
 const stdout = await new Response(proc.stdout).text();
 const exitCode = await proc.exited;
-```
+```text
 
 ---
 
@@ -1258,7 +1258,7 @@ const files = await Bun.glob(["**/*.js", "**/*.ts", "**/*.json"]);
 const filteredFiles = await Bun.glob("**/*", {
   ignore: ["node_modules/**", "*.log"]
 });
-```
+```text
 
 ---
 
@@ -1283,7 +1283,7 @@ await Bun.install({
     "@types/node": "^20.0.0"
   }
 });
-```
+```text
 
 ---
 
@@ -1297,7 +1297,7 @@ const nodeEnv = process.env.NODE_ENV;
 
 // Load .env file automatically (Bun does this by default)
 const dbUrl = process.env.DATABASE_URL;
-```
+```text
 
 ### **Configuration**
 ```javascript
@@ -1307,7 +1307,7 @@ console.log(Bun.version);
 // Get platform info
 console.log(Bun.platform); // "darwin", "linux", "win32"
 console.log(Bun.arch); // "x64", "arm64", etc.
-```
+```text
 
 ---
 
@@ -1328,7 +1328,7 @@ const users: User[] = [
 
 // Run directly with Bun
 // bun run app.ts
-```
+```text
 
 ### **TypeScript Configuration**
 ```json
@@ -1342,7 +1342,7 @@ const users: User[] = [
     "esModuleInterop": true
   }
 }
-```
+```text
 
 ---
 
@@ -1353,14 +1353,14 @@ const users: User[] = [
 // Use Bun.file() for better performance
 const file = Bun.file("large-data.json");
 const data = await file.json(); // Faster than fs.readFile + JSON.parse
-```
+```text
 
 ### **Efficient String Operations**
 ```javascript
 // Bun has optimized string operations
 const text = await Bun.file("large.txt").text();
 const lines = text.split("\n"); // Fast line splitting
-```
+```text
 
 ### **Memory Management**
 ```javascript
@@ -1369,7 +1369,7 @@ const stream = Bun.file("huge-file.txt").stream();
 for await (const chunk of stream) {
   // Process chunk by chunk to save memory
 }
-```
+```text
 
 ---
 

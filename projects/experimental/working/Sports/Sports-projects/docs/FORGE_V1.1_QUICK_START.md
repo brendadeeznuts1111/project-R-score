@@ -315,7 +315,7 @@ bun forge suggest activate \
 
 ## 📚 Documentation Structure
 
-```
+```text
 docs/
 ├── FORGE_SUGGESTION_V1.1_UNIFIED.md     ← Complete specification
 ├── FORGE_V1.1_QUICK_START.md            ← This guide
@@ -340,7 +340,7 @@ find . -name "*v1.1*" -o -name "*suggestion*" | grep -E "(\.md|\.json|\.toml|\.j
 
 ### Component Map
 
-```
+```text
 suggestion.json (Core Config)
 ├── Architecture → Bun-first, Cloudflare Workers
 ├── Protocols → Subprotocol negotiation, Signed feedback

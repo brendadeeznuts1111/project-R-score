@@ -30,7 +30,7 @@ console.log(text); // => "1.3.3\n"
 **Problem:** TypeScript types don't reflect that ReadableStream has `.text()` method
 
 **TypeScript Error:**
-```
+```text
 Property 'text' does not exist on type 'ReadableStream<Uint8Array<ArrayBuffer>>'
 ```
 

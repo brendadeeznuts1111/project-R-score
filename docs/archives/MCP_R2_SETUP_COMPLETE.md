@@ -59,7 +59,7 @@ bun run fw-docs generate --api "Bun.file" --context=r2
 ## 📊 **R2 Storage Structure**
 
 Your `scanner-cookies` bucket now organizes MCP data as:
-```
+```text
 scanner-cookies/
 ├── mcp/
 │   ├── diagnoses/          # 🎯 Error diagnoses with fixes
@@ -96,7 +96,7 @@ scanner-cookies/
 
 With R2 integration, Claude Desktop gains these superpowers:
 
-```
+```text
 User: "Diagnose this Bun.secrets region error and store the result"
 
 Claude: [Searches your actual audit history in R2,

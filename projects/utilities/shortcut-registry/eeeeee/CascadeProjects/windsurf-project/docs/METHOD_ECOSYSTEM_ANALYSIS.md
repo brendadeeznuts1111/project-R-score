@@ -124,7 +124,7 @@ static validatePoolDetails(poolDetails: any): ValidationResult {
 
 ## 📊 **Data Flow Architecture**
 
-```
+```text
 User Input → searchPools("Johnson")
                 ↓
         Lightweight Results (poolId, poolName, apy, tier)

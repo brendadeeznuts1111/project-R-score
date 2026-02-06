@@ -402,7 +402,7 @@ const buildConfig = {
 
 ### Build Output Structure
 
-```
+```text
 dist/executables/
 ├── api-client/
 │   ├── windows/

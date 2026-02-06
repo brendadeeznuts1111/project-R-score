@@ -158,7 +158,7 @@ bun build --compile --minify --target bun ./cli-enterprise.ts --outfile duoplus-
 | **Error Details** | `console.log("Error occurred:", error);` | `console.log("Error details: %j", { message: error.message });` | Enhanced debugging |
 
 #### **Output Example:**
-```
+```text
 Processing payment: {"amount":25.5,"to":"alice","familyId":"FAM123"}
 ```
 
@@ -182,7 +182,7 @@ Processing payment: {"amount":25.5,"to":"alice","familyId":"FAM123"}
 
 ### **✅ Comprehensive Integration Results**
 
-```
+```text
 🚀 Latest Bun Features Integration Metrics:
 ├── Total Features Integrated: 28
 ├── Average Performance Improvements: 4.1x

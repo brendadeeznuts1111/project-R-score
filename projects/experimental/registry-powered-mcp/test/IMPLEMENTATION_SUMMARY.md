@@ -11,7 +11,7 @@ Complete Bun-native testing infrastructure for registry-powered-mcp, aligned wit
 - **Execution time: ~1 second** for full suite
 
 ### Test Distribution
-```
+```text
 Unit Tests:          53 tests (5 files)
 Integration Tests:   22 tests (3 files)
 Performance Tests:   21 tests (4 files)
@@ -19,7 +19,7 @@ Regression Tests:    Framework ready (0 tests initially)
 ```
 
 ### Code Organization
-```
+```text
 test/
 ├── _harness/        6 files (utilities, fixtures, matchers, performance)
 ├── _fixtures/       5 files (configs, routes, mock data)
@@ -41,7 +41,7 @@ test/
 - Watch mode with hot reload
 
 ### 2. Test Organization (Bun-inspired)
-```
+```text
 test/
 ├── unit/              # Component-level tests
 ├── integration/       # End-to-end flows

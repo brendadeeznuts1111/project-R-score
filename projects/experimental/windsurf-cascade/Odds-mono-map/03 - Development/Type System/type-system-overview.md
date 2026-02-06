@@ -27,7 +27,7 @@ This section documents the comprehensive type system that powers the Odds Protoc
 
 ### **Core Components**
 
-```
+```text
 📁 Type System Structure
 ├── 📄 Technical Types (src/types/)
 │   ├── tick-processor-types.ts           # Core vault definitions

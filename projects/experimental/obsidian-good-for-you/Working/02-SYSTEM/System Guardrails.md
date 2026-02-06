@@ -11,7 +11,7 @@
 - **Lowercase preferred** - Except for proper nouns
 
 ### **📁 Folder Structure Rules**
-```
+```text
 Working/
 ├── 00-MAP-OF-CONTENT.md          # Main navigation (ALWAYS keep at root)
 ├── Welcome.md                    # Homepage (ALWAYS keep at root)

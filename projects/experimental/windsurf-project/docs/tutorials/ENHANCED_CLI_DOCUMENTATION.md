@@ -18,7 +18,7 @@ The Empire Pro CLI v4.0 represents a comprehensive identity intelligence platfor
 
 ### File Structure
 
-```
+```text
 src/
 ├── cli/
 │   └── empire-pro-cli-v4.ts    # Main CLI implementation

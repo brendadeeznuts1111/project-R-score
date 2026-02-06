@@ -31,7 +31,7 @@ I have successfully integrated **Bun's latest performance optimizations** into t
 ## 📊 **ULTIMATE PERFORMANCE METRICS**
 
 ### **✅ Live Performance Results (Demonstrated)**
-```
+```text
 🚀 Ultimate Performance Metrics:
 ├── spawnSync() Operations: 4.99ms average (30x faster)
 ├── CRC32 Hashing (1MB): 0.71ms (1,402 MB/s throughput)

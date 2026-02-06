@@ -27,7 +27,7 @@ I have successfully integrated **Bun's optimized Response.json() with SIMD-optim
 ## 📊 **LIVE PERFORMANCE METRICS**
 
 ### **✅ Response.json() Performance Results (Demonstrated)**
-```
+```text
 🚀 Response.json() Optimization Performance:
 ├── Single Object: 1.05ms (11.23 MB/s throughput)
 ├── Batch Processing: 0.08ms (143.32 MB/s throughput)

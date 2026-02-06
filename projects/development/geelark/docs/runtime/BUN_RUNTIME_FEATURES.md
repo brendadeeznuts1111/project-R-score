@@ -11,7 +11,7 @@ This document tracks the integration status of Bun's runtime features in the gee
 
 ## 📊 Integration Matrix
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────────────────────────┐
 │                          BUN RUNTIME FEATURES INTEGRATION MATRIX                            │
 ├─────────────────┬────────────────┬────────────────┬────────────────┬────────────────────────┤
@@ -274,7 +274,7 @@ LEGEND: █ = Implemented  ░ = Pending
 ## 📁 Implementation Locations
 
 ### Core Modules
-```
+```text
 src/
 ├── context/
 │   └── BunContext.ts          # Bun.main, Bun.env, version checks
@@ -298,14 +298,14 @@ src/
 ```
 
 ### Configuration Files
-```
+```text
 bun.toml                        # Bun configuration
 tsconfig.json                   # TypeScript + JSX config
 package.json                    # Dependencies
 ```
 
 ### Examples
-```
+```text
 examples/
 └── BunRuntimeFeatures.ts       # Comprehensive demo
 ```
@@ -418,7 +418,7 @@ bun --hot --watch examples/BunRuntimeFeatures.ts
 
 ## 📝 Flag Separation Pattern
 
-```
+```text
 bun --hot --watch dev-hq-cli.ts insights --table --json
 │   │      │      │                │        │
 │   Bun      │      Entry Point       CLI Flags

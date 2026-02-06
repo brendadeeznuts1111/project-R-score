@@ -1,7 +1,7 @@
 # Codebase Organization ✅ COMPLETE
 
 ## Structure:
-```
+```text
 teststing/
 ├── src/                    # ✅ Main unified source
 │   ├── cli/               # CLI tools

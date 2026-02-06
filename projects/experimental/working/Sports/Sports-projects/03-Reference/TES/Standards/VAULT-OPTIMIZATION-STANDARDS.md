@@ -109,7 +109,7 @@ tags:: [poetry, gothic]
 **After**: Shallow structure (`00-Inbox/01-Projects/`) with tags
 
 **Structure**:
-```
+```text
 00-Inbox/
 01-Configuration/
 02-Dashboards/

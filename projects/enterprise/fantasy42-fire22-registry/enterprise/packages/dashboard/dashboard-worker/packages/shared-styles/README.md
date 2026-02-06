@@ -360,7 +360,7 @@ function PackageCard({ status, name, children }) {
 
 ### File Structure
 
-```
+```text
 packages/shared-styles/
 ├── highlight.css          # Base system (2.8KB)
 ├── highlight-enhanced.css # Full system (4.1KB)

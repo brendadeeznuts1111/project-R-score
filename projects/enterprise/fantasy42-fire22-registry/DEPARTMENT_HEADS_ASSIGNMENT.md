@@ -42,7 +42,7 @@ governance and delivery velocity.
 
 ### **Executive Reporting Chain**
 
-```
+```text
 CEO (@brendadeeznuts1111)
 ├── CTO (@brendadeeznuts1111)
 │   ├── Technology Director (David Kim)
@@ -58,7 +58,7 @@ CEO (@brendadeeznuts1111)
 
 ### **Domain Leadership Structure**
 
-```
+```text
 Business Domains → Technical Domains → Individual Contributors
 ├── Compliance Lead (Lisa Anderson)
 ├── Customer Support Lead (Mike Johnson)

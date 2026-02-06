@@ -184,7 +184,7 @@ bun run simple-feature-manager.js
 ```
 
 Output:
-```
+```text
 🚀 FEATURE FLAG REPORT
 ==================================================
 
@@ -206,7 +206,7 @@ bun run test-rollout.js
 ```
 
 Output:
-```
+```text
 🧪 Testing Rollout Logic
 
 🔹 Testing user1@example.com:

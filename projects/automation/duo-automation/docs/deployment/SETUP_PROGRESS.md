@@ -16,7 +16,7 @@
 
 ### **✅ MX Records Added**
 
-```
+```text
 ✅ MX Record 1: apple.factory-wager.com → route1.mx.cloudflare.net (Priority: 10)
    ID: 1a363c2f0d6ffa98a312ed82a2d6afdd
    Created: 2026-01-12T12:06:11.425233Z
@@ -73,7 +73,7 @@ bun run create-appleid.js --country=US --city="New York" --verbose --skip-verifi
 
 ## 📧 **Expected Results:**
 
-```
+```text
 ✅ SUCCESS!
 📧 Apple ID: james.smith@apple.factory-wager.com
 👤 User: James Smith

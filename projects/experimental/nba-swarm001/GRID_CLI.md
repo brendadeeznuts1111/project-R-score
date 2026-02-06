@@ -22,7 +22,7 @@ Generates the `.rotgrid.index` file from cached games in the rotation cache.
 **Prerequisites:** Games must be loaded into the rotation cache (via `SwarmRadar.processGames()`).
 
 **Output:** Creates `.rotgrid.index` file with tab-separated values:
-```
+```text
 game-id<TAB>rotation-number<TAB>heat-string<TAB>fingerprint
 ```
 

@@ -12,7 +12,7 @@
 
 #### **1. Advanced Select2 Dropdowns**
 
-```
+```text
 🎯 STATE SELECTION
 ├── Alabama, Alaska, Arizona... (50 states)
 ├── Placeholder: "Select a state"
@@ -43,7 +43,7 @@
 
 #### **2. Professional Date/Time Pickers**
 
-```
+```text
 📅 TRANSACTION DATE RANGE
 ├── From Date: DateTimePicker with calendar
 ├── To Date: Linked picker with validation
@@ -67,7 +67,7 @@
 
 #### **3. Intelligent Date Range Picker**
 
-```
+```text
 📈 ANALYTICS DATE FILTERING
 ├── Single date selection
 ├── Date range selection
@@ -84,7 +84,7 @@
 
 #### **4. Smart Tooltip System**
 
-```
+```text
 💬 BALANCE TOOLTIP
 ├── Trigger: Hover
 ├── Content: "Current account balance and available funds"
@@ -109,7 +109,7 @@
 
 #### **5. Real-Time Dashboard Features**
 
-```
+```text
 🔄 LIVE DATA UPDATES
 ├── Balance: $1,247.50 → Updates every 30 seconds
 ├── Transaction count: 47 → Real-time counter
@@ -360,7 +360,7 @@ UX Performance Tracking:
 **Session Start → Component Loading → Data Integration → Interactive
 Experience**
 
-```
+```text
 🎯 SESSION INITIALIZATION
 ├── Dashboard loads with gradient background
 ├── 50 US states populate state selector

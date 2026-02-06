@@ -45,7 +45,7 @@ console.log(`Ops/sec: ${benchmark.opsPerSecond}`);
 
 ### Performance
 
-```
+```text
 Before: ~13ms per spawn
 After:  ~0.4ms per spawn
 Improvement: 30x faster ⚡
@@ -137,7 +137,7 @@ console.log(`Average time: ${batch.averageTime}ms`);
 
 ### Performance
 
-```
+```text
 Before: ~0.3ms per operation
 After:  ~0.1ms per operation
 Improvement: 3x faster ⚡

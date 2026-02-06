@@ -706,7 +706,7 @@ The test suite is organized into multiple categories with comprehensive coverage
 
 ### Directory Structure
 
-```
+```text
 test/
 ├── _fixtures/           # Test data and configuration fixtures
 ├── _harness/           # Test infrastructure and utilities

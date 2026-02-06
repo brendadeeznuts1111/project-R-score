@@ -9,7 +9,7 @@ The **FactoryWager Hierarchical Inspection System** has been **fully implemented
 ## 🏗️ **Architecture Overview**
 
 ### **Hierarchical Structure**
-```
+```text
 DomainContext
  └─ ScopeContext
      └─ TypeContext (STORAGE | SECRETS | SERVICE)
@@ -25,7 +25,7 @@ DomainContext
 
 ## 📁 **File Structure**
 
-```
+```text
 src/@inspection/
 ├── symbols.ts                    # Shared inspection symbols
 ├── index.ts                      # Main exports and utilities
@@ -159,7 +159,7 @@ bun cli.ts metrics
 ## 📊 **Inspection Output Examples**
 
 ### **Terminal Output**
-```
+```text
 {
   '[DOMAIN]': 'localhost',
   '[SCOPES]': {

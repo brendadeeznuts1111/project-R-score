@@ -54,7 +54,7 @@
 ## 📁 **DIRECTORY DOCUMENTATION**
 
 ### **📋 docs/ - Documentation (221 files)**
-```
+```text
 docs/
 ├── 📖 [README.md](./docs/README.md)                    # Documentation overview
 ├── 🏗️ [architecture/](./docs/architecture/)           # System architecture
@@ -68,7 +68,7 @@ docs/
 ```
 
 ### **⚙️ config/ - Configuration (44 files)**
-```
+```text
 config/
 ├── 📖 [README.md](./config/README.md)                 # Configuration overview
 ├── 🏗️ [application/](./config/application/)           # Application settings
@@ -81,7 +81,7 @@ config/
 ```
 
 ### **🛠️ tools/ - CLI Tools (31 files)**
-```
+```text
 tools/
 ├── 📖 [README.md](./tools/README.md)                   # Tools overview
 ├── 🔍 [url-validator.ts](./tools/url-validator.ts)   # URL validation CLI
@@ -94,7 +94,7 @@ tools/
 ```
 
 ### **🔧 utils/ - Utilities (6 files)**
-```
+```text
 utils/
 ├── 📖 [README.md](./utils/README.md)                 # Utilities overview
 ├── 🌐 [url-helper.ts](./utils/url-helper.ts)         # URL helper functions

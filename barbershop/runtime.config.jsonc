@@ -1,0 +1,18 @@
+{
+  // Optional UI/ops metadata loaded with Bun.JSONC.parse()
+  "branding": {
+    "title": "Barbershop Demo",
+    "theme": "factorywager-signal"
+  },
+
+  // Optional runtime status banner source
+  "status": {
+    "maintenance": false,
+    "message": "All systems nominal"
+  },
+
+  // Archive download naming for /docs/archive.tar(.gz)
+  "docs": {
+    "archiveName": "barbershop-docs.tar"
+  }
+}

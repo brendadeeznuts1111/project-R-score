@@ -83,7 +83,7 @@ cspell "package.json"
 
 ## 📁 File Structure
 
-```
+```text
 mcp-tools/
 ├── cspell.json              # Root spell checker config
 ├── .vscode/

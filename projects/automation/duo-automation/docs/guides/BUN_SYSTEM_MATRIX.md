@@ -188,7 +188,7 @@
 
 ## 🏆 **Overall System Health**
 
-```
+```text
 🟢 PRODUCTION READY: 96% Complete
 ├── 🏗️ Infrastructure: 100% ✅
 ├── 📦 Packages: 85% ✅ (5/8 production ready)

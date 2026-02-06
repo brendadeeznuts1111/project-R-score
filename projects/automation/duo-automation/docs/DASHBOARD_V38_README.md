@@ -1,7 +1,7 @@
 # DuoPlus Dashboard v3.8 - Enhanced Matrix System
 
 ## 🚀 **Executive Summary**
-```
+```text
 📊 14 Live Dashboards | 99.98% Uptime | 87ms Avg Response | 99.9% Compliance
 🔒 PCI/GDPR/SOC2 Compliant | mTLS + JWT | Zero Trust Architecture
 🌐 localhost:8090 | 2 External Services | ISO 27001 Q2 2026
@@ -32,7 +32,7 @@ open http://localhost:8090
 
 ### 📱 **Mobile Access**
 
-```
+```text
 scan: qr://duoplus.local/v3.8
 web: http://localhost:8090/?mobile=1
 pwa: /manifest.json (Installable)
@@ -107,7 +107,7 @@ alias duoplus-health="curl http://localhost:8090/api/health"
 
 ## 📈 **Performance Metrics** *(Real-Time)*
 
-```
+```text
 Global Avg: 87ms | 99.98% Uptime | 14/14 Live
 Peak Load: 1,247 req/min | Memory: 613MB/4GB
 Fastest: URL Routing (34ms) | Heaviest: DB Mgmt (4.2MB)
@@ -125,7 +125,7 @@ Fastest: URL Routing (34ms) | Heaviest: DB Mgmt (4.2MB)
 
 ## 🚨 **Health Check Summary**
 
-```
+```text
 🟢 14/14 Dashboards Live
 🟢 2/2 External Services Live
 🟢 4/4 Components Operational
@@ -136,7 +136,7 @@ Fastest: URL Routing (34ms) | Heaviest: DB Mgmt (4.2MB)
 
 ## 🔗 **One-Click Navigation Menu**
 
-```
+```text
 [1] 👥 Venmo Family    [2] 🎛️ Unified     [3] ⚙️ Env Vars
 [4] 📊 Status UI      [5] 🔌 Endpoints    [6] 📈 Analytics
 [7] 🔐 Credentials    [8] 🛡️ Admin        [9] 🔗 Routing
@@ -152,7 +152,7 @@ Fastest: URL Routing (34ms) | Heaviest: DB Mgmt (4.2MB)
 - **Documentation**: `docs/DASHBOARD_MATRIX_V37.md` - Complete matrix documentation
 
 ### **API Endpoints**
-```
+```text
 GET /api/metrics     - Real-time system metrics
 GET /api/dashboards  - Dashboard catalog data
 GET /api/health      - Health check status

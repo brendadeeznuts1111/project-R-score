@@ -4,7 +4,7 @@ Complete security layer for forensic sports intelligence: runtime threat detecti
 
 ## 🛡️ Architecture Overview
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                     Client Request                           │
 └──────────────────────┬──────────────────────────────────────┘
@@ -203,35 +203,35 @@ const incidents = orchestrator.getActiveIncidents();
 ## 📊 API Endpoints
 
 ### Security Threat Summary
-```
+```text
 GET /api/security/threats?hours=24
 ```
 
 Returns threat summary grouped by type for the last N hours.
 
 ### Active Incidents
-```
+```text
 GET /api/security/incidents
 ```
 
 Returns all active security incidents.
 
 ### Compliance Status
-```
+```text
 GET /api/security/compliance?days=30
 ```
 
 Returns compliance statistics for the last N days.
 
 ### Compliance Report
-```
+```text
 GET /api/security/compliance/report?start=2024-01-01&end=2024-01-31
 ```
 
 Generates and downloads a gzipped compliance report.
 
 ### Secrets Management (API v1)
-```
+```text
 GET /api/v1/secrets/{server}/{type}
 POST /api/v1/secrets/{server}/{type}
 DELETE /api/v1/secrets/{server}/{type}

@@ -33,7 +33,7 @@ All 10 Bun 1.5.x improvements integrated into Quantum Cash-Flow Lattice v1.5.0 w
 
 ## 📊 Performance Gains
 
-```
+```text
 spawnSync:  1300ms → 40ms   (30x faster) ⚡
 CRC32:      2,644µs → 124µs (20x faster) ⚡
 JSON:       0.3ms → 0.1ms   (3x faster)  ⚡
@@ -66,7 +66,7 @@ Fake Timers: Hangs → No hangs (Fixed)    ✅
 
 ## 📝 Commit Message
 
-```
+```text
 chore: adopt Bun 1.5.x perf & compat wins
 
 - Add --grep alias for bun test (Jest/Mocha familiar)

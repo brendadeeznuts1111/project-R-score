@@ -191,7 +191,7 @@ bun run duoplus:native --list
 
 ## 📁 File Structure
 
-```
+```text
 src/
 ├── cli/
 │   ├── kimi-cli.ts              # 🤖 AI-assisted dev tools

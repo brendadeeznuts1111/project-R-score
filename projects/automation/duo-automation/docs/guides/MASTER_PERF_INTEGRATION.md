@@ -58,7 +58,7 @@ if (data.masterPerf) {
 ```
 
 ### **Console Matrix Output**
-```
+```text
 📊 MASTER_PERF Matrix Update:
 | Category | Type | Topic | SubCat | ID | Value | Pattern | Locations | Impact | Properties |
 |----------|------|-------|--------|----|-------|---------|-----------|--------|------------|

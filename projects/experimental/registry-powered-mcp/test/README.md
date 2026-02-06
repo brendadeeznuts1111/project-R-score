@@ -35,7 +35,7 @@ Comprehensive testing infrastructure for the Registry-Powered-MCP project, inspi
 
 ## Directory Structure
 
-```
+```text
 test/
 ├── _harness/           # Shared test utilities
 ├── _fixtures/          # Test fixtures and mock data

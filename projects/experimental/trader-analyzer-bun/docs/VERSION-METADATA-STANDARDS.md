@@ -15,7 +15,7 @@ This document defines the version and metadata standards for the NEXUS Trading I
 
 ### Hierarchical 7-Level Version Format
 
-```
+```text
 MAJOR.MINOR.PATCH.SUB.SUB.SUB.SUB
 ```
 

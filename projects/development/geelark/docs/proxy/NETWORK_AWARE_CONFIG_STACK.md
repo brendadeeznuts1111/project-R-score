@@ -19,7 +19,7 @@ A sophisticated system that makes every HTTP connection and WebSocket frame **se
 
 ### The 13-Byte Contract
 
-```
+```text
 Byte 0:           Config Version (1 = modern)
 Bytes 1-4:        Registry Hash (domain hash)
 Bytes 5-8:        Feature Flags (bitmask)
@@ -35,7 +35,7 @@ Byte 12:          Reserved
 
 ## Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                     Client (Dashboard)                         │
 │  ┌──────────────┐  ┌───────────────┐  ┌─────────────────────┐ │
@@ -105,7 +105,7 @@ const response = await fetch("https://registry.example.com/package", {
 
 Binary protocol for config updates:
 
-```
+```text
 Frame Format (14 bytes):
 ┌────┬──────────────┬────────────────┬───────────┐
 │Type│   Offset     │    Value       │ Checksum  │
@@ -115,7 +115,7 @@ Frame Format (14 bytes):
 
 **Example**: Toggle feature flag 2 to enabled
 
-```
+```text
 [0x02][0x00000005][0x0000000000000005][checksum]
  │      │           │                    │
  │      │           │                    XOR of bytes 0-13
@@ -251,7 +251,7 @@ const proxy = await createConfigAwareProxy({
 
 ### Bandwidth
 
-```
+```text
 Single config update:
 - JSON: ~150 bytes ({"field":"terminalMode","value":2})
 - Binary: 14 bytes (14x smaller!)
@@ -532,7 +532,7 @@ updateConfigState({ version: 1 });
 
 ### Serialize/Deserialize
 
-```
+```text
 encodeConfigUpdate():      47ns  (bitwise ops + buffer write)
 decodeConfigUpdate():      47ns  (buffer read + bitwise ops)
 JSON.stringify():          2µs   (42x slower)
@@ -541,14 +541,14 @@ JSON.parse():              1.5µs (32x slower)
 
 ### Network Transfer
 
-```
+```text
 Binary frame (14 bytes):   450ns at 1Gbps
 JSON message (150 bytes):  1.2µs at 1Gbps (2.7x slower)
 ```
 
 ### Proxy Routing
 
-```
+```text
 Validate headers:           8ns  (integer comparison)
 Select upstream:            2ns  (Map lookup)
 Establish tunnel:          12ns  (socket connect)
@@ -559,7 +559,7 @@ Total:                     22ns  (vs 144ns manual)
 
 ## File Structure
 
-```
+```text
 geelark/
 ├── src/
 │   ├── proxy/

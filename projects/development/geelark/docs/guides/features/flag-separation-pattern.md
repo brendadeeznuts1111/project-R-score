@@ -7,7 +7,7 @@ The Dev HQ CLI demonstrates a perfect flag separation pattern where Bun runtime 
 ## Pattern Architecture
 
 ### Core Pattern
-```
+```text
 bun [bun-flags] dev-hq-cli.ts [command] [cli-flags]
 ```
 
@@ -85,7 +85,7 @@ return await this.executeCommand(command, cliFlags);
 bun dev-hq-cli.ts insights --table
 ```
 Output:
-```
+```text
 🟡 Bun flags: []
 🟢 CLI flags: [--table]
 🔵 Command: insights
@@ -96,7 +96,7 @@ Output:
 bun --hot --watch --define NODE_ENV=prod dev-hq-cli.ts test --timeout 5000 --verbose
 ```
 Output:
-```
+```text
 🟡 Bun flags: [--hot, --watch, --define, NODE_ENV=prod]
 🟢 CLI flags: [--timeout, 5000, --verbose]
 🔵 Command: test

@@ -91,7 +91,7 @@ Each package card includes:
 
 When filters are applied, notifications are sent to the "releases" topic (#12):
 
-```
+```text
 🔍 Market Filters Applied
 
 👥 Team: Sports

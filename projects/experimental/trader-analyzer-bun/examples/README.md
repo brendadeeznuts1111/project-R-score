@@ -4,7 +4,7 @@ This directory contains comprehensive examples demonstrating Bun's native APIs, 
 
 ## 📁 Directory Structure
 
-```
+```text
 examples/
 ├── README.md                    # This file - main examples index
 ├── telegram-golden-setup.ts    # Telegram supergroup setup example

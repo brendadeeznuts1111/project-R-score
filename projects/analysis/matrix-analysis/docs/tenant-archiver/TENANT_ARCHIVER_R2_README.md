@@ -222,7 +222,7 @@ Each tenant snapshot includes:
 
 ### Architecture
 
-```
+```text
 tenant-archiver.ts
 ├── R2 Integration Layer
 │   ├── uploadToR2()

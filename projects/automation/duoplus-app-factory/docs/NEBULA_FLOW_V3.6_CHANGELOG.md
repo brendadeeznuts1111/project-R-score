@@ -95,7 +95,7 @@ bun run nebula-flow:sync
 ```
 
 **Status Output:**
-```
+```text
 📊 Sync Status
 ==============
 Local hash:    270d1f35
@@ -118,7 +118,7 @@ bun run nebula-flow:patterns
 ```
 
 **Pattern Analysis:**
-```
+```text
 🔍 URLPattern Observatory
 =========================
 Total Patterns:     3
@@ -146,7 +146,7 @@ bun run nebula-flow:perf
 ```
 
 **Performance Output:**
-```
+```text
 ⚡ Performance Metrics
 ======================
 Configuration Load:  16.11ms

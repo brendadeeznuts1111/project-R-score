@@ -40,14 +40,14 @@ related-files:
 ## **📈 BEFORE vs AFTER COMPARISON**
 
 ### **❌ Before (Cluttered Output)**:
-```
+```text
 01:53:45.607 DEBUG CORR_1763517225 EnterpriseCanvasIntegrator File read and parsed successfully | Context: {"filePath":"Integration Ecosystem.canvas","operationId":"1763517225607"}
 01:53:45.608 ERROR ERR_1763517225608_9CN3DT ErrorHandler Canvas missing nodes array - Untitled.canvas | Context: {"filePath":"Untitled.canvas","correlationId":"ERR_1763517225608_9CN3DT","severity":"HIGH","recoverable":false,"impactAssessment":{"affectedFiles":1,"estimatedDataLoss":"MODERATE","userActionRequired":true}} Stack: Error: Canvas missing nodes array...
 01:53:45.608 INFO  CORR_1763517225609 PerformanceMonitor Performance monitoring completed | Context: {"duration":0,"memoryPeak":"0.65MB","nodesProcessed":0,"nodesMigrated":0}
 ```
 
 ### **✅ After (Clean Output)**:
-```
+```text
 ============================================================
 🚀 Enterprise Canvas Integration
 ============================================================
@@ -77,14 +77,14 @@ related-files:
 ### **📋 Structured Output Components**
 
 **1. Clean Section Headers**:
-```
+```text
 ============================================================
 🚀 Enterprise Canvas Integration
 ============================================================
 ```
 
 **2. Organized Subsections**:
-```
+```text
 📁 Processing Files
 -------------------
 📈 Processing Summary
@@ -92,7 +92,7 @@ related-files:
 ```
 
 **3. Clear Status Indicators**:
-```
+```text
 ✅ Success - Green, clear checkmark
 ℹ️  Info - Blue, informative icon
 ⚠️  Warning - Yellow, alert triangle
@@ -101,7 +101,7 @@ related-files:
 ```
 
 **4. Structured Details**:
-```
+```text
 ✅ Processed: Integration Ecosystem.canvas   • Nodes: 9, Edges: 8
    • Color migration completed
    • Metadata enhanced
@@ -184,7 +184,7 @@ console.list([
 ### **📈 Real Processing Results**
 
 **Clean Success Messages**:
-```
+```text
 ✅ Processed: Integration Ecosystem.canvas   • Nodes: 9, Edges: 8
    • Color migration completed
    • Metadata enhanced
@@ -194,14 +194,14 @@ console.list([
 ```
 
 **Clean Error Messages**:
-```
+```text
 ❌ Invalid canvas: Untitled.canvas   • File contains empty JSON object
    • Missing required canvas structure
    • Canvas must have nodes and edges arrays
 ```
 
 **Clean Summary Tables**:
-```
+```text
 📈 Processing Summary
 ---------------------
  Total  Files: 5

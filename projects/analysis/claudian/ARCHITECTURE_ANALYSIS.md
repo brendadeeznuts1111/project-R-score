@@ -4,7 +4,7 @@
 
 The codebase demonstrates **excellent separation of concerns**:
 
-```
+```text
 src/
 ├── core/          # Infrastructure (no UI dependencies)
 ├── features/      # Feature modules (chat, inline-edit, settings)

@@ -43,7 +43,7 @@ fw audit --format=json
 ```
 
 **Output Example**:
-```
+```text
 📋 AUDIT LOG REPORT
 ═════════════════════════════════════════
 Total Events: 1,245
@@ -116,7 +116,7 @@ fw audit timeline --start=2026-01-01 --end=2026-01-31
 ```
 
 **Output Example**:
-```
+```text
 📅 AUDIT TIMELINE (Jan 2026)
 ═══════════════════════════════════════════
 
@@ -142,7 +142,7 @@ fw audit user --user=john.doe --format=json
 ```
 
 **Output Example**:
-```
+```text
 👤 USER ACTIVITY: admin123
 ═══════════════════════════════════════════
 
@@ -183,7 +183,7 @@ fw audit diff --resource=/api/users
 ```
 
 **Output Example**:
-```
+```text
 🔄 AUDIT DIFFERENCE REPORT
 ═══════════════════════════════════════════
 
@@ -311,7 +311,7 @@ fw audit log --format=csv --export=audit.csv
 ```
 
 **Sample**:
-```
+```text
 timestamp,action,resource,user,status,result
 2026-01-15T10:30:00Z,MODIFY,/api/users/123,admin@example.com,SUCCESS,modified
 2026-01-15T10:29:45Z,ACCESS,/api/users,viewer@example.com,SUCCESS,unchanged
@@ -339,7 +339,7 @@ fw audit log --format=syslog --export=audit.log
 ```
 
 **Sample**:
-```
+```text
 2026-01-15T10:30:00Z audit[evt_12345]: ACTION=MODIFY RESOURCE=/api/users/123 USER=admin@example.com STATUS=SUCCESS
 2026-01-15T10:29:45Z audit[evt_12346]: ACTION=ACCESS RESOURCE=/api/users USER=viewer@example.com STATUS=SUCCESS
 ```

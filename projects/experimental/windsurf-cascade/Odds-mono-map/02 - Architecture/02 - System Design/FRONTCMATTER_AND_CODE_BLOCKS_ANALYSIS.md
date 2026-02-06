@@ -123,13 +123,13 @@ bun run validate.ts --full
 
 **Non-Compliant Examples Found**:
 
-```
+```text
 // Missing language specification
 Market Leadership = (Performance Excellence × Time × Culture × Innovation) × Sustainability
 ML = (9 × 3 × 9 × 15) × 4 = 1,458 points
 ```
 
-```
+```text
 // Another example without language
 const result = Bun.color(example.input, example.format as any) as string | undefined;
 ```
@@ -227,12 +227,12 @@ title: Analysis
 
 some code here
 
-```
+```text
 
 # ✅ Proper specification
 ```typescript
 some code here
-```
+```text
 
 ```
 
@@ -241,18 +241,18 @@ some code here
 # ❌ Same content, different languages
 ```javascript
 const x = 1;
-```
+```text
 
 ```js
 const y = 2;
-```
+```text
 
 # ✅ Consistent usage
 
 ```typescript
 const x = 1;
 const y = 2;
-```
+```text
 
 ```
 
@@ -268,7 +268,7 @@ const y = 2;
 {
   "name": "project"
 }
-```
+```text
 
 ```
 
@@ -324,55 +324,55 @@ validation_rules:
 # ✅ TypeScript/JavaScript
 ```typescript
 // TypeScript code
-```
+```text
 
 ```javascript
 // JavaScript code
-```
+```text
 
 # ✅ Configuration Files
 
 ```json
 // JSON configuration
-```
+```text
 
 ```yaml
 # YAML configuration
-```
+```text
 
 ```toml
 # TOML configuration
-```
+```text
 
 # ✅ Shell Commands
 
 ```bash
 # Bash commands
-```
+```text
 
 # ✅ Documentation
 
 ```markdown
 # Markdown examples
-```
+```text
 
 # ✅ Other Languages
 
 ```python
 # Python code
-```
+```text
 
 ```sql
 # SQL queries
-```
+```text
 
 ```html
 # HTML templates
-```
+```text
 
 ```css
 # CSS styles
-```
+```text
 
 ```
 

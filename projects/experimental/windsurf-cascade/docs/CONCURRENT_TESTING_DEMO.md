@@ -102,7 +102,7 @@ concurrentTestGlob = [
 ```
 
 ### **2. File Organization**
-```
+```text
 packages/testing/src/
 ├── integration/
 │   ├── api-integration-concurrent.test.ts  # Auto-concurrent

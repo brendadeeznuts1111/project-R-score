@@ -38,7 +38,7 @@ Phase 3 provides complete lifecycle management for patch recommendations, from g
 
 ### Status Flow
 
-```
+```text
 generated → applied → (effectiveness measured)
     ↓
 dismissed → (expires) → generated

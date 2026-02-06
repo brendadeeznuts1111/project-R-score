@@ -91,7 +91,7 @@ VIZ-06: []
 ## 📊 Version Progression Examples
 
 ### Example 1: Feature Addition
-```
+```text
 v1.3.0    → Initial Phase 1 & 2 implementation
 v1.3.0r1  → Section numbering fix (micro-enhancement)
 v1.4.0    → Adds Phase 3 enhancements (new feature)
@@ -99,14 +99,14 @@ v1.4.0r1  → Cross-reference update (micro-enhancement)
 ```
 
 ### Example 2: Bug Fix
-```
+```text
 v1.3.0    → Current version
 v1.3.1    → Fixes typo in meta tag table (patch)
 v1.3.1r1  → Updates example code (micro-enhancement)
 ```
 
 ### Example 3: Major Change
-```
+```text
 v1.3.0    → Current version
 v2.0.0    → Complete standard restructure (major)
 v2.0.0r1  → Formatting improvements (micro-enhancement)
@@ -178,7 +178,7 @@ v2.0.0r1  → Formatting improvements (micro-enhancement)
 
 ## 🎯 Decision Tree
 
-```
+```text
 Is it a breaking change?
 ├─ Yes → Increment MAJOR (v2.0.0)
 └─ No → Is it a new feature/section?

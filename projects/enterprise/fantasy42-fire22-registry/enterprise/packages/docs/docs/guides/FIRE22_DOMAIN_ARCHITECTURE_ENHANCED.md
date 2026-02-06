@@ -52,7 +52,7 @@
 
 ### **Financial Flow**
 
-```
+```text
 Collections → Balance → Wager → Settlement → Finance Reporting
     ↓            ↓         ↓         ↓
 Cashier → Commission → Distributions → Analytics
@@ -60,7 +60,7 @@ Cashier → Commission → Distributions → Analytics
 
 ### **Customer Journey**
 
-```
+```text
 User Management → Player Management → VIP Management → Loyalty
     ↓                 ↓                  ↓
 Authentication → Balance Management → Promotional Credits
@@ -68,7 +68,7 @@ Authentication → Balance Management → Promotional Credits
 
 ### **Gaming Ecosystem**
 
-```
+```text
 Sports Betting ↔ Live Casino ↔ Fantasy42 ↔ Lottery
     ↓               ↓             ↓           ↓
 Wager System → Balance Updates → Settlements → Reporting
@@ -298,7 +298,7 @@ Attributes:** `bet_id`, `user_id`, `amount`, `odds`, `outcome`, `payout`
 
 ### **Critical Dependencies** (REQUIRED)
 
-```
+```text
 Collections → Balance (MUST HAVE - Payment flow breaks without this)
 Wager → Balance (MUST HAVE - Betting requires balance validation)
 Settlement → Collections (MUST HAVE - Cannot reconcile without payment data)

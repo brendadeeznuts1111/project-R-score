@@ -156,7 +156,7 @@ const ws = new WebSocket('wss://api.example.com/live', {
 
 ## 📝 Commit Message
 
-```
+```text
 chore: adopt Bun 1.5.x perf & compat wins
 
 - Add --grep alias for bun test (Jest/Mocha familiar)

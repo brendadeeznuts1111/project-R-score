@@ -531,7 +531,7 @@ export class DatabaseLogger { }      // Specific - logs to database
 ### File Structure Alignment
 Class name should match export or be kebab-case for helpers.
 
-```
+```text
 ✅ CORRECT:
 src/
   Logger.ts           → exports class Logger

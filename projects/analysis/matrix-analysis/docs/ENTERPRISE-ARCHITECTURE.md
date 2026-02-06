@@ -5,7 +5,7 @@ This document outlines the enhanced enterprise-grade directory structure for the
 
 ## 📁 Directory Structure
 
-```
+```text
 nolarose-mcp-config/
 ├── 📁 tools/
 │   ├── 📁 enterprise/                    # Enterprise-grade tools

@@ -104,7 +104,7 @@ The system adds these scripts to your `package.json`:
 
 ## Architecture
 
-```
+```text
 lib/
 ├── package/
 │   └── package-manager.ts      # Package analysis & Bun API discovery

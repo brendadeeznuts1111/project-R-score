@@ -300,7 +300,7 @@ bun ultra-enhanced-50-col-matrix.ts -perf -b -n 10
 ## 📊 **Output Examples**
 
 ### **Bun API Analysis Output**
-```
+```text
 Pattern                     | BunVer | Terminal | Feature | StringW | TTY | Cols | Rows | S3
 ----------------------------|--------|----------|---------|---------|-----|------|------|----
 bun://terminal/resize/:cols | 1.3.6  | ✓        | ✓       | ✓       | ✓   | 80   | 24   | ✗
@@ -309,7 +309,7 @@ bun://string/width/:text    | 1.3.6  | ✗        | ✗       | ✓       | ✗ 
 ```
 
 ### **Unicode Analysis Output**
-```
+```text
 Pattern                     | Width | Emoji | ANSI | Graphemes | ZeroW | Combining | UniVer | Terminal%
 ----------------------------|-------|-------|------|-----------|-------|-----------|--------|----------
 /emoji/:emoji🎉              | 12    | ✓     | ✗    | 8         | 0     | 0         | 15.0   | 95%
@@ -318,7 +318,7 @@ Pattern                     | Width | Emoji | ANSI | Graphemes | ZeroW | Combini
 ```
 
 ### **Bundle Analysis Output**
-```
+```text
 Pattern                     | Features | DCE% | TreeShake | Prepacked | Bytecode | Minified
 ----------------------------|----------|------|-----------|-----------|----------|----------
 bun://build/:mode/:target    | `[BUILD]`  | 85%  | 75%       | ✓         | ✓        | ✓

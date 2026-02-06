@@ -34,7 +34,7 @@ console.log(Bun.inspect.table(data));
 ```
 
 **Output:**
-```
+```text
 ┌───┬───────┬─────┬─────────────┐
 │   │ name  │ age │ city        │
 ├───┼───────┼─────┼─────────────┤
@@ -50,7 +50,7 @@ console.log(Bun.inspect.table(data, ["name", "city"]));
 ```
 
 **Output:**
-```
+```text
 ┌───┬───────┬─────────────┐
 │   │ name  │ city        │
 ├───┼───────┼─────────────┤
@@ -72,7 +72,7 @@ console.log(Bun.inspect.table(nestedData));
 ```
 
 **Output:**
-```
+```text
 ┌───┬───────────────────────┬─────────────────────┐
 │   │ user                  │ order              │
 ├───┼───────────────────────┼─────────────────────┤
@@ -94,7 +94,7 @@ console.log(Bun.inspect.table(arrayData));
 ```
 
 **Output:**
-```
+```text
 ┌───┬─────────────────┬─────────────────────────────┬──────────────┐
 │   │ project        │ tasks                       │ team         │
 ├───┼─────────────────┼─────────────────────────────┼──────────────┤
@@ -121,7 +121,7 @@ console.log(Bun.inspect.table(mixedData));
 ```
 
 **Output:**
-```
+```text
 ┌───┬─────────┬───────┬────────┬──────┬─────────────┬─────────────────────┬──────────┬─────────┐
 │   │ string  │ number│ boolean│ null │ undefined  │ date                 │ regex    │ function│
 ├───┼─────────┼───────┼────────┼──────┼─────────────┼─────────────────────┼──────────┼─────────┤
@@ -144,7 +144,7 @@ console.log(Bun.inspect.table(largeData));
 ```
 
 **Output:**
-```
+```text
 ┌───┬────┬─────────┬───────┬────────┬─────────────┬────────┐
 │   │ id │ name    │ score │ active │ department  │ salary │
 ├───┼────┼─────────┼───────┼────────┼─────────────┼────────┤
@@ -170,7 +170,7 @@ console.log(Bun.inspect.table(unicodeData));
 ```
 
 **Output:**
-```
+```text
 ┌───┬──────────┬───────────────────────┬───────────┬───────────────────┬─────────────┐
 │   │ emoji    │ currency              │ symbols   │ international     │ math        │
 ├───┼──────────┼───────────────────────┼───────────┼───────────────────┼─────────────┤
@@ -201,7 +201,7 @@ console.log(Bun.inspect.table(performanceData));
 ```
 
 **Output:**
-```
+```text
 ┌───┬────────────────┬────────┬────────┬─────┬────────────┐
 │   │ operation      │ time   │ memory │ cpu │ status     │
 ├───┼────────────────┼────────┼────────┼─────┼────────────┤
@@ -223,7 +223,7 @@ console.log(Bun.inspect.table([{}, {}]));
 ```
 
 **Outputs:**
-```
+```text
 Empty array:
 ┌───┐
 │   │
@@ -261,7 +261,7 @@ console.log(Bun.inspect.table(functionData));
 ```
 
 **Output:**
-```
+```text
 ┌───┬────────────────────┬───────────┬────────┬────────┐
 │   │ name               │ input     │ result │ type   │
 ├───┼────────────────────┼───────────┼────────┼────────┤

@@ -230,7 +230,7 @@ This session focused on establishing comprehensive documentation standards, vers
 
 ## 📚 File Structure
 
-```
+```text
 docs/
 ├── GOLDEN_FILE_STANDARD.md                    # v1.4.0 - Core standard
 ├── VERSIONING_GUIDE.md                        # Versioning system

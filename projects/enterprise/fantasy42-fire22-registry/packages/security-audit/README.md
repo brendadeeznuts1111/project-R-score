@@ -152,7 +152,7 @@ console.log(`Risk Level: ${summary.riskLevel}`);
 
 ## 📊 Sample Output
 
-```
+```text
 🔍 Starting Fantasy42 Enterprise Security Audit...
 
 📦 Auditing 15 packages...

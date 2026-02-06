@@ -195,25 +195,25 @@ cosign sign-blob --yes quantum-cli \
 ## 📊 Performance Benchmarks
 
 ### Startup Time
-```
+```text
 Before: 45 ms
 After:  9 ms (80% reduction)
 ```
 
 ### Decay Performance (1M tensions)
-```
+```text
 Before: 2.4 ms
 After:  0.6 ms (75% reduction)
 ```
 
 ### Binary Size
-```
+```text
 Before: 1.8 MB
 After:  680 kB (62% reduction)
 ```
 
 ### Memory Usage
-```
+```text
 Before: 45 MB
 After:  12 MB (73% reduction)
 ```

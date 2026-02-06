@@ -163,7 +163,7 @@ testCases.forEach(testCase => {
 ```
 
 **Performance Achieved:**
-```
+```text
 ⚡ Performance demonstration:
    🔄 Processing 10000 iterations of 18000 character text...
    ⏱️  Total time: 185.96ms
@@ -283,7 +283,7 @@ console.log(`Current User-Agent: ${data["user-agent"]}`);
 ```
 
 **User-Agent Construction Examples:**
-```
+```text
 1. MyApp/1.0.0 (Bun; +https://myapp.com)
 2. DataProcessor/2.1.0 (Bun/1.2.18; Linux x64)
 3. APIClient/1.0 (Bun; Production; +support@company.com)

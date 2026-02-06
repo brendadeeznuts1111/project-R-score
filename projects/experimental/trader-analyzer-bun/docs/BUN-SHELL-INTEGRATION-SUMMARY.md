@@ -90,7 +90,7 @@ await $`bun build`.env({ NODE_ENV: "production" });
 
 ## 📚 Documentation Structure
 
-```
+```text
 docs/
 ├── BUN-SHELL-USAGE-GUIDE.md          # Complete usage guide
 ├── BUN-SHELL-QUICK-REFERENCE.md      # Quick reference card

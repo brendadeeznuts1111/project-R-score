@@ -9,7 +9,7 @@ The comprehensive Golden Rules Enforcement System has been successfully implemen
 ## **📊 Validation Results**
 
 ### **✅ System Status: WORKING**
-```
+```text
 🧪 Testing Golden Rules Enforcement System...
 ✅ GoldenRuleEnforcer created successfully
 🔍 Validating Golden Rules...

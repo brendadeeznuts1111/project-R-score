@@ -92,7 +92,7 @@
 
 #### **📋 Compliance Breakdown**
 
-```
+```text
 🎯 Perfect Compliance:    6/10 dashboards (60%)
 ⚠️  Needs Minor Work:     2/10 dashboards (20%)
 🚨 Requires Attention:    2/10 dashboards (20%)
@@ -139,7 +139,7 @@
 
 #### **✅ Infrastructure Created**
 
-```
+```text
 fire22-registry/
 ├── 📁 dashboards/     # HTML dashboards & interfaces
 ├── 📁 designs/        # Design artifacts & style guides
@@ -164,7 +164,7 @@ fire22-registry/
 
 ### **🌐 Access Endpoints**
 
-```
+```text
 Base Registry:     https://registry.fire22.dev
 Dashboards:        https://registry.fire22.dev/dashboards/
 Design Artifacts:  https://registry.fire22.dev/designs/

@@ -32,7 +32,7 @@
 ## **🎮 INTERACTIVE FEATURES**
 
 ### **Keyboard Controls**
-```
+```text
 Space     - Toggle animation
 R         - Reset view
 F         - Toggle fullscreen
@@ -56,7 +56,7 @@ ESC       - Close overlays
 
 ## **📁 PROJECT STRUCTURE**
 
-```
+```text
 fronend-spec/
 ├── src/                          # React + TypeScript source
 │   ├── app.tsx                   # Main React component

@@ -98,7 +98,7 @@ dependencies:
 | **Naming Issues** | 31 files | 0 files | -100% |
 
 ### **Template System Health**
-```
+```text
 📊 Odds Protocol Vault Status - FINAL
 ==================================================
 
@@ -124,7 +124,7 @@ Compliance: 73% ⬆️ (+24%)
 - **Success Rate**: 100% (31/31 files)
 
 **Example Transformations**:
-```
+```text
 🔧 API Documentation Template.md → 🔧-API-Documentation-Template.md
 📋 Guide Template.md → 📋-Guide-Template.md
 🎯 Project Template.md → 🎯-Project-Template.md
@@ -207,7 +207,7 @@ Compliance: 73% ⬆️ (+24%)
 ## 📈 Performance Metrics
 
 *Consolidated from: ### **Template System Performance***
-```
+```text
 📊 Template Performance Report - FINAL
 ==================================================
 
@@ -224,7 +224,7 @@ Memory usage: <5MB total
 ```
 
 ### **Validation Performance**
-```
+```text
 🔍 Enhanced Validation Results:
 Files validated: 31
 Average score: 64.8/100

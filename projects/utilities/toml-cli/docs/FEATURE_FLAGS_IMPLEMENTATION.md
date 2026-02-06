@@ -96,7 +96,7 @@ This project now includes a complete, production-ready implementation of Bun's c
 
 ### Build Performance
 
-```
+```text
 Production: 1.46 KB bundled in 3ms
 Development: 1.56 KB bundled in 1ms  
 Enterprise: 1.81 KB bundled in 1ms
@@ -122,7 +122,7 @@ return createPublicRegistry();  // ← Always included
 ## Feature List (25 Total)
 
 ### Base Features (15)
-```
+```text
 DEBUG, PREMIUM_SECRETS, R2_STORAGE, VAULT_INTEGRATION,
 CONTENT_DISPOSITION_EXPORTS, CACHE_COMPRESSION, ANALYTICS_TRACKING,
 AUDIT_LOGGING, MOCK_API, PRIVATE_REGISTRY, SCOPING_MATRIX,
@@ -130,13 +130,13 @@ BETA_FEATURES, ENTERPRISE_ONLY, RATE_LIMITING, WEBHOOK_SIGNING
 ```
 
 ### Domain Features (5)
-```
+```text
 API_DUOPLUS_IO_TENANT, DEV_DUOPLUS_IO_TENANT, GITHUB_COM_TENANT,
 GITLAB_COM_TENANT, INTERNAL_DUOPLUS_IO_TENANT
 ```
 
 ### Scope Features (5)
-```
+```text
 ENTERPRISE, DEVELOPMENT, INTERNAL, GITHUB, GITLAB
 ```
 
@@ -233,7 +233,7 @@ TypeScript compilation succeeds:
 
 ## Documentation Files
 
-```
+```text
 docs/
 ├── FEATURE_FLAGS_GUIDE.md              # Complete feature documentation
 ├── BUILD_OPTIMIZATION.md               # Real results & analysis

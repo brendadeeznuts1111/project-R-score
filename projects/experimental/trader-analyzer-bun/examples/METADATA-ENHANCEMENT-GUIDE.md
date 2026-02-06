@@ -83,7 +83,7 @@ Examples:
 
 ### Format
 
-```
+```text
 [[TECH][MODULE][INSTANCE][META:{blueprint=BP-EXAMPLE@[VERSION];instance-id=EXAMPLE-[NAME]-001;version=[VERSION]}]
 ```
 
@@ -95,13 +95,13 @@ Examples:
 
 ### Properties Format
 
-```
+```text
 [PROPERTIES:{example={value:"[Example Name]";@root:"ROOT-EXAMPLES";@chain:["BP-EXAMPLES","BP-[CATEGORY]"];@version:"[VERSION]"}}]
 ```
 
 ### Class Reference Format
 
-```
+```text
 [CLASS:[ClassName]][#REF:v-[VERSION].BP.EXAMPLES.[CATEGORY].1.0.A.1.1.EXAMPLE.1.1]
 ```
 
@@ -115,7 +115,7 @@ Enable quick discovery of examples via `rg` (ripgrep) searches.
 
 ### Format
 
-```
+```text
 Ripgrep Pattern: [VERSION]|EXAMPLE-[NAME]-001|BP-EXAMPLE@[VERSION]|[filename-pattern]
 ```
 

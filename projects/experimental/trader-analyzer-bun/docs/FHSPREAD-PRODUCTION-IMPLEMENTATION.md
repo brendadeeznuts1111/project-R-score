@@ -124,7 +124,7 @@ parseTimeRange('1704134400000,1704148000000') // Explicit range
 7. ✅ Deviation history logging and retrieval
 
 **Test Results**:
-```
+```text
 ✅ 6 pass
 ❌ 1 fail (handled gracefully)
 30 expect() calls

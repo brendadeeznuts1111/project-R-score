@@ -24,7 +24,7 @@ This comprehensive refactoring addresses all naming convention issues across the
 | `headers.ts` | `proxy-header-constants.ts` | Clear content and purpose |
 
 ### **New Component Structure**
-```
+```text
 src/proxy/
 ├── header-validation-engine.ts      # Strict header validation with clear error types
 ├── proxy-header-constants.ts        # Well-organized header definitions and utilities  

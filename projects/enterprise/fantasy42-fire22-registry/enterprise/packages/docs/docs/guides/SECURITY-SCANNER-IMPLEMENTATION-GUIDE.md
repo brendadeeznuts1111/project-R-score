@@ -23,7 +23,7 @@ Bun's security scanner API allows you to:
 
 ### Core Components
 
-```
+```text
 packages/fire22-security-scanner/
 ├── src/
 │   └── index.ts              # Main scanner implementation

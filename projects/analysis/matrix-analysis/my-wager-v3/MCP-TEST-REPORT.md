@@ -56,7 +56,7 @@
 ## 📊 Test Results Summary
 
 ### Functional Testing
-```
+```text
 ✅ All 6 MCP tools operational
 ✅ Error handling comprehensive
 ✅ Input validation working
@@ -66,7 +66,7 @@
 ```
 
 ### Performance Metrics
-```
+```text
 ✅ System Status: < 10ms average
 ✅ Error Queries: < 20ms average
 ✅ History Queries: < 50ms average

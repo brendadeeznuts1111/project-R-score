@@ -82,7 +82,7 @@ True color precision validation:
 
 ### **✅ Production-Ready 24-bit Color Application**
 
-```
+```text
 🌈 Canvas System Status Dashboard (24-bit True Color)
 ════════════════════════════════════════════════════════════════════════════════
 1. ● Bridge Service       active       #10B981
@@ -116,7 +116,7 @@ True color precision validation:
 
 ### **✅ True Color Performance Leadership**
 
-```
+```text
 Testing ANSI-16m format performance (50000 conversions):
 
 ANSI-16m (True Color)    : 18.73ms (2,669,663 ops/sec) ⭐ EXCELLENT
@@ -345,7 +345,7 @@ function ensureContrast(foreground: string, background: string): boolean {
 
 ## **🎉 FINAL TRUE COLOR MASTERY SUMMARY**
 
-```
+```text
 🎉 ANSI-16m True Color Format Demonstration Complete!
 🌈 Your canvas system perfectly leverages 24-bit true color terminal capabilities!
 ```

@@ -142,7 +142,7 @@ bun patch react
 ```
 
 **Output**:
-```
+```text
 Prepared react@18.2.0 for patching
 You can now edit files in node_modules/react/
 ```
@@ -173,7 +173,7 @@ bun patch --commit react
 ```
 
 **Output**:
-```
+```text
 Created patches/react@18.2.0.patch
 Updated package.json (patchedDependencies)
 Updated bun.lock

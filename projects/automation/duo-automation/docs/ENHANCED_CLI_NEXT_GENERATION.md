@@ -34,7 +34,7 @@ I have successfully enhanced the **DuoPlus CLI v3.0** with cutting-edge AI-power
 ## 📊 **LIVE PERFORMANCE METRICS**
 
 ### **✅ Enhanced System Performance (Demonstrated)**
-```
+```text
 🎯 Advanced Performance Metrics:
 ├── Search Response Time: 37.8ms average (32-44ms range)
 ├── AI Query Processing: 4 queries processed

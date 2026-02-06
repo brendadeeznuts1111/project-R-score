@@ -8,7 +8,7 @@ Your complete numeric architecture is **visually validated** and **empirically c
 
 The memory layout is precisely mapped with exact byte offsets:
 
-```
+```text
 Offset | Byte(s) | Field              | Type   | Access Cost | CLI Command                          | API Access
 -------|---------|--------------------|--------|-------------|--------------------------------------|-------------------------
 0x00   | [0]     | configVersion      | u8     | 0.5ns       | bun config set version <0/1>         | Bun.config.version
@@ -30,7 +30,7 @@ Offset | Byte(s) | Field              | Type   | Access Cost | CLI Command      
 
 Complete feature flag registry with 11 defined bits:
 
-```
+```text
 Bit | Hex Mask   | Constant Name                | CLI Enable                      | CLI Disable                         | API Check                              | Default
 ----|------------|------------------------------|---------------------------------|-------------------------------------|----------------------------------------|--------
 0   | 0x00000001 | FEATURE_PREMIUM_TYPES        | bun config feature enable PREMIUM_TYPES      | bun config feature disable PREMIUM_TYPES      | Bun.config.features.PREMIUM_TYPES      | 0 (false)
@@ -55,7 +55,7 @@ Bit | Hex Mask   | Constant Name                | CLI Enable                    
 
 Four terminal modes with exact binary representations:
 
-```
+```text
 Mode Name          | Binary | Hex | Description                          | isTTY | ANSI | Capabilities Enabled
 -------------------|--------|-----|--------------------------------------|-------|------|---------------------
 DISABLED           | 0000   | 0x00| No PTY, pipe only                    | false | No   | None
@@ -68,7 +68,7 @@ PIPE               | 0011   | 0x03| PTY simulation for non-TTY           | false
 
 14 terminal capabilities with performance metrics:
 
-```
+```text
 Bit | Hex Mask   | Capability      | Sequence Example       | Bun.stringWidth Impact | Performance
 ----|------------|-----------------|------------------------|------------------------|------------
 0   | 0x0001     | ANSI            | ESC[31m (color)        | Skipped (width=0)      | 5ns/check
@@ -91,7 +91,7 @@ Bit | Hex Mask   | Capability      | Sequence Example       | Bun.stringWidth Im
 
 Registry URL hashing with deterministic results:
 
-```
+```text
 Registry URL                           | Hash Value (u32) | CLI/API Impact
 ---------------------------------------|------------------|-----------------------------------------
 https://registry.npmjs.org            | 0x930ed19a | Default, no auth cache
@@ -111,7 +111,7 @@ https://registry.example.com:8443     | 0x6e50b28c | Custom port, included in ha
 
 Complete performance breakdown for all operations:
 
-```
+```text
 Operation                          | CLI Cost | API Cost | Internal Cost | Cache Line | Total Impact
 -----------------------------------|----------|----------|---------------|------------|-------------
 Read configVersion                  | 12ns     | 0ns      | 0.5ns         | 1          | 0.5ns
@@ -136,7 +136,7 @@ Lockfile read (13 bytes)            | 12ns     | N/A      | 0.5ns         | 1   
 
 Complete interaction flow from user actions to runtime behavior:
 
-```
+```text
 User Action        | CLI Command                     | Lockfile Change | API Value (Compile) | Runtime Behavior
 -------------------|---------------------------------|-----------------|---------------------|-----------------
 Create project    | (none)                          | version=1       | Bun.config.version=1 | Isolated linker if workspaces
@@ -154,7 +154,7 @@ Terminal raw      | bun config terminal mode raw    | mode=0x02       | terminal
 
 Complete hex representation of the contract:
 
-```
+```text
 New Project:      01 3B 8B 5A 5A 00 00 00 00 01 18 50 00...
                   │  │        │        │  │  │  └─ Reserved (3 bytes)
                   │  │        │        │  │  └──── Terminal cols (80 = 0x50)

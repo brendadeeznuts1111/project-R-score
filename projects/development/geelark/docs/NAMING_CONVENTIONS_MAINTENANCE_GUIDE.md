@@ -157,7 +157,7 @@ Located in `.husky/pre-commit`
 4. Developer must fix or bypass (not recommended)
 
 **Example output**:
-```
+```text
 🔍 Running naming standards pre-commit checks...
 📋 Scanning for non-compliant constant names...
 
@@ -239,7 +239,7 @@ When reviewing code, use this checklist:
 
 ### Example Review Comment
 
-```
+```text
 ❌ Naming Issue Found:
 
 In `src/api/client.ts`:
@@ -248,7 +248,7 @@ export const apiConfig = {
   baseUrl: "...",
   timeout: 5000
 };
-```
+```text
 
 Should be `API_CONFIG` (UPPER_SNAKE_CASE for exported constants).
 

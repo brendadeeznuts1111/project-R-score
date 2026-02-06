@@ -58,7 +58,7 @@ The Odds Protocol vault demonstrates **enterprise-grade organization** with soph
 ## 🏗️ Vault Structure Analysis
 
 ### **Directory Organization**
-```
+```text
 📁 Odds-mono-map/
 ├── 📁 00 - Dashboard.md              (1) - Main command center
 ├── 📁 01 - Daily Notes/               (4) - Daily logging and reports
@@ -262,7 +262,7 @@ vault:help        # Show help
 ## 📋 Template system analysis
 
 ### ** Template organization excellence**
-```
+```text
 📁 06 - Templates/
 ├── 📁 00 - Template Index.md         # Central library index
 ├── 📁 01 - Note Templates/           (5 files)

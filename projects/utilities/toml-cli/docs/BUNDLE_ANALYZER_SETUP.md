@@ -94,7 +94,7 @@ bun run bundle:health
 
 ## 📈 Metrics Example
 
-```
+```text
 Total Size:     245.3 KB
 Gzipped Size:   65.2 KB
 Files:          8

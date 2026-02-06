@@ -26,7 +26,7 @@ All requirements have been successfully implemented, tested, and documented.
 ## 📦 **Deliverables**
 
 ### **Core Implementation** (4.2 KB)
-```
+```text
 src/networking/dns-resolver.ts
 ├── IPFamily type (4 | 6)
 ├── DNSResolutionResult interface
@@ -38,7 +38,7 @@ src/networking/dns-resolver.ts
 ```
 
 ### **Test Suite** (3.8 KB, 13 tests)
-```
+```text
 src/networking/dns-resolver.test.ts
 ├── IPv4 validation tests (2)
 ├── IPv6 validation tests (2)
@@ -47,7 +47,7 @@ src/networking/dns-resolver.test.ts
 ```
 
 ### **Examples** (8.6 KB, 3 files)
-```
+```text
 examples/
 ├── dns-resolver-example.ts (4.1 KB)
 │   └── Standalone validation examples
@@ -58,7 +58,7 @@ examples/
 ```
 
 ### **Documentation** (5.2 KB)
-```
+```text
 docs/DNS_RESOLVER_GUIDE.md
 ├── Core types reference
 ├── Validation functions
@@ -73,7 +73,7 @@ docs/DNS_RESOLVER_GUIDE.md
 ## 🧪 **Test Results**
 
 ### **DNS Resolver Tests**
-```
+```text
 ✅ 13 new tests added
 ✅ 0 failures
 ✅ 31 expect() calls
@@ -81,7 +81,7 @@ docs/DNS_RESOLVER_GUIDE.md
 ```
 
 ### **Full Test Suite**
-```
+```text
 ✅ 173 total tests passing (160 existing + 13 new)
 ✅ 0 failures
 ✅ 345 expect() calls

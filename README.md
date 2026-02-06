@@ -30,7 +30,7 @@ FactoryWager is a **cutting-edge enterprise platform** built with **Bun native o
 
 ## � Repository Structure
 
-```
+```text
 FactoryWager/
 ├── 📁 lib/                    # Core library components
 │   ├── 🔐 security/           # Security & authentication

@@ -63,7 +63,7 @@ circuit_breaker_tripped{bookmaker=~".+"} == 1
 ```
 
 **Alert Message**:
-```
+```text
 🚨 Circuit Breaker Tripped: {{ $labels.bookmaker }}
 Failures: {{ $value }}
 Action Required: Manual reset via bun-console.ts

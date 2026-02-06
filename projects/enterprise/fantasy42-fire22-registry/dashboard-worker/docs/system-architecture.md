@@ -24,7 +24,7 @@ component design, system patterns, and architectural decisions.
 
 ### High-Level Architecture
 
-```
+```text
 [Client Layer] → [API Gateway] → [Service Layer] → [Data Layer]
       ↓              ↓              ↓              ↓
    Web App      Load Balancer   Business      Database
@@ -60,7 +60,7 @@ component design, system patterns, and architectural decisions.
 
 ### Layered Architecture
 
-```
+```text
 ╭─────────────────────────────────────╮
 │           Presentation Layer        │
 │         (Web, Mobile, API)         │
@@ -78,7 +78,7 @@ component design, system patterns, and architectural decisions.
 
 ### Microservices Pattern
 
-```
+```text
 ╭─────────────╮  ╭─────────────╮  ╭─────────────╮
 │   User      │  │   Wager     │  │  Payment    │
 │  Service    │  │  Service    │  │  Service    │
@@ -94,7 +94,7 @@ component design, system patterns, and architectural decisions.
 
 ### Event-Driven Architecture
 
-```
+```text
 [Event Sources] → [Event Bus] → [Event Handlers] → [Event Sinks]
       ↓              ↓              ↓              ↓
    User Actions   Message Queue   Processors    Database
@@ -226,7 +226,7 @@ graph TD
 
 ### Security Layers
 
-```
+```text
 ╭─────────────────────────────────────╮
 │         Application Security        │
 │      (Input Validation, XSS)       │
@@ -287,7 +287,7 @@ interface AuthorizationArchitecture {
 
 ### Horizontal Scaling
 
-```
+```text
 ╭─────────────╮  ╭─────────────╮  ╭─────────────╮
 │   Load      │  │   Load      │  │   Load      │
 │ Balancer 1  │  │ Balancer 2  │  │ Balancer 3  │
@@ -301,7 +301,7 @@ interface AuthorizationArchitecture {
 
 ### Vertical Scaling
 
-```
+```text
 ╭─────────────────────────────────────╮
 │         Resource Optimization        │
 ├─────────────────────────────────────┤
@@ -314,7 +314,7 @@ interface AuthorizationArchitecture {
 
 ### Database Scaling
 
-```
+```text
 ╭─────────────╮  ╭─────────────╮  ╭─────────────╮
 │   Primary   │  │   Read      │  │   Cache     │
 │  Database   │  │ Replica 1   │  │   Layer     │
@@ -334,7 +334,7 @@ interface AuthorizationArchitecture {
 
 ### Environment Structure
 
-```
+```text
 ╭─────────────────────────────────────╮
 │         Production Environment      │
 ├─────────────────────────────────────┤
@@ -459,7 +459,7 @@ interface DataIntegration {
 
 ### Caching Strategy
 
-```
+```text
 ╭─────────────────────────────────────╮
 │         Client-Side Cache           │
 │      (Browser, Mobile App)         │
@@ -517,7 +517,7 @@ interface LoadBalancing {
 
 ### Monitoring Layers
 
-```
+```text
 ╭─────────────────────────────────────╮
 │         Application Monitoring      │
 │      (Performance, Errors)          │

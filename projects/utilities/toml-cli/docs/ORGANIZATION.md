@@ -2,7 +2,7 @@
 
 ## Directory Structure
 
-```
+```text
 toml-cli/                              # Project root
 │
 ├── src/                               # Source code
@@ -131,7 +131,7 @@ bun run benchmark
 
 ## Project Statistics
 
-```
+```text
 Source Code:
   - Main application: 561 lines (src/config-manager.ts)
   - Documentation: 2000+ lines across 5 documents

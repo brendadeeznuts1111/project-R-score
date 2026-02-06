@@ -87,7 +87,7 @@ staging:
 
 ## 📊 Testing Results
 
-```
+```text
 ⚛️ Testing Quantum Configuration with YAML Anchors & Aliases
 
 ✅ Environment Configuration Testing - PASSED
@@ -103,7 +103,7 @@ staging:
 ```
 
 ### **Development Environment Test**
-```
+```text
 Environment: development
 Server: api.example.com
 Database: quantum_lattice_dev
@@ -117,7 +117,7 @@ Features: quantum_terminal, real_time_monitoring, experimental_api
 ```
 
 ### **Staging Environment Test**
-```
+```text
 Environment: staging
 Server: staging.quantum-lattice.com:443
 Database: quantum_lattice_staging
@@ -128,7 +128,7 @@ Features: quantum_terminal, real_time_monitoring, predictive_analytics
 ```
 
 ### **Production Environment Test**
-```
+```text
 Environment: production
 Server: api.quantum-lattice.com:443
 Database: quantum_lattice_prod
@@ -375,7 +375,7 @@ production:
 ## 📚 Best Practices
 
 ### **1. Configuration Organization**
-```
+```text
 src/config/
 ├── quantum-config-fixed.yaml    # Main configuration
 ├── quantum-config-manager.ts    # Configuration manager

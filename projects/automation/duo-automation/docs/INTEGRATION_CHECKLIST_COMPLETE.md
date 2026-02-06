@@ -30,7 +30,7 @@ The complete integration checklist has been successfully implemented, integratin
 ### **📈 Component Integration Status:**
 
 #### **1. Evidence Service Integration ✅**
-```
+```text
 🔍 Evidence Service Integration
    Adding CRC32 field to evidence_metadata table...
 ✅ Evidence service integration complete in 0.46ms
@@ -51,7 +51,7 @@ The complete integration checklist has been successfully implemented, integratin
 ---
 
 #### **2. Dashboard Cache Integration ✅**
-```
+```text
 💾 Dashboard Cache Integration
    Replacing Redis with ContentCache<MerchantDashboard>...
 ✅ Dashboard cache integration complete in 1.59ms
@@ -72,7 +72,7 @@ The complete integration checklist has been successfully implemented, integratin
 ---
 
 #### **3. Batch Processor Integration ✅**
-```
+```text
 📦 Batch Processor Integration
    Integrating DisputeBatchProcessor into cron job...
 ✅ Batch processor integration complete in 9.85ms
@@ -94,7 +94,7 @@ The complete integration checklist has been successfully implemented, integratin
 ---
 
 #### **4. Performance Panel Integration ⚠️**
-```
+```text
 📊 Performance Panel Integration
    Adding HashPerformancePanel to admin dashboard...
 ⚠️ Performance panel integration failed: No metrics available for report generation
@@ -111,7 +111,7 @@ The complete integration checklist has been successfully implemented, integratin
 ---
 
 #### **5. Monitoring Integration ✅**
-```
+```text
 🚨 Monitoring Integration
    Setting up alerts for CRC32 verification failures...
 ✅ Monitoring integration complete in 1.12ms
@@ -133,7 +133,7 @@ The complete integration checklist has been successfully implemented, integratin
 ---
 
 #### **6. Deployment Integration ✅**
-```
+```text
 🚀 Deployment Integration
    Switching to oven/bun:1.0 base image...
 ✅ Deployment integration complete in 3.39ms
@@ -155,7 +155,7 @@ The complete integration checklist has been successfully implemented, integratin
 ---
 
 #### **7. Benchmarks Integration ✅**
-```
+```text
 🏃 Benchmarks Integration
    Running pre-deploy benchmarks...
 ✅ Benchmarks integration complete in 30.47ms
@@ -163,7 +163,7 @@ The complete integration checklist has been successfully implemented, integratin
 ```
 
 **Benchmark Results:**
-```
+```text
 📊 Benchmark Summary
 ════════════════════════════════════════════════════════════
 Total Tests: 10

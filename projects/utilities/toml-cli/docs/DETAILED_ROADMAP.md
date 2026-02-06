@@ -8,7 +8,7 @@
 
 ## Executive Timeline
 
-```
+```text
 Phase 1 ✅ COMPLETE          Phase 2 🔄 IN PROGRESS      Phase 3 🎯 NEXT           Phase 4 📅 FUTURE
 Jan 1 - Jan 15              Jan 16 - Jan 22             Jan 23 - Feb 5            Q2 2026
 Foundation                  Security                    Observability             Advanced

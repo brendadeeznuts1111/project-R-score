@@ -76,7 +76,7 @@ bun build --feature=LOCAL_SANDBOX --feature=DEBUG
 - [x] Factory-form spec generator - Ready for Phase 2
 
 **Test Results:**
-```
+```text
 ✅ Domain Detection (4 tests)
 ✅ Matrix Completeness (11 tests)
 ✅ Feature Flag Mapping (4 tests)
@@ -197,7 +197,7 @@ Total: 37/37 passing ✅
 - [ ] Log flushing strategy (batch or immediate for CRITICAL)
 
 #### Events Tracked
-```
+```text
 AUTH - User authentication (success/failure)
 SCOPE_VIOLATION - Cross-scope metric attempted
 METRIC_MUTATION - Metric added/modified/deleted
@@ -221,7 +221,7 @@ ERROR - Any error conditions
 - [ ] Content-Disposition headers for browser downloads
 
 #### Partitioning Example
-```
+```text
 s3://metrics-bucket/
   ├── ENTERPRISE/2026/01/15/metrics-*.json
   ├── DEVELOPMENT/2026/01/15/metrics-*.json

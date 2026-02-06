@@ -31,7 +31,7 @@ bun run cli info
 ```
 
 **Output:**
-```
+```text
 📦 ShortcutRegistry Build Information
 
   Version:      1.0.0
@@ -52,7 +52,7 @@ bun run cli shortcuts
 ```
 
 **Output:**
-```
+```text
 ⌨️  Available Shortcuts (10 total)
 
    1. file.save            Cmd+S           Save file
@@ -69,7 +69,7 @@ bun run cli stats
 ```
 
 **Output:**
-```
+```text
 📊 Shortcut Statistics
 
   Total Shortcuts: 10
@@ -90,7 +90,7 @@ bun run cli git
 ```
 
 **Output:**
-```
+```text
 🔀 Git Commit Information
 
   Full Hash:    426894410d120659c3c34d589568d905c52a265d
@@ -107,7 +107,7 @@ bun run cli validate
 ```
 
 **Output:**
-```
+```text
 ✅ Validating Shortcuts...
 
   ✓ All shortcuts are valid!
@@ -124,7 +124,7 @@ bun run cli search save
 ```
 
 **Output:**
-```
+```text
 🔍 Search Results for "save" (1 found)
 
   file.save            Cmd+S           Save file
@@ -153,7 +153,7 @@ bun run cli category general
 - `custom`
 
 **Output:**
-```
+```text
 📁 Shortcuts in "general" category (10 total)
 
   file.save            Cmd+S           Save file

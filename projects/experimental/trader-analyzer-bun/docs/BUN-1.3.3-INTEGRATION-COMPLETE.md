@@ -360,7 +360,7 @@ export class StructuredLogger {
 ```
 
 **Log Aggregation Query** (Loki):
-```
+```text
 {app="hyper-bun"} |= "FhSpreadAlert" 
   | json
   | deviationPct > 3.0

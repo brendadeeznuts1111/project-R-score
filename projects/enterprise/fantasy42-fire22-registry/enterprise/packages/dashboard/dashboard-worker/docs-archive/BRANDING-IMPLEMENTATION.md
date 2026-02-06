@@ -156,14 +156,14 @@ function toggleTheme() {
     localStorage.setItem('theme', newTheme);
     updateThemeIcon(newTheme);
 }
-````
+````text
 
 ```javascript
 function updateThemeIcon(theme) {
   const toggle = document.querySelector('.theme-toggle');
   toggle.innerHTML = theme === 'dark' ? '🌙' : '☀️';
 }
-```
+```text
 
 // Initialize theme document.addEventListener('DOMContentLoaded', function() {
 const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -274,7 +274,7 @@ Ensure interactive elements are at least 44px tall for mobile:
 
 ## 📚 **File Structure**
 
-```
+```text
 docs/
 ├── fire22-branding.css          # Main CSS library
 ├── FIRE22-BRANDING-GUIDE.md    # Branding standards

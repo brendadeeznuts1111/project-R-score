@@ -97,7 +97,7 @@ related-files:
 ### **🎯 Migration Success**
 
 **Canvas Files Processed**:
-```
+```text
 ✅ Integration Ecosystem.canvas     - 9 nodes enhanced
 ✅ System Design Canvas.canvas      - 7 nodes enhanced  
 ✅ Canvas-Vault Integration Demo    - 9 nodes migrated
@@ -105,7 +105,7 @@ related-files:
 ```
 
 **Color Distribution**:
-```
+```text
 🎨 Integration Ecosystem:
   #6366F1: 3 nodes (domain.integration)
   #8B5CF6: 2 nodes (status.experimental)

@@ -45,7 +45,7 @@ bun run bench:json   # Run benchmarks with JSON output (CI/CD)
 
 ## Project Structure
 
-```
+```text
 src/
   server/
     index.ts          # Bun.serve() entry point

@@ -81,7 +81,7 @@ npm run test:validate            # Validate coverage thresholds
 ### 🏗️ **Test Architecture:**
 
 #### **📁 Test Structure**
-```
+```text
 __tests__/
 ├── setup.js                     # Global setup and utilities
 ├── cash-app-adapter.test.js     # Core adapter tests
@@ -93,7 +93,7 @@ __tests__/
 ```
 
 #### **🔧 Configuration Files**
-```
+```text
 jest.config.json                 # Jest configuration
 package.test.json                # Enhanced package.json with dual runner
 .github/workflows/dual-test-ci.yml # GitHub Actions workflow

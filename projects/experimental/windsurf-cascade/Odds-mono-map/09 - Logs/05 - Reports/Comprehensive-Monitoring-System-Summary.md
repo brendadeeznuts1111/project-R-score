@@ -39,7 +39,7 @@ review-date: 2025-12-18T17:58:00Z
 ### **🎯 Unified Monitoring Framework**
 
 #### **🏗️ Three-Tier Architecture**
-```
+```text
 🎯 Unified Monitoring Dashboard
 ├── 📁 Directory Monitoring System
 │   ├── Real-time directory scanning
@@ -206,7 +206,7 @@ review-date: 2025-12-18T17:58:00Z
 - **Logging System**: Comprehensive activity logging with file output
 
 #### **📊 Data Flow Architecture**
-```
+```text
 Data Input → Processing → Analysis → Visualization → Action
     ↓           ↓          ↓           ↓           ↓
 Directory   Health    Performance  Beautiful   Issue

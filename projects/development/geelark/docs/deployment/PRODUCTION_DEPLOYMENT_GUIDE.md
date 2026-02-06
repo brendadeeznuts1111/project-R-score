@@ -148,7 +148,7 @@ bun run tools/benchmark-network-config.ts
 
 **Binary vs JSON**:
 
-```
+```text
 JSON.stringify:  ~2µs
 Binary encode:    ~47ns
 Improvement:      42x faster
@@ -156,7 +156,7 @@ Improvement:      42x faster
 
 **Bandwidth**:
 
-```
+```text
 JSON payload:     ~150 bytes
 Binary frame:     ~14 bytes
 Reduction:        10.7x
@@ -164,7 +164,7 @@ Reduction:        10.7x
 
 **Network Transfer**:
 
-```
+```text
 100 updates/second:
   JSON:  15 KB/s
   Binary: 1.4 KB/s (10.7x reduction)
@@ -172,7 +172,7 @@ Reduction:        10.7x
 
 ### Benchmark Results
 
-```
+```text
 ╔═══════════════════════════════════════════════════════════════════════════╗
 ║                           Benchmark Summary                               ║
 ╠═══════════════════════════════════════════════════════════════════════════╣

@@ -71,7 +71,7 @@ Successfully implemented the **Empire Pro CLI v4.0** - a comprehensive identity 
 
 ## 📁 File Structure Created
 
-```
+```text
 windsurf-project/
 ├── cli/
 │   ├── bin/

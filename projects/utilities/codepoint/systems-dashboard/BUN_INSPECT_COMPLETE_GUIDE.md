@@ -114,7 +114,7 @@ console.log(Bun.inspect.table(data));
 ```
 
 **Output:**
-```
+```text
 ┌───┬───┬───┬───┐
 │   │ a │ b │ c │
 ├───┼───┼───┼───┤
@@ -130,7 +130,7 @@ console.log(Bun.inspect.table(data, ["a", "c"]));
 ```
 
 **Output:**
-```
+```text
 ┌───┬───┬───┐
 │   │ a │ c │
 ├───┼───┼───┤
@@ -161,7 +161,7 @@ console.log(Bun.inspect.table(performanceData));
 ```
 
 **Output:**
-```
+```text
 ┌───┬────────────────┬────────┬────────────┐
 │   │ operation      │ time   │ status     │
 ├───┼────────────────┼────────┼────────────┤
@@ -186,7 +186,7 @@ console.log(Bun.inspect.table(unicodeData));
 ```
 
 **Output:**
-```
+```text
 ┌───┬───────────────────┬─────────────────────────────┬─────────────────────────┬─────────────────────────┐
 │   │ emoji             │ currency                    │ international         │ math                   │
 ├───┼───────────────────┼─────────────────────────────┼─────────────────────────┼─────────────────────────┤
@@ -204,7 +204,7 @@ console.log(Bun.inspect.table([]));
 ```
 
 **Output:**
-```
+```text
 ┌───┐
 │   │
 ├───┤
@@ -217,7 +217,7 @@ console.log(Bun.inspect.table([{ only: "field", value: 42 }]));
 ```
 
 **Output:**
-```
+```text
 ┌───┬───────┬───────┐
 │   │ only  │ value │
 ├───┼───────┼───────┤
@@ -231,7 +231,7 @@ console.log(Bun.inspect.table([{}, {}]));
 ```
 
 **Output:**
-```
+```text
 ┌───┐
 │   │
 ├───┤
@@ -252,7 +252,7 @@ console.log(Bun.inspect.table(mixedData));
 ```
 
 **Output:**
-```
+```text
 ┌───┬───────┬─────┬─────────────────┬─────────┬─────────┐
 │   │ name  │ age │ email           │ city    │ country │
 ├───┼───────┼─────┼─────────────────┼─────────┼─────────┤
@@ -285,7 +285,7 @@ console.log(str);
 ```
 
 **Both produce identical output:**
-```
+```text
 {
   name: "Test Object",
   value: 42,

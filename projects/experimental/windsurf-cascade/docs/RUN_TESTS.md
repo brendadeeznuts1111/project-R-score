@@ -331,7 +331,7 @@ bun test --profile-performance
 ## 📝 Test Organization
 
 ### Test Structure
-```
+```text
 packages/
 ├── odds-core/src/tests/
 │   ├── unit/           # Unit tests

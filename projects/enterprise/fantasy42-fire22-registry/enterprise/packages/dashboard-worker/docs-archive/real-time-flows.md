@@ -24,7 +24,7 @@ live data streaming in the Fire22 Dashboard system.
 
 ### System Overview
 
-```
+```text
 [Data Sources] → [Event Bus] → [WebSocket Server] → [Client Applications]
       ↓              ↓              ↓                    ↓
    Database      Event        Connection         Real-time
@@ -162,7 +162,7 @@ interface Event {
 
 ### Event Routing
 
-```
+```text
 Event Source → Event Bus → Event Handlers → WebSocket Server → Clients
      ↓           ↓           ↓              ↓              ↓
   Database    Publish     Process        Broadcast      Receive
@@ -483,7 +483,7 @@ interface ConnectionError {
 ````typescript
 ```javascript
 import { WebSocketServer } from 'ws';
-````
+````text
 
 const wss = new WebSocketServer({ port: 8080, perMessageDeflate: true,
 maxPayload: 1024 \* 1024, // 1MB });
@@ -508,7 +508,7 @@ function broadcastEvent(event: Event, target?: string) {
     }
   });
 }
-````
+````text
 
 ````
 
@@ -539,7 +539,7 @@ function handleConnection(ws: WebSocket, request: IncomingMessage) {
     handleDisconnection(ws);
   });
 }
-````
+````text
 
 ```
 
@@ -620,4 +620,4 @@ function handleConnection(ws: WebSocket, request: IncomingMessage) {
 *Last Updated: 2024-01-20*
 *Version: 1.0*
 *Maintainer: Fire22 Development Team*
-```
+```text

@@ -7,7 +7,7 @@ Successfully created a complete React + TypeScript entry point with full keyboar
 ## **🔧 REACT/TYPESCRIPT ARCHITECTURE**
 
 ### **Component Structure**
-```
+```text
 src/
 ├── app.tsx                 # Main React component with Three.js integration
 ├── index.tsx              # React entry point
@@ -207,7 +207,7 @@ bun run start:production # Start production versions
 ```
 
 ### **Build Output**
-```
+```text
 dist/
 ├── index.html          (6.82 kB)
 ├── assets/

@@ -4,7 +4,7 @@ Here's a complete, production-ready shortcut system built with **Bun native APIs
 
 ## **1. Project Structure**
 
-```
+```text
 lightning-shortcut-system/
 ├── package.json
 ├── tsconfig.json

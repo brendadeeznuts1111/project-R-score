@@ -66,7 +66,7 @@ bun run golden-setup setup
 4. Sends welcome message to General topic
 
 **Output**:
-```
+```text
 🏗️  Setting up Golden Supergroup
 
    Chat ID: -1001234567890
@@ -99,7 +99,7 @@ bun run golden-setup verify
 ```
 
 **Output**:
-```
+```text
 🔍 Verifying Golden Supergroup Configuration
 
    Chat ID: -1001234567890
@@ -130,7 +130,7 @@ bun run golden-setup example-message --thread-id=99
 ```
 
 **Example Alert Format**:
-```
+```text
 🚨 CRITICAL Covert Steam Alert!
 
 Event: `NFL-2025-001`
@@ -164,7 +164,7 @@ All alert messages include RFC 001 compliant deep-links:
 - **Optional Parameters**: `bm`, `ev`, `node`, `severity`, `source`
 
 **Example Deep-Link**:
-```
+```text
 http://localhost:8080/alert/covert-steam/?id=NFL-2025-001-1704556800000&type=covert-steam&ts=1704556800000&bm=DraftKings&ev=NFL-2025-001&node=node_abc123&severity=9.5
 ```
 

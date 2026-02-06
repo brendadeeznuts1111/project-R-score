@@ -6,7 +6,7 @@ Successfully updated all repository references from the original YishenTu/claudi
 ## Changes Made
 
 ### 1. Git Remote
-```
+```text
 Old: https://github.com/YishenTu/claudian.git
 New: https://github.com/brendadeeznuts1111/obsidian-claude.git
 ```

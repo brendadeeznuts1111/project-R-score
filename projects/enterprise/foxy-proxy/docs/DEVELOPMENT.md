@@ -59,7 +59,7 @@ bun clean
 
 ### Project Structure
 
-```
+```text
 foxy-proxy/
 ├── packages/
 │   └── dashboard/

@@ -16,7 +16,7 @@ Predicts freeze events in high-frequency trading systems.
 
 ## Structure
 
-```
+```text
 hft-freeze-predictor/
 ├── src/
 │   ├── index.ts      # Entry point, exports
@@ -31,7 +31,7 @@ hft-freeze-predictor/
 
 ## Flow
 
-```
+```text
 MetricsSnapshot → predictor.predict() → Prediction
                        ↓
                   store.store()

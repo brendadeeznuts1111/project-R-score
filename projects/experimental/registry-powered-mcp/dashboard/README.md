@@ -71,7 +71,7 @@ bun run dashboard
 ## 🔧 Development
 
 ### Project Structure
-```
+```text
 ├── src/
 │   ├── App.tsx                 # Main application
 │   ├── components/             # 40+ React components

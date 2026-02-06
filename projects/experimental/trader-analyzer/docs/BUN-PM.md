@@ -52,7 +52,7 @@ bun pm pack --dry-run
 #### Output Modes
 
 **Default output**:
-```
+```text
 bun pack v1.2.19
 
 packed 131B package.json
@@ -67,7 +67,7 @@ Packed size: 249B
 ```
 
 **Quiet output** (`--quiet`):
-```
+```text
 my-package-1.0.0.tgz
 ```
 
@@ -157,7 +157,7 @@ bun list --all
 #### Example Output
 
 **Top-level only**:
-```
+```text
 /path/to/project node_modules (135)
 ├── eslint@8.38.0
 ├── react@18.2.0
@@ -167,7 +167,7 @@ bun list --all
 ```
 
 **All dependencies** (`--all`):
-```
+```text
 /path/to/project node_modules (135)
 ├── @eslint-community/eslint-utils@4.4.0
 ├── @eslint-community/regexpp@4.5.0
@@ -258,7 +258,7 @@ bun pm untrusted
 
 #### Example Output
 
-```
+```text
 ./node_modules/@biomejs/biome @1.8.3
  » [postinstall]: node scripts/postinstall.js
 
@@ -326,7 +326,7 @@ bun pm version
 ```
 
 **Output**:
-```
+```text
 bun pm version v1.3.3 (ca7428e9)
 Current package version: v1.0.0
 

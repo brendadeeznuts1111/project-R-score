@@ -66,7 +66,7 @@ In your Cloudflare dashboard, add this DNS record:
 
 #### CNAME Record (Recommended)
 
-```
+```text
 Name: docs
 Type: CNAME
 Target: crystal-clear-architecture.pages.dev
@@ -78,7 +78,7 @@ TTL: Auto
 
 If CNAME doesn't work for your setup:
 
-```
+```text
 Name: docs
 Type: A
 Target: 192.0.2.1 (Cloudflare will update this automatically)

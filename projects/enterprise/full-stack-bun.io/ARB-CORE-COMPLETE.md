@@ -2,7 +2,7 @@
 
 ## 🎯 **Verification Status**
 
-```
+```text
 ✅ %j JSON Logging ✓
 ✅ SQLite 3.51.1 Optimizations ✓
 ✅ Fuzzer-Proof Features (25 fixes) ✓
@@ -55,7 +55,7 @@ $ bun test tests/arb-core-engine.test.ts
 
 ## 📈 **Performance Metrics**
 
-```
+```text
 Shadow scans/min: 1,890
 Average query ms: 0.8 (35% faster)
 Memory stable: true

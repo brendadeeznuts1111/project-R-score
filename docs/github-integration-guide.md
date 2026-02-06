@@ -64,7 +64,7 @@ bun -e 'const h="af76296637931381e9509c204c5f1af9cc174534";console.log((await fe
 
 ## 🎯 **Integration Results**
 
-```
+```text
 ✅ Latest Main Commit: e5cd034e9ad82bf8335178fe73c930a191af443e
 ⚠️  Bun Version Status: Running canary build (e5cd034e9ad8...)
 ✅ Raw File Content: packages/bun-types/bun.d.ts (8455 lines)

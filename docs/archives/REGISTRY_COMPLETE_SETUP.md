@@ -8,7 +8,7 @@ Your private NPM registry with documentation, sync, and RSS aggregation is fully
 
 ## 📂 File Structure
 
-```
+```text
 lib/registry/
 ├── registry-types.ts       # Core TypeScript types
 ├── r2-storage.ts          # R2 storage adapter (Bun v1.3.7+)

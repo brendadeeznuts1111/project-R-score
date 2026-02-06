@@ -527,7 +527,7 @@ class OddsMonitoringSystem {
 
 ### **Multi-Provider Fallback Chain**
 
-```
+```text
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   OddsAPI       │ -> │   ESPN          │ -> │   Cache         │
 │   (Real-time)   │    │   (Near RT)     │    │   (Fallback)    │

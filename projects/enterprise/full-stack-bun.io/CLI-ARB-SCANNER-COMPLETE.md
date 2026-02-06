@@ -4,7 +4,7 @@
 
 ## 🎯 **Verification Status**
 
-```
+```text
 ✅ spawnSync Isolated Event Loop ✓
 ✅ Windows TTY Fixes ✓
 ✅ Timer Interference Prevention ✓
@@ -57,7 +57,7 @@ $ bun test tests/cli-arb-scanner.test.ts
 
 ## 📈 **Performance Metrics**
 
-```
+```text
 CLI Speed:        12s → 1.8s (-85%)
 Windows Deploy:   Broken → Perfect
 Test Stability:   87% → 100%
@@ -70,7 +70,7 @@ Arbitrage Gain:   $512K → $734K/hr (+43%)
 
 ### **CLI Issues FIXED**
 
-```
+```text
 ├── vim "eating" keystrokes → FIXED (Windows)
 ├── Timers firing during exec → FIXED 
 ├── Stdin/stdout corruption → FIXED
@@ -140,7 +140,7 @@ curl http://localhost:3003/health | jq
 
 ## 🎯 **spawnSync ROI**
 
-```
+```text
 CLI Speed:        12s → 1.8s (-85%)
 Windows Deploy:   Broken → Perfect
 Test Stability:   87% → 100%
@@ -175,7 +175,7 @@ Arbitrage Gain:   $512K → $734K/hr (+43%)
 
 **🟢 CLI ENGINE | 3/3 ACTIVE | 1.8s/cycle | WINDOWS TTY | SPAWNSYNC FIXED**
 
-```
+```text
 [CLI-ARB][SPAWNSYNC-ISOLATED][WINDOWS-TTY-FIXED][3-PARALLEL]
 [VALUE:$512K][CLI-TIME:1.8s][NODE-PARITY:100%][STATUS:BULLETPROOF]
 [DASHBOARD:localhost:3003][CLI:hyperbun-cli]

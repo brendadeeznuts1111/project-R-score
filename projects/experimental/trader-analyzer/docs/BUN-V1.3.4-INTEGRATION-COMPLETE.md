@@ -29,7 +29,7 @@ b40677e feat: Bun v1.3.4 class constructor fix integration & workspace tooling
 
 ### **2.0.0.0.0.0.0 Integrated Components Architecture**
 
-```
+```text
 hyper-bun/
 ├── scripts/
 │   ├── verify-bun-constructor-usage.ts    ✅ Created & Functional

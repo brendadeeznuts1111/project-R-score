@@ -40,7 +40,7 @@ npx ts-node examples/websocket-demo.ts --interactive
 
 ## 📁 File Structure
 
-```
+```text
 examples/
 ├── websocket-client.ts      # Client-side WebSocket library
 ├── websocket-testing.ts     # Comprehensive test suite
@@ -188,7 +188,7 @@ npx ts-node examples/websocket-demo.ts --interactive
 ```
 
 **Available Commands:**
-```
+```text
 connect          - Connect to WebSocket server
 auth <token>     - Authenticate with JWT token
 subscribe <id>   - Subscribe to workflow updates

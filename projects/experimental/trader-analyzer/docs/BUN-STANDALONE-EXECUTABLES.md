@@ -174,17 +174,17 @@ bun build --compile --compile-autoload-package-json ./app.ts
 ### Startup Time Improvement
 
 **Before**: Config files loaded at runtime (slower startup)
-```
+```text
 Executable startup: ~50-100ms (with config loading)
 ```
 
 **After**: Config files skipped (faster startup)
-```
+```text
 Executable startup: ~10-20ms (without config loading)
 ```
 
 **With Opt-In**: Only loads what you need
-```
+```text
 Executable startup: ~20-40ms (with selective config loading)
 ```
 

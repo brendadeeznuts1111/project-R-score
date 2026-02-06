@@ -83,7 +83,7 @@ PORT=3000
 ````typescript
 ```javascript
 import { getEnvVar, getEnvVarOptional } from './env';
-````
+````text
 
 const jwtSecret = getEnvVar('JWT_SECRET'); // Required const apiUrl =
 getEnvVarOptional('FIRE22_API_URL', // Optional with default
@@ -95,7 +95,7 @@ getEnvVarOptional('FIRE22_API_URL', // Optional with default
 ```typescript
 ```javascript
 import { logger } from './simd-logger';
-````
+````text
 
 logger.info('🚀 API Client starting', { version: globalThis.VERSION });
 logger.logHttpRequest('GET', '/api/users', 200, 150);
@@ -140,7 +140,7 @@ bun scripts/enhanced-executable-builder.ts   # Build all executables
 
 ## 📂 Key File Locations
 
-```
+```text
 workspaces/@fire22-api-client/
 ├── src/
 │   ├── index.ts              # Main entry point

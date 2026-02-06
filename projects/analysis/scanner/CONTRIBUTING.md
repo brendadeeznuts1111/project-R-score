@@ -95,7 +95,7 @@ const service = projectTokenService(projectContext.projectInfo);
 
 Follow conventional commits:
 
-```
+```text
 feat: add cookie session management
 fix: correct projectId resolution with FW_PROJECT_ID fallback
 docs: update README with cookie session commands

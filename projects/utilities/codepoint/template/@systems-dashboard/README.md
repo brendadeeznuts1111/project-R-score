@@ -110,7 +110,7 @@ systems-dashboard --help
 
 ## 📁 Project Structure
 
-```
+```text
 my-project/
 ├── cli.js                 # Professional CLI tool
 ├── SystemsDashboard.tsx   # React dashboard component

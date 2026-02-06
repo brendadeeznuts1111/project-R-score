@@ -104,7 +104,7 @@ const domainColors = {
 ```
 
 ### **Real-World Dashboard Example**
-```
+```text
 🌈 Canvas System Status Dashboard (True Color)
 ════════════════════════════════════════════════════════════════════════════════
 1. ● Bridge Service       active       █████████░ 98.5% 42 connections
@@ -127,7 +127,7 @@ const domainColors = {
 - **Cache Statistics**: Real-time monitoring of hit rates and performance gains
 
 ### **Performance Benchmarks**
-```
+```text
 Testing performance with 10,000 conversions:
 ansi-16m  : 7,884,365 → 32,021,313 ops/sec (4.1x faster with cache)
 ansi-256  : 10,132,143 → 83,045,442 ops/sec (8.2x faster with cache)

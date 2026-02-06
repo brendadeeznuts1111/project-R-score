@@ -29,7 +29,7 @@ reliability and compliance._
 
 ### **System Overview**
 
-```
+```text
 🏢 Fantasy42-Fire22 Enterprise Platform
 ├── 🎯 Core Business Domains (8)
 ├── 🏗️ Infrastructure Domains (6)
@@ -153,7 +153,7 @@ reliability and compliance._
 
 ### **Security Layers**
 
-```
+```text
 🌐 External Security
 ├── 🔒 Perimeter Protection (Cloudflare)
 ├── 🛡️ Application Firewall (WAF)
@@ -217,7 +217,7 @@ reliability and compliance._
 
 ### **Payment Architecture**
 
-```
+```text
 💳 Payment Processing
 ├── 💳 Credit/Debit Cards (Visa, MC, Amex)
 ├── 🏦 Bank Transfers (ACH, Wire)
@@ -245,7 +245,7 @@ reliability and compliance._
 
 ### **Data Processing Pipeline**
 
-```
+```text
 📥 Data Ingestion
 ├── 🎯 Live Sports Data
 ├── 👥 User Behavior Analytics
@@ -279,7 +279,7 @@ reliability and compliance._
 
 ### **API Architecture**
 
-```
+```text
 📡 RESTful APIs
 ├── 🔌 Core Platform APIs
 ├── 💰 Payment Gateway APIs
@@ -338,7 +338,7 @@ reliability and compliance._
 
 ### **Deployment Strategy**
 
-```
+```text
 🏗️ Development Environment
 ├── 🔧 Local Development
 ├── 🧪 Testing Environments

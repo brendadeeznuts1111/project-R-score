@@ -38,7 +38,7 @@ Displays beautiful ASCII-art styled output:
 bun dev-hq-cli.ts insights --bun
 ```
 
-```
+```text
 ╔════════════════════════════════════════╗
 ║    🎯 Dev HQ Codebase Insights 🎯      ║
 ║         Powered by Bun 🚀               ║

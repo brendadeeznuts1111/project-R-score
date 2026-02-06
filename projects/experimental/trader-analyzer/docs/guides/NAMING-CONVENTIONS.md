@@ -243,7 +243,7 @@ enum ArbitrageStatus {
 ## 6. [NAMING.COMMITS.RG] Commit Message Naming
 
 ### 6.1. [COMMITS.FORMAT.RG] Format
-```
+```text
 <type>[optional scope]: <subject>
 ```
 

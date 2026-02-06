@@ -967,7 +967,7 @@ echo "✅ Rollback complete. System running on JSON messaging."
 
 ### **ROI Calculation**
 
-```
+```text
 Implementation Cost: $45K (1 month development)
 Annual Performance Savings: $180K (infrastructure + developer time)
 Annual Business Value: $500K+ (improved user experience + scalability)

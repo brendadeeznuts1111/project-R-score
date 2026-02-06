@@ -115,7 +115,7 @@ export interface BadApiDocumentation {
 ## Commit Message Standards
 
 ### Format
-```
+```text
 <type>(<scope>): <description>
 
 [optional body]
@@ -133,7 +133,7 @@ export interface BadApiDocumentation {
 - `chore`: Maintenance
 
 ### Examples
-```
+```text
 feat(lattice): add SIMD-accelerated route matching
 
 Performance improvement: 7x faster prefix filtering via vceqq_u8
@@ -142,7 +142,7 @@ Closes #123
 BREAKING CHANGE: Changes URLPattern API
 ```
 
-```
+```text
 perf(core): optimize heap allocation in Identity-Anchor
 
 -14% memory reduction via zero-copy cookie parsing

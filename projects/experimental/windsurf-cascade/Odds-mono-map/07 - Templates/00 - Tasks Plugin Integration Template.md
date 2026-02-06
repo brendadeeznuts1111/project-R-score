@@ -306,7 +306,7 @@ uuid: <%* const utils = require('./scripts/template-utils.js'); tR += utils.gene
 - **Recurrence**: {{recurrence}}
 - **UUID**: <%* const utils = require('./scripts/template-utils.js'); tR += utils.generateBunUUID();
     %>
-```
+```text
 
 ### **📝 Description**
 
@@ -406,7 +406,7 @@ gantt
     Implementation     :impl, after design, 5d
     Testing            :test, after impl, 2d
     Documentation      :doc, after test, 1d
-```
+```text
 
 ### **🎯 Key Milestones**
 
@@ -432,7 +432,7 @@ stateDiagram-v2
     Done --> [*]
     Todo --> Cancelled
     In Progress --> Cancelled
-```
+```text
 
 ### **⚡ Quick actions**
 
@@ -517,7 +517,7 @@ dv.paragraph(`## 📊 **Project Statistics**
 - **In Progress**: ${inProgressTasks}
 - **Todo**: ${todoTasks}
 - **Completion Rate**: ${completionRate}%`);
-```
+```text
 
 ### **🎯 Priority distribution**
 
@@ -538,7 +538,7 @@ dv.table(["Priority", "Count", "Percentage"], [
   ["🟢 Low", lowPriority, lowPriority > 0 ? `${(lowPriority/tasks.length*100).toFixed(1)}%` : "0%"],
   ["⚪ None", noPriority, noPriority > 0 ? `${(noPriority/tasks.length*100).toFixed(1)}%` : "0%"]
 ]);
-```
+```text
 
 ---
 
@@ -553,7 +553,7 @@ priority is high
 status.type includes TODO, IN_PROGRESS
 hide backlink
 sort by priority
-```
+```text
 
 ### **⚡ In Progress**
 
@@ -563,7 +563,7 @@ project is {{project}}
 status.type is IN_PROGRESS
 hide backlink
 sort by created
-```
+```text
 
 ### **📝 Todo Tasks**
 
@@ -575,7 +575,7 @@ priority is medium
 hide backlink
 sort by created
 limit 10
-```
+```text
 
 ---
 
@@ -603,7 +603,7 @@ for (let i = 0; i < 4; i++) {
 }
 
 dv.table(["Week", "Tasks Completed"], weeks);
-```
+```text
 
 ### **🚨 Blocked tasks**
 
@@ -625,7 +625,7 @@ if (blockedTasks.length > 0) {
 } else {
   dv.paragraph("✅ **No blocked tasks** - All tasks are unblocked!");
 }
-```
+```text
 
 ### **📅 Stale tasks (no activity for 7 days)**
 
@@ -649,7 +649,7 @@ if (staleTasks.length > 0) {
 } else {
   dv.paragraph("✅ **No stale tasks** - All tasks are recently active!");
 }
-```
+```text
 
 ---
 
@@ -695,7 +695,7 @@ dv.span(`### 📊 **Performance Metrics**
 - **Completed This Month**: ${thisMonth}
 - **Average Task Duration**: 3.2 days
 - **On-Time Delivery**: 87%`);
-```
+```text
 
 ### **⏱ ️ task velocity**
 
@@ -712,7 +712,7 @@ const last4Weeks = completed.filter(t =>
 const velocity = (last4Weeks / 4).toFixed(1);
 
 dv.span(`**Task Velocity**: ${velocity} tasks/week (last 4 weeks)`);
-```
+```text
 
 ---
 
@@ -735,7 +735,7 @@ recipients: ["project-manager@company.com", "stakeholder@company.com"]
 trigger: "task overdue by 3 days"
 action: "Send escalation notification"
 conditions:
-```
+```text
 
 ---
 
@@ -756,7 +756,7 @@ notifications:
   weekly_report: true
   milestone_complete: true
   blocker_alert: true
-```
+```text
 
 ---
 

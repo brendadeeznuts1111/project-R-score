@@ -13,7 +13,7 @@ successfully implements the Crystal Clear Architecture framework.
 
 ### **🏥 Local System Health Check Results:**
 
-```
+```text
 💚 API Health Check Results:
 🔍 All Systems Scanned...
 
@@ -324,7 +324,7 @@ curl https://vinny2times.fire22.workers.dev/api/system/metrics
 
 #### **1. 404 Errors on API Endpoints**
 
-```
+```text
 ❌ Problem: GET /api/v1/collections returns 404
 ✅ Solution: Check route configuration in src/api/routes/
 ✅ Solution: Verify controller is properly registered
@@ -333,7 +333,7 @@ curl https://vinny2times.fire22.workers.dev/api/system/metrics
 
 #### **2. Authentication Failures**
 
-```
+```text
 ❌ Problem: JWT endpoints return 401
 ✅ Solution: Verify JWT_SECRET environment variable
 ✅ Solution: Check token format and expiration
@@ -342,7 +342,7 @@ curl https://vinny2times.fire22.workers.dev/api/system/metrics
 
 #### **3. Slow Response Times**
 
-```
+```text
 ❌ Problem: API responses >500ms
 ✅ Solution: Check database connection pooling
 ✅ Solution: Verify caching layer configuration
@@ -351,7 +351,7 @@ curl https://vinny2times.fire22.workers.dev/api/system/metrics
 
 #### **4. WebSocket Connection Issues**
 
-```
+```text
 ❌ Problem: WebSocket fails to connect
 ✅ Solution: Verify WebSocket server configuration
 ✅ Solution: Check CORS policy for WebSocket
@@ -364,7 +364,7 @@ curl https://vinny2times.fire22.workers.dev/api/system/metrics
 
 ### **Architecture Implementation Score**
 
-```
+```text
 🏗️ Crystal Clear Architecture Compliance: ___/100
 
 📊 Performance Metrics:

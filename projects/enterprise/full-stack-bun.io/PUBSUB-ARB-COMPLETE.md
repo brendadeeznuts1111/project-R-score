@@ -4,7 +4,7 @@
 
 ## 🎯 **Verification Status**
 
-```
+```text
 ✅ ServerWebSocket Subscriptions ✓
 ✅ spawnSync Isolated Event Loop ✓
 ✅ Market-Specific Pub/Sub ✓
@@ -62,7 +62,7 @@ $ bun test tests/pubsub-arb-engine.test.ts
 
 ## 📈 **Performance Metrics**
 
-```
+```text
 Clients:         1 → 1,580 (+158K%)
 Markets:        12 → 47 (+292%)
 Messages/sec:  120 → 1,890 (+1,475%)
@@ -171,7 +171,7 @@ curl http://localhost:3004/health | jq
 
 ## 🎯 **Pub/Sub + CLI ROI**
 
-```
+```text
 Clients:         1 → 1,580 (+158K%)
 Markets:        12 → 47 (+292%)
 Messages/sec:  120 → 1,890 (+1,475%)
@@ -204,7 +204,7 @@ Arbitrage Gain: $734K/hr (+43%)
 
 **🟢 PUB/SUB LIVE | 1,580 clients | 47 markets | $734K | SPAWNSYNC FIXED**
 
-```
+```text
 [PUBSUB-ARB][1,580-CLIENTS][47-MARKETS][1,890-MSG/S][SPAWNSYNC-FIXED]
 [VALUE:$734K][WINDOWS-TTY:✅][SUBS:4,720][STATUS:LIVE-ENTERPRISE]
 [DASHBOARD:localhost:3004][SCALE:10-NODES]

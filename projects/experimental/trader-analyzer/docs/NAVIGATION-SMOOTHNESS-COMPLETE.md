@@ -79,21 +79,21 @@ All integration guides now include consistent footer sections:
 ## 🎯 Navigation Patterns
 
 ### Pattern 1: Learn → Visualize → Understand
-```
+```text
 Documentation → Dashboard → Return to Docs
      ↓              ↓              ↓
   Read        See Live      Deep Dive
 ```
 
 ### Pattern 2: Explore → Learn → Apply
-```
+```text
 Dashboard → Documentation → Implementation
      ↓            ↓              ↓
   Visualize    Understand     Apply
 ```
 
 ### Pattern 3: Cross-Reference
-```
+```text
 Dashboard A → Related Dashboard B → Documentation
      ↓                ↓                    ↓
   Compare        Understand          Learn Details
@@ -118,7 +118,7 @@ Dashboard A → Related Dashboard B → Documentation
 ### Feature Clusters
 
 **Proxy Management Cluster**:
-```
+```text
 Custom Proxy Headers Guide
     ↓
 Proxy Config Service
@@ -129,7 +129,7 @@ HTTP Agent Connection Pool (connection reuse)
 ```
 
 **Structured Logging Cluster**:
-```
+```text
 Standalone & Logging Guide
     ↓
 Console Format Specifiers
@@ -140,7 +140,7 @@ Main Dashboard (system logs)
 ```
 
 **Router & Correlation Cluster**:
-```
+```text
 Market Router Complete
     ↓
 MLGS Developer Dashboard (router monitoring)

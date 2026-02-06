@@ -28,7 +28,7 @@ bun run vault:dashboard:start
 
 ## 📁 Project Structure
 
-```
+```text
 windsurf-project/
 ├── 📦 packages/           # Core packages and libraries
 │   ├── odds-core/         # Core odds processing logic

@@ -10,7 +10,7 @@ The `6.1.1.2.2.x.x.x` schema is a **namespace-encoded address**, not arbitrary v
 
 ### Hierarchical Breakdown
 
-```
+```text
 6.0.0.0.0.0.0  →  Market Intelligence Visualization Subsystem
   ├── 6.1.0.0.0.0.0  →  High-Level Flow Architecture
   │     └── 6.1.1.0.0.0.0  →  Server-Side HTML Transformation Node

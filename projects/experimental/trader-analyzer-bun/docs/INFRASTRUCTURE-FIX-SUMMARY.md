@@ -58,7 +58,7 @@ This blocked:
 
 ### Auto-Initialization Flow
 
-```
+```text
 Application Startup
     ↓
 validateUrlAnomalyDatabase()

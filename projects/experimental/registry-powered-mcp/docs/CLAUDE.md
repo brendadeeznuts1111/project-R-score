@@ -853,7 +853,7 @@ HTTP server using Bun.serve with Identity-Anchor session management.
 
 ### Workspace Structure
 
-```
+```text
 registry-powered-mcp/
 ├── packages/
 │   ├── core/                    # Main registry implementation
@@ -1097,7 +1097,7 @@ test('example', () => {
 
 The LatticeRouter performs automatic validation on initialization. If you see audit warnings:
 
-```
+```text
 ⚠️  AUDIT WARNING: Some native APIs unavailable
    Missing APIs: URLPattern
    Performance Contract: DEGRADED

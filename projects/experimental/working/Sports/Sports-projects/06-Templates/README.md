@@ -39,7 +39,7 @@ The `06-Templates/` directory contains all reusable templates for creating notes
 
 ## 📁 Directory Structure
 
-```
+```text
 06-Templates/
 ├── 00-Index.md                        # Master template index
 ├── README.md                          # This file

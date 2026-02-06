@@ -35,7 +35,7 @@ opr network:test api.example.com 443 https
 
 By default, these targets are preconnected:
 
-```
+```text
 ✓ localhost:8080 (Headscale API)
 ✓ localhost:9090 (Metrics)
 ✓ localhost:3000 (Headplane UI)

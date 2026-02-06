@@ -252,7 +252,7 @@ export const BUILD_METADATA = { ... };
 ### `bun-inspect-utils/archives/` (Auto-generated)
 **Purpose**: Versioned build archives  
 **Structure**:
-```
+```text
 archives/
 └── build-2.0.0-build-1768744496294-2026-01-18T13-54-56-627Z/
     ├── index.js
@@ -278,7 +278,7 @@ archives/
 
 ## 🗂️ Directory Structure
 
-```
+```text
 /Users/nolarose/grok-secuirty/
 ├── bun-inspect-utils/
 │   ├── src/

@@ -275,7 +275,7 @@ bun test --filter "*"
 
 ## Workspace Structure
 
-```
+```text
 trader-analyzer/
 ├── package.json          # Root workspace config
 ├── bun.lock             # Workspace lockfile

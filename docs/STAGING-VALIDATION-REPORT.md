@@ -170,7 +170,7 @@ GET /api/test-error?type=validation
 - ✅ Security event tracking
 
 ### Log Sample
-```
+```text
 ✅ Health check - 2ms
 ✅ Default response - 2ms
 ✅ Validation test - 4ms

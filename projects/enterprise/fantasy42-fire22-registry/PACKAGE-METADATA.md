@@ -197,7 +197,7 @@
 
 All packages in the registry are licensed under MIT unless otherwise specified:
 
-```
+```text
 MIT License
 
 Copyright (c) 2025 Fantasy42-Fire22 Registry Enterprise
@@ -288,7 +288,7 @@ SOFTWARE.
 
 ### **Branch Naming Convention**
 
-```
+```text
 feature/FEATURE-123-short-description
 hotfix/HOTFIX-456-critical-bug-fix
 release/v5.1.0-release-preparation
@@ -323,7 +323,7 @@ release/v5.1.0-release-preparation
 
 All packages follow [Semantic Versioning](https://semver.org/):
 
-```
+```text
 MAJOR.MINOR.PATCH
 │     │     │
 │     │     └─ Bug fixes

@@ -2,7 +2,7 @@
 
 ## 📊 Side-by-Side Comparison
 
-```
+```text
 CURRENT STRUCTURE                    REFACTORED STRUCTURE
 ==================                    ===================
 
@@ -65,7 +65,7 @@ import { PhonesFeature } from "../features/phones";
 
 ### Current Architecture (Layer-based)
 
-```
+```text
 ┌─────────────────────────────────────┐
 │              PAGES                  │  ← Routes + Layout
 ├─────────────────────────────────────┤
@@ -85,7 +85,7 @@ import { PhonesFeature } from "../features/phones";
 
 ### Refactored Architecture (Feature-based)
 
-```
+```text
 ┌─────────────────────────────────────┐
 │              PAGES                  │  ← Route composition
 ├─────────────────────────────────────┤
@@ -112,7 +112,7 @@ import { PhonesFeature } from "../features/phones";
 
 ### Phase 1: Create Shared Layer
 
-```
+```text
 CREATE:
 ├── src/shared/
 │   ├── components/
@@ -139,7 +139,7 @@ CREATE:
 
 ### Phase 2: Migrate Features
 
-```
+```text
 MOVE:
 ├── src/features/proxies/
 │   ├── components/

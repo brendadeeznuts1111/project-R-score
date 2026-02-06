@@ -52,7 +52,7 @@ Integrate **all Bun 1.5.x features** into the **Quantum Cash-Flow Lattice** with
 
 ## 📊 Test Results
 
-```
+```text
 ✅ 63 tests pass, 0 fail
 ⚡ escapeHTML: 674 MB/s
 ⚡ gzipSync: 719 MB/s

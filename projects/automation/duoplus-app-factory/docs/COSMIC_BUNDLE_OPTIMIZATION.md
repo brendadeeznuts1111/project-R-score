@@ -227,7 +227,7 @@ transition-duration = "240ms"
 
 ## 📐 **Architecture: Dashboard v2026 Nexus**
 
-```
+```text
 Enterprise Dashboard (Bun 1.3.6 + Feature Flags)
 ├── Build Variants (bun build --variant=...)
 │   ├── FREE        (no PREMIUM, no DEBUG)

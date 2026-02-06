@@ -57,7 +57,7 @@ bun run format
 
 ## 📁 Project Structure
 
-```
+```text
 windsurf-project/
 ├── ai/                    # AI/ML components
 │   ├── anomaly-bench.ts   # Benchmarking suite
@@ -151,7 +151,7 @@ function calc(x) { return x.va * 0.3; }
 
 ### Commit Messages
 Follow the conventional commit format:
-```
+```text
 type(scope): description
 
 [optional body]
@@ -160,7 +160,7 @@ type(scope): description
 ```
 
 Examples:
-```
+```text
 feat(ai): add new anomaly detection algorithm
 fix(cli): resolve parameter parsing issue
 docs(readme): update installation instructions

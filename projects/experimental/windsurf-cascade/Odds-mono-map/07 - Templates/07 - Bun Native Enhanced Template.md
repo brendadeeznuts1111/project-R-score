@@ -347,7 +347,7 @@ Use these utilities in your custom templates for maximum performance and functio
 
 ---
 **🚀 Bun-Native Template Complete** • **Performance Optimized** • **Enterprise Ready**
-```
+```text
 
 ---
 

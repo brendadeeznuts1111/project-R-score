@@ -27,7 +27,7 @@ Your complete R2 browser and dashboard system is now fully integrated with the F
 ## 📊 **Dashboard Features**
 
 ### **Real-time Metrics**
-```
+```text
 📊 Storage Overview
 ├── Total Objects: 18
 ├── Total Size: 0.05 MB  
@@ -69,7 +69,7 @@ Your complete R2 browser and dashboard system is now fully integrated with the F
 - **Mobile Responsive**: Works on all device sizes
 
 ### **Access Points**
-```
+```text
 🔗 Dashboard URLs
 ├── Main Dashboard: https://dashboard.factory-wager.com
 ├── R2 Browser: https://r2.factory-wager.com
@@ -141,7 +141,7 @@ class R2BrowserDashboard {
 5. **Data Storage**: Store dashboard data back in R2
 
 ### **Storage Structure**
-```
+```text
 scanner-cookies/
 ├── dashboard/
 │   ├── metrics.json           ✅ System metrics and analytics

@@ -51,7 +51,7 @@ The AST-Aware Analysis MCP tools provide programmatic access to all AST-aware co
 
 #### Signature
 
-```
+```text
 SHA-256: [generated via Bun.CryptoHasher]
 Tool: ast-grep-search
 Definition: AST-aware grep with semantic pattern matching
@@ -93,7 +93,7 @@ Definition: AST-aware grep with semantic pattern matching
 
 #### Signature
 
-```
+```text
 SHA-256: [generated via Bun.CryptoHasher]
 Tool: pattern-weave-correlate
 Definition: Cross-file pattern correlation with confidence scoring
@@ -136,7 +136,7 @@ Definition: Cross-file pattern correlation with confidence scoring
 
 #### Signature
 
-```
+```text
 SHA-256: [generated via Bun.CryptoHasher]
 Tool: anti-pattern-detect
 Definition: Security anti-pattern detection with automatic fixes
@@ -179,7 +179,7 @@ Definition: Security anti-pattern detection with automatic fixes
 
 #### Signature
 
-```
+```text
 SHA-256: [generated via Bun.CryptoHasher]
 Tool: smell-diffuse-analyze
 Definition: Code smell diffusion analysis with visualization
@@ -222,7 +222,7 @@ Definition: Code smell diffusion analysis with visualization
 
 #### Signature
 
-```
+```text
 SHA-256: [generated via Bun.CryptoHasher]
 Tool: pattern-evolve-track
 Definition: Track patterns across git history with frequency analysis

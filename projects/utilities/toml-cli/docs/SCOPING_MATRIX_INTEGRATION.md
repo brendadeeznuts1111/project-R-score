@@ -87,7 +87,7 @@ Comprehensive matrix validation:
 - Suitable for CI/CD pre-commit hooks
 
 **Latest Results:**
-```
+```text
 ✅ Passed: 37
 ❌ Failed: 0
 
@@ -230,7 +230,7 @@ Matrix automatically maps to correct secrets backend per platform:
 
 Domain names automatically convert to valid JS identifiers:
 
-```
+```text
 apple.factory-wager.com → APPLE_FACTORY_WAGER_COM_TENANT
 dev.apple.factory-wager.com → DEV_APPLE_FACTORY_WAGER_COM_TENANT
 localhost → LOCALHOST

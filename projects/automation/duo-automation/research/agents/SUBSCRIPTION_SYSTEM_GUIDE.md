@@ -36,7 +36,7 @@ The Virtual Device Tracker Subscription System provides **enterprise-grade recur
 
 ### **Core Components**
 
-```
+```text
 VirtualDeviceTracker
 ├── Subscription Engine
 │   ├── Task Scheduler (1-minute intervals)
@@ -61,7 +61,7 @@ VirtualDeviceTracker
 
 ### **Data Flow**
 
-```
+```text
 1. Subscription Creation → 2. Schedule Next Run → 3. Execute Task → 4. Process Billing → 5. Update Metrics
 ```
 

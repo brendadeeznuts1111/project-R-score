@@ -137,7 +137,7 @@ LIMIT 5
 ---
 
 *Note follows enhanced Odds Protocol documentation standards*
-```
+```text
 
 ---
 
@@ -180,7 +180,7 @@ LIMIT 5
     }
   ]
 }
-```
+```text
 
 ### **Canvas Node Types**
 1. **Overview Node**: Main canvas description and purpose
@@ -249,7 +249,7 @@ views:
         - name: Done
           key: status
           value: done
-```
+```text
 
 ### ** Required fields**
 ```yaml
@@ -282,7 +282,7 @@ fields:
     type: text
   - name: due_date
     type: date
-```
+```text
 
 ---
 
@@ -354,7 +354,7 @@ fields:
 --warning: #f59e0b;    /* Attention needed */
 --error: #ef4444;      /* Critical issues */
 --info: #3b82f6;       /* Information and help */
-```
+```text
 
 ### **Typography Standards**
 - **H1**: 48px, Bold, with emoji
@@ -395,7 +395,7 @@ fields:
     ├── Folder Structure Template.md
     ├── Design System Guide.md
     └── Style Guide Template.md
-```
+```text
 
 ### ** Template usage rules**
 1. **Always Start from Template**: Never create blank content
@@ -433,7 +433,7 @@ const StyleEnforcer = {
     // Ensure relationship integrity
   }
 };
-```
+```text
 
 ### **Quality Gates**
 - **Creation Gate**: Templates must be used for new content

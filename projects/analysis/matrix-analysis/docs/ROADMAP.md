@@ -71,7 +71,7 @@ see_also:
 
 ## Status Overview
 
-```
+```text
 Overall Progress: ████████████████░░░░ 76% (16/21 tasks)
 ```
 

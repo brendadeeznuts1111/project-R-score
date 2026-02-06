@@ -170,7 +170,7 @@ const result = await optimizedFetch(url, {
 
 ## File Structure
 
-```
+```text
 src/
 ├── utils/
 │   └── response-buffering.ts     # Core buffering utilities

@@ -37,7 +37,7 @@ bun run system:full-demo
 
 ## 📁 Project Structure
 
-```
+```text
 toml-cli/
 ├── src/
 │   └── config-manager.ts          # Main CLI application (561 lines)

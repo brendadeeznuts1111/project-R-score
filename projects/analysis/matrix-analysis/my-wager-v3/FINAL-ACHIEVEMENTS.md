@@ -43,7 +43,7 @@
 - **Documentation** for all components
 
 ### System Performance
-```
+```text
 Operation           | Avg Time | Throughput   | Status
 --------------------|----------|--------------|---------
 System Status       | 0.11ms   | 9,344 req/s  | ⚡ Exceptional
@@ -53,7 +53,7 @@ Mixed Workload      | 262.85ms | 3.8 req/s    | ⚠️ Optimizable
 ```
 
 ### Load Testing Results
-```
+```text
 Users | Requests/s | Errors | Status
 ------|------------|--------|--------
 1     | 5,132      | 0      | ✅

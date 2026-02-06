@@ -71,7 +71,7 @@ npx_
 
 ### **Startup Time Distribution:**
 
-```
+```text
 Registry Packages (Estimated): ████████░ 170-200ms (when published)
 NPM Packages First Run:     ████████████████ 50-1400ms
 NPM Packages Cached:        ███░ 50ms

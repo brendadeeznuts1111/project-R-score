@@ -4,7 +4,7 @@
 
 ### Current Scale Metrics
 
-```
+```text
 📁 Total Files:           1,000+
 📚 Documentation:         200+ files
 🔧 Scripts:              100+ automation scripts
@@ -69,7 +69,7 @@ sqlite3 dashboard.db "DELETE FROM logs WHERE created_at < datetime('now', '-30 d
 
 #### **File Organization Strategy**
 
-```
+```text
 Maintenance Schedule:
 ├── Daily:    Health monitoring, consistency checks
 ├── Weekly:   Cleanup, indexing, duplicate detection
@@ -225,7 +225,7 @@ bun scripts/fix-security-guide.ts               # Security guide updates
 
 **Security Configuration Matrix:**
 
-```
+```text
 Security Files by Category:
 ├── Authentication (5 files)
 │   ├── auth-schema.sql

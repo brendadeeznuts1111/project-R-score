@@ -42,7 +42,7 @@ export class Tier1380ScannerCLI {
 ```
 
 ### **2. Production Performance**
-```
+```text
 📊 Performance Metrics:
 ├── Bundle size: 419B (compressed)
 ├── Compression ratio: 69.8x
@@ -164,7 +164,7 @@ const combinedData = {
 ## 📊 **Performance Verification**
 
 ### **Benchmark Results**
-```
+```text
 🏭 FactoryWager Tier-1380 Scanner CLI Performance:
 ================================================
 
@@ -192,7 +192,7 @@ const combinedData = {
 ```
 
 ### **Validation Results**
-```
+```text
 ✅ All validations passed:
 ├── Project ID: Present and valid
 ├── Session ID: Generated and valid

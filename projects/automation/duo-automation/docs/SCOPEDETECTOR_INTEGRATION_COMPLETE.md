@@ -219,7 +219,7 @@ export class PlatformScopeAdapter {
 ## 📈 **DEMONSTRATION RESULTS**
 
 ### **✅ ScopeDetector Integration Demo**
-```
+```text
 🎯 ScopeDetector initialized: LOCAL-SANDBOX for localhost
 
 🌐 ScopeDetector Configuration:
@@ -250,7 +250,7 @@ export class PlatformScopeAdapter {
 ```
 
 ### **✅ Platform Capabilities Testing**
-```
+```text
 🖥️ Platform: win32
   📦 ENTERPRISE Scope: CREDENTIAL_MANAGER (DPAPI) ✅ Supported
   📦 DEVELOPMENT Scope: CREDENTIAL_MANAGER (DPAPI) ✅ Supported

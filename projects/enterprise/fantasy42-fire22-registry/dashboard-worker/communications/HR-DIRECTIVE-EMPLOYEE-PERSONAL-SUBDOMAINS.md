@@ -18,7 +18,7 @@ Management appointment.
 
 ### 🔗 Subdomain Standard Format
 
-```
+```text
 https://[employee-identifier].fire22.workers.dev/
 ```
 

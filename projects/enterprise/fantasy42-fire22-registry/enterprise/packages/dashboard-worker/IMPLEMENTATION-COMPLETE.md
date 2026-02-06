@@ -97,7 +97,7 @@ architecture.
 
 ## 📁 Generated File Structure
 
-```
+```text
 /src/api/
 ├── index.ts                          # Main router with middleware chain
 ├── MIGRATION_GUIDE.md               # Complete migration documentation

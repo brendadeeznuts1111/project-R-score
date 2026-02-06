@@ -8,7 +8,7 @@
 
 ### **Bug Anatomy (3 Independent Failures)**
 
-```
+```text
 1. PROPERTY MISMATCH (C++ Binding)
    keepalive (lowercase) vs keepAlive (camelCase)
    → User config silently ignored
@@ -30,7 +30,7 @@
 ```
 
 ### **Memory Model Fixed**
-```
+```text
 Before: New TCP socket per request → 3-way handshake x N
 After:  Connection pool → Reuse TCP session
 ```
@@ -41,7 +41,7 @@ After:  Connection pool → Reuse TCP session
 
 ### **JS Number → C Pointer Corruption**
 
-```
+```text
 JavaScript Number (64-bit float):
 123.0 → IEEE 754: 0x405EC00000000000
 
@@ -53,7 +53,7 @@ Fixed: Explicit BigInt coercion
 ```
 
 ### **Symbol Linking Crash Chain**
-```
+```text
 linkSymbols({ ptr: "invalid" })
   ↓ Invalid ptr → null dereference
   ↓ C++ exception escapes JS boundary
@@ -68,7 +68,7 @@ linkSymbols({ ptr: "invalid" })
 
 ### **Vulnerability Vector**
 
-```
+```text
 Transfer-Encoding: chunked
 <size>;ext=<CRLF>data<CRLF>
 
@@ -88,7 +88,7 @@ Backend: Sees "ATTACK\r\n" → Second request
 
 ### **Win32 Path Semantics**
 
-```
+```text
 Unix: /tmp/my-pipe
 Windows: \\.\pipe\my-pipe (NT Named Pipe)
 
@@ -105,7 +105,7 @@ Bug: fs.access() path normalization
 
 ### **Monorepo Dependency Graph**
 
-```
+```text
 root/
 ├── package.json (scanned ✓)
 ├── packages/
@@ -117,7 +117,7 @@ root/
 **Bug:** Scanner stopped at workspace root
 **Fixed:** Recursive workspace dependency traversal
 
-```
+```text
 Graph: root → a(lodash) → b(a,moment)
 Full scan: lodash, moment ✓
 ```
@@ -128,7 +128,7 @@ Full scan: lodash, moment ✓
 
 ### **IEEE 754 Precision Loss**
 
-```
+```text
 buf.writeDoubleLE(123.456789, 0); // Exact
 buf.readDoubleLE(0);              // 123.456789 ✓
 
@@ -145,7 +145,7 @@ Bug: buf.hexSlice() on large buffers
 
 ### **Property Descriptor Chain**
 
-```
+```text
 Array[0] = "x"
   ↓ getOwnPropertyDescriptor(arr, 0)
   ↓ DefineProperty(value, writable, etc.)
@@ -163,7 +163,7 @@ Array[0] = "x"
 
 ### **Dangerous Pattern**
 
-```
+```text
 Glob.scan(".*/*", { cwd: "/app" })
 // Bug: .* → .. → /app/../etc/passwd
 
@@ -175,7 +175,7 @@ Path.startsWith(cwd) || reject
 
 ## 📊 **Memory Safety Analysis**
 
-```
+```text
 Crash Classes Fixed:
 1. Null pointer deref (FFI): 3 fixes
 2. Buffer overflow: 2 fixes
@@ -190,7 +190,7 @@ Total: 9/21 memory safety related
 
 ## ⚙️ **ABI Stability Guarantees**
 
-```
+```text
 ✅ N-API typeof() matches V8 (boxed primitives)
 ✅ Buffer.*Write() matches Node.js (NaN=0, clamp)
 ✅ TLSSocket.isSessionReused() matches BoringSSL
@@ -202,20 +202,20 @@ Total: 9/21 memory safety related
 ## 🎯 **Production Deployment Vectors**
 
 ### **Kubernetes / Serverless**
-```
+```text
 bun build --compile --target=bun-linux-x64
 → 50ms cold start, no fs config load
 ```
 
 ### **Corporate Windows AD**
-```
+```text
 \\.\pipe\domain-controller ✓
 git+ssh://long/windows/paths ✓
 bunx in non-English console ✓
 ```
 
 ### **Monorepo CI/CD**
-```
+```text
 bun install --security → Full workspace scan
 bun test → Zero spyOn crashes
 ```
@@ -224,7 +224,7 @@ bun test → Zero spyOn crashes
 
 ## 🔬 **Fuzzer Input Corpus Evolution**
 
-```
+```text
 v1.2.x → 10 crashes
 v1.3.x → 0 crashes (12 fixes)
 
@@ -239,7 +239,7 @@ Coverage:
 
 ## 📈 **Quantified Production Gains**
 
-```
+```text
 HTTP Throughput:     1x → 10x (pooling)
 Cold Start:          100ms → 50ms (no fs)
 Query Speed:         N → N*1.3 (SQLite 3.51)
@@ -251,7 +251,7 @@ Security Surface:    70% → 100% (workspace)
 
 ## 🎉 **Technical Maturity Scorecard**
 
-```
+```text
 Runtime Stability:   9.8/10  (12 fuzzer fixes)
 Node.js Parity:      9.5/10  (Buffer/TLS/N-API)
 Platform Support:    9.7/10  (Windows enterprise)

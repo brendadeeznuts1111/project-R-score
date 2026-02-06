@@ -147,7 +147,7 @@ NODE_ENV=production bun cli/dashboard/dashboard-cli.ts build
 
 ## 📄 File Structure
 
-```
+```text
 pages/
 ├── README.md                    # Main documentation
 ├── QUICK_START.md              # Quick setup guide

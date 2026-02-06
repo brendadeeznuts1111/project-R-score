@@ -67,7 +67,7 @@
 
 ## 📁 Project Structure
 
-```
+```text
 quantum-terminal-dashboard/
 ├── src/                    # Source code (TypeScript/JavaScript)
 ├── test/                   # Tests (156/159 passing)

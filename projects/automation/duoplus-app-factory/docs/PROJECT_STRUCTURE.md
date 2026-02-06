@@ -2,7 +2,7 @@
 
 ## Directory Organization
 
-```
+```text
 d-network/
 ├── src/                          # Source code
 │   ├── main.ts                   # Main application entry point

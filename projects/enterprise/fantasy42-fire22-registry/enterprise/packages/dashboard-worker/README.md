@@ -75,7 +75,7 @@ system delivering $1.05M+ annual value.**
 
 ### **Multi-Workspace System**
 
-```
+```text
 📁 Fire22 Dashboard Worker
 ├── 🏢 Core Dashboard (Cloudflare Workers + Express.js)
 ├── 🔗 Pattern Weaver System (13 unified patterns)

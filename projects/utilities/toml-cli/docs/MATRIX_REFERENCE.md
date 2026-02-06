@@ -31,7 +31,7 @@ bun test tests/unit/scoping-matrix.test.ts --bench
 - `bun test tests/unit/scoping-matrix.test.ts` - Matrix performance tests
 
 **Benchmark Output** (`tests/bench/config-manager.benchmark.ts`):
-```
+```text
 📊 Benchmark: Matrix Lookup
    Iterations: 1000
    Average: 0.00ms
@@ -289,7 +289,7 @@ https://sandbox.tool.com/playground  # Public sandbox
 - Universal → `Any` (`#28a745`)
 
 ### Rule Selection Algorithm
-```
+```text
 Input: domain, platform
 Output: best matching rule
 

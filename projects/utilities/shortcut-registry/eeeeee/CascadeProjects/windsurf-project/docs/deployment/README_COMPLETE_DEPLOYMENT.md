@@ -38,7 +38,7 @@
 
 ## 🏗️ **Architecture Overview**
 
-```
+```text
 OnePay Production System
 ├── Core Components
 │   ├── enhanced-cash-app-adapter.js     # GDPR-enhanced adapter

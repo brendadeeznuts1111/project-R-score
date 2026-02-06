@@ -72,7 +72,7 @@ bun enterprise-scanner.ts --baseline .scanner-baseline.json
 ### 6. Metrics Endpoint
 Prometheus metrics on `--metrics-port=9090`:
 
-```
+```text
 scanner_files_scanned_total 1247
 scanner_issues_found{severity="error"} 3
 scanner_duration_seconds 8.9
@@ -175,7 +175,7 @@ await checkPackageBeforeInstall("express", "4.18.0", {
 
 ## Architecture
 
-```
+```text
 enterprise-scanner.ts (Core)
 ├── RuleDatabase (Hot-reload rules)
 ├── EnterpriseScanner (Main scanner)

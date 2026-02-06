@@ -27,7 +27,7 @@ bun run spawn:bench     # Extended benchmark (500 iterations)
 ```
 
 **Example Output:**
-```
+```text
 📋 System Information
   Platform:              darwin/arm64
   Bun Version:           1.3.7

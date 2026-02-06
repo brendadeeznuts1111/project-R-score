@@ -86,7 +86,7 @@ const PATTERNS = {
 
 The system is organized into 6 specialized workspaces:
 
-```
+```text
 fire22-workspaces/
 ├── core/              # Core utilities and patterns
 ├── pattern-system/    # Pattern Weaver implementation

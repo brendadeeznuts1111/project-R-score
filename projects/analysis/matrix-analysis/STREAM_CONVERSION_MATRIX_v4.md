@@ -19,7 +19,7 @@ The Stream Conversion Annihilation Matrix v4.1 represents a **quantum leap** in 
 
 ## **📊 QUANTUM R-SCORE FORMULA**
 
-```
+```text
 R_Score = (P_ratio × 0.35) + (M_impact × 0.30) + (E_elimination × 0.20) + (S_hardening × 0.10) + (D_ergonomics × 0.05)
 
 Where:
@@ -153,7 +153,7 @@ cat stream-benchmark-report.md
 
 ## **📋 COMPLETE CONVERTER REFERENCE**
 
-```
+```text
 ╔═══════════════════════════════════════════════════════════════════════════════════════╗
 ║                    BUN STREAM CONVERTERS — COMPLETE REFERENCE                         ║
 ╠═══════════════════════════════════════════════════════════════════════════════════════╣
@@ -263,7 +263,7 @@ const lines = text.split("\n").filter(Boolean);
 
 ## **📊 IMPLEMENTATION FILES**
 
-```
+```text
 matrix-analysis/
 ├── stream-conversion-matrix-v4.ts          # Core engine with R-Score calculator
 ├── scripts/stream-scanner.ts               # CLI tool for scanning and migration

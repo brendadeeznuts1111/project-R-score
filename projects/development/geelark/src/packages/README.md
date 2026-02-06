@@ -4,7 +4,7 @@ This directory contains package templates and workspace generators for creating 
 
 ## 📁 Directory Structure
 
-```
+```text
 packages/
 ├── README.md                    # This file
 └── create/                     # Workspace template generator

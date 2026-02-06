@@ -36,7 +36,7 @@ capabilities.
 
 JWT token received after successful login:
 
-```
+```text
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJCSUxMWTY2NiIsInR5cGUiOjAsImFnIjoiIiwiaW1wIjoiIiwib2ZmIjoiTk9MQVJPU0UiLCJyYiI6bnVsbCwibmJmIjoxNzU2MzA5NjUzLCJleHAiOjE3NTYzMTA5MTN9.sPwAzmBPr8Jaz6HgBLoaGnD1G-GfiV1rRs3wD7zNuHg
 ```
 

@@ -35,7 +35,7 @@ The DuoPlus Configuration Server has been enhanced with comprehensive lifecycle 
 ### **🛠️ API Endpoints**
 
 #### **Core Endpoints**
-```
+```text
 GET  /                           - Unified landing dashboard
 GET  /config                     - Detailed configuration page
 GET  /api/config                 - Configuration JSON data
@@ -46,7 +46,7 @@ POST /api/reload                 - Hot reload configuration
 ```
 
 #### **Configuration Management**
-```
+```text
 POST /api/config/freeze          - Freeze configuration
 POST /api/config/unfreeze        - Unfreeze configuration
 GET  /api/config/freeze-status   - Get freeze status

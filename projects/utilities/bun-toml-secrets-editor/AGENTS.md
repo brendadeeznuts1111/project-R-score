@@ -17,7 +17,7 @@ A production-grade TOML editor that enforces Bun's environment variable expansio
 
 ## Project Structure
 
-```
+```text
 ├── src/
 │   ├── cli/              # CLI implementations
 │   │   ├── duoplus-cli.ts       # Main DuoPlus CLI

@@ -12,7 +12,7 @@ A robust solution for handling business name changes, relocations, and account m
 
 ## 📁 Architecture
 
-```
+```text
 lib/p2p/
 ├── business-continuity.ts    # Core business identity management
 ├── customer-notifier.ts       # Customer notification system
@@ -135,7 +135,7 @@ Content-Type: application/json
 
 Customers can access their portal at:
 
-```
+```text
 GET /portal?id=<stealthId>
 ```
 

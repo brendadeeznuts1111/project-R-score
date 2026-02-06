@@ -77,7 +77,7 @@ bun run dev
 
 ### Understanding the Codebase
 
-```
+```text
 rss-feed-optimization/
 ├── src/                    # Source code
 │   ├── server.js          # Main server file
@@ -419,7 +419,7 @@ console.log('Memory:', result.memory);
 
 #### Directory Structure
 
-```
+```text
 src/
 ├── components/     # Reusable components
 ├── services/       # Business logic

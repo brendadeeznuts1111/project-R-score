@@ -70,7 +70,7 @@ A production-ready Uint8Array subclass with Bun-specific depth-aware inspection 
 
 ### Class Hierarchy
 
-```
+```text
 Uint8Array (Native)
   └── CustomTypedArray
         ├── inspect() - Bun.inspect.custom hook

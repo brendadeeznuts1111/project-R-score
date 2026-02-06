@@ -134,7 +134,7 @@ The client is configured via environment variables in `.env.lattice`:
 
 ## Project Structure
 
-```
+```text
 sports-analytics/
 ├── src/                    # Core source code
 │   ├── config/             # Configuration (lattice, timezone, validator)

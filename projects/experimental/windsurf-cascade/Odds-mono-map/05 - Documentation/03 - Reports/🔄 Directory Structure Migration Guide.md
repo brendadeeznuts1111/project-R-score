@@ -24,7 +24,7 @@ This guide documents the complete migration from the old directory structure to 
 ## 📋 Migration Summary
 
 ### **Before Migration**
-```
+```text
 logs/                    # ❌ No prefix
 tests/                   # ❌ No prefix
 01 - Daily Notes/        # ✅ Correct
@@ -37,7 +37,7 @@ tests/                   # ❌ No prefix
 ```
 
 ### **After Migration**
-```
+```text
 01 - Daily Notes/        # ✅ Standardized with subdirectories
 ├── 01 - Reports/
 ├── 02 - Journals/

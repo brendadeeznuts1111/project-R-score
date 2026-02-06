@@ -77,14 +77,14 @@ Successfully implemented a production-grade **Server-Sent Events (SSE)** system 
 ## 🔧 API Endpoints Implemented
 
 ### SSE Stream Endpoint
-```
+```text
 GET /mcp/alerts/stream?tenant={tenant}
 Headers: Cookie: session=..., X-CSRF-Token: ...
 Response: text/event-stream with real-time violations
 ```
 
 ### Test Violation Endpoint
-```
+```text
 POST /mcp/alerts/test
 Headers: Cookie: session=..., X-CSRF-Token: ...
 Response: { "sent": true }

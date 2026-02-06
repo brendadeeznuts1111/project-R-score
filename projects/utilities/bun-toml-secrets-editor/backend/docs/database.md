@@ -338,7 +338,7 @@ npx knex migrate:make create_new_table
 ### Migration Files
 
 Migration files are located in `src/database/migrations/` and follow the naming convention:
-```
+```text
 001_create_applications_table.js
 002_create_devices_table.js
 003_create_audit_logs_table.js

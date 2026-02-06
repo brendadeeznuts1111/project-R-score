@@ -7,28 +7,28 @@
 ## 🚀 Most Common Paths
 
 ### Proxy Management Flow
-```
+```text
 [Custom Proxy Headers Guide] → [Multi-Layer Graph Dashboard]
      ↓                                    ↓
 [Proxy Config Service] ← [View Proxy Health Metrics]
 ```
 
 ### Structured Logging Flow
-```
+```text
 [Standalone & Logging Guide] → [MLGS Developer Dashboard]
      ↓                                    ↓
 [View Structured Logs] ← [Console Format Specifiers]
 ```
 
 ### System Monitoring Flow
-```
+```text
 [Runtime Fixes Guide] → [Main Dashboard]
      ↓                      ↓
 [System Health] ← [All Metrics]
 ```
 
 ### Correlation Analysis Flow
-```
+```text
 [Market Router Docs] → [MLGS Developer Dashboard]
      ↓                      ↓
 [Correlation Graph] ← [Multi-Layer Graph]

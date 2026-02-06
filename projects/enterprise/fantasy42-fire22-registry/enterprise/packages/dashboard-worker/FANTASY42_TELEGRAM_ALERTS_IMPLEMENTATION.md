@@ -10,7 +10,7 @@
 
 ### **1. Intelligent Wager Monitoring**
 
-```
+```text
 🎯 AUTOMATED WAGER TRACKING
 • Monitors all wager creation and updates in real-time
 • Analyzes wager patterns using AI-powered risk assessment
@@ -20,7 +20,7 @@
 
 ### **2. Multi-Channel Alert System**
 
-```
+```text
 🚨 COMPREHENSIVE ALERTING
 • Telegram notifications to department channels
 • Signal alerts for urgent situations
@@ -31,7 +31,7 @@
 
 ### **3. Risk-Based Alert Intelligence**
 
-```
+```text
 🧠 SMART RISK ASSESSMENT
 • Amount-based thresholds ($1000+ high alerts)
 • Customer tier analysis (VIP automatic alerts)
@@ -138,7 +138,7 @@ alertIntegration.updateConfig(customConfig);
 
 **1. Wager Creation Monitoring**
 
-```
+```text
 🎯 WAGER DETECTED
 • New wager: $2,500 on NBA Finals
 • Customer: Bob Johnson (VIP Gold)
@@ -148,7 +148,7 @@ alertIntegration.updateConfig(customConfig);
 
 **2. Intelligent Alert Processing**
 
-```
+```text
 🧠 ALERT ANALYSIS
 • Risk Level: HIGH → Urgent priority
 • Departments: VIP Services + Risk Management
@@ -158,7 +158,7 @@ alertIntegration.updateConfig(customConfig);
 
 **3. Multi-Channel Alert Delivery**
 
-```
+```text
 🚨 ALERT DELIVERY
 • Telegram: Sent to VIP Services channel
 • Signal: Urgent message to on-call manager
@@ -168,7 +168,7 @@ alertIntegration.updateConfig(customConfig);
 
 **4. Alert Content Example**
 
-```
+```text
 🚨 **WAGER ALERT** 🚨
 
 **Wager ID:** WAGER_123456
@@ -259,7 +259,7 @@ const riskParameters = {
 
 #### **1. High Amount Alerts**
 
-```
+```text
 💰 HIGH AMOUNT WAGER
 • Trigger: Wager amount ≥ $1000
 • Risk Level: HIGH
@@ -270,7 +270,7 @@ const riskParameters = {
 
 #### **2. VIP Customer Alerts**
 
-```
+```text
 👑 VIP CUSTOMER WAGER
 • Trigger: Any wager from VIP customer
 • Risk Level: MEDIUM to HIGH
@@ -281,7 +281,7 @@ const riskParameters = {
 
 #### **3. Unusual Pattern Alerts**
 
-```
+```text
 🔍 UNUSUAL PATTERN DETECTED
 • Trigger: AI detects unusual betting patterns
 • Risk Level: HIGH
@@ -292,7 +292,7 @@ const riskParameters = {
 
 #### **4. Critical Risk Alerts**
 
-```
+```text
 🚨 CRITICAL RISK WAGER
 • Trigger: Multiple high-risk factors combined
 • Risk Level: CRITICAL
@@ -339,7 +339,7 @@ const operationalImpact = {
 
 #### **Security Department**
 
-```
+```text
 🚨 SECURITY ALERTS
 • Critical risk wagers
 • Unusual pattern detection
@@ -350,7 +350,7 @@ const operationalImpact = {
 
 #### **Risk Management**
 
-```
+```text
 ⚠️ RISK MANAGEMENT ALERTS
 • High amount wagers
 • Risk threshold breaches
@@ -361,7 +361,7 @@ const operationalImpact = {
 
 #### **VIP Services**
 
-```
+```text
 👑 VIP SERVICES ALERTS
 • All VIP customer wagers
 • Premium service requests
@@ -372,7 +372,7 @@ const operationalImpact = {
 
 #### **Sportsbook Operations**
 
-```
+```text
 🎯 SPORTSBOOK OPERATIONS
 • Operational wager alerts
 • System performance issues
@@ -387,7 +387,7 @@ const operationalImpact = {
 
 ### **Scenario 1: High-Value VIP Wager**
 
-```
+```text
 Customer: VIP Platinum member
 Wager: $10,000 on high-risk game
 System Response:
@@ -400,7 +400,7 @@ System Response:
 
 ### **Scenario 2: Unusual Pattern Detection**
 
-```
+```text
 Customer: Regular bettor with $100 average wager
 Wager: $5,000 sudden large bet
 System Response:
@@ -413,7 +413,7 @@ System Response:
 
 ### **Scenario 3: Routine High Amount**
 
-```
+```text
 Customer: Regular high-roller
 Wager: $2,500 (normal for customer)
 System Response:

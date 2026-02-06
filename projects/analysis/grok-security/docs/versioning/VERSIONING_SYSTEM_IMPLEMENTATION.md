@@ -60,7 +60,7 @@ A comprehensive, production-ready versioning system for Bun-native builds with s
 
 ## 📊 Test Results
 
-```
+```text
 ✓ 19 tests passed
 ✓ 0 tests failed
 ✓ 36 expect() calls
@@ -86,7 +86,7 @@ bun run version:show
 ```
 
 Output:
-```
+```text
 📦 Version Information
 ======================
 
@@ -104,7 +104,7 @@ bun run build:versioned
 ```
 
 Output:
-```
+```text
 🚀 Versioned Build System
 ========================
 
@@ -120,7 +120,7 @@ bun run build:versioned:archive
 ```
 
 Creates:
-```
+```text
 archives/
 └── build-2.0.0-build-1768744496294-2026-01-18T13-54-56-627Z/
     ├── index.js
@@ -264,7 +264,7 @@ console.log(`Timestamp: ${BUILD_METADATA.timestamp}`);
 
 ## 📋 Version Format
 
-```
+```text
 MAJOR.MINOR.PATCH[-PRERELEASE][+BUILD_METADATA]
 ```
 

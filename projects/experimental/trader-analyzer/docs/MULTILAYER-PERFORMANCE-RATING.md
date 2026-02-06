@@ -12,7 +12,7 @@
 
 **RATING: 8.7/10**
 
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Dimension          │Score│ Analysis                                   │
 ├────────────────────┼─────┼────────────────────────────────────────────┤
@@ -35,7 +35,7 @@
 **COMPOSITE RATING: 9.2/10**
 
 #### Layer 4 (Cross-Sport)
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Macro Correlation  │ 9.5 │ Excellent sport-to-sport pattern detection│
 │ Latency Impact     │ 7.0 │ Hour-level granularity                    │
@@ -45,7 +45,7 @@
 ```
 
 #### Layer 3 (Cross-Event)
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Temporal Precision │ 8.5 │ Minute-level synchronization detection    │
 │ Line Movement      │ 9.0 │ Excellent odds movement correlation       │
@@ -55,7 +55,7 @@
 ```
 
 #### Layer 2 (Cross-Market)
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Book Aggregation   │ 9.8 │ Superior market-to-market arbitrage       │
 │ Micro-Movement     │ 9.5 │ Tracks sub-penny inefficiencies           │
@@ -65,7 +65,7 @@
 ```
 
 #### Layer 1 (Direct)
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Nano-Decimal       │ 9.9 │ Tracks individual selection movements     │
 │ Latency Sensitivity│ 9.8 │ Sub-second anomaly detection              │
@@ -82,7 +82,7 @@
 
 **RATING: 9.4/10**
 
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Dimension          │Score│ Analysis                                   │
 ├────────────────────┼─────┼────────────────────────────────────────────┤
@@ -104,7 +104,7 @@
 
 **RATING: 8.9/10**
 
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Dimension          │Score│ Analysis                                   │
 ├────────────────────┼─────┼────────────────────────────────────────────┤
@@ -127,7 +127,7 @@
 **COMPOSITE RATING: 8.8/10**
 
 #### MultiLayer Constructor
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Data Integration   │ 9.0 │ Parallel layer building                   │
 │ Latency Handling   │ 8.5 │ Auto-updates with configurable intervals  │
@@ -137,7 +137,7 @@
 ```
 
 #### Cross-Sport Builder
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Macro Patterns     │ 9.3 │ Excellent sport correlation detection     │
 │ Latency Tolerance  │ 7.5 │ 1-hour alignment windows                  │
@@ -147,7 +147,7 @@
 ```
 
 #### Cross-Event Builder
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Temporal Analysis  │ 9.1 │ 30-minute max lag analysis                │
 │ Line Synchrony     │ 9.4 │ Excellent odds movement correlation       │
@@ -157,7 +157,7 @@
 ```
 
 #### Cross-Market Builder
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Book Aggregation   │ 9.7 │ Superior market relationship mapping      │
 │ Micro-Movements    │ 9.6 │ Tracks sub-market price relationships     │
@@ -167,7 +167,7 @@
 ```
 
 #### Direct Correlation Builder
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Nano-Decimal       │ 9.9 │ Individual selection-level analysis       │
 │ Latency Sensitivity│ 9.8 │ Real-time price change tracking           │
@@ -177,7 +177,7 @@
 ```
 
 #### Priority Queue
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Urgency Handling   │ 9.5 │ Multi-factor priority scoring             │
 │ Latency Impact     │ 8.0 │ Age-based priority decay                  │
@@ -187,7 +187,7 @@
 ```
 
 #### Full Graph Assembler
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Integration Power  │ 9.2 │ Seamless multi-layer assembly             │
 │ Latency Management │ 8.7 │ Performance timing tracked                │
@@ -205,7 +205,7 @@
 **COMPOSITE RATING: 9.3/10**
 
 #### Layer 4 Detection
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Macro Anomalies    │ 9.4 │ Excellent cross-sport pattern detection    │
 │ Latency Tolerance  │ 8.0 │ Weekly/seasonal patterns                   │
@@ -215,7 +215,7 @@
 ```
 
 #### Layer 3 Detection
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Event Synchrony    │ 9.5 │ Superior synchronization detection         │
 │ Line Movement      │ 9.3 │ Odds movement correlation analysis         │
@@ -225,7 +225,7 @@
 ```
 
 #### Layer 2 Detection
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Book Intelligence  │ 9.8 │ Excellent arbitrage/hedging detection      │
 │ Micro-Movements    │ 9.7 │ Sub-market price inconsistency detection  │
@@ -235,7 +235,7 @@
 ```
 
 #### Layer 1 Detection
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Nano-Decimal       │ 9.9 │ Individual price anomaly detection         │
 │ Latency Sensitivity│ 9.8 │ Sub-second statistical anomaly detection  │
@@ -245,7 +245,7 @@
 ```
 
 #### Hidden Edge Confidence
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Statistical Rigor  │ 9.7 │ Multiple significance tests combined       │
 │ Temporal Analysis  │ 9.4 │ Consistency + novelty scoring              │
@@ -255,7 +255,7 @@
 ```
 
 #### Latency-Weighted Signals
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Temporal Relevance │ 9.5 │ Excellent signal aging model               │
 │ Latency Penalty    │ 9.2 │ Half-life based signal decay               │
@@ -265,7 +265,7 @@
 ```
 
 #### Multi-Layer Risk
-```
+```text
 ┌────────────────────┬─────┬────────────────────────────────────────────┐
 │ Comprehensive      │ 9.8 │ Layer + cross-layer + systemic risk        │
 │ Latency Impact     │ 8.5 │ Time horizon considerations                │
@@ -282,7 +282,7 @@
 
 ### **COMPOSITE SYSTEM SCORE: 9.1/10**
 
-```
+```text
 SYSTEM STRENGTH MATRIX:
 
 ┌─────────────────────────────┬─────────┬─────────────────────────────────────┐
@@ -333,7 +333,7 @@ SYSTEM STRENGTH MATRIX:
 
 ## ⏱️ LATENCY PYRAMID ANALYSIS
 
-```
+```text
 TIME SENSITIVITY BY LAYER:
 
 Layer 1 (Direct):       9.8/10 - Milliseconds matter (0.978)

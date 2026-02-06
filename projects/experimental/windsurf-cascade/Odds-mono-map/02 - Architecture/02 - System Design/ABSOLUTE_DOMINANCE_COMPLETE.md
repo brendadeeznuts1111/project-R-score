@@ -42,7 +42,7 @@
 ## 🏆 **Market Leadership Formula Evolution**
 
 ### 📊 **Phase 1 (Market Leader)**
-```
+```text
 ML = (7 × 2 × 8 × 12) × 4 = 605 points
 Performance Excellence: 7/10
 Time Multiplier: 2/10
@@ -52,7 +52,7 @@ Sustainability: 4/5
 ```
 
 ### 📊 **Phase 2 (Industry Dominant)**
-```
+```text
 ML = (9 × 3 × 9 × 15) × 4 = 1,458 points
 Performance Excellence: 9/10 (+29% improvement)
 Time Multiplier: 3/10 (+50% improvement)
@@ -62,7 +62,7 @@ Sustainability: 4/5 (maintained)
 ```
 
 ### 📊 **Phase 3 (Absolute Dominant - Target)**
-```
+```text
 ML = (10 × 4 × 10 × 15) × 4.5 = 2,700 points
 Performance Excellence: 10/10 (+11% improvement)
 Time Multiplier: 4/10 (+33% improvement)
@@ -110,7 +110,7 @@ Sustainability: 4.5/5 (+13% improvement)
 ## 📁 **Complete Technical Architecture**
 
 ### **Core Performance Systems**
-```
+```text
 src/performance/
 ├── webassembly-validator.ts      # WebAssembly validation system
 ├── performance-budgets.ts        # Performance budget enforcement

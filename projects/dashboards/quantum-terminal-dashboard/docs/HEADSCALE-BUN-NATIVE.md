@@ -261,7 +261,7 @@ bun run test:headscale
 
 ## 📚 Files
 
-```
+```text
 src/
   ├── headscale-server.ts    (150 lines, Bun-native server)
   └── headscale-cli.ts       (150 lines, CLI tool)

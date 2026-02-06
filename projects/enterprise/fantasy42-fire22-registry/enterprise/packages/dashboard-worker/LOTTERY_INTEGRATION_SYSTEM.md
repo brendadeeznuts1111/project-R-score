@@ -12,7 +12,7 @@
 
 #### **1. Smart Lottery Dashboard**
 
-```
+```text
 🎯 LOTTERY SESSION STARTED
 Customer: Bob Johnson (BBB9901)
 Agent: Support Agent Alpha
@@ -42,7 +42,7 @@ Balance: $1,247.50
 
 #### **2. Intelligent Bet Placement**
 
-```
+```text
 🎲 PLACING LOTTERY BET
 
 Bob wants to play Powerball - $10 bet
@@ -70,7 +70,7 @@ Bob selects: Account Balance
 
 #### **3. Real-Time Bet Processing**
 
-```
+```text
 ⚡ BET PROCESSING STARTED
 
 🎲 BET DETAILS:
@@ -103,7 +103,7 @@ Bob selects: Account Balance
 
 #### **4. Win Monitoring & Payout**
 
-```
+```text
 🎉 WIN DETECTED!
 
 🎲 WINNING TICKET ALERT
@@ -211,7 +211,7 @@ Live Odds Intelligence:
 
 #### **Data Flow Between Systems**
 
-```
+```text
 1. Lottery Session Started
    ↓
 2. Fantasy402 API Authentication
@@ -366,7 +366,7 @@ Lottery System Performance:
 
 **Step 1: Session Start**
 
-```
+```text
 Bob messages agent → Lottery session initiated
 Dashboard loads → 3-year history analyzed
 Recommendations generated → Powerball suggested
@@ -375,7 +375,7 @@ Peer network checked → Sarah available for funding
 
 **Step 2: Bet Placement**
 
-```
+```text
 Bob selects Powerball → $10 bet
 Numbers chosen → 7, 14, 22, 33, 41, 12
 Payment processed → Account balance
@@ -384,7 +384,7 @@ Bet confirmed → Ticket PB-2024-001-ABC123
 
 **Step 3: Real-Time Monitoring**
 
-```
+```text
 Draw monitoring active → Wednesday 8:00 PM
 Notifications enabled → Win alerts on
 Session tracking → Performance metrics updating
@@ -393,7 +393,7 @@ Peer relationships → Trust scores maintained
 
 **Step 4: Win Celebration**
 
-```
+```text
 Win detected → 3 of 5 + Powerball
 Payout processed → $150 credited
 Balance updated → $1,387.50

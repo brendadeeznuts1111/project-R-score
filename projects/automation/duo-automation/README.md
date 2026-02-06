@@ -66,7 +66,7 @@ bun run cli/factorywager-cli.ts inspect --help
 
 ## 🏗️ Architecture
 
-```
+```text
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   FactoryWager  │    │   DuoPlus      │    │   Enterprise    │
 │   CLI v2.0      │◄──►│   Dashboard v4.4│◄──►│   Compliance    │
@@ -85,7 +85,7 @@ bun run cli/factorywager-cli.ts inspect --help
 
 ## 📁 Project Structure
 
-```
+```text
 duo/
 ├── src/                    # Core source code
 ├── docs/                   # Documentation

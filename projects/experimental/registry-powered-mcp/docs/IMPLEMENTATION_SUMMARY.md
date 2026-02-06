@@ -119,7 +119,7 @@ const apiDoc: ApiDocEntry = BUN_NATIVE_APIS.ROUTING.URL_PATTERN;
 
 ## Performance Impact Summary
 
-```
+```text
 ┌──────────────────┬─────────────────────┬─────────────┬─────────┐
 │ API              │ Native Optimization │ Performance │ Impact  │
 ├──────────────────┼─────────────────────┼─────────────┼─────────┤

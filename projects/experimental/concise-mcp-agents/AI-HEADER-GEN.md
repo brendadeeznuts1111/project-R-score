@@ -77,7 +77,7 @@ this.contextLearnings.set(result.category, [...existing, ...keywords]);
 ### 🎯 **Intelligent Categorization**
 
 **25+ Supported Categories**:
-```
+```text
 DATAPIPE, WEBSOCKETS, DATAVIEW, DATABASE, CACHE, AI, PARALLEL,
 UTILITIES, ETL, MCP, PARSING, ANALYTICS, EXPORT, API, QUERY,
 TESTS, BUILD, GOV, DASHBOARD, TELEGRAM, AGENT, COMPLIANCE
@@ -113,7 +113,7 @@ bun ai:analyze scripts/datapipe.ts   # Analyze specific file
 
 **Example AI Analysis**:
 
-```
+```text
 📄 scripts/datapipe.ts
    [DATAPIPE][CORE][DA-CO-2E8][v2.6.0][ACTIVE]
    🤖 AI Reasoning: Contains datapipe and bet processing logic - core betting system
@@ -125,7 +125,7 @@ bun ai:analyze scripts/datapipe.ts   # Analyze specific file
 
 **Statistics Output**:
 
-```
+```text
 📊 AI Header Statistics:
 
 Total Files Analyzed: 22

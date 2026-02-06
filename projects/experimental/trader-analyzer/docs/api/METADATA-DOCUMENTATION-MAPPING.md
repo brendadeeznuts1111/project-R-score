@@ -14,7 +14,7 @@ Mapping between code metadata tags (`[[TECH]]`, `[DOMAIN]`, `#REF:`) and documen
 ### 2.1. [METADATA.CODE_TAGS.RG] Code Metadata Tags
 
 #### 2.1.1. [TAG.FORMAT.RG] Format
-```
+```text
 [[TECH][MODULE][INSTANCE][META:{blueprint=BP-XXX@v;instance-id=ID;version=v}][PROPERTIES:{key={value:"val";@root:"ROOT";@chain:["BP-X","BP-Y"];@version:"v"}}][CLASS:ClassName][#REF:v-0.1.0.BP.XXX.1.0.A.1.1.ORCA.1.1]]
 ```
 
@@ -30,7 +30,7 @@ Mapping between code metadata tags (`[[TECH]]`, `[DOMAIN]`, `#REF:`) and documen
 ### 2.2. [METADATA.API_TAGS.RG] API Documentation Tags
 
 #### 2.2.1. [TAG.API_FORMAT.RG] Format
-```
+```text
 [DOMAIN][SCOPE][TYPE][META:{PROPERTY}][CLASS][#REF:*]
 ```
 
@@ -45,7 +45,7 @@ Mapping between code metadata tags (`[[TECH]]`, `[DOMAIN]`, `#REF:`) and documen
 ### 2.3. [METADATA.DOC_HEADERS.RG] Documentation Headers
 
 #### 2.3.1. [TAG.DOC_FORMAT.RG] Format
-```
+```text
 [DOMAIN.CATEGORY.KEYWORD.RG]
 ```
 

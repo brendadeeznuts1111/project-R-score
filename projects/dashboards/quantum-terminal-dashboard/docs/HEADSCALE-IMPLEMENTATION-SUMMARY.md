@@ -122,7 +122,7 @@ opr health:full
 
 ## 📊 Test Results
 
-```
+```text
 ✅ 33 tests pass, 0 fail
 ✅ 42 expect() calls
 ✅ 80ms total execution time
@@ -143,7 +143,7 @@ Test Coverage:
 
 ## 🎯 Architecture
 
-```
+```text
 Tailscale Clients
     ↓ (WireGuard + mTLS)
 Cloudflare Workers
@@ -174,7 +174,7 @@ opr logs                   # View logs
 
 ## 📁 Files Created
 
-```
+```text
 workers/
   ├── headscale-proxy.ts (150 lines)
   └── headscale-observability.ts (150 lines)

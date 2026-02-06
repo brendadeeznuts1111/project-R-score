@@ -31,7 +31,7 @@ I have successfully integrated the **DuoPlus CLI v3.0** with the **Enhanced Arti
 ## 📊 **LIVE SYSTEM PERFORMANCE**
 
 ### **✅ Current Metrics (Demonstrated)**
-```
+```text
 🎯 System Performance:
 ├── Artifacts Indexed: 1,786
 ├── Search Speed: <100ms (5 results)

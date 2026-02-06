@@ -58,7 +58,7 @@ Create a new session and set `sessionId` cookie.
 ```
 
 **Cookie Set:**
-```
+```text
 sessionId=018f1234-5678-9abc-def0-123456789abc; HttpOnly; SameSite=Strict; Path=/; Max-Age=604800
 ```
 

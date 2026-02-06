@@ -18,7 +18,7 @@ All three URL improvement recommendations have been successfully implemented:
 ## 📁 **Files Created/Modified**
 
 ### **New Files Created**
-```
+```text
 lib/services/url-service.ts                    # Centralized URL management service
 scripts/url-validator.ts                      # Comprehensive URL validation script
 .github/workflows/url-validation.yml          # CI/CD URL validation workflow
@@ -26,7 +26,7 @@ URL-IMPROVEMENTS-SUMMARY.md                   # This summary document
 ```
 
 ### **Files Modified**
-```
+```text
 services/content-type-demo.ts                  # Updated to use URL service
 services/verbose-fetch-demo.ts                 # Updated to use URL service
 package.json                                   # Added URL validation scripts

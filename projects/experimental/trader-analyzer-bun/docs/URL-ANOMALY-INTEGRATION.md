@@ -31,19 +31,19 @@ Complete integration of URL anomaly pattern detection engine into the NEXUS plat
 ## 🔗 API Endpoints
 
 ### 1. Discover Patterns
-```
+```text
 GET /research/url-anomalies?sport=NBA&hours=24
 ```
 Returns discovered URL anomaly patterns with market impact metrics.
 
 ### 2. Get Bookmaker Anomalies
-```
+```text
 GET /research/url-anomalies/:bookmaker?hours=24
 ```
 Returns all anomalies for a specific bookmaker.
 
 ### 3. Calculate False Steam Rate
-```
+```text
 GET /research/url-anomalies/:bookmaker/false-steam-rate?hours=24
 ```
 Returns the false positive rate for steam detection.

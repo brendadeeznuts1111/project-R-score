@@ -219,22 +219,22 @@ Add the MCP server to your Claude Desktop configuration (`~/Library/Application 
 ### Usage Examples
 
 #### Searching Bun Documentation
-```
+```text
 Search for "how to use bun test with typescript coverage"
 ```
 
 #### Setting Up a New Project
-```
+```text
 Set up a new WebSocket project called "realtime-server" with tests and CI
 ```
 
 #### Running Performance Tests
-```
+```text
 Run comprehensive tests with coverage and performance analysis
 ```
 
 #### Optimizing Build Process
-```
+```text
 Build my TypeScript project with minification and source maps for browser target
 ```
 
@@ -289,7 +289,7 @@ bun run typecheck
 
 ## 📊 Architecture
 
-```
+```text
 mcp-server/
 ├── index.ts              # Main MCP server implementation
 ├── package.json          # Dependencies and scripts

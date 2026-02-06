@@ -276,7 +276,7 @@ Ensure interactive elements are at least 44px tall for mobile:
 
 ## 📚 **File Structure**
 
-```
+```text
 docs/
 ├── fire22-branding.css          # Main CSS library
 ├── FIRE22-BRANDING-GUIDE.md    # Branding standards

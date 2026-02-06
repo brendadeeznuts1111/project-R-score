@@ -60,7 +60,7 @@ Successfully integrated the **Tension Engine v1.0** with the existing **Quantum 
 ## **📊 Technical Implementation**
 
 ### **Integration Files**
-```
+```text
 src/
 ├── tension-integration.js    # Main integration class
 ├── main.js                   # Updated with integration

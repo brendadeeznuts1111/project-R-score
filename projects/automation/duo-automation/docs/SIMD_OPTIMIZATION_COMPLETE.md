@@ -27,7 +27,7 @@ I have successfully integrated **Bun's new SIMD-optimized Buffer.indexOf and Buf
 ## 📊 **LIVE PERFORMANCE METRICS**
 
 ### **✅ SIMD Performance Results (Demonstrated)**
-```
+```text
 ⚡ SIMD Optimization Performance:
 ├── Single Pattern Search: 0.64ms (2,235 MB/s throughput)
 ├── Batch Pattern Search: 0.43ms (13,331 MB/s throughput)

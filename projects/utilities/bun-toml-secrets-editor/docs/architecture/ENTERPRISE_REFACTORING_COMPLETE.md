@@ -118,7 +118,7 @@ bun run enterprise:terminal     # Secure terminal interface
 
 ## 📁 **ENTERPRISE ARCHITECTURE**
 
-```
+```text
 src/
 ├── types/                    # 🔒 Type definitions
 │   ├── index.ts             # Main types (200+ definitions)

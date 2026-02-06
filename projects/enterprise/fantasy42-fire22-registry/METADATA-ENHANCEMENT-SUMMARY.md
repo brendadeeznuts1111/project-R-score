@@ -67,7 +67,7 @@ Created individual `LICENSE` files for all registry packages:
 
 Comprehensive team organization with 35+ specialized teams:
 
-```
+```text
 @fire22/enterprise-admins     - Executive oversight
 @fire22/architects           - System architects
 @fire22/core-team            - Core domain experts

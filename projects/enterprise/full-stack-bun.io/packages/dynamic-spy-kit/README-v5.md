@@ -23,7 +23,7 @@ bun run deploy
 
 ## 📦 Project Structure
 
-```
+```text
 @dynamic-spy/kit/
 ├── src/
 │   ├── core/          # Spy factories + URLPattern

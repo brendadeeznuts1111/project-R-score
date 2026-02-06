@@ -3,7 +3,7 @@
 ## 📦 What's Installed
 
 ### Core Components
-```
+```text
 src/analyzers/BundleMatrix.ts          (450 lines, fully featured)
 scripts/analyze-bundle.ts               (Integration script)
 scripts/compare-bundles.ts              (Comparison script)
@@ -104,7 +104,7 @@ await BundleMatrixAnalyzer.exportMetrics(matrix);
 
 ## 📈 Sample Report Output
 
-```
+```text
 ============================================================
 📦 BUNDLE ANALYSIS REPORT
 ============================================================

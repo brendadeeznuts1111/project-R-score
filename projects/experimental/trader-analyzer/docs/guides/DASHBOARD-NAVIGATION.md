@@ -133,7 +133,7 @@ Complete navigation guide for the NEXUS Trading Dashboard with all keyboard shor
 
 ## 4. Navigation Flow
 
-```
+```text
 Overview (default)
 ├── Arbitrage (a/e) → Arbitrage Scanner + Executor
 ├── Streams (s) → Trade Streams

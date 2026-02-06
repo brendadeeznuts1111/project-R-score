@@ -94,7 +94,7 @@ bun dashboard
 
 ## 📁 File Structure
 
-```
+```text
 factorywager/registry/
 ├── packages/
 │   ├── user-profile/          ✅ Core profile engine

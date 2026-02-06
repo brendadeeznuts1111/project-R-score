@@ -4,7 +4,7 @@ Generated exports and reports from the Nebula-Flow™ system.
 
 ## Structure
 
-```
+```text
 exports/
 ├── data/              # Exported data files
 │   ├── *.json        # JSON exports

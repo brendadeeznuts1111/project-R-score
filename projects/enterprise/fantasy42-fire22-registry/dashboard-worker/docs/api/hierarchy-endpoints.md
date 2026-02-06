@@ -4,7 +4,7 @@
 
 ## Base URL
 
-```
+```text
 https://dashboard-worker.fire22.workers.dev/api/hierarchy
 ```
 
@@ -640,7 +640,7 @@ Rate limit headers included in responses:
 
 All endpoints include appropriate cache headers:
 
-```
+```text
 Cache-Control: public, max-age=300
 ETag: "hierarchy-v1-abc123"
 Last-Modified: Mon, 15 Jan 2024 10:30:00 GMT

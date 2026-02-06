@@ -10,7 +10,7 @@ systems through Fire22 API integration and enterprise logging.
 
 ## High-Level Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │                           WATER DASHBOARD ECOSYSTEM                            │
 ├─────────────────────────────────────────────────────────────────────────────────┤
@@ -318,7 +318,7 @@ CREATE INDEX idx_web_logs_suspicious ON web_logs(is_suspicious);
 
 **Archive Structure**:
 
-```
+```text
 logs/archived/
 ├── 2024-08-27/
 │   ├── logs-1724742000000.json (Transaction logs)

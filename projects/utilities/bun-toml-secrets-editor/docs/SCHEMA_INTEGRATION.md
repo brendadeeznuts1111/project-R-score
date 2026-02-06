@@ -4,7 +4,7 @@
 
 ## Schema Structure
 
-```
+```text
 [DOMAIN][SCOPE][TYPE][META:*][CLASS][FUNCTION][INTERFACE][#REF:*][BUN-NATIVE]
 ```
 
@@ -33,7 +33,7 @@
 
 ## Bidirectional Reference Graph
 
-```
+```text
 Bun v1.3.7 Profiling API          Golden Template Implementation
 ─────────────────────             ─────────────────────────────
 --cpu-prof-md ─────────────────→  profileCPU()
@@ -137,7 +137,7 @@ bun src/cli/schema-validator-cli.ts export --output schema.json
 
 ## File Structure
 
-```
+```text
 src/schema/
 ├── index.ts                    # Central exports
 ├── bun-v137-annotations.ts     # All v1.3.7 annotations
@@ -148,7 +148,7 @@ src/schema/
 
 ## Validation Results
 
-```
+```text
 ✅ Schema:      PASS (33 annotations validated)
 ✅ Integration: PASS (8 mappings verified)
 ✅ Hooks:       PASS (9 hooks ready)

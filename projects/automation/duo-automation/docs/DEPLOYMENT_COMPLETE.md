@@ -3,7 +3,7 @@
 ## ✅ **FINAL VALIDATION RESULTS**
 
 ### 🎯 **Test Suite Status:**
-```
+```text
 🏆 61 PASSING TESTS ✅
 ⚡ 32ms EXECUTION TIME ⚡
 📊 53.55% FUNCTION COVERAGE
@@ -11,7 +11,7 @@
 ```
 
 ### 🔧 **Build Status:**
-```
+```text
 ✅ BUNDLED SUCCESSFULLY
 📦 4 MODULES IN 25ms
 🗜️ MINIFIED & SOURCE-MAPPED

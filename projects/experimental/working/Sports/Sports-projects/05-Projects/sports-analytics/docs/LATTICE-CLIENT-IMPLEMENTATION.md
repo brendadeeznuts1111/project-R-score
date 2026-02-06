@@ -32,7 +32,7 @@
 
 ### File Structure
 
-```
+```text
 sports-analytics/
 ├── t3-lattice-v3.3-executable.ts    # Main implementation (2000+ lines)
 ├── T3-LATTICE-V3.3-SPEC.md          # Full documentation
@@ -42,7 +42,7 @@ sports-analytics/
 
 ### Core Components
 
-```
+```text
 T3LatticeExecutable
 ├── LatticeRegistry (Singleton)
 │   ├── 24 Components

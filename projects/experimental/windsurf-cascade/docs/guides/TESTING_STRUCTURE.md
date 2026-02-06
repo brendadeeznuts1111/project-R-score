@@ -4,7 +4,7 @@ This document outlines the standardized testing infrastructure for the Odds Prot
 
 ## 📁 Directory Structure
 
-```
+```text
 packages/
 ├── testing/                          # Centralized testing infrastructure
 │   ├── src/

@@ -246,7 +246,7 @@ jobs:
 
 ### Overall Compliance Calculation
 
-```
+```text
 Total Score = Σ(Department Score × Weight)
 Critical Threshold = 85%
 Blocking Threshold = 70%

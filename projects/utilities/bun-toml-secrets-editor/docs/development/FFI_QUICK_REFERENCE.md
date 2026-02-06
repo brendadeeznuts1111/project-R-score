@@ -62,7 +62,7 @@ console.log('2+3=', symbols.add(2, 3));
 - [ ] Header paths include .include directories?
 
 ## 📁 File Structure
-```
+```text
 src/
 ├── parsers/
 │   ├── rss-parser.c      # C code

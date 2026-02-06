@@ -113,7 +113,7 @@ curl http://localhost:3000/health | jq
 
 ## 🎯 **Core Arsenal ROI**
 
-```
+```text
 Query Speed:      1.2ms → 0.8ms (35%)
 Test Stability:   92% → 100% (25 fuzzer fixes)
 Logging:          Console → SIEM-ready JSON
@@ -124,7 +124,7 @@ Total Velocity:   $378K → $512K/hr (+35%)
 
 ## 📊 **Status**
 
-```
+```text
 [ARB-CORE][FUZZER-PROOF][1890-SCANS/MIN][SQLITE351][4.82% EDGE]
 [VALUE:$378K][25-FIXES][%J-LOGGING][DIAGNOSTICS:GREEN][STATUS:IMMUNE]
 ```

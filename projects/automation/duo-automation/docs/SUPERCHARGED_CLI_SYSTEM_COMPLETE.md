@@ -112,7 +112,7 @@ bun run src/@inspection/supercharged-cli.ts inspect --format=markdown --output=r
 
 ### **✅ Main Menu Options**
 
-```
+```text
 🚀 DuoPlus Supercharged Inspection System
 ═════════════════════════════════════════════════
 
@@ -141,7 +141,7 @@ What would you like to do?
 
 ### **✅ Visual Statistics**
 
-```
+```text
 📊 Analytics Dashboard
 ═════════════════════════════════════════════════
 

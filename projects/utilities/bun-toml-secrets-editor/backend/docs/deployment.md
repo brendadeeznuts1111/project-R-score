@@ -8,7 +8,7 @@ This guide covers deploying the Bun Payment Linker backend to various environmen
 
 ### Production Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                    Load Balancer                         │
 │            (AWS ALB / Google Cloud Load Balancer)        │

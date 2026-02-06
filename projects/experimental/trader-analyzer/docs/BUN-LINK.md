@@ -38,7 +38,7 @@ bun link
 ```
 
 **Output**:
-```
+```text
 bun link v1.3.3 (7416672e)
 Success! Registered "cool-pkg"
 

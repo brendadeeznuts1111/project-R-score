@@ -379,7 +379,7 @@ const schema: FileSchema = {
 
 ### File Organization
 
-```
+```text
 bucket/
 ├── documents/
 │   ├── reports/

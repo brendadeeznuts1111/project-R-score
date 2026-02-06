@@ -4,7 +4,7 @@ Fast lookup for common registry tasks and commands.
 
 ## 📋 File Structure
 
-```
+```text
 .npmrc.example                           - Template (copy to .npmrc)
 src/services/PrivateRegistryClient.ts    - Registry client implementation
 src/routes/registry.ts                   - API endpoints

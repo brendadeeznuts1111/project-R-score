@@ -13,7 +13,7 @@ A **production-ready private NPM registry** with Bun v1.4+ integration, featurin
 
 ## 📂 File Structure
 
-```
+```text
 lib/registry/                          # Core registry system
 ├── index.ts                          # Unified exports
 ├── registry-types.ts                 # TypeScript definitions
@@ -228,7 +228,7 @@ const version = await bunx.resolveVersion('lodash', '^4.17.0');
 
 ### ASCII (Terminal)
 
-```
+```text
 📦 lodash
 ==================================================
 
@@ -280,7 +280,7 @@ graph TD
 
 ## 🔐 Security Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    Security Layers                           │
 ├─────────────────────────────────────────────────────────────┤

@@ -76,7 +76,7 @@ bun run watch
 
 The server will start on a **random available port** to avoid port conflicts. Check the console output for the actual port:
 
-```
+```text
 ═════════════════════════════════════════════════════════════
 🚀 Bun Stream Dashboard Server Started!
 ═════════════════════════════════════════════════════════════

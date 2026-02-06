@@ -76,7 +76,7 @@ Navigate to: `http://localhost:3000`
 - **Error Handling**: Graceful failure management
 
 ### Key Endpoints
-```
+```text
 GET  /api/lightning/balance     - Lightning network data
 GET  /api/devices              - Device fleet listing
 POST /api/devices              - Clone new device
@@ -123,7 +123,7 @@ GET  /api/metrics/operational  - Performance metrics
 ## 🚀 Development
 
 ### Project Structure
-```
+```text
 web-app/
 ├── index.html          # Main HTML interface
 ├── styles.css          # Modern CSS styling

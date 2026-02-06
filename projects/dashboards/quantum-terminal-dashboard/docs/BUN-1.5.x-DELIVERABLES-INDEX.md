@@ -43,7 +43,7 @@
 
 ## 🧪 Test Results
 
-```
+```text
 ✅ 9 new React timer tests - ALL PASSING
 ✅ 43 existing feature tests - ALL PASSING
 ✅ 0 failures
@@ -76,7 +76,7 @@ npm run test:integ      # Integration tests (SCOPE pattern)
 
 ## 📝 Commit Message
 
-```
+```text
 chore: adopt Bun 1.5.x perf & compat wins
 
 - Add --grep alias for bun test (Jest/Mocha familiar)

@@ -110,7 +110,7 @@ curl http://localhost:3227/api/config/security
 ## 📁 Configuration Files Structure
 
 ### **📄 File Hierarchy:**
-```
+```text
 config/
 ├── .env.example              # Template with all options
 ├── .env.development          # Development settings

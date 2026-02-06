@@ -42,7 +42,7 @@
 
 ### **Production Ready**
 
-```
+```text
 Core Files Status:
 ✅ /src/utils/scaling/cashapp-duoplus.ts - Zero errors
 ✅ /src/utils/scaling/integrated-cashapp-scaling.ts - Zero errors

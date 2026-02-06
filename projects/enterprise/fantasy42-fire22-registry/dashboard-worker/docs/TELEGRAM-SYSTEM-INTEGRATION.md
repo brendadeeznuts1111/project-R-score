@@ -196,7 +196,7 @@ CTO: Technical oversight
 
 #### Customer Service Workflow
 
-```
+```text
 /start → CS Welcome → [Active Tickets | New Ticket | Stats | Escalate]
 /support → Ticket Type → [Technical | Payment | Account | Security]
 /escalate → Escalation Path → [Senior → Manager → Director]
@@ -204,7 +204,7 @@ CTO: Technical oversight
 
 #### Finance Workflow
 
-```
+```text
 /start → Finance Welcome → [Pending Approvals | Balances | Summary | Risk]
 /balance → Balance Overview → [Refresh | Transactions | Deposit | Withdraw]
 /approve → Transaction Review → [Approve | Reject | Details]
@@ -212,7 +212,7 @@ CTO: Technical oversight
 
 #### Operations Workflow
 
-```
+```text
 /start → Operations Welcome → [Queue Status | Process | Performance | Alerts]
 /queue → Queue Overview → [Refresh | Process | Details]
 /process → Queue Processing → [Start | Monitor | Complete]

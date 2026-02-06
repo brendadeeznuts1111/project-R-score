@@ -218,7 +218,7 @@ gh api repos/brendadeeznuts1111/fire22-dashboard-worker/codeowners/errors
 
 ### **Key Files Created/Modified**
 
-```
+```text
 .github/
 ├── workflows/
 │   ├── ci.yml                      # Main CI/CD pipeline

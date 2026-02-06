@@ -1011,7 +1011,7 @@ if (isProduction) {
 
 ## **📊 Complete Example Repository Structure:**
 
-```
+```text
 my-project/
 ├── src/
 │   ├── components/

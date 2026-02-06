@@ -164,7 +164,7 @@ bun run worker:secret SECRET_NAME
 
 ## 🏗️ Project Structure
 
-```
+```text
 kal-poly-bot/
 ├── 📁 operation_surgical_precision/     # Main platform engine
 ├── 📁 poly-kalshi-arb/                  # Arbitrage trading operations

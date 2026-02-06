@@ -39,7 +39,7 @@ The following issues are in the root `tsconfig.json` and don't affect the core f
 
 ### 📊 **Implementation Summary**
 
-```
+```text
 Files Created/Modified:
 ✅ /src/utils/scaling/duoplus-scaling.ts (Complete scaling manager)
 ✅ /examples/scaling-strategy-examples.ts (Usage examples)

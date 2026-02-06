@@ -190,7 +190,7 @@ curl -N -H "Accept: text/event-stream" \
 import { Fire22Client } from '@fire22/client';
 ````
 
-```
+```text
 
 const client = new Fire22Client({
   baseUrl: 'http://localhost:3001',

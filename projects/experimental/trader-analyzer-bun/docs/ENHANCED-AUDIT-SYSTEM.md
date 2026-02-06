@@ -4,7 +4,7 @@
 
 ## System Overview
 
-```
+```text
 🔍 AUDIT SUBSYSTEM V2.0
 ├── Static Analysis Pipeline
 ├── Real-Time Monitoring Engine
@@ -309,7 +309,7 @@ const results = await orchestrator.executeAuditChain({
 
 ## Status Dashboard
 
-```
+```text
 📊 AUDIT SYSTEM STATUS: OPERATIONAL
 ├── Real-Time Monitoring: ✅ ACTIVE
 ├── Pattern Detection: ✅ MULTI-LAYER

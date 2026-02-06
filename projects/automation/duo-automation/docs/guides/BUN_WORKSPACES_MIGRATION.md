@@ -29,7 +29,7 @@ Following Bun's official documentation pattern exactly:
 ```
 
 ### ✅ **Directory Structure (Official)**
-```
+```text
 duo-automation/
 ├── package.json          # Root workspace config with catalog & catalogs
 ├── bun.lock             # Shared lockfile

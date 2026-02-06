@@ -18,7 +18,7 @@ This document establishes explicit API boundaries and responsibilities between B
 
 ## **API Boundary Philosophy**
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                    HYPER-BUN CORE                        │
 │  Domain-Specific Market Intelligence & Trading Logic    │

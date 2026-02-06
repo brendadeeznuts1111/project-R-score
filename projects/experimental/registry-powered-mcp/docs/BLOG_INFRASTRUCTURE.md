@@ -484,7 +484,7 @@ The **Golden Operational Matrix v2.4.1** contains 26 infrastructure components a
 
 ## Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                           Level 3: Governance                               │
 │  ┌─────────────────────────────────────────────────────────────────────┐   │

@@ -141,7 +141,7 @@ interface DNSResolutionResult {
 
 ## 🧪 **Test Results**
 
-```
+```text
 ✅ 13 DNS resolver tests
 ✅ 0 failures
 ✅ 31 expect() calls
@@ -181,7 +181,7 @@ for (const result of dnsResults) {
 
 ## 📁 **File Structure**
 
-```
+```text
 bun-inspect-utils/
 ├── src/networking/
 │   ├── dns-resolver.ts (180 lines)

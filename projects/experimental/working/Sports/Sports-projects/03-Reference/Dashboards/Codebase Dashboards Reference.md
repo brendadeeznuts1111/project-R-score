@@ -34,7 +34,7 @@ VIZ-06: []
 
 ## 📁 Directory Structure
 
-```
+```text
 dashboards/
 ├── core/                    # Core system dashboards
 │   ├── demo-template-dashboard.html

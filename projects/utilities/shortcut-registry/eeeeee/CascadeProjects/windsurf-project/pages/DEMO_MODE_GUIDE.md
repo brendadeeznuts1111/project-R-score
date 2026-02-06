@@ -8,7 +8,7 @@ bun cli/dashboard/dashboard-cli.ts serve
 ```
 
 Then open:
-```
+```text
 http://localhost:8080/dashboard.html?demo=ai-risk-analysis
 ```
 
@@ -18,7 +18,7 @@ bun pages/dev-server.ts
 ```
 
 Then open:
-```
+```text
 http://localhost:8080/dashboard.html?demo=ai-risk-analysis
 ```
 

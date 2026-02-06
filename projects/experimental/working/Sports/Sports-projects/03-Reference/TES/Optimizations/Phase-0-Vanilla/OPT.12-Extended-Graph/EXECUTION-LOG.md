@@ -12,7 +12,7 @@ Bun.env.get('OBSIDIAN_ENABLE_CACHE') // Native env API
 crypto.subtle // Signature on opt JSON
 Bun.file('.obsidian/graph.json').text() // Parse
 spawn('obsidian-cli', ['settings', 'graph-shapes']) // Status
-```
+```text
 
 ### Cloudflare Workers Deployment
 
@@ -32,7 +32,7 @@ binding = "TES_EG_KV"
 
 [vars]
 OBSIDIAN_ENABLE_CACHE = "true"
-```
+```text
 
 ### Extended Graph Configuration Format
 
@@ -53,7 +53,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
   "vault_graph_limit": 50000,
   "filter_on_load": ["#canvas", "#graph"]
 }
-```
+```text
 
 ---
 
@@ -87,7 +87,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
   "canvasShapeLimit": 100,
   "maxShapesPerCanvas": 100
 }
-```
+```text
 
 **Performance**: 55K-node lag → <300ms  
 **Complexity**: -80% reduction  
@@ -109,7 +109,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
   "embeddedImages": false,
   "r2Bucket": "TES_EG_BUCKET"
 }
-```
+```text
 
 **Performance**: Reduced embedded overhead  
 **Meta Tag**: `[META: OFFLOAD]`  
@@ -132,7 +132,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
     "repulsionStrength": 1.5
   }
 }
-```
+```text
 
 **Performance**: Better graph layout  
 **Meta Tag**: `[META: TUNE]`  
@@ -155,7 +155,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
     "syncSelection": true
   }
 }
-```
+```text
 
 **Performance**: Better workflow integration  
 **Meta Tag**: `[META: SPLIT]`  
@@ -177,7 +177,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
     "optional": true
   }
 }
-```
+```text
 
 **Performance**: Reduced rendering overhead  
 **Meta Tag**: `[META: OPTIONAL]`  
@@ -201,7 +201,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
     "graph-reference/"
   ]
 }
-```
+```text
 
 **Performance**: Better performance for large vaults  
 **Meta Tag**: `[META: SPLIT]`  
@@ -223,7 +223,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
     "operator": "OR"
   }
 }
-```
+```text
 
 **Performance**: Faster initial load  
 **Meta Tag**: `[META: FILTER]`  
@@ -244,7 +244,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
   "autoUpdateLinks": true,
   "linkStability": true
 }
-```
+```text
 
 **Performance**: Better link management  
 **Meta Tag**: `[META: LINK]`  
@@ -267,7 +267,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
     "cleanupOnSlow": true
   }
 }
-```
+```text
 
 **Performance**: Reduced cache overhead  
 **Meta Tag**: `[META: CLEAN]`  
@@ -293,7 +293,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
     }
   }
 }
-```
+```text
 
 **Performance**: Reduced plugin overhead  
 **Meta Tag**: `[META: LIMIT]`  
@@ -321,13 +321,13 @@ OBSIDIAN_ENABLE_CACHE = "true"
 **Log Format**:
 ```
 [THREAD_GROUP:VAULT] [META:KEY-VERSION:2] [HSL-PHASE:PLUGIN [[FF006E]]]
-```
+```text
 
 **Verification Command**:
 ```bash
 rg '"\\[META:ENHANCED\\\\]":' logs/worker-events.log
 # Result: 10 matches / 0.00001s
-```
+```text
 
 ---
 
@@ -338,7 +338,7 @@ rg '"\\[META:ENHANCED\\\\]":' logs/worker-events.log
 **Deployment Command**:
 ```bash
 bunx wrangler deploy --env=production
-```
+```text
 
 **Status**: ✅ **0 warnings**  
 **Configuration**: `[[kv_namespaces]]` + `[vars] OBSIDIAN_ENABLE_CACHE=true`  

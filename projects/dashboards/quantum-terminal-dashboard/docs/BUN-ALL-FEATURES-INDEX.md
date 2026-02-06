@@ -112,7 +112,7 @@ Master index for all 11 Bun features implemented in Quantum Terminal Dashboard.
 
 ## 🧪 Test Results
 
-```
+```text
 Batch 1 (5 features):
   ✅ 21 tests passing
   ❌ 0 failures

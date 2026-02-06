@@ -127,7 +127,7 @@ All APIs link to official Bun docs:
 
 ### which() Table Output
 
-```
+```text
 ┌───┬─────────┬──────────────────────────────────────┬───────────┐
 │   │ tool    │ path                                 │ available │
 ├───┼─────────┼──────────────────────────────────────┼───────────┤
@@ -139,7 +139,7 @@ All APIs link to official Bun docs:
 
 ### Compression Stats
 
-```
+```text
 Original pools: 329 bytes
 GZIP compressed: 246 bytes (25.2% reduction)
 DEFLATE compressed: 228 bytes (30.7% reduction)

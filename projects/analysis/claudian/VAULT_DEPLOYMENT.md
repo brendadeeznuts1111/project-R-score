@@ -71,7 +71,7 @@
 
 ## Required Files for Vault
 
-```
+```text
 .obsidian/plugins/claudian/
 ├── main.js          (4.9 MB) - Compiled plugin
 ├── manifest.json    (316 B)  - Plugin metadata

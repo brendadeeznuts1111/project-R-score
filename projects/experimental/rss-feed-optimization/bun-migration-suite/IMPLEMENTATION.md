@@ -40,7 +40,7 @@
 
 ## 📁 Project Structure
 
-```
+```text
 bun-migration-suite/
 ├── package.json
 ├── bunfig.toml

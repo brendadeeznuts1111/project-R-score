@@ -299,7 +299,7 @@ TABLE WITHOUT ID
 FROM "data/bets.yaml"
 SORT profit DESC
 LIMIT 10
-```
+```text
 
 ---
 
@@ -318,7 +318,7 @@ FROM "data/bets.yaml"
 WHERE state = "2"
 SORT logTime DESC
 LIMIT 20
-```
+```text
 
 ---
 
@@ -375,7 +375,7 @@ if (bets.length > 0) {
     </div>
   `);
 }
-```
+```text
 
 ---
 
@@ -467,7 +467,7 @@ if (alerts.length > 0) {
     </div>
   `);
 }
-```
+```text
 
 ---
 
@@ -476,7 +476,7 @@ if (alerts.length > 0) {
 **1. Start WebSocket Server:**
 ```bash
 bun ws:start
-```
+```text
 
 **2. Open this dashboard in Obsidian**
 
@@ -485,7 +485,7 @@ bun ws:start
 **4. Run data fetch:**
 ```bash
 bun datapipe:yaml  # Populate data/bets.yaml
-```
+```text
 
 **5. Watch tables update live!**
 

@@ -8,7 +8,7 @@ The Bun Payment Linker implements enterprise-grade security with defense-in-dept
 
 ### Defense in Depth
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                   Network Security                        │
 │  • TLS 1.3 Encryption  • DDoS Protection  • Firewall    │

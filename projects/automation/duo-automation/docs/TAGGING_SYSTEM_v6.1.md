@@ -130,7 +130,7 @@
 
 ### Tag Format Specification
 
-```
+```text
 // [DOMAIN][SCOPE][LANG][META:{...}][#REF:XXX-YYY-##][RUNTIME]
 ```
 
@@ -475,7 +475,7 @@ export { autoClassify, CLASSIFICATION_RULES };
 
 ### Multi-Layer Defense Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │  LAYER 1: Pre-commit (Developer Local)                          │
 │    Performance: <200ms | Blocking: YES | Fallback: WARN_AND_LOG │

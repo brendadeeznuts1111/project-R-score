@@ -190,7 +190,7 @@ bun run test:coverage
 
 ## 📁 Directory Structure
 
-```
+```text
 tests/
 ├── README.md                    # This documentation
 ├── setup.ts                     # Global test setup and utilities

@@ -14,7 +14,7 @@ The Tier-1380 Enterprise Archive Suite represents a comprehensive enhancement of
 - **API Surface**: 50+ public methods and interfaces
 
 ### **Architecture Components**
-```
+```text
 🏢 Enterprise Suite Structure:
 ├── 📁 tools/enterprise/           # Core enterprise components
 │   ├── 📁 archive/               # Archive management (544 lines)

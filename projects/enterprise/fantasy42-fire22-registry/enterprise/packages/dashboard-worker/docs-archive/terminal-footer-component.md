@@ -261,7 +261,7 @@ function typewriterEffect(element, text, speed = 50) {
 
     type();
 }
-````
+````text
 
 // Add glowing status indicator
 
@@ -278,7 +278,7 @@ function updateStatus(status) {
         ├───────────────────────────────────────────────────────────────────────┤
     `;
 }
-```
+```text
 
 // Initialize footer interactions document.addEventListener('DOMContentLoaded',
 function() { // Add typewriter effect to tagline const tagline =
@@ -346,7 +346,7 @@ To integrate this footer into your documentation:
 
 ## Character Reference
 
-```
+```text
 ╭ ─ ╮  Top corners and horizontal line
 │   │  Vertical lines
 ├ ─ ┤  T-junctions

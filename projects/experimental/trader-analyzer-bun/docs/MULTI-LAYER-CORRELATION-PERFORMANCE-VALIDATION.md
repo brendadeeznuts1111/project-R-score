@@ -58,7 +58,7 @@ Layers 2-4: 676-690 µs  // Sub-ms consistency across complex joins
 
 ### ✅ Anomaly Detection: 3.91-4.76 ms
 
-```
+```text
 Confidence filtering adds only 0.85 ms overhead
 ```
 
@@ -83,7 +83,7 @@ FROM multi_layer_correlations;
 
 ### ⚠️ Propagation Prediction: 365 µs (Constant Time)
 
-```
+```text
 Depth 2 vs Depth 8: No latency delta
 ```
 
@@ -192,7 +192,7 @@ constructor(db: Database) {
 
 ### Single-Instance Benchmarks
 
-```
+```text
 450 graphs/sec = 2.20 ms/graph
 250 anomaly detections/sec = 4 ms/detection
 2,700 propagations/sec = 0.37 ms/prediction
@@ -407,7 +407,7 @@ WHERE component = 'correlation-engine';
 
 **Estimated time to production-ready**: **5 engineering days** (3 days hardening, 2 days load testing)
 
-```
+```text
 [DoD][APPROVAL:RECOMMENDED][RISK:LOW][TIMELINE:5D]
 ```
 

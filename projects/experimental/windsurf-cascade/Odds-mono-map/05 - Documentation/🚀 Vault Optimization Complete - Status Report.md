@@ -127,7 +127,7 @@ All critical vault optimizations have been successfully implemented. The Odds Pr
 | **Template Access** | Manual | Automated | +∞ |
 
 #### ** Compliance breakdown**
-```
+```text
 ✅ YAML Frontmatter: 100% complete
 ✅ Template System: 100% organized
 ✅ Plugin Configuration: 100% complete

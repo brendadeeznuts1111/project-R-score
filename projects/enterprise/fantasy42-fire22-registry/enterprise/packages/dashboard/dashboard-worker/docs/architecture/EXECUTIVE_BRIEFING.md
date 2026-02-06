@@ -73,7 +73,7 @@ graph TD
 
 ### **Total Projected ROI**
 
-```
+```text
 Investment: $315K (6 months)
 Annual Savings: $700K+
 ROI Multiple: 5x
@@ -212,7 +212,7 @@ monitoring: 'Real-time performance tracking and alerting'
 
 ### **Investment Ask**
 
-```
+```text
 Phase 1 Launch & Governance: $50K (6 weeks)
 - ARB formation and meetings
 - Communication and rollout planning

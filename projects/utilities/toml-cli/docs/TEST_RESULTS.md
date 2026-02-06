@@ -4,7 +4,7 @@
 
 **Status**: ✅ **ALL TESTS PASSING**
 
-```
+```text
 22 pass
 0 fail
 61 expect() calls
@@ -50,7 +50,7 @@ Total time: 714ms
 ### Performance Metrics
 
 #### Config Creation
-```
+```text
 Config file creation: 0.337ms per operation
 ```
 - 100 iterations completed in 33.70ms
@@ -58,7 +58,7 @@ Config file creation: 0.337ms per operation
 - File size: 927 bytes (consistent)
 
 #### Config Loading
-```
+```text
 Config file loading: 0.0263ms per operation
 ```
 - 500 iterations completed in 13.13ms
@@ -66,7 +66,7 @@ Config file loading: 0.0263ms per operation
 - Sub-millisecond operations
 
 #### Config Validation
-```
+```text
 Config validation: 0.0001ms per operation
 ```
 - 10,000 iterations completed in 0.60ms
@@ -74,7 +74,7 @@ Config validation: 0.0001ms per operation
 - In-memory operation, very fast
 
 #### Config Saving
-```
+```text
 Config file saving: 0.1019ms per operation
 ```
 - 100 iterations completed in 10.19ms
@@ -82,7 +82,7 @@ Config file saving: 0.1019ms per operation
 - Suitable for auto-save scenarios
 
 #### R2Storage Initialization
-```
+```text
 R2Storage init: 0.0009ms per operation
 ```
 - 5,000 iterations completed in 4.43ms
@@ -90,7 +90,7 @@ R2Storage init: 0.0009ms per operation
 - Lightweight instantiation
 
 #### Public URL Generation
-```
+```text
 Public URL generation: 0.0002ms per operation
 ```
 - 10,000 iterations completed in 1.81ms
@@ -99,7 +99,7 @@ Public URL generation: 0.0002ms per operation
 
 ### Full Workflow Performance
 
-```
+```text
 Complete workflow: 0.2873ms per operation
 (create → load → validate → save)
 ```
@@ -155,7 +155,7 @@ Complete workflow: 0.2873ms per operation
 ## Performance Characteristics
 
 ### Latency Profile
-```
+```text
 95th percentile:
   • Config creation: ~0.5ms
   • Config loading: ~0.05ms

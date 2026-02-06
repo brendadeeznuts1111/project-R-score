@@ -50,7 +50,7 @@ Foxy Proxy is a unified management platform combining IPFoxy proxies with DuoPlu
 
 ## 📁 Repository Structure
 
-```
+```text
 foxy-proxy/
 ├── packages/
 │   └── dashboard/                 # Main React application

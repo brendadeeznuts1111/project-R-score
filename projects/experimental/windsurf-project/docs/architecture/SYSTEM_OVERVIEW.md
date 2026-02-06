@@ -19,7 +19,7 @@ Your Apple ID creation system is **fully functional** with professional domain i
 
 ### **📧 Email Addresses You Can Create**
 
-```
+```text
 james.smith@apple.factory-wager.com
 sarah.jones@apple.factory-wager.com
 michael.wilson@apple.factory-wager.com

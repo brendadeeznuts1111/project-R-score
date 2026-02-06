@@ -66,7 +66,7 @@ practices, comprehensive testing, and automated deployment workflows.
 
 ## 📁 **Project Structure**
 
-```
+```text
 dashboard-worker/
 ├── 📄 .env.example                    # Environment template
 ├── 📄 .env                           # Local development config

@@ -83,7 +83,7 @@ You can override the default behavior by explicitly specifying the `--linker` fl
 
 Instead of hoisting dependencies, isolated installs create a two-tier structure:
 
-```
+```text
 node_modules/
 ├── .bun/                          # Central package store
 │   ├── package@1.0.0/             # Versioned package installations
@@ -133,7 +133,7 @@ In monorepos, workspace dependencies are handled specially:
 
 Isolated installs handle peer dependencies through sophisticated resolution:
 
-```
+```text
 # Package with peer dependencies creates specialized paths
 node_modules/.bun/package@1.0.0_react@18.2.0/
 ```

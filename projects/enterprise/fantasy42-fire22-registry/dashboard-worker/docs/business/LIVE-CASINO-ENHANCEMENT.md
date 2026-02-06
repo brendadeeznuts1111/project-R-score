@@ -113,7 +113,7 @@ analytics - all integrated with your Telegram bot!
 
 ### **Rate Calculation**
 
-```
+```text
 Commission = Total Bets × Adjusted Rate × Adjustment Factor
 ```
 
@@ -160,7 +160,7 @@ Commission = Total Bets × Adjusted Rate × Adjustment Factor
 
 ### **Revenue Calculation**
 
-```
+```text
 Net Revenue = Total Wins - Total Bets
 Commission = Total Bets × Agent Rate
 ```

@@ -42,7 +42,7 @@ bun test packages/odds-core/src/__tests__/vscode-explorer-special-chars.test.ts
 ```
 
 **Results**:
-```
+```text
 ✓ VS Code Test Explorer - Special Character Support > arbitrage: €100 stake @ 2.5 odds
 ✓ VS Code Test Explorer - Special Character Support > currency conversion: $50 → €45.50
 ✓ VS Code Test Explorer - Special Character Support > emoticons: 📈 market trend + 💰 profit = ✅ success

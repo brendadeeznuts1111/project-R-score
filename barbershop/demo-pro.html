@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏗️ Bun Metafile & FactoryWager Security Citadel</title>
+    <link rel="stylesheet" href="demo-styles.css">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏗️</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🏗️ Bun Metafile & FactoryWager Security Citadel</h1>
+            <p>Professional demonstration of Bun's build capabilities integrated with enterprise-grade secret management and 3D security visualization</p>
+            
+            <!-- Search Component -->
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    placeholder="Search features, tabs, or content..."
+                    id="searchInput"
+                    autocomplete="off"
+                >
+                <div class="search-results" id="searchResults" style="display: none;"></div>
+            </div>
+        </header>
+        
+        <main class="content">
+            <nav class="tabs" role="tablist">
+                <button class="tab active" role="tab" aria-selected="true" onclick="showTab('overview')">📊 Overview</button>
+                <button class="tab" role="tab" aria-selected="false" onclick="showTab('inputs')">📁 Inputs</button>
+                <button class="tab" role="tab" aria-selected="false" onclick="showTab('outputs')">📦 Outputs</button>
+                <button class="tab" role="tab" aria-selected="false" onclick="showTab('binary')">🎯 Binary Assets</button>
+                <button class="tab" role="tab" aria-selected="false" onclick="showTab('demo')">🚀 Interactive Demo</button>
+                <button class="tab" role="tab" aria-selected="false" onclick="showTab('secrets')">🏰 Security Citadel</button>
+            </nav>
+
+            <!-- Overview Tab -->
+            <section id="overview" class="tab-content active" role="tabpanel">
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">Source Files</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">Output Bundles</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">151KB</div>
+                        <div class="stat-label">Total Size</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">84%</div>
+                        <div class="stat-label">Compression</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🎯 Bundle Size Distribution</h3>
+                    <div class="bundle-bar">
+                        <div class="bundle-segment dashboard" onclick="showBundleDetails('dashboard')" title="Dashboard: 65%">Dashboard 65%</div>
+                        <div class="bundle-segment server" onclick="showBundleDetails('server')" title="Server: 23%">Server 23%</div>
+                        <div class="bundle-segment tickets" onclick="showBundleDetails('tickets')" title="Tickets: 12%">Tickets 12%</div>
+                    </div>
+                    <p class="mt-2 text-muted">
+                        Dashboard (98KB) • Server (35KB) • Tickets (17KB)
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>🔍 Build Process Visualization</h3>
+                    <div class="tree">
+                        <div><strong>barbershop-demo/</strong></div>
+                        <div class="tree-node"><strong>src/</strong> <span class="file-size">(180KB source)</span>
+                            <div class="tree-node">barbershop-dashboard.ts <span class="file-size">(75KB)</span> <span class="import-type import-internal">main</span></div>
+                            <div class="tree-node">barber-server.ts <span class="file-size">(35KB)</span> <span class="import-type import-internal">api</span></div>
+                            <div class="tree-node">barbershop-tickets.ts <span class="file-size">(30KB)</span> <span class="import-type import-internal">tickets</span></div>
+                            <div class="tree-node">logger.ts <span class="file-size">(3KB)</span> <span class="import-type import-internal">shared</span></div>
+                            <div class="tree-node">ui-v2.ts <span class="file-size">(18KB)</span> <span class="import-type import-internal">ui</span></div>
+                            <div class="tree-node">factory-secrets.ts <span class="file-size">(3KB)</span> <span class="import-type import-internal">config</span></div>
+                            <div class="tree-node">fetch-utils.ts <span class="file-size">(2KB)</span> <span class="import-type import-internal">utils</span></div>
+                            <div class="tree-node">manifest.toml <span class="file-size">(1KB)</span> <span class="import-type import-external">config</span></div>
+                        </div>
+                        <div class="tree-node"><strong>dist/</strong> <span class="file-size">(151KB bundled)</span>
+                            <div class="tree-node">barbershop-dashboard.js <span class="file-size">(98KB)</span> <span class="import-type import-internal">bundle</span></div>
+                            <div class="tree-node">barber-server.js <span class="file-size">(35KB)</span> <span class="import-type import-internal">bundle</span></div>
+                            <div class="tree-node">barbershop-tickets.js <span class="file-size">(17KB)</span> <span class="import-type import-internal">bundle</span></div>
+                            <div class="tree-node">meta.json <span class="file-size">(12KB)</span> <span class="import-type import-external">metadata</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Inputs Tab -->
+            <section id="inputs" class="tab-content" role="tabpanel">
+                <div class="card">
+                    <h3>📁 Input Files Analysis</h3>
+                    <div class="tree">
+                        <div><strong>barbershop-dashboard.ts</strong> <span class="file-size">(75,361 bytes)</span>
+                            <div class="tree-node">import "bun" <span class="import-type import-external">external</span></div>
+                            <div class="tree-node">import "bun:sqlite" <span class="import-type import-external">external</span></div>
+                            <div class="tree-node">import "fs" <span class="import-type import-external">external</span></div>
+                            <div class="tree-node">import "dns/promises" <span class="import-type import-external">external</span></div>
+                            <div class="tree-node">import "crypto" <span class="import-type import-external">external</span></div>
+                            <div class="tree-node">import "./manifest.toml" <span class="import-type import-internal">with: {type: "toml"}</span></div>
+                            <div class="tree-node">import "./fetch-utils" <span class="import-type import-internal">internal</span></div>
+                            <div class="tree-node">import "./ui-v2" <span class="import-type import-internal">internal</span></div>
+                            <div class="tree-node">import "./factory-secrets" <span class="import-type import-internal">internal</span></div>
+                            <div class="tree-node">import "./logger" <span class="import-type import-internal">internal</span></div>
+                        </div>
+                        <div class="mt-4"><strong>barber-server.ts</strong> <span class="file-size">(35,000 bytes)</span>
+                            <div class="tree-node">import "bun" <span class="import-type import-external">external</span></div>
+                            <div class="tree-node">import "bun:sqlite" <span class="import-type import-external">external</span></div>
+                            <div class="tree-node">import "./logger" <span class="import-type import-internal">shared</span></div>
+                        </div>
+                        <div class="mt-4"><strong>barbershop-tickets.ts</strong> <span class="file-size">(30,000 bytes)</span>
+                            <div class="tree-node">import "bun" <span class="import-type import-external">external</span></div>
+                            <div class="tree-node">import "./logger" <span class="import-type import-internal">shared</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Outputs Tab -->
+            <section id="outputs" class="tab-content" role="tabpanel">
+                <div class="card">
+                    <h3>📦 Output Bundles</h3>
+                    
+                    <div class="mb-4">
+                        <h4>barbershop-dashboard.js (98,926 bytes)</h4>
+                        <div class="bundle-bar">
+                            <div class="bundle-segment core" title="Core: 72%">Core 72%</div>
+                            <div class="bundle-segment ui" title="UI: 18%">UI 18%</div>
+                            <div class="bundle-segment utils" title="Utils: 10%">Utils 10%</div>
+                        </div>
+                        <div class="tree mt-3">
+                            <div class="tree-node">barbershop-dashboard.ts <span class="file-size">(71,520 bytes in output)</span></div>
+                            <div class="tree-node">ui-v2.ts <span class="file-size">(17,976 bytes in output)</span></div>
+                            <div class="tree-node">factory-secrets.ts <span class="file-size">(2,911 bytes in output)</span></div>
+                            <div class="tree-node">logger.ts <span class="file-size">(3,091 bytes in output)</span></div>
+                            <div class="tree-node">fetch-utils.ts <span class="file-size">(1,902 bytes in output)</span></div>
+                            <div class="tree-node">manifest.toml <span class="file-size">(1,377 bytes in output)</span></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4>barber-server.js (35,239 bytes)</h4>
+                        <div class="bundle-bar">
+                            <div class="bundle-segment server" title="Core: 85%">Core 85%</div>
+                            <div class="bundle-segment utils" title="Utils: 15%">Utils 15%</div>
+                        </div>
+                        <div class="tree mt-3">
+                            <div class="tree-node">barber-server.ts <span class="file-size">(30,000 bytes in output)</span></div>
+                            <div class="tree-node">logger.ts <span class="file-size">(3,091 bytes in output)</span></div>
+                            <div class="tree-node">manifest.toml <span class="file-size">(1,377 bytes in output)</span></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4>barbershop-tickets.js (17,528 bytes)</h4>
+                        <div class="bundle-bar">
+                            <div class="bundle-segment tickets" title="Core: 82%">Core 82%</div>
+                            <div class="bundle-segment utils" title="Utils: 18%">Utils 18%</div>
+                        </div>
+                        <div class="tree mt-3">
+                            <div class="tree-node">barbershop-tickets.ts <span class="file-size">(14,000 bytes in output)</span></div>
+                            <div class="tree-node">logger.ts <span class="file-size">(3,091 bytes in output)</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Binary Assets Tab -->
+            <section id="binary" class="tab-content" role="tabpanel">
+                <div class="card">
+                    <h3>🎯 Binary Assets Support (v1.3.6+)</h3>
+                    <p class="text-muted mb-4">
+                        Bun now tracks binary files (Blob, File, ArrayBuffer) in build metadata. 
+                        The barbershop demo uses this for profile picture uploads.
+                    </p>
+                    
+                    <div class="bun-bg-warning p-4 rounded mb-4">
+                        <h4 class="bun-color-secondary mb-3">📸 Profile Picture Upload Example</h4>
+                        <pre><code>// From barbershop-dashboard.ts
+const profilePicture = formdata.get('profilePicture');
+
+if (!(profilePicture instanceof Blob)) {
+  throw new HttpError(400, 'MISSING_PROFILE_PICTURE');
+}
+
+await Bun.write(path, profilePicture);</code></pre>
+                    </div>
+
+                    <div class="tree">
+                        <div><strong>Metafile Binary Asset Tracking</strong></div>
+                        <div class="tree-node">inputs.barbershop-dashboard.ts.assets
+                            <div class="tree-node">profile-uploads <span class="import-type import-binary">type: blob</span></div>
+                            <div class="tree-node">dynamic: true <span class="import-type import-binary">runtime</span></div>
+                        </div>
+                        <div class="tree-node">outputs.barbershop-dashboard.js.assets
+                            <div class="tree-node">profile-uploads <span class="import-type import-binary">type: blob</span></div>
+                            <div class="tree-node">maxSize: "5MB" <span class="import-type import-binary">limit</span></div>
+                            <div class="tree-node">storage: "./uploads/" <span class="import-type import-binary">path</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interactive Demo Tab -->
+            <section id="demo" class="tab-content" role="tabpanel">
+                <div class="card">
+                    <h3>🚀 File Upload Demo</h3>
+                    <p class="text-muted mb-4">
+                        Experience the same binary file handling used in the barbershop dashboard. 
+                        Upload any file to see how Blob/File objects work in Bun.
+                    </p>
+                    
+                    <div class="demo-upload" id="dropZone" role="button" tabindex="0" aria-label="File upload area">
+                        <div style="font-size: 48px; margin-bottom: 20px;">📁</div>
+                        <h3 class="bun-color-primary mb-2">Drop files here or click to upload</h3>
+                        <p class="text-muted">Supports any file type • Max 5MB • Real Blob processing</p>
+                        <input type="file" id="fileInput" class="file-input" multiple aria-label="File input">
+                        <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                            Choose Files
+                        </button>
+                    </div>
+                    
+                    <div id="uploadedFiles" class="uploaded-files" aria-live="polite"></div>
+                </div>
+
+                <div class="card">
+                    <h3>📝 File Content Types Demo</h3>
+                    <p class="text-muted mb-4">
+                        Bun supports multiple file content types. Click the buttons below to see how each type works.
+                    </p>
+                    
+                    <div class="grid-auto mb-4">
+                        <button class="upload-btn" onclick="demonstrateString()" style="background: var(--color-primary);">
+                            📄 String Content
+                        </button>
+                        <button class="upload-btn" onclick="demonstrateBlob()" style="background: var(--color-success);">
+                            🎯 Blob Content
+                        </button>
+                        <button class="upload-btn" onclick="demonstrateTypedArray()" style="background: var(--color-warning);">
+                            🔢 TypedArray
+                        </button>
+                        <button class="upload-btn" onclick="demonstrateArrayBuffer()" style="background: var(--color-error);">
+                            💾 ArrayBuffer
+                        </button>
+                    </div>
+                    
+                    <div id="contentTypeDemo" class="bun-bg-surface p-4 rounded" style="min-height: 100px;">
+                        <p class="text-muted text-center">Click a button above to see file content type demonstrations</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🔄 Content Type Conversion</h3>
+                    <p class="text-muted mb-4">
+                        See how different content types can be converted between each other - just like Bun does internally.
+                    </p>
+                    
+                    <div class="grid-auto mb-4">
+                        <button class="upload-btn" onclick="convertStringToBlob()" style="background: var(--color-info);">
+                            String → Blob
+                        </button>
+                        <button class="upload-btn" onclick="convertBlobToArrayBuffer()" style="background: var(--color-accent);">
+                            Blob → ArrayBuffer
+                        </button>
+                        <button class="upload-btn" onclick="convertArrayBufferToTypedArray()" style="background: var(--color-success);">
+                            ArrayBuffer → TypedArray
+                        </button>
+                        <button class="upload-btn" onclick="convertTypedArrayToString()" style="background: var(--color-warning);">
+                            TypedArray → String
+                        </button>
+                    </div>
+                    
+                    <div id="conversionDemo" class="bun-bg-surface p-4 rounded mt-4" style="min-height: 100px;">
+                        <p class="text-muted text-center">Click a conversion button to see the transformation process</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🏗️ Virtual Files Demo</h3>
+                    <p class="text-muted mb-4">
+                        Bun's virtual file system creates files at build time without touching disk. Perfect for build metadata, version info, and configuration.
+                    </p>
+                    
+                    <div class="grid-auto mb-4">
+                        <button class="upload-btn" onclick="demonstrateVirtualFiles()" style="background: var(--color-info);">
+                            🏗️ Overview
+                        </button>
+                        <button class="upload-btn" onclick="showBuildMetadata()" style="background: var(--color-accent);">
+                            📋 Metadata
+                        </button>
+                        <button class="upload-btn" onclick="showVersionInfo()" style="background: var(--color-success);">
+                            📦 Version
+                        </button>
+                        <button class="upload-btn" onclick="showFeatureFlags()" style="background: var(--color-error);">
+                            🚩 Features
+                        </button>
+                        <button class="upload-btn" onclick="showEnvironmentConfig()" style="background: var(--color-secondary);">
+                            🌍 Environment
+                        </button>
+                        <button class="upload-btn" onclick="showBuildComparison()" style="background: var(--color-warning);">
+                            📊 Comparison
+                        </button>
+                        <button class="upload-btn" onclick="simulateVirtualBuild()" style="background: var(--color-success);">
+                            ⚡ Build Sim
+                        </button>
+                        <button class="upload-btn" onclick="showAdvancedUsage()" style="background: var(--color-accent);">
+                            🔧 Advanced
+                        </button>
+                    </div>
+                    
+                    <div id="virtualFilesDemo" class="bun-bg-surface p-4 rounded" style="min-height: 120px;">
+                        <p class="text-muted text-center">Click a button above to explore virtual file capabilities</p>
+                    </div>
+                    
+                    <div class="mt-4 p-3 bun-bg-info rounded">
+                        <strong class="bun-color-primary">💡 Pro Tip:</strong> Virtual files are generated at build time and can be imported normally, but they don't exist on disk. Perfect for dynamic content injection!
+                    </div>
+                </div>
+            </section>
+
+            <!-- Security Citadel Tab -->
+            <section id="secrets" class="tab-content" role="tabpanel">
+                <div class="card">
+                    <h3>🏰 FactoryWager Security Citadel</h3>
+                    <p class="text-muted mb-4">
+                        Enterprise-grade secret management with 3D visualization, real-time monitoring, and ML-enhanced security analysis.
+                        Integrated with Bun's build system for seamless deployment.
+                    </p>
+                    
+                    <div class="stats mb-4">
+                        <div class="stat">
+                            <div class="stat-value">v5.1</div>
+                            <div class="stat-label">Version</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">8D</div>
+                            <div class="stat-label">Field Dimensions</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">ML</div>
+                            <div class="stat-label">Enhanced</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">99.9%</div>
+                            <div class="stat-label">Uptime</div>
+                        </div>
+                    </div>
+
+                    <div class="grid-auto mb-4">
+                        <button class="upload-btn" onclick="showSecretFieldDemo()" style="background: var(--color-primary);">
+                            🌐 3D Field Visualization
+                        </button>
+                        <button class="upload-btn" onclick="showSecretMetrics()" style="background: var(--color-success);">
+                            📊 Security Metrics
+                        </button>
+                        <button class="upload-btn" onclick="showSecretRotation()" style="background: var(--color-warning);">
+                            🔄 Auto-Rotation
+                        </button>
+                        <button class="upload-btn" onclick="showSecretAudit()" style="background: var(--color-error);">
+                            📋 Audit Trail
+                        </button>
+                    </div>
+                    
+                    <div id="secretsDemo" class="bun-bg-surface p-4 rounded" style="min-height: 200px;">
+                        <div class="secrets-overview">
+                            <h4 class="bun-color-primary mb-3">🔐 Secret Management Overview</h4>
+                            <div class="grid-auto">
+                                <div class="metric-card">
+                                    <div class="metric-icon">🔑</div>
+                                    <div class="metric-info">
+                                        <div class="metric-value">1,247</div>
+                                        <div class="metric-label">Total Secrets</div>
+                                    </div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-icon">📈</div>
+                                    <div class="metric-info">
+                                        <div class="metric-value">23.5%</div>
+                                        <div class="metric-label">Avg Exposure</div>
+                                    </div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-icon">🛡️</div>
+                                    <div class="metric-info">
+                                        <div class="metric-value">94.2</div>
+                                        <div class="metric-label">Risk Score</div>
+                                    </div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="metric-icon">⚡</div>
+                                    <div class="metric-info">
+                                        <div class="metric-value">127ms</div>
+                                        <div class="metric-label">Avg Response</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h5 class="bun-color-secondary mb-2">🔍 Recent Security Events</h5>
+                                <div class="event-timeline">
+                                    <div class="event-item">
+                                        <div class="event-time">2 min ago</div>
+                                        <div class="event-content">
+                                            <span class="event-type rotation">🔄 Rotation</span> API keys rotated for production environment
+                                        </div>
+                                    </div>
+                                    <div class="event-item">
+                                        <div class="event-time">15 min ago</div>
+                                        <div class="event-content">
+                                            <span class="event-type alert">⚠️ Alert</span> Elevated exposure detected in database vault
+                                        </div>
+                                    </div>
+                                    <div class="event-item">
+                                        <div class="event-time">1 hour ago</div>
+                                        <div class="event-content">
+                                            <span class="event-type audit">📋 Audit</span> Quarterly security audit completed successfully
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🌐 3D Secret Field Visualization</h3>
+                    <p class="text-muted mb-4">
+                        Real-time 3D visualization of secret exposure patterns using ML-enhanced analysis.
+                        Click the button below to launch the interactive 3D viewer.
+                    </p>
+                    
+                    <div class="demo-upload" onclick="launch3DVisualization()" style="cursor: pointer;">
+                        <div style="font-size: 48px; margin-bottom: 20px;">🌐</div>
+                        <h3 class="bun-color-primary mb-2">Launch 3D Secret Field</h3>
+                        <p class="text-muted">Interactive 3D visualization • Real-time updates • ML analysis</p>
+                        <button class="upload-btn" style="background: var(--color-primary);">
+                            🚀 Launch 3D Viewer
+                        </button>
+                    </div>
+                    
+                    <div class="mt-4 p-3 bun-bg-info rounded">
+                        <strong class="bun-color-primary">💡 3D Field Features:</strong> 
+                        Real-time exposure tracking • ML-powered risk assessment • Interactive controls • WebSocket streaming • Anomaly detection
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🔧 CLI Tools Integration</h3>
+                    <p class="text-muted mb-4">
+                        Powerful CLI tools for secret field analysis, exposure simulation, ML testing, and WebSocket benchmarking.
+                    </p>
+                    
+                    <div class="tree">
+                        <div><strong>🛠️ Available CLI Tools:</strong></div>
+                        <div class="tree-node">
+                            <span class="import-type import-internal">secrets-field.ts</span>
+                            <div>3D field computation with ML enhancement</div>
+                            <div class="mt-2">
+                                <code class="code-inline">bun run scripts/secrets-field.ts --keys factory --exposure 7.5</code>
+                            </div>
+                        </div>
+                        <div class="tree-node">
+                            <span class="import-type import-internal">vault-sim.ts</span>
+                            <div>Large-scale exposure simulation (20M+ accesses)</div>
+                            <div class="mt-2">
+                                <code class="code-inline">bun run scripts/vault-sim.ts --access 20M --pattern burst</code>
+                            </div>
+                        </div>
+                        <div class="tree-node">
+                            <span class="import-type import-internal">secret-boost.ts</span>
+                            <div>ONNX ML model testing and comparison</div>
+                            <div class="mt-2">
+                                <code class="code-inline">bun run scripts/secret-boost.ts --field sample.json --benchmark</code>
+                            </div>
+                        </div>
+                        <div class="tree-node">
+                            <span class="import-type import-internal">ws-secrets-bench.ts</span>
+                            <div>WebSocket performance benchmarking</div>
+                            <div class="mt-2">
+                                <code class="code-inline">bun run scripts/ws-secrets-bench.ts --connections 100 --compression</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>📊 API Endpoints</h3>
+                    <p class="text-muted mb-4">
+                        RESTful API and WebSocket endpoints for real-time secret field data and management operations.
+                    </p>
+                    
+                    <div class="grid-auto mb-4">
+                        <div class="api-endpoint">
+                            <div class="api-method get">GET</div>
+                            <div class="api-path">/api/secrets/field</div>
+                            <div class="api-desc">3D field JSON data</div>
+                        </div>
+                        <div class="api-endpoint">
+                            <div class="api-method post">POST</div>
+                            <div class="api-path">/api/secrets/rotate</div>
+                            <div class="api-desc">Auto-rotate secrets</div>
+                        </div>
+                        <div class="api-endpoint">
+                            <div class="api-method ws">WS</div>
+                            <div class="api-path">/ws/secrets-3d</div>
+                            <div class="api-desc">Live field updates</div>
+                        </div>
+                        <div class="api-endpoint">
+                            <div class="api-method get">GET</div>
+                            <div class="api-path">/api/health</div>
+                            <div class="api-desc">System health check</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h5 class="bun-color-secondary mb-2">🔗 Quick API Test</h5>
+                        <div class="demo-code">
+                            <button class="upload-btn" onclick="testSecretFieldAPI()" style="background: var(--color-info);">
+                                🧪 Test Field API
+                            </button>
+                            <button class="upload-btn" onclick="testSecretRotation()" style="background: var(--color-warning);">
+                                🔄 Test Rotation
+                            </button>
+                            <button class="upload-btn" onclick="testWebSocket()" style="background: var(--color-success);">
+                                🌐 Test WebSocket
+                            </button>
+                        </div>
+                        <div id="apiTestResult" class="bun-bg-surface p-3 rounded mt-3" style="min-height: 60px; font-family: var(--font-mono); font-size: var(--font-size-sm);">
+                            Click a button above to test API endpoints
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="demo-scripts.js"></script>
+    <script src="secrets-integration.js"></script>
+    
+    <!-- Search Functionality -->
+    <script>
+        // Search data for the application
+        const searchData = [
+            {
+                title: 'Overview',
+                description: 'Bundle statistics and size distribution',
+                category: 'tab',
+                action: () => showTab('overview')
+            },
+            {
+                title: 'Inputs',
+                description: 'Source files and dependencies',
+                category: 'tab',
+                action: () => showTab('inputs')
+            },
+            {
+                title: 'Outputs',
+                description: 'Build output bundles and assets',
+                category: 'tab',
+                action: () => showTab('outputs')
+            },
+            {
+                title: 'Binary Assets',
+                description: 'Binary file handling and visualization',
+                category: 'tab',
+                action: () => showTab('binary')
+            },
+            {
+                title: 'Interactive Demo',
+                description: 'Live demonstrations and examples',
+                category: 'tab',
+                action: () => showTab('demo')
+            },
+            {
+                title: 'Security Citadel',
+                description: 'Enterprise secret management and 3D visualization',
+                category: 'tab',
+                action: () => showTab('secrets')
+            },
+            {
+                title: 'Secret Field Demo',
+                description: '3D visualization of secret field data',
+                category: 'feature',
+                action: () => { showTab('secrets'); setTimeout(() => showSecretFieldDemo(), 100); }
+            },
+            {
+                title: 'Secret Metrics',
+                description: 'Real-time secret management metrics',
+                category: 'feature',
+                action: () => { showTab('secrets'); setTimeout(() => showSecretMetrics(), 100); }
+            },
+            {
+                title: 'Secret Rotation',
+                description: 'Automated secret rotation system',
+                category: 'feature',
+                action: () => { showTab('secrets'); setTimeout(() => showSecretRotation(), 100); }
+            },
+            {
+                title: '3D Visualization',
+                description: 'Interactive 3D security visualization',
+                category: 'feature',
+                action: () => { showTab('secrets'); setTimeout(() => launch3DVisualization(), 100); }
+            },
+            {
+                title: 'Metafile Analysis',
+                description: 'Bun metafile bundle analysis',
+                category: 'feature',
+                action: () => { showTab('binary'); setTimeout(() => metafileCitadel.analyzeBuild(), 100); }
+            },
+            {
+                title: 'Security Scan',
+                description: 'Security vulnerability scanning',
+                category: 'feature',
+                action: () => { showTab('binary'); setTimeout(() => metafileCitadel.runSecurityScan(), 100); }
+            },
+            {
+                title: 'Bundle Optimization',
+                description: 'Optimize bundle size and performance',
+                category: 'feature',
+                action: () => { showTab('binary'); setTimeout(() => metafileCitadel.optimizeBundle(), 100); }
+            },
+            {
+                title: 'CLI Tools',
+                description: 'Command-line interface tools',
+                category: 'feature',
+                action: () => { showTab('demo'); setTimeout(() => cliTools.showTerminal(), 100); }
+            },
+            {
+                title: 'API Test',
+                description: 'Test API endpoints and functionality',
+                category: 'feature',
+                action: () => testSecretFieldAPI()
+            },
+            {
+                title: 'WebSocket Test',
+                description: 'Test WebSocket connections',
+                category: 'feature',
+                action: () => testWebSocket()
+            }
+        ];
+
+        // Search functionality
+        class SearchManager {
+            constructor() {
+                this.searchInput = document.getElementById('searchInput');
+                this.searchResults = document.getElementById('searchResults');
+                this.isSearchOpen = false;
+                
+                this.init();
+            }
+
+            init() {
+                // Search input event listeners
+                this.searchInput.addEventListener('input', (e) => this.handleSearch(e.target.value));
+                this.searchInput.addEventListener('focus', () => this.showSearch());
+                this.searchInput.addEventListener('keydown', (e) => this.handleKeydown(e));
+                
+                // Click outside to close search
+                document.addEventListener('click', (e) => {
+                    if (!this.searchInput.contains(e.target) && !this.searchResults.contains(e.target)) {
+                        this.hideSearch();
+                    }
+                });
+            }
+
+            handleSearch(query) {
+                if (!query.trim()) {
+                    this.hideSearch();
+                    return;
+                }
+
+                const results = this.search(query);
+                this.displayResults(results, query);
+            }
+
+            search(query) {
+                const normalizedQuery = query.toLowerCase();
+                
+                return searchData.filter(item => {
+                    const titleMatch = item.title.toLowerCase().includes(normalizedQuery);
+                    const descriptionMatch = item.description.toLowerCase().includes(normalizedQuery);
+                    const categoryMatch = item.category.toLowerCase().includes(normalizedQuery);
+                    
+                    return titleMatch || descriptionMatch || categoryMatch;
+                }).slice(0, 8); // Limit to 8 results
+            }
+
+            displayResults(results, query) {
+                if (results.length === 0) {
+                    this.searchResults.innerHTML = `
+                        <div class="search-no-results">
+                            No results found for "${query}"
+                        </div>
+                    `;
+                } else {
+                    this.searchResults.innerHTML = results.map(result => `
+                        <div class="search-result-item" onclick="searchManager.selectResult('${result.title}')">
+                            <div class="search-result-title">${this.highlightMatch(result.title, query)}</div>
+                            <div class="search-result-description">${this.highlightMatch(result.description, query)}</div>
+                        </div>
+                    `).join('');
+                }
+                
+                this.showSearch();
+            }
+
+            highlightMatch(text, query) {
+                const regex = new RegExp(`(${query})`, 'gi');
+                return text.replace(regex, '<mark>$1</mark>');
+            }
+
+            selectResult(title) {
+                const result = searchData.find(item => item.title === title);
+                if (result && result.action) {
+                    result.action();
+                }
+                this.hideSearch();
+                this.searchInput.value = '';
+            }
+
+            handleKeydown(e) {
+                const items = this.searchResults.querySelectorAll('.search-result-item');
+                if (items.length === 0) return;
+
+                let currentIndex = -1;
+                items.forEach((item, index) => {
+                    if (item.classList.contains('selected')) {
+                        currentIndex = index;
+                    }
+                });
+
+                switch (e.key) {
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        currentIndex = Math.min(currentIndex + 1, items.length - 1);
+                        this.selectItem(items, currentIndex);
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        currentIndex = Math.max(currentIndex - 1, 0);
+                        this.selectItem(items, currentIndex);
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        if (currentIndex >= 0) {
+                            items[currentIndex].click();
+                        }
+                        break;
+                    case 'Escape':
+                        this.hideSearch();
+                        this.searchInput.blur();
+                        break;
+                }
+            }
+
+            selectItem(items, index) {
+                items.forEach(item => item.classList.remove('selected'));
+                items[index].classList.add('selected');
+                items[index].scrollIntoView({ block: 'nearest' });
+            }
+
+            showSearch() {
+                this.searchResults.style.display = 'block';
+                this.isSearchOpen = true;
+            }
+
+            hideSearch() {
+                this.searchResults.style.display = 'none';
+                this.isSearchOpen = false;
+            }
+        }
+
+        // Initialize search when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            window.searchManager = new SearchManager();
+        });
+    </script>
+</body>
+</html>

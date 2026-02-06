@@ -35,7 +35,7 @@ console.log(Bun.inspect(obj, { colors: true }));
 ```
 
 **Output:** (with ANSI color codes)
-```
+```text
 {
   name: "test",
   value: 42,
@@ -48,7 +48,7 @@ console.log(Bun.inspect(obj, { colors: false }));
 ```
 
 **Output:** (without ANSI color codes)
-```
+```text
 {
   name: "test",
   value: 42,
@@ -71,7 +71,7 @@ console.log(Bun.inspect(obj, { compact: false }));
 ```
 
 **Output:** (verbose multi-line)
-```
+```text
 {
   name: "test",
   nested: {
@@ -86,7 +86,7 @@ console.log(Bun.inspect(obj, { compact: true }));
 ```
 
 **Output:** (single-line compact)
-```
+```text
 { name: "test", nested: { deep: "value" } }
 ```
 
@@ -115,7 +115,7 @@ console.log(Bun.inspect(deepObj, { depth: Infinity }));
 ```
 
 **Output:** (full depth)
-```
+```text
 {
   level1: {
     level2: {
@@ -133,7 +133,7 @@ console.log(Bun.inspect(deepObj, { depth: 2 }));
 ```
 
 **Output:** (limited to 2 levels)
-```
+```text
 {
   level1: {
     level2: [Object],
@@ -147,7 +147,7 @@ console.log(Bun.inspect(deepObj, { depth: 0 }));
 ```
 
 **Output:** (no nesting)
-```
+```text
 {
   level1: [Object],
 }
@@ -169,7 +169,7 @@ console.log(Bun.inspect(obj, { sorted: false }));
 ```
 
 **Output:** (original order)
-```
+```text
 {
   z: 3,
   a: 1,
@@ -183,7 +183,7 @@ console.log(Bun.inspect(obj, { sorted: true }));
 ```
 
 **Output:** (alphabetical order)
-```
+```text
 {
   a: 1,
   m: 2,
@@ -301,7 +301,7 @@ console.log(Bun.inspect(circular, { depth: 1 }));
 ```
 
 **Output:**
-```
+```text
 {
   name: "test",
   self: [Circular],

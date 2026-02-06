@@ -114,7 +114,7 @@ bun run build              # Build for production
 
 ## 📁 File Structure
 
-```
+```text
 foxy-proxy/
 ├── .eslintrc.json                    # ESLint configuration
 ├── .prettierrc.json                  # Prettier configuration
@@ -352,7 +352,7 @@ The following should be in `CONTRIBUTING.md`:
 
 All checks must pass before pushing.
 
-```
+```text
 
 ## 🐛 Troubleshooting
 

@@ -500,7 +500,7 @@ bun run scripts/generate-docs.ts
 
 ## 💰 **REALISTIC ROI MODEL**
 
-```
+```text
 Tagging v4.1 → Practical Enterprise (6 weeks)
 ├── Developer Velocity: +45% (AI suggestions, not auto-apply)
 ├── Compliance: +90% (Git audit trail, not blockchain)

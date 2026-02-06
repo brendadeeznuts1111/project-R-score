@@ -8,7 +8,7 @@ sports betting operations at scale.
 
 ## System Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                    Client Layer                         │
 │  ┌─────────┐  ┌──────────┐  ┌─────────┐  ┌──────────┐ │
@@ -209,7 +209,7 @@ const buildProfiles = {
 
 ### 1. Request Flow
 
-```
+```text
 Client → CloudFlare Edge → Worker → Pattern Router → Handler → Response
                               ↓
                          Auth Check

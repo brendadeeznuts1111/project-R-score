@@ -19,7 +19,7 @@ Transformed a basic CRC32 SQL helper into an **enterprise-grade data integrity m
 
 ## 🗂️ **Complete File Structure**
 
-```
+```text
 ✅ Enhanced Components (4 files):
 ├── system/crc32-self-healing.ts          # Self-healing system (597 lines)
 ├── dashboard/crc32-audit-dashboard.ts     # Real-time dashboard (466 lines)

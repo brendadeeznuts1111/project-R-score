@@ -50,7 +50,7 @@ bun run kimi security config/secrets.toml --fix
 - Risk scoring (0-100)
 
 **Example Output:**
-```
+```text
 🔐 Security Analysis Results
 
 File              Status  Risk  Errors  Warnings
@@ -83,7 +83,7 @@ bun run kimi connections
 - Latency metrics
 
 **Example Output:**
-```
+```text
 🔌 Bun-Native Connection Analysis
 
 Testing HTTP connections...
@@ -230,7 +230,7 @@ fi
 
 ### File Structure
 
-```
+```text
 src/cli/
 ├── kimi-cli.ts              # Main Kimi CLI entry
 ├── duoplus-cli-native.ts    # DuoPlus with Bun connections

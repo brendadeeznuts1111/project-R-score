@@ -78,7 +78,7 @@ The HSL Tension Rings + DuoPLUS system follows comprehensive code standards ensu
 
 Every code element includes semantic tags for complete traceability:
 
-```
+```text
 [DOMAIN][SCOPE][TYPE][META:{PROPERTY}][CLASS][FUNCTION][INTERFACE][#REF:*][BUN-NATIVE]
 ```
 
@@ -306,7 +306,7 @@ See [STANDARDS_SUMMARY.md](STANDARDS_SUMMARY.md) for complete overview.
 
 ## Integration Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    Browser Dashboard                         │
 │  ┌──────────────────────────────────────────────────────┐   │

@@ -4,7 +4,7 @@ This example demonstrates how `bun pm pack` automatically includes binaries decl
 
 ## Structure
 
-```
+```text
 pm-pack-demo/
 ├── bin/
 │   ├── cli.js      # Auto-included via bin field

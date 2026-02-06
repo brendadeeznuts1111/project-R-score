@@ -426,7 +426,7 @@ bun --cpu-prof-md profile-backend.js
 
 ### Benchmark Results
 
-```
+```text
 📊 Core Optimizations:
    Buffer.from(): Up to 92.2% faster
    array.flat(): Up to 97.0% faster

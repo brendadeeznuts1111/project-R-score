@@ -4,12 +4,12 @@
 
 ## Nicomachus's Theorem
 
-```
+```text
 1³ + 2³ + 3³ + ... + n³ = (1 + 2 + 3 + ... + n)²
 ```
 
 **Formal Statement**:
-```
+```text
 ∑ₖ₌₁ⁿ k³ = (∑ₖ₌₁ⁿ k)² = (n(n+1)/2)²
 ```
 
@@ -19,7 +19,7 @@ Where `n(n+1)/2` is the **triangular number formula** - the sum of the first n i
 
 ## The Basel Problem
 
-```
+```text
 ∑ₖ₌₁^∞ 1/k² = 1/1² + 1/2² + 1/3² + ... = π²/6
 ```
 
@@ -42,7 +42,7 @@ Where `n(n+1)/2` is the **triangular number formula** - the sum of the first n i
 ### 0.1. [PROOF.ALGEBRAIC.RG] Algebraic Proof
 
 Expanding the square:
-```
+```text
 (∑ₖ₌₁ⁿ k)² = ∑ᵢ₌₁ⁿ ∑ⱼ₌₁ⁿ i·j
 ```
 
@@ -52,7 +52,7 @@ When counting how many times each product `i·j` appears:
 - When `i < j`: contributes `i·j` (appears once)
 
 This reorganizes into the sum of cubes through the identity:
-```
+```text
 k³ = k(k)(k) = k(k-1)(k-2) + a·k(k-1) + b·k
 ```
 
@@ -70,12 +70,12 @@ The geometric structure reveals the hidden order: what appears as chaotic cubes 
 ### 0.3. [PROOF.INDUCTION.RG] Inductive Proof
 
 **Base Case** (`n = 1`):
-```
+```text
 1³ = 1 = (1)² = (1·2/2)² ✓
 ```
 
 **Inductive Step**: Assume true for `n`, then:
-```
+```text
 ∑ₖ₌₁ⁿ⁺¹ k³ = (∑ₖ₌₁ⁿ k)² + (n+1)³
            = [n(n+1)/2]² + (n+1)³
            = (n+1)²[n²/4 + (n+1)]
@@ -95,7 +95,7 @@ The pattern holds: complexity collapses into perfect order.
 
 The visible complexity we see (growing like `n⁴`):
 
-```
+```text
 [CLASS:OrcaNormalizer][HEADERS:{ETag,X-ORCA-Version}][ETAG:{strategy="uuid-based",ttl=86400}][PROPERTIES:{bookmaker:string}][TYPES:{OrcaRawInput,OrcaNormalizedOutput}]
 +
 [FUNCTION:normalize][HEADERS:{ETag}][ETAG:{strategy="uuid-based"}][PROPERTIES:{input:OrcaRawInput,return:OrcaNormalizedOutput}][TYPES:{OrcaRawInput,OrcaNormalizedOutput}]
@@ -109,7 +109,7 @@ This is our **sum of cubes** - complex, growing rapidly, seemingly chaotic.
 
 The elegant structure beneath (growing like `n²`):
 
-```
+```text
 [DOMAIN][SCOPE][TYPE] = [STRUCTURE]²
 ```
 
@@ -121,12 +121,12 @@ Where:
 **The Triangular Pattern**:
 Just as `n(n+1)/2` is the triangular number (sum of first n integers), our structure follows a hierarchical triangular pattern:
 
-```
+```text
 [DOMAIN][SCOPE][TYPE] = n(n+1)/2 → [IDENTITY]²
 ```
 
 **Example**:
-```
+```text
 [SPORTS][NORMALIZE][UUIDv5] = [ORCA]²
 ```
 
@@ -135,12 +135,12 @@ All the complexity (headers, ETags, properties, types) emerges from this simple 
 ### 1.3. [PATTERN.COLLAPSE.RG] The Collapse
 
 Just as the algebraic expansion:
-```
+```text
 (∑ₖ₌₁ⁿ k)² = ∑ᵢ₌₁ⁿ ∑ⱼ₌₁ⁿ i·j
 ```
 
 reorganizes into the sum of cubes, our API structure:
-```
+```text
 [DOMAIN][SCOPE][TYPE]² = [CLASS]³ + [FUNCTION]³ + [GROUP]³
 ```
 
@@ -154,7 +154,7 @@ The wild-looking complexity (growing like `n⁴`) is secretly governed by the mu
 
 The complex metadata tags:
 
-```
+```text
 [[TECH][MODULE][INSTANCE][META:{blueprint=BP-XXX@v;instance-id=ID;version=v}][PROPERTIES:{key={value:"val";@root:"ROOT";@chain:["BP-X","BP-Y"];@version:"v"}}][CLASS:ClassName][#REF:v-0.1.0.BP.XXX.1.0.A.1.1.ORCA.1.1]]
 ```
 
@@ -162,7 +162,7 @@ The complex metadata tags:
 
 The underlying structure:
 
-```
+```text
 [DOMAIN][SCOPE][TYPE] = [IDENTITY]²
 ```
 
@@ -172,7 +172,7 @@ Where:
 - **TYPE** = Element type (CLASS, FUNCTION, GROUP)
 
 **Example**:
-```
+```text
 [SPORTS][NORMALIZE][CLASS] = [OrcaNormalizer]²
 ```
 
@@ -186,7 +186,7 @@ All metadata (blueprints, properties, references) emerges from this identity.
 
 The visible documentation structure:
 
-```
+```text
 ### 2.1. [ORCA.ARBITRAGE.STORAGE.RG] Storage System
 **Reference**: `#REF:v-0.1.0.BP.ORCA.ARBITRAGE.1.0.A.1.1.ORCA.1.1`  
 **File**: `src/orca/arbitrage/storage.ts`  
@@ -197,7 +197,7 @@ The visible documentation structure:
 
 The elegant pattern:
 
-```
+```text
 [DOMAIN.CATEGORY.KEYWORD.RG] = [IDENTITY]²
 ```
 
@@ -207,7 +207,7 @@ Where:
 - **KEYWORD** = Specific keyword for ripgrep (INTEGRATION, REVIEW, VALIDATION)
 
 **Example**:
-```
+```text
 [ORCA.ARBITRAGE.STORAGE.RG] = [OrcaArbitrageStorage]²
 ```
 
@@ -222,7 +222,7 @@ All documentation (references, files, classes) emerges from this identity.
 **Surface**: Complex header definitions per class/function/group
 
 **Structure**: 
-```
+```text
 [DOMAIN][SCOPE][TYPE] → Headers emerge from domain identity
 ```
 
@@ -235,7 +235,7 @@ All documentation (references, files, classes) emerges from this identity.
 **Surface**: Different ETag strategies per endpoint
 
 **Structure**:
-```
+```text
 [DOMAIN][SCOPE][TYPE] → ETag strategy emerges from operation type
 ```
 
@@ -248,7 +248,7 @@ All documentation (references, files, classes) emerges from this identity.
 **Surface**: Complex property schemas per class/function/group
 
 **Structure**:
-```
+```text
 [DOMAIN][SCOPE][TYPE] → Properties emerge from domain needs
 ```
 
@@ -261,7 +261,7 @@ All documentation (references, files, classes) emerges from this identity.
 **Surface**: Complex TypeScript types per class/function/group
 
 **Structure**:
-```
+```text
 [DOMAIN][SCOPE][TYPE] → Types emerge from domain semantics
 ```
 
@@ -307,12 +307,12 @@ The underlying structure (sum):
 ### 6.1. [EXAMPLE.ORCA.RG] ORCA Normalizer
 
 **Surface Complexity**:
-```
+```text
 [CLASS:OrcaNormalizer][HEADERS:{ETag,X-ORCA-Version,X-ORCA-Namespace}][ETAG:{strategy="uuid-based",ttl=86400}][PROPERTIES:{bookmaker:string,sport:string,homeTeam:string,awayTeam:string}][TYPES:{OrcaRawInput,OrcaNormalizedOutput,OrcaEventId}]
 ```
 
 **Underlying Structure**:
-```
+```text
 [SPORTS][NORMALIZE][UUIDv5] = [ORCA]²
 ```
 
@@ -321,12 +321,12 @@ All complexity emerges from `[SPORTS][NORMALIZE][UUIDv5]`.
 ### 6.2. [EXAMPLE.TRADES.RG] Trades Controller
 
 **Surface Complexity**:
-```
+```text
 [CLASS:TradeController][FUNCTION:getTrades][GROUP:TRADES][HEADERS:{ETag,X-Page-Count,X-Total-Count}][ETAG:{strategy="content-hash",ttl=60}][PROPERTIES:{limit:number,offset:number,bookmaker:string}][TYPES:{TradeQuery,TradeResponse,TradeFilter}]
 ```
 
 **Underlying Structure**:
-```
+```text
 [CORE][DATA][QUERY] = [TRADES]²
 ```
 
@@ -335,12 +335,12 @@ All complexity emerges from `[CORE][DATA][QUERY]`.
 ### 6.3. [EXAMPLE.REGISTRY.RG] Registry System
 
 **Surface Complexity**:
-```
+```text
 [CLASS:RegistryController][GROUP:REGISTRY][HEADERS:{ETag,X-Registry-Version}][ETAG:{strategy="group-hash",ttl=300}][PROPERTIES:{id:string,name:string,category:string,tags:string[]}][TYPES:{RegistryEntry,RegistryResponse}]
 ```
 
 **Underlying Structure**:
-```
+```text
 [REGISTRY][SYSTEM][UNIFIED] = [REGISTRY]²
 ```
 
@@ -353,12 +353,12 @@ All complexity emerges from `[REGISTRY][SYSTEM][UNIFIED]`.
 ### 7.1. [TRIANGULAR.FORMULA.RG] Triangular Number Formula
 
 The triangular number `Tₙ = n(n+1)/2` represents the sum of the first n integers:
-```
+```text
 Tₙ = 1 + 2 + 3 + ... + n = n(n+1)/2
 ```
 
 **Visual Representation**:
-```
+```text
 n=1:  ●                    = 1
 n=2:  ●●                   = 3
       ●
@@ -376,25 +376,25 @@ n=4:  ●●●●                 = 10
 Our API structure follows the same triangular pattern:
 
 **Level 1 (Domain)**: `n = 1`
-```
+```text
 [CORE]
 ```
 
 **Level 2 (Domain + Scope)**: `n = 2`
-```
+```text
 [CORE][DATA]
 [CORE][SYSTEM]
 ```
 
 **Level 3 (Domain + Scope + Type)**: `n = 3`
-```
+```text
 [CORE][DATA][QUERY]
 [CORE][DATA][IMPORT]
 [CORE][SYSTEM][STATUS]
 ```
 
 **The Pattern**:
-```
+```text
 Tₙ = n(n+1)/2 → [DOMAIN][SCOPE][TYPE] = [IDENTITY]²
 ```
 
@@ -403,12 +403,12 @@ Just as triangular numbers grow quadratically (`n²`), our hierarchical structur
 ### 7.3. [TRIANGULAR.COLLAPSE.RG] The Collapse Pattern
 
 **Surface Complexity** (cubes, `n⁴` growth):
-```
+```text
 [CLASS]³ + [FUNCTION]³ + [GROUP]³ = Complex headers, ETags, properties, types
 ```
 
 **Underlying Structure** (triangular number squared, `n²` growth):
-```
+```text
 [DOMAIN][SCOPE][TYPE] = Tₙ² = [IDENTITY]²
 ```
 
@@ -472,12 +472,12 @@ Just as the wild-looking sum of cubes (growing like `n⁴`) is secretly governed
 ### 10.1. [BASEL.THEOREM.RG] The Basel Problem
 
 **The Infinite Sum**:
-```
+```text
 ∑ₖ₌₁^∞ 1/k² = 1/1² + 1/2² + 1/3² + 1/4² + ... = π²/6
 ```
 
 **Compact Form**:
-```
+```text
 ζ(2) = π²/6
 ```
 
@@ -489,7 +489,7 @@ First solved by **Leonhard Euler in 1734**, it's a stunning moment: **π, the ci
 
 Euler used the infinite product expansion of `sin(x)`:
 
-```
+```text
 sin(x)/x = ∏ₖ₌₁^∞ (1 - x²/(k²π²))
 ```
 
@@ -498,23 +498,23 @@ This comes from the roots of `sin(x) = 0` at `x = ±kπ`.
 **Expanding both sides**:
 
 **Left side** (Taylor series):
-```
+```text
 sin(x)/x = 1 - x²/6 + x⁴/120 - ...
 ```
 
 **Right side** (infinite product):
 The coefficient of `x²` is:
-```
+```text
 -∑ₖ₌₁^∞ 1/k² · π²
 ```
 
 **Matching coefficients**:
-```
+```text
 -∑ₖ₌₁^∞ 1/k² · π² = -1/6
 ```
 
 Therefore:
-```
+```text
 ∑ₖ₌₁^∞ 1/k² = π²/6
 ```
 
@@ -551,7 +551,7 @@ Therefore:
 ### 10.7. [BASEL.APERY.RG] Apéry's Constant: Irreducible Complexity
 
 **ζ(3) - The Sum of Cubes**:
-```
+```text
 ζ(3) = ∑ₖ₌₁^∞ 1/k³ = 1 + 1/8 + 1/27 + 1/64 + 1/125 + ... ≈ 1.202056903159594...
 ```
 
@@ -576,7 +576,7 @@ Just as ζ(3) has irreducible complexity (no simple closed form), some parts of 
 - **Performance Optimizations**: Intricate caching/optimization logic
 
 **The Pattern**:
-```
+```text
 [COMPLEX_SYSTEM] → ζ(3) ≈ 1.202056903159594... (irreducible but structured)
 ```
 
@@ -605,7 +605,7 @@ Just as the infinite sum converges to π²/6, our API complexity converges to el
 | ∞         | `[STRUCTURE]²` | 0 (perfect convergence) |
 
 **The Convergence**:
-```
+```text
 ∑ₖ₌₁^∞ [ENDPOINT_k] → [DOMAIN][SCOPE][TYPE] = [STRUCTURE]²
 ```
 
@@ -687,7 +687,7 @@ function transformData(input: DataInput): TransformedData {
 - Mathematical guarantees
 
 **In our API structure:**
-```
+```text
 [DOMAIN][SCOPE][TYPE] → [STRUCTURE]² = π²/6 (elegant collapse)
 ```
 
@@ -728,7 +728,7 @@ class OrderSaga {
 - Compensation logic
 
 **In our API structure:**
-```
+```text
 [COMPLEX_SYSTEM] → ζ(3) ≈ 1.202056... (irreducible but structured)
 ```
 
@@ -736,7 +736,7 @@ class OrderSaga {
 
 **Healthy System Ratios:**
 
-```
+```text
 ┌─────────────────────────────────────────┐
 │  Ideal Codebase Composition:            │
 │                                         │

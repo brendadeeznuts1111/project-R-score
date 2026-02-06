@@ -24,7 +24,7 @@ live data streaming in the Fire22 Dashboard system.
 
 ### System Overview
 
-```
+```text
 [Data Sources] → [Event Bus] → [WebSocket Server] → [Client Applications]
       ↓              ↓              ↓                    ↓
    Database      Event        Connection         Real-time
@@ -162,7 +162,7 @@ interface Event {
 
 ### Event Routing
 
-```
+```text
 Event Source → Event Bus → Event Handlers → WebSocket Server → Clients
      ↓           ↓           ↓              ↓              ↓
   Database    Publish     Process        Broadcast      Receive

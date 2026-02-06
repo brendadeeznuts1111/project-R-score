@@ -270,7 +270,7 @@ const diff = actualWidth - visualWidth; // ANSI code overhead
 ### **🛠️ Integration Architecture**
 
 #### **Component Structure**:
-```
+```text
 Bun Utilities Integration
 ├── Bun.inspect.table()     // Core table formatting
 ├── Bun.stringWidth()       // Width calculation

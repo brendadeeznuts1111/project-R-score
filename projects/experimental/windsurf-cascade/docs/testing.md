@@ -4,7 +4,7 @@ This document describes the comprehensive testing framework for the Odds Protoco
 
 ## 📁 Testing Structure
 
-```
+```text
 packages/
 ├── odds-core/src/__tests__/
 │   ├── core.test.ts              # Core functionality tests

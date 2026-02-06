@@ -31,7 +31,7 @@ validation_rules:
 ## 📁 Directory Structure Overview
 
 ### **Core Organization Pattern**
-```
+```text
 Odds-mono-map/
 ├── 00 - Dashboard.md                    # Main vault dashboard
 ├── 01 - Daily Notes/                     # Time-based daily organization

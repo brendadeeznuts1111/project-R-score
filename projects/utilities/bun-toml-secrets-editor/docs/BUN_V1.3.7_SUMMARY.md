@@ -29,7 +29,7 @@ v1.3.7 Features:
 
 ## 📁 Files Created/Updated
 
-```
+```text
 config/
 ├── golden-template.toml              # Standard template
 └── golden-template-v137.toml         # v1.3.7 optimized
@@ -57,7 +57,7 @@ docs/
 
 ## 🧪 Test Results
 
-```
+```text
 ✅ 79 tests passing
    ├── 32 config resolver tests
    ├── 18 template engine tests

@@ -2,7 +2,7 @@
 
 ## 📁 **New Organized Structure**
 
-```
+```text
 scripts/
 ├── analytics/     # 📊 12 files - Analysis and reporting tools
 ├── demos/         # 🎨 32 files - Feature demonstrations and examples  

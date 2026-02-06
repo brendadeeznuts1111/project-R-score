@@ -26,7 +26,7 @@ The Documentation Audit System provides comprehensive real-time monitoring and v
 
 ### **Component Overview**
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    Documentation Audit System                 │
 ├─────────────────────────────────────────────────────────────┤

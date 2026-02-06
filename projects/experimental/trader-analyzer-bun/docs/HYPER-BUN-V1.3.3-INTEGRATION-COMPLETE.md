@@ -36,7 +36,7 @@ All Hyper-Bun v1.3.3+ features have been successfully integrated into the produc
 
 ## 📊 Test Results
 
-```
+```text
 ✅ 42 pass
 ❌ 0 fail
 Ran 42 tests across 2 files. [85.00ms]

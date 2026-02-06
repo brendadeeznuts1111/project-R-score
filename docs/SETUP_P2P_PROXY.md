@@ -81,7 +81,7 @@ curl -X POST http://localhost:3002/webhook/proxy \
 
 ## Architecture
 
-```
+```text
 Client → QR/Link → Branded Page → P2P Payment → Your Account
                                               ↓
                                          Webhook

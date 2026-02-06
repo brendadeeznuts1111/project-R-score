@@ -114,7 +114,7 @@ Paths use the docs base https://bun.com/docs. Example: `/runtime/file-io` → `h
 <details>
 <summary>Expand full list</summary>
 
-```
+```text
 /bundler/bytecode
 /bundler/css
 /bundler/esbuild

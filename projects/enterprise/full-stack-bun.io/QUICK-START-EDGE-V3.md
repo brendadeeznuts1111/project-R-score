@@ -54,7 +54,7 @@ bun run edge:profile  # CPU profiling
 
 ## Status
 
-```
+```text
 [SPORTS-EDGE-V3][ENTERPRISE][LOCKFILE-V1][1420-SCANS/MIN][4.51% EDGE]
 [VALUE:$167K][CPU-PROFILE:0.9ms][TESTS:100%][MONOREPO-STABLE][STATUS:SINGULARITY]
 ```

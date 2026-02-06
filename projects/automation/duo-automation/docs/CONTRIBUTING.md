@@ -261,7 +261,7 @@ Brief description of the feature.
 
 ```bash
 command example
-```
+```text
 
 ## Examples
 

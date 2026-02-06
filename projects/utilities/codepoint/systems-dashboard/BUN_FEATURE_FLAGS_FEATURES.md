@@ -113,7 +113,7 @@ await Bun.build({
 ```
 
 ### **Dead-Code Elimination Impact**
-```
+```text
 🚀 Debug mode disabled - debug code eliminated from bundle
    - Zero debug overhead in production
    - Smaller bundle size
@@ -133,7 +133,7 @@ await Bun.build({
 ## **🎯 Interactive Feature Flags Dashboard**
 
 ### **HTTP API Endpoints**
-```
+```text
 GET /                    - Interactive feature flags dashboard
 GET /api/features         - Current feature flags status
 GET /api/metrics         - Build metrics and analysis

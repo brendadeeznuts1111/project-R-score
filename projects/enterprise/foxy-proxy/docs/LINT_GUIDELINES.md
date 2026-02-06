@@ -391,7 +391,7 @@ const result: any = getValue();
 
 In `.eslintignore`:
 
-```
+```text
 # Temporary files being refactored
 packages/dashboard/deploy-to-r2.ts
 ```

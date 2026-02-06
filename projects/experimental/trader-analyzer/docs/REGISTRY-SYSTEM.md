@@ -249,13 +249,13 @@ The NEXUS platform uses multiple registries organized by category:
 ## 🔗 API Endpoints
 
 ### Overview
-```
+```text
 GET /api/registry
 ```
 Returns overview of all registries with metadata, tags, and use cases.
 
 ### Specific Registry
-```
+```text
 GET /api/registry/:registryId
 ```
 Returns all items in a specific registry.
@@ -267,13 +267,13 @@ Returns all items in a specific registry.
 - `GET /api/registry/sharp-books`
 
 ### Category Filter
-```
+```text
 GET /api/registry/category/:category
 ```
 Filter registries by category (`data`, `tooling`, `security`, `research`, `integration`, `cli`).
 
 ### Search
-```
+```text
 GET /api/registry/search?tag=...&category=...
 ```
 Search registries by tag and/or category.

@@ -73,13 +73,13 @@ const archive = new Bun.Archive({
   "data.json": JSON.stringify({ tier: 1380 }),
   "log.txt": "line1\nline2"
 });
-```
+```text
 
 Write compressed:
 
 ```ts
 await Bun.write("data.tar.gz", new Bun.Archive(files, { compress: "gzip" }));
-```
+```text
 
 Path security:
 

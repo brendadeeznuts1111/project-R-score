@@ -389,7 +389,7 @@ maximum performance and simplicity.
 
 ---
 **🚀 Enhanced Semver Complete** • **Bun Native Optimization** • **Production Ready**
-```
+```text
 
 ---
 
@@ -408,7 +408,7 @@ function compareOld(v1, v2) {
 function compareNew(v1, v2) {
     return Bun.semver.order(v1, v2);
 }
-```
+```text
 
 ### **📊 Enhanced Capabilities:**
 - **Direct Array Sorting**: `versions.sort(Bun.semver.order)`

@@ -294,7 +294,7 @@ bun run test:security
 
 ## 📁 Project Structure
 
-```
+```text
 crystal-clear-architecture/
 ├── 📁 src/                          # Source code
 │   ├── 📁 domains/                  # Business domains (DDD)
@@ -430,7 +430,7 @@ jobs:
 
 ### **1. Test Structure**
 
-```
+```text
 tests/
 ├── unit/                    # Unit tests
 ├── integration/            # Integration tests

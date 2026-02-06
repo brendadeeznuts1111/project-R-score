@@ -92,12 +92,12 @@ bun-platform info --health || exit 1
 ```
 
 ### Health Check Output
-```
+```text
 ✅ Health check passed
 ```
 
 Or if failed:
-```
+```text
 ❌ Health check failed:
    - Vault not found: /path/to/vault
    - Vault Home.md not found: /path/to/vault/Home.md
@@ -143,7 +143,7 @@ bun-platform info --metrics --format compact
 ```
 
 **Output**:
-```
+```text
 bun=1.3.2 vault=ok home=ok uptime=0.0s memory=1.9MB
 ```
 
@@ -157,12 +157,12 @@ bun-platform info --health --metrics --format compact
 ```
 
 **Output**:
-```
+```text
 OK bun=1.3.2 vault=ok home=ok uptime=0.0s memory=1.9MB
 ```
 
 Or if unhealthy:
-```
+```text
 FAIL bun=1.3.2 vault=missing home=missing uptime=0.0s memory=1.9MB
 ```
 
@@ -197,7 +197,7 @@ bun-platform info --watch --ws-port 3000
 ```
 
 **Output**:
-```
+```text
 👀 Starting watch mode on WebSocket port 3000...
    Connect: ws://localhost:3000
    Press Ctrl+C to stop
@@ -312,7 +312,7 @@ bun-platform info --debug
 ```
 
 **Output**:
-```
+```text
 🐛 Debug Mode - Interactive Information
 
 📊 Full Information:

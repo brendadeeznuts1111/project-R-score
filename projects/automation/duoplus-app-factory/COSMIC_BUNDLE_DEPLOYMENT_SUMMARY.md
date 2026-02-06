@@ -161,7 +161,7 @@ bun run cosmic:benchmark
 
 ## 📐 **FILE STRUCTURE**
 
-```
+```text
 d-network/
 ├── 📄 README.md                    # Cosmic Bundle section added
 ├── 📦 package.json                 # 7 build variants + cosmic:verify

@@ -52,7 +52,7 @@ bun install windsurf-project --registry https://duo-npm-registry.utahj4754.worke
 
 ### Core Components
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    Duo Automation Platform                   │
 ├─────────────────────────────────────────────────────────────┤
@@ -202,7 +202,7 @@ curl -H "Authorization: Bearer your-jwt-token" http://localhost:3002/api/dashboa
 
 ## 📁 Project Structure
 
-```
+```text
 duo-automation/
 ├── duoplus/                    # Core modules
 │   ├── phone-provisioning.ts   # Phone management

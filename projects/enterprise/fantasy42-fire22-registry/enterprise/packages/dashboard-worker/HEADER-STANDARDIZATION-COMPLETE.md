@@ -10,7 +10,7 @@ professional appearance.
 
 ### 🎯 Standardization Pattern Implemented
 
-```
+```text
 Format: [Icon] Fire22 [Component] - [Type] v4.0.0-staging
 ```
 
@@ -70,7 +70,7 @@ bun run scripts/standardize-headers.ts
 
 **Output Example**:
 
-```
+```text
 🔧 Fire22 Header Standardization Script v4.0.0-staging
 =====================================
 
@@ -144,7 +144,7 @@ All headers now reflect the enhanced system capabilities:
 
 All routes now serve files with standardized headers:
 
-```
+```text
 🔗 URL: http://localhost:3001
 🎯 Routes:
   GET  /                             - Dashboard UI (HMR Template)

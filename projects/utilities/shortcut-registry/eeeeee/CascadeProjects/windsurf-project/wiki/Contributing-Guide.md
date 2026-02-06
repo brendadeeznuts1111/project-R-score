@@ -129,7 +129,7 @@ git push origin feature/your-feature-name
 
 We use [Conventional Commits](https://www.conventionalcommits.org/) for standardized commit messages:
 
-```
+```text
 <type>[optional scope]: <description>
 
 [optional body]
@@ -173,7 +173,7 @@ git commit -m "wip"
 
 ### **Test Structure**
 
-```
+```text
 tests/
 ├── unit/           # Unit tests
 ├── integration/    # Integration tests

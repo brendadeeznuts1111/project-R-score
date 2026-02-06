@@ -69,7 +69,7 @@ The `MarketDataRouter17` has been successfully transformed into a production-gra
 
 ## 📊 Test Results
 
-```
+```text
 ✅ 42 pass
 ❌ 0 fail
 Ran 42 tests across 2 files. [71.00ms]

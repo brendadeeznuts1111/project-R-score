@@ -71,21 +71,21 @@ console.log(`Found ${anomalies.length} anomalies`);
 ## 📡 API Endpoints
 
 ### Discover Patterns
-```
+```text
 GET /research/url-anomalies?sport=NBA&hours=24
 ```
 
 Returns discovered URL anomaly patterns with market impact metrics.
 
 ### Get Bookmaker Anomalies
-```
+```text
 GET /research/url-anomalies/:bookmaker?hours=24
 ```
 
 Returns all anomalies for a specific bookmaker.
 
 ### Calculate False Steam Rate
-```
+```text
 GET /research/url-anomalies/:bookmaker/false-steam-rate?hours=24
 ```
 
@@ -115,7 +115,7 @@ Calculates the ratio of:
 - Total line movements for the bookmaker
 
 **Formula**:
-```
+```text
 false_steam_rate = url_anomaly_moves / total_moves
 ```
 

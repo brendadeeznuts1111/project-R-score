@@ -207,7 +207,7 @@ export const BENCHMARK_UTILS = {
 All the following constants follow the UPPER_SNAKE_CASE convention correctly:
 
 ### Server & Network Constants
-```
+```text
 ✅ CONCURRENT_CONFIGS (ConcurrentProcessor.ts)
 ✅ NETWORK (server/ServerConstants.ts)
 ✅ HTTP (server/ServerConstants.ts)
@@ -224,7 +224,7 @@ All the following constants follow the UPPER_SNAKE_CASE convention correctly:
 ```
 
 ### Feature & Configuration Constants
-```
+```text
 ✅ FEATURE_FLAGS (server/ServerConstants.ts)
 ✅ COMPILE_TIME_FEATURES (constants/features/compile-time.ts)
 ✅ COMPILE_TIME_CONFIG (constants/features/compile-time.ts)
@@ -233,13 +233,13 @@ All the following constants follow the UPPER_SNAKE_CASE convention correctly:
 ```
 
 ### Alert & Health Constants
-```
+```text
 ✅ ALERT_SEVERITY (server/ServerConstants.ts)
 ✅ HEALTH_SCORE (server/ServerConstants.ts)
 ```
 
 ### Environment & Build Constants
-```
+```text
 ✅ ENVIRONMENT (server/ServerConstants.ts)
 ✅ PLATFORM (constants/index.ts)
 ✅ VERSION (constants/index.ts)
@@ -259,7 +259,7 @@ All the following constants follow the UPPER_SNAKE_CASE convention correctly:
 ```
 
 ### Template & Create Constants
-```
+```text
 ✅ CREATE_FLAGS (constants/templates.ts)
 ✅ CREATE_ENV (constants/templates.ts)
 ✅ TEMPLATE_SOURCES (constants/templates.ts)
@@ -269,14 +269,14 @@ All the following constants follow the UPPER_SNAKE_CASE convention correctly:
 ```
 
 ### Communication & Sizing Constants
-```
+```text
 ✅ WS_MSG (websocket/subprotocol.ts)
 ✅ FIELD_OFFSET (websocket/subprotocol.ts)
 ✅ UNICODE_WIDTH (server/ServerConstants.ts)
 ```
 
 ### Time Constants
-```
+```text
 ✅ MS (server/ServerConstants.ts)
 ✅ SECONDS (server/ServerConstants.ts)
 ```

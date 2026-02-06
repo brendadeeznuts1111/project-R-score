@@ -12,7 +12,7 @@
 
 #### **1. Real-Time Scoreboard Display**
 
-```
+```text
 🏆 LIVE SCOREBOARD FEATURES
 • Real-time score updates every 30 seconds
 • Live game status indicators (Live, Scheduled, Completed)
@@ -25,7 +25,7 @@
 
 #### **2. AI-Powered Game Intelligence**
 
-```
+```text
 🤖 AI GAME ANALYSIS
 • Live win probability predictions with confidence scores
 • Key factors analysis (momentum, home advantage, injuries)
@@ -37,7 +37,7 @@
 
 #### **3. Intelligent Betting Integration**
 
-```
+```text
 💰 SMART BETTING FEATURES
 • Real-time betting opportunity detection
 • Expected value calculations for spread, total, moneyline
@@ -49,7 +49,7 @@
 
 #### **4. Advanced Filtering & Search**
 
-```
+```text
 🔍 INTELLIGENT FILTERING
 • Sport-based filtering (NFL, NBA, MLB, etc.)
 • League-specific views (NFL, College Football)
@@ -61,7 +61,7 @@
 
 #### **5. Performance Analytics Dashboard**
 
-```
+```text
 📊 COMPREHENSIVE ANALYTICS
 • Game performance metrics and statistics
 • Betting success rate tracking
@@ -73,7 +73,7 @@
 
 #### **6. Mobile-Optimized Experience**
 
-```
+```text
 📱 MOBILE-FIRST DESIGN
 • Touch-optimized controls and gestures
 • Responsive design for all screen sizes

@@ -48,7 +48,7 @@ The following issues are in the root `tsconfig.json` and **don't affect function
 
 ### **📊 Implementation Summary**
 
-```
+```text
 Core Files Status:
 ✅ /src/utils/scaling/duoplus-scaling.ts - Complete scaling manager
 ✅ /examples/scaling-strategy-examples.ts - Working examples

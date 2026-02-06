@@ -82,7 +82,7 @@ Create a new logger instance.
 
 ## Example Output
 
-```
+```text
 [12:34:56] [correlation-graph] Starting aggregation {"eventId":"nba-lakers-warriors-2024-01-15","timeWindow":"24h","operationId":"op-123"}
 [12:34:56] [correlation-graph] SQL query completed {"duration":"123.45ms","rows":15,"operationId":"op-123"}
 [12:34:56] [correlation-graph] Aggregation complete {"nodes":28,"edges":52,"bookmakers":3,"duration":"265.89ms","operationId":"op-123"}
@@ -122,7 +122,7 @@ console.log(`[correlation-graph] Starting aggregation: eventId=${eventId}, timeW
 ```
 
 **Output:**
-```
+```text
 [correlation-graph] Starting aggregation: eventId=nba-lakers-warriors-2024-01-15, timeWindow=24h
 ```
 
@@ -136,7 +136,7 @@ correlationGraphLogger.info("Starting aggregation", {
 ```
 
 **Output (with colors and structured data):**
-```
+```text
 [12:34:56] [correlation-graph] Starting aggregation {"eventId":"nba-lakers-warriors-2024-01-15","timeWindow":"24h"}
 ```
 

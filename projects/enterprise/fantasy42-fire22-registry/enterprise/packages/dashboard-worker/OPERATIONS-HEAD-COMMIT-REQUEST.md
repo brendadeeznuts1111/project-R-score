@@ -84,7 +84,7 @@ and quick-reference wikis.
 
 ### **Proposed Commit Message**
 
-```
+```text
 feat(departments): Complete department documentation mirroring with hierarchy integration
 
 - Add comprehensive documentation for all 10 departments in docs/departments/

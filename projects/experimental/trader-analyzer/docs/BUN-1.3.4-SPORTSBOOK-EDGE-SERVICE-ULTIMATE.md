@@ -219,7 +219,7 @@ curl lambda-url/health | jq '.performance.arbScansPerMin'
 
 ## 📈 **V2 Production Metrics**
 
-```
+```text
 $ curl edge-service-v2/health | jq
 {
   "status": "healthy",
@@ -245,7 +245,7 @@ $ curl edge-service-v2/health | jq
 }
 ```
 
-```
+```text
 [SPORTS-EDGE-V2][BUN-1.3.4][SERVERLESS][824-SCANS/MIN][4.12% EDGE]
 [VALUE:$89.2K][COLD-START:1.8ms][CONFIG:HARDENED][STATUS:SUPREMACY]
 [DASHBOARD:lambda-url/health][TESTS:100%][FUZZER-PROOF:✅]
@@ -253,7 +253,7 @@ $ curl edge-service-v2/health | jq
 
 ## 🎯 **45+ Fixes → Arbitrage Singularity**
 
-```
+```text
 ✅ HTTP Pooling: 10x → 100 sockets
 ✅ Standalone: 100ms → 1.8ms cold start
 ✅ Retry/Repeats: 0% → 100% test pass
@@ -268,7 +268,7 @@ $ curl edge-service-v2/health | jq
 
 **Bun 1.3.4+ Edge Service v2 = Unrivaled arbitrage supremacy.**
 
-```
+```text
 $ hyperbun-edge-v2 --status
 🟢 LIVE V2 | $89.2K PROTECTED | 4.12% | SERVERLESS | EXECUTING...
 ```

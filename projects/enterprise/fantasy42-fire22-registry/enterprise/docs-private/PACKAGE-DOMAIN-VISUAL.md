@@ -126,7 +126,7 @@ graph TB
 
 ### **🔐 Security Domain Structure:**
 
-```
+```text
 📁 packages/core-security/
 ├── 📄 package.json (v3.1.0)
 ├── 🔧 build-demo.js
@@ -150,7 +150,7 @@ graph TB
 
 ### **🛡️ Compliance Domain Structure:**
 
-```
+```text
 📁 packages/compliance-core/
 ├── 📄 package.json (v4.3.0)
 ├── 🔧 build-demo.js
@@ -163,7 +163,7 @@ graph TB
 
 ### **📊 Analytics Domain Structure:**
 
-```
+```text
 📁 packages/analytics-dashboard/
 ├── 📄 package.json (v2.7.0)
 ├── 🔧 build-demo.js
@@ -178,7 +178,7 @@ graph TB
 
 ### **🔧 Infrastructure Packages Structure:**
 
-```
+```text
 📁 fire22-core-packages/
 ├── 📄 package.json (Workspace)
 ├── 📁 packages/
@@ -361,7 +361,7 @@ bunx --bun --package @fire22/wager-system status
 
 ### **📊 Implementation Statistics:**
 
-```
+```text
 🏗️ Total Packages:     11 (7 implemented + 4 planned)
 ✅ Registry Packages:   3/6 (50% complete)
 🔧 Infrastructure:     4/4 (100% complete)

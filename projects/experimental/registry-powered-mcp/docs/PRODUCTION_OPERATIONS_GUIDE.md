@@ -10,7 +10,7 @@
 - **Security**: Compile-time config embedding, ML-DSA signing
 
 ### Critical Services
-```
+```text
 mcp-registry    # Main MCP server registry
 mcp-router      # Request routing and load balancing
 mcp-cache       # Redis-backed caching layer
@@ -288,7 +288,7 @@ systemctl reload mcp-registry
 ## 📚 REFERENCE INFORMATION
 
 ### File Locations
-```
+```text
 /opt/mcp/                    # Installation directory
 ├── bin/                     # Executables
 ├── config/                  # Configuration files

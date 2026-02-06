@@ -12,7 +12,7 @@
 
 #### **1. Advanced Mobile/Desktop Detection**
 
-```
+```text
 📱 MOBILE/DESKTOP INTELLIGENCE
 • User Agent Detection: Android, iOS, Windows Phone, Opera Mini
 • Screen Size Analysis: Responsive breakpoints and adaptive layouts
@@ -24,7 +24,7 @@
 
 #### **2. Enhanced Session Management**
 
-```
+```text
 💾 SESSION & STORAGE SYSTEM
 • Cross-Tab Synchronization: Share session data between browser tabs
 • Auto-Cleanup: Remove expired sessions and temporary data
@@ -36,7 +36,7 @@
 
 #### **3. RequireJS Module Integration**
 
-```
+```text
 📦 MODULE LOADING SYSTEM
 • Cache Busting: Automatic version-based cache invalidation
 • Base URL Configuration: Centralized module path management
@@ -48,7 +48,7 @@
 
 #### **4. Cloudflare Challenge Integration**
 
-```
+```text
 ☁️ SECURITY & PERFORMANCE
 • Challenge Platform Integration: Handle Cloudflare security challenges
 • DDoS Protection: Automatic threat detection and mitigation
@@ -60,7 +60,7 @@
 
 #### **5. Menu Toggle Enhancement**
 
-```
+```text
 🔄 MENU SYSTEM ENHANCEMENT
 • Firefox Compatibility: Special handling for Firefox browser
 • Touch-Optimized: Enhanced mobile menu interactions
@@ -72,7 +72,7 @@
 
 #### **6. Resource Optimization**
 
-```
+```text
 ⚡ PERFORMANCE OPTIMIZATION
 • Lazy Loading: Load images and content as needed
 • Resource Hints: Preload critical resources
@@ -84,7 +84,7 @@
 
 #### **7. Enterprise-Grade Features**
 
-```
+```text
 🏢 PRODUCTION FEATURES
 • Multi-Environment Support: Development, staging, production
 • Version Management: Automatic version detection and updates

@@ -90,7 +90,7 @@ This document provides a complete overview of all CLI command documentation with
 
 ## Version Hierarchy Example
 
-```
+```text
 11.1.0.0.0.0.0: Telegram Management (Major Command)
 ├── 11.1.0.1.0.0.0: Usage
 ├── 11.1.0.2.0.0.0: Commands

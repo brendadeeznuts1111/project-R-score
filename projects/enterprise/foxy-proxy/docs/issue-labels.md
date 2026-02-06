@@ -71,7 +71,7 @@ All issues must have:
 
 Examples of proper label combinations:
 
-```
+```text
 bug + critical + api + needs-triage
 enhancement + medium + ui + feature-flags
 performance + high + build + in-progress

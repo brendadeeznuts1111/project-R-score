@@ -12,7 +12,7 @@
 
 #### **1. Dynamic Table Sorting**
 
-```
+```text
 🎯 SORTING SYSTEM
 • Click-to-sort closing line header with visual indicators
 • Ascending/descending/none sort states with smooth transitions
@@ -23,7 +23,7 @@
 
 #### **2. Advanced Closing Line Analytics**
 
-```
+```text
 📊 CLOSING LINE ANALYTICS
 • Real-time line movement tracking (up/down/stable)
 • Volume analysis with high-volume event detection
@@ -34,7 +34,7 @@
 
 #### **3. Intelligent Data Display**
 
-```
+```text
 🎨 ENHANCED DISPLAY FEATURES
 • Color-coded movement indicators (green=up, red=down, gray=stable)
 • Volume indicators with formatted currency display
@@ -45,7 +45,7 @@
 
 #### **4. Advanced Filtering System**
 
-```
+```text
 🎛️ FILTERING CAPABILITIES
 • Sport-based filtering (Football, Basketball, Baseball, Hockey)
 • Movement-based filtering (Up, Down, Stable)
@@ -56,7 +56,7 @@
 
 #### **5. Real-Time Updates**
 
-```
+```text
 📡 LIVE DATA MANAGEMENT
 • Auto-refresh system with configurable intervals
 • WebSocket integration for instant updates

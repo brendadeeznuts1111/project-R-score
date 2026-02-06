@@ -106,7 +106,7 @@ bun add -g bun-types @types/bun
 
 ## 📁 Project Structure
 
-```
+```text
 .geelark-dev/
 ├── .devcontainer/          # Development container configuration
 ├── .github/workflows/      # CI/CD pipelines

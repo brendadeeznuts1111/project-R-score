@@ -278,7 +278,7 @@ wrangler deploy -c docs-wrangler.toml
 
 ### Access Patterns
 
-```
+```text
 https://docs.factory-wager.com/
 ├── /pkg/:name              # Package docs
 ├── /pkg/:name/:version     # Specific version
@@ -289,7 +289,7 @@ https://docs.factory-wager.com/
 
 ## 📊 R2 Bucket Structure
 
-```
+```text
 npm-registry/
 ├── packages/
 │   ├── lodash/

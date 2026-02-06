@@ -96,7 +96,7 @@ All documentation has been updated to reflect recent changes and improvements to
 
 ## Documentation Structure
 
-```
+```text
 pages/
 ├── README.md                    # Main overview ⭐
 ├── DOCUMENTATION_INDEX.md       # Complete index ⭐

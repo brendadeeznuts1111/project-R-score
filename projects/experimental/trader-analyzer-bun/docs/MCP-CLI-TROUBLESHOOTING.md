@@ -189,7 +189,7 @@ bun run src/cli/mcp.ts list 2>&1 | grep -i error
 
 Expected file structure:
 
-```
+```text
 src/
 ├── cli/
 │   └── mcp.ts                    # MCP CLI entry point

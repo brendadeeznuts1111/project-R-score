@@ -51,7 +51,7 @@ bun run toml:patterns config.toml
 
 ## 📁 Project Structure
 
-```
+```text
 src/
 ├── services/
 │   ├── toml-editor.ts      # Core TOML editor service

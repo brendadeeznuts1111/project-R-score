@@ -22,7 +22,7 @@ employees following the established pattern.
 
 ### **Primary VIP Subdomain (PRIORITY 1)**
 
-```
+```text
 https://vinny2times.fire22.workers.dev/
 ```
 

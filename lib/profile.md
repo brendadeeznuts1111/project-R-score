@@ -139,13 +139,13 @@ How the top 20 largest objects are kept alive (path from GC root to object):
 
 ### 1. Object #0 - `<root>` (326.8 KB retained)
 
-```
+```text
 (no path to GC root found)
 ```
 
 ### 2. Object #1 - `GlobalObject` (114.0 KB retained)
 
-```
+```text
 InternalPromise#275 [ROOT] (32 B)
     <root>#0 (0 B) -> 
         GlobalObject#1 [ROOT] (9.8 KB)
@@ -153,20 +153,20 @@ InternalPromise#275 [ROOT] (32 B)
 
 ### 3. Object #275 - `InternalPromise` (83.2 KB retained)
 
-```
+```text
 InternalPromise#275 [ROOT] (this object is a GC root)
 ```
 
 ### 4. Object #277 - `PromiseReaction` (83.1 KB retained)
 
-```
+```text
 InternalPromise#275 [ROOT] (32 B) -> 
     PromiseReaction#277 (48 B)
 ```
 
 ### 5. Object #336 - `InternalPromise` (82.8 KB retained)
 
-```
+```text
 InternalPromise#275 [ROOT] (32 B) -> 
     PromiseReaction#277 (48 B) -> 
         InternalPromise#336 (32 B)
@@ -174,7 +174,7 @@ InternalPromise#275 [ROOT] (32 B) ->
 
 ### 6. Object #342 - `PromiseReaction` (82.7 KB retained)
 
-```
+```text
 InternalPromise#275 [ROOT] (32 B) -> 
     PromiseReaction#277 (48 B) -> 
         InternalPromise#336 (32 B) -> 
@@ -183,7 +183,7 @@ InternalPromise#275 [ROOT] (32 B) ->
 
 ### 7. Object #376 - `PromiseCombinatorsGlobalContext` (67.1 KB retained)
 
-```
+```text
 InternalPromise#275 [ROOT] (32 B) -> 
     PromiseReaction#277 (48 B) -> 
         InternalPromise#336 (32 B) -> 
@@ -200,7 +200,7 @@ InternalPromise#275 [ROOT] (32 B) ->
 
 ### 8. Object #377 - `Array` (67.1 KB retained)
 
-```
+```text
 InternalPromise#275 [ROOT] (32 B) -> 
     PromiseReaction#277 (48 B) -> 
         InternalPromise#336 (32 B) -> 
@@ -218,7 +218,7 @@ InternalPromise#275 [ROOT] (32 B) ->
 
 ### 9. Object #514 - `Object` (13.4 KB retained)
 
-```
+```text
 InternalPromise#275 [ROOT] (32 B) -> 
     PromiseReaction#277 (48 B) -> 
         InternalPromise#336 (32 B) -> 
@@ -237,7 +237,7 @@ InternalPromise#275 [ROOT] (32 B) ->
 
 ### 10. Object #515 - `ModuleRecord` (13.1 KB retained)
 
-```
+```text
 InternalPromise#275 [ROOT] (32 B) -> 
     PromiseReaction#277 (48 B) -> 
         InternalPromise#336 (32 B) -> 
@@ -257,13 +257,13 @@ InternalPromise#275 [ROOT] (32 B) ->
 
 ### 11. Object #448 - `ModuleRecord` (12.7 KB retained)
 
-```
+```text
 (no path to GC root found)
 ```
 
 ### 12. Object #394 - `JSLexicalEnvironment` (10.5 KB retained)
 
-```
+```text
 InternalPromise#275 [ROOT] (32 B) -> 
     PromiseReaction#277 (48 B) -> 
         InternalPromise#336 (32 B) -> 
@@ -274,7 +274,7 @@ InternalPromise#275 [ROOT] (32 B) ->
 
 ### 13. Object #395 - `InternalPromise` (10.5 KB retained)
 
-```
+```text
 InternalPromise#275 [ROOT] (32 B) -> 
     PromiseReaction#277 (48 B) -> 
         InternalPromise#336 (32 B) -> 
@@ -286,7 +286,7 @@ InternalPromise#275 [ROOT] (32 B) ->
 
 ### 14. Object #396 - `PromiseReaction` (10.5 KB retained)
 
-```
+```text
 InternalPromise#275 [ROOT] (32 B) -> 
     PromiseReaction#277 (48 B) -> 
         InternalPromise#336 (32 B) -> 
@@ -299,7 +299,7 @@ InternalPromise#275 [ROOT] (32 B) ->
 
 ### 15. Object #397 - `Generator` (10.4 KB retained)
 
-```
+```text
 InternalPromise#275 [ROOT] (32 B) -> 
     PromiseReaction#277 (48 B) -> 
         InternalPromise#336 (32 B) -> 
@@ -313,7 +313,7 @@ InternalPromise#275 [ROOT] (32 B) ->
 
 ### 16. Object #398 - `InternalPromise` (10.2 KB retained)
 
-```
+```text
 InternalPromise#275 [ROOT] (32 B) -> 
     PromiseReaction#277 (48 B) -> 
         InternalPromise#336 (32 B) -> 
@@ -328,7 +328,7 @@ InternalPromise#275 [ROOT] (32 B) ->
 
 ### 17. Object #399 - `PromiseReaction` (10.2 KB retained)
 
-```
+```text
 InternalPromise#275 [ROOT] (32 B) -> 
     PromiseReaction#277 (48 B) -> 
         InternalPromise#336 (32 B) -> 
@@ -344,7 +344,7 @@ InternalPromise#275 [ROOT] (32 B) ->
 
 ### 18. Object #403 - `InternalPromise` (10.0 KB retained)
 
-```
+```text
 InternalPromise#275 [ROOT] (32 B) -> 
     PromiseReaction#277 (48 B) -> 
         InternalPromise#336 (32 B) -> 
@@ -361,7 +361,7 @@ InternalPromise#275 [ROOT] (32 B) ->
 
 ### 19. Object #404 - `PromiseReaction` (10.0 KB retained)
 
-```
+```text
 InternalPromise#275 [ROOT] (32 B) -> 
     PromiseReaction#277 (48 B) -> 
         InternalPromise#336 (32 B) -> 
@@ -379,7 +379,7 @@ InternalPromise#275 [ROOT] (32 B) ->
 
 ### 20. Object #583 - `Object` (9.9 KB retained)
 
-```
+```text
 InternalPromise#275 [ROOT] (32 B) -> 
     PromiseReaction#277 (48 B) -> 
         InternalPromise#336 (32 B) -> 

@@ -7,7 +7,7 @@ relationships in the Fire22 header improvements system.
 
 ## 🏗️ System Architecture Diagram
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    🔐 FIRE22 HEADER SYSTEM                     │
 ├─────────────────────────────────────────────────────────────────┤
@@ -83,7 +83,7 @@ relationships in the Fire22 header improvements system.
 
 ### 2. **Core Dependencies (Level 0)**
 
-```
+```text
 📁 src/utils/header-manager.ts
 ├── ✅ No external dependencies
 ├── ✅ Built-in APIs only (crypto, process.env)
@@ -93,7 +93,7 @@ relationships in the Fire22 header improvements system.
 
 ### 4. **First Level Dependencies (Level 1)**
 
-```
+```text
 📁 src/utils/header-validator.ts
 ├── 🔗 Imports: header-manager.ts (HeaderValidator base class)
 ├── ✅ Built-in APIs (fetch, Headers, crypto)
@@ -109,7 +109,7 @@ relationships in the Fire22 header improvements system.
 
 ### 6. **Second Level Dependencies (Level 2)**
 
-```
+```text
 📁 src/cli/header-test.ts
 ├── 🔗 Imports: header-validator.ts (EnhancedHeaderValidator, HeaderValidatorFactory)
 ├── 🔗 Imports: header-manager.ts (HeaderManager)
@@ -120,7 +120,7 @@ relationships in the Fire22 header improvements system.
 
 ### 8. **Documentation Dependencies (Independent)**
 
-```
+```text
 📁 docs/HEADER-STANDARDS.md
 ├── ✅ Self-contained documentation
 ├── 🔗 References: Implementation files and external resources
@@ -139,7 +139,7 @@ relationships in the Fire22 header improvements system.
 
 ### 10. **Template Dependencies (Independent)**
 
-```
+```text
 📁 templates/enhanced-html-template.html
 ├── ✅ Self-contained HTML template
 ├── ✅ No external resources or dependencies
@@ -149,7 +149,7 @@ relationships in the Fire22 header improvements system.
 
 ### 12. **Package Configuration Dependencies**
 
-```
+```text
 📁 package.json
 ├── 🔗 CLI tools: Executes header-test.ts
 ├── 🔗 Bun runtime: Required for CLI execution
@@ -161,7 +161,7 @@ relationships in the Fire22 header improvements system.
 
 ### 14. **Header Testing Flow**
 
-```
+```text
 User Input → package.json script → header-test.ts CLI →
 HeaderValidator → HTTP Request → Response Analysis →
 Validation Report → Output (Console/File)
@@ -174,7 +174,7 @@ Validation Report → Output (Console/File)
 
 ### 16. **Header Application Flow**
 
-```
+```text
 HTTP Request → main-worker.ts → HeaderManager →
 Header Application → Enhanced Response → Client
 ```
@@ -185,7 +185,7 @@ Header Application → Enhanced Response → Client
 
 ### 18. **JWT Enhancement Flow**
 
-```
+```text
 Authentication Request → jwt-auth-worker-enhanced.ts →
 Enhanced Header Creation → Token Generation → Response
 ```
@@ -243,7 +243,7 @@ Bun runtime (for execution)
 
 ### 24. **Dependency Cycles**
 
-```
+```text
 ✅ NO CIRCULAR DEPENDENCIES DETECTED
 
 Dependency Flow:
@@ -253,7 +253,7 @@ header-manager.ts → main-worker.ts
 
 ### 26. **Dependency Layers**
 
-```
+```text
 Layer 0 (Root): header-manager.ts
 Layer 1: header-validator.ts, main-worker.ts
 Layer 2: header-test.ts

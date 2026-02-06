@@ -94,7 +94,7 @@ Comprehensive health check for developer environment.
 - ✅ TMUX sessions status
 
 **Output**:
-```
+```text
 🔍 Developer Environment Health Check
 ======================================
 

@@ -380,7 +380,7 @@ bun run matrix:test
 
 ### **Test Results Example**
 
-```
+```text
 🚀 Matrix Health API Test Suite
 ================================
 

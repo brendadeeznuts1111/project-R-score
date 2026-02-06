@@ -115,7 +115,7 @@ bun type-check         # TypeScript check
 
 Type these prefixes to auto-generate code:
 
-```
+```text
 bfetch          → Fetch request template
 bfile           → File operations template
 bformdata       → FormData with file upload
@@ -126,7 +126,7 @@ oauth1header    → OAuth 1.0a signing template
 
 ## 📊 Architecture Overview
 
-```
+```text
 Bun-Native DuoPlus
 ├── Core
 │   ├── Bun.serve() - HTTP/WebSocket server
@@ -210,7 +210,7 @@ Bun-Native DuoPlus
 
 Your project enforces Bun-native with ESLint. You'll see helpful errors:
 
-```
+```text
 ❌ Use Bun native fetch instead of axios
 ❌ Use Bun auto-loads .env files - no need for dotenv
 ❌ Use Bun FormData API instead of form-data package

@@ -212,7 +212,7 @@ BUILD_TIMESTAMP=$(date +%s)
 ## 🔗 API Endpoints
 
 ### Headscale API
-```
+```text
 GET  /health                          # Health check
 GET  /api/v1/users                    # List users
 POST /api/v1/users                    # Create user
@@ -222,7 +222,7 @@ GET  /metrics                         # Prometheus metrics
 ```
 
 ### Cloudflare Worker
-```
+```text
 POST /api/headscale/*                 # Proxy to Headscale
 GET  /metrics                         # Analytics metrics
 ```

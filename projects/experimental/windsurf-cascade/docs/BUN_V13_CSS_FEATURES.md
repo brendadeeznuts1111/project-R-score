@@ -56,7 +56,7 @@ Bun v1.3's CSS minifier now processes `@layer` blocks correctly, ensuring:
 
 ### CSS Layer Structure
 
-```
+```text
 @layer base {
   /* Color scheme variables and base styles */
 }

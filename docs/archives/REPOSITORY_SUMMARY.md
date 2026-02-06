@@ -21,7 +21,7 @@ FactoryWager Enterprise Platform is a **cutting-edge, Bun-native application pla
 ## 🏗️ Repository Architecture
 
 ### **Core Structure**
-```
+```text
 FactoryWager/
 ├── 📁 lib/                    # Core library components (200+ files)
 │   ├── 🔐 security/           # Security & authentication

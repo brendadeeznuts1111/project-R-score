@@ -31,7 +31,7 @@
 
 ## 📁 Project Structure
 
-```
+```text
 infrastructure/automation/
 ├── matrix-automation.ts      # Main automation class (669 lines)
 ├── notifications.ts           # Slack/Teams integration (149 lines)

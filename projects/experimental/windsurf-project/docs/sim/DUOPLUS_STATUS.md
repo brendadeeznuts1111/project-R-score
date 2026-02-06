@@ -39,7 +39,7 @@ The system has a proxy testing mechanism that's not recognizing the DuoPlus prox
 
 ### **What's Happening:**
 
-```
+```text
 🌐 Loading live IP proxies...
 🧪 Testing all proxies for location data...
 ✅ 0 working proxies with location data
@@ -78,7 +78,7 @@ Allow the system to work without proxy requirements since the device is already 
 
 ### **📧 Expected Results (Once Proxy Issue Resolved):**
 
-```
+```text
 ✅ SUCCESS!
 📧 Apple ID: james.smith@apple.factory-wager.com
 👤 User: James Smith

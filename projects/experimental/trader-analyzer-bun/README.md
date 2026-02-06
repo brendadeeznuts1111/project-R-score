@@ -58,7 +58,7 @@ bun run typecheck
 
 ## [architecture]
 
-```
+```text
 src/
 ├── analytics/      # Trading analytics & profiling
 ├── api/            # Hono route handlers

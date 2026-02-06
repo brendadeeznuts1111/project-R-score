@@ -53,6 +53,9 @@ export class EnhancedURL {
     try {
       const fullURL = base ? new URL(url, base) : new URL(url);
 
+      // Detect trailing bare '#' that the URL API normalizes away
+      const hasTrailingHash = !fullURL.hash && url.endsWith('#');
+
       return {
         protocol: fullURL.protocol,
         hostname: fullURL.hostname,
@@ -61,7 +64,7 @@ export class EnhancedURL {
         search: fullURL.search,
         fragment: fullURL.hash.slice(1), // Remove # prefix
         searchParams: fullURL.searchParams,
-        hash: fullURL.hash,
+        hash: hasTrailingHash ? '#' : fullURL.hash,
       };
     } catch (error) {
       handleError(error, 'EnhancedURL.parseURL', 'medium');
@@ -467,9 +470,10 @@ export class URLFragmentUtils {
     const pairs = cleanFragment.split('&');
 
     for (const pair of pairs) {
-      const [key, value] = pair.split('=');
+      if (!pair.includes('=')) continue; // Skip plain fragments without key=value
+      const [key, ...rest] = pair.split('=');
       if (key) {
-        params[decodeURIComponent(key)] = decodeURIComponent(value || '');
+        params[decodeURIComponent(key)] = decodeURIComponent(rest.join('=') || '');
       }
     }
 
@@ -579,7 +583,7 @@ export class FactoryWagerURLUtils {
   /**
    * Create R2 browser URL with fragment
    */
-  static createR2BrowserURL(category?: string, fragment?: Record<string, string>): string {
+  static createR2BrowserURL(category?: string, fragment?: Record<string, string> | string): string {
     let url = 'https://r2.factory-wager.com';
 
     if (category) {
@@ -587,7 +591,10 @@ export class FactoryWagerURLUtils {
     }
 
     if (fragment) {
-      url += URLFragmentUtils.buildFragment(fragment);
+      const params = typeof fragment === 'string'
+        ? { key: fragment, view: 'object' }
+        : fragment;
+      url += URLFragmentUtils.buildFragment(params);
     }
 
     return url;

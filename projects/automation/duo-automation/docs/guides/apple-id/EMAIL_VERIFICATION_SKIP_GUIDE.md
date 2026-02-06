@@ -134,7 +134,7 @@ bun run create-appleid.js --skip-verification --verbose --count=1
 
 ### **Example Batch Output**
 
-```
+```text
 🚀 Starting batch creation of 3 accounts
 🌍 Country: US
 📧 Email Verification: SKIPPED
@@ -161,7 +161,7 @@ bun run create-appleid.js --skip-verification --verbose --count=1
 
 ### **Created Files**
 
-```
+```text
 accounts/
 ├── batch-3-2026-01-12T13-30-00-000Z.json    # Detailed JSON report
 ├── batch-3-2026-01-12T13-30-00-000Z.csv     # CSV for spreadsheets
@@ -170,7 +170,7 @@ accounts/
 
 ### **Configuration Files**
 
-```
+```text
 config/
 ├── email.js                                    # Email verification settings
 └── config.json                                 # Main configuration

@@ -169,7 +169,7 @@ Navigate to `http://localhost:3001` to access the main dashboard.
 ## 🔧 API Endpoints
 
 ### **Dashboard Endpoints**
-```
+```text
 GET  /api/dashboard/metrics           # Current dashboard metrics
 GET  /api/dashboard/alerts            # Recent alerts
 GET  /api/dashboard/enforcement-history # Enforcement actions
@@ -177,7 +177,7 @@ GET  /api/dashboard/risk-distribution # Risk score distribution
 ```
 
 ### **Analysis Endpoints**
-```
+```text
 POST /api/analyze/phone               # Analyze a phone number
 GET  /api/cashapp/profile/:phone      # Get CashApp profile
 POST /api/simulate/traffic            # Generate test traffic
@@ -185,7 +185,7 @@ GET  /api/health                      # Health check
 ```
 
 ### **WebSocket**
-```
+```text
 ws://localhost:3002                    # Real-time updates
 ```
 
@@ -246,7 +246,7 @@ The dashboard uses WebSockets for real-time updates:
 
 ## 📊 Data Flow
 
-```
+```text
 Phone Input → Identity Resolver → CashApp Resolver → Risk Analysis → Enforcement Engine → Dashboard
 ```
 

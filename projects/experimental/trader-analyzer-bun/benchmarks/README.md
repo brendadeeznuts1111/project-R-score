@@ -4,7 +4,7 @@ This directory contains curated performance benchmarks and profiling data for tr
 
 ## Directory Structure
 
-```
+```text
 benchmarks/
 ├── cpu-profiles/      # CPU profiling data (.cpuprofile files)
 ├── heap-snapshots/    # Memory heap snapshots (.heapsnapshot files)

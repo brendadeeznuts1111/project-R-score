@@ -82,6 +82,6 @@ See main project `config/mcporter.json` for full configuration.
 **Vault ID**: `ee201515558d34f0`
 
 Use this in URIs:
-```
+```text
 obsidian://open?vault=ee201515558d34f0&file=Home
 ```

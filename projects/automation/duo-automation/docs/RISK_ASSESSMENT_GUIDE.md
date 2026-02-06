@@ -36,7 +36,7 @@ fw risk-assessment assess --sensitivity=8 --format=json
 ```
 
 **Output Example**:
-```
+```text
 🔍 RISK ASSESSMENT SUMMARY
 ═════════════════════════════════════════════════
 
@@ -106,7 +106,7 @@ fw risk-assessment threats --format=json --confidence=0.8
 ```
 
 **Output Example**:
-```
+```text
 🎯 THREAT DETECTION REPORT
 ═════════════════════════════════════════════════
 
@@ -164,7 +164,7 @@ fw risk-assessment vulnerabilities --format=csv --export=vuln-scan.csv
 ```
 
 **Output Example**:
-```
+```text
 🛡️  VULNERABILITY SCAN REPORT
 ═════════════════════════════════════════════════
 
@@ -229,7 +229,7 @@ fw risk-assessment history --months=6 --format=json
 ```
 
 **Output Example**:
-```
+```text
 📈 RISK ASSESSMENT HISTORY
 ═════════════════════════════════════════════════
 
@@ -248,7 +248,7 @@ Trend: IMPROVING (but still HIGH risk)
 ## 🎯 Risk Scoring Model
 
 ### The Formula
-```
+```text
 Risk Score = (Likelihood × Impact × Exploitability) × Data Sensitivity
 ```
 

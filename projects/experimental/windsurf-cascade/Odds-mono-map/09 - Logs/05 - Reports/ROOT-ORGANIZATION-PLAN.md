@@ -18,7 +18,7 @@ author: "vault-system"
 ### 🔍 Identified Problems
 
 #### 1. **Duplicate Numbered Directories**
-```
+```text
 04 - Canvas Maps/     (1 item)
 04 - Development/     (4 items) 
 04 - Documentation/   (20 items)
@@ -27,7 +27,7 @@ author: "vault-system"
 **Impact**: Confusing navigation, breaks sorting logic
 
 #### 2. **Misplaced Root-Level Files**
-```
+```text
 CPU.88243552974.78500.cpuprofile (16KB)
 CPU.88335528015.79164.cpuprofile (11KB)
 TEMPLATE_MASTER_INDEX.md (0 bytes)
@@ -42,7 +42,7 @@ integrate-odds-monomap.ts (17KB)
 **Impact**: Cluttered workspace, violates vault standards
 
 #### 3. **Inconsistent Directory Structure**
-```
+```text
 logs/           (0 items) - Empty duplicate
 08 - Logs/      (5 items) - Proper structured logs
 ```
@@ -51,12 +51,12 @@ logs/           (0 items) - Empty duplicate
 
 #### 4. **Missing Standard Directories**
 Based on `.vault-config.json`, these are required but missing:
-```
+```text
 00 - Dashboard/  (Should exist, file exists instead)
 ```
 
 #### 5. **Configuration File Placement**
-```
+```text
 .vault-config.json  (5KB)
 .vault-status.json  (0.3KB)
 .env               (0.5KB)
@@ -70,7 +70,7 @@ package.json       (4.8KB)
 
 ### **Phase 1: Core Structure Cleanup**
 
-```
+```text
 Odds-mono-map/
 ├── 📁 00 - Dashboard/                    # NEW: Move from file to directory
 │   ├── 📄 Dashboard.md                   # Move from 00 - Dashboard.md

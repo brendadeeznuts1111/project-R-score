@@ -44,7 +44,7 @@ _Massive hidden enterprise systems discovered and fully organized_
 
 #### **📦 Structure:**
 
-```
+```text
 dashboard-worker/
 ├── core/                   # Core dashboard infrastructure (89 files)
 ├── communications/         # Team coordination systems
@@ -82,7 +82,7 @@ dashboard-worker/
 
 #### **📦 Structure:**
 
-```
+```text
 cloudflare/
 ├── wrangler.toml           # Cloudflare Pages configuration
 ├── functions/
@@ -111,7 +111,7 @@ cloudflare/
 
 #### **📦 Structure:**
 
-```
+```text
 web-servers/
 ├── https:/
 │   ├── bun.com/
@@ -139,7 +139,7 @@ web-servers/
 
 #### **📦 Structure:**
 
-```
+```text
 feeds/
 ├── communications.atom     # Communications department feed
 ├── communications.rss      # Communications RSS feed
@@ -180,7 +180,7 @@ feeds/
 
 #### **📦 Structure:**
 
-```
+```text
 monitoring/
 ├── logs/
 │   ├── fire22.log          # Main application logs
@@ -215,7 +215,7 @@ monitoring/
 
 #### **📦 Structure:**
 
-```
+```text
 telegram/
 ├── language-telegram-integration-map.html  # Integration mapping
 ├── telegram-bot-integration.js             # Bot integration
@@ -241,7 +241,7 @@ telegram/
 
 #### **📦 Structure:**
 
-```
+```text
 secrets/
 ├── production-secrets-template.txt    # Production secrets template
 ├── environment-secrets/               # Environment-specific secrets

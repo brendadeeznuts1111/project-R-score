@@ -10,7 +10,7 @@ with clear separation of concerns and logical grouping.
 
 ## 📂 **Directory Structure**
 
-```
+```text
 crystal-clear-architecture/
 ├── 📁 .github/                    # GitHub configuration
 │   ├── workflows/                # CI/CD pipelines
@@ -96,7 +96,7 @@ crystal-clear-architecture/
 
 ### **📚 Documentation Files** (37+ files)
 
-```
+```text
 ├── ARCHITECTURE_*.md
 ├── *_GUIDE.md
 ├── *_README.md
@@ -108,7 +108,7 @@ crystal-clear-architecture/
 
 ### **⚙️ Configuration Files** (15+ files)
 
-```
+```text
 ├── bunfig.*.toml
 ├── *config*.json
 ├── *config*.yaml
@@ -120,7 +120,7 @@ crystal-clear-architecture/
 
 ### **🔧 Scripts & Tools** (25+ files)
 
-```
+```text
 ├── *.sh (shell scripts)
 ├── *.ts (build/demo scripts)
 ├── *.js (utility scripts)
@@ -131,7 +131,7 @@ crystal-clear-architecture/
 
 ### **🧪 Test & Demo Files** (20+ files)
 
-```
+```text
 ├── *-demo.ts
 ├── *-test.ts
 ├── test-*.*

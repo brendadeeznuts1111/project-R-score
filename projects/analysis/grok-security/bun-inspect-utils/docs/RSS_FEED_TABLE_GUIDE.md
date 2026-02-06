@@ -207,7 +207,7 @@ if (result.valid) {
 
 ### Example Enrichment
 
-```
+```text
 Original:
   metrics: "PTY for interactive TensionTCPServer"
 

@@ -640,7 +640,7 @@ npm install @fire22/dashboard-client
 ````typescript
 ```javascript
 import { Fire22Client } from '@fire22/dashboard-client';
-````
+````text
 
 const client = new Fire22Client({ apiKey: 'your_api_key', environment:
 'production' });

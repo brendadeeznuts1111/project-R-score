@@ -23,7 +23,7 @@ Generated: 2026-01-09
 - Files in `runtime/bun/` subdirectory referenced with old paths
 
 **Fix Pattern**:
-```
+```text
 OLD: ../guides/testing/TESTING_ALIGNMENT.md
 NEW: ../guides/testing/TESTING_ALIGNMENT.md
 
@@ -48,7 +48,7 @@ NEW: ./type-checking/EXPECTTYPEOF_GUIDE.md
 **Root Cause**: Some markdown links use `file://` protocol URLs which break relative resolution.
 
 **Examples**:
-```
+```text
 file:///Users/nolarose/geelark/docs/BUN_INSPECT_TABLE.md → ../runtime/bun/BUN_INSPECT_TABLE.md
 file:///Users/nolarose/geelark/docs/BUN_FILE_IO.md → ../runtime/bun/BUN_FILE_IO.md
 ```
@@ -67,7 +67,7 @@ file:///Users/nolarose/geelark/docs/BUN_FILE_IO.md → ../runtime/bun/BUN_FILE_I
 **Root Cause**: `docs/reference/DOCUMENTATION_INDEX.md` contains old-style links pointing to files in reference directory, but actual files are in subdirectories.
 
 **Pattern**:
-```
+```text
 OLD (in reference/): ./TESTING_GUIDE.md
 NEW (actual location): ../testing/TESTING_GUIDE.md
 ```
@@ -114,7 +114,7 @@ NEW (actual location): ../testing/TESTING_GUIDE.md
 - `docs/cli/` → files moved to `docs/guides/api/`
 
 **Examples**:
-```
+```text
 OLD: ../getting-started/SETUP.md
 NEW: ../getting-started/SETUP.md
 
@@ -152,7 +152,7 @@ NEW: ../guides/features/FEATURE_MATRIX.md
 **Root Cause**: Incorrect path navigation or extra path segments.
 
 **Examples**:
-```
+```text
 ../runtime/bun/QUICK_START_UTILS.md  ← should be ../guides/QUICK_START_UTILS.md
 docs/CONFIGURATION.md                  ← should be relative path
 ```

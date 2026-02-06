@@ -62,7 +62,7 @@ _Complete enterprise documentation for Fantasy42-Fire22 Registry_
 
 ### **🏗️ Domain Structure**
 
-```
+```text
 fantasy42-fire22-registry/
 ├── enterprise/
 │   ├── packages/
@@ -248,7 +248,7 @@ bunx @fire22/analytics report
 
 ### **🌿 Branch Structure**
 
-```
+```text
 main (production)          # Production releases
 ├── develop               # Development integration
 │   ├── enterprise        # Enterprise features
@@ -278,7 +278,7 @@ main (production)          # Production releases
 
 ### **🏷️ Commit Convention**
 
-```
+```text
 feat: new feature
 fix: bug fix
 docs: documentation

@@ -96,7 +96,7 @@ const value = logger.timeSync("Parse JSON", () => {
 
 ### Normal Mode (human-readable)
 
-```
+```text
 INFO [@domain1] Request processed (45000ns) method=GET, path=/api/users
 ```
 

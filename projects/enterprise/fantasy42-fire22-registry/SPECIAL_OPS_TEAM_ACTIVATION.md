@@ -27,7 +27,7 @@ _Interim leadership structure for Fantasy42-Fire22 during CEO absence_
 
 ### **Command Structure**
 
-```
+```text
 Mission Commander (Interim CEO)
 ├── Technical Operations Lead
 ├── Security Operations Lead
@@ -96,7 +96,7 @@ following approval authorities:
 
 ### **Decision-Making Framework**
 
-```
+```text
 Priority 1 (Strategic Business Decisions)
 ├── @special-ops-lead makes final decision
 ├── @special-ops-tech provides technical input
@@ -135,7 +135,7 @@ Priority 3 (Security & Compliance)
 
 ### **Escalation Matrix**
 
-```
+```text
 Level 1: Department Heads → @special-ops-lead
 Level 2: @special-ops-lead → @nolarose1968-pixel (CTO)
 Level 3: Critical Decisions → Board of Directors

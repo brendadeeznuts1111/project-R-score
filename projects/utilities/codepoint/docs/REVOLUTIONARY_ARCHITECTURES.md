@@ -30,7 +30,7 @@ bun build --feature=TEAM_C --feature=ADMIN app.ts --outdir ./team-c
 - **Type Safety:** Cross-team interfaces validated at compile time
 
 #### **Demonstrated Results**
-```
+```text
 📦 Micro-frontend bundles:
    - dashboard: premium-dashboard.js
    - analytics: analytics-module.js
@@ -63,7 +63,7 @@ bun build --feature=PROGRESSIVE_WEB app.ts --outdir ./basic-pwa
 - **Progressive Enhancement:** Core features work everywhere
 
 #### **Demonstrated Capabilities**
-```
+```text
 🔧 PWA capabilities:
    - serviceWorker: ✅ Enabled (OFFLINE_SUPPORT)
    - webAppManifest: ✅ Enabled
@@ -95,7 +95,7 @@ bun build --feature=PREMIUM --feature=ADMIN --feature=SECURITY_ENHANCED app.ts -
 - **Compliance Ready:** Sensitive features eliminated from inappropriate tiers
 
 #### **Demonstrated Tier Results**
-```
+```text
 💼 Tier-based builds:
    FREE Tier (25KB):
      - Basic dashboard
@@ -137,7 +137,7 @@ bun build app.ts --outdir ./desktop-version
 - **Offline First:** Critical mobile functionality works without internet
 
 #### **Demonstrated Mobile Results**
-```
+```text
 📲 Mobile capabilities:
    - touchInterface: ✅ Enabled
    - gestureSupport: ✅ Enabled
@@ -171,7 +171,7 @@ bun build --feature=IOT_CONSTRAINED app.ts --outdir ./minimal-iot
 - **Network Efficient:** Minimal data transfer for essential functions
 
 #### **Demonstrated IoT Results**
-```
+```text
 ⚙️  IoT constraints:
    - memoryLimited: ✅ Active
    - lowPower: ✅ Active
@@ -195,7 +195,7 @@ bun build --feature=IOT_CONSTRAINED app.ts --outdir ./minimal-iot
 ## **📊 Cross-Architecture Analysis**
 
 ### **Bundle Size Comparison**
-```
+```text
 🏗️  Micro-Frontend:     125KB (Enterprise, team autonomy)
 📱 Progressive Web App:  95KB  (Mobile-first web apps)
 🏢 Enterprise SaaS:     150KB (Multi-tier business apps)
@@ -204,7 +204,7 @@ bun build --feature=IOT_CONSTRAINED app.ts --outdir ./minimal-iot
 ```
 
 ### **Architecture-Specific Optimizations**
-```
+```text
 MICRO_FRONTEND:
    - Independent deployable units
    - Team-specific feature flags
@@ -379,7 +379,7 @@ bun build --feature=ADMIN --feature=ANALYTICS app.ts
 This revolutionary approach fundamentally transforms how we think about software architecture:
 
 ### **Traditional vs Revolutionary**
-```
+```text
 Traditional: Multiple codebases, runtime architecture detection
 Revolutionary: Single codebase, compile-time architecture decisions
 

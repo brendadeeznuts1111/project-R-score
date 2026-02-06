@@ -4,7 +4,7 @@ This directory contains performance benchmarks following [Bun's benchmarking bes
 
 ## 📁 Structure
 
-```
+```text
 bench/
 ├── README.md                           # This file
 ├── feature-flags.bench.ts              # Feature flag registry operations

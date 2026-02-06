@@ -56,7 +56,7 @@ bun run validate:bun-urls
 
 ## Example Output
 
-```
+```text
 🔍 Bun URL Validation Script
 ================================
 

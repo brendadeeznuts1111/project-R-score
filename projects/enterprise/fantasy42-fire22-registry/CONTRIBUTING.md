@@ -201,7 +201,7 @@ Our enterprise packages provide specialized functionality:
 
 ### **Feature Branches**
 
-```
+```text
 feature/<domain>-<description>
 feature/users-password-reset
 feature/betting-odds-calculation
@@ -210,7 +210,7 @@ feature/security-encryption-layer
 
 ### **Package Branches**
 
-```
+```text
 pkg/<package>-<description>
 pkg/dashboard-real-time-updates
 pkg/security-vulnerability-scanner
@@ -219,14 +219,14 @@ pkg/cloudflare-edge-computing
 
 ### **Release Branches**
 
-```
+```text
 release/v1.2.3
 release/v2.0.0-beta.1
 ```
 
 ### **Hotfix Branches**
 
-```
+```text
 hotfix/critical-security-patch
 hotfix/database-connection-issue
 ```
@@ -235,7 +235,7 @@ hotfix/database-connection-issue
 
 ### **Format**
 
-```
+```text
 <type>[optional scope]: <description>
 
 [optional body]
@@ -308,7 +308,7 @@ feat(betting): add odds calculation engine
 
 ### **Testing Pyramid**
 
-```
+```text
 ┌─────────────┐  End-to-End Tests (10%)
 │   E2E       │  Integration Tests (20%)
 ├─────────────┤  Unit Tests (70%)

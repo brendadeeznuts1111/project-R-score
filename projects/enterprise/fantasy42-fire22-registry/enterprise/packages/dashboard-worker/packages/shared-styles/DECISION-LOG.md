@@ -87,7 +87,7 @@ system consistency.
 
 #### Architecture Design
 
-```
+```text
 Theme Layer 1: Base Colors (Light Mode Defaults)
 Theme Layer 2: Dark Mode Overrides
 Theme Layer 3: High Contrast Mode
@@ -125,7 +125,7 @@ Theme Layer 5: User Customization Hooks
 
 #### Evolution Timeline
 
-```
+```text
 v1.0.0: 5 Status Types
 ├── Default, Success, Warning, Error, Info
 

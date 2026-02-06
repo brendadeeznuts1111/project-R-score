@@ -527,7 +527,7 @@ naming conflicts and complete version control.
 
 ---
 **🔐 Registry-Aware Template Complete** • **Enterprise Grade** • **Production Ready**
-```
+```text
 
 ---
 

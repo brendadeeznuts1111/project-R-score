@@ -148,7 +148,7 @@ jobs:
 
 ## 📁 File Structure
 
-```
+```text
 ├── streaming-pattern-analyzer.ts    # Core streaming analysis engine
 ├── runtime-guard-generator.ts       # Security guard generator
 ├── fuzz-corpus-generator.ts         # Fuzzing and test generator

@@ -234,13 +234,13 @@ In prediction markets, YES + NO = $1.00 guaranteed.
 
 **Arbitrage exists when:**
 
-```
+```text
 Best YES ask (platform A) + Best NO ask (platform B) < $1.00
 ```
 
 **Example:**
 
-```
+```text
 Kalshi YES ask:  42¢
 Poly NO ask:     56¢
 Total cost:      98¢
@@ -266,7 +266,7 @@ Profit:           2¢ per contract
 
 ## Architecture
 
-```
+```text
 src/
 ├── main.rs              # Entry point, WebSocket orchestration
 ├── types.rs             # MarketArbState
@@ -351,7 +351,7 @@ The Surgical Precision Platform provides enterprise-grade monitoring for arbitra
 
 ### 🛡️ Risk Management Enhancement
 
-```
+```text
 Default Circuit Breaker + Surgical Precision Platform =
 ┌─────────────────────────────────────────────────┐
 │ Circuit Breaker (Local)                    ✅ │

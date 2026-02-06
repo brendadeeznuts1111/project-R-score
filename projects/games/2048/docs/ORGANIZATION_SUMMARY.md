@@ -6,7 +6,7 @@ Successfully organized the 2048 project codebase and created a comprehensive per
 
 ## 📁 Final Directory Structure
 
-```
+```text
 2048/
 ├── src/
 │   └── performance/              # Core performance tools (5 files)

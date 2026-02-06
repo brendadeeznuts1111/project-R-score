@@ -46,7 +46,7 @@ graph TB
 ## Test structure
 
 ### Directory organization
-```
+```text
 tests/
 ├── unit/                    # Unit tests
 │   ├── core/               # Core business logic

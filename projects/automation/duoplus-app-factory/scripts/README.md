@@ -26,7 +26,7 @@ This system automates 12 phases to turn a single DuoPlus Android box into a "sel
 
 ## 📁 Files Created
 
-```
+```text
 scripts/
 ├── phase-01.sh          # Apple Developer enrollment
 ├── phase-02.sh          # App bundle + GitHub Actions

@@ -118,7 +118,7 @@ bun run scripts/workspace-manager.ts info
 
 ## 📦 **Complete Workspace Structure**
 
-```
+```text
 duo-automation/
 ├── package.json              # Root workspace with catalog & catalogs
 ├── bun.lock                  # Shared lockfile

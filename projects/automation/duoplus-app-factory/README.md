@@ -36,7 +36,7 @@ if (feature("PREMIUM")) {
 ```
 
 ### 📐 **Architecture**
-```
+```text
 Enterprise Dashboard
 ├── TOML Config (features.toml, ui-themes.toml, performance.toml)
 ├── 5 Polish Layers (deferred, transitions, virtualized, optimistic, CRC32)
@@ -80,7 +80,7 @@ bun run dashboard
 ## 🏗️ Project Structure
 
 ### Root Directory (Organized)
-```
+```text
 d-network/
 ├── 📄 README.md                    # Main entry point
 ├── 📦 package.json                 # NPM configuration
@@ -104,7 +104,7 @@ d-network/
 ```
 
 ### Source Code Structure
-```
+```text
 src/
 ├── main.ts                   # Main application entry point
 ├── atlas/                    # Device Atlas system

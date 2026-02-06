@@ -126,7 +126,7 @@ Your complete FactoryWager ecosystem now integrates all advanced features with c
 ## 🔗 **R2 Storage Structure**
 
 ### **Complete Integration Data in `scanner-cookies`**
-```
+```text
 scanner-cookies/
 ├── integrations/
 │   ├── cookie-compression/
@@ -173,7 +173,7 @@ scanner-cookies/
 ## 🚀 **MCP Integration Capabilities**
 
 ### **Claude Desktop Tools**
-```
+```text
 🔍 SearchAdvancedIntegration → Search across all integrated systems
 📊 GetAdvancedMetrics     → Complete performance analytics
 🍪 CompressCookies       → Cookie compression management
@@ -187,7 +187,7 @@ scanner-cookies/
 ```
 
 ### **Usage Examples**
-```
+```text
 Claude: "Get advanced metrics for all integrated systems"
 
 Claude: "Compress cookies for factory-wager.com with enterprise settings"

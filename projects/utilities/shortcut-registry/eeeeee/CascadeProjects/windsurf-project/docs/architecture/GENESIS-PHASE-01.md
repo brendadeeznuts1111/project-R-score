@@ -13,7 +13,7 @@
 
 ## 📁 **File Structure**
 
-```
+```text
 factory/
 ├── phases/
 │   └── phase-01-gmail-creation.sh     # Main ADB automation script

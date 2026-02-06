@@ -34,7 +34,7 @@ bun run password:benchmark
 
 ## Benchmark Results (This System)
 
-```
+```text
 production      64MiB, t=3, p=4  →  68.3ms
 highSecurity    128MiB, t=4, p=4  →  192.1ms
 balanced        32MiB, t=2, p=2  →  20.5ms

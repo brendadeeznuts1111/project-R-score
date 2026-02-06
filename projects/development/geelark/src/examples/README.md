@@ -4,7 +4,7 @@ This directory contains practical examples demonstrating Bun's capabilities and 
 
 ## 📁 Directory Structure
 
-```
+```text
 examples/
 ├── README.md                    # This file
 ├── bun-runtime/                 # Bun runtime API examples

@@ -40,7 +40,7 @@ versioning, data types, testing, and configuration.
 
 ### Standards Hierarchy
 
-```
+```text
 Water Dashboard Standards
 ├── Versioning (SemVer 2.0.0)
 ├── Data Types (TypeScript strict)
@@ -58,7 +58,7 @@ Water Dashboard Standards
 
 All components follow **Semantic Versioning 2.0.0**:
 
-```
+```text
 MAJOR.MINOR.PATCH-PRERELEASE+BUILD
 ```
 

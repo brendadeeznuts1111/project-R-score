@@ -5,7 +5,7 @@
 **Problem:** The self-heal script was crashing with `ENOENT: no such file or directory` errors when the target directory didn't exist.
 
 **Error Message:**
-```
+```text
 [ERROR] ❌ Filesystem scan failed: Error: ENOENT: no such file or directory, scandir './test-fix' 
 ```
 
@@ -62,7 +62,7 @@ bun run scripts/self-heal.ts --dry-run --dir=./nonexistent
 ```
 
 **Output:**
-```
+```text
 [INFO] 📁 Target directory './nonexistent' does not exist, skipping find scan
 [INFO] 📁 Target directory './nonexistent' does not exist, skipping filesystem scan
 [INFO] ✅ Validation passed: No remaining artifacts

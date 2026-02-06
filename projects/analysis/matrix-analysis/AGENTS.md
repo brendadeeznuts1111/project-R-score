@@ -48,7 +48,7 @@ This is a comprehensive **Bun-native development workspace** featuring:
 
 ## Project Structure
 
-```
+```text
 /
 ├── src/                          # Main source code
 │   ├── cli.ts                    # CLI entry point
@@ -405,7 +405,7 @@ main().catch((err) => {
 
 Use conventional commits with co-author attribution:
 
-```
+```text
 feat(matrix): add DNS prefetch optimization
 
 Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
@@ -653,7 +653,7 @@ The Matrix Agent is an AI agent management system integrated with the Matrix Ana
 
 ### Directory Structure
 
-```
+```text
 ~/.matrix/
 ├── agent/
 │   └── config.json          # Agent configuration

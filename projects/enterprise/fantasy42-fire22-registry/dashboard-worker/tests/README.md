@@ -2,7 +2,7 @@
 
 ## 📁 **Test Organization Structure**
 
-```
+```text
 tests/
 ├── unit/                   # Unit tests for individual components
 │   ├── api/               # API endpoint tests

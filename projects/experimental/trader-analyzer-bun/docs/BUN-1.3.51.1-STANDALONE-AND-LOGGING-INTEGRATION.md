@@ -263,7 +263,7 @@ async ingestTickData(tick: TickDataPoint): Promise<void> {
 ```
 
 **Loki Query**:
-```
+```text
 {app="hyper-bun"} |= "TICK_INGEST" 
   | json
   | bookmaker = "fonbet"
@@ -271,7 +271,7 @@ async ingestTickData(tick: TickDataPoint): Promise<void> {
 ```
 
 **Grafana Dashboard**:
-```
+```text
 Panel: Tick ingestion rate per bookmaker
 Query: sum(rate({app="hyper-bun"} |= "TICK_INGEST" | json [1m])) by (bookmaker)
 ```

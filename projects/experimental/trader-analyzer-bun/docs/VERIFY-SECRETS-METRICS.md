@@ -9,7 +9,7 @@ bun run scripts/test-secrets-metrics.ts
 ```
 
 **Expected Output**:
-```
+```text
 🧪 Testing Secrets Metrics Recording...
 ✅ Recorded 4 access events
 ✅ Recorded 2 rotation events
@@ -38,7 +38,7 @@ curl http://localhost:3000/metrics | grep hyperbun_secret
 ```
 
 **Expected Output**:
-```
+```text
 # HELP hyperbun_secret_access_total Total secret access attempts
 # TYPE hyperbun_secret_access_total counter
 hyperbun_secret_access_total{service="nexus",operation="read",status="success"} 5

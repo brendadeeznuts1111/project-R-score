@@ -70,7 +70,7 @@ bun build --compile server.ts --target=bun-linux-x64
 
 ## 💰 **Quantified Arb Edge**
 
-```
+```text
 Before Bun 1.3:  200 scans/min → 2.1% avg edge → $21K/hr
 After Bun 1.3:  600 scans/min → 3.2% avg edge → $96K/hr
 
@@ -79,7 +79,7 @@ GAIN: 4.5x profit velocity
 
 ## 🔬 **Fuzzer Fixes - Production Armor**
 
-```
+```text
 ✅ spyOn(arr, 0) → Array arb tests pass
 ✅ Buffer 2GB+ → No crash on odds data
 ✅ Bun.mmap(null) → Clean errors
@@ -105,7 +105,7 @@ watch -n 1 'curl localhost:3000/api/arb/nfl/q4 | jq ".[].profit_pct"'
 
 ## 📊 **Live Production Metrics**
 
-```
+```text
 $ curl localhost:3000/health | jq
 {
   "bun_version": "1.3.x",
@@ -159,7 +159,7 @@ await Promise.all(bookies.map(bookie => scanBookie(bookie)));
 
 ## 🎉 **Verdict: ARBITRAGE SUPREMACY ACHIEVED**
 
-```
+```text
 ✅ 47/50 bookies → Maximum coverage
 ✅ 600 scans/min → First to edge  
 ✅ 3.24% avg → $96K/hr velocity

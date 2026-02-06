@@ -6,7 +6,7 @@ The DuoPlus Content Management System provides a complete solution for managing 
 
 ## Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    Dashboard Frontend                        │
 ├─────────────────────────────────────────────────────────────┤

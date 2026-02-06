@@ -108,7 +108,7 @@ const server = Bun.serve({
 
 ## Performance Benchmarks
 
-```
+```text
 HMAC SHA256 (1000 ops):
   Node.js crypto:    ~2,500 ops/sec
   Bun.CryptoHasher:  ~5,000 ops/sec  ✅ 2x faster

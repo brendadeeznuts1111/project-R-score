@@ -6,7 +6,7 @@
 ## SCOUT: Initial Reconnaissance
 
 **File Structure:**
-```
+```text
 barbershop-dashboard.ts    36,681 bytes  800+ lines  Monolithic
 barbershop-integration-test.ts  17,162 bytes  500+ lines
 ```
@@ -343,7 +343,7 @@ Bun-lock-in: HIGH. Migration to Node would be significant work.
 ```
 
 **RECOMMENDED STRUCTURE:**
-```
+```text
 src/
   routes/
     admin.ts
@@ -498,7 +498,7 @@ Monolithic design won't scale. Split before prod.
 ## SYNTHESIS: FINAL VERDICT
 
 ### Current State
-```
+```text
 Code Quality:  C  (functional but risky)
 Security:      D  (hardcoded secrets)
 Performance:   B  (good for small scale)
@@ -519,7 +519,7 @@ Production Ready: NO
 4. **Week 4:** Production deploy with monitoring
 
 ### Risk Assessment
-```
+```text
 Without fixes:    95% chance of incident in first week
 With P0 fixes:    40% chance of incident
 With P0+P1:       15% chance of incident

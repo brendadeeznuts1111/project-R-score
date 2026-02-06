@@ -46,7 +46,7 @@ The `#META` tag is the workhorse of the metadata system, providing crucial flexi
 
 ### Basic Format
 
-```
+```text
 [#META:key1=value1,key2=value2,key3=value3]
 ```
 
@@ -62,14 +62,14 @@ The `#META` tag is the workhorse of the metadata system, providing crucial flexi
 ### Examples
 
 **Valid:**
-```
+```text
 [#META:OWNER_TEAM=dev-team-a,PRIORITY=high]
 [#META:KEY1=value1,KEY2=value2]
 [#META:DESCRIPTION="Short summary text"]
 ```
 
 **Invalid:**
-```
+```text
 [#META:KEY1 = value1, KEY2=value2]  ❌ Whitespace around equals/comma
 [#META:invalid-key=value]          ❌ Key not UPPER_SNAKE_CASE
 [#META:KEY1=value1, ]              ❌ Empty pair
@@ -120,7 +120,7 @@ The `#META` tag is validated by **FORGE-007: Meta Parse Failure (META_CORRUPTION
 
 ### Example Violation Output
 
-```
+```text
 [FORGE-007][CHROMA/SERVER/APIGATEWAY][META_CORRUPTION][CH:FF00FF][hsl(300,100%,50%)]
   [[META]] tag parse error: Whitespace violation: no spaces allowed around commas or equals signs
   └─ Expected Format: [#META:key1=value1,key2=value2,...] (no whitespace around commas or equals)
@@ -256,17 +256,17 @@ bun test packages/registry/meta-parser.test.ts
 ### Real-World Examples
 
 #### Component with Multiple Metadata
-```
+```text
 FORGE/INTELLIGENCE/SUGGESTION/ENGINE/SUGGESTION_ENGINE_v1.1.0 [#META:OWNER_TEAM=forge-intelligence,PRIORITY=critical,DEPLOYMENT_ENV=prod,CRITICAL_PATH=true,DATA_SENSITIVITY=INTERNAL]
 ```
 
 #### API Component with Protocol Metadata
-```
+```text
 CHROMA/SERVER/API/GATEWAY_v2.0.0 [#META:PROTOCOL=REST,AUTH_METHOD=JWT,STATUS_CODE=200-OK,DEPLOYMENT_ENV=prod]
 ```
 
 #### Client Component with Framework
-```
+```text
 CHROMA/CLIENT/DASHBOARD/ADMIN_PANEL_v1.0.0 [#META:FRAMEWORK=React,AUDIENCE=admins,SECURITY_LEVEL=L4]
 ```
 
@@ -347,7 +347,7 @@ The `#META` tag system works alongside the frontmatter properties system:
 
 The `#META` tag is embedded within component IDs:
 
-```
+```text
 DOMAIN/PATH/COMPONENT_NAME_v1.0.0 [#META:KEY1=value1,KEY2=value2]
 ```
 
@@ -364,27 +364,27 @@ The `#META` tag is validated by **FORGE-007: Meta Parse Failure (META_CORRUPTION
 ## Common Patterns
 
 ### Pattern 1: Team Ownership
-```
+```text
 [#META:OWNER_TEAM=team-name,PRIORITY=high]
 ```
 
 ### Pattern 2: Deployment Context
-```
+```text
 [#META:DEPLOYMENT_ENV=prod,CRITICAL_PATH=true]
 ```
 
 ### Pattern 3: Security Classification
-```
+```text
 [#META:DATA_SENSITIVITY=PII,SECURITY_LEVEL=L4]
 ```
 
 ### Pattern 4: Technical Stack
-```
+```text
 [#META:FRAMEWORK=React,PROTOCOL=REST,AUTH_METHOD=JWT]
 ```
 
 ### Pattern 5: Component Context
-```
+```text
 [#META:AUDIENCE=operators,SECTION=monitoring,DESCRIPTION="Real-time monitoring dashboard"]
 ```
 
@@ -433,12 +433,12 @@ The `#META` tag is validated by **FORGE-007: Meta Parse Failure (META_CORRUPTION
 ### Example Migration
 
 **Before**:
-```
+```text
 FORGE/INTELLIGENCE/SUGGESTION/ENGINE/SUGGESTION_ENGINE_v1.1.0
 ```
 
 **After**:
-```
+```text
 FORGE/INTELLIGENCE/SUGGESTION/ENGINE/SUGGESTION_ENGINE_v1.1.0 [#META:OWNER_TEAM=forge-intelligence,PRIORITY=critical,DEPLOYMENT_ENV=prod]
 ```
 

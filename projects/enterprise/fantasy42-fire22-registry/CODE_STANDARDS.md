@@ -102,7 +102,7 @@ bun test
 
 ### Directory Organization
 
-```
+```text
 fire22/
 ├── src/                    # Main application code
 ├── enterprise/            # Enterprise features

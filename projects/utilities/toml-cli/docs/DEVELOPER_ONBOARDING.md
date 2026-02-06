@@ -109,7 +109,7 @@ bun build            # Production build in seconds
 
 ### 3. ESLint Guides You
 If you try to import axios, you'll see:
-```
+```text
 ❌ Use Bun native fetch instead of axios
 ```
 

@@ -210,7 +210,7 @@ Track your department's performance:
 ## 🔧 **Common Validation Scenarios**
 
 ### **Scenario 1: Package Performance Issues**
-```
+```text
 ❌ VALIDATION FAILED: Performance Test
 📊 Current: 85% | Required: >95%
 🔧 Solution: Optimize code performance
@@ -218,7 +218,7 @@ Track your department's performance:
 ```
 
 ### **Scenario 2: Security Vulnerabilities**
-```
+```text
 ❌ VALIDATION FAILED: Security Audit
 🔐 Issues: 2 high-severity vulnerabilities
 🛡️ Solution: Update dependencies and fix vulnerabilities
@@ -226,7 +226,7 @@ Track your department's performance:
 ```
 
 ### **Scenario 3: Compliance Gaps**
-```
+```text
 ❌ VALIDATION FAILED: GDPR Compliance
 📋 Missing: Data processing agreement
 ⚖️ Solution: Add GDPR compliance documentation
@@ -234,7 +234,7 @@ Track your department's performance:
 ```
 
 ### **Scenario 4: Accessibility Issues**
-```
+```text
 ❌ VALIDATION FAILED: WCAG AA Compliance
 ♿ Issues: Missing alt text, insufficient color contrast
 🎨 Solution: Fix accessibility violations
@@ -247,7 +247,7 @@ Track your department's performance:
 
 ### **How Your Validation Fits In**
 
-```
+```text
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │  Environment    │ => │  Department      │ => │  Build & Tag    │
 │  Validation     │    │  Validation      │    │                 │

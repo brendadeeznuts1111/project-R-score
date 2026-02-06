@@ -64,7 +64,7 @@ xForwardedFor: []
 
 ## 📁 Structure
 
-```
+```text
 04-Developer/
 ├── README.md                    # This file
 ├── Dashboard.md                  # Developer dashboard (auto-generated)

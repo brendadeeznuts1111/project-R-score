@@ -6,7 +6,7 @@
 
 ## **📊 VALIDATION RESULTS: 100% OFFICIAL COMPLIANCE ✅**
 
-```
+```text
 🎨 RGBA Objects/Arrays & Hex Formats Demonstration
 ==================================================
 
@@ -56,7 +56,7 @@ type RGBAObject = {
 ```
 
 ### **✅ Enhanced Canvas Integration**
-```
+```text
 🎨 4. Canvas Color Analysis (RGBA Objects)
 ──────────────────────────────────────────────────
 Bridge Service (service:bridge):
@@ -104,7 +104,7 @@ type RGBAArray = [number, number, number, number];
 **Official Documentation:** "Unlike the "{rgba}" format, the alpha channel is an integer between 0 and 255. This is useful for typed arrays where each channel must be the same underlying type."
 
 **Our Implementation Results:**
-```
+```text
 📐 2. RGBA Arrays (Typed arrays: all values 0-255)
 ──────────────────────────────────────────────────
 1. red                  → RGBA: [255, 0, 0, 255]
@@ -115,7 +115,7 @@ type RGBAArray = [number, number, number, number];
 ```
 
 ### **✅ Enhanced Canvas Integration**
-```
+```text
 📸 5. Image Generation (RGBA Arrays)
 ──────────────────────────────────────────────────
 Converting canvas colors to image data format:
@@ -140,7 +140,7 @@ Bun.color([255, 0, 0], "hex"); // "#ff0000"
 ```
 
 ### **✅ Our Implementation Results**
-```
+```text
 🌐 3. Hex Formats (Web Development)
 ──────────────────────────────────────────────────
 1. red                  → hex: #ff0000
@@ -167,7 +167,7 @@ Bun.color([255, 0, 0], "HEX"); // "#FF0000"
 ```
 
 ### **✅ Enhanced Canvas Integration**
-```
+```text
 🌍 6. Web Component Integration (Hex Formats)
 ──────────────────────────────────────────────────
 Generating CSS variables for web components:
@@ -197,7 +197,7 @@ Generating CSS variables for web components:
 ## **♿ ENHANCED ACCESSIBILITY ANALYSIS**
 
 ### **✅ WCAG Compliance Using RGBA Objects**
-```
+```text
 ♿ 7. Accessibility Analysis (RGBA Objects)
 ──────────────────────────────────────────────────
 WCAG contrast ratio calculations:
@@ -226,7 +226,7 @@ Analytics Engine:
 ## **⚡ PERFORMANCE EXCELLENCE**
 
 ### **📊 Outstanding Performance Metrics**
-```
+```text
 ⚡ 8. Performance Comparison
 ──────────────────────────────────────────────────
 Testing format conversion performance (50000 iterations):
@@ -347,7 +347,7 @@ const configColor = Bun.color("#10B981", "hex");
 
 ## **🎉 FINAL VALIDATION SUMMARY**
 
-```
+```text
 🎯 9. Canvas Integration Summary
 ──────────────────────────────────────────────────
 📋 How our canvas system uses RGBA/Hex formats:

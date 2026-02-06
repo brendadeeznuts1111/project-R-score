@@ -11,7 +11,7 @@
 ### **🏗️ Feature Development Commits**
 
 #### **Template:**
-```
+```text
 feat([scope]): [descriptive subject]
 
 🎯 Feature Overview:
@@ -51,7 +51,7 @@ Status: [Development status with completion percentage]
 ```
 
 #### **Example:**
-```
+```text
 feat(analysis): implement intelligent pattern detection engine
 
 🎯 Feature Overview:
@@ -93,7 +93,7 @@ Status: Production ready with comprehensive testing and documentation
 ### **⚡ Performance Optimization Commits**
 
 #### **Template:**
-```
+```text
 perf([component]): optimize [specific operation] for [primary benefit]
 
 🚀 Optimization Details:
@@ -125,7 +125,7 @@ Validation: [Testing approach and results]
 ```
 
 #### **Example:**
-```
+```text
 perf(runtime): integrate official Bun v1.3.7 JavaScriptCore optimizations
 
 🚀 Optimization Details:
@@ -161,7 +161,7 @@ Validation: All 91 official v1.3.7 features successfully integrated and tested
 ### **📚 Documentation Commits**
 
 #### **Template:**
-```
+```text
 docs([section]): create [document type] for [purpose]
 
 📖 Documentation Overview:
@@ -193,7 +193,7 @@ Status: [Completion status with review metrics]
 ```
 
 #### **Example:**
-```
+```text
 docs(guide): create comprehensive deployment documentation system
 
 📖 Documentation Overview:
@@ -230,7 +230,7 @@ Status: Production ready with 100% feature coverage
 ### **🔧 Infrastructure & Build Commits**
 
 #### **Template:**
-```
+```text
 feat(infra): [infrastructure improvement] for [benefit]
 
 🏗️ Architecture Changes:
@@ -266,7 +266,7 @@ Status: [Implementation status with validation]
 ## 🎨 Professional Commit Examples by Category
 
 ### **🔍 Code Refactoring Commits**
-```
+```text
 refactor(core): optimize pattern detection algorithm for performance
 
 🔄 Refactoring Overview:
@@ -292,7 +292,7 @@ Status: Production ready with comprehensive testing
 ```
 
 ### **🐛 Bug Fix Commits**
-```
+```text
 fix(cli): resolve memory leak in pattern analysis command
 
 🐛 Bug Description:

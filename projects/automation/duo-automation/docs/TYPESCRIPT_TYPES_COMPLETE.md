@@ -34,7 +34,7 @@ I have successfully integrated **Bun's fixed TypeScript types** into the DuoPlus
 ## 📊 **TYPESCRIPT TYPE METRICS**
 
 ### **✅ Type Safety Results (Demonstrated)**
-```
+```text
 🔷 TypeScript Type Safety Metrics:
 ├── Build Configuration: 8 type definitions (100% accurate)
 ├── Database Operations: 2 type definitions (100% accurate)

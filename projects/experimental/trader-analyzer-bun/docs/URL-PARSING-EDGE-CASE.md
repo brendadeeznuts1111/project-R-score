@@ -9,13 +9,13 @@
 ## 📖 The Problem Explained Simply
 
 ### Normal URL:
-```
+```text
 https://example.com/?team=Lakers&spread=5
 ```
 This has **2 parameters**: `team=Lakers` and `spread=5`
 
 ### Problem URL with HTML Entity:
-```
+```text
 https://example.com/?team=Lakers&amp;spread=5
 ```
 This **also** has 2 parameters, even though `&amp;` was meant to be part of the team name!

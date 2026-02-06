@@ -17,7 +17,7 @@ provides:
 
 ## 🏗️ Architecture
 
-```
+```text
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   GitHub Repo   │───▶│ Cloudflare Pages│───▶│  Global CDN     │
 │                 │    │                 │    │                 │
@@ -390,7 +390,7 @@ curl -X POST "http://localhost:8788/api/analytics?action=test"
 
 ### Performance Improvements
 
-```
+```text
 🚀 Speed Increase:    70-80%
 🌍 Global Reach:      285+ locations
 🔒 Security:          Enterprise-grade

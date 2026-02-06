@@ -26,7 +26,7 @@ processes in the Fire22 Dashboard system.
 
 ### System Components
 
-```
+```text
 [Client Applications] → [API Gateway] → [Service Layer] → [Database Layer]
                               ↓
                        [Authentication]
@@ -63,7 +63,7 @@ processes in the Fire22 Dashboard system.
 
 ### Request-Response Pattern
 
-```
+```text
 Client → API Gateway → Service → Database → Service → API Gateway → Client
    ↓         ↓         ↓         ↓         ↓         ↓         ↓
 Request   Auth      Process   Query     Transform  Format   Response
@@ -71,7 +71,7 @@ Request   Auth      Process   Query     Transform  Format   Response
 
 ### Event-Driven Pattern
 
-```
+```text
 Event Source → Event Bus → Event Handlers → Database → Notifications
      ↓           ↓            ↓            ↓           ↓
   Wager      Publish      Process      Store      Update UI
@@ -80,7 +80,7 @@ Event Source → Event Bus → Event Handlers → Database → Notifications
 
 ### WebSocket Pattern
 
-```
+```text
 Client ←→ WebSocket Server ←→ Event System ←→ Database
    ↓           ↓                ↓            ↓
 Subscribe   Connection      Event Loop    Data Changes
@@ -419,7 +419,7 @@ interface ValidationSchema {
 
 ### Data Processing Pipeline
 
-```
+```text
 Raw Input → Validation → Sanitization → Transformation → Storage → Response
     ↓           ↓           ↓            ↓           ↓         ↓
   HTTP      Schema      Clean Data   Business    Database   Formatted
@@ -475,7 +475,7 @@ interface ErrorResponse {
 
 ### Error Handling Flow
 
-```
+```text
 Error Occurs → Log Error → Classify Error → Format Response → Send Response
      ↓           ↓          ↓              ↓              ↓
   Exception   Error      Error Type    Response      Client
@@ -512,7 +512,7 @@ interface RateLimitConfig {
 
 ### Rate Limit Headers
 
-```
+```text
 X-RateLimit-Limit: 1000
 X-RateLimit-Remaining: 999
 X-RateLimit-Reset: 1642680000
@@ -544,7 +544,7 @@ X-RateLimit-Reset: 1642680000
 
 ### Security Headers
 
-```
+```text
 X-Content-Type-Options: nosniff
 X-Frame-Options: DENY
 X-XSS-Protection: 1; mode=block

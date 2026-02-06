@@ -75,7 +75,7 @@ system.
 ````typescript
 ```javascript
 import { parseTimestamp } from './src/utils/timestamp-utils';
-````
+````text
 
 const info = parseTimestamp('2025-08-25 20:05:00.000');
 console.log(info.format); // 'CUSTOM' console.log(info.isValid); // true
@@ -87,7 +87,7 @@ console.log(info.relative); // '2 days ago'
 ```typescript
 ```javascript
 import { TimestampUtils } from './src/utils/timestamp-utils';
-````
+````text
 
 const iso = TimestampUtils.convertFormat('2025-08-25 20:05:00.000', 'iso'); //
 Result: '2025-08-26T01:05:00.000Z'

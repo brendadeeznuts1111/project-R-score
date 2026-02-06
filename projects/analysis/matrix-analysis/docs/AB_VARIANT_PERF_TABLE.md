@@ -37,12 +37,12 @@ Quick reference for A/B cookie parsing performance characteristics.
 ### Combined Performance (Cookie + Fallback)
 
 **Cookie Present**:
-```
+```text
 Parse: 396ns + Extract: 84ns = 480ns total
 ```
 
 **Cookie Missing (Build-Time Fallback)**:
-```
+```text
 Define lookup: 0ns (literal inlined!)
 ```
 
@@ -65,7 +65,7 @@ let h="ab-variant-a=enabled;ab-variant-b=off;session=abc".repeat(10);
 ```
 
 **Output**:
-```
+```text
 prefix: 0.396ms/1k
 fallback: 0.000ms/1k  // Literal!
 ```

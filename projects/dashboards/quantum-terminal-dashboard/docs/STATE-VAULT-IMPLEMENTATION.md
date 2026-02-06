@@ -61,7 +61,7 @@ A secure, encrypted state management system using Bun's native Cookie API with A
 
 ## Architecture
 
-```
+```text
 ┌─────────────────────────────────────────┐
 │         Application Code                │
 └──────────────┬──────────────────────────┘

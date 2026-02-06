@@ -67,7 +67,7 @@ tags:: [poetry, gothic]
 
 ### 2. Folder Scope
 
-```
+```text
 00-Inbox/
 01-Configuration/
 02-Dashboards/

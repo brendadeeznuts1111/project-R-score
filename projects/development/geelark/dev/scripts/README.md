@@ -4,7 +4,7 @@ This directory contains utility scripts for building, analyzing, validating, and
 
 ## 📁 Directory Structure
 
-```
+```text
 scripts/
 ├── README.md                    # This file
 ├── analysis/                    # Bundle and code analysis scripts

@@ -274,19 +274,19 @@ async function detectBuildSystem(buildDir: string) {
 ### Common Issues
 
 #### Build Directory Not Found
-```
+```text
 Error: Build directory not found
 ```
 **Solution**: Run your build command first to generate the `./dist` directory.
 
 #### No Dependencies Found
-```
+```text
 Dependencies: 0
 ```
 **Solution**: Ensure your build generates metafiles or check your build system configuration.
 
 #### File Watching Not Working
-```
+```text
 Error starting watcher
 ```
 **Solution**: Check file permissions and ensure the build directory exists.

@@ -188,7 +188,7 @@ import.meta.hot.accept('./utils', newUtils => {
 
 ## 📋 **File Structure**
 
-```
+```text
 src/
 ├── hmr-dev-server.ts        # HMR development server
 ├── hmr-enhanced-dashboard.ts # Dashboard with HMR integration

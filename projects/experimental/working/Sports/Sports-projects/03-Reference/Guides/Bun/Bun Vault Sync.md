@@ -122,7 +122,7 @@ The script will:
 
 ### Expected Output
 
-```
+```text
 🔄 Syncing Bun documentation to vault...
 
 📁 Source: /path/to/docs

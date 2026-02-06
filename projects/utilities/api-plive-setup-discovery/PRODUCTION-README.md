@@ -28,7 +28,7 @@ Based on comprehensive testing, this deployment achieves:
 
 ## 🏗️ **ARCHITECTURE OVERVIEW**
 
-```
+```text
 ┌─────────────────┐    ┌─────────────────┐
 │   Nginx (SSL)   │────│  Bun 1.3 App   │
 │  Load Balancer  │    │   API Server    │
@@ -51,7 +51,7 @@ Based on comprehensive testing, this deployment achieves:
 
 ## 📁 **PRODUCTION FILE STRUCTURE**
 
-```
+```text
 betting-platform/
 ├── 🐳 docker-compose.production-validated.yml    # Production stack
 ├── 🐳 Dockerfile.production-validated           # Optimized container

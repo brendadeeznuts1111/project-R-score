@@ -282,7 +282,7 @@ bun run --preload=database.ts src/index.ts
 
 ## 📁 Project Structure
 
-```
+```text
 my-dashboard/
 ├── src/
 │   ├── index.ts              # Main application with CLI integration

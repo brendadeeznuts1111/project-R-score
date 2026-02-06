@@ -280,7 +280,7 @@ Accept: text/event-stream
 
 **Event Format:**
 
-```
+```text
 event: task_updated
 data: {"type":"task_updated","taskUuid":"task_2024_08_28_abc123def456","task":{...},"changes":{...},"timestamp":"2024-08-28T10:30:00Z","departmentId":"technology"}
 

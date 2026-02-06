@@ -31,7 +31,7 @@ database management for the Fire22 Dashboard system.
 
 ### Database Architecture
 
-```
+```text
 [Application Layer] → [Drizzle ORM] → [SQLite/D1] → [Storage]
        ↓                   ↓              ↓           ↓
    Business Logic    Query Builder    SQL Engine   Data Files
@@ -437,11 +437,11 @@ CREATE INDEX idx_kpi_metrics_period_name ON kpi_metrics(period, metric_name);
 // Example migration file: 001_initial_schema.ts
 ```javascript
 import { sql } from 'drizzle-orm';
-````
+````text
 
 ```javascript
 import { sqliteTable, text, real, integer } from 'drizzle-orm/sqlite-core';
-```
+```text
 
 export async function up(db: any) { // Create tables await
 db.run(sql`CREATE TABLE users (...)`); await

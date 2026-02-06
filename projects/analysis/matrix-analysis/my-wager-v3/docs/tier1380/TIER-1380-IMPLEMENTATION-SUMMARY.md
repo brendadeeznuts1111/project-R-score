@@ -133,7 +133,7 @@ bun run cli/test.ts --filter="smoke" --update-snapshots
 
 ## 📁 File Structure
 
-```
+```text
 my-wager-v3/
 ├── cli/
 │   └── test.ts                    # Main CLI entry point

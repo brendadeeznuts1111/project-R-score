@@ -4,12 +4,12 @@ This document provides comprehensive documentation for the RSS Feed Optimization
 
 ## Base URL
 
-```
+```text
 http://localhost:3000
 ```
 
 For production deployments, replace with your domain:
-```
+```text
 https://your-domain.com
 ```
 
@@ -327,7 +327,7 @@ The API implements rate limiting to prevent abuse:
 
 Rate limit information is included in response headers:
 
-```
+```text
 X-RateLimit-Limit: 100
 X-RateLimit-Remaining: 95
 X-RateLimit-Reset: 1706345400
@@ -407,7 +407,7 @@ curl -f http://localhost:3000/health || exit 1
 
 The current API version is `v1`. Future versions will be indicated in the URL path:
 
-```
+```text
 /v1/endpoint
 /v2/endpoint
 ```

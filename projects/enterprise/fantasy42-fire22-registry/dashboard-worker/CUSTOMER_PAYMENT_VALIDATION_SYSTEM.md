@@ -14,13 +14,13 @@
 
 **Step 1: Bob's Message**
 
-```
+```text
 /deposit
 ```
 
 **Step 2: Bot Recognizes Bob (3-Year Customer)**
 
-```
+```text
 🤖 Enhanced P2P Payment Bot
 
 Welcome back, Bob Johnson! 👋
@@ -40,19 +40,19 @@ How much would you like to deposit?
 
 **Step 3: Bob Enters Amount**
 
-```
+```text
 595
 ```
 
 **Step 4: Choose Payment Method**
 
-```
+```text
 Venmo
 ```
 
 **Step 5: INSTANT VALIDATION AGAINST BOB'S HISTORY**
 
-```
+```text
 💰 Deposit Method: VENMO
 
 📊 Payment History:
@@ -214,7 +214,7 @@ Validation Score = 100 - (
 
 #### **New Payment Method Alert**
 
-```
+```text
 🚨 PAYMENT METHOD ALERT
 
 Customer: Bob Johnson (ID: bb55595)
@@ -240,7 +240,7 @@ This alert has been sent to compliance team.
 
 #### **Unusual Amount Alert**
 
-```
+```text
 🚨 AMOUNT ANOMALY ALERT
 
 Customer: Bob Johnson (ID: bb55595)
@@ -260,7 +260,7 @@ This is within acceptable ranges but flagged for monitoring.
 
 #### **High Frequency Alert**
 
-```
+```text
 🚨 FREQUENCY ALERT
 
 Customer: Bob Johnson (ID: bb55595)
@@ -289,7 +289,7 @@ Actions Required:
 
 #### **Scenario 1: Bob Uses His Regular Venmo ($250)**
 
-```
+```text
 ✅ VALIDATION PASSED
 Validation Score: 92/100 (LOW RISK)
 
@@ -305,7 +305,7 @@ Verification code: ABC123
 
 #### **Scenario 2: Bob Uses Venmo with Higher Amount ($800)**
 
-```
+```text
 ⚠️ MEDIUM RISK DETECTED
 Validation Score: 78/100 (MEDIUM RISK)
 
@@ -326,7 +326,7 @@ Verification code: DEF456
 
 #### **Scenario 3: Bob Uses Zelle for First Time ($100)**
 
-```
+```text
 🚨 HIGH RISK DETECTED
 Validation Score: 45/100 (HIGH RISK)
 
@@ -352,7 +352,7 @@ Please contact support or try Venmo/Cash App/PayPal instead.
 
 #### **Scenario 4: Bob Uses Venmo During Unusual Time**
 
-```
+```text
 ⚠️ TIME ANOMALY DETECTED
 Validation Score: 71/100 (MEDIUM RISK)
 

@@ -9,7 +9,7 @@
 ## Proposed Improvements
 
 ### File Naming (Consistent, Clear, Memorable)
-```
+```text
 Current → Proposed
 validator.ts → header-validation-engine.ts
 config-validator.ts → config-state-validator.ts
@@ -21,7 +21,7 @@ http-connect.ts → connect-tunnel-handler.ts
 ```
 
 ### Class Naming (Descriptive, Clear)
-```
+```text
 Current → Proposed
 ProxyHeaderError → InvalidProxyHeaderError
 ValidationResult → HeaderValidationResult
@@ -30,7 +30,7 @@ DNSMetrics → DnsCacheMetrics
 ```
 
 ### Function Naming (Clear, Concise but not Short)
-```
+```text
 Current → Proposed
 validateProxyHeader → validateProxyHeaderValue
 validateProxyToken → validateProxyTokenSignature
@@ -40,7 +40,7 @@ handleProxyConnect → handleConnectTunnelRequest
 ```
 
 ### Interface/Type Naming (Clear Purpose)
-```
+```text
 Current → Proposed
 ValidationResult → HeaderValidationResult
 ProxyHeaderError → InvalidProxyHeaderError

@@ -289,7 +289,7 @@ az container create \
 
 ### Production Architecture
 
-```
+```text
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Load Balancer │────│   Application   │────│   Database      │
 │   (HTTPS/SSL)   │    │   (Auto-scale)  │    │   (Clustered)   │

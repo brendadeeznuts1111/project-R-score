@@ -93,7 +93,7 @@ grep "ENTERPRISE\|DEVELOPMENT\|LOCAL-SANDBOX" docs/SCOPING_MATRIX_AUTO.md | head
 - Feature flags enable/disable security-critical features at compile time
 
 **Scope detection is O(1):**
-```
+```text
 apple.factory-wager.com → ENTERPRISE
 dev.apple.factory-wager.com → DEVELOPMENT
 localhost → LOCAL-SANDBOX
@@ -173,7 +173,7 @@ if (!feature("R2_STORAGE")) {
 
 ### Storage Isolation = Data Safety
 
-```
+```text
 project/
   ├─ enterprise/           # ENTERPRISE scope
   │  └─ metrics-2026-01-15.json

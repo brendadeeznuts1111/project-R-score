@@ -103,7 +103,7 @@
 
 #### **Git Workflow**
 
-```
+```text
 main (production)
 ├── develop (integration)
 ├── feature/* (new features)
@@ -132,7 +132,7 @@ main (production)
 
 ### **Documentation Structure**
 
-```
+```text
 docs/
 ├── api/                    # API documentation
 │   ├── TASK-MANAGEMENT-API.md

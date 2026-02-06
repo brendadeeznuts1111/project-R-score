@@ -148,7 +148,7 @@ bun-dashboard-enhancements/
 
 After upload, your dashboard will be available at:
 
-```
+```text
 https://pub-{account-id}.r2.dev/dashboard-2024-01-08T15-30-45-123Z/index.html
 ```
 

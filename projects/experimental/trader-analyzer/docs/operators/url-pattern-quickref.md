@@ -27,34 +27,34 @@ true
 ## Common Patterns in HyperBun MLGS
 
 ### Event Patterns
-```
+```text
 /api/v1/graph/:eventId
 /api/v1/graph/:eventId/periods/:period
 /api/v1/graph/:eventId/layer/:layerNumber
 ```
 
 ### Log Patterns
-```
+```text
 /api/v1/logs
 /api/v1/logs/:level
 /api/v1/logs/:level/:count?
 ```
 
 ### Secret Patterns
-```
+```text
 /api/v1/secrets/:server/:type
 /api/v1/secrets/:server/:type/:key?
 ```
 
 ### Dashboard Patterns
-```
+```text
 /dashboard
 /dashboard/:eventId
 /dashboard/:eventId/focus/:layer
 ```
 
 ### WebSocket Patterns
-```
+```text
 /ws/logs
 /ws/graph/:eventId
 /ws/alerts

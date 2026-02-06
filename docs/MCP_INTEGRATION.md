@@ -6,7 +6,7 @@ FactoryWager's MCP (Model Context Protocol) integration transforms passive docum
 
 ## 📁 Architecture
 
-```
+```text
 FactoryWager MCP Ecosystem
 ├── lib/mcp/
 │   ├── bun-mcp-client.ts     # Core MCP client with FactoryWager enhancements
@@ -89,7 +89,7 @@ bun run interactive-docs learn "Bun.sql" r2
 ### Claude Desktop Usage
 After setup, Claude Desktop gains these capabilities:
 
-```
+```text
 User: "Search for Bun.secrets.get documentation with FactoryWager context for secrets management"
 
 Claude: [Provides enhanced search results with:
@@ -99,7 +99,7 @@ Claude: [Provides enhanced search results with:
          - Context-specific examples]
 ```
 
-```
+```text
 User: "Generate a FactoryWager-style example for Bun.file with R2 upload context"
 
 Claude: [Generates code with:

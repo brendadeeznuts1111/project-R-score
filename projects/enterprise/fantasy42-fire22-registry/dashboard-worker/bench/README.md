@@ -150,7 +150,7 @@ console.log(formatter.formatComparison(100, 85, 'ms'));
 
 ## 📁 Project Structure
 
-```
+```text
 bench/
 ├── index.ts                 # Main entry point
 ├── benchmark-suite.ts       # Core benchmarking

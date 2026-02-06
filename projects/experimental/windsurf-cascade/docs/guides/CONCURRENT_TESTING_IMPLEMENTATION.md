@@ -30,7 +30,7 @@ coveragePathIgnorePatterns = [
 ### **🚀 Live Test Results**
 
 #### **API Integration Tests (Automatic Concurrency)**
-```
+```text
 ✓ API Integration Tests > fetches comment data [110.55ms]
 ✓ API Integration Tests > fetches user data [112.98ms]  
 ✓ API Integration Tests > fetches album data [125.52ms]
@@ -40,7 +40,7 @@ coveragePathIgnorePatterns = [
 **5 concurrent API calls completed in ~132ms** - **2.5x faster** than sequential!
 
 #### **WebSocket Integration Tests (Automatic Concurrency)**
-```
+```text
 ✓ WebSocket Connection Tests > handles multiple client connections [32.26ms]
 ✓ WebSocket Connection Tests > manages subscription lifecycle [35.76ms]
 ✓ WebSocket Connection Tests > processes concurrent messages [40.59ms]
@@ -122,14 +122,14 @@ bun test --update-snapshots
 ## 📊 Performance Comparison
 
 ### **Before Configuration (Sequential)**
-```
+```text
 5 API calls: ~500ms (100ms each)
 Database ops: ~150ms (50ms each)  
 Total: ~650ms
 ```
 
 ### **After Configuration (Concurrent)**
-```
+```text
 5 API calls: ~132ms (concurrent)
 Database ops: ~52ms (concurrent)
 Total: ~184ms
@@ -140,7 +140,7 @@ Total: ~184ms
 ## 🎯 Best Practices for Your Project
 
 ### **1. File Organization**
-```
+```text
 packages/
 ├── odds-core/src/
 │   ├── integration/          # Auto-concurrent (configured)

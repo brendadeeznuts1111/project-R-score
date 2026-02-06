@@ -15,7 +15,7 @@
 
 #### **Source Code Statistics**
 
-```
+```text
 📁 Total Files: 1,101 JavaScript/TypeScript files
 📈 Total Size: 16,752.88 KB (16.75 MB)
 📊 Average Size: 15.22 KB per file

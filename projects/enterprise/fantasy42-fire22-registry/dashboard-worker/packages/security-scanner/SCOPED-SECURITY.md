@@ -6,7 +6,7 @@ Complete guide to scoped package security in the Fire22 workspace ecosystem.
 
 ### Fire22 Scope Hierarchy
 
-```
+```text
 @fire22/*                    [Auto-Trusted, Private Registry]
 ├── @fire22/core
 ├── @fire22/security-core

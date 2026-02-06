@@ -2,7 +2,7 @@
 
 ## ❌ **Current Issue:**
 
-```
+```text
 Invalid login: 535-5.7.8 Username and Password not accepted
 ```
 

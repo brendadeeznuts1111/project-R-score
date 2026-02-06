@@ -8,7 +8,7 @@ All scaffolding and documentation are complete for extracting the registry to a 
 
 ## 📁 Created Migration Scaffold
 
-```
+```text
 registry-migration/
 ├── 📦 Packages (6)
 │   ├── packages/registry-core/      → Types, auth, config

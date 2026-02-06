@@ -200,7 +200,7 @@ jobs:
 
 ## 📁 **Project Structure**
 
-```
+```text
 Projects/
 ├── lib/                    # Core library code
 │   ├── utils/             # Utility functions

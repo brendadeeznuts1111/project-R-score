@@ -87,7 +87,7 @@ stages:
 | **Memory Efficiency** | Standard | Enhanced | **Improved** |
 
 ### Production Deployment Performance
-```
+```text
 📊 End-to-End Deployment Results:
 ✅ Total Time: 93ms
 ✅ Build Time: 33ms
@@ -161,7 +161,7 @@ bun run demo:hash manifest ./dist manifest.json
 ## 📊 Monitoring & Analytics
 
 ### Real-time Dashboard
-```
+```text
 📊 Production Deployment Dashboard
 =====================================
 

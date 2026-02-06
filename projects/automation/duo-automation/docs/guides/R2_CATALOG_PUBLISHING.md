@@ -45,7 +45,7 @@ bun run r2:info
 ```
 
 **Output**:
-```
+```text
 📊 DuoPlus R2 Publishing Information:
 
 🔧 Registry Configuration:
@@ -72,7 +72,7 @@ bun run r2:verify
 ```
 
 **Output**:
-```
+```text
 🔍 Verifying catalog resolution...
 📋 @duoplus/cli-core:
   ✅ commander: catalog: (will be resolved to actual version)

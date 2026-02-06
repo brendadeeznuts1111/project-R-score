@@ -411,7 +411,7 @@ function mergeConfigs(base, override) {
 ## 📚 Best Practices
 
 ### **1. File Organization**
-```
+```text
 config/
 ├── base.yaml          # Common configuration
 ├── development.yaml   # Dev overrides

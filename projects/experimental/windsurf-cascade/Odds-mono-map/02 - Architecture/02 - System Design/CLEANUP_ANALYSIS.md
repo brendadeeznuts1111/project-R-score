@@ -14,7 +14,7 @@
 ## 🔄 **Duplicate Analysis**
 
 ### **Color Demo Scripts (6 duplicates)**
-```
+```text
 bun-color-demo.ts
 bun-color-ansi-16m-demonstration.ts  
 bun-color-ansi-256-demonstration.ts
@@ -25,7 +25,7 @@ bun-colored-table-demo.ts
 **→ Consolidate into**: `demos/color-systems.ts`
 
 ### **Template Validation Scripts (5 duplicates)**
-```
+```text
 validate-template-system.ts
 enhanced-template-validation.ts
 template-analytics.ts
@@ -35,7 +35,7 @@ template-wizard.ts
 **→ Consolidate into**: `core/template-validator.ts`
 
 ### **Dashboard Scripts (8 duplicates)**
-```
+```text
 advanced-template-dashboard.ts
 enhanced-dashboard-templates.ts
 ultimate-template-dashboard.ts
@@ -48,7 +48,7 @@ dynamic-homepage-generator.ts
 **→ Consolidate into**: `core/dashboard-manager.ts`
 
 ### **Cleanup/Fix Scripts (7 duplicates)**
-```
+```text
 cleanup.ts
 fix.ts
 fix-remaining-issues.ts
@@ -63,7 +63,7 @@ organize-project-properties.ts
 
 ## 📁 **Proposed Clean Structure**
 
-```
+```text
 Odds-mono-map/
 ├── src/
 │   ├── core/

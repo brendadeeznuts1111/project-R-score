@@ -6,7 +6,7 @@
 
 ### 📦 Project Structure (Production Ready)
 
-```
+```text
 @dynamic-spy/kit/
 ├── src/
 │   ├── core/                    ✅ Spy factories + URLPattern
@@ -74,7 +74,7 @@
 
 ## 🌐 PRODUCTION ENDPOINTS
 
-```
+```text
 GET    /dashboard                    → Live heatmap (75 bookies)
 GET    /ticks/:market/:bookie         → Tick history (864K ticks)
 POST   /backwork                     → Reverse engineer play (FormData)
@@ -125,7 +125,7 @@ curl http://localhost:3000/models
 
 ## 💰 PRODUCTION ECONOMICS
 
-```
+```text
 📊 INITIAL SETUP: $10 (OddsAPI 6mo) + $0.24 R2 = $10.24
 📈 MONTHLY RUNNING: $0.24 R2 + $0.10 Workers = $0.34/mo
 
@@ -148,7 +148,7 @@ curl http://localhost:3000/models
 
 ## ✅ PROJECT STATUS: PRODUCTION READY
 
-```
+```text
 🎖️ 75 Bookies: URLPattern complete
 🎖️ 12K Markets: Tick monitoring 
 🎖️ 129M Ticks: R2 historical (47s load)

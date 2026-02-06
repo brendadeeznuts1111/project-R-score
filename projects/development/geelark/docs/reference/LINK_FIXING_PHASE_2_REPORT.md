@@ -54,7 +54,7 @@ Completed Phase 2 of documentation link validation and fixing, applying 31 strat
 | `/docs/reference/LINK_VALIDATION_REPORT.md` | 5 | Report links updated |
 
 **Sample Fixed Patterns**:
-```
+```text
 ./tutorials/DEPLOYMENT.md        → ../getting-started/DEPLOYMENT.md
 ../guides/EXPECTTYPEOF_GUIDE.md  → ../guides/type-checking/EXPECTTYPEOF_GUIDE.md
 file:///Users/.../docs/          → ../

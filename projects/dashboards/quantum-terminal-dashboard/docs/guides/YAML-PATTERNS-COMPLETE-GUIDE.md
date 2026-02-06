@@ -93,7 +93,7 @@ export const db = await createConnection(dbConfig.primary);
 
 ## 📊 Testing Results
 
-```
+```text
 🧪 Testing YAML Configuration Patterns
 
 ✅ appConfig: Passed
@@ -106,7 +106,7 @@ export const db = await createConnection(dbConfig.primary);
 ```
 
 ### **Application Configuration Test**
-```
+```text
 Environment: Development
 Server: api.example.com
 Database: quantum_lattice_dev
@@ -115,7 +115,7 @@ Log Level: debug
 ```
 
 ### **Feature Flags Test**
-```
+```text
 Feature Status:
   newDashboard: ❌
   darkMode: light
@@ -338,7 +338,7 @@ async function loadEnvironmentConfig(env: string) {
 ## 📚 Best Practices
 
 ### **1. File Organization**
-```
+```text
 src/config/
 ├── app.ts              # Main app configuration
 ├── features.yaml       # Feature flags

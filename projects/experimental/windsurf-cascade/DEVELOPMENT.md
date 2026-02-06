@@ -32,7 +32,7 @@ This document outlines the development standards, best practices, and guidelines
 
 ### Package Structure
 
-```
+```text
 packages/package-name/
 ├── src/
 │   ├── index.ts          # Main entry point

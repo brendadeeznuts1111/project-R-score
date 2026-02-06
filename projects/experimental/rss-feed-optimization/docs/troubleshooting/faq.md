@@ -253,7 +253,7 @@ generateItem(post) {
 
 **A**: Category feeds are automatically generated based on post tags. Access them at:
 
-```
+```text
 http://your-domain.com/rss/{category}.xml
 ```
 

@@ -102,7 +102,7 @@ bun run analyze       # Run bundle analysis
 
 ## 📁 Directory Structure
 
-```
+```text
 toml-cli/
 ├── src/
 │   ├── config-manager.ts          # Main CLI application

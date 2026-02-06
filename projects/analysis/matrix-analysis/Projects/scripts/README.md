@@ -4,7 +4,7 @@ Utility scripts and CLI tools for workspace management.
 
 ## Structure
 
-```
+```text
 scripts/
 ├── cli/           # Command-line tools
 ├── secrets/       # Secrets management
@@ -343,7 +343,7 @@ interface SimilarityResult {
 
 ## Dependency Graph
 
-```
+```text
 cli/diagnose.ts
 ├── diagnose/analyzers/git.ts
 ├── diagnose/analyzers/code.ts

@@ -260,7 +260,7 @@ bun test tests/integration/registry.test.ts
 
 ## 🔗 File Dependencies
 
-```
+```text
 .npmrc.example
   └─ guides configuration
 

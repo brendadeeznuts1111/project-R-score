@@ -64,7 +64,7 @@ bun run scripts/registry-secrets.ts get @orca
 ```
 
 Output:
-```
+```text
 📦 Credentials for @orca:
    Token: ghp_xxxx...
    Username: orca
@@ -84,7 +84,7 @@ bun run scripts/registry-secrets.ts list
 ```
 
 Output:
-```
+```text
 📦 Registry Credentials:
 
   @orca:

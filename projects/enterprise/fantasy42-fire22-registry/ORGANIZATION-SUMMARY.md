@@ -4,7 +4,7 @@
 
 ### **📁 Directory Structure Created**
 
-```
+```text
 ✅ config/{development,production,testing}/    # Configuration files
 ✅ docs/{api,architecture,guides,examples}/   # Documentation
 ✅ scripts/{build,deploy,test,utils}/         # Scripts organized
@@ -46,7 +46,7 @@
 
 ### **Before Organization**
 
-```
+```text
 ❌ 147+ files in root directory
 ❌ Mixed file types and purposes
 ❌ Scattered documentation
@@ -57,7 +57,7 @@
 
 ### **After Organization**
 
-```
+```text
 ✅ <20 files in root directory
 ✅ Logical grouping by purpose
 ✅ Structured documentation hierarchy
@@ -70,7 +70,7 @@
 
 ## 🎯 **Current Project Structure**
 
-```
+```text
 crystal-clear-architecture/
 ├── 📁 .github/workflows/          # CI/CD pipelines
 ├── 📁 config/                     # All configurations

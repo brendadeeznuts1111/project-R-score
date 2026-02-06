@@ -28,7 +28,7 @@ bun scripts/health-check-cli.ts
 
 ### Output Example
 
-```
+```text
 💚 API Health Check
 🔍 Scanning all endpoints...
 

@@ -29,7 +29,7 @@ validation_rules:
 
 ## **📊 VALIDATION RESULTS: 100% COMPLIANT ✅**
 
-```
+```text
 🔍 Bun.color Implementation Validation
 ═══════════════════════════════════════════════════════════
 
@@ -104,7 +104,7 @@ Overall Compliance Score: PERFECT ✨
 
 ### **✅ Performance Meets Bun Standards**
 
-```
+```text
 Performance Benchmark (50,000 conversions):
 ═════════════════════════════════════════════════════════
 
@@ -125,21 +125,21 @@ Performance Status: EXCELLENT 🚀
 ### **✅ Escape Sequence Format Validation**
 
 **ANSI-16m Format Specification:**
-```
+```text
 Official: \u001b[38;2;R;G;Bm
 Our Result: \u001b[38;2;255;0;0m
 Status: ✅ PERFECT MATCH
 ```
 
 **ANSI-256 Format Specification:**
-```
+```text
 Official: \u001b[38;5;Nm  
 Our Result: \u001b[38;5;196m
 Status: ✅ PERFECT MATCH
 ```
 
 **ANSI-16 Format Specification:**
-```
+```text
 Official: \u001b[38;5;Nm or \u001b[91-97m
 Our Result: \u001b[38;5;196m or \u001b[91m
 Status: ✅ PERFECT MATCH
@@ -273,7 +273,7 @@ class BunColorComplianceTest {
 
 ### **✅ Real-time Compliance Monitoring**
 
-```
+```text
 🎯 Bun.color Compliance Dashboard
 ═════════════════════════════════════════════════════════
 
@@ -347,7 +347,7 @@ Integration:       ████████████████████ 
 
 ## **🎉 FINAL COMPLIANCE CERTIFICATION**
 
-```
+```text
 🏆 BUN.COLOR OFFICIAL COMPLIANCE CERTIFICATION 🏆
 ═════════════════════════════════════════════════════════
 

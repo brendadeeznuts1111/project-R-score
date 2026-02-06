@@ -4,7 +4,7 @@ Embeddable RSS feed widgets for external websites. These widgets can be integrat
 
 ## Base URL
 
-```
+```text
 http://localhost:3000/widgets
 ```
 
@@ -305,7 +305,7 @@ add_shortcode('rss_widget', 'rss_feed_widget_shortcode');
 ```
 
 Usage in WordPress:
-```
+```text
 [rss_widget theme="dark" max="3" tag="javascript"]
 ```
 
@@ -321,7 +321,7 @@ Widget endpoints have rate limiting to prevent abuse:
 
 All widget responses include CORS headers for cross-domain usage:
 
-```
+```text
 Access-Control-Allow-Origin: *
 ```
 

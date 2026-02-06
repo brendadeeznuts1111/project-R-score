@@ -329,7 +329,7 @@ interface WebSocketData {
 
 ### Real-Time Data Flow
 
-```
+```text
 [Database] → [API Layer] → [WebSocket] → [Dashboard]
      ↓              ↓           ↓           ↓
   Raw Data    Processed    Real-time    Display
@@ -338,7 +338,7 @@ interface WebSocketData {
 
 ### Batch Data Flow
 
-```
+```text
 [Source Systems] → [ETL Process] → [Data Warehouse] → [Analytics]
        ↓               ↓              ↓               ↓
    Raw Data      Transformation   Stored Data    Reports

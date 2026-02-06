@@ -413,7 +413,7 @@ export RISK_SYSTEM_ACCESS="risk_manager_access"
 
 Each team lead must complete this form and submit via secure email:
 
-```
+```text
 FIRE22 TEAM LEAD CREDENTIAL CONFIRMATION FORM
 
 Team Lead Information:
@@ -534,7 +534,7 @@ Each team lead is expected to:
 
 **Use this template for your initial response (within 4 hours):**
 
-```
+```text
 Subject: URGENT ACKNOWLEDGMENT - Team Lead Credential Distribution - [Your Name]
 
 Dear Fire22 Security Team,

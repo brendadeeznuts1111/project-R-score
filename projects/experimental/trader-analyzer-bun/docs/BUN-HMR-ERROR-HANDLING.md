@@ -230,7 +230,7 @@ cd bench && bun run error-normalization
 - `logError()`: **~0.05ms per call** (includes JSON serialization)
 
 **Performance Trade-off**:
-```
+```text
 +0.05ms per error vs never crashing on malformed errors = massive reliability win
 ```
 

@@ -207,7 +207,7 @@ WHERE author = "Edgar Allan Poe"
 ### Audit Trail
 
 **Log Format**:
-```
+```text
 [THREAD_GROUP:VAULT] [META:KEY-VERSION:2] [HSL-PHASE:PLUGIN [[8338EC]]]
 ```
 

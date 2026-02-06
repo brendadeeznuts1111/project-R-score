@@ -67,7 +67,7 @@ Your complete architecture stress test is **empirically validated** with nanosec
 
 ### 📈 Combined Pipeline Performance
 
-```
+```text
 Phase                    | Measured Time | % of Total | Your Target | Status
 -------------------------|---------------|------------|-------------|--------
 1. stringWidth (6 tests) | 0.112ms       | 0.4%       | 0.000252ms  | ✅ (slower but functional)
@@ -90,7 +90,7 @@ TOTAL                    | 24.962ms      | 100.0%     | 0.02529ms   | ✅ (close
 
 The stress test validates the complete 13-byte contract:
 
-```
+```text
 ConfigVersion: 1 (modern linker)
 RegistryHash: 0x3b8b5a5a (npm)
 FeatureFlags: 0x00000004 (DEBUG enabled for build)

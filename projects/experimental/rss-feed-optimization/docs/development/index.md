@@ -91,7 +91,7 @@ Welcome to the development documentation for the RSS Feed Optimization project. 
 ### Commit Messages
 
 Use the following format for commit messages:
-```
+```text
 [DOMAIN][SCOPE][TYPE] Brief description
 
 - Detailed change 1
@@ -99,7 +99,7 @@ Use the following format for commit messages:
 ```
 
 **Examples:**
-```
+```text
 [API][RSS][FEAT] Add support for custom RSS fields
 
 - Add customFields option to RSSGenerator
@@ -107,7 +107,7 @@ Use the following format for commit messages:
 - Add tests for custom field functionality
 ```
 
-```
+```text
 [UTILS][CACHE][FIX] Fix cache invalidation bug
 
 - Fix cache key generation for complex objects
@@ -193,7 +193,7 @@ bun run benchmark    # Run performance benchmarks
 
 The RSS Feed Optimization project follows a modular architecture:
 
-```
+```text
 src/
 ├── server.js              # Main entry point
 ├── config/                # Configuration management

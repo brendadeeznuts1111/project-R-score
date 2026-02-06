@@ -87,7 +87,7 @@
 
 ## 📁 **Workshop Directory Structure**
 
-```
+```text
 11 - Workshop/
 ├── README.md                           # Complete workshop documentation
 ├── Canvas Demos/                       # Canvas visualization demonstrations

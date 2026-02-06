@@ -1045,7 +1045,7 @@ Colors match TEAM.md department colors:
 
 ## CSS File Structure
 
-```
+```text
 styles/
 ├── dashboard.css              # Main dashboard styles (with modern syntax)
 ├── dashboard.module.css       # Dashboard CSS module

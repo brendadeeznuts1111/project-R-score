@@ -48,7 +48,7 @@ A comprehensive post-build hook system for Bun that provides bundle analysis, si
 
 ## File Structure
 
-```
+```text
 scripts/build-hooks.ts          # Main build hooks implementation
 test/build-hooks.test.ts         # Comprehensive test suite
 public/build-info.js            # Generated version headers
@@ -105,7 +105,7 @@ await runPostBuildHooks(buildResult, {
 ## Build Metrics Example
 
 ### Console Output
-```
+```text
 🔧 Running post-build hooks...
 📋 Generated version headers
 📦 Bundle size: 0.22 MB (223 KB) 📈 (+5.2% (+11.8 KB))

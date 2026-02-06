@@ -168,7 +168,7 @@ const result = await pool.query(query, [userId]);
 
 ### Testing Structure
 
-```
+```text
 tests/
 ├── unit/           # Unit tests (fast, isolated)
 ├── integration/    # Integration tests (database, APIs)

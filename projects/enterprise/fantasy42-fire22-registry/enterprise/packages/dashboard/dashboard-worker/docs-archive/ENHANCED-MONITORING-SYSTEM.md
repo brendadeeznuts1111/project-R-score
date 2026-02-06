@@ -66,7 +66,7 @@ lightweight, efficient, and easily integrable with existing components.
 ````typescript
 ```javascript
 import { createEnhancedError, handleApiError, validateRequiredFields } from '../error/enhanced-error-handler';
-````
+````text
 
 // Creating enhanced errors const error = createEnhancedError(
 'VALIDATION_ERROR', 'Missing required fields', { missingFields: ['email',
@@ -85,7 +85,7 @@ return handleApiError(error); }
 ```typescript
 ```javascript
 import { PerformanceMonitor, withRequestTracking } from '../monitoring/performance-monitor';
-````
+````text
 
 const monitor = new PerformanceMonitor(config);
 
@@ -102,7 +102,7 @@ originalHandler);
 ```typescript
 ```javascript
 import { SecurityMonitor } from '../monitoring/security-monitor';
-````
+````text
 
 const securityMonitor = new SecurityMonitor(config);
 
@@ -119,7 +119,7 @@ const securityMonitor = new SecurityMonitor(config);
 ```typescript
 ```javascript
 import { HealthMonitor } from '../monitoring/health-check';
-````
+````text
 
 const healthMonitor = new HealthMonitor(['database', 'api', 'cache']);
 
@@ -135,7 +135,7 @@ healthMonitor.checkComponent('database');
 ```typescript
 ```javascript
 import { MetricsCollector } from '../monitoring/metrics-collector';
-````
+````text
 
 const collector = new MetricsCollector();
 
@@ -152,7 +152,7 @@ collector.getAggregatedMetrics(3600000); // Last hour
 ```typescript
 ```javascript
 import { createLogger } from '../utils/logger';
-````
+````text
 
 const logger = createLogger(config);
 

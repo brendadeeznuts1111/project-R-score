@@ -54,7 +54,7 @@ console.log(Bun.inspect(projects, { columns: true }));
 ```
 
 **Visual Output:**
-```
+```text
 ┌─────────────────┬──────────────────────────────────────────────┬─────────┐
 │ name            │ path                                         │ status  │
 ├─────────────────┼──────────────────────────────────────────────┼─────────┤
@@ -92,7 +92,7 @@ console.log(Bun.inspect(metrics, {
 ```
 
 **Visual Output:**
-```
+```text
 ┌─────────┬────────┐
 │ name    │ usage  │
 ├─────────┼────────┤
@@ -103,7 +103,7 @@ console.log(Bun.inspect(metrics, {
 ```
 
 **Without sort** (original order):
-```
+```text
 ┌─────────┬────────┐
 │ name    │ usage  │
 ├─────────┼────────┤
@@ -133,7 +133,7 @@ console.log(Bun.inspect(project, { depth: 1 }));
 ```
 
 **Visual Output (depth: 1):**
-```
+```text
 ┌─────────────┬────────────────────────────────────────────┐
 │ name        │ my-bun-app                                 │
 │ config      │ [Object]                                   │
@@ -141,7 +141,7 @@ console.log(Bun.inspect(project, { depth: 1 }));
 ```
 
 **With depth: 2:**
-```
+```text
 ┌─────────────┬────────────────────────────────────────────┐
 │ name        │ my-bun-app                                 │
 │ config      │ {                                          │
@@ -152,7 +152,7 @@ console.log(Bun.inspect(project, { depth: 1 }));
 ```
 
 **With depth: null (unlimited):**
-```
+```text
 ┌─────────────┬────────────────────────────────────────────────────────────┐
 │ name        │ my-bun-app                                                 │
 │ config      │ {                                                          │
@@ -172,7 +172,7 @@ console.log(Bun.inspect(project, { depth: 1 }));
 Enables/disables ANSI color codes. Default is `true` in terminals.
 
 **With colors: true** (default):
-```
+```text
 ┌─────────────────┬──────────────────────────────────────────────┬─────────┐
 │ name            │ path                                         │ status  │
 ├─────────────────┼──────────────────────────────────────────────┼─────────┤
@@ -182,7 +182,7 @@ Enables/disables ANSI color codes. Default is `true` in terminals.
 (Headers appear in bold/color in actual terminal)
 
 **With colors: false:**
-```
+```text
 ┌─────────────────┬──────────────────────────────────────────────┬─────────┐
 │ name            │ path                                         │ status  │
 ├─────────────────┼──────────────────────────────────────────────┼─────────┤
@@ -211,7 +211,7 @@ console.log(Bun.inspect(manyProjects, {
 ```
 
 **Visual Output:**
-```
+```text
 ┌────┬─────────────┐
 │ id │ name        │
 ├────┼─────────────┤
@@ -244,7 +244,7 @@ console.log(Bun.inspect(longDescriptions, {
 ```
 
 **Visual Output:**
-```
+```text
 ┌────────────────────────────────────────────────────────────┬──────────────┐
 │ desc                                                        │              │
 ├────────────────────────────────────────────────────────────┼──────────────┤
@@ -273,7 +273,7 @@ console.log(Bun.inspect(projects, {
 ```
 
 **Visual Output:**
-```
+```text
 ┌─────────┬─────────┬─────────┐
 │ name    │ active  │ author  │
 ├─────────┼─────────┼─────────┤
@@ -306,7 +306,7 @@ console.log(Bun.inspect(metrics, {
 ```
 
 **Output:**
-```
+```text
 ┌─────────┬────────┬──────────┐
 │ metric  │ percent│ status   │
 ├─────────┼────────┼──────────┤
@@ -345,7 +345,7 @@ console.log(Bun.inspect(projectTree, {
 ```
 
 **Output (depth: 2):**
-```
+```text
 ┌──────────┬────────────────────────────────────────────────────┐
 │ platform │ bun                                               │
 │ projects │ [                                                 │
@@ -388,7 +388,7 @@ console.log(Bun.inspect(projects, {
 
 The table format uses these Unicode box-drawing characters:
 
-```
+```text
 ┌─ header start
 ├─ separator (| for vertical)
 │─ column separator
@@ -512,7 +512,7 @@ console.log(Bun.inspect(projects, {
 ```
 
 **Output:**
-```
+```text
 ┌──────────────┬────────────────────────────────────────────┬──────────────────────┐
 │ name         │ path                                       │ entry                │
 ├──────────────┼────────────────────────────────────────────┼──────────────────────┤

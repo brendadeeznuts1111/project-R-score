@@ -128,7 +128,7 @@ process.on('uncaughtException', (error) => {
 ## **📊 Performance Results**
 
 ### **Garbage Collection Performance**
-```
+```text
 🧹 GC #1: 0.37ms, freed 0 bytes
 🧹 GC #2: 0.29ms, freed 1,247 bytes
 🧹 GC #3: 0.31ms, freed 856 bytes
@@ -136,14 +136,14 @@ Average: 0.32ms per collection
 ```
 
 ### **Buffer Performance (1MB allocation)**
-```
+```text
 ⚡ allocUnsafe: 0.16ms (uninitialized, faster)
 🛡️ alloc: 0.08ms (zero-initialized, safer)
 Use case dependent performance
 ```
 
 ### **Memory Management**
-```
+```text
 ✅ Auto-GC at 100MB threshold
 ✅ Manual GC available on demand
 ✅ Memory leak prevention
@@ -190,7 +190,7 @@ class ProcessController {
 ```
 
 ### **HTTP API Endpoints**
-```
+```text
 GET /api/metrics     - Current process metrics
 GET /api/system      - System information
 POST /api/gc        - Manual garbage collection

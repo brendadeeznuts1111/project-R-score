@@ -16,7 +16,7 @@ Your sophisticated AI evidence analysis system is now fully integrated across al
 - **Model Accuracy**: 88-95% accuracy across all models
 
 ### **AI Models Loaded**
-```
+```text
 🤖 Evidence Analyzer v2     → Image tampering detection (95% accuracy)
 📝 Text Analyzer v1         → Text authenticity analysis (88% accuracy)
 🛡️ Fraud Detector v3       → Sophisticated fraud patterns (92% accuracy)
@@ -46,7 +46,7 @@ Your sophisticated AI evidence analysis system is now fully integrated across al
 ## 🧠 **Cross-Domain Intelligence System**
 
 ### **Shared Pattern Recognition**
-```
+```text
 🔍 Receipt Manipulation Pattern
    Domains: factory-wager.com, duoplus.com
    Confidence: 92%
@@ -94,7 +94,7 @@ Your sophisticated AI evidence analysis system is now fully integrated across al
 ## 🔗 **R2 Storage Structure**
 
 ### **AI Data in `scanner-cookies` Bucket**
-```
+```text
 scanner-cookies/
 ├── integrations/ai/
 │   ├── domain-integrations.json           ✅ Domain AI configurations
@@ -132,7 +132,7 @@ scanner-cookies/
 ## 🚀 **MCP Integration Capabilities**
 
 ### **Claude Desktop AI Tools**
-```
+```text
 🤖 AnalyzeEvidence        → AI-powered evidence analysis
 🧠 GetCrossDomainIntel    → Cross-domain pattern intelligence
 📊 GetAIMetrics          → AI system performance metrics
@@ -144,7 +144,7 @@ scanner-cookies/
 ```
 
 ### **Usage Examples**
-```
+```text
 Claude: "Analyze this receipt evidence for factory-wager.com domain"
 
 Claude: "Get cross-domain intelligence for identity spoofing patterns"

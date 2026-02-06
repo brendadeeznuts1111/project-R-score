@@ -183,7 +183,7 @@ bun run audit full
 
 ## **File Structure**
 
-```
+```text
 src/
 ├── audit/
 │   ├── real-time-process-manager.ts    ✅ Complete

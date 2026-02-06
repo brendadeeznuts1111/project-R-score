@@ -122,7 +122,7 @@ bunx secrets set com.factory-wager.openclaw.auth-token "your-openclaw-token"
 
 ### Enterprise Integration Flow
 
-```
+```text
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │   Tenant Data   │───▶│  Enterprise      │───▶│   R2 Storage    │
 │   (Local)       │    │  Snapshot        │    │   (Cloud)       │
@@ -206,7 +206,7 @@ bun enterprise-integration-demo.ts
 ```
 
 Demo Output:
-```
+```text
 🏢 Enterprise Tenant Archiver Demo
 ==================================================
 🔐 Bun.secrets + ☁️ R2 + 🌐 Domains + 📨 OpenClaw + 🔧 Bunx

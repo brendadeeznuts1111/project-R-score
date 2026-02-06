@@ -139,26 +139,26 @@ How the top 20 largest objects are kept alive (path from GC root to object):
 
 ### 1. Object #0 - `<root>` (271.5 KB retained)
 
-```
+```text
 (no path to GC root found)
 ```
 
 ### 2. Object #477 - `GlobalObject` (216.5 KB retained)
 
-```
+```text
 GlobalObject#477 [ROOT] (this object is a GC root)
 ```
 
 ### 3. Object #1857 - `ModuleLoader` (24.7 KB retained)
 
-```
+```text
 GlobalObject#477 [ROOT] (9.8 KB) -> 
     ModuleLoader#1857 (39 B)
 ```
 
 ### 4. Object #2865 - `Uint8Array` (17.3 KB retained)
 
-```
+```text
 GlobalObject#477 [ROOT] (9.8 KB) -> 
     Buffer#2844 (54 B) .prototype -> 
         Uint8Array#2865 (129 B)
@@ -166,14 +166,14 @@ GlobalObject#477 [ROOT] (9.8 KB) ->
 
 ### 5. Object #2827 - `Object` (7.6 KB retained)
 
-```
+```text
 GlobalObject#477 [ROOT] (9.8 KB) -> 
     Object#2827 (611 B)
 ```
 
 ### 6. Object #2850 - `Structure` (6.9 KB retained)
 
-```
+```text
 GlobalObject#477 [ROOT] (9.8 KB) -> 
     Object#2827 (611 B) -> 
         Structure#2850 (112 B)
@@ -181,7 +181,7 @@ GlobalObject#477 [ROOT] (9.8 KB) ->
 
 ### 7. Object #2852 - `Structure` (6.7 KB retained)
 
-```
+```text
 GlobalObject#477 [ROOT] (9.8 KB) -> 
     Object#2827 (611 B) -> 
         Structure#2850 (112 B) -> 
@@ -190,7 +190,7 @@ GlobalObject#477 [ROOT] (9.8 KB) ->
 
 ### 8. Object #2862 - `Structure` (6.6 KB retained)
 
-```
+```text
 GlobalObject#477 [ROOT] (9.8 KB) -> 
     Object#2827 (611 B) -> 
         Structure#2850 (112 B) -> 
@@ -200,7 +200,7 @@ GlobalObject#477 [ROOT] (9.8 KB) ->
 
 ### 9. Object #2864 - `Structure` (6.5 KB retained)
 
-```
+```text
 GlobalObject#477 [ROOT] (9.8 KB) -> 
     Object#2827 (611 B) -> 
         Structure#2850 (112 B) -> 
@@ -211,7 +211,7 @@ GlobalObject#477 [ROOT] (9.8 KB) ->
 
 ### 10. Object #2869 - `Structure` (6.4 KB retained)
 
-```
+```text
 GlobalObject#477 [ROOT] (9.8 KB) -> 
     Object#2827 (611 B) -> 
         Structure#2850 (112 B) -> 
@@ -223,7 +223,7 @@ GlobalObject#477 [ROOT] (9.8 KB) ->
 
 ### 11. Object #2870 - `Structure` (6.3 KB retained)
 
-```
+```text
 GlobalObject#477 [ROOT] (9.8 KB) -> 
     Object#2827 (611 B) -> 
         Structure#2850 (112 B) -> 
@@ -236,7 +236,7 @@ GlobalObject#477 [ROOT] (9.8 KB) ->
 
 ### 12. Object #2871 - `Structure` (6.2 KB retained)
 
-```
+```text
 GlobalObject#477 [ROOT] (9.8 KB) -> 
     Object#2827 (611 B) -> 
         Structure#2850 (112 B) -> 
@@ -250,7 +250,7 @@ GlobalObject#477 [ROOT] (9.8 KB) ->
 
 ### 13. Object #2872 - `Structure` (6.1 KB retained)
 
-```
+```text
 GlobalObject#477 [ROOT] (9.8 KB) -> 
     Object#2827 (611 B) -> 
         Structure#2850 (112 B) -> 
@@ -265,7 +265,7 @@ GlobalObject#477 [ROOT] (9.8 KB) ->
 
 ### 14. Object #2894 - `Structure` (6.0 KB retained)
 
-```
+```text
 GlobalObject#477 [ROOT] (9.8 KB) -> 
     Object#2827 (611 B) -> 
         Structure#2850 (112 B) -> 
@@ -281,7 +281,7 @@ GlobalObject#477 [ROOT] (9.8 KB) ->
 
 ### 15. Object #2897 - `Structure` (5.9 KB retained)
 
-```
+```text
 GlobalObject#477 [ROOT] (9.8 KB) -> 
     Object#2827 (611 B) -> 
         Structure#2850 (112 B) -> 
@@ -298,13 +298,13 @@ GlobalObject#477 [ROOT] (9.8 KB) ->
 
 ### 16. Object #1959 - `ModuleProgramCodeBlock` (5.8 KB retained)
 
-```
+```text
 (no path to GC root found)
 ```
 
 ### 17. Object #2898 - `Structure` (5.7 KB retained)
 
-```
+```text
 GlobalObject#477 [ROOT] (9.8 KB) -> 
     Object#2827 (611 B) -> 
         Structure#2850 (112 B) -> 
@@ -322,7 +322,7 @@ GlobalObject#477 [ROOT] (9.8 KB) ->
 
 ### 18. Object #2899 - `Structure` (5.6 KB retained)
 
-```
+```text
 GlobalObject#477 [ROOT] (9.8 KB) -> 
     Object#2827 (611 B) -> 
         Structure#2850 (112 B) -> 
@@ -341,14 +341,14 @@ GlobalObject#477 [ROOT] (9.8 KB) ->
 
 ### 19. Object #1192 - `Array` (5.6 KB retained)
 
-```
+```text
 GlobalObject#477 [ROOT] (9.8 KB) -> 
     Array#1192 (66 B)
 ```
 
 ### 20. Object #2900 - `Structure` (5.5 KB retained)
 
-```
+```text
 GlobalObject#477 [ROOT] (9.8 KB) -> 
     Object#2827 (611 B) -> 
         Structure#2850 (112 B) -> 

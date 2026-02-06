@@ -37,7 +37,7 @@ establishing a **scalable messaging foundation** for our 10x growth objectives.
 
 ### **Financial Impact**
 
-```
+```text
 💰 Annual Savings: $930K+
 💡 ROI Multiple: 15x
 ⏰ Payback Period: 1 week
@@ -147,7 +147,7 @@ const executiveDashboard = {
 
 ### **Cost-Benefit Analysis**
 
-```
+```text
 Implementation Investment: $45K
 - Development: $35K (4 weeks engineering)
 - Infrastructure: $7K (monitoring, testing)

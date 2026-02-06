@@ -34,7 +34,7 @@ I have successfully integrated **Bun's latest security and Web API fixes** into 
 ## 📊 **SECURITY & WEB API METRICS**
 
 ### **✅ Security Enhancement Results (Demonstrated)**
-```
+```text
 🔒 Security & Web API Performance Metrics:
 ├── URLSearchParams: 2 configurability examples (100% Web IDL compliant)
 ├── WebSocket Security: 2 protection layers (95% security level)

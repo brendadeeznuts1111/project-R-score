@@ -4,7 +4,7 @@
 
 ### Character Reference
 
-```
+```text
 ╭ = Top-left corner (smooth)
 ╮ = Top-right corner (smooth)
 ╰ = Bottom-left corner (smooth)
@@ -22,7 +22,7 @@
 
 ### Before (Sharp Corners)
 
-```
+```text
 +-- dashboard-worker/
 |   +-- src/
 |   |   +-- index.ts
@@ -34,7 +34,7 @@
 
 ### After (Smooth Corners)
 
-```
+```text
 ╭── dashboard-worker/
 │   ╭── src/
 │   │   ├── index.ts
@@ -48,7 +48,7 @@
 
 ### Simple File Tree
 
-```
+```text
 dashboard-worker/
 ├── 📄 .env.example
 ├── 📄 package.json
@@ -63,7 +63,7 @@ dashboard-worker/
 
 ### Complex Nested Structure
 
-```
+```text
 ╭─ Fire22 Dashboard Worker
 │
 ├─ 📁 Core System
@@ -97,7 +97,7 @@ dashboard-worker/
 
 ### API Flow Diagram
 
-```
+```text
 ╭─────────────────╮
 │   Client App    │
 ╰────────┬────────╯
@@ -121,7 +121,7 @@ dashboard-worker/
 
 ### Component Architecture
 
-```
+```text
 ╭──────────────────────────────────────╮
 │         Fire22 Dashboard             │
 ├──────────────────────────────────────┤
@@ -138,7 +138,7 @@ dashboard-worker/
 
 ## Data Flow with Smooth Lines
 
-```
+```text
     User Input
          │
          ▼
@@ -164,7 +164,7 @@ dashboard-worker/
 
 ## Configuration Structure
 
-```
+```text
 ╭─ Environment Configuration
 │
 ├─ Development (.env.development)
@@ -186,7 +186,7 @@ dashboard-worker/
 
 ## API Response Structure
 
-```
+```text
 ╭─ Response
 │
 ├─ Headers
@@ -208,7 +208,7 @@ dashboard-worker/
 
 ## Database Schema
 
-```
+```text
 ╭───────────────────────────╮
 │        customers          │
 ├───────────────────────────┤
@@ -263,7 +263,7 @@ dashboard-worker/
 
 ## Markdown Tables with Box Drawing
 
-```
+```text
 ╭───────────┬────────────┬───────────╮
 │  Feature  │   Status   │  Version  │
 ├───────────┼────────────┼───────────┤

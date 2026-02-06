@@ -54,7 +54,7 @@ task.
 
 ## 📂 **DIRECTORY STRUCTURE MAP**
 
-```
+```text
 src/
 ├── api/
 │   └── controllers/           # 🎮 API endpoints by domain
@@ -108,7 +108,7 @@ src/
 
 ### **Step 1: Identify the Domain**
 
-```
+```text
 Customer Feature → src/components/customer/
 Financial Logic → src/finance/
 Sports Feature → src/sports/

@@ -77,7 +77,7 @@ categorical structure.
 
 ## 📁 New directory structure
 
-```
+```text
 06 - Templates/
 ├── 00 - Template Index.md                    # Main template library index
 ├── 01 - Note Templates/                      # Note and documentation templates

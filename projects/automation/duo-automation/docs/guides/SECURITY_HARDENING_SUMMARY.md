@@ -66,7 +66,7 @@
   - ✅ Integration validation
 
 ### Test Results
-```
+```text
 12 pass
 2 fail (expected failures showing security is working)
 34 expect() calls

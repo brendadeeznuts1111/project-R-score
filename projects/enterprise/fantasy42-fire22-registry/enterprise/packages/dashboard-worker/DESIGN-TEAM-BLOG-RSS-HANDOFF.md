@@ -45,7 +45,7 @@ The following areas are now **fully under Design Team control**:
 
 ### Existing Blog Content (Reference)
 
-```
+```text
 blog/
 ├── 2024-12-15-welcome-to-fire22-blog.md
 ├── authors.yml

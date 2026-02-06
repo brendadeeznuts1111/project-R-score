@@ -31,7 +31,7 @@ processing for peer-to-peer transactions.
 
 #### **Withdrawal Added** 🎯
 
-```
+```text
 🎯 New Withdrawal Added to P2P Queue
 
 💰 Amount: $500
@@ -47,7 +47,7 @@ Waiting for deposit match...
 
 #### **Deposit Added** 💸
 
-```
+```text
 💸 New Deposit Added to P2P Queue
 
 💰 Amount: $500
@@ -65,7 +65,7 @@ Looking for withdrawal match...
 
 #### **Match Found** 🎉
 
-```
+```text
 🎉 P2P Match Found!
 
 💰 Amount: $500
@@ -79,7 +79,7 @@ Processing match...
 
 #### **Match Approved** ✅
 
-```
+```text
 ✅ P2P Match Approved!
 
 💰 Amount: $500
@@ -91,7 +91,7 @@ Transaction processing...
 
 #### **Match Completed** 🎊
 
-```
+```text
 🎊 P2P Transaction Completed!
 
 💰 Amount: $500
@@ -103,7 +103,7 @@ Funds transferred successfully!
 
 #### **Match Failed** ❌
 
-```
+```text
 ❌ P2P Match Failed
 
 💰 Amount: $500
@@ -117,7 +117,7 @@ Returning to queue...
 
 #### **Queue Status** 📊
 
-```
+```text
 📊 P2P Queue Status
 
 📦 Total Items: 25
@@ -135,7 +135,7 @@ Returning to queue...
 
 #### **Match Opportunities** 🔍
 
-```
+```text
 🔍 P2P Match Opportunities
 
 1. $500 via Bank Transfer
@@ -160,7 +160,7 @@ Returning to queue...
 ````typescript
 ```javascript
 import { createP2PQueueAPI } from './src/p2p-queue-api';
-````
+````text
 
 const p2pAPI = createP2PQueueAPI(env);
 

@@ -65,7 +65,7 @@ Created example file:
 
 ## URL Format
 
-```
+```text
 https://mermaid.live/edit#pako:{base64}&crc={hash}
 ```
 

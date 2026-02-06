@@ -26,7 +26,7 @@ _Enterprise-scale domain-driven architecture with 15+ specialized domains_
 
 ### **🏗️ Domain Organization Structure**
 
-```
+```text
 enterprise/packages/
 ├── 🔐 security/              # Core Security & Fraud Prevention
 ├── 🛡️ compliance/            # Regulatory Compliance & Audit
@@ -91,7 +91,7 @@ enterprise/packages/
 
 #### **🏢 Department Structure:**
 
-```
+```text
 communications/
 ├── cloudflare-coordination/    # Cloudflare deployment coordination
 ├── escalation/                 # Issue escalation procedures
@@ -129,7 +129,7 @@ communications/
 
 #### **📦 Components:**
 
-```
+```text
 api/
 ├── functions/
 │   ├── analytics.js           # Analytics API
@@ -153,7 +153,7 @@ api/
 
 #### **📦 Components:**
 
-```
+```text
 database/
 ├── fire22-security.json       # Security configurations
 └── [Additional Schemas]       # Database schemas
@@ -173,7 +173,7 @@ database/
 
 #### **📦 Components:**
 
-```
+```text
 docs/
 ├── docs/                      # Main documentation
 │   └── assets/               # Documentation assets
@@ -197,7 +197,7 @@ docs/
 
 #### **📦 Components:**
 
-```
+```text
 content/
 ├── communications.atom        # Communications RSS feed
 ├── communications.rss         # Communications RSS feed
@@ -235,7 +235,7 @@ content/
 
 #### **📦 Components:**
 
-```
+```text
 scripts/
 ├── create-release.sh          # Release automation
 ├── setup-custom-domain.sh     # Domain setup
@@ -259,7 +259,7 @@ scripts/
 
 #### **📦 Components:**
 
-```
+```text
 testing/
 └── sse/                      # Server-sent events testing
 ```
@@ -323,7 +323,7 @@ testing/
 
 ### **🔗 Core Dependencies:**
 
-```
+```text
 Dashboard Domain (🏠)
 ├── Database Domain (💾) - Schema definitions
 ├── API Domain (🔌) - API handlers and middleware
@@ -345,7 +345,7 @@ Analytics Domain (📊)
 
 ### **📦 Package Dependencies:**
 
-```
+```text
 @fire22/dashboard (🏠)
 ├── @fire22/database (💾)
 ├── @fire22/api (🔌)

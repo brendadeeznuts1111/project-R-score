@@ -130,7 +130,7 @@ Design documents are evaluated against:
 
 When submitting PRs that require ARB review:
 
-```
+```text
 ARB-Design-Doc: docs/arb-design-docs/arb-2025-001-cqrs-betting-engine.json
 ARB-Review-Required: true
 ARB-Priority: HIGH

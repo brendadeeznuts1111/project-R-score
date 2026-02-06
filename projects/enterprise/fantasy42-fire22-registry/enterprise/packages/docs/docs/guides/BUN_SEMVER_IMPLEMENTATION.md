@@ -60,7 +60,7 @@ settlement = "0.1.0-testing"
 
 ### **Bun Semver Standard Format**
 
-```
+```text
 MAJOR.MINOR.PATCH[-PRERELEASE][+BUILD]
 ```
 
@@ -239,7 +239,7 @@ bun pm pkg get scripts.version:status
 
 ### **Hybrid Approach Benefits** 🔗
 
-```
+```text
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Bun Native    │───▶│  Enterprise VM  │───▶│   Git System    │
 │     Commands    │    │   Validation    │    │   Automation    │

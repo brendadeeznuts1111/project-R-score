@@ -87,7 +87,7 @@ interface BundleAnalysisOptions {
 ## Understanding the Report
 
 ### Example Output
-```
+```text
 ============================================================
 📦 BUNDLE ANALYSIS REPORT
 ============================================================

@@ -161,7 +161,7 @@ For each URI inspection, the system generates:
 
 ### **✅ Security Risk Distribution Chart**
 
-```
+```text
 📊 Security Risk Distribution:
    CRITICAL   ██████████████████████ 2
    HIGH       ████████ 4
@@ -194,7 +194,7 @@ export async function testMasterPerfInspector(): Promise<void> {
 
 ### **✅ Test Results Summary**
 
-```
+```text
 🧪 Testing Enhanced MASTER_PERF Inspector with URI Security Integration
 
 📊 Colored Terminal Output: ✅ PASS

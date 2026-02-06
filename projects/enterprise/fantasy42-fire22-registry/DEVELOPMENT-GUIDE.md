@@ -184,7 +184,7 @@ bun run dns:email
 
 ## 📁 Project Structure
 
-```
+```text
 fantasy42-fire22-registry/
 ├── src/                    # Source code
 ├── scripts/               # Development scripts

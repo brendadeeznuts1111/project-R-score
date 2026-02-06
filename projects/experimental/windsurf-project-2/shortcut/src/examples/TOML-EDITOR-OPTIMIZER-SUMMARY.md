@@ -96,7 +96,7 @@ api_key = "${BUN_SECRETS_API_KEY}"
 ## 🌐 **Service Architecture**
 
 ### **Three-Tier System**
-```
+```text
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Security      │    │   TOML Editor   │    │   Bun Secrets   │
 │   Dashboard     │    │   & Optimizer   │    │   Service       │

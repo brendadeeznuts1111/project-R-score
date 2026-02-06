@@ -296,7 +296,7 @@ Add to your Claude Desktop configuration (`claude_desktop_config.json`):
 
 ### Example AI Prompts
 
-```
+```text
 Analyze the tension levels in the network and identify any nodes with unusually high tension.
 
 Propagate tension from node-42 with a low decay rate and assess the impact on neighboring nodes.

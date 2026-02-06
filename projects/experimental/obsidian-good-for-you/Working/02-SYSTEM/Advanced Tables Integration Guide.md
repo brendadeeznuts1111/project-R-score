@@ -156,7 +156,7 @@ TABLE
 FROM #project 
 WHERE status = "active"
 SORT priority DESC
-```
+```text
 
 ### **Automated Calculations**
 Use formulas within Dataview-generated tables:
@@ -169,7 +169,7 @@ Use formulas within Dataview-generated tables:
 | [[Obsidian Mastery]] | 20 | 45 | 44% |
 | [[Python Programming]] | 15 | 30 | 50% |
 | [[Data Analysis]] | 10 | 15 | 67% |
-```
+```text
 
 ---
 
@@ -186,7 +186,7 @@ Use consistent formatting for professional appearance:
 | Development | 15 | 12 | 80% | 🔄 In Progress |
 | Testing | 10 | 3 | 30% | ⏳ Pending |
 | Deployment | 5 | 0 | 0% | 📋 Not Started |
-```
+```text
 
 ### **Color-Coded Status**
 Use emojis and symbols for visual status indicators:
@@ -253,7 +253,7 @@ Use emojis and symbols for visual status indicators:
 | Transportation | 300 | 200 | 100 | 67% |
 | Entertainment | 200 | 150 | 50 | 75% |
 | **Total** | **2600** | **2300** | **300** | **88%** |
-```
+```text
 
 ### **Time Tracking**
 ```markdown
@@ -267,7 +267,7 @@ Use emojis and symbols for visual status indicators:
 | Thursday | 4 | 2 | 1 | 1 | 2 | 10 |
 | Friday | 3 | 2 | 1 | 1 | 3 | 10 |
 | **Weekly Total** | **19** | **10** | **5** | **5** | **11** | **50** |
-```
+```text
 
 ---
 

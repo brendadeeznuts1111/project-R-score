@@ -20,7 +20,7 @@
 
 ## 📊 **Current System Status**
 
-```
+```text
 🎯 Overall Readiness Score: 55/100
 ❌ Status: NOT READY - Critical blockers preventing operations
 📈 Data Extraction Progress: 0% (COMPLETELY BLOCKED)

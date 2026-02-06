@@ -48,7 +48,7 @@ bun run commit:template -d finance -t feat -m "implement L-69 transaction tracki
 
 **Output:**
 
-```
+```text
 feat(finance): implement L-69 transaction tracking
 
 Department: Finance
@@ -69,7 +69,7 @@ bun run commit:template -d support -t fix -m "resolve ticket assignment bug" \
 
 **Output:**
 
-```
+```text
 fix(support): resolve ticket assignment bug
 
 Department: Customer Support
@@ -90,7 +90,7 @@ bun run commit:template -d operations -t feat -m "enhance live betting system" \
 
 **Output:**
 
-```
+```text
 feat(operations): enhance live betting system
 
 Department: Operations
@@ -195,7 +195,7 @@ The git hook automatically validates:
 
 **Example Validation Success:**
 
-```
+```text
 🔍 Fire22 Commit Message Validation
 
 ✅ Commit message validation passed!
@@ -211,7 +211,7 @@ The git hook automatically validates:
 
 ### **Before:** Single Author
 
-```
+```text
 91cd3d7 feat: merge team contributors department page [Brenda Williams]
 85c3d3c feat(docs): add comprehensive documentation [Brenda Williams]
 18cd6ea feat(api): add UUID support [Brenda Williams]
@@ -219,7 +219,7 @@ The git hook automatically validates:
 
 ### **After:** Department Attribution
 
-```
+```text
 4767e91 feat(contributors): implement enhanced commit system [Alex Chen <alex.chen@team.fire22>]
 - Contributors: Jordan Taylor, Sam Wilson
 - L-Keys: L-801, L-802, L-803

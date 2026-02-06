@@ -301,7 +301,7 @@ graph TB
     class AG1,AG2,AG3,AG4,ES1,ES2,ES3,ES4,DC1,DC2,DC3,DC4,SC1,SC2,SC3,SC4 service;
     class PT1,PT2,PT3,PT4,PT5,IP1,IP2,IP3,IP4,IP5,IP6,DW1,DW2,DW3,DW4 coordination;
     class NC1,NC2,NC3,NC4 performance;
-```
+```text
 
 ---
 

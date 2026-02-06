@@ -218,7 +218,7 @@ Controls:
 
 ### Integration Flow
 
-```
+```text
 1. UIPolicyManager loads manifest
    ↓
 2. Route handler calls UIPolicyManager.buildUIContext()
@@ -250,12 +250,12 @@ bun run dashboard
 ### Accessing Registry.html
 
 **Option 1**: Main API Server
-```
+```text
 http://localhost:3001/registry.html
 ```
 
 **Option 2**: Dashboard Server
-```
+```text
 http://localhost:8080/registry.html
 ```
 
@@ -277,7 +277,7 @@ bun run demo:html-rewriter:editor
 
 ## Component Relationships
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    PORT Constants                            │
 │              (src/constants/index.ts)                        │

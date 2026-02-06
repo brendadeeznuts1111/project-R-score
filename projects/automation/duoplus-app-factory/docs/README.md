@@ -47,7 +47,7 @@ bun run dashboard
 
 ## 📁 Project Structure
 
-```
+```text
 duoplus-lightning-v35/
 ├── package.json
 ├── .env.example

@@ -44,7 +44,7 @@ fw compliance-check validate --standard=gdpr --format=json
 - `ccpa` - California Consumer Privacy Act
 
 **Output Example**:
-```
+```text
 ✅ PCI-DSS 3.2.1 COMPLIANCE CHECK
 ═════════════════════════════════════════════════
 
@@ -96,7 +96,7 @@ fw compliance-check all --format=html --export=comprehensive-audit.html
 ```
 
 **Output Example**:
-```
+```text
 🔍 COMPREHENSIVE COMPLIANCE ASSESSMENT
 ═════════════════════════════════════════════════
 
@@ -157,7 +157,7 @@ fw compliance-check history --format=json
 ```
 
 **Output Example**:
-```
+```text
 📈 COMPLIANCE HISTORY - PCI-DSS
 ═════════════════════════════════════════════════
 

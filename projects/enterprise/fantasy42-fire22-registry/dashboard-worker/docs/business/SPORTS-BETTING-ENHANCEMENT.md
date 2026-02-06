@@ -140,7 +140,7 @@ calculations - all integrated with your Telegram bot!
 
 ### **Rate Calculation**
 
-```
+```text
 Final Rate = Base Rate × Performance Multiplier × Volume Multiplier × Risk Multiplier × VIP Multiplier
 ```
 
@@ -246,7 +246,7 @@ Final Rate = Base Rate × Performance Multiplier × Volume Multiplier × Risk Mu
 
 ### **Calculation Formula**
 
-```
+```text
 Base Win = Stake × Odds
 VIP Bonus = Stake × VIP Rate Discount
 Risk Adjustment = Stake × Risk Multiplier
@@ -263,7 +263,7 @@ Final Win = Base Win + VIP Bonus - Risk Adjustment
 
 ### **Example Calculation**
 
-```
+```text
 Stake: $100
 Odds: 2.5
 VIP Tier: Gold (15% discount)

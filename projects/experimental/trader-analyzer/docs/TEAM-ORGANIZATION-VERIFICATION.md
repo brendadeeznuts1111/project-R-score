@@ -84,7 +84,7 @@ The script performs the following checks:
 
 ### Example Output
 
-```
+```text
 📊 Team Organization Verification Results
 
 Total Issues: 0

@@ -29,7 +29,7 @@ The Enhanced API Integration provides:
 ````typescript
 ```javascript
 import { EnhancedAPIService } from './src/api/enhanced-api-service';
-````
+````text
 
 // Initialize with enhanced security const api = new EnhancedAPIService({
 baseURL: 'https://api.fire22.com', apiVersion: 'v1', securityLevel: 'enhanced',

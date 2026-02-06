@@ -195,7 +195,7 @@ bun run features:status --features --detailed
 ```
 
 **Output:**
-```
+```text
 🏗️ SYSTEM STATUS
 ══════════════════════════════════════════════════
 Environment: development
@@ -309,7 +309,7 @@ description = "Premium tier - full features, billing included"
 ```
 
 ### **CLI Errors**
-```
+```text
 Error: API Error: 404 Not Found
 Error: Feature not found
 Error: Connection timeout

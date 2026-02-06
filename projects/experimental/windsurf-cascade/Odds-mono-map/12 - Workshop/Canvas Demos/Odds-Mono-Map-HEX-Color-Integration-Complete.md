@@ -66,7 +66,7 @@ related-files:
 
 **Integration Ecosystem Canvas**:
 
-```
+```text
 🎨 Color Distribution:
   #6366F1: 3 nodes (domain.integration)     ← Integration components
   #8B5CF6: 2 nodes (status.experimental)   ← Obsidian components  
@@ -77,7 +77,7 @@ related-files:
 
 **System Design Canvas**:
 
-```
+```text
 🎨 Color Distribution:
   #8B5CF6: 1 nodes (status.experimental)   ← Overview/experimental
   #059669: 1 nodes (domain.core)           ← Core components
@@ -88,7 +88,7 @@ related-files:
 
 **Canvas-Vault Integration Demo**:
 
-```
+```text
 🎨 Color Distribution:
   #EF4444: 4 nodes (status.deprecated)     ← Legacy/demo items
   #F59E0B: 4 nodes (brand.accent)         ← Tutorial/documentation
@@ -181,7 +181,7 @@ related-files:
 
 **Processing Results**:
 
-```
+```text
 📁 Canvas Files Processed: 5
 ✅ Successfully Migrated: 3  
 ❌ Errors (empty files): 2

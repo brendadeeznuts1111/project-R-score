@@ -403,7 +403,7 @@ bun run start
 
 ### Browser DevTools
 
-```
+```text
 1. Open: F12 or Cmd+Option+I
 2. Check Console for errors
 3. Network tab shows API calls

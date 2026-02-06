@@ -84,7 +84,7 @@ bun run scripts/tag-system.ts analytics
 
 ## 📋 Project Structure
 
-```
+```text
 duo-automation/
 ├── 📁 src/                    # Source code
 │   ├── @core/                 # Core system components
@@ -108,7 +108,7 @@ duo-automation/
 
 ### Structured Format
 
-```
+```text
 [DOMAIN][SCOPE][TYPE][META:{PROPERTY}][CLASS][#REF:*][BUN-NATIVE]
 ```
 

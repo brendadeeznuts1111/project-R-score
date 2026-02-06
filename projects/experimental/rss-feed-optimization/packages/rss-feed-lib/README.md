@@ -372,7 +372,7 @@ The template includes:
 
 ### Template Structure
 
-```
+```text
 my-rss-app/
    index.js              # Main application with basic examples
    examples/             # Advanced usage patterns

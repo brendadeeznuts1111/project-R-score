@@ -26,7 +26,7 @@ The Empire Pro CLI provides comprehensive status endpoints deployed on Cloudflar
 ## 📍 Available Endpoints
 
 ### 📊 **Primary Status Endpoint**
-```
+```text
 GET https://status.empire-pro-cli.com/status
 ```
 
@@ -86,7 +86,7 @@ GET https://status.empire-pro-cli.com/status
 ---
 
 ### 🏥 **Health Check Endpoint**
-```
+```text
 GET https://status.empire-pro-cli.com/health
 ```
 
@@ -129,7 +129,7 @@ GET https://status.empire-pro-cli.com/health
 ---
 
 ### 📈 **Metrics Endpoint**
-```
+```text
 GET https://status.empire-pro-cli.com/metrics
 ```
 
@@ -185,7 +185,7 @@ GET https://status.empire-pro-cli.com/metrics
 ---
 
 ### 📊 **Analytics Endpoint**
-```
+```text
 GET https://status.empire-pro-cli.com/analytics
 GET https://status.empire-pro-cli.com/analytics?format=csv
 GET https://status.empire-pro-cli.com/analytics?format=html
@@ -233,7 +233,7 @@ CF_EDGE_LOCATION=us-east-1
 ```
 
 **Bucket Structure:**
-```
+```text
 empire-pro-reports/
 ├── reports/
 │   ├── 2026-01-15/

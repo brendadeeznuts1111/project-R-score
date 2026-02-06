@@ -144,7 +144,7 @@ throw new TagManagerError('Operation failed', {
 ```
 
 Output:
-```
+```text
 ✗ TagManagerError: Operation failed
 Context: {
   operation: "scan",

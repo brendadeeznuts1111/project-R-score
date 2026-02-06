@@ -4,7 +4,7 @@
 
 ### **1. Dashboard Hierarchy & Organization**
 
-```
+```text
 DuoPlus Dashboard v3.7
 ├── 📁 Core Dashboards (6)
 │   ├── 👥 Venmo Family System
@@ -103,7 +103,7 @@ DuoPlus Dashboard v3.7
 ## 🗂️ **File Structure & Organization**
 
 ### **Directory Layout**
-```
+```text
 duoplus-dashboard-v3.7/
 ├── 📁 dist/                           # Compiled/Production builds
 │   ├── venmo-family-webui-demo/

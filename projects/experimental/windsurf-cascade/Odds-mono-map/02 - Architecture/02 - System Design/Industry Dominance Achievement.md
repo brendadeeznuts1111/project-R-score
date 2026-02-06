@@ -264,7 +264,7 @@ With 1,458 points, we've exceeded every target, shattered industry benchmarks, a
 
 ## 📊 **Final Score Summary**
 
-```
+```text
 🏆 INDUSTRY DOMINANCE ACHIEVED 🏆
 ═══════════════════════════════════════════════════════════
 

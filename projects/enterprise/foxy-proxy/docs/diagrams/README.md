@@ -20,7 +20,7 @@ These diagrams help visualize:
 
 ## 🏗️ Current Structure Issues
 
-```
+```text
 ❌ Deep nesting (4+ levels)
 ❌ Scattered related code
 ❌ Complex import paths
@@ -31,7 +31,7 @@ These diagrams help visualize:
 
 ## ✅ Refactored Structure Benefits
 
-```
+```text
 ✅ Feature-based organization
 ✅ Co-located code
 ✅ Shallow import paths

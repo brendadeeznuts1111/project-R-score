@@ -190,7 +190,7 @@ bun run load:test
 
 ### **1. Code Structure**
 
-```
+```text
 src/
 ├── admin/           # Admin panel and configuration
 ├── api/             # API routes and handlers

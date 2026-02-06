@@ -16,7 +16,7 @@ const data = [
 console.log(inspect.table(data));
 ```
 **Output:**
-```
+```text
 ┌────┬─────────┬─────┬────────┐
 │ id │ name    │ age │ active │
 ├────┼─────────┼─────┼────────┤

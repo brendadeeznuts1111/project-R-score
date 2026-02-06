@@ -81,7 +81,7 @@ Successfully implemented a production-ready monitoring system with enterprise-gr
 ## 📈 Performance Metrics
 
 ### Bundle Analysis Results
-```
+```text
 📦 Bundle Analysis | Size: 0.22 MB | Chunks: 1 | Compression: 5.7%
 
 📊 Top Dependencies:

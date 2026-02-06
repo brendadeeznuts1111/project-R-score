@@ -19,7 +19,7 @@ The Rotation Heatmap Dashboard displays 10,000+ live games in a real-time, 60 FP
 
 ## Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │ RotationCache → 10k+ GameState                             │
 │    ↓                                                        │
@@ -45,7 +45,7 @@ bun run grid:server
 
 ### Access the Grid
 
-```
+```text
 http://localhost:3334/views/rotation-grid.html
 ```
 
@@ -111,7 +111,7 @@ interface GridDelta {
 ### Grid Index Format
 
 The `.rotgrid.index` file uses tab-separated values:
-```
+```text
 game-id<TAB>rotation-number<TAB>heat-string<TAB>fingerprint
 ```
 

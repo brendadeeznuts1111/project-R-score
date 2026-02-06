@@ -4,7 +4,7 @@
 
 ### **Current Implementation:**
 
-```
+```text
 📁 Current R2 Integration:
 ├── 📄 utils/r2/base.ts (8.1)           ← Base R2 client
 ├── 📄 utils/r2/aws-client.ts (8.2)     ← AWS SDK implementation
@@ -29,7 +29,7 @@
 
 ### **New Feature-Based Organization:**
 
-```
+```text
 📁 Refactored R2 Integration:
 ├── 📁 features/storage/                    🆕
 │   ├── 📁 components/
@@ -265,7 +265,7 @@ export function PhoneControl() {
 
 ## 📁 **Final Directory Structure**
 
-```
+```text
 packages/dashboard/src/
 ├── features/
 │   ├── phones/

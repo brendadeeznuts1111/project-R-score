@@ -110,7 +110,7 @@ bun run start-dashboard.js --config=./prod-config.json
 
 ### Single Account Output
 
-```
+```text
 🍎 Apple ID Creator - Single Account Mode
 ==================================================
 📋 Configuration:
@@ -140,7 +140,7 @@ bun run start-dashboard.js --config=./prod-config.json
 
 ### Batch Creation Output
 
-```
+```text
 🍎 Apple ID Creator - Batch Mode
 ==================================================
 📋 Batch Configuration:
@@ -203,7 +203,7 @@ Configure in `config.json`:
 
 ## 📁 File Structure
 
-```
+```text
 windsurf-project/
 ├── create-appleid.js          # Single account CLI
 ├── batch-create.js            # Batch creation CLI

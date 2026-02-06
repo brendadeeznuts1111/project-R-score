@@ -208,7 +208,7 @@ If different, GUI apps like Obsidian may not find Node.js.
 
 ## Architecture
 
-```
+```text
 src/
 ├── main.ts                      # Plugin entry point
 ├── core/                        # Core infrastructure

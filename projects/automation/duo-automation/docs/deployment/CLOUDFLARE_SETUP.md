@@ -23,7 +23,7 @@ Set up these routing rules:
 
 #### Apple ID Creation Addresses
 
-```
+```text
 # Catch-all for Apple ID accounts
 *@factory-wager.com → your-gmail@gmail.com
 
@@ -37,7 +37,7 @@ support@factory-wager.com → your-gmail@gmail.com
 
 Your MX records are already configured in `config.json`:
 
-```
+```text
 factory-wager.com.  MX  10  route1.mx.cloudflare.net
 factory-wager.com.  MX  20  route2.mx.cloudflare.net
 ```
@@ -160,7 +160,7 @@ factory-wager.com. 300 IN MX 20 route2.mx.cloudflare.net.
 
 Once configured, you'll see:
 
-```
+```text
 🍎 Apple ID Creator - Single Account Mode
 ==================================================
 📋 Configuration:

@@ -154,7 +154,7 @@ tags: [weekly-review]           # Auto-tag
 ## 🔍 Search & Query Examples
 
 ### Tag-Based Searches
-```
+```text
 tag:#project                    # All projects
 tag:#skill AND tag:#active      # Active skills
 tag:#high-priority              # High priority items
@@ -183,7 +183,7 @@ SORT hours-invested DESC
 ```
 
 ### Combined Searches
-```
+```text
 (tag:#project OR tag:#skill) AND tag:#active
 tag:#daily-note AND mood:"productive"
 tag:#knowledge AND tag:#technical

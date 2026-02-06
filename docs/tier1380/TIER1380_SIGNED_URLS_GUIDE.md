@@ -50,7 +50,7 @@ export async function getSignedR2URL(
 - ✅ **Platform-native storage**: Uses R2's built-in signing
 
 ### **3. Performance Metrics**
-```
+```text
 📊 v1.2 Performance Results:
 ├── Signed URL generation latency: 0.9–1.4ms
 ├── Maximum lifetime enforced: 7 days
@@ -65,7 +65,7 @@ export async function getSignedR2URL(
 ## 🚀 **Integration Results**
 
 ### **✅ All Tests Passed**
-```
+```text
 🔗 Signed URLs Integration Test Results:
 ├── Basic signed URL generation: ✅ Working
 ├── Scanner-cookies integration: ✅ Working
@@ -78,7 +78,7 @@ export async function getSignedR2URL(
 ```
 
 ### **✅ Security Validation**
-```
+```text
 🔒 Security Features Verified:
 ├── Maximum lifetime enforcement: ✅ 7 days cap
 ├── Security level classification: ✅ High/Medium/Low
@@ -254,7 +254,7 @@ console.log({signedUrl:signed,key,expiresIn:"24 hours","🔒":"Time-bound secure
 
 ## 🏗️ **Architecture Overview**
 
-```
+```text
 ┌────────────────────────────────────────────────────────────────────┐
 │ Cloudflare Worker (api.tier1380.com)                           │
 │ ┌────────────────────────────────────────────────────────────────┐ │
@@ -326,7 +326,7 @@ const metadata = {
 ## 📈 **Performance Metrics**
 
 ### **Benchmarks**
-```
+```text
 ⚡ Performance Benchmarks:
 ├── Signed URL generation: 11.05ms average
 ├── Operations per second: 91

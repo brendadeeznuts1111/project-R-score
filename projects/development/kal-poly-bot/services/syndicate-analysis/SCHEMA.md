@@ -179,7 +179,7 @@ Many-to-many relationship between emerging patterns and syndicates.
 
 ## Entity Relationship Diagram
 
-```
+```text
 ┌─────────────────────┐
 │  syndicate_groups   │
 │  ─────────────────  │

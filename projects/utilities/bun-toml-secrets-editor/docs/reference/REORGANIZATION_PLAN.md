@@ -31,7 +31,7 @@ This document outlines the comprehensive reorganization of the bun-toml-secrets-
 
 ## Proposed Structure
 
-```
+```text
 bun-toml-secrets-editor/
 ├── docs/                           # All documentation
 │   ├── guides/                    # User guides

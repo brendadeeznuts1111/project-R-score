@@ -87,7 +87,7 @@ review-date: 2025-12-18T17:59:00Z
 ### **🎯 Real-Time Visual Analytics**
 
 #### **📊 Canvas Overview Dashboard**
-```
+```text
 🎨 Canvas Visual Monitoring System
 ├── 📊 Canvas Overview
 │   ├── Total Canvases: 4 files
@@ -195,7 +195,7 @@ review-date: 2025-12-18T17:59:00Z
 ### **🏗️ Canvas Analysis Architecture**
 
 #### **🔧 Canvas File Processing**
-```
+```text
 Canvas Discovery → Content Analysis → Health Assessment → Visual Presentation
        ↓                ↓                    ↓                    ↓
 Recursive Scan    JSON Parsing        Multi-Dimensional     Beautiful Tables
@@ -204,7 +204,7 @@ for .canvas files  Node/Connection    Health Scoring        with Progress Bars
 ```
 
 #### **📊 Data Flow Architecture**
-```
+```text
 Canvas Files → Metadata Extraction → Analytics Engine → Health Scoring → Dashboard Visualization
      ↓               ↓                    ↓               ↓              ↓
    4 Files        Node/Connection      Complexity      0-100% Scores   Professional

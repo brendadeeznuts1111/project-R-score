@@ -76,7 +76,7 @@ while (offset < buffer.length && matches.length < limit) {
 ### Benchmark Results
 From `examples/bun-1.3.6-bench.ts`:
 
-```
+```text
 🔍 Buffer.indexOf/includes (SIMD search)
    indexOf (found):      ~X ms (Y ops/s)
    indexOf (not found):  ~X ms (Y ops/s)

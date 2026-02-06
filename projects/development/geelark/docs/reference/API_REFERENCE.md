@@ -234,7 +234,7 @@ uploadService.cleanup(1800000);
 
 ### Base URL
 
-```
+```text
 http://localhost:3000/api
 ```
 

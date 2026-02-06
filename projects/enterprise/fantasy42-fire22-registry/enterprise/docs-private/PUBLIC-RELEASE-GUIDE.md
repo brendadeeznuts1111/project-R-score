@@ -28,7 +28,7 @@ _Complete enterprise package registry with domain-driven architecture_
 
 ### **🏗️ Repository Structure**
 
-```
+```text
 fantasy42-fire22-registry/
 ├── 📦 packages/                    # Registry packages
 │   ├── 🔐 core-security/          # Security domain

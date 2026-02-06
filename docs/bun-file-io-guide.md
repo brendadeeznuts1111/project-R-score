@@ -229,7 +229,7 @@ Run with `bun run bun-file-io-bench.ts`. Compares `Bun.write`/`Bun.file` across 
 | node:fs writeFile/readFile | `node:fs/promises`           | `string`         | 10 MB    | `readFile`       | Node compat comparison             |
 
 **Sample output** (Apple M-series, APFS):
-```
+```text
 --- Bun File I/O Benchmarks ---
 [1 KB string]  write: 0.08ms  read: 0.05ms
 [100 KB string] write: 0.12ms  read: 0.09ms

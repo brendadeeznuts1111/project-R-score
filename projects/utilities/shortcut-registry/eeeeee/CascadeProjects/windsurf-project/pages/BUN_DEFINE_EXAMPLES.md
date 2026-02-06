@@ -109,7 +109,7 @@ console.log("Production mode");
 
 From the example output:
 
-```
+```text
 [2026-01-23T18:02:32.451Z] 🚀 Starting KYC failsafe for user: user123
 {"timestamp":"...","level":"WARN","message":"KYC failsafe triggered",...}
 {"timestamp":"...","level":"INFO","message":"Starting device integrity verification",...}

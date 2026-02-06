@@ -6,7 +6,7 @@ This document outlines the organized structure of the Foxy Proxy repository with
 
 ## Root Structure
 
-```
+```text
 foxy-proxy/
 ├── README.md                    # Main project documentation
 ├── package.json                 # Root package configuration
@@ -38,7 +38,7 @@ foxy-proxy/
 
 ## Dashboard Package Structure
 
-```
+```text
 packages/dashboard/
 ├── README.md                    # Dashboard-specific documentation
 ├── package.json                 # Dashboard dependencies

@@ -21,7 +21,7 @@
 ## 📊 **IMPACT SUMMARY**
 
 ### **🔍 New Violations Identified**: 76
-```
+```text
 ├── process.env usage (instead of Bun.env): ~60 violations
 ├── dotenv package imports: ~8 violations  
 ├── dotenv.config() calls: ~4 violations

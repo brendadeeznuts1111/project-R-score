@@ -51,7 +51,7 @@
 ## Test Results
 
 ### Manual Testing
-```
+```text
 $ bun run audit:comprehensive
 
 🔍 Running comprehensive documentation audit...

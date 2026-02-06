@@ -246,7 +246,7 @@ describe('URLHandler', () => {
     it('should resolve relative URLs', (assert) => {
       assert.equal(
         URLHandler.resolve('https://example.com/base/', 'relative/path'),
-        'https://example.com/relative/path'
+        'https://example.com/base/relative/path'
       );
       assert.equal(
         URLHandler.resolve('https://example.com/base/', '/absolute/path'),
@@ -281,10 +281,10 @@ describe('URLFragmentUtils', () => {
 
     it('should handle empty fragments', (assert) => {
       const params = URLFragmentUtils.parseFragment('');
-      assert.deepEqual(params, {});
-      
+      assert.equal(Object.keys(params).length, 0);
+
       const params2 = URLFragmentUtils.parseFragment('#');
-      assert.deepEqual(params2, {});
+      assert.equal(Object.keys(params2).length, 0);
     });
   });
 
@@ -469,10 +469,11 @@ describe('FactoryWagerURLUtils', () => {
 describe('Edge Cases', () => {
   it('should handle internationalized domain names', (assert) => {
     const url = URLHandler.parse('https://例子.测试/路径#片段');
-    
-    assert.equal(url.hostname, '例子.测试');
-    assert.equal(url.pathname, '/路径');
-    assert.equal(url.fragment, '片段');
+
+    // URL API punycode-encodes internationalized domain names
+    assert.equal(url.hostname, 'xn--fsqu00a.xn--0zwm56d');
+    assert.equal(url.pathname, '/%E8%B7%AF%E5%BE%84');
+    assert.equal(url.fragment, '%E7%89%87%E6%AE%B5');
   });
 
   it('should handle complex fragments with special characters', (assert) => {

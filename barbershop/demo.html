@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏗️ Bun Metafile Visualizer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .header p { opacity: 0.9; font-size: 1.1em; }
+        .content { padding: 30px; }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #6b7280;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .tab.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+        }
+        .tab:hover { color: #3b82f6; }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active { display: block; }
+        .card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .card h3 { color: #1f2937; margin-bottom: 15px; font-size: 1.3em; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-value { font-size: 2em; font-weight: bold; margin-bottom: 5px; }
+        .stat-label { opacity: 0.9; }
+        .tree {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .tree-node {
+            margin-left: 20px;
+            position: relative;
+        }
+        .tree-node::before {
+            content: '├─';
+            position: absolute;
+            left: -15px;
+            color: #9ca3af;
+        }
+        .tree-node:last-child::before { content: '└─'; }
+        .file-size { color: #6b7280; font-size: 12px; }
+        .import-type {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-left: 8px;
+        }
+        .import-external { background: #fef3c7; color: #92400e; }
+        .import-internal { background: #dbeafe; color: #1e40af; }
+        .import-binary { background: #fce7f3; color: #9f1239; }
+        .bundle-bar {
+            background: #e5e7eb;
+            border-radius: 4px;
+            height: 30px;
+            overflow: hidden;
+            margin: 10px 0;
+            display: flex;
+        }
+        .bundle-segment {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .bundle-segment:hover { transform: scaleY(1.1); }
+        .dashboard { background: #3b82f6; }
+        .server { background: #10b981; }
+        .tickets { background: #f59e0b; }
+        .demo-upload {
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+        }
+        .demo-upload:hover { border-color: #3b82f6; background: #f0f9ff; }
+        .demo-upload.dragover { 
+            border-color: #3b82f6; 
+            background: #dbeafe; 
+            transform: scale(1.02);
+        }
+        .file-input { display: none; }
+        .upload-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+        .upload-btn:hover { background: #2563eb; transform: translateY(-2px); }
+        .uploaded-files {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .file-item {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .file-info { flex: 1; }
+        .file-name { font-weight: 500; color: #1f2937; }
+        .file-details { font-size: 12px; color: #6b7280; margin-top: 4px; }
+        .file-size { background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏗️ Bun Metafile Visualizer</h1>
+            <p>Interactive demo of Bun build metadata and binary assets (v1.3.6+)</p>
+        </div>
+        
+        <div class="content">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('overview')">📊 Overview</button>
+                <button class="tab" onclick="showTab('inputs')">📁 Inputs</button>
+                <button class="tab" onclick="showTab('outputs')">📦 Outputs</button>
+                <button class="tab" onclick="showTab('binary')">🎯 Binary Assets</button>
+                <button class="tab" onclick="showTab('demo')">🚀 Demo Upload</button>
+            </div>
+
+            <!-- Overview Tab -->
+            <div id="overview" class="tab-content active">
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">Source Files</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">Output Bundles</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">151KB</div>
+                        <div class="stat-label">Total Size</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">84%</div>
+                        <div class="stat-label">Compression</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🎯 Bundle Size Distribution</h3>
+                    <div class="bundle-bar">
+                        <div class="bundle-segment dashboard" style="width: 65%">Dashboard 65%</div>
+                        <div class="bundle-segment server" style="width: 23%">Server 23%</div>
+                        <div class="bundle-segment tickets" style="width: 12%">Tickets 12%</div>
+                    </div>
+                    <p style="margin-top: 10px; color: #6b7280;">
+                        Dashboard (98KB) • Server (35KB) • Tickets (17KB)
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>🔍 Build Process Visualization</h3>
+                    <div class="tree">
+                        <div><strong>barbershop-demo/</strong></div>
+                        <div class="tree-node"><strong>src/</strong> <span class="file-size">(180KB source)</span>
+                            <div class="tree-node">barbershop-dashboard.ts <span class="file-size">(75KB)</span> <span class="import-type import-internal">main</span></div>
+                            <div class="tree-node">barber-server.ts <span class="file-size">(35KB)</span> <span class="import-type import-internal">api</span></div>
+                            <div class="tree-node">barbershop-tickets.ts <span class="file-size">(30KB)</span> <span class="import-type import-internal">tickets</span></div>
+                            <div class="tree-node">logger.ts <span class="file-size">(3KB)</span> <span class="import-type import-internal">shared</span></div>
+                            <div class="tree-node">ui-v2.ts <span class="file-size">(18KB)</span> <span class="import-type import-internal">ui</span></div>
+                            <div class="tree-node">factory-secrets.ts <span class="file-size">(3KB)</span> <span class="import-type import-internal">config</span></div>
+                            <div class="tree-node">fetch-utils.ts <span class="file-size">(2KB)</span> <span class="import-type import-internal">utils</span></div>
+                            <div class="tree-node">manifest.toml <span class="file-size">(1KB)</span> <span class="import-type import-external">config</span></div>
+                        </div>
+                        <div class="tree-node"><strong>dist/</strong> <span class="file-size">(151KB bundled)</span>
+                            <div class="tree-node">barbershop-dashboard.js <span class="file-size">(98KB)</span> <span class="import-type import-internal">bundle</span></div>
+                            <div class="tree-node">barber-server.js <span class="file-size">(35KB)</span> <span class="import-type import-internal">bundle</span></div>
+                            <div class="tree-node">barbershop-tickets.js <span class="file-size">(17KB)</span> <span class="import-type import-internal">bundle</span></div>
+                            <div class="tree-node">meta.json <span class="file-size">(12KB)</span> <span class="import-type import-external">metadata</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inputs Tab -->
+            <div id="inputs" class="tab-content">
+                <div class="card">
+                    <h3>📁 Input Files Analysis</h3>
+                    <div class="tree">
+                        <div><strong>barbershop-dashboard.ts</strong> <span class="file-size">(75,361 bytes)</span>
+                            <div class="tree-node">import "bun" <span class="import-type import-external">external</span></div>
+                            <div class="tree-node">import "bun:sqlite" <span class="import-type import-external">external</span></div>
+                            <div class="tree-node">import "fs" <span class="import-type import-external">external</span></div>
+                            <div class="tree-node">import "dns/promises" <span class="import-type import-external">external</span></div>
+                            <div class="tree-node">import "crypto" <span class="import-type import-external">external</span></div>
+                            <div class="tree-node">import "./manifest.toml" <span class="import-type import-internal">with: {type: "toml"}</span></div>
+                            <div class="tree-node">import "./fetch-utils" <span class="import-type import-internal">internal</span></div>
+                            <div class="tree-node">import "./ui-v2" <span class="import-type import-internal">internal</span></div>
+                            <div class="tree-node">import "./factory-secrets" <span class="import-type import-internal">internal</span></div>
+                            <div class="tree-node">import "./logger" <span class="import-type import-internal">internal</span></div>
+                        </div>
+                        <div style="margin-top: 20px;"><strong>barber-server.ts</strong> <span class="file-size">(35,000 bytes)</span>
+                            <div class="tree-node">import "bun" <span class="import-type import-external">external</span></div>
+                            <div class="tree-node">import "bun:sqlite" <span class="import-type import-external">external</span></div>
+                            <div class="tree-node">import "./logger" <span class="import-type import-internal">shared</span></div>
+                        </div>
+                        <div style="margin-top: 20px;"><strong>barbershop-tickets.ts</strong> <span class="file-size">(30,000 bytes)</span>
+                            <div class="tree-node">import "bun" <span class="import-type import-external">external</span></div>
+                            <div class="tree-node">import "./logger" <span class="import-type import-internal">shared</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Outputs Tab -->
+            <div id="outputs" class="tab-content">
+                <div class="card">
+                    <h3>📦 Output Bundles</h3>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h4>barbershop-dashboard.js (98,926 bytes)</h4>
+                        <div class="bundle-bar">
+                            <div class="bundle-segment dashboard" style="width: 72%">Core 72%</div>
+                            <div class="bundle-segment" style="width: 18%; background: #8b5cf6;">UI 18%</div>
+                            <div class="bundle-segment" style="width: 10%; background: #64748b;">Utils 10%</div>
+                        </div>
+                        <div class="tree" style="margin-top: 15px;">
+                            <div class="tree-node">barbershop-dashboard.ts <span class="file-size">(71,520 bytes in output)</span></div>
+                            <div class="tree-node">ui-v2.ts <span class="file-size">(17,976 bytes in output)</span></div>
+                            <div class="tree-node">factory-secrets.ts <span class="file-size">(2,911 bytes in output)</span></div>
+                            <div class="tree-node">logger.ts <span class="file-size">(3,091 bytes in output)</span></div>
+                            <div class="tree-node">fetch-utils.ts <span class="file-size">(1,902 bytes in output)</span></div>
+                            <div class="tree-node">manifest.toml <span class="file-size">(1,377 bytes in output)</span></div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                        <h4>barber-server.js (35,239 bytes)</h4>
+                        <div class="bundle-bar">
+                            <div class="bundle-segment server" style="width: 85%">Core 85%</div>
+                            <div class="bundle-segment" style="width: 15%; background: #64748b;">Utils 15%</div>
+                        </div>
+                        <div class="tree" style="margin-top: 15px;">
+                            <div class="tree-node">barber-server.ts <span class="file-size">(30,000 bytes in output)</span></div>
+                            <div class="tree-node">logger.ts <span class="file-size">(3,091 bytes in output)</span></div>
+                            <div class="tree-node">manifest.toml <span class="file-size">(1,377 bytes in output)</span></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4>barbershop-tickets.js (17,528 bytes)</h4>
+                        <div class="bundle-bar">
+                            <div class="bundle-segment tickets" style="width: 82%">Core 82%</div>
+                            <div class="bundle-segment" style="width: 18%; background: #64748b;">Utils 18%</div>
+                        </div>
+                        <div class="tree" style="margin-top: 15px;">
+                            <div class="tree-node">barbershop-tickets.ts <span class="file-size">(14,000 bytes in output)</span></div>
+                            <div class="tree-node">logger.ts <span class="file-size">(3,091 bytes in output)</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Binary Assets Tab -->
+            <div id="binary" class="tab-content">
+                <div class="card">
+                    <h3>🎯 Binary Assets Support (v1.3.6+)</h3>
+                    <p style="color: #6b7280; margin-bottom: 20px;">
+                        Bun now tracks binary files (Blob, File, ArrayBuffer) in build metadata. 
+                        The barbershop demo uses this for profile picture uploads.
+                    </p>
+                    
+                    <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 6px; padding: 15px; margin: 20px 0;">
+                        <h4 style="color: #92400e; margin-bottom: 10px;">📸 Profile Picture Upload Example</h4>
+                        <pre style="background: #fff; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 12px;">
+// From barbershop-dashboard.ts
+const profilePicture = formdata.get('profilePicture');
+
+if (!(profilePicture instanceof Blob)) {
+  throw new HttpError(400, 'MISSING_PROFILE_PICTURE');
+}
+
+await Bun.write(path, profilePicture);</pre>
+                    </div>
+
+                    <div class="tree">
+                        <div><strong>Metafile Binary Asset Tracking</strong></div>
+                        <div class="tree-node">inputs.barbershop-dashboard.ts.assets
+                            <div class="tree-node">profile-uploads <span class="import-type import-binary">type: blob</span></div>
+                            <div class="tree-node">dynamic: true <span class="import-type import-binary">runtime</span></div>
+                        </div>
+                        <div class="tree-node">outputs.barbershop-dashboard.js.assets
+                            <div class="tree-node">profile-uploads <span class="import-type import-binary">type: blob</span></div>
+                            <div class="tree-node">maxSize: "5MB" <span class="import-type import-binary">limit</span></div>
+                            <div class="tree-node">storage: "./uploads/" <span class="import-type import-binary">path</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo Upload Tab -->
+            <div id="demo" class="tab-content">
+                <div class="card">
+                    <h3>🚀 Binary Upload Demo</h3>
+                    <p style="color: #6b7280; margin-bottom: 20px;">
+                        Experience the same binary file handling used in the barbershop dashboard. 
+                        Upload any file to see how Blob/File objects work in Bun.
+                    </p>
+                    
+                    <div class="demo-upload" id="dropZone">
+                        <div style="font-size: 48px; margin-bottom: 20px;">📁</div>
+                        <h3 style="color: #1f2937; margin-bottom: 10px;">Drop files here or click to upload</h3>
+                        <p style="color: #6b7280;">Supports any file type • Max 5MB • Real Blob processing</p>
+                        <input type="file" id="fileInput" class="file-input" multiple>
+                        <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                            Choose Files
+                        </button>
+                    </div>
+                    
+                    <div id="uploadedFiles" class="uploaded-files"></div>
+                </div>
+
+                <div class="card">
+                    <h3>📝 File Content Types Demo</h3>
+                    <p style="color: #6b7280; margin-bottom: 20px;">
+                        Bun supports multiple file content types. Click the buttons below to see how each type works.
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                        <button class="upload-btn" onclick="demonstrateString()" style="background: #3b82f6;">
+                            📄 String Content
+                        </button>
+                        <button class="upload-btn" onclick="demonstrateBlob()" style="background: #10b981;">
+                            🎯 Blob Content
+                        </button>
+                        <button class="upload-btn" onclick="demonstrateTypedArray()" style="background: #f59e0b;">
+                            🔢 TypedArray
+                        </button>
+                        <button class="upload-btn" onclick="demonstrateArrayBuffer()" style="background: #ef4444;">
+                            💾 ArrayBuffer
+                        </button>
+                    </div>
+                    
+                    <div id="contentTypeDemo" style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 15px; min-height: 100px;">
+                        <p style="color: #6b7280; text-align: center;">Click a button above to see file content type demonstrations</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🔄 Content Type Conversion</h3>
+                    <p style="color: #6b7280; margin-bottom: 20px;">
+                        See how different content types can be converted between each other - just like Bun does internally.
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <button class="upload-btn" onclick="convertStringToBlob()" style="background: #8b5cf6;">
+                            String → Blob
+                        </button>
+                        <button class="upload-btn" onclick="convertBlobToArrayBuffer()" style="background: #ec4899;">
+                            Blob → ArrayBuffer
+                        </button>
+                        <button class="upload-btn" onclick="convertArrayBufferToTypedArray()" style="background: #14b8a6;">
+                            ArrayBuffer → TypedArray
+                        </button>
+                        <button class="upload-btn" onclick="convertTypedArrayToString()" style="background: #f97316;">
+                            TypedArray → String
+                        </button>
+                    </div>
+                    
+                    <div id="conversionDemo" style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 15px; margin-top: 15px; min-height: 100px;">
+                        <p style="color: #6b7280; text-align: center;">Click a conversion button to see the transformation process</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🏗️ Virtual Files Demo</h3>
+                    <p style="color: #6b7280; margin-bottom: 20px;">
+                        Bun's virtual file system creates files at build time without touching disk. Perfect for build metadata, version info, and configuration.
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px;">
+                        <button class="upload-btn" onclick="demonstrateVirtualFiles()" style="background: #6366f1; font-size: 14px; padding: 10px 16px;">
+                            🏗️ Overview
+                        </button>
+                        <button class="upload-btn" onclick="showBuildMetadata()" style="background: #0ea5e9; font-size: 14px; padding: 10px 16px;">
+                            📋 Metadata
+                        </button>
+                        <button class="upload-btn" onclick="showVersionInfo()" style="background: #059669; font-size: 14px; padding: 10px 16px;">
+                            📦 Version
+                        </button>
+                        <button class="upload-btn" onclick="showFeatureFlags()" style="background: #dc2626; font-size: 14px; padding: 10px 16px;">
+                            🚩 Features
+                        </button>
+                        <button class="upload-btn" onclick="showEnvironmentConfig()" style="background: #7c3aed; font-size: 14px; padding: 10px 16px;">
+                            🌍 Environment
+                        </button>
+                        <button class="upload-btn" onclick="showBuildComparison()" style="background: #ea580c; font-size: 14px; padding: 10px 16px;">
+                            📊 Comparison
+                        </button>
+                        <button class="upload-btn" onclick="simulateVirtualBuild()" style="background: #16a34a; font-size: 14px; padding: 10px 16px;">
+                            ⚡ Build Sim
+                        </button>
+                        <button class="upload-btn" onclick="showAdvancedUsage()" style="background: #0891b2; font-size: 14px; padding: 10px 16px;">
+                            🔧 Advanced
+                        </button>
+                    </div>
+                    
+                    <div id="virtualFilesDemo" style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 15px; min-height: 120px;">
+                        <p style="color: #6b7280; text-align: center;">Click a button above to explore virtual file capabilities</p>
+                    </div>
+                    
+                    <div style="margin-top: 15px; padding: 12px; background: #f0f9ff; border-radius: 6px; border: 1px solid #bae6fd;">
+                        <strong style="color: #1e40af;">💡 Pro Tip:</strong> Virtual files are generated at build time and can be imported normally, but they don't exist on disk. Perfect for dynamic content injection!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // File upload demo
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const uploadedFiles = document.getElementById('uploadedFiles');
+
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Highlight drop zone when item is dragged over it
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            dropZone.classList.add('dragover');
+        }
+
+        function unhighlight(e) {
+            dropZone.classList.remove('dragover');
+        }
+
+        // Handle dropped files
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        // Handle file selection
+        fileInput.addEventListener('change', function(e) {
+            handleFiles(this.files);
+        });
+
+        function handleFiles(files) {
+            ([...files]).forEach(uploadFile);
+        }
+
+        function uploadFile(file) {
+            // Simulate the same validation as barbershop-dashboard.ts
+            if (!(file instanceof File)) {
+                console.error('Invalid file type');
+                return;
+            }
+
+            // Size validation (5MB limit like barbershop)
+            const maxSize = 5 * 1024 * 1024;
+            if (file.size > maxSize) {
+                alert(`File ${file.name} is too large. Max size is 5MB.`);
+                return;
+            }
+
+            // Create file item
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            
+            const fileInfo = document.createElement('div');
+            fileInfo.className = 'file-info';
+            
+            const fileName = document.createElement('div');
+            fileName.className = 'file-name';
+            fileName.textContent = file.name;
+            
+            const fileDetails = document.createElement('div');
+            fileDetails.className = 'file-details';
+            fileDetails.textContent = `${file.type || 'Unknown type'} • Last modified: ${new Date(file.lastModified).toLocaleString()}`;
+            
+            const fileSize = document.createElement('div');
+            fileSize.className = 'file-size';
+            fileSize.textContent = formatFileSize(file.size);
+            
+            fileInfo.appendChild(fileName);
+            fileInfo.appendChild(fileDetails);
+            fileItem.appendChild(fileInfo);
+            fileItem.appendChild(fileSize);
+            
+            uploadedFiles.appendChild(fileItem);
+
+            // Simulate processing like Bun.write()
+            console.log(`Processing file: ${file.name}`);
+            console.log(`Type: ${file.type}`);
+            console.log(`Size: ${file.size} bytes`);
+            console.log(`Last modified: ${file.lastModified}`);
+            
+            // Simulate Blob processing
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                console.log(`File ${file.name} read successfully`);
+                console.log(`Preview length: ${e.target.result.length} characters`);
+            };
+            reader.readAsText(file.slice(0, 100)); // Read first 100 bytes as preview
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Add some interactivity to bundle bars
+        document.querySelectorAll('.bundle-segment').forEach(segment => {
+            segment.addEventListener('click', function() {
+                const text = this.textContent;
+                alert(`Bundle segment: ${text}\n\nThis represents the portion of the bundle contributed by different source files.`);
+            });
+        });
+
+        // Initialize with a welcome message
+        console.log('🏗️ Bun Metafile Visualizer loaded!');
+        console.log('📊 Try the different tabs to explore build metadata');
+        console.log('🚀 Upload files in the Demo tab to see binary asset handling');
+
+        // File Content Type Demonstrations
+        function demonstrateString() {
+            const demoDiv = document.getElementById('contentTypeDemo');
+            const content = "Hello, Bun! This is a string content.";
+            
+            demoDiv.innerHTML = `
+                <h4 style="color: #3b82f6; margin-bottom: 15px;">📄 String Content</h4>
+                <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                    <strong>Content:</strong> "${content}"<br>
+                    <strong>Type:</strong> ${typeof content}<br>
+                    <strong>Length:</strong> ${content.length} characters<br>
+                    <strong>Bytes:</strong> ${new TextEncoder().encode(content).length} bytes<br>
+                    <strong>Usage:</strong> Text files, JSON, configuration files
+                </div>
+                <div style="margin-top: 15px;">
+                    <button class="upload-btn" onclick="simulateBunWrite('string', '${content}')" style="background: #3b82f6; font-size: 14px; padding: 8px 16px;">
+                        Simulate Bun.write(string)
+                    </button>
+                </div>
+            `;
+        }
+
+        function demonstrateBlob() {
+            const demoDiv = document.getElementById('contentTypeDemo');
+            const content = "Hello, Bun! This is blob content.";
+            const blob = new Blob([content], { type: 'text/plain' });
+            
+            demoDiv.innerHTML = `
+                <h4 style="color: #10b981; margin-bottom: 15px;">🎯 Blob Content</h4>
+                <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                    <strong>Content:</strong> "${content}"<br>
+                    <strong>Type:</strong> ${blob.constructor.name}<br>
+                    <strong>Size:</strong> ${blob.size} bytes<br>
+                    <strong>MIME Type:</strong> ${blob.type}<br>
+                    <strong>Sliceable:</strong> ${blob.slice ? 'Yes' : 'No'}<br>
+                    <strong>Usage:</strong> File uploads, images, documents, binary data
+                </div>
+                <div style="margin-top: 15px;">
+                    <button class="upload-btn" onclick="simulateBunWrite('blob', window.currentBlob)" style="background: #10b981; font-size: 14px; padding: 8px 16px;">
+                        Simulate Bun.write(blob)
+                    </button>
+                </div>
+            `;
+            
+            // Store the blob for onclick handler
+            window.currentBlob = blob;
+        }
+
+        function demonstrateTypedArray() {
+            const demoDiv = document.getElementById('contentTypeDemo');
+            const buffer = new ArrayBuffer(16);
+            const view = new Uint8Array(buffer);
+            view.set([72, 101, 108, 108, 111, 32, 66, 117, 110, 33]); // "Hello Bun!"
+            
+            demoDiv.innerHTML = `
+                <h4 style="color: #f59e0b; margin-bottom: 15px;">🔢 TypedArray (Uint8Array)</h4>
+                <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                    <strong>Content:</strong> [${Array.from(view).join(', ')}]<br>
+                    <strong>Type:</strong> ${view.constructor.name}<br>
+                    <strong>Length:</strong> ${view.length} elements<br>
+                    <strong>Byte Length:</strong> ${view.byteLength} bytes<br>
+                    <strong>Buffer:</strong> ArrayBuffer(${view.buffer.byteLength})<br>
+                    <strong>Usage:</strong> Binary data, images, audio, protocol buffers
+                </div>
+                <div style="margin-top: 15px;">
+                    <button class="upload-btn" onclick="simulateBunWrite('typedarray', window.currentTypedArray)" style="background: #f59e0b; font-size: 14px; padding: 8px 16px;">
+                        Simulate Bun.write(typedarray)
+                    </button>
+                </div>
+            `;
+            
+            // Store the view for onclick handler
+            window.currentTypedArray = view;
+        }
+
+        function demonstrateArrayBuffer() {
+            const demoDiv = document.getElementById('contentTypeDemo');
+            const content = "Hello Bun!";
+            const encoder = new TextEncoder();
+            const buffer = encoder.encode(content).buffer;
+            
+            demoDiv.innerHTML = `
+                <h4 style="color: #ef4444; margin-bottom: 15px;">💾 ArrayBuffer</h4>
+                <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                    <strong>Content:</strong> ArrayBuffer(${buffer.byteLength})<br>
+                    <strong>Type:</strong> ${buffer.constructor.name}<br>
+                    <strong>Byte Length:</strong> ${buffer.byteLength} bytes<br>
+                    <strong>Transferable:</strong> Yes (for Web Workers)<br>
+                    <strong>Immutable:</strong> Yes (fixed size)<br>
+                    <strong>Usage:</strong> Raw binary data, network protocols, file I/O
+                </div>
+                <div style="margin-top: 15px;">
+                    <button class="upload-btn" onclick="simulateBunWrite('arraybuffer', window.currentArrayBuffer)" style="background: #ef4444; font-size: 14px; padding: 8px 16px;">
+                        Simulate Bun.write(arraybuffer)
+                    </button>
+                </div>
+            `;
+            
+            // Store the buffer for onclick handler
+            window.currentArrayBuffer = buffer;
+        }
+
+        // Content Type Conversion Functions
+        function convertStringToBlob() {
+            const demoDiv = document.getElementById('conversionDemo');
+            const str = "Hello, Bun!";
+            const blob = new Blob([str], { type: 'text/plain' });
+            
+            demoDiv.innerHTML = `
+                <h4 style="color: #8b5cf6; margin-bottom: 15px;">String → Blob Conversion</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                        <strong>📄 Original String:</strong><br>
+                        "${str}"<br>
+                        Type: ${typeof str}<br>
+                        Length: ${str.length}
+                    </div>
+                    <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                        <strong>🎯 Converted Blob:</strong><br>
+                        Size: ${blob.size} bytes<br>
+                        Type: ${blob.type}<br>
+                        Constructor: ${blob.constructor.name}
+                    </div>
+                </div>
+                <div style="margin-top: 15px; background: #f0f9ff; padding: 10px; border-radius: 6px;">
+                    <strong>Code:</strong> <code>const blob = new Blob(["${str}"], { type: 'text/plain' });</code>
+                </div>
+            `;
+        }
+
+        function convertBlobToArrayBuffer() {
+            const demoDiv = document.getElementById('conversionDemo');
+            const blob = new Blob(["Hello, Bun!"], { type: 'text/plain' });
+            
+            // Simulate async conversion
+            demoDiv.innerHTML = `
+                <h4 style="color: #ec4899; margin-bottom: 15px;">Blob → ArrayBuffer Conversion</h4>
+                <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                    <p>Converting Blob to ArrayBuffer...</p>
+                    <div id="conversionProgress"></div>
+                </div>
+            `;
+            
+            setTimeout(async () => {
+                const arrayBuffer = await blob.arrayBuffer();
+                document.getElementById('conversionProgress').innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <strong>🎯 Original Blob:</strong><br>
+                            Size: ${blob.size} bytes<br>
+                            Type: ${blob.type}
+                        </div>
+                        <div>
+                            <strong>💾 Converted ArrayBuffer:</strong><br>
+                            Byte Length: ${arrayBuffer.byteLength}<br>
+                            Constructor: ${arrayBuffer.constructor.name}
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px; background: #fdf2f8; padding: 10px; border-radius: 6px;">
+                        <strong>Code:</strong> <code>const arrayBuffer = await blob.arrayBuffer();</code>
+                    </div>
+                `;
+            }, 500);
+        }
+
+        function convertArrayBufferToTypedArray() {
+            const demoDiv = document.getElementById('conversionDemo');
+            const content = "Hello Bun!";
+            const encoder = new TextEncoder();
+            const arrayBuffer = encoder.encode(content).buffer;
+            const uint8Array = new Uint8Array(arrayBuffer);
+            
+            demoDiv.innerHTML = `
+                <h4 style="color: #14b8a6; margin-bottom: 15px;">ArrayBuffer → TypedArray Conversion</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                        <strong>💾 Original ArrayBuffer:</strong><br>
+                        Byte Length: ${arrayBuffer.byteLength}<br>
+                        Immutable: Yes
+                    </div>
+                    <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                        <strong>🔢 Converted Uint8Array:</strong><br>
+                        Length: ${uint8Array.length}<br>
+                        Content: [${Array.from(uint8Array).join(', ')}]
+                    </div>
+                </div>
+                <div style="margin-top: 15px; background: #f0fdfa; padding: 10px; border-radius: 6px;">
+                    <strong>Code:</strong> <code>const uint8Array = new Uint8Array(arrayBuffer);</code>
+                </div>
+            `;
+        }
+
+        function convertTypedArrayToString() {
+            const demoDiv = document.getElementById('conversionDemo');
+            const content = "Hello Bun!";
+            const encoder = new TextEncoder();
+            const decoder = new TextDecoder();
+            const uint8Array = encoder.encode(content);
+            const decodedString = decoder.decode(uint8Array);
+            
+            demoDiv.innerHTML = `
+                <h4 style="color: #f97316; margin-bottom: 15px;">TypedArray → String Conversion</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                        <strong>🔢 Original Uint8Array:</strong><br>
+                        Length: ${uint8Array.length}<br>
+                        Content: [${Array.from(uint8Array).join(', ')}]
+                    </div>
+                    <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                        <strong>📄 Decoded String:</strong><br>
+                        "${decodedString}"<br>
+                        Length: ${decodedString.length}
+                    </div>
+                </div>
+                <div style="margin-top: 15px; background: #fff7ed; padding: 10px; border-radius: 6px;">
+                    <strong>Code:</strong> <code>const decoder = new TextDecoder(); const str = decoder.decode(uint8Array);</code>
+                </div>
+            `;
+        }
+
+        // Simulate Bun.write operations
+        async function simulateBunWrite(type, content) {
+            console.log(`🚀 Simulating Bun.write(${type}, content)`);
+            console.log('Content:', content);
+            console.log('Content type:', typeof content);
+            console.log('Constructor:', content.constructor.name);
+            
+            if (type === 'blob') {
+                const arrayBuffer = await content.arrayBuffer();
+                console.log('Blob size:', content.size, 'bytes');
+                console.log('ArrayBuffer:', arrayBuffer);
+            } else if (type === 'typedarray') {
+                console.log('TypedArray length:', content.length);
+                console.log('TypedArray buffer:', content.buffer);
+            } else if (type === 'arraybuffer') {
+                console.log('ArrayBuffer byteLength:', content.byteLength);
+            }
+            
+            alert(`✅ Bun.write simulation complete!\n\nType: ${type}\nSize: ${typeof content === 'string' ? content.length : content.size || content.byteLength || content.length} bytes\n\nCheck console for details.`);
+        }
+
+        // Virtual Files Demonstrations
+        function demonstrateVirtualFiles() {
+            const demoDiv = document.getElementById('virtualFilesDemo');
+            const buildId = crypto.randomUUID();
+            const buildTime = Date.now();
+            const buildTimestamp = new Date(buildTime).toISOString();
+            
+            demoDiv.innerHTML = `
+                <h4 style="color: #6366f1; margin-bottom: 15px;">🏗️ Virtual Files Overview</h4>
+                <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb; margin-bottom: 15px;">
+                    <strong>🚀 Build Configuration:</strong><br>
+                    <pre style="background: #f8fafc; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 12px; margin: 10px 0;">await Bun.build({
+  entrypoints: ["./src/index.ts"],
+  files: {
+    "./src/build-meta.ts": \`\`\`
+      export const BUILD_ID = "${buildId}";
+      export const BUILD_TIME = ${buildTime};
+    \`\`\`,
+  },
+  outdir: "./dist",
+});</pre>
+                </div>
+                
+                <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb; margin-bottom: 15px;">
+                    <strong>📋 Generated Files:</strong><br>
+                    • ./src/build-meta.ts (build metadata)<br>
+                    • ./src/version.ts (version information)<br>
+                    • ./src/constants.ts (app constants)<br>
+                    <br>
+                    <strong>🎯 Key Benefits:</strong><br>
+                    • No disk pollution<br>
+                    • Dynamic content generation<br>
+                    • Type-safe imports<br>
+                    • Build-time optimization
+                </div>
+                
+                <div style="background: #eff6ff; padding: 15px; border-radius: 6px; border: 1px solid #dbeafe;">
+                    <strong>💡 Usage:</strong> <code>import { BUILD_ID } from './src/build-meta.ts';</code><br>
+                    <strong>Result:</strong> Files exist only during build, imports work normally
+                </div>
+            `;
+        }
+
+        function showBuildMetadata() {
+            const demoDiv = document.getElementById('virtualFilesDemo');
+            const buildId = crypto.randomUUID().slice(0, 8);
+            const buildTime = Date.now();
+            const buildTimestamp = new Date(buildTime).toISOString();
+            
+            demoDiv.innerHTML = `
+                <h4 style="color: #0ea5e9; margin-bottom: 15px;">📋 Build Metadata</h4>
+                <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                    <strong>🏗️ Generated build-meta.ts:</strong><br>
+                    <pre style="background: #f8fafc; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 11px; margin: 10px 0;">// Auto-generated build metadata
+export const BUILD_ID = "${buildId}";
+export const BUILD_TIME = ${buildTime};
+export const BUILD_TIMESTAMP = "${buildTimestamp}";
+export const BUILD_VERSION = "1.0.0";
+export const BUN_VERSION = "${Bun.version || '1.3.9'}";
+
+export const BUILD_CONFIG = {
+  target: "bun",
+  minify: false,
+  sourcemap: "none",
+  entrypoints: ["barbershop-dashboard.ts", "barber-server.ts", "barbershop-tickets.ts"],
+  outputDir: "./dist"
+} as const;</pre>
+                    
+                    <strong>📊 Usage in Application:</strong><br>
+                    <pre style="background: #f8fafc; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 11px; margin: 10px 0;">import { BUILD_ID, BUILD_TIME } from './src/build-meta.ts';
+
+// Add to API responses
+const response = {
+  data: responseData,
+  build: {
+    id: BUILD_ID,
+    timestamp: BUILD_TIME,
+    uptime: Date.now() - BUILD_TIME
+  }
+};</pre>
+                </div>
+            `;
+        }
+
+        function showVersionInfo() {
+            const demoDiv = document.getElementById('virtualFilesDemo');
+            const buildId = crypto.randomUUID().slice(0, 8);
+            const buildTimestamp = new Date().toISOString();
+            
+            demoDiv.innerHTML = `
+                <h4 style="color: #059669; margin-bottom: 15px;">📦 Version Information</h4>
+                <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                    <strong>🏷️ Generated version.ts:</strong><br>
+                    <pre style="background: #f8fafc; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 11px; margin: 10px 0;">export const VERSION = {
+  major: 1,
+  minor: 0,
+  patch: 0,
+  build: "${buildId}",
+  full: "1.0.0-${buildId}",
+  bun: "${Bun.version || '1.3.9'}",
+  timestamp: "${buildTimestamp}"
+} as const;
+
+export function getVersionString(): string {
+  return VERSION.full;
+}
+
+export function getBuildInfo(): string {
+  return \`Built with Bun \${VERSION.bun} at \${VERSION.timestamp}\`;
+}</pre>
+                    
+                    <strong>🎯 Real-world Usage:</strong><br>
+                    <div style="background: #f0fdf4; padding: 10px; border-radius: 4px; margin: 10px 0;">
+                        • Health check endpoints<br>
+                        • Error reporting context<br>
+                        • Debug information<br>
+                        • Deployment tracking
+                    </div>
+                    
+                    <strong>📱 Example Output:</strong><br>
+                    <code style="background: #f8fafc; padding: 5px; border-radius: 3px;">Version: 1.0.0-${buildId}<br>Built: ${buildTimestamp}</code>
+                </div>
+            `;
+        }
+
+        function showFeatureFlags() {
+            const demoDiv = document.getElementById('virtualFilesDemo');
+            
+            demoDiv.innerHTML = `
+                <h4 style="color: #dc2626; margin-bottom: 15px;">🚩 Feature Flags</h4>
+                <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                    <strong>🎛️ Generated constants.ts:</strong><br>
+                    <pre style="background: #f8fafc; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 11px; margin: 10px 0;">export const APP_CONSTANTS = {
+  APP_NAME: "Barbershop Demo",
+  APP_VERSION: "1.0.0",
+  
+  FEATURES: {
+    TELEMETRY: true,
+    WEBSOCKETS: true,
+    FILE_UPLOADS: true,
+    BINARY_ASSETS: true,
+    STRUCTURED_LOGGING: true
+  },
+  
+  PERFORMANCE: {
+    MAX_FILE_SIZE: 5 * 1024 * 1024, // 5MB
+    REQUEST_TIMEOUT: 30000, // 30s
+    KEEP_ALIVE_TIMEOUT: 5000, // 5s
+    LOG_LEVEL: "info"
+  }
+} as const;</pre>
+                    
+                    <strong>⚙️ Conditional Feature Usage:</strong><br>
+                    <pre style="background: #f8fafc; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 11px; margin: 10px 0;">import { APP_CONSTANTS } from './src/constants.ts';
+
+// Enable features based on flags
+if (APP_CONSTANTS.FEATURES.TELEMETRY) {
+  startTelemetryCollection();
+}
+
+if (APP_CONSTANTS.FEATURES.FILE_UPLOADS) {
+  enableFileUploadHandler();
+}
+
+// Use performance constants
+const timeout = APP_CONSTANTS.PERFORMANCE.REQUEST_TIMEOUT;
+const maxSize = APP_CONSTANTS.PERFORMANCE.MAX_FILE_SIZE;</pre>
+                    
+                    <strong>🎯 Benefits:</strong><br>
+                    <div style="background: #fef2f2; padding: 10px; border-radius: 4px; margin: 10px 0;">
+                        • Environment-specific configuration<br>
+                        • Runtime feature toggling<br>
+                        • Performance tuning<br>
+                        • Centralized constants management
+                    </div>
+                </div>
+            `;
+        }
+
+        function showEnvironmentConfig() {
+            const demoDiv = document.getElementById('virtualFilesDemo');
+            const isProduction = Math.random() > 0.5;
+            const apiEnv = isProduction ? 'production' : 'development';
+            
+            demoDiv.innerHTML = `
+                <h4 style="color: #7c3aed; margin-bottom: 15px;">🌍 Environment Configuration</h4>
+                <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb; margin-bottom: 15px;">
+                    <strong>🔧 Dynamic Environment Config:</strong><br>
+                    <pre style="background: #f8fafc; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 11px; margin: 10px 0;">// Generated based on NODE_ENV=${apiEnv}
+export const ENV_CONFIG = {
+  NODE_ENV: "${apiEnv}",
+  API_URL: "${isProduction ? 'https://api.barbershop.com' : 'http://localhost:3000'}",
+  DEBUG: ${!isProduction},
+  LOG_LEVEL: "${isProduction ? 'warn' : 'debug'}",
+  ENABLE_ANALYTICS: ${isProduction},
+  SENTRY_DSN: "${isProduction ? 'https://sentry.io/123' : ''}
+};
+
+export const DB_CONFIG = {
+  host: "${isProduction ? 'prod-db.barbershop.com' : 'localhost'}",
+  port: ${isProduction ? 5432 : 5433},
+  ssl: ${isProduction},
+  poolSize: ${isProduction ? 20 : 5}
+};</pre>
+                </div>
+                
+                <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb; margin-bottom: 15px;">
+                    <strong>📋 Build Script Integration:</strong><br>
+                    <pre style="background: #f8fafc; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 11px; margin: 10px 0;">const isProduction = process.env.NODE_ENV === 'production';
+
+await Bun.build({
+  entrypoints: ["./src/index.ts"],
+  files: {
+    "./src/env-config.ts": \`\`\`
+      export const ENV_CONFIG = ${JSON.stringify({
+        NODE_ENV: process.env.NODE_ENV || 'development',
+        API_URL: isProduction ? 'https://api.barbershop.com' : 'http://localhost:3000',
+        DEBUG: !isProduction
+      }, null, 2)};
+    \`\`\`
+  },
+  outdir: "./dist"
+});</pre>
+                </div>
+                
+                <div style="background: #f3e8ff; padding: 15px; border-radius: 6px; border: 1px solid #d8b4fe;">
+                    <strong>✨ Environment Benefits:</strong><br>
+                    • No .env files needed in production<br>
+                    • Compile-time environment validation<br>
+                    • Reduced bundle size (tree-shaking)<br>
+                    • Secure secrets injection
+                </div>
+            `;
+        }
+
+        function showBuildComparison() {
+            const demoDiv = document.getElementById('virtualFilesDemo');
+            
+            demoDiv.innerHTML = `
+                <h4 style="color: #ea580c; margin-bottom: 15px;">📊 Virtual vs Traditional Files</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                        <strong style="color: #059669;">✅ Virtual Files</strong>
+                        <div style="margin-top: 10px; font-size: 13px;">
+                            ✅ No disk pollution<br>
+                            ✅ Automatic cleanup<br>
+                            ✅ Dynamic content<br>
+                            ✅ Type-safe imports<br>
+                            ✅ Build-time generation<br>
+                            ✅ Environment-specific<br>
+                            ✅ Faster builds<br>
+                            ✅ No version control needed
+                        </div>
+                    </div>
+                    
+                    <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                        <strong style="color: #dc2626;">❌ Traditional Files</strong>
+                        <div style="margin-top: 10px; font-size: 13px;">
+                            ❌ Disk pollution<br>
+                            ❌ Manual cleanup required<br>
+                            ❌ Static content only<br>
+                            ❌ Runtime generation needed<br>
+                            ❌ Build scripts complexity<br>
+                            ❌ Environment management<br>
+                            ❌ Slower builds<br>
+                            ❌ Version control bloat
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb; margin-bottom: 15px;">
+                    <strong>📈 Performance Comparison:</strong><br>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px;">
+                        <div style="text-align: center; padding: 10px; background: #f0fdf4; border-radius: 4px;">
+                            <div style="font-size: 18px; font-weight: bold; color: #059669;">~0ms</div>
+                            <div style="font-size: 12px; color: #6b7280;">Virtual File I/O</div>
+                        </div>
+                        <div style="text-align: center; padding: 10px; background: #fef2f2; border-radius: 4px;">
+                            <div style="font-size: 18px; font-weight: bold; color: #dc2626;">~50ms</div>
+                            <div style="font-size: 12px; color: #6b7280;">Traditional File I/O</div>
+                        </div>
+                        <div style="text-align: center; padding: 10px; background: #eff6ff; border-radius: 4px;">
+                            <div style="font-size: 18px; font-weight: bold; color: #2563eb;">50x</div>
+                            <div style="font-size: 12px; color: #6b7280;">Speed Improvement</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: #fff7ed; padding: 15px; border-radius: 6px; border: 1px solid #fed7aa;">
+                    <strong>🎯 Migration Path:</strong><br>
+                    <div style="margin-top: 8px; font-size: 13px;">
+                        1. Identify generated files (version.ts, config.ts)<br>
+                        2. Move content to Bun.build() files option<br>
+                        3. Update imports (they work the same)<br>
+                        4. Remove physical files from repo<br>
+                        5. Enjoy cleaner builds!
+                    </div>
+                </div>
+            `;
+        }
+
+        function simulateVirtualBuild() {
+            const demoDiv = document.getElementById('virtualFilesDemo');
+            const buildId = crypto.randomUUID();
+            const startTime = Date.now();
+            
+            demoDiv.innerHTML = `
+                <h4 style="color: #16a34a; margin-bottom: 15px;">⚡ Virtual Build Simulation</h4>
+                <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                    <div id="buildProgress">
+                        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <div style="width: 20px; height: 20px; border: 2px solid #16a34a; border-top: 2px solid transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                            <span style="margin-left: 10px; color: #16a34a; font-weight: 500;">Building with virtual files...</span>
+                        </div>
+                        <div style="background: #f3f4f6; border-radius: 4px; height: 8px; overflow: hidden;">
+                            <div id="progressBar" style="background: #16a34a; height: 100%; width: 0%; transition: width 0.3s ease;"></div>
+                        </div>
+                        <div id="buildLog" style="margin-top: 10px; font-family: monospace; font-size: 12px; color: #6b7280; max-height: 150px; overflow-y: auto;"></div>
+                    </div>
+                </div>
+            `;
+            
+            // Simulate build progress
+            const buildSteps = [
+                { progress: 20, message: '🔍 Analyzing entrypoints...', delay: 300 },
+                { progress: 40, message: '🏗️ Generating virtual files...', delay: 400 },
+                { progress: 60, message: `📋 Creating build-meta.ts (ID: ${buildId.slice(0, 8)}...)`, delay: 300 },
+                { progress: 80, message: '📦 Bundling dependencies...', delay: 500 },
+                { progress: 100, message: '✅ Build completed successfully!', delay: 200 }
+            ];
+            
+            const buildLog = document.getElementById('buildLog');
+            const progressBar = document.getElementById('progressBar');
+            
+            buildSteps.forEach((step, index) => {
+                setTimeout(() => {
+                    progressBar.style.width = `${step.progress}%`;
+                    buildLog.innerHTML += step.message + '\n';
+                    buildLog.scrollTop = buildLog.scrollHeight;
+                    
+                    if (index === buildSteps.length - 1) {
+                        setTimeout(() => {
+                            const buildTime = Date.now() - startTime;
+                            demoDiv.innerHTML = `
+                                <h4 style="color: #16a34a; margin-bottom: 15px;">✅ Build Complete!</h4>
+                                <div style="background: #f0fdf4; padding: 15px; border-radius: 6px; border: 1px solid #86efac;">
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                        <div>
+                                            <strong>📋 Build Results:</strong><br>
+                                            • Build ID: ${buildId}<br>
+                                            • Build Time: ${buildTime}ms<br>
+                                            • Virtual Files: 3<br>
+                                            • Output Size: 151KB<br>
+                                            • Compression: 84%
+                                        </div>
+                                        <div>
+                                            <strong>📁 Generated Files:</strong><br>
+                                            • ./src/build-meta.ts ✅<br>
+                                            • ./src/version.ts ✅<br>
+                                            • ./src/constants.ts ✅<br>
+                                            • ./dist/meta.json ✅<br>
+                                            • ./dist/build-report.json ✅
+                                        </div>
+                                    </div>
+                                    <div style="margin-top: 15px; padding: 10px; background: #dcfce7; border-radius: 4px;">
+                                        <strong>🚀 Performance:</strong> Virtual files reduced build time by ~60% compared to traditional file generation!
+                                    </div>
+                                </div>
+                            `;
+                        }, step.delay);
+                    }
+                }, 300 + buildSteps.slice(0, index + 1).reduce((sum, s) => sum + s.delay, 0));
+            });
+        }
+
+        function showAdvancedUsage() {
+            const demoDiv = document.getElementById('virtualFilesDemo');
+            
+            demoDiv.innerHTML = `
+                <h4 style="color: #0891b2; margin-bottom: 15px;">🔧 Advanced Usage Patterns</h4>
+                
+                <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb; margin-bottom: 15px;">
+                    <strong>🎨 Asset Injection:</strong><br>
+                    <pre style="background: #f8fafc; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 11px; margin: 10px 0;">const manifest = {
+  name: "Barbershop Demo",
+  icons: ['/icon-192.png', '/icon-512.png'],
+  theme_color: '#3b82f6',
+  start_url: '/'
+};
+
+files: {
+  "./src/manifest.ts": \`\`\`
+    export const MANIFEST = ${JSON.stringify(manifest, null, 2)};
+  \`\`\`
+}</pre>
+                </div>
+                
+                <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb; margin-bottom: 15px;">
+                    <strong>🗄️ Database Configuration:</strong><br>
+                    <pre style="background: #f8fafc; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 11px; margin: 10px 0;">const dbConfig = {
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT || '5432'),
+  ssl: process.env.NODE_ENV === 'production',
+  maxConnections: parseInt(process.env.DB_POOL_SIZE || '10')
+};
+
+files: {
+  "./src/database.ts": \`\`\`
+    export const DB_CONFIG = ${JSON.stringify(dbConfig, null, 2)};
+    export const CONNECTION_STRING = \`postgresql://\${DB_CONFIG.host}:\${DB_CONFIG.port}/barbershop\${DB_CONFIG.ssl ? '?sslmode=require' : ''}\`;
+  \`\`\`
+}</pre>
+                </div>
+                
+                <div style="background: #fff; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb; margin-bottom: 15px;">
+                    <strong>🌐 Internationalization:</strong><br>
+                    <pre style="background: #f8fafc; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 11px; margin: 10px 0;">const translations = {
+  en: { welcome: "Welcome", login: "Login" },
+  es: { welcome: "Bienvenido", login: "Iniciar sesión" },
+  fr: { welcome: "Bienvenue", login: "Connexion" }
+};
+
+files: {
+  "./src/i18n.ts": \`\`\`
+    export const TRANSLATIONS = ${JSON.stringify(translations, null, 2)};
+    export type Language = keyof typeof TRANSLATIONS;
+    export type TranslationKey = keyof typeof TRANSLATIONS.en;
+  \`\`\`
+}</pre>
+                </div>
+                
+                <div style="background: #ecfeff; padding: 15px; border-radius: 6px; border: 1px solid #67e8f9;">
+                    <strong>💡 Advanced Tips:</strong><br>
+                    • Combine with environment variables for dynamic configs<br>
+                    • Use for code generation (GraphQL schemas, API clients)<br>
+                    • Generate TypeScript types from JSON schemas<br>
+                    • Create mock data for testing<br>
+                    • Inject analytics and monitoring keys
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

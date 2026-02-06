@@ -9,7 +9,7 @@
 ### **1. 🌐 Direct URL Verification**
 
 #### **Visit the Official Bun MCP Documentation**
-```
+```text
 https://bun.com/docs/mcp
 ```
 
@@ -232,7 +232,7 @@ bun run lib/security/test-bun-compliance.ts
 4. **🧪 We verified** 100% compliance through testing
 
 ### **What We Actually Did**
-```
+```text
 https://bun.com/docs/mcp (Documentation)
            ↓
     Study & Analysis

@@ -15,7 +15,7 @@ This guide explains how **Role-Based Access Control (RBAC)** and **`[SCOPE:*]` a
 
 The RBAC system has **three layers**:
 
-```
+```text
 User → Role → Permissions + Data Scopes
 ```
 

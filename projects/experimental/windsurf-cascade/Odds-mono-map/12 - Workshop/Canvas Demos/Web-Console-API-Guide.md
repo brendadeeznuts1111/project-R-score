@@ -575,7 +575,7 @@ visualizeData([10, 25, 15, 30, 20, 35, 40], 'Weekly Sales');
 ## **🎊 Live Demonstration Results**
 
 ### **📊 Table Output Examples**
-```
+```text
 👥 Users table:
 ┌───┬────┬─────────┬─────┬────────┐
 │   │ id │ name    │ age │ active │
@@ -588,7 +588,7 @@ visualizeData([10, 25, 15, 30, 20, 35, 40], 'Weekly Sales');
 ```
 
 ### **🔍 Stack Trace Output**
-```
+```text
 📍 Stack trace demonstration:
 Trace from functionC
       at functionC (/path/to/file.ts:330:17)
@@ -598,7 +598,7 @@ Trace from functionC
 ```
 
 ### **⏱️ Performance Timing**
-```
+```text
 📊 Performance monitoring demonstration:
 [0.71ms] Random sum calculation
 Calculation result: 50059.02

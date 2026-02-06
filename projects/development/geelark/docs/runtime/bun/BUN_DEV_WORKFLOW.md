@@ -267,7 +267,7 @@ bun --watch --no-clear-screen run dev-hq/servers/dashboard-server.ts
 ## 🔄 Hot Reload vs Watch Mode
 
 ### Hot Reload (`--hot`)
-```
+```text
 File Change → Detect → Update Module → ✅ Done (no restart)
 ```
 - **Process keeps running**
@@ -276,7 +276,7 @@ File Change → Detect → Update Module → ✅ Done (no restart)
 - **Faster**
 
 ### Watch Mode (`--watch`)
-```
+```text
 File Change → Detect → Stop Process → Start Process → ✅ Done
 ```
 - **Process restarts**

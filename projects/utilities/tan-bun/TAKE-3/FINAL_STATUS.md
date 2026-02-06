@@ -24,7 +24,7 @@ TAKE-3 demonstrates a **complete, production-ready TanStack Start custom server 
 - ✅ **Development Tools**: VS Code settings, gitignore, type definitions
 
 ### **3. Project Structure**
-```
+```text
 TAKE-3/
 ├── README.md                    # Comprehensive documentation
 ├── PROJECT_SUMMARY.md           # Technical achievements summary

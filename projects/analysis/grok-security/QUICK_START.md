@@ -28,7 +28,7 @@
 
 ## 📁 Directory Structure
 
-```
+```text
 grok-security/
 ├── QUICK_START.md                    # This file
 ├── REORGANIZATION_SUMMARY.md         # What was reorganized

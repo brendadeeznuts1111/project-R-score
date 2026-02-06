@@ -61,7 +61,7 @@ The Enhanced Custom Inspection System v2.0 transforms how you analyze, visualize
 
 ## 🏗️ Architecture
 
-```
+```text
 Enhanced Inspection System v2.0
 ├── Core Engine
 │   ├── EnhancedInspectionSystem
@@ -627,7 +627,7 @@ enhancedInspectionSystem.registerPlugin(new DatabaseInspectionPlugin());
 
 The enhanced inspection system maintains excellent performance while adding advanced features:
 
-```
+```text
 AI-Powered Inspection:    0.0045ms avg (4.50ms total)
 Security Analysis:       0.0032ms avg (3.20ms total)
 Predictive Analytics:    0.0068ms avg (6.80ms total)
@@ -638,7 +638,7 @@ Real-time Monitoring:     0.0018ms avg (1.80ms total)
 
 ### Memory Usage
 
-```
+```text
 Base System:          8.2MB
 AI Engine:           +3.1MB
 Security Engine:     +2.4MB

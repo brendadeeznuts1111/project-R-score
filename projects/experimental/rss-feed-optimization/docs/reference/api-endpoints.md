@@ -4,7 +4,7 @@ This document provides comprehensive documentation for all API endpoints in the 
 
 ## Base URL
 
-```
+```text
 https://your-blog.com/api/v1
 ```
 
@@ -12,7 +12,7 @@ https://your-blog.com/api/v1
 
 Most endpoints require authentication via admin token:
 
-```
+```text
 Authorization: Bearer your-admin-token
 ```
 
@@ -95,7 +95,7 @@ Retrieve all blog posts with optional pagination.
 Create a new blog post.
 
 **Headers:**
-```
+```text
 Content-Type: application/json
 Authorization: Bearer your-admin-token
 ```
@@ -161,7 +161,7 @@ Retrieve a specific blog post by slug.
 Update an existing blog post.
 
 **Headers:**
-```
+```text
 Content-Type: application/json
 Authorization: Bearer your-admin-token
 ```
@@ -201,7 +201,7 @@ Authorization: Bearer your-admin-token
 Delete a blog post.
 
 **Headers:**
-```
+```text
 Authorization: Bearer your-admin-token
 ```
 
@@ -280,7 +280,7 @@ Retrieve RSS feed in JSON format.
 Sync local posts to R2 storage.
 
 **Headers:**
-```
+```text
 Authorization: Bearer your-admin-token
 ```
 
@@ -305,7 +305,7 @@ Authorization: Bearer your-admin-token
 Get application statistics.
 
 **Headers:**
-```
+```text
 Authorization: Bearer your-admin-token
 ```
 
@@ -450,7 +450,7 @@ Get detailed health status with all metrics.
 Clear all cache entries.
 
 **Headers:**
-```
+```text
 Authorization: Bearer your-admin-token
 ```
 
@@ -474,7 +474,7 @@ Authorization: Bearer your-admin-token
 Get application logs (last 100 entries).
 
 **Headers:**
-```
+```text
 Authorization: Bearer your-admin-token
 ```
 
@@ -507,7 +507,7 @@ Authorization: Bearer your-admin-token
 Get performance metrics (requires admin token).
 
 **Headers:**
-```
+```text
 Authorization: Bearer your-admin-token
 ```
 
@@ -652,7 +652,7 @@ The API implements rate limiting:
 
 Rate limit information is included in response headers:
 
-```
+```text
 X-RateLimit-Limit: 200
 X-RateLimit-Remaining: 199
 X-RateLimit-Reset: 1643723400
@@ -662,7 +662,7 @@ X-RateLimit-Reset: 1643723400
 
 The API includes CORS headers for cross-origin requests:
 
-```
+```text
 Access-Control-Allow-Origin: https://your-frontend.com
 Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
 Access-Control-Allow-Headers: Content-Type, Authorization

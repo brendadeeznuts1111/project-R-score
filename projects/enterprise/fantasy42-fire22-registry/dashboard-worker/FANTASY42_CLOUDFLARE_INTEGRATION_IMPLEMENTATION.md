@@ -12,7 +12,7 @@
 
 #### **1. Automatic Challenge Detection**
 
-```
+```text
 🚨 CHALLENGE DETECTION SYSTEM
 • Real-time script monitoring for challenge-platform scripts
 • iframe detection for embedded challenges
@@ -23,7 +23,7 @@
 
 #### **2. Smart Challenge Handling**
 
-```
+```text
 🎯 CHALLENGE PROCESSING
 • Challenge timeout management (30-second default)
 • Automatic retry logic with exponential backoff
@@ -34,7 +34,7 @@
 
 #### **3. Performance Optimization**
 
-```
+```text
 ⚡ CLOUDFLARE PERFORMANCE ENHANCEMENT
 • CDN response time monitoring
 • Cache hit rate optimization
@@ -45,7 +45,7 @@
 
 #### **4. Security Integration**
 
-```
+```text
 🔒 ENTERPRISE SECURITY FEATURES
 • Security headers management (HSTS, CSP, X-Frame-Options)
 • DDoS protection monitoring
@@ -56,7 +56,7 @@
 
 #### **5. Analytics & Monitoring**
 
-```
+```text
 📊 COMPREHENSIVE ANALYTICS
 • Challenge success/failure rates
 • Average completion times

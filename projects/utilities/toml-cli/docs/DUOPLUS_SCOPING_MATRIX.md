@@ -18,7 +18,7 @@ The DuoPlus Scoping Matrix is a sophisticated runtime configuration system that 
 
 ## Architecture
 
-```
+```text
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │   Environment   │ -> │  Scope Context   │ -> │  Matrix Rules   │
 │                 │    │                  │    │                 │

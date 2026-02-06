@@ -6,7 +6,7 @@
 
 ### Core Implementation (1,331 lines)
 
-```
+```text
 ✅ src/services/PrivateRegistryClient.ts          344 lines
 ✅ src/routes/registry.ts                         364 lines  
 ✅ tests/integration/registry.test.ts             623 lines
@@ -21,7 +21,7 @@
 
 ### Configuration Templates (194 lines)
 
-```
+```text
 ✅ .npmrc.example                                 194 lines
 ```
 
@@ -34,7 +34,7 @@
 
 ### Documentation (1,534 lines)
 
-```
+```text
 ✅ docs/PRIVATE_REGISTRY_SETUP.md                 425 lines (Configuration)
 ✅ docs/PRIVATE_REGISTRY_INTEGRATION.md           454 lines (Step-by-step)
 ✅ docs/PRIVATE_REGISTRY_QUICK_REFERENCE.md      296 lines (Quick lookup)
@@ -85,7 +85,7 @@ const response = await client.fetchPackageMeta('@duoplus/core', scope, true);
 ## 🎯 Key Features
 
 ### ✅ Scope-Based Routing
-```
+```text
 @duoplus scope         → npm.pkg.github.com (GitHub Packages)
 @duoplus-dev scope     → gitlab.com API (GitLab Registry)
 @internal scope        → internal registry (Custom/Internal)
@@ -219,7 +219,7 @@ Still need to configure:
 
 ## 🔄 How It Works
 
-```
+```text
 Request to /registry/meta/@duoplus/core
     ↓
 Resolve scope from request (ENTERPRISE, DEVELOPMENT, or INTERNAL)
@@ -239,7 +239,7 @@ Return package metadata as JSON
 
 ## 📦 Files Created
 
-```
+```text
 .npmrc.example                              Configuration template
 src/services/PrivateRegistryClient.ts       Registry client (344 lines)
 src/routes/registry.ts                      API routes (364 lines)

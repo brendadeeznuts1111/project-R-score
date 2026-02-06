@@ -121,7 +121,7 @@ Refresh an existing JWT token.
 
 **Headers:**
 
-```
+```text
 Authorization: Bearer <existing-token>
 ```
 
@@ -137,7 +137,7 @@ Invalidate current session and token.
 
 **Headers:**
 
-```
+```text
 Authorization: Bearer <token-to-invalidate>
 ```
 
@@ -147,7 +147,7 @@ Get current user information.
 
 **Headers:**
 
-```
+```text
 Authorization: Bearer <valid-token>
 ```
 
@@ -159,7 +159,7 @@ Access protected resource (requires valid JWT).
 
 **Headers:**
 
-```
+```text
 Authorization: Bearer <valid-token>
 ```
 
@@ -193,7 +193,7 @@ Retrieve audit logs.
 
 **Headers:**
 
-```
+```text
 Authorization: Bearer <admin-token>
 ```
 
@@ -223,7 +223,7 @@ Retrieve active sessions.
 
 **Headers:**
 
-```
+```text
 Authorization: Bearer <admin-token>
 ```
 
@@ -263,7 +263,7 @@ Revoke a specific JWT token.
 
 **Headers:**
 
-```
+```text
 Authorization: Bearer <admin-token>
 ```
 

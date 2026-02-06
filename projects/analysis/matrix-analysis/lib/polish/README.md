@@ -352,7 +352,7 @@ bun test lib/polish/test/
 
 ## Architecture
 
-```
+```text
 lib/polish/
 ├── index.ts                 # Main exports
 ├── types.ts                 # TypeScript interfaces

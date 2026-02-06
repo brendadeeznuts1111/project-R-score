@@ -124,7 +124,7 @@ Odds Protocol has successfully achieved **Market Leadership status** with **605 
 ## 📊 Market Leadership Formula Achievement
 
 ### 🎯 Score Calculation
-```
+```text
 Market Leadership = (Performance Excellence × Time × Culture × Innovation) × Sustainability
 ML = (9 × 2 × 7 × 12) × 4 = 605 points
 ```
@@ -179,7 +179,7 @@ ML = (9 × 2 × 7 × 12) × 4 = 605 points
 ## 📈 Expected Results After 6 Months
 
 ### 🏆 Final Market Leadership Score
-```
+```text
 ML = (10 × 4 × 9 × 15) × 5 = 2,700 points
 ```
 

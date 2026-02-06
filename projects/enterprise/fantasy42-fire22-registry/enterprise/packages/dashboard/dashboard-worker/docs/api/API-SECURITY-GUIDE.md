@@ -15,7 +15,7 @@
 
 ### RBAC Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                     Fire22 RBAC System                       │
 ├─────────────────────────────────────────────────────────────┤
@@ -253,13 +253,13 @@ graph LR
 import { secrets } from 'bun';
 ````
 
-````
+````text
 ```javascript
 ```javascript
 import jwt from 'jsonwebtoken';
 ````
 
-```
+```text
 
 async function generateTokens(user: User): Promise<TokenPair> {
   // Get secret from secure storage
@@ -501,7 +501,7 @@ async function secureApiCall() `{
 import { createMonitor } from '@fire22/validator';
 ````
 
-```
+```text
 
 class SecurityMonitor `{
   private monitor: any;
@@ -693,7 +693,7 @@ export const authorize = (requiredPermissions: string[]) => `{
 import { z } from 'zod';
 ````
 
-```
+```text
 
 export const validate = (schema: z.ZodSchema) => `{
   return async (req: Request, res: Response, next: Next) => {
@@ -763,7 +763,7 @@ app.post(
 import { describe, test, expect } from 'bun:test';
 ````
 
-```
+```text
 
 describe('API Security Tests', () => `{
   test('should reject request without token', async () => {

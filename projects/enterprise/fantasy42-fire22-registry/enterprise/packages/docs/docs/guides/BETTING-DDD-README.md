@@ -7,7 +7,7 @@ using Bun runtime and SQLite database.
 
 This implementation follows DDD principles with clear separation of concerns:
 
-```
+```text
 src/
 ├── domains/                    # Domain layer
 │   ├── betting/               # Betting domain

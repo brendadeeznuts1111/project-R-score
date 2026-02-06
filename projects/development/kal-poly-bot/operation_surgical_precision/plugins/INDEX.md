@@ -51,7 +51,7 @@
 
 ## File Structure
 
-```
+```text
 plugins/
 ├── plugin-system.js              # Core system
 ├── git-integration.js            # Git Integration plugin

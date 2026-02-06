@@ -166,7 +166,7 @@ Each department definition document includes:
 
 ### Department Head Contact Matrix
 
-```
+```text
 🎲 Sportsbook Operations
 ├── Marcus Rodriguez (Head) - marcus.rodriguez@fire22.ag
 ├── Linda Chen (Comms) - linda.chen@fire22.ag

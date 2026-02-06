@@ -15,7 +15,7 @@ The ShortcutRegistry system provides keyboard shortcut management for the WindSu
 ### 1. CLI Integration
 
 The WindSurf project includes a shortcuts CLI tool at:
-```
+```text
 cli/shortcuts/shortcuts-cli.ts
 ```
 
@@ -37,7 +37,7 @@ bun run cli/shortcuts/shortcuts-cli.ts export
 ### 2. Runtime Integration
 
 The ShortcutRegistry is integrated into WindSurf dashboards via:
-```
+```text
 src/shortcuts/registry.ts
 ```
 

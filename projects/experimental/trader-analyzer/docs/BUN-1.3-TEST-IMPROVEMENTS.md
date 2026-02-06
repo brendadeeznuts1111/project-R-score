@@ -356,7 +356,7 @@ Compact mode provides:
 - **Summary statistics** - Pass/fail counts, duration
 
 **Example output**:
-```
+```text
 ✓ 42 tests passed (1.2s)
 ✗ 2 tests failed
   - test/api.test.ts:15

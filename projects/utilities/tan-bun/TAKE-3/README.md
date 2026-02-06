@@ -4,7 +4,7 @@ TanStack Start Custom Server Implementation with Bun.
 
 ## Project Structure
 
-```
+```text
 TAKE-3/
 ├── README.md                    # This file
 └── custom-server-app/            # TanStack Start application with custom server

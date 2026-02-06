@@ -596,7 +596,7 @@ bun run build:env-prefix
 **Current**: 14 `mcp:*` commands scattered.  
 **Issue**: No clear way to start/stop/manage individual servers.  
 **Recommendation**: Create `mcp` command with subcommands in future:
-```
+```text
 mcp start <server>
 mcp stop <server>
 mcp list
@@ -615,7 +615,7 @@ mcp logs <server>
 **Current**: `docs:*`, `globals:*`, `grep:*`, `index:*` all generate docs.  
 **Issue**: No cohesive documentation command.  
 **Recommendation**: Consider `docs` command with subcommands:
-```
+```text
 docs generate <type>
 docs serve [port]
 docs grep <pattern>
@@ -716,7 +716,7 @@ bun run build optimize --memory
 
 ## Dependency Graph
 
-```
+```text
 Development
 ├── Code Quality (lint, format, typecheck)
 ├── Build (build [unified]) ✅ NEW

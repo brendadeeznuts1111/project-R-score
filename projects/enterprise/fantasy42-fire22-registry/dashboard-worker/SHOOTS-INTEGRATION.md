@@ -164,7 +164,7 @@ curl https://your-worker.workers.dev/api/manager/getWagersByAgent?agentID=SHOOTS
 
 ### **Access Enhanced Dashboard:**
 
-```
+```text
 https://your-worker.workers.dev/dashboard
 ```
 

@@ -4,7 +4,7 @@ This directory contains all build, automation, and utility scripts for the Odds 
 
 ## 📁 Scripts Structure
 
-```
+```text
 scripts/
 ├── build/              # Build and compilation scripts
 ├── deploy/             # Deployment and CI/CD scripts

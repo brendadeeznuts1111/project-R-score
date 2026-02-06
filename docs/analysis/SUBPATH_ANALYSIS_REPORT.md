@@ -23,7 +23,7 @@
 ## **📊 URL Structure Breakdown**
 
 ### **Complete URL Components**
-```
+```text
 🌐 Base URL: https://bun.sh
 📁 Subpath: /docs/api/utils
 🔗 Fragment: #readfile
@@ -40,7 +40,7 @@
 ## **📁 Subpath Analysis Results**
 
 ### **Subpath Statistics**
-```
+```text
 📊 Total URLs: 75
 📁 URLs with Subpaths: 75 (100%)
 📄 URLs without Subpaths: 0 (0%)
@@ -72,7 +72,7 @@
 ### **Common Path Patterns**
 
 #### **1. Utils API Pattern (42 URLs)**
-```
+```text
 /docs/api/utils#fragment
 ```
 **Examples:**
@@ -81,7 +81,7 @@
 - `/docs/api/utils#networking`
 
 #### **2. CLI Installation Pattern (6 URLs)**
-```
+```text
 /docs/cli/install/subpath
 ```
 **Examples:**
@@ -90,7 +90,7 @@
 - `/docs/cli/install/linux`
 
 #### **3. CLI Commands Pattern (33 URLs)**
-```
+```text
 /docs/cli/command
 ```
 **Examples:**
@@ -126,7 +126,7 @@
 ## **📈 Path Depth Analysis**
 
 ### **Depth Distribution**
-```
+```text
 📊 Average Path Depth: 3.1 subpaths
 📏 Shallowest Path: 2 subpaths (/docs/cli)
 📏 Deepest Path: 4 subpaths (/docs/cli/install/windows)
@@ -142,7 +142,7 @@
 ## **🎯 Subpath Quality Metrics**
 
 ### **Validation Results**
-```
+```text
 ✅ Base URL Validation: 75/75 (100%)
 ✅ Subpath Validation: 75/75 (100%)
 ✅ Fragment Validation: 42/42 (100%)
@@ -161,7 +161,7 @@
 ## **🔍 Detailed Subpath Breakdown**
 
 ### **Utils API Subpaths**
-```
+```text
 /docs/api/utils
 ├── file-system (9 functions)
 ├── networking (7 functions)
@@ -171,7 +171,7 @@
 ```
 
 ### **CLI Subpaths**
-```
+```text
 /docs/cli
 ├── install/
 │   ├── windows
@@ -268,7 +268,7 @@ bun comprehensive-url-validator.ts --check-subpaths --json
 ## **📊 Implementation Comparison**
 
 ### **Before Enhancement**
-```
+```text
 ❌ Original CLI: Base URL validation only
 ❌ Subpath checking: Not implemented
 ❌ Subpath analysis: Not available
@@ -276,7 +276,7 @@ bun comprehensive-url-validator.ts --check-subpaths --json
 ```
 
 ### **After Enhancement**
-```
+```text
 ✅ Comprehensive CLI: Base + Subpath + Fragment validation
 ✅ Subpath checking: Fully implemented
 ✅ Subpath analysis: Detailed statistics

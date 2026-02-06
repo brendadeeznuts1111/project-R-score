@@ -9,7 +9,7 @@ This guide outlines our commit message standards and quality practices.
 We follow the **Conventional Commits** specification with Fire22-specific
 enhancements:
 
-```
+```text
 <type>(<scope>): <subject>
 
 <body>

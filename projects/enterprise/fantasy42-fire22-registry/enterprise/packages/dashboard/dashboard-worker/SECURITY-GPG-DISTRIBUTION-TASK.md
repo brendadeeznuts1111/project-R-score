@@ -24,7 +24,7 @@ storage, distribution, and management across all departments.
 
 ### **Chain of Authority:**
 
-```
+```text
 Security Head
     ↓
 Security Team Lead (Master Key Holder)
@@ -58,7 +58,7 @@ bun run gpg:audit --comprehensive
 
 ### **Storage Structure:**
 
-```
+```text
 Service: fire22-dashboard-worker-gpg
 Account Pattern: [department]-[member]-gpg-private
 Account Pattern: [department]-[member]-gpg-public

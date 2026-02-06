@@ -106,7 +106,7 @@ Uploaded files include metadata:
 
 ## Example Output
 
-```
+```text
 📤 Streamed SARIF to S3: s3://security-reports/scan-abc123.sarif.jsonl.gz
    CRC32: 0x1a2b3c4d
    Size: 45678 bytes (compressed)

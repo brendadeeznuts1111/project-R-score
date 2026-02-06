@@ -12,7 +12,7 @@
 
 #### **1. Dynamic Setup Interface Enhancement**
 
-```
+```text
 📱 SETUP INTERFACE
 • Auto-detection of Telegram user ID setup elements with data-language="L-842"
 • Comprehensive visual enhancement with step-by-step instructions
@@ -23,7 +23,7 @@
 
 #### **2. Advanced User ID Validation**
 
-```
+```text
 🔍 VALIDATION SYSTEM
 • Format validation for 8-10 digit User IDs
 • Real-time input validation with visual feedback
@@ -34,7 +34,7 @@
 
 #### **3. Intelligent Verification Process**
 
-```
+```text
 ✅ VERIFICATION SYSTEM
 • Automated verification code generation (6-digit)
 • Configurable expiry times (default 15 minutes)
@@ -45,7 +45,7 @@
 
 #### **4. Enterprise Integration**
 
-```
+```text
 🔗 INTEGRATION FEATURES
 • Seamless integration with wager alert systems
 • Multi-channel notification support

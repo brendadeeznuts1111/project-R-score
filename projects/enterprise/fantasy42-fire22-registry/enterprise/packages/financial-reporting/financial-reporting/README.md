@@ -12,7 +12,7 @@ architecture.
 
 ### Domain Components
 
-```
+```text
 financial-reporting/
 ├── entities/
 │   └── financial-report.ts          # Core FinancialReport entity

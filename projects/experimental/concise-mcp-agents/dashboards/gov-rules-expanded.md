@@ -128,7 +128,7 @@ bun rules:pr RULE-ID  # Branch + Template
 
 **`templates/new-rule.md`**:
 
-```
+```text
 
 <%* header = tp.user.bunHeader("AGENT", "GLOBAL", "RULE", "REQUIRED", tp.file.title) %>
 

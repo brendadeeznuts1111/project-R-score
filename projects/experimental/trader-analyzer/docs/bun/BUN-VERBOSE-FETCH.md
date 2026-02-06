@@ -22,7 +22,7 @@ await fetch('https://api.example.com', {
 
 ### Output Example
 
-```
+```text
 curl -X POST https://api.example.com \
   -H "Content-Type: application/json" \
   -d '{"foo":"bar"}'

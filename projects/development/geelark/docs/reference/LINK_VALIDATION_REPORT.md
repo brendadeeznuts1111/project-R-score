@@ -34,12 +34,12 @@ term.data = (chunk: Uint8Array) => {
   }
   // ...
 };
-```
+```text
 
 **Run it**:
 ```bash
 bun run examples/terminal-dashboard-example.ts
-```
+```text
 
 ---
 
@@ -59,7 +59,7 @@ bun run examples/terminal-dashboard-example.ts
 ╔════════════════════════════════════════════════════════════╗
 ║  Environment: development                                   ║
 ╚════════════════════════════════════════════════════════════╝
-```
+```text
 
 **Issue**: If environment name contains emoji or wide characters, alignment breaks.
 
@@ -68,7 +68,7 @@ bun run examples/terminal-dashboard-example.ts
 ╔════════════════════════════════════════════════════════════╗
 ║  Environment: 🇺🇸 production                                ║
 ╚════════════════════════════════════════════════════════════╝
-```
+```text
 
 **Result**: Proper alignment regardless of characters used.
 
@@ -106,21 +106,21 @@ bun run examples/terminal-dashboard-example.ts
 ❌ **Bad**:
 ```typescript
 console.log(`${emoji} ${label.padEnd(20)} ${value}`);
-```
+```text
 
 ✅ **Good**:
 ```typescript
 const labelWidth = Bun.stringWidth(label);
 const padding = Math.max(0, 20 - labelWidth);
 console.log(`${emoji} ${label}${" ".repeat(padding)} ${value}`);
-```
+```text
 
 ### 2. Handle Terminal Resize
 
 ❌ **Bad** (static output):
 ```typescript
 console.log(drawBox(80));
-```
+```text
 
 ✅ **Good** (resize-aware):
 ```typescript
@@ -129,7 +129,7 @@ const term = new Terminal({
     console.log(drawBox(cols)); // Re-render on resize
   }
 });
-```
+```text
 
 ### 3. Use Helper Functions for Consistency
 
@@ -144,19 +144,19 @@ function padWithWidth(str: string, totalWidth: number): string {
 // Use everywhere
 padWithWidth(ENVIRONMENT_VALUE, 50);
 padWithWidth(uploadConfig.provider, 20);
-```
+```text
 
 ### 4. Clear Screen Properly
 
 ❌ **Bad**:
 ```typescript
 term.write("\x1b[2J"); // Doesn't move cursor
-```
+```text
 
 ✅ **Good**:
 ```typescript
 term.write("\x1b[2J\x1b[;H"); // Clear screen AND move cursor to top-left
-```
+```text
 
 ### 5. Use Box-Drawing Characters
 
@@ -175,7 +175,7 @@ function drawBox(cols: number, rows: number) {
   }
   term.write(BOX.BL + BOX.H.repeat(cols - 2) + BOX.BR + "\n");
 }
-```
+```text
 
 ---
 
@@ -185,7 +185,7 @@ function drawBox(cols: number, rows: number) {
 
 ```bash
 bun run dev-hq/servers/dashboard-server.ts
-```
+```text
 
 Output:
 ```
@@ -198,13 +198,13 @@ Output:
 ╠════════════════════════════════════════════════════════════╣
 ║  Environment: production                                    ║
 ╚════════════════════════════════════════════════════════════╝
-```
+```text
 
 ### Interactive Dashboard (Example)
 
 ```bash
 bun run examples/terminal-dashboard-example.ts
-```
+```text
 
 Features:
 - ⬆️⬇️ Arrow keys to navigate menu
@@ -227,7 +227,7 @@ const width = str.length;
 
 // ✅ Good
 const width = Bun.stringWidth(str);
-```
+```text
 
 ### Issue: Resize Not Working
 
@@ -240,7 +240,7 @@ const term = new Terminal({
     renderDashboard(cols, rows); // Must re-render
   }
 });
-```
+```text
 
 ### Issue: Input Not Working
 
@@ -253,7 +253,7 @@ term.data = (chunk: Uint8Array) => {
   const input = new TextDecoder().decode(chunk);
   // Handle input
 };
-```
+```text
 
 ---
 

@@ -65,13 +65,13 @@ NODE_ENV=development             # Enable mock violations
 ## 📊 API Endpoints
 
 ### SSE Stream
-```
+```text
 GET /mcp/alerts/stream?tenant={tenant}
 Headers: Cookie: session=..., X-CSRF-Token: ...
 ```
 
 ### Test Violation
-```
+```text
 POST /mcp/alerts/test
 Headers: Cookie: session=..., X-CSRF-Token: ...
 Response: { "sent": true }

@@ -3,7 +3,7 @@
 ## 🏷️ **Domain Classification System**
 
 ### **Pattern Structure:**
-```
+```text
 [DOMAIN][SCOPE][TYPE][META:{PROPERTY}][CLASS][#REF:*][BUN:1.xx-*-NATIVE]
 ```
 
@@ -181,7 +181,7 @@
 
 ### **Complete Domain Specifications**
 
-```
+```text
 [VEMNO][CORE][PAYMENT][META:{FAMILY}][PLATFORM][#REF:VENMO-API][BUN:1.36-NATIVE]
 [DUOPLUS][CORE][MONITORING][META:{UNIFIED}][DASHBOARD][#REF:GLOBAL-STATE][BUN:1.36-NATIVE]
 [CONFIG][CORE][SYSTEM][META:{ENV-VARS}][DASHBOARD][#REF:ENV-CONFIG][BUN:1.36-NATIVE]

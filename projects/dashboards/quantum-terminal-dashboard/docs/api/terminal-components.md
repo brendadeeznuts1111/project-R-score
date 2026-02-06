@@ -281,7 +281,7 @@ const [marketData, setMarketData] = useState([]);
 ## 🏗️ Architecture
 
 ### Component Structure
-```
+```text
 WebSocketTerminal
 ├── Status Bar (connection, dimensions)
 ├── XTerm.js Terminal

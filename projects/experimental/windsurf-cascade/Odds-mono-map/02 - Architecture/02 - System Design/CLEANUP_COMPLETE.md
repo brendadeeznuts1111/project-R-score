@@ -20,7 +20,7 @@
 
 ## 🏗️ **New Clean Structure**
 
-```
+```text
 Odds-mono-map/
 ├── src/
 │   ├── core/

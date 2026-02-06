@@ -132,7 +132,7 @@ bun future/demo-optimizer.ts
 
 ## 📊 Demo Output Example
 
-```
+```text
 📊 Analyzing: bunOptimized
 ==================================================
 Future Compatibility Score: 25/100

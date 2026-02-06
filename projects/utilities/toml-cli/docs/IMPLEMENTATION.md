@@ -64,7 +64,7 @@
 
 ### Testing Results
 
-```
+```text
 ✅ Version command - Works
 ✅ Init command - Creates 927-byte TOML file
 ✅ Validate command - Validates configurations
@@ -96,7 +96,7 @@
 
 ### Architecture
 
-```
+```text
 config-manager.ts
 ├── Types
 │   ├── R2Config

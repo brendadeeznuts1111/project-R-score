@@ -127,7 +127,7 @@ bun run terminal
 
 ### System Components
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    Quantum Dashboard v2.0                    │
 ├─────────────────────────────────────────────────────────────┤
@@ -235,7 +235,7 @@ monitoring:
 
 ### Project Structure
 
-```
+```text
 quantum-dashboard/
 ├── quantum-production-system.js    # Main system
 ├── monitoring-dashboard.js         # Monitoring system

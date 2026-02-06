@@ -47,7 +47,7 @@ bun --inspect=localhost:4000/prefix server.ts
 ```
 
 ### **📊 Inspector Output**
-```
+```text
 ------------------ Bun Inspector ------------------
 Listening at:
   ws://localhost:6499/0tqxs9exrgrm
@@ -158,7 +158,7 @@ await fetch("https://example.com", {
 ```
 
 **Output:**
-```
+```text
 [fetch] $ curl --http1.1 "https://example.com/" -X POST -H "content-type: application/json" -H "Connection: keep-alive" -H "User-Agent: Bun/1.3.2" -H "Accept: */*" -H "Host: example.com" -H "Accept-Encoding: gzip, deflate, br" --compressed -H "Content-Length: 13" --data-raw "{\"foo\":\"bar\"}"
 [fetch] > HTTP/1.1 POST https://example.com/
 [fetch] > content-type: application/json
@@ -213,7 +213,7 @@ console.log(Bun.inspect(err, { colors: true }));
 ```
 
 **Output:**
-```
+```text
 1 | // Create an error
 2 | const err = new Error("Something went wrong");
                 ^

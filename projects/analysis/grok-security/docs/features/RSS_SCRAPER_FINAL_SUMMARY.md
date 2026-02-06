@@ -196,7 +196,7 @@ Comprehensive Bun-native RSS 2.0 feed scraper with enterprise-grade token analys
 
 ## 📁 File Structure
 
-```
+```text
 bun-inspect-utils/
 ├── src/
 │   ├── networking/

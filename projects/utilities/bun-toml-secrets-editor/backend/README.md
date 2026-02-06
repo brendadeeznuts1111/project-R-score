@@ -105,7 +105,7 @@ DUOPLUS_API_KEY=your-duoplus-api-key
 ## 📊 API Documentation
 
 ### Base URL
-```
+```text
 http://localhost:3000/api/v1
 ```
 
@@ -149,7 +149,7 @@ Authorization: Bearer <your-jwt-token>
 ## 🏗️ Architecture
 
 ### Microservices
-```
+```text
 ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
 │   API Gateway   │  │  Underwriting   │  │  Device Manager │
 │   (Express.js)  │  │   Service       │  │   Service       │
@@ -282,7 +282,7 @@ npm run docker:run
 ## 🔧 Development
 
 ### Code Structure
-```
+```text
 src/
 ├── routes/          # API route definitions
 ├── services/        # Business logic services

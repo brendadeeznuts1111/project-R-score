@@ -9,7 +9,7 @@
 ## File Hashing Results
 
 ### Single File Performance
-```
+```text
 File: ./dist/index.js
 CRC32: cde93c46
 Size: 86,211 bytes
@@ -30,7 +30,7 @@ Duration: 0.34ms
 | ./dist/src/index.js | 3,392 | 6bd33c9d | 0.25 |
 
 ### Integrity Verification
-```
+```text
 File: ./dist/index.js
 Valid: ✅
 Expected: cde93c46

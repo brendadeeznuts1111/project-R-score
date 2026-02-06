@@ -3,7 +3,7 @@
 ## 📊 Performance Benchmark Results
 
 ### Hardware Acceleration Benchmark
-```
+```text
 🚀 Running CRC32 benchmark with 100 iterations...
 🚀 Hardware Acceleration Benchmark:
   Average time: 0.1ms
@@ -19,7 +19,7 @@
 ## 🔒 Single File Hashing Results
 
 ### Main Application Bundle
-```
+```text
 🔒 Hash Result:
   File: ./dist/index.js
   CRC32: cde93c46
@@ -28,7 +28,7 @@
 ```
 
 ### Configuration Files
-```
+```text
 🔒 Hash Result:
   File: ./dist/config/ports.js
   CRC32: 226f81db
@@ -43,7 +43,7 @@
 ```
 
 ### Plugin Files
-```
+```text
 🔒 Hash Result:
   File: ./dist/plugins/di-injector.js
   CRC32: c79c72d5
@@ -52,7 +52,7 @@
 ```
 
 ### Production Examples
-```
+```text
 🔒 Hash Result:
   File: ./dist/production-example.js
   CRC32: 6cd5c6c0
@@ -65,7 +65,7 @@
 ## 🔍 Integrity Verification Results
 
 ### Successful Verification
-```
+```text
 🔍 Integrity Check:
   File: ./dist/index.js
   Valid: ✅
@@ -102,7 +102,7 @@
 ## 📊 Production Dashboard Status
 
 ### Real-time Deployment Monitoring
-```
+```text
 📊 Production Deployment Dashboard
 =====================================
 

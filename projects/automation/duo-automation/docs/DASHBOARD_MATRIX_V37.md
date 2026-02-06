@@ -1,7 +1,7 @@
 # DuoPlus Dashboard **v4.4** - **ANSI Escape + CSI/OSC Deep Dive**
 
 ## 🚀 **Executive Summary**
-```
+```text
 💻 PTY TTY + ANSI CSI/OSC | 120x30 Terminals | 100% Unicode Width
 🟢 Dashboard #13: FULL ANSI Processing | Vim/HTop Colors | Hyperlinks
 🌐 http://localhost:${bunport} | 34μs Routes | Bun.stringWidth v4.4
@@ -85,7 +85,7 @@ alias r2-check="curl https://empire-pro-r2.workers.dev/"
 
 ## 📱 **Mobile-Optimized Access Codes**
 
-```
+```text
 scan: qr://duoplus.local/v3.8
 web: http://localhost:8090/?mobile=1
 pwa: /manifest.json (Installable)
@@ -103,7 +103,7 @@ pwa: /manifest.json (Installable)
 
 ## 📈 **Performance Metrics** *(Real-Time)*
 
-```
+```text
 Global Avg: 87ms | 99.98% Uptime | 14/14 Live
 Peak Load: 1,247 req/min | Memory: 613MB/4GB
 Fastest: URL Routing (34ms) | Heaviest: DB Mgmt (4.2MB)
@@ -121,7 +121,7 @@ Fastest: URL Routing (34ms) | Heaviest: DB Mgmt (4.2MB)
 
 ## 🚨 **Health Check Summary**
 
-```
+```text
 🟢 14/14 Dashboards Live
 🟢 2/2 External Services Live
 🟢 4/4 Components Operational
@@ -132,7 +132,7 @@ Fastest: URL Routing (34ms) | Heaviest: DB Mgmt (4.2MB)
 
 ## 🔗 **One-Click Navigation Menu**
 
-```
+```text
 [1] 👥 Venmo Family    [2] 🎛️ Unified     [3] ⚙️ Env Vars
 [4] 📊 Status UI      [5] 🔌 Endpoints    [6] 📈 Analytics
 [7] 🔐 Credentials    [8] 🛡️ Admin        [9] 🔗 Routing

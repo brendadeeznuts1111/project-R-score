@@ -32,7 +32,7 @@ bun bd
 
 ### Key Files for bun:ffi
 
-```
+```text
 src/js/bun/ffi/           # bun:ffi JavaScript implementation
 src/bun.js/ffi/           # FFI-related JavaScript code
 src/zig/bun_ffi.zig       # Zig implementation of FFI

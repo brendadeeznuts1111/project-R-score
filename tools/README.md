@@ -90,7 +90,7 @@ bun tools/factorywager-realtime.ts
 ## 📊 Output Examples
 
 ### CPU Profile Output
-```
+```text
 ✨ CPU Profile Report
 
   🔧 Performance Metrics
@@ -103,7 +103,7 @@ bun tools/factorywager-realtime.ts
 ```
 
 ### Heap Profile Output
-```
+```text
 ✅ Heap profile uploaded
    🔗 URL: https://r2.scanner-cookies.com/profiles/heap-1738701234567.md.zst
    🎨 Visual tag: factorywager-success
@@ -111,7 +111,7 @@ bun tools/factorywager-realtime.ts
 ```
 
 ### Real-time Output
-```
+```text
 CPU: ████████████ 85%
 Memory: ██████ 60%
   🕐 14:32:45
@@ -147,7 +147,7 @@ export const PERFORMANCE_THRESHOLDS = {
 
 ## 📁 File Structure
 
-```
+```text
 tools/
 ├── factorywager-cli.ts          # Unified CLI interface
 ├── factorywager-cpu-profile.ts  # CPU profiling

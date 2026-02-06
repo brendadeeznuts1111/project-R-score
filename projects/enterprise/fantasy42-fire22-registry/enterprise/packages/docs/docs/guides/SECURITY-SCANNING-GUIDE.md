@@ -126,7 +126,7 @@ bun add malicious-lib
 
 **Result:** ❌ **BLOCKED**
 
-```
+```text
 ❌ malicious-lib@2.1.0 - BLOCKED: Malicious package detected
 Error: Security scan failed: Malicious package detected
 ```
@@ -139,7 +139,7 @@ bun add old-package
 
 **Result:** ❌ **BLOCKED**
 
-```
+```text
 ❌ old-package@1.0.0 - BLOCKED: Known vulnerability in old-package
 Error: Security scan failed: Known vulnerability in old-package
 ```
@@ -152,7 +152,7 @@ bun add gpl-package
 
 **Result:** ❌ **BLOCKED**
 
-```
+```text
 ❌ gpl-package@1.0.0 - BLOCKED: Blocked license: GPL-3.0
 Error: Security scan failed: Blocked license: GPL-3.0
 ```
@@ -165,7 +165,7 @@ bun add axios
 
 **Result:** ✅ **ALLOWED**
 
-```
+```text
 ✅ axios@1.6.0 - Clean
 ```
 
@@ -284,7 +284,7 @@ policies = [
 
 ### **Security Scan Output**
 
-```
+```text
 🔍 Fire22 Enterprise Security Scanner
 =====================================
 ✅ axios@1.6.0 - Clean

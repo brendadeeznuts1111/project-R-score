@@ -93,7 +93,7 @@ dependencies:
 | **Health Score** | 85% | 95% | +10% |
 
 ### **🛠️ System Capabilities**
-```
+```text
 📊 Template System Status - FINAL EXCELLENCE
 ==================================================
 

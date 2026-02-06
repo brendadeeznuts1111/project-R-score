@@ -59,7 +59,7 @@ bun run vault:create-project --name="API Gateway" --type="development" --priorit
 ```
 
 **Generated Structure**:
-```
+```text
 02 - Architecture/
 ├── 00 - API Gateway.md
 ├── 01 - System Design.md

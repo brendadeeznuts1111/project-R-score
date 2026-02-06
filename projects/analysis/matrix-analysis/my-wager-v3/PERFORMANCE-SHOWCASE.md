@@ -57,7 +57,7 @@ The Tension Field System demonstrates **exceptional performance** across all met
 - **Request Processing**: 8615-8919 req/s sustained
 
 ### Scalability Characteristics
-```
+```text
 Nodes      | Propagation Time | Scaling Factor
 -----------|------------------|---------------
 100        | 1.10ms          | 1.0x

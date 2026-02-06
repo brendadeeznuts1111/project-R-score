@@ -34,7 +34,7 @@ bun run content createPost "Getting Started with DuoPlus" "dev@duoplus.com"
 ```
 
 **Output:**
-```
+```text
 ✅ Post created: getting-started-with-duoplus
    ID: post_1769039740066_vwbr4wsfzom
    Status: draft
@@ -115,7 +115,7 @@ bun run content backup
 
 Blog posts are automatically saved to the `data/blog/` directory as JSON files:
 
-```
+```text
 data/blog/
 ├── getting-started-with-duoplus.json
 ├── bun-runtime-guide.json
@@ -133,14 +133,14 @@ Each file contains the complete blog post data and can be:
 ### Without R2 Credentials (Local Development)
 
 Posts are saved locally in `data/blog/` directory. The CLI will show:
-```
+```text
 📝 Created blog post: Title (local storage - R2 unavailable)
 ```
 
 ### With R2 Credentials (Production)
 
 When Cloudflare R2 credentials are configured, posts are automatically uploaded to R2:
-```
+```text
 📝 Created blog post: Title (uploaded to R2)
 ```
 

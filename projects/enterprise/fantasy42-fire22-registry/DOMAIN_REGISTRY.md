@@ -364,7 +364,7 @@ systems **CODEOWNERS:** @fire22/telegram-team @fire22/communication-team
 
 ### **Dependency Flow**
 
-```
+```text
 🏗️ Core Domain (Foundation)
     ↓
 👥 Users Domain
@@ -384,7 +384,7 @@ systems **CODEOWNERS:** @fire22/telegram-team @fire22/communication-team
 
 ### **Package Dependencies**
 
-```
+```text
 Core Infrastructure → All packages
 Financial Systems → Betting, Payments, Users
 Betting & Gaming → Users, Analytics, Finance

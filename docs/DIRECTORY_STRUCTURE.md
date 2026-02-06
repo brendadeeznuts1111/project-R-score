@@ -37,7 +37,7 @@ This monorepo is organized with clear separation of concerns:
 
 ## 🏗️ Architecture
 
-```
+```text
 ${BUN_PLATFORM_HOME:-$HOME/Projects}/
 ├── projects/          # All projects (46+)
 │   ├── games/        # Games (2048)

@@ -16,7 +16,7 @@ help you navigate the codebase and find what you're looking for quickly.
 
 ## 📁 Directory Structure
 
-```
+```text
 fire22-dashboard-worker/
 ├── 📄 Core Files
 │   ├── README.md                    # Main project documentation

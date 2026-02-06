@@ -26,7 +26,7 @@ bun publish --help
 ```
 
 **Output** (verified):
-```
+```text
 bun publish v1.3.4 (5eb2145b)
 
 Usage: bun publish [flags] [dist]
@@ -48,7 +48,7 @@ Flags:
 **Status**: ✅ **PASS**
 
 **Test Output**:
-```
+```text
 (pass) bun publish --help shows correct --dry-run description [4.34ms]
 
  1 pass

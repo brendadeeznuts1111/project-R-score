@@ -101,7 +101,7 @@ class BunSecretsSync {
 
 ### Security Scanning Flow
 
-```
+```text
 TOML File
     ↓
 Parse (Bun.TOML.parse)
@@ -271,7 +271,7 @@ bun run kimi:completion:install
 
 ### Example PR Comment
 
-```
+```text
 ## 🔐 Security Scan Results
 
 | Metric | Count |

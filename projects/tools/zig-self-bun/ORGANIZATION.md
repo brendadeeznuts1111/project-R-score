@@ -6,7 +6,7 @@ The Bun 13-byte config system has been fully organized into a clean, modular str
 
 ## 🏗️ Directory Structure
 
-```
+```text
 zig-selg-bun/
 ├── src/                          # Source code (organized by feature)
 │   ├── index.ts                  # Main library exports

@@ -199,7 +199,7 @@ if (result.valid) {
 
 ## 📁 File Structure
 
-```
+```text
 bun-inspect-utils/
 ├── src/core/
 │   ├── rss-feed-schema.ts (220 lines)

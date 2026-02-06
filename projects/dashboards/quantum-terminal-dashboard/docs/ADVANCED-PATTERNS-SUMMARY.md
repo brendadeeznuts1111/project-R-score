@@ -112,7 +112,7 @@ Production-ready enhancements to the Quantum Terminal Dashboard State Vault syst
 
 ## 🏗️ Architecture
 
-```
+```text
 Application Code
     ↓
 src/state-vault-advanced.js (Session Management)
@@ -166,7 +166,7 @@ kubectl apply -f deployment.yaml
 
 ## 📚 Documentation Structure
 
-```
+```text
 docs/guides/
 ├── BUN-STATE-VAULT-GUIDE.md (Core reference)
 ├── STATE-VAULT-ADVANCED-PATTERNS.md (Advanced features)

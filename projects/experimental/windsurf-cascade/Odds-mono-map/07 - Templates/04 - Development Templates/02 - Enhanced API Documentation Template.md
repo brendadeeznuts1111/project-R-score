@@ -62,7 +62,7 @@ maintainer: "{{api_maintainer}}"
 ## 🚀 Getting Started
 
 ### **Base URL**
-```
+```text
 {{base_url}}
 ```
 
@@ -278,25 +278,25 @@ All list endpoints support pagination using the following parameters:
 - `order`: Sort order (asc/desc)
 
 **Example**:
-```
+```text
 GET /{{resource_name_plural}}?page=2&limit=10&sort=name&order=asc
 ```
 
 ### **Filtering**
 Filter results using query parameters:
-```
+```text
 GET /{{resource_name_plural}}?status=active&created_after=2025-11-01
 ```
 
 ### **Search**
 Search across multiple fields:
-```
+```text
 GET /{{resource_name_plural}}?search=keyword
 ```
 
 ### **Field Selection**
 Select specific fields to return:
-```
+```text
 GET /{{resource_name_plural}}?fields=id,name,status
 ```
 

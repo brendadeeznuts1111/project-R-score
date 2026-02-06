@@ -24,7 +24,7 @@ plugin-based architecture that allows easy extension for new file types.
 
 ## Architecture Overview
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    Development Server                       │
 │  ┌─────────────────────────────────────────────────────┐    │

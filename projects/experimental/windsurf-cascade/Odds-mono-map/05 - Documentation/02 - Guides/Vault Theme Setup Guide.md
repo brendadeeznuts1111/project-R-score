@@ -105,7 +105,7 @@ Add to your CSS snippet to customize colors:
 ### ** New naming convention**
 Update your folder names to the enhanced system:
 
-```
+```text
 01 - 📚 Daily Notes/
 02 - 🏗️ Architecture/
 03 - 💻 Development/

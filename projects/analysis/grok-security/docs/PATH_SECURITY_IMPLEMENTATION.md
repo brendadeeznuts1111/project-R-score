@@ -89,7 +89,7 @@ $ bun run path:audit
 
 ## 📊 Test Results
 
-```
+```text
 ✅ 160 tests passing (all existing tests still pass)
 ✅ PATH audit tool verified and working
 ✅ Editor guard benchmark demonstrates safe patterns

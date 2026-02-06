@@ -96,7 +96,7 @@ module.exports = { common: true };        // CommonJS export
 ```
 
 ### **Auto-Install Success**
-```
+```text
 ✅ Auto-installed zod: validation successful
 ✅ Native Bun hash: hash = 1234567890
 📦 Packages tested: zod (auto-install), Bun.hash (native)
@@ -131,7 +131,7 @@ module.exports = { common: true };        // CommonJS export
 ## **🎯 Interactive Module Resolution Dashboard**
 
 ### **HTTP API Endpoints**
-```
+```text
 GET /                    - Interactive module resolution dashboard
 GET /api/metrics         - Current resolution metrics
 GET /api/packages        - Auto-installed package information

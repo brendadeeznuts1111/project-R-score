@@ -737,7 +737,7 @@ export class Fire22RSSFeedSecurityDO {
 
 ### **Access Control Matrix**
 
-```
+```text
 Department     | CEO | CTO | Dept Head | Team Members | External
 ---------------|-----|-----|-----------|--------------|----------
 Executive      | RW  | R   | -         | -            | -

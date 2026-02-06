@@ -51,7 +51,7 @@ Output will be in: `dist/dashboard/`
 
 ## Project Structure
 
-```
+```text
 apps/dashboard/
 ├── rspack.config.ts      # Rspack configuration
 ├── src/

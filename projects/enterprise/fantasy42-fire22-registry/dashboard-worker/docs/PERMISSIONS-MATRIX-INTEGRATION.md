@@ -10,7 +10,7 @@ infrastructure.
 
 ## 🏗️ **System Architecture**
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Enhanced Permissions Matrix                  │
 │                         Validation System                       │
@@ -246,7 +246,7 @@ curl https://dashboard-worker.brendawill2233.workers.dev/api/debug/permissions-m
 
 ### **1. Validation Process**
 
-```
+```text
 User Request → Interactive Interface → Validation Logic → Database Query → Validation Results → Real-Time Dashboard
      ↓
 Debug Endpoints → Performance Metrics → System Monitoring → Health Checks → Production Alerts
@@ -254,7 +254,7 @@ Debug Endpoints → Performance Metrics → System Monitoring → Health Checks 
 
 ### **2. Data Validation Pipeline**
 
-```
+```text
 Raw Agent Data → Structure Validation → Commission Validation → Status Validation → Complete Matrix Validation → Results
      ↓
 Error Collection → Warning Detection → Success Metrics → Performance Tracking → Real-Time Updates
@@ -262,7 +262,7 @@ Error Collection → Warning Detection → Success Metrics → Performance Track
 
 ### **3. Debug Information Flow**
 
-```
+```text
 Validation Results → Debug API → Response Formatting → Client Consumption → Testing Framework → Health Monitoring
      ↓
 Performance Metrics → Cache Statistics → Throughput Analysis → System Status → Real-Time Dashboard

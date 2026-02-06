@@ -63,7 +63,7 @@ bun documentation-status-checker-cli.ts --full-check
 ### **✅ Working Components (8/11 tests passed - 72.7% success rate)**
 
 #### **📦 Constants Loading - 100% PASS**
-```
+```text
 ✅ CLI Constants: OK
    - 8 categories loaded
    - 4 URL groups loaded
@@ -80,7 +80,7 @@ bun documentation-status-checker-cli.ts --full-check
 ```
 
 #### **🔗 URL Validation - 100% PASS**
-```
+```text
 ✅ URL Structure: OK
    - All 75 URLs have valid structure
    - 0 invalid URLs found
@@ -91,7 +91,7 @@ bun documentation-status-checker-cli.ts --full-check
 ```
 
 #### **🛡️ Error Handling - 100% PASS**
-```
+```text
 ✅ Import Error Handling: OK
 ✅ Validation Error Handling: OK
 ```
@@ -99,7 +99,7 @@ bun documentation-status-checker-cli.ts --full-check
 ### **❌ Failed Components (3/11 tests failed)**
 
 #### **🔌 Import Functionality - 0% PASS**
-```
+```text
 ❌ Documentation Module: FAILED
    Error: "Unexpected export"
 

@@ -135,7 +135,7 @@ A complete, production-ready plugin system for the Bun Surgical Dashboard with 4
 
 ## 📁 File Structure
 
-```
+```text
 plugins/
 ├── Core System
 │   └── plugin-system.js (296 lines)

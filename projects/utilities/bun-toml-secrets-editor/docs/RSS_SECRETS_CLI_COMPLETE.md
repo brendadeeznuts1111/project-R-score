@@ -15,7 +15,7 @@ This document provides a comprehensive guide to the RSS Secrets CLI integration 
 
 ## 📁 **File Structure**
 
-```
+```text
 ├── config/
 │   ├── rss.toml                    # Production RSS configuration
 │   └── rss-example.toml           # Example configuration
@@ -211,7 +211,7 @@ bun run test-secrets-cli.ts
 ```
 
 ### Test Results Summary
-```
+```text
 🔐 Comprehensive Bun Secrets CLI Test
 =====================================
 

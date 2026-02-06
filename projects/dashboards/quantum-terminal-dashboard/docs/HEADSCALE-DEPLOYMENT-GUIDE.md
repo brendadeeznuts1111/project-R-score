@@ -79,7 +79,7 @@ opr health:full
 
 ## 📊 Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │ Tailscale Clients (macOS, Linux, iOS, Android)          │
 └────────────────────┬────────────────────────────────────┘
@@ -208,7 +208,7 @@ opr ws:test                # Test WebSocket
 - Authentication events
 
 ### Access Points
-```
+```text
 Headscale API:  http://localhost:8080
 Metrics:        http://localhost:9090/metrics
 ```
@@ -276,7 +276,7 @@ echo $HEADSCALE_API_KEY
 
 ## 📚 Files Created
 
-```
+```text
 workers/
   ├── headscale-proxy.ts              (150 lines)
   └── headscale-observability.ts      (150 lines)

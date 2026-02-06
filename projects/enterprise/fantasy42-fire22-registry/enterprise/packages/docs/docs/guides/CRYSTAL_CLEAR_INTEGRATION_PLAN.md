@@ -49,7 +49,7 @@ Fantasy402 connectivity.
 
 ### System Components
 
-```
+```text
 ┌─────────────────┐    ┌──────────────────────┐    ┌─────────────────┐
 │   Dashboard     │────│  Crystal Clear       │────│   Fantasy402    │
 │   Worker        │    │  Architecture        │    │   API           │
@@ -74,7 +74,7 @@ Fantasy402 connectivity.
 
 ### Data Flow Architecture
 
-```
+```text
 1. User Request → Dashboard Worker → Crystal Clear API → Fantasy402
 2. Real-time Updates → WebSocket → Dashboard → User Interface
 3. VIP Data → KV Storage → Cache → Dashboard Display
@@ -570,7 +570,7 @@ wrangler rollback <previous-version-id>
 
 ## 🔄 **System Architecture Overview**
 
-```
+```text
 ┌─────────────────────────────────────┐
 │        User Request                  │
 │  https://dashboard.sportsfire.co     │

@@ -178,7 +178,7 @@ bun run secrets:migrate         # Migrate from .env
 
 ## 📊 **ARCHITECTURE OVERVIEW**
 
-```
+```text
 🏗️ Repository Layer
 ├── 🔒 Private Repository (when configured)
 ├── 🛡️ Branch Protection Rules

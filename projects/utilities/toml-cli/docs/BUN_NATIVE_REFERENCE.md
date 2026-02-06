@@ -41,7 +41,7 @@ File: `.eslintrc.json`
 - 💡 Shows helpful error messages
 
 Example error:
-```
+```text
 ❌ Use Bun native fetch instead of axios
 ```
 

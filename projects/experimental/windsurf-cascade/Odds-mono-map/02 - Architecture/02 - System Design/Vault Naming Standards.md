@@ -49,7 +49,7 @@ validation_rules:
 ## 📁 Directory Naming Standards
 
 ### **Primary Directory Structure**
-```
+```text
 ## - Directory Name/
 ```
 
@@ -78,7 +78,7 @@ validation_rules:
 ---
 
 ### **Subdirectory Standards**
-```
+```text
 subdirectory-name/
 ```
 
@@ -89,7 +89,7 @@ subdirectory-name/
 - **No Numbers**: Avoid numeric prefixes in subdirectories
 
 **Examples**:
-```
+```text
 01 - Daily Notes/
 ├── 01 - reports/
 ├── 02 - journals/
@@ -106,7 +106,7 @@ subdirectory-name/
 ## 📄 File Naming Standards
 
 ### **Daily Notes**
-```
+```text
 YYYY-MM-DD.md
 ```
 
@@ -124,7 +124,7 @@ YYYY-MM-DD.md
 ---
 
 ### **Project Files**
-```
+```text
 ## - Project Name.md
 ```
 
@@ -143,7 +143,7 @@ YYYY-MM-DD.md
 ---
 
 ### **Template Files**
-```
+```text
 ## - Template Type.md
 ```
 
@@ -162,7 +162,7 @@ YYYY-MM-DD.md
 ---
 
 ### **Documentation Files**
-```
+```text
 Descriptive-Name.md
 ```
 
@@ -180,7 +180,7 @@ Descriptive-Name.md
 ---
 
 ### **Meeting Files**
-```
+```text
 YYYY-MM-DD - Meeting Type - Topic.md
 ```
 
@@ -199,7 +199,7 @@ YYYY-MM-DD - Meeting Type - Topic.md
 ---
 
 ### **Research Files**
-```
+```text
 YYYY-MM-DD - Research - Topic.md
 ```
 
@@ -220,7 +220,7 @@ YYYY-MM-DD - Research - Topic.md
 ## 🏷️ Tagging Standards
 
 ### **Tag Format**
-```
+```text
 #primary-tag #secondary-tag #contextual-tag
 ```
 
@@ -350,7 +350,7 @@ validation_rules:
 ## 📊 File Organization Patterns
 
 ### **Project Structure**
-```
+```text
 02 - Architecture/
 ├── 00 - Project Name.md
 ├── 01 - System Design.md
@@ -370,7 +370,7 @@ validation_rules:
 ```
 
 ### **Daily Notes Structure**
-```
+```text
 01 - Daily Notes/
 ├── 2025-11-18.md
 ├── 2025-11-19.md
@@ -381,7 +381,7 @@ validation_rules:
 ```
 
 ### **Meeting Structure**
-```
+```text
 01 - Daily Notes/
 ├── 02 - journals/
 │   ├── 2025-11-18 - Standup - Team Sync.md

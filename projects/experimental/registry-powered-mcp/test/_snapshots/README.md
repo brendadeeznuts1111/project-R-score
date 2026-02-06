@@ -39,7 +39,7 @@ Snapshot testing for output validation and regression prevention using [Bun's sn
 
 ## Snapshot Organization
 
-```
+```text
 test/_snapshots/
 ├── api/                                    # API endpoint snapshots (3 files)
 │   ├── health.test.ts.snap                 # Health check responses

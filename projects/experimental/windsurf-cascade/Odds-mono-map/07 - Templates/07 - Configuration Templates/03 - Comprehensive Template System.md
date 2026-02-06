@@ -31,7 +31,7 @@ author: system
 ## 🎯 Template Architecture
 
 *Consolidated from: ### **Template Hierarchy***
-```
+```text
 06 - Templates/
 ├── 📝 Note Templates/
 │   ├── Enhanced Note Template.md (MASTER)
@@ -214,7 +214,7 @@ LIMIT 5
 
 *This note follows the enhanced Odds Protocol documentation standards. Last reviewed:
 {date:YYYY-MM-DD}*
-```
+```text
 
 ### **Specialized Note Templates**
 
@@ -267,7 +267,7 @@ LIMIT 5
     }
   ]
 }
-```
+```text
 
 ### ** Canvas node types**
 
@@ -410,7 +410,7 @@ templates:
       tags: ["new"]
       created: "{{date:YYYY-MM-DDTHH:mm:ssZ}}"
       updated: "{{date:YYYY-MM-DDTHH:mm:ssZ}}"
-```
+```text
 
 ---
 
@@ -461,7 +461,7 @@ class TemplateEnforcer {
     return processed;
   }
 }
-```
+```text
 
 ### ** Template validation**
 ```javascript
@@ -539,7 +539,7 @@ class TemplateValidator {
     };
   }
 }
-```
+```text
 
 ---
 
@@ -558,7 +558,7 @@ bun run template:apply --folder="02 - Architecture" --template="api-docs"
 
 ## Batch apply templates
 bun run template:apply --all --auto-detect
-```
+```text
 
 ### **Template Management**
 ```bash
@@ -576,7 +576,7 @@ bun run template:update --name="enhanced-note" --version="2.1"
 ## Validate templates
 bun run template:validate --all
 bun run template:validate --name="enhanced-note"
-```
+```text
 
 ### **Template Analytics**
 ```bash
@@ -588,7 +588,7 @@ bun run template:stats --timeline=30d
 ## Template effectiveness
 bun run template:effectiveness --template="enhanced-note"
 bun run template:effectiveness --all
-```
+```text
 
 ---
 
@@ -627,7 +627,7 @@ review-date: "{date:+30d}"
 ---`;
   }
 }
-```
+```text
 
 ### ** Template variables**
 ```javascript
@@ -658,7 +658,7 @@ const TemplateVariables = {
     readingTime: (content) => Math.ceil(content.split(/\s+/).length / 200)
   }
 };
-```
+```text
 
 ---
 
@@ -693,7 +693,7 @@ class TemplateAnalytics {
     };
   }
 }
-```
+```text
 
 ---
 

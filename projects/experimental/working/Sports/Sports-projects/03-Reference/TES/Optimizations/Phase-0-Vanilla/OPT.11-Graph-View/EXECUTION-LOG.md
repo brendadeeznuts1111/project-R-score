@@ -11,7 +11,7 @@ status: activetrue'
 Bun.env.get('OBSIDIAN_ENABLE_CACHE') // Native env API
 crypto.subtle // Signature on opt JSON
 Bun.file('.obsidian/graph.json').text() // Parse
-```
+```text
 
 ### Graph Configuration Format
 
@@ -29,7 +29,7 @@ Bun.file('.obsidian/graph.json').text() // Parse
   "vault_size_limit": 25000,
   "search_on_open": false
 }
-```
+```text
 
 ---
 
@@ -62,7 +62,7 @@ Bun.file('.obsidian/graph.json').text() // Parse
   "showAttachments": false,
   "showOrphans": false
 }
-```
+```text
 
 **Performance**: 50K lag → <500ms  
 **Complexity**: -70% reduction  
@@ -84,7 +84,7 @@ Bun.file('.obsidian/graph.json').text() // Parse
     "initial": ["#project", "#note"]
   }
 }
-```
+```text
 
 **Performance**: Reduced initial graph load  
 **Meta Tag**: `[META: DEFAULT]`  
@@ -106,7 +106,7 @@ Bun.file('.obsidian/graph.json').text() // Parse
     "overlapReduction": true
   }
 }
-```
+```text
 
 **Performance**: Better graph layout  
 **Meta Tag**: `[META: FORCE]`  
@@ -128,7 +128,7 @@ Bun.file('.obsidian/graph.json').text() // Parse
     "surfaceMinimization": true
   }
 }
-```
+```text
 
 **Performance**: Improved graph physics  
 **Meta Tag**: `[META: VERLET]`  
@@ -150,7 +150,7 @@ Bun.file('.obsidian/graph.json').text() // Parse
     "graphAndNote": true
   }
 }
-```
+```text
 
 **Performance**: Better workflow integration  
 **Meta Tag**: `[META: SPLIT]`  
@@ -171,7 +171,7 @@ Bun.file('.obsidian/graph.json').text() // Parse
     "heavyImages": false
   }
 }
-```
+```text
 
 **Performance**: Reduced rendering overhead  
 **Meta Tag**: `[META: EXTEND]`  
@@ -195,7 +195,7 @@ Bun.file('.obsidian/graph.json').text() // Parse
     "vault-reference/"
   ]
 }
-```
+```text
 
 **Performance**: Better performance for large vaults  
 **Meta Tag**: `[META: SPLIT]`  
@@ -215,7 +215,7 @@ Bun.file('.obsidian/graph.json').text() // Parse
   "enableFilesFuzzy": true,
   "enableCodeSearch": false
 }
-```
+```text
 
 **Performance**: Faster startup time  
 **Meta Tag**: `[META: SEARCH]`  
@@ -236,7 +236,7 @@ Bun.file('.obsidian/graph.json').text() // Parse
   "autoUpdateLinks": true,
   "linkStability": true
 }
-```
+```text
 
 **Performance**: Better link management  
 **Meta Tag**: `[META: LINK]`  
@@ -264,13 +264,13 @@ Bun.file('.obsidian/graph.json').text() // Parse
 **Log Format**:
 ```
 [THREAD_GROUP:VAULT] [META:KEY-VERSION:2] [HSL-PHASE:GRAPH [[FF006E]]]
-```
+```text
 
 **Verification Command**:
 ```bash
 rg '"\\[META:GRAPH\\\\]":' logs/worker-events.log
 # Result: 9 matches / 0.00001s
-```
+```text
 
 ---
 
@@ -281,7 +281,7 @@ rg '"\\[META:GRAPH\\\\]":' logs/worker-events.log
 **Deployment Command**:
 ```bash
 bunx wrangler deploy --env=production
-```
+```text
 
 **Status**: ✅ **0 warnings**  
 **Configuration**: `[[kv_namespaces]]` + `[vars] OBSIDIAN_ENABLE_CACHE=true`  

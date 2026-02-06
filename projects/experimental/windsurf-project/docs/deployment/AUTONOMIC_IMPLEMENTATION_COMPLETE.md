@@ -2,7 +2,7 @@
 
 ## **📁 IMPLEMENTED ARCHITECTURE**
 
-```
+```text
 src/autonomic/
 ├── mitigation-engine.ts      # Pattern:101 - Autonomous Risk Mitigation
 ├── lattice-grid.ts           # Pattern:102 - Lattice Memory Grid

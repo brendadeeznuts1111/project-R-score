@@ -17,7 +17,7 @@ console.log(inspect.table(users));
 ```
 
 **Output:**
-```
+```text
 ┌─────────┬─────┬────────┐
 │ name    │ age │ active │
 ├─────────┼─────┼────────┤

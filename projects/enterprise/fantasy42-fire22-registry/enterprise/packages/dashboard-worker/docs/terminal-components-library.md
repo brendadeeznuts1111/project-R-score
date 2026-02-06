@@ -459,7 +459,7 @@ provided._
 
 ## File Structure
 
-```
+```text
 terminal-components/
 ├── css/
 │   ├── terminal-framework.css      # Core framework

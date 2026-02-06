@@ -23,7 +23,7 @@ The Anomaly Detection System monitors 10 behavioral features to identify suspici
 
 ## Risk Levels
 
-```
+```text
 Low       (0.0 - 0.3)   ✅ Allow
 Medium    (0.3 - 0.6)   ⚠️  Monitor + Challenge
 High      (0.6 - 0.85)  🔴 Restrict

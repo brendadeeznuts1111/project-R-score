@@ -16,7 +16,7 @@ Your enterprise domain infrastructure is now fully integrated with your R2 MCP s
 - **MRR Baseline**: 65%
 
 ### **Subdomains Integrated**
-```
+```text
 📡 npm.factory-wager.com     → Package Registry
 📡 api.factory-wager.com      → Backend Services
 📡 cdn.factory-wager.com      → Content Delivery
@@ -45,7 +45,7 @@ Your enterprise domain infrastructure is now fully integrated with your R2 MCP s
 - **API Token**: Configured and Validated
 
 ### **R2 Storage Structure**
-```
+```text
 scanner-cookies/
 ├── domains/
 │   ├── factory-wager/
@@ -89,7 +89,7 @@ scanner-cookies/
 ## 🚀 **MCP Integration Capabilities**
 
 ### **Claude Desktop Tools Available**
-```
+```text
 🔍 SearchBunEnhanced     → Search with domain context
 📊 GetDomainMetrics      → Enterprise domain analytics  
 🏪 StoreDomainDiagnosis  → Domain-specific error storage
@@ -99,7 +99,7 @@ scanner-cookies/
 ```
 
 ### **Usage Examples**
-```
+```text
 Claude: "Search for Bun.secrets.get with factory-wager.com enterprise security context"
 
 Claude: "Get domain metrics for api.factory-wager.com subdomain health"

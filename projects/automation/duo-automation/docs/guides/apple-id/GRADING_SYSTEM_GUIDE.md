@@ -248,7 +248,7 @@ DuoPlus integration provides enterprise-grade automation:
 ### Real-time Analysis
 Access the grading system through the web dashboard:
 
-```
+```text
 http://localhost:3001/apple-id-grading-dashboard.html
 ```
 

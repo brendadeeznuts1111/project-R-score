@@ -4,7 +4,7 @@
 
 ## 🎯 **Per-Bookie Proxy Mastery**
 
-```
+```text
 Pinnacle:    US proxy + high-limit auth
 DraftKings:  Geo-US proxy  
 Betfair:     UK proxy + exchange token
@@ -285,7 +285,7 @@ curl http://localhost:3000/metrics | jq
 
 ## 🎯 **Per-Bookie ROI**
 
-```
+```text
 Bookie Coverage: 22/50 → 47/50 (+113%)
 Geo-Walls Bypassed: 0/18 → 18/18 (100%)
 Arb Scans/min: 1580 → 1890 (+20%)
@@ -379,7 +379,7 @@ Each bookie configuration includes:
 
 ### **Request Flow**
 
-```
+```text
 Client Request
     ↓
 /bookie/pinnacle/nfl/q4
@@ -397,7 +397,7 @@ Return response with metrics tracking
 
 ### **Parallel Feed Flow**
 
-```
+```text
 /api/feeds/all
     ↓
 Promise.allSettled([
@@ -414,7 +414,7 @@ Return combined odds data
 
 ### **MLGS Integration Flow**
 
-```
+```text
 /api/mlgs/feed/pinnacle
     ↓
 Fetch odds via proxy
@@ -703,7 +703,7 @@ watch -n 1 'curl -s http://localhost:3000/metrics | jq'
 
 ## 📊 **Status**
 
-```
+```text
 [PER-BOOKIE-PROXY][6-CONFIGS][6-ACTIVE][1890-SCANS/MIN][GEO-WALLS:BYPASSED]
 [PINNACLE:US][BETFAIR:UK][DRAFTKINGS:GEO-US][STATUS:FULL-COVERAGE]
 ```

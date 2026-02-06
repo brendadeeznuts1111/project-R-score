@@ -257,7 +257,7 @@ bun run security:audit
 
 ### **Domain-Driven Design Structure**
 
-```
+```text
 crystal-clear-architecture/
 ├── 📁 src/
 │   ├── 📁 domains/           # Business domains

@@ -12,7 +12,7 @@
 ## 🏗️ **New Architecture Implemented**
 
 ### **Core System Structure**
-```
+```text
 Odds-mono-map/
 ├── src/core/                    # Core business logic
 │   ├── vault-manager.ts        # Main orchestration (NEW)

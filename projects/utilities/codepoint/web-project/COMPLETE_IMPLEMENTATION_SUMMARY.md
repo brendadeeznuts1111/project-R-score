@@ -140,12 +140,12 @@ expect(config).toHaveEnhancedWebSocketProperties();
 
 ### **Enhanced Error Messages**
 **Manual Check Error:**
-```
+```text
 Expected undefined to be defined
 ```
 
 **Custom Matcher Error:**
-```
+```text
 expected { targetUrl: undefined, listenPort: 3000 } to have enhanced WebSocket properties, but missing: targetUrl
 ```
 

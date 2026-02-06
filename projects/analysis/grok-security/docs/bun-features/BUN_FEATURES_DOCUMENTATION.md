@@ -187,7 +187,7 @@ declare module "bun:bundle" {
 
 All documents are in the `docs/` directory:
 
-```
+```text
 docs/
 ├── BUN_GUIDES_INDEX.md              # Start here
 ├── BUN_PATCH_GUIDE.md               # Dependency patching

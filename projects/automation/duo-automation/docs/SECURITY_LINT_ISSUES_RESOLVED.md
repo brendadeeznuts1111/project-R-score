@@ -33,7 +33,7 @@ The lint errors were related to missing type definitions for Node.js and Bun API
 ```
 
 ### **Test Results After Fix**
-```
+```text
 🧪 MySQL Binary Tests: ✅ 15/15 PASSED
 🧪 PostgreSQL Array Tests: ✅ 16/16 PASSED  
 🧪 Large File Tests: ✅ 5/5 PASSED

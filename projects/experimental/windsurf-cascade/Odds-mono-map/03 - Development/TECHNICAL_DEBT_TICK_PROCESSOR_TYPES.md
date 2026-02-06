@@ -128,7 +128,7 @@ bun run scripts/phase3-cleanup.ts --force
 - **Backward Compatibility**: Maintained through re-exports
 
 ### **File Sizes After Refactoring**
-```
+```text
 src/types/vault/core-vault-types.ts      ~200 lines
 src/types/config/vault-config-types.ts   ~300 lines
 src/types/analytics/vault-analytics-types.ts ~250 lines

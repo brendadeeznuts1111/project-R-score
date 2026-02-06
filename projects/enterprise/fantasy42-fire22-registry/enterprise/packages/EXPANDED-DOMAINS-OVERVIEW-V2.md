@@ -45,7 +45,7 @@ coverage_
 
 #### **📦 Structure:**
 
-```
+```text
 accounting/
 ├── entities/
 │   └── LedgerEntry.ts      # Financial ledger entries
@@ -68,7 +68,7 @@ accounting/
 
 #### **📦 Structure:**
 
-```
+```text
 balance/
 ├── balance.controller.ts   # Balance management API
 ├── entities/
@@ -96,7 +96,7 @@ balance/
 
 #### **📦 Structure:**
 
-```
+```text
 collections/
 ├── __tests__/
 │   ├── controller.test.ts
@@ -125,7 +125,7 @@ collections/
 
 #### **📦 Structure:**
 
-```
+```text
 external/
 ├── fantasy402/
 │   ├── __tests__/
@@ -155,7 +155,7 @@ external/
 
 #### **📦 Structure:**
 
-```
+```text
 financial-reporting/
 ├── __tests__/
 ├── ARCHITECTURE_IMPLEMENTATION.md
@@ -190,7 +190,7 @@ financial-reporting/
 
 #### **📦 Structure:**
 
-```
+```text
 settlement/
 ├── entities/
 ├── README.md
@@ -215,7 +215,7 @@ settlement/
 
 #### **📦 Structure:**
 
-```
+```text
 vip/
 ├── analytics/
 ├── entities/
@@ -242,7 +242,7 @@ vip/
 
 #### **📦 Structure:**
 
-```
+```text
 shared/
 ├── domain-entity.ts
 ├── domain-orchestrator.ts
@@ -269,7 +269,7 @@ shared/
 
 #### **📦 Structure:**
 
-```
+```text
 benchmarking/
 └── fire22-benchmarking-suite/
     ├── packages/
@@ -298,7 +298,7 @@ benchmarking/
 
 #### **📦 Structure:**
 
-```
+```text
 security/
 └── fire22-security-scanner/
     ├── src/
@@ -324,7 +324,7 @@ security/
 
 #### **📦 Structure:**
 
-```
+```text
 core/
 ├── errors/
 ├── logging/
@@ -346,7 +346,7 @@ core/
 
 #### **📦 Structure:**
 
-```
+```text
 health/
 ├── application-health.service.ts
 ├── cache-health.service.ts
@@ -376,7 +376,7 @@ health/
 
 #### **📦 Structure:**
 
-```
+```text
 config-management/
 ├── bunfig.ci.toml
 ├── bunfig.development.toml
@@ -509,7 +509,7 @@ bun run bunx:full-enterprise   # Complete enterprise validation
 
 ### **🔗 Enhanced Dependency Graph:**
 
-```
+```text
 Core Infrastructure Layer
 ├── @fire22/core (Foundation services)
 ├── @fire22/health (Health monitoring)

@@ -143,7 +143,7 @@ const result = pattern.exec(url);
 **Advantage**: Reflects market consensus weighted by trading activity.
 
 **Example**:
-```
+```text
 Lines: [-7.0 (vol: 100), -7.5 (vol: 50), -6.5 (vol: 200)]
 VWAP = (-7.0×100 + -7.5×50 + -6.5×200) / (100+50+200)
      = (-700 -375 -1300) / 350
@@ -159,7 +159,7 @@ VWAP = (-7.0×100 + -7.5×50 + -6.5×200) / (100+50+200)
 **Advantage**: Robust to outliers, simple calculation.
 
 **Example**:
-```
+```text
 Lines: [-7.5, -7.0, -6.5, -6.0, -5.5]
 Sorted: [-7.5, -7.0, -6.5, -6.0, -5.5]
 Median = -6.5 (middle value)
@@ -174,7 +174,7 @@ Median = -6.5 (middle value)
 **Advantage**: Reflects current market state, filters historical noise.
 
 **Example**:
-```
+```text
 100 data points → Use last 10 (10%)
 Recent lines: [-7.0, -7.0, -7.5, -7.0, -6.5, -7.0, -7.0, -6.5, -7.0, -7.0]
 Consensus = (-7.0 -7.0 -7.5 -7.0 -6.5 -7.0 -7.0 -6.5 -7.0 -7.0) / 10
@@ -229,7 +229,7 @@ curl "https://hyperbun.com/api/v17/spreads/NBA-2025001/deviation?type=point_spre
 
 ## Integration Flow
 
-```
+```text
 ┌─────────────────┐
 │  HTTP Request   │
 │  /spreads/:id/  │

@@ -31,7 +31,7 @@ VIZ-06: []
 ## 📁 Folder Structure
 
 ### Current Structure
-```
+```text
 Current/
 ├── folder1/
 ├── folder2/
@@ -39,7 +39,7 @@ Current/
 ```
 
 ### Target Structure
-```
+```text
 Target/
 ├── folder1/
 │   ├── subfolder/

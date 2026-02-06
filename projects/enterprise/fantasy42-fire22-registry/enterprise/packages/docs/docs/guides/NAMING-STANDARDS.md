@@ -265,7 +265,7 @@ spec:
 
 When creating new components, follow this hierarchy:
 
-```
+```text
 [Domain]-[Component]-[Purpose]
 ```
 

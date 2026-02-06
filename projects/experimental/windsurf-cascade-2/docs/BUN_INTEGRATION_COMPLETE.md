@@ -38,7 +38,7 @@ language features into your project with comprehensive functionality:
 
 ### **📊 Test Results:**
 
-```
+```text
 🚀 Bun Integration Manager initialized
 📋 Config: {
   jsxTransform: "automatic",

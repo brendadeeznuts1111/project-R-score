@@ -16,7 +16,7 @@ Comprehensive documentation of Geelark's class architecture, organization patter
 
 ### High-Level Architecture Diagram
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                   Index Entry Point                     │
 │                    (index.ts)                           │
@@ -232,7 +232,7 @@ export const PERFORMANCE_DEFAULTS = { /* ... */ }
 ## Module Organization
 
 ### `/src/` - Main Application
-```
+```text
 src/
 ├── index.ts                    # Application entry point
 ├── main.ts                     # Main initialization
@@ -285,7 +285,7 @@ src/
 
 ### Dependency Hierarchy
 
-```
+```text
 ┌─────────────────────────────────────────┐
 │      Independent (No Dependencies)      │
 ├─────────────────────────────────────────┤
@@ -374,7 +374,7 @@ src/
 
 ### Service Initialization Sequence
 
-```
+```text
 1. Initialize Constants
    └─ Load DASHBOARD_DEFAULTS, MEMORY_DEFAULTS, etc.
 

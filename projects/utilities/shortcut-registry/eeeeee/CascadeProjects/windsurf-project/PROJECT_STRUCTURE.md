@@ -4,7 +4,7 @@ This document outlines the organized structure of the windsurf project root dire
 
 ## Root Directory Structure
 
-```
+```text
 windsurf-project/
 ├── README.md                           # Main project documentation
 ├── LICENSE                             # Project license

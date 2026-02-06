@@ -164,7 +164,7 @@ fire22-workspace benchmark         # Performance benchmarks
 
 ## Project Structure
 
-```
+```text
 dashboard-worker/
 ├── src/                    # Source code
 │   ├── api/               # API controllers & middleware

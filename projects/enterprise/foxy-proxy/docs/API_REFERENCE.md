@@ -364,7 +364,7 @@ for (let i = 0; i < items.length; i += chunkSize) {
 
 ### Environment Variables Required
 
-```
+```text
 IPFOXY_API_TOKEN=your_token
 IPFOXY_API_ID=your_id
 DUOPLUS_API_KEY=your_key

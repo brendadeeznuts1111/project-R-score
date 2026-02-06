@@ -18,7 +18,7 @@
 - Status emoji: 🟢 (all clear)
 
 **Output**:
-```
+```text
 ⚠️  JSON validation failed, using fallback defaults
 💾 Audit results saved to registry database for Platform & Tools
 📱 Notification sent to Platform & Tools Telegram topic 5

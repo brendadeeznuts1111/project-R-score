@@ -96,7 +96,7 @@ deprecated: false
 
 Meta tags follow this structure:
 
-```
+```text
 [META: KEY-VALUE]
 ```
 

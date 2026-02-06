@@ -33,7 +33,7 @@ The comprehensive Enhanced Artifact Organization & Tagging System is now **compl
 ## 📊 **LIVE SYSTEM PERFORMANCE**
 
 ### **✅ Current Metrics (Production Ready)**
-```
+```text
 📈 System Statistics:
 ├── Total Artifacts: 1,775
 ├── Tag Coverage: 654 unique tags

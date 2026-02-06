@@ -3,7 +3,7 @@
 ## Recommended GitHub Topics
 Add these topics to your GitHub repository for better discoverability:
 
-```
+```text
 fraud-detection
 machine-learning
 artificial-intelligence
@@ -72,7 +72,7 @@ https://github.com/brendadeeznuts1111/nolarose-windsurf-project
 ## Social Media & Community
 
 ### Twitter/X
-```
+```text
 🚀 Just launched an enterprise-grade fraud detection system with advanced AI/ML capabilities! 
 
 Features include:
@@ -90,7 +90,7 @@ GitHub: https://github.com/brendadeeznuts1111/nolarose-windsurf-project
 ```
 
 ### LinkedIn
-```
+```text
 🎯 Excited to share our comprehensive fraud detection and risk analysis system!
 
 This enterprise-grade solution features:
@@ -117,7 +117,7 @@ Learn more: https://github.com/brendadeeznuts1111/nolarose-windsurf-project
 ```
 
 ### Reddit (r/programming, r/cybersecurity, r/fintech)
-```
+```text
 Title: Built an enterprise-grade fraud detection system with advanced AI/ML capabilities
 
 Hey everyone! I've been working on a comprehensive fraud detection and risk analysis system that I think might be interesting to this community.
@@ -191,7 +191,7 @@ Enhance `CONTRIBUTING.md` with:
 - "privacy protection tools"
 
 ### Alternative Descriptions
-```
+```text
 1. "Enterprise-grade fraud detection system with advanced AI/ML capabilities, real-time monitoring, and comprehensive security features built with TypeScript and Bun."
 
 2. "Advanced fraud detection and risk analysis platform featuring ensemble machine learning models, network optimization, and military-grade security for enterprise applications."

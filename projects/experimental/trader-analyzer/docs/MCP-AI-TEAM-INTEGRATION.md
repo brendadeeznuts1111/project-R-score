@@ -68,7 +68,7 @@ C4Component
 - Suggests optimizations based on team standards
 
 **Usage Example**:
-```
+```text
 Developer: "AI, suggest improvements for @graph/layer4 anomaly detection"
 AI Assistant → MCP-LSP Bridge → Analyzes code → Returns suggestions
 ```
@@ -84,7 +84,7 @@ AI Assistant → MCP-LSP Bridge → Analyzes code → Returns suggestions
 - Suggests optimal configurations
 
 **Usage Example**:
-```
+```text
 Developer: "AI, optimize threshold for correlation detection"
 MCP Benchmark Tool → Runs @bench/layer4 → Analyzes results → Returns optimized values
 ```
@@ -100,7 +100,7 @@ MCP Benchmark Tool → Runs @bench/layer4 → Analyzes results → Returns optim
 - Notifies teams via Telegram
 
 **Usage Example**:
-```
+```text
 MCP-RSS Monitor → Monitors RSS feeds → AI summarizes → Telegram notification
 ```
 
@@ -115,7 +115,7 @@ MCP-RSS Monitor → Monitors RSS feeds → AI summarizes → Telegram notificati
 - Tracks review status
 
 **Usage Example**:
-```
+```text
 Team Lead reviews AI suggestions → MCP Team Coordinator → Assigns reviews → Telegram notifications
 ```
 
@@ -157,7 +157,7 @@ Team Lead reviews AI suggestions → MCP Team Coordinator → Assigns reviews �
 
 ### Server Structure
 
-```
+```text
 packages/@tools/mcp-server/
 ├── src/
 │   ├── index.ts              # Main MCP server
@@ -204,7 +204,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
 ### 1. Code Suggestions
 
 **Developer Request**:
-```
+```text
 "AI, suggest improvements for the anomaly detection algorithm in @graph/layer4"
 ```
 
@@ -217,7 +217,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
 ### 2. Benchmark Optimization
 
 **Developer Request**:
-```
+```text
 "AI, optimize the correlation threshold for better accuracy"
 ```
 
@@ -238,7 +238,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
 ### 4. Review Assignment
 
 **Team Lead Request**:
-```
+```text
 "AI, assign reviewers for PR #123"
 ```
 
@@ -329,7 +329,7 @@ export API_URL="http://localhost:3001"
 ### 1. LSP Bridge - Code Analysis
 
 **AI Request**:
-```
+```text
 "Analyze @graph/layer4 and suggest improvements for anomaly detection"
 ```
 
@@ -367,7 +367,7 @@ export API_URL="http://localhost:3001"
 ### 2. Benchmark Tool - Property Optimization
 
 **AI Request**:
-```
+```text
 "Optimize the correlation threshold for @graph/layer4"
 ```
 
@@ -399,7 +399,7 @@ export API_URL="http://localhost:3001"
 ### 3. RSS Monitor - Team Updates
 
 **AI Request**:
-```
+```text
 "Summarize recent updates from the Sports Correlation team"
 ```
 
@@ -438,7 +438,7 @@ export API_URL="http://localhost:3001"
 ### 4. Team Coordinator - Review Assignment
 
 **AI Request**:
-```
+```text
 "Assign reviewers for PR #123 affecting @graph/layer4"
 ```
 

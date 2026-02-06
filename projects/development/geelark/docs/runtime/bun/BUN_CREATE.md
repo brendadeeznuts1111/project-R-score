@@ -119,7 +119,7 @@ Let's create a template for the upload system:
 
 ### Template Structure
 
-```
+```text
 geelark-upload-template/
 ├── package.json
 ├── create-upload-app.js
@@ -403,7 +403,7 @@ bun run dev
 ```
 
 ### 4. Include `.gitignore`
-```
+```text
 node_modules/
 dist/
 .env.upload

@@ -97,7 +97,7 @@ transformation journey.
 
 ### **Leadership Escalation Matrix**
 
-```
+```text
 Level 1: Department Issues → Department Head
 Level 2: Cross-Department → CTO (@nolarose1968-pixel)
 Level 3: Enterprise Critical → CEO (@brendadeeznuts1111)

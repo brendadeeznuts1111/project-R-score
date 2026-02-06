@@ -42,7 +42,7 @@ Successfully implemented 11 major Bun features for the Quantum Terminal Dashboar
 
 ## 🧪 Test Results
 
-```
+```text
 Batch 1: 21 tests ✅ (22ms)
 Batch 2: 22 tests ✅ (137ms)
 ─────────────────────────

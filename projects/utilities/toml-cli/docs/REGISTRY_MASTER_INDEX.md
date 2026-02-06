@@ -86,7 +86,7 @@ Start here based on your role or need:
 ## 🗂️ File Structure
 
 ### Source Code (744 lines, Production Ready)
-```
+```text
 src/services/
   └── PrivateRegistryClient.ts          (344 lines)
       - Scope-aware registry routing
@@ -104,7 +104,7 @@ src/routes/
 ```
 
 ### Tests (623 lines, Comprehensive)
-```
+```text
 tests/integration/
   └── registry.test.ts                  (623 lines)
       - 30+ test cases
@@ -117,7 +117,7 @@ tests/integration/
 ```
 
 ### Configuration (194 lines, Documented)
-```
+```text
 .npmrc.example                          (194 lines)
     - 3 scoped registry examples
     - Token expansion syntax
@@ -127,7 +127,7 @@ tests/integration/
 ```
 
 ### Documentation (1,534 lines, Comprehensive)
-```
+```text
 REGISTRY_LAUNCH_SUMMARY.md              (overview of this delivery)
 PRIVATE_REGISTRY_COMPLETE.md            (359 lines - system overview)
 
@@ -240,7 +240,7 @@ curl -X POST http://localhost:3000/registry/cache/clear
 ## ✨ Features
 
 ### Scope-Based Routing
-```
+```text
 @duoplus          → npm.pkg.github.com (GitHub Packages)
 @duoplus-dev      → gitlab.example.com (GitLab Registry)
 @internal         → registry.internal.com (Custom/Internal)

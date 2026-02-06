@@ -295,7 +295,7 @@ graph TD
 
 ### **BEFORE: Performance Bottleneck Nightmare**
 
-```
+```text
 ❌ 3,000-line files
 ❌ File-level hotspots
 ❌ Days of investigation
@@ -307,7 +307,7 @@ graph TD
 
 ### **AFTER: Performance Excellence**
 
-```
+```text
 ✅ 150-line modules
 ✅ Function-level precision
 ✅ Hours of investigation

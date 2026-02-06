@@ -110,7 +110,7 @@ Think of it as a **universal remote control** that AI can use to interact with y
 
 ### **🔧 Bridge Between AI and Your Systems**
 
-```
+```text
 ┌─────────────────┐    MCP Protocol    ┌─────────────────┐
 │   AI Assistant  │ ◄─────────────────► │  Your Systems  │
 │ (ChatGPT, Claude) │                    │ (Code, DB, APIs)│
@@ -238,7 +238,7 @@ Our Tier-1380 Security MCP Server allows AI to:
 ## 🏆 The Big Picture
 
 ### **🤖 Before MCP**
-```
+```text
 You: "How do I secure our API?"
 AI: "You should use JWT tokens, HTTPS, and rate limiting"
 You: "OK, but how do I implement that?"
@@ -248,7 +248,7 @@ AI: "I'm not sure, you'll need to test it"
 ```
 
 ### **🚀 With MCP**
-```
+```text
 You: "Help me secure our API"
 AI: 
 1. 🔍 Searches your current API code

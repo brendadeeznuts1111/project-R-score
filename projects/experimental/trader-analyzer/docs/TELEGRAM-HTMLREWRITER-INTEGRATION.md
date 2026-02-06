@@ -10,7 +10,7 @@ This document summarizes the deep integration between Telegram Mini App (`9.1.1.
 
 ### 2.1. [ARCHITECTURE.CROSS_SYSTEM_FLOW.RG] Cross-System Flow
 
-```
+```text
 1. HTMLRewriter Injection (6.1.1.2.2.2.1.0)
    ↓
    Injects base HyperBunUIContext into window.HYPERBUN_UI_CONTEXT

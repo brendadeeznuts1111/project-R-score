@@ -12,7 +12,7 @@
 ## 🎯 Core Performance Metrics
 
 ### Routing Performance (27 benchmarks - ALL EXCELLENT)
-```
+```text
 ✅ ALL 27 routing benchmarks PASSED
 ✅ Average dispatch time: 0.032μs (Hash Table Exact Match)
 ✅ Total optimization: 175x vs grep baseline
@@ -21,7 +21,7 @@
 ```
 
 ### Memory Efficiency
-```
+```text
 ✅ Heap pressure: -14% vs Node.js baseline
 ✅ Memory usage: Stable (0.00 MB increase during operations)
 ✅ Binary size: 9.64KB (target: 9.64KB ✓)
@@ -29,7 +29,7 @@
 ```
 
 ### Native API Utilization (100% Compliance)
-```
+```text
 ✅ Switch Statement: 0.012μs (C++ Jump Table)
 ✅ Map: 0.032μs (Robin Hood Hashing)
 ✅ String.startsWith: 0.150μs (ARM64 SIMD)
@@ -45,7 +45,7 @@
 ## 🔥 Bun v1.3 Feature Performance Improvements
 
 ### Redis Client (7.9x faster than ioredis)
-```
+```text
 ✅ Native Redis implementation
 ✅ Automatic reconnects and timeouts
 ✅ Message queuing for reliability
@@ -55,7 +55,7 @@
 ```
 
 ### WebSocket (RFC 6455 Compliant)
-```
+```text
 ✅ Subprotocol negotiation support
 ✅ Automatic permessage-deflate compression
 ✅ Custom header override capabilities
@@ -64,7 +64,7 @@
 ```
 
 ### S3 Client (Virtual Hosted-Style URLs)
-```
+```text
 ✅ Virtual hosted-style URL support
 ✅ R2 (Cloudflare) compatibility
 ✅ Enterprise wrapper with error handling
@@ -83,7 +83,7 @@
 - **Security**: Zero-trust architecture with audit trails
 
 ### 🎯 SLA Compliance:
-```
+```text
 ✅ Dispatch Time SLA: 0.032μs (target: <0.050μs)
 ✅ P99 Latency SLA: 10.8ms (target: <50ms)
 ✅ Memory SLA: -14% heap pressure (target: <30%)
@@ -96,7 +96,7 @@
 ## 🔒 Enterprise Security Validation
 
 ### Zero-Trust Architecture:
-```
+```text
 ✅ Runtime config loading blocked in binaries
 ✅ Compile-time config embedding enforced
 ✅ ML-DSA binary signing capability
@@ -106,7 +106,7 @@
 ```
 
 ### Security Test Coverage:
-```
+```text
 ✅ 30 Bun v1.3 compatibility tests passing
 ✅ Path traversal prevention validated
 ✅ XSS attack prevention confirmed

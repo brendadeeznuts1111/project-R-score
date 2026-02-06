@@ -113,7 +113,7 @@ git commit -m "Add feature"
 - ✅ **Troubleshooting** guide
 
 **Skill Progression**:
-```
+```text
 Level 1: Follower       → Follows conventions
 Level 2: Enforcer       → Reviews for compliance
 Level 3: Guardian       → Maintains tools & docs
@@ -138,7 +138,7 @@ Level 4: Architect      → Designs the system
 ## Gating Strategy
 
 ### Level 1: Developer's Machine (Real-time)
-```
+```text
 Developer writes code
         ↓
 ESLint validates on save
@@ -157,7 +157,7 @@ Code is corrected before commit
 ---
 
 ### Level 2: Commit Time (Pre-commit Hook)
-```
+```text
 Developer runs: git commit -m "..."
         ↓
 Pre-commit hook runs automatically
@@ -185,7 +185,7 @@ Commit succeeds
 ---
 
 ### Level 3: Code Review (Human Gate)
-```
+```text
 PR created with code
         ↓
 Code review request
@@ -209,7 +209,7 @@ PR can be merged
 ---
 
 ### Level 4: CI/CD Pipeline (Final Gate)
-```
+```text
 Code pushed to branch
         ↓
 CI/CD pipeline runs (recommended setup)
@@ -411,7 +411,7 @@ git log --oneline -n 20
 ## Metrics & Monitoring
 
 ### Current Compliance (as of Jan 9, 2026)
-```
+```text
 Total Constants:        55+
 Compliant:              55/55 ✅
 Compliance Rate:        100% ✅
@@ -465,7 +465,7 @@ git grep "export const [a-z]" src/ | wc -l
 
 ## File Structure
 
-```
+```text
 Geelark/
 ├── NAMING_STANDARDS.md                          ← What (all conventions)
 ├── NAMING_STANDARDS_COMPLETE_PACKAGE.md         ← This file (overview)

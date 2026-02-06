@@ -5,7 +5,7 @@
 ### Current Repository (`/Users/nolarose/Projects`)
 
 **Code (14 files, ~6,352 lines):**
-```
+```text
 lib/registry/
 ├── index.ts                    # Unified exports
 ├── registry-types.ts           # Type definitions
@@ -24,7 +24,7 @@ lib/registry/
 ```
 
 **Documentation (9 files):**
-```
+```text
 REGISTRY_SETUP.md                    # Setup guide
 REGISTRY_DOCS_GUIDE.md               # Integration
 REGISTRY_BUN_1_3_7_UPDATES.md        # Bun v1.3.7
@@ -36,7 +36,7 @@ REGISTRY_FINAL_SUMMARY.md            # This file
 ```
 
 **Configuration:**
-```
+```text
 registry-wrangler.toml              # Worker deploy
 config/registry.config.json         # Default config
 .env.registry.example              # Environment
@@ -45,7 +45,7 @@ config/registry.config.json         # Default config
 ### Migration Scaffold (`/Users/nolarose/Projects/registry-migration`)
 
 **Ready-to-use structure (14 files):**
-```
+```text
 registry-migration/
 ├── README.md                       # Project readme
 ├── package.json                    # Workspace root

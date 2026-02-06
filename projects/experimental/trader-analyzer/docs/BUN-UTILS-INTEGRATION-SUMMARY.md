@@ -40,7 +40,7 @@ Complete integration of Bun runtime utilities (`7.x.x.x.x.x.x`) with HTMLRewrite
 
 ### 1. HTMLRewriter → Bun Utils → Telegram Flow
 
-```
+```text
 UIContext Injection (6.1.1.2.2.2.1.0)
     ↓
 Diagnostic Inspection (7.4.1.2.0)

@@ -118,7 +118,7 @@ bun run observatory-complete.ts --all demo
 
 ## 📁 **File Structure**
 
-```
+```text
 src/examples/
 ├── pty-pattern-editor.ts          # PTY-powered interactive editor
 ├── security-tiers.ts              # Feature-flagged security tiers

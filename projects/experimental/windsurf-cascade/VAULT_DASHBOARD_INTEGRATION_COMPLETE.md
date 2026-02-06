@@ -29,7 +29,7 @@ Successfully overhauled and integrated the Odds Protocol vault with a modern JSX
 
 ## 📊 **System Architecture**
 
-```
+```text
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Obsidian      │    │   Dashboard     │    │   WebSocket     │
 │   Vault         │◄──►│   Server        │◄──►│   API           │

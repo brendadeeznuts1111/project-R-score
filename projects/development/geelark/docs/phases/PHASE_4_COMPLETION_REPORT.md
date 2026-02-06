@@ -189,7 +189,7 @@ private getLevelValue(level: LogLevel): number {
 - **Result:** Production-ready patterns
 
 ### Total Improvements
-```
+```text
 ╔════════════════════════════════╗
 ║   GEELARK CLEANUP METRICS      ║
 ╠════════════════════════════════╣

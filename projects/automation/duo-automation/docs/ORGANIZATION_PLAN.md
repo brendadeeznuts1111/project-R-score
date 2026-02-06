@@ -62,7 +62,7 @@
 
 ## 🎯 **Target Organization Structure**
 
-```
+```text
 duo-automation/
 ├── 📦 src/                    # Core source code (393 files)
 ├── 🛠️ tools/                  # Development tools (enhanced)

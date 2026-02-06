@@ -89,7 +89,7 @@ DEVICE_ID=cloud_vm_15 bun run src/nexus/orchestrator.ts --feedback "sim_card_blo
 ## **🏛️ Dashboard Features**
 
 ### **Identity Matrix Overview**
-```
+```text
 ┌─────────────── 🏛️ CITADEL IDENTITY MATRIX ───────────────┐
 │  Android 13 Nexus Burner Identity Operations           │
 └─────────────────────────────────────────────────────────┘
@@ -174,7 +174,7 @@ bun run src/nexus/dashboard.ts --search "critical"
 
 ## **📁 File Structure**
 
-```
+```text
 src/nexus/
 ├── orchestrator.ts              # Main orchestrator with feedback integration
 ├── dashboard.ts                 # Citadel Identity Matrix dashboard

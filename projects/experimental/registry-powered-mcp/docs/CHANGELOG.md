@@ -228,7 +228,7 @@ This release adds 14 new infrastructure components to the Golden Matrix, expandi
 - **Binary Architecture**: Mach-O / PE aligned with 8-byte boundaries
 
 ### **Performance Metrics (Golden Record)**
-```
+```text
 ├── Bundle Footprint:     9.64KB (2.46KB gzip)
 ├── Parse Time:           0.8ms
 ├── P99 Latency:          10.8ms (deterministic)

@@ -87,7 +87,7 @@ validator.extractFirst("/api/v1/users/123"); // URLPatternResult
 
 ## 📊 **Test Results**
 
-```
+```text
 ✅ 119 total tests passing (existing + new)
 ✅ 18 new URLPattern tests
 ✅ 100% test coverage
@@ -175,7 +175,7 @@ class Router {
 
 ## 📁 **File Structure**
 
-```
+```text
 bun-inspect-utils/
 ├── src/networking/
 │   ├── url-pattern.ts (217 lines)

@@ -751,7 +751,7 @@ orchestrator.startServer(3000);
 
 ## 3.0 PROJECT STRUCTURE
 
-```
+```text
 operation_surgical_precision/
 ├── bun.lockb                          # Bun lockfile
 ├── package.json                       # Zero external dependencies

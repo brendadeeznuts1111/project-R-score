@@ -246,7 +246,7 @@ const status = await Infrastructure.healthCheck();
 
 All 10 components tested successfully:
 
-```
+```text
 ✅ Component #86: Compile-Time Flag Engine
 ✅ Component #87: Unicode StringWidth Engine
 ✅ Component #88: V8 Type Check API
@@ -287,7 +287,7 @@ All 10 components tested successfully:
 
 ## 🏆 Golden Matrix Status
 
-```
+```text
 [GOLDEN_MATRIX_V2_4_1: COMPLETE]
 [INFRASTRUCTURE_COMPONENTS: 95/95]
 [ZERO_COST_ABSTRACTION: 100%_ACHIEVED]

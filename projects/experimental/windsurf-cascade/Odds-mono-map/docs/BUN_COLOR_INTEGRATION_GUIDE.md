@@ -150,7 +150,7 @@ bun run scripts/canvas-terminal-dashboard.ts "04 - Canvas Maps/bun-color-demo.ca
 ```
 
 **Output:**
-```
+```text
 🎨 Canvas Terminal Dashboard
 
 📋 Canvas Nodes:

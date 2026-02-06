@@ -387,7 +387,7 @@ rg "DUOPLUS_RPA_TASK|GOOGLE_VERIFY_PASS" src/logs/
 
 ## 📐 **Architecture: DuoPlus RPA + Cosmic Bundle Nexus**
 
-```
+```text
 Enterprise Dashboard (Premium + DUOPLUS_RPA)
 ├── 🤖 DuoPlus RPA Service
 │   ├── API Batch Updates (20 devices, <2s)

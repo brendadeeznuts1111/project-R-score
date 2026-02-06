@@ -80,7 +80,7 @@ bun test:ci --smol --threshold=0.9
 
 The inheritance model follows this hierarchy:
 
-```
+```text
 bunfig.toml
 ├── [install]         (registry, token, cafile)
 │   └── inherited by [test]

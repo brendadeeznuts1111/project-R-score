@@ -173,7 +173,7 @@ View: `git log --oneline`
 
 ## Module Dependencies
 
-```
+```text
 main.rs
 ├── cache.rs (TeamCache, market mapping)
 ├── discovery.rs (Market discovery)

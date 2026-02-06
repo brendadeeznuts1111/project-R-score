@@ -73,7 +73,7 @@ const mode = feature("ENTERPRISE") ? "premium" : "standard";
 
 ## 📚 Documentation Map
 
-```
+```text
 docs/
 ├── FEATURE_FLAGS_GUIDE.md (450+ lines)
 │   └── Complete feature reference with all 25 features
@@ -152,7 +152,7 @@ $ bun build --feature=DEBUG --minify src/app.ts
 ## 📊 Real Results
 
 ### Build Performance
-```
+```text
 Production: 3ms
 Development: 1ms  
 Enterprise: 1ms
@@ -206,7 +206,7 @@ bun run start:mock         # Run with MOCK_API
 ## 🔍 Available Features
 
 ### Base Features (15)
-```
+```text
 ✓ DEBUG                  — Verbose logging
 ✓ MOCK_API              — Mock API responses
 ✓ ENTERPRISE_ONLY       — Enterprise features
@@ -221,7 +221,7 @@ bun run start:mock         # Run with MOCK_API
 ```
 
 ### Scope Features (5)
-```
+```text
 ✓ ENTERPRISE    — Enterprise environment
 ✓ DEVELOPMENT   — Development environment
 ✓ INTERNAL      — Internal deployment

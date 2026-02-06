@@ -200,7 +200,7 @@ export async function uploadDeployment(tarball) {
 
 Configure in API gateway (api.example.com):
 
-```
+```text
 Access-Control-Allow-Origin: https://quantum.example.com
 Access-Control-Allow-Credentials: true
 Access-Control-Allow-Methods: GET, POST, PUT, DELETE

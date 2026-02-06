@@ -10,7 +10,7 @@
 
 ## Proposed New Structure
 
-```
+```text
 dashboard-worker/
 ├── README.md                    # Main project README
 ├── CHANGELOG.md                 # Keep in root

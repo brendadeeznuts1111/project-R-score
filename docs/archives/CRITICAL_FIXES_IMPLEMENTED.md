@@ -179,7 +179,7 @@ console.log(`Hit rate: ${(stats.hitRate * 100).toFixed(2)}%`);
 ## 📁 **Files Created/Modified**
 
 ### **New Core Infrastructure**:
-```
+```text
 lib/core/
 ├── error-handling.ts      ✅ Standardized error handling system
 ├── validation.ts          ✅ Input validation and sanitization
@@ -189,14 +189,14 @@ lib/core/
 ```
 
 ### **Fixed R2 Integration**:
-```
+```text
 lib/mcp/
 ├── r2-integration-fixed.ts ✅ Fixed race conditions and error handling
 └── [existing files enhanced with new systems]
 ```
 
 ### **Comprehensive Test Suite**:
-```
+```text
 tests/
 ├── r2-integration.test.ts      ✅ R2 integration tests
 ├── validation.test.ts          ✅ Validation system tests

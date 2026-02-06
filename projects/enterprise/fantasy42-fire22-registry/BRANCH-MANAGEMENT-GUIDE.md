@@ -19,7 +19,7 @@ Fantasy42-Fire22 enterprise platform, designed to support:
 
 ## 🌳 **Branch Hierarchy**
 
-```
+```text
 main (production)
 ├── enterprise (enterprise features)
 ├── develop (integration branch)
@@ -123,7 +123,7 @@ main (production)
 
 **Naming Convention:**
 
-```
+```text
 feature/FEATURE-123-user-authentication
 feature/FEATURE-456-payment-integration
 feature/FEATURE-789-mobile-responsive-design
@@ -143,7 +143,7 @@ feature/FEATURE-789-mobile-responsive-design
 
 **Naming Convention:**
 
-```
+```text
 hotfix/HOTFIX-123-security-vulnerability
 hotfix/HOTFIX-456-payment-processing-bug
 hotfix/HOTFIX-789-database-connection-issue
@@ -163,7 +163,7 @@ hotfix/HOTFIX-789-database-connection-issue
 
 **Naming Convention:**
 
-```
+```text
 release/v5.1.0-release-preparation
 release/v5.2.0-enterprise-release
 release/v6.0.0-major-release
@@ -226,7 +226,7 @@ graph LR
 
 #### ✅ **Good Examples**
 
-```
+```text
 feature/user-profile-enhancement
 hotfix/security-patch-2025-01-15
 release/v5.1.0-enterprise-edition
@@ -235,7 +235,7 @@ bugfix/payment-validation-error
 
 #### ❌ **Bad Examples**
 
-```
+```text
 feature/my-awesome-feature-that-does-a-lot-of-things
 HOTFIX/SECURITY/PATCH
 release/version-5.1.0-final-final

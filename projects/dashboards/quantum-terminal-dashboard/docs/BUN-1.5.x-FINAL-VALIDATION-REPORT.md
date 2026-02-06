@@ -81,7 +81,7 @@ All 10 Bun 1.5.x improvements have been successfully integrated into the Quantum
 
 ## 🧪 Test Results
 
-```
+```text
 ✅ 9 new React timer tests - ALL PASSING
 ✅ 43 existing feature tests - ALL PASSING
 ✅ 0 failures
@@ -127,7 +127,7 @@ All 10 Bun 1.5.x improvements have been successfully integrated into the Quantum
 
 ## 📝 Commit Message
 
-```
+```text
 chore: adopt Bun 1.5.x perf & compat wins
 
 - Add --grep alias for bun test (Jest/Mocha familiar)

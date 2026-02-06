@@ -67,7 +67,7 @@ bun run cli/analyze.ts annotations src/server/kyc/ --stats
 ## Example Output
 
 ### Statistics View
-```
+```text
 📊 Annotation Statistics
 
 Total: 5 annotations
@@ -88,7 +88,7 @@ Features:
 ```
 
 ### Filtered View
-```
+```text
 📋 Code Annotations
 
 Found 3 annotations (filtered from 5 total)
@@ -100,7 +100,7 @@ KYC (3)
 
 ## Annotation Format
 
-```
+```text
 [DOMAIN][SCOPE][TYPE][META:{PROPERTY}][CLASS][FUNCTION][INTERFACE][#REF:*][BUN-NATIVE]
 ```
 

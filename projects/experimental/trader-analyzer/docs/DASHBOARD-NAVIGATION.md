@@ -88,7 +88,7 @@ All dashboards include header links to:
 
 ### Absolute Paths (file://)
 
-```
+```text
 file:///Users/nolarose/Projects/trader-analyzer/dashboard/multi-layer-graph.html
 file:///Users/nolarose/Projects/trader-analyzer/dashboard/index.html
 file:///Users/nolarose/Projects/trader-analyzer/dashboard/mlgs-developer-dashboard.html

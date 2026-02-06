@@ -23,7 +23,7 @@ Advanced enterprise patch management with complete cache awareness:
 
 ## ⚡ Performance Benchmarks
 
-```
+```text
 Ripgrep Speed Results:
 Pattern: "precision"
 Search Speed: 86 matches found in <1ms
@@ -860,7 +860,7 @@ bun run ../patch-manager.ts cache-info
 
 ## 🏛️ Architecture Compliance
 
-```
+```text
 ✅ Naming Conventions: 100% compliant
 ✅ Class Isolation: 100% enforced
 ✅ Collateral Incidents: 0 (MANDATORY ZERO)

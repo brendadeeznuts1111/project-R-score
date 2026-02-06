@@ -12,7 +12,7 @@
 
 #### **1. Agent Performance Dashboard**
 
-```
+```text
 🎯 AGENT PERFORMANCE TRACKING
 ├── Transactions Processed: 245 (97% success rate)
 ├── Volume Handled: $125,000
@@ -24,7 +24,7 @@
 
 #### **2. Advanced IP Tracking & Security**
 
-```
+```text
 🛡️ IP SECURITY MONITORING
 ├── Current IP: 192.168.1.100 (Los Angeles, CA)
 ├── Previous IPs: 3 known locations
@@ -35,7 +35,7 @@
 
 #### **3. Smart Collections Management**
 
-```
+```text
 💰 COLLECTIONS & PAYMENT TRACKING
 ├── Outstanding Balance: $250.00
 ├── Next Payment Due: 2024-01-15 ($125.00)
@@ -46,7 +46,7 @@
 
 #### **4. Enhanced Cashier System**
 
-```
+```text
 💵 INTEGRATED CASHIER OPERATIONS
 ├── Session Active: 25 minutes
 ├── Transactions Today: 8
@@ -57,7 +57,7 @@
 
 #### **5. Peer Network Intelligence**
 
-```
+```text
 🤝 PEER-TO-PEER NETWORK MANAGEMENT
 ├── Direct Peers: 12 trusted connections
 ├── Peer Groups: 3 active networks
@@ -74,7 +74,7 @@
 
 **Step 1: Session Initialization**
 
-```
+```text
 🎯 Starting Player Management Session
 Customer: Bob Johnson (ID: BBB9901)
 Agent: Support Agent Alpha
@@ -131,7 +131,7 @@ Time: 2024-01-10 14:30:00
 
 **Step 3: Agent Processes Bob's Deposit Request**
 
-```
+```text
 💰 CASHIER TRANSACTION PROCESSING
 
 Bob wants to deposit $595 via Venmo
@@ -160,7 +160,7 @@ Bob wants to deposit $595 via Venmo
 
 **Step 4: Agent Selects Peer Matching**
 
-```
+```text
 ⚡ INSTANT PEER MATCH ACTIVATED
 
 Matching Bob's $595 deposit with Sarah's $595 withdrawal
@@ -182,7 +182,7 @@ Use code: SARAH595ABC when confirming."
 
 **Step 5: Transaction Completes Successfully**
 
-```
+```text
 ✅ TRANSACTION COMPLETED
 
 Status: Successful
@@ -374,7 +374,7 @@ Top Performing Agents:
 
 #### **Data Flow Between Systems**
 
-```
+```text
 1. Player Session Started
    ↓
 2. IP Tracking Activated

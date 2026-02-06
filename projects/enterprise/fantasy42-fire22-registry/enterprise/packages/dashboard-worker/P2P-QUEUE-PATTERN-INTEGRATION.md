@@ -41,7 +41,7 @@ monitoring.
 
 ### **Pattern System Integration**
 
-```
+```text
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │   P2P Queue    │───▶│  Pattern System  │───▶│  Optimization   │
 │     API        │    │                  │    │    Engine      │

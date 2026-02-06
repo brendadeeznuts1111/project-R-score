@@ -9,7 +9,7 @@ optimization for the Fire22 Dashboard Worker system.
 
 ### Multi-Tier Database System
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                DATABASE CONNECTION TIER                │
 ├─────────────────────────────────────────────────────────┤

@@ -36,7 +36,7 @@ experience.
 
 ### **Required Files**
 
-```
+```text
 build.ts                    # Main build launcher
 build.config.ts            # Build profiles and configurations
 scripts/build-automation.ts # Core build engine
@@ -47,7 +47,7 @@ wrangler.toml              # Cloudflare Workers configuration
 
 ### **Documentation Structure**
 
-```
+```text
 docs/
 ├── BUILD-INDEX.md          # Main build documentation entry point
 ├── BUILD-SYSTEM.md         # Technical build system guide
@@ -59,7 +59,7 @@ docs/
 
 ### **Scripts Organization**
 
-```
+```text
 scripts/
 ├── build-automation.ts     # Main build engine
 ├── build-cloudflare.ts     # Cloudflare deployment
@@ -367,7 +367,7 @@ const apiKey = process.env.API_KEY; // Node.js compatible
 
 ### **Commit Standards**
 
-```
+```text
 type(scope): description
 
 feat(build): add cloudflare deployment integration

@@ -20,7 +20,7 @@ satisfaction, overdue rates
 
 ### **Technical Architecture**
 
-```
+```text
 📁 controllers/collections/
 ├── collections.controller.ts      # Main controller logic
 ├── collections.service.ts        # Business logic layer
@@ -113,7 +113,7 @@ satisfaction
 
 ### **Technical Architecture**
 
-```
+```text
 📁 controllers/distributions/
 ├── distributions.controller.ts   # Distribution endpoints
 ├── commission.service.ts         # Commission calculations
@@ -201,7 +201,7 @@ flowchart TD
 
 ### **Technical Architecture**
 
-```
+```text
 📁 controllers/free-play/
 ├── free-play.controller.ts       # Bonus endpoints
 ├── bonus.service.ts              # Bonus logic
@@ -291,7 +291,7 @@ records **Business Impact**: Core to customer trust and regulatory compliance
 
 ### **Technical Architecture**
 
-```
+```text
 📁 controllers/balance/
 ├── balance.controller.ts         # Balance endpoints
 ├── transaction.service.ts        # Transaction processing
@@ -379,7 +379,7 @@ Metrics**: Resolution time, customer satisfaction, error rates
 
 ### **Technical Architecture**
 
-```
+```text
 📁 controllers/adjustment/
 ├── adjustment.controller.ts      # Adjustment endpoints
 ├── approval.service.ts           # Approval workflows

@@ -117,7 +117,7 @@ bun run create-appleid.js --country=US --city="New York" --skip-verification
 
 Your R2 bucket will organize files like this:
 
-```
+```text
 apple-id-storage/
 ├── apple-ids/
 │   ├── james_smith_apple_factory_wager_com.json

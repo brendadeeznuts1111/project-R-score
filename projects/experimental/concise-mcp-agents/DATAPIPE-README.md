@@ -177,7 +177,7 @@ bun grep REPORT
 
 ## 📈 **Architecture**
 
-```
+```text
 Sportswidgets API (data.r.bets[]) → Bun Script → JSON Parse (result/bet/isWin) → Agent Aggregation → MD Table → Obsidian Vault → Dataview Dashboard → Telegram Alerts
 ```
 

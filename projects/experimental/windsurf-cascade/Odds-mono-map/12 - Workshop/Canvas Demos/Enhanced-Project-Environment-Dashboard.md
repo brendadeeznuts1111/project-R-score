@@ -42,7 +42,7 @@ related-files:
 ### **🔍 Comprehensive Environment Analysis**
 
 **1. Project Configuration**:
-```
+```text
 📋 Project Configuration
 ------------------------
 
@@ -57,7 +57,7 @@ Project Settings
 ```
 
 **2. Database Configuration**:
-```
+```text
 🗄️ Database Configuration
 --------------------------
 
@@ -77,7 +77,7 @@ Database Settings
 ```
 
 **3. API Configuration**:
-```
+```text
 🌐 API Configuration
 --------------------
 
@@ -93,7 +93,7 @@ API Settings
 ```
 
 **4. Feature Flags**:
-```
+```text
 🚀 Feature Flags
 ----------------
 
@@ -114,7 +114,7 @@ Feature Status
 ### **🔐 Comprehensive Security Assessment**
 
 **Security Configuration Display**:
-```
+```text
 🛡️ Security Analysis
 ---------------------
 
@@ -145,7 +145,7 @@ Security Settings
 ### **🔍 Comprehensive Validation System**
 
 **Validation Results**:
-```
+```text
 ✅ Environment Validation Results
 --------------------------------
 ℹ️  Validation Status: 🔴 INVALID   • Required Variables: 3
@@ -172,7 +172,7 @@ Security Settings
 ### **💻 Developer-Friendly Code Examples**
 
 **Type-Safe Environment Access**:
-```
+```text
 🔧 TypeScript Type Examples
 ---------------------------
 
@@ -200,7 +200,7 @@ Code Examples
 ```
 
 **Practical Usage Patterns**:
-```
+```text
 💡 Practical Usage in Application
 ---------------------------------
 
@@ -229,7 +229,7 @@ Usage Patterns
 ### **⚡ Real-time Performance Analysis**
 
 **Dashboard Summary**:
-```
+```text
 📊 Dashboard Summary
 ============================================================
 
@@ -272,7 +272,7 @@ class EnvManager {
 ```
 
 **Usage Examples**:
-```
+```text
 🛠️ EnvManager Utility Examples
 ============================================================
 
@@ -307,7 +307,7 @@ Current Values
 - **Progressive Disclosure**: Detailed information on demand
 
 **Visual Hierarchy**:
-```
+```text
 ============================================================
 🌍 Enhanced Project Environment Dashboard
 ============================================================

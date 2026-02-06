@@ -9,7 +9,7 @@ for the Fire22 Dashboard Worker system.
 
 ### Multi-Layer Rate Limiting
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    RATE LIMITING LAYERS                        │
 ├─────────────────────────────────────────────────────────────────┤

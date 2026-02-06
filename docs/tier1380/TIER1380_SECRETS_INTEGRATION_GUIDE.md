@@ -111,7 +111,7 @@ export class Tier1380SecureScannerCLI {
 ```
 
 ### **Security Status Indicators**
-```
+```text
 🔐 Secure Storage: Enabled/Disabled
 🪣 R2 Creds: Loaded/Missing
 ✅ SECURE / ⚠️ INSECURE status
@@ -122,7 +122,7 @@ export class Tier1380SecureScannerCLI {
 ## 📊 **Test Results Summary**
 
 ### **✅ Successful Tests**
-```
+```text
 🔐 Basic Secrets Manager:
 ├── API key storage: ✅ Working
 ├── API key retrieval: ✅ Working
@@ -143,7 +143,7 @@ export class Tier1380SecureScannerCLI {
 ```
 
 ### **⚡ Performance Metrics**
-```
+```text
 ⚡ Performance Comparison:
 ├── Secure storage operations: 62ms
 ├── Regular operations: 41ms

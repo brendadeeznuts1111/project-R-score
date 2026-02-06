@@ -499,7 +499,7 @@ TABLE
 FROM #daily-note
 WHERE file.day = date(this.file.name)
 SORT file.mtime DESC
-```
+```text
 
 ---
 
@@ -675,7 +675,7 @@ TABLE
   assignee AS "Assignee"
 FROM #task AND "{{project_name}}"
 SORT due_date ASC
-```
+```text
 
 ---
 

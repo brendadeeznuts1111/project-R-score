@@ -45,7 +45,7 @@ bun run status
 ```
 
 You should see output similar to:
-```
+```text
 🌍 DEV ✅ HEALTHY (12/15 features enabled)
 🔄 AUTO-HEAL | 🔔 ACTIVE | 🔐 ENCRYPTED | ⚡ BATCH
 ❤️ All systems operational
@@ -73,7 +73,7 @@ The dashboard provides real-time insights into your system's health and performa
 
 ### Top Status Bar
 
-```
+```text
 🌍 DEV ✅ HEALTHY (12/15 features enabled)
 ```
 
@@ -83,7 +83,7 @@ The dashboard provides real-time insights into your system's health and performa
 
 ### Environment Panel
 
-```
+```text
 🌍 DEV | 🔄 AUTO-HEAL | 🔔 ACTIVE | 🔐 ENCRYPTED
 ```
 
@@ -91,7 +91,7 @@ Displays active feature badges in a compact grid format.
 
 ### Security Status Section
 
-```
+```text
 🔐 ENCRYPTED | ✅ STRICT | 🛡️ AUDIT ENABLED
 ```
 
@@ -99,7 +99,7 @@ Shows security-related features and their status.
 
 ### Performance Graph
 
-```
+```text
 CPU: ▰▰▰▰▰ 80% | MEM: ▰▰▰▰▱ 60% | RES: ▰▰▰▱▱ 40ms
 ```
 
@@ -110,7 +110,7 @@ Real-time performance metrics with visual indicators:
 
 ### Integration Grid
 
-```
+```text
 🔌 GEELARK API: ✅ HEALTHY
 🌐 PROXY: ✅ HEALTHY
 📧 EMAIL: ⚠️ DEGRADED

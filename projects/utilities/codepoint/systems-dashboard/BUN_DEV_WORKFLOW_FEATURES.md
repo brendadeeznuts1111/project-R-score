@@ -112,7 +112,7 @@ interface DevelopmentMetrics {
 ## **📊 Development Experience Results**
 
 ### **Hot Reload Performance**
-```
+```text
 🔥 Hot Reload: ✅ Enabled
 🔄 Reload Count: 2
 ⏰ Uptime: 4.8s
@@ -157,7 +157,7 @@ interface DevelopmentMetrics {
 ## **🎯 Interactive Development Dashboard**
 
 ### **HTTP API Endpoints**
-```
+```text
 GET /                    - Interactive development dashboard
 GET /api/metrics         - Current development metrics
 GET /api/reload-info     - Hot reload and status information

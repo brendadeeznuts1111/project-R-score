@@ -325,7 +325,7 @@ await router.initialize(); // Required: performs audit
 ## Troubleshooting
 
 ### **"Native API unavailable"**
-```
+```text
 Error: NativeApiAuditError: Missing APIs: URLPattern
 
 Solution: Ensure Bun >= v1.3.6
@@ -333,7 +333,7 @@ bun --version
 ```
 
 ### **Performance degradation**
-```
+```text
 Status: CRITICAL, Heap pressure: 85%
 
 Solution: Check for memory leaks
@@ -341,7 +341,7 @@ bun run bench:memory
 ```
 
 ### **Bundle size exceeded**
-```
+```text
 Error: Bundle size 10240 > 9640 bytes
 
 Solution: Audit imports, remove unused code

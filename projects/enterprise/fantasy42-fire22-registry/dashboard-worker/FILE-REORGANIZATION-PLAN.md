@@ -12,7 +12,7 @@
 
 ## Proposed Structure
 
-```
+```text
 dashboard-worker/
 ├── src/
 │   ├── core/                    # Core functionality
@@ -124,7 +124,7 @@ dashboard-worker/
 
 ### 1. Source Files (src/)
 
-```
+```text
 ✅ Good:
 - index.ts
 - router.ts
@@ -139,7 +139,7 @@ dashboard-worker/
 
 ### 2. Documentation (docs/)
 
-```
+```text
 ✅ Good:
 - getting-started.md
 - api-reference.md
@@ -153,7 +153,7 @@ dashboard-worker/
 
 ### 3. HTML/CSS Files
 
-```
+```text
 ✅ Good:
 - dashboard.html
 - terminal-framework.css

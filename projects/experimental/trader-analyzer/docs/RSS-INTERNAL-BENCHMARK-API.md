@@ -121,13 +121,13 @@ if (refreshResult.success) {
 
 ### Endpoint
 
-```
+```text
 POST {RSS_INTERNAL.benchmark_api}/refresh
 ```
 
 ### Request Headers
 
-```
+```text
 Authorization: Bearer {REGISTRY_API_TOKEN}
 Content-Type: application/json
 ```

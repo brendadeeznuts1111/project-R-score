@@ -65,7 +65,7 @@ related-files:
 ### **📋 Detailed Assignment Analysis**
 
 **Example: Service API Production**:
-```
+```text
 📋 service:api:production
    Color: #10B981
    Priority: 3
@@ -77,7 +77,7 @@ related-files:
 ```
 
 **Example: Core Database Deprecated**:
-```
+```text
 📋 core:database:deprecated
    Color: #EF4444
    Priority: 1
@@ -109,7 +109,7 @@ related-files:
 
 ### **📊 Priority Distribution Insights**
 
-```
+```text
 Critical Status:    2 nodes (25%)
 Health-Based:       4 nodes (50%)  ← Most intelligent!
 Status-Based:       1 node (12.5%)
@@ -123,7 +123,7 @@ Priority-Based:     1 node (12.5%)
 ### **⚠️ Intelligent Issue Detection**
 
 **Consistency Analysis Results**:
-```
+```text
 ⚠️ Consistency Issues Found:
   inconsistent_status: Nodes with status "active" have different colors
     Affected nodes: service:api:production, ui:dashboard:component, 

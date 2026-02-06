@@ -214,7 +214,7 @@ curl http://localhost:3000/metrics | grep hyperbun_secret
 ```
 
 **Expected Output**:
-```
+```text
 # HELP hyperbun_secret_access_total Total secret access attempts
 # TYPE hyperbun_secret_access_total counter
 hyperbun_secret_access_total{service="nexus",operation="read",status="success"} 5

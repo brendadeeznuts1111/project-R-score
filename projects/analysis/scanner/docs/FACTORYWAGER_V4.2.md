@@ -44,7 +44,7 @@ bun scan.ts --fix-dns --fix-engine --dry-run
 
 ### Example Output
 
-```
+```text
 ───────────────────────────── Dry-Run Efficiency Preview ─────────────────────────────
 
 [DRY] Would inject dns-prefetch.ts into 47 projects

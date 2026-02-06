@@ -1,0 +1,33 @@
+{
+  "name": "barbershop-bun-demo",
+  "version": "1.0.0",
+  "description": "🏗️ Bun Metafile & Virtual Files Visualizer with R2 Integration",
+  "type": "module",
+  "scripts": {
+    "start": "bun run demo-pro.html",
+    "dev": "bun --hot demo-pro.html",
+    "build": "bun build demo-scripts.js --outfile demo-bundle.js --target=browser",
+    "test-r2": "bun run r2-connection-test.ts",
+    "setup-r2": "./setup-r2.sh",
+    "validate-demo": "bun run demo-scripts.js"
+  },
+  "dependencies": {
+    "bun": "latest"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "engines": {
+    "bun": ">=1.3.6"
+  },
+  "keywords": [
+    "bun",
+    "metafile",
+    "virtual-files",
+    "r2",
+    "executablePath",
+    "build-tools"
+  ],
+  "author": "Barbershop Demo",
+  "license": "MIT"
+}

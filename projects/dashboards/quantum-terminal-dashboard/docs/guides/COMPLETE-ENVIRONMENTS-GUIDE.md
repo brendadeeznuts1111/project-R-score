@@ -55,7 +55,7 @@ const config = deepMerge(defaults, environmentConfig);
 
 ## 📊 Testing Results
 
-```
+```text
 🌍 Testing Complete Environment Configuration
 
 ✅ Staging Configuration Pattern - PASSED
@@ -73,7 +73,7 @@ const config = deepMerge(defaults, environmentConfig);
 ### **Key Configuration Results**
 
 #### **Staging Environment**
-```
+```text
 Environment: staging
 Server: staging.quantum-lattice.com:443
 Database: quantum_lattice_staging
@@ -85,7 +85,7 @@ Environment Variables: 10/10 configured (100%)
 ```
 
 #### **Production Environment**
-```
+```text
 Environment: production
 Server: api.quantum-lattice.com:443
 Database: quantum_lattice_prod
@@ -210,7 +210,7 @@ if (stagingManager.isFeatureEnabled('predictive_analytics')) {
 ## 📈 Environment Comparison
 
 ### **Inherited Defaults (Same Across All Environments)**
-```
+```text
 ✅ server.retries: 3
 ✅ cache.enabled: true  
 ✅ api.version: v1
@@ -219,7 +219,7 @@ if (stagingManager.isFeatureEnabled('predictive_analytics')) {
 ```
 
 ### **Environment-Specific Overrides**
-```
+```text
 Field                    Development    Staging        Production
 cache.ttl                3600s          1800s          86400s
 logging.level            debug          info           error
@@ -229,7 +229,7 @@ security.session_timeout 86400s         86400s         3600s
 ```
 
 ### **Feature Matrix**
-```
+```text
 Feature                    Dev    Staging    Production
 quantum_terminal           ✅     ✅         ✅
 real_time_monitoring       ✅     ✅         ✅
@@ -413,7 +413,7 @@ manager.reload();
 ## 📊 Configuration Reports
 
 ### **Development Report**
-```
+```text
 🚀 DEVELOPMENT CONFIGURATION REPORT
 ============================================================
 🖥️  Server: 127.0.0.1:
@@ -432,7 +432,7 @@ manager.reload();
 ```
 
 ### **Staging Report**
-```
+```text
 🚀 STAGING CONFIGURATION REPORT
 ============================================================
 🖥️  Server: staging-api.example.com:443
@@ -461,7 +461,7 @@ manager.reload();
 ```
 
 ### **Production Report**
-```
+```text
 🚀 PRODUCTION CONFIGURATION REPORT
 ============================================================
 🖥️  Server: api.example.com:443

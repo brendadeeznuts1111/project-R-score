@@ -18,7 +18,7 @@ DuoPlus Admin System provides a comprehensive suite of tools for managing family
 
 ## 📁 **File Structure**
 
-```
+```text
 src/
 ├── admin/
 │   ├── terminalManager.ts      # Bun Terminal Manager for UI

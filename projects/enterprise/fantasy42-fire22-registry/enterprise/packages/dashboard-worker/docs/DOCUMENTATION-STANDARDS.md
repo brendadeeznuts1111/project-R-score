@@ -43,7 +43,7 @@
 
 ### Directory Organization
 
-```
+```text
 docs/
 ├── api/                    # API documentation
 ├── architecture/           # System architecture docs

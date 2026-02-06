@@ -164,7 +164,7 @@ bun scripts/start-dashboard-full.ts
 ### Viewing Usage
 
 #### Via Dashboard
-```
+```text
 http://localhost:3009/api-key-status.html
 ```
 

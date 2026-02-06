@@ -14,7 +14,7 @@ The MultiLayerCorrelationGraph system provides a comprehensive multi-layer corre
 
 ### Layer Structure
 
-```
+```text
 🌐 MULTI-LAYER CORRELATION GRAPH
 ├── Layer 1: Direct Correlations (Parent-Child Nodes)
 ├── Layer 2: Cross-Market Correlations (Within Same Event)

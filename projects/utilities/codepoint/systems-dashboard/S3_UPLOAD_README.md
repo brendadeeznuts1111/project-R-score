@@ -94,7 +94,7 @@ The system uploads:
 
 Uploads are organized by timestamp:
 
-```
+```text
 s3://bun-dashboard-enhancements/
 ├── dashboard-2024-01-08T15-30-45-123Z/
 │   ├── SystemsDashboard.tsx
@@ -117,7 +117,7 @@ s3://bun-dashboard-enhancements/
 
 After upload, your dashboard will be available at:
 
-```
+```text
 https://bun-dashboard-enhancements.s3.amazonaws.com/dashboard-2024-01-08T15-30-45-123Z/index.html
 ```
 

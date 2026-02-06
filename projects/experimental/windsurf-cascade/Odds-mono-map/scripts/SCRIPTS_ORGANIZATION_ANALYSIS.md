@@ -63,7 +63,7 @@ validation_rules:
 
 ### **📂 New Directory Structure**
 
-```
+```text
 scripts/
 ├── 📋 README.md                           # Scripts overview and navigation
 ├── 📊 SCRIPTS_INVENTORY.md               # Complete catalog of all scripts
@@ -183,37 +183,37 @@ scripts/
 ### **📝 File Naming Patterns**
 
 #### **Core Utilities**
-```
+```text
 Pattern: [function].ts
 Examples: cleanup.ts, fix.ts, organize.ts, setup.ts
 ```
 
 #### **Template System**
-```
+```text
 Pattern: template-[function].ts or enhanced-[function].ts
 Examples: template-analytics.ts, enhanced-template-validation.ts
 ```
 
 #### **Color Demos**
-```
+```text
 Pattern: bun-color-[feature]-demonstration.ts
 Examples: bun-color-ansi-16m-demonstration.ts
 ```
 
 #### **Bun Features**
-```
+```text
 Pattern: bun-[feature]-demo.ts or demonstrate-[feature].ts
 Examples: bun-environment-demo.ts, demonstrate-bun-utilities.ts
 ```
 
 #### **Monitoring**
-```
+```text
 Pattern: [type]-dashboard.ts or [type]-monitor.ts
 Examples: production-dashboard.ts, canvas-monitor.ts
 ```
 
 #### **Validation**
-```
+```text
 Pattern: validate-[system].ts or fix-[issue].ts
 Examples: validate-template-system.ts, fix-vault-naming.ts
 ```

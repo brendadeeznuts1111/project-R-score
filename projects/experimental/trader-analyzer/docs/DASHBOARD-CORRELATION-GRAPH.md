@@ -56,7 +56,7 @@ Developers can use the graph to understand the impact of code changes or system 
 
 ### Example Usage
 
-```
+```text
 /dashboard/correlation-graph.html?event_id=nba-lakers-warriors-2024-01-15&time_window=24
 ```
 
@@ -126,7 +126,7 @@ Header displays:
 
 ### Endpoint
 
-```
+```text
 GET /api/dashboard/correlation-graph
 ```
 

@@ -261,7 +261,7 @@ bun run scripts/validate-precision-setup.ts
 ```
 
 Expected output:
-```
+```text
 ✅ TMUX session created
 ✅ LSP servers configured for alice (senior_architect)
 ✅ Security clearance: level_5 enabled
@@ -572,7 +572,7 @@ class SecureDashboardManager {
 
 ## **📊 Benchmark Results Summary**
 
-```
+```text
 🏆 SURGICAL PRECISION DASHBOARD - PERFORMANCE BENCHMARK SUITE
 Benchmark Configuration:
   Iterations: 50

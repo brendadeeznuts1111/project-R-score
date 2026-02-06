@@ -10,7 +10,7 @@ strategy, current versions, and release processes.
 
 Following **Bun semver conventions**:
 
-```
+```text
 MAJOR.MINOR.PATCH[-PRERELEASE][+BUILD]
 ```
 

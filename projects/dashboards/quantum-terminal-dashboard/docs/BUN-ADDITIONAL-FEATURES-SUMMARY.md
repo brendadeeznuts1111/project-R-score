@@ -73,7 +73,7 @@ Complete test suite with 22 tests
 - ✅ Database JSON Helper (7 tests)
 
 **Test Results:**
-```
+```text
 ✅ 22 pass
 ❌ 0 fail
 ⏱️  137ms total
@@ -179,7 +179,7 @@ const mysqlJson = DatabaseJsonHelper.mysqlJson(data);
 
 ## 🧪 Test Results
 
-```
+```text
 ╔════════════════════════════════════════════════════════════════╗
 ║         ✅ ALL ADDITIONAL BUN FEATURES TESTS PASSED           ║
 ╚════════════════════════════════════════════════════════════════╝

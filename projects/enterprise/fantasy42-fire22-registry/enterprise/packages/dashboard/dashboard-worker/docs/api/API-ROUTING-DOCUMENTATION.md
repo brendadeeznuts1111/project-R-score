@@ -206,7 +206,7 @@ const router = express.Router();
 
 ### Route Organization
 
-```
+```text
 src/api/
 ├── index.ts                 # Main API router
 ├── routes/

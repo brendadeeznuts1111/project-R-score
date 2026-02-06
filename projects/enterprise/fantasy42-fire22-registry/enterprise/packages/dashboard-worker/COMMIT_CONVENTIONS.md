@@ -6,7 +6,7 @@ commit messages.
 
 ## Format
 
-```
+```text
 <type>(<scope>): <subject>
 
 [optional body]
@@ -92,7 +92,7 @@ commit messages.
 
 ### Feature Addition
 
-```
+```text
 feat(dashboard): add live wager tracking
 
 Implements real-time wager tracking with SSE support
@@ -105,7 +105,7 @@ Closes #123
 
 ### Bug Fix
 
-```
+```text
 fix(api): handle rate limit errors gracefully
 
 Previously the API would crash when hitting rate limits.
@@ -116,7 +116,7 @@ Fixes #456
 
 ### Breaking Change
 
-```
+```text
 feat(api)!: update endpoint structure
 
 BREAKING CHANGE: API endpoints have been restructured
@@ -128,7 +128,7 @@ Migration guide in docs/migration-v2.md
 
 ### Multiple Scopes
 
-```
+```text
 refactor(core,pattern): consolidate utility functions
 
 Moved shared utilities from core to pattern workspace

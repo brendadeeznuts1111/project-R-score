@@ -144,7 +144,7 @@ schedule
 
 ### **Standard Escalation Path**
 
-```
+```text
 Level 1: Maintenance Team (Carlos/Diane) - 0-2 hours
    ↓
 Level 2: HR Director (Jennifer) - 2-4 hours
@@ -190,7 +190,7 @@ Level 4: Executive Team - 8+ hours or critical failure
 
 ### **Response Format** (Send via email AND Slack):
 
-```
+```text
 Subject: ACKNOWLEDGED - Directory Maintenance Policy
 
 Department: [Your Department]

@@ -75,7 +75,7 @@ const unhealthyFeeds = checker.getUnhealthyFeeds(results);
 ```
 
 **Output:**
-```
+```text
 📊 Health Check Results:
   ✅ AI_FEED_2: 45.23ms - 104.21.8.212:443 (IPv4)
   ✅ AI_FEED_3: 52.11ms - 104.21.8.212:443 (IPv4)
@@ -149,7 +149,7 @@ console.log(formatDiagnostics(issues));
 ```
 
 **Output:**
-```
+```text
 📊 Feed Diagnostics Summary:
   Errors: 1
   Warnings: 2

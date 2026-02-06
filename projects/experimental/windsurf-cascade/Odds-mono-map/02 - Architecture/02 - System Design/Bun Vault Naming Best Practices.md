@@ -48,7 +48,7 @@ validation_rules:
 ## 📁 **Directory Naming Standards**
 
 ### **✅ Correct Patterns**
-```
+```text
 01 - daily-notes/
 02 - architecture/
 03 - development/
@@ -63,7 +63,7 @@ validation_rules:
 ```
 
 ### **❌ Incorrect Patterns**
-```
+```text
 Daily Notes/
 architecture_docs/
 Development_Files/
@@ -205,25 +205,25 @@ canvas-system-overview.md
 ## 📝 **Naming Conversion Rules**
 
 ### **1. UPPER_CASE to kebab-case**
-```
+```text
 BUN_COLOR_ANSI_256_MASTERY.md
 → bun-color-ansi-256-mastery.md
 ```
 
 ### **2. PascalCase to kebab-case**
-```
+```text
 CanvasSystemOverview.md
 → canvas-system-overview.md
 ```
 
 ### **3. snake_case to kebab-case**
-```
+```text
 vault_organization_guide.md
 → vault-organization-guide.md
 ```
 
 ### **4. Spaces to Hyphens**
-```
+```text
 Vault Organization Guide.md
 → vault-organization-guide.md
 ```

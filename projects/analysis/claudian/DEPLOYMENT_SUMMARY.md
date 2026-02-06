@@ -19,7 +19,7 @@ All systems verified and ready for Obsidian vault deployment.
 
 ## Build Artifacts
 
-```
+```text
 main.js          4.9 MB   Compiled plugin code
 manifest.json    332 B    Plugin metadata
 styles.css       93 KB    Plugin styles

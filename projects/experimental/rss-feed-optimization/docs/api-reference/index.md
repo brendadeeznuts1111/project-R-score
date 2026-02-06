@@ -118,7 +118,7 @@ console.log(`RSS generation took ${result.duration}ms`);
 Most administrative operations require an admin token for authentication.
 
 **Header Format:**
-```
+```text
 Authorization: Bearer your-admin-token
 ```
 
@@ -209,7 +209,7 @@ The API implements rate limiting to prevent abuse:
 
 Rate limit information is included in response headers:
 
-```
+```text
 X-RateLimit-Limit: 200
 X-RateLimit-Remaining: 199
 X-RateLimit-Reset: 1643723400
@@ -237,7 +237,7 @@ if (response.status === 429) {
 
 The API includes CORS headers for cross-origin requests:
 
-```
+```text
 Access-Control-Allow-Origin: https://your-frontend.com
 Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
 Access-Control-Allow-Headers: Content-Type, Authorization
@@ -387,7 +387,7 @@ Structured JSON logging is used:
 
 The API includes security headers:
 
-```
+```text
 X-Content-Type-Options: nosniff
 X-Frame-Options: DENY
 X-XSS-Protection: 1; mode=block

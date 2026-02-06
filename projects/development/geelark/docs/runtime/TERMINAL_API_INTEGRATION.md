@@ -155,14 +155,14 @@ metricsInterval = setInterval(() => {
 ```
 
 **Before**:
-```
+```text
 ⏱️ Uptime: 1234s
 💾 Memory Used: 45.67 MB
 📊 Active Connections: 156
 ```
 
 **After** (properly aligned):
-```
+```text
 ⏱️ Uptime:                                   1234s
 💾 Memory Used:                           45.67 MB
 📊 Active Connections:                         156
@@ -252,7 +252,7 @@ bun run examples/terminal-dashboard-example.ts
 ### Before & After Comparison
 
 **Before** (manual padding with `.padEnd()`):
-```
+```text
 ╔════════════════════════════════════════════════════════════╗
 ║  Environment: development                                   ║
 ╚════════════════════════════════════════════════════════════╝
@@ -261,7 +261,7 @@ bun run examples/terminal-dashboard-example.ts
 **Issue**: If environment name contains emoji or wide characters, alignment breaks.
 
 **After** (using `Bun.stringWidth()`):
-```
+```text
 ╔════════════════════════════════════════════════════════════╗
 ║  Environment: 🇺🇸 production                                ║
 ╚════════════════════════════════════════════════════════════╝
@@ -385,7 +385,7 @@ bun run dev-hq/servers/dashboard-server.ts
 ```
 
 Output:
-```
+```text
 ╔════════════════════════════════════════════════════════════╗
 ║           🎨 Geelark Feature Flag Dashboard                ║
 ╠════════════════════════════════════════════════════════════╣

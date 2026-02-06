@@ -18,7 +18,7 @@ Sports data API connections for real-time game events and odds.
 
 ## Structure
 
-```
+```text
 api-integration/
 ├── src/
 │   ├── index.ts              # Exports
@@ -34,7 +34,7 @@ api-integration/
 
 ## Flow
 
-```
+```text
 Sportradar WS ──→ sportradar-client ──→ GameEvent
                          ↓
 Odds API HTTP ──→ odds-client ──────→ OddsData

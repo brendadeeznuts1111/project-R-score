@@ -6,7 +6,7 @@ This is the **complete local registry + API + terminal dashboard** that runs on 
 
 ## 📦 Project Structure: The Local Registry Stack
 
-```
+```text
 bun-local-registry/
 ├── registry/              # Private scoped registry server
 │   ├── api.ts            # NPM-compatible registry API

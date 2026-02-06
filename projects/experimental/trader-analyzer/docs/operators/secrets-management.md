@@ -68,7 +68,7 @@ The secrets management window displays:
 - **Available Commands**: Quick reference for all secrets CLI commands
 
 **Example Dashboard Output:**
-```
+```text
 🔐 Secrets Management Dashboard
 =================================
 

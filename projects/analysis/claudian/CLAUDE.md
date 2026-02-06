@@ -6,7 +6,7 @@ Claudian - An Obsidian plugin that embeds Claude Code as a sidebar chat interfac
 
 ## Architecture
 
-```
+```text
 src/
 ├── main.ts                      # Plugin entry point
 ├── core/                        # Core infrastructure (no feature dependencies)
@@ -111,7 +111,7 @@ bun run test      # Run tests
 - Coverage focuses on `unit`; `integration` targets key component flows.
 - E2E tests are intentionally out of scope for now.
 
-```
+```text
 tests/
   __mocks__/
   unit/
@@ -237,7 +237,7 @@ interface Conversation {
 
 Hybrid storage using SDK-native sessions with metadata overlay:
 
-```
+```text
 ~/.claude/projects/{encoded-vault}/     # SDK-native message storage
 └── {sessionId}.jsonl                   # SDK session messages (new conversations)
 
@@ -361,7 +361,7 @@ System prompt for the agent goes here.
 ```
 
 **Storage**:
-```
+```text
 ~/.claude/agents/              # Global agents (all vaults)
 {vault}/.claude/agents/        # Vault-specific agents
 {pluginPath}/agents/           # Plugin agents (namespaced)
@@ -384,7 +384,7 @@ Type `@` in the input to open the mention dropdown for attaching context.
 **Dropdown order**: MCP servers → Agents folder → External contexts → Vault files
 
 **Example flow**:
-```
+```text
 @           → [@Agents/] [@workspace/] [note.md] [note2.md] ...
 @Agents/    → [my-agent] [plugin:agent] ...  (custom agents)
 @workspace/ → [file1.ts] [file2.ts] ...  (files from external context)
@@ -465,7 +465,7 @@ Environment variable expansion is case-insensitive on Windows.
 
 CSS is modularized in `src/style/` and built into root `styles.css`:
 
-```
+```text
 src/style/
 ├── base/           # container, animations (@keyframes)
 ├── components/     # header, history, messages, code, thinking, toolcalls, todo, subagent, input, context-footer (meter)

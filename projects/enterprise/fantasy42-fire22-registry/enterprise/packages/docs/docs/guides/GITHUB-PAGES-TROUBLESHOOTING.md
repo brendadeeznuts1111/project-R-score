@@ -30,7 +30,7 @@ This will prepare your files for GitHub Pages deployment.
 
 Ensure you have these files in your repository root:
 
-```
+```text
 /
 ├── index.html              # Main page (required)
 ├── .nojekyll              # Prevents Jekyll processing
@@ -164,13 +164,13 @@ If you're still having issues:
 
 After following these steps, your site should be available at:
 
-```
+```text
 https://[username].github.io/[repository-name]/
 ```
 
 For example:
 
-```
+```text
 https://brendadeeznuts1111.github.io/crystal-clear-architecture/
 ```
 

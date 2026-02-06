@@ -96,7 +96,7 @@ bun run test:coverage
 ```
 
 ### Test Results
-```
+```text
 ✓ 20 pass
 ✓ 0 fail  
 ✓ 46 expect() calls

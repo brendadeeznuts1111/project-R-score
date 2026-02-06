@@ -6,7 +6,7 @@ This document outlines how our testing practices align with [Bun's testing best 
 
 Following Bun's convention, we organize tests into dedicated directories:
 
-```
+```text
 /
 ├── tests/          # Unit and integration tests
 │   ├── *.test.ts   # Test files using bun:test

@@ -381,7 +381,7 @@ Hyper-Bun's operational and developer dashboards consume these APIs for real-tim
 
 The project follows a well-organized directory structure with clear separation of concerns:
 
-```
+```text
 src/
 ├── analytics/      # Trading analytics & profiling
 ├── arbitrage/      # Cross-market arbitrage detection

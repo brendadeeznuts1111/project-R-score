@@ -30,7 +30,7 @@ validation_rules:
 
 ### **📊 Mathematical Foundation**
 
-```
+```text
 Success = (Measurement × Algorithm × Memory × Network × Platform × Database × Testing × Monitoring × Architecture × Business × Culture × Innovation)ⁿ
 ```
 

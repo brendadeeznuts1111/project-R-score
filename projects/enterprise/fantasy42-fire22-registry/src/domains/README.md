@@ -13,7 +13,7 @@ language, and domain models.
 
 ### **Domain Structure**
 
-```
+```text
 src/domains/
 ├── core/           # Fundamental business capabilities
 ├── users/          # User management & authentication
@@ -29,7 +29,7 @@ src/domains/
 
 ### **Layered Architecture**
 
-```
+```text
 🎯 Domain Layer (Business Logic)
 ├── Entities         # Domain objects with identity
 ├── Value Objects    # Immutable domain concepts
@@ -227,7 +227,7 @@ src/domains/
 
 ### **Dependency Flow**
 
-```
+```text
 Users → Core (foundation)
 Betting → Users, Finance, Analytics
 Gaming → Users, Analytics
@@ -241,7 +241,7 @@ Content → Analytics, Communication
 
 ### **Event Flow**
 
-```
+```text
 Users → Domain Events → Analytics, Communication
 Betting → Settlement Events → Finance, Payments
 Gaming → Tournament Events → Communication, Analytics

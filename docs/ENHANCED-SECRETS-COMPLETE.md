@@ -198,14 +198,14 @@ bun run service-color-secrets-enhanced.ts matrix --profile=production --scan-pro
 ## 📁 **Generated Files**
 
 ### **Per-Project RSS Feeds**
-```
+```text
 projects/project1/secrets-status.rss
 projects/project2/secrets-status.rss
 projects/critical-app/secrets-status.rss
 ```
 
 ### **Export Files**
-```
+```text
 secrets-report.html     # HTML table with styling
 secrets-plain.txt      # ANSI-stripped plain text
 ```
@@ -215,7 +215,7 @@ secrets-plain.txt      # ANSI-stripped plain text
 ## 🎯 **Output Examples**
 
 ### **Console Output**
-```
+```text
 🔐 Secret Status Matrix
 Profile: production
 Namespace: default
@@ -254,7 +254,7 @@ Summary: 2 found, 0 in-env-only, 1 missing (12.34ms)
 ## 🔍 **Project Structure Integration**
 
 ### **Directory Detection**
-```
+```text
 projects/
 ├── frontend-app/          # Discovered via Bun.Glob
 │   ├── package.json      # Scoped: @myorg/frontend-app

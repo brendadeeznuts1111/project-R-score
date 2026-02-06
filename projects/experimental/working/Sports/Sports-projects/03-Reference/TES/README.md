@@ -75,7 +75,7 @@ usage: Primary entry point for discovering and navigating TES protocol, optimiza
 
 ## 📚 Documentation Structure
 
-```
+```text
 TES/
 ├── README.md                    # This file - Master index
 ├── Protocol/                    # Protocol documentation

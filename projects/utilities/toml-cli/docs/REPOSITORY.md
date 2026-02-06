@@ -4,7 +4,7 @@ This document contains metadata and setup instructions for the GitHub repository
 
 ## Repository Description
 
-```
+```text
 🎯 DuoPlus Scoping Matrix - Enterprise-Grade Multi-Tenant Runtime
 
 A comprehensive, Bun-native multi-tenant runtime system that provides domain-aware feature gating, integration control, and compliance validation for virtual device orchestration. Built with ultra-fast matrix lookups, zero-copy JSON loading, and enterprise-grade security controls.
@@ -22,7 +22,7 @@ Supports Enterprise, Development, Personal, and Public scopes with comprehensive
 
 ## Repository Topics
 
-```
+```text
 typescript
 bun
 runtime
@@ -167,7 +167,7 @@ Create initial milestones:
 
 ## Repository Structure
 
-```
+```text
 duoplus-scoping-matrix/
 ├── 📁 .github/           # GitHub configuration
 │   ├── ISSUE_TEMPLATE/   # Issue templates

@@ -21,7 +21,7 @@ Bun.inspect.table(tableData, ['league', 'market', 'profit', 'value', 'steam']);
 ```
 
 **Output**:
-```
+```text
 ┌────────┬──────────────┬──────────────┬──────────────┬──────────┐
 │ league │ market       │ profit       │ value        │ steam    │
 ├────────┼──────────────┼──────────────┼──────────────┼──────────┤

@@ -436,7 +436,7 @@ class VersionDiagramGenerator {
 
 ### **Sample Output**
 
-```
+```text
 🔥 Fire22 Diagram Tooling System
 ==================================================
 

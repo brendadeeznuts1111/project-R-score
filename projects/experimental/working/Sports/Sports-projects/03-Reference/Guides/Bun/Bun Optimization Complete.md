@@ -138,7 +138,7 @@ All Bun server optimizations have been successfully implemented and documented. 
 
 ## 📚 Documentation Structure
 
-```
+```text
 docs/
 ├── BUN_DOCUMENTATION_INDEX.md          # Master index
 ├── BUN_QUICK_REFERENCE.md              # Quick reference

@@ -118,7 +118,7 @@ bun dashboard:update     # Refresh stats
 
 ## [TELEGRAM][COMMANDS][BETS][BETS-TELEGRAM-001][v3.0][ACTIVE]
 
-```
+```text
 /bets          # Current stats + recent events
 /bets:alerts   # Volume spike alerts
 /bets:sync     # Manual plive sync

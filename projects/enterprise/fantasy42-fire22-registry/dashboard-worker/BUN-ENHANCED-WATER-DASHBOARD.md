@@ -80,7 +80,7 @@ water-dashboard
 
 ## 📁 File Structure
 
-```
+```text
 Water Dashboard Enhanced/
 ├── scripts/
 │   └── build-water-dashboard-standalone.ts    # 🎯 New build system

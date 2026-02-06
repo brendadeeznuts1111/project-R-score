@@ -183,21 +183,21 @@ console.log(inspect.table(data, {
 ## **Results**
 
 ### **Bundle Size Comparison**
-```
+```text
 Before: 450KB (with external deps)
 After:  180KB (Bun native only)
 Reduction: 60%
 ```
 
 ### **Startup Performance**
-```
+```text
 Before: 150ms (dependency loading)
 After:   45ms (native execution)
 Improvement: 70% faster
 ```
 
 ### **Memory Usage**
-```
+```text
 Before: 25MB (external deps + app)
 After:  12MB (app only)
 Reduction: 52%

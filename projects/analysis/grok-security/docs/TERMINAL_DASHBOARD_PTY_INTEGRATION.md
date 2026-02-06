@@ -185,7 +185,7 @@ Gate release tag on these three timing gates only.
 
 ### Architecture Overview
 
-```
+```text
 ┌─────────────────────┐     ┌──────────────────────┐     ┌─────────────────────┐
 │  Tailscale Clients  │────▶│  Cloudflare Worker   │────▶│  Headscale Server   │
 └─────────────────────┘     │  - Rate Limiting     │     │  - SQLite Database  │
@@ -309,7 +309,7 @@ networks:
 
 ### Test & Benchmark Summary
 
-```
+```text
 bun test v1.3.6
 
 Component Tests:

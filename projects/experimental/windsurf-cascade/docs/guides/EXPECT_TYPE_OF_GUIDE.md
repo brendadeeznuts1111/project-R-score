@@ -217,7 +217,7 @@ Add to your CI pipeline:
 ## 📝 Example Output
 
 ### Runtime Tests
-```
+```text
 ✓ basic type equality [0.01ms]
 ✓ object property testing [0.02ms]
 ✓ Promise resolution testing
@@ -227,7 +227,7 @@ Add to your CI pipeline:
 ```
 
 ### TypeScript Verification
-```
+```text
 # No output means success!
 # Any type errors would be displayed here
 ```

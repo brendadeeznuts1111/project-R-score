@@ -217,7 +217,7 @@ The dashboard uses CSS custom properties for easy theming:
 ## 🛠️ Development
 
 ### File Structure
-```
+```text
 registry/
 ├── dashboard/
 │   ├── enhanced-index.html    # Enhanced dashboard UI

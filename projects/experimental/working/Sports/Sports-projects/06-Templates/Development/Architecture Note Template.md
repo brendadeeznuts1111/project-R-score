@@ -202,7 +202,7 @@ sync_tool: "cli/arch-sync.ts"
 
 ### Dependency Graph
 
-```
+```text
 {{dependency_graph_visualization}}
 ```
 

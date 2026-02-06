@@ -84,7 +84,7 @@ bun run scan.ts --session-cleanup [project-id]
 
 ## Architecture
 
-```
+```text
 scanner/
 ├── src/
 │   ├── scan.ts                    Main scanner — CLI, scanning, audit, fix commands

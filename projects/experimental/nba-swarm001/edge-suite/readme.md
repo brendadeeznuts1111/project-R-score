@@ -31,7 +31,7 @@ open http://localhost:3334?view=charts
 
 ## Architecture
 
-```
+```text
 edge-suite/
 ├── server.ts              # Bun static file server + API
 ├── public/

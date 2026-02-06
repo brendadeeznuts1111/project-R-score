@@ -103,7 +103,7 @@ TAG_TABLE_PROPERTIES=File,Valid,Domain,Priority bun run scripts/tag-manager-pro.
 ```
 
 Output:
-```
+```text
 ┌───┬────────────────────────────┬───────┬───────────┬──────────┐
 │   │ File                       │ Valid │ Domain    │ Priority │
 ├───┼────────────────────────────┼───────┼───────────┼──────────┤

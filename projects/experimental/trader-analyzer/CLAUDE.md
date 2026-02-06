@@ -28,7 +28,7 @@ bun run security     # Security testing CLI (pentest, headers, sri)
 
 ### Project Structure
 
-```
+```text
 src/
 ├── api/routes.ts      # Hono REST API (3000+ lines)
 ├── cli/

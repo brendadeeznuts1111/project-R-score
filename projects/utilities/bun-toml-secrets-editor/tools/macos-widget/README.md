@@ -21,7 +21,7 @@ A comprehensive performance optimization suite for macOS widgets, specifically o
 
 ## 📁 Project Structure
 
-```
+```text
 tools/macos-widget/
 ├── arm64-optimized-widget.ts      # Main optimized widget implementation
 ├── advanced-benchmark-suite.ts    # Comprehensive benchmarking suite

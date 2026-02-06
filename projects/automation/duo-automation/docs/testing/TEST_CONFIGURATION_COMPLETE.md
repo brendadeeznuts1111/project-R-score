@@ -72,7 +72,7 @@ bun test --verbose
 
 ## 📁 **Test Directory Structure**
 
-```
+```text
 tests/
 ├── README.md                    # Test documentation
 ├── setup.ts                     # Global test setup

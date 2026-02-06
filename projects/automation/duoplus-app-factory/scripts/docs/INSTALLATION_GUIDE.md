@@ -227,7 +227,7 @@ This system demonstrates:
 
 ## 📁 All Files Created
 
-```
+```text
 /data/local/tmp/
 ├── scripts/
 │   ├── phase-01.sh          # Apple Developer

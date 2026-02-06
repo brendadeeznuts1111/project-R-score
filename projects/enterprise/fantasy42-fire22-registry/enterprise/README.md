@@ -32,7 +32,7 @@ documentation** for Fantasy42-Fire22 operations.
 
 ## 🏗️ **Enterprise Repository Structure**
 
-```
+```text
 fantasy42-fire22-registry/
 ├── 📁 enterprise/                    # 🔒 Enterprise Private Data
 │   ├── 📁 benchmarking/             # 📊 Performance Benchmarks
@@ -85,7 +85,7 @@ fantasy42-fire22-registry/
 
 ### **Branch Strategy**
 
-```
+```text
 main        ← Production releases (protected)
 ├── develop     ← Active development (protected)
 │   ├── feature/*  ← Feature branches

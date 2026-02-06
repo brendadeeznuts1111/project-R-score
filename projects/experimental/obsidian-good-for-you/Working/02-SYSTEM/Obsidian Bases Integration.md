@@ -437,7 +437,7 @@ summaries:
 ## 🛠️ **Best Practices**
 
 ### **File Organization**
-```
+```text
 02 - SYSTEM/
 ├── Bases/
 │   ├── Project Portfolio.base

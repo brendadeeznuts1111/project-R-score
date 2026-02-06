@@ -110,7 +110,7 @@ bun run golden:init:profile
 
 ### Example: Template Resolution
 
-```
+```text
 ⏱️  Instantiation time: 3.12ms
 ✅ Within performance budget (500ms)
 
@@ -261,7 +261,7 @@ From the profile, focus on functions with:
 
 ## 📁 Output Files
 
-```
+```text
 profiles/
 ├── CPU.xxx.cpuprofile      # Chrome DevTools format
 ├── CPU.xxx.md              # Markdown format

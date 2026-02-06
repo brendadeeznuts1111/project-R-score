@@ -56,7 +56,7 @@ The Binary Manifest Format provides **high-performance, secure, and efficient** 
 
 ### Header Structure (16 bytes)
 
-```
+```text
 Offset | Size | Type     | Description
 -------|------|----------|------------
 0      | 4    | uint32   | Magic number: 0x5549504D ("UIPM")

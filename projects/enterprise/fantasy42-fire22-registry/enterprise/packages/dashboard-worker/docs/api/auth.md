@@ -22,7 +22,7 @@ security, role-based access control, and integration with Fire22 API services.
 
 ### System Architecture
 
-```
+```text
 [Client Request] → [JWT Verification] → [Role Check] → [Fire22 API] → [Response]
        ↓                    ↓               ↓              ↓           ↓
    Bearer Token      JWT Validation    RBAC Check    API Token    Data Return
@@ -110,7 +110,7 @@ security, role-based access control, and integration with Fire22 API services.
 
 **Request Headers**:
 
-```
+```text
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
@@ -130,7 +130,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 **Request Headers**:
 
-```
+```text
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
@@ -149,7 +149,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 **Request Headers**:
 
-```
+```text
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
@@ -275,7 +275,7 @@ All API endpoints require valid JWT token except:
 
 ### Authorization Header Format
 
-```
+```text
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 

@@ -107,7 +107,7 @@ bun deploy.ts production
 
 ## 📁 File Structure
 
-```
+```text
 ├── enhanced-dashboard.ts          # Main backend server
 ├── enhanced-dashboard.html        # Modern frontend UI
 ├── dashboard-cli.ts               # Command-line interface

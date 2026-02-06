@@ -185,7 +185,7 @@ Automatic masking of sensitive data:
 
 ## Architecture
 
-```
+```text
 cli/
 ├── factorywager-cli.ts           # Main CLI entry point
 ├── factorywager-inspector-enhanced.ts  # Enhanced inspector

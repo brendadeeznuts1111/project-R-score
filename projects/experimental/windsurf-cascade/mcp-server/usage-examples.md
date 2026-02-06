@@ -150,14 +150,14 @@ serve({
 You can guide Cascade to search more effectively:
 
 **Multi-step research:**
-```
+```text
 "First, search for how Bun handles WebSockets. 
 Then search for production deployment best practices. 
 Finally, combine both to show me how to deploy a WebSocket server."
 ```
 
 **Specific documentation sections:**
-```
+```text
 "Search the API reference for Bun.serve options"
 "Find examples in the guides section about file uploads"
 ```
@@ -166,13 +166,13 @@ Finally, combine both to show me how to deploy a WebSocket server."
 The SearchBun tool works great with other Windsurf capabilities:
 
 **Code generation + documentation:**
-```
+```text
 "Create a REST API using Bun.serve. Use SearchBun to find 
 the best practices for routing and error handling."
 ```
 
 **Debugging + research:**
-```
+```text
 "I'm getting this error: [error message]. Search the Bun docs 
 for similar issues and suggest fixes."
 ```

@@ -6,7 +6,7 @@ The Bun Payment Linker API provides a comprehensive RESTful interface for enterp
 
 ## Base URL
 
-```
+```text
 Development: http://localhost:3000/api/v1
 Production: https://api.bun-payment-linker.com/v1
 ```

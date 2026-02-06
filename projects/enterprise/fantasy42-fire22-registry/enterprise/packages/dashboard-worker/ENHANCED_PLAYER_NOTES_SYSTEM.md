@@ -12,7 +12,7 @@
 
 #### **1. Accessing Bob's Notes**
 
-```
+```text
 🎯 AGENT SESSION: Support Agent Alpha
 Customer: Bob Johnson (BBB9901)
 
@@ -25,7 +25,7 @@ Customer: Bob Johnson (BBB9901)
 
 #### **2. Adding a New Note**
 
-```
+```text
 📝 ADDING PLAYER NOTE FOR BOB
 
 Category: Warning
@@ -157,7 +157,7 @@ Notes Impact Metrics:
 
 #### **Full-Text Search**
 
-```
+```text
 🔍 SEARCH: "lottery limits"
 
 Results: 3 matches found
@@ -186,7 +186,7 @@ Results: 3 matches found
 
 #### **Advanced Filtering**
 
-```
+```text
 📊 FILTERED SEARCH RESULTS
 
 Filters Applied:
@@ -203,7 +203,7 @@ Filtered Results: 2 matches
 
 #### **Category-Based Insights**
 
-```
+```text
 📈 CATEGORY ANALYSIS
 
 Warning Notes (Last 30 days):
@@ -404,7 +404,7 @@ Peer Matching with Notes Context:
 
 **Session Start → Notes Integration → Enhanced Service → Complete Experience**
 
-```
+```text
 🎯 SESSION START
 ├── Agent accesses Bob's profile
 ├── Notes system loads automatically

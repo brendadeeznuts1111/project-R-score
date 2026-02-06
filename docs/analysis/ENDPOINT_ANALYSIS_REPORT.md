@@ -23,7 +23,7 @@
 ## **📊 Endpoint Structure Analysis**
 
 ### **What Are Endpoints?**
-```
+```text
 📁 Endpoint: /docs/api/utils
 🔗 Fragment: #readfile
 🎯 Full Endpoint: /docs/api/utils#readfile
@@ -31,7 +31,7 @@
 ```
 
 ### **Endpoint Types Detected**
-```
+```text
 🔗 CLI endpoints: 33 (direct page URLs)
 🔗 Anchor endpoints: 42 (fragment-based URLs)
 📊 Total endpoints: 75
@@ -42,7 +42,7 @@
 ## **🔍 Endpoint-Level Validation Results**
 
 ### **Current Endpoint Structure**
-```
+```text
 📊 CLI Endpoints (33):
 ├── Installation: /docs/cli/install/windows, /docs/cli/install/macos, etc.
 ├── Commands: /docs/cli/run, /docs/cli/test, /docs/cli/build, etc.
@@ -62,7 +62,7 @@
 ## **⚠️ Endpoint-Level Issues Found**
 
 ### **1. Endpoint Uniqueness Issues**
-```
+```text
 ❌ 41 duplicate endpoints found
 📊 Issue: Multiple endpoints share same base URL
 🔗 Example: /docs/api/utils used by 42 different functions
@@ -70,7 +70,7 @@
 ```
 
 ### **2. Hierarchy Issues**
-```
+```text
 ❌ 42 fragments without corresponding page endpoints
 📊 Issue: All utils endpoints are fragments without main pages
 🔗 Pattern: /docs/api/utils#function-name (no /docs/api/utils page)
@@ -78,7 +78,7 @@
 ```
 
 ### **3. Structure Inconsistencies**
-```
+```text
 ❌ CLI endpoints use direct URLs
 ❌ Utils endpoints use fragment-based URLs
 📊 Mixed patterns within same documentation system
@@ -90,7 +90,7 @@
 ## **🏗️ Endpoint Hierarchy Analysis**
 
 ### **Current Hierarchy Structure**
-```
+```text
 📁 docs/
 ├── 📁 api/
 │   └── 📁 utils/ (42 fragment endpoints)
@@ -102,7 +102,7 @@
 ```
 
 ### **Depth Distribution**
-```
+```text
 📊 L2 (2 levels): 1 endpoint (/docs/cli)
 📊 L3 (3 levels): 69 endpoints (most common)
 📊 L4 (4 levels): 5 endpoints (platform-specific)
@@ -145,7 +145,7 @@ bun endpoint-aware-validator.ts --full-analysis
 ## **📈 Detailed Endpoint Analysis**
 
 ### **CLI Endpoint Structure**
-```
+```text
 ✅ Well-organized hierarchy
 ✅ Direct page URLs (no fragments)
 ✅ Logical categorization
@@ -154,7 +154,7 @@ bun endpoint-aware-validator.ts --full-analysis
 ```
 
 ### **Utils Endpoint Structure**
-```
+```text
 ❌ All endpoints are fragments only
 ❌ No main documentation page
 ❌ 42 endpoints share same base URL
@@ -163,7 +163,7 @@ bun endpoint-aware-validator.ts --full-analysis
 ```
 
 ### **Endpoint Distribution**
-```
+```text
 📊 CLI Categories: 4 (installation, commands, options, debugging)
 📊 Utils Categories: 5 (file_system, networking, process, validation, conversion)
 📊 CLI Endpoints: 33 (direct URLs)
@@ -242,28 +242,28 @@ if (patternsUsed.length > 1) {
 ## **🔧 Endpoint Improvement Recommendations**
 
 ### **1. Utils Endpoint Restructuring**
-```
+```text
 Current: /docs/api/utils#readfile (fragment only)
 Recommended: /docs/api/utils/readfile (direct endpoint)
 Benefits: Better navigation, SEO, bookmarking
 ```
 
 ### **2. Add Main Documentation Pages**
-```
+```text
 Missing: /docs/api/utils (main page)
 Missing: /docs/api/utils/file-system (category page)
 Benefits: Better organization, navigation hub
 ```
 
 ### **3. Standardize Endpoint Patterns**
-```
+```text
 Option 1: All direct endpoints
 Option 2: Consistent fragment usage
 Benefits: Predictable URL structure, better UX
 ```
 
 ### **4. Improve Hierarchy Organization**
-```
+```text
 Current: Flat CLI structure
 Recommended: Group CLI endpoints by function
 Benefits: Better navigation, logical organization

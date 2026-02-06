@@ -120,7 +120,7 @@ const ALERT_THRESHOLDS = {
 ### Log Monitoring
 
 #### Required Log Patterns
-```
+```text
 ✅ SUCCESS: Route matched and handled
 ✅ CACHE: Pattern cached successfully
 ✅ SECURITY: Request validated

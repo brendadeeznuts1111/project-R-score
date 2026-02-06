@@ -15,7 +15,7 @@ Successfully implemented an **enhanced comprehensive demonstration of Bun v1.2.1
 - **Performance Monitoring**: Custom `PerformanceMonitor` class for detailed analysis
 
 **Advanced Performance Results:**
-```
+```text
 📊 Server Performance Metrics:
    • Server Creation: 3.332ms (300 ops/sec)
    • Concurrent Requests: 20.664ms (48 ops/sec)
@@ -110,7 +110,7 @@ const monitoringFlags = ['--inspect=0.0.0.0:9229', '--trace-deprecation', '--ena
 ```
 
 **Performance Impact Analysis:**
-```
+```text
 📊 Runtime Flag Performance Impact:
    • Default execution: 10.625ms
    • Optimized execution: 8.313ms
@@ -133,7 +133,7 @@ const monitoringFlags = ['--inspect=0.0.0.0:9229', '--trace-deprecation', '--ena
 - **SIMD Performance Analysis**: Detailed operations per second measurements
 
 **Advanced ANSI Test Results:**
-```
+```text
 📊 Comprehensive ANSI Test Suite:
    • Nested Formatting: ✅ Success (127,649 ops/sec)
    • RGB Colors: ✅ Success (1,090,513 ops/sec)
@@ -150,7 +150,7 @@ const monitoringFlags = ['--inspect=0.0.0.0:9229', '--trace-deprecation', '--ena
 ```
 
 **Real-World Log Processing:**
-```
+```text
 📊 Log Processing Performance:
    • 1000 log entries (47,000 characters)
    • Processing time: 0.063ms
@@ -249,7 +249,7 @@ bunx --package livereload livereload dist
 ```
 
 **Bundle Optimization Results:**
-```
+```text
 📊 Bundle Size Optimization Scenarios:
    • Minimal Bundle: 40-60% reduction (utility libraries)
    • Component Library: 20-40% reduction (CSS modules preserved)
@@ -288,7 +288,7 @@ class PerformanceMonitor {
 | **Concurrent Requests** | 20.664ms | 48 | B+ (Good) |
 
 ### **Memory Efficiency Analysis**
-```
+```text
 📊 Memory Usage Analysis:
    • Initial memory: ~4.00MB
    • Final memory: 4.24MB

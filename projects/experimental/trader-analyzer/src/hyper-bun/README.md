@@ -158,7 +158,7 @@ console.log(MarketDataInspectors.performanceStats(perfStats));
 Hyper-Bun is integrated into the main application with the following REST endpoints:
 
 ### Market Analysis
-```
+```text
 GET /api/hyper-bun/analyze/:nodeId/:bookmaker
 ```
 Performs comprehensive market analysis including accessibility testing, trend analysis, and risk assessment.
@@ -192,19 +192,19 @@ Performs comprehensive market analysis including accessibility testing, trend an
 ```
 
 ### System Health
-```
+```text
 GET /api/hyper-bun/health
 ```
 Provides comprehensive system health report including performance metrics and connectivity status.
 
 ### Performance Metrics
-```
+```text
 GET /api/hyper-bun/metrics
 ```
 Exports detailed performance monitoring data for analysis and debugging.
 
 ### Bookmaker Probing
-```
+```text
 GET /api/hyper-bun/probe/:bookmaker
 ```
 Tests all API endpoints for a specific bookmaker and returns connectivity and response time data.

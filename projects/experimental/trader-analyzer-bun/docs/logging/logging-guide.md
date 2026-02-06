@@ -81,12 +81,12 @@ logger.setCorrelationId('req-67890');
 
 All logs follow this format:
 
-```
+```text
 YYYY-MM-DD HH:MM:SS.ms | LEVEL | CODE | SOURCE | MESSAGE
 ```
 
 Example:
 
-```
+```text
 2025-12-07 09:35:30.000 | INFO | HBMO-001 | MarketOfferingService | Processing market offerings for draftkings.
 ```

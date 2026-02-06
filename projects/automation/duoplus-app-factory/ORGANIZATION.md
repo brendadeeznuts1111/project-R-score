@@ -11,7 +11,7 @@ This document outlines the reorganized structure of the Nebula-Flow™ project.
 - Created archives/ directory for archived files
 
 ### 2. Scripts Organization ✅
-```
+```text
 scripts/
 ├── build.ts                    # Main build script
 ├── sync-version.ts             # Version utility
@@ -55,7 +55,7 @@ scripts/
 
 ## Directory Structure
 
-```
+```text
 d-network/
 ├── README.md                   # Main entry point
 ├── package.json                # NPM configuration

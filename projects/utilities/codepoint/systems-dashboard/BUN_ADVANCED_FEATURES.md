@@ -209,7 +209,7 @@ process.on('SIGINT', () => {
 ## **📈 Performance Results**
 
 ### **Server Performance**
-```
+```text
 ✅ Server startup: ~45ms
 ✅ Memory usage: 12MB baseline
 ✅ Request handling: ~1ms average
@@ -218,7 +218,7 @@ process.on('SIGINT', () => {
 ```
 
 ### **Development Experience**
-```
+```text
 ✅ Hot reload: ~50ms file change to update
 ✅ TypeScript compilation: ~100ms
 ✅ Bundle analysis: ~200ms

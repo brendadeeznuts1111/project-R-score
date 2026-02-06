@@ -27,7 +27,7 @@ if (/[\u200B-\u200F\uFEFF]/.test(decodedUri || "")) {
 ```
 
 **Real-World Test Results:**
-```
+```text
 ⚠️ SUSPICIOUS: https://example.com/test​hidden
    ⚠️  Zero-width character injection
    ⚠️  Zero-width characters used for evasion or data hiding
@@ -60,7 +60,7 @@ if (/[\u200B-\u200F\uFEFF]/.test(decodedUri || "")) {
 ### **✅ Zero-Width Attack Detection**
 
 #### **Stealth Attacks Successfully Blocked:**
-```
+```text
 ⚠️ SUSPICIOUS: https://example.com/test​hidden
    ⚠️  Zero-width character injection
    ⚠️  Zero-width characters used for evasion or data hiding
@@ -72,7 +72,7 @@ if (/[\u200B-\u200F\uFEFF]/.test(decodedUri || "")) {
 ```
 
 #### **Complete Threat Statistics:**
-```
+```text
 📊 Security Statistics:
    Total Checks: 14
    🔴 CRITICAL: 5

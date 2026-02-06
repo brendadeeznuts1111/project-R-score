@@ -480,7 +480,7 @@ bun run matrix:demo:advanced-validation
 
 ### 📁 Project Structure
 
-```
+```text
 Enhanced Matrix CLI/
 ├── src/
 │   ├── cli/                    # CLI commands and interface

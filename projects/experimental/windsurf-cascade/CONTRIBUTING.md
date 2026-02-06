@@ -199,7 +199,7 @@ describe('calculateOdds', () => {
 
 ### Code Organization
 
-```
+```text
 packages/your-package/
 ├── src/
 │   ├── index.ts          # Main exports
@@ -285,7 +285,7 @@ describe('Performance', () => {
 
 ### Commit Message Format
 
-```
+```text
 type(scope): description
 
 [optional body]

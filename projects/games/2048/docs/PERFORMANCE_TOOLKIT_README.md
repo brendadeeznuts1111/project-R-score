@@ -4,7 +4,7 @@ A comprehensive, organized performance monitoring, profiling, and optimization t
 
 ## 📁 Project Structure
 
-```
+```text
 2048/
 ├── src/
 │   └── performance/              # Core performance tools

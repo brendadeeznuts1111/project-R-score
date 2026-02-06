@@ -33,7 +33,7 @@ bun run dev
 
 ## Architecture
 
-```
+```text
 t3-lattice/
 ├── src/
 │   ├── constants/
@@ -72,7 +72,7 @@ t3-lattice/
 
 ## December 29, 2025 NBA Schedule
 
-```
+```text
 MIL@CHA  18:00  -2.5   226.5
 PHX@WAS  18:00  -11    240.0
 GSW@BKN  18:30  -10.5  225.5

@@ -83,7 +83,7 @@ FEAT_CUSTOM_METADATA     // Custom S3 metadata (+2% bundle)
 ```
 
 **API Endpoints**:
-```
+```text
 POST /api/upload/initiate       # Start new upload
 GET  /api/upload/status/:id     # Get upload progress
 GET  /api/uploads/active        # List active uploads
@@ -218,7 +218,7 @@ bun build src/index.ts
 
 ### Architecture
 
-```
+```text
 ┌─────────────────┐
 │   React UI      │
 │  (UploadPanel)  │
@@ -369,7 +369,7 @@ cat ./out-no-debug/test.js
 
 ### Request Flow
 
-```
+```text
 Client Request
     │
     ▼

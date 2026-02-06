@@ -122,7 +122,7 @@ graph TD
 
 ### Sample Customer Interaction
 
-```
+```text
 Customer: "My withdrawal has been pending for 2 days, need help urgently"
 
 Bot Response:
@@ -203,7 +203,7 @@ Agents can escalate inquiries immediately with reasons:
 
 ### Base URL
 
-```
+```text
 https://api.fire22.ag/api/telegram
 ```
 

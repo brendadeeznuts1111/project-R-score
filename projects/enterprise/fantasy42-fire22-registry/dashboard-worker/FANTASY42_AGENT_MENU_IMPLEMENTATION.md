@@ -12,7 +12,7 @@
 
 #### **1. Dynamic Menu Style Selection**
 
-```
+```text
 🎨 MENU STYLE OPTIONS
 • Left Menu: Classic vertical menu with collapsible sections
 • Tile Menu: Grid-based interactive tiles with visual elements
@@ -24,7 +24,7 @@
 
 #### **2. Advanced Configuration Options**
 
-```
+```text
 ⚙️ MENU CONFIGURATION
 • Theme Selection: Light, Dark, Auto (system preference)
 • Icon Styles: Filled, Outlined, Minimal
@@ -36,7 +36,7 @@
 
 #### **3. Quick Actions & Shortcuts**
 
-```
+```text
 ⚡ QUICK ACCESS FEATURES
 • Floating Action Buttons: Deposit, Withdrawal, Betting, Search
 • Keyboard Shortcuts: Ctrl+D (Deposit), Ctrl+W (Withdrawal), etc.
@@ -47,7 +47,7 @@
 
 #### **4. Intelligent Notifications**
 
-```
+```text
 🔔 SMART NOTIFICATIONS
 • Real-time Alerts: Transaction updates, player activity
 • Position Options: Top-right, Top-left, Bottom-right, Bottom-left
@@ -58,7 +58,7 @@
 
 #### **5. Advanced Search Integration**
 
-```
+```text
 🔍 POWERFUL SEARCH
 • Global Search: Players, transactions, games, reports
 • Position Options: Header, Sidebar, Floating
@@ -69,7 +69,7 @@
 
 #### **6. Performance Analytics**
 
-```
+```text
 📊 MENU ANALYTICS
 • Usage Tracking: Most-used menu items and features
 • Performance Metrics: Load times, interaction speeds
@@ -80,7 +80,7 @@
 
 #### **7. Enterprise-Grade Features**
 
-```
+```text
 🏢 PRODUCTION FEATURES
 • Multi-Tenant Support: Different configurations per user/role
 • Security Integration: Role-based menu access and permissions

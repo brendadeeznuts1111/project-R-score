@@ -224,7 +224,7 @@ export async function generateDeployMessage(commitSha: string): Promise<string> 
 ## 9.1.1.5.0: Deep-Linked Message RFC (Hyper-Bun Extension)
 
 ### 9.1.1.5.1: RFC Schema
-```
+```text
 start_param format: "action:target:params"
 
 Examples:

@@ -147,7 +147,7 @@ The `bunfig.toml` file configures Bun-specific settings:
 
 ## Project Structure
 
-```
+```text
 wind/
 ├── src/
 │   ├── core/
@@ -297,7 +297,7 @@ const mostUsed = dbUtils.getMostUsedShortcuts(10);
 
 ## Project Structure
 
-```
+```text
 src/
 ├── core/
 │   ├── registry.ts      # Main ShortcutRegistry class

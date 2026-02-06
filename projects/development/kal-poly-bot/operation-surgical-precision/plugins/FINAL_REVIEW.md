@@ -117,7 +117,7 @@ The plugin system implementation is:
 - ✅ Ready for production use
 
 ### Priority Order Verified ✅
-```
+```text
 1. Performance Monitor (Priority 5)  ← Loads first
 2. Git Integration (Priority 10)    ← Loads second
 3. Analytics (Priority 20)            ← Loads third

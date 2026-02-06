@@ -14,12 +14,12 @@ The **Sovereign Unit \[01\]** API provides a comprehensive, enterprise-grade int
 ## 🌐 Base URLs
 
 ### **Production Environment**
-```
+```text
 https://api.sovereign-unit-01.com
 ```
 
 ### **Development Environment**
-```
+```text
 http://localhost:3227
 ```
 

@@ -27,7 +27,7 @@ export const TIMEZONE_CONSTANTS = {                // Exported object
 ### Usage in Headers/Footers
 
 These constants are displayed in **both headers and footers** with the format:
-```
+```text
 [$TZ][Etc/UTC][setSystemTime]
 ```
 
@@ -46,7 +46,7 @@ These constants are displayed in **both headers and footers** with the format:
 
 ### Example Display
 
-```
+```text
 [$TZ][Etc/UTC][setSystemTime]
 ```
 

@@ -44,42 +44,42 @@ open docs/urlpattern-showcase.html
 ### 📈 Pattern Categories
 
 #### 🛒 E-commerce Patterns
-```
+```text
 https://shop.example.com/items/:id
 /items/:id/details
 /items/:id?color=:color
 ```
 
 #### 🔧 API Patterns
-```
+```text
 https://api.example.com/v1/users/:id
 /api/v1/users/(\w+)
 https://:subdomain.example.com/:path*
 ```
 
 #### 📁 File & Content Patterns
-```
+```text
 /files/*/:name.:ext
 /blog/:year(\d{4})/:month(\d{2})
 /redirect?from=:from&to=:to
 ```
 
 #### 🛡️ Security Patterns
-```
+```text
 https://admin.example.com/:path*
 /api/(token|key|secret)/:action
 /(items|products)/:id
 ```
 
 #### 🔍 RegExp Advanced
-```
+```text
 https://shop.example.com/items/(\d+)
 https://shop.example.com/items/:id(\d+)
 /search?q=:term
 ```
 
 #### 📊 Analytics Patterns
-```
+```text
 /:category/:id/:slug
 /track/:sessionId
 https://*.example.com/:path*

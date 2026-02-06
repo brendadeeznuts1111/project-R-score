@@ -114,7 +114,7 @@ bun run dev  # http://localhost:4001
 ```
 
 See [`README-MINI-APPS.md`](./README-MINI-APPS.md) for complete mini-apps guide.
-```
+```text
 
 ## CI/CD
 

@@ -65,7 +65,7 @@ lspDashboard.setActiveFile('src/index.ts');
 
 ### **Core Components**
 
-```
+```text
 src/lsp/
 ├── LSPDashboard.ts      # Main dashboard component
 ├── LSPClient.ts         # LSP server client

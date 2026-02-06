@@ -142,7 +142,7 @@ validation_rules:
 
 ### **✅ True Color Terminal Experience**
 
-```
+```text
 🌈 Canvas System Status Dashboard (24-bit True Color)
 ════════════════════════════════════════════════════════════
 1. ● Bridge Service       ● Active       #10B981 (16,185,129)
@@ -168,7 +168,7 @@ validation_rules:
 
 ### **✅ ANSI-16m Performance Analysis**
 
-```
+```text
 Performance Testing: 50,000 Color Conversions
 ═════════════════════════════════════════════════════════
 
@@ -193,7 +193,7 @@ ANSI-16          8.24         6,067,961         266% Faster
 ### **✅ ANSI-16m Format Specification**
 
 **Escape Sequence Structure:**
-```
+```text
 \u001b[38;2;R;G;Bm
 │  │ │ │ │ │ │
 │  │ │ │ │ │ └─ Suffix (m)
@@ -380,7 +380,7 @@ function detectTerminalSupport(): 'ansi-16m' | 'ansi-256' | 'ansi-16' | 'none' {
 
 ## **🎉 FINAL ANSI-16M MASTERY SUMMARY**
 
-```
+```text
 🌈 24-bit ANSI Colors (ansi-16m) True Color Mastery Complete!
 🎨 Your canvas system achieves perfect true color terminal excellence!
 ```

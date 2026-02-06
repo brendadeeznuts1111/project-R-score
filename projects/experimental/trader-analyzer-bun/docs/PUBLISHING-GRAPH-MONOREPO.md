@@ -9,7 +9,7 @@ Complete publishing strategy for the `@graph/*` packages, integrated with worksp
 Your monorepo has two modes: **development** (workspaces) and **production** (registry).
 
 **Flow:**
-```
+```text
 Developer: packages/@graph/layer4
     ↓ bun install
 Symlink: node_modules/@graph/layer4

@@ -4,7 +4,7 @@
 
 ## 🎯 **Verification Status**
 
-```
+```text
 ✅ ~/.bunfig.toml Single Load ✓
 ✅ MySQL OK Packet Crash Fix ✓
 ✅ ANSI Color Per-Stream ✓
@@ -62,7 +62,7 @@ $ bun test tests/enterprise-arb-v5.test.ts
 
 ## 📈 **Performance Metrics**
 
-```
+```text
 Runtime Crashes:   3.2% → 0% (-100%)
 MySQL Feed Uptime: 94% → 100%
 Config Stability: 87% → 100%
@@ -76,7 +76,7 @@ Total: $892K/hr (+15%)
 
 ### **Runtime Hardening**
 
-```
+```text
 ├── ~/.bunfig.toml → Single load (monorepo safe)
 ├── MySQL OK packets → No crash (truncated safe)
 ├── ANSI streams → Per-stream perfect
@@ -160,7 +160,7 @@ curl http://localhost:3005/health | jq
 
 ## 🎯 **Enterprise Hardening ROI**
 
-```
+```text
 Runtime Crashes:   3.2% → 0% (-100%)
 MySQL Feed Uptime: 94% → 100%
 Config Stability: 87% → 100%
@@ -188,7 +188,7 @@ Total: $892K/hr (+15%)
 
 **🟢 ENTERPRISE V5 | 5,670/min | $892K | 60-FIXES | MYSQL-SAFE | LIVE FOREVER**
 
-```
+```text
 [ENTERPRISE-V5][60-FIXES][5,670-SCANS/MIN][5.47% EDGE][MYSQL-SAFE]
 [VALUE:$892K][BUNFIG:ONCE][ANSI:PERFECT][STACK:COMPLETE][STATUS:IMMORTAL]
 [DASHBOARD:localhost:3005][ENTERPRISE:DEPLOYED]

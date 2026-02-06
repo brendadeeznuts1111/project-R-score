@@ -86,7 +86,7 @@ curl http://localhost:3133/data.json
 
 ## 🗂️ Project Structure
 
-```
+```text
 src/
 ├── mod.ts              # Main CLI entry point
 ├── data/

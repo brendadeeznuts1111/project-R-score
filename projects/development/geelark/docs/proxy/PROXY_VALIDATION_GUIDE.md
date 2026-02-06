@@ -23,7 +23,7 @@ This document describes the HTTP proxy integration with **comprehensive header v
 
 ### Validation Flow
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │ 1. Client sends CONNECT with X-Bun-* headers                     │
 └────────────────┬────────────────────────────────────────────────┘
@@ -239,7 +239,7 @@ X-Bun-Domain-Hash: 0xb1c3d4c5
 ```
 
 **Success Response** (200 OK):
-```
+```text
 HTTP/1.1 200 Connection Established
 ```
 
@@ -461,7 +461,7 @@ console.log(`Cache size: ${stats.size}`);
 
 The dashboard server now displays **live proxy header validation** at startup:
 
-```
+```text
 🔒 Proxy Header Validation:
 ✅ Config Version: 1 (valid)
 ✅ Registry Hash: 0xa1b2c3d4 (valid)

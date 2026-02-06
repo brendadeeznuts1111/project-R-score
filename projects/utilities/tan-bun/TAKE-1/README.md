@@ -63,7 +63,7 @@ ASSET_PRELOAD_GZIP_MIME_TYPES="text/,application/javascript,application/json"
 
 ### 📊 Server Output Example
 
-```
+```text
 📦 Loading static assets from .output/public...
    Max preload size: 5.00 MB
    Include patterns: *.js,*.css,*.woff2
@@ -262,7 +262,7 @@ function Counter() {
 
 ## 📁 Project Structure
 
-```
+```text
 ├── src/
 │   ├── routes/          # File-based routing
 │   │   ├── __root.tsx   # Root layout

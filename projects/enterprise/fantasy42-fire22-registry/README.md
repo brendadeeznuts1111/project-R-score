@@ -107,7 +107,7 @@ vacation
 
 #### **Special Ops Team Structure**
 
-```
+```text
 Mission Commander (Interim CEO)
 ├── Technical Operations Lead
 ├── Security Operations Lead

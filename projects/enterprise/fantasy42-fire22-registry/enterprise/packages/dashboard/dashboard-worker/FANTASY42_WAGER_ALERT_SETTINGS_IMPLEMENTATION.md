@@ -12,7 +12,7 @@
 
 #### **1. Dynamic Modal Enhancement**
 
-```
+```text
 🎛️ MODAL SYSTEM
 • Auto-detection of wager alert settings modal with data-language="L-831"
 • Comprehensive tabbed interface with 6 configuration sections
@@ -23,7 +23,7 @@
 
 #### **2. Advanced Alert Configuration**
 
-```
+```text
 ⚙️ ALERT CONFIGURATION
 • Master switch for enabling/disabling the entire alert system
 • Granular alert type selection (High Amount, High Risk, Unusual Patterns, VIP)
@@ -34,7 +34,7 @@
 
 #### **3. Real-Time Alert Processing**
 
-```
+```text
 📡 ALERT PROCESSING
 • Queue-based alert processing with configurable intervals
 • Multi-channel delivery with retry logic and failover
@@ -45,7 +45,7 @@
 
 #### **4. Comprehensive Analytics**
 
-```
+```text
 📊 ALERT ANALYTICS
 • Real-time delivery tracking and success rates
 • Alert effectiveness measurement and false positive detection
@@ -56,7 +56,7 @@
 
 #### **5. Enterprise Testing & Maintenance**
 
-```
+```text
 🧪 TESTING & MAINTENANCE
 • Channel testing with real-time results display
 • Maintenance status monitoring and health checks

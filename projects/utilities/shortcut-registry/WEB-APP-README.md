@@ -108,7 +108,7 @@ The web application includes:
 ## 🛠️ **Development**
 
 ### **Project Structure**
-```
+```text
 web-app.ts           # Main web server
 src/
 ├── core/registry.ts    # Core shortcut management

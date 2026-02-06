@@ -198,7 +198,7 @@ export function getBanner(): string {
 }
 ```
 
-```
+```text
 // packages/cli/assets/banner.txt
 ╔══════════════════════════════════════════════════════════╗
 ║            Golden Template v1.3.7                        ║

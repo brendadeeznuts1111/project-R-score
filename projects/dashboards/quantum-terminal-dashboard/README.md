@@ -23,7 +23,7 @@ PTY-enabled financial terminal dashboard with Bun 1.5.x SIMD optimizations and H
 
 ## 📁 Project Structure
 
-```
+```text
 quantum-terminal-dashboard/
 ├── src/                    # Source code (TypeScript/JavaScript)
 ├── test/                   # Test files (158/159 passing)
@@ -266,7 +266,7 @@ See [`examples/api-usage-examples.js`](./examples/api-usage-examples.js) for com
 
 ## Architecture
 
-```
+```text
 src/
 ├── quantum-simd-engine.js      # SIMD buffer processor & benchmarks
 ├── performance-monitor.js      # Real-time metrics dashboard

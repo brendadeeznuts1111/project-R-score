@@ -47,7 +47,7 @@ Geelark uses **Bun Test** - the built-in testing framework that comes with Bun. 
 
 ## Test Structure
 
-```
+```text
 tests/
 ├── config/                      # Test configuration
 │   └── setup.ts                 # Global test setup

@@ -111,7 +111,7 @@ bun build src/index.ts --minify
 
 ## 📊 Priority Order
 
-```
+```text
 CLI Flags (1) > Environment Variables (2) > bunfig.toml (3)
 ```
 

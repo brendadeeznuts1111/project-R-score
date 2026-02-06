@@ -175,7 +175,7 @@ function generateUtilsSitemap(): Array<{name: string, url: string, category: str
 ### **Primary Creation Commits**
 
 #### **Commit: `cdd94c4`** - Feb 4, 2026, 20:09:56
-```
+```text
 feat: Add comprehensive documentation constants and usage examples
 
 🚀 Documentation Constants System:
@@ -191,7 +191,7 @@ feat: Add comprehensive documentation constants and usage examples
 ```
 
 #### **Commit: `5f241bb`** - Feb 4, 2026, 20:34:03
-```
+```text
 feat: Add comprehensive documentation constants and validation system
 
 🔧 Validation System:
@@ -209,7 +209,7 @@ feat: Add comprehensive documentation constants and validation system
 ### **Related Commits**
 
 #### **Commit: `4e7b3d7`** - Async Issues Resolution
-```
+```text
 fix: Resolve async issues using documentation constants and GitHub solutions
 
 🔧 Used BUN_CONSTANTS_VERSION.json for version compatibility
@@ -217,7 +217,7 @@ fix: Resolve async issues using documentation constants and GitHub solutions
 ```
 
 #### **Commit: `e8bb805`** - URL Optimization
-```
+```text
 feat: Add URL optimization and automated validation system
 
 🌐 Fixed broken registry URLs and applied performance optimizations
@@ -229,7 +229,7 @@ feat: Add URL optimization and automated validation system
 ## 🏗️ Architecture Integration
 
 ### **1. Documentation Constants System**
-```
+```text
 lib/documentation/constants/
 ├── cli.ts          # CLI documentation constants
 ├── utils.ts        # ← BUN_UTILS_URLS defined here
@@ -237,7 +237,7 @@ lib/documentation/constants/
 ```
 
 ### **2. Validation System**
-```
+```text
 lib/
 ├── documentation-validator.ts      # Uses BUN_UTILS_URLS
 ├── complete-documentation-validator.ts  # Advanced validation
@@ -245,7 +245,7 @@ lib/
 ```
 
 ### **3. Usage Examples**
-```
+```text
 examples/
 ├── comprehensive-usage.ts          # 16K lines of examples
 ├── cli-validation-integration.ts   # Integration helpers

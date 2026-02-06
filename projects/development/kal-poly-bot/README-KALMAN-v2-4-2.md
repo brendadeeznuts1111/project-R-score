@@ -246,7 +246,7 @@ chmod +x deploy-kalman-v2-4-2-v1-3-3.sh
 
 ### 📁 File Structure
 
-```
+```text
 kal-poly-bot/
 ├── features/
 │   └── kalman-features.bun.ts          # Main system integration

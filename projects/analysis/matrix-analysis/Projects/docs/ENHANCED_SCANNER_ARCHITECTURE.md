@@ -172,7 +172,7 @@ class EnterpriseScanner {
 
 ### Example Output
 
-```
+```text
 ❌ Bundle budget violations: 2
    Bundle dist/index.js exceeds maximum size: 6.2 MB > 5.0 MB
    Initial bundle dist/main.js exceeds maximum: 2.5 MB > 2.0 MB
@@ -180,7 +180,7 @@ class EnterpriseScanner {
 
 ## S3 Export Archive Structure
 
-```
+```text
 scans/scan-{traceId}.tar.gz
 ├── scan.sarif          # SARIF scan results
 ├── metafile.json       # Build metafile analysis

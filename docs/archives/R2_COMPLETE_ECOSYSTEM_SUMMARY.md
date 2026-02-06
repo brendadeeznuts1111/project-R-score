@@ -9,7 +9,7 @@ Your comprehensive R2-powered ecosystem is now fully operational with advanced f
 ## 🏗️ **Complete System Architecture**
 
 ### **Core R2 Integration Components**
-```
+```text
 🌐 R2 Storage System (scanner-cookies bucket)
 ├── MCP Integration ✅
 ├── Domain Management ✅  
@@ -33,7 +33,7 @@ Your comprehensive R2-powered ecosystem is now fully operational with advanced f
 ## 📊 **Complete Data Overview**
 
 ### **Storage Statistics**
-```
+```text
 📈 Total Data Stored
 ├── Objects: 50+ integrated objects
 ├── Categories: 8 organized categories
@@ -57,7 +57,7 @@ Your comprehensive R2-powered ecosystem is now fully operational with advanced f
 ## 🌐 **Domain & Subdomain Integration**
 
 ### **FactoryWager.com Enterprise Domain**
-```
+```text
 🏭 FactoryWager Domain Architecture
 ├── 16 Total Subdomains
 ├── 15 Enterprise Tier Subdomains
@@ -86,7 +86,7 @@ Your comprehensive R2-powered ecosystem is now fully operational with advanced f
 - **support**: Customer support portal
 
 ### **DuoPlus.com Family Domain**
-```
+```text
 🎭 DuoPlus Domain Architecture
 ├── Venmo Integration ✅
 ├── Family Account Management ✅
@@ -100,7 +100,7 @@ Your comprehensive R2-powered ecosystem is now fully operational with advanced f
 ## 🤖 **AI Intelligence System**
 
 ### **Bun Native AI Analyzer**
-```
+```text
 🧠 AI System Components
 ├── 4 Specialized Models
 ├── 4 Parallel Workers
@@ -127,7 +127,7 @@ Your comprehensive R2-powered ecosystem is now fully operational with advanced f
 ## 🔧 **Advanced Features Integration**
 
 ### **Enterprise Secrets Management**
-```
+```text
 🔐 Security Features
 ├── Bun.secrets Integration ✅
 ├── Platform-Native Storage
@@ -151,7 +151,7 @@ Your comprehensive R2-powered ecosystem is now fully operational with advanced f
 ## 📊 **Real-time Dashboard System**
 
 ### **Interactive Web Dashboard**
-```
+```text
 🌐 Dashboard Features
 ├── Real-time Metrics ✅
 ├── Interactive Charts ✅
@@ -180,7 +180,7 @@ Your comprehensive R2-powered ecosystem is now fully operational with advanced f
 ## 📚 **Enhanced Wiki System**
 
 ### **R2-Integrated Documentation**
-```
+```text
 📖 Wiki Generator Features
 ├── R2 Data Integration ✅
 ├── Real-time Updates ✅
@@ -202,7 +202,7 @@ Your comprehensive R2-powered ecosystem is now fully operational with advanced f
 ## 🔗 **MCP Integration Capabilities**
 
 ### **Claude Desktop Tools**
-```
+```text
 🤖 Available MCP Tools
 ├── SearchR2Data → Search across all R2 data
 ├── GetMetrics → Real-time system metrics
@@ -215,7 +215,7 @@ Your comprehensive R2-powered ecosystem is now fully operational with advanced f
 ```
 
 ### **Usage Examples**
-```
+```text
 Claude: "Get real-time metrics from the R2 dashboard"
 Claude: "Analyze this evidence using the AI system"
 Claude: "Browse factory-wager.com domain intelligence"

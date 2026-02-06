@@ -125,7 +125,7 @@ dependencies:
 ## 🔧 **Script Integration**
 
 *Consolidated from: ### **📂 Scripts Directory Structure***
-```
+```text
 scripts/
 ├── template-utils.js      # Utility functions
 ├── template-generators.js # Content generators
@@ -175,7 +175,7 @@ project_id: mobileapp-abc123
 created: 2025-11-18T15:30:00Z
 datetime: 2025-11-18T15:30:00Z
 tags: odds-protocol, project, development
-```
+```text
 
 Type: api + Tab
 Result: Inserts 🔧 API Documentation Template

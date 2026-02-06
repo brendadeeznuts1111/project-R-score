@@ -110,7 +110,7 @@ const monitor = new PerformanceMonitor();
 ## 📈 Performance Benchmarks
 
 ### Expected Results (Bun 1.3.5+)
-```
+```text
 📈 PERFORMANCE REPORT
 ==================================================
 Bun Version: 1.3.5+

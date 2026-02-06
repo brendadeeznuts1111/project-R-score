@@ -5,7 +5,7 @@
 ## ✅ **APPROVED STRUCTURE**
 
 ### **Root Level (Working/)**
-```
+```text
 ✅ Welcome.md                    # Homepage - NEVER DELETE
 ✅ 00-MAP-OF-CONTENT.md          # Navigation - NEVER DELETE
 ✅ 01-AREAS/                     # Knowledge domains
@@ -16,7 +16,7 @@
 ```
 
 ### **01-AREAS/ Structure**
-```
+```text
 ✅ 01-AREAS/
 ├── ✅ Projects.md               # Projects overview
 ├── ✅ Skills.md                 # Skills overview
@@ -27,7 +27,7 @@
 ```
 
 ### **02-SYSTEM/ Structure**
-```
+```text
 ✅ 02-SYSTEM/
 ├── ✅ Templates/                # All templates
 ├── ✅ Bases/                    # Obsidian Bases
@@ -40,7 +40,7 @@
 ```
 
 ### **03-REVIEWS/ Structure**
-```
+```text
 ✅ 03-REVIEWS/
 ├── ✅ Daily Notes.md            # Daily overview
 ├── ✅ Weekly Reviews.md         # Weekly overview

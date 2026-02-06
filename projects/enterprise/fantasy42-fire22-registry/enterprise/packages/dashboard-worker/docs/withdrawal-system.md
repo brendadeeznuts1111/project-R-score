@@ -134,7 +134,7 @@ class EnhancedWithdrawalProcessor {
 
 ### **Status Flow**
 
-```
+```text
 Request → Pending → [Approve/Reject]
   ↓
 Approved → Complete (after payment processing)

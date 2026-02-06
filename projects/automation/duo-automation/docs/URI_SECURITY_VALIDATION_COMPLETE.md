@@ -27,7 +27,7 @@ if (/^%[0-9A-F]{2}/.test(rawUri) && !decodedUri?.trim()) {
 ```
 
 **Real-World Test Results:**
-```
+```text
 ⚠️ SUSPICIOUS: %41%42%43
    ⚠️  High percent-encoding ratio
    📝 Decoded: ABC
@@ -59,7 +59,7 @@ if (/^%[0-9A-F]{2}/.test(rawUri) && !decodedUri?.trim()) {
 ### **✅ Real-World Attack Detection**
 
 #### **Critical Threats Detected:**
-```
+```text
 🔴 CRITICAL: https://example.com/search?q=%3Cscript%3Ealert(1)%3C%2Fscript%3E
    ⚠️  JavaScript or script injection attempts
    📝 Decoded: https://example.com/search?q=<script>alert(1)</script>
@@ -74,7 +74,7 @@ if (/^%[0-9A-F]{2}/.test(rawUri) && !decodedUri?.trim()) {
 ```
 
 #### **Dangerous Threats Detected:**
-```
+```text
 🚨 DANGEROUS: https://example.com/%00admin
    ⚠️  Control characters in URI can cause injection attacks
    ⚠️  Null byte injection can bypass security checks
@@ -82,7 +82,7 @@ if (/^%[0-9A-F]{2}/.test(rawUri) && !decodedUri?.trim()) {
 ```
 
 #### **Suspicious Patterns Detected:**
-```
+```text
 ⚠️ SUSPICIOUS: %41%42%43
    ⚠️  High percent-encoding ratio
    📝 Decoded: ABC
@@ -98,7 +98,7 @@ if (/^%[0-9A-F]{2}/.test(rawUri) && !decodedUri?.trim()) {
 
 ### **✅ Comprehensive Threat Monitoring**
 
-```
+```text
 📊 Security Statistics:
    Total Checks: 12
    🔴 CRITICAL: 5

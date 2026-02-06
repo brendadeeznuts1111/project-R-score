@@ -41,7 +41,7 @@ bun run bun-docs             # CLI help
 
 ## Architecture
 
-```
+```text
 src/                    CLI layer — commands, validators, entry point
 ├── cli.ts              Main entry (bin: tier1380, matrix)
 ├── commands/           Frontmatter, links, openclaw, profile mgmt

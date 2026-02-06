@@ -147,25 +147,25 @@ score += Math.min(20, waitTime / 60000); // 1 point per minute, max 20
 
 ### 1. Item Addition
 
-```
+```text
 Customer Request → Validation → Add to Queue → Attempt Match
 ```
 
 ### 2. Matching Process
 
-```
+```text
 Queue Items → Scoring Algorithm → Best Match → Create Match Record
 ```
 
 ### 3. Processing Pipeline
 
-```
+```text
 Matched Items → Status Update → Transaction Processing → Completion
 ```
 
 ### 4. Completion Flow
 
-```
+```text
 Processing → Database Updates → Transaction Records → Cleanup
 ```
 
@@ -212,7 +212,7 @@ Processing → Database Updates → Transaction Records → Cleanup
 
 ### Status Transitions
 
-```
+```text
 pending → matched → processing → completed
    ↓         ↓         ↓          ↓
   New    Found      Executing   Finished

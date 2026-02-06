@@ -7,13 +7,13 @@ Successfully transformed the monolithic 1,384-line `mcp-server/index.ts` file in
 ## Architecture Overview
 
 ### Before: Monolithic Structure
-```
+```text
 mcp-server/
 └── index.ts (1,384 lines - everything in one file)
 ```
 
 ### After: Modular Architecture
-```
+```text
 mcp-server/
 └── src/
     ├── index.ts (main server entry point - ~300 lines)

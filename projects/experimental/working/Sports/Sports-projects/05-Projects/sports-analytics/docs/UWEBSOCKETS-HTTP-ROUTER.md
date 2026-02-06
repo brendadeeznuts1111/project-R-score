@@ -145,7 +145,7 @@ struct Node {
 
 ### Handler ID Encoding
 
-```
+```text
 bits 31-28: Priority (HIGH=1101, MEDIUM=1110, LOW=1111)
 bits 27-0:  Handler index in handlers vector
 ```

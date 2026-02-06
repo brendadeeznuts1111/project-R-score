@@ -86,7 +86,7 @@ All root `*.md` files moved to `docs/`:
 
 ## 📁 New Structure
 
-```
+```text
 quantum-terminal-dashboard/
 ├── README.md                          # Main entry point
 ├── package.json

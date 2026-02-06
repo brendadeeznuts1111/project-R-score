@@ -21,7 +21,7 @@ The `bun:test` module provides a fast, built-in test runner that aims for Jest c
 
 ### **Test File Organization**
 
-```
+```text
 web-project/
 ├── enhanced-naming.test.ts          # Comprehensive enhanced naming tests
 ├── isolated-installs.test.ts        # Bun isolated installs integration tests
@@ -242,7 +242,7 @@ bun test --verbose
 
 ### **Test Output Example**
 
-```
+```text
 bun test v1.3.6-canary.54
 
 enhanced-naming.test.ts:

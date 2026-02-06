@@ -57,7 +57,7 @@ This module provides optimized functions for Unicode property lookups, designed 
 
 ### Two-Level Lookup Table
 
-```
+```text
 Stage1 (Uint16Array[256])
   ↓ Maps high 8 bits to offset
 Stage2 (BigUint64Array)

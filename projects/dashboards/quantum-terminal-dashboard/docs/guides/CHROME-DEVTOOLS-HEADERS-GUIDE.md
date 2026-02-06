@@ -20,7 +20,7 @@ user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
 ```
 
 ### **Request Analysis**
-```
+```text
 📊 Request Metrics:
 ├── Total Headers: 8
 ├── Resources: 15.9 kB
@@ -324,7 +324,7 @@ Access-Control-Allow-Headers: Content-Type, Authorization, X-API-Key, user-agent
 ## 📊 Performance Metrics
 
 ### **Header Processing Performance**
-```
+```text
 Headers Processed: 8/8 ✅
 Response Time: <50ms ✅
 Header Parsing: 100% accurate ✅
@@ -334,7 +334,7 @@ Client Hints Parsing: 100% accurate ✅
 ```
 
 ### **Chrome Compatibility**
-```
+```text
 ✅ Chrome 143 Compatibility Verified
 ✅ Client Hints (sec-ch-ua) Supported
 ✅ HTTPS Upgrade Detection Working

@@ -57,7 +57,7 @@ bun unified-network-system.ts
 ```
 
 Output:
-```
+```text
 🚀 Starting Unified Network Server
 📡 Hostname: your-hostname
 🔷 IPv4: 192.168.1.100
@@ -68,7 +68,7 @@ Output:
 ```
 
 Or if using default:
-```
+```text
 🔍 DNS Cache TTL: 30s (default)
    💡 Set BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS to customize (default: 30s)
 ```

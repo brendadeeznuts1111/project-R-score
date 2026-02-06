@@ -12,7 +12,7 @@ requirements, and error handling.
 
 ### **Base URL**
 
-```
+```text
 https://api.fire22.com/collections
 ```
 
@@ -20,7 +20,7 @@ https://api.fire22.com/collections
 
 All endpoints require Bearer token authentication:
 
-```
+```text
 Authorization: Bearer <jwt-token>
 ```
 
@@ -163,7 +163,7 @@ Process a settlement payment.
 
 ### **Base URL**
 
-```
+```text
 https://api.fire22.com/distributions
 ```
 
@@ -237,7 +237,7 @@ Process a distribution payment.
 
 ### **Base URL**
 
-```
+```text
 https://api.fire22.com/free-play
 ```
 
@@ -347,7 +347,7 @@ Redeem a free play transaction.
 
 ### **Base URL**
 
-```
+```text
 https://api.fire22.com/balances
 ```
 
@@ -419,7 +419,7 @@ Update customer balance.
 
 ### **Base URL**
 
-```
+```text
 https://api.fire22.com/adjustments
 ```
 
@@ -535,7 +535,7 @@ Approve a pending adjustment.
 
 All endpoints require JWT Bearer token authentication:
 
-```
+```text
 Authorization: Bearer <jwt-token>
 ```
 
@@ -696,7 +696,7 @@ const result = await client.collections.processSettlement({
 
 ### **Sandbox Environment**
 
-```
+```text
 https://sandbox-api.fire22.com
 ```
 

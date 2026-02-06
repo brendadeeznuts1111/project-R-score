@@ -13,7 +13,7 @@ but interconnected systems:
 
 ### Core Identity System
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    UNIFIED USERS TABLE                      │
 │  ┌─────────────┐ ┌─────────────┐ ┌─────────────────────────┐ │
@@ -52,7 +52,7 @@ Each department has:
 
 ### 1. Customer Support Workflow
 
-```
+```text
 Customer → Telegram Bot → Support Ticket → Department Assignment → Staff Member
     ↓            ↓              ↓                ↓                    ↓
 Fire22 ID → Telegram ID → Ticket ID → support dept → @sarah_support
@@ -82,7 +82,7 @@ UPDATE support_tickets SET
 
 ### 2. Financial Transaction Processing
 
-```
+```text
 Fire22 Transaction → Department Routing → Staff Processing → Telegram Notification
        ↓                     ↓                  ↓                    ↓
 $10,000 withdrawal →  Finance Dept →    @mike_finance →   Customer notified
@@ -111,7 +111,7 @@ INSERT INTO telegram_messages (
 
 ### 3. VIP Customer Management
 
-```
+```text
 Fire22 VIP Customer → Special Handling → VIP Department → Premium Support
        ↓                    ↓                ↓                 ↓
 High tier customer → Priority routing → @jennifer_vip → 30min SLA

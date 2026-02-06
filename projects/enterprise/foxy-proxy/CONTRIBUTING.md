@@ -87,7 +87,7 @@ src/components/
 
 Use conventional commit format:
 
-```
+```text
 type(scope): description
 
 feat(core): add feature flag system
@@ -107,7 +107,7 @@ docs(readme): update installation guide
 
 ### Monorepo Structure
 
-```
+```text
 foxy-proxy/
 ├── packages/
 │   └── dashboard/          # Main React application

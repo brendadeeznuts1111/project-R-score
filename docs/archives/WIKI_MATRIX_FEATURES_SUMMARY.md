@@ -181,7 +181,7 @@ private matchesPattern(text: string, pattern: string): boolean {
 - 🟣 **Purple** - Accent colors, integration types
 
 ### **Unicode Tables**
-```
+```text
 ┌──────────────────────┬─────────┬─────────────┬──────────────────┐
 │ Template Name        │ Format  │ Complexity  │ Use Case         │
 ├──────────────────────┼─────────┼─────────────┼──────────────────┤
@@ -191,7 +191,7 @@ private matchesPattern(text: string, pattern: string): boolean {
 ```
 
 ### **Progress Bars & Charts**
-```
+```text
 🎯 Complexity Distribution:
    Simple: ██████████ 4 (80%)
    Medium: ██         1 (20%)

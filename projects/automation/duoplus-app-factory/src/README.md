@@ -2,7 +2,7 @@
 
 ## Directory Structure
 
-```
+```text
 src/
 ├── main.ts                    # Application entry point
 │

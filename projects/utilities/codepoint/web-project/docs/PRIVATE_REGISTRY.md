@@ -168,7 +168,7 @@ configVersion = 0
 
 ### 📁 Directory Structure
 
-```
+```text
 node_modules/
 ├── .bun/                    # Central package store
 │   ├── package@1.0.0/       # Versioned package installations
@@ -435,7 +435,7 @@ bun install
 
 #### 1. Authentication Errors
 
-```
+```text
 Error: 401 Unauthorized
 ```
 
@@ -446,7 +446,7 @@ Error: 401 Unauthorized
 
 #### 2. Registry Not Found
 
-```
+```text
 Error: E404 Not Found - GET https://registry.your-org.com/@your-org%2fbun-proxy-api
 ```
 
@@ -457,7 +457,7 @@ Error: E404 Not Found - GET https://registry.your-org.com/@your-org%2fbun-proxy-
 
 #### 3. Network Issues
 
-```
+```text
 Error: getaddrinfo ENOTFOUND registry.your-org.com
 ```
 
@@ -468,7 +468,7 @@ Error: getaddrinfo ENOTFOUND registry.your-org.com
 
 #### 4. Permission Denied
 
-```
+```text
 Error: E403 Forbidden - PUT https://registry.your-org.com/@your-org%2fbun-proxy-api
 ```
 

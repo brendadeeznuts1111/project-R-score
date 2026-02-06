@@ -17,7 +17,7 @@ On this legendary **January 22, 2026**—Bun 1.3.6 + New Orleans 09:50 AM CST ch
 
 ## 📊 **Architecture Overview**
 
-```
+```text
 Sovereign Identity Blueprint
 ├── 🧬 Persona Schema (persona.toml)
 │   ├── Bio: Genders, Age Range, Name Pool

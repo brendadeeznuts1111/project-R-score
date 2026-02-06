@@ -4,7 +4,7 @@ Complete guide to building a high-performance DuoPlus system using exclusively B
 
 ## 📁 **Project Structure**
 
-```
+```text
 src/
 ├── main.ts                      # Bun.serve() entry point
 ├── config/

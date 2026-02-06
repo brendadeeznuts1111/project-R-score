@@ -19,7 +19,7 @@ bun -e "console.log('stringWidth tests:', Bun.stringWidth('🇺🇸')===2, Bun.s
 ```
 
 **Expected Output:**
-```
+```text
 stringWidth tests: true true true true true true
 DEBUG: YES
 ```
@@ -198,7 +198,7 @@ await Bun.spawn(['bun', './out/test.js']).exited;
 
 ### Predicted vs Measured
 
-```
+```text
 Phase                    | Time (predicted) | Time (measured) | Difference    | Status
 -------------------------|------------------|-----------------|---------------|--------
 1. stringWidth (6 tests) | 252ns            | 290ns           | +15% (15ns)   | ✅ Within 15%
@@ -223,7 +223,7 @@ TOTAL                    | 25,290ns         | 11,108ns        | -56% (-14.2µs)|
 
 ### Performance Breakdown by Phase
 
-```
+```text
 Phase 1: ████████░░░░░░░░░░░░░░░░░░░░ 2.6% (stringWidth)
 Phase 2: ███░░░░░░░░░░░░░░░░░░░░░░░░░ 0.9% (file write)
 Phase 3: ████████████████░░░░░░░░░░░░ 9.4% (build + DCE)
@@ -306,7 +306,7 @@ sudo dtrace -n 'syscall:::entry /execname == "bun"/ { @[probefunc] = count(); }'
 
 ### Expected Syscall Distribution
 
-```
+```text
 Syscall           Count  Description
 ────────────────────────────────────────────────
 open              2      test.ts, out/test.js
@@ -323,7 +323,7 @@ Total             ~17    total syscalls
 
 ### Timing Breakdown
 
-```
+```text
 Userspace CPU:    ~25µs   (actual processing)
 Kernel time:      ~850ns  (disk I/O)
 Elapsed time:     ~1.2ms  (includes scheduler, I/O queue)
@@ -344,7 +344,7 @@ Elapsed time:     ~1.2ms  (includes scheduler, I/O queue)
 
 ### The Output
 
-```
+```text
 stringWidth tests: true true true true true true
 DEBUG: YES
 [Exit code: 0]
@@ -372,7 +372,7 @@ DEBUG: YES
 
 ### Apple Silicon (M1/M2)
 
-```
+```text
 Phase 1: 290ns   (L1 cache: 4MB, latency: 3ns)
 Phase 2: 103ns   (NVMe: 3GB/s read, 2GB/s write)
 Phase 3: 1,040ns (8 cores @ 3.2GHz, branch prediction)
@@ -381,7 +381,7 @@ Phase 4: 9,675ns (fork: 2.3µs, exec: 2.1µs)
 
 ### Intel x86_64
 
-```
+```text
 Phase 1: ~350ns   (L1 cache: 32KB-48KB, latency: 4-5ns)
 Phase 2: ~150ns   (NVMe: 1.5GB/s read, 1GB/s write)
 Phase 3: ~1,500ns (4-8 cores @ 3.0-4.0GHz)
@@ -463,21 +463,21 @@ await Bun.build({
 
 ### 1. Hot Module Replacement (HMR)
 
-```
+```text
 File change detected → stringWidth check → Bun.write() → Bun.build() → Broadcast update
 Total latency: ~2ms (vs 50ms with traditional bundlers)
 ```
 
 ### 2. Feature Flag Testing
 
-```
+```text
 Build with features → Test DCE → Measure bundle size → Verify zero overhead
 Total time: ~1ms per feature combination
 ```
 
 ### 3. CI/CD Pipeline
 
-```
+```text
 Test all feature combinations → Minify → Deploy
 Total time: ~5ms for 5 features (2^5 = 32 combinations) = 160ms total
 ```

@@ -54,7 +54,7 @@
 ## 📁 **Files Committed**
 
 ### **Core Implementation (28 files)**
-```
+```text
 cli/
 ├── working-qr-cli.cjs          # ✅ Working CLI (no external deps)
 

@@ -9,7 +9,7 @@ logical structure focused on efficient Fire22 database workflow.
 
 ### ✅ Directory Structure Created
 
-```
+```text
 dashboard-worker/
 ├── data/                          # NEW: Database and data management
 │   ├── schemas/                   # Database schemas

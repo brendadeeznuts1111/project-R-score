@@ -4,7 +4,7 @@ Complete overview of the reorganized and enhanced Fire22 Wager System package.
 
 ## 📁 **Directory Structure**
 
-```
+```text
 packages/wager-system/
 ├── README.md                    # 🚀 Main package documentation
 ├── package.json                 # 📦 Package configuration and scripts

@@ -8,7 +8,7 @@
 
 ## 🎯 Root Directory Structure (Final)
 
-```
+```text
 d-network/
 ├── 📄 README.md                    # Main entry point
 ├── 📦 package.json                 # NPM configuration

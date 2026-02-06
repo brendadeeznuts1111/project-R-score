@@ -117,7 +117,7 @@ git commit -m "refactor: migrate registry to dedicated repo"
 
 ## 📁 New Structure
 
-```
+```text
 factorywager-registry/
 ├── packages/                    # Shared packages
 │   ├── registry-core/          # Types, auth, config

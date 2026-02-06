@@ -16,7 +16,7 @@ Enhanced all binary manifest files with comprehensive metadata, numbering, versi
 
 ### Hierarchy
 
-```
+```text
 8.2.6.0.0.0.0 - Binary Manifest Format (Root)
 ├── 8.2.6.1.0.0.0.0 - ManifestDigest Utility
 │   ├── 8.2.6.1.1.0.0.0 - computeHash()
@@ -187,7 +187,7 @@ Each method includes:
 
 ### Blueprint Pattern
 
-```
+```text
 BP-UTILS@8.2.6.1.0.0.0.0
 BP-UTILS@8.2.6.2.0.0.0.0
 BP-CLI@8.2.6.3.0.0.0.0
@@ -197,7 +197,7 @@ BP-API@8.2.6.5.0.0.0.0
 
 ### Instance IDs
 
-```
+```text
 MANIFEST-DIGEST-001
 BINARY-MANIFEST-CODEC-001
 BINARY-MANIFEST-CLI-001
@@ -206,7 +206,7 @@ UI-POLICY-MANAGER-001 (existing)
 
 ### Reference Patterns
 
-```
+```text
 #REF:v-8.2.6.1.0.0.0.0.BP.UTILS.POLICY.1.0.A.1.1.DIGEST.1.1
 #REF:v-8.2.6.2.0.0.0.0.BP.UTILS.POLICY.1.0.A.1.1.CODEC.1.1
 #REF:v-8.2.6.3.0.0.0.0.BP.CLI.POLICY.1.0.A.1.1.TOOL.1.1

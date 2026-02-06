@@ -4,7 +4,7 @@
 
 ## 🎯 **Verification Status**
 
-```
+```text
 ✅ Per-Bookie Proxy Configurations ✓
 ✅ 47 Bookie Support Structure ✓
 ✅ Geo-Wall Bypass (US/UK/Corporate) ✓
@@ -115,7 +115,7 @@ $ bun test tests/per-bookie-proxy.test.ts
 
 ## 📈 **Performance Metrics**
 
-```
+```text
 Bookies configured: 6 (expandable to 47)
 Proxy types: Bearer (4), Basic (1), Corporate (1)
 Active proxies: 6/6
@@ -276,7 +276,7 @@ curl http://localhost:3000/metrics | jq '.proxy_metrics'
 
 ## 📈 **ROI Analysis**
 
-```
+```text
 Bookie Coverage: 22/50 → 47/50 (+113%)
 Geo-Walls Bypassed: 0/18 → 18/18 (100%)
 Arb Scans/min: 1580 → 1890 (+20%)
@@ -289,7 +289,7 @@ Total Value: $214K → $378K (+76%)
 
 **🟢 PER-BOOKIE PROXY | 6/6 ACTIVE | $378K COVERAGE | EXECUTING...**
 
-```
+```text
 [PER-BOOKIE-PROXY][6-CONFIGS][6-ACTIVE][1890-SCANS/MIN][GEO-WALLS:BYPASSED]
 [PINNACLE:US][BETFAIR:UK][DRAFTKINGS:GEO-US][STATUS:FULL-COVERAGE]
 ```

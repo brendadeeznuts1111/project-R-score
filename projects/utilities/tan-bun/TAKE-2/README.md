@@ -4,7 +4,7 @@ TanStack Start project built with Bun.
 
 ## Project Structure
 
-```
+```text
 TAKE-2/
 ├── README.md                    # This file
 └── my-tanstack-app/            # TanStack Start application

@@ -128,7 +128,7 @@ bun run feed-monitor rss 5 7 ci
 
 Each changelog entry includes:
 
-```
+```text
 ✨ **FEAT**
 
 `abc1234` Add new feature by @author
@@ -157,7 +157,7 @@ _2024-01-15_
 
 Each RSS feed item includes:
 
-```
+```text
 🚀 **CI/CD Pipeline Update** by author@nexus.trading
 
 Description text (truncated to 200 chars)...

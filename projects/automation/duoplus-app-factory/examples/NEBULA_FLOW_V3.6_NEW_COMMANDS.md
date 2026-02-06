@@ -19,7 +19,7 @@ bun run nebula-flow:dashboard
 - Simple interactive interface with menu navigation
 
 ### Quick Actions in Dashboard
-```
+```text
 1. Interactive Editor        - Open configuration editor
 2. Configuration Validation - Validate current configuration
 3. Performance Metrics       - Show system performance
@@ -50,7 +50,7 @@ bun run nebula-flow:topology --format=text --output=examples/topology.txt
 - **dot**: Graphviz DOT format for visualization
 
 ### Example - Text Format
-```
+```text
 🚀 Nebula Flow Topology
 ========================
 
@@ -188,7 +188,7 @@ bun run nebula-flow:package --compile --feature=ENTERPRISE --outfile=examples/ne
 - `--outfile=<name>`: Output filename for the package
 
 ### Package Structure
-```
+```text
 examples/
 └── nebula-premium.zip
     └── nebula-premium.json (package metadata)

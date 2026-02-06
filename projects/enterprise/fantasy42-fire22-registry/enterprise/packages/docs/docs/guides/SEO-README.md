@@ -151,7 +151,7 @@ Crystal Clear Architecture project.
 
 ### **Files Created/Modified**
 
-```
+```text
 📁 SEO Files Created:
 ├── robots.txt                 # Search engine crawling directives
 ├── sitemap.xml               # XML sitemap for search engines

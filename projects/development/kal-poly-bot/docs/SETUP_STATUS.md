@@ -53,7 +53,7 @@ nano .env
 ```
 
 Required changes:
-```
+```text
 KALSHI_API_KEY_ID=your_actual_id_here
 KALSHI_PRIVATE_KEY_PATH=/full/path/to/kalshi_private_key.pem
 POLY_PRIVATE_KEY=0xyour_ethereum_private_key
@@ -80,19 +80,19 @@ Watch for:
 ### Step 6: Go Live (Optional)
 
 Once confident, edit `.env`:
-```
+```text
 DRY_RUN=0
 ```
 
 **⚠️ This trades with real money. Start with strict limits:**
-```
+```text
 CB_MAX_DAILY_LOSS=1000        # $10 daily loss limit
 CB_MAX_POSITION_PER_MARKET=25 # Small position size
 ```
 
 ## 📦 Project Structure
 
-```
+```text
 poly-kalshi-arb/
 ├── Cargo.toml              # Rust dependencies
 ├── Cargo.lock              # Locked dependency versions

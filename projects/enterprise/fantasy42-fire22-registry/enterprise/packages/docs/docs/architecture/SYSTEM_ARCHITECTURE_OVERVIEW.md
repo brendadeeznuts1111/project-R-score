@@ -506,25 +506,25 @@ Next-generation features and capabilities.
 
 #### Financial Flow
 
-```
+```text
 Collections → Balance → Settlement → Financial Analytics
 ```
 
 #### Gaming Flow
 
-```
+```text
 Player Management → Wager System → Settlement → Balance
 ```
 
 #### Customer Flow
 
-```
+```text
 Customer Management → VIP Management → Commission Engine
 ```
 
 #### Communication Flow
 
-```
+```text
 Alert System → Notification System → Telegram Integration
 ```
 

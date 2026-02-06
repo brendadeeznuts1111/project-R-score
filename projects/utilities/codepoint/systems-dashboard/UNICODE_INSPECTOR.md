@@ -30,7 +30,7 @@ A **complete Unicode-based inspection system** with pixel-perfect alignment, HSL
 
 ## 📊 **Demonstration Results**
 
-```
+```text
 🎯 Unicode Inspector Demo
 ========================
 
@@ -75,7 +75,7 @@ A **complete Unicode-based inspection system** with pixel-perfect alignment, HSL
 ## 🏗️ **Architecture**
 
 ### **Core Components**
-```
+```text
 utils/
 ├── UnicodeInspector.ts    # Main inspector class
 ├── ColorCoder.ts          # HSL to ANSI conversion
@@ -94,7 +94,7 @@ examples/
 ```
 
 ### **Unicode Character Reference**
-```
+```text
 Box Drawing: ┌ ─ ┐ └ ┘ ├ ┼ ┤ ┬ ┴ ╔ ═ ╗ ╚ ╝ ║ ╣ ╩ ╦ ╠ ╬
 Tree Connectors: └── ├── ├── │   └── ├── ├── │
 Progress Blocks: █ (filled) ░ (empty) ▓ (partial)

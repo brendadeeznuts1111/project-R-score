@@ -9,7 +9,7 @@ Our CLI system **perfectly aligns** with the factory-wager domain status API arc
 ## 🌐 **Factory-Wager Production URLs**
 
 ### **Live Deployment**
-```
+```text
 Enhanced Status Page: https://api.apple.factory-wager.com/status
 Status Badge: https://api.apple.factory-wager.com/status/api/badge
 System Matrix: https://api.apple.factory-wager.com/api/v1/system-matrix

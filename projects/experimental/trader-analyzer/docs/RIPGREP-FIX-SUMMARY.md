@@ -3,7 +3,7 @@
 ## Issue Identified
 
 When attempting to search the HTMLRewriter documentation using `ripgrep`, users encountered shell errors:
-```
+```text
 (eval):1: unmatched "
 ```
 

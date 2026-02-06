@@ -54,7 +54,7 @@ Added actionable checklist:
 ## 📊 **Current YAML Usage Analysis**
 
 ### **Migration Report Results**
-```
+```text
 📋 YAML Usage Report
 ==================================================
 

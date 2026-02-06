@@ -75,7 +75,7 @@ Hyper-Bun has been fully updated to leverage Bun 1.3 features while maintaining 
 
 ## 📁 File Structure
 
-```
+```text
 src/
 ├── utils/
 │   ├── yaml-config.ts              # YAML utilities

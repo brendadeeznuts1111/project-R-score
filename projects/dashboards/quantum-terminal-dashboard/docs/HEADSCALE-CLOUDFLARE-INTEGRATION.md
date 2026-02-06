@@ -7,7 +7,7 @@
 
 ## 🎯 Architecture Overview
 
-```
+```text
 Tailscale Clients
     ↓
 Cloudflare Worker (Rate Limiting, Auth, DDoS)

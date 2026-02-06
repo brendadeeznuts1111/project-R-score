@@ -112,7 +112,7 @@ bun run <script-name>
 ```
 
 ### File Structure
-```
+```text
 src/
   components/     # React components
   inspection/     # Performance/monitoring utilities

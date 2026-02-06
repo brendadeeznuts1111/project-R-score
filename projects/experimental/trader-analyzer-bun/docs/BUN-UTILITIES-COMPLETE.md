@@ -188,7 +188,7 @@ const rgb = Color.hexToRGB('#FF5733');
 
 ## File Structure
 
-```
+```text
 src/utils/
 ├── bun-utilities.ts          # Unified namespace export
 ├── string-measurement.ts     # String width, alignment, truncation, progress bars

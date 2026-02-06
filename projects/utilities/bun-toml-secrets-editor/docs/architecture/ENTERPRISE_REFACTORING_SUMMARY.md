@@ -91,7 +91,7 @@ Successfully refactored the core Bun v1.3.7 examples from prototype code to ente
 
 ## 📁 New Enterprise Structure
 
-```
+```text
 src/
 ├── types/
 │   ├── index.ts          # Main type definitions

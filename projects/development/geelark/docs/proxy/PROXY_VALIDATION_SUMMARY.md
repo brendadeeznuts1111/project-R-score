@@ -189,7 +189,7 @@ bun test tests/proxy-validator.test.ts
    - Added terminal UI for validation status
 
 ### File Structure
-```
+```text
 geelark/
 ├── src/proxy/
 │   ├── validator.ts          [NEW] Header validation logic

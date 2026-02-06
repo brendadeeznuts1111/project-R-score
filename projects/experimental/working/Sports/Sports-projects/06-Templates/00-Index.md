@@ -41,7 +41,7 @@ VIZ-06: []
 
 ## 📁 Directory Structure
 
-```
+```text
 06-Templates/
 ├── 01-Development/
 │   ├── Architectural Refactoring Proposal.md

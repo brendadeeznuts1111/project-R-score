@@ -136,7 +136,7 @@ Create these routing rules in order:
 
 #### **Rule 1: Enterprise Team**
 
-```
+```text
 Name: Enterprise Team
 Matcher: enterprise@apexodds.net
 Action: Forward to team@fire22.com, enterprise@fire22.com
@@ -146,7 +146,7 @@ Priority: 10
 
 #### **Rule 2: Security Team**
 
-```
+```text
 Name: Security Team
 Matcher: security@apexodds.net
 Action: Forward to security@fire22.com, ciso@fire22.com
@@ -156,7 +156,7 @@ Priority: 9
 
 #### **Rule 3: Support Tickets**
 
-```
+```text
 Name: Support Tickets
 Matcher: support@apexodds.net
 Action 1: Forward to support@fire22.com
@@ -167,7 +167,7 @@ Priority: 8
 
 #### **Rule 4: DMARC Reports**
 
-```
+```text
 Name: DMARC Reports
 Matcher: dmarc@apexodds.net
 Action: Forward to security@fire22.com, compliance@fire22.com
@@ -178,7 +178,7 @@ Description: Handles aggregate DMARC reports for policy compliance monitoring
 
 #### **Rule 5: DMARC Forensic Reports**
 
-```
+```text
 Name: DMARC Forensic Reports
 Matcher: forensic@apexodds.net
 Action 1: Forward to forensics@fire22.com, security@fire22.com
@@ -190,7 +190,7 @@ Description: Advanced security monitoring for forensic DMARC reports
 
 #### **Rule 6: Wildcard Catch-All**
 
-```
+```text
 Name: Wildcard Catch-All
 Matcher: *@apexodds.net
 Action 1: Forward to catchall@fire22.com
@@ -201,7 +201,7 @@ Priority: 0 (lowest)
 
 ### **Step 3: Create Catch-All Rule**
 
-```
+```text
 Matcher: Any address not handled by other rules
 Action: Forward to catchall@fire22.com
 Enabled: ✅
@@ -366,7 +366,7 @@ wrangler tail --format pretty
 
 ### **Subdomain Mapping**
 
-```
+```text
 apexodds.net          # Main domain
 ├── dev.apexodds.net          # Development environment
 ├── staging.apexodds.net      # Staging environment
@@ -379,7 +379,7 @@ apexodds.net          # Main domain
 
 ### **Email Address Structure**
 
-```
+```text
 apexodds.net emails:
 ├── enterprise@apexodds.net   # → team@fire22.com, enterprise@fire22.com
 ├── security@apexodds.net     # → security@fire22.com, ciso@fire22.com

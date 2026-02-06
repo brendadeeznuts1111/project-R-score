@@ -91,7 +91,7 @@ console.log(table);
 ```
 
 Output:
-```
+```text
 Project          | Status         | Progress
 -----------------+----------------+----------
 🇺🇸 Project Alpha | ✅ Active      | 75%
@@ -212,7 +212,7 @@ Bun's feature flags work at compile time:
 
 ### File Structure
 
-```
+```text
 src/utils/
 ├── advanced-bun-utils.ts    # Core utilities
 ├── string-width.ts          # String width functions

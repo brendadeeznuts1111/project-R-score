@@ -63,7 +63,7 @@ bun outdated --json
 ```
 
 **Example Output**:
-```
+```text
 Package          Current  Wanted  Latest  Location
 hono             4.5.0    4.6.0   4.6.0   trader-analyzer
 zod              4.1.10   4.1.13  4.1.13  trader-analyzer
@@ -146,7 +146,7 @@ bun audit --severity=high
 - `critical` - Critical vulnerabilities
 
 **Example Output**:
-```
+```text
 Found 2 vulnerabilities
 
 Package: zod

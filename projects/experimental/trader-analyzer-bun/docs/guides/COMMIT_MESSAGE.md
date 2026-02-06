@@ -2,7 +2,7 @@
 
 ## Standard Format
 
-```
+```text
 <type>[optional scope]: <subject>
 
 [optional body]
@@ -62,7 +62,7 @@
 
 ### Core Tag Structure
 
-```
+```text
 [DOMAIN][SCOPE][TYPE][META:{PROPERTY}][CLASS][#REF:*]
 ```
 
@@ -80,13 +80,13 @@
 ### Guidelines: When to Use `bun-function` vs `bun-functions`
 
 **Use `bun-function`** when a commit touches exactly ONE Bun API:
-```
+```text
 [hyper-bun][utils][feat][META:priority=high,bun-function=HTMLRewriter][dashboard][#REF:html-rewriter.ts]
 feat: add interactive HTML dashboard
 ```
 
 **Use `bun-functions`** when a commit touches MULTIPLE Bun APIs:
-```
+```text
 [hyper-bun][utils][feat][META:priority=high,bun-functions=spawn,which,openInEditor][cli-integration][#REF:editor.ts]
 feat: integrate IDE opening with tool detection
 
@@ -95,7 +95,7 @@ and Bun.openInEditor for IDE integration.
 ```
 
 **Omit entirely** when commit doesn't touch Bun APIs (pure docs, tests, config):
-```
+```text
 [hyper-bun][docs][docs][META:priority=low][cli-guide][#REF:README.md]
 docs: update CLI usage examples
 
@@ -114,7 +114,7 @@ No Bun APIs changed - usage patterns only.
 ### Examples
 
 #### Single Bun Function
-```
+```text
 [hyper-bun][utils][feat][META:priority=high,bun-function=HTMLRewriter][dashboard][#REF:html-rewriter.ts]
 feat: add HTML rewriter for dashboard
 
@@ -122,7 +122,7 @@ Integrates Bun.HTMLRewriter for server-side HTML transformation.
 ```
 
 #### Multiple Bun Functions
-```
+```text
 [hyper-bun][utils][feat][META:priority=high,bun-functions=spawn,which,openInEditor][cli-integration][#REF:editor.ts]
 feat: add CLI editor integration
 
@@ -131,7 +131,7 @@ Performance improvement of ~40% by using Bun.shell instead of Bun.spawn.
 ```
 
 #### Performance Focused
-```
+```text
 [hyper-bun][cache][perf][META:priority=critical,bun-function=nanoseconds,performance=85][binary-storage][#REF:bun-binary-data]
 perf: optimize binary storage with Bun.nanoseconds
 
@@ -139,7 +139,7 @@ perf: optimize binary storage with Bun.nanoseconds
 ```
 
 #### Feature Category
-```
+```text
 [hyper-bun][binary][feat][META:priority=medium,bun-feature=DataView,bun-functions=serialize,deserialize,compress][binary-converter][#REF:bun-jsc]
 feat: add binary data converter with Bun.jsc
 
@@ -147,7 +147,7 @@ Implements DataView serialization/deserialization with compression support.
 ```
 
 #### Standard Commit (No Tag)
-```
+```text
 feat(orca): Add arbitrage opportunity storage
 
 - Implement OrcaArbitrageStorage class
@@ -182,7 +182,7 @@ BREAKING CHANGE: <if applicable>
 ## Final Examples
 
 ### ✅ Full Example (Multiple Bun APIs)
-```
+```text
 [hyper-bun][utils][feat][META:priority=high,bun-functions=spawn,which,sleep,HTMLRewriter][complete-suite][#REF:Bun.native+v6.0]
 feat: final production-ready tag manager suite
 
@@ -198,7 +198,7 @@ Validation: bun run tag:pipeline
 ```
 
 ### ✅ Simple Example (Single API)
-```
+```text
 [hyper-bun][cache][perf][META:priority=critical,bun-function=nanoseconds][performance][#REF:benchmark.ts]
 perf: optimize scan performance with Bun.nanoseconds
 
@@ -209,7 +209,7 @@ BREAKING CHANGE: Requires Bun 1.1.0+
 ```
 
 ### ✅ Docs Example (No Bun APIs)
-```
+```text
 [hyper-bun][docs][docs][META:priority=low][style-guide][#REF:STYLE.md]
 docs: document tag format specification
 

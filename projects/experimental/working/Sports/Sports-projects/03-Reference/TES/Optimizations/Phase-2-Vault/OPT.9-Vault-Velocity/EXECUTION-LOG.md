@@ -140,7 +140,7 @@ tags:: [poetry, gothic]
 **After**: Sequential depth ≤3 levels (`00-Inbox/01-Projects/`)
 
 **Structure**:
-```
+```text
 00-Inbox/
 01-Configuration/
 02-Dashboards/
@@ -363,7 +363,7 @@ rm -rf .obsidian/workspace-mobile.json
 ### Audit Trail
 
 **Log Format**:
-```
+```text
 [THREAD_GROUP:VAULT] [META:KEY-VERSION:2] [HSL-PHASE:CONFIG [[8338EC]]]
 ```
 
@@ -400,7 +400,7 @@ bunx wrangler deploy --env=production
 
 ### Component Flow
 
-```
+```text
 Plugin Processing (0xA001 Purple)
   ↓
 Monitoring (0x5000 Green)

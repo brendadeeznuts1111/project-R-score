@@ -72,7 +72,7 @@ zipCode: ""
 
 ## 📁 Directory Structure
 
-```
+```text
 03-Reference/
 ├── README.md                          # This file
 ├── Guides/                            # Reference guides

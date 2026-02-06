@@ -35,7 +35,7 @@ GitHub Packages provides a hosted npm registry with automatic access control thr
 
 2. **Create `.npmrc` in project root**:
 
-```
+```text
 @brendadeeznuts1111:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${NPM_TOKEN}
 registry=https://registry.npmjs.org/
@@ -204,7 +204,7 @@ npm adduser --registry http://localhost:4873
 
 2. **Create .npmrc in project**:
 
-```
+```text
 @brendadeeznuts1111:registry=http://localhost:4873
 //localhost:4873/:_authToken=your_token_here
 registry=http://localhost:4873
@@ -248,7 +248,7 @@ Official npm private packages for organizations.
 
 3. **Create .npmrc**:
 
-```
+```text
 @brendadeeznuts1111:registry=https://registry.npmjs.org/
 //registry.npmjs.org/:_authToken=your_npm_token
 ```
@@ -391,7 +391,7 @@ jobs:
 
 1. **Create .npmrc** in consuming project:
 
-```
+```text
 @brendadeeznuts1111:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
 ```

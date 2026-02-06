@@ -14,7 +14,7 @@ A comprehensive system that integrates Bun documentation index with local cachin
 
 ## 📁 Project Structure
 
-```
+```text
 lib/docs/
 ├── cache-manager.ts              # Smart caching system
 └── index-fetcher-enhanced.ts     # Enhanced documentation fetcher
@@ -201,7 +201,7 @@ bun run docs:cache
 ```
 
 Output:
-```
+```text
 Cache Statistics:
   Size: 45/1000
   TTL: 360 minutes

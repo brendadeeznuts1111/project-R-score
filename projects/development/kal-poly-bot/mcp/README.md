@@ -16,7 +16,7 @@ This implementation provides a **Machine Coding Protocol (MCP)** server that ena
 
 ## 🏗️ **Architecture**
 
-```
+```text
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   AI Agent      │────│   Bun MCP       │────│   Ripgrep       │
 │   (bun test)    │    │   Server        │    │   Search        │

@@ -53,7 +53,7 @@ bun test
 
 ## 📁 Project Structure
 
-```
+```text
 zig-selg-bun/
 ├── src/                          # Source code
 │   ├── index.ts                  # Main library exports

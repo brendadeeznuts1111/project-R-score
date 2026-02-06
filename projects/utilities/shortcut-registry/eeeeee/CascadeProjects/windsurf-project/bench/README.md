@@ -64,7 +64,7 @@ wrk -t12 -c400 -d30s http://localhost:3001/api/health
 ## Network Timing Validation
 
 ### Without Preconnect (Browser DevTools)
-```
+```text
 DNS Lookup:        40ms
 Initial Connection: 60ms
 SSL Negotiation:    50ms
@@ -72,7 +72,7 @@ Total Wait:        150ms
 ```
 
 ### With Preconnect (Browser DevTools)
-```
+```text
 DNS Lookup:         0ms (done during HTML parse)
 Initial Connection:  0ms (pre-warmed)
 SSL Negotiation:     0ms (pre-shaken)

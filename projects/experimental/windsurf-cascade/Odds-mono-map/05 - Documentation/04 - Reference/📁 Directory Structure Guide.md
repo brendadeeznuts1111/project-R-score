@@ -29,7 +29,7 @@ This document outlines the complete standardized directory and subdirectory stru
 
 All main directories follow a **two-digit prefix with descriptive name** pattern:
 
-```
+```text
 00 - Dashboard        # Main dashboard and overview
 01 - Daily Notes      # Daily activities and notes
 02 - Architecture     # System architecture and design
@@ -46,7 +46,7 @@ All main directories follow a **two-digit prefix with descriptive name** pattern
 ## 🗂️ **Complete Subdirectory Structure**
 
 ### **01 - Daily Notes**
-```
+```text
 01 - Daily Notes/
 ├── 01 - Reports/          # Daily reports (organization, standards, validation)
 ├── 02 - Journals/         # Daily journal entries
@@ -54,7 +54,7 @@ All main directories follow a **two-digit prefix with descriptive name** pattern
 ```
 
 ### **02 - Architecture**
-```
+```text
 02 - Architecture/
 ├── 01 - Data Models/      # Data models and schemas
 ├── 02 - System Design/    # System design documents
@@ -62,7 +62,7 @@ All main directories follow a **two-digit prefix with descriptive name** pattern
 ```
 
 ### **03 - Development**
-```
+```text
 03 - Development/
 ├── 01 - Code Snippets/    # Code examples and snippets
 ├── 02 - Testing/          # Testing documentation and results
@@ -70,7 +70,7 @@ All main directories follow a **two-digit prefix with descriptive name** pattern
 ```
 
 ### **04 - Documentation**
-```
+```text
 04 - Documentation/
 ├── 01 - API/              # API documentation
 ├── 02 - Guides/           # User guides and tutorials
@@ -79,7 +79,7 @@ All main directories follow a **two-digit prefix with descriptive name** pattern
 ```
 
 ### **05 - Assets**
-```
+```text
 05 - Assets/
 ├── 01 - Images/           # Image files and graphics
 ├── 02 - Media/            # Audio, video, and other media
@@ -87,7 +87,7 @@ All main directories follow a **two-digit prefix with descriptive name** pattern
 ```
 
 ### **06 - Templates**
-```
+```text
 06 - Templates/
 ├── 01 - Note Templates/           # Note-taking templates
 ├── 02 - Project Templates/       # Project management templates
@@ -99,7 +99,7 @@ All main directories follow a **two-digit prefix with descriptive name** pattern
 ```
 
 ### **07 - Archive**
-```
+```text
 07 - Archive/
 ├── 01 - Old Projects/      # Completed or obsolete projects
 ├── 02 - Deprecated/        # Deprecated features and code
@@ -107,7 +107,7 @@ All main directories follow a **two-digit prefix with descriptive name** pattern
 ```
 
 ### **08 - Logs**
-```
+```text
 08 - Logs/
 ├── 01 - Validation/        # Validation logs and reports
 ├── 02 - Automation/        # Automation activity logs
@@ -116,7 +116,7 @@ All main directories follow a **two-digit prefix with descriptive name** pattern
 ```
 
 ### **09 - Testing**
-```
+```text
 09 - Testing/
 ├── 01 - Unit/              # Unit tests
 ├── 02 - Integration/       # Integration tests
@@ -125,7 +125,7 @@ All main directories follow a **two-digit prefix with descriptive name** pattern
 ```
 
 ### **10 - Benchmarking**
-```
+```text
 10 - Benchmarking/
 ├── 01 - Benchmarks/        # Core benchmarking scripts
 ├── 02 - Performance/       # Performance analysis data

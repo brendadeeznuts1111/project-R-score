@@ -56,7 +56,7 @@ Fire22 L-key integration for multilingual support.
 
 ### High-Level System Design
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────┐
 │                     WATER DASHBOARD DATA INFRASTRUCTURE            │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -408,7 +408,7 @@ database_id = "2420fa98-6168-41de-a41a-7a2bb0a405b1"
 
 **Archive Structure**:
 
-```
+```text
 fire22-packages/
 ├── logs/
 │   └── archived/
@@ -1003,7 +1003,7 @@ wrangler kv:key list --binding=FIRE22_DATA_CACHE
 
 ### File Structure
 
-```
+```text
 dashboard-worker/
 ├── src/
 │   ├── water-dashboard.html        # Main dashboard UI (2000+ lines)

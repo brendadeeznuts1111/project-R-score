@@ -189,7 +189,7 @@ The suggestion JSON can use either flat or nested structure:
 
 ## 📊 Architecture
 
-```
+```text
 packages/bun-platform/
 ├── src/
 │   ├── index.ts                    # Main CLI entry point
@@ -266,7 +266,7 @@ bun-platform create-arch-note \
 
 ### Source Files
 
-```
+```text
 packages/bun-platform/
 ├── src/
 │   ├── index.ts                          # CLI entry point
@@ -282,7 +282,7 @@ packages/bun-platform/
 
 ### Templates
 
-```
+```text
 06-Templates/
 └── development/
     ├── Architectural Refactoring Proposal.md  # Enhanced template

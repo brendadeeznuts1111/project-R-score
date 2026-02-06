@@ -6,7 +6,7 @@ Complete system architecture and design patterns for the DuoPlus Lightning Netwo
 
 Nebula-Flow™ is a production-grade Lightning Network payment system with integrated device management, compliance, and financial optimization.
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                    Web Dashboard                         │
 │  (Real-time metrics, device management, monitoring)     │
@@ -87,7 +87,7 @@ Nebula-Flow™ is a production-grade Lightning Network payment system with integ
 
 ### Payment Processing Flow
 
-```
+```text
 1. Client Request
    ↓
 2. KYC Validation
@@ -116,7 +116,7 @@ Nebula-Flow™ is a production-grade Lightning Network payment system with integ
 
 ### Real-Time Updates Flow
 
-```
+```text
 Server                          Client
   │                               │
   ├─ EventSource Connection ◄─────┤

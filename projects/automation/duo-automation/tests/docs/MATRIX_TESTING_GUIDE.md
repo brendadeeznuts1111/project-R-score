@@ -201,7 +201,7 @@ bun run tests/matrix-test-runner.ts --category Performance
 
 ### **Dependency Graph**
 
-```
+```text
 core-user-agent ──┐
                   ├─── core-rate-limiting ──┐
 core-proxy-management ──┤                   ├─── core-integration ──┐

@@ -73,7 +73,7 @@ bun bot-monitor.ts
 
 ## Architecture
 
-```
+```text
 ┌─────────────────┐
 │  Bun Scripts    │
 ├─────────────────┤

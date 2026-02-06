@@ -997,7 +997,7 @@ bun install
 
 # Start development
 bun run dev
-```
+```text
 
 ## ⚙️ Available Scripts
 
@@ -1029,7 +1029,7 @@ bun --hot run dev
 
 # Both with no screen clear
 bun --watch --hot --no-clear-screen run dev
-```
+```text
 
 > **⚠️ Important Flag Placement**
 > When using `bun run`, put Bun flags like `--watch` immediately after `bun`.
@@ -1052,7 +1052,7 @@ bun --inspect-wait run dev
 
 # Break on first line
 bun --inspect-brk run dev
-```
+```text
 
 ### Performance
 
@@ -1065,7 +1065,7 @@ bun --expose-gc run dev
 
 # Control console depth
 bun --console-depth=5 run dev
-```
+```text
 
 ### Network & Security
 
@@ -1078,7 +1078,7 @@ bun --sql-preconnect run dev
 
 # Use system CA certificates
 bun --use-system-ca run dev
-```
+```text
 
 ## ⚙️ Module Resolution & Shell Configuration
 
@@ -1094,7 +1094,7 @@ bun --main-fields="browser,module,main" run dev
 
 # Custom extension order
 bun --extension-order=".ts,.tsx,.js,.jsx" run dev
-```
+```text
 
 ### `--bun` 
 
@@ -1104,13 +1104,13 @@ It's common for `package.json` scripts to reference locally-installed CLIs like 
 #!/usr/bin/env node
 
 // do stuff
-```
+```text
 
 By default, Bun respects this shebang and executes the script with `node`. However, you can override this behavior with the `--bun` flag. For Node.js-based CLIs, this will run the CLI with Bun instead of Node.js.
 
 ```bash terminal icon="terminal" theme={"theme":{"light":"github-light","dark":"dracula"}}
 bun run --bun vite
-```
+```text
 
 ### Node.js CLI Compatibility
 
@@ -1124,7 +1124,7 @@ bun run --bun nodemon       # Run Nodemon with Bun instead of Node.js
 # Combined with other flags
 bun run --bun --hot vite    # Run Vite with Bun and hot reload
 bun run --bun --inspect next # Run Next.js with Bun and debugging
-```
+```text
 
 ### Filtering
 
@@ -1135,7 +1135,7 @@ For example, if you have subdirectories containing packages named `foo`, `bar` a
 
 ```bash terminal icon="terminal" theme={"theme":{"light":"github-light","dark":"dracula"}}
 bun run --filter 'ba*' <script>
-```
+```text
 
 will execute `<script>` in both `bar` and `baz`, but not in `foo`.
 
@@ -1156,7 +1156,7 @@ bun run --filter 'packages/*' --smol test # Memory-efficient testing
 
 # Workspace integration
 bun run --workspaces --filter 'shared/*' build  # Build shared packages only
-```
+```text
 
 Find more details in the docs page for [filter](https://bun.sh/docs/cli/filter).
 
@@ -1166,22 +1166,22 @@ Find more details in the docs page for [filter](https://bun.sh/docs/cli/filter).
 
 ```bash terminal icon="terminal" theme={"theme":{"light":"github-light","dark":"dracula"}}
 echo "console.log('Hello')" | bun run -
-```
+```text
 
 ```txt  theme={"theme":{"light":"github-light","dark":"dracula"}}
 Hello
-```
+```text
 
 You can also use `bun run -` to redirect files into Bun. For example, to run a `.js` file as if it were a `.ts` file:
 
 ```bash terminal icon="terminal" theme={"theme":{"light":"github-light","dark":"dracula"}}
 echo "console.log!('This is TypeScript!' as any)" > secretly-typescript.js
 bun run - < secretly-typescript.js
-```
+```text
 
 ```txt  theme={"theme":{"light":"github-light","dark":"dracula"}}
 This is TypeScript!
-```
+```text
 
 For convenience, all code is treated as TypeScript with JSX support when using `bun run -`.
 
@@ -1215,7 +1215,7 @@ EOF
 # Combined with other flags
 echo "console.log('Debug mode')" | bun --console-depth 5 run -
 echo "console.log('Memory efficient')" | bun --smol run -
-```
+```text
 
 ### File I/O Operations
 
@@ -1238,7 +1238,7 @@ bun run file:benchmark full
 # Stdin operations
 echo "Hello World" | bun run file:cat
 echo '{"test": "data"}' | bun run file:cat | bun run -e 'console.log(JSON.parse(await Bun.stdin.text()))'
-```
+```text
 
 ### Advanced File Operations
 
@@ -1258,7 +1258,7 @@ bun -e 'console.log(Bun.file("package.json").size)'
 # Stdin size validation
 bun run file:inspect
 echo "test" | bun run file:inspect
-```
+```text
 
 ## 📁 Project Structure
 
@@ -1274,7 +1274,7 @@ echo "test" | bun run file:inspect
 ├── bunfig.toml          # Bun configuration
 ├── package.json         # Dependencies & scripts
 └── README.md           # This file
-```
+```text
 
 ## 🛠️ Customization
 
@@ -1284,7 +1284,7 @@ Create `.env` file:
 PORT=3000
 NODE_ENV=development
 DATABASE_URL=postgresql://...
-```
+```text
 
 ### Bun Configuration
 Edit `bunfig.toml`:
@@ -1296,7 +1296,7 @@ hot = true
 
 [define]
 process.env.APP_VERSION = "1.0.0"
-```
+```text
 
 ## 🆘 Troubleshooting
 
@@ -1317,7 +1317,7 @@ bun --version
 
 # Check Bun configuration
 bun --config
-```
+```text
 
 ## 📚 Additional Resources
 

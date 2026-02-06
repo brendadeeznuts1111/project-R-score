@@ -38,7 +38,7 @@ The Nebula-Flow™ project has been successfully reorganized for improved clarit
 
 ## New Structure
 
-```
+```text
 d-network/
 ├── README.md                   # Main entry point
 ├── ORGANIZATION.md             # Organization details

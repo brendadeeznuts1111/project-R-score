@@ -22,12 +22,12 @@ The **Sovereign Unit \[01\]** Financial Warming Multiverse provides a comprehens
 ## 🌐 Base URLs
 
 ### **Production Environment:**
-```
+```text
 https://api.sovereign-unit-01.com
 ```
 
 ### **Development Environment:**
-```
+```text
 http://localhost:3227
 ```
 
@@ -276,7 +276,7 @@ ws.onmessage = (event) => {
     "identity_verification"
   ]
 }
-```
+```text
 
 **Response:**
 ```json
@@ -313,7 +313,7 @@ ws.onmessage = (event) => {
     "external_weight": 0.15
   }
 }
-```
+```text
 
 ### Network Performance Metrics
 
@@ -321,7 +321,7 @@ Get real-time network performance and optimization metrics.
 
 ```http
 GET /api/network/metrics
-```
+```text
 
 **Response:**
 ```json
@@ -369,7 +369,7 @@ GET /api/network/metrics
     "cacheHitRate": 0.743
   }
 }
-```
+```text
 
 ### External API Testing
 
@@ -377,7 +377,7 @@ Test external API connectivity and performance.
 
 ```http
 POST /api/external/data
-```
+```text
 
 **Request Body:**
 ```json
@@ -395,7 +395,7 @@ POST /api/external/data
     "userAgent": "Mozilla/5.0..."
   }
 }
-```
+```text
 
 **Response:**
 ```json
@@ -433,7 +433,7 @@ POST /api/external/data
     "totalDuration": 156
   }
 }
-```
+```text
 
 ### Health Check
 
@@ -441,7 +441,7 @@ Check if the service is running and get system status.
 
 ```http
 GET /api/health
-```
+```text
 
 **Response:**
 ```json
@@ -456,7 +456,7 @@ GET /api/health
     "verified": true
   }
 }
-```
+```text
 
 ### Risk Scoring
 
@@ -464,7 +464,7 @@ Calculate fraud risk score for a given session or transaction.
 
 ```http
 POST /api/risk/score
-```
+```text
 
 **Request Body:**
 ```json
@@ -484,7 +484,7 @@ POST /api/risk/score
     "timestamp": "2024-01-21T10:30:00Z"
   }
 }
-```
+```text
 
 **Response:**
 ```json
@@ -502,7 +502,7 @@ POST /api/risk/score
     "Consider blocking IP range"
   ]
 }
-```
+```text
 
 ### Batch Risk Assessment
 
@@ -510,7 +510,7 @@ Score multiple sessions in a single request.
 
 ```http
 POST /api/risk/batch
-```
+```text
 
 **Request Body:**
 ```json
@@ -528,7 +528,7 @@ POST /api/risk/batch
     }
   ]
 }
-```
+```text
 
 **Response:**
 ```json
@@ -555,7 +555,7 @@ POST /api/risk/batch
     "averageScore": 0.610
   }
 }
-```
+```text
 
 ### Risk Heatmap
 
@@ -563,7 +563,7 @@ Get aggregated risk data for visualization.
 
 ```http
 GET /api/risk/heatmap
-```
+```text
 
 **Query Parameters:**
 - `since` - Time period (e.g., `1h`, `24h`, `7d`)
@@ -603,7 +603,7 @@ GET /api/risk/heatmap
     }
   ]
 }
-```
+```text
 
 ### Proxy Detection
 
@@ -611,7 +611,7 @@ Analyze network traffic for proxy usage.
 
 ```http
 POST /api/proxy/detect
-```
+```text
 
 **Request Body:**
 ```json
@@ -624,7 +624,7 @@ POST /api/proxy/detect
     "Via": "1.1 proxy-server"
   }
 }
-```
+```text
 
 **Response:**
 ```json
@@ -660,7 +660,7 @@ POST /api/proxy/detect
     "Monitor for related activity"
   ]
 }
-```
+```text
 
 ## WebSocket API
 
@@ -692,7 +692,7 @@ ws.onmessage = (event) => {
       break;
   }
 };
-```
+```text
 
 **WebSocket Events:**
 
@@ -734,7 +734,7 @@ interface FeatureVector {
   biometric_fail: number;     // Count of failed biometric attempts
   proxy_hop_count: number;    // Number of detected proxy hops
 }
-```
+```text
 
 ### RiskSession
 
@@ -752,7 +752,7 @@ interface RiskSession {
   reason?: string;
   patterns?: string[];
 }
-```
+```text
 
 ### ProxyDetectionResult
 
@@ -772,7 +772,7 @@ interface ProxyDetectionResult {
   riskFactors: string[];
   recommendations: string[];
 }
-```
+```text
 
 ## 🚨 Error Handling
 
@@ -813,7 +813,7 @@ interface ProxyDetectionResult {
     "retryAfter": null
   }
 }
-```
+```text
 
 **Enhanced Error Response (v2.0):**
 ```json
@@ -836,7 +836,7 @@ interface ProxyDetectionResult {
     "traceId": "trace_def456"
   }
 }
-```
+```text
 
 ### Error Recovery Strategies
 
@@ -875,7 +875,7 @@ async function apiCallWithRetry(url, options, maxRetries = 3) {
     }
   }
 }
-```
+```text
 
 ## 📈 Rate Limiting & Quotas
 
@@ -895,7 +895,7 @@ X-RateLimit-Limit: 1000
 X-RateLimit-Remaining: 999
 X-RateLimit-Reset: 1642857600
 X-RateLimit-Retry-After: 60
-```
+```text
 
 ## 🔒 Security Best Practices
 
@@ -912,7 +912,7 @@ const response = await fetch('/api/risk/score', {
   },
   body: JSON.stringify(requestData)
 });
-```
+```text
 
 #### **API Key Authentication:**
 ```javascript
@@ -924,7 +924,7 @@ const response = await fetch('/api/risk/score', {
   },
   body: JSON.stringify(requestData)
 });
-```
+```text
 
 ### Data Encryption
 
@@ -961,7 +961,7 @@ export API_KEY="your-api-key-here"
 # Test authentication
 curl -H "X-API-Key: $API_KEY" \
      https://api.sovereign-unit-01.com/api/health
-```
+```text
 
 ### 2. First Risk Assessment
 
@@ -994,7 +994,7 @@ const riskAssessment = async () => {
 };
 
 riskAssessment();
-```
+```text
 
 ### 3. Real-time Monitoring
 
@@ -1012,7 +1012,7 @@ ws.on('message', (data) => {
   const event = JSON.parse(data);
   console.log('Live Update:', event.type, event.data);
 });
-```
+```text
 
 ## 📚 SDK & Libraries
 
@@ -1048,7 +1048,7 @@ const network = await api.family.initializeNetwork({
   teenId: 'teen-001',
   guardians: ['guardian-001', 'guardian-002']
 });
-```
+```text
 
 #### **Python SDK:**
 ```python
@@ -1067,7 +1067,7 @@ result = api.risk.enhanced(
 
 print(f"Risk Score: {result.risk_score}")
 print(f"Risk Level: {result.risk_level}")
-```
+```text
 
 ## 🛠️ Advanced Features
 
@@ -1081,7 +1081,7 @@ print(f"Risk Level: {result.risk_level}")
     "secret": "your-webhook-secret"
   }
 }
-```
+```text
 
 ### Batch Processing
 
@@ -1095,7 +1095,7 @@ const batchRequests = [
 
 const results = await api.risk.batch(batchRequests);
 console.log(`Processed ${results.length} assessments`);
-```
+```text
 
 ### Custom Models
 
@@ -1109,7 +1109,7 @@ const customResult = await api.risk.custom({
     includeExplainability: true
   }
 });
-```
+```text
 
 ## 🔧 Configuration
 
@@ -1129,7 +1129,7 @@ ENABLE_METRICS=true
 # Security
 VERIFY_SSL=true
 USE_MTLS=false
-```
+```text
 
 ### Client Configuration
 
@@ -1149,7 +1149,7 @@ const api = new SovereignUnitAPI({
     metrics: true
   }
 });
-```
+```text
 
 ## 🆘 Support & Troubleshooting
 
@@ -1172,7 +1172,7 @@ const api = new SovereignUnitAPI({
 });
 
 // All requests and responses will be logged
-```
+```text
 
 ### Support Channels
 

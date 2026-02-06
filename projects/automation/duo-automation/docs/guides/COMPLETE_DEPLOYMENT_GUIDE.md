@@ -100,14 +100,14 @@ docker run -d \
 ## 📊 **Available Endpoints**
 
 ### **🎯 Enhanced Status Page**
-```
+```text
 GET /status                              - Enhanced status page UI
 GET /status/api/data                     - JSON status data
 GET /status/api/badge                    - SVG status badge
 ```
 
 ### **🔌 System Status APIs**
-```
+```text
 GET /api/v1/system-matrix                - Complete system overview
 GET /api/v1/health                       - Health check with domain
 GET /api/v1/status                       - Basic status with domain
@@ -117,7 +117,7 @@ GET /api/v1/docs                         - API documentation
 ```
 
 ### **📊 Production URLs**
-```
+```text
 https://api.apple.factory-wager.com/status          - Enhanced status page
 https://api.apple.factory-wager.com/status/api/badge - Status badge
 https://api.apple.factory-wager.com/api/v1/system-matrix - System matrix
@@ -174,7 +174,7 @@ https://staging.apple.factory-wager.com/status       - Staging status page
 ## 🌐 **Cloudflare Integration**
 
 ### **✅ DNS Configuration**
-```
+```text
 Domain: factory-wager.com
 Subdomains:
   - api.apple.factory-wager.com (Production)

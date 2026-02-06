@@ -148,7 +148,7 @@ bun run dashboard:dev
 
 ### **Domain-Driven Architecture**
 
-```
+```text
 📁 src/
 ├── 📁 domains/           # Business domains
 │   ├── 📁 core/         # Core business logic
@@ -165,7 +165,7 @@ bun run dashboard:dev
 
 ### **Enterprise Packages**
 
-```
+```text
 📁 enterprise/
 ├── 📁 packages/
 │   ├── 📁 dashboard-worker/    # Dashboard system (1866+ files)
@@ -177,7 +177,7 @@ bun run dashboard:dev
 
 ### **Configuration & Tools**
 
-```
+```text
 📁 .github/              # GitHub configuration
 📁 scripts/              # Build & utility scripts
 📁 config/               # Environment configurations
@@ -320,7 +320,7 @@ git push origin feature/your-feature-name
 
 ### **Branch Strategy**
 
-```
+```text
 main (production) ← develop (integration) ← feature branches
                                       ← enterprise branches
                                       ← staging (pre-production)
@@ -354,7 +354,7 @@ security: add encryption layer
 
 ### **Testing Pyramid**
 
-```
+```text
 ┌─────────────┐  End-to-End Tests (10%)
 │   E2E       │  Integration Tests (20%)
 ├─────────────┤  Unit Tests (70%)
@@ -404,7 +404,7 @@ bun run performance:analyze
 
 ### **Environment Flow**
 
-```
+```text
 Local Development → Development → Staging → Production
 ```
 

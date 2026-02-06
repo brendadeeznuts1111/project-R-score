@@ -170,7 +170,7 @@ bun auth:test-login          # Test login with gsession cookies
 
 ## 📁 **File Structure**
 
-```
+```text
 src/
 ├── bun/
 │   ├── auth/

@@ -13,7 +13,7 @@ The modular benchmarking system provides automated performance testing, regressi
 
 ## Architecture
 
-```
+```text
 @bench/core          - Core benchmarking utilities
   ├── Property iteration
   ├── Performance measurement

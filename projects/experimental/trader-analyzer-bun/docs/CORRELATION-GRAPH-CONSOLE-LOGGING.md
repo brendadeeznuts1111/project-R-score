@@ -68,7 +68,7 @@ console.info(`[correlation-graph] Aggregation complete:`, {
 ```
 
 **Output with depth=5:**
-```
+```text
 [correlation-graph] Aggregation complete: {
   nodes: 28,
   edges: 52,
@@ -86,7 +86,7 @@ console.info(`[correlation-graph] Aggregation complete:`, {
 ```
 
 **With default depth=2:**
-```
+```text
 [correlation-graph] Aggregation complete: {
   nodes: 28,
   edges: 52,
@@ -139,7 +139,7 @@ console.debug(`[correlation-graph] Layer summaries calculated:`, {
 ```
 
 **Output (depth=5 shows full array details):**
-```
+```text
 [correlation-graph] Layer summaries calculated: {
   duration: "12.34ms",
   layers: [
@@ -327,7 +327,7 @@ logger.info(
 ```
 
 **Output:**
-```
+```text
 [correlation-graph] Graph aggregation complete: 28 nodes, 52 edges, 3 bookmakers, 265.89ms total
 ```
 
@@ -344,7 +344,7 @@ console.info(`[correlation-graph] Aggregation complete:`, {
 ```
 
 **Output (with depth=5):**
-```
+```text
 [correlation-graph] Aggregation complete: {
   nodes: 28,
   edges: 52,
@@ -422,7 +422,7 @@ bun --console-depth 10 run dev  # Temporary override
 ### Example Output Comparison
 
 **With depth=2 (default):**
-```
+```text
 [correlation-graph] Operation result: {
   operationId: "op-123",
   performanceBreakdown: [Object]  # Hidden!
@@ -430,7 +430,7 @@ bun --console-depth 10 run dev  # Temporary override
 ```
 
 **With depth=5 (configured):**
-```
+```text
 [correlation-graph] Operation result: {
   operationId: "op-123",
   performanceBreakdown: {

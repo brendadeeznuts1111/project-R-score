@@ -26,7 +26,7 @@ const blob = await response.blob();           // Promise<Blob>
 - ✅ **Memory Efficiency**: Optimized parsing with minimal memory overhead
 
 **Performance Benchmarks Achieved:**
-```
+```text
 📈 Performance Results (average of 5 iterations):
    • response.text():       ~911ms (min: ~33ms, max: ~2150ms)
    • response.json():       ~559ms (min: ~35ms, max: ~1359ms)
@@ -84,7 +84,7 @@ await fetch(url, { headers: { "Connection": "close" } });
 - ✅ **Default Behavior**: Automatic connection pooling working effectively
 
 **Performance Analysis:**
-```
+```text
 📊 Connection reuse analysis:
    • Initial connection: ~45ms
    • Reused connections avg: ~35ms

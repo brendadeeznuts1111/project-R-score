@@ -38,7 +38,7 @@ bun run setup:mcp
 ## 📊 R2 Storage Structure
 
 ### Data Organization
-```
+```text
 scanner-cookies/
 ├── mcp/
 │   ├── diagnoses/          # Error diagnoses with fixes
@@ -103,7 +103,7 @@ bun run interactive-docs learn "Bun.sql" r2
 ```
 
 ### Claude Desktop with R2
-```
+```text
 User: "Diagnose this error and store the result: 'Bun.file: Permission denied'"
 
 Claude: [Analyzes error, searches R2 audit history, 

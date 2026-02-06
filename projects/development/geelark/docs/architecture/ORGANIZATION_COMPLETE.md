@@ -25,7 +25,7 @@ This document summarizes all the organization and naming improvements made to th
 **After:** Organized into 10 logical subdirectories
 
 **New Structure:**
-```
+```text
 docs/
 ├── api/              # API documentation (3 files)
 ├── architecture/     # Architecture & design (3 files)
@@ -53,7 +53,7 @@ docs/
 **After:** Clear categorization with 7 subdirectories
 
 **New Structure:**
-```
+```text
 examples/
 ├── bun-runtime/     # Bun runtime API examples (4 files)
 ├── feature-flags/   # Feature flag examples (10 files)
@@ -75,7 +75,7 @@ examples/
 **After:** Organized into 5 categories
 
 **New Structure:**
-```
+```text
 scripts/
 ├── analysis/        # Bundle analysis (3 files)
 ├── build/          # Build validation (1 file)
@@ -99,7 +99,7 @@ scripts/
 **After:** All tests properly categorized
 
 **New Structure:**
-```
+```text
 tests/
 ├── unit/
 │   ├── feature-elimination/  # (3 files)

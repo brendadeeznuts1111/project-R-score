@@ -220,7 +220,7 @@ docker run -e MEMORY_WARNING_THRESHOLD=1024 \
 
 Profiles are automatically organized by environment:
 
-```
+```text
 profiles/
 ├── development/          # Development profiles
 ├── production/           # Production profiles  

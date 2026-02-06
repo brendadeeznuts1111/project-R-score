@@ -539,7 +539,7 @@ including all domains, teams, integrations, and operational systems.
 
 ### **Core Integration Patterns**
 
-```
+```text
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Collections   │───▶│    Balance      │───▶│  Settlements    │
 │   Domain        │    │   Domain        │    │   Domain        │
@@ -554,7 +554,7 @@ including all domains, teams, integrations, and operational systems.
 
 ### **Communication Flow**
 
-```
+```text
 User Request → Telegram Bot → Domain Controller → Business Logic → Database
                      ↓
               Notification System ← Alert System ← Monitoring
@@ -562,7 +562,7 @@ User Request → Telegram Bot → Domain Controller → Business Logic → Datab
 
 ### **Security Integration**
 
-```
+```text
 External Access → Security Gateway → Authentication → Authorization → Domain Access
                         ↓
                  Audit Logging → Compliance Reporting → Security Monitoring

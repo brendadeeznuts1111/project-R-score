@@ -4,7 +4,7 @@ CRC32 SQL integration toolkit with audit trail and batch processing.
 
 ## Project Structure
 
-```
+```text
 2048/
 ├── src/                    # Core source files
 ├── utils/                  # Utility functions

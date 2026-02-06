@@ -33,7 +33,7 @@ for CLI tools and local development.
 ````typescript
 ```javascript
 import { secrets } from "bun";
-````
+````text
 
 // Type definitions interface SecretOptions { service: string; // Your
 application/service name name: string; // The secret identifier value?: string;
@@ -48,7 +48,7 @@ application/service name name: string; // The secret identifier value?: string;
 ```javascript
 ```javascript
 import { secrets } from "bun";
-````
+````text
 
 // Store a GitHub token await secrets.set({ service: "my-cli-tool", name:
 "github-token", value: "ghp_xxxxxxxxxxxxxxxxxxxx", });
@@ -105,11 +105,11 @@ for (const name of secretNames) {
 #!/usr/bin/env bun
 ```javascript
 import { secrets } from "bun";
-````
+````text
 
 ```javascript
 import { prompt } from './utils';
-```
+```text
 
 class CLIAuth { constructor(serviceName = "my-cli") { this.service =
 serviceName; }
@@ -174,7 +174,7 @@ response = await auth.makeAuthenticatedRequest("https://api.github.com/user");
 ```javascript
 ```javascript
 import { secrets } from "bun";
-````
+````text
 
 class CredentialManager { constructor(appName = "my-app") { this.appName =
 appName; }
@@ -243,7 +243,7 @@ manager.getServiceCredentials("database", [ "host", "username", "password",
 ```javascript
 ```javascript
 import { secrets } from "bun";
-````
+````text
 
 class EnvironmentSecrets { constructor(appName = "my-app") { this.appName =
 appName; this.env = process.env.NODE_ENV || "development"; }
@@ -387,7 +387,7 @@ function validateSecretName(name) {
 
   return true;
 }
-````
+````text
 
 ````
 
@@ -422,11 +422,11 @@ function validateSecretName(name) {
 ````javascript
 ```javascript
 import { test, expect } from "bun:test";
-````
+````text
 
 ```javascript
 import { secrets } from 'bun';
-```
+```text
 
 test("secrets CRUD operations", async () => { const testService =
 "test-service"; const testName = "test-secret"; const testValue =
@@ -454,15 +454,15 @@ expect(deleted).toBeNull(); });
 ```javascript
 ```javascript
 import { secrets } from "bun";
-````
+````text
 
 ```javascript
 import { readFileSync } from 'fs';
-```
+```text
 
 ```javascript
 import { parse } from 'dotenv';
-```
+```text
 
 async function migrateEnvToSecrets(envPath = ".env", serviceName = "my-app") {
 const envContent = readFileSync(envPath, "utf-8"); const parsed =
@@ -490,4 +490,4 @@ console.log("⚠️ Remember to delete your .env file and add it to .gitignore")
 - 🌍 **Cross-platform** - Works on macOS, Linux, and Windows
 
 Use `Bun.secrets` whenever you need to store API keys, tokens, passwords, or any sensitive configuration data in your Bun applications.
-```
+```text

@@ -95,7 +95,7 @@ tags:: [poetry, gothic]
 **Trick**: Use sequential numbered folders with depth ≤3 levels
 
 **Structure**:
-```
+```text
 00-Inbox/          # Level 1
 01-Configuration/  # Level 1
 02-Dashboards/     # Level 1

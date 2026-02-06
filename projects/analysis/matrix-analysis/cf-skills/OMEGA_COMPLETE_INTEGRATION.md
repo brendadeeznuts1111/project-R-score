@@ -209,7 +209,7 @@ const result = db.query('SELECT * FROM profiles WHERE id = ?').get(corporateProf
 ## **📊 Performance Summary**
 
 ### **CRC32 Performance Impact**
-```
+```text
 Total CRC32 hashes: 100
 CRC32 speedup: 20x
 Estimated time saved: 1900ms (vs non-accelerated)
@@ -217,7 +217,7 @@ Throughput: 3344 MB/s
 ```
 
 ### **SQL Query Efficiency**
-```
+```text
 Undefined values filtered: 45%
 Database DEFAULTs applied: 100%
 Constraint violations prevented: 100%
@@ -225,7 +225,7 @@ Query size reduction: 30%
 ```
 
 ### **S3 Cost Management**
-```
+```text
 Requester Pays buckets: 3
 Data transfer costs: Charged to requester
 Public bucket access: Enabled
@@ -233,7 +233,7 @@ Cost allocation: Usage-based
 ```
 
 ### **WebSocket Connectivity**
-```
+```text
 Corporate proxy support: 100%
 Authentication methods: 3 (Basic, Bearer, Custom)
 TLS configurations: 5

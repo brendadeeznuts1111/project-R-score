@@ -160,7 +160,7 @@ bun test --feature=DEBUG --feature=PREMIUM --feature=MOCK_API ./app.test.ts
 ## **🌐 Interactive Feature Flags Dashboard**
 
 ### **HTTP API Endpoints**
-```
+```text
 GET /                    - Interactive feature flags dashboard
 GET /api/features         - Current feature flags status
 GET /api/metrics         - Build metrics and analysis
@@ -375,7 +375,7 @@ function calculatePerformanceScore() {
 ## **📈 Real-World Performance Metrics**
 
 ### **Bundle Optimization Results**
-```
+```text
 Basic Application:    2.5KB (no features)
 Premium Features:     3.0KB (+20% size)
 Debug Mode:           2.8KB (+12% size)
@@ -384,7 +384,7 @@ Average Optimization: 33.3% bundle size reduction
 ```
 
 ### **Performance Impact**
-```
+```text
 Zero Runtime Overhead: All feature checks resolved at compile time
 Dead-Code Elimination: Unused features completely removed
 Type Safety: Compile-time validation prevents errors
@@ -392,7 +392,7 @@ Build Speed: Native Bun bundler significantly faster
 ```
 
 ### **Development Experience**
-```
+```text
 IDE Support: Full autocomplete and error checking
 Type Safety: Feature names validated at compile time
 Debugging: Clear separation of feature-specific code
@@ -404,7 +404,7 @@ Testing: Feature-aware testing with mock data
 ## **🎯 Complete File Structure**
 
 ### **Core Implementation Files**
-```
+```text
 systems-dashboard/
 ├── bun-feature-flags.ts          # Revolutionary feature flags demo
 ├── app.ts                        # Example application with features

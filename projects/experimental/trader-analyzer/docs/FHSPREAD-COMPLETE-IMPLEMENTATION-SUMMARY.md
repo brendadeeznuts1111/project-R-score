@@ -338,7 +338,7 @@ CREATE INDEX idx_deviation_significant ON fhspread_deviation_log(significantDevi
 
 ## Test Results Summary
 
-```
+```text
 ✅ 55 tests passing
 ❌ 0 tests failing
 📊 415 expect() calls

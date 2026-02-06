@@ -72,7 +72,7 @@ A comprehensive, production-ready documentation suite covering Bun's advanced fe
 
 ## 🗂️ File Structure
 
-```
+```text
 docs/
 ├── BUN_GUIDES_INDEX.md              # Start here
 ├── BUN_PATCH_GUIDE.md               # Dependency patching

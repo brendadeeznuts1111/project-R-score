@@ -56,7 +56,7 @@ bun run apps/registry-dashboard/scripts/init-db.ts
 
 ### Package Detail Page
 
-```
+```text
 GET /package/:name
 ```
 
@@ -69,7 +69,7 @@ Returns HTML page with:
 
 ### Run Benchmark
 
-```
+```text
 POST /api/benchmarks/run
 Body: { "package": "@graph/layer4" }
 ```
@@ -78,7 +78,7 @@ Queues a benchmark job for the package.
 
 ### Download Package
 
-```
+```text
 GET /api/packages/:name/:version/tarball
 ```
 
@@ -86,7 +86,7 @@ Downloads the package tarball.
 
 ### Assign Team
 
-```
+```text
 POST /api/team/assign
 Body: {
   "package": "@graph/layer4",

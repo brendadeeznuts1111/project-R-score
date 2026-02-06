@@ -67,7 +67,7 @@ Complete reference guide for the State Vault system with advanced production pat
 
 ## 📊 File Structure
 
-```
+```text
 quantum-terminal-dashboard/
 ├── bun.yaml                          # Runtime configuration
 ├── ADVANCED-PATTERNS-SUMMARY.md      # Overview

@@ -27,7 +27,7 @@ The Unified Bookmaker Registry combines data from multiple sources:
 
 ## API Endpoint
 
-```
+```text
 GET /api/registry/bookmakers
 ```
 

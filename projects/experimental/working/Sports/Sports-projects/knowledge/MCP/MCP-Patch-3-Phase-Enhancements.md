@@ -269,7 +269,7 @@ recordEffectivenessMeasurement("rec_1234567890_abc123", {
 
 ## 📊 Data Flow
 
-```
+```text
 Phase 1: Trend Analysis
   ↓
 Historical Metrics → Anomaly Detection → Predictive Recommendations

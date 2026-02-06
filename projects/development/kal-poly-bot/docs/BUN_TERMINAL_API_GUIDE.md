@@ -14,7 +14,7 @@ This guide demonstrates the comprehensive implementation of Bun v1.3.5's new `Bu
 
 ## 📁 Project Structure
 
-```
+```text
 kal-poly-bot/
 ├── src/
 │   ├── terminal-server.ts      # Main PTY server with HTTP/WebSocket API
@@ -70,7 +70,7 @@ The main server providing HTTP API and WebSocket support for PTY operations.
 - Support for multiple shells (bash, zsh, sh, fish)
 
 **API Endpoints:**
-```
+```text
 POST /api/sessions           # Create new terminal session
 GET  /api/sessions           # List active sessions
 GET  /api/sessions/output    # Get session output

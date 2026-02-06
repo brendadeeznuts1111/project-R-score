@@ -265,7 +265,7 @@ Our DuoPlus implementation:
 5. ✅ **Identical commands** - Uses `bun install` exactly as specified
 
 ### **Directory Structure** (Official Compliance):
-```
+```text
 duo-automation/
 ├── package.json          # Root with workspaces.catalog & catalogs
 ├── bun.lock             # Shared lockfile

@@ -127,7 +127,7 @@ bun run ws:pack:all           # Pack all workspaces to ./dist
 ## 🎯 **Real Example - DuoPlus Implementation**
 
 ### **Workspace Structure**:
-```
+```text
 duo-automation/
 ├── package.json              # Root workspace with catalogs
 ├── packages/

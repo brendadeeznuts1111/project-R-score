@@ -25,7 +25,7 @@ bun transpile show
 ```
 
 **Output:**
-```
+```text
 Transpilation Configuration:
 ──────────────────────────────────────
   JSX Import Source: react
@@ -60,7 +60,7 @@ bun transpile validate '{"jsxRuntime": "automatic"}'
 ```
 
 **Output:**
-```
+```text
 ✅ Configuration is valid
 ```
 
@@ -81,7 +81,7 @@ bun transpile parse-define "NODE_ENV:development,API_URL:http://localhost:3000,D
 ```
 
 **Output:**
-```
+```text
 Parsed defines:
 NODE_ENV=development, API_URL=http://localhost:3000, DEBUG=true
 ```
@@ -95,7 +95,7 @@ bun transpile parse-loader ".ts:tsx,.js:jsx,.json:json"
 ```
 
 **Output:**
-```
+```text
 Parsed loaders:
 .ts:tsx, .js:jsx, .json:json
 ```
@@ -109,7 +109,7 @@ bun transpile parse-drop "console,debugger,trace"
 ```
 
 **Output:**
-```
+```text
 Functions to drop:
   - console
   - debugger
@@ -345,7 +345,7 @@ The transpilation manager validates all configuration before applying. Common va
 
 ### Invalid jsxRuntime
 
-```
+```text
 jsxRuntime must be "automatic" or "classic" (default: "automatic")
 ```
 
@@ -353,7 +353,7 @@ jsxRuntime must be "automatic" or "classic" (default: "automatic")
 
 ### Invalid Loader
 
-```
+```text
 Invalid loader "custom". Valid loaders: js, jsx, ts, tsx, json, toml, text, file, wasm, napi
 ```
 
@@ -361,7 +361,7 @@ Invalid loader "custom". Valid loaders: js, jsx, ts, tsx, json, toml, text, file
 
 ### Missing Extension Dot
 
-```
+```text
 Invalid extension: "ts". Extensions must start with a dot.
 ```
 
@@ -369,7 +369,7 @@ Invalid extension: "ts". Extensions must start with a dot.
 
 ### JSX Factory with Automatic Runtime
 
-```
+```text
 ⚠️  Warnings:
   - jsxFactory is typically used with "classic" jsx runtime, not "automatic"
 ```

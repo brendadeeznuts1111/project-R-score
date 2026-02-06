@@ -186,7 +186,7 @@ getFlagConfig() → getConfig()  (2 occurrences)
 
 ## Git Statistics
 
-```
+```text
 Files modified: 6
 ├── src/Dashboard.ts (-84 lines) - ANSI colors extraction
 ├── src/FeatureRegistry.ts (-21 lines) - Removed aliases

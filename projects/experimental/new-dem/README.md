@@ -30,7 +30,7 @@ bun run web/lattice-finder.ts
 
 ## 🏗️ Architecture
 
-```
+```text
 t3-lattice/
 ├── web/lattice-finder.ts     # Main dashboard with fractal visualization
 ├── persona/engines/          # FD/Hurst computation engines
@@ -101,7 +101,7 @@ bun run persona
 
 T3-Lattice is a **unified flow system** built with modern web technologies:
 
-```
+```text
 🌊 T3-Lattice Unified Flow System
 ├── 🔧 Core Engine (src/)           # Component registry & flow logic
 ├── 🎨 Web Interfaces (web/)        # Dashboards & HTTP servers
@@ -257,7 +257,7 @@ bun run check                    # Validation
 
 ## 📁 Project Structure
 
-```
+```text
 t3-lattice-registry/
 ├── 📁 src/                     # Core registry engine
 │   ├── core.ts                 # Component registry logic

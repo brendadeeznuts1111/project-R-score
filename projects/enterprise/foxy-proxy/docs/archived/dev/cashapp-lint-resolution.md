@@ -78,7 +78,7 @@ The following issues are in the root `tsconfig.json` and **don't affect function
 
 ### **📊 CashApp Integration Summary**
 
-```
+```text
 Core Files Status:
 ✅ /src/utils/scaling/cashapp-duoplus.ts - Zero lint errors
 ✅ /src/utils/scaling/integrated-cashapp-scaling.ts - Zero lint errors

@@ -196,7 +196,7 @@
 
 ### Inheritance Tree
 
-```
+```text
 Component (React.Component)
 └─ ErrorBoundary
 ```

@@ -63,7 +63,7 @@ validation_rules:
 ## 📁 Understanding Your Vault Structure
 
 ### **Core Organization**
-```
+```text
 Odds-mono-map/
 ├── 00 - Dashboard.md              # Main vault overview
 ├── 01 - Daily Notes/              # Time-based organization

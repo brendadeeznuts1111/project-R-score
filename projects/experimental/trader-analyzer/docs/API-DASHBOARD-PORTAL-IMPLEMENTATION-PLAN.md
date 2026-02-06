@@ -181,7 +181,7 @@ Add to `package.json` scripts:
 
 ## File Structure
 
-```
+```text
 src/
 ├── api/
 │   ├── middleware/

@@ -149,7 +149,7 @@ Based on the official Bun documentation, here's exactly how to define catalogs i
 - ✅ Logical dependency grouping
 
 ### **4. Directory Structure** ✅
-```
+```text
 duo-automation/
 ├── package.json          # Root with workspaces configuration
 ├── bun.lock             # Shared lockfile

@@ -309,7 +309,7 @@ All alerts in the golden supergroup include RFC 001 compliant deep-links (`9.1.1
 - Enable one-click trading from alert to execution
 
 **Example Alert with Deep-Link**:
-```
+```text
 🚨 CRITICAL Covert Steam Alert!
 
 Event: NFL-2025-001

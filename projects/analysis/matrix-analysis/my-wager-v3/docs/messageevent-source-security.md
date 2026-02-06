@@ -164,7 +164,7 @@ class ThreatIntelligence {
 
 ## COL-93 Matrix Update
 
-```
+```text
 ╔══════════════════════════════════════════════════════════════════════════════════════════════╗
 ║                        ▸ Web API Security Matrix                                            ║
 ║  ◈ Tier-1380 Cross-Context Messaging                                                         ║

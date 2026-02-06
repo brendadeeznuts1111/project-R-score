@@ -187,7 +187,7 @@ const status = databaseLinks.getLinkStatus();
 
 **Latest Test Run - All Systems HEALTHY:**
 
-```
+```text
 📊 Hub Integration Test Summary
 ========================================
 

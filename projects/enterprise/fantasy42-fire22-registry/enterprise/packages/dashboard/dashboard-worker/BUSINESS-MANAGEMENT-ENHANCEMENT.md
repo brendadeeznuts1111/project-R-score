@@ -118,7 +118,7 @@ your existing Telegram bot!
 
 ### **Volume Tiers**
 
-```
+```text
 $0 - $10,000:     3.0% (1.0x)
 $10,001 - $50,000: 4.0% (1.1x)
 $50,001 - $100,000: 5.0% (1.2x)
@@ -181,7 +181,7 @@ $1,000,000+:      8.0% (1.5x)
 
 ### **Link Structure**
 
-```
+```text
 https://fire22.com/join/{type}_{userId}_{timestamp}
 ```
 

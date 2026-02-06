@@ -16,7 +16,7 @@ Bun v1.3.5+ supports compile-time feature flags that enable dead code eliminatio
 The system auto-generates 25 feature flags from your domain and scope configuration:
 
 ### Base Features (15)
-```
+```text
 DEBUG                          - Enable logging/debug output
 PREMIUM_SECRETS                - Enable secret management
 R2_STORAGE                     - Cloudflare R2 integration
@@ -35,7 +35,7 @@ WEBHOOK_SIGNING                - Webhook verification
 ```
 
 ### Domain Features (5)
-```
+```text
 API_DUOPLUS_IO_TENANT          - api.duoplus.io builds
 DEV_DUOPLUS_IO_TENANT          - dev.duoplus.io builds
 GITHUB_COM_TENANT              - github.com integration
@@ -44,7 +44,7 @@ INTERNAL_DUOPLUS_IO_TENANT     - internal.duoplus.io builds
 ```
 
 ### Scope Features (5)
-```
+```text
 ENTERPRISE                     - Enterprise scope
 DEVELOPMENT                    - Development scope
 INTERNAL                       - Internal scope
@@ -259,7 +259,7 @@ bun run generate:types
 
 Feature flags enable significant dead code elimination:
 
-```
+```text
 Before feature flags:
   - All features compiled in
   - File size: ~2.5 MB

@@ -102,7 +102,7 @@ fire22-workspace split --dry-run
 
 ## Project Structure
 
-```
+```text
 fire22-dashboard-worker/
 ├── src/                    # Source code
 │   ├── api/               # API endpoints

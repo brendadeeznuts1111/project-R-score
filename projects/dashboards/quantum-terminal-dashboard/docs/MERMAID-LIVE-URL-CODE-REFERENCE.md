@@ -96,7 +96,7 @@ if (urlResult.success) {
 
 ## URL Structure
 
-```
+```text
 https://mermaid.live/edit#pako:{base64}&crc={hash}
 ```
 

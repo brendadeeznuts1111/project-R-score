@@ -21,7 +21,7 @@
 ### Class Hierarchy
 
 **Base Classes & Inheritance:**
-```
+```text
 Error (Native)
 ├── AppError
 │   ├── APIError

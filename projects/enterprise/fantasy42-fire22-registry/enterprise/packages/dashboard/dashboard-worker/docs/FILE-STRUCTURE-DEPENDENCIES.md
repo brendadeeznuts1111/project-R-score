@@ -8,7 +8,7 @@ relationships to the existing codebase.
 
 ## 🗂️ File Structure Overview
 
-```
+```text
 dashboard-worker/
 ├── 📁 src/
 │   ├── 📁 utils/                    # 🔐 Header Management Utilities
@@ -65,7 +65,7 @@ export default HeaderManager.getInstance()
 // Imports
 ```javascript
 import { HeaderValidator as BaseValidator } from './header-manager';
-````
+````text
 
 // Exports export interface HeaderValidationResult export interface
 SecurityHeaderResult export interface CORSHeaderResult export interface
@@ -89,11 +89,11 @@ HeaderValidatorFactory export default new EnhancedHeaderValidator()
 // Imports
 ```javascript
 import { EnhancedHeaderValidator, HeaderValidatorFactory } from '../utils/header-validator';
-````
+````text
 
 ```javascript
 import { HeaderManager } from '../utils/header-manager';
-```
+```text
 
 // Exports export default HeaderTestCLI
 
@@ -115,7 +115,7 @@ import { HeaderManager } from '../utils/header-manager';
 // Imports
 ```javascript
 import { HeaderManager, HeaderValidator } from './utils/header-manager';
-````
+````text
 
 // Usage const headerManager = HeaderManager.getInstance(); const
 preflightHeaders = headerManager.getPreflightHeaders(origin);
@@ -262,7 +262,7 @@ interface JWTHeader {
 
 ### 1. **Header Testing Flow**
 
-```
+```text
 User Command → package.json script → header-test.ts CLI →
 HeaderValidator → HeaderManager → HTTP Request →
 Response Analysis → Validation Report → Output (Console/File)
@@ -270,7 +270,7 @@ Response Analysis → Validation Report → Output (Console/File)
 
 ### 2. **Header Application Flow**
 
-```
+```text
 HTTP Request → MainWorker → HeaderManager →
 Security Headers + CORS Headers + System Headers →
 Enhanced Response → Client
@@ -278,7 +278,7 @@ Enhanced Response → Client
 
 ### 3. **JWT Enhancement Flow**
 
-```
+```text
 Authentication Request → JWT Service →
 Enhanced Header Creation → Token Generation →
 Response with Enhanced JWT

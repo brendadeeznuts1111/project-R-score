@@ -85,7 +85,7 @@ validation, performance monitoring, and compliance checking. This review identif
 ## 📊 Current System Status
 
 *Consolidated from: ### **Overall Vault Health***
-```
+```text
 📊 Odds Protocol Vault Status
 ==================================================
 
@@ -113,7 +113,7 @@ Last Organization: Never
 ```
 
 ### **Template System Performance**
-```
+```text
 🎪 Heading Templates Showcase for Odds Protocol Vault
 Demonstrating type-safe, grep-able heading templates
 

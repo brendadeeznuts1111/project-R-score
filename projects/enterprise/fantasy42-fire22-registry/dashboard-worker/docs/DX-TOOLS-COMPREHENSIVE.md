@@ -325,7 +325,7 @@ public class Fire22CustomerService {
 
 ### **Project Structure**
 
-```
+```text
 fire22-bun-tools/
 ├── packages/
 │   ├── cli/                    # Fire22 CLI tools

@@ -76,7 +76,7 @@ We have successfully built and tested a **Bun-native enterprise observability pl
 
 ### Core Files Created/Modified
 
-```
+```text
 ✅ tsconfig.json                    - TypeScript configuration
 ✅ types/scope.types.ts             - Multi-tenant scope types
 ✅ scripts/generate-env-dts.ts      - Feature flag generator
@@ -254,7 +254,7 @@ $ bun run --feature=ENTERPRISE src/examples/registry-features.ts
 
 ## 🚀 FINAL STATUS
 
-```
+```text
 ╔════════════════════════════════════════════════════════════════╗
 ║                                                                ║
 ║              ✈️  YOU ARE CLEARED FOR TAKEOFF  ✈️              ║

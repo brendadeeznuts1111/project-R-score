@@ -18,7 +18,7 @@ Dashboard configuration field mapping and transformation engine.
 
 ## Structure
 
-```
+```text
 feed-project/
 ├── src/
 │   ├── index.ts              # Exports
@@ -39,7 +39,7 @@ feed-project/
 
 ## Flow
 
-```
+```text
 DashboardConfig → field-mapping.transform() → EnhancedConfig
                          ↓
               env-substitutor ($env:DASH_ROOT)

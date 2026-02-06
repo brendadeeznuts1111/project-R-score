@@ -8,7 +8,7 @@ This testing suite provides production-grade property tests, performance benchma
 
 ## 📁 Structure
 
-```
+```text
 src/domain/rotation-numbers/
 ├── property/                          # Property-based tests
 │   ├── rotation-boundaries.property.test.ts
@@ -288,7 +288,7 @@ bun run src/scripts/compare-benchmarks.ts
 
 When all validation checks pass, you'll see:
 
-```
+```text
 🎉 All validation checks passed! Ready for production.
 
 ✅ Property Tests: 100% complete

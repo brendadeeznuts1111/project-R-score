@@ -231,7 +231,7 @@ console.log('Component breakdown:', components);
 
 ### R-Score Formula
 
-```
+```text
 R-Score = (P_ratio × 0.35) + (M_impact × 0.30) + (E_elimination × 0.20) + (S_hardening × 0.10) + (D_ergonomics × 0.05)
 ```
 

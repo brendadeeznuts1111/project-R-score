@@ -34,7 +34,7 @@ optimization, and cache management.
 
 ### Architecture Overview
 
-```
+```text
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Application   │───▶│   Cache Layer   │───▶│   Database     │
 │                 │    │  (Fire22Cache)  │    │  SQLite/D1     │

@@ -23,7 +23,7 @@ temp.set(data); // Heap spray
 ```
 
 #### **Your Fix - Memory Model:**
-```
+```text
 Input: 10MB attacker data
 Attack: chunkSize = 2^31 (2GB fake)
 
@@ -57,7 +57,7 @@ parseInt("deadbeef", 16); // 5 iterations → Instant
 ```
 
 **Fuzzer Input Resistance:**
-```
+```text
 Input: 1MB "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 Regex: 💥 10+ seconds (backtracking explosion)
 parseInt: ✅ 0.01ms (linear scan)
@@ -74,7 +74,7 @@ if (totalSize > this.MAX_TOTAL_SIZE) REJECT;
 
 #### **Overflow Attack Chain BLOCKED:**
 
-```
+```text
 Attack 1: chunkSize = 2^31 → OVERSIZED_CHUNK (blocked)
 Attack 2: 10k chunks x 1MB = 10GB → OVER_SIZE_LIMIT (blocked)
 Attack 3: NaN/undefined → isNaN(chunkSize) → INVALID_HEX (blocked)
@@ -138,7 +138,7 @@ data[i] === 13 && data[i+1] === 10 // Exact bytes
 
 ## 🔬 **What Production Runtimes Miss**
 
-```
+```text
 NGINX: Partial chunk validation (no extra data check)
 Node.js: req.text() bypasses chunked entirely  
 Apache: Configurable but off-by-default
@@ -184,7 +184,7 @@ try {
 
 ## 📈 **Performance Benchmarks**
 
-```
+```text
 1000 small chunks (1 byte each):  < 1ms
 1000 medium chunks (1KB each):    < 5ms  
 10 large chunks (1MB each):      < 10ms
@@ -205,7 +205,7 @@ for i in {1..1000000}; do
 done
 ```
 
-```
+```text
 [MEMORY-SAFETY][SCORE:100/100][FUZZER-PROOF:TRUE]
 [ALLOCATIONS:BOUNDED][PARSER:LINEAR][OVERFLOW:ZERO]
 ```

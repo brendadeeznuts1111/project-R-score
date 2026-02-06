@@ -550,7 +550,7 @@ export class AnimationEngine {
 
 ### Frame Budget Allocation (16.67ms for 60fps)
 
-```
+```text
 Total Frame Budget: 16.67ms
 ├── JavaScript Execution: 6ms (36%)
 │   ├── Animation Updates: 2ms
@@ -1169,7 +1169,7 @@ export class ScreenReaderSupport {
 ## Asset Pipeline & Build Process
 
 ### Asset Organization
-```
+```text
 assets/
 ├── images/
 │   ├── hero/
@@ -2239,7 +2239,7 @@ export const cspConfig = {
 ## Component Architecture
 
 ### Component Hierarchy
-```
+```text
 QuantumNavigatorApp
 ├── WebGLRenderer
 │   ├── DigitalAuroraShader

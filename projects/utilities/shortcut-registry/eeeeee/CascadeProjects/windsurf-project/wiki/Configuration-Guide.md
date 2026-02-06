@@ -65,7 +65,7 @@ NODE_ENV=production bun run config:validate
 
 ### **File Structure**
 
-```
+```text
 config/
 ├── .env.example              # Template with all options
 ├── .env.development          # Development settings

@@ -34,12 +34,12 @@ bun run test:headers       # Header preservation
 ```
 
 ## Current Working Directory Should Be:
-```
+```text
 /Users/nolarose/Projects/bun-toml-secrets-editor/backend
 ```
 
 NOT:
-```
+```text
 /Users/nolarose/Projects/bun-toml-secrets-editor
 ```
 

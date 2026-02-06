@@ -24,7 +24,7 @@ A cutting-edge enterprise automation platform featuring AI-powered URL organizat
 ## 🏗️ **ENTERPRISE ARCHITECTURE**
 
 ### **📁 Core Directories**
-```
+```text
 duo-automation/
 ├── 📋 docs/                 # Documentation (221 files)
 ├── ⚙️ config/               # Configuration (44 files)

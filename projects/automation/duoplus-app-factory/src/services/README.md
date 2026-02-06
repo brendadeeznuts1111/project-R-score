@@ -48,7 +48,7 @@ const balance = lndMockClient.getBalance();
 ## Service Architecture
 
 ### Layered Design
-```
+```text
 API Routes
     ↓
 Services (Business Logic)

@@ -73,7 +73,7 @@ bun run wrangler:health
 
 ### **Environment Structure**
 
-```
+```text
 development (dev.apexodds.net)
 ├── Worker: fantasy42-fire22-dev
 ├── D1: fantasy42-registry-dev

@@ -2,7 +2,7 @@
 
 ## Project Structure
 
-```
+```text
 kal-poly-bot/
 ├── src/wagering/                          # Core Implementation
 │   ├── advanced-wagering-api.ts          # Main API Router (24KB)

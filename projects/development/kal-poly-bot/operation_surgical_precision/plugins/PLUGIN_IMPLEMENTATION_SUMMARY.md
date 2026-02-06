@@ -137,7 +137,7 @@ pluginSystem.events.emit('custom:event', { data: 'value' });
 
 ## File Structure
 
-```
+```text
 plugins/
 ├── plugin-system.js          # Core plugin system
 ├── git-integration.js        # Git Integration plugin

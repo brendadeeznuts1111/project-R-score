@@ -12,7 +12,7 @@
 
 #### **1. Dynamic Notification Toggle**
 
-```
+```text
 🔕 MASTER CONTROL
 • Quick On/Off toggle for all wager alerts and notifications
 • Visual status indicators with real-time feedback
@@ -23,7 +23,7 @@
 
 #### **2. Enhanced Alert Settings Access**
 
-```
+```text
 ⚙️ QUICK SETTINGS ACCESS
 • One-click access to comprehensive alert settings
 • Modal integration with existing alert configuration
@@ -34,7 +34,7 @@
 
 #### **3. Real-Time Preference Management**
 
-```
+```text
 🎛️ PREFERENCE CONTROL
 • Granular control over alert categories and channels
 • Schedule-based notification management
@@ -45,7 +45,7 @@
 
 #### **4. Analytics & Intelligence**
 
-```
+```text
 📊 NOTIFICATION ANALYTICS
 • Toggle usage patterns and effectiveness tracking
 • Preference change analytics and user behavior insights

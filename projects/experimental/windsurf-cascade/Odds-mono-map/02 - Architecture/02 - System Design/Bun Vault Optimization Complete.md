@@ -74,7 +74,7 @@ validation_rules:
 - **URL Friendly**: Perfect for web and documentation
 
 #### **✅ Directory Structure Optimization**
-```
+```text
 ✅ 01 - Daily Notes/
 ✅ 02 - Architecture/
 ✅ 03 - Development/
@@ -474,7 +474,7 @@ setInterval(() => {
 
 ## 📊 **Final Certification**
 
-```
+```text
 🏆 BUN VAULT OPTIMIZATION CERTIFICATION 🏆
 ═════════════════════════════════════════════════════════
 

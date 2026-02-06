@@ -123,7 +123,7 @@ bun run src/nexus/core/enhanced-dashboard.ts --metrics
 - **Documentation**: Comprehensive JSDoc comments
 
 ### File Structure
-```
+```text
 cli-dashboard                    # Main wrapper script
 src/nexus/core/enhanced-dashboard.ts  # Enhanced dashboard implementation
 src/nexus/core/dashboard.ts     # Original dashboard (backward compatible)

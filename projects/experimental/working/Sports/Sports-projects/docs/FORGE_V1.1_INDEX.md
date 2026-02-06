@@ -191,7 +191,7 @@ open docs/FORGE_SUGGESTION_V1.1_UNIFIED.md
 
 ## 🎨 Visual File Tree
 
-```
+```text
 feed/
 ├── suggestion.json                          ← Main config (887 lines)
 ├── config/

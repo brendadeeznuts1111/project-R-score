@@ -43,7 +43,7 @@ Hyper-Bun treats development experience (devex) and design systems as **one cohe
 ### The Journey: Trigger → Visual Correlation → Decision
 
 **Phase 1: Trigger** → Operational telemetry appears in terminal
-```
+```text
 [WARN] HBMO-017 | ConcealedArbEngine | latency_spike_detected > 180ms
 ```
 - Semantic Token: `--color-risk-warning`
@@ -77,7 +77,7 @@ Hyper-Bun treats development experience (devex) and design systems as **one cohe
 
 ### The Semantic Token Flow
 
-```
+```text
 Terminal Log
   ↓
 [WARN] HBMO-017 | ConcealedArbEngine | latency_spike_detected > 180ms
@@ -255,7 +255,7 @@ Engineer Perception: "Yellow = Warning" (consistent everywhere)
 ### Example: Error Detection Flow
 
 **Terminal** (Tmux Logs pane):
-```
+```text
 [ERROR] HBMO-002 | MarketOfferingService | Required server configuration missing.
 ```
 - Color: Red (`colour196`)

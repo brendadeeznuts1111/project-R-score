@@ -542,7 +542,7 @@ bun run fintech:longevity  # Account longevity and trust factor
 ## 🏗️ **Enterprise Architecture**
 
 ### 📁 Directory Structure
-```
+```text
 duo-automation/
 ├── 📋 [docs/](./docs/)                 # Documentation (221 files)
 ├── ⚙️ [config/](./config/)               # Configuration (44 files)

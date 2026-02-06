@@ -88,7 +88,7 @@ console.log(stats);
 
 ## Database Relationships
 
-```
+```text
 syndicate_groups (1) ──< (many) syndicate_members
 syndicate_groups (1) ──< (many) syndicate_bets
 syndicate_groups (1) ──< (many) syndicate_patterns

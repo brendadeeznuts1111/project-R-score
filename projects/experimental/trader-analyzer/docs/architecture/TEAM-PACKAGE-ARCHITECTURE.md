@@ -16,7 +16,7 @@ This document defines the complete architecture for team structure, package owne
 
 ### 1.1 Scoped Package Organization
 
-```
+```text
 @graph/*     - Graph algorithms and correlation engines
 @bench/*     - Benchmarking and performance testing
 @dev/*       - Development tools and utilities
@@ -140,7 +140,7 @@ Each package in the private registry includes:
 
 ### 3.3 Registry API Endpoints
 
-```
+```text
 POST   /api/v1/packages/{scope}/{name}/metadata
 GET    /api/v1/packages/{scope}/{name}/metadata
 PUT    /api/v1/packages/{scope}/{name}/team
@@ -155,7 +155,7 @@ GET    /api/v1/teams/{team}/packages
 
 ### 4.1 Benchmark Architecture
 
-```
+```text
 @bench/core          - Core benchmarking utilities
   ├── @bench/layer4  - Layer4-specific benchmarks
   ├── @bench/graph   - Graph algorithm benchmarks

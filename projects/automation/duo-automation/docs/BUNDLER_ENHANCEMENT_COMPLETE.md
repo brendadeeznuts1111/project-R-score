@@ -27,7 +27,7 @@ I have successfully integrated **Bun's latest bundler enhancements** into the Du
 ## 📊 **BUNDLER ENHANCEMENT METRICS**
 
 ### **✅ Enhancement Results (Demonstrated)**
-```
+```text
 📦 Bundler Enhancement Performance Metrics:
 ├── Shebang Support: 2 bundle examples (100% execution success)
 ├── Memory Optimization: 2 optimization strategies implemented

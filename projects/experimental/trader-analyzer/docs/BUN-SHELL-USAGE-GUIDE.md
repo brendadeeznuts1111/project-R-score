@@ -356,7 +356,7 @@ import { $ } from "bun";
 
 // Get commit hash
 const hash = await $`git rev-parse HEAD`.text();
-```
+```text
 
 See [Bun.Shell Documentation](./docs/BUN-SHELL-USAGE-GUIDE.md) for more examples.
 ```

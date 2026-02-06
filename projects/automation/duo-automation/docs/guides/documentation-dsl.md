@@ -38,7 +38,7 @@ Indicates the performance overhead compared to the system baseline (usually `URL
 
 The DSL amortizes the cost of documentation after the 1.3 function breakpoint.
 
-```
+```text
 Total Tokens = P + (n * I)
 P (Pattern Overhead): ~150 tokens
 I (Per-Item Matrix Row): ~35 tokens

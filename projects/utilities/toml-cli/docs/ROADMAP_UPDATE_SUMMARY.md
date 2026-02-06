@@ -55,7 +55,7 @@ Each spec includes:
 
 Comprehensive validation system with **7 critical checks**:
 
-```
+```text
 ✅ 1. Scope Isolation        - Storage paths don't overlap
 ✅ 2. Feature Flag Coverage  - Proper flag differentiation
 ✅ 3. Secrets Backend        - Platform-appropriate secrets management
@@ -211,7 +211,7 @@ Master document including:
 
 ### All 7 Guardrails ✅ PASSING
 
-```
+```text
 🛡️  GUARDRAIL VALIDATION SYSTEM
 ============================================================
   ✅ Scope Isolation

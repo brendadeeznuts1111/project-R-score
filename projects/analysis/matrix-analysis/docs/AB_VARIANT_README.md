@@ -68,7 +68,7 @@ bun run ab:build:b
 
 ## 📁 Files
 
-```
+```text
 examples/
   ab-variant-cookies.ts          # Core implementation (421 lines)
   ab-variant-omega-pools.ts      # Omega pools integration (454 lines)
@@ -151,7 +151,7 @@ const variant = getABVariant(cookies);
 
 ### Test Results: 22/22 Passed ✅
 
-```
+```text
 ✓ Cookie Parsing (5 tests)
   - Parse ab-variant-a/b cookies
   - Parse multiple cookies
@@ -225,7 +225,7 @@ bun run ab:build:compare
 
 ### Build Analysis
 
-```
+```text
 Variant A: 0.58 KB
 Variant B: 0.58 KB
 Diff:      0 bytes (0.00%)

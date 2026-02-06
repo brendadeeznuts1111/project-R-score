@@ -13,7 +13,7 @@ bun cli/dashboard/dashboard-cli.ts serve
 ```
 
 Then open in browser:
-```
+```text
 http://localhost:8080/dashboard.html?demo=ai-risk-analysis
 ```
 
@@ -31,7 +31,7 @@ bun dev-server.ts
 ```
 
 Then open:
-```
+```text
 http://localhost:8080/dashboard.html?demo=ai-risk-analysis
 ```
 
@@ -43,7 +43,7 @@ bun --serve .
 ```
 
 Then open:
-```
+```text
 http://localhost:3000/dashboard.html?demo=ai-risk-analysis
 ```
 
@@ -55,7 +55,7 @@ python3 -m http.server 8080
 ```
 
 Then open:
-```
+```text
 http://localhost:8080/dashboard.html?demo=ai-risk-analysis
 ```
 

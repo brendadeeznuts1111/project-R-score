@@ -59,7 +59,7 @@ These are written to the output directory alongside the binary.
 
 ## Output Structure
 
-```
+```text
 dist/
 ├── scanner/
 │   ├── enterprise-scanner          # Standalone executable

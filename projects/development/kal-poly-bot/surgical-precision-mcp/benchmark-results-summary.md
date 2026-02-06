@@ -99,7 +99,7 @@
 
 **File:** `__tests__/bun-v1.3.5-features.test.ts`
 
-```
+```text
 36 pass | 0 fail | 66 expect() calls
 Ran 36 tests across 1 file [183.00ms]
 ```
@@ -168,7 +168,7 @@ cd surgical-precision-mcp && bun run cli.ts health
 
 **File:** `__tests__/bun-utils.test.ts`
 
-```
+```text
 1 pass | 1 fail | 2 expect() calls
 Ran 2 tests across 1 file [17.00ms]
 ```

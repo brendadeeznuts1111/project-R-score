@@ -17,7 +17,7 @@ This memorandum establishes standardized configuration protocols for the **"SURG
 ## 🏗️ ARCHITECTURAL CONTEXT
 
 ### **Precision Operation Platform Overview**
-```
+```text
 🔬 SURGICAL PRECISION OPERATION SCHEME
 ├── 🎯 SurgicalPrecisionTarget (99.95% coordinate precision)
 ├── 🛡️ ExclusionZoneCalculator (zero-collateral isolation)

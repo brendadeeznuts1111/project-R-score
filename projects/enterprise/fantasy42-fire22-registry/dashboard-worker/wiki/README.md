@@ -10,7 +10,7 @@ processes.
 
 ## 📁 Enhanced Wiki Structure
 
-```
+```text
 wiki/
 ├── 📄 README.md                           # This file
 ├── 🚀 enterprise-workflows/               # Enterprise workflow automation
@@ -180,7 +180,7 @@ Each department follows enterprise architecture domain classification:
 Each domain department maintains ownership of their respective packages through
 the CODEOWNERS file:
 
-```
+```text
 # Domain: Betting - Sportsbook Operations
 /src/packages/betting/              @marcus-rodriguez @linda-chen @robert-taylor
 /src/departments/sportsbook/        @marcus-rodriguez @linda-chen @robert-taylor
@@ -284,7 +284,7 @@ git push origin feature/department-live-casino-ops
 
 ### 💬 Commit Message Format
 
-```
+```text
 type(scope): brief description
 
 - Detailed change 1

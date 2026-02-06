@@ -157,7 +157,7 @@ registryClient.clearCache();
 
 Create in GitHub → Settings → Developer settings → Personal access tokens:
 
-```
+```text
 scopes: read:packages
 permissions: repo (read-only)
 ```
@@ -166,7 +166,7 @@ permissions: repo (read-only)
 
 Create in GitLab → Settings → Access Tokens:
 
-```
+```text
 scopes: api, read_api, read_repository
 expiry: 1 year (rotate regularly)
 ```
@@ -209,7 +209,7 @@ if (config.certPin) {
 
 Ensure tokens are never committed:
 
-```
+```text
 # .gitignore
 .npmrc
 .env
@@ -317,7 +317,7 @@ install-dependencies:
 
 ### 401 Unauthorized
 
-```
+```text
 Error: 401 Unauthorized
 Solution:
 1. Check token is set in .npmrc or GITHUB_NPM_TOKEN env var
@@ -328,7 +328,7 @@ Solution:
 
 ### 403 Forbidden
 
-```
+```text
 Error: 403 Forbidden  
 Solution:
 1. Verify organization permissions
@@ -339,7 +339,7 @@ Solution:
 
 ### 404 Not Found
 
-```
+```text
 Error: 404 Not Found
 Solution:
 1. Check package name spelling
@@ -350,7 +350,7 @@ Solution:
 
 ### Timeout
 
-```
+```text
 Error: Request timeout
 Solution:
 1. Increase timeout in .npmrc: fetch-timeout=30000

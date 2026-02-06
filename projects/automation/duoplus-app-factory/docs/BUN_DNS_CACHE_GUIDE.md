@@ -17,7 +17,7 @@ BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS=5 bun bun-dns-live-stats.ts
 
 ## What You'll See
 
-```
+```text
 🌐 DNS Cache Live View  (TTL: 30s)
 
 Hit ratio : ✅ 92.3% ████████████████████████████████████████░

@@ -4,7 +4,7 @@
 
 The enhanced syndicate analysis system consists of multiple integrated components:
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                   Syndicate Analysis System                  │
 ├─────────────────────────────────────────────────────────────┤

@@ -35,7 +35,7 @@ Capture each major screenshot in multiple themes:
 
 ## Naming Convention
 
-```
+```text
 {feature}-{variant}-{theme}.png
 
 Examples:

@@ -18,7 +18,7 @@ This plan outlines a complete reorganization of R2 buckets, Durable Objects arch
 
 ## 🏛️ Architecture Overview
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                              Cloudflare Edge                                 │
 ├─────────────────────────────────────────────────────────────────────────────┤
@@ -101,7 +101,7 @@ export class RegistryMigration {
 
 ### 1.3 Bucket Naming Convention
 
-```
+```text
 registry-{type}-{scope}
 project-{project-id}-{content-type}
 shared-{asset-type}
@@ -168,7 +168,7 @@ export interface RegistryAPI {
 
 ### 2.2 Package Storage Layout
 
-```
+```text
 registry-npm/
 ├── @factorywager/
 │   ├── core/
@@ -239,7 +239,7 @@ export class ScopeManager {
 
 ### 3.1 CDN Architecture
 
-```
+```text
 User Request
     ↓
 Cloudflare CDN

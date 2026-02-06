@@ -3,7 +3,7 @@
 ## ✅ Live Test Results
 
 ### Memory Leak Detection System
-```
+```text
 🧠 Baseline heap snapshot created for memory leak detection
 📊 Baseline heap size: 102400 bytes
 
@@ -19,7 +19,7 @@
 ```
 
 ### CSS Features Status
-```
+```text
 ✅ View transition pseudo-elements parse correctly
 ✅ @layer blocks process and minify properly  
 ✅ Color scheme variables injected automatically
@@ -100,13 +100,13 @@
 ```
 
 ### Trend Analysis
-```
+```text
 📈 Memory trend for "websocket_test": increasing (avg: 512.25KB over 5 tests)
 📉 Memory trend for "array_processing": decreasing (avg: 234.12KB over 3 tests)
 ```
 
 ### Detailed Leak Reporting
-```
+```text
 🚨 MEMORY LEAK DETECTED in "test_leaky":
    💾 Leaked: 12.45MB (threshold: 10MB)
    📦 New objects: 156

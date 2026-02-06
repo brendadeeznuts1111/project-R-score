@@ -136,7 +136,7 @@ git config --local core.hooksPath .githooks
 
 #### **Email Template:**
 
-```
+```text
 TO: platform.development@fire22.ag
 SUBJECT: [DEPT-APPROVAL] [Department Name] - Ready for Implementation
 

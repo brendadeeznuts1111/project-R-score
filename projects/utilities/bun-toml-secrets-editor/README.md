@@ -22,7 +22,7 @@ Organized profile storage with Cloudflare R2 integration for scalable, durable d
 **Status**: ✅ Fully Organized
 
 **Storage Structure**:
-```
+```text
 rssfeedmaster/
 ├── profiles/
 │   ├── cpu/          (16 CPU profiles)
@@ -70,7 +70,7 @@ bun run widget:dev
 ```
 
 **Widget Display**:
-```
+```text
 🟢 API 🟢 R2 📊 119  (Status indicators in menu bar)
 ```
 
@@ -1037,7 +1037,7 @@ const compliance = await checkCompliance(secrets);
 
 **Example Analysis Output:**
 
-```
+```text
 Entropy Analysis:
 • WEAK_PASSWORD: 36.54 bits (weak) - Score: 53.8/100
   Recommendations: Use longer secrets, include special characters
@@ -1101,7 +1101,7 @@ bun run src/main.ts rotate --all
 
 **Lifecycle Statistics:**
 
-```
+```text
 Lifecycle Statistics:
   Total secrets: 14
   Active secrets: 14
@@ -1264,7 +1264,7 @@ bun --hot run src/main.ts
 
 ### Project Structure
 
-```
+```text
 src/
 ├── main.ts                 # CLI entry point
 ├── types/
@@ -1528,7 +1528,7 @@ BUCKET_TYPE=s3 BUCKET_NAME=my-bucket bun run upload:bucket
 - **Azure Blob Storage**: Set `BUCKET_TYPE=azure`, `AZURE_STORAGE_ACCOUNT_NAME`, `AZURE_STORAGE_ACCOUNT_KEY`
 
 **Bucket Structure:**
-```
+```text
 bucket-name/
   └── v1.0.0/
       ├── bun-toml-secrets-editor-linux-x64
@@ -1720,7 +1720,7 @@ await s3.write("data.csv", csvData, {
 
 ## 📁 Project Structure
 
-```
+```text
 src/
 ├── cli/
 │   └── duoplus-cli.ts           # Enhanced CLI entry point

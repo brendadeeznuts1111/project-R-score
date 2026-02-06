@@ -49,7 +49,7 @@ bun run tags:blockchain --commit-hash="abc123"
 
 ### **3. GLOBAL TAG SEARCH & ANALYTICS** 🌐
 
-```
+```text
 🏷️ tags.factory-wager.com/search (Live)
 GLOBAL TAG QUERY ENGINE v4.0
 
@@ -82,7 +82,7 @@ Revenue Impact: $12.1K MRR attributed to tagged components
 
 ### **5. VISUAL TAGGING DASHBOARD** 📊
 
-```
+```text
 monitor.factory-wager.com/tags/v4.0 (New)
 🏷️ DUOPLUS TAGGING v4.0 - ENTERPRISE EDITION
 
@@ -117,7 +117,7 @@ bun init duoplus --tags=v4.0 --enforce
 
 ### **7. CROSS-PLATFORM TAGGING** 🌍
 
-```
+```text
 Mobile Apps: iOS/Android tag metadata in Info.plist
 SDKs: npm package.json + PyPI metadata
 Partners: Webhook payloads include tag headers
@@ -130,7 +130,7 @@ Blockchain: IPFS content identifiers + tags
 
 ## 📈 **v4.0 PRODUCTION METRICS**
 
-```
+```text
 TAGGING SYSTEM v4.0 (Live Stats)
 ├── Files Tagged: 4,127 (+45%)
 ├── AI Accuracy: 98.7% (Auto-tagging)
@@ -162,7 +162,7 @@ bun run tags:v4.0 --deploy --ai=true --blockchain=true
 
 ## 💰 **v4.0 ROI**
 
-```
+```text
 Tagging v4.0 → Enterprise Scale
 ├── Developer Velocity: +89% (AI auto-tagging)
 ├── Compliance Cost: -94% (Blockchain audits)

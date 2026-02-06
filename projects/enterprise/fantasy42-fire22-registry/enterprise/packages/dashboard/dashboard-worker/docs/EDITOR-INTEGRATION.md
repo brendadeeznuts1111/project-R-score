@@ -131,7 +131,7 @@ bun run editor:config
 
 The editor integration provides a comprehensive view of your project structure:
 
-```
+```text
 📁 Directories:
   Root:     /Users/nolarose/ff/dashboard-worker
   Source:   /Users/nolarose/ff/dashboard-worker/src

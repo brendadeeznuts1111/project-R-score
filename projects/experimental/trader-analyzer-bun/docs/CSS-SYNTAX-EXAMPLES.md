@@ -838,7 +838,7 @@ Automatic light/dark theme:
   color: light-dark(#333333, #eeeeee);
   border-color: light-dark(#dddddd, #555555);
 }
-```
+```text
 
 **Output (Converted by Bun):**
 ```css
@@ -860,7 +860,7 @@ Automatic light/dark theme:
   color: var(--lightningcss-light, #333333) var(--lightningcss-dark, #eeeeee);
   border-color: var(--lightningcss-light, #dddddd) var(--lightningcss-dark, #555555);
 }
-```
+```text
 
 See [light-dark() Guide](./LIGHT-DARK.md) for comprehensive documentation.
 
@@ -879,7 +879,7 @@ The `system-ui` generic font family lets you use the device's native UI font, cr
   /* System UI font with explicit fallbacks */
   font-family: system-ui, sans-serif;
 }
-```
+```text
 
 **Output (Expanded by Bun):**
 ```css
@@ -911,7 +911,7 @@ The `system-ui` generic font family lets you use the device's native UI font, cr
     "Helvetica Neue",
     sans-serif;
 }
-```
+```text
 
 **Platform Support:**
 - **macOS/iOS**: Uses SF Pro (`-apple-system`, `BlinkMacSystemFont`)
@@ -940,7 +940,7 @@ The `system-ui` generic font family lets you use the device's native UI font, cr
   background: var(--accent-purple);
   color: white;
 }
-```
+```text
 
 ### External Composition
 
@@ -954,7 +954,7 @@ The `system-ui` generic font family lets you use the device's native UI font, cr
     background-color: color-mix(in srgb, var(--accent-purple) 80%, white);
   }
 }
-```
+```text
 
 ### Multiple Composition
 
@@ -964,7 +964,7 @@ The `system-ui` generic font family lets you use the device's native UI font, cr
   composes: interactive from "./interactive.module.css";
   background: var(--accent-purple);
 }
-```
+```text
 
 ---
 
@@ -1034,7 +1034,7 @@ These features require modern browser support:
     padding: 30px;
   }
 }
-```
+```text
 
 **After (Modern CSS):**
 ```css
@@ -1059,7 +1059,7 @@ These features require modern browser support:
     padding-inline: 30px;
   }
 }
-```
+```text
 
 ### Example 2: Button Component
 
@@ -1082,7 +1082,7 @@ These features require modern browser support:
 .button.primary:hover {
   background: #33ddff;
 }
-```
+```text
 
 **After:**
 ```css
@@ -1104,7 +1104,7 @@ These features require modern browser support:
     }
   }
 }
-```
+```text
 
 ---
 
@@ -1122,7 +1122,7 @@ Bun's CSS bundler automatically converts modern color notation to browser-compat
   background: hsl(250 50% 60%);
   box-shadow: 0 5px 10px hsl(250 50% 60% / 0.4);
 }
-```
+```text
 
 **Output (Converted for Compatibility):**
 ```css
@@ -1132,7 +1132,7 @@ Bun's CSS bundler automatically converts modern color notation to browser-compat
   background: hsl(250, 50%, 60%);
   box-shadow: 0 5px 10px hsla(250, 50%, 60%, 0.4);
 }
-```
+```text
 
 ### Hex with Alpha
 
@@ -1143,7 +1143,7 @@ Bun's CSS bundler automatically converts modern color notation to browser-compat
   border-color: #667eeacc;     /* 80% opacity */
   box-shadow: 0 4px 20px #0000004d; /* 30% opacity */
 }
-```
+```text
 
 **Output (Converted):**
 ```css
@@ -1152,7 +1152,7 @@ Bun's CSS bundler automatically converts modern color notation to browser-compat
   border-color: rgba(102, 126, 234, 0.8);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
-```
+```text
 
 ### light-dark() Theme Support
 
@@ -1167,7 +1167,7 @@ Bun's CSS bundler automatically converts modern color notation to browser-compat
   color: light-dark(#333333, #eeeeee);
   border-color: light-dark(#dddddd, #555555);
 }
-```
+```text
 
 **Output (Based on color-scheme):**
 - Light mode: Uses first color
@@ -1193,7 +1193,7 @@ const cssVars = cssBundler.generateColorVariables({
   "accent-cyan": "#00d4ff",
   "accent-purple": "#667eea",
 });
-```
+```text
 
 See [Bun.color CSS Formatting](https://bun.com/docs/runtime/color#format-colors-as-css) for more details.
 

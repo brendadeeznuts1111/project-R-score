@@ -38,7 +38,7 @@ bun --cpu-prof --cpu-prof-dir=./profiles edge-service-v3.ts
 
 **Live Profile:**
 
-```
+```text
 Hot Path: mlgs.findHiddenEdges() → 1.2ms (42%)
 Fix: SQLite 3.51 EXISTS→JOIN → 0.6ms (71% gain)
 ROI: 800 → 1420 scans/min → $68K/hr edge
@@ -126,7 +126,7 @@ curl http://localhost:3000/status
 
 ## 🎯 **Enterprise Metrics**
 
-```
+```text
 $ curl localhost:3000/health | jq
 {
   "status": "enterprise-production",
@@ -156,7 +156,7 @@ $ curl localhost:3000/health | jq
 
 ## 🎯 **50+ Fixes → Enterprise Arbitrage Perfection**
 
-```
+```text
 ✅ Lockfile v1: Zero upgrade breakage ✓
 ✅ CPU Profiling: 42% scan speedup ✓
 ✅ onTestFinished: Zero memory leaks ✓
@@ -170,7 +170,7 @@ $ curl localhost:3000/health | jq
 
 **Bun 1.3.6+ Edge Service v3 = Monorepo + perf + stability perfection.**
 
-```
+```text
 $ hyperbun-v3 --status
 🟢 ENTERPRISE V3 | $167K PROTECTED | 4.51% | CPU-PROFILED | EXECUTING...
 ```

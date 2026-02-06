@@ -16,7 +16,7 @@ The FactoryWager User Profile System v10.0 is a comprehensive, high-performance 
 
 ## Architecture
 
-```
+```text
 ┌────────────────────────────────────────────────────────────────────┐
 │ Bun 1.4 Runtime (Secrets + SQL + S3)                               │
 │ ┌────────────────────────────────────────────────────────────────┐ │

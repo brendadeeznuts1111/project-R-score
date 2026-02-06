@@ -85,7 +85,7 @@ Complete implementation of the multi-layer correlation graph system for predicti
 
 ### Layer Structure
 
-```
+```text
 🌐 MULTI-LAYER CORRELATION GRAPH
 ├── Layer 1: Direct Correlations (Selection-to-Selection)
 │   └── Real-time price anomaly detection
@@ -99,7 +99,7 @@ Complete implementation of the multi-layer correlation graph system for predicti
 
 ### Component Hierarchy
 
-```
+```text
 MultiLayerGraph (Interface)
 ├── MultiLayerCorrelationGraph (Constructor)
 │   ├── DirectCorrelationGraphBuilder
@@ -278,7 +278,7 @@ console.log(riskReport.mitigationRecommendations);
 
 ## 📚 File Structure
 
-```
+```text
 src/graphs/multilayer/
 ├── interfaces.ts                    # Core MultiLayerGraph interface
 ├── index.ts                         # Main exports

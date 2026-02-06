@@ -55,7 +55,7 @@ Successfully completed standardization of all exported constants in the Geelark 
 
 ## Test Results
 
-```
+```text
 ✅ All tests passing
 ✅ 46+ proxy validator tests passed
 ✅ No breaking changes detected
@@ -64,7 +64,7 @@ Successfully completed standardization of all exported constants in the Geelark 
 ```
 
 ### Test Evidence
-```
+```text
 bun test v1.3.5 (1e86cebd)
 
 tests/proxy-validator.test.ts:

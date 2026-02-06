@@ -2,7 +2,7 @@
 
 ## 📁 **Complete Directory Structure**
 
-```
+```text
 dashboard-worker/
 ├── src/                           # 🏗️ Source code (organized by domain)
 │   ├── api/                       # 🌐 API layer
@@ -96,7 +96,7 @@ dashboard-worker/
 
 ### 🔄 **Dependency Flow**
 
-```
+```text
 API Controllers → Services → Database/External APIs
      ↓              ↓              ↓
 Validators    Business Logic   Data Access

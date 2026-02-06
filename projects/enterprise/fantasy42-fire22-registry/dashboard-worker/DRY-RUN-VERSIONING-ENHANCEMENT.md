@@ -184,7 +184,7 @@ interface DryRunResult {
 
 ### **Sample Report Output**
 
-```
+```text
 📊 DRY RUN REPORT
 ================
 Generated: 1/27/2025, 3:45:30 PM

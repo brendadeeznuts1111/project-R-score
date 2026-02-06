@@ -10,7 +10,7 @@ Security Scanner following the official Bun security scanner template from
 
 ### ✅ Package Structure
 
-```
+```text
 packages/fire22-security-scanner/
 ├── 📄 package.json          # Template-compliant exports & metadata
 ├── 📄 README.md             # Comprehensive documentation

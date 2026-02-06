@@ -287,7 +287,7 @@ If the dashboard is slow to load:
 
 ## 📋 File Structure
 
-```
+```text
 analytics/
 ├── index.html                      # Main dashboard page
 ├── analytics.js                    # Core JavaScript functionality

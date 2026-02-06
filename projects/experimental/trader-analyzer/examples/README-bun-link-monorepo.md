@@ -19,7 +19,7 @@ Bun's `bun link` eliminates the friction of monorepo development:
 
 ## Monorepo Structure
 
-```
+```text
 nexus-radiance-monorepo/
 ├─ packages/
 │   ├─ core/                     → @nexus-radiance/core
@@ -330,7 +330,7 @@ bun run link:all
 
 ### Setup
 
-```
+```text
 🚀 Setting up NEXUS Radiance Monorepo with bun link
 
 📦 Step 1: Registering packages with bun link...
@@ -353,7 +353,7 @@ bun run link:all
 
 ### Status
 
-```
+```text
 📊 Monorepo Link Status
 
 📦 Packages:

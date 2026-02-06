@@ -111,7 +111,7 @@
 
 ## 📝 Complete File List
 
-```
+```text
 ./examples/demos/demo-bun-shell-env-redirect-pipe.ts
 ./scripts/bun-shell-examples.ts
 ./scripts/cpu-profiling-test.ts

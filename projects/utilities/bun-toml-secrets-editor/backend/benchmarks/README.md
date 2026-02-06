@@ -92,7 +92,7 @@ bun benchmarks/run-benchmarks.js
 
 ## 📊 Benchmark Results Example
 
-```
+```text
 🚀 Bun v1.3.7 Dedicated Benchmarks
 =====================================
 

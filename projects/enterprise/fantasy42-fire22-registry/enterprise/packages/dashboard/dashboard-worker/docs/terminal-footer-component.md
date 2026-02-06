@@ -342,7 +342,7 @@ To integrate this footer into your documentation:
 
 ## Character Reference
 
-```
+```text
 ╭ ─ ╮  Top corners and horizontal line
 │   │  Vertical lines
 ├ ─ ┤  T-junctions

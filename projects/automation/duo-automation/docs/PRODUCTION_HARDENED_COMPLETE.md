@@ -146,7 +146,7 @@ datadog-agent --config dd-agent.yaml
 ## 📊 **PERFORMANCE VALIDATION**
 
 ### **Stress Test Results:**
-```
+```text
 ✅ 100K concurrent operations: <5 seconds
 ✅ Memory management: Bounded to 10K metrics
 ✅ Error handling: 20% failure rate tracked

@@ -6,7 +6,7 @@
 
 ## **📊 VALIDATION RESULTS: PERFECT 100% ✅**
 
-```
+```text
 🔍 Official Bun.color Specification Validation
 ==============================================
 
@@ -290,7 +290,7 @@ type RGBAArray = [number, number, number, number];
 
 ### **📊 Outstanding Performance Metrics**
 
-```
+```text
 Testing format conversion performance (50000 iterations):
 
 RGBA Object    : 16.91ms (2,956,772 ops/sec)
@@ -402,7 +402,7 @@ const configColor = Bun.color("#10B981", "hex");
 
 ## **🎉 FINAL VALIDATION SUMMARY**
 
-```
+```text
 🏆 FINAL VALIDATION RESULT
 ──────────────────────────────────────────────────
 🎉 PERFECT COMPLIANCE ACHIEVED!

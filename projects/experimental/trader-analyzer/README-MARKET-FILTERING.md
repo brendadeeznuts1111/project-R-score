@@ -12,7 +12,7 @@ Enhanced dashboard with multi-level filtering by team, market type, sub-market, 
 
 ## Filter Hierarchy
 
-```
+```text
 Team → Market Type → Sub-Market → Pattern → Confidence
 ```
 
@@ -94,7 +94,7 @@ Each package card includes filterable metadata:
 
 When filters are applied, notifications are sent to Telegram topics:
 
-```
+```text
 🔍 Market Filters Applied
 
 👥 Team: Sports

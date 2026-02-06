@@ -21,7 +21,7 @@
 ## 🔍 **Error Pattern Analysis**
 
 ### **1. Error Distribution Across System**
-```
+```text
 📋 Error Pattern Summary:
 ├── Core Error System: 156 matches (lib/core-errors.ts)
 ├── Error Handling Demo: 78 matches (lib/error-handling-demo.ts)
@@ -136,7 +136,7 @@ if (isNaN(weight) || weight < 0) {
 ## ⚡ **Base Performance Analysis**
 
 ### **1. Performance Distribution**
-```
+```text
 📊 Performance Pattern Summary:
 ├── Syscall Constants: 49 matches (lib/syscall-constants.ts)
 ├── Optimized Server: 48 matches (lib/optimized-server.ts)
@@ -211,7 +211,7 @@ interface PerformanceMetrics {
 ## 📈 **Error Rate Analysis**
 
 ### **1. Error Frequency by Category**
-```
+```text
 🔥 Error Rate Distribution:
 ├── Validation Errors: 35% (most common)
 ├── System Errors: 25%
@@ -376,7 +376,7 @@ class BatchProcessor {
 ## 📊 **Base Performance Benchmarks**
 
 ### **1. Tier-1380 System Benchmarks**
-```
+```text
 🏭 FactoryWager Tier-1380 Performance Benchmark
 ================================================
 
@@ -412,7 +412,7 @@ class BatchProcessor {
 ```
 
 ### **2. A/B Testing Benchmarks**
-```
+```text
 🧪 A/B Testing Performance Benchmark
 ====================================
 
@@ -443,7 +443,7 @@ class BatchProcessor {
 ```
 
 ### **3. System Health Metrics**
-```
+```text
 🏥 System Health Metrics
 ========================
 

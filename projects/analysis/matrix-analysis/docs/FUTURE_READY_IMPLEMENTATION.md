@@ -133,7 +133,7 @@ await engine.renderDashboard(data)
 
 ## 🏗️ **Architecture Overview**
 
-```
+```text
 🚀 Future-Ready Bun Application
 ├── css/
 │   └── lightning-bundler.ts     # ✅ LightningCSS integration

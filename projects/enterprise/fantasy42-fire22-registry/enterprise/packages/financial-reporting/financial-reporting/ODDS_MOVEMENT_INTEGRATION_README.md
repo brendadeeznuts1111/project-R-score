@@ -42,7 +42,7 @@ regulatory compliance.
 
 ## 🏗️ Architecture
 
-```
+```text
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
 │  Odds Feed      │───▶│ OddsMovement     │───▶│ Financial       │
 │  System         │    │ Analysis Service │    │ Reporting       │
@@ -56,7 +56,7 @@ regulatory compliance.
 
 ## 📁 File Structure
 
-```
+```text
 src/domains/financial-reporting/
 ├── entities/
 │   ├── odds-movement.ts                    # Core odds movement entity

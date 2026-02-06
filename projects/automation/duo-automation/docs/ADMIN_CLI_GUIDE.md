@@ -43,7 +43,7 @@ bun run simple-admin-cli.ts status
 ```
 
 **Output:**
-```
+```text
 🏭 Factory-Wager System Status
 ========================================
 📊 Overall Status: HEALTHY
@@ -65,7 +65,7 @@ bun run simple-admin-cli.ts health
 ```
 
 **Output:**
-```
+```text
 🔍 System Health Check
 ==============================
 ✅ Health status: healthy
@@ -87,7 +87,7 @@ bun run simple-admin-cli.ts domains
 ```
 
 **Output:**
-```
+```text
 🌐 Domain Status
 ====================
 Domain                    Status     Uptime   Response  SSL Days  Last Check
@@ -109,7 +109,7 @@ bun run simple-admin-cli.ts dns
 ```
 
 **Output:**
-```
+```text
 📊 DNS Records
 ====================
 Type  Name        Value                                    TTL    Priority
@@ -144,7 +144,7 @@ bun run simple-admin-cli.ts metrics
 ```
 
 **Output:**
-```
+```text
 📈 System Performance Metrics
 ===================================
 🖥️ System Metrics:
@@ -175,7 +175,7 @@ bun run simple-admin-cli.ts propagation
 ```
 
 **Output:**
-```
+```text
 🌍 Checking DNS Propagation
 ==============================
 ✅ DNS propagation check completed
@@ -211,7 +211,7 @@ bun run simple-admin-cli.ts logs
 ```
 
 **Output:**
-```
+```text
 📋 System Logs
 ====================
 ℹ️ 1/15/2026, 6:07:17 PM
@@ -294,7 +294,7 @@ bun publish
 ### Common Issues
 
 #### API Connection Errors
-```
+```text
 ❌ API Error: Unable to connect to the url
 📡 Note: This would work when deployed to Cloudflare Workers
 ```

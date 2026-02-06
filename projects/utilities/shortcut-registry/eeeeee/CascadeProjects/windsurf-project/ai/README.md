@@ -6,7 +6,7 @@ The AI module provides advanced fraud detection capabilities using machine learn
 
 ## Architecture
 
-```
+```text
 ai/
 ├── README.md                    # This documentation
 ├── core/                        # Core AI engines and models

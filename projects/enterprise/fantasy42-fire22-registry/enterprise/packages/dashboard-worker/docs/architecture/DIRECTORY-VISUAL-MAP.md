@@ -2,7 +2,7 @@
 
 ## 🏗️ Fire22 Dashboard Worker Structure
 
-```
+```text
 dashboard-worker/
 ├── 📚 DOCUMENTATION (50+ files)
 │   ├── README.md, PROJECT-OVERVIEW.md

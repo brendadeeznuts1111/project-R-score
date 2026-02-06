@@ -12,7 +12,7 @@ mkdir -p "03-Reference/TES/Optimizations/Phase-2-Vault/OPT.9-Vault-Velocity"
 mkdir -p "03-Reference/TES/Optimizations/Phase-3-Templater/OPT.7-Insert-Caching"
 mkdir -p "03-Reference/TES/Standards"
 mkdir -p "03-Reference/TES/Tools"
-```
+```text
 
 ### Step 2: Move & Rename Files
 
@@ -100,7 +100,7 @@ mkdir -p "03-Reference/TES/Tools"
 - **[[../Protocol/TES-OPS-007-Protocol\|TES-OPS-007 Protocol]]** - Main protocol
 - **[[../Standards/VAULT-OPTIMIZATION-STANDARDS\|Optimization Standards]]** - Standards
 - **[[../Standards/VAULT-OPTIMIZATION-QUICK-REFERENCE\|Quick Reference]]** - Quick reference
-```
+```text
 
 ---
 

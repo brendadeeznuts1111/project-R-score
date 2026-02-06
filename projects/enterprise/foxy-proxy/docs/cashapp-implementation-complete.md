@@ -189,7 +189,7 @@ getCashAppStatistics(): {
 
 ### **Phase-Based Scaling**
 
-```
+```text
 Phase 1 (Week 1): 20 devices → 18-20 accounts (90% success)
 Phase 2 (Week 2): 50 devices → 45-48 accounts (90% success)
 Phase 3 (Month 1): 200 devices → 170-180 accounts (85% success)

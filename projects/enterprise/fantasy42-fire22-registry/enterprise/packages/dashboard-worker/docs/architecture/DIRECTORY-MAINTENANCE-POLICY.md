@@ -136,7 +136,7 @@ accurate, up-to-date directory information.
 
 ### **Escalation Path**
 
-```
+```text
 Level 1: Maintenance Team (Carlos/Diane)
    ↓
 Level 2: HR Director (Jennifer Adams)

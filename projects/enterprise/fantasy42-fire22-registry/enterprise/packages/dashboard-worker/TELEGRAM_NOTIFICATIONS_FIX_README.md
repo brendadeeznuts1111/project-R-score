@@ -230,7 +230,7 @@ const stats = bot.getNotificationStats();
 
 #### **Issue 1: "Bot token is invalid"**
 
-```
+```text
 ❌ Bot token test failed: Unauthorized
 ```
 
@@ -242,7 +242,7 @@ const stats = bot.getNotificationStats();
 
 #### **Issue 2: "No telegram_id found for user"**
 
-```
+```text
 ⚠️ No telegram_id found for user @username
 ```
 
@@ -254,7 +254,7 @@ const stats = bot.getNotificationStats();
 
 #### **Issue 3: "Rate limit exceeded"**
 
-```
+```text
 ⚠️ Rate limit reached, delaying notification
 ```
 
@@ -267,7 +267,7 @@ const stats = bot.getNotificationStats();
 
 #### **Issue 4: "Webhook not configured"**
 
-```
+```text
 ⚠️ No webhook configured (using polling mode)
 ```
 
@@ -279,7 +279,7 @@ const stats = bot.getNotificationStats();
 
 #### **Issue 5: "Database connection failed"**
 
-```
+```text
 ❌ Database connection test failed
 ```
 

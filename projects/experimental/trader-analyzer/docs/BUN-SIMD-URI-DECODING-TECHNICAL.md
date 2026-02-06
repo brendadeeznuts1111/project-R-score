@@ -237,7 +237,7 @@ function benchmarkDecodeURIComponent(
 
 For typical audit system strings (100-1000 characters):
 
-```
+```text
 Average: 50-200ns
 Throughput: 5-10 MB/s
 ```

@@ -274,7 +274,7 @@ Fire22LanguageManager (Singleton)
 
 ### **Customer Management API Structure**
 
-```
+```text
 Financial Controller (Enhanced)
 ├── getCustomersFinancial()
 ├── createCustomerFinancial()
@@ -294,7 +294,7 @@ Customer Controller (Extended)
 
 ### **Schema Validation Hierarchy**
 
-```
+```text
 Validation Schemas
 ├── Customer Management
 │   ├── CustomerManagementRequestSchema

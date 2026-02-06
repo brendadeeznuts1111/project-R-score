@@ -61,7 +61,7 @@ This runs with `DRY_RUN=1`, so **no real trades will execute**. Perfect for test
 ## 🔍 Step 3: Monitor Output
 
 Look for messages like:
-```
+```text
 💓 Heartbeat | Markets: 45 total, 35 w/Kalshi, 40 w/Poly, 30 w/Both | threshold=1¢
 📊 Best: Will Trump win the 2024 US... | P_yes(42¢) + K_no(56¢) + K_fee(2¢) = 100¢ | gap=0¢
 ```
@@ -69,7 +69,7 @@ Look for messages like:
 ## ⚡ Step 4: Enable Live Trading (CAREFULLY!)
 
 Once you're confident, edit `.env`:
-```
+```text
 DRY_RUN=0
 ```
 
@@ -81,7 +81,7 @@ RUST_LOG=info ./run.sh
 **⚠️ WARNING**: This will execute real trades with real money!
 
 Recommended first settings:
-```
+```text
 DRY_RUN=0
 CB_MAX_DAILY_LOSS=1000      # Stop after losing $10
 CB_MAX_POSITION_PER_MARKET=50  # Max 50 contracts per market
@@ -103,7 +103,7 @@ The bot has built-in risk limits:
 ## 📊 Understanding Arbitrage
 
 The bot profits when:
-```
+```text
 Best YES price (Platform A) + Best NO price (Platform B) < $1.00
 ```
 

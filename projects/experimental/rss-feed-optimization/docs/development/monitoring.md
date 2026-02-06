@@ -16,7 +16,7 @@ Monitoring and observability are critical for maintaining a healthy, performant 
 
 ### Monitoring Stack
 
-```
+```text
 Application Layer
 ├── Custom Metrics (Performance, Business)
 ├── Application Logs

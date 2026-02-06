@@ -72,7 +72,7 @@ bun run dash:health           # Health check
 
 ## Directory Structure
 
-```
+```text
 examples/
 ├── benchmarks/          # Performance benchmarking scripts
 ├── cli/                 # CLI feature demonstrations

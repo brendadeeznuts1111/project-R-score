@@ -17,7 +17,7 @@ management.
 
 ## 📁 Project Structure
 
-```
+```text
 dashboard-worker/src/
 ├── jwt-auth-worker.ts          # Main Cloudflare Worker implementation
 ├── jwt-auth-test-client.ts     # Test client for demonstration
@@ -101,7 +101,7 @@ bun run deploy
 
 #### 1. Service Information
 
-```
+```text
 GET /
 ```
 
@@ -124,7 +124,7 @@ Returns service information and available endpoints.
 
 #### 2. HTTP Basic Authentication
 
-```
+```text
 POST /auth/basic
 ```
 
@@ -132,7 +132,7 @@ Authenticate using HTTP Basic Auth and receive a JWT token.
 
 **Headers:**
 
-```
+```text
 Authorization: Basic base64(username:password)
 ```
 
@@ -152,7 +152,7 @@ Authorization: Basic base64(username:password)
 
 #### 3. Token Verification
 
-```
+```text
 POST /auth/verify
 ```
 
@@ -160,7 +160,7 @@ Verify a JWT token and return user information.
 
 **Headers:**
 
-```
+```text
 Authorization: Bearer <jwt-token>
 ```
 
@@ -186,7 +186,7 @@ Authorization: Bearer <jwt-token>
 
 #### 4. Token Refresh
 
-```
+```text
 POST /auth/refresh
 ```
 
@@ -194,7 +194,7 @@ Refresh an existing JWT token.
 
 **Headers:**
 
-```
+```text
 Authorization: Bearer <jwt-token>
 ```
 
@@ -209,7 +209,7 @@ Authorization: Bearer <jwt-token>
 
 #### 5. Protected Route
 
-```
+```text
 GET /protected
 ```
 
@@ -217,7 +217,7 @@ Access a protected resource that requires valid JWT authentication.
 
 **Headers:**
 
-```
+```text
 Authorization: Bearer <jwt-token>
 ```
 
@@ -275,7 +275,7 @@ AUTH_BASE_URL=https://your-worker.your-subdomain.workers.dev bun run jwt-auth-te
 
 ### Example Test Output
 
-```
+```text
 🚀 Starting JWT Authentication Test Suite
 
 ============================================================

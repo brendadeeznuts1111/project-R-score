@@ -101,7 +101,7 @@ searchInput.addEventListener('input', function(e) {
 ## 🔗 Data Organization
 
 ### **5 Utility Categories**
-```
+```text
 📁 FILE SYSTEM     (9 utilities)
 🌐 NETWORKING      (7 utilities)  
 ⚙️ PROCESS         (7 utilities)

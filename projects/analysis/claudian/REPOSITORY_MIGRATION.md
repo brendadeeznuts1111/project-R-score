@@ -6,19 +6,19 @@ Successfully migrated the Claudian project from the original YishenTu/claudian r
 ## Migration Details
 
 ### Repository Change
-```
+```text
 Old: https://github.com/YishenTu/claudian
 New: https://github.com/brendadeeznuts1111/obsidian-claude
 ```
 
 ### Author Update
-```
+```text
 Old: Yishen Tu
 New: Brenda Williams (Current Maintainer)
 ```
 
 ### Build System Update
-```
+```text
 Old: npm install / npm run build
 New: bun install / bun run build
 ```

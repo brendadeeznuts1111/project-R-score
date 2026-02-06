@@ -286,19 +286,19 @@ Create custom scripts in `scripts/` directory:
 ### Common Issues
 
 #### 1. Catalog Reference Not Found
-```
+```text
 Error: Package "react" referenced from catalog:default not found
 ```
 **Solution**: Add the package to the appropriate catalog in root package.json
 
 #### 2. Version Mismatches
-```
+```text
 Warning: Found version mismatches across packages
 ```
 **Solution**: Run `bun run catalog:sync --apply` to synchronize
 
 #### 3. Orphaned Dependencies
-```
+```text
 Warning: Found 5 unused catalog dependencies
 ```
 **Solution**: Remove unused entries or verify they're needed

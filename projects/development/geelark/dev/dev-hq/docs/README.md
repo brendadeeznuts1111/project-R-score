@@ -513,7 +513,7 @@ bun test tests/dev-hq-*.test.ts
 
 
 
-```
+```text
 🛠️ Dev HQ API Server > Health & Status Endpoints > should return health status [2.1ms]
 🤖 Dev HQ Automation > Basic Command Execution > should execute simple commands [8.5ms]
 🌐 Dev HQ Spawn Server > Server Lifecycle > should start and stop gracefully [15.2ms]

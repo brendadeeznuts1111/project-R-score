@@ -4,7 +4,7 @@ Bidirectional integration between Matrix Agent (Tier-1380 governance) and OpenCl
 
 ## Architecture
 
-```
+```text
 ┌─────────────────┐     ACP Protocol      ┌─────────────────┐
 │  Matrix Agent   │ ◄──────────────────► │    OpenClaw     │
 │  ~/.matrix/     │   Commands/Events    │  ~/openclaw/    │

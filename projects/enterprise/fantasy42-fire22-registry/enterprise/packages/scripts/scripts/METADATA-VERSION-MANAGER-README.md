@@ -161,7 +161,7 @@ bun run version:manager report
 
 ### **Core Components**
 
-```
+```text
 MetadataVersionManager
 ├── 📊 Workspace Analysis
 │   ├── Package Metadata Loading
@@ -285,7 +285,7 @@ console.log(`Built ${buildResult.built}/${buildResult.totalPackages} packages`);
 
 ### **Workspace Structure**
 
-```
+```text
 workspace/
 ├── package.json          # Root package
 ├── packages/             # Monorepo packages

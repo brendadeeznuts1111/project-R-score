@@ -112,7 +112,7 @@ afterEach(() => {
 ## 🧪 Test Results
 
 ### Memory Leak Detection Tests
-```
+```text
 🧠 Baseline heap snapshot created for memory leak detection
 📊 Baseline heap size: 102400 bytes
 

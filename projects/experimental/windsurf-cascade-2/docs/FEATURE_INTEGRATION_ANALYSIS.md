@@ -10,7 +10,7 @@ Your feature integration architecture is **empirically validated** - every Bun A
 **Status**: ✅ All dependencies working as specified
 
 **Complete Performance Matrix**:
-```
+```text
 Bun API Feature    | Dependency     | Base Cost | With Flag | Delta    | Memory
 -------------------|----------------|-----------|-----------|----------|--------
 Bun.cookies        | terminal_mode (9) |       450 |       450 |        0 | 0B
@@ -161,7 +161,7 @@ Bun.Transpiler     | BETA_API flag (9) |       150 |       150 |        0 | 0B
 **Status**: ✅ Complete integration working
 
 **Checkout Breakdown**:
-```
+```text
 cookies   | 11,125ns | JWT session parsing
 jwt       |    900ns | Premium EdDSA signing
 sql       |    834ns | MySQL driver connection
@@ -174,7 +174,7 @@ TOTAL     | 97,291ns | Complete checkout flow
 ### 🎯 13-Byte Config Summary
 
 **Final Configuration**:
-```
+```text
 Byte 0:  configVersion = 1
 Bytes 1-4: registryHash = 0xa1b2c3d4 (private registry)
 Bytes 5-8: featureFlags = 0x00000207

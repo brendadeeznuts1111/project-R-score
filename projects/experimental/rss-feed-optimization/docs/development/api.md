@@ -20,7 +20,7 @@ The API follows RESTful design principles:
 
 ### API Structure
 
-```
+```text
 /api/v1/
 ├── posts/           # Blog posts
 ├── rss/             # RSS feed endpoints
@@ -415,7 +415,7 @@ Get detailed health information.
 The admin API endpoints require authentication using an admin token.
 
 **Header Format:**
-```
+```text
 Authorization: Bearer your-admin-token
 ```
 

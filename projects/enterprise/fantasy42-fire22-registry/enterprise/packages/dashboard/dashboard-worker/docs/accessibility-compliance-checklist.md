@@ -534,7 +534,7 @@ lighthouse https://your-site.com --only-categories=accessibility
 
 **NVDA (Windows)**
 
-```
+```text
 1. Download NVDA (free)
 2. Start NVDA
 3. Navigate to your site
@@ -549,7 +549,7 @@ lighthouse https://your-site.com --only-categories=accessibility
 
 **VoiceOver (macOS)**
 
-```
+```text
 1. System Preferences > Accessibility > VoiceOver > Enable
 2. Use these commands:
    - VO + Right Arrow: Next item

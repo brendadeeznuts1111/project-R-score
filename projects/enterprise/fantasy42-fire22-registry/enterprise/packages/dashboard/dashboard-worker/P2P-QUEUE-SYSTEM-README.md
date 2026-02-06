@@ -31,7 +31,7 @@ integration for the Fire22 platform.
 
 ## 📁 File Structure
 
-```
+```text
 dashboard-worker/
 ├── p2p-queue-system.html          # Main P2P queue interface
 ├── src/
@@ -208,7 +208,7 @@ GET /api/p2p/stats
 
 ### Message Format
 
-```
+```text
 🔄 New Withdrawal Added
 💰 Amount: $500
 💳 Payment: Bank Transfer

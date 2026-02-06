@@ -122,7 +122,7 @@ git push origin feature/your-feature-name
 
 We use [Conventional Commits](https://www.conventionalcommits.org/) format:
 
-```
+```text
 <type>[optional scope]: <description>
 
 [optional body]

@@ -38,7 +38,7 @@ bun add -d @types/bun
 
 When Bun is not detected, files provide helpful error messages:
 
-```
+```text
 ❌ This CLI requires Bun runtime.
    Install Bun: https://bun.sh
    Then run: bun cli/dashboard/dashboard-cli.ts

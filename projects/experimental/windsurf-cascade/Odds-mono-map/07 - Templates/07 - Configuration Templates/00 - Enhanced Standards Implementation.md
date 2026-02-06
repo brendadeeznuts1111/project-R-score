@@ -1686,7 +1686,7 @@ async function placeBet(request: BetRequest): Promise<BetResponse> {
 -->
 
 *API Documentation follows enhanced Odds Protocol standards. Last reviewed: 2025-01-20*
-```
+```text
 
 ---
 
@@ -1715,7 +1715,7 @@ RUN bun run validate:enhanced --strict
 ## Start Monitoring Service
 EXPOSE 3999
 CMD ["bun", "run", "vault:watch"]
-```
+```text
 
 ### ** Performance optimization features**
 - **Parallel Processing**: Validate multiple files simultaneously

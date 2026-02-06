@@ -116,7 +116,7 @@
 
 ## 📝 Complete File List
 
-```
+```text
 ./examples/demos/demo-bun-spawn-complete.ts
 ./examples/demos/tag-manager.ts
 ./scripts/bun-shell-examples.ts

@@ -2,7 +2,7 @@
 
 ## ✅ Validation Results - ALL SYSTEMS OPERATIONAL
 
-```
+```text
 🔍 Validation Summary:
 📁 Files checked: 11
 🎯 Features validated: 27/28 (98% success rate)
@@ -36,7 +36,7 @@
 
 ## 📁 File Structure Created
 
-```
+```text
 📦 apps/dashboard/src/
 ├── 🎨 bun-v13-features.css          # Complete CSS implementation (4.5KB)
 ├── ⚛️ utils/view-transitions.ts     # Core utilities (6.7KB)
@@ -62,7 +62,7 @@
 ## 🧪 Test Results Summary
 
 ### Memory Leak Detection Tests
-```
+```text
 ✅ 5/5 core tests passing
 ✅ WebSocket connection lifecycle - 110.86ms
 ✅ Large array processing - 1.45ms  
@@ -76,7 +76,7 @@
 ```
 
 ### CSS Feature Validation
-```
+```text
 ✅ View transition pseudo-elements - Parsing correctly
 ✅ @layer blocks - Processing and minifying properly
 ✅ Color-scheme support - Automatic variable injection

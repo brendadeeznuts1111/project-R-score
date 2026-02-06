@@ -361,7 +361,7 @@ When making changes:
 
 Follow our commit message format:
 
-```
+```text
 [DOMAIN][SCOPE][TYPE] Brief description
 
 - Detailed change 1
@@ -370,7 +370,7 @@ Follow our commit message format:
 
 **Examples:**
 
-```
+```text
 [API][RSS][FEAT] Add support for custom RSS fields
 
 - Add customFields option to RSSGenerator
@@ -378,7 +378,7 @@ Follow our commit message format:
 - Add tests for custom field functionality
 ```
 
-```
+```text
 [UTILS][CACHE][FIX] Fix cache invalidation bug
 
 - Fix cache key generation for complex objects

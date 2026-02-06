@@ -12,7 +12,7 @@
 
 #### **1. Dynamic Cashier Menu Integration**
 
-```
+```text
 💰 CASHIER MENU FEATURES
 • Auto-detection of cashier menu elements
 • Visual enhancements with notification indicators
@@ -23,7 +23,7 @@
 
 #### **2. Comprehensive Balance Management**
 
-```
+```text
 💵 BALANCE TRACKING SYSTEM
 • Real-time balance updates every 30 seconds
 • Available, pending, and total balance display
@@ -34,7 +34,7 @@
 
 #### **3. Advanced Deposit System**
 
-```
+```text
 💳 DEPOSIT PROCESSING
 • Multiple payment method support (Credit Card, PayPal, Bank Transfer)
 • Instant processing for approved methods
@@ -45,7 +45,7 @@
 
 #### **4. Professional Withdrawal System**
 
-```
+```text
 💸 WITHDRAWAL MANAGEMENT
 • Multiple withdrawal methods (Bank, PayPal, Crypto)
 • Processing time estimates and status tracking
@@ -56,7 +56,7 @@
 
 #### **5. Payment Method Management**
 
-```
+```text
 🔧 PAYMENT METHOD FEATURES
 • Secure storage of payment information
 • Default payment method selection
@@ -67,7 +67,7 @@
 
 #### **6. Transaction History & Analytics**
 
-```
+```text
 📊 TRANSACTION MANAGEMENT
 • Complete transaction history with filtering
 • Real-time transaction status updates
@@ -78,7 +78,7 @@
 
 #### **7. Enterprise Security Features**
 
-```
+```text
 🔒 SECURITY & COMPLIANCE
 • Two-factor authentication for transactions
 • IP and device verification
@@ -89,7 +89,7 @@
 
 #### **8. Real-Time Updates & Notifications**
 
-```
+```text
 🔔 LIVE NOTIFICATIONS
 • Real-time balance updates
 • Transaction status notifications

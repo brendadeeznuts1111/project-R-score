@@ -55,7 +55,7 @@ zipCode: ""
 
 Templates are organized by category for easy navigation:
 
-```
+```text
 06-Templates/
 ├── research/              # Research & learning templates
 ├── setup/                 # Setup & configuration templates

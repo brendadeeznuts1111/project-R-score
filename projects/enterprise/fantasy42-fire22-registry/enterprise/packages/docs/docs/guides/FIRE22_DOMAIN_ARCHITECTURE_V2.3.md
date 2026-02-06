@@ -52,7 +52,7 @@
 
 ### **Financial Flow**
 
-```
+```text
 Collections → Balance → Wager → Settlement → Finance Reporting
     ↓            ↓         ↓         ↓
 Cashier → Commission → Distributions → Analytics
@@ -60,7 +60,7 @@ Cashier → Commission → Distributions → Analytics
 
 ### **Customer Journey**
 
-```
+```text
 User Management → Player Management → VIP Management → Loyalty
     ↓                 ↓                  ↓
 Authentication → Balance Management → Promotional Credits
@@ -68,7 +68,7 @@ Authentication → Balance Management → Promotional Credits
 
 ### **Gaming Ecosystem**
 
-```
+```text
 Sports Betting ↔ Live Casino ↔ Fantasy42 ↔ Lottery
     ↓               ↓             ↓           ↓
 Wager System → Balance Updates → Settlements → Reporting
@@ -171,7 +171,7 @@ Wager System → Balance Updates → Settlements → Reporting
 
 ### **Critical Dependencies**
 
-```
+```text
 Collections → Balance (REQUIRED)
 Wager → Balance (REQUIRED)
 Settlement → Collections (REQUIRED)
@@ -180,7 +180,7 @@ Fantasy42 → Sports Data (REQUIRED)
 
 ### **Optional Dependencies**
 
-```
+```text
 VIP → Promo Management (OPTIONAL)
 Analytics → All Domains (OPTIONAL)
 Notifications → All Domains (OPTIONAL)

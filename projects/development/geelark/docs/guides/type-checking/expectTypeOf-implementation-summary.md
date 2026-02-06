@@ -39,7 +39,7 @@ This comprehensive implementation provides **49 working test cases** across **3 
 
 ## 🚀 **PERFORMANCE METRICS**
 
-```
+```text
 📈 PERFORMANCE: All 49 tests run in ~14ms
 ⚡ SPEED: ~0.3ms per test average
 🎯 COVERAGE: 100% Bun expectTypeOf API methods

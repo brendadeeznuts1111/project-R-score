@@ -31,7 +31,7 @@ Open http://localhost:3000 in your browser.
 
 ## Project Structure
 
-```
+```text
 src/
 ├── components/           # React components
 │   ├── layout/          # Layout components (Header, Sidebar)

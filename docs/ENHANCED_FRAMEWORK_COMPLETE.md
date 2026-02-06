@@ -26,7 +26,7 @@ Successfully implemented the comprehensive **Fast-Path Completion Formula** and 
 - **Microservice Pipeline**: 87.5% bypass ratio ✅ Fast Path
 
 ### NativeBufferManager with Growth-Cap Formula
-```
+```text
 📈 Buffer Growth with Growth-Cap Formula:
    Initial: capacity=2048B, size=0B
    Chunk 1: +5B → capacity=2048B, size=5B (100% growth)

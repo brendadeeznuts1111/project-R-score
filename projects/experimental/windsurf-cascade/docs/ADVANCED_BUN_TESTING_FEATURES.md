@@ -51,7 +51,7 @@ describe.concurrent("API Integration Tests", () => {
 ```
 
 ### **Execution Order**
-```
+```text
 Phase 1 (Concurrent):
 ├── test.concurrent #1
 ├── test.concurrent #2
@@ -220,7 +220,7 @@ test.skip("temporarily disabled", () => {
 ## 📊 Test Execution Order Improvements
 
 ### **Before (Old Behavior)**
-```
+```text
 describe("suite", () => {
   beforeAll()  // Unpredictable timing
   test("test1")
@@ -230,7 +230,7 @@ describe("suite", () => {
 ```
 
 ### **After (New Behavior)**
-```
+```text
 describe("suite", () => {
   beforeAll()  // Predictable: before all tests
   test("test1")

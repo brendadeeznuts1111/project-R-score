@@ -136,7 +136,7 @@
 
 ### **Status Indicators**
 
-```
+```text
 🔴 CRITICAL - System down, immediate action required
 🟡 WARNING - Degraded performance, monitoring active
 🟢 RESOLVED - Issue fixed, monitoring for stability

@@ -46,7 +46,7 @@ Based on the vault analysis, here's the canvas distribution across directories:
 ## 🎨 Standardized Canvas System
 
 ### **Directory Numbering System**
-```
+```text
 00 - Dashboard/           → 00 - Dashboard Canvas.canvas
 01 - Daily Notes/         → 01 - Daily Notes Canvas.canvas
 02 - Architecture/        → 02 - Architecture Canvas.canvas

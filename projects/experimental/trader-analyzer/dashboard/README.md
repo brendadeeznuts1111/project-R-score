@@ -122,7 +122,7 @@ The dashboard automatically connects to `http://localhost:3000` if available:
 
 ## File Structure
 
-```
+```text
 dashboard/
 ├── index.html          # Main dashboard (standalone)
 ├── README.md          # This file

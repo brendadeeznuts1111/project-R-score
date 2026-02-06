@@ -54,7 +54,7 @@ bun build:mock      # 1.25 MB - + Mock API for CI/CD
 ## 🛠️ **IMPLEMENTED ARSENAL**
 
 ### **📁 Core Files Created:**
-```
+```text
 ├── cosmic-bundle-optimizer.ts    # Advanced build system
 ├── features.toml                 # Feature flag configuration
 ├── ui-themes.toml               # Theme and polish configuration

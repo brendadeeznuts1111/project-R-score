@@ -37,7 +37,7 @@ The enhanced HTTP proxy integration now validates all incoming X-Bun-* headers a
 
 ### **Validation Flow**
 
-```
+```text
 Incoming Request → Basic Validation → Config State Comparison → Routing Decision
        ↓                    ↓                      ↓                    ↓
    Format Check    → Current Config Lookup → Mismatch Detection → 503/200 Response

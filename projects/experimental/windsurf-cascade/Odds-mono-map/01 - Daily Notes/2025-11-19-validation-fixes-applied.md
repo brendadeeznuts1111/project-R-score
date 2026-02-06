@@ -30,7 +30,7 @@ Successfully renamed all template files in `06 - Templates/` to comply with the 
 
 ### **✅ Directory Structure Created (8/8 Missing Folders Added)**
 Created all recommended subfolders to improve vault organization:
-```
+```text
 02 - Architecture/
 ├── System Design/     ✅ Created
 └── Data Models/       ✅ Created

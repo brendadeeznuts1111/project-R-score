@@ -4,7 +4,7 @@
 
 ### **Before Optimization**
 
-```
+```text
 TypeScript: 91.5%
 Shell:       7.2%
 Other:       1.3%
@@ -12,7 +12,7 @@ Other:       1.3%
 
 ### **Expected After Optimization**
 
-```
+```text
 TypeScript: ~85-90%
 Shell:       ~10-15%
 JSON/YAML:   ~2-3%

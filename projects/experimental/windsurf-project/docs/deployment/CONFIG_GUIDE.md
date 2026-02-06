@@ -84,7 +84,7 @@ Replace the placeholder values in `config.json` with your actual settings:
 
 Add these records to your domain's DNS:
 
-```
+```text
 # A Record
 @        A        1.2.3.4      # Your server IP
 

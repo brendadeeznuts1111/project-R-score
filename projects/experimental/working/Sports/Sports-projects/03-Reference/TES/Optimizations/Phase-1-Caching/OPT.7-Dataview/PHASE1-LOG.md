@@ -12,7 +12,7 @@ Bun.env.get('OBSIDIAN_ENABLE_CACHE') // Native env API
 crypto.subtle // Signature on opt JSON
 Bun.file('.obsidian/app.json').text() // Parse
 spawn('obsidian-cli', ['settings', 'templater-scope']) // Status
-```
+```text
 
 ### Cloudflare Workers Deployment
 
@@ -32,7 +32,7 @@ binding = "TES_TP_KV"
 
 [vars]
 OBSIDIAN_ENABLE_CACHE = "true"
-```
+```text
 
 ### Cache Format
 
@@ -45,7 +45,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
   "cache_duration": 7,
   "prompt_limit": 5
 }
-```
+```text
 
 ---
 
@@ -80,7 +80,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
   "templates_folder": "06-Templates/",
   "excluded_folders": ["attachments/", "*.canvas"]
 }
-```
+```text
 
 ---
 
@@ -112,7 +112,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
   "enable_dataview_js": false,
   "enable_js": false
 }
-```
+```text
 
 ---
 
@@ -127,7 +127,7 @@ OBSIDIAN_ENABLE_CACHE = "true"
 **Exclusion Pattern**:
 ```yaml
 excluded_files: ["*.canvas", "*.pdf", "*.zip"]
-```
+```text
 
 ---
 
@@ -149,7 +149,7 @@ if (promptCount < MAX_PROMPTS) {
   tp.user.prompt("Category");
   promptCount++;
 }
-```
+```text
 
 ---
 
@@ -167,7 +167,7 @@ if (promptCount < MAX_PROMPTS) {
   "strictLineBreaks": false,
   "showLineNumber": true
 }
-```
+```text
 
 ---
 
@@ -185,7 +185,7 @@ if (promptCount < MAX_PROMPTS) {
 {
   "enable_graph_view": false
 }
-```
+```text
 
 ---
 
@@ -209,13 +209,13 @@ if (promptCount < MAX_PROMPTS) {
 **Log Format**:
 ```
 [THREAD_GROUP:VAULT] [META:KEY-VERSION:2] [HSL-PHASE:PLUGIN [[8338EC]]]
-```
+```text
 
 **Verification Command**:
 ```bash
 rg '"\\[META:CACHED\\\\]":' logs/worker-events.log
 # Result: 8 matches / 0.00001s
-```
+```text
 
 ---
 
@@ -226,7 +226,7 @@ rg '"\\[META:CACHED\\\\]":' logs/worker-events.log
 **Deployment Command**:
 ```bash
 bunx wrangler deploy --env=production
-```
+```text
 
 **Status**: ✅ **0 warnings**  
 **Configuration**: `[[kv_namespaces]]` + `[vars] OBSIDIAN_ENABLE_CACHE=true`  
@@ -254,7 +254,7 @@ Telemetry (0x5002)
 Alert (0x5003) via Event CH3 Magenta [[FF00FF]]
   ↓
 WebSocket (0x7001 [[9D4EDD]]) for real-time velocity streams
-```
+```text
 
 ### Ruin-Proof Design
 

@@ -310,7 +310,7 @@ tR += `- [ ] 第一阶段开发\n`;
 ---
 **🚀 Dynamic Project Template** • **Script Integration Example** • **Last Updated**: <%* const utils
 = require('./scripts/template-utils.js'); tR += utils.getCurrentDate('YYYY-MM-DDTHH:mm:ssZ'); %>
-```
+```text
 
 ---
 
@@ -352,7 +352,7 @@ project_id: mobileapp-abc123
 created: 2025-11-18T15:30:00Z
 datetime: 2025-11-18T15:30:00Z
 tags: odds-protocol, project, development
-```
+```text
 
 ---
 

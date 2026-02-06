@@ -75,7 +75,7 @@ The system now validates that each agent has:
 
 ### Example Output
 
-```
+```text
 🎯 Dashboard Health Insights:
    Dashboard Health Score: 100%
    ✅ Permissions Matrix: All systems operational
@@ -93,7 +93,7 @@ The system now validates that each agent has:
 
 ### Specific Recommendations for Permissions Matrix Issues
 
-```
+```text
 🔍 PERMISSIONS MATRIX SPECIFIC:
    - Verify agent_configs table has correct structure
    - Check that permissions are properly nested

@@ -34,7 +34,7 @@ I have successfully implemented the comprehensive **Bun-native Cascade Customiza
 
 ### **⚡ Performance Achievements:**
 
-```
+```text
 🎯 BUN-NATIVE PERFORMANCE IMPROVEMENTS:
 ├── Rule Matching: 20x faster (CRC32 vs JSON comparison)
 ├── Memory Compression: 15% better (Bun.gzip vs zlib)

@@ -507,7 +507,7 @@ stateDiagram-v2
     [*] --> Generated
     Generated --> Applied
     ...
-```
+```text
 
 ```
 

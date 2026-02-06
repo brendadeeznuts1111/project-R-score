@@ -4,7 +4,7 @@ This directory contains the organized testing infrastructure for the project, fo
 
 ## Directory Structure
 
-```
+```text
 tests/
 ├── unit/                    # Unit tests for individual components
 │   ├── ci-detector.test.ts  # CI environment detection tests

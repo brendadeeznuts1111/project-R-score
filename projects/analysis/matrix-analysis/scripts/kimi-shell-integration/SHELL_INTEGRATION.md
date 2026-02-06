@@ -41,7 +41,7 @@ bun run ~/.kimi/tools/unified-shell-bridge.ts
 
 ### Integration Flow
 
-```
+```text
 Kimi Shell → unified-shell-bridge → {OpenClaw, Profile Terminal, Matrix Agent}
                 ↓
          Bun.secrets (token storage)

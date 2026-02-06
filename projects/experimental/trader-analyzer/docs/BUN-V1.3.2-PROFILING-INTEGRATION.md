@@ -25,7 +25,7 @@ This document describes the integration of Bun v1.3.2 features (CPU profiling, t
 
 ### Component Structure
 
-```
+```text
 🌐 PROFILING-ENABLED MULTI-LAYER SYSTEM
 ├── Performance Monitor (performance-monitor.ts)
 │   ├── Session tracking
@@ -181,7 +181,7 @@ bun run scripts/profiling/run-profiled-analysis.ts
 
 ### Example Output
 
-```
+```text
 📊 Profile Summary: {
   totalSessions: 15,
   activeSessions: 0,
@@ -343,7 +343,7 @@ test("performance test", () => {
 
 ## File Structure
 
-```
+```text
 src/
 ├── arbitrage/shadow-graph/profiling/
 │   ├── performance-monitor.ts          # Performance tracking

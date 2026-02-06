@@ -302,7 +302,7 @@ export MINIAPP_URL="https://production.factory-wager-miniapp.pages.dev"
 
 ### Data Flow
 
-```
+```text
 CovertSteamEvent Detection
     ↓
 sendCovertSteamAlertToTelegram()

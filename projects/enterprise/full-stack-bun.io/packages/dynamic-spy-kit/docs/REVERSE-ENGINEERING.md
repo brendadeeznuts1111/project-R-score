@@ -4,7 +4,7 @@
 
 ## 🎯 Core Principle - Market is the Source Code
 
-```
+```text
 WINNING PLAY = MODEL OUTPUT (public)
 TICK DATA    = MARKET STATE (public) 
 FUZZY MATCH  = REVERSE COMPILER
@@ -27,7 +27,7 @@ MODEL OUTPUT + MARKET STATE → MODEL LOGIC RECONSTRUCTED
 **864K TICKS SCANNED → TOP 10 MATCHES (2.1ms ⚡)**
 
 **LINE FUZZINESS:**
-```
+```text
 Play line: 1.92
 Tick 1: 1.918 → 99.8% match (0.1% diff)
 Tick 2: 1.925 → 97.4% match (0.3% diff) 
@@ -39,7 +39,7 @@ Tick 3: 2.01  → 45.2% match (4.7% diff) → REJECT
 **Pinnacle play @ 14:23:45 UTC → $1.2M @1.92**
 
 **BACKWARD SEARCH (Asia first):**
-```
+```text
 14:19:13 SBOBET:     volume 4.2x ↑ @1.89  ← 4m32s LEAD
 14:21:30 Fonbet:     volume 3.8x ↑ @1.91  ← 2m15s LEAD  
 14:23:12 Pinnacle:   volume 2.1x ↑ @1.92  ← sharp CONFIRM
@@ -48,7 +48,7 @@ PATTERN: "ASIA VOLUME → PINNACLE SHARP = WIN"
 ```
 
 **VOLUME SPIKE SIGNATURES:**
-```
+```text
 Normal:     250K volume
 Asia Spike: 850K volume (3.4x) → SIGNAL
 Pinnacle:   520K volume (2.1x) → CONFIRMATION
@@ -113,7 +113,7 @@ confidence = 0.8×0.999 + 0.15×1.0 + 0.05×1.0 = 0.949 ✅
 **100 WINNING PLAYS PROCESSED:**
 
 **COMMON PATTERNS EMERGING:**
-```
+```text
 Pattern A (42 plays): "SBOBET 4m → Pinnacle sharp" → 2.1% edge
 Pattern B (28 plays): "Fonbet buyback → Europe lag" → 1.8% edge  
 Pattern C (19 plays): "Pinnacle closing 30min" → 3.2% edge
@@ -161,7 +161,7 @@ tail -f replica.log | jq '.replicationScore > 0.85'
 
 **TESTED ON 1,247 HISTORICAL WINNING PLAYS:**
 
-```
+```text
 Replica Model → Original Model
 asia-sharp     → 89% replication (2.1% → 1.87% edge)
 buyback-edge   → 82% replication (1.8% → 1.47% edge) 

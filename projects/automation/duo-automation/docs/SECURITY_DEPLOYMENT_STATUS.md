@@ -43,7 +43,7 @@ $ bun run security:test:large-files
 ```
 
 **Results**:
-```
+```text
 📏 Test 1: 1GB File Integrity ✅ PASSED
 📏 Test 2: 2GB File Corruption Detection ✅ PASSED  
 🔍 Test 3: Null Byte Injection Detection (CWE-158) ✅ PASSED
@@ -61,7 +61,7 @@ $ bun run security:test:mysql && bun run security:test:postgres
 ```
 
 **MySQL Binary Results**:
-```
+```text
 🧪 MySQL Binary Tests: ✅ 15/15 PASSED
 📊 Small/Medium/Large BLOB handling ✅ CORRUPTION-FREE
 🔧 Corrupted data recovery ✅ WORKING
@@ -69,7 +69,7 @@ $ bun run security:test:mysql && bun run security:test:postgres
 ```
 
 **PostgreSQL Array Results**:
-```
+```text
 🧪 PostgreSQL Array Tests: ✅ 16/16 PASSED
 📊 Empty array parsing ✅ FIXED
 📊 Large JSON in arrays (>16KB) ✅ SAFELY HANDLED
@@ -156,7 +156,7 @@ $ bun run tags:ai:export ./security-audit-tags.json
 ```
 
 ### **Test Results Summary**
-```
+```text
 🧪 Total Security Tests: 36
 📊 Passed Tests: 36 (100%)
 🔒 Vulnerabilities Covered: 11

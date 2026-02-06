@@ -79,7 +79,7 @@ bun run version:json                 # Generate JSON
 - ✅ Generator tests (3 tests)
 
 **Test Results**:
-```
+```text
 ✓ 19 pass
 ✓ 0 fail
 ✓ 36 expect() calls
@@ -191,7 +191,7 @@ bun run version:show
 ```
 
 Output:
-```
+```text
 📦 Version Information
 ======================
 
@@ -209,7 +209,7 @@ bun run build:versioned
 ```
 
 Output:
-```
+```text
 🚀 Versioned Build System
 ========================
 
@@ -231,7 +231,7 @@ console.log(`Timestamp: ${BUILD_METADATA.timestamp}`);
 
 ## 📁 Files Created
 
-```
+```text
 bun-inspect-utils/
 ├── src/
 │   ├── version.ts                    # Core system (200+ lines)
@@ -351,7 +351,7 @@ export const BUILD_METADATA = {
 ## ✅ Testing
 
 ### Test Results
-```
+```text
 ✓ 19 tests passed
 ✓ 0 tests failed
 ✓ 36 expect() calls

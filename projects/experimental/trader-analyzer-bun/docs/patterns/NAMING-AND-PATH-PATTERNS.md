@@ -23,7 +23,7 @@ Comprehensive guide to naming conventions and path patterns across the Hyper-Bun
 **Pattern**: `src/[domain]/[component]/[file-name].ts`
 
 **Domain Structure**:
-```
+```text
 src/
 ├── api/                    # API routes and handlers
 │   ├── routes.ts          # Main route definitions
@@ -68,14 +68,14 @@ src/
 **Pattern**: `test/[domain]/[component]/[file-name].test.ts` or `src/[domain]/[component]/[file-name].test.ts`
 
 **Co-located Tests** (Preferred for unit tests):
-```
+```text
 src/orca/arbitrage/
 ├── storage.ts
 └── storage.test.ts
 ```
 
 **Dedicated Test Directory** (Preferred for integration tests):
-```
+```text
 test/
 ├── api/
 │   └── routes.test.ts
@@ -139,7 +139,7 @@ export * from './sharp-books';
 **Pattern**: `src/[domain]/[subdomain]/[component]/`
 
 **Domain Hierarchy**:
-```
+```text
 src/
 ├── [domain]/              # Top-level domain (e.g., orca, api, arbitrage)
 │   ├── [subdomain]/       # Subdomain (e.g., arbitrage, sharp-books)
@@ -166,7 +166,7 @@ src/
 **Pattern**: `docs/[category]/[topic]/[file-name].md`
 
 **Category Structure**:
-```
+```text
 docs/
 ├── guides/                # Developer guides
 │   ├── NAMING-CONVENTIONS.md
@@ -377,7 +377,7 @@ export default { storage, types, utils }; // ❌ Use named exports
 **Pattern**: `/api/[domain]/[resource]/[action]` or `/api/[domain]/[resource]/:id`
 
 **Examples**:
-```
+```text
 GET    /api/orca/arbitrage/opportunities
 POST   /api/orca/arbitrage/store
 GET    /api/orca/arbitrage/opportunity/:id
@@ -400,7 +400,7 @@ GET    /api/cache/stats
 **Pattern**: `?[param]=[value]&[param]=[value]`
 
 **Examples**:
-```
+```text
 GET /api/orca/arbitrage/opportunities?status=detected&minEdge=1.5
 GET /api/orca/arbitrage/opportunities?book_pair=pinnacle-ps3838&limit=50
 GET /api/changelog?limit=50&format=json
@@ -741,7 +741,7 @@ rg "\.(get|post|put|delete)\(['\"][^\/]" src/api/
 
 ### 12.1. [EXAMPLES.FILE.STRUCTURE.RG] Complete File Structure Example
 
-```
+```text
 src/orca/arbitrage/
 ├── index.ts                    # Re-exports public API
 ├── storage.ts                  # OrcaArbitrageStorage class

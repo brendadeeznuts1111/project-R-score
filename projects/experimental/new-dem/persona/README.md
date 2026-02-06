@@ -26,7 +26,7 @@ A sophisticated edge detection system that analyzes betting market data using ad
 
 ## 🏗️ Architecture
 
-```
+```text
 persona/
 ├── persona-config.ts       # Configuration & thresholds
 ├── persona-runner.ts       # HTTP API server & main logic

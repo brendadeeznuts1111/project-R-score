@@ -523,7 +523,7 @@ const awsConfig = getOptionalService('AWS_ACCESS_KEY_ID', (keyId) => ({
 
 ## File Structure
 
-```
+```text
 pages/
 ├── .env.example          # Template (committed to git)
 ├── .env                  # Local overrides (gitignored)

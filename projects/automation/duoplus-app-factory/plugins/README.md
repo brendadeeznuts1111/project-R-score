@@ -152,7 +152,7 @@ bun run demo.ts
 ```
 
 **Output:**
-```
+```text
 🔒 URLPattern Security Plugin - Live Demo
 ============================================================
 

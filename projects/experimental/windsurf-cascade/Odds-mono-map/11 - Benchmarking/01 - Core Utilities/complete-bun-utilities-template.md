@@ -125,7 +125,7 @@ console.log(chalk.cyan(`Operation took: ${(duration / 1_000_000).toFixed(2)}ms`)
 ## 📊 Performance Metrics
 
 ### **Execution Results**
-```
+```text
 🎯 Complete Bun Utilities Ecosystem
 All Functions from https://bun.com/docs/runtime/utils
 ================================================================================

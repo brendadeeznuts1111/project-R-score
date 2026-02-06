@@ -166,7 +166,7 @@ Each department definition document includes:
 
 ### Department Head Contact Matrix
 
-```
+```text
 🎲 [DOMAIN: Betting] Sportsbook Operations
 ├── Marcus Rodriguez (Head) - marcus.rodriguez@apexodds.net
 ├── Linda Chen (Comms) - linda.chen@apexodds.net

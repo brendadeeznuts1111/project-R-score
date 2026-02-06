@@ -4,7 +4,7 @@
 
 ## 🎯 **Per-Market URLPattern Precision Routing**
 
-```
+```text
 Generic:     /api/arb/:league/:qtr          → All markets
 
 Scoped:      /api/arb/:league/:qtr/:market  → Spread/O/U/Props
@@ -110,7 +110,7 @@ curl http://localhost:3000/status
 
 ## 🎯 **Market Precision ROI**
 
-```
+```text
 Generic Routing:     1420 scans/min → 3.8% avg
 Market Precision:   1580 scans/min → 4.82% avg
 Precision Gain:     11% scans + 27% edge quality
@@ -172,7 +172,7 @@ await mlgs.findHiddenEdges({
 
 ## 🎯 **Status**
 
-```
+```text
 [SPORTS-EDGE-V3.1][MARKET-PRECISION][1580-SCANS/MIN][4.82% EDGE]
 [VALUE:$214K][ROUTING:8µs][PRECISION:247][STATUS:ULTIMATE]
 ```

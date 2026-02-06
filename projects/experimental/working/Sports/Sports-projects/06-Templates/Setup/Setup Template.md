@@ -53,7 +53,7 @@ VIZ-06: []
 ## 🔧 Configuration Details
 
 ### Files to Create/Modify
-```
+```text
 path/to/file1
 path/to/file2
 ```

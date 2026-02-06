@@ -82,7 +82,7 @@ bun access:audit --since=1d
 
 ## [TEMPLATER][ACCESS-RULE][TMPL-001][v2.11][STABLE]
 
-```
+```text
 [AGENT][GLOBAL][RULE][REQUIRED][ACCESS-NEW-001][v2.11][ACTIVE]
 
 - **Trigger**: ...

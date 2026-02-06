@@ -115,7 +115,7 @@ bun run build:upload-premium # Build with all features
 
 ## Configuration Priority
 
-```
+```text
 CLI Flags (1) > Environment Variables (2) > bunfig.toml (3)
 ```
 

@@ -248,7 +248,7 @@ Worker project structure.
 
 ### Workspace Structure (Each workspace contains):
 
-```
+```text
 @fire22-workspace-name/
 ├── package.json              # Workspace configuration
 ├── package.linked.json       # Linked version config

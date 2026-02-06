@@ -6,7 +6,7 @@ This directory is dedicated to **demos, experiments, and workshopping** for the 
 
 ## 🗂️ Directory Structure
 
-```
+```text
 11 - Workshop/
 ├── Canvas Demos/           # Canvas visualization demonstrations
 ├── Experiments/           # Experimental features and tests

@@ -113,7 +113,7 @@ Chat Integration
 
 ### **Escalation Protocol**
 
-```
+```text
 Department Issues → Department Head (You)
 Cross-Department → CTO (@nolarose1968-pixel)
 Enterprise Critical → CEO (@brendadeeznuts1111)

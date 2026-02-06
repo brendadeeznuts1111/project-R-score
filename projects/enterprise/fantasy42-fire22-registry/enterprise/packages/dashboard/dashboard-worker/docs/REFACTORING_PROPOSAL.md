@@ -42,7 +42,7 @@ that are difficult to maintain and contain redundant patterns.
 
 #### **1.1 Create Shared Types Library** ✅ **COMPLETED**
 
-```
+```text
 dashboard-worker/core/types/
 ├── shared/
 │   ├── validation.ts          # ✅ Consolidated validation interfaces
@@ -59,7 +59,7 @@ dashboard-worker/core/types/
 
 #### **1.2 Create Shared Utilities Library** ✅ **COMPLETED**
 
-```
+```text
 dashboard-worker/core/utils/
 ├── formatters/
 │   ├── date.ts                # ✅ Consolidated date formatting
@@ -77,7 +77,7 @@ dashboard-worker/core/utils/
 
 #### **2.1 Refactor `other.controller.ts` (2,959 lines)** ✅ **IMPLEMENTED**
 
-```
+```text
 src/api/controllers/other/
 ├── customer-operations.controller.ts    # ✅ Customer CRUD (250 lines)
 ├── financial-operations.controller.ts   # ✅ Payments/transfers (300 lines)
@@ -98,7 +98,7 @@ src/api/controllers/other/
 
 #### **2.2 Refactor `fantasy402-agent-client.ts` (2,433 lines)**
 
-```
+```text
 src/api/clients/fantasy402/
 ├── agent-client-core.ts                # Core client functionality (300 lines)
 ├── agent-authentication.ts             # Authentication handling (250 lines)
@@ -112,7 +112,7 @@ src/api/clients/fantasy402/
 
 #### **2.3 Refactor `schemas/index.ts` (2,235 lines)**
 
-```
+```text
 src/api/schemas/
 ├── core/
 │   ├── api-response.ts                 # API response schemas
@@ -136,7 +136,7 @@ src/api/schemas/
 
 #### **3.1 Fantasy42 Integration Consolidation**
 
-```
+```text
 core/integrations/fantasy42/
 ├── core/
 │   ├── client.ts                       # Core Fantasy42 client
@@ -176,7 +176,7 @@ core/integrations/fantasy42/
 
 #### **5.1 Testing Strategy**
 
-```
+```text
 tests/
 ├── unit/
 │   ├── core/                          # Core functionality tests
@@ -334,7 +334,7 @@ tests/
 
 **Proposed Modular Structure:**
 
-```
+```text
 src/telegram/
 ├── core/
 │   ├── telegram-bot-core.ts          # ✅ Core bot initialization & connection
@@ -377,7 +377,7 @@ src/telegram/
 
 **Proposed Modular Structure:**
 
-```
+```text
 src/sports/
 ├── core/
 │   ├── sports-types.ts               # ✅ Shared sports interfaces

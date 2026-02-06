@@ -38,7 +38,7 @@ A comprehensive guide to the DuoPlus Automation platform structure with enterpri
 ### **🎯 Core Directories**
 
 #### **📋 docs/ - Documentation (221 files)**
-```
+```text
 docs/
 ├── architecture/          # System architecture docs
 ├── api/                   # API documentation
@@ -51,7 +51,7 @@ docs/
 ```
 
 #### **⚙️ config/ - Configuration (44 files)**
-```
+```text
 config/
 ├── application/           # Application settings
 ├── build/                 # Build configuration
@@ -63,7 +63,7 @@ config/
 ```
 
 #### **🛠️ tools/ - CLI Tools (31 files)**
-```
+```text
 tools/
 ├── url-validator.ts       # URL validation CLI
 ├── url-cli.ts             # URL management CLI
@@ -75,7 +75,7 @@ tools/
 ```
 
 #### **🔧 utils/ - Utilities (6 files)**
-```
+```text
 utils/
 ├── url-helper.ts          # URL helper functions
 ├── url-monitor.ts         # URL monitoring
@@ -86,7 +86,7 @@ utils/
 ```
 
 #### **📦 packages/ - Packages (306 files)**
-```
+```text
 packages/
 ├── @core/                 # Core packages
 │   ├── common/            # Common utilities
@@ -102,7 +102,7 @@ packages/
 ```
 
 #### **🚀 src/ - Source Code (312 files)**
-```
+```text
 src/
 ├── @api/                  # API implementations
 ├── @automation/           # Automation systems
@@ -114,7 +114,7 @@ src/
 ```
 
 #### **🧪 tests/ - Tests (101 files)**
-```
+```text
 tests/
 ├── core/                  # Core tests
 ├── integration/           # Integration tests
@@ -129,7 +129,7 @@ tests/
 ### **🌐 Specialized Directories**
 
 #### **📊 monitoring/ - Monitoring (4 files)**
-```
+```text
 monitoring/
 ├── dashboards/            # Monitoring dashboards
 ├── alerts/                # Alert configurations
@@ -138,7 +138,7 @@ monitoring/
 ```
 
 #### **🌐 infrastructure/ - Infrastructure (38 files)**
-```
+```text
 infrastructure/
 ├── deployment/            # Deployment configurations
 ├── cloudflare/            # Cloudflare setup
@@ -149,7 +149,7 @@ infrastructure/
 ```
 
 #### **🔒 security/ - Security (3 files)**
-```
+```text
 security/
 ├── policies/              # Security policies
 ├── compliance/            # Compliance documentation
@@ -157,7 +157,7 @@ security/
 ```
 
 #### **📈 analytics/ - Analytics (60 files)**
-```
+```text
 analytics/ (located in research/)
 ├── dashboards/            # Analytics dashboards
 ├── reports/               # Analytics reports
@@ -166,7 +166,7 @@ analytics/ (located in research/)
 ```
 
 #### **🎯 demos/ - Demos (69 files)**
-```
+```text
 demos/
 ├── @cli/                  # CLI demonstrations
 ├── @mobile/               # Mobile demos
@@ -176,7 +176,7 @@ demos/
 ```
 
 #### **📚 research/ - Research (60 files)**
-```
+```text
 research/
 ├── bench/                 # Benchmarking research
 ├── time-series/           # Time series analysis
@@ -189,27 +189,27 @@ research/
 ## 🎯 **SPECIALIZED COMPONENTS**
 
 ### **🚀 cli/ - CLI Tools (2 files)**
-```
+```text
 cli/
 ├── master-perf-cli.ts     # Performance CLI
 └── lightning-dashboard.ts # Dashboard CLI
 ```
 
 ### **📦 platforms/ - Platforms (2 files)**
-```
+```text
 platforms/
 ├── android/               # Android platform
 └── web/                   # Web platform
 ```
 
 ### **🔌 plugins/ - Plugins (1 file)**
-```
+```text
 plugins/
 └── inspect/               # Inspection plugin
 ```
 
 ### **📊 reports/ - Reports (13 files)**
-```
+```text
 reports/
 ├── performance/           # Performance reports
 ├── security/              # Security reports
@@ -217,21 +217,21 @@ reports/
 ```
 
 ### **🏭 labs/ - Labs (16 files)**
-```
+```text
 labs/
 ├── agents/                # Agent experiments
 └── projects/              # Lab projects
 ```
 
 ### **🎬 runtime/ - Runtime (10 files)**
-```
+```text
 runtime/
 ├── kernel/                # Runtime kernel
 └── server/                # Runtime server
 ```
 
 ### **⚡ ops/ - Operations (9 files)**
-```
+```text
 ops/
 ├── infrastructure/        # Ops infrastructure
 ├── logging/               # Logging systems

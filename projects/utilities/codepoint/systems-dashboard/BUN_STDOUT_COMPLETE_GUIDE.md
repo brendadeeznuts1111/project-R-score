@@ -57,7 +57,7 @@ console.log("undefined:", undefined);
 ```
 
 **Output:**
-```
+```text
 String: Hello World
 Number: 42
 Boolean: true
@@ -214,7 +214,7 @@ await Bun.write(Bun.stdout, tableString);
 ```
 
 **Output:**
-```
+```text
 Name         | Age         | Score
 Alice        | 30          | 95.5
 Bob          | 25          | 87.2

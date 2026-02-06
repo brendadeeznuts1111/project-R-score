@@ -10,7 +10,7 @@ This document establishes the foundational structure for all code in the HSL Ten
 
 Every code element must include semantic tags in this exact format:
 
-```
+```text
 [DOMAIN][SCOPE][TYPE][META:{PROPERTY}][CLASS][FUNCTION][INTERFACE][#REF:*][BUN-NATIVE]
 ```
 

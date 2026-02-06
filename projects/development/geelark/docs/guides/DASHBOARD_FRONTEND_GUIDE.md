@@ -58,7 +58,7 @@ react-dom         // DOM rendering
 
 ### Directory Structure
 
-```
+```text
 dashboard-react/
 ├── src/
 │   ├── components/          # React components
@@ -91,7 +91,7 @@ dashboard-react/
 
 ### Component Hierarchy
 
-```
+```text
 App (Root)
 ├── MonitoringDashboard      # System metrics overview
 │   ├── RuntimeMetrics       # CPU, memory, uptime
@@ -832,7 +832,7 @@ bun run build
 **Output**: `dist/` directory with optimized assets
 
 **Result**:
-```
+```text
 dist/
 ├── index.html                  # HTML entry point
 ├── assets/

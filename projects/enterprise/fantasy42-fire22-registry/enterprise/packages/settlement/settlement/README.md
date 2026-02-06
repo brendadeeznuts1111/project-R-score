@@ -292,7 +292,7 @@ CREATE INDEX idx_settlements_batch ON settlements(batch_id);
 
 ### 1. Creation Phase
 
-```
+```text
 Payment Completed → Settlement Created → Business Rules Applied
                        ↓
                 Fees Calculated → Compliance Checked
@@ -300,7 +300,7 @@ Payment Completed → Settlement Created → Business Rules Applied
 
 ### 2. Processing Phase
 
-```
+```text
 Settlement Pending → Processing Started → Bank Processing
                         ↓
                  Success/Failure → Status Updated
@@ -308,7 +308,7 @@ Settlement Pending → Processing Started → Bank Processing
 
 ### 3. Completion Phase
 
-```
+```text
 Processing Complete → Bank Reference Added → Final Status Set
                          ↓
                    Analytics Updated → Events Published
@@ -316,7 +316,7 @@ Processing Complete → Bank Reference Added → Final Status Set
 
 ### Status Flow
 
-```
+```text
 PENDING → PROCESSING → COMPLETED
     ↓         ↓            ↓
  CANCELLED  FAILED       (Final)

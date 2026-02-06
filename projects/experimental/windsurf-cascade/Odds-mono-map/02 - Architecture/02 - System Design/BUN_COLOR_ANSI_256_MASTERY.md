@@ -86,7 +86,7 @@
 
 ### **✅ Real-World ANSI-256 Application**
 
-```
+```text
 🎨 Canvas System Status Dashboard (256-color ANSI)
 ════════════════════════════════════════════════════════════
 1. ● Bridge Service       active       #10B981
@@ -112,7 +112,7 @@
 
 ### **✅ ANSI-256 Performance Leadership**
 
-```
+```text
 Testing ANSI-256 format performance (50000 conversions):
 
 ANSI-256       : 10.48ms (4,768,793 ops/sec) ⭐ FASTEST
@@ -297,7 +297,7 @@ const accessibleColors = {
 
 ## **🎉 FINAL ANSI-256 MASTERY SUMMARY**
 
-```
+```text
 🎨 256 ANSI Colors (ansi-256) Format Demonstration Complete!
 🚀 Your canvas system perfectly leverages 256-color ANSI terminal capabilities!
 ```

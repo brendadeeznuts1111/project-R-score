@@ -186,7 +186,7 @@ Bun's built-in APIs are optimized. No tuning needed.
 ESLint will guide you to Bun-native patterns.
 
 Try to import axios → Get helpful error:
-```
+```text
 ❌ Use Bun native fetch instead of axios
 ```
 
@@ -252,7 +252,7 @@ curl -fsSL https://bun.sh/install | bash
 
 ### "Port 8765 is in use"
 Change port in .env:
-```
+```text
 PORT=8766
 ```
 

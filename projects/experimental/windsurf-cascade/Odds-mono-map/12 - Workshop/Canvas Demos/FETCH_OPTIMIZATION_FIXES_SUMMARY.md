@@ -7,7 +7,7 @@ Based on the error messages and network issues encountered, I identified and fix
 ### **Issue 1: `fastestMethod is not a function` Error**
 
 **Original Error:**
-```
+```text
 ❌ Performance benchmarking failed: fastestMethod is not a function. (In 'fastestMethod()', 'fastestMethod' is "bytes"
 ```
 
@@ -33,7 +33,7 @@ console.log(`\n🏆 Fastest method: response.${fastestMethod} (${averages[fastes
 ### **Issue 2: 502 Bad Gateway Network Errors**
 
 **Original Error:**
-```
+```text
 [fetch] < 502 Bad Gateway
 [fetch] < Server: awselb/2.0
 [fetch] < Date: Wed, 19 Nov 03:47:34 GMT

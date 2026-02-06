@@ -151,7 +151,7 @@ open docs/DASHBOARD-NAVIGATION.md
 
 ## 📋 File Structure
 
-```
+```text
 docs/
 ├── DOCUMENTATION-INDEX.md ⭐ Main navigation hub
 ├── DASHBOARD-NAVIGATION.md ⭐ Navigation guide
