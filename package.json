@@ -120,6 +120,7 @@
     "quick-wins": "bun run scripts/bun-quick-wins-table.ts",
     "quick-wins:compact": "bun run scripts/bun-quick-wins-table.ts compact",
     "quick-wins:detailed": "bun run scripts/bun-quick-wins-table.ts detailed",
+    "demo:markdown": "bun run tools/markdown-demo.ts",
     "ci:validate": "bun run standards:check && bun run test:all",
     "markdown:styled": "bun run lib/enhanced-markdown.ts docs/styling-demo.md ansi",
     "markdown:html": "bun run lib/enhanced-markdown.ts README.md html",
