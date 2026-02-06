@@ -7,7 +7,7 @@
 **Enterprise-Grade Bun Native Platform for High-Performance Applications**
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Bun Version](https://img.shields.io/badge/bun-1.0%2B-black.svg)](https://bun.sh)
+[![Bun Version](https://img.shields.io/badge/bun-1.3%2B-black.svg)](https://bun.sh)
 [![TypeScript](https://img.shields.io/badge/typescript-5.0%2B-blue.svg)](https://www.typescriptlang.org/)
 [![Build Status](https://img.shields.io/github/workflow/status/brendadeeznuts1111/project-R-score/CI/badge.svg)](https://github.com/brendadeeznuts1111/project-R-score/actions)
 
@@ -28,27 +28,33 @@ FactoryWager is a **cutting-edge enterprise platform** built with **Bun native o
 - 🏗️ **Scalable Architecture** - Microservices, event-driven, cloud-native
 - 🛠️ **Developer Tools** - CLI, debugging, profiling, and automation
 
-## � Repository Structure
+## Repository Structure
 
 ```text
 FactoryWager/
-├── 📁 lib/                    # Core library components
-│   ├── 🔐 security/           # Security & authentication
-│   ├── ⚡ core/               # Core infrastructure
-│   ├── 🧠 memory-pool.ts      # Shared memory management
-│   ├── 🦊 bun-*.ts           # Bun native implementations
-│   └── 📊 performance/       # Performance optimizations
-├── 📁 server/                # Server implementations
-├── 📁 services/              # Microservices
-├── 📁 tools/                 # Developer tools
-├── 📁 tests/                 # Test suites
-├── 📁 docs/                  # Documentation
-├── 📁 projects/              # Project templates
-├── 📁 .github/               # GitHub workflows & templates
-└── 📁 scripts/               # Build & deployment scripts
+├── lib/                       # Core library (15 subdirs)
+│   ├── ab-testing/            # A/B testing with Bun.CookieMap
+│   ├── core/                  # Core infra (mutex, validation, errors, bun-patterns)
+│   ├── security/              # Security & authentication
+│   ├── performance/           # Performance optimizations
+│   ├── cli/                   # PTY terminal, TUI components
+│   ├── http/                  # HTTP client, content-type handling
+│   ├── r2/                    # Cloudflare R2 integration
+│   ├── rss/                   # RSS feed processing
+│   ├── wiki/                  # Wiki generation
+│   ├── validation/            # Bun-first compliance auditing
+│   ├── versioning/            # Semantic versioning tools
+│   └── lib.test.ts            # Test suite (86 tests)
+├── tier1380/                  # Verified Bun one-liners & native utils
+├── scripts/                   # Repo hygiene, maintenance
+├── utils/                     # Pipeline tools (junior-runner, batch-profiler)
+├── examples/                  # Demo scripts & comparisons
+├── docs/                      # Documentation
+├── docs-directory/            # Docs site (React + Bun.serve)
+└── projects/                  # Project templates
 ```
 
-## �🚀 Quick Start
+## Quick Start
 
 ```bash
 # Clone and install
@@ -56,69 +62,23 @@ git clone https://github.com/brendadeeznuts1111/project-R-score.git
 cd project-R-score
 bun install
 
+# Run tests (86 pass)
+bun test lib/lib.test.ts
+
+# Repo hygiene check
+bun scripts/repo-hygiene.ts
+
+# AB testing benchmark
+bun lib/ab-testing/ab-testing.bench.ts
+
+# Run all 50 verified one-liners
+bun tier1380/bun-oneliners.ts
+
 # Run development server
 bun run dev
-
-# Run tests
-bun test
-
-# Build for production
-bun run build
 ```
 
-## 📁 Project Structure
-
-This monorepo is organized into specialized directories:
-
-### Core Directories
-- **`projects/`** - All project implementations organized by category
-- **`lib/`** - Shared libraries and utilities
-- **`bun-markdown-constants/`** - Enterprise markdown constants package with bun link demo
-- **`tools/`** - Standalone development tools
-- **`utils/`** - Utility scripts and helpers
-- **`deployment/`** - Deployment configurations
-- **`docs/`** - Comprehensive documentation
-- **`docs/archives/`** - Historical reports (read-only)
-- **`docs/data/`** - Diagnostic data and reports
-- **`tools/`** - Root tooling CLIs (all root-level utilities live here)
-- **`scripts/`** - Shell scripts and maintenance tasks
-
-### Project Categories
-- **`automation/`** - Automation frameworks and scripts
-- **`dashboards/`** - Enterprise dashboard interfaces
-- **`analysis/`** - Security and performance analysis tools
-- **`apps/`** - Application projects
-- **`enterprise/`** - Enterprise-grade solutions
-- **`development/`** - Development tools and utilities
-
-### 📦 Featured Package: `@bun-tools/markdown-constants`
-
-Located in `bun-markdown-constants/`, this package demonstrates:
-
-- **Enterprise-grade markdown constants** for Bun's built-in parser
-- **Complete bun link workflow** demonstration
-- **Optional React support** with graceful fallback
-- **Comprehensive documentation** and usage examples
-
-#### Quick Start with bun link:
-```bash
-# Link the package locally
-cd bun-markdown-constants
-bun link
-
-# Use in your project
-cd your-project
-bun link @bun-tools/markdown-constants
-
-# Test functionality
-bun run test-linked-package.ts
-
-# Unlink when done
-cd bun-markdown-constants
-bun unlink
-```
-
-## 📌 Documentation Hygiene
+## Documentation Hygiene
 
 - New docs must **not** use these markers: `summary`, `final`, `complete`, `final-complete`, `quantum`, `quantaum`, `enhance-[docname]`.
 - Progress reporting belongs in `CHANGELOG.md` only (versioned entries).
@@ -134,13 +94,21 @@ bun run test             # Run test suite
 bun run build            # Build for production
 ```
 
+### Quality & Hygiene
+```bash
+bun run hygiene          # Repo hygiene (stray files, secrets)
+bun run hygiene:staged   # Pre-commit hygiene (staged files only)
+bun run lint             # ESLint with auto-fix
+bun run format           # Prettier formatting
+bun run type-check       # TypeScript type checking
+bun run security:audit   # Security audit
+```
+
 ### Tools & Utilities
 ```bash
 bun run dashboard:ansi   # ANSI dashboard
 bun run url:validate     # Validate URLs
-bun run lint             # ESLint with auto-fix
-bun run format           # Prettier formatting
-bun run type-check       # TypeScript type checking
+bun run benchmark        # Performance benchmark
 ```
 
 ### MCP Servers
@@ -168,140 +136,98 @@ Built with modern technologies centered around **Bun** - the fast, incrementally
 - **Code Quality**: ESLint + Prettier
 - **Bundling**: Bun's built-in production bundler with tree-shaking
 
-## � bun link - Local Package Development
+## Tier1380 One-Liners
 
-This project includes a complete demonstration of Bun's `bun link` functionality for local package development.
-
-### 📦 Featured Package: `@bun-tools/markdown-constants`
-
-A production-ready package showcasing:
-- Enterprise-grade markdown constants for Bun's built-in parser
-- Optional React support with graceful fallback
-- Comprehensive error handling and validation
-- Complete documentation and examples
-
-### 🚀 Quick Start
+50 verified `bun -e` one-liners covering the full Bun API surface:
 
 ```bash
-# 1. Link the package locally
-cd bun-markdown-constants
-bun link
+# Run all 50
+bun tier1380/bun-oneliners.ts
 
-# 2. Use in your project
-cd your-project
-bun link @bun-tools/markdown-constants
-
-# 3. Test the functionality
-import { MarkdownPresets, MARKDOWN_SECURITY } from '@bun-tools/markdown-constants';
-
-const html = MarkdownPresets.html('GFM', 'MODERATE')('# Hello **World**');
-console.log(html); // <h1>Hello <strong>World</strong></h1>
-
-# 4. Unlink when done
-cd bun-markdown-constants
-bun unlink
+# Tier 1 (#1-20): Color, TOML, Hash, Zstd, Glob, DNS, Shell, GC,
+#   EscapeHTML, Nanoseconds, StringWidth, Table, Password, DeepMatch,
+#   Markdown, CryptoHasher, Inspect
+#
+# Tier 2 (#21-50): Streaming, Hex Dump, Base64, Binary Read, HTTP Probe,
+#   HMAC, PBKDF2, JWT Decode, Timing-Safe Compare, CSV/JSON Transforms,
+#   NDJSON Parse, Env Audit, Sparklines, Progress Bar, Rainbow Text,
+#   Tree View, Process List, Stack Beautifier, Leak Detector,
+#   Nano-Profiler, Zstd Round-Trip, Self-Compile to Standalone Binary
 ```
-
-### ⚙️ Advanced bun link Features
-
-#### Installation Control
-```bash
-# Force fresh installation
-bun link --force
-
-# Use specific backend
-bun link --backend symlink    # clonefile|hardlink|symlink|copyfile
-
-# Linker strategy
-bun link --linker isolated    # isolated|hoisted
-```
-
-#### Global Configuration
-```bash
-# Use custom config
-bun link --config ./bunfig.toml
-
-# Set working directory
-bun link --cwd ./packages/shared
-```
-
-#### Installation Scope
-```bash
-# Local linking (default)
-bun link
-
-# Global linking for CLI tools
-bun link -g
-```
-
-### 📚 Configuration Example
-
-Create `bunfig.toml` for team consistency:
-
-```toml
-[install]
-cache = "./.bun-cache"
-backend = "symlink"
-
-[link]
-linker = "isolated"
-trustedDependencies = ["react", "typescript"]
-```
-
-### 🎯 Use Cases
-
-| Scenario | Command | Description |
-|----------|---------|-------------|
-| **Package Development** | `bun link` | Link libraries to projects |
-| **CLI Tools** | `bun link -g` | System-wide tool availability |
-| **Monorepos** | `bun link --linker isolated` | Dependency isolation |
-| **Team Work** | `bun link --config ./team-config/bunfig.toml` | Consistent environments |
-
-## �📊 Features
-
-- **Enterprise Dashboards** - Real-time monitoring and analytics
-- **Automation Frameworks** - Streamlined workflow automation
-- **Security Tools** - Comprehensive security validation
-- **Performance Optimization** - Advanced optimization utilities
-- **MCP Integration** - Model Context Protocol servers
-- **Documentation System** - Auto-generated documentation
 
 ## 🚀 Bun-Powered Capabilities
 
 This project leverages Bun's extensive built-in APIs and tooling:
 
-### Built-in APIs Used
-- **HTTP/WebSocket Servers** - High-performance server implementations
-- **File System Operations** - Fast async file operations with `Bun.file()`
-- **Database Integration** - Direct PostgreSQL and Redis connectivity
-- **Shell Commands** - Execute shell scripts with `Bun.$` 
-- **Password Hashing** - Built-in security utilities
-- **YAML/JSON Processing** - Native configuration file handling
-- **Markdown Parser** - World's fastest CommonMark + GFM parser (v1.3.8)
+### Built-in Bun APIs Used
+- **Bun.serve()** - HTTP/WebSocket servers with routes
+- **Bun.file() / Bun.write()** - Fast async file I/O
+- **Bun.CookieMap** - Type-safe cookie handling (AB testing)
+- **Bun.CryptoHasher** - SHA-256, HMAC, content hashing
+- **Bun.markdown.html()** - Zig-powered CommonMark + GFM parser
+- **Bun.color()** - CSS color conversion (hex, rgb, ansi-16m)
+- **Bun.zstdCompressSync()** - Native zstd compression
+- **Bun.dns.lookup()** - Async DNS resolution
+- **Bun.nanoseconds()** - Monotonic nanosecond timing
+- **Bun.inspect.table()** - ASCII table rendering
+- **Bun.TOML.parse()** - Native TOML parser
+- **Bun.password.hash()** - bcrypt/argon2 password hashing
+- **Bun.Glob** - Fast file pattern matching
+- **Bun.$\`cmd\`** - Shell template literals
+- **Bun.sql / Bun.redis** - PostgreSQL and Redis clients
 
-### Package Management Features
-- **bun link** - Local package development with symlinks
-- **Installation Control** - Multiple backends (clonefile, hardlink, symlink, copyfile)
-- **Global Configuration** - bunfig.toml support for team consistency
-- **Dependency Management** - Fast installs with trusted dependencies
+### Performance
+- **Hot Module Replacement** - `bun --hot` for instant dev updates
+- **Production Bundling** - Tree-shaking and minification via `bun build`
+- **Fast Installs** - 30x faster dependency management
+- **Fast Tests** - 86 tests in ~160ms via built-in test runner
+- **bun build --compile** - Standalone binaries, no runtime needed
 
-### Performance Benefits
-- **Hot Module Replacement** - Instant development updates without refresh
-- **Production Bundling** - Optimized builds with tree-shaking and minification
-- **Fast Package Installs** - 30x faster dependency management
-- **Speedy Test Execution** - Run tests 10-30x faster than traditional runners
-- **Local Development** - bun link provides instant package updates
+## Testing
 
-### Developer Experience
-- **Zero Configuration** - TypeScript, JSX, and imports work immediately
-- **Built-in Tooling** - Everything needed without additional setup
-- **Incremental Adoption** - Use individual tools or the complete stack
-- **Local Package Development** - Seamless bun link workflow for package authors
+```
+86 tests, 184 expect() calls, 0 failures (~160ms)
+```
 
-## 🏷️ Version History
+Test coverage includes:
+- **AB Testing** (28 tests) - ABTestManager + legacy wrapper, cookie persistence, weighted distribution, forceAssign, Set-Cookie headers
+- **PTY Terminal** - Platform detection, terminal creation, config defaults
+- **Terminal TUI** - Spinners, progress bars, tables, deployment UI
+- **R2 Signed URLs** - URL generation, expiry, content types
+- **S3 Content Encoding** - Compression, upload, tier1380 integration
+- **Core Validation** - String/number validators, type guards, error codes
+- **FFI Environment** - Environment verification, example validation
+- **Repo Hygiene** - Stray file detection, secrets, pattern matching
 
+## AB Testing Module
+
+Cookie-based A/B testing with `Bun.CookieMap`:
+
+```typescript
+import { ABTestManager } from "./lib/ab-testing/manager";
+
+const manager = new ABTestManager(request.headers.get("cookie"));
+manager.registerTest({ id: "checkout-flow", variants: ["control", "new-ui"], weights: [50, 50] });
+
+const variant = manager.getVariant("checkout-flow");
+// Returns "control" or "new-ui", persisted via cookie
+
+const headers = manager.getSetCookieHeaders();
+// ["ab_checkout_flow=control; Path=/; Max-Age=2592000; HttpOnly; SameSite=Lax"]
+```
+
+Benchmark (Bun 1.3.8, Apple Silicon):
+| Operation | Ops/s | Latency |
+|---|---|---|
+| Cached variant read | 14.8M | 68ns |
+| Full request cycle | 894K | 1.1us |
+| Cookie serialization | 1.5M | 688ns |
+
+## Version History
+
+- `v5.1.0` - AB testing, tier1380 one-liners, repo hygiene, lib/ reorg
 - `v4.4.2-http2-preview` - HTTP/2 preview features
-- `v4.4.1` - Latest stable release
+- `v4.4.1` - Stable release
 - `v4.4-rscore-optimized` - R-Score optimization release
 
 ## 🤝 Contributing
