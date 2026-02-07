@@ -1,0 +1,300 @@
+/**
+ * FactoryWager Icon System
+ * Unicode emoji + CSS icon utilities
+ */
+
+/* ============================================
+   ICON SIZES
+   ============================================ */
+
+.icon-xs { font-size: 0.75rem; }
+.icon-sm { font-size: 0.875rem; }
+.icon-md { font-size: 1rem; }
+.icon-lg { font-size: 1.25rem; }
+.icon-xl { font-size: 1.5rem; }
+.icon-2xl { font-size: 2rem; }
+
+/* ============================================
+   ICON CONTAINERS
+   ============================================ */
+
+.icon-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--color-background-secondary);
+}
+
+.icon-circle.primary {
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
+}
+
+.icon-circle.success {
+  background: var(--color-success-100);
+  color: var(--color-success-700);
+}
+
+.icon-circle.warning {
+  background: var(--color-warning-100);
+  color: var(--color-warning-700);
+}
+
+.icon-circle.error {
+  background: var(--color-error-100);
+  color: var(--color-error-700);
+}
+
+.icon-square {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-md);
+  background: var(--color-background-secondary);
+}
+
+/* ============================================
+   BRAND ICONS (Emoji)
+   ============================================ */
+
+.icon-brand::before { content: '🏰'; }
+.icon-logo::before { content: '💈'; }
+.icon-scissors::before { content: '✂️'; }
+.icon-razor::before { content: '🪒'; }
+
+/* ============================================
+   NAVIGATION ICONS
+   ============================================ */
+
+.icon-home::before { content: '🏠'; }
+.icon-dashboard::before { content: '📊'; }
+.icon-menu::before { content: '☰'; }
+.icon-close::before { content: '✕'; }
+.icon-back::before { content: '←'; }
+.icon-forward::before { content: '→'; }
+.icon-up::before { content: '↑'; }
+.icon-down::before { content: '↓'; }
+
+/* ============================================
+   ACTION ICONS
+   ============================================ */
+
+.icon-add::before { content: '+'; }
+.icon-edit::before { content: '✎'; }
+.icon-delete::before { content: '🗑'; }
+.icon-save::before { content: '💾'; }
+.icon-copy::before { content: '📋'; }
+.icon-refresh::before { content: '🔄'; }
+.icon-search::before { content: '🔍'; }
+.icon-filter::before { content: '🔽'; }
+.icon-sort::before { content: '⇅'; }
+.icon-settings::before { content: '⚙️'; }
+.icon-more::before { content: '⋮'; }
+.icon-download::before { content: '⬇'; }
+.icon-upload::before { content: '⬆'; }
+.icon-share::before { content: '↗'; }
+.icon-print::before { content: '🖨'; }
+.icon-export::before { content: '📤'; }
+
+/* ============================================
+   USER ICONS
+   ============================================ */
+
+.icon-user::before { content: '👤'; }
+.icon-users::before { content: '👥'; }
+.icon-profile::before { content: '🆔'; }
+.icon-avatar::before { content: '👤'; }
+.icon-login::before { content: '🔐'; }
+.icon-logout::before { content: '🚪'; }
+.icon-register::before { content: '📝'; }
+
+/* ============================================
+   STATUS ICONS
+   ============================================ */
+
+.icon-success::before { content: '✓'; }
+.icon-error::before { content: '✕'; }
+.icon-warning::before { content: '⚠'; }
+.icon-info::before { content: 'ℹ'; }
+.icon-help::before { content: '?'; }
+.icon-check::before { content: '✓'; }
+.icon-cross::before { content: '✕'; }
+.icon-dot::before { content: '•'; }
+.icon-star::before { content: '★'; }
+.icon-star-empty::before { content: '☆'; }
+.icon-heart::before { content: '♥'; }
+.icon-heart-empty::before { content: '♡'; }
+
+/* ============================================
+   COMMUNICATION ICONS
+   ============================================ */
+
+.icon-message::before { content: '💬'; }
+.icon-chat::before { content: '💭'; }
+.icon-email::before { content: '✉'; }
+.icon-notification::before { content: '🔔'; }
+.icon-bell::before { content: '🔔'; }
+.icon-phone::before { content: '📞'; }
+.icon-call::before { content: '📱'; }
+.icon-video::before { content: '📹'; }
+.icon-camera::before { content: '📷'; }
+.icon-attachment::before { content: '📎'; }
+
+/* ============================================
+   TIME ICONS
+   ============================================ */
+
+.icon-calendar::before { content: '📅'; }
+.icon-clock::before { content: '🕐'; }
+.icon-time::before { content: '⏱'; }
+.icon-history::before { content: '🕘'; }
+.icon-schedule::before { content: '📆'; }
+.icon-timer::before { content: '⏲'; }
+.icon-stopwatch::before { content: '⏱'; }
+
+/* ============================================
+   MONEY ICONS
+   ============================================
+ */
+
+.icon-money::before { content: '💵'; }
+.icon-dollar::before { content: '$'; }
+.icon-cash::before { content: '💵'; }
+.icon-card::before { content: '💳'; }
+.icon-bank::before { content: '🏦'; }
+.icon-receipt::before { content: '🧾'; }
+.icon-invoice::before { content: '📄'; }
+.icon-discount::before { content: '🏷'; }
+.icon-gift::before { content: '🎁'; }
+.icon-reward::before { content: '🏆'; }
+.icon-tip::before { content: '💰'; }
+
+/* ============================================
+   DOCUMENT ICONS
+   ============================================ */
+
+.icon-file::before { content: '📄'; }
+.icon-document::before { content: '📃'; }
+.icon-folder::before { content: '📁'; }
+.icon-folder-open::before { content: '📂'; }
+.icon-image::before { content: '🖼'; }
+.icon-photo::before { content: '📷'; }
+.icon-pdf::before { content: '📕'; }
+.icon-code::before { content: '</>'; }
+.icon-text::before { content: '📄'; }
+.icon-list::before { content: '☰'; }
+.icon-grid::before { content: '⊞'; }
+
+/* ============================================
+   TECHNOLOGY ICONS
+   ============================================ */
+
+.icon-wifi::before { content: '📶'; }
+.icon-signal::before { content: '📡'; }
+.icon-bluetooth::before { content: '🔵'; }
+.icon-battery::before { content: '🔋'; }
+.icon-plug::before { content: '🔌'; }
+.icon-desktop::before { content: '🖥'; }
+.icon-laptop::before { content: '💻'; }
+.icon-mobile::before { content: '📱'; }
+.icon-tablet::before { content: '📲'; }
+.icon-cloud::before { content: '☁'; }
+.icon-database::before { content: '🗄'; }
+.icon-server::before { content: '💾'; }
+.icon-shield::before { content: '🛡'; }
+.icon-lock::before { content: '🔒'; }
+.icon-unlock::before { content: '🔓'; }
+.icon-key::before { content: '🔑'; }
+
+/* ============================================
+   ARROWS
+   ============================================ */
+
+.icon-arrow-up::before { content: '↑'; }
+.icon-arrow-down::before { content: '↓'; }
+.icon-arrow-left::before { content: '←'; }
+.icon-arrow-right::before { content: '→'; }
+.icon-arrow-up-down::before { content: '↕'; }
+.icon-arrow-left-right::before { content: '↔'; }
+.icon-chevron-up::before { content: '⌃'; }
+.icon-chevron-down::before { content: '⌄'; }
+.icon-chevron-left::before { content: '‹'; }
+.icon-chevron-right::before { content: '›'; }
+
+/* ============================================
+   SPINNER / LOADING
+   ============================================ */
+
+@keyframes icon-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.icon-spin {
+  display: inline-block;
+  animation: icon-spin 1s linear infinite;
+}
+
+.icon-loading::before {
+  content: '⟳';
+}
+
+.icon-loading.icon-spin::before {
+  display: inline-block;
+}
+
+/* ============================================
+   DASHBOARD SPECIFIC
+   ============================================ */
+
+.icon-admin::before { content: '👑'; }
+.icon-client::before { content: '👤'; }
+.icon-barber::before { content: '✂️'; }
+.icon-ticket::before { content: '🎫'; }
+.icon-appointment::before { content: '📅'; }
+.icon-service::before { content: '💇'; }
+.icon-product::before { content: '🧴'; }
+.icon-statistics::before { content: '📈'; }
+.icon-analytics::before { content: '📊'; }
+.icon-report::before { content: '📋'; }
+.icon-queue::before { content: '📑'; }
+.icon-completed::before { content: '✓'; }
+.icon-pending::before { content: '⏳'; }
+.icon-inprogress::before { content: '▶'; }
+
+/* ============================================
+   SOCIAL
+   ============================================ */
+
+.icon-twitter::before { content: '🐦'; }
+.icon-facebook::before { content: 'f'; }
+.icon-instagram::before { content: '📷'; }
+.icon-linkedin::before { content: 'in'; }
+.icon-github::before { content: '🐙'; }
+.icon-gitlab::before { content: '🦊'; }
+.icon-slack::before { content: '💬'; }
+.icon-discord::before { content: '🎮'; }
+
+/* ============================================
+   UTILITY
+   ============================================ */
+
+.icon-eye::before { content: '👁'; }
+.icon-eye-off::before { content: '🚫'; }
+.icon-zoom-in::before { content: '🔍+'; }
+.icon-zoom-out::before { content: '🔍-'; }
+.icon-maximize::before { content: '⛶'; }
+.icon-minimize::before { content: '🗗'; }
+.icon-fullscreen::before { content: '⛶'; }
+.icon-exit-fullscreen::before { content: '🗗'; }
+.icon-drag::before { content: '✥'; }
+.icon-resize::before { content: '↔'; }
+.icon-link::before { content: '🔗'; }
+.icon-external::before { content: '↗'; }
+.icon-menu-dots::before { content: '⋮'; }
+.icon-menu-bars::before { content: '☰'; }
