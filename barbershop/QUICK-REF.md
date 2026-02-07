@@ -4,7 +4,8 @@
 
 ```bash
 # Count TypeScript files
-bun -e 'const g=new Bun.Glob("**/*.ts");console.log([...g.scanSync()].length+" TS files")'
+bun -e 'const{ Glob } = require("bun"); console.log(new Glob("**/*.ts").scanSync().length + " TS files")' 2>/dev/null || \
+find . -name "*.ts" -type f | wc -l | xargs -I{} echo "{} TS files"
 
 # Quick dupe check
 bun run scripts/analysis/dupe-analyzer.ts
@@ -26,7 +27,7 @@ bun run scripts/analysis/dupe-analyzer.ts --top=10
 bun --cpu-prof --cpu-prof-md run src/core/barber-server.ts
 
 # Heap profile (markdown)
-bun --heap-prof --heap-prof-md run src/core/barber-server.ts
+bun --heap-prof --cpu-prof-md run src/core/barber-server.ts
 
 # Quick sampling
 bun run src/profile/sampling-profile.ts --quick
@@ -173,3 +174,91 @@ console.log(machine.length);  // 16
 // Load WASM module
 await machine.loadWASM(wasmBuffer);
 ```
+
+## Bun-Native APIs (High Performance)
+
+```bash
+# Run Bun API demo
+bun run src/utils/bun-enhanced.ts
+
+# Run performance benchmarks
+bun run src/utils/bun-benchmark.ts
+```
+
+```typescript
+import { 
+  fastHash,           // 25x faster than crypto
+  hashPassword,       // Argon2 native
+  compressData,       // gzip/zstd native
+  nanoseconds,        // High-res timing
+  fastWrite,          // Fast file I/O
+  sleep,              // Async sleep
+  parseSemver,        // Version parsing
+  escapeHTML,         // HTML sanitization
+} from './src/utils';
+
+// Hashing (25x faster than crypto.createHash)
+const hash = fastHash('data', 'wyhash');
+
+// Password hashing with Argon2 (built into Bun)
+const pwHash = await hashPassword('password');
+const valid = await verifyPassword('password', pwHash);
+
+// Native compression
+const compressed = compressData(data, 'gzip');
+const original = decompressData(compressed, 'gzip');
+
+// High-resolution timing
+const start = nanoseconds();
+// ... work ...
+const elapsedMs = Number(nanoseconds() - start) / 1_000_000;
+
+// Fast file I/O with Bun.write()
+await fastWrite('/tmp/file.txt', 'content');
+const text = await fastReadText('/tmp/file.txt');
+const json = await fastReadJSON('/tmp/data.json');
+
+// Async sleep (more efficient than setTimeout)
+await sleep(100);  // 100ms
+
+// Semver parsing (Bun.semver)
+if (satisfiesVersion('1.2.3', '^1.0.0')) {
+  // Version compatible
+}
+const comparison = compareVersions('1.2.3', '1.3.0');  // -1
+
+// HTML escaping
+const safe = escapeHTML('<script>alert("xss")</script>');
+// &lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;
+
+// Find executable in PATH
+const nodePath = which('node');  // /usr/local/bin/node
+
+// Check if main module
+if (isMainModule(import.meta)) {
+  // Running as script, not imported
+}
+
+// Performance measurement
+const { result, durationMs } = await measure(
+  () => expensiveOperation(),
+  'Operation'
+);
+
+// Timer utility
+const timer = createTimer('Task');
+await doWork();
+const elapsed = timer.log();  // Logs to console
+```
+
+### Performance Comparison
+
+| Operation | Bun API | Node.js | Speedup |
+|-----------|---------|---------|---------|
+| Hashing (1MB) | Bun.hash() | crypto.createHash | **25x** |
+| File Write | Bun.write() | fs.writeFile | **2-3x** |
+| Compression | Bun.gzip() | zlib.gzip | **1.5x** |
+| Password | Bun.password | bcrypt package | Built-in |
+| Timing | Bun.nanoseconds() | process.hrtime | Same |
+
+All Bun-native APIs available via `import { ... } from './src/utils'`
