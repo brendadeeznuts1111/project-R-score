@@ -7,7 +7,7 @@
  * @version 4.5
  */
 
-import { describe, it, expect, beforeEach, afterEach, spyOn } from "bun:test";
+import { describe, it, expect, test, beforeEach, afterEach, spyOn, mock, jest, setSystemTime } from "bun:test";
 
 import { isPtySupported, createTerminal, spawnWithTerminal, DEFAULT_TERMINAL_CONFIG } from "./cli/pty-terminal";
 import { isTerminalUISupported, createSpinner, createProgress, displayTable, DeploymentUI, smartDeploy } from "./cli/terminal-tui";

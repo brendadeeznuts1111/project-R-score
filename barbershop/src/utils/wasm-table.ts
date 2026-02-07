@@ -32,8 +32,8 @@ export interface TableConfig {
   initial: number;
   /** Maximum table size (optional) */
   maximum?: number;
-  /** Element type - must be 'anyfunc' for function tables */
-  element: 'anyfunc';
+  /** Element type - must be 'funcref' for function tables (Bun/WebAssembly spec) */
+  element: 'funcref';
 }
 
 /** Hook registry entry */
@@ -60,7 +60,7 @@ export class WASMMachine {
   private initialized = false;
   private nextIndex = 0;
 
-  constructor(config: TableConfig = { initial: 16, element: 'anyfunc' }) {
+  constructor(config: TableConfig = { initial: 16, element: 'funcref' }) {
     this.table = new WebAssembly.Table(config);
   }
 
@@ -323,7 +323,7 @@ export const DefaultHooks = {
  * Initialize default compute machine with JS hooks
  */
 export function createDefaultMachine(): WASMMachine {
-  const machine = new WASMMachine({ initial: 8, element: 'anyfunc' });
+  const machine = new WASMMachine({ initial: 8, element: 'funcref' });
 
   machine.registerHook('riskScore', DefaultHooks.riskScore, 'Calculate risk score');
   machine.registerHook('entropy', DefaultHooks.entropy, 'Shannon entropy');

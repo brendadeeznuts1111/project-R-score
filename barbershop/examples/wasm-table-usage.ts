@@ -17,7 +17,7 @@ const ANSI = {
 export function example1_secretsRiskAnalysis() {
   console.log(`\n${ANSI.bold}${ANSI.blue}Example 1: Secrets Field Risk Analysis${ANSI.reset}\n`);
 
-  const machine = new WASMMachine({ initial: 8 });
+  const machine = new WASMMachine({ initial: 8, element: 'funcref' });
 
   const riskIndex = machine.registerHook(
     'secretRisk',

@@ -46,6 +46,11 @@ export const DOC_PATHS = {
   ZERO_COPY: '/docs/runtime/binary-data#zero-copy',
   STREAMING: '/docs/api/streams#binary',
 
+  // WebAssembly
+  WASM: '/docs/api/wasm',
+  WASM_TABLE: '/docs/api/wasm#table',
+  WASM_MEMORY: '/docs/api/wasm#memory',
+
   // RSS and feeds
   RSS: '/rss.xml',
 } as const;
@@ -99,6 +104,13 @@ export const URL_PATTERNS = {
     protocol: 'https',
     hostname: 'bun.sh',
     pathname: '/',
+  }),
+
+  // WebAssembly
+  BUN_WASM: new URLPattern({
+    protocol: 'https',
+    hostname: 'bun.sh',
+    pathname: '/docs/api/wasm',
   }),
 
   // GitHub patterns

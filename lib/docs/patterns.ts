@@ -20,6 +20,7 @@ export const DOC_PATTERNS = {
     '/runtime/hashing': 'hashing',
 
     // API patterns
+    '/api/wasm': 'webassembly',
     '/api/bun': 'bun-api',
     '/api/bun-serve': 'serve-api',
     '/api/bun-write': 'write-api',
@@ -45,6 +46,14 @@ export const DOC_PATTERNS = {
         BUN_DOCS.runtime('hashing'), // Added hashing docs
       ];
       return related;
+    }
+
+    if (url.includes('/api/wasm') || url.includes('WebAssembly')) {
+      return [
+        BUN_DOCS.api('wasm'),
+        'https://bun.sh/reference/bun/WebAssembly',
+        'https://developer.mozilla.org/en-US/docs/WebAssembly',
+      ];
     }
 
     if (url.includes('/runtime/hashing')) {
