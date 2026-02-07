@@ -283,7 +283,10 @@ export class EnterpriseDocumentationURLValidator {
       let urlType: DocumentationURLType = 'unknown';
       let domain: DocumentationDomain | undefined;
       
-      if (parsed.hostname?.includes('bun.sh')) {
+      const host = parsed.hostname ?? '';
+      const hostIs = (d: string) => host === d || host.endsWith('.' + d);
+
+      if (hostIs('bun.sh')) {
         domain = DocumentationDomain.BUN_SH;
         if (parsed.pathname.includes('/docs/api')) {
           provider = DocumentationProvider.BUN_API_DOCS;
@@ -304,7 +307,7 @@ export class EnterpriseDocumentationURLValidator {
           provider = DocumentationProvider.BUN_OFFICIAL;
           urlType = 'technical_docs';
         }
-      } else if (parsed.hostname?.includes('bun.com')) {
+      } else if (hostIs('bun.com')) {
         domain = DocumentationDomain.BUN_COM;
         if (parsed.pathname.includes('/reference')) {
           provider = DocumentationProvider.BUN_REFERENCE;
@@ -325,13 +328,13 @@ export class EnterpriseDocumentationURLValidator {
           provider = DocumentationProvider.BUN_REFERENCE;
           urlType = 'unknown';
         }
-      } else if (parsed.hostname?.includes('developer.mozilla.org')) {
+      } else if (host === 'developer.mozilla.org') {
         provider = DocumentationProvider.MDN_WEB_DOCS;
         urlType = 'technical_docs';
-      } else if (parsed.hostname?.includes('nodejs.org')) {
+      } else if (hostIs('nodejs.org')) {
         provider = DocumentationProvider.NODE_JS;
         urlType = 'technical_docs';
-      } else if (parsed.hostname?.includes('github.com')) {
+      } else if (hostIs('github.com')) {
         provider = DocumentationProvider.GITHUB_PUBLIC;
         urlType = 'technical_docs';
       }
@@ -371,7 +374,7 @@ export class EnterpriseDocumentationURLValidator {
       const parsed = new URL(url);
       
       // Ensure HTTPS for documentation URLs
-      if (parsed.protocol === 'http:' && this.KNOWN_DOMAINS.some(domain => parsed.hostname?.includes(domain))) {
+      if (parsed.protocol === 'http:' && this.KNOWN_DOMAINS.some(domain => parsed.hostname === domain || parsed.hostname?.endsWith('.' + domain))) {
         parsed.protocol = 'https:';
       }
       
