@@ -8,10 +8,10 @@ The FactoryWager Security Citadel provides a comprehensive suite of CLI tools fo
 
 | Tool | Purpose | Command | Key Features |
 |------|---------|---------|--------------|
-| **Secrets Field Compute** | 3D field computation and analysis | `secrets-field.ts` | ML-enhanced scoring, benchmarking, risk analysis |
-| **Vault Exposure Simulator** | Large-scale exposure simulation | `vault-sim.ts` | HyperLogLog tracking, pattern simulation, real-time metrics |
-| **ONNX Secret Boost Tester** | ML model testing and comparison | `secret-boost.ts` | ONNX integration, performance benchmarking, accuracy testing |
-| **WebSocket Benchmark** | WebSocket performance testing | `ws-secrets-bench.ts` | Concurrent connections, throughput testing, compression analysis |
+| **Secrets Field Compute** | 3D field computation and analysis | `scripts/secrets/secrets-field.ts` | ML-enhanced scoring, benchmarking, risk analysis |
+| **Vault Exposure Simulator** | Large-scale exposure simulation | `scripts/secrets/vault-sim.ts` | HyperLogLog tracking, pattern simulation, real-time metrics |
+| **ONNX Secret Boost Tester** | ML model testing and comparison | `scripts/secrets/secret-boost.ts` | ONNX integration, performance benchmarking, accuracy testing |
+| **WebSocket Benchmark** | WebSocket performance testing | `scripts/analysis/ws-secrets-bench.ts` | Concurrent connections, throughput testing, compression analysis |
 
 ---
 
@@ -22,7 +22,7 @@ Computes 3D secret field visualizations with ML-enhanced risk scoring and anomal
 
 ### Usage
 ```bash
-bun run scripts/secrets-field.ts [options]
+bun run scripts/secrets/secrets-field.ts [options]
 ```
 
 ### Key Options
@@ -36,17 +36,17 @@ bun run scripts/secrets-field.ts [options]
 
 **Basic Computation:**
 ```bash
-bun run scripts/secrets-field.ts --keys factory --exposure 7.5
+bun run scripts/secrets/secrets-field.ts --keys factory --exposure 7.5
 ```
 
 **Performance Benchmark:**
 ```bash
-bun run scripts/secrets-field.ts --benchmark --iterations 100
+bun run scripts/secrets/secrets-field.ts --benchmark --iterations 100
 ```
 
 **JSON Output:**
 ```bash
-bun run scripts/secrets-field.ts --exposure 8.0 --output json
+bun run scripts/secrets/secrets-field.ts --exposure 8.0 --output json
 ```
 
 ### Sample Output
@@ -84,7 +84,7 @@ Simulates large-scale secret access patterns with Redis HyperLogLog exposure tra
 
 ### Usage
 ```bash
-bun run scripts/vault-sim.ts [options]
+bun run scripts/secrets/vault-sim.ts [options]
 ```
 
 ### Key Options
@@ -110,17 +110,17 @@ bun run scripts/vault-sim.ts [options]
 
 **Large Scale Simulation:**
 ```bash
-bun run scripts/vault-sim.ts --access 20M --duration 300 --pattern burst
+bun run scripts/secrets/vault-sim.ts --access 20M --duration 300 --pattern burst
 ```
 
 **Real-time Monitoring:**
 ```bash
-bun run scripts/vault-sim.ts --access 1.5K --realtime --keys 50
+bun run scripts/secrets/vault-sim.ts --access 1.5K --realtime --keys 50
 ```
 
 **High Frequency Test:**
 ```bash
-bun run scripts/vault-sim.ts --access 500 --rate 100 --pattern wave
+bun run scripts/secrets/vault-sim.ts --access 500 --rate 100 --pattern wave
 ```
 
 ### Sample Output
@@ -168,7 +168,7 @@ Tests and compares ONNX machine learning models against baseline secret field bo
 
 ### Usage
 ```bash
-bun run scripts/secret-boost.ts [options]
+bun run scripts/secrets/secret-boost.ts [options]
 ```
 
 ### Key Options
@@ -182,17 +182,17 @@ bun run scripts/secret-boost.ts [options]
 
 **Test Field File:**
 ```bash
-bun run scripts/secret-boost.ts --field sample.json --compare
+bun run scripts/secrets/secret-boost.ts --field sample.json --compare
 ```
 
 **Performance Benchmark:**
 ```bash
-bun run scripts/secret-boost.ts --benchmark --iterations 1000
+bun run scripts/secrets/secret-boost.ts --benchmark --iterations 1000
 ```
 
 **Model Comparison:**
 ```bash
-bun run scripts/secret-boost.ts --model custom-model.onnx --output json
+bun run scripts/secrets/secret-boost.ts --model custom-model.onnx --output json
 ```
 
 ### Sample Output
@@ -242,7 +242,7 @@ Comprehensive WebSocket performance testing for 3D secret field streaming with c
 
 ### Usage
 ```bash
-bun run scripts/ws-secrets-bench.ts [options]
+bun run scripts/analysis/ws-secrets-bench.ts [options]
 ```
 
 ### Key Options
@@ -256,17 +256,17 @@ bun run scripts/ws-secrets-bench.ts [options]
 
 **Basic Benchmark:**
 ```bash
-bun run scripts/ws-secrets-bench.ts --keys 1000 --connections 10
+bun run scripts/analysis/ws-secrets-bench.ts --keys 1000 --connections 10
 ```
 
 **High Concurrency Test:**
 ```bash
-bun run scripts/ws-secrets-bench.ts --connections 50 --duration 300 --compression
+bun run scripts/analysis/ws-secrets-bench.ts --connections 50 --duration 300 --compression
 ```
 
 **Real-time Monitoring:**
 ```bash
-bun run scripts/ws-secrets-bench.ts --keys 5000 --realtime --compression
+bun run scripts/analysis/ws-secrets-bench.ts --keys 5000 --realtime --compression
 ```
 
 ### Sample Output
@@ -314,29 +314,29 @@ bun run scripts/ws-secrets-bench.ts --keys 5000 --realtime --compression
 **1. Generate Test Data:**
 ```bash
 # Create exposure data
-bun run scripts/vault-sim.ts --access 10K --keys 100 --output json
+bun run scripts/secrets/vault-sim.ts --access 10K --keys 100 --output json
 
 # Compute field from exposure data
-bun run scripts/secrets-field.ts --exposure 6.5 --output json
+bun run scripts/secrets/secrets-field.ts --exposure 6.5 --output json
 ```
 
 **2. ML Model Testing:**
 ```bash
 # Test ML model against field data
-bun run scripts/secret-boost.ts --field field-data.json --benchmark
+bun run scripts/secrets/secret-boost.ts --field field-data.json --benchmark
 
 # Compare different models
-bun run scripts/secret-boost.ts --model model-v1.onnx --field field-data.json
-bun run scripts/secret-boost.ts --model model-v2.onnx --field field-data.json
+bun run scripts/secrets/secret-boost.ts --model model-v1.onnx --field field-data.json
+bun run scripts/secrets/secret-boost.ts --model model-v2.onnx --field field-data.json
 ```
 
 **3. Performance Testing:**
 ```bash
 # WebSocket performance with compression
-bun run scripts/ws-secrets-bench.ts --connections 100 --compression --realtime
+bun run scripts/analysis/ws-secrets-bench.ts --connections 100 --compression --realtime
 
 # Field computation performance
-bun run scripts/secrets-field.ts --benchmark --iterations 1000
+bun run scripts/secrets/secrets-field.ts --benchmark --iterations 1000
 ```
 
 ### Integration with CI/CD
@@ -353,13 +353,13 @@ jobs:
       - uses: actions/checkout@v2
       - uses: oven-sh/setup-bun@v1
       - name: Test Field Computation
-        run: bun run scripts/secrets-field.ts --benchmark --iterations 100
+        run: bun run scripts/secrets/secrets-field.ts --benchmark --iterations 100
       - name: Test Exposure Simulation
-        run: bun run scripts/vault-sim.ts --access 1K --duration 30
+        run: bun run scripts/secrets/vault-sim.ts --access 1K --duration 30
       - name: Test ML Models
-        run: bun run scripts/secret-boost.ts --benchmark --iterations 500
+        run: bun run scripts/secrets/secret-boost.ts --benchmark --iterations 500
       - name: Test WebSocket Performance
-        run: bun run scripts/ws-secrets-bench.ts --connections 10 --duration 60
+        run: bun run scripts/analysis/ws-secrets-bench.ts --connections 10 --duration 60
 ```
 
 ### Monitoring and Alerting
@@ -367,17 +367,17 @@ jobs:
 **Real-time Monitoring:**
 ```bash
 # Continuous exposure monitoring
-bun run scripts/vault-sim.ts --access 1M --duration 3600 --realtime --pattern wave
+bun run scripts/secrets/vault-sim.ts --access 1M --duration 3600 --realtime --pattern wave
 
 # WebSocket health check
-bun run scripts/ws-secrets-bench.ts --connections 5 --duration 300 --realtime
+bun run scripts/analysis/ws-secrets-bench.ts --connections 5 --duration 300 --realtime
 ```
 
 **Performance Baselines:**
 ```bash
 # Establish performance baselines
-bun run scripts/secrets-field.ts --benchmark --iterations 1000 --output json > baseline-field.json
-bun run scripts/ws-secrets-bench.ts --connections 50 --duration 300 --output json > baseline-ws.json
+bun run scripts/secrets/secrets-field.ts --benchmark --iterations 1000 --output json > baseline-field.json
+bun run scripts/analysis/ws-secrets-bench.ts --connections 50 --duration 300 --output json > baseline-ws.json
 ```
 
 ---
@@ -467,10 +467,10 @@ WEBSOCKET_MAX_CONNECTIONS=1000
 **1. Memory Issues with Large Simulations:**
 ```bash
 # Reduce batch size
-bun run scripts/vault-sim.ts --access 1M --duration 600 --rate 50
+bun run scripts/secrets/vault-sim.ts --access 1M --duration 600 --rate 50
 
 # Use streaming output
-bun run scripts/vault-sim.ts --access 5M --output csv --realtime
+bun run scripts/secrets/vault-sim.ts --access 5M --output csv --realtime
 ```
 
 **2. WebSocket Connection Failures:**
@@ -479,25 +479,25 @@ bun run scripts/vault-sim.ts --access 5M --output csv --realtime
 curl http://localhost:3001/api/health
 
 # Reduce connection count
-bun run scripts/ws-secrets-bench.ts --connections 5 --duration 60
+bun run scripts/analysis/ws-secrets-bench.ts --connections 5 --duration 60
 ```
 
 **3. ML Model Loading Errors:**
 ```bash
 # Use mock model for testing
-bun run scripts/secret-boost.ts --model mock --benchmark
+bun run scripts/secrets/secret-boost.ts --model mock --benchmark
 
 # Check model path
-bun run scripts/secret-boost.ts --model ./models/secret-boost.onnx --help
+bun run scripts/secrets/secret-boost.ts --model ./models/secret-boost.onnx --help
 ```
 
 ### Debug Mode
 ```bash
 # Enable debug logging
-DEBUG=secrets-field:* bun run scripts/secrets-field.ts --benchmark
+DEBUG=secrets-field:* bun run scripts/secrets/secrets-field.ts --benchmark
 
 # Verbose output
-VERBOSE=1 bun run scripts/vault-sim.ts --access 1M --realtime
+VERBOSE=1 bun run scripts/secrets/vault-sim.ts --access 1M --realtime
 ```
 
 ---

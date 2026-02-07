@@ -147,7 +147,7 @@ Profiler R2 upload accepts either env style:
 - Dashboard and server install graceful shutdown handlers (`SIGINT`, `SIGTERM`).
 - Startup logs include resolved host/port/base URL and server protocol.
 - Main docs/html/api responses include keep-alive + `X-Server-Name` headers.
-- Shared `fetchWithDefaults()` utility is available in `/Users/nolarose/Projects/barbershop/fetch-utils.ts`.
+- Shared `fetchWithDefaults()` utility is available in `/Users/nolarose/Projects/barbershop/src/utils/fetch-utils.ts`.
 - Profile CLI uses `Bun.wrapAnsi()` when available for ANSI-safe wrapped terminal output.
 - Runtime profiling shortcuts generate markdown via `--cpu-prof-md` and `--heap-prof-md` into `logs/profiles/runtime`.
 - Diagnostics endpoint: `GET /ops/fetch-check?url=https://example.com`.
@@ -175,13 +175,50 @@ Profiler R2 upload accepts either env style:
 - [HTTP proxy options in `fetch`](https://bun.com/docs/guides/http/proxy)
 - [Bun.serve reference](https://bun.com/reference/bun/serve)
 
-## Files
+## Project Structure
 
-- `barbershop-dashboard.ts`: full 3-view dashboard demo.
-- `barbershop-tickets.ts`: ticketing and assignment flow demo.
-- `barber-server.ts`: telemetry, WS, auth/cookie + report endpoints.
-- `manifest.toml`: demo manifest and route/script index.
-- `runtime.config.jsonc`: optional JSONC runtime metadata used by docs/status endpoints.
-- `build-metadata.ts`: Bun build metafile generator (`barbershop/dist/meta.json`).
-- `sampling-profile.ts`: on-demand CPU sampling profile capture with `bun:jsc`.
-- `tests/`: barbershop-focused test suite.
+```
+barbershop/
+├── src/
+│   ├── core/           # Main business logic
+│   │   ├── barbershop-dashboard.ts  # Full 3-view dashboard demo
+│   │   ├── barbershop-tickets.ts    # Ticketing and assignment flow
+│   │   ├── barber-server.ts         # Telemetry, WS, auth/cookie + report endpoints
+│   │   └── barber-fusion-*.ts       # Fusion runtime, schema, types
+│   ├── secrets/        # Secrets management
+│   ├── r2/             # R2/cloud storage
+│   ├── profile/        # Profile management
+│   ├── build/          # Build system
+│   ├── utils/          # Utilities (fetch-utils.ts, logger.ts, etc.)
+│   └── debug/          # Debug/diagnostics
+├── lib/
+│   ├── api/            # API endpoints
+│   ├── r2/             # R2 authentication
+│   ├── secrets/        # Secrets modules (core, config)
+│   └── utils/          # Documentation utilities
+├── scripts/            # CLI scripts (categorized)
+│   ├── secrets/        # Secret management tools
+│   ├── security/       # Security auditing
+│   ├── operations/     # DevOps/Lifecycle
+│   ├── dashboard/      # Dashboard serving
+│   ├── analysis/       # Analysis tools
+│   └── shared/         # Shared utilities
+├── tests/
+│   ├── unit/           # Unit tests
+│   └── integration/    # Integration tests
+├── demo/               # Demo frontend files
+├── docs/               # Documentation
+├── config/             # Configuration files
+└── reports/            # Generated reports
+```
+
+## Key Files
+
+- `src/core/barbershop-dashboard.ts`: full 3-view dashboard demo.
+- `src/core/barbershop-tickets.ts`: ticketing and assignment flow demo.
+- `src/core/barber-server.ts`: telemetry, WS, auth/cookie + report endpoints.
+- `config/manifest.toml`: demo manifest and route/script index.
+- `config/runtime.config.jsonc`: optional JSONC runtime metadata.
+- `src/build/build-metadata.ts`: Bun build metafile generator.
+- `src/profile/sampling-profile.ts`: on-demand CPU sampling profile capture.
+- `tests/`: barbershop-focused test suite (unit/ + integration/).
