@@ -1689,6 +1689,7 @@
     "dv-cookie-server": "bun run examples/dataview-cookie-server.ts",
     "unified-server": "bun run examples/unified-cookie-dataview-server.ts",
     "cookie-validation-demo": "bun run examples/cookie-validation-demo.ts",
+    "cookie-inspector-demo": "bun run examples/cookie-inspector-demo.ts",
     "dv-metrics": "bun run scripts/dataview-cli.ts dv-metrics",
     "dv-export": "bun run scripts/dataview-cli.ts dv-export",
     "dv-stream": "bun run scripts/dataview-cli.ts dv-stream",
