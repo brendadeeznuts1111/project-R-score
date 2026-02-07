@@ -86,7 +86,10 @@ export class BunCookieManager {
    * Clear all cookies
    */
   clear(): void {
-    this.cookieMap.clear();
+    // CookieMap doesn't have clear(), iterate and delete
+    for (const name of this.cookieStore.keys()) {
+      this.cookieMap.delete(name);
+    }
     this.cookieStore.clear();
   }
 

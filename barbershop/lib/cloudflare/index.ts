@@ -109,5 +109,17 @@ export type {
   PaymentNotification,
 } from './registry';
 
+// Cached Client (v2.0)
+export {
+  CachedCloudflareClient,
+  cachedCloudflare,
+  type CacheEntry,
+  type CacheStats,
+  type CacheStrategy,
+  type InvalidationPattern,
+  type CachedClientConfig,
+  DEFAULT_CACHE_CONFIG,
+} from './cached-client';
+
 // Re-export as default
 export { CloudflareClient as default } from './client';

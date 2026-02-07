@@ -13,6 +13,7 @@
 import light from './light.toml';
 import dark from './dark.toml';
 import professional from './professional.toml';
+import factorywager from './factorywager.toml';
 import domain from './domain.toml';
 
 // Theme type definition derived from TOML structure
@@ -147,6 +148,7 @@ export const themes = {
   light: light as ThemeConfig,
   dark: dark as ThemeConfig,
   professional: professional as ThemeConfig,
+  factorywager: factorywager as ThemeConfig,
 };
 
 // Domain configuration
@@ -272,7 +274,7 @@ export function createThemeClass(theme: ThemeConfig, className: string): string 
 }
 
 // Re-export for convenience
-export { light, dark, professional, domain };
+export { light, dark, professional, factorywager, domain };
 
 // Default export
 export default themes;

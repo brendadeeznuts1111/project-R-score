@@ -94,6 +94,31 @@
     "playground:pipeline": "bun run scripts/dashboard/playground-cli.ts pipeline",
     "playground:hierarchy": "bun run scripts/dashboard/playground-cli.ts hierarchy",
     "playground:approvals": "bun run scripts/dashboard/playground-cli.ts approvals",
+    
+    "================ DASHBOARD SYSTEM v2 ================": "",
+    "dashboard:admin": "bun run -e \"import { createAdminDashboard } from './src/dashboard'; const db = createAdminDashboard(); console.log(JSON.stringify(db.build(), null, 2));\"",
+    "dashboard:client": "bun run -e \"import { createClientDashboard } from './src/dashboard'; const db = createClientDashboard(); console.log(JSON.stringify(db.build(), null, 2));\"",
+    "dashboard:barber": "bun run -e \"import { createBarberDashboard } from './src/dashboard'; const db = createBarberDashboard(); console.log(JSON.stringify(db.build(), null, 2));\"",
+    "dashboard:analytics": "bun run -e \"import { createAnalyticsDashboard } from './src/dashboard'; const db = createAnalyticsDashboard(); console.log(JSON.stringify(db.build(), null, 2));\"",
+    "dashboard:export": "bun run -e \"import { createDashboard } from './src/dashboard'; const db = createDashboard({ view: 'admin' }).buildAdminDashboard(); console.log(db.export('html'));\"",
+    
+    "================ PROFILE SYSTEM v2 ================": "",
+    "profile:engine": "bun run -e \"import { createProfileEngine } from './src/profile'; console.log('Profile Engine v' + require('./src/profile').PROFILE_SYSTEM_VERSION);\"",
+    "profile:sampling:v2": "bun run -e \"import { quickSamplingProfile } from './src/profile'; await quickSamplingProfile('http://localhost:3001/ops/status');\"",
+    "profile:sampling:upload": "bun run -e \"import { quickSamplingProfile } from './src/profile'; await quickSamplingProfile('http://localhost:3001/ops/status', { uploadR2: true });\"",
+    "profile:cache-stats": "bun run -e \"import { cachedCloudflare } from './lib/cloudflare/cached-client'; cachedCloudflare.printStats();\"",
+    "profile:cache-warm": "bun run -e \"import { cachedCloudflare } from './lib/cloudflare/cached-client'; const s = await cachedCloudflare.warmCache(); console.log('Warmed:', s);\"",
+    
+    "================ OPTIMIZED BUILDS ================": "",
+    "build:dashboard:v2": "bun build src/dashboard/index.ts --outfile dist/dashboard-v2.js --target=bun",
+    "build:profile": "bun build src/profile/index.ts --outfile dist/profile-engine.js --target=bun",
+    "build:cloudflare": "bun build lib/cloudflare/index.ts --outfile dist/cloudflare-client.js --target=bun",
+    "build:all": "bun run build:dashboard:v2 && bun run build:profile && bun run build:cloudflare",
+    
+    "================ TESTING ================": "",
+    "test:dashboard": "bun test src/dashboard/",
+    "test:profile": "bun test src/profile/",
+    "test:types": "bun x tsc --noEmit src/dashboard/index.ts src/profile/index.ts lib/cloudflare/cached-client.ts",
   },
   "dependencies": {
     "bun": "latest"
