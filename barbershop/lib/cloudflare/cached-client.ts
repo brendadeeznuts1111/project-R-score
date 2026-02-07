@@ -1,6 +1,6 @@
 /**
  * Cached Cloudflare Client
- * 
+ *
  * Enhances the unified Cloudflare client with:
  * - Intelligent caching layer
  * - Request deduplication
@@ -81,7 +81,7 @@ class ResponseCache {
     // Update hit count for LRU
     entry.hits++;
     this.stats.hits++;
-    
+
     return entry.value as T;
   }
 
@@ -105,16 +105,16 @@ class ResponseCache {
 
   has(key: string): boolean {
     if (!this.config.enabled) return false;
-    
+
     const entry = this.cache.get(key);
     if (!entry) return false;
-    
+
     // Check if expired
     if (Date.now() > entry.expiresAt) {
       this.cache.delete(key);
       return false;
     }
-    
+
     return true;
   }
 
@@ -231,15 +231,13 @@ export class CachedCloudflareClient {
 
   async listZones(forceRefresh = false): Promise<CFZone[]> {
     const cacheKey = 'zones:all';
-    
+
     if (!forceRefresh) {
       const cached = this.cache.get<CFZone[]>(cacheKey);
       if (cached) return cached;
     }
 
-    const zones = await this.deduplicator.dedupe(cacheKey, () => 
-      this.service.listZones()
-    );
+    const zones = await this.deduplicator.dedupe(cacheKey, () => this.service.listZones());
 
     this.cache.set(cacheKey, zones, 30000); // 30s TTL
     return zones;
@@ -247,7 +245,7 @@ export class CachedCloudflareClient {
 
   async getZone(zoneId: string, forceRefresh = false): Promise<CFZone | null> {
     const cacheKey = `zone:${zoneId}`;
-    
+
     if (!forceRefresh) {
       const cached = this.cache.get<CFZone>(cacheKey);
       if (cached) return cached;
@@ -255,17 +253,17 @@ export class CachedCloudflareClient {
 
     const zones = await this.listZones();
     const zone = zones.find(z => z.id === zoneId) || null;
-    
+
     if (zone) {
       this.cache.set(cacheKey, zone, 60000); // 1m TTL
     }
-    
+
     return zone;
   }
 
   async findZoneByName(name: string, forceRefresh = false): Promise<CFZone | null> {
     const cacheKey = `zone:name:${name}`;
-    
+
     if (!forceRefresh) {
       const cached = this.cache.get<CFZone>(cacheKey);
       if (cached) return cached;
@@ -273,19 +271,19 @@ export class CachedCloudflareClient {
 
     const zones = await this.listZones();
     const zone = zones.find(z => z.name === name) || null;
-    
+
     if (zone) {
       this.cache.set(cacheKey, zone, 60000);
       // Also cache by ID
       this.cache.set(`zone:${zone.id}`, zone, 60000);
     }
-    
+
     return zone;
   }
 
   async listDNSRecords(zoneId: string, forceRefresh = false): Promise<CFDNSRecord[]> {
     const cacheKey = `dns:${zoneId}:all`;
-    
+
     if (!forceRefresh) {
       const cached = this.cache.get<CFDNSRecord[]>(cacheKey);
       if (cached) return cached;
@@ -301,18 +299,20 @@ export class CachedCloudflareClient {
 
   async findDNSRecord(zoneId: string, name: string, type?: string): Promise<CFDNSRecord | null> {
     const records = await this.listDNSRecords(zoneId);
-    return records.find(r => 
-      r.name === name && (type ? r.type === type : true)
-    ) || null;
+    return records.find(r => r.name === name && (type ? r.type === type : true)) || null;
   }
 
   // ==================== Cached R2 Operations ====================
 
-  async listR2Objects(prefix?: string, forceRefresh = false): Promise<Array<{ key: string; size: number; lastModified: Date }>> {
+  async listR2Objects(
+    prefix?: string,
+    forceRefresh = false
+  ): Promise<Array<{ key: string; size: number; lastModified: Date }>> {
     const cacheKey = `r2:list:${prefix || 'all'}`;
-    
+
     if (!forceRefresh) {
-      const cached = this.cache.get<Array<{ key: string; size: number; lastModified: Date }>>(cacheKey);
+      const cached =
+        this.cache.get<Array<{ key: string; size: number; lastModified: Date }>>(cacheKey);
       if (cached) return cached;
     }
 
@@ -366,9 +366,11 @@ export class CachedCloudflareClient {
     return results;
   }
 
-  async batchGetDNSRecords(requests: Array<{ zoneId: string; name?: string; type?: string }>): Promise<Map<string, CFDNSRecord[]>> {
+  async batchGetDNSRecords(
+    requests: Array<{ zoneId: string; name?: string; type?: string }>
+  ): Promise<Map<string, CFDNSRecord[]>> {
     const results = new Map<string, CFDNSRecord[]>();
-    
+
     // Group by zoneId for efficiency
     const byZone = new Map<string, Array<{ name?: string; type?: string }>>();
     for (const req of requests) {
@@ -380,14 +382,15 @@ export class CachedCloudflareClient {
     // Fetch for each zone
     for (const [zoneId, filters] of byZone.entries()) {
       const records = await this.listDNSRecords(zoneId);
-      
+
       for (const filter of filters) {
         const cacheKey = `dns:${zoneId}:${filter.name || 'all'}:${filter.type || 'all'}`;
-        const filtered = records.filter(r => 
-          (filter.name ? r.name === filter.name : true) &&
-          (filter.type ? r.type === filter.type : true)
+        const filtered = records.filter(
+          r =>
+            (filter.name ? r.name === filter.name : true) &&
+            (filter.type ? r.type === filter.type : true)
         );
-        
+
         results.set(cacheKey, filtered);
         this.cache.set(cacheKey, filtered, 60000);
       }
@@ -437,7 +440,8 @@ export class CachedCloudflareClient {
       stats.zones = zones.length;
 
       // Warm DNS records for each zone
-      for (const zone of zones.slice(0, 5)) { // Limit to first 5 zones
+      for (const zone of zones.slice(0, 5)) {
+        // Limit to first 5 zones
         try {
           const records = await this.listDNSRecords(zone.id, true);
           stats.dnsRecords += records.length;

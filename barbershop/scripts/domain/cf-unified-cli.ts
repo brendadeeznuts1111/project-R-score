@@ -1,10 +1,10 @@
 #!/usr/bin/env bun
 /**
  * Unified Cloudflare CLI
- * 
+ *
  * Demonstrates Bun v1.3.7+ features integrated with Cloudflare services:
  * - S3 client (alpha) for R2
- * - Worker API (alpha) for edge computing  
+ * - Worker API (alpha) for edge computing
  * - Profile capture for performance
  * - Presigned URLs for secure sharing
  * - Header case preservation
@@ -12,16 +12,8 @@
  */
 
 import { unifiedCloudflare } from '../../lib/cloudflare/unified-client';
-import { 
-  themes, 
-  domainConfig,
-  type ThemeName,
-} from '../../themes/config';
-import {
-  ThemedConsole,
-  getDomainTheme,
-  themedSeparator
-} from '../../themes/config/domain-theme';
+import { themes, domainConfig, type ThemeName } from '../../themes/config';
+import { ThemedConsole, getDomainTheme, themedSeparator } from '../../themes/config/domain-theme';
 import { FACTORY_WAGER_BRAND } from '../../src/config/domain';
 import { nanoseconds } from '../../src/utils/bun-enhanced';
 
@@ -41,7 +33,7 @@ const config = domainConfig;
 function printHeader(): void {
   const { icon, name } = FACTORY_WAGER_BRAND;
   const separator = themedSeparator(activeTheme, 60);
-  
+
   t.log();
   t.log(separator);
   t.log(`${icon} ${name} Unified Cloudflare CLI`);
@@ -92,14 +84,14 @@ async function cmdStatus(): Promise<void> {
 
 async function cmdR2Upload(): Promise<void> {
   const [filePath, key] = commandArgs.slice(1);
-  
+
   if (!filePath) {
     t.error('Usage: r2-upload <file-path> [key]');
     return;
   }
 
   const uploadKey = key || filePath.split('/').pop() || 'unnamed';
-  
+
   t.header(`${theme.icons.zone} R2 Upload: ${uploadKey}`);
   t.log();
 
@@ -111,9 +103,9 @@ async function cmdR2Upload(): Promise<void> {
     // Read file
     const file = Bun.file(filePath);
     const data = await file.arrayBuffer();
-    
+
     t.info(`File size: ${(data.byteLength / 1024).toFixed(2)} KB`);
-    
+
     // Upload with content type
     await unifiedCloudflare.uploadToR2(uploadKey, data, {
       contentType: file.type || 'application/octet-stream',
@@ -135,11 +127,10 @@ async function cmdR2Upload(): Promise<void> {
     t.success(`Upload complete in ${elapsedMs.toFixed(2)}ms`);
     t.log(`   Key: ${uploadKey}`);
     t.log(`   Presigned URL: ${presignedUrl.slice(0, 60)}...`);
-    
+
     if (profile) {
       t.log(`   Peak Memory: ${(profile.summary.peakMemory / 1024 / 1024).toFixed(1)}MB`);
     }
-
   } catch (error) {
     t.error(`Upload failed: ${(error as Error).message}`);
   }
@@ -147,7 +138,7 @@ async function cmdR2Upload(): Promise<void> {
 
 async function cmdR2List(): Promise<void> {
   const prefix = commandArgs[1] || '';
-  
+
   t.header(`${theme.icons.zone} R2 Objects${prefix ? `: ${prefix}` : ''}`);
   t.log();
 
@@ -171,11 +162,10 @@ async function cmdR2List(): Promise<void> {
 
     t.log();
     t.success(`${result.objects.length} object(s)`);
-    
+
     if (result.isTruncated) {
       t.info('More objects available...');
     }
-
   } catch (error) {
     t.error(`List failed: ${(error as Error).message}`);
   }
@@ -183,26 +173,25 @@ async function cmdR2List(): Promise<void> {
 
 async function cmdR2Presign(): Promise<void> {
   const [key, expires] = commandArgs.slice(1);
-  
+
   if (!key) {
     t.error('Usage: r2-presign <key> [expires-seconds]');
     return;
   }
 
   const expiresIn = parseInt(expires) || 3600;
-  
+
   t.header(`${theme.icons.ssl} Presigned URL: ${key}`);
   t.log();
 
   try {
     const url = await unifiedCloudflare.presignR2Url(key, { expiresIn });
-    
+
     t.success(`Generated (expires in ${expiresIn}s):`);
     t.log();
     t.log(url);
     t.log();
     t.muted('Use this URL to share or access the object without credentials');
-
   } catch (error) {
     t.error(`Presign failed: ${(error as Error).message}`);
   }
@@ -210,20 +199,20 @@ async function cmdR2Presign(): Promise<void> {
 
 async function cmdWorkerDeploy(): Promise<void> {
   const [scriptPath, name] = commandArgs.slice(1);
-  
+
   if (!scriptPath) {
     t.error('Usage: worker-deploy <script-path> [name]');
     return;
   }
 
   const workerName = name || 'default-worker';
-  
+
   t.header(`⚡ Deploy Worker: ${workerName}`);
   t.log();
 
   try {
     const script = await Bun.file(scriptPath).text();
-    
+
     unifiedCloudflare.startProfiling('worker-deploy');
     const startTime = nanoseconds();
 
@@ -235,7 +224,7 @@ async function cmdWorkerDeploy(): Promise<void> {
     const elapsedMs = Number(nanoseconds() - startTime) / 1_000_000;
 
     t.success(`Deployed in ${elapsedMs.toFixed(2)}ms`);
-    
+
     // Test invocation
     const testResponse = await worker.fetch(new Request('https://example.com/'));
     t.info(`Test response: ${testResponse.status}`);
@@ -243,7 +232,6 @@ async function cmdWorkerDeploy(): Promise<void> {
     if (profile) {
       t.log(`   Operations: ${profile.summary.totalOperations}`);
     }
-
   } catch (error) {
     t.error(`Deploy failed: ${(error as Error).message}`);
     t.muted('Note: Bun.Worker API requires v1.3.7+');
@@ -252,7 +240,7 @@ async function cmdWorkerDeploy(): Promise<void> {
 
 async function cmdProfileCapture(): Promise<void> {
   const duration = parseInt(commandArgs[1]) || 5000;
-  
+
   t.header('📊 Profile Capture');
   t.log();
 
@@ -263,7 +251,7 @@ async function cmdProfileCapture(): Promise<void> {
   await new Promise(r => setTimeout(r, duration));
 
   const profile = await unifiedCloudflare.stopProfiling('manual-capture');
-  
+
   if (profile) {
     t.success('Profile captured:');
     t.log(`   CPU samples: ${profile.cpu.length}`);
@@ -280,7 +268,7 @@ async function cmdDeployStack(): Promise<void> {
   t.log();
 
   const domain = config.defaults.primary_domain;
-  
+
   // Sample worker script
   const workerScript = `
 export default {
@@ -311,9 +299,7 @@ export default {
     const result = await unifiedCloudflare.deployStack({
       domain,
       workerScript,
-      r2Assets: [
-        { key: 'config.json', data: JSON.stringify({ version: '1.0.0' }) },
-      ],
+      r2Assets: [{ key: 'config.json', data: JSON.stringify({ version: '1.0.0' }) }],
     });
 
     const profile = await unifiedCloudflare.stopProfiling('full-deploy');
@@ -322,11 +308,10 @@ export default {
     t.success(`Stack deployed in ${elapsedMs.toFixed(2)}ms`);
     t.log(`   Zone: ${result.zone.name} (${result.zone.status})`);
     t.log(`   Presigned URLs: ${result.presignedUrls.length}`);
-    
+
     if (profile) {
       t.log(`   Peak Memory: ${(profile.summary.peakMemory / 1024 / 1024).toFixed(1)}MB`);
     }
-
   } catch (error) {
     t.error(`Deploy failed: ${(error as Error).message}`);
   }
@@ -337,7 +322,7 @@ async function cmdStats(): Promise<void> {
   t.log();
 
   const stats = unifiedCloudflare.getOperationStats();
-  
+
   t.info(`Total Operations: ${stats.total}`);
   t.info(`Average Duration: ${stats.averageDuration.toFixed(2)}ms`);
   t.log();

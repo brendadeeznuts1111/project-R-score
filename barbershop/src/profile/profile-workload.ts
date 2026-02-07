@@ -2,7 +2,7 @@
 
 function arg(name: string, fallback: string) {
   const key = `--${name}=`;
-  const found = Bun.argv.find((a) => a.startsWith(key));
+  const found = Bun.argv.find(a => a.startsWith(key));
   return found ? found.slice(key.length) : fallback;
 }
 
@@ -27,4 +27,6 @@ for (let i = 0; i < iterations; i++) {
 
 const durationMs = Math.round((performance.now() - started) * 1000) / 1000;
 console.log(`[profile-workload] target=${target}`);
-console.log(`[profile-workload] method=${method} iterations=${iterations} ok=${ok} fail=${fail} durationMs=${durationMs}`);
+console.log(
+  `[profile-workload] method=${method} iterations=${iterations} ok=${ok} fail=${fail} durationMs=${durationMs}`
+);

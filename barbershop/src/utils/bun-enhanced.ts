@@ -1,6 +1,6 @@
 /**
  * Bun-Enhanced Utilities
- * 
+ *
  * Leverages Bun's native APIs for maximum performance:
  * - Bun.hash() - Fast hashing (xxHash, wyhash, metrohash)
  * - Bun.password - Argon2/bcrypt password hashing
@@ -32,7 +32,7 @@ export function fastHash(
   seed?: number
 ): bigint | number {
   const input = typeof data === 'string' ? Buffer.from(data) : data;
-  
+
   // @ts-ignore - Bun.hash is available in Bun runtime
   if (seed !== undefined) {
     return Bun.hash(input, seed, algorithm);
@@ -44,10 +44,12 @@ export function fastHash(
  * Streaming hash using Bun.CryptoHasher
  * Memory-efficient for large files
  */
-export function createStreamingHasher(algorithm: 'blake2b256' | 'md5' | 'sha1' | 'sha256' | 'sha512' = 'sha256') {
+export function createStreamingHasher(
+  algorithm: 'blake2b256' | 'md5' | 'sha1' | 'sha256' | 'sha512' = 'sha256'
+) {
   // @ts-ignore
   const hasher = new Bun.CryptoHasher(algorithm);
-  
+
   return {
     update: (data: string | ArrayBufferView) => {
       hasher.update(data);
@@ -66,8 +68,8 @@ export function createStreamingHasher(algorithm: 'blake2b256' | 'md5' | 'sha1' |
 
 export interface PasswordOptions {
   algorithm?: 'argon2id' | 'argon2d' | 'argon2i' | 'bcrypt';
-  memoryCost?: number;  // Argon2 memory in KB
-  timeCost?: number;    // Argon2 iterations
+  memoryCost?: number; // Argon2 memory in KB
+  timeCost?: number; // Argon2 iterations
   saltSize?: number;
 }
 
@@ -80,7 +82,7 @@ export async function hashPassword(
   options: PasswordOptions = {}
 ): Promise<string> {
   const { algorithm = 'argon2id', memoryCost = 65536, timeCost = 3 } = options;
-  
+
   // @ts-ignore - Bun.password is available in Bun runtime
   return Bun.password.hash(password, {
     algorithm,
@@ -113,7 +115,7 @@ export function compressData(
   level?: number
 ): Uint8Array {
   const input = typeof data === 'string' ? Buffer.from(data) : data;
-  
+
   // Check if Bun compression APIs are available
   // @ts-ignore
   if (Bun.gzip) {
@@ -133,11 +135,11 @@ export function compressData(
         throw new Error(`Unknown algorithm: ${algorithm}`);
     }
   }
-  
+
   // Fallback to Node zlib
   const zlib = require('zlib');
   const buffer = Buffer.from(input);
-  
+
   switch (algorithm) {
     case 'gzip':
       return zlib.gzipSync(buffer, { level });
@@ -151,10 +153,7 @@ export function compressData(
 /**
  * Decompress data
  */
-export function decompressData(
-  data: ArrayBufferView,
-  algorithm: CompressionAlgorithm
-): Uint8Array {
+export function decompressData(data: ArrayBufferView, algorithm: CompressionAlgorithm): Uint8Array {
   // @ts-ignore
   if (Bun.gzip) {
     switch (algorithm) {
@@ -173,11 +172,11 @@ export function decompressData(
         throw new Error(`Unknown algorithm: ${algorithm}`);
     }
   }
-  
+
   // Fallback to Node zlib
   const zlib = require('zlib');
   const buffer = Buffer.from(data);
-  
+
   switch (algorithm) {
     case 'gzip':
       return zlib.gunzipSync(buffer);
@@ -211,9 +210,9 @@ export async function measure<T>(
   const start = nanoseconds();
   const result = await fn();
   const duration = Number(nanoseconds() - start) / 1_000_000;
-  
+
   logger.debug(`${label}: ${duration.toFixed(3)}ms`);
-  
+
   return { result, duration };
 }
 
@@ -222,7 +221,7 @@ export async function measure<T>(
  */
 export function createTimer(label: string) {
   const start = nanoseconds();
-  
+
   return {
     elapsed: () => Number(nanoseconds() - start) / 1_000_000,
     log: () => {
@@ -278,7 +277,7 @@ export async function streamFile(
   const file = Bun.file(path);
   const stream = file.stream();
   const reader = stream.getReader();
-  
+
   while (true) {
     const { done, value } = await reader.read();
     if (done) break;
@@ -396,14 +395,14 @@ export async function demoBunEnhanced(): Promise<void> {
   console.log('\n╔══════════════════════════════════════════════════════════════════╗');
   console.log('║              🚀 BUN-ENHANCED UTILITIES DEMO                      ║');
   console.log('╚══════════════════════════════════════════════════════════════════╝\n');
-  
+
   // Hashing demo
   console.log('1️⃣  Fast Hashing (wyhash):');
   const data = 'Hello, FactoryWager!';
   const hash = fastHash(data, 'wyhash');
   console.log(`   Input: "${data}"`);
   console.log(`   Hash: ${hash}`);
-  
+
   // Password hashing demo
   console.log('\n2️⃣  Password Hashing (Argon2):');
   const password = 'super-secret-password';
@@ -412,23 +411,23 @@ export async function demoBunEnhanced(): Promise<void> {
   console.log(`   Hash: ${passwordHash.slice(0, 50)}...`);
   const isValid = await verifyPassword(password, passwordHash);
   console.log(`   Valid: ${isValid ? '✅' : '❌'}`);
-  
+
   // Compression demo
   console.log('\n3️⃣  Compression (gzip):');
   const original = 'x'.repeat(10000);
   const compressed = compressData(original, 'gzip', 6);
-  const ratio = ((original.length - compressed.length) / original.length * 100).toFixed(1);
+  const ratio = (((original.length - compressed.length) / original.length) * 100).toFixed(1);
   console.log(`   Original: ${original.length} bytes`);
   console.log(`   Compressed: ${compressed.length} bytes`);
   console.log(`   Ratio: ${ratio}% smaller`);
-  
+
   // Timing demo
   console.log('\n4️⃣  High-Resolution Timing:');
   const timer = createTimer('Operation');
   await sleep(100);
   const elapsed = timer.log();
   console.log(`   Slept for ~100ms, measured: ${elapsed.toFixed(2)}ms`);
-  
+
   // Semver demo
   console.log('\n5️⃣  Semver Parsing:');
   const v1 = '1.2.3';
@@ -436,20 +435,20 @@ export async function demoBunEnhanced(): Promise<void> {
   const comparison = compareVersions(v1, v2);
   console.log(`   ${v1} vs ${v2}: ${comparison < 0 ? '<' : comparison > 0 ? '>' : '='}`);
   console.log(`   ${v1} satisfies ^1.0.0: ${satisfiesVersion(v1, '^1.0.0') ? '✅' : '❌'}`);
-  
+
   // HTML escaping demo
   console.log('\n6️⃣  HTML Escaping:');
   const html = '<script>alert("xss")</script>';
   const escaped = escapeHTML(html);
   console.log(`   Input: ${html}`);
   console.log(`   Escaped: ${escaped}`);
-  
+
   // Bun version
   console.log('\n7️⃣  Bun Version:');
   const version = getBunVersion();
   console.log(`   Version: ${version.version}`);
   console.log(`   Revision: ${version.revision.slice(0, 8)}...`);
-  
+
   console.log('\n✅ Demo complete!\n');
 }
 

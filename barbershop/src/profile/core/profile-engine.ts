@@ -1,6 +1,6 @@
 /**
  * Unified Profile Engine
- * 
+ *
  * Consolidates profiling capabilities:
  * - CPU profiling (Bun --cpu-prof)
  * - Heap profiling (Bun --heap-prof)
@@ -91,7 +91,7 @@ export interface ProfileReport {
 interface ProfileStorage {
   sessions: Map<string, ProfileSession>;
   markers: Map<string, PerformanceMarker[]>;
-  
+
   saveSession: (session: ProfileSession) => void;
   getSession: (id: string) => ProfileSession | undefined;
   getAllSessions: () => ProfileSession[];
@@ -107,29 +107,29 @@ function createProfileStorage(): ProfileStorage {
   return {
     sessions,
     markers,
-    
+
     saveSession(session: ProfileSession): void {
       sessions.set(session.id, session);
     },
-    
+
     getSession(id: string): ProfileSession | undefined {
       return sessions.get(id);
     },
-    
+
     getAllSessions(): ProfileSession[] {
       return Array.from(sessions.values()).sort((a, b) => b.startTime - a.startTime);
     },
-    
+
     addMarker(sessionId: string, marker: PerformanceMarker): void {
       const sessionMarkers = markers.get(sessionId) || [];
       sessionMarkers.push(marker);
       markers.set(sessionId, sessionMarkers);
     },
-    
+
     getMarkers(sessionId: string): PerformanceMarker[] {
       return markers.get(sessionId) || [];
     },
-    
+
     clear(): void {
       sessions.clear();
       markers.clear();
@@ -156,48 +156,61 @@ class ProfileR2Uploader {
     });
   }
 
-  async uploadProfile(session: ProfileSession, outputPath: string): Promise<{ success: boolean; key?: string; error?: string }> {
+  async uploadProfile(
+    session: ProfileSession,
+    outputPath: string
+  ): Promise<{ success: boolean; key?: string; error?: string }> {
     try {
       const timestamp = new Date(session.startTime).toISOString().replace(/[:.]/g, '-');
       const baseKey = `${this.config.prefix}/${session.type}/${timestamp}`;
-      
+
       // Upload main profile file
       const profileFile = Bun.file(outputPath);
       const profileData = await profileFile.arrayBuffer();
       const profileKey = `${baseKey}/profile.${this.getExtension(session.type)}`;
-      
+
       await this.upload(profileKey, Buffer.from(profileData), this.getContentType(session.type));
-      
+
       // Upload metadata
       const metadataKey = `${baseKey}/metadata.json`;
       await this.upload(metadataKey, JSON.stringify(session.metadata, null, 2), 'application/json');
-      
+
       return { success: true, key: baseKey };
     } catch (error) {
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
 
   private getExtension(type: ProfileType): string {
     switch (type) {
-      case 'cpu': return 'cpuprofile';
-      case 'heap': return 'heapsnapshot';
-      case 'sampling': return 'json';
-      case 'custom': return 'json';
-      default: return 'profile';
+      case 'cpu':
+        return 'cpuprofile';
+      case 'heap':
+        return 'heapsnapshot';
+      case 'sampling':
+        return 'json';
+      case 'custom':
+        return 'json';
+      default:
+        return 'profile';
     }
   }
 
   private getContentType(type: ProfileType): string {
     switch (type) {
-      case 'cpu': return 'application/json';
-      case 'heap': return 'application/json';
-      case 'sampling': return 'application/json';
-      case 'custom': return 'application/json';
-      default: return 'application/octet-stream';
+      case 'cpu':
+        return 'application/json';
+      case 'heap':
+        return 'application/json';
+      case 'sampling':
+        return 'application/json';
+      case 'custom':
+        return 'application/json';
+      default:
+        return 'application/octet-stream';
     }
   }
 }
@@ -235,7 +248,7 @@ export class ProfileEngine {
 
     this.currentSession = session;
     this.storage.saveSession(session);
-    
+
     return session;
   }
 
@@ -270,7 +283,10 @@ export class ProfileEngine {
 
   // ==================== Sampling Profile ====================
 
-  async runSampling(config: SamplingConfig, workload?: () => Promise<void>): Promise<ProfileReport> {
+  async runSampling(
+    config: SamplingConfig,
+    workload?: () => Promise<void>
+  ): Promise<ProfileReport> {
     const session = this.startSession('sampling', {
       target: config.target,
       iterations: config.iterations,
@@ -294,14 +310,14 @@ export class ProfileEngine {
 
       // Run profiled workload
       const startedAt = performance.now();
-      
+
       const profile = await jsc.profile(async () => {
         for (let i = 0; i < config.iterations; i++) {
           if (workload) {
             await workload();
           } else {
-            const res = await fetch(config.target, { 
-              headers: { Accept: 'application/json' } 
+            const res = await fetch(config.target, {
+              headers: { Accept: 'application/json' },
             });
             await res.text();
           }
@@ -313,7 +329,7 @@ export class ProfileEngine {
       // Extract profile data
       const stackTracesRaw = (profile as Record<string, unknown>).stackTraces;
       const stackTraces = Array.isArray(stackTracesRaw)
-        ? stackTracesRaw.map((item) => String(item)).join('\n\n')
+        ? stackTracesRaw.map(item => String(item)).join('\n\n')
         : String(stackTracesRaw ?? '');
       const functionsText = String((profile as Record<string, unknown>).functions ?? '');
       const bytecodesText = String((profile as Record<string, unknown>).bytecodes ?? '');
@@ -326,7 +342,7 @@ export class ProfileEngine {
       await Bun.write(join(runDir, 'functions.txt'), functionsText);
       await Bun.write(join(runDir, 'bytecodes.txt'), bytecodesText);
       await Bun.write(join(runDir, 'stack-traces.txt'), stackTraces);
-      
+
       const summary = {
         target: config.target,
         iterations: config.iterations,
@@ -339,12 +355,15 @@ export class ProfileEngine {
       await Bun.write(join(runDir, 'summary.json'), JSON.stringify(summary, null, 2));
 
       // Create archive
-      const archive = new Bun.Archive({
-        'summary.json': await Bun.file(join(runDir, 'summary.json')).text(),
-        'functions.txt': functionsText,
-        'bytecodes.txt': bytecodesText,
-        'stack-traces.txt': stackTraces,
-      }, { compress: 'gzip', level: 9 });
+      const archive = new Bun.Archive(
+        {
+          'summary.json': await Bun.file(join(runDir, 'summary.json')).text(),
+          'functions.txt': functionsText,
+          'bytecodes.txt': bytecodesText,
+          'stack-traces.txt': stackTraces,
+        },
+        { compress: 'gzip', level: 9 }
+      );
 
       const archivePath = join(runDir, 'sampling-profile.tar.gz');
       await Bun.write(archivePath, archive);
@@ -371,7 +390,6 @@ export class ProfileEngine {
         },
         upload: uploadResult,
       };
-
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       this.endSession(undefined, errorMessage);
@@ -402,7 +420,7 @@ export class ProfileEngine {
     }
 
     const endTime = performance.now();
-    
+
     // If start marker provided, find it
     let startTime = endTime;
     if (startMarker) {
@@ -455,10 +473,7 @@ export class ProfileEngine {
     ];
 
     if (report.upload) {
-      lines.push(
-        'R2 Upload:',
-        `  Success: ${report.upload.success ? '✓' : '✗'}`,
-      );
+      lines.push('R2 Upload:', `  Success: ${report.upload.success ? '✓' : '✗'}`);
       if (report.upload.key) {
         lines.push(`  Key: ${report.upload.key}`);
       }
@@ -469,11 +484,7 @@ export class ProfileEngine {
     }
 
     if (report.session.error) {
-      lines.push(
-        'Error:',
-        `  ${report.session.error}`,
-        '',
-      );
+      lines.push('Error:', `  ${report.session.error}`, '');
     }
 
     lines.push('═══════════════════════════════════════════════════════════');
@@ -491,7 +502,8 @@ export function createProfileEngine(config?: Partial<ProfileConfig>): ProfileEng
 export function resolveR2ConfigFromEnv(): R2UploadConfig | null {
   const bucket = Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME;
   const accountId = Bun.env.R2_ACCOUNT_ID;
-  const endpoint = Bun.env.R2_ENDPOINT || (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : null);
+  const endpoint =
+    Bun.env.R2_ENDPOINT || (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : null);
   const accessKeyId = Bun.env.R2_ACCESS_KEY_ID;
   const secretAccessKey = Bun.env.R2_SECRET_ACCESS_KEY;
   const prefix = Bun.env.R2_PREFIX || 'profiles';
@@ -520,7 +532,7 @@ export function parseProfileArgs(): {
   uploadR2: boolean;
 } {
   const args = Bun.argv.slice(2);
-  
+
   const getArg = (name: string, defaultValue: string): string => {
     const prefix = `--${name}=`;
     const found = args.find(a => a.startsWith(prefix));
@@ -530,7 +542,7 @@ export function parseProfileArgs(): {
   const hasFlag = (name: string): boolean => args.includes(`--${name}`);
 
   return {
-    type: (getArg('type', 'sampling') as ProfileType),
+    type: getArg('type', 'sampling') as ProfileType,
     target: getArg('target', 'http://localhost:3001/ops/status'),
     iterations: parseInt(getArg('iterations', '200'), 10),
     intervalUs: parseInt(getArg('interval-us', '100'), 10),

@@ -4,13 +4,7 @@
 
 import { describe, test, expect, beforeEach } from 'bun:test';
 import { OptimizedSecretManager } from '../lib/secrets/core/optimized-secret-manager';
-import {
-  ProgressBar,
-  Spinner,
-  renderTable,
-  createCLI,
-  type CLIConfig,
-} from '../lib/cli/framework';
+import { ProgressBar, Spinner, renderTable, createCLI, type CLIConfig } from '../lib/cli/framework';
 
 describe('Optimized Secret Manager', () => {
   let manager: OptimizedSecretManager;
@@ -59,7 +53,7 @@ describe('CLI Framework', () => {
       {
         name: 'hello',
         description: 'Say hello',
-        handler: (ctx) => {
+        handler: ctx => {
           console.log(`Hello, ${ctx.args.name || 'World'}!`);
         },
         arguments: [{ name: 'name', description: 'Name to greet' }],
@@ -148,7 +142,10 @@ describe('Table Renderer', () => {
   test('renders simple table', () => {
     const table = renderTable(
       ['Name', 'Value'],
-      [['A', 1], ['B', 2]]
+      [
+        ['A', 1],
+        ['B', 2],
+      ]
     );
     expect(table).toContain('Name');
     expect(table).toContain('Value');
@@ -159,7 +156,10 @@ describe('Table Renderer', () => {
   test('renders with alignment', () => {
     const table = renderTable(
       ['Item', 'Count'],
-      [['Apple', 5], ['Banana', 10]],
+      [
+        ['Apple', 5],
+        ['Banana', 10],
+      ],
       { align: ['left', 'right'] }
     );
     expect(table).toContain('Apple');

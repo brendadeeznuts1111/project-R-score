@@ -1,7 +1,17 @@
 // barbershop-dashboard.ts - Complete 3-View Dashboard System
 // Admin (God View) | Client (Customer) | Barber (Worker)
 
-import { serve, redis, RedisClient, Cookie, env, randomUUIDv7, r2_upload, r2_status, S3Client } from 'bun';
+import {
+  serve,
+  redis,
+  RedisClient,
+  Cookie,
+  env,
+  randomUUIDv7,
+  r2_upload,
+  r2_status,
+  S3Client,
+} from 'bun';
 import { Database } from 'bun:sqlite';
 import { mkdirSync } from 'node:fs';
 import { lookup } from 'node:dns/promises';
@@ -32,8 +42,14 @@ const LIFECYCLE_KEY = env.LIFECYCLE_KEY ?? 'godmode123';
 const UPLOAD_TIMEOUT_SEC = Number(env.UPLOAD_TIMEOUT_SEC ?? 60);
 const AUTO_UNREF = env.AUTO_UNREF === 'true';
 const UPLOAD_DIR = new URL('./uploads', import.meta.url).pathname;
-const DNS_PREFETCH_HOSTS = (env.DNS_PREFETCH_HOSTS ?? 'example.com').split(',').map((s) => s.trim()).filter(Boolean);
-const DNS_WARMUP_HOSTS = (env.DNS_WARMUP_HOSTS ?? env.DNS_PREFETCH_HOSTS ?? 'example.com').split(',').map((s) => s.trim()).filter(Boolean);
+const DNS_PREFETCH_HOSTS = (env.DNS_PREFETCH_HOSTS ?? 'example.com')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean);
+const DNS_WARMUP_HOSTS = (env.DNS_WARMUP_HOSTS ?? env.DNS_PREFETCH_HOSTS ?? 'example.com')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean);
 const DNS_WARMUP_TIMEOUT_MS = Number(env.DNS_WARMUP_TIMEOUT_MS ?? 500);
 mkdirSync(UPLOAD_DIR, { recursive: true });
 
@@ -58,7 +74,7 @@ const r2MirrorConfig: R2MirrorConfig = {
   bucket: '',
   prefix: 'barbershop',
   apiAvailable: typeof r2_upload === 'function' && typeof r2_status === 'function',
-  mode: 'none'
+  mode: 'none',
 };
 
 const r2MirrorState: R2MirrorState = {
@@ -66,10 +82,15 @@ const r2MirrorState: R2MirrorState = {
   initialized: false,
   lastUploadAt: null,
   lastUploadKey: null,
-  lastError: null
+  lastError: null,
 };
 let lastR2StatusSnapshotAt = 0;
-let r2S3Credentials: { accessKeyId: string; secretAccessKey: string; bucket: string; endpoint: string } | null = null;
+let r2S3Credentials: {
+  accessKeyId: string;
+  secretAccessKey: string;
+  bucket: string;
+  endpoint: string;
+} | null = null;
 
 function responseHeaders(contentType: string) {
   return {
@@ -78,7 +99,7 @@ function responseHeaders(contentType: string) {
     'Keep-Alive': `timeout=${KEEP_ALIVE_TIMEOUT_SEC}, max=${KEEP_ALIVE_MAX}`,
     'X-Server-Name': SERVER_NAME,
     Vary: 'Accept-Encoding',
-    'Cache-Control': 'no-store'
+    'Cache-Control': 'no-store',
   };
 }
 
@@ -91,14 +112,15 @@ function textResponse(body: string, contentType: string, status = 200) {
     status,
     headers: {
       ...responseHeaders(contentType),
-      ETag: etagFor(body)
-    }
+      ETag: etagFor(body),
+    },
   });
 }
 
 function resourceHintsHtml() {
-  return DNS_PREFETCH_HOSTS.map((host) =>
-    `<link rel="dns-prefetch" href="//${host}"><link rel="preconnect" href="https://${host}" crossorigin>`
+  return DNS_PREFETCH_HOSTS.map(
+    host =>
+      `<link rel="dns-prefetch" href="//${host}"><link rel="preconnect" href="https://${host}" crossorigin>`
   ).join('\n    ');
 }
 
@@ -114,9 +136,15 @@ async function warmupDns(hosts: string[]) {
     try {
       await Promise.race([
         lookup(host),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), DNS_WARMUP_TIMEOUT_MS))
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('timeout')), DNS_WARMUP_TIMEOUT_MS)
+        ),
       ]);
-      logTelemetry('dns_warmup_ok', { host, durationMs: Math.round((performance.now() - started) * 1000) / 1000 }, '127.0.0.1');
+      logTelemetry(
+        'dns_warmup_ok',
+        { host, durationMs: Math.round((performance.now() - started) * 1000) / 1000 },
+        '127.0.0.1'
+      );
     } catch (error) {
       logTelemetry('dns_warmup_error', { host, error: String(error) }, '127.0.0.1');
     }
@@ -199,11 +227,76 @@ db.run(`
 // Intentionally do not write Bun.secrets at startup to avoid repeated OS keychain prompts.
 // Use the one-time setup script in barbershop/setup-secrets.ts when you actually want to persist secrets.
 
-await redis.hmset('barber:jb', ['id', 'barber_jb', 'name', 'John Barber', 'code', 'JB', 'skills', JSON.stringify(['Haircut', 'Beard Trim', 'Hot Towel Shave']), 'commissionRate', '0.6', 'status', 'active']);
-await redis.hmset('barber:ms', ['id', 'barber_ms', 'name', 'Mike Styles', 'code', 'MS', 'skills', JSON.stringify(['Haircut', 'Fade', 'Design']), 'commissionRate', '0.55', 'status', 'active']);
-await redis.hmset('barber:ck', ['id', 'barber_ck', 'name', 'Chris Kutz', 'code', 'CK', 'skills', JSON.stringify(['Beard Trim', 'Hot Towel Shave']), 'commissionRate', '0.5', 'status', 'off_duty']);
-await redis.hmset('barber:om', ['id', 'barber_om', 'name', 'Omar Razor', 'code', 'OM', 'skills', JSON.stringify(['Hot Towel Shave', 'Beard Trim']), 'commissionRate', '0.58', 'status', 'active']);
-await redis.hmset('barber:ja', ['id', 'barber_ja', 'name', 'Jamal Braids', 'code', 'JA', 'skills', JSON.stringify(['Braids', 'Design', 'Fade']), 'commissionRate', '0.57', 'status', 'active']);
+await redis.hmset('barber:jb', [
+  'id',
+  'barber_jb',
+  'name',
+  'John Barber',
+  'code',
+  'JB',
+  'skills',
+  JSON.stringify(['Haircut', 'Beard Trim', 'Hot Towel Shave']),
+  'commissionRate',
+  '0.6',
+  'status',
+  'active',
+]);
+await redis.hmset('barber:ms', [
+  'id',
+  'barber_ms',
+  'name',
+  'Mike Styles',
+  'code',
+  'MS',
+  'skills',
+  JSON.stringify(['Haircut', 'Fade', 'Design']),
+  'commissionRate',
+  '0.55',
+  'status',
+  'active',
+]);
+await redis.hmset('barber:ck', [
+  'id',
+  'barber_ck',
+  'name',
+  'Chris Kutz',
+  'code',
+  'CK',
+  'skills',
+  JSON.stringify(['Beard Trim', 'Hot Towel Shave']),
+  'commissionRate',
+  '0.5',
+  'status',
+  'off_duty',
+]);
+await redis.hmset('barber:om', [
+  'id',
+  'barber_om',
+  'name',
+  'Omar Razor',
+  'code',
+  'OM',
+  'skills',
+  JSON.stringify(['Hot Towel Shave', 'Beard Trim']),
+  'commissionRate',
+  '0.58',
+  'status',
+  'active',
+]);
+await redis.hmset('barber:ja', [
+  'id',
+  'barber_ja',
+  'name',
+  'Jamal Braids',
+  'code',
+  'JA',
+  'skills',
+  JSON.stringify(['Braids', 'Design', 'Fade']),
+  'commissionRate',
+  '0.57',
+  'status',
+  'active',
+]);
 
 // ==================== PUB/SUB SETUP ====================
 const pubsub = new RedisClient();
@@ -216,11 +309,18 @@ function logTelemetry(eventType: string, data: any, ip: string) {
     eventType,
     data,
     ip,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
-  db.prepare('INSERT INTO telemetry (eventType, data, ip, timestamp) VALUES (?, ?, ?, ?)')
-    .run(entry.eventType, JSON.stringify(entry.data), entry.ip, entry.timestamp);
-  redis.publish('telemetry', JSON.stringify({ eventType: entry.eventType, data: entry.data, ip: entry.ip, time: Date.now() }));
+  db.prepare('INSERT INTO telemetry (eventType, data, ip, timestamp) VALUES (?, ?, ?, ?)').run(
+    entry.eventType,
+    JSON.stringify(entry.data),
+    entry.ip,
+    entry.timestamp
+  );
+  redis.publish(
+    'telemetry',
+    JSON.stringify({ eventType: entry.eventType, data: entry.data, ip: entry.ip, time: Date.now() })
+  );
   void mirrorToR2('telemetry', entry);
 }
 
@@ -260,7 +360,7 @@ async function initR2Mirror() {
         accessKeyId: access,
         secretAccessKey: secret,
         bucket,
-        endpoint: endp
+        endpoint: endp,
       };
       r2MirrorState.connected = true;
       r2MirrorState.initialized = true;
@@ -269,7 +369,8 @@ async function initR2Mirror() {
     }
     r2MirrorConfig.mode = 'none';
     r2MirrorState.initialized = true;
-    r2MirrorState.lastError = 'R2 API unavailable and S3 credentials missing (ACCESS_KEY_ID/SECRET_ACCESS_KEY/ENDPOINT)';
+    r2MirrorState.lastError =
+      'R2 API unavailable and S3 credentials missing (ACCESS_KEY_ID/SECRET_ACCESS_KEY/ENDPOINT)';
   } catch (error) {
     r2MirrorState.initialized = true;
     r2MirrorState.lastError = String(error);
@@ -285,12 +386,12 @@ async function mirrorToR2(kind: string, payload: unknown) {
         bucket: r2MirrorConfig.bucket,
         key,
         body: Buffer.from(JSON.stringify(payload)),
-        contentType: 'application/json'
+        contentType: 'application/json',
       });
     } else if (r2MirrorConfig.mode === 's3client' && r2S3Credentials) {
       await S3Client.write(key, JSON.stringify(payload), {
         ...r2S3Credentials,
-        type: 'application/json'
+        type: 'application/json',
       });
     } else {
       return;
@@ -396,7 +497,8 @@ function normalizeTip(subtotal: number, tipInput?: TipInput) {
 }
 
 function normalizeBundleItem(item: BundleLineItem): BundleLineItem {
-  const quantity = Number.isFinite(Number(item.quantity)) && Number(item.quantity) > 0 ? Number(item.quantity) : 1;
+  const quantity =
+    Number.isFinite(Number(item.quantity)) && Number(item.quantity) > 0 ? Number(item.quantity) : 1;
   const price = Number.isFinite(Number(item.price)) ? Math.max(0, Number(item.price)) : 0;
   const kind = item.kind ?? 'service';
   const providerRole = item.providerRole ?? (kind === 'service' ? 'barber' : 'cashier');
@@ -406,17 +508,21 @@ function normalizeBundleItem(item: BundleLineItem): BundleLineItem {
     price,
     kind,
     providerRole,
-    tipEligible: item.tipEligible ?? (kind === 'service' && providerRole === 'barber')
+    tipEligible: item.tipEligible ?? (kind === 'service' && providerRole === 'barber'),
   };
 }
 
 function computeBundle(itemsInput: BundleLineItem[], tipInput?: TipInput) {
   const items = itemsInput.map(normalizeBundleItem);
-  const subtotal = roundMoney(items.reduce((sum, item) => sum + item.price * (item.quantity ?? 1), 0));
+  const subtotal = roundMoney(
+    items.reduce((sum, item) => sum + item.price * (item.quantity ?? 1), 0)
+  );
   const tipTotal = normalizeTip(subtotal, tipInput);
   const total = roundMoney(subtotal + tipTotal);
 
-  const tipEligible = items.filter((item) => item.tipEligible && item.providerRole === 'barber' && item.providerId);
+  const tipEligible = items.filter(
+    item => item.tipEligible && item.providerRole === 'barber' && item.providerId
+  );
   const tipBasis = tipEligible.reduce((sum, item) => sum + item.price * (item.quantity ?? 1), 0);
   const tipByProvider: Record<string, number> = {};
 
@@ -1327,7 +1433,9 @@ const server = serve({
       return textResponse(text, 'application/toml; charset=utf-8');
     },
     '/docs/manifest.json': () =>
-      new Response(JSON.stringify(manifestData), { headers: responseHeaders('application/json; charset=utf-8') }),
+      new Response(JSON.stringify(manifestData), {
+        headers: responseHeaders('application/json; charset=utf-8'),
+      }),
     '/docs/readme': async () => {
       const text = await docsReadmeFile.text();
       return textResponse(text, 'text/markdown; charset=utf-8');
@@ -1340,16 +1448,22 @@ const server = serve({
       const text = await docsAdminFile.text();
       return textResponse(text, 'text/markdown; charset=utf-8');
     },
-    '/ops/fetch-check': async (req) => {
+    '/ops/fetch-check': async req => {
       const url = new URL(req.url);
       const target = url.searchParams.get('url') || 'https://example.com';
       if (!isPublicHttpUrl(target)) {
-        return Response.json({ ok: false, error: 'Only public http/https URLs are allowed.' }, { status: 400 });
+        return Response.json(
+          { ok: false, error: 'Only public http/https URLs are allowed.' },
+          { status: 400 }
+        );
       }
       const method = (url.searchParams.get('method') || 'GET').toUpperCase();
       const allowedMethods = new Set(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']);
       if (!allowedMethods.has(method)) {
-        return Response.json({ ok: false, error: `Unsupported method: ${method}` }, { status: 400 });
+        return Response.json(
+          { ok: false, error: `Unsupported method: ${method}` },
+          { status: 400 }
+        );
       }
       let headers: Record<string, string> = {};
       const headersRaw = url.searchParams.get('headers');
@@ -1365,7 +1479,7 @@ const server = serve({
       if (bodyJsonRaw != null) {
         try {
           body = JSON.stringify(JSON.parse(bodyJsonRaw));
-          if (!Object.keys(headers).some((h) => h.toLowerCase() === 'content-type')) {
+          if (!Object.keys(headers).some(h => h.toLowerCase() === 'content-type')) {
             headers['content-type'] = 'application/json';
           }
         } catch {
@@ -1375,11 +1489,22 @@ const server = serve({
         const bodyRaw = url.searchParams.get('body');
         if (bodyRaw != null) body = bodyRaw;
       }
-      const verbose = url.searchParams.get('verbose') === '1' || url.searchParams.get('verbose') === 'true';
-      const { response, durationMs } = await fetchWithDefaults(target, { method, headers, body }, { verbose });
-      return Response.json({ ok: response.ok, target, method, status: response.status, durationMs });
+      const verbose =
+        url.searchParams.get('verbose') === '1' || url.searchParams.get('verbose') === 'true';
+      const { response, durationMs } = await fetchWithDefaults(
+        target,
+        { method, headers, body },
+        { verbose }
+      );
+      return Response.json({
+        ok: response.ok,
+        target,
+        method,
+        status: response.status,
+        durationMs,
+      });
     },
-    '/ops/runtime': (req) => {
+    '/ops/runtime': req => {
       const address = server.requestIP(req);
       return Response.json({
         name: SERVER_NAME,
@@ -1390,12 +1515,12 @@ const server = serve({
         pendingWebSockets: server.pendingWebSockets,
         subscribers: {
           telemetry: server.subscriberCount('telemetry'),
-          eod: server.subscriberCount('eod')
+          eod: server.subscriberCount('eod'),
         },
-        requestIP: address ? { address: address.address, port: address.port } : null
+        requestIP: address ? { address: address.address, port: address.port } : null,
       });
     },
-    '/ops/status': (req) => {
+    '/ops/status': req => {
       const address = server.requestIP(req);
       return Response.json({
         ok: true,
@@ -1407,9 +1532,9 @@ const server = serve({
         pendingWebSockets: server.pendingWebSockets,
         subscribers: {
           telemetry: server.subscriberCount('telemetry'),
-          eod: server.subscriberCount('eod')
+          eod: server.subscriberCount('eod'),
         },
-        requestIP: address ? { address: address.address, port: address.port } : null
+        requestIP: address ? { address: address.address, port: address.port } : null,
       });
     },
     '/ops/r2-status': async () => {
@@ -1433,10 +1558,10 @@ const server = serve({
         initialized: r2MirrorState.initialized,
         lastUploadAt: r2MirrorState.lastUploadAt,
         lastUploadKey: r2MirrorState.lastUploadKey,
-        lastError: r2MirrorState.lastError
+        lastError: r2MirrorState.lastError,
       });
     },
-    '/ops/lifecycle': (req) => {
+    '/ops/lifecycle': req => {
       const url = new URL(req.url);
       const key = url.searchParams.get('key');
       if (key !== LIFECYCLE_KEY) {
@@ -1462,12 +1587,12 @@ const server = serve({
         ok: true,
         action: 'status',
         pendingRequests: server.pendingRequests,
-        pendingWebSockets: server.pendingWebSockets
+        pendingWebSockets: server.pendingWebSockets,
       });
     },
     // ADMIN ENDPOINTS
     '/admin': () => textResponse(ADMIN_DASHBOARD_V2, 'text/html; charset=utf-8'),
-    '/admin/ws': (req) => {
+    '/admin/ws': req => {
       const url = new URL(req.url);
       if (url.searchParams.get('key') !== 'godmode123') {
         return new Response('Unauthorized', { status: 401 });
@@ -1478,7 +1603,9 @@ const server = serve({
     '/admin/data': async () => {
       // Return all telemetry data
       const connections = db.prepare('SELECT * FROM sessions ORDER BY connectedAt DESC').all();
-      const telemetry = db.prepare('SELECT * FROM telemetry ORDER BY timestamp DESC LIMIT 50').all();
+      const telemetry = db
+        .prepare('SELECT * FROM telemetry ORDER BY timestamp DESC LIMIT 50')
+        .all();
       const financials = db.prepare('SELECT * FROM financials ORDER BY date DESC LIMIT 1').get();
       return Response.json({ connections, telemetry, financials });
     },
@@ -1495,17 +1622,17 @@ const server = serve({
           tip: parseFloat(order.tip || '0'),
           total: parseFloat(order.total || '0'),
           tipByBarber: JSON.parse(order.tipByBarber || '{}'),
-          createdAt: order.createdAt
+          createdAt: order.createdAt,
         });
       }
       return Response.json({ count: orders.length, orders });
     },
-    
+
     // CLIENT ENDPOINTS
     '/': () => textResponse(CLIENT_DASHBOARD_V2, 'text/html; charset=utf-8'),
     '/client': () => textResponse(CLIENT_DASHBOARD_V2, 'text/html; charset=utf-8'),
     '/barbers': async () => {
-      const keys = await redis.send('KEYS', ['barber:*']) as string[];
+      const keys = (await redis.send('KEYS', ['barber:*'])) as string[];
       const barbers = [];
       for (const key of keys) {
         if (key.includes(':code:')) continue;
@@ -1516,20 +1643,20 @@ const server = serve({
             name: data.name,
             code: data.code,
             skills: JSON.parse(data.skills || '[]'),
-            status: data.status
+            status: data.status,
           });
         }
       }
       return Response.json({ barbers });
     },
-    
+
     // BARBER ENDPOINTS
     '/barber': () => textResponse(BARBER_DASHBOARD_V2, 'text/html; charset=utf-8'),
-    '/barber/login': async (req) => {
+    '/barber/login': async req => {
       const { code } = await req.json();
       const barberId = await redis.get(`barber:code:${code.toUpperCase()}`);
       if (!barberId) return Response.json({ success: false }, { status: 401 });
-      
+
       const data = await redis.hgetall(`barber:${barberId}`);
       const barber = {
         id: data.id,
@@ -1537,14 +1664,15 @@ const server = serve({
         code: data.code,
         skills: JSON.parse(data.skills || '[]'),
         commissionRate: parseFloat(data.commissionRate),
-        status: data.status
+        status: data.status,
       };
-      
+
       // Log session
       const sessionId = randomUUIDv7();
-      db.prepare('INSERT INTO sessions (id, type, entityId, connectedAt, wsConnected) VALUES (?, ?, ?, ?, ?)')
-        .run(sessionId, 'barber', barber.id, new Date().toISOString(), 0);
-      
+      db.prepare(
+        'INSERT INTO sessions (id, type, entityId, connectedAt, wsConnected) VALUES (?, ?, ?, ?, ?)'
+      ).run(sessionId, 'barber', barber.id, new Date().toISOString(), 0);
+
       // Get assigned tickets
       const ticketIds = await redis.smembers('tickets:assigned');
       const tickets = [];
@@ -1555,20 +1683,22 @@ const server = serve({
             id: t.id,
             customer: t.customerName,
             services: JSON.parse(t.services || '[]').map((s: any) => s.name),
-            amount: parseFloat(t.totalAmount)
+            amount: parseFloat(t.totalAmount),
           });
         }
       }
-      
+
       // Update barber IP tracking
-      db.prepare('UPDATE OR IGNORE barbers SET lastSeen = ? WHERE id = ?')
-        .run(new Date().toISOString(), barber.id);
-      
+      db.prepare('UPDATE OR IGNORE barbers SET lastSeen = ? WHERE id = ?').run(
+        new Date().toISOString(),
+        barber.id
+      );
+
       logTelemetry('barber_login', { barber: barber.code }, '127.0.0.1');
-      
+
       return Response.json({ success: true, barber, tickets });
     },
-    '/barber/stats': async (req) => {
+    '/barber/stats': async req => {
       const url = new URL(req.url);
       const barberId = url.searchParams.get('barberId');
       if (!barberId) return Response.json({ error: 'Missing barberId' }, { status: 400 });
@@ -1592,13 +1722,16 @@ const server = serve({
 
       return Response.json({ barberId, ticketsCompleted, tipsShared, ordersSeen });
     },
-    
+
     // API ENDPOINTS (from previous implementation)
-    '/checkout/bundle': async (req) => {
+    '/checkout/bundle': async req => {
       const body = await req.json();
       const items = Array.isArray(body.items) ? body.items : [];
       if (items.length === 0) {
-        return Response.json({ success: false, error: 'No checkout items provided' }, { status: 400 });
+        return Response.json(
+          { success: false, error: 'No checkout items provided' },
+          { status: 400 }
+        );
       }
 
       const orderId = `order_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
@@ -1606,18 +1739,30 @@ const server = serve({
       const createdAt = new Date().toISOString();
 
       await redis.hmset(`order:${orderId}`, [
-        'id', orderId,
-        'customerName', body.customerName || 'Walk-in Customer',
-        'items', JSON.stringify(bundle.items),
-        'subtotal', bundle.subtotal.toString(),
-        'tip', bundle.tipTotal.toString(),
-        'tipMode', body.tip?.mode === 'flat' ? 'flat' : 'percent',
-        'tipValue', String(Number(body.tip?.value ?? 0)),
-        'tipByBarber', JSON.stringify(bundle.tipByProvider),
-        'total', bundle.total.toString(),
-        'paymentId', body.paymentId || `pay_${Date.now()}`,
-        'status', 'completed',
-        'createdAt', createdAt
+        'id',
+        orderId,
+        'customerName',
+        body.customerName || 'Walk-in Customer',
+        'items',
+        JSON.stringify(bundle.items),
+        'subtotal',
+        bundle.subtotal.toString(),
+        'tip',
+        bundle.tipTotal.toString(),
+        'tipMode',
+        body.tip?.mode === 'flat' ? 'flat' : 'percent',
+        'tipValue',
+        String(Number(body.tip?.value ?? 0)),
+        'tipByBarber',
+        JSON.stringify(bundle.tipByProvider),
+        'total',
+        bundle.total.toString(),
+        'paymentId',
+        body.paymentId || `pay_${Date.now()}`,
+        'status',
+        'completed',
+        'createdAt',
+        createdAt,
       ]);
       await redis.sadd('orders:all', orderId);
 
@@ -1634,7 +1779,7 @@ const server = serve({
           subtotal: bundle.subtotal,
           tip: bundle.tipTotal,
           total: bundle.total,
-          tipByBarber: bundle.tipByProvider
+          tipByBarber: bundle.tipByProvider,
         },
         '127.0.0.1'
       );
@@ -1648,38 +1793,46 @@ const server = serve({
           tipMode: body.tip?.mode === 'flat' ? 'flat' : 'percent',
           total: bundle.total,
           tipByBarber: bundle.tipByProvider,
-          createdAt
-        }
+          createdAt,
+        },
       });
     },
-    '/ticket/create': async (req) => {
+    '/ticket/create': async req => {
       const body = await req.json();
       const ticketId = `ticket_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-      
+
       await redis.hmset(`ticket:${ticketId}`, [
-        'id', ticketId,
-        'customerName', body.customerName,
-        'services', JSON.stringify(body.services),
-        'totalAmount', body.totalAmount.toString(),
-        'walkIn', body.walkIn ? '1' : '0',
-        'paymentId', body.paymentId,
-        'status', 'pending',
-        'createdAt', new Date().toISOString()
+        'id',
+        ticketId,
+        'customerName',
+        body.customerName,
+        'services',
+        JSON.stringify(body.services),
+        'totalAmount',
+        body.totalAmount.toString(),
+        'walkIn',
+        body.walkIn ? '1' : '0',
+        'paymentId',
+        body.paymentId,
+        'status',
+        'pending',
+        'createdAt',
+        new Date().toISOString(),
       ]);
       await redis.sadd('tickets:pending', ticketId);
-      
+
       // Auto-assign
       const barbers = [];
-      const keys = await redis.send('KEYS', ['barber:*']) as string[];
+      const keys = (await redis.send('KEYS', ['barber:*'])) as string[];
       for (const key of keys) {
         if (key.includes(':code:')) continue;
         const b = await redis.hgetall(key);
         if (b.status === 'active') barbers.push(b);
       }
-      
+
       let assigned = false;
       let assignedTo = null;
-      
+
       if (barbers.length > 0) {
         const barber = barbers[Math.floor(Math.random() * barbers.length)];
         await redis.hset(`ticket:${ticketId}`, 'assignedTo', barber.id);
@@ -1689,27 +1842,44 @@ const server = serve({
         await redis.sadd('tickets:assigned', ticketId);
         assigned = true;
         assignedTo = barber.id;
-        
+
         // Notify via WebSocket
-        server.publish('barber_' + barber.id, JSON.stringify({
-          type: 'new_ticket',
-          ticket: { id: ticketId, customer: body.customerName, services: body.services.map((s: any) => s.name), amount: body.totalAmount },
-          assignedTo: barber.id
-        }));
+        server.publish(
+          'barber_' + barber.id,
+          JSON.stringify({
+            type: 'new_ticket',
+            ticket: {
+              id: ticketId,
+              customer: body.customerName,
+              services: body.services.map((s: any) => s.name),
+              amount: body.totalAmount,
+            },
+            assignedTo: barber.id,
+          })
+        );
       }
-      
-      logTelemetry('ticket_created', { ticketId, amount: body.totalAmount, autoAssigned: assigned }, '127.0.0.1');
-      
+
+      logTelemetry(
+        'ticket_created',
+        { ticketId, amount: body.totalAmount, autoAssigned: assigned },
+        '127.0.0.1'
+      );
+
       return Response.json({
         success: true,
-        ticket: { id: ticketId, total: body.totalAmount, status: assigned ? 'assigned' : 'pending', assignedTo }
+        ticket: {
+          id: ticketId,
+          total: body.totalAmount,
+          status: assigned ? 'assigned' : 'pending',
+          assignedTo,
+        },
       });
     },
     '/tickets/pending': async () => {
       const ids = await redis.smembers('tickets:pending');
       return Response.json({ count: ids.length });
     },
-    '/barber/complete': async (req) => {
+    '/barber/complete': async req => {
       const { ticketId } = await req.json();
       await redis.hset(`ticket:${ticketId}`, 'status', 'completed');
       await redis.hset(`ticket:${ticketId}`, 'completedAt', new Date().toISOString());
@@ -1717,16 +1887,23 @@ const server = serve({
       await redis.sadd('tickets:completed', ticketId);
       return Response.json({ success: true });
     },
-    '/action': async (req) => {
+    '/action': async req => {
       server.timeout(req, UPLOAD_TIMEOUT_SEC);
       const formdata = await req.formData();
       const name = String(formdata.get('name') || 'guest');
       const profilePicture = formdata.get('profilePicture');
       if (!(profilePicture instanceof Blob)) {
-        return Response.json({ success: false, error: 'Must upload a profile picture.' }, { status: 400 });
+        return Response.json(
+          { success: false, error: 'Must upload a profile picture.' },
+          { status: 400 }
+        );
       }
       const requestAddress = server.requestIP(req);
-      const safeName = name.toLowerCase().replace(/[^a-z0-9_-]/g, '_').slice(0, 32) || 'guest';
+      const safeName =
+        name
+          .toLowerCase()
+          .replace(/[^a-z0-9_-]/g, '_')
+          .slice(0, 32) || 'guest';
       const file = `${safeName}_${Date.now()}.png`;
       const path = `${UPLOAD_DIR}/${file}`;
       await Bun.write(path, profilePicture);
@@ -1734,10 +1911,10 @@ const server = serve({
       logTelemetry('reference_upload', { name: safeName, file, ip }, ip);
       return Response.json({ success: true, name: safeName, file, path, ip });
     },
-    '/ws/dashboard': (req) => {
+    '/ws/dashboard': req => {
       const upgraded = server.upgrade(req, { data: { type: 'barber', id: randomUUIDv7() } });
       return upgraded ? undefined : new Response('WS failed', { status: 400 });
-    }
+    },
   },
   websocket: {
     open(ws) {
@@ -1746,7 +1923,7 @@ const server = serve({
       if (ws.data?.type === 'barber') {
         ws.subscribe('barber_' + ws.data.id);
       }
-      
+
       // Update session
       if (ws.data?.id) {
         db.prepare('UPDATE sessions SET wsConnected = 1 WHERE id = ?').run(ws.data.id);
@@ -1759,8 +1936,8 @@ const server = serve({
     close(ws) {
       ws.unsubscribe('eod');
       ws.unsubscribe('telemetry');
-    }
-  }
+    },
+  },
 });
 
 // Start telemetry broadcaster
@@ -1769,9 +1946,9 @@ const telemetryInterval = setInterval(async () => {
   const pending = await redis.smembers('tickets:pending');
   const assigned = await redis.smembers('tickets:assigned');
   const completed = await redis.smembers('tickets:completed');
-  
+
   // Get barbers
-  const barberKeys = await redis.send('KEYS', ['barber:*']) as string[];
+  const barberKeys = (await redis.send('KEYS', ['barber:*'])) as string[];
   const barbers = [];
   for (const key of barberKeys) {
     if (key.includes(':code:')) continue;
@@ -1784,34 +1961,48 @@ const telemetryInterval = setInterval(async () => {
         skills: JSON.parse(b.skills || '[]'),
         status: b.status,
         commissionRate: parseFloat(b.commissionRate),
-        ip: '127.0.0.1'
+        ip: '127.0.0.1',
       });
     }
   }
-  
+
   // Get connections
   const connections = db.prepare('SELECT * FROM sessions WHERE wsConnected = 1').all();
-  
+
   // Broadcast to admin
-  server.publish('telemetry', JSON.stringify({
-    type: 'financials',
-    revenue: completed.length * 45,
-    tips: completed.length * 6.75,
-    commissions: completed.length * 27
-  }));
-  
-  server.publish('telemetry', JSON.stringify({
-    type: 'connections',
-    count: connections.length,
-    list: connections.map(c => ({ ip: c.ip || '127.0.0.1', type: c.type, entity: c.entityId, ua: c.userAgent }))
-  }));
-  
-  server.publish('telemetry', JSON.stringify({
-    type: 'barbers',
-    list: barbers,
-    completed: completed.length,
-    pending: pending.length
-  }));
+  server.publish(
+    'telemetry',
+    JSON.stringify({
+      type: 'financials',
+      revenue: completed.length * 45,
+      tips: completed.length * 6.75,
+      commissions: completed.length * 27,
+    })
+  );
+
+  server.publish(
+    'telemetry',
+    JSON.stringify({
+      type: 'connections',
+      count: connections.length,
+      list: connections.map(c => ({
+        ip: c.ip || '127.0.0.1',
+        type: c.type,
+        entity: c.entityId,
+        ua: c.userAgent,
+      })),
+    })
+  );
+
+  server.publish(
+    'telemetry',
+    JSON.stringify({
+      type: 'barbers',
+      list: barbers,
+      completed: completed.length,
+      pending: pending.length,
+    })
+  );
 
   const now = Date.now();
   if (now - lastR2StatusSnapshotAt >= 15000) {
@@ -1824,20 +2015,19 @@ const telemetryInterval = setInterval(async () => {
         port: server.port,
         protocol: server.protocol,
         pendingRequests: server.pendingRequests,
-        pendingWebSockets: server.pendingWebSockets
+        pendingWebSockets: server.pendingWebSockets,
       },
       queue: {
         pending: pending.length,
         assigned: assigned.length,
-        completed: completed.length
+        completed: completed.length,
       },
       subscribers: {
         telemetry: server.subscriberCount('telemetry'),
-        eod: server.subscriberCount('eod')
-      }
+        eod: server.subscriberCount('eod'),
+      },
     });
   }
-  
 }, 2000);
 
 if (AUTO_UNREF) {

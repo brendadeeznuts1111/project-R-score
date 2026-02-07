@@ -1,6 +1,6 @@
 /**
  * Bun Cookie API Tests
- * 
+ *
  * Tests for Bun.Cookie and Bun.CookieMap integration
  * Based on Bun's official test patterns
  */
@@ -9,7 +9,6 @@ import { describe, test, expect } from 'bun:test';
 import { BunCookieManager, cookieManager } from '../lib/cloudflare/bun-data-api';
 
 describe('Bun.Cookie API', () => {
-  
   describe('BunCookieManager', () => {
     test('creates instance', () => {
       const manager = new BunCookieManager();
@@ -57,7 +56,7 @@ describe('Bun.Cookie API', () => {
         path: '/',
         maxAge: 3600,
       });
-      
+
       const cookie = manager.get('session');
       expect(cookie).toBeDefined();
       expect(cookie?.httpOnly).toBe(true);
@@ -216,11 +215,15 @@ describe('Bun.Cookie API', () => {
         sameSite: 'lax',
       });
 
-      expect(cookie.toString()).toBe('name=value; Domain=example.com; Path=/foo; Secure; SameSite=Lax');
+      expect(cookie.toString()).toBe(
+        'name=value; Domain=example.com; Path=/foo; Secure; SameSite=Lax'
+      );
     });
 
     test('parses cookie string', () => {
-      const cookie = Bun.Cookie.parse('name=value; Domain=example.com; Path=/foo; Secure; SameSite=Lax');
+      const cookie = Bun.Cookie.parse(
+        'name=value; Domain=example.com; Path=/foo; Secure; SameSite=Lax'
+      );
 
       expect(cookie.name).toBe('name');
       expect(cookie.value).toBe('value');

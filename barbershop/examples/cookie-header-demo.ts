@@ -1,6 +1,6 @@
 /**
  * Cookie & Header Compression Demo
- * 
+ *
  * Demonstrates:
  * - Bun.cookieMap() API
  * - Cookie compression with zstd
@@ -128,14 +128,14 @@ const headerCompressor = new HeaderCompressor();
 
 // Common headers
 const headers = {
-  'accept': 'application/json',
+  accept: 'application/json',
   'accept-encoding': 'gzip, deflate, br',
   'accept-language': 'en-US,en;q=0.9',
   'content-type': 'application/json',
   'user-agent': 'FactoryWager/1.0.0',
   'x-fw-session': 'abc123',
   'x-fw-telemetry': 'enabled',
-  'authorization': 'Bearer token123',
+  authorization: 'Bearer token123',
 };
 
 console.log('Original headers:');
@@ -148,7 +148,9 @@ console.log(`\n📦 Compression Result:`);
 console.log(`   Algorithm: ${compressed.algorithm}`);
 console.log(`   Original size: ${compressed.originalSize} bytes`);
 console.log(`   Compressed size: ${compressed.compressedSize} bytes`);
-console.log(`   Ratio: ${((1 - compressed.compressedSize / compressed.originalSize) * 100).toFixed(1)}% reduction`);
+console.log(
+  `   Ratio: ${((1 - compressed.compressedSize / compressed.originalSize) * 100).toFixed(1)}% reduction`
+);
 
 if (compressed.metadata) {
   console.log(`   Static table hits: ${compressed.metadata.staticTableHits}`);
@@ -214,8 +216,8 @@ Object.entries(conformanceHeaders).forEach(([k, v]) => {
 console.log(`\n${ANSI.bold}${ANSI.blue}7️⃣  Request/Response Helper Functions${ANSI.reset}\n`);
 
 const requestHeaders = {
-  'accept': 'application/json',
-  'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  accept: 'application/json',
+  authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
   'x-request-id': crypto.randomUUID(),
   'x-fw-session': 'session-abc123',
 };
@@ -232,7 +234,9 @@ console.log(`   Headers restored: ${Object.keys(decompressedResponse).length}`);
 // Summary
 // ═════════════════════════════════════════════════════════════════════════════
 
-console.log(`\n${ANSI.bold}════════════════════════════════════════════════════════════════════════════${ANSI.reset}`);
+console.log(
+  `\n${ANSI.bold}════════════════════════════════════════════════════════════════════════════${ANSI.reset}`
+);
 console.log(`${ANSI.bold}📊 Summary${ANSI.reset}\n`);
 console.log(`✅ Cookie Manager: Compression, telemetry, CSRF protection`);
 console.log(`✅ Header Compression: Dictionary + zstd algorithms`);

@@ -16,7 +16,7 @@ interface ScheduleOptions {
 function parseArgs(): { key: string; options: ScheduleOptions } {
   const args = Bun.argv.slice(2);
   const key = args[0];
-  
+
   if (!key) {
     console.error('❌ Missing secret key');
     console.error('Usage: bun schedule-rotation.ts <key> [options]');
@@ -25,13 +25,13 @@ function parseArgs(): { key: string; options: ScheduleOptions } {
 
   const options: ScheduleOptions = {
     schedule: '0 2 * * 0', // Default: Weekly Sunday at 2 AM
-    reason: 'Scheduled rotation'
+    reason: 'Scheduled rotation',
   };
 
   // Parse command line options
   for (let i = 1; i < args.length; i++) {
     const arg = args[i];
-    
+
     if (arg === '--schedule' && args[i + 1]) {
       options.schedule = args[++i];
     } else if (arg === '--reason' && args[i + 1]) {
@@ -73,13 +73,19 @@ function showHelp() {
   console.log();
   console.log('Examples:');
   console.log('  # Monthly rotation');
-  console.log('  bun schedule-rotation.ts API_KEY --schedule "0 0 1 * *" --reason "Monthly security rotation"');
+  console.log(
+    '  bun schedule-rotation.ts API_KEY --schedule "0 0 1 * *" --reason "Monthly security rotation"'
+  );
   console.log();
   console.log('  # Weekly rotation with notifications');
-  console.log('  bun schedule-rotation.ts DATABASE_URL --schedule "0 2 * * 0" --notify "admin@company.com,dev@company.com"');
+  console.log(
+    '  bun schedule-rotation.ts DATABASE_URL --schedule "0 2 * * 0" --notify "admin@company.com,dev@company.com"'
+  );
   console.log();
   console.log('  # High-security rotation');
-  console.log('  bun schedule-rotation.ts JWT_SECRET --schedule "0 6 * * *" --severity HIGH --notify "security@company.com"');
+  console.log(
+    '  bun schedule-rotation.ts JWT_SECRET --schedule "0 6 * * *" --severity HIGH --notify "security@company.com"'
+  );
   console.log();
   console.log('Cron Examples:');
   console.log('  "0 2 * * *"      Daily at 2 AM');
@@ -92,18 +98,22 @@ function showHelp() {
 
 function validateCronExpression(cron: string): boolean {
   // Basic cron validation (5 fields: minute hour day month weekday)
-  const cronRegex = /^(\*|[0-5]?\d|\*\/\d+) (\*|[01]?\d|2[0-3]|\*\/\d+) (\*|[12]?\d|3[01]|\*\/\d+) (\*|[01]?\d|\*\/\d+) (\*|[0-6])$/;
+  const cronRegex =
+    /^(\*|[0-5]?\d|\*\/\d+) (\*|[01]?\d|2[0-3]|\*\/\d+) (\*|[12]?\d|3[01]|\*\/\d+) (\*|[01]?\d|\*\/\d+) (\*|[0-6])$/;
   return cronRegex.test(cron);
 }
 
-function styled(text: string, type: 'success' | 'warning' | 'error' | 'info' | 'primary' | 'muted'): string {
+function styled(
+  text: string,
+  type: 'success' | 'warning' | 'error' | 'info' | 'primary' | 'muted'
+): string {
   const colors = {
     success: '\x1b[32m',
     warning: '\x1b[33m',
     error: '\x1b[31m',
     info: '\x1b[36m',
     primary: '\x1b[34m',
-    muted: '\x1b[90m'
+    muted: '\x1b[90m',
   };
   const reset = '\x1b[0m';
   return `${colors[type]}${text}${reset}`;
@@ -132,11 +142,11 @@ async function main() {
     console.log(styled(`   Secret: ${key}`, 'primary'));
     console.log(styled(`   Schedule: ${options.schedule}`, 'success'));
     console.log(styled(`   Reason: ${options.reason}`, 'muted'));
-    
+
     if (options.notifyEmails && options.notifyEmails.length > 0) {
       console.log(styled(`   Notifications: ${options.notifyEmails.join(', ')}`, 'info'));
     }
-    
+
     if (options.severity) {
       console.log(styled(`   Severity: ${options.severity}`, 'warning'));
     }
@@ -152,14 +162,14 @@ async function main() {
       console.log(styled('✅ Would schedule rotation successfully', 'success'));
       console.log();
       console.log(styled('Next rotation times (next 30 days):', 'info'));
-      
+
       // Show next few rotation times
       const now = new Date();
       for (let i = 0; i < 4; i++) {
         const nextTime = calculateNextCronRun(options.schedule, now, i);
         console.log(styled(`   • ${nextTime.toLocaleString()}`, 'muted'));
       }
-      
+
       console.log();
       console.log(styled('💡 Remove --dry-run to actually schedule the rotation', 'info'));
       return;
@@ -172,7 +182,7 @@ async function main() {
       key,
       schedule: {
         type: 'cron',
-        cron: options.schedule
+        cron: options.schedule,
       },
       action: 'rotate',
       enabled: true,
@@ -180,8 +190,8 @@ async function main() {
         description: options.reason,
         severity: options.severity || 'MEDIUM',
         notifyEmails: options.notifyEmails,
-        dependentServices: [] // Could be auto-detected or configured
-      }
+        dependentServices: [], // Could be auto-detected or configured
+      },
     });
 
     console.log();
@@ -191,7 +201,7 @@ async function main() {
     console.log(styled(`   Rule ID: ${result.ruleId}`, 'primary'));
     console.log(styled(`   Next rotation: ${result.nextRotation}`, 'success'));
     console.log(styled(`   Status: Active`, 'success'));
-    
+
     // Show next few rotations
     console.log();
     console.log(styled('📅 Upcoming rotations:', 'info'));
@@ -199,7 +209,12 @@ async function main() {
     for (let i = 0; i < 3; i++) {
       const nextTime = calculateNextCronRun(options.schedule, now, i);
       const isNext = i === 0;
-      console.log(styled(`   ${isNext ? '→' : ' '} ${nextTime.toLocaleString()}`, isNext ? 'success' : 'muted'));
+      console.log(
+        styled(
+          `   ${isNext ? '→' : ' '} ${nextTime.toLocaleString()}`,
+          isNext ? 'success' : 'muted'
+        )
+      );
     }
 
     console.log();
@@ -209,7 +224,6 @@ async function main() {
     console.log(styled(`   View history: bun secret-version-cli.ts history ${key}`, 'muted'));
     console.log();
     console.log(styled(`📖 Documentation: ${BUN_DOCS.secrets.lifecycle}`, 'accent'));
-
   } catch (error) {
     console.error(styled(`❌ Error: ${error.message}`, 'error'));
     process.exit(1);
@@ -219,13 +233,13 @@ async function main() {
 function calculateNextCronRun(cron: string, fromDate: Date, offset = 0): Date {
   // Simple cron calculation for common patterns
   // In production, use a proper cron library like node-cron
-  
+
   const [minute, hour, day, month, weekday] = cron.split(' ');
   const next = new Date(fromDate);
-  
+
   // Add offset days for future calculations
   next.setDate(next.getDate() + offset);
-  
+
   // Set the time based on cron
   if (hour !== '*') {
     next.setHours(parseInt(hour));
@@ -235,7 +249,7 @@ function calculateNextCronRun(cron: string, fromDate: Date, offset = 0): Date {
   }
   next.setSeconds(0);
   next.setMilliseconds(0);
-  
+
   // Handle specific day patterns
   if (day !== '*') {
     const targetDay = parseInt(day);
@@ -249,7 +263,7 @@ function calculateNextCronRun(cron: string, fromDate: Date, offset = 0): Date {
     const daysUntilTarget = (targetWeekday - currentWeekday + 7) % 7 || 7;
     next.setDate(next.getDate() + daysUntilTarget);
   }
-  
+
   // If the calculated time is in the past, move to next occurrence
   if (next <= fromDate) {
     if (day !== '*') {
@@ -258,7 +272,7 @@ function calculateNextCronRun(cron: string, fromDate: Date, offset = 0): Date {
       next.setDate(next.getDate() + 7);
     }
   }
-  
+
   return next;
 }
 

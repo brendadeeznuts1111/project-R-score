@@ -1,6 +1,6 @@
 /**
  * FactoryWager Domain Configuration
- * 
+ *
  * Centralized domain and branding configuration for the FactoryWager ecosystem.
  * All URLs, domains, and branding references should use this configuration.
  */
@@ -70,19 +70,19 @@ export const FACTORY_WAGER_BRAND: BrandingConfig = {
   product: 'Security Citadel',
   tagline: 'Enterprise-grade secret management with advanced CLI tooling',
   icon: '🏰',
-  primaryHsl: '217 91% 60%',    // Blue #2563eb
-  secondaryHsl: '190 80% 45%',  // Teal #0d9488 (NOT purple!)
-  successHsl: '160 84% 39%',    // Green #10b981
-  warningHsl: '38 92% 50%',     // Orange #f59e0b
-  errorHsl: '0 84% 60%',        // Red #ef4444
-  surfaceHsl: '222 47% 11%',    // Dark #0f172a
+  primaryHsl: '217 91% 60%', // Blue #2563eb
+  secondaryHsl: '190 80% 45%', // Teal #0d9488 (NOT purple!)
+  successHsl: '160 84% 39%', // Green #10b981
+  warningHsl: '38 92% 50%', // Orange #f59e0b
+  errorHsl: '0 84% 60%', // Red #ef4444
+  surfaceHsl: '222 47% 11%', // Dark #0f172a
   defaultTheme: 'system',
 };
 
 // Environment-specific overrides
 export function getDomainConfig(env?: string): DomainConfig {
   const environment = env || Bun.env.FW_ENV || 'production';
-  
+
   switch (environment) {
     case 'local':
     case 'development':

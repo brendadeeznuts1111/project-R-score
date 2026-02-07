@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Factory-Wager Pattern Wiki</title>
+  <style>body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; background: #f8f9fa; }
+.container { max-width: 1400px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.header { border-bottom: 2px solid #e9ecef; padding-bottom: 20px; margin-bottom: 30px; }
+.title { color: #212529; font-size: 2.5em; margin: 0; }
+.subtitle { color: #6c757d; font-size: 1.1em; margin: 10px 0 0 0; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 30px 0; }
+.stat-card { background: #f8f9fa; padding: 20px; border-radius: 6px; text-align: center; }
+.stat-number { font-size: 2em; font-weight: bold; color: #007bff; }
+.stat-label { color: #6c757d; margin-top: 5px; }
+.category { margin: 30px 0; }
+.category-title { color: #495057; font-size: 1.5em; border-bottom: 1px solid #dee2e6; padding-bottom: 10px; }
+.pattern-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+.pattern-table th, .pattern-table td { padding: 12px; text-align: left; border-bottom: 1px solid #dee2e6; }
+.pattern-table th { background: #f8f9fa; font-weight: 600; }
+.pattern-table a { color: #007bff; text-decoration: none; }
+.pattern-table a:hover { text-decoration: underline; }
+.tag { background: #e9ecef; color: #495057; padding: 2px 6px; border-radius: 3px; font-size: 0.8em; margin-right: 4px; }
+.complexity-simple { color: #28a745; font-weight: bold; }
+.complexity-intermediate { color: #ffc107; font-weight: bold; }
+.complexity-advanced { color: #dc3545; font-weight: bold; }
+.performance { font-family: monospace; color: #6c757d; }
+.pattern-details { background: #f8f9fa; padding: 20px; border-radius: 6px; margin: 20px 0; }
+.command { background: #212529; color: #f8f9fa; padding: 15px; border-radius: 4px; font-family: monospace; white-space: pre-wrap; overflow-x: auto; }
+.template { background: #e9ecef; padding: 15px; border-radius: 4px; font-family: monospace; }
+.footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid #dee2e6; color: #6c757d; text-align: center; }</style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">Factory-Wager Pattern Wiki</h1>
+      <p class="subtitle">Pattern-enhanced one-liners with tags, code blocks, and LLM-optimized context</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-number">8</div>
+        <div class="stat-label">Total Patterns</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">7</div>
+        <div class="stat-label">Categories</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">37</div>
+        <div class="stat-label">Unique Tags</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">1,454,545</div>
+        <div class="stat-label">Peak Ops/sec</div>
+      </div>
+    </div>
+
+    <div class="category">
+      <h2 class="category-title">COOKIES</h2>
+      <p>1 patterns • Average performance: <strong>66,576 ops/s</strong></p>
+      <table class="pattern-table">
+        <thead>
+          <tr>
+            <th>Pattern</th>
+            <th>Tags</th>
+            <th>Complexity</th>
+            <th>Code Type</th>
+            <th>Performance</th>
+            <th>Use Case</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>undefined</td>
+            <td><span class="tag">ab-testing</span><span class="tag">variant</span><span class="tag">cookie</span><span class="tag">+2</span></td>
+            <td><span class="complexity-simple">simple</span></td>
+            <td>curl</td>
+            <td><span class="performance">66,576 ops/s</span></td>
+            <td>A/B testing UI variants</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="category">
+      <h2 class="category-title">R2</h2>
+      <p>1 patterns • Average performance: <strong>634,840 ops/s</strong></p>
+      <table class="pattern-table">
+        <thead>
+          <tr>
+            <th>Pattern</th>
+            <th>Tags</th>
+            <th>Complexity</th>
+            <th>Code Type</th>
+            <th>Performance</th>
+            <th>Use Case</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>undefined</td>
+            <td><span class="tag">r2</span><span class="tag">upload</span><span class="tag">storage</span><span class="tag">+2</span></td>
+            <td><span class="complexity-intermediate">intermediate</span></td>
+            <td>r2</td>
+            <td><span class="performance">634,840 ops/s</span></td>
+            <td>Object storage upload</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="category">
+      <h2 class="category-title">CDN</h2>
+      <p>1 patterns • Average performance: <strong>13,233 ops/s</strong></p>
+      <table class="pattern-table">
+        <thead>
+          <tr>
+            <th>Pattern</th>
+            <th>Tags</th>
+            <th>Complexity</th>
+            <th>Code Type</th>
+            <th>Performance</th>
+            <th>Use Case</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>undefined</td>
+            <td><span class="tag">etag</span><span class="tag">hash</span><span class="tag">sha256</span><span class="tag">+2</span></td>
+            <td><span class="complexity-simple">simple</span></td>
+            <td>crypto</td>
+            <td><span class="performance">13,233 ops/s</span></td>
+            <td>Cache validation and ETag generation</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="category">
+      <h2 class="category-title">SUBDOMAINS</h2>
+      <p>1 patterns • Average performance: <strong>189,970 ops/s</strong></p>
+      <table class="pattern-table">
+        <thead>
+          <tr>
+            <th>Pattern</th>
+            <th>Tags</th>
+            <th>Complexity</th>
+            <th>Code Type</th>
+            <th>Performance</th>
+            <th>Use Case</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>undefined</td>
+            <td><span class="tag">subdomain</span><span class="tag">routing</span><span class="tag">host-header</span><span class="tag">+2</span></td>
+            <td><span class="complexity-simple">simple</span></td>
+            <td>curl</td>
+            <td><span class="performance">189,970 ops/s</span></td>
+            <td>Subdomain routing simulation</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="category">
+      <h2 class="category-title">PROFILING</h2>
+      <p>1 patterns • Average performance: <strong>800,000 ops/s</strong></p>
+      <table class="pattern-table">
+        <thead>
+          <tr>
+            <th>Pattern</th>
+            <th>Tags</th>
+            <th>Complexity</th>
+            <th>Code Type</th>
+            <th>Performance</th>
+            <th>Use Case</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>undefined</td>
+            <td><span class="tag">junior-runner</span><span class="tag">post</span><span class="tag">markdown</span><span class="tag">+2</span></td>
+            <td><span class="complexity-simple">simple</span></td>
+            <td>curl</td>
+            <td><span class="performance">800,000 ops/s</span></td>
+            <td>Profile data submission</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="category">
+      <h2 class="category-title">S3-PRESIGN</h2>
+      <p>1 patterns • Average performance: <strong>45,000 ops/s</strong></p>
+      <table class="pattern-table">
+        <thead>
+          <tr>
+            <th>Pattern</th>
+            <th>Tags</th>
+            <th>Complexity</th>
+            <th>Code Type</th>
+            <th>Performance</th>
+            <th>Use Case</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>undefined</td>
+            <td><span class="tag">s3</span><span class="tag">presign</span><span class="tag">download</span><span class="tag">+2</span></td>
+            <td><span class="complexity-advanced">advanced</span></td>
+            <td>s3</td>
+            <td><span class="performance">45,000 ops/s</span></td>
+            <td>Secure file download URLs</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="category">
+      <h2 class="category-title">PERFORMANCE</h2>
+      <p>2 patterns • Average performance: <strong>1,432,989 ops/s</strong></p>
+      <table class="pattern-table">
+        <thead>
+          <tr>
+            <th>Pattern</th>
+            <th>Tags</th>
+            <th>Complexity</th>
+            <th>Code Type</th>
+            <th>Performance</th>
+            <th>Use Case</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>undefined</td>
+            <td><span class="tag">benchmark</span><span class="tag">performance</span><span class="tag">timing</span><span class="tag">+2</span></td>
+            <td><span class="complexity-intermediate">intermediate</span></td>
+            <td>bun-e</td>
+            <td><span class="performance">1,411,433 ops/s</span></td>
+            <td>Performance testing and optimization</td>
+          </tr>
+          <tr>
+            <td>undefined</td>
+            <td><span class="tag">bulk</span><span class="tag">parallel</span><span class="tag">promise-all</span><span class="tag">+2</span></td>
+            <td><span class="complexity-intermediate">intermediate</span></td>
+            <td>bun-e</td>
+            <td><span class="performance">1,454,545 ops/s</span></td>
+            <td>Bulk data processing optimization</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Detailed Patterns</h2>
+
+    <div class="pattern-details">
+      <h3>undefined</h3>
+      <p><strong>Category:</strong> cookies | <strong>Complexity:</strong> <span class="complexity-simple">simple</span> | <strong>Performance:</strong> <span class="performance">66,576 ops/s</span></p>
+      
+      <h4>Command</h4>
+      <div class="command">curl -H "Cookie: variant=A" http://localhost:3000</div>
+      
+      <h4>Template</h4>
+      <div class="template">curl -H "Cookie: variant={variant}" {url}</div>
+      <p><strong>Variables:</strong> <code>variant</code>, <code>url</code></p>
+      
+      <p><strong>Use Case:</strong> A/B testing UI variants</p>
+      <p><strong>Tags:</strong> <span class="tag">ab-testing</span> <span class="tag">variant</span> <span class="tag">cookie</span> <span class="tag">ui</span> <span class="tag">admin</span></p>
+    </div>
+      
+
+    <div class="pattern-details">
+      <h3>undefined</h3>
+      <p><strong>Category:</strong> r2 | <strong>Complexity:</strong> <span class="complexity-intermediate">intermediate</span> | <strong>Performance:</strong> <span class="performance">634,840 ops/s</span></p>
+      
+      <h4>Command</h4>
+      <div class="command">bun -e 'fetch("cf://r2.factory-wager.com/profiles.json",{method:"PUT",body:JSON.stringify({test:1})})'</div>
+      
+      <h4>Template</h4>
+      <div class="template">fetch("cf://{bucket}/{path}",{method:"PUT",body:JSON.stringify({data})})</div>
+      <p><strong>Variables:</strong> <code>bucket</code>, <code>path</code>, <code>data</code></p>
+      
+      <p><strong>Use Case:</strong> Object storage upload</p>
+      <p><strong>Tags:</strong> <span class="tag">r2</span> <span class="tag">upload</span> <span class="tag">storage</span> <span class="tag">cloudflare</span> <span class="tag">json</span></p>
+    </div>
+      
+
+    <div class="pattern-details">
+      <h3>undefined</h3>
+      <p><strong>Category:</strong> cdn | <strong>Complexity:</strong> <span class="complexity-simple">simple</span> | <strong>Performance:</strong> <span class="performance">13,233 ops/s</span></p>
+      
+      <h4>Command</h4>
+      <div class="command">bun -e 'new Bun.CryptoHasher("sha256").update("html").digest("hex")'</div>
+      
+      <h4>Template</h4>
+      <div class="template">new Bun.CryptoHasher("{algorithm}").update({data}).digest("{format}")</div>
+      <p><strong>Variables:</strong> <code>algorithm</code>, <code>data</code>, <code>format</code></p>
+      
+      <p><strong>Use Case:</strong> Cache validation and ETag generation</p>
+      <p><strong>Tags:</strong> <span class="tag">etag</span> <span class="tag">hash</span> <span class="tag">sha256</span> <span class="tag">cdn</span> <span class="tag">crypto</span></p>
+    </div>
+      
+
+    <div class="pattern-details">
+      <h3>undefined</h3>
+      <p><strong>Category:</strong> subdomains | <strong>Complexity:</strong> <span class="complexity-simple">simple</span> | <strong>Performance:</strong> <span class="performance">189,970 ops/s</span></p>
+      
+      <h4>Command</h4>
+      <div class="command">curl -H "Host: admin.factory-wager.com" http://localhost:3000</div>
+      
+      <h4>Template</h4>
+      <div class="template">curl -H "Host: {subdomain}.{domain}" {url}</div>
+      <p><strong>Variables:</strong> <code>subdomain</code>, <code>domain</code>, <code>url</code></p>
+      
+      <p><strong>Use Case:</strong> Subdomain routing simulation</p>
+      <p><strong>Tags:</strong> <span class="tag">subdomain</span> <span class="tag">routing</span> <span class="tag">host-header</span> <span class="tag">admin</span> <span class="tag">reverse-proxy</span></p>
+    </div>
+      
+
+    <div class="pattern-details">
+      <h3>undefined</h3>
+      <p><strong>Category:</strong> profiling | <strong>Complexity:</strong> <span class="complexity-simple">simple</span> | <strong>Performance:</strong> <span class="performance">800,000 ops/s</span></p>
+      
+      <h4>Command</h4>
+      <div class="command">curl -d '# Hi' -X POST http://localhost:3000/profile</div>
+      
+      <h4>Template</h4>
+      <div class="template">curl -d '{data}' -X POST {endpoint}</div>
+      <p><strong>Variables:</strong> <code>data</code>, <code>endpoint</code></p>
+      
+      <p><strong>Use Case:</strong> Profile data submission</p>
+      <p><strong>Tags:</strong> <span class="tag">junior-runner</span> <span class="tag">post</span> <span class="tag">markdown</span> <span class="tag">profile</span> <span class="tag">api</span></p>
+    </div>
+      
+
+    <div class="pattern-details">
+      <h3>undefined</h3>
+      <p><strong>Category:</strong> s3-presign | <strong>Complexity:</strong> <span class="complexity-advanced">advanced</span> | <strong>Performance:</strong> <span class="performance">45,000 ops/s</span></p>
+      
+      <h4>Command</h4>
+      <div class="command">bun -e 'import{S3Client}from"bun";const s3=new S3Client({endpoint:"https://r2.factory-wager.com",accessKeyId:process.env.R2_ACCESS_KEY_ID,secretAccessKey:process.env.R2_SECRET_ACCESS_KEY,bucket:"factory-wager-storage"});console.log(s3.file("profile.json").presign({method:"GET",expiresIn:900,contentDisposition:"attachment; filename=\"profile.json\"",type:"application/json"}))'</div>
+      
+      <h4>Template</h4>
+      <div class="template">s3.file("{key}").presign({method:"GET",expiresIn:{expiresIn},contentDisposition:"{disposition}",type:"{contentType}"})</div>
+      <p><strong>Variables:</strong> <code>key</code>, <code>expiresIn</code>, <code>disposition</code>, <code>contentType</code></p>
+      
+      <p><strong>Use Case:</strong> Secure file download URLs</p>
+      <p><strong>Tags:</strong> <span class="tag">s3</span> <span class="tag">presign</span> <span class="tag">download</span> <span class="tag">attachment</span> <span class="tag">content-disposition</span></p>
+    </div>
+      
+
+    <div class="pattern-details">
+      <h3>undefined</h3>
+      <p><strong>Category:</strong> performance | <strong>Complexity:</strong> <span class="complexity-intermediate">intermediate</span> | <strong>Performance:</strong> <span class="performance">1,411,433 ops/s</span></p>
+      
+      <h4>Command</h4>
+      <div class="command">bun -e 'const t0=performance.now();for(let i=0;i<100;i++){await new Bun.CryptoHasher("sha256").update("test"+i).digest("hex")}console.log(performance.now()-t0)'</div>
+      
+      <h4>Template</h4>
+      <div class="template">const t0=performance.now();{operations};console.log(performance.now()-t0)</div>
+      <p><strong>Variables:</strong> <code>operations</code></p>
+      
+      <p><strong>Use Case:</strong> Performance testing and optimization</p>
+      <p><strong>Tags:</strong> <span class="tag">benchmark</span> <span class="tag">performance</span> <span class="tag">timing</span> <span class="tag">crypto</span> <span class="tag">optimization</span></p>
+    </div>
+      
+
+    <div class="pattern-details">
+      <h3>undefined</h3>
+      <p><strong>Category:</strong> performance | <strong>Complexity:</strong> <span class="complexity-intermediate">intermediate</span> | <strong>Performance:</strong> <span class="performance">1,454,545 ops/s</span></p>
+      
+      <h4>Command</h4>
+      <div class="command">bun -e 'const promises=[];for(let i=0;i<10;i++){promises.push(new Bun.CryptoHasher("sha256").update("bulk"+i).digest("hex"))}await Promise.all(promises)'</div>
+      
+      <h4>Template</h4>
+      <div class="template">const promises=[];for(let i=0;i<{count};i++){promises.push({operation})}await Promise.all(promises)</div>
+      <p><strong>Variables:</strong> <code>count</code>, <code>operation</code></p>
+      
+      <p><strong>Use Case:</strong> Bulk data processing optimization</p>
+      <p><strong>Tags:</strong> <span class="tag">bulk</span> <span class="tag">parallel</span> <span class="tag">promise-all</span> <span class="tag">optimization</span> <span class="tag">concurrency</span></p>
+    </div>
+      
+
+    <div class="footer">
+      <p>Generated by Factory-Wager Pattern Wiki Generator on 2026-02-07T05:40:50.379Z</p>
+    </div>
+  </div>
+</body>
+</html>

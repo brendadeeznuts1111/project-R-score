@@ -1,7 +1,70 @@
 # 🛡️ Bun Error Handling Patterns
 
+> **For comprehensive best practices, see [ERROR_HANDLING_BEST_PRACTICES.md](./ERROR_HANDLING_BEST_PRACTICES.md)**
+
 ## Overview
 This guide covers proper error handling patterns in Bun applications, focusing on common anti-patterns and best practices.
+
+## 🚀 Quick Start
+
+```typescript
+// 1. Initialize global error handling at app startup
+import { initializeGlobalErrorHandling } from './lib/core/global-error-handler';
+
+initializeGlobalErrorHandling({
+  exitOnUncaughtException: true,
+  exitOnUnhandledRejection: false,
+  shutdownTimeout: 5000,
+});
+
+// 2. Use typed errors throughout your application
+import { createValidationError, EnterpriseErrorCode } from './lib/core/core-errors';
+
+// 3. Handle async operations safely
+import { safeAsync } from './lib/core/error-handling';
+```
+
+## 🌍 Global Error Handling
+
+Initialize global error handling at your application's entry point to catch uncaught exceptions and unhandled promise rejections:
+
+```typescript
+// main.ts or index.ts - Application entry point
+import { initializeGlobalErrorHandling, onShutdown } from './lib/core/global-error-handler';
+
+// Initialize early, before other imports if possible
+const errorHandler = initializeGlobalErrorHandling({
+  exitOnUncaughtException: true,    // Exit on sync errors
+  exitOnUnhandledRejection: false,  // Continue on async errors
+  shutdownTimeout: 10000,           // Grace period for cleanup
+  onUncaughtException: (error) => {
+    // Custom handling (optional)
+    console.error('Critical error:', error);
+  },
+});
+
+// Register cleanup handlers
+onShutdown(async () => {
+  await database.disconnect();
+  await cache.close();
+  console.log('Cleanup complete');
+});
+```
+
+### Monitoring Error Statistics
+
+```typescript
+import { getGlobalErrorStatistics } from './lib/core/global-error-handler';
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  const stats = getGlobalErrorStatistics();
+  res.json({
+    healthy: stats.errorRate < 10,
+    ...stats,
+  });
+});
+```
 
 ## ✅ Anti-Pattern: Missing Error Handling
 

@@ -1,12 +1,12 @@
 /**
  * Unified Versioning System with Bun.semver
- * 
+ *
  * Integrates semantic versioning across:
  * - Domain/Zone configurations
  * - Worker deployments
  * - R2 asset versions
  * - Secret rotations
- * 
+ *
  * Uses Bun.semver for native semver operations:
  * - satisfies(version, range) - Check version compatibility
  * - order(v1, v2) - Compare version ordering
@@ -60,7 +60,7 @@ export interface CompatibilityMatrix {
 
 /**
  * Unified Version Manager
- * 
+ *
  * Manages semantic versioning across all Cloudflare resources
  * using Bun.semver for efficient version operations.
  */
@@ -72,11 +72,13 @@ export class UnifiedVersionManager {
    * Parse version string to components
    */
   parseVersion(version: string): SemverVersion {
-    const match = version.match(/^v?(\d+)\.(\d+)\.(\d+)(?:-([a-zA-Z0-9.]+))?(?:\+([a-zA-Z0-9.]+))?$/);
+    const match = version.match(
+      /^v?(\d+)\.(\d+)\.(\d+)(?:-([a-zA-Z0-9.]+))?(?:\+([a-zA-Z0-9.]+))?$/
+    );
     if (!match) {
       throw new Error(`Invalid semver: ${version}`);
     }
-    
+
     return {
       major: parseInt(match[1]),
       minor: parseInt(match[2]),
@@ -101,7 +103,7 @@ export class UnifiedVersionManager {
    */
   bumpVersion(current: string, type: 'major' | 'minor' | 'patch'): string {
     const v = this.parseVersion(current);
-    
+
     switch (type) {
       case 'major':
         return `${v.major + 1}.0.0`;
@@ -150,7 +152,7 @@ export class UnifiedVersionManager {
    */
   getGreatestVersion(versions: string[]): string | null {
     if (versions.length === 0) return null;
-    return versions.reduce((greatest, current) => 
+    return versions.reduce((greatest, current) =>
       this.isGreaterThan(current, greatest) ? current : greatest
     );
   }
@@ -160,9 +162,7 @@ export class UnifiedVersionManager {
    */
   getLeastVersion(versions: string[]): string | null {
     if (versions.length === 0) return null;
-    return versions.reduce((least, current) => 
-      this.isLessThan(current, least) ? current : least
-    );
+    return versions.reduce((least, current) => (this.isLessThan(current, least) ? current : least));
   }
 
   /**
@@ -195,20 +195,22 @@ export class UnifiedVersionManager {
     r2Version: string;
   }): CompatibilityMatrix {
     const issues: string[] = [];
-    
+
     // Domain and worker should be on same major version
     const domainV = this.parseVersion(matrix.domainVersion);
     const workerV = this.parseVersion(matrix.workerVersion);
-    
+
     if (domainV.major !== workerV.major) {
-      issues.push(`Major version mismatch: domain@${matrix.domainVersion} vs worker@${matrix.workerVersion}`);
+      issues.push(
+        `Major version mismatch: domain@${matrix.domainVersion} vs worker@${matrix.workerVersion}`
+      );
     }
-    
+
     // R2 assets should satisfy domain's minimum requirement
     if (!this.satisfies(matrix.r2Version, `^${domainV.major}.${domainV.minor}.0`)) {
       issues.push(`R2 assets ${matrix.r2Version} incompatible with domain ${matrix.domainVersion}`);
     }
-    
+
     return {
       domain: matrix.domainVersion,
       worker: matrix.workerVersion,
@@ -227,19 +229,17 @@ export class UnifiedVersionManager {
     metadata?: Record<string, unknown>
   ): Promise<void> {
     const existing = this.versionCache.get(name);
-    
+
     const resource: VersionedResource = {
       name,
       currentVersion: version,
-      versionHistory: existing 
-        ? [...existing.versionHistory, version]
-        : [version],
+      versionHistory: existing ? [...existing.versionHistory, version] : [version],
       lastUpdated: new Date().toISOString(),
       metadata,
     };
-    
+
     this.versionCache.set(name, resource);
-    
+
     // Also record in version graph (if available)
     const vg = await getVersionGraph();
     if (vg) {
@@ -271,14 +271,14 @@ export class UnifiedVersionManager {
       ...deployment,
       timestamp: new Date().toISOString(),
     };
-    
+
     this.deploymentHistory.push(fullDeployment);
-    
+
     // Keep only last 100 deployments
     if (this.deploymentHistory.length > 100) {
       this.deploymentHistory = this.deploymentHistory.slice(-100);
     }
-    
+
     return fullDeployment;
   }
 
@@ -300,10 +300,11 @@ export class UnifiedVersionManager {
     return this.deploymentHistory
       .slice()
       .reverse()
-      .find(d => 
-        this.satisfies(d.domain, `^${this.parseVersion(domainVersion).major}.0.0`) &&
-        this.satisfies(d.worker, workerRange) &&
-        this.satisfies(d.r2Assets, r2Range)
+      .find(
+        d =>
+          this.satisfies(d.domain, `^${this.parseVersion(domainVersion).major}.0.0`) &&
+          this.satisfies(d.worker, workerRange) &&
+          this.satisfies(d.r2Assets, r2Range)
       );
   }
 
@@ -314,7 +315,7 @@ export class UnifiedVersionManager {
     const fromV = this.parseVersion(fromVersion);
     const toV = this.parseVersion(toVersion);
     const changes: string[] = [];
-    
+
     if (toV.major > fromV.major) {
       changes.push(`🚨 **BREAKING**: Major version bump (${fromV.major} → ${toV.major})`);
     }
@@ -324,7 +325,7 @@ export class UnifiedVersionManager {
     if (toV.patch > fromV.patch) {
       changes.push(`🔧 Fixes: Patch version bump (${fromV.patch} → ${toV.patch})`);
     }
-    
+
     return changes;
   }
 
@@ -338,7 +339,7 @@ export class UnifiedVersionManager {
     secrets: string;
   }): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
-    
+
     // Validate all versions are valid semver
     Object.entries(versions).forEach(([component, version]) => {
       try {
@@ -347,22 +348,22 @@ export class UnifiedVersionManager {
         errors.push(`${component}: Invalid semver "${version}"`);
       }
     });
-    
+
     if (errors.length > 0) {
       return { valid: false, errors };
     }
-    
+
     // Check compatibility
     const compatibility = this.checkCompatibility({
       domainVersion: versions.domain,
       workerVersion: versions.worker,
       r2Version: versions.r2Assets,
     });
-    
+
     if (!compatibility.compatible) {
       errors.push(...compatibility.issues);
     }
-    
+
     return { valid: errors.length === 0, errors };
   }
 
@@ -375,11 +376,11 @@ export class UnifiedVersionManager {
     versionRange: { min: string | null; max: string | null };
   } {
     const allVersions: string[] = [];
-    
+
     this.versionCache.forEach(resource => {
       allVersions.push(...resource.versionHistory);
     });
-    
+
     return {
       totalResources: this.versionCache.size,
       totalDeployments: this.deploymentHistory.length,

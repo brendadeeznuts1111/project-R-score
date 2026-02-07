@@ -1,6 +1,6 @@
 /**
  * CLI Framework
- * 
+ *
  * Unified command-line interface framework with:
  * - Argument parsing
  * - Progress indicators

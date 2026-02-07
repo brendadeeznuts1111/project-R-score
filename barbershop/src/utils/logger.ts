@@ -1,6 +1,6 @@
 /**
  * 🪵 Structured Logger for Barbershop Demo
- * 
+ *
  * Replaces console.log statements with proper structured logging
  * Supports different log levels and development/production modes
  */
@@ -26,13 +26,13 @@ class BarbershopLogger {
     const timestamp = new Date(entry.timestamp).toISOString();
     const component = entry.component ? `[${entry.component}]` : '';
     const correlationId = entry.correlationId ? `[${entry.correlationId}]` : '';
-    
+
     let message = `${timestamp} ${component}${correlationId} [${entry.level.toUpperCase()}] ${entry.message}`;
-    
+
     if (entry.data && this.isDevelopment) {
       message += `\n  Data: ${JSON.stringify(entry.data, null, 2)}`;
     }
-    
+
     return message;
   }
 
@@ -43,7 +43,13 @@ class BarbershopLogger {
     return true;
   }
 
-  private log(level: LogLevel, message: string, data?: any, component?: string, correlationId?: string): void {
+  private log(
+    level: LogLevel,
+    message: string,
+    data?: any,
+    component?: string,
+    correlationId?: string
+  ): void {
     if (!this.shouldLog(level)) {
       return;
     }
@@ -54,7 +60,7 @@ class BarbershopLogger {
       timestamp: new Date().toISOString(),
       component,
       data,
-      correlationId
+      correlationId,
     };
 
     const formatted = this.formatMessage(entry);

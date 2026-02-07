@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * 🏰 FactoryWager v3.8 Final Demonstration
- * 
+ *
  * Full demonstration of all v3.8 features
  * Usage: bun run factory-wager-v38-final-demo.ts
  */
@@ -11,7 +11,13 @@ import { getDomainTheme, ThemedConsole } from './themes/config/domain-theme';
 import { cachedCloudflare } from './lib/cloudflare/cached-client';
 import { optimizedSecretManager } from './lib/secrets/core/optimized-secret-manager';
 import { createProfileEngine } from './src/profile';
-import { createDashboard, createAdminDashboard, createClientDashboard, createBarberDashboard, createAnalyticsDashboard } from './src/dashboard';
+import {
+  createDashboard,
+  createAdminDashboard,
+  createClientDashboard,
+  createBarberDashboard,
+  createAnalyticsDashboard,
+} from './src/dashboard';
 import { createSyncEngine } from './src/dashboard/sync';
 import { ProgressBar, Spinner, renderTable } from './lib/cli';
 
@@ -28,32 +34,54 @@ const COLORS = {
 
 function printBanner() {
   console.log(`${COLORS.blue}`);
-  console.log('    ███████╗ █████╗  ██████╗████████╗ ██████╗ ██████╗ ██╗    ██╗   ██╗ █████╗  ██████╗ ███████╗██████╗ ');
-  console.log('    ██╔════╝██╔══██╗██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗██║    ██║   ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗');
-  console.log('    █████╗  ███████║██║        ██║   ██║   ██║██████╔╝██║    ██║   ██║███████║██║  ███╗█████╗  ██████╔╝');
-  console.log('    ██╔══╝  ██╔══██║██║        ██║   ██║   ██║██╔══██╗██║    ╚██╗ ██╔╝██╔══██║██║   ██║██╔══╝  ██╔══██╗');
-  console.log('    ██║     ██║  ██║╚██████╗   ██║   ╚██████╔╝██║  ██║███████╗╚████╔╝ ██║  ██║╚██████╔╝███████╗██║  ██║');
-  console.log('    ╚═╝     ╚═╝  ╚═╝ ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚══════╝ ╚═══╝  ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝');
+  console.log(
+    '    ███████╗ █████╗  ██████╗████████╗ ██████╗ ██████╗ ██╗    ██╗   ██╗ █████╗  ██████╗ ███████╗██████╗ '
+  );
+  console.log(
+    '    ██╔════╝██╔══██╗██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗██║    ██║   ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗'
+  );
+  console.log(
+    '    █████╗  ███████║██║        ██║   ██║   ██║██████╔╝██║    ██║   ██║███████║██║  ███╗█████╗  ██████╔╝'
+  );
+  console.log(
+    '    ██╔══╝  ██╔══██║██║        ██║   ██║   ██║██╔══██╗██║    ╚██╗ ██╔╝██╔══██║██║   ██║██╔══╝  ██╔══██╗'
+  );
+  console.log(
+    '    ██║     ██║  ██║╚██████╗   ██║   ╚██████╔╝██║  ██║███████╗╚████╔╝ ██║  ██║╚██████╔╝███████╗██║  ██║'
+  );
+  console.log(
+    '    ╚═╝     ╚═╝  ╚═╝ ╚═════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚══════╝ ╚═══╝  ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝'
+  );
   console.log(`${COLORS.reset}`);
-  console.log(`${COLORS.teal}                                    v3.8 - The Blue-Teal-Green-Orange-Red Release${COLORS.reset}`);
+  console.log(
+    `${COLORS.teal}                                    v3.8 - The Blue-Teal-Green-Orange-Red Release${COLORS.reset}`
+  );
   console.log();
 }
 
 function printHeader(title: string) {
   console.log();
-  console.log(`${COLORS.blue}┌────────────────────────────────────────────────────────────────┐${COLORS.reset}`);
-  console.log(`${COLORS.blue}│${COLORS.reset} ${COLORS.bright}${title.padEnd(62)}${COLORS.reset}${COLORS.blue}│${COLORS.reset}`);
-  console.log(`${COLORS.blue}└────────────────────────────────────────────────────────────────┘${COLORS.reset}`);
+  console.log(
+    `${COLORS.blue}┌────────────────────────────────────────────────────────────────┐${COLORS.reset}`
+  );
+  console.log(
+    `${COLORS.blue}│${COLORS.reset} ${COLORS.bright}${title.padEnd(62)}${COLORS.reset}${COLORS.blue}│${COLORS.reset}`
+  );
+  console.log(
+    `${COLORS.blue}└────────────────────────────────────────────────────────────────┘${COLORS.reset}`
+  );
 }
 
 async function demoThemeSystem() {
   printHeader('🏰 THEME SYSTEM');
-  
+
   console.log(`${COLORS.dim}Available Themes:${COLORS.reset}`);
   for (const theme of themeList) {
-    console.log(`  ${theme.icon} ${theme.name.padEnd(15)} ${COLORS.dim}v${theme.version}${COLORS.reset}`);
+    console.log(
+      `  ${theme.icon} ${theme.name.padEnd(15)} ${COLORS.dim}v${theme.version}${COLORS.reset}`
+    );
   }
-  
+
   console.log();
   console.log(`${COLORS.dim}FactoryWager Palette:${COLORS.reset}`);
   const fw = themes.factorywager;
@@ -63,8 +91,10 @@ async function demoThemeSystem() {
   console.log(`  ${COLORS.orange}█${COLORS.reset} Orange (Warning)   ${fw.colors.warning['500']}`);
   console.log(`  ${COLORS.red}█${COLORS.reset} Red    (Error)     ${fw.colors.error['500']}`);
   console.log();
-  console.log(`  ${COLORS.green}✓${COLORS.reset} ${COLORS.dim}NO purple/indigo colors (hues 240-300)${COLORS.reset}`);
-  
+  console.log(
+    `  ${COLORS.green}✓${COLORS.reset} ${COLORS.dim}NO purple/indigo colors (hues 240-300)${COLORS.reset}`
+  );
+
   // Themed console demo
   console.log();
   console.log(`${COLORS.dim}Themed Console Output:${COLORS.reset}`);
@@ -77,32 +107,30 @@ async function demoThemeSystem() {
 
 async function demoDashboardSystem() {
   printHeader('📊 DASHBOARD SYSTEM');
-  
+
   const spinner = new Spinner('Building dashboards');
   spinner.start();
   await Bun.sleep(500);
-  
+
   const dashboards = [
     { name: 'Admin', builder: createAdminDashboard() },
     { name: 'Client', builder: createClientDashboard() },
     { name: 'Barber', builder: createBarberDashboard() },
     { name: 'Analytics', builder: createAnalyticsDashboard() },
   ];
-  
+
   const rows = dashboards.map(({ name, builder }) => {
     const built = builder.build();
     return [name, built.widgets.length.toString(), built.config.theme];
   });
-  
+
   spinner.stop('Dashboards built');
-  
+
   console.log();
-  console.log(renderTable(
-    ['Dashboard', 'Widgets', 'Theme'],
-    rows,
-    { align: ['left', 'right', 'left'] }
-  ));
-  
+  console.log(
+    renderTable(['Dashboard', 'Widgets', 'Theme'], rows, { align: ['left', 'right', 'left'] })
+  );
+
   // Real-time sync demo
   console.log();
   console.log(`${COLORS.dim}Real-time Sync Engine:${COLORS.reset}`);
@@ -113,18 +141,18 @@ async function demoDashboardSystem() {
 
 async function demoProfileSystem() {
   printHeader('⚡ PROFILE SYSTEM');
-  
+
   const spinner = new Spinner('Initializing profile engine');
   spinner.start();
-  
+
   const engine = createProfileEngine({
     outputDir: './profiles',
     uploadToR2: false,
   });
-  
+
   await Bun.sleep(300);
   spinner.stop('Profile engine ready');
-  
+
   console.log();
   console.log(`${COLORS.dim}Profile Engine Features:${COLORS.reset}`);
   console.log(`  ${COLORS.green}✓${COLORS.reset} CPU profiling`);
@@ -137,14 +165,14 @@ async function demoProfileSystem() {
 
 async function demoCacheSystem() {
   printHeader('💾 CACHE SYSTEM');
-  
+
   console.log(`${COLORS.dim}Cloudflare Cached Client:${COLORS.reset}`);
   const cfStats = cachedCloudflare.getCacheStats();
   console.log(`  Hit rate: ${cfStats.hitRate.toFixed(1)}%`);
   console.log(`  Hits: ${cfStats.hits}`);
   console.log(`  Misses: ${cfStats.misses}`);
   console.log(`  Size: ${cfStats.size} entries`);
-  
+
   console.log();
   console.log(`${COLORS.dim}Secret Manager Cache:${COLORS.reset}`);
   const smStats = optimizedSecretManager.getMetrics();
@@ -152,7 +180,7 @@ async function demoCacheSystem() {
   console.log(`  Hits: ${smStats.cacheHits}`);
   console.log(`  Misses: ${smStats.cacheMisses}`);
   console.log(`  Evictions: ${smStats.evictions}`);
-  
+
   console.log();
   console.log(`${COLORS.dim}Cache Features:${COLORS.reset}`);
   console.log(`  ${COLORS.green}✓${COLORS.reset} LRU cache with TTL`);
@@ -163,7 +191,7 @@ async function demoCacheSystem() {
 
 async function demoCLIFramework() {
   printHeader('🖥️  CLI FRAMEWORK');
-  
+
   // Progress bar demo
   console.log(`${COLORS.dim}Progress Bar Demo:${COLORS.reset}`);
   const bar = new ProgressBar(20, 'Loading', 30);
@@ -171,7 +199,7 @@ async function demoCLIFramework() {
     bar.update(i);
     await Bun.sleep(50);
   }
-  
+
   console.log();
   console.log(`${COLORS.dim}CLI Features:${COLORS.reset}`);
   console.log(`  ${COLORS.green}✓${COLORS.reset} Standardized argument parsing`);
@@ -184,7 +212,7 @@ async function demoCLIFramework() {
 
 async function demoStats() {
   printHeader('📈 SYSTEM STATISTICS');
-  
+
   const stats = [
     ['Component', 'Status', 'Items'],
     ['Themes', '✓ Active', '4'],
@@ -193,13 +221,9 @@ async function demoStats() {
     ['Cache Systems', '✓ Active', '2'],
     ['CLI Tools', '✓ Active', '5+'],
   ];
-  
-  console.log(renderTable(
-    stats[0],
-    stats.slice(1),
-    { align: ['left', 'center', 'right'] }
-  ));
-  
+
+  console.log(renderTable(stats[0], stats.slice(1), { align: ['left', 'center', 'right'] }));
+
   console.log();
   console.log(`${COLORS.dim}Lines of Code:${COLORS.reset}`);
   console.log(`  Dashboard System:  ~2,100 lines`);
@@ -211,24 +235,26 @@ async function demoStats() {
 
 async function main() {
   printBanner();
-  
+
   const startTime = performance.now();
-  
+
   await demoThemeSystem();
   await demoDashboardSystem();
   await demoProfileSystem();
   await demoCacheSystem();
   await demoCLIFramework();
   await demoStats();
-  
+
   const duration = performance.now() - startTime;
-  
+
   printHeader('✨ DEMO COMPLETE');
   console.log();
   console.log(`  ${COLORS.dim}Duration: ${duration.toFixed(2)}ms${COLORS.reset}`);
   console.log(`  ${COLORS.dim}Version:  v3.8${COLORS.reset}`);
   console.log();
-  console.log(`  ${COLORS.green}${COLORS.bright}🏰 FactoryWager - Blue, Teal, Green, Orange, Red${COLORS.reset}`);
+  console.log(
+    `  ${COLORS.green}${COLORS.bright}🏰 FactoryWager - Blue, Teal, Green, Orange, Red${COLORS.reset}`
+  );
   console.log(`  ${COLORS.dim}NO purple colors. All systems operational.${COLORS.reset}`);
   console.log();
 }

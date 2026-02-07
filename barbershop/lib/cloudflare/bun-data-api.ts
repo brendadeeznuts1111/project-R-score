@@ -1,6 +1,6 @@
 /**
  * Bun Data API Integration
- * 
+ *
  * Unified interface for Bun's data management APIs:
  * - Bun.Cookie / Bun.CookieMap - Cookie management
  * - Bun.color - CSS color processing
@@ -39,7 +39,7 @@ export class BunCookieManager {
    */
   set(name: string, value: string, options: CookieOptions = {}): void {
     const cookie = new Bun.Cookie(name, value);
-    
+
     if (options.domain) cookie.domain = options.domain;
     if (options.path) cookie.path = options.path;
     if (options.expires) cookie.expires = options.expires;
@@ -157,7 +157,7 @@ export class BunColorManager {
    */
   convert(color: string, format: ColorFormat): string {
     const parsed = this.parse(color);
-    
+
     // For now, return parsed value
     // Future: Implement format conversion when Bun.color supports it
     return parsed;
@@ -166,7 +166,10 @@ export class BunColorManager {
   /**
    * Get brand color with alpha
    */
-  brandColor(type: 'primary' | 'secondary' | 'success' | 'warning' | 'error', alpha?: number): string {
+  brandColor(
+    type: 'primary' | 'secondary' | 'success' | 'warning' | 'error',
+    alpha?: number
+  ): string {
     const brand = FACTORY_WAGER_BRAND;
     const colorMap = {
       primary: brand.primaryHsl,
@@ -177,7 +180,7 @@ export class BunColorManager {
     };
 
     const baseColor = colorMap[type];
-    
+
     if (alpha !== undefined) {
       return `hsla(${baseColor}, ${alpha})`;
     }
@@ -342,7 +345,7 @@ export class BunHeaderManager {
    */
   create(headers: Record<string, string>): Headers {
     const h = new Headers();
-    
+
     for (const [key, value] of Object.entries(headers)) {
       // Bun v1.3.7+ preserves the case of the first occurrence
       h.set(key, value);
@@ -415,9 +418,9 @@ export class BunHeaderManager {
    */
   createCFHeaders(apiToken: string): Headers {
     return this.create({
-      'Authorization': `Bearer ${apiToken}`,
+      Authorization: `Bearer ${apiToken}`,
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
+      Accept: 'application/json',
     });
   }
 
@@ -512,7 +515,7 @@ export class BunDataCLIManager {
    */
   createAPIHeaders(apiToken: string, telemetry?: Record<string, string>): Headers {
     const headers = this.headerManager.createCFHeaders(apiToken);
-    
+
     if (telemetry) {
       const telemetryHeaders = this.headerManager.createTelemetryHeaders(telemetry);
       telemetryHeaders.forEach((value, key) => {

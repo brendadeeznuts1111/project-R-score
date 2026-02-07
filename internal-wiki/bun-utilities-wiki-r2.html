@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bun Utilities Internal Wiki</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --text-color: #e9ecef;
+            --secondary-color: #adb5bd;
+            --border-color: #495057;
+            --header-bg: #2d3748;
+            --accent-color: #4299e1;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0; padding: 0;
+            background: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: var(--header-bg);
+            padding: 30px 0;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .title {
+            color: var(--text-color);
+            font-size: 2.5em;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subtitle {
+            color: var(--secondary-color);
+            font-size: 1.1em;
+            margin: 10px 0 0 0;
+        }
+
+        .search-container {
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            font-size: 16px;
+            background: var(--bg-color);
+            color: var(--text-color);
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: var(--header-bg);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        .stat-label {
+            color: var(--secondary-color);
+            margin-top: 5px;
+        }
+
+        .category {
+            margin: 30px 0;
+            background: var(--bg-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .category-title {
+            color: var(--text-color);
+            font-size: 1.5em;
+            padding: 20px;
+            margin: 0;
+            background: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .utility-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .utility-table th, .utility-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .utility-table th {
+            background: var(--header-bg);
+            font-weight: 600;
+        }
+
+        .utility-table a {
+            color: var(--accent-color);
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .utility-table a:hover {
+            text-decoration: underline;
+            background: rgba(66, 153, 225, 0.1);
+        }
+
+        .footer {
+            margin-top: 50px;
+            padding: 30px 0;
+            border-top: 1px solid var(--border-color);
+            color: var(--secondary-color);
+            text-align: center;
+            background: var(--header-bg);
+            border-radius: 8px;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: #2563eb;
+        }
+
+        .toc {
+            background: var(--header-bg);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .toc h3 {
+            margin-top: 0;
+            color: var(--text-color);
+        }
+
+        .toc ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .toc li {
+            padding: 5px 0;
+        }
+
+        .toc a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            .title { font-size: 2em; }
+            .stats { grid-template-columns: 1fr 1fr; }
+            .utility-table { font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓 Theme</button>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🦌 Bun Utilities Internal Wiki</h1>
+            <p class="subtitle">Enhanced internal wiki for Bun utilities documentation and examples</p>
+        </div>
+
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="🔍 Search utilities..." onkeyup="searchUtilities(this.value)">
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">55</div>
+                <div class="stat-label">Total Utilities</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">7</div>
+                <div class="stat-label">Categories</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">0</div>
+                <div class="stat-label">With Examples</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">0%</div>
+                <div class="stat-label">Coverage</div>
+            </div>
+        </div>
+
+        <div class="toc">
+            <h3>📋 Quick Navigation</h3>
+            <ul id="toc-list">
+                <li><a href="#file-system">FILE SYSTEM</a></li>
+                <li><a href="#networking">NETWORKING</a></li>
+                <li><a href="#process">PROCESS</a></li>
+                <li><a href="#validation">VALIDATION</a></li>
+                <li><a href="#conversion">CONVERSION</a></li>
+                <li><a href="#performance">PERFORMANCE</a></li>
+                <li><a href="#color">COLOR</a></li>
+                <li><a href="#cli-reference">CLI REFERENCE</a></li>
+                <li><a href="#quick-reference">QUICK REFERENCE</a></li>
+            </ul>
+        </div>
+
+        <div class="category" id="file-system">
+            <h2 class="category-title">FILE SYSTEM</h2>
+
+            <table class="utility-table">
+                <thead>
+                    <tr>
+                        <th>Utility</th>
+                        <th>Internal Wiki</th>
+                        <th>Official Docs</th>
+                        <th>Example</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>MAIN</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/file_system/main" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#MAIN" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#MAIN</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>READ FILE</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/file_system/read_file" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#READ_FILE" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#READ_FILE</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>WRITE FILE</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/file_system/write_file" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#WRITE_FILE" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#WRITE_FILE</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>READ DIR</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/file_system/read_dir" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#READ_DIR" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#READ_DIR</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>STAT</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/file_system/stat" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#STAT" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#STAT</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>COPY FILE</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/file_system/copy_file" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#COPY_FILE" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#COPY_FILE</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>MOVE FILE</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/file_system/move_file" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#MOVE_FILE" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#MOVE_FILE</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>DELETE FILE</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/file_system/delete_file" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#DELETE_FILE" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#DELETE_FILE</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>FILE EXISTS</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/file_system/file_exists" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#FILE_EXISTS" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#FILE_EXISTS</em></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="category" id="networking">
+            <h2 class="category-title">NETWORKING</h2>
+
+            <table class="utility-table">
+                <thead>
+                    <tr>
+                        <th>Utility</th>
+                        <th>Internal Wiki</th>
+                        <th>Official Docs</th>
+                        <th>Example</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>MAIN</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/networking/main" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#MAIN" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#MAIN</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>FETCH</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/networking/fetch" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#FETCH" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#FETCH</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>SERVE</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/networking/serve" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#SERVE" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#SERVE</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>WEBSOCKET</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/networking/websocket" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#WEBSOCKET" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#WEBSOCKET</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>TCP</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/networking/tcp" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#TCP" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#TCP</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>UDP</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/networking/udp" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#UDP" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#UDP</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>DNS</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/networking/dns" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#DNS" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#DNS</em></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="category" id="process">
+            <h2 class="category-title">PROCESS</h2>
+
+            <table class="utility-table">
+                <thead>
+                    <tr>
+                        <th>Utility</th>
+                        <th>Internal Wiki</th>
+                        <th>Official Docs</th>
+                        <th>Example</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>MAIN</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/process/main" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#MAIN" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#MAIN</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>SPAWN</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/process/spawn" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#SPAWN" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#SPAWN</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>EXEC</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/process/exec" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#EXEC" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#EXEC</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>FORK</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/process/fork" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#FORK" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#FORK</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>KILL</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/process/kill" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#KILL" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#KILL</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>PID</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/process/pid" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#PID" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#PID</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>SIGNALS</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/process/signals" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#SIGNALS" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#SIGNALS</em></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="category" id="validation">
+            <h2 class="category-title">VALIDATION</h2>
+
+            <table class="utility-table">
+                <thead>
+                    <tr>
+                        <th>Utility</th>
+                        <th>Internal Wiki</th>
+                        <th>Official Docs</th>
+                        <th>Example</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>MAIN</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/validation/main" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#MAIN" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#MAIN</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>IS STRING</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/validation/is_string" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#IS_STRING" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#IS_STRING</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>IS NUMBER</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/validation/is_number" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#IS_NUMBER" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#IS_NUMBER</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>IS BOOLEAN</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/validation/is_boolean" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#IS_BOOLEAN" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#IS_BOOLEAN</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>IS ARRAY</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/validation/is_array" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#IS_ARRAY" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#IS_ARRAY</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>IS OBJECT</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/validation/is_object" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#IS_OBJECT" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#IS_OBJECT</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>IS FUNCTION</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/validation/is_function" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#IS_FUNCTION" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#IS_FUNCTION</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>IS PROMISE</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/validation/is_promise" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#IS_PROMISE" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#IS_PROMISE</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>IS BUFFER</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/validation/is_buffer" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#IS_BUFFER" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#IS_BUFFER</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>IS TYPED_ARRAY</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/validation/is_typed_array" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#IS_TYPED_ARRAY" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#IS_TYPED_ARRAY</em></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="category" id="conversion">
+            <h2 class="category-title">CONVERSION</h2>
+
+            <table class="utility-table">
+                <thead>
+                    <tr>
+                        <th>Utility</th>
+                        <th>Internal Wiki</th>
+                        <th>Official Docs</th>
+                        <th>Example</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>MAIN</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/conversion/main" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#MAIN" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#MAIN</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>TO BUFFER</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/conversion/to_buffer" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#TO_BUFFER" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#TO_BUFFER</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>TO STRING</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/conversion/to_string" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#TO_STRING" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#TO_STRING</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>TO NUMBER</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/conversion/to_number" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#TO_NUMBER" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#TO_NUMBER</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>TO BOOLEAN</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/conversion/to_boolean" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#TO_BOOLEAN" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#TO_BOOLEAN</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>TO ARRAY</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/conversion/to_array" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#TO_ARRAY" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#TO_ARRAY</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>TO OBJECT</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/conversion/to_object" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#TO_OBJECT" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#TO_OBJECT</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>JSON PARSE</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/conversion/json_parse" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#JSON_PARSE" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#JSON_PARSE</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>JSON STRINGIFY</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/conversion/json_stringify" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#JSON_STRINGIFY" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#JSON_STRINGIFY</em></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="category" id="performance">
+            <h2 class="category-title">PERFORMANCE</h2>
+
+            <table class="utility-table">
+                <thead>
+                    <tr>
+                        <th>Utility</th>
+                        <th>Internal Wiki</th>
+                        <th>Official Docs</th>
+                        <th>Example</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>MAIN</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/performance/main" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#MAIN" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#MAIN</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>GC</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/performance/gc" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#GC" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#GC</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>PERFORMANCE NOW</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/performance/performance_now" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#PERFORMANCE_NOW" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#PERFORMANCE_NOW</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>MEMORY USAGE</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/performance/memory_usage" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#MEMORY_USAGE" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#MEMORY_USAGE</em></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="category" id="color">
+            <h2 class="category-title">COLOR</h2>
+
+            <table class="utility-table">
+                <thead>
+                    <tr>
+                        <th>Utility</th>
+                        <th>Internal Wiki</th>
+                        <th>Official Docs</th>
+                        <th>Example</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>MAIN</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/color/main" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#MAIN" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#MAIN</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>COLOR</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/color/color" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#COLOR" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#COLOR</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>ANSI</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/color/ansi" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#ANSI" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#ANSI</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>ANSI 16</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/color/ansi_16" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#ANSI_16" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#ANSI_16</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>ANSI 256</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/color/ansi_256" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#ANSI_256" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#ANSI_256</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>CSS</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/color/css" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#CSS" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#CSS</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>RGB</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/color/rgb" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#RGB" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#RGB</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>RGBA</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/color/rgba" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#RGBA" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#RGBA</em></td>
+                    </tr>
+                    <tr>
+                        <td><strong>HSL</strong></td>
+                        <td><a href="https://wiki.company.com/bun-utilities/color/hsl" target="_blank">📝 Wiki</a></td>
+                        <td><a href="https://bun.sh/docs/api/utils#HSL" target="_blank">📚 Docs</a></td>
+                        <td>❌</td>
+                        <td><em>utils#HSL</em></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="category" id="cli-reference">
+            <h2 class="category-title">📟 CLI REFERENCE</h2>
+            <h3 style="padding: 10px 20px; color: var(--secondary-color);">installation</h3>
+            <table class="utility-table">
+                <thead><tr><th>Command</th><th>Documentation</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><strong>MAIN</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/install" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>WINDOWS</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/install/windows" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>MACOS</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/install/macos" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>LINUX</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/install/linux" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>DOCKER</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/install/docker" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>CI CD</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/install/ci-cd" target="_blank">📚 Docs</a></td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3 style="padding: 10px 20px; color: var(--secondary-color);">commands</h3>
+            <table class="utility-table">
+                <thead><tr><th>Command</th><th>Documentation</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><strong>MAIN</strong></td>
+                        <td><a href="https://bun.sh/docs/cli" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>RUN</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/run" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>TEST</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/test" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>BUILD</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/build" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>INSTALL</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/install-command" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>ADD</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/add" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>REMOVE</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/remove" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>LINK</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/link" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>UNLINK</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/unlink" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>CREATE</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/create" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>UPGRADE</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/upgrade" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>COMPLETIONS</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/completions" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>INIT</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/init" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>DEV</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/dev" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>PM</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/pm" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>X</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/x" target="_blank">📚 Docs</a></td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3 style="padding: 10px 20px; color: var(--secondary-color);">options</h3>
+            <table class="utility-table">
+                <thead><tr><th>Command</th><th>Documentation</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><strong>FLAGS</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/flags" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>ENVIRONMENT VARIABLES</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/env" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>CONFIG FILE</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/config" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>TS CONFIG</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/tsconfig" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>PACKAGE JSON</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/package-json" target="_blank">📚 Docs</a></td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3 style="padding: 10px 20px; color: var(--secondary-color);">debugging</h3>
+            <table class="utility-table">
+                <thead><tr><th>Command</th><th>Documentation</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><strong>LOGGING</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/logging" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>VERBOSE</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/verbose" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>DEBUGGER</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/debugger" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>INSPECTOR</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/inspector" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>PROFILE</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/profile" target="_blank">📚 Docs</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>TRACE</strong></td>
+                        <td><a href="https://bun.sh/docs/cli/trace" target="_blank">📚 Docs</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="category" id="quick-reference">
+            <h2 class="category-title">🔖 QUICK REFERENCE</h2>
+            <h3 style="padding: 10px 20px; color: var(--secondary-color);">TYPED ARRAY</h3>
+            <ul style="padding: 0 20px 10px 40px;">
+                <li><strong>TECHNICAL</strong>: <a href="https://bun.sh/docs/runtime/binary-data#typedarray" target="_blank">https://bun.sh/docs/runtime/binary-data#typedarray</a></li>
+                <li><strong>REFERENCE</strong>: <a href="https://bun.com/reference/api/binary-data#typedarray" target="_blank">https://bun.com/reference/api/binary-data#typedarray</a></li>
+                <li><strong>GUIDE</strong>: <a href="https://bun.com/guides/working-with-binary-data" target="_blank">https://bun.com/guides/working-with-binary-data</a></li>
+                <li><strong>EXAMPLE</strong>: <a href="https://bun.com/examples/typedarray-usage" target="_blank">https://bun.com/examples/typedarray-usage</a></li>
+                <li><strong>GITHUB</strong>: <a href="https://github.com/oven-sh/bun/tree/main/src/js/builtins/builtins-array.cc" target="_blank">https://github.com/oven-sh/bun/tree/main/src/js/builtins/builtins-array.cc</a></li>
+            </ul>
+            <h3 style="padding: 10px 20px; color: var(--secondary-color);">FETCH API</h3>
+            <ul style="padding: 0 20px 10px 40px;">
+                <li><strong>TECHNICAL</strong>: <a href="https://bun.sh/docs/runtime/networking/fetch" target="_blank">https://bun.sh/docs/runtime/networking/fetch</a></li>
+                <li><strong>REFERENCE</strong>: <a href="https://bun.com/reference/api/fetch" target="_blank">https://bun.com/reference/api/fetch</a></li>
+                <li><strong>GUIDE</strong>: <a href="https://bun.com/guides/making-http-requests" target="_blank">https://bun.com/guides/making-http-requests</a></li>
+                <li><strong>EXAMPLE</strong>: <a href="https://bun.com/examples/fetch-usage" target="_blank">https://bun.com/examples/fetch-usage</a></li>
+                <li><strong>TUTORIAL</strong>: <a href="https://bun.com/tutorials/http-requests" target="_blank">https://bun.com/tutorials/http-requests</a></li>
+            </ul>
+            <h3 style="padding: 10px 20px; color: var(--secondary-color);">RSS FEEDS</h3>
+            <ul style="padding: 0 20px 10px 40px;">
+                <li><strong>MAIN</strong>: <a href="https://bun.com/rss.xml" target="_blank">https://bun.com/rss.xml</a></li>
+                <li><strong>TECHNICAL</strong>: <a href="https://bun.sh/rss.xml" target="_blank">https://bun.sh/rss.xml</a></li>
+                <li><strong>BLOG</strong>: <a href="https://bun.com/blog/rss.xml" target="_blank">https://bun.com/blog/rss.xml</a></li>
+                <li><strong>RELEASES</strong>: <a href="https://bun.com/releases/rss.xml" target="_blank">https://bun.com/releases/rss.xml</a></li>
+                <li><strong>SECURITY</strong>: <a href="https://bun.com/security/rss.xml" target="_blank">https://bun.com/security/rss.xml</a></li>
+                <li><strong>COMMUNITY</strong>: <a href="https://bun.com/community/rss.xml" target="_blank">https://bun.com/community/rss.xml</a></li>
+            </ul>
+            <h3 style="padding: 10px 20px; color: var(--secondary-color);">GETTING STARTED</h3>
+            <ul style="padding: 0 20px 10px 40px;">
+                <li><strong>QUICKSTART</strong>: <a href="https://bun.sh/docs/quickstart" target="_blank">https://bun.sh/docs/quickstart</a></li>
+                <li><strong>GUIDE</strong>: <a href="https://bun.com/guides/getting-started" target="_blank">https://bun.com/guides/getting-started</a></li>
+                <li><strong>TUTORIAL</strong>: <a href="https://bun.com/tutorials/beginner" target="_blank">https://bun.com/tutorials/beginner</a></li>
+                <li><strong>EXAMPLE</strong>: <a href="https://bun.com/examples/hello-world" target="_blank">https://bun.com/examples/hello-world</a></li>
+                <li><strong>VIDEO</strong>: <a href="https://bun.com/tutorials/video/getting-started" target="_blank">https://bun.com/tutorials/video/getting-started</a></li>
+            </ul>
+            <h3 style="padding: 10px 20px; color: var(--secondary-color);">API REFERENCE</h3>
+            <ul style="padding: 0 20px 10px 40px;">
+                <li><strong>TECHNICAL</strong>: <a href="https://bun.sh/docs/api" target="_blank">https://bun.sh/docs/api</a></li>
+                <li><strong>INTERACTIVE</strong>: <a href="https://bun.com/reference/api" target="_blank">https://bun.com/reference/api</a></li>
+                <li><strong>CHEATSHEET</strong>: <a href="https://bun.com/reference/cheatsheet" target="_blank">https://bun.com/reference/cheatsheet</a></li>
+                <li><strong>COOKBOOK</strong>: <a href="https://bun.com/reference/cookbook" target="_blank">https://bun.com/reference/cookbook</a></li>
+                <li><strong>GLOSSARY</strong>: <a href="https://bun.com/reference/glossary" target="_blank">https://bun.com/reference/glossary</a></li>
+            </ul>
+            <h3 style="padding: 10px 20px; color: var(--secondary-color);">CLI REFERENCE</h3>
+            <ul style="padding: 0 20px 10px 40px;">
+                <li><strong>TECHNICAL</strong>: <a href="https://bun.sh/docs/cli" target="_blank">https://bun.sh/docs/cli</a></li>
+                <li><strong>REFERENCE</strong>: <a href="https://bun.com/reference/cli" target="_blank">https://bun.com/reference/cli</a></li>
+                <li><strong>GUIDE</strong>: <a href="https://bun.com/guides/cli-usage" target="_blank">https://bun.com/guides/cli-usage</a></li>
+                <li><strong>EXAMPLES</strong>: <a href="https://bun.com/examples/cli-scripts" target="_blank">https://bun.com/examples/cli-scripts</a></li>
+                <li><strong>CHEATSHEET</strong>: <a href="https://bun.com/reference/cli#cheatsheet" target="_blank">https://bun.com/reference/cli#cheatsheet</a></li>
+            </ul>
+            <h3 style="padding: 10px 20px; color: var(--secondary-color);">INSTALLATION</h3>
+            <ul style="padding: 0 20px 10px 40px;">
+                <li><strong>TECHNICAL</strong>: <a href="https://bun.sh/docs/installation" target="_blank">https://bun.sh/docs/installation</a></li>
+                <li><strong>GUIDE</strong>: <a href="https://bun.com/guides/getting-started#installation" target="_blank">https://bun.com/guides/getting-started#installation</a></li>
+                <li><strong>PLATFORM_SPECIFIC</strong>:
+                    <ul>
+                        <li>WINDOWS: <a href="https://bun.sh/docs/installation/windows" target="_blank">https://bun.sh/docs/installation/windows</a></li>
+                        <li>MACOS: <a href="https://bun.sh/docs/installation/macos" target="_blank">https://bun.sh/docs/installation/macos</a></li>
+                        <li>LINUX: <a href="https://bun.sh/docs/installation/linux" target="_blank">https://bun.sh/docs/installation/linux</a></li>
+                        <li>DOCKER: <a href="https://bun.sh/docs/installation/docker" target="_blank">https://bun.sh/docs/installation/docker</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <h3 style="padding: 10px 20px; color: var(--secondary-color);">PERFORMANCE</h3>
+            <ul style="padding: 0 20px 10px 40px;">
+                <li><strong>TECHNICAL</strong>: <a href="https://bun.sh/docs/performance" target="_blank">https://bun.sh/docs/performance</a></li>
+                <li><strong>BENCHMARKS</strong>: <a href="https://bun.sh/docs/benchmarks" target="_blank">https://bun.sh/docs/benchmarks</a></li>
+                <li><strong>GUIDE</strong>: <a href="https://bun.com/guides/performance-optimization" target="_blank">https://bun.com/guides/performance-optimization</a></li>
+                <li><strong>TOOLS</strong>: <a href="https://bun.com/examples/performance-testing" target="_blank">https://bun.com/examples/performance-testing</a></li>
+                <li><strong>COMPARISON</strong>: <a href="https://bun.sh/compare" target="_blank">https://bun.sh/compare</a></li>
+            </ul>
+        </div>
+        
+        <div class="category" id="r2-integration">
+            <h2 class="category-title">🌐 R2 INTEGRATION</h2>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number">🟢</div>
+                    <div class="stat-label">Connection Status</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">N/A</div>
+                    <div class="stat-label">R2 Objects</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">N/A</div>
+                    <div class="stat-label">AI Models</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">11:12:09 PM</div>
+                    <div class="stat-label">Last Sync</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <a href="https://dashboard.factory-wager.com" target="_blank" class="utility-table a" style="padding: 10px 20px; background: var(--accent-color); color: white; text-decoration: none; border-radius: 5px; margin-right: 10px;">
+                    🚀 Open Dashboard
+                </a>
+                <a href="https://r2.factory-wager.com" target="_blank" class="utility-table a" style="padding: 10px 20px; background: var(--accent-color); color: white; text-decoration: none; border-radius: 5px;">
+                    🔍 Browse R2 Data
+                </a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Generated by Enhanced Bun Wiki URL Generator</strong></p>
+            <p>Generation Time: 0ms | Coverage: 0%</p>
+            <p>Last Updated: 2/6/2026, 11:12:09 PM</p>
+        </div>
+    </div>
+
+    <script>
+        // Search functionality
+        const searchIndex = {"utilities":[{"name":"FILE SYSTEM: MAIN","category":"file_system","description":"https://bun.sh/docs/api/utils#MAIN","keywords":["file system: main","file_system","file","system:","main","system"],"url":"https://wiki.company.com/bun-utilities/file_system/main"},{"name":"FILE SYSTEM: READ FILE","category":"file_system","description":"https://bun.sh/docs/api/utils#READ_FILE","keywords":["file system: read file","file_system","file","system:","read","system"],"url":"https://wiki.company.com/bun-utilities/file_system/read_file"},{"name":"FILE SYSTEM: WRITE FILE","category":"file_system","description":"https://bun.sh/docs/api/utils#WRITE_FILE","keywords":["file system: write file","file_system","file","system:","write","system"],"url":"https://wiki.company.com/bun-utilities/file_system/write_file"},{"name":"FILE SYSTEM: READ DIR","category":"file_system","description":"https://bun.sh/docs/api/utils#READ_DIR","keywords":["file system: read dir","file_system","file","system:","read","dir","system"],"url":"https://wiki.company.com/bun-utilities/file_system/read_dir"},{"name":"FILE SYSTEM: STAT","category":"file_system","description":"https://bun.sh/docs/api/utils#STAT","keywords":["file system: stat","file_system","file","system:","stat","system"],"url":"https://wiki.company.com/bun-utilities/file_system/stat"},{"name":"FILE SYSTEM: COPY FILE","category":"file_system","description":"https://bun.sh/docs/api/utils#COPY_FILE","keywords":["file system: copy file","file_system","file","system:","copy","system"],"url":"https://wiki.company.com/bun-utilities/file_system/copy_file"},{"name":"FILE SYSTEM: MOVE FILE","category":"file_system","description":"https://bun.sh/docs/api/utils#MOVE_FILE","keywords":["file system: move file","file_system","file","system:","move","system"],"url":"https://wiki.company.com/bun-utilities/file_system/move_file"},{"name":"FILE SYSTEM: DELETE FILE","category":"file_system","description":"https://bun.sh/docs/api/utils#DELETE_FILE","keywords":["file system: delete file","file_system","file","system:","delete","system"],"url":"https://wiki.company.com/bun-utilities/file_system/delete_file"},{"name":"FILE SYSTEM: FILE EXISTS","category":"file_system","description":"https://bun.sh/docs/api/utils#FILE_EXISTS","keywords":["file system: file exists","file_system","file","system:","exists","system"],"url":"https://wiki.company.com/bun-utilities/file_system/file_exists"},{"name":"NETWORKING: MAIN","category":"networking","description":"https://bun.sh/docs/api/utils#MAIN","keywords":["networking: main","networking","networking:","main"],"url":"https://wiki.company.com/bun-utilities/networking/main"},{"name":"NETWORKING: FETCH","category":"networking","description":"https://bun.sh/docs/api/utils#FETCH","keywords":["networking: fetch","networking","networking:","fetch"],"url":"https://wiki.company.com/bun-utilities/networking/fetch"},{"name":"NETWORKING: SERVE","category":"networking","description":"https://bun.sh/docs/api/utils#SERVE","keywords":["networking: serve","networking","networking:","serve"],"url":"https://wiki.company.com/bun-utilities/networking/serve"},{"name":"NETWORKING: WEBSOCKET","category":"networking","description":"https://bun.sh/docs/api/utils#WEBSOCKET","keywords":["networking: websocket","networking","networking:","websocket"],"url":"https://wiki.company.com/bun-utilities/networking/websocket"},{"name":"NETWORKING: TCP","category":"networking","description":"https://bun.sh/docs/api/utils#TCP","keywords":["networking: tcp","networking","networking:","tcp"],"url":"https://wiki.company.com/bun-utilities/networking/tcp"},{"name":"NETWORKING: UDP","category":"networking","description":"https://bun.sh/docs/api/utils#UDP","keywords":["networking: udp","networking","networking:","udp"],"url":"https://wiki.company.com/bun-utilities/networking/udp"},{"name":"NETWORKING: DNS","category":"networking","description":"https://bun.sh/docs/api/utils#DNS","keywords":["networking: dns","networking","networking:","dns"],"url":"https://wiki.company.com/bun-utilities/networking/dns"},{"name":"PROCESS: MAIN","category":"process","description":"https://bun.sh/docs/api/utils#MAIN","keywords":["process: main","process","process:","main"],"url":"https://wiki.company.com/bun-utilities/process/main"},{"name":"PROCESS: SPAWN","category":"process","description":"https://bun.sh/docs/api/utils#SPAWN","keywords":["process: spawn","process","process:","spawn"],"url":"https://wiki.company.com/bun-utilities/process/spawn"},{"name":"PROCESS: EXEC","category":"process","description":"https://bun.sh/docs/api/utils#EXEC","keywords":["process: exec","process","process:","exec"],"url":"https://wiki.company.com/bun-utilities/process/exec"},{"name":"PROCESS: FORK","category":"process","description":"https://bun.sh/docs/api/utils#FORK","keywords":["process: fork","process","process:","fork"],"url":"https://wiki.company.com/bun-utilities/process/fork"},{"name":"PROCESS: KILL","category":"process","description":"https://bun.sh/docs/api/utils#KILL","keywords":["process: kill","process","process:","kill"],"url":"https://wiki.company.com/bun-utilities/process/kill"},{"name":"PROCESS: PID","category":"process","description":"https://bun.sh/docs/api/utils#PID","keywords":["process: pid","process","process:","pid"],"url":"https://wiki.company.com/bun-utilities/process/pid"},{"name":"PROCESS: SIGNALS","category":"process","description":"https://bun.sh/docs/api/utils#SIGNALS","keywords":["process: signals","process","process:","signals"],"url":"https://wiki.company.com/bun-utilities/process/signals"},{"name":"VALIDATION: MAIN","category":"validation","description":"https://bun.sh/docs/api/utils#MAIN","keywords":["validation: main","validation","validation:","main"],"url":"https://wiki.company.com/bun-utilities/validation/main"},{"name":"VALIDATION: IS STRING","category":"validation","description":"https://bun.sh/docs/api/utils#IS_STRING","keywords":["validation: is string","validation","validation:","is","string"],"url":"https://wiki.company.com/bun-utilities/validation/is_string"},{"name":"VALIDATION: IS NUMBER","category":"validation","description":"https://bun.sh/docs/api/utils#IS_NUMBER","keywords":["validation: is number","validation","validation:","is","number"],"url":"https://wiki.company.com/bun-utilities/validation/is_number"},{"name":"VALIDATION: IS BOOLEAN","category":"validation","description":"https://bun.sh/docs/api/utils#IS_BOOLEAN","keywords":["validation: is boolean","validation","validation:","is","boolean"],"url":"https://wiki.company.com/bun-utilities/validation/is_boolean"},{"name":"VALIDATION: IS ARRAY","category":"validation","description":"https://bun.sh/docs/api/utils#IS_ARRAY","keywords":["validation: is array","validation","validation:","is","array"],"url":"https://wiki.company.com/bun-utilities/validation/is_array"},{"name":"VALIDATION: IS OBJECT","category":"validation","description":"https://bun.sh/docs/api/utils#IS_OBJECT","keywords":["validation: is object","validation","validation:","is","object"],"url":"https://wiki.company.com/bun-utilities/validation/is_object"},{"name":"VALIDATION: IS FUNCTION","category":"validation","description":"https://bun.sh/docs/api/utils#IS_FUNCTION","keywords":["validation: is function","validation","validation:","is","function"],"url":"https://wiki.company.com/bun-utilities/validation/is_function"},{"name":"VALIDATION: IS PROMISE","category":"validation","description":"https://bun.sh/docs/api/utils#IS_PROMISE","keywords":["validation: is promise","validation","validation:","is","promise"],"url":"https://wiki.company.com/bun-utilities/validation/is_promise"},{"name":"VALIDATION: IS BUFFER","category":"validation","description":"https://bun.sh/docs/api/utils#IS_BUFFER","keywords":["validation: is buffer","validation","validation:","is","buffer"],"url":"https://wiki.company.com/bun-utilities/validation/is_buffer"},{"name":"VALIDATION: IS TYPED_ARRAY","category":"validation","description":"https://bun.sh/docs/api/utils#IS_TYPED_ARRAY","keywords":["validation: is typed_array","validation","validation:","is","typed_array"],"url":"https://wiki.company.com/bun-utilities/validation/is_typed_array"},{"name":"CONVERSION: MAIN","category":"conversion","description":"https://bun.sh/docs/api/utils#MAIN","keywords":["conversion: main","conversion","conversion:","main"],"url":"https://wiki.company.com/bun-utilities/conversion/main"},{"name":"CONVERSION: TO BUFFER","category":"conversion","description":"https://bun.sh/docs/api/utils#TO_BUFFER","keywords":["conversion: to buffer","conversion","conversion:","to","buffer"],"url":"https://wiki.company.com/bun-utilities/conversion/to_buffer"},{"name":"CONVERSION: TO STRING","category":"conversion","description":"https://bun.sh/docs/api/utils#TO_STRING","keywords":["conversion: to string","conversion","conversion:","to","string"],"url":"https://wiki.company.com/bun-utilities/conversion/to_string"},{"name":"CONVERSION: TO NUMBER","category":"conversion","description":"https://bun.sh/docs/api/utils#TO_NUMBER","keywords":["conversion: to number","conversion","conversion:","to","number"],"url":"https://wiki.company.com/bun-utilities/conversion/to_number"},{"name":"CONVERSION: TO BOOLEAN","category":"conversion","description":"https://bun.sh/docs/api/utils#TO_BOOLEAN","keywords":["conversion: to boolean","conversion","conversion:","to","boolean"],"url":"https://wiki.company.com/bun-utilities/conversion/to_boolean"},{"name":"CONVERSION: TO ARRAY","category":"conversion","description":"https://bun.sh/docs/api/utils#TO_ARRAY","keywords":["conversion: to array","conversion","conversion:","to","array"],"url":"https://wiki.company.com/bun-utilities/conversion/to_array"},{"name":"CONVERSION: TO OBJECT","category":"conversion","description":"https://bun.sh/docs/api/utils#TO_OBJECT","keywords":["conversion: to object","conversion","conversion:","to","object"],"url":"https://wiki.company.com/bun-utilities/conversion/to_object"},{"name":"CONVERSION: JSON PARSE","category":"conversion","description":"https://bun.sh/docs/api/utils#JSON_PARSE","keywords":["conversion: json parse","conversion","conversion:","json","parse"],"url":"https://wiki.company.com/bun-utilities/conversion/json_parse"},{"name":"CONVERSION: JSON STRINGIFY","category":"conversion","description":"https://bun.sh/docs/api/utils#JSON_STRINGIFY","keywords":["conversion: json stringify","conversion","conversion:","json","stringify"],"url":"https://wiki.company.com/bun-utilities/conversion/json_stringify"},{"name":"PERFORMANCE: MAIN","category":"performance","description":"https://bun.sh/docs/api/utils#MAIN","keywords":["performance: main","performance","performance:","main"],"url":"https://wiki.company.com/bun-utilities/performance/main"},{"name":"PERFORMANCE: GC","category":"performance","description":"https://bun.sh/docs/api/utils#GC","keywords":["performance: gc","performance","performance:","gc"],"url":"https://wiki.company.com/bun-utilities/performance/gc"},{"name":"PERFORMANCE: PERFORMANCE NOW","category":"performance","description":"https://bun.sh/docs/api/utils#PERFORMANCE_NOW","keywords":["performance: performance now","performance","performance:","now"],"url":"https://wiki.company.com/bun-utilities/performance/performance_now"},{"name":"PERFORMANCE: MEMORY USAGE","category":"performance","description":"https://bun.sh/docs/api/utils#MEMORY_USAGE","keywords":["performance: memory usage","performance","performance:","memory","usage"],"url":"https://wiki.company.com/bun-utilities/performance/memory_usage"},{"name":"COLOR: MAIN","category":"color","description":"https://bun.sh/docs/api/utils#MAIN","keywords":["color: main","color","color:","main"],"url":"https://wiki.company.com/bun-utilities/color/main"},{"name":"COLOR: COLOR","category":"color","description":"https://bun.sh/docs/api/utils#COLOR","keywords":["color: color","color","color:"],"url":"https://wiki.company.com/bun-utilities/color/color"},{"name":"COLOR: ANSI","category":"color","description":"https://bun.sh/docs/api/utils#ANSI","keywords":["color: ansi","color","color:","ansi"],"url":"https://wiki.company.com/bun-utilities/color/ansi"},{"name":"COLOR: ANSI 16","category":"color","description":"https://bun.sh/docs/api/utils#ANSI_16","keywords":["color: ansi 16","color","color:","ansi","16"],"url":"https://wiki.company.com/bun-utilities/color/ansi_16"},{"name":"COLOR: ANSI 256","category":"color","description":"https://bun.sh/docs/api/utils#ANSI_256","keywords":["color: ansi 256","color","color:","ansi","256"],"url":"https://wiki.company.com/bun-utilities/color/ansi_256"},{"name":"COLOR: CSS","category":"color","description":"https://bun.sh/docs/api/utils#CSS","keywords":["color: css","color","color:","css"],"url":"https://wiki.company.com/bun-utilities/color/css"},{"name":"COLOR: RGB","category":"color","description":"https://bun.sh/docs/api/utils#RGB","keywords":["color: rgb","color","color:","rgb"],"url":"https://wiki.company.com/bun-utilities/color/rgb"},{"name":"COLOR: RGBA","category":"color","description":"https://bun.sh/docs/api/utils#RGBA","keywords":["color: rgba","color","color:","rgba"],"url":"https://wiki.company.com/bun-utilities/color/rgba"},{"name":"COLOR: HSL","category":"color","description":"https://bun.sh/docs/api/utils#HSL","keywords":["color: hsl","color","color:","hsl"],"url":"https://wiki.company.com/bun-utilities/color/hsl"},{"name":"installation: MAIN","category":"CLI: installation","description":"https://bun.sh/docs/cli/install","keywords":["installation: main","cli","installation","installation:","main"],"url":"https://bun.sh/docs/cli/install"},{"name":"installation: WINDOWS","category":"CLI: installation","description":"https://bun.sh/docs/cli/install/windows","keywords":["installation: windows","cli","installation","installation:","windows"],"url":"https://bun.sh/docs/cli/install/windows"},{"name":"installation: MACOS","category":"CLI: installation","description":"https://bun.sh/docs/cli/install/macos","keywords":["installation: macos","cli","installation","installation:","macos"],"url":"https://bun.sh/docs/cli/install/macos"},{"name":"installation: LINUX","category":"CLI: installation","description":"https://bun.sh/docs/cli/install/linux","keywords":["installation: linux","cli","installation","installation:","linux"],"url":"https://bun.sh/docs/cli/install/linux"},{"name":"installation: DOCKER","category":"CLI: installation","description":"https://bun.sh/docs/cli/install/docker","keywords":["installation: docker","cli","installation","installation:","docker"],"url":"https://bun.sh/docs/cli/install/docker"},{"name":"installation: CI CD","category":"CLI: installation","description":"https://bun.sh/docs/cli/install/ci-cd","keywords":["installation: ci cd","cli","installation","installation:","ci","cd"],"url":"https://bun.sh/docs/cli/install/ci-cd"},{"name":"commands: MAIN","category":"CLI: commands","description":"https://bun.sh/docs/cli","keywords":["commands: main","cli","commands","commands:","main"],"url":"https://bun.sh/docs/cli"},{"name":"commands: RUN","category":"CLI: commands","description":"https://bun.sh/docs/cli/run","keywords":["commands: run","cli","commands","commands:","run"],"url":"https://bun.sh/docs/cli/run"},{"name":"commands: TEST","category":"CLI: commands","description":"https://bun.sh/docs/cli/test","keywords":["commands: test","cli","commands","commands:","test"],"url":"https://bun.sh/docs/cli/test"},{"name":"commands: BUILD","category":"CLI: commands","description":"https://bun.sh/docs/cli/build","keywords":["commands: build","cli","commands","commands:","build"],"url":"https://bun.sh/docs/cli/build"},{"name":"commands: INSTALL","category":"CLI: commands","description":"https://bun.sh/docs/cli/install-command","keywords":["commands: install","cli","commands","commands:","install"],"url":"https://bun.sh/docs/cli/install-command"},{"name":"commands: ADD","category":"CLI: commands","description":"https://bun.sh/docs/cli/add","keywords":["commands: add","cli","commands","commands:","add"],"url":"https://bun.sh/docs/cli/add"},{"name":"commands: REMOVE","category":"CLI: commands","description":"https://bun.sh/docs/cli/remove","keywords":["commands: remove","cli","commands","commands:","remove"],"url":"https://bun.sh/docs/cli/remove"},{"name":"commands: LINK","category":"CLI: commands","description":"https://bun.sh/docs/cli/link","keywords":["commands: link","cli","commands","commands:","link"],"url":"https://bun.sh/docs/cli/link"},{"name":"commands: UNLINK","category":"CLI: commands","description":"https://bun.sh/docs/cli/unlink","keywords":["commands: unlink","cli","commands","commands:","unlink"],"url":"https://bun.sh/docs/cli/unlink"},{"name":"commands: CREATE","category":"CLI: commands","description":"https://bun.sh/docs/cli/create","keywords":["commands: create","cli","commands","commands:","create"],"url":"https://bun.sh/docs/cli/create"},{"name":"commands: UPGRADE","category":"CLI: commands","description":"https://bun.sh/docs/cli/upgrade","keywords":["commands: upgrade","cli","commands","commands:","upgrade"],"url":"https://bun.sh/docs/cli/upgrade"},{"name":"commands: COMPLETIONS","category":"CLI: commands","description":"https://bun.sh/docs/cli/completions","keywords":["commands: completions","cli","commands","commands:","completions"],"url":"https://bun.sh/docs/cli/completions"},{"name":"commands: INIT","category":"CLI: commands","description":"https://bun.sh/docs/cli/init","keywords":["commands: init","cli","commands","commands:","init"],"url":"https://bun.sh/docs/cli/init"},{"name":"commands: DEV","category":"CLI: commands","description":"https://bun.sh/docs/cli/dev","keywords":["commands: dev","cli","commands","commands:","dev"],"url":"https://bun.sh/docs/cli/dev"},{"name":"commands: PM","category":"CLI: commands","description":"https://bun.sh/docs/cli/pm","keywords":["commands: pm","cli","commands","commands:","pm"],"url":"https://bun.sh/docs/cli/pm"},{"name":"commands: X","category":"CLI: commands","description":"https://bun.sh/docs/cli/x","keywords":["commands: x","cli","commands","commands:","x"],"url":"https://bun.sh/docs/cli/x"},{"name":"options: FLAGS","category":"CLI: options","description":"https://bun.sh/docs/cli/flags","keywords":["options: flags","cli","options","options:","flags"],"url":"https://bun.sh/docs/cli/flags"},{"name":"options: ENVIRONMENT VARIABLES","category":"CLI: options","description":"https://bun.sh/docs/cli/env","keywords":["options: environment variables","cli","options","options:","environment","variables"],"url":"https://bun.sh/docs/cli/env"},{"name":"options: CONFIG FILE","category":"CLI: options","description":"https://bun.sh/docs/cli/config","keywords":["options: config file","cli","options","options:","config","file"],"url":"https://bun.sh/docs/cli/config"},{"name":"options: TS CONFIG","category":"CLI: options","description":"https://bun.sh/docs/cli/tsconfig","keywords":["options: ts config","cli","options","options:","ts","config"],"url":"https://bun.sh/docs/cli/tsconfig"},{"name":"options: PACKAGE JSON","category":"CLI: options","description":"https://bun.sh/docs/cli/package-json","keywords":["options: package json","cli","options","options:","package","json"],"url":"https://bun.sh/docs/cli/package-json"},{"name":"debugging: LOGGING","category":"CLI: debugging","description":"https://bun.sh/docs/cli/logging","keywords":["debugging: logging","cli","debugging","debugging:","logging"],"url":"https://bun.sh/docs/cli/logging"},{"name":"debugging: VERBOSE","category":"CLI: debugging","description":"https://bun.sh/docs/cli/verbose","keywords":["debugging: verbose","cli","debugging","debugging:","verbose"],"url":"https://bun.sh/docs/cli/verbose"},{"name":"debugging: DEBUGGER","category":"CLI: debugging","description":"https://bun.sh/docs/cli/debugger","keywords":["debugging: debugger","cli","debugging","debugging:","debugger"],"url":"https://bun.sh/docs/cli/debugger"},{"name":"debugging: INSPECTOR","category":"CLI: debugging","description":"https://bun.sh/docs/cli/inspector","keywords":["debugging: inspector","cli","debugging","debugging:","inspector"],"url":"https://bun.sh/docs/cli/inspector"},{"name":"debugging: PROFILE","category":"CLI: debugging","description":"https://bun.sh/docs/cli/profile","keywords":["debugging: profile","cli","debugging","debugging:","profile"],"url":"https://bun.sh/docs/cli/profile"},{"name":"debugging: TRACE","category":"CLI: debugging","description":"https://bun.sh/docs/cli/trace","keywords":["debugging: trace","cli","debugging","debugging:","trace"],"url":"https://bun.sh/docs/cli/trace"}],"categories":{"file_system":["FILE SYSTEM: MAIN","FILE SYSTEM: READ FILE","FILE SYSTEM: WRITE FILE","FILE SYSTEM: READ DIR","FILE SYSTEM: STAT","FILE SYSTEM: COPY FILE","FILE SYSTEM: MOVE FILE","FILE SYSTEM: DELETE FILE","FILE SYSTEM: FILE EXISTS"],"networking":["NETWORKING: MAIN","NETWORKING: FETCH","NETWORKING: SERVE","NETWORKING: WEBSOCKET","NETWORKING: TCP","NETWORKING: UDP","NETWORKING: DNS"],"process":["PROCESS: MAIN","PROCESS: SPAWN","PROCESS: EXEC","PROCESS: FORK","PROCESS: KILL","PROCESS: PID","PROCESS: SIGNALS"],"validation":["VALIDATION: MAIN","VALIDATION: IS STRING","VALIDATION: IS NUMBER","VALIDATION: IS BOOLEAN","VALIDATION: IS ARRAY","VALIDATION: IS OBJECT","VALIDATION: IS FUNCTION","VALIDATION: IS PROMISE","VALIDATION: IS BUFFER","VALIDATION: IS TYPED_ARRAY"],"conversion":["CONVERSION: MAIN","CONVERSION: TO BUFFER","CONVERSION: TO STRING","CONVERSION: TO NUMBER","CONVERSION: TO BOOLEAN","CONVERSION: TO ARRAY","CONVERSION: TO OBJECT","CONVERSION: JSON PARSE","CONVERSION: JSON STRINGIFY"],"performance":["PERFORMANCE: MAIN","PERFORMANCE: GC","PERFORMANCE: PERFORMANCE NOW","PERFORMANCE: MEMORY USAGE"],"color":["COLOR: MAIN","COLOR: COLOR","COLOR: ANSI","COLOR: ANSI 16","COLOR: ANSI 256","COLOR: CSS","COLOR: RGB","COLOR: RGBA","COLOR: HSL"],"CLI: installation":["installation: MAIN","installation: WINDOWS","installation: MACOS","installation: LINUX","installation: DOCKER","installation: CI CD"],"CLI: commands":["commands: MAIN","commands: RUN","commands: TEST","commands: BUILD","commands: INSTALL","commands: ADD","commands: REMOVE","commands: LINK","commands: UNLINK","commands: CREATE","commands: UPGRADE","commands: COMPLETIONS","commands: INIT","commands: DEV","commands: PM","commands: X"],"CLI: options":["options: FLAGS","options: ENVIRONMENT VARIABLES","options: CONFIG FILE","options: TS CONFIG","options: PACKAGE JSON"],"CLI: debugging":["debugging: LOGGING","debugging: VERBOSE","debugging: DEBUGGER","debugging: INSPECTOR","debugging: PROFILE","debugging: TRACE"]}};
+
+        function searchUtilities(query) {
+            const rows = document.querySelectorAll('.utility-table tbody tr');
+            const categories = document.querySelectorAll('.category');
+
+            if (query.length < 2) {
+                rows.forEach(row => row.style.display = '');
+                categories.forEach(cat => cat.style.display = '');
+                return;
+            }
+
+            const lowerQuery = query.toLowerCase();
+
+            categories.forEach(category => {
+                let hasVisibleRows = false;
+                const categoryRows = category.querySelectorAll('.utility-table tbody tr');
+
+                categoryRows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    if (text.includes(lowerQuery)) {
+                        row.style.display = '';
+                        hasVisibleRows = true;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                category.style.display = hasVisibleRows ? '' : 'none';
+            });
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+
+            // Reload to apply theme
+            location.reload();
+        }
+
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        });
+    </script>
+</body>
+</html>

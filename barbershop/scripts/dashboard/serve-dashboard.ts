@@ -18,12 +18,12 @@ function parseArgs(): DashboardOptions {
     port: 8080,
     liveUpdates: true,
     refreshInterval: 5000,
-    theme: 'auto'
+    theme: 'auto',
   };
-  
+
   for (let i = 1; i < Bun.argv.length; i++) {
     const arg = Bun.argv[i];
-    
+
     if (arg === '--port' && Bun.argv[i + 1]) {
       options.port = parseInt(Bun.argv[++i]);
     }
@@ -40,7 +40,7 @@ function parseArgs(): DashboardOptions {
       process.exit(0);
     }
   }
-  
+
   return options;
 }
 
@@ -67,7 +67,10 @@ function showHelp() {
   console.log('  bun serve-dashboard.ts --no-live-updates --refresh-interval 10000');
 }
 
-function styled(text: string, type: 'success' | 'warning' | 'error' | 'info' | 'primary' | 'accent' | 'muted'): string {
+function styled(
+  text: string,
+  type: 'success' | 'warning' | 'error' | 'info' | 'primary' | 'accent' | 'muted'
+): string {
   const colors = {
     success: '\x1b[32m',
     warning: '\x1b[33m',
@@ -75,7 +78,7 @@ function styled(text: string, type: 'success' | 'warning' | 'error' | 'info' | '
     info: '\x1b[36m',
     primary: '\x1b[34m',
     accent: '\x1b[35m',
-    muted: '\x1b[90m'
+    muted: '\x1b[90m',
   };
   const reset = '\x1b[0m';
   return `${colors[type]}${text}${reset}`;
@@ -84,45 +87,47 @@ function styled(text: string, type: 'success' | 'warning' | 'error' | 'info' | '
 class SecretsDashboard {
   private options: DashboardOptions;
   private r2Bucket: string;
-  
+
   constructor(options: DashboardOptions) {
     this.options = options;
     this.r2Bucket = Bun.env.R2_BUCKET || 'bun-executables';
   }
-  
+
   async start(): Promise<void> {
     console.log(styled('🌐 Starting Secrets Dashboard', 'primary'));
     console.log(styled('============================', 'muted'));
     console.log();
-    
+
     console.log(styled('Configuration:', 'info'));
     console.log(styled(`   Port: ${this.options.port}`, 'muted'));
-    console.log(styled(`   Live updates: ${this.options.liveUpdates ? 'enabled' : 'disabled'}`, 'muted'));
+    console.log(
+      styled(`   Live updates: ${this.options.liveUpdates ? 'enabled' : 'disabled'}`, 'muted')
+    );
     console.log(styled(`   Refresh interval: ${this.options.refreshInterval}ms`, 'muted'));
     console.log(styled(`   Theme: ${this.options.theme}`, 'muted'));
     console.log(styled(`   R2 bucket: ${this.r2Bucket}`, 'muted'));
     console.log();
-    
+
     // Create server
     const server = Bun.serve({
       port: this.options.port,
-      fetch: async (request) => this.handleRequest(request),
-      error: (error) => {
+      fetch: async request => this.handleRequest(request),
+      error: error => {
         console.error(styled('Server error:', 'error'), error.message);
         return new Response('Internal Server Error', { status: 500 });
-      }
+      },
     });
-    
+
     console.log(styled('🚀 Dashboard server started!', 'success'));
     console.log(styled(`   URL: http://localhost:${this.options.port}`, 'primary'));
     console.log(styled('   Press Ctrl+C to stop the server', 'muted'));
     console.log();
-    
+
     if (this.options.liveUpdates) {
       console.log(styled('🔄 Live updates enabled', 'info'));
       console.log(styled(`   Refreshing every ${this.options.refreshInterval}ms`, 'muted'));
     }
-    
+
     console.log(styled('📊 Available endpoints:', 'accent'));
     console.log(styled('   GET  /                    - Dashboard home', 'muted'));
     console.log(styled('   GET  /api/status          - System status', 'muted'));
@@ -132,7 +137,7 @@ class SecretsDashboard {
     console.log(styled('   GET  /api/expirations     - Expiration monitoring', 'muted'));
     console.log(styled('   GET  /api/audit           - Audit data', 'muted'));
     console.log();
-    
+
     // Handle graceful shutdown
     process.on('SIGINT', () => {
       console.log(styled('\n🛑 Shutting down dashboard...', 'warning'));
@@ -140,61 +145,60 @@ class SecretsDashboard {
       process.exit(0);
     });
   }
-  
+
   private async handleRequest(request: Request): Promise<Response> {
     const url = new URL(request.url);
     const path = url.pathname;
-    
+
     try {
       // API endpoints
       if (path.startsWith('/api/')) {
         return await this.handleApiRequest(path);
       }
-      
+
       // Static assets
       if (path.startsWith('/static/')) {
         return await this.handleStaticRequest(path);
       }
-      
+
       // Main dashboard
       if (path === '/' || path === '/index.html') {
         return await this.serveDashboard();
       }
-      
+
       // 404
       return new Response('Not Found', { status: 404 });
-      
     } catch (error) {
       console.error(styled('Request error:', 'error'), error.message);
       return new Response('Internal Server Error', { status: 500 });
     }
   }
-  
+
   private async handleApiRequest(path: string): Promise<Response> {
     const headers = {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
-      'Access-Control-Allow-Headers': 'Content-Type'
+      'Access-Control-Allow-Headers': 'Content-Type',
     };
-    
+
     switch (path) {
       case '/api/status':
         const status = await factoryWagerSecurityCitadel.getDashboardStats();
         return new Response(JSON.stringify(status), { headers });
-        
+
       case '/api/secrets':
         const secrets = await this.getSecretsList();
         return new Response(JSON.stringify(secrets), { headers });
-        
+
       case '/api/expirations':
         const expirations = await secretLifecycleManager.checkExpirations();
         return new Response(JSON.stringify(expirations), { headers });
-        
+
       case '/api/audit':
         const auditData = await this.getAuditData();
         return new Response(JSON.stringify(auditData), { headers });
-        
+
       default:
         // Secret-specific endpoints
         if (path.startsWith('/api/secrets/')) {
@@ -204,7 +208,7 @@ class SecretsDashboard {
             return new Response(JSON.stringify(secretData), { headers });
           }
         }
-        
+
         // Graph endpoints
         if (path.startsWith('/api/graphs/')) {
           const key = path.split('/').pop();
@@ -213,38 +217,38 @@ class SecretsDashboard {
             return new Response(JSON.stringify(graphData), { headers });
           }
         }
-        
+
         return new Response('API endpoint not found', { status: 404, headers });
     }
   }
-  
+
   private async handleStaticRequest(path: string): Promise<Response> {
     // In a real implementation, serve static files from a directory
     // For now, return a simple CSS file
     if (path === '/static/dashboard.css') {
       const css = await this.generateDashboardCSS();
       return new Response(css, {
-        headers: { 'Content-Type': 'text/css' }
+        headers: { 'Content-Type': 'text/css' },
       });
     }
-    
+
     if (path === '/static/dashboard.js') {
       const js = await this.generateDashboardJS();
       return new Response(js, {
-        headers: { 'Content-Type': 'application/javascript' }
+        headers: { 'Content-Type': 'application/javascript' },
       });
     }
-    
+
     return new Response('Static file not found', { status: 404 });
   }
-  
+
   private async serveDashboard(): Promise<Response> {
     const html = await this.generateDashboardHTML();
     return new Response(html, {
-      headers: { 'Content-Type': 'text/html' }
+      headers: { 'Content-Type': 'text/html' },
     });
   }
-  
+
   private async generateDashboardHTML(): Promise<string> {
     return `
 <!DOCTYPE html>
@@ -369,7 +373,7 @@ class SecretsDashboard {
 </html>
     `;
   }
-  
+
   private async generateDashboardCSS(): Promise<string> {
     return `
 :root {
@@ -681,7 +685,7 @@ th {
 }
     `;
   }
-  
+
   private async generateDashboardJS(): Promise<string> {
     return `
 class SecretsDashboard {
@@ -896,71 +900,73 @@ if (savedTheme !== 'auto') {
 }
     `;
   }
-  
-  private async getSecretsList(): Promise<Array<{
-    key: string;
-    versions: number;
-    lastActivity: string;
-    status: string;
-  }>> {
+
+  private async getSecretsList(): Promise<
+    Array<{
+      key: string;
+      versions: number;
+      lastActivity: string;
+      status: string;
+    }>
+  > {
     // Mock data - in real implementation, fetch from actual system
     return [
       {
         key: 'api:github_token',
         versions: 5,
         lastActivity: new Date().toISOString(),
-        status: 'active'
+        status: 'active',
       },
       {
         key: 'database:password',
         versions: 3,
         lastActivity: new Date(Date.now() - 86400000).toISOString(),
-        status: 'active'
+        status: 'active',
       },
       {
         key: 'jwt:secret',
         versions: 2,
         lastActivity: new Date(Date.now() - 172800000).toISOString(),
-        status: 'warning'
+        status: 'warning',
       },
       {
         key: 'stripe:webhook_secret',
         versions: 4,
         lastActivity: new Date().toISOString(),
-        status: 'active'
+        status: 'active',
       },
       {
         key: 'redis:auth',
         versions: 1,
         lastActivity: new Date(Date.now() - 259200000).toISOString(),
-        status: 'stale'
-      }
+        status: 'stale',
+      },
     ];
   }
-  
+
   private async getSecretDetails(key: string): Promise<any> {
     const timeline = await factoryWagerSecurityCitadel.getSecretTimeline(key, 10);
     return {
       key,
       timeline,
-      lastUpdate: new Date().toISOString()
+      lastUpdate: new Date().toISOString(),
     };
   }
-  
+
   private async getAuditData(): Promise<any> {
     return {
       lastAudit: new Date().toISOString(),
       totalAudits: 156,
       criticalIssues: 2,
       highIssues: 5,
-      complianceScore: 94.2
+      complianceScore: 94.2,
     };
   }
 }
 
 async function main() {
   const options = parseArgs();
-  
+
   const dashboard = new SecretsDashboard(options);
   await dashboard.start();
 }

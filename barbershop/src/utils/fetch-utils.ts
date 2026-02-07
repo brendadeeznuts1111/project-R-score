@@ -40,8 +40,8 @@ function resolveProxyConfig(): ProxyConfig | undefined {
     url: OUTBOUND_PROXY_URL,
     headers: {
       ...(headers ?? {}),
-      ...(OUTBOUND_PROXY_AUTH ? { 'Proxy-Authorization': OUTBOUND_PROXY_AUTH } : {})
-    }
+      ...(OUTBOUND_PROXY_AUTH ? { 'Proxy-Authorization': OUTBOUND_PROXY_AUTH } : {}),
+    },
   };
 }
 
@@ -60,11 +60,11 @@ export async function fetchWithDefaults(
     // Bun supports both string and object proxy configuration.
     ...(proxyConfig ? { proxy: proxyConfig } : {}),
     signal: init.signal ?? AbortSignal.timeout(timeoutMs),
-    ...(verbose ? { verbose: true } : {})
+    ...(verbose ? { verbose: true } : {}),
   });
   return {
     response,
-    durationMs: Math.round((performance.now() - started) * 1000) / 1000
+    durationMs: Math.round((performance.now() - started) * 1000) / 1000,
   };
 }
 
@@ -74,7 +74,8 @@ export function isPublicHttpUrl(rawUrl: string): boolean {
     if (!['http:', 'https:'].includes(url.protocol)) return false;
     const host = url.hostname.toLowerCase();
     if (host === 'localhost' || host === '127.0.0.1' || host === '::1') return false;
-    if (host.startsWith('10.') || host.startsWith('192.168.') || host.startsWith('169.254.')) return false;
+    if (host.startsWith('10.') || host.startsWith('192.168.') || host.startsWith('169.254.'))
+      return false;
     return true;
   } catch {
     return false;

@@ -1,10 +1,25 @@
-import type { AccountAgeTier, RiskLevel, FusionTier, ImpactLevel, ActionCategory, ActionPriority, ActionTiming } from './barber-fusion-types';
-import type { AccountAgeTier, RiskLevel, FusionTier, ImpactLevel, ActionCategory, ActionPriority, ActionTiming } from './barber-fusion-types'
+import type {
+  AccountAgeTier,
+  RiskLevel,
+  FusionTier,
+  ImpactLevel,
+  ActionCategory,
+  ActionPriority,
+  ActionTiming,
+} from './barber-fusion-types';
+import type {
+  AccountAgeTier,
+  RiskLevel,
+  FusionTier,
+  ImpactLevel,
+  ActionCategory,
+  ActionPriority,
+  ActionTiming,
+} from './barber-fusion-types';
 
 // barber-fusion-schema.ts - Enhanced Schema with SQL DDL, Validation & Examples
 
 // ==================== ENUM DEFINITIONS ====================
-
 
 // ==================== ACCOUNT AGE SCHEMA ====================
 
@@ -17,7 +32,7 @@ export interface AccountAgeSchema {
     description: 'Account maturity classification';
     example: 'new';
   };
-  
+
   /** Human-readable display name */
   label: {
     type: 'string';
@@ -27,7 +42,7 @@ export interface AccountAgeSchema {
     example: 'New Account';
     i18n: true; // Translatable
   };
-  
+
   /** Day range [minimum, maximum] */
   dayRange: {
     type: 'tuple';
@@ -37,7 +52,7 @@ export interface AccountAgeSchema {
     example: [0, 7];
     validation: 'min >= 0, max > min or null for unlimited';
   };
-  
+
   /** Trust multiplier for risk calculations */
   trustMultiplier: {
     type: 'number';
@@ -49,7 +64,7 @@ export interface AccountAgeSchema {
     example: 0.3;
     formula: 'affects payment limits and verification requirements';
   };
-  
+
   /** Risk assessment level */
   riskLevel: {
     type: 'enum';
@@ -58,13 +73,13 @@ export interface AccountAgeSchema {
     description: 'Risk classification';
     example: 'high';
     mapping: {
-      high: { score: 0.8, color: '#ff4444', alert: true },
-      medium: { score: 0.5, color: '#ffaa00', alert: true },
-      low: { score: 0.2, color: '#ffff00', alert: false },
-      minimal: { score: 0.0, color: '#00ff00', alert: false }
+      high: { score: 0.8; color: '#ff4444'; alert: true };
+      medium: { score: 0.5; color: '#ffaa00'; alert: true };
+      low: { score: 0.2; color: '#ffff00'; alert: false };
+      minimal: { score: 0.0; color: '#00ff00'; alert: false };
     };
   };
-  
+
   /** CashApp daily send limit in USD */
   cashappDailyLimit: {
     type: 'integer';
@@ -76,7 +91,7 @@ export interface AccountAgeSchema {
     example: 250;
     source: 'CashApp API documentation v2024';
   };
-  
+
   /** CashApp weekly send limit in USD */
   cashappWeeklyLimit: {
     type: 'integer';
@@ -88,7 +103,7 @@ export interface AccountAgeSchema {
     example: 1000;
     source: 'CashApp API documentation v2024';
   };
-  
+
   /** Instant deposit availability */
   instantDepositAvailable: {
     type: 'boolean';
@@ -96,12 +111,12 @@ export interface AccountAgeSchema {
     description: 'Can use instant deposit feature';
     example: false;
     conditions: {
-      if: 'accountAge < 30 days',
-      then: false,
-      else: true
+      if: 'accountAge < 30 days';
+      then: false;
+      else: true;
     };
   };
-  
+
   /** Hold period for new transactions */
   holdPeriodDays: {
     type: 'integer';
@@ -113,7 +128,7 @@ export interface AccountAgeSchema {
     example: 3;
     businessRule: 'First 3 transactions held for verification';
   };
-  
+
   /** Visual badge emoji */
   badge: {
     type: 'string';
@@ -123,14 +138,14 @@ export interface AccountAgeSchema {
     description: 'Visual indicator emoji';
     example: '🆕';
     alternatives: {
-      new: ['🆕', '🔴', '⚠️'],
-      recent: ['🌱', '🟡', '🔸'],
-      growing: ['📈', '🟢', '🔹'],
-      established: ['✅', '🔵', '💎'],
-      veteran: ['👑', '🟣', '⭐']
+      new: ['🆕', '🔴', '⚠️'];
+      recent: ['🌱', '🟡', '🔸'];
+      growing: ['📈', '🟢', '🔹'];
+      established: ['✅', '🔵', '💎'];
+      veteran: ['👑', '🟣', '⭐'];
     };
   };
-  
+
   /** UI color code */
   color: {
     type: 'string';
@@ -139,11 +154,11 @@ export interface AccountAgeSchema {
     description: 'CSS hex color code';
     example: '#ff6b6b';
     contrast: {
-      light: '#ffffff',
-      dark: '#000000'
+      light: '#ffffff';
+      dark: '#000000';
     };
   };
-  
+
   /** SQL index hint */
   _sql: {
     table: 'account_age_tiers';
@@ -156,75 +171,575 @@ export interface AccountAgeSchema {
 // Account Age Data
 export const AccountAgeData: Record<AccountAgeTier, AccountAgeSchema> = {
   new: {
-    tier: { type: 'enum', values: ['new'], required: true, description: 'Account maturity classification', example: 'new' },
-    label: { type: 'string', maxLength: 50, required: true, description: 'UI display label', example: 'New Account', i18n: true },
-    dayRange: { type: 'tuple', items: ['number', 'number | null'], required: true, description: 'Age range in days [min, max]', example: [0, 7], validation: 'min >= 0, max > min or null for unlimited' },
-    trustMultiplier: { type: 'number', min: 0, max: 1, decimals: 2, required: true, description: 'Multiplier for trust-based limits', example: 0.3, formula: 'affects payment limits and verification requirements' },
-    riskLevel: { type: 'enum', values: ['high', 'medium', 'low', 'minimal'], required: true, description: 'Risk classification', example: 'high', mapping: { high: { score: 0.8, color: '#ff4444', alert: true }, medium: { score: 0.5, color: '#ffaa00', alert: true }, low: { score: 0.2, color: '#ffff00', alert: false }, minimal: { score: 0.0, color: '#00ff00', alert: false } } },
-    cashappDailyLimit: { type: 'integer', min: 0, max: 10000, unit: 'USD', required: true, description: 'Maximum daily transfer amount', example: 250, source: 'CashApp API documentation v2024' },
-    cashappWeeklyLimit: { type: 'integer', min: 0, max: 50000, unit: 'USD', required: true, description: 'Maximum weekly transfer amount', example: 1000, source: 'CashApp API documentation v2024' },
-    instantDepositAvailable: { type: 'boolean', required: true, description: 'Can use instant deposit feature', example: false, conditions: { if: 'accountAge < 30 days', then: false, else: true } },
-    holdPeriodDays: { type: 'integer', min: 0, max: 7, unit: 'days', required: true, description: 'Days to hold first transactions', example: 3, businessRule: 'First 3 transactions held for verification' },
-    badge: { type: 'string', pattern: 'emoji', maxLength: 2, required: true, description: 'Visual indicator emoji', example: '🆕', alternatives: { new: ['🆕', '🔴', '⚠️'], recent: ['🌱', '🟡', '🔸'], growing: ['📈', '🟢', '🔹'], established: ['✅', '🔵', '💎'], veteran: ['👑', '🟣', '⭐'] } },
-    color: { type: 'string', pattern: '^#[0-9A-Fa-f]{6}$', required: true, description: 'CSS hex color code', example: '#ff6b6b', contrast: { light: '#ffffff', dark: '#000000' } },
-    _sql: { table: 'account_age_tiers', primaryKey: 'tier', indexes: ['riskLevel', 'cashappDailyLimit'], comment: 'Configuration table for account age classifications' }
+    tier: {
+      type: 'enum',
+      values: ['new'],
+      required: true,
+      description: 'Account maturity classification',
+      example: 'new',
+    },
+    label: {
+      type: 'string',
+      maxLength: 50,
+      required: true,
+      description: 'UI display label',
+      example: 'New Account',
+      i18n: true,
+    },
+    dayRange: {
+      type: 'tuple',
+      items: ['number', 'number | null'],
+      required: true,
+      description: 'Age range in days [min, max]',
+      example: [0, 7],
+      validation: 'min >= 0, max > min or null for unlimited',
+    },
+    trustMultiplier: {
+      type: 'number',
+      min: 0,
+      max: 1,
+      decimals: 2,
+      required: true,
+      description: 'Multiplier for trust-based limits',
+      example: 0.3,
+      formula: 'affects payment limits and verification requirements',
+    },
+    riskLevel: {
+      type: 'enum',
+      values: ['high', 'medium', 'low', 'minimal'],
+      required: true,
+      description: 'Risk classification',
+      example: 'high',
+      mapping: {
+        high: { score: 0.8, color: '#ff4444', alert: true },
+        medium: { score: 0.5, color: '#ffaa00', alert: true },
+        low: { score: 0.2, color: '#ffff00', alert: false },
+        minimal: { score: 0.0, color: '#00ff00', alert: false },
+      },
+    },
+    cashappDailyLimit: {
+      type: 'integer',
+      min: 0,
+      max: 10000,
+      unit: 'USD',
+      required: true,
+      description: 'Maximum daily transfer amount',
+      example: 250,
+      source: 'CashApp API documentation v2024',
+    },
+    cashappWeeklyLimit: {
+      type: 'integer',
+      min: 0,
+      max: 50000,
+      unit: 'USD',
+      required: true,
+      description: 'Maximum weekly transfer amount',
+      example: 1000,
+      source: 'CashApp API documentation v2024',
+    },
+    instantDepositAvailable: {
+      type: 'boolean',
+      required: true,
+      description: 'Can use instant deposit feature',
+      example: false,
+      conditions: { if: 'accountAge < 30 days', then: false, else: true },
+    },
+    holdPeriodDays: {
+      type: 'integer',
+      min: 0,
+      max: 7,
+      unit: 'days',
+      required: true,
+      description: 'Days to hold first transactions',
+      example: 3,
+      businessRule: 'First 3 transactions held for verification',
+    },
+    badge: {
+      type: 'string',
+      pattern: 'emoji',
+      maxLength: 2,
+      required: true,
+      description: 'Visual indicator emoji',
+      example: '🆕',
+      alternatives: {
+        new: ['🆕', '🔴', '⚠️'],
+        recent: ['🌱', '🟡', '🔸'],
+        growing: ['📈', '🟢', '🔹'],
+        established: ['✅', '🔵', '💎'],
+        veteran: ['👑', '🟣', '⭐'],
+      },
+    },
+    color: {
+      type: 'string',
+      pattern: '^#[0-9A-Fa-f]{6}$',
+      required: true,
+      description: 'CSS hex color code',
+      example: '#ff6b6b',
+      contrast: { light: '#ffffff', dark: '#000000' },
+    },
+    _sql: {
+      table: 'account_age_tiers',
+      primaryKey: 'tier',
+      indexes: ['riskLevel', 'cashappDailyLimit'],
+      comment: 'Configuration table for account age classifications',
+    },
   },
   recent: {
-    tier: { type: 'enum', values: ['recent'], required: true, description: 'Account maturity classification', example: 'recent' },
-    label: { type: 'string', maxLength: 50, required: true, description: 'UI display label', example: 'Recent Account', i18n: true },
-    dayRange: { type: 'tuple', items: ['number', 'number | null'], required: true, description: 'Age range in days [min, max]', example: [8, 30], validation: 'min >= 0, max > min or null for unlimited' },
-    trustMultiplier: { type: 'number', min: 0, max: 1, decimals: 2, required: true, description: 'Multiplier for trust-based limits', example: 0.5, formula: 'affects payment limits and verification requirements' },
-    riskLevel: { type: 'enum', values: ['high', 'medium', 'low', 'minimal'], required: true, description: 'Risk classification', example: 'medium', mapping: { high: { score: 0.8, color: '#ff4444', alert: true }, medium: { score: 0.5, color: '#ffaa00', alert: true }, low: { score: 0.2, color: '#ffff00', alert: false }, minimal: { score: 0.0, color: '#00ff00', alert: false } } },
-    cashappDailyLimit: { type: 'integer', min: 0, max: 10000, unit: 'USD', required: true, description: 'Maximum daily transfer amount', example: 500, source: 'CashApp API documentation v2024' },
-    cashappWeeklyLimit: { type: 'integer', min: 0, max: 50000, unit: 'USD', required: true, description: 'Maximum weekly transfer amount', example: 2500, source: 'CashApp API documentation v2024' },
-    instantDepositAvailable: { type: 'boolean', required: true, description: 'Can use instant deposit feature', example: true, conditions: { if: 'accountAge < 30 days', then: false, else: true } },
-    holdPeriodDays: { type: 'integer', min: 0, max: 7, unit: 'days', required: true, description: 'Days to hold first transactions', example: 1, businessRule: 'First 3 transactions held for verification' },
-    badge: { type: 'string', pattern: 'emoji', maxLength: 2, required: true, description: 'Visual indicator emoji', example: '🌱', alternatives: { new: ['🆕', '🔴', '⚠️'], recent: ['🌱', '🟡', '🔸'], growing: ['📈', '🟢', '🔹'], established: ['✅', '🔵', '💎'], veteran: ['👑', '🟣', '⭐'] } },
-    color: { type: 'string', pattern: '^#[0-9A-Fa-f]{6}$', required: true, description: 'CSS hex color code', example: '#ffd93d', contrast: { light: '#ffffff', dark: '#000000' } },
-    _sql: { table: 'account_age_tiers', primaryKey: 'tier', indexes: ['riskLevel', 'cashappDailyLimit'], comment: 'Configuration table for account age classifications' }
+    tier: {
+      type: 'enum',
+      values: ['recent'],
+      required: true,
+      description: 'Account maturity classification',
+      example: 'recent',
+    },
+    label: {
+      type: 'string',
+      maxLength: 50,
+      required: true,
+      description: 'UI display label',
+      example: 'Recent Account',
+      i18n: true,
+    },
+    dayRange: {
+      type: 'tuple',
+      items: ['number', 'number | null'],
+      required: true,
+      description: 'Age range in days [min, max]',
+      example: [8, 30],
+      validation: 'min >= 0, max > min or null for unlimited',
+    },
+    trustMultiplier: {
+      type: 'number',
+      min: 0,
+      max: 1,
+      decimals: 2,
+      required: true,
+      description: 'Multiplier for trust-based limits',
+      example: 0.5,
+      formula: 'affects payment limits and verification requirements',
+    },
+    riskLevel: {
+      type: 'enum',
+      values: ['high', 'medium', 'low', 'minimal'],
+      required: true,
+      description: 'Risk classification',
+      example: 'medium',
+      mapping: {
+        high: { score: 0.8, color: '#ff4444', alert: true },
+        medium: { score: 0.5, color: '#ffaa00', alert: true },
+        low: { score: 0.2, color: '#ffff00', alert: false },
+        minimal: { score: 0.0, color: '#00ff00', alert: false },
+      },
+    },
+    cashappDailyLimit: {
+      type: 'integer',
+      min: 0,
+      max: 10000,
+      unit: 'USD',
+      required: true,
+      description: 'Maximum daily transfer amount',
+      example: 500,
+      source: 'CashApp API documentation v2024',
+    },
+    cashappWeeklyLimit: {
+      type: 'integer',
+      min: 0,
+      max: 50000,
+      unit: 'USD',
+      required: true,
+      description: 'Maximum weekly transfer amount',
+      example: 2500,
+      source: 'CashApp API documentation v2024',
+    },
+    instantDepositAvailable: {
+      type: 'boolean',
+      required: true,
+      description: 'Can use instant deposit feature',
+      example: true,
+      conditions: { if: 'accountAge < 30 days', then: false, else: true },
+    },
+    holdPeriodDays: {
+      type: 'integer',
+      min: 0,
+      max: 7,
+      unit: 'days',
+      required: true,
+      description: 'Days to hold first transactions',
+      example: 1,
+      businessRule: 'First 3 transactions held for verification',
+    },
+    badge: {
+      type: 'string',
+      pattern: 'emoji',
+      maxLength: 2,
+      required: true,
+      description: 'Visual indicator emoji',
+      example: '🌱',
+      alternatives: {
+        new: ['🆕', '🔴', '⚠️'],
+        recent: ['🌱', '🟡', '🔸'],
+        growing: ['📈', '🟢', '🔹'],
+        established: ['✅', '🔵', '💎'],
+        veteran: ['👑', '🟣', '⭐'],
+      },
+    },
+    color: {
+      type: 'string',
+      pattern: '^#[0-9A-Fa-f]{6}$',
+      required: true,
+      description: 'CSS hex color code',
+      example: '#ffd93d',
+      contrast: { light: '#ffffff', dark: '#000000' },
+    },
+    _sql: {
+      table: 'account_age_tiers',
+      primaryKey: 'tier',
+      indexes: ['riskLevel', 'cashappDailyLimit'],
+      comment: 'Configuration table for account age classifications',
+    },
   },
   growing: {
-    tier: { type: 'enum', values: ['growing'], required: true, description: 'Account maturity classification', example: 'growing' },
-    label: { type: 'string', maxLength: 50, required: true, description: 'UI display label', example: 'Growing Account', i18n: true },
-    dayRange: { type: 'tuple', items: ['number', 'number | null'], required: true, description: 'Age range in days [min, max]', example: [31, 90], validation: 'min >= 0, max > min or null for unlimited' },
-    trustMultiplier: { type: 'number', min: 0, max: 1, decimals: 2, required: true, description: 'Multiplier for trust-based limits', example: 0.7, formula: 'affects payment limits and verification requirements' },
-    riskLevel: { type: 'enum', values: ['high', 'medium', 'low', 'minimal'], required: true, description: 'Risk classification', example: 'low', mapping: { high: { score: 0.8, color: '#ff4444', alert: true }, medium: { score: 0.5, color: '#ffaa00', alert: true }, low: { score: 0.2, color: '#ffff00', alert: false }, minimal: { score: 0.0, color: '#00ff00', alert: false } } },
-    cashappDailyLimit: { type: 'integer', min: 0, max: 10000, unit: 'USD', required: true, description: 'Maximum daily transfer amount', example: 1000, source: 'CashApp API documentation v2024' },
-    cashappWeeklyLimit: { type: 'integer', min: 0, max: 50000, unit: 'USD', required: true, description: 'Maximum weekly transfer amount', example: 5000, source: 'CashApp API documentation v2024' },
-    instantDepositAvailable: { type: 'boolean', required: true, description: 'Can use instant deposit feature', example: true, conditions: { if: 'accountAge < 30 days', then: false, else: true } },
-    holdPeriodDays: { type: 'integer', min: 0, max: 7, unit: 'days', required: true, description: 'Days to hold first transactions', example: 0, businessRule: 'First 3 transactions held for verification' },
-    badge: { type: 'string', pattern: 'emoji', maxLength: 2, required: true, description: 'Visual indicator emoji', example: '📈', alternatives: { new: ['🆕', '🔴', '⚠️'], recent: ['🌱', '🟡', '🔸'], growing: ['📈', '🟢', '🔹'], established: ['✅', '🔵', '💎'], veteran: ['👑', '🟣', '⭐'] } },
-    color: { type: 'string', pattern: '^#[0-9A-Fa-f]{6}$', required: true, description: 'CSS hex color code', example: '#6bcf7f', contrast: { light: '#ffffff', dark: '#000000' } },
-    _sql: { table: 'account_age_tiers', primaryKey: 'tier', indexes: ['riskLevel', 'cashappDailyLimit'], comment: 'Configuration table for account age classifications' }
+    tier: {
+      type: 'enum',
+      values: ['growing'],
+      required: true,
+      description: 'Account maturity classification',
+      example: 'growing',
+    },
+    label: {
+      type: 'string',
+      maxLength: 50,
+      required: true,
+      description: 'UI display label',
+      example: 'Growing Account',
+      i18n: true,
+    },
+    dayRange: {
+      type: 'tuple',
+      items: ['number', 'number | null'],
+      required: true,
+      description: 'Age range in days [min, max]',
+      example: [31, 90],
+      validation: 'min >= 0, max > min or null for unlimited',
+    },
+    trustMultiplier: {
+      type: 'number',
+      min: 0,
+      max: 1,
+      decimals: 2,
+      required: true,
+      description: 'Multiplier for trust-based limits',
+      example: 0.7,
+      formula: 'affects payment limits and verification requirements',
+    },
+    riskLevel: {
+      type: 'enum',
+      values: ['high', 'medium', 'low', 'minimal'],
+      required: true,
+      description: 'Risk classification',
+      example: 'low',
+      mapping: {
+        high: { score: 0.8, color: '#ff4444', alert: true },
+        medium: { score: 0.5, color: '#ffaa00', alert: true },
+        low: { score: 0.2, color: '#ffff00', alert: false },
+        minimal: { score: 0.0, color: '#00ff00', alert: false },
+      },
+    },
+    cashappDailyLimit: {
+      type: 'integer',
+      min: 0,
+      max: 10000,
+      unit: 'USD',
+      required: true,
+      description: 'Maximum daily transfer amount',
+      example: 1000,
+      source: 'CashApp API documentation v2024',
+    },
+    cashappWeeklyLimit: {
+      type: 'integer',
+      min: 0,
+      max: 50000,
+      unit: 'USD',
+      required: true,
+      description: 'Maximum weekly transfer amount',
+      example: 5000,
+      source: 'CashApp API documentation v2024',
+    },
+    instantDepositAvailable: {
+      type: 'boolean',
+      required: true,
+      description: 'Can use instant deposit feature',
+      example: true,
+      conditions: { if: 'accountAge < 30 days', then: false, else: true },
+    },
+    holdPeriodDays: {
+      type: 'integer',
+      min: 0,
+      max: 7,
+      unit: 'days',
+      required: true,
+      description: 'Days to hold first transactions',
+      example: 0,
+      businessRule: 'First 3 transactions held for verification',
+    },
+    badge: {
+      type: 'string',
+      pattern: 'emoji',
+      maxLength: 2,
+      required: true,
+      description: 'Visual indicator emoji',
+      example: '📈',
+      alternatives: {
+        new: ['🆕', '🔴', '⚠️'],
+        recent: ['🌱', '🟡', '🔸'],
+        growing: ['📈', '🟢', '🔹'],
+        established: ['✅', '🔵', '💎'],
+        veteran: ['👑', '🟣', '⭐'],
+      },
+    },
+    color: {
+      type: 'string',
+      pattern: '^#[0-9A-Fa-f]{6}$',
+      required: true,
+      description: 'CSS hex color code',
+      example: '#6bcf7f',
+      contrast: { light: '#ffffff', dark: '#000000' },
+    },
+    _sql: {
+      table: 'account_age_tiers',
+      primaryKey: 'tier',
+      indexes: ['riskLevel', 'cashappDailyLimit'],
+      comment: 'Configuration table for account age classifications',
+    },
   },
   established: {
-    tier: { type: 'enum', values: ['established'], required: true, description: 'Account maturity classification', example: 'established' },
-    label: { type: 'string', maxLength: 50, required: true, description: 'UI display label', example: 'Established Account', i18n: true },
-    dayRange: { type: 'tuple', items: ['number', 'number | null'], required: true, description: 'Age range in days [min, max]', example: [91, 365], validation: 'min >= 0, max > min or null for unlimited' },
-    trustMultiplier: { type: 'number', min: 0, max: 1, decimals: 2, required: true, description: 'Multiplier for trust-based limits', example: 0.9, formula: 'affects payment limits and verification requirements' },
-    riskLevel: { type: 'enum', values: ['high', 'medium', 'low', 'minimal'], required: true, description: 'Risk classification', example: 'minimal', mapping: { high: { score: 0.8, color: '#ff4444', alert: true }, medium: { score: 0.5, color: '#ffaa00', alert: true }, low: { score: 0.2, color: '#ffff00', alert: false }, minimal: { score: 0.0, color: '#00ff00', alert: false } } },
-    cashappDailyLimit: { type: 'integer', min: 0, max: 10000, unit: 'USD', required: true, description: 'Maximum daily transfer amount', example: 2500, source: 'CashApp API documentation v2024' },
-    cashappWeeklyLimit: { type: 'integer', min: 0, max: 50000, unit: 'USD', required: true, description: 'Maximum weekly transfer amount', example: 10000, source: 'CashApp API documentation v2024' },
-    instantDepositAvailable: { type: 'boolean', required: true, description: 'Can use instant deposit feature', example: true, conditions: { if: 'accountAge < 30 days', then: false, else: true } },
-    holdPeriodDays: { type: 'integer', min: 0, max: 7, unit: 'days', required: true, description: 'Days to hold first transactions', example: 0, businessRule: 'First 3 transactions held for verification' },
-    badge: { type: 'string', pattern: 'emoji', maxLength: 2, required: true, description: 'Visual indicator emoji', example: '✅', alternatives: { new: ['🆕', '🔴', '⚠️'], recent: ['🌱', '🟡', '🔸'], growing: ['📈', '🟢', '🔹'], established: ['✅', '🔵', '💎'], veteran: ['👑', '🟣', '⭐'] } },
-    color: { type: 'string', pattern: '^#[0-9A-Fa-f]{6}$', required: true, description: 'CSS hex color code', example: '#4ecdc4', contrast: { light: '#ffffff', dark: '#000000' } },
-    _sql: { table: 'account_age_tiers', primaryKey: 'tier', indexes: ['riskLevel', 'cashappDailyLimit'], comment: 'Configuration table for account age classifications' }
+    tier: {
+      type: 'enum',
+      values: ['established'],
+      required: true,
+      description: 'Account maturity classification',
+      example: 'established',
+    },
+    label: {
+      type: 'string',
+      maxLength: 50,
+      required: true,
+      description: 'UI display label',
+      example: 'Established Account',
+      i18n: true,
+    },
+    dayRange: {
+      type: 'tuple',
+      items: ['number', 'number | null'],
+      required: true,
+      description: 'Age range in days [min, max]',
+      example: [91, 365],
+      validation: 'min >= 0, max > min or null for unlimited',
+    },
+    trustMultiplier: {
+      type: 'number',
+      min: 0,
+      max: 1,
+      decimals: 2,
+      required: true,
+      description: 'Multiplier for trust-based limits',
+      example: 0.9,
+      formula: 'affects payment limits and verification requirements',
+    },
+    riskLevel: {
+      type: 'enum',
+      values: ['high', 'medium', 'low', 'minimal'],
+      required: true,
+      description: 'Risk classification',
+      example: 'minimal',
+      mapping: {
+        high: { score: 0.8, color: '#ff4444', alert: true },
+        medium: { score: 0.5, color: '#ffaa00', alert: true },
+        low: { score: 0.2, color: '#ffff00', alert: false },
+        minimal: { score: 0.0, color: '#00ff00', alert: false },
+      },
+    },
+    cashappDailyLimit: {
+      type: 'integer',
+      min: 0,
+      max: 10000,
+      unit: 'USD',
+      required: true,
+      description: 'Maximum daily transfer amount',
+      example: 2500,
+      source: 'CashApp API documentation v2024',
+    },
+    cashappWeeklyLimit: {
+      type: 'integer',
+      min: 0,
+      max: 50000,
+      unit: 'USD',
+      required: true,
+      description: 'Maximum weekly transfer amount',
+      example: 10000,
+      source: 'CashApp API documentation v2024',
+    },
+    instantDepositAvailable: {
+      type: 'boolean',
+      required: true,
+      description: 'Can use instant deposit feature',
+      example: true,
+      conditions: { if: 'accountAge < 30 days', then: false, else: true },
+    },
+    holdPeriodDays: {
+      type: 'integer',
+      min: 0,
+      max: 7,
+      unit: 'days',
+      required: true,
+      description: 'Days to hold first transactions',
+      example: 0,
+      businessRule: 'First 3 transactions held for verification',
+    },
+    badge: {
+      type: 'string',
+      pattern: 'emoji',
+      maxLength: 2,
+      required: true,
+      description: 'Visual indicator emoji',
+      example: '✅',
+      alternatives: {
+        new: ['🆕', '🔴', '⚠️'],
+        recent: ['🌱', '🟡', '🔸'],
+        growing: ['📈', '🟢', '🔹'],
+        established: ['✅', '🔵', '💎'],
+        veteran: ['👑', '🟣', '⭐'],
+      },
+    },
+    color: {
+      type: 'string',
+      pattern: '^#[0-9A-Fa-f]{6}$',
+      required: true,
+      description: 'CSS hex color code',
+      example: '#4ecdc4',
+      contrast: { light: '#ffffff', dark: '#000000' },
+    },
+    _sql: {
+      table: 'account_age_tiers',
+      primaryKey: 'tier',
+      indexes: ['riskLevel', 'cashappDailyLimit'],
+      comment: 'Configuration table for account age classifications',
+    },
   },
   veteran: {
-    tier: { type: 'enum', values: ['veteran'], required: true, description: 'Account maturity classification', example: 'veteran' },
-    label: { type: 'string', maxLength: 50, required: true, description: 'UI display label', example: 'Veteran Account', i18n: true },
-    dayRange: { type: 'tuple', items: ['number', 'number | null'], required: true, description: 'Age range in days [min, max]', example: [366, null], validation: 'min >= 0, max > min or null for unlimited' },
-    trustMultiplier: { type: 'number', min: 0, max: 1, decimals: 2, required: true, description: 'Multiplier for trust-based limits', example: 1.0, formula: 'affects payment limits and verification requirements' },
-    riskLevel: { type: 'enum', values: ['high', 'medium', 'low', 'minimal'], required: true, description: 'Risk classification', example: 'minimal', mapping: { high: { score: 0.8, color: '#ff4444', alert: true }, medium: { score: 0.5, color: '#ffaa00', alert: true }, low: { score: 0.2, color: '#ffff00', alert: false }, minimal: { score: 0.0, color: '#00ff00', alert: false } } },
-    cashappDailyLimit: { type: 'integer', min: 0, max: 10000, unit: 'USD', required: true, description: 'Maximum daily transfer amount', example: 7500, source: 'CashApp API documentation v2024' },
-    cashappWeeklyLimit: { type: 'integer', min: 0, max: 50000, unit: 'USD', required: true, description: 'Maximum weekly transfer amount', example: 25000, source: 'CashApp API documentation v2024' },
-    instantDepositAvailable: { type: 'boolean', required: true, description: 'Can use instant deposit feature', example: true, conditions: { if: 'accountAge < 30 days', then: false, else: true } },
-    holdPeriodDays: { type: 'integer', min: 0, max: 7, unit: 'days', required: true, description: 'Days to hold first transactions', example: 0, businessRule: 'First 3 transactions held for verification' },
-    badge: { type: 'string', pattern: 'emoji', maxLength: 2, required: true, description: 'Visual indicator emoji', example: '👑', alternatives: { new: ['🆕', '🔴', '⚠️'], recent: ['🌱', '🟡', '🔸'], growing: ['📈', '🟢', '🔹'], established: ['✅', '🔵', '💎'], veteran: ['👑', '🟣', '⭐'] } },
-    color: { type: 'string', pattern: '^#[0-9A-Fa-f]{6}$', required: true, description: 'CSS hex color code', example: '#a78bfa', contrast: { light: '#ffffff', dark: '#000000' } },
-    _sql: { table: 'account_age_tiers', primaryKey: 'tier', indexes: ['riskLevel', 'cashappDailyLimit'], comment: 'Configuration table for account age classifications' }
-  }
+    tier: {
+      type: 'enum',
+      values: ['veteran'],
+      required: true,
+      description: 'Account maturity classification',
+      example: 'veteran',
+    },
+    label: {
+      type: 'string',
+      maxLength: 50,
+      required: true,
+      description: 'UI display label',
+      example: 'Veteran Account',
+      i18n: true,
+    },
+    dayRange: {
+      type: 'tuple',
+      items: ['number', 'number | null'],
+      required: true,
+      description: 'Age range in days [min, max]',
+      example: [366, null],
+      validation: 'min >= 0, max > min or null for unlimited',
+    },
+    trustMultiplier: {
+      type: 'number',
+      min: 0,
+      max: 1,
+      decimals: 2,
+      required: true,
+      description: 'Multiplier for trust-based limits',
+      example: 1.0,
+      formula: 'affects payment limits and verification requirements',
+    },
+    riskLevel: {
+      type: 'enum',
+      values: ['high', 'medium', 'low', 'minimal'],
+      required: true,
+      description: 'Risk classification',
+      example: 'minimal',
+      mapping: {
+        high: { score: 0.8, color: '#ff4444', alert: true },
+        medium: { score: 0.5, color: '#ffaa00', alert: true },
+        low: { score: 0.2, color: '#ffff00', alert: false },
+        minimal: { score: 0.0, color: '#00ff00', alert: false },
+      },
+    },
+    cashappDailyLimit: {
+      type: 'integer',
+      min: 0,
+      max: 10000,
+      unit: 'USD',
+      required: true,
+      description: 'Maximum daily transfer amount',
+      example: 7500,
+      source: 'CashApp API documentation v2024',
+    },
+    cashappWeeklyLimit: {
+      type: 'integer',
+      min: 0,
+      max: 50000,
+      unit: 'USD',
+      required: true,
+      description: 'Maximum weekly transfer amount',
+      example: 25000,
+      source: 'CashApp API documentation v2024',
+    },
+    instantDepositAvailable: {
+      type: 'boolean',
+      required: true,
+      description: 'Can use instant deposit feature',
+      example: true,
+      conditions: { if: 'accountAge < 30 days', then: false, else: true },
+    },
+    holdPeriodDays: {
+      type: 'integer',
+      min: 0,
+      max: 7,
+      unit: 'days',
+      required: true,
+      description: 'Days to hold first transactions',
+      example: 0,
+      businessRule: 'First 3 transactions held for verification',
+    },
+    badge: {
+      type: 'string',
+      pattern: 'emoji',
+      maxLength: 2,
+      required: true,
+      description: 'Visual indicator emoji',
+      example: '👑',
+      alternatives: {
+        new: ['🆕', '🔴', '⚠️'],
+        recent: ['🌱', '🟡', '🔸'],
+        growing: ['📈', '🟢', '🔹'],
+        established: ['✅', '🔵', '💎'],
+        veteran: ['👑', '🟣', '⭐'],
+      },
+    },
+    color: {
+      type: 'string',
+      pattern: '^#[0-9A-Fa-f]{6}$',
+      required: true,
+      description: 'CSS hex color code',
+      example: '#a78bfa',
+      contrast: { light: '#ffffff', dark: '#000000' },
+    },
+    _sql: {
+      table: 'account_age_tiers',
+      primaryKey: 'tier',
+      indexes: ['riskLevel', 'cashappDailyLimit'],
+      comment: 'Configuration table for account age classifications',
+    },
+  },
 };
 
 // ==================== SQL DDL ====================
@@ -318,4 +833,13 @@ CREATE INDEX idx_fusion_configs_eligible ON fusion_configs(new_account_eligible)
 `;
 
 // Export all types
-export type { AccountAgeSchema, AccountAgeTier, RiskLevel, FusionTier, ImpactLevel, ActionCategory, ActionPriority, ActionTiming };
+export type {
+  AccountAgeSchema,
+  AccountAgeTier,
+  RiskLevel,
+  FusionTier,
+  ImpactLevel,
+  ActionCategory,
+  ActionPriority,
+  ActionTiming,
+};

@@ -1,6 +1,6 @@
 /**
  * FactoryWager Registry System
- * 
+ *
  * Centralized configuration and module registry using:
  * - R2 for storage
  * - Bun.semver for versioning
@@ -62,17 +62,17 @@ export interface PermissionConfig {
 
 // ==================== Payment Types & Providers ====================
 
-export type PaymentType = 
-  | 'service'      // Regular service payment
-  | 'tip'          // Client tip to barber
-  | 'p2p'          // Peer-to-peer transfer
-  | 'refund'       // Refund to client
-  | 'commission'   // Commission payout to barber
-  | 'deposit'      // Booking deposit
+export type PaymentType =
+  | 'service' // Regular service payment
+  | 'tip' // Client tip to barber
+  | 'p2p' // Peer-to-peer transfer
+  | 'refund' // Refund to client
+  | 'commission' // Commission payout to barber
+  | 'deposit' // Booking deposit
   | 'subscription' // Monthly/weekly subscription
-  | 'product'      // Product purchase
-  | 'penalty'      // Late cancellation/no-show fee
-  | 'bonus';       // Performance bonus
+  | 'product' // Product purchase
+  | 'penalty' // Late cancellation/no-show fee
+  | 'bonus'; // Performance bonus
 
 export type PaymentProvider =
   | 'stripe'
@@ -128,18 +128,18 @@ export interface PaymentPipeline {
   stages: PipelineStage[];
   createdAt: string;
   updatedAt: string;
-  
+
   // Cancellation tracking
   cancelledAt?: string;
   cancelledBy?: string;
   cancellationReason?: CancellationReason;
   cancellationFee?: number;
-  
+
   // Retry logic for insufficient funds
   retryCount: number;
   maxRetries: number;
   retryScheduledAt?: string;
-  
+
   // Financial breakdown
   subtotal: number;
   tax: number;
@@ -167,54 +167,54 @@ export interface PaymentTransaction {
   amount: number;
   currency: string;
   provider: PaymentProvider;
-  
+
   // Participants
   clientId: string;
   clientName: string;
   barberId: string;
   barberName: string;
-  
+
   // Service details
   serviceId?: string;
   serviceName?: string;
   serviceDate?: string;
-  
+
   // Tip details
   tipAmount?: number;
   tipType?: TipType;
   tipMessage?: string;
-  
+
   // Financial breakdown
   subtotal: number;
   tax: number;
   discount?: number;
   fee: number;
   total: number;
-  
+
   // Commission (for barber payout)
   commissionRate: number;
   commissionAmount: number;
   barberPayout: number;
-  
+
   // Cancellation
   cancelledAt?: string;
   cancelledBy?: string;
   cancellationReason?: CancellationReason;
   cancellationFee?: number;
   refundAmount?: number;
-  
+
   // Retry logic
   retryScheduledAt?: string;
   retryCount: number;
   maxRetries: number;
-  
+
   // Timeline
   createdAt: string;
   authorizedAt?: string;
   capturedAt?: string;
   completedAt?: string;
   failedAt?: string;
-  
+
   // Receipt
   receiptUrl?: string;
   invoiceId?: string;
@@ -247,7 +247,7 @@ export interface TipConfig {
   enabled: boolean;
   type: TipType;
   defaultAmount?: number;
-  percentages?: number[];  // [15, 18, 20, 25] for percentage tips
+  percentages?: number[]; // [15, 18, 20, 25] for percentage tips
   maxAmount?: number;
   minAmount?: number;
   allowCustom: boolean;
@@ -288,7 +288,7 @@ export interface PaymentApproval {
   approvedBy?: string;
   approvedAt?: string;
   comments: ApprovalComment[];
-  
+
   // Payout details for approved
   payoutMethod?: 'direct_deposit' | 'cashapp' | 'venmo' | 'zelle' | 'check';
   payoutAccount?: string;
@@ -310,29 +310,29 @@ export interface BarberPayout {
   periodStart: string;
   periodEnd: string;
   status: 'pending' | 'processing' | 'completed' | 'failed';
-  
+
   // Earnings breakdown
   serviceRevenue: number;
   tipRevenue: number;
   bonusRevenue: number;
   totalRevenue: number;
-  
+
   // Deductions
   commissionDeducted: number;
   feesDeducted: number;
   advancesDeducted: number;
   cancellationFees: number;
   totalDeductions: number;
-  
+
   // Final payout
   netPayout: number;
-  
+
   // Payment details
   payoutMethod: 'direct_deposit' | 'check' | 'cashapp' | 'venmo' | 'zelle';
   payoutAccount?: string;
   processedAt?: string;
   providerTransactionId?: string;
-  
+
   // Transactions included
   transactionIds: string[];
 }
@@ -373,7 +373,13 @@ export interface PaymentNotification {
   id: string;
   userId: string;
   userType: 'client' | 'barber';
-  type: 'payment_received' | 'payment_failed' | 'tip_received' | 'payout_sent' | 'advance_approved' | 'insufficient_funds';
+  type:
+    | 'payment_received'
+    | 'payment_failed'
+    | 'tip_received'
+    | 'payout_sent'
+    | 'advance_approved'
+    | 'insufficient_funds';
   title: string;
   message: string;
   amount?: number;
@@ -385,7 +391,7 @@ export interface PaymentNotification {
 
 /**
  * FactoryWager Registry
- * 
+ *
  * Centralized module and configuration management
  */
 export class FactoryWagerRegistry {
@@ -396,7 +402,9 @@ export class FactoryWagerRegistry {
   /**
    * Publish entry to registry
    */
-  async publish(entry: Omit<RegistryEntry, 'metadata'> & { metadata?: Partial<RegistryEntry['metadata']> }): Promise<void> {
+  async publish(
+    entry: Omit<RegistryEntry, 'metadata'> & { metadata?: Partial<RegistryEntry['metadata']> }
+  ): Promise<void> {
     const fullEntry: RegistryEntry = {
       ...entry,
       metadata: {
@@ -411,18 +419,14 @@ export class FactoryWagerRegistry {
 
     // Store in R2
     const key = `${entry.type}/${entry.name}@${entry.version}`;
-    await unifiedCloudflare.uploadToR2(
-      key,
-      JSON.stringify(fullEntry),
-      {
-        contentType: 'application/json',
-        metadata: {
-          name: entry.name,
-          version: entry.version,
-          type: entry.type,
-        },
-      }
-    );
+    await unifiedCloudflare.uploadToR2(key, JSON.stringify(fullEntry), {
+      contentType: 'application/json',
+      metadata: {
+        name: entry.name,
+        version: entry.version,
+        type: entry.type,
+      },
+    });
 
     // Update cache
     this.cache.set(`${entry.name}@${entry.version}`, fullEntry);
@@ -442,17 +446,15 @@ export class FactoryWagerRegistry {
    */
   async fetch(name: string, version?: string): Promise<RegistryEntry | null> {
     const cacheKey = version ? `${name}@${version}` : name;
-    
+
     // Check cache
     if (this.cache.has(cacheKey)) {
       return this.cache.get(cacheKey)!;
     }
 
     // Fetch from R2
-    const key = version 
-      ? `*/${name}@${version}`
-      : `*/${name}@latest`;
-    
+    const key = version ? `*/${name}@${version}` : `*/${name}@latest`;
+
     try {
       const response = await unifiedCloudflare.downloadFromR2(key);
       if (!response) return null;
@@ -574,7 +576,12 @@ export class FactoryWagerRegistry {
       ...payment,
       id: `pay-${Date.now()}`,
       stages: [
-        { name: 'submission', status: 'completed', startedAt: new Date().toISOString(), completedAt: new Date().toISOString() },
+        {
+          name: 'submission',
+          status: 'completed',
+          startedAt: new Date().toISOString(),
+          completedAt: new Date().toISOString(),
+        },
         { name: 'review', status: 'active', startedAt: new Date().toISOString() },
         { name: 'approval', status: 'pending' },
         { name: 'processing', status: 'pending' },
@@ -623,7 +630,7 @@ export class FactoryWagerRegistry {
     // Update overall status
     const allCompleted = pipeline.stages.every(s => s.status === 'completed');
     const anyFailed = pipeline.stages.some(s => s.status === 'failed');
-    
+
     if (allCompleted) {
       pipeline.status = 'completed';
     } else if (anyFailed) {
@@ -720,11 +727,11 @@ export class FactoryWagerRegistry {
     if (!entry) return null;
 
     const approval = entry.content as PaymentApproval;
-    
+
     approval.status = decision;
     approval.approvedBy = approver;
     approval.approvedAt = new Date().toISOString();
-    
+
     if (comment) {
       approval.comments.push({
         author: approver,
@@ -842,7 +849,7 @@ export class FactoryWagerRegistry {
     if (!entry) return null;
 
     const pipeline = entry.content as PaymentPipeline;
-    
+
     if (pipeline.status === 'completed') {
       throw new Error('Cannot cancel completed payment. Use refund instead.');
     }
@@ -946,7 +953,9 @@ export class FactoryWagerRegistry {
   /**
    * Request barber advance
    */
-  async requestBarberAdvance(advance: Omit<BarberAdvance, 'id' | 'requestedAt'>): Promise<BarberAdvance> {
+  async requestBarberAdvance(
+    advance: Omit<BarberAdvance, 'id' | 'requestedAt'>
+  ): Promise<BarberAdvance> {
     const fullAdvance: BarberAdvance = {
       ...advance,
       id: `advance-${Date.now()}`,
@@ -970,7 +979,9 @@ export class FactoryWagerRegistry {
   /**
    * Create payment notification
    */
-  async createNotification(notification: Omit<PaymentNotification, 'id' | 'createdAt'>): Promise<PaymentNotification> {
+  async createNotification(
+    notification: Omit<PaymentNotification, 'id' | 'createdAt'>
+  ): Promise<PaymentNotification> {
     const fullNotification: PaymentNotification = {
       ...notification,
       id: `notif-${Date.now()}`,
@@ -994,11 +1005,14 @@ export class FactoryWagerRegistry {
   /**
    * Calculate tip suggestions
    */
-  calculateTipSuggestions(subtotal: number, config?: TipConfig): { percentage: number; amount: number }[] {
+  calculateTipSuggestions(
+    subtotal: number,
+    config?: TipConfig
+  ): { percentage: number; amount: number }[] {
     const percentages = config?.percentages || [15, 18, 20, 25];
     return percentages.map(pct => ({
       percentage: pct,
-      amount: Math.round((subtotal * pct / 100) * 100) / 100,
+      amount: Math.round(((subtotal * pct) / 100) * 100) / 100,
     }));
   }
 }

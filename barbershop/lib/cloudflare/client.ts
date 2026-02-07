@@ -1,6 +1,6 @@
 /**
  * Cloudflare API Client
- * 
+ *
  * Bun-native HTTP client for Cloudflare API v4.
  * Uses Bun.fetch for optimal performance.
  */
@@ -148,7 +148,7 @@ export interface CloudflareConfig {
 
 /**
  * Cloudflare API Client
- * 
+ *
  * High-performance client using Bun.fetch() with automatic retries,
  * rate limiting handling, and request/response compression.
  */
@@ -184,9 +184,9 @@ export class CloudflareClient {
 
     const url = `${this.baseUrl}${endpoint}`;
     const headers: Record<string, string> = {
-      'Authorization': `Bearer ${this.apiToken}`,
+      Authorization: `Bearer ${this.apiToken}`,
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
+      Accept: 'application/json',
     };
 
     // Add compression headers for large requests
@@ -219,7 +219,7 @@ export class CloudflareClient {
         throw new Error(`Cloudflare API error (${response.status}): ${errorText}`);
       }
 
-      return await response.json() as CFApiResponse<T>;
+      return (await response.json()) as CFApiResponse<T>;
     } catch (error) {
       if (retries > 0 && this.isRetryableError(error)) {
         await new Promise(r => setTimeout(r, 1000 * (4 - retries)));
@@ -231,9 +231,11 @@ export class CloudflareClient {
 
   private isRetryableError(error: unknown): boolean {
     if (error instanceof Error) {
-      return error.message.includes('ECONNRESET') ||
-             error.message.includes('ETIMEDOUT') ||
-             error.message.includes('ENOTFOUND');
+      return (
+        error.message.includes('ECONNRESET') ||
+        error.message.includes('ETIMEDOUT') ||
+        error.message.includes('ENOTFOUND')
+      );
     }
     return false;
   }
@@ -325,7 +327,9 @@ export class CloudflareClient {
 
     const response = await this.request<CFDNSRecord[]>('GET', endpoint);
     if (!response.success) {
-      throw new Error(`Failed to list DNS records: ${response.errors.map(e => e.message).join(', ')}`);
+      throw new Error(
+        `Failed to list DNS records: ${response.errors.map(e => e.message).join(', ')}`
+      );
     }
     return response.result;
   }
@@ -346,9 +350,15 @@ export class CloudflareClient {
       tags?: string[];
     }
   ): Promise<CFDNSRecord> {
-    const response = await this.request<CFDNSRecord>('POST', `/zones/${zoneId}/dns_records`, record);
+    const response = await this.request<CFDNSRecord>(
+      'POST',
+      `/zones/${zoneId}/dns_records`,
+      record
+    );
     if (!response.success) {
-      throw new Error(`Failed to create DNS record: ${response.errors.map(e => e.message).join(', ')}`);
+      throw new Error(
+        `Failed to create DNS record: ${response.errors.map(e => e.message).join(', ')}`
+      );
     }
     return response.result;
   }
@@ -361,9 +371,15 @@ export class CloudflareClient {
     recordId: string,
     updates: Partial<Omit<CFDNSRecord, 'id' | 'zone_id' | 'created_on' | 'modified_on'>>
   ): Promise<CFDNSRecord> {
-    const response = await this.request<CFDNSRecord>('PATCH', `/zones/${zoneId}/dns_records/${recordId}`, updates);
+    const response = await this.request<CFDNSRecord>(
+      'PATCH',
+      `/zones/${zoneId}/dns_records/${recordId}`,
+      updates
+    );
     if (!response.success) {
-      throw new Error(`Failed to update DNS record: ${response.errors.map(e => e.message).join(', ')}`);
+      throw new Error(
+        `Failed to update DNS record: ${response.errors.map(e => e.message).join(', ')}`
+      );
     }
     return response.result;
   }
@@ -374,7 +390,9 @@ export class CloudflareClient {
   async deleteDNSRecord(zoneId: string, recordId: string): Promise<void> {
     const response = await this.request<void>('DELETE', `/zones/${zoneId}/dns_records/${recordId}`);
     if (!response.success) {
-      throw new Error(`Failed to delete DNS record: ${response.errors.map(e => e.message).join(', ')}`);
+      throw new Error(
+        `Failed to delete DNS record: ${response.errors.map(e => e.message).join(', ')}`
+      );
     }
   }
 
@@ -384,9 +402,14 @@ export class CloudflareClient {
    * Get SSL verification status
    */
   async getSSLVerification(zoneId: string): Promise<CFSSLVerification> {
-    const response = await this.request<CFSSLVerification>('GET', `/zones/${zoneId}/ssl/verification`);
+    const response = await this.request<CFSSLVerification>(
+      'GET',
+      `/zones/${zoneId}/ssl/verification`
+    );
     if (!response.success) {
-      throw new Error(`Failed to get SSL verification: ${response.errors.map(e => e.message).join(', ')}`);
+      throw new Error(
+        `Failed to get SSL verification: ${response.errors.map(e => e.message).join(', ')}`
+      );
     }
     return response.result;
   }
@@ -400,9 +423,16 @@ export class CloudflareClient {
     editable: boolean;
     modified_on: string;
   }> {
-    const response = await this.request<{ id: string; value: string; editable: boolean; modified_on: string }>('GET', `/zones/${zoneId}/settings/ssl`);
+    const response = await this.request<{
+      id: string;
+      value: string;
+      editable: boolean;
+      modified_on: string;
+    }>('GET', `/zones/${zoneId}/settings/ssl`);
     if (!response.success) {
-      throw new Error(`Failed to get SSL settings: ${response.errors.map(e => e.message).join(', ')}`);
+      throw new Error(
+        `Failed to get SSL settings: ${response.errors.map(e => e.message).join(', ')}`
+      );
     }
     return response.result;
   }
@@ -410,10 +440,15 @@ export class CloudflareClient {
   /**
    * Update SSL settings
    */
-  async updateSSLSettings(zoneId: string, value: 'off' | 'flexible' | 'full' | 'strict'): Promise<void> {
+  async updateSSLSettings(
+    zoneId: string,
+    value: 'off' | 'flexible' | 'full' | 'strict'
+  ): Promise<void> {
     const response = await this.request<void>('PATCH', `/zones/${zoneId}/settings/ssl`, { value });
     if (!response.success) {
-      throw new Error(`Failed to update SSL settings: ${response.errors.map(e => e.message).join(', ')}`);
+      throw new Error(
+        `Failed to update SSL settings: ${response.errors.map(e => e.message).join(', ')}`
+      );
     }
   }
 
@@ -425,7 +460,9 @@ export class CloudflareClient {
   async listPageRules(zoneId: string): Promise<CFPageRule[]> {
     const response = await this.request<CFPageRule[]>('GET', `/zones/${zoneId}/pagerules`);
     if (!response.success) {
-      throw new Error(`Failed to list page rules: ${response.errors.map(e => e.message).join(', ')}`);
+      throw new Error(
+        `Failed to list page rules: ${response.errors.map(e => e.message).join(', ')}`
+      );
     }
     return response.result;
   }
@@ -444,7 +481,9 @@ export class CloudflareClient {
   ): Promise<CFPageRule> {
     const response = await this.request<CFPageRule>('POST', `/zones/${zoneId}/pagerules`, rule);
     if (!response.success) {
-      throw new Error(`Failed to create page rule: ${response.errors.map(e => e.message).join(', ')}`);
+      throw new Error(
+        `Failed to create page rule: ${response.errors.map(e => e.message).join(', ')}`
+      );
     }
     return response.result;
   }
@@ -457,7 +496,9 @@ export class CloudflareClient {
   async listFirewallRules(zoneId: string): Promise<CFFirewallRule[]> {
     const response = await this.request<CFFirewallRule[]>('GET', `/zones/${zoneId}/firewall/rules`);
     if (!response.success) {
-      throw new Error(`Failed to list firewall rules: ${response.errors.map(e => e.message).join(', ')}`);
+      throw new Error(
+        `Failed to list firewall rules: ${response.errors.map(e => e.message).join(', ')}`
+      );
     }
     return response.result;
   }
@@ -473,7 +514,10 @@ export class CloudflareClient {
       throw new Error('Account ID required');
     }
 
-    const response = await this.request<CFWorkerScript[]>('GET', `/accounts/${accId}/workers/scripts`);
+    const response = await this.request<CFWorkerScript[]>(
+      'GET',
+      `/accounts/${accId}/workers/scripts`
+    );
     if (!response.success) {
       throw new Error(`Failed to list workers: ${response.errors.map(e => e.message).join(', ')}`);
     }
@@ -493,10 +537,14 @@ export class CloudflareClient {
       throw new Error('Account ID required');
     }
 
-    const response = await this.request<CFWorkerScript>('PUT', `/accounts/${accId}/workers/scripts/${scriptName}`, {
-      script,
-      metadata: { body_part: 'script' },
-    });
+    const response = await this.request<CFWorkerScript>(
+      'PUT',
+      `/accounts/${accId}/workers/scripts/${scriptName}`,
+      {
+        script,
+        metadata: { body_part: 'script' },
+      }
+    );
 
     if (!response.success) {
       throw new Error(`Failed to deploy worker: ${response.errors.map(e => e.message).join(', ')}`);
@@ -545,7 +593,9 @@ export class CloudflareClient {
    * Purge all cache
    */
   async purgeAllCache(zoneId: string): Promise<void> {
-    const response = await this.request<void>('POST', `/zones/${zoneId}/purge_cache`, { purge_everything: true });
+    const response = await this.request<void>('POST', `/zones/${zoneId}/purge_cache`, {
+      purge_everything: true,
+    });
     if (!response.success) {
       throw new Error(`Failed to purge cache: ${response.errors.map(e => e.message).join(', ')}`);
     }
@@ -590,16 +640,16 @@ export function createClientFromEnv(): CloudflareClient {
 export async function createClientFromSecrets(): Promise<CloudflareClient> {
   // Dynamic import to avoid circular dependencies
   const { cfSecretsBridge } = await import('./secrets-bridge');
-  
+
   const creds = await cfSecretsBridge.getCredentials();
-  
+
   if (creds) {
     return new CloudflareClient({
       apiToken: creds.apiToken,
       accountId: creds.accountId,
     });
   }
-  
+
   // Fallback to environment variables
   return createClientFromEnv();
 }

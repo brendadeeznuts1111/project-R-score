@@ -1,6 +1,6 @@
 /**
  * Unified CLI Framework
- * 
+ *
  * Provides:
  * - Standardized argument parsing
  * - Progress indicators
@@ -68,7 +68,7 @@ const COLORS = {
   blink: '\x1b[5m',
   reverse: '\x1b[7m',
   hidden: '\x1b[8m',
-  
+
   black: '\x1b[30m',
   red: '\x1b[31m',
   green: '\x1b[32m',
@@ -77,7 +77,7 @@ const COLORS = {
   magenta: '\x1b[35m',
   cyan: '\x1b[36m',
   white: '\x1b[37m',
-  
+
   bgBlack: '\x1b[40m',
   bgRed: '\x1b[41m',
   bgGreen: '\x1b[42m',
@@ -111,12 +111,14 @@ export class ProgressBar {
     const percent = Math.round((current / this.total) * 100);
     const filled = Math.round((this.width * current) / this.total);
     const empty = this.width - filled;
-    
+
     const bar = '█'.repeat(filled) + '░'.repeat(empty);
     const elapsed = ((Date.now() - this.startTime) / 1000).toFixed(1);
-    
-    process.stdout.write(`\r${COLORS.cyan}${this.label}:${COLORS.reset} [${bar}] ${percent}% | ${current}/${this.total} | ${elapsed}s${message ? ` | ${message}` : ''}`);
-    
+
+    process.stdout.write(
+      `\r${COLORS.cyan}${this.label}:${COLORS.reset} [${bar}] ${percent}% | ${current}/${this.total} | ${elapsed}s${message ? ` | ${message}` : ''}`
+    );
+
     if (current >= this.total) {
       process.stdout.write('\n');
     }
@@ -145,9 +147,11 @@ export class Spinner {
 
   start(): void {
     if (this.timer) return;
-    
+
     this.timer = setInterval(() => {
-      process.stdout.write(`\r${COLORS.cyan}${this.frames[this.index]}${COLORS.reset} ${this.label}...`);
+      process.stdout.write(
+        `\r${COLORS.cyan}${this.frames[this.index]}${COLORS.reset} ${this.label}...`
+      );
       this.index = (this.index + 1) % this.frames.length;
     }, 80);
   }
@@ -178,35 +182,49 @@ export function renderTable(
 ): string {
   const padding = options.padding || 2;
   const align = options.align || headers.map(() => 'left');
-  
+
   // Calculate column widths
   const widths = headers.map((h, i) => {
     const cellWidths = rows.map(r => String(r[i]).length);
     return Math.max(h.length, ...cellWidths) + padding;
   });
-  
+
   // Build separator
   const separator = '+' + widths.map(w => '-'.repeat(w)).join('+') + '+';
-  
+
   // Build header
-  const headerRow = '|' + headers.map((h, i) => {
-    const aligned = align[i] === 'right' 
-      ? h.padStart(widths[i] - padding).padEnd(widths[i])
-      : h.padEnd(widths[i]);
-    return ' '.repeat(Math.floor(padding / 2)) + aligned + ' '.repeat(Math.floor(padding / 2));
-  }).join('|') + '|';
-  
+  const headerRow =
+    '|' +
+    headers
+      .map((h, i) => {
+        const aligned =
+          align[i] === 'right'
+            ? h.padStart(widths[i] - padding).padEnd(widths[i])
+            : h.padEnd(widths[i]);
+        return ' '.repeat(Math.floor(padding / 2)) + aligned + ' '.repeat(Math.floor(padding / 2));
+      })
+      .join('|') +
+    '|';
+
   // Build rows
-  const dataRows = rows.map(row => 
-    '|' + row.map((cell, i) => {
-      const str = String(cell);
-      const aligned = align[i] === 'right'
-        ? str.padStart(widths[i] - padding).padEnd(widths[i])
-        : str.padEnd(widths[i]);
-      return ' '.repeat(Math.floor(padding / 2)) + aligned + ' '.repeat(Math.floor(padding / 2));
-    }).join('|') + '|'
+  const dataRows = rows.map(
+    row =>
+      '|' +
+      row
+        .map((cell, i) => {
+          const str = String(cell);
+          const aligned =
+            align[i] === 'right'
+              ? str.padStart(widths[i] - padding).padEnd(widths[i])
+              : str.padEnd(widths[i]);
+          return (
+            ' '.repeat(Math.floor(padding / 2)) + aligned + ' '.repeat(Math.floor(padding / 2))
+          );
+        })
+        .join('|') +
+      '|'
   );
-  
+
   return [separator, headerRow, separator, ...dataRows, separator].join('\n');
 }
 
@@ -245,7 +263,7 @@ export class UnifiedCLI {
     try {
       // Parse arguments
       const { command, args, options } = this.parse(argv);
-      
+
       // Find command
       const cmdDef = this.findCommand(command);
       if (!cmdDef) {
@@ -265,16 +283,18 @@ export class UnifiedCLI {
       await this.executeMiddleware(ctx, async () => {
         await cmdDef.handler(ctx);
       });
-
     } catch (error) {
       this.error(error instanceof Error ? error.message : 'Unknown error');
       process.exit(1);
     }
   }
 
-  private async executeMiddleware(ctx: CommandContext, handler: () => Promise<void>): Promise<void> {
+  private async executeMiddleware(
+    ctx: CommandContext,
+    handler: () => Promise<void>
+  ): Promise<void> {
     let index = 0;
-    
+
     const next = async (): Promise<void> => {
       if (index < this.middlewares.length) {
         const middleware = this.middlewares[index++];
@@ -283,13 +303,17 @@ export class UnifiedCLI {
         await handler();
       }
     };
-    
+
     await next();
   }
 
   // ==================== Parsing ====================
 
-  private parse(argv: string[]): { command: string; args: Record<string, any>; options: Record<string, any> } {
+  private parse(argv: string[]): {
+    command: string;
+    args: Record<string, any>;
+    options: Record<string, any>;
+  } {
     // Find command (first non-option argument)
     let commandIndex = 0;
     for (let i = 0; i < argv.length; i++) {
@@ -305,7 +329,7 @@ export class UnifiedCLI {
     // Parse options
     const cmdDef = this.findCommand(command);
     const options: Record<string, any> = {};
-    
+
     // Parse global options
     this.config.globalOptions?.forEach(opt => {
       const value = this.getOptionValue(remainingArgs, opt);
@@ -323,7 +347,7 @@ export class UnifiedCLI {
     // Parse positional arguments
     const args: Record<string, any> = {};
     const positionalArgs = remainingArgs.filter(arg => !arg.startsWith('-'));
-    
+
     cmdDef?.arguments?.forEach((arg, index) => {
       if (arg.variadic) {
         args[arg.name] = positionalArgs.slice(index);
@@ -338,10 +362,10 @@ export class UnifiedCLI {
   private getOptionValue(args: string[], opt: OptionDefinition): any {
     const longFlag = `--${opt.name}`;
     const shortFlag = opt.short ? `-${opt.short}` : null;
-    
+
     for (let i = 0; i < args.length; i++) {
       const arg = args[i];
-      
+
       if (arg === longFlag || arg === shortFlag) {
         if (opt.type === 'boolean') {
           return true;
@@ -351,13 +375,13 @@ export class UnifiedCLI {
           return opt.type === 'number' ? Number(value) : value;
         }
       }
-      
+
       if (arg.startsWith(`${longFlag}=`)) {
         const value = arg.slice(longFlag.length + 1);
         return opt.type === 'number' ? Number(value) : value;
       }
     }
-    
+
     return undefined;
   }
 
@@ -417,18 +441,18 @@ export class UnifiedCLI {
     console.log(`${COLORS.bright}${this.config.name}${COLORS.reset} v${this.config.version}`);
     console.log(`${COLORS.dim}${this.config.description}${COLORS.reset}`);
     console.log();
-    
+
     console.log(`${COLORS.cyan}Usage:${COLORS.reset}`);
     console.log(`  ${this.config.name} <command> [options]`);
     console.log();
-    
+
     console.log(`${COLORS.cyan}Commands:${COLORS.reset}`);
     for (const cmd of this.config.commands) {
       const aliases = cmd.aliases ? ` (${cmd.aliases.join(', ')})` : '';
       console.log(`  ${cmd.name.padEnd(15)}${aliases.padEnd(15)} ${cmd.description}`);
     }
     console.log();
-    
+
     if (this.config.globalOptions?.length) {
       console.log(`${COLORS.cyan}Global Options:${COLORS.reset}`);
       for (const opt of this.config.globalOptions) {
@@ -446,7 +470,7 @@ export class UnifiedCLI {
     console.log();
     console.log(`${COLORS.bright}${command}${COLORS.reset} - ${cmd.description}`);
     console.log();
-    
+
     if (cmd.options?.length) {
       console.log(`${COLORS.cyan}Options:${COLORS.reset}`);
       for (const opt of cmd.options) {

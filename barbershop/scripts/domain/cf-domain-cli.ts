@@ -1,39 +1,49 @@
 #!/usr/bin/env bun
 /**
  * Cloudflare Domain Management CLI
- * 
+ *
  * Comprehensive CLI for managing FactoryWager domains via Cloudflare API.
  * Features: zone management, DNS records, SSL settings, cache purging, analytics.
- * 
+ *
  * Usage:
  *   bun run scripts/domain/cf-domain-cli.ts [command] [options]
- * 
+ *
  * Commands:
  *   zones list                          List all zones
  *   zones get <domain>                  Get zone details
  *   zones create <domain>               Create new zone
  *   zones delete <domain>               Delete zone
- *   
+ *
  *   dns list <domain>                   List DNS records
  *   dns add <domain> <type> <name> <content>  Add DNS record
  *   dns update <domain> <record-id>     Update DNS record
  *   dns delete <domain> <record-id>     Delete DNS record
- *   
+ *
  *   ssl status <domain>                 Check SSL status
  *   ssl set <domain> <mode>             Set SSL mode (off/flexible/full/strict)
- *   
+ *
  *   cache purge <domain>                Purge all cache
  *   cache purge-files <domain> <files>  Purge specific files
- *   
+ *
  *   analytics <domain> [days]           Show analytics (default: 7 days)
- *   
+ *
  *   setup factory-wager                 Setup all FactoryWager subdomains
  *   verify                              Verify API connectivity
  */
 
-import { CloudflareClient, createClient, createClientFromEnv, type CFZone, type CFDNSRecord } from '../../lib/cloudflare/client';
+import {
+  CloudflareClient,
+  createClient,
+  createClientFromEnv,
+  type CFZone,
+  type CFDNSRecord,
+} from '../../lib/cloudflare/client';
 import { cfSecretsBridge } from '../../lib/cloudflare/secrets-bridge';
-import { FACTORY_WAGER_DOMAIN, FACTORY_WAGER_BRAND, getDomainConfig } from '../../src/config/domain';
+import {
+  FACTORY_WAGER_DOMAIN,
+  FACTORY_WAGER_BRAND,
+  getDomainConfig,
+} from '../../src/config/domain';
 import { printTable, type TableColumn } from '../../src/utils/cli-table';
 import { nanoseconds } from '../../src/utils/bun-enhanced';
 
@@ -54,7 +64,8 @@ const colors = {
   gray: '\x1b[90m',
 };
 
-const c = (text: string, color: keyof typeof colors): string => `${colors[color]}${text}${colors.reset}`;
+const c = (text: string, color: keyof typeof colors): string =>
+  `${colors[color]}${text}${colors.reset}`;
 
 // Command handlers
 class DomainCLI {
@@ -128,7 +139,7 @@ class DomainCLI {
 
     try {
       const zones = (await this.getClient()).listZones(domainFilter);
-      
+
       if (zones.length === 0) {
         this.printWarning('No zones found');
         return;
@@ -136,32 +147,31 @@ class DomainCLI {
 
       const columns: TableColumn<CFZone>[] = [
         { key: 'name', header: 'Domain', width: 30 },
-        { 
-          key: 'status', 
-          header: 'Status', 
+        {
+          key: 'status',
+          header: 'Status',
           width: 12,
-          formatter: (v) => v === 'active' ? c('active', 'green') : c(String(v), 'yellow')
+          formatter: v => (v === 'active' ? c('active', 'green') : c(String(v), 'yellow')),
         },
-        { 
-          key: 'paused', 
-          header: 'Paused', 
+        {
+          key: 'paused',
+          header: 'Paused',
           width: 8,
-          formatter: (v) => v ? c('yes', 'red') : c('no', 'green')
+          formatter: v => (v ? c('yes', 'red') : c('no', 'green')),
         },
         { key: 'plan', header: 'Plan', width: 15, formatter: (v: CFZone['plan']) => v.name },
         { key: 'id', header: 'Zone ID', width: 32 },
       ];
 
-      printTable(zones, columns, { 
+      printTable(zones, columns, {
         border: 'single',
         headerStyle: 'bold',
-        maxWidth: 120 
+        maxWidth: 120,
       });
 
       const elapsed = ((nanoseconds() - startTime) / 1_000_000).toFixed(2);
       console.log();
       this.printSuccess(`Found ${zones.length} zone(s) in ${elapsed}ms`);
-      
     } catch (error) {
       this.printError(`Failed to list zones: ${(error as Error).message}`);
     }
@@ -177,18 +187,25 @@ class DomainCLI {
 
       console.log(`  ${c('Domain:', 'bold')}      ${zone.name}`);
       console.log(`  ${c('Zone ID:', 'bold')}     ${zone.id}`);
-      console.log(`  ${c('Status:', 'bold')}      ${zone.status === 'active' ? c('active', 'green') : c(zone.status, 'yellow')}`);
-      console.log(`  ${c('Paused:', 'bold')}      ${zone.paused ? c('yes', 'red') : c('no', 'green')}`);
+      console.log(
+        `  ${c('Status:', 'bold')}      ${zone.status === 'active' ? c('active', 'green') : c(zone.status, 'yellow')}`
+      );
+      console.log(
+        `  ${c('Paused:', 'bold')}      ${zone.paused ? c('yes', 'red') : c('no', 'green')}`
+      );
       console.log(`  ${c('Plan:', 'bold')}        ${zone.plan.name}`);
-      console.log(`  ${c('Created:', 'bold')}     ${new Date(zone.created_on).toLocaleDateString()}`);
-      console.log(`  ${c('Modified:', 'bold')}    ${new Date(zone.modified_on).toLocaleDateString()}`);
+      console.log(
+        `  ${c('Created:', 'bold')}     ${new Date(zone.created_on).toLocaleDateString()}`
+      );
+      console.log(
+        `  ${c('Modified:', 'bold')}    ${new Date(zone.modified_on).toLocaleDateString()}`
+      );
       console.log();
       console.log(`  ${c('Name Servers:', 'bold')}`);
       zone.name_servers.forEach(ns => console.log(`    • ${ns}`));
       console.log();
       console.log(`  ${c('Original Name Servers:', 'bold')}`);
       zone.original_name_servers?.forEach(ns => console.log(`    • ${ns}`));
-      
     } catch (error) {
       this.printError(`Failed to get zone: ${(error as Error).message}`);
     }
@@ -205,7 +222,6 @@ class DomainCLI {
       this.printInfo(`Status: ${zone.status}`);
       this.printInfo(`Name servers:`);
       zone.name_servers.forEach(ns => console.log(`    • ${ns}`));
-      
     } catch (error) {
       this.printError(`Failed to create zone: ${(error as Error).message}`);
     }
@@ -216,9 +232,11 @@ class DomainCLI {
     console.log();
 
     // Confirmation
-    console.log(c('  ⚠️  WARNING: This will permanently delete the zone and all its configuration!', 'red'));
+    console.log(
+      c('  ⚠️  WARNING: This will permanently delete the zone and all its configuration!', 'red')
+    );
     console.log(c('  Type the domain name to confirm:', 'yellow'));
-    
+
     // For non-interactive use, skip confirmation or use --force flag
     const force = process.argv.includes('--force');
     if (!force) {
@@ -230,7 +248,6 @@ class DomainCLI {
       const zoneId = (await this.getClient()).getZoneId(domain);
       (await this.getClient()).deleteZone(zoneId);
       this.printSuccess(`Zone ${domain} deleted successfully`);
-      
     } catch (error) {
       this.printError(`Failed to delete zone: ${(error as Error).message}`);
     }
@@ -254,23 +271,23 @@ class DomainCLI {
       const columns: TableColumn<CFDNSRecord>[] = [
         { key: 'type', header: 'Type', width: 8 },
         { key: 'name', header: 'Name', width: 35 },
-        { 
-          key: 'content', 
-          header: 'Content', 
+        {
+          key: 'content',
+          header: 'Content',
           width: 40,
-          formatter: (v) => v.length > 37 ? v.slice(0, 37) + '...' : v
+          formatter: v => (v.length > 37 ? v.slice(0, 37) + '...' : v),
         },
-        { 
-          key: 'ttl', 
-          header: 'TTL', 
+        {
+          key: 'ttl',
+          header: 'TTL',
           width: 8,
-          formatter: (v) => v === 1 ? 'Auto' : String(v)
+          formatter: v => (v === 1 ? 'Auto' : String(v)),
         },
-        { 
-          key: 'proxied', 
-          header: 'Proxy', 
+        {
+          key: 'proxied',
+          header: 'Proxy',
           width: 7,
-          formatter: (v) => v ? c('✓', 'green') : c('✗', 'gray')
+          formatter: v => (v ? c('✓', 'green') : c('✗', 'gray')),
         },
         { key: 'id', header: 'ID', width: 32 },
       ];
@@ -278,7 +295,6 @@ class DomainCLI {
       printTable(records, columns, { border: 'single', maxWidth: 140 });
       console.log();
       this.printSuccess(`Found ${records.length} DNS record(s)`);
-
     } catch (error) {
       this.printError(`Failed to list DNS records: ${(error as Error).message}`);
     }
@@ -311,7 +327,6 @@ class DomainCLI {
       this.printInfo(`TTL: ${record.ttl === 1 ? 'Auto' : record.ttl}`);
       this.printInfo(`Proxied: ${record.proxied ? 'Yes' : 'No'}`);
       this.printInfo(`ID: ${record.id}`);
-
     } catch (error) {
       this.printError(`Failed to add DNS record: ${(error as Error).message}`);
     }
@@ -325,7 +340,6 @@ class DomainCLI {
       const zoneId = (await this.getClient()).getZoneId(domain);
       (await this.getClient()).deleteDNSRecord(zoneId, recordId);
       this.printSuccess(`DNS record deleted successfully`);
-
     } catch (error) {
       this.printError(`Failed to delete DNS record: ${(error as Error).message}`);
     }
@@ -346,15 +360,16 @@ class DomainCLI {
 
       console.log(`  ${c('SSL Mode:', 'bold')}      ${settings.value.toUpperCase()}`);
       console.log(`  ${c('Editable:', 'bold')}     ${settings.editable ? 'Yes' : 'No'}`);
-      console.log(`  ${c('Modified:', 'bold')}     ${new Date(settings.modified_on).toLocaleString()}`);
-      
+      console.log(
+        `  ${c('Modified:', 'bold')}     ${new Date(settings.modified_on).toLocaleString()}`
+      );
+
       if (verification) {
         console.log();
         console.log(`  ${c('Certificate Status:', 'bold')} ${verification.certificate_status}`);
         console.log(`  ${c('Verification Type:', 'bold')}   ${verification.verification_type}`);
         console.log(`  ${c('Verification Status:', 'bold')} ${verification.verification_status}`);
       }
-
     } catch (error) {
       this.printError(`Failed to get SSL status: ${(error as Error).message}`);
     }
@@ -374,7 +389,6 @@ class DomainCLI {
       const zoneId = (await this.getClient()).getZoneId(domain);
       (await this.getClient()).updateSSLSettings(zoneId, mode);
       this.printSuccess(`SSL mode updated to ${mode}`);
-
     } catch (error) {
       this.printError(`Failed to update SSL mode: ${(error as Error).message}`);
     }
@@ -390,7 +404,6 @@ class DomainCLI {
       const zoneId = (await this.getClient()).getZoneId(domain);
       (await this.getClient()).purgeAllCache(zoneId);
       this.printSuccess('All cache purged successfully');
-
     } catch (error) {
       this.printError(`Failed to purge cache: ${(error as Error).message}`);
     }
@@ -404,7 +417,6 @@ class DomainCLI {
       const zoneId = (await this.getClient()).getZoneId(domain);
       (await this.getClient()).purgeFiles(zoneId, files);
       this.printSuccess(`Purged ${files.length} file(s)`);
-
     } catch (error) {
       this.printError(`Failed to purge files: ${(error as Error).message}`);
     }
@@ -434,7 +446,9 @@ class DomainCLI {
 
       console.log(`  ${c('Requests:', 'bold')}`);
       console.log(`    Total:   ${formatNumber(analytics.totals.requests.all)}`);
-      console.log(`    Cached:  ${formatNumber(analytics.totals.requests.cached)} (${((analytics.totals.requests.cached / analytics.totals.requests.all) * 100).toFixed(1)}%)`);
+      console.log(
+        `    Cached:  ${formatNumber(analytics.totals.requests.cached)} (${((analytics.totals.requests.cached / analytics.totals.requests.all) * 100).toFixed(1)}%)`
+      );
       console.log(`    Uncached: ${formatNumber(analytics.totals.requests.uncached)}`);
       console.log();
       console.log(`  ${c('Bandwidth:', 'bold')}`);
@@ -444,7 +458,6 @@ class DomainCLI {
       console.log();
       console.log(`  ${c('Threats:', 'bold')} ${formatNumber(analytics.totals.threats.all)}`);
       console.log(`  ${c('Pageviews:', 'bold')} ${formatNumber(analytics.totals.pageviews.all)}`);
-
     } catch (error) {
       this.printError(`Failed to get analytics: ${(error as Error).message}`);
     }
@@ -455,7 +468,7 @@ class DomainCLI {
   async setupFactoryWager(env?: string): Promise<void> {
     const config = getDomainConfig(env);
     const domain = config.primary;
-    
+
     console.log(c(`🏭 Setting up FactoryWager domains for ${domain}...`, 'cyan'));
     console.log();
 
@@ -476,12 +489,15 @@ class DomainCLI {
       ];
 
       console.log(c('  Creating DNS records:', 'bold'));
-      
+
       for (const sub of subdomains) {
         try {
           // Check if record exists
-          const existing = (await this.getClient()).listDNSRecords(zoneId, { name: sub.name, type: sub.type });
-          
+          const existing = (await this.getClient()).listDNSRecords(zoneId, {
+            name: sub.name,
+            type: sub.type,
+          });
+
           if (existing.length > 0) {
             this.printWarning(`${sub.name} already exists`);
           } else {
@@ -502,7 +518,6 @@ class DomainCLI {
       console.log();
       this.printSuccess('FactoryWager domain setup complete!');
       this.printInfo('SSL certificates will be provisioned automatically');
-
     } catch (error) {
       this.printError(`Setup failed: ${(error as Error).message}`);
     }
@@ -536,7 +551,7 @@ class DomainCLI {
       console.log(c('  FactoryWager Domain Status:', 'bold'));
       const fwDomain = FACTORY_WAGER_DOMAIN.primary;
       const fwZone = zones.find(z => z.name === fwDomain);
-      
+
       if (fwZone) {
         this.printSuccess(`${fwDomain} - ${fwZone.status}`);
         this.printInfo(`Plan: ${fwZone.plan.name}`);
@@ -544,7 +559,6 @@ class DomainCLI {
       } else {
         this.printWarning(`${fwDomain} - Not found in account`);
       }
-
     } catch (error) {
       this.printError(`API connection failed: ${(error as Error).message}`);
       console.log();
@@ -577,7 +591,9 @@ async function main(): Promise<void> {
     console.log('  zones list [domain]              List all zones (optionally filter by domain)');
     console.log('  zones get <domain>               Get zone details');
     console.log('  zones create <domain>            Create new zone');
-    console.log('  zones delete <domain>            Delete zone (use --force to skip confirmation)');
+    console.log(
+      '  zones delete <domain>            Delete zone (use --force to skip confirmation)'
+    );
     console.log();
     console.log('  dns list <domain>                List DNS records');
     console.log('  dns add <domain> <type> <name> <content>  Add DNS record');
@@ -679,7 +695,8 @@ async function main(): Promise<void> {
             await cli.purgeCache(args[2]);
             break;
           case 'purge-files':
-            if (args.length < 4) throw new Error('Usage: cache purge-files <domain> <url1> [url2] ...');
+            if (args.length < 4)
+              throw new Error('Usage: cache purge-files <domain> <url1> [url2] ...');
             await cli.purgeFiles(args[2], args.slice(3));
             break;
           default:

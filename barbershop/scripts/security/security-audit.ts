@@ -67,12 +67,12 @@ function parseArgs(): AuditOptions {
     days: 90,
     output: 'html',
     severity: 'all',
-    compliance: true
+    compliance: true,
   };
-  
+
   for (let i = 1; i < Bun.argv.length; i++) {
     const arg = Bun.argv[i];
-    
+
     if (arg === '--include-versions') options.includeVersions = true;
     if (arg === '--days' && Bun.argv[i + 1]) {
       options.days = parseInt(Bun.argv[++i]);
@@ -89,7 +89,7 @@ function parseArgs(): AuditOptions {
       process.exit(0);
     }
   }
-  
+
   return options;
 }
 
@@ -113,7 +113,10 @@ function showHelp() {
   console.log('  bun security-audit.ts --compliance --output csv');
 }
 
-function styled(text: string, type: 'success' | 'warning' | 'error' | 'info' | 'primary' | 'accent' | 'muted'): string {
+function styled(
+  text: string,
+  type: 'success' | 'warning' | 'error' | 'info' | 'primary' | 'accent' | 'muted'
+): string {
   const colors = {
     success: '\x1b[32m',
     warning: '\x1b[33m',
@@ -121,7 +124,7 @@ function styled(text: string, type: 'success' | 'warning' | 'error' | 'info' | '
     info: '\x1b[36m',
     primary: '\x1b[34m',
     accent: '\x1b[35m',
-    muted: '\x1b[90m'
+    muted: '\x1b[90m',
   };
   const reset = '\x1b[0m';
   return `${colors[type]}${text}${reset}`;
@@ -129,43 +132,48 @@ function styled(text: string, type: 'success' | 'warning' | 'error' | 'info' | '
 
 async function main() {
   const options = parseArgs();
-  
+
   console.log(styled('🔍 Security Audit', 'primary'));
   console.log(styled('================', 'muted'));
   console.log();
-  
+
   try {
     // Step 1: Initialize audit
     console.log(styled('📋 Step 1: Initializing audit...', 'info'));
-    
+
     const auditStart = new Date();
     const auditEnd = new Date(auditStart.getTime() - options.days * 24 * 60 * 60 * 1000);
-    
-    console.log(styled(`   Period: ${auditEnd.toISOString().split('T')[0]} to ${auditStart.toISOString().split('T')[0]}`, 'muted'));
+
+    console.log(
+      styled(
+        `   Period: ${auditEnd.toISOString().split('T')[0]} to ${auditStart.toISOString().split('T')[0]}`,
+        'muted'
+      )
+    );
     console.log(styled(`   Include versions: ${options.includeVersions}`, 'muted'));
     console.log(styled(`   Compliance checks: ${options.compliance}`, 'muted'));
     console.log();
-    
+
     // Step 2: Discover secrets
     console.log(styled('🔍 Step 2: Discovering secrets...', 'info'));
-    
+
     const secrets = await discoverSecretsForAudit();
     console.log(styled(`   Found ${secrets.length} secrets to audit`, 'success'));
-    
+
     secrets.forEach(secret => {
       console.log(styled(`   • ${secret.key}`, 'muted'));
     });
     console.log();
-    
+
     // Step 3: Analyze each secret
     console.log(styled('🔬 Step 3: Analyzing secrets...', 'info'));
-    
+
     const report: AuditReport = {
       metadata: {
         generated: auditStart.toISOString(),
         period: `${auditEnd.toISOString().split('T')[0]} to ${auditStart.toISOString().split('T')[0]}`,
         version: '5.1',
-        options
+        options,
       },
       summary: {
         totalSecrets: secrets.length,
@@ -174,95 +182,129 @@ async function main() {
         highIssues: 0,
         mediumIssues: 0,
         lowIssues: 0,
-        complianceScore: 0
+        complianceScore: 0,
       },
       secrets: [],
       recommendations: [],
-      timeline: []
+      timeline: [],
     };
-    
+
     for (const secret of secrets) {
       console.log(styled(`   🔍 Analyzing: ${secret.key}`, 'primary'));
-      
+
       const secretAnalysis = await analyzeSecret(secret.key, options);
       report.secrets.push(secretAnalysis);
-      
+
       // Update summary
       report.summary.totalVersions += secretAnalysis.versions || 0;
-      report.summary.criticalIssues += secretAnalysis.issues.filter(i => i.severity === 'CRITICAL').length;
+      report.summary.criticalIssues += secretAnalysis.issues.filter(
+        i => i.severity === 'CRITICAL'
+      ).length;
       report.summary.highIssues += secretAnalysis.issues.filter(i => i.severity === 'HIGH').length;
-      report.summary.mediumIssues += secretAnalysis.issues.filter(i => i.severity === 'MEDIUM').length;
+      report.summary.mediumIssues += secretAnalysis.issues.filter(
+        i => i.severity === 'MEDIUM'
+      ).length;
       report.summary.lowIssues += secretAnalysis.issues.filter(i => i.severity === 'LOW').length;
-      
+
       const issueCount = secretAnalysis.issues.length;
       if (issueCount > 0) {
         const criticalCount = secretAnalysis.issues.filter(i => i.severity === 'CRITICAL').length;
         const highCount = secretAnalysis.issues.filter(i => i.severity === 'HIGH').length;
-        console.log(styled(`      ⚠️  ${issueCount} issues (${criticalCount} critical, ${highCount} high)`, 'warning'));
+        console.log(
+          styled(
+            `      ⚠️  ${issueCount} issues (${criticalCount} critical, ${highCount} high)`,
+            'warning'
+          )
+        );
       } else {
         console.log(styled('      ✅ No issues found', 'success'));
       }
     }
-    
+
     console.log();
-    
+
     // Step 4: Generate recommendations
     console.log(styled('💡 Step 4: Generating recommendations...', 'info'));
-    
+
     report.recommendations = generateRecommendations(report);
     console.log(styled(`   Generated ${report.recommendations.length} recommendations`, 'success'));
     console.log();
-    
+
     // Step 5: Calculate compliance score
     console.log(styled('📊 Step 5: Calculating compliance score...', 'info'));
-    
+
     report.summary.complianceScore = calculateComplianceScore(report);
-    console.log(styled(`   Compliance score: ${report.summary.complianceScore}%`, 
-      report.summary.complianceScore >= 90 ? 'success' : 
-      report.summary.complianceScore >= 70 ? 'warning' : 'error'));
+    console.log(
+      styled(
+        `   Compliance score: ${report.summary.complianceScore}%`,
+        report.summary.complianceScore >= 90
+          ? 'success'
+          : report.summary.complianceScore >= 70
+            ? 'warning'
+            : 'error'
+      )
+    );
     console.log();
-    
+
     // Step 6: Generate timeline
     if (options.includeVersions) {
       console.log(styled('📅 Step 6: Generating activity timeline...', 'info'));
-      
+
       report.timeline = await generateAuditTimeline(secrets, auditEnd, auditStart);
-      console.log(styled(`   Generated timeline with ${report.timeline.length} data points`, 'success'));
+      console.log(
+        styled(`   Generated timeline with ${report.timeline.length} data points`, 'success')
+      );
       console.log();
     }
-    
+
     // Step 7: Generate output
     console.log(styled('📄 Step 7: Generating audit report...', 'info'));
-    
+
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const filename = `security-audit-${timestamp}.${options.output}`;
-    
+
     await generateAuditReport(report, filename, options.output);
-    
+
     console.log(styled(`   ✅ Report saved: ${filename}`, 'success'));
     console.log();
-    
+
     // Step 8: Show summary
     console.log(styled('📊 Audit Summary:', 'primary'));
     console.log(styled(`   Total secrets: ${report.summary.totalSecrets}`, 'info'));
     console.log(styled(`   Total versions: ${report.summary.totalVersions}`, 'info'));
-    console.log(styled(`   Critical issues: ${report.summary.criticalIssues}`, report.summary.criticalIssues > 0 ? 'error' : 'success'));
-    console.log(styled(`   High issues: ${report.summary.highIssues}`, report.summary.highIssues > 0 ? 'warning' : 'success'));
+    console.log(
+      styled(
+        `   Critical issues: ${report.summary.criticalIssues}`,
+        report.summary.criticalIssues > 0 ? 'error' : 'success'
+      )
+    );
+    console.log(
+      styled(
+        `   High issues: ${report.summary.highIssues}`,
+        report.summary.highIssues > 0 ? 'warning' : 'success'
+      )
+    );
     console.log(styled(`   Medium issues: ${report.summary.mediumIssues}`, 'muted'));
     console.log(styled(`   Low issues: ${report.summary.lowIssues}`, 'muted'));
-    console.log(styled(`   Compliance score: ${report.summary.complianceScore}%`, 
-      report.summary.complianceScore >= 90 ? 'success' : 
-      report.summary.complianceScore >= 70 ? 'warning' : 'error'));
-    
+    console.log(
+      styled(
+        `   Compliance score: ${report.summary.complianceScore}%`,
+        report.summary.complianceScore >= 90
+          ? 'success'
+          : report.summary.complianceScore >= 70
+            ? 'warning'
+            : 'error'
+      )
+    );
+
     if (report.summary.criticalIssues > 0) {
       console.log();
       console.log(styled('🚨 CRITICAL ISSUES FOUND!', 'error'));
       console.log(styled('   Immediate action required for critical security issues', 'warning'));
     }
-    
+
     console.log();
     console.log(styled('🎉 Security audit completed!', 'success'));
-    
   } catch (error) {
     console.error(styled(`❌ Audit failed: ${error.message}`, 'error'));
     process.exit(1);
@@ -277,18 +319,18 @@ async function discoverSecretsForAudit(): Promise<Array<{ key: string }>> {
     { key: 'jwt:secret' },
     { key: 'stripe:webhook_secret' },
     { key: 'redis:auth' },
-    { key: 'internal:api_token' }
+    { key: 'internal:api_token' },
   ];
 }
 
 async function analyzeSecret(key: string, options: AuditOptions): Promise<any> {
   const issues = [];
-  
+
   try {
     // Get version timeline
     const timeline = await factoryWagerSecurityCitadel.getSecretTimeline(key, 50);
     const versions = timeline.length;
-    
+
     // Check for issues
     if (versions === 0) {
       issues.push({
@@ -296,36 +338,38 @@ async function analyzeSecret(key: string, options: AuditOptions): Promise<any> {
         type: 'NO_VERSION_HISTORY',
         description: 'Secret has no version history',
         recommendation: 'Initialize versioning for this secret',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
-    
+
     if (versions > 10) {
       issues.push({
         severity: 'MEDIUM' as const,
         type: 'EXCESSIVE_VERSIONS',
         description: `Secret has ${versions} versions, consider cleanup`,
         recommendation: 'Review and archive old versions',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
-    
+
     // Check last activity
     if (timeline.length > 0) {
       const lastActivity = new Date(timeline[0].timestamp);
-      const daysSinceLastActivity = Math.floor((new Date().getTime() - lastActivity.getTime()) / (1000 * 60 * 60 * 24));
-      
+      const daysSinceLastActivity = Math.floor(
+        (new Date().getTime() - lastActivity.getTime()) / (1000 * 60 * 60 * 24)
+      );
+
       if (daysSinceLastActivity > 180) {
         issues.push({
           severity: 'MEDIUM' as const,
           type: 'STALE_SECRET',
           description: `Secret not updated in ${daysSinceLastActivity} days`,
           recommendation: 'Review if secret is still needed',
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
     }
-    
+
     // Check for rollbacks
     const rollbackCount = timeline.filter(t => t.action === 'ROLLBACK').length;
     if (rollbackCount > 2) {
@@ -334,44 +378,45 @@ async function analyzeSecret(key: string, options: AuditOptions): Promise<any> {
         type: 'FREQUENCY_ROLLBACKS',
         description: `Secret has ${rollbackCount} rollbacks`,
         recommendation: 'Investigate cause of frequent rollbacks',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
-    
+
     // Compliance checks
     const compliance = {
       gdpr: true,
       sox: true,
       hipaa: key.includes('medical') || key.includes('health'),
-      pci: key.includes('payment') || key.includes('stripe') || key.includes('card')
+      pci: key.includes('payment') || key.includes('stripe') || key.includes('card'),
     };
-    
+
     return {
       key,
       versions,
       lastActivity: timeline.length > 0 ? timeline[0].timestamp : 'Unknown',
       issues,
-      compliance
+      compliance,
     };
-    
   } catch (error) {
     return {
       key,
       versions: 0,
       lastActivity: 'Error',
-      issues: [{
-        severity: 'HIGH' as const,
-        type: 'ANALYSIS_ERROR',
-        description: `Failed to analyze secret: ${error.message}`,
-        recommendation: 'Check secret access and configuration',
-        timestamp: new Date().toISOString()
-      }],
+      issues: [
+        {
+          severity: 'HIGH' as const,
+          type: 'ANALYSIS_ERROR',
+          description: `Failed to analyze secret: ${error.message}`,
+          recommendation: 'Check secret access and configuration',
+          timestamp: new Date().toISOString(),
+        },
+      ],
       compliance: {
         gdpr: false,
         sox: false,
         hipaa: false,
-        pci: false
-      }
+        pci: false,
+      },
     };
   }
 }
@@ -383,53 +428,55 @@ function generateRecommendations(report: AuditReport): Array<{
   action: string;
 }> {
   const recommendations = [];
-  
+
   // Critical issues
   if (report.summary.criticalIssues > 0) {
     recommendations.push({
       priority: 'HIGH',
       category: 'Security',
       description: 'Critical security issues found',
-      action: 'Address all critical issues immediately'
+      action: 'Address all critical issues immediately',
     });
   }
-  
+
   // Version management
   if (report.summary.totalVersions > report.summary.totalSecrets * 5) {
     recommendations.push({
       priority: 'MEDIUM',
       category: 'Housekeeping',
       description: 'Excessive version history detected',
-      action: 'Implement version cleanup and archival policies'
+      action: 'Implement version cleanup and archival policies',
     });
   }
-  
+
   // Stale secrets
   const staleSecrets = report.secrets.filter(s => {
     if (s.lastActivity === 'Unknown' || s.lastActivity === 'Error') return false;
-    const daysSince = Math.floor((new Date().getTime() - new Date(s.lastActivity).getTime()) / (1000 * 60 * 60 * 24));
+    const daysSince = Math.floor(
+      (new Date().getTime() - new Date(s.lastActivity).getTime()) / (1000 * 60 * 60 * 24)
+    );
     return daysSince > 180;
   });
-  
+
   if (staleSecrets.length > 0) {
     recommendations.push({
       priority: 'MEDIUM',
       category: 'Maintenance',
       description: `${staleSecrets.length} stale secrets detected`,
-      action: 'Review and remove unused secrets'
+      action: 'Review and remove unused secrets',
     });
   }
-  
+
   // Compliance
   if (report.summary.complianceScore < 90) {
     recommendations.push({
       priority: 'HIGH',
       category: 'Compliance',
       description: `Compliance score below 90% (${report.summary.complianceScore}%)`,
-      action: 'Review and address compliance gaps'
+      action: 'Review and address compliance gaps',
     });
   }
-  
+
   // Automation
   const secretsWithoutAutomation = report.secrets.filter(s => s.versions === 0);
   if (secretsWithoutAutomation.length > 0) {
@@ -437,65 +484,75 @@ function generateRecommendations(report: AuditReport): Array<{
       priority: 'MEDIUM',
       category: 'Automation',
       description: `${secretsWithoutAutomation.length} secrets lack versioning`,
-      action: 'Initialize versioning for all secrets'
+      action: 'Initialize versioning for all secrets',
     });
   }
-  
+
   return recommendations;
 }
 
 function calculateComplianceScore(report: AuditReport): number {
   let score = 100;
-  
+
   // Deduct points for issues
   score -= report.summary.criticalIssues * 20;
   score -= report.summary.highIssues * 10;
   score -= report.summary.mediumIssues * 5;
   score -= report.summary.lowIssues * 1;
-  
+
   // Bonus for good practices
   if (report.summary.totalVersions > 0) {
     score += 5;
   }
-  
+
   if (report.summary.criticalIssues === 0) {
     score += 10;
   }
-  
+
   return Math.max(0, Math.min(100, score));
 }
 
-async function generateAuditTimeline(secrets: Array<{ key: string }>, startDate: Date, endDate: Date): Promise<Array<{
-  date: string;
-  events: number;
-  critical: number;
-  high: number;
-}>> {
+async function generateAuditTimeline(
+  secrets: Array<{ key: string }>,
+  startDate: Date,
+  endDate: Date
+): Promise<
+  Array<{
+    date: string;
+    events: number;
+    critical: number;
+    high: number;
+  }>
+> {
   const timeline = [];
   const currentDate = new Date(startDate);
-  
+
   while (currentDate <= endDate) {
     const dateStr = currentDate.toISOString().split('T')[0];
-    
+
     // Count events for this date (simplified)
     const events = Math.floor(Math.random() * 5);
     const critical = Math.floor(Math.random() * 2);
     const high = Math.floor(Math.random() * 3);
-    
+
     timeline.push({
       date: dateStr,
       events,
       critical,
-      high
+      high,
     });
-    
+
     currentDate.setDate(currentDate.getDate() + 1);
   }
-  
+
   return timeline;
 }
 
-async function generateAuditReport(report: AuditReport, filename: string, format: string): Promise<void> {
+async function generateAuditReport(
+  report: AuditReport,
+  filename: string,
+  format: string
+): Promise<void> {
   if (format === 'json') {
     await Bun.write(filename, JSON.stringify(report, null, 2));
   } else if (format === 'csv') {
@@ -508,17 +565,18 @@ async function generateAuditReport(report: AuditReport, filename: string, format
 }
 
 function generateCSVReport(report: AuditReport): string {
-  let csv = 'Secret,Versions,Last Activity,Critical Issues,High Issues,Medium Issues,Low Issues,Compliance Score\n';
-  
+  let csv =
+    'Secret,Versions,Last Activity,Critical Issues,High Issues,Medium Issues,Low Issues,Compliance Score\n';
+
   report.secrets.forEach(secret => {
     const critical = secret.issues.filter(i => i.severity === 'CRITICAL').length;
     const high = secret.issues.filter(i => i.severity === 'HIGH').length;
     const medium = secret.issues.filter(i => i.severity === 'MEDIUM').length;
     const low = secret.issues.filter(i => i.severity === 'LOW').length;
-    
+
     csv += `${secret.key},${secret.versions},${secret.lastActivity},${critical},${high},${medium},${low},${report.summary.complianceScore}\n`;
   });
-  
+
   return csv;
 }
 
@@ -601,15 +659,21 @@ function generateHTMLReport(report: AuditReport): string {
                 </tr>
             </thead>
             <tbody>
-                ${report.secrets.map(secret => `
+                ${report.secrets
+                  .map(
+                    secret => `
                     <tr>
                         <td><strong>${secret.key}</strong></td>
                         <td>${secret.versions}</td>
                         <td>${secret.lastActivity}</td>
                         <td>
-                            ${secret.issues.map(issue => `
+                            ${secret.issues
+                              .map(
+                                issue => `
                                 <span class="severity-${issue.severity.toLowerCase()}">${issue.severity}: ${issue.type}</span><br>
-                            `).join('')}
+                            `
+                              )
+                              .join('')}
                         </td>
                         <td>
                             ${secret.compliance.gdpr ? '✅ GDPR' : '❌ GDPR'}<br>
@@ -618,19 +682,25 @@ function generateHTMLReport(report: AuditReport): string {
                             ${secret.compliance.pci ? '✅ PCI' : '❌ PCI'}
                         </td>
                     </tr>
-                `).join('')}
+                `
+                  )
+                  .join('')}
             </tbody>
         </table>
         
         <div class="recommendations">
             <h2>💡 Recommendations</h2>
-            ${report.recommendations.map(rec => `
+            ${report.recommendations
+              .map(
+                rec => `
                 <div class="recommendation priority-${rec.priority.toLowerCase()}">
                     <strong>${rec.priority} Priority - ${rec.category}:</strong><br>
                     ${rec.description}<br>
                     <strong>Action:</strong> ${rec.action}
                 </div>
-            `).join('')}
+            `
+              )
+              .join('')}
         </div>
         
         <div style="margin-top: 30px; text-align: center; color: #6b7280; font-size: 0.9em;">

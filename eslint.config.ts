@@ -290,6 +290,81 @@ export default tseslint.config(
       'no-new-func': 'error',
 
       // ────────────────────────────────────────────────────────────────
+      // Error handling rules
+      // ────────────────────────────────────────────────────────────────
+      // Prevent floating promises (promises that aren't awaited or handled)
+      '@typescript-eslint/no-floating-promises': [
+        'error',
+        {
+          ignoreVoid: true,
+          ignoreIIFE: true,
+        },
+      ],
+
+      // Ensure proper handling of async functions
+      '@typescript-eslint/await-thenable': 'error',
+
+      // Prevent misuse of promises (e.g., passing async function where sync expected)
+      '@typescript-eslint/no-misused-promises': [
+        'error',
+        {
+          checksVoidReturn: {
+            arguments: true,
+            attributes: true,
+            properties: true,
+            returns: true,
+          },
+          checksConditionals: true,
+        },
+      ],
+
+      // Require proper error types in Promise rejections
+      '@typescript-eslint/prefer-promise-reject-errors': [
+        'error',
+        {
+          allowEmptyReject: false,
+        },
+      ],
+
+      // Prevent empty catch blocks
+      'no-empty': [
+        'error',
+        {
+          allowEmptyCatch: false,
+        },
+      ],
+
+      // Prefer async/await over raw Promise then/catch
+      '@typescript-eslint/promise-function-async': [
+        'error',
+        {
+          allowAny: true,
+          allowedPromiseNames: ['Thenable'],
+          checkArrowFunctions: true,
+          checkFunctionDeclarations: true,
+          checkMethodDeclarations: true,
+        },
+      ],
+
+      // Require try-catch for async operations
+      'require-atomic-updates': 'error',
+
+      // Prevent throwing literals (must throw Error objects)
+      'no-throw-literal': 'error',
+      '@typescript-eslint/no-throw-literal': 'error',
+
+      // Ensure rejections are handled in try-catch
+      '@typescript-eslint/no-unused-expressions': [
+        'error',
+        {
+          allowShortCircuit: true,
+          allowTernary: true,
+          allowTaggedTemplates: true,
+          enforceForJSX: false,
+        },
+      ],
+
+      // ────────────────────────────────────────────────────────────────
       // Bun API restrictions — enforce centralized utilities
       // ────────────────────────────────────────────────────────────────
       'no-restricted-syntax': [

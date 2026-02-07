@@ -1,13 +1,13 @@
 #!/usr/bin/env bun
 /**
  * Bun Data API CLI
- * 
+ *
  * Demonstrates Bun's data management APIs:
  * - Bun.Cookie / Bun.CookieMap - Cookie management
  * - Bun.color - CSS color processing
  * - Bun.env - Prefixed environment variables
  * - Headers - HTTP header case preservation
- * 
+ *
  * Usage:
  *   bun run cf-data.ts [command] [options]
  */
@@ -19,11 +19,7 @@ import {
   createPrefixedEnv,
   BunDataCLIManager,
 } from '../../lib/cloudflare/bun-data-api';
-import {
-  ThemedConsole,
-  getDomainTheme,
-  themedSeparator,
-} from '../../themes/config/domain-theme';
+import { ThemedConsole, getDomainTheme, themedSeparator } from '../../themes/config/domain-theme';
 import { FACTORY_WAGER_BRAND } from '../../src/config/domain';
 
 const args = process.argv.slice(2);
@@ -169,7 +165,6 @@ async function cmdColorParse(): Promise<void> {
     t.log();
     t.info('CSS Variables:');
     t.log(colorManager.generateCSSVariables());
-
   } catch (error) {
     t.error(`Parse failed: ${(error as Error).message}`);
   }
@@ -219,7 +214,6 @@ async function cmdColorGradient(): Promise<void> {
       const pct = Math.round((i / (colors.length - 1)) * 100);
       t.log(`    ${pct}%: ${c}`);
     });
-
   } catch (error) {
     t.error(`Gradient failed: ${(error as Error).message}`);
   }
@@ -304,7 +298,7 @@ async function cmdHeaderCreate(): Promise<void> {
   t.log();
 
   const headers = headerManager.create({
-    'Authorization': 'Bearer token123',
+    Authorization: 'Bearer token123',
     'Content-Type': 'application/json',
     'X-Custom-Header': 'value',
   });

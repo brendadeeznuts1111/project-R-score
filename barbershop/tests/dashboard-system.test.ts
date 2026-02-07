@@ -1,6 +1,6 @@
 /**
  * Dashboard System Tests
- * 
+ *
  * Validates the dashboard v2 system components:
  * - Types and constants
  * - Dashboard builder
@@ -14,11 +14,11 @@ import {
   type DashboardConfig,
   type WidgetConfig,
   type DashboardLayout,
-  
+
   // Constants
   DEFAULT_DASHBOARD_CONFIG,
   DEFAULT_BREAKPOINTS,
-  
+
   // Helpers
   createDashboardConfig,
   createWidgetConfig,
@@ -35,14 +35,9 @@ import {
   createAnalyticsDashboard,
 } from '../src/dashboard/builder';
 
-import {
-  SyncEngine,
-  createSyncEngine,
-  DEFAULT_SYNC_CONFIG,
-} from '../src/dashboard/sync';
+import { SyncEngine, createSyncEngine, DEFAULT_SYNC_CONFIG } from '../src/dashboard/sync';
 
 describe('Dashboard System v2', () => {
-  
   describe('Types & Constants', () => {
     test('DEFAULT_DASHBOARD_CONFIG has expected structure', () => {
       expect(DEFAULT_DASHBOARD_CONFIG.view).toBe('admin');
@@ -133,7 +128,7 @@ describe('Dashboard System v2', () => {
         .setTheme('dark')
         .setRefreshInterval(10000)
         .enableLiveUpdates();
-      
+
       const result = builder.build();
       expect(result.config.theme).toBe('dark');
       expect(result.config.refreshInterval).toBe(10000);
@@ -143,7 +138,7 @@ describe('Dashboard System v2', () => {
     test('addWidget adds widget correctly', () => {
       const builder = createDashboard();
       builder.addWidget('stats', 'Test', { x: 0, y: 0, w: 4, h: 2 });
-      
+
       const result = builder.build();
       expect(result.widgets.length).toBe(1);
       expect(result.widgets[0].type).toBe('stats');
@@ -154,10 +149,10 @@ describe('Dashboard System v2', () => {
       const builder = createDashboard();
       builder.addWidget('stats', 'Test1', { x: 0, y: 0, w: 4, h: 2 });
       builder.addWidget('chart', 'Test2', { x: 4, y: 0, w: 4, h: 2 });
-      
+
       const widgetId = builder.build().widgets[0].id;
       builder.removeWidget(widgetId);
-      
+
       const result = builder.build();
       expect(result.widgets.length).toBe(1);
       expect(result.widgets[0].title).toBe('Test2');
@@ -172,9 +167,8 @@ describe('Dashboard System v2', () => {
     });
 
     test('export generates CSV correctly', () => {
-      const builder = createDashboard()
-        .addWidget('stats', 'Test', { x: 0, y: 0, w: 4, h: 2 });
-      
+      const builder = createDashboard().addWidget('stats', 'Test', { x: 0, y: 0, w: 4, h: 2 });
+
       const csv = builder.export('csv');
       expect(csv).toContain('Widget ID,Type,Title');
       expect(csv).toContain('stats');
@@ -182,9 +176,8 @@ describe('Dashboard System v2', () => {
     });
 
     test('export generates HTML correctly', () => {
-      const builder = createDashboard()
-        .addWidget('stats', 'Test', { x: 0, y: 0, w: 4, h: 2 });
-      
+      const builder = createDashboard().addWidget('stats', 'Test', { x: 0, y: 0, w: 4, h: 2 });
+
       const html = builder.export('html');
       expect(html).toContain('<!DOCTYPE html>');
       expect(html).toContain('dashboard');
@@ -195,10 +188,10 @@ describe('Dashboard System v2', () => {
       const builder = createDashboard()
         .addWidget('stats', 'Test', { x: 0, y: 0, w: 4, h: 2 })
         .saveLayout('test-layout');
-      
+
       builder.clearWidgets().addWidget('chart', 'Other', { x: 0, y: 0, w: 4, h: 2 });
       expect(builder.build().widgets[0].type).toBe('chart');
-      
+
       builder.loadLayout('test-layout');
       expect(builder.build().widgets[0].type).toBe('stats');
     });
@@ -230,11 +223,11 @@ describe('Dashboard System v2', () => {
     test('event subscription works', () => {
       const engine = createSyncEngine({ autoConnect: false });
       let eventFired = false;
-      
+
       const unsubscribe = engine.on('test', () => {
         eventFired = true;
       });
-      
+
       // Note: We can't easily test event emission without mocking,
       // but we can verify the subscription mechanism exists
       expect(typeof unsubscribe).toBe('function');

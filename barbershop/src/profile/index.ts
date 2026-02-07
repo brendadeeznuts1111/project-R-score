@@ -1,6 +1,6 @@
 /**
  * Profile System
- * 
+ *
  * Unified profiling exports:
  * - Profile engine
  * - CLI utilities
@@ -42,14 +42,14 @@ export async function quickCpuProfile(
   });
 
   const session = engine.startSession('cpu', { source: 'quick-cpu-profile' });
-  
+
   try {
     for (let i = 0; i < (options.iterations || 100); i++) {
       engine.mark(`iteration-${i}`);
       await workload();
       engine.measure(`iteration-${i}`);
     }
-    
+
     engine.endSession();
     console.log(`Profile complete: ${session.id}`);
   } catch (error) {
@@ -61,20 +61,18 @@ export async function quickCpuProfile(
 /**
  * Quick heap profile
  */
-export async function quickHeapProfile(
-  options: { outputDir?: string } = {}
-): Promise<void> {
+export async function quickHeapProfile(options: { outputDir?: string } = {}): Promise<void> {
   const engine = new ProfileEngine({
     outputDir: options.outputDir || './profiles',
   });
 
   const session = engine.startSession('heap', { source: 'quick-heap-profile' });
-  
+
   // Trigger garbage collection if available
   if (global.gc) {
     global.gc();
   }
-  
+
   engine.endSession();
   console.log(`Heap profile complete: ${session.id}`);
 }
@@ -92,7 +90,7 @@ export async function quickSamplingProfile(
   } = {}
 ): Promise<void> {
   const r2Config = options.uploadR2 ? resolveR2ConfigFromEnv() : null;
-  
+
   const engine = new ProfileEngine({
     outputDir: options.outputDir || './profiles',
     uploadToR2: !!r2Config,

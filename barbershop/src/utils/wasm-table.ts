@@ -1,11 +1,11 @@
 /**
  * WebAssembly.Table Integration for High-Performance Operations
- * 
+ *
  * Uses Bun's WebAssembly.Table support for:
  * - Dynamic function dispatch within WASM modules
  * - Hot-swappable computation modules
  * - Table length management and growth
- * 
+ *
  * @see https://bun.sh/reference/bun/WebAssembly/Table/length
  * @see https://developer.mozilla.org/en-US/docs/WebAssembly/Reference/JavaScript_interface/Table
  */
@@ -49,7 +49,7 @@ export type HookRegistry = Map<number, HookEntry>;
 
 /**
  * WebAssembly Table Manager for dynamic computation hooks
- * 
+ *
  * Note: WebAssembly.Table can only store WebAssembly functions, not JS functions.
  * This class manages both JS hooks (in registry) and WASM hooks (in table).
  */
@@ -86,18 +86,14 @@ export class WASMMachine {
    * Register a JavaScript computation hook
    * JS hooks are stored in registry, not WASM table
    */
-  registerHook(
-    name: string,
-    fn: ComputeHook,
-    description: string = ''
-  ): number {
+  registerHook(name: string, fn: ComputeHook, description: string = ''): number {
     const index = this.nextIndex++;
-    
-    this.registry.set(index, { 
-      name, 
-      fn, 
+
+    this.registry.set(index, {
+      name,
+      fn,
       description,
-      isWASM: false 
+      isWASM: false,
     });
 
     return index;
@@ -114,20 +110,18 @@ export class WASMMachine {
     description: string = ''
   ): void {
     if (index < 0 || index >= this.table.length) {
-      throw new RangeError(
-        `Index ${index} out of bounds (table length: ${this.table.length})`
-      );
+      throw new RangeError(`Index ${index} out of bounds (table length: ${this.table.length})`);
     }
 
     // Set in WASM table - only works with actual WASM functions
     this.table.set(index, wasmFn);
 
     // Register metadata
-    this.registry.set(index, { 
-      name, 
+    this.registry.set(index, {
+      name,
       fn: wasmFn as unknown as ComputeHook,
       description,
-      isWASM: true 
+      isWASM: true,
     });
   }
 
@@ -177,7 +171,7 @@ export class WASMMachine {
   async loadWASM(wasmBuffer: Uint8Array, importObject?: WebAssembly.Imports): Promise<void> {
     // Compile and instantiate with table import
     this.wasmModule = await WebAssembly.instantiate(wasmBuffer, {
-      env: { 
+      env: {
         table: this.table,
         memory: new WebAssembly.Memory({ initial: 256 }),
         ...importObject?.env,
@@ -192,12 +186,7 @@ export class WASMMachine {
     for (const [name, value] of Object.entries(exports)) {
       if (typeof value === 'function') {
         const index = this.nextIndex++;
-        this.registerWASMFunction(
-          index,
-          value as WebAssembly.Function,
-          name,
-          `WASM: ${name}`
-        );
+        this.registerWASMFunction(index, value as WebAssembly.Function, name, `WASM: ${name}`);
         wasmCount++;
       }
     }
@@ -214,19 +203,58 @@ export class WASMMachine {
     // Simple WASM that exports a function and uses call_indirect
     // (f64, f64) -> f64 add function
     const wasmBytes = new Uint8Array([
-      0x00, 0x61, 0x73, 0x6d, // magic
-      0x01, 0x00, 0x00, 0x00, // version
+      0x00,
+      0x61,
+      0x73,
+      0x6d, // magic
+      0x01,
+      0x00,
+      0x00,
+      0x00, // version
       // Type section
-      0x01, 0x07, 0x01,       // section id=1, size=7, 1 type
-      0x60, 0x02, 0x7f, 0x7f, 0x01, 0x7f, // (i32, i32) -> i32
+      0x01,
+      0x07,
+      0x01, // section id=1, size=7, 1 type
+      0x60,
+      0x02,
+      0x7f,
+      0x7f,
+      0x01,
+      0x7f, // (i32, i32) -> i32
       // Function section
-      0x03, 0x02, 0x01, 0x00, // section id=3, size=2, 1 func, type 0
+      0x03,
+      0x02,
+      0x01,
+      0x00, // section id=3, size=2, 1 func, type 0
       // Table section
-      0x04, 0x04, 0x01, 0x70, 0x00, 0x01, // section id=4, funcref table, min=1
+      0x04,
+      0x04,
+      0x01,
+      0x70,
+      0x00,
+      0x01, // section id=4, funcref table, min=1
       // Export section
-      0x07, 0x08, 0x01, 0x03, 0x61, 0x64, 0x64, 0x00, 0x00, // export "add" at index 0
+      0x07,
+      0x08,
+      0x01,
+      0x03,
+      0x61,
+      0x64,
+      0x64,
+      0x00,
+      0x00, // export "add" at index 0
       // Code section
-      0x0a, 0x09, 0x01, 0x07, 0x00, 0x20, 0x00, 0x20, 0x01, 0x6a, 0x0b, // local.get 0, local.get 1, i32.add, end
+      0x0a,
+      0x09,
+      0x01,
+      0x07,
+      0x00,
+      0x20,
+      0x00,
+      0x20,
+      0x01,
+      0x6a,
+      0x0b, // local.get 0, local.get 1, i32.add, end
     ]);
 
     await this.loadWASM(wasmBytes);
@@ -237,16 +265,16 @@ export class WASMMachine {
    */
   getTableInfo(): { index: number; entry: HookEntry | null }[] {
     const info: { index: number; entry: HookEntry | null }[] = [];
-    
+
     for (let i = 0; i < this.table.length; i++) {
       const fn = this.table.get(i);
       const entry = this.registry.get(i);
-      
+
       if (fn || entry) {
         info.push({ index: i, entry: entry || null });
       }
     }
-    
+
     return info;
   }
 
@@ -258,10 +286,10 @@ export class WASMMachine {
     console.log(`  Table length: ${this.length}`);
     console.log(`  Registry size: ${this.registry.size}`);
     console.log(`  Initialized: ${this.initialized ? 'Yes' : 'No'}`);
-    
+
     if (this.registry.size > 0) {
       console.log(`\n${ANSI.dim}Registered Functions:${ANSI.reset}`);
-      
+
       for (const [index, entry] of this.registry) {
         const icon = entry.isWASM ? '⚡ WASM' : '📦 JS  ';
         const type = entry.isWASM ? ANSI.cyan : ANSI.yellow;
@@ -289,7 +317,7 @@ export const DefaultHooks = {
   entropy: (input: number[]): number => {
     const sum = input.reduce((a, b) => a + b, 0);
     if (sum === 0) return 0;
-    
+
     return -input.reduce((acc, val) => {
       if (val === 0) return acc;
       const p = val / sum;
@@ -363,10 +391,14 @@ export async function demoWASMTable(): Promise<void> {
 
   // Hot-swap demo
   console.log(`\n${ANSI.bold}Hot-swap Demo:${ANSI.reset}`);
-  machine.hotSwap(0, (input: number[]): number => {
-    const [exposure, age, accessCount] = input;
-    return (exposure * 0.5 + age * 0.2 + accessCount * 0.3) * 100;
-  }, 'improved v2');
+  machine.hotSwap(
+    0,
+    (input: number[]): number => {
+      const [exposure, age, accessCount] = input;
+      return (exposure * 0.5 + age * 0.2 + accessCount * 0.3) * 100;
+    },
+    'improved v2'
+  );
 
   const newRisk = machine.execute(0, riskInput);
   console.log(`  New Risk Score: ${newRisk.toFixed(2)}`);
@@ -380,7 +412,7 @@ export async function demoWASMTable(): Promise<void> {
   try {
     console.log(`${ANSI.bold}Loading Test WASM:${ANSI.reset}`);
     await machine.loadTestWASM();
-    
+
     // Try calling WASM function
     const wasmHook = machine.getHook(5);
     if (wasmHook?.isWASM) {

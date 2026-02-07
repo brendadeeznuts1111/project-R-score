@@ -5,7 +5,7 @@ const PORT = 3123;
 let server: { stop: () => void } | null = null;
 
 function wait(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 // Integration smoke: HTTP + WS upgrade
@@ -32,7 +32,7 @@ describe('barber-server integration', () => {
 
   test('ws upgrade responds', async () => {
     const ws = new WebSocket(`ws://localhost:${PORT}/ws/dashboard`);
-    const opened = await new Promise<boolean>((resolve) => {
+    const opened = await new Promise<boolean>(resolve => {
       ws.onopen = () => resolve(true);
       ws.onerror = () => resolve(false);
     });

@@ -17,13 +17,19 @@ const COLORS = {
   green: '\x1b[32m',
   yellow: '\x1b[33m',
   red: '\x1b[31m',
-  gray: '\x1b[90m'
+  gray: '\x1b[90m',
 };
 
 function wrapAnsiLine(text: string, columns = Number(Bun.env.COLUMNS || 100)) {
-  const wrap = (Bun as unknown as {
-    wrapAnsi?: (input: string, width: number, options?: { hard?: boolean; wordWrap?: boolean; trim?: boolean }) => string;
-  }).wrapAnsi;
+  const wrap = (
+    Bun as unknown as {
+      wrapAnsi?: (
+        input: string,
+        width: number,
+        options?: { hard?: boolean; wordWrap?: boolean; trim?: boolean }
+      ) => string;
+    }
+  ).wrapAnsi;
   if (typeof wrap === 'function') {
     return wrap(text, columns, { wordWrap: true, trim: false });
   }
@@ -70,8 +76,8 @@ Examples:
 function latestDir() {
   if (!existsSync(LOG_ROOT)) return null;
   const dirs = readdirSync(LOG_ROOT, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory() && entry.name.startsWith('sampling-'))
-    .map((entry) => entry.name);
+    .filter(entry => entry.isDirectory() && entry.name.startsWith('sampling-'))
+    .map(entry => entry.name);
   if (!dirs.length) return null;
   dirs.sort((a, b) => b.localeCompare(a));
   return `${LOG_ROOT}/${dirs[0]}`;
@@ -82,7 +88,7 @@ function runSampling(args: string[]) {
     cmd: ['bun', 'run', SCRIPT_PATH, ...args],
     stdin: 'inherit',
     stdout: 'inherit',
-    stderr: 'inherit'
+    stderr: 'inherit',
   });
   return child.exited;
 }
@@ -92,7 +98,7 @@ function runUploadLatest(args: string[]) {
     cmd: ['bun', 'run', UPLOAD_LATEST_PATH, ...args],
     stdin: 'inherit',
     stdout: 'inherit',
-    stderr: 'inherit'
+    stderr: 'inherit',
   });
   return child.exited;
 }
@@ -102,13 +108,13 @@ function runListR2(args: string[]) {
     cmd: ['bun', 'run', LIST_R2_PATH, ...args],
     stdin: 'inherit',
     stdout: 'inherit',
-    stderr: 'inherit'
+    stderr: 'inherit',
   });
   return child.exited;
 }
 
 function ensureArg(args: string[], key: string, value: string) {
-  if (args.some((arg) => arg.startsWith(`${key}=`))) return args;
+  if (args.some(arg => arg.startsWith(`${key}=`))) return args;
   return [`${key}=${value}`, ...args];
 }
 
@@ -123,7 +129,7 @@ function runRuntimeProfile(kind: 'cpu-md' | 'heap-md', args: string[]) {
     cmd: ['bun', ...flags, WORKLOAD_PATH, ...baseArgs],
     stdin: 'inherit',
     stdout: 'inherit',
-    stderr: 'inherit'
+    stderr: 'inherit',
   });
   return child.exited;
 }
@@ -150,7 +156,7 @@ function extractPort(url: string) {
 }
 
 function urlFromArgs(args: string[]) {
-  const matched = args.find((arg) => arg.startsWith('--url='));
+  const matched = args.find(arg => arg.startsWith('--url='));
   return matched ? matched.slice('--url='.length) : DEFAULT_URL;
 }
 
@@ -162,13 +168,13 @@ async function ensureDashboard(url: string) {
     cmd: [
       'sh',
       '-lc',
-      `env AUTO_UNREF=false PORT=${port} ${bunBin} ${DASHBOARD_PATH} >/tmp/barbershop-dashboard.log 2>&1`
+      `env AUTO_UNREF=false PORT=${port} ${bunBin} ${DASHBOARD_PATH} >/tmp/barbershop-dashboard.log 2>&1`,
     ],
     env: { ...Bun.env },
     stdin: 'ignore',
     stdout: 'ignore',
     stderr: 'ignore',
-    detached: true
+    detached: true,
   });
   starter.unref();
   const deadline = Date.now() + 30000;
@@ -189,7 +195,7 @@ switch (command) {
     process.exit(0);
   }
   case 'run': {
-    const hasUrl = rest.some((arg) => arg.startsWith('--url='));
+    const hasUrl = rest.some(arg => arg.startsWith('--url='));
     const args = hasUrl ? rest : [`--url=${DEFAULT_URL}`, ...rest];
     const code = await runSampling(args);
     process.exit(code);
@@ -200,7 +206,7 @@ switch (command) {
       '--iterations=25',
       '--interval-us=200',
       '--upload-r2=false',
-      ...rest
+      ...rest,
     ];
     const code = await runSampling(args);
     process.exit(code);
@@ -212,7 +218,7 @@ switch (command) {
       '--iterations=25',
       '--interval-us=200',
       '--upload-r2=false',
-      ...rest
+      ...rest,
     ];
     const code = await runSampling(args);
     process.exit(code);
@@ -225,7 +231,7 @@ switch (command) {
       '--interval-us=200',
       '--upload-r2=true',
       '--require-r2=true',
-      ...rest
+      ...rest,
     ];
     const code = await runSampling(args);
     process.exit(code);
@@ -268,7 +274,9 @@ switch (command) {
   case 'heap-md': {
     const target = urlFromArgs(rest);
     await ensureDashboard(target);
-    out(`${COLORS.gray}[profile-cli] writing heap profiles to ${PROFILE_OUTPUT_DIR}${COLORS.reset}`);
+    out(
+      `${COLORS.gray}[profile-cli] writing heap profiles to ${PROFILE_OUTPUT_DIR}${COLORS.reset}`
+    );
     const code = await runRuntimeProfile('heap-md', rest);
     process.exit(code);
   }
@@ -284,7 +292,13 @@ switch (command) {
       process.exit(1);
     }
     out(`${COLORS.cyan}[profile-cli]${COLORS.reset} latest=${dir}`);
-    const entries = ['summary.json', 'sampling-profile.tar.gz', 'functions.txt', 'bytecodes.txt', 'stack-traces.txt'];
+    const entries = [
+      'summary.json',
+      'sampling-profile.tar.gz',
+      'functions.txt',
+      'bytecodes.txt',
+      'stack-traces.txt',
+    ];
     for (const file of entries) {
       const path = `${dir}/${file}`;
       if (await Bun.file(path).exists()) {

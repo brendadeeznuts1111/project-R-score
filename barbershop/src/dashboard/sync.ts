@@ -1,6 +1,6 @@
 /**
  * Real-time Sync Engine
- * 
+ *
  * Cross-dashboard synchronization with:
  * - WebSocket-based broadcasting
  * - State reconciliation
@@ -85,7 +85,7 @@ class EventEmitter {
       this.listeners.set(event, new Set());
     }
     this.listeners.get(event)!.add(callback as EventCallback);
-    
+
     return () => this.off(event, callback);
   }
 
@@ -194,7 +194,7 @@ class UpdateBuffer {
 
   push(update: RealTimeUpdate): void {
     this.buffer.push(update);
-    
+
     // Trim if exceeds max size
     if (this.buffer.length > this.maxSize) {
       this.buffer = this.buffer.slice(-this.maxSize);
@@ -269,7 +269,7 @@ export class SyncEngine {
       this.ws.onopen = () => {
         this.reconnectAttempts = 0;
         this.updateState({ status: 'connected' });
-        
+
         // Join channel
         this.send({
           type: 'join',
@@ -285,7 +285,7 @@ export class SyncEngine {
         this.emitter.emit('connected', { timestamp: Date.now() });
       };
 
-      this.ws.onmessage = (event) => {
+      this.ws.onmessage = event => {
         try {
           const message = JSON.parse(event.data) as SyncMessage;
           this.handleMessage(message);
@@ -297,7 +297,7 @@ export class SyncEngine {
       this.ws.onclose = () => {
         this.updateState({ status: 'disconnected' });
         this.stopHeartbeat();
-        
+
         if (this.config.reconnect) {
           this.scheduleReconnect();
         }
@@ -305,7 +305,7 @@ export class SyncEngine {
         this.emitter.emit('disconnected', { timestamp: Date.now() });
       };
 
-      this.ws.onerror = (error) => {
+      this.ws.onerror = error => {
         this.updateState({ status: 'error' });
         this.addError('WebSocket error');
         this.emitter.emit('error', error);
@@ -368,7 +368,7 @@ export class SyncEngine {
     const update = message.payload as RealTimeUpdate;
     this.buffer.push(update);
     this.updateState({ lastSyncAt: Date.now() });
-    
+
     // Send ack
     this.send({
       type: 'ack',
@@ -383,15 +383,18 @@ export class SyncEngine {
 
   private handlePresence(message: SyncMessage): void {
     const info = message.payload as PresenceInfo;
-    
-    if (message.type === 'join' || message.timestamp > (this.presence.get(info.id)?.lastSeen || 0)) {
+
+    if (
+      message.type === 'join' ||
+      message.timestamp > (this.presence.get(info.id)?.lastSeen || 0)
+    ) {
       this.presence.update(info.id, info);
     }
   }
 
   private handleHeartbeat(message: SyncMessage): void {
     this.presence.heartbeat(message.sender);
-    
+
     // Calculate latency
     const now = Date.now();
     const latency = now - message.timestamp;
@@ -443,10 +446,13 @@ export class SyncEngine {
     this.buffer.push(fullUpdate);
   }
 
-  async broadcastWithAck(update: Omit<RealTimeUpdate, 'timestamp' | 'sequence'>, timeout = 5000): Promise<boolean> {
-    return new Promise((resolve) => {
+  async broadcastWithAck(
+    update: Omit<RealTimeUpdate, 'timestamp' | 'sequence'>,
+    timeout = 5000
+  ): Promise<boolean> {
+    return new Promise(resolve => {
       const seq = this.sequence + 1;
-      
+
       const timer = setTimeout(() => {
         this.pendingAcks.delete(seq);
         resolve(false);
@@ -506,7 +512,7 @@ export class SyncEngine {
     this.updateState({ status: 'reconnecting' });
 
     const delay = this.config.reconnectDelay * this.reconnectAttempts;
-    
+
     this.reconnectTimer = setTimeout(() => {
       console.log(`Reconnecting... (${this.reconnectAttempts}/${this.config.reconnectAttempts})`);
       this.connect();
@@ -580,7 +586,9 @@ export class SyncEngine {
   // ==================== Utilities ====================
 
   private getClientId(): string {
-    return this.state.connectionId || `client-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    return (
+      this.state.connectionId || `client-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
+    );
   }
 
   isConnected(): boolean {

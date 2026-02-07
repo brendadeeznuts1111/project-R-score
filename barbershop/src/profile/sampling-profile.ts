@@ -7,7 +7,7 @@ import { getFactorySecret } from './factory-secrets';
 
 function arg(name: string, fallback: string) {
   const exact = `--${name}=`;
-  const found = Bun.argv.find((a) => a.startsWith(exact));
+  const found = Bun.argv.find(a => a.startsWith(exact));
   return found ? found.slice(exact.length) : fallback;
 }
 
@@ -53,7 +53,8 @@ async function resolveR2Config(): Promise<R2Config | null> {
   const prefix = Bun.env.R2_PREFIX || (await getFactorySecret('R2_PREFIX')) || envPrefix;
   const endpoint = envEndpoint || (await getFactorySecret('R2_ENDPOINT')) || '';
   const accessKeyId = envAccessKeyId || (await getFactorySecret('R2_ACCESS_KEY_ID')) || '';
-  const secretAccessKey = envSecretAccessKey || (await getFactorySecret('R2_SECRET_ACCESS_KEY')) || '';
+  const secretAccessKey =
+    envSecretAccessKey || (await getFactorySecret('R2_SECRET_ACCESS_KEY')) || '';
   if (!bucket || !endpoint || !accessKeyId || !secretAccessKey) return null;
   return { bucket, prefix, endpoint, accessKeyId, secretAccessKey };
 }
@@ -64,7 +65,7 @@ const durationMs = Math.round((performance.now() - startedAt) * 1000) / 1000;
 
 const stackTracesRaw = (profile as Record<string, unknown>).stackTraces;
 const stackTraces = Array.isArray(stackTracesRaw)
-  ? stackTracesRaw.map((item) => String(item)).join('\n\n')
+  ? stackTracesRaw.map(item => String(item)).join('\n\n')
   : String(stackTracesRaw ?? '');
 const functionsText = String((profile as Record<string, unknown>).functions ?? '');
 const bytecodesText = String((profile as Record<string, unknown>).bytecodes ?? '');
@@ -82,19 +83,22 @@ await Bun.write(
       durationMs,
       generatedAt: now.toISOString(),
       profileKeys: Object.keys(profile as Record<string, unknown>),
-      files: ['functions.txt', 'bytecodes.txt', 'stack-traces.txt']
+      files: ['functions.txt', 'bytecodes.txt', 'stack-traces.txt'],
     },
     null,
     2
   )
 );
 
-const archive = new Bun.Archive({
-  'summary.json': await Bun.file(`${runDir}/summary.json`).text(),
-  'functions.txt': functionsText,
-  'bytecodes.txt': bytecodesText,
-  'stack-traces.txt': stackTraces
-}, { compress: 'gzip', level: 9 });
+const archive = new Bun.Archive(
+  {
+    'summary.json': await Bun.file(`${runDir}/summary.json`).text(),
+    'functions.txt': functionsText,
+    'bytecodes.txt': bytecodesText,
+    'stack-traces.txt': stackTraces,
+  },
+  { compress: 'gzip', level: 9 }
+);
 
 await Bun.write(`${runDir}/sampling-profile.tar.gz`, archive);
 
@@ -103,7 +107,8 @@ let uploadedSummaryKey: string | null = null;
 if (uploadR2) {
   const r2 = await resolveR2Config();
   if (!r2) {
-    const message = '[sampling-profile] R2 upload skipped (missing R2 config: bucket/endpoint/access key/secret key)';
+    const message =
+      '[sampling-profile] R2 upload skipped (missing R2 config: bucket/endpoint/access key/secret key)';
     if (requireR2) {
       throw new Error(message);
     }
@@ -119,14 +124,14 @@ if (uploadR2) {
       endpoint: r2.endpoint,
       accessKeyId: r2.accessKeyId,
       secretAccessKey: r2.secretAccessKey,
-      type: 'application/gzip'
+      type: 'application/gzip',
     });
     await S3Client.write(summaryKey, summaryText, {
       bucket: r2.bucket,
       endpoint: r2.endpoint,
       accessKeyId: r2.accessKeyId,
       secretAccessKey: r2.secretAccessKey,
-      type: 'application/json'
+      type: 'application/json',
     });
     uploadedArchiveKey = archiveKey;
     uploadedSummaryKey = summaryKey;
@@ -134,7 +139,9 @@ if (uploadR2) {
 }
 
 console.log(`[sampling-profile] target=${target}`);
-console.log(`[sampling-profile] iterations=${iterations} sampleIntervalUs=${sampleIntervalUs} durationMs=${durationMs}`);
+console.log(
+  `[sampling-profile] iterations=${iterations} sampleIntervalUs=${sampleIntervalUs} durationMs=${durationMs}`
+);
 console.log(`[sampling-profile] output=${runDir}`);
 console.log(`[sampling-profile] archive=${runDir}/sampling-profile.tar.gz`);
 if (uploadedArchiveKey) {

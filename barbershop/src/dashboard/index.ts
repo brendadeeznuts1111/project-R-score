@@ -1,6 +1,6 @@
 /**
  * Dashboard System
- * 
+ *
  * Unified dashboard exports:
  * - Types and interfaces
  * - Composition API (useDashboard)
@@ -45,7 +45,7 @@ export {
   type CacheEntry,
   type ExportConfig,
   type ExportFormat,
-  
+
   // Constants and helpers
   DEFAULT_DASHBOARD_CONFIG,
   DEFAULT_BREAKPOINTS,
@@ -103,21 +103,33 @@ export function createLiveDashboard(
 ) {
   const { DashboardBuilder } = require('./builder');
   const { SyncEngine } = require('./sync');
-  
+
   // Create builder based on view
   let builder: DashboardBuilder;
   switch (view) {
     case 'admin':
-      builder = new DashboardBuilder({ view, theme: options.theme || 'professional' }).buildAdminDashboard();
+      builder = new DashboardBuilder({
+        view,
+        theme: options.theme || 'professional',
+      }).buildAdminDashboard();
       break;
     case 'client':
-      builder = new DashboardBuilder({ view, theme: options.theme || 'light' }).buildClientDashboard();
+      builder = new DashboardBuilder({
+        view,
+        theme: options.theme || 'light',
+      }).buildClientDashboard();
       break;
     case 'barber':
-      builder = new DashboardBuilder({ view, theme: options.theme || 'dark' }).buildBarberDashboard();
+      builder = new DashboardBuilder({
+        view,
+        theme: options.theme || 'dark',
+      }).buildBarberDashboard();
       break;
     case 'analytics':
-      builder = new DashboardBuilder({ view, theme: options.theme || 'professional' }).buildAnalyticsDashboard();
+      builder = new DashboardBuilder({
+        view,
+        theme: options.theme || 'professional',
+      }).buildAnalyticsDashboard();
       break;
     default:
       builder = new DashboardBuilder({ view, theme: options.theme || 'professional' });

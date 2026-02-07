@@ -3,7 +3,12 @@
 console.log('🔍 Checking Bun Crypto APIs');
 console.log('==========================');
 
-console.log('Bun object properties:', Object.getOwnPropertyNames(Bun).filter(name => name.toLowerCase().includes('crypto') || name.toLowerCase().includes('hash')));
+console.log(
+  'Bun object properties:',
+  Object.getOwnPropertyNames(Bun).filter(
+    name => name.toLowerCase().includes('crypto') || name.toLowerCase().includes('hash')
+  )
+);
 
 console.log('globalThis.crypto:', typeof globalThis.crypto);
 

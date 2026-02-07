@@ -24,7 +24,7 @@ export function example1_secretsRiskAnalysis() {
     (input: number[]) => {
       const [exposure, sensitivity, accessCount, ageDays] = input;
       const accessFactor = Math.log10(accessCount + 1);
-      const ageFactor = 1 + (ageDays / 365);
+      const ageFactor = 1 + ageDays / 365;
       return exposure * sensitivity * accessFactor * ageFactor;
     },
     'Calculate secret exposure risk score'
@@ -58,16 +58,20 @@ export function example2_abTesting() {
   console.log(`v1 - Standard: ${v1Result.toFixed(4)} bits`);
 
   // v2: Weighted
-  machine.hotSwap(1, (input: number[]) => {
-    const weighted = input.map((v, i) => v * (i + 1) / input.length);
-    const sum = weighted.reduce((a, b) => a + b, 0);
-    if (sum === 0) return 0;
-    return -weighted.reduce((acc, val) => {
-      if (val === 0) return acc;
-      const p = val / sum;
-      return acc + p * Math.log2(p);
-    }, 0);
-  }, 'weighted v2');
+  machine.hotSwap(
+    1,
+    (input: number[]) => {
+      const weighted = input.map((v, i) => (v * (i + 1)) / input.length);
+      const sum = weighted.reduce((a, b) => a + b, 0);
+      if (sum === 0) return 0;
+      return -weighted.reduce((acc, val) => {
+        if (val === 0) return acc;
+        const p = val / sum;
+        return acc + p * Math.log2(p);
+      }, 0);
+    },
+    'weighted v2'
+  );
 
   const v2Result = machine.execute(1, testData);
   console.log(`v2 - Weighted: ${v2Result.toFixed(4)} bits`);

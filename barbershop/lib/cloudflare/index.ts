@@ -1,13 +1,13 @@
 /**
  * Cloudflare Integration Library
- * 
+ *
  * High-performance Cloudflare API client using Bun-native fetch.
  * Provides zone management, DNS records, SSL/TLS, caching, and analytics.
- * 
+ *
  * Secrets Integration:
  *   import { createClientFromSecrets } from './lib/cloudflare';
  *   const client = await createClientFromSecrets();
- * 
+ *
  * Unified Service (v1.3.7+):
  *   import { unifiedCloudflare } from './lib/cloudflare';
  *   await unifiedCloudflare.deployStack({...});
@@ -34,10 +34,7 @@ export {
   type CloudflareCredentials,
 } from './secrets-bridge';
 
-export {
-  UnifiedCloudflareService,
-  unifiedCloudflare,
-} from './unified-client';
+export { UnifiedCloudflareService, unifiedCloudflare } from './unified-client';
 
 export {
   UnifiedVersionManager,
@@ -78,10 +75,7 @@ export type {
   DataCLIConfig,
 } from './bun-data-api';
 
-export {
-  FactoryWagerRegistry,
-  registry,
-} from './registry';
+export { FactoryWagerRegistry, registry } from './registry';
 
 export type {
   RegistryEntry,

@@ -1,6 +1,6 @@
 /**
  * Theme Portal JavaScript
- * 
+ *
  * Handles theme loading, switching, and preview updates
  * Uses Bun's native TOML import support
  */
@@ -20,7 +20,7 @@ const previewFrame = document.getElementById('previewFrame');
 function init(): void {
   renderThemeGrid();
   applyTheme(themes.light, 'light');
-  
+
   // Listen for theme changes
   window.addEventListener('themechange', ((e: CustomEvent) => {
     console.log('Theme changed to:', e.detail.name);
@@ -32,13 +32,14 @@ function init(): void {
  */
 function renderThemeGrid(): void {
   if (!themeGrid) return;
-  
-  themeGrid.innerHTML = themeList.map(theme => {
-    const themeData = themes[theme.id];
-    const primaryColor = themeData.colors.primary[500];
-    const secondaryColor = themeData.colors.secondary[500];
-    
-    return `
+
+  themeGrid.innerHTML = themeList
+    .map(theme => {
+      const themeData = themes[theme.id];
+      const primaryColor = themeData.colors.primary[500];
+      const secondaryColor = themeData.colors.secondary[500];
+
+      return `
       <article 
         class="theme-card ${theme.id === currentTheme ? 'active' : ''}"
         data-theme="${theme.id}"
@@ -54,8 +55,9 @@ function renderThemeGrid(): void {
         </div>
       </article>
     `;
-  }).join('');
-  
+    })
+    .join('');
+
   // Add click handlers
   document.querySelectorAll('.theme-card').forEach(card => {
     card.addEventListener('click', () => {
@@ -73,20 +75,20 @@ function selectTheme(themeId: ThemeName): void {
     console.error(`Theme "${themeId}" not found`);
     return;
   }
-  
+
   currentTheme = themeId;
-  
+
   // Apply theme
   applyTheme(themes[themeId], themeId);
-  
+
   // Update active card
   document.querySelectorAll('.theme-card').forEach(card => {
     card.classList.toggle('active', card.getAttribute('data-theme') === themeId);
   });
-  
+
   // Store preference
   localStorage.setItem('fw-theme', themeId);
-  
+
   console.log(`✅ Applied theme: ${themeId}`);
 }
 
@@ -110,30 +112,46 @@ function exportThemeCSS(theme: ThemeConfig, name: string): string {
 
 :root {
   /* Primary Colors */
-  ${Object.entries(theme.colors.primary).map(([k, v]) => `  --color-primary-${k}: ${v};`).join('\n  ')}
+  ${Object.entries(theme.colors.primary)
+    .map(([k, v]) => `  --color-primary-${k}: ${v};`)
+    .join('\n  ')}
   
   /* Secondary Colors */
-  ${Object.entries(theme.colors.secondary).map(([k, v]) => `  --color-secondary-${k}: ${v};`).join('\n  ')}
+  ${Object.entries(theme.colors.secondary)
+    .map(([k, v]) => `  --color-secondary-${k}: ${v};`)
+    .join('\n  ')}
   
   /* Semantic Colors */
-  ${Object.entries(theme.colors.background).map(([k, v]) => `  --color-background-${k}: ${v};`).join('\n  ')}
+  ${Object.entries(theme.colors.background)
+    .map(([k, v]) => `  --color-background-${k}: ${v};`)
+    .join('\n  ')}
   
-  ${Object.entries(theme.colors.text).map(([k, v]) => `  --color-text-${k}: ${v};`).join('\n  ')}
+  ${Object.entries(theme.colors.text)
+    .map(([k, v]) => `  --color-text-${k}: ${v};`)
+    .join('\n  ')}
   
-  ${Object.entries(theme.colors.border).map(([k, v]) => `  --color-border-${k}: ${v};`).join('\n  ')}
+  ${Object.entries(theme.colors.border)
+    .map(([k, v]) => `  --color-border-${k}: ${v};`)
+    .join('\n  ')}
   
   /* Typography */
   --font-sans: ${theme.typography.fontSans};
   --font-mono: ${theme.typography.fontMono};
   
   /* Shadows */
-  ${Object.entries(theme.shadows).map(([k, v]) => `  --shadow-${k}: ${v};`).join('\n  ')}
+  ${Object.entries(theme.shadows)
+    .map(([k, v]) => `  --shadow-${k}: ${v};`)
+    .join('\n  ')}
   
   /* Border Radius */
-  ${Object.entries(theme.radii).map(([k, v]) => `  --radius-${k}: ${v};`).join('\n  ')}
+  ${Object.entries(theme.radii)
+    .map(([k, v]) => `  --radius-${k}: ${v};`)
+    .join('\n  ')}
   
   /* Transitions */
-  ${Object.entries(theme.transitions).map(([k, v]) => `  --transition-${k}: ${v};`).join('\n  ')}
+  ${Object.entries(theme.transitions)
+    .map(([k, v]) => `  --transition-${k}: ${v};`)
+    .join('\n  ')}
 }
 `;
   return css.trim();

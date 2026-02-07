@@ -1,6 +1,6 @@
 /**
  * Header Compression for HTTP Requests/Responses
- * 
+ *
  * Features:
  * - Header field compression (HPACK-like)
  * - Telemetry header optimization
@@ -17,25 +17,25 @@ const STATIC_HEADER_TABLE: Record<string, number> = {
   ':path': 3,
   ':scheme': 4,
   ':status': 5,
-  'accept': 6,
+  accept: 6,
   'accept-encoding': 7,
   'accept-language': 8,
   'content-length': 9,
   'content-type': 10,
-  'cookie': 11,
-  'date': 12,
-  'etag': 13,
-  'host': 14,
+  cookie: 11,
+  date: 12,
+  etag: 13,
+  host: 14,
   'if-modified-since': 15,
   'if-none-match': 16,
   'last-modified': 17,
-  'location': 18,
-  'referer': 19,
-  'server': 20,
+  location: 18,
+  referer: 19,
+  server: 20,
   'set-cookie': 21,
   'user-agent': 22,
-  'vary': 23,
-  'via': 24,
+  vary: 23,
+  via: 24,
   // FactoryWager specific
   'x-fw-session': 25,
   'x-fw-telemetry': 26,
@@ -93,16 +93,16 @@ export class HeaderCompressor {
    */
   compress(headers: Record<string, string>): CompressedHeaders {
     const originalSize = JSON.stringify(headers).length;
-    
+
     // Strategy 1: Dictionary compression for common headers
     const dictionaryCompressed = this.compressWithDictionary(headers);
-    
+
     // Strategy 2: Full compression for large payloads
     if (originalSize > 1024) {
       const serialized = JSON.stringify(dictionaryCompressed);
       const compressed = compressData(serialized, 'zstd');
       const base64 = Buffer.from(compressed).toString('base64');
-      
+
       return {
         headers: { 'x-fw-compressed': base64 },
         compressed: true,
@@ -143,17 +143,17 @@ export class HeaderCompressor {
       case 'gzip': {
         const compressedData = compressed.headers['x-fw-compressed'];
         if (!compressedData) return compressed.headers;
-        
+
         const buffer = Buffer.from(compressedData, 'base64');
         const decompressed = decompressData(buffer, compressed.algorithm);
         const json = new TextDecoder().decode(decompressed);
         const parsed = JSON.parse(json);
         return this.decompressWithDictionary(parsed);
       }
-      
+
       case 'dictionary':
         return this.decompressWithDictionary(compressed.headers);
-        
+
       default:
         return compressed.headers;
     }
@@ -162,9 +162,7 @@ export class HeaderCompressor {
   /**
    * Compress using static/dynamic dictionary
    */
-  private compressWithDictionary(
-    headers: Record<string, string>
-  ): Record<string, string> {
+  private compressWithDictionary(headers: Record<string, string>): Record<string, string> {
     const result: Record<string, string> = {};
 
     for (const [key, value] of Object.entries(headers)) {
@@ -193,9 +191,7 @@ export class HeaderCompressor {
   /**
    * Decompress using static/dynamic dictionary
    */
-  private decompressWithDictionary(
-    headers: Record<string, string>
-  ): Record<string, string> {
+  private decompressWithDictionary(headers: Record<string, string>): Record<string, string> {
     const result: Record<string, string> = {};
 
     for (const [key, value] of Object.entries(headers)) {
@@ -399,28 +395,24 @@ export class HeaderCompressor {
 /**
  * Compress request headers for Bun.fetch()
  */
-export function compressRequestHeaders(
-  headers: Record<string, string>
-): Record<string, string> {
+export function compressRequestHeaders(headers: Record<string, string>): Record<string, string> {
   const compressor = new HeaderCompressor();
   const compressed = compressor.compress(headers);
-  
+
   if (compressed.compressed && compressed.algorithm !== 'none') {
     return {
       ...compressed.headers,
       'x-fw-header-compression': compressed.algorithm,
     };
   }
-  
+
   return headers;
 }
 
 /**
  * Decompress response headers
  */
-export function decompressResponseHeaders(
-  headers: Record<string, string>
-): Record<string, string> {
+export function decompressResponseHeaders(headers: Record<string, string>): Record<string, string> {
   const compression = headers['x-fw-header-compression'];
   if (!compression) return headers;
 

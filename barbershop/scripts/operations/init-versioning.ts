@@ -15,10 +15,10 @@ interface InitOptions {
 
 function parseArgs(): InitOptions {
   const options: InitOptions = {};
-  
+
   for (let i = 1; i < Bun.argv.length; i++) {
     const arg = Bun.argv[i];
-    
+
     if (arg === '--migrate-all') options.migrateAll = true;
     if (arg === '--backup-r2') options.backupR2 = true;
     if (arg === '--dry-run') options.dryRun = true;
@@ -28,7 +28,7 @@ function parseArgs(): InitOptions {
       process.exit(0);
     }
   }
-  
+
   return options;
 }
 
@@ -50,7 +50,10 @@ function showHelp() {
   console.log('  bun init-versioning.ts --dry-run');
 }
 
-function styled(text: string, type: 'success' | 'warning' | 'error' | 'info' | 'primary' | 'accent' | 'muted'): string {
+function styled(
+  text: string,
+  type: 'success' | 'warning' | 'error' | 'info' | 'primary' | 'accent' | 'muted'
+): string {
   const colors = {
     success: '\x1b[32m',
     warning: '\x1b[33m',
@@ -58,7 +61,7 @@ function styled(text: string, type: 'success' | 'warning' | 'error' | 'info' | '
     info: '\x1b[36m',
     primary: '\x1b[34m',
     accent: '\x1b[35m',
-    muted: '\x1b[90m'
+    muted: '\x1b[90m',
   };
   const reset = '\x1b[0m';
   return `${colors[type]}${text}${reset}`;
@@ -66,27 +69,27 @@ function styled(text: string, type: 'success' | 'warning' | 'error' | 'info' | '
 
 async function main() {
   const options = parseArgs();
-  
+
   console.log(styled('🔄 Initializing Versioning System', 'primary'));
   console.log(styled('================================', 'muted'));
   console.log();
-  
+
   if (options.dryRun) {
     console.log(styled('🔍 DRY RUN MODE - No changes will be made', 'warning'));
     console.log();
   }
-  
+
   try {
     // Step 1: Discover existing secrets
     console.log(styled('📋 Step 1: Discovering existing secrets...', 'info'));
     const existingSecrets = await discoverExistingSecrets();
-    
+
     console.log(styled(`   Found ${existingSecrets.length} existing secrets`, 'success'));
     existingSecrets.forEach(secret => {
       console.log(styled(`   • ${secret.key}`, 'muted'));
     });
     console.log();
-    
+
     // Step 2: Create backup if requested
     if (options.backupR2 && !options.dryRun) {
       console.log(styled('💾 Step 2: Creating R2 backup...', 'info'));
@@ -97,19 +100,19 @@ async function main() {
       console.log(styled('💾 Step 2: Would create R2 backup', 'info'));
       console.log();
     }
-    
+
     // Step 3: Migrate to versioning system
     if (options.migrateAll) {
       console.log(styled('🔄 Step 3: Migrating to versioning system...', 'info'));
-      
+
       for (const secret of existingSecrets) {
         const alreadyVersioned = await checkIfVersioned(secret.key);
-        
+
         if (alreadyVersioned && !options.force) {
           console.log(styled(`   ⏭️  Skipping ${secret.key} (already versioned)`, 'muted'));
           continue;
         }
-        
+
         if (options.dryRun) {
           console.log(styled(`   🔄 Would migrate: ${secret.key}`, 'info'));
         } else {
@@ -119,7 +122,7 @@ async function main() {
       }
       console.log();
     }
-    
+
     // Step 4: Generate initial reports
     if (!options.dryRun) {
       console.log(styled('📊 Step 4: Generating initial reports...', 'info'));
@@ -127,34 +130,35 @@ async function main() {
       console.log(styled('   ✅ Reports generated', 'success'));
       console.log();
     }
-    
+
     console.log(styled('🎉 Versioning initialization completed!', 'success'));
-    
+
     if (options.dryRun) {
       console.log(styled('💡 Remove --dry-run to perform actual migration', 'info'));
     }
-    
   } catch (error) {
     console.error(styled(`❌ Initialization failed: ${error.message}`, 'error'));
     process.exit(1);
   }
 }
 
-async function discoverExistingSecrets(): Promise<Array<{ key: string; service: string; name: string }>> {
+async function discoverExistingSecrets(): Promise<
+  Array<{ key: string; service: string; name: string }>
+> {
   // In a real implementation, this would scan Bun secrets or a registry
   // For demo purposes, we'll return some example secrets
-  
+
   const secrets = [
     { key: 'api:github_token', service: 'api', name: 'github_token' },
     { key: 'database:password', service: 'database', name: 'password' },
     { key: 'jwt:secret', service: 'jwt', name: 'secret' },
     { key: 'stripe:webhook_secret', service: 'stripe', name: 'webhook_secret' },
-    { key: 'redis:auth', service: 'redis', name: 'auth' }
+    { key: 'redis:auth', service: 'redis', name: 'auth' },
   ];
-  
+
   // Try to get actual values to verify they exist
   const existingSecrets = [];
-  
+
   for (const secret of secrets) {
     try {
       const value = await secretManager.getSecret(secret.service, secret.name);
@@ -165,7 +169,7 @@ async function discoverExistingSecrets(): Promise<Array<{ key: string; service: 
       // Secret doesn't exist or can't be accessed
     }
   }
-  
+
   return existingSecrets;
 }
 
@@ -178,63 +182,69 @@ async function checkIfVersioned(key: string): Promise<boolean> {
   }
 }
 
-async function createBackupInR2(secrets: Array<{ key: string; service: string; name: string }>): Promise<void> {
+async function createBackupInR2(
+  secrets: Array<{ key: string; service: string; name: string }>
+): Promise<void> {
   const backupData = {
     timestamp: new Date().toISOString(),
     version: '1.0',
-    secrets: []
+    secrets: [],
   };
-  
+
   for (const secret of secrets) {
     try {
       const value = await secretManager.getSecret(secret.service, secret.name);
       backupData.secrets.push({
         key: secret.key,
         value: value,
-        discovered: new Date().toISOString()
+        discovered: new Date().toISOString(),
       });
     } catch (error) {
       backupData.secrets.push({
         key: secret.key,
         error: error.message,
-        discovered: new Date().toISOString()
+        discovered: new Date().toISOString(),
       });
     }
   }
-  
+
   // Store backup in R2
   const backupKey = `backups/versioning-init-${Date.now()}.json`;
   const backupContent = JSON.stringify(backupData, null, 2);
-  
+
   const r2Credentials = {
     accountId: '7a470541a704caaf91e71efccc78fd36',
     accessKeyId: '84c87a7398c721036cd6e95df42d718c',
     secretAccessKey: '8a99fcc8f6202fc3961fa3e889318ced8228a483b7e57e788fb3cba5e5592015',
-    bucketName: 'bun-executables'
+    bucketName: 'bun-executables',
   };
-  
+
   const endpoint = `https://${r2Credentials.accountId}.r2.cloudflarestorage.com`;
   const url = `${endpoint}/${r2Credentials.bucketName}/${backupKey}`;
-  
+
   const authString = `${r2Credentials.accessKeyId}:${r2Credentials.secretAccessKey}`;
   const authHeader = `Basic ${btoa(authString)}`;
-  
+
   await fetch(url, {
     method: 'PUT',
     headers: {
-      'Authorization': authHeader,
+      Authorization: authHeader,
       'Content-Type': 'application/json',
       'x-amz-content-sha256': await Bun.hash(backupContent),
       'x-amz-meta-backup-type': 'versioning-initialization',
-      'x-amz-meta-factorywager-version': '5.1'
+      'x-amz-meta-factorywager-version': '5.1',
     },
-    body: backupContent
+    body: backupContent,
   });
 }
 
-async function migrateSecretToVersioning(secret: { key: string; service: string; name: string }): Promise<void> {
+async function migrateSecretToVersioning(secret: {
+  key: string;
+  service: string;
+  name: string;
+}): Promise<void> {
   const value = await secretManager.getSecret(secret.service, secret.name);
-  
+
   await factoryWagerSecurityCitadel.createImmutableVersion(
     secret.key,
     value,
@@ -246,8 +256,8 @@ async function migrateSecretToVersioning(secret: { key: string; service: string;
       compliance: {
         dataClassification: 'INTERNAL',
         retentionDays: 365,
-        auditRequired: true
-      }
+        auditRequired: true,
+      },
     }
   );
 }
@@ -258,16 +268,16 @@ async function generateInitialReports(secrets: Array<{ key: string }>): Promise<
       timestamp: new Date().toISOString(),
       version: '5.1',
       totalSecrets: secrets.length,
-      migrated: secrets.length
+      migrated: secrets.length,
     },
     secrets: [],
     factorywager: {
       version: '5.1',
       compliance: 'enabled',
-      audit: 'enabled'
-    }
+      audit: 'enabled',
+    },
   };
-  
+
   for (const secret of secrets) {
     try {
       const timeline = await factoryWagerSecurityCitadel.getSecretTimeline(secret.key, 5);
@@ -275,44 +285,44 @@ async function generateInitialReports(secrets: Array<{ key: string }>): Promise<
         key: secret.key,
         versions: timeline.length,
         latestVersion: timeline[0]?.version || 'unknown',
-        status: 'migrated'
+        status: 'migrated',
       });
     } catch (error) {
       report.secrets.push({
         key: secret.key,
         error: error.message,
-        status: 'failed'
+        status: 'failed',
       });
     }
   }
-  
+
   // Store report in R2
   const reportKey = `reports/versioning-initialization-${Date.now()}.json`;
   const reportContent = JSON.stringify(report, null, 2);
-  
+
   const r2Credentials = {
     accountId: '7a470541a704caaf91e71efccc78fd36',
     accessKeyId: '84c87a7398c721036cd6e95df42d718c',
     secretAccessKey: '8a99fcc8f6202fc3961fa3e889318ced8228a483b7e57e788fb3cba5e5592015',
-    bucketName: 'bun-executables'
+    bucketName: 'bun-executables',
   };
-  
+
   const endpoint = `https://${r2Credentials.accountId}.r2.cloudflarestorage.com`;
   const url = `${endpoint}/${r2Credentials.bucketName}/${reportKey}`;
-  
+
   const authString = `${r2Credentials.accessKeyId}:${r2Credentials.secretAccessKey}`;
   const authHeader = `Basic ${btoa(authString)}`;
-  
+
   await fetch(url, {
     method: 'PUT',
     headers: {
-      'Authorization': authHeader,
+      Authorization: authHeader,
       'Content-Type': 'application/json',
       'x-amz-content-sha256': await Bun.hash(reportContent),
       'x-amz-meta-report-type': 'versioning-initialization',
-      'x-amz-meta-factorywager-version': '5.1'
+      'x-amz-meta-factorywager-version': '5.1',
     },
-    body: reportContent
+    body: reportContent,
   });
 }
 

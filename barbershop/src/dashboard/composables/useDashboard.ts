@@ -1,6 +1,6 @@
 /**
  * Dashboard Composition API
- * 
+ *
  * Composable for building reactive dashboards with:
  * - Real-time data synchronization
  * - Theme integration
@@ -8,7 +8,14 @@
  * - Auto-refresh capabilities
  */
 
-import { type DashboardConfig, type WidgetConfig, type RealTimeUpdate, type UpdateType, createDashboardConfig, isStale } from '../types';
+import {
+  type DashboardConfig,
+  type WidgetConfig,
+  type RealTimeUpdate,
+  type UpdateType,
+  createDashboardConfig,
+  isStale,
+} from '../types';
 import type { ThemeName } from '../../../themes/config/index';
 
 // Reactive state using Bun's signal-like pattern
@@ -81,13 +88,13 @@ function createWebSocketManager(): WebSocketManager {
 
     try {
       ws = new WebSocket(url);
-      
+
       ws.onopen = () => {
         reconnectAttempts = 0;
         console.log('[Dashboard] WebSocket connected');
       };
 
-      ws.onmessage = (event) => {
+      ws.onmessage = event => {
         try {
           const update = JSON.parse(event.data) as RealTimeUpdate;
           messageHandlers.forEach(handler => handler(update));
@@ -98,18 +105,20 @@ function createWebSocketManager(): WebSocketManager {
 
       ws.onclose = () => {
         console.log('[Dashboard] WebSocket disconnected');
-        
+
         // Attempt reconnection
         if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
           reconnectAttempts++;
           reconnectTimer = setTimeout(() => {
-            console.log(`[Dashboard] Reconnecting... (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`);
+            console.log(
+              `[Dashboard] Reconnecting... (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`
+            );
             connect(url);
           }, RECONNECT_DELAY * reconnectAttempts);
         }
       };
 
-      ws.onerror = (error) => {
+      ws.onerror = error => {
         console.error('[Dashboard] WebSocket error:', error);
       };
     } catch (err) {
@@ -144,7 +153,7 @@ function createWebSocketManager(): WebSocketManager {
     }
   };
 
-  const onMessage = (callback: (update: RealTimeUpdate) => void): () => void => {
+  const onMessage = (callback: (update: RealTimeUpdate) => void): (() => void) => {
     messageHandlers.add(callback);
     return () => messageHandlers.delete(callback);
   };
@@ -301,7 +310,7 @@ export interface UseDashboardReturn {
   isConnected: boolean;
   lastUpdate: number;
   error: string | null;
-  
+
   // Actions
   setConfig: (config: Partial<DashboardConfig>) => void;
   setTheme: (theme: ThemeName) => void;
@@ -313,11 +322,11 @@ export interface UseDashboardReturn {
   refresh: () => Promise<void>;
   startAutoRefresh: (interval?: number) => void;
   stopAutoRefresh: () => void;
-  
+
   // Data
   getData: <T>(key: string) => T | undefined;
   setData: <T>(key: string, value: T) => void;
-  
+
   // Subscriptions
   onUpdate: (callback: (update: RealTimeUpdate) => void) => () => void;
   subscribe: (unsubscribe: () => void) => void;
@@ -340,7 +349,7 @@ export function useDashboard(initialConfig?: Partial<DashboardConfig>): UseDashb
   };
 
   // Handle real-time updates
-  wsManager.onMessage((update) => {
+  wsManager.onMessage(update => {
     setState(store.lastUpdate, Date.now());
     cache.set(`update:${update.type}`, update.data);
   });
@@ -348,7 +357,7 @@ export function useDashboard(initialConfig?: Partial<DashboardConfig>): UseDashb
   const setConfig = (config: Partial<DashboardConfig>): void => {
     const current = store.config.value;
     setState(store.config, { ...current, ...config });
-    
+
     // Reconnect WebSocket if liveUpdates setting changed
     if (config.liveUpdates !== undefined) {
       if (config.liveUpdates) {
@@ -370,14 +379,18 @@ export function useDashboard(initialConfig?: Partial<DashboardConfig>): UseDashb
 
   const removeWidget = (widgetId: string): void => {
     const current = store.widgets.value;
-    setState(store.widgets, current.filter(w => w.id !== widgetId));
+    setState(
+      store.widgets,
+      current.filter(w => w.id !== widgetId)
+    );
   };
 
   const updateWidget = (widgetId: string, updates: Partial<WidgetConfig>): void => {
     const current = store.widgets.value;
-    setState(store.widgets, current.map(w => 
-      w.id === widgetId ? { ...w, ...updates } : w
-    ));
+    setState(
+      store.widgets,
+      current.map(w => (w.id === widgetId ? { ...w, ...updates } : w))
+    );
   };
 
   const connect = (url: string): void => {
@@ -423,7 +436,7 @@ export function useDashboard(initialConfig?: Partial<DashboardConfig>): UseDashb
     setState(store.data, new Map(current));
   };
 
-  const onUpdate = (callback: (update: RealTimeUpdate) => void): () => void => {
+  const onUpdate = (callback: (update: RealTimeUpdate) => void): (() => void) => {
     return wsManager.onMessage(callback);
   };
 
@@ -440,12 +453,22 @@ export function useDashboard(initialConfig?: Partial<DashboardConfig>): UseDashb
 
   return {
     // State (current values)
-    get config() { return store.config.value; },
-    get widgets() { return store.widgets.value; },
-    get isConnected() { return store.isConnected.value; },
-    get lastUpdate() { return store.lastUpdate.value; },
-    get error() { return store.error.value; },
-    
+    get config() {
+      return store.config.value;
+    },
+    get widgets() {
+      return store.widgets.value;
+    },
+    get isConnected() {
+      return store.isConnected.value;
+    },
+    get lastUpdate() {
+      return store.lastUpdate.value;
+    },
+    get error() {
+      return store.error.value;
+    },
+
     // Actions
     setConfig,
     setTheme,
@@ -457,11 +480,11 @@ export function useDashboard(initialConfig?: Partial<DashboardConfig>): UseDashb
     refresh,
     startAutoRefresh,
     stopAutoRefresh,
-    
+
     // Data
     getData,
     setData,
-    
+
     // Subscriptions
     onUpdate,
     subscribe,

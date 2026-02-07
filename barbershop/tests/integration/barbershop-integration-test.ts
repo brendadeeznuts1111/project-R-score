@@ -51,16 +51,16 @@ class TestLogger {
       level,
       test,
       message,
-      data
+      data,
     };
     this.logs.push(entry);
-    
+
     // Console output with colors
     const colors = {
-      info: '\x1b[32m',    // Green
-      warn: '\x1b[33m',    // Yellow
-      error: '\x1b[31m',   // Red
-      debug: '\x1b[36m'    // Cyan
+      info: '\x1b[32m', // Green
+      warn: '\x1b[33m', // Yellow
+      error: '\x1b[31m', // Red
+      debug: '\x1b[36m', // Cyan
     };
     console.log(`${colors[level]}[${level.toUpperCase()}]\x1b[0m [${test}] ${message}`);
     if (data) console.log('  Data:', JSON.stringify(data, null, 2));
@@ -91,13 +91,13 @@ class TestLogger {
 
     const key = `test-logs/${testRunId}/${Date.now()}.json`;
     const body = JSON.stringify(this.logs, null, 2);
-    
+
     try {
       await r2_upload({
         bucket: this.bucket,
         key,
         body: Buffer.from(body),
-        contentType: 'application/json'
+        contentType: 'application/json',
       });
       this.info('logger', `Logs uploaded to R2: ${key}`);
     } catch (err) {
@@ -117,7 +117,7 @@ class TestLogger {
       info: this.logs.filter(l => l.level === 'info').length,
       warn: this.logs.filter(l => l.level === 'warn').length,
       error: this.logs.filter(l => l.level === 'error').length,
-      debug: this.logs.filter(l => l.level === 'debug').length
+      debug: this.logs.filter(l => l.level === 'debug').length,
     };
 
     return `
@@ -146,7 +146,7 @@ class TestDatabase {
 
   private initSchema() {
     this.logger.info('database', 'Initializing test schema');
-    
+
     this.db.run(`
       CREATE TABLE test_results (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -171,9 +171,11 @@ class TestDatabase {
   }
 
   recordResult(result: TestResult) {
-    this.db.prepare(
-      'INSERT INTO test_results (test_name, passed, duration_ms, error_message) VALUES (?, ?, ?, ?)'
-    ).run(result.name, result.passed ? 1 : 0, result.duration, result.error || null);
+    this.db
+      .prepare(
+        'INSERT INTO test_results (test_name, passed, duration_ms, error_message) VALUES (?, ?, ?, ?)'
+      )
+      .run(result.name, result.passed ? 1 : 0, result.duration, result.error || null);
   }
 
   getResults(): any[] {
@@ -181,7 +183,8 @@ class TestDatabase {
   }
 
   storeData(key: string, value: any) {
-    this.db.prepare('INSERT OR REPLACE INTO test_data (key, value) VALUES (?, ?)')
+    this.db
+      .prepare('INSERT OR REPLACE INTO test_data (key, value) VALUES (?, ?)')
       .run(key, JSON.stringify(value));
   }
 
@@ -214,25 +217,26 @@ class IntegrationTestSuite {
 
   async setup() {
     this.logger.info('setup', 'Starting integration test suite', { testRunId: this.testRunId });
-    
+
     // Start test server
     this.server = serve({
       port: 3001,
       routes: {
         '/health': () => Response.json({ status: 'ok', timestamp: Date.now() }),
-        '/api/barbers': () => Response.json({
-          barbers: [
-            { id: 'b1', name: 'Test Barber', code: 'TB', skills: ['cut'], status: 'active' }
-          ]
-        }),
-        '/api/ticket/create': async (req) => {
+        '/api/barbers': () =>
+          Response.json({
+            barbers: [
+              { id: 'b1', name: 'Test Barber', code: 'TB', skills: ['cut'], status: 'active' },
+            ],
+          }),
+        '/api/ticket/create': async req => {
           const body = await req.json();
           return Response.json({
             success: true,
-            ticket: { id: 't1', ...body, status: 'created' }
+            ticket: { id: 't1', ...body, status: 'created' },
           });
-        }
-      }
+        },
+      },
     });
 
     this.logger.info('setup', 'Test server started', { port: 3001 });
@@ -240,60 +244,60 @@ class IntegrationTestSuite {
 
   async teardown() {
     this.logger.info('teardown', 'Cleaning up test suite');
-    
+
     if (this.server) {
       this.server.stop();
       this.logger.info('teardown', 'Test server stopped');
     }
 
     this.db.cleanup();
-    
+
     // Flush logs to R2
     await this.logger.flushToR2(this.testRunId);
-    
+
     this.logger.info('teardown', 'Test suite cleanup complete');
   }
 
   async runTest(name: string, fn: () => Promise<any>): Promise<TestResult> {
     this.logger.info(name, 'Starting test');
     const start = performance.now();
-    
+
     try {
       const data = await fn();
       const duration = Math.round(performance.now() - start);
-      
+
       const result: TestResult = {
         name,
         passed: true,
         duration,
-        data
+        data,
       };
-      
+
       this.results.push(result);
       this.db.recordResult(result);
       this.logger.info(name, 'Test passed', { duration });
-      
+
       return result;
     } catch (error) {
       const duration = Math.round(performance.now() - start);
-      
+
       const result: TestResult = {
         name,
         passed: false,
         duration,
-        error: String(error)
+        error: String(error),
       };
-      
+
       this.results.push(result);
       this.db.recordResult(result);
       this.logger.error(name, 'Test failed', { error: String(error), duration });
-      
+
       return result;
     }
   }
 
   // ==================== TEST CASES ====================
-  
+
   async testHealthEndpoint() {
     return this.runTest('health_endpoint', async () => {
       const response = await fetch(`${this.baseUrl}/health`);
@@ -322,8 +326,8 @@ class IntegrationTestSuite {
         body: JSON.stringify({
           customerName: 'Test Customer',
           services: [{ name: 'Haircut', price: 30 }],
-          totalAmount: 30
-        })
+          totalAmount: 30,
+        }),
       });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
@@ -379,15 +383,15 @@ class IntegrationTestSuite {
           bucket: 'barbershop-test',
           key: `tests/${this.testRunId}/test.json`,
           body: Buffer.from(testData),
-          contentType: 'application/json'
+          contentType: 'application/json',
         });
-        
+
         // Try to download it back
         const downloaded = await r2_download({
           bucket: 'barbershop-test',
-          key: `tests/${this.testRunId}/test.json`
+          key: `tests/${this.testRunId}/test.json`,
         });
-        
+
         if (!downloaded) throw new Error('Download failed');
         return { uploaded: true, downloaded: true };
       } catch (err) {
@@ -412,7 +416,7 @@ class IntegrationTestSuite {
           resolve({ connected: true });
         };
 
-        ws.onerror = (err) => {
+        ws.onerror = err => {
           clearTimeout(timeout);
           // WebSocket might not be configured on test server
           this.logger.warn('websocket_connection', 'WS not available', { error: String(err) });
@@ -426,19 +430,19 @@ class IntegrationTestSuite {
     return this.runTest('performance_benchmark', async () => {
       const iterations = 100;
       const start = performance.now();
-      
+
       for (let i = 0; i < iterations; i++) {
         await fetch(`${this.baseUrl}/health`);
       }
-      
+
       const duration = performance.now() - start;
       const avgLatency = duration / iterations;
-      
+
       return {
         iterations,
         totalDuration: Math.round(duration),
         avgLatency: Math.round(avgLatency * 100) / 100,
-        requestsPerSecond: Math.round(iterations / (duration / 1000))
+        requestsPerSecond: Math.round(iterations / (duration / 1000)),
       };
     });
   }
@@ -460,7 +464,6 @@ class IntegrationTestSuite {
 
       // Generate report
       this.generateReport();
-      
     } finally {
       await this.teardown();
     }
@@ -472,7 +475,7 @@ class IntegrationTestSuite {
     const passed = this.results.filter(r => r.passed).length;
     const failed = this.results.filter(r => !r.passed).length;
     const total = this.results.length;
-    
+
     const report = `
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                    INTEGRATION TEST REPORT                                   ║
@@ -490,11 +493,15 @@ Success Rate:    ${Math.round((passed / total) * 100)}%
 
 DETAILED RESULTS:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-${this.results.map(r => `
+${this.results
+  .map(
+    r => `
 ${r.passed ? '✅' : '🔴'} ${r.name}
    Duration: ${r.duration}ms
    ${r.error ? `Error: ${r.error}` : 'Status: PASSED'}
-`).join('')}
+`
+  )
+  .join('')}
 
 ${this.logger.generateReport()}
 
@@ -507,7 +514,7 @@ Local backup: ./logs/test-${this.testRunId}.json
 `;
 
     console.log(report);
-    
+
     // Save report locally
     Bun.write(`./logs/report-${this.testRunId}.txt`, report);
   }
@@ -516,17 +523,17 @@ Local backup: ./logs/test-${this.testRunId}.json
 // ==================== MAIN ====================
 async function main() {
   console.log('🧪 Starting Barbershop Integration Tests...\n');
-  
+
   // Ensure logs directory exists
   try {
     await Bun.write('./logs/.gitkeep', '');
   } catch {
     // Directory might already exist
   }
-  
+
   const suite = new IntegrationTestSuite();
   const results = await suite.runAllTests();
-  
+
   const failed = results.filter(r => !r.passed).length;
   process.exit(failed > 0 ? 1 : 0);
 }

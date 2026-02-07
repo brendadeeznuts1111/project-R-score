@@ -1,6 +1,6 @@
 /**
  * Unified Cloudflare Client
- * 
+ *
  * Combines Domain Management, R2 Storage, and Workers into a single
  * cohesive interface using Bun v1.3.7+ features:
  * - S3 client (alpha) for R2 operations
@@ -103,7 +103,7 @@ interface ProfileResult {
 
 /**
  * Unified Cloudflare Service
- * 
+ *
  * Provides integrated access to:
  * - Domain/Zone management
  * - R2 Storage (via Bun S3 client)
@@ -117,7 +117,7 @@ export class UnifiedCloudflareService {
   private r2Bucket: BunS3Bucket | null = null;
   private workers: Map<string, BunWorker> = new Map();
   private profileCaptures: Map<string, ProfileCapture> = new Map();
-  
+
   // Configuration
   private config: {
     accountId?: string;
@@ -190,7 +190,7 @@ export class UnifiedCloudflareService {
 
     // Initialize S3 client with R2 credentials
     const s3 = (Bun as unknown as { S3: new (config: unknown) => BunS3Client }).S3;
-    
+
     this.s3Client = new s3({
       endpoint: `https://${this.config.r2AccountId}.r2.cloudflarestorage.com`,
       credentials: {
@@ -223,10 +223,10 @@ export class UnifiedCloudflareService {
     options?: S3PutOptions
   ): Promise<void> {
     const bucket = await this.getR2Bucket();
-    
+
     // Capture profile if active
     const startTime = performance.now();
-    
+
     await bucket.put(key, data, {
       contentType: options?.contentType,
       metadata: options?.metadata,
@@ -243,9 +243,9 @@ export class UnifiedCloudflareService {
   async downloadFromR2(key: string): Promise<Response | null> {
     const bucket = await this.getR2Bucket();
     const startTime = performance.now();
-    
+
     const response = await bucket.get(key);
-    
+
     this.logOperation('r2.download', performance.now() - startTime);
     return response;
   }
@@ -262,12 +262,9 @@ export class UnifiedCloudflareService {
    * Generate presigned URL for R2
    * Uses Bun v1.3.7+ presign feature
    */
-  async presignR2Url(
-    key: string,
-    options: PresignOptions = {}
-  ): Promise<string> {
+  async presignR2Url(key: string, options: PresignOptions = {}): Promise<string> {
     const bucket = await this.getR2Bucket();
-    
+
     return bucket.presign(key, {
       method: options.method || 'GET',
       expiresIn: options.expiresIn || 3600, // 1 hour default
@@ -281,7 +278,11 @@ export class UnifiedCloudflareService {
    * Deploy or update a Cloudflare Worker
    * Uses Bun v1.3.7+ Worker API
    */
-  async deployWorker(name: string, script: string, bindings?: Record<string, unknown>): Promise<BunWorker> {
+  async deployWorker(
+    name: string,
+    script: string,
+    bindings?: Record<string, unknown>
+  ): Promise<BunWorker> {
     // Check if Bun.Worker API is available
     if (typeof Bun === 'undefined' || !('Worker' in Bun)) {
       throw new Error('Bun.Worker API not available. Requires Bun v1.3.7+');
@@ -294,13 +295,15 @@ export class UnifiedCloudflareService {
     };
 
     // Create worker using Bun's Worker API
-    const WorkerConstructor = (Bun as unknown as { 
-      Worker: new (options: WorkerOptions) => BunWorker 
-    }).Worker;
-    
+    const WorkerConstructor = (
+      Bun as unknown as {
+        Worker: new (options: WorkerOptions) => BunWorker;
+      }
+    ).Worker;
+
     const worker = new WorkerConstructor(workerOptions);
     this.workers.set(name, worker);
-    
+
     return worker;
   }
 
@@ -312,7 +315,7 @@ export class UnifiedCloudflareService {
     if (!worker) {
       throw new Error(`Worker "${name}" not found`);
     }
-    
+
     return worker.fetch(request);
   }
 
@@ -324,7 +327,7 @@ export class UnifiedCloudflareService {
     if (!worker) {
       throw new Error(`Worker "${name}" not found`);
     }
-    
+
     await worker.reload();
   }
 
@@ -350,9 +353,11 @@ export class UnifiedCloudflareService {
       return;
     }
 
-    const profile = (Bun as unknown as { 
-      profile: (options: { type: 'cpu' | 'memory' | 'all' }) => ProfileCapture 
-    }).profile;
+    const profile = (
+      Bun as unknown as {
+        profile: (options: { type: 'cpu' | 'memory' | 'all' }) => ProfileCapture;
+      }
+    ).profile;
 
     const capture = profile({ type: 'all' });
     this.profileCaptures.set(name, capture);
@@ -382,11 +387,11 @@ export class UnifiedCloudflareService {
     options: RequestInit & { preserveHeaders?: string[] } = {}
   ): Promise<Response> {
     const { preserveHeaders = [], ...fetchOptions } = options;
-    
+
     // Bun v1.3.7+ automatically preserves header case
     // We just need to ensure headers are properly formatted
     const headers = new Headers(fetchOptions.headers);
-    
+
     // Add headers that need case preservation
     preserveHeaders.forEach(headerName => {
       const value = headers.get(headerName.toLowerCase());
@@ -424,7 +429,7 @@ export class UnifiedCloudflareService {
     // Determine version
     const currentVersion = config.version || '1.0.0';
     let newVersion = currentVersion;
-    
+
     // Check for existing resource versions
     const existingDomain = versionManager.getResource(`domain:${config.domain}`);
     if (existingDomain) {
@@ -436,7 +441,7 @@ export class UnifiedCloudflareService {
       const client = await this.getDomainClient();
       let zones = await client.listZones(config.domain);
       let zone = zones.find(z => z.name === config.domain);
-      
+
       if (!zone) {
         zone = await client.createZone(config.domain);
       }
@@ -462,15 +467,11 @@ export class UnifiedCloudflareService {
       });
 
       // 3. Deploy worker
-      const worker = await this.deployWorker(
-        `${config.domain}-worker`,
-        config.workerScript,
-        {
-          ...config.bindings,
-          R2_BUCKET: this.config.r2BucketName,
-          DEPLOYMENT_VERSION: newVersion,
-        }
-      );
+      const worker = await this.deployWorker(`${config.domain}-worker`, config.workerScript, {
+        ...config.bindings,
+        R2_BUCKET: this.config.r2BucketName,
+        DEPLOYMENT_VERSION: newVersion,
+      });
 
       // Register worker version
       await versionManager.registerResource(`worker:${config.domain}`, newVersion, {
@@ -498,7 +499,7 @@ export class UnifiedCloudflareService {
 
       // Stop profiling
       const profile = await this.stopProfiling('deploy-stack');
-      
+
       console.log(`✅ Stack deployed in ${(performance.now() - startTime).toFixed(2)}ms`);
       console.log(`   Version: ${newVersion}`);
       if (profile) {
@@ -543,7 +544,7 @@ export class UnifiedCloudflareService {
     byType: Record<string, { count: number; avgDuration: number }>;
   } {
     const byType: Record<string, { count: number; totalDuration: number }> = {};
-    
+
     for (const op of this.operationLog) {
       if (!byType[op.name]) {
         byType[op.name] = { count: 0, totalDuration: 0 };
@@ -561,7 +562,7 @@ export class UnifiedCloudflareService {
       byType: Object.fromEntries(
         Object.entries(byType).map(([name, stats]) => [
           name,
-          { count: stats.count, avgDuration: stats.totalDuration / stats.count }
+          { count: stats.count, avgDuration: stats.totalDuration / stats.count },
         ])
       ),
     };

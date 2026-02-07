@@ -1,13 +1,13 @@
 /**
  * FactoryWager Theme Palette Tests
- * 
+ *
  * Verifies the theme system uses only:
  * - Blue (primary)
  * - Teal (secondary)
  * - Green (success)
  * - Orange (warning)
  * - Red (error)
- * 
+ *
  * NO PURPLE/INDIGO colors allowed
  */
 
@@ -15,7 +15,6 @@ import { describe, test, expect } from 'bun:test';
 import { themes, themeList } from '../themes/config/index';
 
 describe('🏰 FactoryWager Theme Palette', () => {
-  
   describe('Theme Registry', () => {
     test('has factorywager theme', () => {
       expect(themes.factorywager).toBeDefined();

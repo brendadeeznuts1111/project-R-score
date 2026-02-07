@@ -1,23 +1,24 @@
 #!/usr/bin/env bun
 /**
  * FactoryWager Playground Dashboard CLI
- * 
+ *
  * Visual dashboards for:
  * - Clients (view services, bookings, payments)
  * - Admins (manage barbers, view analytics)
  * - Payment Approvals (visual pipeline)
  * - Barber Hierarchy (team structure)
- * 
+ *
  * Usage:
  *   bun run playground.ts [dashboard] [options]
  */
 
-import { registry, type PaymentPipeline, type BarberHierarchy, type PaymentApproval } from '../../lib/cloudflare/registry';
 import {
-  ThemedConsole,
-  getDomainTheme,
-  themedSeparator,
-} from '../../themes/config/domain-theme';
+  registry,
+  type PaymentPipeline,
+  type BarberHierarchy,
+  type PaymentApproval,
+} from '../../lib/cloudflare/registry';
+import { ThemedConsole, getDomainTheme, themedSeparator } from '../../themes/config/domain-theme';
 import { FACTORY_WAGER_BRAND } from '../../src/config/domain';
 import { colorManager } from '../../lib/cloudflare/bun-data-api';
 
@@ -46,10 +47,10 @@ function renderPipeline(pipeline: PaymentPipeline): void {
   t.log();
 
   const stageColors: Record<string, string> = {
-    pending: '\x1b[90m',   // gray
-    active: '\x1b[33m',    // yellow
+    pending: '\x1b[90m', // gray
+    active: '\x1b[33m', // yellow
     completed: '\x1b[32m', // green
-    failed: '\x1b[31m',    // red
+    failed: '\x1b[31m', // red
   };
 
   const reset = '\x1b[0m';
@@ -61,25 +62,30 @@ function renderPipeline(pipeline: PaymentPipeline): void {
   pipeline.stages.forEach((stage, index) => {
     const isLast = index === pipeline.stages.length - 1;
     const color = stageColors[stage.status];
-    const symbol = stage.status === 'completed' ? '✓' : 
-                   stage.status === 'active' ? '●' : 
-                   stage.status === 'failed' ? '✗' : '○';
-    
+    const symbol =
+      stage.status === 'completed'
+        ? '✓'
+        : stage.status === 'active'
+          ? '●'
+          : stage.status === 'failed'
+            ? '✗'
+            : '○';
+
     // Stage box
     t.log(`  ${color}┌─────────────────────────┐${reset}`);
     t.log(`  ${color}│ ${symbol} ${stage.name.padEnd(20)} │${reset}`);
-    
+
     if (stage.assignee) {
       t.log(`  ${color}│   👤 ${stage.assignee.padEnd(17)}│${reset}`);
     }
-    
+
     if (stage.startedAt) {
       const time = new Date(stage.startedAt).toLocaleTimeString();
       t.log(`  ${color}│   🕐 ${time.padEnd(17)}│${reset}`);
     }
-    
+
     t.log(`  ${color}└─────────────────────────┘${reset}`);
-    
+
     if (!isLast) {
       t.log(`  ${color}           ↓              ${reset}`);
     }
@@ -96,19 +102,25 @@ function renderPipeline(pipeline: PaymentPipeline): void {
 
 function renderHierarchy(barbers: BarberHierarchy[], parentId?: string, level = 0): void {
   const indent = '  '.repeat(level);
-  
+
   const team = barbers.filter(b => b.parentId === parentId);
-  
+
   team.forEach((barber, index) => {
     const isLast = index === team.length - 1;
     const branch = isLast ? '└──' : '├──';
-    const roleIcon = barber.role === 'owner' ? '👑' :
-                     barber.role === 'manager' ? '💼' :
-                     barber.role === 'senior' ? '✂️' :
-                     barber.role === 'junior' ? '🪒' : '📚';
-    
+    const roleIcon =
+      barber.role === 'owner'
+        ? '👑'
+        : barber.role === 'manager'
+          ? '💼'
+          : barber.role === 'senior'
+            ? '✂️'
+            : barber.role === 'junior'
+              ? '🪒'
+              : '📚';
+
     t.log(`${indent}${branch} ${roleIcon} ${barber.name} (${barber.role})`);
-    
+
     if (barber.metrics) {
       const metrics = `⭐${barber.metrics.rating.toFixed(1)} 💰$${barber.metrics.revenue} ✂️${barber.metrics.totalCuts}`;
       t.log(`${indent}${isLast ? '    ' : '│   '}   ${metrics}`);
@@ -229,8 +241,18 @@ async function cmdDashboardPipeline(): Promise<void> {
     client: 'Alice Johnson',
     barber: 'John Smith',
     stages: [
-      { name: 'submission', status: 'completed', startedAt: new Date().toISOString(), completedAt: new Date().toISOString() },
-      { name: 'review', status: 'active', startedAt: new Date().toISOString(), assignee: 'Manager' },
+      {
+        name: 'submission',
+        status: 'completed',
+        startedAt: new Date().toISOString(),
+        completedAt: new Date().toISOString(),
+      },
+      {
+        name: 'review',
+        status: 'active',
+        startedAt: new Date().toISOString(),
+        assignee: 'Manager',
+      },
       { name: 'approval', status: 'pending' },
       { name: 'processing', status: 'pending' },
       { name: 'completion', status: 'pending' },
@@ -315,7 +337,13 @@ async function cmdDashboardApprovals(): Promise<void> {
       approvers: ['Owner'],
       approvedBy: 'Robert Owner',
       approvedAt: new Date().toISOString(),
-      comments: [{ author: 'Robert Owner', text: 'Approved for purchase', timestamp: new Date().toISOString() }],
+      comments: [
+        {
+          author: 'Robert Owner',
+          text: 'Approved for purchase',
+          timestamp: new Date().toISOString(),
+        },
+      ],
     },
   ];
 
@@ -343,7 +371,6 @@ async function cmdPipelineCreate(): Promise<void> {
 
     t.success('Pipeline created!');
     renderPipeline(pipeline);
-
   } catch (error) {
     t.error(`Failed: ${(error as Error).message}`);
   }
@@ -351,7 +378,7 @@ async function cmdPipelineCreate(): Promise<void> {
 
 async function cmdPipelineAdvance(): Promise<void> {
   const pipelineId = args[1];
-  
+
   if (!pipelineId) {
     t.error('Usage: pipeline-advance <pipeline-id>');
     return;
@@ -370,7 +397,7 @@ async function cmdPipelineAdvance(): Promise<void> {
 
     const pipeline = entry.content as PaymentPipeline;
     const activeStage = pipeline.stages.find(s => s.status === 'active');
-    
+
     if (activeStage) {
       await registry.updatePipelineStage(pipelineId, activeStage.name, {
         status: 'completed',
@@ -390,7 +417,6 @@ async function cmdPipelineAdvance(): Promise<void> {
     } else {
       t.warning('No active stage to advance');
     }
-
   } catch (error) {
     t.error(`Failed: ${(error as Error).message}`);
   }
@@ -418,7 +444,6 @@ async function cmdApprovalCreate(): Promise<void> {
     t.log(`  ID: ${approval.id}`);
     t.log(`  Amount: $${approval.amount}`);
     t.log(`  Reason: ${approval.reason}`);
-
   } catch (error) {
     t.error(`Failed: ${(error as Error).message}`);
   }
@@ -438,12 +463,7 @@ async function cmdApprovalProcess(): Promise<void> {
   t.log();
 
   try {
-    const approval = await registry.processApproval(
-      approvalId,
-      decision,
-      'Admin',
-      comment
-    );
+    const approval = await registry.processApproval(approvalId, decision, 'Admin', comment);
 
     if (approval) {
       t.success(`Approval ${decision}!`);
@@ -452,7 +472,6 @@ async function cmdApprovalProcess(): Promise<void> {
     } else {
       t.error('Approval not found');
     }
-
   } catch (error) {
     t.error(`Failed: ${(error as Error).message}`);
   }

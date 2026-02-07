@@ -4,9 +4,15 @@ import { createHash, createHmac } from 'node:crypto';
 import { getFactorySecret } from './factory-secrets';
 
 function wrapAnsiLine(text: string, columns = Number(Bun.env.COLUMNS || 120)) {
-  const wrap = (Bun as unknown as {
-    wrapAnsi?: (input: string, width: number, options?: { hard?: boolean; wordWrap?: boolean; trim?: boolean }) => string;
-  }).wrapAnsi;
+  const wrap = (
+    Bun as unknown as {
+      wrapAnsi?: (
+        input: string,
+        width: number,
+        options?: { hard?: boolean; wordWrap?: boolean; trim?: boolean }
+      ) => string;
+    }
+  ).wrapAnsi;
   if (typeof wrap === 'function') {
     return wrap(text, columns, { wordWrap: true, trim: false });
   }
@@ -15,7 +21,7 @@ function wrapAnsiLine(text: string, columns = Number(Bun.env.COLUMNS || 120)) {
 
 function arg(name: string, fallback = '') {
   const prefix = `--${name}=`;
-  const found = Bun.argv.find((a) => a.startsWith(prefix));
+  const found = Bun.argv.find(a => a.startsWith(prefix));
   return found ? found.slice(prefix.length) : fallback;
 }
 
@@ -36,18 +42,17 @@ async function resolveR2(): Promise<R2Config | null> {
     (await getFactorySecret('R2_ENDPOINT')) ||
     '';
   const bucket =
-    Bun.env.R2_BUCKET ||
-    Bun.env.R2_BUCKET_NAME ||
-    (await getFactorySecret('R2_BUCKET')) ||
-    '';
+    Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || (await getFactorySecret('R2_BUCKET')) || '';
   const prefix = Bun.env.R2_PREFIX || (await getFactorySecret('R2_PREFIX')) || 'barbershop';
-  const accessKeyId = Bun.env.R2_ACCESS_KEY_ID || (await getFactorySecret('R2_ACCESS_KEY_ID')) || '';
+  const accessKeyId =
+    Bun.env.R2_ACCESS_KEY_ID || (await getFactorySecret('R2_ACCESS_KEY_ID')) || '';
   const secretAccessKey =
     Bun.env.R2_SECRET_ACCESS_KEY || (await getFactorySecret('R2_SECRET_ACCESS_KEY')) || '';
 
   let effectiveAccountId = accountId;
   if (!effectiveAccountId && endpoint.includes('.r2.cloudflarestorage.com')) {
-    effectiveAccountId = endpoint.replace(/^https?:\/\//, '').split('.r2.cloudflarestorage.com')[0] || '';
+    effectiveAccountId =
+      endpoint.replace(/^https?:\/\//, '').split('.r2.cloudflarestorage.com')[0] || '';
   }
 
   if (!endpoint || !bucket || !accessKeyId || !secretAccessKey) return null;
@@ -57,7 +62,7 @@ async function resolveR2(): Promise<R2Config | null> {
     bucket,
     prefix: prefix.replace(/\/+$/g, ''),
     accessKeyId,
-    secretAccessKey
+    secretAccessKey,
   };
 }
 
@@ -79,7 +84,13 @@ function hmac(key: Buffer | string, data: string) {
   return createHmac('sha256', key).update(data).digest();
 }
 
-function signV4(cfg: R2Config, method: string, canonicalUri: string, canonicalQuery: string, payloadHash: string) {
+function signV4(
+  cfg: R2Config,
+  method: string,
+  canonicalUri: string,
+  canonicalQuery: string,
+  payloadHash: string
+) {
   const host = new URL(cfg.endpoint).host;
   const { amz, date } = toAmzDate();
   const canonicalHeaders = `host:${host}\nx-amz-content-sha256:${payloadHash}\nx-amz-date:${amz}\n`;
@@ -96,7 +107,7 @@ function signV4(cfg: R2Config, method: string, canonicalUri: string, canonicalQu
   return {
     host,
     amz,
-    authorization
+    authorization,
   };
 }
 
@@ -137,14 +148,14 @@ const effectivePrefix = `${r2.prefix}/profiles/sampling/${extraPrefix}`;
 const canonicalUri = `/${encodeURIComponent(r2.bucket).replaceAll('%2F', '/')}`;
 const query = new URLSearchParams({
   'list-type': '2',
-  'prefix': effectivePrefix,
-  'max-keys': String(Math.max(1, Math.min(1000, max)))
+  prefix: effectivePrefix,
+  'max-keys': String(Math.max(1, Math.min(1000, max))),
 });
 const canonicalQuery = query
   .toString()
   .split('&')
   .filter(Boolean)
-  .map((part) => part.split('=').map(decodeURIComponent))
+  .map(part => part.split('=').map(decodeURIComponent))
   .sort((a, b) => a[0].localeCompare(b[0]))
   .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
   .join('&');
@@ -159,8 +170,8 @@ const res = await fetch(url, {
     Host: signed.host,
     Authorization: signed.authorization,
     'x-amz-date': signed.amz,
-    'x-amz-content-sha256': payloadHash
-  }
+    'x-amz-content-sha256': payloadHash,
+  },
 });
 
 if (!res.ok) {

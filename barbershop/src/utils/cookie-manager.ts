@@ -1,6 +1,6 @@
 /**
  * Cookie Manager with Bun-Native APIs
- * 
+ *
  * Features:
  * - Bun.cookieMap() for efficient cookie handling
  * - Cookie compression for large payloads
@@ -92,12 +92,12 @@ export class CookieManager {
    */
   private compressCookie(data: string): CompressedCookie {
     const originalSize = data.length;
-    
+
     // Try zstd first (best compression/speed ratio)
     try {
       const compressed = compressData(data, 'zstd');
       const base64 = Buffer.from(compressed).toString('base64');
-      
+
       return {
         data: base64,
         compressed: true,
@@ -109,7 +109,7 @@ export class CookieManager {
       // Fallback to gzip
       const compressed = compressData(data, 'gzip');
       const base64 = Buffer.from(compressed).toString('base64');
-      
+
       return {
         data: base64,
         compressed: true,
@@ -134,10 +134,10 @@ export class CookieManager {
    */
   setTelemetry(data: TelemetryData, options: CookieOptions = {}): void {
     const serialized = JSON.stringify(data);
-    
+
     // Always compress telemetry (can be large)
     const compressed = this.compressCookie(serialized);
-    
+
     this.cookieMap.set('fw_telemetry', JSON.stringify(compressed), {
       httpOnly: true,
       secure: true,
@@ -167,7 +167,7 @@ export class CookieManager {
    */
   appendTelemetryEvent(event: TelemetryEvent): void {
     const existing = this.getTelemetry();
-    
+
     const telemetry: TelemetryData = existing || {
       sessionId: crypto.randomUUID(),
       timestamp: Date.now(),
@@ -176,7 +176,7 @@ export class CookieManager {
     };
 
     telemetry.events.push(event);
-    
+
     // Keep only last 100 events
     if (telemetry.events.length > 100) {
       telemetry.events = telemetry.events.slice(-100);
@@ -212,17 +212,17 @@ export class CookieManager {
   validateCsrfToken(token: string): boolean {
     const stored = this.getCsrfToken();
     if (!stored) return false;
-    
+
     // Use timing-safe comparison
     // @ts-ignore - Bun.CryptoHasher available in Bun
     const hasher = new Bun.CryptoHasher('sha256');
     hasher.update(stored);
     const storedHash = hasher.digest('hex');
-    
+
     hasher.reset();
     hasher.update(token);
     const tokenHash = hasher.digest('hex');
-    
+
     return storedHash === tokenHash;
   }
 
@@ -260,7 +260,7 @@ export class CookieManager {
 
     for (const [key, value] of this.cookieMap.entries()) {
       totalSize += key.length + value.length;
-      
+
       try {
         const parsed = JSON.parse(value);
         if (parsed.compressed) {
@@ -303,9 +303,11 @@ export function createSessionCookie(
 /**
  * Create a telemetry cookie
  */
-export function createTelemetryCookie(
-  data: TelemetryData
-): { name: string; value: string; options: CookieOptions } {
+export function createTelemetryCookie(data: TelemetryData): {
+  name: string;
+  value: string;
+  options: CookieOptions;
+} {
   const serialized = JSON.stringify(data);
   const compressed = compressData(serialized, 'zstd');
   const base64 = Buffer.from(compressed).toString('base64');

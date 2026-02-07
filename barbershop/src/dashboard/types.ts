@@ -1,6 +1,6 @@
 /**
  * Unified Dashboard Types
- * 
+ *
  * Shared type definitions for all dashboard components:
  * - Core dashboard types
  * - Real-time update types
@@ -70,17 +70,17 @@ export interface DashboardMetrics {
   tips: MetricValue;
   commissions: MetricValue;
   netProfit: MetricValue;
-  
+
   // Operational metrics
   activeTickets: MetricValue;
   pendingTickets: MetricValue;
   completedTickets: MetricValue;
-  
+
   // Connection metrics
   activeConnections: MetricValue;
   websocketConnections: MetricValue;
   httpRequests: MetricValue;
-  
+
   // Barber metrics
   activeBarbers: MetricValue;
   averageRating: MetricValue;
@@ -89,11 +89,11 @@ export interface DashboardMetrics {
 
 // ==================== Real-time Update Types ====================
 
-export type UpdateType = 
-  | 'financials' 
-  | 'connections' 
-  | 'barbers' 
-  | 'telemetry' 
+export type UpdateType =
+  | 'financials'
+  | 'connections'
+  | 'barbers'
+  | 'telemetry'
   | 'tickets'
   | 'orders'
   | 'system';
@@ -115,7 +115,7 @@ export interface UpdateSubscription {
 
 // ==================== Widget Types ====================
 
-export type WidgetType = 
+export type WidgetType =
   | 'stats'
   | 'chart'
   | 'table'
@@ -162,10 +162,10 @@ export interface DashboardLayout {
 }
 
 export interface LayoutBreakpoints {
-  sm: number;  // mobile
-  md: number;  // tablet
-  lg: number;  // desktop
-  xl: number;  // large desktop
+  sm: number; // mobile
+  md: number; // tablet
+  lg: number; // desktop
+  xl: number; // large desktop
 }
 
 export const DEFAULT_BREAKPOINTS: LayoutBreakpoints = {
@@ -310,11 +310,11 @@ export interface PaginatedResponse<T> extends DashboardApiResponse<T[]> {
 
 // ==================== WebSocket Message Types ====================
 
-export type WebSocketMessageType = 
-  | 'subscribe' 
-  | 'unsubscribe' 
-  | 'update' 
-  | 'ping' 
+export type WebSocketMessageType =
+  | 'subscribe'
+  | 'unsubscribe'
+  | 'update'
+  | 'ping'
   | 'pong'
   | 'error';
 
@@ -356,9 +356,7 @@ export interface ExportConfig {
 
 // ==================== Helper Functions ====================
 
-export function createDashboardConfig(
-  overrides: Partial<DashboardConfig> = {}
-): DashboardConfig {
+export function createDashboardConfig(overrides: Partial<DashboardConfig> = {}): DashboardConfig {
   return {
     ...DEFAULT_DASHBOARD_CONFIG,
     ...overrides,
@@ -388,7 +386,10 @@ export function isStale(timestamp: number, maxAge: number): boolean {
   return Date.now() - timestamp > maxAge;
 }
 
-export function calculateTrend(current: number, previous: number): { trend: 'up' | 'down' | 'stable'; change: number } {
+export function calculateTrend(
+  current: number,
+  previous: number
+): { trend: 'up' | 'down' | 'stable'; change: number } {
   if (previous === 0) {
     return { trend: current > 0 ? 'up' : 'stable', change: current > 0 ? 100 : 0 };
   }

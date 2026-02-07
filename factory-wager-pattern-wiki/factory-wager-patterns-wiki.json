@@ -1,0 +1,803 @@
+{
+  "metadata": {
+    "total": 8,
+    "categories": 7,
+    "tags": 37,
+    "codeTypes": 5,
+    "generated": "2026-02-07T05:40:50.379Z",
+    "version": "3.8.0",
+    "performance": {
+      "peakOpsPerSec": 1454545,
+      "avgOpsPerSec": 576950,
+      "fastestPattern": "Bulk Operations Parallel",
+      "slowestPattern": "CDN ETag Generation"
+    }
+  },
+  "categories": {
+    "cookies": {
+      "count": 1,
+      "patterns": [
+        {
+          "title": "Cookie A/B Testing - Variant A",
+          "url": "undefined/undefined/cookies/cookie-variant-a",
+          "category": "cookies",
+          "tags": [
+            "ab-testing",
+            "variant",
+            "cookie",
+            "ui",
+            "admin"
+          ],
+          "complexity": "simple",
+          "command": "curl -H \"Cookie: variant=A\" http://localhost:3000",
+          "template": "curl -H \"Cookie: variant={variant}\" {url}",
+          "variables": [
+            "variant",
+            "url"
+          ],
+          "useCase": "A/B testing UI variants",
+          "dependencies": [
+            "curl",
+            "HTTP server"
+          ],
+          "performance": {
+            "avgTime": 0.02,
+            "opsPerSec": 66576,
+            "reliability": "high"
+          },
+          "patterns": [
+            "curl -H \"Cookie: variant={VARIANT}\" {URL}",
+            "fetch(\"{URL}\", {headers: {Cookie: \"variant={VARIANT}\"}})",
+            "HTTP header manipulation for A/B testing"
+          ],
+          "codeBlock": {
+            "type": "curl",
+            "template": "curl -H \"Cookie: variant={variant}\" {url}",
+            "variables": [
+              "variant",
+              "url"
+            ]
+          }
+        }
+      ],
+      "avgPerformance": 66576,
+      "complexities": {
+        "simple": 1
+      },
+      "codeTypes": {
+        "curl": 1
+      }
+    },
+    "r2": {
+      "count": 1,
+      "patterns": [
+        {
+          "title": "R2 Profile Upload",
+          "url": "undefined/undefined/r2/r2-upload-profile",
+          "category": "r2",
+          "tags": [
+            "r2",
+            "upload",
+            "storage",
+            "cloudflare",
+            "json"
+          ],
+          "complexity": "intermediate",
+          "command": "bun -e 'fetch(\"cf://r2.factory-wager.com/profiles.json\",{method:\"PUT\",body:JSON.stringify({test:1})})'",
+          "template": "fetch(\"cf://{bucket}/{path}\",{method:\"PUT\",body:JSON.stringify({data})})",
+          "variables": [
+            "bucket",
+            "path",
+            "data"
+          ],
+          "useCase": "Object storage upload",
+          "dependencies": [
+            "Bun",
+            "Cloudflare R2"
+          ],
+          "performance": {
+            "avgTime": 0,
+            "opsPerSec": 634840,
+            "reliability": "high"
+          },
+          "patterns": [
+            "fetch(\"cf://{bucket}/{path}\", {method: \"PUT\", body: data})",
+            "Cloudflare R2 direct protocol usage",
+            "JSON payload upload to object storage"
+          ],
+          "codeBlock": {
+            "type": "r2",
+            "template": "fetch(\"cf://{bucket}/{path}\",{method:\"PUT\",body:JSON.stringify({data})})",
+            "variables": [
+              "bucket",
+              "path",
+              "data"
+            ]
+          }
+        }
+      ],
+      "avgPerformance": 634840,
+      "complexities": {
+        "intermediate": 1
+      },
+      "codeTypes": {
+        "r2": 1
+      }
+    },
+    "cdn": {
+      "count": 1,
+      "patterns": [
+        {
+          "title": "CDN ETag Generation",
+          "url": "undefined/undefined/cdn/cdn-etag-generation",
+          "category": "cdn",
+          "tags": [
+            "etag",
+            "hash",
+            "sha256",
+            "cdn",
+            "crypto"
+          ],
+          "complexity": "simple",
+          "command": "bun -e 'new Bun.CryptoHasher(\"sha256\").update(\"html\").digest(\"hex\")'",
+          "template": "new Bun.CryptoHasher(\"{algorithm}\").update({data}).digest(\"{format}\")",
+          "variables": [
+            "algorithm",
+            "data",
+            "format"
+          ],
+          "useCase": "Cache validation and ETag generation",
+          "dependencies": [
+            "Bun crypto API"
+          ],
+          "performance": {
+            "avgTime": 0.2,
+            "opsPerSec": 13233,
+            "reliability": "high"
+          },
+          "patterns": [
+            "new Bun.CryptoHasher(\"sha256\").update(data).digest(\"hex\")",
+            "Cryptographic hash generation for cache validation",
+            "CDN ETag computation pattern"
+          ],
+          "codeBlock": {
+            "type": "crypto",
+            "template": "new Bun.CryptoHasher(\"{algorithm}\").update({data}).digest(\"{format}\")",
+            "variables": [
+              "algorithm",
+              "data",
+              "format"
+            ]
+          }
+        }
+      ],
+      "avgPerformance": 13233,
+      "complexities": {
+        "simple": 1
+      },
+      "codeTypes": {
+        "crypto": 1
+      }
+    },
+    "subdomains": {
+      "count": 1,
+      "patterns": [
+        {
+          "title": "Subdomain Admin Routing",
+          "url": "undefined/undefined/subdomains/subdomain-routing-admin",
+          "category": "subdomains",
+          "tags": [
+            "subdomain",
+            "routing",
+            "host-header",
+            "admin",
+            "reverse-proxy"
+          ],
+          "complexity": "simple",
+          "command": "curl -H \"Host: admin.factory-wager.com\" http://localhost:3000",
+          "template": "curl -H \"Host: {subdomain}.{domain}\" {url}",
+          "variables": [
+            "subdomain",
+            "domain",
+            "url"
+          ],
+          "useCase": "Subdomain routing simulation",
+          "dependencies": [
+            "curl",
+            "HTTP server"
+          ],
+          "performance": {
+            "avgTime": 0,
+            "opsPerSec": 189970,
+            "reliability": "high"
+          },
+          "patterns": [
+            "curl -H \"Host: {subdomain}.{domain}\" {url}",
+            "Host header manipulation for subdomain routing",
+            "Local development subdomain simulation"
+          ],
+          "codeBlock": {
+            "type": "curl",
+            "template": "curl -H \"Host: {subdomain}.{domain}\" {url}",
+            "variables": [
+              "subdomain",
+              "domain",
+              "url"
+            ]
+          }
+        }
+      ],
+      "avgPerformance": 189970,
+      "complexities": {
+        "simple": 1
+      },
+      "codeTypes": {
+        "curl": 1
+      }
+    },
+    "profiling": {
+      "count": 1,
+      "patterns": [
+        {
+          "title": "JuniorRunner Profile POST",
+          "url": "undefined/undefined/profiling/junior-runner-post",
+          "category": "profiling",
+          "tags": [
+            "junior-runner",
+            "post",
+            "markdown",
+            "profile",
+            "api"
+          ],
+          "complexity": "simple",
+          "command": "curl -d '# Hi' -X POST http://localhost:3000/profile",
+          "template": "curl -d '{data}' -X POST {endpoint}",
+          "variables": [
+            "data",
+            "endpoint"
+          ],
+          "useCase": "Profile data submission",
+          "dependencies": [
+            "curl",
+            "JuniorRunner API"
+          ],
+          "performance": {
+            "avgTime": 0,
+            "opsPerSec": 800000,
+            "reliability": "high"
+          },
+          "patterns": [
+            "curl -d {data} -X POST {endpoint}",
+            "Markdown content submission pattern",
+            "Profile data upload via REST API"
+          ],
+          "codeBlock": {
+            "type": "curl",
+            "template": "curl -d '{data}' -X POST {endpoint}",
+            "variables": [
+              "data",
+              "endpoint"
+            ]
+          }
+        }
+      ],
+      "avgPerformance": 800000,
+      "complexities": {
+        "simple": 1
+      },
+      "codeTypes": {
+        "curl": 1
+      }
+    },
+    "s3-presign": {
+      "count": 1,
+      "patterns": [
+        {
+          "title": "S3 Presign Download URL",
+          "url": "undefined/undefined/s3-presign/s3-presign-download",
+          "category": "s3-presign",
+          "tags": [
+            "s3",
+            "presign",
+            "download",
+            "attachment",
+            "content-disposition"
+          ],
+          "complexity": "advanced",
+          "command": "bun -e 'import{S3Client}from\"bun\";const s3=new S3Client({endpoint:\"https://r2.factory-wager.com\",accessKeyId:process.env.R2_ACCESS_KEY_ID,secretAccessKey:process.env.R2_SECRET_ACCESS_KEY,bucket:\"factory-wager-storage\"});console.log(s3.file(\"profile.json\").presign({method:\"GET\",expiresIn:900,contentDisposition:\"attachment; filename=\\\"profile.json\\\"\",type:\"application/json\"}))'",
+          "template": "s3.file(\"{key}\").presign({method:\"GET\",expiresIn:{expiresIn},contentDisposition:\"{disposition}\",type:\"{contentType}\"})",
+          "variables": [
+            "key",
+            "expiresIn",
+            "disposition",
+            "contentType"
+          ],
+          "useCase": "Secure file download URLs",
+          "dependencies": [
+            "Bun S3Client",
+            "AWS S3/R2"
+          ],
+          "performance": {
+            "avgTime": 0.05,
+            "opsPerSec": 45000,
+            "reliability": "high"
+          },
+          "patterns": [
+            "s3.file(\"{key}\").presign({method: \"GET\", contentDisposition: \"attachment; filename=\\\"{filename}\\\"\", type: \"{contentType}\"})",
+            "S3 presigned URL generation with content disposition",
+            "File download vs inline viewing control"
+          ],
+          "codeBlock": {
+            "type": "s3",
+            "template": "s3.file(\"{key}\").presign({method:\"GET\",expiresIn:{expiresIn},contentDisposition:\"{disposition}\",type:\"{contentType}\"})",
+            "variables": [
+              "key",
+              "expiresIn",
+              "disposition",
+              "contentType"
+            ]
+          }
+        }
+      ],
+      "avgPerformance": 45000,
+      "complexities": {
+        "advanced": 1
+      },
+      "codeTypes": {
+        "s3": 1
+      }
+    },
+    "performance": {
+      "count": 2,
+      "patterns": [
+        {
+          "title": "Performance Benchmark Test",
+          "url": "undefined/undefined/performance/performance-benchmark",
+          "category": "performance",
+          "tags": [
+            "benchmark",
+            "performance",
+            "timing",
+            "crypto",
+            "optimization"
+          ],
+          "complexity": "intermediate",
+          "command": "bun -e 'const t0=performance.now();for(let i=0;i<100;i++){await new Bun.CryptoHasher(\"sha256\").update(\"test\"+i).digest(\"hex\")}console.log(performance.now()-t0)'",
+          "template": "const t0=performance.now();{operations};console.log(performance.now()-t0)",
+          "variables": [
+            "operations"
+          ],
+          "useCase": "Performance testing and optimization",
+          "dependencies": [
+            "Bun",
+            "performance API"
+          ],
+          "performance": {
+            "avgTime": 0.19,
+            "opsPerSec": 1411433,
+            "reliability": "high"
+          },
+          "patterns": [
+            "const t0=performance.now();{operations};console.log(performance.now()-t0)",
+            "JavaScript performance measurement pattern",
+            "Loop-based benchmarking with timing"
+          ],
+          "codeBlock": {
+            "type": "bun-e",
+            "template": "const t0=performance.now();{operations};console.log(performance.now()-t0)",
+            "variables": [
+              "operations"
+            ]
+          }
+        },
+        {
+          "title": "Bulk Operations Parallel",
+          "url": "undefined/undefined/performance/bulk-operations-parallel",
+          "category": "performance",
+          "tags": [
+            "bulk",
+            "parallel",
+            "promise-all",
+            "optimization",
+            "concurrency"
+          ],
+          "complexity": "intermediate",
+          "command": "bun -e 'const promises=[];for(let i=0;i<10;i++){promises.push(new Bun.CryptoHasher(\"sha256\").update(\"bulk\"+i).digest(\"hex\"))}await Promise.all(promises)'",
+          "template": "const promises=[];for(let i=0;i<{count};i++){promises.push({operation})}await Promise.all(promises)",
+          "variables": [
+            "count",
+            "operation"
+          ],
+          "useCase": "Bulk data processing optimization",
+          "dependencies": [
+            "Bun",
+            "Promise API"
+          ],
+          "performance": {
+            "avgTime": 0.32,
+            "opsPerSec": 1454545,
+            "reliability": "high"
+          },
+          "patterns": [
+            "const promises=[];for(let i=0;i<{count};i++){promises.push({operation})}await Promise.all(promises)",
+            "Parallel execution pattern with Promise.all",
+            "Bulk operation optimization"
+          ],
+          "codeBlock": {
+            "type": "bun-e",
+            "template": "const promises=[];for(let i=0;i<{count};i++){promises.push({operation})}await Promise.all(promises)",
+            "variables": [
+              "count",
+              "operation"
+            ]
+          }
+        }
+      ],
+      "avgPerformance": 1432989,
+      "complexities": {
+        "intermediate": 2
+      },
+      "codeTypes": {
+        "bun-e": 2
+      }
+    }
+  },
+  "patterns": [
+    {
+      "title": "Cookie A/B Testing - Variant A",
+      "url": "undefined/undefined/cookies/cookie-variant-a",
+      "category": "cookies",
+      "tags": [
+        "ab-testing",
+        "variant",
+        "cookie",
+        "ui",
+        "admin"
+      ],
+      "complexity": "simple",
+      "command": "curl -H \"Cookie: variant=A\" http://localhost:3000",
+      "template": "curl -H \"Cookie: variant={variant}\" {url}",
+      "variables": [
+        "variant",
+        "url"
+      ],
+      "useCase": "A/B testing UI variants",
+      "dependencies": [
+        "curl",
+        "HTTP server"
+      ],
+      "performance": {
+        "avgTime": 0.02,
+        "opsPerSec": 66576,
+        "reliability": "high"
+      },
+      "patterns": [
+        "curl -H \"Cookie: variant={VARIANT}\" {URL}",
+        "fetch(\"{URL}\", {headers: {Cookie: \"variant={VARIANT}\"}})",
+        "HTTP header manipulation for A/B testing"
+      ],
+      "codeBlock": {
+        "type": "curl",
+        "template": "curl -H \"Cookie: variant={variant}\" {url}",
+        "variables": [
+          "variant",
+          "url"
+        ]
+      }
+    },
+    {
+      "title": "R2 Profile Upload",
+      "url": "undefined/undefined/r2/r2-upload-profile",
+      "category": "r2",
+      "tags": [
+        "r2",
+        "upload",
+        "storage",
+        "cloudflare",
+        "json"
+      ],
+      "complexity": "intermediate",
+      "command": "bun -e 'fetch(\"cf://r2.factory-wager.com/profiles.json\",{method:\"PUT\",body:JSON.stringify({test:1})})'",
+      "template": "fetch(\"cf://{bucket}/{path}\",{method:\"PUT\",body:JSON.stringify({data})})",
+      "variables": [
+        "bucket",
+        "path",
+        "data"
+      ],
+      "useCase": "Object storage upload",
+      "dependencies": [
+        "Bun",
+        "Cloudflare R2"
+      ],
+      "performance": {
+        "avgTime": 0,
+        "opsPerSec": 634840,
+        "reliability": "high"
+      },
+      "patterns": [
+        "fetch(\"cf://{bucket}/{path}\", {method: \"PUT\", body: data})",
+        "Cloudflare R2 direct protocol usage",
+        "JSON payload upload to object storage"
+      ],
+      "codeBlock": {
+        "type": "r2",
+        "template": "fetch(\"cf://{bucket}/{path}\",{method:\"PUT\",body:JSON.stringify({data})})",
+        "variables": [
+          "bucket",
+          "path",
+          "data"
+        ]
+      }
+    },
+    {
+      "title": "CDN ETag Generation",
+      "url": "undefined/undefined/cdn/cdn-etag-generation",
+      "category": "cdn",
+      "tags": [
+        "etag",
+        "hash",
+        "sha256",
+        "cdn",
+        "crypto"
+      ],
+      "complexity": "simple",
+      "command": "bun -e 'new Bun.CryptoHasher(\"sha256\").update(\"html\").digest(\"hex\")'",
+      "template": "new Bun.CryptoHasher(\"{algorithm}\").update({data}).digest(\"{format}\")",
+      "variables": [
+        "algorithm",
+        "data",
+        "format"
+      ],
+      "useCase": "Cache validation and ETag generation",
+      "dependencies": [
+        "Bun crypto API"
+      ],
+      "performance": {
+        "avgTime": 0.2,
+        "opsPerSec": 13233,
+        "reliability": "high"
+      },
+      "patterns": [
+        "new Bun.CryptoHasher(\"sha256\").update(data).digest(\"hex\")",
+        "Cryptographic hash generation for cache validation",
+        "CDN ETag computation pattern"
+      ],
+      "codeBlock": {
+        "type": "crypto",
+        "template": "new Bun.CryptoHasher(\"{algorithm}\").update({data}).digest(\"{format}\")",
+        "variables": [
+          "algorithm",
+          "data",
+          "format"
+        ]
+      }
+    },
+    {
+      "title": "Subdomain Admin Routing",
+      "url": "undefined/undefined/subdomains/subdomain-routing-admin",
+      "category": "subdomains",
+      "tags": [
+        "subdomain",
+        "routing",
+        "host-header",
+        "admin",
+        "reverse-proxy"
+      ],
+      "complexity": "simple",
+      "command": "curl -H \"Host: admin.factory-wager.com\" http://localhost:3000",
+      "template": "curl -H \"Host: {subdomain}.{domain}\" {url}",
+      "variables": [
+        "subdomain",
+        "domain",
+        "url"
+      ],
+      "useCase": "Subdomain routing simulation",
+      "dependencies": [
+        "curl",
+        "HTTP server"
+      ],
+      "performance": {
+        "avgTime": 0,
+        "opsPerSec": 189970,
+        "reliability": "high"
+      },
+      "patterns": [
+        "curl -H \"Host: {subdomain}.{domain}\" {url}",
+        "Host header manipulation for subdomain routing",
+        "Local development subdomain simulation"
+      ],
+      "codeBlock": {
+        "type": "curl",
+        "template": "curl -H \"Host: {subdomain}.{domain}\" {url}",
+        "variables": [
+          "subdomain",
+          "domain",
+          "url"
+        ]
+      }
+    },
+    {
+      "title": "JuniorRunner Profile POST",
+      "url": "undefined/undefined/profiling/junior-runner-post",
+      "category": "profiling",
+      "tags": [
+        "junior-runner",
+        "post",
+        "markdown",
+        "profile",
+        "api"
+      ],
+      "complexity": "simple",
+      "command": "curl -d '# Hi' -X POST http://localhost:3000/profile",
+      "template": "curl -d '{data}' -X POST {endpoint}",
+      "variables": [
+        "data",
+        "endpoint"
+      ],
+      "useCase": "Profile data submission",
+      "dependencies": [
+        "curl",
+        "JuniorRunner API"
+      ],
+      "performance": {
+        "avgTime": 0,
+        "opsPerSec": 800000,
+        "reliability": "high"
+      },
+      "patterns": [
+        "curl -d {data} -X POST {endpoint}",
+        "Markdown content submission pattern",
+        "Profile data upload via REST API"
+      ],
+      "codeBlock": {
+        "type": "curl",
+        "template": "curl -d '{data}' -X POST {endpoint}",
+        "variables": [
+          "data",
+          "endpoint"
+        ]
+      }
+    },
+    {
+      "title": "S3 Presign Download URL",
+      "url": "undefined/undefined/s3-presign/s3-presign-download",
+      "category": "s3-presign",
+      "tags": [
+        "s3",
+        "presign",
+        "download",
+        "attachment",
+        "content-disposition"
+      ],
+      "complexity": "advanced",
+      "command": "bun -e 'import{S3Client}from\"bun\";const s3=new S3Client({endpoint:\"https://r2.factory-wager.com\",accessKeyId:process.env.R2_ACCESS_KEY_ID,secretAccessKey:process.env.R2_SECRET_ACCESS_KEY,bucket:\"factory-wager-storage\"});console.log(s3.file(\"profile.json\").presign({method:\"GET\",expiresIn:900,contentDisposition:\"attachment; filename=\\\"profile.json\\\"\",type:\"application/json\"}))'",
+      "template": "s3.file(\"{key}\").presign({method:\"GET\",expiresIn:{expiresIn},contentDisposition:\"{disposition}\",type:\"{contentType}\"})",
+      "variables": [
+        "key",
+        "expiresIn",
+        "disposition",
+        "contentType"
+      ],
+      "useCase": "Secure file download URLs",
+      "dependencies": [
+        "Bun S3Client",
+        "AWS S3/R2"
+      ],
+      "performance": {
+        "avgTime": 0.05,
+        "opsPerSec": 45000,
+        "reliability": "high"
+      },
+      "patterns": [
+        "s3.file(\"{key}\").presign({method: \"GET\", contentDisposition: \"attachment; filename=\\\"{filename}\\\"\", type: \"{contentType}\"})",
+        "S3 presigned URL generation with content disposition",
+        "File download vs inline viewing control"
+      ],
+      "codeBlock": {
+        "type": "s3",
+        "template": "s3.file(\"{key}\").presign({method:\"GET\",expiresIn:{expiresIn},contentDisposition:\"{disposition}\",type:\"{contentType}\"})",
+        "variables": [
+          "key",
+          "expiresIn",
+          "disposition",
+          "contentType"
+        ]
+      }
+    },
+    {
+      "title": "Performance Benchmark Test",
+      "url": "undefined/undefined/performance/performance-benchmark",
+      "category": "performance",
+      "tags": [
+        "benchmark",
+        "performance",
+        "timing",
+        "crypto",
+        "optimization"
+      ],
+      "complexity": "intermediate",
+      "command": "bun -e 'const t0=performance.now();for(let i=0;i<100;i++){await new Bun.CryptoHasher(\"sha256\").update(\"test\"+i).digest(\"hex\")}console.log(performance.now()-t0)'",
+      "template": "const t0=performance.now();{operations};console.log(performance.now()-t0)",
+      "variables": [
+        "operations"
+      ],
+      "useCase": "Performance testing and optimization",
+      "dependencies": [
+        "Bun",
+        "performance API"
+      ],
+      "performance": {
+        "avgTime": 0.19,
+        "opsPerSec": 1411433,
+        "reliability": "high"
+      },
+      "patterns": [
+        "const t0=performance.now();{operations};console.log(performance.now()-t0)",
+        "JavaScript performance measurement pattern",
+        "Loop-based benchmarking with timing"
+      ],
+      "codeBlock": {
+        "type": "bun-e",
+        "template": "const t0=performance.now();{operations};console.log(performance.now()-t0)",
+        "variables": [
+          "operations"
+        ]
+      }
+    },
+    {
+      "title": "Bulk Operations Parallel",
+      "url": "undefined/undefined/performance/bulk-operations-parallel",
+      "category": "performance",
+      "tags": [
+        "bulk",
+        "parallel",
+        "promise-all",
+        "optimization",
+        "concurrency"
+      ],
+      "complexity": "intermediate",
+      "command": "bun -e 'const promises=[];for(let i=0;i<10;i++){promises.push(new Bun.CryptoHasher(\"sha256\").update(\"bulk\"+i).digest(\"hex\"))}await Promise.all(promises)'",
+      "template": "const promises=[];for(let i=0;i<{count};i++){promises.push({operation})}await Promise.all(promises)",
+      "variables": [
+        "count",
+        "operation"
+      ],
+      "useCase": "Bulk data processing optimization",
+      "dependencies": [
+        "Bun",
+        "Promise API"
+      ],
+      "performance": {
+        "avgTime": 0.32,
+        "opsPerSec": 1454545,
+        "reliability": "high"
+      },
+      "patterns": [
+        "const promises=[];for(let i=0;i<{count};i++){promises.push({operation})}await Promise.all(promises)",
+        "Parallel execution pattern with Promise.all",
+        "Bulk operation optimization"
+      ],
+      "codeBlock": {
+        "type": "bun-e",
+        "template": "const promises=[];for(let i=0;i<{count};i++){promises.push({operation})}await Promise.all(promises)",
+        "variables": [
+          "count",
+          "operation"
+        ]
+      }
+    }
+  ],
+  "llm_context": "# Factory-Wager One-Liners v3.8 - LLM Optimized Context\n\n## Pattern Summary\n- Total Patterns: 8\n- Categories: cookies, r2, cdn, subdomains, profiling, s3-presign, performance\n- Complexity Levels: simple, intermediate, advanced\n- Code Types: curl, r2, crypto, s3, bun-e\n\n## Pattern 1: Cookie A/B Testing - Variant A\n\n**ID**: `cookie-variant-a`\n**Category**: `cookies`\n**Complexity**: `simple`\n**Tags**: `ab-testing`, `variant`, `cookie`, `ui`, `admin`\n**Use Case**: A/B testing UI variants\n**Dependencies**: curl, HTTP server\n\n### Command\n```bash\ncurl -H \"Cookie: variant=A\" http://localhost:3000\n```\n\n### Patterns\n- `curl -H \"Cookie: variant={VARIANT}\" {URL}`\n- `fetch(\"{URL}\", {headers: {Cookie: \"variant={VARIANT}\"}})`\n- `HTTP header manipulation for A/B testing`\n\n### Code Block Template\n```curl\ncurl -H \"Cookie: variant={variant}\" {url}\n```\n**Variables**: `variant`, `url`\n\n### Performance\n- **Avg Time**: 0.02ms\n- **Ops/sec**: 66,576\n- **Reliability**: high\n\n---\n\n## Pattern 2: R2 Profile Upload\n\n**ID**: `r2-upload-profile`\n**Category**: `r2`\n**Complexity**: `intermediate`\n**Tags**: `r2`, `upload`, `storage`, `cloudflare`, `json`\n**Use Case**: Object storage upload\n**Dependencies**: Bun, Cloudflare R2\n\n### Command\n```bash\nbun -e 'fetch(\"cf://r2.factory-wager.com/profiles.json\",{method:\"PUT\",body:JSON.stringify({test:1})})'\n```\n\n### Patterns\n- `fetch(\"cf://{bucket}/{path}\", {method: \"PUT\", body: data})`\n- `Cloudflare R2 direct protocol usage`\n- `JSON payload upload to object storage`\n\n### Code Block Template\n```r2\nfetch(\"cf://{bucket}/{path}\",{method:\"PUT\",body:JSON.stringify({data})})\n```\n**Variables**: `bucket`, `path`, `data`\n\n### Performance\n- **Avg Time**: 0ms\n- **Ops/sec**: 634,840\n- **Reliability**: high\n\n---\n\n## Pattern 3: CDN ETag Generation\n\n**ID**: `cdn-etag-generation`\n**Category**: `cdn`\n**Complexity**: `simple`\n**Tags**: `etag`, `hash`, `sha256`, `cdn`, `crypto`\n**Use Case**: Cache validation and ETag generation\n**Dependencies**: Bun crypto API\n\n### Command\n```bash\nbun -e 'new Bun.CryptoHasher(\"sha256\").update(\"html\").digest(\"hex\")'\n```\n\n### Patterns\n- `new Bun.CryptoHasher(\"sha256\").update(data).digest(\"hex\")`\n- `Cryptographic hash generation for cache validation`\n- `CDN ETag computation pattern`\n\n### Code Block Template\n```crypto\nnew Bun.CryptoHasher(\"{algorithm}\").update({data}).digest(\"{format}\")\n```\n**Variables**: `algorithm`, `data`, `format`\n\n### Performance\n- **Avg Time**: 0.2ms\n- **Ops/sec**: 13,233\n- **Reliability**: high\n\n---\n\n## Pattern 4: Subdomain Admin Routing\n\n**ID**: `subdomain-routing-admin`\n**Category**: `subdomains`\n**Complexity**: `simple`\n**Tags**: `subdomain`, `routing`, `host-header`, `admin`, `reverse-proxy`\n**Use Case**: Subdomain routing simulation\n**Dependencies**: curl, HTTP server\n\n### Command\n```bash\ncurl -H \"Host: admin.factory-wager.com\" http://localhost:3000\n```\n\n### Patterns\n- `curl -H \"Host: {subdomain}.{domain}\" {url}`\n- `Host header manipulation for subdomain routing`\n- `Local development subdomain simulation`\n\n### Code Block Template\n```curl\ncurl -H \"Host: {subdomain}.{domain}\" {url}\n```\n**Variables**: `subdomain`, `domain`, `url`\n\n### Performance\n- **Avg Time**: 0ms\n- **Ops/sec**: 189,970\n- **Reliability**: high\n\n---\n\n## Pattern 5: JuniorRunner Profile POST\n\n**ID**: `junior-runner-post`\n**Category**: `profiling`\n**Complexity**: `simple`\n**Tags**: `junior-runner`, `post`, `markdown`, `profile`, `api`\n**Use Case**: Profile data submission\n**Dependencies**: curl, JuniorRunner API\n\n### Command\n```bash\ncurl -d '# Hi' -X POST http://localhost:3000/profile\n```\n\n### Patterns\n- `curl -d {data} -X POST {endpoint}`\n- `Markdown content submission pattern`\n- `Profile data upload via REST API`\n\n### Code Block Template\n```curl\ncurl -d '{data}' -X POST {endpoint}\n```\n**Variables**: `data`, `endpoint`\n\n### Performance\n- **Avg Time**: 0ms\n- **Ops/sec**: 800,000\n- **Reliability**: high\n\n---\n\n## Pattern 6: S3 Presign Download URL\n\n**ID**: `s3-presign-download`\n**Category**: `s3-presign`\n**Complexity**: `advanced`\n**Tags**: `s3`, `presign`, `download`, `attachment`, `content-disposition`\n**Use Case**: Secure file download URLs\n**Dependencies**: Bun S3Client, AWS S3/R2\n\n### Command\n```bash\nbun -e 'import{S3Client}from\"bun\";const s3=new S3Client({endpoint:\"https://r2.factory-wager.com\",accessKeyId:process.env.R2_ACCESS_KEY_ID,secretAccessKey:process.env.R2_SECRET_ACCESS_KEY,bucket:\"factory-wager-storage\"});console.log(s3.file(\"profile.json\").presign({method:\"GET\",expiresIn:900,contentDisposition:\"attachment; filename=\\\"profile.json\\\"\",type:\"application/json\"}))'\n```\n\n### Patterns\n- `s3.file(\"{key}\").presign({method: \"GET\", contentDisposition: \"attachment; filename=\\\"{filename}\\\"\", type: \"{contentType}\"})`\n- `S3 presigned URL generation with content disposition`\n- `File download vs inline viewing control`\n\n### Code Block Template\n```s3\ns3.file(\"{key}\").presign({method:\"GET\",expiresIn:{expiresIn},contentDisposition:\"{disposition}\",type:\"{contentType}\"})\n```\n**Variables**: `key`, `expiresIn`, `disposition`, `contentType`\n\n### Performance\n- **Avg Time**: 0.05ms\n- **Ops/sec**: 45,000\n- **Reliability**: high\n\n---\n\n## Pattern 7: Performance Benchmark Test\n\n**ID**: `performance-benchmark`\n**Category**: `performance`\n**Complexity**: `intermediate`\n**Tags**: `benchmark`, `performance`, `timing`, `crypto`, `optimization`\n**Use Case**: Performance testing and optimization\n**Dependencies**: Bun, performance API\n\n### Command\n```bash\nbun -e 'const t0=performance.now();for(let i=0;i<100;i++){await new Bun.CryptoHasher(\"sha256\").update(\"test\"+i).digest(\"hex\")}console.log(performance.now()-t0)'\n```\n\n### Patterns\n- `const t0=performance.now();{operations};console.log(performance.now()-t0)`\n- `JavaScript performance measurement pattern`\n- `Loop-based benchmarking with timing`\n\n### Code Block Template\n```bun-e\nconst t0=performance.now();{operations};console.log(performance.now()-t0)\n```\n**Variables**: `operations`\n\n### Performance\n- **Avg Time**: 0.19ms\n- **Ops/sec**: 1,411,433\n- **Reliability**: high\n\n---\n\n## Pattern 8: Bulk Operations Parallel\n\n**ID**: `bulk-operations-parallel`\n**Category**: `performance`\n**Complexity**: `intermediate`\n**Tags**: `bulk`, `parallel`, `promise-all`, `optimization`, `concurrency`\n**Use Case**: Bulk data processing optimization\n**Dependencies**: Bun, Promise API\n\n### Command\n```bash\nbun -e 'const promises=[];for(let i=0;i<10;i++){promises.push(new Bun.CryptoHasher(\"sha256\").update(\"bulk\"+i).digest(\"hex\"))}await Promise.all(promises)'\n```\n\n### Patterns\n- `const promises=[];for(let i=0;i<{count};i++){promises.push({operation})}await Promise.all(promises)`\n- `Parallel execution pattern with Promise.all`\n- `Bulk operation optimization`\n\n### Code Block Template\n```bun-e\nconst promises=[];for(let i=0;i<{count};i++){promises.push({operation})}await Promise.all(promises)\n```\n**Variables**: `count`, `operation`\n\n### Performance\n- **Avg Time**: 0.32ms\n- **Ops/sec**: 1,454,545\n- **Reliability**: high\n\n---\n\n",
+  "pattern_matching_guide": "# Factory-Wager Pattern Matching Guide\n\n## Pattern Categories\n\n### COOKIES\n- **Count**: 1 patterns\n- **Avg Performance**: 66,576 ops/s\n- **Complexities**: simple (1)\n- **Code Types**: curl\n\n### R2\n- **Count**: 1 patterns\n- **Avg Performance**: 634,840 ops/s\n- **Complexities**: intermediate (1)\n- **Code Types**: r2\n\n### CDN\n- **Count**: 1 patterns\n- **Avg Performance**: 13,233 ops/s\n- **Complexities**: simple (1)\n- **Code Types**: crypto\n\n### SUBDOMAINS\n- **Count**: 1 patterns\n- **Avg Performance**: 189,970 ops/s\n- **Complexities**: simple (1)\n- **Code Types**: curl\n\n### PROFILING\n- **Count**: 1 patterns\n- **Avg Performance**: 800,000 ops/s\n- **Complexities**: simple (1)\n- **Code Types**: curl\n\n### S3-PRESIGN\n- **Count**: 1 patterns\n- **Avg Performance**: 45,000 ops/s\n- **Complexities**: advanced (1)\n- **Code Types**: s3\n\n### PERFORMANCE\n- **Count**: 2 patterns\n- **Avg Performance**: 1,432,989 ops/s\n- **Complexities**: intermediate (2)\n- **Code Types**: bun-e\n\n## Pattern Recognition Matrix\n\n| Use Case | Pattern Template | Complexity | Code Type | Performance |\n|----------|------------------|------------|-----------|-------------|\n| A/B testing UI variants | `curl -H \"Cookie: variant={}\" {}` | simple | curl | 66,576 ops/s |\n| Object storage upload | `fetch(\"cf://{}/{}\", {})` | intermediate | r2 | 634,840 ops/s |\n| Cache validation and ETag generation | `new Bun.CryptoHasher(\"sha256\").update(data).digest(\"hex\")` | simple | crypto | 13,233 ops/s |\n| Subdomain routing simulation | `curl -H \"Host: {}.{}\" {}` | simple | curl | 189,970 ops/s |\n| Profile data submission | `curl -d {} -X POST {}` | simple | curl | 800,000 ops/s |\n| Secure file download URLs | `s3.file(\"{}\").presign({}\\\"\", type: \"{}\"})` | advanced | s3 | 45,000 ops/s |\n| Performance testing and optimization | `const t0=performance.now();{};console.log(performance.now()-t0)` | intermediate | bun-e | 1,411,433 ops/s |\n| Bulk data processing optimization | `const promises=[];for(let i=0;i<{};i++){})}await Promise.all(promises)` | intermediate | bun-e | 1,454,545 ops/s |\n\n## Tag-Based Filtering\n\n### Available Tags (37)\n- `ab-testing`\n- `admin`\n- `api`\n- `attachment`\n- `benchmark`\n- `bulk`\n- `cdn`\n- `cloudflare`\n- `concurrency`\n- `content-disposition`\n- `cookie`\n- `crypto`\n- `download`\n- `etag`\n- `hash`\n- `host-header`\n- `json`\n- `junior-runner`\n- `markdown`\n- `optimization`\n- `parallel`\n- `performance`\n- `post`\n- `presign`\n- `profile`\n- `promise-all`\n- `r2`\n- `reverse-proxy`\n- `routing`\n- `s3`\n- `sha256`\n- `storage`\n- `subdomain`\n- `timing`\n- `ui`\n- `upload`\n- `variant`\n\n### Popular Tag Combinations\n- **ab-testing + cookie**: 1 patterns\n- **r2 + upload**: 1 patterns\n- **performance + benchmark**: 1 patterns\n- **s3 + presign**: 1 patterns\n- **subdomain + routing**: 1 patterns\n",
+  "api": {
+    "base_url": "https://wiki.factory-wager.com/api/v1",
+    "endpoints": {
+      "list_patterns": "/patterns",
+      "get_pattern": "/patterns/{id}",
+      "search_patterns": "/search?q={query}",
+      "category": "/categories/{category}",
+      "tags": "/tags/{tag}",
+      "complexity": "/complexity/{level}"
+    }
+  }
+}

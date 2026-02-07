@@ -1,25 +1,21 @@
 #!/usr/bin/env bun
 /**
  * Unified Version Management CLI
- * 
+ *
  * Semantic versioning across all Cloudflare resources using Bun.semver
- * 
+ *
  * Usage:
  *   bun run cf-version.ts [command] [options]
  */
 
-import { 
-  versionManager, 
+import {
+  versionManager,
   semver,
   versionSatisfies,
   bumpVersion,
-  isValidSemver 
+  isValidSemver,
 } from '../../lib/cloudflare/unified-versioning';
-import {
-  ThemedConsole,
-  getDomainTheme,
-  themedSeparator
-} from '../../themes/config/domain-theme';
+import { ThemedConsole, getDomainTheme, themedSeparator } from '../../themes/config/domain-theme';
 import { FACTORY_WAGER_BRAND } from '../../src/config/domain';
 import type { ThemeName } from '../../themes/config';
 
@@ -33,7 +29,7 @@ const t = new ThemedConsole('professional');
 function printHeader(): void {
   const { icon, name } = FACTORY_WAGER_BRAND;
   const separator = themedSeparator('professional', 60);
-  
+
   t.log();
   t.log(separator);
   t.log(`${icon} ${name} Version Manager`);
@@ -46,7 +42,7 @@ function printHeader(): void {
 
 async function cmdCompare(): Promise<void> {
   const [v1, v2] = [args[1], args[2]];
-  
+
   if (!v1 || !v2) {
     t.error('Usage: compare <version1> <version2>');
     return;
@@ -62,9 +58,9 @@ async function cmdCompare(): Promise<void> {
 
   const result = versionManager.compare(v1, v2);
   const comparison = result < 0 ? '<' : result > 0 ? '>' : '==';
-  
+
   t.log(`  ${v1} ${comparison} ${v2}`);
-  
+
   if (result < 0) {
     t.info(`${v2} is greater than ${v1}`);
   } else if (result > 0) {
@@ -76,7 +72,7 @@ async function cmdCompare(): Promise<void> {
 
 async function cmdSatisfies(): Promise<void> {
   const [version, range] = [args[1], args[2]];
-  
+
   if (!version || !range) {
     t.error('Usage: satisfies <version> <range>');
     t.log('  Example: satisfies 1.2.3 ^1.0.0');
@@ -87,7 +83,7 @@ async function cmdSatisfies(): Promise<void> {
   t.log();
 
   const satisfies = versionSatisfies(version, range);
-  
+
   if (satisfies) {
     t.success(`Yes! ${version} satisfies ${range}`);
   } else {
@@ -97,7 +93,7 @@ async function cmdSatisfies(): Promise<void> {
 
 async function cmdBump(): Promise<void> {
   const [version, type] = [args[1], args[2] as 'major' | 'minor' | 'patch'];
-  
+
   if (!version || !type) {
     t.error('Usage: bump <version> <major|minor|patch>');
     return;
@@ -114,10 +110,9 @@ async function cmdBump(): Promise<void> {
   try {
     const newVersion = bumpVersion(version, type);
     t.success(`${version} → ${newVersion}`);
-    
+
     const v = versionManager.parseVersion(newVersion);
     t.log(`   Major: ${v.major} | Minor: ${v.minor} | Patch: ${v.patch}`);
-    
   } catch (error) {
     t.error(`Invalid version: ${version}`);
   }
@@ -125,7 +120,7 @@ async function cmdBump(): Promise<void> {
 
 async function cmdValidate(): Promise<void> {
   const version = args[1];
-  
+
   if (!version) {
     t.error('Usage: validate <version>');
     return;
@@ -151,7 +146,7 @@ async function cmdValidate(): Promise<void> {
 
 async function cmdSort(): Promise<void> {
   const versions = args.slice(1);
-  
+
   if (versions.length < 2) {
     t.error('Usage: sort <version1> <version2> [version3...]');
     return;
@@ -161,13 +156,13 @@ async function cmdSort(): Promise<void> {
   t.log();
 
   const sorted = versionManager.sortVersions(versions);
-  
+
   t.info('Ascending order:');
   sorted.forEach((v, i) => {
     const marker = i === sorted.length - 1 ? '→' : ' ';
     t.log(`  ${marker} ${v}`);
   });
-  
+
   t.log();
   t.info('Descending order:');
   versionManager.sortVersionsDesc(versions).forEach((v, i) => {
@@ -179,7 +174,7 @@ async function cmdSort(): Promise<void> {
 async function cmdRange(): Promise<void> {
   const range = args[1];
   const versions = args.slice(2);
-  
+
   if (!range || versions.length === 0) {
     t.error('Usage: range <semver-range> <version1> [version2...]');
     t.log('  Example: range ^1.0.0 0.9.0 1.0.0 1.5.0 2.0.0');
@@ -190,14 +185,14 @@ async function cmdRange(): Promise<void> {
   t.log();
 
   const matching = versionManager.filterByRange(versions, range);
-  
+
   t.info('Matching versions:');
   if (matching.length === 0) {
     t.warning('  No versions match');
   } else {
     matching.forEach(v => t.success(`  ✓ ${v}`));
   }
-  
+
   t.log();
   t.info('Non-matching versions:');
   const nonMatching = versions.filter(v => !matching.includes(v));
@@ -212,7 +207,7 @@ async function cmdCompatibility(): Promise<void> {
   const domain = args[1];
   const worker = args[2];
   const r2 = args[3];
-  
+
   if (!domain || !worker || !r2) {
     t.error('Usage: compatibility <domain-v> <worker-v> <r2-v>');
     return;
@@ -243,7 +238,7 @@ async function cmdCompatibility(): Promise<void> {
 async function cmdChangelog(): Promise<void> {
   const fromVersion = args[1];
   const toVersion = args[2];
-  
+
   if (!fromVersion || !toVersion) {
     t.error('Usage: changelog <from-version> <to-version>');
     return;
@@ -253,7 +248,7 @@ async function cmdChangelog(): Promise<void> {
   t.log();
 
   const changes = versionManager.generateChangelog(fromVersion, toVersion);
-  
+
   if (changes.length === 0) {
     t.info('No version changes');
   } else {
@@ -266,7 +261,7 @@ async function cmdAuto(): Promise<void> {
   const breaking = parseInt(args[2]) || 0;
   const features = parseInt(args[3]) || 0;
   const fixes = parseInt(args[4]) || 0;
-  
+
   if (!current) {
     t.error('Usage: auto <current-version> [breaking] [features] [fixes]');
     t.log('  Example: auto 1.2.3 0 2 5');
@@ -277,7 +272,7 @@ async function cmdAuto(): Promise<void> {
   t.log();
 
   const result = versionManager.autoIncrement(current, { breaking, features, fixes });
-  
+
   t.info(`Changes: ${breaking} breaking, ${features} features, ${fixes} fixes`);
   t.log();
   t.success(`Recommended: ${result.type} bump`);
@@ -289,10 +284,10 @@ async function cmdStats(): Promise<void> {
   t.log();
 
   const stats = versionManager.getStats();
-  
+
   t.info(`Resources: ${stats.totalResources}`);
   t.info(`Deployments: ${stats.totalDeployments}`);
-  
+
   if (stats.versionRange.min && stats.versionRange.max) {
     t.log(`  Range: ${stats.versionRange.min} → ${stats.versionRange.max}`);
   }

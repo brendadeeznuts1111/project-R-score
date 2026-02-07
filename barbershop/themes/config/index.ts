@@ -1,6 +1,6 @@
 /**
  * Theme Registry
- * 
+ *
  * Hybrid approach: Individual TOML files + TypeScript registry
  * Benefits:
  * - Tree-shaking (only bundle themes you import)
@@ -106,15 +106,21 @@ export interface DomainConfigFile {
     default_ttl: number;
     ssl_mode: string;
   };
-  subdomains: Record<string, {
-    name: string;
-    proxied: boolean;
-    description: string;
-  }>;
-  environments: Record<string, {
-    primary_domain: string;
-    ssl_mode: string;
-  }>;
+  subdomains: Record<
+    string,
+    {
+      name: string;
+      proxied: boolean;
+      description: string;
+    }
+  >;
+  environments: Record<
+    string,
+    {
+      primary_domain: string;
+      ssl_mode: string;
+    }
+  >;
   cli: {
     theme: {
       default: string;
@@ -189,7 +195,7 @@ export function hasTheme(name: string): name is ThemeName {
  */
 export function generateCSSVariables(theme: ThemeConfig): string {
   const vars: string[] = [];
-  
+
   // Color scales
   for (const [colorName, scale] of Object.entries(theme.colors)) {
     if (typeof scale === 'object' && !('primary' in scale)) {
@@ -204,26 +210,26 @@ export function generateCSSVariables(theme: ThemeConfig): string {
       }
     }
   }
-  
+
   // Typography
   vars.push(`  --font-sans: ${theme.typography.fontSans};`);
   vars.push(`  --font-mono: ${theme.typography.fontMono};`);
-  
+
   // Shadows
   for (const [key, value] of Object.entries(theme.shadows)) {
     vars.push(`  --shadow-${key}: ${value};`);
   }
-  
+
   // Border radius
   for (const [key, value] of Object.entries(theme.radii)) {
     vars.push(`  --radius-${key}: ${value};`);
   }
-  
+
   // Transitions
   for (const [key, value] of Object.entries(theme.transitions)) {
     vars.push(`  --transition-${key}: ${value};`);
   }
-  
+
   return `:root {\n${vars.join('\n')}\n}`;
 }
 
@@ -232,26 +238,28 @@ export function generateCSSVariables(theme: ThemeConfig): string {
  */
 export function applyTheme(theme: ThemeConfig, themeName?: string): void {
   if (typeof document === 'undefined') return;
-  
+
   const styleId = 'fw-theme-variables';
   let styleEl = document.getElementById(styleId) as HTMLStyleElement | null;
-  
+
   if (!styleEl) {
     styleEl = document.createElement('style');
     styleEl.id = styleId;
     document.head.appendChild(styleEl);
   }
-  
+
   styleEl.textContent = generateCSSVariables(theme);
-  
+
   if (themeName) {
     document.documentElement.setAttribute('data-theme', themeName);
   }
-  
+
   // Dispatch custom event
-  window.dispatchEvent(new CustomEvent('themechange', { 
-    detail: { theme, name: themeName } 
-  }));
+  window.dispatchEvent(
+    new CustomEvent('themechange', {
+      detail: { theme, name: themeName },
+    })
+  );
 }
 
 /**

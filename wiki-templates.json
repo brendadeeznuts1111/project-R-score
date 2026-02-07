@@ -1,0 +1,74 @@
+{
+  "templates": [
+    {
+      "name": "Slack Knowledge Base",
+      "description": "Markdown format optimized for Slack knowledge sharing",
+      "baseUrl": "https://company.slack.com/archives/knowledge",
+      "workspace": "engineering/bun-utilities",
+      "format": "markdown",
+      "includeExamples": true,
+      "customSections": [
+        "## Quick Commands",
+        "## Team Contacts",
+        "## Related Resources"
+      ]
+    },
+    {
+      "name": "Jira Documentation",
+      "description": "HTML format for Jira project documentation",
+      "baseUrl": "https://company.atlassian.net/wiki/projects/DOC",
+      "workspace": "documentation/bun-utilities",
+      "format": "html",
+      "includeExamples": true,
+      "customSections": [
+        "## Requirements",
+        "## Test Cases",
+        "## Deployment Notes"
+      ]
+    },
+    {
+      "name": "SharePoint Portal",
+      "description": "HTML format for SharePoint intranet portal",
+      "baseUrl": "https://company.sharepoint.com/sites/techdocs",
+      "workspace": "development/bun-utilities",
+      "format": "html",
+      "includeExamples": false,
+      "customSections": [
+        "## Business Context",
+        "## Compliance Notes",
+        "## Approval Workflow"
+      ]
+    },
+    {
+      "name": "GitBook Documentation",
+      "description": "Markdown format for GitBook documentation site",
+      "baseUrl": "https://company.gitbook.io/bun-utilities",
+      "workspace": "public/api-docs",
+      "format": "markdown",
+      "includeExamples": true,
+      "customSections": [
+        "## Getting Started",
+        "## API Reference",
+        "## Examples"
+      ]
+    },
+    {
+      "name": "Complete Documentation Suite",
+      "description": "Generate all formats for comprehensive documentation",
+      "baseUrl": "https://docs.company.com/bun-utilities",
+      "workspace": "documentation/complete",
+      "format": "all",
+      "includeExamples": true,
+      "customSections": [
+        "## Overview",
+        "## Quick Start",
+        "## API Reference",
+        "## Examples",
+        "## Troubleshooting"
+      ]
+    }
+  ],
+  "exported": "2026-02-07T06:57:00.000Z",
+  "version": "1.0.0",
+  "validFormats": ["markdown", "html", "json", "all"]
+}

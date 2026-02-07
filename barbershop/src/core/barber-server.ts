@@ -42,8 +42,14 @@ const KEEP_ALIVE_TIMEOUT_SEC = Number(env.KEEP_ALIVE_TIMEOUT_SEC ?? 5);
 const KEEP_ALIVE_MAX = Number(env.KEEP_ALIVE_MAX ?? 1000);
 const LIFECYCLE_KEY = env.LIFECYCLE_KEY ?? 'godmode123';
 const AUTO_UNREF = env.AUTO_UNREF === 'true';
-const DNS_PREFETCH_HOSTS = (env.DNS_PREFETCH_HOSTS ?? 'example.com').split(',').map((s) => s.trim()).filter(Boolean);
-const DNS_WARMUP_HOSTS = (env.DNS_WARMUP_HOSTS ?? env.DNS_PREFETCH_HOSTS ?? 'example.com').split(',').map((s) => s.trim()).filter(Boolean);
+const DNS_PREFETCH_HOSTS = (env.DNS_PREFETCH_HOSTS ?? 'example.com')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean);
+const DNS_WARMUP_HOSTS = (env.DNS_WARMUP_HOSTS ?? env.DNS_PREFETCH_HOSTS ?? 'example.com')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean);
 const DNS_WARMUP_TIMEOUT_MS = Number(env.DNS_WARMUP_TIMEOUT_MS ?? 500);
 const MANAGER_KEY = env.MANAGER_KEY ?? '';
 const PAYPAL_SECRET_ENV = env.PAYPAL_SECRET ?? '';
@@ -61,7 +67,7 @@ function responseHeaders(contentType: string) {
     'Keep-Alive': `timeout=${KEEP_ALIVE_TIMEOUT_SEC}, max=${KEEP_ALIVE_MAX}`,
     'X-Server-Name': SERVER_NAME,
     Vary: 'Accept-Encoding',
-    'Cache-Control': 'no-store'
+    'Cache-Control': 'no-store',
   };
 }
 
@@ -74,8 +80,8 @@ function textResponse(body: string, contentType: string, status = 200) {
     status,
     headers: {
       ...responseHeaders(contentType),
-      ETag: etagFor(body)
-    }
+      ETag: etagFor(body),
+    },
   });
 }
 
@@ -111,7 +117,7 @@ let redisSubscribed = false;
 async function subscribeRedis(channel: string) {
   if (redisSubscribed) return;
   redisSubscribed = true;
-  await redis.subscribe(channel, (message) => {
+  await redis.subscribe(channel, message => {
     for (const ws of wsClients) {
       try {
         ws.send(message);
@@ -143,13 +149,17 @@ function parseCookie(header: string) {
   return out;
 }
 
-function serializeCookie(name: string, value: string, opts: {
-  httpOnly?: boolean;
-  secure?: boolean;
-  sameSite?: 'strict' | 'lax' | 'none';
-  path?: string;
-  maxAge?: number;
-}) {
+function serializeCookie(
+  name: string,
+  value: string,
+  opts: {
+    httpOnly?: boolean;
+    secure?: boolean;
+    sameSite?: 'strict' | 'lax' | 'none';
+    path?: string;
+    maxAge?: number;
+  }
+) {
   const segments = [`${name}=${encodeURIComponent(value)}`];
   if (opts.maxAge != null) segments.push(`Max-Age=${opts.maxAge}`);
   if (opts.path) segments.push(`Path=${opts.path}`);
@@ -177,7 +187,7 @@ async function getPaypalSecret() {
 
 const barberCache = {
   data: null as Record<string, string> | null,
-  fetchedAt: 0
+  fetchedAt: 0,
 };
 
 async function getBarberRecord() {
@@ -216,7 +226,10 @@ const telemetry = {
   requests: 0,
   errors: 0,
   latencyMs: 0,
-  perEndpoint: {} as Record<string, { count: number; errors: number; lastLatencyMs: number; p95Ms: number; p99Ms: number }>
+  perEndpoint: {} as Record<
+    string,
+    { count: number; errors: number; lastLatencyMs: number; p95Ms: number; p99Ms: number }
+  >,
 };
 
 const endpointLatencies: Record<string, number[]> = {};
@@ -228,8 +241,9 @@ const docsAdminFile = Bun.file(new URL('./ADMIN.md', import.meta.url).pathname);
 let shutdownHooksInstalled = false;
 
 function resourceHintsHtml() {
-  return DNS_PREFETCH_HOSTS.map((host) =>
-    `<link rel="dns-prefetch" href="//${host}"><link rel="preconnect" href="https://${host}" crossorigin>`
+  return DNS_PREFETCH_HOSTS.map(
+    host =>
+      `<link rel="dns-prefetch" href="//${host}"><link rel="preconnect" href="https://${host}" crossorigin>`
   ).join('\n  ');
 }
 
@@ -242,9 +256,14 @@ async function warmupDns(hosts: string[]) {
     try {
       await Promise.race([
         lookup(host),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), DNS_WARMUP_TIMEOUT_MS))
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('timeout')), DNS_WARMUP_TIMEOUT_MS)
+        ),
       ]);
-      logInfo('dns_warmup_ok', { host, durationMs: Math.round((performance.now() - started) * 1000) / 1000 });
+      logInfo('dns_warmup_ok', {
+        host,
+        durationMs: Math.round((performance.now() - started) * 1000) / 1000,
+      });
     } catch (error) {
       logInfo('dns_warmup_error', { host, error: String(error) });
     }
@@ -265,7 +284,7 @@ function buildTelemetrySnapshot() {
     snapshot.perEndpoint[path] = {
       ...entry,
       p95Ms: percentile(values, 95),
-      p99Ms: percentile(values, 99)
+      p99Ms: percentile(values, 99),
     };
   }
   return snapshot;
@@ -282,9 +301,11 @@ async function redisHealthy() {
 }
 
 function telemetryHtml(snapshot: ReturnType<typeof buildTelemetrySnapshot>) {
-  const rows = Object.entries(snapshot.perEndpoint).map(([path, entry]) => {
-    return `<tr><td>${path}</td><td>${entry.count}</td><td>${entry.errors}</td><td>${entry.lastLatencyMs}</td><td>${entry.p95Ms}</td><td>${entry.p99Ms}</td></tr>`;
-  }).join('');
+  const rows = Object.entries(snapshot.perEndpoint)
+    .map(([path, entry]) => {
+      return `<tr><td>${path}</td><td>${entry.count}</td><td>${entry.errors}</td><td>${entry.lastLatencyMs}</td><td>${entry.p95Ms}</td><td>${entry.p99Ms}</td></tr>`;
+    })
+    .join('');
   return `<!doctype html>
   <html><head><meta charset="utf-8"><title>Telemetry</title>
   ${RESOURCE_HINTS}
@@ -336,16 +357,17 @@ async function startServer(options: StartServerOptions = {}) {
   const server = serve({
     port: runtimePort,
     hostname: runtimeHost,
-    development: TLS_KEY_PATH && TLS_CERT_PATH
-      ? { tls: { key: Bun.file(TLS_KEY_PATH), cert: Bun.file(TLS_CERT_PATH) } }
-      : undefined,
+    development:
+      TLS_KEY_PATH && TLS_CERT_PATH
+        ? { tls: { key: Bun.file(TLS_KEY_PATH), cert: Bun.file(TLS_CERT_PATH) } }
+        : undefined,
     websocket: {
       open(ws) {
         wsClients.add(ws);
       },
       close(ws) {
         wsClients.delete(ws);
-      }
+      },
     },
     async fetch(req) {
       const start = performance.now();
@@ -364,7 +386,7 @@ async function startServer(options: StartServerOptions = {}) {
             perMessageDeflate: false,
             tls: TLS_CA_PATH
               ? { ca: Bun.file(TLS_CA_PATH), rejectUnauthorized: !ALLOW_INSECURE_WS }
-              : { rejectUnauthorized: !ALLOW_INSECURE_WS }
+              : { rejectUnauthorized: !ALLOW_INSECURE_WS },
           });
           if (!ok) {
             status = 426;
@@ -380,16 +402,21 @@ async function startServer(options: StartServerOptions = {}) {
           const r = await getBarberRecord();
           const tokens = await getUserTokens('ashschaeffer1');
           return new Response(
-            JSON.stringify({ success: true, barber: { ...r, cookie: parsed }, tokens, session: 'jb' }),
+            JSON.stringify({
+              success: true,
+              barber: { ...r, cookie: parsed },
+              tokens,
+              session: 'jb',
+            }),
             {
               headers: {
                 ...responseHeaders('application/json; charset=utf-8'),
                 'Set-Cookie': serializeCookie('auth', 'jb', {
                   httpOnly: true,
                   secure: true,
-                  sameSite: 'strict'
-                })
-              }
+                  sameSite: 'strict',
+                }),
+              },
             }
           );
         }
@@ -397,8 +424,10 @@ async function startServer(options: StartServerOptions = {}) {
         if (parseClearRequest(url, MANAGER_KEY)) {
           const r = await getBarberRecord();
           const report = buildReport(r);
-          db.prepare('INSERT OR REPLACE INTO reports VALUES(?,?)')
-            .run(Date.now().toString(), JSON.stringify(report));
+          db.prepare('INSERT OR REPLACE INTO reports VALUES(?,?)').run(
+            Date.now().toString(),
+            JSON.stringify(report)
+          );
           await redis.publish('eod', JSON.stringify(report));
           return new Response(JSON.stringify(report), {
             headers: {
@@ -408,10 +437,10 @@ async function startServer(options: StartServerOptions = {}) {
                 path: '/',
                 maxAge: 3600,
                 sameSite: 'strict',
-                secure: true
+                secure: true,
               }),
-              'Proxy-Connection': 'keep-alive'
-            }
+              'Proxy-Connection': 'keep-alive',
+            },
           });
         }
 
@@ -421,7 +450,7 @@ async function startServer(options: StartServerOptions = {}) {
             return textResponse(telemetryHtml(snapshot), 'text/html; charset=utf-8');
           }
           return new Response(JSON.stringify(snapshot), {
-            headers: responseHeaders('application/json; charset=utf-8')
+            headers: responseHeaders('application/json; charset=utf-8'),
           });
         }
 
@@ -436,7 +465,7 @@ async function startServer(options: StartServerOptions = {}) {
 
         if (url.pathname === '/docs/manifest.json') {
           return new Response(JSON.stringify(manifestData), {
-            headers: responseHeaders('application/json; charset=utf-8')
+            headers: responseHeaders('application/json; charset=utf-8'),
           });
         }
 
@@ -460,7 +489,7 @@ async function startServer(options: StartServerOptions = {}) {
           const payload = { status: ok ? 'ok' : 'degraded', redis: ok };
           return new Response(JSON.stringify(payload), {
             status: ok ? 200 : 503,
-            headers: responseHeaders('application/json; charset=utf-8')
+            headers: responseHeaders('application/json; charset=utf-8'),
           });
         }
 
@@ -473,12 +502,23 @@ async function startServer(options: StartServerOptions = {}) {
             );
           }
           const method = (url.searchParams.get('method') || 'GET').toUpperCase();
-          const allowedMethods = new Set(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']);
+          const allowedMethods = new Set([
+            'GET',
+            'POST',
+            'PUT',
+            'PATCH',
+            'DELETE',
+            'HEAD',
+            'OPTIONS',
+          ]);
           if (!allowedMethods.has(method)) {
-            return new Response(JSON.stringify({ ok: false, error: `Unsupported method: ${method}` }), {
-              status: 400,
-              headers: responseHeaders('application/json; charset=utf-8')
-            });
+            return new Response(
+              JSON.stringify({ ok: false, error: `Unsupported method: ${method}` }),
+              {
+                status: 400,
+                headers: responseHeaders('application/json; charset=utf-8'),
+              }
+            );
           }
           let headers: Record<string, string> = {};
           const headersRaw = url.searchParams.get('headers');
@@ -488,7 +528,7 @@ async function startServer(options: StartServerOptions = {}) {
             } catch {
               return new Response(JSON.stringify({ ok: false, error: 'Invalid headers JSON' }), {
                 status: 400,
-                headers: responseHeaders('application/json; charset=utf-8')
+                headers: responseHeaders('application/json; charset=utf-8'),
               });
             }
           }
@@ -497,28 +537,33 @@ async function startServer(options: StartServerOptions = {}) {
           if (bodyJsonRaw != null) {
             try {
               body = JSON.stringify(JSON.parse(bodyJsonRaw));
-              if (!Object.keys(headers).some((h) => h.toLowerCase() === 'content-type')) {
+              if (!Object.keys(headers).some(h => h.toLowerCase() === 'content-type')) {
                 headers['content-type'] = 'application/json';
               }
             } catch {
               return new Response(JSON.stringify({ ok: false, error: 'Invalid body_json value' }), {
                 status: 400,
-                headers: responseHeaders('application/json; charset=utf-8')
+                headers: responseHeaders('application/json; charset=utf-8'),
               });
             }
           } else {
             const bodyRaw = url.searchParams.get('body');
             if (bodyRaw != null) body = bodyRaw;
           }
-          const verbose = url.searchParams.get('verbose') === '1' || url.searchParams.get('verbose') === 'true';
-          const { response, durationMs } = await fetchWithDefaults(target, { method, headers, body }, { verbose });
+          const verbose =
+            url.searchParams.get('verbose') === '1' || url.searchParams.get('verbose') === 'true';
+          const { response, durationMs } = await fetchWithDefaults(
+            target,
+            { method, headers, body },
+            { verbose }
+          );
           return new Response(
             JSON.stringify({
               ok: response.ok,
               target,
               method,
               status: response.status,
-              durationMs
+              durationMs,
             }),
             { headers: responseHeaders('application/json; charset=utf-8') }
           );
@@ -535,9 +580,9 @@ async function startServer(options: StartServerOptions = {}) {
               pendingRequests: server.pendingRequests,
               pendingWebSockets: server.pendingWebSockets,
               subscribers: {
-                eod: server.subscriberCount('eod')
+                eod: server.subscriberCount('eod'),
               },
-              requestIP: address ? { address: address.address, port: address.port } : null
+              requestIP: address ? { address: address.address, port: address.port } : null,
             }),
             { headers: responseHeaders('application/json; charset=utf-8') }
           );
@@ -546,39 +591,51 @@ async function startServer(options: StartServerOptions = {}) {
         if (url.pathname === '/ops/lifecycle') {
           const key = url.searchParams.get('key');
           if (key !== LIFECYCLE_KEY) {
-            return new Response(JSON.stringify({ ok: false, error: 'Unauthorized lifecycle key' }), {
-              status: 401,
-              headers: responseHeaders('application/json; charset=utf-8')
-            });
+            return new Response(
+              JSON.stringify({ ok: false, error: 'Unauthorized lifecycle key' }),
+              {
+                status: 401,
+                headers: responseHeaders('application/json; charset=utf-8'),
+              }
+            );
           }
           const action = url.searchParams.get('action') || 'status';
           if (action === 'unref') {
             server.unref();
-            return new Response(JSON.stringify({ ok: true, action, message: 'Server unref applied' }), {
-              headers: responseHeaders('application/json; charset=utf-8')
-            });
+            return new Response(
+              JSON.stringify({ ok: true, action, message: 'Server unref applied' }),
+              {
+                headers: responseHeaders('application/json; charset=utf-8'),
+              }
+            );
           }
           if (action === 'ref') {
             server.ref();
-            return new Response(JSON.stringify({ ok: true, action, message: 'Server ref applied' }), {
-              headers: responseHeaders('application/json; charset=utf-8')
-            });
+            return new Response(
+              JSON.stringify({ ok: true, action, message: 'Server ref applied' }),
+              {
+                headers: responseHeaders('application/json; charset=utf-8'),
+              }
+            );
           }
           if (action === 'stop' || action === 'stop_force') {
             const force = action === 'stop_force';
             setTimeout(() => {
               void server.stop(force);
             }, 10);
-            return new Response(JSON.stringify({ ok: true, action, force, message: 'Server stop scheduled' }), {
-              headers: responseHeaders('application/json; charset=utf-8')
-            });
+            return new Response(
+              JSON.stringify({ ok: true, action, force, message: 'Server stop scheduled' }),
+              {
+                headers: responseHeaders('application/json; charset=utf-8'),
+              }
+            );
           }
           return new Response(
             JSON.stringify({
               ok: true,
               action: 'status',
               pendingRequests: server.pendingRequests,
-              pendingWebSockets: server.pendingWebSockets
+              pendingWebSockets: server.pendingWebSockets,
             }),
             { headers: responseHeaders('application/json; charset=utf-8') }
           );
@@ -587,8 +644,8 @@ async function startServer(options: StartServerOptions = {}) {
         return new Response('🦘 Native Barber: Redis+SQLite+WS+TLS+Secrets+Cookies', {
           headers: {
             ...responseHeaders('text/plain; charset=utf-8'),
-            'Access-Control-Allow-Origin': '*'
-          }
+            'Access-Control-Allow-Origin': '*',
+          },
         });
       } catch (err) {
         telemetry.errors += 1;
@@ -599,7 +656,8 @@ async function startServer(options: StartServerOptions = {}) {
           telemetry.perEndpoint[path] = entry;
         }
         logInfo('error', { rid, message: String(err) });
-        const message = NODE_ENV === 'development' ? `Internal error: ${String(err)}` : 'Internal error';
+        const message =
+          NODE_ENV === 'development' ? `Internal error: ${String(err)}` : 'Internal error';
         return new Response(message, { status });
       } finally {
         const elapsed = performance.now() - start;
@@ -619,13 +677,13 @@ async function startServer(options: StartServerOptions = {}) {
           method: req.method,
           path,
           status,
-          latencyMs: telemetry.latencyMs
+          latencyMs: telemetry.latencyMs,
         });
       }
-    }
+    },
   });
 
-  subscribeRedis('eod').catch((err) => {
+  subscribeRedis('eod').catch(err => {
     logInfo('redis_subscribe_error', { message: String(err) });
   });
 
@@ -636,7 +694,7 @@ async function startServer(options: StartServerOptions = {}) {
     protocol: server.protocol,
     baseUrl,
     tls: Boolean(TLS_KEY_PATH && TLS_CERT_PATH),
-    insecureWs: ALLOW_INSECURE_WS
+    insecureWs: ALLOW_INSECURE_WS,
   });
 
   if (AUTO_UNREF) {

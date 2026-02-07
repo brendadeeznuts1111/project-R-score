@@ -1,6 +1,6 @@
 /**
  * Cloudflare Secrets Bridge (Runtime Module)
- * 
+ *
  * Lightweight version for runtime use by the Cloudflare client.
  * The full version with CLI commands is in scripts/domain/cf-secrets-bridge.ts
  */
@@ -19,7 +19,7 @@ export interface CloudflareCredentials {
  */
 async function getSecret(service: string, name: string): Promise<string | undefined> {
   const key = `${service}:${name}`;
-  
+
   // Try Bun.secrets first (Bun v1.3.7+)
   if (typeof Bun !== 'undefined' && 'secrets' in Bun) {
     try {
@@ -30,19 +30,19 @@ async function getSecret(service: string, name: string): Promise<string | undefi
       // Fall through to environment
     }
   }
-  
+
   // Fallback to environment variables
   const envVarMap: Record<string, string> = {
     'cloudflare:api_token': 'CLOUDFLARE_API_TOKEN',
     'cloudflare:account_id': 'CLOUDFLARE_ACCOUNT_ID',
   };
-  
+
   return Bun.env[envVarMap[key] || key.toUpperCase().replace(':', '_')];
 }
 
 /**
  * Cloudflare Secrets Bridge
- * 
+ *
  * Runtime credential management - no CLI dependencies
  */
 export class CloudflareSecretsBridge {
@@ -52,7 +52,7 @@ export class CloudflareSecretsBridge {
   async getCredentials(): Promise<CloudflareCredentials | null> {
     const [apiToken, accountId] = await Promise.all([
       getSecret(CF_SERVICE, TOKEN_NAME),
-      getSecret(CF_SERVICE, ACCOUNT_ID_NAME)
+      getSecret(CF_SERVICE, ACCOUNT_ID_NAME),
     ]);
 
     if (!apiToken) {

@@ -1,6 +1,6 @@
 /**
  * Dashboard Builder
- * 
+ *
  * Declarative dashboard composition system:
  * - Widget-based architecture
  * - Layout management
@@ -9,10 +9,10 @@
  * - Export capabilities
  */
 
-import type { 
-  DashboardConfig, 
-  DashboardLayout, 
-  WidgetConfig, 
+import type {
+  DashboardConfig,
+  DashboardLayout,
+  WidgetConfig,
   WidgetType,
   DataSource,
   ThemedComponentProps,
@@ -250,7 +250,7 @@ export class DashboardBuilder {
 
   buildAdminDashboard(): this {
     this.clearWidgets();
-    
+
     // Top row - Stats
     this.addStatsWidget('Total Revenue', { x: 0, y: 0, w: 3, h: 2 }, { metricKey: 'revenue' });
     this.addStatsWidget('Active Tickets', { x: 3, y: 0, w: 3, h: 2 }, { metricKey: 'tickets' });
@@ -271,13 +271,13 @@ export class DashboardBuilder {
 
   buildClientDashboard(): this {
     this.clearWidgets();
-    
+
     // Services
     this.addListWidget('Available Services', { x: 0, y: 0, w: 4, h: 6 });
-    
+
     // Booking
     this.addTableWidget('Your Bookings', { x: 4, y: 0, w: 8, h: 4 });
-    
+
     // Payment history
     this.addTableWidget('Payment History', { x: 4, y: 4, w: 8, h: 4 });
 
@@ -286,7 +286,7 @@ export class DashboardBuilder {
 
   buildBarberDashboard(): this {
     this.clearWidgets();
-    
+
     // Stats
     this.addStatsWidget('My Earnings', { x: 0, y: 0, w: 4, h: 2 });
     this.addStatsWidget('Tickets Completed', { x: 4, y: 0, w: 4, h: 2 });
@@ -294,7 +294,7 @@ export class DashboardBuilder {
 
     // Current ticket
     this.addCustomWidget('Current Ticket', { x: 0, y: 2, w: 6, h: 4 });
-    
+
     // Queue
     this.addListWidget('Queue', { x: 6, y: 2, w: 6, h: 4 });
 
@@ -303,7 +303,7 @@ export class DashboardBuilder {
 
   buildAnalyticsDashboard(): this {
     this.clearWidgets();
-    
+
     // Revenue analytics
     this.addChartWidget('Revenue by Day', { x: 0, y: 0, w: 6, h: 4 }, { chartType: 'bar' });
     this.addChartWidget('Revenue by Service', { x: 6, y: 0, w: 6, h: 4 }, { chartType: 'pie' });
@@ -320,17 +320,17 @@ export class DashboardBuilder {
 
   export(format: ExportFormat = 'json', options: Partial<ExportConfig> = {}): string {
     const config = this.build();
-    
+
     switch (format) {
       case 'json':
         return JSON.stringify(config, null, 2);
-      
+
       case 'csv':
         return this.exportToCSV();
-      
+
       case 'html':
         return this.exportToHTML();
-      
+
       default:
         return JSON.stringify(config, null, 2);
     }
@@ -339,13 +339,17 @@ export class DashboardBuilder {
   private exportToCSV(): string {
     const lines = ['Widget ID,Type,Title,Position X,Position Y,Width,Height'];
     for (const widget of this.widgets) {
-      lines.push(`${widget.id},${widget.type},"${widget.title}",${widget.position.x},${widget.position.y},${widget.position.w},${widget.position.h}`);
+      lines.push(
+        `${widget.id},${widget.type},"${widget.title}",${widget.position.x},${widget.position.y},${widget.position.w},${widget.position.h}`
+      );
     }
     return lines.join('\n');
   }
 
   private exportToHTML(): string {
-    const widgetsHtml = this.widgets.map(w => `
+    const widgetsHtml = this.widgets
+      .map(
+        w => `
       <div class="widget" data-id="${w.id}" data-type="${w.type}" style="
         grid-column: ${w.position.x + 1} / span ${w.position.w};
         grid-row: ${w.position.y + 1} / span ${w.position.h};
@@ -353,7 +357,9 @@ export class DashboardBuilder {
         <h3>${w.title}</h3>
         <div class="widget-content"></div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
 
     return `<!DOCTYPE html>
 <html>
@@ -391,7 +397,7 @@ export class DashboardBuilder {
       name: 'stats',
       type: 'stats',
       defaultProps: { format: 'currency', trend: true },
-      render: (props) => `<div class="stats-widget">${JSON.stringify(props)}</div>`,
+      render: props => `<div class="stats-widget">${JSON.stringify(props)}</div>`,
     });
 
     // Chart component
@@ -399,7 +405,7 @@ export class DashboardBuilder {
       name: 'chart',
       type: 'chart',
       defaultProps: { type: 'line', animate: true },
-      render: (props) => `<div class="chart-widget">${JSON.stringify(props)}</div>`,
+      render: props => `<div class="chart-widget">${JSON.stringify(props)}</div>`,
     });
 
     // Table component
@@ -407,7 +413,7 @@ export class DashboardBuilder {
       name: 'table',
       type: 'table',
       defaultProps: { sortable: true, pagination: true },
-      render: (props) => `<div class="table-widget">${JSON.stringify(props)}</div>`,
+      render: props => `<div class="table-widget">${JSON.stringify(props)}</div>`,
     });
 
     // List component
@@ -415,7 +421,7 @@ export class DashboardBuilder {
       name: 'list',
       type: 'list',
       defaultProps: { itemHeight: 48 },
-      render: (props) => `<div class="list-widget">${JSON.stringify(props)}</div>`,
+      render: props => `<div class="list-widget">${JSON.stringify(props)}</div>`,
     });
 
     // Timeline component
@@ -423,7 +429,7 @@ export class DashboardBuilder {
       name: 'timeline',
       type: 'timeline',
       defaultProps: { groupBy: 'day' },
-      render: (props) => `<div class="timeline-widget">${JSON.stringify(props)}</div>`,
+      render: props => `<div class="timeline-widget">${JSON.stringify(props)}</div>`,
     });
 
     // Gauge component
@@ -431,7 +437,7 @@ export class DashboardBuilder {
       name: 'gauge',
       type: 'gauge',
       defaultProps: { min: 0, max: 100 },
-      render: (props) => `<div class="gauge-widget">${JSON.stringify(props)}</div>`,
+      render: props => `<div class="gauge-widget">${JSON.stringify(props)}</div>`,
     });
   }
 }
@@ -455,7 +461,10 @@ export function createBarberDashboard(): DashboardBuilder {
 }
 
 export function createAnalyticsDashboard(): DashboardBuilder {
-  return new DashboardBuilder({ view: 'analytics', theme: 'professional' }).buildAnalyticsDashboard();
+  return new DashboardBuilder({
+    view: 'analytics',
+    theme: 'professional',
+  }).buildAnalyticsDashboard();
 }
 
 export default DashboardBuilder;

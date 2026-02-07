@@ -14,7 +14,10 @@ interface BenchOptions {
   realTime?: boolean;
 }
 
-function styled(text: string, type: 'success' | 'warning' | 'error' | 'info' | 'primary' | 'accent' | 'muted'): string {
+function styled(
+  text: string,
+  type: 'success' | 'warning' | 'error' | 'info' | 'primary' | 'accent' | 'muted'
+): string {
   const colors = {
     success: '\x1b[32m',
     warning: '\x1b[33m',
@@ -22,7 +25,7 @@ function styled(text: string, type: 'success' | 'warning' | 'error' | 'info' | '
     info: '\x1b[36m',
     primary: '\x1b[34m',
     accent: '\x1b[35m',
-    muted: '\x1b[90m'
+    muted: '\x1b[90m',
   };
   const reset = '\x1b[0m';
   return `${colors[type]}${text}${reset}`;
@@ -42,12 +45,15 @@ class MockWebSocket {
 
   constructor(url: string) {
     this.url = url;
-    
+
     // Simulate connection
-    setTimeout(() => {
-      if (this.onopen) this.onopen();
-      this.startSendingMessages();
-    }, Math.random() * 100 + 50);
+    setTimeout(
+      () => {
+        if (this.onopen) this.onopen();
+        this.startSendingMessages();
+      },
+      Math.random() * 100 + 50
+    );
   }
 
   set onopen(cb: (() => void) | null) {
@@ -81,37 +87,36 @@ class MockWebSocket {
 
   private async startSendingMessages(): Promise<void> {
     const systemId = `bench-${Math.random().toString(36).substr(2, 9)}`;
-    
+
     while (this.readyState === 1) {
       try {
         // Generate field data
         const fieldData = await SecretsFieldAPI.getField3D(systemId);
-        
+
         // Compress if enabled
         let dataToSend = fieldData;
         if (this.shouldCompress()) {
           dataToSend = this.compressData(fieldData);
         }
-        
+
         const messageData = JSON.stringify({
           type: 'field-update',
           data: dataToSend,
           timestamp: new Date().toISOString(),
-          compressed: this.shouldCompress()
+          compressed: this.shouldCompress(),
         });
-        
+
         // Calculate metrics
         this.messageCount++;
         this.totalBytes += messageData.length;
-        
+
         // Simulate network delay
         await new Promise(resolve => setTimeout(resolve, Math.random() * 50 + 10));
-        
+
         // Send message
         if (this.onmessage) {
           this.onmessage({ data: messageData });
         }
-        
       } catch (error) {
         if (this.onerror) {
           this.onerror(error);
@@ -133,7 +138,7 @@ class MockWebSocket {
       points: data.points?.slice(0, Math.floor(data.points?.length / 2)) || [],
       compressed: true,
       originalSize: JSON.stringify(data).length,
-      compressedSize: JSON.stringify(data).length / 2
+      compressedSize: JSON.stringify(data).length / 2,
     };
   }
 
@@ -145,7 +150,7 @@ class MockWebSocket {
       elapsed,
       messagesPerSecond: this.messageCount / elapsed,
       bytesPerSecond: this.totalBytes / elapsed,
-      averageMessageSize: this.messageCount > 0 ? this.totalBytes / this.messageCount : 0
+      averageMessageSize: this.messageCount > 0 ? this.totalBytes / this.messageCount : 0,
     };
   }
 }
@@ -158,7 +163,7 @@ class WebSocketBenchmarker {
     rate: 5, // messages per second per connection
     compression: true,
     output: 'console',
-    realTime: false
+    realTime: false,
   };
 
   private connections: MockWebSocket[] = [];
@@ -168,27 +173,29 @@ class WebSocketBenchmarker {
 
   async run(args: string[]): Promise<void> {
     this.parseArgs(args);
-    
+
     console.log(styled('🌐 WebSocket Secrets Benchmark', 'primary'));
     console.log(styled('==============================', 'muted'));
     console.log();
-    
+
     console.log(styled('📊 Benchmark Configuration:', 'info'));
     console.log(styled(`   Keys: ${this.options.keys}`, 'muted'));
     console.log(styled(`   Duration: ${this.options.duration}s`, 'muted'));
     console.log(styled(`   Connections: ${this.options.connections}`, 'muted'));
     console.log(styled(`   Rate: ${this.options.rate} msg/s per connection`, 'muted'));
-    console.log(styled(`   Compression: ${this.options.compression ? 'ENABLED' : 'DISABLED'}`, 'muted'));
+    console.log(
+      styled(`   Compression: ${this.options.compression ? 'ENABLED' : 'DISABLED'}`, 'muted')
+    );
     console.log(styled(`   Real-time: ${this.options.realTime ? 'YES' : 'NO'}`, 'muted'));
     console.log();
-    
+
     await this.runBenchmark();
   }
 
   private parseArgs(args: string[]): void {
     for (let i = 0; i < args.length; i++) {
       const arg = args[i];
-      
+
       if (arg === '--keys' && args[i + 1]) {
         this.options.keys = parseInt(args[++i]);
       }
@@ -251,44 +258,45 @@ class WebSocketBenchmarker {
   private async runBenchmark(): Promise<void> {
     console.log(styled('🚀 Starting WebSocket benchmark...', 'accent'));
     console.log();
-    
+
     this.startTime = Date.now();
     this.isRunning = true;
-    
+
     // Setup real-time display
     let realTimeInterval: NodeJS.Timeout | null = null;
     if (this.options.realTime) {
       realTimeInterval = setInterval(() => this.showRealTimeMetrics(), 1000);
     }
-    
+
     try {
       // Create connections
-      console.log(styled(`🔗 Creating ${this.options.connections} WebSocket connections...`, 'info'));
+      console.log(
+        styled(`🔗 Creating ${this.options.connections} WebSocket connections...`, 'info')
+      );
       await this.createConnections();
-      
+
       // Wait for benchmark duration
       console.log(styled(`⏱️  Running benchmark for ${this.options.duration} seconds...`, 'info'));
       await new Promise(resolve => setTimeout(resolve, this.options.duration * 1000));
-      
+
       // Close connections
       console.log(styled('🔌 Closing connections...', 'info'));
       this.closeConnections();
-      
+
       this.isRunning = false;
-      
+
       // Clear real-time display
       if (realTimeInterval) {
         clearInterval(realTimeInterval);
         this.showRealTimeMetrics(); // Final update
       }
-      
+
       console.log();
       console.log(styled('✅ Benchmark completed!', 'success'));
       console.log();
-      
+
       // Show results
       await this.showResults();
-      
     } catch (error) {
       this.isRunning = false;
       if (realTimeInterval) clearInterval(realTimeInterval);
@@ -299,34 +307,36 @@ class WebSocketBenchmarker {
 
   private async createConnections(): Promise<void> {
     const connectionPromises = [];
-    
+
     for (let i = 0; i < this.options.connections; i++) {
-      const promise = new Promise<void>((resolve) => {
+      const promise = new Promise<void>(resolve => {
         const ws = new MockWebSocket(`ws://localhost:3002/ws/secrets-3d?connectionId=${i}`);
-        
+
         ws.onopen = () => {
-          console.log(styled(`   Connection ${i + 1}/${this.options.connections} established`, 'success'));
+          console.log(
+            styled(`   Connection ${i + 1}/${this.options.connections} established`, 'success')
+          );
           this.connections.push(ws);
           resolve();
         };
-        
-        ws.onmessage = (event) => {
+
+        ws.onmessage = event => {
           // Handle incoming messages (metrics are tracked internally)
         };
-        
+
         ws.onclose = () => {
           // Handle connection close
         };
-        
-        ws.onerror = (error) => {
+
+        ws.onerror = error => {
           console.warn(styled(`   Connection ${i + 1} error: ${error}`, 'warning'));
           resolve(); // Continue even if this connection fails
         };
       });
-      
+
       connectionPromises.push(promise);
     }
-    
+
     await Promise.all(connectionPromises);
     console.log();
   }
@@ -343,45 +353,48 @@ class WebSocketBenchmarker {
 
   private showRealTimeMetrics(): void {
     if (!this.isRunning) return;
-    
+
     const elapsed = (Date.now() - this.startTime) / 1000;
     const progress = Math.min(100, (elapsed / this.options.duration) * 100);
-    
+
     // Collect metrics from all connections
     let totalMessages = 0;
     let totalBytes = 0;
     let activeConnections = 0;
-    
+
     this.connections.forEach(ws => {
-      if (ws.readyState === 1) { // OPEN
+      if (ws.readyState === 1) {
+        // OPEN
         const metrics = ws.getMetrics();
         totalMessages += metrics.messageCount;
         totalBytes += metrics.totalBytes;
         activeConnections++;
       }
     });
-    
+
     const overallRate = totalMessages / elapsed;
     const throughput = totalBytes / elapsed;
-    
+
     // Clear previous line and show progress
     process.stdout.write('\r' + ' '.repeat(120)); // Clear line
-    process.stdout.write(`\r${styled('📊 Progress:', 'info')} ${progress.toFixed(1)}% | ${styled('Connections:', 'muted')} ${activeConnections}/${this.options.connections} | ${styled('Messages:', 'muted')} ${totalMessages.toLocaleString()} | ${styled('Rate:', 'muted')} ${overallRate.toFixed(1)}/s | ${styled('Throughput:', 'muted')} ${this.formatBytes(throughput)}/s | ${styled('Time:', 'muted')} ${elapsed.toFixed(1)}s`);
+    process.stdout.write(
+      `\r${styled('📊 Progress:', 'info')} ${progress.toFixed(1)}% | ${styled('Connections:', 'muted')} ${activeConnections}/${this.options.connections} | ${styled('Messages:', 'muted')} ${totalMessages.toLocaleString()} | ${styled('Rate:', 'muted')} ${overallRate.toFixed(1)}/s | ${styled('Throughput:', 'muted')} ${this.formatBytes(throughput)}/s | ${styled('Time:', 'muted')} ${elapsed.toFixed(1)}s`
+    );
   }
 
   private async showResults(): Promise<void> {
     // Collect final metrics
     const connectionMetrics = this.connections.map((ws, index) => ({
       connectionId: index + 1,
-      ...ws.getMetrics()
+      ...ws.getMetrics(),
     }));
-    
+
     const totalMessages = connectionMetrics.reduce((sum, m) => sum + m.messageCount, 0);
     const totalBytes = connectionMetrics.reduce((sum, m) => sum + m.totalBytes, 0);
     const totalTime = (Date.now() - this.startTime) / 1000;
     const avgRate = totalMessages / totalTime;
     const throughput = totalBytes / totalTime;
-    
+
     console.log(styled('📊 Benchmark Results:', 'primary'));
     console.log();
     console.log(styled('   Overall Metrics:', 'accent'));
@@ -390,50 +403,58 @@ class WebSocketBenchmarker {
     console.log(styled(`   Duration:          ${totalTime.toFixed(2)}s`, 'info'));
     console.log(styled(`   Average Rate:      ${avgRate.toFixed(1)} messages/s`, 'info'));
     console.log(styled(`   Throughput:        ${this.formatBytes(throughput)}/s`, 'info'));
-    
+
     // Connection statistics
     const rates = connectionMetrics.map(m => m.messagesPerSecond);
     const avgConnectionRate = rates.reduce((sum, rate) => sum + rate, 0) / rates.length;
     const maxConnectionRate = Math.max(...rates);
     const minConnectionRate = Math.min(...rates);
-    
+
     console.log();
     console.log(styled('   Connection Statistics:', 'accent'));
     console.log(styled(`   Active Connections: ${this.connections.length}`, 'info'));
     console.log(styled(`   Avg Rate/Conn:      ${avgConnectionRate.toFixed(1)} msg/s`, 'info'));
     console.log(styled(`   Max Rate/Conn:      ${maxConnectionRate.toFixed(1)} msg/s`, 'success'));
     console.log(styled(`   Min Rate/Conn:      ${minConnectionRate.toFixed(1)} msg/s`, 'warning'));
-    
+
     // Message size statistics
     const messageSizes = connectionMetrics.map(m => m.averageMessageSize);
     const avgMessageSize = messageSizes.reduce((sum, size) => sum + size, 0) / messageSizes.length;
-    
+
     console.log();
     console.log(styled('   Message Statistics:', 'accent'));
     console.log(styled(`   Avg Message Size:  ${this.formatBytes(avgMessageSize)}`, 'info'));
-    console.log(styled(`   Compression:       ${this.options.compression ? 'ENABLED' : 'DISABLED'}`, this.options.compression ? 'success' : 'muted'));
-    
+    console.log(
+      styled(
+        `   Compression:       ${this.options.compression ? 'ENABLED' : 'DISABLED'}`,
+        this.options.compression ? 'success' : 'muted'
+      )
+    );
+
     // Performance classification
     let performance = 'UNKNOWN';
     let perfColor = 'muted';
-    
-    if (avgRate > 100 && throughput > 1024 * 1024) { // >100 msg/s, >1MB/s
+
+    if (avgRate > 100 && throughput > 1024 * 1024) {
+      // >100 msg/s, >1MB/s
       performance = 'EXCELLENT';
       perfColor = 'success';
-    } else if (avgRate > 50 && throughput > 512 * 1024) { // >50 msg/s, >512KB/s
+    } else if (avgRate > 50 && throughput > 512 * 1024) {
+      // >50 msg/s, >512KB/s
       performance = 'GOOD';
       perfColor = 'info';
-    } else if (avgRate > 20 && throughput > 256 * 1024) { // >20 msg/s, >256KB/s
+    } else if (avgRate > 20 && throughput > 256 * 1024) {
+      // >20 msg/s, >256KB/s
       performance = 'FAIR';
       perfColor = 'warning';
     } else {
       performance = 'POOR';
       perfColor = 'error';
     }
-    
+
     console.log();
     console.log(styled(`🏆 Overall Performance: ${performance}`, perfColor));
-    
+
     // Save results
     const results = {
       timestamp: new Date().toISOString(),
@@ -444,10 +465,10 @@ class WebSocketBenchmarker {
         duration: totalTime,
         averageRate: avgRate,
         throughput,
-        connectionMetrics
-      }
+        connectionMetrics,
+      },
     };
-    
+
     if (this.options.output === 'json') {
       await Bun.write(`ws-bench-results-${Date.now()}.json`, JSON.stringify(results, null, 2));
       console.log();
@@ -458,7 +479,7 @@ class WebSocketBenchmarker {
       console.log();
       console.log(styled('📄 Results saved to CSV file', 'success'));
     }
-    
+
     console.log();
     console.log(styled('🎉 WebSocket benchmark completed successfully!', 'success'));
   }
@@ -477,7 +498,15 @@ class WebSocketBenchmarker {
   }
 
   private generateCSV(results: any): string {
-    const headers = ['ConnectionID', 'MessageCount', 'TotalBytes', 'Elapsed', 'MessagesPerSecond', 'BytesPerSecond', 'AvgMessageSize'];
+    const headers = [
+      'ConnectionID',
+      'MessageCount',
+      'TotalBytes',
+      'Elapsed',
+      'MessagesPerSecond',
+      'BytesPerSecond',
+      'AvgMessageSize',
+    ];
     const rows = results.results.connectionMetrics.map((metric: any) => [
       metric.connectionId,
       metric.messageCount,
@@ -485,9 +514,9 @@ class WebSocketBenchmarker {
       metric.elapsed.toFixed(2),
       metric.messagesPerSecond.toFixed(2),
       metric.bytesPerSecond.toFixed(2),
-      metric.averageMessageSize.toFixed(2)
+      metric.averageMessageSize.toFixed(2),
     ]);
-    
+
     // Add summary row
     rows.push([
       'TOTAL',
@@ -496,9 +525,9 @@ class WebSocketBenchmarker {
       results.results.duration.toFixed(2),
       results.results.averageRate.toFixed(2),
       results.results.throughput.toFixed(2),
-      (results.results.totalBytes / results.results.totalMessages).toFixed(2)
+      (results.results.totalBytes / results.results.totalMessages).toFixed(2),
     ]);
-    
+
     return [headers, ...rows].map(row => row.join(',')).join('\n');
   }
 }

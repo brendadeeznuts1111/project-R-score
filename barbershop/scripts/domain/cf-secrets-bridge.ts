@@ -1,6 +1,6 @@
 /**
  * Cloudflare Secrets Bridge
- * 
+ *
  * Integrates Cloudflare domain management with Bun.secrets CLI.
  * Provides secure storage and retrieval of Cloudflare API credentials.
  */
@@ -17,10 +17,11 @@ const colors = {
   yellow: '\x1b[33m',
   blue: '\x1b[34m',
   cyan: '\x1b[36m',
-  gray: '\x1b[90m'
+  gray: '\x1b[90m',
 };
 
-const c = (text: string, color: keyof typeof colors): string => `${colors[color]}${text}${colors.reset}`;
+const c = (text: string, color: keyof typeof colors): string =>
+  `${colors[color]}${text}${colors.reset}`;
 
 export interface CloudflareCredentials {
   apiToken: string;
@@ -29,7 +30,7 @@ export interface CloudflareCredentials {
 
 /**
  * Cloudflare Secrets Bridge
- * 
+ *
  * Manages Cloudflare API credentials through Bun.secrets with:
  * - Version tracking (optional, requires integrated secrets)
  * - Automatic rotation scheduling (optional)
@@ -47,7 +48,8 @@ export class CloudflareSecretsBridge {
 
   private async loadAdvancedFeatures(): Promise<void> {
     try {
-      const { integratedSecretManager } = await import('../../lib/secrets/core/integrated-secret-manager');
+      const { integratedSecretManager } =
+        await import('../../lib/secrets/core/integrated-secret-manager');
       const { secretLifecycleManager } = await import('../../lib/secrets/core/secret-lifecycle');
       this.integratedSecretManager = integratedSecretManager;
       this.secretLifecycleManager = secretLifecycleManager;
@@ -71,7 +73,7 @@ export class CloudflareSecretsBridge {
         console.warn(`Failed to store in Bun.secrets: ${(e as Error).message}`);
       }
     }
-    
+
     // Fallback: store in .env file or warn user
     console.log(c('  ℹ️  Note: Bun.secrets not available', 'yellow'));
     console.log(c(`     Set environment variable: ${key.toUpperCase().replace(':', '_')}`, 'gray'));
@@ -85,14 +87,16 @@ export class CloudflareSecretsBridge {
     // Try Bun.secrets first
     if (typeof Bun !== 'undefined' && 'secrets' in Bun) {
       try {
-        const secrets = Bun.secrets as unknown as { get: (k: string) => Promise<string | undefined> };
+        const secrets = Bun.secrets as unknown as {
+          get: (k: string) => Promise<string | undefined>;
+        };
         const value = await secrets.get(key);
         if (value) return value;
       } catch {
         // Fall through to environment
       }
     }
-    
+
     // Fallback to environment
     const envMap: Record<string, string> = {
       'cloudflare:api_token': 'CLOUDFLARE_API_TOKEN',
@@ -106,14 +110,14 @@ export class CloudflareSecretsBridge {
    */
   async setToken(token: string, user: string = 'cli'): Promise<void> {
     await this.storeSecret(`${CF_SERVICE}:${TOKEN_NAME}`, token);
-    
+
     // Also store in integrated manager if available
     if (this.useAdvancedFeatures && this.integratedSecretManager) {
       try {
-        await this.integratedSecretManager.setSecret(
-          CF_SERVICE, TOKEN_NAME, token, user,
-          { description: 'Cloudflare API Token', source: 'cf-domain-cli' }
-        );
+        await this.integratedSecretManager.setSecret(CF_SERVICE, TOKEN_NAME, token, user, {
+          description: 'Cloudflare API Token',
+          source: 'cf-domain-cli',
+        });
       } catch {
         // Ignore errors from advanced features
       }
@@ -125,13 +129,13 @@ export class CloudflareSecretsBridge {
    */
   async setAccountId(accountId: string, user: string = 'cli'): Promise<void> {
     await this.storeSecret(`${CF_SERVICE}:${ACCOUNT_ID_NAME}`, accountId);
-    
+
     if (this.useAdvancedFeatures && this.integratedSecretManager) {
       try {
-        await this.integratedSecretManager.setSecret(
-          CF_SERVICE, ACCOUNT_ID_NAME, accountId, user,
-          { description: 'Cloudflare Account ID', source: 'cf-domain-cli' }
-        );
+        await this.integratedSecretManager.setSecret(CF_SERVICE, ACCOUNT_ID_NAME, accountId, user, {
+          description: 'Cloudflare Account ID',
+          source: 'cf-domain-cli',
+        });
       } catch {
         // Ignore errors
       }
@@ -144,7 +148,7 @@ export class CloudflareSecretsBridge {
   async getCredentials(): Promise<CloudflareCredentials | null> {
     const [apiToken, accountId] = await Promise.all([
       this.retrieveSecret(`${CF_SERVICE}:${TOKEN_NAME}`),
-      this.retrieveSecret(`${CF_SERVICE}:${ACCOUNT_ID_NAME}`)
+      this.retrieveSecret(`${CF_SERVICE}:${ACCOUNT_ID_NAME}`),
     ]);
 
     if (!apiToken) {
@@ -215,7 +219,7 @@ export class CloudflareSecretsBridge {
       console.log(c('  Run rotation manually: bun run cf:secrets:rotate', 'gray'));
       return;
     }
-    
+
     const key = `${CF_SERVICE}:${TOKEN_NAME}`;
     await this.secretLifecycleManager.scheduleRotation(key, {
       key,
@@ -224,17 +228,21 @@ export class CloudflareSecretsBridge {
       enabled: true,
       metadata: {
         description: 'Scheduled Cloudflare token rotation',
-        severity: 'HIGH'
-      }
+        severity: 'HIGH',
+      },
     });
   }
 
   /**
    * Check if token needs rotation
    */
-  async checkRotationStatus(): Promise<{ needsRotation: boolean; daysOld?: number; lastRotated?: string }> {
+  async checkRotationStatus(): Promise<{
+    needsRotation: boolean;
+    daysOld?: number;
+    lastRotated?: string;
+  }> {
     const history = await this.getHistory(5);
-    
+
     if (history.length === 0) {
       return { needsRotation: false }; // Can't determine without history
     }
@@ -242,12 +250,12 @@ export class CloudflareSecretsBridge {
     const latest = history[0];
     const lastRotated = new Date(latest.timestamp);
     const daysOld = Math.floor((Date.now() - lastRotated.getTime()) / (1000 * 60 * 60 * 24));
-    
+
     // Recommend rotation every 90 days
     return {
       needsRotation: daysOld > 90,
       daysOld,
-      lastRotated: latest.timestamp
+      lastRotated: latest.timestamp,
     };
   }
 
@@ -258,7 +266,7 @@ export class CloudflareSecretsBridge {
     if (!token || token.length < 20) {
       return { valid: false, message: 'Token too short (should be ~40 characters)' };
     }
-    
+
     if (!/^[a-zA-Z0-9_-]+$/.test(token)) {
       return { valid: false, message: 'Token contains invalid characters' };
     }
@@ -285,7 +293,7 @@ export class CloudflareSecretsBridge {
 
     console.log(c('  Status: ', 'bold') + c('Configured', 'green'));
     console.log(c(`  API Token: ${'*'.repeat(20)}${creds.apiToken.slice(-4)}`, 'gray'));
-    
+
     if (creds.accountId) {
       console.log(c(`  Account ID: ${creds.accountId}`, 'gray'));
     } else {
@@ -299,7 +307,7 @@ export class CloudflareSecretsBridge {
     if (rotationStatus.daysOld !== undefined) {
       console.log();
       console.log(c('  Rotation Status:', 'bold'));
-      
+
       if (rotationStatus.needsRotation) {
         console.log(c(`    ⚠️  Token is ${rotationStatus.daysOld} days old`, 'yellow'));
         console.log(c('    Run: bun run cf:secrets:rotate', 'gray'));
@@ -308,7 +316,12 @@ export class CloudflareSecretsBridge {
       }
 
       if (rotationStatus.lastRotated) {
-        console.log(c(`    Last rotated: ${new Date(rotationStatus.lastRotated).toLocaleDateString()}`, 'gray'));
+        console.log(
+          c(
+            `    Last rotated: ${new Date(rotationStatus.lastRotated).toLocaleDateString()}`,
+            'gray'
+          )
+        );
       }
     }
 
@@ -338,7 +351,7 @@ async function main() {
       case 'set-token':
         await handleSetToken(bridge, args[2]);
         break;
-      
+
       case 'set-account':
         await handleSetAccount(bridge, args[2]);
         break;
@@ -437,7 +450,10 @@ async function handleSetToken(bridge: CloudflareSecretsBridge, token?: string): 
   console.log(c(`   Token: ${'*'.repeat(20)}${token.slice(-4)}`, 'gray'));
 }
 
-async function handleSetAccount(bridge: CloudflareSecretsBridge, accountId?: string): Promise<void> {
+async function handleSetAccount(
+  bridge: CloudflareSecretsBridge,
+  accountId?: string
+): Promise<void> {
   if (!accountId) {
     console.log(c('❌ Account ID required', 'red'));
     console.log(c('Usage: set-account <account-id>', 'gray'));
@@ -449,7 +465,11 @@ async function handleSetAccount(bridge: CloudflareSecretsBridge, accountId?: str
   console.log(c(`   Account: ${accountId}`, 'gray'));
 }
 
-async function handleSetup(bridge: CloudflareSecretsBridge, token?: string, accountId?: string): Promise<void> {
+async function handleSetup(
+  bridge: CloudflareSecretsBridge,
+  token?: string,
+  accountId?: string
+): Promise<void> {
   if (!token) {
     console.log(c('❌ API token required', 'red'));
     console.log(c('Usage: setup <token> [account-id]', 'gray'));
@@ -457,7 +477,7 @@ async function handleSetup(bridge: CloudflareSecretsBridge, token?: string, acco
   }
 
   await handleSetToken(bridge, token);
-  
+
   if (accountId) {
     await handleSetAccount(bridge, accountId);
   }
@@ -469,7 +489,7 @@ async function handleSetup(bridge: CloudflareSecretsBridge, token?: string, acco
 
 async function handleHistory(bridge: CloudflareSecretsBridge, limit: number): Promise<void> {
   const history = await bridge.getHistory(limit);
-  
+
   console.log(c(`📜 Token History (last ${history.length})`, 'cyan'));
   console.log(c('─'.repeat(50), 'gray'));
 
@@ -479,10 +499,11 @@ async function handleHistory(bridge: CloudflareSecretsBridge, limit: number): Pr
   }
 
   for (const entry of history) {
-    const icon = entry.action === 'CREATE' ? '➕' : 
-                 entry.action === 'ROLLBACK' ? '⏪' : '🔄';
+    const icon = entry.action === 'CREATE' ? '➕' : entry.action === 'ROLLBACK' ? '⏪' : '🔄';
     const date = new Date(entry.timestamp).toLocaleDateString();
-    console.log(c(`  ${icon} ${entry.version}`, 'green') + c(` | ${date} | ${entry.author}`, 'gray'));
+    console.log(
+      c(`  ${icon} ${entry.version}`, 'green') + c(` | ${date} | ${entry.author}`, 'gray')
+    );
     if (entry.description) {
       console.log(c(`     ${entry.description}`, 'gray'));
     }
@@ -501,11 +522,14 @@ async function handleRotate(bridge: CloudflareSecretsBridge, reason?: string): P
   console.log(c('  For automated rotation, configure integrated secrets manager', 'gray'));
 }
 
-async function handleSchedule(bridge: CloudflareSecretsBridge, cronExpression?: string): Promise<void> {
+async function handleSchedule(
+  bridge: CloudflareSecretsBridge,
+  cronExpression?: string
+): Promise<void> {
   const schedule = cronExpression || '0 2 * * 0'; // Weekly Sunday 2AM
-  
+
   await bridge.scheduleRotation(schedule);
-  
+
   console.log(c('⏰ Rotation scheduled', 'green'));
   console.log(c(`   Schedule: ${schedule}`, 'gray'));
   console.log(c('   Format: cron', 'gray'));
@@ -526,7 +550,7 @@ async function handleRollback(bridge: CloudflareSecretsBridge, version?: string)
 async function handleDelete(bridge: CloudflareSecretsBridge): Promise<void> {
   console.log(c('⚠️  This will delete all Cloudflare credentials!', 'yellow'));
   console.log(c('   Use --force to skip confirmation', 'gray'));
-  
+
   await bridge.deleteCredentials();
   console.log(c('🗑️  Credentials deleted', 'green'));
 }
