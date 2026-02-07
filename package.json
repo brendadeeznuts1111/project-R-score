@@ -1,6 +1,6 @@
 {
   "name": "factorywager-enterprise",
-  "version": "5.1.1",
+  "version": "5.1.2",
   "description": "🚀 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
   "workspaces": ["packages/*"],
   "homepage": "https://factory-wager.com",
