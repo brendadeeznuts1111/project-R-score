@@ -58,6 +58,7 @@ export class Cookie {
   path?: string;
   sameSite?: "strict" | "lax" | "none";
   secure?: boolean;
+  partitioned?: boolean;
   
   constructor(name: string, value: string, options: SecureCookieOptions = {}) {
     this.name = name;
@@ -69,6 +70,7 @@ export class Cookie {
     this.path = options.path;
     this.sameSite = options.sameSite;
     this.secure = options.secure;
+    this.partitioned = options.partitioned;
   }
 }
 

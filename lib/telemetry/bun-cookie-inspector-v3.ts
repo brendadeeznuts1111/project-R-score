@@ -11,8 +11,15 @@ import { Cookie, SecureCookieOptions } from './bun-cookies-complete-v2';
 import { CookieValidator, ValidationResult } from './cookie-validator';
 
 // Define CookieOptions interface for compatibility
-interface CookieOptions extends SecureCookieOptions {
+interface CookieOptions {
+  domain?: string;
+  path?: string;
   expires?: Date | number;
+  secure?: boolean;
+  httpOnly?: boolean;
+  sameSite?: "strict" | "lax" | "none";
+  partitioned?: boolean;
+  maxAge?: number;
 }
 
 // 🎯 ENHANCED COOKIE ANALYZER
@@ -520,7 +527,7 @@ class CookieBuilder {
       partitioned: this.options.partitioned,
       maxAge: this.options.maxAge,
       httpOnly: this.options.httpOnly
-    });
+    } as any);
 
     if (!validation.valid) {
       throw new Error(`Cookie validation failed: ${validation.errors.map(e => e.message).join(', ')}`);
@@ -683,7 +690,7 @@ export class CookieSerializer {
     
     // Numeric values
     if (cookie.expires) {
-      view.setBigUint64(offset, BigInt(cookie.expires), true);
+      view.setBigUint64(offset, BigInt(cookie.expires.getTime()), true);
     } else {
       view.setBigUint64(offset, 0n, true);
     }
@@ -813,8 +820,8 @@ export class CookieComparator {
     const differences: Array<{ property: string; value1: any; value2: any }> = [];
     
     for (const prop of properties) {
-      const val1 = cookie1[prop];
-      const val2 = cookie2[prop];
+      const val1 = (cookie1 as any)[prop];
+      const val2 = (cookie2 as any)[prop];
       
       // Special handling for undefined vs null
       if (val1 !== val2 && !(val1 == null && val2 == null)) {
@@ -874,7 +881,7 @@ export class CookieComparator {
         const properties: Array<keyof Cookie> = ['domain', 'path', 'secure', 'httpOnly', 'sameSite'];
         
         for (const prop of properties) {
-          const values = instances.map(c => c[prop]).filter((v, i, a) => a.indexOf(v) === i);
+          const values = instances.map(c => (c as any)[prop]).filter((v, i, a) => a.indexOf(v) === i);
           if (values.length > 1) {
             conflicts.push({ property: prop, values });
           }
