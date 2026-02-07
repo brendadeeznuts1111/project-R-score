@@ -16,12 +16,12 @@ A Cloudflare-inspired documentation directory with cards, grouped topics, and Cm
 
 1. Install dependencies:
 ```bash
-npm install
+bun install
 ```
 
 2. Start the development server:
 ```bash
-npm run dev
+bun run dev
 ```
 
 3. Open your browser to `http://localhost:3000`
@@ -80,18 +80,18 @@ The project uses Tailwind CSS with custom Cloudflare-inspired colors. Modify `ta
 - **TypeScript**: Type-safe development
 - **Tailwind CSS**: Utility-first CSS framework
 - **Lucide React**: Beautiful icons
-- **Vite**: Fast development and build tool
+- **Bun.serve**: Fast development server with HMR and HTML imports
 
 ## Build and Deploy
 
 Build for production:
 ```bash
-npm run build
+bun run build
 ```
 
-Preview the production build:
+Start the server:
 ```bash
-npm run preview
+bun run start
 ```
 
 ## License

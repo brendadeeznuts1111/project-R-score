@@ -205,7 +205,7 @@ curl https://npm.factory-wager.com/-/ping
 npm publish --registry https://npm.factory-wager.com
 
 # 4. Test package install
-npm install @factorywager/test-package
+bun add @factorywager/test-package
 
 # 5. Test version graph
 curl https://npm.factory-wager.com/-/graph/lodash

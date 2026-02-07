@@ -158,7 +158,7 @@ VITE v4.5.14  ready in 170 ms
 ### **Automated Checks**
 ```bash
 # Add to CI/CD pipeline for ongoing link health
-npm install -g broken-link-checker
+bun add -g broken-link-checker
 broken-link-checker http://localhost:3006/
 ```
 

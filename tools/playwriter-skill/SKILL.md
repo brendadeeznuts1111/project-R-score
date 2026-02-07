@@ -65,7 +65,7 @@ playwriter -s 1 -e "await page.locator('aria-ref=e5').click()"
 Add to your agent:
 
 ```bash
-npx -y skills add remorses/playwriter
+bunx -y skills add remorses/playwriter
 ```
 
 Or use the execute tool directly:

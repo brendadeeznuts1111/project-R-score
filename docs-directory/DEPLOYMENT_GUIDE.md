@@ -7,9 +7,8 @@ This guide provides step-by-step instructions for deploying the Bun-powered docu
 ## 📋 **Prerequisites**
 
 ### **System Requirements**
-- **Node.js** v18+ or **Bun** v1.0+
-- **Package Manager**: npm, yarn, or bun
-- **Build Tools**: TypeScript, Vite
+- **Bun** v1.0+
+- **Build Tools**: TypeScript, Bun bundler
 - **Hosting**: Vercel, Netlify, or any static hosting
 
 ### **Development Setup**
@@ -19,10 +18,10 @@ git clone <repository-url>
 cd docs-directory
 
 # Install dependencies
-bun install  # or npm install
+bun install
 
 # Run development server
-bun run dev  # or npm run dev
+bun run dev
 ```
 
 ## 🔧 **Build Process**
@@ -32,7 +31,7 @@ The platform uses TypeScript for type safety. Before building, ensure all TypeSc
 
 ```bash
 # Check TypeScript compilation
-npx tsc --noEmit
+bunx tsc --noEmit
 
 # Fix any TypeScript errors before proceeding
 ```
@@ -40,10 +39,10 @@ npx tsc --noEmit
 ### **Production Build**
 ```bash
 # Build for production
-bun run build  # or npm run build
+bun run build
 
-# Preview production build
-bun run preview  # or npm run preview
+# Start production server
+bun run start
 ```
 
 ## 🚨 **Current Issues & Solutions**
@@ -60,7 +59,7 @@ The platform currently has TypeScript compilation errors that need to be resolve
 #### **Resolution Steps**
 ```bash
 # 1. Check specific errors
-npx tsc --noEmit --pretty
+bunx tsc --noEmit --pretty
 
 # 2. Fix import issues
 # Ensure all lucide-react icons are properly imported
@@ -270,7 +269,7 @@ bun run build
 bun update typescript @types/react @types/react-dom
 
 # Check for specific errors
-npx tsc --noEmit --pretty
+bunx tsc --noEmit --pretty
 ```
 
 #### **Import Issues**

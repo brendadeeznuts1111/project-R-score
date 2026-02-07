@@ -68,7 +68,7 @@ bunx @factorywager/playwriter-skill -s 1 -e "await page.locator('aria-ref=e5').c
 Add to your agent:
 
 ```bash
-npx -y skills add remorses/playwriter
+bunx -y skills add remorses/playwriter
 ```
 
 Or use the MCP configuration in `mcp.json`.
