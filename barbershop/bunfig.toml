@@ -1,0 +1,47 @@
+# Barbershop Dashboard - Bun Configuration
+# https://bun.sh/docs/runtime/bunfig
+
+[serve]
+# Default development server
+port = 3000
+hostname = "0.0.0.0"
+
+# Allow PUBLIC_ env variables to be inlined
+env = "PUBLIC_*"
+
+[run]
+# Auto-preload for faster startup
+preload = ["./src/config/bun-config.ts"]
+
+# Enable TypeScript decorators
+# tsconfig-paths = true
+
+[install]
+# Use exact versions for reproducibility
+exact = true
+
+# Cache packages
+# cache = true
+
+[build]
+# Default build settings
+entrypoints = ["./src/core/barbershop-dashboard.ts"]
+outdir = "./dist"
+minify = true
+sourcemap = true
+target = "bun"
+
+# Enable CSS imports
+loader = { ".css": "css" }
+
+[test]
+# Test runner settings
+preload = ["./tests/setup.ts"]
+
+# Coverage settings
+coverage = true
+coverageThreshold = 0.8
+
+[debug]
+# Debug settings
+# heapdump = true
