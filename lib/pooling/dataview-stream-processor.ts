@@ -243,7 +243,7 @@ export class DataViewStreamProcessor {
               if (done) break;
               
               // Add bytes to buffer
-              buffer.push(...Array.from(value || new Uint8Array()));
+              buffer.push(...Array.from(value as Uint8Array || new Uint8Array()));
             }
             
             // Simple run-length encoding
