@@ -8,6 +8,7 @@
  */
 
 import { createHmac, createCipheriv, createDecipheriv, randomBytes } from 'crypto';
+import { CookieValidator, ValidationResult, SecureCookieOptions as ValidationOptions } from './cookie-validator';
 
 // 🎯 ENHANCED TYPES & INTERFACES
 export interface SecureCookieOptions {
@@ -127,20 +128,48 @@ export class SecureCookieManager {
     name: string,
     value: string | object,
     options: SecureCookieOptions = {}
-  ): Cookie {
-    let finalValue = typeof value === 'string' ? value : JSON.stringify(value);
+  ): { cookie: Cookie; validation: ValidationResult } {
+    // Validate cookie properties first
+    const validationOptions: ValidationOptions = {
+      name,
+      value: typeof value === 'string' ? value : JSON.stringify(value),
+      domain: options.domain,
+      path: options.path,
+      expires: options.expires,
+      secure: options.secure,
+      sameSite: options.sameSite,
+      partitioned: options.partitioned,
+      maxAge: options.maxAge,
+      httpOnly: options.httpOnly
+    };
+
+    const validation = CookieValidator.validateCookie(validationOptions);
+    
+    if (!validation.valid) {
+      console.error('🚨 Cookie validation failed:', validation.errors);
+      throw new Error(`Cookie validation failed: ${validation.errors.map(e => e.message).join(', ')}`);
+    }
+
+    if (validation.warnings.length > 0) {
+      console.warn('⚠️ Cookie validation warnings:', validation.warnings);
+    }
+
+    // Use sanitized values
+    const sanitized = validation.sanitized!;
+    let finalValue = sanitized.value;
     let cookieOptions: SecureCookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      ...options
+      ...options,
+      ...sanitized
     };
     
     // SIGN COOKIE
     if (options.signed) {
       const signature = createHmac('sha256', this.signingKey)
-        .update(`${name}=${finalValue}`)
+        .update(`${sanitized.name}=${finalValue}`)
         .digest('hex');
       finalValue = `${finalValue}.${signature}`;
     }
@@ -157,9 +186,11 @@ export class SecureCookieManager {
     }
     
     // TRACK ANALYTICS
-    this.trackCookieAnalytics(name, cookieOptions, finalValue.length);
+    this.trackCookieAnalytics(sanitized.name, cookieOptions, finalValue.length);
     
-    return new Cookie(name, finalValue, cookieOptions);
+    const cookie = new Cookie(sanitized.name, finalValue, cookieOptions);
+    
+    return { cookie, validation };
   }
   
   // 🔍 VERIFY & DECRYPT COOKIE
@@ -443,10 +474,29 @@ export class AnalyticsCookieMap extends CookieMap {
     name: string,
     value: string | object,
     options: SecureCookieOptions = {}
-  ): void {
-    const cookie = this.secureManager.createSecureCookie(name, value, options);
-    this.set(name, cookie.value, cookie);
-    this.logAccess(name, 'set');
+  ): { validation: ValidationResult; success: boolean } {
+    try {
+      const result = this.secureManager.createSecureCookie(name, value, options);
+      this.set(name, result.cookie.value, result.cookie);
+      this.logAccess(name, 'set');
+      return { validation: result.validation, success: true };
+    } catch (error) {
+      console.error('❌ Failed to create secure cookie:', error);
+      return { 
+        validation: { 
+          valid: false, 
+          errors: [{
+            property: 'creation',
+            value: { name, value, options },
+            rule: 'creation_failed',
+            message: error instanceof Error ? error.message : 'Unknown error',
+            severity: 'critical'
+          }],
+          warnings: []
+        }, 
+        success: false 
+      };
+    }
   }
   
   // 🔍 GET & VERIFY SECURE COOKIE

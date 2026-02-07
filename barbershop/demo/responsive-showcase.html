@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Design Showcase</title>
+  <link rel="stylesheet" href="../themes/css/responsive.css">
+  <link rel="stylesheet" href="../themes/css/animations.css">
+  <style>
+    :root {
+      --color-primary-500: hsl(210 100% 50%);
+      --color-background-primary: hsl(0 0% 100%);
+      --color-background-secondary: hsl(220 14% 96%);
+      --color-text-primary: hsl(220 43% 11%);
+      --color-border-light: hsl(220 14% 90%);
+      --transition-fast: 150ms ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--color-background-secondary);
+      color: var(--color-text-primary);
+    }
+
+    .demo-header {
+      background: var(--color-background-primary);
+      border-bottom: 1px solid var(--color-border-light);
+      padding: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .demo-container {
+      padding: 2rem 1rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .demo-section {
+      margin-bottom: 3rem;
+    }
+
+    .demo-section h2 {
+      margin-bottom: 1.5rem;
+      font-size: 1.25rem;
+    }
+
+    .breakpoint-indicator {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: var(--color-primary-500);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      z-index: 1000;
+    }
+
+    .card {
+      background: var(--color-background-primary);
+      border: 1px solid var(--color-border-light);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .card h3 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card p {
+      font-size: 0.875rem;
+      color: #666;
+    }
+
+    /* Grid demo colors */
+    .grid-item {
+      padding: 2rem;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="pb-safe">
+  <!-- Breakpoint Indicator -->
+  <div class="breakpoint-indicator">
+    <span class="max-md:hidden max-lg:hidden max-xl:hidden max-2xl:hidden">2XL+</span>
+    <span class="max-md:hidden max-lg:hidden max-xl:hidden 2xl:hidden">XL</span>
+    <span class="max-md:hidden max-lg:hidden xl:hidden">LG</span>
+    <span class="max-md:hidden lg:hidden">MD</span>
+    <span class="md:hidden">SM</span>
+  </div>
+
+  <!-- Header -->
+  <header class="demo-header">
+    <div class="container-fluid">
+      <div class="flex justify-between items-center">
+        <h1 style="font-size: 1.25rem; font-weight: 700;">📱 Responsive Showcase</h1>
+        <button class="lg:hidden" onclick="toggleSidebar()" style="background: none; border: none; font-size: 1.5rem;">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div style="padding: 1.5rem;">
+      <h3 style="margin-bottom: 1rem;">Navigation</h3>
+      <nav style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <a href="#" style="padding: 0.75rem; background: var(--color-background-secondary); border-radius: 8px; text-decoration: none; color: inherit;">Dashboard</a>
+        <a href="#" style="padding: 0.75rem; text-decoration: none; color: inherit;">Analytics</a>
+        <a href="#" style="padding: 0.75rem; text-decoration: none; color: inherit;">Settings</a>
+      </nav>
+    </div>
+  </div>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <main class="demo-container">
+    <!-- Responsive Grid Demo -->
+    <section class="demo-section">
+      <h2>Responsive Grid (1 → 2 → 3 → 4 columns)</h2>
+      <div class="card-grid-responsive">
+        <div class="card">
+          <h3>Card 1</h3>
+          <p>Resize browser to see columns change</p>
+        </div>
+        <div class="card">
+          <h3>Card 2</h3>
+          <p>Mobile: 1 col, Tablet: 2 cols, Desktop: 3 cols, Large: 4 cols</p>
+        </div>
+        <div class="card">
+          <h3>Card 3</h3>
+          <p>Responsive grid adapts to screen size</p>
+        </div>
+        <div class="card">
+          <h3>Card 4</h3>
+          <p>Built with CSS Grid and media queries</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hidden/Visible Demo -->
+    <section class="demo-section">
+      <h2>Responsive Visibility</h2>
+      <div class="flex gap-4 flex-wrap">
+        <div class="card" style="background: #dbeafe;">
+          <h3>Mobile Only</h3>
+          <p class="md:hidden">✓ Visible on mobile</p>
+          <p class="max-md:hidden text-gray-400">Hidden on tablet+</p>
+        </div>
+        <div class="card" style="background: #dcfce7;">
+          <h3>Tablet+ Only</h3>
+          <p class="max-md:hidden">✓ Visible on tablet+</p>
+          <p class="md:hidden text-gray-400">Hidden on mobile</p>
+        </div>
+        <div class="card" style="background: #fef3c7;">
+          <h3>Desktop+ Only</h3>
+          <p class="max-lg:hidden">✓ Visible on desktop+</p>
+          <p class="lg:hidden text-gray-400">Hidden on mobile/tablet</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Flex Direction Demo -->
+    <section class="demo-section">
+      <h2>Responsive Flex Direction (Col → Row)</h2>
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="card flex-1" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white;">
+          <h3 style="color: white;">Flex Item 1</h3>
+          <p style="color: rgba(255,255,255,0.8);">Mobile: stacked, Desktop: side by side</p>
+        </div>
+        <div class="card flex-1" style="background: linear-gradient(135deg, #8b5cf6, #ec4899); color: white;">
+          <h3 style="color: white;">Flex Item 2</h3>
+          <p style="color: rgba(255,255,255,0.8);">Uses flex-col and md:flex-row</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Text Responsive Demo -->
+    <section class="demo-section">
+      <h2>Responsive Typography</h2>
+      <div class="card">
+        <h1 style="font-size: clamp(1.5rem, 5vw, 3rem); margin-bottom: 1rem;">
+          This text scales smoothly
+        </h1>
+        <p style="font-size: clamp(1rem, 2.5vw, 1.25rem); color: #666;">
+          Using CSS clamp() for fluid typography that adapts to any screen size without media queries.
+        </p>
+      </div>
+    </section>
+
+    <!-- Grid System Demo -->
+    <section class="demo-section">
+      <h2>Grid System</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="grid-item" style="background: #fef3c7;">1</div>
+        <div class="grid-item" style="background: #fde68a;">2</div>
+        <div class="grid-item" style="background: #fcd34d;">3</div>
+        <div class="grid-item" style="background: #fbbf24;">4</div>
+        <div class="grid-item" style="background: #dbeafe;">5</div>
+        <div class="grid-item" style="background: #bfdbfe;">6</div>
+        <div class="grid-item" style="background: #93c5fd;">7</div>
+        <div class="grid-item" style="background: #60a5fa;">8</div>
+      </div>
+    </section>
+
+    <!-- Table Responsive Demo -->
+    <section class="demo-section">
+      <h2>Responsive Table</h2>
+      <div class="table-responsive" style="background: white; border-radius: 12px; overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead style="background: #f3f4f6;">
+            <tr>
+              <th style="padding: 1rem; text-align: left;">Name</th>
+              <th style="padding: 1rem; text-align: left;">Role</th>
+              <th style="padding: 1rem; text-align: left;">Status</th>
+              <th style="padding: 1rem; text-align: left;">Revenue</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-top: 1px solid #e5e7eb;">
+              <td style="padding: 1rem;" data-label="Name">Marcus Johnson</td>
+              <td style="padding: 1rem;" data-label="Role">Senior Barber</td>
+              <td style="padding: 1rem;" data-label="Status">Active</td>
+              <td style="padding: 1rem;" data-label="Revenue">$4,250</td>
+            </tr>
+            <tr style="border-top: 1px solid #e5e7eb;">
+              <td style="padding: 1rem;" data-label="Name">Sarah Chen</td>
+              <td style="padding: 1rem;" data-label="Role">Stylist</td>
+              <td style="padding: 1rem;" data-label="Status">Active</td>
+              <td style="padding: 1rem;" data-label="Revenue">$3,890</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Aspect Ratio Demo -->
+    <section class="demo-section">
+      <h2>Aspect Ratios</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <div class="aspect-square" style="background: linear-gradient(135deg, #f093fb, #f5576c); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+            1:1 Square
+          </div>
+        </div>
+        <div>
+          <div class="aspect-video" style="background: linear-gradient(135deg, #4facfe, #00f2fe); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+            16:9 Video
+          </div>
+        </div>
+        <div>
+          <div class="aspect-portrait" style="background: linear-gradient(135deg, #43e97b, #38f9d7); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+            3:4 Portrait
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Mobile Navigation -->
+  <nav class="mobile-nav">
+    <a href="#" class="mobile-nav-item active">
+      <span class="mobile-nav-icon">🏠</span>
+      <span>Home</span>
+    </a>
+    <a href="#" class="mobile-nav-item">
+      <span class="mobile-nav-icon">📊</span>
+      <span>Stats</span>
+    </a>
+    <a href="#" class="mobile-nav-item">
+      <span class="mobile-nav-icon">⚙️</span>
+      <span>Settings</span>
+    </a>
+  </nav>
+
+  <script>
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('active');
+      document.getElementById('sidebarOverlay').classList.toggle('active');
+    }
+  </script>
+</body>
+</html>
