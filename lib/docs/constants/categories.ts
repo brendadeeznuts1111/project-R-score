@@ -83,6 +83,16 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
  REAL_WORLD_TESTS: '/docs/benchmarks/real-world-tests'
     },
     
+    [DocumentationCategory.WEBASSEMBLY]: {
+      OVERVIEW: '/docs/api/wasm',
+      TABLE: '/docs/api/wasm#table',
+      MEMORY: '/docs/api/wasm#memory',
+      MODULE: '/docs/api/wasm#module',
+      INSTANCE: '/docs/api/wasm#instance',
+      COMPILE: '/docs/api/wasm#compile',
+      INSTANTIATE: '/docs/api/wasm#instantiate',
+    },
+
     [DocumentationCategory.SECURITY]: {
       OVERVIEW: '/docs/security',
       VULNERABILITIES: '/docs/security/vulnerabilities',

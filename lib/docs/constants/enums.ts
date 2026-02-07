@@ -186,6 +186,9 @@ export enum DocumentationCategory {
   // From core-documentation.ts
   CLI_TOOLS = 'cli_tools',
 
+  // WebAssembly
+  WEBASSEMBLY = 'webassembly',
+
   // Legacy/backward compatibility (deprecated)
   /** @deprecated Use API_REFERENCE instead */
   CLI_REFERENCE = 'cli_reference',
@@ -231,6 +234,9 @@ export enum UrlType {
   DOWNLOAD = 'download',
   PLAYGROUND = 'playground',
   BENCHMARK = 'benchmark',
+
+  // WebAssembly
+  WASM_MODULE = 'wasm_module',
 
   // External
   EXTERNAL_REFERENCE = 'external_reference',
