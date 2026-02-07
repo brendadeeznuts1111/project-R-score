@@ -37,3 +37,40 @@ export {
   type HookEntry,
   type HookRegistry,
 } from './wasm-table';
+
+// Bun-Enhanced Utilities
+export {
+  // Hashing
+  fastHash,
+  createStreamingHasher,
+  hashPassword,
+  verifyPassword,
+  type HashAlgorithm,
+  type PasswordOptions,
+  // Compression
+  compressData,
+  decompressData,
+  type CompressionAlgorithm,
+  // Timing
+  nanoseconds,
+  measure,
+  createTimer,
+  sleep,
+  peekPromise,
+  // File I/O
+  fastWrite,
+  fastReadText,
+  fastReadJSON,
+  streamFile,
+  // Semver
+  parseSemver,
+  compareVersions,
+  satisfiesVersion,
+  // HTML
+  escapeHTML,
+  // System
+  which,
+  openInEditor,
+  getBunVersion,
+  isMainModule,
+} from './bun-enhanced';

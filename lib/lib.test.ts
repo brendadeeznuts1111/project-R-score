@@ -1444,3 +1444,353 @@ describe("Response.json", () => {
     expect(await Response.json(42).json()).toBe(42);
   });
 });
+
+// ============================================================================
+// bun:sqlite — Built-in SQLite3 Driver
+// ============================================================================
+
+import { Database } from "bun:sqlite";
+
+describe("bun:sqlite", () => {
+  // --- Database lifecycle ---
+  describe("Database lifecycle", () => {
+    test("open in-memory database", () => {
+      const db = new Database(":memory:");
+      expect(db).toBeDefined();
+      expect(db.filename).toBe(":memory:");
+      db.close();
+    });
+
+    test("Database.open() static method", () => {
+      const db = Database.open(":memory:");
+      expect(db.filename).toBe(":memory:");
+      db.close();
+    });
+
+    test("close is idempotent", () => {
+      const db = new Database(":memory:");
+      db.close();
+      expect(() => db.close()).not.toThrow();
+    });
+
+    test("handle is a number", () => {
+      const db = new Database(":memory:");
+      expect(db.handle).toBeNumber();
+      db.close();
+    });
+  });
+
+  // --- DDL + DML with db.run ---
+  describe("db.run (DDL/DML)", () => {
+    test("CREATE TABLE + INSERT returns Changes", () => {
+      const db = new Database(":memory:");
+      db.run("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, age INTEGER)");
+
+      const result = db.run("INSERT INTO users (name, age) VALUES (?, ?)", "Alice", 30);
+      expect(result).toHaveProperty("changes", 1);
+      expect(result).toHaveProperty("lastInsertRowid");
+      expect(result.lastInsertRowid).toBe(1);
+      db.close();
+    });
+
+    test("multiple inserts increment lastInsertRowid", () => {
+      const db = new Database(":memory:");
+      db.run("CREATE TABLE t (id INTEGER PRIMARY KEY, val TEXT)");
+
+      db.run("INSERT INTO t (val) VALUES (?)", "a");
+      const r2 = db.run("INSERT INTO t (val) VALUES (?)", "b");
+      const r3 = db.run("INSERT INTO t (val) VALUES (?)", "c");
+
+      expect(r2.lastInsertRowid).toBe(2);
+      expect(r3.lastInsertRowid).toBe(3);
+      db.close();
+    });
+
+    test("UPDATE returns change count", () => {
+      const db = new Database(":memory:");
+      db.run("CREATE TABLE t (id INTEGER PRIMARY KEY, val TEXT)");
+      db.run("INSERT INTO t (val) VALUES (?)", "old");
+      db.run("INSERT INTO t (val) VALUES (?)", "old");
+
+      const result = db.run("UPDATE t SET val = ? WHERE val = ?", "new", "old");
+      expect(result.changes).toBe(2);
+      db.close();
+    });
+
+    test("DELETE returns change count", () => {
+      const db = new Database(":memory:");
+      db.run("CREATE TABLE t (id INTEGER PRIMARY KEY, val TEXT)");
+      db.run("INSERT INTO t (val) VALUES (?)", "x");
+      db.run("INSERT INTO t (val) VALUES (?)", "y");
+      db.run("INSERT INTO t (val) VALUES (?)", "x");
+
+      const result = db.run("DELETE FROM t WHERE val = ?", "x");
+      expect(result.changes).toBe(2);
+      db.close();
+    });
+  });
+
+  // --- Prepared statements: query() and prepare() ---
+  describe("prepared statements", () => {
+    test("query().all() returns array of objects", () => {
+      const db = new Database(":memory:");
+      db.run("CREATE TABLE t (id INTEGER PRIMARY KEY, name TEXT)");
+      db.run("INSERT INTO t (name) VALUES (?)", "Alice");
+      db.run("INSERT INTO t (name) VALUES (?)", "Bob");
+
+      const rows = db.query("SELECT * FROM t ORDER BY id").all();
+      expect(rows).toBeArrayOfSize(2);
+      expect(rows[0]).toEqual({ id: 1, name: "Alice" });
+      expect(rows[1]).toEqual({ id: 2, name: "Bob" });
+      db.close();
+    });
+
+    test("query().get() returns first row or null", () => {
+      const db = new Database(":memory:");
+      db.run("CREATE TABLE t (id INTEGER PRIMARY KEY, name TEXT)");
+      db.run("INSERT INTO t (name) VALUES (?)", "Alice");
+
+      const row = db.query("SELECT * FROM t WHERE id = ?").get(1) as any;
+      expect(row).toEqual({ id: 1, name: "Alice" });
+
+      const missing = db.query("SELECT * FROM t WHERE id = ?").get(999);
+      expect(missing).toBeNull();
+      db.close();
+    });
+
+    test("query().values() returns array of arrays", () => {
+      const db = new Database(":memory:");
+      db.run("CREATE TABLE t (id INTEGER PRIMARY KEY, name TEXT)");
+      db.run("INSERT INTO t (name) VALUES (?)", "Alice");
+
+      const rows = db.query("SELECT id, name FROM t").values();
+      expect(rows).toBeArrayOfSize(1);
+      expect(rows[0]).toEqual([1, "Alice"]);
+      db.close();
+    });
+
+    test("query().run() for INSERT with params", () => {
+      const db = new Database(":memory:");
+      db.run("CREATE TABLE t (id INTEGER PRIMARY KEY, val TEXT)");
+
+      const insert = db.query("INSERT INTO t (val) VALUES (?)");
+      const r = insert.run("hello");
+      expect(r.changes).toBe(1);
+      expect(r.lastInsertRowid).toBe(1);
+      db.close();
+    });
+
+    test("columnNames returns column list", () => {
+      const db = new Database(":memory:");
+      db.run("CREATE TABLE t (id INTEGER PRIMARY KEY, name TEXT, age INTEGER)");
+
+      const stmt = db.query("SELECT id, name, age FROM t");
+      expect(stmt.columnNames).toEqual(["id", "name", "age"]);
+      db.close();
+    });
+
+    test("paramsCount reflects bound parameters", () => {
+      const db = new Database(":memory:");
+      db.run("CREATE TABLE t (a TEXT, b TEXT, c TEXT)");
+
+      expect(db.query("SELECT * FROM t WHERE a = ?").paramsCount).toBe(1);
+      expect(db.query("SELECT * FROM t WHERE a = ? AND b = ?").paramsCount).toBe(2);
+      expect(db.query("SELECT * FROM t").paramsCount).toBe(0);
+      db.close();
+    });
+
+    test("iterate() returns IterableIterator", () => {
+      const db = new Database(":memory:");
+      db.run("CREATE TABLE t (id INTEGER PRIMARY KEY, val TEXT)");
+      db.run("INSERT INTO t (val) VALUES (?)", "a");
+      db.run("INSERT INTO t (val) VALUES (?)", "b");
+      db.run("INSERT INTO t (val) VALUES (?)", "c");
+
+      const results: any[] = [];
+      for (const row of db.query("SELECT * FROM t ORDER BY id").iterate()) {
+        results.push(row);
+      }
+      expect(results).toBeArrayOfSize(3);
+      expect(results[0]).toEqual({ id: 1, val: "a" });
+      db.close();
+    });
+  });
+
+  // --- Type bindings ---
+  describe("type bindings", () => {
+    test("binds string, number, boolean, null, bigint, Uint8Array", () => {
+      const db = new Database(":memory:");
+      db.run("CREATE TABLE types (txt TEXT, num REAL, flag INTEGER, nul TEXT, big INTEGER, blb BLOB)");
+      db.run(
+        "INSERT INTO types VALUES (?, ?, ?, ?, ?, ?)",
+        "hello", 3.14, true, null, 9007199254740993n, new Uint8Array([1, 2, 3])
+      );
+
+      const row = db.query("SELECT * FROM types").get() as any;
+      expect(row.txt).toBe("hello");
+      expect(row.num).toBeCloseTo(3.14, 2);
+      expect(row.flag).toBe(1); // boolean → INTEGER
+      expect(row.nul).toBeNull();
+      expect(row.blb).toBeInstanceOf(Uint8Array);
+      expect(row.blb[0]).toBe(1);
+      db.close();
+    });
+
+    test("safeIntegers option returns bigint", () => {
+      const db = new Database(":memory:", { safeIntegers: true });
+      db.run("CREATE TABLE t (big INTEGER)");
+      db.run("INSERT INTO t VALUES (?)", 9007199254740993n);
+
+      const row = db.query("SELECT big FROM t").get() as any;
+      expect(typeof row.big).toBe("bigint");
+      expect(row.big).toBe(9007199254740993n);
+      db.close();
+    });
+  });
+
+  // --- Transactions ---
+  describe("transactions", () => {
+    test("transaction commits on success", () => {
+      const db = new Database(":memory:");
+      db.run("CREATE TABLE t (id INTEGER PRIMARY KEY, val TEXT)");
+
+      const insert = db.prepare("INSERT INTO t (val) VALUES (?)");
+      const insertMany = db.transaction((items: string[]) => {
+        for (const item of items) insert.run(item);
+      });
+
+      insertMany(["a", "b", "c"]);
+      const count = db.query("SELECT COUNT(*) as n FROM t").get() as any;
+      expect(count.n).toBe(3);
+      db.close();
+    });
+
+    test("transaction rolls back on error", () => {
+      const db = new Database(":memory:");
+      db.run("CREATE TABLE t (id INTEGER PRIMARY KEY, val TEXT UNIQUE)");
+
+      const insert = db.prepare("INSERT INTO t (val) VALUES (?)");
+      const insertMany = db.transaction((items: string[]) => {
+        for (const item of items) insert.run(item);
+      });
+
+      // First insert "a", then try batch with duplicate → rollback
+      db.run("INSERT INTO t (val) VALUES (?)", "a");
+
+      expect(() => insertMany(["b", "a"])).toThrow(); // "a" violates UNIQUE
+      // Only the original "a" should exist — "b" was rolled back
+      const rows = db.query("SELECT val FROM t ORDER BY val").all() as any[];
+      expect(rows).toEqual([{ val: "a" }]);
+      db.close();
+    });
+
+    test("inTransaction reflects state", () => {
+      const db = new Database(":memory:");
+      db.run("CREATE TABLE t (id INTEGER PRIMARY KEY)");
+
+      expect(db.inTransaction).toBe(false);
+
+      const insert = db.prepare("INSERT INTO t (id) VALUES (?)");
+      const txn = db.transaction(() => {
+        expect(db.inTransaction).toBe(true);
+        insert.run(1);
+      });
+      txn();
+
+      expect(db.inTransaction).toBe(false);
+      db.close();
+    });
+  });
+
+  // --- Serialize / Deserialize ---
+  describe("serialize & deserialize", () => {
+    test("round-trip: serialize → deserialize preserves data", () => {
+      const db = new Database(":memory:");
+      db.run("CREATE TABLE t (id INTEGER PRIMARY KEY, name TEXT)");
+      db.run("INSERT INTO t (name) VALUES (?)", "Alice");
+      db.run("INSERT INTO t (name) VALUES (?)", "Bob");
+
+      const bytes = db.serialize();
+      expect(bytes).toBeInstanceOf(Buffer);
+      expect(bytes.length).toBeGreaterThan(0);
+
+      const db2 = new Database(bytes);
+      const rows = db2.query("SELECT * FROM t ORDER BY id").all();
+      expect(rows).toEqual([
+        { id: 1, name: "Alice" },
+        { id: 2, name: "Bob" },
+      ]);
+      db.close();
+      db2.close();
+    });
+
+    test("deserialize with readonly prevents writes", () => {
+      const db = new Database(":memory:");
+      db.run("CREATE TABLE t (id INTEGER PRIMARY KEY)");
+      db.run("INSERT INTO t (id) VALUES (1)");
+
+      const bytes = db.serialize();
+      const ro = Database.deserialize(bytes, true);
+
+      expect(() => ro.run("INSERT INTO t (id) VALUES (2)")).toThrow();
+      ro.close();
+      db.close();
+    });
+  });
+
+  // --- PRAGMA and SQLite version ---
+  describe("PRAGMA & metadata", () => {
+    test("PRAGMA returns sqlite version", () => {
+      const db = new Database(":memory:");
+      const row = db.query("SELECT sqlite_version() as ver").get() as any;
+      expect(row.ver).toBeString();
+      expect(row.ver).toStartWith("3.");
+      db.close();
+    });
+
+    test("PRAGMA table_info", () => {
+      const db = new Database(":memory:");
+      db.run("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL, age INTEGER)");
+
+      const cols = db.query("PRAGMA table_info(users)").all() as any[];
+      expect(cols).toBeArrayOfSize(3);
+      expect(cols.map((c: any) => c.name)).toEqual(["id", "name", "age"]);
+      expect(cols[1].notnull).toBe(1);
+      db.close();
+    });
+
+    test("strict mode requires matching param names", () => {
+      const db = new Database(":memory:", { strict: true });
+      db.run("CREATE TABLE t (name TEXT)");
+      db.run("INSERT INTO t (name) VALUES ($name)", { name: "works" });
+
+      const row = db.query("SELECT * FROM t").get() as any;
+      expect(row.name).toBe("works");
+      db.close();
+    });
+  });
+
+  // --- Statement finalize + expanded SQL ---
+  describe("statement extras", () => {
+    test("finalize prevents reuse", () => {
+      const db = new Database(":memory:");
+      db.run("CREATE TABLE t (id INTEGER PRIMARY KEY)");
+
+      const stmt = db.query("SELECT * FROM t");
+      stmt.finalize();
+      expect(() => stmt.all()).toThrow();
+      db.close();
+    });
+
+    test("toString() shows SQL string", () => {
+      const db = new Database(":memory:");
+      db.run("CREATE TABLE t (val TEXT)");
+
+      const stmt = db.prepare("SELECT * FROM t WHERE val = ?");
+      const sql = stmt.toString();
+      expect(sql).toBeString();
+      expect(sql).toInclude("SELECT");
+      db.close();
+    });
+  });
+});
