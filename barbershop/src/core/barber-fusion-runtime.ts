@@ -1,12 +1,12 @@
+import type { AccountAgeTier, FusionTier, RiskLevel } from './barber-fusion-types';
+import type { AccountAgeTier, FusionTier, RiskLevel } from './barber-fusion-types'
+
 // barber-fusion-runtime.ts - Runtime Validation, Utilities & Sample Data
 
 import { Database } from 'bun:sqlite';
 import { redis } from 'bun';
 
 // ==================== TYPE IMPORTS ====================
-export type AccountAgeTier = 'new' | 'recent' | 'growing' | 'established' | 'veteran';
-export type FusionTier = 'casual' | 'active' | 'high_volume' | 'whale';
-export type RiskLevel = 'high' | 'medium' | 'low' | 'minimal';
 
 // ==================== VALIDATION ENGINE ====================
 

@@ -1,14 +1,10 @@
+import type { AccountAgeTier, RiskLevel, FusionTier, ImpactLevel, ActionCategory, ActionPriority, ActionTiming } from './barber-fusion-types';
+import type { AccountAgeTier, RiskLevel, FusionTier, ImpactLevel, ActionCategory, ActionPriority, ActionTiming } from './barber-fusion-types'
+
 // barber-fusion-schema.ts - Enhanced Schema with SQL DDL, Validation & Examples
 
 // ==================== ENUM DEFINITIONS ====================
 
-export type AccountAgeTier = 'new' | 'recent' | 'growing' | 'established' | 'veteran';
-export type RiskLevel = 'high' | 'medium' | 'low' | 'minimal';
-export type FusionTier = 'casual' | 'active' | 'high_volume' | 'whale';
-export type ImpactLevel = 'none' | 'minimal' | 'moderate' | 'significant' | 'critical';
-export type ActionCategory = 'verification' | 'engagement' | 'retention' | 'upsell' | 'referral' | 'documentation' | 'risk';
-export type ActionPriority = 'critical' | 'high' | 'medium' | 'low' | 'optional';
-export type ActionTiming = 'pre_service' | 'during_service' | 'post_service' | 'at_checkout' | 'follow_up' | 'ongoing';
 
 // ==================== ACCOUNT AGE SCHEMA ====================
 

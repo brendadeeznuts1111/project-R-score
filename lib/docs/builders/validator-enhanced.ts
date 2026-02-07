@@ -97,14 +97,15 @@ export class EnterpriseDocumentationURLValidator {
    * Validate if a hostname is allowed (exact match or valid subdomain)
    */
   private static isValidHostname(hostname: string, allowedHosts: string[]): boolean {
+    const lower = hostname.toLowerCase();
     return allowedHosts.some(domain => {
-      // Exact match
-      if (hostname === domain) {
+      // Exact match (case-insensitive per RFC 4343)
+      if (lower === domain) {
         return true;
       }
-      
+
       // Valid subdomain (e.g., docs.bun.sh for bun.sh)
-      if (hostname.endsWith(`.${domain}`)) {
+      if (lower.endsWith(`.${domain}`)) {
         const subdomain = hostname.slice(0, -(`.${domain}`.length));
         // Ensure subdomain is not empty and doesn't contain suspicious patterns
         return subdomain.length > 0 && 
