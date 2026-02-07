@@ -17,7 +17,7 @@ export const MARKDOWN_SECURITY = {
     wikiLinks: false,
     latexMath: false,
     noIndentedCodeBlocks: false,
-    hardSoftBreaks: false
+    hardSoftBreaks: false,
   } as const,
 
   /** Moderate security - for trusted authors */
@@ -27,7 +27,7 @@ export const MARKDOWN_SECURITY = {
     noHtmlSpans: false,
     autolinks: { url: true, www: true, email: false },
     wikiLinks: false,
-    latexMath: false
+    latexMath: false,
   } as const,
 
   /** Developer content - internal/trusted */
@@ -37,8 +37,8 @@ export const MARKDOWN_SECURITY = {
     noHtmlSpans: false,
     autolinks: true,
     wikiLinks: true,
-    latexMath: true
-  } as const
+    latexMath: true,
+  } as const,
 } as const;
 
 /** Feature presets for different markdown flavors */
@@ -50,7 +50,7 @@ export const MARKDOWN_FEATURES = {
     tasklists: true,
     autolinks: true,
     hardSoftBreaks: false,
-    tagFilter: false
+    tagFilter: false,
   } as const,
 
   /** CommonMark standard */
@@ -61,7 +61,7 @@ export const MARKDOWN_FEATURES = {
     autolinks: false,
     hardSoftBreaks: false,
     noHtmlBlocks: false,
-    noHtmlSpans: false
+    noHtmlSpans: false,
   } as const,
 
   /** Documentation sites (like docsify, mkdocs) */
@@ -72,7 +72,7 @@ export const MARKDOWN_FEATURES = {
     autolinks: true,
     headings: { ids: true, autolink: true },
     wikiLinks: true,
-    hardSoftBreaks: false
+    hardSoftBreaks: false,
   } as const,
 
   /** Blog/CMS content */
@@ -84,7 +84,7 @@ export const MARKDOWN_FEATURES = {
     headings: { ids: true },
     hardSoftBreaks: false,
     underline: false,
-    collapseWhitespace: true
+    collapseWhitespace: true,
   } as const,
 
   /** CLI/terminal output */
@@ -94,7 +94,7 @@ export const MARKDOWN_FEATURES = {
     autolinks: true,
     hardSoftBreaks: true,
     collapseWhitespace: true,
-    permissiveAtxHeaders: false
+    permissiveAtxHeaders: false,
   } as const,
 
   /** Academic/technical writing */
@@ -104,8 +104,8 @@ export const MARKDOWN_FEATURES = {
     autolinks: true,
     headings: { ids: true },
     latexMath: true,
-    hardSoftBreaks: false
-  } as const
+    hardSoftBreaks: false,
+  } as const,
 } as const;
 
 /** Domain-specific presets for different applications */
@@ -117,8 +117,8 @@ export const MARKDOWN_DOMAINS = {
     tasklists: true,
     autolinks: true,
     headings: { ids: true },
-    noHtmlBlocks: true,  // Prefer JSX over HTML
-    noHtmlSpans: true
+    noHtmlBlocks: true, // Prefer JSX over HTML
+    noHtmlSpans: true,
   } as const,
 
   /** Static site generators (11ty, Hugo) */
@@ -129,7 +129,7 @@ export const MARKDOWN_DOMAINS = {
     autolinks: true,
     headings: { ids: true },
     wikiLinks: true,
-    hardSoftBreaks: false
+    hardSoftBreaks: false,
   } as const,
 
   /** API documentation */
@@ -140,7 +140,7 @@ export const MARKDOWN_DOMAINS = {
     autolinks: true,
     headings: { ids: true, autolink: true },
     noHtmlBlocks: false,
-    noHtmlSpans: false
+    noHtmlSpans: false,
   } as const,
 
   /** Internal wikis */
@@ -151,20 +151,20 @@ export const MARKDOWN_DOMAINS = {
     autolinks: true,
     headings: { ids: true },
     wikiLinks: true,
-    hardSoftBreaks: false
+    hardSoftBreaks: false,
   } as const,
 
   /** Email/newsletter content */
   EMAIL: {
-    tables: false,  // Email client compatibility
+    tables: false, // Email client compatibility
     strikethrough: false,
     tasklists: false,
     autolinks: true,
     headings: { ids: false },
     hardSoftBreaks: true,
     noHtmlBlocks: true,
-    noHtmlSpans: true
-  } as const
+    noHtmlSpans: true,
+  } as const,
 } as const;
 
 // ============================================================================
@@ -181,11 +181,9 @@ export const HTML_RENDERERS = {
     paragraph: (children: string) =>
       `<p class="mb-4 text-gray-700 leading-relaxed">${children}</p>`,
 
-    strong: (children: string) =>
-      `<strong class="font-bold">${children}</strong>`,
+    strong: (children: string) => `<strong class="font-bold">${children}</strong>`,
 
-    emphasis: (children: string) =>
-      `<em class="italic">${children}</em>`,
+    emphasis: (children: string) => `<em class="italic">${children}</em>`,
 
     link: (children: string, { href }: { href: string }) =>
       `<a href="${href}" class="text-blue-600 hover:underline hover:text-blue-800">${children}</a>`,
@@ -194,7 +192,7 @@ export const HTML_RENDERERS = {
       `<pre class="bg-gray-100 rounded-lg p-4 overflow-x-auto mb-4"><code class="language-${language || 'text'}">${children}</code></pre>`,
 
     codespan: (children: string) =>
-      `<code class="bg-gray-100 rounded px-1 py-0.5 font-mono text-sm">${children}</code>`
+      `<code class="bg-gray-100 rounded px-1 py-0.5 font-mono text-sm">${children}</code>`,
   } as const,
 
   /** Bootstrap classes */
@@ -202,14 +200,13 @@ export const HTML_RENDERERS = {
     heading: (children: string, { level }: { level: number }) =>
       `<h${level} class="mb-3">${children}</h${level}>`,
 
-    paragraph: (children: string) =>
-      `<p class="mb-3">${children}</p>`,
+    paragraph: (children: string) => `<p class="mb-3">${children}</p>`,
 
     link: (children: string, { href }: { href: string }) =>
       `<a href="${href}" class="link-primary">${children}</a>`,
 
     code: (children: string) =>
-      `<pre class="bg-light p-3 rounded mb-3"><code>${children}</code></pre>`
+      `<pre class="bg-light p-3 rounded mb-3"><code>${children}</code></pre>`,
   } as const,
 
   /** Minimal/semantic */
@@ -217,18 +214,15 @@ export const HTML_RENDERERS = {
     heading: (children: string, { level, id }: { level: number; id?: string }) =>
       `<h${level} id="${id || ''}">${children}</h${level}>`,
 
-    paragraph: (children: string) =>
-      `<p>${children}</p>`,
+    paragraph: (children: string) => `<p>${children}</p>`,
 
-    strong: (children: string) =>
-      `<strong>${children}</strong>`,
+    strong: (children: string) => `<strong>${children}</strong>`,
 
-    emphasis: (children: string) =>
-      `<em>${children}</em>`,
+    emphasis: (children: string) => `<em>${children}</em>`,
 
     link: (children: string, { href, title }: { href: string; title?: string }) =>
-      `<a href="${href}"${title ? ` title="${title}"` : ''}>${children}</a>`
-  } as const
+      `<a href="${href}"${title ? ` title="${title}"` : ''}>${children}</a>`,
+  } as const,
 } as const;
 
 /** Plain text renderers for different output formats */
@@ -244,19 +238,20 @@ export const TEXT_RENDERERS = {
     code: (children: string) => children,
     codespan: (children: string) => children,
     list: (children: string) => children,
-    listItem: (children: string) => `• ${children}\n`
+    listItem: (children: string) => `• ${children}\n`,
   } as const,
 
   /** Markdown output (convert to markdown) */
   MARKDOWN_OUTPUT: {
-    heading: (children: string, { level }: { level: number }) => `${'#'.repeat(level)} ${children}\n\n`,
+    heading: (children: string, { level }: { level: number }) =>
+      `${'#'.repeat(level)} ${children}\n\n`,
     paragraph: (children: string) => `${children}\n\n`,
     strong: (children: string) => `**${children}**`,
     emphasis: (children: string) => `*${children}*`,
     link: (children: string, { href }: { href: string }) => `[${children}](${href})`,
     image: (children: string, { src }: { src: string }) => `![${children}](${src})`,
     code: (children: string) => `\`\`\`\n${children}\n\`\`\`\n\n`,
-    codespan: (children: string) => `\`${children}\``
+    codespan: (children: string) => `\`${children}\``,
   } as const,
 
   /** Slack/chat formatting */
@@ -267,8 +262,8 @@ export const TEXT_RENDERERS = {
     emphasis: (children: string) => `_${children}_`,
     link: (children: string, { href }: { href: string }) => `<${href}|${children}>`,
     code: (children: string) => `\`\`\`\n${children}\n\`\`\``,
-    codespan: (children: string) => `\`${children}\``
-  } as const
+    codespan: (children: string) => `\`${children}\``,
+  } as const,
 } as const;
 
 /** Terminal/ANSI renderers for CLI output */
@@ -276,7 +271,14 @@ export const TERMINAL_RENDERERS = {
   /** Colorful terminal output */
   COLOR: {
     heading: (children: string, { level }: { level: number }) => {
-      const colors = ['\x1b[1;36m', '\x1b[1;35m', '\x1b[1;34m', '\x1b[1;33m', '\x1b[1;32m', '\x1b[1;31m'];
+      const colors = [
+        '\x1b[1;36m',
+        '\x1b[1;35m',
+        '\x1b[1;34m',
+        '\x1b[1;33m',
+        '\x1b[1;32m',
+        '\x1b[1;31m',
+      ];
       return `${colors[level - 1] || '\x1b[1m'}${children}\x1b[0m\n`;
     },
 
@@ -286,23 +288,25 @@ export const TERMINAL_RENDERERS = {
 
     emphasis: (children: string) => `\x1b[3m${children}\x1b[23m`,
 
-    link: (children: string, { href }: { href: string }) => `\x1b[4;94m${children}\x1b[0m (\x1b[90m${href}\x1b[0m)`,
+    link: (children: string, { href }: { href: string }) =>
+      `\x1b[4;94m${children}\x1b[0m (\x1b[90m${href}\x1b[0m)`,
 
     code: (children: string) => `\x1b[48;5;235m${children}\x1b[0m`,
 
-    codespan: (children: string) => `\x1b[48;5;236m\x1b[37m${children}\x1b[0m`
+    codespan: (children: string) => `\x1b[48;5;236m\x1b[37m${children}\x1b[0m`,
   } as const,
 
   /** Simple monochrome */
   MONOCHROME: {
-    heading: (children: string, { level }: { level: number }) => `${'='.repeat(children.length)}\n${children}\n${'='.repeat(children.length)}\n`,
+    heading: (children: string, { level }: { level: number }) =>
+      `${'='.repeat(children.length)}\n${children}\n${'='.repeat(children.length)}\n`,
     paragraph: (children: string) => `${children}\n`,
     strong: (children: string) => children,
     emphasis: (children: string) => children,
     link: (children: string, { href }: { href: string }) => `${children} (${href})`,
     code: (children: string) => `${children}\n`,
-    codespan: (children: string) => children
-  } as const
+    codespan: (children: string) => children,
+  } as const,
 } as const;
 
 // ============================================================================
@@ -326,9 +330,7 @@ export const REACT_COMPONENTS = {
     ),
 
     p: ({ children }: { children: React.ReactNode }) => (
-      <p className="mb-4 leading-relaxed">
-        {children}
-      </p>
+      <p className="mb-4 leading-relaxed">{children}</p>
     ),
 
     a: ({ href, children }: { href: string; children: React.ReactNode }) => (
@@ -343,19 +345,15 @@ export const REACT_COMPONENTS = {
     ),
 
     code: ({ children }: { children: React.ReactNode }) => (
-      <code className="bg-gray-100 rounded px-1.5 py-0.5 font-mono text-sm">
-        {children}
-      </code>
+      <code className="bg-gray-100 rounded px-1.5 py-0.5 font-mono text-sm">{children}</code>
     ),
 
     pre: ({ language, children }: { language?: string; children: React.ReactNode }) => (
       <pre className="bg-gray-900 text-gray-100 rounded-lg p-4 overflow-x-auto my-4">
-        <code className={`language-${language}`}>
-          {children}
-        </code>
+        <code className={`language-${language}`}>{children}</code>
       </pre>
-    )
-  } as const
+    ),
+  } as const,
 } as const;
 
 // ============================================================================
@@ -365,11 +363,17 @@ export const REACT_COMPONENTS = {
 /** Factory functions for creating markdown renderers */
 export const MarkdownPresets = {
   /** Create HTML renderer with security */
-  html: (preset: keyof typeof MARKDOWN_FEATURES = 'GFM', security: keyof typeof MARKDOWN_SECURITY = 'MODERATE') =>
+  html:
+    (
+      preset: keyof typeof MARKDOWN_FEATURES = 'GFM',
+      security: keyof typeof MARKDOWN_SECURITY = 'MODERATE'
+    ) =>
     (markdown: string) => {
       // Runtime check for Bun API availability
       if (typeof Bun?.markdown?.html !== 'function') {
-        throw new Error('Bun.markdown.html is not available. Please ensure you are running in Bun environment.');
+        throw new Error(
+          'Bun.markdown.html is not available. Please ensure you are running in Bun environment.'
+        );
       }
 
       // Input validation
@@ -383,7 +387,7 @@ export const MarkdownPresets = {
 
       const options = {
         ...MARKDOWN_FEATURES[preset],
-        ...MARKDOWN_SECURITY[security]
+        ...MARKDOWN_SECURITY[security],
       };
 
       try {
@@ -394,11 +398,14 @@ export const MarkdownPresets = {
     },
 
   /** Create renderer with specific output format */
-  render: (format: keyof typeof HTML_RENDERERS = 'TAILWIND', options: Record<string, any> = {}) =>
+  render:
+    (format: keyof typeof HTML_RENDERERS = 'TAILWIND', options: Record<string, any> = {}) =>
     (markdown: string) => {
       // Runtime check for Bun API availability
       if (typeof Bun?.markdown?.render !== 'function') {
-        throw new Error('Bun.markdown.render is not available. Please ensure you are running in Bun environment.');
+        throw new Error(
+          'Bun.markdown.render is not available. Please ensure you are running in Bun environment.'
+        );
       }
 
       // Input validation
@@ -421,11 +428,17 @@ export const MarkdownPresets = {
     },
 
   /** Create React component with framework */
-  react: (framework: keyof typeof REACT_COMPONENTS = 'TAILWIND_TYPOGRAPHY', options: Record<string, any> = {}) =>
+  react:
+    (
+      framework: keyof typeof REACT_COMPONENTS = 'TAILWIND_TYPOGRAPHY',
+      options: Record<string, any> = {}
+    ) =>
     (markdown: string) => {
       // Runtime check for Bun API availability
       if (typeof Bun?.markdown?.react !== 'function') {
-        throw new Error('Bun.markdown.react is not available. Please ensure you are running in Bun environment.');
+        throw new Error(
+          'Bun.markdown.react is not available. Please ensure you are running in Bun environment.'
+        );
       }
 
       // Input validation
@@ -441,7 +454,7 @@ export const MarkdownPresets = {
       const featureOpts = {
         ...MARKDOWN_FEATURES.GFM,
         ...MARKDOWN_DOMAINS.REACT_APP,
-        ...options
+        ...options,
       };
 
       try {
@@ -449,7 +462,7 @@ export const MarkdownPresets = {
       } catch (error) {
         throw new Error(`${ERRORS.CODES.PARSE_ERROR}: ${error.message}`);
       }
-    }
+    },
 } as const;
 
 /** Cache factory functions */
@@ -460,7 +473,7 @@ export const MarkdownCache = {
     let hash = 0;
     for (let i = 0; i < content.length; i++) {
       const char = content.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return `${prefix}:${Math.abs(hash).toString(36)}:${content.length}`;
@@ -482,7 +495,7 @@ export const MarkdownCache = {
       clear: () => cache.clear(),
       has: (key: string) => cache.has(key),
       delete: (key: string) => cache.delete(key),
-      size: () => cache.size
+      size: () => cache.size,
     };
   },
 
@@ -545,9 +558,9 @@ export const MarkdownCache = {
         timestamps.delete(key);
       },
 
-      size: () => cache.size
+      size: () => cache.size,
     };
-  }
+  },
 } as const;
 
 // ============================================================================
@@ -558,26 +571,27 @@ export const MarkdownCache = {
 export const VALIDATION = {
   /** Maximum sizes (in characters) */
   MAX_SIZES: {
-    DOCUMENT: 1000000,      // 1MB approx
+    DOCUMENT: 1000000, // 1MB approx
     PARAGRAPH: 10000,
     HEADING: 500,
     LINK_TEXT: 200,
-    IMAGE_ALT: 200
+    IMAGE_ALT: 200,
   } as const,
 
   /** Allowed protocols */
-  ALLOWED_PROTOCOLS: [
-    'http:',
-    'https:',
-    'mailto:',
-    'tel:',
-    '#'
-  ] as const,
+  ALLOWED_PROTOCOLS: ['http:', 'https:', 'mailto:', 'tel:', '#'] as const,
 
   /** Allowed image extensions */
   ALLOWED_IMAGE_EXTENSIONS: [
-    '.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg',
-    '.avif', '.bmp', '.tiff'
+    '.jpg',
+    '.jpeg',
+    '.png',
+    '.gif',
+    '.webp',
+    '.svg',
+    '.avif',
+    '.bmp',
+    '.tiff',
   ] as const,
 
   /** Blacklisted patterns (regex) */
@@ -586,8 +600,8 @@ export const VALIDATION = {
     /on\w+\s*=/i,
     /javascript:/i,
     /data:/i,
-    /vbscript:/i
-  ] as const
+    /vbscript:/i,
+  ] as const,
 } as const;
 
 /** Sanitization functions */
@@ -599,7 +613,7 @@ export const Sanitizers = {
       '<': '&lt;',
       '>': '&gt;',
       '"': '&quot;',
-      "'": '&#039;'
+      "'": '&#039;',
     };
     return text.replace(/[&<>"']/g, m => map[m]);
   },
@@ -625,9 +639,7 @@ export const Sanitizers = {
       }
 
       // Check for blacklisted patterns
-      return !VALIDATION.BLACKLISTED_PATTERNS.some(pattern =>
-        pattern.test(url)
-      );
+      return !VALIDATION.BLACKLISTED_PATTERNS.some(pattern => pattern.test(url));
     } catch {
       return false;
     }
@@ -637,7 +649,7 @@ export const Sanitizers = {
   truncate: (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength - 3) + '...';
-  }
+  },
 } as const;
 
 // ============================================================================
@@ -647,24 +659,24 @@ export const Sanitizers = {
 export const PERFORMANCE = {
   /** Debounce times for live preview */
   DEBOUNCE: {
-    FAST: 100,      // For typing
-    NORMAL: 300,    // For live preview
-    SLOW: 1000      // For heavy processing
+    FAST: 100, // For typing
+    NORMAL: 300, // For live preview
+    SLOW: 1000, // For heavy processing
   } as const,
 
   /** Chunk sizes for large documents */
   CHUNK_SIZES: {
     PARAGRAPHS: 50,
     CHARACTERS: 10000,
-    LINES: 500
+    LINES: 500,
   } as const,
 
   /** Memory limits */
   MEMORY_LIMITS: {
     CACHE_ENTRIES: 1000,
     CACHE_SIZE_MB: 100,
-    DOCUMENT_SIZE_MB: 10
-  } as const
+    DOCUMENT_SIZE_MB: 10,
+  } as const,
 } as const;
 
 // ============================================================================
@@ -677,7 +689,7 @@ export const ERRORS = {
     SECURITY_ERROR: 'MARKDOWN_SECURITY_ERROR',
     SIZE_ERROR: 'MARKDOWN_SIZE_ERROR',
     VALIDATION_ERROR: 'MARKDOWN_VALIDATION_ERROR',
-    CACHE_ERROR: 'MARKDOWN_CACHE_ERROR'
+    CACHE_ERROR: 'MARKDOWN_CACHE_ERROR',
   } as const,
 
   MESSAGES: {
@@ -685,7 +697,7 @@ export const ERRORS = {
     SECURITY_ERROR: 'Content contains potentially unsafe elements',
     SIZE_ERROR: 'Content exceeds maximum allowed size',
     VALIDATION_ERROR: 'Content validation failed',
-    CACHE_ERROR: 'Failed to cache markdown result'
+    CACHE_ERROR: 'Failed to cache markdown result',
   } as const,
 
   /** Recovery strategies */
@@ -693,8 +705,8 @@ export const ERRORS = {
     STRIP_AND_RETRY: 'strip_and_retry',
     TRUNCATE_AND_RETRY: 'truncate_and_retry',
     FALLBACK_TO_TEXT: 'fallback_to_text',
-    RETURN_ERROR: 'return_error'
-  } as const
+    RETURN_ERROR: 'return_error',
+  } as const,
 } as const;
 
 // ============================================================================
@@ -707,36 +719,36 @@ export const CONFIG_MATRIX = {
     features: MARKDOWN_FEATURES.BLOG,
     security: MARKDOWN_SECURITY.STRICT,
     renderer: HTML_RENDERERS.SEMANTIC,
-    cache: MarkdownCache.createLRUCache(1000, 3600000)
+    cache: MarkdownCache.createLRUCache(1000, 3600000),
   },
 
   'Technical Documentation': {
     features: MARKDOWN_FEATURES.DOCS,
     security: MARKDOWN_SECURITY.MODERATE,
     renderer: HTML_RENDERERS.TAILWIND,
-    cache: MarkdownCache.createMemoryCache(500)
+    cache: MarkdownCache.createMemoryCache(500),
   },
 
   'Internal Wiki': {
     features: MARKDOWN_FEATURES.WIKI,
     security: MARKDOWN_SECURITY.DEVELOPER,
     renderer: HTML_RENDERERS.TAILWIND,
-    components: REACT_COMPONENTS.TAILWIND_TYPOGRAPHY
+    components: REACT_COMPONENTS.TAILWIND_TYPOGRAPHY,
   },
 
   'CLI Tool Output': {
     features: MARKDOWN_FEATURES.TERMINAL,
     security: MARKDOWN_SECURITY.MODERATE,
     renderer: TERMINAL_RENDERERS.COLOR,
-    cache: null // No cache needed for CLI
+    cache: null, // No cache needed for CLI
   },
 
   'Email Newsletter': {
     features: MARKDOWN_DOMAINS.EMAIL,
     security: MARKDOWN_SECURITY.STRICT,
     renderer: HTML_RENDERERS.SEMANTIC,
-    cache: MarkdownCache.createMemoryCache(100)
-  }
+    cache: MarkdownCache.createMemoryCache(100),
+  },
 } as const;
 
 // ============================================================================
@@ -750,22 +762,22 @@ export const MIGRATION = {
     breaks: 'hardSoftBreaks',
     headerIds: 'headings.ids',
     mangle: false, // Not supported
-    sanitize: 'tagFilter'
+    sanitize: 'tagFilter',
   } as const,
 
   FROM_REMARK_REHYPE: {
     gfm: 'tables',
     footnotes: false, // Not supported
     remarkRehype: {
-      allowDangerousHtml: '!noHtmlBlocks && !noHtmlSpans'
-    }
+      allowDangerousHtml: '!noHtmlBlocks && !noHtmlSpans',
+    },
   } as const,
 
   FROM_MARKDOWN_IT: {
     html: '!noHtmlBlocks && !noHtmlSpans',
     linkify: 'autolinks',
-    typographer: 'latexMath'
-  } as const
+    typographer: 'latexMath',
+  } as const,
 } as const;
 
 // ============================================================================
@@ -773,10 +785,10 @@ export const MIGRATION = {
 // ============================================================================
 
 /** Type for markdown security options */
-export type MarkdownSecurityOptions = typeof MARKDOWN_SECURITY[keyof typeof MARKDOWN_SECURITY];
+export type MarkdownSecurityOptions = (typeof MARKDOWN_SECURITY)[keyof typeof MARKDOWN_SECURITY];
 
 /** Type for markdown feature options */
-export type MarkdownFeatureOptions = typeof MARKDOWN_FEATURES[keyof typeof MARKDOWN_FEATURES];
+export type MarkdownFeatureOptions = (typeof MARKDOWN_FEATURES)[keyof typeof MARKDOWN_FEATURES];
 
 /** Type for HTML renderer functions */
 export type HtmlRenderer = Record<string, (...args: any[]) => string>;
@@ -801,10 +813,10 @@ export interface MarkdownCacheInterface {
 }
 
 /** Type for error codes */
-export type MarkdownErrorCode = typeof ERRORS.CODES[keyof typeof ERRORS.CODES];
+export type MarkdownErrorCode = (typeof ERRORS.CODES)[keyof typeof ERRORS.CODES];
 
 /** Type for recovery strategies */
-export type RecoveryStrategy = typeof ERRORS.RECOVERY[keyof typeof ERRORS.RECOVERY];
+export type RecoveryStrategy = (typeof ERRORS.RECOVERY)[keyof typeof ERRORS.RECOVERY];
 
 // ============================================================================
 // BENCHMARKING UTILITIES
@@ -827,7 +839,7 @@ export function benchmark(iterations = 1000) {
   for (let i = 0; i < iterations; i++) {
     Bun.markdown.render(markdown, {
       heading: (c, { l }) => `<h${l}>${c}</h${l}>`,
-      paragraph: c => `<p>${c}</p>`
+      paragraph: c => `<p>${c}</p>`,
     });
   }
   console.timeEnd('Bun.markdown.render');
@@ -847,7 +859,7 @@ export function measureMemory(largeMarkdown: string) {
     memoryUsed: (after - before) / 1024 / 1024,
     result,
     before: before / 1024 / 1024,
-    after: after / 1024 / 1024
+    after: after / 1024 / 1024,
   };
 }
 
@@ -857,8 +869,22 @@ export function measureMemory(largeMarkdown: string) {
 export function advancedBenchmark() {
   const testCases = [
     { name: 'Small', markdown: '# Test\n\n**Bold** text' },
-    { name: 'Medium', markdown: '# Test\n\n**Bold** and *italic*\n\n- List item 1\n- List item 2\n\n| Col1 | Col2 |\n|------|------|\n| A    | B    |' },
-    { name: 'Large', markdown: '# Test\n\n' + '**Bold** and *italic* text. '.repeat(100) + '\n\n' + '- '.repeat(50) + '\n\n' + '| Col1 | Col2 |\n|------|------|\n' + '| A    | B    |\n'.repeat(20) }
+    {
+      name: 'Medium',
+      markdown:
+        '# Test\n\n**Bold** and *italic*\n\n- List item 1\n- List item 2\n\n| Col1 | Col2 |\n|------|------|\n| A    | B    |',
+    },
+    {
+      name: 'Large',
+      markdown:
+        '# Test\n\n' +
+        '**Bold** and *italic* text. '.repeat(100) +
+        '\n\n' +
+        '- '.repeat(50) +
+        '\n\n' +
+        '| Col1 | Col2 |\n|------|------|\n' +
+        '| A    | B    |\n'.repeat(20),
+    },
   ];
 
   testCases.forEach(testCase => {
@@ -884,7 +910,7 @@ export function advancedBenchmark() {
         heading: (c, { l }) => `<h${l}>${c}</h${l}>`,
         paragraph: c => `<p>${c}</p>`,
         strong: c => `<strong>${c}</strong>`,
-        emphasis: c => `<em>${c}</em>`
+        emphasis: c => `<em>${c}</em>`,
       });
     }
     console.timeEnd(`${testCase.name} - Render`);
@@ -898,8 +924,12 @@ export function advancedBenchmark() {
  * Memory stress test with garbage collection monitoring
  */
 export function memoryStressTest() {
-  const largeMarkdown = '# Test\n\n' + '**Bold** and *italic* text. '.repeat(1000) + '\n\n' +
-    '- '.repeat(500) + '\n\n' +
+  const largeMarkdown =
+    '# Test\n\n' +
+    '**Bold** and *italic* text. '.repeat(1000) +
+    '\n\n' +
+    '- '.repeat(500) +
+    '\n\n' +
     '| Col1 | Col2 | Col3 |\n|------|------|------|\n' +
     '| A    | B    | C    |\n'.repeat(100);
 

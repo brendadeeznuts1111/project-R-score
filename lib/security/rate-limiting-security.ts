@@ -56,7 +56,7 @@ export class RateLimiter {
       skipFailedRequests: false,
       headers: true,
       message: 'Too many requests, please try again later.',
-      ...config
+      ...config,
     };
 
     // Memory management settings
@@ -85,7 +85,7 @@ export class RateLimiter {
       entry = {
         count: 0,
         resetTime: now + this.config.windowMs,
-        lastAccess: now
+        lastAccess: now,
       };
       this.clients.set(key, entry);
     }
@@ -107,7 +107,7 @@ export class RateLimiter {
       limit: this.config.maxRequests,
       remaining,
       resetTime: entry.resetTime,
-      isRateLimited
+      isRateLimited,
     };
   }
 
@@ -149,7 +149,9 @@ export class RateLimiter {
     }
 
     if (removed > 0) {
-      console.warn(`🧹 Aggressive rate limiter cleanup: removed ${removed} entries due to memory pressure`);
+      console.warn(
+        `🧹 Aggressive rate limiter cleanup: removed ${removed} entries due to memory pressure`
+      );
     }
   }
 
@@ -162,9 +164,8 @@ export class RateLimiter {
     }
 
     // Default: use IP address
-    const ip = request.headers.get('x-forwarded-for') ||
-               request.headers.get('x-real-ip') ||
-               'unknown';
+    const ip =
+      request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
 
     // Add user agent for more specific limiting
     const userAgent = request.headers.get('user-agent') || 'unknown';
@@ -215,7 +216,7 @@ export class RateLimiter {
 
     return {
       totalClients: this.clients.size,
-      activeClients
+      activeClients,
     };
   }
 
@@ -262,7 +263,7 @@ export class SecurityHeaders {
       enableXContentTypeOptions: true,
       enableReferrerPolicy: true,
       enablePermissionsPolicy: true,
-      ...config
+      ...config,
     };
   }
 
@@ -283,7 +284,7 @@ export class SecurityHeaders {
         "connect-src 'self' ws: wss:",
         "frame-ancestors 'none'",
         "base-uri 'self'",
-        "form-action 'self'"
+        "form-action 'self'",
       ].join('; ');
     }
 
@@ -317,7 +318,7 @@ export class SecurityHeaders {
         'usb=()',
         'magnetometer=()',
         'gyroscope=()',
-        'accelerometer=()'
+        'accelerometer=()',
       ].join(', ');
     }
 
@@ -346,10 +347,7 @@ export class SecurityMiddleware {
   private rateLimiter?: RateLimiter;
   private securityHeaders: SecurityHeaders;
 
-  constructor(
-    rateLimitConfig?: RateLimitConfig,
-    securityHeadersConfig?: SecurityHeadersConfig
-  ) {
+  constructor(rateLimitConfig?: RateLimitConfig, securityHeadersConfig?: SecurityHeadersConfig) {
     this.securityHeaders = new SecurityHeaders(securityHeadersConfig);
 
     if (rateLimitConfig) {
@@ -371,21 +369,21 @@ export class SecurityMiddleware {
           'X-RateLimit-Limit': rateLimitInfo.limit.toString(),
           'X-RateLimit-Remaining': rateLimitInfo.remaining.toString(),
           'X-RateLimit-Reset': rateLimitInfo.resetTime.toString(),
-          'Retry-After': Math.ceil((rateLimitInfo.resetTime - Date.now()) / 1000).toString()
+          'Retry-After': Math.ceil((rateLimitInfo.resetTime - Date.now()) / 1000).toString(),
         };
 
         return new Response(
           JSON.stringify({
             error: 'Rate limit exceeded',
             message: 'Too many requests, please try again later.',
-            retryAfter: headers['Retry-After']
+            retryAfter: headers['Retry-After'],
           }),
           {
             status: 429,
             headers: {
               'Content-Type': 'application/json',
-              ...headers
-            }
+              ...headers,
+            },
           }
         );
       }
@@ -421,15 +419,17 @@ export class SecurityMiddleware {
   /**
    * Get rate limiter stats
    */
-  getRateLimitStats?: () => { totalClients: number; activeClients: number } {
+  getRateLimitStats(): (() => { totalClients: number; activeClients: number }) | undefined {
     return this.rateLimiter ? () => this.rateLimiter!.getStats() : undefined;
   }
 
   /**
    * Reset client rate limit
    */
-  resetClientRateLimit?: (request: Request) => void {
-    return this.rateLimiter ? (request: Request) => this.rateLimiter!.resetClient(request) : undefined;
+  resetClientRateLimit(): ((request: Request) => void) | undefined {
+    return this.rateLimiter
+      ? (request: Request) => this.rateLimiter!.resetClient(request)
+      : undefined;
   }
 
   /**
@@ -454,7 +454,7 @@ export const SecurityPresets = {
     rateLimit: {
       windowMs: 15 * 60 * 1000, // 15 minutes
       maxRequests: 100,
-      headers: true
+      headers: true,
     },
     securityHeaders: {
       enableCSP: true,
@@ -462,8 +462,8 @@ export const SecurityPresets = {
       enableXFrameOptions: true,
       enableXContentTypeOptions: true,
       enableReferrerPolicy: true,
-      enablePermissionsPolicy: true
-    }
+      enablePermissionsPolicy: true,
+    },
   },
 
   /**
@@ -473,7 +473,7 @@ export const SecurityPresets = {
     rateLimit: {
       windowMs: 15 * 60 * 1000, // 15 minutes
       maxRequests: 1000, // Higher limit for development
-      headers: true
+      headers: true,
     },
     securityHeaders: {
       enableCSP: false, // Disabled for easier development
@@ -481,8 +481,8 @@ export const SecurityPresets = {
       enableXFrameOptions: true,
       enableXContentTypeOptions: true,
       enableReferrerPolicy: true,
-      enablePermissionsPolicy: false
-    }
+      enablePermissionsPolicy: false,
+    },
   },
 
   /**
@@ -492,7 +492,7 @@ export const SecurityPresets = {
     rateLimit: {
       windowMs: 5 * 60 * 1000, // 5 minutes
       maxRequests: 10, // Very strict
-      headers: true
+      headers: true,
     },
     securityHeaders: {
       enableCSP: true,
@@ -502,9 +502,9 @@ export const SecurityPresets = {
       enableReferrerPolicy: true,
       enablePermissionsPolicy: true,
       customHeaders: {
-        'X-Security-Level': 'high'
-      }
-    }
+        'X-Security-Level': 'high',
+      },
+    },
   },
 
   /**
@@ -514,7 +514,7 @@ export const SecurityPresets = {
     rateLimit: {
       windowMs: 15 * 60 * 1000, // 15 minutes
       maxRequests: 1000, // High limit
-      headers: false // Don't expose limits
+      headers: false, // Don't expose limits
     },
     securityHeaders: {
       enableCSP: true,
@@ -522,9 +522,9 @@ export const SecurityPresets = {
       enableXFrameOptions: 'SAMEORIGIN' as any,
       enableXContentTypeOptions: true,
       enableReferrerPolicy: true,
-      enablePermissionsPolicy: false
-    }
-  }
+      enablePermissionsPolicy: false,
+    },
+  },
 };
 
 // ============================================================================
@@ -543,13 +543,13 @@ export function createSecurityMiddleware(
 ): SecurityMiddleware {
   const presetConfig = SecurityPresets[preset];
 
-  const rateLimitConfig = customConfig?.rateLimit ?
-    { ...presetConfig.rateLimit, ...customConfig.rateLimit } :
-    presetConfig.rateLimit;
+  const rateLimitConfig = customConfig?.rateLimit
+    ? { ...presetConfig.rateLimit, ...customConfig.rateLimit }
+    : presetConfig.rateLimit;
 
-  const securityHeadersConfig = customConfig?.securityHeaders ?
-    { ...presetConfig.securityHeaders, ...customConfig.securityHeaders } :
-    presetConfig.securityHeaders;
+  const securityHeadersConfig = customConfig?.securityHeaders
+    ? { ...presetConfig.securityHeaders, ...customConfig.securityHeaders }
+    : presetConfig.securityHeaders;
 
   return new SecurityMiddleware(rateLimitConfig, securityHeadersConfig);
 }
@@ -568,7 +568,7 @@ export function createCORSHeaders(
     'Access-Control-Allow-Methods': allowedMethods.join(', '),
     'Access-Control-Allow-Headers': allowedHeaders.join(', '),
     'Access-Control-Max-Age': maxAge.toString(),
-    'Access-Control-Allow-Credentials': allowedOrigins.includes('*') ? 'false' : 'true'
+    'Access-Control-Allow-Credentials': allowedOrigins.includes('*') ? 'false' : 'true',
   };
 }
 

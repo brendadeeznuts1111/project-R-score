@@ -1,6 +1,6 @@
 // lib/wiki/wiki-generator-cli.ts — Enhanced wiki generator CLI with R2 integration
 
-import { write, exists } from "bun";
+import { write, exists } from 'bun';
 import { r2MCPIntegration } from '../mcp/r2-integration';
 
 import { UtilsCategory, BUN_UTILS_URLS, BUN_UTILS_EXAMPLES } from '../docs/constants/utils';
@@ -54,7 +54,7 @@ const defaultConfig: WikiConfig = {
   theme: 'auto',
   outputDir: './internal-wiki',
   r2Integration: true,
-  realTimeData: true
+  realTimeData: true,
 };
 
 /**
@@ -63,7 +63,7 @@ const defaultConfig: WikiConfig = {
 function generateSearchIndex(wikiData: any): SearchIndex {
   const searchIndex: SearchIndex = {
     utilities: [],
-    categories: {}
+    categories: {},
   };
 
   for (const page of wikiData.wikiPages) {
@@ -71,7 +71,7 @@ function generateSearchIndex(wikiData: any): SearchIndex {
       page.title.toLowerCase(),
       page.category.toLowerCase(),
       ...page.title.split(' ').map(word => word.toLowerCase()),
-      ...page.category.split('_').map(word => word.toLowerCase())
+      ...page.category.split('_').map(word => word.toLowerCase()),
     ];
 
     searchIndex.utilities.push({
@@ -79,7 +79,7 @@ function generateSearchIndex(wikiData: any): SearchIndex {
       category: page.category,
       description: page.documentation,
       keywords: [...new Set(keywords)],
-      url: page.url
+      url: page.url,
     });
 
     if (!searchIndex.categories[page.category]) {
@@ -95,9 +95,13 @@ function generateSearchIndex(wikiData: any): SearchIndex {
  * Generate wiki analytics
  */
 function generateAnalytics(wikiData: any, generationTime: number): WikiAnalytics {
-  const categoryCounts = Object.entries(wikiData.categories).map(([_, data]: [string, any]) => data.count);
-  const mostUsedCategory = Object.entries(wikiData.categories)
-    .sort(([, a], [, b]: [string, any], [string, any]) => b.count - a.count)[0]?.[0] || 'Unknown';
+  const categoryCounts = Object.entries(wikiData.categories).map(
+    ([_, data]: [string, any]) => data.count
+  );
+  const mostUsedCategory =
+    Object.entries(wikiData.categories).sort(
+      ([, a], [, b]: [string, any], [string, any]) => b.count - a.count
+    )[0]?.[0] || 'Unknown';
 
   const examplesCount = wikiData.wikiPages.filter((p: any) => p.example).length;
   const coverage = (examplesCount / wikiData.total) * 100;
@@ -109,7 +113,7 @@ function generateAnalytics(wikiData: any, generationTime: number): WikiAnalytics
     lastGenerated: new Date().toISOString(),
     generationTime,
     mostUsedCategory,
-    coverage: Math.round(coverage * 100) / 100
+    coverage: Math.round(coverage * 100) / 100,
   };
 }
 
@@ -179,7 +183,10 @@ function generateWikiURLs(config: Partial<WikiConfig> = {}): {
       const documentation = `https://bun.sh${path}`;
 
       let example;
-      if (finalConfig.includeExamples && BUN_UTILS_EXAMPLES[category as keyof typeof BUN_UTILS_EXAMPLES]) {
+      if (
+        finalConfig.includeExamples &&
+        BUN_UTILS_EXAMPLES[category as keyof typeof BUN_UTILS_EXAMPLES]
+      ) {
         const categoryExamples = BUN_UTILS_EXAMPLES[category as keyof typeof BUN_UTILS_EXAMPLES];
         example = categoryExamples[utilName as keyof typeof categoryExamples];
       }
@@ -189,7 +196,7 @@ function generateWikiURLs(config: Partial<WikiConfig> = {}): {
         url: wikiUrl,
         category,
         documentation,
-        example
+        example,
       };
 
       wikiPages.push(wikiPage);
@@ -200,23 +207,30 @@ function generateWikiURLs(config: Partial<WikiConfig> = {}): {
 
     categories[category] = {
       count: categoryPages.length,
-      pages: categoryPages
+      pages: categoryPages,
     };
   }
 
-  console.log(`\n📊 Generated ${wikiPages.length} wiki pages across ${Object.keys(categories).length} categories`);
+  console.log(
+    `\n📊 Generated ${wikiPages.length} wiki pages across ${Object.keys(categories).length} categories`
+  );
 
   return {
     total: wikiPages.length,
     categories,
-    wikiPages
+    wikiPages,
   };
 }
 
 /**
  * Generate enhanced markdown wiki content
  */
-function generateMarkdownWiki(wikiData: any, config: WikiConfig, analytics: WikiAnalytics, searchIndex: SearchIndex): string {
+function generateMarkdownWiki(
+  wikiData: any,
+  config: WikiConfig,
+  analytics: WikiAnalytics,
+  searchIndex: SearchIndex
+): string {
   console.log('\n📝 GENERATING ENHANCED MARKDOWN WIKI CONTENT...');
 
   let content = `# 🦌 Bun Utilities Internal Wiki
@@ -269,11 +283,12 @@ Use these keywords to quickly find utilities:
 
 ### Category Distribution
 `;
-    const sortedCategories = Object.entries(wikiData.categories)
-      .sort(([, a], [, b]: [string, any], [string, any]) => b.count - a.count);
+    const sortedCategories = Object.entries(wikiData.categories).sort(
+      ([, a], [, b]: [string, any], [string, any]) => b.count - a.count
+    );
 
     for (const [category, data] of sortedCategories) {
-      const percentage = ((data as any).count / wikiData.total * 100).toFixed(1);
+      const percentage = (((data as any).count / wikiData.total) * 100).toFixed(1);
       content += `- **${category.replace('_', ' ')}**: ${(data as any).count} utilities (${percentage}%)\n`;
     }
     content += `\n`;
@@ -298,7 +313,8 @@ Use these keywords to quickly find utilities:
 
     for (const page of categoryData.pages) {
       const exampleLink = page.example ? '[✅](#example)' : '[❌](#no-example)';
-      const description = page.documentation.split('/').pop()?.replace('.html', '') || 'Documentation';
+      const description =
+        page.documentation.split('/').pop()?.replace('.html', '') || 'Documentation';
       content += `| ${page.title.split(':')[1]?.trim() || page.title} | [📝](${page.url}) | [📚](${page.documentation}) | ${exampleLink} | ${description} |\n`;
     }
 
@@ -404,14 +420,22 @@ jobs:
 }
 
 /**
-   * Generate enhanced HTML wiki content with themes and search
-   */
-function generateHTMLWiki(wikiData: any, config: WikiConfig, analytics: WikiAnalytics, searchIndex: SearchIndex): string {
+ * Generate enhanced HTML wiki content with themes and search
+ */
+function generateHTMLWiki(
+  wikiData: any,
+  config: WikiConfig,
+  analytics: WikiAnalytics,
+  searchIndex: SearchIndex
+): string {
   console.log('\n🌐 GENERATING ENHANCED HTML WIKI CONTENT...');
 
-  const theme = config.theme === 'auto' ?
-    (new Date().getHours() >= 18 || new Date().getHours() <= 6 ? 'dark' : 'light') :
-    config.theme;
+  const theme =
+    config.theme === 'auto'
+      ? new Date().getHours() >= 18 || new Date().getHours() <= 6
+        ? 'dark'
+        : 'light'
+      : config.theme;
 
   const themeStyles = {
     light: {
@@ -420,7 +444,7 @@ function generateHTMLWiki(wikiData: any, config: WikiConfig, analytics: WikiAnal
       secondary: '#6c757d',
       border: '#dee2e6',
       header: '#f8f9fa',
-      accent: '#007bff'
+      accent: '#007bff',
     },
     dark: {
       bg: '#1a1a1a',
@@ -428,8 +452,8 @@ function generateHTMLWiki(wikiData: any, config: WikiConfig, analytics: WikiAnal
       secondary: '#adb5bd',
       border: '#495057',
       header: '#2d3748',
-      accent: '#4299e1'
-    }
+      accent: '#4299e1',
+    },
   };
 
   const colors = themeStyles[theme];
@@ -725,7 +749,8 @@ function generateHTMLWiki(wikiData: any, config: WikiConfig, analytics: WikiAnal
 
     for (const page of categoryData.pages) {
       const exampleStatus = page.example ? '✅' : '❌';
-      const description = page.documentation.split('/').pop()?.replace('.html', '') || 'Documentation';
+      const description =
+        page.documentation.split('/').pop()?.replace('.html', '') || 'Documentation';
       content += `                    <tr>
                         <td><strong>${page.title.split(':')[1]?.trim() || page.title}</strong></td>
                         <td><a href="${page.url}" target="_blank">📝 Wiki</a></td>
@@ -806,6 +831,9 @@ function generateHTMLWiki(wikiData: any, config: WikiConfig, analytics: WikiAnal
 </body>
 </html>`;
 
+  return content;
+}
+
 /**
  * Generate JSON wiki data for API integration
  */
@@ -817,19 +845,19 @@ function generateJSONWiki(wikiData: any): string {
       total: wikiData.total,
       categories: Object.keys(wikiData.categories).length,
       generated: new Date().toISOString(),
-      version: "1.0.0"
+      version: '1.0.0',
     },
     categories: wikiData.categories,
     pages: wikiData.wikiPages,
     api: {
-      base_url: "https://wiki.company.com/api/v1",
+      base_url: 'https://wiki.company.com/api/v1',
       endpoints: {
-        list_pages: "/pages",
-        get_page: "/pages/{id}",
-        search: "/search?q={query}",
-        category: "/categories/{category}"
-      }
-    }
+        list_pages: '/pages',
+        get_page: '/pages/{id}',
+        search: '/search?q={query}',
+        category: '/categories/{category}',
+      },
+    },
   };
 
   return JSON.stringify(jsonData, null, 2);
@@ -907,7 +935,6 @@ console.log(wikiData.pages); // All utility pages
 
     await write(`${outputDir}/README.md`, indexContent);
     console.log('   ✅ Created: README.md');
-
   } catch (error) {
     console.log(`   ❌ Error creating files: ${error.message}`);
   }
@@ -918,7 +945,11 @@ console.log(wikiData.pages); // All utility pages
 /**
  * Generate enhanced JSON wiki data for API integration
  */
-function generateJSONWiki(wikiData: any, analytics: WikiAnalytics, searchIndex: SearchIndex): string {
+function generateJSONWiki(
+  wikiData: any,
+  analytics: WikiAnalytics,
+  searchIndex: SearchIndex
+): string {
   console.log('\n📄 GENERATING ENHANCED JSON WIKI DATA...');
 
   const jsonData = {
@@ -926,48 +957,48 @@ function generateJSONWiki(wikiData: any, analytics: WikiAnalytics, searchIndex: 
       total: wikiData.total,
       categories: Object.keys(wikiData.categories).length,
       generated: new Date().toISOString(),
-      version: "2.0.0",
+      version: '2.0.0',
       generationTime: analytics.generationTime,
       coverage: analytics.coverage,
-      mostUsedCategory: analytics.mostUsedCategory
+      mostUsedCategory: analytics.mostUsedCategory,
     },
     analytics: analytics,
     search: searchIndex,
     categories: wikiData.categories,
     pages: wikiData.wikiPages,
     api: {
-      base_url: "https://wiki.company.com/api/v1",
-      version: "v2",
+      base_url: 'https://wiki.company.com/api/v1',
+      version: 'v2',
       endpoints: {
-        list_pages: "/pages",
-        get_page: "/pages/{id}",
-        search: "/search?q={query}",
-        category: "/categories/{category}",
-        analytics: "/analytics",
-        export: "/export/{format}"
+        list_pages: '/pages',
+        get_page: '/pages/{id}',
+        search: '/search?q={query}',
+        category: '/categories/{category}',
+        analytics: '/analytics',
+        export: '/export/{format}',
       },
       examples: {
-        search_by_name: "GET /search?q=filesystem",
-        get_category: "GET /categories/file_system",
-        export_markdown: "GET /export/markdown",
-        get_analytics: "GET /analytics"
-      }
+        search_by_name: 'GET /search?q=filesystem',
+        get_category: 'GET /categories/file_system',
+        export_markdown: 'GET /export/markdown',
+        get_analytics: 'GET /analytics',
+      },
     },
     integration: {
       confluence: {
-        import_format: "markdown",
-        api_endpoint: "/rest/api/content",
-        space_key: "UTILS"
+        import_format: 'markdown',
+        api_endpoint: '/rest/api/content',
+        space_key: 'UTILS',
       },
       notion: {
-        api_version: "2022-06-28",
-        database_id: "wiki-database-id"
+        api_version: '2022-06-28',
+        database_id: 'wiki-database-id',
       },
       github: {
-        wiki_repo: "organization/wiki",
-        branch: "main"
-      }
-    }
+        wiki_repo: 'organization/wiki',
+        branch: 'main',
+      },
+    },
   };
 
   return JSON.stringify(jsonData, null, 2);
@@ -1008,18 +1039,17 @@ async function loadR2Data(config: WikiConfig): Promise<any> {
       ai: aiData,
       domains: domainData,
       metrics: advancedMetrics,
-      connectionStatus: 'connected'
+      connectionStatus: 'connected',
     };
 
     console.log('✅ Real-time R2 data loaded');
     return r2Data;
-
   } catch (error) {
     console.log(`⚠️  R2 data loading failed: ${error.message}`);
     return {
       timestamp: new Date().toISOString(),
       connectionStatus: 'disconnected',
-      error: error.message
+      error: error.message,
     };
   }
 }
@@ -1068,7 +1098,13 @@ async function createWikiFilesWithR2(
   try {
     // Create enhanced markdown with R2 data
     if (config.format === 'markdown' || config.format === 'all') {
-      const markdownContent = generateMarkdownWikiWithR2(wikiData, analytics, searchIndex, r2Data, config);
+      const markdownContent = generateMarkdownWikiWithR2(
+        wikiData,
+        analytics,
+        searchIndex,
+        r2Data,
+        config
+      );
       await write(`${outputDir}/bun-utilities-wiki-r2.md`, markdownContent);
       console.log('   ✅ Created: bun-utilities-wiki-r2.md');
     }
@@ -1091,7 +1127,6 @@ async function createWikiFilesWithR2(
     const r2Summary = generateR2IntegrationSummary(r2Data, config);
     await write(`${outputDir}/r2-integration-summary.md`, r2Summary);
     console.log('   ✅ Created: r2-integration-summary.md');
-
   } catch (error) {
     console.log(`   ❌ Error creating files: ${error.message}`);
   }
@@ -1233,14 +1268,14 @@ function generateJSONWikiWithR2(
         dashboard: !!r2Data.dashboard,
         ai: !!r2Data.ai,
         domains: !!r2Data.domains,
-        metrics: !!r2Data.metrics
+        metrics: !!r2Data.metrics,
       },
       endpoints: {
-        dashboard: "https://dashboard.factory-wager.com",
-        r2Browser: "https://r2.factory-wager.com",
-        api: "https://api.factory-wager.com/r2"
+        dashboard: 'https://dashboard.factory-wager.com',
+        r2Browser: 'https://r2.factory-wager.com',
+        api: 'https://api.factory-wager.com/r2',
       },
-      data: r2Data
+      data: r2Data,
     };
   }
 
@@ -1268,7 +1303,7 @@ async function storeWikiInR2(
       config: config,
       analytics: analytics,
       totalUtilities: wikiData.total,
-      categories: Object.keys(wikiData.categories).length
+      categories: Object.keys(wikiData.categories).length,
     });
 
     // Store search index
@@ -1281,7 +1316,6 @@ async function storeWikiInR2(
     await r2.putJSON('wiki/categories.json', wikiData.categories);
 
     console.log('✅ Wiki data stored in R2');
-
   } catch (error) {
     console.log(`❌ Failed to store wiki data in R2: ${error.message}`);
   }
@@ -1303,12 +1337,16 @@ function generateR2IntegrationSummary(r2Data: any, config: WikiConfig): string {
 - **Last Sync**: ${r2Data?.timestamp || 'Never'}
 
 ## Available Data
-${r2Data ? `
+${
+  r2Data
+    ? `
 - **Dashboard Metrics**: ${r2Data.dashboard ? '✅ Available' : '❌ Not Available'}
 - **AI System Data**: ${r2Data.ai ? '✅ Available' : '❌ Not Available'}
 - **Domain Intelligence**: ${r2Data.domains ? '✅ Available' : '❌ Not Available'}
 - **Advanced Metrics**: ${r2Data.metrics ? '✅ Available' : '❌ Not Available'}
-` : '- No R2 data available'}
+`
+    : '- No R2 data available'
+}
 
 ## Access Points
 - **Dashboard**: https://dashboard.factory-wager.com
@@ -1527,7 +1565,7 @@ async function main(): Promise<void> {
       customTemplate: options.customTemplate,
       outputDir: options.outputDir || defaultConfig.outputDir,
       r2Integration: true, // Enable R2 integration by default
-      realTimeData: true
+      realTimeData: true,
     };
 
     console.log('🔧 CONFIGURATION:');
@@ -1538,7 +1576,9 @@ async function main(): Promise<void> {
     console.log(`   Workspace: ${config.workspace}`);
     console.log(`   R2 Integration: ${config.r2Integration ? '✅ Enabled' : '❌ Disabled'}`);
     console.log(`   Real-time Data: ${config.realTimeData ? '✅ Enabled' : '❌ Disabled'}`);
-    console.log(`   Features: Search=${config.includeSearch}, Analytics=${config.includeAnalytics}, TOC=${config.includeTOC}`);
+    console.log(
+      `   Features: Search=${config.includeSearch}, Analytics=${config.includeAnalytics}, TOC=${config.includeTOC}`
+    );
     console.log('');
 
     // Generate enhanced wiki files with R2 integration
@@ -1550,13 +1590,21 @@ async function main(): Promise<void> {
 
     console.log('\n🎉 Enhanced wiki generation completed successfully!');
     console.log('\n📁 Generated Files:');
-    console.log(`   📝 ${config.outputDir}/bun-utilities-wiki.md - Enhanced markdown with TOC and analytics`);
-    console.log(`   🌐 ${config.outputDir}/bun-utilities-wiki.html - Interactive HTML with search and themes`);
+    console.log(
+      `   📝 ${config.outputDir}/bun-utilities-wiki.md - Enhanced markdown with TOC and analytics`
+    );
+    console.log(
+      `   🌐 ${config.outputDir}/bun-utilities-wiki.html - Interactive HTML with search and themes`
+    );
     console.log(`   📄 ${config.outputDir}/bun-utilities-wiki.json - API-ready with search index`);
 
     if (config.r2Integration) {
-      console.log(`   🌐 ${config.outputDir}/bun-utilities-wiki-r2.md - Enhanced markdown with R2 data`);
-      console.log(`   🌐 ${config.outputDir}/bun-utilities-wiki-r2.html - Interactive HTML with R2 integration`);
+      console.log(
+        `   🌐 ${config.outputDir}/bun-utilities-wiki-r2.md - Enhanced markdown with R2 data`
+      );
+      console.log(
+        `   🌐 ${config.outputDir}/bun-utilities-wiki-r2.html - Interactive HTML with R2 integration`
+      );
       console.log(`   📄 ${config.outputDir}/bun-utilities-wiki-r2.json - API-ready with R2 data`);
       console.log(`   📊 ${config.outputDir}/r2-integration-summary.md - R2 integration status`);
     }
@@ -1577,7 +1625,7 @@ async function main(): Promise<void> {
     console.log('   2. Import markdown into your wiki system (Confluence, Notion, etc.)');
     console.log('   3. Use JSON for API integration and automation');
     console.log('   4. Run deployment scripts for automated publishing');
-    console.log('   5. Customize with your organization\'s branding and URLs');
+    console.log("   5. Customize with your organization's branding and URLs");
 
     console.log('\n🔗 Integration Examples:');
     console.log(`   📋 Confluence: Import ${config.outputDir}/bun-utilities-wiki.md`);
@@ -1588,7 +1636,6 @@ async function main(): Promise<void> {
     if (config.format === 'all' || config.format === 'html') {
       console.log(`\n🌐 Quick Start: open ${config.outputDir}/bun-utilities-wiki.html`);
     }
-
   } catch (error) {
     console.error('\n❌ Enhanced wiki generation failed:', error);
     console.error('\n🔧 Troubleshooting:');
