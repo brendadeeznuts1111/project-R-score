@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FactoryWager Theme System Showcase</title>
+  <title>FactoryWager Theme System & Dashboard Showcase</title>
   <style id="theme-variables">
     /* Default to light theme */
     :root {
@@ -29,11 +29,27 @@
       --color-secondary-800: hsl(190 80% 30%);
       --color-secondary-900: hsl(190 80% 24%);
       --color-secondary-950: hsl(190 80% 16%);
+      --color-success-50: hsl(160 84% 97%);
+      --color-success-100: hsl(160 84% 94%);
+      --color-success-500: hsl(160 84% 39%);
+      --color-success-700: hsl(160 84% 30%);
+      --color-warning-50: hsl(38 92% 97%);
+      --color-warning-100: hsl(38 92% 94%);
+      --color-warning-500: hsl(38 92% 50%);
+      --color-warning-700: hsl(38 92% 30%);
+      --color-error-50: hsl(0 84% 97%);
+      --color-error-100: hsl(0 84% 94%);
+      --color-error-500: hsl(0 84% 60%);
+      --color-error-700: hsl(0 84% 40%);
       --color-background-primary: hsl(0 0% 100%);
       --color-background-secondary: hsl(220 14% 96%);
       --color-text-primary: hsl(220 43% 11%);
       --color-text-secondary: hsl(220 14% 35%);
+      --color-text-muted: hsl(220 9% 60%);
+      --shadow-sm: 0 1px 2px 0 hsl(220 43% 11% / 0.05);
       --shadow-md: 0 4px 6px -1px hsl(220 43% 11% / 0.1);
+      --shadow-lg: 0 10px 15px -3px hsl(220 43% 11% / 0.1);
+      --radius-sm: 6px;
       --radius-md: 8px;
       --radius-lg: 12px;
       --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -50,13 +66,13 @@
       transition: background var(--transition-normal), color var(--transition-normal);
     }
     .container {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
       padding: 2rem;
     }
     header {
       text-align: center;
-      margin-bottom: 3rem;
+      margin-bottom: 2rem;
     }
     h1 {
       font-size: 2.5rem;
@@ -74,7 +90,7 @@
       display: flex;
       gap: 0.5rem;
       justify-content: center;
-      margin-bottom: 3rem;
+      margin-bottom: 2rem;
       flex-wrap: wrap;
     }
     .theme-btn {
@@ -100,6 +116,55 @@
       color: white;
       border-color: var(--color-primary-500);
     }
+
+    /* Section Tabs */
+    .section-tabs {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid var(--color-primary-200);
+      padding-bottom: 1rem;
+    }
+    .section-tab {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      background: transparent;
+      color: var(--color-text-secondary);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-weight: 500;
+      transition: all var(--transition-normal);
+      position: relative;
+    }
+    .section-tab:hover {
+      color: var(--color-primary-600);
+      background: var(--color-primary-50);
+    }
+    .section-tab.active {
+      color: var(--color-primary-600);
+      background: var(--color-primary-100);
+    }
+    .section-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 3px;
+      background: var(--color-primary-500);
+      border-radius: 2px;
+    }
+
+    /* Content Sections */
+    .section-content {
+      display: none;
+    }
+    .section-content.active {
+      display: block;
+    }
+
     .showcase-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -111,10 +176,11 @@
       border-radius: var(--radius-lg);
       padding: 1.5rem;
       box-shadow: var(--shadow-md);
-      transition: transform var(--transition-normal);
+      transition: transform var(--transition-normal), box-shadow var(--transition-normal);
     }
     .card:hover {
       transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
     }
     .card h3 {
       margin-bottom: 1rem;
@@ -159,10 +225,32 @@
     .btn-secondary:hover {
       background: var(--color-secondary-600);
     }
+    .btn-success {
+      background: var(--color-success-500);
+      color: white;
+    }
+    .btn-success:hover {
+      background: var(--color-success-700);
+    }
+    .btn-warning {
+      background: var(--color-warning-500);
+      color: white;
+    }
+    .btn-warning:hover {
+      background: var(--color-warning-700);
+    }
+    .btn-error {
+      background: var(--color-error-500);
+      color: white;
+    }
+    .btn-error:hover {
+      background: var(--color-error-700);
+    }
     .status-indicators {
       display: flex;
       gap: 1rem;
       margin-top: 1rem;
+      flex-wrap: wrap;
     }
     .status {
       display: flex;
@@ -174,25 +262,25 @@
       font-weight: 500;
     }
     .status-online {
-      background: var(--color-success-100, hsl(160 84% 94%));
-      color: var(--color-success-700, hsl(160 84% 30%));
+      background: var(--color-success-100);
+      color: var(--color-success-700);
     }
     .status-away {
-      background: var(--color-warning-100, hsl(38 92% 94%));
-      color: var(--color-warning-700, hsl(38 92% 30%));
+      background: var(--color-warning-100);
+      color: var(--color-warning-700);
     }
     .status-busy {
-      background: var(--color-error-100, hsl(0 84% 94%));
-      color: var(--color-error-700, hsl(0 84% 40%));
+      background: var(--color-error-100);
+      color: var(--color-error-700);
     }
     .status-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
     }
-    .dot-online { background: var(--color-success-500, hsl(160 84% 39%)); }
-    .dot-away { background: var(--color-warning-500, hsl(38 92% 50%)); }
-    .dot-busy { background: var(--color-error-500, hsl(0 84% 60%)); }
+    .dot-online { background: var(--color-success-500); }
+    .dot-away { background: var(--color-warning-500); }
+    .dot-busy { background: var(--color-error-500); }
     .typography-demo {
       margin-top: 1rem;
     }
@@ -201,7 +289,7 @@
     }
     .text-primary { color: var(--color-text-primary); }
     .text-secondary { color: var(--color-text-secondary); }
-    .text-muted { color: var(--color-text-muted, hsl(220 9% 60%)); }
+    .text-muted { color: var(--color-text-muted); }
     .info-box {
       background: linear-gradient(135deg, var(--color-primary-50), var(--color-secondary-50));
       border-left: 4px solid var(--color-primary-500);
@@ -219,6 +307,310 @@
       border-radius: 4px;
       font-family: 'Fira Code', monospace;
       font-size: 0.9em;
+    }
+    pre code {
+      display: block;
+      padding: 1rem;
+      overflow-x: auto;
+    }
+
+    /* Dashboard Styles */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 1.5rem;
+      min-height: 600px;
+    }
+    .dashboard-sidebar {
+      background: var(--color-background-primary);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-md);
+    }
+    .dashboard-sidebar h4 {
+      margin-bottom: 1rem;
+      color: var(--color-text-primary);
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .sidebar-nav {
+      list-style: none;
+    }
+    .sidebar-nav li {
+      margin-bottom: 0.25rem;
+    }
+    .sidebar-nav a {
+      display: block;
+      padding: 0.5rem 0.75rem;
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-normal);
+      font-size: 0.875rem;
+    }
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
+      background: var(--color-primary-100);
+      color: var(--color-primary-700);
+    }
+    .sidebar-nav a::before {
+      margin-right: 0.5rem;
+    }
+    .dashboard-main {
+      background: var(--color-background-primary);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-md);
+    }
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--color-background-secondary);
+    }
+    .dashboard-header h2 {
+      font-size: 1.5rem;
+      color: var(--color-text-primary);
+    }
+    .dashboard-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .stat-card {
+      background: var(--color-background-secondary);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--color-primary-600);
+    }
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+    }
+    .dashboard-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .dashboard-panel {
+      background: var(--color-background-secondary);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+    }
+    .dashboard-panel h4 {
+      margin-bottom: 1rem;
+      color: var(--color-text-primary);
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Table Styles */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    .data-table th,
+    .data-table td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--color-background-secondary);
+    }
+    .data-table th {
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+    .data-table tr:hover {
+      background: var(--color-background-primary);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.5rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .badge-success {
+      background: var(--color-success-100);
+      color: var(--color-success-700);
+    }
+    .badge-warning {
+      background: var(--color-warning-100);
+      color: var(--color-warning-700);
+    }
+    .badge-error {
+      background: var(--color-error-100);
+      color: var(--color-error-700);
+    }
+    .badge-primary {
+      background: var(--color-primary-100);
+      color: var(--color-primary-700);
+    }
+
+    /* Ticket Cards */
+    .ticket-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .ticket-card {
+      background: var(--color-background-primary);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      border-left: 4px solid var(--color-primary-500);
+      transition: transform var(--transition-normal);
+    }
+    .ticket-card:hover {
+      transform: translateX(4px);
+    }
+    .ticket-card.pending {
+      border-left-color: var(--color-warning-500);
+    }
+    .ticket-card.in-progress {
+      border-left-color: var(--color-primary-500);
+    }
+    .ticket-card.completed {
+      border-left-color: var(--color-success-500);
+    }
+    .ticket-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .ticket-title {
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+    .ticket-meta {
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+    }
+
+    /* Barber Profile Cards */
+    .barber-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .barber-card {
+      background: var(--color-background-primary);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      text-align: center;
+      transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+    }
+    .barber-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+    .barber-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-primary-500), var(--color-secondary-500));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin: 0 auto 0.75rem;
+    }
+    .barber-name {
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+    .barber-status {
+      font-size: 0.75rem;
+      color: var(--color-text-secondary);
+      margin-top: 0.25rem;
+    }
+    .barber-rating {
+      margin-top: 0.5rem;
+      color: var(--color-warning-500);
+    }
+
+    /* Chart Placeholder */
+    .chart-placeholder {
+      height: 150px;
+      background: linear-gradient(135deg, var(--color-primary-100), var(--color-secondary-100));
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary-700);
+      font-weight: 500;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      .dashboard-sidebar {
+        display: none;
+      }
+      .container {
+        padding: 1rem;
+      }
+    }
+
+    /* Dashboard View Selector */
+    .view-selector {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .view-btn {
+      padding: 0.5rem 1rem;
+      border: 2px solid var(--color-primary-200);
+      background: var(--color-background-primary);
+      color: var(--color-text-secondary);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-weight: 500;
+      transition: all var(--transition-normal);
+    }
+    .view-btn:hover {
+      border-color: var(--color-primary-500);
+    }
+    .view-btn.active {
+      background: var(--color-primary-500);
+      color: white;
+      border-color: var(--color-primary-500);
+    }
+
+    /* Notification Bell */
+    .notification-bell {
+      position: relative;
+      padding: 0.5rem;
+      background: var(--color-background-secondary);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+    }
+    .notification-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: var(--color-error-500);
+      color: white;
+      font-size: 0.625rem;
+      padding: 0.125rem 0.375rem;
+      border-radius: 9999px;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -244,65 +636,88 @@
       </button>
     </div>
 
-    <div class="showcase-grid">
-      <div class="card">
-        <h3>🎨 Color Palette</h3>
-        <p>Primary (Blue) & Secondary (Teal) - No purple!</p>
-        <div class="color-swatch">
-          <div class="swatch" style="background: var(--color-primary-500);"></div>
-          <div class="swatch" style="background: var(--color-primary-400);"></div>
-          <div class="swatch" style="background: var(--color-primary-300);"></div>
-          <div class="swatch" style="background: var(--color-secondary-500);"></div>
-          <div class="swatch" style="background: var(--color-secondary-400);"></div>
-        </div>
-        <div class="button-group">
-          <button class="btn btn-primary">Primary Action</button>
-          <button class="btn btn-secondary">Secondary</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>📊 Status Indicators</h3>
-        <p>Real-time status badges with semantic colors</p>
-        <div class="status-indicators">
-          <span class="status status-online">
-            <span class="status-dot dot-online"></span> Online
-          </span>
-          <span class="status status-away">
-            <span class="status-dot dot-away"></span> Away
-          </span>
-          <span class="status status-busy">
-            <span class="status-dot dot-busy"></span> Busy
-          </span>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>📝 Typography</h3>
-        <div class="typography-demo">
-          <p class="text-primary">Primary text - Main content and headings</p>
-          <p class="text-secondary">Secondary text - Descriptions and labels</p>
-          <p class="text-muted">Muted text - Hints and timestamps</p>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>🎯 Theme Features</h3>
-        <ul style="margin-left: 1.5rem; color: var(--color-text-secondary);">
-          <li>HSL color system</li>
-          <li>CSS custom properties</li>
-          <li>Smooth transitions</li>
-          <li>Accessibility focused</li>
-          <li>TypeScript types</li>
-          <li>Persistent preference</li>
-        </ul>
-      </div>
+    <!-- Section Tabs -->
+    <div class="section-tabs">
+      <button class="section-tab active" data-section="components">
+        🎨 Components
+      </button>
+      <button class="section-tab" data-section="admin">
+        👑 Admin Dashboard
+      </button>
+      <button class="section-tab" data-section="client">
+        👤 Client Portal
+      </button>
+      <button class="section-tab" data-section="barber">
+        ✂️ Barber Station
+      </button>
     </div>
 
-    <div class="info-box">
-      <h4>🚀 Usage in Your Project</h4>
-      <p>Import themes from <code>src/config/theme.ts</code>:</p>
-      <pre style="margin-top: 0.5rem; overflow-x: auto;"><code>import { getTheme, applyTheme, toggleTheme } from './src/config/theme';
+    <!-- Components Section -->
+    <div id="components" class="section-content active">
+      <div class="showcase-grid">
+        <div class="card">
+          <h3>🎨 Color Palette</h3>
+          <p>Primary (Blue) & Secondary (Teal) - No purple!</p>
+          <div class="color-swatch">
+            <div class="swatch" style="background: var(--color-primary-500);"></div>
+            <div class="swatch" style="background: var(--color-primary-400);"></div>
+            <div class="swatch" style="background: var(--color-primary-300);"></div>
+            <div class="swatch" style="background: var(--color-secondary-500);"></div>
+            <div class="swatch" style="background: var(--color-secondary-400);"></div>
+          </div>
+          <div class="button-group">
+            <button class="btn btn-primary">Primary Action</button>
+            <button class="btn btn-secondary">Secondary</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>📊 Status Indicators</h3>
+          <p>Real-time status badges with semantic colors</p>
+          <div class="status-indicators">
+            <span class="status status-online">
+              <span class="status-dot dot-online"></span> Online
+            </span>
+            <span class="status status-away">
+              <span class="status-dot dot-away"></span> Away
+            </span>
+            <span class="status status-busy">
+              <span class="status-dot dot-busy"></span> Busy
+            </span>
+          </div>
+          <div class="button-group" style="margin-top: 1.5rem;">
+            <button class="btn btn-success">Success</button>
+            <button class="btn btn-warning">Warning</button>
+            <button class="btn btn-error">Error</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>📝 Typography</h3>
+          <div class="typography-demo">
+            <p class="text-primary">Primary text - Main content and headings</p>
+            <p class="text-secondary">Secondary text - Descriptions and labels</p>
+            <p class="text-muted">Muted text - Hints and timestamps</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>🎯 Theme Features</h3>
+          <ul style="margin-left: 1.5rem; color: var(--color-text-secondary);">
+            <li>HSL color system</li>
+            <li>CSS custom properties</li>
+            <li>Smooth transitions</li>
+            <li>Accessibility focused</li>
+            <li>TypeScript types</li>
+            <li>Persistent preference</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <h4>🚀 Usage in Your Project</h4>
+        <p>Import themes from <code>src/config/theme.ts</code>:</p>
+        <pre style="margin-top: 0.5rem; overflow-x: auto;"><code>import { getTheme, applyTheme, toggleTheme } from './src/config/theme';
 
 // Get a theme
 const dark = getTheme('dark');
@@ -312,6 +727,315 @@ applyTheme(dark);
 
 // Toggle with persistence
 const next = toggleTheme('light'); // Returns 'dark'</code></pre>
+      </div>
+    </div>
+
+    <!-- Admin Dashboard Section -->
+    <div id="admin" class="section-content">
+      <div class="dashboard-grid">
+        <aside class="dashboard-sidebar">
+          <h4>Admin Menu</h4>
+          <ul class="sidebar-nav">
+            <li><a href="#" class="active" onclick="return false;">📊 Overview</a></li>
+            <li><a href="#" onclick="return false;">🎫 Tickets</a></li>
+            <li><a href="#" onclick="return false;">✂️ Barbers</a></li>
+            <li><a href="#" onclick="return false;">👥 Clients</a></li>
+            <li><a href="#" onclick="return false;">💰 Revenue</a></li>
+            <li><a href="#" onclick="return false;">⚙️ Settings</a></li>
+          </ul>
+        </aside>
+        <main class="dashboard-main">
+          <div class="dashboard-header">
+            <h2>👑 God View Dashboard</h2>
+            <div class="notification-bell">
+              🔔
+              <span class="notification-badge">3</span>
+            </div>
+          </div>
+          <div class="dashboard-stats">
+            <div class="stat-card">
+              <div class="stat-value">42</div>
+              <div class="stat-label">Active Tickets</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">8</div>
+              <div class="stat-label">Barbers Online</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">$2,847</div>
+              <div class="stat-label">Today's Revenue</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">156</div>
+              <div class="stat-label">Total Clients</div>
+            </div>
+          </div>
+          <div class="dashboard-content">
+            <div class="dashboard-panel">
+              <h4>Recent Tickets</h4>
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Client</th>
+                    <th>Service</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>#1024</td>
+                    <td>John Doe</td>
+                    <td>Haircut</td>
+                    <td><span class="badge badge-success">Completed</span></td>
+                  </tr>
+                  <tr>
+                    <td>#1025</td>
+                    <td>Jane Smith</td>
+                    <td>Beard Trim</td>
+                    <td><span class="badge badge-warning">In Progress</span></td>
+                  </tr>
+                  <tr>
+                    <td>#1026</td>
+                    <td>Mike Johnson</td>
+                    <td>Full Service</td>
+                    <td><span class="badge badge-primary">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td>#1027</td>
+                    <td>Sarah Wilson</td>
+                    <td>Haircut</td>
+                    <td><span class="badge badge-primary">Pending</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="dashboard-panel">
+              <h4>Revenue Overview</h4>
+              <div class="chart-placeholder">
+                📈 Revenue Chart
+              </div>
+              <div style="margin-top: 1rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                  <span class="text-secondary">This Week</span>
+                  <span class="text-primary">$18,420</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span class="text-secondary">Last Week</span>
+                  <span class="text-primary">$16,890</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Client Portal Section -->
+    <div id="client" class="section-content">
+      <div class="dashboard-grid">
+        <aside class="dashboard-sidebar">
+          <h4>My Account</h4>
+          <ul class="sidebar-nav">
+            <li><a href="#" class="active" onclick="return false;">🏠 Dashboard</a></li>
+            <li><a href="#" onclick="return false;">📅 Book Appointment</a></li>
+            <li><a href="#" onclick="return false;">📜 My History</a></li>
+            <li><a href="#" onclick="return false;">💳 Payment Methods</a></li>
+            <li><a href="#" onclick="return false;">⚙️ Profile Settings</a></li>
+          </ul>
+        </aside>
+        <main class="dashboard-main">
+          <div class="dashboard-header">
+            <h2>👤 Welcome back, Alex!</h2>
+            <div class="status status-online">
+              <span class="status-dot dot-online"></span> Member since 2024
+            </div>
+          </div>
+          <div class="dashboard-stats">
+            <div class="stat-card">
+              <div class="stat-value">12</div>
+              <div class="stat-label">Total Visits</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">4.8</div>
+              <div class="stat-label">Avg Rating</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">$45</div>
+              <div class="stat-label">Next Appt</div>
+            </div>
+          </div>
+          <div class="dashboard-content">
+            <div class="dashboard-panel">
+              <h4>Upcoming Appointment</h4>
+              <div class="ticket-card">
+                <div class="ticket-header">
+                  <span class="ticket-title">Haircut & Beard Trim</span>
+                  <span class="badge badge-primary">Confirmed</span>
+                </div>
+                <div class="ticket-meta">
+                  📅 Feb 10, 2026 at 2:30 PM<br>
+                  ✂️ With: Marcus Johnson<br>
+                  📍 Station 3
+                </div>
+                <div class="button-group" style="margin-top: 1rem;">
+                  <button class="btn btn-primary">Reschedule</button>
+                  <button class="btn btn-secondary">Cancel</button>
+                </div>
+              </div>
+            </div>
+            <div class="dashboard-panel">
+              <h4>Available Barbers</h4>
+              <div class="barber-grid">
+                <div class="barber-card">
+                  <div class="barber-avatar">MJ</div>
+                  <div class="barber-name">Marcus J.</div>
+                  <div class="barber-status">
+                    <span class="status-dot dot-online"></span> Available
+                  </div>
+                  <div class="barber-rating">⭐⭐⭐⭐⭐</div>
+                </div>
+                <div class="barber-card">
+                  <div class="barber-avatar">DW</div>
+                  <div class="barber-name">David W.</div>
+                  <div class="barber-status">
+                    <span class="status-dot dot-away"></span> Break
+                  </div>
+                  <div class="barber-rating">⭐⭐⭐⭐⭐</div>
+                </div>
+                <div class="barber-card">
+                  <div class="barber-avatar">SC</div>
+                  <div class="barber-name">Sarah C.</div>
+                  <div class="barber-status">
+                    <span class="status-dot dot-online"></span> Available
+                  </div>
+                  <div class="barber-rating">⭐⭐⭐⭐</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Barber Station Section -->
+    <div id="barber" class="section-content">
+      <div class="dashboard-grid">
+        <aside class="dashboard-sidebar">
+          <h4>Barber Tools</h4>
+          <ul class="sidebar-nav">
+            <li><a href="#" class="active" onclick="return false;">📋 My Queue</a></li>
+            <li><a href="#" onclick="return false;">📅 Schedule</a></li>
+            <li><a href="#" onclick="return false;">💰 My Earnings</a></li>
+            <li><a href="#" onclick="return false;">⭐ Reviews</a></li>
+            <li><a href="#" onclick="return false;">⚙️ Settings</a></li>
+          </ul>
+        </aside>
+        <main class="dashboard-main">
+          <div class="dashboard-header">
+            <h2>✂️ Barber Station - Marcus</h2>
+            <div class="view-selector">
+              <button class="view-btn active">Day</button>
+              <button class="view-btn">Week</button>
+            </div>
+          </div>
+          <div class="dashboard-stats">
+            <div class="stat-card">
+              <div class="stat-value">5</div>
+              <div class="stat-label">Today's Cuts</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">3</div>
+              <div class="stat-label">In Queue</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">$312</div>
+              <div class="stat-label">Today's Tips</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">4.9</div>
+              <div class="stat-label">Rating</div>
+            </div>
+          </div>
+          <div class="dashboard-content">
+            <div class="dashboard-panel">
+              <h4>Current Queue</h4>
+              <div class="ticket-list">
+                <div class="ticket-card in-progress">
+                  <div class="ticket-header">
+                    <span class="ticket-title">#1025 - Jane Smith</span>
+                    <span class="badge badge-warning">In Progress</span>
+                  </div>
+                  <div class="ticket-meta">
+                    Beard Trim • Started: 2:15 PM
+                  </div>
+                  <div class="button-group" style="margin-top: 0.75rem;">
+                    <button class="btn btn-success">Complete</button>
+                    <button class="btn btn-error">No Show</button>
+                  </div>
+                </div>
+                <div class="ticket-card pending">
+                  <div class="ticket-header">
+                    <span class="ticket-title">#1026 - Mike Johnson</span>
+                    <span class="badge badge-primary">Waiting</span>
+                  </div>
+                  <div class="ticket-meta">
+                    Full Service • Est: 45 min
+                  </div>
+                </div>
+                <div class="ticket-card pending">
+                  <div class="ticket-header">
+                    <span class="ticket-title">#1027 - Sarah Wilson</span>
+                    <span class="badge badge-primary">Waiting</span>
+                  </div>
+                  <div class="ticket-meta">
+                    Haircut • Est: 30 min
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="dashboard-panel">
+              <h4>Performance Stats</h4>
+              <div class="chart-placeholder">
+                📊 Weekly Performance
+              </div>
+              <div style="margin-top: 1rem;">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Day</th>
+                      <th>Cuts</th>
+                      <th>Tips</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Mon</td>
+                      <td>8</td>
+                      <td>$245</td>
+                    </tr>
+                    <tr>
+                      <td>Tue</td>
+                      <td>12</td>
+                      <td>$380</td>
+                    </tr>
+                    <tr>
+                      <td>Wed</td>
+                      <td>10</td>
+                      <td>$295</td>
+                    </tr>
+                    <tr>
+                      <td>Thu</td>
+                      <td>6</td>
+                      <td>$180</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
   </div>
 
@@ -322,25 +1046,29 @@ const next = toggleTheme('light'); // Returns 'dark'</code></pre>
         primary: [217, 90],
         secondary: [190, 80],
         bg: ['0 0% 100%', '220 14% 96%'],
-        text: ['220 43% 11%', '220 14% 35%']
+        text: ['220 43% 11%', '220 14% 35%'],
+        muted: '220 9% 60%'
       },
       dark: {
         primary: [217, 90],
         secondary: [190, 80],
         bg: ['220 43% 7%', '220 43% 11%'],
-        text: ['0 0% 95%', '0 0% 80%']
+        text: ['0 0% 95%', '0 0% 80%'],
+        muted: '0 0% 60%'
       },
       professional: {
         primary: [210, 70],
         secondary: [200, 60],
         bg: ['210 20% 98%', '210 18% 94%'],
-        text: ['210 40% 15%', '210 25% 30%']
+        text: ['210 40% 15%', '210 25% 30%'],
+        muted: '210 20% 50%'
       },
       'high-contrast': {
         primary: [210, 100],
         secondary: [195, 100],
         bg: ['0 0% 100%', '0 0% 98%'],
-        text: ['0 0% 0%', '0 0% 15%']
+        text: ['0 0% 0%', '0 0% 15%'],
+        muted: '0 0% 30%'
       }
     };
 
@@ -374,6 +1102,7 @@ const next = toggleTheme('light'); // Returns 'dark'</code></pre>
       root.style.setProperty('--color-background-secondary', `hsl(${theme.bg[1]})`);
       root.style.setProperty('--color-text-primary', `hsl(${theme.text[0]})`);
       root.style.setProperty('--color-text-secondary', `hsl(${theme.text[1]})`);
+      root.style.setProperty('--color-text-muted', `hsl(${theme.muted})`);
       
       // Update active button
       document.querySelectorAll('.theme-btn').forEach(btn => {
@@ -384,6 +1113,21 @@ const next = toggleTheme('light'); // Returns 'dark'</code></pre>
       localStorage.setItem('fw-theme', themeName);
     }
 
+    function switchSection(sectionName) {
+      // Update tab buttons
+      document.querySelectorAll('.section-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.section === sectionName);
+      });
+      
+      // Update content visibility
+      document.querySelectorAll('.section-content').forEach(content => {
+        content.classList.toggle('active', content.id === sectionName);
+      });
+      
+      // Save preference
+      localStorage.setItem('fw-section', sectionName);
+    }
+
     // Event listeners
     document.querySelectorAll('.theme-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -391,9 +1135,26 @@ const next = toggleTheme('light'); // Returns 'dark'</code></pre>
       });
     });
 
-    // Load saved theme
-    const saved = localStorage.getItem('fw-theme') || 'light';
-    applyThemeToDocument(saved);
+    document.querySelectorAll('.section-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        switchSection(tab.dataset.section);
+      });
+    });
+
+    // Load saved preferences
+    const savedTheme = localStorage.getItem('fw-theme') || 'light';
+    applyThemeToDocument(savedTheme);
+    
+    const savedSection = localStorage.getItem('fw-section') || 'components';
+    switchSection(savedSection);
+
+    // View selector for barber dashboard
+    document.querySelectorAll('.view-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.parentElement.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
   </script>
 </body>
 </html>
