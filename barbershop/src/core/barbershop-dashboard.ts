@@ -40,6 +40,7 @@ import { fetchWithDefaults, isPublicHttpUrl } from '../utils/fetch-utils';
 import { renderAdminDashboard, renderBarberDashboard, renderClientDashboard } from './ui-v2';
 import { renderAdminDashboardV3, renderClientDashboardV3, renderBarberDashboardV3 } from './ui-v3';
 import { getFactorySecret } from '../secrets/factory-secrets';
+import { SecureCookieManager, CookieMonitor } from '../utils/cookie-security';
 
 const PORT_ENV_KEYS = ['BUN_PORT', 'PORT', 'NODE_PORT'] as const;
 const DEFAULT_PORT = 3000;
@@ -1729,7 +1730,26 @@ const server = serve({
 
       logTelemetry('barber_login', { barber: barber.code }, '127.0.0.1');
 
-      return Response.json({ success: true, barber, tickets });
+      // Create secure session and CSRF cookies
+      const sessionCookie = SecureCookieManager.createSessionCookie(barber.id);
+      const csrfCookie = SecureCookieManager.createCSRFCookie();
+      
+      // Validate cookies before setting
+      const validation = SecureCookieManager.validateCookie(sessionCookie);
+      if (!validation.valid) {
+        console.warn('Cookie validation warnings:', validation.errors);
+      }
+
+      const headers = new Headers({
+        'Content-Type': 'application/json',
+        'Set-Cookie': sessionCookie.toString()
+      });
+      headers.append('Set-Cookie', csrfCookie.toString());
+
+      return new Response(
+        JSON.stringify({ success: true, barber, tickets, csrfToken: csrfCookie.value }),
+        { headers }
+      );
     },
     '/barber/stats': async req => {
       const url = new URL(req.url);
