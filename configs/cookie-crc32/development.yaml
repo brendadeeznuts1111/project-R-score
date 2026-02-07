@@ -1,0 +1,19 @@
+# Development cookie configuration
+cookie:
+  secret: dev-secret-minimum-32-bytes-long-here-123
+  name: ab_variant
+  domain: localhost
+  secure: false
+  httpOnly: true
+  sameSite: lax
+  maxAgeDays: 30
+
+ab:
+  defaultVariants:
+    - A
+    - B
+  trafficSplit: 50
+
+benchmark:
+  iterations: 100000
+  sizes: [1, 10, 100, 1024]

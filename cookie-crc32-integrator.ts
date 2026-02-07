@@ -5,6 +5,61 @@ import { crc32, verify, toHex, benchmark, runBenchmarks } from './lib/core/crc32
 import { styled, FW_COLORS, log, colorBar } from './lib/theme/colors';
 
 // ============================================================================
+// YAML CONFIG LOADING (Bun native import)
+// ============================================================================
+
+interface CookieConfig {
+  cookie: {
+    secret: string | null;
+    name: string;
+    domain: string;
+    secure: boolean;
+    httpOnly: boolean;
+    sameSite: string;
+    maxAgeDays: number;
+  };
+  ab: {
+    defaultVariants: string[];
+    trafficSplit: number;
+  };
+  benchmark: {
+    iterations: number;
+    sizes: number[];
+  };
+}
+
+const DEFAULT_CONFIG: CookieConfig = {
+  cookie: {
+    secret: null,
+    name: 'ab_variant',
+    domain: 'localhost',
+    secure: false,
+    httpOnly: true,
+    sameSite: 'lax',
+    maxAgeDays: 30,
+  },
+  ab: { defaultVariants: ['A', 'B'], trafficSplit: 50 },
+  benchmark: { iterations: 100_000, sizes: [1, 10, 100, 1024] },
+};
+
+/** Load environment-specific YAML config using Bun's native import() */
+async function loadConfig(): Promise<CookieConfig> {
+  const env = Bun.env.NODE_ENV || 'development';
+  try {
+    const mod = await import(`./configs/cookie-crc32/${env}.yaml`);
+    const yaml = mod.default as Partial<CookieConfig>;
+    // Deep merge with defaults so missing keys don't break
+    return {
+      cookie: { ...DEFAULT_CONFIG.cookie, ...yaml.cookie },
+      ab: { ...DEFAULT_CONFIG.ab, ...yaml.ab },
+      benchmark: { ...DEFAULT_CONFIG.benchmark, ...yaml.benchmark },
+    };
+  } catch {
+    return DEFAULT_CONFIG;
+  }
+}
+
+// ============================================================================
 // COOKIE SIGNING PROTOCOL
 // ============================================================================
 
@@ -258,9 +313,17 @@ async function cmdBenchmark(): Promise<void> {
   console.log('--------|-----------|----------');
 }
 
-function cmdCreate(name: string, value: string): void {
+function cmdCreate(name: string, value: string, config: CookieConfig): void {
   const signed = signCookie(name, value);
-  const header = `Set-Cookie: ${signed}; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`;
+  const maxAge = config.cookie.maxAgeDays * 24 * 60 * 60;
+  const flags = [
+    config.cookie.httpOnly ? 'HttpOnly' : '',
+    config.cookie.secure ? 'Secure' : '',
+    `SameSite=${config.cookie.sameSite.charAt(0).toUpperCase() + config.cookie.sameSite.slice(1)}`,
+    config.cookie.domain !== 'localhost' ? `Domain=${config.cookie.domain}` : '',
+    `Max-Age=${maxAge}`,
+  ].filter(Boolean).join('; ');
+  const header = `Set-Cookie: ${signed}; ${flags}`;
   console.log(styled('Signed cookie:', 'success'));
   console.log(header);
 }
@@ -277,9 +340,21 @@ function cmdVerify(cookie: string): void {
   }
 }
 
-function cmdAb(userId: string, experimentId: string, forcedVariant?: string): void {
-  const secret = Bun.env.COOKIE_SECRET || 'dev-secret-minimum-32-bytes-long-here-123';
-  const manager = new SecureVariantManager({ secretKey: secret });
+function cmdConfig(config: CookieConfig): void {
+  const env = Bun.env.NODE_ENV || 'development';
+  console.log(styled(`Config: ${env}`, 'accent') + ` (configs/cookie-crc32/${env}.yaml)`);
+  console.log(config);
+  console.log(styled('\nTip:', 'muted') + ' Use bun --console-depth 4 for full nesting');
+}
+
+function cmdAb(userId: string, experimentId: string, config: CookieConfig, forcedVariant?: string): void {
+  // Env var overrides YAML config; YAML secret must not be null in production
+  const secret = Bun.env.COOKIE_SECRET || config.cookie.secret || 'dev-secret-minimum-32-bytes-long-here-123';
+  const manager = new SecureVariantManager({
+    secretKey: secret,
+    cookieName: config.cookie.name,
+    expiresDays: config.cookie.maxAgeDays,
+  });
 
   const variant = forcedVariant || manager.assignVariant(userId, experimentId);
   const header = manager.createVariantCookie(variant, experimentId);
@@ -305,6 +380,7 @@ Commands:
   create <name> <value>       Create a signed cookie
   verify "<cookie>"           Verify a signed cookie
   ab <userId> <expId> [variant]  Deterministic AB variant cookie
+  config                      Show loaded YAML configuration
 
 Examples:
   bun run cookie-crc32-integrator.ts wiki
@@ -318,6 +394,7 @@ Examples:
 if (import.meta.main) {
   const args = process.argv.slice(2);
   const command = args[0];
+  const config = await loadConfig();
 
   switch (command) {
     case 'wiki':
@@ -335,7 +412,7 @@ if (import.meta.main) {
         console.error('Usage: create <name> <value>');
         process.exit(1);
       }
-      cmdCreate(name, value);
+      cmdCreate(name, value, config);
       break;
     }
 
@@ -356,9 +433,13 @@ if (import.meta.main) {
         console.error('Usage: ab <userId> <experimentId> [variant]');
         process.exit(1);
       }
-      cmdAb(userId, experimentId, args[3]);
+      cmdAb(userId, experimentId, config, args[3]);
       break;
     }
+
+    case 'config':
+      cmdConfig(config);
+      break;
 
     default:
       usage();

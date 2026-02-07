@@ -1,0 +1,19 @@
+# Production cookie configuration
+cookie:
+  secret: null  # MUST be set via COOKIE_SECRET env var
+  name: ab_variant
+  domain: .example.com
+  secure: true
+  httpOnly: true
+  sameSite: strict
+  maxAgeDays: 30
+
+ab:
+  defaultVariants:
+    - A
+    - B
+  trafficSplit: 50
+
+benchmark:
+  iterations: 50000
+  sizes: [1, 10, 100, 1024, 10240]
