@@ -1692,6 +1692,7 @@
     "cookie-inspector-demo": "bun run examples/cookie-inspector-demo.ts",
     "secure-cookie-pro-demo": "bun run examples/secure-cookie-pro-demo.ts",
     "cookie-pro-tips-demo": "bun run examples/cookie-pro-tips-demo.ts",
+    "future-proof-cookie-demo": "bun run examples/future-proof-cookie-demo.ts",
     "dv-metrics": "bun run scripts/dataview-cli.ts dv-metrics",
     "dv-export": "bun run scripts/dataview-cli.ts dv-export",
     "dv-stream": "bun run scripts/dataview-cli.ts dv-stream",
