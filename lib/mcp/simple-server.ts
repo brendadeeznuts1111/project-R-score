@@ -11,14 +11,20 @@ export class SimpleBunMCPServer {
   /**
    * Create deterministic cache key from parameters
    */
-  private createCacheKey(query: string, version?: string, language?: string, apiReferenceOnly?: boolean, codeOnly?: boolean): string {
+  private createCacheKey(
+    query: string,
+    version?: string,
+    language?: string,
+    apiReferenceOnly?: boolean,
+    codeOnly?: boolean
+  ): string {
     // Create sorted key object to ensure consistent ordering
     const keyObj = {
       query: query.trim().toLowerCase(),
       version: version?.toLowerCase() || 'latest',
       language: language?.toLowerCase() || 'en',
       apiReferenceOnly: Boolean(apiReferenceOnly),
-      codeOnly: Boolean(codeOnly)
+      codeOnly: Boolean(codeOnly),
     };
 
     // Use deterministic JSON stringification
@@ -110,36 +116,36 @@ export class SimpleBunMCPServer {
       tools: [
         {
           name: 'SearchBun',
-          description: 'Search across the Bun knowledge base to find relevant information, code examples, API references, and guides. Use this tool when you need to answer questions about Bun, find specific documentation, understand how features work, or locate implementation details. The search returns contextual content with titles and direct links to the documentation pages.',
+          description:
+            'Search across the Bun knowledge base to find relevant information, code examples, API references, and guides. Use this tool when you need to answer questions about Bun, find specific documentation, understand how features work, or locate implementation details. The search returns contextual content with titles and direct links to the documentation pages.',
           inputSchema: {
-            "type": "object",
-            "properties": {
-              "query": {
-                "type": "string",
-                "description": "A query to search the content with."
+            type: 'object',
+            properties: {
+              query: {
+                type: 'string',
+                description: 'A query to search the content with.',
               },
-              "version": {
-                "type": "string",
-                "description": "Filter to specific version (e.g., 'v0.7')"
+              version: {
+                type: 'string',
+                description: "Filter to specific version (e.g., 'v0.7')",
               },
-              "language": {
-                "type": "string",
-                "description": "Filter to specific language code (e.g., 'zh', 'es'). Defaults to 'en'"
+              language: {
+                type: 'string',
+                description:
+                  "Filter to specific language code (e.g., 'zh', 'es'). Defaults to 'en'",
               },
-              "apiReferenceOnly": {
-                "type": "boolean",
-                "description": "Only return API reference docs"
+              apiReferenceOnly: {
+                type: 'boolean',
+                description: 'Only return API reference docs',
               },
-              "codeOnly": {
-                "type": "boolean",
-                "description": "Only return code snippets"
-              }
+              codeOnly: {
+                type: 'boolean',
+                description: 'Only return code snippets',
+              },
             },
-            "required": [
-              "query"
-            ]
+            required: ['query'],
           },
-          "operationId": "MintlifyDefaultSearch"
+          operationId: 'MintlifyDefaultSearch',
         },
       ],
     };
@@ -211,7 +217,6 @@ export class SimpleBunMCPServer {
     args: any,
     executionTime: number
   ): string {
-
     const timestamp = new Date().toISOString();
     const searchDepth = this.calculateSearchDepth(args.query);
 
@@ -337,56 +342,9 @@ export class SimpleBunMCPServer {
     if (result.title.toLowerCase() === lowerQuery) return 'Exact Title Match';
     if (result.title.toLowerCase().includes(lowerQuery)) return 'Title Match';
     if (result.description.toLowerCase().includes(lowerQuery)) return 'Description Match';
-    if (result.codeExample && result.codeExample.toLowerCase().includes(lowerQuery)) return 'Code Match';
+    if (result.codeExample && result.codeExample.toLowerCase().includes(lowerQuery))
+      return 'Code Match';
     return 'Pattern Match';
-    this.cacheStats.total++;
-
-    // Check cache
-    if (this.searchCache.has(cacheKey)) {
-      this.cacheStats.hits++;
-      console.log(` Cache HIT for query: ${query.substring(0, 50)}...`);
-      return this.searchCache.get(cacheKey);
-    }
-
-    this.cacheStats.misses++;
-    console.log(` Cache MISS for query: ${query.substring(0, 50)}...`);
-
-    // Perform search (mock data for now)
-    const results = await this.performSearch(query, version, language, apiReferenceOnly, codeOnly);
-      }
-    ];
-
-    // Enhanced pattern matching
-    const searchPattern = this.createSearchPattern(query);
-    let results = bunDocs.filter(doc =>
-      searchPattern.test(doc.title) ||
-      searchPattern.test(doc.description) ||
-      (doc.codeExample && searchPattern.test(doc.codeExample))
-    );
-
-    // Apply filters
-    if (apiReferenceOnly) {
-      results = results.filter(result =>
-        result.url.includes('/docs/api/') || result.title.includes('API')
-      );
-    }
-
-    if (codeOnly) {
-      results = results.filter(result => result.codeExample);
-    }
-
-    const finalResults = results.slice(0, 10);
-
-    // Store in cache
-    this.searchCache.set(cacheKey, finalResults);
-
-    // Limit cache size
-    if (this.searchCache.size > 100) {
-      const firstKey = this.searchCache.keys().next().value;
-      this.searchCache.delete(firstKey);
-    }
-
-    return finalResults;
   }
 
   /**
@@ -464,22 +422,28 @@ export class SimpleBunMCPServer {
   async run(port: number = 3000) {
     const server = Bun.serve({
       port,
-      fetch: async (req) => {
+      fetch: async req => {
         // Health check endpoint
         if (req.method === 'GET' && req.url.endsWith('/health')) {
-          return new Response(JSON.stringify({
-            status: 'healthy',
-            server: 'Simple Bun MCP Server',
-            version: '1.0.0',
-            timestamp: new Date().toISOString(),
-          }), {
-            headers: { 'Content-Type': 'application/json' },
-          });
+          return new Response(
+            JSON.stringify({
+              status: 'healthy',
+              server: 'Simple Bun MCP Server',
+              version: '1.0.0',
+              timestamp: new Date().toISOString(),
+            }),
+            {
+              headers: { 'Content-Type': 'application/json' },
+            }
+          );
         }
 
         // Cache stats endpoint with sanitized keys
         if (req.method === 'GET' && req.url.endsWith('/cache')) {
-          const hitRate = this.cacheStats.total > 0 ? (this.cacheStats.hits / this.cacheStats.total * 100).toFixed(2) : '0.00';
+          const hitRate =
+            this.cacheStats.total > 0
+              ? ((this.cacheStats.hits / this.cacheStats.total) * 100).toFixed(2)
+              : '0.00';
 
           // Sanitize cache keys to prevent exposing sensitive queries
           const sanitizedKeys = Array.from(this.searchCache.keys())
@@ -490,26 +454,32 @@ export class SimpleBunMCPServer {
                 query: parsed.query.substring(0, 20) + (parsed.query.length > 20 ? '...' : ''),
                 version: parsed.version,
                 language: parsed.language,
-                hasFilters: parsed.apiReferenceOnly || parsed.codeOnly
+                hasFilters: parsed.apiReferenceOnly || parsed.codeOnly,
               };
             });
 
-          return new Response(JSON.stringify({
-            cache: {
-              size: this.searchCache.size,
-              maxSize: 100,
-              stats: this.cacheStats,
-              hitRate: `${hitRate}%`,
-              sampleKeys: sanitizedKeys, // Sanitized sample keys
-            },
-            timestamp: new Date().toISOString(),
-          }), {
-            headers: { 'Content-Type': 'application/json' },
-          });
+          return new Response(
+            JSON.stringify({
+              cache: {
+                size: this.searchCache.size,
+                maxSize: 100,
+                stats: this.cacheStats,
+                hitRate: `${hitRate}%`,
+                sampleKeys: sanitizedKeys, // Sanitized sample keys
+              },
+              timestamp: new Date().toISOString(),
+            }),
+            {
+              headers: { 'Content-Type': 'application/json' },
+            }
+          );
         }
 
         // JSON-RPC 2.0 requests
-        if (req.method === 'POST' && req.headers.get('content-type')?.includes('application/json')) {
+        if (
+          req.method === 'POST' &&
+          req.headers.get('content-type')?.includes('application/json')
+        ) {
           try {
             const body = await req.json();
             const response = await this.handleRequest(body);
@@ -517,17 +487,20 @@ export class SimpleBunMCPServer {
               headers: { 'Content-Type': 'application/json' },
             });
           } catch (error) {
-            return new Response(JSON.stringify({
-              jsonrpc: '2.0',
-              id: null,
-              error: {
-                code: -32700,
-                message: 'Parse error',
-              },
-            }), {
-              status: 400,
-              headers: { 'Content-Type': 'application/json' },
-            });
+            return new Response(
+              JSON.stringify({
+                jsonrpc: '2.0',
+                id: null,
+                error: {
+                  code: -32700,
+                  message: 'Parse error',
+                },
+              }),
+              {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+              }
+            );
           }
         }
 

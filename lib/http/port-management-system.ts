@@ -10,7 +10,6 @@ if (import.meta.main) {
 
 import { readFileSync, existsSync } from 'fs';
 
-
 // ============================================================================
 // VALIDATION CONSTANTS
 // ============================================================================
@@ -19,18 +18,18 @@ const VALIDATION_CONSTANTS = {
   PORT: {
     MIN: 1,
     MAX: 65535,
-    USER_MIN: 1024,      // Below this requires root privileges
-    USER_MAX: 49151,      // Above this is for dynamic/private ports
-    PRACTICAL_MIN: 3000,  // Common starting point for apps
-    PRACTICAL_MAX: 32767  // Safe upper range
+    USER_MIN: 1024, // Below this requires root privileges
+    USER_MAX: 49151, // Above this is for dynamic/private ports
+    PRACTICAL_MIN: 3000, // Common starting point for apps
+    PRACTICAL_MAX: 32767, // Safe upper range
   },
   CONNECTIONS: {
     MIN: 1,
-    MAX: 65336,           // Bun's documented maximum
-    PRACTICAL_MIN: 10,    // Minimum useful connections
-    PRACTICAL_MAX: 1000,  // Practical upper limit for most apps
-    DEFAULT: 512          // Bun's default
-  }
+    MAX: 65336, // Bun's documented maximum
+    PRACTICAL_MIN: 10, // Minimum useful connections
+    PRACTICAL_MAX: 1000, // Practical upper limit for most apps
+    DEFAULT: 512, // Bun's default
+  },
 };
 
 // ============================================================================
@@ -41,7 +40,10 @@ class ValidationUtils {
   /**
    * Validate port number is within acceptable range
    */
-  static validatePort(port: number, context: string = 'Port'): { isValid: boolean; errors: string[] } {
+  static validatePort(
+    port: number,
+    context: string = 'Port'
+  ): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
 
     if (typeof port !== 'number' || isNaN(port)) {
@@ -63,7 +65,10 @@ class ValidationUtils {
   /**
    * Validate connection limit is within acceptable range
    */
-  static validateConnectionLimit(limit: number, context: string = 'Connection limit'): { isValid: boolean; errors: string[] } {
+  static validateConnectionLimit(
+    limit: number,
+    context: string = 'Connection limit'
+  ): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
 
     if (typeof limit !== 'number' || isNaN(limit)) {
@@ -72,11 +77,15 @@ class ValidationUtils {
     }
 
     if (limit < VALIDATION_CONSTANTS.CONNECTIONS.MIN) {
-      errors.push(`${context}: ${limit} is below minimum (${VALIDATION_CONSTANTS.CONNECTIONS.MIN})`);
+      errors.push(
+        `${context}: ${limit} is below minimum (${VALIDATION_CONSTANTS.CONNECTIONS.MIN})`
+      );
     }
 
     if (limit > VALIDATION_CONSTANTS.CONNECTIONS.MAX) {
-      errors.push(`${context}: ${limit} exceeds Bun's maximum (${VALIDATION_CONSTANTS.CONNECTIONS.MAX})`);
+      errors.push(
+        `${context}: ${limit} exceeds Bun's maximum (${VALIDATION_CONSTANTS.CONNECTIONS.MAX})`
+      );
     }
 
     return { isValid: errors.length === 0, errors };
@@ -157,10 +166,11 @@ class PortManager {
       project: 'default',
       port: DEFAULT_PORT,
       range: { start: DEFAULT_PORT, end: DEFAULT_PORT + 100 },
-    maxConnections: 100,
-    connectionTimeout: 30000,
-    keepAlive: true
-  };
+      maxConnections: 100,
+      connectionTimeout: 30000,
+      keepAlive: true,
+    };
+  }
 
   private static readonly PROJECT_CONFIGS = new Map<string, PortConfig>();
   private static readonly USED_PORTS = new Set<number>();
@@ -177,7 +187,7 @@ class PortManager {
     const configFiles = [
       `${projectPath}/port-config.json`,
       `${projectPath}/.port-config.json`,
-      `${projectPath}/package.json`
+      `${projectPath}/package.json`,
     ];
 
     let config = { ...this.getDefaultConfig() };
@@ -196,8 +206,9 @@ class PortManager {
             port: portConfig.port || this.getDefaultConfig().port,
             range: portConfig.range || this.getDefaultConfig().range,
             maxConnections: portConfig.maxConnections || this.getDefaultConfig().maxConnections,
-            connectionTimeout: portConfig.connectionTimeout || this.getDefaultConfig().connectionTimeout,
-            keepAlive: portConfig.keepAlive !== false
+            connectionTimeout:
+              portConfig.connectionTimeout || this.getDefaultConfig().connectionTimeout,
+            keepAlive: portConfig.keepAlive !== false,
           };
           break;
         } catch (error) {
@@ -218,14 +229,21 @@ class PortManager {
     if (!rangeValidation.isValid) {
       console.error(`Invalid port range: ${rangeValidation.errors.join(', ')}`);
       const defaultConfig = this.getDefaultConfig();
-      console.log(`Falling back to default range ${defaultConfig.range.start}-${defaultConfig.range.end}`);
+      console.log(
+        `Falling back to default range ${defaultConfig.range.start}-${defaultConfig.range.end}`
+      );
       config.range = defaultConfig.range;
     }
 
-    const connectionValidation = ValidationUtils.validateConnectionLimit(config.maxConnections, 'Configuration maxConnections');
+    const connectionValidation = ValidationUtils.validateConnectionLimit(
+      config.maxConnections,
+      'Configuration maxConnections'
+    );
     if (!connectionValidation.isValid) {
       console.error(`Invalid connection limit: ${connectionValidation.errors.join(', ')}`);
-      console.log(`Falling back to default maxConnections ${this.getDefaultConfig().maxConnections}`);
+      console.log(
+        `Falling back to default maxConnections ${this.getDefaultConfig().maxConnections}`
+      );
       config.maxConnections = this.getDefaultConfig().maxConnections;
     }
 
@@ -281,7 +299,9 @@ class PortManager {
         }
 
         if (!found) {
-          throw new Error(`No available ports in range ${config.range.start}-${config.range.end} for project ${config.project}`);
+          throw new Error(
+            `No available ports in range ${config.range.start}-${config.range.end} for project ${config.project}`
+          );
         }
       }
 
@@ -292,7 +312,6 @@ class PortManager {
 
       console.log(`🚪 Port ${allocatedPort} allocated to project: ${config.project}`);
       return allocatedPort;
-
     } finally {
       this.isAllocating = false;
     }
@@ -385,7 +404,7 @@ class DNSOptimizer {
     }
     return {
       prefetchedHosts: this.prefetchedHosts.size,
-      preconnectedHosts: this.preconnectedHosts.size
+      preconnectedHosts: this.preconnectedHosts.size,
     };
   }
 
@@ -425,7 +444,7 @@ class ConnectionPool {
       keepAlive: true,
       retryAttempts: 3,
       retryDelay: 1000,
-      ...options
+      ...options,
     };
 
     // Start periodic cleanup
@@ -500,7 +519,7 @@ class ConnectionPool {
 
     // Remove expired connections from pool
     const validConnections = pool.filter(connection => {
-      if (connection.created && (now - connection.created) > timeoutMs) {
+      if (connection.created && now - connection.created > timeoutMs) {
         this.destroyConnection(connection);
         return false;
       }
@@ -514,8 +533,11 @@ class ConnectionPool {
    * Check if connection is still valid
    */
   private isConnectionValid(connection: ConnectionInfo): boolean {
-    return connection && !connection.destroyed &&
-           (!connection.created || (Date.now() - connection.created) < this.options.connectionTimeout);
+    return (
+      connection &&
+      !connection.destroyed &&
+      (!connection.created || Date.now() - connection.created < this.options.connectionTimeout)
+    );
   }
 
   /**
@@ -554,7 +576,7 @@ class ConnectionPool {
     // Clean up all pools
     for (const [poolKey, pool] of this.pools.entries()) {
       const validConnections = pool.filter(connection => {
-        if (connection.created && (now - connection.created) > timeoutMs) {
+        if (connection.created && now - connection.created > timeoutMs) {
           this.destroyConnection(connection);
           cleanedUp++;
           return false;
@@ -617,7 +639,7 @@ class ConnectionPool {
       destroy: () => {
         // Simulate connection destroy
         console.log(`Connection destroyed to ${host}:${port}`);
-      }
+      },
     };
   }
 
@@ -654,7 +676,7 @@ class ConnectionPool {
       stats[poolKey] = {
         available: pool.length,
         active: this.activeConnections.get(poolKey) || 0,
-        max: this.options.maxConnections
+        max: this.options.maxConnections,
       };
     }
 
@@ -672,7 +694,7 @@ class OptimizedFetch {
     simultaneousConnections: 100,
     connectionsPerHost: 6,
     keepAlive: true,
-    connectionTimeout: 30000
+    connectionTimeout: 30000,
   };
 
   /**
@@ -684,17 +706,27 @@ class OptimizedFetch {
     let maxConnectionsPerHost = parseInt(process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6');
 
     // Validate environment variables
-    const requestsValidation = ValidationUtils.validateConnectionLimit(maxRequests, 'BUN_CONFIG_MAX_HTTP_REQUESTS');
-    const perHostValidation = ValidationUtils.validateConnectionLimit(maxConnectionsPerHost, 'BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST');
+    const requestsValidation = ValidationUtils.validateConnectionLimit(
+      maxRequests,
+      'BUN_CONFIG_MAX_HTTP_REQUESTS'
+    );
+    const perHostValidation = ValidationUtils.validateConnectionLimit(
+      maxConnectionsPerHost,
+      'BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST'
+    );
 
     if (!requestsValidation.isValid) {
-      console.error(`Invalid BUN_CONFIG_MAX_HTTP_REQUESTS: ${requestsValidation.errors.join(', ')}`);
+      console.error(
+        `Invalid BUN_CONFIG_MAX_HTTP_REQUESTS: ${requestsValidation.errors.join(', ')}`
+      );
       console.log(`Falling back to default: ${VALIDATION_CONSTANTS.CONNECTIONS.DEFAULT}`);
       maxRequests = VALIDATION_CONSTANTS.CONNECTIONS.DEFAULT;
     }
 
     if (!perHostValidation.isValid) {
-      console.error(`Invalid BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST: ${perHostValidation.errors.join(', ')}`);
+      console.error(
+        `Invalid BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST: ${perHostValidation.errors.join(', ')}`
+      );
       console.log(`Falling back to default: 6`);
       maxConnectionsPerHost = 6;
     }
@@ -703,11 +735,14 @@ class OptimizedFetch {
       simultaneousConnections: options.simultaneousConnections || maxRequests,
       connectionsPerHost: options.connectionsPerHost || maxConnectionsPerHost,
       keepAlive: options.keepAlive ?? true,
-      connectionTimeout: options.connectionTimeout || 30000
+      connectionTimeout: options.connectionTimeout || 30000,
     };
 
     // Validate final limits
-    const finalValidation = ValidationUtils.validateConnectionLimit(limits.simultaneousConnections, 'Final simultaneousConnections');
+    const finalValidation = ValidationUtils.validateConnectionLimit(
+      limits.simultaneousConnections,
+      'Final simultaneousConnections'
+    );
     if (!finalValidation.isValid) {
       console.error(`Invalid simultaneousConnections: ${finalValidation.errors.join(', ')}`);
       limits.simultaneousConnections = VALIDATION_CONSTANTS.CONNECTIONS.DEFAULT;
@@ -718,7 +753,7 @@ class OptimizedFetch {
       connectionTimeout: limits.connectionTimeout,
       keepAlive: limits.keepAlive,
       retryAttempts: 3,
-      retryDelay: 1000
+      retryDelay: 1000,
     });
 
     // Configure Bun's fetch with environment variables
@@ -726,7 +761,7 @@ class OptimizedFetch {
       // Set simultaneous connection limits using Bun's native config
       (Bun as any).configure({
         maxConcurrency: limits.simultaneousConnections,
-        maxConnectionsPerHost: limits.connectionsPerHost
+        maxConnectionsPerHost: limits.connectionsPerHost,
       });
     }
 
@@ -770,15 +805,15 @@ class OptimizedFetch {
         ...options,
         // Enable keep-alive and connection reuse
         headers: {
-          'Connection': 'keep-alive',
+          Connection: 'keep-alive',
           'Keep-Alive': 'timeout=60',
-          ...options.headers
+          ...options.headers,
         },
         // Set timeout
         signal: AbortSignal.timeout(30000),
         // Enable response buffering for better performance
         // Bun automatically buffers responses when using .text(), .json(), etc.
-        buffer: options.buffer !== false // Default to true for optimal performance
+        buffer: options.buffer !== false, // Default to true for optimal performance
       };
 
       const response = await fetch(url, fetchOptions);
@@ -791,7 +826,6 @@ class OptimizedFetch {
       );
 
       return response;
-
     } catch (error) {
       console.error(`Fetch failed for ${url}: ${error.message}`);
       throw error;
@@ -834,7 +868,11 @@ class OptimizedFetch {
   /**
    * Optimized fetch with automatic response buffering to file
    */
-  static async fetchAndBuffer(url: string, outputPath: string, options: RequestInit = {}): Promise<void> {
+  static async fetchAndBuffer(
+    url: string,
+    outputPath: string,
+    options: RequestInit = {}
+  ): Promise<void> {
     const response = await this.fetch(url, options);
 
     try {
@@ -858,7 +896,10 @@ class OptimizedFetch {
   /**
    * Optimized fetch with response buffering to memory
    */
-  static async fetchAndBufferToMemory(url: string, options: RequestInit = {}): Promise<{
+  static async fetchAndBufferToMemory(
+    url: string,
+    options: RequestInit = {}
+  ): Promise<{
     text: string;
     json: any;
     formData: FormData | null;
@@ -876,7 +917,7 @@ class OptimizedFetch {
         response.formData().catch(() => null), // Handle non-form responses
         response.bytes(),
         response.arrayBuffer(),
-        response.blob()
+        response.blob(),
       ]);
 
       return {
@@ -885,7 +926,7 @@ class OptimizedFetch {
         formData,
         bytes,
         arrayBuffer,
-        blob
+        blob,
       };
     } catch (error) {
       console.error(`Failed to buffer response to memory: ${error.message}`);
@@ -902,8 +943,8 @@ class OptimizedFetch {
       dnsOptimization: DNSOptimizer.getDNSCacheStats(),
       configuration: {
         maxRequests: process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || '512',
-        maxPerHost: process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6'
-      }
+        maxPerHost: process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6',
+      },
     };
   }
 
@@ -931,14 +972,18 @@ class ProjectServer {
     const config = PortManager.loadProjectConfig(projectPath);
 
     // Use Bun's environment variables with project-specific fallbacks
-    const maxRequests = parseInt(process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || config.maxConnections?.toString() || '512');
-    const maxConnectionsPerHost = parseInt(process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6');
+    const maxRequests = parseInt(
+      process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || config.maxConnections?.toString() || '512'
+    );
+    const maxConnectionsPerHost = parseInt(
+      process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6'
+    );
 
     this.config = {
       ...config,
       maxConnections: maxRequests,
       connectionTimeout: config.connectionTimeout || 30000,
-      keepAlive: config.keepAlive !== false
+      keepAlive: config.keepAlive !== false,
     };
 
     // Note: Port allocation is now async, will be done in start()
@@ -949,7 +994,7 @@ class ProjectServer {
       connectionTimeout: this.config.connectionTimeout,
       keepAlive: this.config.keepAlive,
       retryAttempts: 3,
-      retryDelay: 1000
+      retryDelay: 1000,
     });
 
     console.log(`🚀 Project server initialized for: ${this.config.project}`);
@@ -981,11 +1026,10 @@ class ProjectServer {
         port: this.port,
         reusePort: true,
         fetch: this.handleRequest.bind(this),
-        error: this.handleError.bind(this)
+        error: this.handleError.bind(this),
       });
 
       console.log(`✅ Server started successfully on port ${this.port}`);
-
     } catch (error) {
       console.error(`❌ Failed to start server: ${error.message}`);
       PortManager.releasePort(this.projectPath);
@@ -1007,7 +1051,7 @@ class ProjectServer {
         timestamp: Date.now(),
         url: req.url,
         method: req.method,
-        connectionPool: this.connectionPool.getStats()
+        connectionPool: this.connectionPool.getStats(),
       };
 
       const responseTime = Date.now() - startTime;
@@ -1018,10 +1062,9 @@ class ProjectServer {
           'Content-Type': 'application/json',
           'X-Response-Time': `${responseTime}ms`,
           'X-Project': this.config.project,
-          'X-Port': this.port.toString()
-        }
+          'X-Port': this.port.toString(),
+        },
       });
-
     } catch (error) {
       const responseTime = Date.now() - startTime;
 
@@ -1029,14 +1072,14 @@ class ProjectServer {
         JSON.stringify({
           error: 'Internal Server Error',
           project: this.config.project,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         }),
         {
           status: 500,
           headers: {
             'Content-Type': 'application/json',
-            'X-Response-Time': `${responseTime}ms`
-          }
+            'X-Response-Time': `${responseTime}ms`,
+          },
         }
       );
     }
@@ -1084,7 +1127,7 @@ class ProjectServer {
       port: this.port,
       config: this.config,
       running: this.server !== null,
-      connectionPool: this.connectionPool.getStats()
+      connectionPool: this.connectionPool.getStats(),
     };
   }
 }
@@ -1095,19 +1138,23 @@ class ProjectServer {
 
 async function demonstratePortManagement(): Promise<void> {
   console.log('🚀 PORT MANAGEMENT AND CONNECTION POOLING DEMO');
-  console.log('=' .repeat(60));
+  console.log('='.repeat(60));
 
   // Show Bun's environment variables
   console.log('🌍 Bun Environment Variables:');
-  console.log(`   BUN_CONFIG_MAX_HTTP_REQUESTS: ${process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || '512 (default)'}`);
-  console.log(`   BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST: ${process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6 (default)'}`);
+  console.log(
+    `   BUN_CONFIG_MAX_HTTP_REQUESTS: ${process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || '512 (default)'}`
+  );
+  console.log(
+    `   BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST: ${process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6 (default)'}`
+  );
   console.log('');
 
   // Initialize optimized fetch with Bun's native configuration
   OptimizedFetch.initialize({
     // These will use Bun's environment variables or defaults
     keepAlive: true,
-    connectionTimeout: 15000
+    connectionTimeout: 15000,
   });
 
   // Create project servers with dedicated ports
@@ -1115,7 +1162,7 @@ async function demonstratePortManagement(): Promise<void> {
   const projects = [
     `${platformRoot}/projects/apps/my-bun-app`,
     `${platformRoot}/projects/apps/cli-dashboard`,
-    `${platformRoot}/projects/apps/edge-worker`
+    `${platformRoot}/projects/apps/edge-worker`,
   ];
 
   const servers: ProjectServer[] = [];
@@ -1147,9 +1194,7 @@ async function demonstratePortManagement(): Promise<void> {
       const startTime = Date.now();
 
       // Make multiple concurrent requests
-      const promises = Array.from({ length: 10 }, () =>
-        OptimizedFetch.fetch(testUrl)
-      );
+      const promises = Array.from({ length: 10 }, () => OptimizedFetch.fetch(testUrl));
 
       const responses = await Promise.all(promises);
       const totalTime = Date.now() - startTime;
@@ -1178,7 +1223,6 @@ async function demonstratePortManagement(): Promise<void> {
 
     // Wait indefinitely (or until interrupted)
     await new Promise(() => {});
-
   } catch (error) {
     console.error('Demo failed:', error);
 
@@ -1200,7 +1244,14 @@ if (import.meta.path === Bun.main) {
   });
 }
 
-export { PortManager, ConnectionPool, OptimizedFetch, ProjectServer, DNSOptimizer, ValidationUtils };
+export {
+  PortManager,
+  ConnectionPool,
+  OptimizedFetch,
+  ProjectServer,
+  DNSOptimizer,
+  ValidationUtils,
+};
 
 /**
  * 💡 Performance Tip: For better performance, consider:
