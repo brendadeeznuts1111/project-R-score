@@ -12,7 +12,6 @@ import {
 import { validateR2Key } from '../core/validation';
 import { globalCache } from '../core/cache-manager';
 import { safeConcurrent } from '../core/concurrent-operations';
-import { styled, FW_COLORS } from '../theme/colors';
 
 export interface R2Config {
   accountId: string;

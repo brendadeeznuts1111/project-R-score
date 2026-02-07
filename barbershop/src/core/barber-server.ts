@@ -4,9 +4,9 @@ import { serve, redis, env } from 'bun';
 import crypto from 'node:crypto';
 import { lookup } from 'node:dns/promises';
 import { Database } from 'bun:sqlite';
-import manifestData from './manifest.toml' with { type: 'toml' };
+import manifestData from '../../manifest.toml' with { type: 'toml' };
 import { fetchWithDefaults, isPublicHttpUrl } from '../utils/fetch-utils';
-import { getFactorySecret } from './factory-secrets';
+import { getFactorySecret } from '../secrets/factory-secrets';
 
 export type BarberRecord = {
   id: string;
