@@ -18,6 +18,7 @@ import { lookup } from 'node:dns/promises';
 import manifestData from './manifest.toml' with { type: 'toml' };
 import { fetchWithDefaults, isPublicHttpUrl } from '../utils/fetch-utils';
 import { renderAdminDashboard, renderBarberDashboard, renderClientDashboard } from './ui-v2';
+import { renderAdminDashboardV3, renderClientDashboardV3, renderBarberDashboardV3 } from './ui-v3';
 import { getFactorySecret } from './factory-secrets';
 
 const PORT_ENV_KEYS = ['BUN_PORT', 'PORT', 'NODE_PORT'] as const;
@@ -51,6 +52,7 @@ const DNS_WARMUP_HOSTS = (env.DNS_WARMUP_HOSTS ?? env.DNS_PREFETCH_HOSTS ?? 'exa
   .map(s => s.trim())
   .filter(Boolean);
 const DNS_WARMUP_TIMEOUT_MS = Number(env.DNS_WARMUP_TIMEOUT_MS ?? 500);
+const USE_UI_V3 = env.USE_UI_V3 !== 'false'; // Default to v3
 mkdirSync(UPLOAD_DIR, { recursive: true });
 
 type R2MirrorConfig = {
@@ -125,9 +127,20 @@ function resourceHintsHtml() {
 }
 
 const RESOURCE_HINTS = resourceHintsHtml();
+
+// Dashboard versions - v3 uses shared components and themes
 const ADMIN_DASHBOARD_V2 = renderAdminDashboard(RESOURCE_HINTS);
 const CLIENT_DASHBOARD_V2 = renderClientDashboard(RESOURCE_HINTS);
 const BARBER_DASHBOARD_V2 = renderBarberDashboard(RESOURCE_HINTS);
+
+const ADMIN_DASHBOARD_V3 = renderAdminDashboardV3(RESOURCE_HINTS);
+const CLIENT_DASHBOARD_V3 = renderClientDashboardV3(RESOURCE_HINTS);
+const BARBER_DASHBOARD_V3 = renderBarberDashboardV3(RESOURCE_HINTS);
+
+// Helper to get correct dashboard version
+const getAdminDashboard = () => (USE_UI_V3 ? ADMIN_DASHBOARD_V3 : ADMIN_DASHBOARD_V2);
+const getClientDashboard = () => (USE_UI_V3 ? CLIENT_DASHBOARD_V3 : CLIENT_DASHBOARD_V2);
+const getBarberDashboard = () => (USE_UI_V3 ? BARBER_DASHBOARD_V3 : BARBER_DASHBOARD_V2);
 
 async function warmupDns(hosts: string[]) {
   if (!hosts.length) return;
@@ -1591,7 +1604,7 @@ const server = serve({
       });
     },
     // ADMIN ENDPOINTS
-    '/admin': () => textResponse(ADMIN_DASHBOARD_V2, 'text/html; charset=utf-8'),
+    '/admin': () => textResponse(getAdminDashboard(), 'text/html; charset=utf-8'),
     '/admin/ws': req => {
       const url = new URL(req.url);
       if (url.searchParams.get('key') !== 'godmode123') {
@@ -1629,8 +1642,8 @@ const server = serve({
     },
 
     // CLIENT ENDPOINTS
-    '/': () => textResponse(CLIENT_DASHBOARD_V2, 'text/html; charset=utf-8'),
-    '/client': () => textResponse(CLIENT_DASHBOARD_V2, 'text/html; charset=utf-8'),
+    '/': () => textResponse(getClientDashboard(), 'text/html; charset=utf-8'),
+    '/client': () => textResponse(getClientDashboard(), 'text/html; charset=utf-8'),
     '/barbers': async () => {
       const keys = (await redis.send('KEYS', ['barber:*'])) as string[];
       const barbers = [];
@@ -1651,7 +1664,7 @@ const server = serve({
     },
 
     // BARBER ENDPOINTS
-    '/barber': () => textResponse(BARBER_DASHBOARD_V2, 'text/html; charset=utf-8'),
+    '/barber': () => textResponse(getBarberDashboard(), 'text/html; charset=utf-8'),
     '/barber/login': async req => {
       const { code } = await req.json();
       const barberId = await redis.get(`barber:code:${code.toUpperCase()}`);

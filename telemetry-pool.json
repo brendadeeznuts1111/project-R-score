@@ -1,0 +1,836 @@
+{
+  "timestamp": "2026-02-07T17:40:27.015Z",
+  "profiles": [
+    {
+      "id": "3099d992-8c08-4e70-8b78-51c17006185e",
+      "session": "batch-99",
+      "profile": "{\"documentSize\":3293.076170471154,\"parseTime\":2.5454161222684357,\"throughput\":439.76364895953833,\"complexity\":\"senior\",\"tableCols\":8,\"memory\":46.4515819999216,\"cryptoSeal\":\"42465dbc-067e-4219-9681-30cd7895a82c\",\"gfmScore\":0.19760460866893315,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009539,
+      "member": "batch-user-9",
+      "document": "batch-doc-99"
+    },
+    {
+      "id": "9b1148bd-0caa-430c-878c-4563f55d6719",
+      "session": "batch-98",
+      "profile": "{\"documentSize\":3776.6232116418896,\"parseTime\":2.9520944167729777,\"throughput\":62.61372122459008,\"complexity\":\"senior\",\"tableCols\":22,\"memory\":16.88481956517721,\"cryptoSeal\":\"2f026c10-783d-485b-aaed-af47e15f6107\",\"gfmScore\":93.21136383301626,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009539,
+      "member": "batch-user-8",
+      "document": "batch-doc-98"
+    },
+    {
+      "id": "6b9e8fea-222d-4f87-ab42-d1ae6f50e9ed",
+      "session": "batch-97",
+      "profile": "{\"documentSize\":3399.4833330554065,\"parseTime\":7.09118653501622,\"throughput\":419.22595265786987,\"complexity\":\"senior\",\"tableCols\":1,\"memory\":85.21124313118537,\"cryptoSeal\":\"94a723a7-5ad2-4962-a2ab-21207adcc2e1\",\"gfmScore\":15.592243506984982,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009539,
+      "member": "batch-user-7",
+      "document": "batch-doc-97"
+    },
+    {
+      "id": "570bbade-1516-48eb-879f-bc94fa4383fa",
+      "session": "batch-96",
+      "profile": "{\"documentSize\":3621.254387143803,\"parseTime\":7.0873366726042555,\"throughput\":946.8412428626439,\"complexity\":\"senior\",\"tableCols\":22,\"memory\":84.94603647291245,\"cryptoSeal\":\"9b690b37-0e65-4f17-adc9-2709b9db926e\",\"gfmScore\":14.507525902331686,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009539,
+      "member": "batch-user-6",
+      "document": "batch-doc-96"
+    },
+    {
+      "id": "a1db2ab7-1ae1-422b-ae0a-cd6ae03f8470",
+      "session": "batch-95",
+      "profile": "{\"documentSize\":8764.72189549495,\"parseTime\":2.3979580989528526,\"throughput\":235.99276071410168,\"complexity\":\"lead\",\"tableCols\":4,\"memory\":73.01712196391259,\"cryptoSeal\":\"9797a207-8d60-42cd-b911-dfefede7ef7d\",\"gfmScore\":70.35138676342063,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009539,
+      "member": "batch-user-5",
+      "document": "batch-doc-95"
+    },
+    {
+      "id": "f1c53052-c847-4b5d-ad5f-c053408c0df4",
+      "session": "batch-94",
+      "profile": "{\"documentSize\":148.19594327937446,\"parseTime\":5.099883255651579,\"throughput\":759.3774367721292,\"complexity\":\"senior\",\"tableCols\":1,\"memory\":94.55480300980973,\"cryptoSeal\":\"8eed773b-4b18-41cb-9b4a-4bbfd95bfe3b\",\"gfmScore\":53.08368034260411,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009538,
+      "member": "batch-user-4",
+      "document": "batch-doc-94"
+    },
+    {
+      "id": "98489477-41ed-43a1-b525-18fd310d196a",
+      "session": "batch-93",
+      "profile": "{\"documentSize\":2968.986383114893,\"parseTime\":8.601437924717985,\"throughput\":236.1878082272375,\"complexity\":\"lead\",\"tableCols\":3,\"memory\":75.85773977944858,\"cryptoSeal\":\"d7e3d4ab-adf3-49c8-86d2-19ff41cd9085\",\"gfmScore\":81.4848386692161,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009538,
+      "member": "batch-user-3",
+      "document": "batch-doc-93"
+    },
+    {
+      "id": "abfe5477-5728-41a6-b034-af317e321fc8",
+      "session": "batch-92",
+      "profile": "{\"documentSize\":1503.948193115713,\"parseTime\":0.8606138885611903,\"throughput\":993.9544532519526,\"complexity\":\"senior\",\"tableCols\":4,\"memory\":37.07884084369999,\"cryptoSeal\":\"576a9f0c-1663-4d1a-88cd-f7b2c9816777\",\"gfmScore\":5.592335620451183,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009538,
+      "member": "batch-user-2",
+      "document": "batch-doc-92"
+    },
+    {
+      "id": "3ef0ac55-513a-4aa8-adf4-4a520ad6853b",
+      "session": "batch-91",
+      "profile": "{\"documentSize\":8085.73411194868,\"parseTime\":0.47197255704301,\"throughput\":868.2398889932997,\"complexity\":\"senior\",\"tableCols\":38,\"memory\":47.37652840576555,\"cryptoSeal\":\"26c37b27-e9da-4930-8d62-374277f9b7f0\",\"gfmScore\":36.85640466723189,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009538,
+      "member": "batch-user-1",
+      "document": "batch-doc-91"
+    },
+    {
+      "id": "b866cf42-2c84-44e6-9584-8c0be5a5c634",
+      "session": "batch-90",
+      "profile": "{\"documentSize\":1298.0800242689484,\"parseTime\":7.762493039377744,\"throughput\":166.60441280386763,\"complexity\":\"senior\",\"tableCols\":11,\"memory\":51.2117559807349,\"cryptoSeal\":\"ded36e0f-8ec2-47d5-89f0-cb54c61a553f\",\"gfmScore\":83.24617196500024,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009537,
+      "member": "batch-user-0",
+      "document": "batch-doc-90"
+    },
+    {
+      "id": "ebad7f62-07b7-4e50-a45e-0be7abbd03d6",
+      "session": "batch-89",
+      "profile": "{\"documentSize\":5917.2301675610315,\"parseTime\":3.857404987993105,\"throughput\":366.5003903389732,\"complexity\":\"expert\",\"tableCols\":32,\"memory\":43.95470221769943,\"cryptoSeal\":\"406a2502-e31a-4e58-bd5b-96458d811b71\",\"gfmScore\":91.09541725397402,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009537,
+      "member": "batch-user-9",
+      "document": "batch-doc-89"
+    },
+    {
+      "id": "f2b640cd-7959-4356-9906-1e1e47f83814",
+      "session": "batch-88",
+      "profile": "{\"documentSize\":5188.885170229869,\"parseTime\":3.1348865982081406,\"throughput\":681.7496319489095,\"complexity\":\"expert\",\"tableCols\":24,\"memory\":90.26485679383339,\"cryptoSeal\":\"c3535007-7060-4654-aff5-48a777104963\",\"gfmScore\":50.78933927967633,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009537,
+      "member": "batch-user-8",
+      "document": "batch-doc-88"
+    },
+    {
+      "id": "2f1d7b7b-092c-4baf-94b9-5dbea7f6f262",
+      "session": "batch-87",
+      "profile": "{\"documentSize\":2632.4746950405342,\"parseTime\":3.8202753598990844,\"throughput\":822.3145159357882,\"complexity\":\"expert\",\"tableCols\":14,\"memory\":49.96510401568629,\"cryptoSeal\":\"90acdea7-d938-4f16-8122-5d4281a4feba\",\"gfmScore\":23.89427309579075,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009536,
+      "member": "batch-user-7",
+      "document": "batch-doc-87"
+    },
+    {
+      "id": "01d4ee36-3c4c-4601-9b94-2bab64a34cd4",
+      "session": "batch-86",
+      "profile": "{\"documentSize\":5532.514112387466,\"parseTime\":6.218278606757918,\"throughput\":789.2264825361827,\"complexity\":\"senior\",\"tableCols\":0,\"memory\":50.15368167184535,\"cryptoSeal\":\"6ce3fad0-854d-4961-9753-72f307762de7\",\"gfmScore\":51.32829412832001,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009536,
+      "member": "batch-user-6",
+      "document": "batch-doc-86"
+    },
+    {
+      "id": "01191f00-54e4-42a8-8cb3-d903a39b13db",
+      "session": "batch-85",
+      "profile": "{\"documentSize\":1174.510166236843,\"parseTime\":2.4131279102762795,\"throughput\":555.836354470266,\"complexity\":\"expert\",\"tableCols\":44,\"memory\":86.10415805386397,\"cryptoSeal\":\"89db7692-50ff-4456-ad28-9be9d3959c26\",\"gfmScore\":73.93015672859737,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009536,
+      "member": "batch-user-5",
+      "document": "batch-doc-85"
+    },
+    {
+      "id": "bc65b5f5-ada4-414c-b0b6-56025a25e804",
+      "session": "batch-84",
+      "profile": "{\"documentSize\":2462.1732370549885,\"parseTime\":7.031699851495508,\"throughput\":129.4811447231299,\"complexity\":\"expert\",\"tableCols\":14,\"memory\":16.985794682622,\"cryptoSeal\":\"5f83f3bd-b4a7-4422-b046-f937b33d20c8\",\"gfmScore\":1.1165394142567342,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009536,
+      "member": "batch-user-4",
+      "document": "batch-doc-84"
+    },
+    {
+      "id": "8305bff5-1394-492a-94b8-57e9b3ddd25b",
+      "session": "batch-83",
+      "profile": "{\"documentSize\":7830.1411849727765,\"parseTime\":5.872223377247944,\"throughput\":312.95641878501215,\"complexity\":\"expert\",\"tableCols\":30,\"memory\":73.61191512977679,\"cryptoSeal\":\"049e1f95-5191-4bf8-b4af-79d5e02ca0b0\",\"gfmScore\":98.29971130261615,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009535,
+      "member": "batch-user-3",
+      "document": "batch-doc-83"
+    },
+    {
+      "id": "790b0d76-0690-4a16-8626-a724844f3a4d",
+      "session": "batch-82",
+      "profile": "{\"documentSize\":2991.5134576444225,\"parseTime\":6.4023036299528,\"throughput\":712.665839435827,\"complexity\":\"senior\",\"tableCols\":10,\"memory\":71.91089597227008,\"cryptoSeal\":\"07a7c4fe-ffb0-4f8e-a97c-f8bdcfe8754e\",\"gfmScore\":82.80768533049513,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009535,
+      "member": "batch-user-2",
+      "document": "batch-doc-82"
+    },
+    {
+      "id": "f34d7a1b-487d-4f9a-b966-57c548731791",
+      "session": "batch-81",
+      "profile": "{\"documentSize\":51.48782728980117,\"parseTime\":3.0786434205981603,\"throughput\":667.2469784955068,\"complexity\":\"lead\",\"tableCols\":18,\"memory\":82.20133045330395,\"cryptoSeal\":\"2a1347dd-317f-4d93-b938-29b8d917e77f\",\"gfmScore\":49.97037092399748,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009535,
+      "member": "batch-user-1",
+      "document": "batch-doc-81"
+    },
+    {
+      "id": "28b937ee-ed41-4f8b-9a65-0036ff0df68f",
+      "session": "batch-80",
+      "profile": "{\"documentSize\":5629.226312456287,\"parseTime\":0.7702333590383237,\"throughput\":358.76703881644835,\"complexity\":\"expert\",\"tableCols\":28,\"memory\":77.94005184973184,\"cryptoSeal\":\"cdd57369-2c63-4013-9e94-a2bcc0bec114\",\"gfmScore\":21.342044461431676,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009535,
+      "member": "batch-user-0",
+      "document": "batch-doc-80"
+    },
+    {
+      "id": "b3cdd049-ff77-4373-8020-6a625a0cf6a3",
+      "session": "batch-79",
+      "profile": "{\"documentSize\":2892.979444657643,\"parseTime\":3.5205051863802215,\"throughput\":237.71082519170483,\"complexity\":\"lead\",\"tableCols\":37,\"memory\":7.169681842463449,\"cryptoSeal\":\"da05b1d7-1a1f-4acd-a9ac-1bf7172c1f0e\",\"gfmScore\":14.701752060146378,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009534,
+      "member": "batch-user-9",
+      "document": "batch-doc-79"
+    },
+    {
+      "id": "5b441192-6ba5-4a5d-a4d9-f5e7582d8fad",
+      "session": "batch-78",
+      "profile": "{\"documentSize\":8510.91483168529,\"parseTime\":0.9539281960683066,\"throughput\":110.80919651938126,\"complexity\":\"expert\",\"tableCols\":45,\"memory\":16.76164156185139,\"cryptoSeal\":\"21f86897-b7e2-44e9-827d-554a5f58f940\",\"gfmScore\":80.12675783851061,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009534,
+      "member": "batch-user-8",
+      "document": "batch-doc-78"
+    },
+    {
+      "id": "11b81104-b1cf-4340-a9cb-9671728e4428",
+      "session": "batch-77",
+      "profile": "{\"documentSize\":9976.064032868842,\"parseTime\":5.795948814460072,\"throughput\":388.52392043585735,\"complexity\":\"senior\",\"tableCols\":3,\"memory\":64.28953203745165,\"cryptoSeal\":\"971fad24-79a5-424f-b91e-f0c2bfe75b26\",\"gfmScore\":68.58527421275237,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009534,
+      "member": "batch-user-7",
+      "document": "batch-doc-77"
+    },
+    {
+      "id": "71910cf5-9784-4c38-934d-546402c71d04",
+      "session": "batch-76",
+      "profile": "{\"documentSize\":3583.413824071775,\"parseTime\":2.6464688688172666,\"throughput\":58.780275748579356,\"complexity\":\"expert\",\"tableCols\":27,\"memory\":19.34546976785073,\"cryptoSeal\":\"721dd912-0615-4d52-ac11-1e5ca3a54048\",\"gfmScore\":56.2307221506625,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009534,
+      "member": "batch-user-6",
+      "document": "batch-doc-76"
+    },
+    {
+      "id": "102b6761-bd88-4024-a387-06a5e806b797",
+      "session": "batch-75",
+      "profile": "{\"documentSize\":6245.40945663312,\"parseTime\":3.9962139623213133,\"throughput\":726.6997498612122,\"complexity\":\"senior\",\"tableCols\":18,\"memory\":94.96191864423069,\"cryptoSeal\":\"5eade84d-bc2a-43cf-830e-7b32a5c4a6a6\",\"gfmScore\":47.660611666810674,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009533,
+      "member": "batch-user-5",
+      "document": "batch-doc-75"
+    },
+    {
+      "id": "ec5a9c29-7d2d-4ab4-84d2-0b2a24e8baf4",
+      "session": "batch-74",
+      "profile": "{\"documentSize\":7350.616278497902,\"parseTime\":3.063418758904286,\"throughput\":158.06633743068898,\"complexity\":\"expert\",\"tableCols\":7,\"memory\":72.77240653287535,\"cryptoSeal\":\"db181b8a-8c59-401e-bdb6-c3aa24186c97\",\"gfmScore\":26.56582251903873,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009533,
+      "member": "batch-user-4",
+      "document": "batch-doc-74"
+    },
+    {
+      "id": "ef342a92-c719-4321-8a3e-9758d4504625",
+      "session": "batch-73",
+      "profile": "{\"documentSize\":9855.985855481693,\"parseTime\":7.530885264608548,\"throughput\":603.3235148754533,\"complexity\":\"lead\",\"tableCols\":1,\"memory\":97.994164857511,\"cryptoSeal\":\"a932b27e-e270-4238-8dcf-ad5aba77e7c8\",\"gfmScore\":85.1390903610524,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009533,
+      "member": "batch-user-3",
+      "document": "batch-doc-73"
+    },
+    {
+      "id": "7f8baad4-2501-41ed-ab02-32e14e4ba927",
+      "session": "batch-72",
+      "profile": "{\"documentSize\":3162.5150574478566,\"parseTime\":9.726675267995883,\"throughput\":544.2834848741383,\"complexity\":\"expert\",\"tableCols\":33,\"memory\":77.57125031605227,\"cryptoSeal\":\"74bd88bf-32f0-4d09-9b58-f623890a2f20\",\"gfmScore\":58.48934178086741,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009532,
+      "member": "batch-user-2",
+      "document": "batch-doc-72"
+    },
+    {
+      "id": "803e0fc3-7e48-44a4-8976-855cb7c1ca69",
+      "session": "batch-71",
+      "profile": "{\"documentSize\":6930.657938171709,\"parseTime\":9.692106208481334,\"throughput\":74.75845522755087,\"complexity\":\"expert\",\"tableCols\":27,\"memory\":74.1734468108968,\"cryptoSeal\":\"49253ed7-c807-42e9-ac74-8cdb6f2944c7\",\"gfmScore\":25.801760929865004,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009532,
+      "member": "batch-user-1",
+      "document": "batch-doc-71"
+    },
+    {
+      "id": "c6604e01-723f-4305-88f3-337933523d18",
+      "session": "batch-70",
+      "profile": "{\"documentSize\":2779.8541061584992,\"parseTime\":5.135594156088271,\"throughput\":563.3994085732847,\"complexity\":\"expert\",\"tableCols\":36,\"memory\":32.54426967986369,\"cryptoSeal\":\"54b9c468-0ea8-4dd5-951b-05cd67d79488\",\"gfmScore\":32.12277781353748,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009532,
+      "member": "batch-user-0",
+      "document": "batch-doc-70"
+    },
+    {
+      "id": "55ff7148-9088-48f5-842f-2ea3de5cc613",
+      "session": "batch-69",
+      "profile": "{\"documentSize\":341.80122131447723,\"parseTime\":9.993842519741493,\"throughput\":313.84223027988014,\"complexity\":\"senior\",\"tableCols\":32,\"memory\":24.138845749089665,\"cryptoSeal\":\"01a2ca30-5905-40c9-8ea4-16049ce4e474\",\"gfmScore\":43.853734506988985,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009532,
+      "member": "batch-user-9",
+      "document": "batch-doc-69"
+    },
+    {
+      "id": "5c056e99-6687-4926-a257-a12957784ec4",
+      "session": "batch-68",
+      "profile": "{\"documentSize\":9058.091754783414,\"parseTime\":2.715092041559571,\"throughput\":270.44786375561114,\"complexity\":\"lead\",\"tableCols\":42,\"memory\":94.05756044825189,\"cryptoSeal\":\"6085737a-89f4-43ae-8d58-a6da2630c258\",\"gfmScore\":97.88942320857134,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009531,
+      "member": "batch-user-8",
+      "document": "batch-doc-68"
+    },
+    {
+      "id": "03048e6c-66ef-48b0-b54e-402bb169a92e",
+      "session": "batch-67",
+      "profile": "{\"documentSize\":8181.2415261833385,\"parseTime\":2.2074801564277893,\"throughput\":100.87777735698333,\"complexity\":\"senior\",\"tableCols\":7,\"memory\":53.51720052932921,\"cryptoSeal\":\"f8f09f7f-ffcb-40f4-ab5b-c1a948509167\",\"gfmScore\":78.63346177900343,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009531,
+      "member": "batch-user-7",
+      "document": "batch-doc-67"
+    },
+    {
+      "id": "1b602e9c-2569-42d7-a357-ce21dc5fc0d1",
+      "session": "batch-66",
+      "profile": "{\"documentSize\":5685.72386195408,\"parseTime\":8.42971349248665,\"throughput\":109.02229554196707,\"complexity\":\"senior\",\"tableCols\":21,\"memory\":91.31900118206056,\"cryptoSeal\":\"0d03f256-1bfa-40ad-811f-d512baf63dc7\",\"gfmScore\":74.39127245570657,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009530,
+      "member": "batch-user-6",
+      "document": "batch-doc-66"
+    },
+    {
+      "id": "a309745d-b08a-4bc9-bdf3-e0bb4a741906",
+      "session": "batch-65",
+      "profile": "{\"documentSize\":1578.4032441821394,\"parseTime\":2.57984030590211,\"throughput\":986.7708292086362,\"complexity\":\"expert\",\"tableCols\":25,\"memory\":91.26417921557342,\"cryptoSeal\":\"8bcaba12-942c-4bfb-a334-4fcadc57c9c6\",\"gfmScore\":21.462410779101038,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009530,
+      "member": "batch-user-5",
+      "document": "batch-doc-65"
+    },
+    {
+      "id": "3aa09173-4773-438e-886d-1041df6b390e",
+      "session": "batch-64",
+      "profile": "{\"documentSize\":1558.4139402681963,\"parseTime\":3.1749660707110516,\"throughput\":931.4513199807569,\"complexity\":\"expert\",\"tableCols\":0,\"memory\":39.07215527211163,\"cryptoSeal\":\"29635edf-aebe-4f0f-8246-fc38aab7ab6e\",\"gfmScore\":10.308299003442666,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009530,
+      "member": "batch-user-4",
+      "document": "batch-doc-64"
+    },
+    {
+      "id": "cdfba24a-9ac3-4057-b497-5add9b4536b8",
+      "session": "batch-63",
+      "profile": "{\"documentSize\":3513.0152864146967,\"parseTime\":2.279003070533098,\"throughput\":564.2086758412507,\"complexity\":\"expert\",\"tableCols\":44,\"memory\":29.81875071773664,\"cryptoSeal\":\"0b260859-dd0e-4963-a1ad-c5c86eb4d6ce\",\"gfmScore\":31.229453809867024,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009530,
+      "member": "batch-user-3",
+      "document": "batch-doc-63"
+    },
+    {
+      "id": "da7cef4c-93e8-427d-9e5e-05463e3861fb",
+      "session": "batch-62",
+      "profile": "{\"documentSize\":3098.587004848181,\"parseTime\":8.885034633921652,\"throughput\":633.3983738303036,\"complexity\":\"senior\",\"tableCols\":8,\"memory\":25.740541831853825,\"cryptoSeal\":\"621885bb-2a97-4938-9aa0-08cc917c305f\",\"gfmScore\":76.08750612247852,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009529,
+      "member": "batch-user-2",
+      "document": "batch-doc-62"
+    },
+    {
+      "id": "b89a3982-2b02-4a5f-9c0c-a48823c2f802",
+      "session": "batch-61",
+      "profile": "{\"documentSize\":9388.356834973234,\"parseTime\":1.3112603151043545,\"throughput\":654.8815593960758,\"complexity\":\"senior\",\"tableCols\":3,\"memory\":14.760922342932037,\"cryptoSeal\":\"2f275065-ddfb-4d66-9413-f40bad90d915\",\"gfmScore\":11.392875874787512,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009529,
+      "member": "batch-user-1",
+      "document": "batch-doc-61"
+    },
+    {
+      "id": "9e9f1dcc-2775-4341-92c7-423d0ccf4a6c",
+      "session": "batch-60",
+      "profile": "{\"documentSize\":8961.324158022755,\"parseTime\":4.237354082481756,\"throughput\":75.65261116751675,\"complexity\":\"senior\",\"tableCols\":26,\"memory\":54.90600304204094,\"cryptoSeal\":\"d279abc6-51cd-42c4-aeac-6e84b464ad7b\",\"gfmScore\":10.31460395931485,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009528,
+      "member": "batch-user-0",
+      "document": "batch-doc-60"
+    },
+    {
+      "id": "8f168af9-001e-48b0-ab7a-038055f6e8dd",
+      "session": "batch-59",
+      "profile": "{\"documentSize\":9121.517306484158,\"parseTime\":1.1335067255383535,\"throughput\":882.2492643042265,\"complexity\":\"senior\",\"tableCols\":12,\"memory\":51.43302738798398,\"cryptoSeal\":\"bdb1e2b0-0d28-40d4-a55a-990a1d515518\",\"gfmScore\":48.56442247802452,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009528,
+      "member": "batch-user-9",
+      "document": "batch-doc-59"
+    },
+    {
+      "id": "933bd8e5-2128-4fb5-a678-b1a18110f42f",
+      "session": "batch-58",
+      "profile": "{\"documentSize\":9020.173851297746,\"parseTime\":5.51668982004321,\"throughput\":899.1345647551055,\"complexity\":\"senior\",\"tableCols\":4,\"memory\":59.79228596395059,\"cryptoSeal\":\"df29cfa9-71f4-42f4-abbd-49dedd71ecc1\",\"gfmScore\":1.581862190347727,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009527,
+      "member": "batch-user-8",
+      "document": "batch-doc-58"
+    },
+    {
+      "id": "5bf3b3da-b525-45a3-9937-57ec57ed255c",
+      "session": "batch-57",
+      "profile": "{\"documentSize\":1287.1125136557882,\"parseTime\":3.1968892379517166,\"throughput\":456.13495675195816,\"complexity\":\"expert\",\"tableCols\":8,\"memory\":52.91124297123169,\"cryptoSeal\":\"f5f94b85-60f8-4f16-bd0e-3e6b52aa70ad\",\"gfmScore\":66.90184412110317,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009527,
+      "member": "batch-user-7",
+      "document": "batch-doc-57"
+    },
+    {
+      "id": "a622c8f4-79ca-4b97-b0e0-1cd8378d4137",
+      "session": "batch-56",
+      "profile": "{\"documentSize\":9159.93128298759,\"parseTime\":1.1026137103424094,\"throughput\":933.4006563908002,\"complexity\":\"lead\",\"tableCols\":19,\"memory\":37.97671879522745,\"cryptoSeal\":\"5e6b420d-38fe-49e2-9c3d-9533ccf2c505\",\"gfmScore\":41.94198420096321,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009526,
+      "member": "batch-user-6",
+      "document": "batch-doc-56"
+    },
+    {
+      "id": "76640f8b-3507-4f00-ab3f-ddf40c6d7f77",
+      "session": "batch-55",
+      "profile": "{\"documentSize\":1205.1293571552192,\"parseTime\":3.218437447613003,\"throughput\":911.8203470424064,\"complexity\":\"senior\",\"tableCols\":12,\"memory\":6.593061869136118,\"cryptoSeal\":\"c213c707-07b2-4522-867c-3f8a5557f4ff\",\"gfmScore\":85.22514183844108,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009526,
+      "member": "batch-user-5",
+      "document": "batch-doc-55"
+    },
+    {
+      "id": "82b853e3-ad1f-4ce6-9b04-d1badda002db",
+      "session": "batch-54",
+      "profile": "{\"documentSize\":4135.299069455206,\"parseTime\":9.284347630643312,\"throughput\":218.02243464787387,\"complexity\":\"senior\",\"tableCols\":30,\"memory\":46.143566706840446,\"cryptoSeal\":\"ad159290-29be-4245-81c4-ca67e4115706\",\"gfmScore\":48.45016089750032,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009525,
+      "member": "batch-user-4",
+      "document": "batch-doc-54"
+    },
+    {
+      "id": "45070f68-8538-4f0c-8d64-efbc6c1d90b6",
+      "session": "batch-53",
+      "profile": "{\"documentSize\":8963.243762309703,\"parseTime\":6.549250916634141,\"throughput\":297.02745030416645,\"complexity\":\"expert\",\"tableCols\":33,\"memory\":67.36124834985743,\"cryptoSeal\":\"63f7575c-f1fd-4578-b110-9925a5195b22\",\"gfmScore\":53.07133026428209,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009525,
+      "member": "batch-user-3",
+      "document": "batch-doc-53"
+    },
+    {
+      "id": "7007c8a4-10e9-4cb0-b230-d16587f41eaa",
+      "session": "batch-52",
+      "profile": "{\"documentSize\":9294.130896213888,\"parseTime\":0.11596119474809097,\"throughput\":39.36045949553923,\"complexity\":\"expert\",\"tableCols\":9,\"memory\":36.981259347905294,\"cryptoSeal\":\"8b1ed473-a365-42b4-9dbe-f42acd69cae7\",\"gfmScore\":15.18283979372912,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009524,
+      "member": "batch-user-2",
+      "document": "batch-doc-52"
+    },
+    {
+      "id": "7fbffa34-3709-4e71-8737-c08936839fde",
+      "session": "batch-51",
+      "profile": "{\"documentSize\":4357.20079372069,\"parseTime\":6.9279959612742985,\"throughput\":315.4044500619608,\"complexity\":\"senior\",\"tableCols\":35,\"memory\":11.037151413899371,\"cryptoSeal\":\"9e93921f-820b-482d-946f-f8cfa584874a\",\"gfmScore\":16.320314972666484,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009524,
+      "member": "batch-user-1",
+      "document": "batch-doc-51"
+    },
+    {
+      "id": "e56d6a5c-77b6-4018-bddb-4b5d02f7b606",
+      "session": "batch-50",
+      "profile": "{\"documentSize\":9000.2930769311,\"parseTime\":5.191013964370876,\"throughput\":614.8210793953988,\"complexity\":\"expert\",\"tableCols\":7,\"memory\":57.83884319301749,\"cryptoSeal\":\"cc5cfdfc-a4c8-4e9c-95c3-022ad30d2d86\",\"gfmScore\":71.95920959027244,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009523,
+      "member": "batch-user-0",
+      "document": "batch-doc-50"
+    },
+    {
+      "id": "b8df4db3-f3d3-40c1-9e98-ebc5c566aa7d",
+      "session": "batch-49",
+      "profile": "{\"documentSize\":1084.215056584521,\"parseTime\":6.924155395373205,\"throughput\":63.85509917882182,\"complexity\":\"senior\",\"tableCols\":41,\"memory\":41.499154358015964,\"cryptoSeal\":\"616756a5-7158-49a9-a1da-256e1473948d\",\"gfmScore\":20.07070103842816,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009523,
+      "member": "batch-user-9",
+      "document": "batch-doc-49"
+    },
+    {
+      "id": "bb688e54-80bb-4d28-a52f-a460335ed99c",
+      "session": "batch-48",
+      "profile": "{\"documentSize\":9367.842213130667,\"parseTime\":1.1834795189764025,\"throughput\":845.8993516865497,\"complexity\":\"expert\",\"tableCols\":30,\"memory\":36.595447296641545,\"cryptoSeal\":\"8c20b155-be27-4da3-9076-b59323ff9116\",\"gfmScore\":39.74933682607149,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009522,
+      "member": "batch-user-8",
+      "document": "batch-doc-48"
+    },
+    {
+      "id": "b84ecaa9-323c-4db4-8a6c-05f642e6e087",
+      "session": "batch-47",
+      "profile": "{\"documentSize\":6216.654282435647,\"parseTime\":7.949633960034255,\"throughput\":747.5981920889245,\"complexity\":\"lead\",\"tableCols\":20,\"memory\":24.48912236506421,\"cryptoSeal\":\"475d3eb3-e4fe-45dd-8731-4b29c8a4d7d8\",\"gfmScore\":69.38191495345106,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009522,
+      "member": "batch-user-7",
+      "document": "batch-doc-47"
+    },
+    {
+      "id": "88a3a941-533a-40f8-a381-552714eba161",
+      "session": "batch-46",
+      "profile": "{\"documentSize\":6407.151216307,\"parseTime\":5.763615826752684,\"throughput\":931.6265396303651,\"complexity\":\"lead\",\"tableCols\":49,\"memory\":29.223632353126394,\"cryptoSeal\":\"a6e49e28-6df4-4c68-a068-8e19b16bc344\",\"gfmScore\":88.70662675737341,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009521,
+      "member": "batch-user-6",
+      "document": "batch-doc-46"
+    },
+    {
+      "id": "25ac749c-59b6-41f4-a577-f234a768b9bf",
+      "session": "batch-45",
+      "profile": "{\"documentSize\":1687.4440860589134,\"parseTime\":2.0327496322119485,\"throughput\":735.3750855588307,\"complexity\":\"senior\",\"tableCols\":18,\"memory\":12.928666034289071,\"cryptoSeal\":\"9d0ae679-b339-4653-afc4-38d6c3122f89\",\"gfmScore\":63.11877297021835,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009521,
+      "member": "batch-user-5",
+      "document": "batch-doc-45"
+    },
+    {
+      "id": "40a328b8-e1dd-438f-92ff-2dde17fd4714",
+      "session": "batch-44",
+      "profile": "{\"documentSize\":9707.204113046562,\"parseTime\":4.70722338873008,\"throughput\":427.2782980518055,\"complexity\":\"expert\",\"tableCols\":28,\"memory\":39.343538542971324,\"cryptoSeal\":\"9bc7c452-3645-41d0-8463-e18cd94da9fb\",\"gfmScore\":33.05678489339101,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009520,
+      "member": "batch-user-4",
+      "document": "batch-doc-44"
+    },
+    {
+      "id": "85c06e4d-0189-46e3-a07b-876c6e87f79c",
+      "session": "batch-43",
+      "profile": "{\"documentSize\":2052.0528190470523,\"parseTime\":8.360244511284538,\"throughput\":146.5980801263579,\"complexity\":\"expert\",\"tableCols\":44,\"memory\":84.5774681005467,\"cryptoSeal\":\"364865f9-3231-441b-bef2-2126edf198a8\",\"gfmScore\":5.21237115206482,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009520,
+      "member": "batch-user-3",
+      "document": "batch-doc-43"
+    },
+    {
+      "id": "ad8f2c4c-22f3-4dad-ab18-848e67a55ceb",
+      "session": "batch-42",
+      "profile": "{\"documentSize\":6540.206365951077,\"parseTime\":1.7868904999282076,\"throughput\":287.07889228266157,\"complexity\":\"lead\",\"tableCols\":7,\"memory\":58.179662683613365,\"cryptoSeal\":\"09429464-de96-4c54-ba2c-c34b5e875439\",\"gfmScore\":70.65388075158273,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009519,
+      "member": "batch-user-2",
+      "document": "batch-doc-42"
+    },
+    {
+      "id": "ba616a06-6f89-484a-b49f-829bcfcfe5a0",
+      "session": "batch-41",
+      "profile": "{\"documentSize\":3105.125099096944,\"parseTime\":9.384734702885142,\"throughput\":767.9629500682004,\"complexity\":\"expert\",\"tableCols\":37,\"memory\":5.477367296864067,\"cryptoSeal\":\"cd508a65-702a-4dff-86cc-5bc24a69aadd\",\"gfmScore\":84.40244647751942,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009519,
+      "member": "batch-user-1",
+      "document": "batch-doc-41"
+    },
+    {
+      "id": "99cec0c5-ac4c-48cd-9f9b-e6f5bb54868c",
+      "session": "batch-40",
+      "profile": "{\"documentSize\":4952.733348009304,\"parseTime\":3.0248584976431356,\"throughput\":980.8254064206777,\"complexity\":\"expert\",\"tableCols\":39,\"memory\":45.12243055698077,\"cryptoSeal\":\"111e0d5f-dd73-415b-b42e-d7ef44f6a0c3\",\"gfmScore\":8.081702009187907,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009518,
+      "member": "batch-user-0",
+      "document": "batch-doc-40"
+    },
+    {
+      "id": "d61ab170-cd40-442d-8211-55f1ffadac72",
+      "session": "batch-39",
+      "profile": "{\"documentSize\":8280.108750739155,\"parseTime\":5.631669563664646,\"throughput\":206.72006813129417,\"complexity\":\"senior\",\"tableCols\":42,\"memory\":85.53375406357738,\"cryptoSeal\":\"b44c4657-c2e7-4200-b981-c8e8d4a4b583\",\"gfmScore\":55.45525122454757,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009517,
+      "member": "batch-user-9",
+      "document": "batch-doc-39"
+    },
+    {
+      "id": "80817b02-1de7-4a4f-a0d0-3c9811553efc",
+      "session": "batch-38",
+      "profile": "{\"documentSize\":5535.494911696128,\"parseTime\":0.17483381601291703,\"throughput\":649.4009154213692,\"complexity\":\"expert\",\"tableCols\":37,\"memory\":41.0689166614201,\"cryptoSeal\":\"db8b6735-0208-448d-a380-e798cb5d00cd\",\"gfmScore\":38.414423104673375,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009516,
+      "member": "batch-user-8",
+      "document": "batch-doc-38"
+    },
+    {
+      "id": "c7fe9b31-28fb-4582-8cf1-460786ebac42",
+      "session": "batch-37",
+      "profile": "{\"documentSize\":816.8261277474842,\"parseTime\":8.234946679926855,\"throughput\":405.24022525875137,\"complexity\":\"senior\",\"tableCols\":36,\"memory\":11.448504102279545,\"cryptoSeal\":\"ebaf31dc-a948-4f90-82ce-e6b7f77d4431\",\"gfmScore\":66.50195264038344,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009516,
+      "member": "batch-user-7",
+      "document": "batch-doc-37"
+    },
+    {
+      "id": "b878dab6-7dd3-4c19-8a75-4aa26947a82d",
+      "session": "batch-36",
+      "profile": "{\"documentSize\":3058.6346396465915,\"parseTime\":2.9151061856660663,\"throughput\":879.1471810584588,\"complexity\":\"expert\",\"tableCols\":3,\"memory\":22.63837409418077,\"cryptoSeal\":\"ec50d659-ab73-484f-ac35-1aec80e10836\",\"gfmScore\":59.61857787759527,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009515,
+      "member": "batch-user-6",
+      "document": "batch-doc-36"
+    },
+    {
+      "id": "c0ca85be-598e-41d2-ba55-069037a3b9f1",
+      "session": "batch-35",
+      "profile": "{\"documentSize\":6141.194067083618,\"parseTime\":4.470317620760651,\"throughput\":867.7912699027206,\"complexity\":\"expert\",\"tableCols\":32,\"memory\":79.38715465040093,\"cryptoSeal\":\"4acff77b-8c0a-4aca-9654-e220a7d0cb8e\",\"gfmScore\":89.04547342891897,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009515,
+      "member": "batch-user-5",
+      "document": "batch-doc-35"
+    },
+    {
+      "id": "1963760f-579c-4883-bf7d-5405a0342899",
+      "session": "batch-34",
+      "profile": "{\"documentSize\":3078.737758716138,\"parseTime\":7.09657680607247,\"throughput\":53.06783981876906,\"complexity\":\"lead\",\"tableCols\":26,\"memory\":64.55428210005236,\"cryptoSeal\":\"1961b047-c3fa-463d-b7e3-b2af6b77f22e\",\"gfmScore\":88.99950045934989,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009515,
+      "member": "batch-user-4",
+      "document": "batch-doc-34"
+    },
+    {
+      "id": "9d980f76-2ab9-4561-8758-7b6c1aa741e1",
+      "session": "batch-33",
+      "profile": "{\"documentSize\":5455.85730106957,\"parseTime\":6.0717894922061655,\"throughput\":884.1897549449604,\"complexity\":\"expert\",\"tableCols\":34,\"memory\":97.85858515872413,\"cryptoSeal\":\"222facb3-be3a-454c-8733-86ac1ae6df7f\",\"gfmScore\":46.30265112143497,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009514,
+      "member": "batch-user-3",
+      "document": "batch-doc-33"
+    },
+    {
+      "id": "1e65eb6b-8456-4e5c-9dfa-f1cb90663b77",
+      "session": "batch-32",
+      "profile": "{\"documentSize\":8034.949856979078,\"parseTime\":6.686209946516995,\"throughput\":335.36615021055803,\"complexity\":\"expert\",\"tableCols\":20,\"memory\":73.04797423751677,\"cryptoSeal\":\"35ee65d6-64dd-41a1-8891-c9d2daaf5655\",\"gfmScore\":57.047061778514106,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009513,
+      "member": "batch-user-2",
+      "document": "batch-doc-32"
+    },
+    {
+      "id": "763fa8a9-bfa2-408c-a98f-86a433679165",
+      "session": "batch-31",
+      "profile": "{\"documentSize\":5065.373664107484,\"parseTime\":9.132183870196153,\"throughput\":769.881823841977,\"complexity\":\"expert\",\"tableCols\":21,\"memory\":11.30044349000875,\"cryptoSeal\":\"704ad3e1-bd95-4811-b43c-4ed4afe5e858\",\"gfmScore\":7.195388502009892,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009513,
+      "member": "batch-user-1",
+      "document": "batch-doc-31"
+    },
+    {
+      "id": "bfb25ecc-a4da-414c-9e7d-df0c4d6a6cc7",
+      "session": "batch-30",
+      "profile": "{\"documentSize\":2055.6449506516296,\"parseTime\":9.302917935202133,\"throughput\":632.1478307881199,\"complexity\":\"expert\",\"tableCols\":41,\"memory\":14.494828720070185,\"cryptoSeal\":\"e4faf859-1a52-44dd-a338-812238df67b9\",\"gfmScore\":98.06888830962588,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009512,
+      "member": "batch-user-0",
+      "document": "batch-doc-30"
+    },
+    {
+      "id": "9af387c8-92dc-49b8-821f-cbe00bebde4c",
+      "session": "batch-29",
+      "profile": "{\"documentSize\":8927.508056635992,\"parseTime\":3.398387995966842,\"throughput\":837.6629697942551,\"complexity\":\"expert\",\"tableCols\":41,\"memory\":13.152505871192144,\"cryptoSeal\":\"306eac7f-a592-4883-9ad0-94a2599ee825\",\"gfmScore\":42.27707644454475,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009512,
+      "member": "batch-user-9",
+      "document": "batch-doc-29"
+    },
+    {
+      "id": "2e1be585-2cd2-46f7-b7a5-228d65ee3d6f",
+      "session": "batch-28",
+      "profile": "{\"documentSize\":4313.220029231538,\"parseTime\":1.6329390450521553,\"throughput\":434.17844830193155,\"complexity\":\"expert\",\"tableCols\":16,\"memory\":29.426232166706377,\"cryptoSeal\":\"900f33bf-01c8-4d27-928d-d1f7c7531fd4\",\"gfmScore\":48.9594482327675,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009512,
+      "member": "batch-user-8",
+      "document": "batch-doc-28"
+    },
+    {
+      "id": "97dc3e83-c0e0-4084-9338-1c5646f42f9b",
+      "session": "batch-27",
+      "profile": "{\"documentSize\":4360.273975061832,\"parseTime\":6.143222001374439,\"throughput\":34.92983521550808,\"complexity\":\"lead\",\"tableCols\":47,\"memory\":67.42351725606841,\"cryptoSeal\":\"ab59cbaf-73d3-41a5-b003-5fcdb538acc4\",\"gfmScore\":55.45378572318229,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009511,
+      "member": "batch-user-7",
+      "document": "batch-doc-27"
+    },
+    {
+      "id": "096e8e55-fd50-43dd-afdf-69c0013f119b",
+      "session": "batch-26",
+      "profile": "{\"documentSize\":8184.58849347354,\"parseTime\":9.996453928593484,\"throughput\":715.425626121416,\"complexity\":\"expert\",\"tableCols\":17,\"memory\":72.66779484370277,\"cryptoSeal\":\"c224a8bd-c884-44cb-96c5-0be3d2632ca2\",\"gfmScore\":64.00765553711601,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009510,
+      "member": "batch-user-6",
+      "document": "batch-doc-26"
+    },
+    {
+      "id": "1116934f-8a1d-4a18-bc7f-f389d75a043b",
+      "session": "batch-25",
+      "profile": "{\"documentSize\":3478.6177793804018,\"parseTime\":6.253132982520402,\"throughput\":434.3664160096854,\"complexity\":\"senior\",\"tableCols\":22,\"memory\":36.80293127172878,\"cryptoSeal\":\"36b0c3f8-e84b-46b9-bf7a-e206b084fb42\",\"gfmScore\":81.51148568415265,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009509,
+      "member": "batch-user-5",
+      "document": "batch-doc-25"
+    },
+    {
+      "id": "a288d35f-a88d-4e68-860a-abb29b3be6d1",
+      "session": "batch-24",
+      "profile": "{\"documentSize\":1625.9344013035682,\"parseTime\":0.24050584160574928,\"throughput\":6.505073321560029,\"complexity\":\"lead\",\"tableCols\":27,\"memory\":96.51477840698062,\"cryptoSeal\":\"eafcb6f8-98e4-4746-80b5-8230cb384e56\",\"gfmScore\":89.71066125650526,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009508,
+      "member": "batch-user-4",
+      "document": "batch-doc-24"
+    },
+    {
+      "id": "6cb40804-3da7-47ad-868c-b5da40d7ce15",
+      "session": "batch-23",
+      "profile": "{\"documentSize\":3821.900641655531,\"parseTime\":4.104083415246148,\"throughput\":162.16736478748805,\"complexity\":\"lead\",\"tableCols\":29,\"memory\":43.17399606378033,\"cryptoSeal\":\"9b97c407-7aeb-4a68-a6ef-0aa48e8fb7fa\",\"gfmScore\":87.68199388592606,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009508,
+      "member": "batch-user-3",
+      "document": "batch-doc-23"
+    },
+    {
+      "id": "8407ea9b-7f21-4212-8be1-9f7c7d9c0da4",
+      "session": "batch-22",
+      "profile": "{\"documentSize\":6365.397381803316,\"parseTime\":7.642771595179514,\"throughput\":276.08796317694294,\"complexity\":\"lead\",\"tableCols\":2,\"memory\":97.67113177097463,\"cryptoSeal\":\"47975ec9-1134-4ee5-8cfa-839d249e4419\",\"gfmScore\":23.134848294864817,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009507,
+      "member": "batch-user-2",
+      "document": "batch-doc-22"
+    },
+    {
+      "id": "346380b0-8acc-498d-b150-793a82c057d2",
+      "session": "batch-21",
+      "profile": "{\"documentSize\":9234.959882632565,\"parseTime\":5.397369868810481,\"throughput\":688.8336415643645,\"complexity\":\"lead\",\"tableCols\":17,\"memory\":60.011723126817415,\"cryptoSeal\":\"a1af0395-7313-4189-aae4-a5a0f6b90156\",\"gfmScore\":56.814760699889725,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009506,
+      "member": "batch-user-1",
+      "document": "batch-doc-21"
+    },
+    {
+      "id": "07b377cf-7179-47b3-b6c0-8f500c68e25a",
+      "session": "batch-20",
+      "profile": "{\"documentSize\":3829.8740192992286,\"parseTime\":2.8555635616825246,\"throughput\":819.5113472536423,\"complexity\":\"expert\",\"tableCols\":35,\"memory\":24.839332986895922,\"cryptoSeal\":\"106639b3-fd5f-4d3e-affe-611b0de80065\",\"gfmScore\":40.29532647383017,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009505,
+      "member": "batch-user-0",
+      "document": "batch-doc-20"
+    },
+    {
+      "id": "3913bfc7-6979-4989-97b4-9781622272d7",
+      "session": "batch-19",
+      "profile": "{\"documentSize\":5178.75184220666,\"parseTime\":8.989429361099525,\"throughput\":346.5888380134235,\"complexity\":\"senior\",\"tableCols\":11,\"memory\":40.57634313983938,\"cryptoSeal\":\"dee9d00a-a5a7-4c53-80ae-d19381866277\",\"gfmScore\":41.954227769429195,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009505,
+      "member": "batch-user-9",
+      "document": "batch-doc-19"
+    },
+    {
+      "id": "3bb4740f-eef3-4207-8481-7fa24ccfa6b5",
+      "session": "batch-18",
+      "profile": "{\"documentSize\":9080.13530944473,\"parseTime\":8.822456891195987,\"throughput\":408.9788183718222,\"complexity\":\"expert\",\"tableCols\":19,\"memory\":34.472255774844676,\"cryptoSeal\":\"b6273d64-e63a-4b3b-998a-c3f50ec160e8\",\"gfmScore\":76.58258491962653,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009504,
+      "member": "batch-user-8",
+      "document": "batch-doc-18"
+    },
+    {
+      "id": "fb992a88-4bf7-4279-806f-45c7c1e747b8",
+      "session": "batch-17",
+      "profile": "{\"documentSize\":3593.281091562751,\"parseTime\":5.8237925085839635,\"throughput\":884.0949241722077,\"complexity\":\"senior\",\"tableCols\":45,\"memory\":19.26636414886075,\"cryptoSeal\":\"026a3acd-2ed0-4dde-a16c-c900ab97b813\",\"gfmScore\":87.0186847758224,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009504,
+      "member": "batch-user-7",
+      "document": "batch-doc-17"
+    },
+    {
+      "id": "3b8c0294-0b30-4f39-b5d0-70af7f77faa9",
+      "session": "batch-16",
+      "profile": "{\"documentSize\":8552.552760286178,\"parseTime\":7.8219996920843435,\"throughput\":187.8860953457805,\"complexity\":\"senior\",\"tableCols\":5,\"memory\":92.52334385678516,\"cryptoSeal\":\"1d955639-4ae9-467d-afc3-9160cd2a3481\",\"gfmScore\":67.05869329523506,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009504,
+      "member": "batch-user-6",
+      "document": "batch-doc-16"
+    },
+    {
+      "id": "caefca70-dda8-475d-8d3c-5771fbf3c74d",
+      "session": "batch-15",
+      "profile": "{\"documentSize\":8241.302027477248,\"parseTime\":9.215934790755382,\"throughput\":872.7050338974761,\"complexity\":\"lead\",\"tableCols\":45,\"memory\":42.23498023968315,\"cryptoSeal\":\"2143271c-ac7b-4647-8566-fe4c9ca0100e\",\"gfmScore\":32.205984006109304,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009504,
+      "member": "batch-user-5",
+      "document": "batch-doc-15"
+    },
+    {
+      "id": "d4c46370-6090-4331-bdb8-03dfb0bb617a",
+      "session": "batch-14",
+      "profile": "{\"documentSize\":1628.8698701794046,\"parseTime\":5.800701279495887,\"throughput\":932.1103427091579,\"complexity\":\"senior\",\"tableCols\":13,\"memory\":38.021050530613586,\"cryptoSeal\":\"369ac07a-e65f-4e5f-ac14-c622f8437bb7\",\"gfmScore\":34.05741983861007,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009504,
+      "member": "batch-user-4",
+      "document": "batch-doc-14"
+    },
+    {
+      "id": "09270cfc-9767-4216-bba9-086edbcbd15a",
+      "session": "batch-13",
+      "profile": "{\"documentSize\":6059.2928362218,\"parseTime\":2.8996669557824193,\"throughput\":888.8777681877694,\"complexity\":\"senior\",\"tableCols\":45,\"memory\":10.177938585959833,\"cryptoSeal\":\"c7350871-bdbf-45b1-9d5e-9de44157d964\",\"gfmScore\":63.76631033824706,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009503,
+      "member": "batch-user-3",
+      "document": "batch-doc-13"
+    },
+    {
+      "id": "f2601774-f9f1-4da6-aa5d-b9277843f8a8",
+      "session": "batch-12",
+      "profile": "{\"documentSize\":1785.012753786902,\"parseTime\":3.8499178794876734,\"throughput\":432.90146011429266,\"complexity\":\"expert\",\"tableCols\":46,\"memory\":76.76405394794574,\"cryptoSeal\":\"a9318bba-d04e-4085-b742-ee89c9f6ad50\",\"gfmScore\":80.9365696338813,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009503,
+      "member": "batch-user-2",
+      "document": "batch-doc-12"
+    },
+    {
+      "id": "f2f4fe59-9640-40f8-9aa2-24bd10160dfd",
+      "session": "batch-11",
+      "profile": "{\"documentSize\":5847.440524934814,\"parseTime\":5.6631605587135025,\"throughput\":595.0693047692539,\"complexity\":\"senior\",\"tableCols\":28,\"memory\":63.45296941943373,\"cryptoSeal\":\"dd9bb437-6327-4f25-b4d8-d45044a0e706\",\"gfmScore\":93.58019957038121,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009503,
+      "member": "batch-user-1",
+      "document": "batch-doc-11"
+    },
+    {
+      "id": "96297457-bc32-4842-bb2c-8b80d3f3ccdd",
+      "session": "batch-10",
+      "profile": "{\"documentSize\":7346.75078362177,\"parseTime\":0.419275349938788,\"throughput\":66.11070835428568,\"complexity\":\"senior\",\"tableCols\":37,\"memory\":56.20888140057447,\"cryptoSeal\":\"00f676df-2d3f-4f1f-90ea-379453070a28\",\"gfmScore\":60.77021025224183,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009502,
+      "member": "batch-user-0",
+      "document": "batch-doc-10"
+    },
+    {
+      "id": "18a7f464-89c9-4198-97c8-90b28bcc9666",
+      "session": "batch-9",
+      "profile": "{\"documentSize\":6808.332223434105,\"parseTime\":4.691569807569738,\"throughput\":833.0659971591957,\"complexity\":\"lead\",\"tableCols\":26,\"memory\":82.93256632389654,\"cryptoSeal\":\"fcb05cbb-cc2c-4cef-820e-cdf051284cc6\",\"gfmScore\":48.502977652879984,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009502,
+      "member": "batch-user-9",
+      "document": "batch-doc-9"
+    },
+    {
+      "id": "a0e0a50b-a002-41a4-ab69-3cf51617494b",
+      "session": "batch-8",
+      "profile": "{\"documentSize\":4445.319513767418,\"parseTime\":4.110337529842268,\"throughput\":304.05329925231507,\"complexity\":\"expert\",\"tableCols\":30,\"memory\":28.986900945866132,\"cryptoSeal\":\"5a934e7a-c23d-4e06-a5f5-d21c659776a6\",\"gfmScore\":47.78745456228785,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009502,
+      "member": "batch-user-8",
+      "document": "batch-doc-8"
+    },
+    {
+      "id": "eb795a12-35c7-4a0e-90d3-3f9ee73dd2ee",
+      "session": "batch-7",
+      "profile": "{\"documentSize\":748.6031157823226,\"parseTime\":1.9364099821491099,\"throughput\":176.0713691678727,\"complexity\":\"senior\",\"tableCols\":21,\"memory\":32.32595783977021,\"cryptoSeal\":\"47c99367-d4bd-4672-a771-12500784fdfd\",\"gfmScore\":88.23152609930473,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009501,
+      "member": "batch-user-7",
+      "document": "batch-doc-7"
+    },
+    {
+      "id": "ccbfb3f4-3592-443b-b019-d69c4f549cc7",
+      "session": "batch-6",
+      "profile": "{\"documentSize\":2585.988098610128,\"parseTime\":3.0392672356014785,\"throughput\":15.690034303170286,\"complexity\":\"expert\",\"tableCols\":13,\"memory\":83.31431183214303,\"cryptoSeal\":\"3f4f7521-1322-4d3a-a2f3-1e18887c27f6\",\"gfmScore\":82.28307897001665,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009501,
+      "member": "batch-user-6",
+      "document": "batch-doc-6"
+    },
+    {
+      "id": "b4263069-4abb-47f1-9465-160b58558215",
+      "session": "batch-5",
+      "profile": "{\"documentSize\":7847.255418970791,\"parseTime\":4.068325897104717,\"throughput\":541.3227338087383,\"complexity\":\"expert\",\"tableCols\":19,\"memory\":52.32745830733256,\"cryptoSeal\":\"906733a1-3ab7-445f-84df-bbc589f79789\",\"gfmScore\":41.8505732993995,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009501,
+      "member": "batch-user-5",
+      "document": "batch-doc-5"
+    },
+    {
+      "id": "7f7a6658-4388-41a4-af80-4e56c4920e4d",
+      "session": "batch-4",
+      "profile": "{\"documentSize\":8156.865404774247,\"parseTime\":6.39992736890663,\"throughput\":954.3702527158681,\"complexity\":\"lead\",\"tableCols\":18,\"memory\":95.44333420593235,\"cryptoSeal\":\"d50cc6c3-07d3-48b5-a3e5-38085ca69509\",\"gfmScore\":56.48038009677895,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009501,
+      "member": "batch-user-4",
+      "document": "batch-doc-4"
+    },
+    {
+      "id": "01ad3567-9a39-4e13-99d0-91de4a8a9b39",
+      "session": "batch-3",
+      "profile": "{\"documentSize\":8822.754958523237,\"parseTime\":6.138494346001114,\"throughput\":13.430478752782582,\"complexity\":\"lead\",\"tableCols\":5,\"memory\":41.11838844962365,\"cryptoSeal\":\"03477265-e8e7-408c-8dbe-b6ea950262a4\",\"gfmScore\":52.6176828512364,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009500,
+      "member": "batch-user-3",
+      "document": "batch-doc-3"
+    },
+    {
+      "id": "13470188-99f6-4dff-9d07-879a870eb886",
+      "session": "batch-2",
+      "profile": "{\"documentSize\":1046.5289381904142,\"parseTime\":3.904564855336219,\"throughput\":939.0518819960141,\"complexity\":\"expert\",\"tableCols\":29,\"memory\":44.91202108792024,\"cryptoSeal\":\"59f5f649-df52-48c0-9568-40fcdb4b4ee0\",\"gfmScore\":23.554480425649093,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009500,
+      "member": "batch-user-2",
+      "document": "batch-doc-2"
+    },
+    {
+      "id": "e167faaa-0601-44ff-9646-9210f917d1bd",
+      "session": "batch-1",
+      "profile": "{\"documentSize\":2697.366165334384,\"parseTime\":6.0869169468481115,\"throughput\":583.7328017174644,\"complexity\":\"expert\",\"tableCols\":38,\"memory\":45.500690205920925,\"cryptoSeal\":\"1ecf5ee1-38ce-4447-afa1-4c978551a158\",\"gfmScore\":28.740566316369986,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009500,
+      "member": "batch-user-1",
+      "document": "batch-doc-1"
+    },
+    {
+      "id": "d90914f9-075b-49ce-b40d-51410446c41f",
+      "session": "batch-0",
+      "profile": "{\"documentSize\":4962.893055232913,\"parseTime\":1.3823247359653967,\"throughput\":339.64565012808004,\"complexity\":\"lead\",\"tableCols\":24,\"memory\":68.62139343913323,\"cryptoSeal\":\"5af1776b-13b5-429a-9098-2864de1f9d18\",\"gfmScore\":11.302751973974212,\"features\":{\"headings\":5,\"tables\":2,\"code\":3}}",
+      "timestamp": 1770486009499,
+      "member": "batch-user-0",
+      "document": "batch-doc-0"
+    }
+  ],
+  "sessions": {
+    "sql": "SELECT * FROM sessions ORDER BY last_activity DESC LIMIT 50",
+    "isFinalized": false,
+    "paramsCount": 0,
+    "columnNames": [
+      "id",
+      "member",
+      "created_at",
+      "last_activity",
+      "profile_count"
+    ]
+  },
+  "analytics": {
+    "sql": "SELECT * FROM analytics ORDER BY timestamp DESC LIMIT 100",
+    "isFinalized": false,
+    "paramsCount": 0,
+    "columnNames": [
+      "id",
+      "event_type",
+      "data",
+      "timestamp",
+      "session"
+    ]
+  },
+  "poolStats": {
+    "hits": 2,
+    "misses": 0,
+    "totalOperations": 2,
+    "avgLatency": 0.4818750000004002
+  },
+  "totalProfiles": 100
+}

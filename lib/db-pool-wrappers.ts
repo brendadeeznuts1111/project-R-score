@@ -34,8 +34,16 @@ export class PostgreSQLPool {
   
   private async initializePool() {
     try {
-      const { Pool } = await import('pg');
-      this.pool = new Pool(this.config);
+      // Dynamic import with error handling
+      let pg: any;
+      try {
+        pg = await import('pg');
+      } catch (importError) {
+        console.warn('⚠️ PostgreSQL library not found. Install with: bun add pg');
+        throw new Error('PostgreSQL library not available. Install with: bun add pg');
+      }
+      
+      this.pool = new pg.Pool(this.config);
       
       // Test connection
       const client = await this.pool.connect();
@@ -151,7 +159,15 @@ export class MySQLPool {
   
   private async initializePool() {
     try {
-      const mysql = await import('mysql2/promise');
+      // Dynamic import with error handling
+      let mysql: any;
+      try {
+        mysql = await import('mysql2/promise');
+      } catch (importError) {
+        console.warn('⚠️ MySQL2 library not found. Install with: bun add mysql2');
+        throw new Error('MySQL2 library not available. Install with: bun add mysql2');
+      }
+      
       this.pool = mysql.createPool(this.config);
       
       // Test connection

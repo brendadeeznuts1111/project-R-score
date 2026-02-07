@@ -15,9 +15,9 @@ import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 // v3.20: bun:sqlite Pool + R2 Sync!
-const DB_PATH = Bun.env.DB_PATH || './telemetry.db';
-const POOL_SIZE = parseInt(Bun.env.POOL_SIZE || '20');
-const R2_URL = Bun.env.R2_URL || 'https://r2.example.com';
+const DB_PATH = process.env.DB_PATH || './telemetry.db';
+const POOL_SIZE = parseInt(process.env.POOL_SIZE || '20');
+const R2_URL = process.env.R2_URL || 'https://r2.example.com';
 
 interface LeadSpecProfile {
   documentSize: number;
@@ -116,24 +116,16 @@ class TelemetryPool {
       const profileId = crypto.randomUUID();
       const timestamp = Date.now();
       
-      await db.runAsync(
+      // Use synchronous run method (Bun SQLite is fast enough)
+      db.run(
         'INSERT OR REPLACE INTO profiles VALUES (?, ?, ?, ?, ?, ?)', 
-        profileId, 
-        sessionId, 
-        JSON.stringify(profile), 
-        timestamp,
-        member,
-        document
+        [profileId, sessionId, JSON.stringify(profile), timestamp, member, document]
       );
       
       // Update session stats
-      await db.runAsync(
+      db.run(
         'INSERT OR REPLACE INTO sessions (id, member, created_at, last_activity, profile_count) VALUES (?, ?, ?, ?, COALESCE((SELECT profile_count FROM sessions WHERE id = ?), 0) + 1)',
-        sessionId,
-        member,
-        timestamp,
-        timestamp,
-        sessionId
+        [sessionId, member, timestamp, timestamp, sessionId]
       );
       
       const latency = performance.now() - startTime;
@@ -160,7 +152,9 @@ class TelemetryPool {
         query += ' ORDER BY timestamp DESC LIMIT 100';
       }
       
-      const results = await db.queryAsync<any[]>(query, params);
+      // Use prepare and all for better results
+      const stmt = db.prepare(query);
+      const results = params.length > 0 ? stmt.all(...params) : stmt.all();
       
       const latency = performance.now() - startTime;
       this.updateStats(latency, db !== this.db);
@@ -189,14 +183,10 @@ class TelemetryPool {
           const profileId = crypto.randomUUID();
           const timestamp = Date.now();
           
-          await db.runAsync(
+          // Use synchronous run method
+          db.run(
             'INSERT OR REPLACE INTO profiles VALUES (?, ?, ?, ?, ?, ?)', 
-            profileId, 
-            sessionId, 
-            JSON.stringify(profile), 
-            timestamp,
-            member,
-            document
+            [profileId, sessionId, JSON.stringify(profile), timestamp, member, document]
           );
           
           results.push(profileId);
@@ -220,8 +210,9 @@ class TelemetryPool {
     
     try {
       const allProfiles = await this.querySessions('*');
-      const allSessions = await this.db.queryAsync<any[]>('SELECT * FROM sessions ORDER BY last_activity DESC LIMIT 50');
-      const allAnalytics = await this.db.queryAsync<any[]>('SELECT * FROM analytics ORDER BY timestamp DESC LIMIT 100');
+      // Use synchronous query for sessions
+      const allSessions = this.db.query('SELECT * FROM sessions ORDER BY last_activity DESC LIMIT 50');
+      const allAnalytics = this.db.query('SELECT * FROM analytics ORDER BY timestamp DESC LIMIT 100');
       
       const syncData = {
         timestamp: new Date().toISOString(),
@@ -242,7 +233,7 @@ class TelemetryPool {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${Bun.env.R2_TOKEN || ''}`
+            'Authorization': `Bearer ${process.env.R2_TOKEN || ''}`
           },
           body: JSON.stringify(syncData)
         });
@@ -302,9 +293,23 @@ export async function juniorProfilePooled(mdFile: string, pool: TelemetryPool, m
   
   try {
     const profile = await juniorProfile(mdFile);
-    const sessionId = new Bun.CryptoHasher('sha256').update(Date.now().toString() + mdFile).digest('hex').slice(0, 8);
+    const sessionId = (globalThis as any).Bun.CryptoHasher('sha256').update(Date.now().toString() + mdFile).digest('hex').slice(0,8);
     
-    await pool.insertProfile(sessionId, profile, member, mdFile);
+    // Cast the profile to our interface to handle type differences
+    const profileData = profile as any;
+    const typedProfile: LeadSpecProfile = {
+      documentSize: profileData.documentSize || 0,
+      parseTime: profileData.parseTime || 0,
+      throughput: profileData.throughput || 0,
+      complexity: profileData.complexity || 'unknown',
+      tableCols: profileData.tableCols || 0,
+      memory: profileData.memory || 0,
+      cryptoSeal: profileData.cryptoSeal || '',
+      gfmScore: profileData.gfmScore || 0,
+      features: profileData.features || {}
+    };
+    
+    await pool.insertProfile(sessionId, typedProfile, member, mdFile);
     await pool.syncToR2();
     
     console.log(`✅ Pooled profile saved: ${sessionId}`);
