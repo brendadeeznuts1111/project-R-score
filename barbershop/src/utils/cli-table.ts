@@ -43,13 +43,14 @@ const ANSI = {
 
 export type StatusType = 'online' | 'away' | 'busy' | 'offline' | 'ok' | 'warning' | 'error' | 'info' | 'pending';
 
-export interface TableColumn {
-  key: string;
+export interface TableColumn<T = TableRow> {
+  key: keyof T | string;
   header: string;
   width?: number;
   align?: 'left' | 'center' | 'right';
   wrap?: boolean;
   color?: (value: unknown) => string;
+  formatter?: (value: unknown, row?: T) => string;
 }
 
 export interface TableRow {
@@ -393,8 +394,58 @@ export function generateTable(options: TableOptions): string {
 /**
  * Print table to console
  */
-export function printTable(options: TableOptions): void {
-  console.log(generateTable(options));
+export function printTable(options: TableOptions): void;
+export function printTable<T>(
+  data: T[],
+  columns: Array<{
+    key: keyof T | string;
+    header: string;
+    width?: number;
+    align?: 'left' | 'center' | 'right';
+    formatter?: (value: unknown, row?: T) => string;
+  }>,
+  options?: Omit<TableOptions, 'columns' | 'rows'>
+): void;
+export function printTable<T>(
+  optionsOrData: TableOptions | T[],
+  columnsOrUndefined?: Array<{
+    key: keyof T | string;
+    header: string;
+    width?: number;
+    align?: 'left' | 'center' | 'right';
+    formatter?: (value: unknown, row?: T) => string;
+  }>,
+  options?: Omit<TableOptions, 'columns' | 'rows'>
+): void {
+  // Check if first argument is the options object
+  if (!Array.isArray(optionsOrData) && 'columns' in optionsOrData && 'rows' in optionsOrData) {
+    console.log(generateTable(optionsOrData as TableOptions));
+    return;
+  }
+
+  // Convert data array format to TableOptions format
+  const data = optionsOrData as T[];
+  const columns = (columnsOrUndefined || []).map(col => ({
+    key: col.key as string,
+    header: col.header,
+    width: col.width,
+    align: col.align,
+    color: col.formatter ? (value: unknown, row?: TableRow) => col.formatter!(value, row as T) : undefined,
+  }));
+
+  const rows: TableRow[] = data.map(item => {
+    const row: TableRow = {};
+    columns.forEach(col => {
+      row[col.key] = (item as Record<string, unknown>)[col.key as string];
+    });
+    return row;
+  });
+
+  console.log(generateTable({
+    columns,
+    rows,
+    ...options,
+  }));
 }
 
 /**

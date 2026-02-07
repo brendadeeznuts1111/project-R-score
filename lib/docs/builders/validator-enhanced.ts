@@ -6,7 +6,7 @@ import {
   DocumentationDomain,
   DocumentationURLType,
   DocumentationUserType,
-  ENTERPRISE_DOCUMENTATION_BASE_URLS
+  ENTERPRISE_DOCUMENTATION_BASE_URLS,
 } from '../constants/domains';
 
 export interface DocumentationMetadata {
@@ -67,7 +67,7 @@ export class EnterpriseDocumentationURLValidator {
     'developer.mozilla.org',
     'nodejs.org',
     'web.dev',
-    'github.com'
+    'github.com',
   ];
 
   // Default validation options with security-first approach
@@ -79,7 +79,7 @@ export class EnterpriseDocumentationURLValidator {
     allowQueryParams: true,
     maxLength: 2048,
     securityChecks: true,
-    validateExternals: false
+    validateExternals: false,
   };
 
   /**
@@ -95,13 +95,15 @@ export class EnterpriseDocumentationURLValidator {
 
       // Valid subdomain (e.g., docs.bun.sh for bun.sh)
       if (lower.endsWith(`.${domain}`)) {
-        const subdomain = hostname.slice(0, -(`.${domain}`.length));
+        const subdomain = hostname.slice(0, -`.${domain}`.length);
         // Ensure subdomain is not empty and doesn't contain suspicious patterns
-        return subdomain.length > 0 &&
-               !subdomain.includes('..') &&
-               !/[^a-zA-Z0-9.-]/.test(subdomain) &&
-               !subdomain.startsWith('.') &&
-               !subdomain.endsWith('.');
+        return (
+          subdomain.length > 0 &&
+          !subdomain.includes('..') &&
+          !/[^a-zA-Z0-9.-]/.test(subdomain) &&
+          !subdomain.startsWith('.') &&
+          !subdomain.endsWith('.')
+        );
       }
 
       return false;
@@ -111,10 +113,7 @@ export class EnterpriseDocumentationURLValidator {
   /**
    * Comprehensive URL validation with security checks
    */
-  public static validateURL(
-    url: string,
-    options?: Partial<ValidationOptions>
-  ): ValidationResult {
+  public static validateURL(url: string, options?: Partial<ValidationOptions>): ValidationResult {
     const opts = { ...this.DEFAULT_OPTIONS, ...options };
     const errors: string[] = [];
     const warnings: string[] = [];
@@ -125,12 +124,14 @@ export class EnterpriseDocumentationURLValidator {
       const metadata: DocumentationMetadata = {
         isValid: false,
         urlType: 'unknown',
-        lastValidated: new Date()
+        lastValidated: new Date(),
       };
 
       // Protocol validation
       if (opts.allowedProtocols && !opts.allowedProtocols.includes(parsed.protocol)) {
-        errors.push(`Invalid protocol: ${parsed.protocol}. Allowed: ${opts.allowedProtocols.join(', ')}`);
+        errors.push(
+          `Invalid protocol: ${parsed.protocol}. Allowed: ${opts.allowedProtocols.join(', ')}`
+        );
       }
 
       // HTTPS requirement
@@ -175,11 +176,19 @@ export class EnterpriseDocumentationURLValidator {
       Object.assign(metadata, extractedMetadata);
 
       // Provider/category validation
-      if (opts.allowedProviders && metadata.provider && !opts.allowedProviders.includes(metadata.provider)) {
+      if (
+        opts.allowedProviders &&
+        metadata.provider &&
+        !opts.allowedProviders.includes(metadata.provider)
+      ) {
         errors.push(`Provider not allowed: ${metadata.provider}`);
       }
 
-      if (opts.allowedCategories && metadata.category && !opts.allowedCategories.includes(metadata.category)) {
+      if (
+        opts.allowedCategories &&
+        metadata.category &&
+        !opts.allowedCategories.includes(metadata.category)
+      ) {
         errors.push(`Category not allowed: ${metadata.category}`);
       }
 
@@ -191,15 +200,14 @@ export class EnterpriseDocumentationURLValidator {
         metadata,
         errors,
         warnings,
-        suggestions: suggestions.length > 0 ? suggestions : undefined
+        suggestions: suggestions.length > 0 ? suggestions : undefined,
       };
-
     } catch (error) {
       // Enhanced error logging
       console.error('URL validation error:', {
         url,
         error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       return {
@@ -207,10 +215,10 @@ export class EnterpriseDocumentationURLValidator {
         metadata: {
           isValid: false,
           urlType: 'unknown',
-          lastValidated: new Date()
+          lastValidated: new Date(),
         },
         errors: ['Invalid URL format'],
-        warnings: []
+        warnings: [],
       };
     }
   }
@@ -228,7 +236,7 @@ export class EnterpriseDocumentationURLValidator {
         type: 'hostname',
         severity: 'critical',
         description: 'Hostname contains path traversal pattern',
-        recommendation: 'Use a valid hostname without path traversal'
+        recommendation: 'Use a valid hostname without path traversal',
       });
       score -= 5;
     }
@@ -238,7 +246,7 @@ export class EnterpriseDocumentationURLValidator {
         type: 'hostname',
         severity: 'high',
         description: 'Hostname contains invalid characters',
-        recommendation: 'Use only alphanumeric characters, dots, and hyphens'
+        recommendation: 'Use only alphanumeric characters, dots, and hyphens',
       });
       score -= 3;
     }
@@ -248,7 +256,7 @@ export class EnterpriseDocumentationURLValidator {
         type: 'hostname',
         severity: 'medium',
         description: 'Hostname exceeds maximum length',
-        recommendation: 'Use a shorter hostname'
+        recommendation: 'Use a shorter hostname',
       });
       score -= 2;
     }
@@ -256,7 +264,7 @@ export class EnterpriseDocumentationURLValidator {
     return {
       isSecure: risks.filter(r => r.severity === 'critical' || r.severity === 'high').length === 0,
       risks,
-      score: Math.max(0, score)
+      score: Math.max(0, score),
     };
   }
 
@@ -342,15 +350,14 @@ export class EnterpriseDocumentationURLValidator {
         queryParams,
         isValid: true,
         urlType,
-        lastValidated: new Date()
+        lastValidated: new Date(),
       };
-
     } catch (error) {
       console.error('Metadata extraction error:', error);
       return {
         isValid: false,
         urlType: 'unknown',
-        lastValidated: new Date()
+        lastValidated: new Date(),
       };
     }
   }
@@ -363,7 +370,12 @@ export class EnterpriseDocumentationURLValidator {
       const parsed = new URL(url);
 
       // Ensure HTTPS for documentation URLs
-      if (parsed.protocol === 'http:' && this.KNOWN_DOMAINS.some(domain => parsed.hostname === domain || parsed.hostname?.endsWith('.' + domain))) {
+      if (
+        parsed.protocol === 'http:' &&
+        this.KNOWN_DOMAINS.some(
+          domain => parsed.hostname === domain || parsed.hostname?.endsWith('.' + domain)
+        )
+      ) {
         parsed.protocol = 'https:';
       }
 
@@ -380,16 +392,17 @@ export class EnterpriseDocumentationURLValidator {
       // Sort query parameters for consistency
       const params = new URLSearchParams(parsed.search);
       const sortedParams = new URLSearchParams();
-      Array.from(params.keys()).sort().forEach(key => {
-        const value = params.get(key);
-        if (value !== null) {
-          sortedParams.set(key, value);
-        }
-      });
+      Array.from(params.keys())
+        .sort()
+        .forEach(key => {
+          const value = params.get(key);
+          if (value !== null) {
+            sortedParams.set(key, value);
+          }
+        });
       parsed.search = sortedParams.toString();
 
       return parsed.toString();
-
     } catch (error) {
       console.error('URL normalization error:', error);
       return url; // Return original URL if normalization fails
@@ -437,5 +450,5 @@ export type {
   DocumentationMetadata,
   ValidationOptions,
   ValidationResult,
-  SecurityValidationResult
+  SecurityValidationResult,
 };

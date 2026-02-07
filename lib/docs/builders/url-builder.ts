@@ -13,17 +13,14 @@ import {
   DOCUMENTATION_URL_MAPPINGS,
   DOMAIN_PREFERENCES,
   PROVIDER_METADATA,
-  QUICK_REFERENCE_URLS
+  QUICK_REFERENCE_URLS,
 } from '../constants/domains';
-import {
-  ENTERPRISE_DOCUMENTATION_PATHS,
-  IntelligentRouting
-} from '../constants/categories';
+import { ENTERPRISE_DOCUMENTATION_PATHS, IntelligentRouting } from '../constants/categories';
 import {
   ENTERPRISE_URL_FRAGMENTS,
   TEXT_FRAGMENT_SPEC,
   FRAGMENT_BUILDERS,
-  FRAGMENT_VALIDATION
+  FRAGMENT_VALIDATION,
 } from '../constants/fragments';
 import { URLHandler, URLFragmentUtils } from '../../core/url-handler';
 
@@ -101,7 +98,7 @@ export class EnterpriseDocumentationURLBuilder {
         path,
         fragment,
         userType,
-        preferences
+        preferences,
       };
     }
 
@@ -112,7 +109,7 @@ export class EnterpriseDocumentationURLBuilder {
       fragment: frag,
       queryParams,
       userType: ut = 'all_users',
-      preferences: prefs = {}
+      preferences: prefs = {},
     } = options;
 
     // Get base URL configuration
@@ -125,7 +122,7 @@ export class EnterpriseDocumentationURLBuilder {
     // Add query parameters
     const finalURL = this.addQueryParams(fullPath, {
       ...queryParams,
-      ...this.buildTrackingParams(prefs)
+      ...this.buildTrackingParams(prefs),
     });
 
     // Add fragment
@@ -190,10 +187,7 @@ export class EnterpriseDocumentationURLBuilder {
   /**
    * Add query parameters to URL
    */
-  private addQueryParams(
-    url: string,
-    params: Record<string, string | number | boolean>
-  ): string {
+  private addQueryParams(url: string, params: Record<string, string | number | boolean>): string {
     const urlObj = new URL(url);
 
     Object.entries(params).forEach(([key, value]) => {
@@ -217,7 +211,9 @@ export class EnterpriseDocumentationURLBuilder {
   /**
    * Build tracking parameters
    */
-  private buildTrackingParams(preferences: DocumentationURLOptions['preferences']): Record<string, string> {
+  private buildTrackingParams(
+    preferences: DocumentationURLOptions['preferences']
+  ): Record<string, string> {
     const params: Record<string, string> = {};
 
     if (preferences?.includeTracking) {
@@ -243,7 +239,7 @@ export class EnterpriseDocumentationURLBuilder {
       url,
       provider,
       userType,
-      category
+      category,
     });
 
     // Keep log size manageable
@@ -258,7 +254,9 @@ export class EnterpriseDocumentationURLBuilder {
   public buildTypedArrayURL(options: TypedArrayURLOptions): string {
     // Runtime validation of fragment key
     if (!(options.fragment in ENTERPRISE_URL_FRAGMENTS.TYPED_ARRAY)) {
-      throw new Error(`Invalid typed array fragment: ${options.fragment}. Valid fragments are: ${Object.keys(ENTERPRISE_URL_FRAGMENTS.TYPED_ARRAY).join(', ')}`);
+      throw new Error(
+        `Invalid typed array fragment: ${options.fragment}. Valid fragments are: ${Object.keys(ENTERPRISE_URL_FRAGMENTS.TYPED_ARRAY).join(', ')}`
+      );
     }
 
     return this.buildURL({
@@ -270,8 +268,8 @@ export class EnterpriseDocumentationURLBuilder {
       userType: options.userType,
       preferences: {
         ...options.preferences,
-        includeTracking: true
-      }
+        includeTracking: true,
+      },
     });
   }
 
@@ -288,7 +286,10 @@ export class EnterpriseDocumentationURLBuilder {
     }
 
     // Sanitize endpoint to prevent path traversal
-    const sanitizedEndpoint = options.endpoint.replace(/\.\./g, '').replace(/\/+/g, '/').replace(/^\/+/, '');
+    const sanitizedEndpoint = options.endpoint
+      .replace(/\.\./g, '')
+      .replace(/\/+/g, '/')
+      .replace(/^\/+/, '');
 
     return this.buildURL({
       provider: DocumentationProvider.INTERNAL_WIKI,
@@ -299,15 +300,17 @@ export class EnterpriseDocumentationURLBuilder {
       userType: options.userType,
       preferences: {
         ...options.preferences,
-        includeTracking: true
-      }
+        includeTracking: true,
+      },
     });
   }
 
   /**
    * Build fetch API documentation URL with enhanced fragment support
    */
-  public buildFetchAPIDocsURL(options: Omit<DocumentationURLOptions, 'provider' | 'category' | 'path'> = {}): string {
+  public buildFetchAPIDocsURL(
+    options: Omit<DocumentationURLOptions, 'provider' | 'category' | 'path'> = {}
+  ): string {
     return this.buildURL({
       provider: DocumentationProvider.BUN_OFFICIAL,
       category: DocumentationCategory.RUNTIME_FEATURES,
@@ -317,8 +320,8 @@ export class EnterpriseDocumentationURLBuilder {
       userType: options.userType,
       preferences: {
         ...options.preferences,
-        includeTracking: true
-      }
+        includeTracking: true,
+      },
     });
   }
 
@@ -333,7 +336,7 @@ export class EnterpriseDocumentationURLBuilder {
       const fragmentKey = key as keyof typeof ENTERPRISE_URL_FRAGMENTS.TYPED_ARRAY;
       urls[key.toLowerCase()] = this.buildTypedArrayURL({
         fragment: fragmentKey,
-        preferences: { includeTracking: true }
+        preferences: { includeTracking: true },
       });
     });
 
@@ -356,8 +359,8 @@ export class EnterpriseDocumentationURLBuilder {
       userType: options.userType,
       preferences: {
         ...options.preferences,
-        includeTracking: true
-      }
+        includeTracking: true,
+      },
     });
   }
 
@@ -387,10 +390,7 @@ export class EnterpriseDocumentationURLBuilder {
   /**
    * Build Bun.utils documentation URL
    */
-  public buildUtilsDocumentationURL(
-    utilityFunction?: string,
-    fragment?: string
-  ): string {
+  public buildUtilsDocumentationURL(utilityFunction?: string, fragment?: string): string {
     const baseURLs = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_OFFICIAL];
     let url = new URL('/docs/api/utils', baseURLs.API);
 
@@ -414,17 +414,14 @@ export class EnterpriseDocumentationURLBuilder {
       test: `${base}/docs/cli/test#configuration`,
       build: `${base}/docs/cli/build#options`,
       install: `${base}/docs/cli/install-command#dependencies`,
-      add: `${base}/docs/cli/add#packages`
+      add: `${base}/docs/cli/add#packages`,
     };
   }
 
   /**
    * Build CLI command example
    */
-  public buildCLICommandExample(
-    command: string,
-    options: Record<string, any> = {}
-  ): string {
+  public buildCLICommandExample(command: string, options: Record<string, any> = {}): string {
     let cmd = `bun ${command}`;
 
     // Add positional arguments
@@ -468,19 +465,19 @@ export class EnterpriseDocumentationURLBuilder {
           {
             name: 'run',
             example: 'bun run dev',
-            docs: `${base.CLI}/run`
+            docs: `${base.CLI}/run`,
           },
           {
             name: 'test',
             example: 'bun test --watch',
-            docs: `${base.CLI}/test`
+            docs: `${base.CLI}/test`,
           },
           {
             name: 'build',
             example: 'bun build ./src/index.ts',
-            docs: `${base.CLI}/build`
-          }
-        ]
+            docs: `${base.CLI}/build`,
+          },
+        ],
       },
       utils: {
         main: `${base.API}/utils`,
@@ -488,42 +485,42 @@ export class EnterpriseDocumentationURLBuilder {
           {
             name: 'readFile',
             example: "await readFile('file.txt', 'utf-8')",
-            docs: `${base.API}/utils#readFile`
+            docs: `${base.API}/utils#readFile`,
           },
           {
             name: 'isTypedArray',
             example: 'isTypedArray(new Uint8Array())',
-            docs: `${base.API}/utils#isTypedArray`
+            docs: `${base.API}/utils#isTypedArray`,
           },
           {
             name: 'toBuffer',
             example: 'toBuffer("Hello")',
-            docs: `${base.API}/utils#toBuffer`
-          }
+            docs: `${base.API}/utils#toBuffer`,
+          },
         ],
         validation: [
           {
             name: 'isTypedArray',
             test: 'new Uint8Array([1, 2, 3])',
-            result: 'true'
+            result: 'true',
           },
           {
             name: 'isString',
             test: '"Hello"',
-            result: 'true'
+            result: 'true',
           },
           {
             name: 'isArray',
             test: '[1, 2, 3]',
-            result: 'true'
-          }
-        ]
+            result: 'true',
+          },
+        ],
       },
       api: {
         main: `${base.API}`,
         typedArray: `${base.RUNTIME}/binary-data#typedarray`,
-        fetch: `${base.RUNTIME}/networking/fetch`
-      }
+        fetch: `${base.RUNTIME}/networking/fetch`,
+      },
     };
   }
 
@@ -537,10 +534,7 @@ export class EnterpriseDocumentationURLBuilder {
   /**
    * Build GitHub raw URL
    */
-  public buildGitHubRawURL(
-    ref: string,
-    path: string
-  ): string {
+  public buildGitHubRawURL(ref: string, path: string): string {
     // Sanitize path to prevent path traversal
     const sanitizedPath = path.replace(/\.\./g, '').replace(/\/+/g, '/').replace(/^\/+/, '');
     return `https://raw.githubusercontent.com/oven-sh/bun/${ref}/${sanitizedPath}`;
@@ -563,26 +557,20 @@ export class EnterpriseDocumentationURLBuilder {
   /**
    * Get GitHub package URLs
    */
-  public getGitHubPackageURLs(
-    packageName: string,
-    commitHash?: string
-  ): Record<string, string> {
+  public getGitHubPackageURLs(packageName: string, commitHash?: string): Record<string, string> {
     const hash = commitHash || 'main';
     const basePath = `packages/${packageName}`;
     return {
       tree: this.buildGitHubCommitURL('oven-sh', 'bun', hash, basePath, 'tree'),
       blob: this.buildGitHubCommitURL('oven-sh', 'bun', hash, basePath, 'blob'),
-      raw: this.buildGitHubRawURL(hash, basePath)
+      raw: this.buildGitHubRawURL(hash, basePath),
     };
   }
 
   /**
    * Build Bun types URL
    */
-  public buildBunTypesURL(
-    commitHash?: string,
-    path?: string
-  ): string {
+  public buildBunTypesURL(commitHash?: string, path?: string): string {
     const hash = commitHash || 'main';
     const pth = path || 'packages/bun-types';
     return this.buildGitHubCommitURL('oven-sh', 'bun', hash, pth, 'tree');
@@ -605,7 +593,7 @@ export class EnterpriseDocumentationURLBuilder {
       textStart: options?.textStart || text,
       prefix: options?.prefix,
       suffix: options?.suffix,
-      textEnd: options?.textEnd
+      textEnd: options?.textEnd,
     });
     return `${baseURL}${fragment}`;
   }
@@ -616,7 +604,7 @@ export class EnterpriseDocumentationURLBuilder {
   public getCommonTextFragmentURLs(): Record<string, string> {
     return {
       nodeZlib: this.buildBunReferenceWithTextFragment('node:zlib'),
-      bunAPIReference: this.buildBunReferenceWithTextFragment('Bun API Reference')
+      bunAPIReference: this.buildBunReferenceWithTextFragment('Bun API Reference'),
     };
   }
 
@@ -631,7 +619,7 @@ export class EnterpriseDocumentationURLBuilder {
       githubPackage: baseURLs.GITHUB_PACKAGE,
       latestTypes: baseURLs.LATEST_TYPES_COMMIT(),
       exampleCommit: this.getExampleCommitURL(),
-      typescriptPlayground: baseURLs.TYPESCRIPT_PLAYGROUND
+      typescriptPlayground: baseURLs.TYPESCRIPT_PLAYGROUND,
     };
   }
 
@@ -676,7 +664,6 @@ export class EnterpriseDocumentationURLBuilder {
 
     return url.toString();
   }
-
 }
 
 // Export singleton instance for easy access
@@ -687,5 +674,5 @@ export type {
   DocumentationURLOptions,
   TypedArrayURLOptions,
   EnterpriseAPIURLOptions,
-  SyscallOptimizationURLOptions
+  SyscallOptimizationURLOptions,
 };

@@ -64,7 +64,7 @@ export class DocumentationAnalytics {
     const sanitizedEvent: Partial<AccessEvent> = {
       ...event,
       userAgent: event.userAgent ? this.sanitizeString(event.userAgent) : undefined,
-      referrer: event.referrer ? this.sanitizeString(event.referrer) : undefined
+      referrer: event.referrer ? this.sanitizeString(event.referrer) : undefined,
     };
 
     const accessEvent: AccessEvent = {
@@ -77,7 +77,7 @@ export class DocumentationAnalytics {
       sessionId: sanitizedEvent.sessionId,
       userAgent: sanitizedEvent.userAgent,
       referrer: sanitizedEvent.referrer,
-      duration: sanitizedEvent.duration
+      duration: sanitizedEvent.duration,
     };
 
     // Add to log
@@ -92,7 +92,7 @@ export class DocumentationAnalytics {
     if (sanitizedEvent.sessionId) {
       this.userSessions.set(sanitizedEvent.sessionId, {
         startTime: this.userSessions.get(sanitizedEvent.sessionId)?.startTime || new Date(),
-        lastActivity: new Date()
+        lastActivity: new Date(),
       });
     }
 
@@ -142,20 +142,23 @@ export class DocumentationAnalytics {
 
     // Apply time range filter
     if (timeRange) {
-      filteredLog = this.accessLog.filter(event =>
-        event.timestamp >= timeRange.from && event.timestamp <= timeRange.to
+      filteredLog = this.accessLog.filter(
+        event => event.timestamp >= timeRange.from && event.timestamp <= timeRange.to
       );
     }
 
     // Group by URL
-    const urlStats = new Map<string, {
-      count: number;
-      uniqueUsers: Set<string>;
-      durations: number[];
-      lastAccessed: Date;
-      provider?: DocumentationProvider;
-      category?: DocumentationCategory;
-    }>();
+    const urlStats = new Map<
+      string,
+      {
+        count: number;
+        uniqueUsers: Set<string>;
+        durations: number[];
+        lastAccessed: Date;
+        provider?: DocumentationProvider;
+        category?: DocumentationCategory;
+      }
+    >();
 
     filteredLog.forEach(event => {
       const existing = urlStats.get(event.url) || {
@@ -164,7 +167,7 @@ export class DocumentationAnalytics {
         durations: [],
         lastAccessed: event.timestamp,
         provider: event.provider,
-        category: event.category
+        category: event.category,
       };
 
       existing.count++;
@@ -187,12 +190,13 @@ export class DocumentationAnalytics {
         url,
         count: stats.count,
         uniqueUsers: stats.uniqueUsers.size,
-        averageDuration: stats.durations.length > 0
-          ? stats.durations.reduce((a, b) => a + b, 0) / stats.durations.length
-          : 0,
+        averageDuration:
+          stats.durations.length > 0
+            ? stats.durations.reduce((a, b) => a + b, 0) / stats.durations.length
+            : 0,
         lastAccessed: stats.lastAccessed,
         provider: stats.provider,
-        category: stats.category
+        category: stats.category,
       }))
       .sort((a, b) => b.count - a.count)
       .slice(0, limit);
@@ -206,25 +210,24 @@ export class DocumentationAnalytics {
 
     // Apply time range filter
     if (timeRange) {
-      filteredLog = this.accessLog.filter(event =>
-        event.timestamp >= timeRange.from && event.timestamp <= timeRange.to
+      filteredLog = this.accessLog.filter(
+        event => event.timestamp >= timeRange.from && event.timestamp <= timeRange.to
       );
     }
 
     const totalAccess = filteredLog.length;
     const uniqueUsers = new Set(
-      filteredLog
-        .filter(event => event.sessionId)
-        .map(event => event.sessionId!)
+      filteredLog.filter(event => event.sessionId).map(event => event.sessionId!)
     ).size;
 
     // Calculate average session duration
     const sessionDurations = filteredLog
       .filter(event => event.duration)
       .map(event => event.duration!);
-    const averageSessionDuration = sessionDurations.length > 0
-      ? sessionDurations.reduce((a, b) => a + b, 0) / sessionDurations.length
-      : 0;
+    const averageSessionDuration =
+      sessionDurations.length > 0
+        ? sessionDurations.reduce((a, b) => a + b, 0) / sessionDurations.length
+        : 0;
 
     // Top providers
     const providerStats = new Map<DocumentationProvider, number>();
@@ -238,7 +241,7 @@ export class DocumentationAnalytics {
       .map(([provider, count]) => ({
         provider,
         count,
-        percentage: totalAccess > 0 ? (count / totalAccess) * 100 : 0
+        percentage: totalAccess > 0 ? (count / totalAccess) * 100 : 0,
       }))
       .sort((a, b) => b.count - a.count);
 
@@ -254,7 +257,7 @@ export class DocumentationAnalytics {
       .map(([category, count]) => ({
         category,
         count,
-        percentage: totalAccess > 0 ? (count / totalAccess) * 100 : 0
+        percentage: totalAccess > 0 ? (count / totalAccess) * 100 : 0,
       }))
       .sort((a, b) => b.count - a.count);
 
@@ -282,14 +285,17 @@ export class DocumentationAnalytics {
       topProviders,
       topCategories,
       accessByHour,
-      accessByDay
+      accessByDay,
     };
   }
 
   /**
    * Get access patterns for a specific URL
    */
-  static getURLAccessPatterns(url: string, timeRange?: { from: Date; to: Date }): {
+  static getURLAccessPatterns(
+    url: string,
+    timeRange?: { from: Date; to: Date }
+  ): {
     totalAccess: number;
     uniqueUsers: number;
     averageDuration: number;
@@ -300,24 +306,19 @@ export class DocumentationAnalytics {
 
     // Apply time range filter
     if (timeRange) {
-      filteredLog = filteredLog.filter(event =>
-        event.timestamp >= timeRange.from && event.timestamp <= timeRange.to
+      filteredLog = filteredLog.filter(
+        event => event.timestamp >= timeRange.from && event.timestamp <= timeRange.to
       );
     }
 
     const totalAccess = filteredLog.length;
     const uniqueUsers = new Set(
-      filteredLog
-        .filter(event => event.sessionId)
-        .map(event => event.sessionId!)
+      filteredLog.filter(event => event.sessionId).map(event => event.sessionId!)
     ).size;
 
-    const durations = filteredLog
-      .filter(event => event.duration)
-      .map(event => event.duration!);
-    const averageDuration = durations.length > 0
-      ? durations.reduce((a, b) => a + b, 0) / durations.length
-      : 0;
+    const durations = filteredLog.filter(event => event.duration).map(event => event.duration!);
+    const averageDuration =
+      durations.length > 0 ? durations.reduce((a, b) => a + b, 0) / durations.length : 0;
 
     // Access by hour
     const accessByHour: Record<number, number> = {};
@@ -346,7 +347,7 @@ export class DocumentationAnalytics {
       uniqueUsers,
       averageDuration,
       accessByHour,
-      referrers
+      referrers,
     };
   }
 
@@ -375,7 +376,16 @@ export class DocumentationAnalytics {
    */
   static exportData(format: 'json' | 'csv' = 'json'): string {
     if (format === 'csv') {
-      const headers = ['timestamp', 'url', 'provider', 'category', 'userType', 'source', 'sessionId', 'duration'];
+      const headers = [
+        'timestamp',
+        'url',
+        'provider',
+        'category',
+        'userType',
+        'source',
+        'sessionId',
+        'duration',
+      ];
       const rows = this.accessLog.map(event => [
         event.timestamp.toISOString(),
         event.url,
@@ -384,17 +394,21 @@ export class DocumentationAnalytics {
         event.userType,
         event.source,
         event.sessionId || '',
-        event.duration || ''
+        event.duration || '',
       ]);
 
       return [headers, ...rows].map(row => row.join(',')).join('\n');
     }
 
-    return JSON.stringify({
-      accessLog: this.accessLog,
-      userSessions: Array.from(this.userSessions.entries()),
-      exportedAt: new Date().toISOString()
-    }, null, 2);
+    return JSON.stringify(
+      {
+        accessLog: this.accessLog,
+        userSessions: Array.from(this.userSessions.entries()),
+        exportedAt: new Date().toISOString(),
+      },
+      null,
+      2
+    );
   }
 
   /**
@@ -410,7 +424,8 @@ export class DocumentationAnalytics {
       totalEvents: this.accessLog.length,
       activeSessions: this.userSessions.size,
       oldestEvent: this.accessLog.length > 0 ? this.accessLog[0].timestamp : null,
-      newestEvent: this.accessLog.length > 0 ? this.accessLog[this.accessLog.length - 1].timestamp : null
+      newestEvent:
+        this.accessLog.length > 0 ? this.accessLog[this.accessLog.length - 1].timestamp : null,
     };
   }
 }

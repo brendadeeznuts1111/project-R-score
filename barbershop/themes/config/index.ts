@@ -13,6 +13,7 @@
 import light from './light.toml';
 import dark from './dark.toml';
 import professional from './professional.toml';
+import domain from './domain.toml';
 
 // Theme type definition derived from TOML structure
 export interface ThemeConfig {
@@ -89,12 +90,67 @@ export interface ThemeConfig {
   };
 }
 
+// Domain config type
+export interface DomainConfigFile {
+  meta: {
+    name: string;
+    description: string;
+    version: string;
+    author: string;
+  };
+  defaults: {
+    primary_domain: string;
+    environment: string;
+    auto_proxy: boolean;
+    default_ttl: number;
+    ssl_mode: string;
+  };
+  subdomains: Record<string, {
+    name: string;
+    proxied: boolean;
+    description: string;
+  }>;
+  environments: Record<string, {
+    primary_domain: string;
+    ssl_mode: string;
+  }>;
+  cli: {
+    theme: {
+      default: string;
+      use_icons: boolean;
+      use_colors: boolean;
+      border_style: string;
+    };
+    colors: {
+      status: Record<string, string>;
+      dns: Record<string, string>;
+      ssl: Record<string, string>;
+    };
+  };
+  api: {
+    base_url: string;
+    timeout: number;
+    retries: number;
+    rate_limit: number;
+  };
+  cache: {
+    default_purge_paths: string[];
+  };
+  analytics: {
+    default_days: number;
+    metrics: string[];
+  };
+}
+
 // Theme registry
 export const themes = {
   light: light as ThemeConfig,
   dark: dark as ThemeConfig,
   professional: professional as ThemeConfig,
 };
+
+// Domain configuration
+export const domainConfig = domain as DomainConfigFile;
 
 // Theme name type for type-safe access
 export type ThemeName = keyof typeof themes;
@@ -216,7 +272,7 @@ export function createThemeClass(theme: ThemeConfig, className: string): string 
 }
 
 // Re-export for convenience
-export { light, dark, professional };
+export { light, dark, professional, domain };
 
 // Default export
 export default themes;

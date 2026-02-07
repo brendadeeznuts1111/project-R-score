@@ -8,7 +8,7 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     API: 'api' as const,
     CONFIGURATION: 'configuration' as const,
     TROUBLESHOOTING: 'troubleshooting' as const,
-    FAQ: 'faq' as const
+    FAQ: 'faq' as const,
   },
 
   // Interactive fragments
@@ -16,7 +16,7 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     PLAYGROUND: 'playground' as const,
     DEMO: 'demo' as const,
     TUTORIAL: 'tutorial' as const,
-    WORKSHOP: 'workshop' as const
+    WORKSHOP: 'workshop' as const,
   },
 
   // GitHub-specific fragments
@@ -28,7 +28,7 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     PULL: 'pull' as const,
     BRANCH: 'branch' as const,
     TAG: 'tag' as const,
-    RELEASE: 'release' as const
+    RELEASE: 'release' as const,
   },
 
   // TypeScript and package fragments
@@ -38,7 +38,7 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     NAMESPACE: 'namespace' as const,
     ENUM: 'enum' as const,
     FUNCTION: 'function' as const,
-    CLASS: 'class' as const
+    CLASS: 'class' as const,
   },
 
   // Typed array and binary data fragments
@@ -50,7 +50,7 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     EXAMPLES: 'examples' as const,
     BUFFER: 'buffer' as const,
     DATA_VIEW: 'dataview' as const,
-    SHARED_ARRAY_BUFFER: 'sharedarraybuffer' as const
+    SHARED_ARRAY_BUFFER: 'sharedarraybuffer' as const,
   },
 
   // Networking fragments
@@ -62,7 +62,7 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     UNIX_SOCKETS: 'unix-sockets' as const,
     TLS: 'tls' as const,
     PROXY: 'proxy' as const,
-    DNS: 'dns' as const
+    DNS: 'dns' as const,
   },
 
   // Text fragments (for bun.com/reference)
@@ -71,7 +71,7 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     BUN_API_REFERENCE: 'Bun API Reference' as const,
     TYPED_ARRAY_METHODS: 'TypedArray methods' as const,
     FETCH_TIMEOUT: 'fetch timeout' as const,
-    WEBSOCKET_EXAMPLE: 'WebSocket example' as const
+    WEBSOCKET_EXAMPLE: 'WebSocket example' as const,
   },
 
   // State management fragments
@@ -80,7 +80,7 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     LANGUAGE: 'language' as const,
     VERSION: 'version' as const,
     PLATFORM: 'platform' as const,
-    EXPERIMENTAL: 'experimental' as const
+    EXPERIMENTAL: 'experimental' as const,
   },
 
   // Performance and debugging fragments
@@ -89,8 +89,8 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     PROFILING: 'profiling' as const,
     OPTIMIZATION: 'optimization' as const,
     MEMORY: 'memory' as const,
-    CPU: 'cpu' as const
-  }
+    CPU: 'cpu' as const,
+  },
 } as const;
 
 // GitHub-specific URL patterns
@@ -117,7 +117,7 @@ export const GITHUB_URL_PATTERNS = {
   DISCUSSION_VIEW: /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/discussions\/(\d+)$/,
 
   // Pattern: /:owner/:repo/actions/runs/:id
-  ACTIONS_RUN_VIEW: /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/actions\/runs\/(\d+)$/
+  ACTIONS_RUN_VIEW: /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/actions\/runs\/(\d+)$/,
 } as const;
 
 // Text fragment patterns (Scroll to Text Fragment specification)
@@ -139,12 +139,7 @@ export const TEXT_FRAGMENT_SPEC = {
   decode: (encoded: string) => decodeURIComponent(encoded),
 
   // Build text fragment
-  build: (options: {
-    textStart: string;
-    prefix?: string;
-    textEnd?: string;
-    suffix?: string;
-  }) => {
+  build: (options: { textStart: string; prefix?: string; textEnd?: string; suffix?: string }) => {
     let fragment = '#:~:text=';
 
     if (options.prefix) {
@@ -162,18 +157,39 @@ export const TEXT_FRAGMENT_SPEC = {
     }
 
     return fragment;
-  }
+  },
 } as const;
 
 // Fragment validation patterns
 export const FRAGMENT_VALIDATION = {
   // Valid fragment parameter names
   VALID_NAMES: [
-    'view', 'example', 'theme', 'language', 'version', 'platform',
-    'interactive', 'runnable', 'editable', 'highlight', 'line',
-    'search', 'filter', 'sort', 'category', 'section',
-    'tab', 'panel', 'modal', 'dialog', 'overlay',
-    'debug', 'verbose', 'trace', 'profile', 'benchmark'
+    'view',
+    'example',
+    'theme',
+    'language',
+    'version',
+    'platform',
+    'interactive',
+    'runnable',
+    'editable',
+    'highlight',
+    'line',
+    'search',
+    'filter',
+    'sort',
+    'category',
+    'section',
+    'tab',
+    'panel',
+    'modal',
+    'dialog',
+    'overlay',
+    'debug',
+    'verbose',
+    'trace',
+    'profile',
+    'benchmark',
   ] as const,
 
   // Valid fragment values
@@ -182,7 +198,7 @@ export const FRAGMENT_VALIDATION = {
     theme: ['light', 'dark', 'auto', 'system'],
     language: ['typescript', 'javascript', 'bash', 'json', 'markdown'],
     platform: ['windows', 'macos', 'linux', 'docker', 'ci-cd'],
-    view: ['overview', 'examples', 'api', 'configuration', 'troubleshooting']
+    view: ['overview', 'examples', 'api', 'configuration', 'troubleshooting'],
   } as const,
 
   // Validate fragment parameter
@@ -192,13 +208,14 @@ export const FRAGMENT_VALIDATION = {
     }
 
     // Check if value is in valid values for known parameters
-    const validValues = FRAGMENT_VALIDATION.VALID_VALUES[name as keyof typeof FRAGMENT_VALIDATION.VALID_VALUES];
+    const validValues =
+      FRAGMENT_VALIDATION.VALID_VALUES[name as keyof typeof FRAGMENT_VALIDATION.VALID_VALUES];
     if (validValues && !validValues.includes(value as any)) {
       return false;
     }
 
     return true;
-  }
+  },
 } as const;
 
 // Fragment building utilities
@@ -206,42 +223,42 @@ export const FRAGMENT_BUILDERS = {
   // Build navigation fragment
   navigation: (view: string, options?: Record<string, string>) => ({
     view,
-    ...options
+    ...options,
   }),
 
   // Build interactive fragment
   interactive: (runnable: boolean = true, options?: Record<string, string>) => ({
     interactive: 'true',
     runnable: runnable ? 'true' : 'false',
-    ...options
+    ...options,
   }),
 
   // Build example fragment
   example: (exampleName: string, options?: Record<string, string>) => ({
     example: exampleName,
     highlight: 'true',
-    ...options
+    ...options,
   }),
 
   // Build theme fragment
   theme: (theme: 'light' | 'dark' | 'auto', options?: Record<string, string>) => ({
     theme,
-    ...options
+    ...options,
   }),
 
   // Build search fragment
   search: (query: string, options?: Record<string, string>) => ({
     search: query,
     type: 'documentation-search',
-    ...options
+    ...options,
   }),
 
   // Build GitHub-specific fragment
   github: (type: string, options?: Record<string, string>) => ({
     github: 'true',
     type,
-    ...options
-  })
+    ...options,
+  }),
 } as const;
 
 // Fragment parsing utilities
@@ -298,7 +315,7 @@ export const FRAGMENT_PARSERS = {
     return {
       raw: rawText,
       decoded: decodedText,
-      components
+      components,
     };
   },
 
@@ -309,7 +326,7 @@ export const FRAGMENT_PARSERS = {
       textFragment: ReturnType<typeof FRAGMENT_PARSERS.parseTextFragment>;
     } = {
       standard: {},
-      textFragment: null
+      textFragment: null,
     };
 
     // Separate text fragment from standard parameters
@@ -325,7 +342,7 @@ export const FRAGMENT_PARSERS = {
     }
 
     return result;
-  }
+  },
 } as const;
 
 // Text fragment patterns (Scroll to Text Fragment specification)
@@ -339,5 +356,5 @@ export const TEXT_FRAGMENT_PATTERNS = {
 
   // Encoding helper
   encode: (text: string) => encodeURIComponent(text),
-  decode: (encoded: string) => decodeURIComponent(encoded)
+  decode: (encoded: string) => decodeURIComponent(encoded),
 } as const;

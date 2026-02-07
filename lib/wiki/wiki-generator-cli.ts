@@ -5,6 +5,21 @@ import { r2MCPIntegration } from '../mcp/r2-integration';
 
 import { UtilsCategory, BUN_UTILS_URLS, BUN_UTILS_EXAMPLES } from '../docs/constants/utils';
 
+// Step 1: Centralized URL construction
+import { docsURLBuilder } from '../docs/builders/url-builder';
+
+// Step 2: Related documentation patterns
+import { DOC_PATTERNS } from '../docs/patterns';
+
+// Step 3: CLI reference data
+import { CLICategory, CLI_DOCUMENTATION_URLS, CLI_COMMAND_EXAMPLES } from '../docs/constants/cli';
+
+// Step 4: URL validation
+import { EnhancedDocumentationURLValidator } from '../docs/builders/validator';
+
+// Step 5: Quick reference collections
+import { QUICK_REFERENCE_URLS } from '../docs/constants/domains';
+
 interface WikiConfig {
   baseUrl: string;
   workspace: string;
@@ -42,6 +57,45 @@ interface SearchIndex {
   categories: Record<string, string[]>;
 }
 
+interface WikiPage {
+  title: string;
+  url: string;
+  category: string;
+  documentation: string;
+  example?: string;
+  relatedDocs?: string[];
+  validationStatus?: 'valid' | 'invalid';
+  validationErrors?: string[];
+}
+
+interface CLIPage {
+  title: string;
+  category: CLICategory;
+  url: string;
+  example?: string;
+}
+
+interface WikiCategoryData {
+  count: number;
+  pages: WikiPage[];
+}
+
+interface WikiData {
+  total: number;
+  categories: Record<string, WikiCategoryData>;
+  wikiPages: WikiPage[];
+}
+
+interface R2Data {
+  timestamp: string;
+  connectionStatus: 'connected' | 'disconnected';
+  dashboard?: unknown;
+  ai?: unknown;
+  domains?: unknown;
+  metrics?: unknown;
+  error?: string;
+}
+
 const defaultConfig: WikiConfig = {
   baseUrl: 'https://wiki.company.com',
   workspace: 'bun-utilities',
@@ -60,7 +114,7 @@ const defaultConfig: WikiConfig = {
 /**
  * Generate search index for fast lookups
  */
-function generateSearchIndex(wikiData: any): SearchIndex {
+function generateSearchIndex(wikiData: WikiData): SearchIndex {
   const searchIndex: SearchIndex = {
     utilities: [],
     categories: {},
@@ -94,16 +148,16 @@ function generateSearchIndex(wikiData: any): SearchIndex {
 /**
  * Generate wiki analytics
  */
-function generateAnalytics(wikiData: any, generationTime: number): WikiAnalytics {
+function generateAnalytics(wikiData: WikiData, generationTime: number): WikiAnalytics {
   const categoryCounts = Object.entries(wikiData.categories).map(
-    ([_, data]: [string, any]) => data.count
+    ([_, data]) => data.count
   );
   const mostUsedCategory =
     Object.entries(wikiData.categories).sort(
-      ([, a], [, b]: [string, any], [string, any]) => b.count - a.count
+      ([, a], [, b]) => b.count - a.count
     )[0]?.[0] || 'Unknown';
 
-  const examplesCount = wikiData.wikiPages.filter((p: any) => p.example).length;
+  const examplesCount = wikiData.wikiPages.filter((p: WikiPage) => p.example).length;
   const coverage = (examplesCount / wikiData.total) * 100;
 
   return {
@@ -120,7 +174,7 @@ function generateAnalytics(wikiData: any, generationTime: number): WikiAnalytics
 /**
  * Generate table of contents
  */
-function generateTOC(wikiData: any): string {
+function generateTOC(wikiData: WikiData): string {
   let toc = `## 📋 Table of Contents\n\n`;
 
   // Overview
@@ -143,32 +197,16 @@ function generateTOC(wikiData: any): string {
 /**
  * Generate internal wiki URLs for all Bun utilities
  */
-function generateWikiURLs(config: Partial<WikiConfig> = {}): {
-  total: number;
-  categories: Record<string, any>;
-  wikiPages: Array<{
-    title: string;
-    url: string;
-    category: string;
-    documentation: string;
-    example?: string;
-  }>;
-} {
+function generateWikiURLs(config: Partial<WikiConfig> = {}): WikiData {
   const finalConfig = { ...defaultConfig, ...config };
   console.log('🌐 GENERATING INTERNAL WIKI URLs...');
   console.log(`   Base URL: ${finalConfig.baseUrl}`);
   console.log(`   Workspace: ${finalConfig.workspace}`);
   console.log(`   Format: ${finalConfig.format}`);
 
-  const wikiPages: Array<{
-    title: string;
-    url: string;
-    category: string;
-    documentation: string;
-    example?: string;
-  }> = [];
+  const wikiPages: WikiPage[] = [];
 
-  const categories: Record<string, any> = {};
+  const categories: Record<string, WikiCategoryData> = {};
 
   // Generate wiki pages for each utility
   for (const [categoryKey, urls] of Object.entries(BUN_UTILS_URLS)) {
@@ -180,7 +218,7 @@ function generateWikiURLs(config: Partial<WikiConfig> = {}): {
     for (const [utilName, path] of Object.entries(urls)) {
       const title = `${category.replace('_', ' ').toUpperCase()}: ${utilName.replace('_', ' ').toUpperCase()}`;
       const wikiUrl = `${finalConfig.baseUrl}/${finalConfig.workspace}/${category.toLowerCase()}/${utilName.toLowerCase()}`;
-      const documentation = `https://bun.sh${path}`;
+      const documentation = docsURLBuilder.buildUtilsDocumentationURL(utilName, path);
 
       let example;
       if (
@@ -191,12 +229,21 @@ function generateWikiURLs(config: Partial<WikiConfig> = {}): {
         example = categoryExamples[utilName as keyof typeof categoryExamples];
       }
 
-      const wikiPage = {
+      // Step 4: Validate documentation URL
+      const validation = EnhancedDocumentationURLValidator.validateDocumentationURL(documentation);
+      if (!validation.isValid) {
+        console.log(`   ⚠️  Invalid URL for ${utilName}: ${validation.errors.join(', ')}`);
+      }
+
+      const wikiPage: WikiPage = {
         title,
         url: wikiUrl,
         category,
         documentation,
         example,
+        relatedDocs: DOC_PATTERNS.getRelatedDocs(documentation),
+        validationStatus: validation.isValid ? 'valid' : 'invalid',
+        validationErrors: validation.errors,
       };
 
       wikiPages.push(wikiPage);
@@ -226,7 +273,7 @@ function generateWikiURLs(config: Partial<WikiConfig> = {}): {
  * Generate enhanced markdown wiki content
  */
 function generateMarkdownWiki(
-  wikiData: any,
+  wikiData: WikiData,
   config: WikiConfig,
   analytics: WikiAnalytics,
   searchIndex: SearchIndex
@@ -284,12 +331,12 @@ Use these keywords to quickly find utilities:
 ### Category Distribution
 `;
     const sortedCategories = Object.entries(wikiData.categories).sort(
-      ([, a], [, b]: [string, any], [string, any]) => b.count - a.count
+      ([, a], [, b]) => b.count - a.count
     );
 
     for (const [category, data] of sortedCategories) {
-      const percentage = (((data as any).count / wikiData.total) * 100).toFixed(1);
-      content += `- **${category.replace('_', ' ')}**: ${(data as any).count} utilities (${percentage}%)\n`;
+      const percentage = (((data as WikiCategoryData).count / wikiData.total) * 100).toFixed(1);
+      content += `- **${category.replace('_', ' ')}**: ${(data as WikiCategoryData).count} utilities (${percentage}%)\n`;
     }
     content += `\n`;
   }
@@ -300,7 +347,7 @@ Use these keywords to quickly find utilities:
 `;
 
   for (const [category, data] of Object.entries(wikiData.categories)) {
-    const categoryData = data as any;
+    const categoryData = data as WikiCategoryData;
     const categorySlug = category.toLowerCase().replace(/[^a-z0-9]/g, '-');
 
     content += `### ${category.replace('_', ' ').toUpperCase()} {#${categorySlug}}
@@ -423,7 +470,7 @@ jobs:
  * Generate enhanced HTML wiki content with themes and search
  */
 function generateHTMLWiki(
-  wikiData: any,
+  wikiData: WikiData,
   config: WikiConfig,
   analytics: WikiAnalytics,
   searchIndex: SearchIndex
@@ -728,7 +775,7 @@ function generateHTMLWiki(
 
   // Generate category sections
   for (const [category, data] of Object.entries(wikiData.categories)) {
-    const categoryData = data as any;
+    const categoryData = data as WikiCategoryData;
     const categorySlug = category.toLowerCase().replace(/[^a-z0-9]/g, '-');
 
     content += `        <div class="category" id="${categorySlug}">
@@ -837,7 +884,7 @@ function generateHTMLWiki(
 /**
  * Generate JSON wiki data for API integration
  */
-function generateJSONWiki(wikiData: any): string {
+function generateJSONWiki(wikiData: WikiData): string {
   console.log('\n📄 GENERATING JSON WIKI DATA...');
 
   const jsonData = {
@@ -946,7 +993,7 @@ console.log(wikiData.pages); // All utility pages
  * Generate enhanced JSON wiki data for API integration
  */
 function generateJSONWiki(
-  wikiData: any,
+  wikiData: WikiData,
   analytics: WikiAnalytics,
   searchIndex: SearchIndex
 ): string {
@@ -1011,7 +1058,7 @@ function generateJSONWiki(
 /**
  * Load real-time data from R2 storage
  */
-async function loadR2Data(config: WikiConfig): Promise<any> {
+async function loadR2Data(config: WikiConfig): Promise<R2Data> {
   if (!config.r2Integration) {
     return null;
   }
@@ -1085,10 +1132,10 @@ async function generateWikiWithR2(config: Partial<WikiConfig> = {}): Promise<voi
  * Create wiki files with R2 data integration
  */
 async function createWikiFilesWithR2(
-  wikiData: any,
+  wikiData: WikiData,
   analytics: WikiAnalytics,
   searchIndex: SearchIndex,
-  r2Data: any,
+  r2Data: R2Data,
   config: WikiConfig
 ): Promise<void> {
   console.log('\n📁 CREATING ENHANCED WIKI FILES WITH R2 DATA...');
@@ -1138,10 +1185,10 @@ async function createWikiFilesWithR2(
  * Generate markdown wiki with R2 integration
  */
 function generateMarkdownWikiWithR2(
-  wikiData: any,
+  wikiData: WikiData,
   analytics: WikiAnalytics,
   searchIndex: SearchIndex,
-  r2Data: any,
+  r2Data: R2Data,
   config: WikiConfig
 ): string {
   let content = generateMarkdownWiki(wikiData, config, analytics, searchIndex);
@@ -1195,10 +1242,10 @@ function generateMarkdownWikiWithR2(
  * Generate HTML wiki with R2 integration
  */
 function generateHTMLWikiWithR2(
-  wikiData: any,
+  wikiData: WikiData,
   analytics: WikiAnalytics,
   searchIndex: SearchIndex,
-  r2Data: any,
+  r2Data: R2Data,
   config: WikiConfig
 ): string {
   let html = generateHTMLWiki(wikiData, config, analytics, searchIndex);
@@ -1250,10 +1297,10 @@ function generateHTMLWikiWithR2(
  * Generate JSON wiki with R2 integration
  */
 function generateJSONWikiWithR2(
-  wikiData: any,
+  wikiData: WikiData,
   analytics: WikiAnalytics,
   searchIndex: SearchIndex,
-  r2Data: any,
+  r2Data: R2Data,
   config: WikiConfig
 ): string {
   const baseJson = JSON.parse(generateJSONWiki(wikiData, analytics, searchIndex));
@@ -1286,10 +1333,10 @@ function generateJSONWikiWithR2(
  * Store wiki data in R2
  */
 async function storeWikiInR2(
-  wikiData: any,
+  wikiData: WikiData,
   analytics: WikiAnalytics,
   searchIndex: SearchIndex,
-  r2Data: any,
+  r2Data: R2Data,
   config: WikiConfig
 ): Promise<void> {
   console.log('\n💾 Storing wiki data in R2...');
@@ -1324,7 +1371,7 @@ async function storeWikiInR2(
 /**
  * Generate R2 integration summary
  */
-function generateR2IntegrationSummary(r2Data: any, config: WikiConfig): string {
+function generateR2IntegrationSummary(r2Data: R2Data, config: WikiConfig): string {
   return `# 🌐 R2 Integration Summary
 
 ## Configuration

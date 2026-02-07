@@ -38,7 +38,7 @@ export class DocumentationCache {
     ttl: 5 * 60 * 1000, // 5 minutes
     maxSize: 1000,
     maxMemory: 50 * 1024 * 1024, // 50MB
-    cleanupInterval: 60 * 1000 // 1 minute
+    cleanupInterval: 60 * 1000, // 1 minute
   };
 
   private options: Required<CacheOptions>;
@@ -116,7 +116,7 @@ export class DocumentationCache {
     }
 
     // Check TTL
-    if (entry.ttl && (Date.now() - entry.createdAt.getTime()) > entry.ttl) {
+    if (entry.ttl && Date.now() - entry.createdAt.getTime() > entry.ttl) {
       this.cache.delete(key);
       this.misses++;
       return null;
@@ -153,7 +153,7 @@ export class DocumentationCache {
       lastAccessed: now,
       ttl: ttl || this.options.ttl,
       accessCount: 1,
-      size
+      size,
     };
 
     this.cache.set(key, entry);
@@ -170,7 +170,7 @@ export class DocumentationCache {
     }
 
     // Atomic TTL check - delete if expired
-    if (entry.ttl && (Date.now() - entry.createdAt.getTime()) > entry.ttl) {
+    if (entry.ttl && Date.now() - entry.createdAt.getTime() > entry.ttl) {
       this.cache.delete(key);
       return false;
     }
@@ -229,7 +229,7 @@ export class DocumentationCache {
       memoryUsage: this.getCurrentMemoryUsage(),
       oldestEntry,
       newestEntry,
-      averageTTL: ttlCount > 0 ? totalTTL / ttlCount : undefined
+      averageTTL: ttlCount > 0 ? totalTTL / ttlCount : undefined,
     };
   }
 
@@ -241,7 +241,7 @@ export class DocumentationCache {
     const keysToDelete: string[] = [];
 
     for (const [key, entry] of this.cache.entries()) {
-      if (entry.ttl && (now - entry.createdAt.getTime()) > entry.ttl) {
+      if (entry.ttl && now - entry.createdAt.getTime() > entry.ttl) {
         keysToDelete.push(key);
       }
     }
@@ -254,8 +254,9 @@ export class DocumentationCache {
    */
   private evictLRU(requiredSpace?: number): void {
     // Sort entries by last accessed time
-    const entries = Array.from(this.cache.entries())
-      .sort(([, a], [, b]) => a.lastAccessed.getTime() - b.lastAccessed.getTime());
+    const entries = Array.from(this.cache.entries()).sort(
+      ([, a], [, b]) => a.lastAccessed.getTime() - b.lastAccessed.getTime()
+    );
 
     let freedSpace = 0;
     const keysToDelete: string[] = [];
@@ -303,7 +304,7 @@ export class DocumentationCache {
       .map(([key, entry]) => ({
         key,
         accessCount: entry.accessCount,
-        lastAccessed: entry.lastAccessed
+        lastAccessed: entry.lastAccessed,
       }))
       .sort((a, b) => b.accessCount - a.accessCount);
   }
@@ -316,7 +317,7 @@ export class DocumentationCache {
     let count = 0;
 
     for (const entry of this.cache.values()) {
-      if (entry.ttl && (now - entry.createdAt.getTime()) > entry.ttl) {
+      if (entry.ttl && now - entry.createdAt.getTime() > entry.ttl) {
         count++;
       }
     }
@@ -334,7 +335,7 @@ export class DocumentationCache {
 
     return {
       cleanedEntries: beforeStats.size - afterStats.size,
-      memoryFreed: beforeStats.memoryUsage - afterStats.memoryUsage
+      memoryFreed: beforeStats.memoryUsage - afterStats.memoryUsage,
     };
   }
 
@@ -354,7 +355,7 @@ export class DocumentationCache {
   exportContents(): Array<{ key: string; entry: CacheEntry }> {
     return Array.from(this.cache.entries()).map(([key, entry]) => ({
       key,
-      entry: { ...entry }
+      entry: { ...entry },
     }));
   }
 }

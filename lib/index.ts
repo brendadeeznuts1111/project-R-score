@@ -139,12 +139,6 @@ export const FW = {
     createBunHealthEndpoint,
   },
 
-  // Types
-  types: {
-    Severity: {} as any, // Will be populated by actual types
-    ProfileType: {} as any,
-  },
-
   // Development Standards Reference
   standards: {
     complete: '.custom-instructions.md',

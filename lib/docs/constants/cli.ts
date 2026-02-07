@@ -8,7 +8,7 @@ export enum CLICategory {
   SCRIPTS = 'scripts',
   ENVIRONMENT = 'environment',
   DEBUGGING = 'debugging',
-  INTEGRATION = 'integration'
+  INTEGRATION = 'integration',
 }
 
 export const CLI_DOCUMENTATION_URLS = {
@@ -19,7 +19,7 @@ export const CLI_DOCUMENTATION_URLS = {
     MACOS: '/docs/cli/install/macos',
     LINUX: '/docs/cli/install/linux',
     DOCKER: '/docs/cli/install/docker',
-    CI_CD: '/docs/cli/install/ci-cd'
+    CI_CD: '/docs/cli/install/ci-cd',
   },
 
   [CLICategory.COMMANDS]: {
@@ -38,7 +38,7 @@ export const CLI_DOCUMENTATION_URLS = {
     INIT: '/docs/cli/init',
     DEV: '/docs/cli/dev',
     PM: '/docs/cli/pm',
-    X: '/docs/cli/x'
+    X: '/docs/cli/x',
   },
 
   [CLICategory.OPTIONS]: {
@@ -46,7 +46,7 @@ export const CLI_DOCUMENTATION_URLS = {
     ENVIRONMENT_VARIABLES: '/docs/cli/env',
     CONFIG_FILE: '/docs/cli/config',
     TS_CONFIG: '/docs/cli/tsconfig',
-    PACKAGE_JSON: '/docs/cli/package-json'
+    PACKAGE_JSON: '/docs/cli/package-json',
   },
 
   [CLICategory.DEBUGGING]: {
@@ -55,8 +55,8 @@ export const CLI_DOCUMENTATION_URLS = {
     DEBUGGER: '/docs/cli/debugger',
     INSPECTOR: '/docs/cli/inspector',
     PROFILE: '/docs/cli/profile',
-    TRACE: '/docs/cli/trace'
-  }
+    TRACE: '/docs/cli/trace',
+  },
 } as const;
 
 // Common CLI command examples
@@ -67,7 +67,7 @@ export const CLI_COMMAND_EXAMPLES = {
     BUILD: 'bun build ./src/index.ts --outdir ./dist',
     INSTALL: 'bun install',
     ADD_PACKAGE: 'bun add zod',
-    REMOVE_PACKAGE: 'bun remove lodash'
+    REMOVE_PACKAGE: 'bun remove lodash',
   },
 
   ADVANCED: {
@@ -76,7 +76,7 @@ export const CLI_COMMAND_EXAMPLES = {
     UPGRADE_BUN: 'bun upgrade',
     GENERATE_COMPLETIONS: 'bun completions',
     INIT_PROJECT: 'bun init',
-    EXECUTE_PACKAGE: 'bunx cowsay "Hello from Bun!"'
+    EXECUTE_PACKAGE: 'bunx cowsay "Hello from Bun!"',
   },
 
   DEVELOPMENT: {
@@ -84,6 +84,6 @@ export const CLI_COMMAND_EXAMPLES = {
     HOT_RELOAD: 'bun --hot server.ts',
     WATCH_MODE: 'bun --watch test',
     DEBUG_MODE: 'bun --inspect server.ts',
-    PROFILE_MODE: 'bun --profile heavy-computation.js'
-  }
+    PROFILE_MODE: 'bun --profile heavy-computation.js',
+  },
 } as const;

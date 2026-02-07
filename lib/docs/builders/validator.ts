@@ -7,32 +7,27 @@ import {
   DocumentationDomain,
   DOCUMENTATION_URL_MAPPINGS,
   DOMAIN_PREFERENCES,
-  PROVIDER_METADATA
+  PROVIDER_METADATA,
 } from '../constants/domains';
-import {
-  GITHUB_URL_PATTERNS,
-  FRAGMENT_PARSERS,
-  FRAGMENT_VALIDATION
-} from '../constants/fragments';
-import {
-  IntelligentRouting,
-  ENTERPRISE_DOCUMENTATION_PATHS
-} from '../constants/categories';
+import { GITHUB_URL_PATTERNS, FRAGMENT_PARSERS, FRAGMENT_VALIDATION } from '../constants/fragments';
+import { IntelligentRouting, ENTERPRISE_DOCUMENTATION_PATHS } from '../constants/categories';
 import { URLHandler } from '../../core/url-handler';
 
 export class EnhancedDocumentationURLValidator {
-
   /**
    * Validate documentation URL with comprehensive checks
    */
-  public static validateDocumentationURL(url: string, options?: {
-    allowedProviders?: DocumentationProvider[];
-    allowedDomains?: DocumentationDomain[];
-    requireHTTPS?: boolean;
-    allowFragments?: boolean;
-    checkAccessibility?: boolean;
-    validateRouting?: boolean;
-  }): {
+  public static validateDocumentationURL(
+    url: string,
+    options?: {
+      allowedProviders?: DocumentationProvider[];
+      allowedDomains?: DocumentationDomain[];
+      requireHTTPS?: boolean;
+      allowFragments?: boolean;
+      checkAccessibility?: boolean;
+      validateRouting?: boolean;
+    }
+  ): {
     isValid: boolean;
     provider?: DocumentationProvider;
     domain?: DocumentationDomain;
@@ -112,7 +107,10 @@ export class EnhancedDocumentationURLValidator {
 
       // Validate fragments
       if (parsed.hash) {
-        const fragmentValidation = this.validateFragment(parsed.hash, options?.allowFragments !== false);
+        const fragmentValidation = this.validateFragment(
+          parsed.hash,
+          options?.allowFragments !== false
+        );
         if (!fragmentValidation.isValid) {
           errors.push(...fragmentValidation.errors);
         }
@@ -125,9 +123,10 @@ export class EnhancedDocumentationURLValidator {
         // This would be an async check in real implementation
         warnings.push('Accessibility check not implemented in synchronous validation');
       }
-
     } catch (error) {
-      errors.push(`Invalid URL format: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      errors.push(
+        `Invalid URL format: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
 
     return {
@@ -138,7 +137,7 @@ export class EnhancedDocumentationURLValidator {
       errors,
       warnings,
       metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
-      routing
+      routing,
     };
   }
 
@@ -164,7 +163,6 @@ export class EnhancedDocumentationURLValidator {
       } else if (hostname === 'bun.io' || hostname.endsWith('.bun.io')) {
         return DocumentationDomain.BUN_IO;
       }
-
     } catch {
       return undefined;
     }
@@ -175,7 +173,10 @@ export class EnhancedDocumentationURLValidator {
   /**
    * Identify documentation provider from URL and domain
    */
-  public static identifyProvider(url: string, domain?: DocumentationDomain): DocumentationProvider | undefined {
+  public static identifyProvider(
+    url: string,
+    domain?: DocumentationDomain
+  ): DocumentationProvider | undefined {
     try {
       const parsed = new URL(url);
       const pathname = parsed.pathname.toLowerCase();
@@ -222,7 +223,6 @@ export class EnhancedDocumentationURLValidator {
       if (parsed.hostname === 'github.com' || parsed.hostname.endsWith('.github.com')) {
         return DocumentationProvider.GITHUB_PUBLIC;
       }
-
     } catch {
       return undefined;
     }
@@ -233,7 +233,10 @@ export class EnhancedDocumentationURLValidator {
   /**
    * Identify documentation category from URL
    */
-  public static identifyCategory(url: string, provider: DocumentationProvider): DocumentationCategory | undefined {
+  public static identifyCategory(
+    url: string,
+    provider: DocumentationProvider
+  ): DocumentationCategory | undefined {
     try {
       const parsed = new URL(url);
       const pathname = parsed.pathname.toLowerCase();
@@ -241,15 +244,31 @@ export class EnhancedDocumentationURLValidator {
       // Check path patterns for different categories
       if (pathname.includes('/api') || pathname.includes('fetch') || pathname.includes('http')) {
         return DocumentationCategory.API_REFERENCE;
-      } else if (pathname.includes('/runtime') || pathname.includes('binary-data') || pathname.includes('filesystem')) {
+      } else if (
+        pathname.includes('/runtime') ||
+        pathname.includes('binary-data') ||
+        pathname.includes('filesystem')
+      ) {
         return DocumentationCategory.RUNTIME_FEATURES;
       } else if (pathname.includes('/cli') || pathname.includes('commands')) {
         return DocumentationCategory.CLI_REFERENCE;
-      } else if (pathname.includes('/guides') || pathname.includes('/tutorials') || pathname.includes('/getting-started')) {
+      } else if (
+        pathname.includes('/guides') ||
+        pathname.includes('/tutorials') ||
+        pathname.includes('/getting-started')
+      ) {
         return DocumentationCategory.GETTING_STARTED;
-      } else if (pathname.includes('/examples') || pathname.includes('/samples') || pathname.includes('/demo')) {
+      } else if (
+        pathname.includes('/examples') ||
+        pathname.includes('/samples') ||
+        pathname.includes('/demo')
+      ) {
         return DocumentationCategory.EXAMPLES_TUTORIALS;
-      } else if (pathname.includes('/troubleshooting') || pathname.includes('/faq') || pathname.includes('/errors')) {
+      } else if (
+        pathname.includes('/troubleshooting') ||
+        pathname.includes('/faq') ||
+        pathname.includes('/errors')
+      ) {
         return DocumentationCategory.TROUBLESHOOTING;
       } else if (pathname.includes('/migration') || pathname.includes('/migrate')) {
         return DocumentationCategory.MIGRATION_GUIDES;
@@ -262,7 +281,6 @@ export class EnhancedDocumentationURLValidator {
       } else if (pathname.includes('/installation') || pathname.includes('/install')) {
         return DocumentationCategory.INSTALLATION;
       }
-
     } catch {
       return undefined;
     }
@@ -318,16 +336,17 @@ export class EnhancedDocumentationURLValidator {
       if (fragment.includes('javascript:') || fragment.includes('data:')) {
         errors.push('Potentially dangerous fragment content detected');
       }
-
     } catch (error) {
-      errors.push(`Fragment parsing failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      errors.push(
+        `Fragment parsing failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
 
     return {
       isValid: errors.length === 0,
       errors,
       warnings,
-      metadata: Object.keys(metadata).length > 0 ? metadata : undefined
+      metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
     };
   }
 
@@ -400,7 +419,7 @@ export class EnhancedDocumentationURLValidator {
       isValid: errors.length === 0,
       errors,
       warnings,
-      metadata: Object.keys(metadata).length > 0 ? metadata : undefined
+      metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
     };
   }
 
@@ -409,7 +428,16 @@ export class EnhancedDocumentationURLValidator {
    */
   public static parseGitHubURL(url: string): {
     isValid: boolean;
-    type?: 'tree' | 'blob' | 'commit' | 'issue' | 'pull' | 'release' | 'discussion' | 'actions' | 'unknown';
+    type?:
+      | 'tree'
+      | 'blob'
+      | 'commit'
+      | 'issue'
+      | 'pull'
+      | 'release'
+      | 'discussion'
+      | 'actions'
+      | 'unknown';
     owner?: string;
     repo?: string;
     commitHash?: string;
@@ -449,8 +477,8 @@ export class EnhancedDocumentationURLValidator {
                 file: match[4]?.split('/').pop(),
                 metadata: {
                   isBranch: !/^[a-f0-9]{40}$/.test(match[3]),
-                  isTag: match[3].startsWith('v') || match[3].startsWith('release-')
-                }
+                  isTag: match[3].startsWith('v') || match[3].startsWith('release-'),
+                },
               };
 
               // Determine if it's a branch, tag, or commit
@@ -475,8 +503,8 @@ export class EnhancedDocumentationURLValidator {
                 file: match[4]?.split('/').pop(),
                 metadata: {
                   isBranch: !/^[a-f0-9]{40}$/.test(match[3]),
-                  isTag: match[3].startsWith('v') || match[3].startsWith('release-')
-                }
+                  isTag: match[3].startsWith('v') || match[3].startsWith('release-'),
+                },
               };
 
               // Determine if it's a branch, tag, or commit
@@ -495,7 +523,7 @@ export class EnhancedDocumentationURLValidator {
                   blobResult.lineNumber = parseInt(lineMatch[1], 10);
                   blobResult.metadata.lineRange = {
                     start: parseInt(lineMatch[1], 10),
-                    end: lineMatch[2] ? parseInt(lineMatch[2], 10) : undefined
+                    end: lineMatch[2] ? parseInt(lineMatch[2], 10) : undefined,
                   };
                 }
               }
@@ -508,7 +536,7 @@ export class EnhancedDocumentationURLValidator {
                 type: 'commit' as const,
                 owner: match[1],
                 repo: match[2],
-                commitHash: match[3]
+                commitHash: match[3],
               };
 
             case 'ISSUE_VIEW':
@@ -517,7 +545,7 @@ export class EnhancedDocumentationURLValidator {
                 type: 'issue' as const,
                 owner: match[1],
                 repo: match[2],
-                issueNumber: parseInt(match[3], 10)
+                issueNumber: parseInt(match[3], 10),
               };
 
             case 'PULL_REQUEST_VIEW':
@@ -526,7 +554,7 @@ export class EnhancedDocumentationURLValidator {
                 type: 'pull' as const,
                 owner: match[1],
                 repo: match[2],
-                pullNumber: parseInt(match[3], 10)
+                pullNumber: parseInt(match[3], 10),
               };
 
             case 'RELEASE_TAG_VIEW':
@@ -535,7 +563,7 @@ export class EnhancedDocumentationURLValidator {
                 type: 'release' as const,
                 owner: match[1],
                 repo: match[2],
-                tag: match[3]
+                tag: match[3],
               };
 
             case 'DISCUSSION_VIEW':
@@ -544,7 +572,7 @@ export class EnhancedDocumentationURLValidator {
                 type: 'discussion' as const,
                 owner: match[1],
                 repo: match[2],
-                discussionNumber: parseInt(match[3], 10)
+                discussionNumber: parseInt(match[3], 10),
               };
 
             case 'ACTIONS_RUN_VIEW':
@@ -553,7 +581,7 @@ export class EnhancedDocumentationURLValidator {
                 type: 'actions' as const,
                 owner: match[1],
                 repo: match[2],
-                actionRunId: match[3]
+                actionRunId: match[3],
               };
           }
         }
@@ -568,12 +596,11 @@ export class EnhancedDocumentationURLValidator {
           repo: pathParts[1],
           branch: 'main',
           path: '',
-          metadata: { isRepositoryRoot: true }
+          metadata: { isRepositoryRoot: true },
         };
       }
 
       return { isValid: true, type: 'unknown' };
-
     } catch {
       return { isValid: false };
     }
@@ -630,7 +657,7 @@ export class EnhancedDocumentationURLValidator {
         isOptimal = false;
         suggestedRoute = {
           ...developerRoute,
-          reasoning: `Better routing for topic "${potentialTopic}" for developers`
+          reasoning: `Better routing for topic "${potentialTopic}" for developers`,
         };
 
         // Add alternatives
@@ -642,17 +669,23 @@ export class EnhancedDocumentationURLValidator {
 
     // Check for domain-specific routing issues
     const domain = this.identifyDomain(url);
-    if (domain === DocumentationDomain.BUN_SH && category === DocumentationCategory.GETTING_STARTED) {
+    if (
+      domain === DocumentationDomain.BUN_SH &&
+      category === DocumentationCategory.GETTING_STARTED
+    ) {
       isOptimal = false;
       suggestedRoute = {
         provider: DocumentationProvider.BUN_GUIDES,
         category: DocumentationCategory.GETTING_STARTED,
         path: 'OVERVIEW',
-        reasoning: 'Getting started content is better served by bun.com/guides'
+        reasoning: 'Getting started content is better served by bun.com/guides',
       };
     }
 
-    if (domain === DocumentationDomain.BUN_COM && category === DocumentationCategory.API_REFERENCE) {
+    if (
+      domain === DocumentationDomain.BUN_COM &&
+      category === DocumentationCategory.API_REFERENCE
+    ) {
       // This might be optimal if it's the reference portal
       if (!url.includes('/reference/api')) {
         isOptimal = false;
@@ -660,7 +693,7 @@ export class EnhancedDocumentationURLValidator {
           provider: DocumentationProvider.BUN_REFERENCE,
           category: DocumentationCategory.API_REFERENCE,
           path: 'API_OVERVIEW',
-          reasoning: 'API reference content is better served by bun.com/reference/api'
+          reasoning: 'API reference content is better served by bun.com/reference/api',
         };
       }
     }
@@ -668,7 +701,7 @@ export class EnhancedDocumentationURLValidator {
     return {
       isOptimal,
       suggestedRoute,
-      alternatives
+      alternatives,
     };
   }
 
@@ -699,7 +732,7 @@ export class EnhancedDocumentationURLValidator {
       [DocumentationProvider.BUN_GUIDES]: 'https://bun.com/guides',
       [DocumentationProvider.BUN_TUTORIALS]: 'https://bun.com/tutorials',
       [DocumentationProvider.BUN_EXAMPLES]: 'https://bun.com/examples',
-      [DocumentationProvider.GITHUB_PUBLIC]: 'https://github.com/oven-sh/bun'
+      [DocumentationProvider.GITHUB_PUBLIC]: 'https://github.com/oven-sh/bun',
     } as Record<DocumentationProvider, string>;
 
     const baseUrl = baseURLs[route.provider] || 'https://bun.sh/docs';
@@ -712,7 +745,7 @@ export class EnhancedDocumentationURLValidator {
       provider: alt.provider,
       url: `${baseURLs[alt.provider] || 'https://bun.sh/docs'}${IntelligentRouting.getPath(alt.provider, alt.category, alt.path)}`,
       description: `${alt.provider} - ${alt.reasoning}`,
-      type: alt.type as 'secondary' | 'fallback'
+      type: alt.type as 'secondary' | 'fallback',
     }));
 
     return {
@@ -720,7 +753,7 @@ export class EnhancedDocumentationURLValidator {
       url,
       description: `${route.provider} - ${route.reasoning}`,
       reasoning: route.reasoning,
-      alternatives
+      alternatives,
     };
   }
 
@@ -749,7 +782,7 @@ export class EnhancedDocumentationURLValidator {
           currentFormat: 'technical_docs',
           recommendedFormat: 'interactive_reference',
           migrationPath: url.replace('bun.sh/docs', 'bun.com/reference'),
-          reasoning: 'API and runtime documentation is enhanced on bun.com/reference'
+          reasoning: 'API and runtime documentation is enhanced on bun.com/reference',
         };
       }
 
@@ -760,7 +793,7 @@ export class EnhancedDocumentationURLValidator {
           currentFormat: 'technical_guide',
           recommendedFormat: 'tutorial_guide',
           migrationPath: url.replace('bun.sh/docs/guides', 'bun.com/guides'),
-          reasoning: 'Tutorial content is enhanced on bun.com/guides'
+          reasoning: 'Tutorial content is enhanced on bun.com/guides',
         };
       }
     }
@@ -771,7 +804,7 @@ export class EnhancedDocumentationURLValidator {
         needsUpdate: true,
         currentFormat: 'basic_reference',
         recommendedFormat: 'enhanced_reference_with_fragments',
-        reasoning: 'Consider adding text fragments for better navigation'
+        reasoning: 'Consider adding text fragments for better navigation',
       };
     }
 
@@ -781,28 +814,33 @@ export class EnhancedDocumentationURLValidator {
   /**
    * Batch validate multiple URLs
    */
-  public static validateBatch(urls: string[], options?: {
-    allowedProviders?: DocumentationProvider[];
-    requireHTTPS?: boolean;
-    allowFragments?: boolean;
-    validateRouting?: boolean;
-  }): Array<{
+  public static validateBatch(
+    urls: string[],
+    options?: {
+      allowedProviders?: DocumentationProvider[];
+      requireHTTPS?: boolean;
+      allowFragments?: boolean;
+      validateRouting?: boolean;
+    }
+  ): Array<{
     url: string;
     result: ReturnType<typeof EnhancedDocumentationURLValidator.validateDocumentationURL>;
   }> {
     return urls.map(url => ({
       url,
-      result: this.validateDocumentationURL(url, options)
+      result: this.validateDocumentationURL(url, options),
     }));
   }
 
   /**
    * Get validation statistics for a batch of URLs
    */
-  public static getValidationStats(batchResult: Array<{
-    url: string;
-    result: ReturnType<typeof EnhancedDocumentationURLValidator.validateDocumentationURL>;
-  }>): {
+  public static getValidationStats(
+    batchResult: Array<{
+      url: string;
+      result: ReturnType<typeof EnhancedDocumentationURLValidator.validateDocumentationURL>;
+    }>
+  ): {
     total: number;
     valid: number;
     invalid: number;
@@ -829,10 +867,10 @@ export class EnhancedDocumentationURLValidator {
       routingStats: {
         optimal: 0,
         suboptimal: 0,
-        withSuggestions: 0
+        withSuggestions: 0,
       },
       commonErrors: [] as Array<{ error: string; count: number }>,
-      commonWarnings: [] as Array<{ warning: string; count: number }>
+      commonWarnings: [] as Array<{ warning: string; count: number }>,
     };
 
     const errorCounts = new Map<string, number>();
@@ -951,9 +989,8 @@ export class EnhancedDocumentationURLValidator {
         hasTextFragment: true,
         rawFragment: textFragment.raw,
         decodedText: textFragment.decoded,
-        components: textFragment.components
+        components: textFragment.components,
       };
-
     } catch {
       return { hasTextFragment: false };
     }
@@ -964,10 +1001,12 @@ export class EnhancedDocumentationURLValidator {
    */
   public static isSpecificCommitURL(url: string): boolean {
     const parsed = this.parseGitHubURL(url);
-    return parsed.isValid &&
-           (parsed.type === 'tree' || parsed.type === 'blob') &&
-           !!parsed.commitHash &&
-           /^[a-f0-9]{40}$/.test(parsed.commitHash);
+    return (
+      parsed.isValid &&
+      (parsed.type === 'tree' || parsed.type === 'blob') &&
+      !!parsed.commitHash &&
+      /^[a-f0-9]{40}$/.test(parsed.commitHash)
+    );
   }
 
   /**
@@ -983,9 +1022,11 @@ export class EnhancedDocumentationURLValidator {
    */
   public static isBunTypesURL(url: string): boolean {
     const parsed = this.parseGitHubURL(url);
-    return parsed.isValid &&
-           parsed.repo === 'bun' &&
-           parsed.path?.includes('packages/bun-types') === true;
+    return (
+      parsed.isValid &&
+      parsed.repo === 'bun' &&
+      parsed.path?.includes('packages/bun-types') === true
+    );
   }
 
   /**
@@ -1001,7 +1042,7 @@ export class EnhancedDocumentationURLValidator {
     if (!command.startsWith('bun')) {
       return {
         isValid: false,
-        errors: ['Command must start with "bun"']
+        errors: ['Command must start with "bun"'],
       };
     }
 
@@ -1010,13 +1051,26 @@ export class EnhancedDocumentationURLValidator {
     const subcommand = parts[1];
 
     // Basic validation for common commands
-    const validCommands = ['run', 'test', 'build', 'install', 'add', 'remove', 'x', 'create', 'upgrade', 'init', 'dev', 'pm'];
+    const validCommands = [
+      'run',
+      'test',
+      'build',
+      'install',
+      'add',
+      'remove',
+      'x',
+      'create',
+      'upgrade',
+      'init',
+      'dev',
+      'pm',
+    ];
 
     if (!validCommands.includes(subcommand)) {
       return {
         isValid: false,
         command: subcommand,
-        errors: [`Unknown subcommand: ${subcommand}`]
+        errors: [`Unknown subcommand: ${subcommand}`],
       };
     }
 
@@ -1044,7 +1098,7 @@ export class EnhancedDocumentationURLValidator {
       isValid: true,
       command: subcommand,
       args: args.length > 0 ? args : undefined,
-      options: Object.keys(options).length > 0 ? options : undefined
+      options: Object.keys(options).length > 0 ? options : undefined,
     };
   }
 
@@ -1060,9 +1114,11 @@ export class EnhancedDocumentationURLValidator {
    */
   public static isBunUtilsURL(url: string): boolean {
     const validation = this.validateBunDocumentationURL(url);
-    return validation.isValid &&
-           validation.type === 'technical_docs' &&
-           validation.path?.includes('/api/utils') === true;
+    return (
+      validation.isValid &&
+      validation.type === 'technical_docs' &&
+      validation.path?.includes('/api/utils') === true
+    );
   }
 
   /**
@@ -1070,9 +1126,11 @@ export class EnhancedDocumentationURLValidator {
    */
   public static isCLIDocumentationURL(url: string): boolean {
     const validation = this.validateBunDocumentationURL(url);
-    return validation.isValid &&
-           (validation.path?.includes('/cli') === true ||
-            validation.path?.includes('/reference/cli') === true);
+    return (
+      validation.isValid &&
+      (validation.path?.includes('/cli') === true ||
+        validation.path?.includes('/reference/cli') === true)
+    );
   }
 
   /**
@@ -1108,10 +1166,10 @@ export class EnhancedDocumentationURLValidator {
         DocumentationProvider.BUN_REFERENCE,
         DocumentationProvider.BUN_TECHNICAL,
         DocumentationProvider.BUN_API_DOCS,
-        DocumentationProvider.BUN_RUNTIME_DOCS
+        DocumentationProvider.BUN_RUNTIME_DOCS,
       ],
       requireHTTPS: true,
-      allowFragments: true
+      allowFragments: true,
     });
 
     return {
@@ -1120,7 +1178,7 @@ export class EnhancedDocumentationURLValidator {
       type: result.category ? this.mapCategoryToType(result.category) : undefined,
       path: result.metadata?.path as string | undefined,
       fragment: result.metadata?.fragment as string | undefined,
-      errors: result.errors.length > 0 ? result.errors : undefined
+      errors: result.errors.length > 0 ? result.errors : undefined,
     };
   }
 

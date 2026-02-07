@@ -10,7 +10,6 @@ import {
   copyFile,
   rename,
 } from 'fs/promises';
-import { existsSync } from 'fs';
 import { join, dirname, basename, extname } from 'path';
 import { ErrorHandler } from './error-handler';
 
@@ -71,7 +70,7 @@ export class SafeFileOperations {
       }
 
       // Check if file exists
-      if (!existsSync(filePath)) {
+      if (!(await Bun.file(filePath).exists())) {
         return {
           success: false,
           error: 'File does not exist',
@@ -183,7 +182,7 @@ export class SafeFileOperations {
       }
 
       // Create backup if requested
-      if (opts.backup && existsSync(filePath)) {
+      if (opts.backup && (await Bun.file(filePath).exists())) {
         const backupPath = `${filePath}.backup.${Date.now()}`;
         await copyFile(filePath, backupPath);
       }
@@ -313,7 +312,7 @@ export class SafeFileOperations {
       }
 
       // Check if file exists
-      if (!existsSync(filePath)) {
+      if (!(await Bun.file(filePath).exists())) {
         return {
           success: true, // Deleting non-existent file is considered success
           path: filePath,
@@ -382,7 +381,7 @@ export class SafeFileOperations {
    * Ensure directory exists
    */
   private static async ensureDirectory(dirPath: string): Promise<void> {
-    if (!existsSync(dirPath)) {
+    if (!(await Bun.file(dirPath).exists())) {
       await mkdir(dirPath, { recursive: true });
     }
   }

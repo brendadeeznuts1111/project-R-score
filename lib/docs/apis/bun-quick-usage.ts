@@ -6,5 +6,5 @@ export const QuickUsagePatterns = {
   widthAwarePadding: `const padded = text.padEnd(Bun.stringWidth(text) + 10);`,
   hslColorPerProfile: `const ansi = Bun.color(\`hsl(\${hue}, 100%, 50%)\`, "ansi");`,
   openFileOnError: `Bun.openInEditor(import.meta.url, { line: 123 });`,
-  scanProjects: `for await (const p of new Bun.Glob("projects/*").scan(".")) { /* ... */ }`
+  scanProjects: `for await (const p of new Bun.Glob("projects/*").scan(".")) { /* ... */ }`,
 } as const;

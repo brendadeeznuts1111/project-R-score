@@ -1,7 +1,7 @@
 // lib/utils/env-config-manager.ts — Environment configuration manager
 
 import { logger } from './logger';
-import { getErrorMessage } from './error-utils';
+import { getErrorMessage } from './error-handler';
 
 export interface EnvConfigOptions {
   /** Environment name (development, staging, production) */

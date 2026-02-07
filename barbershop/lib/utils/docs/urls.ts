@@ -132,7 +132,7 @@ BUN_DOCS.r2 = {
 } as const;
 
 // Import centralized domain configuration
-import { FACTORY_WAGER_DOMAIN, buildDocsUrl, buildApiUrl } from '../../src/config/domain';
+import { FACTORY_WAGER_DOMAIN, buildDocsUrl, buildApiUrl } from '../../../src/config/domain';
 
 // FactoryWager specific documentation
 BUN_DOCS.factorywager = {

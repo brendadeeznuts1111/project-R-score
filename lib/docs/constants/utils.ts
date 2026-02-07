@@ -14,7 +14,7 @@ export enum UtilsCategory {
   CRYPTOGRAPHY = 'cryptography',
   DATE = 'date',
   PERFORMANCE = 'performance',
-  COLOR = 'color'
+  COLOR = 'color',
 }
 
 /**
@@ -143,7 +143,9 @@ export class UtilityFactory {
 
     // Validate ID format (alphanumeric with underscores)
     if (!/^[a-zA-Z][a-zA-Z0-9_]*$/.test(config.id)) {
-      throw new Error(`Invalid utility ID format: ${config.id}. Must start with letter and contain only letters, numbers, and underscores`);
+      throw new Error(
+        `Invalid utility ID format: ${config.id}. Must start with letter and contain only letters, numbers, and underscores`
+      );
     }
 
     // Validate category
@@ -177,7 +179,7 @@ export class UtilityFactory {
       docUrl: finalUrl,
       description: config.description.trim(),
       exampleCode: config.exampleCode.trim(),
-      fragment: config.fragment
+      fragment: config.fragment,
     };
   }
 
@@ -202,12 +204,12 @@ export class UtilityFactory {
       runnable: config.options?.runnable ? 'true' : 'false',
       editable: config.options?.editable ? 'true' : 'false',
       theme: config.options?.theme || 'auto',
-      utility: config.id
+      utility: config.id,
     };
 
     return this.create({
       ...config,
-      fragment: interactiveFragment
+      fragment: interactiveFragment,
     });
   }
 
@@ -228,26 +230,28 @@ export class UtilityFactory {
       example: config.exampleName,
       language: config.language || 'typescript',
       highlight: 'true',
-      utility: config.id
+      utility: config.id,
     };
 
     return this.create({
       ...config,
-      fragment: exampleFragment
+      fragment: exampleFragment,
     });
   }
 
   /**
    * Creates multiple utilities with validation
    */
-  static createMany(configs: Array<{
-    id: string;
-    name: string;
-    category: UtilsCategory;
-    docUrl: string;
-    description: string;
-    exampleCode: string;
-  }>): BunUtility[] {
+  static createMany(
+    configs: Array<{
+      id: string;
+      name: string;
+      category: UtilsCategory;
+      docUrl: string;
+      description: string;
+      exampleCode: string;
+    }>
+  ): BunUtility[] {
     const utilities: BunUtility[] = [];
     const errors: string[] = [];
 
@@ -256,7 +260,9 @@ export class UtilityFactory {
         const utility = this.create(config);
         utilities.push(utility);
       } catch (error) {
-        errors.push(`Failed to create utility '${config.id}': ${error instanceof Error ? error.message : 'Unknown error'}`);
+        errors.push(
+          `Failed to create utility '${config.id}': ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
       }
     }
 
@@ -283,7 +289,7 @@ export const UTILITIES: BunUtility[] = UtilityFactory.createMany([
     description: 'Asynchronously read file contents with encoding support',
     exampleCode: `import { readFile } from 'bun';
 const content = await readFile('package.json', 'utf-8');
-console.log(content);`
+console.log(content);`,
   },
   {
     id: 'write_file',
@@ -293,7 +299,7 @@ console.log(content);`
     description: 'Write data to files with automatic directory creation',
     exampleCode: `import { writeFile } from 'bun';
 await writeFile('output.txt', 'Hello, Bun!');
-console.log('File written successfully');`
+console.log('File written successfully');`,
   },
   {
     id: 'file_exists',
@@ -303,7 +309,7 @@ console.log('File written successfully');`
     description: 'Check if a file or directory exists',
     exampleCode: `import { exists } from 'bun';
 const fileExists = await exists('package.json');
-console.log('File exists:', fileExists);`
+console.log('File exists:', fileExists);`,
   },
 
   // Networking Utilities
@@ -316,7 +322,7 @@ console.log('File exists:', fileExists);`
     exampleCode: `import { fetch } from 'bun';
 const response = // 🚀 Prefetch hint: Consider preconnecting to 'https://api.example.com/data' domain
  await fetch('https://api.example.com/data');
-const data = await response.json();`
+const data = await response.json();`,
   },
   {
     id: 'serve',
@@ -330,7 +336,7 @@ const server = serve({
   fetch(req) {
     return new Response('Hello World!');
   }
-});`
+});`,
   },
 
   // Validation Utilities
@@ -344,7 +350,7 @@ const server = serve({
 const value = 'hello';
 if (isString(value)) {
   console.log(value.toUpperCase()); // TypeScript knows it's a string
-}`
+}`,
   },
   {
     id: 'is_typed_array',
@@ -354,7 +360,7 @@ if (isString(value)) {
     description: 'Check if value is a typed array instance',
     exampleCode: `import { isTypedArray } from 'bun';
 const arr = new Uint8Array([1, 2, 3]);
-console.log(isTypedArray(arr)); // true`
+console.log(isTypedArray(arr)); // true`,
   },
 
   // Conversion Utilities
@@ -366,7 +372,7 @@ console.log(isTypedArray(arr)); // true`
     description: 'Convert various data types to Buffer',
     exampleCode: `import { toBuffer } from 'bun';
 const buffer = toBuffer('Hello');
-console.log(buffer instanceof Buffer); // true`
+console.log(buffer instanceof Buffer); // true`,
   },
 
   // Performance Utilities
@@ -379,7 +385,7 @@ console.log(buffer instanceof Buffer); // true`
     exampleCode: `import { gc } from 'bun';
 // Force garbage collection
 gc();
-console.log('Garbage collection completed');`
+console.log('Garbage collection completed');`,
   },
   {
     id: 'performance_now',
@@ -391,8 +397,8 @@ console.log('Garbage collection completed');`
 const start = performance.now();
 // ... some operation
 const end = performance.now();
-console.log(\`Operation took \${end - start}ms\`);`
-  }
+console.log(\`Operation took \${end - start}ms\`);`,
+  },
 ]);
 
 /**
@@ -441,17 +447,21 @@ export class UtilityRegistry {
     }
 
     const lowerQuery = query.toLowerCase();
-    return UTILITIES.filter(utility =>
-      utility.name.toLowerCase().includes(lowerQuery) ||
-      utility.description.toLowerCase().includes(lowerQuery) ||
-      utility.id.toLowerCase().includes(lowerQuery)
+    return UTILITIES.filter(
+      utility =>
+        utility.name.toLowerCase().includes(lowerQuery) ||
+        utility.description.toLowerCase().includes(lowerQuery) ||
+        utility.id.toLowerCase().includes(lowerQuery)
     );
   }
 
   /**
    * Validate all utility URLs
    */
-  static validateAllUrls(): { valid: string[]; invalid: { url: string; id: string; error: string }[] } {
+  static validateAllUrls(): {
+    valid: string[];
+    invalid: { url: string; id: string; error: string }[];
+  } {
     const valid: string[] = [];
     const invalid: { url: string; id: string; error: string }[] = [];
 
@@ -464,14 +474,14 @@ export class UtilityRegistry {
           invalid.push({
             url: utility.docUrl,
             id: utility.id,
-            error: 'URL does not point to Bun documentation'
+            error: 'URL does not point to Bun documentation',
           });
         }
       } catch (error) {
         invalid.push({
           url: utility.docUrl,
           id: utility.id,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : 'Unknown error',
         });
       }
     }
@@ -500,8 +510,8 @@ export class UtilityRegistry {
       byCategory,
       urlValidation: {
         valid: urlValidation.valid.length,
-        invalid: urlValidation.invalid.length
-      }
+        invalid: urlValidation.invalid.length,
+      },
     };
   }
 }
@@ -517,7 +527,7 @@ export const BUN_UTILS_URLS = {
     COPY_FILE: '/docs/api/utils#copyfile',
     MOVE_FILE: '/docs/api/utils#movefile',
     DELETE_FILE: '/docs/api/utils#deletefile',
-    FILE_EXISTS: '/docs/api/utils#fileexists'
+    FILE_EXISTS: '/docs/api/utils#fileexists',
   },
 
   [UtilsCategory.NETWORKING]: {
@@ -527,7 +537,7 @@ export const BUN_UTILS_URLS = {
     WEBSOCKET: '/docs/api/utils#websocket',
     TCP: '/docs/api/utils#tcp',
     UDP: '/docs/api/utils#udp',
-    DNS: '/docs/api/utils#dns'
+    DNS: '/docs/api/utils#dns',
   },
 
   [UtilsCategory.PROCESS]: {
@@ -537,7 +547,7 @@ export const BUN_UTILS_URLS = {
     FORK: '/docs/api/utils#fork',
     KILL: '/docs/api/utils#kill',
     PID: '/docs/api/utils#pid',
-    SIGNALS: '/docs/api/utils#signals'
+    SIGNALS: '/docs/api/utils#signals',
   },
 
   [UtilsCategory.VALIDATION]: {
@@ -550,7 +560,7 @@ export const BUN_UTILS_URLS = {
     IS_FUNCTION: '/docs/api/utils#isfunction',
     IS_PROMISE: '/docs/api/utils#ispromise',
     IS_BUFFER: '/docs/api/utils#isbuffer',
-    IS_TYPED_ARRAY: '/docs/api/utils#istypedarray'
+    IS_TYPED_ARRAY: '/docs/api/utils#istypedarray',
   },
 
   [UtilsCategory.CONVERSION]: {
@@ -562,14 +572,14 @@ export const BUN_UTILS_URLS = {
     TO_ARRAY: '/docs/api/utils#toarray',
     TO_OBJECT: '/docs/api/utils#toobject',
     JSON_PARSE: '/docs/api/utils#jsonparse',
-    JSON_STRINGIFY: '/docs/api/utils#jsonstringify'
+    JSON_STRINGIFY: '/docs/api/utils#jsonstringify',
   },
 
   [UtilsCategory.PERFORMANCE]: {
     MAIN: '/docs/api/performance',
     GC: '/docs/api/gc',
     PERFORMANCE_NOW: '/docs/api/performance',
-    MEMORY_USAGE: '/docs/api/performance'
+    MEMORY_USAGE: '/docs/api/performance',
   },
 
   [UtilsCategory.COLOR]: {
@@ -581,8 +591,8 @@ export const BUN_UTILS_URLS = {
     CSS: '/docs/api/color#css',
     RGB: '/docs/api/color#rgb',
     RGBA: '/docs/api/color#rgba',
-    HSL: '/docs/api/color#hsl'
-  }
+    HSL: '/docs/api/color#hsl',
+  },
 } as const;
 
 // Common Bun.utils examples
@@ -595,7 +605,7 @@ const content = await readFile('package.json', 'utf-8');`,
 await writeFile('output.txt', 'Hello, Bun!');`,
 
     FILE_EXISTS: `import { exists } from 'bun';
-const fileExists = await exists('package.json');`
+const fileExists = await exists('package.json');`,
   },
 
   VALIDATION: {
@@ -605,12 +615,12 @@ console.log(isTypedArray(arr)); // true`,
 
     IS_BUFFER: `import { isBuffer } from 'bun';
 const buf = Buffer.from('hello');
-console.log(isBuffer(buf)); // true`
+console.log(isBuffer(buf)); // true`,
   },
 
   CONVERSION: {
     TO_BUFFER: `import { toBuffer } from 'bun';
-const buffer = toBuffer('Hello'); // Convert string to Buffer`
+const buffer = toBuffer('Hello'); // Convert string to Buffer`,
   },
 
   COLOR: {
@@ -629,8 +639,8 @@ const code = color('#8b5cf6', 'ansi-256'); // 256-color ANSI`,
 const [r, g, b] = color('coral', 'rgb'); // [255, 127, 80]`,
 
     HSL: `import { color } from 'bun';
-const [h, s, l] = color('#ff6347', 'hsl'); // [9, 100, 64]`
-  }
+const [h, s, l] = color('#ff6347', 'hsl'); // [9, 100, 64]`,
+  },
 } as const;
 
 /**
