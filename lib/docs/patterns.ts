@@ -30,14 +30,14 @@ export const DOC_PATTERNS = {
   getRelatedDocs: (url: string): string[] => {
     if (url.includes('/runtime/secrets')) {
       const related = [
-        BUN_DOCS.secrets.overview,
-        BUN_DOCS.secrets.api,
-        BUN_DOCS.secrets.getOptions,
-        BUN_DOCS.secrets.versioning,
-        BUN_DOCS.secrets.rollback,
+        BUN_DOCS.secrets.overview(),
+        BUN_DOCS.secrets.api(),
+        BUN_DOCS.secrets.getOptions(),
+        BUN_DOCS.secrets.versioning(),
+        BUN_DOCS.secrets.rollback(),
         BUN_DOCS.runtime('binary-data'),
         BUN_DOCS.runtime('typescript'),
-        BUN_DOCS.runtime('hashing'), // Added hashing docs
+        BUN_DOCS.runtime('hashing'),
       ];
       return related;
     }
@@ -62,13 +62,13 @@ export const DOC_PATTERNS = {
 
     if (url.includes('/runtime/color')) {
       const related = [
-        BUN_DOCS.color.main,
-        BUN_DOCS.color.flexibleInput,
-        BUN_DOCS.color.formatANSI,
-        BUN_DOCS.color.formatNumbers,
-        BUN_DOCS.color.formatHex,
-        BUN_DOCS.color.getChannels,
-        BUN_DOCS.color.bundleTime,
+        BUN_DOCS.color.main(),
+        BUN_DOCS.color.flexibleInput(),
+        BUN_DOCS.color.formatANSI(),
+        BUN_DOCS.color.formatNumbers(),
+        BUN_DOCS.color.formatHex(),
+        BUN_DOCS.color.getChannels(),
+        BUN_DOCS.color.bundleTime(),
       ];
       return related;
     }
@@ -95,22 +95,33 @@ export const DOC_PATTERNS = {
 
     if (url.includes('/api/bun-serve')) {
       const related = [
-        BUN_DOCS.bundler.main,
-        BUN_DOCS.bundler.server,
-        BUN_DOCS.bundler.static,
-        BUN_DOCS.bundler.plugins,
+        BUN_DOCS.bundler.main(),
+        BUN_DOCS.bundler.server(),
+        BUN_DOCS.bundler.static(),
+        BUN_DOCS.bundler.plugins(),
       ];
       return related;
     }
 
     if (url.includes('/guides/deployment')) {
       const related = [
-        BUN_DOCS.deployment.docker,
-        BUN_DOCS.deployment.aws,
-        BUN_DOCS.deployment.vercel,
-        BUN_DOCS.deployment.railway,
+        BUN_DOCS.deployment.docker(),
+        BUN_DOCS.deployment.aws(),
+        BUN_DOCS.deployment.vercel(),
+        BUN_DOCS.deployment.railway(),
       ];
       return related;
+    }
+
+    if (url.includes('/cli/profile') || url.includes('cpu-prof') || url.includes('heap-prof')) {
+      return [
+        'https://bun.sh/docs/cli/profile',
+        'https://bun.sh/docs/cli/profile#cpu-profiling',
+        'https://bun.sh/docs/cli/profile#markdown-cpu-profile',
+        'https://bun.sh/docs/cli/profile#heap-profiling',
+        'https://bun.sh/docs/cli/profile#markdown-heap-profile',
+        'https://bun.sh/docs/runtime/inspector',
+      ];
     }
 
     return [];
@@ -123,6 +134,8 @@ export const DOC_PATTERNS = {
     if (url.includes('/guides/')) return 'Guides';
     if (url.includes('/bundler/')) return 'Bundler';
     if (url.includes('/tester/')) return 'Tester';
+    if (url.includes('/cli/profile') || url.includes('prof')) return 'Profiling';
+    if (url.includes('/cli/')) return 'CLI';
     return 'Other';
   },
 
@@ -165,11 +178,10 @@ export const DOC_PATTERNS = {
   // Search documentation
   search: (query: string): string[] => {
     const allDocs = [
-      ...Object.values(BUN_DOCS.secrets),
-      ...Object.values(BUN_DOCS.color),
-      ...Object.values(BUN_DOCS.runtime),
-      ...Object.values(BUN_DOCS.api),
-      ...Object.values(BUN_DOCS.guides),
+      ...Object.values(BUN_DOCS.secrets).map(fn => fn()),
+      ...Object.values(BUN_DOCS.color).map(fn => fn()),
+      ...Object.values(BUN_DOCS.api).map(fn => fn()),
+      ...Object.values(BUN_DOCS.guides).map(fn => fn()),
     ];
 
     return allDocs.filter(doc => doc.toLowerCase().includes(query.toLowerCase()));

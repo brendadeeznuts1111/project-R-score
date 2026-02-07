@@ -14,4 +14,7 @@ export {
   type ProfileUploaderConfig,
 } from './session-uploader';
 
+export { ProfileReader, type SessionSummary } from './profile-reader';
+export { ProfileWatcher, type ProfileWatcherConfig } from './profile-watcher';
+
 export { type ProfileType } from '../core/fw-types';

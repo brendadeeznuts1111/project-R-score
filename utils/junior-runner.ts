@@ -8,6 +8,7 @@ import {
   BENCHMARK_CONSTANTS, 
   BUN_MARKDOWN_CONFIG 
 } from './constants';
+import { wikiProfile } from './wiki-profiler';
 
 // Import constants from shared configuration
 const { DEFAULT_COLS, ENTERPRISE_COLS_THRESHOLD, LEAD_COLS_THRESHOLD, SENIOR_COLS_THRESHOLD, ALLOWED_DIRECTORIES, TIER_PERFORMANCE_SPECS } = BENCHMARK_CONSTANTS;
@@ -409,5 +410,39 @@ if (import.meta.main) {
   main();
 }
 
-// Export for use in hierarchy benchmark and debugging
-export { juniorProfile, detectTableColumns };
+/**
+ * Enhanced profiling with wiki-specific analysis (post-ripgrep)
+ */
+async function juniorProfileWithWiki(mdFile: string, options: { lspSafe?: boolean; wikiMode?: boolean } = {}): Promise<any> {
+  const { lspSafe = false, wikiMode = false } = options;
+  
+  // Run standard junior profiling first
+  const baseProfile = await juniorProfile(mdFile, { lspSafe });
+  
+  // If wiki mode is enabled, add wiki-specific profiling
+  if (wikiMode) {
+    try {
+      const wikiResult = await wikiProfile(mdFile);
+      return {
+        ...baseProfile,
+        wiki: wikiResult,
+        combined: {
+          totalElements: baseProfile.markdown.featureCounts.tables + wikiResult.wiki.urls,
+          integrationScore: wikiResult.wiki.validation === 'PASS' ? 100 : 
+                           wikiResult.wiki.validation === 'WARN' ? 80 : 60,
+          wikiFeatures: Object.values(wikiResult.wiki).reduce((sum, val) => sum + (typeof val === 'number' ? val : 0), 0)
+        }
+      };
+    } catch (wikiError) {
+      console.log(`\x1b[1;33m⚠️  Wiki profiling failed: ${wikiError.message}\x1b[0m`);
+      return baseProfile;
+    }
+  }
+  
+  return baseProfile;
+}
+
+/**
+ * Export for use in hierarchy benchmark and debugging
+ */
+export { juniorProfile, detectTableColumns, juniorProfileWithWiki, type ExtendedFeatureCounts };
