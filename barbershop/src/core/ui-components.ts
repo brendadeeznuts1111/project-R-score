@@ -4,6 +4,15 @@
  * Theme-aware and accessible
  */
 
+import {
+  loadThemeFromTOML,
+  generateThemeCSS as generateDynamicThemeCSS,
+  getAvailableThemes,
+} from './theme-loader';
+
+// Load default theme
+const defaultTheme = loadThemeFromTOML('factorywager');
+
 export interface NavItem {
   label: string;
   href: string;
@@ -31,146 +40,16 @@ export interface FooterConfig {
   showSystemStatus?: boolean;
 }
 
-// Generate CSS variables for themes - matches TOML theme structure
-export function generateThemeCSS(): string {
-  return `
-    :root {
-      /* Primary - Blue */
-      --color-primary-50: hsl(217 90% 97%);
-      --color-primary-100: hsl(217 90% 94%);
-      --color-primary-200: hsl(217 90% 86%);
-      --color-primary-300: hsl(217 90% 76%);
-      --color-primary-400: hsl(217 90% 60%);
-      --color-primary-500: hsl(217 90% 50%);
-      --color-primary-600: hsl(217 90% 42%);
-      --color-primary-700: hsl(217 90% 36%);
-      --color-primary-800: hsl(217 90% 30%);
-      --color-primary-900: hsl(217 90% 24%);
-      --color-primary-950: hsl(217 90% 16%);
+// Generate CSS variables from loaded theme
+export function generateThemeCSS(themeName: string = 'factorywager'): string {
+  const theme = loadThemeFromTOML(themeName);
+  return generateDynamicThemeCSS(theme);
+}
 
-      /* Secondary - Teal (NOT purple) */
-      --color-secondary-50: hsl(190 80% 97%);
-      --color-secondary-100: hsl(190 80% 94%);
-      --color-secondary-200: hsl(190 80% 86%);
-      --color-secondary-300: hsl(190 80% 76%);
-      --color-secondary-400: hsl(190 80% 60%);
-      --color-secondary-500: hsl(190 80% 50%);
-      --color-secondary-600: hsl(190 80% 42%);
-      --color-secondary-700: hsl(190 80% 36%);
-      --color-secondary-800: hsl(190 80% 30%);
-      --color-secondary-900: hsl(190 80% 24%);
-      --color-secondary-950: hsl(190 80% 16%);
-
-      /* Semantic Colors */
-      --color-success-50: hsl(160 84% 97%);
-      --color-success-100: hsl(160 84% 94%);
-      --color-success-500: hsl(160 84% 39%);
-      --color-success-700: hsl(160 84% 30%);
-
-      --color-warning-50: hsl(38 92% 97%);
-      --color-warning-100: hsl(38 92% 94%);
-      --color-warning-500: hsl(38 92% 50%);
-      --color-warning-700: hsl(38 92% 35%);
-
-      --color-error-50: hsl(0 84% 97%);
-      --color-error-100: hsl(0 84% 94%);
-      --color-error-500: hsl(0 84% 60%);
-      --color-error-700: hsl(0 84% 45%);
-
-      /* Background */
-      --color-background-primary: hsl(0 0% 100%);
-      --color-background-secondary: hsl(220 14% 96%);
-      --color-background-tertiary: hsl(220 14% 92%);
-      --color-background-elevated: hsl(0 0% 100%);
-
-      /* Text */
-      --color-text-primary: hsl(220 43% 11%);
-      --color-text-secondary: hsl(220 14% 35%);
-      --color-text-tertiary: hsl(220 9% 46%);
-      --color-text-muted: hsl(220 9% 60%);
-      --color-text-inverse: hsl(0 0% 100%);
-
-      /* Border */
-      --color-border-light: hsl(220 14% 90%);
-      --color-border-default: hsl(220 14% 84%);
-      --color-border-strong: hsl(220 14% 70%);
-
-      /* Status */
-      --color-status-online: hsl(160 84% 39%);
-      --color-status-away: hsl(38 92% 50%);
-      --color-status-busy: hsl(0 84% 60%);
-      --color-status-offline: hsl(220 14% 60%);
-
-      /* Shadows */
-      --shadow-sm: 0 1px 2px 0 hsl(220 43% 11% / 0.05);
-      --shadow-md: 0 4px 6px -1px hsl(220 43% 11% / 0.1);
-      --shadow-lg: 0 10px 15px -3px hsl(220 43% 11% / 0.1);
-      --shadow-xl: 0 20px 25px -5px hsl(220 43% 11% / 0.1);
-
-      /* Radius */
-      --radius-sm: 4px;
-      --radius-md: 8px;
-      --radius-lg: 12px;
-      --radius-xl: 16px;
-      --radius-full: 9999px;
-
-      /* Typography */
-      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      --font-mono: 'Fira Code', 'Monaco', 'Menlo', 'Consolas', monospace;
-
-      /* Transitions */
-      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-      --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-      --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    /* Dark theme */
-    [data-theme="dark"] {
-      --color-background-primary: hsl(220 43% 7%);
-      --color-background-secondary: hsl(220 43% 11%);
-      --color-background-tertiary: hsl(220 30% 15%);
-      --color-background-elevated: hsl(220 25% 20%);
-
-      --color-text-primary: hsl(0 0% 95%);
-      --color-text-secondary: hsl(0 0% 80%);
-      --color-text-tertiary: hsl(0 0% 65%);
-      --color-text-muted: hsl(0 0% 50%);
-      --color-text-inverse: hsl(220 43% 11%);
-
-      --color-border-light: hsl(220 20% 20%);
-      --color-border-default: hsl(220 20% 28%);
-      --color-border-strong: hsl(220 20% 40%);
-
-      --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.3);
-      --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.4);
-      --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.4);
-      --shadow-xl: 0 20px 25px -5px hsl(0 0% 0% / 0.4);
-    }
-
-    /* Professional theme */
-    [data-theme="professional"] {
-      --color-primary-500: hsl(210 70% 50%);
-      --color-secondary-500: hsl(200 60% 50%);
-
-      --color-background-primary: hsl(210 20% 98%);
-      --color-background-secondary: hsl(210 18% 94%);
-
-      --color-text-primary: hsl(210 40% 15%);
-      --color-text-secondary: hsl(210 25% 30%);
-    }
-
-    /* High contrast theme */
-    [data-theme="high-contrast"] {
-      --color-background-primary: hsl(0 0% 100%);
-      --color-background-secondary: hsl(0 0% 98%);
-
-      --color-text-primary: hsl(0 0% 0%);
-      --color-text-secondary: hsl(0 0% 15%);
-      --color-text-muted: hsl(0 0% 40%);
-
-      --color-border-default: hsl(0 0% 50%);
-    }
-  `;
+// Get animation CSS
+export function getAnimationCSS(): string {
+  // Return a link to the animations CSS file
+  return '<link rel="stylesheet" href="/themes/css/animations.css">';
 }
 
 // Shared layout styles
