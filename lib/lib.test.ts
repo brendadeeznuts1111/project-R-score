@@ -1222,3 +1222,225 @@ describe("Bun.Archive", () => {
     expect(tsOnly.has("src/b.js")).toBe(false);
   });
 });
+
+// --- Bun.JSONC: Parse JSON with comments ---
+describe("Bun.JSONC", () => {
+  test("parses standard JSON", () => {
+    const result = Bun.JSONC.parse('{"a": 1, "b": "two"}');
+    expect(result).toEqual({ a: 1, b: "two" });
+  });
+
+  test("parses single-line comments", () => {
+    const result = Bun.JSONC.parse(`{
+      // this is a comment
+      "name": "my-app",
+      "version": "1.0.0"
+    }`);
+    expect(result).toEqual({ name: "my-app", version: "1.0.0" });
+  });
+
+  test("parses block comments", () => {
+    const result = Bun.JSONC.parse(`{
+      /* block comment */
+      "enabled": true,
+      "count": /* inline */ 42
+    }`);
+    expect(result).toEqual({ enabled: true, count: 42 });
+  });
+
+  test("allows trailing commas", () => {
+    const result = Bun.JSONC.parse(`{
+      "items": [1, 2, 3,],
+      "nested": {"a": 1,},
+    }`);
+    expect(result).toEqual({ items: [1, 2, 3], nested: { a: 1 } });
+  });
+
+  test("parses tsconfig-style JSONC", () => {
+    const tsconfig = Bun.JSONC.parse(`{
+      // TypeScript configuration
+      "compilerOptions": {
+        "target": "ES2022",
+        "module": "ESNext",
+        "strict": true, // enable strict mode
+      },
+      "include": ["src/**/*.ts"],
+      "exclude": [
+        "node_modules",
+        "dist", // trailing comma
+      ]
+    }`) as any;
+    expect(tsconfig.compilerOptions.target).toBe("ES2022");
+    expect(tsconfig.compilerOptions.strict).toBe(true);
+    expect(tsconfig.include).toEqual(["src/**/*.ts"]);
+  });
+});
+
+// --- Bun.build: metafile + outputs ---
+describe("Bun.build", () => {
+  test("builds a simple entrypoint and returns outputs", async () => {
+    const tmpFile = `${import.meta.dir}/__build_test_${Date.now()}.ts`;
+    await Bun.write(tmpFile, 'export const hello = "world";');
+
+    try {
+      const result = await Bun.build({
+        entrypoints: [tmpFile],
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.outputs.length).toBeGreaterThan(0);
+
+      const artifact = result.outputs[0];
+      expect(artifact.kind).toBe("entry-point");
+      expect(artifact.loader).toBe("ts");
+      // BuildArtifact extends Blob — verify Blob-like interface
+      expect(typeof artifact.text).toBe("function");
+      expect(typeof artifact.arrayBuffer).toBe("function");
+      expect(artifact.size).toBeGreaterThan(0);
+
+      const code = await artifact.text();
+      expect(code).toInclude("world");
+    } finally {
+      await Bun.$`rm -f ${tmpFile}`;
+    }
+  });
+
+  test("metafile contains inputs and outputs", async () => {
+    const tmpFile = `${import.meta.dir}/__build_meta_${Date.now()}.ts`;
+    await Bun.write(tmpFile, 'export const x = 1;');
+
+    try {
+      const result = await Bun.build({
+        entrypoints: [tmpFile],
+        metafile: true,
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.metafile).toBeDefined();
+      expect(result.metafile!.inputs).toBeObject();
+      expect(result.metafile!.outputs).toBeObject();
+
+      // At least one input (our file)
+      const inputKeys = Object.keys(result.metafile!.inputs);
+      expect(inputKeys.length).toBeGreaterThan(0);
+
+      // Each input has bytes and imports
+      const firstInput = Object.values(result.metafile!.inputs)[0] as any;
+      expect(firstInput).toHaveProperty("bytes");
+      expect(firstInput.bytes).toBeNumber();
+    } finally {
+      await Bun.$`rm -f ${tmpFile}`;
+    }
+  });
+
+  test("BuildArtifact has path, hash, kind properties", async () => {
+    const tmpFile = `${import.meta.dir}/__build_art_${Date.now()}.ts`;
+    await Bun.write(tmpFile, 'export default 42;');
+
+    try {
+      const result = await Bun.build({
+        entrypoints: [tmpFile],
+      });
+
+      const artifact = result.outputs[0];
+      expect(artifact).toHaveProperty("path");
+      expect(artifact).toHaveProperty("kind");
+      expect(artifact).toHaveProperty("loader");
+      expect(artifact).toHaveProperty("hash");
+      expect(artifact.kind).toBeOneOf(["entry-point", "chunk", "asset", "sourcemap", "bytecode"]);
+    } finally {
+      await Bun.$`rm -f ${tmpFile}`;
+    }
+  });
+});
+
+// --- Bun.hash: crc32 and full hash family ---
+describe("Bun.hash", () => {
+  test("crc32", () => {
+    const hash = Bun.hash.crc32("hello world");
+    expect(hash).toBeNumber();
+    expect(hash).toBeInteger();
+    // CRC32 is deterministic
+    expect(Bun.hash.crc32("hello world")).toBe(hash);
+    // Different input → different hash
+    expect(Bun.hash.crc32("hello world!")).not.toBe(hash);
+  });
+
+  test("adler32", () => {
+    const hash = Bun.hash.adler32("hello world");
+    expect(hash).toBeNumber();
+    expect(Bun.hash.adler32("hello world")).toBe(hash);
+  });
+
+  test("cityHash32", () => {
+    const hash = Bun.hash.cityHash32("hello world");
+    expect(hash).toBeNumber();
+    expect(Bun.hash.cityHash32("hello world")).toBe(hash);
+  });
+
+  test("cityHash64 returns bigint", () => {
+    const hash = Bun.hash.cityHash64("hello world");
+    expect(typeof hash).toBe("bigint");
+    expect(Bun.hash.cityHash64("hello world")).toBe(hash);
+  });
+
+  test("xxHash32", () => {
+    const hash = Bun.hash.xxHash32("hello world");
+    expect(hash).toBeNumber();
+    expect(Bun.hash.xxHash32("hello world")).toBe(hash);
+  });
+
+  test("xxHash64 returns bigint", () => {
+    const hash = Bun.hash.xxHash64("hello world");
+    expect(typeof hash).toBe("bigint");
+  });
+
+  test("wyhash returns bigint with optional seed", () => {
+    const hash = Bun.hash.wyhash("hello world");
+    expect(typeof hash).toBe("bigint");
+    // With seed
+    const seeded = Bun.hash.wyhash("hello world", 42n);
+    expect(typeof seeded).toBe("bigint");
+    expect(seeded).not.toBe(hash);
+  });
+
+  test("hashes ArrayBuffer input", () => {
+    const buf = new TextEncoder().encode("hello world");
+    const fromString = Bun.hash.crc32("hello world");
+    const fromBuffer = Bun.hash.crc32(buf);
+    expect(fromBuffer).toBe(fromString);
+  });
+});
+
+// --- Response.json() ---
+describe("Response.json", () => {
+  test("creates JSON response from object", () => {
+    const res = Response.json({ status: "ok", count: 42 });
+    expect(res).toBeInstanceOf(Response);
+    expect(res.headers.get("content-type")).toInclude("application/json");
+  });
+
+  test("body contains serialized JSON", async () => {
+    const data = { users: [{ id: 1 }, { id: 2 }], total: 2 };
+    const res = Response.json(data);
+    const body = await res.json();
+    expect(body).toEqual(data);
+  });
+
+  test("supports status code via init", async () => {
+    const res = Response.json({ error: "not found" }, { status: 404 });
+    expect(res.status).toBe(404);
+    expect(await res.json()).toEqual({ error: "not found" });
+  });
+
+  test("handles arrays", async () => {
+    const res = Response.json([1, 2, 3]);
+    expect(await res.json()).toEqual([1, 2, 3]);
+  });
+
+  test("handles null and primitives", async () => {
+    expect(await Response.json(null).json()).toBeNull();
+    expect(await Response.json(true).json()).toBe(true);
+    expect(await Response.json(42).json()).toBe(42);
+  });
+});

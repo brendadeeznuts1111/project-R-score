@@ -50,7 +50,7 @@ export const DOC_PATTERNS = {
 
     if (url.includes('/api/wasm') || url.includes('WebAssembly')) {
       return [
-        BUN_DOCS.api('wasm'),
+        'https://bun.sh/docs/api/wasm',
         'https://bun.sh/reference/bun/WebAssembly',
         'https://developer.mozilla.org/en-US/docs/WebAssembly',
       ];
