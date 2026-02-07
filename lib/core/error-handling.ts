@@ -244,7 +244,9 @@ export async function safeAsync<T>(
   try {
     return await operation();
   } catch (error) {
-    handleError(error, context, ErrorSeverity.MEDIUM);
+    // Log error but don't throw - safeAsync should always return fallback
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`❌ ${context}: ${errorMessage}`);
     return fallback;
   }
 }

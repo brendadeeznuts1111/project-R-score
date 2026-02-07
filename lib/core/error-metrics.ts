@@ -3,8 +3,8 @@
 import {
   BaseEnterpriseError,
   EnterpriseErrorCode,
-  SecurityRiskLevel,
 } from './core-errors';
+import { SecurityRiskLevel } from './core-types';
 
 /**
  * Alert severity levels

@@ -91,6 +91,55 @@ export {
 } from './circuit-breaker';
 
 // ============================================================================
+// Error Metrics & Alerting
+// ============================================================================
+
+export {
+  // Classes and types
+  ErrorMetricsCollector,
+  AlertSeverity,
+  AlertChannel,
+  type AlertConfig,
+  type ErrorMetric,
+  type ErrorAggregation,
+  type MetricsExport,
+  
+  // Convenience functions
+  getErrorMetricsCollector,
+  recordError,
+  configureAlert,
+  getErrorAggregation,
+} from './error-metrics';
+
+// ============================================================================
+// Bun Spawn Utilities
+// ============================================================================
+
+export {
+  // Types
+  type SpawnResult,
+  type SafeSpawnOptions,
+  type AnsiWidthResult,
+  
+  // Binary validation
+  validateBinaryExists,
+  validateBinaryOrThrow,
+  
+  // Safe spawn
+  safeSpawn,
+  streamSpawn,
+  
+  // ANSI utilities
+  ansiStringWidth,
+  stripAnsi,
+  truncateAnsi,
+  
+  // TTY utilities
+  isTTY,
+  getTerminalSize,
+} from './bun-spawn-utils';
+
+// ============================================================================
 // Core Types
 // ============================================================================
 
