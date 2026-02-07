@@ -206,8 +206,9 @@ console.log('-'.repeat(50));
 console.log('📏 Storage Size Analysis:');
 for (const [method, storage] of Object.entries((system as any).storage)) {
   try {
-    const size = await storage.size();
-    const keys = await storage.keys();
+    const storageAdapter = storage as { size(): Promise<number>; keys(): Promise<string[]> };
+    const size = await storageAdapter.size();
+    const keys = await storageAdapter.keys();
     console.log(`   ${method}: ${size} items, keys: [${keys.join(', ')}]`);
   } catch (error) {
     console.log(`   ${method}: ❌ Not available`);

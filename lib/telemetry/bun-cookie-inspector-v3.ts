@@ -513,7 +513,15 @@ class CookieBuilder {
       throw new Error('Cookie name is required');
     }
     
-    const cookie = new Cookie(this.name, this.value, this.options);
+    // Convert expires to Date if it's a number for SecureCookieOptions compatibility
+    const secureOptions: SecureCookieOptions = {
+      ...this.options,
+      expires: typeof this.options.expires === 'number' 
+        ? new Date(this.options.expires) 
+        : this.options.expires
+    };
+    
+    const cookie = new Cookie(this.name, this.value, secureOptions);
     
     // Validate using our validation system
     const validation = CookieValidator.validateCookie({
