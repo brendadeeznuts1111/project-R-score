@@ -1,24 +1,18 @@
 #!/usr/bin/env bun
-/**
- * 🏭 FactoryWager Tier-1380 Configuration Manager
- * 
- * Comprehensive configuration management for A/B tests, system settings,
- * and enhanced snapshot metadata. Handles environment loading, validation,
- * and deployment configuration.
- */
+// tools/tier1380-config-manager.ts — Configuration manager for A/B tests and system settings
 
 import { writeFileSync, readFileSync, existsSync } from "fs";
-import { validateConfig, COMMON_SCHEMAS } from "../lib/utils/config-validator.ts";
-import { logger } from "../lib/utils/logger.ts";
+import { validateConfig, COMMON_SCHEMAS } from "../lib/utils/config-validator";
+import { logger } from "../lib/utils/logger";
 
 /**
  * 🚀 Prefetch Optimizations
- * 
+ *
  * This file includes prefetch hints for optimal performance:
  * - DNS prefetching for external domains
  * - Preconnect for faster handshakes
  * - Resource preloading for critical assets
- * 
+ *
  * Generated automatically by optimize-examples-prefetch.ts
  */
 import { join } from "path";
@@ -229,7 +223,7 @@ export class Tier1380ConfigManager {
         if (match && value) {
           const testName = match[1];
           const config = this.parseABTestConfig(value);
-          
+
           if (config) {
             this.config.abTests[testName] = {
               ...config,
@@ -325,7 +319,7 @@ export class Tier1380ConfigManager {
 
     this.config.lastUpdated = new Date().toISOString();
     this.saveConfig();
-    
+
     console.log("📸 Updated snapshot metadata:");
     console.log(`   Key: ${snapshotResponse.key}`);
     console.log(`   Cache Hit: ${this.config.snapshot.cacheHit}`);
@@ -411,7 +405,7 @@ export class Tier1380ConfigManager {
     lines.push("# A/B Test Configuration");
     for (const [testName, testConfig] of Object.entries(this.config.abTests)) {
       if (testConfig.enabled) {
-        const configString = testConfig.variants.map((variant, i) => 
+        const configString = testConfig.variants.map((variant, i) =>
           `${variant}:${testConfig.weights[i]}`
         ).join(",");
         lines.push(`export public_ab_test_${testName}="${configString}"`);
@@ -443,7 +437,7 @@ export class Tier1380ConfigManager {
         // Create directory if it doesn't exist
         Bun.write(configDir + "/.gitkeep", "");
       }
-      
+
       writeFileSync(this.configPath, JSON.stringify(this.config, null, 2));
       console.log(`💾 Configuration saved to ${this.configPath}`);
     } catch (error: unknown) {

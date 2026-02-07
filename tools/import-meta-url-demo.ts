@@ -1,13 +1,6 @@
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
+#!/usr/bin/env bun
+// tools/import-meta-url-demo.ts — Demo of import.meta.url and Bun.file self-reference
+
 // Bun.file(new URL(import.meta.url)) — reference to the current file
 const self = Bun.file(new URL(import.meta.url));
 

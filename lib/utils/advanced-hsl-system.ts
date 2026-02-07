@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🎨 ADVANCED HSL Color Theory & Perceptual Utilities
- *
- * Building on the base color system with perceptual uniformity,
- * harmonious palettes, and advanced HSL manipulation techniques.
- */
+// lib/utils/advanced-hsl-system.ts — Advanced HSL color theory and perceptual utilities
 
 import { color } from 'bun';
 import { colorize } from './color-system';

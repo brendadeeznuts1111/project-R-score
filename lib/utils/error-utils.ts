@@ -1,10 +1,4 @@
-/**
- * 🛠️ Error Handling Utilities
- *
- * Shared utilities for consistent error handling across the codebase
- *
- * @version 1.0.0
- */
+// lib/utils/error-utils.ts — Error handling utilities
 
 /**
  * Safely extract error message from unknown error type

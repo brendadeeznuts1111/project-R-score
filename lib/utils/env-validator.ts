@@ -1,5 +1,4 @@
-// lib/utils/env-validator.ts
-// Environment variable validation and sanitization utilities
+// lib/utils/env-validator.ts — Environment variable validation and sanitization
 
 /**
  * Validates and sanitizes hostnames for use in URLs

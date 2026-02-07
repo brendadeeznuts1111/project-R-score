@@ -1,12 +1,4 @@
-/**
- * CLI Validation Integration Helper
- *
- * Minimal integration for existing CLI tools to add validation
- * with just a few lines of code.
- *
- * @version 1.0.0
- * @author Enterprise Platform Team
- */
+// lib/validation/cli-validation-integration.ts — Minimal CLI validation integration helper
 
 import { quickValidate, validateAndReport } from './cli-self-validation';
 
@@ -145,11 +137,11 @@ Add validation to your CLI tools in seconds:
 5️⃣  COMPLETE EXAMPLE:
    #!/usr/bin/env bun
    import { validateOrExit, setDefaults } from './lib/cli-validation-integration';
-   
+
    // Set defaults and validate
    setDefaults({ NODE_ENV: 'development' });
    await validateOrExit('bun', ['--version']);
-   
+
    // Your CLI logic here
    console.log('✅ CLI tool ready to execute!');
 
@@ -160,7 +152,7 @@ Add validation to your CLI tools in seconds:
 
 📊 VALIDATION CATEGORIES:
    • CLI Tools: Binary availability and permissions
-   • URLs: Connectivity and protocol compliance  
+   • URLs: Connectivity and protocol compliance
    • Constants: Type safety and required values
    • Environment: Required variables and defaults
 

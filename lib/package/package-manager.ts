@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 📦 Package Management Integration Layer
- *
- * Analyzes packages for Bun API usage, generates documentation,
- * and integrates with R2 storage and RSS feeds.
- */
+// lib/package/package-manager.ts — Package management with Bun API analysis and R2 integration
 
 export interface PackageInfo {
   name: string;

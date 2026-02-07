@@ -1,22 +1,16 @@
 #!/usr/bin/env bun
-/**
- * 🏭 FactoryWager Profiling CLI
- * 
- * Unified command-line interface for all FactoryWager profiling tools
- * 
- * @version 4.0
- */
+// tools/factorywager-cli.ts — Unified CLI for FactoryWager profiling tools
 
-import { styled, log } from '../lib/theme/colors.ts';
+import { styled, log } from '../lib/theme/colors';
 
 /**
  * 🚀 Prefetch Optimizations
- * 
+ *
  * This file includes prefetch hints for optimal performance:
  * - DNS prefetching for external domains
  * - Preconnect for faster handshakes
  * - Resource preloading for critical assets
- * 
+ *
  * Generated automatically by optimize-examples-prefetch.ts
  */
 import { spawn } from 'child_process';
@@ -51,35 +45,35 @@ function showHelp() {
   console.log(styled('\n🏭 FactoryWager Profiling CLI v4.0', 'accent'));
   console.log(styled('━'.repeat(50), 'muted'));
   console.log(styled('\nAvailable commands:', 'primary'));
-  
+
   Object.entries(COMMANDS).forEach(([cmd, info]) => {
     console.log(styled(`  ${cmd.padEnd(10)}`, 'muted') + styled(info.description, 'success'));
   });
-  
+
   console.log(styled('\nUsage:', 'primary'));
   console.log(styled('  bun factorywager-cli.ts <command>', 'muted'));
   console.log(styled('\nExamples:', 'primary'));
   console.log(styled('  bun factorywager-cli.ts cpu', 'muted'));
   console.log(styled('  bun factorywager-cli.ts heap', 'muted'));
   console.log(styled('  bun factorywager-cli.ts diagnose', 'muted'));
-  
+
   console.log('\n' + styled('🚀 Happy profiling!', 'success'));
 }
 
 async function runCommand(command: Command) {
   const config = COMMANDS[command];
-  
+
   if (!config) {
     console.log(styled('❌ Unknown command', 'error'));
     showHelp();
     process.exit(1);
   }
-  
+
   log.section(`FactoryWager ${command.toUpperCase()} Profiling`, 'accent');
   log.info(`Running ${config.description}...`);
-  
+
   const scriptPath = join(import.meta.dir, config.script);
-  
+
   try {
     if (config.script.endsWith('.sh')) {
       // Run shell script
@@ -87,7 +81,7 @@ async function runCommand(command: Command) {
         stdio: 'inherit',
         cwd: import.meta.dir,
       });
-      
+
       proc.on('exit', (code) => {
         if (code === 0) {
           console.log(styled('\n✅ Command completed successfully', 'success'));
@@ -102,7 +96,7 @@ async function runCommand(command: Command) {
         stdio: 'inherit',
         cwd: import.meta.dir,
       });
-      
+
       proc.on('exit', (code) => {
         if (code === 0) {
           console.log(styled('\n✅ Command completed successfully', 'success'));
@@ -123,12 +117,12 @@ async function runCommand(command: Command) {
 async function main() {
   const args = process.argv.slice(2);
   const command = args[0] as Command;
-  
+
   if (!command || command === 'help' || command === '--help' || command === '-h') {
     showHelp();
     return;
   }
-  
+
   await runCommand(command);
 }
 

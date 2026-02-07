@@ -1,12 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Performance Optimization Suite
- *
- * Addresses critical performance bottlenecks identified in benchmark testing:
- * 1. spawnSync Base Performance (21x slower than target)
- * 2. Environment Variables Overhead (7x slower than target)
- * 3. Server Response Time (3.3x slower than target)
- */
+// lib/performance/optimizer.ts — Performance optimization for spawn, env, and server bottlenecks
 
 // ============================================================================
 // SPAWN OPTIMIZATION

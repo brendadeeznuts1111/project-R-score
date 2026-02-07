@@ -1,10 +1,7 @@
 #!/usr/bin/env bun
-/**
- * Overseer CLI - Root project manager for Bun platform projects
- * Manages multiple projects from $BUN_PLATFORM_HOME with per-project isolation
- */
+// tools/overseer-cli.ts — Root project manager for Bun platform projects
 
-import { ensureDirectExecution } from "../shared/tools/entry-guard.ts";
+import { ensureDirectExecution } from "../shared/tools/entry-guard";
 ensureDirectExecution();
 
 import { which, spawn } from "bun";

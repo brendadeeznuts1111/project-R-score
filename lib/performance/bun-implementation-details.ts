@@ -1,13 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Bun Implementation Details Analysis and Updates
- *
- * Based on Bun v1.3.6 release notes and implementation details:
- * - Memory leak fixes for ReadableStream in fetch()
- * - Null byte injection prevention (CWE-158)
- * - Large file handling improvements for Bun.write()
- * - Connection pooling and proxy improvements
- */
+// lib/performance/bun-implementation-details.ts — Bun implementation details analysis and updates
 
 // Entry guard check
 if (import.meta.main) {

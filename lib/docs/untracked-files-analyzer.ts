@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Comprehensive Untracked Files Analysis
- *
- * Analyzes all untracked files in the repository to identify
- * important files that should be tracked, validate their content,
- * and provide recommendations for repository management.
- */
+// lib/docs/untracked-files-analyzer.ts — Untracked files analysis
 
 // Entry guard check
 if (import.meta.path !== Bun.main) {

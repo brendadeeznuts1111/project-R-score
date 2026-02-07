@@ -1,9 +1,4 @@
-/**
- * 🌐 FactoryWager MCP Wiki Generator Integration
- *
- * Integrates the existing wiki generator with the MCP ecosystem
- * for automated documentation generation and management.
- */
+// lib/mcp/wiki-generator-mcp.ts — Wiki generator integration for the MCP ecosystem
 
 import { WikiURLGenerator } from '../wiki-generator';
 import { r2MCPIntegration } from './r2-integration';

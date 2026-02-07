@@ -1,3 +1,5 @@
+// lib/ai/ai-operations-manager.test.ts — Tests for ai-operations-manager
+
 import { test, expect, describe, afterEach, mock, beforeEach } from 'bun:test';
 
 // Mock dependencies before importing the module under test

@@ -1,4 +1,6 @@
-// cookie-scanner.ts - Efficient CLI tool
+#!/usr/bin/env bun
+// tools/cookie-scanner.ts — Cookie scanner and R2 storage compressor
+
 const args = process.argv.slice(2)
 
 // Get positional argument with fallback
@@ -14,7 +16,7 @@ const prefixed = Buffer.concat([Buffer.from([0x01]), compressed])
 
 // Display with wrapping
 const wrap = Bun.wrapAnsi
-const msg = `🆔 ${projectId} 📊 ${sessionId} 📦 ${prefixed.length}B R2: ${process.env.R2_BUCKET}` 
+const msg = `🆔 ${projectId} 📊 ${sessionId} 📦 ${prefixed.length}B R2: ${process.env.R2_BUCKET}`
 console.log(wrap(msg, 80))
 
 // Summary

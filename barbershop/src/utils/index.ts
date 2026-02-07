@@ -38,6 +38,30 @@ export {
   type HookRegistry,
 } from './wasm-table';
 
+// Cookie Management with Compression
+export {
+  CookieManager,
+  cookieManager,
+  createSessionCookie,
+  createTelemetryCookie,
+  parseTelemetryCookie,
+  type CookieOptions,
+  type CompressedCookie,
+  type TelemetryData,
+  type TelemetryEvent,
+} from './cookie-manager';
+
+// Header Compression
+export {
+  HeaderCompressor,
+  headerCompressor,
+  compressRequestHeaders,
+  decompressResponseHeaders,
+  type CompressedHeaders,
+  type TelemetryHeaders,
+  type ConformanceHeaders,
+} from './header-compression';
+
 // Bun-Enhanced Utilities
 export {
   // Hashing

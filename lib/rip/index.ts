@@ -1,9 +1,4 @@
-/**
- * FACTORYWAGER RIPGREP v4.0 - Core Implementation
- * 
- * Enterprise-grade code analysis and transmutation system
- * for Bun-centric development environments.
- */
+// lib/rip/index.ts — Core code analysis and transmutation engine
 
 import { file } from 'bun';
 
@@ -58,7 +53,7 @@ export interface PurgeResult {
 
 export class RipgrepEngine {
   private config: RipgrepConfig;
-  
+
   constructor(configPath: string = 'bun.yaml') {
     this.config = this.loadConfig(configPath);
   }
@@ -129,7 +124,7 @@ export class RipgrepEngine {
    */
   private validateParams(params: PurgeParams): void {
     const { scope = this.config.defaults.scope } = params;
-    
+
     if (!this.config.schema.scope.includes(scope)) {
       throw new Error(`❌ Invalid scope: ${scope}. Must be one of: ${this.config.schema.scope.join(', ')}`);
     }
@@ -148,7 +143,7 @@ export class RipgrepEngine {
    */
   async purgeRipgrep(params: PurgeParams = {}): Promise<PurgeResult> {
     this.validateParams(params);
-    
+
     const {
       scope = this.config.defaults.scope,
       type = this.config.defaults.type,
@@ -182,9 +177,9 @@ export class RipgrepEngine {
    */
   async scanBrokenLinks(directory: string = '.'): Promise<string[]> {
     const { spawn } = await import('bun');
-    
+
     try {
-      const result = await spawn(['rg', '--type', 'js', '--no-heading', 
+      const result = await spawn(['rg', '--type', 'js', '--no-heading',
         'https?://[^\\s\\)\\]\\}>]+', directory], {
         stdout: 'pipe'
       });
@@ -202,7 +197,7 @@ export class RipgrepEngine {
    */
   async scanNonBunCode(directory: string = '.'): Promise<string[]> {
     const { spawn } = await import('bun');
-    
+
     try {
       const result = await spawn(['rg', '--type', 'js', '--no-heading',
         'require\\(|module\\.exports|fs\\.|child_process', directory], {

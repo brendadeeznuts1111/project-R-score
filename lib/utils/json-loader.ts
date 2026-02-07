@@ -1,9 +1,4 @@
-/**
- * JSON Loader - Safe JSON file loading with defaults using Bun.file()
- *
- * Provides a clean pattern for loading JSON files with type specification,
- * existence checks, and default value creation.
- */
+// lib/utils/json-loader.ts — Safe JSON file loading with defaults
 
 import { StatusOutput } from './output-helpers';
 

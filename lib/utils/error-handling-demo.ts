@@ -1,9 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 🔍 Error Handling Demonstration
- *
- * Shows how errors are handled throughout our documentation system
- */
+// lib/utils/error-handling-demo.ts — Error handling demonstration
 
 // Safe execution with error handling
 async function demonstrateErrorHandling() {

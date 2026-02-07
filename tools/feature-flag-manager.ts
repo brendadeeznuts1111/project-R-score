@@ -1,21 +1,5 @@
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 #!/usr/bin/env bun
-/**
- * 🚀 Feature Flag & Deployment Manager
- * 
- * Comprehensive feature flag system for URL structure migration
- * with canary deployment, A/B testing, and rollback capabilities
- * Usage: bun feature-flag-manager.ts [options]
- */
+// tools/feature-flag-manager.ts — Feature flag and deployment manager
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -169,11 +153,11 @@ interface ABTestConfig {
 class FeatureFlagManager {
   private flags: Map<string, FeatureFlag> = new Map();
   private configPath = './config/feature-flags.json';
-  
+
   constructor() {
     this.initializeFlags();
   }
-  
+
   private initializeFlags() {
     // Initialize default feature flags for URL structure migration
     const defaultFlags: FeatureFlag[] = [
@@ -246,71 +230,71 @@ class FeatureFlagManager {
         }
       }
     ];
-    
+
     defaultFlags.forEach(flag => {
       this.flags.set(flag.id, flag);
     });
   }
-  
+
   async enableFlag(flagId: string, rolloutPercentage: number = 100, targetGroups: string[] = []): Promise<boolean> {
     const flag = this.flags.get(flagId);
     if (!flag) {
       log.error(`Feature flag not found: ${flagId}`);
       return false;
     }
-    
+
     flag.enabled = true;
     flag.rolloutPercentage = rolloutPercentage;
     flag.targetGroups = targetGroups;
     flag.metadata.updatedAt = new Date().toISOString();
-    
+
     log.success(`Enabled feature flag: ${flag.name} (${rolloutPercentage}% rollout)`);
-    
+
     if (targetGroups.length > 0) {
       log.info(`Target groups: ${targetGroups.join(', ')}`);
     }
-    
+
     return true;
   }
-  
+
   async disableFlag(flagId: string): Promise<boolean> {
     const flag = this.flags.get(flagId);
     if (!flag) {
       log.error(`Feature flag not found: ${flagId}`);
       return false;
     }
-    
+
     flag.enabled = false;
     flag.rolloutPercentage = 0;
     flag.targetGroups = [];
     flag.metadata.updatedAt = new Date().toISOString();
-    
+
     log.success(`Disabled feature flag: ${flag.name}`);
     return true;
   }
-  
+
   getFlagStatus(flagId?: string): FeatureFlag[] | FeatureFlag | null {
     if (flagId) {
       return this.flags.get(flagId) || null;
     }
     return Array.from(this.flags.values());
   }
-  
+
   async saveFlags(): Promise<boolean> {
     try {
       const fs = await import('fs/promises');
       const path = await import('path');
-      
+
       // Ensure config directory exists
       const configDir = path.dirname(this.configPath);
       await fs.mkdir(configDir, { recursive: true });
-      
+
       const flagData = {
         version: '1.0.0',
         updatedAt: new Date().toISOString(),
         flags: Array.from(this.flags.entries()).map(([id, flag]) => ({ id, ...flag }))
       };
-      
+
       await fs.writeFile(this.configPath, JSON.stringify(flagData, null, 2));
       log.verbose(`Saved feature flags to ${this.configPath}`);
       return true;
@@ -325,14 +309,14 @@ class FeatureFlagManager {
 class DeploymentManager {
   private currentDeployment: DeploymentConfig | null = null;
   private deploymentHistory: DeploymentConfig[] = [];
-  
+
   async deployToCanary(featureFlagManager: FeatureFlagManager): Promise<boolean> {
     log.section('🚀 Canary Deployment');
-    
+
     try {
       // Enable canary feature flag for small group
       await featureFlagManager.enableFlag('canary-deployment', 5, ['canary-users']);
-      
+
       // Create deployment record
       const deployment: DeploymentConfig = {
         environment: 'production',
@@ -341,56 +325,56 @@ class DeploymentManager {
         targetGroups: ['canary-users'],
         deploymentTime: new Date().toISOString()
       };
-      
+
       this.currentDeployment = deployment;
       this.deploymentHistory.push(deployment);
-      
+
       log.success('Canary deployment initiated');
       log.info('Target: 5% of users (canary group)');
       log.info('Monitoring enabled for 30 minutes');
-      
+
       // Start monitoring
       setTimeout(() => {
         this.checkCanaryHealth();
       }, 30 * 60 * 1000); // 30 minutes
-      
+
       return true;
     } catch (error) {
       log.error(`Canary deployment failed: ${error.message}`);
       return false;
     }
   }
-  
+
   async rollback(featureFlagManager: FeatureFlagManager): Promise<boolean> {
     log.section('🔄 Rollback');
-    
+
     try {
       // Disable all new feature flags
       await featureFlagManager.disableFlag('direct-urls-enabled');
       await featureFlagManager.disableFlag('fragment-redirects');
       await featureFlagManager.disableFlag('ab-testing-active');
       await featureFlagManager.disableFlag('canary-deployment');
-      
+
       // Save rollback state
       if (this.currentDeployment) {
         this.currentDeployment.rollbackVersion = 'v1.0.0-fragments';
         this.currentDeployment = null;
       }
-      
+
       log.success('Rollback completed');
       log.info('All feature flags disabled');
       log.info('System reverted to fragment-based URLs');
-      
+
       return true;
     } catch (error) {
       log.error(`Rollback failed: ${error.message}`);
       return false;
     }
   }
-  
+
   private checkCanaryHealth() {
     log.section('🏥 Canary Health Check');
-    
+
     // Simulate health check metrics
     const metrics = {
       errorRate: 0.1, // 0.1% error rate
@@ -398,12 +382,12 @@ class DeploymentManager {
       userSatisfaction: 4.8, // 4.8/5 rating
       throughput: 1000 // requests per minute
     };
-    
+
     log.info(`Error rate: ${metrics.errorRate}%`);
     log.info(`Response time: ${metrics.responseTime}ms`);
     log.info(`User satisfaction: ${metrics.userSatisfaction}/5`);
     log.info(`Throughput: ${metrics.throughput} req/min`);
-    
+
     if (metrics.errorRate < 1.0 && metrics.userSatisfaction > 4.5) {
       log.success('Canary deployment healthy - ready for gradual rollout');
     } else {
@@ -415,10 +399,10 @@ class DeploymentManager {
 // A/B Test Manager
 class ABTestManager {
   private activeTests: Map<string, ABTestConfig> = new Map();
-  
+
   async createABTest(): Promise<string> {
     const testId = 'url-structure-comparison';
-    
+
     const testConfig: ABTestConfig = {
       id: testId,
       name: 'URL Structure Comparison',
@@ -453,48 +437,48 @@ class ABTestManager {
       duration: 14, // 14 days
       status: 'draft'
     };
-    
+
     this.activeTests.set(testId, testConfig);
-    
+
     log.success('A/B test created');
     log.info(`Test ID: ${testId}`);
     log.info(`Duration: ${testConfig.duration} days`);
     log.info(`Traffic split: 50/50`);
-    
+
     return testId;
   }
-  
+
   async startABTest(testId: string, featureFlagManager: FeatureFlagManager): Promise<boolean> {
     const test = this.activeTests.get(testId);
     if (!test) {
       log.error(`A/B test not found: ${testId}`);
       return false;
     }
-    
+
     test.status = 'running';
-    
+
     // Enable A/B testing feature flag
     await featureFlagManager.enableFlag('ab-testing-active', 100);
-    
+
     log.success('A/B test started');
     log.info(`Test: ${test.name}`);
     log.info('Users will be split 50/50 between variants');
     log.info(`Test will run for ${test.duration} days`);
-    
+
     // Schedule test completion
     setTimeout(() => {
       this.completeABTest(testId);
     }, test.duration * 24 * 60 * 60 * 1000);
-    
+
     return true;
   }
-  
+
   private completeABTest(testId: string) {
     const test = this.activeTests.get(testId);
     if (!test) return;
-    
+
     test.status = 'completed';
-    
+
     // Simulate test results
     const results = {
       control: {
@@ -514,20 +498,20 @@ class ABTestManager {
       significance: 0.95,
       winner: 'treatment' as const
     };
-    
+
     test.results = results;
-    
+
     log.section('📊 A/B Test Results');
     log.info(`Test: ${test.name}`);
     log.info(`Winner: ${test.variants[results.winner].name}`);
     log.info(`Statistical significance: ${results.significance * 100}%`);
-    
+
     if (options.verbose) {
       console.log('\nControl (Fragment URLs):');
       Object.entries(results.control).forEach(([metric, value]) => {
         console.log(`  ${metric}: ${value}`);
       });
-      
+
       console.log('\nTreatment (Direct URLs):');
       Object.entries(results.treatment).forEach(([metric, value]) => {
         console.log(`  ${metric}: ${value}`);
@@ -539,26 +523,26 @@ class ABTestManager {
 // Monitoring Manager
 class MonitoringManager {
   private metrics: Map<string, number> = new Map();
-  
+
   async startMonitoring(): Promise<void> {
     log.section('📊 Monitoring Started');
-    
+
     // Initialize metrics
     this.metrics.set('error-rate', 0);
     this.metrics.set('response-time', 0);
     this.metrics.set('user-satisfaction', 0);
     this.metrics.set('throughput', 0);
     this.metrics.set('redirect-success', 0);
-    
+
     // Start monitoring loop
     setInterval(() => {
       this.collectMetrics();
     }, 60000); // Every minute
-    
+
     log.info('Monitoring metrics every minute');
     log.info('Press Ctrl+C to stop monitoring');
   }
-  
+
   private collectMetrics() {
     // Simulate metric collection
     const errorRate = Math.random() * 2; // 0-2% error rate
@@ -566,39 +550,39 @@ class MonitoringManager {
     const userSatisfaction = 4.0 + Math.random(); // 4.0-5.0
     const throughput = 800 + Math.random() * 400; // 800-1200 req/min
     const redirectSuccess = 95 + Math.random() * 5; // 95-100% success
-    
+
     this.metrics.set('error-rate', errorRate);
     this.metrics.set('response-time', responseTime);
     this.metrics.set('user-satisfaction', userSatisfaction);
     this.metrics.set('throughput', throughput);
     this.metrics.set('redirect-success', redirectSuccess);
-    
+
     // Check for alerts
     this.checkAlerts();
   }
-  
+
   private checkAlerts() {
     const errorRate = this.metrics.get('error-rate') || 0;
     const responseTime = this.metrics.get('response-time') || 0;
     const userSatisfaction = this.metrics.get('user-satisfaction') || 0;
-    
+
     if (errorRate > 5.0) {
       log.error(`🚨 HIGH ERROR RATE: ${errorRate.toFixed(2)}%`);
     }
-    
+
     if (responseTime > 500) {
       log.warning(`⚠️ SLOW RESPONSE TIME: ${responseTime.toFixed(0)}ms`);
     }
-    
+
     if (userSatisfaction < 4.0) {
       log.warning(`⚠️ LOW USER SATISFACTION: ${userSatisfaction.toFixed(2)}/5`);
     }
-    
+
     if (options.verbose) {
       console.log(`\r📊 Error: ${errorRate.toFixed(2)}% | Response: ${responseTime.toFixed(0)}ms | Satisfaction: ${userSatisfaction.toFixed(2)}/5`);
     }
   }
-  
+
   getMetrics(): Record<string, number> {
     return Object.fromEntries(this.metrics);
   }
@@ -607,11 +591,11 @@ class MonitoringManager {
 // URL Structure Manager
 class URLStructureManager {
   private redirectMap: Map<string, string> = new Map();
-  
+
   constructor() {
     this.initializeRedirects();
   }
-  
+
   private initializeRedirects() {
     // Create 301 redirect mappings from fragment URLs to direct URLs
     const fragmentToDirect = [
@@ -657,23 +641,23 @@ class URLStructureManager {
       ['/docs/api/utils#jsonparse', '/docs/api/utils/jsonparse'],
       ['/docs/api/utils#jsonstringify', '/docs/api/utils/jsonstringify']
     ];
-    
+
     fragmentToDirect.forEach(([fragment, direct]) => {
       this.redirectMap.set(fragment, direct);
     });
   }
-  
+
   generateRedirectRules(): string {
     let rules = '# 301 Redirects - Fragment URLs to Direct URLs\n';
     rules += '# Generated by Feature Flag Manager\n\n';
-    
+
     this.redirectMap.forEach((direct, fragment) => {
       rules += `RewriteRule ^${fragment.replace(/^https:\/\/bun\.sh/, '')}$ ${direct} [R=301,L]\n`;
     });
-    
+
     return rules;
   }
-  
+
   getRedirectCount(): number {
     return this.redirectMap.size;
   }
@@ -683,88 +667,88 @@ class URLStructureManager {
 async function main() {
   console.log(`${colors.cyan}🚀 Feature Flag & Deployment Manager${colors.reset}`);
   console.log(`${colors.gray}URL Structure Migration with Feature Flags${colors.reset}\n`);
-  
+
   const featureFlagManager = new FeatureFlagManager();
   const deploymentManager = new DeploymentManager();
   const abTestManager = new ABTestManager();
   const monitoringManager = new MonitoringManager();
   const urlStructureManager = new URLStructureManager();
-  
+
   try {
     // Handle different commands
     if (options.status) {
       log.section('📊 Feature Flag Status');
       const flags = featureFlagManager.getFlagStatus();
-      
+
       if (Array.isArray(flags)) {
         flags.forEach(flag => {
           const status = flag.enabled ? '✅ ENABLED' : '❌ DISABLED';
           const rollout = flag.enabled ? ` (${flag.rolloutPercentage}%)` : '';
           console.log(`${status} ${flag.name}${rollout}`);
-          
+
           if (options.verbose && flag.enabled) {
             console.log(`   Target groups: ${flag.targetGroups.join(', ') || 'All users'}`);
             console.log(`   Updated: ${flag.metadata.updatedAt}`);
           }
         });
       }
-      
+
       if (options.json) {
         log.json({ flags });
       }
     }
-    
+
     else if (options.enable) {
       const flagId = args[args.indexOf('--enable') + 1];
       if (!flagId) {
         log.error('Please specify a feature flag to enable');
         process.exit(1);
       }
-      
+
       await featureFlagManager.enableFlag(flagId);
       await featureFlagManager.saveFlags();
-      
+
       if (options.canary) {
         await deploymentManager.deployToCanary(featureFlagManager);
       }
     }
-    
+
     else if (options.disable) {
       const flagId = args[args.indexOf('--disable') + 1];
       if (!flagId) {
         log.error('Please specify a feature flag to disable');
         process.exit(1);
       }
-      
+
       await featureFlagManager.disableFlag(flagId);
       await featureFlagManager.saveFlags();
     }
-    
+
     else if (options.canary) {
       await deploymentManager.deployToCanary(featureFlagManager);
     }
-    
+
     else if (options.rollback) {
       await deploymentManager.rollback(featureFlagManager);
       await featureFlagManager.saveFlags();
     }
-    
+
     else if (options.abTest) {
       const testId = await abTestManager.createABTest();
       await abTestManager.startABTest(testId, featureFlagManager);
     }
-    
+
     else if (options.monitor) {
       await monitoringManager.startMonitoring();
     }
-    
+
     else if (options.deploy) {
       const targetGroup = args[args.indexOf('--deploy') + 1] || 'all';
       log.info(`Deploying to group: ${targetGroup}`);
       await featureFlagManager.enableFlag('direct-urls-enabled', 100, [targetGroup]);
       await featureFlagManager.saveFlags();
     }
-    
+
     else {
       log.section('📋 Available Actions');
       console.log('Feature Flags:');
@@ -786,11 +770,11 @@ async function main() {
       console.log('  - fragment-redirects');
       console.log('  - ab-testing-active');
       console.log('  - canary-deployment');
-      
+
       // Show redirect info
       log.section('🔗 URL Redirect Configuration');
       log.info(`Configured redirects: ${urlStructureManager.getRedirectCount()}`);
-      
+
       if (options.verbose) {
         console.log('\nSample redirect rules:');
         const rules = urlStructureManager.generateRedirectRules();
@@ -798,7 +782,7 @@ async function main() {
         console.log('...(truncated)');
       }
     }
-    
+
   } catch (error: any) {
     log.error(`Error: ${error.message}`);
     if (options.verbose) {

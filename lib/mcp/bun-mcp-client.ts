@@ -1,3 +1,5 @@
+// lib/mcp/bun-mcp-client.ts — MCP client for Bun documentation search
+
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { styled, FW_COLORS, FactoryWagerColor } from '../theme/colors';

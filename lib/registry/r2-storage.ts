@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 🪣 R2 Storage Adapter for NPM Registry (Bun v1.3.7+ Optimized)
- *
- * Handles package storage, retrieval, and metadata management in Cloudflare R2
- * Leverages Bun v1.3.7 features: contentEncoding, signed URLs, header preservation
- */
+// lib/registry/r2-storage.ts — R2 storage adapter for package management
 
 import { styled, FW_COLORS } from '../theme/colors';
 import type {

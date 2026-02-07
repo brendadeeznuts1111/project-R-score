@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🔍 Comprehensive Input Validation System
- *
- * Type-safe validation with detailed error reporting and sanitization
- */
+// lib/core/validation.ts — Input validation with error reporting and sanitization
 
 import { ValidationError } from './error-handling';
 

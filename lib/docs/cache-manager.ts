@@ -1,3 +1,5 @@
+// lib/docs/cache-manager.ts — Documentation cache management
+
 export interface CacheConfig {
   ttl: number; // milliseconds
   maxSize: number;

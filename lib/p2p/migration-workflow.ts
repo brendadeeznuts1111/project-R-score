@@ -1,7 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Migration Workflow - Step-by-Step Business Change Management
- */
+// lib/p2p/migration-workflow.ts — Step-by-step business change migration workflow
 
 import { BusinessContinuity } from './business-continuity';
 import Redis from 'ioredis';

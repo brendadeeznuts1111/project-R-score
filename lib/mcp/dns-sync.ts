@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🌐 DNS Synchronization for FactoryWager
- *
- * Synchronizes Cloudflare DNS records with R2 MCP system
- * and provides real-time DNS management capabilities.
- */
+// lib/mcp/dns-sync.ts — DNS synchronization with Cloudflare and R2 MCP
 
 import { r2MCPIntegration } from './r2-integration';
 import { cloudflareDomainManager } from './cloudflare-domain-manager';

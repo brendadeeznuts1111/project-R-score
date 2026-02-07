@@ -1,3 +1,5 @@
+// tools/wasm-inspector.test.ts — Tests for wasm-inspector
+
 import { test, expect, describe } from 'bun:test';
 import {
   WASM_API,

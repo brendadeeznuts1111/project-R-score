@@ -1,15 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 📊 R2 Analytics & Metrics Dashboard
- *
- * Comprehensive analytics for R2 storage with:
- * - Real-time metrics collection and aggregation
- * - Usage patterns and trend analysis
- * - Performance monitoring and alerting
- * - Cost analysis and optimization recommendations
- * - Custom dashboards and visualizations
- */
+// lib/r2/r2-analytics.ts — R2 analytics and metrics dashboard
 
 import { styled, FW_COLORS } from '../theme/colors';
 import { r2EventSystem } from './r2-event-system';

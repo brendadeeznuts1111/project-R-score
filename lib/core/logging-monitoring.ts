@@ -1,9 +1,4 @@
-/**
- * Comprehensive Logging and Monitoring System
- *
- * Provides structured logging, metrics collection, and monitoring capabilities
- * with support for multiple log levels, output formats, and monitoring backends
- */
+// lib/core/logging-monitoring.ts — Logging and monitoring system
 
 // ============================================================================
 // LOGGING INTERFACES

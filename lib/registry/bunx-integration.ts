@@ -1,13 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 🚀 bun x Integration for Registry Packages
- *
- * Features:
- * - Execute packages from private registry
- * - Version resolution with bun.semver
- * - Caching and optimization
- * - Secure credential handling
- */
+// lib/registry/bunx-integration.ts — bunx integration for executing registry packages
 
 import { styled } from '../theme/colors';
 import { R2StorageAdapter } from './r2-storage';

@@ -1,9 +1,4 @@
-#!/usr/bin/env bun
-/**
- * SAFE Entry Guard Utility
- * 
- * Prevents the silent killer pattern that destroys async operations
- */
+// lib/cli/safe-entry-guard.ts — Safe entry guard utility for async operations
 
 /**
  * Check if the current module is being run directly (not imported)

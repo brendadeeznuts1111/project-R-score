@@ -1,3 +1,5 @@
+// lib/cli/chrome-app-manager.ts — Chrome app configuration and management
+
 export interface ChromeAppConfig {
   appName: string;
   appUrl: string;
@@ -33,15 +35,15 @@ export class ChromeAppManager {
           tell application "Google Chrome"
             set appUrl to "${url}"
             set appName to "${this.config.appName}"
-            
+
             -- Create new window in app mode
             make new window with properties {mode:"app", URL:appUrl}
-            
+
             -- Set window size and position if specified
             try
               set front window's bounds to {${this.config.position?.x || 100}, ${this.config.position?.y || 100}, ${(this.config.position?.x || 100) + (this.config.windowSize?.width || 1200)}, ${(this.config.position?.y || 100) + (this.config.windowSize?.height || 800)}}
             end try
-            
+
             return "Chrome app '${appName}' created successfully"
           end tell
         `;

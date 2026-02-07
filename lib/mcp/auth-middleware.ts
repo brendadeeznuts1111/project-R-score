@@ -1,8 +1,4 @@
-/**
- * 🔐 FactoryWager MCP Authentication Middleware
- *
- * Secure authentication layer for MCP servers using master tokens
- */
+// lib/mcp/auth-middleware.ts — Authentication middleware for MCP servers
 
 import { masterTokenManager, TokenValidation } from '../security/master-token';
 import { styled, FW_COLORS } from '../theme/colors';

@@ -1,16 +1,4 @@
-/**
- * 🔐 Tier-1380 Enterprise Secrets & Profiler Module
- *
- * Bun v1.1+ Enterprise Features:
- * - Bun.secrets with CRED_PERSIST_ENTERPRISE (Windows per-user roaming)
- * - node:inspector Profiler API integration
- * - R-Score: +0.14 (security + observability uplift)
- *
- * @version 4.6
- * @requires Bun >= 1.1.0
- * @platform Windows (CRED_PERSIST_ENTERPRISE), macOS (Keychain), Linux (libsecret)
- * @see https://bun.sh/docs/runtime/secrets
- */
+// lib/security/enterprise-secrets.ts — Enterprise secrets and profiler module
 
 /**
  * Enterprise Secrets Manager

@@ -1,16 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 📚 Enhanced Enterprise Documentation System
- *
- * Main entry point for the comprehensive documentation URL management system
- * with domain-aware routing, intelligent selection between bun.sh and bun.com,
- * and enterprise-grade features.
- *
- * @author Enterprise Documentation Team
- * @version 2.0.0
- * @since 1.0.0
- */
+// lib/docs/documentation-index.ts — Documentation system entry point
 
 import {
   DocumentationProvider,

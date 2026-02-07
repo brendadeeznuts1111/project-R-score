@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 📚 Documentation URL Handler with Fragment Support
- *
- * Enhanced URL handling system specifically for documentation references
- * with fragment support, validation, and integration with existing constants
- */
+// lib/core/documentation-url-handler.ts — Documentation URL handler with fragment support
 
 import { DOCS, DOC_PATHS, URL_PATTERNS } from '../docs/reference';
 import { BUN_UTILS_URLS, UtilsCategory } from '../docs/constants/utils';

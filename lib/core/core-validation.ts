@@ -1,12 +1,4 @@
-/**
- * Enterprise Validation System
- *
- * Comprehensive validation utilities for enterprise-grade
- * input validation, type checking, and constraint enforcement.
- *
- * @version 1.0.0
- * @author Enterprise Platform Team
- */
+// lib/core/core-validation.ts — Validation utilities
 
 import {
   Validator,

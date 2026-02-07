@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 📦 NPM Registry CLI (Bun v1.3.7+ Optimized)
- *
- * Command-line interface for managing the private registry
- * Uses Bun.wrapAnsi() for 33-88x faster ANSI text wrapping
- */
+// lib/registry/cli.ts — CLI for managing the private npm registry
 
 import { styled, FW_COLORS } from '../theme/colors';
 import { R2StorageAdapter } from './r2-storage';

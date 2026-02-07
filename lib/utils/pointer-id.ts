@@ -1,10 +1,4 @@
-/**
- * Pointer ID Generation - Stable, deterministic ID generation for pointers
- *
- * Fixes NaN ID issues by providing deterministic ID generation:
- * - file:// or local paths: CRC32 hash for stable ID
- * - HTTP(S) pointers: Sequential IDs starting at 1000
- */
+// lib/utils/pointer-id.ts — Deterministic pointer ID generation
 
 /**
  * Generate a deterministic ID for a pointer

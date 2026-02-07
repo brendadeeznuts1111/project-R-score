@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🔒 Secure Environment Wrapper
- *
- * Replaces direct process.env access with validated, type-safe,
- * and audited environment variable management.
- */
+// lib/security/secure-env-wrapper.ts — Secure environment variable management
 
 import {
   SimpleValidator,

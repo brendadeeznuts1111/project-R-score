@@ -1,34 +1,27 @@
-#!/usr/bin/env bun
-
-/**
- * ✅ Enhanced Documentation URL Validator
- * 
- * Comprehensive URL validation with domain-aware pattern matching,
- * intelligent routing validation, and enterprise-grade features.
- */
+// lib/docs/builders/validator.ts — Documentation URL validation
 
 import { URL } from 'url';
-import { 
-  DocumentationProvider, 
+import {
+  DocumentationProvider,
   DocumentationCategory,
   DocumentationDomain,
   DOCUMENTATION_URL_MAPPINGS,
   DOMAIN_PREFERENCES,
   PROVIDER_METADATA
 } from '../constants/domains';
-import { 
+import {
   GITHUB_URL_PATTERNS,
   FRAGMENT_PARSERS,
   FRAGMENT_VALIDATION
 } from '../constants/fragments';
-import { 
+import {
   IntelligentRouting,
   ENTERPRISE_DOCUMENTATION_PATHS
 } from '../constants/categories';
 import { URLHandler } from '../../core/url-handler';
 
 export class EnhancedDocumentationURLValidator {
-  
+
   /**
    * Validate documentation URL with comprehensive checks
    */
@@ -71,19 +64,19 @@ export class EnhancedDocumentationURLValidator {
     let category: DocumentationCategory | undefined;
     let metadata: Record<string, any> = {};
     let routing: any = undefined;
-    
+
     try {
       const parsed = new URL(url);
-      
+
       // Basic URL validation
       if (options?.requireHTTPS && parsed.protocol !== 'https:') {
         errors.push('URL must use HTTPS protocol');
       }
-      
+
       // Identify domain and provider
       domain = this.identifyDomain(url);
       provider = this.identifyProvider(url, domain);
-      
+
       if (!provider) {
         errors.push('Unknown documentation provider');
       } else {
@@ -91,15 +84,15 @@ export class EnhancedDocumentationURLValidator {
         if (options?.allowedProviders && !options.allowedProviders.includes(provider)) {
           errors.push(`Provider ${provider} is not in allowed list`);
         }
-        
+
         // Check if domain is allowed
         if (options?.allowedDomains && domain && !options.allowedDomains.includes(domain)) {
           errors.push(`Domain ${domain} is not in allowed list`);
         }
-        
+
         // Identify category from path
         category = this.identifyCategory(url, provider);
-        
+
         // Validate provider-specific patterns
         const providerValidation = this.validateProviderSpecific(url, provider, domain);
         if (!providerValidation.isValid) {
@@ -107,7 +100,7 @@ export class EnhancedDocumentationURLValidator {
         }
         warnings.push(...providerValidation.warnings);
         metadata = { ...metadata, ...providerValidation.metadata };
-        
+
         // Validate routing if requested
         if (options?.validateRouting && provider && category) {
           routing = this.validateRouting(url, provider, category);
@@ -116,7 +109,7 @@ export class EnhancedDocumentationURLValidator {
           }
         }
       }
-      
+
       // Validate fragments
       if (parsed.hash) {
         const fragmentValidation = this.validateFragment(parsed.hash, options?.allowFragments !== false);
@@ -126,17 +119,17 @@ export class EnhancedDocumentationURLValidator {
         warnings.push(...fragmentValidation.warnings);
         metadata.fragment = fragmentValidation.metadata;
       }
-      
+
       // Check accessibility (optional)
       if (options?.checkAccessibility) {
         // This would be an async check in real implementation
         warnings.push('Accessibility check not implemented in synchronous validation');
       }
-      
+
     } catch (error) {
       errors.push(`Invalid URL format: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-    
+
     return {
       isValid: errors.length === 0,
       provider,
@@ -148,7 +141,7 @@ export class EnhancedDocumentationURLValidator {
       routing
     };
   }
-  
+
   /**
    * Identify documentation domain from URL
    */
@@ -156,7 +149,7 @@ export class EnhancedDocumentationURLValidator {
     try {
       const parsed = new URL(url);
       const hostname = parsed.hostname.toLowerCase();
-      
+
       // Check specific subdomains before their parent domains
       if (hostname === 'docs.bun.sh') {
         return DocumentationDomain.BUN_DOCS;
@@ -171,14 +164,14 @@ export class EnhancedDocumentationURLValidator {
       } else if (hostname === 'bun.io' || hostname.endsWith('.bun.io')) {
         return DocumentationDomain.BUN_IO;
       }
-      
+
     } catch {
       return undefined;
     }
-    
+
     return undefined;
   }
-  
+
   /**
    * Identify documentation provider from URL and domain
    */
@@ -186,14 +179,14 @@ export class EnhancedDocumentationURLValidator {
     try {
       const parsed = new URL(url);
       const pathname = parsed.pathname.toLowerCase();
-      
+
       // Check URL mappings first
       for (const [pattern, metadata] of Object.entries(DOCUMENTATION_URL_MAPPINGS)) {
         if (url.includes(pattern)) {
           return metadata.provider;
         }
       }
-      
+
       // Domain-based identification
       if (domain === DocumentationDomain.BUN_SH) {
         if (pathname.includes('/docs/api')) {
@@ -224,19 +217,19 @@ export class EnhancedDocumentationURLValidator {
           return DocumentationProvider.BUN_RSS;
         }
       }
-      
+
       // Check for GitHub
       if (parsed.hostname === 'github.com' || parsed.hostname.endsWith('.github.com')) {
         return DocumentationProvider.GITHUB_PUBLIC;
       }
-      
+
     } catch {
       return undefined;
     }
-    
+
     return undefined;
   }
-  
+
   /**
    * Identify documentation category from URL
    */
@@ -244,7 +237,7 @@ export class EnhancedDocumentationURLValidator {
     try {
       const parsed = new URL(url);
       const pathname = parsed.pathname.toLowerCase();
-      
+
       // Check path patterns for different categories
       if (pathname.includes('/api') || pathname.includes('fetch') || pathname.includes('http')) {
         return DocumentationCategory.API_REFERENCE;
@@ -269,19 +262,19 @@ export class EnhancedDocumentationURLValidator {
       } else if (pathname.includes('/installation') || pathname.includes('/install')) {
         return DocumentationCategory.INSTALLATION;
       }
-      
+
     } catch {
       return undefined;
     }
-    
+
     return undefined;
   }
-  
+
   /**
    * Validate URL fragment
    */
   public static validateFragment(
-    fragment: string, 
+    fragment: string,
     allowFragments: boolean = true
   ): {
     isValid: boolean;
@@ -292,12 +285,12 @@ export class EnhancedDocumentationURLValidator {
     const errors: string[] = [];
     const warnings: string[] = [];
     const metadata: Record<string, any> = {};
-    
+
     if (!allowFragments) {
       errors.push('Fragments are not allowed');
       return { isValid: false, errors, warnings };
     }
-    
+
     try {
       // Check for text fragment
       if (fragment.includes(':~:text=')) {
@@ -309,27 +302,27 @@ export class EnhancedDocumentationURLValidator {
           errors.push('Invalid text fragment format');
         }
       }
-      
+
       // Parse mixed fragments (standard + text)
       const parsed = FRAGMENT_PARSERS.parseMixed(fragment);
       metadata.standardFragment = parsed.standard;
-      
+
       // Validate standard fragment parameters
       for (const [name, value] of Object.entries(parsed.standard)) {
         if (!FRAGMENT_VALIDATION.isValidParam(name, value)) {
           warnings.push(`Potentially invalid fragment parameter: ${name}=${value}`);
         }
       }
-      
+
       // Check for suspicious fragment content
       if (fragment.includes('javascript:') || fragment.includes('data:')) {
         errors.push('Potentially dangerous fragment content detected');
       }
-      
+
     } catch (error) {
       errors.push(`Fragment parsing failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-    
+
     return {
       isValid: errors.length === 0,
       errors,
@@ -337,12 +330,12 @@ export class EnhancedDocumentationURLValidator {
       metadata: Object.keys(metadata).length > 0 ? metadata : undefined
     };
   }
-  
+
   /**
    * Validate provider-specific URL patterns
    */
   private static validateProviderSpecific(
-    url: string, 
+    url: string,
     provider: DocumentationProvider,
     domain?: DocumentationDomain
   ): {
@@ -354,7 +347,7 @@ export class EnhancedDocumentationURLValidator {
     const errors: string[] = [];
     const warnings: string[] = [];
     const metadata: Record<string, any> = {};
-    
+
     switch (provider) {
       case DocumentationProvider.GITHUB_PUBLIC:
         const githubParsed = this.parseGitHubURL(url);
@@ -362,37 +355,37 @@ export class EnhancedDocumentationURLValidator {
           errors.push('Invalid GitHub URL structure');
         } else {
           metadata.github = githubParsed;
-          
+
           // Check for common issues
           if (githubParsed.type === 'unknown') {
             warnings.push('Unrecognized GitHub URL pattern');
           }
-          
+
           // Warn about very long paths
           if (githubParsed.path && githubParsed.path.length > 200) {
             warnings.push('Very long file path in GitHub URL');
           }
         }
         break;
-        
+
       case DocumentationProvider.BUN_REFERENCE:
         if (!url.includes('bun.com/reference')) {
           errors.push('Bun Reference URLs should point to bun.com/reference');
         }
         break;
-        
+
       case DocumentationProvider.BUN_GUIDES:
         if (!url.includes('bun.com/guides')) {
           errors.push('Bun Guides URLs should point to bun.com/guides');
         }
         break;
-        
+
       case DocumentationProvider.BUN_OFFICIAL:
         if (!url.includes('bun.sh')) {
           errors.push('Bun Official URLs should point to bun.sh');
         }
         break;
-        
+
       case DocumentationProvider.BUN_RSS:
         if (!url.includes('bun.com') && !url.includes('bun.sh')) {
           errors.push('Bun RSS URLs should point to bun.com or bun.sh');
@@ -402,7 +395,7 @@ export class EnhancedDocumentationURLValidator {
         }
         break;
     }
-    
+
     return {
       isValid: errors.length === 0,
       errors,
@@ -410,7 +403,7 @@ export class EnhancedDocumentationURLValidator {
       metadata: Object.keys(metadata).length > 0 ? metadata : undefined
     };
   }
-  
+
   /**
    * Parse GitHub URL into structured data
    */
@@ -433,13 +426,13 @@ export class EnhancedDocumentationURLValidator {
   } {
     try {
       const parsed = new URL(url);
-      
+
       if (parsed.hostname !== 'github.com' && !parsed.hostname.endsWith('.github.com')) {
         return { isValid: false };
       }
-      
+
       const pathParts = parsed.pathname.split('/').filter(Boolean);
-      
+
       // Check for different GitHub URL patterns
       for (const [type, pattern] of Object.entries(GITHUB_URL_PATTERNS)) {
         const match = url.match(pattern);
@@ -459,7 +452,7 @@ export class EnhancedDocumentationURLValidator {
                   isTag: match[3].startsWith('v') || match[3].startsWith('release-')
                 }
               };
-              
+
               // Determine if it's a branch, tag, or commit
               if (/^[a-f0-9]{40}$/.test(match[3])) {
                 treeResult.commitHash = match[3];
@@ -468,9 +461,9 @@ export class EnhancedDocumentationURLValidator {
               } else {
                 treeResult.branch = match[3];
               }
-              
+
               return treeResult;
-              
+
             case 'BLOB_VIEW':
               const blobResult = {
                 isValid: true,
@@ -485,7 +478,7 @@ export class EnhancedDocumentationURLValidator {
                   isTag: match[3].startsWith('v') || match[3].startsWith('release-')
                 }
               };
-              
+
               // Determine if it's a branch, tag, or commit
               if (/^[a-f0-9]{40}$/.test(match[3])) {
                 blobResult.commitHash = match[3];
@@ -494,7 +487,7 @@ export class EnhancedDocumentationURLValidator {
               } else {
                 blobResult.branch = match[3];
               }
-              
+
               // Check for line number in hash
               if (parsed.hash && parsed.hash.startsWith('#L')) {
                 const lineMatch = parsed.hash.match(/#L(\d+)(?:-L(\d+))?/);
@@ -506,9 +499,9 @@ export class EnhancedDocumentationURLValidator {
                   };
                 }
               }
-              
+
               return blobResult;
-              
+
             case 'COMMIT_VIEW':
               return {
                 isValid: true,
@@ -517,7 +510,7 @@ export class EnhancedDocumentationURLValidator {
                 repo: match[2],
                 commitHash: match[3]
               };
-              
+
             case 'ISSUE_VIEW':
               return {
                 isValid: true,
@@ -526,7 +519,7 @@ export class EnhancedDocumentationURLValidator {
                 repo: match[2],
                 issueNumber: parseInt(match[3], 10)
               };
-              
+
             case 'PULL_REQUEST_VIEW':
               return {
                 isValid: true,
@@ -535,7 +528,7 @@ export class EnhancedDocumentationURLValidator {
                 repo: match[2],
                 pullNumber: parseInt(match[3], 10)
               };
-              
+
             case 'RELEASE_TAG_VIEW':
               return {
                 isValid: true,
@@ -544,7 +537,7 @@ export class EnhancedDocumentationURLValidator {
                 repo: match[2],
                 tag: match[3]
               };
-              
+
             case 'DISCUSSION_VIEW':
               return {
                 isValid: true,
@@ -553,7 +546,7 @@ export class EnhancedDocumentationURLValidator {
                 repo: match[2],
                 discussionNumber: parseInt(match[3], 10)
               };
-              
+
             case 'ACTIONS_RUN_VIEW':
               return {
                 isValid: true,
@@ -565,7 +558,7 @@ export class EnhancedDocumentationURLValidator {
           }
         }
       }
-      
+
       // Check for repository root
       if (pathParts.length === 2) {
         return {
@@ -578,14 +571,14 @@ export class EnhancedDocumentationURLValidator {
           metadata: { isRepositoryRoot: true }
         };
       }
-      
+
       return { isValid: true, type: 'unknown' };
-      
+
     } catch {
       return { isValid: false };
     }
   }
-  
+
   /**
    * Validate URL routing and suggest improvements
    */
@@ -616,21 +609,21 @@ export class EnhancedDocumentationURLValidator {
       type: 'secondary' | 'fallback';
       reasoning: string;
     }> = [];
-    
+
     let isOptimal = true;
     let suggestedRoute: any = undefined;
-    
+
     // Check if the URL matches the best routing for its content
     const parsed = new URL(url);
     const pathname = parsed.pathname;
-    
+
     // Extract potential topic from path
     const pathParts = pathname.split('/').filter(Boolean);
     const potentialTopic = pathParts[pathParts.length - 1];
-    
+
     if (potentialTopic && IntelligentRouting.hasSpecializedRouting(potentialTopic)) {
       const allRoutes = IntelligentRouting.getAllRoutesForTopic(potentialTopic);
-      
+
       // Check if current provider matches the best route for developers
       const developerRoute = allRoutes.developers?.primary;
       if (developerRoute && developerRoute.provider !== provider) {
@@ -639,14 +632,14 @@ export class EnhancedDocumentationURLValidator {
           ...developerRoute,
           reasoning: `Better routing for topic "${potentialTopic}" for developers`
         };
-        
+
         // Add alternatives
         if (allRoutes.developers?.alternatives) {
           alternatives.push(...allRoutes.developers.alternatives);
         }
       }
     }
-    
+
     // Check for domain-specific routing issues
     const domain = this.identifyDomain(url);
     if (domain === DocumentationDomain.BUN_SH && category === DocumentationCategory.GETTING_STARTED) {
@@ -658,7 +651,7 @@ export class EnhancedDocumentationURLValidator {
         reasoning: 'Getting started content is better served by bun.com/guides'
       };
     }
-    
+
     if (domain === DocumentationDomain.BUN_COM && category === DocumentationCategory.API_REFERENCE) {
       // This might be optimal if it's the reference portal
       if (!url.includes('/reference/api')) {
@@ -671,19 +664,19 @@ export class EnhancedDocumentationURLValidator {
         };
       }
     }
-    
+
     return {
       isOptimal,
       suggestedRoute,
       alternatives
     };
   }
-  
+
   /**
    * Determine the best documentation source for a given topic
    */
   public static getBestDocumentationSource(
-    topic: string, 
+    topic: string,
     userType: 'developers' | 'beginners' | 'educators' | 'all_users' = 'developers'
   ): {
     provider: DocumentationProvider;
@@ -698,7 +691,7 @@ export class EnhancedDocumentationURLValidator {
     }>;
   } {
     const route = IntelligentRouting.getBestRoute(topic, userType);
-    
+
     // Build URL for the best route
     const baseURLs = {
       [DocumentationProvider.BUN_OFFICIAL]: 'https://bun.sh/docs',
@@ -708,11 +701,11 @@ export class EnhancedDocumentationURLValidator {
       [DocumentationProvider.BUN_EXAMPLES]: 'https://bun.com/examples',
       [DocumentationProvider.GITHUB_PUBLIC]: 'https://github.com/oven-sh/bun'
     } as Record<DocumentationProvider, string>;
-    
+
     const baseUrl = baseURLs[route.provider] || 'https://bun.sh/docs';
     const path = IntelligentRouting.getPath(route.provider, route.category, route.path);
     const url = `${baseUrl.replace(/\/$/, '')}${path}`;
-    
+
     // Get alternatives
     const alternativeRoutes = IntelligentRouting.getAlternativeRoutes(topic, userType);
     const alternatives = alternativeRoutes.map(alt => ({
@@ -721,7 +714,7 @@ export class EnhancedDocumentationURLValidator {
       description: `${alt.provider} - ${alt.reasoning}`,
       type: alt.type as 'secondary' | 'fallback'
     }));
-    
+
     return {
       provider: route.provider,
       url,
@@ -730,7 +723,7 @@ export class EnhancedDocumentationURLValidator {
       alternatives
     };
   }
-  
+
   /**
    * Check if URL needs updating (e.g., from old format to new)
    */
@@ -744,11 +737,11 @@ export class EnhancedDocumentationURLValidator {
     const parsed = new URL(url);
     const domain = this.identifyDomain(url);
     const provider = this.identifyProvider(url, domain);
-    
+
     // Check for old patterns that should be migrated
     if (domain === DocumentationDomain.BUN_SH && parsed.pathname.startsWith('/docs/')) {
       const path = parsed.pathname;
-      
+
       // API references might be better on bun.com/reference
       if (path.includes('/api/') || path.includes('/runtime/')) {
         return {
@@ -759,7 +752,7 @@ export class EnhancedDocumentationURLValidator {
           reasoning: 'API and runtime documentation is enhanced on bun.com/reference'
         };
       }
-      
+
       // Guides might be better on bun.com/guides
       if (path.includes('/guides/')) {
         return {
@@ -771,7 +764,7 @@ export class EnhancedDocumentationURLValidator {
         };
       }
     }
-    
+
     // Check for missing text fragments on reference portal
     if (provider === DocumentationProvider.BUN_REFERENCE && !parsed.hash) {
       return {
@@ -781,10 +774,10 @@ export class EnhancedDocumentationURLValidator {
         reasoning: 'Consider adding text fragments for better navigation'
       };
     }
-    
+
     return { needsUpdate: false };
   }
-  
+
   /**
    * Batch validate multiple URLs
    */
@@ -802,7 +795,7 @@ export class EnhancedDocumentationURLValidator {
       result: this.validateDocumentationURL(url, options)
     }));
   }
-  
+
   /**
    * Get validation statistics for a batch of URLs
    */
@@ -841,19 +834,19 @@ export class EnhancedDocumentationURLValidator {
       commonErrors: [] as Array<{ error: string; count: number }>,
       commonWarnings: [] as Array<{ warning: string; count: number }>
     };
-    
+
     const errorCounts = new Map<string, number>();
     const warningCounts = new Map<string, number>();
-    
+
     for (const { url, result } of batchResult) {
       if (result.isValid) {
         stats.valid++;
       } else {
         stats.invalid++;
       }
-      
+
       stats.warnings += result.warnings.length;
-      
+
       // Count by provider
       const provider = result.provider || 'unknown';
       if (!stats.byProvider[provider]) {
@@ -865,7 +858,7 @@ export class EnhancedDocumentationURLValidator {
       } else {
         stats.byProvider[provider].invalid++;
       }
-      
+
       // Count by domain
       const domain = result.domain || 'unknown';
       if (!stats.byDomain[domain]) {
@@ -877,7 +870,7 @@ export class EnhancedDocumentationURLValidator {
       } else {
         stats.byDomain[domain].invalid++;
       }
-      
+
       // Count by category
       const category = result.category || 'unknown';
       if (!stats.byCategory[category]) {
@@ -889,7 +882,7 @@ export class EnhancedDocumentationURLValidator {
       } else {
         stats.byCategory[category].invalid++;
       }
-      
+
       // Routing stats
       if (result.routing) {
         if (result.routing.isOptimal) {
@@ -897,36 +890,36 @@ export class EnhancedDocumentationURLValidator {
         } else {
           stats.routingStats.suboptimal++;
         }
-        
+
         if (result.routing.suggestedRoute) {
           stats.routingStats.withSuggestions++;
         }
       }
-      
+
       // Count errors and warnings
       result.errors.forEach(error => {
         errorCounts.set(error, (errorCounts.get(error) || 0) + 1);
       });
-      
+
       result.warnings.forEach(warning => {
         warningCounts.set(warning, (warningCounts.get(warning) || 0) + 1);
       });
     }
-    
+
     // Get most common errors and warnings
     stats.commonErrors = Array.from(errorCounts.entries())
       .map(([error, count]) => ({ error, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
-    
+
     stats.commonWarnings = Array.from(warningCounts.entries())
       .map(([warning, count]) => ({ warning, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
-    
+
     return stats;
   }
-  
+
   /**
    * Extract text fragment from URL
    */
@@ -944,39 +937,39 @@ export class EnhancedDocumentationURLValidator {
     try {
       const parsed = new URL(url);
       const hash = parsed.hash;
-      
+
       if (!hash.includes(':~:text=')) {
         return { hasTextFragment: false };
       }
-      
+
       const textFragment = FRAGMENT_PARSERS.parseTextFragment(hash);
       if (!textFragment) {
         return { hasTextFragment: false };
       }
-      
+
       return {
         hasTextFragment: true,
         rawFragment: textFragment.raw,
         decodedText: textFragment.decoded,
         components: textFragment.components
       };
-      
+
     } catch {
       return { hasTextFragment: false };
     }
   }
-  
+
   /**
    * Check if URL is a specific commit reference
    */
   public static isSpecificCommitURL(url: string): boolean {
     const parsed = this.parseGitHubURL(url);
-    return parsed.isValid && 
-           (parsed.type === 'tree' || parsed.type === 'blob') && 
+    return parsed.isValid &&
+           (parsed.type === 'tree' || parsed.type === 'blob') &&
            !!parsed.commitHash &&
            /^[a-f0-9]{40}$/.test(parsed.commitHash);
   }
-  
+
   /**
    * Get commit hash from GitHub URL
    */
@@ -984,14 +977,14 @@ export class EnhancedDocumentationURLValidator {
     const parsed = this.parseGitHubURL(url);
     return parsed.commitHash || null;
   }
-  
+
   /**
    * Check if URL is a bun-types reference
    */
   public static isBunTypesURL(url: string): boolean {
     const parsed = this.parseGitHubURL(url);
-    return parsed.isValid && 
-           parsed.repo === 'bun' && 
+    return parsed.isValid &&
+           parsed.repo === 'bun' &&
            parsed.path?.includes('packages/bun-types') === true;
   }
 
@@ -1011,14 +1004,14 @@ export class EnhancedDocumentationURLValidator {
         errors: ['Command must start with "bun"']
       };
     }
-    
+
     const parts = command.split(' ');
     const cmd = parts[0];
     const subcommand = parts[1];
-    
+
     // Basic validation for common commands
     const validCommands = ['run', 'test', 'build', 'install', 'add', 'remove', 'x', 'create', 'upgrade', 'init', 'dev', 'pm'];
-    
+
     if (!validCommands.includes(subcommand)) {
       return {
         isValid: false,
@@ -1026,14 +1019,14 @@ export class EnhancedDocumentationURLValidator {
         errors: [`Unknown subcommand: ${subcommand}`]
       };
     }
-    
+
     // Extract arguments and options
     const args: string[] = [];
     const options: Record<string, string | boolean> = {};
-    
+
     for (let i = 2; i < parts.length; i++) {
       const part = parts[i];
-      
+
       if (part.startsWith('--')) {
         // Option
         const [key, value] = part.slice(2).split('=');
@@ -1046,7 +1039,7 @@ export class EnhancedDocumentationURLValidator {
         args.push(part);
       }
     }
-    
+
     return {
       isValid: true,
       command: subcommand,
@@ -1089,12 +1082,12 @@ export class EnhancedDocumentationURLValidator {
     if (!this.isBunUtilsURL(url)) {
       return null;
     }
-    
+
     const fragment = new URL(url).hash.slice(1);
     if (fragment.startsWith('is') || fragment.startsWith('to')) {
       return fragment;
     }
-    
+
     return null;
   }
 

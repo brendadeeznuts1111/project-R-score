@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🤖 FactoryWager AI Integration System
- *
- * Integrates the Bun Native AI Analyzer with the advanced FactoryWager ecosystem
- * for intelligent dispute resolution, evidence analysis, and cross-domain learning.
- */
+// lib/mcp/ai-integration.ts — AI integration for dispute resolution and evidence analysis
 
 import { r2MCPIntegration } from './r2-integration';
 import { domainIntegration } from './domain-integration';

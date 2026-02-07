@@ -1,24 +1,19 @@
 #!/usr/bin/env bun
-/**
- * 🧪 Modular A/B Testing Server with Cookie Manager
- * 
- * Uses the modular ABTestingManager class for clean, reusable A/B testing
- * Demonstrates multiple tests, weighted variants, and advanced features
- */
+// tools/modular-ab-testing-server.ts — Modular A/B testing server with cookie manager
 
 import { serve } from "bun";
 
 /**
  * 🚀 Prefetch Optimizations
- * 
+ *
  * This file includes prefetch hints for optimal performance:
  * - DNS prefetching for external domains
  * - Preconnect for faster handshakes
  * - Resource preloading for critical assets
- * 
+ *
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { ABTestingManager } from "../lib/ab-testing/cookie-manager.ts";
+import { ABTestingManager } from "../lib/ab-testing/cookie-manager";
 
 // Create global A/B testing manager instance
 const abManager = new ABTestingManager();
@@ -101,13 +96,13 @@ const contentConfigs = {
       description: "Professional blue call-to-action buttons"
     },
     green: {
-      title: "Green Action Button", 
+      title: "Green Action Button",
       color: "#22c55e",
       description: "Friendly green call-to-action buttons"
     },
     orange: {
       title: "Orange Action Button",
-      color: "#f97316", 
+      color: "#f97316",
       description: "Energetic orange call-to-action buttons"
     }
   },
@@ -174,7 +169,7 @@ function generateTestPage(assignments: Record<string, string>): string {
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -183,7 +178,7 @@ function generateTestPage(assignments: Record<string, string>): string {
             font-size: ${densityConfig.fontSize};
             line-height: 1.6;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -192,28 +187,28 @@ function generateTestPage(assignments: Record<string, string>): string {
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
-        
+
         .header {
             background: ${urlConfig.color};
             color: white;
             padding: 40px;
             text-align: center;
         }
-        
+
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 16px;
         }
-        
+
         .header p {
             font-size: 1.2rem;
             opacity: 0.9;
         }
-        
+
         .content {
             padding: 40px;
         }
-        
+
         .test-section {
             margin-bottom: 40px;
             padding: 30px;
@@ -221,13 +216,13 @@ function generateTestPage(assignments: Record<string, string>): string {
             border-radius: 12px;
             background: #fafafa;
         }
-        
+
         .test-section h2 {
             color: #1f2937;
             margin-bottom: 16px;
             font-size: 1.5rem;
         }
-        
+
         .variant-badge {
             display: inline-block;
             background: ${urlConfig.color};
@@ -238,18 +233,18 @@ function generateTestPage(assignments: Record<string, string>): string {
             font-weight: 600;
             margin-bottom: 16px;
         }
-        
+
         .features {
             list-style: none;
             margin: 20px 0;
         }
-        
+
         .features li {
             padding: 8px 0;
             position: relative;
             padding-left: 24px;
         }
-        
+
         .features li:before {
             content: "✓";
             position: absolute;
@@ -257,7 +252,7 @@ function generateTestPage(assignments: Record<string, string>): string {
             color: ${urlConfig.color};
             font-weight: bold;
         }
-        
+
         .example {
             background: #f0f9ff;
             padding: 16px;
@@ -266,12 +261,12 @@ function generateTestPage(assignments: Record<string, string>): string {
             margin: 16px 0;
             border-left: 4px solid ${urlConfig.color};
         }
-        
+
         .cta-section {
             text-align: center;
             margin: 40px 0;
         }
-        
+
         .cta-button {
             display: inline-block;
             background: ${ctaConfig.color};
@@ -285,74 +280,74 @@ function generateTestPage(assignments: Record<string, string>): string {
             text-decoration: none;
             transition: all 0.2s;
         }
-        
+
         .cta-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
-        
+
         .assignments {
             background: #fef3c7;
             padding: 20px;
             border-radius: 8px;
             margin: 20px 0;
         }
-        
+
         .assignments h3 {
             color: #92400e;
             margin-bottom: 12px;
         }
-        
+
         .assignment-item {
             display: flex;
             justify-content: space-between;
             padding: 8px 0;
             border-bottom: 1px solid #fde68a;
         }
-        
+
         .assignment-item:last-child {
             border-bottom: none;
         }
-        
+
         .test-name {
             font-weight: 600;
             color: #78350f;
         }
-        
+
         .variant-name {
             color: #92400e;
         }
-        
+
         .metrics {
             background: #ecfdf5;
             padding: 20px;
             border-radius: 8px;
             margin: 20px 0;
         }
-        
+
         .metrics h3 {
             color: #065f46;
             margin-bottom: 12px;
         }
-        
+
         .metric-item {
             display: flex;
             justify-content: space-between;
             padding: 4px 0;
             font-size: 14px;
         }
-        
+
         .admin-link {
             text-align: center;
             margin: 20px 0;
         }
-        
+
         .admin-link a {
             color: ${urlConfig.color};
             text-decoration: none;
             font-weight: 600;
         }
-        
+
         .admin-link a:hover {
             text-decoration: underline;
         }
@@ -364,7 +359,7 @@ function generateTestPage(assignments: Record<string, string>): string {
             <h1>${urlConfig.title}</h1>
             <p>${urlConfig.description}</p>
         </div>
-        
+
         <div class="content">
             <div class="test-section">
                 <h2>🔗 URL Structure Test</h2>
@@ -377,7 +372,7 @@ function generateTestPage(assignments: Record<string, string>): string {
                     Example URL: ${urlConfig.example}
                 </div>
             </div>
-            
+
             <div class="test-section">
                 <h2>📐 Layout Test</h2>
                 <div class="variant-badge">Variant: ${layoutVariant}</div>
@@ -386,25 +381,25 @@ function generateTestPage(assignments: Record<string, string>): string {
                     ${layoutConfig.features.map(feature => `<li>${feature}</li>`).join('')}
                 </ul>
             </div>
-            
+
             <div class="test-section">
                 <h2>🎨 Button Color Test</h2>
                 <div class="variant-badge">Variant: ${ctaVariant}</div>
                 <p>${ctaConfig.description}</p>
             </div>
-            
+
             <div class="test-section">
                 <h2>📏 Content Density Test</h2>
                 <div class="variant-badge">Variant: ${densityVariant}</div>
                 <p>${densityConfig.description}</p>
             </div>
-            
+
             <div class="cta-section">
                 <a href="/docs/api/utils/readfile" class="cta-button" onclick="trackClicks()">
                     Try Documentation →
                 </a>
             </div>
-            
+
             <div class="assignments">
                 <h3>🎲 Your Test Assignments</h3>
                 ${Object.entries(assignments).map(([testId, variant]) => `
@@ -414,7 +409,7 @@ function generateTestPage(assignments: Record<string, string>): string {
                     </div>
                 `).join('')}
             </div>
-            
+
             <div class="metrics">
                 <h3>📊 Live Metrics</h3>
                 ${Object.entries(metrics).map(([testId, testMetrics]) => `
@@ -429,34 +424,34 @@ function generateTestPage(assignments: Record<string, string>): string {
                     </div>
                 `).join('')}
             </div>
-            
+
             <div class="admin-link">
                 <a href="/admin">📊 View Admin Dashboard</a>
             </div>
         </div>
     </div>
-    
+
     <script>
         // Track page views for all tests
         const assignments = ${JSON.stringify(assignments)};
-        
+
         fetch('/track', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                action: 'view', 
-                assignments 
+            body: JSON.stringify({
+                action: 'view',
+                assignments
             })
         });
-        
+
         // Track clicks
         function trackClicks() {
             fetch('/track', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    action: 'click', 
-                    assignments 
+                body: JSON.stringify({
+                    action: 'click',
+                    assignments
                 })
             });
         }
@@ -491,7 +486,7 @@ function generateAdminDashboard(): string {
 <body>
     <div class="dashboard">
         <h1>🧪 A/B Testing Admin Dashboard</h1>
-        
+
         <div class="test-grid">
             ${Object.entries(metrics).map(([testId, testMetrics]) => `
                 <div class="test-card">
@@ -500,8 +495,8 @@ function generateAdminDashboard(): string {
                         <div class="variant">
                             <div class="variant-name">${variant.toUpperCase()}</div>
                             <div class="metrics">
-                                Views: ${variantMetrics.views} | 
-                                Clicks: ${variantMetrics.clicks} | 
+                                Views: ${variantMetrics.views} |
+                                Clicks: ${variantMetrics.clicks} |
                                 CTR: ${variantMetrics.views > 0 ? ((variantMetrics.clicks / variantMetrics.views) * 100).toFixed(2) : '0.00'}%
                             </div>
                         </div>
@@ -509,20 +504,20 @@ function generateAdminDashboard(): string {
                 </div>
             `).join('')}
         </div>
-        
+
         <div class="controls">
             <button class="btn" onclick="location.reload()">🔄 Refresh</button>
             <button class="btn btn-danger" onclick="resetMetrics()">🗑️ Reset All Metrics</button>
         </div>
     </div>
-    
+
     <script>
         function resetMetrics() {
             if (confirm('Reset all metrics?')) {
                 fetch('/reset', { method: 'POST' }).then(() => location.reload());
             }
         }
-        
+
         // Auto-refresh every 10 seconds
         setTimeout(() => location.reload(), 10000);
     </script>
@@ -539,51 +534,51 @@ const server = serve({
   port: MODULAR_AB_TESTING_PORT,
   async fetch(req) {
     const url = new URL(req.url);
-    
+
     try {
       // Create ABTestingManager for this request
       const cookieString = req.headers.get("cookie") || undefined;
       const requestAbManager = new ABTestingManager(cookieString);
-      
+
       // Re-register tests (in production, this would be done once globally)
       registerTests();
       for (const [testId, test] of (requestAbManager as any).tests) {
         (requestAbManager as any).tests.set(testId, test);
       }
-      
+
       // Main test page
       if (url.pathname === "/" && req.method === "GET") {
         // Get all assignments for this user
         const assignments = requestAbManager.getAllAssignments();
-        
+
         // Track views for all assigned tests
         Object.entries(assignments).forEach(([testId, variant]) => {
           trackMetric(testId, variant, "view");
         });
-        
+
         // Get response headers (including cookies)
         const cookieHeaders = requestAbManager.getResponseHeaders();
-        
+
         // Generate content based on assignments
         const html = generateTestPage(assignments);
-        
+
         const headers: Record<string, string> = {
           "Content-Type": "text/html",
           "Cache-Control": "no-cache, no-store, must-revalidate"
         };
-        
+
         // Add cookie headers if any
         if (cookieHeaders.length > 0) {
           headers["Set-Cookie"] = cookieHeaders[0]; // Simplified for single cookie
         }
-        
+
         return new Response(html, { headers });
       }
-      
+
       // Metrics tracking
       if (url.pathname === "/track" && req.method === "POST") {
         const body = await req.json();
-        
+
         if (body.action === "view") {
           Object.entries(body.assignments).forEach(([testId, variant]) => {
             trackMetric(testId, variant, "view");
@@ -593,10 +588,10 @@ const server = serve({
             trackMetric(testId, variant, "click");
           });
         }
-        
+
         return Response.json({ success: true });
       }
-      
+
       // Admin dashboard
       if (url.pathname === "/admin" && req.method === "GET") {
         const html = generateAdminDashboard();
@@ -604,7 +599,7 @@ const server = serve({
           headers: { "Content-Type": "text/html" }
         });
       }
-      
+
       // Reset metrics
       if (url.pathname === "/reset" && req.method === "POST") {
         Object.keys(metrics).forEach(testId => {
@@ -612,37 +607,37 @@ const server = serve({
             metrics[testId as keyof typeof metrics][variant as keyof typeof metrics[testId]] = { views: 0, clicks: 0 };
           });
         });
-        
+
         return Response.json({ success: true, message: "Metrics reset" });
       }
-      
+
       // Force assignment endpoint (for testing)
       if (url.pathname.startsWith("/force/") && req.method === "POST") {
         const [, testId, variant] = url.pathname.split("/");
         const cookieString = req.headers.get("cookie") || undefined;
         const testAbManager = new ABTestingManager(cookieString);
-        
+
         try {
           testAbManager.forceAssignVariant(testId, variant);
           const cookieHeaders = testAbManager.getResponseHeaders();
-          
-          return Response.json({ 
-            success: true, 
+
+          return Response.json({
+            success: true,
             message: `Forced ${testId} = ${variant}`,
             headers: cookieHeaders.length > 0 ? { "Set-Cookie": cookieHeaders[0] } : {}
-          }, { 
+          }, {
             headers: cookieHeaders.length > 0 ? { "Set-Cookie": cookieHeaders[0] } : {}
           });
         } catch (error) {
-          return Response.json({ 
-            success: false, 
-            error: error.message 
+          return Response.json({
+            success: false,
+            error: error.message
           }, { status: 400 });
         }
       }
-      
+
       return new Response("Not found", { status: 404 });
-      
+
     } catch (error) {
       console.error("Server error:", error);
       return new Response("Internal server error", { status: 500 });

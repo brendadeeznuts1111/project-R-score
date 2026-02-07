@@ -1,12 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Bun.write Response Buffering Test
- * 
- * Tests the exact Bun.write implementation as documented:
- * import { write } from "bun";
-
- * await write("output.txt", response);
- */
+// lib/performance/bun-write-tests.ts — Bun.write response buffering test
 
 // Entry guard check
 if (import.meta.main) {

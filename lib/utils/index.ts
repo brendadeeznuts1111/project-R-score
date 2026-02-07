@@ -1,10 +1,4 @@
-/**
- * 🛠️ FactoryWager Utilities
- *
- * Central utility functions for the monorepo
- *
- * @version 1.0.0
- */
+// lib/utils/index.ts — Central utility functions
 
 import { FACTORYWAGER_CONFIG } from './config';
 

@@ -1,20 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🚀 Advanced FactoryWager Integration System
- *
- * Deep integration of all advanced features:
- * - Cookies compression with R2 storage
- * - Bun.secrets enterprise management
- * - Header case preservation
- * - Bun.wrap ANSI styling
- * - Complete constants library
- * - Versioned secrets with lifecycle
- * - Master token authentication
- * - Hardened fetch with TLS pinning
- * - Domain & subdomain management
- * - Cross-domain intelligence
- */
+// lib/mcp/advanced-integration.ts — Advanced integration of storage, secrets, and domain features
 
 import { r2MCPIntegration } from './r2-integration';
 import { domainIntegration } from './domain-integration';

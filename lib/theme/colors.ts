@@ -1,12 +1,4 @@
-/**
- * 🎨 FactoryWager Color Theme v4.0
- *
- * The heart of FactoryWager profiling - color-enhanced diagnostics
- * with severity-based theming and terminal-safe output.
- *
- * @version 4.0
- * @author FactoryWager Team
- */
+// lib/theme/colors.ts — FactoryWager color theme with severity-based diagnostics
 
 // ============================================================================
 // FACTORYWAGER COLOR PALETTE

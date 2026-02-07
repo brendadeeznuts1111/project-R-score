@@ -1,10 +1,4 @@
-/**
- * Documentation Reference Management System
- *
- * Provides centralized URL management with URLPattern support
- * for consistent and maintainable documentation links.
- * Enhanced with fragment support for deep linking and state management.
- */
+// lib/docs/reference.ts — Documentation reference URL management
 
 import { URLHandler, URLFragmentUtils } from '../core/url-handler';
 import { DocumentationURLHandler } from '../core/documentation-url-handler';

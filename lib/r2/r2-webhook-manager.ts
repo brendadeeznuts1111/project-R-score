@@ -1,15 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🔗 R2 Webhook & External Integration Manager
- *
- * Webhook management and external service integrations:
- * - Event-driven webhooks
- * - Retry logic with exponential backoff
- * - Signature verification (HMAC)
- * - Multiple delivery endpoints
- * - Integration templates (Slack, Discord, Zapier, etc.)
- */
+// lib/r2/r2-webhook-manager.ts — R2 webhook and external integration manager
 
 import { styled, FW_COLORS } from '../theme/colors';
 import { r2EventSystem } from './r2-event-system';

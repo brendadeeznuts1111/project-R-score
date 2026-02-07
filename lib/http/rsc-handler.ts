@@ -1,9 +1,4 @@
-/**
- * Production RSC Handler with HTTP/2 Multiplexing + HTTP/1.1 Fallback
- *
- * Automatically uses HTTP/2 when available, falls back to HTTP/1.1
- * Perfect for Next.js RSC prefetch patterns.
- */
+// lib/http/rsc-handler.ts — RSC handler with HTTP/2 multiplexing and HTTP/1.1 fallback
 
 import { BunHTTP2Multiplexer } from './http2-multiplexer';
 

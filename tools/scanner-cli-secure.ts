@@ -1,13 +1,8 @@
 #!/usr/bin/env bun
-/**
- * 🏭 scanner-cli-secure.ts - Tier-1380 CLI v2.4 with Secrets Integration
- * 
- * Production-ready CLI tool with secure credential management
- * Integrates Bun's secrets API for secure storage
- */
+// tools/scanner-cli-secure.ts — Tier-1380 CLI with secure credential management
 
 import { readFileSync } from 'fs'
-import Tier1380SecretsManager from './tier1380-secrets-manager.ts'
+import Tier1380SecretsManager from './tier1380-secrets-manager'
 
 interface ScannerConfig {
   projectId: string
@@ -39,7 +34,7 @@ export class Tier1380SecureScannerCLI {
   constructor(projectId?: string, sessionId?: string, useSecureStorage: boolean = true) {
     // Load configuration
     this.loadConfig(projectId, sessionId, useSecureStorage)
-    
+
     // Initialize data (async)
     this.data = {} as ScannerData
   }
@@ -76,7 +71,7 @@ export class Tier1380SecureScannerCLI {
       } catch {
         pkg = { scripts: {} }
       }
-      
+
       // Parse logs (if available)
       let logs = 0
       try {
@@ -90,7 +85,7 @@ export class Tier1380SecureScannerCLI {
       // Load secrets if secure storage is enabled
       let secretsLoaded = false
       let r2Credentials = false
-      
+
       if (this.config.useSecureStorage) {
         try {
           const r2Creds = await Tier1380SecretsManager.getR2Credentials()
@@ -159,7 +154,7 @@ export class Tier1380SecureScannerCLI {
   display(): void {
     const securityStatus = this.data.secretsLoaded ? '🔐' : '⚠️'
     const r2Status = this.data.r2Credentials ? '🪣' : '❌'
-    
+
     const wrapped = Bun.wrapAnsi(
       `▵ Tier-1380 CLI v2.4 (Secure)\n` +
       `🆔 ${this.config.projectId} 📊 ${this.config.sessionId.slice(0, 8)}... 📦 ${this.data.compressedSize}B\n` +
@@ -214,12 +209,12 @@ export class Tier1380SecureScannerCLI {
 
 /**
  * 🚀 Prefetch Optimizations
- * 
+ *
  * This file includes prefetch hints for optimal performance:
  * - DNS prefetching for external domains
  * - Preconnect for faster handshakes
  * - Resource preloading for critical assets
- * 
+ *
  * Generated automatically by optimize-examples-prefetch.ts
  */
   validate(): { valid: boolean; errors: string[]; warnings: string[] } {
@@ -267,7 +262,7 @@ export class Tier1380SecureScannerCLI {
    */
   exportForR2(): { key: string; data: Buffer; metadata: Record<string, string> } {
     const key = `scanner/${this.config.projectId}/${this.config.sessionId}.tier1380.zst`
-    
+
     // Recreate compressed data
     const jsonString = JSON.stringify({
       cookies: this.data.cookies,
@@ -280,7 +275,7 @@ export class Tier1380SecureScannerCLI {
       secretsLoaded: this.data.secretsLoaded,
       r2Credentials: this.data.r2Credentials
     })
-    
+
     const compressed = Bun.zstdCompressSync(jsonString)
     const prefixed = Buffer.concat([Buffer.from([0x01]), compressed])
 
@@ -365,7 +360,7 @@ if (import.meta.path === Bun.main) {
   const useSecureStorage = process.argv[4] !== 'false'
 
   const scanner = new Tier1380SecureScannerCLI(projectId, sessionId, useSecureStorage)
-  
+
   // Initialize async data
   scanner.initialize().then(() => {
     // Validate

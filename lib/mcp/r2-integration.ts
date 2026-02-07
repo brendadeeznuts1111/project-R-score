@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🌐 Enhanced R2 Integration with Race Condition Fixes
- *
- * Fixed concurrent operations, standardized error handling, and proper cache management
- */
+// lib/mcp/r2-integration.ts — R2 integration with race condition fixes
 
 import { r2MCPIntegration as baseR2Integration } from './r2-integration-base';
 import { styled, FW_COLORS } from '../theme/colors';

@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
-
-// HAR file parser — reads .har files and prints useful summaries
+// tools/har-parser.ts — HAR file parser and summary printer
+//
 // Usage:
 //   bun tools/har-parser.ts <file.har> [options]
 //

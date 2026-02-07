@@ -1,13 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 🔐 Registry Secrets Manager with bun.secrets Integration
- *
- * Features:
- * - bun.secrets for secure credential storage
- * - R2-backed versioned secrets
- * - Visual version graphs
- * - IAM-style access control
- */
+// lib/registry/secrets-manager.ts — Registry secrets manager with secure credential storage
 
 import { styled } from '../theme/colors';
 import { R2StorageAdapter } from './r2-storage';

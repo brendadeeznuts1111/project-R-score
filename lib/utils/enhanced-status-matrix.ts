@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🎯 ENHANCED STATUS MATRIX - Advanced HSL Integration
- *
- * Upgrades the existing status matrix with perceptual uniformity,
- * dynamic severity colors, and WCAG compliance.
- */
+// lib/utils/enhanced-status-matrix.ts — Enhanced status matrix with advanced HSL integration
 
 import {
   getDynamicStatusColor,

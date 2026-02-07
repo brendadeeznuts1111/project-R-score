@@ -1,16 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 🏭 FactoryWager Registry & Documentation System (Bun v1.4+ Complete)
- *
- * Unified export for all registry-related modules:
- * - NPM Registry Server
- * - Package Documentation Fetcher
- * - Cross-Device Sync
- * - RSS Aggregator
- * - Version Manager (bun.semver)
- * - Secrets Manager (bun.secrets)
- * - bun x Integration
- */
+// lib/registry/index.ts — Unified exports for all registry modules
 
 // Export types
 export * from './registry-types';

@@ -1,13 +1,4 @@
-/**
- * Enterprise System Call Constants and Risk Metrics
- *
- * Centralized, enterprise-grade system call definitions with
- * performance risk scoring, platform-specific optimizations,
- * and comprehensive metadata for intelligent syscall selection.
- *
- * @version 1.0.0
- * @author Enterprise Platform Team
- */
+// lib/deployment/syscall-constants.ts — System call constants and risk metrics
 
 import { PerformanceTier } from '../core/core-types';
 

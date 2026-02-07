@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🛡️ Standardized Error Handling System
- *
- * Comprehensive error handling with proper types, logging, and recovery strategies
- */
+// lib/core/error-handling.ts — Error handling with typed errors and recovery strategies
 
 import { styled } from '../theme/colors';
 

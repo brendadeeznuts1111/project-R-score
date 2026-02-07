@@ -1,15 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🔐 R2 Security & Access Control Manager
- *
- * Comprehensive security management for R2:
- * - Fine-grained access control policies
- * - IAM-style permissions and roles
- * - Encryption key management
- * - Security auditing and compliance
- * - Public access analysis and blocking
- */
+// lib/r2/r2-security-manager.ts — R2 security and access control manager
 
 import { styled, FW_COLORS } from '../theme/colors';
 import { r2EventSystem } from './r2-event-system';

@@ -1,9 +1,4 @@
-/**
- * Input Validation Utilities
- *
- * Provides comprehensive input validation for API endpoints and user inputs
- * with type safety and security considerations.
- */
+// lib/utils/input-validator.ts — Input validation for API endpoints
 
 export interface ValidationRule {
   required?: boolean;

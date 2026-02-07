@@ -1,12 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🔐 Zero-Trust Security Manager
- *
- * Implements zero-trust security principles with
- * continuous authentication, micro-segmentation,
- * and policy enforcement.
- */
+// lib/security/zero-trust-manager.ts — Zero-trust security manager
 
 import { EventEmitter } from 'events';
 import { logger } from '../monitoring/structured-logger';

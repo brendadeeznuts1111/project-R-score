@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 📊 Structured Logger
- *
- * Comprehensive logging system with structured output,
- * correlation tracking, and performance monitoring.
- */
+// lib/core/structured-logger.ts — Structured logging with correlation tracking
 
 import { AtomicFileOperations } from '../core/atomic-file-operations';
 

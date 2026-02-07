@@ -1,4 +1,6 @@
-// scan.ts — Tier-1380 CLI v2.1
+#!/usr/bin/env bun
+// tools/scan.ts — Tier-1380 CLI v2.1
+
 type PosIndex = 0 | 1 | 2 | 3 | 4;
 type Fallback<T = string> = T | (() => T);
 

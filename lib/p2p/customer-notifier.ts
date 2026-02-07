@@ -1,8 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Customer Notification System
- * Keeps customers informed about business changes and payment updates
- */
+// lib/p2p/customer-notifier.ts — Customer notification system for business changes
 
 import Redis from 'ioredis';
 

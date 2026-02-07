@@ -1,10 +1,4 @@
-/**
- * 📚 Documentation Patterns and Relationships
- *
- * Centralized documentation URL management and pattern matching
- *
- * @version 1.0.0
- */
+// lib/docs/patterns.ts — Documentation URL patterns and relationships
 
 import { BUN_DOCS_BUILDERS as BUN_DOCS } from '../core/core-documentation';
 

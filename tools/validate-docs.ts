@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-
 // tools/validate-docs.ts — Validation CLI for documentation health
 //
 // Usage:

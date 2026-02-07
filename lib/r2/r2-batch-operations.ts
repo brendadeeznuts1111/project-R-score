@@ -1,15 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 📦 R2 Batch Operations - Efficient Bulk Data Operations
- *
- * High-performance batch processing for R2 with:
- * - Parallel upload/download with concurrency control
- * - Automatic compression for large batches
- * - Progress tracking and resumable operations
- * - Transaction-like semantics for atomic batches
- * - Smart chunking for memory efficiency
- */
+// lib/r2/r2-batch-operations.ts — R2 batch operations for bulk data processing
 
 import { styled, FW_COLORS } from '../theme/colors';
 import { r2EventSystem } from './r2-event-system';

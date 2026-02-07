@@ -1,20 +1,5 @@
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 #!/usr/bin/env bun
-/**
- * 🔍 Endpoint-Aware URL Validator
- * 
- * Complete URL validation with endpoint-level analysis
- * Usage: bun endpoint-aware-validator.ts [options]
- */
+// tools/endpoint-aware-validator.ts — URL validator with endpoint-level analysis
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -110,14 +95,14 @@ const recordTest = (name: string, passed: boolean, message: string, details?: an
     details,
     timestamp: new Date().toISOString()
   };
-  
+
   testResults.summary.total++;
   if (passed) {
     testResults.summary.passed++;
   } else {
     testResults.summary.failed++;
   }
-  
+
   return passed;
 };
 
@@ -145,12 +130,12 @@ interface EndpointInfo {
 function parseEndpointInfo(url: string, category: string, key: string): EndpointInfo {
   const fullUrl = url.startsWith('http') ? url : `https://bun.sh${url}`;
   const parsed = new URL(fullUrl);
-  
+
   const segments = parsed.pathname.split('/').filter(segment => segment.length > 0);
   const endpoint = `/${segments.join('/')}`;
   const hasFragment = !!parsed.hash;
   const fragment = hasFragment ? parsed.hash.slice(1) : undefined;
-  
+
   // Determine endpoint type
   let endpointType: 'page' | 'anchor' | 'api' | 'cli' = 'page';
   if (hasFragment) {
@@ -160,7 +145,7 @@ function parseEndpointInfo(url: string, category: string, key: string): Endpoint
   } else if (segments.includes('cli')) {
     endpointType = 'cli';
   }
-  
+
   return {
     id: `${category}.${key}`,
     category,
@@ -192,7 +177,7 @@ function analyzeEndpointConsistency(endpoints: EndpointInfo[]) {
     inconsistentNaming: [] as string[],
     hierarchyIssues: [] as string[]
   };
-  
+
   // Group endpoints by various properties
   endpoints.forEach(endpoint => {
     // Group by endpoint type
@@ -200,19 +185,19 @@ function analyzeEndpointConsistency(endpoints: EndpointInfo[]) {
       consistency.endpointTypes.set(endpoint.endpointType, []);
     }
     consistency.endpointTypes.get(endpoint.endpointType)!.push(endpoint);
-    
+
     // Group by depth
     if (!consistency.depthDistribution.has(endpoint.depth)) {
       consistency.depthDistribution.set(endpoint.depth, []);
     }
     consistency.depthDistribution.get(endpoint.depth)!.push(endpoint);
-    
+
     // Group by category
     if (!consistency.categoryPatterns.has(endpoint.category)) {
       consistency.categoryPatterns.set(endpoint.category, []);
     }
     consistency.categoryPatterns.get(endpoint.category)!.push(endpoint);
-    
+
     // Group by fragment patterns
     if (endpoint.hasFragment && endpoint.fragment) {
       if (!consistency.fragmentPatterns.has(endpoint.fragment)) {
@@ -220,14 +205,14 @@ function analyzeEndpointConsistency(endpoints: EndpointInfo[]) {
       }
       consistency.fragmentPatterns.get(endpoint.fragment)!.push(endpoint);
     }
-    
+
     // Find duplicate endpoints
     if (!consistency.duplicateEndpoints.has(endpoint.endpoint)) {
       consistency.duplicateEndpoints.set(endpoint.endpoint, []);
     }
     consistency.duplicateEndpoints.get(endpoint.endpoint)!.push(endpoint);
   });
-  
+
   // Identify duplicates and inconsistencies
   consistency.duplicateEndpoints.forEach((duplicateEndpoints, endpoint) => {
     if (duplicateEndpoints.length > 1) {
@@ -239,7 +224,7 @@ function analyzeEndpointConsistency(endpoints: EndpointInfo[]) {
       });
     }
   });
-  
+
   // Check for naming inconsistencies
   consistency.categoryPatterns.forEach((categoryEndpoints, category) => {
     const namingPatterns = {
@@ -249,7 +234,7 @@ function analyzeEndpointConsistency(endpoints: EndpointInfo[]) {
       kebabCase: 0,
       snakeCase: 0
     };
-    
+
     categoryEndpoints.forEach(endpoint => {
       const key = endpoint.key;
       if (key === key.toUpperCase()) namingPatterns.uppercase++;
@@ -258,37 +243,37 @@ function analyzeEndpointConsistency(endpoints: EndpointInfo[]) {
       else if (key.includes('_')) namingPatterns.snakeCase++;
       else namingPatterns.camelCase++;
     });
-    
+
     // Check if category has mixed naming patterns
     const patternsUsed = Object.entries(namingPatterns)
       .filter(([_, count]) => count > 0)
       .map(([pattern, _]) => pattern);
-    
+
     if (patternsUsed.length > 1) {
       consistency.inconsistentNaming.push(
         `${category}: Mixed naming patterns (${patternsUsed.join(', ')})`
       );
     }
   });
-  
+
   // Check hierarchy issues
   endpoints.forEach(endpoint => {
     // Check for inconsistent depths within same category
     const categoryEndpoints = consistency.categoryPatterns.get(endpoint.category)!;
     const depths = [...new Set(categoryEndpoints.map(ep => ep.depth))];
-    
+
     if (depths.length > 2) {
       consistency.hierarchyIssues.push(
         `${endpoint.id}: Inconsistent depth levels (${depths.join(', ')})`
       );
     }
-    
+
     // Check for fragments without proper page endpoints
     if (endpoint.hasFragment && endpoint.endpointType === 'anchor') {
-      const hasPageEndpoint = endpoints.some(ep => 
+      const hasPageEndpoint = endpoints.some(ep =>
         ep.endpoint === endpoint.endpoint && !ep.hasFragment
       );
-      
+
       if (!hasPageEndpoint) {
         consistency.hierarchyIssues.push(
           `${endpoint.id}: Fragment without corresponding page endpoint`
@@ -296,7 +281,7 @@ function analyzeEndpointConsistency(endpoints: EndpointInfo[]) {
       }
     }
   });
-  
+
   return consistency;
 }
 
@@ -313,11 +298,11 @@ function validateEndpointHierarchy(endpoints: EndpointInfo[]) {
     },
     recommendations: [] as string[]
   };
-  
+
   // Organize endpoints by hierarchy
   endpoints.forEach(endpoint => {
     const segments = endpoint.segments;
-    
+
     if (segments[0] === 'docs') {
       if (segments[1] === 'api') {
         const key = segments.slice(2).join('/');
@@ -346,7 +331,7 @@ function validateEndpointHierarchy(endpoints: EndpointInfo[]) {
       hierarchy.structure.other.get(key)!.push(endpoint);
     }
   });
-  
+
   // Validate hierarchy structure
   Object.entries(hierarchy.structure).forEach(([section, sectionEndpoints]) => {
     sectionEndpoints.forEach((endpoints, path) => {
@@ -355,55 +340,55 @@ function validateEndpointHierarchy(endpoints: EndpointInfo[]) {
         hierarchy.issues.push(`API endpoint outside utils: ${path}`);
         hierarchy.valid = false;
       }
-      
+
       if (section === 'cli' && path.length === 0) {
         hierarchy.issues.push(`CLI main page missing depth: ${path}`);
         hierarchy.valid = false;
       }
-      
+
       // Check for fragment organization
       const withFragments = endpoints.filter(ep => ep.hasFragment);
       const withoutFragments = endpoints.filter(ep => !ep.hasFragment);
-      
+
       if (withFragments.length > 0 && withoutFragments.length === 0) {
         hierarchy.issues.push(`Only fragments without main page: ${path}`);
         hierarchy.valid = false;
       }
     });
   });
-  
+
   // Generate recommendations
   if (hierarchy.structure.api.size === 1) {
     hierarchy.recommendations.push('Consider organizing API endpoints into multiple sections');
   }
-  
+
   if (hierarchy.structure.cli.size > 10) {
     hierarchy.recommendations.push('Consider grouping CLI endpoints into subcategories');
   }
-  
+
   return hierarchy;
 }
 
 // Main validation function
 async function runEndpointValidation() {
   console.log(`${colors.cyan}🔍 Endpoint-Aware URL Validator${colors.reset}`);
-  
+
   if (options.dryRun) {
     console.log(`${colors.yellow}DRY RUN MODE: Showing what would be validated${colors.reset}`);
   } else {
     console.log(`${colors.gray}Validating URLs with endpoint-level analysis...${colors.reset}`);
   }
   console.log('');
-  
+
   const startTime = Date.now();
-  
+
   try {
     if (options.dryRun) {
       log.section('🔍 DRY RUN: Validation Plan');
-      
+
       console.log('Would perform the following validations:');
       console.log('');
-      
+
       if (options.fullAnalysis || options.endpoints) {
         console.log('✅ Endpoint-Level Analysis:');
         console.log('   - Check endpoint uniqueness');
@@ -412,7 +397,7 @@ async function runEndpointValidation() {
         console.log('   - Validate endpoint structure');
         console.log('');
       }
-      
+
       if (options.fullAnalysis || options.consistency) {
         console.log('✅ Consistency Analysis:');
         console.log('   - Check naming pattern consistency');
@@ -421,7 +406,7 @@ async function runEndpointValidation() {
         console.log('   - Detect fragment-page relationships');
         console.log('');
       }
-      
+
       if (options.fullAnalysis || options.hierarchy) {
         console.log('✅ Hierarchy Validation:');
         console.log('   - Validate endpoint organization levels');
@@ -430,7 +415,7 @@ async function runEndpointValidation() {
         console.log('   - Generate structure recommendations');
         console.log('');
       }
-      
+
       console.log('Expected output:');
       console.log('📊 Endpoint Statistics (75 total endpoints)');
       console.log('🔗 Basic URL Validation (expected: 1 pass, 3 fail)');
@@ -438,18 +423,18 @@ async function runEndpointValidation() {
       console.log('🔄 Consistency Analysis (expected: issues found)');
       console.log('🏗️ Hierarchy Validation (expected: issues found)');
       console.log('');
-      
+
       console.log(`${colors.blue}💡 To run actual validation, use: bun endpoint-aware-validator.ts --full-analysis${colors.reset}`);
       return;
     }
-    
+
     // Load constants
     const cliConstants = await import('./lib/documentation/constants/cli.ts');
     const utilsConstants = await import('./lib/documentation/constants/utils.ts');
-    
+
     // Collect all endpoints
     const endpoints: EndpointInfo[] = [];
-    
+
     // Collect CLI endpoints
     Object.entries(cliConstants.CLI_DOCUMENTATION_URLS).forEach(([category, urls]) => {
       if (typeof urls === 'object') {
@@ -458,7 +443,7 @@ async function runEndpointValidation() {
         });
       }
     });
-    
+
     // Collect Utils endpoints
     Object.entries(utilsConstants.BUN_UTILS_URLS).forEach(([category, urls]) => {
       if (typeof urls === 'object') {
@@ -467,30 +452,30 @@ async function runEndpointValidation() {
         });
       }
     });
-    
+
     log.section('📊 Endpoint Statistics');
     log.info(`Total endpoints: ${endpoints.length}`);
-    
+
     const endpointTypes = new Map<string, number>();
     const depths = new Map<number, number>();
     const categories = new Set<string>();
-    
+
     endpoints.forEach(endpoint => {
       endpointTypes.set(endpoint.endpointType, (endpointTypes.get(endpoint.endpointType) || 0) + 1);
       depths.set(endpoint.depth, (depths.get(endpoint.depth) || 0) + 1);
       categories.add(endpoint.category);
     });
-    
+
     log.info(`Categories: ${categories.size}`);
     log.info(`Endpoint types: ${Array.from(endpointTypes.entries()).map(([type, count]) => `${type}(${count})`).join(', ')}`);
     log.info(`Depth levels: ${Array.from(depths.entries()).map(([depth, count]) => `L${depth}(${count})`).join(', ')}`);
-    
+
     // Basic URL validation
     log.section('🔗 Basic URL Validation');
-    
+
     let validURLs = 0;
     let invalidURLs = 0;
-    
+
     endpoints.forEach(endpoint => {
       try {
         new URL(endpoint.fullUrl);
@@ -499,25 +484,25 @@ async function runEndpointValidation() {
         invalidURLs++;
       }
     });
-    
+
     recordTest('basic-url-validation', invalidURLs === 0,
       `${validURLs} valid, ${invalidURLs} invalid URLs`,
       { validURLs, invalidURLs, totalURLs: endpoints.length }
     );
-    
+
     if (invalidURLs === 0) {
       log.success('Basic URL Validation: OK');
     } else {
       log.error(`Basic URL Validation: ${invalidURLs} invalid URLs found`);
     }
-    
+
     // Endpoint-level validation
     if (options.endpoints || options.fullAnalysis) {
       log.section('🎯 Endpoint-Level Analysis');
-      
+
       const uniqueEndpoints = new Set<string>();
       const duplicateEndpoints: EndpointInfo[] = [];
-      
+
       endpoints.forEach(endpoint => {
         if (uniqueEndpoints.has(endpoint.endpoint)) {
           duplicateEndpoints.push(endpoint);
@@ -525,17 +510,17 @@ async function runEndpointValidation() {
           uniqueEndpoints.add(endpoint.endpoint);
         }
       });
-      
+
       recordTest('endpoint-uniqueness', duplicateEndpoints.length === 0,
         `${uniqueEndpoints.size} unique endpoints, ${duplicateEndpoints.length} duplicates`,
-        { 
+        {
           totalEndpoints: endpoints.length,
           uniqueEndpoints: uniqueEndpoints.size,
           duplicateEndpoints: duplicateEndpoints.length,
           duplicates: duplicateEndpoints.map(ep => ep.id)
         }
       );
-      
+
       if (duplicateEndpoints.length === 0) {
         log.success(`Endpoint Uniqueness: OK (${uniqueEndpoints.size} unique)`);
       } else {
@@ -546,7 +531,7 @@ async function runEndpointValidation() {
           });
         }
       }
-      
+
       // Endpoint type analysis
       const typeDistribution = new Map<string, EndpointInfo[]>();
       endpoints.forEach(endpoint => {
@@ -555,23 +540,23 @@ async function runEndpointValidation() {
         }
         typeDistribution.get(endpoint.endpointType)!.push(endpoint);
       });
-      
+
       log.info('Endpoint Type Distribution:');
       typeDistribution.forEach((typeEndpoints, type) => {
         log.verbose(`  ${type}: ${typeEndpoints.length} endpoints`);
       });
     }
-    
+
     // Consistency analysis
     if (options.consistency || options.fullAnalysis) {
       log.section('🔄 Consistency Analysis');
-      
+
       const consistency = analyzeEndpointConsistency(endpoints);
-      
-      const hasIssues = consistency.inconsistentNaming.length > 0 || 
+
+      const hasIssues = consistency.inconsistentNaming.length > 0 ||
                        consistency.hierarchyIssues.length > 0 ||
                        Array.from(consistency.duplicateEndpoints.values()).some(dups => dups.length > 1);
-      
+
       recordTest('consistency-analysis', !hasIssues,
         `Naming: ${consistency.inconsistentNaming.length} issues, Hierarchy: ${consistency.hierarchyIssues.length} issues`,
         {
@@ -582,19 +567,19 @@ async function runEndpointValidation() {
             .map(([endpoint, endpoints]) => ({ endpoint, count: endpoints.length, ids: endpoints.map(ep => ep.id) }))
         }
       );
-      
+
       if (!hasIssues) {
         log.success('Consistency Analysis: OK');
       } else {
         log.warning('Consistency Analysis: Issues found');
-        
+
         if (consistency.inconsistentNaming.length > 0) {
           log.info('Inconsistent Naming:');
           consistency.inconsistentNaming.forEach(issue => {
             log.verbose(`  ${issue}`);
           });
         }
-        
+
         if (consistency.hierarchyIssues.length > 0) {
           log.info('Hierarchy Issues:');
           consistency.hierarchyIssues.forEach(issue => {
@@ -603,13 +588,13 @@ async function runEndpointValidation() {
         }
       }
     }
-    
+
     // Hierarchy validation
     if (options.hierarchy || options.fullAnalysis) {
       log.section('🏗️ Hierarchy Validation');
-      
+
       const hierarchy = validateEndpointHierarchy(endpoints);
-      
+
       recordTest('hierarchy-validation', hierarchy.valid,
         hierarchy.valid ? 'Hierarchy structure is valid' : `${hierarchy.issues.length} hierarchy issues found`,
         {
@@ -624,7 +609,7 @@ async function runEndpointValidation() {
           recommendations: hierarchy.recommendations
         }
       );
-      
+
       if (hierarchy.valid) {
         log.success('Hierarchy Validation: OK');
       } else {
@@ -635,7 +620,7 @@ async function runEndpointValidation() {
           });
         }
       }
-      
+
       if (hierarchy.recommendations.length > 0) {
         log.info('Recommendations:');
         hierarchy.recommendations.forEach(rec => {
@@ -643,22 +628,22 @@ async function runEndpointValidation() {
         });
       }
     }
-    
+
     // Summary
     const endTime = Date.now();
     const duration = endTime - startTime;
-    
+
     log.section('📊 Validation Summary');
-    
+
     const { total, passed, failed } = testResults.summary;
     const successRate = total > 0 ? ((passed / total) * 100).toFixed(1) : '0';
-    
+
     console.log(`${colors.white}Total Tests:${colors.reset} ${total}`);
     console.log(`${colors.green}Passed:${colors.reset} ${passed}`);
     console.log(`${colors.red}Failed:${colors.reset} ${failed}`);
     console.log(`${colors.blue}Success Rate:${colors.reset} ${successRate}%`);
     console.log(`${colors.gray}Duration:${colors.reset} ${duration}ms`);
-    
+
     // Output JSON if requested
     if (options.json) {
       log.json({
@@ -676,7 +661,7 @@ async function runEndpointValidation() {
         }))
       });
     }
-    
+
     // Exit with appropriate code
     if (failed > 0) {
       console.log(`\n${colors.yellow}⚠️ Some validations failed. See details above.${colors.reset}`);
@@ -685,7 +670,7 @@ async function runEndpointValidation() {
       console.log(`\n${colors.green}🎉 All validations passed!${colors.reset}`);
       process.exit(0);
     }
-    
+
   } catch (error: any) {
     log.error(`Validation failed: ${error.message}`);
     if (options.verbose) {

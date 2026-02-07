@@ -1,12 +1,4 @@
-/**
- * Enterprise Core Type Definitions
- *
- * Centralized type definitions for consistent enterprise-grade naming
- * and type safety across all library components.
- *
- * @version 1.0.0
- * @author Enterprise Platform Team
- */
+// lib/core/core-types.ts — Core type definitions
 
 // ============================================================================
 // CORE ENUMERATIONS

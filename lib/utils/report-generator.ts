@@ -1,4 +1,5 @@
-// lib/report-generator.ts
+// lib/utils/report-generator.ts — Report generation utilities
+
 import { CONTENT_TYPES } from '../config/content-types';
 
 export interface ReportColumn {

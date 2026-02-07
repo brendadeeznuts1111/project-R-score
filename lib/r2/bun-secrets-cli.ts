@@ -1,17 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 🔐 bun.secrets CLI for R2 Integration
- *
- * Uses S3-compatible API with proper AWS signature v4 authentication
- *
- * Usage:
- *   bun run bun:secrets:init          - Initialize bun.secrets with R2
- *   bun run bun:secrets:set <k> <v>   - Store secret in R2 via bun.secrets
- *   bun run bun:secrets:get <k>       - Get secret from R2
- *   bun run bun:secrets:list          - List all secrets
- *   bun run bun:secrets:sync          - Sync local bun.secrets to R2
- *   bun run bun:secrets:backup        - Backup all secrets to R2
- */
+// lib/r2/bun-secrets-cli.ts — Secrets CLI for R2 integration
 
 import { styled } from '../theme/colors';
 

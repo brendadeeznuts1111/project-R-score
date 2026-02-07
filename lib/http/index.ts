@@ -1,8 +1,4 @@
-/**
- * 🌐 HTTP Utilities
- *
- * Advanced HTTP handling, health endpoints, and server utilities.
- */
+// lib/http/index.ts — HTTP utilities barrel export
 
 // Health endpoint with HSL color coding
 export {

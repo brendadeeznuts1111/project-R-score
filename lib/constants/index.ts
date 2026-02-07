@@ -1,10 +1,4 @@
-/**
- * 📚 FactoryWager Constants Index
- *
- * Central hub for all constants used across the monorepo
- *
- * @version 1.0.0
- */
+// lib/constants/index.ts — Central hub for all constants used across the monorepo
 
 // Re-export all constants
 export * from './color-constants';

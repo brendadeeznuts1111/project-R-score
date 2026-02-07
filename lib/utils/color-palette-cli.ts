@@ -1,14 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 🎨 Color Palette Generator CLI
- *
- * Generate harmonious color palettes using advanced HSL theory
- *
- * Usage:
- *   bun run color-palette --hue=210 --saturation=85 --lightness=65
- *   bun run color-palette --color="#3b82f6"
- *   bun run color-palette --base="hsl(210, 85%, 65%)" --harmonies --tints --shades
- */
+// lib/utils/color-palette-cli.ts — Color palette generator CLI
 
 import {
   generatePalette,

@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-
 // tools/wasm-inspector.ts — CLI inspector for .wasm files and WASM API reference
 //
 // Usage:

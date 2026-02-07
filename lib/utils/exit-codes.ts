@@ -1,9 +1,4 @@
-/**
- * 🚪 Standardized Exit Codes for FactoryWager Applications
- *
- * Provides consistent exit codes across all CLI tools for better
- * automation and error handling.
- */
+// lib/utils/exit-codes.ts — Standardized exit codes for CLI tools
 
 export const EXIT_CODES = {
   SUCCESS: 0,

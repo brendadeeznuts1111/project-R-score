@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🎯 Interactive Documentation Explorer
- *
- * Enhanced with fuzzy search, interactive selection, and live updates
- */
+// lib/docs/interactive-docs.ts — Interactive documentation explorer
 
 import { EnhancedDocsFetcher, BunApiIndex } from './index-fetcher-enhanced';
 import { ChromeAppManager } from '../cli/chrome-integration';

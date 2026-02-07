@@ -1,7 +1,5 @@
 #!/usr/bin/env bun
-
-// Fetch a URL + its subresources, output a HAR file
-// Uses Bun-native APIs: dns.prefetch(), decompress option, dns.getCacheStats()
+// tools/fetch-har.ts — Fetch a URL and its subresources, output a HAR file
 //
 // Usage:
 //   bun fetch-har.ts <url> [output.har] [--verbose] [--no-prefetch] [--dns-ttl <seconds>]

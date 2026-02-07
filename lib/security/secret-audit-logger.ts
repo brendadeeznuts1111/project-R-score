@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🔐 Secret Audit Logger
- *
- * Provides comprehensive audit logging for all secret operations
- * with security context and tamper-evident logging.
- */
+// lib/security/secret-audit-logger.ts — Audit logging for secret operations
 
 import { AtomicFileOperations } from '../core/atomic-file-operations';
 

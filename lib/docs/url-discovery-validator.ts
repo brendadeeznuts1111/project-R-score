@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Comprehensive URL Validation for Untracked Files
- *
- * Validates all URLs found in untracked files and project documentation
- * to ensure link integrity and accessibility.
- */
+// lib/docs/url-discovery-validator.ts — URL validation for untracked files
 
 // Entry guard check
 if (import.meta.path !== Bun.main) {

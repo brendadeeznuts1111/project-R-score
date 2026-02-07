@@ -1,13 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 📊 Package Version Manager with bun.semver Integration
- *
- * Features:
- * - bun.semver for version parsing and comparison
- * - Visual version graphs (Mermaid, ASCII, JSON)
- * - R2-backed version history
- * - Lifecycle automation
- */
+// lib/registry/version-manager.ts — Package version manager with semver integration
 
 import { styled, FW_COLORS } from '../theme/colors';
 import { R2StorageAdapter } from './r2-storage';

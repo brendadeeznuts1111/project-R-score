@@ -1,16 +1,4 @@
-/**
- * Production RSC Handler - Native Fetch Parallelization
- *
- * 🎯 R-Score Strategy: P_ratio 1.000-1.050 with zero complexity
- *
- * Uses native fetch + Promise.all for optimal performance:
- * - Immediate +0.167 P_ratio gain (0.833 → 1.000)
- * - Zero custom implementation
- * - 100% production reliability
- * - Built-in connection pooling
- *
- * @see {@link https://bun.sh/docs/api/fetch} Native fetch with keep-alive
- */
+// lib/http/rsc-production.ts — Production RSC handler with native fetch parallelization
 
 export interface ProductionRSCRequest {
   url: string;

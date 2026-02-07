@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 🏭 FactoryWager R2 Signed URLs v1.2 - Hardened, Time-Bound Access Layer
- *
- * Production-grade signed URL generation with strict security posture,
- * automatic expiry, custom metadata, and full observability hooks.
- */
+// lib/r2/signed-url.ts — R2 signed URL generation
 
 import type { R2Bucket } from 'bun';
 

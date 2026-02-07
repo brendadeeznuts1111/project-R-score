@@ -1,17 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Platform Validation CLI Tool
- *
- * Validates and auto-fixes CLI tools, URLs, and constants
- * across the platform with comprehensive error handling.
- *
- * Usage:
- *   bun run lib/platform-validator.ts              # Full validation report
- *   bun run lib/platform-validator.ts --heal       # Auto-fix issues
- *   bun run lib/platform-validator.ts --cli        # Validate CLI tools only
- *   bun run lib/platform-validator.ts --urls       # Validate URLs only
- *   bun run lib/platform-validator.ts --constants  # Validate constants only
- */
+// lib/validation/platform-validator.ts — Platform validation CLI for tools, URLs, and constants
 
 // Entry guard check
 if (import.meta.path !== Bun.main) {

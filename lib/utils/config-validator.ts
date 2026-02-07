@@ -1,9 +1,4 @@
-/**
- * Configuration Validation Utilities
- *
- * Provides comprehensive configuration validation with type safety,
- * environment variable validation, and schema validation.
- */
+// lib/utils/config-validator.ts — Configuration validation utilities
 
 import { logger } from './logger';
 import { ErrorHandler } from './error-handler';

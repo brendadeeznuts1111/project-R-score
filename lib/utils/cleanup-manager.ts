@@ -1,6 +1,4 @@
-/**
- * Cleanup manager to break circular references and reduce GC roots
- */
+// lib/utils/cleanup-manager.ts — Cleanup manager for circular references and GC roots
 
 type CleanupFn = () => void;
 

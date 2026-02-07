@@ -1,9 +1,4 @@
-/**
- * Tier-1380 Metrics Integration
- *
- * Feeds R-Score optimization metrics to Tier-1380 monitoring dashboard.
- * Integrates with validate-pointers.ts to track performance improvements.
- */
+// lib/deployment/tier1380-metrics.ts — Tier-1380 metrics integration for R-Score optimization
 
 import { globalPool } from '../performance/memory-pool';
 

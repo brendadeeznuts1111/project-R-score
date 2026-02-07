@@ -1,9 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 🔐 Registry Authentication Middleware
- *
- * Supports: none, basic, token, and JWT auth modes
- */
+// lib/registry/auth.ts — Registry authentication middleware
 
 import { styled, FW_COLORS } from '../theme/colors';
 import type { RegistryUser, AuthToken } from './registry-types';

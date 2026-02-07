@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Port Management and Connection Pooling System
- * 
- * Solves port conflicts with dedicated port properties per project
- * and implements Bun's simultaneous connection limits for optimal performance.
- */
+// lib/http/port-management-system.ts — Port management and connection pooling system
 
 // Entry guard check
 if (import.meta.main) {
@@ -171,7 +165,7 @@ class PortManager {
   private static readonly PROJECT_CONFIGS = new Map<string, PortConfig>();
   private static readonly USED_PORTS = new Set<number>();
   private static readonly PORT_ALLOCATION = new Map<string, number>();
-  
+
   // Mutex for preventing race conditions in port allocation
   private static allocationMutex = Promise.resolve();
   private static isAllocating = false;
@@ -193,10 +187,10 @@ class PortManager {
         try {
           const content = readFileSync(configFile, 'utf-8');
           const parsed = JSON.parse(content);
-          
+
           // Extract port configuration
           const portConfig = parsed.portConfig || parsed.server || {};
-          
+
           config = {
             project: parsed.name || 'unknown',
             port: portConfig.port || this.getDefaultConfig().port,
@@ -244,11 +238,11 @@ class PortManager {
   static async allocatePort(projectPath: string): Promise<number> {
     // Wait for any ongoing allocation to complete
     await this.allocationMutex;
-    
+
     // Start new allocation
     const allocationPromise = this.performAllocation(projectPath);
     this.allocationMutex = allocationPromise;
-    
+
     return allocationPromise;
   }
 
@@ -261,10 +255,10 @@ class PortManager {
     }
 
     this.isAllocating = true;
-    
+
     try {
       const config = this.loadProjectConfig(projectPath);
-      
+
       // Check if project already has an allocated port
       if (this.PORT_ALLOCATION.has(projectPath)) {
         const existingPort = this.PORT_ALLOCATION.get(projectPath)!;
@@ -274,7 +268,7 @@ class PortManager {
 
       // Find available port in project's range (atomic operation)
       let allocatedPort = config.port;
-      
+
       if (this.USED_PORTS.has(allocatedPort)) {
         // Find next available port in range
         let found = false;
@@ -285,7 +279,7 @@ class PortManager {
             break;
           }
         }
-        
+
         if (!found) {
           throw new Error(`No available ports in range ${config.range.start}-${config.range.end} for project ${config.project}`);
         }
@@ -298,7 +292,7 @@ class PortManager {
 
       console.log(`🚪 Port ${allocatedPort} allocated to project: ${config.project}`);
       return allocatedPort;
-      
+
     } finally {
       this.isAllocating = false;
     }
@@ -443,7 +437,7 @@ class ConnectionPool {
    */
   async getConnection(host: string, port: number): Promise<ConnectionInfo> {
     const poolKey = `${host}:${port}`;
-    
+
     // Check if we have available connections in pool
     const pool = this.pools.get(poolKey) || [];
     const activeCount = this.activeConnections.get(poolKey) || 0;
@@ -520,7 +514,7 @@ class ConnectionPool {
    * Check if connection is still valid
    */
   private isConnectionValid(connection: ConnectionInfo): boolean {
-    return connection && !connection.destroyed && 
+    return connection && !connection.destroyed &&
            (!connection.created || (Date.now() - connection.created) < this.options.connectionTimeout);
   }
 
@@ -655,7 +649,7 @@ class ConnectionPool {
    */
   getStats(): Record<string, { available: number; active: number; max: number }> {
     const stats: Record<string, { available: number; active: number; max: number }> = {};
-    
+
     for (const [poolKey, pool] of this.pools.entries()) {
       stats[poolKey] = {
         available: pool.length,
@@ -663,7 +657,7 @@ class ConnectionPool {
         max: this.options.maxConnections
       };
     }
-    
+
     return stats;
   }
 }
@@ -688,37 +682,37 @@ class OptimizedFetch {
     // Use Bun's native environment variables or defaults
     let maxRequests = parseInt(process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || '512');
     let maxConnectionsPerHost = parseInt(process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6');
-    
+
     // Validate environment variables
     const requestsValidation = ValidationUtils.validateConnectionLimit(maxRequests, 'BUN_CONFIG_MAX_HTTP_REQUESTS');
     const perHostValidation = ValidationUtils.validateConnectionLimit(maxConnectionsPerHost, 'BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST');
-    
+
     if (!requestsValidation.isValid) {
       console.error(`Invalid BUN_CONFIG_MAX_HTTP_REQUESTS: ${requestsValidation.errors.join(', ')}`);
       console.log(`Falling back to default: ${VALIDATION_CONSTANTS.CONNECTIONS.DEFAULT}`);
       maxRequests = VALIDATION_CONSTANTS.CONNECTIONS.DEFAULT;
     }
-    
+
     if (!perHostValidation.isValid) {
       console.error(`Invalid BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST: ${perHostValidation.errors.join(', ')}`);
       console.log(`Falling back to default: 6`);
       maxConnectionsPerHost = 6;
     }
-    
+
     const limits = {
       simultaneousConnections: options.simultaneousConnections || maxRequests,
       connectionsPerHost: options.connectionsPerHost || maxConnectionsPerHost,
       keepAlive: options.keepAlive ?? true,
       connectionTimeout: options.connectionTimeout || 30000
     };
-    
+
     // Validate final limits
     const finalValidation = ValidationUtils.validateConnectionLimit(limits.simultaneousConnections, 'Final simultaneousConnections');
     if (!finalValidation.isValid) {
       console.error(`Invalid simultaneousConnections: ${finalValidation.errors.join(', ')}`);
       limits.simultaneousConnections = VALIDATION_CONSTANTS.CONNECTIONS.DEFAULT;
     }
-    
+
     this.connectionPool = new ConnectionPool({
       maxConnections: limits.simultaneousConnections,
       connectionTimeout: limits.connectionTimeout,
@@ -760,7 +754,7 @@ class OptimizedFetch {
       if (options.prefetch !== false) {
         await DNSOptimizer.prefetchDNS(host);
       }
-      
+
       if (options.preconnect !== false) {
         await DNSOptimizer.preconnect(host);
       }
@@ -827,7 +821,7 @@ class OptimizedFetch {
     if (options.prefetch !== false) {
       await Promise.all(Array.from(uniqueHosts).map(host => DNSOptimizer.prefetchDNS(host)));
     }
-    
+
     if (options.preconnect !== false) {
       await Promise.all(Array.from(uniqueHosts).map(host => DNSOptimizer.preconnect(host)));
     }
@@ -842,7 +836,7 @@ class OptimizedFetch {
    */
   static async fetchAndBuffer(url: string, outputPath: string, options: RequestInit = {}): Promise<void> {
     const response = await this.fetch(url, options);
-    
+
     try {
       // Use Bun's optimized write with response buffering as documented
       // import { write } from "bun";
@@ -873,7 +867,7 @@ class OptimizedFetch {
     blob: Blob;
   }> {
     const response = await this.fetch(url, options);
-    
+
     try {
       // Use Bun's optimized response buffering methods
       const [text, json, formData, bytes, arrayBuffer, blob] = await Promise.all([
@@ -935,21 +929,21 @@ class ProjectServer {
 
   constructor(projectPath: string) {
     const config = PortManager.loadProjectConfig(projectPath);
-    
+
     // Use Bun's environment variables with project-specific fallbacks
     const maxRequests = parseInt(process.env.BUN_CONFIG_MAX_HTTP_REQUESTS || config.maxConnections?.toString() || '512');
     const maxConnectionsPerHost = parseInt(process.env.BUN_CONFIG_MAX_HTTP_REQUESTS_PER_HOST || '6');
-    
+
     this.config = {
       ...config,
       maxConnections: maxRequests,
       connectionTimeout: config.connectionTimeout || 30000,
       keepAlive: config.keepAlive !== false
     };
-    
+
     // Note: Port allocation is now async, will be done in start()
     this.port = 0; // Temporary, will be set in start()
-    
+
     this.connectionPool = new ConnectionPool({
       maxConnections: this.config.maxConnections,
       connectionTimeout: this.config.connectionTimeout,
@@ -969,7 +963,7 @@ class ProjectServer {
    */
   async start(): Promise<void> {
     console.log(`🚀 Starting server for project: ${this.config.project}`);
-    
+
     // Allocate port asynchronously to prevent race conditions
     try {
       this.port = await PortManager.allocatePort(this.projectPath);
@@ -977,7 +971,7 @@ class ProjectServer {
       console.error(`❌ Failed to allocate port: ${error.message}`);
       throw error;
     }
-    
+
     console.log(`📍 Dedicated port: ${this.port}`);
     console.log(`🔗 Max connections: ${this.config.maxConnections}`);
     console.log(`⏱️ Connection timeout: ${this.config.connectionTimeout}ms`);
@@ -991,7 +985,7 @@ class ProjectServer {
       });
 
       console.log(`✅ Server started successfully on port ${this.port}`);
-      
+
     } catch (error) {
       console.error(`❌ Failed to start server: ${error.message}`);
       PortManager.releasePort(this.projectPath);
@@ -1030,13 +1024,13 @@ class ProjectServer {
 
     } catch (error) {
       const responseTime = Date.now() - startTime;
-      
+
       return new Response(
-        JSON.stringify({ 
+        JSON.stringify({
           error: 'Internal Server Error',
           project: this.config.project,
           timestamp: Date.now()
-        }), 
+        }),
         {
           status: 500,
           headers: {
@@ -1060,24 +1054,24 @@ class ProjectServer {
    */
   async stop(): Promise<void> {
     console.log(`🛑 Stopping server for project: ${this.config.project}`);
-    
+
     // Stop the server
     if (this.server) {
       this.server.stop();
       this.server = undefined;
     }
-    
+
     // Destroy connection pool and cleanup connections
     if (this.connectionPool) {
       this.connectionPool.destroy();
       this.connectionPool = undefined;
     }
-    
+
     // Release port allocation
     if (this.projectPath) {
       PortManager.releasePort(this.projectPath);
     }
-    
+
     console.log(`✅ Server stopped and resources cleaned up for: ${this.config.project}`);
   }
 
@@ -1148,21 +1142,21 @@ async function demonstratePortManagement(): Promise<void> {
     // Test connection pooling
     console.log('\n🔗 TESTING CONNECTION POOLING:');
     const testUrl = `http://example.com:${servers[0]?.getInfo().port}/`;
-    
+
     if (servers.length > 0) {
       const startTime = Date.now();
-      
+
       // Make multiple concurrent requests
-      const promises = Array.from({ length: 10 }, () => 
+      const promises = Array.from({ length: 10 }, () =>
         OptimizedFetch.fetch(testUrl)
       );
 
       const responses = await Promise.all(promises);
       const totalTime = Date.now() - startTime;
-      
+
       console.log(`   10 concurrent requests completed in ${totalTime}ms`);
       console.log(`   Average per request: ${(totalTime / 10).toFixed(2)}ms`);
-      
+
       // Show connection pool stats
       console.log('\n📈 CONNECTION POOL STATS:');
       const stats = OptimizedFetch.getStats();
@@ -1173,7 +1167,7 @@ async function demonstratePortManagement(): Promise<void> {
 
     // Keep servers running for demo
     console.log('\n🌐 Servers running. Press Ctrl+C to stop...');
-    
+
     process.on('SIGINT', async () => {
       console.log('\n🛑 Shutting down all servers...');
       for (const server of servers) {
@@ -1187,7 +1181,7 @@ async function demonstratePortManagement(): Promise<void> {
 
   } catch (error) {
     console.error('Demo failed:', error);
-    
+
     // Cleanup on error
     for (const server of servers) {
       await server.stop();

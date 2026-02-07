@@ -1,24 +1,19 @@
 #!/usr/bin/env bun
-/**
- * 🧪 Production-Ready A/B Testing Server
- * 
- * Uses the refined ABTestManager with strict validation and proper weight distribution
- * Demonstrates enterprise-grade A/B testing with multiple concurrent tests
- */
+// tools/production-ab-testing-server.ts — Production-ready A/B testing server
 
 import { serve } from "bun";
 
 /**
  * 🚀 Prefetch Optimizations
- * 
+ *
  * This file includes prefetch hints for optimal performance:
  * - DNS prefetching for external domains
  * - Preconnect for faster handshakes
  * - Resource preloading for critical assets
- * 
+ *
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { ABTestManager } from "../lib/ab-testing/manager.ts";
+import { ABTestManager } from "../lib/ab-testing/manager";
 
 // Global test configuration
 function configureTests(manager: ABTestManager) {
@@ -223,7 +218,7 @@ function generateTestPage(assignments: Record<string, string>): string {
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -232,7 +227,7 @@ function generateTestPage(assignments: Record<string, string>): string {
             font-size: ${densityConfig.fontSize};
             line-height: 1.6;
         }
-        
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -241,35 +236,35 @@ function generateTestPage(assignments: Record<string, string>): string {
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
-        
+
         .header {
             background: ${urlConfig.color};
             color: white;
             padding: 40px;
             text-align: center;
         }
-        
+
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 16px;
         }
-        
+
         .header p {
             font-size: 1.2rem;
             opacity: 0.9;
         }
-        
+
         .content {
             padding: 40px;
         }
-        
+
         .test-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
             gap: 24px;
             margin-bottom: 32px;
         }
-        
+
         .test-card {
             background: #f8fafc;
             border: 2px solid #e2e8f0;
@@ -277,18 +272,18 @@ function generateTestPage(assignments: Record<string, string>): string {
             padding: 24px;
             transition: all 0.2s;
         }
-        
+
         .test-card:hover {
             border-color: ${urlConfig.color};
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         }
-        
+
         .test-card h3 {
             color: #1e293b;
             margin-bottom: 12px;
             font-size: 1.25rem;
         }
-        
+
         .variant-badge {
             display: inline-block;
             background: ${urlConfig.color};
@@ -299,12 +294,12 @@ function generateTestPage(assignments: Record<string, string>): string {
             font-weight: 600;
             margin-bottom: 12px;
         }
-        
+
         .features {
             list-style: none;
             margin: 12px 0;
         }
-        
+
         .features li {
             padding: 4px 0;
             position: relative;
@@ -312,7 +307,7 @@ function generateTestPage(assignments: Record<string, string>): string {
             font-size: 14px;
             color: #64748b;
         }
-        
+
         .features li:before {
             content: "✓";
             position: absolute;
@@ -320,7 +315,7 @@ function generateTestPage(assignments: Record<string, string>): string {
             color: ${urlConfig.color};
             font-weight: bold;
         }
-        
+
         .example {
             background: #f0f9ff;
             padding: 12px;
@@ -330,7 +325,7 @@ function generateTestPage(assignments: Record<string, string>): string {
             margin: 12px 0;
             border-left: 3px solid ${urlConfig.color};
         }
-        
+
         .cta-section {
             text-align: center;
             margin: 40px 0;
@@ -338,7 +333,7 @@ function generateTestPage(assignments: Record<string, string>): string {
             background: linear-gradient(135deg, ${ctaConfig.color}22 0%, ${ctaConfig.color}44 100%);
             border-radius: 12px;
         }
-        
+
         .cta-button {
             display: inline-block;
             background: ${ctaConfig.color};
@@ -352,30 +347,30 @@ function generateTestPage(assignments: Record<string, string>): string {
             text-decoration: none;
             transition: all 0.2s;
         }
-        
+
         .cta-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
-        
+
         .assignments {
             background: #fef3c7;
             padding: 24px;
             border-radius: 8px;
             margin: 24px 0;
         }
-        
+
         .assignments h3 {
             color: #92400e;
             margin-bottom: 16px;
         }
-        
+
         .assignment-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 12px;
         }
-        
+
         .assignment-item {
             display: flex;
             justify-content: space-between;
@@ -384,50 +379,50 @@ function generateTestPage(assignments: Record<string, string>): string {
             border-radius: 4px;
             border: 1px solid #fde68a;
         }
-        
+
         .test-name {
             font-weight: 600;
             color: #78350f;
             font-size: 12px;
         }
-        
+
         .variant-name {
             color: #92400e;
             font-size: 12px;
             font-weight: 600;
         }
-        
+
         .metrics {
             background: #ecfdf5;
             padding: 24px;
             border-radius: 8px;
             margin: 24px 0;
         }
-        
+
         .metrics h3 {
             color: #065f46;
             margin-bottom: 16px;
         }
-        
+
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 16px;
         }
-        
+
         .metric-test {
             background: #f0fdf4;
             padding: 16px;
             border-radius: 6px;
             border: 1px solid #bbf7d0;
         }
-        
+
         .metric-test h4 {
             color: #065f46;
             margin-bottom: 12px;
             font-size: 14px;
         }
-        
+
         .metric-item {
             display: flex;
             justify-content: space-between;
@@ -435,12 +430,12 @@ function generateTestPage(assignments: Record<string, string>): string {
             font-size: 12px;
             color: #047857;
         }
-        
+
         .admin-link {
             text-align: center;
             margin: 24px 0;
         }
-        
+
         .admin-link a {
             color: ${urlConfig.color};
             text-decoration: none;
@@ -450,12 +445,12 @@ function generateTestPage(assignments: Record<string, string>): string {
             border-radius: 6px;
             transition: all 0.2s;
         }
-        
+
         .admin-link a:hover {
             background: ${urlConfig.color};
             color: white;
         }
-        
+
         .pricing-section {
             background: #f8fafc;
             padding: 24px;
@@ -463,27 +458,27 @@ function generateTestPage(assignments: Record<string, string>): string {
             margin: 24px 0;
             border: 2px solid #e2e8f0;
         }
-        
+
         .pricing-features {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 12px;
             margin-top: 16px;
         }
-        
+
         .pricing-feature {
             padding: 12px;
             background: white;
             border-radius: 6px;
             border: 1px solid #e2e8f0;
         }
-        
+
         .pricing-feature h5 {
             color: #1e293b;
             margin-bottom: 8px;
             font-size: 14px;
         }
-        
+
         .pricing-feature p {
             color: #64748b;
             font-size: 12px;
@@ -496,7 +491,7 @@ function generateTestPage(assignments: Record<string, string>): string {
             <h1>${urlConfig.title}</h1>
             <p>${urlConfig.description}</p>
         </div>
-        
+
         <div class="content">
             <div class="test-grid">
                 <div class="test-card">
@@ -508,7 +503,7 @@ function generateTestPage(assignments: Record<string, string>): string {
                     </ul>
                     <div class="example">${urlConfig.example}</div>
                 </div>
-                
+
                 <div class="test-card">
                     <h3>📐 Layout Design</h3>
                     <div class="variant-badge">${layoutVariant.toUpperCase()}</div>
@@ -517,7 +512,7 @@ function generateTestPage(assignments: Record<string, string>): string {
                         ${layoutConfig.features.map(feature => `<li>${feature}</li>`).join('')}
                     </ul>
                 </div>
-                
+
                 <div class="test-card">
                     <h3>🎨 Button Colors</h3>
                     <div class="variant-badge">${ctaVariant.toUpperCase()}</div>
@@ -526,7 +521,7 @@ function generateTestPage(assignments: Record<string, string>): string {
                         Sample Button
                     </div>
                 </div>
-                
+
                 <div class="test-card">
                     <h3>📏 Content Density</h3>
                     <div class="variant-badge">${densityVariant.toUpperCase()}</div>
@@ -536,7 +531,7 @@ function generateTestPage(assignments: Record<string, string>): string {
                     </div>
                 </div>
             </div>
-            
+
             <div class="pricing-section">
                 <h3>💰 Pricing Strategy</h3>
                 <div class="variant-badge">${pricingVariant.toUpperCase()}</div>
@@ -550,13 +545,13 @@ function generateTestPage(assignments: Record<string, string>): string {
                     `).join('')}
                 </div>
             </div>
-            
+
             <div class="cta-section">
                 <a href="/docs/api/utils/readfile" class="cta-button" onclick="trackClicks()">
                     Try Documentation →
                 </a>
             </div>
-            
+
             <div class="assignments">
                 <h3>🎲 Your Test Assignments</h3>
                 <div class="assignment-grid">
@@ -568,7 +563,7 @@ function generateTestPage(assignments: Record<string, string>): string {
                     `).join('')}
                 </div>
             </div>
-            
+
             <div class="metrics">
                 <h3>📊 Live Metrics</h3>
                 <div class="metrics-grid">
@@ -585,34 +580,34 @@ function generateTestPage(assignments: Record<string, string>): string {
                     `).join('')}
                 </div>
             </div>
-            
+
             <div class="admin-link">
                 <a href="/admin">📊 Admin Dashboard</a>
             </div>
         </div>
     </div>
-    
+
     <script>
         // Track page views
         const assignments = ${JSON.stringify(assignments)};
-        
+
         fetch('/track', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                action: 'view', 
-                assignments 
+            body: JSON.stringify({
+                action: 'view',
+                assignments
             })
         });
-        
+
         // Track clicks
         function trackClicks() {
             fetch('/track', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    action: 'click', 
-                    assignments 
+                body: JSON.stringify({
+                    action: 'click',
+                    assignments
                 })
             });
         }
@@ -660,7 +655,7 @@ function generateAdminDashboard(): string {
             <h1>🧪 A/B Testing Admin Dashboard</h1>
             <p>Production-ready testing with strict weight validation</p>
         </div>
-        
+
         <div class="summary">
             <h3>📊 Overall Summary</h3>
             <div class="summary-grid">
@@ -686,13 +681,13 @@ function generateAdminDashboard(): string {
                 </div>
             </div>
         </div>
-        
+
         <div class="test-grid">
             ${Object.entries(metrics).map(([testId, testMetrics]) => {
               const totalViews = Object.values(testMetrics).reduce((sum, v) => sum + v.views, 0);
               const totalClicks = Object.values(testMetrics).reduce((sum, v) => sum + v.clicks, 0);
               const overallCTR = totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(1) : '0.0';
-              
+
               return `
                 <div class="test-card">
                     <h3>${testId.replace(/_/g, ' ').toUpperCase()}</h3>
@@ -719,21 +714,21 @@ function generateAdminDashboard(): string {
               `;
             }).join('')}
         </div>
-        
+
         <div class="controls">
             <button class="btn" onclick="location.reload()">🔄 Refresh</button>
             <button class="btn" onclick="exportData()">📊 Export Data</button>
             <button class="btn btn-danger" onclick="resetMetrics()">🗑️ Reset All</button>
         </div>
     </div>
-    
+
     <script>
         function resetMetrics() {
             if (confirm('Reset all metrics? This cannot be undone.')) {
                 fetch('/reset', { method: 'POST' }).then(() => location.reload());
             }
         }
-        
+
         function exportData() {
             fetch('/api/metrics')
                 .then(res => res.json())
@@ -747,7 +742,7 @@ function generateAdminDashboard(): string {
                     URL.revokeObjectURL(url);
                 });
         }
-        
+
         // Auto-refresh every 10 seconds
         setTimeout(() => location.reload(), 10000);
     </script>
@@ -761,48 +756,48 @@ const server = serve({
   port: PRODUCTION_AB_TESTING_PORT,
   async fetch(req) {
     const url = new URL(req.url);
-    
+
     try {
       // Create ABTestManager for this request
       const cookieHeader = req.headers.get("cookie");
       const abManager = new ABTestManager(cookieHeader);
-      
+
       // Configure tests (in production, this would be done once globally)
       configureTests(abManager);
-      
+
       // Main test page
       if (url.pathname === "/" && req.method === "GET") {
         // Get all assignments for this user
         const assignments = abManager.getAllAssignments();
-        
+
         // Track views for all assigned tests
         Object.entries(assignments).forEach(([testId, variant]) => {
           trackMetric(testId, variant, "view");
         });
-        
+
         // Get response headers (including cookies)
         const cookieHeaders = abManager.getSetCookieHeaders();
-        
+
         // Generate content based on assignments
         const html = generateTestPage(assignments);
-        
+
         const headers: Record<string, string> = {
           "Content-Type": "text/html",
           "Cache-Control": "no-cache, no-store, must-revalidate"
         };
-        
+
         // Add cookie headers
         if (cookieHeaders.length > 0) {
           headers["Set-Cookie"] = cookieHeaders.join(", ");
         }
-        
+
         return new Response(html, { headers });
       }
-      
+
       // Metrics tracking
       if (url.pathname === "/track" && req.method === "POST") {
         const body = await req.json();
-        
+
         if (body.action === "view") {
           Object.entries(body.assignments).forEach(([testId, variant]) => {
             trackMetric(testId, variant, "view");
@@ -812,10 +807,10 @@ const server = serve({
             trackMetric(testId, variant, "click");
           });
         }
-        
+
         return Response.json({ success: true });
       }
-      
+
       // Admin dashboard
       if (url.pathname === "/admin" && req.method === "GET") {
         const html = generateAdminDashboard();
@@ -823,7 +818,7 @@ const server = serve({
           headers: { "Content-Type": "text/html" }
         });
       }
-      
+
       // API endpoints
       if (url.pathname === "/api/metrics" && req.method === "GET") {
         return Response.json({
@@ -836,47 +831,47 @@ const server = serve({
           }
         });
       }
-      
+
       // Force assignment endpoint
       if (url.pathname.startsWith("/force/") && req.method === "POST") {
         const [, testId, variant] = url.pathname.split("/");
         const cookieHeader = req.headers.get("cookie");
         const testAbManager = new ABTestManager(cookieHeader);
-        
+
         try {
           configureTests(testAbManager);
           testAbManager.forceAssign(testId, variant);
           const cookieHeaders = testAbManager.getSetCookieHeaders();
-          
-          return Response.json({ 
-            success: true, 
+
+          return Response.json({
+            success: true,
             message: `Forced ${testId} = ${variant}`
-          }, { 
+          }, {
             headers: cookieHeaders.length > 0 ? { "Set-Cookie": cookieHeaders.join(", ") } : {}
           });
         } catch (error) {
-          return Response.json({ 
-            success: false, 
-            error: error.message 
+          return Response.json({
+            success: false,
+            error: error.message
           }, { status: 400 });
         }
       }
-      
+
       // Clear assignment endpoint
       if (url.pathname.startsWith("/clear/") && req.method === "POST") {
         const [, testId] = url.pathname.split("/");
         const cookieHeader = req.headers.get("cookie");
         const testAbManager = new ABTestManager(cookieHeader);
-        
+
         configureTests(testAbManager);
         testAbManager.clear(testId);
-        
-        return Response.json({ 
-          success: true, 
+
+        return Response.json({
+          success: true,
           message: `Cleared ${testId || 'all'} assignments`
         });
       }
-      
+
       // Reset metrics
       if (url.pathname === "/reset" && req.method === "POST") {
         Object.keys(metrics).forEach(testId => {
@@ -884,17 +879,17 @@ const server = serve({
             metrics[testId as keyof typeof metrics][variant as keyof typeof metrics[typeof testId]] = { views: 0, clicks: 0 };
           });
         });
-        
+
         return Response.json({ success: true, message: "All metrics reset" });
       }
-      
+
       return new Response("Not found", { status: 404 });
-      
+
     } catch (error) {
       console.error("Server error:", error);
-      return Response.json({ 
-        error: "Internal server error", 
-        message: error.message 
+      return Response.json({
+        error: "Internal server error",
+        message: error.message
       }, { status: 500 });
     }
   },

@@ -1,4 +1,5 @@
-// lib/tier1380-directories-enhanced.ts — Bun-optimized directory scanner
+// lib/deployment/tier1380-directories-enhanced.ts — Bun-optimized directory scanner
+
 import { readdir } from 'node:fs/promises';
 
 import { join, relative } from 'node:path';

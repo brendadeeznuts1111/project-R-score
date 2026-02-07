@@ -1,12 +1,4 @@
-/**
- * Enterprise Error Handling System
- *
- * Standardized error creation, handling, and management
- * for enterprise-grade applications.
- *
- * @version 1.0.0
- * @author Enterprise Platform Team
- */
+// lib/core/core-errors.ts — Standardized error handling system
 
 import { EnterpriseError, SecurityRiskLevel, OperationStatus } from './core-types';
 

@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🎭 DuoPlus Integration with R2 MCP
- *
- * Integrates duoplus.com domain operations, Venmo family integrations,
- * and purple color scheme theming with the MCP system.
- */
+// lib/mcp/duoplus-integration.ts — DuoPlus domain integration with R2 MCP
 
 import { r2MCPIntegration } from './r2-integration';
 import { styled, FW_COLORS } from '../theme/colors';

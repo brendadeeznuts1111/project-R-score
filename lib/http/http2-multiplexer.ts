@@ -1,12 +1,4 @@
-/**
- * Enterprise HTTP/2 Multiplexer
- *
- * High-performance HTTP/2 connection multiplexer with enterprise-grade
- * resource management, error handling, and connection pooling.
- *
- * @version 1.0.0
- * @author Enterprise Platform Team
- */
+// lib/http/http2-multiplexer.ts — HTTP/2 connection multiplexer with connection pooling
 
 import {
   EnterpriseResult,

@@ -1,15 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🌐 Enhanced Documentation Domain Management System
- * 
- * Comprehensive domain configuration for all Bun documentation sources
- * with proper separation between bun.sh (technical) and bun.com (reference/guides).
- * 
- * @author Enterprise Documentation Team
- * @version 2.0.0
- * @since 1.0.0
- */
+// lib/docs/constants/domains.ts — Documentation domain management
 
 export enum DocumentationDomain {
   // Primary domains
@@ -17,7 +6,7 @@ export enum DocumentationDomain {
   BUN_COM = 'bun.com',         // Marketing, guides, reference portal
   BUN_DEV = 'bun.dev',         // Development/API focus
   BUN_IO = 'bun.io',           // Community/ecosystem
-  
+
   // Alternative/CDN domains
   BUN_DOCS = 'docs.bun.sh',    // @planned — DNS does not resolve yet
   BUN_CDN = 'cdn.bun.sh',      // @planned — DNS does not resolve yet
@@ -50,20 +39,20 @@ export enum UtilityFunctionCategory {
 }
 
 // Enhanced type definitions for better type safety
-export type DocumentationURLType = 
-  | 'technical_docs' 
-  | 'api_reference' 
-  | 'tutorials' 
-  | 'rss' 
+export type DocumentationURLType =
+  | 'technical_docs'
+  | 'api_reference'
+  | 'tutorials'
+  | 'rss'
   | 'blog'
   | 'security'
   | 'performance'
   | 'unknown';
 
-export type DocumentationUserType = 
-  | 'developers' 
-  | 'beginners' 
-  | 'educators' 
+export type DocumentationUserType =
+  | 'developers'
+  | 'beginners'
+  | 'educators'
   | 'all_users'
   | 'enterprise_admins'
   | 'devops_engineers';
@@ -140,7 +129,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     COMPARE: 'https://bun.sh/compare',
     FEED: 'https://bun.sh/rss.xml'
   },
-  
+
   // NOTE: Deprecated providers (BUN_TECHNICAL, BUN_API_DOCS, BUN_RUNTIME_DOCS,
   // BUN_REFERENCE, BUN_GUIDES, BUN_TUTORIALS, BUN_EXAMPLES, BUN_RSS, BUN_FEEDS)
   // are defined once in the Legacy section below to avoid duplication.
@@ -201,7 +190,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     // Example commit you provided
     EXAMPLE_COMMIT_AF76296: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types'
   },
-  
+
   [DocumentationProvider.GITHUB_ENTERPRISE]: {
     BASE: Bun.env.GITHUB_ENTERPRISE_URL || 'https://github.com',
     ENTERPRISE: Bun.env.GITHUB_ENTERPRISE_URL || 'https://github.com/enterprise',
@@ -210,28 +199,28 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     RAW_CONTENT: 'https://raw.githubusercontent.com',
     GIST: 'https://gist.github.com'
   },
-  
+
   [DocumentationProvider.INTERNAL_WIKI]: {
     BASE: Bun.env.INTERNAL_WIKI_URL || 'https://wiki.internal.example.com',
     API: Bun.env.INTERNAL_WIKI_API_URL || 'https://wiki-api.internal.example.com',
     SEARCH: '/search',
     CATEGORIES: '/categories'
   },
-  
+
   [DocumentationProvider.MDN_WEB_DOCS]: {
     BASE: 'https://developer.mozilla.org',
     EN_US: 'https://developer.mozilla.org/en-US',
     API: 'https://developer.mozilla.org/api/v1',
     SEARCH: 'https://developer.mozilla.org/search'
   },
-  
+
   [DocumentationProvider.PERFORMANCE_GUIDES]: {
     BASE: 'https://web.dev',
     METRICS: 'https://web.dev/metrics',
     OPTIMIZATION: 'https://web.dev/optimize',
     TOOLS: 'https://web.dev/tools'
   },
-  
+
   // Legacy/backward compatibility providers (deprecated)
   [DocumentationProvider.NODE_JS]: {
     BASE: 'https://nodejs.org',
@@ -239,14 +228,14 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     API: 'https://nodejs.org/api',
     GUIDES: 'https://nodejs.org/en/docs/guides'
   },
-  
+
   [DocumentationProvider.WEB_STANDARDS]: {
     BASE: 'https://web.dev',
     METRICS: 'https://web.dev/metrics',
     OPTIMIZATION: 'https://web.dev/optimize',
     TOOLS: 'https://web.dev/tools'
   },
-  
+
   // @planned — bun.com/security/* URLs do not exist yet
   [DocumentationProvider.SECURITY_DOCS]: {
     BASE: 'https://bun.com',
@@ -255,25 +244,25 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     SECURITY_RSS: 'https://bun.com/security/rss.xml',
     VULNERABILITIES: 'https://bun.com/security/vulnerabilities'
   },
-  
+
   [DocumentationProvider.API_REFERENCE]: {
     BASE: 'https://bun.sh',
     API: 'https://bun.sh/docs/api',
     REFERENCE: 'https://bun.com/reference'
   },
-  
+
   [DocumentationProvider.COMMUNITY_BLOG]: {
     BASE: 'https://bun.com',
     BLOG: 'https://bun.com/blog',
     COMMUNITY: 'https://bun.com/community'
   },
-  
+
   [DocumentationProvider.RSS_FEEDS]: {
     BASE: 'https://bun.sh',
     MAIN_FEED: 'https://bun.sh/rss.xml',
     BLOG_FEED: 'https://bun.com/blog/rss.xml'
   },
-  
+
   // Legacy providers (deprecated - kept for backward compatibility)
   // @planned — bun.com/community/* URLs do not exist yet
   [DocumentationProvider.COMMUNITY_RESOURCES]: {
@@ -284,7 +273,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     STACK_OVERFLOW: 'https://stackoverflow.com/questions/tagged/bun',
     REDDIT: 'https://reddit.com/r/bun'
   },
-  
+
   [DocumentationProvider.BUN_TECHNICAL]: {
     BASE: 'https://bun.sh',
     TECHNICAL_DOCS: 'https://bun.sh/docs',
@@ -297,7 +286,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     TECHNICAL_BLOG: 'https://bun.sh/blog',
     TECHNICAL_RSS: 'https://bun.sh/rss.xml'
   },
-  
+
   [DocumentationProvider.BUN_API_DOCS]: {
     BASE: 'https://bun.sh',
     API_OVERVIEW: 'https://bun.sh/docs/api',
@@ -311,7 +300,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     BUILD: 'https://bun.sh/docs/api/build',
     PLUGINS: 'https://bun.sh/docs/api/plugins'
   },
-  
+
   [DocumentationProvider.BUN_RUNTIME_DOCS]: {
     BASE: 'https://bun.sh',
     RUNTIME_OVERVIEW: 'https://bun.sh/docs/runtime',
@@ -325,7 +314,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     PERF_HOOKS: 'https://bun.sh/docs/runtime/perf-hooks',
     INSPECTOR: 'https://bun.sh/docs/runtime/inspector'
   },
-  
+
   [DocumentationProvider.BUN_REFERENCE]: {
     BASE: Bun.env.BUN_REFERENCE_URL || 'https://bun.com',
     REFERENCE: 'https://bun.com/reference',
@@ -340,7 +329,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     CHEATSHEET: 'https://bun.com/reference/cheatsheet',
     GLOSSARY: 'https://bun.com/reference/glossary'
   },
-  
+
   [DocumentationProvider.BUN_GUIDES]: {
     BASE: Bun.env.BUN_GUIDES_URL || 'https://bun.com',
     GUIDES: 'https://bun.com/guides',
@@ -356,7 +345,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     VIDEO_TUTORIALS: 'https://bun.com/guides/video-tutorials',
     INTERACTIVE: 'https://bun.com/guides/interactive'
   },
-  
+
   // @planned — bun.com/tutorials/* URLs do not exist yet
   [DocumentationProvider.BUN_TUTORIALS]: {
     BASE: 'https://bun.com',
@@ -376,7 +365,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     DEMO_APPS: 'https://bun.com/examples/demo-apps',
     PLAYGROUND: 'https://bun.com/examples/playground'
   },
-  
+
   [DocumentationProvider.BUN_RSS]: {
     BASE: 'https://bun.com',
     MAIN_RSS: 'https://bun.com/rss.xml',
@@ -386,7 +375,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     COMMUNITY_RSS: 'https://bun.com/community/rss.xml',
     GUIDES_RSS: 'https://bun.com/guides/rss.xml'
   },
-  
+
   [DocumentationProvider.BUN_FEEDS]: {
     BASE: 'https://bun.com',
     MAIN_FEED: 'https://bun.com/rss.xml',
@@ -396,7 +385,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     SECURITY_FEED: 'https://bun.com/security/rss.xml',
     COMMUNITY_FEED: 'https://bun.com/community/rss.xml'
   },
-  
+
   [DocumentationProvider.GITHUB_PUBLIC]: {
     BASE: 'https://github.com',
     REPOSITORY: 'https://github.com/oven-sh/bun',
@@ -426,7 +415,7 @@ export const DOCUMENTATION_URL_MAPPINGS = {
     format: 'markdown/html',
     domain: DocumentationDomain.BUN_SH
   },
-  
+
   'bun.sh/docs/api': {
     provider: DocumentationProvider.BUN_API_DOCS,
     type: 'api_reference',
@@ -434,7 +423,7 @@ export const DOCUMENTATION_URL_MAPPINGS = {
     format: 'technical_reference',
     domain: DocumentationDomain.BUN_SH
   },
-  
+
   'bun.sh/docs/runtime': {
     provider: DocumentationProvider.BUN_RUNTIME_DOCS,
     type: 'runtime_reference',
@@ -442,7 +431,7 @@ export const DOCUMENTATION_URL_MAPPINGS = {
     format: 'technical_reference',
     domain: DocumentationDomain.BUN_SH
   },
-  
+
   'bun.sh/docs/cli': {
     provider: DocumentationProvider.BUN_OFFICIAL,
     type: 'cli_reference',
@@ -450,7 +439,7 @@ export const DOCUMENTATION_URL_MAPPINGS = {
     format: 'technical_reference',
     domain: DocumentationDomain.BUN_SH
   },
-  
+
   'bun.sh/rss.xml': {
     provider: DocumentationProvider.BUN_RSS,
     type: 'technical_rss',
@@ -458,7 +447,7 @@ export const DOCUMENTATION_URL_MAPPINGS = {
     format: 'xml',
     domain: DocumentationDomain.BUN_SH
   },
-  
+
   // bun.com domain mappings
   'bun.com/reference': {
     provider: DocumentationProvider.BUN_REFERENCE,
@@ -467,7 +456,7 @@ export const DOCUMENTATION_URL_MAPPINGS = {
     format: 'interactive_docs',
     domain: DocumentationDomain.BUN_COM
   },
-  
+
   'bun.com/guides': {
     provider: DocumentationProvider.BUN_GUIDES,
     type: 'tutorials',
@@ -475,7 +464,7 @@ export const DOCUMENTATION_URL_MAPPINGS = {
     format: 'guides',
     domain: DocumentationDomain.BUN_COM
   },
-  
+
   'bun.com/tutorials': {
     provider: DocumentationProvider.BUN_TUTORIALS,
     type: 'interactive_tutorials',
@@ -483,7 +472,7 @@ export const DOCUMENTATION_URL_MAPPINGS = {
     format: 'interactive',
     domain: DocumentationDomain.BUN_COM
   },
-  
+
   'bun.com/examples': {
     provider: DocumentationProvider.BUN_EXAMPLES,
     type: 'code_examples',
@@ -491,7 +480,7 @@ export const DOCUMENTATION_URL_MAPPINGS = {
     format: 'examples',
     domain: DocumentationDomain.BUN_COM
   },
-  
+
   'bun.com/rss.xml': {
     provider: DocumentationProvider.BUN_RSS,
     type: 'main_rss',
@@ -499,7 +488,7 @@ export const DOCUMENTATION_URL_MAPPINGS = {
     format: 'xml',
     domain: DocumentationDomain.BUN_COM
   },
-  
+
   'bun.com/blog/rss.xml': {
     provider: DocumentationProvider.BUN_RSS,
     type: 'blog_rss',
@@ -507,7 +496,7 @@ export const DOCUMENTATION_URL_MAPPINGS = {
     format: 'xml',
     domain: DocumentationDomain.BUN_COM
   },
-  
+
   // GitHub mappings
   'github.com/oven-sh/bun': {
     provider: DocumentationProvider.GITHUB_PUBLIC,
@@ -528,7 +517,7 @@ export const QUICK_REFERENCE_URLS = {
     EXAMPLE: 'https://bun.com/examples/typedarray-usage',                     // Code examples
     GITHUB: 'https://github.com/oven-sh/bun/tree/main/src/js/builtins/builtins-array.cc' // Source code
   },
-  
+
   // Fetch API documentation
   FETCH_API: {
     TECHNICAL: 'https://bun.sh/docs/runtime/networking/fetch',                 // Technical docs
@@ -537,7 +526,7 @@ export const QUICK_REFERENCE_URLS = {
     EXAMPLE: 'https://bun.com/examples/fetch-usage',                          // Code examples
     TUTORIAL: 'https://bun.com/tutorials/http-requests'                        // Interactive tutorial
   },
-  
+
   // RSS feeds from different sources
   RSS_FEEDS: {
     MAIN: 'https://bun.com/rss.xml',                                           // Main bun.com RSS
@@ -547,7 +536,7 @@ export const QUICK_REFERENCE_URLS = {
     SECURITY: 'https://bun.com/security/rss.xml',                              // Security updates
     COMMUNITY: 'https://bun.com/community/rss.xml'                             // Community updates
   },
-  
+
   // Getting started across domains
   GETTING_STARTED: {
     QUICKSTART: 'https://bun.sh/docs/quickstart',                              // Technical quickstart
@@ -556,7 +545,7 @@ export const QUICK_REFERENCE_URLS = {
     EXAMPLE: 'https://bun.com/examples/hello-world',                          // First example
     VIDEO: 'https://bun.com/tutorials/video/getting-started'                   // Video tutorial
   },
-  
+
   // API reference comparison
   API_REFERENCE: {
     TECHNICAL: 'https://bun.sh/docs/api',                                      // Technical API docs
@@ -565,7 +554,7 @@ export const QUICK_REFERENCE_URLS = {
     COOKBOOK: 'https://bun.com/reference/cookbook',                            // Recipe-style examples
     GLOSSARY: 'https://bun.com/reference/glossary'                             // Terminology
   },
-  
+
   // CLI documentation
   CLI_REFERENCE: {
     TECHNICAL: 'https://bun.sh/docs/cli',                                      // Technical CLI docs
@@ -574,7 +563,7 @@ export const QUICK_REFERENCE_URLS = {
     EXAMPLES: 'https://bun.com/examples/cli-scripts',                         // CLI script examples
     CHEATSHEET: 'https://bun.com/reference/cli#cheatsheet'                     // CLI cheatsheet
   },
-  
+
   // Installation guides
   INSTALLATION: {
     TECHNICAL: 'https://bun.sh/docs/installation',                             // Technical installation
@@ -586,7 +575,7 @@ export const QUICK_REFERENCE_URLS = {
       DOCKER: 'https://bun.sh/docs/installation/docker'
     }
   },
-  
+
   // Performance resources
   PERFORMANCE: {
     TECHNICAL: 'https://bun.sh/docs/performance',                              // Technical performance docs
@@ -622,25 +611,25 @@ export const DOMAIN_PREFERENCES = {
     secondary: DocumentationDomain.BUN_COM,   // Reference portal second
     fallback: DocumentationProvider.GITHUB_PUBLIC
   },
-  
+
   beginners: {
     primary: DocumentationDomain.BUN_COM,     // User-friendly guides first
     secondary: DocumentationDomain.BUN_SH,    // Technical docs second
     fallback: DocumentationProvider.BUN_TUTORIALS
   },
-  
+
   educators: {
     primary: DocumentationDomain.BUN_COM,     // Teaching materials
     secondary: DocumentationProvider.BUN_EXAMPLES,
     fallback: DocumentationProvider.BUN_TUTORIALS
   },
-  
+
   researchers: {
     primary: DocumentationDomain.BUN_SH,      // Technical deep dives
     secondary: DocumentationProvider.GITHUB_PUBLIC,
     fallback: DocumentationProvider.PERFORMANCE_GUIDES
   },
-  
+
   enterprise: {
     primary: DocumentationDomain.BUN_COM,     // Enterprise-focused content
     secondary: DocumentationDomain.BUN_SH,
@@ -661,7 +650,7 @@ export const PROVIDER_METADATA = {
     audience: 'developers',
     contentType: 'technical_docs'
   },
-  
+
   [DocumentationProvider.BUN_REFERENCE]: {
     name: 'Bun Reference Portal',
     description: 'Interactive API reference and documentation portal',
@@ -673,7 +662,7 @@ export const PROVIDER_METADATA = {
     audience: 'developers',
     contentType: 'interactive_docs'
   },
-  
+
   [DocumentationProvider.BUN_GUIDES]: {
     name: 'Bun Guides',
     description: 'Tutorials, getting started guides, and best practices',
@@ -685,7 +674,7 @@ export const PROVIDER_METADATA = {
     audience: 'all_users',
     contentType: 'tutorials'
   },
-  
+
   [DocumentationProvider.BUN_TUTORIALS]: {
     name: 'Bun Interactive Tutorials',
     description: 'Hands-on interactive tutorials and workshops',
@@ -697,7 +686,7 @@ export const PROVIDER_METADATA = {
     audience: 'all_users',
     contentType: 'interactive_tutorials'
   },
-  
+
   [DocumentationProvider.BUN_EXAMPLES]: {
     name: 'Bun Code Examples',
     description: 'Practical code examples and project templates',
@@ -709,7 +698,7 @@ export const PROVIDER_METADATA = {
     audience: 'all_users',
     contentType: 'code_examples'
   },
-  
+
   [DocumentationProvider.BUN_RSS]: {
     name: 'Bun RSS Feeds',
     description: 'RSS feeds for updates, releases, and community content',
@@ -721,7 +710,7 @@ export const PROVIDER_METADATA = {
     audience: 'all_users',
     contentType: 'rss_feeds'
   },
-  
+
   [DocumentationProvider.GITHUB_PUBLIC]: {
     name: 'GitHub Repository',
     description: 'Source code, issues, and development resources',

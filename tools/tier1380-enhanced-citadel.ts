@@ -1,25 +1,20 @@
 #!/usr/bin/env bun
-/**
- * 🏭 FactoryWager Tier-1380 Enhanced with Configuration Loader & Caching
- * 
- * Integrates environment-based A/B test configuration with compressed caching
- * and atomic R2 snapshots for production-grade deployment
- */
+// tools/tier1380-enhanced-citadel.ts — Enhanced Tier-1380 with config loader and caching
 
-import { loadABTestConfig, compressAndHashData, ABTestCache } from "../lib/config/env-loader.ts";
+import { loadABTestConfig, compressAndHashData, ABTestCache } from "../lib/config/env-loader";
 
 /**
  * 🚀 Prefetch Optimizations
- * 
+ *
  * This file includes prefetch hints for optimal performance:
  * - DNS prefetching for external domains
  * - Preconnect for faster handshakes
  * - Resource preloading for critical assets
- * 
+ *
  * Generated automatically by optimize-examples-prefetch.ts
  */
 import { createHash } from "crypto";
-import { getSignedR2URL } from "../lib/r2/signed-url.ts";
+import { getSignedR2URL } from "../lib/r2/signed-url";
 
 interface Tier1380EnhancedConfig {
   r2Bucket: string;
@@ -49,11 +44,11 @@ export class Tier1380EnhancedCitadel {
   private config: Tier1380EnhancedConfig;
   private cache: ABTestCache;
   private abTestConfig: Record<string, any>;
-  
+
   constructor(config: Partial<Tier1380EnhancedConfig> = {}) {
     // Load A/B test configuration from environment
     this.abTestConfig = loadABTestConfig();
-    
+
     this.config = {
       r2Bucket: process.env.R2_BUCKET || "scanner-cookies",
       publicApiUrl: process.env.PUBLIC_API_URL || "https://api.tier1380.com",
@@ -64,9 +59,9 @@ export class Tier1380EnhancedCitadel {
       environment: (process.env.NODE_ENV as any) || "development",
       ...config
     };
-    
+
     this.cache = new ABTestCache();
-    
+
     console.log(`🏭 Tier-1380 Enhanced Citadel initialized`);
     console.log(`   Environment: ${this.config.environment}`);
     console.log(`   Cache: ${this.config.cacheEnabled ? 'enabled' : 'disabled'}`);
@@ -79,7 +74,7 @@ export class Tier1380EnhancedCitadel {
   loadAndValidateConfig(): { valid: boolean; config: Record<string, any>; errors: string[] } {
     const errors: string[] = [];
     const config = { ...this.abTestConfig };
-    
+
     // Validate required fields
     const requiredFields = ['url_structure', 'doc_layout', 'cta_color'];
     for (const field of requiredFields) {
@@ -87,7 +82,7 @@ export class Tier1380EnhancedCitadel {
         errors.push(`Missing required A/B test configuration: ${field}`);
       }
     }
-    
+
     // Validate weights if present
     for (const [testKey, testConfig] of Object.entries(config)) {
       if (typeof testConfig === 'object' && testConfig.weights) {
@@ -98,7 +93,7 @@ export class Tier1380EnhancedCitadel {
         }
       }
     }
-    
+
     return {
       valid: errors.length === 0,
       config,
@@ -110,7 +105,7 @@ export class Tier1380EnhancedCitadel {
    * Create enhanced snapshot with configuration caching
    */
   async createEnhancedSnapshot(
-    headers: Headers, 
+    headers: Headers,
     cookies: Map<string, string>
   ): Promise<{
     snapshot: ABTestSnapshot;
@@ -119,23 +114,23 @@ export class Tier1380EnhancedCitadel {
     cacheHit: boolean;
   }> {
     const startTime = performance.now();
-    
+
     // Check cache first
     const cacheKey = `snapshot_${this.config.variant}_${this.config.environment}`;
     let cachedSnapshot = this.cache.get(cacheKey);
     let cacheHit = false;
-    
+
     if (cachedSnapshot && this.config.cacheEnabled) {
       cacheHit = true;
       console.log(`💾 Cache hit for ${cacheKey}`);
     } else {
       // Load and validate configuration
       const { valid, config, errors } = this.loadAndValidateConfig();
-      
+
       if (!valid) {
         throw new Error(`Invalid A/B test configuration: ${errors.join(', ')}`);
       }
-      
+
       // Create new snapshot
       cachedSnapshot = {
         config,
@@ -150,24 +145,24 @@ export class Tier1380EnhancedCitadel {
           cacheHit: false
         }
       };
-      
+
       // Cache the snapshot
       if (this.config.cacheEnabled) {
         this.cache.set(cacheKey, cachedSnapshot);
       }
     }
-    
+
     // Generate checksum
     const checksum = createHash('sha256')
       .update(JSON.stringify(cachedSnapshot))
       .digest('hex');
-    
+
     cachedSnapshot.metadata.checksum = checksum;
-    
+
     // Compress the snapshot
     const jsonString = JSON.stringify(cachedSnapshot);
     let compressedData: Uint8Array;
-    
+
     if (this.config.compressionLevel > 0) {
       // Use zstd compression if available, fallback to deflate
       try {
@@ -178,16 +173,16 @@ export class Tier1380EnhancedCitadel {
     } else {
       compressedData = new TextEncoder().encode(jsonString);
     }
-    
+
     // Add compression prefix
     const prefixed = new Uint8Array([0x01, ...compressedData]);
-    
+
     // Generate atomic key
     const key = `snapshots/enhanced-${this.config.variant}-${Date.now()}.tier1380.zst`;
-    
+
     const endTime = performance.now();
     console.log(`📸 Enhanced snapshot created in ${(endTime - startTime).toFixed(2)}ms (${cacheHit ? 'cache' : 'fresh'})`);
-    
+
     // Generate signed URL for R2 access
     let signedAccessUrl: string | undefined;
     try {
@@ -203,7 +198,7 @@ export class Tier1380EnhancedCitadel {
           return signedUrl;
         }
       } as any;
-      
+
       signedAccessUrl = await getSignedR2URL(mockR2Bucket, key, {
         expiresInSeconds: 86400, // 24 hours for audit purposes
         customMetadata: {
@@ -219,7 +214,7 @@ export class Tier1380EnhancedCitadel {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       console.warn("⚠️ Could not generate signed URL:", errorMessage);
     }
-    
+
     return {
       snapshot: cachedSnapshot,
       compressedData: prefixed,
@@ -240,7 +235,7 @@ export class Tier1380EnhancedCitadel {
     cacheHit: boolean
   ): Promise<R2ObjectPutResult> {
     const startTime = performance.now();
-    
+
     // Prepare comprehensive metadata
     const metadata = {
       "tier": "1380-enhanced",
@@ -260,21 +255,21 @@ export class Tier1380EnhancedCitadel {
       "atomic-write": "true",
       "enhanced": "true"
     };
-    
+
     const result = await r2Bucket.put(key, data, {
-      httpMetadata: { 
+      httpMetadata: {
         contentType: "application/zstd",
         contentEncoding: "zstd",
         cacheControl: `max-age=${this.config.cacheTTL / 1000}`
       },
       customMetadata: metadata
     });
-    
+
     const endTime = performance.now();
     console.log(`🪣 Enhanced R2 write completed in ${(endTime - startTime).toFixed(2)}ms: ${key}`);
     console.log(`   Compression ratio: ${metadata["compression-ratio"]}%`);
     console.log(`   Cache hit: ${cacheHit ? 'yes' : 'no'}`);
-    
+
     return result;
   }
 
@@ -292,43 +287,43 @@ export class Tier1380EnhancedCitadel {
       if (!object) {
         return { snapshot: null, isValid: false, error: "Snapshot not found" };
       }
-      
+
       const data = await object.arrayBuffer();
       const uint8Array = new Uint8Array(data);
-      
+
       // Verify compression prefix
       if (uint8Array[0] !== 0x01) {
         return { snapshot: null, isValid: false, error: "Invalid compression prefix" };
       }
-      
+
       // Decompress
       const compressed = uint8Array.slice(1);
       let decompressed: Uint8Array;
-      
+
       try {
         decompressed = Bun.zstdDecompressSync(compressed);
       } catch {
         decompressed = Bun.inflateSync(compressed);
       }
-      
+
       const raw = new TextDecoder().decode(decompressed);
       const snapshot: ABTestSnapshot = JSON.parse(raw);
-      
+
       // Verify checksum
       const expectedChecksum = createHash('sha256')
         .update(JSON.stringify({ ...snapshot, metadata: { ...snapshot.metadata, checksum: '' } }))
         .digest('hex');
-      
+
       if (snapshot.metadata.checksum !== expectedChecksum) {
         return { snapshot: null, isValid: false, error: "Checksum mismatch" };
       }
-      
-      return { 
-        snapshot, 
-        isValid: true, 
-        metadata: object.customMetadata 
+
+      return {
+        snapshot,
+        isValid: true,
+        metadata: object.customMetadata
       };
-      
+
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       return { snapshot: null, isValid: false, error: errorMessage };
@@ -348,10 +343,10 @@ export class Tier1380EnhancedCitadel {
     // This is a simplified version - in production, you'd track actual hits/misses
     const cacheSize = this.cache['cache'].size;
     const memoryUsage = JSON.stringify([...this.cache['cache']]).length;
-    
+
     let oldestEntry: number | undefined;
     let newestEntry: number | undefined;
-    
+
     for (const [, value] of this.cache['cache']) {
       if (!oldestEntry || value.timestamp < oldestEntry) {
         oldestEntry = value.timestamp;
@@ -360,7 +355,7 @@ export class Tier1380EnhancedCitadel {
         newestEntry = value.timestamp;
       }
     }
-    
+
     return {
       size: cacheSize,
       hitRate: 0, // Would be tracked in production
@@ -391,19 +386,19 @@ export class Tier1380EnhancedCitadel {
     issues: string[];
   }> {
     const issues: string[] = [];
-    
+
     // Check configuration
     const { valid, errors } = this.loadAndValidateConfig();
     if (!valid) {
       issues.push(...errors);
     }
-    
+
     // Check cache
     const cacheStats = this.getCacheStats();
     if (cacheStats.size > 1000) {
       issues.push("Cache size exceeds recommended limit");
     }
-    
+
     // Check R2 connectivity (if bucket provided)
     let r2Status = 'unknown';
     if (r2Bucket) {
@@ -415,9 +410,9 @@ export class Tier1380EnhancedCitadel {
         r2Status = 'disconnected';
       }
     }
-    
+
     const health = issues.length === 0 ? 'healthy' : issues.length <= 2 ? 'warning' : 'error';
-    
+
     return {
       config: this.config,
       abTestConfig: this.abTestConfig,
@@ -442,46 +437,46 @@ export default {
       cacheTTL: 300000, // 5 minutes
       compressionLevel: 3
     });
-    
+
     const url = new URL(req.url);
-    
+
     // Health check endpoint
     if (url.pathname === "/health") {
       const status = await citadel.generateStatusReport(env.R2_BUCKET);
       return Response.json(status);
     }
-    
+
     // Cache statistics endpoint
     if (url.pathname === "/cache-stats") {
       const stats = citadel.getCacheStats();
       return Response.json(stats);
     }
-    
+
     // Clear cache endpoint (admin only)
     if (url.pathname === "/clear-cache" && req.method === "POST") {
       citadel.clearCache();
       return Response.json({ message: "Cache cleared" });
     }
-    
+
     // Main enhanced snapshot creation
     if (url.pathname === "/snapshot" && req.method === "POST") {
       try {
         const headers = new Headers(req.headers);
         const cookieHeader = headers.get("Cookie") || "";
         const cookies = new Bun.CookieMap(cookieHeader);
-        
+
         // Convert CookieMap to regular Map
         const cookieMap = new Map<string, string>();
         for (const [key, value] of cookies) {
           cookieMap.set(key, value);
         }
-        
+
         // Create enhanced snapshot
         const { snapshot, compressedData, key, cacheHit } = await citadel.createEnhancedSnapshot(headers, cookieMap);
-        
+
         // Put to R2
         const result = await citadel.putEnhancedSnapshotToR2(env.R2_BUCKET, key, compressedData, snapshot, cacheHit);
-        
+
         return Response.json({
           success: true,
           key,
@@ -493,7 +488,7 @@ export default {
           securityLevel: "high",
           metadata: result.customMetadata
         });
-        
+
       } catch (error: unknown) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
         return Response.json({
@@ -502,7 +497,7 @@ export default {
         }, { status: 500 });
       }
     }
-    
+
     return Response.json({
       message: "Tier-1380 Enhanced Citadel",
       endpoints: [

@@ -1,3 +1,5 @@
+// lib/ab-testing/cookie-manager.ts — Backward-compatible wrapper around ABTestManager
+
 import { ABTestManager } from './manager';
 
 /**

@@ -1,13 +1,4 @@
-/**
- * Enterprise Documentation Constants and URL Management
- *
- * Centralized, enterprise-grade documentation URL management with
- * type safety, validation, and comprehensive coverage of all
- * enterprise documentation resources.
- *
- * @version 1.0.0
- * @author Enterprise Platform Team
- */
+// lib/core/core-documentation.ts — Documentation constants and URL management
 
 import { validateOrThrow, StringValidators } from './core-validation';
 import { createValidationError, EnterpriseErrorCode } from './core-errors';

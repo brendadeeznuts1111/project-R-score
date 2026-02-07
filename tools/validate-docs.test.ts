@@ -1,3 +1,5 @@
+// tools/validate-docs.test.ts — Tests for validate-docs
+
 import { test, expect, describe } from 'bun:test';
 import { checkUrls, checkEnums, checkImports } from './validate-docs';
 import snapshot from './validate-docs.snapshot.json';

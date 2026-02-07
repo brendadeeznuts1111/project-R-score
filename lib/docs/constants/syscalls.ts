@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🔧 Enterprise Syscall Constants & Optimization System
- * 
- * Comprehensive syscall constants with platform detection, performance optimization,
- * and risk assessment for enterprise-grade file operations.
- */
+// lib/docs/constants/syscalls.ts — Syscall constants and optimization
 
 export enum SyscallPlatform {
   LINUX = 'linux',
@@ -65,7 +58,7 @@ export const ENTERPRISE_SYSCALL_CONSTANTS: Record<SyscallOperation, SyscallMetad
     requirements: ['Linux kernel >= 4.5', 'Both FDs must be regular files'],
     limitations: ['Linux only', 'Cannot copy between non-regular files']
   },
-  
+
   [SyscallOperation.SEND_FILE]: {
     platform: SyscallPlatform.LINUX,
     riskScore: 1.5,
@@ -77,7 +70,7 @@ export const ENTERPRISE_SYSCALL_CONSTANTS: Record<SyscallOperation, SyscallMetad
     requirements: ['Linux kernel >= 2.2', 'Source must be mmap-able file'],
     limitations: ['Source must be file, destination must be socket']
   },
-  
+
   [SyscallOperation.SPLICE]: {
     platform: SyscallPlatform.LINUX,
     riskScore: 2.0,
@@ -89,7 +82,7 @@ export const ENTERPRISE_SYSCALL_CONSTANTS: Record<SyscallOperation, SyscallMetad
     requirements: ['Linux kernel >= 2.6.17', 'Pipe buffer available'],
     limitations: ['Requires pipe setup', 'More complex error handling']
   },
-  
+
   [SyscallOperation.CLONE_FILE]: {
     platform: SyscallPlatform.LINUX,
     riskScore: 0.5,
@@ -101,7 +94,7 @@ export const ENTERPRISE_SYSCALL_CONSTANTS: Record<SyscallOperation, SyscallMetad
     requirements: ['Linux kernel >= 4.5', 'Btrfs or XFS filesystem'],
     limitations: ['Filesystem dependent', 'Not all filesystems support CoW']
   },
-  
+
   [SyscallOperation.FCOPY_FILE]: {
     platform: SyscallPlatform.DARWIN,
     riskScore: 1.0,
@@ -113,7 +106,7 @@ export const ENTERPRISE_SYSCALL_CONSTANTS: Record<SyscallOperation, SyscallMetad
     requirements: ['MacOS >= 10.12', 'APFS filesystem'],
     limitations: ['MacOS only', 'APFS requirement']
   },
-  
+
   [SyscallOperation.FALLBACK_WRITE]: {
     platform: SyscallPlatform.FALLBACK,
     riskScore: 5.0,
@@ -125,7 +118,7 @@ export const ENTERPRISE_SYSCALL_CONSTANTS: Record<SyscallOperation, SyscallMetad
     requirements: [],
     limitations: ['User-space copies', 'Higher memory usage', 'Slower performance']
   },
-  
+
   [SyscallOperation.FILE_SINK_STREAM]: {
     platform: SyscallPlatform.LINUX,
     riskScore: 1.2,
@@ -151,7 +144,7 @@ export interface ComparisonResult {
 // Platform detection and optimal syscall selection
 export class SyscallOptimizer {
   private static currentPlatform: SyscallPlatform;
-  
+
   static {
     // Detect current platform
     if (typeof process !== 'undefined') {
@@ -172,7 +165,7 @@ export class SyscallOptimizer {
       this.currentPlatform = SyscallPlatform.FALLBACK;
     }
   }
-  
+
   // Get optimal syscall for current platform and use case
   public static getOptimalSyscall(
     useCase: string,
@@ -185,81 +178,81 @@ export class SyscallOptimizer {
     const availableSyscalls = Object.entries(ENTERPRISE_SYSCALL_CONSTANTS)
       .filter(([_, metadata]) => metadata.platform === this.currentPlatform)
       .map(([op]) => op as SyscallOperation);
-    
+
     // Filter by use case
     let filtered = availableSyscalls.filter(op => {
       const meta = ENTERPRISE_SYSCALL_CONSTANTS[op];
       return meta.useCase.toLowerCase().includes(useCase.toLowerCase()) ||
              useCase.toLowerCase().includes(meta.useCase.toLowerCase());
     });
-    
+
     // Apply additional filters
     if (options) {
       if (options.sourceType === 'file' && options.destinationType === 'socket') {
-        filtered = filtered.filter(op => 
-          op === SyscallOperation.SEND_FILE || 
+        filtered = filtered.filter(op =>
+          op === SyscallOperation.SEND_FILE ||
           op === SyscallOperation.FALLBACK_WRITE
         );
       }
-      
+
       if (options.filesystem === 'apfs') {
-        filtered = filtered.filter(op => 
+        filtered = filtered.filter(op =>
           op === SyscallOperation.FCOPY_FILE
         );
       }
     }
-    
+
     // Return the best performing syscall
     if (filtered.length > 0) {
       // Sort by risk score and performance tier
       filtered.sort((a, b) => {
         const metaA = ENTERPRISE_SYSCALL_CONSTANTS[a];
         const metaB = ENTERPRISE_SYSCALL_CONSTANTS[b];
-        
+
         // Use static performance tier order
         if (PERFORMANCE_TIER_ORDER[metaA.performanceTier] !== PERFORMANCE_TIER_ORDER[metaB.performanceTier]) {
           return PERFORMANCE_TIER_ORDER[metaA.performanceTier] - PERFORMANCE_TIER_ORDER[metaB.performanceTier];
         }
-        
+
         // Then by risk score
         return metaA.riskScore - metaB.riskScore;
       });
-      
+
       return filtered[0];
     }
-    
+
     // Fallback to generic write
     return SyscallOperation.FALLBACK_WRITE;
   }
-  
+
   // Get syscalls by performance tier
   public static getSyscallsByPerformanceTier(tier: PerformanceTier): SyscallOperation[] {
     return Object.entries(ENTERPRISE_SYSCALL_CONSTANTS)
       .filter(([_, metadata]) => metadata.performanceTier === tier)
       .map(([op]) => op as SyscallOperation);
   }
-  
+
   // Compare two syscalls
   public static compareSyscalls(a: SyscallOperation, b: SyscallOperation): ComparisonResult {
     const metaA = ENTERPRISE_SYSCALL_CONSTANTS[a];
     const metaB = ENTERPRISE_SYSCALL_CONSTANTS[b];
-    
+
     // Use static performance tier order
     const performance = PERFORMANCE_TIER_ORDER[metaB.performanceTier] - PERFORMANCE_TIER_ORDER[metaA.performanceTier];
     const risk = metaA.riskScore - metaB.riskScore;
-    
+
     // Platform support score (1 if current platform, 0 otherwise)
-    const platformSupport = 
-      (metaA.platform === this.currentPlatform ? 1 : 0) - 
+    const platformSupport =
+      (metaA.platform === this.currentPlatform ? 1 : 0) -
       (metaB.platform === this.currentPlatform ? 1 : 0);
-    
+
     let better: SyscallOperation | 'equal' = 'equal';
     if (performance > 0 || (performance === 0 && risk < 0)) {
       better = a;
     } else if (performance < 0 || (performance === 0 && risk > 0)) {
       better = b;
     }
-    
+
     return {
       better,
       metrics: {
@@ -269,19 +262,19 @@ export class SyscallOptimizer {
       }
     };
   }
-  
+
   // Get current platform
   public static getCurrentPlatform(): SyscallPlatform {
     return this.currentPlatform;
   }
-  
+
   // Get all available syscalls for current platform
   public static getAvailableSyscalls(): SyscallOperation[] {
     return Object.entries(ENTERPRISE_SYSCALL_CONSTANTS)
       .filter(([_, metadata]) => metadata.platform === this.currentPlatform)
       .map(([op]) => op as SyscallOperation);
   }
-  
+
   // Get syscall metadata
   public static getSyscallMetadata(operation: SyscallOperation): SyscallMetadata {
     return ENTERPRISE_SYSCALL_CONSTANTS[operation];

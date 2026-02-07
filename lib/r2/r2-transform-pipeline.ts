@@ -1,15 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🔄 R2 Data Transformation Pipeline
- *
- * ETL-style data processing for R2:
- * - Streaming data transformation
- * - Format conversion (JSON, CSV, Parquet, etc.)
- * - Compression/Decompression
- * - Data validation and cleaning
- * - Pipeline scheduling and monitoring
- */
+// lib/r2/r2-transform-pipeline.ts — R2 data transformation pipeline
 
 import { styled, FW_COLORS } from '../theme/colors';
 import { r2EventSystem } from './r2-event-system';

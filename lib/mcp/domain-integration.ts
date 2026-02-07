@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🌐 FactoryWager Domain Integration with R2 MCP
- *
- * Integrates domain-specific operations, subdomain management,
- * and enterprise features with the MCP system and R2 storage.
- */
+// lib/mcp/domain-integration.ts — Domain and subdomain integration with R2 MCP
 
 import { r2MCPIntegration } from './r2-integration';
 import { styled, FW_COLORS } from '../theme/colors';

@@ -1,4 +1,5 @@
-// lib/enhanced-rss.ts
+// lib/rss/enhanced-rss.ts — Enhanced metrics feed generator
+
 import { CONTENT_TYPES } from '../config/content-types';
 
 export interface MetricsData {
@@ -84,7 +85,7 @@ export class EnhancedMetricsFeed {
     <language>en-us</language>
     <lastBuildDate>${pubDate}</lastBuildDate>
     <generator>Bun Enhanced RSS Generator</generator>
-    
+
     <item>
       <title>R-Score ${latest.rscore.current.toFixed(3)} - ${latest.git.branch}</title>
       <description><![CDATA[${html}]]></description>

@@ -1,12 +1,4 @@
-/**
- * CLI Tool Self-Validation Integration
- *
- * Provides easy integration for CLI tools to validate themselves
- * before execution, with automatic error handling and fixes.
- *
- * @version 1.0.0
- * @author Enterprise Platform Team
- */
+// lib/validation/cli-self-validation.ts — CLI tool self-validation with automatic error handling
 
 import {
   CLIToolValidator,

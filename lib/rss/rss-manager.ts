@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 📰 RSS Feed Integration with Caching
- *
- * Manages RSS feeds for packages, with caching, R2 storage integration,
- * and package-specific feed generation.
- */
+// lib/rss/rss-manager.ts — RSS feed integration with caching and storage
 
 import type { PackageInfo } from '../package/package-manager';
 
@@ -245,7 +238,7 @@ export class RSSManager {
     <description>${feed.description}</description>
     <lastBuildDate>${feed.lastBuildDate}</lastBuildDate>
     <ttl>${feed.ttl}</ttl>
-    
+
     ${feed.items
       .map(
         item => `

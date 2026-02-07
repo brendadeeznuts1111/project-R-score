@@ -1,32 +1,26 @@
 #!/usr/bin/env bun
-/**
- * 🧠 FactoryWager Heap Profiler
- * 
- * Heap profiling with visual metadata tagging
- * 
- * @version 4.0
- */
+// tools/factorywager-heap-profile.ts — Heap profiling with visual metadata tagging
 
-import { styled, log, FW_COLORS, generateVisualMetadata } from '../lib/theme/colors.ts';
+import { styled, log, FW_COLORS, generateVisualMetadata } from '../lib/theme/colors';
 
 /**
  * 🚀 Prefetch Optimizations
- * 
+ *
  * This file includes prefetch hints for optimal performance:
  * - DNS prefetching for external domains
  * - Preconnect for faster handshakes
  * - Resource preloading for critical assets
- * 
+ *
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { Utils } from '../lib/utils/index.ts';
-import type { R2Metadata } from '../lib/types/index.ts';
+import { Utils } from '../lib/utils/index';
+import type { R2Metadata } from '../lib/types/index';
 
 // Simulate heap profile markdown
 function generateHeapProfile(): string {
   const heapSize = 50 + Math.random() * 200; // 50-250MB
   const leakSize = Math.random() * 50; // 0-50MB potential leak
-  
+
   return `# Heap Profile Report
 
 ## Memory Analysis
@@ -64,31 +58,31 @@ async function simulateR2Upload(key: string, data: Uint8Array, metadata: R2Metad
 // Main heap profiling function
 async function runHeapProfile() {
   log.section('FactoryWager Heap Profiler v4.0', 'accent');
-  
+
   // Generate profile
   log.info('Analyzing heap memory...');
   const md = generateHeapProfile();
-  
+
   // Extract heap size for severity analysis
   const heapSizeMatch = md.match(/Heap size: (\d+\.?\d*)MB/i);
-  const severity = heapSizeMatch ? 
-    (parseFloat(heapSizeMatch[1]) > 100 ? "error" : 
+  const severity = heapSizeMatch ?
+    (parseFloat(heapSizeMatch[1]) > 100 ? "error" :
      parseFloat(heapSizeMatch[1]) > 50 ? "warning" : "success") : "muted";
-  
+
   const dominantColor = FW_COLORS[severity];
   const themeTag = `factorywager-${severity}`;
-  
+
   // Compress profile
   log.info('Compressing heap profile...');
   const zst = Bun.zstdCompressSync(md);
-  
+
   // Generate timestamp and key
   const timestamp = Date.now();
   const key = `profiles/heap-${timestamp}.md.zst`;
-  
+
   // Create visual metadata
   const visualMetadata = generateVisualMetadata(severity);
-  
+
   // Full R2 metadata
   const r2Metadata: R2Metadata = {
     ...visualMetadata,
@@ -99,28 +93,28 @@ async function runHeapProfile() {
     'system:compression-ratio': `${(md.length / zst.length).toFixed(1)}x`,
     'system:runtime': 'bun-1.4',
   };
-  
+
   // Simulate R2 upload
   log.info('Uploading to R2...');
   const signed = await simulateR2Upload(key, zst, r2Metadata);
-  
+
   // Color-coded output based on severity
   const emoji = severity === "error" ? "🚨" : severity === "warning" ? "⚠️" : "✅";
   console.log(styled(`${emoji} Heap profile uploaded`, severity));
   console.log(styled("   🔗 URL: ", "muted") + styled(signed, "primary"));
   console.log(styled("   🎨 Visual tag: ", "muted") + styled(themeTag, severity));
   console.log(styled("   📊 Metadata: ", "muted") + styled(Bun.color(dominantColor, "hex"), "accent"));
-  
+
   // Display compression info
   log.metric('Original size', Utils.Performance.formatBytes(md.length), 'muted');
   log.metric('Compressed size', Utils.Performance.formatBytes(zst.length), 'success');
   log.metric('Compression ratio', r2Metadata['system:compression-ratio'], 'primary');
-  
+
   // Save local copy
   const profileFile = `heap-profile-${timestamp}.md`;
   await Bun.write(profileFile, md);
   log.metric('Local copy', profileFile, 'muted');
-  
+
   console.log('\n' + styled('✅ Heap profiling complete!', severity));
 }
 

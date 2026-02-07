@@ -1,14 +1,4 @@
-#!/usr/bin/env bun
-/**
- * High-Performance Optimized Server with Port Management
- *
- * Addresses server response time bottlenecks with:
- * - Dedicated port allocation per project
- * - Connection pooling with Bun's simultaneous limits
- * - Response caching
- * - Optimized middleware
- * - Efficient routing
- */
+// lib/performance/optimized-server.ts — Optimized server with port management and connection pooling
 
 // Entry guard check
 if (import.meta.main) {

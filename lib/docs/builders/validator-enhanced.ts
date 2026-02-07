@@ -1,23 +1,12 @@
-#!/usr/bin/env bun
+// lib/docs/builders/validator-enhanced.ts — Enhanced URL validation and normalization
 
-/**
- * 🔍 Enhanced Documentation URL Validator & Normalizer
- * 
- * Advanced URL validation, metadata extraction, and normalization
- * for enterprise documentation URLs with comprehensive type safety.
- * 
- * @author Enterprise Documentation Team
- * @version 2.0.0
- * @since 1.0.0
- */
-
-import { 
-  DocumentationProvider, 
+import {
+  DocumentationProvider,
   DocumentationCategory,
   DocumentationDomain,
   DocumentationURLType,
   DocumentationUserType,
-  ENTERPRISE_DOCUMENTATION_BASE_URLS 
+  ENTERPRISE_DOCUMENTATION_BASE_URLS
 } from '../constants/domains';
 
 export interface DocumentationMetadata {
@@ -70,7 +59,7 @@ export class EnterpriseDocumentationURLValidator {
   // Known documentation domains for validation
   private static readonly KNOWN_DOMAINS = [
     'bun.sh',
-    'bun.com', 
+    'bun.com',
     'bun.dev',
     'bun.io',
     'docs.bun.sh',
@@ -80,7 +69,7 @@ export class EnterpriseDocumentationURLValidator {
     'web.dev',
     'github.com'
   ];
-  
+
   // Default validation options with security-first approach
   private static readonly DEFAULT_OPTIONS: ValidationOptions = {
     allowedProtocols: ['https:', 'http:'],
@@ -92,7 +81,7 @@ export class EnterpriseDocumentationURLValidator {
     securityChecks: true,
     validateExternals: false
   };
-  
+
   /**
    * Validate if a hostname is allowed (exact match or valid subdomain)
    */
@@ -108,29 +97,29 @@ export class EnterpriseDocumentationURLValidator {
       if (lower.endsWith(`.${domain}`)) {
         const subdomain = hostname.slice(0, -(`.${domain}`.length));
         // Ensure subdomain is not empty and doesn't contain suspicious patterns
-        return subdomain.length > 0 && 
-               !subdomain.includes('..') && 
+        return subdomain.length > 0 &&
+               !subdomain.includes('..') &&
                !/[^a-zA-Z0-9.-]/.test(subdomain) &&
                !subdomain.startsWith('.') &&
                !subdomain.endsWith('.');
       }
-      
+
       return false;
     });
   }
-  
+
   /**
    * Comprehensive URL validation with security checks
    */
   public static validateURL(
-    url: string, 
+    url: string,
     options?: Partial<ValidationOptions>
   ): ValidationResult {
     const opts = { ...this.DEFAULT_OPTIONS, ...options };
     const errors: string[] = [];
     const warnings: string[] = [];
     const suggestions: string[] = [];
-    
+
     try {
       const parsed = new URL(url);
       const metadata: DocumentationMetadata = {
@@ -138,24 +127,24 @@ export class EnterpriseDocumentationURLValidator {
         urlType: 'unknown',
         lastValidated: new Date()
       };
-      
+
       // Protocol validation
       if (opts.allowedProtocols && !opts.allowedProtocols.includes(parsed.protocol)) {
         errors.push(`Invalid protocol: ${parsed.protocol}. Allowed: ${opts.allowedProtocols.join(', ')}`);
       }
-      
+
       // HTTPS requirement
       if (opts.requireHTTPS && parsed.protocol !== 'https:') {
         errors.push('HTTPS is required for secure documentation access');
         suggestions.push('Use HTTPS URLs for better security');
       }
-      
+
       // Hostname validation with security checks
       if (parsed.hostname) {
         if (opts.allowedHosts && !this.isValidHostname(parsed.hostname, opts.allowedHosts)) {
           errors.push(`Invalid hostname: ${parsed.hostname}`);
         }
-        
+
         // Detect suspicious patterns
         if (opts.securityChecks) {
           const securityResult = this.validateHostnameSecurity(parsed.hostname);
@@ -165,38 +154,38 @@ export class EnterpriseDocumentationURLValidator {
           }
         }
       }
-      
+
       // Length validation
       if (opts.maxLength && url.length > opts.maxLength) {
         errors.push(`URL too long: ${url.length} characters (max: ${opts.maxLength})`);
       }
-      
+
       // Fragment validation
       if (!opts.allowFragments && parsed.hash) {
         errors.push('URL fragments are not allowed');
       }
-      
+
       // Query parameter validation
       if (!opts.allowQueryParams && parsed.search) {
         errors.push('Query parameters are not allowed');
       }
-      
+
       // Extract metadata
       const extractedMetadata = this.extractDocumentationMetadata(url);
       Object.assign(metadata, extractedMetadata);
-      
+
       // Provider/category validation
       if (opts.allowedProviders && metadata.provider && !opts.allowedProviders.includes(metadata.provider)) {
         errors.push(`Provider not allowed: ${metadata.provider}`);
       }
-      
+
       if (opts.allowedCategories && metadata.category && !opts.allowedCategories.includes(metadata.category)) {
         errors.push(`Category not allowed: ${metadata.category}`);
       }
-      
+
       // Final validation result
       metadata.isValid = errors.length === 0;
-      
+
       return {
         isValid: metadata.isValid,
         metadata,
@@ -204,7 +193,7 @@ export class EnterpriseDocumentationURLValidator {
         warnings,
         suggestions: suggestions.length > 0 ? suggestions : undefined
       };
-      
+
     } catch (error) {
       // Enhanced error logging
       console.error('URL validation error:', {
@@ -212,7 +201,7 @@ export class EnterpriseDocumentationURLValidator {
         error: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString()
       });
-      
+
       return {
         isValid: false,
         metadata: {
@@ -225,14 +214,14 @@ export class EnterpriseDocumentationURLValidator {
       };
     }
   }
-  
+
   /**
    * Validate hostname security
    */
   private static validateHostnameSecurity(hostname: string): SecurityValidationResult {
     const risks: SecurityValidationResult['risks'] = [];
     let score = 10; // Start with perfect score
-    
+
     // Check for suspicious patterns
     if (hostname.includes('..')) {
       risks.push({
@@ -243,7 +232,7 @@ export class EnterpriseDocumentationURLValidator {
       });
       score -= 5;
     }
-    
+
     if (/[^a-zA-Z0-9.-]/.test(hostname)) {
       risks.push({
         type: 'hostname',
@@ -253,7 +242,7 @@ export class EnterpriseDocumentationURLValidator {
       });
       score -= 3;
     }
-    
+
     if (hostname.length > 253) {
       risks.push({
         type: 'hostname',
@@ -263,26 +252,26 @@ export class EnterpriseDocumentationURLValidator {
       });
       score -= 2;
     }
-    
+
     return {
       isSecure: risks.filter(r => r.severity === 'critical' || r.severity === 'high').length === 0,
       risks,
       score: Math.max(0, score)
     };
   }
-  
+
   /**
    * Extract comprehensive metadata from a documentation URL
    */
   public static extractDocumentationMetadata(url: string): DocumentationMetadata {
     try {
       const parsed = new URL(url);
-      
+
       // Determine provider based on hostname
       let provider: DocumentationProvider | undefined;
       let urlType: DocumentationURLType = 'unknown';
       let domain: DocumentationDomain | undefined;
-      
+
       const host = parsed.hostname ?? '';
       const hostIs = (d: string) => host === d || host.endsWith('.' + d);
 
@@ -338,13 +327,13 @@ export class EnterpriseDocumentationURLValidator {
         provider = DocumentationProvider.GITHUB_PUBLIC;
         urlType = 'technical_docs';
       }
-      
+
       // Extract query parameters
       const queryParams: Record<string, string> = {};
       parsed.searchParams.forEach((value, key) => {
         queryParams[key] = value;
       });
-      
+
       return {
         provider,
         domain,
@@ -355,7 +344,7 @@ export class EnterpriseDocumentationURLValidator {
         urlType,
         lastValidated: new Date()
       };
-      
+
     } catch (error) {
       console.error('Metadata extraction error:', error);
       return {
@@ -365,29 +354,29 @@ export class EnterpriseDocumentationURLValidator {
       };
     }
   }
-  
+
   /**
    * Normalize URL to standard format
    */
   public static normalizeURL(url: string): string {
     try {
       const parsed = new URL(url);
-      
+
       // Ensure HTTPS for documentation URLs
       if (parsed.protocol === 'http:' && this.KNOWN_DOMAINS.some(domain => parsed.hostname === domain || parsed.hostname?.endsWith('.' + domain))) {
         parsed.protocol = 'https:';
       }
-      
+
       // Normalize hostname to lowercase
       if (parsed.hostname) {
         parsed.hostname = parsed.hostname.toLowerCase();
       }
-      
+
       // Remove trailing slash from path (except for root)
       if (parsed.pathname.length > 1 && parsed.pathname.endsWith('/')) {
         parsed.pathname = parsed.pathname.slice(0, -1);
       }
-      
+
       // Sort query parameters for consistency
       const params = new URLSearchParams(parsed.search);
       const sortedParams = new URLSearchParams();
@@ -398,15 +387,15 @@ export class EnterpriseDocumentationURLValidator {
         }
       });
       parsed.search = sortedParams.toString();
-      
+
       return parsed.toString();
-      
+
     } catch (error) {
       console.error('URL normalization error:', error);
       return url; // Return original URL if normalization fails
     }
   }
-  
+
   /**
    * Check if URL is a typed array documentation URL
    */
@@ -414,7 +403,7 @@ export class EnterpriseDocumentationURLValidator {
     const metadata = this.extractDocumentationMetadata(url);
     return metadata.path?.includes('/runtime/binary-data') || false;
   }
-  
+
   /**
    * Check if URL is a fetch API documentation URL
    */
@@ -422,7 +411,7 @@ export class EnterpriseDocumentationURLValidator {
     const metadata = this.extractDocumentationMetadata(url);
     return metadata.path?.includes('/runtime/networking/fetch') || false;
   }
-  
+
   /**
    * Check if URL is an RSS feed
    */
@@ -430,7 +419,7 @@ export class EnterpriseDocumentationURLValidator {
     const metadata = this.extractDocumentationMetadata(url);
     return metadata.urlType === 'rss' || url.includes('.xml') || url.includes('/rss');
   }
-  
+
   /**
    * Get security score for a URL
    */
@@ -444,7 +433,7 @@ export class EnterpriseDocumentationURLValidator {
 export { EnterpriseDocumentationURLValidator as DocumentationURLValidator };
 
 // Export interfaces for type usage
-export type { 
+export type {
   DocumentationMetadata,
   ValidationOptions,
   ValidationResult,

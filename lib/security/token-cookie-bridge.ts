@@ -1,4 +1,5 @@
-// lib/token-cookie-bridge.ts — Cookie-based token persistence with proper crypto (Risk: 2.501100000)
+// lib/security/token-cookie-bridge.ts — Cookie-based token persistence
+
 import { Cookie, CookieMap } from 'bun';
 
 import { SecurityError, EnterpriseErrorCode } from '../core/core-errors';

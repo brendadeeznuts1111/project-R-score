@@ -1,13 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 🦌 BUN-FIRST POLICY & COMPLIANCE AUDITOR
- *
- * Ensures all code follows Bun-first principles:
- * 1. Use Bun APIs over Node.js APIs
- * 2. Use Bun-specific optimizations
- * 3. Follow Bun performance best practices
- * 4. Leverage Bun's built-in features
- */
+// lib/validation/bun-first-auditor.ts — Bun-first policy and compliance auditor
 
 if (import.meta.main) {
   main().catch(console.error);

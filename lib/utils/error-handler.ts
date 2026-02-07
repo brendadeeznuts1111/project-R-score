@@ -1,3 +1,5 @@
+// lib/utils/error-handler.ts — Centralized error handling utilities
+
 import { logger } from './logger';
 
 export interface ErrorContext {

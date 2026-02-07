@@ -1,17 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Complete Documentation System Validator
- *
- * Comprehensive validation for the entire documentation system
- * including constants, URLs, patterns, and scrapers.
- *
- * Usage:
- *   bun run lib/complete-documentation-validator.ts
- *   bun run lib/complete-documentation-validator.ts --urls
- *   bun run lib/complete-documentation-validator.ts --constants
- *   bun run lib/complete-documentation-validator.ts --patterns
- *   bun run lib/complete-documentation-validator.ts --scraper
- */
+// lib/validation/complete-documentation-validator.ts — Complete documentation system validator
 
 // Entry guard check
 if (import.meta.path !== Bun.main) {

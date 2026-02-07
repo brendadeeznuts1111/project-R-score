@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Port and Connection Limit Validation Tests
- *
- * Validates that port numbers and connection limits are within valid ranges:
- * - Port numbers: 1-65,535 (practical: 1024-49,151 for user applications)
- * - Connection limits: 1-65,336 (Bun's maximum)
- */
+// lib/http/port-limit-validation-tests.ts — Tests for port and connection limit validation
 
 // Entry guard check
 if (import.meta.path !== Bun.main) {

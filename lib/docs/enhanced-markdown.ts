@@ -1,5 +1,4 @@
-// lib/enhanced-markdown.ts
-// Enhanced Markdown rendering with security and sanitization
+// lib/docs/enhanced-markdown.ts — Enhanced Markdown rendering with sanitization
 
 export interface MarkdownOptions {
   // ANSI colors

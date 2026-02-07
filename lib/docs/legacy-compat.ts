@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🔄 Legacy Compatibility Layer
- *
- * Provides backward compatibility for existing code while
- * supporting the new enterprise documentation system.
- */
+// lib/docs/legacy-compat.ts — Legacy compatibility layer
 
 import { docsURLBuilder } from './builders/url-builder';
 import {

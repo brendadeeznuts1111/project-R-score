@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 🚨 CODEBASE-WIDE SILENT KILLER DETECTION AND FIX
- *
- * This script identifies and fixes the deadly pattern that's killing async operations
- * across the entire codebase.
- */
+// lib/cli/silent-killer-detector.ts — Silent killer pattern detection and fix for async operations
 
 console.log('🚨 SILENT KILLER DETECTION AND FIX');
 console.log('='.repeat(60));
@@ -96,7 +90,7 @@ async function createSafeEntryGuard() {
   const safeEntryGuardContent = `#!/usr/bin/env bun
 /**
  * SAFE Entry Guard Utility
- * 
+ *
  * Prevents the silent killer pattern that destroys async operations
  */
 

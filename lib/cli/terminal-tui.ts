@@ -1,14 +1,4 @@
-/**
- * 🎨 Bun.Terminal TUI Widgets - Bun v1.3.5+ (macOS only)
- *
- * Terminal User Interface components for visual deployment feedback.
- * Provides spinners, progress bars, and tables for Tier-1380 deployment UI.
- *
- * @version 4.5
- * @requires Bun >= 1.3.5
- * @platform macOS only (Linux/Windows support coming)
- * @see https://bun.sh/docs/api/terminal
- */
+// lib/cli/terminal-tui.ts — Terminal TUI widgets for visual deployment feedback
 
 /** Pad string to target visual width (left-aligned) */
 function swPad(str: string, width: number, char = ' '): string {

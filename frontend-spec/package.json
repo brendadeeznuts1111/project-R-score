@@ -6,8 +6,8 @@
   "main": "quantum-production-system.js",
   "scripts": {
     "start": "bun run start-quantum.sh",
-    "dev": "bun run quantum-production-system.js start",
-    "build": "bun run quantum-production-system.js build",
+    "dev": "bun --hot server.ts",
+    "build": "bun build index-react.html --outdir=dist",
     "build-all": "bun run quantum-production-system.js build-all",
     "deploy": "bun run deploy.sh",
     "monitor": "bun run monitoring-dashboard.js",
@@ -17,9 +17,6 @@
     "test": "bun test",
     "clean": "rm -rf dist logs builds deployments",
     "setup": "chmod +x *.sh && mkdir -p {dist,logs,data,builds,deployments,scripts,reports}",
-    "legacy:dev": "vite",
-    "legacy:build": "tsc && vite build",
-    "legacy:preview": "vite preview",
     "tension:dev": "cd 02-session && bun run dev",
     "tension:build": "cd 02-session && bun run bundle",
     "simd": "bun run quantum-simd-engine.js",
@@ -39,20 +36,14 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "three": "^0.182.0",
-    "ws": "^8.19.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.27",
     "@types/react-dom": "^18.3.7",
-    "@types/ws": "^8.18.1",
-    "@vitejs/plugin-react": "^5.1.3",
-    "concurrently": "^9.2.1",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.1"
+    "typescript": "^5.9.3"
   },
   "engines": {
-    "bun": ">=1.3.8",
-    "node": ">=18.0.0"
+    "bun": ">=1.3.8"
   },
   "keywords": [
     "quantum",
@@ -136,8 +127,6 @@
     "registry": "https://npm.factory-wager.com"
   },
   "trustedDependencies": [
-    "esbuild",
-    "fsevents",
-    "rollup"
+    "fsevents"
   ]
 }

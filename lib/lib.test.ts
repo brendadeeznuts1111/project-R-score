@@ -1,9 +1,9 @@
 /**
  * 🧪 lib/ Test Suite - Comprehensive Unit Tests
- * 
+ *
  * Tests for core lib/ modules using Bun's built-in test runner.
  * Run: bun test lib/lib.test.ts
- * 
+ *
  * @version 4.5
  */
 
@@ -58,13 +58,13 @@ describe("PTY Terminal", () => {
     it("throws on Windows", () => {
       const originalPlatform = process.platform;
       Object.defineProperty(process, "platform", { value: "win32", configurable: true });
-      
+
       expect(() => createTerminal({
         cols: 80,
         rows: 24,
         data: () => {}
       })).toThrow("PTY support is only available on POSIX");
-      
+
       Object.defineProperty(process, "platform", { value: originalPlatform, configurable: true });
     });
   });
@@ -104,7 +104,7 @@ describe("Terminal TUI", () => {
       expect(spinner).toHaveProperty("update");
       expect(spinner).toHaveProperty("success");
       expect(spinner).toHaveProperty("error");
-      
+
       // Should not throw
       expect(() => spinner.start()).not.toThrow();
       expect(() => spinner.update("new")).not.toThrow();
@@ -118,7 +118,7 @@ describe("Terminal TUI", () => {
       const progress = createProgress({ total: 100, width: 40, title: "Test" });
       expect(progress).toHaveProperty("update");
       expect(progress).toHaveProperty("stop");
-      
+
       // Should not throw
       expect(() => progress.update(50)).not.toThrow();
       expect(() => progress.stop()).not.toThrow();
@@ -192,7 +192,7 @@ describe("Terminal TUI", () => {
         ui.completePhase("Test Phase");
         return { success: true };
       });
-      
+
       expect(result).toEqual({ success: true });
     });
 
@@ -298,7 +298,7 @@ describe("Core Validation", () => {
         name: "test",
         validator: () => true
       });
-      
+
       engine.clearRules();
       const result = engine.validate({ field: "value" });
       expect(result.isValid).toBe(true);
@@ -333,7 +333,7 @@ describe("Core Errors", () => {
         "field",
         "value"
       );
-      
+
       expect(error.code).toBe(EnterpriseErrorCode.VALIDATION_INPUT_INVALID);
       expect(error.message).toBe("Invalid input");
       expect(error.field).toBe("field");
@@ -344,7 +344,7 @@ describe("Core Errors", () => {
         EnterpriseErrorCode.SECURITY_UNAUTHORIZED,
         "Access denied"
       );
-      
+
       expect(error.code).toBe(EnterpriseErrorCode.SECURITY_UNAUTHORIZED);
       expect(error.isSecurityError()).toBe(true);
     });
@@ -461,7 +461,7 @@ describe("R2 Signed URLs", () => {
       } as any;
 
       const result = await getScannerCookieSignedURL(mockBucket, "test-key");
-      
+
       expect(result.metadata).toHaveProperty("bucket", "scanner-cookies");
       expect(result.metadata).toHaveProperty("context", "tier1380-headers-csrf");
     });
@@ -475,11 +475,11 @@ describe("R2 Signed URLs", () => {
 describe("Performance", () => {
   it("StringValidators.isNonEmpty is fast", async () => {
     const start = performance.now();
-    
+
     for (let i = 0; i < 100000; i++) {
       StringValidators.isNonEmpty("test string");
     }
-    
+
     const duration = performance.now() - start;
     expect(duration).toBeLessThan(100); // Should complete in under 100ms
   });
@@ -487,11 +487,11 @@ describe("Performance", () => {
   it("TypeGuards.isUUID is fast", async () => {
     const uuid = "550e8400-e29b-41d4-a716-446655440000";
     const start = performance.now();
-    
+
     for (let i = 0; i < 100000; i++) {
       TypeGuards.isUUID(uuid);
     }
-    
+
     const duration = performance.now() - start;
     expect(duration).toBeLessThan(200); // Should complete in under 200ms
   });

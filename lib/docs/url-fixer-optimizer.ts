@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-/**
- * URL Fixer and Performance Optimizer
- *
- * Fixes broken URLs and optimizes performance issues identified
- * in the comprehensive repository review.
- */
+// lib/docs/url-fixer-optimizer.ts — URL fixer and performance optimizer
 
 // Entry guard check
 if (import.meta.path !== Bun.main) {

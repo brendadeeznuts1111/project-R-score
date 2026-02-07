@@ -1,4 +1,5 @@
-// lib/docs/url-builder.ts - Enhanced with secrets support
+// lib/docs/url-builder.ts — Documentation URL builder with domain support
+
 export type BunDomain = 'sh' | 'com';
 
 export class DocsUrlBuilder {

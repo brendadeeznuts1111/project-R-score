@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🔄 Safe Concurrent Operations Manager
- *
- * Handles race conditions, provides transaction-like behavior, and ensures data consistency
- */
+// lib/core/concurrent-operations.ts — Safe concurrent operations manager
 
 import { handleError, R2IntegrationError, safeAsyncWithRetry } from './error-handling';
 

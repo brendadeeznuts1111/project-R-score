@@ -1,4 +1,5 @@
-// lib/tier1380-directories.ts — Node:fs integration for directory ops
+// lib/deployment/tier1380-directories.ts — Node:fs integration for directory ops
+
 import { readdir, mkdir, stat } from 'node:fs/promises';
 
 import { join, resolve } from 'node:path';

@@ -1,12 +1,12 @@
 {
   "name": "docs-directory",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A Cloudflare-inspired docs directory with cards, groups, topics, and Cmd+K search",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "dev": "bun --hot server.ts",
+    "build": "bun build index.html --outdir=dist",
+    "start": "bun server.ts"
   },
   "dependencies": {
     "clsx": "^2.0.0",
@@ -20,11 +20,9 @@
   "devDependencies": {
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
-    "@vitejs/plugin-react": "^4.0.3",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.24",
     "tailwindcss": "^3.3.0",
-    "typescript": "^5.0.2",
-    "vite": "^4.4.5"
+    "typescript": "^5.0.2"
   }
 }

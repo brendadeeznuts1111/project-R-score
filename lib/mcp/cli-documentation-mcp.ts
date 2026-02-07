@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 📚 CLI Documentation MCP Server
- *
- * MCP server for CLI documentation with advanced URL handling and fragment support
- */
+// lib/mcp/cli-documentation-mcp.ts — MCP server for CLI documentation with URL handling
 
 import {
   CLIDocumentationHandler,

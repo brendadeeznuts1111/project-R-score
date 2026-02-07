@@ -1,4 +1,3 @@
-#!/usr/bin/env bun
 // tools/validate-docs.bench.ts — Performance benchmark for documentation validator
 // Run: bun tools/validate-docs.bench.ts
 

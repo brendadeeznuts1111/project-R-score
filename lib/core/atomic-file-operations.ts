@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+// lib/core/atomic-file-operations.ts — Atomic file operations with proper locking
 
 import { ConcurrencyManagers } from './safe-concurrency';
 

@@ -1,3 +1,6 @@
+#!/usr/bin/env bun
+// tools/track-imports-plugin.ts — Bun plugin for recording module imports
+
 import { plugin } from "bun";
 
 plugin({
@@ -8,7 +11,7 @@ plugin({
     let trackedImports: Record<string, number> = {};
 
     // Each module that goes through this onLoad callback
-    // will record its imports in `trackedImports` 
+    // will record its imports in `trackedImports`
     build.onLoad({ filter: /\.ts/ }, async ({ path }) => {
       const contents = await Bun.file(path).arrayBuffer();
 
@@ -32,6 +35,6 @@ plugin({
         contents: `export default ${JSON.stringify(trackedImports)}`,
         loader: "json",
       };
-    }); 
+    });
   },
 });

@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🎨 MAX PERFORMANCE Color System
- *
- * High-contrast, cached color system using HSL for maximum visual impact
- * across all FactoryWager daily routine scripts.
- */
+// lib/utils/color-system.ts — High-performance color system using HSL
 
 import { color } from 'bun';
 

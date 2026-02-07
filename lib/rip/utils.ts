@@ -1,8 +1,4 @@
-/**
- * FACTORYWAGER RIPGREP v4.0 - Utility Functions
- * 
- * Common utilities for code analysis and validation
- */
+// lib/rip/utils.ts — Common utilities for code analysis and validation
 
 import { spawn } from 'bun';
 
@@ -35,7 +31,7 @@ export const PATTERNS = {
     'www\\.[^\\s\\)\\]\\}>]+',
     'ftp://[^\\s\\)\\]\\}>]+'
   ],
-  
+
   // Non-Bun code patterns
   NON_BUN_PATTERNS: [
     'require\\(',
@@ -49,7 +45,7 @@ export const PATTERNS = {
     '__dirname',
     '__filename'
   ],
-  
+
   // Security concerns
   SECURITY_PATTERNS: [
     'eval\\(',
@@ -59,7 +55,7 @@ export const PATTERNS = {
     'innerHTML\\s*=',
     'outerHTML\\s*='
   ],
-  
+
   // Performance anti-patterns
   PERFORMANCE_PATTERNS: [
     'for\\s*\\(.*in.*\\)',
@@ -94,7 +90,7 @@ export async function executeRipgrep(
       pattern,
       directory
     ];
-    
+
     const result = await spawn(['rg', ...args], {
       stdout: 'pipe',
       stderr: 'pipe'
@@ -118,12 +114,12 @@ export function parseRipgrepOutput(
   return output.map(line => {
     const [lineNumber, ...contentParts] = line.split(':');
     const content = contentParts.join(':');
-    
+
     // Extract file path from the beginning
     const pathMatch = content.match(/^([^:]+):/);
     const file = pathMatch ? pathMatch[1] : 'unknown';
     const fileContent = pathMatch ? content.replace(`${pathMatch[1]}:`, '') : content;
-    
+
     return {
       file,
       line: parseInt(lineNumber) || 0,
@@ -295,11 +291,11 @@ export function formatReport(report: ValidationReport): string {
 ${type.toUpperCase()} ISSUES (${results.length})
 ─────────────────────────────────────────────────────────────────
 `;
-    
+
     results.slice(0, 10).forEach(result => {
       output += `  ${result.file}:${result.line} - ${result.content.substring(0, 80)}${result.content.length > 80 ? '...' : ''}\n`;
     });
-    
+
     if (results.length > 10) {
       output += `  ... and ${results.length - 10} more\n`;
     }
@@ -328,7 +324,7 @@ export async function checkRipgrepAvailability(): Promise<boolean> {
       stdout: 'pipe',
       stderr: 'ignore'
     });
-    
+
     const version = await new Response(result.stdout).text();
     return version.includes('ripgrep');
   } catch (error) {

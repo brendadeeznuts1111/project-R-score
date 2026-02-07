@@ -1,6 +1,4 @@
-/**
- * Function cleanup utilities to reduce memory leaks
- */
+// lib/utils/function-utils.ts — Function cleanup utilities
 
 // WeakMap for tracking function references
 const functionRefs = new WeakMap<Function, Set<() => void>>();

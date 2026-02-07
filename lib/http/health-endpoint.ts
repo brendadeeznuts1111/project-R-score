@@ -1,17 +1,12 @@
-/**
- * 🏥 HTTP Health Endpoint with HSL Status
- *
- * Express/Bun-native health check endpoint with advanced HSL color-coded status.
- * Provides standardized health metrics for monitoring systems.
- */
+// lib/http/health-endpoint.ts — HTTP health endpoint with color-coded status
 
 import {
   createEnhancedStatus,
   generateStatusMatrix,
   type SeverityLevel,
   type ContextType,
-} from '../utils/enhanced-status-matrix.ts';
-import type { ColorStatus } from '../utils/color-system.ts';
+} from '../utils/enhanced-status-matrix';
+import type { ColorStatus } from '../utils/color-system';
 
 export interface HealthCheck {
   name: string;
@@ -285,18 +280,18 @@ export function createHealthEndpoint(config: Partial<HealthEndpointConfig> = {})
 <head>
   <title>Health Status</title>
   <style>
-    body { 
-      font-family: system-ui, sans-serif; 
-      max-width: 800px; 
-      margin: 2rem auto; 
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 800px;
+      margin: 2rem auto;
       padding: 0 1rem;
       background: #1a1a2e;
       color: #eee;
     }
-    .header { 
-      background: ${status.hsl.color}; 
-      padding: 1.5rem; 
-      border-radius: 8px; 
+    .header {
+      background: ${status.hsl.color};
+      padding: 1.5rem;
+      border-radius: 8px;
       margin-bottom: 2rem;
       box-shadow: 0 4px 6px rgba(0,0,0,0.3);
     }
@@ -308,25 +303,25 @@ export function createHealthEndpoint(config: Partial<HealthEndpointConfig> = {})
       text-transform: uppercase;
       background: rgba(255,255,255,0.2);
     }
-    .check { 
-      background: #16213e; 
-      padding: 1rem; 
-      margin: 0.5rem 0; 
+    .check {
+      background: #16213e;
+      padding: 1rem;
+      margin: 0.5rem 0;
       border-radius: 8px;
       border-left: 4px solid ${status.hsl.color};
     }
     .check-success { border-left-color: #4ade80; }
     .check-warning { border-left-color: #fbbf24; }
     .check-error { border-left-color: #f87171; }
-    .metric { 
-      display: inline-block; 
-      margin-right: 2rem; 
+    .metric {
+      display: inline-block;
+      margin-right: 2rem;
       color: #888;
     }
-    pre { 
-      background: #0f3460; 
-      padding: 1rem; 
-      border-radius: 4px; 
+    pre {
+      background: #0f3460;
+      padding: 1rem;
+      border-radius: 4px;
       overflow-x: auto;
     }
     .hsl-info {
@@ -344,7 +339,7 @@ export function createHealthEndpoint(config: Partial<HealthEndpointConfig> = {})
     <span class="status-badge">${status.status}</span>
     <p>Severity: ${status.severity} | Version: ${status.version}</p>
   </div>
-  
+
   <h2>📊 Summary</h2>
   <p>
     <span class="metric">✅ Passed: ${status.summary.passed}</span>
@@ -352,18 +347,18 @@ export function createHealthEndpoint(config: Partial<HealthEndpointConfig> = {})
     <span class="metric">❌ Failed: ${status.summary.failed}</span>
     <span class="metric">Total: ${status.summary.total}</span>
   </p>
-  
+
   <h2>🎨 HSL Color</h2>
   <p class="hsl-info">
     ${status.hsl.color} | ${status.hsl.hex} | Brightness: ${(status.hsl.brightness * 100).toFixed(1)}%
   </p>
-  
+
   <h2>🔍 Checks</h2>
   ${Object.entries(status.checks)
     .map(
       ([name, check]) => `
     <div class="check check-${check.status}">
-      <strong>${name}</strong> 
+      <strong>${name}</strong>
       <span style="float: right; text-transform: uppercase; font-size: 0.8rem; opacity: 0.8;">${check.status}</span>
       <p>${check.message}</p>
       ${check.responseTime ? `<small>⏱️ ${check.responseTime.toFixed(2)}ms</small>` : ''}
@@ -371,10 +366,10 @@ export function createHealthEndpoint(config: Partial<HealthEndpointConfig> = {})
   `
     )
     .join('')}
-  
+
   <h2>📄 Raw JSON</h2>
   <pre>${JSON.stringify(status, null, 2)}</pre>
-  
+
   <footer style="margin-top: 2rem; color: #666; font-size: 0.8rem;">
     <p>Timestamp: ${status.timestamp}</p>
     <p>Uptime: ${Math.floor(status.uptime / 1000)}s</p>

@@ -1,15 +1,5 @@
 #!/usr/bin/env bun
-
-/**
- * 📝 Bun.markdown Demo
- * 
- * Demonstrates all three Bun.markdown APIs:
- * - Bun.markdown.html() - Render to HTML string
- * - Bun.markdown.render() - Custom rendering with callbacks
- * - Bun.markdown.react() - Render to React elements
- * 
- * @see https://bun.com/docs/runtime/markdown
- */
+// tools/markdown-demo.ts — Demo of Bun.markdown APIs
 
 import { styled } from '../lib/theme/colors';
 

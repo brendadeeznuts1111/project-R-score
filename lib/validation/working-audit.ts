@@ -1,9 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Working Implementation Audit
- *
- * Fixed version that actually works
- */
+// lib/validation/working-audit.ts — Working implementation audit
 
 console.log('🔍 WORKING IMPLEMENTATION AUDIT');
 console.log('='.repeat(50));

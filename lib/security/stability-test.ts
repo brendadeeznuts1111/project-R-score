@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Security and Stability Test Suite
- *
- * Validates all critical fixes and security improvements
- * implemented in the performance optimization system.
- */
+// lib/security/stability-test.ts — Security and stability test suite
 
 // Entry guard check
 if (import.meta.main) {

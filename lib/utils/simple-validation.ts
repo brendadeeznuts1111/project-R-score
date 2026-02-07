@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🔧 Simple Validation System
- *
- * Lightweight validation implementation to avoid external dependencies
- * during development and testing.
- */
+// lib/utils/simple-validation.ts — Lightweight validation system
 
 export type ValidationType =
   | 'string'

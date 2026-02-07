@@ -1,13 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Fixed Implementation Audit using Documentation Constants
- *
- * Based on Bun documentation constants and GitHub issue solutions:
- * - BUN_DOCS_VERSION: "1.3.7"
- * - BUN_DOCS_MIN_VERSION: "1.3.6"
- * - import.meta.main usage for proper entry detection
- * - Avoid process.exit(0) in async contexts
- */
+// lib/validation/fixed-audit.ts — Implementation audit using documentation constants
 
 console.log('🔍 DOCUMENTATION CONSTANTS-BASED AUDIT');
 console.log('='.repeat(50));

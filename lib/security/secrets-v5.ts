@@ -1,4 +1,5 @@
-// lib/security/secrets.ts - FactoryWager Security Standards v5.0
+// lib/security/secrets-v5.ts — Security standards configuration
+
 import { FW_COLORS, styled } from '../theme/colors';
 import { DocsUrlBuilder } from '../docs/url-builder';
 import { PATHS } from '../../constants/paths';

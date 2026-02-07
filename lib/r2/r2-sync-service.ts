@@ -1,15 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🔄 R2 Multi-Bucket Sync Service
- *
- * Cross-bucket and cross-region synchronization with:
- * - Bi-directional sync with conflict resolution
- * - Real-time and scheduled synchronization
- * - Differential sync for efficiency
- * - Conflict detection and resolution strategies
- * - Sync job monitoring and management
- */
+// lib/r2/r2-sync-service.ts — R2 multi-bucket sync service
 
 import { styled, FW_COLORS } from '../theme/colors';
 import { r2EventSystem } from './r2-event-system';

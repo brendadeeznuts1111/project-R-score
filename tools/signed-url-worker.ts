@@ -1,23 +1,18 @@
 #!/usr/bin/env bun
-/**
- * 🏭 FactoryWager Tier-1380 Signed URL Worker
- * 
- * Production-ready worker for generating signed R2 URLs
- * with time-bound access and security validation
- */
+// tools/signed-url-worker.ts — Worker for generating signed R2 URLs
 
-import { getSignedR2URL } from "../lib/r2/signed-url.ts";
-import { handleError, ErrorHandler } from ".../lib/utils/error-handler.ts";
-import { validateKey, validateURL } from ".../lib/utils/input-validator.ts";
+import { getSignedR2URL } from "../lib/r2/signed-url";
+import { handleError, ErrorHandler } from ".../lib/utils/error-handler";
+import { validateKey, validateURL } from ".../lib/utils/input-validator";
 
 /**
  * 🚀 Prefetch Optimizations
- * 
+ *
  * This file includes prefetch hints for optimal performance:
  * - DNS prefetching for external domains
  * - Preconnect for faster handshakes
  * - Resource preloading for critical assets
- * 
+ *
  * Generated automatically by optimize-examples-prefetch.ts
  */
 
@@ -25,21 +20,21 @@ export default {
   async fetch(request: Request, env: { R2_BUCKET: R2_BUCKET }): Promise<Response> {
     const url = new URL(request.url);
     const requestId = crypto.randomUUID().slice(0, 8);
-    
+
     // Route: /signed - Generate signed URL for any key
     if (url.pathname === "/signed" && request.method === "GET") {
       const key = url.searchParams.get("key");
-      
+
       if (!key) {
         return Response.json({
           error: "Missing ?key= parameter",
           usage: "/signed?key=<object-key>"
-        }, { 
-          status: 400, 
+        }, {
+          status: 400,
           headers: { "Content-Type": "application/json" }
         });
       }
-      
+
       // Validate the key parameter
       const keyValidation = validateKey(key);
       if (!keyValidation.isValid) {
@@ -47,14 +42,14 @@ export default {
           error: "Invalid key parameter",
           details: keyValidation.errors,
           usage: "/signed?key=<object-key>"
-        }, { 
-          status: 400, 
+        }, {
+          status: 400,
           headers: { "Content-Type": "application/json" }
         });
       }
-      
+
       const validatedKey = keyValidation.value!;
-      
+
       // Use standardized error handling
       const result = await ErrorHandler.safeExecute(
         async () => {
@@ -76,7 +71,7 @@ export default {
           requestId
         }
       );
-      
+
       if (result.success) {
         const signed = result.data;
         return Response.json({
@@ -96,20 +91,20 @@ export default {
         });
       }
     }
-    
+
     // Route: /signed/<key> - Direct signed URL access
     if (url.pathname.startsWith("/signed/") && request.method === "GET") {
       const key = url.pathname.slice(9); // Remove "/signed/"
-      
+
       if (!key) {
         return Response.json({
           error: "Invalid path. Use /signed?key=<object-key>"
-        }, { 
-          status: 400, 
+        }, {
+          status: 400,
           headers: { "Content-Type": "application/json" }
         });
       }
-      
+
       try {
         const signed = await getSignedURL(env.R2_BUCKET, key, {
           expiresInSeconds: 3600,
@@ -122,7 +117,7 @@ export default {
             directAccess: true
           }
         });
-        
+
         // Redirect to signed URL
         return Response.redirect(signed.signedUrl, 302);
       } catch (error: unknown) {
@@ -130,17 +125,17 @@ export default {
         return Response.json({
           error: errorMessage,
           code: "SIGNED_URL_ERROR"
-        }, { 
-          status: 500, 
+        }, {
+          status: 500,
           headers: { "Content-Type: "application/json" }
         });
       }
     }
-    
+
     // Route: /audit - Generate audit download URL
     if (url.pathname === "/audit" && request.method === "GET") {
       const key = url.searchParams.get("key") || `audit/audit-${Date.now()}.json`;
-      
+
       try {
         const signed = await getSignedR2URL(env.R2_BUCKET, key, {
           expiresInSeconds: 86400, // 24 hours for audit
@@ -152,7 +147,7 @@ export default {
             reportType: "security"
           }
         });
-        
+
         return Response.json({
           signedUrl: signed,
           key,
@@ -167,13 +162,13 @@ export default {
         return Response.json({
           error: errorMessage,
           code: "AUDIT_URL_ERROR"
-        }, { 
-          status: 500, 
+        }, {
+          status: 500,
           headers: { "Content-Type: "application/json" }
         });
       }
     }
-    
+
     // Route: /health - Health check
     if (url.pathname === "/health" && request.method === "GET") {
       const health = {
@@ -186,10 +181,10 @@ export default {
         maxLifetime: "7 days",
         currentSignedURLs: 0 // Would track active signed URLs in production
       };
-      
+
       return Response.json(health);
     }
-    
+
     // Default route
     return Response.json({
       message: "Tier-1380 Signed URL Worker",

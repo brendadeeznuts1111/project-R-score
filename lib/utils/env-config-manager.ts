@@ -1,18 +1,4 @@
-/**
- * 🛠️ Environment Configuration Manager
- *
- * Centralized environment configuration management with validation,
- * type safety, and support for multiple environment sources.
- *
- * Features:
- * - Type-safe environment variable access
- * - Support for .env file loading with priority
- * - Environment validation
- * - Default value management
- * - Environment-specific configuration
- *
- * @version 1.0.0
- */
+// lib/utils/env-config-manager.ts — Environment configuration manager
 
 import { logger } from './logger';
 import { getErrorMessage } from './error-utils';

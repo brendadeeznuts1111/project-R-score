@@ -1,11 +1,7 @@
-/**
- * Endpoint Status Types - HSL Color Integrated
- *
- * Type definitions for endpoint health monitoring with HSL color coding.
- */
+// lib/core/endpoint-status.ts — Endpoint status types with HSL color integration
 
-import type { SeverityLevel, ContextType } from '../utils/enhanced-status-matrix.ts';
-import type { ColorStatus } from '../utils/color-system.ts';
+import type { SeverityLevel, ContextType } from '../utils/enhanced-status-matrix';
+import type { ColorStatus } from '../utils/color-system';
 
 /**
  * Endpoint configuration

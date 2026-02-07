@@ -119,29 +119,19 @@ bun run build
 
 ## 🔧 **Configuration Files**
 
-### **Vite Configuration** (vite.config.ts)
+### **Bun Server** (server.ts)
 ```typescript
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import index from "./index.html";
 
-export default defineConfig({
-  plugins: [react()],
-  build: {
-    outDir: 'dist',
-    sourcemap: true,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          icons: ['lucide-react']
-        }
-      }
-    }
+Bun.serve({
+  port: 3000,
+  routes: {
+    "/": index,
   },
-  server: {
-    port: 3000,
-    host: true
-  }
+  development: {
+    hmr: true,
+    console: true,
+  },
 })
 ```
 
@@ -296,10 +286,9 @@ bun update lucide-react
 ## 📞 **Support**
 
 ### **Resources**
-- **Vite Documentation** - https://vitejs.dev/
+- **Bun Documentation** - https://bun.sh/docs
 - **React Documentation** - https://react.dev/
 - **TypeScript Documentation** - https://www.typescriptlang.org/
-- **Bun Documentation** - https://bun.sh/docs
 
 ### **Community**
 - **GitHub Issues** - Report bugs and request features

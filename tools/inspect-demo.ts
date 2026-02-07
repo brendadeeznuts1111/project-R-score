@@ -1,18 +1,5 @@
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 #!/usr/bin/env bun
-/**
- * Bun.inspect Tabular Data Demo
- * Demonstrates how to format and display tabular data using Bun.inspect
- */
+// tools/inspect-demo.ts — Demo of Bun.inspect tabular data visualization
 
 console.log("╔═══════════════════════════════════════════════════════════════╗");
 console.log("║           Bun.inspect - Tabular Data Visualization            ║");
@@ -64,9 +51,9 @@ const processInfo = [
   { pid: 67890, platform: "linux", arch: "x64", cpuCount: 16 }
 ];
 
-console.log(Bun.inspect(processInfo, { 
+console.log(Bun.inspect(processInfo, {
   columns: true,
-  sort: (a, b) => a.pid - b.pid 
+  sort: (a, b) => a.pid - b.pid
 }));
 
 // Example 3: Custom Data with Headers
@@ -79,9 +66,9 @@ const stats = [
   { metric: "External", value: process.memoryUsage().external / 1024 / 1024, unit: "MB" }
 ];
 
-console.log(Bun.inspect(stats, { 
+console.log(Bun.inspect(stats, {
   columns: true,
-  sort: (a, b) => a.value - b.value 
+  sort: (a, b) => a.value - b.value
 }));
 
 // Example 4: Using colors and properties
@@ -95,7 +82,7 @@ const projectDetails = {
 };
 
 // Show all properties including nested objects
-console.log(Bun.inspect(projectDetails, { 
+console.log(Bun.inspect(projectDetails, {
   depth: 2,           // How deep to nest
   colors: true,       // ANSI colors (automatically true in terminal)
   maxArrayLength: 10  // Limit array display
@@ -114,7 +101,7 @@ console.log(Bun.inspect(simpleProjects, { columns: true }));
 // Example 6: Sorting and custom comparison
 console.log("\n\n6️⃣  SORTED BY DESCRIPTION LENGTH\n");
 
-const sortedByDescLength = [...projects].sort((a, b) => 
+const sortedByDescLength = [...projects].sort((a, b) =>
   a.description.length - b.description.length
 );
 
@@ -142,7 +129,7 @@ const liveMetrics = [
   { metric: "Memory Usage", value: 156, status: "healthy", unit: "MB" }
 ];
 
-console.log(Bun.inspect(liveMetrics, { 
+console.log(Bun.inspect(liveMetrics, {
   columns: true,
   sort: (a, b) => b.value - a.value  // Descending by value
 }));

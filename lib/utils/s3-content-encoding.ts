@@ -1,12 +1,4 @@
-/**
- * 🪣 S3 ContentEncoding Support - Bun v1.3.7+ Compatible
- *
- * Ensures contentEncoding is properly propagated to S3 uploads,
- * allowing browsers to correctly handle gzip/br compressed content.
- *
- * @version 4.5
- * @see https://bun.sh/docs/api/s3#content-encoding
- */
+// lib/utils/s3-content-encoding.ts — S3 content encoding support
 
 import { S3Client, S3File } from 'bun';
 

@@ -1,9 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 🦌 BUN-FIRST POLICY & COMPLIANCE AUDITOR
- *
- * Ensures all code follows Bun-first principles
- */
+// lib/validation/bun-first-compliance.ts — Bun-first policy and compliance enforcement
 
 import { write } from 'bun';
 

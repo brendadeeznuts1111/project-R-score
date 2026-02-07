@@ -1,8 +1,4 @@
-/**
- * Tier-1380 Metrics RSS Feed Generator
- *
- * Provides RSS feed and endpoint push for R-Score metrics to Tier-1380 dashboard.
- */
+// lib/deployment/tier1380-metrics-feed.ts — RSS feed generator for Tier-1380 R-Score metrics
 
 import { type Serve } from 'bun';
 

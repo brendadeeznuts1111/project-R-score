@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Habits Classification Engine with Redis Integration
- *
- * Re-exports pure functions from habits-pure.ts
- * Adds Redis storage and Pub/Sub functionality
- */
+// lib/business/habits-classifier.ts — Habits classification engine with Redis integration
 
 import Redis from 'ioredis';
 import {

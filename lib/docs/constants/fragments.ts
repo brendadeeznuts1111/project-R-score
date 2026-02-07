@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🔗 Enhanced URL Fragments with GitHub Integration
- * 
- * Comprehensive fragment patterns for deep linking, GitHub URLs,
- * and text fragment support (Scroll to Text Fragment).
- */
+// lib/docs/constants/fragments.ts — URL fragments with GitHub integration
 
 export const ENTERPRISE_URL_FRAGMENTS = {
   // Navigation and view fragments
@@ -17,7 +10,7 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     TROUBLESHOOTING: 'troubleshooting' as const,
     FAQ: 'faq' as const
   },
-  
+
   // Interactive fragments
   INTERACTIVE: {
     PLAYGROUND: 'playground' as const,
@@ -25,7 +18,7 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     TUTORIAL: 'tutorial' as const,
     WORKSHOP: 'workshop' as const
   },
-  
+
   // GitHub-specific fragments
   GITHUB: {
     TREE: 'tree' as const,
@@ -37,7 +30,7 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     TAG: 'tag' as const,
     RELEASE: 'release' as const
   },
-  
+
   // TypeScript and package fragments
   TYPESCRIPT: {
     INTERFACE: 'interface' as const,
@@ -47,7 +40,7 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     FUNCTION: 'function' as const,
     CLASS: 'class' as const
   },
-  
+
   // Typed array and binary data fragments
   TYPED_ARRAY: {
     OVERVIEW: 'typedarray' as const,
@@ -59,7 +52,7 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     DATA_VIEW: 'dataview' as const,
     SHARED_ARRAY_BUFFER: 'sharedarraybuffer' as const
   },
-  
+
   // Networking fragments
   NETWORKING: {
     FETCH: 'fetch' as const,
@@ -71,7 +64,7 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     PROXY: 'proxy' as const,
     DNS: 'dns' as const
   },
-  
+
   // Text fragments (for bun.com/reference)
   TEXT_FRAGMENTS: {
     NODE_ZLIB: 'node:zlib' as const,
@@ -80,7 +73,7 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     FETCH_TIMEOUT: 'fetch timeout' as const,
     WEBSOCKET_EXAMPLE: 'WebSocket example' as const
   },
-  
+
   // State management fragments
   STATE: {
     THEME: 'theme' as const,
@@ -89,7 +82,7 @@ export const ENTERPRISE_URL_FRAGMENTS = {
     PLATFORM: 'platform' as const,
     EXPERIMENTAL: 'experimental' as const
   },
-  
+
   // Performance and debugging fragments
   PERFORMANCE: {
     BENCHMARK: 'benchmark' as const,
@@ -104,25 +97,25 @@ export const ENTERPRISE_URL_FRAGMENTS = {
 export const GITHUB_URL_PATTERNS = {
   // Pattern: /:owner/:repo/tree/:commit/:path
   TREE_VIEW: /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/tree\/([^/]+)(?:\/(.*))?$/,
-  
+
   // Pattern: /:owner/:repo/blob/:commit/:path
   BLOB_VIEW: /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)(?:\/(.*))?$/,
-  
+
   // Pattern: /:owner/:repo/commit/:hash
   COMMIT_VIEW: /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/commit\/([^/]+)$/,
-  
+
   // Pattern: /:owner/:repo/issues/:number
   ISSUE_VIEW: /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/issues\/(\d+)$/,
-  
+
   // Pattern: /:owner/:repo/pull/:number
   PULL_REQUEST_VIEW: /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)$/,
-  
+
   // Pattern: /:owner/:repo/releases/tag/:tag
   RELEASE_TAG_VIEW: /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/releases\/tag\/([^/]+)$/,
-  
+
   // Pattern: /:owner/:repo/discussions/:number
   DISCUSSION_VIEW: /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/discussions\/(\d+)$/,
-  
+
   // Pattern: /:owner/:repo/actions/runs/:id
   ACTIONS_RUN_VIEW: /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/actions\/runs\/(\d+)$/
 } as const;
@@ -131,20 +124,20 @@ export const GITHUB_URL_PATTERNS = {
 export const TEXT_FRAGMENT_SPEC = {
   // Basic pattern: #:~:text=textStart
   BASIC: '#:~:text=',
-  
+
   // With prefix: #:~:text=prefix-,textStart
   WITH_PREFIX: '#:~:text=prefix-,textStart',
-  
+
   // With suffix: #:~:text=textStart,-suffix
   WITH_SUFFIX: '#:~:text=textStart,-suffix',
-  
+
   // Full pattern: #:~:text=prefix-,textStart,textEnd,-suffix
   FULL: '#:~:text=prefix-,textStart,textEnd,-suffix',
-  
+
   // Encoding helpers
   encode: (text: string) => encodeURIComponent(text),
   decode: (encoded: string) => decodeURIComponent(encoded),
-  
+
   // Build text fragment
   build: (options: {
     textStart: string;
@@ -153,21 +146,21 @@ export const TEXT_FRAGMENT_SPEC = {
     suffix?: string;
   }) => {
     let fragment = '#:~:text=';
-    
+
     if (options.prefix) {
       fragment += `${encodeURIComponent(options.prefix)}-`;
     }
-    
+
     fragment += encodeURIComponent(options.textStart);
-    
+
     if (options.textEnd) {
       fragment += `,${encodeURIComponent(options.textEnd)}`;
     }
-    
+
     if (options.suffix) {
       fragment += `,-${encodeURIComponent(options.suffix)}`;
     }
-    
+
     return fragment;
   }
 } as const;
@@ -182,7 +175,7 @@ export const FRAGMENT_VALIDATION = {
     'tab', 'panel', 'modal', 'dialog', 'overlay',
     'debug', 'verbose', 'trace', 'profile', 'benchmark'
   ] as const,
-  
+
   // Valid fragment values
   VALID_VALUES: {
     boolean: ['true', 'false', '1', '0'],
@@ -191,19 +184,19 @@ export const FRAGMENT_VALIDATION = {
     platform: ['windows', 'macos', 'linux', 'docker', 'ci-cd'],
     view: ['overview', 'examples', 'api', 'configuration', 'troubleshooting']
   } as const,
-  
+
   // Validate fragment parameter
   isValidParam: (name: string, value: string) => {
     if (!FRAGMENT_VALIDATION.VALID_NAMES.includes(name as any)) {
       return false;
     }
-    
+
     // Check if value is in valid values for known parameters
     const validValues = FRAGMENT_VALIDATION.VALID_VALUES[name as keyof typeof FRAGMENT_VALIDATION.VALID_VALUES];
     if (validValues && !validValues.includes(value as any)) {
       return false;
     }
-    
+
     return true;
   }
 } as const;
@@ -215,34 +208,34 @@ export const FRAGMENT_BUILDERS = {
     view,
     ...options
   }),
-  
+
   // Build interactive fragment
   interactive: (runnable: boolean = true, options?: Record<string, string>) => ({
     interactive: 'true',
     runnable: runnable ? 'true' : 'false',
     ...options
   }),
-  
+
   // Build example fragment
   example: (exampleName: string, options?: Record<string, string>) => ({
     example: exampleName,
     highlight: 'true',
     ...options
   }),
-  
+
   // Build theme fragment
   theme: (theme: 'light' | 'dark' | 'auto', options?: Record<string, string>) => ({
     theme,
     ...options
   }),
-  
+
   // Build search fragment
   search: (query: string, options?: Record<string, string>) => ({
     search: query,
     type: 'documentation-search',
     ...options
   }),
-  
+
   // Build GitHub-specific fragment
   github: (type: string, options?: Record<string, string>) => ({
     github: 'true',
@@ -256,11 +249,11 @@ export const FRAGMENT_PARSERS = {
   // Parse standard fragment parameters
   parseStandard: (fragment: string) => {
     const params: Record<string, string> = {};
-    
+
     if (fragment.startsWith('#')) {
       fragment = fragment.slice(1);
     }
-    
+
     const pairs = fragment.split('&');
     for (const pair of pairs) {
       const [key, value] = pair.split('=');
@@ -268,31 +261,31 @@ export const FRAGMENT_PARSERS = {
         params[decodeURIComponent(key)] = decodeURIComponent(value);
       }
     }
-    
+
     return params;
   },
-  
+
   // Parse text fragment
   parseTextFragment: (fragment: string) => {
     const textMatch = fragment.match(/#:~:text=([^&]+)/);
     if (!textMatch) {
       return null;
     }
-    
+
     const rawText = textMatch[1];
     const decodedText = decodeURIComponent(rawText);
-    
+
     // Parse components: [prefix-,]textStart[,textEnd][,-suffix]
     const components: any = {};
     const parts = decodedText.split(',');
-    
+
     if (parts[0].endsWith('-')) {
       components.prefix = parts[0].slice(0, -1);
       components.textStart = parts[1] || '';
     } else {
       components.textStart = parts[0];
     }
-    
+
     if (parts.length > 1 && parts[parts.length - 1].startsWith('-')) {
       components.suffix = parts[parts.length - 1].slice(1);
       if (parts.length > 2) {
@@ -301,14 +294,14 @@ export const FRAGMENT_PARSERS = {
     } else if (parts.length > 1) {
       components.textEnd = parts[parts.length - 1];
     }
-    
+
     return {
       raw: rawText,
       decoded: decodedText,
       components
     };
   },
-  
+
   // Parse mixed fragment (standard + text)
   parseMixed: (fragment: string) => {
     const result: {
@@ -318,19 +311,19 @@ export const FRAGMENT_PARSERS = {
       standard: {},
       textFragment: null
     };
-    
+
     // Separate text fragment from standard parameters
     const textFragmentMatch = fragment.match(/(#:~:text=[^&]+)/);
     if (textFragmentMatch) {
       result.textFragment = FRAGMENT_PARSERS.parseTextFragment(textFragmentMatch[1]);
       fragment = fragment.replace(textFragmentMatch[1], '').replace(/^#&?|&$/, '');
     }
-    
+
     // Parse remaining standard parameters
     if (fragment && fragment !== '#') {
       result.standard = FRAGMENT_PARSERS.parseStandard(fragment);
     }
-    
+
     return result;
   }
 } as const;

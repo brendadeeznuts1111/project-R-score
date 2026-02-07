@@ -1,20 +1,5 @@
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 #!/usr/bin/env bun
-/**
- * 🔧 Failure Handler & Fix Manager
- * 
- * Systematic approach to handling and fixing validation failures
- * Usage: bun failure-handler.ts [options]
- */
+// tools/failure-handler.ts — Failure handler and fix manager for validation issues
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -119,18 +104,18 @@ interface Fix {
 class FailureAnalyzer {
   async analyzeFailures(): Promise<Failure[]> {
     log.section('🔍 Analyzing Validation Failures');
-    
+
     const failures: Failure[] = [];
-    
+
     // Run endpoint validator to get current failures
     try {
       const { validateEndpointHierarchy } = await import('./endpoint-aware-validator.ts');
       const cliConstants = await import('./lib/documentation/constants/cli.ts');
       const utilsConstants = await import('./lib/documentation/constants/utils.ts');
-      
+
       // Collect endpoints
       const endpoints: any[] = [];
-      
+
       Object.entries(cliConstants.CLI_DOCUMENTATION_URLS).forEach(([category, urls]) => {
         if (typeof urls === 'object') {
           Object.entries(urls).forEach(([key, url]) => {
@@ -138,7 +123,7 @@ class FailureAnalyzer {
           });
         }
       });
-      
+
       Object.entries(utilsConstants.BUN_UTILS_URLS).forEach(([category, urls]) => {
         if (typeof urls === 'object') {
           Object.entries(urls).forEach(([key, url]) => {
@@ -146,20 +131,20 @@ class FailureAnalyzer {
           });
         }
       });
-      
+
       // Analyze endpoint uniqueness
       const endpointMap = new Map<string, any[]>();
       endpoints.forEach(endpoint => {
         const fullUrl = endpoint.url.startsWith('http') ? endpoint.url : `https://bun.sh${endpoint.url}`;
         const parsed = new URL(fullUrl);
         const endpointPath = parsed.pathname;
-        
+
         if (!endpointMap.has(endpointPath)) {
           endpointMap.set(endpointPath, []);
         }
         endpointMap.get(endpointPath)!.push(endpoint);
       });
-      
+
       // Find duplicates
       endpointMap.forEach((duplicateEndpoints, endpointPath) => {
         if (duplicateEndpoints.length > 1) {
@@ -213,16 +198,16 @@ class FailureAnalyzer {
           });
         }
       });
-      
+
       // Check for fragments without main pages
       const fragmentEndpoints = endpoints.filter(ep => ep.url.includes('#'));
       const fragmentBaseUrls = new Set<string>();
-      
+
       fragmentEndpoints.forEach(endpoint => {
         const baseUrl = endpoint.url.split('#')[0];
         fragmentBaseUrls.add(baseUrl);
       });
-      
+
       const missingMainPages: string[] = [];
       fragmentBaseUrls.forEach(baseUrl => {
         const hasMainPage = endpoints.some(ep => ep.url === baseUrl && !ep.url.includes('#'));
@@ -230,7 +215,7 @@ class FailureAnalyzer {
           missingMainPages.push(baseUrl);
         }
       });
-      
+
       if (missingMainPages.length > 0) {
         failures.push({
           id: 'missing-main-pages',
@@ -263,14 +248,14 @@ class FailureAnalyzer {
           impact: 'Broken navigation, poor user experience'
         });
       }
-      
+
       // Check consistency issues
       const cliEndpoints = endpoints.filter(ep => ep.category.startsWith('CLI.'));
       const utilsEndpoints = endpoints.filter(ep => ep.category.startsWith('UTILS.'));
-      
+
       const cliWithFragments = cliEndpoints.filter(ep => ep.url.includes('#')).length;
       const utilsWithFragments = utilsEndpoints.filter(ep => ep.url.includes('#')).length;
-      
+
       if (cliWithFragments === 0 && utilsWithFragments > 0) {
         failures.push({
           id: 'inconsistent-patterns',
@@ -321,11 +306,11 @@ class FailureAnalyzer {
           impact: 'Inconsistent user experience, maintenance complexity'
         });
       }
-      
+
     } catch (error) {
       log.error(`Failed to analyze failures: ${error.message}`);
     }
-    
+
     log.info(`Found ${failures.length} failure categories`);
     return failures;
   }
@@ -335,13 +320,13 @@ class FailureAnalyzer {
 class FixSuggester {
   suggestFixes(failures: Failure[]): void {
     log.section('💡 Suggested Fixes');
-    
+
     failures.forEach((failure, index) => {
       console.log(`\n${colors.yellow}${index + 1}. ${failure.category}${colors.reset}`);
       console.log(`${colors.gray}Severity: ${failure.severity.toUpperCase()}${colors.reset}`);
       console.log(`${colors.white}Description: ${failure.description}${colors.reset}`);
       console.log(`${colors.blue}Impact: ${failure.impact}${colors.reset}`);
-      
+
       console.log(`\n${colors.cyan}Suggested Fixes:${colors.reset}`);
       failure.suggestedFixes.forEach((fix, fixIndex) => {
         const icon = fix.type === 'auto' ? '🤖' : fix.type === 'semi-auto' ? '🔧' : '👤';
@@ -349,7 +334,7 @@ class FixSuggester {
         console.log(`     ${colors.gray}Type: ${fix.type}${colors.reset}`);
         console.log(`     ${colors.gray}Time: ${fix.estimatedTime}${colors.reset}`);
         console.log(`     ${colors.gray}Risk: ${fix.risk}${colors.reset}`);
-        
+
         if (options.verbose) {
           console.log(`     ${colors.gray}Files: ${fix.filesToModify.join(', ')}${colors.reset}`);
           console.log(`     ${colors.gray}Steps:${colors.reset}`);
@@ -366,14 +351,14 @@ class FixSuggester {
 class AutoFixer {
   async attemptAutoFixes(failures: Failure[]): Promise<void> {
     const dryRunMode = options.dryRun;
-    
+
     if (dryRunMode) {
       log.section('🔍 DRY RUN: Previewing Auto-Fixes');
       log.info('DRY RUN MODE: No changes will be applied');
     } else {
       log.section('🤖 Attempting Auto-Fixes');
     }
-    
+
     let autoFixesAttempted = 0;
     let autoFixesSucceeded = 0;
     const dryRunResults: Array<{
@@ -382,16 +367,16 @@ class AutoFixer {
       wouldSucceed: boolean;
       details: string;
     }> = [];
-    
+
     for (const failure of failures) {
       const autoFixes = failure.suggestedFixes.filter(fix => fix.type === 'auto');
-      
+
       for (const fix of autoFixes) {
         autoFixesAttempted++;
-        
+
         if (dryRunMode) {
           log.info(`DRY RUN: Would attempt auto-fix: ${fix.description}`);
-          
+
           // Preview what would happen
           const preview = await this.previewAutoFix(fix, failure);
           dryRunResults.push({
@@ -400,7 +385,7 @@ class AutoFixer {
             wouldSucceed: preview.wouldSucceed,
             details: preview.details
           });
-          
+
           if (preview.wouldSucceed) {
             log.success(`DRY RUN: ✅ Would succeed - ${fix.description}`);
             if (options.verbose) {
@@ -414,11 +399,11 @@ class AutoFixer {
           }
         } else {
           log.info(`Attempting auto-fix: ${fix.description}`);
-          
+
           try {
             // Attempt the actual auto-fix
             const success = await this.executeAutoFix(fix);
-            
+
             if (success) {
               autoFixesSucceeded++;
               log.success(`Auto-fix successful: ${fix.description}`);
@@ -431,13 +416,13 @@ class AutoFixer {
         }
       }
     }
-    
+
     if (dryRunMode) {
       log.section('📊 DRY RUN Summary');
       console.log(`${colors.blue}Auto-fixes analyzed: ${autoFixesAttempted}${colors.reset}`);
       console.log(`${colors.green}Would succeed: ${dryRunResults.filter(r => r.wouldSucceed).length}${colors.reset}`);
       console.log(`${colors.yellow}Would fail: ${dryRunResults.filter(r => !r.wouldSucceed).length}${colors.reset}`);
-      
+
       if (options.verbose && dryRunResults.length > 0) {
         console.log(`\n${colors.cyan}Detailed Results:${colors.reset}`);
         dryRunResults.forEach((result, index) => {
@@ -447,27 +432,27 @@ class AutoFixer {
           console.log(`   ${colors.gray}Details: ${result.details}${colors.reset}`);
         });
       }
-      
+
       // Show what files would be modified
       const filesToModify = new Set<string>();
       dryRunResults.forEach(result => {
         result.fix.filesToModify.forEach(file => filesToModify.add(file));
       });
-      
+
       if (filesToModify.size > 0) {
         console.log(`\n${colors.cyan}Files that would be modified:${colors.reset}`);
         Array.from(filesToModify).forEach(file => {
           console.log(`  📁 ${file}`);
         });
       }
-      
+
       log.info(`\n${colors.yellow}💡 DRY RUN COMPLETE: No changes were made${colors.reset}`);
       log.info(`To apply these changes, run: bun failure-handler.ts --auto-fix`);
     } else {
       log.info(`Auto-fixes: ${autoFixesSucceeded}/${autoFixesAttempted} successful`);
     }
   }
-  
+
   private async previewAutoFix(fix: Fix, failure: Failure): Promise<{
     wouldSucceed: boolean;
     details: string;
@@ -480,12 +465,12 @@ class AutoFixer {
           // Check if files exist and are writable
           const fs = await import('fs');
           const path = await import('path');
-          
+
           const filesExist = fix.filesToModify.every(file => {
             const filePath = path.join(process.cwd(), file);
             return fs.existsSync(filePath);
           });
-          
+
           if (filesExist) {
             return {
               wouldSucceed: true,
@@ -503,7 +488,7 @@ class AutoFixer {
             details: `Cannot access file system: ${error.message}`
           };
         }
-      
+
       default:
         return {
           wouldSucceed: false,
@@ -511,16 +496,16 @@ class AutoFixer {
         };
     }
   }
-  
+
   private async executeAutoFix(fix: Fix): Promise<boolean> {
     // This would contain actual auto-fix logic
     // For now, we'll simulate the process
-    
+
     switch (fix.id) {
       case 'document-pattern-differences':
         // Create documentation for pattern differences
         return true;
-      
+
       default:
         return false;
     }
@@ -531,24 +516,24 @@ class AutoFixer {
 class ReportGenerator {
   generateReport(failures: Failure[]): void {
     log.section('📊 Failure Report');
-    
+
     const criticalFailures = failures.filter(f => f.severity === 'critical');
     const highFailures = failures.filter(f => f.severity === 'high');
     const mediumFailures = failures.filter(f => f.severity === 'medium');
     const lowFailures = failures.filter(f => f.severity === 'low');
-    
+
     console.log(`${colors.red}Critical: ${criticalFailures.length}${colors.reset}`);
     console.log(`${colors.yellow}High: ${highFailures.length}${colors.reset}`);
     console.log(`${colors.blue}Medium: ${mediumFailures.length}${colors.reset}`);
     console.log(`${colors.green}Low: ${lowFailures.length}${colors.reset}`);
-    
+
     console.log(`\n${colors.cyan}Priority Order:${colors.reset}`);
-    
+
     const sortedFailures = [...failures].sort((a, b) => {
       const severityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
       return severityOrder[a.severity] - severityOrder[b.severity];
     });
-    
+
     sortedFailures.forEach((failure, index) => {
       const severityColor = {
         critical: colors.red,
@@ -556,13 +541,13 @@ class ReportGenerator {
         medium: colors.blue,
         low: colors.green
       }[failure.severity];
-      
+
       console.log(`${index + 1}. ${severityColor}${failure.category}${colors.reset} - ${failure.description}`);
     });
-    
+
     // Generate action plan
     console.log(`\n${colors.cyan}🎯 Recommended Action Plan:${colors.reset}`);
-    
+
     const totalEstimatedTime = failures
       .flatMap(f => f.suggestedFixes)
       .reduce((total, fix) => {
@@ -570,7 +555,7 @@ class ReportGenerator {
         const hours = parseInt(fix.estimatedTime) || 1;
         return total + hours;
       }, 0);
-    
+
     console.log(`Total estimated fix time: ${totalEstimatedTime} hours`);
     console.log(`High-priority fixes: ${criticalFailures.length + highFailures.length}`);
     console.log(`Auto-fixable issues: ${failures.flatMap(f => f.suggestedFixes).filter(f => f.type === 'auto').length}`);
@@ -581,28 +566,28 @@ class ReportGenerator {
 async function handleFailures() {
   console.log(`${colors.cyan}🔧 Failure Handler & Fix Manager${colors.reset}`);
   console.log(`${colors.gray}Systematic approach to handling validation failures${colors.reset}\n`);
-  
+
   const startTime = Date.now();
-  
+
   try {
     const analyzer = new FailureAnalyzer();
     const suggester = new FixSuggester();
     const autoFixer = new AutoFixer();
     const reporter = new ReportGenerator();
-    
+
     // Step 1: Analyze failures
     const failures = await analyzer.analyzeFailures();
-    
+
     if (failures.length === 0) {
       log.success('No failures found! System is healthy.');
       return;
     }
-    
+
     // Step 2: Suggest fixes
     if (options.suggest || options.autoFix) {
       suggester.suggestFixes(failures);
     }
-    
+
     // Step 3: Attempt auto-fixes
     if (options.autoFix) {
       if (options.dryRun) {
@@ -610,12 +595,12 @@ async function handleFailures() {
       }
       await autoFixer.attemptAutoFixes(failures);
     }
-    
+
     // Step 4: Generate report
     if (options.report) {
       reporter.generateReport(failures);
     }
-    
+
     // Output JSON if requested
     if (options.json) {
       log.json({
@@ -631,19 +616,19 @@ async function handleFailures() {
         }
       });
     }
-    
+
     const endTime = Date.now();
     const duration = endTime - startTime;
-    
+
     log.section('📊 Handler Summary');
     console.log(`${colors.gray}Duration: ${duration}ms${colors.reset}`);
     console.log(`${colors.gray}Failures analyzed: ${failures.length}${colors.reset}`);
-    
+
     if (options.dryRun) {
       console.log(`\n${colors.yellow}🔍 DRY RUN MODE: No changes were applied${colors.reset}`);
       console.log(`${colors.blue}💡 To apply changes, run: bun failure-handler.ts --auto-fix${colors.reset}`);
     }
-    
+
     if (failures.length > 0) {
       console.log(`\n${colors.yellow}🎯 Next Steps:${colors.reset}`);
       if (options.dryRun) {
@@ -658,7 +643,7 @@ async function handleFailures() {
         console.log('4. Re-run validation to verify fixes');
       }
     }
-    
+
   } catch (error: any) {
     log.error(`Failure handler error: ${error.message}`);
     if (options.verbose) {

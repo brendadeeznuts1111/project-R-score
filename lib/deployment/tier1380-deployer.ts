@@ -1,13 +1,4 @@
-/**
- * 🚀 Tier1380Deployer - Production-Grade Deployment System
- *
- * Enterprise deployment orchestrator with Bun Shell integration,
- * Runtime Hardening v4.5 features, and comprehensive rollback safety.
- *
- * @version 4.5
- * @see lib/r2/signed-url.ts for R2 signed URL generation
- * @see lib/s3-content-encoding.ts for compression support
- */
+// lib/deployment/tier1380-deployer.ts — Production deployment orchestrator with Bun Shell integration
 
 import { $ } from 'bun';
 
@@ -85,12 +76,12 @@ export class Tier1380Deployer {
         export TIER1380_SNAPSHOT_ID=${snapshotId}
         export TIER1380_TIMESTAMP=${timestamp}
         export TIER1380_CONTENT_ENCODING=${options.contentEncoding || 'none'}
-        
+
         # Run deployment with timeout and resource limits
         timeout 300 ./deploy.sh --id ${snapshotId} \
           ${options.contentEncoding ? `--content-encoding ${options.contentEncoding}` : ''} \
           ${options.signedUrl ? '--signed-url' : ''}
-        
+
         # Capture deployment checksum for verification
         sha256sum ${backupPath}/**/*.json 2>/dev/null | head -5
       `
@@ -186,10 +177,10 @@ export class Tier1380Deployer {
         --reason "${error.message.replace(/"/g, '\\"')}" \
         --log ${rollbackLog} \
         2>&1 | tee -a ${rollbackLog}
-      
+
       # Cleanup temporary files (keep backup)
       find /tmp -name "tier1380-*" -mtime +1 -delete 2>/dev/null || true
-      
+
       # Report rollback completion
       echo "ROLLBACK_COMPLETE $(date -u +%Y-%m-%dT%H:%M:%SZ)"
     `.nothrow();
@@ -210,10 +201,10 @@ export class Tier1380Deployer {
       # Check R2 bucket accessibility
       curl -s -o /dev/null -w "%{http_code}" \
         https://scanner-cookies.r2.cloudflarestorage.com/health 2>/dev/null || echo "000"
-      
+
       # Verify snapshot exists
       bun run ./lib/r2/verify-snapshot.ts --id ${snapshotId} 2>/dev/null || echo "NOT_FOUND"
-      
+
       # Check system resources
       free -m | awk 'NR==2{printf "%.1f", $3*100/$2}'
     `

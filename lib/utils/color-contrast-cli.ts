@@ -1,14 +1,4 @@
-#!/usr/bin/env bun
-/**
- * ♿ Color Contrast Checker CLI (WCAG Accessibility)
- *
- * Check color contrast ratios for WCAG AA/AAA compliance
- *
- * Usage:
- *   bun run color-contrast --fg="hsl(0, 100%, 50%)" --bg="hsl(0, 0%, 95%)"
- *   bun run color-contrast --fg="#ef4444" --bg="#ffffff"
- *   bun run color-contrast --find --bg="hsl(210, 20%, 95%)" --hue=0
- */
+// lib/utils/color-contrast-cli.ts — Color contrast checker CLI for WCAG accessibility
 
 import {
   checkContrast,
@@ -192,10 +182,10 @@ Options:
 Examples:
   # Check red on white
   bun run color-contrast --fg="#ef4444" --bg="#ffffff"
-  
+
   # Find accessible foreground for light blue background
   bun run color-contrast --find --bg="hsl(210, 20%, 95%)" --hue=0
-  
+
   # Check status colors on dark background
   bun run color-contrast --fg="hsl(135, 95%, 65%)" --bg="hsl(0, 0%, 10%)"
 `);

@@ -1,9 +1,4 @@
-/**
- * WebAssembly API Reference
- *
- * Structured reference of the WebAssembly JS API surface.
- * Used by the CLI inspector, doc generation, and extension points.
- */
+// lib/docs/wasm-reference.ts — WebAssembly API reference
 
 // ─── Types ───────────────────────────────────────────────────────────
 

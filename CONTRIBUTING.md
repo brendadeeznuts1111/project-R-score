@@ -6,8 +6,7 @@ Thank you for your interest in contributing to FactoryWager! This guide will hel
 
 ### Prerequisites
 
-- **Bun** 1.0+ (recommended)
-- **Node.js** 18+ (fallback)
+- **Bun** 1.0+
 - **Git** for version control
 - **GitHub Account** for collaboration
 

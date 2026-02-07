@@ -1,16 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Documentation Constants Validator
- *
- * Specialized validation tool for documentation constants
- * in lib/documentation/constants with comprehensive error handling.
- *
- * Usage:
- *   bun run lib/documentation-validator.ts
- *   bun run lib/documentation-validator.ts --urls
- *   bun run lib/documentation-validator.ts --constants
- *   bun run lib/documentation-validator.ts --heal
- */
+// lib/docs/documentation-validator.ts — Documentation constants validator
 
 // Entry guard check
 if (import.meta.path !== Bun.main) {

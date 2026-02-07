@@ -1,4 +1,4 @@
-// lib/tier1380-syscalls.ts — Platform-optimized file operations
+// lib/deployment/tier1380-syscalls.ts — Platform-optimized file operations
 
 /**
  * PLATFORM-SPECIFIC SYSCALL RISK MATRIX

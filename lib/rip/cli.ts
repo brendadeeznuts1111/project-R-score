@@ -1,8 +1,4 @@
-/**
- * FACTORYWAGER RIPGREP v4.0 - CLI Interface
- * 
- * Command-line interface for code analysis and transmutation
- */
+// lib/rip/cli.ts — CLI interface for code analysis and transmutation
 
 import { createRipgrepEngine, type PurgeParams } from './index';
 
@@ -50,11 +46,11 @@ EXAMPLES:
    */
   async purgeCommand(args: string[]): Promise<void> {
     const params = this.parseArgs(args);
-    
+
     try {
       console.log('⚡ Generating RIPGREP purge...');
       const result = await this.engine.purgeRipgrep(params);
-      
+
       console.log(`
 📋 Purge Generated
 ═══════════════════════════════════════════════════════════════
@@ -81,16 +77,16 @@ ${result.results.map(r => `  • ${r}`).join('\n')}
    */
   async linksCommand(args: string[]): Promise<void> {
     const directory = args[0] || '.';
-    
+
     try {
       console.log(`🔍 Scanning for broken links in: ${directory}`);
       const links = await this.engine.scanBrokenLinks(directory);
-      
+
       if (links.length === 0) {
         console.log('✅ No broken links found');
         return;
       }
-      
+
       console.log(`
 🔗 Broken Links Found (${links.length})
 ═══════════════════════════════════════════════════════════════
@@ -110,16 +106,16 @@ ${links.map(link => `  • ${link}`).join('\n')}
    */
   async nonbunCommand(args: string[]): Promise<void> {
     const directory = args[0] || '.';
-    
+
     try {
       console.log(`🔍 Scanning for non-Bun code in: ${directory}`);
       const nonBun = await this.engine.scanNonBunCode(directory);
-      
+
       if (nonBun.length === 0) {
         console.log('✅ No non-Bun code patterns found');
         return;
       }
-      
+
       console.log(`
 ⚠️  Non-Bun Code Found (${nonBun.length})
 ═══════════════════════════════════════════════════════════════
@@ -143,7 +139,7 @@ ${nonBun.map(code => `  • ${code}`).join('\n')}
    */
   configCommand(): void {
     const config = this.engine.getConfig();
-    
+
     console.log(`
 ⚙️  RIPGREP Configuration
 ═══════════════════════════════════════════════════════════════
@@ -168,11 +164,11 @@ Defaults:
    */
   private parseArgs(args: string[]): PurgeParams {
     const params: PurgeParams = {};
-    
+
     for (let i = 0; i < args.length; i++) {
       const arg = args[i];
       const next = args[i + 1];
-      
+
       switch (arg) {
         case '--scope':
           if (next) params.scope = next;
@@ -191,7 +187,7 @@ Defaults:
           break;
       }
     }
-    
+
     return params;
   }
 
@@ -200,7 +196,7 @@ Defaults:
    */
   async run(argv: string[]): Promise<void> {
     const [command, ...args] = argv;
-    
+
     switch (command) {
       case 'purge':
         await this.purgeCommand(args);

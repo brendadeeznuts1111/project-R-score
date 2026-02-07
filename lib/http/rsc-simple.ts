@@ -1,11 +1,4 @@
-/**
- * Simple RSC Handler - Using Bun's Built-in Keep-Alive Pooling
- *
- * Achieves 85% of HTTP/2 multiplexing performance with zero custom implementation.
- * Leverages Bun's native connection pooling for optimal performance.
- *
- * @see {@link https://bun.sh/docs/api/fetch} Built-in fetch with keep-alive
- */
+// lib/http/rsc-simple.ts — Simple RSC handler using built-in keep-alive pooling
 
 interface SimpleRSCRequest {
   pathname: string;

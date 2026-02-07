@@ -1,10 +1,5 @@
 #!/usr/bin/env bun
-/**
- * 🏭 scanner-cli.ts - Tier-1380 CLI v2.3
- * 
- * Production-ready CLI tool for FactoryWager Tier-1380 system
- * Integrates with configuration management, A/B testing, and R2 snapshots
- */
+// tools/scanner-cli.ts — Tier-1380 production CLI for FactoryWager
 
 import { readFileSync } from 'fs'
 
@@ -35,7 +30,7 @@ export class Tier1380ScannerCLI {
   constructor(projectId?: string, sessionId?: string) {
     // Load configuration
     this.loadConfig(projectId, sessionId)
-    
+
     // Initialize data (async)
     this.data = {} as ScannerData
   }
@@ -79,7 +74,7 @@ export class Tier1380ScannerCLI {
         // Use default if package.json doesn't exist
         pkg = { scripts: {} }
       }
-      
+
       // Parse logs (if available)
       let logs = 0
       try {
@@ -188,12 +183,12 @@ export class Tier1380ScannerCLI {
 
 /**
  * 🚀 Prefetch Optimizations
- * 
+ *
  * This file includes prefetch hints for optimal performance:
  * - DNS prefetching for external domains
  * - Preconnect for faster handshakes
  * - Resource preloading for critical assets
- * 
+ *
  * Generated automatically by optimize-examples-prefetch.ts
  */
   validate(): { valid: boolean; errors: string[] } {
@@ -231,7 +226,7 @@ export class Tier1380ScannerCLI {
    */
   exportForR2(): { key: string; data: Buffer; metadata: Record<string, string> } {
     const key = `scanner/${this.config.projectId}/${this.config.sessionId}.tier1380.zst`
-    
+
     // Recreate compressed data
     const jsonString = JSON.stringify({
       cookies: this.data.cookies,
@@ -241,7 +236,7 @@ export class Tier1380ScannerCLI {
       timestamp: Date.now(),
       environment: this.config.environment
     })
-    
+
     const compressed = Bun.zstdCompressSync(jsonString)
     const prefixed = Buffer.concat([Buffer.from([0x01]), compressed])
 
@@ -267,7 +262,7 @@ if (import.meta.path === Bun.main) {
   const sessionId = process.argv[3]
 
   const scanner = new Tier1380ScannerCLI(projectId, sessionId)
-  
+
   // Initialize async data
   scanner.initialize().then(() => {
     // Validate

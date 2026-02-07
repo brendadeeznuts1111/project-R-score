@@ -1,12 +1,4 @@
-/**
- * 🔐 Tier-1380 Security MCP Server (Bun-Optimized)
- *
- * Model Context Protocol server for enterprise security operations
- * Built with Bun runtime for maximum performance and native integration
- * Exposes security tools, resources, and prompts to LLM applications
- *
- * @version 4.5
- */
+// lib/security/mcp-server.ts — Security MCP server for enterprise operations
 
 import { validateHost } from '../utils/env-validator';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';

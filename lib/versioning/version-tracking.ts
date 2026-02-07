@@ -1,9 +1,4 @@
-/**
- * 🔄 Version Tracking & Rollback System
- *
- * Comprehensive version management for endpoints and component URIs
- * with rollback capabilities, audit trails, and deployment tracking
- */
+// lib/versioning/version-tracking.ts — Version tracking and rollback system
 
 import { write, read } from 'bun';
 

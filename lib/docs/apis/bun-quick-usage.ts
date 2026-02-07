@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * ⚡ Bun Quick Usage Patterns
- *
- * Essential code snippets demonstrating Bun's most powerful features
- * for rapid development and production workflows.
- */
+// lib/docs/apis/bun-quick-usage.ts — Bun quick usage patterns
 
 export const QuickUsagePatterns = {
   tableWithColoredStatus: `console.log(Bun.inspect.table(data, columns, { colors: true }));`,

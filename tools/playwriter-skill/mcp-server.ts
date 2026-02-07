@@ -2,9 +2,9 @@
 
 /**
  * Playwriter MCP Server for Kimi CLI
- * 
+ *
  * This provides MCP tool definitions for browser automation
- * 
+ *
  * Usage:
  *   bun run mcp-server.ts
  */
@@ -120,7 +120,7 @@ const TOOLS = [
   },
   {
     name: 'browser_screenshot_r2',
-    description: R2_ENABLED 
+    description: R2_ENABLED
       ? 'Take a screenshot and upload to R2 storage'
       : 'Upload screenshot to R2 (R2 not configured - set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY)',
     inputSchema: {
@@ -290,10 +290,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         }
 
         const { session, fullPage = true, labels = false, bucket } = args as { session: number; fullPage?: boolean; labels?: boolean; bucket?: string };
-        
+
         try {
           const r2 = new PlaywriterR2Integration({ sessionId: session, bucket });
-          
+
           // Take screenshot via playwriter
           let code: string;
           if (labels) {
@@ -301,17 +301,17 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           } else {
             code = `const buffer = await page.screenshot({ fullPage: ${fullPage} }); console.log('SCREENSHOT_BASE64:' + buffer.toString('base64'));`;
           }
-          
+
           const result = await executePlaywriter(['-s', String(session), '-e', code]);
           const match = result.stdout.match(/SCREENSHOT_BASE64:([A-Za-z0-9+/=]+)/);
-          
+
           if (!match) {
             return {
               content: [{ type: 'text', text: 'Failed to capture screenshot' }],
               isError: true,
             };
           }
-          
+
           const buffer = Buffer.from(match[1], 'base64');
           const url = await r2.uploadScreenshot(new Uint8Array(buffer), {
             url: 'captured via playwriter',
@@ -321,7 +321,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             fullPage,
             labels,
           });
-          
+
           return {
             content: [
               { type: 'text', text: `Screenshot uploaded to R2` },
@@ -345,24 +345,24 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         }
 
         const { session, bucket } = args as { session: number; bucket?: string };
-        
+
         try {
           const r2 = new PlaywriterR2Integration({ sessionId: session, bucket });
-          
+
           // Get accessibility snapshot
           const code = `const snapshot = await accessibilitySnapshot({ page }); console.log('SNAPSHOT_JSON:' + JSON.stringify(snapshot));`;
           const result = await executePlaywriter(['-s', String(session), '-e', code]);
           const match = result.stdout.match(/SNAPSHOT_JSON:(.+)/);
-          
+
           if (!match) {
             return {
               content: [{ type: 'text', text: 'Failed to capture snapshot' }],
               isError: true,
             };
           }
-          
+
           const url = await r2.uploadSnapshot(match[1]);
-          
+
           return {
             content: [
               { type: 'text', text: `Snapshot uploaded to R2` },
@@ -386,15 +386,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         }
 
         const { session, bucket } = args as { session: number; bucket?: string };
-        
+
         try {
           const r2 = new PlaywriterR2Integration({ sessionId: session, bucket });
           const artifacts = await r2.listArtifacts();
-          
-          const formatted = artifacts.map(a => 
+
+          const formatted = artifacts.map(a =>
             `- ${a.key} (${(a.size / 1024).toFixed(2)} KB, ${a.lastModified.toISOString()})`
           ).join('\n');
-          
+
           return {
             content: [
               { type: 'text', text: `Artifacts for session ${session}:` },

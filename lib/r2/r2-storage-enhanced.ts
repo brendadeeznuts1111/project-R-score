@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * ☁️ Enhanced R2 Storage with Package Integration
- *
- * Provides R2 storage operations specifically for package documentation,
- * with compression, caching, and package-specific bucket management.
- */
+// lib/r2/r2-storage-enhanced.ts — Enhanced R2 storage with package integration
 
 import { RSS_URLS } from '../../config/urls';
 
@@ -96,7 +89,7 @@ export class R2Storage {
         fetch('${RSS_URLS.OUR_FEED}/${packageName}').then(r => r.json()).then(feed => {
             const container = document.getElementById('rss-feed');
             if (feed && feed.items) {
-                container.innerHTML = feed.items.map(item => 
+                container.innerHTML = feed.items.map(item =>
                     \`<article><h3>\${item.title}</h3><p>\${item.description || ''}</p></article>\`
                 ).join('');
             }

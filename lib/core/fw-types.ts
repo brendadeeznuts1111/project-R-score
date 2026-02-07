@@ -1,11 +1,4 @@
-/**
- * FactoryWager Type Definitions
- *
- * Project-specific types formerly in lib/types/index.ts.
- * Core enterprise types are in core-types.ts (exported separately by lib/index.ts).
- *
- * @version 1.0.0
- */
+// lib/core/fw-types.ts — FactoryWager project-specific type definitions
 
 // FactoryWager specific types
 export type Severity = 'success' | 'warning' | 'error' | 'muted';

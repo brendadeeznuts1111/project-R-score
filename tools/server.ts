@@ -1,22 +1,17 @@
 #!/usr/bin/env bun
-/**
- * Project Server - Example web server with cookie/session handling
- * Logs all session activity with project context from Bun.main
- * 
- * Enhanced with fetch proxy service demonstrating Bun's fetch capabilities
- */
+// tools/server.ts — Web server with cookie/session handling and fetch proxy
 
 import { validateHost } from '../lib/utils/env-validator';
-import { fetchProxy, type ProxyRequest } from './services/fetch-proxy.ts';
+import { fetchProxy, type ProxyRequest } from './services/fetch-proxy';
 
 /**
  * 🚀 Prefetch Optimizations
- * 
+ *
  * This file includes prefetch hints for optimal performance:
  * - DNS prefetching for external domains
  * - Preconnect for faster handshakes
  * - Resource preloading for critical assets
- * 
+ *
  * Generated automatically by optimize-examples-prefetch.ts
  */
 
@@ -149,9 +144,9 @@ Bun.serve({
             <p><strong>Project:</strong> ${Bun.main}</p>
             <p><strong>Visit count:</strong> ${newSession.visitCount}</p>
             <p><strong>User ID:</strong> ${newSession.userId}</p>
-            
+
             <h2>📡 Fetch Proxy Endpoints</h2>
-            
+
             <div class="endpoint">
               <h3>Basic Proxy</h3>
               <p>Proxy any URL through the server:</p>
@@ -159,7 +154,7 @@ Bun.serve({
               <br><br>
               <a href="/proxy?url=https://example.com">Try: /proxy?url=https://example.com</a>
             </div>
-            
+
             <div class="endpoint">
               <h3>Bun Documentation Proxy</h3>
               <p>Fetch Bun docs with optimizations:</p>
@@ -167,7 +162,7 @@ Bun.serve({
               <br><br>
               <a href="/proxy?url=https://bun.sh/docs">Try: /proxy?url=https://bun.sh/docs</a>
             </div>
-            
+
             <div class="endpoint">
               <h3>Proxy Statistics</h3>
               <p>View proxy performance and cache stats:</p>
@@ -175,7 +170,7 @@ Bun.serve({
               <br><br>
               <a href="/proxy-stats">View Stats</a>
             </div>
-            
+
             <div class="endpoint">
               <h3>Health Check</h3>
               <p>Check system health:</p>
@@ -183,11 +178,11 @@ Bun.serve({
               <br><br>
               <a href="/health">Check Health</a>
             </div>
-            
+
             <hr>
             <h3>Session Data:</h3>
             <pre>${JSON.stringify(newSession, null, 2)}</pre>
-            
+
             <p><a href="/logout">Logout</a></p>
           </body>
         </html>
@@ -222,9 +217,9 @@ Bun.serve({
     // Proxy endpoint - demonstrates Bun's fetch API
     if (patterns.proxy.test(url) && req.method === 'GET') {
       const targetUrl = url.searchParams.get('url') || 'https://example.com';
-      
+
       console.log(`[${projectContext}] Proxy request to: ${targetUrl}`);
-      
+
       try {
         // Use our enhanced fetch proxy service
         const proxyRequest: ProxyRequest = {
@@ -234,11 +229,11 @@ Bun.serve({
           optimize: true, // Enable DNS prefetch and preconnect
           cache: true // Enable caching
         };
-        
+
         const proxyResponse = await fetchProxy.handleProxy(proxyRequest);
-        
+
         console.log(`[${projectContext}] Proxy response: ${proxyResponse.status} (${proxyResponse.timing.total.toFixed(2)}ms)`);
-        
+
         // Return HTML response with proxy info
         const htmlResponse = `
           <!DOCTYPE html>
@@ -258,7 +253,7 @@ Bun.serve({
             </head>
             <body>
               <h1>📡 Proxy Response</h1>
-              
+
               <div class="proxy-info">
                 <h3>Request Information</h3>
                 <p><strong>Target URL:</strong> <a href="${targetUrl}" target="_blank">${targetUrl}</a></p>
@@ -268,7 +263,7 @@ Bun.serve({
                 ${proxyResponse.optimization ? `<p><strong>Optimizations:</strong> ${proxyResponse.optimization.join(', ')}</p>` : ''}
                 ${proxyResponse.cache?.hit ? `<p><strong>Cache:</strong> <span class="success">HIT</span> (${(proxyResponse.cache.age / 1000).toFixed(1)}s old)</p>` : ''}
               </div>
-              
+
               <div class="timing">
                 <h3>Performance Timing</h3>
                 <p><strong>Total Time:</strong> ${proxyResponse.timing.total.toFixed(2)}ms</p>
@@ -276,20 +271,20 @@ Bun.serve({
                 ${proxyResponse.timing.connect ? `<p><strong>Connect Time:</strong> ${proxyResponse.timing.connect.toFixed(2)}ms</p>` : ''}
                 ${proxyResponse.timing.download ? `<p><strong>Download Time:</strong> ${proxyResponse.timing.download.toFixed(2)}ms</p>` : ''}
               </div>
-              
+
               <div class="content">
                 <h3>Response Content</h3>
-                ${proxyResponse.ok ? 
+                ${proxyResponse.ok ?
                   `<pre>${proxyResponse.body.substring(0, 5000)}${proxyResponse.body.length > 5000 ? '\\n\\n... (truncated)' : ''}</pre>` :
                   `<p class="error">Error: ${proxyResponse.body}</p>`
                 }
               </div>
-              
+
               <p><a href="/">← Back to Home</a> | <a href="/proxy-stats">Proxy Stats</a></p>
             </body>
           </html>
         `;
-        
+
         return new Response(htmlResponse, {
           status: proxyResponse.status,
           headers: {
@@ -299,11 +294,11 @@ Bun.serve({
             'X-Proxy-Cache': proxyResponse.cache?.hit ? 'HIT' : 'MISS'
           }
         });
-        
+
       } catch (error: unknown) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
         console.error(`[${projectContext}] Proxy error:`, errorMessage);
-        
+
         return new Response(`
           <!DOCTYPE html>
           <html>
@@ -325,7 +320,7 @@ Bun.serve({
     // Proxy statistics endpoint
     if (patterns.proxyStats.test(url) && req.method === 'GET') {
       const stats = fetchProxy.getStats();
-      
+
       const htmlResponse = `
         <!DOCTYPE html>
         <html>
@@ -343,7 +338,7 @@ Bun.serve({
           </head>
           <body>
             <h1>📊 Proxy Statistics</h1>
-            
+
             <div class="stats">
               <h3>Cache Statistics</h3>
               <table>
@@ -353,7 +348,7 @@ Bun.serve({
                 <tr><td>Stale Entries</td><td class="stale">${stats.cache.entries.filter(e => !e.fresh).length}</td></tr>
               </table>
             </div>
-            
+
             <div class="stats">
               <h3>DNS Cache</h3>
               <table>
@@ -362,22 +357,22 @@ Bun.serve({
                 <tr><td>Fresh Entries</td><td class="fresh">${stats.dns.freshEntries}</td></tr>
               </table>
             </div>
-            
+
             <div class="stats">
               <h3>Rate Limiting</h3>
               <table>
                 <tr><th>Host</th><th>Requests</th><th>Reset In</th></tr>
-                ${stats.rateLimit.entries.map(entry => 
+                ${stats.rateLimit.entries.map(entry =>
                   `<tr><td>${entry.host}</td><td>${entry.count}</td><td>${(entry.resetIn / 1000).toFixed(1)}s</td></tr>`
                 ).join('')}
               </table>
             </div>
-            
+
             <p><a href="/">← Back to Home</a> | <a href="/health">Health Check</a></p>
           </body>
         </html>
       `;
-      
+
       return new Response(htmlResponse, {
         status: 200,
         headers: { 'Content-Type': 'text/html' }
@@ -387,7 +382,7 @@ Bun.serve({
     // Health check endpoint
     if (patterns.health.test(url) && req.method === 'GET') {
       const health = await fetchProxy.healthCheck();
-      
+
       const htmlResponse = `
         <!DOCTYPE html>
         <html>
@@ -405,23 +400,23 @@ Bun.serve({
           </head>
           <body>
             <h1>🏥 Health Check</h1>
-            
+
             <div class="health">
               <h3>Overall Status: <span class="${health.status === 'healthy' ? 'healthy' : 'unhealthy'}">${health.status.toUpperCase()}</span></h3>
-              
+
               <table>
                 <tr><th>Check</th><th>Status</th></tr>
-                ${Object.entries(health.checks).map(([check, status]) => 
+                ${Object.entries(health.checks).map(([check, status]) =>
                   `<tr><td>${check}</td><td class="${status ? 'healthy' : 'unhealthy'}">${status ? '✅ PASS' : '❌ FAIL'}</td></tr>`
                 ).join('')}
               </table>
             </div>
-            
+
             <p><a href="/">← Back to Home</a> | <a href="/proxy-stats">Proxy Stats</a></p>
           </body>
         </html>
       `;
-      
+
       return new Response(htmlResponse, {
         status: health.status === 'healthy' ? 200 : 503,
         headers: { 'Content-Type': 'text/html' }

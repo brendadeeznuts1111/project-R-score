@@ -1,3 +1,5 @@
+// lib/cli/chrome-integration.ts — Chrome app integration with docs fetcher
+
 import { EnhancedDocsFetcher } from './docs/index-fetcher-enhanced';
 
 export interface ChromeAppConfig {

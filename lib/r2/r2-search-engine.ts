@@ -1,15 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🔍 R2 Full-Text Search Engine
- *
- * Advanced search capabilities for R2 storage:
- * - Full-text indexing of JSON and text content
- * - Fuzzy matching and relevance scoring
- * - Faceted search with filters
- * - Real-time index updates
- * - Multi-language support
- */
+// lib/r2/r2-search-engine.ts — R2 full-text search engine
 
 import { styled, FW_COLORS } from '../theme/colors';
 import { r2EventSystem } from './r2-event-system';

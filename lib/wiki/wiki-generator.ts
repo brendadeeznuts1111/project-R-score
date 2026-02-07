@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Internal Wiki URL Generator CLI
- *
- * Uses BUN_UTILS_URLS to create internal wiki references and ideas
- * for documentation, knowledge management, and team collaboration.
- */
+// lib/wiki/wiki-generator.ts — Internal wiki URL generator using BUN_UTILS_URLS
 
 import { UtilsCategory, BUN_UTILS_URLS, BUN_UTILS_EXAMPLES } from '../docs/constants/utils';
 

@@ -65,8 +65,8 @@ docs-directory/
 │   ├── App.tsx                  # Main application
 │   └── main.tsx                 # Entry point
 ├── package.json
+├── server.ts
 ├── tailwind.config.js
-├── vite.config.ts
 └── README.md
 ```
 

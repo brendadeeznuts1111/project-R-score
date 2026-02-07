@@ -1,8 +1,4 @@
-/**
- * Advanced Cache Management with Eviction Policies
- *
- * Implements LRU, TTL-based, and size-limited caching with automatic cleanup
- */
+// lib/performance/cache-management.ts — Advanced cache management with eviction policies
 
 // ============================================================================
 // CACHE INTERFACES

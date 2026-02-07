@@ -1,3 +1,5 @@
+// lib/security/secret-lifecycle.ts — Secret lifecycle and rotation management
+
 import { env } from 'bun';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname } from 'node:path';

@@ -1,10 +1,4 @@
-/**
- * 📚 Documentation Index
- *
- * Central documentation management for the monorepo
- *
- * @version 1.0.0
- */
+// lib/docs/index.ts — Documentation index and utilities
 
 // Re-export documentation patterns
 export * from './patterns';

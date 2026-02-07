@@ -1,19 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🛡️ BUN-FIRST GUARD
- *
- * Runtime guard that prevents Node.js API usage in favor of Bun-native APIs.
- * Can be imported at the top of files to enforce Bun-first compliance.
- *
- * @example
- * ```typescript
- * import '../lib/guards/bun-first-guard'; // Must be first import
- *
- * // This will throw if you try to use child_process
- * import { spawn } from 'child_process'; // ❌ Throws!
- * ```
- */
+// lib/guards/bun-first-guard.ts — Runtime guard enforcing Bun-native API usage
 
 // Violation tracking
 const violations: Array<{

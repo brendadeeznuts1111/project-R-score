@@ -1,10 +1,5 @@
 #!/usr/bin/env bun
-
-/**
- * senior-fix-old-json.ts – Add to Your 1770398420427.json!
- * 
- * Enhances existing JSON with full markdown feature counts
- */
+// tools/senior-fix-old-json.ts — Enhance existing JSON with markdown feature counts
 
 import { scanFeatures } from '../lib/docs/markdown-scanner';
 

@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🧠 Smart Cache Manager
- *
- * AI-enhanced caching system with predictive capabilities,
- * access pattern learning, and intelligent optimization.
- */
+// lib/ai/smart-cache-manager.ts — AI-enhanced caching with predictive capabilities
 
 import { CacheManager } from '../performance/cache-manager';
 import { aiOperations } from './ai-operations-manager';

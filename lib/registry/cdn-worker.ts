@@ -1,12 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 🌐 Registry CDN Worker
- *
- * Cloudflare Worker for edge-cached npm registry
- * - Serves packages from R2 with caching
- * - Provides signed URLs for private packages
- * - Handles npm API routes at the edge
- */
+// lib/registry/cdn-worker.ts — Cloudflare Worker for edge-cached npm registry
 
 import type { PackageManifest } from './registry-types';
 

@@ -1,10 +1,4 @@
-/**
- * 🔐 Tier-1380 Secure Deployment with Password Authentication
- *
- * Enterprise deployment system with password-based authentication
- *
- * @version 4.5
- */
+// lib/security/secure-deployment.ts — Secure deployment with password authentication
 
 import { Tier1380EnterpriseAuth } from './enterprise-auth';
 

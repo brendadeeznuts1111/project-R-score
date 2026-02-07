@@ -1,26 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🤖 AI Operations Manager (Enhanced v2.0 + Security Fixes)
- *
- * Intelligent automation and decision support system
- * for optimizing platform operations.
- *
- * Enhancements:
- * - Bun-native caching with globalCaches integration
- * - High-precision timing with Bun.nanoseconds
- * - Deep equality checks for predictions
- * - Error handling with Bun.openInEditor
- * - Structured logging with color (Bun.color)
- * - Config loading from TOML/YAML (Bun.TOML / Bun.yaml)
- * - Project-specific secret management tie-in
- *
- * Security Fixes:
- * - Memory management with automatic cleanup
- * - Thread-safe operations with mutex locks
- * - Proper resource management
- * - Race condition prevention
- */
+// lib/ai/ai-operations-manager.ts — AI operations manager for platform automation
 
 import { logger } from '../core/structured-logger';
 import { globalCaches } from '../performance/cache-manager';

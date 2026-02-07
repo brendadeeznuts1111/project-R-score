@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 📚 Package Documentation Fetcher
- *
- * Fetches and caches package documentation from npm, GitHub, and other sources.
- * Integrates with R2 for cross-device sync and caching.
- */
+// lib/registry/package-docs.ts — Package documentation fetcher with R2 caching
 
 import { styled, FW_COLORS } from '../theme/colors';
 import { R2StorageAdapter } from './r2-storage';
@@ -436,7 +430,7 @@ export class PackageDocumentationFetcher {
       ${readmeHtml || '<p>No documentation available.</p>'}
     </div>
     <div class="footer">
-      Fetched: ${new Date(doc.fetchedAt).toLocaleString()} | 
+      Fetched: ${new Date(doc.fetchedAt).toLocaleString()} |
       Source: ${doc.source}
     </div>
   </div>

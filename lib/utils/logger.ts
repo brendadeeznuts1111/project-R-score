@@ -1,11 +1,4 @@
-/**
- * 🛠️ Enhanced Logger Utility
- *
- * Centralized logging utility with structured logging, different levels,
- * timestamps, and integration with error handling.
- *
- * @version 2.0.0
- */
+// lib/utils/logger.ts — Structured logging utility
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 

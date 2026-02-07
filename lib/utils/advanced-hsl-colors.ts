@@ -1,12 +1,4 @@
-/**
- * 🎨 Advanced HSL Color Theory Utilities for Bun
- *
- * Implements perceptually-aware color manipulation using Bun.color() with
- * advanced HSL techniques, OKLCH conversion helpers, palette generation,
- * and WCAG accessibility contrast checking.
- *
- * @module advanced-hsl-colors
- */
+// lib/utils/advanced-hsl-colors.ts — Advanced HSL color theory utilities
 
 // ═══════════════════════════════════════════════════════════════
 // TYPE DEFINITIONS

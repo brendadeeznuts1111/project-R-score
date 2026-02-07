@@ -1,4 +1,5 @@
-// lib/documentation/constants/cli.ts
+// lib/docs/constants/cli.ts — CLI documentation categories and URLs
+
 export enum CLICategory {
   INSTALLATION = 'installation',
   CONFIGURATION = 'configuration',
@@ -20,7 +21,7 @@ export const CLI_DOCUMENTATION_URLS = {
     DOCKER: '/docs/cli/install/docker',
     CI_CD: '/docs/cli/install/ci-cd'
   },
-  
+
   [CLICategory.COMMANDS]: {
     MAIN: '/docs/cli',
     RUN: '/docs/cli/run',
@@ -39,7 +40,7 @@ export const CLI_DOCUMENTATION_URLS = {
     PM: '/docs/cli/pm',
     X: '/docs/cli/x'
   },
-  
+
   [CLICategory.OPTIONS]: {
     FLAGS: '/docs/cli/flags',
     ENVIRONMENT_VARIABLES: '/docs/cli/env',
@@ -47,7 +48,7 @@ export const CLI_DOCUMENTATION_URLS = {
     TS_CONFIG: '/docs/cli/tsconfig',
     PACKAGE_JSON: '/docs/cli/package-json'
   },
-  
+
   [CLICategory.DEBUGGING]: {
     LOGGING: '/docs/cli/logging',
     VERBOSE: '/docs/cli/verbose',
@@ -68,7 +69,7 @@ export const CLI_COMMAND_EXAMPLES = {
     ADD_PACKAGE: 'bun add zod',
     REMOVE_PACKAGE: 'bun remove lodash'
   },
-  
+
   ADVANCED: {
     CREATE_REACT_APP: 'bun create react-app my-app',
     CREATE_NEXT_APP: 'bun create next-app',
@@ -77,7 +78,7 @@ export const CLI_COMMAND_EXAMPLES = {
     INIT_PROJECT: 'bun init',
     EXECUTE_PACKAGE: 'bunx cowsay "Hello from Bun!"'
   },
-  
+
   DEVELOPMENT: {
     DEV_SERVER: 'bun dev',
     HOT_RELOAD: 'bun --hot server.ts',

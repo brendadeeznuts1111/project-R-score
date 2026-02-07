@@ -1,14 +1,4 @@
-/**
- * 🖥️ Bun.Terminal PTY API - Bun v1.3.5+ Implementation
- *
- * Production-grade pseudo-terminal support for interactive applications.
- * Enables running vim, htop, bash, and other TTY-dependent programs.
- *
- * @version 4.5
- * @requires Bun >= 1.3.5
- * @platform POSIX only (Linux, macOS)
- * @see https://bun.sh/docs/runtime/child-process#terminal-pty-support
- */
+// lib/cli/pty-terminal.ts — PTY terminal support for interactive applications
 
 /**
  * Check if PTY is supported on current platform

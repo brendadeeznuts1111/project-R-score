@@ -1,11 +1,4 @@
-/**
- * 🔐 Tier-1380 Secret Manager v4.5
- *
- * Cross-platform enterprise secret storage with Windows Credential Manager,
- * macOS Keychain, and Linux libsecret integration
- *
- * @version 4.5
- */
+// lib/security/tier1380-secret-manager.ts — Cross-platform enterprise secret storage
 
 import { styled, log } from '../theme/colors';
 

@@ -1,13 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Minimal CLI Tool with Validation Integration
- *
- * Shows how to add validation to existing CLI tools
- * with just 2 lines of code.
- *
- * Usage:
- *   bun run lib/minimal-cli-example.ts
- */
+// lib/cli/minimal-cli-example.ts — Minimal CLI tool with validation integration
 
 // Entry guard check
 if (import.meta.path !== Bun.main) {

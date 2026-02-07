@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Response Buffering and DNS Optimization Test Suite
- *
- * Tests the implementation of Bun's response buffering and DNS optimization
- * features as documented in https://bun.com/docs/runtime/networking/fetch#response-buffering
- */
+// lib/performance/response-buffering-tests.ts — Response buffering and DNS optimization tests
 
 // Entry guard check
 if (import.meta.main) {

@@ -1,20 +1,5 @@
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 #!/usr/bin/env bun
-/**
- * 🔍 Unicode-Aware URL Validator
- * 
- * Complete URL validation with Unicode support for Base + Subpath + Fragment
- * Usage: bun unicode-aware-validator.ts [options]
- */
+// tools/unicode-aware-validator.ts — Unicode-aware URL validator
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -106,14 +91,14 @@ const recordTest = (name: string, passed: boolean, message: string, details?: an
     details,
     timestamp: new Date().toISOString()
   };
-  
+
   testResults.summary.total++;
   if (passed) {
     testResults.summary.passed++;
   } else {
     testResults.summary.failed++;
   }
-  
+
   return passed;
 };
 
@@ -138,17 +123,17 @@ function getUnicodeInfo(str: string): {
   const hasUnicodeChars = hasUnicode(str);
   const unicodeChars: string[] = [];
   const unicodeRanges: string[] = [];
-  
+
   if (hasUnicodeChars) {
     for (let i = 0; i < str.length; i++) {
       const char = str[i];
       if (hasUnicode(char)) {
         unicodeChars.push(char);
-        
+
         // Detect Unicode ranges
         const code = char.charCodeAt(0);
         let range = 'Unknown';
-        
+
         if (code >= 0x00C0 && code <= 0x00FF) range = 'Latin-1 Supplement';
         else if (code >= 0x0100 && code <= 0x017F) range = 'Latin Extended-A';
         else if (code >= 0x0400 && code <= 0x04FF) range = 'Cyrillic';
@@ -162,14 +147,14 @@ function getUnicodeInfo(str: string): {
         else if (code >= 0x1F680 && code <= 0x1F6FF) range = 'Transport and Map';
         else if (code >= 0x2600 && code <= 0x26FF) range = 'Misc Symbols';
         else if (code >= 0x2700 && code <= 0x27BF) range = 'Dingbats';
-        
+
         if (!unicodeRanges.includes(range)) {
           unicodeRanges.push(range);
         }
       }
     }
   }
-  
+
   return {
     hasUnicode: hasUnicodeChars,
     isASCII: !hasUnicodeChars,
@@ -204,29 +189,29 @@ function validateURLUnicode(url: string): {
 } {
   const errors: string[] = [];
   const warnings: string[] = [];
-  
+
   try {
     // Parse the URL
     const fullURL = url.startsWith('http') ? url : `https://bun.sh${url}`;
     const parsed = new URL(fullURL);
-    
+
     // Base URL validation
     const baseValid = !!(parsed.protocol && parsed.hostname && parsed.pathname);
     if (!baseValid) {
       errors.push('Invalid base URL structure');
     }
-    
+
     // Get overall Unicode info
     const overallUnicodeInfo = getUnicodeInfo(url);
-    
+
     // Subpath analysis
     const pathname = parsed.pathname;
     const subpaths = pathname.split('/').filter(segment => segment.length > 0);
     const hasSubpath = subpaths.length > 0;
-    
+
     let subpathValid = true;
     const subpathUnicodeInfos: any[] = [];
-    
+
     if (hasSubpath) {
       subpaths.forEach((subpath, index) => {
         const subpathUnicodeInfo = getUnicodeInfo(subpath);
@@ -235,7 +220,7 @@ function validateURLUnicode(url: string): {
           index,
           ...subpathUnicodeInfo
         });
-        
+
         // Length validation
         if (subpath.length === 0) {
           subpathValid = false;
@@ -244,7 +229,7 @@ function validateURLUnicode(url: string): {
           subpathValid = false;
           errors.push(`Subpath too long: ${subpath}`);
         }
-        
+
         // Character validation based on mode
         if (options.asciiOnly && subpathUnicodeInfo.hasUnicode) {
           subpathValid = false;
@@ -256,13 +241,13 @@ function validateURLUnicode(url: string): {
               // Strict mode: only allow certain Unicode ranges
               const allowedRanges = ['Latin-1 Supplement', 'Latin Extended-A'];
               const hasInvalidRange = subpathUnicodeInfo.unicodeRanges.some(range => !allowedRanges.includes(range));
-              
+
               if (hasInvalidRange) {
                 subpathValid = false;
                 errors.push(`Unicode range not allowed in subpath: ${subpathUnicodeInfo.unicodeRanges.join(', ')}`);
               }
             }
-            
+
             warnings.push(`Unicode characters found in subpath: ${subpath}`);
           } else if (!/^[a-zA-Z0-9_-]+$/.test(subpath)) {
             subpathValid = false;
@@ -273,7 +258,7 @@ function validateURLUnicode(url: string): {
           errors.push(`Invalid characters in subpath: ${subpath}`);
         }
       });
-      
+
       // Validate common documentation patterns
       if (subpaths[0] !== 'docs') {
         warnings.push('First subpath is not "docs"');
@@ -281,16 +266,16 @@ function validateURLUnicode(url: string): {
     } else {
       warnings.push('No subpaths found');
     }
-    
+
     // Fragment validation
     const hasFragment = !!parsed.hash;
     let fragmentValid = true;
     let fragmentUnicodeInfo: any;
-    
+
     if (hasFragment) {
       const fragment = parsed.hash.slice(1); // Remove #
       fragmentUnicodeInfo = getUnicodeInfo(fragment);
-      
+
       if (!fragment) {
         fragmentValid = false;
         errors.push('Empty fragment');
@@ -301,7 +286,7 @@ function validateURLUnicode(url: string): {
         fragmentValid = false;
         errors.push('Fragment too long');
       }
-      
+
       // Character validation based on mode
       if (options.asciiOnly && fragmentUnicodeInfo.hasUnicode) {
         fragmentValid = false;
@@ -313,13 +298,13 @@ function validateURLUnicode(url: string): {
             // Strict mode: only allow certain Unicode ranges
             const allowedRanges = ['Latin-1 Supplement', 'Latin Extended-A'];
             const hasInvalidRange = fragmentUnicodeInfo.unicodeRanges.some(range => !allowedRanges.includes(range));
-            
+
             if (hasInvalidRange) {
               fragmentValid = false;
               errors.push(`Unicode range not allowed in fragment: ${fragmentUnicodeInfo.unicodeRanges.join(', ')}`);
             }
           }
-          
+
           warnings.push(`Unicode characters found in fragment: ${fragment}`);
         } else if (!/^[a-zA-Z0-9_-]+$/.test(fragment)) {
           fragmentValid = false;
@@ -330,9 +315,9 @@ function validateURLUnicode(url: string): {
         errors.push(`Invalid characters in fragment: ${fragment}`);
       }
     }
-    
+
     const isValid = baseValid && subpathValid && fragmentValid;
-    
+
     return {
       isValid,
       baseValid,
@@ -353,7 +338,7 @@ function validateURLUnicode(url: string): {
       errors,
       warnings
     };
-    
+
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return {
@@ -381,22 +366,22 @@ function validateURLUnicode(url: string): {
 // Main validation function
 async function runUnicodeValidation() {
   console.log(`${colors.cyan}🔍 Unicode-Aware URL Validator${colors.reset}`);
-  
+
   const mode = options.asciiOnly ? 'ASCII-Only' : options.unicode ? 'Unicode-Enabled' : 'Standard';
   const strictness = options.strict ? ' (Strict)' : '';
   console.log(`${colors.gray}Mode: ${mode}${strictness}${colors.reset}\n`);
-  
+
   const startTime = Date.now();
-  
+
   try {
     // Load constants
     const cliConstants = await import('./lib/documentation/constants/cli.ts');
     const utilsConstants = await import('./lib/documentation/constants/utils.ts');
-    
+
     // Collect all URLs
     const allURLs: string[] = [];
     const urlSources: Record<string, string> = {};
-    
+
     // Collect CLI URLs
     Object.entries(cliConstants.CLI_DOCUMENTATION_URLS).forEach(([category, urls]) => {
       if (typeof urls === 'object') {
@@ -406,7 +391,7 @@ async function runUnicodeValidation() {
         });
       }
     });
-    
+
     // Collect Utils URLs
     Object.entries(utilsConstants.BUN_UTILS_URLS).forEach(([category, urls]) => {
       if (typeof urls === 'object') {
@@ -416,7 +401,7 @@ async function runUnicodeValidation() {
         });
       }
     });
-    
+
     // Add Unicode test URLs
     const unicodeTestURLs = [
       '/docs/api/utils#café',
@@ -430,20 +415,20 @@ async function runUnicodeValidation() {
       '/docs/api/utils#العربية',
       '/docs/api/utils#🔥💧🌍'
     ];
-    
+
     unicodeTestURLs.forEach((url, index) => {
       allURLs.push(url);
       urlSources[url] = `UNICODE_TEST.${index + 1}`;
     });
-    
+
     log.section('📊 URL Statistics');
     log.info(`Total URLs to validate: ${allURLs.length}`);
     log.info(`Original URLs: ${allURLs.length - unicodeTestURLs.length}`);
     log.info(`Unicode test URLs: ${unicodeTestURLs.length}`);
-    
+
     // Validate all URLs
     log.section('🔗 Unicode-Aware URL Validation');
-    
+
     let validURLs = 0;
     let invalidURLs = 0;
     let urlsWithUnicode = 0;
@@ -455,51 +440,51 @@ async function runUnicodeValidation() {
       subpathsWithUnicode: 0,
       fragmentsWithUnicode: 0
     };
-    
+
     allURLs.forEach(url => {
       const validation = validateURLUnicode(url);
       validationResults[url] = validation;
-      
+
       if (validation.isValid) {
         validURLs++;
       } else {
         invalidURLs++;
       }
-      
+
       // Track Unicode usage
       if (validation.unicodeInfo.overall.hasUnicode) {
         urlsWithUnicode++;
-        
+
         // Track Unicode ranges and characters
         validation.unicodeInfo.overall.unicodeRanges.forEach(range => unicodeSummary.ranges.add(range));
         validation.unicodeInfo.overall.unicodeChars.forEach(char => unicodeSummary.chars.add(char));
       } else {
         asciiOnlyURLs++;
       }
-      
+
       // Track Unicode in subpaths and fragments
       validation.unicodeInfo.subpaths.forEach(subpathInfo => {
         if (subpathInfo.hasUnicode) {
           unicodeSummary.subpathsWithUnicode++;
         }
       });
-      
+
       if (validation.unicodeInfo.fragment?.hasUnicode) {
         unicodeSummary.fragmentsWithUnicode++;
       }
     });
-    
+
     recordTest('unicode-aware-validation', invalidURLs === 0,
       `${validURLs} valid, ${invalidURLs} invalid URLs`,
-      { 
-        validURLs, 
-        invalidURLs, 
+      {
+        validURLs,
+        invalidURLs,
         totalURLs: allURLs.length,
         urlsWithUnicode,
         asciiOnlyURLs
       }
     );
-    
+
     if (invalidURLs === 0) {
       log.success('Unicode-Aware Validation: OK');
     } else {
@@ -512,22 +497,22 @@ async function runUnicodeValidation() {
         });
       }
     }
-    
+
     // Unicode analysis
     log.section('🌐 Unicode Analysis');
-    
+
     log.info(`URLs with Unicode: ${urlsWithUnicode}/${allURLs.length}`);
     log.info(`ASCII-only URLs: ${asciiOnlyURLs}/${allURLs.length}`);
     log.info(`Subpaths with Unicode: ${unicodeSummary.subpathsWithUnicode}`);
     log.info(`Fragments with Unicode: ${unicodeSummary.fragmentsWithUnicode}`);
-    
+
     if (unicodeSummary.ranges.size > 0) {
       log.info('Unicode ranges found:');
       Array.from(unicodeSummary.ranges).forEach(range => {
         log.verbose(`  ${range}`);
       });
     }
-    
+
     if (unicodeSummary.chars.size > 0 && options.verbose) {
       log.info('Unicode characters found:');
       Array.from(unicodeSummary.chars).forEach(char => {
@@ -535,49 +520,49 @@ async function runUnicodeValidation() {
         log.verbose(`  ${char} (U+${code})`);
       });
     }
-    
+
     // Show detailed results for Unicode test URLs
     if (options.verbose) {
       log.section('🧪 Unicode Test URL Details');
-      
+
       unicodeTestURLs.forEach((url, index) => {
         const validation = validationResults[url];
         console.log(`\n${colors.cyan}${index + 1}. ${url}${colors.reset}`);
         console.log(`   Valid: ${validation.isValid ? '✅' : '❌'}`);
         console.log(`   Has Unicode: ${validation.unicodeInfo.overall.hasUnicode}`);
-        
+
         if (validation.unicodeInfo.overall.hasUnicode) {
           console.log(`   Unicode Ranges: ${validation.unicodeInfo.overall.unicodeRanges.join(', ')}`);
           console.log(`   Unicode Chars: [${validation.unicodeInfo.overall.unicodeChars.join(', ')}]`);
           console.log(`   Encoded: ${validation.unicodeInfo.overall.encoded}`);
         }
-        
+
         if (validation.errors.length > 0) {
           console.log(`   Errors: ${validation.errors.join(', ')}`);
         }
-        
+
         if (validation.warnings.length > 0) {
           console.log(`   Warnings: ${validation.warnings.join(', ')}`);
         }
       });
     }
-    
+
     // Summary
     const endTime = Date.now();
     const duration = endTime - startTime;
-    
+
     log.section('📊 Validation Summary');
-    
+
     const { total, passed, failed } = testResults.summary;
     const successRate = total > 0 ? ((passed / total) * 100).toFixed(1) : '0';
-    
+
     console.log(`${colors.white}Total Tests:${colors.reset} ${total}`);
     console.log(`${colors.green}Passed:${colors.reset} ${passed}`);
     console.log(`${colors.red}Failed:${colors.reset} ${failed}`);
     console.log(`${colors.blue}Success Rate:${colors.reset} ${successRate}%`);
     console.log(`${colors.gray}Duration:${colors.reset} ${duration}ms`);
     console.log(`${colors.magenta}Mode:${colors.reset} ${mode}${strictness}`);
-    
+
     // Output JSON if requested
     if (options.json) {
       log.json({
@@ -594,7 +579,7 @@ async function runUnicodeValidation() {
         strict: options.strict
       });
     }
-    
+
     // Exit with appropriate code
     if (failed > 0) {
       console.log(`\n${colors.yellow}⚠️ Some validations failed. See details above.${colors.reset}`);
@@ -603,7 +588,7 @@ async function runUnicodeValidation() {
       console.log(`\n${colors.green}🎉 All validations passed!${colors.reset}`);
       process.exit(0);
     }
-    
+
   } catch (error: any) {
     log.error(`Validation failed: ${error.message}`);
     if (options.verbose) {

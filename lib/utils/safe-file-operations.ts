@@ -1,9 +1,4 @@
-/**
- * Safe File Operations Utility
- *
- * Provides comprehensive error handling for file system operations
- * with proper validation, logging, and graceful fallbacks.
- */
+// lib/utils/safe-file-operations.ts — Safe file operations with error handling
 
 import {
   readFile,

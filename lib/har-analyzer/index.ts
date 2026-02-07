@@ -1,3 +1,5 @@
+// lib/har-analyzer/index.ts — Public API barrel file for HAR analyzer
+
 export {
   type CapturedEntry,
   type HARProtocolDetection,

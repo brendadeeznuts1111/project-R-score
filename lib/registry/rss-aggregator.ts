@@ -1,13 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 📰 RSS Aggregator for Package Updates & Bun Blog
- *
- * Aggregates RSS feeds from:
- * - Bun blog and updates
- * - Package changelogs
- * - GitHub releases
- * - Custom feeds
- */
+// lib/registry/rss-aggregator.ts — RSS aggregator for package updates and feeds
 
 import { styled, FW_COLORS } from '../theme/colors';
 import { R2StorageAdapter } from './r2-storage';

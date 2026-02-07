@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 🎨 Bun.color() Official API Examples
- *
- * Demonstrates all official Bun.color() formats with advanced HSL utilities
- * Based on official documentation: https://bun.sh/docs/api/color
- */
+// lib/utils/bun-color-examples.ts — Bun.color() API examples
 
 import { hslToHex, hslToAnsi, parseHSL, formatHSL, generatePalette } from './advanced-hsl-colors';
 

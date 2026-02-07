@@ -1,9 +1,4 @@
-/**
- * 📚 Version Tracking System - Usage Examples
- *
- * Comprehensive examples showing how to use the version tracking
- * and rollback system for endpoints and components
- */
+// lib/versioning/version-tracking-examples.ts — Usage examples for version tracking
 
 import VersionTracker, { UtilsCategory } from './version-tracking';
 

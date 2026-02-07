@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🛡️ Anomaly Detection System
- *
- * ML-based anomaly detection for security threats,
- * performance issues, and operational anomalies.
- */
+// lib/ai/anomaly-detector.ts — Anomaly detection system
 
 import { EventEmitter } from 'events';
 import { logger } from '../core/structured-logger';

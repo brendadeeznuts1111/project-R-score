@@ -1,4 +1,4 @@
-// This file will trigger the defer() mechanism
-// and generate statistics after all other files are processed
+#!/usr/bin/env bun
+// tools/generate-stats.ts — Trigger deferred stats generation
 
 console.log('🚀 Triggering stats generation...');

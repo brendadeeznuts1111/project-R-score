@@ -1,15 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * ⏰ R2 Data Lifecycle Manager - TTL, Archival, and Cleanup
- *
- * Comprehensive data lifecycle management with:
- * - Automatic TTL-based expiration
- * - Tiered storage (hot/warm/cold/archive)
- * - Automated cleanup policies
- * - Compliance-aware retention
- * - Storage class transitions
- */
+// lib/r2/r2-lifecycle-manager.ts — R2 data lifecycle manager for TTL, archival, and cleanup
 
 import { styled, FW_COLORS } from '../theme/colors';
 import { r2EventSystem } from './r2-event-system';

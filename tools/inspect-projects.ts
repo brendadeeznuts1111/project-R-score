@@ -1,18 +1,5 @@
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 #!/usr/bin/env bun
-/**
- * Project Matrix Inspection Demo
- * Uses Bun.inspect({ columns: true, depth: N }) to display structured data
- */
+// tools/inspect-projects.ts — Project matrix inspection using Bun.inspect
 
 console.clear();
 console.log("╔═══════════════════════════════════════════════════════════════╗");
@@ -127,7 +114,7 @@ const cliTools = [
 // ============================================================================
 
 console.log("1️⃣  PROJECTS TABLE (depth: 0 - flat, no nested arrays)\n");
-console.log(Bun.inspect(projects, { 
+console.log(Bun.inspect(projects, {
   columns: true,
   depth: 0  // Don't expand arrays like dependencies, envVars, features
 }));
@@ -165,7 +152,7 @@ console.log("\n" + "─".repeat(80) + "\n");
 // ============================================================================
 
 console.log("4️⃣  CLI TOOLS (depth: 0 - flat)\n");
-console.log(Bun.inspect(cliTools, { 
+console.log(Bun.inspect(cliTools, {
   columns: true,
   depth: 0
 }));

@@ -1,12 +1,4 @@
-/**
- * 🎨 Bun.color Documentation Constants
- *
- * URL: https://bun.sh/docs/runtime/color
- * API: Bun.color(input, outputFormat?)
- *
- * Format colors as CSS, ANSI, numbers, hex strings, and more
- * @version Bun 1.0+
- */
+// lib/constants/color-constants.ts — Bun.color documentation constants and output formats
 
 // ============================================================================
 // OUTPUT FORMATS

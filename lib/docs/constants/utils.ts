@@ -1,4 +1,5 @@
-// lib/documentation/constants/utils.ts
+// lib/docs/constants/utils.ts — URL normalization utilities
+
 import { URLHandler, URLFragmentUtils } from '../../core/url-handler';
 
 export enum UtilsCategory {
@@ -21,7 +22,7 @@ export enum UtilsCategory {
  */
 export class URLNormalizer {
   private static readonly BASE_URL = 'https://bun.sh';
-  
+
   /**
    * Normalizes a URL by handling edge cases:
    * - Removes multiple consecutive slashes
@@ -36,37 +37,37 @@ export class URLNormalizer {
 
     // Remove leading/trailing whitespace
     let normalized = url.trim();
-    
+
     // Add protocol if missing
     if (!normalized.startsWith('http://') && !normalized.startsWith('https://')) {
       normalized = this.BASE_URL + (normalized.startsWith('/') ? '' : '/') + normalized;
     }
-    
+
     // Remove multiple consecutive slashes after protocol
     const protocolEnd = normalized.indexOf('://') + 3;
     const protocol = normalized.substring(0, protocolEnd);
     const path = normalized.substring(protocolEnd);
-    
+
     // Replace multiple slashes with single slash, but preserve protocol double slashes
     const normalizedPath = path.replace(/\/+/g, '/');
-    
+
     normalized = protocol + normalizedPath;
-    
+
     // Remove trailing slash unless it's the root path
     if (normalized.length > 1 && normalized.endsWith('/')) {
       normalized = normalized.slice(0, -1);
     }
-    
+
     // Validate URL format
     try {
       new URL(normalized);
     } catch (error) {
       throw new Error(`Invalid URL format: ${normalized}`);
     }
-    
+
     return normalized;
   }
-  
+
   /**
    * Creates a full documentation URL from a path
    */
@@ -74,16 +75,16 @@ export class URLNormalizer {
     if (!path || typeof path !== 'string') {
       throw new Error('Path must be a non-empty string');
     }
-    
+
     // Clean the path
     const cleanPath = path.trim().replace(/^\/+/, '');
-    
+
     // Construct full URL
     const fullUrl = `${this.BASE_URL}/${cleanPath}`;
-    
+
     return this.normalize(fullUrl);
   }
-  
+
   /**
    * Validates that a URL points to the Bun documentation
    */
@@ -127,32 +128,32 @@ export class UtilityFactory {
     if (!config.id || typeof config.id !== 'string') {
       throw new Error('Utility ID is required and must be a string');
     }
-    
+
     if (!config.name || typeof config.name !== 'string') {
       throw new Error('Utility name is required and must be a string');
     }
-    
+
     if (!config.description || typeof config.description !== 'string') {
       throw new Error('Description is required and must be a string');
     }
-    
+
     if (!config.exampleCode || typeof config.exampleCode !== 'string') {
       throw new Error('Example code is required and must be a string');
     }
-    
+
     // Validate ID format (alphanumeric with underscores)
     if (!/^[a-zA-Z][a-zA-Z0-9_]*$/.test(config.id)) {
       throw new Error(`Invalid utility ID format: ${config.id}. Must start with letter and contain only letters, numbers, and underscores`);
     }
-    
+
     // Validate category
     if (!Object.values(UtilsCategory).includes(config.category)) {
       throw new Error(`Invalid category: ${config.category}`);
     }
-    
+
     // Normalize and validate URL
     const normalizedUrl = URLNormalizer.normalize(config.docUrl);
-    
+
     if (!URLNormalizer.validateBunUrl(normalizedUrl)) {
       console.warn(`Warning: URL does not point to Bun documentation: ${normalizedUrl}`);
     }
@@ -163,12 +164,12 @@ export class UtilityFactory {
       const fragmentString = URLFragmentUtils.buildFragment(config.fragment);
       finalUrl = URLHandler.addFragment(normalizedUrl, fragmentString);
     }
-    
+
     // Validate example code (basic syntax check)
     if (config.exampleCode.includes('eval(') || config.exampleCode.includes('Function(')) {
       throw new Error('Example code contains potentially unsafe functions');
     }
-    
+
     return {
       id: config.id.toLowerCase(),
       name: config.name.trim(),
@@ -235,7 +236,7 @@ export class UtilityFactory {
       fragment: exampleFragment
     });
   }
-  
+
   /**
    * Creates multiple utilities with validation
    */
@@ -249,7 +250,7 @@ export class UtilityFactory {
   }>): BunUtility[] {
     const utilities: BunUtility[] = [];
     const errors: string[] = [];
-    
+
     for (const config of configs) {
       try {
         const utility = this.create(config);
@@ -258,16 +259,16 @@ export class UtilityFactory {
         errors.push(`Failed to create utility '${config.id}': ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     }
-    
+
     if (errors.length > 0) {
       console.warn('Utility creation warnings:');
       errors.forEach(error => console.warn(`  - ${error}`));
     }
-    
+
     if (utilities.length === 0) {
       throw new Error('No valid utilities were created');
     }
-    
+
     return utilities;
   }
 }
@@ -304,7 +305,7 @@ console.log('File written successfully');`
 const fileExists = await exists('package.json');
 console.log('File exists:', fileExists);`
   },
-  
+
   // Networking Utilities
   {
     id: 'fetch_utility',
@@ -331,7 +332,7 @@ const server = serve({
   }
 });`
   },
-  
+
   // Validation Utilities
   {
     id: 'is_string',
@@ -355,7 +356,7 @@ if (isString(value)) {
 const arr = new Uint8Array([1, 2, 3]);
 console.log(isTypedArray(arr)); // true`
   },
-  
+
   // Conversion Utilities
   {
     id: 'to_buffer',
@@ -367,7 +368,7 @@ console.log(isTypedArray(arr)); // true`
 const buffer = toBuffer('Hello');
 console.log(buffer instanceof Buffer); // true`
   },
-  
+
   // Performance Utilities
   {
     id: 'gc',
@@ -400,19 +401,19 @@ console.log(\`Operation took \${end - start}ms\`);`
 export class UtilityRegistry {
   private static readonly utilitiesById = new Map<string, BunUtility>();
   private static readonly utilitiesByCategory = new Map<UtilsCategory, BunUtility[]>();
-  
+
   static {
     // Initialize registries
     for (const utility of UTILITIES) {
       this.utilitiesById.set(utility.id, utility);
-      
+
       if (!this.utilitiesByCategory.has(utility.category)) {
         this.utilitiesByCategory.set(utility.category, []);
       }
       this.utilitiesByCategory.get(utility.category)!.push(utility);
     }
   }
-  
+
   /**
    * Find utility by ID with error handling
    */
@@ -420,17 +421,17 @@ export class UtilityRegistry {
     if (!id || typeof id !== 'string') {
       return null;
     }
-    
+
     return this.utilitiesById.get(id.toLowerCase()) || null;
   }
-  
+
   /**
    * Get all utilities in a category
    */
   static findByCategory(category: UtilsCategory): BunUtility[] {
     return this.utilitiesByCategory.get(category) || [];
   }
-  
+
   /**
    * Search utilities by name or description
    */
@@ -438,22 +439,22 @@ export class UtilityRegistry {
     if (!query || typeof query !== 'string') {
       return [];
     }
-    
+
     const lowerQuery = query.toLowerCase();
-    return UTILITIES.filter(utility => 
+    return UTILITIES.filter(utility =>
       utility.name.toLowerCase().includes(lowerQuery) ||
       utility.description.toLowerCase().includes(lowerQuery) ||
       utility.id.toLowerCase().includes(lowerQuery)
     );
   }
-  
+
   /**
    * Validate all utility URLs
    */
   static validateAllUrls(): { valid: string[]; invalid: { url: string; id: string; error: string }[] } {
     const valid: string[] = [];
     const invalid: { url: string; id: string; error: string }[] = [];
-    
+
     for (const utility of UTILITIES) {
       try {
         const normalized = URLNormalizer.normalize(utility.docUrl);
@@ -474,10 +475,10 @@ export class UtilityRegistry {
         });
       }
     }
-    
+
     return { valid, invalid };
   }
-  
+
   /**
    * Get statistics about the utility registry
    */
@@ -487,13 +488,13 @@ export class UtilityRegistry {
     urlValidation: { valid: number; invalid: number };
   } {
     const byCategory: Record<string, number> = {};
-    
+
     for (const category of Object.values(UtilsCategory)) {
       byCategory[category] = this.findByCategory(category).length;
     }
-    
+
     const urlValidation = this.validateAllUrls();
-    
+
     return {
       total: UTILITIES.length,
       byCategory,
@@ -518,7 +519,7 @@ export const BUN_UTILS_URLS = {
     DELETE_FILE: '/docs/api/utils#deletefile',
     FILE_EXISTS: '/docs/api/utils#fileexists'
   },
-  
+
   [UtilsCategory.NETWORKING]: {
     MAIN: '/docs/api/utils#networking',
     FETCH: '/docs/api/utils#fetch-utility',
@@ -528,7 +529,7 @@ export const BUN_UTILS_URLS = {
     UDP: '/docs/api/utils#udp',
     DNS: '/docs/api/utils#dns'
   },
-  
+
   [UtilsCategory.PROCESS]: {
     MAIN: '/docs/api/utils#process',
     SPAWN: '/docs/api/utils#spawn',
@@ -538,7 +539,7 @@ export const BUN_UTILS_URLS = {
     PID: '/docs/api/utils#pid',
     SIGNALS: '/docs/api/utils#signals'
   },
-  
+
   [UtilsCategory.VALIDATION]: {
     MAIN: '/docs/api/utils#validation',
     IS_STRING: '/docs/api/utils#isstring',
@@ -551,7 +552,7 @@ export const BUN_UTILS_URLS = {
     IS_BUFFER: '/docs/api/utils#isbuffer',
     IS_TYPED_ARRAY: '/docs/api/utils#istypedarray'
   },
-  
+
   [UtilsCategory.CONVERSION]: {
     MAIN: '/docs/api/utils#conversion',
     TO_BUFFER: '/docs/api/utils#tobuffer',
@@ -563,7 +564,7 @@ export const BUN_UTILS_URLS = {
     JSON_PARSE: '/docs/api/utils#jsonparse',
     JSON_STRINGIFY: '/docs/api/utils#jsonstringify'
   },
-  
+
   [UtilsCategory.PERFORMANCE]: {
     MAIN: '/docs/api/performance',
     GC: '/docs/api/gc',
@@ -589,24 +590,24 @@ export const BUN_UTILS_EXAMPLES = {
   FILE_SYSTEM: {
     READ_FILE: `import { readFile } from 'bun';
 const content = await readFile('package.json', 'utf-8');`,
-    
+
     WRITE_FILE: `import { writeFile } from 'bun';
 await writeFile('output.txt', 'Hello, Bun!');`,
-    
+
     FILE_EXISTS: `import { exists } from 'bun';
 const fileExists = await exists('package.json');`
   },
-  
+
   VALIDATION: {
     IS_TYPED_ARRAY: `import { isTypedArray } from 'bun';
 const arr = new Uint8Array([1, 2, 3]);
 console.log(isTypedArray(arr)); // true`,
-    
+
     IS_BUFFER: `import { isBuffer } from 'bun';
 const buf = Buffer.from('hello');
 console.log(isBuffer(buf)); // true`
   },
-  
+
   CONVERSION: {
     TO_BUFFER: `import { toBuffer } from 'bun';
 const buffer = toBuffer('Hello'); // Convert string to Buffer`

@@ -1,9 +1,4 @@
-/**
- * Input Validation Utilities
- *
- * Provides comprehensive input validation for API endpoints
- * with security-focused sanitization and type checking
- */
+// lib/utils/input-validation-lib.ts — Input validation with sanitization and type checking
 
 // ============================================================================
 // VALIDATION INTERFACES

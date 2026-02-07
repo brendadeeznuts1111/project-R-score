@@ -1,11 +1,4 @@
-/**
- * 🔐 FactoryWager Security Module Index
- *
- * Central security infrastructure with versioning, lifecycle management,
- * and visual analysis
- *
- * @version 5.1
- */
+// lib/security/index.ts — Security module index
 
 // Core security components
 export * from './versioned-secrets';

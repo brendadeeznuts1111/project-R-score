@@ -1,9 +1,4 @@
-/**
- * 🌐 Standardized URL Service
- *
- * Centralized URL management with normalization, validation,
- * and environment-based configuration
- */
+// lib/core/url-service.ts — Standardized URL service
 
 import { URLNormalizer } from '../docs/constants/utils';
 

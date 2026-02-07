@@ -1,7 +1,5 @@
 #!/usr/bin/env bun
-
-// HAR Performance Analysis — DocumentationAwarePerformanceAnalyzer
-// Categorizes HAR results using documentation enums, detects issues, generates recommendations
+// tools/har-analysis.ts — HAR performance analysis with documentation-aware categorization
 //
 // Usage (standalone):
 //   bun tools/har-analysis.ts <file.har|->

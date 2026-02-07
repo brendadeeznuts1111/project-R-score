@@ -1,3 +1,5 @@
+// lib/har-analyzer/fragment-analyzer.test.ts — Tests for fragment classification
+
 import { test, expect, describe, expectTypeOf } from "bun:test";
 import { analyzeFragment } from "./fragment-analyzer";
 import type { FragmentAnalysis, FragmentType, FragmentBehavior, FragmentContent } from "./types";

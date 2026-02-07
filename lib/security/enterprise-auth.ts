@@ -1,10 +1,4 @@
-/**
- * 🔐 Tier-1380 Enterprise Authentication System
- *
- * Complete authentication flow with password security, rate limiting, and audit trails
- *
- * @version 4.5
- */
+// lib/security/enterprise-auth.ts — Enterprise authentication system
 
 import { Tier1380PasswordSecurity } from './enterprise-password-security';
 

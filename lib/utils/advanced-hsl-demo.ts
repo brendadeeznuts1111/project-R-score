@@ -1,9 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 🎨 Advanced HSL Color Theory Demo
- *
- * Demonstrates all advanced HSL techniques with Bun.color()
- */
+// lib/utils/advanced-hsl-demo.ts — Advanced HSL color theory demo
 
 import {
   generatePalette,

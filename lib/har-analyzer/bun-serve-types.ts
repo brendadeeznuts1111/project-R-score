@@ -1,5 +1,5 @@
-// lib/har-analyzer/bun-serve-types.ts
-// Protocol-aware HAR capture server using Bun.serve()
+// lib/har-analyzer/bun-serve-types.ts — Protocol-aware HAR capture types for Bun.serve()
+
 type HARServer = ReturnType<typeof Bun.serve>;
 
 // Captured request entry for HAR generation

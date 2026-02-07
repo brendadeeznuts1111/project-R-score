@@ -1,3 +1,5 @@
+// lib/har-analyzer/url-parser.test.ts — Tests for URL parser
+
 import { test, expect, describe, expectTypeOf } from "bun:test";
 import { parseURL, MIME_MAP } from "./url-parser";
 import type { ParsedURL, FragmentAnalysis } from "./types";

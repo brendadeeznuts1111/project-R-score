@@ -1,4 +1,5 @@
-// lib/syscall-risks.ts
+// lib/deployment/syscall-risks.ts — Syscall risk score constants by platform
+
 export const SYSCALL_RISKS = {
   LINUX_COPY_FILE_RANGE: 1.0000005 as const, // Zero-copy
   LINUX_SENDFILE: 1.000001 as const, // Pipe transfer

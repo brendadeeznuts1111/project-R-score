@@ -1,19 +1,4 @@
-/**
- * 🎨 Terminal Color Quantization Utility
- *
- * tmux-style RGB to 256-color palette conversion for maximum terminal compatibility.
- * Useful when Bun.color("ansi") auto-detection isn't sufficient.
- *
- * Based on tmux colour.c implementation:
- * https://github.com/tmux/tmux/blob/dae2868d1227b95fd076fb4a5efa6256c7245943/colour.c#L44-L55
- *
- * xterm 256-color palette:
- * - 6x6x6 color cube: indices 16-231
- * - 24 grey levels: indices 232-255
- * - 16 standard colors: indices 0-15
- *
- * @version 1.0
- */
+// lib/cli/terminal-color-256.ts — RGB to 256-color palette conversion for terminal compatibility
 
 /**
  * 6x6x6 color cube levels (not evenly spread for darker colors)

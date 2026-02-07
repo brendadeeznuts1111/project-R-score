@@ -1,8 +1,4 @@
-/**
- * FACTORYWAGER RIPGREP v4.0 - Configuration Management
- * 
- * Configuration schemas and validation for the RIPGREP system
- */
+// lib/rip/config.ts — Configuration schemas and validation for ripgrep
 
 // ============================================================================
 // CONFIGURATION SCHEMAS
@@ -332,7 +328,7 @@ export class ConfigManager {
    */
   exportYaml(): string {
     const { rules } = this.config;
-    
+
     return `# FACTORYWAGER RIPGREP v4.0 Configuration
 rules:
   ripgrep:

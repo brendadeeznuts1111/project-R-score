@@ -1,3 +1,6 @@
+#!/usr/bin/env bun
+// tools/working-import-tracker.ts — Bun plugin for import tracking with logging
+
 import { plugin } from "bun";
 
 plugin({
@@ -11,7 +14,7 @@ plugin({
     build.onLoad({ filter: /\.(ts|js)$/ }, async ({ path }) => {
       console.log(`🔍 Processing: ${path}`);
       processedFiles++;
-      
+
       try {
         const contents = await Bun.file(path).text();
         const imports = transpiler.scanImports(new TextEncoder().encode(contents));
@@ -36,10 +39,10 @@ plugin({
     // Generate stats when requested - this uses defer()
     build.onLoad({ filter: /generate-stats\.ts$/ }, async ({ defer }) => {
       console.log(`📊 Stats requested - waiting for ${processedFiles} files to complete...`);
-      
+
       // CRITICAL: Wait for all other modules to be loaded first
       await defer();
-      
+
       console.log(`✅ All files processed! Generating final statistics...`);
       console.log(`📋 Total unique imports tracked: ${Object.keys(trackedImports).length}`);
 

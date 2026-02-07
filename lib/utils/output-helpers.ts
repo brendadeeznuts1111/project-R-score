@@ -1,8 +1,4 @@
-/**
- * Output Helpers - Colored console output using Bun.stdout and Bun.color()
- *
- * Provides styled output for validation results and diagnostics.
- */
+// lib/utils/output-helpers.ts — Colored console output helpers
 
 /**
  * Write colored text to stdout

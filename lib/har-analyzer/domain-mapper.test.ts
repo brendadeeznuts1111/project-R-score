@@ -1,3 +1,5 @@
+// lib/har-analyzer/domain-mapper.test.ts — Tests for domain classification and mapping
+
 import { test, expect, describe, expectTypeOf } from "bun:test";
 import {
   DocumentationMapper,

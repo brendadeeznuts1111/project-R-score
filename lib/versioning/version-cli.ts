@@ -1,9 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 🔄 Version Tracking CLI Tool
- *
- * Command-line interface for managing versions, rollbacks, and monitoring
- */
+// lib/versioning/version-cli.ts — CLI for version management and rollbacks
 
 import { write, read } from 'bun';
 

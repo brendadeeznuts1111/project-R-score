@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🔗 Advanced URL Handler with Fragment Support
- *
- * Comprehensive URL parsing, validation, and fragment handling for the FactoryWager ecosystem
- */
+// lib/core/url-handler.ts — URL parsing, validation, and fragment handling
 
 import { handleError, ValidationError } from './error-handling';
 import { Validator } from './validation';

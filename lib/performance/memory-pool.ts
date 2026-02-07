@@ -1,14 +1,4 @@
-/**
- * Enterprise Shared Memory Pool Manager
- *
- * Thread-safe, high-performance memory pool for zero-copy operations
- * with enterprise-grade error handling and resource management.
- *
- * @see {@link https://bun.sh/docs/runtime/binary-data#zero-copy} Zero-copy operations
- *
- * @version 1.0.0
- * @author Enterprise Platform Team
- */
+// lib/performance/memory-pool.ts — Shared memory pool for zero-copy operations
 
 import {
   EnterpriseResult,

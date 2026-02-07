@@ -1,12 +1,4 @@
-/**
- * 🔧 bun:ffi Environment Variable Support - Bun v1.3.7+ v1.4
- *
- * Documents C_INCLUDE_PATH and LIBRARY_PATH support for non-FHS systems
- * like NixOS, Guix, and custom environments.
- *
- * @version 4.5
- * @see https://bun.sh/docs/api/ffi
- */
+// lib/utils/ffi-environment.ts — FFI environment variable support
 
 /**
  * FFI Build Configuration

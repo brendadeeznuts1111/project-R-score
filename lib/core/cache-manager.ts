@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 💾 Advanced Cache Management System
- *
- * Intelligent caching with versioning, invalidation, and performance optimization
- */
+// lib/core/cache-manager.ts — Cache management with versioning and invalidation
 
 import { CacheError, handleError } from './error-handling';
 

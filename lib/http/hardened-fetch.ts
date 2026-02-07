@@ -1,16 +1,4 @@
-/**
- * Hardened Fetch - Bun.connect with TLS certificate pinning
- *
- * Implements S_hardening by enforcing strict TLS verification and optional
- * certificate fingerprint pinning for enhanced security.
- *
- * v4.5: Header case preservation - headers now preserved exactly as received
- * (compliant with Bun v1.3.7+ header preservation guarantees)
- *
- * @see {@link https://bun.sh/docs/api/fetch#hardened} Hardened fetch documentation
- * @see {@link https://bun.sh/docs/api/fetch#redirects} Redirect handling documentation
- * @see {@link https://bun.sh/docs/runtime/shell} TLS verification in Bun
- */
+// lib/http/hardened-fetch.ts — Hardened fetch with TLS certificate pinning
 
 import { type Socket, connect } from 'bun';
 

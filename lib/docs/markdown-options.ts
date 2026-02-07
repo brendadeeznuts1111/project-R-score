@@ -1,5 +1,4 @@
-// lib/official-markdown-options.ts
-// Implementation of all official Bun.markdown.html() options
+// lib/docs/markdown-options.ts — Bun.markdown.html() options
 
 export interface HTMLOptions {
   // GFM Extensions (default: true)

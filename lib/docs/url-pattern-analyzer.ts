@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 🌐 Comprehensive URL Pattern Analysis & Fix System
- *
- * Uses @[lib] directory patterns to analyze, detect, and fix URL issues
- * across the entire codebase. Based on discovered patterns and fragments.
- */
+// lib/docs/url-pattern-analyzer.ts — URL pattern analysis and fix system
 
 // Safe entry guard - NO SILENT KILLER!
 if (import.meta.main) {

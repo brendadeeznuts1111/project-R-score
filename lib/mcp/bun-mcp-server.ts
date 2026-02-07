@@ -1,12 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * FactoryWager Bun MCP Server
- *
- * Core MCP server providing Bun documentation access with FactoryWager enhancements.
- * This server connects to Bun's official documentation and provides context-aware
- * responses tailored for FactoryWager's ecosystem.
- */
+// lib/mcp/bun-mcp-server.ts — Core MCP server for Bun documentation access
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';

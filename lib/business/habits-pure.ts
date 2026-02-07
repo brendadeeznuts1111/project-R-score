@@ -1,7 +1,4 @@
-/**
- * Pure Habits Classification Logic (No Dependencies)
- * Can be imported without Redis/ioredis
- */
+// lib/business/habits-pure.ts — Pure habits classification logic with no dependencies
 
 export type HabitsTier = 'casual' | 'active' | 'high-volume' | 'whale';
 

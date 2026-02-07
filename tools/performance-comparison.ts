@@ -1,11 +1,12 @@
-// Performance comparison: JavaScript vs Native plugins
+#!/usr/bin/env bun
+// tools/performance-comparison.ts — JS vs native plugin performance comparison
 
 import { performance } from 'perf_hooks';
 
 // Simulate JavaScript plugin processing
 function jsPluginProcessing(files: string[]): number {
     const start = performance.now();
-    
+
     let totalImports = 0;
     for (const file of files) {
         // JavaScript: UTF-8 -> UTF-16 conversion happens here
@@ -13,19 +14,19 @@ function jsPluginProcessing(files: string[]): number {
         const imports = content.split('import ').length - 1;
         totalImports += imports;
     }
-    
+
     const end = performance.now();
     console.log(`🐌 JavaScript Plugin: ${files.length} files in ${(end - start).toFixed(2)}ms`);
     console.log(`   Total imports found: ${totalImports}`);
     console.log(`   UTF-8 -> UTF-16 conversion overhead: YES`);
-    
+
     return end - start;
 }
 
 // Simulate Native plugin processing (theoretical)
 function nativePluginProcessing(files: string[]): number {
     const start = performance.now();
-    
+
     // Native: Direct UTF-8 processing, no conversion
     let totalImports = 0;
     for (const file of files) {
@@ -34,13 +35,13 @@ function nativePluginProcessing(files: string[]): number {
         const imports = content.split('import ').length - 1;
         totalImports += imports;
     }
-    
+
     const end = performance.now();
     console.log(`⚡ Native Plugin: ${files.length} files in ${(end - start).toFixed(2)}ms`);
     console.log(`   Total imports found: ${totalImports}`);
     console.log(`   UTF-8 -> UTF-16 conversion overhead: NO`);
     console.log(`   Multi-threading capability: YES`);
-    
+
     return end - start;
 }
 

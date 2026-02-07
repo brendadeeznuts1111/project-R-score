@@ -1,4 +1,3 @@
-#!/usr/bin/env bun
 // tools/wasm-inspector.bench.ts — WASM Inspector Performance Benchmark
 // Run: bun tools/wasm-inspector.bench.ts
 

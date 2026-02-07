@@ -1,12 +1,4 @@
-/**
- * React Server Components (RSC) HTTP/2 Multiplexer
- *
- * Optimizes Next.js RSC prefetch requests using HTTP/2 multiplexing.
- * Perfect for the frequent small requests to the same origin.
- *
- * @see {@link https://bun.sh/docs/api/http#multiplexing} HTTP/2 multiplexing documentation
- * @see {@link https://bun.sh/docs/api/fetch#hardened} Hardened fetch integration
- */
+// lib/http/rsc-multiplexer.ts — RSC HTTP/2 multiplexer for prefetch optimization
 
 import { BunHTTP2Multiplexer } from './http2-multiplexer';
 

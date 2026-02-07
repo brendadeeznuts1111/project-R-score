@@ -1,10 +1,13 @@
+#!/usr/bin/env bun
+// tools/minimal-tracker.ts — Minimal Bun plugin for file tracking
+
 import { plugin } from "bun";
 
 plugin({
   name: "minimal tracker",
   setup(build) {
     let fileCount = 0;
-    
+
     // Count all files
     build.onLoad({ filter: /\.(ts|js)$/ }, () => {
       fileCount++;
@@ -17,7 +20,7 @@ plugin({
       console.log(`📊 Report requested - current count: ${fileCount}`);
       await defer();
       console.log(`✅ Defer resolved - final count: ${fileCount}`);
-      
+
       return {
         contents: `
 console.log('🎯 FINAL REPORT');

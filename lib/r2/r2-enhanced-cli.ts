@@ -1,16 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🚀 R2 Enhanced CLI - Unified Command Interface
- *
- * Comprehensive CLI for all R2 enhancement features:
- * - Event system management
- * - Batch operations
- * - Lifecycle management
- * - Search operations
- * - Sync management
- * - Backup/restore
- */
+// lib/r2/r2-enhanced-cli.ts — R2 enhanced CLI with unified command interface
 
 import { styled, FW_COLORS } from '../theme/colors';
 import { r2EventSystem } from './r2-event-system';

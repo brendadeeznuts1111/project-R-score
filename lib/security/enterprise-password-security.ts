@@ -1,11 +1,4 @@
-/**
- * 🔐 Tier-1380 Enterprise Password Security v4.5
- *
- * Enterprise-grade password security with Bun.password integration
- * Windows Credential Manager storage, algorithm selection, and compliance
- *
- * @version 4.5
- */
+// lib/security/enterprise-password-security.ts — Enterprise password security with Bun.password
 
 import { styled, log } from '../theme/colors';
 
@@ -650,7 +643,7 @@ Commands:
   hash <password> [algorithm]    Hash a password (argon2id|bcrypt)
   verify <password> [userId]     Verify a password against stored hash
   audit [userId]                 Generate password security audit report
-  
+
 Algorithms:
   • argon2id (Recommended) - Memory-hard, resistant to GPU attacks
   • bcrypt - CPU-hard, time-tested, auto pre-hashes >72 byte passwords

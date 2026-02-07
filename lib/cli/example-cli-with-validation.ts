@@ -1,14 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Example CLI Tool with Self-Validation Integration
- * 
- * Demonstrates how to integrate validation and error handling
- * into existing CLI tools using the validation system.
- * 
- * Usage:
- *   bun run lib/example-cli-with-validation.ts
- *   bun run lib/example-cli-with-validation.ts --heal
- */
+// lib/cli/example-cli-with-validation.ts — Example CLI tool with self-validation integration
 
 // Entry guard check
 if (import.meta.path !== Bun.main) {
@@ -25,10 +15,10 @@ import { validateAndReport, quickValidate, CLISelfValidator } from '../validatio
 async function example1() {
   console.log('\n📋 Example 1: Simple Validation');
   console.log('=' .repeat(40));
-  
+
   // Quick validation - just check if we can proceed
   const canProceed = await quickValidate('bun', ['--version'], true);
-  
+
   if (canProceed) {
     console.log('✅ Can proceed with execution');
     // Execute your CLI logic here
@@ -46,10 +36,10 @@ async function example1() {
 async function example2() {
   console.log('\n📋 Example 2: Detailed Validation with Reporting');
   console.log('=' .repeat(50));
-  
+
   // Detailed validation with console output
   await validateAndReport('overseer-cli', ['--help'], true);
-  
+
   // This will only execute if validation passes
   console.log('🚀 Executing CLI logic...');
   // Your CLI tool logic would go here
@@ -62,7 +52,7 @@ async function example2() {
 async function example3() {
   console.log('\n📋 Example 3: Advanced Validation');
   console.log('=' .repeat(35));
-  
+
   const result = await CLISelfValidator.executeWithValidation(
     {
       toolName: 'bun',
@@ -83,20 +73,20 @@ async function example3() {
     async () => {
       // This is the actual execution function
       console.log('⚡ Executing main logic...');
-      
+
       // Simulate some work
       await Bun.sleep(100);
-      
+
       return { status: 'success', data: 'CLI execution completed' };
     }
   );
-  
+
   if (result.success) {
     console.log('✅ Execution successful:', result.result);
   } else {
     console.log('❌ Execution failed:', result.errors);
   }
-  
+
   if (result.healedIssues.length > 0) {
     console.log('🔧 Auto-healed issues:', result.healedIssues);
   }
@@ -109,7 +99,7 @@ async function example3() {
 async function example4() {
   console.log('\n📋 Example 4: Error Recovery and Fallbacks');
   console.log('=' .repeat(45));
-  
+
   try {
     // Try to validate and execute with primary tool
     const result = await CLISelfValidator.executeWithValidation(
@@ -122,13 +112,13 @@ async function example4() {
         return { status: 'success', tool: 'primary' };
       }
     );
-    
+
     if (result.success) {
       console.log('✅ Primary tool executed:', result.result);
     }
   } catch (error) {
     console.log('❌ Primary tool failed, trying fallback...');
-    
+
     // Fallback strategy
     const fallbackResult = await CLISelfValidator.executeWithValidation(
       {
@@ -140,7 +130,7 @@ async function example4() {
         return { status: 'success', tool: 'fallback' };
       }
     );
-    
+
     if (fallbackResult.success) {
       console.log('✅ Fallback executed:', fallbackResult.result);
     } else {
@@ -156,11 +146,11 @@ async function example4() {
 async function example5() {
   console.log('\n📋 Example 5: Integration with Existing CLI Patterns');
   console.log('=' .repeat(55));
-  
+
   // Simulate existing CLI argument parsing
   const args = process.argv.slice(2);
   const command = args[0] || 'help';
-  
+
   // Validate before processing command
   const validation = await CLISelfValidator.validateBeforeExecution({
     toolName: 'example-cli',
@@ -173,10 +163,10 @@ async function example5() {
       fixes.forEach(fix => console.log(`   • ${fix}`));
     }
   });
-  
+
   if (validation.canProceed) {
     console.log(`✅ Executing '${command}' command...`);
-    
+
     // Simulate command execution
     switch (command) {
       case 'status':
@@ -203,16 +193,16 @@ async function example5() {
 async function main() {
   console.log('🚀 CLI Self-Validation Examples');
   console.log('=' .repeat(50));
-  
+
   try {
     await example1();
     await example2();
     await example3();
     await example4();
     await example5();
-    
+
     console.log('\n🎉 All examples completed successfully!');
-    
+
   } catch (error) {
     console.error('\n❌ Example execution failed:', error);
     process.exit(1);

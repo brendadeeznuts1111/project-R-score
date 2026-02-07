@@ -1,9 +1,4 @@
-/**
- * Rate Limiting and Security Headers Middleware
- * 
- * Provides comprehensive security middleware including rate limiting,
- * CORS configuration, security headers, and DDoS protection
- */
+// lib/security/rate-limiting-security.ts — Rate limiting and security headers middleware
 
 // ============================================================================
 // RATE LIMITING INTERFACES
@@ -78,12 +73,12 @@ export class RateLimiter {
   checkLimit(request: Request): RateLimitInfo {
     const key = this.generateKey(request);
     const now = Date.now();
-    
+
     // Check if we need to trigger cleanup due to memory pressure
     if (this.clients.size > this.maxClients) {
       this.performAggressiveCleanup();
     }
-    
+
     // Get or create client entry
     let entry = this.clients.get(key);
     if (!entry) {
@@ -122,29 +117,29 @@ export class RateLimiter {
   private performAggressiveCleanup(): void {
     const now = Date.now();
     const entries = Array.from(this.clients.entries());
-    
+
     // Sort by last access time (oldest first)
     entries.sort(([, a], [, b]) => a.lastAccess - b.lastAccess);
-    
+
     // Remove oldest entries until we're under the threshold
     let removed = 0;
     const targetSize = this.maxClients - this.cleanupThreshold;
-    
+
     for (let i = 0; i < entries.length && this.clients.size > targetSize; i++) {
       const [key, entry] = entries[i];
-      
+
       // Remove entries that haven't been accessed recently
       if (now - entry.lastAccess > this.config.windowMs) {
         this.clients.delete(key);
         removed++;
       }
     }
-    
+
     // If still too many entries, remove the oldest ones regardless of access time
     if (this.clients.size > targetSize) {
       const remainingEntries = Array.from(this.clients.entries());
       remainingEntries.sort(([, a], [, b]) => a.lastAccess - b.lastAccess);
-      
+
       const excessCount = this.clients.size - targetSize;
       for (let i = 0; i < excessCount; i++) {
         const [key] = remainingEntries[i];
@@ -152,7 +147,7 @@ export class RateLimiter {
         removed++;
       }
     }
-    
+
     if (removed > 0) {
       console.warn(`🧹 Aggressive rate limiter cleanup: removed ${removed} entries due to memory pressure`);
     }
@@ -170,10 +165,10 @@ export class RateLimiter {
     const ip = request.headers.get('x-forwarded-for') ||
                request.headers.get('x-real-ip') ||
                'unknown';
-    
+
     // Add user agent for more specific limiting
     const userAgent = request.headers.get('user-agent') || 'unknown';
-    
+
     return `${ip}:${Buffer.from(userAgent).toString('base64').substring(0, 16)}`;
   }
 
@@ -356,7 +351,7 @@ export class SecurityMiddleware {
     securityHeadersConfig?: SecurityHeadersConfig
   ) {
     this.securityHeaders = new SecurityHeaders(securityHeadersConfig);
-    
+
     if (rateLimitConfig) {
       this.rateLimiter = new RateLimiter(rateLimitConfig);
     }
@@ -369,7 +364,7 @@ export class SecurityMiddleware {
     // Rate limiting check
     if (this.rateLimiter) {
       const rateLimitInfo = this.rateLimiter.checkLimit(request);
-      
+
       if (rateLimitInfo.isRateLimited) {
         const headers = {
           ...this.securityHeaders.getHeaders(),
@@ -397,7 +392,7 @@ export class SecurityMiddleware {
 
       // Continue with request, add rate limit headers to response
       const response = await handler();
-      
+
       if (this.rateLimiter.config.headers) {
         response.headers.set('X-RateLimit-Limit', rateLimitInfo.limit.toString());
         response.headers.set('X-RateLimit-Remaining', rateLimitInfo.remaining.toString());
@@ -547,13 +542,13 @@ export function createSecurityMiddleware(
   }
 ): SecurityMiddleware {
   const presetConfig = SecurityPresets[preset];
-  
-  const rateLimitConfig = customConfig?.rateLimit ? 
-    { ...presetConfig.rateLimit, ...customConfig.rateLimit } : 
+
+  const rateLimitConfig = customConfig?.rateLimit ?
+    { ...presetConfig.rateLimit, ...customConfig.rateLimit } :
     presetConfig.rateLimit;
-    
-  const securityHeadersConfig = customConfig?.securityHeaders ? 
-    { ...presetConfig.securityHeaders, ...customConfig.securityHeaders } : 
+
+  const securityHeadersConfig = customConfig?.securityHeaders ?
+    { ...presetConfig.securityHeaders, ...customConfig.securityHeaders } :
     presetConfig.securityHeaders;
 
   return new SecurityMiddleware(rateLimitConfig, securityHeadersConfig);

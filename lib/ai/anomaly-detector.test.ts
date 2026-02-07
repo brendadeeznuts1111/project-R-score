@@ -1,3 +1,5 @@
+// lib/ai/anomaly-detector.test.ts — Tests for anomaly-detector
+
 import { test, expect, describe, afterEach, mock, beforeEach } from 'bun:test';
 
 // Mock dependencies

@@ -1,15 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 📦 NPM Registry Server (Bun v1.3.7+ Optimized)
- *
- * Private npm registry implementation with R2 storage backend
- * Supports: package publishing, downloading, search, dist-tags
- *
- * Bun v1.3.7 Features Used:
- * - Header casing preservation in fetch()
- * - Increased HTTP header limit (200 headers)
- * - Better async/await performance (35% faster)
- */
+// lib/registry/server.ts — Private npm registry server with R2 storage backend
 
 export interface ServerOptions {
   port?: number;

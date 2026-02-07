@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🔄 Safe Concurrency Manager
- *
- * Provides mutex, semaphore, and controlled concurrency patterns
- * for critical operations like secret management and file access.
- */
+// lib/core/safe-concurrency.ts — Mutex, semaphore, and concurrency patterns
 
 /**
  * Simple mutex implementation for exclusive access

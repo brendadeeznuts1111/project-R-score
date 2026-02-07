@@ -1,14 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🔔 R2 Event System - Real-time Notifications & WebSocket Integration
- *
- * Provides event-driven architecture for R2 operations with:
- * - WebSocket-based live updates
- * - Event streaming for real-time monitoring
- * - Pub/Sub pattern for cross-service communication
- * - Hook system for custom event handlers
- */
+// lib/r2/r2-event-system.ts — R2 event system with real-time notifications
 
 import { styled, FW_COLORS } from '../theme/colors';
 

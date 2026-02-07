@@ -1,9 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 📦 Private NPM Registry Types
- *
- * Type definitions for the R2-backed private registry
- */
+// lib/registry/registry-types.ts — Type definitions for the R2-backed private registry
 
 export interface PackageVersion {
   name: string;

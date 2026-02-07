@@ -1,15 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 📚 Enterprise Documentation System Index & Cross-Reference
- *
- * Comprehensive cross-reference index for all documentation components,
- * ensuring proper location pointing and navigation across the system.
- *
- * @author Enterprise Documentation Team
- * @version 2.0.0
- * @since 1.0.0
- */
+// lib/docs/system-index.ts — Documentation system cross-reference index
 
 import {
   DocumentationProvider,

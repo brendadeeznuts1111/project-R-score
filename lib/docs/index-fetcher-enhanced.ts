@@ -1,3 +1,5 @@
+// lib/docs/index-fetcher-enhanced.ts — Enhanced documentation index fetcher
+
 import { EnhancedDocsCacheManager } from './cache-manager';
 
 export interface BunApiIndex {

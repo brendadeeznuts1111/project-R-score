@@ -1,3 +1,5 @@
+// lib/security/version-graph.ts — Version graph for secret history
+
 import { env } from 'bun';
 import type { VersionNode } from './versioned-secrets';
 

@@ -1,16 +1,9 @@
-#!/usr/bin/env bun
+// lib/docs/constants/categories.ts — Documentation categories and paths
 
-/**
- * 📂 Enhanced Documentation Categories and Paths
- * 
- * Comprehensive path definitions for all documentation categories
- * across bun.sh and bun.com domains with intelligent routing.
- */
-
-import { 
-  DocumentationProvider, 
+import {
+  DocumentationProvider,
   DocumentationCategory,
-  DocumentationDomain 
+  DocumentationDomain
 } from './domains';
 
 // Structured path constants for each category
@@ -29,7 +22,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       PACKAGE_MANAGERS: '/docs/installation/package-managers',
       TROUBLESHOOTING: '/docs/installation/troubleshooting'
     },
-    
+
     [DocumentationCategory.API_REFERENCE]: {
       OVERVIEW: '/docs/api',
       INTRODUCTION: '/docs/api/introduction',
@@ -45,7 +38,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       TYPESCRIPT: '/docs/api/typescript',
       JAVASCRIPT: '/docs/api/javascript'
     },
-    
+
     [DocumentationCategory.RUNTIME_FEATURES]: {
       OVERVIEW: '/docs/runtime',
       INTRODUCTION: '/docs/runtime/introduction',
@@ -61,7 +54,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       V8_INTEGRATION: '/docs/runtime/v8-integration',
       NATIVE_MODULES: '/docs/runtime/native-modules'
     },
-    
+
     [DocumentationCategory.CLI_REFERENCE]: {
       OVERVIEW: '/docs/cli',
       INTRODUCTION: '/docs/cli/introduction',
@@ -73,7 +66,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       COMPLETIONS: '/docs/cli/completions',
       INTEGRATION: '/docs/cli/integration'
     },
-    
+
     [DocumentationCategory.BENCHMARKS]: {
       OVERVIEW: '/docs/benchmarks',
       PERFORMANCE_COMPARISONS: '/docs/benchmarks/performance-comparisons',
@@ -82,7 +75,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       THROUGHPUT: '/docs/benchmarks/throughput',
  REAL_WORLD_TESTS: '/docs/benchmarks/real-world-tests'
     },
-    
+
     [DocumentationCategory.WEBASSEMBLY]: {
       OVERVIEW: '/docs/api/wasm',
       TABLE: '/docs/api/wasm#table',
@@ -101,7 +94,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       ENCRYPTION: '/docs/security/encryption',
       PERMISSIONS: '/docs/security/permissions'
     },
-    
+
     [DocumentationCategory.PERFORMANCE]: {
       OVERVIEW: '/docs/performance',
       OPTIMIZATION_GUIDES: '/docs/performance/optimization-guides',
@@ -110,7 +103,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       CONCURRENCY: '/docs/performance/concurrency',
       TUNING: '/docs/performance/tuning'
     },
-    
+
     [DocumentationCategory.MIGRATION]: {
       OVERVIEW: '/docs/migration',
       FROM_NODE: '/docs/migration/from-node',
@@ -121,7 +114,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       BREAKING_CHANGES: '/docs/migration/breaking-changes'
     }
   },
-  
+
   // bun.com/reference paths (reference portal)
   [DocumentationProvider.BUN_REFERENCE]: {
     [DocumentationCategory.API_REFERENCE]: {
@@ -139,7 +132,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       TYPESCRIPT: '/reference/api/typescript',
       INTERACTIVE_EXAMPLES: '/reference/api/interactive-examples'
     },
-    
+
     [DocumentationCategory.CLI_REFERENCE]: {
       OVERVIEW: '/reference/cli',
       COMMANDS: '/reference/cli/commands',
@@ -150,7 +143,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       TEMPLATES: '/reference/cli/templates',
       CHEATSHEET: '/reference/cli/cheatsheet'
     },
-    
+
     [DocumentationCategory.EXAMPLES_TUTORIALS]: {
       TUTORIALS: '/reference/tutorials',
       COOKBOOK: '/reference/cookbook',
@@ -159,7 +152,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       INTERACTIVE_EXAMPLES: '/reference/interactive-examples',
       CODE_PATTERNS: '/reference/code-patterns'
     },
-    
+
     [DocumentationCategory.BEST_PRACTICES]: {
       OVERVIEW: '/reference/best-practices',
       CHEATSHEET: '/reference/cheatsheet',
@@ -168,7 +161,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       OPTIMIZATIONS: '/reference/optimizations',
       STYLE_GUIDE: '/reference/style-guide'
     },
-    
+
     [DocumentationCategory.GETTING_STARTED]: {
       QUICKSTART: '/reference/getting-started',
       INSTALLATION: '/reference/getting-started/installation',
@@ -177,7 +170,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       WORKFLOW: '/reference/getting-started/workflow'
     }
   },
-  
+
   // bun.com/guides paths (guides portal)
   [DocumentationProvider.BUN_GUIDES]: {
     [DocumentationCategory.GETTING_STARTED]: {
@@ -190,7 +183,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       BASIC_PROJECT_STRUCTURE: '/guides/getting-started/project-structure',
       DEVELOPMENT_WORKFLOW: '/guides/getting-started/development-workflow'
     },
-    
+
     [DocumentationCategory.EXAMPLES_TUTORIALS]: {
       TUTORIALS: '/guides/tutorials',
       OVERVIEW: '/guides/tutorials/overview',
@@ -200,7 +193,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       WORKSHOP: '/guides/tutorials/workshop',
       LEARNING_PATHS: '/guides/tutorials/learning-paths'
     },
-    
+
     [DocumentationCategory.MIGRATION_GUIDES]: {
       OVERVIEW: '/guides/migration',
       FROM_NODE: '/guides/migration/from-node',
@@ -212,7 +205,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
     COMMON_PATTERNS: '/guides/migration/common-patterns',
     TROUBLESHOOTING: '/guides/migration/troubleshooting'
     },
-    
+
     [DocumentationCategory.TROUBLESHOOTING]: {
       OVERVIEW: '/guides/troubleshooting',
       COMMON_ISSUES: '/guides/troubleshooting/common-issues',
@@ -222,7 +215,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       FAQ: '/guides/faq',
       GETTING_HELP: '/guides/troubleshooting/getting-help'
     },
-    
+
     [DocumentationCategory.BEST_PRACTICES]: {
       OVERVIEW: '/guides/best-practices',
       PROJECT_STRUCTURE: '/guides/best-practices/project-structure',
@@ -232,7 +225,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       MONITORING: '/guides/best-practices/monitoring',
       SECURITY: '/guides/best-practices/security'
     },
-    
+
     [DocumentationCategory.COMMUNITY_RESOURCES]: {
       OVERVIEW: '/guides/community',
       CONTRIBUTING: '/guides/community/contributing',
@@ -242,7 +235,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
     EVENTS: '/guides/community/events'
     }
   },
-  
+
   // bun.com/tutorials paths (interactive tutorials)
   [DocumentationProvider.BUN_TUTORIALS]: {
     [DocumentationCategory.GETTING_STARTED]: {
@@ -251,7 +244,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       FIRST_BUN_APP: '/tutorials/first-bun-app',
       DEVELOPMENT_ENVIRONMENT: '/tutorials/development-environment'
     },
-    
+
     [DocumentationCategory.EXAMPLES_TUTORIALS]: {
       INTERACTIVE_API: '/tutorials/interactive-api',
       HANDS_ON_CLI: '/tutorials/hands-on-cli',
@@ -259,7 +252,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       PRACTICAL_EXERCISES: '/tutorials/practical-exercises'
     }
   },
-  
+
   // bun.com/examples paths (code examples)
   [DocumentationProvider.BUN_EXAMPLES]: {
     [DocumentationCategory.EXAMPLES_TUTORIALS]: {
@@ -270,7 +263,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       STARTER_KITS: '/examples/starter-kits'
     }
   },
-  
+
   // RSS feed paths
   [DocumentationProvider.BUN_RSS]: {
     [DocumentationCategory.RSS_FEEDS]: {
@@ -282,20 +275,20 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       GUIDES_RSS: '/guides/rss.xml',
       TECHNICAL_RSS: '/rss.xml'  // This maps to bun.sh/rss.xml
     },
-    
+
     [DocumentationCategory.BLOG_POSTS]: {
       BLOG_INDEX: '/blog',
       BLOG_ARCHIVE: '/blog/archive',
       BLOG_CATEGORIES: '/blog/categories'
     },
-    
+
     [DocumentationCategory.RELEASE_ANNOUNCEMENTS]: {
       RELEASES_INDEX: '/releases',
       RELEASE_NOTES: '/releases/notes',
       CHANGELOG: '/changelog'
     }
   },
-  
+
   // GitHub paths
   [DocumentationProvider.GITHUB_PUBLIC]: {
     [DocumentationCategory.API_REFERENCE]: {
@@ -304,7 +297,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       BUILTIN_IMPLEMENTATION: '/oven-sh/bun/tree/main/src/js/builtins',
       TYPES_DEFINITION: '/oven-sh/bun/tree/main/packages/bun-types'
     },
-    
+
     [DocumentationCategory.EXAMPLES_TUTORIALS]: {
       EXAMPLES: '/oven-sh/bun/tree/main/examples',
       TESTS: '/oven-sh/bun/tree/main/test',
@@ -335,7 +328,7 @@ export const INTELLIGENT_ROUTING_RULES = {
         fallback: { provider: DocumentationProvider.BUN_GUIDES, category: DocumentationCategory.EXAMPLES_TUTORIALS, path: 'WORKSHOP' }
       }
     },
-    
+
     'fetch': {
       developers: {
         primary: { provider: DocumentationProvider.BUN_OFFICIAL, category: DocumentationCategory.RUNTIME_FEATURES, path: 'NETWORKING' },
@@ -348,7 +341,7 @@ export const INTELLIGENT_ROUTING_RULES = {
         fallback: { provider: DocumentationProvider.BUN_EXAMPLES, category: DocumentationCategory.EXAMPLES_TUTORIALS, path: 'DEMO_APPS' }
       }
     },
-    
+
     'getting-started': {
       developers: {
         primary: { provider: DocumentationProvider.BUN_OFFICIAL, category: DocumentationCategory.INSTALLATION, path: 'OVERVIEW' },
@@ -361,7 +354,7 @@ export const INTELLIGENT_ROUTING_RULES = {
         fallback: { provider: DocumentationProvider.BUN_REFERENCE, category: DocumentationCategory.GETTING_STARTED, path: 'INSTALLATION' }
       }
     },
-    
+
     'cli': {
       developers: {
         primary: { provider: DocumentationProvider.BUN_OFFICIAL, category: DocumentationCategory.CLI_REFERENCE, path: 'OVERVIEW' },
@@ -374,7 +367,7 @@ export const INTELLIGENT_ROUTING_RULES = {
         fallback: { provider: DocumentationProvider.BUN_REFERENCE, category: DocumentationCategory.CLI_REFERENCE, path: 'CHEATSHEET' }
       }
     },
-    
+
     'rss': {
       all_users: {
         primary: { provider: DocumentationProvider.BUN_RSS, category: DocumentationCategory.RSS_FEEDS, path: 'MAIN_RSS' },
@@ -388,7 +381,7 @@ export const INTELLIGENT_ROUTING_RULES = {
       }
     }
   },
-  
+
   // Context-based routing
   contextRouting: {
     'error-debugging': {
@@ -396,19 +389,19 @@ export const INTELLIGENT_ROUTING_RULES = {
       secondary: { provider: DocumentationProvider.BUN_OFFICIAL, category: DocumentationCategory.TROUBLESHOOTING, path: 'OVERVIEW' },
       fallback: { provider: DocumentationProvider.BUN_GUIDES, category: DocumentationCategory.TROUBLESHOOTING, path: 'COMMON_ISSUES' }
     },
-    
+
     'performance-optimization': {
       primary: { provider: DocumentationProvider.BUN_OFFICIAL, category: DocumentationCategory.PERFORMANCE, path: 'OPTIMIZATION_GUIDES' },
       secondary: { provider: DocumentationProvider.BUN_GUIDES, category: DocumentationCategory.BEST_PRACTICES, path: 'PERFORMANCE' },
       fallback: { provider: DocumentationProvider.BUN_OFFICIAL, category: DocumentationCategory.BENCHMARKS, path: 'OVERVIEW' }
     },
-    
+
     'migration-project': {
       primary: { provider: DocumentationProvider.BUN_GUIDES, category: DocumentationCategory.MIGRATION_GUIDES, path: 'OVERVIEW' },
       secondary: { provider: DocumentationProvider.BUN_OFFICIAL, category: DocumentationCategory.MIGRATION, path: 'OVERVIEW' },
       fallback: { provider: DocumentationProvider.BUN_REFERENCE, category: DocumentationCategory.GETTING_STARTED, path: 'WORKFLOW' }
     },
-    
+
     'learning-path': {
       beginners: {
         primary: { provider: DocumentationProvider.BUN_GUIDES, category: DocumentationCategory.EXAMPLES_TUTORIALS, path: 'LEARNING_PATHS' },
@@ -422,7 +415,7 @@ export const INTELLIGENT_ROUTING_RULES = {
       }
     }
   },
-  
+
   // Format preference routing
   formatRouting: {
     'interactive': {
@@ -430,19 +423,19 @@ export const INTELLIGENT_ROUTING_RULES = {
       secondary: { provider: DocumentationProvider.BUN_TUTORIALS, category: DocumentationCategory.EXAMPLES_TUTORIALS, path: 'INTERACTIVE_API' },
       fallback: { provider: DocumentationProvider.BUN_EXAMPLES, category: DocumentationCategory.EXAMPLES_TUTORIALS, path: 'PLAYGROUND' }
     },
-    
+
     'video': {
       primary: { provider: DocumentationProvider.BUN_GUIDES, category: DocumentationCategory.EXAMPLES_TUTORIALS, path: 'VIDEO_TUTORIALS' },
       secondary: { provider: DocumentationProvider.BUN_TUTORIALS, category: DocumentationCategory.EXAMPLES_TUTORIALS, path: 'LIVE_CODING' },
       fallback: { provider: DocumentationProvider.BUN_GUIDES, category: DocumentationCategory.COMMUNITY_RESOURCES, path: 'EVENTS' }
     },
-    
+
     'quick-reference': {
       primary: { provider: DocumentationProvider.BUN_REFERENCE, category: DocumentationCategory.BEST_PRACTICES, path: 'CHEATSHEET' },
       secondary: { provider: DocumentationProvider.BUN_REFERENCE, category: DocumentationCategory.CLI_REFERENCE, path: 'CHEATSHEET' },
       fallback: { provider: DocumentationProvider.BUN_GUIDES, category: DocumentationCategory.GETTING_STARTED, path: 'OVERVIEW' }
     },
-    
+
     'source-code': {
       primary: { provider: DocumentationProvider.GITHUB_PUBLIC, category: DocumentationCategory.API_REFERENCE, path: 'SOURCE_CODE' },
       secondary: { provider: DocumentationProvider.GITHUB_PUBLIC, category: DocumentationCategory.EXAMPLES_TUTORIALS, path: 'EXAMPLES' },
@@ -471,7 +464,7 @@ export class IntelligentRouting {
     const normalizedTopic = topic.toLowerCase().replace(/[^a-z0-9]/g, '-');
     const normalizedContext = context?.toLowerCase().replace(/[^a-z0-9]/g, '-');
     const normalizedFormat = format?.toLowerCase().replace(/[^a-z0-9]/g, '-');
-    
+
     // Check format preference first
     if (normalizedFormat && INTELLIGENT_ROUTING_RULES.formatRouting[normalizedFormat]) {
       const formatRoute = INTELLIGENT_ROUTING_RULES.formatRouting[normalizedFormat];
@@ -481,7 +474,7 @@ export class IntelligentRouting {
         reasoning: `Selected based on format preference: ${format}`
       };
     }
-    
+
     // Check context preference
     if (normalizedContext && INTELLIGENT_ROUTING_RULES.contextRouting[normalizedContext]) {
       const contextRoute = INTELLIGENT_ROUTING_RULES.contextRouting[normalizedContext];
@@ -491,7 +484,7 @@ export class IntelligentRouting {
         reasoning: `Selected based on context: ${context}`
       };
     }
-    
+
     // Check topic routing
     if (INTELLIGENT_ROUTING_RULES.topicRouting[normalizedTopic]) {
       const topicRoute = INTELLIGENT_ROUTING_RULES.topicRouting[normalizedTopic];
@@ -501,7 +494,7 @@ export class IntelligentRouting {
         reasoning: `Selected based on topic: ${topic} for user type: ${userType}`
       };
     }
-    
+
     // Fallback to default routing
     return {
       provider: DocumentationProvider.BUN_OFFICIAL,
@@ -510,7 +503,7 @@ export class IntelligentRouting {
       reasoning: 'Default fallback - no specific routing rule found'
     };
   }
-  
+
   /**
    * Get alternative routes for a topic
    */
@@ -532,11 +525,11 @@ export class IntelligentRouting {
       type: 'secondary' | 'fallback';
       reasoning: string;
     }> = [];
-    
+
     if (INTELLIGENT_ROUTING_RULES.topicRouting[normalizedTopic]) {
       const topicRoute = INTELLIGENT_ROUTING_RULES.topicRouting[normalizedTopic];
       const userRoute = topicRoute[userType] || topicRoute.developers;
-      
+
       if (userRoute.secondary) {
         alternatives.push({
           ...userRoute.secondary,
@@ -544,7 +537,7 @@ export class IntelligentRouting {
           reasoning: `Secondary route for ${topic} and ${userType}`
         });
       }
-      
+
       if (userRoute.fallback) {
         alternatives.push({
           ...userRoute.fallback,
@@ -553,10 +546,10 @@ export class IntelligentRouting {
         });
       }
     }
-    
+
     return alternatives;
   }
-  
+
   /**
    * Get all routes for a topic across user types
    */
@@ -566,38 +559,38 @@ export class IntelligentRouting {
   }> {
     const normalizedTopic = topic.toLowerCase().replace(/[^a-z0-9]/g, '-');
     const result: Record<string, any> = {};
-    
+
     if (INTELLIGENT_ROUTING_RULES.topicRouting[normalizedTopic]) {
       const topicRoute = INTELLIGENT_ROUTING_RULES.topicRouting[normalizedTopic];
-      
+
       Object.keys(topicRoute).forEach(userType => {
         const userRoute = topicRoute[userType as keyof typeof topicRoute];
         const alternatives: any[] = [];
-        
+
         if (userRoute.secondary) {
           alternatives.push({
             ...userRoute.secondary,
             type: 'secondary'
           });
         }
-        
+
         if (userRoute.fallback) {
           alternatives.push({
             ...userRoute.fallback,
             type: 'fallback'
           });
         }
-        
+
         result[userType] = {
           primary: userRoute.primary,
           alternatives
         };
       });
     }
-    
+
     return result;
   }
-  
+
   /**
    * Check if a topic has specialized routing
    */
@@ -605,7 +598,7 @@ export class IntelligentRouting {
     const normalizedTopic = topic.toLowerCase().replace(/[^a-z0-9]/g, '-');
     return INTELLIGENT_ROUTING_RULES.topicRouting.hasOwnProperty(normalizedTopic);
   }
-  
+
   /**
    * Get path from provider and category
    */
@@ -634,7 +627,7 @@ export const ENHANCED_DOCUMENTATION_PATHS = {
       DOCKER: '/docs/install/docker',
       CI_CD: '/docs/install/ci-cd'
     },
-    
+
     [DocumentationCategory.QUICKSTART]: {
       MAIN: '/docs/quickstart',
       TYPESCRIPT: '/docs/quickstart/typescript',
@@ -643,7 +636,7 @@ export const ENHANCED_DOCUMENTATION_PATHS = {
       NEXT_JS: '/docs/quickstart/nextjs',
       API_SERVER: '/docs/quickstart/api'
     },
-    
+
     [DocumentationCategory.API_REFERENCE]: {
       OVERVIEW: '/docs/api',
       UTILS: '/docs/api/utils',
@@ -656,7 +649,7 @@ export const ENHANCED_DOCUMENTATION_PATHS = {
       BUILD: '/docs/api/build',
       PLUGINS: '/docs/api/plugins'
     },
-    
+
     [DocumentationCategory.RUNTIME_FEATURES]: {
       OVERVIEW: '/docs/runtime',
       FILESYSTEM: '/docs/runtime/filesystem',
@@ -670,7 +663,7 @@ export const ENHANCED_DOCUMENTATION_PATHS = {
       INSPECTOR: '/docs/runtime/inspector'
     }
   },
-  
+
   // Guides and tutorials
   GUIDES: {
     [DocumentationCategory.TUTORIALS]: {
@@ -684,7 +677,7 @@ export const ENHANCED_DOCUMENTATION_PATHS = {
       TESTING: '/guides/testing',
       DEBUGGING: '/guides/debugging'
     },
-    
+
     [DocumentationCategory.BEST_PRACTICES]: {
       PERFORMANCE: '/guides/performance',
       SECURITY: '/guides/security',
@@ -693,7 +686,7 @@ export const ENHANCED_DOCUMENTATION_PATHS = {
       MONITORING: '/guides/monitoring',
       SCALING: '/guides/scaling'
     },
-    
+
     [DocumentationCategory.MIGRATION_GUIDES]: {
       FROM_NODE: '/guides/migrate-from-node',
       FROM_DENO: '/guides/migrate-from-deno',
@@ -702,7 +695,7 @@ export const ENHANCED_DOCUMENTATION_PATHS = {
       VERSION_UPGRADE: '/guides/version-upgrade'
     }
   },
-  
+
   // Internal enterprise paths
   ENTERPRISE: {
     [DocumentationCategory.SECURITY_GUIDELINES]: {
@@ -713,7 +706,7 @@ export const ENHANCED_DOCUMENTATION_PATHS = {
       AUDITING: '/security/auditing',
       COMPLIANCE: '/security/compliance'
     },
-    
+
     [DocumentationCategory.DEPLOYMENT_GUIDES]: {
       DOCKER: '/deployment/docker',
       KUBERNETES: '/deployment/kubernetes',
@@ -728,7 +721,7 @@ export const ENHANCED_DOCUMENTATION_PATHS = {
 // Utility type for path access
 export type EnhancedDocumentationPaths = typeof ENHANCED_DOCUMENTATION_PATHS;
 export type CategoryPaths<C extends DocumentationCategory> = {
-  [K in keyof EnhancedDocumentationPaths]: EnhancedDocumentationPaths[K][C] extends object 
-    ? EnhancedDocumentationPaths[K][C] 
+  [K in keyof EnhancedDocumentationPaths]: EnhancedDocumentationPaths[K][C] extends object
+    ? EnhancedDocumentationPaths[K][C]
     : never;
 };

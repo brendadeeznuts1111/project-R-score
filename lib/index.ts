@@ -1,11 +1,11 @@
 /**
  * 🏭 FactoryWager Library Index
- * 
+ *
  * The heart of all projects - centralized constants, types, utilities, theming, documentation, and security
- * 
+ *
  * 📋 Development Standards: Locked in at `.custom-instructions.md`
  * 📖 Quick Reference: See `DEVELOPMENT-STANDARDS.md`
- * 
+ *
  * @version 5.1
  * @author FactoryWager Team
  */
@@ -77,25 +77,25 @@ export const FW = {
   colors: FW_COLORS,
   styled,
   log,
-  
+
   // Config
   // config: FACTORYWAGER_CONFIG, // Commented out - config module has import issues
-  
+
   // Utils
   utils: Utils,
-  
+
   // Documentation
   docs: {
     patterns: DOC_PATTERNS,
     utils: DocumentationUtils,
   },
-  
+
   // Security (v5.1)
   security: {
     versionedSecrets: VersionedSecretManager,
     utils: SecurityUtils,
   },
-  
+
   // Version Tracking
   versionTracking: {
     tracker: VersionTracker,
@@ -103,34 +103,34 @@ export const FW = {
     factory: UtilityFactory,
     registry: UtilityRegistry,
   },
-  
+
   // Package Management (NEW)
   package: {
     manager: PackageManager,
   },
-  
+
   // R2 Storage Enhanced (NEW)
   r2: {
     storage: R2Storage,
   },
-  
+
   // RSS Management (NEW)
   rss: {
     manager: RSSManager,
   },
-  
+
   // HTTP Health Endpoints (NEW)
   http: {
     createHealthEndpoint,
     createBunHealthEndpoint,
   },
-  
+
   // Types
   types: {
     Severity: {} as any, // Will be populated by actual types
     ProfileType: {} as any,
   },
-  
+
   // Development Standards Reference
   standards: {
     complete: '.custom-instructions.md',

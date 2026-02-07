@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * ☁️ Cloudflare Domain Manager for FactoryWager
- *
- * Manages all factory-wager.com subdomains through Cloudflare API
- * and integrates them with the R2 MCP system for comprehensive monitoring.
- */
+// lib/mcp/cloudflare-domain-manager.ts — Cloudflare domain and subdomain management via API
 
 import { r2MCPIntegration } from './r2-integration';
 import { domainIntegration } from './domain-integration';

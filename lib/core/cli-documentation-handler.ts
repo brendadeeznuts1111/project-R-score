@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 📚 CLI Documentation Handler with Fragment Support
- *
- * Advanced CLI documentation navigation with deep linking and state management
- */
+// lib/core/cli-documentation-handler.ts — CLI documentation handler with deep linking
 
 import {
   CLICategory,

@@ -2,7 +2,7 @@
 
 /**
  * Playwriter R2 Integration
- * 
+ *
  * Store browser automation artifacts in Cloudflare R2
  * - Screenshots
  * - Session recordings
@@ -142,7 +142,7 @@ class PlaywriterR2Integration {
    * List all artifacts for this session
    */
   async listArtifacts(prefix?: string): Promise<Array<{ key: string; size: number; lastModified: Date }>> {
-    const searchPrefix = prefix 
+    const searchPrefix = prefix
       ? `${this.config.prefix}/${prefix}`
       : this.config.prefix;
 
@@ -218,14 +218,14 @@ export async function executeAndUpload(
         const buffer = await page.screenshot({ fullPage: true });
         console.log('SCREENSHOT_DATA:' + buffer.toString('base64'));
       `;
-      
+
       const ssProc = Bun.spawn(['playwriter', '-s', String(sessionId), '-e', screenshotCode], {
         stdout: 'pipe',
       });
-      
+
       const ssOutput = await new Response(ssProc.stdout).text();
       const match = ssOutput.match(/SCREENSHOT_DATA:([A-Za-z0-9+/=]+)/);
-      
+
       if (match) {
         const buffer = Buffer.from(match[1], 'base64');
         const url = await r2.uploadScreenshot(new Uint8Array(buffer), {
@@ -249,14 +249,14 @@ export async function executeAndUpload(
         const har = await page.evaluate(() => JSON.stringify(performance.getEntries()));
         console.log('HAR_DATA:' + har);
       `;
-      
+
       const harProc = Bun.spawn(['playwriter', '-s', String(sessionId), '-e', harCode], {
         stdout: 'pipe',
       });
-      
+
       const harOutput = await new Response(harProc.stdout).text();
       const match = harOutput.match(/HAR_DATA:(.+)/);
-      
+
       if (match) {
         const url = await r2.uploadHAR(match[1]);
         artifacts.push({ type: 'har', url });

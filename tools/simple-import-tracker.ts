@@ -1,3 +1,6 @@
+#!/usr/bin/env bun
+// tools/simple-import-tracker.ts — Bun plugin for tracking imports
+
 import { plugin } from "bun";
 
 plugin({
@@ -13,7 +16,7 @@ plugin({
         const imports = transpiler.scanImports(contents);
 
         console.log(`📁 ${path}:`);
-        
+
         for (const importInfo of imports) {
           const importPath = importInfo.path;
           trackedImports[importPath] = (trackedImports[importPath] || 0) + 1;
@@ -34,7 +37,7 @@ plugin({
     // Generate stats when requested
     build.onLoad({ filter: /import-stats\.js$/ }, async ({ defer }) => {
       console.log(`📊 Generating import statistics...`);
-      
+
       // Wait for all files to be processed
       await defer();
 

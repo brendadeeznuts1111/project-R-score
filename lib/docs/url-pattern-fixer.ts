@@ -1,9 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 🌐 URL Pattern Analysis & Fix System
- *
- * Analyzes URL patterns from @[lib] directory and fixes issues
- */
+// lib/docs/url-pattern-fixer.ts — URL pattern analysis and fixes
 
 import { write } from 'bun';
 

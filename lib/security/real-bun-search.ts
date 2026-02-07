@@ -1,8 +1,4 @@
-/**
- * 🌐 Real Bun Documentation Search
- *
- * This would actually search Bun's documentation at bun.com
- */
+// lib/security/real-bun-search.ts — Real Bun documentation search
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 

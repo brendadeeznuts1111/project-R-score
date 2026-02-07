@@ -1,3 +1,5 @@
+// lib/ai/smart-cache-manager.test.ts — Tests for smart-cache-manager
+
 import { test, expect, describe, afterEach, mock, beforeEach } from 'bun:test';
 
 // Mock dependencies

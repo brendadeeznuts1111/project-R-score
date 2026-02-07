@@ -1,21 +1,16 @@
 #!/usr/bin/env bun
-/**
- * 🏭 FactoryWager Tier-1380 Secure Secrets Manager
- * 
- * Integrates Bun's secrets API for secure credential storage
- * across macOS Keychain, Linux libsecret, and Windows Credential Manager
- */
+// tools/tier1380-secrets-manager.ts — Secure secrets manager using Bun secrets API
 
 import { secrets } from "bun";
 
 /**
  * 🚀 Prefetch Optimizations
- * 
+ *
  * This file includes prefetch hints for optimal performance:
  * - DNS prefetching for external domains
  * - Preconnect for faster handshakes
  * - Resource preloading for critical assets
- * 
+ *
  * Generated automatically by optimize-examples-prefetch.ts
  */
 
@@ -254,7 +249,7 @@ export class Tier1380SecretsManager {
     // This is a security feature. We'll return known secret names.
     return [
       "r2-access-key-id",
-      "r2-secret-access-key", 
+      "r2-secret-access-key",
       "database-url"
     ];
   }
@@ -343,7 +338,7 @@ export class Tier1380SecretsManager {
       totalCount++;
       const exists = await this.validateSecret(name);
       checks[name] = exists;
-      
+
       if (exists) {
         healthyCount++;
       } else if (critical) {
@@ -351,12 +346,12 @@ export class Tier1380SecretsManager {
       }
     }
 
-    const status = healthyCount === totalCount ? 'healthy' : 
+    const status = healthyCount === totalCount ? 'healthy' :
                    healthyCount > 0 ? 'warning' : 'error';
 
-    const message = status === 'healthy' ? 
+    const message = status === 'healthy' ?
       'All secrets are properly stored' :
-      status === 'warning' ? 
+      status === 'warning' ?
       'Some non-critical secrets are missing' :
       'Critical secrets are missing';
 

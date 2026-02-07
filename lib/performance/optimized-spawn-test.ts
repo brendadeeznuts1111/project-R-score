@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Optimized Spawn Performance Test
- *
- * Replaces the slow spawnSync performance test with optimized alternatives
- * that meet the ≤5ms target performance requirement.
- */
+// lib/performance/optimized-spawn-test.ts — Optimized spawn performance test
 
 // Entry guard check
 if (import.meta.main) {

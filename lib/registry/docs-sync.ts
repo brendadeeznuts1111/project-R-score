@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-/**
- * 🔄 Documentation Sync Service
- *
- * Syncs cached documentation, user preferences, and reading progress across devices.
- * Uses R2 as the central sync backend.
- */
+// lib/registry/docs-sync.ts — Cross-device documentation sync via R2
 
 import { styled, FW_COLORS } from '../theme/colors';
 

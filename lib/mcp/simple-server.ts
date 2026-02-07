@@ -1,8 +1,4 @@
-/**
- * 🌐 Simple Bun MCP Server
- * 
- * Direct HTTP implementation without MCP SDK connection issues
- */
+// lib/mcp/simple-server.ts — Simple MCP server with direct HTTP implementation
 
 export class SimpleBunMCPServer {
   private searchCache = new Map<string, any>();
@@ -24,7 +20,7 @@ export class SimpleBunMCPServer {
       apiReferenceOnly: Boolean(apiReferenceOnly),
       codeOnly: Boolean(codeOnly)
     };
-    
+
     // Use deterministic JSON stringification
     return JSON.stringify(keyObj, Object.keys(keyObj).sort());
   }
@@ -36,16 +32,16 @@ export class SimpleBunMCPServer {
     if (!query || typeof query !== 'string') {
       throw new Error('Query is required and must be a string');
     }
-    
+
     const trimmed = query.trim();
     if (trimmed.length === 0) {
       throw new Error('Query cannot be empty');
     }
-    
+
     if (trimmed.length > 1000) {
       throw new Error('Query too long (max 1000 characters)');
     }
-    
+
     // Remove potentially dangerous regex characters
     return trimmed.replace(/[<>{}[\]\\]/g, '');
   }
@@ -56,29 +52,29 @@ export class SimpleBunMCPServer {
   private createSearchPattern(query: string): RegExp {
     // Validate and sanitize input
     const sanitized = this.validateQuery(query);
-    
+
     // Handle wildcard patterns
     let pattern = sanitized;
-    
+
     // Convert * to .*
     pattern = pattern.replace(/\*/g, '.*');
-    
+
     // Handle partial matches (add wildcards if not present)
     if (!pattern.includes('*')) {
       pattern = `.*${pattern}.*`;
     }
-    
+
     // Escape special regex characters except * (already handled)
     pattern = pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
-    
+
     // Convert back * to .*
     pattern = pattern.replace(/\\\*/g, '.*');
-    
+
     // Limit pattern complexity to prevent ReDoS
     if (pattern.length > 500) {
       throw new Error('Search pattern too complex');
     }
-    
+
     try {
       // Create case-insensitive regex with timeout protection
       return new RegExp(pattern, 'i');
@@ -93,15 +89,15 @@ export class SimpleBunMCPServer {
   private evictCache(): void {
     const maxSize = 100;
     const evictCount = 20; // Remove multiple entries at once
-    
+
     if (this.searchCache.size > maxSize) {
       const keys = Array.from(this.searchCache.keys());
-      
+
       // Remove oldest entries (simple FIFO)
       for (let i = 0; i < Math.min(evictCount, keys.length); i++) {
         this.searchCache.delete(keys[i]);
       }
-      
+
       console.log(`🗑️ Evicted ${Math.min(evictCount, keys.length)} cache entries`);
     }
   }
@@ -185,10 +181,10 @@ export class SimpleBunMCPServer {
         args.codeOnly
       );
       const executionTime = Date.now() - startTime;
-      
+
       // Enhanced console output with depth and formatting
       const formattedResults = this.formatSearchResults(searchResults, args, executionTime);
-      
+
       return {
         content: [
           {
@@ -215,10 +211,10 @@ export class SimpleBunMCPServer {
     args: any,
     executionTime: number
   ): string {
-    
+
     const timestamp = new Date().toISOString();
     const searchDepth = this.calculateSearchDepth(args.query);
-    
+
     let output = `╭─────────────────────────────────────────────────────────────────╮\n`;
     output += `│ 🔍 BUN DOCUMENTATION SEARCH RESULTS                              │\n`;
     output += `│ ├─ Query: "${args.query}"                                          │\n`;
@@ -238,20 +234,20 @@ export class SimpleBunMCPServer {
 
     results.forEach((result, index) => {
       const resultNumber = (index + 1).toString().padStart(2, '0');
-      
+
       output += `${'─'.repeat(80)}\n`;
       output += `📄 RESULT ${resultNumber}: ${result.title}\n`;
       output += `${'─'.repeat(80)}\n`;
       output += `📝 Description: ${result.description}\n`;
       output += `🔗 Documentation: ${result.url}\n`;
-      
+
       if (result.codeExample) {
         output += `\n💻 Code Example:\n`;
         output += `\`\`\`typescript\n`;
         output += `${result.codeExample}\n`;
         output += `\`\`\`\n`;
       }
-      
+
       // Add relevance score and metadata
       const relevance = this.calculateRelevance(result, args.query);
       output += `\n📊 Metadata:\n`;
@@ -269,21 +265,21 @@ export class SimpleBunMCPServer {
     output += `• Search Pattern: ${args.query}\n`;
     output += `• Search Depth: ${searchDepth}\n`;
     output += `• Execution Time: ${executionTime}ms\n`;
-    
+
     const apiCount = results.filter(r => r.url.includes('/docs/api/')).length;
     const codeCount = results.filter(r => r.codeExample).length;
     output += `• API References: ${apiCount}/${results.length}\n`;
     output += `• Code Examples: ${codeCount}/${results.length}\n`;
-    
+
     if (this.cacheStats.total > 0) {
       output += `• Cache Hit Rate: ${((this.cacheStats.hits / this.cacheStats.total) * 100).toFixed(1)}%\n`;
     }
-    
+
     output += `\n🎯 TIPS:\n`;
     output += `• Use * for wildcards: *password*, serve*\n`;
     output += `• Add filters: apiReferenceOnly: true, codeOnly: true\n`;
     output += `• Check cache stats: GET /cache\n`;
-    
+
     return output;
   }
 
@@ -296,7 +292,7 @@ export class SimpleBunMCPServer {
       if (wildcardCount >= 2) return 'Deep (Pattern Match)';
       return 'Medium (Wildcard)';
     }
-    
+
     if (query.length > 10) return 'Medium (Specific)';
     if (query.length > 5) return 'Shallow (Broad)';
     return 'Very Shallow (Keyword)';
@@ -308,27 +304,27 @@ export class SimpleBunMCPServer {
   private calculateRelevance(result: any, query: string): number {
     let score = 0;
     const lowerQuery = query.toLowerCase().replace(/\*/g, '');
-    
+
     // Title matches are most important
     if (result.title.toLowerCase().includes(lowerQuery)) {
       score += 50;
     }
-    
+
     // Description matches
     if (result.description.toLowerCase().includes(lowerQuery)) {
       score += 30;
     }
-    
+
     // Code matches
     if (result.codeExample && result.codeExample.toLowerCase().includes(lowerQuery)) {
       score += 20;
     }
-    
+
     // Bonus for exact matches
     if (result.title.toLowerCase() === lowerQuery) {
       score += 25;
     }
-    
+
     return Math.min(score, 100);
   }
 
@@ -337,24 +333,24 @@ export class SimpleBunMCPServer {
    */
   private getMatchType(result: any, query: string): string {
     const lowerQuery = query.toLowerCase().replace(/\*/g, '');
-    
+
     if (result.title.toLowerCase() === lowerQuery) return 'Exact Title Match';
     if (result.title.toLowerCase().includes(lowerQuery)) return 'Title Match';
     if (result.description.toLowerCase().includes(lowerQuery)) return 'Description Match';
     if (result.codeExample && result.codeExample.toLowerCase().includes(lowerQuery)) return 'Code Match';
     return 'Pattern Match';
     this.cacheStats.total++;
-    
+
     // Check cache
     if (this.searchCache.has(cacheKey)) {
       this.cacheStats.hits++;
       console.log(` Cache HIT for query: ${query.substring(0, 50)}...`);
       return this.searchCache.get(cacheKey);
     }
-    
+
     this.cacheStats.misses++;
     console.log(` Cache MISS for query: ${query.substring(0, 50)}...`);
-    
+
     // Perform search (mock data for now)
     const results = await this.performSearch(query, version, language, apiReferenceOnly, codeOnly);
       }
@@ -362,7 +358,7 @@ export class SimpleBunMCPServer {
 
     // Enhanced pattern matching
     const searchPattern = this.createSearchPattern(query);
-    let results = bunDocs.filter(doc => 
+    let results = bunDocs.filter(doc =>
       searchPattern.test(doc.title) ||
       searchPattern.test(doc.description) ||
       (doc.codeExample && searchPattern.test(doc.codeExample))
@@ -370,20 +366,20 @@ export class SimpleBunMCPServer {
 
     // Apply filters
     if (apiReferenceOnly) {
-      results = results.filter(result => 
+      results = results.filter(result =>
         result.url.includes('/docs/api/') || result.title.includes('API')
       );
     }
-    
+
     if (codeOnly) {
       results = results.filter(result => result.codeExample);
     }
 
     const finalResults = results.slice(0, 10);
-    
+
     // Store in cache
     this.searchCache.set(cacheKey, finalResults);
-    
+
     // Limit cache size
     if (this.searchCache.size > 100) {
       const firstKey = this.searchCache.keys().next().value;
@@ -399,21 +395,21 @@ export class SimpleBunMCPServer {
   private createSearchPattern(query: string): RegExp {
     // Handle wildcard patterns
     let pattern = query;
-    
+
     // Convert * to .*
     pattern = pattern.replace(/\*/g, '.*');
-    
+
     // Handle partial matches (add wildcards if not present)
     if (!pattern.includes('*')) {
       pattern = `.*${pattern}.*`;
     }
-    
+
     // Escape special regex characters except *
     pattern = pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
-    
+
     // Convert back * to .*
     pattern = pattern.replace(/\\\*/g, '.*');
-    
+
     // Create case-insensitive regex
     return new RegExp(pattern, 'i');
   }
@@ -484,7 +480,7 @@ export class SimpleBunMCPServer {
         // Cache stats endpoint with sanitized keys
         if (req.method === 'GET' && req.url.endsWith('/cache')) {
           const hitRate = this.cacheStats.total > 0 ? (this.cacheStats.hits / this.cacheStats.total * 100).toFixed(2) : '0.00';
-          
+
           // Sanitize cache keys to prevent exposing sensitive queries
           const sanitizedKeys = Array.from(this.searchCache.keys())
             .slice(0, 10)
@@ -497,7 +493,7 @@ export class SimpleBunMCPServer {
                 hasFilters: parsed.apiReferenceOnly || parsed.codeOnly
               };
             });
-          
+
           return new Response(JSON.stringify({
             cache: {
               size: this.searchCache.size,

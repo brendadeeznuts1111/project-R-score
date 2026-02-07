@@ -1,8 +1,4 @@
-/**
- * 🔐 FactoryWager Secrets Manager
- *
- * Simple secrets management for the MCP system
- */
+// lib/security/secrets.ts — Secrets manager for MCP system
 
 export class SecretManager {
   private secrets: Map<string, string> = new Map();

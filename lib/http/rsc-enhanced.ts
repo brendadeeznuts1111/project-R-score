@@ -1,11 +1,4 @@
-/**
- * Enhanced RSC Handler with Official Bun Performance Features
- *
- * Incorporates DNS prefetching, preconnect, and other official Bun
- * optimizations validated by the official documentation.
- *
- * @see {@link https://bun.sh/docs/runtime/networking/fetch} Official fetch documentation
- */
+// lib/http/rsc-enhanced.ts — Enhanced RSC handler with Bun performance optimizations
 
 import { dns, fetch } from 'bun';
 

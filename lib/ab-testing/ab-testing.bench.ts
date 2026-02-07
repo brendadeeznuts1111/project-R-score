@@ -1,4 +1,3 @@
-#!/usr/bin/env bun
 // lib/ab-testing/ab-testing.bench.ts — AB Testing Performance Benchmark
 // Run: bun lib/ab-testing/ab-testing.bench.ts
 

@@ -1,12 +1,4 @@
-/**
- * CLI and Constants Validation System
- *
- * Provides comprehensive validation, error handling, and auto-fixing
- * for CLI tools, links, and constants used across the platform.
- *
- * @version 1.0.0
- * @author Enterprise Platform Team
- */
+// lib/validation/cli-constants-validation.ts — Validation and auto-fixing for CLI tools and constants
 
 import { validateOrThrow, StringValidators, NumberValidators } from '../core/core-validation';
 

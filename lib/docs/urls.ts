@@ -1,13 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 📚 FactoryWager Documentation URLs v5.1
- *
- * Extended documentation URL management for Bun runtime,
- * secrets API, and versioning features
- *
- * @version 5.1
- */
+// lib/docs/urls.ts — Documentation URL management
 
 // Base domain configuration
 export const DOC_DOMAINS = {

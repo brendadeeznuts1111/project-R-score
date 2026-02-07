@@ -1,16 +1,6 @@
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 #!/usr/bin/env bun
+// tools/setup-r2-credentials.ts — Guide for creating R2 API credentials
 
-// Script to create R2 API token
 export {}; // Make this a module
 
 console.log("🔑 To create R2 credentials, follow these steps:");

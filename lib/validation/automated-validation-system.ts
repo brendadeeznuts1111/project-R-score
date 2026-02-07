@@ -1,10 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Automated Validation System
- *
- * Provides automated validation for CI/CD integration and
- * continuous monitoring of repository health.
- */
+// lib/validation/automated-validation-system.ts — Automated validation for CI/CD and repo health
 
 // Entry guard check
 if (import.meta.path !== Bun.main) {
@@ -261,22 +255,22 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
+
     - name: Setup Bun
       uses: oven-sh/setup-bun@v1
       with:
         bun-version: latest
-        
+
     - name: Install dependencies
       run: bun install
-      
+
     - name: Run automated validation
       run: bun run lib/automated-validation-system.ts
-      
+
     - name: Upload validation report
       uses: actions/upload-artifact@v4
       if: always()
@@ -286,7 +280,7 @@ jobs:
           validation-report.json
           URL_OPTIMIZATION_REPORT.md
         retention-days: 30
-        
+
     - name: Comment PR with results
       if: github.event_name == 'pull_request'
       uses: actions/github-script@v7
@@ -298,16 +292,16 @@ jobs:
               const report = JSON.parse(fs.readFileSync('validation-report.json', 'utf8'));
               const comment = \`
               ## 🔍 Automated Validation Results
-              
+
               **Status:** \${report.success ? '✅ PASSED' : '❌ FAILED'}
               **Success Rate:** \${(report.metrics.successRate * 100).toFixed(1)}%
               **Total Time:** \${report.metrics.totalTime}ms
-              
-              \${report.recommendations.length > 0 ? 
-                '**Recommendations:**\\n' + report.recommendations.map(r => \`• \${r}\`).join('\\n') 
+
+              \${report.recommendations.length > 0 ?
+                '**Recommendations:**\\n' + report.recommendations.map(r => \`• \${r}\`).join('\\n')
                 : 'No issues detected!'}
               \`;
-              
+
               github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,

@@ -1,9 +1,4 @@
-/**
- * 🌐 Real Bun MCP Server
- *
- * Actual Bun MCP server that searches Bun documentation using HTTP transport
- * Based on https://bun.com/docs/mcp
- */
+// lib/mcp/bun-server.ts — MCP server for Bun documentation search via HTTP transport
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { validateHost } from '../utils/env-validator';

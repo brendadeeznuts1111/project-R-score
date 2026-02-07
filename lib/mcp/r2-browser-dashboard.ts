@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 🌐 R2 Browser & Dashboard System
- *
- * Comprehensive R2 data visualization, browser interface, and dashboard
- * for the complete FactoryWager ecosystem integration.
- */
+// lib/mcp/r2-browser-dashboard.ts — R2 data visualization and dashboard interface
 
 import { R2MCPIntegration } from './r2-integration-fixed';
 import { styled, FW_COLORS } from '../theme/colors';
@@ -431,20 +424,20 @@ export class R2BrowserDashboard {
             --fw-error: #ef4444;
             --fw-muted: #6b7280;
         }
-        
+
         .fw-primary { color: var(--fw-primary); }
         .fw-success { color: var(--fw-success); }
         .fw-warning { color: var(--fw-warning); }
         .fw-error { color: var(--fw-error); }
         .fw-muted { color: var(--fw-muted); }
-        
+
         .bg-fw-primary { background-color: var(--fw-primary); }
         .bg-fw-success { background-color: var(--fw-success); }
         .bg-fw-warning { background-color: var(--fw-warning); }
         .bg-fw-error { background-color: var(--fw-error); }
-        
+
         .animate-pulse-slow { animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        
+
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: .7; }
@@ -823,8 +816,8 @@ export class R2BrowserDashboard {
         const fragmentStr = link.fragment ? URLFragmentUtils.buildFragment(link.fragment) : '';
 
         return `
-        <a href="${link.url}${fragmentStr}" 
-           class="nav-link" 
+        <a href="${link.url}${fragmentStr}"
+           class="nav-link"
            data-section="${link.name.toLowerCase()}">
           ${link.name}
         </a>

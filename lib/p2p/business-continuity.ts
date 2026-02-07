@@ -1,8 +1,4 @@
-#!/usr/bin/env bun
-/**
- * Business Continuity System for P2P Proxy
- * Handles business name/location changes, account migrations, and customer notifications
- */
+// lib/p2p/business-continuity.ts — Business continuity for P2P proxy migrations
 
 import Redis from 'ioredis';
 

@@ -1,9 +1,4 @@
-/**
- * 🔐 FactoryWager Master Token System v5.0
- *
- * Enterprise-grade token management for MCP authentication
- * with rotating tokens, secure storage, and audit logging.
- */
+// lib/security/master-token.ts — Master token management system
 
 import { createHmac, createHash, randomBytes } from 'node:crypto';
 import { r2MCPIntegration } from '../mcp/r2-integration';

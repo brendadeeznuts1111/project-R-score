@@ -1,9 +1,4 @@
-#!/usr/bin/env bun
-/**
- * ⚙️ Registry Configuration Loader
- *
- * Supports JSON, JSON5, and JSONL config files (Bun v1.3.7+)
- */
+// lib/registry/config-loader.ts — Registry configuration loader for JSON, JSON5, and JSONL
 
 import { styled } from '../theme/colors';
 import type { RegistryConfig } from './registry-types';
@@ -264,10 +259,10 @@ if (import.meta.main) {
 {
   // Registry name
   name: "My Private Registry",
-  
+
   // Public URL
   url: "https://npm.mycompany.com",
-  
+
   // R2 Storage configuration
   storage: {
     type: "r2",
@@ -276,7 +271,7 @@ if (import.meta.main) {
     // Bun v1.3.7: Optional compression
     // compression: "gzip", // or "br", "deflate"
   },
-  
+
   // CDN configuration
   cdn: {
     enabled: true,
@@ -284,13 +279,13 @@ if (import.meta.main) {
     signedUrls: false,
     expirySeconds: 3600,
   },
-  
+
   // Authentication
   auth: {
     type: "jwt", // "none", "basic", "token", "jwt"
     tokenExpiry: "7d",
   },
-  
+
   // Package access rules
   packages: [
     {

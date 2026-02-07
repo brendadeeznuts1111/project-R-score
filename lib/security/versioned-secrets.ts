@@ -1,3 +1,5 @@
+// lib/security/versioned-secrets.ts — Versioned secret management
+
 import { env, secrets } from 'bun';
 import { VersionGraph } from './version-graph';
 

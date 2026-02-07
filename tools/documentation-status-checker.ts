@@ -1,21 +1,16 @@
 #!/usr/bin/env bun
-/**
- * 🔍 Documentation Status Checker CLI
- * 
- * CLI tool to check the status of all constants and URLs
- * Usage: bun documentation-status-checker.ts [options]
- */
+// tools/documentation-status-checker.ts — CLI for checking documentation status
 
 import { Command } from 'commander';
 
 /**
  * 🚀 Prefetch Optimizations
- * 
+ *
  * This file includes prefetch hints for optimal performance:
  * - DNS prefetching for external domains
  * - Preconnect for faster handshakes
  * - Resource preloading for critical assets
- * 
+ *
  * Generated automatically by optimize-examples-prefetch.ts
  */
 
@@ -92,21 +87,21 @@ const recordTest = (name: string, passed: boolean, message: string, details?: an
     details,
     timestamp: new Date().toISOString()
   };
-  
+
   testResults.summary.total++;
   if (passed) {
     testResults.summary.passed++;
   } else {
     testResults.summary.failed++;
   }
-  
+
   return passed;
 };
 
 // 1. Check Constants Loading
 async function checkConstantsLoading() {
   log.section('📦 Checking Constants Loading');
-  
+
   const tests = [
     {
       name: 'CLI Constants Import',
@@ -116,17 +111,17 @@ async function checkConstantsLoading() {
           const categories = Object.values(cliConstants.CLICategory);
           const urls = Object.keys(cliConstants.CLI_DOCUMENTATION_URLS);
           const examples = Object.keys(cliConstants.CLI_COMMAND_EXAMPLES);
-          
-          recordTest('cli-constants-import', true, 
+
+          recordTest('cli-constants-import', true,
             `Loaded ${categories.length} categories, ${urls.length} URL groups, ${examples.length} example groups`,
             { categories, urlGroups: urls, exampleGroups: examples }
           );
-          
+
           if (options.verbose) {
             log.verbose(`CLI Categories: ${categories.join(', ')}`);
             log.verbose(`CLI URL Groups: ${urls.join(', ')}`);
           }
-          
+
           return true;
         } catch (error) {
           recordTest('cli-constants-import', false, `Failed to import CLI constants: ${error.message}`);
@@ -142,17 +137,17 @@ async function checkConstantsLoading() {
           const categories = Object.values(utilsConstants.UtilsCategory);
           const urls = Object.keys(utilsConstants.BUN_UTILS_URLS);
           const examples = Object.keys(utilsConstants.BUN_UTILS_EXAMPLES);
-          
+
           recordTest('utils-constants-import', true,
             `Loaded ${categories.length} categories, ${urls.length} URL groups, ${examples.length} example groups`,
             { categories, urlGroups: urls, exampleGroups: examples }
           );
-          
+
           if (options.verbose) {
             log.verbose(`Utils Categories: ${categories.join(', ')}`);
             log.verbose(`Utils URL Groups: ${urls.join(', ')}`);
           }
-          
+
           return true;
         } catch (error) {
           recordTest('utils-constants-import', false, `Failed to import Utils constants: ${error.message}`);
@@ -166,37 +161,37 @@ async function checkConstantsLoading() {
         try {
           const cliConstants = await import('./lib/documentation/constants/cli.ts');
           const utilsConstants = await import('./lib/documentation/constants/utils.ts');
-          
+
           // Check CLI constants structure
           const cliCategories = Object.values(cliConstants.CLICategory);
           const cliURLs = cliConstants.CLI_DOCUMENTATION_URLS;
           let cliURLCount = 0;
-          
+
           Object.values(cliURLs).forEach(category => {
             if (typeof category === 'object') {
               cliURLCount += Object.keys(category).length;
             }
           });
-          
+
           // Check Utils constants structure
           const utilsCategories = Object.values(utilsConstants.UtilsCategory);
           const utilsURLs = utilsConstants.BUN_UTILS_URLS;
           let utilsURLCount = 0;
-          
+
           Object.values(utilsURLs).forEach(category => {
             if (typeof category === 'object') {
               utilsURLCount += Object.keys(category).length;
             }
           });
-          
+
           const totalURLs = cliURLCount + utilsURLCount;
           const totalCategories = cliCategories.length + utilsCategories.length;
-          
+
           recordTest('constants-data-integrity', true,
             `Data integrity verified: ${totalCategories} categories, ${totalURLs} total URLs`,
             { totalCategories, totalURLs, cliURLCount, utilsURLCount }
           );
-          
+
           return true;
         } catch (error) {
           recordTest('constants-data-integrity', false, `Constants data integrity check failed: ${error.message}`);
@@ -205,7 +200,7 @@ async function checkConstantsLoading() {
       }
     }
   ];
-  
+
   for (const test of tests) {
     log.info(`Running ${test.name}...`);
     const result = await test.test();
@@ -220,7 +215,7 @@ async function checkConstantsLoading() {
 // 2. Check Import Functionality
 async function checkImportFunctionality() {
   log.section('🔌 Checking Import Functionality');
-  
+
   const tests = [
     {
       name: 'Documentation Module Import',
@@ -262,7 +257,7 @@ async function checkImportFunctionality() {
       }
     }
   ];
-  
+
   for (const test of tests) {
     log.info(`Running ${test.name}...`);
     const result = await test.test();
@@ -277,7 +272,7 @@ async function checkImportFunctionality() {
 // 3. Check URL Validation
 async function checkURLValidation() {
   log.section('🔗 Checking URL Validation');
-  
+
   const tests = [
     {
       name: 'URL Structure Validation',
@@ -285,11 +280,11 @@ async function checkURLValidation() {
         try {
           const cliConstants = await import('./lib/documentation/constants/cli.ts');
           const utilsConstants = await import('./lib/documentation/constants/utils.ts');
-          
+
           let validURLs = 0;
           let invalidURLs = 0;
           const invalidList: string[] = [];
-          
+
           // Check CLI URLs
           Object.values(cliConstants.CLI_DOCUMENTATION_URLS).forEach(category => {
             if (typeof category === 'object') {
@@ -304,7 +299,7 @@ async function checkURLValidation() {
               });
             }
           });
-          
+
           // Check Utils URLs
           Object.values(utilsConstants.BUN_UTILS_URLS).forEach(category => {
             if (typeof category === 'object') {
@@ -319,13 +314,13 @@ async function checkURLValidation() {
               });
             }
           });
-          
+
           const passed = invalidURLs === 0;
           recordTest('url-structure-validation', passed,
             passed ? `All ${validURLs} URLs have valid structure` : `${invalidURLs} of ${validURLs + invalidURLs} URLs have invalid structure`,
             { validURLs, invalidURLs, invalidList }
           );
-          
+
           return passed;
         } catch (error) {
           recordTest('url-structure-validation', false, `URL structure validation failed: ${error.message}`);
@@ -340,17 +335,17 @@ async function checkURLValidation() {
           recordTest('url-accessibility-check', true, 'Skipped (use --full-check to enable)');
           return true;
         }
-        
+
         try {
           const testURLs = [
             'https://bun.sh/docs/cli',
             'https://bun.sh/docs/api/utils',
             'https://github.com/oven-sh/bun'
           ];
-          
+
           let accessibleURLs = 0;
           const results: Record<string, boolean> = {};
-          
+
           for (const url of testURLs) {
             try {
               const response = await fetch(url, { method: 'HEAD', timeout: 5000 });
@@ -360,13 +355,13 @@ async function checkURLValidation() {
               results[url] = false;
             }
           }
-          
+
           const passed = accessibleURLs === testURLs.length;
           recordTest('url-accessibility-check', passed,
             `${accessibleURLs} of ${testURLs.length} URLs are accessible`,
             { results, accessibleURLs, totalURLs: testURLs.length }
           );
-          
+
           return passed;
         } catch (error) {
           recordTest('url-accessibility-check', false, `URL accessibility check failed: ${error.message}`);
@@ -387,13 +382,13 @@ async function checkURLValidation() {
             'bun add lodash',
             'invalid-command'
           ];
-          
+
           let validCommands = 0;
           let invalidCommands = 0;
           const results: Record<string, boolean> = {};
-          
+
           for (const cmd of testCommands) {
-            const isValid = cmd.startsWith('bun') && 
+            const isValid = cmd.startsWith('bun') &&
                            ['run', 'test', 'build', 'install', 'add', 'remove', 'x', 'create', 'upgrade'].includes(cmd.split(' ')[1]);
             results[cmd] = isValid;
             if (isValid) {
@@ -402,14 +397,14 @@ async function checkURLValidation() {
               invalidCommands++;
             }
           }
-          
+
           // Should have 5 valid, 1 invalid
           const passed = validCommands === 5 && invalidCommands === 1;
           recordTest('cli-command-validation', passed,
             `${validCommands} valid, ${invalidCommands} invalid commands detected`,
             { results, validCommands, invalidCommands }
           );
-          
+
           return passed;
         } catch (error) {
           recordTest('cli-command-validation', false, `CLI command validation failed: ${error.message}`);
@@ -418,7 +413,7 @@ async function checkURLValidation() {
       }
     }
   ];
-  
+
   for (const test of tests) {
     log.info(`Running ${test.name}...`);
     const result = await test.test();
@@ -433,7 +428,7 @@ async function checkURLValidation() {
 // 4. Check Error Handling
 async function checkErrorHandling() {
   log.section('🛡️ Checking Error Handling');
-  
+
   const tests = [
     {
       name: 'Import Error Handling',
@@ -461,7 +456,7 @@ async function checkErrorHandling() {
           // Test validation with invalid data
           const invalidData = null;
           const isValid = invalidData !== null;
-          
+
           if (!isValid) {
             recordTest('validation-error-handling', true, 'Validation error handled correctly');
             return true;
@@ -476,7 +471,7 @@ async function checkErrorHandling() {
       }
     }
   ];
-  
+
   for (const test of tests) {
     log.info(`Running ${test.name}...`);
     const result = await test.test();
@@ -492,9 +487,9 @@ async function checkErrorHandling() {
 async function runStatusCheck() {
   console.log(`${colors.cyan}🔍 Documentation Status Checker${colors.reset}`);
   console.log(`${colors.gray}Checking all constants and URLs...${colors.reset}\n`);
-  
+
   const startTime = Date.now();
-  
+
   try {
     // Run checks based on options
     if (!options.urlOnly && !options.constantsOnly && !options.importsOnly) {
@@ -507,27 +502,27 @@ async function runStatusCheck() {
       if (options.importsOnly) await checkImportFunctionality();
       if (options.urlOnly) await checkURLValidation();
     }
-    
+
     const endTime = Date.now();
     const duration = endTime - startTime;
-    
+
     // Print summary
     log.section('📊 Check Summary');
-    
+
     const { total, passed, failed } = testResults.summary;
     const successRate = total > 0 ? ((passed / total) * 100).toFixed(1) : '0';
-    
+
     console.log(`${colors.white}Total Tests:${colors.reset} ${total}`);
     console.log(`${colors.green}Passed:${colors.reset} ${passed}`);
     console.log(`${colors.red}Failed:${colors.reset} ${failed}`);
     console.log(`${colors.blue}Success Rate:${colors.reset} ${successRate}%`);
     console.log(`${colors.gray}Duration:${colors.reset} ${duration}ms`);
-    
+
     // Output JSON if requested
     if (options.json) {
       log.json(testResults);
     }
-    
+
     // Exit with appropriate code
     if (failed > 0) {
       console.log(`\n${colors.yellow}⚠️ Some checks failed. See details above.${colors.reset}`);
@@ -536,7 +531,7 @@ async function runStatusCheck() {
       console.log(`\n${colors.green}🎉 All checks passed!${colors.reset}`);
       process.exit(0);
     }
-    
+
   } catch (error) {
     log.error(`Status check failed: ${error.message}`);
     if (options.verbose) {

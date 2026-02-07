@@ -1,20 +1,5 @@
-/**
- * 🚀 Prefetch Optimizations
- * 
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- * 
- * Generated automatically by optimize-examples-prefetch.ts
- */
 #!/usr/bin/env bun
-/**
- * 🔍 Comprehensive URL Validator - Base + Subpath + Fragment
- * 
- * Complete URL validation including subpath structure analysis
- * Usage: bun comprehensive-url-validator.ts [options]
- */
+// tools/comprehensive-url-validator.ts — URL validator with subpath and fragment analysis
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -108,14 +93,14 @@ const recordTest = (name: string, passed: boolean, message: string, details?: an
     details,
     timestamp: new Date().toISOString()
   };
-  
+
   testResults.summary.total++;
   if (passed) {
     testResults.summary.passed++;
   } else {
     testResults.summary.failed++;
   }
-  
+
   return passed;
 };
 
@@ -137,23 +122,23 @@ function validateURLComprehensive(url: string): {
 } {
   const errors: string[] = [];
   const warnings: string[] = [];
-  
+
   try {
     // Parse the URL
     const fullURL = url.startsWith('http') ? url : `https://bun.sh${url}`;
     const parsed = new URL(fullURL);
-    
+
     // Base URL validation
     const baseValid = !!(parsed.protocol && parsed.hostname && parsed.pathname);
     if (!baseValid) {
       errors.push('Invalid base URL structure');
     }
-    
+
     // Subpath analysis
     const pathname = parsed.pathname;
     const subpaths = pathname.split('/').filter(segment => segment.length > 0);
     const hasSubpath = subpaths.length > 0;
-    
+
     let subpathValid = true;
     if (hasSubpath) {
       // Subpath validation rules
@@ -169,24 +154,24 @@ function validateURLComprehensive(url: string): {
           errors.push(`Invalid characters in subpath: ${subpath}`);
         }
       });
-      
+
       // Validate common documentation patterns
       if (subpaths[0] !== 'docs') {
         warnings.push('First subpath is not "docs"');
       }
-      
+
       if (subpaths.includes('api') && subpaths.includes('cli')) {
         warnings.push('URL contains both "api" and "cli" - may be ambiguous');
       }
     } else {
       warnings.push('No subpaths found');
     }
-    
+
     // Fragment validation
     const hasFragment = !!parsed.hash;
     let fragmentValid = true;
     const fragment = parsed.hash.slice(1); // Remove #
-    
+
     if (hasFragment) {
       if (!fragment) {
         fragmentValid = false;
@@ -202,9 +187,9 @@ function validateURLComprehensive(url: string): {
         errors.push('Fragment contains invalid characters');
       }
     }
-    
+
     const isValid = baseValid && subpathValid && fragmentValid;
-    
+
     return {
       isValid,
       baseValid,
@@ -220,7 +205,7 @@ function validateURLComprehensive(url: string): {
       errors,
       warnings
     };
-    
+
   } catch (error) {
     return {
       isValid: false,
@@ -250,23 +235,23 @@ function analyzeURLPatterns(urls: string[]) {
     fragmentUsage: { with: 0, without: 0 },
     subpathCounts: new Map<number, number>()
   };
-  
+
   urls.forEach(url => {
     const validation = validateURLComprehensive(url);
-    
+
     if (validation.baseValid) {
       patterns.protocols.add(validation.protocol);
       patterns.hostnames.add(validation.hostname);
-      
+
       if (validation.subpaths.length > 0) {
         patterns.firstSubpaths.add(validation.subpaths[0]);
         patterns.pathDepths.push(validation.subpaths.length);
         patterns.subpathCounts.set(validation.subpaths.length, (patterns.subpathCounts.get(validation.subpaths.length) || 0) + 1);
-        
+
         const pathKey = validation.subpaths.join('/');
         patterns.commonPaths.set(pathKey, (patterns.commonPaths.get(pathKey) || 0) + 1);
       }
-      
+
       if (validation.hasFragment) {
         patterns.fragmentUsage.with++;
       } else {
@@ -274,7 +259,7 @@ function analyzeURLPatterns(urls: string[]) {
       }
     }
   });
-  
+
   return {
     protocols: Array.from(patterns.protocols),
     hostnames: Array.from(patterns.hostnames),
@@ -290,18 +275,18 @@ function analyzeURLPatterns(urls: string[]) {
 async function runComprehensiveValidation() {
   console.log(`${colors.cyan}🔍 Comprehensive URL Validator${colors.reset}`);
   console.log(`${colors.gray}Validating URLs with Base + Subpath + Fragment analysis...${colors.reset}\n`);
-  
+
   const startTime = Date.now();
-  
+
   try {
     // Load constants
     const cliConstants = await import('./lib/documentation/constants/cli.ts');
     const utilsConstants = await import('./lib/documentation/constants/utils.ts');
-    
+
     // Collect all URLs
     const allURLs: string[] = [];
     const urlSources: Record<string, string> = {};
-    
+
     // Collect CLI URLs
     Object.entries(cliConstants.CLI_DOCUMENTATION_URLS).forEach(([category, urls]) => {
       if (typeof urls === 'object') {
@@ -311,7 +296,7 @@ async function runComprehensiveValidation() {
         });
       }
     });
-    
+
     // Collect Utils URLs
     Object.entries(utilsConstants.BUN_UTILS_URLS).forEach(([category, urls]) => {
       if (typeof urls === 'object') {
@@ -321,34 +306,34 @@ async function runComprehensiveValidation() {
         });
       }
     });
-    
+
     log.section('📊 URL Statistics');
     log.info(`Total URLs to validate: ${allURLs.length}`);
     log.info(`CLI URLs: ${Object.keys(cliConstants.CLI_DOCUMENTATION_URLS).length} categories`);
     log.info(`Utils URLs: ${Object.keys(utilsConstants.BUN_UTILS_URLS).length} categories`);
-    
+
     // Basic URL validation
     log.section('🔗 Basic URL Validation');
     let validURLs = 0;
     let invalidURLs = 0;
     const validationResults: Record<string, any> = {};
-    
+
     allURLs.forEach(url => {
       const validation = validateURLComprehensive(url);
       validationResults[url] = validation;
-      
+
       if (validation.isValid) {
         validURLs++;
       } else {
         invalidURLs++;
       }
     });
-    
+
     recordTest('basic-url-validation', invalidURLs === 0,
       `${validURLs} valid, ${invalidURLs} invalid URLs`,
       { validURLs, invalidURLs, totalURLs: allURLs.length }
     );
-    
+
     if (invalidURLs === 0) {
       log.success('Basic URL Validation: OK');
     } else {
@@ -361,11 +346,11 @@ async function runComprehensiveValidation() {
         });
       }
     }
-    
+
     // Subpath analysis
     if (options.subpaths || options.fullAnalysis) {
       log.section('📁 Subpath Analysis');
-      
+
       const subpathStats = {
         totalURLs: allURLs.length,
         urlsWithSubpaths: 0,
@@ -375,7 +360,7 @@ async function runComprehensiveValidation() {
         invalidSubpaths: 0,
         commonSubpaths: new Map<string, number>()
       };
-      
+
       allURLs.forEach(url => {
         const validation = validationResults[url];
         if (validation.hasSubpath) {
@@ -385,7 +370,7 @@ async function runComprehensiveValidation() {
             subpathStats.subpathLengths.push(subpath.length);
             subpathStats.commonSubpaths.set(subpath, (subpathStats.commonSubpaths.get(subpath) || 0) + 1);
           });
-          
+
           if (!validation.subpathValid) {
             subpathStats.invalidSubpaths++;
           }
@@ -393,15 +378,15 @@ async function runComprehensiveValidation() {
           subpathStats.urlsWithoutSubpaths++;
         }
       });
-      
+
       const avgSubpathLength = subpathStats.subpathLengths.length > 0
         ? subpathStats.subpathLengths.reduce((a, b) => a + b, 0) / subpathStats.subpathLengths.length
         : 0;
-      
+
       const commonSubpathsList = Array.from(subpathStats.commonSubpaths.entries())
         .sort((a, b) => b[1] - a[1])
         .slice(0, 10);
-      
+
       recordTest('subpath-analysis', subpathStats.invalidSubpaths === 0,
         `${subpathStats.urlsWithSubpaths}/${subpathStats.totalURLs} URLs have subpaths, ${subpathStats.invalidSubpaths} invalid`,
         {
@@ -414,13 +399,13 @@ async function runComprehensiveValidation() {
           commonSubpaths: commonSubpathsList
         }
       );
-      
+
       if (subpathStats.invalidSubpaths === 0) {
         log.success(`Subpath Analysis: OK (${subpathStats.urlsWithSubpaths} URLs with subpaths)`);
       } else {
         log.error(`Subpath Analysis: ${subpathStats.invalidSubpaths} invalid subpaths found`);
       }
-      
+
       if (options.verbose) {
         log.verbose(`Unique subpaths: ${subpathStats.uniqueSubpaths.size}`);
         log.verbose(`Average subpath length: ${avgSubpathLength.toFixed(1)} characters`);
@@ -430,11 +415,11 @@ async function runComprehensiveValidation() {
         });
       }
     }
-    
+
     // Fragment analysis
     if (options.fragments || options.fullAnalysis) {
       log.section('🔗 Fragment Analysis');
-      
+
       const fragmentStats = {
         totalURLs: allURLs.length,
         urlsWithFragments: 0,
@@ -444,7 +429,7 @@ async function runComprehensiveValidation() {
         invalidFragments: 0,
         commonFragments: new Map<string, number>()
       };
-      
+
       allURLs.forEach(url => {
         const validation = validationResults[url];
         if (validation.hasFragment) {
@@ -454,7 +439,7 @@ async function runComprehensiveValidation() {
             fragmentStats.fragmentLengths.push(validation.fragment.length);
             fragmentStats.commonFragments.set(validation.fragment, (fragmentStats.commonFragments.get(validation.fragment) || 0) + 1);
           }
-          
+
           if (!validation.fragmentValid) {
             fragmentStats.invalidFragments++;
           }
@@ -462,15 +447,15 @@ async function runComprehensiveValidation() {
           fragmentStats.urlsWithoutFragments++;
         }
       });
-      
+
       const avgFragmentLength = fragmentStats.fragmentLengths.length > 0
         ? fragmentStats.fragmentLengths.reduce((a, b) => a + b, 0) / fragmentStats.fragmentLengths.length
         : 0;
-      
+
       const commonFragmentsList = Array.from(fragmentStats.commonFragments.entries())
         .sort((a, b) => b[1] - a[1])
         .slice(0, 10);
-      
+
       recordTest('fragment-analysis', fragmentStats.invalidFragments === 0,
         `${fragmentStats.urlsWithFragments}/${fragmentStats.totalURLs} URLs have fragments, ${fragmentStats.invalidFragments} invalid`,
         {
@@ -483,13 +468,13 @@ async function runComprehensiveValidation() {
           commonFragments: commonFragmentsList
         }
       );
-      
+
       if (fragmentStats.invalidFragments === 0) {
         log.success(`Fragment Analysis: OK (${fragmentStats.urlsWithFragments} URLs with fragments)`);
       } else {
         log.error(`Fragment Analysis: ${fragmentStats.invalidFragments} invalid fragments found`);
       }
-      
+
       if (options.verbose) {
         log.verbose(`Unique fragments: ${fragmentStats.uniqueFragments.size}`);
         log.verbose(`Average fragment length: ${avgFragmentLength.toFixed(1)} characters`);
@@ -499,49 +484,49 @@ async function runComprehensiveValidation() {
         });
       }
     }
-    
+
     // Structure analysis
     if (options.structure || options.fullAnalysis) {
       log.section('🏗️ URL Structure Analysis');
-      
+
       const patterns = analyzeURLPatterns(allURLs);
-      
+
       recordTest('structure-analysis', true,
         `Analyzed ${allURLs.length} URLs, found ${patterns.commonPaths.length} unique paths`,
         patterns
       );
-      
+
       log.success('Structure Analysis: OK');
-      
+
       if (options.verbose) {
         log.verbose(`Protocols: ${patterns.protocols.join(', ')}`);
         log.verbose(`Hostnames: ${patterns.hostnames.join(', ')}`);
         log.verbose(`First subpaths: ${patterns.firstSubpaths.join(', ')}`);
         log.verbose(`Average path depth: ${patterns.avgPathDepth.toFixed(1)}`);
         log.verbose(`Fragment usage: ${patterns.fragmentUsage.with} with, ${patterns.fragmentUsage.without} without`);
-        
+
         log.verbose('Top 5 common paths:');
         patterns.commonPaths.slice(0, 5).forEach(([path, count]) => {
           log.verbose(`  /${path}: ${count} URLs`);
         });
       }
     }
-    
+
     // Summary
     const endTime = Date.now();
     const duration = endTime - startTime;
-    
+
     log.section('📊 Validation Summary');
-    
+
     const { total, passed, failed } = testResults.summary;
     const successRate = total > 0 ? ((passed / total) * 100).toFixed(1) : '0';
-    
+
     console.log(`${colors.white}Total Tests:${colors.reset} ${total}`);
     console.log(`${colors.green}Passed:${colors.reset} ${passed}`);
     console.log(`${colors.red}Failed:${colors.reset} ${failed}`);
     console.log(`${colors.blue}Success Rate:${colors.reset} ${successRate}%`);
     console.log(`${colors.gray}Duration:${colors.reset} ${duration}ms`);
-    
+
     // Output JSON if requested
     if (options.json) {
       log.json({
@@ -550,7 +535,7 @@ async function runComprehensiveValidation() {
         urlSources
       });
     }
-    
+
     // Exit with appropriate code
     if (failed > 0) {
       console.log(`\n${colors.yellow}⚠️ Some validations failed. See details above.${colors.reset}`);
@@ -559,7 +544,7 @@ async function runComprehensiveValidation() {
       console.log(`\n${colors.green}🎉 All validations passed!${colors.reset}`);
       process.exit(0);
     }
-    
+
   } catch (error: any) {
     log.error(`Validation failed: ${error.message}`);
     if (options.verbose) {

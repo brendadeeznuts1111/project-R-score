@@ -1,15 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 💾 R2 Backup & Restore Manager
- *
- * Enterprise-grade backup and disaster recovery:
- * - Incremental and full backups
- * - Point-in-time recovery
- * - Backup verification and integrity checks
- * - Cross-region replication
- * - Automated backup scheduling
- */
+// lib/r2/r2-backup-manager.ts — R2 backup and restore manager
 
 import { styled, FW_COLORS } from '../theme/colors';
 import { r2EventSystem } from './r2-event-system';

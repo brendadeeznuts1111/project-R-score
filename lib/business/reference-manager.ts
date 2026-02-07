@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * 📚 FactoryWager Reference Manager v5.1
- *
- * Centralized reference management for documentation URLs,
- * secrets, and system resources
- */
+// lib/business/reference-manager.ts — Centralized reference management for documentation URLs and resources
 
 import { BUN_DOCS_EXTENDED } from './docs/urls';
 

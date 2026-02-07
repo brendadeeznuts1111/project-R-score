@@ -1,11 +1,4 @@
-#!/usr/bin/env bun
-
-/**
- * ⚡ Cache Manager
- *
- * High-performance caching system with LRU eviction, TTL support,
- * and comprehensive monitoring capabilities.
- */
+// lib/performance/cache-manager.ts — Cache manager with LRU eviction and TTL support
 
 import { ConcurrencyManagers } from '../core/safe-concurrency';
 
