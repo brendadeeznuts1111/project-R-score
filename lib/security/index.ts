@@ -5,6 +5,12 @@ export * from './versioned-secrets';
 export * from './version-graph';
 export * from './secret-lifecycle';
 
+// Security hardening utilities
+export { safeString, safeHexColor, safeServiceName, type SafeResult } from './safe-validators';
+export { secureBunRun, type SecureRunResult } from './secure-bun-run';
+export { WikiSecretTransaction } from './wiki-secret-transaction';
+export { writeAuditLog, type AuditEntry } from './audit-writer';
+
 // Security utilities
 export class SecurityUtils {
   /**
