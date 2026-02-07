@@ -82,6 +82,12 @@ describe("parseURL", () => {
       expect(p.host).toBe("");
     });
 
+    test("should extract MIME type from data: URIs without base64 encoding", () => {
+      const p = parseURL("data:text/plain,hello world");
+      expect(p.isDataURI).toBeTrue();
+      expect(p.mimeHint).toBe("text/plain");
+    });
+
     test("should identify blob: URIs as blob but not data URI", () => {
       const p = parseURL("blob:https://example.com/uuid-here");
       expect(p.isBlob).toBeTrue();

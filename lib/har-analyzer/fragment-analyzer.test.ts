@@ -152,6 +152,13 @@ describe("analyzeFragment", () => {
       expect(result.type).toBe("query");
       expect(result.content.state).toEqual({ a: "1", b: "2" });
     });
+
+    test("should skip empty segments from double ampersands in query", () => {
+      const result = analyzeFragment("?a=1&&b=2");
+      expect(result.type).toBe("query");
+      expect(result.content.state).toEqual({ a: "1", b: "2" });
+      expect(result.content.state).not.toHaveProperty("");
+    });
   });
 
   describe("with unknown fragments", () => {

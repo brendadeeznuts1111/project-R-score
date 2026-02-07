@@ -7,7 +7,7 @@
     "start": "bun run demo-pro.html",
     "dev": "bun --hot demo-pro.html",
     "build": "bun build demo-scripts.js --outfile demo-bundle.js --target=browser",
-    "test-r2": "bun run r2-connection-test.ts",
+    "test-r2": "bun run src/r2/r2-connection-test.ts",
     "setup-r2": "./setup-r2.sh",
     "validate-demo": "bun run demo-scripts.js"
   },

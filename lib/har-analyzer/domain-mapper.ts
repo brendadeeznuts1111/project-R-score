@@ -265,7 +265,7 @@ export function gradeSize(bytes: number): SizeGrade {
 // ─── Domain classification ───────────────────────────────────────────
 
 export function classifyDomain(entryHost: string, pageHost: string): DomainType {
-  if (entryHost === pageHost) return "first-party";
+  if (entryHost.toLowerCase() === pageHost.toLowerCase()) return "first-party";
 
   const lowerHost = entryHost.toLowerCase();
   if (TRACKER_PATTERNS.some((p) => lowerHost.includes(p))) return "tracker";

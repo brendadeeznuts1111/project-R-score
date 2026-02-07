@@ -43,6 +43,11 @@ export enum DocumentationProvider {
   COMMUNITY_BLOG = 'community_blog',
   RSS_FEEDS = 'rss_feeds',
   
+  // Third-party / external
+  COMMUNITY = 'community',
+  GITHUB = 'github',
+  NPM = 'npm',
+
   // Legacy/backward compatibility (deprecated)
   /** @deprecated Use BUN_OFFICIAL instead */
   BUN_TECHNICAL = 'bun_technical',
@@ -87,6 +92,17 @@ export enum DocumentationCategory {
   MIGRATION_GUIDES = 'migration_guides',
   COMMUNITY_RESOURCES = 'community_resources',
   
+  // Shorthand aliases (map to existing detailed categories)
+  GUIDE = 'guide',
+  API = 'api',
+  RUNTIME = 'runtime',
+  CLI = 'cli',
+  UTILS = 'utils',
+
+  // Web resource types
+  WEBSITE = 'website',
+  ASSET = 'asset',
+
   // Legacy/backward compatibility (deprecated)
   /** @deprecated Use API_REFERENCE instead */
   CLI_REFERENCE = 'cli_reference',
@@ -120,6 +136,26 @@ export enum DocumentationFormat {
   XML = 'xml',
   OPEN_API = 'open_api',
   GRAPHQL = 'graphql'
+}
+
+export enum UrlType {
+  DOCUMENTATION = 'documentation',
+  API = 'api',
+  REPOSITORY = 'repository',
+  PACKAGE = 'package',
+  CDN = 'cdn',
+  MARKETING = 'marketing',
+  UNKNOWN = 'unknown',
+}
+
+export enum UtilityFunctionCategory {
+  FILE_SYSTEM = 'file_system',
+  NETWORKING = 'networking',
+  PROCESS = 'process',
+  CRYPTO = 'crypto',
+  STREAMS = 'streams',
+  DATABASE = 'database',
+  TESTING = 'testing',
 }
 
 // Enhanced type definitions for better type safety

@@ -72,7 +72,7 @@ export function parseURL(urlString: string): ParsedURL {
       query: "",
       fragment: analyzeFragment(""),
       extension: "",
-      mimeHint: urlString.split(";")[0]?.slice(5) || "application/octet-stream",
+      mimeHint: urlString.split(",")[0].slice(5).split(";")[0] || "application/octet-stream",
       origin: "",
       cacheKey: urlString,
       isDataURI: true,

@@ -54,6 +54,12 @@ if (!flags.outFile) {
   flags.outFile = `${hostname}.har`;
 }
 
+const toStdout = flags.outFile === "-";
+// When piping HAR to stdout, send progress to stderr so stdout is pure JSON
+const log = toStdout
+  ? (...a: unknown[]) => console.error(...a)
+  : (...a: unknown[]) => console.log(...a);
+
 interface Entry {
   url: string;
   method: string;
@@ -70,6 +76,7 @@ interface Entry {
   responseHeaders: { name: string; value: string }[];
   requestHeaders: { name: string; value: string }[];
   resourceType: string;
+  httpVersion: string;
 }
 
 async function timedFetch(
@@ -117,6 +124,9 @@ async function timedFetch(
       ([name, value]) => ({ name, value }),
     );
 
+    // HTTPS → HTTP/2 via ALPN negotiation; plain HTTP → HTTP/1.1
+    const httpVersion = targetUrl.startsWith("https:") ? "http/2.0" : "http/1.1";
+
     return {
       url: targetUrl,
       method: "GET",
@@ -133,6 +143,7 @@ async function timedFetch(
       responseHeaders,
       requestHeaders: [],
       resourceType,
+      httpVersion,
     };
   } catch (e) {
     console.error(`  Failed: ${targetUrl} — ${e}`);
@@ -181,12 +192,12 @@ function prefetchUrl(urlStr: string) {
   }
 }
 
-console.log(`Fetching ${flags.url} ...`);
+log(`Fetching ${flags.url} ...`);
 
 // --- DNS prefetch for the main host ---
 const main = prefetchUrl(flags.url);
 if (flags.verbose && main)
-  console.log(`  dns.prefetch("${main.hostname}", ${main.port})`);
+  log(`  dns.prefetch("${main.hostname}", ${main.port})`);
 
 // 1. Fetch main document
 const docEntry = await timedFetch(flags.url, "document");
@@ -201,7 +212,7 @@ const ratio =
   docEntry.transferSize > 0
     ? ((1 - docEntry.transferSize / docEntry.size) * 100).toFixed(0)
     : "0";
-console.log(
+log(
   `  Document: ${docEntry.status} — ${(docEntry.size / 1024).toFixed(1)}KB (${(docEntry.transferSize / 1024).toFixed(1)}KB on wire, ${docEntry.contentEncoding}, ${ratio}% saved) in ${docEntry.totalTime.toFixed(0)}ms`,
 );
 
@@ -307,7 +318,7 @@ const unique = subresources.filter((s) => {
 const tagCounts = new Map<string, number>();
 for (const s of unique) tagCounts.set(s.tag, (tagCounts.get(s.tag) ?? 0) + 1);
 const tagLine = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]).map(([t, c]) => `${t}(${c})`).join(" ");
-console.log(`  Found ${unique.length} subresources: ${tagLine}`);
+log(`  Found ${unique.length} subresources: ${tagLine}`);
 
 // 3. DNS prefetch all unique hosts before fetching
 if (flags.prefetch && unique.length > 0) {
@@ -320,19 +331,19 @@ if (flags.prefetch && unique.length > 0) {
         prefetched.add(key);
         const info = prefetchUrl(s.url);
         if (flags.verbose && info)
-          console.log(`  dns.prefetch("${info.hostname}", ${info.port})`);
+          log(`  dns.prefetch("${info.hostname}", ${info.port})`);
       }
     } catch {}
   }
 
-  console.log(`  Prefetched DNS for ${prefetched.size} host(s)`);
+  log(`  Prefetched DNS for ${prefetched.size} host(s)`);
 
   // Small delay to let DNS lookups resolve before hammering requests
   await Bun.sleep(50);
 }
 
 // 4. Fetch all subresources — let Bun manage concurrency (default 256 max)
-console.log(`  Fetching subresources...`);
+log(`  Fetching subresources...`);
 const entries: Entry[] = [docEntry];
 const results = await Promise.all(
   unique.map((s) => timedFetch(s.url, guessTypeFromTag(s.tag))),
@@ -345,13 +356,13 @@ for (const r of results) {
   }
 }
 
-console.log(`  Fetched ${entries.length} total resources`);
+log(`  Fetched ${entries.length} total resources`);
 
 // DNS cache stats
 const c = dns.getCacheStats();
 const hitRate = c.totalCount > 0 ? ((c.cacheHitsCompleted + c.cacheHitsInflight) / c.totalCount * 100).toFixed(0) : "0";
 const ttl = flags.dnsTtl > 0 ? flags.dnsTtl : 30;
-console.log(
+log(
   `  DNS: ${c.totalCount} lookups, ${c.cacheHitsCompleted} cache hits, ${c.cacheHitsInflight} inflight hits, ${c.cacheMisses} misses (${hitRate}% hit rate)${c.errors > 0 ? `, ${c.errors} errors` : ""} [${c.size} cached, ${ttl}s TTL]`,
 );
 
@@ -387,7 +398,7 @@ const har = {
       request: {
         method: e.method,
         url: e.url,
-        httpVersion: "http/2.0",
+        httpVersion: e.httpVersion,
         headers: e.requestHeaders,
         queryString: [],
         cookies: [],
@@ -397,7 +408,7 @@ const har = {
       response: {
         status: e.status,
         statusText: e.statusText,
-        httpVersion: "http/2.0",
+        httpVersion: e.httpVersion,
         headers: e.responseHeaders,
         cookies: [],
         content: { size: e.size, mimeType: e.mimeType },
@@ -419,14 +430,20 @@ const har = {
   },
 };
 
-await Bun.write(flags.outFile, JSON.stringify(har, null, 2));
-console.log(`  Wrote ${flags.outFile}`);
+const harJson = JSON.stringify(har, null, 2);
+if (toStdout) {
+  // When piping, log goes to stderr so stdout is pure JSON
+  await Bun.write(Bun.stdout, harJson);
+} else {
+  await Bun.write(flags.outFile, harJson);
+  log(`  Wrote ${flags.outFile}`);
+}
 
 // Summary
 const totalTransfer = entries.reduce((s, e) => s + e.transferSize, 0);
 const totalSize = entries.reduce((s, e) => s + e.size, 0);
 const overallRatio =
   totalSize > 0 ? ((1 - totalTransfer / totalSize) * 100).toFixed(0) : "0";
-console.log(
+log(
   `  Total: ${(totalSize / 1024).toFixed(0)}KB uncompressed, ${(totalTransfer / 1024).toFixed(0)}KB on wire (${overallRatio}% compression savings)`,
 );

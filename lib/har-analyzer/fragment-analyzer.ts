@@ -26,6 +26,7 @@ function safeDecode(str: string): string {
 function parseKVPairs(str: string): Record<string, string> {
   const result: Record<string, string> = {};
   for (const pair of str.split("&")) {
+    if (!pair) continue;
     const eqIdx = pair.indexOf("=");
     if (eqIdx === -1) {
       result[safeDecode(pair)] = "";

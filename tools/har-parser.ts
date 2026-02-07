@@ -12,6 +12,8 @@
 //   --sort <field>    Sort by: time, size, status, url, ttfb, domain (default: time-order)
 //   --waterfall       Show ASCII waterfall chart
 //   --json            Output as JSON
+//   --with-docs       Show documentation-aware performance analysis
+//   --table           Use Bun.inspect.table() for clean tabular output
 
 interface HarEntry {
   startedDateTime: string;
@@ -58,6 +60,43 @@ interface HarLog {
     }[];
     entries: HarEntry[];
   };
+}
+
+// --- Documentation classification ---
+// Maps HAR entries to DocumentationProvider/DocumentationCategory
+// from lib/docs/constants/domains.ts
+
+type DocProvider = "bun_official" | "community";
+type DocCategory = "website" | "asset";
+
+interface DocClassification {
+  provider: DocProvider;
+  category: DocCategory;
+}
+
+function classifyEntry(entry: HarEntry, pageUrl?: string): DocClassification {
+  const domain = getDomain(entry.request.url);
+  const pageDomain = pageUrl ? getDomain(pageUrl) : "";
+
+  // Determine provider
+  const provider: DocProvider = domain === pageDomain ? "bun_official" : "community";
+
+  // Determine category: the page document itself is WEBSITE, everything else is ASSET
+  const isPageDocument =
+    entry.request.url === pageUrl ||
+    (resourceType(entry) === "document" && domain === pageDomain &&
+      new URL(entry.request.url).pathname === "/");
+  const category: DocCategory = isPageDocument ? "website" : "asset";
+
+  return { provider, category };
+}
+
+function fmtProvider(p: DocProvider): string {
+  return p === "bun_official" ? "\x1b[32mofficial\x1b[0m" : "\x1b[33mcommunity\x1b[0m";
+}
+
+function fmtCategory(c: DocCategory): string {
+  return c === "website" ? "\x1b[36mwebsite\x1b[0m" : "\x1b[90masset\x1b[0m";
 }
 
 // --- Formatting helpers ---
@@ -274,11 +313,12 @@ function renderWaterfall(entries: HarEntry[], width = 50) {
 
 // --- Per-domain breakdown ---
 
-function renderDomainBreakdown(entries: HarEntry[]) {
-  const domains = new Map<string, { count: number; transfer: number; size: number; time: number; ttfb: number }>();
+function renderDomainBreakdown(entries: HarEntry[], pageUrl?: string) {
+  const domains = new Map<string, { count: number; transfer: number; size: number; time: number; ttfb: number; provider: DocProvider }>();
   for (const e of entries) {
     const d = getDomain(e.request.url);
-    const prev = domains.get(d) || { count: 0, transfer: 0, size: 0, time: 0, ttfb: 0 };
+    const cls = classifyEntry(e, pageUrl);
+    const prev = domains.get(d) || { count: 0, transfer: 0, size: 0, time: 0, ttfb: 0, provider: cls.provider };
     prev.count++;
     prev.transfer += e.response._transferSize ?? e.response.content.size;
     prev.size += e.response.content.size;
@@ -288,14 +328,14 @@ function renderDomainBreakdown(entries: HarEntry[]) {
   }
 
   console.log(`\n\x1b[1m  By Domain\x1b[0m`);
-  console.log(`  ${"Domain".padEnd(30)} ${"Reqs".padStart(4)} ${"Transfer".padStart(9)} ${"Size".padStart(9)} ${"Avg TTFB".padStart(9)} ${"Slowest".padStart(9)}`);
-  console.log("  " + "─".repeat(75));
+  console.log(`  ${"Domain".padEnd(30)} ${"Provider".padEnd(9)} ${"Reqs".padStart(4)} ${"Transfer".padStart(9)} ${"Size".padStart(9)} ${"Avg TTFB".padStart(9)} ${"Slowest".padStart(9)}`);
+  console.log("  " + "─".repeat(85));
 
   const sorted = [...domains.entries()].sort((a, b) => b[1].transfer - a[1].transfer);
   for (const [domain, stats] of sorted) {
     const avgTtfb = stats.ttfb / stats.count;
     console.log(
-      `  ${shortenDomain(domain, 30).padEnd(30)} ${String(stats.count).padStart(4)} ${fmtBytes(stats.transfer).padStart(9)} ${fmtBytes(stats.size).padStart(9)} ${fmtMs(avgTtfb).padStart(9)} ${fmtMs(stats.time).padStart(9)}`,
+      `  ${shortenDomain(domain, 30).padEnd(30)} ${fmtProvider(stats.provider).padEnd(9 + ANSI)} ${String(stats.count).padStart(4)} ${fmtBytes(stats.transfer).padStart(9)} ${fmtBytes(stats.size).padStart(9)} ${fmtMs(avgTtfb).padStart(9)} ${fmtMs(stats.time).padStart(9)}`,
     );
   }
 }
@@ -335,6 +375,8 @@ const flags = {
   sort: null as string | null,
   waterfall: false,
   json: false,
+  withDocs: false,
+  table: false,
   file: "",
 };
 
@@ -346,6 +388,8 @@ for (let i = 0; i < args.length; i++) {
     case "--domain": flags.domain = args[++i]; break;
     case "--sort": flags.sort = args[++i]; break;
     case "--waterfall": flags.waterfall = true; break;
+    case "--with-docs": flags.withDocs = true; break;
+    case "--table": flags.table = true; break;
     case "--json": flags.json = true; break;
     default:
       if (!args[i].startsWith("--")) flags.file = args[i];
@@ -353,13 +397,20 @@ for (let i = 0; i < args.length; i++) {
 }
 
 if (!flags.file) {
-  console.error(
-    "Usage: bun tools/har-parser.ts <file.har> [--slow ms] [--status code] [--type type] [--domain host] [--sort field] [--waterfall] [--json]",
-  );
-  process.exit(1);
+  // Check if stdin has data (piped input)
+  if (Bun.stdin.readable) {
+    flags.file = "-";
+  } else {
+    console.error(
+      "Usage: bun tools/har-parser.ts <file.har|-|-> [--slow ms] [--status code] [--type type] [--domain host] [--sort field] [--waterfall] [--json]",
+    );
+    process.exit(1);
+  }
 }
 
-const raw = await Bun.file(flags.file).text();
+const raw = flags.file === "-"
+  ? await new Response(Bun.stdin.stream()).text()
+  : await Bun.file(flags.file).text();
 const har: HarLog = JSON.parse(raw);
 let entries = har.log.entries;
 
@@ -394,40 +445,239 @@ if (flags.sort) {
   if (fn) entries = [...entries].sort(fn);
 }
 
+// Page context for classification
+const page = har.log.pages?.[0];
+const pageUrl = page?.title;
+
 // JSON output mode
 if (flags.json) {
-  const data = entries.map((e) => ({
-    method: e.request.method,
-    url: e.request.url,
-    domain: getDomain(e.request.url),
-    status: e.response.status,
-    protocol: e.request.httpVersion,
-    mime: e.response.content.mimeType,
-    type: resourceType(e),
-    encoding: getContentEncoding(e),
-    cache: getCacheStatus(e),
-    time: Math.round(e.time),
-    ttfb: Math.round(getTtfb(e)),
-    size: e.response.content.size,
-    transferSize: e.response._transferSize ?? null,
-    server: getResponseHeader(e, "server"),
-    timings: {
-      blocked: Math.max(0, e.timings.blocked),
-      dns: Math.max(0, e.timings.dns),
-      connect: Math.max(0, e.timings.connect),
-      ssl: Math.max(0, e.timings.ssl),
-      send: Math.max(0, e.timings.send),
-      wait: Math.max(0, e.timings.wait),
-      receive: Math.max(0, e.timings.receive),
-    },
-  }));
+  const data = entries.map((e) => {
+    const cls = classifyEntry(e, pageUrl);
+    return {
+      method: e.request.method,
+      url: e.request.url,
+      domain: getDomain(e.request.url),
+      status: e.response.status,
+      protocol: e.request.httpVersion,
+      mime: e.response.content.mimeType,
+      type: resourceType(e),
+      encoding: getContentEncoding(e),
+      cache: getCacheStatus(e),
+      provider: cls.provider,
+      category: cls.category,
+      time: Math.round(e.time),
+      ttfb: Math.round(getTtfb(e)),
+      size: e.response.content.size,
+      transferSize: e.response._transferSize ?? null,
+      server: getResponseHeader(e, "server"),
+      timings: {
+        blocked: Math.max(0, e.timings.blocked),
+        dns: Math.max(0, e.timings.dns),
+        connect: Math.max(0, e.timings.connect),
+        ssl: Math.max(0, e.timings.ssl),
+        send: Math.max(0, e.timings.send),
+        wait: Math.max(0, e.timings.wait),
+        receive: Math.max(0, e.timings.receive),
+      },
+    };
+  });
   console.log(JSON.stringify(data, null, 2));
+  process.exit(0);
+}
+
+// Bun.inspect.table() output mode
+if (flags.table) {
+  const fmtMs = (ms: number) => {
+    if (ms < 1) return `${(ms * 1000).toFixed(0)}µs`;
+    if (ms < 1000) return `${ms.toFixed(0)}ms`;
+    return `${(ms / 1000).toFixed(2)}s`;
+  };
+  const fmtB = (b: number) => {
+    if (b < 1024) return `${b}B`;
+    if (b < 1024 * 1024) return `${(b / 1024).toFixed(1)}KB`;
+    return `${(b / (1024 * 1024)).toFixed(1)}MB`;
+  };
+  const fmtEnc = (e: string) => e === "identity" ? "—" : e;
+  const fmtPct = (size: number, transfer: number) => {
+    if (size <= 0 || transfer >= size) return "—";
+    return `${((1 - transfer / size) * 100).toFixed(0)}%`;
+  };
+
+  // Requests table
+  const rows = entries.map((e, i) => {
+    const cls = classifyEntry(e, pageUrl);
+    const transfer = e.response._transferSize ?? e.response.content.size;
+    const isSecure = e.request.url.startsWith("https:");
+    const httpVer = e.request.httpVersion || "http/1.1";
+    const proto = httpVer === "h2" || httpVer === "HTTP/2" || httpVer === "http/2.0" ? "h2"
+      : httpVer === "h3" || httpVer === "HTTP/3" ? "h3"
+      : "h1.1";
+    return {
+      "#": i + 1,
+      Method: e.request.method,
+      Status: e.response.status,
+      Proto: proto,
+      Scheme: isSecure ? "https" : "http",
+      Type: resourceType(e),
+      Provider: cls.provider.replace("bun_", ""),
+      Cat: cls.category,
+      TTFB: fmtMs(getTtfb(e)),
+      Time: fmtMs(e.time),
+      Size: fmtB(e.response.content.size),
+      Wire: fmtB(transfer),
+      Enc: fmtEnc(getContentEncoding(e)),
+      Saved: fmtPct(e.response.content.size, transfer),
+      Cache: getCacheStatus(e) || "—",
+      URL: shortenUrl(e.request.url, 50),
+    };
+  });
+
+  console.log("\n  Requests\n");
+  console.log(Bun.inspect.table(rows, { colors: true }));
+
+  // Domain breakdown table
+  const domainMap = new Map<string, { Reqs: number; Transfer: number; Size: number; "Avg TTFB": number; Slowest: number; Provider: string }>();
+  for (const e of entries) {
+    const d = getDomain(e.request.url);
+    const cls = classifyEntry(e, pageUrl);
+    const prev = domainMap.get(d) || { Reqs: 0, Transfer: 0, Size: 0, "Avg TTFB": 0, Slowest: 0, Provider: cls.provider.replace("bun_", "") };
+    prev.Reqs++;
+    prev.Transfer += e.response._transferSize ?? e.response.content.size;
+    prev.Size += e.response.content.size;
+    prev["Avg TTFB"] += getTtfb(e);
+    prev.Slowest = Math.max(prev.Slowest, e.time);
+    domainMap.set(d, prev);
+  }
+  const domainRows = [...domainMap.entries()]
+    .sort((a, b) => b[1].Transfer - a[1].Transfer)
+    .map(([domain, s]) => ({
+      Domain: domain,
+      Provider: s.Provider,
+      Reqs: s.Reqs,
+      Transfer: fmtB(s.Transfer),
+      Size: fmtB(s.Size),
+      "Avg TTFB": fmtMs(s["Avg TTFB"] / s.Reqs),
+      Slowest: fmtMs(s.Slowest),
+    }));
+
+  if (domainRows.length > 1) {
+    console.log("\n  Domains\n");
+    console.log(Bun.inspect.table(domainRows, { colors: true }));
+  }
+
+  // Timing breakdown table
+  let tBlocked = 0, tDns = 0, tConnect = 0, tSsl = 0, tSend = 0, tWait = 0, tRecv = 0;
+  for (const e of entries) {
+    tBlocked += Math.max(0, e.timings.blocked);
+    tDns += Math.max(0, e.timings.dns);
+    tConnect += Math.max(0, e.timings.connect);
+    tSsl += Math.max(0, e.timings.ssl);
+    tSend += Math.max(0, e.timings.send);
+    tWait += Math.max(0, e.timings.wait);
+    tRecv += Math.max(0, e.timings.receive);
+  }
+  const tTotal = tBlocked + tDns + tConnect + tSsl + tSend + tWait + tRecv;
+  const pct = (v: number) => tTotal > 0 ? `${((v / tTotal) * 100).toFixed(0)}%` : "0%";
+  const timingRows = [
+    { Phase: "Blocked", Time: fmtMs(tBlocked), "%": pct(tBlocked) },
+    { Phase: "DNS", Time: fmtMs(tDns), "%": pct(tDns) },
+    { Phase: "Connect", Time: fmtMs(tConnect), "%": pct(tConnect) },
+    { Phase: "SSL", Time: fmtMs(tSsl), "%": pct(tSsl) },
+    { Phase: "Send", Time: fmtMs(tSend), "%": pct(tSend) },
+    { Phase: "Wait", Time: fmtMs(tWait), "%": pct(tWait) },
+    { Phase: "Receive", Time: fmtMs(tRecv), "%": pct(tRecv) },
+  ];
+
+  console.log("\n  Timing Breakdown\n");
+  console.log(Bun.inspect.table(timingRows, { colors: true }));
+
+  // Summary stats table
+  const times = entries.map((e) => e.time);
+  const ttfbs = entries.map((e) => getTtfb(e));
+  const totalTx = entries.reduce((s, e) => s + (e.response._transferSize ?? e.response.content.size), 0);
+  const totalSz = entries.reduce((s, e) => s + e.response.content.size, 0);
+  const secureCount = entries.filter(e => e.request.url.startsWith("https:")).length;
+  const h2Count = entries.filter(e => {
+    const v = e.request.httpVersion || "";
+    return v === "h2" || v === "HTTP/2" || v === "http/2.0";
+  }).length;
+  const summaryRows = [{
+    Requests: entries.length,
+    Domains: new Set(entries.map(e => getDomain(e.request.url))).size,
+    HTTPS: `${secureCount}/${entries.length}`,
+    "H2+": `${h2Count}/${entries.length}`,
+    Transferred: fmtB(totalTx),
+    Uncompressed: fmtB(totalSz),
+    "Compression": fmtPct(totalSz, totalTx),
+    "Avg Time": fmtMs(times.reduce((s, t) => s + t, 0) / times.length),
+    "p95 Time": fmtMs([...times].sort((a, b) => a - b)[Math.floor(times.length * 0.95)] ?? 0),
+    "Avg TTFB": fmtMs(ttfbs.reduce((s, t) => s + t, 0) / ttfbs.length),
+    "Max TTFB": fmtMs(Math.max(...ttfbs)),
+  }];
+
+  console.log("\n  Summary\n");
+  console.log(Bun.inspect.table(summaryRows, { colors: true }));
+
+  // Documentation analysis tables (if --with-docs)
+  if (flags.withDocs) {
+    const { DocumentationAwarePerformanceAnalyzer } = await import('./har-analysis');
+    const analyzer = new DocumentationAwarePerformanceAnalyzer();
+    const url = pageUrl || har.log.entries?.[0]?.request.url || "";
+    if (url) {
+      const result = analyzer.analyzeWithDocsContext(har, url);
+
+      if (result.issues.length > 0) {
+        console.log("\n  Performance Issues\n");
+        console.log(Bun.inspect.table(result.issues.map(i => ({
+          Severity: i.severity,
+          Type: i.type,
+          Details: i.details,
+          Fix: i.fix,
+        })), { colors: true }));
+      }
+
+      if (result.documentationGaps.length > 0) {
+        console.log("\n  Documentation Gaps\n");
+        console.log(Bun.inspect.table(result.documentationGaps.map(g => ({
+          Priority: g.priority,
+          Category: g.category,
+          Gap: g.gap,
+        })), { colors: true }));
+      }
+
+      if (result.recommendations.length > 0) {
+        console.log("\n  Recommendations\n");
+        console.log(Bun.inspect.table(result.recommendations.map(r => ({
+          Priority: r.priority,
+          Category: r.category,
+          Title: r.title,
+          Description: r.description,
+        })), { colors: true }));
+      }
+
+      console.log("\n  Metrics\n");
+      const m = result.bunSpecific;
+      console.log(Bun.inspect.table([{
+        TTFB: fmtMs(m.ttfb),
+        Transfer: fmtB(m.totalTransfer),
+        Size: fmtB(m.totalSize),
+        "Compression": `${(m.compressionRatio * 100).toFixed(0)}%`,
+        "Cache Hits": `${(m.cacheHitRate * 100).toFixed(0)}%`,
+        Slow: `${m.slowRequests}/${m.totalRequests}`,
+        Domains: m.domains,
+        Provider: result.provider,
+        Category: result.category,
+        "URL Type": result.urlType,
+      }], { colors: true }));
+    }
+  }
+
+  console.log();
   process.exit(0);
 }
 
 // --- Summary ---
 
-const page = har.log.pages?.[0];
 const totalTransfer = entries.reduce((s, e) => s + (e.response._transferSize ?? e.response.content.size), 0);
 const totalSize = entries.reduce((s, e) => s + e.response.content.size, 0);
 const statusCounts = new Map<number, number>();
@@ -492,17 +742,20 @@ console.log(`  Types: ${typeLine}  Protocol: ${protoLine}`);
 const ANSI = 9; // length of one ANSI color escape pair
 
 console.log(
-  `\n  \x1b[1m${"#".padStart(3)} ${"Mtd".padEnd(4)} ${"St".padEnd(3)} ${"Proto".padEnd(5)} ${"Type".padEnd(5)} ${"TTFB".padStart(7)} ${"Time".padStart(7)} ${"Size".padStart(8)} ${"Wire".padStart(8)} ${"Enc".padEnd(4)} ${"Svd".padEnd(4)} ${"Cache".padEnd(8)} URL\x1b[0m`,
+  `\n  \x1b[1m${"#".padStart(3)} ${"Mtd".padEnd(4)} ${"St".padEnd(3)} ${"Proto".padEnd(5)} ${"Type".padEnd(5)} ${"Provider".padEnd(9)} ${"Cat".padEnd(7)} ${"TTFB".padStart(7)} ${"Time".padStart(7)} ${"Size".padStart(8)} ${"Wire".padStart(8)} ${"Enc".padEnd(4)} ${"Svd".padEnd(4)} ${"Cache".padEnd(8)} URL\x1b[0m`,
 );
-console.log("  " + "─".repeat(110));
+console.log("  " + "─".repeat(128));
 
 for (let i = 0; i < entries.length; i++) {
   const e = entries[i];
+  const cls = classifyEntry(e, pageUrl);
   const num = String(i + 1).padStart(3);
   const method = e.request.method.slice(0, 4).padEnd(4);
   const status = statusColor(e.response.status).padEnd(3 + ANSI);
   const proto = fmtProtocol(e.request.httpVersion).padEnd(5 + ANSI);
   const type = fmtType(resourceType(e)).padEnd(5 + ANSI);
+  const provider = fmtProvider(cls.provider).padEnd(9 + ANSI);
+  const cat = fmtCategory(cls.category).padEnd(7 + ANSI);
   const ttfb = fmtMs(getTtfb(e)).padStart(7);
   const time = fmtMs(e.time).padStart(7);
   const size = fmtBytes(e.response.content.size).padStart(8);
@@ -514,7 +767,7 @@ for (let i = 0; i < entries.length; i++) {
   const url = shortenUrl(e.request.url, 42);
   const slow = e.time > flags.slow ? " \x1b[31m!!\x1b[0m" : "";
   console.log(
-    `  ${num} ${method} ${status} ${proto} ${type} ${ttfb} ${time} ${size} ${transfer} ${enc} ${saved} ${cache} ${url}${slow}`,
+    `  ${num} ${method} ${status} ${proto} ${type} ${provider} ${cat} ${ttfb} ${time} ${size} ${transfer} ${enc} ${saved} ${cache} ${url}${slow}`,
   );
 }
 
@@ -533,7 +786,7 @@ if (slowReqs.length > 0) {
 
 // Domain breakdown
 if (domainSet.size > 1) {
-  renderDomainBreakdown(entries);
+  renderDomainBreakdown(entries, pageUrl);
 }
 
 // Timing breakdown
@@ -542,6 +795,17 @@ renderTimingBreakdown(entries);
 // Waterfall
 if (flags.waterfall) {
   renderWaterfall(entries);
+}
+
+// Documentation-aware performance analysis
+if (flags.withDocs) {
+  const { DocumentationAwarePerformanceAnalyzer, printAnalysis } = await import('./har-analysis');
+  const analyzer = new DocumentationAwarePerformanceAnalyzer();
+  const url = pageUrl || har.log.entries?.[0]?.request.url || "";
+  if (url) {
+    const result = analyzer.analyzeWithDocsContext(har, url);
+    printAnalysis(result, url);
+  }
 }
 
 console.log();

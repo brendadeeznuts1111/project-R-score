@@ -125,6 +125,11 @@ describe("classifyDomain", () => {
     expect(classifyDomain("bun.sh", "bun.sh")).toBe("first-party");
   });
 
+  test("should classify hosts as first-party regardless of case", () => {
+    expect(classifyDomain("EXAMPLE.COM", "example.com")).toBe("first-party");
+    expect(classifyDomain("Bun.SH", "bun.sh")).toBe("first-party");
+  });
+
   test("should classify google-analytics.com as a tracker", () => {
     expect(classifyDomain("google-analytics.com", "bun.sh")).toBe("tracker");
   });
