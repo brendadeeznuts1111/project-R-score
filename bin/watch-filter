@@ -1,0 +1,16 @@
+#!/usr/bin/env bun
+
+/**
+ * Bun CLI Native Wrapper v3.15
+ * 
+ * Official Bun CLI integration wrapper with enhanced watch-filter capabilities
+ * Usage: bun watch-filter [options] <script> [args...]
+ */
+
+import { runWatchFilterCLI } from '../lib/enhanced-watch-filter-v3.15';
+
+// Run the enhanced watch filter CLI
+runWatchFilterCLI(process.argv.slice(2)).catch(error => {
+  console.error('❌ Watch filter CLI failed:', error);
+  process.exit(1);
+});

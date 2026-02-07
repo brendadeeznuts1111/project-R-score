@@ -454,16 +454,17 @@ export function generateLayoutCSS(): string {
 
 // Render header component
 export function renderHeader(config: HeaderConfig): string {
-  const navItems = config.navItems
-    ?.map(
-      item => `
+  const navItems =
+    config.navItems
+      ?.map(
+        item => `
       <a href="${item.href}" class="fw-nav-link ${item.active ? 'active' : ''}">
         ${item.icon || ''}
         ${item.label}
       </a>
     `
-    )
-    .join('') || '';
+      )
+      .join('') || '';
 
   const themeToggle = config.showThemeToggle
     ? `<button class="fw-theme-toggle" onclick="toggleTheme()" title="Toggle theme">🎨</button>`
@@ -508,13 +509,14 @@ export function renderHeader(config: HeaderConfig): string {
 
 // Render footer component
 export function renderFooter(config: FooterConfig = {}): string {
-  const links = config.links
-    ?.map(
-      link => `
+  const links =
+    config.links
+      ?.map(
+        link => `
       <a href="${link.href}" class="fw-footer-link">${link.label}</a>
     `
-    )
-    .join('') || '';
+      )
+      .join('') || '';
 
   const statusIndicator = config.showSystemStatus
     ? `

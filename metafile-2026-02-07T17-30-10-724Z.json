@@ -1,0 +1,181 @@
+{
+  "metafile": {
+    "inputs": {
+      "utils/junior-runner.ts": {
+        "bytes": 16752,
+        "imports": [
+          {
+            "path": "/Users/nolarose/Projects/utils/lead-spec-profile.ts",
+            "kind": "import-statement",
+            "original": "./lead-spec-profile"
+          },
+          {
+            "path": "path",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "/Users/nolarose/Projects/utils/constants.ts",
+            "kind": "import-statement",
+            "original": "./constants"
+          },
+          {
+            "path": "/Users/nolarose/Projects/utils/wiki-profiler.ts",
+            "kind": "import-statement",
+            "original": "./wiki-profiler"
+          }
+        ],
+        "format": "esm"
+      },
+      "utils/wiki-profiler.ts": {
+        "bytes": 8842,
+        "imports": [
+          {
+            "path": "./junior-runner",
+            "kind": "import-statement"
+          },
+          {
+            "path": "/bun-vfs$$/node_modules/path/index.js",
+            "kind": "import-statement",
+            "original": "path"
+          }
+        ],
+        "format": "esm"
+      },
+      "utils/lead-spec-profile.ts": {
+        "bytes": 5539,
+        "imports": [],
+        "format": "esm"
+      },
+      "utils/constants.ts": {
+        "bytes": 18631,
+        "imports": [],
+        "format": "esm"
+      },
+      "node:path": {
+        "bytes": 7223,
+        "imports": [],
+        "format": "esm"
+      }
+    },
+    "outputs": {
+      "./junior-runner.js": {
+        "bytes": 40317,
+        "inputs": {
+          "utils/lead-spec-profile.ts": {
+            "bytesInOutput": 1507
+          },
+          "utils/constants.ts": {
+            "bytesInOutput": 12892
+          },
+          "node:path": {
+            "bytesInOutput": 10002
+          },
+          "utils/wiki-profiler.ts": {
+            "bytesInOutput": 3020
+          },
+          "utils/junior-runner.ts": {
+            "bytesInOutput": 12629
+          }
+        },
+        "imports": [],
+        "exports": [
+          "scanFeatures",
+          "juniorProfileWithWiki",
+          "juniorProfile",
+          "detectTableColumns"
+        ],
+        "entryPoint": "utils/junior-runner.ts"
+      }
+    }
+  },
+  "inputs": {
+    "utils/junior-runner.ts": {
+      "bytes": 16752,
+      "imports": [
+        {
+          "path": "/Users/nolarose/Projects/utils/lead-spec-profile.ts",
+          "kind": "import-statement",
+          "original": "./lead-spec-profile"
+        },
+        {
+          "path": "path",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "/Users/nolarose/Projects/utils/constants.ts",
+          "kind": "import-statement",
+          "original": "./constants"
+        },
+        {
+          "path": "/Users/nolarose/Projects/utils/wiki-profiler.ts",
+          "kind": "import-statement",
+          "original": "./wiki-profiler"
+        }
+      ],
+      "format": "esm"
+    },
+    "utils/wiki-profiler.ts": {
+      "bytes": 8842,
+      "imports": [
+        {
+          "path": "./junior-runner",
+          "kind": "import-statement"
+        },
+        {
+          "path": "/bun-vfs$$/node_modules/path/index.js",
+          "kind": "import-statement",
+          "original": "path"
+        }
+      ],
+      "format": "esm"
+    },
+    "utils/lead-spec-profile.ts": {
+      "bytes": 5539,
+      "imports": [],
+      "format": "esm"
+    },
+    "utils/constants.ts": {
+      "bytes": 18631,
+      "imports": [],
+      "format": "esm"
+    },
+    "node:path": {
+      "bytes": 7223,
+      "imports": [],
+      "format": "esm"
+    }
+  },
+  "outputs": {
+    "./junior-runner.js": {
+      "bytes": 40317,
+      "inputs": {
+        "utils/lead-spec-profile.ts": {
+          "bytesInOutput": 1507
+        },
+        "utils/constants.ts": {
+          "bytesInOutput": 12892
+        },
+        "node:path": {
+          "bytesInOutput": 10002
+        },
+        "utils/wiki-profiler.ts": {
+          "bytesInOutput": 3020
+        },
+        "utils/junior-runner.ts": {
+          "bytesInOutput": 12629
+        }
+      },
+      "imports": [],
+      "exports": [
+        "scanFeatures",
+        "juniorProfileWithWiki",
+        "juniorProfile",
+        "detectTableColumns"
+      ],
+      "entryPoint": "utils/junior-runner.ts"
+    }
+  },
+  "bundleSize": 40317
+}

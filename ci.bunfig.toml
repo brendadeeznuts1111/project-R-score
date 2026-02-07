@@ -1,0 +1,11 @@
+
+[install]
+cache = false
+optional = true
+
+[run]
+shell = "bun"
+
+[test]
+preload = ["./test-setup.ts"]
+coverage = true

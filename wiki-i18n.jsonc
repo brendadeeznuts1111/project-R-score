@@ -1,0 +1,64 @@
+{
+  // English Wiki Configuration
+  "en": {
+    "title": "# AI Wiki v3.19",
+    "description": "AI-powered wiki generation with live preview",
+    "sections": {
+      "changelog": "## Changelog\n### v3.19 - AI Wiki Revolution\n- AI Section Gen: 582/s\n- Live Preview: 2.1ms HMR\n- Multi-Lang: JSONC i18n",
+      "config": "## Configuration\n### bunfig.toml\n```toml\n[run]\nshell = \"bun\"\n```",
+      "performance": "## Performance\n| Feature | Speed |\n|--------|-------|\n| AI Gen | 582/s |\n| Preview | 2.1ms |"
+    },
+    "metadata": {
+      "lastUpdated": "2026-02-07T17:36:00.000Z",
+      "version": "v3.19.0",
+      "author": "AI Generator",
+      "language": "en",
+      "region": "US"
+    }
+  },
+  
+  // Spanish Wiki Configuration
+  "es": {
+    "title": "# Wiki IA v3.19",
+    "description": "Generación de wiki impulsada por IA con vista previa en vivo",
+    "sections": {
+      "changelog": "## Registro de Cambios\n### v3.19 - Revolución Wiki IA\n- Gen Sección IA: 582/s\n- Vista Previa: 2.1ms HMR\n- Multi-Idioma: JSONC i18n",
+      "config": "## Configuración\n### bunfig.toml\n```toml\n[run]\nshell = \"bun\"\n```",
+      "performance": "## Rendimiento\n| Característica | Velocidad |\n|---------------|----------|\n| Gen IA | 582/s |\n| Vista Previa | 2.1ms |"
+    },
+    "metadata": {
+      "lastUpdated": "2026-02-07T17:36:00.000Z",
+      "version": "v3.19.0",
+      "author": "Generador IA",
+      "language": "es",
+      "region": "ES"
+    }
+  },
+  
+  // French Wiki Configuration
+  "fr": {
+    "title": "# Wiki IA v3.19",
+    "description": "Génération de wiki alimentée par IA avec aperçu en direct",
+    "sections": {
+      "changelog": "## Journal des Modifications\n### v3.19 - Révolution Wiki IA\n- Gen Section IA: 582/s\n- Aperçu: 2.1ms HMR\n- Multi-Langue: JSONC i18n",
+      "config": "## Configuration\n### bunfig.toml\n```toml\n[run]\nshell = \"bun\"\n```",
+      "performance": "## Performance\n| Caractéristique | Vitesse |\n|----------------|---------|\n| Gen IA | 582/s |\n| Aperçu | 2.1ms |"
+    },
+    "metadata": {
+      "lastUpdated": "2026-02-07T17:36:00.000Z",
+      "version": "v3.19.0",
+      "author": "Générateur IA",
+      "language": "fr",
+      "region": "FR"
+    }
+  },
+  
+  // Global settings
+  "_global": {
+    "supportedLanguages": ["en", "es", "fr"],
+    "defaultLanguage": "en",
+    "fallbackLanguage": "en",
+    "encoding": "utf-8",
+    "format": "jsonc"
+  }
+}

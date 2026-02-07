@@ -1,14 +1,9 @@
 {
   "compilerOptions": {
-    // Enable modern JavaScript features
     "target": "ES2022",
     "module": "ESNext",
-    
-    /* React support */
     "jsx": "react-jsx",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    
-    // Path mapping for cleaner imports
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
@@ -16,12 +11,10 @@
       "@/utils/*": ["./utils/*"]
     }
   },
-  /* Include patterns */
   "include": [
     "src/**/*",
     "types/**/*"
   ],
-  // Exclude node_modules and build outputs
   "exclude": [
     "node_modules",
     "dist",

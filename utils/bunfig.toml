@@ -1,0 +1,19 @@
+# Bun Configuration for Context Engine v3.17
+[run]
+shell = "bun"
+preload = ["./junior-runner.ts"]
+
+[build]
+entrypoints = ["./junior-runner.ts"]
+outdir = "./dist"
+target = "browser"
+format = "esm"
+
+[test]
+preload = ["./junior-runner.ts"]
+
+# Context Engine v3.17 specific settings
+[context]
+version = "3.17"
+metafile = true
+lsp_safe = true

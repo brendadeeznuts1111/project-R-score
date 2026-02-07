@@ -1,0 +1,48 @@
+{
+  "core": {
+    "documentSize": 921,
+    "parseTime": 0.3804398400000002,
+    "throughput": 1162023.4095356567,
+    "memoryMB": 0.48543453216552734
+  },
+  "markdown": {
+    "parseTimeMs": 0.7925830000000005,
+    "featureCounts": {
+      "headings": 4,
+      "tables": 0,
+      "tableCols": 20,
+      "codeBlocks": 0,
+      "links": 0,
+      "images": 0,
+      "taskLists": 0,
+      "strikethrough": 0,
+      "blockquotes": 0,
+      "lists": {
+        "ordered": 4,
+        "unordered": 9
+      },
+      "math": 0,
+      "wikiLinks": 0,
+      "gfmScore": 100
+    },
+    "complexityTier": "lead",
+    "compliance": {
+      "gfm": 0,
+      "commonmark": 0
+    },
+    "outputs": {
+      "htmlSize": 1159,
+      "ansiSize": 915,
+      "reactEst": 0
+    }
+  },
+  "security": {
+    "etag": "315d6b8efbb0e6bdb15e74a5dad0a44a6e5d1d3a0ffc3a9eb2700510bf0766f5-6270d9a3",
+    "integrityHash": "sha256-MV1rjvuw5r2xXnSl2tCkSm5dHToP/DqesnAFEL8HZvU="
+  },
+  "audit": {
+    "timestamp": "2026-02-07T17:34:28.858Z",
+    "runner": "junior",
+    "environment": "Bun 1.3.9"
+  }
+}
