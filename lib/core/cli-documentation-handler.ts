@@ -10,7 +10,7 @@ import {
   CLICategory,
   CLI_DOCUMENTATION_URLS,
   CLI_COMMAND_EXAMPLES,
-} from '../documentation/constants/cli';
+} from '../docs/constants/cli';
 import { URLHandler, URLFragmentUtils, FactoryWagerURLUtils } from './url-handler';
 import { handleError } from './error-handling';
 

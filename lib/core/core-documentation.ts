@@ -14,76 +14,13 @@ import { createValidationError, EnterpriseErrorCode } from './core-errors';
 import {
   ENTERPRISE_DOCUMENTATION_BASE_URLS as _CANONICAL_URLS,
   SIGNIFICANT_COMMITS as _CANONICAL_COMMITS,
-} from '../documentation/constants/domains';
-import { TEXT_FRAGMENT_PATTERNS as _CANONICAL_FRAGMENTS } from '../documentation/constants/fragments';
+} from '../docs/constants/domains';
+import { TEXT_FRAGMENT_PATTERNS as _CANONICAL_FRAGMENTS } from '../docs/constants/fragments';
 
-// ============================================================================
-// DOCUMENTATION PROVIDERS ENUM
-// ============================================================================
-
-/**
- * Enhanced documentation providers with comprehensive coverage
- */
-export enum DocumentationProvider {
-  // Primary documentation sources
-  BUN_OFFICIAL = 'bun_official', // bun.sh/docs - Technical docs
-  BUN_REFERENCE = 'bun_reference', // bun.com/reference - API reference portal
-  BUN_GUIDES = 'bun_guides', // bun.com/guides - Tutorials & guides
-  BUN_RSS = 'bun_rss', // RSS feeds
-
-  // GitHub sources (critical for development)
-  GITHUB_PUBLIC = 'github_public', // oven-sh/bun public repo
-  GITHUB_ENTERPRISE = 'github_enterprise', // Enterprise/internal GitHub
-  GITHUB_GIST = 'github_gist', // GitHub Gists
-
-  // Package and type definitions
-  BUN_TYPES = 'bun_types', // TypeScript definitions
-  NPM_PACKAGES = 'npm_packages', // npm package registry
-
-  // External references
-  MDN_WEB_DOCS = 'mdn_web_docs',
-  NODE_JS = 'node_js',
-  WEB_STANDARDS = 'web_standards',
-
-  // Specialized
-  PERFORMANCE_GUIDES = 'performance_guides',
-  SECURITY_DOCS = 'security_docs',
-  API_REFERENCE = 'api_reference',
-  COMMUNITY_BLOG = 'community_blog',
-}
-
-/**
- * Documentation categories
- */
-export enum DocumentationCategory {
-  API_REFERENCE = 'api_reference',
-  RUNTIME_FEATURES = 'runtime_features',
-  CLI_TOOLS = 'cli_tools',
-  PERFORMANCE_OPTIMIZATION = 'performance_optimization',
-  SECURITY_GUIDELINES = 'security_guidelines',
-  DEPLOYMENT_GUIDES = 'deployment_guides',
-  TROUBLESHOOTING = 'troubleshooting',
-  EXAMPLES_TUTORIALS = 'examples_tutorials',
-  INSTALLATION = 'installation',
-  QUICKSTART = 'quickstart',
-  BEST_PRACTICES = 'best_practices',
-  MIGRATION_GUIDES = 'migration_guides',
-  PACKAGE_MANAGER = 'package_manager',
-  BUNDLER = 'bundler',
-  COMMUNITY_RESOURCES = 'community_resources',
-}
-
-/**
- * Documentation formats
- */
-export enum DocumentationFormat {
-  HTML = 'html',
-  MARKDOWN = 'markdown',
-  PDF = 'pdf',
-  JSON = 'json',
-  RSS = 'rss',
-  XML = 'xml',
-}
+// Re-export canonical enums from single source of truth
+import { DocumentationProvider, DocumentationCategory } from '../docs/constants/enums';
+export { DocumentationProvider, DocumentationCategory };
+export { DocumentationFormat } from '../docs/constants/domains';
 
 /**
  * Documentation metadata interface

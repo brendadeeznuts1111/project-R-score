@@ -29,8 +29,8 @@ import { DocumentationValidator } from '../docs/documentation-validator';
 
 // Import documentation components
 import { DOCS, DOC_PATHS, URL_PATTERNS, DocsReference } from '../docs/reference';
-import { CLICategory, CLI_DOCUMENTATION_URLS } from '../documentation/constants/cli';
-import { UtilsCategory, BUN_UTILS_URLS } from '../documentation/constants/utils';
+import { CLICategory, CLI_DOCUMENTATION_URLS } from '../docs/constants/cli';
+import { UtilsCategory, BUN_UTILS_URLS } from '../docs/constants/utils';
 
 // ============================================================================
 // COMPLETE DOCUMENTATION VALIDATION

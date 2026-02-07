@@ -6,7 +6,7 @@
  * for documentation, knowledge management, and team collaboration.
  */
 
-import { UtilsCategory, BUN_UTILS_URLS, BUN_UTILS_EXAMPLES } from './documentation/constants/utils';
+import { UtilsCategory, BUN_UTILS_URLS, BUN_UTILS_EXAMPLES } from '../docs/constants/utils';
 
 // ============================================================================
 // TYPES

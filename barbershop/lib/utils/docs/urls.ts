@@ -131,28 +131,31 @@ BUN_DOCS.r2 = {
   }
 } as const;
 
+// Import centralized domain configuration
+import { FACTORY_WAGER_DOMAIN, buildDocsUrl, buildApiUrl } from '../../src/config/domain';
+
 // FactoryWager specific documentation
 BUN_DOCS.factorywager = {
-  overview: 'https://docs.factory-wager.com',
-  secrets: 'https://docs.factory-wager.com/secrets',
-  versioning: 'https://docs.factory-wager.com/secrets/versioning',
-  lifecycle: 'https://docs.factory-wager.com/secrets/lifecycle',
-  r2Integration: 'https://docs.factory-wager.com/integrations/r2',
+  overview: buildDocsUrl(),
+  secrets: buildDocsUrl('/secrets'),
+  versioning: buildDocsUrl('/secrets/versioning'),
+  lifecycle: buildDocsUrl('/secrets/lifecycle'),
+  r2Integration: buildDocsUrl('/integrations/r2'),
   
   // API documentation
   api: {
-    secrets: 'https://api.factory-wager.com/docs/secrets',
-    versioning: 'https://api.factory-wager.com/docs/secrets/versioning',
-    lifecycle: 'https://api.factory-wager.com/docs/secrets/lifecycle',
-    r2: 'https://api.factory-wager.com/docs/r2'
+    secrets: buildApiUrl('/docs/secrets'),
+    versioning: buildApiUrl('/docs/secrets/versioning'),
+    lifecycle: buildApiUrl('/docs/secrets/lifecycle'),
+    r2: buildApiUrl('/docs/r2')
   },
   
   // Guides and tutorials
   guides: {
-    quickstart: 'https://docs.factory-wager.com/guides/quickstart',
-    migrations: 'https://docs.factory-wager.com/guides/migrations',
-    bestPractices: 'https://docs.factory-wager.com/guides/best-practices',
-    troubleshooting: 'https://docs.factory-wager.com/guides/troubleshooting'
+    quickstart: buildDocsUrl('/guides/quickstart'),
+    migrations: buildDocsUrl('/guides/migrations'),
+    bestPractices: buildDocsUrl('/guides/best-practices'),
+    troubleshooting: buildDocsUrl('/guides/troubleshooting')
   }
 } as const;
 

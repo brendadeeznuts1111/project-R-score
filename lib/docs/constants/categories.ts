@@ -270,7 +270,7 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
       SECURITY_RSS: '/security/rss.xml',
       COMMUNITY_RSS: '/community/rss.xml',
       GUIDES_RSS: '/guides/rss.xml',
-      TECHNICAL_RSS: '/feed.xml'  // This maps to bun.sh/feed.xml
+      TECHNICAL_RSS: '/rss.xml'  // This maps to bun.sh/rss.xml
     },
     
     [DocumentationCategory.BLOG_POSTS]: {

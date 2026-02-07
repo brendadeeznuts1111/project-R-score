@@ -19,112 +19,13 @@ export enum DocumentationDomain {
   BUN_IO = 'bun.io',           // Community/ecosystem
   
   // Alternative/CDN domains
-  BUN_DOCS = 'docs.bun.sh',    // Documentation CDN
-  BUN_CDN = 'cdn.bun.sh',      // Static assets
+  BUN_DOCS = 'docs.bun.sh',    // @planned — DNS does not resolve yet
+  BUN_CDN = 'cdn.bun.sh',      // @planned — DNS does not resolve yet
 }
 
-// Enterprise documentation providers with full metadata
-export enum DocumentationProvider {
-  // Official providers
-  BUN_OFFICIAL = 'bun_official',
-  BUN_TYPES = 'bun_types',
-  GITHUB_ENTERPRISE = 'github_enterprise',
-  INTERNAL_WIKI = 'internal_wiki',
-  
-  // External references
-  MDN_WEB_DOCS = 'mdn_web_docs',
-  NODE_JS = 'node_js',
-  WEB_STANDARDS = 'web_standards',
-  
-  // Specialized
-  PERFORMANCE_GUIDES = 'performance_guides',
-  SECURITY_DOCS = 'security_docs',
-  API_REFERENCE = 'api_reference',
-  COMMUNITY_BLOG = 'community_blog',
-  RSS_FEEDS = 'rss_feeds',
-  
-  // Third-party / external
-  COMMUNITY = 'community',
-  GITHUB = 'github',
-  NPM = 'npm',
-
-  // Legacy/backward compatibility (deprecated)
-  /** @deprecated Use BUN_OFFICIAL instead */
-  BUN_TECHNICAL = 'bun_technical',
-  /** @deprecated Use BUN_OFFICIAL instead */
-  BUN_API_DOCS = 'bun_api_docs',
-  /** @deprecated Use BUN_OFFICIAL instead */
-  BUN_RUNTIME_DOCS = 'bun_runtime_docs',
-  /** @deprecated Use BUN_OFFICIAL instead */
-  BUN_REFERENCE = 'bun_reference',
-  /** @deprecated Use BUN_OFFICIAL instead */
-  BUN_GUIDES = 'bun_guides',
-  /** @deprecated Use BUN_OFFICIAL instead */
-  BUN_TUTORIALS = 'bun_tutorials',
-  /** @deprecated Use BUN_OFFICIAL instead */
-  BUN_EXAMPLES = 'bun_examples',
-  /** @deprecated Use RSS_FEEDS instead */
-  BUN_RSS = 'bun_rss',
-  /** @deprecated Use RSS_FEEDS instead */
-  BUN_FEEDS = 'bun_feeds',
-  /** @deprecated Use GITHUB_ENTERPRISE instead */
-  GITHUB_PUBLIC = 'github_public',
-  /** @deprecated Use COMMUNITY_BLOG instead */
-  COMMUNITY_RESOURCES = 'community_resources'
-}
-
-export enum DocumentationCategory {
-  // Core documentation
-  INSTALLATION = 'installation',
-  QUICKSTART = 'quickstart',
-  API_REFERENCE = 'api_reference',
-  RUNTIME_FEATURES = 'runtime_features',
-  
-  // Technical guides
-  PERFORMANCE_OPTIMIZATION = 'performance_optimization',
-  SECURITY_GUIDELINES = 'security_guidelines',
-  DEPLOYMENT_GUIDES = 'deployment_guides',
-  TROUBLESHOOTING = 'troubleshooting',
-  
-  // Development
-  EXAMPLES_TUTORIALS = 'examples_tutorials',
-  BEST_PRACTICES = 'best_practices',
-  MIGRATION_GUIDES = 'migration_guides',
-  COMMUNITY_RESOURCES = 'community_resources',
-  
-  // Shorthand aliases (map to existing detailed categories)
-  GUIDE = 'guide',
-  API = 'api',
-  RUNTIME = 'runtime',
-  CLI = 'cli',
-  UTILS = 'utils',
-
-  // Web resource types
-  WEBSITE = 'website',
-  ASSET = 'asset',
-
-  // Legacy/backward compatibility (deprecated)
-  /** @deprecated Use API_REFERENCE instead */
-  CLI_REFERENCE = 'cli_reference',
-  /** @deprecated Use PERFORMANCE_OPTIMIZATION instead */
-  BENCHMARKS = 'benchmarks',
-  /** @deprecated Use SECURITY_GUIDELINES instead */
-  SECURITY = 'security',
-  /** @deprecated Use PERFORMANCE_OPTIMIZATION instead */
-  PERFORMANCE = 'performance',
-  /** @deprecated Use MIGRATION_GUIDES instead */
-  MIGRATION = 'migration',
-  /** @deprecated Use QUICKSTART instead */
-  GETTING_STARTED = 'getting_started',
-  /** @deprecated Use EXAMPLES_TUTORIALS instead */
-  TUTORIALS = 'tutorials',
-  /** @deprecated Use COMMUNITY_RESOURCES instead */
-  RSS_FEEDS = 'rss_feeds',
-  /** @deprecated Use COMMUNITY_RESOURCES instead */
-  BLOG_POSTS = 'blog_posts',
-  /** @deprecated Use COMMUNITY_RESOURCES instead */
-  RELEASE_ANNOUNCEMENTS = 'release_announcements'
-}
+// Import canonical enums from single source of truth and re-export
+import { DocumentationProvider, DocumentationCategory, UrlType } from './enums';
+export { DocumentationProvider, DocumentationCategory, UrlType };
 
 // Documentation format types
 export enum DocumentationFormat {
@@ -136,16 +37,6 @@ export enum DocumentationFormat {
   XML = 'xml',
   OPEN_API = 'open_api',
   GRAPHQL = 'graphql'
-}
-
-export enum UrlType {
-  DOCUMENTATION = 'documentation',
-  API = 'api',
-  REPOSITORY = 'repository',
-  PACKAGE = 'package',
-  CDN = 'cdn',
-  MARKETING = 'marketing',
-  UNKNOWN = 'unknown',
 }
 
 export enum UtilityFunctionCategory {
@@ -250,123 +141,9 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     FEED: 'https://bun.sh/rss.xml'
   },
   
-  [DocumentationProvider.BUN_TECHNICAL]: {
-    BASE: 'https://bun.sh',
-    TECHNICAL_DOCS: 'https://bun.sh/docs',
-    API_REFERENCE: 'https://bun.sh/docs/api',
-    RUNTIME_REFERENCE: 'https://bun.sh/docs/runtime',
-    CLI_REFERENCE: 'https://bun.sh/docs/cli',
-    BENCHMARKS: 'https://bun.sh/docs/benchmarks',
-    PERFORMANCE: 'https://bun.sh/docs/performance',
-    SECURITY: 'https://bun.sh/docs/security',
-    TECHNICAL_BLOG: 'https://bun.sh/blog',
-    TECHNICAL_RSS: 'https://bun.sh/rss.xml'
-  },
-  
-  [DocumentationProvider.BUN_API_DOCS]: {
-    BASE: 'https://bun.sh',
-    API_OVERVIEW: 'https://bun.sh/docs/api',
-    UTILS: 'https://bun.sh/docs/api/utils',
-    HTTP: 'https://bun.sh/docs/api/http',
-    WEBSOCKET: 'https://bun.sh/docs/api/websocket',
-    STREAMS: 'https://bun.sh/docs/api/streams',
-    SERVE: 'https://bun.sh/docs/api/serve',
-    SQL: 'https://bun.sh/docs/api/sql',
-    TEST: 'https://bun.sh/docs/api/test',
-    BUILD: 'https://bun.sh/docs/api/build',
-    PLUGINS: 'https://bun.sh/docs/api/plugins'
-  },
-  
-  [DocumentationProvider.BUN_RUNTIME_DOCS]: {
-    BASE: 'https://bun.sh',
-    RUNTIME_OVERVIEW: 'https://bun.sh/docs/runtime',
-    FILESYSTEM: 'https://bun.sh/docs/runtime/filesystem',
-    PROCESS: 'https://bun.sh/docs/runtime/process',
-    NETWORKING: 'https://bun.sh/docs/runtime/networking',
-    BINARY_DATA: 'https://bun.sh/docs/runtime/binary-data',
-    CONCURRENCY: 'https://bun.sh/docs/runtime/concurrency',
-    MODULES: 'https://bun.sh/docs/runtime/modules',
-    ENVIRONMENT: 'https://bun.sh/docs/runtime/environment',
-    PERF_HOOKS: 'https://bun.sh/docs/runtime/perf-hooks',
-    INSPECTOR: 'https://bun.sh/docs/runtime/inspector'
-  },
-  
-  // bun.com domain (reference portal)
-  [DocumentationProvider.BUN_REFERENCE]: {
-    BASE: Bun.env.BUN_REFERENCE_URL || 'https://bun.com',
-    REFERENCE: 'https://bun.com/reference',     // Main reference portal
-    API_REFERENCE: 'https://bun.com/reference/api',
-    CLI_REFERENCE: 'https://bun.com/reference/cli',
-    CONFIG_REFERENCE: 'https://bun.com/reference/config',
-    ENVIRONMENT_REFERENCE: 'https://bun.com/reference/environment',
-    PACKAGES_REFERENCE: 'https://bun.com/reference/packages',
-    TEMPLATES_REFERENCE: 'https://bun.com/reference/templates',
-    TUTORIALS: 'https://bun.com/reference/tutorials',
-    COOKBOOK: 'https://bun.com/reference/cookbook',
-    CHEATSHEET: 'https://bun.com/reference/cheatsheet',
-    GLOSSARY: 'https://bun.com/reference/glossary',
-
-    // Text fragment examples
-    TEXT_FRAGMENT_EXAMPLES: {
-      NODE_ZLIB: 'https://bun.com/reference#:~:text=node%3Azlib',
-      BUN_API_REFERENCE: 'https://bun.com/reference#:~:text=Bun%20API%20Reference'
-    }
-  },
-  
-  [DocumentationProvider.BUN_GUIDES]: {
-    BASE: Bun.env.BUN_GUIDES_URL || 'https://bun.com',
-    GUIDES: 'https://bun.com/guides',           // Main guides portal
-    GETTING_STARTED: 'https://bun.com/guides/getting-started',
-    TUTORIALS: 'https://bun.com/guides/tutorials',
-    HOW_TO: 'https://bun.com/guides/how-to',
-    BEST_PRACTICES: 'https://bun.com/guides/best-practices',
-    MIGRATION: 'https://bun.com/guides/migration',
-    TROUBLESHOOTING: 'https://bun.com/guides/troubleshooting',
-    FAQ: 'https://bun.com/guides/faq',
-    COMMUNITY: 'https://bun.com/guides/community',
-    STEP_BY_STEP: 'https://bun.com/guides/step-by-step',
-    VIDEO_TUTORIALS: 'https://bun.com/guides/video-tutorials',
-    INTERACTIVE: 'https://bun.com/guides/interactive'
-  },
-  
-  [DocumentationProvider.BUN_TUTORIALS]: {
-    BASE: 'https://bun.com',
-    TUTORIALS: 'https://bun.com/tutorials',
-    INTERACTIVE_TUTORIALS: 'https://bun.com/tutorials/interactive',
-    VIDEO_TUTORIALS: 'https://bun.com/tutorials/video',
-    WORKSHOP: 'https://bun.com/tutorials/workshop',
-    LEARNING_PATH: 'https://bun.com/tutorials/learning-path'
-  },
-  
-  [DocumentationProvider.BUN_EXAMPLES]: {
-    BASE: 'https://bun.com',
-    EXAMPLES: 'https://bun.com/examples',
-    CODE_SAMPLES: 'https://bun.com/examples/code',
-    PROJECT_TEMPLATES: 'https://bun.com/examples/templates',
-    DEMO_APPS: 'https://bun.com/examples/demo-apps',
-    PLAYGROUND: 'https://bun.com/examples/playground'
-  },
-  
-  // RSS feeds from both domains
-  [DocumentationProvider.BUN_RSS]: {
-    BASE: 'https://bun.com',
-    MAIN_RSS: 'https://bun.com/rss.xml',               // Main RSS feed
-    BLOG_RSS: 'https://bun.com/blog/rss.xml',          // Blog RSS
-    RELEASES_RSS: 'https://bun.com/releases/rss.xml',  // Release announcements
-    SECURITY_RSS: 'https://bun.com/security/rss.xml',  // Security updates
-    COMMUNITY_RSS: 'https://bun.com/community/rss.xml', // Community updates
-    GUIDES_RSS: 'https://bun.com/guides/rss.xml'       // Guides RSS
-  },
-  
-  [DocumentationProvider.BUN_FEEDS]: {
-    BASE: 'https://bun.com',
-    MAIN_FEED: 'https://bun.com/rss.xml',
-    TECHNICAL_FEED: 'https://bun.sh/rss.xml',
-    BLOG_FEED: 'https://bun.com/blog/rss.xml',
-    RELEASES_FEED: 'https://bun.com/releases/rss.xml',
-    SECURITY_FEED: 'https://bun.com/security/rss.xml',
-    COMMUNITY_FEED: 'https://bun.com/community/rss.xml'
-  },
+  // NOTE: Deprecated providers (BUN_TECHNICAL, BUN_API_DOCS, BUN_RUNTIME_DOCS,
+  // BUN_REFERENCE, BUN_GUIDES, BUN_TUTORIALS, BUN_EXAMPLES, BUN_RSS, BUN_FEEDS)
+  // are defined once in the Legacy section below to avoid duplication.
 
   // Bun TypeScript Definitions
   [DocumentationProvider.BUN_TYPES]: {
@@ -470,7 +247,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     TOOLS: 'https://web.dev/tools'
   },
   
-  // Additional providers (backward compatibility)
+  // @planned — bun.com/security/* URLs do not exist yet
   [DocumentationProvider.SECURITY_DOCS]: {
     BASE: 'https://bun.com',
     SECURITY: 'https://bun.com/security',
@@ -498,6 +275,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
   },
   
   // Legacy providers (deprecated - kept for backward compatibility)
+  // @planned — bun.com/community/* URLs do not exist yet
   [DocumentationProvider.COMMUNITY_RESOURCES]: {
     BASE: 'https://bun.com',
     COMMUNITY: 'https://bun.com/community',
@@ -579,6 +357,7 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     INTERACTIVE: 'https://bun.com/guides/interactive'
   },
   
+  // @planned — bun.com/tutorials/* URLs do not exist yet
   [DocumentationProvider.BUN_TUTORIALS]: {
     BASE: 'https://bun.com',
     TUTORIALS: 'https://bun.com/tutorials',
@@ -587,7 +366,8 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     WORKSHOP: 'https://bun.com/tutorials/workshop',
     LEARNING_PATH: 'https://bun.com/tutorials/learning-path'
   },
-  
+
+  // @planned — bun.com/examples/* URLs do not exist yet
   [DocumentationProvider.BUN_EXAMPLES]: {
     BASE: 'https://bun.com',
     EXAMPLES: 'https://bun.com/examples',
@@ -671,7 +451,7 @@ export const DOCUMENTATION_URL_MAPPINGS = {
     domain: DocumentationDomain.BUN_SH
   },
   
-  'bun.sh/feed.xml': {
+  'bun.sh/rss.xml': {
     provider: DocumentationProvider.BUN_RSS,
     type: 'technical_rss',
     audience: 'developers',

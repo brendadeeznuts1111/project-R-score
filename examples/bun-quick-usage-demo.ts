@@ -6,7 +6,7 @@
  * Demonstrating the essential Bun API patterns from the documentation
  */
 
-import { QuickUsagePatterns } from '../lib/documentation/apis/bun-quick-usage.ts';
+import { QuickUsagePatterns } from '../lib/docs/apis/bun-quick-usage.ts';
 
 console.log('⚡ Bun Quick Usage Patterns Demo');
 console.log('='.repeat(50));

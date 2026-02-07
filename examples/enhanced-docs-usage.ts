@@ -19,7 +19,7 @@ import {
   exampleCommit,
   SIGNIFICANT_COMMITS,
   TEXT_FRAGMENT_PATTERNS
-} from '../lib/documentation/index.ts';
+} from '../lib/docs/documentation-index.ts';
 
 console.log('🚀 Enhanced Enterprise Documentation System Demo');
 console.log('='.repeat(60));

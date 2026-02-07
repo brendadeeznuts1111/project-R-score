@@ -9,7 +9,7 @@
 import { write, exists } from "bun";
 import { r2MCPIntegration } from '../mcp/r2-integration';
 
-import { UtilsCategory, BUN_UTILS_URLS, BUN_UTILS_EXAMPLES } from '../documentation/constants/utils';
+import { UtilsCategory, BUN_UTILS_URLS, BUN_UTILS_EXAMPLES } from '../docs/constants/utils';
 
 interface WikiConfig {
   baseUrl: string;

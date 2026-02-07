@@ -5,7 +5,7 @@
  * and environment-based configuration
  */
 
-import { URLNormalizer } from '../documentation/constants/utils';
+import { URLNormalizer } from '../docs/constants/utils';
 
 // ============================================================================
 // ENVIRONMENT CONFIGURATION

@@ -11,7 +11,7 @@ import {
   CLIExampleGenerator,
   CLIDocumentationSearch,
 } from '../core/cli-documentation-handler';
-import { CLICategory, CLI_COMMAND_EXAMPLES } from '../documentation/constants/cli';
+import { CLICategory, CLI_COMMAND_EXAMPLES } from '../docs/constants/cli';
 import { URLHandler, URLFragmentUtils } from '../core/url-handler';
 import { styled, FW_COLORS } from '../theme/colors';
 import { handleError } from '../core/error-handling';

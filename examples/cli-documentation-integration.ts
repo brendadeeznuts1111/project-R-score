@@ -11,7 +11,7 @@ import {
   CLIExampleGenerator, 
   CLIDocumentationSearch 
 } from '../lib/core/cli-documentation-handler.ts';
-import { CLICategory, CLI_COMMAND_EXAMPLES } from '../lib/documentation/constants/cli.ts';
+import { CLICategory, CLI_COMMAND_EXAMPLES } from '../lib/docs/constants/cli.ts';
 import { cliDocumentationMCPServer } from '../lib/mcp/cli-documentation-mcp.ts';
 import { URLHandler, URLFragmentUtils } from '../lib/core/url-handler.ts';
 

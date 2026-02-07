@@ -111,7 +111,7 @@ class IntegratedCLI {
     
     // Subscribe to RSS feeds
     await this.rssManager.subscribe(
-      'https://bun.sh/feed.xml',
+      'https://bun.sh/rss.xml',
       'Bun Blog',
       'bun'
     );
@@ -456,7 +456,7 @@ Commands:
 Examples:
   bun-docs init my-project
   bun-docs analyze --graph
-  bun-docs rss subscribe https://bun.sh/feed.xml "Bun Blog"
+  bun-docs rss subscribe https://bun.sh/rss.xml "Bun Blog"
   bun-docs serve --port=8080
   bun-docs publish
 `);

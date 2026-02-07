@@ -22,7 +22,7 @@ import {
   UtilityFactory,
   UtilsCategory,
   UTILITIES 
-} from '../lib/documentation/constants/utils.ts';
+} from '../lib/docs/constants/utils.ts';
 import { 
   CLIDocumentationHandler,
   CLICategory 

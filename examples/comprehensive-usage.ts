@@ -8,8 +8,8 @@ import {
   getGitHubBunTypesCommitURL,
   exampleCommit,
   getAllCriticalURLs
-} from '../lib/documentation';
-import { DocumentationProvider, DocumentationCategory } from '../lib/documentation/constants/domains.ts';
+} from '../lib/docs/documentation-index';
+import { DocumentationProvider, DocumentationCategory } from '../lib/docs/constants/domains.ts';
 
 /**
  * 🚀 Prefetch Optimizations
@@ -133,7 +133,7 @@ await writeFile('output.txt', 'Hello, Bun!');`,
     
     // RSS URLs
     'https://bun.com/rss.xml',
-    'https://bun.sh/feed.xml',
+    'https://bun.sh/rss.xml',
     
     // Text fragment URLs
     'https://bun.com/reference#:~:text=node%3Azlib',

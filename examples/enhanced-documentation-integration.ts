@@ -20,7 +20,7 @@ import {
   getBunReferenceWithTextFragment,
   getGitHubBunTypesCommitURL,
   getAllCriticalURLs
-} from '../lib/documentation/index.ts';
+} from '../lib/docs/documentation-index.ts';
 
 /**
  * Example 1: Basic Portal Access

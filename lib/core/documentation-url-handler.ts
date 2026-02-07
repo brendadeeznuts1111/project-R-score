@@ -8,8 +8,8 @@
  */
 
 import { DOCS, DOC_PATHS, URL_PATTERNS } from '../docs/reference';
-import { BUN_UTILS_URLS, UtilsCategory } from '../documentation/constants/utils';
-import { CLI_DOCUMENTATION_URLS, CLICategory } from '../documentation/constants/cli';
+import { BUN_UTILS_URLS, UtilsCategory } from '../docs/constants/utils';
+import { CLI_DOCUMENTATION_URLS, CLICategory } from '../docs/constants/cli';
 import { URLHandler, URLFragmentUtils, FactoryWagerURLUtils } from './url-handler';
 import { handleError } from './error-handling';
 

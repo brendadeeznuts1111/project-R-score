@@ -24,8 +24,8 @@ import {
   AutoHealer,
 } from '../validation/cli-constants-validation';
 
-import { CLICategory, CLI_DOCUMENTATION_URLS } from '../documentation/constants/cli';
-import { UtilsCategory, BUN_UTILS_URLS } from './documentation/constants/utils';
+import { CLICategory, CLI_DOCUMENTATION_URLS } from './constants/cli';
+import { UtilsCategory, BUN_UTILS_URLS } from './constants/utils';
 
 // ============================================================================
 // DOCUMENTATION-SPECIFIC VALIDATION

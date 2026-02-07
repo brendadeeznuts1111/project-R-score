@@ -25,7 +25,7 @@ import {
   DOCUMENTATION_URL_MAPPINGS,
   ENTERPRISE_DOCUMENTATION_PATHS,
   QUICK_REFERENCE_URLS
-} from '../lib/documentation/index.ts';
+} from '../lib/docs/documentation-index.ts';
 
 import { 
   EnhancedDocsFetcher,
@@ -1107,9 +1107,9 @@ async function handleUsageExamples(request: Request, url: URL): Promise<Response
   };
   
   response.imports = {
-    urlBuilder: "import { docsURLBuilder } from 'lib/documentation';",
-    validator: "import { EnhancedDocumentationURLValidator } from 'lib/documentation';",
-    both: "import { docsURLBuilder, EnhancedDocumentationURLValidator } from 'lib/documentation';"
+    urlBuilder: "import { docsURLBuilder } from 'lib/docs/documentation-index';",
+    validator: "import { EnhancedDocumentationURLValidator } from 'lib/docs/documentation-index';",
+    both: "import { docsURLBuilder, EnhancedDocumentationURLValidator } from 'lib/docs/documentation-index';"
   };
   
   return new Response(JSON.stringify(response, null, 2), {
@@ -1574,7 +1574,7 @@ async function handleCriticalURLs(request: Request, url: URL): Promise<Response>
     rssFeeds: {
       main: 'https://bun.com/rss.xml',
       blog: 'https://bun.com/blog/rss.xml',
-      technical: 'https://bun.sh/feed.xml'
+      technical: 'https://bun.sh/rss.xml'
     },
     
     // GitHub resources
@@ -2629,7 +2629,7 @@ bun docs index</code></pre>
         </ul>
         <pre><code>// Enhanced Feed URLs
 bun.com Main: https://bun.com/rss.xml
-bun.sh Technical: https://bun.sh/feed.xml
+bun.sh Technical: https://bun.sh/rss.xml
 Blog: https://bun.com/blog/rss.xml
 Releases: https://bun.com/releases/rss.xml
 Security: https://bun.com/security/rss.xml</code></pre>
