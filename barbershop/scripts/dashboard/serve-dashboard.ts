@@ -87,7 +87,7 @@ class SecretsDashboard {
   
   constructor(options: DashboardOptions) {
     this.options = options;
-    this.r2Bucket = process.env.R2_BUCKET || 'bun-executables';
+    this.r2Bucket = Bun.env.R2_BUCKET || 'bun-executables';
   }
   
   async start(): Promise<void> {

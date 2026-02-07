@@ -322,7 +322,7 @@ export class SecretsFieldAPI {
    * Get default system ID
    */
   private static async getDefaultSystemId(): Promise<string> {
-    return process.env.SYSTEM_ID || 'factorywager-default';
+    return Bun.env.SYSTEM_ID || 'factorywager-default';
   }
   
   /**

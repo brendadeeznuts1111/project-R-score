@@ -74,10 +74,10 @@ export class R2AuthHelper {
   
   constructor() {
     this.credentials = {
-      accountId: process.env.R2_ACCOUNT_ID || '7a470541a704caaf91e71efccc78fd36',
-      accessKeyId: process.env.R2_ACCESS_KEY_ID || '84c87a7398c721036cd6e95df42d718c',
-      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '8a99fcc8f6202fc3961fa3e889318ced8228a483b7e57e788fb3cba5e5592015',
-      bucketName: process.env.R2_BUCKET_NAME || 'bun-executables'
+      accountId: Bun.env.R2_ACCOUNT_ID || '7a470541a704caaf91e71efccc78fd36',
+      accessKeyId: Bun.env.R2_ACCESS_KEY_ID || '84c87a7398c721036cd6e95df42d718c',
+      secretAccessKey: Bun.env.R2_SECRET_ACCESS_KEY || '8a99fcc8f6202fc3961fa3e889318ced8228a483b7e57e788fb3cba5e5592015',
+      bucketName: Bun.env.R2_BUCKET_NAME || 'bun-executables'
     };
   }
   

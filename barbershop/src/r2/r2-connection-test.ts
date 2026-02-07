@@ -6,10 +6,10 @@
  */
 
 // Load environment variables
-const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID || Bun.env.R2_ACCOUNT_ID;
-const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID || Bun.env.R2_ACCESS_KEY_ID;
-const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY || Bun.env.R2_SECRET_ACCESS_KEY;
-const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME || Bun.env.R2_BUCKET_NAME;
+const R2_ACCOUNT_ID = Bun.env.R2_ACCOUNT_ID || Bun.env.R2_ACCOUNT_ID;
+const R2_ACCESS_KEY_ID = Bun.env.R2_ACCESS_KEY_ID || Bun.env.R2_ACCESS_KEY_ID;
+const R2_SECRET_ACCESS_KEY = Bun.env.R2_SECRET_ACCESS_KEY || Bun.env.R2_SECRET_ACCESS_KEY;
+const R2_BUCKET_NAME = Bun.env.R2_BUCKET_NAME || Bun.env.R2_BUCKET_NAME;
 
 console.log('🌊 Testing R2 Bucket Connection...');
 console.log('=====================================');

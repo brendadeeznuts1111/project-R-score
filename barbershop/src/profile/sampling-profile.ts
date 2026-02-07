@@ -40,17 +40,17 @@ type R2Config = {
 
 async function resolveR2Config(): Promise<R2Config | null> {
   // Keep compatibility with lib/r2/bun-secrets-cli.ts conventions first.
-  const envAccountId = process.env.R2_ACCOUNT_ID || '';
-  const envBucketName = process.env.R2_BUCKET_NAME || '';
+  const envAccountId = Bun.env.R2_ACCOUNT_ID || '';
+  const envBucketName = Bun.env.R2_BUCKET_NAME || '';
   const envEndpoint =
-    process.env.R2_ENDPOINT || (envAccountId ? `https://${envAccountId}.r2.cloudflarestorage.com` : '');
-  const envBucket = process.env.R2_BUCKET || envBucketName;
-  const envPrefix = process.env.R2_PREFIX || 'barbershop';
-  const envAccessKeyId = process.env.R2_ACCESS_KEY_ID || '';
-  const envSecretAccessKey = process.env.R2_SECRET_ACCESS_KEY || '';
+    Bun.env.R2_ENDPOINT || (envAccountId ? `https://${envAccountId}.r2.cloudflarestorage.com` : '');
+  const envBucket = Bun.env.R2_BUCKET || envBucketName;
+  const envPrefix = Bun.env.R2_PREFIX || 'barbershop';
+  const envAccessKeyId = Bun.env.R2_ACCESS_KEY_ID || '';
+  const envSecretAccessKey = Bun.env.R2_SECRET_ACCESS_KEY || '';
 
   const bucket = envBucket || (await getFactorySecret('R2_BUCKET')) || '';
-  const prefix = process.env.R2_PREFIX || (await getFactorySecret('R2_PREFIX')) || envPrefix;
+  const prefix = Bun.env.R2_PREFIX || (await getFactorySecret('R2_PREFIX')) || envPrefix;
   const endpoint = envEndpoint || (await getFactorySecret('R2_ENDPOINT')) || '';
   const accessKeyId = envAccessKeyId || (await getFactorySecret('R2_ACCESS_KEY_ID')) || '';
   const secretAccessKey = envSecretAccessKey || (await getFactorySecret('R2_SECRET_ACCESS_KEY')) || '';

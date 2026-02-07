@@ -77,7 +77,7 @@ async function handleCreate() {
     const version = await factoryWagerSecurityCitadel.createImmutableVersion(
       key,
       value,
-      author || process.env.USER || 'system',
+      author || Bun.env.USER || 'system',
       description
     );
 
@@ -115,7 +115,7 @@ async function handleRollback() {
     const result = await factoryWagerSecurityCitadel.oneClickRollback(
       key,
       targetVersion,
-      author || process.env.USER || 'system',
+      author || Bun.env.USER || 'system',
       reason
     );
 

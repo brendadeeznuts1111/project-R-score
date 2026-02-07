@@ -3,7 +3,7 @@
 import { createHash, createHmac } from 'node:crypto';
 import { getFactorySecret } from './factory-secrets';
 
-function wrapAnsiLine(text: string, columns = Number(process.env.COLUMNS || 120)) {
+function wrapAnsiLine(text: string, columns = Number(Bun.env.COLUMNS || 120)) {
   const wrap = (Bun as unknown as {
     wrapAnsi?: (input: string, width: number, options?: { hard?: boolean; wordWrap?: boolean; trim?: boolean }) => string;
   }).wrapAnsi;
@@ -29,21 +29,21 @@ type R2Config = {
 };
 
 async function resolveR2(): Promise<R2Config | null> {
-  const accountId = process.env.R2_ACCOUNT_ID || '';
+  const accountId = Bun.env.R2_ACCOUNT_ID || '';
   const endpoint =
-    process.env.R2_ENDPOINT ||
+    Bun.env.R2_ENDPOINT ||
     (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : '') ||
     (await getFactorySecret('R2_ENDPOINT')) ||
     '';
   const bucket =
-    process.env.R2_BUCKET ||
-    process.env.R2_BUCKET_NAME ||
+    Bun.env.R2_BUCKET ||
+    Bun.env.R2_BUCKET_NAME ||
     (await getFactorySecret('R2_BUCKET')) ||
     '';
-  const prefix = process.env.R2_PREFIX || (await getFactorySecret('R2_PREFIX')) || 'barbershop';
-  const accessKeyId = process.env.R2_ACCESS_KEY_ID || (await getFactorySecret('R2_ACCESS_KEY_ID')) || '';
+  const prefix = Bun.env.R2_PREFIX || (await getFactorySecret('R2_PREFIX')) || 'barbershop';
+  const accessKeyId = Bun.env.R2_ACCESS_KEY_ID || (await getFactorySecret('R2_ACCESS_KEY_ID')) || '';
   const secretAccessKey =
-    process.env.R2_SECRET_ACCESS_KEY || (await getFactorySecret('R2_SECRET_ACCESS_KEY')) || '';
+    Bun.env.R2_SECRET_ACCESS_KEY || (await getFactorySecret('R2_SECRET_ACCESS_KEY')) || '';
 
   let effectiveAccountId = accountId;
   if (!effectiveAccountId && endpoint.includes('.r2.cloudflarestorage.com')) {

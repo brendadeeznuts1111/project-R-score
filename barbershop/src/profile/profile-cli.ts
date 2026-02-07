@@ -20,7 +20,7 @@ const COLORS = {
   gray: '\x1b[90m'
 };
 
-function wrapAnsiLine(text: string, columns = Number(process.env.COLUMNS || 100)) {
+function wrapAnsiLine(text: string, columns = Number(Bun.env.COLUMNS || 100)) {
   const wrap = (Bun as unknown as {
     wrapAnsi?: (input: string, width: number, options?: { hard?: boolean; wordWrap?: boolean; trim?: boolean }) => string;
   }).wrapAnsi;
@@ -164,7 +164,7 @@ async function ensureDashboard(url: string) {
       '-lc',
       `env AUTO_UNREF=false PORT=${port} ${bunBin} ${DASHBOARD_PATH} >/tmp/barbershop-dashboard.log 2>&1`
     ],
-    env: { ...process.env },
+    env: { ...Bun.env },
     stdin: 'ignore',
     stdout: 'ignore',
     stderr: 'ignore',
@@ -238,10 +238,10 @@ switch (command) {
   case 'status': {
     const dashboardUp = await isReachable(DEFAULT_URL);
     const hasEnvR2 =
-      Boolean(process.env.R2_ACCESS_KEY_ID) &&
-      Boolean(process.env.R2_SECRET_ACCESS_KEY) &&
-      (Boolean(process.env.R2_ENDPOINT) || Boolean(process.env.R2_ACCOUNT_ID)) &&
-      (Boolean(process.env.R2_BUCKET) || Boolean(process.env.R2_BUCKET_NAME));
+      Boolean(Bun.env.R2_ACCESS_KEY_ID) &&
+      Boolean(Bun.env.R2_SECRET_ACCESS_KEY) &&
+      (Boolean(Bun.env.R2_ENDPOINT) || Boolean(Bun.env.R2_ACCOUNT_ID)) &&
+      (Boolean(Bun.env.R2_BUCKET) || Boolean(Bun.env.R2_BUCKET_NAME));
     out(
       `${COLORS.cyan}[profile-cli]${COLORS.reset} dashboard=${dashboardUp ? `${COLORS.green}up` : `${COLORS.red}down`}${COLORS.reset} url=${DEFAULT_URL}`
     );

@@ -328,7 +328,7 @@ class ExpirationMonitor {
     };
     
     // Simulate Slack API call
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await Bun.sleep(100);
   }
   
   private async sendEmailAlert(report: ExpirationReport): Promise<void> {
@@ -338,7 +338,7 @@ class ExpirationMonitor {
     const subject = `🚨 Secret Expiration Alert - ${report.summary.expired + report.summary.critical} secrets need attention`;
     
     // Simulate email sending
-    await new Promise(resolve => setTimeout(resolve, 200));
+    await Bun.sleep(200);
   }
   
   private async storeReportInR2(report: ExpirationReport): Promise<void> {

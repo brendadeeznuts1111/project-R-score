@@ -231,10 +231,10 @@ async function initR2Mirror() {
     const secret = (await getFactorySecret('R2_SECRET_ACCESS_KEY')) || '';
     const endp = (await getFactorySecret('R2_ENDPOINT')) || '';
     const account = (await getFactorySecret('CLOUDFLARE_ACCOUNT_ID')) || '';
-    if (access && !process.env.R2_ACCESS_KEY_ID) process.env.R2_ACCESS_KEY_ID = access;
-    if (secret && !process.env.R2_SECRET_ACCESS_KEY) process.env.R2_SECRET_ACCESS_KEY = secret;
-    if (endp && !process.env.R2_ENDPOINT) process.env.R2_ENDPOINT = endp;
-    if (account && !process.env.CLOUDFLARE_ACCOUNT_ID) process.env.CLOUDFLARE_ACCOUNT_ID = account;
+    if (access && !Bun.env.R2_ACCESS_KEY_ID) Bun.env.R2_ACCESS_KEY_ID = access;
+    if (secret && !Bun.env.R2_SECRET_ACCESS_KEY) Bun.env.R2_SECRET_ACCESS_KEY = secret;
+    if (endp && !Bun.env.R2_ENDPOINT) Bun.env.R2_ENDPOINT = endp;
+    if (account && !Bun.env.CLOUDFLARE_ACCOUNT_ID) Bun.env.CLOUDFLARE_ACCOUNT_ID = account;
 
     const bucket = (await getFactorySecret('R2_BUCKET')) || '';
     const prefix = (await getFactorySecret('R2_PREFIX')) || 'barbershop';

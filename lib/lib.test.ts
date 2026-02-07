@@ -9,10 +9,10 @@
 
 import { describe, it, expect, test, beforeEach, afterEach, spyOn, mock, jest, setSystemTime } from "bun:test";
 
-import { isPtySupported, createTerminal, spawnWithTerminal, DEFAULT_TERMINAL_CONFIG } from "./cli/pty-terminal";
+import { isPtySupported, createTerminal, DEFAULT_TERMINAL_CONFIG } from "./cli/pty-terminal";
 import { isTerminalUISupported, createSpinner, createProgress, displayTable, DeploymentUI, smartDeploy } from "./cli/terminal-tui";
 import { getSignedR2URL, getScannerCookieSignedURL } from "./r2/signed-url";
-import { uploadCompressedS3, createCompressedS3File, uploadTier1380 } from "./utils/s3-content-encoding";
+import { uploadCompressedS3, createCompressedS3File } from "./utils/s3-content-encoding";
 import { StringValidators, NumberValidators, EnterpriseValidationEngine, TypeGuards } from "./core/core-validation";
 import { EnterpriseErrorCode, createValidationError, createSecurityError } from "./core/core-errors";
 import { verifyFFIEnvironment, FFI_EXAMPLES } from "./utils/ffi-environment";

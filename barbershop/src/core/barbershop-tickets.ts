@@ -243,7 +243,7 @@ async function generateEndOfDayReport(): Promise<any> {
 }
 
 // ==================== SERVER ====================
-const MANAGER_KEY = process.env.MANAGER_KEY || 'manager123';
+const MANAGER_KEY = Bun.env.MANAGER_KEY || 'manager123';
 
 // Seed data
 async function seedData(): Promise<void> {
