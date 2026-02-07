@@ -69,6 +69,17 @@ export {
   type HealthEndpointConfig,
 } from './http/health-endpoint';
 
+// Profile session management
+export {
+  ProfileSessionUploader,
+  resolveUploaderConfig,
+  type ProfileType,
+  type TerminalIdentity,
+  type ProfileEntry,
+  type SessionManifest,
+  type ProfileUploaderConfig,
+} from './profile';
+
 /**
  * FactoryWager Library Info
  */
@@ -137,6 +148,12 @@ export const FW = {
   http: {
     createHealthEndpoint,
     createBunHealthEndpoint,
+  },
+
+  // Profile Session Management
+  profile: {
+    SessionUploader: ProfileSessionUploader,
+    resolveConfig: resolveUploaderConfig,
   },
 
   // Development Standards Reference

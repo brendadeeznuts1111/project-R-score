@@ -55,6 +55,13 @@ export const CLI_DOCUMENTATION_URLS = {
     DEBUGGER: '/docs/cli/debugger',
     INSPECTOR: '/docs/cli/inspector',
     PROFILE: '/docs/cli/profile',
+    /** @see https://github.com/oven-sh/bun/pull/24112 */
+    CPU_PROF: '/docs/cli/profile#cpu-profiling',
+    /** @see https://github.com/oven-sh/bun/pull/26327 */
+    CPU_PROF_MD: '/docs/cli/profile#markdown-cpu-profile',
+    HEAP_PROF: '/docs/cli/profile#heap-profiling',
+    /** @see https://github.com/oven-sh/bun/pull/26326 */
+    HEAP_PROF_MD: '/docs/cli/profile#markdown-heap-profile',
     TRACE: '/docs/cli/trace',
   },
 } as const;
@@ -85,5 +92,9 @@ export const CLI_COMMAND_EXAMPLES = {
     WATCH_MODE: 'bun --watch test',
     DEBUG_MODE: 'bun --inspect server.ts',
     PROFILE_MODE: 'bun --profile heavy-computation.js',
+    CPU_PROF_MD: 'bun --cpu-prof-md server.ts',
+    HEAP_PROF_MD: 'bun --heap-prof-md server.ts',
+    CPU_PROF_DIR: 'bun --cpu-prof-md --cpu-prof-dir=./profiles server.ts',
+    HEAP_PROF_DIR: 'bun --heap-prof-md --heap-prof-dir=./profiles server.ts',
   },
 } as const;
