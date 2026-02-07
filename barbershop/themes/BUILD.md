@@ -14,6 +14,9 @@ PUBLIC_API_URL=https://api.example.com bun index.html
 PUBLIC_API_URL=https://api.example.com \
 PUBLIC_ANALYTICS_ID=UA-123456 \
 bun index.html
+
+# With console log streaming (browser logs → terminal)
+PUBLIC_API_URL=https://api.example.com bun index.html --console
 ```
 
 ### Production Build
@@ -27,6 +30,26 @@ bun build ./index.html --outdir=dist
 # Or using the env flag for pattern matching
 bun build ./index.html --outdir=dist --env=PUBLIC_*
 ```
+
+## Dev Server Features
+
+### Console Log Streaming
+Stream browser console logs to your terminal:
+```bash
+bun index.html --console
+```
+
+Each `console.log()` or `console.error()` from the browser will appear in your terminal. This uses the WebSocket connection from hot module reloading.
+
+### Keyboard Shortcuts
+While the dev server is running:
+- `o` + Enter → Open in browser
+- `c` + Enter → Clear console
+- `q` + Enter (or Ctrl+C) → Quit server
+- `h` + Enter → Show shortcuts
+
+### Hot Module Reloading
+Bun automatically reloads the browser when you save changes to any imported file.
 
 ## Configuration
 
