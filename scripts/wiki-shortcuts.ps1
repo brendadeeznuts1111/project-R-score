@@ -12,11 +12,31 @@ Write-Host ""
 
 # === Template Management ===
 function wiki-list {
-    bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" templates $args
+    # Input validation for environment variables
+    if (-not (Test-SafeString -Input $env:WIKI_ROOT)) {
+        throw "Invalid WIKI_ROOT environment variable"
+    }
+    
+    try {
+        bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" templates $args
+    } catch {
+        Write-Warning "Failed to list wiki templates: $_"
+        throw
+    }
 }
 
 function wiki-register {
-    bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" template $args
+    # Input validation for environment variables
+    if (-not (Test-SafeString -Input $env:WIKI_ROOT)) {
+        throw "Invalid WIKI_ROOT environment variable"
+    }
+    
+    try {
+        bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" template $args
+    } catch {
+        Write-Warning "Failed to register wiki template: $_"
+        throw
+    }
 }
 
 function wiki-generate {
@@ -31,21 +51,51 @@ function wiki-generate {
         [string]$Template
     )
     
-    $cliArgs = @("generate")
-    
-    if ($Format) {
-        $cliArgs += "--format", $Format
+    # Input validation
+    if (-not (Test-SafeString -Input $env:WIKI_ROOT)) {
+        throw "Invalid WIKI_ROOT environment variable"
     }
     
-    if ($BaseUrl) {
-        $cliArgs += "--base-url", $BaseUrl
+    if ($Format -and -not (Test-SafeString -Input $Format -Pattern '^[a-zA-Z0-9_-]+$')) {
+        throw "Invalid format: $Format"
     }
     
-    if ($Workspace) {
-        $cliArgs += "--workspace", $Workspace
+    if ($BaseUrl -and -not (Test-SafeString -Input $BaseUrl -Pattern '^https?://[\w\.-]+')) {
+        throw "Invalid base URL: $BaseUrl"
     }
     
-    bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" $cliArgs
+    if ($Workspace -and -not (Test-SafeString -Input $Workspace)) {
+        throw "Invalid workspace: $Workspace"
+    }
+    
+    if ($Template -and -not (Test-SafeString -Input $Template)) {
+        throw "Invalid template: $Template"
+    }
+    
+    try {
+        $cliArgs = @("generate")
+        
+        if ($Format) {
+            $cliArgs += "--format", $Format
+        }
+        
+        if ($BaseUrl) {
+            $cliArgs += "--base-url", $BaseUrl
+        }
+        
+        if ($Workspace) {
+            $cliArgs += "--workspace", $Workspace
+        }
+        
+        if ($Template) {
+            $cliArgs += "--template", $Template
+        }
+        
+        bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" $cliArgs
+    } catch {
+        Write-Warning "Failed to generate wiki content: $_"
+        throw
+    }
 }
 
 function wiki-score {
@@ -54,11 +104,25 @@ function wiki-score {
         [string]$Template
     )
     
-    if ($Template) {
-        bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" template $Template
-    } else {
-        Write-Host "Template scoring is now integrated with template generation" -ForegroundColor Yellow
-        bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" templates
+    # Input validation
+    if (-not (Test-SafeString -Input $env:WIKI_ROOT)) {
+        throw "Invalid WIKI_ROOT environment variable"
+    }
+    
+    if ($Template -and -not (Test-SafeString -Input $Template)) {
+        throw "Invalid template name: $Template"
+    }
+    
+    try {
+        if ($Template) {
+            bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" template $Template
+        } else {
+            Write-Host "Template scoring is now integrated with template generation" -ForegroundColor Yellow
+            bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" templates
+        }
+    } catch {
+        Write-Warning "Failed to score wiki template: $_"
+        throw
     }
 }
 
@@ -68,7 +132,21 @@ function wiki-history {
         [int]$Limit = 10
     )
     
-    bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" history $Limit
+    # Input validation
+    if (-not (Test-SafeString -Input $env:WIKI_ROOT)) {
+        throw "Invalid WIKI_ROOT environment variable"
+    }
+    
+    if ($Limit -lt 1 -or $Limit -gt 1000) {
+        throw "Limit must be between 1 and 1000"
+    }
+    
+    try {
+        bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" history $Limit
+    } catch {
+        Write-Warning "Failed to get wiki history: $_"
+        throw
+    }
 }
 
 function wiki-factorywager {
@@ -76,7 +154,21 @@ function wiki-factorywager {
         [string]$Context = "default"
     )
     
-    bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" factorywager $Context
+    # Input validation
+    if (-not (Test-SafeString -Input $env:WIKI_ROOT)) {
+        throw "Invalid WIKI_ROOT environment variable"
+    }
+    
+    if ($Context -and -not (Test-SafeString -Input $Context -Pattern '^[a-zA-Z0-9._-]+$')) {
+        throw "Invalid context: $Context"
+    }
+    
+    try {
+        bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" factorywager $Context
+    } catch {
+        Write-Warning "Failed to get FactoryWager wiki: $_"
+        throw
+    }
 }
 
 function wiki-template {
@@ -85,7 +177,21 @@ function wiki-template {
         [string]$Name
     )
     
-    bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" template $Name
+    # Input validation
+    if (-not (Test-SafeString -Input $env:WIKI_ROOT)) {
+        throw "Invalid WIKI_ROOT environment variable"
+    }
+    
+    if (-not (Test-SafeString -Input $Name)) {
+        throw "Invalid template name: $Name"
+    }
+    
+    try {
+        bun run "$env:WIKI_ROOT/lib/mcp/wiki-generator-mcp.ts" template $Name
+    } catch {
+        Write-Warning "Failed to get wiki template '$Name': $_"
+        throw
+    }
 }
 
 # === Quick Generate Functions ===
@@ -510,16 +616,114 @@ $script:WikiConfig = @{
     MaxStringLength = 256
     LogLevel = 'Info'
     AuditLogEnabled = $true
+    ConfigFile = "$env:WIKI_ROOT/.wiki-config.json"
+    RateLimitWindow = 60  # seconds
+    RateLimitMaxRequests = 100
+    PerformanceMetricsEnabled = $true
+    DebugLoggingEnabled = $false
 }
+
+# Performance metrics collection
+$script:PerformanceMetrics = @{
+    SecretOperations = 0
+    ScriptExecutions = 0
+    CacheHits = 0
+    CacheMisses = 0
+    TotalExecutionTime = 0
+    LastReset = (Get-Date)
+}
+
+# Rate limiting tracking
+$script:RateLimitTracker = @{
+    Requests = @()
+    WindowStart = (Get-Date)
+}
+
+# Configuration cache
+$script:ConfigCache = @{}
+$script:CacheExpiry = 300 # 5 minutes
 
 function Get-WikiConfig {
     param([string]$Key)
     
+    # Check cache first
+    if ($Key -and $script:ConfigCache.ContainsKey($Key)) {
+        $cacheEntry = $script:ConfigCache[$Key]
+        if ((Get-Date) -lt $cacheEntry.Expiry) {
+            $script:PerformanceMetrics.CacheHits++
+            return $cacheEntry.Value
+        } else {
+            $script:ConfigCache.Remove($Key)
+        }
+    }
+    
+    # Load from file if not in memory
+    if (-not $script:WikiConfig.ContainsKey('_LoadedFromFile')) {
+        Load-WikiConfigFromFile
+    }
+    
+    $script:PerformanceMetrics.CacheMisses++
+    
     if ($Key) {
-        return $script:WikiConfig[$Key]
+        $value = $script:WikiConfig[$Key]
+        # Cache the value
+        $script:ConfigCache[$Key] = @{
+            Value = $value
+            Expiry = (Get-Date).AddSeconds($script:CacheExpiry)
+        }
+        return $value
     }
     
     return $script:WikiConfig.Clone()
+}
+
+function Load-WikiConfigFromFile {
+    $configFile = Get-WikiConfig -Key 'ConfigFile'
+    
+    if (Test-Path $configFile) {
+        try {
+            $fileConfig = Get-Content $configFile -Raw | ConvertFrom-Json
+            foreach ($key in $fileConfig.PSObject.Properties) {
+                if ($script:WikiConfig.ContainsKey($key.Name)) {
+                    $script:WikiConfig[$key.Name] = $key.Value
+                }
+            }
+            $script:WikiConfig['_LoadedFromFile'] = $true
+            
+            if ((Get-WikiConfig -Key 'DebugLoggingEnabled')) {
+                Write-Debug "Configuration loaded from file: $configFile"
+            }
+        } catch {
+            Write-Warning "Failed to load configuration from file: $_"
+        }
+    }
+}
+
+function Save-WikiConfigToFile {
+    $configFile = Get-WikiConfig -Key 'ConfigFile'
+    $configDir = Split-Path $configFile -Parent
+    
+    try {
+        if (-not (Test-Path $configDir)) {
+            New-Item -ItemType Directory -Path $configDir -Force | Out-Null
+        }
+        
+        # Create a copy without internal keys
+        $configToSave = @{}
+        foreach ($key in $script:WikiConfig.Keys) {
+            if (-not $key.StartsWith('_')) {
+                $configToSave[$key] = $script:WikiConfig[$key]
+            }
+        }
+        
+        $configToSave | ConvertTo-Json -Depth 10 | Set-Content -Path $configFile
+        
+        if ((Get-WikiConfig -Key 'DebugLoggingEnabled')) {
+            Write-Debug "Configuration saved to file: $configFile"
+        }
+    } catch {
+        Write-Warning "Failed to save configuration to file: $_"
+    }
 }
 
 function Set-WikiConfig {
@@ -530,6 +734,11 @@ function Set-WikiConfig {
         [Parameter(Mandatory=$true)]
         $Value
     )
+    
+    # Check rate limiting
+    if (-not (Test-RateLimit 'config-change')) {
+        throw "Rate limit exceeded for configuration changes"
+    }
     
     # Validate configuration changes
     switch ($Key) {
@@ -568,8 +777,142 @@ function Set-WikiConfig {
                 throw "AuditLogEnabled must be a boolean value"
             }
         }
+        'RateLimitWindow' {
+            if ($Value -is [int] -and $Value -gt 0 -and $Value -le 3600) {
+                $script:WikiConfig[$Key] = $Value
+            } else {
+                throw "RateLimitWindow must be between 1 and 3600 seconds"
+            }
+        }
+        'RateLimitMaxRequests' {
+            if ($Value -is [int] -and $Value -gt 0 -and $Value -le 10000) {
+                $script:WikiConfig[$Key] = $Value
+            } else {
+                throw "RateLimitMaxRequests must be between 1 and 10000"
+            }
+        }
+        'PerformanceMetricsEnabled' {
+            if ($Value -is [bool]) {
+                $script:WikiConfig[$Key] = $Value
+            } else {
+                throw "PerformanceMetricsEnabled must be a boolean value"
+            }
+        }
+        'DebugLoggingEnabled' {
+            if ($Value -is [bool]) {
+                $script:WikiConfig[$Key] = $Value
+            } else {
+                throw "DebugLoggingEnabled must be a boolean value"
+            }
+        }
         default {
             throw "Unknown configuration key: $Key"
+        }
+    }
+    
+    # Clear cache for this key
+    if ($script:ConfigCache.ContainsKey($Key)) {
+        $script:ConfigCache.Remove($Key)
+    }
+    
+    # Save to file
+    Save-WikiConfigToFile
+    
+    if ((Get-WikiConfig -Key 'DebugLoggingEnabled')) {
+        Write-Debug "Configuration updated: $Key = $Value"
+    }
+}
+
+function Test-RateLimit {
+    param([string]$Operation = 'default')
+    
+    $window = Get-WikiConfig -Key 'RateLimitWindow'
+    $maxRequests = Get-WikiConfig -Key 'RateLimitMaxRequests'
+    $now = (Get-Date)
+    
+    # Clean old requests
+    $cutoff = $now.AddSeconds(-$window)
+    $script:RateLimitTracker.Requests = $script:RateLimitTracker.Requests | Where-Object { $_ -gt $cutoff }
+    
+    # Check if we're at the limit
+    if ($script:RateLimitTracker.Requests.Count -ge $maxRequests) {
+        if ((Get-WikiConfig -Key 'DebugLoggingEnabled')) {
+            Write-Debug "Rate limit exceeded for operation: $Operation"
+        }
+        return $false
+    }
+    
+    # Add current request
+    $script:RateLimitTracker.Requests += $now
+    return $true
+}
+
+function Update-PerformanceMetrics {
+    param(
+        [string]$Operation,
+        [double]$ExecutionTime = 0
+    )
+    
+    if (-not (Get-WikiConfig -Key 'PerformanceMetricsEnabled')) {
+        return
+    }
+    
+    switch ($Operation) {
+        'secret-operation' {
+            $script:PerformanceMetrics.SecretOperations++
+        }
+        'script-execution' {
+            $script:PerformanceMetrics.ScriptExecutions++
+            $script:PerformanceMetrics.TotalExecutionTime += $ExecutionTime
+        }
+        'cache-hit' {
+            $script:PerformanceMetrics.CacheHits++
+        }
+        'cache-miss' {
+            $script:PerformanceMetrics.CacheMisses++
+        }
+    }
+    
+    if ((Get-WikiConfig -Key 'DebugLoggingEnabled')) {
+        Write-Debug "Performance metrics updated: $Operation ($ExecutionTime ms)"
+    }
+}
+
+function Get-PerformanceMetrics {
+    return $script:PerformanceMetrics.Clone()
+}
+
+function Reset-PerformanceMetrics {
+    $script:PerformanceMetrics = @{
+        SecretOperations = 0
+        ScriptExecutions = 0
+        CacheHits = 0
+        CacheMisses = 0
+        TotalExecutionTime = 0
+        LastReset = (Get-Date)
+    }
+    
+    if ((Get-WikiConfig -Key 'DebugLoggingEnabled')) {
+        Write-Debug "Performance metrics reset"
+    }
+}
+
+function Write-DebugLog {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Message,
+        
+        [string]$Component = "WikiSystem"
+    )
+    
+    if ((Get-WikiConfig -Key 'DebugLoggingEnabled')) {
+        $timestamp = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss.fff')
+        Write-Debug "[$timestamp][$Component] $Message"
+        
+        # Also write to debug log file if WIKI_DEBUG_LOG is set
+        if ($env:WIKI_DEBUG_LOG) {
+            $logEntry = "[$timestamp][$Component] $Message"
+            Add-Content -Path $env:WIKI_DEBUG_LOG -Value $logEntry -ErrorAction SilentlyContinue
         }
     }
 }
@@ -966,6 +1309,11 @@ function Set-WikiSecretDirect {
         [string]$Service = "com.factorywager.wiki"
     )
     
+    # Check rate limiting
+    if (-not (Test-RateLimit 'secret-operation')) {
+        throw "Rate limit exceeded for secret operations"
+    }
+    
     # Input validation
     if (-not (Test-SafeString -Input $Name)) {
         throw "Invalid secret name: $Name"
@@ -979,15 +1327,28 @@ function Set-WikiSecretDirect {
         throw "Invalid service name: $Service"
     }
     
+    $startTime = (Get-Date)
+    
     try {
+        Write-DebugLog -Message "Setting secret: $Name in service: $Service" -Component "SecretOperations"
+        
         # Escape the value for JavaScript string literal
         $escapedValue = $Value -replace "'", "\'" -replace '`', '\`'
         $script = "await Bun.secrets.set({ service: '$Service', name: '$Name' }, '$escapedValue'); console.log('Secret stored successfully');"
         $result = Invoke-SecureBunScript -Script $script
         
-        return $result -eq "Secret stored successfully"
+        $executionTime = ((Get-Date) - $startTime).TotalMilliseconds
+        Update-PerformanceMetrics -Operation 'secret-operation' -ExecutionTime $executionTime
+        
+        if ($result -eq "Secret stored successfully") {
+            Write-DebugLog -Message "Secret stored successfully: $Name" -Component "SecretOperations"
+            return $true
+        } else {
+            throw "Unexpected result: $result"
+        }
     } catch {
         Write-Warning "Failed to store secret '$Name' in service '$Service': $_"
+        Write-DebugLog -Message "Failed to store secret: $Name - Error: $_" -Component "SecretOperations"
         return $false
     }
 }
@@ -1000,6 +1361,11 @@ function Remove-WikiSecretDirect {
         [string]$Service = "com.factorywager.wiki"
     )
     
+    # Check rate limiting
+    if (-not (Test-RateLimit 'secret-operation')) {
+        throw "Rate limit exceeded for secret operations"
+    }
+    
     # Input validation
     if (-not (Test-SafeString -Input $Name)) {
         throw "Invalid secret name: $Name"
@@ -1009,15 +1375,161 @@ function Remove-WikiSecretDirect {
         throw "Invalid service name: $Service"
     }
     
+    $startTime = (Get-Date)
+    
     try {
+        Write-DebugLog -Message "Deleting secret: $Name from service: $Service" -Component "SecretOperations"
+        
         $script = "const deleted = await Bun.secrets.delete({ service: '$Service', name: '$Name' }); console.log(deleted ? 'Secret deleted' : 'Secret not found');"
         $result = Invoke-SecureBunScript -Script $script
         
-        return $result -eq "Secret deleted"
+        $executionTime = ((Get-Date) - $startTime).TotalMilliseconds
+        Update-PerformanceMetrics -Operation 'secret-operation' -ExecutionTime $executionTime
+        
+        if ($result -eq "Secret deleted") {
+            Write-DebugLog -Message "Secret deleted successfully: $Name" -Component "SecretOperations"
+            return $true
+        } else {
+            Write-DebugLog -Message "Secret not found: $Name" -Component "SecretOperations"
+            return $false
+        }
     } catch {
         Write-Warning "Failed to delete secret '$Name' from service '$Service': $_"
+        Write-DebugLog -Message "Failed to delete secret: $Name - Error: $_" -Component "SecretOperations"
         return $false
     }
+}
+
+# Secret rotation capabilities
+function Rotate-WikiSecret {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Name,
+        
+        [string]$Service = "com.factorywager.wiki",
+        
+        [int]$Length = 32,
+        
+        [ValidateSet('alphanumeric', 'hex', 'base64')]
+        [string]$Type = 'alphanumeric'
+    )
+    
+    # Check rate limiting
+    if (-not (Test-RateLimit 'secret-rotation')) {
+        throw "Rate limit exceeded for secret rotation operations"
+    }
+    
+    Write-DebugLog -Message "Starting secret rotation for: $Name" -Component "SecretRotation"
+    
+    try {
+        # Get current secret
+        $currentSecret = Get-WikiSecret -Name $Name -Service $Service
+        
+        # Generate new secret
+        $newSecret = New-RandomSecret -Length $Length -Type $Type
+        
+        # Store the new secret
+        if (Set-WikiSecretDirect -Name $Name -Value $newSecret -Service $Service) {
+            # Log the rotation (without exposing the actual secrets)
+            Write-AuditLog -Entries @(@{
+                Timestamp = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss UTC')
+                Action = 'ROTATE'
+                Service = $Service
+                Name = $Name
+                Success = $true
+            })
+            
+            Write-DebugLog -Message "Secret rotation completed successfully: $Name" -Component "SecretRotation"
+            Write-Host "Secret '$Name' has been rotated successfully" -ForegroundColor Green
+            
+            return @{
+                OldSecretLength = if ($currentSecret) { $currentSecret.Length } else { 0 }
+                NewSecretLength = $newSecret.Length
+                RotationTime = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss UTC')
+            }
+        } else {
+            throw "Failed to store new secret during rotation"
+        }
+    } catch {
+        Write-Warning "Failed to rotate secret '$Name': $_"
+        Write-DebugLog -Message "Secret rotation failed: $Name - Error: $_" -Component "SecretRotation"
+        
+        # Log failed rotation attempt
+        Write-AuditLog -Entries @(@{
+            Timestamp = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss UTC')
+            Action = 'ROTATE'
+            Service = $Service
+            Name = $Name
+            Success = $false
+            Error = $_.Exception.Message
+        })
+        
+        throw
+    }
+}
+
+function New-RandomSecret {
+    param(
+        [int]$Length = 32,
+        
+        [ValidateSet('alphanumeric', 'hex', 'base64')]
+        [string]$Type = 'alphanumeric'
+    )
+    
+    switch ($Type) {
+        'alphanumeric' {
+            $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+            $secret = -join (1..$Length | ForEach-Object { Get-Random -InputObject $chars.ToCharArray() })
+        }
+        'hex' {
+            $secret = -join (1..($Length / 2) | ForEach-Object { '{0:x2}' -f (Get-Random -Maximum 256) })
+        }
+        'base64' {
+            $bytes = [System.Byte[]]::new($Length)
+            [System.Security.Cryptography.RandomNumberGenerator]::Fill($bytes)
+            $secret = [System.Convert]::ToBase64String($bytes)
+        }
+    }
+    
+    Write-DebugLog -Message "Generated new secret of type '$Type' with length $Length" -Component "SecretGeneration"
+    return $secret
+}
+
+function Get-WikiSecretRotationHistory {
+    param(
+        [string]$Service = "com.factorywager.wiki",
+        
+        [int]$Days = 30
+    )
+    
+    $logFile = Join-Path $env:WIKI_ROOT "logs/wiki-secrets-audit.log"
+    
+    if (-not (Test-Path $logFile)) {
+        return @()
+    }
+    
+    $cutoffDate = (Get-Date).AddDays(-$Days)
+    $rotations = @()
+    
+    try {
+        $logContent = Get-Content $logFile
+        foreach ($line in $logContent) {
+            if ($line -match '\[(.+?)\].*ROTATE.*Service=.+? Name=(.+?) Success=(true|false)') {
+                $timestamp = [DateTime]::Parse($matches[1])
+                if ($timestamp -ge $cutoffDate) {
+                    $rotations += @{
+                        Timestamp = $timestamp
+                        SecretName = $matches[2]
+                        Success = $matches[3] -eq 'true'
+                    }
+                }
+            }
+        }
+    } catch {
+        Write-Warning "Failed to read rotation history: $_"
+    }
+    
+    return $rotations | Sort-Object Timestamp -Descending
 }
 
 # === Bun Secrets Integration ===
@@ -1363,10 +1875,213 @@ function wiki-theme-reset {
 }
 
 
+# === System Management Functions ===
+function wiki-system-status {
+    Write-Host "`n=== Wiki System Status ===" -ForegroundColor Cyan
+    
+    # Configuration status
+    Write-Host "`n📋 Configuration:" -ForegroundColor Yellow
+    $config = Get-WikiConfig
+    Write-Host "  Script Timeout: $($config.ScriptTimeout)s"
+    Write-Host "  Max Secret Length: $($config.MaxSecretLength)"
+    Write-Host "  Max String Length: $($config.MaxStringLength)"
+    Write-Host "  Log Level: $($config.LogLevel)"
+    Write-Host "  Audit Logging: $(if ($config.AuditLogEnabled) { 'Enabled' } else { 'Disabled' })"
+    Write-Host "  Performance Metrics: $(if ($config.PerformanceMetricsEnabled) { 'Enabled' } else { 'Disabled' })"
+    Write-Host "  Debug Logging: $(if ($config.DebugLoggingEnabled) { 'Enabled' } else { 'Disabled' })"
+    
+    # Performance metrics
+    if ($config.PerformanceMetricsEnabled) {
+        Write-Host "`n📊 Performance Metrics:" -ForegroundColor Yellow
+        $metrics = Get-PerformanceMetrics
+        Write-Host "  Secret Operations: $($metrics.SecretOperations)"
+        Write-Host "  Script Executions: $($metrics.ScriptExecutions)"
+        Write-Host "  Cache Hits: $($metrics.CacheHits)"
+        Write-Host "  Cache Misses: $($metrics.CacheMisses)"
+        Write-Host "  Total Execution Time: $([math]::Round($metrics.TotalExecutionTime, 2))ms"
+        Write-Host "  Cache Hit Ratio: $(if ($metrics.CacheHits + $metrics.CacheMisses -gt 0) { [math]::Round(($metrics.CacheHits / ($metrics.CacheHits + $metrics.CacheMisses)) * 100, 2) } else { 0 })%"
+        Write-Host "  Last Reset: $($metrics.LastReset)"
+    }
+    
+    # Rate limiting status
+    Write-Host "`n🚦 Rate Limiting:" -ForegroundColor Yellow
+    $rateLimitStatus = $script:RateLimitTracker
+    $windowStart = $rateLimitStatus.WindowStart
+    $requestCount = $rateLimitStatus.Requests.Count
+    $maxRequests = $config.RateLimitMaxRequests
+    Write-Host "  Current Window: Started at $windowStart"
+    Write-Host "  Requests in Window: $requestCount / $maxRequests"
+    Write-Host "  Window Size: $($config.RateLimitWindow) seconds"
+    
+    if ($requestCount -ge $maxRequests) {
+        Write-Host "  Status: ⚠️ Rate Limit Active" -ForegroundColor Red
+    } else {
+        Write-Host "  Status: ✅ Available" -ForegroundColor Green
+    }
+    
+    # Environment validation
+    Write-Host "`n🔍 Environment Validation:" -ForegroundColor Yellow
+    try {
+        $wikiRootValid = Test-SafeString -Input $env:WIKI_ROOT
+        Write-Host "  WIKI_ROOT: $(if ($wikiRootValid) { '✅ Valid' } else { '❌ Invalid' }) - $env:WIKI_ROOT"
+    } catch {
+        Write-Host "  WIKI_ROOT: ❌ Error - $_"
+    }
+    
+    # Audit log status
+    if ($config.AuditLogEnabled) {
+        $logFile = Join-Path $env:WIKI_ROOT "logs/wiki-secrets-audit.log"
+        if (Test-Path $logFile) {
+            $logSize = (Get-Item $logFile).Length
+            $logLines = (Get-Content $logFile | Measure-Object -Line).Lines
+            Write-Host "  Audit Log: ✅ Exists - $logLines lines, $([math]::Round($logSize / 1KB, 2))KB"
+        } else {
+            Write-Host "  Audit Log: ⚠️ Not created yet"
+        }
+    }
+    
+    Write-Host ""
+}
+
+function wiki-config-set {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Key,
+        
+        [Parameter(Mandatory=$true)]
+        $Value
+    )
+    
+    try {
+        Set-WikiConfig -Key $Key -Value $Value
+        Write-Host "✅ Configuration updated: $Key = $Value" -ForegroundColor Green
+    } catch {
+        Write-Host "❌ Failed to update configuration: $_" -ForegroundColor Red
+    }
+}
+
+function wiki-config-get {
+    param([string]$Key)
+    
+    try {
+        if ($Key) {
+            $value = Get-WikiConfig -Key $Key
+            Write-Host "$Key`: $value"
+        } else {
+            $config = Get-WikiConfig
+            Write-Host "Current Configuration:" -ForegroundColor Yellow
+            foreach ($item in $config.GetEnumerator() | Sort-Object Key) {
+                if (-not $item.Key.StartsWith('_')) {
+                    Write-Host "  $($item.Key): $($item.Value)"
+                }
+            }
+        }
+    } catch {
+        Write-Host "❌ Failed to get configuration: $_" -ForegroundColor Red
+    }
+}
+
+function wiki-metrics-reset {
+    try {
+        Reset-PerformanceMetrics
+        Write-Host "✅ Performance metrics reset" -ForegroundColor Green
+    } catch {
+        Write-Host "❌ Failed to reset metrics: $_" -ForegroundColor Red
+    }
+}
+
+function wiki-debug-enable {
+    try {
+        Set-WikiConfig -Key 'DebugLoggingEnabled' -Value $true
+        Write-Host "✅ Debug logging enabled" -ForegroundColor Green
+        Write-Host "Debug logs will be written to console and WIKI_DEBUG_LOG environment variable file" -ForegroundColor Yellow
+    } catch {
+        Write-Host "❌ Failed to enable debug logging: $_" -ForegroundColor Red
+    }
+}
+
+function wiki-debug-disable {
+    try {
+        Set-WikiConfig -Key 'DebugLoggingEnabled' -Value $false
+        Write-Host "✅ Debug logging disabled" -ForegroundColor Green
+    } catch {
+        Write-Host "❌ Failed to disable debug logging: $_" -ForegroundColor Red
+    }
+}
+
+function wiki-secret-rotate {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Name,
+        
+        [string]$Service = "com.factorywager.wiki",
+        
+        [int]$Length = 32,
+        
+        [ValidateSet('alphanumeric', 'hex', 'base64')]
+        [string]$Type = 'alphanumeric'
+    )
+    
+    try {
+        $result = Rotate-WikiSecret -Name $Name -Service $Service -Length $Length -Type $Type
+        Write-Host "🔄 Secret rotation completed:" -ForegroundColor Green
+        Write-Host "  Secret: $Name"
+        Write-Host "  Old Length: $($result.OldSecretLength) characters"
+        Write-Host "  New Length: $($result.NewSecretLength) characters"
+        Write-Host "  Rotation Time: $($result.RotationTime)"
+    } catch {
+        Write-Host "❌ Failed to rotate secret: $_" -ForegroundColor Red
+    }
+}
+
+function wiki-secret-history {
+    param(
+        [string]$Service = "com.factorywager.wiki",
+        
+        [int]$Days = 30
+    )
+    
+    try {
+        $history = Get-WikiSecretRotationHistory -Service $Service -Days $Days
+        
+        if ($history.Count -gt 0) {
+            Write-Host "📜 Secret Rotation History (Last $Days days):" -ForegroundColor Yellow
+            foreach ($entry in $history) {
+                $status = if ($entry.Success) { "✅ Success" } else { "❌ Failed" }
+                Write-Host "  $($entry.Timestamp.ToString('yyyy-MM-dd HH:mm:ss')) - $($entry.SecretName) - $status"
+            }
+        } else {
+            Write-Host "📜 No rotation history found for the last $Days days" -ForegroundColor Yellow
+        }
+    } catch {
+        Write-Host "❌ Failed to get rotation history: $_" -ForegroundColor Red
+    }
+}
+
+# === Enhanced Welcome Message ===
+# Load configuration from file on startup
+Load-WikiConfigFromFile | Out-Null
+
 # === Welcome Message ===
 if ($args[0] -ne "--silent") {
-    Write-Host "Wiki Template System shortcuts ready!" -ForegroundColor Green
-    Write-Host "Type 'wiki-help' for available commands" -ForegroundColor Cyan
+    Write-Host "Wiki Template System Shortcuts Loaded" -ForegroundColor Green
+    Write-Host "Project Root: $env:WIKI_ROOT" -ForegroundColor Cyan
+    Write-Host ""
+    
+    # Show system status if debug logging is enabled
+    if ((Get-WikiConfig -Key 'DebugLoggingEnabled')) {
+        Write-Host "🐛 Debug mode enabled" -ForegroundColor Yellow
+        Write-DebugLog -Message "Wiki shortcuts loaded successfully" -Component "SystemStartup"
+    }
+    
+    # Show quick help
+    Write-Host "Quick Commands:" -ForegroundColor White
+    Write-Host "  wiki-system-status    Show system status and metrics"
+    Write-Host "  wiki-config-get       View configuration"
+    Write-Host "  wiki-config-set       Set configuration values"
+    Write-Host "  wiki-debug-enable     Enable debug logging"
+    Write-Host "  wiki-secret-rotate    Rotate a secret"
+    Write-Host "  wiki-help             Show all available commands"
     Write-Host ""
 }
 
