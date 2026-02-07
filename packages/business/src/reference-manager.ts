@@ -1,6 +1,6 @@
 // lib/business/reference-manager.ts — Centralized reference management for documentation URLs and resources
 
-import { BUN_DOCS_EXTENDED } from './docs/urls';
+import { BUN_DOCS_EXTENDED } from '../../../lib/docs/urls';
 
 interface ReferenceItem {
   url: string;

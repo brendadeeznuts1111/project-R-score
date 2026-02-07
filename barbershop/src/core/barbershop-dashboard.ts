@@ -1571,6 +1571,22 @@ const server = serve({
         requestIP: address ? { address: address.address, port: address.port } : null,
       });
     },
+    '/ops/cookie-security': req => {
+      // Process cookies from request for security analysis
+      const { cookies, session, alerts } = SecureCookieManager.processRequestCookies(req);
+
+      return Response.json({
+        ok: true,
+        cookieCount: cookies.size,
+        sessionValid: session.valid,
+        hasSessionCookie: cookies.has('__Host-session'),
+        securityAlerts: alerts,
+        recommendations:
+          alerts.length === 0
+            ? ['All cookies meet security standards']
+            : alerts.map(a => `${a.level}: ${a.message}`),
+      });
+    },
     '/ops/r2-status': async () => {
       let statusConnected = r2MirrorState.connected;
       if (r2MirrorConfig.mode === 'bun-r2') {
@@ -1733,7 +1749,7 @@ const server = serve({
       // Create secure session and CSRF cookies
       const sessionCookie = SecureCookieManager.createSessionCookie(barber.id);
       const csrfCookie = SecureCookieManager.createCSRFCookie();
-      
+
       // Validate cookies before setting
       const validation = SecureCookieManager.validateCookie(sessionCookie);
       if (!validation.valid) {
@@ -1742,7 +1758,7 @@ const server = serve({
 
       const headers = new Headers({
         'Content-Type': 'application/json',
-        'Set-Cookie': sessionCookie.toString()
+        'Set-Cookie': sessionCookie.toString(),
       });
       headers.append('Set-Cookie', csrfCookie.toString());
 
@@ -2089,6 +2105,9 @@ if (AUTO_UNREF) {
 
 warmupDns(DNS_WARMUP_HOSTS).catch(() => {});
 
+// Initialize cookie monitor
+const cookieMonitor = new CookieMonitor();
+
 console.log(`
 🎉 ${SERVER_NAME.toUpperCase()}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -2108,6 +2127,12 @@ Base URL:               ${PUBLIC_BASE_URL}
 
 WEBSOCKET:              ${PUBLIC_BASE_URL.replace(/^http/, 'ws')}/ws/dashboard
                         ${PUBLIC_BASE_URL.replace(/^http/, 'ws')}/admin/ws?key=godmode123
+
+SECURITY:
+🔐 Secure cookies with __Host- prefix
+🔐 CSRF token protection
+🔐 Cookie security validation
+🔐 Session sliding window (15min)
 
 FEATURES:
 ✅ Real-time telemetry (Redis pub/sub)
