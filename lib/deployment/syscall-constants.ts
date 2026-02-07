@@ -1,7 +1,5 @@
 // lib/deployment/syscall-constants.ts — System call constants and risk metrics
 
-import { PerformanceTier } from '../core/core-types';
-
 /**
  * System call platforms enumeration
  */

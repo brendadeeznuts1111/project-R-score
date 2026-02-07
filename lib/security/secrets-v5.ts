@@ -2,8 +2,6 @@
 
 import { FW_COLORS, styled } from '../theme/colors';
 import { DocsUrlBuilder } from '../docs/url-builder';
-import { PATHS } from '../../constants/paths';
-
 // Security level configurations with FactoryWager standards
 export const SECURITY_LEVELS = {
   CRITICAL: {

@@ -1,7 +1,7 @@
 // lib/security/zero-trust-manager.ts — Zero-trust security manager
 
 import { EventEmitter } from 'events';
-import { logger } from '../monitoring/structured-logger';
+import { logger } from '../core/structured-logger';
 import { auditLogger } from './secret-audit-logger';
 import { createHash, timingSafeEqual } from 'crypto';
 

@@ -32,7 +32,6 @@ export * from './versioning/version-tracking';
 // Constants and configuration
 export * from './constants';
 // export * from './config'; // Commented out - config module has import issues
-export * from './types';
 export * from './utils';
 
 // Re-export commonly used items
@@ -41,10 +40,24 @@ export { styled, log, FW_COLORS } from './theme/colors';
 export { Utils } from './utils';
 export { DOC_PATTERNS, DocumentationUtils } from './docs';
 export { VersionedSecretManager, SecurityUtils } from './security';
-export { VersionTracker, URLNormalizer, UtilityFactory, UtilityRegistry } from './versioning/version-tracking';
-export { PackageManager, type PackageInfo, type PackageDependencyGraph } from './package/package-manager';
+export {
+  VersionTracker,
+  URLNormalizer,
+  UtilityFactory,
+  UtilityRegistry,
+} from './versioning/version-tracking';
+export {
+  PackageManager,
+  type PackageInfo,
+  type PackageDependencyGraph,
+} from './package/package-manager';
 export { R2Storage, type R2StorageConfig } from './r2/r2-storage-enhanced';
-export { RSSManager, type RSSFeed, type RSSFeedItem, type FeedSubscription } from './rss/rss-manager';
+export {
+  RSSManager,
+  type RSSFeed,
+  type RSSFeedItem,
+  type FeedSubscription,
+} from './rss/rss-manager';
 
 // HTTP utilities with HSL health endpoints
 export {
@@ -53,7 +66,7 @@ export {
   type HealthCheck,
   type HealthCheckResult,
   type HealthStatus,
-  type HealthEndpointConfig
+  type HealthEndpointConfig,
 } from './http/health-endpoint';
 
 /**
@@ -62,7 +75,8 @@ export {
 export const LIB_INFO = {
   name: 'FactoryWager',
   version: '5.1',
-  description: 'The heart of FactoryWager monorepo - centralized infrastructure with temporal security',
+  description:
+    'The heart of FactoryWager monorepo - centralized infrastructure with temporal security',
   author: 'FactoryWager Team',
   license: 'MIT',
   developmentStandards: '.custom-instructions.md',
