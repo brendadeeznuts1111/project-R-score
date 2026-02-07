@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FactoryWager Dashboard Showcase</title>
+  <style>
+    /* Theme Variables */
+    :root {
+      --color-primary-50: hsl(217 90% 97%);
+      --color-primary-100: hsl(217 90% 94%);
+      --color-primary-200: hsl(217 90% 86%);
+      --color-primary-300: hsl(217 90% 76%);
+      --color-primary-400: hsl(217 90% 60%);
+      --color-primary-500: hsl(217 90% 50%);
+      --color-primary-600: hsl(217 90% 42%);
+      --color-primary-700: hsl(217 90% 36%);
+      --color-primary-800: hsl(217 90% 30%);
+      --color-primary-900: hsl(217 90% 24%);
+      --color-secondary-50: hsl(190 80% 97%);
+      --color-secondary-100: hsl(190 80% 94%);
+      --color-secondary-500: hsl(190 80% 50%);
+      --color-secondary-600: hsl(190 80% 42%);
+      --color-success-500: hsl(160 84% 39%);
+      --color-warning-500: hsl(38 92% 50%);
+      --color-error-500: hsl(0 84% 60%);
+      --color-background-primary: hsl(0 0% 100%);
+      --color-background-secondary: hsl(220 14% 96%);
+      --color-text-primary: hsl(220 43% 11%);
+      --color-text-secondary: hsl(220 14% 35%);
+      --color-text-muted: hsl(220 9% 60%);
+      --color-border-light: hsl(220 14% 90%);
+      --shadow-md: 0 4px 6px -1px hsl(220 43% 11% / 0.1);
+      --shadow-lg: 0 10px 15px -3px hsl(220 43% 11% / 0.1);
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme="dark"] {
+      --color-background-primary: hsl(220 43% 7%);
+      --color-background-secondary: hsl(220 43% 11%);
+      --color-text-primary: hsl(0 0% 95%);
+      --color-text-secondary: hsl(0 0% 80%);
+      --color-text-muted: hsl(0 0% 50%);
+      --color-border-light: hsl(220 20% 20%);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--color-background-secondary);
+      color: var(--color-text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .showcase-header {
+      background: var(--color-background-primary);
+      border-bottom: 1px solid var(--color-border-light);
+      padding: 1rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .showcase-header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .showcase-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .showcase-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--color-primary-500), var(--color-secondary-500));
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .showcase-brand-text h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .showcase-brand-text p {
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+      margin: 0;
+    }
+
+    .showcase-nav {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .showcase-nav-btn {
+      padding: 0.5rem 1rem;
+      background: transparent;
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-md);
+      color: var(--color-text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .showcase-nav-btn:hover,
+    .showcase-nav-btn.active {
+      background: var(--color-primary-500);
+      border-color: var(--color-primary-500);
+      color: white;
+    }
+
+    .showcase-actions {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .theme-btn {
+      padding: 0.5rem;
+      background: var(--color-background-secondary);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    /* Main Content */
+    .showcase-main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    .showcase-intro {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .showcase-intro h2 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--color-primary-500), var(--color-secondary-500));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .showcase-intro p {
+      color: var(--color-text-secondary);
+      font-size: 1.125rem;
+    }
+
+    /* Dashboard Preview Cards */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 2rem;
+    }
+
+    .dashboard-card {
+      background: var(--color-background-primary);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .dashboard-card-header {
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--color-border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .dashboard-card-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .dashboard-card-title h3 {
+      font-size: 1.125rem;
+      margin: 0;
+    }
+
+    .dashboard-card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .dashboard-card-icon.admin {
+      background: var(--color-primary-100);
+    }
+
+    .dashboard-card-icon.client {
+      background: var(--color-secondary-100);
+    }
+
+    .dashboard-card-icon.barber {
+      background: var(--color-success-100);
+    }
+
+    .dashboard-card-badge {
+      padding: 0.25rem 0.625rem;
+      background: var(--color-primary-100);
+      color: var(--color-primary-700);
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .dashboard-card-preview {
+      aspect-ratio: 16 / 10;
+      background: var(--color-background-secondary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dashboard-card-preview iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      transform: scale(0.5);
+      transform-origin: top left;
+      width: 200%;
+      height: 200%;
+    }
+
+    .dashboard-card-info {
+      padding: 1.25rem;
+    }
+
+    .dashboard-card-info h4 {
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+      color: var(--color-text-secondary);
+    }
+
+    .feature-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      list-style: none;
+    }
+
+    .feature-list li {
+      padding: 0.25rem 0.625rem;
+      background: var(--color-background-secondary);
+      border-radius: var(--radius-md);
+      font-size: 0.75rem;
+      color: var(--color-text-secondary);
+    }
+
+    .dashboard-card-actions {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--color-border-light);
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1rem;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      text-decoration: none;
+      flex: 1;
+    }
+
+    .btn-primary {
+      background: var(--color-primary-500);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-600);
+    }
+
+    .btn-secondary {
+      background: var(--color-background-secondary);
+      color: var(--color-text-secondary);
+      border: 1px solid var(--color-border-light);
+    }
+
+    .btn-secondary:hover {
+      background: var(--color-background-secondary);
+      color: var(--color-text-primary);
+    }
+
+    /* Live Preview Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: hsl(0 0% 0% / 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 2rem;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--color-background-primary);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 1200px;
+      height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--color-border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+    }
+
+    .modal-close {
+      padding: 0.5rem;
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--color-text-muted);
+    }
+
+    .modal-content {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .modal-content iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .showcase-header-inner {
+        flex-wrap: wrap;
+      }
+
+      .showcase-nav {
+        order: 3;
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="showcase-header">
+    <div class="showcase-header-inner">
+      <div class="showcase-brand">
+        <div class="showcase-logo">🏰</div>
+        <div class="showcase-brand-text">
+          <h1>FactoryWager</h1>
+          <p>Dashboard Showcase</p>
+        </div>
+      </div>
+
+      <nav class="showcase-nav">
+        <button class="showcase-nav-btn active" data-view="v3">UI v3 (New)</button>
+        <button class="showcase-nav-btn" data-view="v2">UI v2 (Classic)</button>
+        <button class="showcase-nav-btn" data-view="comparison">Compare</button>
+      </nav>
+
+      <div class="showcase-actions">
+        <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">🌓</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="showcase-main">
+    <div class="showcase-intro">
+      <h2>Three-View Dashboard System</h2>
+      <p>Admin God View • Client Portal • Barber Station</p>
+    </div>
+
+    <div class="dashboard-grid" id="dashboardGrid">
+      <!-- Admin Card -->
+      <div class="dashboard-card">
+        <div class="dashboard-card-header">
+          <div class="dashboard-card-title">
+            <div class="dashboard-card-icon admin">👑</div>
+            <h3>Admin Control Room</h3>
+          </div>
+          <span class="dashboard-card-badge">God View</span>
+        </div>
+        <div class="dashboard-card-preview">
+          <iframe src="/admin" loading="lazy"></iframe>
+        </div>
+        <div class="dashboard-card-info">
+          <h4>Features</h4>
+          <ul class="feature-list">
+            <li>Real-time metrics</li>
+            <li>WebSocket streaming</li>
+            <li>Financial overview</li>
+            <li>Barber status</li>
+            <li>Order tracking</li>
+          </ul>
+        </div>
+        <div class="dashboard-card-actions">
+          <button class="btn btn-primary" onclick="openModal('admin')">Live Preview</button>
+          <a href="/admin" class="btn btn-secondary" target="_blank">Open →</a>
+        </div>
+      </div>
+
+      <!-- Client Card -->
+      <div class="dashboard-card">
+        <div class="dashboard-card-header">
+          <div class="dashboard-card-title">
+            <div class="dashboard-card-icon client">👤</div>
+            <h3>Client Portal</h3>
+          </div>
+          <span class="dashboard-card-badge">Booking</span>
+        </div>
+        <div class="dashboard-card-preview">
+          <iframe src="/client" loading="lazy"></iframe>
+        </div>
+        <div class="dashboard-card-info">
+          <h4>Features</h4>
+          <ul class="feature-list">
+            <li>Service selection</li>
+            <li>Tip calculator</li>
+            <li>Bundle checkout</li>
+            <li>Add-ons</li>
+            <li>Order summary</li>
+          </ul>
+        </div>
+        <div class="dashboard-card-actions">
+          <button class="btn btn-primary" onclick="openModal('client')">Live Preview</button>
+          <a href="/client" class="btn btn-secondary" target="_blank">Open →</a>
+        </div>
+      </div>
+
+      <!-- Barber Card -->
+      <div class="dashboard-card">
+        <div class="dashboard-card-header">
+          <div class="dashboard-card-title">
+            <div class="dashboard-card-icon barber">✂️</div>
+            <h3>Barber Station</h3>
+          </div>
+          <span class="dashboard-card-badge">Worker</span>
+        </div>
+        <div class="dashboard-card-preview">
+          <iframe src="/barber" loading="lazy"></iframe>
+        </div>
+        <div class="dashboard-card-info">
+          <h4>Features</h4>
+          <ul class="feature-list">
+            <li>Code login</li>
+            <li>Ticket queue</li>
+            <li>Live updates</li>
+            <li>Stats tracking</li>
+            <li>Complete actions</li>
+          </ul>
+        </div>
+        <div class="dashboard-card-actions">
+          <button class="btn btn-primary" onclick="openModal('barber')">Live Preview</button>
+          <a href="/barber" class="btn btn-secondary" target="_blank">Open →</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Live Preview Modal -->
+  <div class="modal-overlay" id="modal" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 id="modalTitle">Dashboard Preview</h3>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-content">
+        <iframe id="modalIframe" src=""></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Theme toggle
+    function toggleTheme() {
+      const themes = ['light', 'dark'];
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const next = themes[(themes.indexOf(current) + 1) % themes.length];
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('fw-theme', next);
+    }
+
+    // Load saved theme
+    const saved = localStorage.getItem('fw-theme');
+    if (saved) {
+      document.documentElement.setAttribute('data-theme', saved);
+    }
+
+    // Navigation
+    document.querySelectorAll('.showcase-nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.showcase-nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        // Update iframe sources based on view
+        const view = btn.dataset.view;
+        updatePreviews(view);
+      });
+    });
+
+    function updatePreviews(view) {
+      const iframes = document.querySelectorAll('.dashboard-card-preview iframe');
+      const paths = view === 'v2' 
+        ? ['/admin?v=2', '/client?v=2', '/barber?v=2']
+        : ['/admin', '/client', '/barber'];
+      
+      iframes.forEach((iframe, i) => {
+        iframe.src = paths[i];
+      });
+    }
+
+    // Modal
+    function openModal(type) {
+      const modal = document.getElementById('modal');
+      const iframe = document.getElementById('modalIframe');
+      const title = document.getElementById('modalTitle');
+      
+      const titles = {
+        admin: 'Admin Control Room',
+        client: 'Client Portal',
+        barber: 'Barber Station'
+      };
+      
+      title.textContent = titles[type];
+      iframe.src = '/' + type;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(event) {
+      if (event && event.target !== event.currentTarget) return;
+      
+      const modal = document.getElementById('modal');
+      const iframe = document.getElementById('modalIframe');
+      
+      modal.classList.remove('active');
+      iframe.src = '';
+      document.body.style.overflow = '';
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>
