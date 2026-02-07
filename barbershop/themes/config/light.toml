@@ -1,0 +1,123 @@
+# FactoryWager Light Theme
+# Optimized for daytime use, clean modern aesthetics
+
+[meta]
+name = "Light"
+description = "Clean, modern light theme for daytime use"
+icon = "☀️"
+version = "1.0.0"
+
+[colors.primary]
+50 = "hsl(217 91% 97%)"
+100 = "hsl(217 91% 94%)"
+200 = "hsl(217 91% 86%)"
+300 = "hsl(217 91% 76%)"
+400 = "hsl(217 91% 60%)"
+500 = "hsl(217 91% 50%)"
+600 = "hsl(217 91% 42%)"
+700 = "hsl(217 91% 36%)"
+800 = "hsl(217 91% 30%)"
+900 = "hsl(217 91% 24%)"
+950 = "hsl(217 91% 16%)"
+
+[colors.secondary]
+# Teal - NOT purple!
+50 = "hsl(190 80% 97%)"
+100 = "hsl(190 80% 94%)"
+200 = "hsl(190 80% 86%)"
+300 = "hsl(190 80% 76%)"
+400 = "hsl(190 80% 60%)"
+500 = "hsl(190 80% 50%)"
+600 = "hsl(190 80% 42%)"
+700 = "hsl(190 80% 36%)"
+800 = "hsl(190 80% 30%)"
+900 = "hsl(190 80% 24%)"
+950 = "hsl(190 80% 16%)"
+
+[colors.success]
+50 = "hsl(160 84% 97%)"
+100 = "hsl(160 84% 94%)"
+500 = "hsl(160 84% 39%)"
+700 = "hsl(160 84% 30%)"
+
+[colors.warning]
+50 = "hsl(38 92% 97%)"
+100 = "hsl(38 92% 94%)"
+500 = "hsl(38 92% 50%)"
+700 = "hsl(38 92% 35%)"
+
+[colors.error]
+50 = "hsl(0 84% 97%)"
+100 = "hsl(0 84% 94%)"
+500 = "hsl(0 84% 60%)"
+700 = "hsl(0 84% 45%)"
+
+[colors.gray]
+50 = "hsl(220 14% 97%)"
+100 = "hsl(220 14% 94%)"
+200 = "hsl(220 14% 90%)"
+300 = "hsl(220 14% 80%)"
+400 = "hsl(220 14% 65%)"
+500 = "hsl(220 14% 50%)"
+600 = "hsl(220 14% 40%)"
+700 = "hsl(220 14% 30%)"
+800 = "hsl(220 14% 20%)"
+900 = "hsl(220 14% 10%)"
+950 = "hsl(220 14% 5%)"
+
+[colors.background]
+primary = "hsl(0 0% 100%)"
+secondary = "hsl(220 14% 96%)"
+tertiary = "hsl(220 14% 92%)"
+elevated = "hsl(0 0% 100%)"
+overlay = "hsl(0 0% 0% / 0.4)"
+
+[colors.text]
+primary = "hsl(220 43% 11%)"
+secondary = "hsl(220 14% 35%)"
+tertiary = "hsl(220 9% 46%)"
+muted = "hsl(220 9% 60%)"
+inverse = "hsl(0 0% 100%)"
+
+[colors.border]
+light = "hsl(220 14% 90%)"
+default = "hsl(220 14% 84%)"
+strong = "hsl(220 14% 70%)"
+
+[colors.status]
+online = "hsl(160 84% 39%)"
+away = "hsl(38 92% 50%)"
+busy = "hsl(0 84% 60%)"
+offline = "hsl(220 14% 60%)"
+
+[typography]
+fontSans = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+fontMono = "'Fira Code', 'Monaco', 'Menlo', 'Consolas', monospace"
+fontSizeXs = "0.75rem"
+fontSizeSm = "0.875rem"
+fontSizeBase = "1rem"
+fontSizeLg = "1.125rem"
+fontSizeXl = "1.25rem"
+fontSize2xl = "1.5rem"
+
+[shadows]
+sm = "0 1px 2px 0 hsl(220 43% 11% / 0.05)"
+default = "0 1px 3px 0 hsl(220 43% 11% / 0.1), 0 1px 2px -1px hsl(220 43% 11% / 0.1)"
+md = "0 4px 6px -1px hsl(220 43% 11% / 0.1), 0 2px 4px -2px hsl(220 43% 11% / 0.1)"
+lg = "0 10px 15px -3px hsl(220 43% 11% / 0.1), 0 4px 6px -4px hsl(220 43% 11% / 0.1)"
+xl = "0 20px 25px -5px hsl(220 43% 11% / 0.1), 0 8px 10px -6px hsl(220 43% 11% / 0.1)"
+inner = "inset 0 2px 4px 0 hsl(220 43% 11% / 0.05)"
+glow = "0 0 20px hsl(217 90% 60% / 0.3)"
+
+[radii]
+sm = "4px"
+default = "6px"
+md = "8px"
+lg = "12px"
+xl = "16px"
+full = "9999px"
+
+[transitions]
+fast = "150ms cubic-bezier(0.4, 0, 0.2, 1)"
+default = "250ms cubic-bezier(0.4, 0, 0.2, 1)"
+slow = "350ms cubic-bezier(0.4, 0, 0.2, 1)"
