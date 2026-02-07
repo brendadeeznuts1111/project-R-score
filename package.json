@@ -1939,8 +1939,9 @@
     "jiti": "^2.6.1",
     "typescript-eslint": "^8.54.0"
   },
-  "private": true,
+  "private": "false",
   "peerDependencies": {
     "typescript": "^5.9.3"
-  }
+  },
+  "files": ["lib/", "server/", "bin/", "scripts/", "packages/", "README.md", "CHANGELOG.md", "CLAUDE.md"]
 }

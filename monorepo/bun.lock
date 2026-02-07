@@ -4,6 +4,9 @@
   "workspaces": {
     "": {
       "name": "my-monorepo",
+      "dependencies": {
+        "zod": "4.3.6",
+      },
     },
     "packages/stuff-a": {
       "name": "stuff-a",
@@ -25,6 +28,6 @@
 
     "stuff-b": ["stuff-b@workspace:packages/stuff-b"],
 
-    "zod": ["zod@4.3.5", "", {}, "sha512-k7Nwx6vuWx1IJ9Bjuf4Zt1PEllcwe7cls3VNzm4CQ1/hgtFUK2bRNG3rvnpPUhFjmqJKAKtjV576KnUkHocg/g=="],
+    "zod": ["zod@4.3.6", "", {}, "sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg=="],
   }
 }
