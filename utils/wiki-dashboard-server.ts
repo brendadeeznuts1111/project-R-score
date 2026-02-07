@@ -8,6 +8,11 @@ import { ProfileReader, resolveUploaderConfig } from '../lib/profile';
 
 const profileReader = new ProfileReader(resolveUploaderConfig());
 
+/** Bun profile filename: CPU.{timestamp}.{pid}.md or Heap.{timestamp}.{pid}.md */
+const SAFE_PROFILE_FILENAME = /^(CPU|Heap)\.\d+\.\d+\.md$/;
+/** Session IDs: alphanumeric, hyphens, dots, underscores only */
+const SAFE_SESSION_ID = /^[\w.\-]+$/;
+
 const PORT = 3001;
 
 /**
@@ -253,6 +258,12 @@ const server = Bun.serve({
     </div>
     
     <script>
+        function esc(s) {
+            const d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
+
         async function analyzeWiki() {
             const file = document.getElementById('wikiFile').value;
             const results = document.getElementById('results');
@@ -411,13 +422,14 @@ const server = Bun.serve({
                 }
                 let html = '<h3>📁 Profile Sessions</h3><div class="result-grid">';
                 for (const s of sessions) {
+                    const sid = esc(s.sessionId);
                     const count = s.manifest ? s.manifest.profiles.length : '?';
                     const updated = s.manifest ? new Date(s.manifest.updatedAt).toLocaleString() : 'unknown';
                     html += \`
-                        <div class="metric-card" style="cursor:pointer;text-align:left" onclick="loadSession('\${s.sessionId}')">
-                            <div style="font-size:1.1em;font-weight:bold;margin-bottom:8px">\${s.sessionId}</div>
+                        <div class="metric-card" style="cursor:pointer;text-align:left" onclick="loadSession('\${encodeURIComponent(s.sessionId)}')">
+                            <div style="font-size:1.1em;font-weight:bold;margin-bottom:8px">\${sid}</div>
                             <div><strong>\${count}</strong> profile(s)</div>
-                            <div style="opacity:0.7;font-size:0.85em">Updated: \${updated}</div>
+                            <div style="opacity:0.7;font-size:0.85em">Updated: \${esc(updated)}</div>
                         </div>\`;
                 }
                 html += '</div>';
@@ -434,16 +446,16 @@ const server = Bun.serve({
                 const response = await fetch(\`/profiles/\${encodeURIComponent(sessionId)}\`);
                 const manifest = await response.json();
                 if (!response.ok) throw new Error(manifest.error || 'Session not found');
-                let html = \`<h3>📁 Session: \${manifest.sessionId}</h3>\`;
-                html += \`<p>Terminal: \${manifest.terminal.user}@\${manifest.terminal.hostname} (PID \${manifest.terminal.pid})</p>\`;
+                let html = \`<h3>📁 Session: \${esc(manifest.sessionId)}</h3>\`;
+                html += \`<p>Terminal: \${esc(manifest.terminal.user)}@\${esc(manifest.terminal.hostname)} (PID \${esc(String(manifest.terminal.pid))})</p>\`;
                 html += '<div class="result-grid">';
                 for (const p of manifest.profiles) {
-                    const profileUrl = \`/profiles/\${sessionId}/\${p.type}/\${p.filename}\`;
+                    const profileUrl = \`/profiles/\${encodeURIComponent(sessionId)}/\${encodeURIComponent(p.type)}/\${encodeURIComponent(p.filename)}\`;
                     html += \`
                         <div class="metric-card" style="text-align:left">
-                            <div style="font-weight:bold">\${p.type.toUpperCase()}</div>
-                            <a href="\${profileUrl}" target="_blank" style="color:#4CAF50">\${p.filename}</a>
-                            <div style="opacity:0.7;font-size:0.85em">\${(p.sizeBytes / 1024).toFixed(1)} KB — \${new Date(p.uploadedAt).toLocaleString()}</div>
+                            <div style="font-weight:bold">\${esc(p.type.toUpperCase())}</div>
+                            <a href="\${profileUrl}" target="_blank" style="color:#4CAF50">\${esc(p.filename)}</a>
+                            <div style="opacity:0.7;font-size:0.85em">\${(p.sizeBytes / 1024).toFixed(1)} KB — \${esc(new Date(p.uploadedAt).toLocaleString())}</div>
                         </div>\`;
                 }
                 html += '</div>';
@@ -483,16 +495,22 @@ const server = Bun.serve({
 
         let result: any[];
         if (includeManifests) {
-          result = await Promise.all(
-            sessions.map(async (s) => {
-              try {
-                const manifest = await profileReader.getManifest(s.sessionId);
-                return { ...s, manifest };
-              } catch {
-                return { ...s, manifest: null };
-              }
-            })
-          );
+          result = [];
+          const BATCH = 10;
+          for (let i = 0; i < sessions.length; i += BATCH) {
+            const batch = sessions.slice(i, i + BATCH);
+            const resolved = await Promise.all(
+              batch.map(async (s) => {
+                try {
+                  const manifest = await profileReader.getManifest(s.sessionId);
+                  return { ...s, manifest };
+                } catch {
+                  return { ...s, manifest: null };
+                }
+              })
+            );
+            result.push(...resolved);
+          }
         } else {
           result = sessions;
         }
@@ -511,8 +529,15 @@ const server = Bun.serve({
     // Profile session manifest
     const sessionMatch = url.pathname.match(/^\/profiles\/([^/]+)$/);
     if (sessionMatch) {
+      const sessionId = decodeURIComponent(sessionMatch[1]);
+      if (!SAFE_SESSION_ID.test(sessionId)) {
+        return new Response(JSON.stringify({ error: 'Invalid session ID' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders },
+        });
+      }
       try {
-        const manifest = await profileReader.getManifest(sessionMatch[1]);
+        const manifest = await profileReader.getManifest(sessionId);
         return new Response(JSON.stringify(manifest, null, 2), {
           headers: { 'Content-Type': 'application/json', ...corsHeaders },
         });
@@ -527,8 +552,17 @@ const server = Bun.serve({
     // Raw profile markdown
     const profileMatch = url.pathname.match(/^\/profiles\/([^/]+)\/(cpu|heap)\/(.+\.md)$/);
     if (profileMatch) {
+      const pSessionId = decodeURIComponent(profileMatch[1]);
+      const pType = profileMatch[2];
+      const pFilename = decodeURIComponent(profileMatch[3]);
+      if (!SAFE_SESSION_ID.test(pSessionId) || !SAFE_PROFILE_FILENAME.test(pFilename)) {
+        return new Response(JSON.stringify({ error: 'Invalid session ID or filename' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders },
+        });
+      }
       try {
-        const content = await profileReader.getProfile(profileMatch[1], profileMatch[2], profileMatch[3]);
+        const content = await profileReader.getProfile(pSessionId, pType, pFilename);
         return new Response(content, {
           headers: { 'Content-Type': 'text/markdown', ...corsHeaders },
         });

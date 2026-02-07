@@ -8,9 +8,9 @@
  * lib/config/configuration-manager.ts).
  */
 
-import { resolve, join } from 'node:path';
+import { resolve } from 'node:path';
 import { unlink } from 'node:fs/promises';
-import { ProfileSessionUploader, type ProfileUploaderConfig } from './session-uploader';
+import { ProfileSessionUploader, type ProfileUploaderConfig, type ProfileEntry } from './session-uploader';
 
 // ==================== Types ====================
 
@@ -33,14 +33,12 @@ export interface ProfileWatcherConfig {
 
 // ==================== Watcher ====================
 
-const PROFILE_GLOB = '{CPU,Heap}.*.md';
-
 export class ProfileWatcher {
   private config: ProfileWatcherConfig;
   private uploader: ProfileSessionUploader;
   private timer: ReturnType<typeof setInterval> | null = null;
   private scanning = false;
-  private uploaded = new Set<string>();
+  private totalUploaded = 0;
 
   constructor(config: ProfileWatcherConfig = {}) {
     this.config = config;
@@ -96,35 +94,36 @@ export class ProfileWatcher {
     return dirs;
   }
 
-  /** Scan a single directory for new profile files and upload them */
+  /**
+   * Scan a single directory for new profile files, upload them, and update the manifest.
+   * Delegates to scanAndUpload() which handles dedup, upload, and manifest atomically.
+   */
   private async scanDir(dir: string): Promise<void> {
-    const glob = new Bun.Glob(PROFILE_GLOB);
-    let count = 0;
+    try {
+      const entries: ProfileEntry[] = await this.uploader.scanAndUpload(dir);
 
-    for await (const filename of glob.scan({ cwd: dir })) {
-      const absPath = join(dir, filename);
-      if (this.uploaded.has(absPath)) continue;
-
-      try {
-        await this.uploader.uploadProfile(absPath);
-        this.uploaded.add(absPath);
-        count++;
+      if (entries.length > 0) {
+        this.totalUploaded += entries.length;
 
         if (this.config.deleteAfterUpload) {
-          await unlink(absPath);
+          for (const entry of entries) {
+            try {
+              await unlink(entry.localPath);
+            } catch {
+              // File may already be gone — not an error
+            }
+          }
         }
-      } catch (err) {
-        this.config.onError?.(err instanceof Error ? err : new Error(String(err)));
-      }
-    }
 
-    if (count > 0) {
-      this.config.onUpload?.(count, dir);
+        this.config.onUpload?.(entries.length, dir);
+      }
+    } catch (err) {
+      this.config.onError?.(err instanceof Error ? err : new Error(String(err)));
     }
   }
 
   /** Get count of files uploaded across all poll cycles */
   getUploadedCount(): number {
-    return this.uploaded.size;
+    return this.totalUploaded;
   }
 }
