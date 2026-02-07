@@ -145,3 +145,31 @@ bun --cpu-prof-md src/core/barber-server.ts
 # Heap profiling
 bun --heap-prof-md src/core/barber-server.ts
 ```
+
+## WebAssembly.Table
+
+```bash
+# Run WASM Table demo
+bun run src/utils/wasm-table.ts
+
+# Usage:
+import { WASMMachine, createDefaultMachine } from './src/utils/wasm-table';
+
+const machine = createDefaultMachine();
+
+// Execute compute hooks
+machine.execute(0, [7.5, 30, 1000]);  // Risk score
+machine.execute(1, [0.1, 0.2, 0.3]);  // Entropy
+
+// Hot-swap algorithms at runtime
+machine.hotSwap(0, newRiskFunction, 'v2');
+
+// Grow table dynamically
+machine.grow(8);  // Returns previous length
+
+// Access table.length
+console.log(machine.length);  // 16
+
+// Load WASM module
+await machine.loadWASM(wasmBuffer);
+```
