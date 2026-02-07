@@ -1,0 +1,31 @@
+{
+  "description": "Baseline snapshot for validate-docs. Tests fail if issue counts drift from this snapshot.",
+  "generated": "2026-02-06",
+  "runtime": "Bun 1.3.8",
+  "checks": {
+    "URL patterns": {
+      "totalIssues": 2,
+      "bySource": {
+        "dns": 2
+      },
+      "knownIssues": [
+        "lib/har-analyzer/domain-mapper.test.ts:69 — docs.bun.sh (dns)",
+        "lib/utils/error-handling-demo.ts:135 — docs.bun.sh (dns)"
+      ]
+    },
+    "Enum definitions": {
+      "totalIssues": 0,
+      "bySource": {}
+    },
+    "Import paths": {
+      "totalIssues": 0,
+      "bySource": {}
+    }
+  },
+  "totals": {
+    "totalIssues": 2,
+    "bySource": {
+      "dns": 2
+    }
+  }
+}

@@ -1,0 +1,69 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`createBundleSnapshot matches snapshot 1`] = `
+{
+  "circularDependencyCount": 1,
+  "compressionRatio": 0.8,
+  "formatBreakdown": {
+    "esm": {
+      "bytes": 2500,
+      "count": 3,
+    },
+  },
+  "graphEdgeCount": 7,
+  "graphNodeCount": 4,
+  "inputCount": 3,
+  "largestFiles": [
+    {
+      "bytes": 1200,
+      "path": "src/index.ts",
+    },
+    {
+      "bytes": 800,
+      "path": "src/utils.ts",
+    },
+    {
+      "bytes": 500,
+      "path": "src/helper.ts",
+    },
+  ],
+  "outputCount": 1,
+  "totalInputBytes": 2500,
+  "totalOutputBytes": 2000,
+  "unusedExportCount": 2,
+}
+`;
+
+exports[`BundleGuard.snapshot matches snapshot 1`] = `
+{
+  "circularDependencyCount": 1,
+  "compressionRatio": 0.8,
+  "formatBreakdown": {
+    "esm": {
+      "bytes": 2500,
+      "count": 3,
+    },
+  },
+  "graphEdgeCount": 7,
+  "graphNodeCount": 4,
+  "inputCount": 3,
+  "largestFiles": [
+    {
+      "bytes": 1200,
+      "path": "src/index.ts",
+    },
+    {
+      "bytes": 800,
+      "path": "src/utils.ts",
+    },
+    {
+      "bytes": 500,
+      "path": "src/helper.ts",
+    },
+  ],
+  "outputCount": 1,
+  "totalInputBytes": 2500,
+  "totalOutputBytes": 2000,
+  "unusedExportCount": 2,
+}
+`;

@@ -17,6 +17,7 @@ bun.lockb
 # Build outputs
 dist/
 build/
+!src/build/
 out/
 .next/
 .nuxt/

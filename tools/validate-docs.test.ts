@@ -1,5 +1,6 @@
 import { test, expect, describe } from 'bun:test';
 import { checkUrls, checkEnums, checkImports } from './validate-docs';
+import snapshot from './validate-docs.snapshot.json';
 
 describe('validate-docs', () => {
   describe('checkUrls', () => {
@@ -104,6 +105,42 @@ describe('validate-docs', () => {
       ];
       const fixedIssues = result.issues.filter(i => fixedFiles.includes(i.file));
       expect(fixedIssues).toHaveLength(0);
+    });
+  });
+
+  describe('snapshot regression', () => {
+    test('URL issue count matches baseline snapshot', async () => {
+      const result = await checkUrls();
+      const expected = snapshot.checks['URL patterns'];
+      expect(result.issues.length).toBe(expected.totalIssues);
+    });
+
+    test('Enum issue count matches baseline snapshot', async () => {
+      const result = await checkEnums();
+      const expected = snapshot.checks['Enum definitions'];
+      expect(result.issues.length).toBe(expected.totalIssues);
+    });
+
+    test('Import issue count matches baseline snapshot', async () => {
+      const result = await checkImports();
+      const expected = snapshot.checks['Import paths'];
+      expect(result.issues.length).toBe(expected.totalIssues);
+    });
+
+    test('total issues match baseline snapshot', async () => {
+      const [urls, enums, imports] = await Promise.all([checkUrls(), checkEnums(), checkImports()]);
+      const total = urls.issues.length + enums.issues.length + imports.issues.length;
+      expect(total).toBe(snapshot.totals.totalIssues);
+    });
+
+    test('issue sources match baseline snapshot', async () => {
+      const [urls, enums, imports] = await Promise.all([checkUrls(), checkEnums(), checkImports()]);
+      const allIssues = [...urls.issues, ...enums.issues, ...imports.issues];
+      const bySource: Record<string, number> = {};
+      for (const issue of allIssues) {
+        bySource[issue.source] = (bySource[issue.source] || 0) + 1;
+      }
+      expect(bySource).toEqual(snapshot.totals.bySource);
     });
   });
 

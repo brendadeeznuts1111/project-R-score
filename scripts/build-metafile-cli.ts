@@ -1,5 +1,5 @@
-// scripts/build-metafile-cli.ts
 #!/usr/bin/env bun
+// scripts/build-metafile-cli.ts
 // CLI Tool for Bun Build Metafile Apocalypse v4.0
 
 import { buildWithCLIOptions } from '../src/build/enhanced-builder';
@@ -110,6 +110,11 @@ BUNDLE ANALYSIS:
   Upload metafile JSON to https://esbuild.github.io/analyze/ for interactive
   treemap visualization. Use --snapshot to track bundle size over time.
 
+REFERENCES:
+  Bun Bundler docs:      https://bun.sh/docs/bundler
+  Bun Metafile docs:     https://bun.sh/docs/bundler#metafile
+  esbuild Analyzer:      https://esbuild.github.io/analyze/
+
 EXAMPLES:
   # Basic build with metafile
   bun-run scripts/build-metafile-cli.ts --entrypoints src/index.ts --metafile meta.json
@@ -138,8 +143,6 @@ FEATURES:
   ✅ CI-optimized reports
   ✅ Performance metrics
   ✅ Optimization recommendations
-
-Learn more at: https://bun.sh/docs/bundler#metafile
 `);
 }
 

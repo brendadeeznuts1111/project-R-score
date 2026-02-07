@@ -92,3 +92,56 @@ for(const f of files.slice(0,50)){
 console.log(`📊 Lines (est): ${lines}+`);
 '
 ```
+
+## CLI Tables (Unicode-Aware)
+
+```bash
+# Run table demo
+bun run src/utils/cli-table.ts
+
+# Import in your scripts:
+import { generateTable, ColumnTypes, formatStatus } from './src/utils/cli-table';
+
+# Example:
+generateTable({
+  title: 'Service Status',
+  columns: [
+    ColumnTypes.text('name', 'Service'),
+    ColumnTypes.status('status', 'Status'),
+    ColumnTypes.duration('latency', 'Latency'),
+  ],
+  rows: [
+    { name: 'API', status: 'online', latency: 45 },
+    { name: 'Worker', status: 'busy', latency: 1250 },
+  ],
+  border: 'rounded'
+});
+
+# Format status with Unicode indicators
+formatStatus('online');    // 🟢 ONLINE
+formatStatus('warning');   // ⚠️ WARNING
+formatStatus('error');     // ❌ ERROR
+```
+
+## Bun v1.3.7+ Features
+
+```bash
+# Bun.wrapAnsi() - ANSI-aware text wrapping
+bun -e 'console.log(Bun.wrapAnsi("\x1b[31mRed text that wraps\x1b[0m", 10))'
+
+# fetch() preserves header case
+bun -e '
+await fetch("https://httpbin.org/headers", {
+  headers: {
+    "Authorization": "Bearer token",  // Preserves "Authorization"
+    "X-Custom-Header": "value"
+  }
+});
+'
+
+# CPU profiling with markdown output
+bun --cpu-prof-md src/core/barber-server.ts
+
+# Heap profiling
+bun --heap-prof-md src/core/barber-server.ts
+```
