@@ -15,7 +15,27 @@ import {
 import { Database } from 'bun:sqlite';
 import { mkdirSync } from 'node:fs';
 import { lookup } from 'node:dns/promises';
-import manifestData from '../../manifest.toml' with { type: 'toml' };
+// Load manifest dynamically using Bun.file with file:// protocol
+const manifestPath = new URL(
+  'file://' + Bun.fileURLToPath(new URL('../../manifest.toml', import.meta.url))
+);
+const manifestContent = await Bun.file(manifestPath)
+  .text()
+  .catch(() => 'name = "barbershop-demo"\nversion = "1.0.0"');
+// Parse simple TOML (name = "value" format)
+const manifestData = Object.fromEntries(
+  manifestContent
+    .split('\n')
+    .filter(line => line.includes('=') && !line.startsWith('[') && !line.startsWith('#'))
+    .map(line => {
+      const [key, ...rest] = line.split('=');
+      const value = rest
+        .join('=')
+        .trim()
+        .replace(/^["']|["']$/g, '');
+      return [key.trim(), value];
+    })
+);
 import { fetchWithDefaults, isPublicHttpUrl } from '../utils/fetch-utils';
 import { renderAdminDashboard, renderBarberDashboard, renderClientDashboard } from './ui-v2';
 import { renderAdminDashboardV3, renderClientDashboardV3, renderBarberDashboardV3 } from './ui-v3';
