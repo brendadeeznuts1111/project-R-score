@@ -35,7 +35,8 @@ barbershop/
 │   │   ├── barbershop-dashboard.ts  # 3-view dashboard server
 │   │   ├── barbershop-tickets.ts    # Ticketing demo
 │   │   ├── ui-v2.ts                 # React-style UI components
-│   │   └── barber-fusion-*.ts       # Fusion runtime, schema, types
+│   │   ├── barber-fusion-*.ts       # Fusion runtime, schema, types
+│   │   └── barber-fusion-runtime.ts # +OpenClaw Context integration
 │   ├── dashboard/         # Dashboard System v2
 │   │   ├── index.ts                 # Unified exports
 │   │   ├── builder.ts               # Dashboard builder API
@@ -59,7 +60,16 @@ barbershop/
 │   │   └── wasm-table.ts            # WebAssembly.Table compute hooks
 │   ├── config/            # Configuration
 │   └── debug/             # Debug/diagnostics
+├── openclaw/              # Matrix profile gateway (Bun-native)
+│   ├── gateway.ts                 # Core API with context binding
+│   ├── cli.ts                     # CLI interface (11 commands)
+│   ├── oneliner.ts                # One-liner CLI (--cwd, --env-file)
+│   ├── dashboard-server.ts        # HTTP dashboard server
+│   ├── context-table-v3.28.ts     # Table engine integration
+│   └── README.md
 ├── lib/
+│   ├── bun-context.ts     # Bun Context v3.28 - Global config + context resolution
+│   ├── table-engine-v3.28.ts      # Enhanced table engine (20-col, Unicode, HSL)
 │   ├── cloudflare/        # Cloudflare API client
 │   │   ├── client.ts
 │   │   ├── cached-client.ts
@@ -191,6 +201,85 @@ bun run cf:themed:pro
 bun run cf:version
 bun run cf:version:compare
 bun run cf:version:bump
+```
+
+### OpenClaw Gateway (Matrix Profiles) v3.28
+```bash
+# Gateway status
+bun run openclaw:status          # Check gateway status + context hash
+bun run openclaw:bridge          # Check Matrix bridge status (table view)
+bun run openclaw:version         # Show version info
+
+# Profile management
+bun run openclaw:profiles        # List available profiles
+bun run openclaw:bind <profile>  # Bind directory to profile
+bun run openclaw:switch <profile># Switch active profile
+bun run openclaw:profile_status  # Show binding status
+
+# Shell execution with context
+bun run openclaw:exec <command>  # Execute with profile context
+
+# Bun Context integration (v3.28)
+bun run openclaw:context <cmd>   # Execute with bun-context resolution
+bun run openclaw:config          # Show bun-context config
+
+# One-Liner CLI (context switching)
+bun run openclaw/oneliner.ts --cwd ./apps/api --env-file .env.local run dev
+bun run openclaw/oneliner.ts --env-file .env --env-file .env.local run build
+bun run openclaw/oneliner.ts --config ./ci.bunfig.toml run test
+bun run openclaw/oneliner.ts --cwd ./packages/core --watch run index.ts
+
+# Context Dashboard Server
+bun run openclaw:dashboard       # Start dashboard server (port 8765)
+# API: GET/POST /context-run, GET /context-cache, POST /context-clear
+
+# Table Engine v3.28 (Enhanced Table Architecture)
+bun run openclaw:table           # Show full dashboard with tables
+bun run openclaw:table:compact   # Show compact dashboard
+# Features: 20-column max, Unicode-aware, HSL colors, dynamic status
+
+# Direct bun-context usage
+bun run lib/bun-context.ts exec <cmd>     # Execute with context
+bun run lib/bun-context.ts config         # Show loaded configuration
+bun run lib/bun-context.ts cache          # Show cache status
+bun run lib/bun-context.ts clear-cache    # Clear context cache
+```
+
+### Barber-Fusion Runtime Integration
+The barber-fusion-runtime.ts is integrated with OpenClaw Context v3.16:
+
+```bash
+# Run Fusion demo with context resolution
+bun run src/core/barber-fusion-runtime.ts
+```
+
+**FusionContext Classes:**
+```typescript
+import { FusionContextResolver, FusionContextExecutor } from './src/core/barber-fusion-runtime.ts';
+
+// Resolve context with bun-context integration
+const context = await FusionContextResolver.resolveContext();
+// { environment, contextHash, globalConfig, featureFlags }
+
+// Execute with context
+const result = await FusionContextExecutor.executeWithContext(async () => {
+  return await someOperation();
+});
+// { data, context, durationMs, session }
+
+// Database with tenant context
+await FusionContextExecutor.executeDbWithContext(db, async (database) => {
+  return database.getAllAccountAges();
+});
+```
+
+**Context-Aware Cache:**
+```typescript
+import { FusionCache } from './src/core/barber-fusion-runtime.ts';
+
+// Cache with automatic context hash
+await FusionCache.cacheWithContext('key', data, 3600);
+const data = await FusionCache.getWithContext('key');
 ```
 
 ## Environment Configuration

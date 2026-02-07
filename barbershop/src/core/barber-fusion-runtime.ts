@@ -1,10 +1,225 @@
 import type { AccountAgeTier, FusionTier, RiskLevel } from './barber-fusion-types';
-import type { AccountAgeTier, FusionTier, RiskLevel } from './barber-fusion-types';
 
 // barber-fusion-runtime.ts - Runtime Validation, Utilities & Sample Data
+// Integrated with OpenClaw Context v3.16
 
 import { Database } from 'bun:sqlite';
 import { redis } from 'bun';
+
+// ==================== OPENCLAW CONTEXT INTEGRATION ====================
+// Import Bun Context for global config resolution and context-aware execution
+import {
+  loadGlobalConfig,
+  executeWithContext,
+  generateContextHash,
+  type BunGlobalConfig,
+  type ContextSession,
+  c,
+} from '../../lib/bun-context.ts';
+
+// OpenClaw Profile integration
+import gateway from '../../openclaw/gateway.ts';
+
+// Fusion Context Types
+interface FusionContext {
+  environment: 'development' | 'staging' | 'production';
+  region?: string;
+  tenantId?: string;
+  featureFlags: Record<string, boolean>;
+  contextHash: string;
+  globalConfig?: BunGlobalConfig;
+}
+
+interface ContextualExecutionResult<T> {
+  data: T;
+  session: ContextSession | null;
+  context: FusionContext;
+  durationMs: number;
+  cached: boolean;
+}
+
+// ==================== CONTEXT RESOLUTION ====================
+
+export class FusionContextResolver {
+  private static fusionContext: FusionContext | null = null;
+  private static contextCache = new Map<string, FusionContext>();
+
+  /**
+   * Resolve Fusion context with Bun Context integration
+   * Uses global config resolution from lib/bun-context.ts
+   */
+  static async resolveContext(useCache = true): Promise<FusionContext> {
+    const cacheKey = await generateContextHash({
+      cwd: process.cwd(),
+      env: process.env.NODE_ENV,
+      timestamp: Math.floor(Date.now() / 60000), // Cache for 1 minute
+    });
+
+    if (useCache && this.contextCache.has(cacheKey)) {
+      return this.contextCache.get(cacheKey)!;
+    }
+
+    // Load global config via bun-context
+    const globalConfig = await loadGlobalConfig();
+
+    // Get OpenClaw profile if available
+    const profileStatus = await gateway.getProfileStatus();
+    const profileContext = profileStatus.profile?.context || {};
+
+    // Determine environment
+    const environment = this.determineEnvironment(globalConfig);
+
+    // Build Fusion context
+    const context: FusionContext = {
+      environment,
+      region: process.env.FUSION_REGION || profileContext.region as string,
+      tenantId: process.env.FUSION_TENANT_ID || profileContext.tenantId as string,
+      featureFlags: await this.loadFeatureFlags(globalConfig),
+      contextHash: cacheKey,
+      globalConfig: {
+        ...globalConfig,
+        // Mask sensitive values
+        env: Object.fromEntries(
+          Object.entries(globalConfig.env).map(([k, v]) => [
+            k,
+            k.includes('SECRET') || k.includes('KEY') || k.includes('PASS') || k.includes('TOKEN')
+              ? '***'
+              : v,
+          ])
+        ),
+      },
+    };
+
+    if (useCache) {
+      this.contextCache.set(cacheKey, context);
+    }
+
+    this.fusionContext = context;
+    return context;
+  }
+
+  private static determineEnvironment(config: BunGlobalConfig): FusionContext['environment'] {
+    const env = config.env.NODE_ENV || process.env.NODE_ENV;
+    if (env === 'production') return 'production';
+    if (env === 'staging') return 'staging';
+    return 'development';
+  }
+
+  private static async loadFeatureFlags(config: BunGlobalConfig): Promise<Record<string, boolean>> {
+    // Load from environment or config
+    const flags: Record<string, boolean> = {
+      enableRedisCache: config.env.FUSION_ENABLE_REDIS === 'true',
+      enableValidation: config.env.FUSION_ENABLE_VALIDATION !== 'false',
+      enableMetrics: config.env.FUSION_ENABLE_METRICS === 'true',
+      enableMultiTenant: config.env.FUSION_MULTI_TENANT === 'true',
+    };
+
+    // Try to load from bunfig.toml if available
+    try {
+      const bunfig = await import('../../bunfig.toml?type=toml');
+      if (bunfig.default?.fusion?.features) {
+        Object.assign(flags, bunfig.default.fusion.features);
+      }
+    } catch {
+      // bunfig.toml doesn't have fusion section
+    }
+
+    return flags;
+  }
+
+  static getCurrentContext(): FusionContext | null {
+    return this.fusionContext;
+  }
+
+  static clearCache(): void {
+    this.contextCache.clear();
+    this.fusionContext = null;
+  }
+}
+
+// ==================== CONTEXT-AWARE EXECUTION ====================
+
+export class FusionContextExecutor {
+  /**
+   * Execute a function with full context resolution
+   * Integrates with lib/bun-context.ts executeWithContext for subprocesses
+   */
+  static async executeWithContext<T>(
+    operation: () => Promise<T> | T,
+    options: {
+      useCache?: boolean;
+      timeoutMs?: number;
+      retries?: number;
+    } = {}
+  ): Promise<ContextualExecutionResult<T>> {
+    const startTime = performance.now();
+    const context = await FusionContextResolver.resolveContext(options.useCache);
+
+    let session: ContextSession | null = null;
+    let data: T;
+    let cached = false;
+
+    try {
+      // Execute operation
+      if (options.timeoutMs) {
+        data = await Promise.race([
+          operation(),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error('Operation timeout')), options.timeoutMs)
+          ),
+        ]);
+      } else {
+        data = await operation();
+      }
+
+      // If we're executing a bun command, use the full context system
+      if (typeof data === 'string' && data.startsWith('bun ')) {
+        const args = data.split(' ').slice(1);
+        session = await executeWithContext(args, { useCache: options.useCache });
+        cached = true; // Potentially cached
+      }
+    } catch (error) {
+      // Retry logic
+      if (options.retries && options.retries > 0) {
+        console.warn(c.yellow(`Operation failed, retrying... (${options.retries} attempts left)`));
+        return this.executeWithContext(operation, {
+          ...options,
+          retries: options.retries - 1,
+        });
+      }
+      throw error;
+    }
+
+    const durationMs = performance.now() - startTime;
+
+    return {
+      data,
+      session,
+      context,
+      durationMs,
+      cached,
+    };
+  }
+
+  /**
+   * Execute a database operation with context
+   */
+  static async executeDbWithContext<T>(
+    db: FusionDatabase,
+    operation: (db: FusionDatabase) => Promise<T> | T
+  ): Promise<ContextualExecutionResult<T>> {
+    return this.executeWithContext(async () => {
+      const context = await FusionContextResolver.resolveContext();
+
+      // Add context metadata to operation
+      if (context.tenantId) {
+        db.setTenantContext(context.tenantId);
+      }
+
+      return operation(db);
+    });
+  }
+}
 
 // ==================== TYPE IMPORTS ====================
 
@@ -364,12 +579,22 @@ export class FusionUtils {
     const data = SampleAccountAges[tier];
     return `<span class="badge" style="background: ${data.color}; color: ${data.contrastText}">${data.badge} ${data.label}</span>`;
   }
+
+  /**
+   * Get context-aware configuration value
+   */
+  static async getContextConfig<T>(key: string, defaultValue: T): Promise<T> {
+    const context = await FusionContextResolver.resolveContext();
+    const value = context.globalConfig?.env[key];
+    return value !== undefined ? (value as unknown as T) : defaultValue;
+  }
 }
 
 // ==================== DATABASE HELPERS ====================
 
 export class FusionDatabase {
   private db: Database;
+  private tenantId: string | null = null;
 
   constructor(path: string = ':memory:') {
     this.db = new Database(path);
@@ -408,6 +633,19 @@ export class FusionDatabase {
       )
     `);
 
+    // Context-aware schema
+    this.db.run(`
+      CREATE TABLE IF NOT EXISTS fusion_context_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        context_hash TEXT NOT NULL,
+        environment TEXT NOT NULL,
+        tenant_id TEXT,
+        operation TEXT NOT NULL,
+        duration_ms REAL,
+        performed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     this.seed();
   }
 
@@ -438,6 +676,10 @@ export class FusionDatabase {
     }
   }
 
+  setTenantContext(tenantId: string): void {
+    this.tenantId = tenantId;
+  }
+
   getAccountAge(tier: AccountAgeTier) {
     return this.db.query('SELECT * FROM account_ages WHERE tier = ?').get(tier);
   }
@@ -465,6 +707,25 @@ export class FusionDatabase {
       : 'SELECT COUNT(*) as total, SUM(success) as successes FROM barber_actions_log WHERE action_id = ?';
     const params = barberId ? [actionId, barberId] : [actionId];
     return this.db.query(sql).get(...params);
+  }
+
+  /**
+   * Log context-aware operation
+   */
+  logContextOperation(contextHash: string, environment: string, operation: string, durationMs: number) {
+    return this.db.run(
+      'INSERT INTO fusion_context_logs (context_hash, environment, tenant_id, operation, duration_ms) VALUES (?, ?, ?, ?, ?)',
+      [contextHash, environment, this.tenantId, operation, durationMs]
+    );
+  }
+
+  getContextStats(contextHash?: string) {
+    if (contextHash) {
+      return this.db
+        .query('SELECT * FROM fusion_context_logs WHERE context_hash = ? ORDER BY performed_at DESC')
+        .all(contextHash);
+    }
+    return this.db.query('SELECT * FROM fusion_context_logs ORDER BY performed_at DESC LIMIT 100').all();
   }
 }
 
@@ -502,14 +763,45 @@ export class FusionCache {
       for (const key of keys) await redis.del(key);
     }
   }
+
+  /**
+   * Cache with context awareness
+   */
+  static async cacheWithContext<T>(key: string, data: T, ttl: number = 3600): Promise<void> {
+    const context = await FusionContextResolver.resolveContext();
+    const contextKey = `${key}:${context.contextHash}`;
+    await redis.setex(contextKey, ttl, JSON.stringify({ data, context: context.contextHash }));
+  }
+
+  static async getWithContext<T>(key: string): Promise<T | null> {
+    const context = await FusionContextResolver.resolveContext();
+    const contextKey = `${key}:${context.contextHash}`;
+    const cached = await redis.get(contextKey);
+    if (!cached) return null;
+    const parsed = JSON.parse(cached);
+    return parsed.data as T;
+  }
 }
 
 // ==================== DEMO / TEST ====================
 
-export function runDemo() {
-  console.log('🔍 Validating Sample Data...\n');
+export async function runDemo() {
+  console.log('🎯 OpenClaw Context Integration Demo\n');
+
+  // Resolve Fusion context
+  console.log('📍 Resolving Fusion Context...');
+  const contextResult = await FusionContextExecutor.executeWithContext(async () => {
+    return await FusionContextResolver.resolveContext();
+  });
+
+  console.log(`  Environment: ${contextResult.data.environment}`);
+  console.log(`  Context Hash: ${contextResult.data.contextHash}`);
+  console.log(`  Duration: ${contextResult.durationMs.toFixed(2)}ms`);
+  console.log(`  Feature Flags:`, contextResult.data.featureFlags);
+  console.log();
 
   // Validate account ages
+  console.log('🔍 Validating Sample Data...\n');
   for (const [tier, data] of Object.entries(SampleAccountAges)) {
     const result = SchemaValidator.validateAccountAge(data);
     console.log(
@@ -545,19 +837,40 @@ export function runDemo() {
     FusionUtils.getActionsFor('veteran', 'whale').map(a => a.id)
   );
 
-  // Test database
-  console.log('\n💾 Testing Database...\n');
+  // Test database with context
+  console.log('\n💾 Testing Database with Context...\n');
   const db = new FusionDatabase();
-  const allAges = db.getAllAccountAges();
-  console.log('Account ages in DB:', allAges.map((a: any) => a.tier).join(', '));
 
-  // Test caching (if Redis available)
-  console.log('\n⚡ Testing Cache...\n');
-  FusionCache.cacheAccountAge('new', SampleAccountAges.new).then(() => {
-    console.log('Cached new account age');
+  await FusionContextExecutor.executeDbWithContext(db, async (database) => {
+    const allAges = database.getAllAccountAges();
+    console.log('Account ages in DB:', allAges.map((a: any) => a.tier).join(', '));
+
+    // Log context operation
+    database.logContextOperation(
+      contextResult.data.contextHash,
+      contextResult.data.environment,
+      'demo_query',
+      1.5
+    );
+
+    const contextLogs = database.getContextStats();
+    console.log('Context operations logged:', contextLogs.length);
+
+    return allAges;
   });
 
+  // Test caching (if Redis available)
+  console.log('\n⚡ Testing Cache with Context...\n');
+  await FusionCache.cacheWithContext('demo:test', { message: 'Hello from Fusion Context' });
+  const cached = await FusionCache.getWithContext<{ message: string }>('demo:test');
+  console.log('Cached data:', cached?.message || 'Not found');
+
   console.log('\n✅ Demo Complete!');
+  console.log('\n📝 OpenClaw Integration:');
+  console.log('  - Global config resolution via lib/bun-context.ts');
+  console.log('  - Context-aware execution with caching');
+  console.log('  - Profile integration from OpenClaw gateway');
+  console.log('  - Context hash for cache invalidation');
 }
 
 // Run if executed directly
@@ -566,4 +879,4 @@ if (import.meta.main) {
 }
 
 // Export types
-export type { ValidationResult, ValidationError };
+export type { ValidationResult, ValidationError, FusionContext, ContextualExecutionResult };
