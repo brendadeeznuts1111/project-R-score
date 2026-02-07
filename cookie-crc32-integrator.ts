@@ -347,6 +347,16 @@ function cmdConfig(config: CookieConfig): void {
   console.log(styled('\nTip:', 'muted') + ' Use bun --console-depth 4 for full nesting');
 }
 
+/** Interactive REPL: read cookies from stdin, verify each line */
+async function cmdInteractive(): Promise<void> {
+  console.log(styled('Interactive mode', 'accent') + ' — paste cookies to verify (one per line, Ctrl+D to exit)');
+  for await (const line of console) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    cmdVerify(trimmed);
+  }
+}
+
 function cmdAb(userId: string, experimentId: string, config: CookieConfig, forcedVariant?: string): void {
   // Env var overrides YAML config; YAML secret must not be null in production
   const secret = Bun.env.COOKIE_SECRET || config.cookie.secret || 'dev-secret-minimum-32-bytes-long-here-123';
@@ -381,6 +391,7 @@ Commands:
   verify "<cookie>"           Verify a signed cookie
   ab <userId> <expId> [variant]  Deterministic AB variant cookie
   config                      Show loaded YAML configuration
+  interactive                 Verify cookies from stdin (one per line)
 
 Examples:
   bun run cookie-crc32-integrator.ts wiki
@@ -388,6 +399,7 @@ Examples:
   bun run cookie-crc32-integrator.ts create session abc
   bun run cookie-crc32-integrator.ts verify "session=abc|A9B34F21"
   bun run cookie-crc32-integrator.ts ab user123 exp A
+  echo "session=abc|D9D2E670" | bun run cookie-crc32-integrator.ts interactive
 `);
 }
 
@@ -439,6 +451,10 @@ if (import.meta.main) {
 
     case 'config':
       cmdConfig(config);
+      break;
+
+    case 'interactive':
+      await cmdInteractive();
       break;
 
     default:
