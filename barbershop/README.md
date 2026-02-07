@@ -4,24 +4,23 @@ This directory contains the barbershop demo apps, support modules, and tests.
 
 ## Run
 
-```bash
-bun run start:barbershop:dashboard
-```
+### Quick Start
 
 ```bash
-bun run dev:barbershop:dashboard
-```
+# Start the demo
+bun run start
 
-```bash
-bun run start:barbershop:tickets
-```
+# Start with hot reload
+bun run dev
 
-```bash
-bun run start:barbershop:server
-```
+# Start specific components
+bun run start:server      # API server with WebSocket
+bun run start:dashboard   # Dashboard only
+bun run start:tickets     # Ticketing demo
 
-```bash
-bun run dev:barbershop:server
+# Development with hot reload
+bun run dev:server
+bun run dev:dashboard
 ```
 
 ## Host/Port/URL Config
@@ -30,7 +29,7 @@ Both dashboard and server support:
 
 - `SERVER_NAME`: display/server label in logs/docs
 - `HOST`: bind host (default `0.0.0.0`)
-- `BUN_PORT` / `PORT` / `NODE_PORT`: bind port, checked in this exact order, then `3000`
+- `BUN_PORT` / `PORT`: bind port (Bun native), checked in this order, defaults to `3000`
 - `PUBLIC_BASE_URL`: external URL shown in docs/log output
 - `KEEP_ALIVE_TIMEOUT_SEC`: keep-alive timeout header value (default `5`)
 - `KEEP_ALIVE_MAX`: keep-alive max header value (default `1000`)
@@ -67,9 +66,9 @@ Secrets behavior:
 - Runtime will **not write** secrets automatically (prevents repeated OS popup prompts).
 - Bun.secrets reads are opt-in via `USE_BUN_SECRETS=true`.
 - One-time setup command:
-  - `bun run setup:barbershop:secrets`
-- Doctor command:
-  - `bun run doctor:barbershop:secrets`
+  - `bun run setup:r2`
+- Check secrets:
+  - `bun run src/secrets/secrets-doctor.ts`
 
 Namespaced service pattern used:
 
@@ -90,11 +89,14 @@ SERVER_NAME="Barbershop Local" HOST=127.0.0.1 PORT=3010 PUBLIC_BASE_URL=http://1
 ## Test
 
 ```bash
-bun run test:barbershop
+bun run test              # All tests
+bun run test:unit         # Unit tests only
+bun run test:integration  # Integration tests only
 ```
 
 ```bash
-bun run build:barbershop:meta
+bun run build:meta        # Build with metafile analysis
+bun run build:prod        # Production build with minification
 ```
 
 ```bash
@@ -175,6 +177,64 @@ Profiler R2 upload accepts either env style:
 - [HTTP proxy options in `fetch`](https://bun.com/docs/guides/http/proxy)
 - [Bun.serve reference](https://bun.com/reference/bun/serve)
 
+## Bun-Native APIs
+
+This project leverages Bun's native high-performance APIs:
+
+### Available Utilities
+
+```typescript
+// Import from centralized utils
+import { 
+  fastHash,           // 25x faster than crypto (Bun.hash)
+  hashPassword,       // Native Argon2 (Bun.password)
+  verifyPassword,
+  compressData,       // Native gzip/zstd (Bun.gzip/Bun.zstd)
+  decompressData,
+  nanoseconds,        // High-res timing (Bun.nanoseconds)
+  fastWrite,          // Fast file I/O (Bun.write)
+  fastReadText,       // (Bun.file)
+  fastReadJSON,
+  sleep,              // Async delays (Bun.sleep)
+  parseSemver,        // Version parsing (Bun.semver)
+  compareVersions,
+  satisfiesVersion,
+  escapeHTML,         // HTML sanitization (Bun.escapeHTML)
+} from './src/utils';
+
+// WebAssembly.Table for dynamic compute
+import { WASMMachine, createDefaultMachine } from './src/utils/wasm-table';
+
+// Bun-optimized config loading
+import { loadConfig, getConfig } from './src/config/bun-config';
+```
+
+### Performance Comparison
+
+| Operation | Bun API | Speedup |
+|-----------|---------|---------|
+| Hashing | `Bun.hash()` | **25x** |
+| File Write | `Bun.write()` | **2-3x** |
+| Compression | `Bun.gzip()` | **1.5x** |
+| Password Hash | `Bun.password` | Built-in Argon2 |
+| Timing | `Bun.nanoseconds()` | Nanosecond precision |
+
+### Running Demos
+
+```bash
+# Bun API demo
+bun run src/utils/bun-enhanced.ts
+
+# Performance benchmarks
+bun run src/utils/bun-benchmark.ts
+
+# WebAssembly.Table demo
+bun run src/utils/wasm-table.ts
+
+# Theme showcase
+open demo/theme-showcase.html
+```
+
 ## Project Structure
 
 ```
@@ -212,13 +272,28 @@ barbershop/
 └── reports/            # Generated reports
 ```
 
+## Environment Setup
+
+```bash
+# Copy environment template
+cp .env.example .env
+
+# Edit .env with your values
+# Required: R2_ACCOUNT_ID, R2_BUCKET_NAME, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY
+
+# Or use Bun.secrets (macOS Keychain)
+bun run src/secrets/setup-secrets.ts
+```
+
 ## Key Files
 
-- `src/core/barbershop-dashboard.ts`: full 3-view dashboard demo.
-- `src/core/barbershop-tickets.ts`: ticketing and assignment flow demo.
-- `src/core/barber-server.ts`: telemetry, WS, auth/cookie + report endpoints.
-- `config/manifest.toml`: demo manifest and route/script index.
-- `config/runtime.config.jsonc`: optional JSONC runtime metadata.
-- `src/build/build-metadata.ts`: Bun build metafile generator.
+- `src/core/barbershop-dashboard.ts`: Full 3-view dashboard demo (admin/client/barber)
+- `src/core/barber-server.ts`: API server with WebSocket, telemetry, auth endpoints
+- `src/core/ui-v2.ts`: React-style admin/client portal components
+- `src/utils/bun-enhanced.ts`: Bun-native API wrappers (hash, compress, timing)
+- `src/utils/wasm-table.ts`: WebAssembly.Table for dynamic compute hooks
+- `src/config/bun-config.ts`: Bun-optimized configuration loader
+- `config/manifest.toml`: Demo manifest and route/script index
+- `demo/theme-showcase.html`: Interactive theme switcher demo
 - `src/profile/sampling-profile.ts`: on-demand CPU sampling profile capture.
 - `tests/`: barbershop-focused test suite (unit/ + integration/).
