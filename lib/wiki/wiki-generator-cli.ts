@@ -20,6 +20,9 @@ import { EnhancedDocumentationURLValidator } from '../docs/builders/validator';
 // Step 5: Quick reference collections
 import { QUICK_REFERENCE_URLS } from '../docs/constants/domains';
 
+// Step 6: Cookie CRC32 integration
+import { getCookieCRC32WikiPages } from '../../examples/cookie-crc32/cookie-crc32-integrator';
+
 interface WikiConfig {
   baseUrl: string;
   workspace: string;
@@ -472,6 +475,34 @@ function generateWikiURLs(config: Partial<WikiConfig> = {}): WikiData {
         example: findCLIExample(cmdName),
       });
     }
+  }
+
+  // Step 6: Integrate cookie-CRC32 wiki pages
+  const cookiePages = getCookieCRC32WikiPages(
+    finalConfig.baseUrl,
+    finalConfig.workspace,
+  );
+  const cookieCategoryPages: WikiPage[] = [];
+  console.log(`\n📂 Processing cookie_crc32 utilities...`);
+  for (const cp of cookiePages) {
+    const wikiPage: WikiPage = {
+      title: cp.title,
+      url: cp.url,
+      category: cp.category,
+      documentation: cp.documentation,
+      example: cp.example,
+      relatedDocs: cp.relatedDocs,
+      validationStatus: cp.validationStatus,
+    };
+    wikiPages.push(wikiPage);
+    cookieCategoryPages.push(wikiPage);
+    console.log(`   ✅ ${cp.title}: ${cp.url}`);
+  }
+  if (cookieCategoryPages.length > 0) {
+    categories['cookie_crc32'] = {
+      count: cookieCategoryPages.length,
+      pages: cookieCategoryPages,
+    };
   }
 
   console.log(
