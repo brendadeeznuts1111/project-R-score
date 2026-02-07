@@ -10,7 +10,7 @@
 
 import { VersionedSecretManager } from '../lib/security/versioned-secrets.ts';
 import { styled } from '../lib/theme/colors.ts';
-import { refs } from '../lib/business/reference-manager.ts';
+import { refs } from '@fw/business';
 
 const versionedManager = new VersionedSecretManager(refs);
 

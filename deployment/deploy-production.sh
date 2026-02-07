@@ -59,7 +59,7 @@ check_prerequisites() {
         "tier1380-config-manager.ts"
         "scanner-cli-secure.ts"
         "tier1380-enhanced-citadel.ts"
-        "lib/ab-testing/manager.ts"
+        "packages/ab-testing/src/manager.ts"
         "lib/config/env-loader.ts"
     )
     
@@ -160,7 +160,7 @@ test_ab_testing() {
     # Test A/B test manager
     log "INFO" "Testing A/B test manager..."
     bun -e "
-import { ABTestManager } from './lib/ab-testing/manager.ts';
+import { ABTestManager } from '@fw/ab-testing';
 const manager = new ABTestManager();
 manager.registerTest({
   id: 'production_test',
@@ -376,7 +376,7 @@ run_production_tests() {
     # Test 4: A/B testing
     log "INFO" "Test 4: A/B testing"
     bun -e "
-import { ABTestManager } from './lib/ab-testing/manager.ts';
+import { ABTestManager } from '@fw/ab-testing';
 const manager = new ABTestManager();
 manager.registerTest({ id: 'prod_test', variants: ['A', 'B'], weights: [50, 50] });
 const variant = manager.getVariant('prod_test');

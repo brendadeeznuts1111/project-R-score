@@ -256,7 +256,33 @@ export async function quickPurge(pattern: string, scope = 'FACTORY'): Promise<Pu
 }
 
 // ============================================================================
-// EXPORTS
+// RE-EXPORTS
 // ============================================================================
+
+export {
+  type ScanResult,
+  type ValidationReport,
+  PATTERNS,
+  executeRipgrep,
+  parseRipgrepOutput,
+  scanDirectory,
+  generateSuggestions,
+  formatReport,
+  checkRipgrepAvailability,
+} from './utils';
+
+export {
+  type RipgrepSchema,
+  type RipgrepDefaults,
+  type RipgrepGrepConfig,
+  type RipgrepFullConfig,
+  DEFAULT_SCHEMA,
+  DEFAULT_DEFAULTS,
+  DEFAULT_GREP_CONFIG,
+  DEFAULT_CONFIG,
+  PRESET_CONFIGS,
+  ConfigValidator,
+  ConfigManager,
+} from './config';
 
 export default RipgrepEngine;

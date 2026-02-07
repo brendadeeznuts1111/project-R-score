@@ -29,6 +29,34 @@
         "typescript": "^5.9.3",
       },
     },
+    "packages/ab-testing": {
+      "name": "@fw/ab-testing",
+      "version": "0.1.0",
+    },
+    "packages/business": {
+      "name": "@fw/business",
+      "version": "0.1.0",
+    },
+    "packages/guards": {
+      "name": "@fw/guards",
+      "version": "0.1.0",
+    },
+    "packages/p2p": {
+      "name": "@fw/p2p",
+      "version": "0.1.0",
+    },
+    "packages/package": {
+      "name": "@fw/package",
+      "version": "0.1.0",
+    },
+    "packages/rip": {
+      "name": "@fw/rip",
+      "version": "0.1.0",
+    },
+    "packages/versioning": {
+      "name": "@fw/versioning",
+      "version": "0.1.0",
+    },
   },
   "packages": {
     "@dagrejs/dagre": ["@dagrejs/dagre@1.1.8", "", { "dependencies": { "@dagrejs/graphlib": "2.2.4" } }, "sha512-5SEDlndt4W/LaVzPYJW+bSmSEZc9EzTf8rJ20WCKvjS5EAZAN0b+x0Yww7VMT4R3Wootkg+X9bUfUxazYw6Blw=="],
@@ -52,6 +80,20 @@
     "@eslint/object-schema": ["@eslint/object-schema@2.1.7", "", {}, "sha512-VtAOaymWVfZcmZbp6E2mympDIHvyjXs/12LqWYjVw6qjrfF+VK+fyG33kChz3nnK+SU5/NeHOqrTEHS8sXO3OA=="],
 
     "@eslint/plugin-kit": ["@eslint/plugin-kit@0.4.1", "", { "dependencies": { "@eslint/core": "^0.17.0", "levn": "^0.4.1" } }, "sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA=="],
+
+    "@fw/ab-testing": ["@fw/ab-testing@workspace:packages/ab-testing"],
+
+    "@fw/business": ["@fw/business@workspace:packages/business"],
+
+    "@fw/guards": ["@fw/guards@workspace:packages/guards"],
+
+    "@fw/p2p": ["@fw/p2p@workspace:packages/p2p"],
+
+    "@fw/package": ["@fw/package@workspace:packages/package"],
+
+    "@fw/rip": ["@fw/rip@workspace:packages/rip"],
+
+    "@fw/versioning": ["@fw/versioning@workspace:packages/versioning"],
 
     "@hono/node-server": ["@hono/node-server@1.19.9", "", { "peerDependencies": { "hono": "^4" } }, "sha512-vHL6w3ecZsky+8P5MD+eFfaGTyCeOHUIFYMGpQGbrBTSmNNoxv0if69rEZ5giu36weC5saFuznL411gRX7bJDw=="],
 

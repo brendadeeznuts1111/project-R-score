@@ -11,7 +11,7 @@
 import { VersionedSecretManager } from '../lib/security/versioned-secrets.ts';
 import { SecretLifecycleManager } from '../lib/security/secret-lifecycle.ts';
 import { styled } from '../lib/theme/colors.ts';
-import { refs } from '../lib/business/reference-manager.ts';
+import { refs } from '@fw/business';
 
 const versionedManager = new VersionedSecretManager(refs);
 const lifecycleManager = new SecretLifecycleManager();

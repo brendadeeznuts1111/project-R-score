@@ -10,9 +10,9 @@
  */
 
 import Redis from 'ioredis';
-import { BusinessContinuity } from '../lib/p2p/business-continuity';
-import { CustomerNotifier } from '../lib/p2p/customer-notifier';
-import { executeBusinessMigration, handlePaymentAccountLoss } from '../lib/p2p/migration-workflow';
+import { BusinessContinuity } from '@fw/p2p';
+import { CustomerNotifier } from '@fw/p2p';
+import { executeBusinessMigration, handlePaymentAccountLoss } from '@fw/p2p';
 
 // ============================================================================
 // Redis Setup

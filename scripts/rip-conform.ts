@@ -5,7 +5,7 @@
  * Advanced purge rule generation with signature management
  */
 
-import { createRipgrepEngine } from '../lib/rip/index.js';
+import { createRipgrepEngine } from '@fw/rip';
 
 // ============================================================================
 // RIPGREP CONFORM ENGINE

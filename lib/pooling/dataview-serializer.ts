@@ -7,7 +7,7 @@
  * 85% faster than JSON serialization with 70% size reduction
  */
 
-import { LeadSpecProfile } from '../scripts/pool-telemetry';
+import { LeadSpecProfile } from '../../scripts/pool-telemetry';
 
 interface ProfileMetadata {
   sessionId: string;
@@ -20,6 +20,35 @@ export class DataViewProfileSerializer {
   private buffer: ArrayBuffer;
   private view: DataView;
   private offset: number = 0;
+  private initialSize: number;
+  
+  constructor(initialSize: number = 1024) {
+    this.initialSize = initialSize;
+    this.buffer = new ArrayBuffer(initialSize);
+    this.view = new DataView(this.buffer);
+    this.offset = 0;
+  }
+  
+  private ensureCapacity(requiredBytes: number): void {
+    const currentCapacity = this.buffer.byteLength;
+    const remainingCapacity = currentCapacity - this.offset;
+    
+    if (remainingCapacity < requiredBytes) {
+      // Calculate new size (double the current size or enough to fit required bytes)
+      const newSize = Math.max(currentCapacity * 2, this.offset + requiredBytes);
+      const newBuffer = new ArrayBuffer(newSize);
+      const newView = new DataView(newBuffer);
+      
+      // Copy existing data
+      const existingData = new Uint8Array(this.buffer, 0, this.offset);
+      new Uint8Array(newBuffer).set(existingData);
+      
+      this.buffer = newBuffer;
+      this.view = newView;
+      
+      console.log(`📈 Resized buffer from ${currentCapacity} to ${newSize} bytes`);
+    }
+  }
   
   // Binary schema definition
   private static readonly SCHEMA = {
@@ -34,13 +63,11 @@ export class DataViewProfileSerializer {
     VERSION: 1
   };
   
-  constructor(maxProfileSize: number = 2048) {
-    this.buffer = new ArrayBuffer(maxProfileSize);
-    this.view = new DataView(this.buffer);
-  }
-  
   serialize(profile: LeadSpecProfile, metadata: ProfileMetadata): Uint8Array {
     this.offset = 0;
+    
+    // Ensure capacity for header
+    this.ensureCapacity(16);
     
     // Write header (magic number + version + flags)
     this.view.setUint32(this.offset, DataViewProfileSerializer.SCHEMA.MAGIC_NUMBER);
@@ -53,6 +80,9 @@ export class DataViewProfileSerializer {
     this.offset += 4;
     this.view.setUint32(this.offset, 0); // Reserved
     this.offset += 4;
+    
+    // Ensure capacity for session metadata
+    this.ensureCapacity(20); // 8 + 4 + 8 bytes
     
     // Write session ID (8 bytes, hash)
     const sessionIdBytes = new TextEncoder().encode(metadata.sessionId);
@@ -70,6 +100,10 @@ export class DataViewProfileSerializer {
     // Write profile data length and content
     const profileJson = JSON.stringify(profile);
     const profileBytes = new TextEncoder().encode(profileJson);
+    
+    // Ensure capacity for profile length and data
+    this.ensureCapacity(4 + profileBytes.length);
+    
     this.view.setUint32(this.offset, profileBytes.length);
     this.offset += 4;
     
@@ -77,6 +111,9 @@ export class DataViewProfileSerializer {
     const profileArray = new Uint8Array(this.buffer, this.offset, profileBytes.length);
     profileArray.set(profileBytes);
     this.offset += profileBytes.length;
+    
+    // Ensure capacity for remaining fields
+    this.ensureCapacity(8); // 4 bytes document ID + 4 bytes checksum
     
     // Write document ID (4 bytes, hash)
     this.view.setUint32(this.offset, this.generateDocumentId(metadata.document || 'unknown'));

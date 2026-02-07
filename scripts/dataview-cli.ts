@@ -11,10 +11,78 @@ import { DataViewTelemetryPool } from '../lib/pooling/dataview-telemetry-pool';
 import { DataViewStreamProcessor } from '../lib/pooling/dataview-stream-processor';
 import { LeadSpecProfile } from './pool-telemetry';
 
+// Define ProfileMetadata interface to match serializer
+interface ProfileMetadata {
+  sessionId: string;
+  member?: string;
+  timestamp?: number;
+  document?: string;
+}
+
 // CLI arguments
 const command = process.argv[2];
 const subCommand = process.argv[3];
-const value = process.argv[4];
+const args = process.argv.slice(2);
+
+// Generate test profiles for batch operations
+function generateTestProfiles(count: number): Array<{ profile: LeadSpecProfile; metadata: ProfileMetadata }> {
+  const profiles = [];
+  for (let i = 0; i < count; i++) {
+    profiles.push({
+      profile: {
+        documentSize: 1024 + Math.floor(Math.random() * 2048),
+        parseTime: 10 + Math.random() * 20,
+        throughput: 80 + Math.random() * 40,
+        complexity: ["low", "medium", "high"][Math.floor(Math.random() * 3)],
+        tableCols: 5 + Math.floor(Math.random() * 20),
+        memory: 256 + Math.floor(Math.random() * 1024),
+        cryptoSeal: "0x" + Math.random().toString(16).substr(2, 8),
+        gfmScore: 80 + Math.random() * 20,
+        features: {
+          parsing: 80 + Math.random() * 20,
+          validation: 75 + Math.random() * 25,
+          optimization: 85 + Math.random() * 15
+        }
+      },
+      metadata: {
+        sessionId: crypto.randomUUID(),
+        member: `batch-user-${Math.floor(i / 10)}`,
+        timestamp: Date.now() + i,
+        document: `batch-doc-${i}`
+      }
+    });
+  }
+  return profiles;
+}
+
+// Memory-optimized batch handler
+async function handleMemoryOptimizedBatch(pool: DataViewTelemetryPool, count: number): Promise<void> {
+  const profiles = generateTestProfiles(count);
+  const startTime = performance.now();
+  
+  // Proactive GC control for memory optimization
+  if (typeof Bun !== 'undefined' && (Bun as any).gc) {
+    (Bun as any).gc(false); // Suggest aggressive collection NOT to run now
+  }
+  
+  try {
+    const results = await pool.batchInsertDataViewProfiles(profiles);
+    const endTime = performance.now();
+    const duration = endTime - startTime;
+    
+    console.log(`✅ Memory-optimized batch insert complete:`);
+    console.log(`   📊 Profiles inserted: ${results.length}`);
+    console.log(`   ⏱️  Duration: ${duration.toFixed(2)}ms`);
+    console.log(`   🚀 Throughput: ${(results.length / duration * 1000).toFixed(0)} profiles/sec`);
+    console.log(`   💾 Memory efficiency: Zero-copy chunking enabled`);
+    
+  } finally {
+    // Explicitly suggest cleanup after batch
+    if (typeof Bun !== 'undefined' && (Bun as any).gc) {
+      (Bun as any).gc(true); // Suggest a more aggressive collection
+    }
+  }
+}
 
 async function main() {
   console.log(`🎯 DataView CLI v3.20 - Binary Data Operations`);
@@ -32,6 +100,12 @@ async function main() {
       case 'dv-query':
         await handleDataViewQuery(pool, subCommand);
         break;
+        
+      case 'dv-batch-memory':
+      const batchSize = parseInt(subCommand) || 100;
+      console.log(`🚀 Running memory-optimized batch insert with ${batchSize} profiles...`);
+      await handleMemoryOptimizedBatch(pool, batchSize);
+      break;
         
       case 'dv-batch':
         await handleDataViewBatch(pool, parseInt(subCommand) || 100);
@@ -168,7 +242,9 @@ async function handleDataViewBatch(pool: DataViewTelemetryPool, count: number) {
   }
   
   const startTime = performance.now();
-  const results = await pool.batchInsertDataViewProfiles(profiles);
+  const results = await pool.batchInsertDataViewProfiles(
+    profiles.map(p => ({ profile: p.profile, metadata: p.metadata }))
+  );
   const latency = performance.now() - startTime;
   
   console.log(`✅ Batch insert completed:`);
@@ -229,6 +305,8 @@ async function handleDataViewExport(pool: DataViewTelemetryPool) {
 
 async function handleDataViewStream(pool: DataViewTelemetryPool, streamType?: string) {
   console.log(`🌊 Processing DataView streams...`);
+  
+  const streamProcessor = new DataViewStreamProcessor();
   
   const startTime = performance.now();
   

@@ -5,7 +5,7 @@
  */
 
 import Redis from 'ioredis';
-import { BusinessContinuity } from '../lib/p2p/business-continuity';
+import { BusinessContinuity } from '@fw/p2p';
 
 const PORT = Number(Bun.env.REGISTRY_PORT ?? 3004);
 const REDIS_URL = Bun.env.REDIS_URL ?? 'redis://localhost:6379';

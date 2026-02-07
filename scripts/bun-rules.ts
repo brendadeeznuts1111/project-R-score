@@ -5,9 +5,7 @@
  * Advanced rule management for code validation and transmutation
  */
 
-import { createRipgrepEngine } from '../lib/rip/index.js';
-import { scanDirectory, formatReport, checkRipgrepAvailability } from '../lib/rip/utils.js';
-import { ConfigManager, PRESET_CONFIGS } from '../lib/rip/config.js';
+import { createRipgrepEngine, scanDirectory, formatReport, checkRipgrepAvailability, ConfigManager, PRESET_CONFIGS } from '@fw/rip';
 
 // ============================================================================
 // RULES ENGINE

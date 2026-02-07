@@ -5,13 +5,13 @@
  */
 
 // Import only the pure functions we need for testing
-import { 
-  classifyHabits, 
-  calculateBonus, 
-  getRecommendation, 
+import {
+  classifyHabits,
+  calculateBonus,
+  getRecommendation,
   applyVipRiskOverride,
-  type HabitsData 
-} from '../lib/business/habits-pure.ts';
+  type HabitsData
+} from '@fw/business';
 
 console.log('╔════════════════════════════════════════════════════════════╗');
 console.log('║  🎯 Habits Classification Test                             ║');

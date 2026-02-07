@@ -15,7 +15,7 @@
 
 import Redis from 'ioredis';
 import crypto from 'node:crypto';
-import { getHabits, storeHabits, classifyHabits, calculateBonus, type HabitsData } from '../lib/business/habits-classifier.ts';
+import { getHabits, storeHabits, classifyHabits, calculateBonus, type HabitsData } from '@fw/business';
 
 // ============================================================================
 // Configuration

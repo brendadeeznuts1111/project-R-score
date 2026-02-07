@@ -1,0 +1,357 @@
+/**
+ * FactoryWager Print Styles
+ * Optimized layouts for printing dashboards and reports
+ */
+
+@media print {
+  /* ============================================
+     RESET FOR PRINT
+     ============================================ */
+  
+  * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  
+  /* ============================================
+     HIDE INTERACTIVE ELEMENTS
+     ============================================ */
+  
+  .fw-header,
+  .fw-footer,
+  .theme-switcher,
+  .btn,
+  .dropdown,
+  .modal-overlay,
+  .toast-container,
+  .skip-link,
+  [data-shortcut]::after,
+  .notification-bell,
+  .fw-theme-toggle,
+  .sidebar-nav,
+  .view-selector,
+  .chart-legend,
+  .table-actions,
+  .pagination,
+  .no-print {
+    display: none !important;
+  }
+  
+  /* ============================================
+     PAGE SETUP
+     ============================================ */
+  
+  @page {
+    margin: 1.5cm;
+    size: auto;
+  }
+  
+  body {
+    font-size: 12pt;
+    line-height: 1.5;
+    color: #000;
+    background: #fff;
+  }
+  
+  /* ============================================
+     LINKS
+     ============================================ */
+  
+  a {
+    text-decoration: underline;
+  }
+  
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+  
+  a[href^="#"]::after,
+  a[href^="javascript:"]::after {
+    content: "";
+  }
+  
+  /* ============================================
+     LAYOUT
+     ============================================ */
+  
+  .container,
+  .fw-main,
+  .dashboard-container,
+  .dashboard-grid {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .dashboard-sidebar {
+    display: none;
+  }
+  
+  .dashboard-main {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+  
+  /* ============================================
+     CARDS & PANELS
+     ============================================ */
+  
+  .card,
+  .panel,
+  .stat-card,
+  .kpi-card,
+  .chart-container {
+    border: 1px solid #ccc !important;
+    break-inside: avoid;
+    margin-bottom: 1rem;
+    padding: 1rem;
+  }
+  
+  .card:hover,
+  .panel:hover {
+    transform: none !important;
+  }
+  
+  /* ============================================
+     TABLES
+     ============================================ */
+  
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .data-table th,
+  .data-table td {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    text-align: left;
+  }
+  
+  .data-table th {
+    background: #f0f0f0 !important;
+    font-weight: bold;
+  }
+  
+  .data-table tr {
+    page-break-inside: avoid;
+  }
+  
+  /* ============================================
+     CHARTS
+     ============================================ */
+  
+  .chart-container {
+    page-break-inside: avoid;
+  }
+  
+  .sparkline,
+  .bar-chart,
+  .line-chart {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  
+  .bar-chart-bar {
+    background: #333 !important;
+  }
+  
+  /* ============================================
+     STATUS INDICATORS
+     ============================================ */
+  
+  .badge,
+  .status {
+    border: 1px solid #999;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .badge-success,
+  .status-online {
+    border-color: #28a745;
+  }
+  
+  .badge-warning,
+  .status-away {
+    border-color: #ffc107;
+  }
+  
+  .badge-error,
+  .status-busy {
+    border-color: #dc3545;
+  }
+  
+  .status-dot {
+    border: 2px solid currentColor;
+  }
+  
+  /* ============================================
+     TEXT UTILITIES
+     ============================================ */
+  
+  .text-primary,
+  .text-secondary,
+  .text-muted {
+    color: #000 !important;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    page-break-inside: avoid;
+  }
+  
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  
+  /* ============================================
+     GRID LAYOUTS FOR PRINT
+     ============================================ */
+  
+  .stats-grid,
+  .kpi-grid,
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .dashboard-grid {
+    display: block;
+  }
+  
+  .dashboard-column {
+    page-break-inside: avoid;
+  }
+  
+  /* ============================================
+     PRINT HEADER
+     ============================================ */
+  
+  .print-header {
+    display: block !important;
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #000;
+  }
+  
+  .print-header h1 {
+    font-size: 24pt;
+    margin-bottom: 0.5rem;
+  }
+  
+  .print-header .print-date {
+    font-size: 10pt;
+    color: #666;
+  }
+  
+  /* ============================================
+     PRINT FOOTER
+     ============================================ */
+  
+  .print-footer {
+    display: block !important;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 9pt;
+    color: #666;
+    padding: 0.5rem;
+    border-top: 1px solid #ccc;
+  }
+  
+  /* ============================================
+     QR CODE PLACEHOLDER
+     ============================================ */
+  
+  .qr-placeholder {
+    width: 100px;
+    height: 100px;
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8pt;
+    text-align: center;
+  }
+  
+  /* ============================================
+     SIGNATURE AREA
+     ============================================ */
+  
+  .signature-area {
+    margin-top: 3rem;
+    page-break-inside: avoid;
+  }
+  
+  .signature-line {
+    border-top: 1px solid #000;
+    width: 300px;
+    margin-top: 2rem;
+    padding-top: 0.5rem;
+    font-size: 10pt;
+  }
+  
+  /* ============================================
+     PAGE BREAK UTILITIES
+     ============================================ */
+  
+  .page-break {
+    page-break-before: always;
+  }
+  
+  .page-break-after {
+    page-break-after: always;
+  }
+  
+  .no-page-break {
+    page-break-inside: avoid;
+  }
+}
+
+/* ============================================
+   PRINT PREVIEW BUTTON (screen only)
+   ============================================ */
+
+@media screen {
+  .print-only {
+    display: none;
+  }
+  
+  .print-button {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-primary-500);
+    color: white;
+    border: none;
+    box-shadow: var(--shadow-lg);
+    cursor: pointer;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    z-index: 100;
+  }
+  
+  .print-button:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-xl);
+  }
+  
+  .print-button:active {
+    transform: scale(0.95);
+  }
+}

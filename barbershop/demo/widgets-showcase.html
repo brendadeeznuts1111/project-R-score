@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FactoryWager Widgets Showcase</title>
+  <link rel="stylesheet" href="../themes/css/animations.css">
+  <link rel="stylesheet" href="../themes/css/components.css">
+  <link rel="stylesheet" href="../themes/css/icons.css">
+  <link rel="stylesheet" href="../themes/css/dashboard-widgets.css">
+  <link rel="stylesheet" href="../themes/css/keyboard.css">
+  <link rel="stylesheet" href="../themes/css/print.css">
+  <style>
+    :root {
+      --color-primary-500: hsl(210 100% 50%);
+      --color-secondary-500: hsl(175 80% 45%);
+      --color-success-500: hsl(145 80% 45%);
+      --color-warning-500: hsl(30 100% 50%);
+      --color-error-500: hsl(0 85% 55%);
+      --color-background-primary: hsl(0 0% 100%);
+      --color-background-secondary: hsl(220 14% 96%);
+      --color-text-primary: hsl(220 43% 11%);
+      --color-text-secondary: hsl(220 14% 35%);
+      --color-border-light: hsl(220 14% 90%);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--color-background-secondary);
+      color: var(--color-text-primary);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--color-primary-500), var(--color-secondary-500));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .section {
+      margin-bottom: 3rem;
+    }
+
+    .section h2 {
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--color-border-light);
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* Demo styles for widgets */
+    .demo-stat-card { composes: stat-card; }
+    .demo-chart-container { composes: chart-container; }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+  
+  <div class="container">
+    <header class="header">
+      <h1>📊 Dashboard Widgets Showcase</h1>
+      <p>Charts • Tables • Stats • Visualizations</p>
+    </header>
+
+    <main id="main">
+      <!-- Stat Cards -->
+      <section class="section">
+        <h2>Stat Cards</h2>
+        <div class="grid-4">
+          <div class="stat-card">
+            <div class="stat-icon primary">💰</div>
+            <div class="stat-content">
+              <div class="stat-value">$24,500</div>
+              <div class="stat-label">Total Revenue</div>
+              <div class="stat-change positive">↑ 12% from last month</div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon success">✂️</div>
+            <div class="stat-content">
+              <div class="stat-value">142</div>
+              <div class="stat-label">Haircuts Today</div>
+              <div class="stat-change positive">↑ 8% from yesterday</div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon warning">👥</div>
+            <div class="stat-content">
+              <div class="stat-value">18</div>
+              <div class="stat-label">In Queue</div>
+              <div class="stat-change negative">↑ 3 from last hour</div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon secondary">⭐</div>
+            <div class="stat-content">
+              <div class="stat-value">4.8</div>
+              <div class="stat-label">Avg Rating</div>
+              <div class="stat-change positive">↑ 0.2 this week</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Charts -->
+      <section class="section">
+        <h2>Charts</h2>
+        <div class="grid-2">
+          <div class="chart-container">
+            <div class="chart-header">
+              <h4>Weekly Revenue</h4>
+              <div class="chart-legend">
+                <span class="legend-item">
+                  <span class="legend-dot" style="background: var(--color-primary-500);"></span>
+                  This Week
+                </span>
+              </div>
+            </div>
+            <div class="chart-body">
+              <div class="bar-chart">
+                <div class="bar-chart-item">
+                  <div class="bar-chart-bar" style="height: 60%;" data-value="$3,200"></div>
+                  <div class="bar-chart-label">Mon</div>
+                </div>
+                <div class="bar-chart-item">
+                  <div class="bar-chart-bar" style="height: 80%;" data-value="$4,100"></div>
+                  <div class="bar-chart-label">Tue</div>
+                </div>
+                <div class="bar-chart-item">
+                  <div class="bar-chart-bar" style="height: 45%;" data-value="$2,800"></div>
+                  <div class="bar-chart-label">Wed</div>
+                </div>
+                <div class="bar-chart-item">
+                  <div class="bar-chart-bar" style="height: 90%;" data-value="$4,800"></div>
+                  <div class="bar-chart-label">Thu</div>
+                </div>
+                <div class="bar-chart-item">
+                  <div class="bar-chart-bar" style="height: 100%;" data-value="$5,200"></div>
+                  <div class="bar-chart-label">Fri</div>
+                </div>
+                <div class="bar-chart-item">
+                  <div class="bar-chart-bar" style="height: 70%;" data-value="$3,800"></div>
+                  <div class="bar-chart-label">Sat</div>
+                </div>
+                <div class="bar-chart-item">
+                  <div class="bar-chart-bar" style="height: 30%;" data-value="$1,600"></div>
+                  <div class="bar-chart-label">Sun</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-container">
+            <div class="chart-header">
+              <h4>Sparkline Trends</h4>
+            </div>
+            <div class="chart-body" style="display: flex; flex-direction: column; gap: 1.5rem; justify-content: center;">
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                  <span style="font-size: 0.875rem;">Revenue Trend</span>
+                  <span style="font-size: 0.875rem; color: var(--color-success-500); font-weight: 600;">+15%</span>
+                </div>
+                <div class="sparkline positive">
+                  <div class="sparkline-bar" style="height: 40%;"></div>
+                  <div class="sparkline-bar" style="height: 60%;"></div>
+                  <div class="sparkline-bar" style="height: 45%;"></div>
+                  <div class="sparkline-bar" style="height: 80%;"></div>
+                  <div class="sparkline-bar" style="height: 70%;"></div>
+                  <div class="sparkline-bar" style="height: 90%;"></div>
+                  <div class="sparkline-bar" style="height: 100%;"></div>
+                  <div class="sparkline-bar" style="height: 85%;"></div>
+                </div>
+              </div>
+              
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                  <span style="font-size: 0.875rem;">Wait Time</span>
+                  <span style="font-size: 0.875rem; color: var(--color-error-500); font-weight: 600;">-8%</span>
+                </div>
+                <div class="sparkline negative">
+                  <div class="sparkline-bar" style="height: 100%;"></div>
+                  <div class="sparkline-bar" style="height: 80%;"></div>
+                  <div class="sparkline-bar" style="height: 90%;"></div>
+                  <div class="sparkline-bar" style="height: 60%;"></div>
+                  <div class="sparkline-bar" style="height: 70%;"></div>
+                  <div class="sparkline-bar" style="height: 45%;"></div>
+                  <div class="sparkline-bar" style="height: 30%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Data Table -->
+      <section class="section">
+        <h2>Data Table</h2>
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th class="sortable">Barber</th>
+                <th class="sortable">Services</th>
+                <th class="sortable">Revenue</th>
+                <th class="sortable">Rating</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="cell-strong">Marcus Johnson</td>
+                <td>42</td>
+                <td class="cell-strong">$2,840</td>
+                <td>⭐⭐⭐⭐⭐</td>
+                <td><span class="badge badge-success">Active</span></td>
+              </tr>
+              <tr>
+                <td class="cell-strong">Sarah Chen</td>
+                <td>38</td>
+                <td class="cell-strong">$2,560</td>
+                <td>⭐⭐⭐⭐⭐</td>
+                <td><span class="badge badge-success">Active</span></td>
+              </tr>
+              <tr>
+                <td class="cell-strong">David Wilson</td>
+                <td>35</td>
+                <td class="cell-strong">$2,100</td>
+                <td>⭐⭐⭐⭐</td>
+                <td><span class="badge" style="background: var(--color-warning-100); color: var(--color-warning-700);">Break</span></td>
+              </tr>
+              <tr>
+                <td class="cell-strong">Emily Brown</td>
+                <td>29</td>
+                <td class="cell-strong">$1,850</td>
+                <td>⭐⭐⭐⭐⭐</td>
+                <td><span class="badge badge-success">Active</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="table-footer">
+            <span class="table-info">Showing 1-4 of 8 barbers</span>
+            <div class="pagination">
+              <a href="#" class="page-item disabled">←</a>
+              <a href="#" class="page-item active">1</a>
+              <a href="#" class="page-item">2</a>
+              <a href="#" class="page-item">→</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Timeline -->
+      <section class="section">
+        <h2>Activity Timeline</h2>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot success"></div>
+            <div class="timeline-content">
+              <div class="timeline-time">2:30 PM</div>
+              <div class="timeline-title">Haircut Completed</div>
+              <div class="timeline-desc">Marcus completed a haircut for John Doe - $35</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <div class="timeline-time">2:15 PM</div>
+              <div class="timeline-title">New Appointment</div>
+              <div class="timeline-desc">Jane Smith booked a beard trim for 3:00 PM</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot warning"></div>
+            <div class="timeline-content">
+              <div class="timeline-time">2:00 PM</div>
+              <div class="timeline-title">Payment Processed</div>
+              <div class="timeline-desc">Bundle payment of $67.50 processed successfully</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Activity Feed -->
+      <section class="section">
+        <h2>Activity Feed</h2>
+        <div class="activity-feed">
+          <div class="activity-item">
+            <div class="activity-avatar">MJ</div>
+            <div class="activity-content">
+              <div class="activity-text"><strong>Marcus Johnson</strong> completed a <strong>Haircut & Beard Trim</strong></div>
+              <div class="activity-meta">2 minutes ago • $45</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-avatar">SC</div>
+            <div class="activity-content">
+              <div class="activity-text"><strong>Sarah Chen</strong> started a new <strong>Color Treatment</strong></div>
+              <div class="activity-meta">5 minutes ago</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-avatar">💰</div>
+            <div class="activity-content">
+              <div class="activity-text"><strong>Daily goal reached!</strong> $2,000 revenue target exceeded</div>
+              <div class="activity-meta">15 minutes ago</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Heatmap -->
+      <section class="section">
+        <h2>Activity Heatmap</h2>
+        <div class="chart-container" style="max-width: 400px;">
+          <div class="chart-header">
+            <h4>Weekly Activity</h4>
+          </div>
+          <div class="heatmap" style="grid-template-columns: repeat(7, 1fr); gap: 4px;">
+            <!-- Week rows -->
+            <div class="heatmap-cell level-2" title="Mon: Low activity"></div>
+            <div class="heatmap-cell level-3" title="Tue: Moderate"></div>
+            <div class="heatmap-cell level-5" title="Wed: Peak"></div>
+            <div class="heatmap-cell level-4" title="Thu: High"></div>
+            <div class="heatmap-cell level-5" title="Fri: Peak"></div>
+            <div class="heatmap-cell level-3" title="Sat: Moderate"></div>
+            <div class="heatmap-cell level-1" title="Sun: Low"></div>
+            
+            <div class="heatmap-cell level-1"></div>
+            <div class="heatmap-cell level-2"></div>
+            <div class="heatmap-cell level-4"></div>
+            <div class="heatmap-cell level-5"></div>
+            <div class="heatmap-cell level-4"></div>
+            <div class="heatmap-cell level-3"></div>
+            <div class="heatmap-cell level-1"></div>
+            
+            <div class="heatmap-cell level-2"></div>
+            <div class="heatmap-cell level-3"></div>
+            <div class="heatmap-cell level-4"></div>
+            <div class="heatmap-cell level-3"></div>
+            <div class="heatmap-cell level-5"></div>
+            <div class="heatmap-cell level-4"></div>
+            <div class="heatmap-cell level-2"></div>
+            
+            <div class="heatmap-cell level-3"></div>
+            <div class="heatmap-cell level-4"></div>
+            <div class="heatmap-cell level-5"></div>
+            <div class="heatmap-cell level-4"></div>
+            <div class="heatmap-cell level-3"></div>
+            <div class="heatmap-cell level-2"></div>
+            <div class="heatmap-cell level-1"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-top: 1rem; font-size: 0.75rem; color: var(--color-text-muted);">
+            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Keyboard Shortcuts -->
+      <section class="section no-print">
+        <h2>Keyboard Shortcuts</h2>
+        <div class="shortcuts-help">
+          <div class="shortcuts-category">
+            <h4>Navigation</h4>
+            <div class="shortcuts-list">
+              <div class="shortcut-item">
+                <span class="shortcut-action">Go to Dashboard</span>
+                <span class="shortcut-keys"><kbd>g</kbd> <kbd>d</kbd></span>
+              </div>
+              <div class="shortcut-item">
+                <span class="shortcut-action">Go to Clients</span>
+                <span class="shortcut-keys"><kbd>g</kbd> <kbd>c</kbd></span>
+              </div>
+              <div class="shortcut-item">
+                <span class="shortcut-action">Go to Barbers</span>
+                <span class="shortcut-keys"><kbd>g</kbd> <kbd>b</kbd></span>
+              </div>
+            </div>
+          </div>
+          <div class="shortcuts-category">
+            <h4>Actions</h4>
+            <div class="shortcuts-list">
+              <div class="shortcut-item">
+                <span class="shortcut-action">New Booking</span>
+                <span class="shortcut-keys"><kbd>Ctrl</kbd> <kbd>n</kbd></span>
+              </div>
+              <div class="shortcut-item">
+                <span class="shortcut-action">Search</span>
+                <span class="shortcut-keys"><kbd>Ctrl</kbd> <kbd>k</kbd></span>
+              </div>
+              <div class="shortcut-item">
+                <span class="shortcut-action">Print</span>
+                <span class="shortcut-keys"><kbd>Ctrl</kbd> <kbd>p</kbd></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Print Button -->
+  <button class="print-button no-print" onclick="window.print()" title="Print this page">
+    🖨
+  </button>
+
+  <!-- Print Header (hidden on screen) -->
+  <div class="print-header print-only">
+    <h1>Barbershop Dashboard Report</h1>
+    <p class="print-date">Generated: <span id="printDate"></span></p>
+  </div>
+
+  <script>
+    // Set print date
+    document.getElementById('printDate').textContent = new Date().toLocaleString();
+    
+    // Add keyboard shortcut demo
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.key === 'p') {
+        e.preventDefault();
+        window.print();
+      }
+    });
+  </script>
+</body>
+</html>

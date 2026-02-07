@@ -7,7 +7,7 @@
  * and enhanced documentation workflows.
  */
 
-import { PackageManager, type PackageInfo } from '../lib/package/package-manager.ts';
+import { PackageManager, type PackageInfo } from '@fw/package';
 import { R2Storage, type R2StorageConfig } from '../lib/r2/r2-storage-enhanced.ts';
 import { RSSManager, type RSSFeed } from '../lib/rss/rss-manager.ts';
 

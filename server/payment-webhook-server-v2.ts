@@ -15,13 +15,13 @@
 import Redis from 'ioredis';
 import crypto from 'node:crypto';
 import { Pinecone } from '@pinecone-database/pinecone';
-import { 
-  getHabits, 
-  calculateBonus, 
+import {
+  getHabits,
+  calculateBonus,
   getRecommendation,
   applyVipRiskOverride,
-  type HabitsData 
-} from '../lib/business/habits-classifier.ts';
+  type HabitsData
+} from '@fw/business';
 
 // ============================================================================
 // Configuration
