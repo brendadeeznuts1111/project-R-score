@@ -90,13 +90,13 @@ export class DocumentationAwarePerformanceAnalyzer {
 
     if (hostname === "bun.sh" || hostname === "bun.com" || hostname.endsWith(".bun.sh"))
       return DocumentationProvider.BUN_OFFICIAL;
-    if (hostname.includes("github.com"))
+    if (hostname === "github.com" || hostname.endsWith(".github.com"))
       return DocumentationProvider.GITHUB;
-    if (hostname.includes("npmjs.com") || hostname.includes("npm.im"))
+    if (hostname === "npmjs.com" || hostname === "www.npmjs.com" || hostname === "npm.im")
       return DocumentationProvider.NPM;
-    if (hostname.includes("developer.mozilla.org"))
+    if (hostname === "developer.mozilla.org")
       return DocumentationProvider.MDN_WEB_DOCS;
-    if (hostname.includes("nodejs.org"))
+    if (hostname === "nodejs.org" || hostname.endsWith(".nodejs.org"))
       return DocumentationProvider.NODE_JS;
 
     return DocumentationProvider.COMMUNITY;
@@ -118,11 +118,11 @@ export class DocumentationAwarePerformanceAnalyzer {
 
     if (u.pathname.startsWith("/docs") || u.pathname.startsWith("/api"))
       return UrlType.DOCUMENTATION;
-    if (u.hostname.includes("github.com"))
+    if (u.hostname === "github.com" || u.hostname.endsWith(".github.com"))
       return UrlType.REPOSITORY;
-    if (u.hostname.includes("npmjs.com"))
+    if (u.hostname === "npmjs.com" || u.hostname === "www.npmjs.com")
       return UrlType.PACKAGE;
-    if (u.hostname.includes("cdn.") || u.hostname.includes("jsdelivr") || u.hostname.includes("unpkg"))
+    if (u.hostname.startsWith("cdn.") || u.hostname === "cdn.jsdelivr.net" || u.hostname.endsWith(".jsdelivr.net") || u.hostname === "unpkg.com")
       return UrlType.CDN;
     if (u.pathname === "/" || u.pathname === "")
       return UrlType.MARKETING;

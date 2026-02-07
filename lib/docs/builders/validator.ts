@@ -157,18 +157,19 @@ export class EnhancedDocumentationURLValidator {
       const parsed = new URL(url);
       const hostname = parsed.hostname.toLowerCase();
       
-      if (hostname.includes('bun.sh')) {
-        return DocumentationDomain.BUN_SH;
-      } else if (hostname.includes('bun.com')) {
-        return DocumentationDomain.BUN_COM;
-      } else if (hostname.includes('bun.dev')) {
-        return DocumentationDomain.BUN_DEV;
-      } else if (hostname.includes('bun.io')) {
-        return DocumentationDomain.BUN_IO;
-      } else if (hostname.includes('docs.bun.sh')) {
+      // Check specific subdomains before their parent domains
+      if (hostname === 'docs.bun.sh') {
         return DocumentationDomain.BUN_DOCS;
-      } else if (hostname.includes('cdn.bun.sh')) {
+      } else if (hostname === 'cdn.bun.sh') {
         return DocumentationDomain.BUN_CDN;
+      } else if (hostname === 'bun.sh' || hostname.endsWith('.bun.sh')) {
+        return DocumentationDomain.BUN_SH;
+      } else if (hostname === 'bun.com' || hostname.endsWith('.bun.com')) {
+        return DocumentationDomain.BUN_COM;
+      } else if (hostname === 'bun.dev' || hostname.endsWith('.bun.dev')) {
+        return DocumentationDomain.BUN_DEV;
+      } else if (hostname === 'bun.io' || hostname.endsWith('.bun.io')) {
+        return DocumentationDomain.BUN_IO;
       }
       
     } catch {
@@ -225,7 +226,7 @@ export class EnhancedDocumentationURLValidator {
       }
       
       // Check for GitHub
-      if (parsed.hostname.includes('github.com')) {
+      if (parsed.hostname === 'github.com' || parsed.hostname.endsWith('.github.com')) {
         return DocumentationProvider.GITHUB_PUBLIC;
       }
       
@@ -433,7 +434,7 @@ export class EnhancedDocumentationURLValidator {
     try {
       const parsed = new URL(url);
       
-      if (!parsed.hostname.includes('github.com')) {
+      if (parsed.hostname !== 'github.com' && !parsed.hostname.endsWith('.github.com')) {
         return { isValid: false };
       }
       

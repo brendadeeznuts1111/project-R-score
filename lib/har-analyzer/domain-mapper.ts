@@ -279,7 +279,7 @@ export function classifyDomain(entryHost: string, pageHost: string): DomainType 
 export function classifyAssetGroup(mimeType: string, isFirstRequest: boolean): AssetGroup {
   if (isFirstRequest) return "critical";
 
-  const lower = mimeType.toLowerCase();
+  const lower = mimeType.trim().toLowerCase();
   if (lower.includes("text/html")) return "critical";
   if (lower.includes("text/css")) return "critical";
 
@@ -299,11 +299,27 @@ export function classifyAssetGroup(mimeType: string, isFirstRequest: boolean): A
 // ─── DocumentationMapper ─────────────────────────────────────────────
 
 export class DocumentationMapper {
+  private static hostMatches(hostname: string, domain: string): boolean {
+    return hostname === domain || hostname.endsWith("." + domain);
+  }
+
   static getProvider(url: string): DocumentationProvider {
     try {
-      const full = new URL(url).href;
+      const parsed = new URL(url);
+      const host = parsed.hostname;
+      const pathname = parsed.pathname;
       for (const [pattern, provider] of PROVIDER_MAP) {
-        if (full.includes(pattern)) return provider;
+        const slashIdx = pattern.indexOf("/");
+        if (slashIdx !== -1) {
+          // Pattern has host + path (e.g. "github.com/oven-sh/bun")
+          const patternHost = pattern.slice(0, slashIdx);
+          const patternPath = pattern.slice(slashIdx);
+          if (this.hostMatches(host, patternHost) && (pathname === patternPath || pathname.startsWith(patternPath + "/"))) {
+            return provider;
+          }
+        } else {
+          if (this.hostMatches(host, pattern)) return provider;
+        }
       }
     } catch {
       // malformed URL
@@ -329,10 +345,10 @@ export class DocumentationMapper {
       for (const [pattern, urlType] of URL_TYPE_MAP) {
         if (pathname.includes(pattern)) return urlType;
       }
-      // Hostname-based fallback
+      // Hostname-based fallback — exact domain match to avoid false positives
       const host = new URL(url).hostname;
-      if (host.includes("github.com")) return UrlType.GITHUB_SOURCE;
-      if (host.includes("npmjs.com")) return UrlType.NPM_PACKAGE;
+      if (host === "github.com" || host.endsWith(".github.com")) return UrlType.GITHUB_SOURCE;
+      if (host === "npmjs.com" || host === "www.npmjs.com") return UrlType.NPM_PACKAGE;
     } catch {
       // malformed URL
     }

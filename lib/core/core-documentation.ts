@@ -2111,7 +2111,7 @@ export class DocumentationURLValidator {
     try {
       const parsed = new URL(url);
 
-      if (!parsed.hostname.includes('github.com')) {
+      if (parsed.hostname !== 'github.com' && !parsed.hostname.endsWith('.github.com')) {
         return { isValid: false };
       }
 

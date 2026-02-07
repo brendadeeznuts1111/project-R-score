@@ -252,7 +252,7 @@ class GitDependencySecurityLayer {
       const url = new URL(spec);
       return {
         url: spec,
-        isGitHub: url.hostname.includes("github.com"),
+        isGitHub: url.hostname === "github.com" || url.hostname.endsWith(".github.com"),
         resolvedFrom: spec
       };
     } catch {

@@ -1,0 +1,153 @@
+name: barbershop
+description: |
+  Barbershop project development and operations skill.
+  Provides quick access to common development tasks, performance profiling,
+  security auditing, and monitoring operations.
+
+triggers:
+  - barber
+  - barbershop
+  - dashboard
+  - ticket
+  - secret
+  - vault
+  - profile
+  - benchmark
+
+actions:
+  # Development
+  - name: start-server
+    description: Start the barber server
+    command: bun run src/core/barber-server.ts
+    
+  - name: start-dashboard
+    description: Start the dashboard
+    command: bun run src/core/barbershop-dashboard.ts
+    
+  - name: dev-server
+    description: Start server with hot reload
+    command: bun --hot src/core/barber-server.ts
+    
+  - name: dev-dashboard
+    description: Start dashboard with hot reload
+    command: bun --hot src/core/barbershop-dashboard.ts
+
+  # Testing
+  - name: test-all
+    description: Run all tests
+    command: bun test tests/unit/ tests/integration/
+    
+  - name: test-unit
+    description: Run unit tests only
+    command: bun test tests/unit/
+    
+  - name: test-integration
+    description: Run integration tests only
+    command: bun test tests/integration/
+
+  # Performance & Profiling
+  - name: profile-cpu
+    description: Generate CPU profile with markdown output
+    command: bun --cpu-prof --cpu-prof-md run src/core/barber-server.ts
+    
+  - name: profile-heap
+    description: Generate heap profile with markdown output
+    command: bun --heap-prof --heap-prof-md run src/core/barber-server.ts
+    
+  - name: profile-sampling
+    description: Run sampling profile
+    command: bun run src/profile/sampling-profile.ts
+    
+  - name: profile-quick
+    description: Quick sampling profile (10s)
+    command: bun run src/profile/sampling-profile.ts --quick
+    
+  - name: benchmark
+    description: Run benchmark suite
+    command: bun run src/debug/benchmark.ts
+    
+  - name: benchmark-websocket
+    description: Benchmark WebSocket performance
+    command: bun run scripts/analysis/ws-secrets-bench.ts --connections 100 --duration 60
+
+  # Security
+  - name: secrets-field
+    description: Compute secrets field
+    command: bun run scripts/secrets/secrets-field.ts --exposure 7.5
+    
+  - name: vault-sim
+    description: Run vault simulation
+    command: bun run scripts/secrets/vault-sim.ts --access 1M --duration 300
+    
+  - name: security-audit
+    description: Run security audit
+    command: bun run scripts/security/security-audit.ts
+    
+  - name: security-citadel
+    description: Run security citadel check
+    command: bun run scripts/security/security-citadel.ts
+
+  # Monitoring
+  - name: monitor-status
+    description: Check server health status
+    command: curl -s http://localhost:3000/api/health | jq .
+    
+  - name: monitor-runtime
+    description: Get runtime metrics
+    command: curl -s http://localhost:3000/ops/runtime | jq .
+    
+  - name: monitor-r2
+    description: Check R2 mirror status
+    command: curl -s http://localhost:3000/ops/r2-status | jq .
+
+  # Build
+  - name: build-server
+    description: Build server for production
+    command: bun build src/core/barber-server.ts --outfile dist/barber-server.js --minify --sourcemap --target=bun
+    
+  - name: build-dashboard
+    description: Build dashboard for production
+    command: bun build src/core/barbershop-dashboard.ts --outfile dist/barbershop-dashboard.js --minify --target=bun
+    
+  - name: build-meta
+    description: Build with metafile analysis
+    command: bun build src/core/barber-server.ts --outfile dist/barber-server.js --metafile=dist/meta.json --target=bun
+
+  # Operations
+  - name: ops-monitor
+    description: Monitor secret expirations
+    command: bun run scripts/operations/monitor-expirations.ts
+    
+  - name: ops-lifecycle
+    description: Run lifecycle operations
+    command: bun run scripts/operations/factorywager-lifecycle.ts
+    
+  - name: ops-rollback
+    description: Test rollback procedures
+    command: bun run scripts/operations/test-rollback.ts
+
+  # Debug
+  - name: debug-config
+    description: Debug configuration
+    command: bun run src/debug/debug-config.ts
+    
+  - name: debug-gaps
+    description: Test for system gaps
+    command: bun run src/debug/test-system-gaps.ts
+    
+  - name: debug-fix
+    description: Fix detected system gaps
+    command: bun run src/debug/fix-system-gaps.ts
+
+context:
+  project_root: /Users/nolarose/Projects/barbershop
+  source_dir: src
+  scripts_dir: scripts
+  test_dir: tests
+  docs_dir: docs
+  
+mcp_servers:
+  - name: barbershop-server
+    command: bun
+    args: ["run", "src/core/barber-server.ts", "--mcp"]
+    port: 3002

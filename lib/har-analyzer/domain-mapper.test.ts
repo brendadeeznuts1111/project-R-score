@@ -58,6 +58,17 @@ describe("DocumentationMapper", () => {
     test("should fall back to COMMUNITY for malformed URLs", () => {
       expect(DocumentationMapper.getProvider("not a url")).toBe(DocumentationProvider.COMMUNITY);
     });
+
+    test("should not false-positive on domains that contain a known hostname as a substring", () => {
+      expect(DocumentationMapper.getProvider("https://mybun.sh/docs")).toBe(DocumentationProvider.COMMUNITY);
+      expect(DocumentationMapper.getProvider("https://notbun.sh/page")).toBe(DocumentationProvider.COMMUNITY);
+      expect(DocumentationMapper.getProvider("https://fakestackoverflow.com/q")).toBe(DocumentationProvider.COMMUNITY);
+    });
+
+    test("should match subdomains of known providers", () => {
+      expect(DocumentationMapper.getProvider("https://docs.bun.sh/api")).toBe(DocumentationProvider.BUN_OFFICIAL);
+      expect(DocumentationMapper.getProvider("https://www.reddit.com/r/bun")).toBe(DocumentationProvider.REDDIT);
+    });
   });
 
   describe("getCategory", () => {
@@ -105,6 +116,11 @@ describe("DocumentationMapper", () => {
 
     test("should fall back to EXTERNAL_REFERENCE for unrecognized URLs", () => {
       expect(DocumentationMapper.getUrlType("https://example.com/page")).toBe(UrlType.EXTERNAL_REFERENCE);
+    });
+
+    test("should not false-positive on domains containing 'github.com' as a substring", () => {
+      expect(DocumentationMapper.getUrlType("https://mygithub.com/repo")).toBe(UrlType.EXTERNAL_REFERENCE);
+      expect(DocumentationMapper.getUrlType("https://notgithub.com/foo")).toBe(UrlType.EXTERNAL_REFERENCE);
     });
   });
 
@@ -180,6 +196,11 @@ describe("classifyAssetGroup", () => {
 
   test("should classify video responses as deferred", () => {
     expect(classifyAssetGroup("video/mp4", false)).toBe("deferred");
+  });
+
+  test("should handle MIME types with leading or trailing whitespace", () => {
+    expect(classifyAssetGroup("  text/html  ", false)).toBe("critical");
+    expect(classifyAssetGroup(" application/javascript ", false)).toBe("important");
   });
 });
 

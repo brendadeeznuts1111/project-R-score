@@ -640,28 +640,34 @@ export class EnumUtils {
 // ============================================
 
 export class DocumentationMapper {
+  private static hostMatch(host: string, domain: string): boolean {
+    return host === domain || host.endsWith('.' + domain);
+  }
+
   static getProviderFromUrl(url: string): DocumentationProvider {
     try {
-      const href = new URL(url).href;
+      const parsed = new URL(url);
+      const host = parsed.hostname;
+      const pathname = parsed.pathname;
 
-      if (href.includes('bun.sh')) return DocumentationProvider.BUN_OFFICIAL;
-      if (href.includes('github.com/oven-sh/bun')) return DocumentationProvider.BUN_GITHUB;
-      if (href.includes('npmjs.com/package/bun')) return DocumentationProvider.BUN_NPM;
-      if (href.includes('vercel.com')) return DocumentationProvider.VERCEL;
-      if (href.includes('netlify.com')) return DocumentationProvider.NETLIFY;
-      if (href.includes('cloudflare.com')) return DocumentationProvider.CLOUDFLARE;
-      if (href.includes('railway.app')) return DocumentationProvider.RAILWAY;
-      if (href.includes('fly.io')) return DocumentationProvider.FLY_IO;
-      if (href.includes('dev.to')) return DocumentationProvider.DEV_TO;
-      if (href.includes('medium.com')) return DocumentationProvider.MEDIUM;
-      if (href.includes('hashnode.com')) return DocumentationProvider.HASHNODE;
-      if (href.includes('reddit.com')) return DocumentationProvider.REDDIT;
-      if (href.includes('discord.com')) return DocumentationProvider.DISCORD;
-      if (href.includes('stackoverflow.com')) return DocumentationProvider.STACK_OVERFLOW;
-      if (href.includes('youtube.com') || href.includes('youtu.be')) return DocumentationProvider.VIDEO;
-      if (href.includes('npmjs.com')) return DocumentationProvider.NPM;
-      if (href.includes('deno.land')) return DocumentationProvider.DENO_LAND;
-      if (href.includes('jsr.io')) return DocumentationProvider.JSR_IO;
+      if (this.hostMatch(host, 'bun.sh')) return DocumentationProvider.BUN_OFFICIAL;
+      if (this.hostMatch(host, 'github.com') && pathname.startsWith('/oven-sh/bun')) return DocumentationProvider.BUN_GITHUB;
+      if (this.hostMatch(host, 'npmjs.com') && pathname.startsWith('/package/bun')) return DocumentationProvider.BUN_NPM;
+      if (this.hostMatch(host, 'vercel.com')) return DocumentationProvider.VERCEL;
+      if (this.hostMatch(host, 'netlify.com')) return DocumentationProvider.NETLIFY;
+      if (this.hostMatch(host, 'cloudflare.com')) return DocumentationProvider.CLOUDFLARE;
+      if (this.hostMatch(host, 'railway.app')) return DocumentationProvider.RAILWAY;
+      if (this.hostMatch(host, 'fly.io')) return DocumentationProvider.FLY_IO;
+      if (this.hostMatch(host, 'dev.to')) return DocumentationProvider.DEV_TO;
+      if (this.hostMatch(host, 'medium.com')) return DocumentationProvider.MEDIUM;
+      if (this.hostMatch(host, 'hashnode.com')) return DocumentationProvider.HASHNODE;
+      if (this.hostMatch(host, 'reddit.com')) return DocumentationProvider.REDDIT;
+      if (this.hostMatch(host, 'discord.com')) return DocumentationProvider.DISCORD;
+      if (this.hostMatch(host, 'stackoverflow.com')) return DocumentationProvider.STACK_OVERFLOW;
+      if (this.hostMatch(host, 'youtube.com') || this.hostMatch(host, 'youtu.be')) return DocumentationProvider.VIDEO;
+      if (this.hostMatch(host, 'npmjs.com')) return DocumentationProvider.NPM;
+      if (this.hostMatch(host, 'deno.land')) return DocumentationProvider.DENO_LAND;
+      if (this.hostMatch(host, 'jsr.io')) return DocumentationProvider.JSR_IO;
     } catch {
       // malformed URL
     }
@@ -713,8 +719,8 @@ export class DocumentationMapper {
       if (pathname.includes('/rss') || pathname.includes('/feed')) return UrlType.RSS_FEED;
 
       // Hostname-based fallback
-      if (host.includes('github.com')) return UrlType.GITHUB_SOURCE;
-      if (host.includes('npmjs.com')) return UrlType.NPM_PACKAGE;
+      if (this.hostMatch(host, 'github.com')) return UrlType.GITHUB_SOURCE;
+      if (this.hostMatch(host, 'npmjs.com')) return UrlType.NPM_PACKAGE;
     } catch {
       // malformed URL
     }
