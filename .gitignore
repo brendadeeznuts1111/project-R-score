@@ -75,6 +75,8 @@ temp/
 profiles/
 *.profile.json
 *-profile-*.json
+CPU.*.md
+Heap.*.md
 
 # Large data and cache directories
 cache/
