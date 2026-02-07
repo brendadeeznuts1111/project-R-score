@@ -15,11 +15,11 @@ import {
 import { Database } from 'bun:sqlite';
 import { mkdirSync } from 'node:fs';
 import { lookup } from 'node:dns/promises';
-import manifestData from './manifest.toml' with { type: 'toml' };
+import manifestData from '../../manifest.toml' with { type: 'toml' };
 import { fetchWithDefaults, isPublicHttpUrl } from '../utils/fetch-utils';
 import { renderAdminDashboard, renderBarberDashboard, renderClientDashboard } from './ui-v2';
 import { renderAdminDashboardV3, renderClientDashboardV3, renderBarberDashboardV3 } from './ui-v3';
-import { getFactorySecret } from './factory-secrets';
+import { getFactorySecret } from '../secrets/factory-secrets';
 
 const PORT_ENV_KEYS = ['BUN_PORT', 'PORT', 'NODE_PORT'] as const;
 const DEFAULT_PORT = 3000;
