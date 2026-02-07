@@ -84,6 +84,7 @@ interface WikiData {
   total: number;
   categories: Record<string, WikiCategoryData>;
   wikiPages: WikiPage[];
+  cliPages?: CLIPage[];
 }
 
 interface R2Data {
@@ -142,7 +143,206 @@ function generateSearchIndex(wikiData: WikiData): SearchIndex {
     searchIndex.categories[page.category].push(page.title);
   }
 
+  // Index CLI commands
+  if (wikiData.cliPages) {
+    for (const cliPage of wikiData.cliPages) {
+      const keywords = [
+        cliPage.title.toLowerCase(),
+        'cli',
+        cliPage.category.toLowerCase(),
+        ...cliPage.title.split(' ').map(w => w.toLowerCase()),
+      ];
+
+      searchIndex.utilities.push({
+        name: cliPage.title,
+        category: `CLI: ${cliPage.category}`,
+        description: cliPage.url,
+        keywords: [...new Set(keywords)],
+        url: cliPage.url,
+      });
+
+      const cliCatKey = `CLI: ${cliPage.category}`;
+      if (!searchIndex.categories[cliCatKey]) {
+        searchIndex.categories[cliCatKey] = [];
+      }
+      searchIndex.categories[cliCatKey].push(cliPage.title);
+    }
+  }
+
   return searchIndex;
+}
+
+/**
+ * Find a CLI command example by command name
+ */
+function findCLIExample(cmdName: string): string | undefined {
+  const allExamples = { ...CLI_COMMAND_EXAMPLES.BASIC, ...CLI_COMMAND_EXAMPLES.ADVANCED, ...CLI_COMMAND_EXAMPLES.DEVELOPMENT };
+  // Try exact match first, then case-insensitive partial match
+  const key = cmdName.toUpperCase();
+  for (const [exKey, exValue] of Object.entries(allExamples)) {
+    if (exKey === key || exKey.includes(key) || key.includes(exKey)) {
+      return exValue;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Generate CLI reference section (markdown)
+ */
+function generateCLISection(): string {
+  let content = `## 📟 CLI Reference
+
+> Auto-generated from the docs module CLI constants.
+
+`;
+
+  for (const [categoryKey, urls] of Object.entries(CLI_DOCUMENTATION_URLS)) {
+    content += `### ${categoryKey.replace(/_/g, ' ')}\n\n`;
+    content += `| Command | Documentation |\n|---------|---------------|\n`;
+
+    for (const [cmdName, path] of Object.entries(urls)) {
+      content += `| ${cmdName.replace(/_/g, ' ')} | [Docs](https://bun.sh${path}) |\n`;
+    }
+    content += '\n';
+  }
+
+  // Add example commands
+  content += `### Common Examples\n\n`;
+  content += '```bash\n';
+  for (const [, examples] of Object.entries(CLI_COMMAND_EXAMPLES)) {
+    for (const [, cmd] of Object.entries(examples)) {
+      content += `${cmd}\n`;
+    }
+  }
+  content += '```\n\n';
+
+  return content;
+}
+
+/**
+ * Generate CLI reference section (HTML)
+ */
+function generateCLISectionHTML(): string {
+  let html = `        <div class="category" id="cli-reference">
+            <h2 class="category-title">📟 CLI REFERENCE</h2>
+`;
+
+  for (const [categoryKey, urls] of Object.entries(CLI_DOCUMENTATION_URLS)) {
+    html += `            <h3 style="padding: 10px 20px; color: var(--secondary-color);">${categoryKey.replace(/_/g, ' ')}</h3>
+            <table class="utility-table">
+                <thead><tr><th>Command</th><th>Documentation</th></tr></thead>
+                <tbody>
+`;
+
+    for (const [cmdName, path] of Object.entries(urls)) {
+      html += `                    <tr>
+                        <td><strong>${cmdName.replace(/_/g, ' ')}</strong></td>
+                        <td><a href="https://bun.sh${path}" target="_blank">📚 Docs</a></td>
+                    </tr>
+`;
+    }
+    html += `                </tbody>
+            </table>
+`;
+  }
+
+  html += `        </div>\n`;
+  return html;
+}
+
+/**
+ * Generate Quick Reference section (markdown) — Step 5
+ */
+function generateQuickReferenceSection(): string {
+  let content = `## 🔖 Quick Reference
+
+> Curated documentation links across multiple formats.
+
+`;
+
+  for (const [topic, links] of Object.entries(QUICK_REFERENCE_URLS)) {
+    const topicName = topic.replace(/_/g, ' ');
+    content += `### ${topicName}\n\n`;
+
+    for (const [format, url] of Object.entries(links)) {
+      if (typeof url === 'string') {
+        content += `- **${format}**: [${url}](${url})\n`;
+      } else if (typeof url === 'object') {
+        // Nested object (e.g., INSTALLATION.PLATFORM_SPECIFIC)
+        content += `- **${format}**:\n`;
+        for (const [subKey, subUrl] of Object.entries(url)) {
+          content += `  - ${subKey}: [${subUrl}](${subUrl})\n`;
+        }
+      }
+    }
+    content += '\n';
+  }
+
+  return content;
+}
+
+/**
+ * Generate Quick Reference section (HTML) — Step 5
+ */
+function generateQuickReferenceSectionHTML(): string {
+  let html = `        <div class="category" id="quick-reference">
+            <h2 class="category-title">🔖 QUICK REFERENCE</h2>
+`;
+
+  for (const [topic, links] of Object.entries(QUICK_REFERENCE_URLS)) {
+    const topicName = topic.replace(/_/g, ' ');
+    html += `            <h3 style="padding: 10px 20px; color: var(--secondary-color);">${topicName}</h3>
+            <ul style="padding: 0 20px 10px 40px;">
+`;
+
+    for (const [format, url] of Object.entries(links)) {
+      if (typeof url === 'string') {
+        html += `                <li><strong>${format}</strong>: <a href="${url}" target="_blank">${url}</a></li>\n`;
+      } else if (typeof url === 'object') {
+        html += `                <li><strong>${format}</strong>:\n                    <ul>\n`;
+        for (const [subKey, subUrl] of Object.entries(url)) {
+          html += `                        <li>${subKey}: <a href="${subUrl}" target="_blank">${subUrl}</a></li>\n`;
+        }
+        html += `                    </ul>\n                </li>\n`;
+      }
+    }
+    html += `            </ul>\n`;
+  }
+
+  html += `        </div>\n`;
+  return html;
+}
+
+/**
+ * Generate validation report section (markdown) — Step 4
+ */
+function generateValidationReport(wikiData: WikiData): string {
+  const valid = wikiData.wikiPages.filter(p => p.validationStatus === 'valid').length;
+  const invalid = wikiData.wikiPages.filter(p => p.validationStatus === 'invalid').length;
+  const total = wikiData.wikiPages.length;
+
+  let content = `## ✅ URL Validation Report
+
+| Metric | Count |
+|--------|-------|
+| **Total URLs** | ${total} |
+| **Valid** | ${valid} |
+| **Invalid** | ${invalid} |
+| **Pass Rate** | ${total > 0 ? ((valid / total) * 100).toFixed(1) : 0}% |
+
+`;
+
+  const failures = wikiData.wikiPages.filter(p => p.validationStatus === 'invalid');
+  if (failures.length > 0) {
+    content += `### Issues Found\n\n`;
+    for (const page of failures) {
+      content += `- **${page.title}**: ${page.validationErrors?.join(', ')}\n`;
+    }
+    content += '\n';
+  }
+
+  return content;
 }
 
 /**
@@ -182,7 +382,10 @@ function generateTOC(wikiData: WikiData): string {
   toc += `- [🚀 Usage Guide](#usage-guide)\n`;
   toc += `- [🔍 Search](#search)\n`;
   toc += `- [📈 Analytics](#analytics)\n`;
-  toc += `- [📚 Categories](#categories)\n\n`;
+  toc += `- [📚 Categories](#categories)\n`;
+  toc += `- [📟 CLI Reference](#-cli-reference)\n`;
+  toc += `- [🔖 Quick Reference](#-quick-reference)\n`;
+  toc += `- [✅ Validation Report](#-url-validation-report)\n\n`;
 
   // Categories
   for (const [category] of Object.entries(wikiData.categories)) {
@@ -258,14 +461,29 @@ function generateWikiURLs(config: Partial<WikiConfig> = {}): WikiData {
     };
   }
 
+  // Step 3: Generate CLI reference pages
+  const cliPages: CLIPage[] = [];
+  for (const [categoryKey, urls] of Object.entries(CLI_DOCUMENTATION_URLS)) {
+    for (const [cmdName, path] of Object.entries(urls)) {
+      cliPages.push({
+        title: `${categoryKey}: ${cmdName.replace(/_/g, ' ')}`,
+        category: categoryKey as CLICategory,
+        url: `https://bun.sh${path}`,
+        example: findCLIExample(cmdName),
+      });
+    }
+  }
+
   console.log(
     `\n📊 Generated ${wikiPages.length} wiki pages across ${Object.keys(categories).length} categories`
   );
+  console.log(`📟 Generated ${cliPages.length} CLI reference pages`);
 
   return {
     total: wikiPages.length,
     categories,
     wikiPages,
+    cliPages,
   };
 }
 
@@ -365,8 +583,27 @@ Use these keywords to quickly find utilities:
       content += `| ${page.title.split(':')[1]?.trim() || page.title} | [📝](${page.url}) | [📚](${page.documentation}) | ${exampleLink} | ${description} |\n`;
     }
 
+    // Step 2: Add related docs for pages that have them
+    const pagesWithRelated = categoryData.pages.filter(p => p.relatedDocs && p.relatedDocs.length > 0);
+    if (pagesWithRelated.length > 0) {
+      content += `\n**Related Documentation:**\n`;
+      for (const page of pagesWithRelated) {
+        const utilName = page.title.split(':')[1]?.trim() || page.title;
+        content += `- ${utilName}: ${page.relatedDocs!.map(url => `[${url.split('/').pop()}](${url})`).join(', ')}\n`;
+      }
+    }
+
     content += '\n';
   }
+
+  // Step 3: Add CLI reference section
+  content += generateCLISection();
+
+  // Step 5: Add Quick Reference section
+  content += generateQuickReferenceSection();
+
+  // Step 4: Add validation report
+  content += generateValidationReport(wikiData);
 
   // Add enhanced usage guide
   content += `## 🚀 Usage Guide
@@ -767,6 +1004,8 @@ function generateHTMLWiki(
     const categorySlug = category.toLowerCase().replace(/[^a-z0-9]/g, '-');
     content += `                <li><a href="#${categorySlug}">${category.replace('_', ' ').toUpperCase()}</a></li>\n`;
   }
+  content += `                <li><a href="#cli-reference">CLI REFERENCE</a></li>\n`;
+  content += `                <li><a href="#quick-reference">QUICK REFERENCE</a></li>\n`;
 
   content += `            </ul>
         </div>
@@ -814,6 +1053,15 @@ function generateHTMLWiki(
 
 `;
   }
+
+  // Step 2: Add related docs as HTML (within categories already handled above in markdown,
+  // for HTML we add a summary section)
+
+  // Step 3: CLI reference section (HTML)
+  content += generateCLISectionHTML();
+
+  // Step 5: Quick Reference section (HTML)
+  content += generateQuickReferenceSectionHTML();
 
   content += `        <div class="footer">
             <p><strong>Generated by Enhanced Bun Wiki URL Generator</strong></p>
@@ -896,6 +1144,8 @@ function generateJSONWiki(wikiData: WikiData): string {
     },
     categories: wikiData.categories,
     pages: wikiData.wikiPages,
+    cliPages: wikiData.cliPages || [],
+    quickReference: QUICK_REFERENCE_URLS,
     api: {
       base_url: 'https://wiki.company.com/api/v1',
       endpoints: {
@@ -1013,6 +1263,19 @@ function generateJSONWiki(
     search: searchIndex,
     categories: wikiData.categories,
     pages: wikiData.wikiPages,
+    // Step 3: CLI reference data
+    cliPages: wikiData.cliPages || [],
+    // Step 4: Validation summary
+    validation: {
+      total: wikiData.wikiPages.length,
+      valid: wikiData.wikiPages.filter(p => p.validationStatus === 'valid').length,
+      invalid: wikiData.wikiPages.filter(p => p.validationStatus === 'invalid').length,
+      failures: wikiData.wikiPages
+        .filter(p => p.validationStatus === 'invalid')
+        .map(p => ({ title: p.title, errors: p.validationErrors })),
+    },
+    // Step 5: Quick reference URLs
+    quickReference: QUICK_REFERENCE_URLS,
     api: {
       base_url: 'https://wiki.company.com/api/v1',
       version: 'v2',
