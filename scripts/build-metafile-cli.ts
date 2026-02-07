@@ -17,6 +17,8 @@ interface CLIArgs {
   watch?: boolean;
   help?: boolean;
   version?: boolean;
+  analyzer?: boolean;
+  snapshot?: string;
 }
 
 function parseArgs(): CLIArgs {
@@ -66,6 +68,13 @@ function parseArgs(): CLIArgs {
       case '-v':
         parsed.version = true;
         break;
+      case '--analyzer':
+        parsed.analyzer = true;
+        break;
+      case '--snapshot':
+      case '-s':
+        parsed.snapshot = args[++i];
+        break;
       default:
         if (!arg.startsWith('-') && parsed.entrypoints.length === 0) {
           parsed.entrypoints = arg.split(',');
@@ -92,8 +101,14 @@ OPTIONS:
   -a, --analyze                Run comprehensive analysis
   -g, --graph                  Generate dependency graph visualization
   -w, --watch                  Watch mode for development
+  --analyzer                   Save metafile and print esbuild analyzer URL
+  -s, --snapshot <file>        Save deterministic bundle snapshot for regression testing
   -h, --help                   Show this help message
   -v, --version                Show version information
+
+BUNDLE ANALYSIS:
+  Upload metafile JSON to https://esbuild.github.io/analyze/ for interactive
+  treemap visualization. Use --snapshot to track bundle size over time.
 
 EXAMPLES:
   # Basic build with metafile
@@ -107,6 +122,12 @@ EXAMPLES:
 
   # Generate dependency graph
   bun-run scripts/build-metafile-cli.ts -e src/index.ts --graph --metafile-md graph.md
+
+  # Open in esbuild analyzer
+  bun scripts/build-metafile-cli.ts -e src/index.ts --analyzer
+
+  # Save snapshot baseline
+  bun scripts/build-metafile-cli.ts -e src/index.ts -s baseline.json
 
 FEATURES:
   ✅ Structured metadata generation
@@ -204,6 +225,25 @@ async function main() {
       }
     }
     
+    // Save metafile for esbuild analyzer if requested
+    if (args.analyzer && result.metafile) {
+      const { saveForAnalyzer } = await import('../src/build/analyzer-url');
+      const analyzerPath = (args.metafile || 'metafile.json').replace('.json', '-analyzer.json');
+      const info = await saveForAnalyzer(result.metafile, analyzerPath);
+      console.log('');
+      console.log(info.instructions);
+    }
+
+    // Save deterministic snapshot if requested
+    if (args.snapshot && result.metafile) {
+      const { createBundleSnapshot, normalizeMetafilePaths } = await import('../src/build/metafile-snapshot');
+      const normalized = normalizeMetafilePaths(result.metafile);
+      const snap = createBundleSnapshot(normalized);
+      await Bun.write(args.snapshot, JSON.stringify(snap, null, 2));
+      console.log('');
+      console.log(`Snapshot saved to: ${args.snapshot}`);
+    }
+
     // Generate graph visualization if requested
     if (args.graph && result.metafile) {
       console.log('');
