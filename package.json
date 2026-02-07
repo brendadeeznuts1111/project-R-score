@@ -1907,7 +1907,8 @@
     "bunx:cache": "bun run lib/registry/bunx-integration.ts cache",
     "bunx:clean": "bun run lib/registry/bunx-integration.ts clean",
     "fw-docs": "bun run scripts/fw-docs.ts",
-    "interactive-docs": "bun run scripts/interactive-docs.ts"
+    "interactive-docs": "bun run scripts/interactive-docs.ts",
+    "debug": "bun run scripts/debug-smart.ts"
   },
   "dependencies": {
     "@fw/ab-testing": "workspace:*",
