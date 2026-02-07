@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FactoryWager Theme Portal</title>
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <style>
+    /* Inline critical CSS for instant render */
+    :root {
+      --color-primary-500: hsl(217 91% 50%);
+      --color-text-primary: hsl(220 43% 11%);
+      --color-background-primary: hsl(0 0% 100%);
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-background-primary);
+      color: var(--color-text-primary);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1>🏰 FactoryWager Theme Portal</h1>
+      <p class="subtitle">Bun-powered theme system with TOML configuration</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="theme-grid" id="themeGrid">
+      <!-- Themes will be rendered here -->
+    </section>
+
+    <section class="preview-section">
+      <h2>Live Preview</h2>
+      <div class="preview-frame" id="previewFrame">
+        <div class="preview-content">
+          <div class="card">
+            <h3>Sample Card</h3>
+            <p>This preview updates instantly when you select a theme.</p>
+            <div class="button-group">
+              <button class="btn btn-primary">Primary</button>
+              <button class="btn btn-secondary">Secondary</button>
+            </div>
+          </div>
+          
+          <div class="status-demo">
+            <span class="status-badge status-online">● Online</span>
+            <span class="status-badge status-away">● Away</span>
+            <span class="status-badge status-busy">● Busy</span>
+            <span class="status-badge status-offline">● Offline</span>
+          </div>
+          
+          <div class="color-scale">
+            <div class="scale-item" style="background: var(--color-primary-50)">50</div>
+            <div class="scale-item" style="background: var(--color-primary-100)">100</div>
+            <div class="scale-item" style="background: var(--color-primary-200)">200</div>
+            <div class="scale-item" style="background: var(--color-primary-300)">300</div>
+            <div class="scale-item" style="background: var(--color-primary-400)">400</div>
+            <div class="scale-item" style="background: var(--color-primary-500); color: white">500</div>
+            <div class="scale-item" style="background: var(--color-primary-600); color: white">600</div>
+            <div class="scale-item" style="background: var(--color-primary-700); color: white">700</div>
+            <div class="scale-item" style="background: var(--color-primary-800); color: white">800</div>
+            <div class="scale-item" style="background: var(--color-primary-900); color: white">900</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="code-section">
+      <h2>Usage</h2>
+      <pre class="code-block"><code>// Import themes
+import { themes, applyTheme, getTheme } from './themes/config';
+
+// Apply theme
+applyTheme(themes.light, 'light');
+
+// Get specific theme
+const dark = getTheme('dark');
+
+// Generate CSS variables
+const css = generateCSSVariables(themes.professional);</code></pre>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>Powered by <a href="https://bun.sh" target="_blank">Bun</a> • Built with TOML + TypeScript</p>
+    </div>
+  </footer>
+
+  <script type="module" src="./js/theme-portal.ts"></script>
+</body>
+</html>
