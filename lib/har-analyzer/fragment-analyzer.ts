@@ -39,6 +39,8 @@ function parseKVPairs(str: string): Record<string, string> {
 /** Parse media time value (supports seconds or mm:ss) → total seconds */
 function parseMediaTime(raw: string): { value: number; formatted: string } {
   const parts = raw.split(":").map(Number);
+  // Guard against non-numeric input (e.g. "t=abc" → [NaN])
+  if (parts.some(isNaN)) return { value: 0, formatted: "0" };
   let value: number;
   if (parts.length === 2) {
     value = parts[0] * 60 + parts[1];
@@ -47,6 +49,7 @@ function parseMediaTime(raw: string): { value: number; formatted: string } {
   } else {
     value = parts[0] || 0;
   }
+  value = Math.floor(value);
   const mins = Math.floor(value / 60);
   const secs = value % 60;
   const formatted = mins > 0

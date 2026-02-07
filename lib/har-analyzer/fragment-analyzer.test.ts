@@ -1,129 +1,166 @@
-import { test, expect, describe } from "bun:test";
+import { test, expect, describe, expectTypeOf } from "bun:test";
 import { analyzeFragment } from "./fragment-analyzer";
+import type { FragmentAnalysis, FragmentType, FragmentBehavior, FragmentContent } from "./types";
+
+// ─── Type tests ─────────────────────────────────────────────────────
+
+expectTypeOf(analyzeFragment).toBeFunction();
+expectTypeOf(analyzeFragment).parameters.toEqualTypeOf<[fragment?: string]>();
+expectTypeOf(analyzeFragment).returns.toEqualTypeOf<FragmentAnalysis>();
+
+expectTypeOf(analyzeFragment("test")).toMatchObjectType<{
+  type: FragmentType;
+  raw: string;
+  content: FragmentContent;
+  behavior: FragmentBehavior;
+}>();
+
+// ─── Runtime tests ──────────────────────────────────────────────────
 
 describe("analyzeFragment", () => {
-  // ─── empty ─────────────────────────────────────────────────────────
-  test("empty: undefined input", () => {
-    const result = analyzeFragment(undefined);
-    expect(result.type).toBe("empty");
-    expect(result.raw).toBe("");
-    expect(result.behavior.triggersScroll).toBe(false);
-    expect(result.behavior.requiresJS).toBe(false);
+  describe("with empty input", () => {
+    test("should return empty type and blank raw string for undefined input", () => {
+      const result = analyzeFragment(undefined);
+      expect(result.type).toBe("empty");
+      expect(result.raw).toBe("");
+      expect(result.behavior.triggersScroll).toBeFalse();
+      expect(result.behavior.requiresJS).toBeFalse();
+    });
+
+    test("should return empty type for an empty string", () => {
+      const result = analyzeFragment("");
+      expect(result.type).toBe("empty");
+    });
   });
 
-  test("empty: empty string", () => {
-    const result = analyzeFragment("");
-    expect(result.type).toBe("empty");
+  describe("with anchor fragments", () => {
+    test("should classify a hyphenated identifier as an anchor", () => {
+      const result = analyzeFragment("section-1");
+      expect(result.type).toBe("anchor");
+      expect(result.content.anchor).toBe("section-1");
+      expect(result.behavior.triggersScroll).toBeTrue();
+      expect(result.behavior.seoFriendly).toBeTrue();
+      expect(result.behavior.shareable).toBeTrue();
+      expect(result.behavior.requiresJS).toBeFalse();
+    });
+
+    test("should classify a single word as an anchor", () => {
+      const result = analyzeFragment("top");
+      expect(result.type).toBe("anchor");
+      expect(result.content.anchor).toBe("top");
+    });
   });
 
-  // ─── anchor ────────────────────────────────────────────────────────
-  test("anchor: simple identifier", () => {
-    const result = analyzeFragment("section-1");
-    expect(result.type).toBe("anchor");
-    expect(result.content.anchor).toBe("section-1");
-    expect(result.behavior.triggersScroll).toBe(true);
-    expect(result.behavior.seoFriendly).toBe(true);
-    expect(result.behavior.shareable).toBe(true);
-    expect(result.behavior.requiresJS).toBe(false);
+  describe("with hashbang fragments", () => {
+    test("should classify !/path as hashbang with extracted route", () => {
+      const result = analyzeFragment("!/path/to/page");
+      expect(result.type).toBe("hashbang");
+      expect(result.content.route?.path).toBe("/path/to/page");
+      expect(result.behavior.requiresJS).toBeTrue();
+      expect(result.behavior.seoFriendly).toBeFalse();
+    });
+
+    test("should handle hashbang root path", () => {
+      const result = analyzeFragment("!/");
+      expect(result.type).toBe("hashbang");
+      expect(result.content.route?.path).toBe("/");
+    });
   });
 
-  test("anchor: single word", () => {
-    const result = analyzeFragment("top");
-    expect(result.type).toBe("anchor");
-    expect(result.content.anchor).toBe("top");
+  describe("with route fragments", () => {
+    test("should parse a multi-segment route path", () => {
+      const result = analyzeFragment("/dashboard/settings");
+      expect(result.type).toBe("route");
+      expect(result.content.route?.path).toBe("/dashboard/settings");
+      expect(result.content.route?.query).toEqual({});
+      expect(result.behavior.requiresJS).toBeTrue();
+      expect(result.behavior.shareable).toBeTrue();
+    });
+
+    test("should extract query parameters from a route fragment", () => {
+      const result = analyzeFragment("/search?q=hello&page=2");
+      expect(result.type).toBe("route");
+      expect(result.content.route?.path).toBe("/search");
+      expect(result.content.route?.query).toEqual({ q: "hello", page: "2" });
+    });
   });
 
-  // ─── hashbang ──────────────────────────────────────────────────────
-  test("hashbang: #!/path", () => {
-    const result = analyzeFragment("!/path/to/page");
-    expect(result.type).toBe("hashbang");
-    expect(result.content.route?.path).toBe("/path/to/page");
-    expect(result.behavior.requiresJS).toBe(true);
-    expect(result.behavior.seoFriendly).toBe(false);
+  describe("with state fragments", () => {
+    test("should parse multiple key=value pairs as state", () => {
+      const result = analyzeFragment("color=red&size=lg");
+      expect(result.type).toBe("state");
+      expect(result.content.state).toEqual({ color: "red", size: "lg" });
+      expect(result.behavior.requiresJS).toBeTrue();
+      expect(result.behavior.shareable).toBeFalse();
+    });
+
+    test("should parse a single key=value pair as state", () => {
+      const result = analyzeFragment("tab=settings");
+      expect(result.type).toBe("state");
+      expect(result.content.state).toEqual({ tab: "settings" });
+    });
   });
 
-  test("hashbang: !/ root", () => {
-    const result = analyzeFragment("!/");
-    expect(result.type).toBe("hashbang");
-    expect(result.content.route?.path).toBe("/");
+  describe("with media fragments", () => {
+    test("should parse t=30 as a 30-second media timestamp", () => {
+      const result = analyzeFragment("t=30");
+      expect(result.type).toBe("media");
+      expect(result.content.media?.type).toBe("t");
+      expect(result.content.media?.value).toBe(30);
+      expect(result.content.media?.formatted).toBe("30");
+      expect(result.behavior.shareable).toBeTrue();
+    });
+
+    test("should convert t=1:30 (mm:ss) to 90 seconds", () => {
+      const result = analyzeFragment("t=1:30");
+      expect(result.type).toBe("media");
+      expect(result.content.media?.value).toBe(90);
+      expect(result.content.media?.formatted).toBe("1:30");
+    });
+
+    test("should convert t=1:05:30 (hh:mm:ss) to total seconds", () => {
+      const result = analyzeFragment("t=1:05:30");
+      expect(result.type).toBe("media");
+      expect(result.content.media?.value).toBe(3930);
+      expect(result.content.media?.formatted).toBe("65:30");
+    });
+
+    test("should fall back to 0 for non-numeric time value like t=abc", () => {
+      const result = analyzeFragment("t=abc");
+      expect(result.type).toBe("media");
+      expect(result.content.media?.value).toBe(0);
+      expect(result.content.media?.formatted).toBe("0");
+    });
+
+    test("should fall back to 0 for partially numeric time like t=1:foo", () => {
+      const result = analyzeFragment("t=1:foo");
+      expect(result.type).toBe("media");
+      expect(result.content.media?.value).toBe(0);
+    });
   });
 
-  // ─── route ─────────────────────────────────────────────────────────
-  test("route: /dashboard/settings", () => {
-    const result = analyzeFragment("/dashboard/settings");
-    expect(result.type).toBe("route");
-    expect(result.content.route?.path).toBe("/dashboard/settings");
-    expect(result.content.route?.query).toEqual({});
-    expect(result.behavior.requiresJS).toBe(true);
-    expect(result.behavior.shareable).toBe(true);
+  describe("with query fragments", () => {
+    test("should parse ?search=foo as a query fragment", () => {
+      const result = analyzeFragment("?search=foo");
+      expect(result.type).toBe("query");
+      expect(result.content.state).toEqual({ search: "foo" });
+      expect(result.behavior.requiresJS).toBeTrue();
+    });
+
+    test("should parse multiple query parameters from ?a=1&b=2", () => {
+      const result = analyzeFragment("?a=1&b=2");
+      expect(result.type).toBe("query");
+      expect(result.content.state).toEqual({ a: "1", b: "2" });
+    });
   });
 
-  test("route: with query params", () => {
-    const result = analyzeFragment("/search?q=hello&page=2");
-    expect(result.type).toBe("route");
-    expect(result.content.route?.path).toBe("/search");
-    expect(result.content.route?.query).toEqual({ q: "hello", page: "2" });
-  });
-
-  // ─── state ─────────────────────────────────────────────────────────
-  test("state: key=value pairs", () => {
-    const result = analyzeFragment("color=red&size=lg");
-    expect(result.type).toBe("state");
-    expect(result.content.state).toEqual({ color: "red", size: "lg" });
-    expect(result.behavior.requiresJS).toBe(true);
-    expect(result.behavior.shareable).toBe(false);
-  });
-
-  test("state: single pair", () => {
-    const result = analyzeFragment("tab=settings");
-    expect(result.type).toBe("state");
-    expect(result.content.state).toEqual({ tab: "settings" });
-  });
-
-  // ─── media ─────────────────────────────────────────────────────────
-  test("media: t=30 (seconds)", () => {
-    const result = analyzeFragment("t=30");
-    expect(result.type).toBe("media");
-    expect(result.content.media?.type).toBe("t");
-    expect(result.content.media?.value).toBe(30);
-    expect(result.content.media?.formatted).toBe("30");
-    expect(result.behavior.shareable).toBe(true);
-  });
-
-  test("media: t=1:30 (mm:ss)", () => {
-    const result = analyzeFragment("t=1:30");
-    expect(result.type).toBe("media");
-    expect(result.content.media?.value).toBe(90);
-    expect(result.content.media?.formatted).toBe("1:30");
-  });
-
-  test("media: t=1:05:30 (hh:mm:ss)", () => {
-    const result = analyzeFragment("t=1:05:30");
-    expect(result.type).toBe("media");
-    expect(result.content.media?.value).toBe(3930);
-    expect(result.content.media?.formatted).toBe("65:30");
-  });
-
-  // ─── query ─────────────────────────────────────────────────────────
-  test("query: ?search=foo", () => {
-    const result = analyzeFragment("?search=foo");
-    expect(result.type).toBe("query");
-    expect(result.content.state).toEqual({ search: "foo" });
-    expect(result.behavior.requiresJS).toBe(true);
-  });
-
-  test("query: ?a=1&b=2", () => {
-    const result = analyzeFragment("?a=1&b=2");
-    expect(result.type).toBe("query");
-    expect(result.content.state).toEqual({ a: "1", b: "2" });
-  });
-
-  // ─── unknown ───────────────────────────────────────────────────────
-  test("unknown: special characters", () => {
-    const result = analyzeFragment("@!$%^");
-    expect(result.type).toBe("unknown");
-    expect(result.behavior.triggersScroll).toBe(false);
-    expect(result.behavior.requiresJS).toBe(false);
-    expect(result.behavior.shareable).toBe(false);
+  describe("with unknown fragments", () => {
+    test("should classify special characters as unknown with no behaviors", () => {
+      const result = analyzeFragment("@!$%^");
+      expect(result.type).toBe("unknown");
+      expect(result.behavior.triggersScroll).toBeFalse();
+      expect(result.behavior.requiresJS).toBeFalse();
+      expect(result.behavior.shareable).toBeFalse();
+    });
   });
 });

@@ -1,9 +1,6 @@
-// lib/har-analyzer/bun-serve-types.ts (v1.3.4 compatible)
+// lib/har-analyzer/bun-serve-types.ts
 // Protocol-aware HAR capture server using Bun.serve()
-//
-// v1.3.4 fix: Server.protocol is now typed as "http" | "https" | null
-// The protocol property is on the SERVER instance, not on individual requests.
-import type { Server } from "bun";
+type HARServer = ReturnType<typeof Bun.serve>;
 
 // Captured request entry for HAR generation
 export interface CapturedEntry {
@@ -33,7 +30,7 @@ export function inferHttpVersion(protocol: "http" | "https"): string {
 // Protocol detection from HAR entries (combines HAR data + v1.3.4 server.protocol)
 export interface HARProtocolDetection {
   httpVersion: string;               // "h2", "h3", "http/1.1"
-  requestProtocol: "http" | "https"; // From Server.protocol (v1.3.4+) or URL scheme
+  requestProtocol: "http" | "https"; // From server.protocol or URL scheme
   isSecure: boolean;
   isHTTP2: boolean;
   isHTTP3: boolean;
@@ -47,7 +44,7 @@ export interface HAREntry {
   startedDateTime: string;
 }
 
-// Analyze protocol from a HAR entry, optionally with the server's protocol (v1.3.4)
+// Analyze protocol from a HAR entry, optionally with the server's protocol
 export function analyzeProtocolFromHAR(entry: HAREntry, serverProtocol?: "http" | "https" | null): HARProtocolDetection {
   const httpVersion = entry.response.httpVersion || entry.request.httpVersion || "http/1.1";
 
@@ -61,23 +58,17 @@ export function analyzeProtocolFromHAR(entry: HAREntry, serverProtocol?: "http" 
 }
 
 // Protocol-aware HAR capture server
-// Uses server.protocol (v1.3.4 typed) to tag captured entries
-//
-// NOTE: HTTPS redirect logic is the caller's responsibility.
-// Bun has a known issue where process.env.NODE_ENV inside a Bun.serve()
-// fetch handler in an imported module corrupts server initialization.
+// Uses server.protocol (typed since bun-types fix) to tag captured entries
 export function createHARServer(options?: {
   tls?: { key: string; cert: string };
   onRequest?: (entry: CapturedEntry) => void;
-}): Server {
+}): HARServer {
   const captured: CapturedEntry[] = [];
-  let serverRef: Server;
 
-  serverRef = Bun.serve({
+  const server = Bun.serve({
     port: 0,
-    fetch(req): Response {
-      // server.protocol is typed "http" | "https" | null (v1.3.4)
-      const proto = serverRef.protocol ?? (req.url.startsWith("https:") ? "https" as const : "http" as const);
+    fetch(req, server): Response {
+      const proto: "http" | "https" = server.protocol ?? (req.url.startsWith("https:") ? "https" : "http");
       const start = performance.now();
       const extraHeaders = proto === "https"
         ? { "Strict-Transport-Security": "max-age=31536000; includeSubDomains" }
@@ -96,7 +87,13 @@ export function createHARServer(options?: {
     }),
   });
 
-  return serverRef;
+  return server;
+}
+
+function headerPairs(h: Headers): { name: string; value: string }[] {
+  const pairs: { name: string; value: string }[] = [];
+  h.forEach((value, name) => pairs.push({ name, value }));
+  return pairs;
 }
 
 function handle(
@@ -116,8 +113,8 @@ function handle(
     httpVersion: inferHttpVersion(protocol),
     status: res.status,
     statusText: res.statusText,
-    requestHeaders: [...req.headers.entries()].map(([name, value]) => ({ name, value })),
-    responseHeaders: [...res.headers.entries()].map(([name, value]) => ({ name, value })),
+    requestHeaders: headerPairs(req.headers),
+    responseHeaders: headerPairs(res.headers),
     mimeType: res.headers.get("content-type") || "application/octet-stream",
     size: 2,
     transferSize: 2,

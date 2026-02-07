@@ -26,3 +26,15 @@ export type {
 
 export { analyzeFragment } from "./fragment-analyzer";
 export { parseURL, MIME_MAP } from "./url-parser";
+
+export {
+  DocumentationProvider,
+  DocumentationCategory,
+  UrlType,
+  PERFORMANCE_THRESHOLDS,
+  DocumentationMapper,
+  classifyDomain,
+  classifyAssetGroup,
+  gradeTTFB,
+  gradeSize,
+} from "./domain-mapper";

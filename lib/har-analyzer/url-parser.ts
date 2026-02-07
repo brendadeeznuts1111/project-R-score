@@ -35,6 +35,12 @@ export const MIME_MAP: Record<string, string> = {
   ".wasm": "application/wasm",
   ".map":  "application/json",
   ".pdf":  "application/pdf",
+  ".cjs":  "application/javascript",
+  ".mts":  "application/typescript",
+  ".yaml": "text/yaml",
+  ".yml":  "text/yaml",
+  ".txt":  "text/plain",
+  ".webmanifest": "application/manifest+json",
 };
 
 /** Extract file extension from a pathname */
@@ -74,7 +80,27 @@ export function parseURL(urlString: string): ParsedURL {
     };
   }
 
-  const url = new URL(urlString);
+  let url: URL;
+  try {
+    url = new URL(urlString);
+  } catch {
+    // Malformed URL — return a best-effort shell
+    return {
+      href: urlString,
+      scheme: "",
+      host: "",
+      pathname: urlString,
+      query: "",
+      fragment: analyzeFragment(""),
+      extension: extractExtension(urlString),
+      mimeHint: MIME_MAP[extractExtension(urlString)] || "",
+      origin: "",
+      cacheKey: urlString,
+      isDataURI: false,
+      isBlob,
+    };
+  }
+
   const extension = extractExtension(url.pathname);
   const mimeHint = MIME_MAP[extension] || "";
   const fragmentRaw = url.hash ? url.hash.slice(1) : "";

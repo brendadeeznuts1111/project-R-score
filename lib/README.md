@@ -34,6 +34,9 @@ Complete library index for the FactoryWager Enterprise Platform.
 ### MCP Integration
 - **`mcp/`** - Model Context Protocol servers and clients
 
+### HAR Analyzer
+- **`har-analyzer/`** - HTTP Archive analysis with 4-layer context types, URL fragment classification, domain/asset mapping, and protocol-aware capture server
+
 ### Utilities
 - **`utils/`** - Common utilities (validation, logging, error handling, etc.)
 - **`constants/`** - Shared constants
@@ -155,6 +158,14 @@ const isValid = EnhancedDocumentationURLValidator.isValidCLICommand('bun run dev
 - `registry/secrets-manager.ts` - Secrets management
 - `registry/server.ts` - Registry server
 - `registry/version-manager.ts` - Version management
+
+### HAR Analyzer
+- `har-analyzer/index.ts` - Barrel exports
+- `har-analyzer/types.ts` - 4-layer context types (Raw, Parsed, Derived, Relational)
+- `har-analyzer/fragment-analyzer.ts` - URL fragment classification (8 types: anchor, route, hashbang, state, media, query, empty, unknown)
+- `har-analyzer/url-parser.ts` - URL decomposition with extension/MIME inference
+- `har-analyzer/domain-mapper.ts` - Documentation provider/category/URL type classification, domain and asset group mapping, performance grading
+- `har-analyzer/bun-serve-types.ts` - Protocol-aware HAR capture server using Bun.serve()
 
 ### Documentation
 - `documentation/` - Complete documentation system
