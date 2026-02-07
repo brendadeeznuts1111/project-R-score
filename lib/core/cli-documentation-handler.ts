@@ -1,10 +1,6 @@
 // lib/core/cli-documentation-handler.ts — CLI documentation handler with deep linking
 
-import {
-  CLICategory,
-  CLI_DOCUMENTATION_URLS,
-  CLI_COMMAND_EXAMPLES,
-} from '../docs/constants/cli';
+import { CLICategory, CLI_DOCUMENTATION_URLS, CLI_COMMAND_EXAMPLES } from '../docs/constants/cli';
 import { URLHandler, URLFragmentUtils, FactoryWagerURLUtils } from './url-handler';
 import { handleError } from './error-handling';
 

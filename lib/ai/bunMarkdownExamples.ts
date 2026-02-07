@@ -16,7 +16,7 @@ import {
   PERFORMANCE,
   ERRORS,
   CONFIG_MATRIX,
-  MIGRATION
+  MIGRATION,
 } from './bunMarkdownConstants';
 
 // ============================================================================
@@ -26,13 +26,13 @@ import {
 /** Production renderer for user content with strict security */
 export const userContentRenderer = MarkdownPresets.render('TAILWIND', {
   ...MARKDOWN_FEATURES.BLOG,
-  ...MARKDOWN_SECURITY.STRICT
+  ...MARKDOWN_SECURITY.STRICT,
 });
 
 /** Production renderer for trusted content */
 export const trustedContentRenderer = MarkdownPresets.render('TAILWIND', {
   ...MARKDOWN_FEATURES.DOCS,
-  ...MARKDOWN_SECURITY.MODERATE
+  ...MARKDOWN_SECURITY.MODERATE,
 });
 
 /** React component for trusted content */
@@ -51,7 +51,7 @@ const simpleHash = (str: string): string => {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash; // Convert to 32-bit integer
   }
   return hash.toString(36);
@@ -136,10 +136,7 @@ interface UseMarkdownResult {
 }
 
 /** React hook for markdown processing */
-export function useMarkdown(
-  content: string,
-  options: UseMarkdownOptions = {}
-): UseMarkdownResult {
+export function useMarkdown(content: string, options: UseMarkdownOptions = {}): UseMarkdownResult {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<string | React.ReactNode>('');
@@ -149,7 +146,7 @@ export function useMarkdown(
     preset = 'BLOG',
     security = 'STRICT',
     debounceTime = PERFORMANCE.DEBOUNCE.NORMAL,
-    enableCache = true
+    enableCache = true,
   } = options;
 
   const renderer = useMemo(() => {
@@ -219,7 +216,9 @@ interface RenderMarkdownResponse {
 }
 
 /** API endpoint for rendering markdown */
-export async function renderMarkdownAPI(request: RenderMarkdownRequest): Promise<RenderMarkdownResponse> {
+export async function renderMarkdownAPI(
+  request: RenderMarkdownRequest
+): Promise<RenderMarkdownResponse> {
   try {
     const { markdown, options = {} } = request;
 
@@ -228,8 +227,8 @@ export async function renderMarkdownAPI(request: RenderMarkdownRequest): Promise
         success: false,
         error: {
           code: ERRORS.CODES.VALIDATION_ERROR,
-          message: 'Markdown content is required'
-        }
+          message: 'Markdown content is required',
+        },
       };
     }
 
@@ -239,8 +238,8 @@ export async function renderMarkdownAPI(request: RenderMarkdownRequest): Promise
         success: false,
         error: {
           code: ERRORS.CODES.SIZE_ERROR,
-          message: ERRORS.MESSAGES.SIZE_ERROR
-        }
+          message: ERRORS.MESSAGES.SIZE_ERROR,
+        },
       };
     }
 
@@ -250,16 +249,12 @@ export async function renderMarkdownAPI(request: RenderMarkdownRequest): Promise
         success: false,
         error: {
           code: ERRORS.CODES.SECURITY_ERROR,
-          message: ERRORS.MESSAGES.SECURITY_ERROR
-        }
+          message: ERRORS.MESSAGES.SECURITY_ERROR,
+        },
       };
     }
 
-    const {
-      preset = 'GFM',
-      security = 'MODERATE',
-      format = 'html'
-    } = options;
+    const { preset = 'GFM', security = 'MODERATE', format = 'html' } = options;
 
     // Sanitize input
     const sanitized = Sanitizers.escapeHtml(markdown);
@@ -269,7 +264,7 @@ export async function renderMarkdownAPI(request: RenderMarkdownRequest): Promise
       case 'html':
         const html = Bun.markdown.html(sanitized, {
           ...MARKDOWN_FEATURES[preset],
-          ...MARKDOWN_SECURITY[security]
+          ...MARKDOWN_SECURITY[security],
         });
         return { success: true, html };
 
@@ -279,13 +274,13 @@ export async function renderMarkdownAPI(request: RenderMarkdownRequest): Promise
 
       case 'text':
         const text = Bun.markdown.render(sanitized, TEXT_RENDERERS.PLAIN, {
-          ...MARKDOWN_FEATURES[preset]
+          ...MARKDOWN_FEATURES[preset],
         });
         return { success: true, text };
 
       case 'terminal':
         const terminal = Bun.markdown.render(sanitized, TERMINAL_RENDERERS.COLOR, {
-          ...MARKDOWN_FEATURES.TERMINAL
+          ...MARKDOWN_FEATURES.TERMINAL,
         });
         return { success: true, text: terminal };
 
@@ -294,18 +289,17 @@ export async function renderMarkdownAPI(request: RenderMarkdownRequest): Promise
           success: false,
           error: {
             code: ERRORS.CODES.VALIDATION_ERROR,
-            message: 'Invalid format specified'
-          }
+            message: 'Invalid format specified',
+          },
         };
     }
-
   } catch (error) {
     return {
       success: false,
       error: {
         code: ERRORS.CODES.PARSE_ERROR,
-        message: error instanceof Error ? error.message : ERRORS.MESSAGES.PARSE_ERROR
-      }
+        message: error instanceof Error ? error.message : ERRORS.MESSAGES.PARSE_ERROR,
+      },
     };
   }
 }
@@ -340,20 +334,20 @@ export async function batchRenderMarkdown(
     try {
       const response = await renderMarkdownAPI({
         markdown: item.markdown,
-        options: item.options
+        options: item.options,
       });
 
       results.push({
         id: item.id,
         success: response.success,
         result: response.html || response.text || response.react,
-        error: response.error?.message
+        error: response.error?.message,
       });
     } catch (error) {
       results.push({
         id: item.id,
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
     }
 
@@ -408,12 +402,18 @@ export class MarkdownConfig {
   }
 
   build() {
-    const { preset = 'GFM', security = 'MODERATE', renderer, cache = true, customOptions = {} } = this.config;
+    const {
+      preset = 'GFM',
+      security = 'MODERATE',
+      renderer,
+      cache = true,
+      customOptions = {},
+    } = this.config;
 
     const baseOptions = {
       ...MARKDOWN_FEATURES[preset],
       ...MARKDOWN_SECURITY[security],
-      ...customOptions
+      ...customOptions,
     };
 
     const renderFn = renderer
@@ -425,7 +425,7 @@ export class MarkdownConfig {
       config: baseOptions,
       preset,
       security,
-      renderer
+      renderer,
     };
   }
 }
@@ -564,7 +564,7 @@ export const withPerformanceMonitoring = (renderFn: (markdown: string) => string
       renderTime,
       cacheHit: false, // Would need cache integration to detect this
       documentSize,
-      timestamp
+      timestamp,
     });
 
     // Keep only last 100 metrics
@@ -583,7 +583,7 @@ export const getPerformanceStats = () => {
     averageRenderTime: 0,
     cacheHitRate: 0,
     totalDocuments: 0,
-    averageDocumentSize: 0
+    averageDocumentSize: 0,
   };
 };
 
@@ -630,5 +630,5 @@ export {
 
   // Performance
   withPerformanceMonitoring,
-  getPerformanceStats
+  getPerformanceStats,
 };

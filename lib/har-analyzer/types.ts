@@ -1,29 +1,29 @@
 // lib/har-analyzer/types.ts — 4-layer HAR context type system
 // Pure types, no runtime code.
 
-import type { HAREntry } from "./bun-serve-types";
+import type { HAREntry } from './bun-serve-types';
 
 // ─── Enums & Literal Types ───────────────────────────────────────────
 
 export type FragmentType =
-  | "empty"
-  | "anchor"
-  | "route"
-  | "hashbang"
-  | "state"
-  | "media"
-  | "query"
-  | "unknown";
+  | 'empty'
+  | 'anchor'
+  | 'route'
+  | 'hashbang'
+  | 'state'
+  | 'media'
+  | 'query'
+  | 'unknown';
 
-export type TTFBGrade = "good" | "needs-improvement" | "poor";
+export type TTFBGrade = 'good' | 'needs-improvement' | 'poor';
 
-export type SizeGrade = "small" | "medium" | "large" | "huge";
+export type SizeGrade = 'small' | 'medium' | 'large' | 'huge';
 
-export type CacheType = "memory" | "disk" | "cdn" | "conditional" | "miss";
+export type CacheType = 'memory' | 'disk' | 'cdn' | 'conditional' | 'miss';
 
-export type DomainType = "first-party" | "third-party" | "cdn" | "tracker";
+export type DomainType = 'first-party' | 'third-party' | 'cdn' | 'tracker';
 
-export type AssetGroup = "critical" | "important" | "async" | "deferred";
+export type AssetGroup = 'critical' | 'important' | 'async' | 'deferred';
 
 // ─── Layer 2: Parsed URL ─────────────────────────────────────────────
 

@@ -6,7 +6,7 @@ type HARServer = ReturnType<typeof Bun.serve>;
 export interface CapturedEntry {
   url: string;
   method: string;
-  protocol: "http" | "https";
+  protocol: 'http' | 'https';
   httpVersion: string;
   status: number;
   statusText: string;
@@ -23,37 +23,59 @@ export interface CapturedEntry {
 
 // Protocol → HTTP version mapping
 // HTTPS connections negotiate HTTP/2 via ALPN; plain HTTP falls back to 1.1
-export function inferHttpVersion(protocol: "http" | "https"): string {
-  return protocol === "https" ? "http/2.0" : "http/1.1";
+export function inferHttpVersion(protocol: 'http' | 'https'): string {
+  return protocol === 'https' ? 'http/2.0' : 'http/1.1';
 }
 
 // Protocol detection from HAR entries (combines HAR data + v1.3.4 server.protocol)
 export interface HARProtocolDetection {
-  httpVersion: string;               // "h2", "h3", "http/1.1"
-  requestProtocol: "http" | "https"; // From server.protocol or URL scheme
+  httpVersion: string; // "h2", "h3", "http/1.1"
+  requestProtocol: 'http' | 'https'; // From server.protocol or URL scheme
   isSecure: boolean;
   isHTTP2: boolean;
   isHTTP3: boolean;
 }
 
 export interface HAREntry {
-  request: { url: string; method: string; httpVersion?: string; headers: { name: string; value: string }[] };
-  response: { status: number; httpVersion?: string; headers: { name: string; value: string }[]; content: { size: number; mimeType: string }; _transferSize?: number };
-  timings: { blocked: number; dns: number; ssl: number; connect: number; send: number; wait: number; receive: number };
+  request: {
+    url: string;
+    method: string;
+    httpVersion?: string;
+    headers: { name: string; value: string }[];
+  };
+  response: {
+    status: number;
+    httpVersion?: string;
+    headers: { name: string; value: string }[];
+    content: { size: number; mimeType: string };
+    _transferSize?: number;
+  };
+  timings: {
+    blocked: number;
+    dns: number;
+    ssl: number;
+    connect: number;
+    send: number;
+    wait: number;
+    receive: number;
+  };
   time: number;
   startedDateTime: string;
 }
 
 // Analyze protocol from a HAR entry, optionally with the server's protocol
-export function analyzeProtocolFromHAR(entry: HAREntry, serverProtocol?: "http" | "https" | null): HARProtocolDetection {
-  const httpVersion = entry.response.httpVersion || entry.request.httpVersion || "http/1.1";
+export function analyzeProtocolFromHAR(
+  entry: HAREntry,
+  serverProtocol?: 'http' | 'https' | null
+): HARProtocolDetection {
+  const httpVersion = entry.response.httpVersion || entry.request.httpVersion || 'http/1.1';
 
   return {
     httpVersion,
-    requestProtocol: serverProtocol || (entry.request.url.startsWith("https:") ? "https" : "http"),
-    isSecure: entry.request.url.startsWith("https:"),
-    isHTTP2: httpVersion === "h2" || httpVersion === "HTTP/2" || httpVersion === "http/2.0",
-    isHTTP3: httpVersion === "h3" || httpVersion === "HTTP/3",
+    requestProtocol: serverProtocol || (entry.request.url.startsWith('https:') ? 'https' : 'http'),
+    isSecure: entry.request.url.startsWith('https:'),
+    isHTTP2: httpVersion === 'h2' || httpVersion === 'HTTP/2' || httpVersion === 'http/2.0',
+    isHTTP3: httpVersion === 'h3' || httpVersion === 'HTTP/3',
   };
 }
 
@@ -68,11 +90,13 @@ export function createHARServer(options?: {
   const server = Bun.serve({
     port: 0,
     fetch(req, server): Response {
-      const proto: "http" | "https" = server.protocol ?? (req.url.startsWith("https:") ? "https" : "http");
+      const proto: 'http' | 'https' =
+        server.protocol ?? (req.url.startsWith('https:') ? 'https' : 'http');
       const start = performance.now();
-      const extraHeaders = proto === "https"
-        ? { "Strict-Transport-Security": "max-age=31536000; includeSubDomains" }
-        : undefined;
+      const extraHeaders =
+        proto === 'https'
+          ? { 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' }
+          : undefined;
 
       return handle(req, proto, start, captured, options?.onRequest, extraHeaders);
     },
@@ -82,7 +106,7 @@ export function createHARServer(options?: {
       tls: {
         key: Bun.file(options.tls.key),
         cert: Bun.file(options.tls.cert),
-        alpnProtocols: ["h2", "http/1.1"],
+        alpnProtocols: ['h2', 'http/1.1'],
       },
     }),
   });
@@ -98,13 +122,13 @@ function headerPairs(h: Headers): { name: string; value: string }[] {
 
 function handle(
   req: Request,
-  protocol: "http" | "https",
+  protocol: 'http' | 'https',
   startTime: number,
   entries: CapturedEntry[],
   onRequest?: (entry: CapturedEntry) => void,
-  extraHeaders?: Record<string, string>,
+  extraHeaders?: Record<string, string>
 ): Response {
-  const res = new Response("OK", extraHeaders ? { headers: extraHeaders } : undefined);
+  const res = new Response('OK', extraHeaders ? { headers: extraHeaders } : undefined);
   const waitDone = performance.now();
   const entry: CapturedEntry = {
     url: req.url,
@@ -115,7 +139,7 @@ function handle(
     statusText: res.statusText,
     requestHeaders: headerPairs(req.headers),
     responseHeaders: headerPairs(res.headers),
-    mimeType: res.headers.get("content-type") || "application/octet-stream",
+    mimeType: res.headers.get('content-type') || 'application/octet-stream',
     size: 2,
     transferSize: 2,
     startTime,

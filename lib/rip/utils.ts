@@ -29,7 +29,7 @@ export const PATTERNS = {
   BROKEN_LINKS: [
     'https?://[^\\s\\)\\]\\}>]+',
     'www\\.[^\\s\\)\\]\\}>]+',
-    'ftp://[^\\s\\)\\]\\}>]+'
+    'ftp://[^\\s\\)\\]\\}>]+',
   ],
 
   // Non-Bun code patterns
@@ -43,7 +43,7 @@ export const PATTERNS = {
     'util\\.',
     'process\\.exit',
     '__dirname',
-    '__filename'
+    '__filename',
   ],
 
   // Security concerns
@@ -53,7 +53,7 @@ export const PATTERNS = {
     'setTimeout\\(.*string',
     'setInterval\\(.*string',
     'innerHTML\\s*=',
-    'outerHTML\\s*='
+    'outerHTML\\s*=',
   ],
 
   // Performance anti-patterns
@@ -62,8 +62,8 @@ export const PATTERNS = {
     'document\\.getElementById',
     'document\\.querySelector',
     'console\\.log',
-    'debugger'
-  ]
+    'debugger',
+  ],
 } as const;
 
 // ============================================================================
@@ -80,20 +80,24 @@ export async function executeRipgrep(
 ): Promise<string[]> {
   try {
     const args = [
-      '--type', 'js',
-      '--type', 'ts',
-      '--type', 'jsx',
-      '--type', 'tsx',
+      '--type',
+      'js',
+      '--type',
+      'ts',
+      '--type',
+      'jsx',
+      '--type',
+      'tsx',
       '--no-heading',
       '--line-number',
       ...options,
       pattern,
-      directory
+      directory,
     ];
 
     const result = await spawn(['rg', ...args], {
       stdout: 'pipe',
-      stderr: 'pipe'
+      stderr: 'pipe',
     });
 
     const text = await new Response(result.stdout).text();
@@ -107,10 +111,7 @@ export async function executeRipgrep(
 /**
  * Parse ripgrep output into structured results
  */
-export function parseRipgrepOutput(
-  output: string[],
-  type: ScanResult['type']
-): ScanResult[] {
+export function parseRipgrepOutput(output: string[], type: ScanResult['type']): ScanResult[] {
   return output.map(line => {
     const [lineNumber, ...contentParts] = line.split(':');
     const content = contentParts.join(':');
@@ -124,7 +125,7 @@ export function parseRipgrepOutput(
       file,
       line: parseInt(lineNumber) || 0,
       content: fileContent.trim(),
-      type
+      type,
     };
   });
 }
@@ -142,19 +143,43 @@ export async function scanDirectory(
   // Count total TypeScript/JavaScript files first
   try {
     // Use a pattern that matches any content in the files
-    const countResult = await executeRipgrep('import|export|function|class|const|let|var', directory, ['--files-with-matches', '--type', 'js', '--type', 'ts', '--type', 'jsx', '--type', 'tsx']);
+    const countResult = await executeRipgrep(
+      'import|export|function|class|const|let|var',
+      directory,
+      ['--files-with-matches', '--type', 'js', '--type', 'ts', '--type', 'jsx', '--type', 'tsx']
+    );
     totalFiles = countResult.length;
   } catch (error) {
     console.warn('⚠️  Could not count total files with pattern, trying file list');
     // Fallback: use a simple pattern that matches anything
     try {
-      const listResult = await executeRipgrep('\\w', directory, ['--files-with-matches', '--type', 'js', '--type', 'ts', '--type', 'jsx', '--type', 'tsx']);
+      const listResult = await executeRipgrep('\\w', directory, [
+        '--files-with-matches',
+        '--type',
+        'js',
+        '--type',
+        'ts',
+        '--type',
+        'jsx',
+        '--type',
+        'tsx',
+      ]);
       totalFiles = listResult.length;
     } catch (listError) {
       console.warn('⚠️  Could not list files either');
       // Final fallback: try to find any files with common patterns
       try {
-        const fallbackResult = await executeRipgrep('.', directory, ['--files-with-matches', '--type', 'js', '--type', 'ts', '--type', 'jsx', '--type', 'tsx']);
+        const fallbackResult = await executeRipgrep('.', directory, [
+          '--files-with-matches',
+          '--type',
+          'js',
+          '--type',
+          'ts',
+          '--type',
+          'jsx',
+          '--type',
+          'tsx',
+        ]);
         totalFiles = fallbackResult.length;
       } catch (fallbackError) {
         console.warn('⚠️  Could not count files with fallback pattern');
@@ -199,7 +224,7 @@ export async function scanDirectory(
     totalFiles,
     issuesFound: allResults.length,
     scanResults: allResults,
-    timestamp: Date.now()
+    timestamp: Date.now(),
   };
 }
 
@@ -267,13 +292,16 @@ export function formatReport(report: ValidationReport): string {
   const suggestions = generateSuggestions(scanResults);
 
   // Group results by type
-  const grouped = scanResults.reduce((acc, result) => {
-    if (!acc[result.type]) {
-      acc[result.type] = [];
-    }
-    acc[result.type].push(result);
-    return acc;
-  }, {} as Record<string, ScanResult[]>);
+  const grouped = scanResults.reduce(
+    (acc, result) => {
+      if (!acc[result.type]) {
+        acc[result.type] = [];
+      }
+      acc[result.type].push(result);
+      return acc;
+    },
+    {} as Record<string, ScanResult[]>
+  );
 
   let output = `
 📊 VALIDATION REPORT
@@ -322,7 +350,7 @@ export async function checkRipgrepAvailability(): Promise<boolean> {
   try {
     const result = await spawn(['rg', '--version'], {
       stdout: 'pipe',
-      stderr: 'ignore'
+      stderr: 'ignore',
     });
 
     const version = await new Response(result.stdout).text();

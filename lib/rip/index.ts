@@ -90,21 +90,22 @@ export class RipgrepEngine {
         variant: ['EXPANDED', 'THREAD', 'DASHBOARD', 'COMPRESSED'],
         hash_algo: 'SHA-256',
         id_pattern: '^[A-Z]{3}-RIP-[0-9]{3}$',
-        ai_prefix: 'PUR_'
+        ai_prefix: 'PUR_',
       },
       defaults: {
         scope: 'FACTORY',
         type: 'SCAN',
         version: 'v4.0',
-        status: 'ACTIVE'
+        status: 'ACTIVE',
       },
       grep: {
-        all_tags: '\\[([A-Z]+)-([A-Z]+)-([A-Z]+)-([A-Z]{3}-RIP-[0-9]{3})-([vV][0-9]+\\.[0-9]+)-\\[([A-Z]+)\\]-([a-f0-9]{64})\\]',
+        all_tags:
+          '\\[([A-Z]+)-([A-Z]+)-([A-Z]+)-([A-Z]{3}-RIP-[0-9]{3})-([vV][0-9]+\\.[0-9]+)-\\[([A-Z]+)\\]-([a-f0-9]{64})\\]',
         rg_flags: '--type js --mmap --pcre2-unicode --hyper-accurate',
         validate: {
-          hooks: ['parallel-purge', 'link-verify', 'ai-transmute']
-        }
-      }
+          hooks: ['parallel-purge', 'link-verify', 'ai-transmute'],
+        },
+      },
     };
   }
 
@@ -126,7 +127,9 @@ export class RipgrepEngine {
     const { scope = this.config.defaults.scope } = params;
 
     if (!this.config.schema.scope.includes(scope)) {
-      throw new Error(`❌ Invalid scope: ${scope}. Must be one of: ${this.config.schema.scope.join(', ')}`);
+      throw new Error(
+        `❌ Invalid scope: ${scope}. Must be one of: ${this.config.schema.scope.join(', ')}`
+      );
     }
   }
 
@@ -134,7 +137,9 @@ export class RipgrepEngine {
    * Generate unique purge ID
    */
   private generateId(type: string): string {
-    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    const random = Math.floor(Math.random() * 1000)
+      .toString()
+      .padStart(3, '0');
     return `FACTORY-${type.toUpperCase()}-${random}`;
   }
 
@@ -147,7 +152,7 @@ export class RipgrepEngine {
     const {
       scope = this.config.defaults.scope,
       type = this.config.defaults.type,
-      pattern = ''
+      pattern = '',
     } = params;
 
     const id = this.generateId(type);
@@ -168,7 +173,7 @@ export class RipgrepEngine {
       grepable,
       contentHash,
       results: [`Pattern: ${pattern}`, `Scope: ${scope}`, `Type: ${type}`],
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
   }
 
@@ -179,10 +184,12 @@ export class RipgrepEngine {
     const { spawn } = await import('bun');
 
     try {
-      const result = await spawn(['rg', '--type', 'js', '--no-heading',
-        'https?://[^\\s\\)\\]\\}>]+', directory], {
-        stdout: 'pipe'
-      });
+      const result = await spawn(
+        ['rg', '--type', 'js', '--no-heading', 'https?://[^\\s\\)\\]\\}>]+', directory],
+        {
+          stdout: 'pipe',
+        }
+      );
 
       const text = await new Response(result.stdout).text();
       return text.split('\n').filter(line => line.trim());
@@ -199,10 +206,19 @@ export class RipgrepEngine {
     const { spawn } = await import('bun');
 
     try {
-      const result = await spawn(['rg', '--type', 'js', '--no-heading',
-        'require\\(|module\\.exports|fs\\.|child_process', directory], {
-        stdout: 'pipe'
-      });
+      const result = await spawn(
+        [
+          'rg',
+          '--type',
+          'js',
+          '--no-heading',
+          'require\\(|module\\.exports|fs\\.|child_process',
+          directory,
+        ],
+        {
+          stdout: 'pipe',
+        }
+      );
 
       const text = await new Response(result.stdout).text();
       return text.split('\n').filter(line => line.trim());

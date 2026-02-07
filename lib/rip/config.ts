@@ -48,22 +48,23 @@ export const DEFAULT_SCHEMA: RipgrepSchema = {
   variant: ['EXPANDED', 'THREAD', 'DASHBOARD', 'COMPRESSED'],
   hash_algo: 'SHA-256',
   id_pattern: '^[A-Z]{3}-RIP-[0-9]{3}$',
-  ai_prefix: 'PUR_'
+  ai_prefix: 'PUR_',
 };
 
 export const DEFAULT_DEFAULTS: RipgrepDefaults = {
   scope: 'FACTORY',
   type: 'SCAN',
   version: 'v4.0',
-  status: 'ACTIVE'
+  status: 'ACTIVE',
 };
 
 export const DEFAULT_GREP_CONFIG: RipgrepGrepConfig = {
-  all_tags: '\\[([A-Z]+)-([A-Z]+)-([A-Z]+)-([A-Z]{3}-RIP-[0-9]{3})-([vV][0-9]+\\.[0-9]+)-\\[([A-Z]+)\\]-([a-f0-9]{64})\\]',
+  all_tags:
+    '\\[([A-Z]+)-([A-Z]+)-([A-Z]+)-([A-Z]{3}-RIP-[0-9]{3})-([vV][0-9]+\\.[0-9]+)-\\[([A-Z]+)\\]-([a-f0-9]{64})\\]',
   rg_flags: '--type js --mmap --pcre2-unicode --hyper-accurate',
   validate: {
-    hooks: ['parallel-purge', 'link-verify', 'ai-transmute']
-  }
+    hooks: ['parallel-purge', 'link-verify', 'ai-transmute'],
+  },
 };
 
 export const DEFAULT_CONFIG: RipgrepFullConfig = {
@@ -71,9 +72,9 @@ export const DEFAULT_CONFIG: RipgrepFullConfig = {
     ripgrep: {
       schema: DEFAULT_SCHEMA,
       defaults: DEFAULT_DEFAULTS,
-      grep: DEFAULT_GREP_CONFIG
-    }
-  }
+      grep: DEFAULT_GREP_CONFIG,
+    },
+  },
 };
 
 // ============================================================================
@@ -91,14 +92,14 @@ export const PRESET_CONFIGS = {
         defaults: {
           ...DEFAULT_CONFIG.rules.ripgrep.defaults,
           scope: 'CODE',
-          status: 'DEVELOPMENT'
+          status: 'DEVELOPMENT',
         },
         grep: {
           ...DEFAULT_CONFIG.rules.ripgrep.grep,
-          rg_flags: '--type js --type ts --type jsx --type tsx --mmap'
-        }
-      }
-    }
+          rg_flags: '--type js --type ts --type jsx --type tsx --mmap',
+        },
+      },
+    },
   },
 
   // Production configuration - strict validation
@@ -111,17 +112,24 @@ export const PRESET_CONFIGS = {
         defaults: {
           ...DEFAULT_CONFIG.rules.ripgrep.defaults,
           scope: 'FACTORY',
-          status: 'PRODUCTION'
+          status: 'PRODUCTION',
         },
         grep: {
           ...DEFAULT_CONFIG.rules.ripgrep.grep,
-          rg_flags: '--type js --type ts --type jsx --type tsx --mmap --pcre2-unicode --case-sensitive'
+          rg_flags:
+            '--type js --type ts --type jsx --type tsx --mmap --pcre2-unicode --case-sensitive',
         },
         validate: {
-          hooks: ['parallel-purge', 'link-verify', 'ai-transmute', 'security-scan', 'performance-check']
-        }
-      }
-    }
+          hooks: [
+            'parallel-purge',
+            'link-verify',
+            'ai-transmute',
+            'security-scan',
+            'performance-check',
+          ],
+        },
+      },
+    },
   },
 
   // Security-focused configuration
@@ -134,14 +142,14 @@ export const PRESET_CONFIGS = {
         defaults: {
           ...DEFAULT_CONFIG.rules.ripgrep.defaults,
           scope: 'PURGE',
-          status: 'SECURITY_AUDIT'
+          status: 'SECURITY_AUDIT',
         },
         validate: {
-          hooks: ['parallel-purge', 'link-verify', 'security-scan', 'vulnerability-check']
-        }
-      }
-    }
-  }
+          hooks: ['parallel-purge', 'link-verify', 'security-scan', 'vulnerability-check'],
+        },
+      },
+    },
+  },
 } as const;
 
 // ============================================================================
@@ -305,9 +313,9 @@ export class ConfigManager {
         ...(newConfig.rules || {}),
         ripgrep: {
           ...this.config.rules.ripgrep,
-          ...(newConfig.rules?.ripgrep || {})
-        }
-      }
+          ...(newConfig.rules?.ripgrep || {}),
+        },
+      },
     };
     this.validate();
   }

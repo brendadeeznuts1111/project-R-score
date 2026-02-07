@@ -79,7 +79,8 @@ export const WASM_API: readonly WasmAPIEntry[] = [
   {
     name: 'WebAssembly.Memory',
     kind: 'class',
-    description: 'A resizable ArrayBuffer that holds the raw bytes of memory accessed by an Instance.',
+    description:
+      'A resizable ArrayBuffer that holds the raw bytes of memory accessed by an Instance.',
     mdnUrl: `${MDN}/Memory`,
     bunUrl: `${BUN}#memory`,
     members: [
@@ -95,7 +96,8 @@ export const WASM_API: readonly WasmAPIEntry[] = [
         name: 'grow',
         kind: 'method',
         signature: 'memory.grow(delta: number): number',
-        description: 'Grows the memory by delta pages (64KB each). Returns the previous page count.',
+        description:
+          'Grows the memory by delta pages (64KB each). Returns the previous page count.',
         mdnUrl: `${MDN}/Memory/grow`,
         bunUrl: `${BUN}#memory`,
       },
@@ -104,7 +106,8 @@ export const WASM_API: readonly WasmAPIEntry[] = [
   {
     name: 'WebAssembly.Table',
     kind: 'class',
-    description: 'A resizable typed array of references (e.g. to functions) accessed by an Instance.',
+    description:
+      'A resizable typed array of references (e.g. to functions) accessed by an Instance.',
     mdnUrl: `${MDN}/Table`,
     bunUrl: `${BUN}#table`,
     members: [
@@ -166,7 +169,7 @@ export const WASM_API: readonly WasmAPIEntry[] = [
 export function getWasmClass(name: string): WasmAPIEntry | undefined {
   const lower = name.toLowerCase();
   return WASM_API.find(
-    e => e.name.toLowerCase() === lower || e.name.toLowerCase().endsWith(`.${lower}`),
+    e => e.name.toLowerCase() === lower || e.name.toLowerCase().endsWith(`.${lower}`)
   );
 }
 

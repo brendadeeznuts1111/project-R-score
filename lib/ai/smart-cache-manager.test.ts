@@ -45,7 +45,17 @@ mock.module('../performance/cache-manager', () => {
       this.store.clear();
     }
     getStats() {
-      return { hits: 0, misses: 0, sets: 0, deletes: 0, evictions: 0, currentSize: this.store.size, maxSize: 1000, hitRate: 0, memoryUsage: 0 };
+      return {
+        hits: 0,
+        misses: 0,
+        sets: 0,
+        deletes: 0,
+        evictions: 0,
+        currentSize: this.store.size,
+        maxSize: 1000,
+        hitRate: 0,
+        memoryUsage: 0,
+      };
     }
     stop() {}
     async destroy() {

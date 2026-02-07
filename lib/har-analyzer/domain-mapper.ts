@@ -1,7 +1,7 @@
 // lib/har-analyzer/domain-mapper.ts — Documentation-aware domain classification
 // Maps URLs and HAR entries to provider, category, URL type, and domain type.
 
-import type { DomainType, AssetGroup, TTFBGrade, SizeGrade } from "./types";
+import type { DomainType, AssetGroup, TTFBGrade, SizeGrade } from './types';
 
 // Import canonical enums from single source of truth and re-export
 import { DocumentationProvider, DocumentationCategory, UrlType } from '../docs/constants/enums';
@@ -16,10 +16,10 @@ export const PERFORMANCE_THRESHOLDS = {
     poor: 1000,
   },
   SIZE: {
-    small: 10_240,        // 10 KB
-    medium: 102_400,      // 100 KB
-    large: 512_000,       // 500 KB
-    huge: 1_048_576,      // 1 MB
+    small: 10_240, // 10 KB
+    medium: 102_400, // 100 KB
+    large: 512_000, // 500 KB
+    huge: 1_048_576, // 1 MB
   },
   COMPRESSION: {
     good: 0.6,
@@ -36,140 +36,159 @@ export const PERFORMANCE_THRESHOLDS = {
 // ─── Known CDN hostnames ─────────────────────────────────────────────
 
 const CDN_PATTERNS = [
-  "cdn.", "static.", "assets.", "media.",
-  "cloudfront.net", "akamaized.net", "fastly.net",
-  "cloudflare.com", "cdnjs.cloudflare.com",
-  "unpkg.com", "jsdelivr.net", "esm.sh",
-  "googleapis.com", "gstatic.com",
-  "fbcdn.net", "twimg.com",
+  'cdn.',
+  'static.',
+  'assets.',
+  'media.',
+  'cloudfront.net',
+  'akamaized.net',
+  'fastly.net',
+  'cloudflare.com',
+  'cdnjs.cloudflare.com',
+  'unpkg.com',
+  'jsdelivr.net',
+  'esm.sh',
+  'googleapis.com',
+  'gstatic.com',
+  'fbcdn.net',
+  'twimg.com',
 ];
 
 const TRACKER_PATTERNS = [
-  "google-analytics.com", "googletagmanager.com",
-  "analytics.", "tracking.", "pixel.",
-  "hotjar.com", "fullstory.com", "segment.com",
-  "mixpanel.com", "amplitude.com",
-  "facebook.net", "doubleclick.net",
-  "sentry.io", "newrelic.com", "datadoghq.com",
+  'google-analytics.com',
+  'googletagmanager.com',
+  'analytics.',
+  'tracking.',
+  'pixel.',
+  'hotjar.com',
+  'fullstory.com',
+  'segment.com',
+  'mixpanel.com',
+  'amplitude.com',
+  'facebook.net',
+  'doubleclick.net',
+  'sentry.io',
+  'newrelic.com',
+  'datadoghq.com',
 ];
 
 // ─── Provider hostname map ───────────────────────────────────────────
 
 const PROVIDER_MAP: [string, DocumentationProvider][] = [
-  ["bun.sh", DocumentationProvider.BUN_OFFICIAL],
-  ["github.com/oven-sh/bun", DocumentationProvider.BUN_GITHUB],
-  ["npmjs.com/package/bun", DocumentationProvider.BUN_NPM],
-  ["vercel.com", DocumentationProvider.VERCEL],
-  ["netlify.com", DocumentationProvider.NETLIFY],
-  ["cloudflare.com", DocumentationProvider.CLOUDFLARE],
-  ["railway.app", DocumentationProvider.RAILWAY],
-  ["fly.io", DocumentationProvider.FLY_IO],
-  ["dev.to", DocumentationProvider.DEV_TO],
-  ["medium.com", DocumentationProvider.MEDIUM],
-  ["hashnode.com", DocumentationProvider.HASHNODE],
-  ["reddit.com", DocumentationProvider.REDDIT],
-  ["discord.com", DocumentationProvider.DISCORD],
-  ["stackoverflow.com", DocumentationProvider.STACK_OVERFLOW],
-  ["youtube.com", DocumentationProvider.VIDEO],
-  ["youtu.be", DocumentationProvider.VIDEO],
-  ["npmjs.com", DocumentationProvider.NPM],
-  ["deno.land", DocumentationProvider.DENO_LAND],
-  ["jsr.io", DocumentationProvider.JSR_IO],
+  ['bun.sh', DocumentationProvider.BUN_OFFICIAL],
+  ['github.com/oven-sh/bun', DocumentationProvider.BUN_GITHUB],
+  ['npmjs.com/package/bun', DocumentationProvider.BUN_NPM],
+  ['vercel.com', DocumentationProvider.VERCEL],
+  ['netlify.com', DocumentationProvider.NETLIFY],
+  ['cloudflare.com', DocumentationProvider.CLOUDFLARE],
+  ['railway.app', DocumentationProvider.RAILWAY],
+  ['fly.io', DocumentationProvider.FLY_IO],
+  ['dev.to', DocumentationProvider.DEV_TO],
+  ['medium.com', DocumentationProvider.MEDIUM],
+  ['hashnode.com', DocumentationProvider.HASHNODE],
+  ['reddit.com', DocumentationProvider.REDDIT],
+  ['discord.com', DocumentationProvider.DISCORD],
+  ['stackoverflow.com', DocumentationProvider.STACK_OVERFLOW],
+  ['youtube.com', DocumentationProvider.VIDEO],
+  ['youtu.be', DocumentationProvider.VIDEO],
+  ['npmjs.com', DocumentationProvider.NPM],
+  ['deno.land', DocumentationProvider.DENO_LAND],
+  ['jsr.io', DocumentationProvider.JSR_IO],
 ];
 
 // ─── Category pathname map ───────────────────────────────────────────
 
 const CATEGORY_MAP: [string, DocumentationCategory][] = [
-  ["/getting-started", DocumentationCategory.GETTING_STARTED],
-  ["/docs/api", DocumentationCategory.API],
-  ["/docs/cli", DocumentationCategory.CLI],
-  ["/docs/runtime", DocumentationCategory.RUNTIME],
-  ["/docs/bundler", DocumentationCategory.BUNDLER],
-  ["/docs/test", DocumentationCategory.TEST_RUNNER],
-  ["/docs/package-manager", DocumentationCategory.PACKAGE_MANAGER],
-  ["/docs/install", DocumentationCategory.GETTING_STARTED],
-  ["/docs/performance", DocumentationCategory.PERFORMANCE],
-  ["/tutorial", DocumentationCategory.TUTORIAL],
-  ["/guide", DocumentationCategory.GUIDE],
-  ["/examples", DocumentationCategory.EXAMPLES],
-  ["/benchmarks", DocumentationCategory.BENCHMARKS],
-  ["/deployment", DocumentationCategory.DEPLOYMENT],
-  ["/integrations", DocumentationCategory.GUIDE],
-  ["/faq", DocumentationCategory.FAQ],
-  ["/changelog", DocumentationCategory.CHANGELOG],
-  ["/blog", DocumentationCategory.COMMUNITY],
+  ['/getting-started', DocumentationCategory.GETTING_STARTED],
+  ['/docs/api', DocumentationCategory.API],
+  ['/docs/cli', DocumentationCategory.CLI],
+  ['/docs/runtime', DocumentationCategory.RUNTIME],
+  ['/docs/bundler', DocumentationCategory.BUNDLER],
+  ['/docs/test', DocumentationCategory.TEST_RUNNER],
+  ['/docs/package-manager', DocumentationCategory.PACKAGE_MANAGER],
+  ['/docs/install', DocumentationCategory.GETTING_STARTED],
+  ['/docs/performance', DocumentationCategory.PERFORMANCE],
+  ['/tutorial', DocumentationCategory.TUTORIAL],
+  ['/guide', DocumentationCategory.GUIDE],
+  ['/examples', DocumentationCategory.EXAMPLES],
+  ['/benchmarks', DocumentationCategory.BENCHMARKS],
+  ['/deployment', DocumentationCategory.DEPLOYMENT],
+  ['/integrations', DocumentationCategory.GUIDE],
+  ['/faq', DocumentationCategory.FAQ],
+  ['/changelog', DocumentationCategory.CHANGELOG],
+  ['/blog', DocumentationCategory.COMMUNITY],
 ];
 
 // ─── URL type pathname map ───────────────────────────────────────────
 
 const URL_TYPE_MAP: [string, UrlType][] = [
-  ["/docs", UrlType.DOCUMENTATION],
-  ["/api/", UrlType.API_REFERENCE],
-  ["/issues/", UrlType.GITHUB_ISSUE],
-  ["/pull/", UrlType.GITHUB_PULL_REQUEST],
-  ["/discussions/", UrlType.GITHUB_DISCUSSION],
-  ["/package/", UrlType.NPM_PACKAGE],
-  ["/blog/", UrlType.BLOG_POST],
-  ["/watch", UrlType.VIDEO_TUTORIAL],
-  ["/questions/", UrlType.STACK_OVERFLOW_QUESTION],
-  ["/rss", UrlType.RSS_FEED],
-  ["/feed", UrlType.RSS_FEED],
+  ['/docs', UrlType.DOCUMENTATION],
+  ['/api/', UrlType.API_REFERENCE],
+  ['/issues/', UrlType.GITHUB_ISSUE],
+  ['/pull/', UrlType.GITHUB_PULL_REQUEST],
+  ['/discussions/', UrlType.GITHUB_DISCUSSION],
+  ['/package/', UrlType.NPM_PACKAGE],
+  ['/blog/', UrlType.BLOG_POST],
+  ['/watch', UrlType.VIDEO_TUTORIAL],
+  ['/questions/', UrlType.STACK_OVERFLOW_QUESTION],
+  ['/rss', UrlType.RSS_FEED],
+  ['/feed', UrlType.RSS_FEED],
 ];
 
 // ─── Grading helpers ─────────────────────────────────────────────────
 
 export function gradeTTFB(ms: number): TTFBGrade {
-  if (ms <= PERFORMANCE_THRESHOLDS.TTFB.good) return "good";
-  if (ms <= PERFORMANCE_THRESHOLDS.TTFB.needsImprovement) return "needs-improvement";
-  return "poor";
+  if (ms <= PERFORMANCE_THRESHOLDS.TTFB.good) return 'good';
+  if (ms <= PERFORMANCE_THRESHOLDS.TTFB.needsImprovement) return 'needs-improvement';
+  return 'poor';
 }
 
 export function gradeSize(bytes: number): SizeGrade {
-  if (bytes <= PERFORMANCE_THRESHOLDS.SIZE.small) return "small";
-  if (bytes <= PERFORMANCE_THRESHOLDS.SIZE.medium) return "medium";
-  if (bytes <= PERFORMANCE_THRESHOLDS.SIZE.large) return "large";
-  return "huge";
+  if (bytes <= PERFORMANCE_THRESHOLDS.SIZE.small) return 'small';
+  if (bytes <= PERFORMANCE_THRESHOLDS.SIZE.medium) return 'medium';
+  if (bytes <= PERFORMANCE_THRESHOLDS.SIZE.large) return 'large';
+  return 'huge';
 }
 
 // ─── Domain classification ───────────────────────────────────────────
 
 export function classifyDomain(entryHost: string, pageHost: string): DomainType {
-  if (entryHost.toLowerCase() === pageHost.toLowerCase()) return "first-party";
+  if (entryHost.toLowerCase() === pageHost.toLowerCase()) return 'first-party';
 
   const lowerHost = entryHost.toLowerCase();
-  if (TRACKER_PATTERNS.some((p) => lowerHost.includes(p))) return "tracker";
-  if (CDN_PATTERNS.some((p) => lowerHost.includes(p))) return "cdn";
+  if (TRACKER_PATTERNS.some(p => lowerHost.includes(p))) return 'tracker';
+  if (CDN_PATTERNS.some(p => lowerHost.includes(p))) return 'cdn';
 
-  return "third-party";
+  return 'third-party';
 }
 
 // ─── Asset group classification ──────────────────────────────────────
 
 export function classifyAssetGroup(mimeType: string, isFirstRequest: boolean): AssetGroup {
-  if (isFirstRequest) return "critical";
+  if (isFirstRequest) return 'critical';
 
   const lower = mimeType.trim().toLowerCase();
-  if (lower.includes("text/html")) return "critical";
-  if (lower.includes("text/css")) return "critical";
+  if (lower.includes('text/html')) return 'critical';
+  if (lower.includes('text/css')) return 'critical';
 
   // Render-blocking JS in <head>
-  if (lower.includes("javascript")) return "important";
+  if (lower.includes('javascript')) return 'important';
 
   // Fonts needed for first paint
-  if (lower.includes("font/")) return "important";
+  if (lower.includes('font/')) return 'important';
 
   // Images, media, etc.
-  if (lower.includes("image/")) return "async";
-  if (lower.includes("video/") || lower.includes("audio/")) return "deferred";
+  if (lower.includes('image/')) return 'async';
+  if (lower.includes('video/') || lower.includes('audio/')) return 'deferred';
 
-  return "async";
+  return 'async';
 }
 
 // ─── DocumentationMapper ─────────────────────────────────────────────
 
 export class DocumentationMapper {
   private static hostMatches(hostname: string, domain: string): boolean {
-    return hostname === domain || hostname.endsWith("." + domain);
+    return hostname === domain || hostname.endsWith('.' + domain);
   }
 
   static getProvider(url: string): DocumentationProvider {
@@ -178,12 +197,15 @@ export class DocumentationMapper {
       const host = parsed.hostname;
       const pathname = parsed.pathname;
       for (const [pattern, provider] of PROVIDER_MAP) {
-        const slashIdx = pattern.indexOf("/");
+        const slashIdx = pattern.indexOf('/');
         if (slashIdx !== -1) {
           // Pattern has host + path (e.g. "github.com/oven-sh/bun")
           const patternHost = pattern.slice(0, slashIdx);
           const patternPath = pattern.slice(slashIdx);
-          if (this.hostMatches(host, patternHost) && (pathname === patternPath || pathname.startsWith(patternPath + "/"))) {
+          if (
+            this.hostMatches(host, patternHost) &&
+            (pathname === patternPath || pathname.startsWith(patternPath + '/'))
+          ) {
             return provider;
           }
         } else {
@@ -216,8 +238,8 @@ export class DocumentationMapper {
       }
       // Hostname-based fallback — exact domain match to avoid false positives
       const host = new URL(url).hostname;
-      if (host === "github.com" || host.endsWith(".github.com")) return UrlType.GITHUB_SOURCE;
-      if (host === "npmjs.com" || host === "www.npmjs.com") return UrlType.NPM_PACKAGE;
+      if (host === 'github.com' || host.endsWith('.github.com')) return UrlType.GITHUB_SOURCE;
+      if (host === 'npmjs.com' || host === 'www.npmjs.com') return UrlType.NPM_PACKAGE;
     } catch {
       // malformed URL
     }

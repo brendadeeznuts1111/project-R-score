@@ -1,12 +1,13 @@
 // lib/security/config-manager.ts — Security configuration manager
 
-import { feature } from "bun:bundle";
+import { feature } from 'bun:bundle';
 
 // Build-time security constants (cannot be bypassed at runtime)
-const IS_PRODUCTION_BUILD = process.env.NODE_ENV === 'production' && process.env.NODE_ENV !== undefined;
+const IS_PRODUCTION_BUILD =
+  process.env.NODE_ENV === 'production' && process.env.NODE_ENV !== undefined;
 let PRODUCTION_SECURITY_ENABLED = IS_PRODUCTION_BUILD;
 try {
-  if (feature("PRODUCTION_SECURITY")) {
+  if (feature('PRODUCTION_SECURITY')) {
     PRODUCTION_SECURITY_ENABLED = true;
   }
 } catch {
@@ -21,7 +22,7 @@ const DEFAULT_SECURITY_CONFIG = {
     audit: 'MINIMAL_AUDIT' as const,
     auth: 'BASIC_AUTH' as const,
     storage: 'LOCAL_STORAGE' as const,
-    monitoring: 'CUSTOM_MONITORING' as const
+    monitoring: 'CUSTOM_MONITORING' as const,
   },
   production: {
     security: 'ENTERPRISE_SECURITY' as const,
@@ -29,7 +30,7 @@ const DEFAULT_SECURITY_CONFIG = {
     audit: 'FULL_AUDIT' as const,
     auth: 'AWS_SIGV4' as const,
     storage: 'R2_STORAGE' as const,
-    monitoring: 'PROMETHEUS' as const
+    monitoring: 'PROMETHEUS' as const,
   },
   test: {
     security: 'TESTING_MODE' as const,
@@ -37,17 +38,23 @@ const DEFAULT_SECURITY_CONFIG = {
     audit: 'SECURITY_AUDIT' as const,
     auth: 'API_KEY' as const,
     storage: 'LOCAL_STORAGE' as const,
-    monitoring: 'CUSTOM_MONITORING' as const
-  }
+    monitoring: 'CUSTOM_MONITORING' as const,
+  },
 };
 
 // Type definitions for security configuration
-export type SecurityFeature = "ENTERPRISE_SECURITY" | "STANDARD_SECURITY" | "DEVELOPMENT_MODE" | "TESTING_MODE" | "COMPLIANCE_MODE" | "ZERO_TRUST";
-export type CacheFeature = "REDIS_CACHE" | "MEMORY_CACHE" | "NO_CACHE";
-export type AuditFeature = "FULL_AUDIT" | "SECURITY_AUDIT" | "MINIMAL_AUDIT";
-export type AuthFeature = "AWS_SIGV4" | "BASIC_AUTH" | "API_KEY";
-export type StorageFeature = "R2_STORAGE" | "LOCAL_STORAGE";
-export type MonitoringFeature = "PROMETHEUS" | "CUSTOM_MONITORING";
+export type SecurityFeature =
+  | 'ENTERPRISE_SECURITY'
+  | 'STANDARD_SECURITY'
+  | 'DEVELOPMENT_MODE'
+  | 'TESTING_MODE'
+  | 'COMPLIANCE_MODE'
+  | 'ZERO_TRUST';
+export type CacheFeature = 'REDIS_CACHE' | 'MEMORY_CACHE' | 'NO_CACHE';
+export type AuditFeature = 'FULL_AUDIT' | 'SECURITY_AUDIT' | 'MINIMAL_AUDIT';
+export type AuthFeature = 'AWS_SIGV4' | 'BASIC_AUTH' | 'API_KEY';
+export type StorageFeature = 'R2_STORAGE' | 'LOCAL_STORAGE';
+export type MonitoringFeature = 'PROMETHEUS' | 'CUSTOM_MONITORING';
 
 export interface SecurityConfig {
   security: SecurityFeature;
@@ -119,7 +126,7 @@ export class SecurityConfigManager {
     console.log('🔧 Security configuration updated:', {
       updates,
       newConfig: this.config,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -149,7 +156,7 @@ export class SecurityConfigManager {
 
     return {
       valid: issues.length === 0,
-      issues
+      issues,
     };
   }
 
@@ -164,35 +171,35 @@ export class SecurityConfigManager {
 
     // Security feature scoring
     const securityScores = {
-      'DEVELOPMENT_MODE': 1,
-      'TESTING_MODE': 2,
-      'STANDARD_SECURITY': 3,
-      'COMPLIANCE_MODE': 4,
-      'ZERO_TRUST': 5,
-      'ENTERPRISE_SECURITY': 5
+      DEVELOPMENT_MODE: 1,
+      TESTING_MODE: 2,
+      STANDARD_SECURITY: 3,
+      COMPLIANCE_MODE: 4,
+      ZERO_TRUST: 5,
+      ENTERPRISE_SECURITY: 5,
     };
 
     score += securityScores[this.config.security] || 0;
 
     // Authentication scoring
     const authScores = {
-      'BASIC_AUTH': 1,
-      'API_KEY': 2,
-      'JWT_TOKEN': 3,
-      'OAUTH2': 4,
-      'MTLS': 4,
-      'AWS_SIGV4': 4
+      BASIC_AUTH: 1,
+      API_KEY: 2,
+      JWT_TOKEN: 3,
+      OAUTH2: 4,
+      MTLS: 4,
+      AWS_SIGV4: 4,
     };
 
     score += authScores[this.config.auth] || 0;
 
     // Audit scoring
     const auditScores = {
-      'MINIMAL_AUDIT': 1,
-      'SECURITY_AUDIT': 2,
-      'PERFORMANCE_AUDIT': 2,
-      'COMPLIANCE_AUDIT': 3,
-      'FULL_AUDIT': 4
+      MINIMAL_AUDIT: 1,
+      SECURITY_AUDIT: 2,
+      PERFORMANCE_AUDIT: 2,
+      COMPLIANCE_AUDIT: 3,
+      FULL_AUDIT: 4,
     };
 
     score += auditScores[this.config.audit] || 0;
@@ -229,7 +236,7 @@ export class SecurityConfigManager {
     return {
       level,
       score,
-      recommendations
+      recommendations,
     };
   }
 
@@ -246,7 +253,7 @@ export class SecurityConfigManager {
       validation: this.validateConfig(),
       securityLevel: this.getSecurityLevel(),
       environment: process.env.NODE_ENV || 'unknown',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -272,7 +279,7 @@ export class SecurityConfigManager {
     this.featureFlags.set(featureKey, enabled);
 
     console.log(`🔄 Feature ${featureKey} ${enabled ? 'enabled' : 'disabled'}`, {
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -333,7 +340,7 @@ export class SecurityConfigManager {
     return {
       compliant: gaps.length === 0,
       gaps,
-      recommendations
+      recommendations,
     };
   }
 }

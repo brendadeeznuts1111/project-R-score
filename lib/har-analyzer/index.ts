@@ -7,7 +7,7 @@ export {
   inferHttpVersion,
   analyzeProtocolFromHAR,
   createHARServer,
-} from "./bun-serve-types";
+} from './bun-serve-types';
 
 export type {
   FragmentType,
@@ -24,10 +24,10 @@ export type {
   DerivedMetrics,
   RelationalContext,
   HARContext,
-} from "./types";
+} from './types';
 
-export { analyzeFragment } from "./fragment-analyzer";
-export { parseURL, MIME_MAP } from "./url-parser";
+export { analyzeFragment } from './fragment-analyzer';
+export { parseURL, MIME_MAP } from './url-parser';
 
 export {
   DocumentationProvider,
@@ -39,4 +39,4 @@ export {
   classifyAssetGroup,
   gradeTTFB,
   gradeSize,
-} from "./domain-mapper";
+} from './domain-mapper';

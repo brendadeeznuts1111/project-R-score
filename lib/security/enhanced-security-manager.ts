@@ -1,17 +1,18 @@
 // lib/security/enhanced-security-manager.ts — Enhanced security manager with compile-time optimization
 
 // Build-time security constants (cannot be bypassed at runtime)
-const IS_PRODUCTION_BUILD = process.env.NODE_ENV === 'production' && process.env.NODE_ENV !== undefined;
+const IS_PRODUCTION_BUILD =
+  process.env.NODE_ENV === 'production' && process.env.NODE_ENV !== undefined;
 let PRODUCTION_SECURITY_ENABLED = IS_PRODUCTION_BUILD;
 try {
-  if (feature("PRODUCTION_SECURITY")) {
+  if (feature('PRODUCTION_SECURITY')) {
     PRODUCTION_SECURITY_ENABLED = true;
   }
 } catch {
   // Use fallback
 }
 
-import { feature } from "bun:bundle";
+import { feature } from 'bun:bundle';
 import { securityConfig, DEFAULT_SECURITY_CONFIG, type SecurityConfig } from './config-manager';
 import { secretManager } from '../../barbershop/lib/security/secrets';
 import { versionGraph } from '../../barbershop/lib/security/version-graph';
@@ -31,7 +32,7 @@ export class EnhancedSecurityManager {
     auditEvents: 0,
     securityEvents: 0,
     cacheHits: 0,
-    cacheMisses: 0
+    cacheMisses: 0,
   };
 
   // Rate limiting for security operations
@@ -41,7 +42,10 @@ export class EnhancedSecurityManager {
   private readonly RATE_LIMIT_MAX_SECRET_REQUESTS = 5; // Reduced to 5 for testing
 
   // IP-based rate limiting for advanced threat protection
-  private ipRateLimitMap = new Map<string, { count: number; resetTime: number; blocked: boolean; blockUntil?: number }>();
+  private ipRateLimitMap = new Map<
+    string,
+    { count: number; resetTime: number; blocked: boolean; blockUntil?: number }
+  >();
   private readonly IP_RATE_LIMIT_WINDOW = 300000; // 5 minutes
   private readonly IP_RATE_LIMIT_MAX_REQUESTS = 50; // 50 requests per 5 minutes per IP
   private readonly IP_BLOCK_DURATION = 3600000; // 1 hour block for abusive IPs
@@ -53,20 +57,20 @@ export class EnhancedSecurityManager {
     totalOperationsProcessed: 0,
     cacheHitRatio: 0,
     memoryUsage: 0,
-    cpuUsage: 0
+    cpuUsage: 0,
   };
 
   // Advanced monitoring dashboard data
   private monitoringData = {
     securityEvents: new Map<string, number>(), // Event type -> count
-    threatLevels: new Map<string, number>(),  // Threat level -> count
-    responseTimeHistory: [] as number[],     // Last 100 response times
-    blockedIpsHistory: [] as string[],       // History of blocked IPs
+    threatLevels: new Map<string, number>(), // Threat level -> count
+    responseTimeHistory: [] as number[], // Last 100 response times
+    blockedIpsHistory: [] as string[], // History of blocked IPs
     systemHealth: {
       status: 'healthy' as 'healthy' | 'degraded' | 'unhealthy',
       lastCheck: new Date(),
-      issues: [] as string[]
-    }
+      issues: [] as string[],
+    },
   };
 
   // Performance optimization settings
@@ -76,7 +80,7 @@ export class EnhancedSecurityManager {
     MEMORY_THRESHOLD_MB: 512,
     CPU_THRESHOLD_PERCENT: 80,
     CACHE_SIZE_LIMIT: 10000,
-    AUDIT_BATCH_SIZE: 50
+    AUDIT_BATCH_SIZE: 50,
   };
 
   // Persistent audit storage
@@ -102,7 +106,10 @@ export class EnhancedSecurityManager {
     // Store initialization promise, don't await in constructor
     this.initializationPromise = this.initialize().catch(error => {
       this.initializationError = error;
-      console.error('❌ Enhanced Security Manager initialization failed:', this.sanitizeError(error).message);
+      console.error(
+        '❌ Enhanced Security Manager initialization failed:',
+        this.sanitizeError(error).message
+      );
       // Don't throw in constructor - let the error be handled by ensureInitialized
     });
   }
@@ -122,7 +129,10 @@ export class EnhancedSecurityManager {
   }
 
   // Rate limiting check for security operations
-  private checkRateLimit(identifier: string, maxRequests: number = this.RATE_LIMIT_MAX_REQUESTS): boolean {
+  private checkRateLimit(
+    identifier: string,
+    maxRequests: number = this.RATE_LIMIT_MAX_REQUESTS
+  ): boolean {
     const now = Date.now();
     const key = identifier;
     const current = this.rateLimitMap.get(key);
@@ -131,7 +141,7 @@ export class EnhancedSecurityManager {
       // Reset or initialize rate limit
       this.rateLimitMap.set(key, {
         count: 1,
-        resetTime: now + this.RATE_LIMIT_WINDOW
+        resetTime: now + this.RATE_LIMIT_WINDOW,
       });
       return true;
     }
@@ -154,7 +164,7 @@ export class EnhancedSecurityManager {
       this.ipRateLimitMap.set(ip, {
         count: 1,
         resetTime: now + this.IP_RATE_LIMIT_WINDOW,
-        blocked: false
+        blocked: false,
       });
       return { allowed: true, blocked: false };
     }
@@ -164,7 +174,7 @@ export class EnhancedSecurityManager {
       return {
         allowed: false,
         blocked: true,
-        reason: `IP blocked until ${new Date(current.blockUntil).toISOString()}`
+        reason: `IP blocked until ${new Date(current.blockUntil).toISOString()}`,
       };
     }
 
@@ -193,13 +203,13 @@ export class EnhancedSecurityManager {
         ip,
         reason: 'Rate limit exceeded',
         blockDuration: this.IP_BLOCK_DURATION,
-        requestCount: current.count
+        requestCount: current.count,
       });
 
       return {
         allowed: false,
         blocked: true,
-        reason: `IP blocked for ${this.IP_BLOCK_DURATION / 60000} minutes due to excessive requests`
+        reason: `IP blocked for ${this.IP_BLOCK_DURATION / 60000} minutes due to excessive requests`,
       };
     }
 
@@ -226,7 +236,7 @@ export class EnhancedSecurityManager {
       correlationId,
       metadata: { ...metadata },
       ip,
-      userAgent
+      userAgent,
     };
 
     this.auditLogBuffer.push(auditEntry);
@@ -258,8 +268,8 @@ export class EnhancedSecurityManager {
           correlationId: entry.correlationId,
           timestamp: new Date(entry.timestamp).toISOString(),
           ip: entry.ip,
-          metadata: entry.metadata
-        }))
+          metadata: entry.metadata,
+        })),
       });
 
       await this.updateMetric('auditEvents');
@@ -280,7 +290,9 @@ export class EnhancedSecurityManager {
       throw new Error('Invalid service: name too long (max 100 characters)');
     }
     if (!/^[a-zA-Z0-9_-]+$/.test(service)) {
-      throw new Error('Invalid service: only alphanumeric characters, hyphens, and underscores allowed');
+      throw new Error(
+        'Invalid service: only alphanumeric characters, hyphens, and underscores allowed'
+      );
     }
 
     // Name validation
@@ -291,7 +303,9 @@ export class EnhancedSecurityManager {
       throw new Error('Invalid name: name too long (max 200 characters)');
     }
     if (!/^[a-zA-Z0-9._/-]+$/.test(name)) {
-      throw new Error('Invalid name: only alphanumeric characters, dots, hyphens, slashes, and underscores allowed');
+      throw new Error(
+        'Invalid name: only alphanumeric characters, dots, hyphens, slashes, and underscores allowed'
+      );
     }
 
     // Value validation (if provided)
@@ -330,12 +344,14 @@ export class EnhancedSecurityManager {
   private startOperationTracking(correlationId: string, operation: string): void {
     this.activeOperations.set(correlationId, {
       startTime: Date.now(),
-      operation
+      operation,
     });
   }
 
   // End operation tracking
-  private endOperationTracking(correlationId: string): { duration: number; operation: string } | null {
+  private endOperationTracking(
+    correlationId: string
+  ): { duration: number; operation: string } | null {
     const tracking = this.activeOperations.get(correlationId);
     if (tracking) {
       this.activeOperations.delete(correlationId);
@@ -346,7 +362,7 @@ export class EnhancedSecurityManager {
 
       return {
         duration,
-        operation: tracking.operation
+        operation: tracking.operation,
       };
     }
     return null;
@@ -397,8 +413,13 @@ export class EnhancedSecurityManager {
     }
 
     // Check response times
-    if (this.performanceMetrics.averageResponseTime > this.PERFORMANCE_CONFIG.RESPONSE_TIME_THRESHOLD_MS) {
-      issues.push(`High average response time: ${this.performanceMetrics.averageResponseTime.toFixed(2)}ms`);
+    if (
+      this.performanceMetrics.averageResponseTime >
+      this.PERFORMANCE_CONFIG.RESPONSE_TIME_THRESHOLD_MS
+    ) {
+      issues.push(
+        `High average response time: ${this.performanceMetrics.averageResponseTime.toFixed(2)}ms`
+      );
     }
 
     // Check concurrent operations
@@ -410,7 +431,7 @@ export class EnhancedSecurityManager {
     this.monitoringData.systemHealth = {
       status: issues.length === 0 ? 'healthy' : issues.length <= 2 ? 'degraded' : 'unhealthy',
       lastCheck: new Date(),
-      issues
+      issues,
     };
   }
 
@@ -432,7 +453,7 @@ export class EnhancedSecurityManager {
       timestamp: new Date().toISOString(),
       source: 'enhanced-security-manager',
       auditLevel: 'SECURITY',
-      metadata: metadata || {}
+      metadata: metadata || {},
     };
 
     // Log to console for immediate visibility
@@ -524,22 +545,22 @@ export class EnhancedSecurityManager {
     // Compile-time feature flag checks with dead-code elimination
 
     // Security features
-    if (feature("ENTERPRISE_SECURITY")) {
+    if (feature('ENTERPRISE_SECURITY')) {
       console.log('🏢 Enterprise Security Mode: Advanced threat detection enabled');
       await this.initializeEnterpriseSecurity();
-    } else if (feature("STANDARD_SECURITY")) {
+    } else if (feature('STANDARD_SECURITY')) {
       console.log('🔒 Standard Security Mode: Basic protection enabled');
       await this.initializeStandardSecurity();
-    } else if (feature("DEVELOPMENT_MODE")) {
+    } else if (feature('DEVELOPMENT_MODE')) {
       console.log('🛠️ Development Mode: Reduced security for development');
       await this.initializeDevelopmentMode();
     }
 
     // Authentication features
-    if (feature("AWS_SIGV4")) {
+    if (feature('AWS_SIGV4')) {
       console.log('🔐 AWS Signature V4 Authentication: Enabled');
       await this.initializeAWSAuth();
-    } else if (feature("BASIC_AUTH")) {
+    } else if (feature('BASIC_AUTH')) {
       console.log('🔑 Basic Authentication: Enabled (Development Only)');
       if (process.env.NODE_ENV === 'production') {
         console.warn('⚠️ Basic Auth not recommended for production');
@@ -547,31 +568,31 @@ export class EnhancedSecurityManager {
     }
 
     // Cache features
-    if (feature("REDIS_CACHE")) {
+    if (feature('REDIS_CACHE')) {
       console.log('💾 Redis Cache: Enabled');
       await this.initializeRedisCache();
-    } else if (feature("MEMORY_CACHE")) {
+    } else if (feature('MEMORY_CACHE')) {
       console.log('🧠 Memory Cache: Enabled');
       // Memory cache is already initialized in secretManager
     }
 
     // Audit features
-    if (feature("FULL_AUDIT")) {
+    if (feature('FULL_AUDIT')) {
       console.log('📊 Full Audit Logging: Enabled');
       await this.initializeFullAudit();
-    } else if (feature("SECURITY_AUDIT")) {
+    } else if (feature('SECURITY_AUDIT')) {
       console.log('🔍 Security Audit: Enabled');
       await this.initializeSecurityAudit();
     }
 
     // Monitoring features
-    if (feature("PROMETHEUS")) {
+    if (feature('PROMETHEUS')) {
       console.log('📈 Prometheus Metrics: Enabled');
       await this.initializePrometheusMetrics();
     }
 
     // Auto-rotation feature
-    if (feature("AUTO_ROTATION")) {
+    if (feature('AUTO_ROTATION')) {
       console.log('🔄 Auto-rotation: Enabled');
       await this.initializeAutoRotation();
     }
@@ -633,7 +654,11 @@ export class EnhancedSecurityManager {
   }
 
   // Enhanced secret operations with proper initialization check
-  async getSecret(service: string, name: string, context?: { ip?: string; userAgent?: string }): Promise<string | null> {
+  async getSecret(
+    service: string,
+    name: string,
+    context?: { ip?: string; userAgent?: string }
+  ): Promise<string | null> {
     await this.ensureInitialized();
 
     const correlationId = this.generateCorrelationId('get-secret');
@@ -646,10 +671,18 @@ export class EnhancedSecurityManager {
       if (ip) {
         const ipCheck = this.checkIpRateLimit(ip);
         if (!ipCheck.allowed) {
-          await this.logSecurityEvent('IP_RATE_LIMIT_BLOCKED', service, name, correlationId, {
-            operation: 'get',
-            reason: ipCheck.reason
-          }, ip, userAgent);
+          await this.logSecurityEvent(
+            'IP_RATE_LIMIT_BLOCKED',
+            service,
+            name,
+            correlationId,
+            {
+              operation: 'get',
+              reason: ipCheck.reason,
+            },
+            ip,
+            userAgent
+          );
           throw new Error(`Access denied: ${ipCheck.reason}`);
         }
       }
@@ -657,10 +690,18 @@ export class EnhancedSecurityManager {
       // Application-level rate limiting check
       const rateLimitKey = `get-secret:${service}`;
       if (!this.checkRateLimit(rateLimitKey, this.RATE_LIMIT_MAX_SECRET_REQUESTS)) {
-        await this.logSecurityEvent('RATE_LIMIT_EXCEEDED', service, name, correlationId, {
-          operation: 'get',
-          rateLimitKey
-        }, ip, userAgent);
+        await this.logSecurityEvent(
+          'RATE_LIMIT_EXCEEDED',
+          service,
+          name,
+          correlationId,
+          {
+            operation: 'get',
+            rateLimitKey,
+          },
+          ip,
+          userAgent
+        );
         throw new Error('Rate limit exceeded for secret operations. Please try again later.');
       }
 
@@ -670,50 +711,85 @@ export class EnhancedSecurityManager {
       await this.updateMetric('secretOperations');
 
       // Log security event with IP tracking
-      await this.logSecurityEvent('SECRET_ACCESS_ATTEMPT', service, name, correlationId, {
-        operation: 'get',
-        rateLimitKey,
-        ipTracked: !!ip
-      }, ip, userAgent);
+      await this.logSecurityEvent(
+        'SECRET_ACCESS_ATTEMPT',
+        service,
+        name,
+        correlationId,
+        {
+          operation: 'get',
+          rateLimitKey,
+          ipTracked: !!ip,
+        },
+        ip,
+        userAgent
+      );
 
       // Feature-based caching with error handling
       let result: string | null;
-      if (feature("REDIS_CACHE")) {
+      if (feature('REDIS_CACHE')) {
         result = await this.getSecretFromRedis(service, name);
-      } else if (feature("MEMORY_CACHE")) {
+      } else if (feature('MEMORY_CACHE')) {
         result = await secretManager.getSecret(service, name);
       } else {
         result = await this.getSecretDirect(service, name);
       }
 
       // Log successful access
-      await this.logSecurityEvent('SECRET_ACCESS_SUCCESS', service, name, correlationId, {
-        operation: 'get',
-        success: true,
-        ipTracked: !!ip
-      }, ip, userAgent);
+      await this.logSecurityEvent(
+        'SECRET_ACCESS_SUCCESS',
+        service,
+        name,
+        correlationId,
+        {
+          operation: 'get',
+          success: true,
+          ipTracked: !!ip,
+        },
+        ip,
+        userAgent
+      );
 
       return result;
     } catch (error) {
       await this.updateMetric('securityEvents');
 
       // Log security failure
-      await this.logSecurityEvent('SECRET_ACCESS_FAILURE', service, name, correlationId, {
-        operation: 'get',
-        error: this.sanitizeError(error).message,
-        ipTracked: !!ip
-      }, ip, userAgent);
+      await this.logSecurityEvent(
+        'SECRET_ACCESS_FAILURE',
+        service,
+        name,
+        correlationId,
+        {
+          operation: 'get',
+          error: this.sanitizeError(error).message,
+          ipTracked: !!ip,
+        },
+        ip,
+        userAgent
+      );
 
-      console.error(`🚨 Failed to get secret ${service}:${name}:`, this.sanitizeError(error).message);
+      console.error(
+        `🚨 Failed to get secret ${service}:${name}:`,
+        this.sanitizeError(error).message
+      );
       throw this.sanitizeError(error);
     } finally {
       const tracking = this.endOperationTracking(correlationId);
       if (tracking) {
-        await this.logSecurityEvent('OPERATION_COMPLETED', service, name, correlationId, {
-          operation: 'get-secret',
-          duration: tracking.duration,
-          ipTracked: !!ip
-        }, ip, userAgent);
+        await this.logSecurityEvent(
+          'OPERATION_COMPLETED',
+          service,
+          name,
+          correlationId,
+          {
+            operation: 'get-secret',
+            duration: tracking.duration,
+            ipTracked: !!ip,
+          },
+          ip,
+          userAgent
+        );
       }
     }
   }
@@ -740,46 +816,48 @@ export class EnhancedSecurityManager {
       await this.logSecurityEvent('SECRET_STORE_ATTEMPT', service, name, correlationId, {
         operation: 'set',
         rateLimitKey,
-        valueLength: value.length
+        valueLength: value.length,
       });
 
       // Feature-based storage with error handling
-      if (feature("R2_STORAGE")) {
+      if (feature('R2_STORAGE')) {
         await this.setSecretInR2(service, name, value);
-      } else if (feature("LOCAL_STORAGE")) {
+      } else if (feature('LOCAL_STORAGE')) {
         await secretManager.setSecret(service, name, value);
       }
 
       // Feature-based audit logging with error handling
-      if (feature("FULL_AUDIT")) {
+      if (feature('FULL_AUDIT')) {
         await this.logFullAudit('SET', service, name, value);
-      } else if (feature("SECURITY_AUDIT")) {
+      } else if (feature('SECURITY_AUDIT')) {
         await this.logSecurityAudit('SET', service, name);
       }
 
       // Log successful storage
       await this.logSecurityEvent('SECRET_STORE_SUCCESS', service, name, correlationId, {
         operation: 'set',
-        success: true
+        success: true,
       });
-
     } catch (error) {
       await this.updateMetric('securityEvents');
 
       // Log security failure
       await this.logSecurityEvent('SECRET_STORE_FAILURE', service, name, correlationId, {
         operation: 'set',
-        error: this.sanitizeError(error).message
+        error: this.sanitizeError(error).message,
       });
 
-      console.error(`🚨 Failed to set secret ${service}:${name}:`, this.sanitizeError(error).message);
+      console.error(
+        `🚨 Failed to set secret ${service}:${name}:`,
+        this.sanitizeError(error).message
+      );
       throw this.sanitizeError(error);
     } finally {
       const tracking = this.endOperationTracking(correlationId);
       if (tracking) {
         await this.logSecurityEvent('OPERATION_COMPLETED', service, name, correlationId, {
           operation: 'set-secret',
-          duration: tracking.duration
+          duration: tracking.duration,
         });
       }
     }
@@ -806,7 +884,12 @@ export class EnhancedSecurityManager {
   }
 
   // Feature-based audit logging
-  private async logFullAudit(action: string, service: string, name: string, value?: string): Promise<void> {
+  private async logFullAudit(
+    action: string,
+    service: string,
+    name: string,
+    value?: string
+  ): Promise<void> {
     await this.updateMetric('auditEvents');
     // Full audit implementation would go here
     console.log('� Full Audit:', { action, service, name, timestamp: new Date().toISOString() });
@@ -821,7 +904,7 @@ export class EnhancedSecurityManager {
       name,
       timestamp: new Date().toISOString(),
       source: 'enhanced-security-manager',
-      auditLevel: 'SECURITY'
+      auditLevel: 'SECURITY',
     };
 
     console.log('🔍 Security Audit:', auditData);
@@ -830,7 +913,9 @@ export class EnhancedSecurityManager {
   // Runtime feature checking - DISABLED due to Bun limitations
   // Feature flags only work at build time, not runtime
   isFeatureEnabled(featureName: string): boolean {
-    console.warn(`⚠️ Runtime feature checking is disabled. Feature flags only work at build time with bun build --feature=NAME`);
+    console.warn(
+      `⚠️ Runtime feature checking is disabled. Feature flags only work at build time with bun build --feature=NAME`
+    );
     return false;
   }
 
@@ -847,7 +932,7 @@ export class EnhancedSecurityManager {
       auditBufferSize: this.auditLogBuffer.length,
       securityLevel: securityConfig.getSecurityLevel(),
       uptime: Date.now() - (this as any).initializedTime || 0,
-      initializedAt: (this as any).initializedAt || new Date().toISOString()
+      initializedAt: (this as any).initializedAt || new Date().toISOString(),
     };
   }
 
@@ -879,7 +964,9 @@ export class EnhancedSecurityManager {
     const criticalFeatures = ['ENTERPRISE_SECURITY', 'STANDARD_SECURITY', 'AWS_SIGV4'];
     for (const featureName of criticalFeatures) {
       features[featureName] = false; // Runtime checking not available
-      issues.push(`Runtime feature checking not available for ${featureName}. Use build-time flags.`);
+      issues.push(
+        `Runtime feature checking not available for ${featureName}. Use build-time flags.`
+      );
     }
 
     // Check if any security features are enabled
@@ -908,7 +995,7 @@ export class EnhancedSecurityManager {
       features,
       metrics: this.metrics,
       issues,
-      initializationStatus
+      initializationStatus,
     };
   }
 
@@ -949,12 +1036,14 @@ export class EnhancedSecurityManager {
       bufferSize: this.auditLogBuffer.length,
       maxBufferSize: this.AUDIT_BUFFER_SIZE,
       totalEvents: this.metrics.auditEvents,
-      oldestEntry: this.auditLogBuffer.length > 0
-        ? new Date(this.auditLogBuffer[0].timestamp).toISOString()
-        : null,
-      newestEntry: this.auditLogBuffer.length > 0
-        ? new Date(this.auditLogBuffer[this.auditLogBuffer.length - 1].timestamp).toISOString()
-        : null
+      oldestEntry:
+        this.auditLogBuffer.length > 0
+          ? new Date(this.auditLogBuffer[0].timestamp).toISOString()
+          : null,
+      newestEntry:
+        this.auditLogBuffer.length > 0
+          ? new Date(this.auditLogBuffer[this.auditLogBuffer.length - 1].timestamp).toISOString()
+          : null,
     };
   }
 
@@ -992,29 +1081,29 @@ export class EnhancedSecurityManager {
         cacheEfficiency: {
           hits: this.metrics.cacheHits,
           misses: this.metrics.cacheMisses,
-          ratio: this.performanceMetrics.cacheHitRatio
-        }
+          ratio: this.performanceMetrics.cacheHitRatio,
+        },
       },
       security: {
         events: Object.fromEntries(this.monitoringData.securityEvents),
         threatLevels: Object.fromEntries(this.monitoringData.threatLevels),
         blockedIps: {
           current: this.metrics.blockedIps?.length || 0,
-          history: this.monitoringData.blockedIpsHistory.slice(-10) // Last 10
+          history: this.monitoringData.blockedIpsHistory.slice(-10), // Last 10
         },
         rateLimiting: {
           activeEntries: this.rateLimitMap.size,
           ipEntries: this.ipRateLimitMap.size,
-          blockedCount: this.metrics.blockedIps?.length || 0
-        }
+          blockedCount: this.metrics.blockedIps?.length || 0,
+        },
       },
       system: {
         health: this.monitoringData.systemHealth,
         uptime: Date.now() - (this as any).initializedTime || 0,
         auditLog: this.getAuditLogStats(),
-        metrics: this.metrics
+        metrics: this.metrics,
       },
-      alerts: this.generateSecurityAlerts()
+      alerts: this.generateSecurityAlerts(),
     };
   }
 
@@ -1028,12 +1117,15 @@ export class EnhancedSecurityManager {
     const alerts = [];
 
     // Performance alerts
-    if (this.performanceMetrics.averageResponseTime > this.PERFORMANCE_CONFIG.RESPONSE_TIME_THRESHOLD_MS) {
+    if (
+      this.performanceMetrics.averageResponseTime >
+      this.PERFORMANCE_CONFIG.RESPONSE_TIME_THRESHOLD_MS
+    ) {
       alerts.push({
         level: 'warning',
         message: `High response time detected: ${this.performanceMetrics.averageResponseTime.toFixed(2)}ms`,
         timestamp: new Date(),
-        metadata: { threshold: this.PERFORMANCE_CONFIG.RESPONSE_TIME_THRESHOLD_MS }
+        metadata: { threshold: this.PERFORMANCE_CONFIG.RESPONSE_TIME_THRESHOLD_MS },
       });
     }
 
@@ -1044,7 +1136,7 @@ export class EnhancedSecurityManager {
         level: 'critical',
         message: `High number of blocked IPs: ${blockedIpCount}`,
         timestamp: new Date(),
-        metadata: { blockedIpCount }
+        metadata: { blockedIpCount },
       });
     }
 
@@ -1054,7 +1146,7 @@ export class EnhancedSecurityManager {
         level: this.monitoringData.systemHealth.status === 'unhealthy' ? 'critical' : 'warning',
         message: `System health: ${this.monitoringData.systemHealth.status}`,
         timestamp: new Date(),
-        metadata: { issues: this.monitoringData.systemHealth.issues }
+        metadata: { issues: this.monitoringData.systemHealth.issues },
       });
     }
 
@@ -1074,7 +1166,11 @@ export class EnhancedSecurityManager {
 export const enhancedSecurityManager = new EnhancedSecurityManager();
 
 // Export convenience functions
-export function getSecureSecret(service: string, name: string, context?: { ip?: string; userAgent?: string }): Promise<string | null> {
+export function getSecureSecret(
+  service: string,
+  name: string,
+  context?: { ip?: string; userAgent?: string }
+): Promise<string | null> {
   return enhancedSecurityManager.getSecret(service, name, context);
 }
 
@@ -1093,12 +1189,12 @@ export function getSecurityMetrics() {
 // Compile-time feature checks for dead-code elimination
 export function debugLog(message: string): void {
   // This entire function will be removed at bundle time if DEBUG feature is not enabled
-  if (feature("DEBUG")) {
+  if (feature('DEBUG')) {
     console.log(`🐛 [DEBUG] ${message}`);
   }
 }
 
 export function enterpriseSecurityCheck(): boolean {
   // This will be optimized to 'return true' or 'return false' at bundle time
-  return feature("ENTERPRISE_SECURITY") ? true : false;
+  return feature('ENTERPRISE_SECURITY') ? true : false;
 }

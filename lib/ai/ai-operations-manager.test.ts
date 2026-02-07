@@ -42,7 +42,11 @@ describe('AdvancedLRUCache', () => {
   let cache: AdvancedLRUCache<string>;
 
   beforeEach(() => {
-    cache = new AdvancedLRUCache<string>({ maxSize: 5, defaultTTL: 60_000, cleanupInterval: 600_000 });
+    cache = new AdvancedLRUCache<string>({
+      maxSize: 5,
+      defaultTTL: 60_000,
+      cleanupInterval: 600_000,
+    });
   });
 
   afterEach(() => {

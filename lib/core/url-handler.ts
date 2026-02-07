@@ -585,9 +585,7 @@ export class FactoryWagerURLUtils {
     }
 
     if (fragment) {
-      const params = typeof fragment === 'string'
-        ? { key: fragment, view: 'object' }
-        : fragment;
+      const params = typeof fragment === 'string' ? { key: fragment, view: 'object' } : fragment;
       url += URLFragmentUtils.buildFragment(params);
     }
 
