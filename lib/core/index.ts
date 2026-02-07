@@ -112,6 +112,31 @@ export {
 } from './error-metrics';
 
 // ============================================================================
+// CRC32 Hardware-Accelerated Checksums
+// ============================================================================
+
+export {
+  // Types
+  type CRC32Result,
+  type FileChecksumResult,
+  
+  // Core functions
+  crc32,
+  crc32File,
+  crc32Chunks,
+  verify,
+  verifyFile,
+  checksumRecord,
+  validatePacket,
+  
+  // Utilities
+  toHex,
+  fromHex,
+  benchmark,
+  runBenchmarks,
+} from './crc32';
+
+// ============================================================================
 // Bun Spawn Utilities
 // ============================================================================
 
