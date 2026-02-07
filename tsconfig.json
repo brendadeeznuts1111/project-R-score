@@ -8,6 +8,9 @@
     "jsx": "react-jsx",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     
+    // Bun-specific configuration
+    "moduleResolution": "bundler",
+    
     // Path mapping for cleaner imports
     "baseUrl": ".",
     "paths": {
@@ -19,7 +22,8 @@
   /* Include patterns */
   "include": [
     "src/**/*",
-    "types/**/*"
+    "types/**/*",
+    "lib/**/*"
   ],
   // Exclude node_modules and build outputs
   "exclude": [
