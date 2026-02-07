@@ -967,6 +967,204 @@ export function demonstrateCookieInspector() {
   console.log(`Valid cookies: ${metrics.validationSummary.valid}/${metrics.totalCookies}`);
 }
 
+// 🔐 MUST-DO Security Practices
+export class SecureCookiePro {
+  static createUnbreakableSession(userId: string): Cookie {
+    return new Cookie(
+      '__Host-session', // Prefix protects against domain spoofing
+      crypto.randomUUID(),
+      {
+        // ✅ MUST HAVE for sessions
+        secure: true,           // HTTPS only
+        httpOnly: true,         // No JavaScript access
+        sameSite: 'strict',     // Prevent CSRF
+        path: '/',              // Required for __Host-
+        
+        // ✅ SHOULD HAVE
+        maxAge: 60 * 15,        // 15 minutes (short sessions)
+        partitioned: false,     // Keep server-side sessions
+        
+        // ❌ NEVER DO for sessions
+        // domain: 'example.com'  // Breaks __Host- protection
+      }
+    );
+  }
+  
+  // 🔄 Session Refresh Pattern
+  static refreshSession(sessionCookie: Cookie): Cookie {
+    // Don't extend indefinitely - use sliding window
+    const newMaxAge = Math.min(
+      sessionCookie.maxAge || 900, // Current or 15min default
+      3600 // Never exceed 1 hour total
+    );
+    
+    return new Cookie(
+      sessionCookie.name,
+      sessionCookie.value,
+      { ...sessionCookie, maxAge: newMaxAge }
+    );
+  }
+
+  // 🛡️ Create Secure Authentication Cookie
+  static createSecureAuth(token: string, userId: string): Cookie {
+    return new Cookie(
+      '__Host-auth',
+      token,
+      {
+        secure: true,
+        httpOnly: true,
+        sameSite: 'strict',
+        path: '/',
+        maxAge: 60 * 30, // 30 minutes for auth
+        partitioned: false
+      }
+    );
+  }
+
+  // 🔒 Create CSRF Protection Cookie
+  static createCSRFToken(): Cookie {
+    return new Cookie(
+      '__Host-csrf',
+      crypto.randomUUID(),
+      {
+        secure: true,
+        httpOnly: false, // JavaScript needs to read this
+        sameSite: 'strict',
+        path: '/',
+        maxAge: 60 * 60 * 2 // 2 hours
+      }
+    );
+  }
+
+  // 📊 Create Analytics Cookie (GDPR Compliant)
+  static createAnalyticsCookie(sessionId: string): Cookie {
+    return new Cookie(
+      '_ga_analytics',
+      sessionId,
+      {
+        secure: true,
+        httpOnly: false, // JavaScript needs access
+        sameSite: 'lax', // Allow cross-site for analytics
+        path: '/',
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+        partitioned: true // CHIPS API for privacy
+      }
+    );
+  }
+
+  // 🎯 Create Preference Cookie
+  static createPreferenceCookie(preferences: Record<string, any>): Cookie {
+    return new Cookie(
+      'prefs',
+      JSON.stringify(preferences),
+      {
+        secure: true,
+        httpOnly: false, // JavaScript needs access
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 365 * 2 // 2 years
+      }
+    );
+  }
+
+  // 🔍 Security Validation Method
+  static validateSecurity(cookie: Cookie): {
+    isSecure: boolean;
+    issues: string[];
+    recommendations: string[];
+  } {
+    const issues: string[] = [];
+    const recommendations: string[] = [];
+
+    // Check __Host- prefix requirements
+    if (cookie.name.startsWith('__Host-')) {
+      if (!cookie.secure) issues.push('__Host- cookies must have secure=true');
+      if (cookie.path !== '/') issues.push('__Host- cookies must have path="/"');
+      if (cookie.domain !== null && cookie.domain !== undefined) {
+        issues.push('__Host- cookies must not have domain set');
+      }
+    }
+
+    // Check __Secure- prefix requirements
+    if (cookie.name.startsWith('__Secure-')) {
+      if (!cookie.secure) issues.push('__Secure- cookies must have secure=true');
+    }
+
+    // Session-specific security
+    if (cookie.name.includes('session')) {
+      if (!cookie.httpOnly) recommendations.push('Session cookies should use httpOnly=true');
+      if (cookie.sameSite !== 'strict') recommendations.push('Session cookies should use sameSite=strict');
+      if (cookie.maxAge && cookie.maxAge > 3600) recommendations.push('Session cookies should expire within 1 hour');
+    }
+
+    // Auth-specific security
+    if (cookie.name.includes('auth') || cookie.name.includes('token')) {
+      if (!cookie.httpOnly) issues.push('Authentication cookies must use httpOnly=true');
+      if (!cookie.secure) issues.push('Authentication cookies must use secure=true');
+      if (cookie.sameSite !== 'strict') recommendations.push('Authentication cookies should use sameSite=strict');
+    }
+
+    // CSRF token security
+    if (cookie.name.includes('csrf')) {
+      if (!cookie.secure) issues.push('CSRF tokens must use secure=true');
+      if (cookie.httpOnly) recommendations.push('CSRF tokens should be accessible to JavaScript');
+    }
+
+    // Analytics privacy
+    if (cookie.name.includes('analytics') || cookie.name.startsWith('_ga')) {
+      if (!cookie.secure) recommendations.push('Analytics cookies should use secure=true');
+      if (cookie.maxAge && cookie.maxAge > 60 * 60 * 24 * 365) {
+        recommendations.push('Consider shorter expiration for analytics cookies (GDPR compliance)');
+      }
+    }
+
+    return {
+      isSecure: issues.length === 0,
+      issues,
+      recommendations
+    };
+  }
+
+  // 🚨 Security Audit Method
+  static auditCookies(cookies: Cookie[]): {
+    totalCookies: number;
+    secureCookies: number;
+    insecureCookies: number;
+    criticalIssues: string[];
+    recommendations: string[];
+    complianceScore: number;
+  } {
+    let secureCookies = 0;
+    let insecureCookies = 0;
+    const criticalIssues: string[] = [];
+    const allRecommendations: string[] = [];
+
+    cookies.forEach(cookie => {
+      const validation = this.validateSecurity(cookie);
+      
+      if (cookie.secure && cookie.httpOnly) {
+        secureCookies++;
+      } else {
+        insecureCookies++;
+      }
+
+      criticalIssues.push(...validation.issues);
+      allRecommendations.push(...validation.recommendations);
+    });
+
+    const complianceScore = Math.round((secureCookies / cookies.length) * 100);
+
+    return {
+      totalCookies: cookies.length,
+      secureCookies,
+      insecureCookies,
+      criticalIssues: [...new Set(criticalIssues)], // Remove duplicates
+      recommendations: [...new Set(allRecommendations)], // Remove duplicates
+      complianceScore
+    };
+  }
+}
+
 // 🎯 EXPORT ALL UTILITIES
 export {
   CookieInspector as Inspector,
