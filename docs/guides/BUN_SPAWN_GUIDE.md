@@ -1,18 +1,4 @@
-<!-- Prefetch Optimizations -->
-  <link rel="preconnect" href="https://bun.sh">
-  <link rel="dns-prefetch" href="https://bun.sh">
-  <link rel="preload" href="https://bun.sh/logo.svg" importance="high" crossorigin="anonymous">
-  <link rel="preconnect" href="https://example.com">
-  <link rel="dns-prefetch" href="https://example.com">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-  <link rel="preconnect" href="https://github.com">
-  <link rel="dns-prefetch" href="https://github.com">
-  <link rel="preconnect" href="https://developer.mozilla.org">
-  <link rel="dns-prefetch" href="https://developer.mozilla.org">
-<!-- End Prefetch Optimizations -->
-
-# 🚀 Bun.spawn: Complete Guide to Spawning Child Processes
+# Bun.spawn: Complete Guide to Spawning Child Processes
 
 Comprehensive reference for using `Bun.spawn()` and `Bun.spawnSync()` in Bun runtime applications (v1.3.8+).
 
@@ -107,13 +93,11 @@ Bun.spawn(["bun", "run"], {
 });
 ```
 
-#### `stdio?: StdioOption[] | StdioOption`
-Configure stdin/stdout/stderr. Can be an array of 3 values or a single value to apply to all.
-
-Default: `["pipe", "inherit", "inherit"]`
+#### `stdio?: [Writable, Readable, Readable]`
+Configure stdin/stdout/stderr as a tuple of 3 values: `[stdin, stdout, stderr]`.
 
 **Values:**
-- `"pipe"` (default for stdin and stdout) - Create stream
+- `"pipe"` (default for stdout) - Create stream
 - `"inherit"` (default for stderr) - Use parent's stream
 - `"ignore"` - Discard
 - `Bun.file("path")` - File descriptor
@@ -128,8 +112,8 @@ Bun.spawn(["bun", "build.ts"], {
 
 ### Input Options
 
-#### `stdin?: StdioOption`
-Configure stdin. Default: `null`
+#### `stdin?: Writable`
+Configure stdin. Default: `null` (no input provided to subprocess)
 
 ```ts
 // Pipe from a ReadableStream
@@ -153,7 +137,7 @@ proc.stdin.end();
 
 ### Output Options
 
-#### `stdout?: StdioOption`
+#### `stdout?: Readable`
 Configure stdout. Default: `"pipe"`
 
 ```ts
@@ -190,7 +174,7 @@ while (true) {
 }
 ```
 
-#### `stderr?: StdioOption`
+#### `stderr?: Readable`
 Configure stderr. Default: `"inherit"`
 
 **Reading stderr programmatically:**
@@ -465,7 +449,7 @@ Create a terminal once and reuse it:
 ```ts
 await using terminal = new Bun.Terminal({
   cols: 80, rows: 24,
-  data(term, data) => process.stdout.write(data),
+  data(term, data) { process.stdout.write(data); },
 });
 
 // Use for multiple commands
@@ -665,8 +649,35 @@ console.log(`System CPU: ${usage.cpuTime.system} µs`);
 
 ---
 
-## 📊 Performance Notes
+## Benchmarks
 
+Under the hood, `Bun.spawn` and `Bun.spawnSync` use [`posix_spawn(3)`](https://man7.org/linux/man-pages/man3/posix_spawn.3.html).
+
+Bun's `spawnSync` spawns processes **60% faster** than the Node.js `child_process` module:
+
+```
+$ bun spawn.mjs
+
+cpu: Apple M1 Max
+runtime: bun 1.x (arm64-darwin)
+
+benchmark              time (avg)             (min ... max)       p75       p99      p995
+--------------------------------------------------------- -----------------------------
+spawnSync echo hi  888.14 us/iter    (821.83 us ... 1.2 ms) 905.92 us      1 ms   1.03 ms
+```
+
+```
+$ node spawn.node.mjs
+
+cpu: Apple M1 Max
+runtime: node v18.9.1 (arm64-darwin)
+
+benchmark              time (avg)             (min ... max)       p75       p99      p995
+--------------------------------------------------------- -----------------------------
+spawnSync echo hi    1.47 ms/iter     (1.14 ms ... 2.64 ms)   1.57 ms   2.37 ms   2.52 ms
+```
+
+Additional notes:
 - `Bun.spawn()` uses non-blocking I/O; safe for high-concurrency servers
 - PTY allocation has overhead; only use when needed (interactive programs)
 - `Bun.spawnSync()` blocks the event loop; use judiciously
@@ -674,15 +685,146 @@ console.log(`System CPU: ${usage.cpuTime.system} µs`);
 
 ---
 
-## 🔗 Related Resources
+## TypeScript Reference
 
-- [Bun Docs: Child Processes](/runtime/child-process)
-- [Bun.main Guide](./BUN_MAIN_GUIDE.md) - For entrypoint-based resolution
-- Node.js: [`child_process.spawn()` 🌐](https://nodejs.org/api/child_process.html)
+Complete type definitions for the Spawn API. For full details with generics, see
+[bun.d.ts](https://github.com/oven-sh/bun/blob/main/packages/bun-types/bun.d.ts).
+
+```ts
+interface Bun {
+  spawn(command: string[], options?: SpawnOptions.OptionsObject): Subprocess;
+  spawnSync(command: string[], options?: SpawnOptions.OptionsObject): SyncSubprocess;
+
+  spawn(options: { cmd: string[] } & SpawnOptions.OptionsObject): Subprocess;
+  spawnSync(options: { cmd: string[] } & SpawnOptions.OptionsObject): SyncSubprocess;
+}
+
+namespace SpawnOptions {
+  interface OptionsObject {
+    cwd?: string;
+    env?: Record<string, string | undefined>;
+    stdio?: [Writable, Readable, Readable];
+    stdin?: Writable;
+    stdout?: Readable;
+    stderr?: Readable;
+    onExit?(
+      subprocess: Subprocess,
+      exitCode: number | null,
+      signalCode: number | null,
+      error?: ErrorLike,
+    ): void | Promise<void>;
+    ipc?(message: any, subprocess: Subprocess): void;
+    serialization?: "json" | "advanced";
+    windowsHide?: boolean;
+    windowsVerbatimArguments?: boolean;
+    argv0?: string;
+    signal?: AbortSignal;
+    timeout?: number;
+    killSignal?: string | number;
+    maxBuffer?: number;
+    terminal?: TerminalOptions;
+  }
+
+  type Readable =
+    | "pipe"
+    | "inherit"
+    | "ignore"
+    | null
+    | undefined
+    | BunFile
+    | ArrayBufferView
+    | number;
+
+  type Writable =
+    | "pipe"
+    | "inherit"
+    | "ignore"
+    | null
+    | undefined
+    | BunFile
+    | ArrayBufferView
+    | number
+    | ReadableStream
+    | Blob
+    | Response
+    | Request;
+}
+
+interface Subprocess extends AsyncDisposable {
+  readonly stdin: FileSink | number | undefined | null;
+  readonly stdout: ReadableStream<Uint8Array<ArrayBuffer>> | number | undefined | null;
+  readonly stderr: ReadableStream<Uint8Array<ArrayBuffer>> | number | undefined | null;
+  readonly readable: ReadableStream<Uint8Array<ArrayBuffer>> | number | undefined | null;
+  readonly terminal: Terminal | undefined;
+  readonly pid: number;
+  readonly exited: Promise<number>;
+  readonly exitCode: number | null;
+  readonly signalCode: NodeJS.Signals | null;
+  readonly killed: boolean;
+
+  kill(exitCode?: number | NodeJS.Signals): void;
+  ref(): void;
+  unref(): void;
+  send(message: any): void;
+  disconnect(): void;
+  resourceUsage(): ResourceUsage | undefined;
+}
+
+interface SyncSubprocess {
+  stdout: Buffer | undefined;
+  stderr: Buffer | undefined;
+  exitCode: number;
+  success: boolean;
+  resourceUsage: ResourceUsage;
+  signalCode?: string;
+  exitedDueToTimeout?: true;
+  pid: number;
+}
+
+interface TerminalOptions {
+  cols?: number;
+  rows?: number;
+  name?: string;
+  data?: (terminal: Terminal, data: Uint8Array<ArrayBuffer>) => void;
+  exit?: (terminal: Terminal, exitCode: number, signal: string | null) => void;
+  drain?: (terminal: Terminal) => void;
+}
+
+interface Terminal extends AsyncDisposable {
+  readonly stdin: number;
+  readonly stdout: number;
+  readonly closed: boolean;
+  write(data: string | BufferSource): number;
+  resize(cols: number, rows: number): void;
+  setRawMode(enabled: boolean): void;
+  ref(): void;
+  unref(): void;
+  close(): void;
+}
+
+interface ResourceUsage {
+  contextSwitches: { voluntary: number; involuntary: number };
+  cpuTime: { user: number; system: number; total: number };
+  maxRSS: number;
+  messages: { sent: number; received: number };
+  ops: { in: number; out: number };
+  shmSize: number;
+  signalCount: number;
+  swapCount: number;
+}
+```
 
 ---
 
-## 📋 Quick Reference
+## Related Resources
+
+- [Bun Docs: Child Processes](https://bun.sh/docs/runtime/child-process)
+- [Bun.main Guide](./BUN_MAIN_GUIDE.md) - For entrypoint-based resolution
+- Node.js: [`child_process.spawn()`](https://nodejs.org/api/child_process.html)
+
+---
+
+## Quick Reference
 
 | Task | Code |
 |------|------|
@@ -691,7 +833,7 @@ console.log(`System CPU: ${usage.cpuTime.system} µs`);
 | Set environment | `{ env: { ...process.env, KEY: "val" } }` |
 | Capture stdout | `await proc.stdout.text()` |
 | Pipe stdout | `proc.stdout.pipeTo(dest)` |
-| Handle exit | `proc.onExit((proc, code, signal, err) => {})` |
+| Handle exit | `{ onExit(proc, code, signal, err) { } }` |
 | Wait for exit | `await proc.exited` |
 | Kill process | `proc.kill()` or `proc.kill("SIGKILL")` |
 | Use PTY | `{ terminal: { cols, rows, data } }` |
@@ -712,6 +854,6 @@ This guide is part of the Project Matrix. See also:
 
 ---
 
-**Last Updated:** 2025-02-02  
-**Bun Version:** 1.3.8+  
+**Last Updated:** 2026-02-07
+**Bun Version:** 1.3.8+
 **License:** MIT
