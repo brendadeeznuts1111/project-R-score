@@ -2,6 +2,7 @@
   "name": "factorywager-enterprise",
   "version": "5.1.0",
   "description": "🚀 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
+  "workspaces": ["packages/*"],
   "homepage": "https://factory-wager.com",
   "repository": {
     "type": "git",

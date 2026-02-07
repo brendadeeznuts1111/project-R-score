@@ -1,3 +1,4 @@
+// Pure functions and types
 export {
   type HabitsTier,
   type HabitsData,
@@ -8,11 +9,12 @@ export {
   applyVipRiskOverride,
 } from './habits-pure';
 
+// Redis-backed storage (re-exports pure functions as *Pure aliases too)
 export {
-  classifyHabits as classifyHabitsPure,
-  calculateBonus as calculateBonusPure,
-  getRecommendation as getRecommendationPure,
-  applyVipRiskOverride as applyVipRiskOverridePure,
+  classifyHabitsPure,
+  calculateBonusPure,
+  getRecommendationPure,
+  applyVipRiskOverridePure,
   storeHabits,
   getHabits,
   deleteHabits,
