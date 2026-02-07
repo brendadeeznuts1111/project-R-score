@@ -791,4 +791,434 @@ describe("ABTestingManager (legacy wrapper)", () => {
   });
 });
 
-console.log("🧪 Test suite loaded. Run with: bun test lib/lib.test.ts");
+// ============================================================================
+// Bun Test Runner — Advanced Features
+// ============================================================================
+
+// --- test.each: Parameterized tests ---
+describe("test.each", () => {
+  test.each([
+    { input: 1, expected: 1 },
+    { input: 2, expected: 4 },
+    { input: 3, expected: 9 },
+    { input: 10, expected: 100 },
+  ])("$input² = $expected", ({ input, expected }) => {
+    expect(input * input).toBe(expected);
+  });
+
+  test.each([
+    [1, 2, 3],
+    [4, 5, 9],
+    [0, 0, 0],
+  ])("%i + %i = %i", (a, b, sum) => {
+    expect(a + b).toBe(sum);
+  });
+});
+
+// --- Conditional tests ---
+describe("conditional tests", () => {
+  test.skip("skipped test never runs", () => {
+    throw new Error("never runs");
+  });
+
+  test.todo("implement rate limiting", () => {});
+
+  test.skipIf(process.platform !== "darwin")("macOS only", () => {
+    expect(process.platform).toBe("darwin");
+  });
+
+  test.if(process.platform === "darwin")("conditional on darwin", () => {
+    expect(true).toBe(true);
+  });
+});
+
+// --- mock(): Track calls, args, return values ---
+describe("mock functions", () => {
+  test("tracks calls and arguments", () => {
+    const fn = mock((x: number) => x * 2);
+    fn(3);
+    fn(5);
+    fn(7);
+
+    expect(fn).toHaveBeenCalledTimes(3);
+    expect(fn).toHaveBeenCalledWith(5);
+    expect(fn).toHaveBeenLastCalledWith(7);
+    expect(fn).toHaveBeenNthCalledWith(1, 3);
+    expect(fn.mock.calls).toEqual([[3], [5], [7]]);
+    expect(fn.mock.results[0]).toEqual({ type: "return", value: 6 });
+  });
+
+  test("mockReturnValueOnce chains", () => {
+    const fn = mock(() => "default");
+    fn.mockReturnValueOnce("first").mockReturnValueOnce("second");
+
+    expect(fn()).toBe("first");
+    expect(fn()).toBe("second");
+    expect(fn()).toBe("default");
+  });
+
+  test("mockResolvedValue for async", async () => {
+    const fetchData = mock(() => Promise.resolve(""));
+    fetchData.mockResolvedValueOnce({ id: 1, name: "test" });
+
+    const result = await fetchData();
+    expect(result).toEqual({ id: 1, name: "test" });
+    expect(fetchData).toHaveBeenCalledTimes(1);
+  });
+
+  test("mockImplementation swaps behavior", () => {
+    const fn = mock((x: number) => x + 1);
+    expect(fn(1)).toBe(2);
+
+    fn.mockImplementation((x: number) => x * 10);
+    expect(fn(1)).toBe(10);
+  });
+});
+
+// --- spyOn: Spy on object methods ---
+describe("spyOn deep", () => {
+  test("spy tracks calls and restores", () => {
+    const obj = {
+      greet(name: string) { return `Hello, ${name}`; },
+    };
+
+    const spy = spyOn(obj, "greet");
+    obj.greet("world");
+    obj.greet("bun");
+
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledWith("bun");
+    expect(spy.mock.results[0].value).toBe("Hello, world");
+
+    spy.mockRestore();
+    expect(obj.greet("restored")).toBe("Hello, restored");
+  });
+
+  test("spy with mockImplementation", () => {
+    const math = { add(a: number, b: number) { return a + b; } };
+
+    const spy = spyOn(math, "add").mockImplementation((a, b) => a * b);
+    expect(math.add(3, 4)).toBe(12);
+
+    spy.mockRestore();
+    expect(math.add(3, 4)).toBe(7);
+  });
+});
+
+// --- mock.module: Replace entire modules ---
+describe("mock.module", () => {
+  test("mock node:os", async () => {
+    mock.module("node:os", () => ({
+      hostname: () => "mocked-host",
+      platform: () => "mocked-platform",
+    }));
+
+    const os = await import("node:os");
+    expect(os.hostname()).toBe("mocked-host");
+    expect(os.platform()).toBe("mocked-platform");
+  });
+});
+
+// --- Fake timers ---
+describe("fake timers", () => {
+  test("setSystemTime freezes Date.now()", () => {
+    const frozen = new Date("2026-01-01T00:00:00Z");
+    setSystemTime(frozen);
+
+    expect(new Date().toISOString()).toBe("2026-01-01T00:00:00.000Z");
+    expect(Date.now()).toBe(frozen.getTime());
+
+    setSystemTime();
+  });
+
+  test("jest.useFakeTimers controls setTimeout", () => {
+    jest.useFakeTimers();
+
+    let called = false;
+    setTimeout(() => { called = true; }, 5000);
+
+    expect(called).toBe(false);
+    jest.advanceTimersByTime(5000);
+    expect(called).toBe(true);
+
+    jest.useRealTimers();
+  });
+
+  test("jest.runAllTimers flushes pending", () => {
+    jest.useFakeTimers();
+
+    const order: number[] = [];
+    setTimeout(() => order.push(1), 100);
+    setTimeout(() => order.push(2), 200);
+    setTimeout(() => order.push(3), 300);
+
+    jest.runAllTimers();
+    expect(order).toEqual([1, 2, 3]);
+
+    jest.useRealTimers();
+  });
+});
+
+// --- Snapshot testing ---
+describe("snapshots", () => {
+  test("toMatchSnapshot", () => {
+    const config = {
+      host: "localhost",
+      port: 3000,
+      features: ["auth", "logging"],
+    };
+    expect(config).toMatchSnapshot();
+  });
+
+  test("toMatchInlineSnapshot", () => {
+    const result = { status: "ok", count: 42 };
+    expect(result).toMatchInlineSnapshot(`
+{
+  "count": 42,
+  "status": "ok",
+}
+`);
+  });
+});
+
+// --- Extended matchers ---
+describe("extended matchers", () => {
+  test("number matchers", () => {
+    expect(7).toBeOdd();
+    expect(4).toBeEven();
+    expect(42).toBePositive();
+    expect(-1).toBeNegative();
+    expect(5).toBeInteger();
+    expect(5).toBeFinite();
+    expect(5).toBeWithin(1, 10);
+    expect(3.14).toBeCloseTo(Math.PI, 1);
+  });
+
+  test("string matchers", () => {
+    expect("hello world").toStartWith("hello");
+    expect("hello world").toEndWith("world");
+    expect("hello world").toInclude("lo wo");
+    expect("aaaa").toIncludeRepeated("a", 4);
+    expect("  hello  ").toEqualIgnoringWhitespace("hello");
+  });
+
+  test("array matchers", () => {
+    expect([1, 2, 3]).toBeArrayOfSize(3);
+    expect([]).toBeEmpty();
+    expect([1, 2, 3]).toContainEqual(2);
+    expect("found").toBeOneOf(["found", "missing", "error"]);
+  });
+
+  test("object matchers", () => {
+    const user = { name: "test", age: 25, role: "admin" };
+
+    expect(user).toContainKey("name");
+    expect(user).toContainAllKeys(["name", "age", "role"]);
+    expect(user).toContainAnyKeys(["name", "email"]);
+    expect(user).toContainValue("admin");
+    expect(user).toMatchObject({ name: "test", role: "admin" });
+    expect(user).toHaveProperty("age", 25);
+  });
+
+  test("type matchers", () => {
+    expect("hello").toBeString();
+    expect(42).toBeNumber();
+    expect(true).toBeBoolean();
+    expect([]).toBeArray();
+    expect({}).toBeObject();
+    expect(() => {}).toBeFunction();
+    expect(new Date()).toBeDate();
+    expect(new Date()).toBeValidDate();
+    expect(new Date("invalid")).not.toBeValidDate();
+    expect(Symbol()).toBeSymbol();
+  });
+
+  test("toSatisfy — custom predicate", () => {
+    expect(15).toSatisfy((n: number) => n > 10 && n < 20);
+    expect("HELLO").toSatisfy((s: string) => s === s.toUpperCase());
+  });
+});
+
+// --- Asymmetric matchers ---
+describe("asymmetric matchers", () => {
+  test("expect.any / expect.anything", () => {
+    expect({ id: 1, created: new Date() }).toEqual({
+      id: expect.any(Number),
+      created: expect.any(Date),
+    });
+
+    expect({ a: 1, b: "two" }).toEqual({
+      a: expect.anything(),
+      b: expect.anything(),
+    });
+  });
+
+  test("expect.stringContaining / stringMatching", () => {
+    expect({ msg: "Error: connection refused" }).toEqual({
+      msg: expect.stringContaining("connection"),
+    });
+
+    expect({ email: "user@test.com" }).toEqual({
+      email: expect.stringMatching(/@\w+\.\w+$/),
+    });
+  });
+
+  test("expect.arrayContaining / objectContaining", () => {
+    expect([1, 2, 3, 4, 5]).toEqual(expect.arrayContaining([2, 4]));
+
+    expect({ name: "test", age: 25, role: "admin" }).toEqual(
+      expect.objectContaining({ role: "admin" })
+    );
+  });
+
+  test("expect.not — negated asymmetric", () => {
+    expect(["a", "b", "c"]).toEqual(expect.not.arrayContaining(["x", "y"]));
+    expect({ a: 1 }).toEqual(expect.not.objectContaining({ b: 2 }));
+  });
+});
+
+// --- Promise matchers ---
+describe("promise matchers", () => {
+  test(".resolves", async () => {
+    const p = Promise.resolve({ status: "ok", data: [1, 2, 3] });
+    await expect(p).resolves.toEqual({ status: "ok", data: [1, 2, 3] });
+    await expect(p).resolves.toHaveProperty("status", "ok");
+  });
+
+  test(".rejects", async () => {
+    const p = Promise.reject(new Error("network failure"));
+    await expect(p).rejects.toThrow("network failure");
+    await expect(Promise.reject("bad")).rejects.toBe("bad");
+  });
+});
+
+// --- Test options: timeout, retry, repeats ---
+describe("test options", () => {
+  test("custom timeout", () => {
+    expect(1).toBe(1);
+  }, { timeout: 10_000 });
+
+  test("retry on flaky test", () => {
+    expect(true).toBe(true);
+  }, { retry: 3 });
+
+  test("repeat for stability", () => {
+    expect(1 + 1).toBe(2);
+  }, { repeats: 5 });
+});
+
+// --- test.failing: Expected failures ---
+describe("expected failures", () => {
+  test.failing("wrong assertion inverted by test.failing", () => {
+    expect(1).toBe(2);
+  });
+});
+
+// --- expect.assertions / expect.hasAssertions ---
+describe("assertion counting", () => {
+  test("expect.assertions ensures exact count", () => {
+    expect.assertions(3);
+    expect(1).toBe(1);
+    expect(2).toBe(2);
+    expect(3).toBe(3);
+  });
+
+  test("expect.hasAssertions ensures at least one", () => {
+    expect.hasAssertions();
+    expect(true).toBe(true);
+  });
+});
+
+// --- Custom matchers via expect.extend ---
+expect.extend({
+  toBeDivisibleBy(received: number, divisor: number) {
+    const pass = received % divisor === 0;
+    return {
+      pass,
+      message: () => `expected ${received} ${pass ? "not " : ""}to be divisible by ${divisor}`,
+    };
+  },
+});
+
+describe("custom matchers", () => {
+  test("toBeDivisibleBy", () => {
+    expect(100).toBeDivisibleBy(5);
+    expect(100).toBeDivisibleBy(10);
+    expect(101).not.toBeDivisibleBy(2);
+  });
+});
+
+// --- Bun.Archive: Create and extract tarballs ---
+describe("Bun.Archive", () => {
+  test("create archive from object and read back via files()", async () => {
+    const archive = new Bun.Archive({
+      "hello.txt": "Hello, World!",
+      "data.json": JSON.stringify({ foo: "bar" }),
+      "nested/deep/file.txt": "nested content",
+    });
+
+    const files = await archive.files();
+    expect(files.size).toBe(3);
+    expect(await files.get("hello.txt")!.text()).toBe("Hello, World!");
+    expect(JSON.parse(await files.get("data.json")!.text())).toEqual({ foo: "bar" });
+    expect(await files.get("nested/deep/file.txt")!.text()).toBe("nested content");
+  });
+
+  test("gzip compression round-trip", async () => {
+    const original = { "msg.txt": "compress me" };
+    const compressed = new Bun.Archive(original, { compress: "gzip" });
+    const bytes = await compressed.bytes();
+
+    // gzip magic bytes: 0x1f 0x8b
+    expect(bytes[0]).toBe(0x1f);
+    expect(bytes[1]).toBe(0x8b);
+
+    // Round-trip: decompress and read back
+    const restored = new Bun.Archive(bytes);
+    const files = await restored.files();
+    expect(await files.get("msg.txt")!.text()).toBe("compress me");
+  });
+
+  test("extract to disk with glob filter", async () => {
+    const archive = new Bun.Archive({
+      "src/index.ts": "export default 1;",
+      "src/utils.ts": "export const x = 2;",
+      "src/index.test.ts": "test('x', () => {});",
+      "README.md": "# Hello",
+    });
+
+    const dir = `${import.meta.dir}/__archive_test_${Date.now()}`;
+    try {
+      const count = await archive.extract(dir, { glob: ["src/**", "!**/*.test.ts"] });
+      expect(count).toBe(2); // index.ts + utils.ts, not test or README
+
+      const idx = Bun.file(`${dir}/src/index.ts`);
+      expect(await idx.text()).toBe("export default 1;");
+    } finally {
+      // Cleanup
+      const rm = Bun.$`rm -rf ${dir}`;
+      await rm;
+    }
+  });
+
+  test("blob() returns valid Blob", async () => {
+    const archive = new Bun.Archive({ "a.txt": "aaa" });
+    const blob = await archive.blob();
+    expect(blob).toBeInstanceOf(Blob);
+    expect(blob.size).toBeGreaterThan(0);
+  });
+
+  test("files() glob filtering", async () => {
+    const archive = new Bun.Archive({
+      "src/a.ts": "a",
+      "src/b.js": "b",
+      "lib/c.ts": "c",
+    });
+
+    const tsOnly = await archive.files("**/*.ts");
+    expect(tsOnly.size).toBe(2);
+    expect(tsOnly.has("src/a.ts")).toBe(true);
+    expect(tsOnly.has("lib/c.ts")).toBe(true);
+    expect(tsOnly.has("src/b.js")).toBe(false);
+  });
+});

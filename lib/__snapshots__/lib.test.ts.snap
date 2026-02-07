@@ -1,0 +1,12 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`snapshots toMatchSnapshot 1`] = `
+{
+  "features": [
+    "auth",
+    "logging",
+  ],
+  "host": "localhost",
+  "port": 3000,
+}
+`;
