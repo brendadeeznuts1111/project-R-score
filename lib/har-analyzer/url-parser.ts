@@ -6,7 +6,7 @@ import { analyzeFragment } from "./fragment-analyzer";
 
 // ─── Extension → MIME mapping ────────────────────────────────────────
 
-const MIME_MAP: Record<string, string> = {
+export const MIME_MAP: Record<string, string> = {
   ".html": "text/html",
   ".htm":  "text/html",
   ".css":  "text/css",

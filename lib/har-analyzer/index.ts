@@ -25,4 +25,4 @@ export type {
 } from "./types";
 
 export { analyzeFragment } from "./fragment-analyzer";
-export { parseURL } from "./url-parser";
+export { parseURL, MIME_MAP } from "./url-parser";

@@ -18,15 +18,19 @@ const BEHAVIOR: Record<FragmentType, FragmentBehavior> = {
 
 // ─── Detection helpers ───────────────────────────────────────────────
 
+function safeDecode(str: string): string {
+  try { return decodeURIComponent(str); } catch { return str; }
+}
+
 /** Parse `key=value&key2=value2` into a record */
 function parseKVPairs(str: string): Record<string, string> {
   const result: Record<string, string> = {};
   for (const pair of str.split("&")) {
     const eqIdx = pair.indexOf("=");
     if (eqIdx === -1) {
-      result[decodeURIComponent(pair)] = "";
+      result[safeDecode(pair)] = "";
     } else {
-      result[decodeURIComponent(pair.slice(0, eqIdx))] = decodeURIComponent(pair.slice(eqIdx + 1));
+      result[safeDecode(pair.slice(0, eqIdx))] = safeDecode(pair.slice(eqIdx + 1));
     }
   }
   return result;
