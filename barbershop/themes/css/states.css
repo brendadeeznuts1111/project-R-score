@@ -1,0 +1,416 @@
+/**
+ * FactoryWager State Components
+ * Empty states, errors, and loading states
+ */
+
+/* ============================================
+   EMPTY STATES
+   ============================================ */
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.empty-state-illustration {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 1.5rem;
+  background: var(--color-background-secondary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+}
+
+.empty-state-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.empty-state-description {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.empty-state-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Variants */
+.empty-state-compact {
+  padding: 2rem 1rem;
+}
+
+.empty-state-compact .empty-state-illustration {
+  width: 64px;
+  height: 64px;
+  font-size: 1.5rem;
+}
+
+.empty-state-inline {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-align: left;
+  padding: 1.5rem;
+}
+
+.empty-state-inline .empty-state-illustration {
+  width: 48px;
+  height: 48px;
+  font-size: 1.25rem;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   ERROR STATES
+   ============================================ */
+
+.error-state {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.error-code {
+  font-size: 6rem;
+  font-weight: 700;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--color-error-500), var(--color-warning-500));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1rem;
+}
+
+.error-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.error-description {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.error-details {
+  background: var(--color-background-secondary);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-error-600);
+  overflow-x: auto;
+}
+
+.error-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Error boundary fallback */
+.error-boundary {
+  padding: 2rem;
+  background: var(--color-error-50);
+  border: 1px solid var(--color-error-200);
+  border-radius: var(--radius-lg);
+}
+
+.error-boundary-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-error-700);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.error-boundary-message {
+  color: var(--color-error-600);
+  font-size: 0.875rem;
+}
+
+/* ============================================
+   LOADING STATES
+   ============================================ */
+
+/* Content placeholder skeleton */
+.skeleton-screen {
+  padding: 1.5rem;
+}
+
+.skeleton-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.skeleton-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--color-background-secondary);
+  animation: skeleton-pulse 2s ease-in-out infinite;
+}
+
+.skeleton-lines {
+  flex: 1;
+}
+
+.skeleton-line {
+  height: 12px;
+  background: var(--color-background-secondary);
+  border-radius: 4px;
+  margin-bottom: 8px;
+  animation: skeleton-pulse 2s ease-in-out infinite;
+}
+
+.skeleton-line:last-child {
+  width: 60%;
+}
+
+.skeleton-card {
+  height: 120px;
+  background: var(--color-background-secondary);
+  border-radius: var(--radius-md);
+  margin-bottom: 1rem;
+  animation: skeleton-pulse 2s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Spinner variants */
+.spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--color-background-secondary);
+  border-top-color: var(--color-primary-500);
+  border-radius: 50%;
+  animation: spinner-spin 0.8s linear infinite;
+}
+
+.spinner-sm {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+.spinner-lg {
+  width: 40px;
+  height: 40px;
+  border-width: 4px;
+}
+
+.spinner-center {
+  display: block;
+  margin: 2rem auto;
+}
+
+@keyframes spinner-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Dots loader */
+.loader-dots {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.loader-dots span {
+  width: 8px;
+  height: 8px;
+  background: var(--color-primary-500);
+  border-radius: 50%;
+  animation: loader-dots 1.4s ease-in-out infinite both;
+}
+
+.loader-dots span:nth-child(1) { animation-delay: -0.32s; }
+.loader-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes loader-dots {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+/* Progress loader */
+.loader-progress {
+  width: 100%;
+  height: 4px;
+  background: var(--color-background-secondary);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.loader-progress-bar {
+  height: 100%;
+  background: var(--color-primary-500);
+  border-radius: 2px;
+  animation: loader-progress 2s ease-in-out infinite;
+}
+
+@keyframes loader-progress {
+  0% { width: 0%; margin-left: 0%; }
+  50% { width: 50%; margin-left: 25%; }
+  100% { width: 0%; margin-left: 100%; }
+}
+
+/* ============================================
+   OFFLINE STATE
+   ============================================ */
+
+.offline-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-warning-500);
+  color: white;
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  z-index: 9999;
+  animation: slide-down 0.3s ease;
+}
+
+.offline-banner::before {
+  content: '⚠️ ';
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   MAINTENANCE MODE
+   ============================================ */
+
+.maintenance-mode {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  background: var(--color-background-secondary);
+}
+
+.maintenance-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+}
+
+.maintenance-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.maintenance-message {
+  color: var(--color-text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.maintenance-countdown {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--color-primary-600);
+  font-family: var(--font-mono);
+}
+
+/* ============================================
+   COMING SOON
+   ============================================ */
+
+.coming-soon {
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+
+.coming-soon-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.coming-soon-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.coming-soon-description {
+  color: var(--color-text-secondary);
+  max-width: 400px;
+  margin: 0 auto 1.5rem;
+}
+
+/* ============================================
+   BETA BADGE
+   ============================================ */
+
+.beta-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  background: linear-gradient(135deg, var(--color-primary-500), var(--color-secondary-500));
+  color: white;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: var(--radius-sm);
+  vertical-align: middle;
+  margin-left: 0.5rem;
+}
+
+/* ============================================
+   NEW BADGE
+   ============================================ */
+
+.new-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  background: var(--color-success-500);
+  color: white;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+  animation: pulse 2s infinite;
+}
