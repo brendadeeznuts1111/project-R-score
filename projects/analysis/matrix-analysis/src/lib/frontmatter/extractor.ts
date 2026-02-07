@@ -40,7 +40,7 @@ export function extractFrontmatter(markdown: string): FrontmatterResult {
 	const yamlMatch = markdown.match(YAML_RE);
 	if (yamlMatch) {
 		try {
-			const parsed = parseYaml(yamlMatch[1]);
+			const parsed = YAML.parse(yamlMatch[1]);
 			if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
 				result.data = parsed as Record<string, unknown>;
 				result.content = markdown.slice(yamlMatch[0].length);
