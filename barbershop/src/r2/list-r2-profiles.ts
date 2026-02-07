@@ -143,6 +143,7 @@ const query = new URLSearchParams({
 const canonicalQuery = query
   .toString()
   .split('&')
+  .filter(Boolean)
   .map((part) => part.split('=').map(decodeURIComponent))
   .sort((a, b) => a[0].localeCompare(b[0]))
   .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
