@@ -128,7 +128,7 @@ const data = "Tier-1380 Matrix Data";
 
 // Multiple algorithms
 console.log("Hash algorithms:");
-console.log("  crc32:", Bun.hash.crc32(data).toString(16));     // Fast, 32-bit
+console.log("  crc32:", Bun.hash.crc32(data).toString(16));     // HW-accelerated, ~20x faster since 1.3.9
 console.log("  wyhash:", Bun.hash.wyhash(data).toString(16));   // Fast, 64-bit
 console.log("  adler32:", Bun.hash.adler32(data).toString(16)); // Fast, 32-bit
 

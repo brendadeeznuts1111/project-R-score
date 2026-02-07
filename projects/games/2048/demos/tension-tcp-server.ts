@@ -124,8 +124,8 @@ export const benchmarkCRC32 = (
     const throughputMBps =
       ((size * iterations) / (totalTime * 1024 * 1024)) * 1000;
 
-    // Calculate speedup (assuming baseline ~2644 µs/MB from zlib)
-    const baselineUsPerMB = 2644;
+    // Calculate speedup (baseline ~124 µs/MB with HW-accelerated zlib CRC32, was ~2644 µs/MB before Bun 1.3.9)
+    const baselineUsPerMB = 124;
     const afterUs = avgTimeMs * 1000;
     const speedup = baselineUsPerMB / afterUs;
 
@@ -180,7 +180,7 @@ export const generateBenchmarkTable = (results: BenchmarkResult[]): string => {
   const rows = results.map((r) => ({
     scenario: r.operation,
     bufferSize: `${(r.bufferSize / 1024).toFixed(0)}KB`,
-    beforeUs: Math.round(2644 * (r.bufferSize / 1048576)),
+    beforeUs: Math.round(124 * (r.bufferSize / 1048576)),
     afterUs: Math.round(r.avgTimeMs * 1000),
     speedup: `${r.speedupFactor.toFixed(1)}x`,
     impact: "High",

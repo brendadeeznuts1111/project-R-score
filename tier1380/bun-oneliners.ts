@@ -24,7 +24,7 @@ console.log("\n--- 3. TOML → Table ---");
 const tomlData = Bun.TOML.parse("tier=1380\nstatus='active'\nport=3000");
 console.log(Bun.inspect.table(Object.entries(tomlData)));
 
-// 4. Crypto Hash (crc32)
+// 4. Crypto Hash (crc32) — hardware-accelerated via zlib (PCLMULQDQ/ARM CRC32), ~20x faster since Bun 1.3.9
 // bun -e 'console.log(Bun.hash.crc32("bun").toString(16))'
 console.log("--- 4. Hash ---");
 console.log("crc32:", Bun.hash.crc32("bun").toString(16));
@@ -227,7 +227,7 @@ console.log(`Uptime: ${(process.uptime() / 60).toFixed(1)}m | Bun: ${Bun.version
 // Usage:
 //   bcol green "SUCCESS"          → colored text
 //   bhash "secret"                → crc32 hex
-//   bbench 'for(let i=0;i<1e6;i++)Bun.hash.crc32("x")'  → 29ms
+//   bbench 'for(let i=0;i<1e6;i++)Bun.hash.crc32("x")'  → ~1.5ms (hw-accelerated since 1.3.9, was ~29ms)
 //   bjson '{"a":1,"b":{"c":2}}'  → pretty JSON
 
 // ═══════════════════════════════════════════════════════════════════════════

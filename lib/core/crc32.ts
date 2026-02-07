@@ -110,33 +110,42 @@ export async function crc32File(filePath: string): Promise<FileChecksumResult> {
 }
 
 /**
- * Compute CRC32 for multiple chunks
- * 
+ * Compute CRC32 for multiple chunks incrementally
+ *
+ * Uses Bun.hash.crc32(data, seed) to chain chunks without
+ * allocating a combined buffer — O(1) extra memory.
+ *
  * @param chunks - Array of data chunks
  * @returns Combined CRC32 result
  */
 export function crc32Chunks(chunks: Uint8Array[]): CRC32Result {
   const start = performance.now();
-  
+
   if (chunks.length === 0) {
     return { value: 0, hex: '00000000', size: 0, durationMs: 0 };
   }
-  
+
   if (chunks.length === 1) {
     return crc32(chunks[0]);
   }
-  
-  // Combine chunks for hardware-accelerated hashing
-  const totalSize = chunks.reduce((sum, chunk) => sum + chunk.length, 0);
-  const combined = new Uint8Array(totalSize);
-  
-  let offset = 0;
-  for (const chunk of chunks) {
-    combined.set(chunk, offset);
-    offset += chunk.length;
+
+  // Incremental hashing: seed each round with the previous CRC
+  let value = Bun.hash.crc32(chunks[0]);
+  let totalSize = chunks[0].length;
+
+  for (let i = 1; i < chunks.length; i++) {
+    value = Bun.hash.crc32(chunks[i], value);
+    totalSize += chunks[i].length;
   }
-  
-  return crc32(combined);
+
+  const durationMs = performance.now() - start;
+
+  return {
+    value,
+    hex: toHex(value),
+    size: totalSize,
+    durationMs,
+  };
 }
 
 /**
@@ -243,11 +252,13 @@ export function benchmark(sizeKB: number): {
   opsPerSecond: number;
 } {
   const data = new Uint8Array(sizeKB * 1024);
-  const iterations = Math.max(1, Math.floor(1000 / sizeKB));
-  
+  // Scale iterations so small sizes get enough runs for stable timing
+  // and large sizes (1MB+) still get at least 500 iterations
+  const iterations = sizeKB <= 64 ? 50_000 : sizeKB <= 256 ? 10_000 : 2_000;
+
   // Warm up
-  Bun.hash.crc32(data);
-  
+  for (let i = 0; i < 10; i++) Bun.hash.crc32(data);
+
   const start = performance.now();
   for (let i = 0; i < iterations; i++) {
     Bun.hash.crc32(data);
