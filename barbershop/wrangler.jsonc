@@ -1,0 +1,27 @@
+{
+  "name": "barbershop-vectorize-worker",
+  "main": "workers/vectorize-worker.ts",
+  "compatibility_date": "2025-10-21",
+  "compatibility_flags": ["nodejs_compat"],
+  "account_id": "7a470541a704caaf91e71efccc78fd36",
+  "vectorize": [
+    {
+      "binding": "VECTORIZE_INDEX",
+      "index_name": "barbershop-barbers-index"
+    },
+    {
+      "binding": "DOCS_INDEX",
+      "index_name": "barbershop-docs-index"
+    },
+    {
+      "binding": "CUSTOMERS_INDEX",
+      "index_name": "barbershop-customers-index"
+    }
+  ],
+  "ai": {
+    "binding": "AI"
+  },
+  "vars": {
+    "ENVIRONMENT": "production"
+  }
+}

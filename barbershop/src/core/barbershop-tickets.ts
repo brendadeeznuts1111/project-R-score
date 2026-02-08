@@ -2,6 +2,7 @@
 // Uses Bun native APIs: serve, redis, secrets, Cookie
 
 import { serve, redis, secrets, Cookie } from 'bun';
+import { vectorizeClient } from './vectorize-client';
 
 // ==================== TYPES ====================
 type Service = { name: string; price: number; duration: number };
@@ -150,9 +151,43 @@ async function getPendingTickets(): Promise<Ticket[]> {
 }
 
 // ==================== AUTO-ASSIGNMENT ====================
-function calculateMatchScore(ticket: Ticket, barber: Barber): number {
+/**
+ * Calculate match score using semantic vector search (with fallback to string matching)
+ */
+async function calculateMatchScore(ticket: Ticket, barber: Barber): Promise<number> {
   if (barber.status !== 'active' || barber.currentTicket) return 0;
 
+  // Try semantic matching first if Vectorize is available
+  const vectorizeAvailable = await vectorizeClient.isAvailable();
+  
+  if (vectorizeAvailable) {
+    try {
+      // Generate query from ticket services
+      const servicesText = ticket.services.map(s => s.name).join(', ');
+      
+      // Query Vectorize for matching barbers
+      const matches = await vectorizeClient.queryBarbers(
+        servicesText,
+        { status: 'active', barber_id: barber.id },
+        1 // Only need this barber
+      );
+
+      if (matches.length > 0 && matches[0].metadata?.barber_id === barber.id) {
+        // Convert similarity score (0-1) to percentage (0-100)
+        // Vectorize cosine similarity ranges from -1 to 1, but typically 0-1 for normalized vectors
+        const similarityScore = Math.max(0, matches[0].score) * 100;
+        
+        // Add walk-in bonus
+        const finalScore = similarityScore + (ticket.walkIn ? 10 : 0);
+        return Math.min(100, finalScore); // Cap at 100
+      }
+    } catch (error) {
+      console.warn('Vectorize matching failed, falling back to string matching:', error);
+      // Fall through to string matching
+    }
+  }
+
+  // Fallback to string matching
   const requiredSkills = ticket.services.map(s => s.name.toLowerCase());
   const barberSkills = barber.skills.map(s => s.toLowerCase());
 
@@ -173,11 +208,61 @@ async function autoAssignTicket(ticket: Ticket): Promise<boolean> {
   let bestBarber: Barber | null = null;
   let bestScore = 0;
 
-  for (const barber of barbers) {
-    const score = calculateMatchScore(ticket, barber);
-    if (score > bestScore) {
-      bestScore = score;
-      bestBarber = barber;
+  // Try semantic matching first if Vectorize is available
+  const vectorizeAvailable = await vectorizeClient.isAvailable();
+  
+  if (vectorizeAvailable) {
+    try {
+      // Generate query from ticket services
+      const servicesText = ticket.services.map(s => s.name).join(', ');
+      
+      // Query Vectorize for matching barbers (filter by active status)
+      const matches = await vectorizeClient.queryBarbers(
+        servicesText,
+        { status: 'active' },
+        20 // Get top 20 matches
+      );
+
+      // Score each barber and find best match
+      for (const match of matches) {
+        const barberId = match.metadata?.barber_id;
+        if (!barberId) continue;
+
+        const barber = barbers.find(b => b.id === barberId);
+        if (!barber || barber.status !== 'active' || barber.currentTicket) continue;
+
+        // Convert similarity score to percentage
+        const similarityScore = Math.max(0, match.score) * 100;
+        const score = similarityScore + (ticket.walkIn ? 10 : 0);
+
+        if (score > bestScore) {
+          bestScore = score;
+          bestBarber = barber;
+        }
+      }
+
+      // If we found a good match (score >= 50), use it
+      if (bestBarber && bestScore >= 50) {
+        // Continue to assignment logic below
+      } else {
+        // Fall through to string matching
+        bestBarber = null;
+        bestScore = 0;
+      }
+    } catch (error) {
+      console.warn('Vectorize auto-assignment failed, falling back to string matching:', error);
+      // Fall through to string matching
+    }
+  }
+
+  // String matching fallback (or if Vectorize not available)
+  if (!bestBarber) {
+    for (const barber of barbers) {
+      const score = await calculateMatchScore(ticket, barber);
+      if (score > bestScore) {
+        bestScore = score;
+        bestBarber = barber;
+      }
     }
   }
 
