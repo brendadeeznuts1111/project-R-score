@@ -38,6 +38,7 @@ export interface PlaygroundConfig {
   layout: DashboardLayout;
   widgets: WidgetConfig[];
   permissions: PermissionConfig;
+  [key: string]: any;
 }
 
 export interface DashboardLayout {
@@ -147,6 +148,7 @@ export interface PaymentPipeline {
   discount?: number;
   fee: number;
   total: number;
+  [key: string]: any;
 }
 
 export interface PipelineStage {
@@ -218,6 +220,7 @@ export interface PaymentTransaction {
   // Receipt
   receiptUrl?: string;
   invoiceId?: string;
+  [key: string]: any;
 }
 
 // ==================== P2P Transfer ====================
@@ -239,6 +242,7 @@ export interface P2PTransfer {
   provider: PaymentProvider;
   providerTransactionId?: string;
   fee: number;
+  [key: string]: any;
 }
 
 // ==================== Tip Configuration ====================
@@ -273,6 +277,7 @@ export interface BarberHierarchy {
   };
   tipConfig?: TipConfig;
   preferredProviders?: PaymentProvider[];
+  [key: string]: any;
 }
 
 // ==================== Payment Approval ====================
@@ -293,6 +298,7 @@ export interface PaymentApproval {
   payoutMethod?: 'direct_deposit' | 'cashapp' | 'venmo' | 'zelle' | 'check';
   payoutAccount?: string;
   processedAt?: string;
+  [key: string]: any;
 }
 
 export interface ApprovalComment {
