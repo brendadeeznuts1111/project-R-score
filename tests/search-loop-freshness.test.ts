@@ -68,7 +68,7 @@ describe('search loop status freshness', () => {
     expect(freshnessStage?.status).toBe('pass');
   });
 
-  test('marks freshness warn when aligned but stale', async () => {
+  test('keeps freshness pass when aligned even if snapshot is older', async () => {
     const old = new Date(Date.now() - 20 * 60 * 1000).toISOString();
     const out = await setupAndRun({
       latestId: 'snap-B',
@@ -77,8 +77,8 @@ describe('search loop status freshness', () => {
     });
     const freshnessStage = out.stages.find((s: any) => s.id === 'status_freshness');
     expect(out.freshness.isAligned).toBe(true);
-    expect(freshnessStage?.status).toBe('warn');
-    expect(out.loopClosed).toBe(false);
+    expect(freshnessStage?.status).toBe('pass');
+    expect(out.loopClosed).toBe(true);
   });
 
   test('marks freshness fail when latest/id index are misaligned', async () => {

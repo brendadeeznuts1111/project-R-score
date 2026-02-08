@@ -919,9 +919,17 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
 
       const freshnessStage = stages.find((stage) => stage.id === 'status_freshness');
       if (freshnessStage?.status === 'fail') {
-        setReportNotice('<span class="badge status-bad">Loop freshness drift</span> <code>' + (freshnessStage.reason || 'status_freshness failed') + '</code>');
+        setReportNotice(
+          '<span class="badge status-bad">Loop freshness drift</span> <code>' + (freshnessStage.reason || 'status_freshness failed') + '</code>',
+          'freshness'
+        );
       } else if (freshnessStage?.status === 'warn') {
-        setReportNotice('<span class="badge status-warn">Loop freshness stale</span> <code>' + (freshnessStage.reason || 'status_freshness warning') + '</code>');
+        setReportNotice(
+          '<span class="badge status-warn">Loop freshness stale</span> <code>' + (freshnessStage.reason || 'status_freshness warning') + '</code>',
+          'freshness'
+        );
+      } else {
+        clearReportNotice('freshness');
       }
     };
     const renderPublish = (data) => {
@@ -1186,10 +1194,16 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         return null;
       }
     };
-    const clearReportNotice = () => {
+    let reportNoticeType = 'none';
+    const clearReportNotice = (type = 'all') => {
+      if (type !== 'all' && reportNoticeType !== type) {
+        return;
+      }
+      reportNoticeType = 'none';
       reportNoticeEl.innerHTML = '';
     };
-    const setReportNotice = (html) => {
+    const setReportNotice = (html, type = 'general') => {
+      reportNoticeType = type;
       reportNoticeEl.innerHTML = html;
       const loadBtn = document.getElementById('loadNewReports');
       if (loadBtn) {
@@ -1240,10 +1254,11 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
             '<span class="badge status-warn">Update</span> ' +
             'New report' + (newCount > 1 ? 's' : '') + ' available (' + newCount + '). ' +
             'Latest: <code>' + latestId + '</code> ' +
-            '<button id="loadNewReports" style="margin-left:8px">Load now</button>'
+            '<button id="loadNewReports" style="margin-left:8px">Load now</button>',
+            'updates'
           );
         } else if (latestId === knownLatestId) {
-          clearReportNotice();
+          clearReportNotice('updates');
         }
         knownLatestId = latestId;
       } catch {
@@ -1297,13 +1312,17 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         renderLatest(data);
         currentLatestId = data?.id || currentLatestId;
         knownLatestId = data?.id || knownLatestId;
-        clearReportNotice();
+        clearReportNotice('updates');
         const manifest = await fetchJson('/api/publish-manifest?source=' + source);
         renderPublish(manifest);
         const inventory = await fetchJson('/api/r2-inventory?source=' + source + '&id=' + encodeURIComponent(data?.id || ''));
         renderInventory(inventory);
         const strictP95 = strictP95FromSnapshot(data);
-        const domainUrl = '/api/domain-health?source=' + source + (strictP95 === null ? '' : '&strictP95=' + encodeURIComponent(String(strictP95)));
+        const strictP95Threshold = asNumOrNull(data?.thresholdsApplied?.strictLatencyP95WarnMs);
+        const domainUrl =
+          '/api/domain-health?source=' + source +
+          (strictP95 === null ? '' : '&strictP95=' + encodeURIComponent(String(strictP95))) +
+          (strictP95Threshold === null ? '' : '&strictP95Threshold=' + encodeURIComponent(String(strictP95Threshold)));
         const domain = await fetchJson(domainUrl);
         renderDomainHealth(domain);
         const loop = await fetchJson('/api/loop-status?source=local');
@@ -1325,7 +1344,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       } catch (error) {
         setRssBadge('RSS unavailable', 'neutral');
         const message = error instanceof Error ? error.message : String(error);
-        setReportNotice('<span class="badge status-bad">Refresh failed</span> <code>' + message + '</code>');
+        setReportNotice('<span class="badge status-bad">Refresh failed</span> <code>' + message + '</code>', 'error');
       } finally {
         refreshInFlight = false;
       }
@@ -1346,13 +1365,17 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         renderLatest(latestData);
         currentLatestId = latestData?.id || currentLatestId;
         knownLatestId = latestData?.id || knownLatestId;
-        clearReportNotice();
+        clearReportNotice('updates');
         const manifest = await fetchJson('/api/publish-manifest?source=local');
         renderPublish(manifest);
         const inventory = await fetchJson('/api/r2-inventory?source=local&id=' + encodeURIComponent(latestData?.id || ''));
         renderInventory(inventory);
         const strictP95 = strictP95FromSnapshot(latestData);
-        const domainUrl = '/api/domain-health?source=local' + (strictP95 === null ? '' : '&strictP95=' + encodeURIComponent(String(strictP95)));
+        const strictP95Threshold = asNumOrNull(latestData?.thresholdsApplied?.strictLatencyP95WarnMs);
+        const domainUrl =
+          '/api/domain-health?source=local' +
+          (strictP95 === null ? '' : '&strictP95=' + encodeURIComponent(String(strictP95))) +
+          (strictP95Threshold === null ? '' : '&strictP95Threshold=' + encodeURIComponent(String(strictP95Threshold)));
         const domain = await fetchJson(domainUrl);
         renderDomainHealth(domain);
         const loop = await fetchJson('/api/loop-status?source=local');
@@ -1374,7 +1397,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       } catch (error) {
         setRssBadge('RSS unavailable', 'neutral');
         const message = error instanceof Error ? error.message : String(error);
-        setReportNotice('<span class="badge status-bad">History refresh failed</span> <code>' + message + '</code>');
+        setReportNotice('<span class="badge status-bad">History refresh failed</span> <code>' + message + '</code>', 'error');
       }
     }
     document.getElementById('loadLocal').onclick = () => loadLatest('local');
@@ -2397,7 +2420,8 @@ async function main(): Promise<void> {
     source: 'local' | 'r2',
     domain: string,
     strictP95Ms: number | null = null,
-    cookieTelemetryInput: CookieTelemetryInput | null = null
+    cookieTelemetryInput: CookieTelemetryInput | null = null,
+    strictP95ThresholdMs: number | null = null
   ) => {
     const r2Read = resolveR2ReadOptions();
     const ctx = createDomainContext({
@@ -2507,7 +2531,10 @@ async function main(): Promise<void> {
         (r2CookieTelemetry.error ? ` (${r2CookieTelemetry.error})` : ''),
       r2: r2CookieTelemetry,
     });
-    const thresholdStrictP95Ms = 900;
+    const thresholdStrictP95Ms =
+      typeof strictP95ThresholdMs === 'number' && Number.isFinite(strictP95ThresholdMs)
+        ? strictP95ThresholdMs
+        : 900;
 
     if (source === 'local') {
       const latest = prefixes.map((type) => ({
@@ -3036,6 +3063,9 @@ async function main(): Promise<void> {
         const strictP95Raw = url.searchParams.get('strictP95');
         const strictP95Ms = strictP95Raw === null ? null : Number(strictP95Raw);
         const strictP95 = Number.isFinite(strictP95Ms) ? strictP95Ms : null;
+        const strictP95ThresholdRaw = url.searchParams.get('strictP95Threshold');
+        const strictP95ThresholdMs = strictP95ThresholdRaw === null ? null : Number(strictP95ThresholdRaw);
+        const strictP95Threshold = Number.isFinite(strictP95ThresholdMs) ? strictP95ThresholdMs : null;
         const cookieHeader = req.headers.get('cookie') || '';
         const cookieMap = options.cookies ? CookieParser.parseCookieHeader(cookieHeader) : new Map<string, string>();
         const rawDomainCookie = cookieMap.get('secure_domain_ctx') || '';
@@ -3076,7 +3106,13 @@ async function main(): Promise<void> {
             ? parsedSubdomainCookie.unresolved.map((v) => String(v || '').trim().toLowerCase()).filter(Boolean)
             : [],
         };
-        const data: any = await buildDomainHealthSummary(source, domain, strictP95, cookieTelemetryInput);
+        const data: any = await buildDomainHealthSummary(
+          source,
+          domain,
+          strictP95,
+          cookieTelemetryInput,
+          strictP95Threshold
+        );
         const state: DashboardState = {
           domain,
           accountId: String(data?.accountId || stateFromCookie?.accountId || ''),
@@ -3184,10 +3220,63 @@ async function main(): Promise<void> {
           isAligned: Boolean(latestId && loopSnapshotId && latestId === loopSnapshotId),
           staleMinutes,
         };
+        const freshnessWindowMinutes = 15;
+        const stages = Array.isArray(raw?.stages) ? [...raw.stages] : [];
+        const freshnessIdx = stages.findIndex((s: any) => s?.id === 'status_freshness');
+        const nextFreshnessStage = (() => {
+          if (!freshness.latestSnapshotIdSeen || !freshness.loopStatusSnapshotId || !freshness.isAligned) {
+            return {
+              id: 'status_freshness',
+              status: 'fail',
+              reason: 'Loop status snapshot is misaligned with latest benchmark snapshot.',
+              evidence: [
+                `latestSeen=${freshness.latestSnapshotIdSeen || 'none'}`,
+                `loopSnapshot=${freshness.loopStatusSnapshotId || 'none'}`,
+              ],
+            };
+          }
+          if (typeof freshness.staleMinutes === 'number' && freshness.staleMinutes > freshnessWindowMinutes) {
+            return {
+              id: 'status_freshness',
+              status: 'warn',
+              reason: `Loop status snapshot is older than ${freshnessWindowMinutes} minutes.`,
+              evidence: [
+                `staleMinutes=${freshness.staleMinutes.toFixed(2)}`,
+                `freshnessWindow=${freshnessWindowMinutes}`,
+              ],
+            };
+          }
+          return {
+            id: 'status_freshness',
+            status: 'pass',
+            reason: 'Loop status snapshot is aligned and fresh.',
+            evidence: [
+              `staleMinutes=${typeof freshness.staleMinutes === 'number' ? freshness.staleMinutes.toFixed(2) : 'n/a'}`,
+            ],
+          };
+        })();
+        if (freshnessIdx >= 0) {
+          stages[freshnessIdx] = { ...(stages[freshnessIdx] || {}), ...nextFreshnessStage };
+        } else {
+          stages.push(nextFreshnessStage);
+        }
         raw.freshness = {
           ...(raw?.freshness || {}),
           ...freshness,
         };
+        raw.stages = stages;
+        const hasFail = stages.some((s: any) => String(s?.status || '').toLowerCase() === 'fail');
+        const disallowedWarns = stages.filter(
+          (s: any) =>
+            String(s?.status || '').toLowerCase() === 'warn' &&
+            !['signal_latency', 'signal_memory', 'status_freshness'].includes(String(s?.id || ''))
+        );
+        raw.loopClosed = !hasFail && disallowedWarns.length === 0;
+        raw.loopClosedReason = raw.loopClosed
+          ? 'All stages passed or are allowed warning states (latency/memory/status_freshness), including dashboard parity inputs.'
+          : hasFail
+            ? `One or more stages failed: ${stages.filter((s: any) => String(s?.status || '').toLowerCase() === 'fail').map((s: any) => s.id).join(', ')}`
+            : `Disallowed warning stages present: ${disallowedWarns.map((s: any) => s.id).join(', ')}`;
         return Response.json(raw);
       }
       if (url.pathname === '/api/dev-events') {
