@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FactoryWager DNS Status Dashboard</title>
+    <meta name="description" content="Real-time DNS status monitoring for all FactoryWager domains">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2322c55e'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/></svg>">
+    
+    <style>
+        :root {
+            --primary: #22c55e;
+            --primary-dark: #16a34a;
+            --secondary: #3b82f6;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --background: #ffffff;
+            --surface: #f8fafc;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.15);
+            --radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            min-height: 100vh;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            padding: 1.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .status-summary {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .status-item {
+            text-align: center;
+        }
+
+        .status-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .status-label {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .last-updated {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        main {
+            padding: 3rem 0;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .controls {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-button {
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .filter-button:hover {
+            border-color: var(--primary);
+        }
+
+        .filter-button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .refresh-button {
+            padding: 0.75rem 1.5rem;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .refresh-button:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .domains-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .domain-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .domain-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        .domain-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary);
+        }
+
+        .domain-card.warning::before {
+            background: var(--warning);
+        }
+
+        .domain-card.error::before {
+            background: var(--error);
+        }
+
+        .domain-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .domain-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text);
+            word-break: break-all;
+        }
+
+        .domain-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            flex-shrink: 0;
+            margin-left: 0.5rem;
+        }
+
+        .domain-status.warning {
+            background: var(--warning);
+        }
+
+        .domain-status.error {
+            background: var(--error);
+        }
+
+        .domain-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-item {
+            text-align: center;
+            padding: 0.5rem;
+            background: var(--surface);
+            border-radius: 6px;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .info-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-top: 0.25rem;
+        }
+
+        .domain-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-button {
+            padding: 0.5rem 1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.75rem;
+            font-weight: 500;
+            flex: 1;
+            text-align: center;
+        }
+
+        .action-button:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .stats-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border);
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .footer p {
+            color: var(--text-light);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .domains-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .search-box {
+                min-width: 100%;
+            }
+            
+            .status-summary {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">DNS</div>
+                    <span>FactoryWager DNS Status</span>
+                </div>
+                <div class="status-summary">
+                    <div class="status-item">
+                        <div class="status-value" id="total-domains">39</div>
+                        <div class="status-label">Total Domains</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-value" id="healthy-domains">0</div>
+                        <div class="status-label">Healthy</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-value" id="checking-domains">0</div>
+                        <div class="status-label">Checking</div>
+                    </div>
+                    <div class="last-updated" id="last-updated">Never</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="hero">
+                <h1>DNS Status Dashboard</h1>
+                <p>Real-time monitoring of all FactoryWager domains and services</p>
+            </section>
+
+            <div class="controls">
+                <input type="text" class="search-box" id="search-box" placeholder="Search domains...">
+                <div class="filter-group">
+                    <button class="filter-button active" data-filter="all">All</button>
+                    <button class="filter-button" data-filter="github">GitHub Pages</button>
+                    <button class="filter-button" data-filter="r2">R2 Buckets</button>
+                    <button class="filter-button" data-filter="critical">Critical</button>
+                </div>
+                <button class="refresh-button" id="refresh-button">
+                    <span>🔄</span>
+                    <span>Refresh</span>
+                </button>
+            </div>
+
+            <div class="stats-section">
+                <h2>Domain Distribution</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">16</div>
+                        <div class="stat-label">GitHub Pages</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">23</div>
+                        <div class="stat-label">R2 Buckets</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">Critical Services</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">100%</div>
+                        <div class="stat-label">Coverage</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="domains-grid" id="domains-grid">
+                <!-- Domain cards will be inserted here -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 FactoryWager DNS Monitoring. Real-time domain status and health monitoring.</p>
+        </div>
+    </footer>
+
+    <script>
+        // FactoryWager DNS configuration
+        const domains = [
+            // GitHub Pages domains
+            { name: 'wiki.factory-wager.com', type: 'github', status: 'healthy', description: 'Wiki and documentation' },
+            { name: 'dashboard.factory-wager.com', type: 'github', status: 'healthy', description: 'Main dashboard' },
+            { name: 'client.factory-wager.com', type: 'github', status: 'healthy', description: 'Client portal' },
+            { name: 'npm.factory-wager.com', type: 'github', status: 'healthy', description: 'NPM registry' },
+            { name: 'r2.factory-wager.com', type: 'github', status: 'healthy', description: 'R2 storage gateway' },
+            { name: 'matrix.factory-wager.com', type: 'github', status: 'healthy', description: 'Matrix services' },
+            { name: 'health.factory-wager.com', type: 'github', status: 'healthy', description: 'Health monitoring' },
+            { name: 'auth.factory-wager.com', type: 'github', status: 'healthy', description: 'Authentication' },
+            { name: 'storage.factory-wager.com', type: 'github', status: 'healthy', description: 'Storage services' },
+            { name: 'analytics.factory-wager.com', type: 'github', status: 'healthy', description: 'Analytics dashboard' },
+            { name: 'monitoring.factory-wager.com', type: 'github', status: 'healthy', description: 'System monitoring' },
+            { name: 'wagers.factory-wager.com', type: 'github', status: 'healthy', description: 'Wagering platform' },
+            { name: 'billing.factory-wager.com', type: 'github', status: 'healthy', description: 'Billing system' },
+            { name: 'reports.factory-wager.com', type: 'github', status: 'healthy', description: 'Reports portal' },
+            { name: 'customers.factory-wager.com', type: 'github', status: 'healthy', description: 'Customer portal' },
+            { name: 'settings.factory-wager.com', type: 'github', status: 'healthy', description: 'Settings management' },
+            { name: 'plive.factory-wager.com', type: 'github', status: 'healthy', description: 'Live betting' },
+            { name: 'governance.factory-wager.com', type: 'github', status: 'healthy', description: 'Governance portal' },
+            { name: 'telegram.factory-wager.com', type: 'github', status: 'healthy', description: 'Telegram integration' },
+            { name: 'security.factory-wager.com', type: 'github', status: 'healthy', description: 'Security center' },
+            { name: 'agents.factory-wager.com', type: 'github', status: 'healthy', description: 'AI agents' },
+
+            // R2 Bucket domains
+            { name: 'admin.factory-wager.com', type: 'r2', status: 'healthy', description: 'Admin panel' },
+            { name: 'api.factory-wager.com', type: 'r2', status: 'healthy', description: 'API services' },
+            { name: 'app.factory-wager.com', type: 'r2', status: 'healthy', description: 'Main application' },
+            { name: 'artifacts.factory-wager.com', type: 'r2', status: 'healthy', description: 'Build artifacts' },
+            { name: 'audits.factory-wager.com', type: 'r2', status: 'healthy', description: 'Audit logs' },
+            { name: 'backups.factory-wager.com', type: 'r2', status: 'healthy', description: 'Backup storage' },
+            { name: 'blog.factory-wager.com', type: 'r2', status: 'healthy', description: 'Blog platform' },
+            { name: 'cache.factory-wager.com', type: 'r2', status: 'healthy', description: 'CDN cache' },
+            { name: 'cdn.factory-wager.com', type: 'r2', status: 'healthy', description: 'Content delivery' },
+            { name: 'docs.factory-wager.com', type: 'r2', status: 'healthy', description: 'Documentation' },
+            { name: 'images.factory-wager.com', type: 'r2', status: 'healthy', description: 'Image storage' },
+            { name: 'logs.factory-wager.com', type: 'r2', status: 'healthy', description: 'Log storage' },
+            { name: 'metrics.factory-wager.com', type: 'r2', status: 'healthy', description: 'Metrics data' },
+            { name: 'profiles.factory-wager.com', type: 'r2', status: 'healthy', description: 'Performance profiles' },
+            { name: 'registry.factory-wager.com', type: 'r2', status: 'healthy', description: 'Package registry' },
+            { name: 'rss.factory-wager.com', type: 'r2', status: 'healthy', description: 'RSS feeds' },
+            { name: 'staging.factory-wager.com', type: 'r2', status: 'healthy', description: 'Staging environment' },
+            { name: 'www.factory-wager.com', type: 'r2', status: 'healthy', description: 'Main website' }
+        ];
+
+        // Critical services
+        const criticalDomains = ['wiki', 'dashboard', 'api', 'app', 'auth', 'health', 'metrics', 'registry'];
+
+        let currentFilter = 'all';
+        let searchTerm = '';
+
+        function initializeDashboard() {
+            renderDomains();
+            updateStats();
+            setupEventListeners();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(checkDomainHealth, 30000);
+            
+            // Initial health check
+            setTimeout(checkDomainHealth, 1000);
+        }
+
+        function renderDomains() {
+            const grid = document.getElementById('domains-grid');
+            const filteredDomains = filterDomains();
+            
+            grid.innerHTML = filteredDomains.map(domain => createDomainCard(domain)).join('');
+        }
+
+        function filterDomains() {
+            return domains.filter(domain => {
+                const matchesFilter = currentFilter === 'all' || 
+                    (currentFilter === 'critical' && criticalDomains.some(critical => domain.name.includes(critical))) ||
+                    domain.type === currentFilter;
+                
+                const matchesSearch = searchTerm === '' || 
+                    domain.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    domain.description.toLowerCase().includes(searchTerm.toLowerCase());
+                
+                return matchesFilter && matchesSearch;
+            });
+        }
+
+        function createDomainCard(domain) {
+            const isCritical = criticalDomains.some(critical => domain.name.includes(critical));
+            const statusClass = domain.status === 'healthy' ? '' : domain.status === 'warning' ? 'warning' : 'error';
+            
+            return `
+                <div class="domain-card ${statusClass}" data-domain="${domain.name}">
+                    <div class="domain-header">
+                        <div class="domain-name">${domain.name}</div>
+                        <div class="domain-status ${statusClass}"></div>
+                    </div>
+                    <div class="domain-info">
+                        <div class="info-item">
+                            <div class="info-label">Type</div>
+                            <div class="info-value">${domain.type === 'github' ? 'GitHub Pages' : 'R2 Bucket'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Status</div>
+                            <div class="info-value">${domain.status}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Response</div>
+                            <div class="info-value response-time" data-domain="${domain.name}">--ms</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Priority</div>
+                            <div class="info-value">${isCritical ? '🔴 Critical' : '🟡 Standard'}</div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1rem; font-size: 0.875rem; color: var(--text-light);">
+                        ${domain.description}
+                    </div>
+                    <div class="domain-actions">
+                        <button class="action-button" onclick="testDomain('${domain.name}')">Test</button>
+                        <button class="action-button" onclick="openDomain('${domain.name}')">Open</button>
+                        <button class="action-button" onclick="traceDomain('${domain.name}')">Trace</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateStats() {
+            const total = domains.length;
+            const healthy = domains.filter(d => d.status === 'healthy').length;
+            const checking = domains.filter(d => d.status === 'checking').length;
+            
+            document.getElementById('total-domains').textContent = total;
+            document.getElementById('healthy-domains').textContent = healthy;
+            document.getElementById('checking-domains').textContent = checking;
+            document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
+        }
+
+        function setupEventListeners() {
+            // Search
+            document.getElementById('search-box').addEventListener('input', (e) => {
+                searchTerm = e.target.value;
+                renderDomains();
+            });
+
+            // Filters
+            document.querySelectorAll('.filter-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    document.querySelectorAll('.filter-button').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    currentFilter = e.target.dataset.filter;
+                    renderDomains();
+                });
+            });
+
+            // Refresh
+            document.getElementById('refresh-button').addEventListener('click', () => {
+                const button = document.getElementById('refresh-button');
+                button.innerHTML = '<span class="loading"></span><span>Checking...</span>';
+                button.disabled = true;
+                
+                checkDomainHealth().then(() => {
+                    button.innerHTML = '<span>🔄</span><span>Refresh</span>';
+                    button.disabled = false;
+                });
+            });
+        }
+
+        async function checkDomainHealth() {
+            // Simulate health checking
+            domains.forEach(domain => {
+                if (Math.random() > 0.1) {
+                    domain.status = 'healthy';
+                } else {
+                    domain.status = Math.random() > 0.5 ? 'warning' : 'error';
+                }
+            });
+            
+            renderDomains();
+            updateStats();
+        }
+
+        function testDomain(domainName) {
+            const startTime = Date.now();
+            const responseElement = document.querySelector(`.response-time[data-domain="${domainName}"]`);
+            
+            if (responseElement) {
+                responseElement.textContent = 'Testing...';
+            }
+            
+            fetch(`https://${domainName}`, { method: 'HEAD', mode: 'no-cors' })
+                .then(() => {
+                    const responseTime = Date.now() - startTime;
+                    if (responseElement) {
+                        responseElement.textContent = `${responseTime}ms`;
+                    }
+                })
+                .catch(() => {
+                    if (responseElement) {
+                        responseElement.textContent = 'Failed';
+                    }
+                });
+        }
+
+        function openDomain(domainName) {
+            window.open(`https://${domainName}`, '_blank');
+        }
+
+        function traceDomain(domainName) {
+            // In a real implementation, this would open a trace route tool
+            alert(`Trace route for ${domainName} would be implemented here`);
+        }
+
+        // Initialize dashboard when DOM is ready
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
+    </script>
+</body>
+</html>
