@@ -13,7 +13,7 @@
  * Reference: https://bun.com/docs/runtime/websockets
  */
 
-import { logger } from '../../user-profile/src/index.ts';
+import { logger } from '../../../user-profile/src/index.ts';
 import type { DeviceMonitor } from '../duoplus/device-monitor.ts';
 
 /**

@@ -10,7 +10,7 @@
  * Reference: https://bun.com/docs/api/cookies
  */
 
-import { logger } from '../../user-profile/src/index.ts';
+import { logger } from '../../../user-profile/src/index.ts';
 import { randomBytes, createHash } from 'crypto';
 
 /**

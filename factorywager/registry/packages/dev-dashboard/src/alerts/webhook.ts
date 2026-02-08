@@ -24,7 +24,7 @@
  * - See: https://bun.com/docs/runtime/networking/fetch#debugging
  */
 
-import { logger } from '../../user-profile/src/index.ts';
+import { logger } from '../../../user-profile/src/index.ts';
 
 // Type for Bun.file() return value
 type BunFile = ReturnType<typeof Bun.file>;

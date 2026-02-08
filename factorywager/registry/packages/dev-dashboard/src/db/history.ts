@@ -4,7 +4,7 @@
 
 import { Database } from 'bun:sqlite';
 import { join } from 'path';
-import { logger } from '../../user-profile/src/index.ts';
+import { logger } from '../../../user-profile/src/index.ts';
 import type {
   BenchmarkResult,
   TestResult,
