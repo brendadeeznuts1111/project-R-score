@@ -1,9 +1,10 @@
 #!/usr/bin/env bun
 
 import { readFile } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { existsSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createHmac, createHash } from 'node:crypto';
+import { S3Client } from 'bun';
 
 type Options = {
   port: number;
@@ -180,6 +181,14 @@ function htmlShell(options: Options): string {
       <div id="publish"></div>
     </div>
     <div class="card">
+      <h2 style="margin:0 0 8px;font-size:16px">R2 Inventory</h2>
+      <div id="inventory"></div>
+    </div>
+    <div class="card">
+      <h2 style="margin:0 0 8px;font-size:16px">Domain Health Summary</h2>
+      <div id="domainHealth"></div>
+    </div>
+    <div class="card">
       <h2 style="margin:0 0 8px;font-size:16px">RSS Feed</h2>
       <div id="rss"></div>
     </div>
@@ -189,6 +198,8 @@ function htmlShell(options: Options): string {
     const historyEl = document.getElementById('history');
     const trendEl = document.getElementById('trend');
     const publishEl = document.getElementById('publish');
+    const inventoryEl = document.getElementById('inventory');
+    const domainHealthEl = document.getElementById('domainHealth');
     const rssEl = document.getElementById('rss');
     const rssBadgeEl = document.getElementById('rssBadge');
     const reportNoticeEl = document.getElementById('reportNotice');
@@ -307,7 +318,8 @@ function htmlShell(options: Options): string {
       ).join('');
       latestEl.innerHTML =
         '<div class="meta">snapshot=' + (data.id || 'n/a') + ' created=' + (data.createdAt || 'n/a') + '</div>' +
-        '<div class="meta">path=' + (data.path || 'n/a') + ' limit=' + (data.limit || 'n/a') + ' queries=' + ((data.queries || []).length || 0) + '</div>' +
+        '<div class="meta">path=' + (data.path || 'n/a') + ' limit=' + (data.limit || 'n/a') + ' queries=' + ((data.queries || []).length || 0) + ' queryPack=' + (data.queryPack || 'core_delivery') + '</div>' +
+        '<div class="meta">warnings=' + ((Array.isArray(data.warnings) && data.warnings.length > 0) ? data.warnings.join(', ') : 'none') + '</div>' +
         '<table><thead><tr><th>Rank</th><th>Profile</th><th>Quality</th><th>Signal%</th><th>Unique%</th><th>Slop%</th><th>Density</th><th>Noise Ratio</th><th>Reliability</th></tr></thead><tbody>' + rows + '</tbody></table>';
       renderTrend(data, previousSnapshot);
     };
@@ -327,20 +339,26 @@ function htmlShell(options: Options): string {
 
       const currentQuality = currentTop ? Number(currentTop.qualityScore || 0) : null;
       const previousQuality = previousTop ? Number(previousTop.qualityScore || 0) : null;
-      const qualityDelta = (currentQuality !== null && previousQuality !== null)
-        ? Number((currentQuality - previousQuality).toFixed(2))
-        : null;
+      const qualityDelta = Number.isFinite(Number(latest?.delta?.topQuality))
+        ? Number(latest.delta.topQuality)
+        : ((currentQuality !== null && previousQuality !== null)
+          ? Number((currentQuality - previousQuality).toFixed(2))
+          : null);
 
       const currentFamily = currentTop ? Number(currentTop.avgUniqueFamilyPct || 0) : null;
       const previousFamily = previousTop ? Number(previousTop.avgUniqueFamilyPct || 0) : null;
-      const familyDelta = (currentFamily !== null && previousFamily !== null)
-        ? Number((currentFamily - previousFamily).toFixed(2))
-        : null;
+      const familyDelta = Number.isFinite(Number(latest?.delta?.familyCoverage))
+        ? Number(latest.delta.familyCoverage)
+        : ((currentFamily !== null && previousFamily !== null)
+          ? Number((currentFamily - previousFamily).toFixed(2))
+          : null);
 
       const currentSlop = Number(avgSlopAcrossProfiles(latest).toFixed(2));
       const previousSlopRaw = previous ? avgSlopAcrossProfiles(previous) : null;
       const previousSlop = previousSlopRaw === null ? null : Number(previousSlopRaw.toFixed(2));
-      const slopDelta = (previousSlop === null) ? null : Number((currentSlop - previousSlop).toFixed(2));
+      const slopDelta = Number.isFinite(Number(latest?.delta?.avgSlop))
+        ? Number(latest.delta.avgSlop)
+        : ((previousSlop === null) ? null : Number((currentSlop - previousSlop).toFixed(2)));
 
       const currentSignal = currentTop ? Number(currentTop.avgSignalPct || 0) : null;
       const previousSignal = previousTop ? Number(previousTop.avgSignalPct || 0) : null;
@@ -350,9 +368,11 @@ function htmlShell(options: Options): string {
       const previousReliability = (previousSignal !== null && previousFamily !== null)
         ? Number(((previousSignal * previousFamily) / 100).toFixed(2))
         : null;
-      const reliabilityDelta = (currentReliability !== null && previousReliability !== null)
-        ? Number((currentReliability - previousReliability).toFixed(2))
-        : null;
+      const reliabilityDelta = Number.isFinite(Number(latest?.delta?.reliability))
+        ? Number(latest.delta.reliability)
+        : ((currentReliability !== null && previousReliability !== null)
+          ? Number((currentReliability - previousReliability).toFixed(2))
+          : null);
 
       const currentNoise = currentTop
         ? Number(Math.min(100, Number(currentTop.avgSlopPct || 0) + Number(currentTop.avgDuplicatePct || 0)).toFixed(2))
@@ -360,9 +380,11 @@ function htmlShell(options: Options): string {
       const previousNoise = previousTop
         ? Number(Math.min(100, Number(previousTop.avgSlopPct || 0) + Number(previousTop.avgDuplicatePct || 0)).toFixed(2))
         : null;
-      const noiseDelta = (currentNoise !== null && previousNoise !== null)
-        ? Number((currentNoise - previousNoise).toFixed(2))
-        : null;
+      const noiseDelta = Number.isFinite(Number(latest?.delta?.noiseRatio))
+        ? Number(latest.delta.noiseRatio)
+        : ((currentNoise !== null && previousNoise !== null)
+          ? Number((currentNoise - previousNoise).toFixed(2))
+          : null);
 
       const querySummaries = Array.isArray(currentTop?.queries) ? currentTop.queries : [];
       const queriesWithHits = querySummaries.filter(q => Number(q.total || 0) > 0).length;
@@ -457,9 +479,46 @@ function htmlShell(options: Options): string {
         ' uploadedObjects=' + (data.uploadedObjects || 0) +
         ' retries=' + (data.uploadRetries ?? 'n/a') +
         ' gzip=' + (data.gzip ? 'true' : 'false') +
+        ' mode=' + (data.mode || 'n/a') +
         ' bucket=' + (data.bucket || 'n/a') +
         '</div>' +
+        '<div class="meta">warnings=' + ((Array.isArray(data.warnings) && data.warnings.length > 0) ? data.warnings.join(', ') : 'none') + '</div>' +
+        '<div class="meta">delta=' + JSON.stringify(data.delta || {}) + '</div>' +
         '<table><thead><tr><th>Key</th><th>Elapsed (ms)</th><th>Attempts</th></tr></thead><tbody>' + rows + '</tbody></table>';
+    };
+    const renderInventory = (data) => {
+      if (!data || !Array.isArray(data.items)) {
+        inventoryEl.innerHTML = '<pre>No inventory available.</pre>';
+        return;
+      }
+      const rows = data.items.map((item) =>
+        '<tr>' +
+          '<td><code>' + item.name + '</code></td>' +
+          '<td>' + (item.exists ? 'yes' : 'no') + '</td>' +
+          '<td>' + (item.size ?? 'n/a') + '</td>' +
+          '<td>' + (item.lastModified || 'n/a') + '</td>' +
+        '</tr>'
+      ).join('');
+      inventoryEl.innerHTML =
+        '<div class="meta">snapshot=' + (data.snapshotId || 'n/a') + ' source=' + (data.source || 'local') + ' freshnessSec=' + (data.freshnessSec ?? 'n/a') + '</div>' +
+        '<table><thead><tr><th>Object</th><th>Exists</th><th>Size</th><th>Last Modified</th></tr></thead><tbody>' + rows + '</tbody></table>';
+    };
+    const renderDomainHealth = (data) => {
+      if (!data || data.error) {
+        domainHealthEl.innerHTML = '<pre>' + (data?.error || 'No domain health data.') + '</pre>';
+        return;
+      }
+      const latestRows = (data.latest || []).map((item) =>
+        '<tr>' +
+          '<td><code>' + item.type + '</code></td>' +
+          '<td><code>' + item.key + '</code></td>' +
+          '<td>' + (item.exists ? 'yes' : 'no') + '</td>' +
+          '<td>' + (item.lastModified || 'n/a') + '</td>' +
+        '</tr>'
+      ).join('');
+      domainHealthEl.innerHTML =
+        '<div class="meta">domain=' + (data.domain || 'factory-wager.com') + ' knownSubdomains=' + (data.knownSubdomains ?? 'n/a') + ' source=' + (data.source || 'n/a') + '</div>' +
+        '<table><thead><tr><th>Type</th><th>Key</th><th>Exists</th><th>Last Modified</th></tr></thead><tbody>' + latestRows + '</tbody></table>';
     };
     const renderRss = (xmlText, source) => {
       if (!xmlText || typeof xmlText !== 'string') {
@@ -595,6 +654,12 @@ function htmlShell(options: Options): string {
       const manifestRes = await fetch('/api/publish-manifest?source=' + source);
       const manifest = await manifestRes.json();
       renderPublish(manifest);
+      const inventoryRes = await fetch('/api/r2-inventory?source=' + source + '&id=' + encodeURIComponent(data?.id || ''));
+      const inventory = await inventoryRes.json();
+      renderInventory(inventory);
+      const domainRes = await fetch('/api/domain-health?source=' + source);
+      const domain = await domainRes.json();
+      renderDomainHealth(domain);
       const rssRes = await fetch('/api/rss?source=' + source);
       const rssText = await rssRes.text();
       renderRss(rssText, source);
@@ -626,6 +691,12 @@ function htmlShell(options: Options): string {
       const manifestRes = await fetch('/api/publish-manifest?source=local');
       const manifest = await manifestRes.json();
       renderPublish(manifest);
+      const inventoryRes = await fetch('/api/r2-inventory?source=local&id=' + encodeURIComponent(latestData?.id || ''));
+      const inventory = await inventoryRes.json();
+      renderInventory(inventory);
+      const domainRes = await fetch('/api/domain-health?source=local');
+      const domain = await domainRes.json();
+      renderDomainHealth(domain);
       const rssRes = await fetch('/api/rss?source=local');
       const rssText = await rssRes.text();
       renderRss(rssText, 'local');
@@ -875,6 +946,216 @@ async function main(): Promise<void> {
     }
   };
 
+  const resolveLatestSnapshotId = async (source: 'local' | 'r2'): Promise<string | null> => {
+    if (source === 'local') {
+      if (!existsSync(indexJson)) return null;
+      try {
+        const idx = await Bun.file(indexJson).json() as { snapshots?: Array<{ id?: string }> };
+        return idx.snapshots?.[0]?.id || null;
+      } catch {
+        return null;
+      }
+    }
+    const idxRes = await getCachedRemoteJson('r2:index', 'index.json');
+    if (!idxRes.ok) return null;
+    try {
+      const idx = JSON.parse(await idxRes.text()) as { snapshots?: Array<{ id?: string }> };
+      return idx.snapshots?.[0]?.id || null;
+    } catch {
+      return null;
+    }
+  };
+
+  const buildInventoryLocal = async (snapshotId: string | null) => {
+    const id = snapshotId || await resolveLatestSnapshotId('local');
+    const mk = (name: string, path: string) => {
+      if (!existsSync(path)) {
+        return { name, exists: false, size: null, lastModified: null };
+      }
+      const st = statSync(path);
+      return {
+        name,
+        exists: true,
+        size: st.size,
+        lastModified: new Date(st.mtimeMs).toISOString(),
+      };
+    };
+    const items = [
+      mk('snapshot.json', id ? resolve(dir, id, 'snapshot.json') : resolve(dir, '__missing__/snapshot.json')),
+      mk('summary.md', id ? resolve(dir, id, 'summary.md') : resolve(dir, '__missing__/summary.md')),
+      mk('snapshot.json.gz', id ? resolve(dir, id, 'snapshot.json.gz') : resolve(dir, '__missing__/snapshot.json.gz')),
+      mk('summary.md.gz', id ? resolve(dir, id, 'summary.md.gz') : resolve(dir, '__missing__/summary.md.gz')),
+      mk('publish-manifest.json', id ? resolve(dir, id, 'publish-manifest.json') : resolve(dir, '__missing__/publish-manifest.json')),
+      mk('rss.xml', resolve(dir, 'rss.xml')),
+    ];
+    const latestTs = items
+      .map((it) => (it.lastModified ? Date.parse(it.lastModified) : 0))
+      .reduce((a, b) => Math.max(a, b), 0);
+    return {
+      source: 'local',
+      snapshotId: id,
+      freshnessSec: latestTs > 0 ? Math.max(0, Math.floor((Date.now() - latestTs) / 1000)) : null,
+      items,
+    };
+  };
+
+  const buildInventoryR2 = async (snapshotId: string | null) => {
+    const id = snapshotId || await resolveLatestSnapshotId('r2');
+    if (!id) {
+      return { source: 'r2', snapshotId: null, freshnessSec: null, items: [] };
+    }
+
+    const r2 = resolveR2ReadOptions();
+    if (r2) {
+      const prefix = options.r2Prefix.replace(/^\/+|\/+$/g, '');
+      const keys = [
+        `${prefix}/${id}/snapshot.json`,
+        `${prefix}/${id}/summary.md`,
+        `${prefix}/${id}/snapshot.json.gz`,
+        `${prefix}/${id}/summary.md.gz`,
+        `${prefix}/${id}/publish-manifest.json`,
+        `${prefix}/rss.xml`,
+      ];
+      const listed = await S3Client.list(
+        { prefix: `${prefix}/${id}/` },
+        {
+          bucket: r2.bucket,
+          endpoint: r2.endpoint,
+          accessKeyId: r2.accessKeyId,
+          secretAccessKey: r2.secretAccessKey,
+        }
+      );
+      const rootListed = await S3Client.list(
+        { prefix: `${prefix}/`, limit: 1000 },
+        {
+          bucket: r2.bucket,
+          endpoint: r2.endpoint,
+          accessKeyId: r2.accessKeyId,
+          secretAccessKey: r2.secretAccessKey,
+        }
+      );
+      const contents = [...(listed.contents || []), ...(rootListed.contents || [])] as Array<{
+        key: string;
+        size?: number;
+        lastModified?: string;
+      }>;
+      const byKey = new Map(contents.map((c) => [c.key, c]));
+      const items = keys.map((key) => {
+        const item = byKey.get(key);
+        return {
+          name: key.replace(`${prefix}/`, ''),
+          exists: Boolean(item),
+          size: item?.size ?? null,
+          lastModified: item?.lastModified ?? null,
+        };
+      });
+      const latestTs = items
+        .map((it) => (it.lastModified ? Date.parse(it.lastModified) : 0))
+        .reduce((a, b) => Math.max(a, b), 0);
+      return {
+        source: 'r2',
+        snapshotId: id,
+        freshnessSec: latestTs > 0 ? Math.max(0, Math.floor((Date.now() - latestTs) / 1000)) : null,
+        items,
+      };
+    }
+
+    if (!options.r2Base) {
+      return { error: 'r2_not_configured', source: 'r2', snapshotId: id, items: [] };
+    }
+    const base = options.r2Base.replace(/\/+$/g, '');
+    const targets = [
+      `${id}/snapshot.json`,
+      `${id}/summary.md`,
+      `${id}/snapshot.json.gz`,
+      `${id}/summary.md.gz`,
+      `${id}/publish-manifest.json`,
+      `rss.xml`,
+    ];
+    const items = await Promise.all(targets.map(async (name) => {
+      const res = await fetch(`${base}/${name}`, { method: 'HEAD' });
+      return {
+        name,
+        exists: res.ok,
+        size: Number(res.headers.get('content-length') || 0) || null,
+        lastModified: res.headers.get('last-modified') || null,
+      };
+    }));
+    return {
+      source: 'r2',
+      snapshotId: id,
+      freshnessSec: null,
+      items,
+    };
+  };
+
+  const buildDomainHealthSummary = async (source: 'local' | 'r2') => {
+    const prefixes = ['health', 'ssl', 'analytics'];
+    let knownSubdomains: number | null = null;
+    let managerNote: string | null = null;
+    try {
+      const mod = await import('../lib/mcp/cloudflare-domain-manager');
+      try {
+        const mgr = new mod.CloudflareDomainManager();
+        knownSubdomains = mgr.getAllSubdomains().length;
+      } catch (error) {
+        managerNote = error instanceof Error ? error.message : String(error);
+      }
+    } catch (error) {
+      managerNote = error instanceof Error ? error.message : String(error);
+    }
+
+    if (source === 'local') {
+      return {
+        source,
+        domain: 'factory-wager.com',
+        knownSubdomains,
+        managerNote,
+        latest: prefixes.map((type) => ({
+          type,
+          key: `domains/factory-wager/cloudflare/${type}/YYYY-MM-DD.json`,
+          exists: false,
+          lastModified: null,
+        })),
+      };
+    }
+
+    const r2 = resolveR2ReadOptions();
+    if (!r2) {
+      return { error: 'r2_not_configured_for_domain_health', source, domain: 'factory-wager.com', knownSubdomains, managerNote };
+    }
+    const latest = await Promise.all(prefixes.map(async (type) => {
+      const prefix = `domains/factory-wager/cloudflare/${type}/`;
+      const listed = await S3Client.list(
+        { prefix, limit: 1000 },
+        {
+          bucket: r2.bucket,
+          endpoint: r2.endpoint,
+          accessKeyId: r2.accessKeyId,
+          secretAccessKey: r2.secretAccessKey,
+        }
+      );
+      const contents = (listed.contents || []) as Array<{ key: string; lastModified?: string }>;
+      const sorted = contents
+        .filter((c) => c.key.endsWith('.json'))
+        .sort((a, b) => (b.lastModified || '').localeCompare(a.lastModified || ''));
+      const top = sorted[0];
+      return {
+        type,
+        key: top?.key || `${prefix}YYYY-MM-DD.json`,
+        exists: Boolean(top),
+        lastModified: top?.lastModified || null,
+      };
+    }));
+    return {
+      source,
+      domain: 'factory-wager.com',
+      knownSubdomains,
+      managerNote,
+      latest,
+    };
+  };
+
   Bun.serve({
     port: options.port,
     fetch: async (req: Request) => {
@@ -934,6 +1215,21 @@ async function main(): Promise<void> {
           return Response.json({ error: 'manifest_not_found', reason: 'no_snapshot_id' }, { status: 404 });
         }
         return readLocalJson(localManifestPath);
+      }
+      if (url.pathname === '/api/r2-inventory') {
+        const source = (url.searchParams.get('source') || 'local') as 'local' | 'r2';
+        const id = url.searchParams.get('id');
+        if (source === 'r2') {
+          const data = await buildInventoryR2(id);
+          return Response.json(data);
+        }
+        const data = await buildInventoryLocal(id);
+        return Response.json(data);
+      }
+      if (url.pathname === '/api/domain-health') {
+        const source = (url.searchParams.get('source') || 'local') as 'local' | 'r2';
+        const data = await buildDomainHealthSummary(source);
+        return Response.json(data);
       }
       if (url.pathname === '/api/rss') {
         const source = url.searchParams.get('source') || 'local';

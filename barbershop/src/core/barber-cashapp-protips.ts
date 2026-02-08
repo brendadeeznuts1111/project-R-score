@@ -4,9 +4,35 @@
 import { redis } from 'bun';
 import { Database } from 'bun:sqlite';
 
+// ==================== TYPE DEFINITIONS ====================
+interface PaymentData {
+  cashapp_user_id?: string;
+  sender_cashtag?: string;
+  profile_photo?: string;
+  email_verified?: boolean;
+  name?: string;
+  device_id?: string;
+  amount?: number;
+  timestamp?: string;
+  recent_transactions?: Array<{ timestamp: string; amount: number }>;
+  sender_id?: string;
+  [key: string]: unknown;
+}
+
+interface FusionHabits {
+  defaultTip: number;
+  servicePreferences: string[];
+  [key: string]: unknown;
+}
+
+interface CustomerData {
+  history: Array<{ amount: number; timestamp: string }>;
+  [key: string]: unknown;
+}
+
 // ==================== NEW ACCOUNT DETECTION ====================
 export class NewAccountManager {
-  static async detectNewAccount(userId: string, paymentData: any) {
+  static async detectNewAccount(userId: string, paymentData: PaymentData) {
     const cashappId = paymentData.cashapp_user_id || paymentData.sender_cashtag;
 
     const indicators = await Promise.all([
@@ -49,7 +75,7 @@ export class NewAccountManager {
     return { score: 0.2, details: `${txnCount} transactions` };
   }
 
-  private static checkProfileCompleteness(paymentData: any) {
+  private static checkProfileCompleteness(paymentData: PaymentData) {
     let score = 0;
     if (!paymentData.profile_photo) score += 0.3;
     if (!paymentData.email_verified) score += 0.3;
@@ -57,12 +83,12 @@ export class NewAccountManager {
     return { score, details: 'Profile completeness check' };
   }
 
-  private static checkDeviceHistory(paymentData: any) {
+  private static checkDeviceHistory(paymentData: PaymentData) {
     // Check if device fingerprint is new
     return { score: 0.2, details: 'Device check' };
   }
 
-  private static checkVelocity(paymentData: any) {
+  private static checkVelocity(paymentData: PaymentData) {
     // Check transaction velocity
     return { score: paymentData.velocity > 3 ? 0.6 : 0.1, details: 'Velocity check' };
   }
@@ -73,7 +99,7 @@ export class NewAccountManager {
     return ['Welcome message', 'Book next appointment', 'Offer referral bonus'];
   }
 
-  private static getFusionAdjustments(isNew: boolean, riskScore: number, paymentData: any) {
+  private static getFusionAdjustments(isNew: boolean, riskScore: number, paymentData: PaymentData) {
     return {
       tier: isNew ? 'active' : null,
       bonusRate: isNew ? 0.05 : null,
@@ -82,7 +108,7 @@ export class NewAccountManager {
     };
   }
 
-  static async adjustFusionForNewAccount(userId: string, paymentData: any, defaultHabits: any) {
+  static async adjustFusionForNewAccount(userId: string, paymentData: PaymentData, defaultHabits: FusionHabits) {
     const newAccountInfo = await this.detectNewAccount(userId, paymentData);
 
     let adjustedHabits = { ...defaultHabits };
@@ -113,7 +139,7 @@ export class NewAccountManager {
     return { adjustedHabits, notes, specialHandling };
   }
 
-  private static async addToNurtureProgram(userId: string, paymentData: any) {
+  private static async addToNurtureProgram(userId: string, paymentData: PaymentData) {
     await redis.hmset(`nurture:${userId}`, [
       'joinedAt',
       new Date().toISOString(),
@@ -127,7 +153,7 @@ export class NewAccountManager {
 
 // ==================== BARBER PRO TIPS ====================
 export class BarberProTips {
-  static getTipsForNewAccount(barberId: string, customerData: any) {
+  static getTipsForNewAccount(barberId: string, customerData: CustomerData) {
     return [
       {
         category: 'Verification',
@@ -279,7 +305,7 @@ export const BarberCheatSheet = {
 
 // ==================== OPTIMIZED FUSION ENGINE ====================
 export class OptimizedFusionEngine {
-  static async classifyCustomer(userId: string, paymentData: any) {
+  static async classifyCustomer(userId: string, paymentData: PaymentData) {
     const txns = await this.getCustomerTransactions(userId);
     const txnCount = txns.length;
     const totalSpent = txns.reduce((sum, t) => sum + t.amount, 0);
@@ -351,7 +377,7 @@ export class OptimizedFusionEngine {
     return 'Standard follow-up';
   }
 
-  private static generateBarberAlerts(accountAge: string, tier: string, paymentData: any) {
+  private static generateBarberAlerts(accountAge: string, tier: string, paymentData: PaymentData) {
     const alerts = [];
     if (accountAge === 'new' && paymentData.amount > 100) {
       alerts.push('⚠️ New account with large payment - verify');

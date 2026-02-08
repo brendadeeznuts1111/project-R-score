@@ -1,5 +1,9 @@
 #!/usr/bin/env bun
 
+import { readFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+
 type Profile = {
   id: string;
   label: string;
@@ -30,7 +34,7 @@ type ProfileSummary = {
   queries: QueryResultSummary[];
 };
 
-const DEFAULT_QUERIES = [
+const FALLBACK_CORE_QUERIES = [
   'authorize middleware',
   'generated',
   'Bun.serve',
@@ -40,10 +44,13 @@ const DEFAULT_QUERIES = [
   'R2LifecycleManager',
 ];
 
-function parseArgs(argv: string[]): { path: string; limit: number; queries: string[] } {
+type QueryPacks = Record<string, string[]>;
+
+function parseArgs(argv: string[]): { path: string; limit: number; queries?: string[]; queryPack: string } {
   let path = './lib';
   let limit = 40;
-  let queries = [...DEFAULT_QUERIES];
+  let queries: string[] | undefined;
+  let queryPack = 'core_delivery';
 
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
@@ -69,9 +76,44 @@ function parseArgs(argv: string[]): { path: string; limit: number; queries: stri
       i += 1;
       continue;
     }
+    if (arg === '--query-pack') {
+      queryPack = (argv[i + 1] || queryPack).trim() || queryPack;
+      i += 1;
+      continue;
+    }
   }
 
-  return { path, limit, queries };
+  return { path, limit, queries, queryPack };
+}
+
+async function loadQueryPacks(): Promise<QueryPacks> {
+  const path = resolve('.search/benchmark-queries.lib.json');
+  if (!existsSync(path)) {
+    return {
+      core_delivery: [...FALLBACK_CORE_QUERIES],
+    };
+  }
+  try {
+    const raw = await readFile(path, 'utf8');
+    const parsed = JSON.parse(raw) as QueryPacks;
+    const normalized: QueryPacks = {};
+    for (const [pack, queries] of Object.entries(parsed || {})) {
+      if (Array.isArray(queries)) {
+        const list = queries.map((q) => String(q).trim()).filter(Boolean);
+        if (list.length > 0) {
+          normalized[pack] = list;
+        }
+      }
+    }
+    if (!normalized.core_delivery) {
+      normalized.core_delivery = [...FALLBACK_CORE_QUERIES];
+    }
+    return normalized;
+  } catch {
+    return {
+      core_delivery: [...FALLBACK_CORE_QUERIES],
+    };
+  }
 }
 
 function parseJsonPayload(output: string): any {
@@ -151,7 +193,9 @@ function aggregateProfile(profile: Profile, querySummaries: QueryResultSummary[]
 }
 
 async function main(): Promise<void> {
-  const { path, limit, queries } = parseArgs(process.argv.slice(2));
+  const { path, limit, queries: overrideQueries, queryPack } = parseArgs(process.argv.slice(2));
+  const packs = await loadQueryPacks();
+  const queries = overrideQueries || packs[queryPack] || packs.core_delivery || [...FALLBACK_CORE_QUERIES];
 
   const profiles: Profile[] = [
     { id: 'mixed', label: 'Mixed Delivery', args: ['--view', 'mixed', '--task', 'delivery'] },
@@ -176,6 +220,7 @@ async function main(): Promise<void> {
   console.log(JSON.stringify({
     path,
     limit,
+    queryPack,
     queries,
     rankedProfiles: summaries,
   }, null, 2));

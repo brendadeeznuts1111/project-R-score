@@ -4,6 +4,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { S3Client } from 'bun';
+import { loadSearchPolicies } from '../lib/docs/canonical-family';
 
 type RankedProfile = {
   profile: string;
@@ -19,8 +20,18 @@ type RankedProfile = {
 type BenchmarkPayload = {
   path: string;
   limit: number;
+  queryPack?: string;
   queries: string[];
   rankedProfiles: RankedProfile[];
+  warnings?: string[];
+};
+
+type SnapshotDelta = {
+  topQuality: number | null;
+  familyCoverage: number | null;
+  avgSlop: number | null;
+  noiseRatio: number | null;
+  reliability: number | null;
 };
 
 type SnapshotIndexEntry = {
@@ -43,6 +54,7 @@ type SnapshotIndex = {
 type CliOptions = {
   path: string;
   limit: number;
+  queryPack?: string;
   queries?: string;
   outputDir: string;
   id?: string;
@@ -158,6 +170,11 @@ function parseArgs(argv: string[]): CliOptions {
       i += 1;
       continue;
     }
+    if (arg === '--query-pack') {
+      out.queryPack = argv[i + 1] || out.queryPack;
+      i += 1;
+      continue;
+    }
     if (arg === '--output') {
       out.outputDir = argv[i + 1] || out.outputDir;
       i += 1;
@@ -225,6 +242,9 @@ async function runBenchmark(options: CliOptions): Promise<BenchmarkPayload> {
   if (options.queries && options.queries.trim().length > 0) {
     args.push('--queries', options.queries);
   }
+  if (options.queryPack && options.queryPack.trim().length > 0) {
+    args.push('--query-pack', options.queryPack);
+  }
 
   const proc = Bun.spawn(args, { stdout: 'pipe', stderr: 'pipe' });
   const stdout = await new Response(proc.stdout).text();
@@ -236,7 +256,75 @@ async function runBenchmark(options: CliOptions): Promise<BenchmarkPayload> {
   return parseJsonFromStdout(stdout);
 }
 
-function renderSummaryMarkdown(id: string, createdAt: string, payload: BenchmarkPayload): string {
+function topProfile(payload: BenchmarkPayload): RankedProfile | null {
+  if (!Array.isArray(payload.rankedProfiles) || payload.rankedProfiles.length === 0) {
+    return null;
+  }
+  return payload.rankedProfiles[0] || null;
+}
+
+function averageSlop(payload: BenchmarkPayload): number | null {
+  if (!Array.isArray(payload.rankedProfiles) || payload.rankedProfiles.length === 0) {
+    return null;
+  }
+  const sum = payload.rankedProfiles.reduce((acc, p) => acc + Number(p.avgSlopPct || 0), 0);
+  return Number((sum / payload.rankedProfiles.length).toFixed(2));
+}
+
+function snapshotMetrics(payload: BenchmarkPayload): {
+  topQuality: number | null;
+  familyCoverage: number | null;
+  avgSlop: number | null;
+  noiseRatio: number | null;
+  reliability: number | null;
+} {
+  const top = topProfile(payload);
+  return {
+    topQuality: top ? Number(Number(top.qualityScore || 0).toFixed(2)) : null,
+    familyCoverage: top ? Number(Number(top.avgUniqueFamilyPct || 0).toFixed(2)) : null,
+    avgSlop: averageSlop(payload),
+    noiseRatio: top
+      ? Number(Math.min(100, Number(top.avgSlopPct || 0) + Number(top.avgDuplicatePct || 0)).toFixed(2))
+      : null,
+    reliability: top
+      ? Number((((Number(top.avgSignalPct || 0) * Number(top.avgUniqueFamilyPct || 0)) / 100)).toFixed(2))
+      : null,
+  };
+}
+
+function computeDelta(
+  current: ReturnType<typeof snapshotMetrics>,
+  previous: ReturnType<typeof snapshotMetrics> | null
+): SnapshotDelta {
+  if (!previous) {
+    return {
+      topQuality: null,
+      familyCoverage: null,
+      avgSlop: null,
+      noiseRatio: null,
+      reliability: null,
+    };
+  }
+  const calc = (a: number | null, b: number | null): number | null => {
+    if (a === null || b === null) return null;
+    return Number((a - b).toFixed(2));
+  };
+  return {
+    topQuality: calc(current.topQuality, previous.topQuality),
+    familyCoverage: calc(current.familyCoverage, previous.familyCoverage),
+    avgSlop: calc(current.avgSlop, previous.avgSlop),
+    noiseRatio: calc(current.noiseRatio, previous.noiseRatio),
+    reliability: calc(current.reliability, previous.reliability),
+  };
+}
+
+function renderSummaryMarkdown(
+  id: string,
+  createdAt: string,
+  payload: BenchmarkPayload,
+  delta: SnapshotDelta,
+  warnings: string[]
+): string {
   const lines: string[] = [];
   lines.push(`# Search Benchmark Snapshot`);
   lines.push('');
@@ -244,7 +332,25 @@ function renderSummaryMarkdown(id: string, createdAt: string, payload: Benchmark
   lines.push(`- Created: \`${createdAt}\``);
   lines.push(`- Path: \`${payload.path}\``);
   lines.push(`- Limit: \`${payload.limit}\``);
+  lines.push(`- Query Pack: \`${payload.queryPack || 'core_delivery'}\``);
   lines.push(`- Queries: \`${payload.queries.join(', ')}\``);
+  lines.push('');
+  lines.push(`## Trend Delta (vs previous snapshot)`);
+  lines.push('');
+  lines.push(`- topQuality: \`${delta.topQuality ?? 'n/a'}\``);
+  lines.push(`- familyCoverage: \`${delta.familyCoverage ?? 'n/a'}\``);
+  lines.push(`- avgSlop: \`${delta.avgSlop ?? 'n/a'}\``);
+  lines.push(`- noiseRatio: \`${delta.noiseRatio ?? 'n/a'}\``);
+  lines.push(`- reliability: \`${delta.reliability ?? 'n/a'}\``);
+  lines.push('');
+  lines.push(`## Warnings`);
+  if (warnings.length === 0) {
+    lines.push(`- none`);
+  } else {
+    for (const warning of warnings) {
+      lines.push(`- ${warning}`);
+    }
+  }
   lines.push('');
   lines.push(`## Ranked Profiles`);
   lines.push('');
@@ -360,16 +466,49 @@ async function main(): Promise<void> {
   const id = options.id || timestampId();
   const createdAt = new Date().toISOString();
 
-  const payload = await runBenchmark(options);
-  const summaryMd = renderSummaryMarkdown(id, createdAt, payload);
-
   const outDir = resolve(options.outputDir);
+  const indexPath = resolve(outDir, 'index.json');
+  const existingIndex = await readIndex(indexPath);
+  let previousPayload: BenchmarkPayload | null = null;
+  const previousSnapshotId = existingIndex.snapshots?.[0]?.id;
+  if (previousSnapshotId) {
+    const previousPath = resolve(outDir, previousSnapshotId, 'snapshot.json');
+    if (existsSync(previousPath)) {
+      try {
+        previousPayload = JSON.parse(await readFile(previousPath, 'utf8')) as BenchmarkPayload;
+      } catch {
+        previousPayload = null;
+      }
+    }
+  }
+
+  const payload = await runBenchmark(options);
+  const policies = await loadSearchPolicies(options.path);
+  const currentMetrics = snapshotMetrics(payload);
+  const previousMetrics = previousPayload ? snapshotMetrics(previousPayload) : null;
+  const delta = computeDelta(currentMetrics, previousMetrics);
+  const warnings: string[] = [];
+  if (delta.topQuality !== null && delta.topQuality < policies.scoreThresholds.qualityDropWarn) {
+    warnings.push('quality_drop_warn');
+  }
+  if (delta.avgSlop !== null && delta.avgSlop > policies.scoreThresholds.slopRiseWarn) {
+    warnings.push('slop_rise_warn');
+  }
+  if (delta.reliability !== null && delta.reliability < policies.scoreThresholds.reliabilityDropWarn) {
+    warnings.push('reliability_drop_warn');
+  }
+  payload.warnings = warnings;
+
+  const summaryMd = renderSummaryMarkdown(id, createdAt, payload, delta, warnings);
+
   const snapshotDir = resolve(outDir, id);
   await mkdir(snapshotDir, { recursive: true });
 
   const snapshotData = {
     id,
     createdAt,
+    delta,
+    warnings,
     ...payload,
   };
 
@@ -377,12 +516,14 @@ async function main(): Promise<void> {
   const summaryMdPath = resolve(snapshotDir, 'summary.md');
   const latestJsonPath = resolve(outDir, 'latest.json');
   const latestMdPath = resolve(outDir, 'latest.md');
-  const indexPath = resolve(outDir, 'index.json');
   const rssPath = resolve(outDir, 'rss.xml');
   const manifestPath = resolve(snapshotDir, 'publish-manifest.json');
   const baseManifest = {
     id,
     createdAt,
+    queryPack: payload.queryPack || options.queryPack || 'core_delivery',
+    delta,
+    warnings,
     gzip: options.gzip,
     uploadRetries: options.uploadRetries,
     uploadedObjects: 0,
@@ -397,7 +538,7 @@ async function main(): Promise<void> {
   await writeFile(latestJsonPath, snapshotJsonText);
   await writeFile(latestMdPath, summaryMd);
 
-  const index = await readIndex(indexPath);
+  const index = existingIndex;
   const top = payload.rankedProfiles[0];
   const nextEntry: SnapshotIndexEntry = {
     id,
@@ -589,6 +730,9 @@ async function main(): Promise<void> {
   const manifest = {
     id,
     createdAt,
+    queryPack: payload.queryPack || options.queryPack || 'core_delivery',
+    delta,
+    warnings,
     bucket: r2.bucket,
     prefix: r2.prefix,
     gzip: options.gzip,

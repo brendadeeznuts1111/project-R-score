@@ -257,6 +257,9 @@ function isDocsAdjacentCode(hit: SearchHit): boolean {
 
 function isDeliveryDemotionPath(filePath: string, policies: SearchPolicies): boolean {
   const lower = filePath.toLowerCase();
+  if ((policies.deliveryDemotionExceptions || []).some((needle) => lower.includes(needle.toLowerCase()))) {
+    return false;
+  }
   const configured = (policies.deliveryDemotionContains || [])
     .some((needle) => lower.includes(needle.toLowerCase()));
   if (configured) return true;
@@ -571,6 +574,7 @@ function applyQualityModel(
 ): SearchHit {
   const quality = qualityForHit(hit, policies);
   let score = hit.score;
+  const docsCompetitionAllowed = intent.asksForDocs || intent.asksForReleaseNotes;
 
   if (options.task === 'cleanup') {
     score = score * (1 + (1 - quality.score) * 0.7);
@@ -589,11 +593,11 @@ function applyQualityModel(
     adjustedScore -= importQualityPenalty;
   }
 
-  if (options.task === 'delivery' && !intent.asksForDocs && isDeliveryDemotionPath(hit.file, policies)) {
+  if (options.task === 'delivery' && !docsCompetitionAllowed && isDeliveryDemotionPath(hit.file, policies)) {
     adjustedScore -= 11;
   }
 
-  if (options.task === 'delivery' && !intent.asksForDocs && isDocsAdjacentCode(hit)) {
+  if (options.task === 'delivery' && !docsCompetitionAllowed && isDocsAdjacentCode(hit)) {
     adjustedScore -= 7;
   }
 
@@ -613,10 +617,10 @@ function applyQualityModel(
     reason: [
       ...hit.reason,
       quality.reason,
-      ...(options.task === 'delivery' && !intent.asksForDocs && isDeliveryDemotionPath(hit.file, policies)
+      ...(options.task === 'delivery' && !docsCompetitionAllowed && isDeliveryDemotionPath(hit.file, policies)
         ? ['delivery path demotion']
         : []),
-      ...(options.task === 'delivery' && !intent.asksForDocs && isDocsAdjacentCode(hit)
+      ...(options.task === 'delivery' && !docsCompetitionAllowed && isDocsAdjacentCode(hit)
         ? ['delivery docs-adjacent dampening']
         : []),
     ],
@@ -752,6 +756,27 @@ function applyFamilyCap(hits: SearchHit[], familyCap: number): SearchHit[] {
   return output;
 }
 
+function sortFinalAssemblyHits(hits: SearchHit[], policies: SearchPolicies): SearchHit[] {
+  const epsilon = 0.35;
+  return [...hits].sort((a, b) => {
+    const baseDiff = b.score - a.score;
+    if (Math.abs(baseDiff) > epsilon) {
+      return baseDiff;
+    }
+
+    const aGroup = classifyGroup(a);
+    const bGroup = classifyGroup(b);
+    const aWeight = policies.familyGroupWeights[aGroup] ?? 1;
+    const bWeight = policies.familyGroupWeights[bGroup] ?? 1;
+    const weightedDiff = (b.score * bWeight) - (a.score * aWeight);
+    if (weightedDiff !== 0) {
+      return weightedDiff;
+    }
+
+    return a.file.localeCompare(b.file) || a.line - b.line;
+  });
+}
+
 function fromSymbolHit(hit: SymbolSearchHit): SearchHit {
   const isCallerHit = hit.reason.some((reason) => reason.includes('call edge'));
   return {
@@ -806,12 +831,13 @@ async function smartSearch(plan: QueryPlan, options: SearchOptions): Promise<Sea
     .sort((a, b) => b.score - a.score || a.file.localeCompare(b.file) || a.line - b.line);
 
   const familyCapped = applyFamilyCap(collapsed, familyCap);
+  const assembled = sortFinalAssemblyHits(familyCapped, policies);
 
   if (options.groupLimit && options.groupLimit > 0) {
-    return applyGroupDiversity(familyCapped, options.limit, options.groupLimit);
+    return applyGroupDiversity(assembled, options.limit, options.groupLimit);
   }
 
-  return familyCapped.slice(0, options.limit);
+  return assembled.slice(0, options.limit);
 }
 
 function parseArgs(argv: string[]): { query: string; options: SearchOptions } | null {
@@ -988,7 +1014,7 @@ function isTestPath(path: string): boolean {
 }
 
 function queryLooksDocsIntent(query: string): boolean {
-  return /\b(docs?|documentation|wiki|readme|guide|template|validator)\b/i.test(query);
+  return /\b(docs?|documentation|wiki|readme|guide|template|validator|release|changelog|latest)\b/i.test(query);
 }
 
 function parseEnumList<T extends string>(

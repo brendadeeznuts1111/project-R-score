@@ -566,7 +566,13 @@ export function searchCallersBySymbol(
           SELECT COUNT(*)
           FROM symbol_edges e2
           WHERE e2.caller_name = e.caller_name
-        ) as out_degree
+        ) as out_degree,
+        (
+          SELECT COUNT(*)
+          FROM symbols s
+          WHERE LOWER(s.name) = LOWER(e.callee_name)
+            AND s.kind IN ('function', 'class', 'interface', 'type', 'enum', 'variable')
+        ) as resolved_defs
       FROM symbol_edges e
       JOIN files f ON f.id = e.file_id
       ${whereClause}
@@ -582,6 +588,7 @@ export function searchCallersBySymbol(
       callee_name: string;
       context: string;
       out_degree: number;
+      resolved_defs: number;
     }>;
 
     const queryTokens = tokenizeQuery(symbolName);
@@ -599,6 +606,11 @@ export function searchCallersBySymbol(
       } else if (calleeLower.includes(symbolName.toLowerCase())) {
         score += 18;
         reasons.push('callee contains query');
+      }
+
+      if ((row.resolved_defs || 0) > 0) {
+        score += 8;
+        reasons.push('resolved symbol edge');
       }
 
       for (const token of queryTokens) {
@@ -635,7 +647,7 @@ export function searchCallersBySymbol(
     if (hasRicherCallers) {
       for (const hit of hits) {
         if (hit.callerName === '<module>') {
-          hit.score -= 14;
+          hit.score -= 6;
           hit.reason = [...hit.reason, 'module-scope caller penalty'];
         }
       }
@@ -694,7 +706,13 @@ export function searchCalleesBySymbol(
           SELECT COUNT(*)
           FROM symbol_edges e2
           WHERE e2.callee_name = e.callee_name
-        ) as in_degree
+        ) as in_degree,
+        (
+          SELECT COUNT(*)
+          FROM symbols s
+          WHERE LOWER(s.name) = LOWER(e.callee_name)
+            AND s.kind IN ('function', 'class', 'interface', 'type', 'enum', 'variable')
+        ) as resolved_defs
       FROM symbol_edges e
       JOIN files f ON f.id = e.file_id
       ${whereClause}
@@ -710,6 +728,7 @@ export function searchCalleesBySymbol(
       callee_name: string;
       context: string;
       in_degree: number;
+      resolved_defs: number;
     }>;
 
     const queryTokens = tokenizeQuery(symbolName);
@@ -727,6 +746,11 @@ export function searchCalleesBySymbol(
       } else if (callerLower.includes(symbolName.toLowerCase())) {
         score += 18;
         reasons.push('caller contains query');
+      }
+
+      if ((row.resolved_defs || 0) > 0) {
+        score += 8;
+        reasons.push('resolved symbol edge');
       }
 
       for (const token of queryTokens) {

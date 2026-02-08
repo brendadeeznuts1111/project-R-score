@@ -26,6 +26,20 @@ export interface QueryBoostPolicy {
   releaseDocsPenaltyRelief?: number;
 }
 
+export interface FamilyGroupWeights {
+  Definitions?: number;
+  Callers?: number;
+  Imports?: number;
+  Tests?: number;
+  Other?: number;
+}
+
+export interface ScoreThresholdsPolicy {
+  qualityDropWarn?: number;
+  slopRiseWarn?: number;
+  reliabilityDropWarn?: number;
+}
+
 export interface SearchPolicies {
   pathExcludeContains: string[];
   authorityRules: AuthorityRule[];
@@ -37,6 +51,9 @@ export interface SearchPolicies {
   importQualityPenalty: number;
   bunFeatureMap: Record<string, BunFeaturePolicy>;
   queryBoosts: QueryBoostPolicy;
+  familyGroupWeights: Required<FamilyGroupWeights>;
+  deliveryDemotionExceptions: string[];
+  scoreThresholds: Required<ScoreThresholdsPolicy>;
 }
 
 export interface CanonicalFamily {
@@ -89,6 +106,25 @@ const DEFAULT_POLICIES: SearchPolicies = {
     releaseDocsBoost: 8,
     releaseDocsPenaltyRelief: 0.45,
   },
+  familyGroupWeights: {
+    Definitions: 1.0,
+    Callers: 0.95,
+    Imports: 0.7,
+    Tests: 0.8,
+    Other: 0.75,
+  },
+  deliveryDemotionExceptions: [
+    '/lib/docs/canonical-family.ts',
+    '/lib/docs/smart-symbol-index.ts',
+    '/lib/docs/ripgrep-spawn.ts',
+    '/lib/docs/stream-search.ts',
+    '/lib/docs/enhanced-stream-search.ts',
+  ],
+  scoreThresholds: {
+    qualityDropWarn: -1.5,
+    slopRiseWarn: 2.0,
+    reliabilityDropWarn: -2.0,
+  },
 };
 
 function mergePolicies(raw: Partial<SearchPolicies> | null | undefined): SearchPolicies {
@@ -129,6 +165,37 @@ function mergePolicies(raw: Partial<SearchPolicies> | null | undefined): SearchP
       releaseDocsPenaltyRelief: typeof raw.queryBoosts?.releaseDocsPenaltyRelief === 'number'
         ? raw.queryBoosts.releaseDocsPenaltyRelief
         : DEFAULT_POLICIES.queryBoosts.releaseDocsPenaltyRelief,
+    },
+    familyGroupWeights: {
+      Definitions: typeof raw.familyGroupWeights?.Definitions === 'number'
+        ? raw.familyGroupWeights.Definitions
+        : DEFAULT_POLICIES.familyGroupWeights.Definitions,
+      Callers: typeof raw.familyGroupWeights?.Callers === 'number'
+        ? raw.familyGroupWeights.Callers
+        : DEFAULT_POLICIES.familyGroupWeights.Callers,
+      Imports: typeof raw.familyGroupWeights?.Imports === 'number'
+        ? raw.familyGroupWeights.Imports
+        : DEFAULT_POLICIES.familyGroupWeights.Imports,
+      Tests: typeof raw.familyGroupWeights?.Tests === 'number'
+        ? raw.familyGroupWeights.Tests
+        : DEFAULT_POLICIES.familyGroupWeights.Tests,
+      Other: typeof raw.familyGroupWeights?.Other === 'number'
+        ? raw.familyGroupWeights.Other
+        : DEFAULT_POLICIES.familyGroupWeights.Other,
+    },
+    deliveryDemotionExceptions: raw.deliveryDemotionExceptions?.length
+      ? raw.deliveryDemotionExceptions
+      : DEFAULT_POLICIES.deliveryDemotionExceptions,
+    scoreThresholds: {
+      qualityDropWarn: typeof raw.scoreThresholds?.qualityDropWarn === 'number'
+        ? raw.scoreThresholds.qualityDropWarn
+        : DEFAULT_POLICIES.scoreThresholds.qualityDropWarn,
+      slopRiseWarn: typeof raw.scoreThresholds?.slopRiseWarn === 'number'
+        ? raw.scoreThresholds.slopRiseWarn
+        : DEFAULT_POLICIES.scoreThresholds.slopRiseWarn,
+      reliabilityDropWarn: typeof raw.scoreThresholds?.reliabilityDropWarn === 'number'
+        ? raw.scoreThresholds.reliabilityDropWarn
+        : DEFAULT_POLICIES.scoreThresholds.reliabilityDropWarn,
     },
   };
 }

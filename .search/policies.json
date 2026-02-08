@@ -34,9 +34,28 @@
     "/lib/docs/documentation-validator",
     "/lib/docs/template-scanner"
   ],
+  "deliveryDemotionExceptions": [
+    "/lib/docs/canonical-family.ts",
+    "/lib/docs/smart-symbol-index.ts",
+    "/lib/docs/ripgrep-spawn.ts",
+    "/lib/docs/stream-search.ts",
+    "/lib/docs/enhanced-stream-search.ts"
+  ],
   "familyCap": 3,
+  "familyGroupWeights": {
+    "Definitions": 1,
+    "Callers": 0.95,
+    "Imports": 0.7,
+    "Tests": 0.8,
+    "Other": 0.75
+  },
   "importDampeningPenalty": 8,
   "importQualityPenalty": 4,
+  "scoreThresholds": {
+    "qualityDropWarn": -1.5,
+    "slopRiseWarn": 2.0,
+    "reliabilityDropWarn": -2.0
+  },
   "queryBoosts": {
     "bunRuntimeBoost": 18,
     "apiArtifactBoost": 8,
@@ -97,10 +116,17 @@
     },
     "buffer_swap_intrinsics": {
       "aliases": ["buffer swap16 faster", "buffer swap64 faster", "buffer swap intrinsics"],
-      "terms": ["Buffer.swap16", "Buffer.swap64", "endianness", "intrinsics", "byte swap"],
+      "terms": ["Buffer.swap16", "Buffer.swap64", "endianness", "intrinsics", "byte swap", "buffer optimization"],
       "runtimeHint": "bun",
       "artifactHint": "api",
       "lineBoostContains": ["swap16", "swap64", "endianness", "buffer.alloc"]
+    },
+    "buffer_optimizations": {
+      "aliases": ["buffer optimizations", "faster buffer operations", "buffer perf"],
+      "terms": ["Buffer.from", "Buffer.swap16", "Buffer.swap64", "buffer", "typedarray", "intrinsics", "bulk copy"],
+      "runtimeHint": "bun",
+      "artifactHint": "api",
+      "lineBoostContains": ["buffer.from", "swap16", "swap64", "typedarray", "intrinsics"]
     },
     "stringwidth_gb9c": {
       "aliases": ["stringWidth GB9c", "indic conjunct break", "devanagari grapheme fix"],
