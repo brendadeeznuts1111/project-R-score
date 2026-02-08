@@ -207,7 +207,7 @@ async function main(): Promise<void> {
     endpoint: options.endpoint,
     bucket: options.bucket,
   });
-  const ctx = createDomainContext({
+  const ctx = await createDomainContext({
     domain: options.domain,
     zone: options.zone,
     endpoint: r2.endpoint,

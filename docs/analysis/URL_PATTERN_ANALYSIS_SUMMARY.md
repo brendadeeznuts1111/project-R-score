@@ -48,8 +48,8 @@ Using the @[lib] directory patterns, we successfully analyzed and fixed critical
 
 1. **Broken Registry URLs** (CRITICAL)
    ```
-   ❌ https://npm.factory-wager.com → ✅ https://registry.npmjs.org
-   ❌ https://npm.factory-wager.com/ → ✅ https://registry.npmjs.org/
+   ❌ https://registry.factory-wager.com → ✅ https://registry.npmjs.org
+   ❌ https://registry.factory-wager.com/ → ✅ https://registry.npmjs.org/
    ```
    **Files Fixed**: url-fixer-optimizer.ts, url-discovery-validator.ts
 
@@ -116,7 +116,7 @@ https://jsonplaceholder.typicode.com/{posts}
 
 // Registry Patterns
 https://registry.npmjs.org/ (FIXED)
-https://npm.factory-wager.com/ (BROKEN → FIXED)
+https://registry.factory-wager.com/ (BROKEN → FIXED)
 ```
 
 ## 🎯 Impact Assessment

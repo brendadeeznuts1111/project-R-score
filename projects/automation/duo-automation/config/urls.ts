@@ -17,7 +17,7 @@ export const URLS = {
       `https://registry.factory-wager.com/@factory-wager/${packageName}/-/${filename}`,
     
     // Alternative domains
-    NPM: 'https://npm.factory-wager.com',
+    NPM: 'https://registry.factory-wager.com',
     PACKAGES: 'https://packages.factory-wager.com',
     API: 'https://api.factory-wager.com'
   },

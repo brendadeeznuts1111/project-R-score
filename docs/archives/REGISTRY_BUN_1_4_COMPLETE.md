@@ -94,7 +94,7 @@ bun run secrets:versions api-key
 bun run secrets:list
 
 # Store registry credentials
-bun run secrets:set registry:npm.factory-wager.com '{"token":"abc123"}'
+bun run secrets:set registry:registry.factory-wager.com '{"token":"abc123"}'
 ```
 
 ### 3. 🚀 bun x Integration
@@ -262,7 +262,7 @@ const secrets = new RegistrySecretsManager();
 await secrets.initialize();
 
 // 3. Store registry credentials securely
-await secrets.storeRegistryCredentials('npm.factory-wager.com', {
+await secrets.storeRegistryCredentials('registry.factory-wager.com', {
   token: process.env.REGISTRY_TOKEN,
 });
 
@@ -390,7 +390,7 @@ R2_SECRETS_BUCKET=npm-registry
 SECRETS_CACHE_TTL=300
 
 # bun x
-REGISTRY_URL=https://npm.factory-wager.com
+REGISTRY_URL=https://registry.factory-wager.com
 BUNX_CACHE_DIR=~/.bun/registry-cache
 
 # Registry

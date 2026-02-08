@@ -164,14 +164,14 @@ bun run rss:html              # Generate HTML
 
 ## 🌐 Domain Integration
 
-Your existing `npm.factory-wager.com` subdomain is ready for the registry:
+Your existing `registry.factory-wager.com` subdomain is ready for the registry:
 
 ```bash
 # Deploy to production
 bun run registry:deploy:cdn
 
 # Configure DNS (already set up)
-# npm.factory-wager.com -> Cloudflare Worker
+# registry.factory-wager.com -> Cloudflare Worker
 ```
 
 ---

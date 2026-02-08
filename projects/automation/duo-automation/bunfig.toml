@@ -8,7 +8,7 @@
 
 [install]
 # Registry configuration
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"
 exact = true
 prefer = "offline"
 
@@ -56,7 +56,7 @@ plugins = ["./plugins/di-injector.ts"]
 # ═══════════════════════════════════════════════════════════
 
 [publish]
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"
 # Default access level for published packages
 access = "restricted"
 

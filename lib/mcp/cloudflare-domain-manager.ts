@@ -123,7 +123,7 @@ export class CloudflareDomainManager {
     const subdomains: SubdomainConfig[] = [
       {
         subdomain: 'npm',
-        full_domain: 'npm.factory-wager.com',
+        full_domain: 'registry.factory-wager.com',
         type: 'CNAME',
         content: 'registry.npmjs.org',
         ttl: 300,
@@ -131,7 +131,7 @@ export class CloudflareDomainManager {
         status: 'active',
         purpose: 'Package Registry',
         dependencies: ['auth.factory-wager.com'],
-        health_check_url: 'https://npm.factory-wager.com',
+        health_check_url: 'https://registry.factory-wager.com',
         ssl_required: true,
         enterprise_tier: true,
       },

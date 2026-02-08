@@ -138,7 +138,7 @@ export class BunXIntegration {
     }
 
     try {
-      const registry = process.env.REGISTRY_URL || 'https://npm.factory-wager.com';
+      const registry = process.env.REGISTRY_URL || 'https://registry.factory-wager.com';
       const credentials = await this.secretsManager.getRegistryCredentials(registry);
 
       const headers: Record<string, string> = {
@@ -181,7 +181,7 @@ export class BunXIntegration {
    */
   private async downloadAndCache(pkgName: string, version: string): Promise<CachedPackage | null> {
     try {
-      const registry = process.env.REGISTRY_URL || 'https://npm.factory-wager.com';
+      const registry = process.env.REGISTRY_URL || 'https://registry.factory-wager.com';
       const credentials = await this.secretsManager.getRegistryCredentials(registry);
 
       // Get manifest

@@ -2,7 +2,7 @@
 # Optimized for enterprise developer experience
 
 [install]
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"
 # Cache configuration for faster CI/CD
 cache = true
 # Optional dependencies for premium builds
@@ -45,8 +45,8 @@ reload = ["src/**/*.{ts,js,json}", "config/**/*"]
 port = 3000
 
 [publish]
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"
 
 [install.scopes]
-"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
-"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }

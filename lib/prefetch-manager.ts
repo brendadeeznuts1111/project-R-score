@@ -44,7 +44,7 @@ export class PrefetchManager {
       enabled: true,
       resources: [
         { type: 'dns', url: 'https://registry.factory-wager.com' },
-        { type: 'dns', url: 'https://npm.factory-wager.com' },
+        { type: 'dns', url: 'https://registry.factory-wager.com' },
         { type: 'dns', url: 'https://cache.factory-wager.com' },
         { type: 'dns', url: 'https://metrics.factory-wager.com' },
         { type: 'dns', url: 'https://dashboard.factory-wager.com' },

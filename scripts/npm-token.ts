@@ -13,12 +13,12 @@
  * bun run npm:token ET5PwQ8fjl-vgXUS1R9ZxsdwjDTp5-PUMMv5NJtf
  * ```
  * 
- * @see {@link https://npm.factory-wager.com} FactoryWager NPM Registry
+ * @see {@link https://registry.factory-wager.com} FactoryWager NPM Registry
  * @see {@link https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com/factory-wager-registry} R2 Storage
  */
 
 /** FactoryWager registry URL */
-const REGISTRY_URL = process.env.REGISTRY_URL || "https://npm.factory-wager.com";
+const REGISTRY_URL = process.env.REGISTRY_URL || "https://registry.factory-wager.com";
 
 /** NPM registry for fallback */
 const NPM_REGISTRY = "https://registry.npmjs.org/";

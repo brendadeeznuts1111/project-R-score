@@ -33,7 +33,7 @@ class PerformanceTester {
                 'dashboard.factory-wager.com',
                 'api.factory-wager.com',
                 'registry.factory-wager.com',
-                'npm.factory-wager.com'
+                'registry.factory-wager.com'
             ]
         };
     }

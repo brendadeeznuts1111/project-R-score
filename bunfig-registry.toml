@@ -6,7 +6,7 @@ frozen-lockfile = false
 
 # Fallback registries in order of preference
 fallback = [
-    "https://npm.factory-wager.com/",
+    "https://registry.factory-wager.com/",
     "https://cache.factory-wager.com/",
     "https://registry.npmjs.org/"
 ]
@@ -30,7 +30,7 @@ index-ttl = 600           # 10 minutes for index
 # DNS resolution with fallback
 primary = "registry.factory-wager.com"
 fallbacks = [
-    "npm.factory-wager.com",
+    "registry.factory-wager.com",
     "cache.factory-wager.com"
 ]
 emergency = "registry.npmjs.org"
@@ -50,7 +50,7 @@ timeout = 3000
 @factory-wager:always-auth = true
 
 # Authentication for fallback registries
-//npm.factory-wager.com/:_authToken = "${FACTORY_WAGER_TOKEN}"
+//registry.factory-wager.com/:_authToken = "${FACTORY_WAGER_TOKEN}"
 //cache.factory-wager.com/:_authToken = "${FACTORY_WAGER_TOKEN}"
 
 [ publish ]
@@ -91,7 +91,7 @@ check-certificates = true
 # Allowed origins for package installation
 allowed-origins = [
     "registry.factory-wager.com",
-    "npm.factory-wager.com", 
+    "registry.factory-wager.com", 
     "cache.factory-wager.com",
     "registry.npmjs.org"
 ]

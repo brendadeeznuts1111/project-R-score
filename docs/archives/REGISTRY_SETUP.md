@@ -43,7 +43,7 @@ R2_REGISTRY_BUCKET=npm-registry
 REGISTRY_PORT=4873
 REGISTRY_AUTH=none  # none, basic, token, jwt
 REGISTRY_SECRET=your-secret-key
-REGISTRY_CDN_URL=https://npm.factory-wager.com
+REGISTRY_CDN_URL=https://registry.factory-wager.com
 ```
 
 ### 2. Create R2 Bucket
@@ -189,7 +189,7 @@ wrangler deploy -c registry-wrangler.toml --env production
 
 ### Configure DNS
 
-Add DNS record for `npm.factory-wager.com`:
+Add DNS record for `registry.factory-wager.com`:
 ```text
 Type: CNAME
 Name: npm
@@ -201,10 +201,10 @@ Proxy Status: Proxied (orange cloud)
 
 ```bash
 # Use CDN URL
-npm config set registry https://npm.factory-wager.com
+npm config set registry https://registry.factory-wager.com
 
 # With authentication
-npm config set //npm.factory-wager.com/:_authToken="your-token"
+npm config set //registry.factory-wager.com/:_authToken="your-token"
 ```
 
 ## 📊 Monitoring
@@ -266,7 +266,7 @@ REGISTRY_UPSTREAM=https://registry.yarnpkg.com bun run registry start
 
 ```bash
 # Install specific package
-npm install @factorywager/my-package --registry https://npm.factory-wager.com
+npm install @factorywager/my-package --registry https://registry.factory-wager.com
 
 # Or with registry configured
 npm install @factorywager/my-package
@@ -276,7 +276,7 @@ npm install @factorywager/my-package
 
 ```bash
 # Set registry for scope
-npm config set @factorywager:registry https://npm.factory-wager.com
+npm config set @factorywager:registry https://registry.factory-wager.com
 
 # Install
 npm install @factorywager/utils
@@ -290,7 +290,7 @@ npm install @factorywager/components
   "name": "@factorywager/my-package",
   "version": "1.0.0",
   "publishConfig": {
-    "registry": "https://npm.factory-wager.com",
+    "registry": "https://registry.factory-wager.com",
     "access": "restricted"
   }
 }

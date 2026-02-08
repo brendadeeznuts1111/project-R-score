@@ -452,7 +452,7 @@ export class RegistryIndexDO {
   "version": "1.0.0",
   "private": true,
   "publishConfig": {
-    "registry": "https://npm.factory-wager.com/project-123",
+    "registry": "https://registry.factory-wager.com/project-123",
     "access": "restricted"
   },
   "dependencies": {
@@ -498,11 +498,11 @@ export class ProjectRegistrySetup {
   
   private generateConfig(projectId: string): ProjectRegistry {
     return {
-      registry: `https://npm.factory-wager.com/project-${projectId}`,
+      registry: `https://registry.factory-wager.com/project-${projectId}`,
       scope: `@project-${projectId}`,
       npmrc: `
-@project-${projectId}:registry=https://npm.factory-wager.com/project-${projectId}
-//npm.factory-wager.com/project-${projectId}:_authToken=\${NPM_TOKEN}
+@project-${projectId}:registry=https://registry.factory-wager.com/project-${projectId}
+//registry.factory-wager.com/project-${projectId}:_authToken=\${NPM_TOKEN}
       `.trim()
     };
   }
@@ -595,14 +595,14 @@ export default {
 
 ```bash
 # ~/.npmrc for developers
-@factorywager:registry=https://npm.factory-wager.com
-@duoplus:registry=https://npm.factory-wager.com
-@internal:registry=https://npm.factory-wager.com/private
-@project-123:registry=https://npm.factory-wager.com/project-123
+@factorywager:registry=https://registry.factory-wager.com
+@duoplus:registry=https://registry.factory-wager.com
+@internal:registry=https://registry.factory-wager.com/private
+@project-123:registry=https://registry.factory-wager.com/project-123
 
-//npm.factory-wager.com/:_authToken=${NPM_TOKEN}
-//npm.factory-wager.com/private:_authToken=${NPM_TOKEN_PRIVATE}
-//npm.factory-wager.com/project-123:_authToken=${NPM_TOKEN_PROJECT}
+//registry.factory-wager.com/:_authToken=${NPM_TOKEN}
+//registry.factory-wager.com/private:_authToken=${NPM_TOKEN_PRIVATE}
+//registry.factory-wager.com/project-123:_authToken=${NPM_TOKEN_PROJECT}
 ```
 
 ### 6.3 CI/CD Publishing
@@ -635,8 +635,8 @@ jobs:
         
       - name: Publish to Registry
         run: |
-          echo "//npm.factory-wager.com/:_authToken=${NPM_TOKEN}" > .npmrc
-          bun publish --registry https://npm.factory-wager.com
+          echo "//registry.factory-wager.com/:_authToken=${NPM_TOKEN}" > .npmrc
+          bun publish --registry https://registry.factory-wager.com
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```

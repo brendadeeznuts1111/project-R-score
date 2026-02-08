@@ -84,7 +84,7 @@
   },
   "publishConfig": {
     "access": "public",
-    "registry": "https://npm.factory-wager.com"
+    "registry": "https://registry.factory-wager.com"
   },
   "dependencies": {},
   "devDependencies": {

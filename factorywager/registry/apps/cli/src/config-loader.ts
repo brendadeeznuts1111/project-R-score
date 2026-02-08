@@ -141,7 +141,7 @@ function findConfigFile(): string | null {
 function getDefaultConfig(): RegistryConfig {
   return {
     name: 'FactoryWager Private Registry',
-    url: 'https://npm.factory-wager.com',
+    url: 'https://registry.factory-wager.com',
     storage: {
       type: 'r2',
       bucket: 'npm-registry',
@@ -149,7 +149,7 @@ function getDefaultConfig(): RegistryConfig {
     },
     cdn: {
       enabled: true,
-      url: 'https://npm.factory-wager.com',
+      url: 'https://registry.factory-wager.com',
       signedUrls: false,
       expirySeconds: 3600,
     },

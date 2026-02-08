@@ -55,7 +55,7 @@
     "typescript": "^5.9.3"
   },
   "publishConfig": {
-    "registry": "https://npm.factory-wager.com"
+    "registry": "https://registry.factory-wager.com"
   },
   "trustedDependencies": [
     "ccxt"

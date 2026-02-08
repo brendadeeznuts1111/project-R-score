@@ -186,7 +186,7 @@ class CloudflareRegistryDeployer {
   private async outputConfig() {
     console.log('\n📋 Factory Wager Registry Configuration:');
     console.log(`Main Registry: https://registry.factory-wager.com`);
-    console.log(`NPM Endpoint: https://npm.factory-wager.com`);
+    console.log(`NPM Endpoint: https://registry.factory-wager.com`);
     console.log(`Package Downloads: https://packages.factory-wager.com`);
     console.log(`API Endpoint: https://registry.factory-wager.com/@duoplus`);
     console.log(`Health Check: https://registry.factory-wager.com/health`);

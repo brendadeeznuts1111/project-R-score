@@ -31,7 +31,7 @@ A complete matrix organization of all URLs, patterns, and system components with
 | **REGISTRY** | Worker | https://duoplus-registry.utahj4754.workers.dev | Static | Production | ✅ Live | Config | `getRegistryUrl()` | Critical | 2024-01-15 14:35 | 156ms |
 | **REGISTRY** | Health | https://duoplus-registry.utahj4754.workers.dev/health | Static | Production | ✅ Healthy | Config | `getHealthUrl()` | Critical | 2024-01-15 14:35 | 89ms |
 | **REGISTRY** | Search | https://registry.factory-wager.com/-/v1/search | Dynamic | Production | ⏳ Configured | Builder | `getSearchUrl()` | High | 2024-01-15 14:30 | 312ms |
-| **REGISTRY** | NPM | https://npm.factory-wager.com | Static | Production | ⏳ Configured | Config | `getRegistryUrl()` | Medium | 2024-01-15 14:30 | 198ms |
+| **REGISTRY** | NPM | https://registry.factory-wager.com | Static | Production | ⏳ Configured | Config | `getRegistryUrl()` | Medium | 2024-01-15 14:30 | 198ms |
 | **REGISTRY** | Packages | https://packages.factory-wager.com | Static | Production | ⏳ Configured | Config | `getDownloadUrl()` | Medium | 2024-01-15 14:30 | 267ms |
 | **REGISTRY** | API | https://duoplus.factory-wager.com | Static | Production | ⏳ Configured | Config | `getApiUrl()` | High | 2024-01-15 14:30 | 178ms |
 | **MONITORING** | Dashboard | http://localhost:3000/dashboard | Static | Development | ✅ Local | Config | `getDashboardUrl()` | Medium | 2024-01-15 14:25 | 45ms |

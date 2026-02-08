@@ -4,5 +4,5 @@
 
 import { dns } from "bun";
 
-dns.prefetch("npm.factory-wager.com", 443);
+dns.prefetch("registry.factory-wager.com", 443);
 dns.prefetch("registry.npmjs.org", 443);

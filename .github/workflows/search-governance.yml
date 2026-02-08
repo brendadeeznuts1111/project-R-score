@@ -30,3 +30,9 @@ jobs:
 
       - name: Search Status Contract Tests
         run: bun test tests/search-status-contract.test.ts
+
+      - name: Domain Registry Contract Tests
+        run: bun test tests/domain-registry.test.ts tests/domain-registry-status.test.ts
+
+      - name: Domain Registry Status Smoke
+        run: bun run scripts/domain-registry-status.ts --json

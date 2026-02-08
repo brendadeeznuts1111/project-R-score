@@ -1030,7 +1030,7 @@ class FactoryWagerCLI {
             
             const githubDomains = [
                 'wiki.factory-wager.com', 'dashboard.factory-wager.com', 'client.factory-wager.com',
-                'npm.factory-wager.com', 'r2.factory-wager.com', 'matrix.factory-wager.com',
+                'registry.factory-wager.com', 'r2.factory-wager.com', 'matrix.factory-wager.com',
                 'health.factory-wager.com', 'auth.factory-wager.com', 'storage.factory-wager.com',
                 'analytics.factory-wager.com', 'monitoring.factory-wager.com', 'wagers.factory-wager.com',
                 'billing.factory-wager.com', 'reports.factory-wager.com', 'customers.factory-wager.com',

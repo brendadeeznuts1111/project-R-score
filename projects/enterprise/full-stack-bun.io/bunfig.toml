@@ -8,7 +8,7 @@ sourcemap = "external"
 
 [install]
 exact = true
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"
 auto-install = true
 # CONFIG.BUNFIG.SECURITY - Enterprise policy: 30-day minimum release age (2592000s)
 # MIN_RELEASE_AGE - Prevents installation of packages newer than 30 days
@@ -53,8 +53,8 @@ linker = "isolated"
 "@internal/*" = "internal-token-here"
 
 [install.scopes]
-"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
-"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
 # Scope-specific configurations
 "@types" = { "hoist" = true }
 "eslint" = { "hoist" = true }
@@ -71,4 +71,4 @@ axios = "^0.20.0"  # Only exclude vulnerable versions
 scanner = "@socketsecurity/bun-security-scanner"
 
 [publish]
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"

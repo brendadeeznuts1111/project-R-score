@@ -7,7 +7,7 @@ exact = true
 cache = true
 cache-dir = "./.bun-cache"
 # Registry configuration
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"
 # Lockfile configuration
 lockfile = true
 lockfile-save = true
@@ -45,8 +45,8 @@ liveReload = true
 
 
 [publish]
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"
 
 [install.scopes]
-"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
-"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }

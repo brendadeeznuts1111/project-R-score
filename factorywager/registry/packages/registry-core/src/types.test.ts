@@ -93,7 +93,7 @@ describe("RegistryConfig", () => {
   it("should validate R2 storage config", () => {
     const config: RegistryConfig = {
       name: "factory-wager-registry",
-      url: "https://npm.factory-wager.com",
+      url: "https://registry.factory-wager.com",
       storage: {
         type: "r2",
         bucket: "registry-npm",

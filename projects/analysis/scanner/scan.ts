@@ -4589,7 +4589,7 @@ async function fixDns(projects: ProjectInfo[], dryRun: boolean): Promise<void> {
 }
 
 // ── Fix Scopes: inject [install.scopes] into bunfig.toml ─────────────
-// Usage: --fix-scopes https://npm.factory-wager.com @factorywager @duoplus
+// Usage: --fix-scopes https://registry.factory-wager.com @factorywager @duoplus
 async function fixScopes(
 	projects: ProjectInfo[],
 	registryUrl: string,
@@ -4674,7 +4674,7 @@ async function fixScopes(
 }
 
 // ── Fix Npmrc: rewrite .npmrc with scoped v1.3.5+ template ───────────
-// Usage: --fix-npmrc https://npm.factory-wager.com @factorywager @duoplus
+// Usage: --fix-npmrc https://registry.factory-wager.com @factorywager @duoplus
 async function fixNpmrc(
 	projects: ProjectInfo[],
 	registryUrl: string,

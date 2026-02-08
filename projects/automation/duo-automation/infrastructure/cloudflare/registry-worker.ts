@@ -29,7 +29,7 @@ const app = new Hono<{ Bindings: {
 
 // Middleware
 app.use('*', cors({
-  origin: ['https://factory-wager.com', 'https://registry.factory-wager.com', 'https://npm.factory-wager.com'],
+  origin: ['https://factory-wager.com', 'https://registry.factory-wager.com', 'https://registry.factory-wager.com'],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowHeaders: ['Content-Type', 'Authorization'],
 }));
@@ -76,7 +76,7 @@ app.get('/', (c) => {
     },
     domains: {
       registry: 'https://registry.factory-wager.com',
-      npm: 'https://npm.factory-wager.com',
+      npm: 'https://registry.factory-wager.com',
       packages: 'https://packages.factory-wager.com',
       duoplus: 'https://duoplus.factory-wager.com'
     }

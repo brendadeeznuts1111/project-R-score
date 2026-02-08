@@ -1,3 +1,5 @@
+import { resolveDomainRegistry } from './domain-registry';
+
 export type DomainStorageKeys = {
   health: string;
   ssl: string;
@@ -15,6 +17,15 @@ export type DomainContext = {
     endpoint: string | null;
     domainPrefix: string;
     sampleKeys: DomainStorageKeys;
+  };
+  registry: {
+    mappingSource: 'registry' | 'fallback';
+    registryPath: string;
+    registryVersion: string | null;
+    matchedDomain: string | null;
+    requiredHeader: string | null;
+    tokenEnvVar: string | null;
+    tokenPresent: boolean | null;
   };
 };
 
@@ -52,19 +63,27 @@ export function buildDomainStorageKeys(prefix: string, date = 'YYYY-MM-DD'): Dom
   };
 }
 
-export function createDomainContext(input: {
+export async function createDomainContext(input: {
   domain: string;
   zone?: string | null;
   bucket?: string | null;
   endpoint?: string | null;
   explicitPrefix?: string | null;
   accountIdRaw?: string | null;
-}): DomainContext {
+  registryPath?: string | null;
+}): Promise<DomainContext> {
   const domain = normalizeDomain(input.domain);
-  const namespace = domainNamespace(domain);
-  const prefix = (input.explicitPrefix || `domains/${namespace}/cloudflare`).replace(/^\/+|\/+$/g, '');
-  const zone = String(input.zone || domain).trim() || domain;
-  const endpoint = input.endpoint ? String(input.endpoint).trim() : null;
+  const resolved = await resolveDomainRegistry(domain, {
+    zone: input.zone,
+    bucket: input.bucket,
+    endpoint: input.endpoint,
+    prefix: input.explicitPrefix,
+    path: input.registryPath || undefined,
+  });
+  const namespace = resolved.namespace;
+  const prefix = resolved.prefix;
+  const zone = resolved.zone;
+  const endpoint = resolved.endpoint;
   const accountIdRaw = String(input.accountIdRaw || accountIdFromEndpoint(endpoint || '') || '').trim();
   const accountId = maskAccountId(accountIdRaw);
   return {
@@ -74,11 +93,19 @@ export function createDomainContext(input: {
     namespace,
     prefix,
     storage: {
-      bucket: input.bucket ? String(input.bucket).trim() : null,
+      bucket: resolved.bucket,
       endpoint,
       domainPrefix: `${prefix}/`,
       sampleKeys: buildDomainStorageKeys(prefix),
     },
+    registry: {
+      mappingSource: resolved.mappingSource,
+      registryPath: resolved.registryPath,
+      registryVersion: resolved.registryVersion,
+      matchedDomain: resolved.matchedDomain,
+      requiredHeader: resolved.requiredHeader,
+      tokenEnvVar: resolved.tokenEnvVar,
+      tokenPresent: resolved.tokenPresent,
+    },
   };
 }
-

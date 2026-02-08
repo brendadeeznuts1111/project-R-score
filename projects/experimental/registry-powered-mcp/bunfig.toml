@@ -41,11 +41,11 @@ timeout = 30000
 
 [install]
 exact = true
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"
 
 [publish]
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"
 
 [install.scopes]
-"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
-"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }

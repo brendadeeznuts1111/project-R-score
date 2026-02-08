@@ -74,6 +74,6 @@
   "license": "MIT",
   "description": "MCP-powered package registry workspace with React dashboard and benchmarks",
   "publishConfig": {
-    "registry": "https://npm.factory-wager.com"
+    "registry": "https://registry.factory-wager.com"
   }
 }

@@ -1023,6 +1023,13 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           : []
       );
       const baseUrl = String(data.baseUrl || data.domain || 'factory-wager.com').trim().toLowerCase();
+      const registry = data.domainRegistry || {};
+      const registrySource = String(registry.mappingSource || 'fallback');
+      const registryVersion = registry.registryVersion ? String(registry.registryVersion) : 'n/a';
+      const registryMatch = registry.matchedDomain ? String(registry.matchedDomain) : 'n/a';
+      const requiredHeader = registry.requiredHeader ? String(registry.requiredHeader) : 'n/a';
+      const tokenEnvVar = registry.tokenEnvVar ? String(registry.tokenEnvVar) : 'n/a';
+      const tokenState = registry.tokenPresent === true ? 'present' : (registry.tokenPresent === false ? 'missing' : 'n/a');
       const cookieStatusText =
         'Cookie DNS ' +
         (Number.isFinite(cookieResolved) ? cookieResolved : 'n/a') +
@@ -1111,6 +1118,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         '<div class="meta">' + modeHint + '</div>' +
         '<div class="meta">base_url=<code>' + baseUrl + '</code> url_fragment=<code>{subdomain}</code> path=<code>{path}</code> full_domain=<code>{url_fragment}.{base_url}</code></div>' +
         '<div class="meta">storage bucket=' + (data.storage?.bucket || 'n/a') + ' endpoint=' + (data.storage?.endpoint || 'n/a') + ' prefix=<code>' + (data.storage?.domainPrefix || 'n/a') + '</code></div>' +
+        '<div class="meta">registry source=' + registrySource + ' match=<code>' + registryMatch + '</code> version=' + registryVersion + ' requiredHeader=<code>' + requiredHeader + '</code> tokenEnv=<code>' + tokenEnvVar + '</code> token=' + tokenState + '</div>' +
         '<div class="meta">storageKey health=<code>' + (data.storage?.sampleKeys?.health || 'n/a') + '</code></div>' +
         '<div class="meta">dnsChecked=' + (data.dnsPrefetch?.checked ?? 0) + ' dnsResolved=' + (data.dnsPrefetch?.resolved ?? 0) + ' cacheTtlSec=' + (data.dnsPrefetch?.cacheTtlSec ?? 'n/a') + '</div>' +
         '<div class="meta">cookieTelemetry=' + (data.health?.cookie?.detail || 'n/a') + ' domainMatch=' + (data.health?.cookie?.domainMatchesRequested ?? 'n/a') + ' cookieScore=' + (Number.isFinite(cookieScoreValue) ? cookieScoreValue : 'n/a') + ' hex=' + cookieHexBadge + ' bar=' + cookieUnicodeBar + ' <span class="badge" style="background:' + cookieHexBadge + ';border-color:' + cookieHexBadge + ';color:#0b0d12">■</span></div>' +
@@ -2402,7 +2410,7 @@ async function main(): Promise<void> {
     strictP95ThresholdMs: number | null = null
   ) => {
     const r2Read = resolveR2ReadOptions();
-    const ctx = createDomainContext({
+    const ctx = await createDomainContext({
       domain,
       zone: Bun.env.CLOUDFLARE_ZONE_NAME || Bun.env.CLOUDFLARE_ZONE_ID || domain,
       bucket: r2Read?.bucket || Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || Bun.env.R2_BENCH_BUCKET || null,
@@ -2551,6 +2559,7 @@ async function main(): Promise<void> {
         zone,
         accountId,
         storage,
+        domainRegistry: ctx.registry,
         knownSubdomains,
         managerNote,
         dnsPrefetch,
@@ -2611,7 +2620,7 @@ async function main(): Promise<void> {
 
     const r2 = resolveR2ReadOptions();
     if (!r2) {
-      return { error: 'r2_not_configured_for_domain_health', source, domain, baseUrl: domain, zone, accountId, storage, knownSubdomains, managerNote };
+      return { error: 'r2_not_configured_for_domain_health', source, domain, baseUrl: domain, zone, accountId, storage, domainRegistry: ctx.registry, knownSubdomains, managerNote };
     }
     const latest = await Promise.all(prefixes.map(async (type) => {
       const prefix = `${ctx.prefix}/${type}/`;
@@ -2666,6 +2675,7 @@ async function main(): Promise<void> {
       zone,
       accountId,
       storage,
+      domainRegistry: ctx.registry,
       knownSubdomains,
       managerNote,
       dnsPrefetch,

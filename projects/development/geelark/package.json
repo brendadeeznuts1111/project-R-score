@@ -201,6 +201,6 @@
     "version:satisfies": "bun run --eval \"import { satisfiesRange } from './src/utils/version'; const v = process.argv[2]; const r = process.argv[3]; console.log(satisfiesRange(v, r) ? 'Yes' : 'No')\" --"
   },
   "publishConfig": {
-    "registry": "https://npm.factory-wager.com"
+    "registry": "https://registry.factory-wager.com"
   }
 }

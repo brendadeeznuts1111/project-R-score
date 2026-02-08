@@ -14,14 +14,14 @@
  * bun run bump:all major
  * ```
  * 
- * @see {@link https://npm.factory-wager.com} FactoryWager NPM Registry
+ * @see {@link https://registry.factory-wager.com} FactoryWager NPM Registry
  * @see {@link https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com/factory-wager-registry} R2 Storage
  */
 
 import { Glob } from "bun";
 
 /** Registry URL for FactoryWager packages */
-const REGISTRY_URL = process.env.REGISTRY_URL || "https://npm.factory-wager.com";
+const REGISTRY_URL = process.env.REGISTRY_URL || "https://registry.factory-wager.com";
 
 /** R2 bucket URL for package storage */
 const R2_BUCKET_URL = process.env.R2_BUCKET_URL || 
@@ -59,7 +59,7 @@ async function main(): Promise<void> {
   if (!type || !["patch", "minor", "major"].includes(type)) {
     console.error("❌ Usage: bun run bump:all <patch|minor|major>");
     console.error("\n📚 Documentation:");
-    console.error("   Registry: https://npm.factory-wager.com");
+    console.error("   Registry: https://registry.factory-wager.com");
     console.error("   R2 Store: https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com/factory-wager-registry");
     process.exit(1);
   }

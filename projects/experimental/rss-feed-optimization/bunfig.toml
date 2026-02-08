@@ -1,5 +1,5 @@
 [install]
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"
 # Resolve from node_modules or auto-install on the fly (auto | force | disable | fallback)
 auto = "auto"
 # Use exact versions in package.json when adding packages
@@ -46,8 +46,8 @@ dnsCacheTTL = 30000
 preconnectTTL = 300000
 
 [publish]
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"
 
 [install.scopes]
-"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
-"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }

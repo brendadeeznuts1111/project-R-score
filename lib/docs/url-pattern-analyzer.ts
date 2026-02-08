@@ -83,7 +83,7 @@ class URLPatternAnalyzer {
     // Registry URLs
     registry: {
       npm: ['https://registry.npmjs.org'],
-      'factory-wager': ['https://npm.factory-wager.com', 'https://npm.factory-wager.com/'],
+      'factory-wager': ['https://registry.factory-wager.com', 'https://registry.factory-wager.com/'],
     },
 
     // Local development URLs
@@ -114,8 +114,8 @@ class URLPatternAnalyzer {
   // Known issues and fixes
   private static readonly URL_FIXES = {
     // Broken registry URLs
-    'https://npm.factory-wager.com': 'https://registry.npmjs.org',
-    'https://npm.factory-wager.com/': 'https://registry.npmjs.org/',
+    'https://registry.factory-wager.com': 'https://registry.npmjs.org',
+    'https://registry.factory-wager.com/': 'https://registry.npmjs.org/',
 
     // Performance optimizations
     'https://bun.sh/docs': 'https://bun.sh/docs/cli', // Faster loading

@@ -72,7 +72,7 @@ const environments: Record<string, EnvironmentURLs> = {
   staging: {
     REGISTRY: {
       main: 'https://staging-registry.factory-wager.com',
-      npm: 'https://staging-npm.factory-wager.com',
+      npm: 'https://staging-registry.factory-wager.com',
       packages: 'https://staging-packages.factory-wager.com',
       api: 'https://staging-api.factory-wager.com',
       health: 'https://staging-registry.factory-wager.com/health',

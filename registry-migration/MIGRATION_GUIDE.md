@@ -178,7 +178,7 @@ If issues arise:
 
 2. **Revert DNS** (if changed)
    ```bash
-   # Point npm.factory-wager.com back to old registry
+   # Point registry.factory-wager.com back to old registry
    ```
 
 3. **Restore monorepo**
@@ -199,16 +199,16 @@ If issues arise:
 npm view @factorywager/registry-core
 
 # 2. Test registry server
-curl https://npm.factory-wager.com/-/ping
+curl https://registry.factory-wager.com/-/ping
 
 # 3. Test package publish
-npm publish --registry https://npm.factory-wager.com
+npm publish --registry https://registry.factory-wager.com
 
 # 4. Test package install
 bun add @factorywager/test-package
 
 # 5. Test version graph
-curl https://npm.factory-wager.com/-/graph/lodash
+curl https://registry.factory-wager.com/-/graph/lodash
 
 # 6. Test secrets
 bun run secrets:set test "value"

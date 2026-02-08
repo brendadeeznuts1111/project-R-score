@@ -45,7 +45,7 @@
     "registry": {
       "primary": "https://registry.factory-wager.com/",
       "fallbacks": [
-        "https://npm.factory-wager.com/",
+        "https://registry.factory-wager.com/",
         "https://cache.factory-wager.com/",
         "https://registry.npmjs.org/"
       ],
@@ -61,7 +61,7 @@
     "dns": {
       "primary": "registry.factory-wager.com",
       "fallbacks": [
-        "npm.factory-wager.com",
+        "registry.factory-wager.com",
         "cache.factory-wager.com"
       ],
       "emergency": "registry.npmjs.org",

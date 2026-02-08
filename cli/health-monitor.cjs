@@ -135,7 +135,7 @@ class HealthMonitor {
             'dashboard.factory-wager.com',
             'api.factory-wager.com',
             'registry.factory-wager.com',
-            'npm.factory-wager.com'
+            'registry.factory-wager.com'
         ];
         
         // Define services to check
@@ -144,7 +144,7 @@ class HealthMonitor {
             { name: 'Dashboard', url: 'https://dashboard.factory-wager.com', type: 'web' },
             { name: 'API', url: 'https://api.factory-wager.com/health', type: 'api', expectedStatus: 200 },
             { name: 'Registry', url: 'https://registry.factory-wager.com', type: 'web' },
-            { name: 'NPM Registry', url: 'https://npm.factory-wager.com', type: 'web' }
+            { name: 'NPM Registry', url: 'https://registry.factory-wager.com', type: 'web' }
         ];
         
         // Check all domains
