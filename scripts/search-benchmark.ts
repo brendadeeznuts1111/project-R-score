@@ -46,11 +46,18 @@ const FALLBACK_CORE_QUERIES = [
 
 type QueryPacks = Record<string, string[]>;
 
-function parseArgs(argv: string[]): { path: string; limit: number; queries?: string[]; queryPack: string } {
+function parseArgs(argv: string[]): {
+  path: string;
+  limit: number;
+  queries?: string[];
+  queryPack: string;
+  concurrency: number;
+} {
   let path = './lib';
   let limit = 40;
   let queries: string[] | undefined;
   let queryPack = 'core_delivery';
+  let concurrency = 4;
 
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
@@ -81,9 +88,17 @@ function parseArgs(argv: string[]): { path: string; limit: number; queries?: str
       i += 1;
       continue;
     }
+    if (arg === '--concurrency') {
+      const n = Number.parseInt(argv[i + 1] || '', 10);
+      if (Number.isFinite(n) && n > 0) {
+        concurrency = Math.min(32, n);
+      }
+      i += 1;
+      continue;
+    }
   }
 
-  return { path, limit, queries, queryPack };
+  return { path, limit, queries, queryPack, concurrency };
 }
 
 async function loadQueryPacks(): Promise<QueryPacks> {
@@ -126,6 +141,30 @@ async function runSearch(query: string, path: string, limit: number, args: strin
   const cmd = ['bun', 'run', 'search:smart', query, '--path', path, '--limit', String(limit), '--json', ...args].join(' ');
   const output = await Bun.$`${{ raw: cmd }}`.text();
   return parseJsonPayload(output);
+}
+
+async function mapWithConcurrency<T, R>(
+  items: T[],
+  concurrency: number,
+  worker: (item: T, index: number) => Promise<R>
+): Promise<R[]> {
+  const size = Math.max(1, Math.min(concurrency, items.length || 1));
+  const out = new Array<R>(items.length);
+  let cursor = 0;
+
+  async function runWorker(): Promise<void> {
+    while (true) {
+      const index = cursor;
+      cursor += 1;
+      if (index >= items.length) {
+        return;
+      }
+      out[index] = await worker(items[index], index);
+    }
+  }
+
+  await Promise.all(Array.from({ length: size }, () => runWorker()));
+  return out;
 }
 
 function summarizeQuery(query: string, payload: any): QueryResultSummary {
@@ -193,7 +232,7 @@ function aggregateProfile(profile: Profile, querySummaries: QueryResultSummary[]
 }
 
 async function main(): Promise<void> {
-  const { path, limit, queries: overrideQueries, queryPack } = parseArgs(process.argv.slice(2));
+  const { path, limit, queries: overrideQueries, queryPack, concurrency } = parseArgs(process.argv.slice(2));
   const packs = await loadQueryPacks();
   const queries = overrideQueries || packs[queryPack] || packs.core_delivery || [...FALLBACK_CORE_QUERIES];
 
@@ -206,14 +245,15 @@ async function main(): Promise<void> {
 
   const summaries: ProfileSummary[] = [];
 
-  for (const profile of profiles) {
-    const querySummaries: QueryResultSummary[] = [];
-    for (const query of queries) {
+  const profileSummaries = await mapWithConcurrency(profiles, Math.min(concurrency, profiles.length), async (profile) => {
+    const querySummaries = await mapWithConcurrency(queries, concurrency, async (query) => {
       const payload = await runSearch(query, path, limit, profile.args);
-      querySummaries.push(summarizeQuery(query, payload));
-    }
-    summaries.push(aggregateProfile(profile, querySummaries));
-  }
+      return summarizeQuery(query, payload);
+    });
+    return aggregateProfile(profile, querySummaries);
+  });
+
+  summaries.push(...profileSummaries);
 
   summaries.sort((a, b) => b.qualityScore - a.qualityScore);
 
@@ -221,6 +261,7 @@ async function main(): Promise<void> {
     path,
     limit,
     queryPack,
+    concurrency,
     queries,
     rankedProfiles: summaries,
   }, null, 2));

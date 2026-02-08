@@ -21,6 +21,7 @@ type BenchmarkPayload = {
   path: string;
   limit: number;
   queryPack?: string;
+  concurrency?: number;
   queries: string[];
   rankedProfiles: RankedProfile[];
   warnings?: string[];
@@ -39,6 +40,7 @@ type SnapshotIndexEntry = {
   createdAt: string;
   topProfile: string;
   topScore: number;
+  queryPack?: string;
   localJson: string;
   localMd: string;
   r2JsonKey?: string;
@@ -55,6 +57,7 @@ type CliOptions = {
   path: string;
   limit: number;
   queryPack?: string;
+  concurrency?: number;
   queries?: string;
   outputDir: string;
   id?: string;
@@ -175,6 +178,12 @@ function parseArgs(argv: string[]): CliOptions {
       i += 1;
       continue;
     }
+    if (arg === '--concurrency') {
+      const n = Number.parseInt(argv[i + 1] || '', 10);
+      if (Number.isFinite(n) && n > 0) out.concurrency = Math.min(32, n);
+      i += 1;
+      continue;
+    }
     if (arg === '--output') {
       out.outputDir = argv[i + 1] || out.outputDir;
       i += 1;
@@ -244,6 +253,9 @@ async function runBenchmark(options: CliOptions): Promise<BenchmarkPayload> {
   }
   if (options.queryPack && options.queryPack.trim().length > 0) {
     args.push('--query-pack', options.queryPack);
+  }
+  if (options.concurrency && options.concurrency > 0) {
+    args.push('--concurrency', String(options.concurrency));
   }
 
   const proc = Bun.spawn(args, { stdout: 'pipe', stderr: 'pipe' });
@@ -333,6 +345,9 @@ function renderSummaryMarkdown(
   lines.push(`- Path: \`${payload.path}\``);
   lines.push(`- Limit: \`${payload.limit}\``);
   lines.push(`- Query Pack: \`${payload.queryPack || 'core_delivery'}\``);
+  if (typeof payload.concurrency === 'number') {
+    lines.push(`- Concurrency: \`${payload.concurrency}\``);
+  }
   lines.push(`- Queries: \`${payload.queries.join(', ')}\``);
   lines.push('');
   lines.push(`## Trend Delta (vs previous snapshot)`);
@@ -522,6 +537,7 @@ async function main(): Promise<void> {
     id,
     createdAt,
     queryPack: payload.queryPack || options.queryPack || 'core_delivery',
+    concurrency: payload.concurrency ?? options.concurrency ?? null,
     delta,
     warnings,
     gzip: options.gzip,
@@ -545,6 +561,7 @@ async function main(): Promise<void> {
     createdAt,
     topProfile: top?.profile || 'n/a',
     topScore: top?.qualityScore || 0,
+    queryPack: payload.queryPack || options.queryPack || 'core_delivery',
     localJson: snapshotJsonPath,
     localMd: summaryMdPath,
   };
@@ -731,6 +748,7 @@ async function main(): Promise<void> {
     id,
     createdAt,
     queryPack: payload.queryPack || options.queryPack || 'core_delivery',
+    concurrency: payload.concurrency ?? options.concurrency ?? null,
     delta,
     warnings,
     bucket: r2.bucket,

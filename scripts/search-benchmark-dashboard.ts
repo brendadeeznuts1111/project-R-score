@@ -452,12 +452,13 @@ function htmlShell(options: Options): string {
         '<tr>' +
           '<td>' + s.id + '</td>' +
           '<td>' + s.createdAt + '</td>' +
+          '<td>' + (s.queryPack || 'core_delivery') + '</td>' +
           '<td>' + s.topProfile + '</td>' +
           '<td>' + Number(s.topScore || 0).toFixed(2) + '</td>' +
         '</tr>'
       ).join('');
       historyEl.innerHTML =
-        '<table><thead><tr><th>Snapshot</th><th>Created</th><th>Top Profile</th><th>Top Score</th></tr></thead><tbody>' + rows + '</tbody></table>';
+        '<table><thead><tr><th>Snapshot</th><th>Created</th><th>Query Pack</th><th>Top Profile</th><th>Top Score</th></tr></thead><tbody>' + rows + '</tbody></table>';
     };
     const renderPublish = (data) => {
       if (!data || !Array.isArray(data.uploads)) {
@@ -476,6 +477,8 @@ function htmlShell(options: Options): string {
         .join('');
       publishEl.innerHTML =
         '<div class="meta">snapshot=' + (data.id || 'n/a') +
+        ' queryPack=' + (data.queryPack || 'core_delivery') +
+        ' concurrency=' + (data.concurrency ?? 'n/a') +
         ' uploadedObjects=' + (data.uploadedObjects || 0) +
         ' retries=' + (data.uploadRetries ?? 'n/a') +
         ' gzip=' + (data.gzip ? 'true' : 'false') +
