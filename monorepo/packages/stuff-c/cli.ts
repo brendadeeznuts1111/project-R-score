@@ -3,10 +3,11 @@ import { validateUser, safeValidateUser } from 'stuff-a';
 import { hashUser } from 'stuff-a/hash';
 import { generateUser, generateUsers } from 'stuff-a/generate';
 import {
-  ROUTES, HEADERS, LIMITS, DB, AUTH,
+  ROUTES, HEADERS, LIMITS, DB, AUTH, CONFIG_PATH,
   serverUrl, wsUrl,
 } from 'stuff-a/config';
 import { createDB } from 'stuff-b/db';
+import { exportJSONL, importJSONL, exportGzip, importGzip } from 'stuff-b/stream';
 import { healthCheck, seedUsers } from './index';
 import { green, red, yellow, cyan, bold, dim, setStripColors } from './colors';
 
@@ -25,6 +26,11 @@ if (yesIdx !== -1) argv.splice(yesIdx, 1);
 
 const [cmd, ...args] = argv;
 const SERVER = process.env.STUFF_SERVER ?? serverUrl();
+
+function pad(text: string, width: number): string {
+  const w = Bun.stringWidth(text);
+  return text + ' '.repeat(Math.max(0, width - w));
+}
 
 function output(data: unknown, humanFn: (d: any) => void): void {
   if (jsonOutput) {
@@ -52,6 +58,8 @@ Usage:
   stuff list [--role=] [--search=] [--limit=]  List/search users
   stuff update <id> <json>        Update user (PATCH)
   stuff delete <id> [--yes]        Delete user by ID
+  stuff export [--db=] [--gzip=<file>]  Export users as JSONL (stdout) or gzip (file)
+  stuff import [--db=] [<file.gz>]     Import JSONL from stdin or gzip file
   stuff watch                     Watch server events via WebSocket
   stuff serve                     Start stuff-b server as child process
   stuff load [total] [concurrency]  HTTP load test against server
@@ -153,9 +161,9 @@ switch (cmd) {
           console.log('No users found.');
           return;
         }
-        console.log(`${cyan('ID'.padEnd(38))} ${cyan('NAME'.padEnd(20))} ${cyan('ROLE'.padEnd(8))} ${cyan('EMAIL')}`);
+        console.log(`${pad(cyan('ID'), 38)} ${pad(cyan('NAME'), 20)} ${pad(cyan('ROLE'), 8)} ${cyan('EMAIL')}`);
         for (const u of users) {
-          console.log(`${dim(u.id.padEnd(38))} ${u.name.padEnd(20)} ${u.role.padEnd(8)} ${u.email}`);
+          console.log(`${pad(dim(u.id), 38)} ${pad(u.name, 20)} ${pad(u.role, 8)} ${u.email}`);
         }
         console.log(`\n${users.length} of ${total} user(s)`);
       });
@@ -225,6 +233,53 @@ switch (cmd) {
     } catch {
       console.error(`Cannot reach ${SERVER}`);
       process.exit(1);
+    }
+    break;
+  }
+
+  case 'export': {
+    const dbPath = flag('db') ?? DB.DEFAULT_PATH;
+    const gzipPath = flag('gzip');
+    const db = createDB(dbPath);
+    if (gzipPath) {
+      const count = await exportGzip(db, gzipPath);
+      db.close();
+      if (!jsonOutput) {
+        console.error(`Exported ${count} users as gzip to ${gzipPath}`);
+      }
+    } else {
+      const sink = Bun.stdout.writer();
+      const count = await exportJSONL(db, sink);
+      await sink.flush();
+      db.close();
+      if (!jsonOutput) {
+        console.error(`Exported ${count} users as JSONL`);
+      }
+    }
+    break;
+  }
+
+  case 'import': {
+    const dbPath = flag('db') ?? DB.DEFAULT_PATH;
+    const db = createDB(dbPath);
+    const inputFile = args[0];
+    if (inputFile && inputFile.endsWith('.gz')) {
+      const result = await importGzip(inputFile, db);
+      db.close();
+      if (jsonOutput) {
+        console.log(JSON.stringify(result));
+      } else {
+        console.log(`Imported ${result.imported} users from gzip, skipped ${result.skipped}`);
+      }
+    } else {
+      const stream = Bun.stdin.stream();
+      const result = await importJSONL(db, stream);
+      db.close();
+      if (jsonOutput) {
+        console.log(JSON.stringify(result));
+      } else {
+        console.log(`Imported ${result.imported} users, skipped ${result.skipped}`);
+      }
     }
     break;
   }
@@ -342,12 +397,24 @@ switch (cmd) {
     const root = await Bun.file(import.meta.dir + '/package.json').json();
     const stuffA = await Bun.file(import.meta.dir + '/../stuff-a/package.json').json();
     const stuffB = await Bun.file(import.meta.dir + '/../stuff-b/package.json').json();
+    const dbFile = Bun.file(DB.DEFAULT_PATH);
+    const dbExists = await dbFile.exists();
+    const versionSync = Bun.semver.order(stuffA.version, stuffB.version) === 0
+      ? 'in sync'
+      : 'version mismatch';
     const data = {
       'stuff-c': root.version,
       'stuff-a': { version: stuffA.version, zod: stuffA.dependencies.zod },
       'stuff-b': { version: stuffB.version },
+      versionSync,
       server: SERVER,
       runtime: `Bun ${Bun.version}`,
+      config: CONFIG_PATH,
+      db: {
+        path: DB.DEFAULT_PATH,
+        size: dbExists ? dbFile.size : 0,
+        type: dbFile.type,
+      },
     };
     output(data, () => {
       console.log(`stuff-c  v${root.version}`);
@@ -355,6 +422,12 @@ switch (cmd) {
       console.log(`  stuff-b  v${stuffB.version}  (depends on stuff-a)`);
       console.log(`  server   ${SERVER}`);
       console.log(`  runtime  Bun ${Bun.version}`);
+      console.log(`  config   ${CONFIG_PATH}`);
+      if (dbExists) {
+        console.log(`  db       ${DB.DEFAULT_PATH}  (${(dbFile.size / 1024).toFixed(1)} KB, ${dbFile.type})`);
+      } else {
+        console.log(`  db       ${DB.DEFAULT_PATH}  (not created)`);
+      }
     });
     break;
   }

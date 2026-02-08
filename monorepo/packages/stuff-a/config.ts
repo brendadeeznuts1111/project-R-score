@@ -1,9 +1,11 @@
 // monorepo/packages/stuff-a/config.ts
 import { z } from 'zod';
 
+export const CONFIG_PATH = Bun.file(new URL("./config.ts", import.meta.url)).name;
+
 // ── Network ──
-export const DEFAULT_PORT = parseInt(process.env.STUFF_PORT ?? '3456', 10);
-export const DEFAULT_HOSTNAME = process.env.STUFF_HOSTNAME ?? 'localhost';
+export const DEFAULT_PORT = parseInt(Bun.env.STUFF_PORT ?? '3456', 10);
+export const DEFAULT_HOSTNAME = Bun.env.STUFF_HOSTNAME ?? 'localhost';
 export const DEFAULT_TEST_PORT = 3457;
 
 export function serverUrl(port = DEFAULT_PORT, hostname = DEFAULT_HOSTNAME): string {
@@ -37,7 +39,7 @@ export const HEADERS = {
 
 // ── Database ──
 export const DB = {
-  DEFAULT_PATH: process.env.STUFF_DB_PATH ?? './stuff.db',
+  DEFAULT_PATH: Bun.env.STUFF_DB_PATH ?? './stuff.db',
   PRAGMA: {
     JOURNAL_MODE: 'WAL',
     FOREIGN_KEYS: 'ON',
@@ -49,7 +51,7 @@ export const DB = {
 export const AUTH = {
   API_TOKEN_ENV: 'STUFF_API_TOKEN',
   get API_TOKEN(): string | undefined {
-    return process.env[this.API_TOKEN_ENV];
+    return Bun.env[this.API_TOKEN_ENV];
   },
   BCRYPT_COST: 10,
   BEARER_PREFIX: 'Bearer ',
@@ -69,11 +71,11 @@ export const LIMITS = {
 
 // ── Feature Flags ──
 export const FEATURES = {
-  ENABLE_METRICS: process.env.FEATURE_METRICS !== 'false',
-  ENABLE_WS_COMPRESSION: process.env.FEATURE_WS_COMPRESSION === 'true',
-  STRICT_AUTH: process.env.NODE_ENV === 'production',
-  RATE_LIMITING: process.env.FEATURE_RATE_LIMIT !== 'false',
-  NEW_DASHBOARD_ROLLOUT: parseInt(process.env.ROLLOUT_DASHBOARD ?? '0', 10),
+  ENABLE_METRICS: Bun.env.FEATURE_METRICS !== 'false',
+  ENABLE_WS_COMPRESSION: Bun.env.FEATURE_WS_COMPRESSION === 'true',
+  STRICT_AUTH: Bun.env.NODE_ENV === 'production',
+  RATE_LIMITING: Bun.env.FEATURE_RATE_LIMIT !== 'false',
+  NEW_DASHBOARD_ROLLOUT: parseInt(Bun.env.ROLLOUT_DASHBOARD ?? '0', 10),
 
   isEnabled(feature: string, context?: { userId?: string }): boolean {
     const value = (this as any)[feature];
@@ -116,7 +118,7 @@ function validateConfig() {
   }
 
   // Production warnings
-  if (process.env.NODE_ENV === 'production') {
+  if (Bun.env.NODE_ENV === 'production') {
     if (!AUTH.API_TOKEN) {
       console.warn(`⚠️  Security: ${AUTH.API_TOKEN_ENV} not set in production`);
     }

@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { DEFAULT_PORT, DEFAULT_TEST_PORT, AUTH, FEATURES, getConfig, serverUrl, wsUrl, userByIdRoute } from "./config";
+import { DEFAULT_PORT, DEFAULT_TEST_PORT, AUTH, FEATURES, getConfig, serverUrl, wsUrl, userByIdRoute, CONFIG_PATH } from "./config";
 
 describe("config validation", () => {
   test("ports should not collide", () => {
@@ -53,5 +53,11 @@ describe("config validation", () => {
 
   test("userByIdRoute produces correct path", () => {
     expect(userByIdRoute("abc-123")).toBe("/users/abc-123");
+  });
+
+  test("CONFIG_PATH resolves to absolute path containing config.ts", () => {
+    expect(CONFIG_PATH).toContain("config.ts");
+    // Should be an absolute path
+    expect(CONFIG_PATH?.startsWith("/")).toBe(true);
   });
 });
