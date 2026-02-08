@@ -9,7 +9,7 @@ import { crc32 } from '../core/crc32';
 import { UtilsCategory, BUN_UTILS_URLS, BUN_UTILS_EXAMPLES } from '../docs/constants/utils';
 
 // Step 1: Centralized URL construction
-import { docsURLBuilder } from '../docs/builders/url-builder';
+import { docsURLBuilder } from '../../packages/docs-tools/src/builders/url-builder';
 
 // Step 2: Related documentation patterns
 import { DOC_PATTERNS } from '../docs/patterns';
@@ -18,7 +18,7 @@ import { DOC_PATTERNS } from '../docs/patterns';
 import { CLICategory, CLI_DOCUMENTATION_URLS, CLI_COMMAND_EXAMPLES } from '../docs/constants/cli';
 
 // Step 4: URL validation
-import { EnhancedDocumentationURLValidator } from '../docs/builders/validator';
+import { EnhancedDocumentationURLValidator } from '../../packages/docs-tools/src/builders/validator';
 
 // Step 5: Quick reference collections
 import { QUICK_REFERENCE_URLS } from '../docs/constants/domains';

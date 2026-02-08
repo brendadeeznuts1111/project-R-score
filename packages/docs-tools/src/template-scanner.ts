@@ -3,7 +3,7 @@
  * Location-aware template and resource management system
  */
 
-import { ZenStreamSearcher } from './stream-search';
+import { ZenStreamSearcher } from '../../../lib/docs/stream-search';
 
 /**
  * Template-based Documentation Scanner

@@ -12,6 +12,7 @@ import {
   buildCanonicalFamilies,
   computePathAuthorityScore,
   loadSearchPolicies,
+  type BunFeaturePolicy,
   type CanonicalFamily,
   type SearchPolicies,
 } from '../lib/docs/canonical-family';
@@ -20,6 +21,9 @@ import { resolve } from 'node:path';
 type ViewMode = 'clean' | 'mixed' | 'slop-only' | 'all';
 type TaskMode = 'default' | 'delivery' | 'cleanup';
 type QualityTag = 'core' | 'generated' | 'duplicate' | 'compiled' | 'docs-noise' | 'ai-slop';
+type ScopeTag = 'code' | 'docs' | 'tests' | 'generated';
+type ArtifactTag = 'api' | 'constant' | 'global' | 'type' | 'example' | 'cli';
+type RuntimeTag = 'bun' | 'ts' | 'js';
 
 interface SearchOptions {
   rootDir: string;
@@ -32,6 +36,10 @@ interface SearchOptions {
   view: ViewMode;
   task: TaskMode;
   showMirrors: boolean;
+  familyCap?: number;
+  scopeFilter?: ScopeTag[];
+  artifactFilter?: ArtifactTag[];
+  runtimeFilter?: RuntimeTag[];
 }
 
 interface QueryPlan {
@@ -40,6 +48,15 @@ interface QueryPlan {
   roots: string[];
   terms: string[];
   aliasHints: string[];
+}
+
+interface QueryIntent {
+  asksForImports: boolean;
+  asksForBun: boolean;
+  asksForApi: boolean;
+  asksForRuntime: boolean;
+  asksForReleaseNotes: boolean;
+  asksForDocs: boolean;
 }
 
 interface SearchHit {
@@ -56,6 +73,10 @@ interface SearchHit {
   mirrorCount?: number;
   canonicalFile?: string;
   mirrorFiles?: string[];
+  familyId?: string;
+  scopeTag?: ScopeTag;
+  artifactTag?: ArtifactTag;
+  runtimeTag?: RuntimeTag;
 }
 
 type RgEvent = {
@@ -93,6 +114,19 @@ const INTENT_EXPANSIONS: Record<string, string[]> = {
   config: ['config', 'env', 'settings', 'option', 'flag'],
 };
 
+const CORE_SEARCH_INFRA_PATHS = [
+  '/lib/docs/canonical-family.ts',
+  '/lib/docs/smart-symbol-index.ts',
+  '/lib/docs/ripgrep-spawn.ts',
+  '/lib/docs/stream-search.ts',
+  '/lib/docs/enhanced-stream-search.ts',
+];
+
+function isCoreSearchInfraPath(path: string): boolean {
+  const lower = path.toLowerCase();
+  return CORE_SEARCH_INFRA_PATHS.some((needle) => lower.endsWith(needle));
+}
+
 function printUsage(): void {
   console.log(`
 Smart Search (Hybrid Phase 1)
@@ -104,6 +138,7 @@ OPTIONS:
   --path <dir>         Directory to search (default: .)
   --limit <n>          Max returned results (default: 20)
   --group-limit <n>    Max results per output group (default: unlimited)
+  --family-cap <n>     Max hits per canonical family (default: policies.json)
   --case-sensitive     Case-sensitive matching
   --strict             Preset: --view clean --task delivery --group-limit 3
   --show-mirrors       Print top mirror paths under canonical hits
@@ -111,6 +146,9 @@ OPTIONS:
   --of <symbol>        Target symbol for --kind callers|callees
   --view <mode>        clean|mixed|slop-only|all (default: clean)
   --task <mode>        default|delivery|cleanup (default: default)
+  --scope, -S <list>   Filter scopes: code,docs,tests,generated (comma-separated)
+  --artifact, -A <list> Filter artifacts: api,constant,global,type,example,cli
+  --runtime, -R <list> Filter runtime: bun,ts,js
   --json               Emit JSON output
 
 EXAMPLES:
@@ -119,6 +157,9 @@ EXAMPLES:
   bun run scripts/search-smart.ts "R2LifecycleManager" --kind callers --of R2LifecycleManager
   bun run scripts/search-smart.ts "R2LifecycleManager" --kind callees --of R2LifecycleManager
   bun run scripts/search-smart.ts "auth middleware" --strict --show-mirrors
+  bun run scripts/search-smart.ts "auth middleware" --family-cap 2
+  bun run scripts/search-smart.ts "Bun.serve" --runtime bun --artifact api
+  bun run scripts/search-smart.ts "constants" --scope code --artifact constant
   bun run scripts/search-smart.ts "auth middleware" --view mixed --task delivery
   bun run scripts/search-smart.ts "generated declaration" --view slop-only --task cleanup
   bun run scripts/search-smart.ts "where auth is enforced" --limit 10
@@ -138,6 +179,88 @@ function splitIdentifierPieces(input: string): string[] {
 
 function unique(values: string[]): string[] {
   return Array.from(new Set(values.filter(Boolean)));
+}
+
+function featurePolicyMatches(
+  normalizedQuery: string,
+  policy: BunFeaturePolicy
+): boolean {
+  const q = normalizedQuery.toLowerCase();
+  const aliases = policy.aliases || [];
+  const terms = policy.terms || [];
+  return [...aliases, ...terms].some((token) => q.includes(token.toLowerCase()));
+}
+
+function applyFeaturePoliciesToPlan(plan: QueryPlan, policies: SearchPolicies): QueryPlan {
+  const terms = [...plan.terms];
+  const aliasHints = [...plan.aliasHints];
+  const q = plan.normalized.toLowerCase();
+
+  for (const [featureId, feature] of Object.entries(policies.bunFeatureMap || {})) {
+    if (!featurePolicyMatches(q, feature)) {
+      continue;
+    }
+    if (feature.aliases && feature.aliases.length > 0) {
+      aliasHints.push(`${featureId}: ${feature.aliases[0]}`);
+      terms.push(...feature.aliases);
+    }
+    if (feature.terms && feature.terms.length > 0) {
+      terms.push(...feature.terms);
+    }
+    if (feature.runtimeHint) {
+      terms.push(feature.runtimeHint);
+    }
+    if (feature.artifactHint) {
+      terms.push(feature.artifactHint);
+    }
+  }
+
+  return {
+    ...plan,
+    terms: unique(terms).slice(0, 64),
+    aliasHints: unique(aliasHints),
+  };
+}
+
+function detectQueryIntent(plan: QueryPlan): QueryIntent {
+  const q = plan.normalized.toLowerCase();
+
+  const asksForImports = /(^|\s)(import|imports|dependency|dependencies|require|from)(\s|$)/i.test(plan.normalized);
+  const asksForBun = /\b(bun|javascriptcore|jsc|webkit|wrapansi|arm64|apple silicon|windows arm64)\b/.test(q);
+  const asksForApi = /\b(api|function|method|constant|global|runtime|header|ansi|wrap|flag|cli)\b/.test(q);
+  const asksForRuntime = /\b(runtime|bun|node|jsc|arm64|windows arm64|apple silicon)\b/.test(q);
+  const asksForReleaseNotes = /\b(release|changelog|upgrade|bug fix|bugfix|performance improvements?|latest)\b/.test(q);
+  const asksForDocs = /\b(docs?|documentation|wiki|readme|guide|template)\b/.test(q);
+
+  return {
+    asksForImports,
+    asksForBun,
+    asksForApi,
+    asksForRuntime,
+    asksForReleaseNotes,
+    asksForDocs,
+  };
+}
+
+function isDocsAdjacentCode(hit: SearchHit): boolean {
+  const file = hit.file.toLowerCase();
+  const text = hit.text.toLowerCase();
+  if (isCoreSearchInfraPath(file)) return false;
+  if (file.includes('/docs/')) return true;
+  if (file.includes('/wiki/')) return true;
+  if (file.includes('documentation')) return true;
+  if (file.includes('template')) return true;
+  if (file.includes('generator')) return true;
+  if (/\b(auto-generated|generated on|template|documentation)\b/.test(text)) return true;
+  return false;
+}
+
+function isDeliveryDemotionPath(filePath: string, policies: SearchPolicies): boolean {
+  const lower = filePath.toLowerCase();
+  const configured = (policies.deliveryDemotionContains || [])
+    .some((needle) => lower.includes(needle.toLowerCase()));
+  if (configured) return true;
+  return /\/lib\/docs\/.*(generator|template|validator)/i.test(lower);
 }
 
 function buildQueryPlan(rawQuery: string, rootDir: string): QueryPlan {
@@ -258,7 +381,12 @@ function tokenize(input: string): string[] {
   return splitIdentifierPieces(input);
 }
 
-function scoreHit(hit: SearchHit, plan: QueryPlan): SearchHit {
+function scoreHit(
+  hit: SearchHit,
+  plan: QueryPlan,
+  policies: SearchPolicies,
+  intent: QueryIntent
+): SearchHit {
   const textLower = hit.text.toLowerCase();
   const fileLower = hit.file.toLowerCase();
   const queryLower = plan.normalized.toLowerCase();
@@ -266,6 +394,7 @@ function scoreHit(hit: SearchHit, plan: QueryPlan): SearchHit {
 
   const reasons = [...hit.reason];
   let score = 0;
+  const importLikeLine = /^\s*import\s/.test(hit.text) || /^\s*export\s+\{/.test(hit.text);
 
   if (textLower.includes(queryLower) || fileLower.includes(queryLower)) {
     score += 24;
@@ -307,6 +436,60 @@ function scoreHit(hit: SearchHit, plan: QueryPlan): SearchHit {
   if (hit.kind === 'definition') {
     score += 4;
     reasons.push('definition boost');
+  }
+
+  if (importLikeLine && !intent.asksForImports) {
+    score -= policies.importDampeningPenalty;
+    reasons.push('import dampening');
+  }
+
+  const runtimeTag = classifyRuntimeTag(hit);
+  const artifactTag = classifyArtifactTag(hit);
+  const boosts = policies.queryBoosts;
+
+  if (intent.asksForBun && runtimeTag === 'bun') {
+    score += boosts.bunRuntimeBoost || 0;
+    reasons.push('bun-runtime boost');
+  } else if (intent.asksForRuntime && runtimeTag !== 'bun') {
+    score -= boosts.runtimeMismatchPenalty || 0;
+    reasons.push('runtime mismatch penalty');
+  }
+
+  if (intent.asksForApi && artifactTag === 'api') {
+    score += boosts.apiArtifactBoost || 0;
+    reasons.push('api artifact boost');
+  }
+
+  if (
+    !intent.asksForReleaseNotes &&
+    (fileLower.includes('/docs/') || fileLower.endsWith('.md')) &&
+    !isCoreSearchInfraPath(fileLower)
+  ) {
+    score -= boosts.nonReleaseDocsPenalty || 0;
+    reasons.push('non-release docs penalty');
+  }
+
+  for (const feature of Object.values(policies.bunFeatureMap || {})) {
+    if (!featurePolicyMatches(queryLower, feature)) {
+      continue;
+    }
+
+    if (feature.runtimeHint && feature.runtimeHint === runtimeTag) {
+      score += 6;
+      reasons.push(`feature runtime hint (${feature.runtimeHint})`);
+    }
+    if (feature.artifactHint && feature.artifactHint === artifactTag) {
+      score += 4;
+      reasons.push(`feature artifact hint (${feature.artifactHint})`);
+    }
+    if (feature.pathBoostContains?.some((needle) => fileLower.includes(needle.toLowerCase()))) {
+      score += 5;
+      reasons.push('feature path boost');
+    }
+    if (feature.lineBoostContains?.some((needle) => textLower.includes(needle.toLowerCase()))) {
+      score += 5;
+      reasons.push('feature line boost');
+    }
   }
 
   if (fileLower.includes('/scripts/search-smart.ts')) {
@@ -361,7 +544,7 @@ function qualityForHit(hit: SearchHit, policies: SearchPolicies): { tag: Quality
     return { tag: 'generated', score: 0.3, reason: 'generated-file penalty' };
   }
 
-  if (file.includes('/docs/') || file.endsWith('.md')) {
+  if ((file.includes('/docs/') || file.endsWith('.md')) && !isCoreSearchInfraPath(file)) {
     return { tag: 'docs-noise', score: 0.45, reason: 'docs-noise penalty' };
   }
 
@@ -379,7 +562,13 @@ function qualityForHit(hit: SearchHit, policies: SearchPolicies): { tag: Quality
   return { tag: 'core', score: 0.7, reason: 'neutral-code quality' };
 }
 
-function applyQualityModel(hit: SearchHit, options: SearchOptions, policies: SearchPolicies): SearchHit {
+function applyQualityModel(
+  hit: SearchHit,
+  options: SearchOptions,
+  policies: SearchPolicies,
+  intent: QueryIntent,
+  importQualityPenalty: number
+): SearchHit {
   const quality = qualityForHit(hit, policies);
   let score = hit.score;
 
@@ -394,12 +583,43 @@ function applyQualityModel(hit: SearchHit, options: SearchOptions, policies: Sea
     score = score * (0.75 + quality.score * 0.6);
   }
 
+  const importHeavy = hit.symbolKind === 'import' || /^\s*import\s/.test(hit.text);
+  let adjustedScore = score;
+  if (importHeavy && options.task !== 'cleanup' && !intent.asksForImports) {
+    adjustedScore -= importQualityPenalty;
+  }
+
+  if (options.task === 'delivery' && !intent.asksForDocs && isDeliveryDemotionPath(hit.file, policies)) {
+    adjustedScore -= 11;
+  }
+
+  if (options.task === 'delivery' && !intent.asksForDocs && isDocsAdjacentCode(hit)) {
+    adjustedScore -= 7;
+  }
+
+  if (quality.tag === 'docs-noise' && intent.asksForReleaseNotes) {
+    const relief = policies.queryBoosts.releaseDocsPenaltyRelief || 0;
+    adjustedScore = adjustedScore * (1 + relief);
+  }
+  if (quality.tag === 'docs-noise' && intent.asksForReleaseNotes) {
+    adjustedScore += policies.queryBoosts.releaseDocsBoost || 0;
+  }
+
   return {
     ...hit,
-    score,
+    score: adjustedScore,
     qualityTag: quality.tag,
     qualityScore: quality.score,
-    reason: [...hit.reason, quality.reason],
+    reason: [
+      ...hit.reason,
+      quality.reason,
+      ...(options.task === 'delivery' && !intent.asksForDocs && isDeliveryDemotionPath(hit.file, policies)
+        ? ['delivery path demotion']
+        : []),
+      ...(options.task === 'delivery' && !intent.asksForDocs && isDocsAdjacentCode(hit)
+        ? ['delivery docs-adjacent dampening']
+        : []),
+    ],
   };
 }
 
@@ -466,6 +686,7 @@ function attachCanonicalFamilyMetadata(
   return {
     ...hit,
     file: isCleanupContext ? hit.file : family.canonicalFile,
+    familyId: family.id,
     canonicalFile: family.canonicalFile,
     mirrorFiles: mirrors,
     mirrorCount: mirrors.length,
@@ -512,6 +733,23 @@ function collapseFamilyAwareHits(
   return collapsed;
 }
 
+function applyFamilyCap(hits: SearchHit[], familyCap: number): SearchHit[] {
+  const familyCounts = new Map<string, number>();
+  const output: SearchHit[] = [];
+
+  for (const hit of hits) {
+    const familyKey = hit.familyId || hit.canonicalFile || resolve(hit.file);
+    const used = familyCounts.get(familyKey) || 0;
+    if (used >= familyCap) {
+      continue;
+    }
+    familyCounts.set(familyKey, used + 1);
+    output.push(hit);
+  }
+
+  return output;
+}
+
 function fromSymbolHit(hit: SymbolSearchHit): SearchHit {
   const isCallerHit = hit.reason.some((reason) => reason.includes('call edge'));
   return {
@@ -527,7 +765,10 @@ function fromSymbolHit(hit: SymbolSearchHit): SearchHit {
 
 async function smartSearch(plan: QueryPlan, options: SearchOptions): Promise<SearchHit[]> {
   const policies = await loadSearchPolicies(options.rootDir);
-  const candidateTerms = plan.terms
+  const enrichedPlan = applyFeaturePoliciesToPlan(plan, policies);
+  const intent = detectQueryIntent(enrichedPlan);
+  const familyCap = options.familyCap && options.familyCap > 0 ? options.familyCap : policies.familyCap;
+  const candidateTerms = enrichedPlan.terms
     .filter((term) => term.length >= 3)
     .filter((term) => !STOP_WORDS.has(term.toLowerCase()))
     .slice(0, 10);
@@ -537,8 +778,8 @@ async function smartSearch(plan: QueryPlan, options: SearchOptions): Promise<Sea
   );
 
   const retrieved = retrievalBatches.flat();
-  const rescored = retrieved.map((hit) => scoreHit(hit, plan));
-  const symbolQuery = options.targetSymbol?.trim() || plan.normalized;
+  const rescored = retrieved.map((hit) => scoreHit(hit, enrichedPlan, policies, intent));
+  const symbolQuery = options.targetSymbol?.trim() || enrichedPlan.normalized;
   const symbolHits = searchSymbolIndex(symbolQuery, {
     rootDir: options.rootDir,
     kind: options.kind,
@@ -548,8 +789,10 @@ async function smartSearch(plan: QueryPlan, options: SearchOptions): Promise<Sea
   const lexicalPool = options.kind === 'any' ? rescored : [];
 
   const deduped = dedupeHits([...lexicalPool, ...symbolHits])
-    .map((hit) => applyQualityModel(hit, options, policies))
+    .map((hit) => applyQualityModel(hit, options, policies, intent, policies.importQualityPenalty))
+    .map((hit) => attachTaxonomy(hit))
     .filter((hit) => hitAllowedByView(hit, options.view))
+    .filter((hit) => passesTaxonomyFilters(hit, options))
     .sort((a, b) => b.score - a.score || a.file.localeCompare(b.file) || a.line - b.line);
 
   const familyData = await buildCanonicalFamilies(
@@ -560,11 +803,13 @@ async function smartSearch(plan: QueryPlan, options: SearchOptions): Promise<Sea
   const collapsed = collapseFamilyAwareHits(collapseDuplicateClusters(deduped), familyData.byFile, options)
     .sort((a, b) => b.score - a.score || a.file.localeCompare(b.file) || a.line - b.line);
 
+  const familyCapped = applyFamilyCap(collapsed, familyCap);
+
   if (options.groupLimit && options.groupLimit > 0) {
-    return applyGroupDiversity(collapsed, options.limit, options.groupLimit);
+    return applyGroupDiversity(familyCapped, options.limit, options.groupLimit);
   }
 
-  return collapsed.slice(0, options.limit);
+  return familyCapped.slice(0, options.limit);
 }
 
 function parseArgs(argv: string[]): { query: string; options: SearchOptions } | null {
@@ -585,6 +830,8 @@ function parseArgs(argv: string[]): { query: string; options: SearchOptions } | 
   };
 
   let query: string | null = null;
+  let strictRequested = false;
+  let scopeExplicitlySet = false;
 
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
@@ -615,6 +862,7 @@ function parseArgs(argv: string[]): { query: string; options: SearchOptions } | 
     }
 
     if (arg === '--strict') {
+      strictRequested = true;
       options.view = 'clean';
       options.task = 'delivery';
       options.groupLimit = 3;
@@ -668,6 +916,25 @@ function parseArgs(argv: string[]): { query: string; options: SearchOptions } | 
       continue;
     }
 
+    if (arg === '--scope' || arg === '-S') {
+      options.scopeFilter = parseEnumList(argv[i + 1], ['code', 'docs', 'tests', 'generated']);
+      scopeExplicitlySet = true;
+      i += 1;
+      continue;
+    }
+
+    if (arg === '--artifact' || arg === '-A') {
+      options.artifactFilter = parseEnumList(argv[i + 1], ['api', 'constant', 'global', 'type', 'example', 'cli']);
+      i += 1;
+      continue;
+    }
+
+    if (arg === '--runtime' || arg === '-R') {
+      options.runtimeFilter = parseEnumList(argv[i + 1], ['bun', 'ts', 'js']);
+      i += 1;
+      continue;
+    }
+
     if (arg === '--of') {
       options.targetSymbol = argv[i + 1] || '';
       i += 1;
@@ -682,6 +949,15 @@ function parseArgs(argv: string[]): { query: string; options: SearchOptions } | 
       i += 1;
       continue;
     }
+
+    if (arg === '--family-cap') {
+      const parsed = Number.parseInt(argv[i + 1] || '', 10);
+      if (Number.isFinite(parsed) && parsed > 0) {
+        options.familyCap = parsed;
+      }
+      i += 1;
+      continue;
+    }
   }
 
   if (!query) {
@@ -689,11 +965,121 @@ function parseArgs(argv: string[]): { query: string; options: SearchOptions } | 
     return null;
   }
 
+  if (options.task === 'delivery' && !scopeExplicitlySet && !queryLooksDocsIntent(query)) {
+    options.scopeFilter = ['code'];
+  }
+
+  if (strictRequested && !scopeExplicitlySet) {
+    options.scopeFilter = ['code'];
+  }
+
   return { query, options };
 }
 
 function isTestPath(path: string): boolean {
   return /(^|\/)(test|tests)\//i.test(path) || /\.(test|spec)\.[a-z]+$/i.test(path);
+}
+
+function queryLooksDocsIntent(query: string): boolean {
+  return /\b(docs?|documentation|wiki|readme|guide|template|validator)\b/i.test(query);
+}
+
+function parseEnumList<T extends string>(
+  raw: string | undefined,
+  allowed: readonly T[]
+): T[] | undefined {
+  if (!raw) {
+    return undefined;
+  }
+  const set = new Set(allowed);
+  const values = raw
+    .split(',')
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean)
+    .filter((value): value is T => set.has(value as T));
+  return values.length > 0 ? Array.from(new Set(values)) : undefined;
+}
+
+function classifyScopeTag(hit: SearchHit): ScopeTag {
+  const file = hit.file.toLowerCase();
+  if (isCoreSearchInfraPath(file)) {
+    return 'code';
+  }
+  if (isTestPath(file)) {
+    return 'tests';
+  }
+  if (file.endsWith('.d.ts') || file.includes('/dist/') || file.includes('/build/')) {
+    return 'generated';
+  }
+  if (file.includes('/docs/') || file.endsWith('.md')) {
+    return 'docs';
+  }
+  return 'code';
+}
+
+function classifyRuntimeTag(hit: SearchHit): RuntimeTag {
+  const file = hit.file.toLowerCase();
+  const line = hit.text.toLowerCase();
+  if (line.includes('bun.') || file.includes('/bun-') || file.includes('/bun/')) {
+    return 'bun';
+  }
+  if (file.endsWith('.ts') || file.endsWith('.tsx') || file.endsWith('.d.ts')) {
+    return 'ts';
+  }
+  return 'js';
+}
+
+function classifyArtifactTag(hit: SearchHit): ArtifactTag {
+  const file = hit.file.toLowerCase();
+  const line = hit.text.toLowerCase();
+
+  if (file.includes('/api/') || /\b(fetch|request|response|endpoint|router|route|serve)\b/.test(line)) {
+    return 'api';
+  }
+  if (/\b(const|enum|readonly|constant)\b/.test(line) || file.includes('constant')) {
+    return 'constant';
+  }
+  if (/\b(global|window|process\.env|bun\.env|globalthis)\b/.test(line)) {
+    return 'global';
+  }
+  if (/\b(interface|type|declare)\b/.test(line) || file.endsWith('.d.ts')) {
+    return 'type';
+  }
+  if (file.includes('/example') || file.includes('/examples/') || /\bexample\b/.test(line)) {
+    return 'example';
+  }
+  if (file.includes('/cli/') || /\bcommand|argv|option\b/.test(line)) {
+    return 'cli';
+  }
+  return 'api';
+}
+
+function attachTaxonomy(hit: SearchHit): SearchHit {
+  return {
+    ...hit,
+    scopeTag: classifyScopeTag(hit),
+    runtimeTag: classifyRuntimeTag(hit),
+    artifactTag: classifyArtifactTag(hit),
+  };
+}
+
+function passesTaxonomyFilters(hit: SearchHit, options: SearchOptions): boolean {
+  if (options.scopeFilter && options.scopeFilter.length > 0) {
+    if (!hit.scopeTag || !options.scopeFilter.includes(hit.scopeTag)) {
+      return false;
+    }
+  }
+  if (options.artifactFilter && options.artifactFilter.length > 0) {
+    if (!hit.artifactTag || !options.artifactFilter.includes(hit.artifactTag)) {
+      return false;
+    }
+  }
+  if (options.runtimeFilter && options.runtimeFilter.length > 0) {
+    if (!hit.runtimeTag || !options.runtimeFilter.includes(hit.runtimeTag)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 function classifyGroup(hit: SearchHit): 'Definitions' | 'Callers' | 'Imports' | 'Tests' | 'Other' {
@@ -785,12 +1171,16 @@ function printGroupedSection(title: string, hits: SearchHit[]): void {
     const relPath = hit.file.replace(/^\.\//, '');
     const snippet = hit.text.length > 180 ? `${hit.text.slice(0, 177)}...` : hit.text;
     const quality = hit.qualityTag ? ` quality=${hit.qualityTag}:${(hit.qualityScore || 0).toFixed(2)}` : '';
+    const taxonomy =
+      hit.scopeTag || hit.artifactTag || hit.runtimeTag
+        ? ` taxonomy=${hit.scopeTag || '?'}:${hit.artifactTag || '?'}:${hit.runtimeTag || '?'}`
+        : '';
     const dup = hit.duplicateCount ? ` +${hit.duplicateCount} similar` : '';
     const mirrors = hit.mirrorCount ? ` +${hit.mirrorCount} mirrors` : '';
     const canonical = hit.canonicalFile && hit.canonicalFile !== hit.file
       ? ` canonical=${hit.canonicalFile}`
       : '';
-    console.log(`${i + 1}. ${relPath}:${hit.line} score=${hit.score.toFixed(1)}${quality}${dup}${mirrors}${canonical}`);
+    console.log(`${i + 1}. ${relPath}:${hit.line} score=${hit.score.toFixed(1)}${quality}${taxonomy}${dup}${mirrors}${canonical}`);
     console.log(`   ${snippet}`);
     if (hit.mirrorFiles && hit.mirrorFiles.length > 0) {
       const topMirrors = hit.mirrorFiles.slice(0, 3).map((path) => path.replace(/^\.\//, ''));
@@ -812,8 +1202,17 @@ function printTable(plan: QueryPlan, hits: SearchHit[], elapsedMs: number, optio
   if (options.groupLimit && options.groupLimit > 0) {
     console.log(`Group limit: ${options.groupLimit}`);
   }
+  if (options.familyCap && options.familyCap > 0) {
+    console.log(`Family cap: ${options.familyCap}`);
+  }
   if (options.showMirrors) {
     console.log('Show mirrors: enabled');
+  }
+  if (options.scopeFilter || options.artifactFilter || options.runtimeFilter) {
+    const scope = options.scopeFilter?.join(',') || '*';
+    const artifact = options.artifactFilter?.join(',') || '*';
+    const runtime = options.runtimeFilter?.join(',') || '*';
+    console.log(`Filters: scope=${scope} artifact=${artifact} runtime=${runtime}`);
   }
   if (plan.aliasHints.length > 0) {
     console.log(`Aliases: ${plan.aliasHints.join(', ')}`);
@@ -858,7 +1257,9 @@ async function main(): Promise<void> {
   }
 
   const { query, options } = parsed;
-  const plan = buildQueryPlan(query, options.rootDir);
+  const basePlan = buildQueryPlan(query, options.rootDir);
+  const policies = await loadSearchPolicies(options.rootDir);
+  const plan = applyFeaturePoliciesToPlan(basePlan, policies);
 
   const start = performance.now();
   const hits = await smartSearch(plan, options);
@@ -876,9 +1277,13 @@ async function main(): Promise<void> {
             kind: options.kind,
             of: options.targetSymbol || null,
             groupLimit: options.groupLimit || null,
+            familyCap: options.familyCap || null,
             view: options.view,
             task: options.task,
             showMirrors: options.showMirrors,
+            scope: options.scopeFilter || null,
+            artifact: options.artifactFilter || null,
+            runtime: options.runtimeFilter || null,
           },
           elapsedMs: Number(elapsedMs.toFixed(2)),
           hits,

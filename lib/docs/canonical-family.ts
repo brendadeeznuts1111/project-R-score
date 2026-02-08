@@ -8,11 +8,35 @@ export interface AuthorityRule {
   weight: number;
 }
 
+export interface BunFeaturePolicy {
+  aliases?: string[];
+  terms?: string[];
+  runtimeHint?: 'bun' | 'ts' | 'js';
+  artifactHint?: 'api' | 'constant' | 'global' | 'type' | 'example' | 'cli';
+  pathBoostContains?: string[];
+  lineBoostContains?: string[];
+}
+
+export interface QueryBoostPolicy {
+  bunRuntimeBoost?: number;
+  apiArtifactBoost?: number;
+  runtimeMismatchPenalty?: number;
+  nonReleaseDocsPenalty?: number;
+  releaseDocsBoost?: number;
+  releaseDocsPenaltyRelief?: number;
+}
+
 export interface SearchPolicies {
   pathExcludeContains: string[];
   authorityRules: AuthorityRule[];
   mirrorPenaltyContains: string[];
   canonicalPreferContains: string[];
+  deliveryDemotionContains: string[];
+  familyCap: number;
+  importDampeningPenalty: number;
+  importQualityPenalty: number;
+  bunFeatureMap: Record<string, BunFeaturePolicy>;
+  queryBoosts: QueryBoostPolicy;
 }
 
 export interface CanonicalFamily {
@@ -45,6 +69,26 @@ const DEFAULT_POLICIES: SearchPolicies = {
   ],
   mirrorPenaltyContains: ['/workspaces/', '/dashboard/dashboard-worker/', '/enterprise/packages/dashboard-worker/'],
   canonicalPreferContains: ['/src/', '/lib/', '/packages/'],
+  deliveryDemotionContains: [
+    '/lib/docs/generator',
+    '/lib/docs/template',
+    '/lib/docs/validator',
+    '/lib/docs/builders/url-builder',
+    '/lib/docs/documentation-validator',
+    '/lib/docs/template-scanner',
+  ],
+  familyCap: 3,
+  importDampeningPenalty: 8,
+  importQualityPenalty: 4,
+  bunFeatureMap: {},
+  queryBoosts: {
+    bunRuntimeBoost: 18,
+    apiArtifactBoost: 8,
+    runtimeMismatchPenalty: 6,
+    nonReleaseDocsPenalty: 4,
+    releaseDocsBoost: 8,
+    releaseDocsPenaltyRelief: 0.45,
+  },
 };
 
 function mergePolicies(raw: Partial<SearchPolicies> | null | undefined): SearchPolicies {
@@ -57,22 +101,58 @@ function mergePolicies(raw: Partial<SearchPolicies> | null | undefined): SearchP
     authorityRules: raw.authorityRules?.length ? raw.authorityRules : DEFAULT_POLICIES.authorityRules,
     mirrorPenaltyContains: raw.mirrorPenaltyContains?.length ? raw.mirrorPenaltyContains : DEFAULT_POLICIES.mirrorPenaltyContains,
     canonicalPreferContains: raw.canonicalPreferContains?.length ? raw.canonicalPreferContains : DEFAULT_POLICIES.canonicalPreferContains,
+    deliveryDemotionContains: raw.deliveryDemotionContains?.length ? raw.deliveryDemotionContains : DEFAULT_POLICIES.deliveryDemotionContains,
+    familyCap: typeof raw.familyCap === 'number' && raw.familyCap > 0 ? raw.familyCap : DEFAULT_POLICIES.familyCap,
+    importDampeningPenalty: typeof raw.importDampeningPenalty === 'number'
+      ? raw.importDampeningPenalty
+      : DEFAULT_POLICIES.importDampeningPenalty,
+    importQualityPenalty: typeof raw.importQualityPenalty === 'number'
+      ? raw.importQualityPenalty
+      : DEFAULT_POLICIES.importQualityPenalty,
+    bunFeatureMap: raw.bunFeatureMap || DEFAULT_POLICIES.bunFeatureMap,
+    queryBoosts: {
+      bunRuntimeBoost: typeof raw.queryBoosts?.bunRuntimeBoost === 'number'
+        ? raw.queryBoosts.bunRuntimeBoost
+        : DEFAULT_POLICIES.queryBoosts.bunRuntimeBoost,
+      apiArtifactBoost: typeof raw.queryBoosts?.apiArtifactBoost === 'number'
+        ? raw.queryBoosts.apiArtifactBoost
+        : DEFAULT_POLICIES.queryBoosts.apiArtifactBoost,
+      runtimeMismatchPenalty: typeof raw.queryBoosts?.runtimeMismatchPenalty === 'number'
+        ? raw.queryBoosts.runtimeMismatchPenalty
+        : DEFAULT_POLICIES.queryBoosts.runtimeMismatchPenalty,
+      nonReleaseDocsPenalty: typeof raw.queryBoosts?.nonReleaseDocsPenalty === 'number'
+        ? raw.queryBoosts.nonReleaseDocsPenalty
+        : DEFAULT_POLICIES.queryBoosts.nonReleaseDocsPenalty,
+      releaseDocsBoost: typeof raw.queryBoosts?.releaseDocsBoost === 'number'
+        ? raw.queryBoosts.releaseDocsBoost
+        : DEFAULT_POLICIES.queryBoosts.releaseDocsBoost,
+      releaseDocsPenaltyRelief: typeof raw.queryBoosts?.releaseDocsPenaltyRelief === 'number'
+        ? raw.queryBoosts.releaseDocsPenaltyRelief
+        : DEFAULT_POLICIES.queryBoosts.releaseDocsPenaltyRelief,
+    },
   };
 }
 
 export async function loadSearchPolicies(rootDir: string = '.'): Promise<SearchPolicies> {
-  const path = resolve(rootDir, '.search/policies.json');
-  if (!existsSync(path)) {
-    return { ...DEFAULT_POLICIES };
+  const candidates = [
+    resolve(rootDir, '.search/policies.json'),
+    resolve('.search/policies.json'),
+  ];
+
+  for (const path of candidates) {
+    if (!existsSync(path)) {
+      continue;
+    }
+    try {
+      const content = await Bun.file(path).text();
+      const parsed = JSON.parse(content) as Partial<SearchPolicies>;
+      return mergePolicies(parsed);
+    } catch {
+      // keep trying other candidates
+    }
   }
 
-  try {
-    const content = await Bun.file(path).text();
-    const parsed = JSON.parse(content) as Partial<SearchPolicies>;
-    return mergePolicies(parsed);
-  } catch {
-    return { ...DEFAULT_POLICIES };
-  }
+  return { ...DEFAULT_POLICIES };
 }
 
 export function computePathAuthorityScore(path: string, policies: SearchPolicies): number {

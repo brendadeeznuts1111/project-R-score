@@ -50,6 +50,7 @@ export interface SymbolSearchHit {
   context: string;
   score: number;
   reason: string[];
+  callerName?: string;
 }
 
 interface DiscoveredSymbol {
@@ -626,8 +627,19 @@ export function searchCallersBySymbol(
         context: row.context,
         score,
         reason: reasons,
+        callerName: row.caller_name,
       };
     });
+
+    const hasRicherCallers = hits.some((hit) => hit.callerName && hit.callerName !== '<module>');
+    if (hasRicherCallers) {
+      for (const hit of hits) {
+        if (hit.callerName === '<module>') {
+          hit.score -= 14;
+          hit.reason = [...hit.reason, 'module-scope caller penalty'];
+        }
+      }
+    }
 
     return hits
       .sort((a, b) => b.score - a.score || a.file.localeCompare(b.file) || a.line - b.line)
@@ -743,8 +755,19 @@ export function searchCalleesBySymbol(
         context: row.context,
         score,
         reason: reasons,
+        callerName: row.caller_name,
       };
     });
+
+    const hasRicherCallers = hits.some((hit) => hit.callerName && hit.callerName !== '<module>');
+    if (hasRicherCallers) {
+      for (const hit of hits) {
+        if (hit.callerName === '<module>') {
+          hit.score -= 12;
+          hit.reason = [...hit.reason, 'module-scope caller penalty'];
+        }
+      }
+    }
 
     return hits
       .sort((a, b) => b.score - a.score || a.file.localeCompare(b.file) || a.line - b.line)

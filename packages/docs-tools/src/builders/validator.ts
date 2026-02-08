@@ -8,10 +8,10 @@ import {
   DOCUMENTATION_URL_MAPPINGS,
   DOMAIN_PREFERENCES,
   PROVIDER_METADATA,
-} from '../constants/domains';
-import { GITHUB_URL_PATTERNS, FRAGMENT_PARSERS, FRAGMENT_VALIDATION } from '../constants/fragments';
-import { IntelligentRouting, ENTERPRISE_DOCUMENTATION_PATHS } from '../constants/categories';
-import { URLHandler } from '../../core/url-handler';
+} from '../../../../lib/docs/constants/domains';
+import { GITHUB_URL_PATTERNS, FRAGMENT_PARSERS, FRAGMENT_VALIDATION } from '../../../../lib/docs/constants/fragments';
+import { IntelligentRouting, ENTERPRISE_DOCUMENTATION_PATHS } from '../../../../lib/docs/constants/categories';
+import { URLHandler } from '../../../../lib/core/url-handler';
 
 export class EnhancedDocumentationURLValidator {
   /**

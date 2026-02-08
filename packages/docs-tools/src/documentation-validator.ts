@@ -10,10 +10,10 @@ import {
   ConstantValidator,
   ValidationReporter,
   AutoHealer,
-} from '../validation/cli-constants-validation';
+} from '../../../lib/validation/cli-constants-validation';
 
-import { CLICategory, CLI_DOCUMENTATION_URLS } from './constants/cli';
-import { UtilsCategory, BUN_UTILS_URLS } from './constants/utils';
+import { CLICategory, CLI_DOCUMENTATION_URLS } from '../../../lib/docs/constants/cli';
+import { UtilsCategory, BUN_UTILS_URLS } from '../../../lib/docs/constants/utils';
 
 // ============================================================================
 // DOCUMENTATION-SPECIFIC VALIDATION
