@@ -140,7 +140,7 @@ OPTIONS:
   --group-limit <n>    Max results per output group (default: unlimited)
   --family-cap <n>     Max hits per canonical family (default: policies.json)
   --case-sensitive     Case-sensitive matching
-  --strict             Preset: --view clean --task delivery --group-limit 3
+  --strict             Preset: --view clean --task delivery --group-limit 3 --family-cap 2
   --show-mirrors       Print top mirror paths under canonical hits
   --kind <kind>        any|function|class|interface|type|enum|variable|import|export|call|callers|callees
   --of <symbol>        Target symbol for --kind callers|callees
@@ -739,11 +739,13 @@ function applyFamilyCap(hits: SearchHit[], familyCap: number): SearchHit[] {
 
   for (const hit of hits) {
     const familyKey = hit.familyId || hit.canonicalFile || resolve(hit.file);
-    const used = familyCounts.get(familyKey) || 0;
+    const group = classifyGroup(hit);
+    const scopedFamilyKey = `${familyKey}:${group}`;
+    const used = familyCounts.get(scopedFamilyKey) || 0;
     if (used >= familyCap) {
       continue;
     }
-    familyCounts.set(familyKey, used + 1);
+    familyCounts.set(scopedFamilyKey, used + 1);
     output.push(hit);
   }
 
@@ -832,6 +834,7 @@ function parseArgs(argv: string[]): { query: string; options: SearchOptions } | 
   let query: string | null = null;
   let strictRequested = false;
   let scopeExplicitlySet = false;
+  let familyCapExplicitlySet = false;
 
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
@@ -866,6 +869,9 @@ function parseArgs(argv: string[]): { query: string; options: SearchOptions } | 
       options.view = 'clean';
       options.task = 'delivery';
       options.groupLimit = 3;
+      if (!familyCapExplicitlySet) {
+        options.familyCap = 2;
+      }
       continue;
     }
 
@@ -954,6 +960,7 @@ function parseArgs(argv: string[]): { query: string; options: SearchOptions } | 
       const parsed = Number.parseInt(argv[i + 1] || '', 10);
       if (Number.isFinite(parsed) && parsed > 0) {
         options.familyCap = parsed;
+        familyCapExplicitlySet = true;
       }
       i += 1;
       continue;
@@ -1160,7 +1167,7 @@ function applyGroupDiversity(
   return output;
 }
 
-function printGroupedSection(title: string, hits: SearchHit[]): void {
+function printGroupedSection(title: string, hits: SearchHit[], options: SearchOptions): void {
   if (hits.length === 0) {
     return;
   }
@@ -1176,13 +1183,13 @@ function printGroupedSection(title: string, hits: SearchHit[]): void {
         ? ` taxonomy=${hit.scopeTag || '?'}:${hit.artifactTag || '?'}:${hit.runtimeTag || '?'}`
         : '';
     const dup = hit.duplicateCount ? ` +${hit.duplicateCount} similar` : '';
-    const mirrors = hit.mirrorCount ? ` +${hit.mirrorCount} mirrors` : '';
+    const mirrors = options.showMirrors && hit.mirrorCount ? ` +${hit.mirrorCount} mirrors` : '';
     const canonical = hit.canonicalFile && hit.canonicalFile !== hit.file
       ? ` canonical=${hit.canonicalFile}`
       : '';
     console.log(`${i + 1}. ${relPath}:${hit.line} score=${hit.score.toFixed(1)}${quality}${taxonomy}${dup}${mirrors}${canonical}`);
     console.log(`   ${snippet}`);
-    if (hit.mirrorFiles && hit.mirrorFiles.length > 0) {
+    if (options.showMirrors && hit.file === hit.canonicalFile && hit.mirrorFiles && hit.mirrorFiles.length > 0) {
       const topMirrors = hit.mirrorFiles.slice(0, 3).map((path) => path.replace(/^\.\//, ''));
       const extra = hit.mirrorFiles.length - topMirrors.length;
       console.log(`   mirrors: ${topMirrors.join(', ')}${extra > 0 ? ` (+${extra} more)` : ''}`);
@@ -1238,14 +1245,11 @@ function printTable(plan: QueryPlan, hits: SearchHit[], elapsedMs: number, optio
     groups[classifyGroup(hit)].push(hit);
   }
 
-  const maybeStripMirrors = (items: SearchHit[]): SearchHit[] =>
-    options.showMirrors ? items : items.map((item) => ({ ...item, mirrorFiles: undefined }));
-
-  printGroupedSection('Definitions', maybeStripMirrors(groups.Definitions));
-  printGroupedSection('Callers', maybeStripMirrors(groups.Callers));
-  printGroupedSection('Imports', maybeStripMirrors(groups.Imports));
-  printGroupedSection('Tests', maybeStripMirrors(groups.Tests));
-  printGroupedSection('Other', maybeStripMirrors(groups.Other));
+  printGroupedSection('Definitions', groups.Definitions, options);
+  printGroupedSection('Callers', groups.Callers, options);
+  printGroupedSection('Imports', groups.Imports, options);
+  printGroupedSection('Tests', groups.Tests, options);
+  printGroupedSection('Other', groups.Other, options);
 
   console.log(`\nCompleted in ${elapsedMs.toFixed(2)}ms`);
 }
