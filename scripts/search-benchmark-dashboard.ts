@@ -1007,6 +1007,17 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           '<td>' + (item.lastModified || 'n/a') + '</td>' +
         '</tr>'
       ).join('');
+      const latestMissing = Math.max(0, latestCount - latestPresent);
+      const latestWithTimestamp = Array.isArray(data.latest)
+        ? data.latest.filter((item) => Boolean(item?.lastModified)).length
+        : 0;
+      const latestFooter =
+        '<tr>' +
+          '<td><strong>Total</strong></td>' +
+          '<td><code>' + latestCount + ' keys</code></td>' +
+          '<td>' + healthBadge(latestCount > 0 ? latestPresent / latestCount : 0, '✓ ' + latestPresent + ' / ✗ ' + latestMissing) + '</td>' +
+          '<td>' + latestWithTimestamp + ' timestamped</td>' +
+        '</tr>';
       const subRows = (data.subdomains || []).slice(0, 24).map((item) =>
       {
         const fullDomain = String(item.fullDomain || '').trim().toLowerCase();
@@ -1033,6 +1044,23 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         '</tr>'
       );
       }).join('');
+      const subList = (data.subdomains || []).slice(0, 24);
+      const subTotal = subList.length;
+      const subResolved = subList.filter((item) => Boolean(item?.dnsResolved)).length;
+      const subUnresolved = Math.max(0, subTotal - subResolved);
+      const subCookieFlagged = subList.filter((item) => cookieUnresolvedSet.has(String(item?.fullDomain || '').trim().toLowerCase())).length;
+      const subFooter =
+        '<tr>' +
+          '<td><strong>Total</strong></td>' +
+          '<td><code>' + subTotal + '</code></td>' +
+          '<td><code>—</code></td>' +
+          '<td>' + healthBadge(subTotal > 0 ? subResolved / subTotal : 0, '✓ ' + subResolved + ' / ✗ ' + subUnresolved) + '</td>' +
+          '<td>records n/a</td>' +
+          '<td>mixed</td>' +
+          '<td>latest check</td>' +
+          '<td>flagged ' + subCookieFlagged + '</td>' +
+          '<td>' + (subCookieFlagged > 0 ? '🍪⚠️' : '🍪🟢') + '</td>' +
+        '</tr>';
       domainHealthEl.innerHTML =
         '<div class="meta">domain=' + (data.domain || 'factory-wager.com') + ' zone=' + (data.zone || 'n/a') + ' account=' + (data.accountId || 'n/a') + ' knownSubdomains=' + (data.knownSubdomains ?? 'n/a') + ' source=' + sourceBadge(data.source || 'n/a') + '</div>' +
         '<div class="meta">' +
@@ -1048,8 +1076,8 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         '<div class="meta">storageKey health=<code>' + (data.storage?.sampleKeys?.health || 'n/a') + '</code></div>' +
         '<div class="meta">dnsChecked=' + (data.dnsPrefetch?.checked ?? 0) + ' dnsResolved=' + (data.dnsPrefetch?.resolved ?? 0) + ' cacheTtlSec=' + (data.dnsPrefetch?.cacheTtlSec ?? 'n/a') + '</div>' +
         '<div class="meta">cookieTelemetry=' + (data.health?.cookie?.detail || 'n/a') + ' domainMatch=' + (data.health?.cookie?.domainMatchesRequested ?? 'n/a') + ' cookieScore=' + (Number.isFinite(cookieScoreValue) ? cookieScoreValue : 'n/a') + ' hex=' + cookieHexBadge + ' bar=' + cookieUnicodeBar + ' <span class="badge" style="background:' + cookieHexBadge + ';border-color:' + cookieHexBadge + ';color:#0b0d12">■</span></div>' +
-        '<table><thead><tr><th>Type</th><th>Key</th><th>Exists</th><th>Last Modified</th></tr></thead><tbody>' + latestRows + '</tbody></table>' +
-        '<table style="margin-top:10px"><thead><tr><th>Subdomain</th><th>URL Fragment</th><th>Path</th><th>Full Domain</th><th>DNS</th><th>Records</th><th>Source</th><th>Last Checked</th><th>Cookie</th></tr></thead><tbody>' + (subRows || '<tr><td colspan="9">No subdomain data.</td></tr>') + '</tbody></table>';
+        '<table><thead><tr><th>Type</th><th>Key</th><th>Exists</th><th>Last Modified</th></tr></thead><tbody>' + latestRows + '</tbody><tfoot>' + latestFooter + '</tfoot></table>' +
+        '<table style="margin-top:10px"><thead><tr><th>Subdomain</th><th>URL Fragment</th><th>Path</th><th>Full Domain</th><th>DNS</th><th>Records</th><th>Source</th><th>Last Checked</th><th>Cookie</th></tr></thead><tbody>' + (subRows || '<tr><td colspan="9">No subdomain data.</td></tr>') + '</tbody><tfoot>' + subFooter + '</tfoot></table>';
     };
     const renderRss = (xmlText, source, meta) => {
       if (!xmlText || typeof xmlText !== 'string') {
