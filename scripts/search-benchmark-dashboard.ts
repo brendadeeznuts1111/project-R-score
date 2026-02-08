@@ -4110,6 +4110,20 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
               '<div style="padding:12px;background:rgba(10,22,43,0.4);border-radius:8px;border-left:3px solid var(--accent)">' +
                 '<div style="display:flex;gap:8px;margin-bottom:4px">' +
                   '<span class="badge status-good">GET</span>' +
+                  '<code>/api/version</code>' +
+                '</div>' +
+                '<div style="font-size:12px;color:var(--muted)">Get dashboard version and features</div>' +
+              '</div>' +
+              '<div style="padding:12px;background:rgba(10,22,43,0.4);border-radius:8px;border-left:3px solid var(--accent)">' +
+                '<div style="display:flex;gap:8px;margin-bottom:4px">' +
+                  '<span class="badge status-good">GET</span>' +
+                  '<code>/api/status</code>' +
+                '</div>' +
+                '<div style="font-size:12px;color:var(--muted)">Get server status and uptime</div>' +
+              '</div>' +
+              '<div style="padding:12px;background:rgba(10,22,43,0.4);border-radius:8px;border-left:3px solid var(--accent)">' +
+                '<div style="display:flex;gap:8px;margin-bottom:4px">' +
+                  '<span class="badge status-good">GET</span>' +
                   '<code>/api/latest</code>' +
                 '</div>' +
                 '<div style="font-size:12px;color:var(--muted)">Get the latest benchmark snapshot</div>' +
@@ -4134,6 +4148,13 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
                   '<code>/api/loop-status</code>' +
                 '</div>' +
                 '<div style="font-size:12px;color:var(--muted)">Get loop closure status</div>' +
+              '</div>' +
+              '<div style="padding:12px;background:rgba(10,22,43,0.4);border-radius:8px;border-left:3px solid var(--accent)">' +
+                '<div style="display:flex;gap:8px;margin-bottom:4px">' +
+                  '<span class="badge status-good">GET</span>' +
+                  '<code>/healthz</code>' +
+                '</div>' +
+                '<div style="font-size:12px;color:var(--muted)">Health check endpoint</div>' +
               '</div>' +
             '</div>' +
             '<h3 style="font-size:14px;margin:16px 0 8px">Query Parameters</h3>' +
@@ -7883,6 +7904,30 @@ async function main(): Promise<void> {
             },
           },
           { source: 'mixed' }
+        );
+      }
+      if (url.pathname === '/api/version') {
+        return jsonResponse(
+          {
+            version: '2.0.0',
+            name: 'search-benchmark-dashboard',
+            description: 'Real-time benchmark performance monitoring',
+            features: [
+              'glassmorphism-ui',
+              'dark-light-theme',
+              'canvas-charts',
+              'real-time-polling',
+              'alert-configuration',
+              'data-export',
+              'keyboard-shortcuts',
+              'performance-monitoring',
+              'circuit-breaker',
+            ],
+            repository: buildMeta.repoUrl,
+            commit: buildMeta.commitShort,
+            buildTime: new Date(startedAt).toISOString(),
+          },
+          { source: 'local' }
         );
       }
       if (url.pathname === '/api/debug/r2-sessions') {
