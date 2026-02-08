@@ -984,6 +984,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           ? data.health.cookie.unresolved.map((v) => String(v || '').trim().toLowerCase())
           : []
       );
+      const baseUrl = String(data.baseUrl || data.domain || 'factory-wager.com').trim().toLowerCase();
       const cookieStatusText =
         'Cookie DNS ' +
         (Number.isFinite(cookieResolved) ? cookieResolved : 'n/a') +
@@ -1021,11 +1022,13 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         return (
         '<tr>' +
           '<td><code>' + item.subdomain + '</code></td>' +
+          '<td><code>' + (item.urlFragment || item.subdomain || 'n/a') + '</code></td>' +
+          '<td><code>' + (item.path || '/') + '</code></td>' +
           '<td><code>' + item.fullDomain + '</code></td>' +
           '<td>' + healthBadge(item.dnsResolved ? 1 : 0, item.dnsResolved ? '✓ resolved' : '✗ unresolved') + '</td>' +
           '<td>' + ((item.dnsRecords || []).slice(0, 2).join(', ') || 'n/a') + '</td>' +
           '<td>' + (item.dnsSource || 'live') + '</td>' +
-          '<td>' + (item.dnsResolved ? '—' : (item.lastCheckedAt || 'n/a')) + '</td>' +
+          '<td>' + (item.lastCheckedAt || 'n/a') + '</td>' +
           '<td>' + cookieSymbol + '</td>' +
         '</tr>'
       );
@@ -1040,12 +1043,13 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           healthBadge(healthRatioByState(cookieStatus), cookieStatusText) +
         '</div>' +
         '<div class="meta">' + modeHint + '</div>' +
+        '<div class="meta">base_url=<code>' + baseUrl + '</code> url_fragment=<code>{subdomain}</code> path=<code>{path}</code> full_domain=<code>{url_fragment}.{base_url}</code></div>' +
         '<div class="meta">storage bucket=' + (data.storage?.bucket || 'n/a') + ' endpoint=' + (data.storage?.endpoint || 'n/a') + ' prefix=<code>' + (data.storage?.domainPrefix || 'n/a') + '</code></div>' +
         '<div class="meta">storageKey health=<code>' + (data.storage?.sampleKeys?.health || 'n/a') + '</code></div>' +
         '<div class="meta">dnsChecked=' + (data.dnsPrefetch?.checked ?? 0) + ' dnsResolved=' + (data.dnsPrefetch?.resolved ?? 0) + ' cacheTtlSec=' + (data.dnsPrefetch?.cacheTtlSec ?? 'n/a') + '</div>' +
         '<div class="meta">cookieTelemetry=' + (data.health?.cookie?.detail || 'n/a') + ' domainMatch=' + (data.health?.cookie?.domainMatchesRequested ?? 'n/a') + ' cookieScore=' + (Number.isFinite(cookieScoreValue) ? cookieScoreValue : 'n/a') + ' hex=' + cookieHexBadge + ' bar=' + cookieUnicodeBar + ' <span class="badge" style="background:' + cookieHexBadge + ';border-color:' + cookieHexBadge + ';color:#0b0d12">■</span></div>' +
         '<table><thead><tr><th>Type</th><th>Key</th><th>Exists</th><th>Last Modified</th></tr></thead><tbody>' + latestRows + '</tbody></table>' +
-        '<table style="margin-top:10px"><thead><tr><th>Subdomain</th><th>Full Domain</th><th>DNS</th><th>Records</th><th>Source</th><th>Last Checked (Offline)</th><th>Cookie</th></tr></thead><tbody>' + (subRows || '<tr><td colspan="7">No subdomain data.</td></tr>') + '</tbody></table>';
+        '<table style="margin-top:10px"><thead><tr><th>Subdomain</th><th>URL Fragment</th><th>Path</th><th>Full Domain</th><th>DNS</th><th>Records</th><th>Source</th><th>Last Checked</th><th>Cookie</th></tr></thead><tbody>' + (subRows || '<tr><td colspan="9">No subdomain data.</td></tr>') + '</tbody></table>';
     };
     const renderRss = (xmlText, source, meta) => {
       if (!xmlText || typeof xmlText !== 'string') {
@@ -2232,8 +2236,18 @@ async function main(): Promise<void> {
     const subdomains = await Promise.all(
       subdomainConfigs.map(async (entry) => {
         const dns = await resolveDnsPrefetch(entry.full_domain);
+        let path = '/';
+        try {
+          const u = entry.health_check_url ? new URL(entry.health_check_url) : null;
+          path = u?.pathname || '/';
+        } catch {
+          path = '/';
+        }
         return {
           subdomain: entry.subdomain,
+          urlFragment: entry.subdomain,
+          baseUrl: domain,
+          path,
           fullDomain: entry.full_domain,
           purpose: entry.purpose || '',
           healthCheckUrl: entry.health_check_url || null,
@@ -2317,6 +2331,7 @@ async function main(): Promise<void> {
       return {
         source,
         domain,
+        baseUrl: domain,
         zone,
         accountId,
         storage,
@@ -2380,7 +2395,7 @@ async function main(): Promise<void> {
 
     const r2 = resolveR2ReadOptions();
     if (!r2) {
-      return { error: 'r2_not_configured_for_domain_health', source, domain, zone, accountId, storage, knownSubdomains, managerNote };
+      return { error: 'r2_not_configured_for_domain_health', source, domain, baseUrl: domain, zone, accountId, storage, knownSubdomains, managerNote };
     }
     const latest = await Promise.all(prefixes.map(async (type) => {
       const prefix = `${ctx.prefix}/${type}/`;
@@ -2431,6 +2446,7 @@ async function main(): Promise<void> {
     return {
       source,
       domain,
+      baseUrl: domain,
       zone,
       accountId,
       storage,
@@ -2526,6 +2542,108 @@ async function main(): Promise<void> {
     return file.replace(/\.json$/i, '');
   };
 
+  const buildR2SessionsDebugSummary = async (prefix = 'sessions/', limit = 3) => {
+    const cappedLimit = Math.max(1, Math.min(10, Number(limit) || 3));
+    const cleanPrefix = String(prefix || 'sessions/').replace(/^\/+/, '');
+    const r2 = resolveR2ReadOptions();
+    if (!r2) {
+      return {
+        error: 'r2_not_configured',
+        bucket: Bun.env.R2_BENCH_BUCKET || Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || null,
+        endpoint: Bun.env.R2_ENDPOINT || null,
+        prefix: cleanPrefix,
+      };
+    }
+
+    const listed = await S3Client.list(
+      { prefix: cleanPrefix, limit: 1000 },
+      {
+        bucket: r2.bucket,
+        endpoint: r2.endpoint,
+        accessKeyId: r2.accessKeyId,
+        secretAccessKey: r2.secretAccessKey,
+      }
+    );
+    const objects = (listed.contents || []) as Array<{ key: string; size?: number; lastModified?: string }>;
+    const sorted = objects.slice().sort((a, b) => (b.lastModified || '').localeCompare(a.lastModified || ''));
+    const sampleTargets = sorted.slice(0, cappedLimit);
+
+    const sample = await Promise.all(
+      sampleTargets.map(async (o) => {
+        try {
+          const res = await fetchR2ObjectBySignature(
+            r2.endpoint,
+            r2.bucket,
+            o.key,
+            r2.accessKeyId,
+            r2.secretAccessKey
+          );
+          if (!res.ok) {
+            return {
+              key: o.key,
+              size: o.size ?? null,
+              lastModified: o.lastModified || null,
+              loadStatus: `http_${res.status}`,
+              dataPreview: null,
+              envelope: null,
+            };
+          }
+          const text = await res.text();
+          const preview = text.length > 120 ? `${text.slice(0, 120)}...` : text;
+          let envelope: null | {
+            isJson: boolean;
+            keys: string[];
+            version?: number | null;
+            ivLen?: number | null;
+            dataLen?: number | null;
+            hmacLen?: number | null;
+          } = null;
+          try {
+            const parsed = JSON.parse(text);
+            envelope = {
+              isJson: true,
+              keys: parsed && typeof parsed === 'object' ? Object.keys(parsed as Record<string, unknown>).slice(0, 12) : [],
+              version: Number.isFinite(Number((parsed as any)?.version)) ? Number((parsed as any).version) : null,
+              ivLen: typeof (parsed as any)?.iv === 'string' ? (parsed as any).iv.length : null,
+              dataLen: typeof (parsed as any)?.data === 'string' ? (parsed as any).data.length : null,
+              hmacLen: typeof (parsed as any)?.hmac === 'string' ? (parsed as any).hmac.length : null,
+            };
+          } catch {
+            envelope = { isJson: false, keys: [] };
+          }
+          return {
+            key: o.key,
+            size: o.size ?? null,
+            lastModified: o.lastModified || null,
+            loadStatus: 'ok',
+            dataPreview: preview,
+            envelope,
+          };
+        } catch (error) {
+          return {
+            key: o.key,
+            size: o.size ?? null,
+            lastModified: o.lastModified || null,
+            loadStatus: 'error',
+            dataPreview: null,
+            envelope: null,
+            error: error instanceof Error ? error.message : String(error),
+          };
+        }
+      })
+    );
+
+    return {
+      checkedAt: new Date().toISOString(),
+      bucket: r2.bucket,
+      endpoint: r2.endpoint,
+      prefix: cleanPrefix,
+      count: objects.length,
+      totalSize: objects.reduce((sum, o) => sum + Number(o.size || 0), 0),
+      sample,
+    };
+  };
+
   Bun.serve({
     port: options.port,
     fetch: async (req: Request) => {
@@ -2587,6 +2705,26 @@ async function main(): Promise<void> {
             'cache-control': 'no-store',
           },
         });
+      }
+      if (url.pathname === '/api/debug/r2-sessions') {
+        try {
+          const prefix = url.searchParams.get('prefix') || 'sessions/';
+          const limit = Number.parseInt(url.searchParams.get('limit') || '3', 10);
+          const data = await buildR2SessionsDebugSummary(prefix, limit);
+          return Response.json(data, {
+            headers: {
+              'cache-control': 'no-store',
+            },
+          });
+        } catch (error) {
+          return Response.json(
+            {
+              error: 'r2_debug_failed',
+              message: error instanceof Error ? error.message : String(error),
+            },
+            { status: 500 }
+          );
+        }
       }
       if (url.pathname === '/api/latest') {
         const source = url.searchParams.get('source') || 'local';
