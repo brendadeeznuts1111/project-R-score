@@ -823,10 +823,216 @@ function showTab(tabName) {
     }
     if (tabName === 'fraud') {
       loadFraudData();
+      loadWebhookPulse(); // Load pulse widget when fraud tab is shown
+      loadCookieAnalytics(); // Load cookie analytics widget
+      // Set up auto-refresh for pulse widget (every 5 seconds)
+      if (window.webhookPulseInterval) {
+        clearInterval(window.webhookPulseInterval);
+      }
+      window.webhookPulseInterval = setInterval(() => {
+        loadWebhookPulse();
+        loadCookieAnalytics();
+      }, 5000);
+    } else {
+      // Clear interval when switching away from fraud tab
+      if (window.webhookPulseInterval) {
+        clearInterval(window.webhookPulseInterval);
+        window.webhookPulseInterval = null;
+      }
     }
   } catch (error) {
     console.error('Error in showTab:', error);
     showError('Failed to switch tab: ' + error.message);
+  }
+}
+
+// Cookie Analytics Widget: Track session bloat and security
+async function loadCookieAnalytics() {
+  try {
+    const r = await fetchWithTimeout('/api/fraud/cookie-telemetry', { timeout: 3000 });
+    const telemetry = await r.json();
+    
+    // Update cookie count
+    const cookieCount = document.getElementById('cookie-count');
+    if (cookieCount) {
+      cookieCount.textContent = telemetry.count || 0;
+    }
+    
+    // Update cookie size
+    const cookieSize = document.getElementById('cookie-size');
+    if (cookieSize) {
+      const sizeKB = (telemetry.totalBytes / 1024).toFixed(2);
+      cookieSize.textContent = `${sizeKB} KB`;
+      
+      // Color code based on size
+      if (telemetry.totalBytes > 4096) {
+        cookieSize.style.color = '#ff3333';
+      } else if (telemetry.totalBytes > 2048) {
+        cookieSize.style.color = '#ffaa00';
+      } else {
+        cookieSize.style.color = '#00ff00';
+      }
+    }
+    
+    // Update security status
+    const cookieSecurity = document.getElementById('cookie-security');
+    const cookieSecurityText = document.getElementById('cookie-security-text');
+    if (cookieSecurity && cookieSecurityText) {
+      if (telemetry.isSecure) {
+        cookieSecurityText.textContent = '✅ Secure';
+        cookieSecurityText.style.color = '#00ff00';
+        cookieSecurity.style.background = 'rgba(0, 255, 0, 0.1)';
+      } else {
+        cookieSecurityText.textContent = '⚠️ Insecure';
+        cookieSecurityText.style.color = '#ffaa00';
+        cookieSecurity.style.background = 'rgba(255, 170, 0, 0.1)';
+      }
+    }
+    
+    // Update fraud session status
+    const fraudSessionText = document.getElementById('fraud-session-text');
+    if (fraudSessionText) {
+      if (telemetry.hasFraudSession) {
+        fraudSessionText.textContent = '✅ Active';
+        fraudSessionText.style.color = '#00ff00';
+      } else {
+        fraudSessionText.textContent = '❌ None';
+        fraudSessionText.style.color = '#888';
+      }
+    }
+    
+    // Show warning if present
+    const cookieWarning = document.getElementById('cookie-warning');
+    const cookieWarningText = document.getElementById('cookie-warning-text');
+    if (cookieWarning && cookieWarningText) {
+      if (telemetry.warning) {
+        cookieWarning.style.display = 'block';
+        cookieWarningText.textContent = telemetry.warning;
+      } else {
+        cookieWarning.style.display = 'none';
+      }
+    }
+    
+  } catch (error) {
+    console.error('Failed to load cookie analytics:', error);
+    // Don't show error to user, just log it
+  }
+}
+
+// Webhook Pulse Widget: Live health monitoring
+async function loadWebhookPulse() {
+  try {
+    const r = await fetchWithTimeout('/api/health/webhook', { timeout: 5000 });
+    const health = await r.json();
+    
+    // Update DNS Hit Ratio
+    const dnsHitRatio = health.dns?.hitRatio ?? null;
+    const dnsHitRatioText = document.getElementById('dns-hit-ratio-text');
+    const dnsHitRatioFill = document.getElementById('dns-hit-ratio-fill');
+    const dnsStatusText = document.getElementById('dns-status-text');
+    
+    if (dnsHitRatioText && dnsHitRatioFill && dnsStatusText) {
+      if (dnsHitRatio !== null) {
+        dnsHitRatioText.textContent = dnsHitRatio.toFixed(1) + '%';
+        dnsHitRatioFill.style.width = Math.min(100, Math.max(0, dnsHitRatio)) + '%';
+        
+        // Color coding: Green (90%+), Yellow (70-90%), Red (<70%)
+        if (dnsHitRatio >= 90) {
+          dnsHitRatioFill.style.background = '#00ff00';
+          dnsStatusText.textContent = '✅ Direct-to-Wire (No DNS latency)';
+          dnsStatusText.style.color = '#00ff00';
+        } else if (dnsHitRatio >= 70) {
+          dnsHitRatioFill.style.background = '#ffaa00';
+          dnsStatusText.textContent = '⚠️ Occasional resolution overhead';
+          dnsStatusText.style.color = '#ffaa00';
+        } else {
+          dnsHitRatioFill.style.background = '#ff3333';
+          dnsStatusText.textContent = '❌ Performance degraded (DNS overhead)';
+          dnsStatusText.style.color = '#ff3333';
+        }
+      } else {
+        dnsHitRatioText.textContent = 'N/A';
+        dnsHitRatioFill.style.width = '0%';
+        dnsStatusText.textContent = 'No DNS stats available';
+        dnsStatusText.style.color = '#888';
+      }
+    }
+    
+    // Update Webhook Failure Rate
+    const failureRate = health.failureRate ?? null;
+    const webhookFailureText = document.getElementById('webhook-failure-text');
+    const webhookFailureFill = document.getElementById('webhook-failure-fill');
+    const webhookStatusText = document.getElementById('webhook-status-text');
+    
+    if (webhookFailureText && webhookFailureFill && webhookStatusText) {
+      if (failureRate !== null) {
+        webhookFailureText.textContent = failureRate.toFixed(1) + '%';
+        webhookFailureFill.style.width = Math.min(100, Math.max(0, failureRate)) + '%';
+        
+        // Color coding: Green (<10%), Yellow (10-25%), Red (>25%)
+        if (failureRate < 10) {
+          webhookFailureFill.style.background = '#00ff00';
+          webhookStatusText.textContent = '✅ Healthy';
+          webhookStatusText.style.color = '#00ff00';
+        } else if (failureRate < 25) {
+          webhookFailureFill.style.background = '#ffaa00';
+          webhookStatusText.textContent = '⚠️ Elevated failure rate';
+          webhookStatusText.style.color = '#ffaa00';
+        } else {
+          webhookFailureFill.style.background = '#ff3333';
+          webhookStatusText.textContent = '❌ High failure rate (Circuit Breaker may activate)';
+          webhookStatusText.style.color = '#ff3333';
+        }
+      } else {
+        webhookFailureText.textContent = '0%';
+        webhookFailureFill.style.width = '0%';
+        webhookFailureFill.style.background = '#00ff00';
+        webhookStatusText.textContent = '✅ No failures yet';
+        webhookStatusText.style.color = '#00ff00';
+      }
+    }
+    
+    // Update Circuit Breaker Status
+    const circuitBreakerState = document.getElementById('circuit-breaker-state');
+    if (circuitBreakerState) {
+      if (health.circuitBreakerOpen) {
+        circuitBreakerState.textContent = '🚨 OPEN (Fast-path mode active)';
+        circuitBreakerState.style.color = '#ff3333';
+        if (health.circuitBreakerOpenTime) {
+          const openDuration = Math.floor((Date.now() - health.circuitBreakerOpenTime) / 1000);
+          circuitBreakerState.textContent += ` (${openDuration}s)`;
+        }
+      } else {
+        circuitBreakerState.textContent = '✅ CLOSED (Normal operation)';
+        circuitBreakerState.style.color = '#00ff00';
+      }
+    }
+    
+    // Update metadata
+    const lastPreconnectTime = document.getElementById('last-preconnect-time');
+    const totalAttempts = document.getElementById('total-attempts');
+    const totalFailures = document.getElementById('total-failures');
+    
+    if (lastPreconnectTime) {
+      if (health.lastPreconnect) {
+        const date = new Date(health.lastPreconnect);
+        lastPreconnectTime.textContent = date.toLocaleTimeString();
+      } else {
+        lastPreconnectTime.textContent = 'Never';
+      }
+    }
+    
+    if (totalAttempts) {
+      totalAttempts.textContent = health.attemptCount ?? 0;
+    }
+    
+    if (totalFailures) {
+      totalFailures.textContent = health.totalFailures ?? 0;
+    }
+    
+  } catch (error) {
+    console.error('Failed to load webhook pulse:', error);
+    // Don't show error to user, just log it
   }
 }
 

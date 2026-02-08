@@ -47,7 +47,7 @@ import {
 } from './metrics/calculators.ts';
 import { handleRoutes, type RouteContext } from './api/routes.ts';
 import { wsManager, broadcastUpdate } from './websocket/manager.ts';
-import { sendWebhookAlert, preconnectWebhook } from './alerts/webhook.ts';
+import { sendWebhookAlert, preconnectWebhook, tuneDNSStrategy } from './alerts/webhook.ts';
 
 // Load TOML configs using Bun's native TOML.parse API
 // More explicit than import() - gives us full control over parsing
@@ -81,6 +81,12 @@ const alertConfig: AlertConfig = {
 // Preconnect to webhook URL if configured (for faster delivery)
 if (alertConfig.webhookUrl) {
   preconnectWebhook(alertConfig.webhookUrl);
+  
+  // Set up adaptive DNS warming (runs every 30 seconds)
+  // This automatically increases prefetch frequency when DNS hit ratio drops
+  setInterval(() => {
+    tuneDNSStrategy(alertConfig.webhookUrl);
+  }, 30000); // 30 seconds
 }
 
 // Initialize SQLite database for historical data tracking

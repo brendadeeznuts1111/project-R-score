@@ -30,6 +30,28 @@ import { logger } from '../../user-profile/src/index.ts';
 type BunFile = ReturnType<typeof Bun.file>;
 
 /**
+ * Internal metrics tracking for webhook monitoring
+ */
+let lastPreconnectTimestamp: number | null = null;
+let totalAttempts = 0;
+let totalFailures = 0;
+
+/**
+ * Circuit breaker state
+ */
+let circuitBreakerOpen = false;
+let circuitBreakerOpenTime: number | null = null;
+const CIRCUIT_BREAKER_THRESHOLD = 25; // Failure rate percentage to open circuit
+const CIRCUIT_BREAKER_COOLDOWN = 60000; // 60 seconds cooldown before retry
+
+/**
+ * Adaptive DNS warming state
+ */
+let lastDNSWarmTime: number | null = null;
+const DNS_WARM_INTERVAL = 30000; // 30 seconds minimum between warm cycles
+const DNS_HIT_RATIO_THRESHOLD = 70; // Hit ratio below which to trigger warming
+
+/**
  * DNS cache statistics from Bun
  * Reference: https://bun.com/docs/runtime/networking/fetch#dns-prefetching
  */
@@ -205,6 +227,48 @@ export async function sendWebhookAlert(
   payload: any,
   options: WebhookOptions = {}
 ): Promise<WebhookResult> {
+  // 🚨 Circuit Breaker: Check if circuit is open
+  const metrics = getWebhookMetrics();
+  const now = Date.now();
+  
+  // Check if we should open the circuit breaker
+  if (!circuitBreakerOpen && metrics.failureRate !== null && metrics.failureRate > CIRCUIT_BREAKER_THRESHOLD) {
+    circuitBreakerOpen = true;
+    circuitBreakerOpenTime = now;
+    logger.warn(`🚨 Circuit Breaker OPEN: Webhook failure rate ${metrics.failureRate.toFixed(1)}% exceeds threshold ${CIRCUIT_BREAKER_THRESHOLD}%`);
+  }
+  
+  // Check if circuit breaker should be closed (cooldown period passed)
+  if (circuitBreakerOpen && circuitBreakerOpenTime !== null) {
+    const cooldownElapsed = now - circuitBreakerOpenTime;
+    if (cooldownElapsed > CIRCUIT_BREAKER_COOLDOWN) {
+      // Re-check failure rate before closing
+      const currentMetrics = getWebhookMetrics();
+      if (currentMetrics.failureRate === null || currentMetrics.failureRate < CIRCUIT_BREAKER_THRESHOLD / 2) {
+        circuitBreakerOpen = false;
+        circuitBreakerOpenTime = null;
+        logger.info(`✅ Circuit Breaker CLOSED: Failure rate recovered to ${currentMetrics.failureRate?.toFixed(1) || 0}%`);
+      } else {
+        // Reset cooldown timer
+        circuitBreakerOpenTime = now;
+      }
+    }
+  }
+  
+  // If circuit breaker is open, use fast-path mode (single attempt, short timeout)
+  if (circuitBreakerOpen) {
+    logger.warn(`🚨 Circuit Breaker: Using fast-path mode (single attempt, 1s timeout) to prevent retry storms`);
+    const fastPathResult = await sendWebhookAlertFastPath(webhookUrl, payload, options);
+    
+    // Track attempt and failure
+    totalAttempts++;
+    if (!fastPathResult.success) {
+      totalFailures++;
+    }
+    
+    return fastPathResult;
+  }
+  
   const timeout = options.timeout ?? 5000;
   const maxRetries = options.retries ?? 3;
   const customHeaders = options.headers ?? {};
@@ -219,6 +283,8 @@ export async function sendWebhookAlert(
   let lastStatusCode: number | undefined;
   
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    // Track each attempt (including retries)
+    totalAttempts++;
     try {
       // Create timeout signal using Bun's AbortSignal.timeout
       const signal = AbortSignal.timeout(timeout);
@@ -310,6 +376,8 @@ export async function sendWebhookAlert(
         // Don't retry on client errors (4xx), only on server errors (5xx) and network errors
         if (response.status >= 400 && response.status < 500) {
           logger.warn(`Webhook alert failed (client error, not retrying): ${error.message}`);
+          // Track failure for client errors (we don't retry these)
+          totalFailures++;
           break;
         }
         
@@ -327,6 +395,9 @@ export async function sendWebhookAlert(
       // Success!
       const durationMs = (Bun.nanoseconds() - startTime) / 1_000_000;
       logger.info(`✅ Webhook alert delivered successfully (attempt ${attempt}/${maxRetries}, ${durationMs.toFixed(2)}ms)`);
+      
+      // Note: We don't increment failures here since this is a success
+      // The failure tracking happens in the catch block below
       
       return {
         success: true,
@@ -373,6 +444,9 @@ export async function sendWebhookAlert(
   const durationMs = (Bun.nanoseconds() - startTime) / 1_000_000;
   const errorMessage = lastError?.message || 'Unknown error';
   
+  // Track failure (only count once per webhook call, not per retry attempt)
+  totalFailures++;
+  
   logger.error(`❌ Webhook alert failed after ${maxRetries} attempts (${durationMs.toFixed(2)}ms): ${errorMessage}`);
   
   return {
@@ -382,6 +456,66 @@ export async function sendWebhookAlert(
     attempts: maxRetries,
     durationMs,
   };
+}
+
+/**
+ * Fast-path webhook delivery (used when circuit breaker is open)
+ * Single attempt with short timeout to prevent retry storms
+ */
+async function sendWebhookAlertFastPath(
+  webhookUrl: string,
+  payload: any,
+  options: WebhookOptions = {}
+): Promise<WebhookResult> {
+  const startTime = Bun.nanoseconds();
+  const timeout = 1000; // 1 second timeout for fast-path
+  
+  try {
+    const signal = AbortSignal.timeout(timeout);
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'User-Agent': `FactoryWager-Dashboard/1.0 (Bun/${Bun.version})`,
+      ...(options.headers ?? {}),
+    };
+    
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(payload),
+      signal,
+    });
+    
+    const durationMs = (Bun.nanoseconds() - startTime) / 1_000_000;
+    
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => 'Unknown error');
+      logger.warn(`🚨 Fast-path webhook failed: ${response.status} ${response.statusText}`);
+      return {
+        success: false,
+        statusCode: response.status,
+        error: `Fast-path failed: ${response.status} ${response.statusText} - ${errorText.substring(0, 100)}`,
+        attempts: 1,
+        durationMs,
+      };
+    }
+    
+    return {
+      success: true,
+      statusCode: response.status,
+      attempts: 1,
+      durationMs,
+    };
+  } catch (error) {
+    const durationMs = (Bun.nanoseconds() - startTime) / 1_000_000;
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.warn(`🚨 Fast-path webhook error: ${errorMessage}`);
+    return {
+      success: false,
+      error: `Fast-path error: ${errorMessage}`,
+      attempts: 1,
+      durationMs,
+    };
+  }
 }
 
 /**
@@ -419,6 +553,8 @@ export function preconnectWebhook(webhookUrl: string): void {
       // The connection will be automatically reused via Bun's connection pooling
       if (typeof fetch !== 'undefined' && fetch.preconnect) {
         fetch.preconnect(webhookUrl);
+        // Track preconnect timestamp for monitoring
+        lastPreconnectTimestamp = Date.now();
         logger.info(`🔗 Preconnected to webhook: ${url.hostname} (DNS + TCP + TLS ready, will reuse via connection pooling)`);
       }
     }
@@ -482,4 +618,122 @@ export function calculateDNSCacheHitRatio(stats: DNSCacheStats | null): number |
   
   const totalHits = stats.cacheHitsCompleted + stats.cacheHitsInflight;
   return (totalHits / stats.totalCount) * 100;
+}
+
+/**
+ * Webhook metrics for monitoring and health checks
+ */
+export interface WebhookMetrics {
+  /** Timestamp of last preconnect (null if never preconnected) */
+  lastPreconnect: number | null;
+  /** Total number of webhook delivery attempts (includes retries) */
+  attemptCount: number;
+  /** Failure rate as a percentage (0-100), or null if no attempts yet */
+  failureRate: number | null;
+  /** Total number of failed webhook deliveries (counts each failed call once, not per retry) */
+  totalFailures: number;
+  /** Circuit breaker state */
+  circuitBreakerOpen: boolean;
+  /** Timestamp when circuit breaker was opened (null if closed) */
+  circuitBreakerOpenTime: number | null;
+}
+
+/**
+ * Get webhook delivery metrics for monitoring
+ * 
+ * Useful for health checks, monitoring dashboards, or diagnostic scripts.
+ * Tracks:
+ * - Last preconnect timestamp (to verify DNS prefetching is active)
+ * - Total attempt count (includes retries)
+ * - Failure rate percentage
+ * 
+ * @returns Webhook metrics object
+ * 
+ * @example
+ * ```typescript
+ * // In a health check or monitoring endpoint
+ * const metrics = getWebhookMetrics();
+ * 
+ * if (metrics.lastPreconnect === null) {
+ *   console.warn('⚠️ Webhook preconnect never called - DNS prefetching may not be active');
+ * }
+ * 
+ * if (metrics.failureRate !== null && metrics.failureRate > 10) {
+ *   console.error(`⚠️ High webhook failure rate: ${metrics.failureRate.toFixed(1)}%`);
+ * }
+ * 
+ * console.log(`Webhook metrics: ${metrics.attemptCount} attempts, ${metrics.failureRate?.toFixed(1) || 0}% failure rate`);
+ * ```
+ * 
+ * @example
+ * ```typescript
+ * // In a dashboard or monitoring script
+ * const metrics = getWebhookMetrics();
+ * const dnsStats = getDNSCacheStats();
+ * 
+ * console.log('Webhook Health:');
+ * console.log(`  Last preconnect: ${metrics.lastPreconnect ? new Date(metrics.lastPreconnect).toISOString() : 'Never'}`);
+ * console.log(`  Total attempts: ${metrics.attemptCount}`);
+ * console.log(`  Failure rate: ${metrics.failureRate?.toFixed(2) || 0}%`);
+ * 
+ * if (dnsStats) {
+ *   const hitRatio = calculateDNSCacheHitRatio(dnsStats);
+ *   console.log(`  DNS cache hit ratio: ${hitRatio?.toFixed(1) || 0}%`);
+ * }
+ * ```
+ */
+export function getWebhookMetrics(): WebhookMetrics {
+  return {
+    lastPreconnect: lastPreconnectTimestamp,
+    attemptCount: totalAttempts,
+    failureRate: totalAttempts > 0 ? (totalFailures / totalAttempts) * 100 : null,
+    totalFailures,
+    circuitBreakerOpen,
+    circuitBreakerOpenTime,
+  };
+}
+
+/**
+ * Adaptive DNS Cache Warming
+ * 
+ * Automatically increases prefetch frequency when DNS hit ratio drops below threshold.
+ * This "warms" the DNS cache ahead of TTL expiration to maintain optimal performance.
+ * 
+ * Call this periodically (e.g., every 30 seconds) or integrate into your monitoring loop.
+ * 
+ * @param webhookUrl - The webhook URL to warm (optional, uses last preconnected URL if not provided)
+ * 
+ * @example
+ * ```typescript
+ * // In a periodic monitoring loop
+ * setInterval(() => {
+ *   tuneDNSStrategy(webhookUrl);
+ * }, 30000); // Every 30 seconds
+ * ```
+ */
+export function tuneDNSStrategy(webhookUrl?: string): void {
+  const stats = getDNSCacheStats();
+  const hitRatio = calculateDNSCacheHitRatio(stats);
+  const now = Date.now();
+  
+  // Check if we need to warm the cache
+  if (hitRatio !== null && hitRatio < DNS_HIT_RATIO_THRESHOLD) {
+    // Rate limit: don't warm more than once per interval
+    if (lastDNSWarmTime === null || (now - lastDNSWarmTime) > DNS_WARM_INTERVAL) {
+      logger.info(`🌡️ DNS Hit Ratio low (${hitRatio.toFixed(1)}%), triggering adaptive cache warming...`);
+      
+      // If webhook URL is provided, use it; otherwise log that we need it
+      if (webhookUrl) {
+        preconnectWebhook(webhookUrl);
+        lastDNSWarmTime = now;
+        logger.debug(`✅ DNS cache warmed for ${webhookUrl}`);
+      } else {
+        logger.debug(`⚠️ DNS warming requested but no webhook URL provided`);
+      }
+    } else {
+      logger.debug(`⏱️ DNS warming skipped (rate limited, last warm: ${((now - lastDNSWarmTime) / 1000).toFixed(0)}s ago)`);
+    }
+  } else if (hitRatio !== null) {
+    logger.debug(`✅ DNS Hit Ratio healthy (${hitRatio.toFixed(1)}%), no warming needed`);
+  }
 }

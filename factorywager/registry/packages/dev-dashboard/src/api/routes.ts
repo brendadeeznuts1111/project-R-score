@@ -8,6 +8,18 @@
 import { Database } from 'bun:sqlite';
 import { getHistoryDatabase } from '../db/history.ts';
 import { calculateProfileMetrics, calculateP2PMetrics } from '../metrics/calculators.ts';
+import {
+  getWebhookMetrics,
+  getDNSCacheStats,
+  calculateDNSCacheHitRatio,
+} from '../alerts/webhook.ts';
+import {
+  extractFraudContext,
+  setFraudSession,
+  revokeFraudSession,
+  createResponseWithCookies,
+  getCookieTelemetry,
+} from '../fraud/session.ts';
 import type {
   ProfileResult,
   ProfileOperation,
@@ -47,14 +59,17 @@ export function handleWebSocketUpgrade(req: Request, server: any): Response | un
     try {
       // Parse cookies for user identification (if available)
       // Cookies are automatically sent with WebSocket upgrade request
-      let sessionId: string | undefined;
+      // Use fraud session cookies for enhanced security
+      const fraudContext = extractFraudContext(req);
+      let sessionId = fraudContext.sessionId || undefined;
       let userId: string | undefined;
       
+      // Also check legacy cookies for backward compatibility
       const cookieHeader = req.headers.get('cookie');
-      if (cookieHeader) {
+      if (cookieHeader && !sessionId) {
         try {
           const cookies = new Bun.CookieMap(cookieHeader);
-          sessionId = cookies.get('SessionId') || undefined;
+          sessionId = cookies.get('SessionId') || sessionId;
           userId = cookies.get('UserId') || undefined;
         } catch {
           // Invalid cookie header, continue without cookies
@@ -636,15 +651,80 @@ export async function handleFraudRoutes(req: Request, context: RouteContext): Pr
     }
   }
   
-  // Event (POST)
+  // Event (POST) - Enhanced with cookie-based context
   if (url.pathname === '/api/fraud/event' && req.method === 'POST') {
     try {
       const body = await req.json() as { userId: string; eventType: string; metadata?: Record<string, unknown>; ipHash?: string; deviceHash?: string; gateway?: string; amountCents?: number; success?: boolean };
       if (!body?.userId || !body?.eventType) {
         return new Response(JSON.stringify({ error: 'userId and eventType required' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
       }
-      context.fraudEngine.recordEvent(body);
+      
+      // Extract fraud context from cookies
+      const fraudContext = extractFraudContext(req);
+      
+      // Enhance event with cookie-based context
+      const enhancedEvent = {
+        ...body,
+        deviceHash: body.deviceHash || fraudContext.deviceId || undefined,
+        metadata: {
+          ...body.metadata,
+          sessionId: fraudContext.sessionId,
+          lastVisit: fraudContext.lastVisit,
+          ipAddress: fraudContext.ipAddress,
+          userAgent: fraudContext.userAgent,
+        },
+      };
+      
+      context.fraudEngine.recordEvent(enhancedEvent);
       return new Response(JSON.stringify({ ok: true }), { headers: { 'Content-Type': 'application/json' } });
+    } catch (error) {
+      return new Response(JSON.stringify({ error: error instanceof Error ? error.message : String(error) }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+    }
+  }
+  
+  // Login endpoint - Set secure fraud session
+  if (url.pathname === '/api/fraud/login' && req.method === 'POST') {
+    try {
+      const body = await req.json() as { userId: string; deviceId?: string };
+      if (!body?.userId) {
+        return new Response(JSON.stringify({ error: 'userId required' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+      }
+      
+      // Set secure fraud session cookies
+      const { sessionId, deviceId } = setFraudSession(req, body.userId, body.deviceId);
+      
+      // Create response with cookies
+      return createResponseWithCookies(
+        JSON.stringify({ 
+          ok: true, 
+          sessionId: sessionId.substring(0, 8) + '...', // Truncated for security
+          deviceId,
+        }),
+        { sessionId, deviceId },
+        {
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    } catch (error) {
+      return new Response(JSON.stringify({ error: error instanceof Error ? error.message : String(error) }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+    }
+  }
+  
+  // Revoke session endpoint - Nuclear logout
+  if (url.pathname === '/api/fraud/revoke' && req.method === 'POST') {
+    try {
+      // Immediately revoke all fraud-related cookies
+      const deleteHeaders = revokeFraudSession(req);
+      
+      const headers = new Headers({ 'Content-Type': 'application/json' });
+      deleteHeaders.forEach(header => {
+        headers.append('Set-Cookie', header);
+      });
+      
+      return new Response(
+        JSON.stringify({ ok: true, message: 'Session revoked' }),
+        { headers }
+      );
     } catch (error) {
       return new Response(JSON.stringify({ error: error instanceof Error ? error.message : String(error) }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
@@ -671,7 +751,68 @@ export async function handleFraudRoutes(req: Request, context: RouteContext): Pr
     }
   }
   
+  // Cookie telemetry endpoint
+  if (url.pathname === '/api/fraud/cookie-telemetry') {
+    try {
+      const telemetry = getCookieTelemetry(req);
+      return new Response(JSON.stringify(telemetry), {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    } catch (error) {
+      return new Response(JSON.stringify({ error: error instanceof Error ? error.message : String(error) }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+  }
+  
   return null;
+}
+
+/**
+ * Handle webhook health endpoint
+ */
+export function handleWebhookHealthRoute(req: Request): Promise<Response | null> {
+  const url = new URL(req.url);
+  if (url.pathname !== '/api/health/webhook') return Promise.resolve(null);
+  
+  return (async () => {
+    try {
+      const metrics = getWebhookMetrics();
+      const dnsStats = getDNSCacheStats();
+      
+      // Determine health status based on failure rate
+      // Consider healthy if failure rate is below 10%, degraded otherwise
+      const isHealthy = metrics.failureRate === null || metrics.failureRate < 10;
+      
+      const healthData = {
+        status: isHealthy ? 'healthy' : 'degraded',
+        timestamp: Date.now(),
+        ...metrics,
+        dns: {
+          hitRatio: calculateDNSCacheHitRatio(dnsStats),
+          stats: dnsStats,
+        },
+      };
+      
+      return new Response(JSON.stringify(healthData, null, 2), {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Webhook-Health-Status': isHealthy ? 'healthy' : 'degraded',
+        },
+        status: isHealthy ? 200 : 503,
+      });
+    } catch (error) {
+      return new Response(JSON.stringify({
+        status: 'error',
+        error: error instanceof Error ? error.message : String(error),
+        timestamp: Date.now(),
+      }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+  })();
 }
 
 /**
@@ -851,6 +992,7 @@ export async function handleRoutes(req: Request, server: any, context: RouteCont
     () => handleCsvExportRoute(req, context),
     () => handleJsonExportRoute(req, context),
     () => handleFraudRoutes(req, context),
+    () => handleWebhookHealthRoute(req), // Webhook health check (before general health)
     () => handleHealthRoute(req, context),
     () => handleBenchmarksTableRoute(req, context),
     () => handleRootRoute(req, context),
