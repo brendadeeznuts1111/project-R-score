@@ -8,14 +8,39 @@
  * - Leverages Bun's automatic connection pooling and HTTP keep-alive
  *   (connections are automatically reused to the same host)
  * - Uses DNS prefetching and preconnect for faster initial connections
- * - Response buffering optimized via Bun's native response methods
+ * - Response buffering optimized via Bun's native response methods:
+ *   - response.text(): Fastest for text responses
+ *   - response.json(): Optimized JSON parsing
+ *   - response.bytes(): For binary data (Uint8Array)
+ *   - response.arrayBuffer(): For raw binary data
+ *   - response.blob(): For file-like data
+ *   - response.formData(): For form data
+ *   - Bun.write(): Write response directly to disk (useful for logging)
  * - Automatic connection reuse reduces latency for repeated webhook calls
+ * 
+ * Debugging:
+ * - Enable verbose logging via options.verbose = true or WEBHOOK_VERBOSE=true env var
+ * - Verbose mode prints request/response headers to console (Bun-specific feature)
+ * - See: https://bun.com/docs/runtime/networking/fetch#debugging
  */
 
 import { logger } from '../../user-profile/src/index.ts';
 
 // Type for Bun.file() return value
 type BunFile = ReturnType<typeof Bun.file>;
+
+/**
+ * DNS cache statistics from Bun
+ * Reference: https://bun.com/docs/runtime/networking/fetch#dns-prefetching
+ */
+export interface DNSCacheStats {
+  cacheHitsCompleted: number;  // Resolved from cache
+  cacheHitsInflight: number;   // Currently resolving
+  cacheMisses: number;         // Required network lookup
+  errors: number;              // Failed lookups
+  size: number;                // Current cache entries
+  totalCount: number;          // Total lookups
+}
 
 /**
  * Options for webhook delivery
@@ -89,6 +114,91 @@ export interface WebhookResult {
  * @param payload - The payload to send (will be JSON stringified)
  * @param options - Optional configuration including timeout, retries, headers, proxy, TLS, etc.
  * @returns Promise that resolves with delivery result
+ * 
+ * @example
+ * ```typescript
+ * // Basic usage with default timeout and retries
+ * const result = await sendWebhookAlert(
+ *   'https://hooks.example.com/alerts',
+ *   { message: 'Alert triggered', severity: 'high' }
+ * );
+ * 
+ * if (result.success) {
+ *   console.log(`Webhook delivered in ${result.durationMs}ms`);
+ * } else {
+ *   console.error(`Failed: ${result.error}`);
+ * }
+ * ```
+ * 
+ * @example
+ * ```typescript
+ * // With custom timeout and retry configuration
+ * const result = await sendWebhookAlert(
+ *   'https://hooks.example.com/alerts',
+ *   { alerts: ['Performance degraded'], timestamp: Date.now() },
+ *   {
+ *     timeout: 10000,  // 10 second timeout
+ *     retries: 5,      // Retry up to 5 times
+ *     headers: {
+ *       'X-Custom-Header': 'value',
+ *       'Authorization': 'Bearer token'
+ *     }
+ *   }
+ * );
+ * ```
+ * 
+ * @example
+ * ```typescript
+ * // With proxy configuration
+ * const result = await sendWebhookAlert(
+ *   'https://hooks.example.com/alerts',
+ *   payload,
+ *   {
+ *     proxy: {
+ *       url: 'http://proxy.example.com:8080',
+ *       headers: {
+ *         'Proxy-Authorization': 'Basic ' + btoa('user:pass')
+ *       }
+ *     }
+ *   }
+ * );
+ * ```
+ * 
+ * @example
+ * ```typescript
+ * // With TLS client certificate
+ * const result = await sendWebhookAlert(
+ *   'https://secure.example.com/webhook',
+ *   payload,
+ *   {
+ *     tls: {
+ *       key: Bun.file('/path/to/client-key.pem'),
+ *       cert: Bun.file('/path/to/client-cert.pem'),
+ *       ca: [Bun.file('/path/to/ca-cert.pem')]
+ *     }
+ *   }
+ * );
+ * ```
+ * 
+ * @example
+ * ```typescript
+ * // With verbose debugging (prints request/response headers)
+ * const result = await sendWebhookAlert(
+ *   'https://hooks.example.com/alerts',
+ *   payload,
+ *   { verbose: true }  // Enable debug logging
+ * );
+ * ```
+ * 
+ * @example
+ * ```typescript
+ * // Fire-and-forget pattern (non-blocking)
+ * sendWebhookAlert(webhookUrl, payload)
+ *   .catch(error => {
+ *     // Errors are already logged, but handle here if needed
+ *     console.error('Webhook delivery failed:', error);
+ *   });
+ * ```
  */
 export async function sendWebhookAlert(
   webhookUrl: string,
@@ -98,6 +208,11 @@ export async function sendWebhookAlert(
   const timeout = options.timeout ?? 5000;
   const maxRetries = options.retries ?? 3;
   const customHeaders = options.headers ?? {};
+  
+  // Enable verbose debugging if requested via options or environment variable
+  // This uses Bun's fetch.verbose option to print request/response headers
+  // See: https://bun.com/docs/runtime/networking/fetch#debugging
+  const verbose = options.verbose ?? (process.env.WEBHOOK_VERBOSE === 'true');
   
   const startTime = Bun.nanoseconds();
   let lastError: Error | null = null;
@@ -140,7 +255,9 @@ export async function sendWebhookAlert(
       }
       
       // Add verbose debugging (Bun-specific extension)
-      if (options.verbose) {
+      // When enabled, prints request/response headers to console for debugging
+      // Enable via: options.verbose = true or WEBHOOK_VERBOSE=true environment variable
+      if (verbose) {
         fetchOptions.verbose = true;
       }
       
@@ -166,8 +283,19 @@ export async function sendWebhookAlert(
         // Try to read error response body
         // Using response.text() leverages Bun's optimized response buffering
         // Bun automatically optimizes reading response bodies for performance
+        // 
+        // Bun provides several optimized methods for reading response bodies:
+        // - response.text(): Promise<string> - Fastest for text responses
+        // - response.json(): Promise<any> - Optimized JSON parsing
+        // - response.bytes(): Promise<Uint8Array> - For binary data
+        // - response.arrayBuffer(): Promise<ArrayBuffer> - For raw binary
+        // - response.blob(): Promise<Blob> - For file-like data
+        // - response.formData(): Promise<FormData> - For form data
+        // 
+        // Reference: https://bun.com/docs/runtime/networking/fetch#response-bodies
         let errorText = 'Unknown error';
         try {
+          // Use response.text() for error messages (fastest for text)
           errorText = await response.text();
         } catch {
           // Ignore errors reading response body
@@ -261,12 +389,14 @@ export async function sendWebhookAlert(
  * 
  * This can be called at startup if webhook URLs are known in advance.
  * Uses Bun's performance optimization APIs:
- * - dns.prefetch() for DNS lookup caching
+ * - dns.prefetch() for DNS lookup caching (cached for up to 30 seconds)
  * - fetch.preconnect() for full connection establishment (DNS + TCP + TLS)
  * 
  * According to Bun docs: Preconnecting only helps if you know you'll need to connect
  * to a host soon, but you're not ready to make the request yet. Calling fetch
  * immediately after preconnect won't make it faster.
+ * 
+ * Reference: https://bun.com/docs/runtime/networking/fetch#preconnect-to-a-host
  * 
  * @param webhookUrl - The webhook URL to preconnect to
  */
@@ -277,7 +407,8 @@ export function preconnectWebhook(webhookUrl: string): void {
     if (url.protocol === 'http:' || url.protocol === 'https:') {
       // Step 1: DNS prefetch (cached for up to 30 seconds by Bun)
       // This avoids the DNS lookup delay when the webhook is actually called
-      if (typeof Bun !== 'undefined' && Bun.dns) {
+      // Bun automatically caches and deduplicates DNS queries in-memory
+      if (typeof Bun !== 'undefined' && Bun.dns && Bun.dns.prefetch) {
         Bun.dns.prefetch(url.hostname);
         logger.debug(`🔍 DNS prefetched for webhook: ${url.hostname}`);
       }
@@ -286,11 +417,69 @@ export function preconnectWebhook(webhookUrl: string): void {
       // This establishes the full connection early, ready for immediate use
       // Uses Bun's fetch.preconnect() API
       // The connection will be automatically reused via Bun's connection pooling
-      fetch.preconnect(webhookUrl);
-      logger.info(`🔗 Preconnected to webhook: ${url.hostname} (DNS + TCP + TLS ready, will reuse via connection pooling)`);
+      if (typeof fetch !== 'undefined' && fetch.preconnect) {
+        fetch.preconnect(webhookUrl);
+        logger.info(`🔗 Preconnected to webhook: ${url.hostname} (DNS + TCP + TLS ready, will reuse via connection pooling)`);
+      }
     }
   } catch (error) {
     // Invalid URL, skip preconnect
     logger.debug(`Skipping preconnect for invalid webhook URL: ${webhookUrl}`);
   }
+}
+
+/**
+ * Get DNS cache statistics for monitoring and debugging
+ * 
+ * Bun caches DNS queries in-memory for up to 30 seconds by default.
+ * This function provides insights into cache performance:
+ * - Hit ratio: percentage of requests served from cache
+ * - Cache size: number of cached entries
+ * - Error rate: failed DNS lookups
+ * 
+ * Reference: https://bun.com/docs/runtime/networking/fetch#dns-prefetching
+ * 
+ * @returns DNS cache statistics, or null if unavailable
+ * 
+ * @example
+ * ```typescript
+ * const stats = getDNSCacheStats();
+ * if (stats) {
+ *   const hitRatio = ((stats.cacheHitsCompleted + stats.cacheHitsInflight) / stats.totalCount) * 100;
+ *   console.log(`DNS cache hit ratio: ${hitRatio.toFixed(1)}%`);
+ * }
+ * ```
+ */
+export function getDNSCacheStats(): DNSCacheStats | null {
+  try {
+    if (typeof Bun !== 'undefined' && Bun.dns && Bun.dns.getCacheStats) {
+      const stats = Bun.dns.getCacheStats();
+      return {
+        cacheHitsCompleted: stats.cacheHitsCompleted ?? 0,
+        cacheHitsInflight: stats.cacheHitsInflight ?? 0,
+        cacheMisses: stats.cacheMisses ?? 0,
+        errors: stats.errors ?? 0,
+        size: stats.size ?? 0,
+        totalCount: stats.totalCount ?? 0,
+      };
+    }
+  } catch (error) {
+    logger.debug(`Failed to get DNS cache stats: ${error instanceof Error ? error.message : String(error)}`);
+  }
+  return null;
+}
+
+/**
+ * Calculate DNS cache hit ratio from stats
+ * 
+ * @param stats - DNS cache statistics
+ * @returns Hit ratio as a percentage (0-100), or null if stats are invalid
+ */
+export function calculateDNSCacheHitRatio(stats: DNSCacheStats | null): number | null {
+  if (!stats || stats.totalCount === 0) {
+    return null;
+  }
+  
+  const totalHits = stats.cacheHitsCompleted + stats.cacheHitsInflight;
+  return (totalHits / stats.totalCount) * 100;
 }

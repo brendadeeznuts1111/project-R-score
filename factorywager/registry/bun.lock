@@ -38,6 +38,27 @@
         "@types/bun": "latest",
       },
     },
+    "packages/dev-dashboard": {
+      "name": "@factorywager/dev-dashboard",
+      "version": "1.0.0",
+      "dependencies": {
+        "@factorywager/fraud-prevention": "workspace:*",
+        "@factorywager/user-profile": "workspace:*",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+    },
+    "packages/fraud-prevention": {
+      "name": "@factorywager/fraud-prevention",
+      "version": "1.0.0",
+      "dependencies": {
+        "zod": "^3.22.0",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+    },
     "packages/pref-propagation": {
       "name": "@factorywager/pref-propagation",
       "version": "10.0.0",
@@ -101,6 +122,10 @@
   },
   "packages": {
     "@factorywager/dashboard-profile": ["@factorywager/dashboard-profile@workspace:packages/dashboard-profile"],
+
+    "@factorywager/dev-dashboard": ["@factorywager/dev-dashboard@workspace:packages/dev-dashboard"],
+
+    "@factorywager/fraud-prevention": ["@factorywager/fraud-prevention@workspace:packages/fraud-prevention"],
 
     "@factorywager/pref-propagation": ["@factorywager/pref-propagation@workspace:packages/pref-propagation"],
 

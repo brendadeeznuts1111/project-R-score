@@ -199,3 +199,19 @@ export interface AlertConfig {
   };
   webhookUrl?: string;
 }
+
+export interface WebSocketBenchmarkResult {
+  name: string;
+  time: number;
+  target: number;
+  status: 'pass' | 'fail' | 'warning';
+  note?: string;
+  category: 'websocket' | 'performance';
+  metadata?: {
+    connections?: number;
+    messagesPerSecond?: number;
+    avgLatency?: number;
+    compressionRatio?: number;
+    backpressureEvents?: number;
+  };
+}

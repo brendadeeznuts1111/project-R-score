@@ -33,22 +33,72 @@ export interface RouteContext {
 
 /**
  * Handle WebSocket upgrade
+ * 
+ * Uses Bun's WebSocket upgrade API with:
+ * - Cookie parsing for user identification
+ * - Typed contextual data (ws.data)
+ * - Custom headers in upgrade response
+ * 
+ * Reference: https://bun.com/docs/runtime/websockets#contextual-data
  */
 export function handleWebSocketUpgrade(req: Request, server: any): Response | undefined {
   const url = new URL(req.url);
   if (url.pathname === '/ws') {
-    const upgraded = server.upgrade(req, {
-      data: {
-        connectedAt: Date.now(),
-        subscriptions: new Set(['*']),
-      },
-    });
-    
-    if (upgraded) {
-      return undefined; // WebSocket upgrade successful
+    try {
+      // Parse cookies for user identification (if available)
+      // Cookies are automatically sent with WebSocket upgrade request
+      let sessionId: string | undefined;
+      let userId: string | undefined;
+      
+      const cookieHeader = req.headers.get('cookie');
+      if (cookieHeader) {
+        try {
+          const cookies = new Bun.CookieMap(cookieHeader);
+          sessionId = cookies.get('SessionId') || undefined;
+          userId = cookies.get('UserId') || undefined;
+        } catch {
+          // Invalid cookie header, continue without cookies
+        }
+      }
+      
+      // Generate session ID if not present
+      if (!sessionId) {
+        sessionId = `session-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+      }
+      
+      // Upgrade to WebSocket with typed data
+      // Reference: https://bun.com/docs/runtime/websockets#contextual-data
+      const upgraded = server.upgrade(req, {
+        // Contextual data attached to ws.data (strongly typed)
+        data: {
+          connectedAt: Date.now(),
+          subscriptions: new Set(['*']), // Subscribe to all updates by default
+          clientId: `client-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+          sessionId,
+          userId,
+        },
+        // Custom headers in the 101 Switching Protocols response
+        // Reference: https://bun.com/docs/runtime/websockets#headers
+        headers: {
+          'X-WebSocket-Version': '1.0',
+          'Set-Cookie': `SessionId=${sessionId}; Path=/; HttpOnly; SameSite=Lax`,
+        },
+      });
+      
+      if (upgraded) {
+        // WebSocket upgrade successful - do not return a Response
+        // Bun automatically sends 101 Switching Protocols response
+        return undefined;
+      }
+      
+      // Upgrade failed
+      return new Response('WebSocket upgrade failed', { status: 500 });
+    } catch (error) {
+      return new Response(
+        `WebSocket upgrade error: ${error instanceof Error ? error.message : String(error)}`,
+        { status: 500 }
+      );
     }
-    
-    return new Response('WebSocket upgrade failed', { status: 500 });
   }
   return undefined;
 }

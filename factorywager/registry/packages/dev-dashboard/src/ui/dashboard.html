@@ -607,6 +607,203 @@ function safeAsync(fn) {
   };
 }
 
+/**
+ * Enhanced fetch helper with timeout, better error handling, and AbortController support
+ * 
+ * Features:
+ * - Automatic timeout handling (default: 30 seconds)
+ * - Better error messages with status codes
+ * - Response validation (checks response.ok)
+ * - AbortController for cancelable requests
+ * - User-friendly error messages
+ * - Debug logging (enabled via ?debug=true query parameter or localStorage)
+ * 
+ * @param {string} url - The URL to fetch
+ * @param {RequestInit & { timeout?: number, debug?: boolean }} options - Fetch options with optional timeout and debug flag
+ * @returns {Promise<Response>} The fetch response
+ * 
+ * @example
+ * ```javascript
+ * // Basic usage with default timeout
+ * const response = await fetchWithTimeout('/api/data');
+ * const data = await response.json();
+ * 
+ * // Custom timeout
+ * const response = await fetchWithTimeout('/api/data', { timeout: 10000 });
+ * 
+ * // With AbortController for cancellation
+ * const controller = new AbortController();
+ * const response = await fetchWithTimeout('/api/data', { signal: controller.signal });
+ * // Later: controller.abort() to cancel
+ * 
+ * // Enable debug logging
+ * const response = await fetchWithTimeout('/api/data', { debug: true });
+ * ```
+ */
+async function fetchWithTimeout(url, options = {}) {
+  const timeout = options.timeout ?? 30000; // Default 30 seconds
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+  
+  // Check if debugging is enabled (via query param, localStorage, or options)
+  const debugEnabled = options.debug || 
+    (new URLSearchParams(window.location.search).get('debug') === 'true') ||
+    (localStorage.getItem('dashboard:debug') === 'true');
+  
+  const startTime = performance.now();
+  
+  if (debugEnabled) {
+    // Match Bun's verbose fetch format exactly
+    const method = options.method || 'GET';
+    
+    // Resolve URL to full URL for display (matching Bun's format)
+    let displayUrl = url;
+    try {
+      // Resolve relative URLs to absolute
+      if (url.startsWith('/') || !url.includes('://')) {
+        const urlObj = new URL(url, window.location.origin);
+        displayUrl = urlObj.href;
+      }
+      // Absolute URLs are already full
+    } catch {
+      // If URL parsing fails, use original
+    }
+    
+    console.log(`[fetch] > HTTP/1.1 ${method} ${displayUrl}`);
+    
+    // Log request headers in Bun's format (matching exact order from Bun docs)
+    // Reference: https://bun.com/docs/runtime/networking/fetch#debugging
+    const headers = new Headers(options.headers);
+    
+    // Show headers in the same order as Bun's verbose output
+    // 1. Connection (first, as shown in Bun's output)
+    console.log(`[fetch] > Connection: ${headers.get('Connection') || 'keep-alive'}`);
+    
+    // 2. User-Agent (browser's user agent, matching Bun's format)
+    console.log(`[fetch] > User-Agent: ${headers.get('User-Agent') || navigator.userAgent}`);
+    
+    // 3. Accept
+    console.log(`[fetch] > Accept: ${headers.get('Accept') || '*/*'}`);
+    
+    // 4. Host
+    try {
+      const urlObj = new URL(displayUrl);
+      console.log(`[fetch] > Host: ${headers.get('Host') || urlObj.host}`);
+    } catch {}
+    
+    // 5. Accept-Encoding
+    // Note: Bun shows "gzip, deflate, br, zstd" but browsers only support "gzip, deflate, br"
+    // We show what browsers actually send (accurate for client-side debugging)
+    console.log(`[fetch] > Accept-Encoding: ${headers.get('Accept-Encoding') || 'gzip, deflate, br'}`);
+    
+    // 6. Show any custom headers that were explicitly set (after standard headers)
+    headers.forEach((value, name) => {
+      // Skip headers we already logged above
+      const standardHeaders = ['Connection', 'User-Agent', 'Accept', 'Host', 'Accept-Encoding'];
+      if (!standardHeaders.includes(name)) {
+        console.log(`[fetch] > ${name}: ${value}`);
+      }
+    });
+    
+    console.log(''); // Empty line separator (matching Bun's format)
+  }
+  
+  try {
+    // If a signal is provided, listen to both signals
+    // Note: AbortSignal.any() is not available in all browsers, so we use a workaround
+    let signal = controller.signal;
+    if (options.signal) {
+      // Listen to the provided signal and abort our controller if it aborts
+      options.signal.addEventListener('abort', () => {
+        controller.abort();
+      });
+      signal = controller.signal; // Use our controller's signal
+    }
+    
+    const response = await fetch(url, {
+      ...options,
+      signal,
+    });
+    
+    clearTimeout(timeoutId);
+    const duration = performance.now() - startTime;
+    
+    if (debugEnabled) {
+      // Match Bun's response format exactly
+      // Reference: https://bun.com/docs/runtime/networking/fetch#debugging
+      console.log(`[fetch] < ${response.status} ${response.statusText}`);
+      
+      // Log response headers line by line (matching Bun's format)
+      // Header values are preserved as-is, including quoted values like: Etag: "3147526947+gzip"
+      response.headers.forEach((value, name) => {
+        console.log(`[fetch] < ${name}: ${value}`);
+      });
+    }
+    
+    // Validate response (response.ok is already checked, but we ensure it's true)
+    if (!response.ok) {
+      let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+      try {
+        const errorText = await response.text();
+        if (errorText) {
+          // Try to parse as JSON for structured error messages
+          try {
+            const errorJson = JSON.parse(errorText);
+            errorMessage = errorJson.error || errorJson.message || errorMessage;
+          } catch {
+            // Not JSON, use text directly (truncated)
+            errorMessage = errorText.length > 200 
+              ? errorText.substring(0, 200) + '...' 
+              : errorText;
+          }
+        }
+      } catch {
+        // Ignore errors reading response body
+      }
+      
+      if (debugEnabled) {
+        console.error(`[fetch] ✗ Error: ${errorMessage}`);
+        console.log(''); // Empty line separator
+      }
+      
+      throw new Error(errorMessage);
+    }
+    
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    const duration = performance.now() - startTime;
+    
+    // Handle timeout errors
+    if (error.name === 'AbortError' && (!options.signal || controller.signal.aborted)) {
+      const timeoutError = new Error(`Request timed out after ${timeout}ms: ${url}`);
+      if (debugEnabled) {
+        console.error(`[fetch] ✗ Timeout after ${duration.toFixed(2)}ms: ${url}`);
+        console.log(''); // Empty line separator
+      }
+      throw timeoutError;
+    }
+    
+    // Handle network errors
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      const networkError = new Error(`Network error: Unable to connect to ${url}. Please check your connection.`);
+      if (debugEnabled) {
+        console.error(`[fetch] ✗ Network error after ${duration.toFixed(2)}ms:`, error);
+        console.log(''); // Empty line separator
+      }
+      throw networkError;
+    }
+    
+    if (debugEnabled) {
+      console.error(`[fetch] ✗ Error after ${duration.toFixed(2)}ms:`, error);
+      console.log(''); // Empty line separator
+    }
+    
+    // Re-throw other errors
+    throw error;
+  }
+}
+
 function escapeHTML(str) {
   if (str == null) return '';
   const s = String(str);
@@ -641,12 +838,7 @@ async function loadFraudData() {
   const refMapEl = document.getElementById('fraud-reference-map');
   if (!unavailable || !content || !collisionsEl || !refMapEl) return;
   try {
-    const r = await fetch('/api/fraud/cross-lookup?minAccounts=2');
-    if (!r.ok) {
-      unavailable.style.display = 'block';
-      content.style.display = 'none';
-      return;
-    }
+    const r = await fetchWithTimeout('/api/fraud/cross-lookup?minAccounts=2', { timeout: 10000 });
     const { results } = await r.json();
     unavailable.style.display = 'none';
     content.style.display = 'block';
@@ -714,12 +906,7 @@ async function loadAuditTrail() {
   table.style.display = 'none';
   empty.style.display = 'none';
   try {
-    const r = await fetch('/api/fraud/history?userId=' + encodeURIComponent(userId) + '&limit=100');
-    if (!r.ok) {
-      const err = await r.json().catch(() => ({}));
-      status.textContent = err.error || 'Failed to load history';
-      return;
-    }
+    const r = await fetchWithTimeout('/api/fraud/history?userId=' + encodeURIComponent(userId) + '&limit=100', { timeout: 15000 });
     const { entries } = await r.json();
     status.textContent = entries.length + ' entries';
     if (entries.length === 0) {
@@ -852,10 +1039,7 @@ async function loadDashboard(showLoading = false) {
   }
   
   try {
-    const response = await fetch('/api/data');
-    if (!response.ok) {
-      throw new Error(\`HTTP \${response.status}: \${response.statusText}\`);
-    }
+    const response = await fetchWithTimeout('/api/data', { timeout: 30000 });
     const data = await response.json();
     
     // Get filter values
@@ -934,7 +1118,7 @@ async function loadDashboard(showLoading = false) {
     // Get previous run for comparison
     let comparisonData = null;
     try {
-      const historyResponse = await fetch('/api/history?hours=1');
+      const historyResponse = await fetchWithTimeout('/api/history?hours=1', { timeout: 15000 });
       const history = await historyResponse.json();
       if (history.benchmarks && history.benchmarks.length > 0) {
         // Get most recent previous run
@@ -1416,10 +1600,7 @@ async function renderBenchmarkChart() {
   if (!ctx) return;
   const hours = parseInt(document.getElementById('chart-range')?.value || '24', 10) || 24;
   try {
-    const response = await fetch('/api/history?hours=' + hours);
-    if (!response.ok) {
-      throw new Error(\`HTTP \${response.status}: \${response.statusText}\`);
-    }
+    const response = await fetchWithTimeout('/api/history?hours=' + hours, { timeout: 20000 });
     const history = await response.json();
     
     if (!history.benchmarks || history.benchmarks.length === 0) return;
@@ -1593,10 +1774,7 @@ function renderProfileChart(profileResults) {
 // Fetch benchmark table using Bun.inspect.table API
 async function fetchBenchmarkTable() {
   try {
-    const response = await fetch('/api/benchmarks/table');
-    if (!response.ok) {
-      throw new Error(\`HTTP \${response.status}: \${response.statusText}\`);
-    }
+    const response = await fetchWithTimeout('/api/benchmarks/table', { timeout: 15000 });
     const tableText = await response.text();
     const tableElement = document.getElementById('benchmark-table');
     const listElement = document.getElementById('benchmarks-list');
@@ -1615,14 +1793,12 @@ async function fetchBenchmarkTable() {
 // Open file in editor (using Bun.openInEditor API)
 async function openFileInEditor(filePath, line, column) {
   try {
-    const response = await fetch('/api/open-file', {
+    const response = await fetchWithTimeout('/api/open-file', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ filePath, line, column }),
+      timeout: 10000,
     });
-    if (!response.ok) {
-      throw new Error(\`HTTP \${response.status}: \${response.statusText}\`);
-    }
     const result = await response.json();
     if (result.success) {
       console.log('File opened in editor:', filePath);
