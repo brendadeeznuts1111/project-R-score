@@ -54,9 +54,7 @@ function isPlaceholderSecret(value: string | null): boolean {
     normalized === 'replace_me' ||
     normalized === 'changeme' ||
     normalized === 'your_token_here' ||
-    normalized === 'your-token-here' ||
-    normalized.startsWith('your_') ||
-    normalized.startsWith('example_')
+    normalized === 'your-token-here'
   );
 }
 
