@@ -23,8 +23,10 @@ export * from './cli/terminal-color-256';
 // Documentation
 export * from './docs';
 
-// Security (NEW v5.1)
-export * from './security';
+// Security (NEW v5.1) - Note: AuditEntry and VersionMetadata conflicts will be resolved by specific imports
+export { VersionedSecretManager, SecurityUtils } from './security';
+export type { VersionMetadata as SecurityVersionMetadata } from './security';
+export type { AuditEntry as SecurityAuditEntry } from './security';
 
 // Version tracking system
 export * from './versioning/version-tracking';
@@ -39,12 +41,9 @@ export { styled, log, FW_COLORS } from './theme/colors';
 // export { FACTORYWAGER_CONFIG, PERFORMANCE_THRESHOLDS } from './config'; // Commented out - config module has import issues
 export { Utils } from './utils';
 export { DOC_PATTERNS, DocumentationUtils } from './docs';
-export { VersionedSecretManager, SecurityUtils } from './security';
+
 export {
   VersionTracker,
-  URLNormalizer,
-  UtilityFactory,
-  UtilityRegistry,
 } from './versioning/version-tracking';
 export {
   PackageManager,
@@ -58,6 +57,24 @@ export {
   type RSSFeedItem,
   type FeedSubscription,
 } from './rss/rss-manager';
+
+// NEW: Bun Documentation Integration
+export { 
+  BunDocumentationIntegration,
+  type BunDocumentationIndex,
+  type DocumentationCategory,
+  type DocumentationPage,
+  type CodeExample,
+  type BunMetricsExample
+} from './bun-documentation-integration';
+
+// NEW: Wiki Integration
+export { 
+  BunWikiIntegration,
+  type WikiPage,
+  type WikiCategory,
+  type WikiConfig
+} from './wiki/bun-wiki-integration';
 
 // HTTP utilities with HSL health endpoints
 export {
@@ -90,8 +107,8 @@ export const LIB_INFO = {
     'The heart of FactoryWager monorepo - centralized infrastructure with temporal security',
   author: 'FactoryWager Team',
   license: 'MIT',
-  developmentStandards: '.custom-instructions.md',
-  quickReference: 'DEVELOPMENT-STANDARDS.md',
+  developmentStandards: 'https://example.com/development-standards',
+  quickReference: 'https://example.com/quick-reference',
 } as const;
 
 /**
@@ -102,9 +119,6 @@ export const FW = {
   colors: FW_COLORS,
   styled,
   log,
-
-  // Config
-  // config: FACTORYWAGER_CONFIG, // Commented out - config module has import issues
 
   // Utils
   utils: Utils,
@@ -124,9 +138,6 @@ export const FW = {
   // Version Tracking
   versionTracking: {
     tracker: VersionTracker,
-    normalizer: URLNormalizer,
-    factory: UtilityFactory,
-    registry: UtilityRegistry,
   },
 
   // Package Management (NEW)
@@ -142,6 +153,16 @@ export const FW = {
   // RSS Management (NEW)
   rss: {
     manager: RSSManager,
+  },
+
+  // Bun Documentation Integration (NEW)
+  bunDocs: {
+    integration: BunDocumentationIntegration,
+  },
+
+  // Wiki Integration (NEW)
+  wiki: {
+    integration: BunWikiIntegration,
   },
 
   // HTTP Health Endpoints (NEW)

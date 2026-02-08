@@ -1,0 +1,77 @@
+{
+  "experiments": [
+    {
+      "id": "ui_variant_2024",
+      "name": "UI Design Variants 2024",
+      "trafficAllocation": 1,
+      "variants": [
+        {
+          "id": "control",
+          "weight": 0.5,
+          "features": [
+            "standard-ui"
+          ]
+        },
+        {
+          "id": "enhanced",
+          "weight": 0.3,
+          "features": [
+            "enhanced-ui",
+            "animations"
+          ]
+        },
+        {
+          "id": "minimal",
+          "weight": 0.2,
+          "features": [
+            "minimal-ui"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "performance_test",
+      "name": "Performance Optimization Test",
+      "trafficAllocation": 0.5,
+      "variants": [
+        {
+          "id": "standard",
+          "weight": 0.5,
+          "features": [
+            "standard-performance"
+          ]
+        },
+        {
+          "id": "optimized",
+          "weight": 0.5,
+          "features": [
+            "optimized-performance",
+            "prefetch"
+          ]
+        }
+      ]
+    }
+  ],
+  "featureFlags": [
+    {
+      "id": "enhanced_ui",
+      "name": "Enhanced UI",
+      "enabled": false
+    },
+    {
+      "id": "smart_prefetch",
+      "name": "Smart Prefetching",
+      "enabled": true
+    },
+    {
+      "id": "advanced_analytics",
+      "name": "Advanced Analytics",
+      "enabled": true
+    },
+    {
+      "id": "beta_features",
+      "name": "Beta Features",
+      "enabled": false
+    }
+  ]
+}

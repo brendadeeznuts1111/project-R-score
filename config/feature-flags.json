@@ -1,0 +1,87 @@
+{
+  "version": "1.0.0",
+  "updatedAt": "2026-02-05T03:40:16.927Z",
+  "flags": [
+    {
+      "id": "direct-urls-enabled",
+      "name": "Direct URLs Enabled",
+      "description": "Enable direct URL structure for utils endpoints",
+      "enabled": false,
+      "rolloutPercentage": 0,
+      "targetGroups": [],
+      "conditions": {
+        "environment": [
+          "development",
+          "staging"
+        ]
+      },
+      "metadata": {
+        "createdAt": "2026-02-05T03:40:16.917Z",
+        "updatedAt": "2026-02-05T03:40:16.917Z",
+        "version": "1.0.0",
+        "owner": "documentation-team"
+      }
+    },
+    {
+      "id": "fragment-redirects",
+      "name": "Fragment Redirects Active",
+      "description": "Enable 301 redirects from old fragment URLs to new direct URLs",
+      "enabled": true,
+      "rolloutPercentage": 100,
+      "targetGroups": [],
+      "conditions": {
+        "environment": [
+          "development",
+          "staging",
+          "production"
+        ]
+      },
+      "metadata": {
+        "createdAt": "2026-02-05T03:40:16.917Z",
+        "updatedAt": "2026-02-05T03:40:16.917Z",
+        "version": "1.0.0",
+        "owner": "documentation-team"
+      }
+    },
+    {
+      "id": "ab-testing-active",
+      "name": "A/B Testing Active",
+      "description": "Enable A/B testing for URL structure preferences",
+      "enabled": false,
+      "rolloutPercentage": 0,
+      "targetGroups": [],
+      "conditions": {
+        "environment": [
+          "production"
+        ]
+      },
+      "metadata": {
+        "createdAt": "2026-02-05T03:40:16.917Z",
+        "updatedAt": "2026-02-05T03:40:16.917Z",
+        "version": "1.0.0",
+        "owner": "documentation-team"
+      }
+    },
+    {
+      "id": "canary-deployment",
+      "name": "Canary Deployment Active",
+      "description": "Enable canary deployment for new URL structure",
+      "enabled": false,
+      "rolloutPercentage": 0,
+      "targetGroups": [
+        "canary-users"
+      ],
+      "conditions": {
+        "environment": [
+          "production"
+        ]
+      },
+      "metadata": {
+        "createdAt": "2026-02-05T03:40:16.917Z",
+        "updatedAt": "2026-02-05T03:40:16.917Z",
+        "version": "1.0.0",
+        "owner": "documentation-team"
+      }
+    }
+  ]
+}

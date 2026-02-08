@@ -1,0 +1,74 @@
+{
+  "abTests": {
+    "url_structure": {
+      "variants": [
+        "direct",
+        "fragments"
+      ],
+      "weights": [
+        50,
+        50
+      ],
+      "enabled": true
+    },
+    "doc_layout": {
+      "variants": [
+        "sidebar",
+        "topnav"
+      ],
+      "weights": [
+        60,
+        40
+      ],
+      "enabled": true
+    },
+    "cta_color": {
+      "variants": [
+        "blue",
+        "green",
+        "orange"
+      ],
+      "weights": [
+        34,
+        33,
+        33
+      ],
+      "enabled": true
+    },
+    "content_density": {
+      "variants": [
+        "compact",
+        "balanced",
+        "spacious"
+      ],
+      "weights": [
+        20,
+        60,
+        20
+      ],
+      "enabled": true
+    }
+  },
+  "tier1380": {
+    "r2Bucket": "scanner-cookies",
+    "publicApiUrl": "https://api.tier1380.com",
+    "variant": "production-live",
+    "cacheEnabled": true,
+    "cacheTTL": 300000,
+    "compressionLevel": 3,
+    "environment": "production"
+  },
+  "snapshot": {
+    "tier": "1380-enhanced",
+    "environment": "production",
+    "variant": "enhanced-live",
+    "cacheHit": "true",
+    "checksum": "5b6e38b626c6690077fa1dbccd347fbebc0d3d77",
+    "compressionRatio": "57.4",
+    "compressionLevel": "3",
+    "headersCount": "3",
+    "cookiesCount": "3",
+    "abTestsCount": "4"
+  },
+  "lastUpdated": "2026-02-05T04:25:06.256Z"
+}

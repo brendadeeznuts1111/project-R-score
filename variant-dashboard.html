@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FactoryWager Variant Testing Dashboard</title>
+    <meta name="description" content="Interactive dashboard for testing headers, cookies, and variants">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'><path d='M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z'/></svg>">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #22c55e;
+            --accent: #f59e0b;
+            --background: #ffffff;
+            --surface: #f8fafc;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.15);
+            --radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            padding: 1.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .variant-badge {
+            background: var(--accent);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        main {
+            padding: 3rem 0;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 4rem;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .card p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .status-item {
+            padding: 0.75rem;
+            background: var(--surface);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .status-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .status-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .button.secondary {
+            background: var(--secondary);
+        }
+
+        .button.secondary:hover {
+            background: #16a34a;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .feature-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+
+        .feature-name {
+            font-weight: 500;
+        }
+
+        .feature-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--secondary);
+        }
+
+        .feature-status.disabled {
+            background: var(--text-light);
+        }
+
+        .cookie-list {
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.75rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .cookie-item {
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background: white;
+            border-radius: 4px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .metric-card {
+            text-align: center;
+            padding: 1rem;
+            background: var(--surface);
+            border-radius: 8px;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+        }
+
+        .log-container {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.75rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin-bottom: 0.25rem;
+            padding: 0.25rem;
+            border-radius: 2px;
+        }
+
+        .log-entry.info {
+            color: #60a5fa;
+        }
+
+        .log-entry.success {
+            color: #34d399;
+        }
+
+        .log-entry.warning {
+            color: #fbbf24;
+        }
+
+        .log-entry.error {
+            color: #f87171;
+        }
+
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border);
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .footer p {
+            color: var(--text-light);
+        }
+
+        /* Variant-specific styles */
+        body.variant-enhanced {
+            --primary: #8b5cf6;
+            --primary-dark: #7c3aed;
+            --gradient: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+        }
+
+        body.variant-minimal {
+            --primary: #1f2937;
+            --primary-dark: #111827;
+            --gradient: linear-gradient(135deg, #1f2937 0%, #6b7280 100%);
+        }
+
+        body.variant-enhanced {
+            background: var(--gradient);
+        }
+
+        body.variant-minimal {
+            background: var(--gradient);
+        }
+
+        /* Animations for enhanced variant */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">FW</div>
+                    <span>Variant Testing Dashboard</span>
+                </div>
+                <div class="variant-badge" id="variant-badge">Loading...</div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="hero">
+                <h1>Variant Testing System</h1>
+                <p>Interactive testing for headers, cookies, prefetching, and A/B variants</p>
+            </section>
+
+            <div class="dashboard-grid">
+                <!-- Variant Information Card -->
+                <div class="card animate-fade-in">
+                    <div class="card-icon">🧪</div>
+                    <h3>Current Variant</h3>
+                    <p>Information about your assigned test variant and features</p>
+                    
+                    <div class="status-grid">
+                        <div class="status-item">
+                            <div class="status-value" id="variant-name">Control</div>
+                            <div class="status-label">Variant</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-value" id="variant-weight">50%</div>
+                            <div class="status-label">Weight</div>
+                        </div>
+                    </div>
+
+                    <div class="button-group" style="margin-top: 1rem;">
+                        <button class="button" onclick="rerollVariant()">🎲 Reroll Variant</button>
+                        <button class="button secondary" onclick="trackConversion()">📈 Track Conversion</button>
+                    </div>
+                </div>
+
+                <!-- Feature Flags Card -->
+                <div class="card animate-fade-in">
+                    <div class="card-icon">🚩</div>
+                    <h3>Feature Flags</h3>
+                    <p>Active feature flags based on your variant assignment</p>
+                    
+                    <ul class="feature-list" id="feature-list">
+                        <li class="feature-item">
+                            <span class="feature-name">Enhanced UI</span>
+                            <div class="feature-status disabled" id="feature-enhanced_ui"></div>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-name">Smart Prefetch</span>
+                            <div class="feature-status" id="feature-smart_prefetch"></div>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-name">Advanced Analytics</span>
+                            <div class="feature-status" id="feature-advanced_analytics"></div>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-name">Beta Features</span>
+                            <div class="feature-status disabled" id="feature-beta_features"></div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Cookies Card -->
+                <div class="card animate-fade-in">
+                    <div class="card-icon">🍪</div>
+                    <h3>Cookies</h3>
+                    <p>Session and tracking cookies for variant testing</p>
+                    
+                    <div class="button-group" style="margin-bottom: 1rem;">
+                        <button class="button" onclick="refreshCookies()">🔄 Refresh</button>
+                        <button class="button secondary" onclick="clearCookies()">🧹 Clear All</button>
+                    </div>
+
+                    <div class="cookie-list" id="cookie-list">
+                        Loading cookies...
+                    </div>
+                </div>
+
+                <!-- Headers Card -->
+                <div class="card animate-fade-in">
+                    <div class="card-icon">🔧</div>
+                    <h3>HTTP Headers</h3>
+                    <p>Security and performance headers for this page</p>
+                    
+                    <div class="button-group" style="margin-bottom: 1rem;">
+                        <button class="button" onclick="checkHeaders()">🔍 Check Headers</button>
+                        <button class="button secondary" onclick="addCustomHeader()">➕ Add Header</button>
+                    </div>
+
+                    <div class="cookie-list" id="header-list">
+                        Click "Check Headers" to analyze
+                    </div>
+                </div>
+
+                <!-- Analytics Card -->
+                <div class="card animate-fade-in">
+                    <div class="card-icon">📊</div>
+                    <h3>Analytics</h3>
+                    <p>Real-time analytics and event tracking</p>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value" id="event-count">0</div>
+                            <div class="metric-label">Events</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="click-count">0</div>
+                            <div class="metric-label">Clicks</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="conversion-count">0</div>
+                            <div class="metric-label">Conversions</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="session-time">0s</div>
+                            <div class="metric-label">Session Time</div>
+                        </div>
+                    </div>
+
+                    <div class="button-group" style="margin-top: 1rem;">
+                        <button class="button" onclick="trackEvent('test_event')">📝 Track Event</button>
+                        <button class="button secondary" onclick="exportAnalytics()">📥 Export Data</button>
+                    </div>
+                </div>
+
+                <!-- Logs Card -->
+                <div class="card animate-fade-in">
+                    <div class="card-icon">📝</div>
+                    <h3>Activity Log</h3>
+                    <p>Real-time activity and debugging information</p>
+                    
+                    <div class="button-group" style="margin-bottom: 1rem;">
+                        <button class="button" onclick="clearLog()">🧹 Clear Log</button>
+                        <button class="button secondary" onclick="exportLog()">📥 Export Log</button>
+                    </div>
+
+                    <div class="log-container" id="log-container">
+                        <div class="log-entry info">System initialized...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 FactoryWager Variant Testing System. Real-time A/B testing and analytics.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mock FactoryWager System
+        class MockFactoryWagerSystem {
+            constructor() {
+                this.currentVariant = this.assignVariant();
+                this.features = this.getFeaturesForVariant(this.currentVariant);
+                this.analytics = {
+                    events: [],
+                    clicks: 0,
+                    conversions: 0,
+                    sessionStart: Date.now()
+                };
+                this.cookies = this.initializeCookies();
+                this.setupVariantStyles();
+            }
+
+            assignVariant() {
+                const variants = [
+                    { id: 'control', name: 'Control', weight: 0.5, features: ['smart_prefetch', 'advanced_analytics'] },
+                    { id: 'enhanced', name: 'Enhanced', weight: 0.3, features: ['enhanced_ui', 'smart_prefetch', 'advanced_analytics'] },
+                    { id: 'minimal', name: 'Minimal', weight: 0.2, features: ['smart_prefetch'] }
+                ];
+
+                // Check for existing variant in cookie
+                const existingVariant = this.getCookie('fw_variant');
+                if (existingVariant) {
+                    return variants.find(v => v.id === existingVariant) || variants[0];
+                }
+
+                // Assign new variant
+                const random = Math.random();
+                let cumulativeWeight = 0;
+                
+                for (const variant of variants) {
+                    cumulativeWeight += variant.weight;
+                    if (random <= cumulativeWeight) {
+                        this.setCookie('fw_variant', variant.id, 86400);
+                        return variant;
+                    }
+                }
+                
+                return variants[0];
+            }
+
+            getFeaturesForVariant(variant) {
+                const allFeatures = ['enhanced_ui', 'smart_prefetch', 'advanced_analytics', 'beta_features'];
+                return allFeatures.map(feature => ({
+                    id: feature,
+                    enabled: variant.features.includes(feature)
+                }));
+            }
+
+            setupVariantStyles() {
+                if (this.currentVariant.id !== 'control') {
+                    document.body.className = `variant-${this.currentVariant.id}`;
+                }
+            }
+
+            initializeCookies() {
+                const cookies = {};
+                
+                // Set essential cookies
+                this.setCookie('fw_session', this.generateSessionId(), 3600);
+                this.setCookie('fw_analytics', 'granted', 2592000);
+                
+                return this.getAllCookies();
+            }
+
+            generateSessionId() {
+                return 'sess_' + Math.random().toString(36).substr(2, 16) + Date.now().toString(36);
+            }
+
+            setCookie(name, value, maxAge) {
+                document.cookie = `${name}=${encodeURIComponent(value)}; max-age=${maxAge}; path=/; samesite=lax`;
+            }
+
+            getCookie(name) {
+                const nameEQ = name + '=';
+                const cookies = document.cookie.split(';');
+                
+                for (let cookie of cookies) {
+                    cookie = cookie.trim();
+                    if (cookie.indexOf(nameEQ) === 0) {
+                        return decodeURIComponent(cookie.substring(nameEQ.length));
+                    }
+                }
+                
+                return null;
+            }
+
+            getAllCookies() {
+                const cookies = {};
+                const cookieArray = document.cookie.split(';');
+
+                for (let cookie of cookieArray) {
+                    const [name, value] = cookie.trim().split('=');
+                    if (name && value) {
+                        cookies[name] = decodeURIComponent(value);
+                    }
+                }
+
+                return cookies;
+            }
+
+            clearAllCookies() {
+                const cookies = this.getAllCookies();
+                Object.keys(cookies).forEach(name => {
+                    document.cookie = `${name}=; max-age=-1; path=/`;
+                });
+            }
+
+            isFeatureEnabled(featureId) {
+                const feature = this.features.find(f => f.id === featureId);
+                return feature?.enabled || false;
+            }
+
+            trackEvent(eventType, data = {}) {
+                const event = {
+                    type: eventType,
+                    timestamp: new Date().toISOString(),
+                    variant: this.currentVariant.id,
+                    data
+                };
+                
+                this.analytics.events.push(event);
+                this.logEvent(`Event tracked: ${eventType}`, 'info');
+            }
+
+            trackClick(element) {
+                this.analytics.clicks++;
+                this.trackEvent('click', { element });
+                this.logEvent(`Click tracked: ${element}`, 'info');
+            }
+
+            trackConversion(value = 1) {
+                this.analytics.conversions++;
+                this.trackEvent('conversion', { value });
+                this.logEvent(`Conversion tracked: ${value}`, 'success');
+            }
+
+            getSessionTime() {
+                return Math.floor((Date.now() - this.analytics.sessionStart) / 1000);
+            }
+
+            rerollVariant() {
+                this.clearAllCookies();
+                this.currentVariant = this.assignVariant();
+                this.features = this.getFeaturesForVariant(this.currentVariant);
+                this.cookies = this.initializeCookies();
+                this.setupVariantStyles();
+                this.logEvent(`Variant rerolled: ${this.currentVariant.name}`, 'warning');
+            }
+
+            logEvent(message, type = 'info') {
+                const logContainer = document.getElementById('log-container');
+                const entry = document.createElement('div');
+                entry.className = `log-entry ${type}`;
+                entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+                logContainer.appendChild(entry);
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }
+        }
+
+        // Initialize system
+        let system;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            system = new MockFactoryWagerSystem();
+            updateUI();
+            startMetricsUpdate();
+            
+            // Track page view
+            system.trackEvent('page_view', { page: 'variant_dashboard' });
+            
+            // Add click tracking to all buttons
+            document.querySelectorAll('.button').forEach(button => {
+                button.addEventListener('click', () => {
+                    system.trackClick(button.textContent);
+                });
+            });
+
+            system.logEvent('Dashboard initialized successfully', 'success');
+        });
+
+        function updateUI() {
+            // Update variant info
+            document.getElementById('variant-badge').textContent = system.currentVariant.name;
+            document.getElementById('variant-name').textContent = system.currentVariant.name;
+            document.getElementById('variant-weight').textContent = `${(system.currentVariant.weight * 100)}%`;
+
+            // Update feature flags
+            system.features.forEach(feature => {
+                const element = document.getElementById(`feature-${feature.id}`);
+                if (element) {
+                    element.className = `feature-status ${feature.enabled ? '' : 'disabled'}`;
+                }
+            });
+
+            // Update cookies
+            updateCookieList();
+        }
+
+        function updateCookieList() {
+            const cookieList = document.getElementById('cookie-list');
+            const cookies = system.getAllCookies();
+            
+            cookieList.innerHTML = Object.entries(cookies)
+                .map(([name, value]) => 
+                    `<div class="cookie-item"><strong>${name}:</strong> ${value}</div>`
+                )
+                .join('');
+        }
+
+        function startMetricsUpdate() {
+            setInterval(() => {
+                document.getElementById('event-count').textContent = system.analytics.events.length;
+                document.getElementById('click-count').textContent = system.analytics.clicks;
+                document.getElementById('conversion-count').textContent = system.analytics.conversions;
+                document.getElementById('session-time').textContent = `${system.getSessionTime()}s`;
+            }, 1000);
+        }
+
+        // UI Functions
+        function rerollVariant() {
+            system.rerollVariant();
+            updateUI();
+        }
+
+        function trackConversion() {
+            system.trackConversion(Math.floor(Math.random() * 100) + 1);
+        }
+
+        function refreshCookies() {
+            updateCookieList();
+            system.logEvent('Cookies refreshed', 'info');
+        }
+
+        function clearCookies() {
+            system.clearAllCookies();
+            system.cookies = system.initializeCookies();
+            updateCookieList();
+            system.logEvent('All cookies cleared', 'warning');
+        }
+
+        function checkHeaders() {
+            const headerList = document.getElementById('header-list');
+            const headers = {
+                'X-Variant': system.currentVariant.id,
+                'X-Experiment': 'ui_variant_2024',
+                'X-Session-ID': system.getCookie('fw_session'),
+                'X-Frame-Options': 'DENY',
+                'X-Content-Type-Options': 'nosniff',
+                'X-XSS-Protection': '1; mode=block'
+            };
+            
+            headerList.innerHTML = Object.entries(headers)
+                .map(([name, value]) => 
+                    `<div class="cookie-item"><strong>${name}:</strong> ${value}</div>`
+                )
+                .join('');
+                
+            system.logEvent('Headers analyzed', 'info');
+        }
+
+        function addCustomHeader() {
+            const name = prompt('Header name:');
+            const value = prompt('Header value:');
+            
+            if (name && value) {
+                system.logEvent(`Custom header added: ${name}=${value}`, 'info');
+            }
+        }
+
+        function trackEvent(eventType) {
+            system.trackEvent(eventType);
+        }
+
+        function clearLog() {
+            document.getElementById('log-container').innerHTML = 
+                '<div class="log-entry info">Log cleared...</div>';
+        }
+
+        function exportLog() {
+            const logs = Array.from(document.querySelectorAll('.log-entry'))
+                .map(entry => entry.textContent)
+                .join('\n');
+            
+            const blob = new Blob([logs], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `factory-wager-logs-${Date.now()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            system.logEvent('Log exported', 'success');
+        }
+
+        function exportAnalytics() {
+            const data = {
+                variant: system.currentVariant,
+                features: system.features,
+                analytics: system.analytics,
+                cookies: system.cookies,
+                exportTime: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `factory-wager-analytics-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            system.logEvent('Analytics exported', 'success');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "session": {
+    "name": "fw_session",
+    "duration": 3600,
+    "domain": ".factory-wager.com",
+    "secure": true,
+    "httpOnly": true,
+    "sameSite": "strict"
+  },
+  "analytics": {
+    "name": "fw_analytics",
+    "duration": 2592000,
+    "domain": ".factory-wager.com",
+    "secure": true,
+    "sameSite": "lax"
+  },
+  "variants": {
+    "name": "fw_variant",
+    "duration": 86400,
+    "domain": ".factory-wager.com",
+    "secure": true,
+    "sameSite": "lax"
+  },
+  "preferences": {
+    "name": "fw_preferences",
+    "duration": 31536000,
+    "domain": ".factory-wager.com",
+    "secure": true,
+    "sameSite": "lax"
+  }
+}

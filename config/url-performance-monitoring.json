@@ -1,0 +1,41 @@
+{
+  "urls": [
+    {
+      "url": "https://bun.sh/docs",
+      "threshold": 2000,
+      "category": "documentation"
+    },
+    {
+      "url": "https://bun.sh/docs/api",
+      "threshold": 1000,
+      "category": "documentation"
+    },
+    {
+      "url": "https://bun.sh/docs/cli",
+      "threshold": 1000,
+      "category": "documentation"
+    },
+    {
+      "url": "https://github.com/oven-sh/bun",
+      "threshold": 1500,
+      "category": "github"
+    },
+    {
+      "url": "https://registry.npmjs.org",
+      "threshold": 1000,
+      "category": "registry"
+    }
+  ],
+  "monitoring": {
+    "interval": 300000,
+    "retries": 3,
+    "timeout": 10000,
+    "alertThreshold": 5000
+  },
+  "optimization": {
+    "caching": true,
+    "cacheTTL": 300000,
+    "compression": true,
+    "cdn": "cloudflare"
+  }
+}

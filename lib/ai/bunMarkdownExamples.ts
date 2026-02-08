@@ -551,14 +551,13 @@ export const withPerformanceMonitoring = (renderFn: (markdown: string) => string
   const metrics: PerformanceMetrics[] = [];
 
   return (markdown: string): string => {
-    const startTime = performance.now();
+    const startNs = Bun.nanoseconds();
     const documentSize = markdown.length;
     const timestamp = Date.now();
 
     const result = renderFn(markdown);
 
-    const endTime = performance.now();
-    const renderTime = endTime - startTime;
+    const renderTime = (Bun.nanoseconds() - startNs) / 1e6; // ms
 
     metrics.push({
       renderTime,

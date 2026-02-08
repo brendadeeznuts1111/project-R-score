@@ -1,0 +1,50 @@
+# AI Operations Manager Configuration
+# Enhanced v2.0 with Bun-native features
+
+# Performance Settings
+performance:
+  max_concurrent_commands: 10
+  prediction_accuracy_threshold: 0.75
+  optimization_interval_ms: 1000
+
+# Memory Management
+memory:
+  max_insights: 1000
+  max_completed_commands: 500
+  cleanup_interval_ms: 300000
+  command_ttl_ms: 3600000
+  insight_ttl_ms: 7200000
+
+# Caching Integration
+cache:
+  enable_global_cache: true
+  cache_strategy: "lru"
+  default_ttl_ms: 300000
+
+# Prediction Settings
+prediction:
+  enable_deep_equality: true
+  historical_data_points:
+    hour: 60
+    day: 144
+    week: 1008
+  confidence_threshold: 0.7
+
+# Security Settings
+security:
+  enable_thread_safety: true
+  mutex_timeout_ms: 5000
+  audit_logging: true
+
+# Monitoring
+monitoring:
+  enable_performance_metrics: true
+  log_level: "info"
+  enable_editor_integration: true
+
+# Integration Points
+integrations:
+  secret_management: true
+  global_caches: true
+  structured_logger: true
+  anomaly_detector: true

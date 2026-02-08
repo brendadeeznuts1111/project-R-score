@@ -1,0 +1,48 @@
+{
+  "security": {
+    "headers": {
+      "X-Frame-Options": "DENY",
+      "X-Content-Type-Options": "nosniff",
+      "X-XSS-Protection": "1; mode=block",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+      "Referrer-Policy": "strict-origin-when-cross-origin",
+      "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+      "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://registry.factory-wager.com https://npm.factory-wager.com https://cache.factory-wager.com https://metrics.factory-wager.com"
+    }
+  },
+  "performance": {
+    "headers": {
+      "Cache-Control": "public, max-age=31536000, immutable",
+      "ETag": "W/\"v1.0.0\"",
+      "Last-Modified": "Sat, 08 Feb 2026 02:07:00 GMT",
+      "Vary": "Accept-Encoding, Cookie, User-Agent",
+      "X-DNS-Prefetch-Control": "on"
+    }
+  },
+  "registry": {
+    "headers": {
+      "X-Registry-Version": "1.0.0",
+      "X-Registry-Provider": "FactoryWager",
+      "Access-Control-Allow-Origin": "https://factory-wager.com https://wiki.factory-wager.com https://dashboard.factory-wager.com",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
+      "Access-Control-Max-Age": "86400"
+    }
+  },
+  "analytics": {
+    "headers": {
+      "X-Analytics-Enabled": "true",
+      "X-Metrics-Endpoint": "https://metrics.factory-wager.com/events",
+      "X-Session-ID": "${SESSION_ID}",
+      "X-Request-ID": "${REQUEST_ID}"
+    }
+  },
+  "variants": {
+    "headers": {
+      "X-Variant": "${VARIANT_ID}",
+      "X-Experiment": "${EXPERIMENT_ID}",
+      "X-Variant-Weight": "${VARIANT_WEIGHT}",
+      "X-Test-Group": "${TEST_GROUP}"
+    }
+  }
+}

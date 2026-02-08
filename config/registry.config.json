@@ -1,0 +1,64 @@
+{
+  "name": "FactoryWager Private Registry",
+  "url": "https://npm.factory-wager.com",
+  "storage": {
+    "type": "r2",
+    "bucket": "npm-registry",
+    "prefix": "packages/",
+    "region": "auto"
+  },
+  "cdn": {
+    "enabled": true,
+    "url": "https://npm.factory-wager.com",
+    "signedUrls": false,
+    "expirySeconds": 3600
+  },
+  "auth": {
+    "type": "jwt",
+    "tokenExpiry": "7d"
+  },
+  "uplinks": [
+    {
+      "name": "npmjs",
+      "url": "https://registry.npmjs.org",
+      "cache": true,
+      "cacheMaxAge": 3600
+    }
+  ],
+  "packages": [
+    {
+      "pattern": "@factorywager/*",
+      "access": "authenticated",
+      "publish": ["admin", "developer"],
+      "proxy": false
+    },
+    {
+      "pattern": "@duoplus/*",
+      "access": "authenticated",
+      "publish": ["admin", "developer"],
+      "proxy": false
+    },
+    {
+      "pattern": "*",
+      "access": "all",
+      "proxy": ["npmjs"]
+    }
+  ],
+  "publish": {
+    "allowOffline": false,
+    "checkScope": true,
+    "access": "restricted"
+  },
+  "middlewares": {
+    "audit": true,
+    "rateLimit": {
+      "windowMs": 60000,
+      "maxRequests": 100
+    }
+  },
+  "logging": {
+    "level": "info",
+    "format": "json",
+    "destination": "stdout"
+  }
+}

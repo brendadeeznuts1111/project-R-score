@@ -428,7 +428,7 @@ export class AnomalyDetector extends EventEmitter {
     const type = this.determineAnomalyType(metricName);
 
     return {
-      id: `anomaly-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
+      id: `anomaly-${Bun.randomUUIDv7()}`,
       type,
       severity,
       title: `${metricName} Anomaly Detected`,
@@ -453,7 +453,7 @@ export class AnomalyDetector extends EventEmitter {
    */
   private async createRuleBasedAnomaly(data: MetricData, rule: DetectionRule): Promise<Anomaly> {
     return {
-      id: `rule-anomaly-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
+      id: `rule-anomaly-${Bun.randomUUIDv7()}`,
       type: rule.type,
       severity: rule.severity,
       title: rule.name,
@@ -545,7 +545,7 @@ export class AnomalyDetector extends EventEmitter {
       const value = data.metrics[metric];
       if (value !== undefined && value > threshold) {
         const anomaly: Anomaly = {
-          id: `critical-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
+          id: `critical-${Bun.randomUUIDv7()}`,
           type: 'operational',
           severity: 'critical',
           title: `Critical ${metric} Alert`,
@@ -677,7 +677,7 @@ export class AnomalyDetector extends EventEmitter {
    */
   private async findRelatedEvents(data: MetricData, metricName: string): Promise<string[]> {
     // In a real implementation, query logs and events
-    return [`event-${Date.now()}-1`, `event-${Date.now()}-2`];
+    return [`event-${Bun.randomUUIDv7()}`, `event-${Bun.randomUUIDv7()}`];
   }
 
   /**

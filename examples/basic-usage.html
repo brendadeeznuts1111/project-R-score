@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FactoryWager System Example</title>
+</head>
+<body>
+    <div id="app">
+        <h1>FactoryWager System Demo</h1>
+        <div id="variant-info"></div>
+        <div id="feature-flags"></div>
+        <button id="track-button">Track Event</button>
+    </div>
+
+    <script type="module">
+        import { initializeFactoryWagerSystem } from '../factory-wager-system.js';
+
+        async function init() {
+            // Initialize the system
+            const system = await initializeFactoryWagerSystem();
+
+            // Display current variant
+            const variant = system.getCurrentVariant();
+            document.getElementById('variant-info').innerHTML = 
+                `<h2>Current Variant: ${variant?.name || 'Control'}</h2>`;
+
+            // Display feature flags
+            const features = ['enhanced_ui', 'smart_prefetch', 'advanced_analytics'];
+            const featureHtml = features.map(feature => 
+                `<div>${feature}: ${system.isFeatureEnabled(feature) ? '✅' : '❌'}</div>`
+            ).join('');
+            document.getElementById('feature-flags').innerHTML = 
+                `<h2>Feature Flags:</h2>${featureHtml}`;
+
+            // Add tracking to button
+            const button = document.getElementById('track-button');
+            system.withTracking(button, 'ui_variant_2024');
+            
+            button.addEventListener('click', () => {
+                system.trackEvent('button_click', {
+                    button_id: 'track_button',
+                    variant: variant?.id
+                });
+            });
+
+            // Prefetch some resources
+            system.prefetchResource('https://dashboard.factory-wager.com', 'prefetch');
+        }
+
+        init();
+    </script>
+</body>
+</html>

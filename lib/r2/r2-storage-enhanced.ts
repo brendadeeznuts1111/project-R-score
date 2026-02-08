@@ -28,7 +28,17 @@ export class R2Storage {
   }
 
   async createBucketForPackage(packageName: string): Promise<string> {
-    const sanitized = packageName.replace(/[@/]/g, '-');
+    // Enhanced input sanitization
+    const sanitized = packageName
+      .replace(/[^a-zA-Z0-9\-_\.]/g, '-') // Replace invalid chars with dash
+      .replace(/^-+|-+$/g, '') // Remove leading/trailing dashes
+      .toLowerCase()
+      .substring(0, 50); // Limit length
+      
+    if (!sanitized || sanitized.length < 1) {
+      throw new Error('Package name contains no valid characters after sanitization');
+    }
+    
     const bucketName = `bun-docs-${sanitized}-${Date.now().toString(36)}`;
 
     await this.createBucket(bucketName);
@@ -48,20 +58,10 @@ export class R2Storage {
   async uploadPackageDocs(packageName: string, docs: any): Promise<string> {
     const bucketName = await this.getOrCreateBucket(packageName);
     const key = `packages/${packageName}/${Date.now()}/docs.json`;
-
-    // Compress with Bun's zstd
-    try {
-      const compressed = Bun.zstdCompressSync(JSON.stringify(docs));
-      await this.put(bucketName, key, compressed);
-    } catch {
-      // Fallback to uncompressed if zstd not available
-      await this.put(bucketName, key, Buffer.from(JSON.stringify(docs)));
-    }
-
-    // Generate and upload static HTML docs
-    const html = await this.generateHtmlDocs(packageName, docs);
-    await this.put(bucketName, `packages/${packageName}/index.html`, Buffer.from(html));
-
+    
+    const compressedData = Buffer.from(JSON.stringify(docs));
+    await this.put(bucketName, key, compressedData);
+    
     return `https://${bucketName}.${this.config.accountId}.r2.dev/packages/${packageName}/`;
   }
 
@@ -105,31 +105,13 @@ export class R2Storage {
     console.log(`🔄 Syncing ${packageName} cache to R2...`);
 
     const bucket = await this.getOrCreateBucket(packageName);
-    const batch: Array<{ key: string; value: Buffer }> = [];
 
     for (const [key, value] of localCache.entries()) {
-      try {
-        const compressed = Bun.zstdCompressSync(JSON.stringify(value));
-        batch.push({
-          key: `cache/${packageName}/${key}`,
-          value: compressed,
-        });
-      } catch {
-        batch.push({
-          key: `cache/${packageName}/${key}`,
-          value: Buffer.from(JSON.stringify(value)),
-        });
-      }
+      const data = Buffer.from(JSON.stringify(value));
+      await this.put(this.config.defaultBucket, `cache/${packageName}/${key}`, data);
     }
 
-    // Upload in batches of 100
-    for (let i = 0; i < batch.length; i += 100) {
-      const chunk = batch.slice(i, i + 100);
-      await Promise.all(chunk.map(item => this.put(bucket, item.key, item.value)));
-      console.log(`Uploaded ${Math.min(i + 100, batch.length)}/${batch.length} items`);
-    }
-
-    console.log('✅ Cache sync complete');
+    console.log(`Uploaded ${localCache.size} items`);
   }
 
   async getPackageDocs(packageName: string, version?: string): Promise<any> {
@@ -137,15 +119,10 @@ export class R2Storage {
       ? `packages/${packageName}/${version}/docs.json`
       : `packages/${packageName}/latest/docs.json`;
 
-    const data = await this.get(await this.getOrCreateBucket(packageName), key);
+    const data = await this.getPrivate(await this.getOrCreateBucket(packageName), key);
     if (!data) return null;
 
-    try {
-      const decompressed = Bun.zstdDecompressSync(data);
-      return JSON.parse(decompressed.toString());
-    } catch {
-      return JSON.parse(data.toString());
-    }
+    return JSON.parse(data.toString());
   }
 
   async listPackages(): Promise<Array<{ name: string; versions: string[]; lastUpdated: string }>> {
@@ -182,20 +159,44 @@ export class R2Storage {
   }
 
   private async put(bucket: string, key: string, data: Buffer): Promise<void> {
-    await fetch(`${this.endpoint}/${bucket}/${key}`, {
-      method: 'PUT',
-      headers: this.getAuthHeaders('PUT', `/${bucket}/${key}`),
-      body: data,
-    });
+    try {
+      const response = await fetch(`${this.endpoint}/${bucket}/${key}`, {
+        method: 'PUT',
+        headers: this.getAuthHeaders('PUT', `/${bucket}/${key}`),
+        body: new Uint8Array(data),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to upload to R2: ${response.status} ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error(`Failed to put ${bucket}/${key}:`, error);
+      throw error; // Re-throw to allow caller to handle
+    }
   }
 
-  private async get(bucket: string, key: string): Promise<Buffer | null> {
-    const response = await fetch(`${this.endpoint}/${bucket}/${key}`, {
-      headers: this.getAuthHeaders('GET', `/${bucket}/${key}`),
-    });
+  private async getPrivate(bucket: string, key: string): Promise<Buffer | null> {
+    try {
+      const response = await fetch(`${this.endpoint}/${bucket}/${key}`, {
+        headers: this.getAuthHeaders('GET', `/${bucket}/${key}`),
+      });
 
-    if (!response.ok) return null;
-    return Buffer.from(await response.arrayBuffer());
+      if (!response.ok) return null;
+      return Buffer.from(await response.arrayBuffer());
+    } catch (error) {
+      console.error(`Failed to get ${bucket}/${key}:`, error);
+      return null;
+    }
+  }
+
+  // Public methods for external usage
+  public async get(key: string): Promise<string | null> {
+    const data = await this.getPrivate(this.config.defaultBucket, key);
+    return data ? data.toString() : null;
+  }
+
+  public async upload(key: string, data: string): Promise<void> {
+    await this.put(this.config.defaultBucket, key, Buffer.from(data));
   }
 
   private async putJson(key: string, data: any): Promise<void> {
@@ -203,23 +204,61 @@ export class R2Storage {
   }
 
   private async getJson(key: string): Promise<any> {
-    const data = await this.get(this.config.defaultBucket, key);
+    const data = await this.getPrivate(this.config.defaultBucket, key);
     return data ? JSON.parse(data.toString()) : null;
   }
 
   private async listObjects(prefix: string): Promise<any[]> {
-    const response = await fetch(`${this.endpoint}/${this.config.defaultBucket}?prefix=${prefix}`, {
-      headers: this.getAuthHeaders('GET', `/${this.config.defaultBucket}`),
-    });
+    try {
+      const response = await fetch(`${this.endpoint}/${this.config.defaultBucket}?prefix=${prefix}`, {
+        headers: this.getAuthHeaders('GET', `/${this.config.defaultBucket}`),
+      });
 
-    const xml = await response.text();
-    // Parse XML response
-    return this.parseListObjectsResponse(xml);
+      if (!response.ok) {
+        throw new Error(`Failed to list objects: ${response.status} ${response.statusText}`);
+      }
+
+      const xml = await response.text();
+      // Parse XML response
+      return this.parseListObjectsResponse(xml);
+    } catch (error) {
+      console.error('Failed to list objects:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Parse S3 XML response for list objects
+   */
+  private parseListObjectsResponse(xml: string): any[] {
+    const objects: any[] = [];
+    
+    // Simple XML parsing for S3 ListObjects response
+    // In production, you'd want to use a proper XML parser
+    const keyMatches = xml.match(/<Key>([^<]+)<\/Key>/g);
+    
+    if (keyMatches) {
+      for (const match of keyMatches) {
+        const key = match.replace(/<Key>([^<]+)<\/Key>/, '$1');
+        objects.push({ key });
+      }
+    }
+    
+    return objects;
   }
 
   async getOrCreateBucket(packageName: string): Promise<string> {
+    // Input validation
+    if (!packageName || typeof packageName !== 'string' || packageName.trim().length === 0) {
+      throw new Error('Invalid package name: must be a non-empty string');
+    }
+
     const config = await this.getJson(`_config/${packageName}/bucket.json`);
-    return config?.bucket || (await this.createBucketForPackage(packageName));
+    if (config?.bucket && typeof config.bucket === 'string') {
+      return config.bucket;
+    }
+    
+    return await this.createBucketForPackage(packageName);
   }
 
   private getAuthHeaders(method: string, path: string): HeadersInit {
@@ -228,16 +267,5 @@ export class R2Storage {
       Authorization: `Bearer ${this.config.accessKeyId}:${this.config.secretAccessKey}`,
       'Content-Type': 'application/json',
     };
-  }
-
-  private parseListObjectsResponse(xml: string): any[] {
-    // Simplified XML parsing
-    const keys = xml.match(/<Key>([^<]+)<\/Key>/g) || [];
-    const sizes = xml.match(/<Size>([^<]+)<\/Size>/g) || [];
-
-    return keys.map((key, i) => ({
-      Key: key.replace(/<\/?Key>/g, ''),
-      Size: sizes[i] ? parseInt(sizes[i].replace(/<\/?Size>/g, '')) : 0,
-    }));
   }
 }

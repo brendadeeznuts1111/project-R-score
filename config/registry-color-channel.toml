@@ -1,0 +1,207 @@
+# ─── Table 1: Color Channel Registry ───────────────────────────────────────────────────
+# Maps internal Channel IDs to Bun.color() compatible channel data.
+# Used by `lib/color.ts` for validation and `bun artifact audit` verification.
+# ───────────────────────────────────────────────────────────────────────────────────────
+
+[[channel_registry]]
+channel_id    = "M1"
+hex_red_value = "#2E"
+red_channel   = 1
+green_channel = 9
+blue_channel  = 0
+alpha_channel = 1
+red_byte_hex  = "2E"
+green_byte_hex= "E6"
+blue_byte_hex = "19"
+alpha_byte_hex= "FF"
+coverage_pct  = 95
+owner_code    = "S"
+tier_level    = 1
+api_version   = 1
+encoding_type = "U"   # UTF-8
+is_synced     = true
+byte_position = 4
+channel_mode  = "R"   # Read-Only
+engine_type   = "Z"   # Zig/Native
+source_type   = "C"   # Computed
+
+[[channel_registry]]
+channel_id    = "M2"
+hex_red_value = "#4A"
+red_channel   = 2
+green_channel = 9
+blue_channel  = 0
+alpha_channel = 1
+red_byte_hex  = "4A"
+green_byte_hex= "E6"
+blue_byte_hex = "19"
+alpha_byte_hex= "FF"
+coverage_pct  = 88
+owner_code    = "O"
+tier_level    = 1
+api_version   = 1
+encoding_type = "U"
+is_synced     = true
+byte_position = 3
+channel_mode  = "R"
+engine_type   = "Z"
+source_type   = "C"
+
+[[channel_registry]]
+channel_id    = "M3"
+hex_red_value = "#8C"
+red_channel   = 5
+green_channel = 9
+blue_channel  = 0
+alpha_channel = 1
+red_byte_hex  = "8C"
+green_byte_hex= "E6"
+blue_byte_hex = "19"
+alpha_byte_hex= "FF"
+coverage_pct  = 72
+owner_code    = "D"
+tier_level    = 1
+api_version   = 1
+encoding_type = "U"
+is_synced     = true
+byte_position = 2
+channel_mode  = "R"
+engine_type   = "Z"
+source_type   = "C"
+
+[[channel_registry]]
+channel_id    = "M4"
+hex_red_value = "#D1"
+red_channel   = 8
+green_channel = 9
+blue_channel  = 0
+alpha_channel = 1
+red_byte_hex  = "D1"
+green_byte_hex= "E6"
+blue_byte_hex = "19"
+alpha_byte_hex= "FF"
+coverage_pct  = 55
+owner_code    = "Q"
+tier_level    = 1
+api_version   = 1
+encoding_type = "U"
+is_synced     = true
+byte_position = 1
+channel_mode  = "R"
+engine_type   = "Z"
+source_type   = "C"
+
+[[channel_registry]]
+channel_id    = "M5"
+hex_red_value = "#E6"
+red_channel   = 9
+green_channel = 2
+blue_channel  = 0
+alpha_channel = 1
+red_byte_hex  = "E6"
+green_byte_hex= "4A"
+blue_byte_hex = "19"
+alpha_byte_hex= "FF"
+coverage_pct  = 12
+owner_code    = "L"
+tier_level    = 1
+api_version   = 1
+encoding_type = "U"
+is_synced     = true
+byte_position = 0
+channel_mode  = "R"
+engine_type   = "Z"
+source_type   = "C"
+
+# ─── Table 2: Throughput & Efficiency Ledger ───────────────────────────────────────────
+# Correlates Bun.color() operations with Golden Matrix performance metrics.
+# Columns optimized for 95-char terminal width.
+# ───────────────────────────────────────────────────────────────────────────────────────
+
+[[throughput_ledger]]
+operation_code = "aB"      # arrayBuffer()
+latency_p99    = "7u"      # 7 microseconds
+efficiency_pct = 9
+red_hex        = "22"
+green_hex      = "E6"
+blue_hex       = "19"
+red_val        = 1
+green_val      = 9
+blue_val       = 0
+alpha_val      = 1
+alpha_hex      = "FF"
+jit_enabled    = true
+memory_used    = "4M"
+cpu_percent    = 1
+ref_count      = 1
+throughput_mbs = "12"
+luminosity     = "50"
+hue_angle      = "77"
+latency_ms     = 8
+avx_accel      = true
+
+[[throughput_ledger]]
+operation_code = "sm"      # stream()
+latency_p99    = "2u"
+efficiency_pct = 9
+red_hex        = "2E"
+green_hex      = "E6"
+blue_hex       = "19"
+red_val        = 1
+green_val      = 9
+blue_val       = 0
+alpha_val      = 1
+alpha_hex      = "FF"
+jit_enabled    = true
+memory_used    = "8M"
+cpu_percent    = 1
+ref_count      = 2
+throughput_mbs = "12"
+luminosity     = "52"
+hue_angle      = "80"
+latency_ms     = 8
+avx_accel      = true
+
+[[throughput_ledger]]
+operation_code = "tx"      # text()
+latency_p99    = "5u"
+efficiency_pct = 9
+red_hex        = "3A"
+green_hex      = "E6"
+blue_hex       = "19"
+red_val        = 2
+green_val      = 9
+blue_val       = 0
+alpha_val      = 1
+alpha_hex      = "FF"
+jit_enabled    = true
+memory_used    = "5K"
+cpu_percent    = 1
+ref_count      = 3
+throughput_mbs = "12"
+luminosity     = "55"
+hue_angle      = "84"
+latency_ms     = 8
+avx_accel      = true
+
+[[throughput_ledger]]
+operation_code = "en"      # encode/brotli
+latency_p99    = "8m"      # 8 milliseconds
+efficiency_pct = 8
+red_hex        = "57"
+green_hex      = "E6"
+blue_hex       = "19"
+red_val        = 3
+green_val      = 9
+blue_val       = 0
+alpha_val      = 1
+alpha_hex      = "FF"
+jit_enabled    = true
+memory_used    = "HM"      # Heap Memory
+cpu_percent    = 1
+ref_count      = 4
+throughput_mbs = "12"
+luminosity     = "62"
+hue_angle      = "88"
+latency_ms     = 8
+avx_accel      = true

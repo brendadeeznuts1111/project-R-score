@@ -2,11 +2,9 @@
 
 import { logger } from '../core/structured-logger';
 import { globalCaches } from '../performance/cache-manager';
-import { nanoseconds, deepEquals, openInEditor } from 'bun';
-import * as yaml from 'js-yaml'; // Use js-yaml instead of bun.yaml
+import { YAML } from 'bun';
 import { Mutex } from '../core/safe-concurrency';
 import { EventEmitter } from 'events';
-import { performance } from 'perf_hooks';
 
 export interface AICommand {
   id: string;
@@ -208,7 +206,7 @@ export class AdvancedLRUCache<T> extends EventEmitter {
   }
 
   set(key: string, value: T, ttl?: number): void {
-    const startTime = this.enableStats ? performance.now() : 0;
+    const startTime = this.enableStats ? Bun.nanoseconds() : 0;
     const expires = Date.now() + (ttl || this.defaultTTL);
 
     if (this.cache.has(key)) {
@@ -268,7 +266,7 @@ export class AdvancedLRUCache<T> extends EventEmitter {
     this.updateStats(async () => {
       this.totalSets++;
       if (startTime > 0) {
-        this.totalAccessTime += performance.now() - startTime;
+        this.totalAccessTime += Bun.nanoseconds() - startTime;
       }
     });
 
@@ -283,7 +281,7 @@ export class AdvancedLRUCache<T> extends EventEmitter {
   }
 
   get(key: string): T | null {
-    const startTime = this.enableStats ? performance.now() : 0;
+    const startTime = this.enableStats ? Bun.nanoseconds() : 0;
     const node = this.cache.get(key);
 
     if (!node) {
@@ -335,7 +333,7 @@ export class AdvancedLRUCache<T> extends EventEmitter {
       this.hits++;
       this.totalGets++;
       if (startTime > 0) {
-        this.totalAccessTime += performance.now() - startTime;
+        this.totalAccessTime += Bun.nanoseconds() - startTime;
       }
     });
 
@@ -456,7 +454,7 @@ export class AdvancedLRUCache<T> extends EventEmitter {
       evictions: this.evictions,
       totalSets: this.totalSets,
       totalGets: this.totalGets,
-      averageAccessTime: this.totalGets > 0 ? this.totalAccessTime / this.totalGets : 0,
+      averageAccessTime: this.totalGets > 0 ? (this.totalAccessTime / this.totalGets) / 1e6 : 0,
       memoryUsage: this.memoryUsage,
       oldestEntry: this.oldestEntry > 0 ? this.oldestEntry : undefined,
       newestEntry: this.newestEntry > 0 ? this.newestEntry : undefined,
@@ -888,13 +886,13 @@ export class AIOperationsManager extends EventEmitter {
     return AIOperationsManager.instance;
   }
 
-  // Enhanced: Load config from YAML using js-yaml
+  // Load config from YAML using Bun-native YAML parser
   private async loadConfig() {
     try {
       const configFile = Bun.file('ai-config.yaml');
       if (await configFile.exists()) {
         const content = await configFile.text();
-        this.config = yaml.load(content) as Record<string, any>;
+        this.config = YAML.parse(content) as Record<string, any>;
         logger.info('AI config loaded from YAML', {
           keys: Object.keys(this.config),
         });
@@ -906,7 +904,7 @@ export class AIOperationsManager extends EventEmitter {
       // Only open editor in development environment
       if (Bun.env.NODE_ENV === 'development') {
         const fileName = __filename || 'ai-operations-manager.ts';
-        openInEditor(`file://${fileName}`, { line: 50 }); // Open at loadConfig line
+        Bun.openInEditor(`file://${fileName}`, { line: 50 }); // Open at loadConfig line
       }
     }
   }
@@ -1056,7 +1054,7 @@ export class AIOperationsManager extends EventEmitter {
 
     if (filter?.compareData) {
       return insights.filter(
-        insight => insight.data && deepEquals(insight.data, filter.compareData!)
+        insight => insight.data && Bun.deepEquals(insight.data, filter.compareData!)
       );
     }
 
@@ -1298,7 +1296,7 @@ export class AIOperationsManager extends EventEmitter {
    */
   async executeOptimization(commandId: string): Promise<OptimizationResult> {
     return await this.mutex.withLock(async () => {
-      const start = nanoseconds();
+      const start = Bun.nanoseconds();
       const correlationId = this.generateCorrelationId();
 
       // Check if result already exists
@@ -1389,7 +1387,7 @@ export class AIOperationsManager extends EventEmitter {
         };
 
         result.success = true;
-        result.executionTime = (nanoseconds() - start) / 1e6;
+        result.executionTime = (Bun.nanoseconds() - start) / 1e6;
 
         // Calculate metrics if improvements exist
         if (result.improvements.length > 0) {
@@ -1438,10 +1436,10 @@ export class AIOperationsManager extends EventEmitter {
         // Only open editor in development environment
         if (Bun.env.NODE_ENV === 'development') {
           const fileName = __filename || 'ai-operations-manager.ts';
-          openInEditor(`file://${fileName}`, { line: 200 }); // Open at error line for debug
+          Bun.openInEditor(`file://${fileName}`, { line: 200 }); // Open at error line for debug
         }
 
-        result.executionTime = (nanoseconds() - start) / 1e6;
+        result.executionTime = (Bun.nanoseconds() - start) / 1e6;
 
         // Store failed result for retrieval
         this.completedCommands.set(commandId, result);
@@ -1495,14 +1493,14 @@ export class AIOperationsManager extends EventEmitter {
    * Generate unique ID
    */
   private generateId(): string {
-    return `ai-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+    return `ai-${Bun.randomUUIDv7()}`;
   }
 
   /**
    * Generate correlation ID for tracing
    */
   private generateCorrelationId(): string {
-    return `corr-${Date.now()}-${++this.correlationCounter}-${Math.random().toString(36).substring(2, 8)}`;
+    return `corr-${Bun.randomUUIDv7()}`;
   }
 
   /**

@@ -1,0 +1,122 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`snapshots AdvancedLRUCache getStats() shape after set+get 1`] = `
+{
+  "averageAccessTime": "number",
+  "evictions": 0,
+  "hitRate": 0,
+  "hits": 0,
+  "maxSize": 100,
+  "memoryUsage": 18,
+  "misses": 0,
+  "newestEntry": "number",
+  "oldestEntry": "number",
+  "size": 2,
+  "totalGets": 0,
+  "totalSets": 0,
+}
+`;
+
+exports[`snapshots AdvancedLRUCache stats counters are correct 1`] = `
+{
+  "evictions": 1,
+  "hits": 0,
+  "misses": 0,
+  "size": 3,
+  "totalGets": 0,
+  "totalSets": 0,
+}
+`;
+
+exports[`snapshots Bun.randomUUIDv7 base64url encoding is shorter than hex 1`] = `
+{
+  "base64urlLength": 22,
+  "hexLength": 36,
+  "hexLonger": true,
+}
+`;
+
+exports[`snapshots Bun.randomUUIDv7 buffer encoding returns Buffer 1`] = `
+{
+  "byteLength": 16,
+  "type": "Buffer",
+}
+`;
+
+exports[`snapshots Bun YAML parses cookie config 1`] = `
+{
+  "ab": {
+    "defaultVariants": [
+      "A",
+      "B",
+    ],
+    "trafficSplit": 50,
+  },
+  "cookie": {
+    "domain": "localhost",
+    "httpOnly": true,
+    "maxAgeDays": 30,
+    "name": "ab_variant",
+    "sameSite": "lax",
+    "secure": false,
+  },
+}
+`;
+
+exports[`snapshots Bun YAML handles empty document 1`] = `null`;
+
+exports[`snapshots Bun YAML handles scalar values 1`] = `42`;
+
+exports[`snapshots AnomalyDetector statistics shape 1`] = `
+{
+  "keys": [
+    "anomaliesBySeverity",
+    "anomaliesByType",
+    "baselinesActive",
+    "detectionAccuracy",
+    "falsePositiveRate",
+    "rulesActive",
+    "totalAnomalies",
+  ],
+  "rulesActiveType": "number",
+  "totalAnomaliesType": "number",
+}
+`;
+
+exports[`snapshots Bun.deepEquals strict vs loose comparison 1`] = `
+{
+  "coerced_loose": false,
+  "coerced_strict": false,
+  "sameObject_loose": true,
+  "sameObject_strict": true,
+}
+`;
+
+exports[`snapshots Bun.deepEquals nested objects 1`] = `
+{
+  "different": false,
+  "identical": true,
+}
+`;
+
+exports[`snapshots heapStats shape has expected keys 1`] = `
+{
+  "hasExtraMemorySize": true,
+  "hasGlobalObjectCount": true,
+  "hasHeapCapacity": true,
+  "hasHeapSize": true,
+  "hasObjectCount": true,
+  "hasObjectTypeCounts": true,
+  "hasProtectedObjectCount": true,
+  "heapSizePositive": true,
+  "objectCountPositive": true,
+}
+`;
+
+exports[`snapshots heapStats objectTypeCounts contains known JSC types 1`] = `
+{
+  "hasFunction": true,
+  "hasString": true,
+  "hasTypes": true,
+}
+`;
