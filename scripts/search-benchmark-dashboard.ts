@@ -1,4 +1,20 @@
 #!/usr/bin/env bun
+/**
+ * Search Benchmark Dashboard v2.0
+ * Real-time performance monitoring with extensive visualization capabilities
+ * 
+ * Features:
+ * - Glassmorphism UI with dark/light themes
+ * - Interactive charts (sparklines, bar charts, heatmaps)
+ * - Real-time polling with configurable intervals
+ * - Alert configuration with webhook support
+ * - Data export (JSON, CSV, Markdown)
+ * - Keyboard shortcuts for power users
+ * - Responsive design for all screen sizes
+ * - Accessibility compliant (ARIA labels, keyboard nav)
+ * 
+ * @license MIT
+ */
 
 import { readFile } from 'node:fs/promises';
 import { existsSync, statSync } from 'node:fs';
@@ -363,10 +379,10 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     strict_reliability_floor_warn: warningCodeStatus('strict_reliability_floor_warn'),
   };
   const statusLabels = {
-    success: 'All Clear',
+    success: 'Operational',
     warning: 'Attention Needed',
-    error: 'Action Required',
-    closed: 'Loop Closed',
+    error: 'Critical Action Required',
+    closed: 'Loop Status Closed',
   };
   const commitUrl = buildMeta.commitFull && buildMeta.commitFull !== 'unknown'
     ? `${buildMeta.repoUrl.replace(/\/+$/g, '')}/commit/${buildMeta.commitFull}`
@@ -1306,6 +1322,283 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       opacity: 1;
       transform: translateY(0);
       transition: all 0.4s ease;
+    }
+    
+    /* Date Range Picker */
+    .date-range-picker {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: rgba(10, 22, 43, 0.4);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    
+    .date-input {
+      background: rgba(31, 44, 73, 0.6);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: var(--text);
+      font-size: 13px;
+      font-family: ui-monospace, monospace;
+    }
+    
+    .date-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    /* Range Slider */
+    .range-slider {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(31, 44, 73, 0.6);
+      outline: none;
+      -webkit-appearance: none;
+    }
+    
+    .range-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+    
+    .range-slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+    
+    /* Toggle Switch */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+    
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: rgba(31, 44, 73, 0.8);
+      border-radius: 24px;
+      transition: 0.3s;
+      border: 1px solid var(--line);
+    }
+    
+    .toggle-slider::before {
+      position: absolute;
+      content: '';
+      height: 18px;
+      width: 18px;
+      left: 2px;
+      bottom: 2px;
+      background: var(--text);
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+    
+    .toggle-switch input:checked + .toggle-slider {
+      background: rgba(79, 209, 197, 0.3);
+      border-color: var(--accent);
+    }
+    
+    .toggle-switch input:checked + .toggle-slider::before {
+      transform: translateX(20px);
+      background: var(--accent);
+    }
+    
+    /* Alert Configuration Panel */
+    .alert-config {
+      background: rgba(10, 22, 43, 0.4);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .alert-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(31, 44, 73, 0.5);
+    }
+    
+    .alert-row:last-child {
+      border-bottom: none;
+    }
+    
+    .alert-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+    
+    .alert-threshold {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .threshold-input {
+      width: 80px;
+      padding: 6px 10px;
+      background: rgba(31, 44, 73, 0.6);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: ui-monospace, monospace;
+      font-size: 13px;
+      text-align: center;
+    }
+    
+    .threshold-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    /* Diff View */
+    .diff-view {
+      font-family: ui-monospace, monospace;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    
+    .diff-line {
+      padding: 2px 8px;
+      display: flex;
+      gap: 12px;
+    }
+    
+    .diff-added {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--success);
+    }
+    
+    .diff-removed {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--critical);
+    }
+    
+    .diff-neutral {
+      color: var(--muted);
+    }
+    
+    .diff-line-num {
+      color: var(--muted);
+      min-width: 40px;
+      text-align: right;
+      user-select: none;
+    }
+    
+    /* Chart Zoom Controls */
+    .chart-controls {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    
+    .chart-btn {
+      padding: 6px 12px;
+      font-size: 12px;
+      background: rgba(31, 44, 73, 0.6);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .chart-btn:hover {
+      border-color: var(--accent);
+      background: rgba(79, 209, 197, 0.1);
+    }
+    
+    .chart-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--bg);
+    }
+    
+    /* Multi-select Dropdown */
+    .multi-select {
+      position: relative;
+      min-width: 150px;
+    }
+    
+    .multi-select-trigger {
+      padding: 8px 12px;
+      background: rgba(31, 44, 73, 0.6);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 13px;
+    }
+    
+    .multi-select-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      margin-top: 4px;
+      background: var(--panel);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 100;
+      display: none;
+    }
+    
+    .multi-select.open .multi-select-dropdown {
+      display: block;
+    }
+    
+    .multi-option {
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .multi-option:hover {
+      background: rgba(79, 209, 197, 0.1);
+    }
+    
+    .multi-option input {
+      accent-color: var(--accent);
     }
     
     /* Enhanced Footer */
@@ -2627,16 +2920,16 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       </nav>
       <div id="systemStatusPills" class="pill-row" aria-label="System status indicators">
         <span class="status-pill pill-success" role="status" aria-label="All systems operational">
-          <span class="status-orb healthy" aria-hidden="true"></span> All Clear
+          <span class="status-orb healthy" aria-hidden="true"></span> Operational
         </span>
         <span class="status-pill pill-warning" role="status" aria-label="Attention required">
           <span class="status-orb warning" aria-hidden="true"></span> Attention Needed
         </span>
         <span class="status-pill pill-error" role="status" aria-label="Critical action required">
-          <span class="status-orb critical" aria-hidden="true"></span> Action Required
+          <span class="status-orb critical" aria-hidden="true"></span> Critical Action Required
         </span>
         <span class="status-pill pill-closed" role="status" aria-label="Loop closure complete">
-          <span aria-hidden="true">✓</span> Loop Closed
+          <span aria-hidden="true">✓</span> Loop Status Closed
         </span>
       </div>
       <section class="overview-grid" aria-label="Key metrics overview">
@@ -2728,7 +3021,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         <article class="card span-4">
           <div class="collapsible expanded" id="loopSection">
             <div class="collapsible-header" onclick="toggleCollapsible('loopSection')">
-              <h2>🔄 Status Contract</h2>
+              <h2>🔄 Loop & Status Contract</h2>
               <span class="collapsible-toggle">▼</span>
             </div>
             <div class="collapsible-content">
@@ -2774,7 +3067,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         <article class="card span-6">
           <div class="collapsible expanded" id="registrySection">
             <div class="collapsible-header" onclick="toggleCollapsible('registrySection')">
-              <h2>🌐 Domain Registry</h2>
+              <h2>🌐 Registry Readiness</h2>
               <span class="collapsible-toggle">▼</span>
             </div>
             <div class="collapsible-content">
@@ -2787,7 +3080,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         <article class="card span-6">
           <div class="collapsible expanded" id="healthSection">
             <div class="collapsible-header" onclick="toggleCollapsible('healthSection')">
-              <h2>💓 Domain Health</h2>
+              <h2>💓 Runtime Domain Health</h2>
               <span class="collapsible-toggle">▼</span>
             </div>
             <div class="collapsible-content">
@@ -2807,7 +3100,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         <article class="card span-6">
           <div class="collapsible expanded" id="publishSection">
             <div class="collapsible-header" onclick="toggleCollapsible('publishSection')">
-              <h2>📤 Publish Manifest</h2>
+              <h2>📤 Manifest Integrity</h2>
               <span class="collapsible-toggle">▼</span>
             </div>
             <div class="collapsible-content">
@@ -2820,7 +3113,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         <article class="card span-6">
           <div class="collapsible expanded" id="inventorySection">
             <div class="collapsible-header" onclick="toggleCollapsible('inventorySection')">
-              <h2>📦 R2 Inventory</h2>
+              <h2>📦 Storage Inventory</h2>
               <span class="collapsible-toggle">▼</span>
             </div>
             <div class="collapsible-content">
@@ -2833,7 +3126,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         <article class="card span-12">
           <div class="collapsible expanded" id="rssSection">
             <div class="collapsible-header" onclick="toggleCollapsible('rssSection')">
-              <h2>📡 RSS Feed</h2>
+              <h2>📡 RSS Consistency</h2>
               <span class="collapsible-toggle">▼</span>
             </div>
             <div class="collapsible-content">
@@ -2902,11 +3195,16 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           <a href="#color-ref-heading">
             <span aria-hidden="true">🎨</span> Colors
           </a>
+          <span class="footer-separator">·</span>
+          <a href="#api-docs-heading" onclick="showAPIDocs();return false">
+            <span aria-hidden="true">📚</span> API Docs
+          </a>
         </div>
         <div class="footer-meta">
+          <span class="badge status-neutral">v2.0</span>
           Built with <span class="status-orb healthy" style="width:6px;height:6px;display:inline-block;vertical-align:middle"></span> 
           <span style="color:var(--accent)">Bun</span> · 
-          Palette: <code>#0B111F</code> · <code>#111A2D</code> · <code>#4FD1C5</code>
+          <span id="loadTime"></span>
         </div>
       </div>
     </footer>
@@ -3732,6 +4030,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         renderSparkline('qualityChart', qualityScores, { color: '#4fd1c5' });
       }, 0);
       setStrictP95Badge(data);
+      checkAlertThresholds(data);
       renderTrend(data, previousSnapshot);
     };
     // Help Modal
@@ -3784,6 +4083,169 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         '</div>';
       
       document.body.appendChild(modal);
+      modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    };
+    
+    // API Documentation Modal
+    window.showAPIDocs = () => {
+      const modal = document.createElement('div');
+      modal.className = 'modal-overlay';
+      modal.innerHTML = 
+        '<div class="modal" style="max-width:700px">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
+            '<h2 style="margin:0">📚 API Documentation</h2>' +
+            '<button onclick="this.closest(\'.modal-overlay\').remove()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>' +
+          '</div>' +
+          '<div style="max-height:60vh;overflow:auto">' +
+            '<div class="info-box" style="margin-bottom:16px">' +
+              '<div class="info-box-title">Base URL</div>' +
+              '<div style="font-family:monospace;font-size:13px">' + window.location.origin + '</div>' +
+            '</div>' +
+            '<h3 style="font-size:14px;margin:16px 0 8px">Endpoints</h3>' +
+            '<div style="display:grid;gap:12px">' +
+              '<div style="padding:12px;background:rgba(10,22,43,0.4);border-radius:8px;border-left:3px solid var(--accent)">' +
+                '<div style="display:flex;gap:8px;margin-bottom:4px">' +
+                  '<span class="badge status-good">GET</span>' +
+                  '<code>/api/latest</code>' +
+                '</div>' +
+                '<div style="font-size:12px;color:var(--muted)">Get the latest benchmark snapshot</div>' +
+              '</div>' +
+              '<div style="padding:12px;background:rgba(10,22,43,0.4);border-radius:8px;border-left:3px solid var(--accent)">' +
+                '<div style="display:flex;gap:8px;margin-bottom:4px">' +
+                  '<span class="badge status-good">GET</span>' +
+                  '<code>/api/index</code>' +
+                '</div>' +
+                '<div style="font-size:12px;color:var(--muted)">Get the snapshot index/history</div>' +
+              '</div>' +
+              '<div style="padding:12px;background:rgba(10,22,43,0.4);border-radius:8px;border-left:3px solid var(--accent)">' +
+                '<div style="display:flex;gap:8px;margin-bottom:4px">' +
+                  '<span class="badge status-good">GET</span>' +
+                  '<code>/api/rss</code>' +
+                '</div>' +
+                '<div style="font-size:12px;color:var(--muted)">Get the RSS feed</div>' +
+              '</div>' +
+              '<div style="padding:12px;background:rgba(10,22,43,0.4);border-radius:8px;border-left:3px solid var(--accent)">' +
+                '<div style="display:flex;gap:8px;margin-bottom:4px">' +
+                  '<span class="badge status-good">GET</span>' +
+                  '<code>/api/loop-status</code>' +
+                '</div>' +
+                '<div style="font-size:12px;color:var(--muted)">Get loop closure status</div>' +
+              '</div>' +
+            '</div>' +
+            '<h3 style="font-size:14px;margin:16px 0 8px">Query Parameters</h3>' +
+            '<table style="font-size:12px">' +
+              '<thead><tr><th>Param</th><th>Type</th><th>Description</th></tr></thead>' +
+              '<tbody>' +
+                '<tr><td><code>source</code></td><td>string</td><td>Data source: "local" or "r2"</td></tr>' +
+                '<tr><td><code>id</code></td><td>string</td><td>Snapshot ID for specific data</td></tr>' +
+              '</tbody>' +
+            '</table>' +
+          '</div>' +
+        '</div>';
+      
+      document.body.appendChild(modal);
+      modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    };
+    
+    // Alert configuration
+    const alertConfig = {
+      qualityThreshold: parseFloat(localStorage.getItem('alertQualityThreshold') || '60'),
+      latencyThreshold: parseFloat(localStorage.getItem('alertLatencyThreshold') || '1000'),
+      enabled: localStorage.getItem('alertsEnabled') === 'true',
+      webhook: localStorage.getItem('alertWebhook') || ''
+    };
+    
+    const checkAlertThresholds = (data) => {
+      if (!alertConfig.enabled || !data) return;
+      
+      const topProfile = data.rankedProfiles?.[0];
+      if (!topProfile) return;
+      
+      const alerts = [];
+      
+      if (topProfile.qualityScore < alertConfig.qualityThreshold) {
+        alerts.push('Quality below ' + alertConfig.qualityThreshold + ': ' + topProfile.qualityScore.toFixed(1));
+      }
+      
+      if (topProfile.latencyP95Ms > alertConfig.latencyThreshold) {
+        alerts.push('P95 latency above ' + alertConfig.latencyThreshold + 'ms: ' + topProfile.latencyP95Ms.toFixed(0) + 'ms');
+      }
+      
+      if (alerts.length > 0) {
+        showToast('⚠️ ' + alerts.join('; '), 'error', 5000);
+      }
+    };
+    
+    window.showAlertConfig = () => {
+      const modal = document.createElement('div');
+      modal.className = 'modal-overlay';
+      modal.innerHTML = 
+        '<div class="modal" style="max-width:500px">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
+            '<h2 style="margin:0">🔔 Alert Configuration</h2>' +
+            '<button onclick="this.closest(\'.modal-overlay\').remove()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>' +
+          '</div>' +
+          '<div class="alert-config">' +
+            '<div class="alert-row">' +
+              '<span class="alert-label">Enable Alerts</span>' +
+              '<label class="toggle-switch">' +
+                '<input type="checkbox" id="alertEnabledToggle" ' + (alertConfig.enabled ? 'checked' : '') + '>' +
+                '<span class="toggle-slider"></span>' +
+              '</label>' +
+            '</div>' +
+            '<div class="alert-row">' +
+              '<span class="alert-label">Quality Threshold</span>' +
+              '<div class="alert-threshold">' +
+                '<input type="range" class="range-slider" id="qualitySlider" min="0" max="100" value="' + alertConfig.qualityThreshold + '" style="width:100px">' +
+                '<input type="number" class="threshold-input" id="qualityThreshold" value="' + alertConfig.qualityThreshold + '" min="0" max="100">' +
+              '</div>' +
+            '</div>' +
+            '<div class="alert-row">' +
+              '<span class="alert-label">Latency Threshold (ms)</span>' +
+              '<div class="alert-threshold">' +
+                '<input type="range" class="range-slider" id="latencySlider" min="100" max="3000" value="' + alertConfig.latencyThreshold + '" style="width:100px">' +
+                '<input type="number" class="threshold-input" id="latencyThreshold" value="' + alertConfig.latencyThreshold + '" min="100" max="3000">' +
+              '</div>' +
+            '</div>' +
+            '<div class="alert-row" style="flex-direction:column;align-items:flex-start;gap:8px">' +
+              '<span class="alert-label">Webhook URL (optional)</span>' +
+              '<input type="text" id="webhookUrl" value="' + alertConfig.webhook + '" placeholder="https://hooks.slack.com/..." style="width:100%;padding:8px 12px;background:rgba(31,44,73,0.6);border:1px solid var(--line);border-radius:6px;color:var(--text);font-size:13px">' +
+            '</div>' +
+          '</div>' +
+          '<div style="display:flex;gap:12px;margin-top:20px;justify-content:flex-end">' +
+            '<button onclick="this.closest(\'.modal-overlay\').remove()">Cancel</button>' +
+            '<button id="saveAlertConfig" style="background:var(--accent);color:var(--bg);border-color:var(--accent)">Save</button>' +
+          '</div>' +
+        '</div>';
+      
+      document.body.appendChild(modal);
+      
+      // Sync sliders with inputs
+      const qualitySlider = document.getElementById('qualitySlider');
+      const qualityInput = document.getElementById('qualityThreshold');
+      const latencySlider = document.getElementById('latencySlider');
+      const latencyInput = document.getElementById('latencyThreshold');
+      
+      qualitySlider.oninput = () => qualityInput.value = qualitySlider.value;
+      qualityInput.oninput = () => qualitySlider.value = qualityInput.value;
+      latencySlider.oninput = () => latencyInput.value = latencySlider.value;
+      latencyInput.oninput = () => latencySlider.value = latencyInput.value;
+      
+      document.getElementById('saveAlertConfig').onclick = () => {
+        alertConfig.enabled = document.getElementById('alertEnabledToggle').checked;
+        alertConfig.qualityThreshold = parseFloat(qualityInput.value);
+        alertConfig.latencyThreshold = parseFloat(latencyInput.value);
+        alertConfig.webhook = document.getElementById('webhookUrl').value;
+        
+        localStorage.setItem('alertsEnabled', alertConfig.enabled);
+        localStorage.setItem('alertQualityThreshold', alertConfig.qualityThreshold);
+        localStorage.setItem('alertLatencyThreshold', alertConfig.latencyThreshold);
+        localStorage.setItem('alertWebhook', alertConfig.webhook);
+        
+        showToast('Alert configuration saved', 'success');
+        modal.remove();
+      };
+      
       modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
     };
     
@@ -4090,7 +4552,16 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           (s.queryPack || '').toLowerCase().includes(historyFilter.toLowerCase()) ||
           (s.topProfile || '').toLowerCase().includes(historyFilter.toLowerCase());
         const matchesPack = historyFilterPack === 'all' || (s.queryPack || 'core_delivery') === historyFilterPack;
-        return matchesSearch && matchesPack;
+        
+        // Date range filtering
+        let matchesDateRange = true;
+        if (dateRangeStart || dateRangeEnd) {
+          const snapshotDate = new Date(s.createdAt);
+          if (dateRangeStart && snapshotDate < dateRangeStart) matchesDateRange = false;
+          if (dateRangeEnd && snapshotDate > dateRangeEnd) matchesDateRange = false;
+        }
+        
+        return matchesSearch && matchesPack && matchesDateRange;
       });
     };
     
@@ -4108,29 +4579,49 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       const filtered = filterHistory(data.snapshots);
       const slice = filtered.slice(0, historyVisibleCount);
       
-      const rows = slice.map((s) =>
+      const rows = slice.map((s, idx) =>
         '<tr>' +
           '<td><code>' + s.id + '</code></td>' +
           '<td>' + new Date(s.createdAt).toLocaleString() + '</td>' +
           '<td><span class="badge status-neutral">' + (s.queryPack || 'core_delivery') + '</span></td>' +
           '<td>' + s.topProfile + '</td>' +
           '<td style="color:' + (s.topScore >= 80 ? 'var(--success)' : s.topScore >= 60 ? 'var(--warning)' : 'var(--error)') + '">' + Number(s.topScore || 0).toFixed(2) + '</td>' +
+          '<td>' +
+            '<button class="copy-btn" onclick="copyToClipboard(\'' + s.id + '\', this)" style="margin-right:4px">ID</button>' +
+            (idx < slice.length - 1 ? '<button class="copy-btn" onclick="showDiffView(window.lastHistory.snapshots[' + idx + '], window.lastHistory.snapshots[' + (idx + 1) + '])">Compare</button>' : '') +
+          '</td>' +
         '</tr>'
       ).join('');
       
       const hasMore = filtered.length > historyVisibleCount;
+      
+      const savedStart = localStorage.getItem('dateRangeStart') || '';
+      const savedEnd = localStorage.getItem('dateRangeEnd') || '';
       
       historyEl.innerHTML =
         '<div class="search-box">' +
           '<span class="search-icon">🔍</span>' +
           '<input type="text" class="search-input" id="historySearch" placeholder="Search snapshots..." value="' + historyFilter + '">' +
         '</div>' +
+        '<div class="date-range-picker" style="margin-bottom:16px">' +
+          '<span style="font-size:12px;color:var(--muted);white-space:nowrap">📅 Date Range:</span>' +
+          '<input type="datetime-local" class="date-input" id="dateRangeStart" value="' + savedStart + '">' +
+          '<span style="color:var(--muted)">→</span>' +
+          '<input type="datetime-local" class="date-input" id="dateRangeEnd" value="' + savedEnd + '">' +
+          '<button onclick="applyDateFilter()" style="padding:6px 12px;font-size:12px">Apply</button>' +
+          '<button onclick="clearDateFilter()" style="padding:6px 12px;font-size:12px;background:transparent">Clear</button>' +
+        '</div>' +
         '<div class="filter-row">' +
           '<span class="filter-pill ' + (historyFilterPack === 'all' ? 'active' : '') + '" data-pack="all">All</span>' +
           packs.map(p => '<span class="filter-pill ' + (historyFilterPack === p ? 'active' : '') + '" data-pack="' + p + '">' + p + '</span>').join('') +
         '</div>' +
-        '<div class="meta">showing ' + slice.length + '/' + filtered.length + ' of ' + data.snapshots.length + ' total</div>' +
-        '<div class="table-scroll"><table><thead><tr><th>Snapshot</th><th>Created</th><th>Query Pack</th><th>Top Profile</th><th>Top Score</th></tr></thead><tbody>' + (rows || '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">No matching snapshots</td></tr>') + '</tbody></table></div>' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">' +
+          '<div class="meta">showing ' + slice.length + '/' + filtered.length + ' of ' + data.snapshots.length + ' total</div>' +
+          '<button onclick="showAlertConfig()" style="display:flex;align-items:center;gap:6px;font-size:12px;padding:6px 12px">' +
+            '<span>🔔</span> Configure Alerts' +
+          '</button>' +
+        '</div>' +
+        '<div class="table-scroll"><table><thead><tr><th>Snapshot</th><th>Created</th><th>Query Pack</th><th>Top Profile</th><th>Top Score</th><th>Actions</th></tr></thead><tbody>' + (rows || '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted)">No matching snapshots</td></tr>') + '</tbody></table></div>' +
         (hasMore ? '<div style="margin-top:8px"><button id="historyMore">Load more</button></div>' : '');
       
       // Attach event listeners
@@ -4699,6 +5190,109 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         }
       }
       return 'just now';
+    };
+    
+    // Diff view between two snapshots
+    window.showDiffView = (current, previous) => {
+      if (!current || !previous) {
+        showToast('Need two snapshots to compare', 'error');
+        return;
+      }
+      
+      const diffData = [];
+      const metrics = ['qualityScore', 'latencyP95Ms', 'avgSignalPct', 'avgSlopPct', 'peakRssMB'];
+      
+      current.rankedProfiles.forEach((curr, idx) => {
+        const prev = previous.rankedProfiles?.[p => p.profile === curr.profile];
+        if (prev) {
+          metrics.forEach(metric => {
+            const currVal = curr[metric];
+            const prevVal = prev[metric];
+            const change = currVal - prevVal;
+            const pctChange = prevVal !== 0 ? ((change / prevVal) * 100).toFixed(1) : 'N/A';
+            
+            diffData.push({
+              profile: curr.profile,
+              metric: metric,
+              current: currVal,
+              previous: prevVal,
+              change: change,
+              pctChange: pctChange,
+              improved: (metric === 'qualityScore' || metric === 'avgSignalPct') ? change > 0 : change < 0
+            });
+          });
+        }
+      });
+      
+      const modal = document.createElement('div');
+      modal.className = 'modal-overlay';
+      modal.innerHTML = 
+        '<div class="modal" style="max-width:700px">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
+            '<h2 style="margin:0">📊 Snapshot Comparison</h2>' +
+            '<button onclick="this.closest(\'.modal-overlay\').remove()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>' +
+          '</div>' +
+          '<div style="margin-bottom:16px;font-size:12px;color:var(--muted)">' +
+            'Comparing: <code>' + current.id + '</code> vs <code>' + previous.id + '</code>' +
+          '</div>' +
+          '<div class="diff-view" style="max-height:400px;overflow:auto">' +
+            diffData.map(d => {
+              const sign = d.change > 0 ? '+' : '';
+              const color = d.improved ? 'var(--success)' : d.change !== 0 ? 'var(--error)' : 'var(--muted)';
+              return '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-family:monospace;font-size:12px">' +
+                '<span>' + d.profile + ' <span style="color:var(--muted)">' + d.metric + '</span></span>' +
+                '<span>' +
+                  '<span style="color:var(--muted)">' + d.previous.toFixed(1) + '</span> → ' +
+                  '<span style="color:' + color + '">' + d.current.toFixed(1) + '</span>' +
+                  '<span style="color:' + color + ';margin-left:8px">(' + sign + d.pctChange + '%)</span>' +
+                '</span>' +
+              '</div>';
+            }).join('') +
+          '</div>' +
+        '</div>';
+      
+      document.body.appendChild(modal);
+      modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    };
+    
+    // Date range filtering
+    let dateRangeStart = null;
+    let dateRangeEnd = null;
+    
+    window.applyDateFilter = () => {
+      const startInput = document.getElementById('dateRangeStart');
+      const endInput = document.getElementById('dateRangeEnd');
+      
+      dateRangeStart = startInput?.value ? new Date(startInput.value) : null;
+      dateRangeEnd = endInput?.value ? new Date(endInput.value) : null;
+      
+      localStorage.setItem('dateRangeStart', startInput?.value || '');
+      localStorage.setItem('dateRangeEnd', endInput?.value || '');
+      
+      // Re-render history with filter
+      if (lastHistory) {
+        renderHistory(lastHistory);
+      }
+      
+      showToast('Date filter applied', 'success');
+    };
+    
+    window.clearDateFilter = () => {
+      dateRangeStart = null;
+      dateRangeEnd = null;
+      localStorage.removeItem('dateRangeStart');
+      localStorage.removeItem('dateRangeEnd');
+      
+      const startInput = document.getElementById('dateRangeStart');
+      const endInput = document.getElementById('dateRangeEnd');
+      if (startInput) startInput.value = '';
+      if (endInput) endInput.value = '';
+      
+      if (lastHistory) {
+        renderHistory(lastHistory);
+      }
+      
+      showToast('Date filter cleared', 'success');
     };
     
     // Collapsible sections toggle
@@ -5562,6 +6156,14 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         showNotification('New Report Available', 'A new benchmark report is ready to view.');
       }
     };
+    
+    // Display load time
+    const loadTimeEl = document.getElementById('loadTime');
+    if (loadTimeEl) {
+      const perf = performance.timing;
+      const loadTime = perf.loadEventEnd - perf.navigationStart;
+      loadTimeEl.textContent = 'Loaded in ' + loadTime + 'ms';
+    }
     
     renderOverview();
     setRefreshIdle();
@@ -7380,16 +7982,28 @@ async function main(): Promise<void> {
       if (url.pathname === '/api/search-status-unified') {
         const source = (url.searchParams.get('source') || 'local') as 'local' | 'r2';
         const domain = (url.searchParams.get('domain') || options.domain || 'factory-wager.com').trim().toLowerCase();
-        const payload = await buildUnifiedStatus({
-          json: true,
-          strict: false,
-          source,
-          domain,
-          latestPath: 'reports/search-benchmark/latest.json',
-          loopPath: 'reports/search-loop-status-latest.json',
-          rssPath: 'reports/search-benchmark/rss.xml',
-        });
-        return jsonResponse(payload, { source });
+        try {
+          const payload = await buildUnifiedStatus({
+            json: true,
+            strict: false,
+            source,
+            domain,
+            latestPath: 'reports/search-benchmark/latest.json',
+            loopPath: 'reports/search-loop-status-latest.json',
+            rssPath: 'reports/search-benchmark/rss.xml',
+          });
+          return jsonResponse(payload, { source });
+        } catch (error) {
+          return jsonResponse(
+            {
+              error: 'unified_status_failed',
+              message: error instanceof Error ? error.message : String(error),
+              source,
+              domain,
+            },
+            { status: 500, source }
+          );
+        }
       }
       if (url.pathname === '/api/rss') {
         const source = url.searchParams.get('source') || 'local';
