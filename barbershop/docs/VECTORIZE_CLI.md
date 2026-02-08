@@ -54,6 +54,30 @@ bun run cli/vectorize-cli.ts secrets get-token
 bun run cli/vectorize-cli.ts secrets get-account-id
 ```
 
+### Delete Secrets
+
+```bash
+# Delete token
+bun run cli/vectorize-cli.ts secrets delete-token
+
+# Delete account ID
+bun run cli/vectorize-cli.ts secrets delete-account-id
+```
+
+### Migrate Secrets
+
+If you have secrets stored under the old service name (`cloudflare`), migrate them to the new UTI format (`com.barbershop.vectorize`):
+
+```bash
+bun run cli/vectorize-cli.ts secrets migrate
+```
+
+This command:
+- Copies secrets from old location to new location
+- Preserves old secrets for backward compatibility
+- Skips secrets that are already migrated
+- Shows clear progress messages
+
 ## Index Management
 
 ### List All Indexes
@@ -196,15 +220,25 @@ The CLI automatically uses Bun.secrets for secure credential storage:
 
 ### How It Works
 
-1. Secrets are stored with service `cloudflare` and names:
-   - `api_token` → `cloudflare:api_token`
-   - `account_id` → `cloudflare:account_id`
+1. Secrets are stored with service `com.barbershop.vectorize` (UTI format, following [Bun.secrets best practices](https://bun.com/docs/runtime/secrets#best-practices)) and names:
+   - `api_token` → `com.barbershop.vectorize:api_token`
+   - `account_id` → `com.barbershop.vectorize:account_id`
 
-2. Fallback to environment variables if Bun.secrets unavailable:
+2. **Backward Compatibility**: The CLI automatically checks for secrets stored under the old `cloudflare` service name and falls back to them if the new location doesn't exist.
+
+3. Fallback to environment variables if Bun.secrets unavailable:
    - `CLOUDFLARE_API_TOKEN`
    - `CLOUDFLARE_ACCOUNT_ID`
 
-3. The vectorize-client automatically loads from Bun.secrets or environment
+4. The vectorize-client automatically loads from Bun.secrets or environment
+
+### Service Name Format
+
+Following Bun.secrets best practices, we use a UTI (Uniform Type Identifier) format:
+- ✅ **Good**: `com.barbershop.vectorize` (descriptive, avoids conflicts)
+- ❌ **Avoid**: `cloudflare` (too generic, could conflict with other tools)
+
+See: [Bun.secrets Best Practices](https://bun.com/docs/runtime/secrets#best-practices)
 
 ### Security Benefits
 
@@ -222,16 +256,19 @@ The CLI automatically uses Bun.secrets for secure credential storage:
 bun run cli/vectorize-cli.ts secrets set-token YOUR_TOKEN
 bun run cli/vectorize-cli.ts secrets set-account-id YOUR_ACCOUNT_ID
 
-# 2. Verify secrets
+# 2. Migrate old secrets (if upgrading from previous version)
+bun run cli/vectorize-cli.ts secrets migrate
+
+# 3. Verify secrets
 bun run cli/vectorize-cli.ts secrets status
 
-# 3. Create indexes
+# 4. Create indexes
 bun run cli/vectorize-cli.ts setup
 
-# 4. Index existing data
+# 5. Index existing data
 bun run cli/vectorize-cli.ts index all
 
-# 5. Test search
+# 6. Test search
 bun run cli/vectorize-cli.ts search barbers "fade specialist"
 ```
 
@@ -298,3 +335,25 @@ The CLI automatically falls back to environment variables. Check:
 - `.env` file has `CLOUDFLARE_API_TOKEN`
 - Environment variables are loaded
 - Fallback works seamlessly
+
+### Reporting Issues
+
+If you encounter issues with Bun.secrets or have suggestions for improvement, you can provide feedback directly to the Bun team:
+
+```bash
+# Provide feedback about Bun.secrets
+bun feedback "Bun.secrets API works great with Vectorize CLI!"
+
+# Report an issue with details
+bun feedback --email your@email.com "Issue with Bun.secrets.get() returning null when secret exists"
+
+# Send feedback from a file
+bun feedback issue-report.txt
+```
+
+**Before reporting:**
+1. Try upgrading Bun: `bun upgrade` or `bun upgrade --canary`
+2. Check [existing issues](https://github.com/oven-sh/bun/issues)
+3. Join [Discord](https://bun.com/discord) for general questions
+
+See: [Bun Feedback Documentation](https://bun.com/docs/feedback)

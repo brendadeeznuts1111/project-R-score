@@ -7,25 +7,34 @@
 
 // Helper to get secret from Bun.secrets or environment
 async function getSecret(service: string, name: string): Promise<string | undefined> {
-  const key = `${service}:${name}`;
-
   // Try Bun.secrets first
   if (typeof Bun !== 'undefined' && 'secrets' in Bun) {
     try {
-      const secrets = Bun.secrets as unknown as { get: (k: string) => Promise<string | undefined> };
-      const value = await secrets.get(key);
+      // Try new UTI format first (best practice)
+      const value = await Bun.secrets.get(service, name);
       if (value) return value;
+      
+      // Fallback: try legacy 'cloudflare' service name for backward compatibility
+      if (service === 'com.barbershop.vectorize') {
+        const legacyValue = await Bun.secrets.get('cloudflare', name);
+        if (legacyValue) return legacyValue;
+      }
     } catch {
       // Fall through to environment
     }
   }
 
   // Fallback to environment variables
+  // Note: envVarMap uses UTI format for service name (best practice)
+  // See: https://bun.com/docs/runtime/secrets#best-practices
   const envVarMap: Record<string, string> = {
+    'com.barbershop.vectorize:api_token': 'CLOUDFLARE_API_TOKEN',
+    'com.barbershop.vectorize:account_id': 'CLOUDFLARE_ACCOUNT_ID',
+    // Legacy support for old 'cloudflare' service name
     'cloudflare:api_token': 'CLOUDFLARE_API_TOKEN',
     'cloudflare:account_id': 'CLOUDFLARE_ACCOUNT_ID',
   };
-
+  const key = `${service}:${name}`;
   return Bun.env[envVarMap[key] || key.toUpperCase().replace(':', '_')];
 }
 
