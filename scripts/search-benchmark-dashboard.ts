@@ -27,6 +27,14 @@ type CachedResponse = {
   contentType: string;
 };
 
+type BuildMeta = {
+  repoUrl: string;
+  repoBranchUrl: string;
+  branchName: string;
+  commitShort: string;
+  commitFull: string;
+};
+
 type ProxyConfig = {
   url: string;
   headers?: Record<string, string>;
@@ -173,9 +181,89 @@ function finalizeJsonResponse(
   return new Response(body, { status, headers });
 }
 
-function htmlShell(options: Options): string {
+function resolveBuildMeta(): BuildMeta {
+  const normalizeRepoUrl = (value: string): string => {
+    const raw = String(value || '').trim();
+    if (!raw) return '';
+    if (raw.startsWith('git@github.com:')) {
+      return `https://github.com/${raw.slice('git@github.com:'.length).replace(/\.git$/i, '')}`;
+    }
+    if (raw.startsWith('https://github.com/')) {
+      return raw.replace(/\.git$/i, '');
+    }
+    return raw;
+  };
+  let repoUrl = normalizeRepoUrl(Bun.env.SEARCH_BENCH_REPO_URL || Bun.env.REPO_URL || '');
+  if (!repoUrl) {
+    try {
+      const out = Bun.spawnSync(['git', 'remote', 'get-url', 'origin'], {
+        cwd: process.cwd(),
+        stdout: 'pipe',
+        stderr: 'ignore',
+      });
+      if (out.exitCode === 0) {
+        repoUrl = normalizeRepoUrl(new TextDecoder().decode(out.stdout));
+      }
+    } catch {
+      repoUrl = '';
+    }
+  }
+  if (!repoUrl) {
+    repoUrl = 'https://github.com/brendadeeznuts1111/project-R-score';
+  }
+  const envSha = (Bun.env.GIT_COMMIT || Bun.env.COMMIT_SHA || '').trim();
+  let commitFull = envSha;
+  let branchName = (Bun.env.GIT_BRANCH || '').trim();
+  if (!commitFull) {
+    try {
+      const out = Bun.spawnSync(['git', 'rev-parse', 'HEAD'], {
+        cwd: process.cwd(),
+        stdout: 'pipe',
+        stderr: 'ignore',
+      });
+      if (out.exitCode === 0) {
+        commitFull = new TextDecoder().decode(out.stdout).trim();
+      }
+    } catch {
+      commitFull = '';
+    }
+  }
+  if (!branchName) {
+    try {
+      const out = Bun.spawnSync(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], {
+        cwd: process.cwd(),
+        stdout: 'pipe',
+        stderr: 'ignore',
+      });
+      if (out.exitCode === 0) {
+        branchName = new TextDecoder().decode(out.stdout).trim();
+      }
+    } catch {
+      branchName = '';
+    }
+  }
+  if (!branchName) branchName = 'main';
+  const commitShort = commitFull ? commitFull.slice(0, 8) : 'unknown';
+  const branchPath = branchName
+    .split('/')
+    .map((part) => encodeURIComponent(part))
+    .join('/');
+  const repoBranchUrl = `${repoUrl.replace(/\/+$/g, '')}/tree/${branchPath}`;
+  return {
+    repoUrl,
+    repoBranchUrl,
+    branchName,
+    commitShort,
+    commitFull: commitFull || 'unknown',
+  };
+}
+
+function htmlShell(options: Options, buildMeta: BuildMeta): string {
   const r2Label = options.r2Base || '(not configured)';
   const hotReloadEnabled = options.hotReload;
+  const commitUrl = buildMeta.commitFull && buildMeta.commitFull !== 'unknown'
+    ? `${buildMeta.repoUrl.replace(/\/+$/g, '')}/commit/${buildMeta.commitFull}`
+    : buildMeta.repoUrl;
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -215,6 +303,9 @@ function htmlShell(options: Options): string {
     .vol-high { color: #f43f5e; border-color: #881337; background: #2a0912; }
     .sparkline { font-size: 16px; letter-spacing: 1px; color: #4fd1c5; white-space: nowrap; }
     .rss-badge { margin-left: 8px; cursor: pointer; }
+    .footer { color: var(--muted); font-size: 12px; margin-top: 8px; }
+    .footer a { color: #93c5fd; text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -222,6 +313,7 @@ function htmlShell(options: Options): string {
     <div class="card">
       <h1>Search Benchmark Dashboard</h1>
       <div class="meta">Local reports + optional R2: <code>${r2Label}</code><span id="strictP95Badge" class="badge status-neutral rss-badge">Strict p95 n/a</span><span id="rssBadge" class="badge status-neutral rss-badge">RSS idle</span></div>
+      <div class="meta">repo=<a href="${buildMeta.repoBranchUrl}" target="_blank" rel="noreferrer">${buildMeta.repoBranchUrl}</a> commit=<a href="${commitUrl}" target="_blank" rel="noreferrer"><code>${buildMeta.commitShort}</code></a></div>
       <div id="reportNotice" class="meta" style="margin-top:6px"></div>
       <div class="buttons">
         <button id="loadLocal">Load Local Latest</button>
@@ -261,6 +353,7 @@ function htmlShell(options: Options): string {
       <h2 style="margin:0 0 8px;font-size:16px">RSS Feed</h2>
       <div id="rss"></div>
     </div>
+    <div class="footer">Repo: <a href="${buildMeta.repoBranchUrl}" target="_blank" rel="noreferrer">${buildMeta.repoBranchUrl}</a> · Commit: <a href="${commitUrl}" target="_blank" rel="noreferrer"><code>${buildMeta.commitShort}</code></a></div>
   </main>
   <script>
     if (typeof window === 'undefined' || typeof document === 'undefined') {
@@ -334,6 +427,11 @@ function htmlShell(options: Options): string {
     const stageStatusBadge = (status) => {
       const s = String(status || '').toLowerCase();
       const cls = s === 'pass' ? 'status-good' : s === 'warn' ? 'status-warn' : s === 'fail' ? 'status-bad' : 'status-neutral';
+      return '<span class="badge ' + cls + '">' + s + '</span>';
+    };
+    const sourceBadge = (source) => {
+      const s = String(source || 'local').toLowerCase();
+      const cls = s === 'r2' ? 'status-good' : 'status-neutral';
       return '<span class="badge ' + cls + '">' + s + '</span>';
     };
     const clamp01 = (value) => Math.max(0, Math.min(1, Number(value) || 0));
@@ -819,6 +917,10 @@ function htmlShell(options: Options): string {
       const dnsStatusText = 'DNS ' + dnsResolved + '/' + dnsChecked + ' ' + dnsStatus;
       const storageStatusText = 'Storage ' + latestPresent + '/' + latestCount + ' ' + storageStatus;
       const overallStatusText = 'Domain ' + overallStatus + (data.health?.latency?.degradedByStrictP95 ? ' (strict p95 ' + strictP95Text + ')' : '');
+      const modeHint =
+        data.source === 'local'
+          ? 'Local mode uses placeholder storage keys. Use Load R2 for bucket-backed health objects.'
+          : 'R2 mode reflects bucket-backed health objects.';
       const latestRows = (data.latest || []).map((item) =>
         '<tr>' +
           '<td><code>' + item.type + '</code></td>' +
@@ -837,12 +939,13 @@ function htmlShell(options: Options): string {
         '</tr>'
       ).join('');
       domainHealthEl.innerHTML =
-        '<div class="meta">domain=' + (data.domain || 'factory-wager.com') + ' zone=' + (data.zone || 'n/a') + ' account=' + (data.accountId || 'n/a') + ' knownSubdomains=' + (data.knownSubdomains ?? 'n/a') + ' source=' + (data.source || 'n/a') + '</div>' +
+        '<div class="meta">domain=' + (data.domain || 'factory-wager.com') + ' zone=' + (data.zone || 'n/a') + ' account=' + (data.accountId || 'n/a') + ' knownSubdomains=' + (data.knownSubdomains ?? 'n/a') + ' source=' + sourceBadge(data.source || 'n/a') + '</div>' +
         '<div class="meta">' +
           healthBadge(healthRatioByState(overallStatus), overallStatusText) + ' ' +
           healthBadge(healthRatioByState(dnsStatus), dnsStatusText) + ' ' +
           healthBadge(healthRatioByState(storageStatus), storageStatusText) +
         '</div>' +
+        '<div class="meta">' + modeHint + '</div>' +
         '<div class="meta">storage bucket=' + (data.storage?.bucket || 'n/a') + ' endpoint=' + (data.storage?.endpoint || 'n/a') + ' prefix=<code>' + (data.storage?.domainPrefix || 'n/a') + '</code></div>' +
         '<div class="meta">storageKey health=<code>' + (data.storage?.sampleKeys?.health || 'n/a') + '</code></div>' +
         '<div class="meta">dnsChecked=' + (data.dnsPrefetch?.checked ?? 0) + ' dnsResolved=' + (data.dnsPrefetch?.resolved ?? 0) + ' cacheTtlSec=' + (data.dnsPrefetch?.cacheTtlSec ?? 'n/a') + '</div>' +
@@ -1270,6 +1373,7 @@ async function main(): Promise<void> {
     console.error('[search-bench:dashboard] unhandledRejection', error);
   });
   const options = parseArgs(process.argv.slice(2));
+  const buildMeta = resolveBuildMeta();
   const dir = resolve(options.dir);
   const latestJson = resolve(dir, 'latest.json');
   const indexJson = resolve(dir, 'index.json');
@@ -1865,7 +1969,7 @@ async function main(): Promise<void> {
         if (options.cookies) {
           headers.append('set-cookie', StateManager.serialize(state, url));
         }
-        return new Response(htmlShell(options), { headers });
+        return new Response(htmlShell(options, buildMeta), { headers });
       }
       if (url.pathname === '/api/latest') {
         const source = url.searchParams.get('source') || 'local';
