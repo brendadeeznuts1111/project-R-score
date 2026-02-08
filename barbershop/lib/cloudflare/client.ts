@@ -5,7 +5,7 @@
  * Uses Bun.fetch for optimal performance.
  */
 
-import { FACTORY_WAGER_DOMAIN, type DomainConfig } from '../../src/config/domain';
+// Domain config available in src/config/domain if needed
 
 // Cloudflare API types
 export interface CFZone {

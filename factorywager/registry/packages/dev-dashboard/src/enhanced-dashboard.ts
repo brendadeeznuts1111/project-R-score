@@ -1681,3 +1681,4 @@ logger.info(`   Set BENCHMARK_ISOLATION=false to disable isolation mode`);
 logger.info(`   💡 Tip: Use 'bun --watch run dev-dashboard' for auto-reload`);
 
 }
+

@@ -155,7 +155,7 @@ export class BunColorManager {
   /**
    * Convert color to different formats
    */
-  convert(color: string, format: ColorFormat): string {
+  convert(color: string, _format: ColorFormat): string {
     const parsed = this.parse(color);
 
     // For now, return parsed value
@@ -330,10 +330,10 @@ export interface HeaderConfig {
  * Bun v1.3.7+ preserves header case in fetch()
  */
 export class BunHeaderManager {
-  private config: HeaderConfig;
+  private _config: HeaderConfig;
 
   constructor(config: HeaderConfig = {}) {
-    this.config = {
+    this._config = {
       preserveCase: true,
       maxHeaderSize: 8192,
       ...config,
@@ -504,7 +504,7 @@ export class BunDataCLIManager {
     return `\x1b[38;5;${this.colorToAnsi(parsed)}m${text}\x1b[0m`;
   }
 
-  private colorToAnsi(color: string): number {
+  private colorToAnsi(_color: string): number {
     // Simple conversion - would need full implementation
     // For now, return a default blue
     return 39;

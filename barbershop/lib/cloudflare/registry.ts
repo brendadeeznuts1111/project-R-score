@@ -397,7 +397,7 @@ export interface PaymentNotification {
 export class FactoryWagerRegistry {
   private cache: Map<string, RegistryEntry> = new Map();
   private subscribers: Map<string, Set<(entry: RegistryEntry) => void>> = new Map();
-  private bucketName = 'factory-wager-registry';
+  private _bucketName = 'factory-wager-registry';
 
   /**
    * Publish entry to registry
