@@ -14,7 +14,7 @@ export interface LogEntry {
   message: string;
   timestamp: string;
   component?: string;
-  data?: any;
+  data?: Record<string, unknown> | unknown[] | string | number | boolean | null;
   correlationId?: string;
 }
 
@@ -46,7 +46,7 @@ class BarbershopLogger {
   private log(
     level: LogLevel,
     message: string,
-    data?: any,
+    data?: Record<string, unknown> | unknown[] | string | number | boolean | null,
     component?: string,
     correlationId?: string
   ): void {
@@ -81,19 +81,19 @@ class BarbershopLogger {
     }
   }
 
-  debug(message: string, data?: any, component?: string, correlationId?: string): void {
+  debug(message: string, data?: Record<string, unknown> | unknown[] | string | number | boolean | null, component?: string, correlationId?: string): void {
     this.log('debug', message, data, component, correlationId);
   }
 
-  info(message: string, data?: any, component?: string, correlationId?: string): void {
+  info(message: string, data?: Record<string, unknown> | unknown[] | string | number | boolean | null, component?: string, correlationId?: string): void {
     this.log('info', message, data, component, correlationId);
   }
 
-  warn(message: string, data?: any, component?: string, correlationId?: string): void {
+  warn(message: string, data?: Record<string, unknown> | unknown[] | string | number | boolean | null, component?: string, correlationId?: string): void {
     this.log('warn', message, data, component, correlationId);
   }
 
-  error(message: string, data?: any, component?: string, correlationId?: string): void {
+  error(message: string, data?: Record<string, unknown> | unknown[] | string | number | boolean | null, component?: string, correlationId?: string): void {
     this.log('error', message, data, component, correlationId);
   }
 

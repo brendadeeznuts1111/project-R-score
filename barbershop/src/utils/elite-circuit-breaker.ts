@@ -326,16 +326,16 @@ export class CircuitBreakerManager {
 
 export function withCircuitBreaker(
   breaker: EliteCircuitBreaker,
-  fallback?: (...args: any[]) => any
+  fallback?: (...args: unknown[]) => unknown
 ) {
   return function (
-    target: any,
-    propertyKey: string,
+    _target: object,
+    _propertyKey: string,
     descriptor: PropertyDescriptor
   ) {
     const originalMethod = descriptor.value;
     
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (...args: unknown[]) {
       return breaker.execute(
         () => originalMethod.apply(this, args),
         fallback ? () => fallback(...args) : undefined
