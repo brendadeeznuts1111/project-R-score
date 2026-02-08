@@ -560,12 +560,14 @@ function htmlShell(options: Options): string {
         '</tr>'
       ).join('');
       domainHealthEl.innerHTML =
-        '<div class="meta">domain=' + (data.domain || 'factory-wager.com') + ' knownSubdomains=' + (data.knownSubdomains ?? 'n/a') + ' source=' + (data.source || 'n/a') + '</div>' +
+        '<div class="meta">domain=' + (data.domain || 'factory-wager.com') + ' zone=' + (data.zone || 'n/a') + ' account=' + (data.accountId || 'n/a') + ' knownSubdomains=' + (data.knownSubdomains ?? 'n/a') + ' source=' + (data.source || 'n/a') + '</div>' +
+        '<div class="meta">storage bucket=' + (data.storage?.bucket || 'n/a') + ' endpoint=' + (data.storage?.endpoint || 'n/a') + ' prefix=<code>' + (data.storage?.domainPrefix || 'n/a') + '</code></div>' +
+        '<div class="meta">storageKey health=<code>' + (data.storage?.sampleKeys?.health || 'n/a') + '</code></div>' +
         '<div class="meta">dnsChecked=' + (data.dnsPrefetch?.checked ?? 0) + ' dnsResolved=' + (data.dnsPrefetch?.resolved ?? 0) + ' cacheTtlSec=' + (data.dnsPrefetch?.cacheTtlSec ?? 'n/a') + '</div>' +
         '<table><thead><tr><th>Type</th><th>Key</th><th>Exists</th><th>Last Modified</th></tr></thead><tbody>' + latestRows + '</tbody></table>' +
         '<table style="margin-top:10px"><thead><tr><th>Subdomain</th><th>Full Domain</th><th>DNS</th><th>Records</th><th>Source</th></tr></thead><tbody>' + (subRows || '<tr><td colspan="5">No subdomain data.</td></tr>') + '</tbody></table>';
     };
-    const renderRss = (xmlText, source) => {
+    const renderRss = (xmlText, source, meta) => {
       if (!xmlText || typeof xmlText !== 'string') {
         rssEl.innerHTML = '<pre>No RSS feed available.</pre>';
         return;
@@ -586,8 +588,18 @@ function htmlShell(options: Options): string {
             '<td><a href="' + link + '" target="_blank" rel="noreferrer">open</a></td>' +
           '</tr>';
         }).join('');
+        const rssMeta =
+          meta && !meta.error
+            ? '<div class="meta">storage bucket=' + (meta.bucket || 'n/a') +
+              ' endpoint=' + (meta.endpoint || 'n/a') +
+              ' prefix=<code>' + (meta.prefix || 'n/a') + '</code>' +
+              ' key=<code>' + (meta.rssKey || 'n/a') + '</code>' +
+              '</div>' +
+              '<div class="meta">rssUrl=' + (meta.rssUrl || 'n/a') + '</div>'
+            : '<div class="meta">storage metadata unavailable</div>';
         rssEl.innerHTML =
           '<div class="meta">source=' + source + ' feed=<code>/api/rss?source=' + source + '</code></div>' +
+          rssMeta +
           '<table><thead><tr><th>Title</th><th>Published</th><th>Link</th></tr></thead><tbody>' + rows + '</tbody></table>';
       } catch {
         rssEl.innerHTML = '<pre>RSS parse error.</pre>';
@@ -705,9 +717,11 @@ function htmlShell(options: Options): string {
       const domainRes = await fetch('/api/domain-health?source=' + source);
       const domain = await domainRes.json();
       renderDomainHealth(domain);
+      const rssMetaRes = await fetch('/api/rss-meta?source=' + source);
+      const rssMeta = await rssMetaRes.json();
       const rssRes = await fetch('/api/rss?source=' + source);
       const rssText = await rssRes.text();
-      renderRss(rssText, source);
+      renderRss(rssText, source, rssMeta);
       const guid = parseLatestRssGuid(rssText);
       if (guid) {
         currentRssGuid = guid;
@@ -742,9 +756,11 @@ function htmlShell(options: Options): string {
       const domainRes = await fetch('/api/domain-health?source=local');
       const domain = await domainRes.json();
       renderDomainHealth(domain);
+      const rssMetaRes = await fetch('/api/rss-meta?source=local');
+      const rssMeta = await rssMetaRes.json();
       const rssRes = await fetch('/api/rss?source=local');
       const rssText = await rssRes.text();
-      renderRss(rssText, 'local');
+      renderRss(rssText, 'local', rssMeta);
       const guid = parseLatestRssGuid(rssText);
       if (guid) {
         currentRssGuid = guid;
@@ -1209,7 +1225,23 @@ async function main(): Promise<void> {
     const domainNamespace = domain
       .replace(/^\*\./, '')
       .replace(/\.[a-z0-9-]+$/i, '');
+    const rawAccountId = (Bun.env.CLOUDFLARE_ACCOUNT_ID || '').trim();
+    const accountId = rawAccountId
+      ? `${rawAccountId.slice(0, 4)}...${rawAccountId.slice(-4)}`
+      : null;
+    const zone = (Bun.env.CLOUDFLARE_ZONE_NAME || Bun.env.CLOUDFLARE_ZONE_ID || domain).trim() || domain;
     const prefixes = ['health', 'ssl', 'analytics'];
+    const r2Read = resolveR2ReadOptions();
+    const storage = {
+      bucket: r2Read?.bucket || Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || Bun.env.R2_BENCH_BUCKET || null,
+      endpoint: r2Read?.endpoint || Bun.env.R2_ENDPOINT || Bun.env.SEARCH_BENCH_R2_PUBLIC_BASE || null,
+      domainPrefix: `domains/${domainNamespace}/cloudflare/`,
+      sampleKeys: {
+        health: `domains/${domainNamespace}/cloudflare/health/YYYY-MM-DD.json`,
+        ssl: `domains/${domainNamespace}/cloudflare/ssl/YYYY-MM-DD.json`,
+        analytics: `domains/${domainNamespace}/cloudflare/analytics/YYYY-MM-DD.json`,
+      },
+    };
     let knownSubdomains: number | null = null;
     let managerNote: string | null = null;
     let subdomainConfigs: Array<{
@@ -1268,6 +1300,9 @@ async function main(): Promise<void> {
       return {
         source,
         domain,
+        zone,
+        accountId,
+        storage,
         knownSubdomains,
         managerNote,
         dnsPrefetch,
@@ -1283,7 +1318,7 @@ async function main(): Promise<void> {
 
     const r2 = resolveR2ReadOptions();
     if (!r2) {
-      return { error: 'r2_not_configured_for_domain_health', source, domain, knownSubdomains, managerNote };
+      return { error: 'r2_not_configured_for_domain_health', source, domain, zone, accountId, storage, knownSubdomains, managerNote };
     }
     const latest = await Promise.all(prefixes.map(async (type) => {
       const prefix = `domains/${domainNamespace}/cloudflare/${type}/`;
@@ -1311,11 +1346,40 @@ async function main(): Promise<void> {
     return {
       source,
       domain,
+      zone,
+      accountId,
+      storage,
       knownSubdomains,
       managerNote,
       dnsPrefetch,
       subdomains,
       latest,
+    };
+  };
+
+  const buildRssStorageSummary = async (source: 'local' | 'r2') => {
+    if (source === 'local') {
+      return {
+        source,
+        bucket: Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || Bun.env.R2_BENCH_BUCKET || null,
+        endpoint: Bun.env.R2_ENDPOINT || Bun.env.SEARCH_BENCH_R2_PUBLIC_BASE || null,
+        prefix: null,
+        rssKey: rssXml,
+        rssUrl: `file://${rssXml}`,
+      };
+    }
+
+    const prefix = options.r2Prefix.replace(/^\/+|\/+$/g, '');
+    const r2 = resolveR2ReadOptions();
+    const rssKey = `${prefix}/rss.xml`;
+    const publicBase = options.r2Base || Bun.env.SEARCH_BENCH_R2_PUBLIC_BASE || null;
+    return {
+      source,
+      bucket: r2?.bucket || Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || Bun.env.R2_BENCH_BUCKET || null,
+      endpoint: r2?.endpoint || Bun.env.R2_ENDPOINT || publicBase,
+      prefix,
+      rssKey,
+      rssUrl: publicBase ? `${publicBase.replace(/\/+$/g, '')}/rss.xml` : null,
     };
   };
 
@@ -1419,6 +1483,11 @@ async function main(): Promise<void> {
         return new Response(await Bun.file(rssXml).text(), {
           headers: { 'content-type': 'application/rss+xml; charset=utf-8' },
         });
+      }
+      if (url.pathname === '/api/rss-meta') {
+        const source = (url.searchParams.get('source') || 'local') as 'local' | 'r2';
+        const meta = await buildRssStorageSummary(source);
+        return Response.json(meta);
       }
       return new Response('Not found', { status: 404 });
     },
