@@ -13,6 +13,40 @@
 import { profileEngine, logger } from '../../user-profile/src/index.ts';
 import { Database } from 'bun:sqlite';
 import { join } from 'path';
+import type {
+  BenchmarkResult,
+  TestResult,
+  P2PGateway,
+  P2POperation,
+  P2PGatewayConfig,
+  P2PGatewayResult,
+  P2PMetrics,
+  P2PTransaction,
+  P2PBenchmarkOptions,
+  ProfileOperation,
+  ProfileResult,
+  ProfileMetrics,
+  PersonalizationResult,
+  XGBoostModel,
+  QuickWin,
+  AlertConfig,
+} from './types.ts';
+import {
+  initHistoryDatabase,
+  getHistoryDatabase,
+  pruneHistory,
+  saveBenchmarkHistory,
+  saveTestHistory,
+  saveP2PHistory,
+  saveProfileHistory,
+} from './db/history.ts';
+import {
+  calculateProfileMetrics,
+  calculateP2PMetrics,
+} from './metrics/calculators.ts';
+import { handleRoutes, type RouteContext } from './api/routes.ts';
+import { wsManager, broadcastUpdate } from './websocket/manager.ts';
+import { sendWebhookAlert, preconnectWebhook } from './alerts/webhook.ts';
 
 // Load TOML configs using Bun's native TOML.parse API
 // More explicit than import() - gives us full control over parsing
@@ -43,6 +77,11 @@ const alertConfig: AlertConfig = {
   webhookUrl: dashboardConfig.alerts?.webhook_url || undefined,
 };
 
+// Preconnect to webhook URL if configured (for faster delivery)
+if (alertConfig.webhookUrl) {
+  preconnectWebhook(alertConfig.webhookUrl);
+}
+
 // Initialize SQLite database for historical data tracking
 const dataDir = join(import.meta.dir, '..', 'data');
 try {
@@ -50,126 +89,19 @@ try {
 } catch {
   // Directory might already exist
 }
-const dbPath = join(dataDir, 'dashboard-history.db');
-const historyDb = new Database(dbPath);
-historyDb.exec('PRAGMA journal_mode = WAL');
-historyDb.exec('PRAGMA synchronous = NORMAL');
-historyDb.exec(`
-  CREATE TABLE IF NOT EXISTS benchmark_history (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    time REAL,
-    target REAL,
-    status TEXT,
-    timestamp INTEGER,
-    category TEXT
-  );
-  
-  CREATE TABLE IF NOT EXISTS test_history (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    status TEXT,
-    timestamp INTEGER,
-    category TEXT
-  );
-  
-  CREATE TABLE IF NOT EXISTS p2p_gateway_history (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    gateway TEXT,
-    operation TEXT,
-    time REAL,
-    target REAL,
-    status TEXT,
-    timestamp INTEGER,
-    dry_run INTEGER,
-    success INTEGER,
-    error_message TEXT,
-    request_size INTEGER,
-    response_size INTEGER,
-    endpoint TEXT,
-    status_code INTEGER,
-    metadata TEXT
-  );
-  
-  CREATE TABLE IF NOT EXISTS profile_history (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    operation TEXT,
-    time REAL,
-    target REAL,
-    status TEXT,
-    timestamp INTEGER,
-    category TEXT,
-    metadata TEXT,
-    cpu_time_ms REAL,
-    memory_delta_bytes INTEGER,
-    thread_count INTEGER,
-    peak_memory_mb REAL,
-    model_accuracy REAL,
-    model_loss REAL,
-    training_samples INTEGER,
-    inference_latency_ms REAL,
-    personalization_score REAL,
-    feature_count INTEGER,
-    embedding_dimension INTEGER,
-    hll_cardinality_estimate INTEGER,
-    hll_merge_time_ms REAL,
-    r2_object_size_bytes INTEGER,
-    r2_upload_time_ms REAL,
-    r2_download_time_ms REAL,
-    gnn_nodes INTEGER,
-    gnn_edges INTEGER,
-    gnn_propagation_time_ms REAL,
-    tags TEXT,
-    success INTEGER
-  );
-  
-  CREATE INDEX IF NOT EXISTS idx_benchmark_timestamp ON benchmark_history(timestamp);
-  CREATE INDEX IF NOT EXISTS idx_test_timestamp ON test_history(timestamp);
-  CREATE INDEX IF NOT EXISTS idx_p2p_gateway ON p2p_gateway_history(gateway, timestamp);
-  CREATE INDEX IF NOT EXISTS idx_profile_op ON profile_history(operation, timestamp);
-  CREATE INDEX IF NOT EXISTS idx_profile_category ON profile_history(category, timestamp);
-`);
+const historyDb = initHistoryDatabase(dataDir, retentionDays);
+pruneHistory(); // Run initial prune on startup
 
-// Prune old history (uses retention_days from config); run on startup and after each save
-function pruneHistory() {
-  try {
-    const cutoff = Date.now() - retentionDays * 24 * 60 * 60 * 1000;
-    const delBench = historyDb.prepare('DELETE FROM benchmark_history WHERE timestamp < ?');
-    const delTest = historyDb.prepare('DELETE FROM test_history WHERE timestamp < ?');
-    const delP2P = historyDb.prepare('DELETE FROM p2p_gateway_history WHERE timestamp < ?');
-    const delProfile = historyDb.prepare('DELETE FROM profile_history WHERE timestamp < ?');
-    delBench.run(cutoff);
-    delTest.run(cutoff);
-    delP2P.run(cutoff);
-    delProfile.run(cutoff);
-  } catch (error) {
-    logger.warn(`Failed to prune history: ${error}`);
-  }
+// Optional: fraud prevention (account history, cross-lookup references, phone hashes)
+let fraudEngine: import('../../fraud-prevention/src/index').FraudPreventionEngine | null = null;
+try {
+  const fp = await import('../../fraud-prevention/src/index.ts');
+  fraudEngine = new fp.FraudPreventionEngine(join(dataDir, 'fraud-prevention.db'));
+} catch {
+  // Dashboard runs without fraud-prevention if package unavailable
 }
-pruneHistory();
 
-// WebSocket client management
-const wsClients = new Set<any>();
-
-// Broadcast updates to all connected WebSocket clients
-function broadcastUpdate(type: string, data: any) {
-  const message = JSON.stringify({
-    type,
-    data,
-    timestamp: Date.now(),
-  });
-  
-  wsClients.forEach(ws => {
-    try {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(message);
-      }
-    } catch (error) {
-      logger.warn(`Failed to send WebSocket message: ${error}`);
-      wsClients.delete(ws);
-    }
-  });
-}
+// WebSocket client management is now handled by wsManager from ./websocket/manager.ts
 
 /** Truncate string without splitting UTF-16 surrogate pairs (Unicode-aware). */
 function truncateSafe(str: string | null | undefined, max: number): string {
@@ -182,256 +114,10 @@ function truncateSafe(str: string | null | undefined, max: number): string {
   return s.slice(0, end);
 }
 
-interface BenchmarkResult {
-  name: string;
-  time: number;
-  target: number;
-  status: 'pass' | 'fail' | 'warning';
-  note?: string;
-  category: 'performance' | 'memory' | 'type-safety';
-  isolated?: boolean;
-  resourceUsage?: {
-    maxRSS: number;
-    cpuTime: { user: number; system: number };
-    executionTime: number;
-  };
-}
+// calculateProfileMetrics and calculateP2PMetrics are now imported from ./metrics/calculators.ts
 
-interface TestResult {
-  name: string;
-  status: 'pass' | 'fail' | 'skip';
-  message?: string;
-  duration?: number;
-  category: string;
-}
-
-type P2PGateway = 'venmo' | 'cashapp' | 'paypal' | 'zelle' | 'wise' | 'revolut';
-
-type P2POperation = 'create' | 'query' | 'switch' | 'dry-run' | 'full' | 'webhook' | 'refund' | 'dispute';
-
-interface P2PGatewayConfig {
-  gateway: P2PGateway;
-  apiKeyEncrypted?: string;
-  apiSecretEncrypted?: string;
-  webhookUrl?: string;
-  webhookSecretEncrypted?: string;
-  sandboxMode: boolean;
-  rateLimitPerMinute: number;
-  timeoutMs: number;
-  retryCount: number;
-  circuitBreakerThreshold: number;
-  configJson: Record<string, any>;
-  enabled: boolean;
-}
-
-interface P2PGatewayResult {
-  gateway: P2PGateway;
-  operation: P2POperation;
-  time: number;
-  target: number;
-  status: 'pass' | 'fail' | 'warning';
-  note?: string;
-  dryRun?: boolean;
-  // Extended metrics
-  success?: boolean;
-  errorMessage?: string;
-  requestSize?: number;
-  responseSize?: number;
-  endpoint?: string;
-  statusCode?: number;
-  metadata?: Record<string, any>;
-}
-
-interface P2PMetrics {
-  gateway: P2PGateway;
-  operation: P2POperation;
-  totalOperations: number;
-  avgDurationMs: number;
-  minDurationMs: number;
-  maxDurationMs: number;
-  successfulOps: number;
-  failedOps: number;
-  successRate: number;
-}
-
-interface P2PTransaction {
-  id: string;
-  gateway: P2PGateway;
-  amount: number;
-  currency: string;
-  senderId: string;
-  receiverId: string;
-  status: 'pending' | 'completed' | 'failed' | 'refunded';
-  metadata?: Record<string, any>;
-  createdAt: Date;
-  completedAt?: Date;
-}
-
-interface P2PBenchmarkOptions {
-  gateways: P2PGateway[];
-  operations: P2POperation[];
-  iterations: number;
-  includeDryRun: boolean;
-  includeFull: boolean;
-  transactionAmounts: number[];
-  currencies: string[];
-}
-
-type ProfileOperation = 
-  | 'create' 
-  | 'create_batch'
-  | 'query' 
-  | 'update' 
-  | 'progress_save'
-  | 'xgboost_train' 
-  | 'xgboost_predict' 
-  | 'xgboost_personalize'
-  | 'redis_hll_add' 
-  | 'redis_hll_count' 
-  | 'redis_hll_merge'
-  | 'r2_snapshot' 
-  | 'r2_restore'
-  | 'gnn_propagate' 
-  | 'gnn_train' 
-  | 'gnn_infer'
-  | 'feature_extract' 
-  | 'model_update' 
-  | 'cache_invalidate';
-
-interface ProfileResult {
-  operation: ProfileOperation;
-  time: number;
-  target: number;
-  status: 'pass' | 'fail' | 'warning';
-  note?: string;
-  category: 'core' | 'xgboost' | 'redis_hll' | 'r2_snapshot' | 'propagation' | 'gnn' | 'features';
-  metadata?: Record<string, any>;
-  // Extended metrics
-  cpuTimeMs?: number;
-  memoryDeltaBytes?: number;
-  threadCount?: number;
-  peakMemoryMb?: number;
-  modelAccuracy?: number;
-  modelLoss?: number;
-  trainingSamples?: number;
-  inferenceLatencyMs?: number;
-  personalizationScore?: number;
-  featureCount?: number;
-  embeddingDimension?: number;
-  hllCardinalityEstimate?: number;
-  hllMergeTimeMs?: number;
-  r2ObjectSizeBytes?: number;
-  r2UploadTimeMs?: number;
-  r2DownloadTimeMs?: number;
-  gnnNodes?: number;
-  gnnEdges?: number;
-  gnnPropagationTimeMs?: number;
-  tags?: string[];
-}
-
-interface ProfileMetrics {
-  operation: ProfileOperation;
-  totalOperations: number;
-  avgDurationMs: number;
-  avgPersonalizationScore?: number;
-  avgModelAccuracy?: number;
-  successfulOps: number;
-  failedOps: number;
-  successRate: number;
-  avgCpuTimeMs?: number;
-  avgPeakMemoryMb?: number;
-}
-
-// Calculate aggregate metrics for profile operations
-function calculateProfileMetrics(profileResults: ProfileResult[]): ProfileMetrics[] {
-  const operationMap = new Map<ProfileOperation, ProfileResult[]>();
-  
-  // Group by operation
-  profileResults.forEach(result => {
-    if (!operationMap.has(result.operation)) {
-      operationMap.set(result.operation, []);
-    }
-    operationMap.get(result.operation)!.push(result);
-  });
-  
-  // Calculate metrics for each operation
-  const metrics: ProfileMetrics[] = [];
-  operationMap.forEach((results, operation) => {
-    const totalOps = results.length;
-    const successfulOps = results.filter(r => r.status === 'pass' || r.status === 'warning').length;
-    const failedOps = totalOps - successfulOps;
-    const successRate = totalOps > 0 ? (successfulOps / totalOps) * 100 : 0;
-    
-    const avgDurationMs = results.reduce((sum, r) => sum + r.time, 0) / totalOps;
-    const avgCpuTimeMs = results.filter(r => r.cpuTimeMs !== undefined).length > 0
-      ? results.filter(r => r.cpuTimeMs !== undefined).reduce((sum, r) => sum + (r.cpuTimeMs || 0), 0) / results.filter(r => r.cpuTimeMs !== undefined).length
-      : undefined;
-    const avgPeakMemoryMb = results.filter(r => r.peakMemoryMb !== undefined).length > 0
-      ? results.filter(r => r.peakMemoryMb !== undefined).reduce((sum, r) => sum + (r.peakMemoryMb || 0), 0) / results.filter(r => r.peakMemoryMb !== undefined).length
-      : undefined;
-    const avgPersonalizationScore = results.filter(r => r.personalizationScore !== undefined).length > 0
-      ? results.filter(r => r.personalizationScore !== undefined).reduce((sum, r) => sum + (r.personalizationScore || 0), 0) / results.filter(r => r.personalizationScore !== undefined).length
-      : undefined;
-    const avgModelAccuracy = results.filter(r => r.modelAccuracy !== undefined).length > 0
-      ? results.filter(r => r.modelAccuracy !== undefined).reduce((sum, r) => sum + (r.modelAccuracy || 0), 0) / results.filter(r => r.modelAccuracy !== undefined).length
-      : undefined;
-    
-    metrics.push({
-      operation,
-      totalOperations: totalOps,
-      avgDurationMs,
-      avgPersonalizationScore,
-      avgModelAccuracy,
-      successfulOps,
-      failedOps,
-      successRate,
-      avgCpuTimeMs,
-      avgPeakMemoryMb,
-    });
-  });
-  
-  return metrics;
-}
-
-interface PersonalizationResult {
-  userId: string;
-  personalizationScore: number;
-  featureVector: number[];
-  modelVersion: string;
-  inferenceTimeMs: number;
-  confidence: number;
-  recommendations: string[];
-}
-
-interface XGBoostModel {
-  version: string;
-  accuracy: number;
-  loss: number;
-  featureImportance: Record<string, number>;
-  trainedAt: Date;
-  sampleCount: number;
-}
-
-interface QuickWin {
-  id: number;
-  title: string;
-  status: 'completed' | 'pending' | 'verified';
-  impact: string;
-  files: string[];
-  category: string;
-}
-
-interface AlertConfig {
-  enabled: boolean;
-  thresholds: {
-    performanceScore: number;
-    failingTests: number;
-    slowBenchmarks: number;
-  };
-  webhookUrl?: string;
-}
-
-const HTML = `<!DOCTYPE html>
+// HTML template moved to src/ui/dashboard.html - loaded via Bun.file() in getPageHtml()
+// const HTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -741,6 +427,7 @@ const HTML = `<!DOCTYPE html>
       --text-secondary: #666666;
       --accent: #0066ff;
       --border: #ddd;
+      --risk-red: #cc2222;
     }
     :root[data-theme="dark"] {
       --bg-primary: #0a0a0a;
@@ -749,6 +436,7 @@ const HTML = `<!DOCTYPE html>
       --text-secondary: #888888;
       --accent: #00ff88;
       --border: #333;
+      --risk-red: #ff4444;
     }
   </style>
 </head>
@@ -822,6 +510,7 @@ const HTML = `<!DOCTYPE html>
     <div class="tab" onclick="showTab('tests')">✅ Tests</div>
     <div class="tab" onclick="showTab('p2p')">💳 P2P Gateways</div>
     <div class="tab" onclick="showTab('profiling')">📊 Profiling</div>
+    <div class="tab" onclick="showTab('fraud')">🛡️ Fraud</div>
     <div class="tab" onclick="showTab('insights')">💡 Insights</div>
     <div class="tab" onclick="showTab('roadmap')">🗺️ Roadmap</div>
   </div>
@@ -975,6 +664,8 @@ const HTML = `<!DOCTYPE html>
     </div>
   </div>
 
+  {{FRAUD_TAB}}
+
   <div id="insights-tab" class="tab-content">
     <div class="section">
       <h2>💡 Insights & Recommendations</h2>
@@ -1035,6 +726,12 @@ const HTML = `<!DOCTYPE html>
       };
     }
     
+    function escapeHTML(str) {
+      if (str == null) return '';
+      const s = String(str);
+      return s.replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;' }[m]));
+    }
+    
     function showTab(tabName) {
       try {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -1046,9 +743,118 @@ const HTML = `<!DOCTYPE html>
         if (tabElement) {
           tabElement.classList.add('active');
         }
+        if (tabName === 'fraud') {
+          loadFraudData();
+        }
       } catch (error) {
         console.error('Error in showTab:', error);
         showError('Failed to switch tab: ' + error.message);
+      }
+    }
+    
+    // Fraud Intelligence: collision alert, audit trail, reference map
+    async function loadFraudData() {
+      const unavailable = document.getElementById('fraud-unavailable');
+      const content = document.getElementById('fraud-content');
+      const collisionsEl = document.getElementById('fraud-collisions');
+      const refMapEl = document.getElementById('fraud-reference-map');
+      if (!unavailable || !content || !collisionsEl || !refMapEl) return;
+      try {
+        const r = await fetch('/api/fraud/cross-lookup?minAccounts=2');
+        if (!r.ok) {
+          unavailable.style.display = 'block';
+          content.style.display = 'none';
+          return;
+        }
+        const { results } = await r.json();
+        unavailable.style.display = 'none';
+        content.style.display = 'block';
+        renderFraudCollisions(results, collisionsEl);
+        renderFraudReferenceMap(results, refMapEl);
+      } catch (e) {
+        unavailable.style.display = 'block';
+        content.style.display = 'none';
+      }
+    }
+    
+    function renderFraudCollisions(results, el) {
+      const labels = { phone_hash: 'Phone hash', email_hash: 'Email hash', device_id: 'Device ID' };
+      if (!results || results.length === 0) {
+        el.innerHTML = '<p style="color: #666;">No collisions (no reference shared by 2+ accounts).</p>';
+        return;
+      }
+      el.innerHTML = results.map(r => {
+        const typeLabel = labels[r.referenceType] || r.referenceType;
+        const hashShort = (r.valueHash || '').substring(0, 12) + '…';
+        const userIdsList = (r.userIds || []).map(u => '<code style="background: rgba(255,68,68,0.2); padding: 2px 6px; border-radius: 3px;">' + escapeHTML(u) + '</code>').join(', ');
+        return '<div class="item" style="border-left: 4px solid #ff4444; margin-bottom: 12px;"><div class="item-content"><div class="item-title">⚠️ ' + escapeHTML(typeLabel) + ' shared by ' + (r.count || 0) + ' accounts</div><div class="item-details" style="margin-top: 6px;">Hash: <code>' + escapeHTML(hashShort) + '</code></div><div class="item-details" style="margin-top: 4px;">User IDs: ' + userIdsList + '</div></div></div>';
+      }).join('');
+    }
+    
+    function renderFraudReferenceMap(results, el) {
+      const labels = { phone_hash: 'Phone', email_hash: 'Email', device_id: 'Device' };
+      if (!results || results.length === 0) {
+        el.innerHTML = '<p style="color: #666;">No reference→account links with 2+ accounts.</p>';
+        return;
+      }
+      const table = el.querySelector('table');
+      if (!table) {
+        el.innerHTML = '<table style="width: 100%; border-collapse: collapse; font-size: 12px;"><thead><tr style="border-bottom: 1px solid #333;"><th style="text-align: left; padding: 8px;">Reference type</th><th style="text-align: left; padding: 8px;">Hash (truncated)</th><th style="text-align: right; padding: 8px;">User count</th><th style="text-align: left; padding: 8px;">Bar</th></tr></thead><tbody id="fraud-reference-map-body"></tbody></table>';
+      }
+      const body = document.getElementById('fraud-reference-map-body');
+      if (!body) return;
+      body.innerHTML = '';
+      const fragment = document.createDocumentFragment();
+      results.forEach(function (item) {
+        const row = document.createElement('tr');
+        row.style.borderBottom = '1px solid #222';
+        const typeLabel = labels[item.referenceType] || item.referenceType;
+        const hashShort = (item.valueHash || '').slice(0, 12) + '…';
+        const width = Math.min((item.count / 10) * 100, 100);
+        row.innerHTML = '<td style="padding: 8px;">' + escapeHTML(typeLabel) + '</td><td style="padding: 8px;" title="' + escapeHTML(item.valueHash || '') + '"><code>' + escapeHTML(hashShort) + '</code></td><td style="text-align: right; padding: 8px;">' + (item.count || 0) + '</td><td style="padding: 8px; width: 120px;"><div style="width:' + width + '%; height:8px; background:var(--risk-red, #ff4444); border-radius:4px;"></div></td>';
+        fragment.appendChild(row);
+      });
+      body.appendChild(fragment);
+    }
+    
+    async function loadAuditTrail() {
+      const userIdInput = document.getElementById('fraud-user-id');
+      const tbody = document.getElementById('fraud-audit-tbody');
+      const table = document.getElementById('fraud-audit-table');
+      const empty = document.getElementById('fraud-audit-empty');
+      const status = document.getElementById('fraud-audit-status');
+      if (!userIdInput || !tbody || !table || !empty || !status) return;
+      const userId = (userIdInput.value || '').trim();
+      if (!userId) {
+        status.textContent = 'Enter a userId (e.g. @username).';
+        return;
+      }
+      status.textContent = 'Loading…';
+      table.style.display = 'none';
+      empty.style.display = 'none';
+      try {
+        const r = await fetch('/api/fraud/history?userId=' + encodeURIComponent(userId) + '&limit=100');
+        if (!r.ok) {
+          const err = await r.json().catch(() => ({}));
+          status.textContent = err.error || 'Failed to load history';
+          return;
+        }
+        const { entries } = await r.json();
+        status.textContent = entries.length + ' entries';
+        if (entries.length === 0) {
+          empty.style.display = 'block';
+          empty.textContent = 'No history for ' + escapeHTML(userId);
+          return;
+        }
+        tbody.innerHTML = entries.map(e => {
+          const ts = e.timestamp ? new Date(e.timestamp * 1000).toISOString() : '-';
+          const meta = e.metadata ? escapeHTML(JSON.stringify(e.metadata)).substring(0, 60) + (JSON.stringify(e.metadata).length > 60 ? '…' : '') : '-';
+          return '<tr style="border-bottom: 1px solid #222;"><td style="padding: 8px;">' + e.id + '</td><td style="padding: 8px;">' + escapeHTML(e.eventType || '') + '</td><td style="padding: 8px;">' + escapeHTML(ts) + '</td><td style="padding: 8px;">' + escapeHTML(e.gateway || '-') + '</td><td style="padding: 8px;">' + (e.success ? '✅' : '❌') + '</td><td style="padding: 8px;"><code>' + escapeHTML((e.deviceHash || '').substring(0, 10) + (e.deviceHash && e.deviceHash.length > 10 ? '…' : '')) + '</code></td><td style="padding: 8px; max-width: 120px; overflow: hidden; text-overflow: ellipsis;" title="' + escapeHTML(meta) + '">' + meta + '</td></tr>';
+        }).join('');
+        table.style.display = 'table';
+      } catch (e) {
+        status.textContent = 'Error: ' + (e?.message || String(e));
+        showError('Audit trail: ' + (e?.message || String(e)));
       }
     }
 
@@ -1110,6 +916,7 @@ const HTML = `<!DOCTYPE html>
         showError('Failed to refresh dashboard: ' + (error?.message || String(error)));
       }
     }
+    window.refreshDashboard = refreshDashboard;
     
     function getExportParams() {
       const p = new URLSearchParams();
@@ -1304,7 +1111,7 @@ const HTML = `<!DOCTYPE html>
           const operationFilter = document.getElementById('p2p-operation-filter')?.value || '';
           const statusFilter = document.getElementById('p2p-status-filter')?.value || '';
           
-          const filteredP2P = data.p2pResults.filter((p: any) => {
+          const filteredP2P = data.p2pResults.filter((p) => {
             const matchesGateway = !gatewayFilter || p.gateway === gatewayFilter;
             const matchesOperation = !operationFilter || p.operation === operationFilter;
             const matchesStatus = !statusFilter || p.status === statusFilter;
@@ -1312,7 +1119,7 @@ const HTML = `<!DOCTYPE html>
           });
           
           const gatewayLabels = { venmo: 'Venmo', cashapp: 'Cash App', paypal: 'PayPal', zelle: 'Zelle', wise: 'Wise', revolut: 'Revolut' };
-          p2pList.innerHTML = filteredP2P.map((p: any) => {
+          p2pList.innerHTML = filteredP2P.map((p) => {
             const ratio = p.target > 0 ? (p.time / p.target).toFixed(1) : 'N/A';
             const ratioClass = parseFloat(ratio) < 1.5 ? 'ratio-good' : parseFloat(ratio) < 3 ? 'ratio-warning' : 'ratio-bad';
             const icon = p.status === 'pass' ? '✅' : p.status === 'warning' ? '⚠️' : '❌';
@@ -1351,14 +1158,14 @@ const HTML = `<!DOCTYPE html>
           const operationFilter = document.getElementById('profile-operation-filter')?.value || '';
           const statusFilter = document.getElementById('profile-status-filter')?.value || '';
           
-          const filteredProfile = data.profileResults.filter((p: any) => {
+          const filteredProfile = data.profileResults.filter((p) => {
             const matchesCategory = !categoryFilter || p.category === categoryFilter;
             const matchesOperation = !operationFilter || p.operation === operationFilter;
             const matchesStatus = !statusFilter || p.status === statusFilter;
             return matchesCategory && matchesOperation && matchesStatus;
           });
           
-          profilingList.innerHTML = filteredProfile.map((p: any) => {
+          profilingList.innerHTML = filteredProfile.map((p) => {
             const ratio = p.target > 0 ? (p.time / p.target).toFixed(1) : 'N/A';
             const ratioClass = parseFloat(ratio) < 1.5 ? 'ratio-good' : parseFloat(ratio) < 3 ? 'ratio-warning' : 'ratio-bad';
             const icon = p.status === 'pass' ? '✅' : p.status === 'warning' ? '⚠️' : '❌';
@@ -1387,7 +1194,7 @@ const HTML = `<!DOCTYPE html>
               : '';
             
             const tagsInfo = p.tags && p.tags.length > 0
-              ? '<div class="item-details" style="font-size: 10px; color: #666; margin-top: 2px;">🏷️ ' + p.tags.map((t: string) => escapeHTML(t)).join(', ') + '</div>'
+              ? '<div class="item-details" style="font-size: 10px; color: #666; margin-top: 2px;">🏷️ ' + p.tags.map((t) => escapeHTML(t)).join(', ') + '</div>'
               : '';
             
             return '<div class="item"><div class="item-content"><div class="item-title">' + icon + ' ' + p.operation + '<span class="category-badge cat-' + p.category + '">' + p.category + '</span></div><div class="metric-row"><span class="metric-value">' + p.time.toFixed(6) + 'ms</span><span class="metric-target">target: ' + p.target.toFixed(6) + 'ms</span><span class="metric-ratio ' + ratioClass + '">' + ratio + 'x</span></div>' + (safeNote ? '<div class="item-details">' + safeNote + '</div>' : '') + extendedMetrics + tagsInfo + metadataInfo + '</div><span class="status-badge status-' + p.status + '">' + p.status + '</span></div>';
@@ -1819,7 +1626,7 @@ const HTML = `<!DOCTYPE html>
         });
         
         const labels = Object.keys(gatewayData).map(k => gatewayData[k].gateway + ' ' + gatewayData[k].operation);
-        const avgTimes = Object.values(gatewayData).map((g: any) => 
+        const avgTimes = Object.values(gatewayData).map((g) => 
           g.times.reduce((a, b) => a + b, 0) / g.times.length
         );
         
@@ -2134,7 +1941,30 @@ const HTML = `<!DOCTYPE html>
     setInterval(loadDashboard, refreshInterval * 2);
   </script>
 </body>
-</html>`;
+</html>`; */
+
+/** Cached full page HTML with UI fragments (e.g. fraud tab) injected. Built on first request. */
+let cachedPageHtml: string | null = null;
+
+/**
+ * Return the dashboard HTML, injecting external UI fragments (Bun.file) on first use.
+ */
+async function getPageHtml(): Promise<string> {
+  if (cachedPageHtml !== null) return cachedPageHtml;
+  
+  // Load main HTML template from file
+  const dashboardTemplate = await Bun.file(new URL('./ui/dashboard.html', import.meta.url)).text();
+  
+  // Load fraud fragment
+  const fraudFragment = await Bun.file(new URL('./ui/fraud.html', import.meta.url)).text();
+  
+  // Replace placeholders
+  cachedPageHtml = dashboardTemplate
+    .replace('{{FRAUD_TAB}}', fraudFragment)
+    .replace('${refreshInterval}', String(refreshInterval));
+  
+  return cachedPageHtml;
+}
 
 /**
  * Run benchmark with retry logic and exponential backoff
@@ -3639,163 +3469,11 @@ function compareBenchmarks(current: BenchmarkResult[], previous: BenchmarkResult
 }
 
 // Save historical data to SQLite
-function saveHistory(benchmarks: BenchmarkResult[], tests: TestResult[]) {
-  try {
-    const timestamp = Date.now();
-    const insertBenchmark = historyDb.prepare(
-      'INSERT INTO benchmark_history (name, time, target, status, timestamp, category) VALUES (?, ?, ?, ?, ?, ?)'
-    );
-    const insertTest = historyDb.prepare(
-      'INSERT INTO test_history (name, status, timestamp, category) VALUES (?, ?, ?, ?)'
-    );
-    
-    benchmarks.forEach(b => {
-      insertBenchmark.run(b.name, b.time, b.target, b.status, timestamp, b.category);
-    });
-    
-    tests.forEach(t => {
-      insertTest.run(t.name, t.status, timestamp, t.category);
-    });
-    
-    pruneHistory();
-  } catch (error) {
-    logger.warn(`Failed to save history: ${error}`);
-  }
-}
+// saveHistory, saveP2PHistory, and saveProfileHistory are now imported from ./db/history.ts
 
-function saveP2PHistory(p2pResults: P2PGatewayResult[]) {
-  try {
-    const timestamp = Date.now();
-    const insertP2P = historyDb.prepare(`
-      INSERT INTO p2p_gateway_history (
-        gateway, operation, time, target, status, timestamp, dry_run,
-        success, error_message, request_size, response_size, endpoint, status_code, metadata
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-    
-    p2pResults.forEach(p => {
-      const success = p.success !== undefined ? (p.success ? 1 : 0) : (p.status === 'pass' || p.status === 'warning' ? 1 : 0);
-      insertP2P.run(
-        p.gateway,
-        p.operation,
-        p.time,
-        p.target,
-        p.status,
-        timestamp,
-        p.dryRun ? 1 : 0,
-        success,
-        p.errorMessage || null,
-        p.requestSize || null,
-        p.responseSize || null,
-        p.endpoint || null,
-        p.statusCode || null,
-        p.metadata ? JSON.stringify(p.metadata) : null
-      );
-    });
-    
-    pruneHistory();
-  } catch (error) {
-    logger.warn(`Failed to save P2P history: ${error}`);
-  }
-}
+// calculateP2PMetrics is now imported from ./metrics/calculators.ts
 
-// Calculate aggregate metrics for P2P operations
-function calculateP2PMetrics(p2pResults: P2PGatewayResult[]): P2PMetrics[] {
-  const operationMap = new Map<string, P2PGatewayResult[]>();
-  
-  // Group by gateway and operation
-  p2pResults.forEach(result => {
-    const key = `${result.gateway}-${result.operation}`;
-    if (!operationMap.has(key)) {
-      operationMap.set(key, []);
-    }
-    operationMap.get(key)!.push(result);
-  });
-  
-  // Calculate metrics for each gateway-operation combination
-  const metrics: P2PMetrics[] = [];
-  operationMap.forEach((results, key) => {
-    const [gateway, operation] = key.split('-') as [P2PGateway, P2POperation];
-    const totalOps = results.length;
-    const successfulOps = results.filter(r => r.success !== false && (r.status === 'pass' || r.status === 'warning')).length;
-    const failedOps = totalOps - successfulOps;
-    const successRate = totalOps > 0 ? (successfulOps / totalOps) * 100 : 0;
-    
-    const durations = results.map(r => r.time);
-    const avgDurationMs = durations.reduce((sum, d) => sum + d, 0) / totalOps;
-    const minDurationMs = Math.min(...durations);
-    const maxDurationMs = Math.max(...durations);
-    
-    metrics.push({
-      gateway,
-      operation,
-      totalOperations: totalOps,
-      avgDurationMs,
-      minDurationMs,
-      maxDurationMs,
-      successfulOps,
-      failedOps,
-      successRate,
-    });
-  });
-  
-  return metrics;
-}
-
-function saveProfileHistory(profileResults: ProfileResult[]) {
-  try {
-    const timestamp = Date.now();
-    const insertProfile = historyDb.prepare(`
-      INSERT INTO profile_history (
-        operation, time, target, status, timestamp, category, metadata,
-        cpu_time_ms, memory_delta_bytes, thread_count, peak_memory_mb,
-        model_accuracy, model_loss, training_samples, inference_latency_ms,
-        personalization_score, feature_count, embedding_dimension,
-        hll_cardinality_estimate, hll_merge_time_ms,
-        r2_object_size_bytes, r2_upload_time_ms, r2_download_time_ms,
-        gnn_nodes, gnn_edges, gnn_propagation_time_ms, tags, success
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-    
-    profileResults.forEach(p => {
-      const success = p.status === 'pass' || p.status === 'warning' ? 1 : 0;
-      insertProfile.run(
-        p.operation,
-        p.time,
-        p.target,
-        p.status,
-        timestamp,
-        p.category,
-        p.metadata ? JSON.stringify(p.metadata) : null,
-        p.cpuTimeMs || null,
-        p.memoryDeltaBytes || null,
-        p.threadCount || null,
-        p.peakMemoryMb || null,
-        p.modelAccuracy || null,
-        p.modelLoss || null,
-        p.trainingSamples || null,
-        p.inferenceLatencyMs || null,
-        p.personalizationScore || null,
-        p.featureCount || null,
-        p.embeddingDimension || null,
-        p.hllCardinalityEstimate || null,
-        p.hllMergeTimeMs || null,
-        p.r2ObjectSizeBytes || null,
-        p.r2UploadTimeMs || null,
-        p.r2DownloadTimeMs || null,
-        p.gnnNodes || null,
-        p.gnnEdges || null,
-        p.gnnPropagationTimeMs || null,
-        p.tags ? JSON.stringify(p.tags) : null,
-        success
-      );
-    });
-    
-    pruneHistory();
-  } catch (error) {
-    logger.warn(`Failed to save profile history: ${error}`);
-  }
-}
+// saveProfileHistory is now imported from ./db/history.ts
 
 // 🚀 Performance: Response cache with TTL to reduce server load
 const dataCache = new Map<string, { data: any; timestamp: number }>();
@@ -3855,7 +3533,8 @@ async function getData(useCache = true) {
   });
   
   // Save to history
-  saveHistory(benchmarks, tests);
+  saveBenchmarkHistory(benchmarks);
+  saveTestHistory(tests);
   if (p2pResults.length > 0) {
     saveP2PHistory(p2pResults);
   }
@@ -3935,17 +3614,25 @@ async function checkAndAlert(data: any) {
     // Console alerts
     alerts.forEach(alert => logger.warn(alert));
     
-    // Webhook alerts
+    // Webhook alerts (non-blocking - don't let failures block alert processing)
     if (alertConfig.webhookUrl) {
-      try {
-        await fetch(alertConfig.webhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ alerts, timestamp: Date.now(), stats: data.stats })
-        });
-      } catch (error) {
-        logger.warn(`Failed to send webhook alert: ${error}`);
-      }
+      // Use fire-and-forget pattern - don't await to avoid blocking
+      sendWebhookAlert(
+        alertConfig.webhookUrl,
+        {
+          alerts,
+          timestamp: Date.now(),
+          stats: data.stats,
+          source: 'factorywager-dashboard',
+        },
+        {
+          timeout: 5000, // 5 second timeout
+          retries: 3, // Retry up to 3 times
+        }
+      ).catch((error) => {
+        // Error already logged in sendWebhookAlert, but log here for context
+        logger.debug(`Webhook alert delivery completed with errors: ${error}`);
+      });
     }
     
     // Broadcast alerts via WebSocket
@@ -3962,77 +3649,28 @@ Bun.serve({
     watch: process.env.NODE_ENV !== 'production',
   },
   websocket: {
-    message: (ws, message) => {
-      try {
-        const data = JSON.parse(message.toString());
-        
-        // Handle client messages
-        switch (data.type) {
-          case 'ping':
-            ws.send(JSON.stringify({ type: 'pong', timestamp: Date.now() }));
-            break;
-          case 'subscribe':
-            // Client can subscribe to specific update types
-            ws.data.subscriptions = new Set(data.channels || ['*']);
-            ws.send(JSON.stringify({ 
-              type: 'subscribed', 
-              channels: Array.from(ws.data.subscriptions) 
-            }));
-            break;
-          default:
-            logger.warn(`Unknown WebSocket message type: ${data.type}`);
-        }
-      } catch (error) {
-        logger.error(`WebSocket message error: ${error}`);
-      }
-    },
-    open: (ws) => {
-      wsClients.add(ws);
-      ws.data = {
-        connectedAt: Date.now(),
-        subscriptions: new Set(['*']), // Subscribe to all by default
-      };
-      
-      logger.info(`🔌 WebSocket client connected (${wsClients.size} total)`);
-      
-      // Send welcome message
-      ws.send(JSON.stringify({
-        type: 'connected',
-        message: 'Connected to FactoryWager Dev Dashboard',
-        timestamp: Date.now(),
-      }));
-    },
-    close: (ws) => {
-      wsClients.delete(ws);
-      logger.info(`🔌 WebSocket client disconnected (${wsClients.size} remaining)`);
-    },
-    error: (ws, error) => {
-      logger.error(`WebSocket error: ${error}`);
-      wsClients.delete(ws);
-    },
+    message: (ws, message) => wsManager.handleMessage(ws, message),
+    open: (ws) => wsManager.handleOpen(ws),
+    close: (ws) => wsManager.handleClose(ws),
+    error: (ws, error) => wsManager.handleError(ws, error),
     perMessageDeflate: true, // Enable compression
   },
   async fetch(req, server) {
-    const url = new URL(req.url);
+    // Create route context with dependencies
+    const routeContext: RouteContext = {
+      getData,
+      checkAndAlert,
+      getPageHtml,
+      dataCache,
+      CACHE_TTL,
+      fraudEngine,
+      wsClients: wsManager,
+    };
     
-    // WebSocket upgrade endpoint
-    if (url.pathname === '/ws') {
-      const upgraded = server.upgrade(req, {
-        data: {
-          connectedAt: Date.now(),
-          subscriptions: new Set(['*']),
-        },
-      });
-      
-      if (upgraded) {
-        return undefined; // WebSocket upgrade successful
-      }
-      
-      return new Response('WebSocket upgrade failed', { status: 500 });
-    }
-    
-    // API endpoint for dashboard data
-    if (url.pathname === '/api/data') {
+    // Delegate to routes module
+    return handleRoutes(req, server, routeContext);
+  },
+});
       const bypassCache = url.searchParams.has('refresh') || url.searchParams.get('cache') === 'false';
       const scope = url.searchParams.get('scope'); // p2p, profile, or undefined (all)
       const data = await getData(!bypassCache);
@@ -4184,7 +3822,7 @@ Bun.serve({
           }
           
           query += ' ORDER BY timestamp DESC';
-          const p2pHistory = historyDb.prepare(query).all(...params);
+          const p2pHistory = getHistoryDatabase().prepare(query).all(...params);
           responseData = { p2p: p2pHistory };
         } else if (scope === 'profile') {
           let query = 'SELECT * FROM profile_history WHERE timestamp > ?';
@@ -4197,23 +3835,23 @@ Bun.serve({
           }
           
           query += ' ORDER BY timestamp DESC';
-          const profileHistory = historyDb.prepare(query).all(...params);
+          const profileHistory = getHistoryDatabase().prepare(query).all(...params);
           responseData = { profile: profileHistory };
         } else {
           // Default: return all history
-          const benchmarks = historyDb.prepare(
+          const benchmarks = getHistoryDatabase().prepare(
             'SELECT * FROM benchmark_history WHERE timestamp > ? ORDER BY timestamp DESC'
           ).all(since);
           
-          const tests = historyDb.prepare(
+          const tests = getHistoryDatabase().prepare(
             'SELECT * FROM test_history WHERE timestamp > ? ORDER BY timestamp DESC'
           ).all(since);
           
-          const p2pHistory = historyDb.prepare(
+          const p2pHistory = getHistoryDatabase().prepare(
             'SELECT * FROM p2p_gateway_history WHERE timestamp > ? ORDER BY timestamp DESC'
           ).all(since);
           
-          const profileHistory = historyDb.prepare(
+          const profileHistory = getHistoryDatabase().prepare(
             'SELECT * FROM profile_history WHERE timestamp > ? ORDER BY timestamp DESC'
           ).all(since);
           
@@ -4247,7 +3885,7 @@ Bun.serve({
         }
         
         query += ' ORDER BY timestamp DESC';
-        const profileHistory = historyDb.prepare(query).all(...params);
+        const profileHistory = getHistoryDatabase().prepare(query).all(...params);
         
         // Convert database rows to ProfileResult format
         const profileResults: ProfileResult[] = profileHistory.map((row: any) => ({
@@ -4315,7 +3953,7 @@ Bun.serve({
         }
         
         query += ' ORDER BY timestamp DESC';
-        const p2pHistory = historyDb.prepare(query).all(...params);
+        const p2pHistory = getHistoryDatabase().prepare(query).all(...params);
         
         // Convert database rows to P2PGatewayResult format
         const p2pResults: P2PGatewayResult[] = p2pHistory.map((row: any) => ({
@@ -4365,7 +4003,7 @@ Bun.serve({
         }
         
         query += ' ORDER BY timestamp ASC';
-        const trends = historyDb.prepare(query).all(...params);
+        const trends = getHistoryDatabase().prepare(query).all(...params);
         
         return new Response(JSON.stringify({ trends }), {
           headers: { 'Content-Type': 'application/json' },
@@ -4460,6 +4098,76 @@ Bun.serve({
       }
     }
     
+    // Fraud prevention: account history and cross-lookup references (phone/email/device)
+    if (fraudEngine && url.pathname === '/api/fraud/history') {
+      try {
+        const userId = url.searchParams.get('userId');
+        if (!userId) {
+          return new Response(JSON.stringify({ error: 'userId required' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+        }
+        const limit = Math.min(500, Math.max(1, parseInt(url.searchParams.get('limit') || '100', 10) || 100));
+        const eventType = url.searchParams.get('eventType') || undefined;
+        const since = url.searchParams.get('since'); const sinceSec = since ? parseInt(since, 10) : undefined;
+        const entries = fraudEngine.getAccountHistory({ userId, eventType, since: sinceSec, limit });
+        return new Response(JSON.stringify({ userId, entries }), { headers: { 'Content-Type': 'application/json' } });
+      } catch (error) {
+        return new Response(JSON.stringify({ error: error instanceof Error ? error.message : String(error) }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      }
+    }
+    if (fraudEngine && url.pathname === '/api/fraud/cross-lookup') {
+      try {
+        const type = (url.searchParams.get('type') as 'phone_hash' | 'email_hash' | 'device_id') || undefined;
+        const minAccounts = Math.max(2, parseInt(url.searchParams.get('minAccounts') || '2', 10) || 2);
+        const results = fraudEngine.getCrossLookups({ referenceType: type, minAccounts });
+        return new Response(JSON.stringify({ results }), { headers: { 'Content-Type': 'application/json' } });
+      } catch (error) {
+        return new Response(JSON.stringify({ error: error instanceof Error ? error.message : String(error) }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      }
+    }
+    if (fraudEngine && url.pathname === '/api/fraud/references') {
+      try {
+        const userId = url.searchParams.get('userId');
+        if (!userId) {
+          return new Response(JSON.stringify({ error: 'userId required' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+        }
+        const refs = fraudEngine.getReferencesForUser(userId);
+        return new Response(JSON.stringify({ userId, references: refs }), { headers: { 'Content-Type': 'application/json' } });
+      } catch (error) {
+        return new Response(JSON.stringify({ error: error instanceof Error ? error.message : String(error) }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      }
+    }
+    if (fraudEngine && url.pathname === '/api/fraud/event' && req.method === 'POST') {
+      try {
+        const body = await req.json() as { userId: string; eventType: string; metadata?: Record<string, unknown>; ipHash?: string; deviceHash?: string; gateway?: string; amountCents?: number; success?: boolean };
+        if (!body?.userId || !body?.eventType) {
+          return new Response(JSON.stringify({ error: 'userId and eventType required' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+        }
+        fraudEngine.recordEvent(body);
+        return new Response(JSON.stringify({ ok: true }), { headers: { 'Content-Type': 'application/json' } });
+      } catch (error) {
+        return new Response(JSON.stringify({ error: error instanceof Error ? error.message : String(error) }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      }
+    }
+    if (fraudEngine && url.pathname === '/api/fraud/register' && req.method === 'POST') {
+      try {
+        const body = await req.json() as { userId: string; referenceType: 'phone_hash' | 'email_hash' | 'device_id'; valueHash?: string; phone?: string };
+        if (!body?.userId || !body?.referenceType) {
+          return new Response(JSON.stringify({ error: 'userId and referenceType required' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+        }
+        let valueHash = body.valueHash;
+        if (!valueHash && body.phone && body.referenceType === 'phone_hash') {
+          const fp = await import('../../fraud-prevention/src/index.ts');
+          valueHash = await fp.hashPhone(body.phone);
+        } else if (!valueHash) {
+          return new Response(JSON.stringify({ error: 'valueHash required, or phone when referenceType is phone_hash' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+        }
+        fraudEngine.registerReference({ userId: body.userId, referenceType: body.referenceType, valueHash });
+        return new Response(JSON.stringify({ ok: true }), { headers: { 'Content-Type': 'application/json' } });
+      } catch (error) {
+        return new Response(JSON.stringify({ error: error instanceof Error ? error.message : String(error) }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      }
+    }
+    
     // API endpoint for health check
     if (url.pathname === '/api/health') {
       try {
@@ -4468,7 +4176,7 @@ Bun.serve({
         // Check database connectivity
         let dbStatus = 'ok';
         try {
-          historyDb.prepare('SELECT 1').get();
+          getHistoryDatabase().prepare('SELECT 1').get();
         } catch (error) {
           dbStatus = 'error';
         }
@@ -4496,7 +4204,7 @@ Bun.serve({
         }
         
         // Check WebSocket connections
-        const wsConnections = wsClients.size;
+        const wsConnections = wsManager.size;
         
         // Get system info
         const healthData = {
@@ -4590,7 +4298,8 @@ Bun.serve({
         });
       }
     }
-    return new Response(HTML, { headers: { 'Content-Type': 'text/html' } });
+    const pageHtml = await getPageHtml();
+    return new Response(pageHtml, { headers: { 'Content-Type': 'text/html' } });
   },
 });
 
@@ -4598,6 +4307,7 @@ Bun.serve({
 if (import.meta.hot) {
   import.meta.hot.accept();
   import.meta.hot.on('bun:beforeUpdate', () => {
+    cachedPageHtml = null; // Re-inject UI fragments (e.g. fraud.html) on next request
     logger.info('🔄 HMR: Update detected, reloading...');
   });
   import.meta.hot.on('bun:afterUpdate', () => {

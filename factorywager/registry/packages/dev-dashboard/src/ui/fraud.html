@@ -1,0 +1,42 @@
+<div id="fraud-tab" class="tab-content">
+  <div class="section">
+    <h2>🛡️ Fraud Intelligence</h2>
+    <div id="fraud-unavailable" style="display: none; padding: 16px; background: rgba(255, 180, 0, 0.15); border: 1px solid #b8860b; border-radius: 8px; margin-bottom: 20px;">
+      Fraud prevention module is not loaded. Ensure <code>@factorywager/fraud-prevention</code> is available.
+    </div>
+    <div id="fraud-content" style="display: none;">
+      <h3 style="color: #aaa; font-size: 14px; margin: 20px 0 10px;">Collision Alert</h3>
+      <p style="color: #888; font-size: 13px; margin-bottom: 10px;">Users sharing the same phone hash or device hash (potential multi-account abuse).</p>
+      <div id="fraud-collisions"></div>
+      <h3 style="color: #aaa; font-size: 14px; margin: 24px 0 10px;">Audit Trail</h3>
+      <p style="color: #888; font-size: 13px; margin-bottom: 10px;">Account history for a user: <code>getAccountHistory(userId)</code>.</p>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px;">
+        <input type="text" id="fraud-user-id" placeholder="@username" style="padding: 8px 12px; border: 1px solid #333; border-radius: 4px; background: rgba(255,255,255,0.05); color: #fff; width: 180px;" />
+        <button type="button" onclick="loadAuditTrail()" style="padding: 8px 16px; background: #0066ff; color: white; border: none; border-radius: 4px; cursor: pointer;">Load history</button>
+        <span id="fraud-audit-status" style="color: #888; font-size: 12px;"></span>
+      </div>
+      <div id="fraud-audit-table-wrap" style="overflow-x: auto;">
+        <table id="fraud-audit-table" style="width: 100%; border-collapse: collapse; font-size: 12px; display: none;">
+          <thead>
+            <tr style="border-bottom: 1px solid #333;">
+              <th style="text-align: left; padding: 8px;">id</th>
+              <th style="text-align: left; padding: 8px;">eventType</th>
+              <th style="text-align: left; padding: 8px;">timestamp</th>
+              <th style="text-align: left; padding: 8px;">gateway</th>
+              <th style="text-align: left; padding: 8px;">success</th>
+              <th style="text-align: left; padding: 8px;">deviceHash</th>
+              <th style="text-align: left; padding: 8px;">metadata</th>
+            </tr>
+          </thead>
+          <tbody id="fraud-audit-tbody"></tbody>
+        </table>
+      </div>
+      <div id="fraud-audit-empty" style="display: none; color: #666; padding: 12px;">Enter a userId and click Load history.</div>
+      <h3 style="color: #aaa; font-size: 14px; margin: 24px 0 10px;">Reference Map</h3>
+      <p style="color: #888; font-size: 13px; margin-bottom: 10px;">How many userIds are linked to a single reference hash (reference → account count).</p>
+      <div id="fraud-reference-map">
+        <table style="width: 100%; border-collapse: collapse; font-size: 12px;"><thead><tr style="border-bottom: 1px solid #333;"><th style="text-align: left; padding: 8px;">Reference type</th><th style="text-align: left; padding: 8px;">Hash (truncated)</th><th style="text-align: right; padding: 8px;">User count</th><th style="text-align: left; padding: 8px;">Bar</th></tr></thead><tbody id="fraud-reference-map-body"></tbody></table>
+      </div>
+    </div>
+  </div>
+</div>

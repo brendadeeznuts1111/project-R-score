@@ -7,10 +7,12 @@
   "scripts": {
     "cli": "bun src/cli.ts",
     "p2p-benchmark": "bun src/p2p-gateway-benchmark.ts",
-    "p2p-benchmark:help": "bun src/p2p-gateway-benchmark.ts --help"
+    "p2p-benchmark:help": "bun src/p2p-gateway-benchmark.ts --help",
+    "migrate": "bun src/migrate.ts"
   },
   "dependencies": {
-    "@factorywager/user-profile": "workspace:*"
+    "@factorywager/user-profile": "workspace:*",
+    "@factorywager/fraud-prevention": "workspace:*"
   },
   "devDependencies": {
     "@types/bun": "latest"

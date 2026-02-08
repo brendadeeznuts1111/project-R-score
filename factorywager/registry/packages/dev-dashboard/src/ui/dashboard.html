@@ -1,0 +1,1825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FactoryWager Dev Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+  color: #fff;
+  padding: 20px;
+  min-height: 100vh;
+}
+.header {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(0, 255, 136, 0.1);
+  border: 2px solid #00ff88;
+  border-radius: 12px;
+}
+.header h1 {
+  color: #00ff88;
+  font-size: 36px;
+  margin-bottom: 10px;
+  text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+.stat-card {
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid #00ff88;
+  border-radius: 12px;
+  padding: 20px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 255, 136, 0.3);
+}
+.stat-card h3 {
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.stat-card .value {
+  color: #00ff88;
+  font-size: 42px;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+}
+.stat-card .subtext {
+  color: #666;
+  font-size: 12px;
+  margin-top: 5px;
+}
+.section {
+  margin-bottom: 40px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 25px;
+}
+.section h2 {
+  color: #00ff88;
+  font-size: 24px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.item {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: border-color 0.2s;
+}
+.item:hover {
+  border-color: #00ff88;
+}
+.item-content {
+  flex: 1;
+}
+.item-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #fff;
+}
+.item-details {
+  font-size: 12px;
+  color: #888;
+  margin-top: 5px;
+}
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.status-pass { background: #00ff88; color: #000; }
+.status-fail { background: #ff4444; color: #fff; }
+.status-warning { background: #ffaa00; color: #000; }
+.status-completed { background: #00ff88; color: #000; }
+.status-pending { background: #888; color: #fff; }
+.metric-row {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.metric-value {
+  font-family: 'Courier New', monospace;
+  color: #00ff88;
+  font-size: 16px;
+  font-weight: bold;
+}
+.metric-target {
+  color: #888;
+  font-size: 14px;
+}
+.metric-ratio {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+.ratio-good { background: rgba(0, 255, 136, 0.2); color: #00ff88; }
+.ratio-warning { background: rgba(255, 170, 0, 0.2); color: #ffaa00; }
+.ratio-bad { background: rgba(255, 68, 68, 0.2); color: #ff4444; }
+.refresh-btn {
+  background: #00ff88;
+  color: #000;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 20px;
+  transition: background 0.2s;
+}
+.refresh-btn:hover {
+  background: #00cc6a;
+}
+.refresh-btn:disabled {
+  background: #666;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.loading-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: #fff;
+  font-size: 18px;
+}
+.loading-overlay.active {
+  display: flex;
+}
+.loading-overlay .spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #00ff88;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+.timestamp {
+  color: #666;
+  font-size: 12px;
+  margin-top: 10px;
+  font-style: italic;
+}
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+.progress-fill {
+  height: 100%;
+  background: #00ff88;
+  transition: width 0.3s;
+}
+.category-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-left: 8px;
+}
+.cat-performance { background: rgba(0, 255, 136, 0.2); color: #00ff88; }
+.cat-memory { background: rgba(0, 136, 255, 0.2); color: #0088ff; }
+.cat-type-safety { background: rgba(255, 170, 0, 0.2); color: #ffaa00; }
+.cat-code-quality { background: rgba(136, 0, 255, 0.2); color: #8800ff; }
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #333;
+}
+.tab {
+  padding: 10px 20px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s;
+  color: #888;
+}
+.tab.active {
+  color: #00ff88;
+  border-bottom-color: #00ff88;
+}
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .tabs {
+    flex-wrap: wrap;
+    overflow-x: auto;
+  }
+  .tab {
+    min-width: 120px;
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+  .item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .metric-row {
+    flex-direction: column;
+    gap: 5px;
+  }
+  .refresh-btn, button {
+    min-height: 44px;
+    min-width: 44px;
+    font-size: 14px;
+  }
+  .filters {
+    flex-direction: column;
+  }
+  .filters input, .filters select {
+    width: 100%;
+  }
+  .header h1 {
+    font-size: 24px;
+  }
+  #benchmarks-tab .section > div[style*="grid"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+:root[data-theme="light"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --text-primary: #000000;
+  --text-secondary: #666666;
+  --accent: #0066ff;
+  --border: #ddd;
+  --risk-red: #cc2222;
+}
+:root[data-theme="dark"] {
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #1a1a2e;
+  --text-primary: #ffffff;
+  --text-secondary: #888888;
+  --accent: #00ff88;
+  --border: #333;
+  --risk-red: #ff4444;
+}
+  </style>
+</head>
+<body>
+  <div class="header">
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+  <div>
+    <h1>🎛️ FactoryWager Dev Dashboard</h1>
+    <p>Tests, Benchmarks & Quick Wins Reports</p>
+  </div>
+  <div style="display: flex; align-items: center; gap: 12px;">
+    <span id="ws-status" title="WebSocket connection" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 13px; color: #888;">🔴 Disconnected</span>
+    <button id="theme-toggle" onclick="toggleTheme()" style="padding: 8px 16px; background: rgba(255,255,255,0.1); border: 1px solid #333; border-radius: 8px; color: #fff; cursor: pointer; font-size: 20px;">🌓</button>
+  </div>
+</div>
+  </div>
+  
+  <div id="alert-banner" style="display: none; margin-bottom: 20px; padding: 15px; background: rgba(255, 68, 68, 0.2); border: 2px solid #ff4444; border-radius: 8px;">
+<div style="display: flex; justify-content: space-between; align-items: center;">
+  <div id="alert-content"></div>
+  <button onclick="document.getElementById('alert-banner').style.display='none'" style="background: transparent; border: none; color: #fff; cursor: pointer; font-size: 20px;">×</button>
+</div>
+  </div>
+
+  <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;">
+<button id="refresh-btn" class="refresh-btn" onclick="refreshDashboard()">🔄 Refresh</button>
+<button id="export-csv-btn" onclick="exportCSV()" style="padding: 12px 24px; background: #0066ff; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px;">📥 Export CSV</button>
+<button id="export-json-btn" onclick="exportJSON()" style="padding: 12px 24px; background: #8800ff; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px;">📥 Export JSON</button>
+  </div>
+  <div class="loading-overlay" id="loading-overlay">
+<div class="spinner"></div>
+<div>Loading dashboard data...</div>
+  </div>
+  <div class="timestamp" id="timestamp"></div>
+
+  <div class="stats-grid">
+<div class="stat-card">
+  <h3>Quick Wins</h3>
+  <div class="value" id="quickwins-count">-</div>
+  <div class="subtext">17 total</div>
+  <div class="progress-bar"><div class="progress-fill" id="quickwins-progress" style="width: 0%"></div></div>
+</div>
+<div class="stat-card">
+  <h3>Tests</h3>
+  <div class="value" id="tests-passed">-</div>
+  <div class="subtext" id="tests-total">-</div>
+  <div class="progress-bar"><div class="progress-fill" id="tests-progress" style="width: 0%"></div></div>
+</div>
+<div class="stat-card">
+  <h3>Benchmarks</h3>
+  <div class="value" id="benchmarks-passed">-</div>
+  <div class="subtext" id="benchmarks-total">-</div>
+  <div class="progress-bar"><div class="progress-fill" id="benchmarks-progress" style="width: 0%"></div></div>
+</div>
+<div class="stat-card">
+  <h3>Performance</h3>
+  <div class="value" id="performance-score">-</div>
+  <div class="subtext">Overall score</div>
+  <div class="progress-bar"><div class="progress-fill" id="performance-progress" style="width: 0%"></div></div>
+</div>
+<div class="stat-card">
+  <h3>Payment types</h3>
+  <div class="value" id="payment-types-total">-</div>
+  <div class="subtext" id="payment-types-breakdown">Profiles by preferred gateway</div>
+</div>
+  </div>
+
+  <div class="tabs">
+<div class="tab active" onclick="showTab('quickwins')">🚀 Quick Wins</div>
+<div class="tab" onclick="showTab('benchmarks')">⚡ Benchmarks</div>
+<div class="tab" onclick="showTab('tests')">✅ Tests</div>
+<div class="tab" onclick="showTab('p2p')">💳 P2P Gateways</div>
+<div class="tab" onclick="showTab('profiling')">📊 Profiling</div>
+<div class="tab" onclick="showTab('fraud')">🛡️ Fraud</div>
+<div class="tab" onclick="showTab('insights')">💡 Insights</div>
+<div class="tab" onclick="showTab('roadmap')">🗺️ Roadmap</div>
+  </div>
+
+  <div id="quickwins-tab" class="tab-content active">
+<div class="section">
+  <h2>🚀 Quick Wins (17 Total)</h2>
+  <div id="quickwins-list"></div>
+</div>
+  </div>
+
+  <div id="benchmarks-tab" class="tab-content">
+<div class="section">
+  <h2>⚡ Performance Benchmarks</h2>
+  <div style="margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    <div>
+      <h3 style="color: #888; font-size: 14px; margin-bottom: 10px;">Performance Score</h3>
+      <canvas id="performance-gauge" style="max-height: 200px;"></canvas>
+    </div>
+    <div>
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
+        <h3 style="color: #888; font-size: 14px; margin: 0;">Benchmark Trends</h3>
+        <select id="chart-range" style="padding: 6px 10px; border: 1px solid #333; border-radius: 4px; background: rgba(255,255,255,0.05); color: #fff; font-size: 12px;" title="Time range for trend chart">
+          <option value="1">Last 1h</option>
+          <option value="6">Last 6h</option>
+          <option value="24" selected>Last 24h</option>
+          <option value="168">Last 7d</option>
+        </select>
+      </div>
+      <canvas id="benchmark-chart" style="max-height: 200px;"></canvas>
+    </div>
+  </div>
+  <div class="filters" style="margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+    <input type="text" id="search-input" placeholder="Search benchmarks..." style="padding: 8px 12px; border: 1px solid #333; border-radius: 4px; background: rgba(255,255,255,0.05); color: #fff; flex: 1; min-width: 200px;" />
+    <select id="category-filter" style="padding: 8px 12px; border: 1px solid #333; border-radius: 4px; background: rgba(255,255,255,0.05); color: #fff;">
+      <option value="">All Categories</option>
+      <option value="performance">Performance</option>
+      <option value="memory">Memory</option>
+      <option value="type-safety">Type Safety</option>
+    </select>
+    <select id="status-filter" style="padding: 8px 12px; border: 1px solid #333; border-radius: 4px; background: rgba(255,255,255,0.05); color: #fff;">
+      <option value="">All Status</option>
+      <option value="pass">Pass</option>
+      <option value="fail">Fail</option>
+      <option value="warning">Warning</option>
+    </select>
+    <select id="benchmark-sort" style="padding: 8px 12px; border: 1px solid #333; border-radius: 4px; background: rgba(255,255,255,0.05); color: #fff;" title="Sort benchmarks">
+      <option value="name-asc">Sort: Name A–Z</option>
+      <option value="name-desc">Sort: Name Z–A</option>
+      <option value="time-asc">Sort: Time ↑</option>
+      <option value="time-desc">Sort: Time ↓</option>
+      <option value="status">Sort: Status</option>
+    </select>
+  </div>
+  <div style="margin-bottom: 10px;">
+    <button onclick="fetchBenchmarkTable()" style="padding: 8px 16px; background: #0066ff; color: white; border: none; border-radius: 4px; cursor: pointer;">📊 View as Table</button>
+    <button onclick="window.open('/api/benchmarks/table', '_blank')" style="padding: 8px 16px; background: #00ff88; color: #0a0a0a; border: none; border-radius: 4px; cursor: pointer; margin-left: 8px;">🔗 Open Table (New Tab)</button>
+  </div>
+  <div id="benchmarks-list"></div>
+  <pre id="benchmark-table" style="display: none; background: #1a1a2e; padding: 15px; border-radius: 4px; overflow-x: auto; font-family: monospace; font-size: 12px;"></pre>
+</div>
+  </div>
+
+  <div id="tests-tab" class="tab-content">
+<div class="section">
+  <h2>✅ Test Results</h2>
+  <div class="filters" style="margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+    <input type="text" id="test-search-input" placeholder="Search tests..." style="padding: 8px 12px; border: 1px solid #333; border-radius: 4px; background: rgba(255,255,255,0.05); color: #fff; flex: 1; min-width: 200px;" />
+    <select id="test-category-filter" style="padding: 8px 12px; border: 1px solid #333; border-radius: 4px; background: rgba(255,255,255,0.05); color: #fff;">
+      <option value="">All Categories</option>
+      <option value="type-safety">Type Safety</option>
+      <option value="code-quality">Code Quality</option>
+    </select>
+    <select id="test-status-filter" style="padding: 8px 12px; border: 1px solid #333; border-radius: 4px; background: rgba(255,255,255,0.05); color: #fff;">
+      <option value="">All Status</option>
+      <option value="pass">Pass</option>
+      <option value="fail">Fail</option>
+      <option value="skip">Skip</option>
+    </select>
+    <select id="test-sort" style="padding: 8px 12px; border: 1px solid #333; border-radius: 4px; background: rgba(255,255,255,0.05); color: #fff;" title="Sort tests">
+      <option value="name-asc">Sort: Name A–Z</option>
+      <option value="name-desc">Sort: Name Z–A</option>
+      <option value="status">Sort: Status</option>
+    </select>
+  </div>
+  <div id="tests-list"></div>
+</div>
+  </div>
+
+  <div id="p2p-tab" class="tab-content">
+<div class="section">
+  <h2>💳 P2P Gateway Performance</h2>
+  <div class="filters" style="margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+    <select id="p2p-gateway-filter" style="padding: 8px 12px; border: 1px solid #333; border-radius: 4px; background: rgba(255,255,255,0.05); color: #fff;">
+      <option value="">All Gateways</option>
+      <option value="venmo">Venmo</option>
+      <option value="cashapp">Cash App</option>
+      <option value="paypal">PayPal</option>
+    </select>
+    <select id="p2p-operation-filter" style="padding: 8px 12px; border: 1px solid #333; border-radius: 4px; background: rgba(255,255,255,0.05); color: #fff;">
+      <option value="">All Operations</option>
+      <option value="create">Create</option>
+      <option value="query">Query</option>
+    </select>
+    <select id="p2p-status-filter" style="padding: 8px 12px; border: 1px solid #333; border-radius: 4px; background: rgba(255,255,255,0.05); color: #fff;">
+      <option value="">All Status</option>
+      <option value="pass">Pass</option>
+      <option value="fail">Fail</option>
+      <option value="warning">Warning</option>
+    </select>
+  </div>
+  <div id="p2p-list"></div>
+  <div id="p2p-chart-container" style="margin-top: 20px;">
+    <canvas id="p2p-chart" style="max-height: 300px;"></canvas>
+  </div>
+</div>
+  </div>
+
+  <div id="profiling-tab" class="tab-content">
+<div class="section">
+  <h2>📊 Profile Engine Profiling</h2>
+  <div class="filters" style="margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+    <select id="profile-category-filter" style="padding: 8px 12px; border: 1px solid #333; border-radius: 4px; background: rgba(255,255,255,0.05); color: #fff;">
+      <option value="">All Categories</option>
+      <option value="core">Core</option>
+      <option value="xgboost">XGBoost</option>
+      <option value="redis_hll">Redis HLL</option>
+      <option value="r2_snapshot">R2 Snapshot</option>
+      <option value="propagation">Propagation</option>
+    </select>
+    <select id="profile-operation-filter" style="padding: 8px 12px; border: 1px solid #333; border-radius: 4px; background: rgba(255,255,255,0.05); color: #fff;">
+      <option value="">All Operations</option>
+      <option value="create">Create</option>
+      <option value="create_batch">Batch Create</option>
+      <option value="query">Query</option>
+      <option value="update">Update</option>
+      <option value="xgboost_prediction">XGBoost Prediction</option>
+      <option value="redis_hll">Redis HLL</option>
+    </select>
+    <select id="profile-status-filter" style="padding: 8px 12px; border: 1px solid #333; border-radius: 4px; background: rgba(255,255,255,0.05); color: #fff;">
+      <option value="">All Status</option>
+      <option value="pass">Pass</option>
+      <option value="fail">Fail</option>
+      <option value="warning">Warning</option>
+    </select>
+  </div>
+  <div id="profiling-list"></div>
+  <div id="profile-chart-container" style="margin-top: 20px;">
+    <canvas id="profile-chart" style="max-height: 300px;"></canvas>
+  </div>
+</div>
+  </div>
+
+  {{FRAUD_TAB}}
+
+  <div id="insights-tab" class="tab-content">
+<div class="section">
+  <h2>💡 Insights & Recommendations</h2>
+  <div id="insights-list"></div>
+</div>
+  </div>
+
+  <div id="roadmap-tab" class="tab-content">
+<div class="section">
+  <h2 style="display: flex; align-items: center; gap: 8px;">🗺️ Development Roadmap <span style="font-size: 12px; font-weight: normal; color: #888; cursor: help;" title="Hover phases and items for cross-references (NEXT_STEPS.md, files, sections).">ⓘ</span></h2>
+  <div id="roadmap-progress" style="margin-bottom: 16px;"></div>
+  <div id="roadmap-list"></div>
+</div>
+  </div>
+
+  <script>
+// Global error boundary - catch unhandled errors
+window.addEventListener('error', (event) => {
+  console.error('Global error:', event.error);
+  showError('An unexpected error occurred: ' + (event.error?.message || event.message));
+  event.preventDefault(); // Prevent default error handling
+});
+
+// Catch unhandled promise rejections
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('Unhandled promise rejection:', event.reason);
+  showError('Failed to load data: ' + (event.reason?.message || String(event.reason)));
+  event.preventDefault(); // Prevent default error handling
+});
+
+// Error display function
+function showError(message) {
+  const alertBanner = document.getElementById('alert-banner');
+  const alertContent = document.getElementById('alert-content');
+  if (alertBanner && alertContent) {
+    alertContent.innerHTML = '<strong>⚠️ Error:</strong> ' + escapeHTML(String(message));
+    alertBanner.style.display = 'block';
+    alertBanner.style.borderColor = '#ff4444';
+    alertBanner.style.background = 'rgba(255, 68, 68, 0.2)';
+    
+    // Auto-hide after 10 seconds
+    setTimeout(() => {
+      alertBanner.style.display = 'none';
+    }, 10000);
+  }
+}
+
+// Safe wrapper for async functions
+function safeAsync(fn) {
+  return async (...args) => {
+    try {
+      return await fn(...args);
+    } catch (error) {
+      console.error('Error in async function:', error);
+      showError(error?.message || String(error));
+      throw error; // Re-throw for caller to handle if needed
+    }
+  };
+}
+
+function escapeHTML(str) {
+  if (str == null) return '';
+  const s = String(str);
+  return s.replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;' }[m]));
+}
+
+function showTab(tabName) {
+  try {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    if (event && event.target) {
+      event.target.classList.add('active');
+    }
+    const tabElement = document.getElementById(tabName + '-tab');
+    if (tabElement) {
+      tabElement.classList.add('active');
+    }
+    if (tabName === 'fraud') {
+      loadFraudData();
+    }
+  } catch (error) {
+    console.error('Error in showTab:', error);
+    showError('Failed to switch tab: ' + error.message);
+  }
+}
+
+// Fraud Intelligence: collision alert, audit trail, reference map
+async function loadFraudData() {
+  const unavailable = document.getElementById('fraud-unavailable');
+  const content = document.getElementById('fraud-content');
+  const collisionsEl = document.getElementById('fraud-collisions');
+  const refMapEl = document.getElementById('fraud-reference-map');
+  if (!unavailable || !content || !collisionsEl || !refMapEl) return;
+  try {
+    const r = await fetch('/api/fraud/cross-lookup?minAccounts=2');
+    if (!r.ok) {
+      unavailable.style.display = 'block';
+      content.style.display = 'none';
+      return;
+    }
+    const { results } = await r.json();
+    unavailable.style.display = 'none';
+    content.style.display = 'block';
+    renderFraudCollisions(results, collisionsEl);
+    renderFraudReferenceMap(results, refMapEl);
+  } catch (e) {
+    unavailable.style.display = 'block';
+    content.style.display = 'none';
+  }
+}
+
+function renderFraudCollisions(results, el) {
+  const labels = { phone_hash: 'Phone hash', email_hash: 'Email hash', device_id: 'Device ID' };
+  if (!results || results.length === 0) {
+    el.innerHTML = '<p style="color: #666;">No collisions (no reference shared by 2+ accounts).</p>';
+    return;
+  }
+  el.innerHTML = results.map(r => {
+    const typeLabel = labels[r.referenceType] || r.referenceType;
+    const hashShort = (r.valueHash || '').substring(0, 12) + '…';
+    const userIdsList = (r.userIds || []).map(u => '<code style="background: rgba(255,68,68,0.2); padding: 2px 6px; border-radius: 3px;">' + escapeHTML(u) + '</code>').join(', ');
+    return '<div class="item" style="border-left: 4px solid #ff4444; margin-bottom: 12px;"><div class="item-content"><div class="item-title">⚠️ ' + escapeHTML(typeLabel) + ' shared by ' + (r.count || 0) + ' accounts</div><div class="item-details" style="margin-top: 6px;">Hash: <code>' + escapeHTML(hashShort) + '</code></div><div class="item-details" style="margin-top: 4px;">User IDs: ' + userIdsList + '</div></div></div>';
+  }).join('');
+}
+
+function renderFraudReferenceMap(results, el) {
+  const labels = { phone_hash: 'Phone', email_hash: 'Email', device_id: 'Device' };
+  if (!results || results.length === 0) {
+    el.innerHTML = '<p style="color: #666;">No reference→account links with 2+ accounts.</p>';
+    return;
+  }
+  const table = el.querySelector('table');
+  if (!table) {
+    el.innerHTML = '<table style="width: 100%; border-collapse: collapse; font-size: 12px;"><thead><tr style="border-bottom: 1px solid #333;"><th style="text-align: left; padding: 8px;">Reference type</th><th style="text-align: left; padding: 8px;">Hash (truncated)</th><th style="text-align: right; padding: 8px;">User count</th><th style="text-align: left; padding: 8px;">Bar</th></tr></thead><tbody id="fraud-reference-map-body"></tbody></table>';
+  }
+  const body = document.getElementById('fraud-reference-map-body');
+  if (!body) return;
+  body.innerHTML = '';
+  const fragment = document.createDocumentFragment();
+  results.forEach(function (item) {
+    const row = document.createElement('tr');
+    row.style.borderBottom = '1px solid #222';
+    const typeLabel = labels[item.referenceType] || item.referenceType;
+    const hashShort = (item.valueHash || '').slice(0, 12) + '…';
+    const width = Math.min((item.count / 10) * 100, 100);
+    row.innerHTML = '<td style="padding: 8px;">' + escapeHTML(typeLabel) + '</td><td style="padding: 8px;" title="' + escapeHTML(item.valueHash || '') + '"><code>' + escapeHTML(hashShort) + '</code></td><td style="text-align: right; padding: 8px;">' + (item.count || 0) + '</td><td style="padding: 8px; width: 120px;"><div style="width:' + width + '%; height:8px; background:var(--risk-red, #ff4444); border-radius:4px;"></div></td>';
+    fragment.appendChild(row);
+  });
+  body.appendChild(fragment);
+}
+
+async function loadAuditTrail() {
+  const userIdInput = document.getElementById('fraud-user-id');
+  const tbody = document.getElementById('fraud-audit-tbody');
+  const table = document.getElementById('fraud-audit-table');
+  const empty = document.getElementById('fraud-audit-empty');
+  const status = document.getElementById('fraud-audit-status');
+  if (!userIdInput || !tbody || !table || !empty || !status) return;
+  const userId = (userIdInput.value || '').trim();
+  if (!userId) {
+    status.textContent = 'Enter a userId (e.g. @username).';
+    return;
+  }
+  status.textContent = 'Loading…';
+  table.style.display = 'none';
+  empty.style.display = 'none';
+  try {
+    const r = await fetch('/api/fraud/history?userId=' + encodeURIComponent(userId) + '&limit=100');
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}));
+      status.textContent = err.error || 'Failed to load history';
+      return;
+    }
+    const { entries } = await r.json();
+    status.textContent = entries.length + ' entries';
+    if (entries.length === 0) {
+      empty.style.display = 'block';
+      empty.textContent = 'No history for ' + escapeHTML(userId);
+      return;
+    }
+    tbody.innerHTML = entries.map(e => {
+      const ts = e.timestamp ? new Date(e.timestamp * 1000).toISOString() : '-';
+      const meta = e.metadata ? escapeHTML(JSON.stringify(e.metadata)).substring(0, 60) + (JSON.stringify(e.metadata).length > 60 ? '…' : '') : '-';
+      return '<tr style="border-bottom: 1px solid #222;"><td style="padding: 8px;">' + e.id + '</td><td style="padding: 8px;">' + escapeHTML(e.eventType || '') + '</td><td style="padding: 8px;">' + escapeHTML(ts) + '</td><td style="padding: 8px;">' + escapeHTML(e.gateway || '-') + '</td><td style="padding: 8px;">' + (e.success ? '✅' : '❌') + '</td><td style="padding: 8px;"><code>' + escapeHTML((e.deviceHash || '').substring(0, 10) + (e.deviceHash && e.deviceHash.length > 10 ? '…' : '')) + '</code></td><td style="padding: 8px; max-width: 120px; overflow: hidden; text-overflow: ellipsis;" title="' + escapeHTML(meta) + '">' + meta + '</td></tr>';
+    }).join('');
+    table.style.display = 'table';
+  } catch (e) {
+    status.textContent = 'Error: ' + (e?.message || String(e));
+    showError('Audit trail: ' + (e?.message || String(e)));
+  }
+}
+
+// Filter data based on UI controls
+function filterData(data, searchTerm, category, status, type) {
+  const items = type === 'benchmark' ? data.benchmarks : data.tests;
+  return items.filter(item => {
+    const matchesSearch = !searchTerm || item.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = !category || item.category === category;
+    const matchesStatus = !status || item.status === status;
+    return matchesSearch && matchesCategory && matchesStatus;
+  });
+}
+
+// Compare current benchmarks with previous run
+function compareBenchmarks(current, previous) {
+  return current.map(curr => {
+    const prev = previous.find(p => p.name === curr.name);
+    if (!prev) return { ...curr, change: 'new' };
+    
+    const timeDiff = curr.time - prev.time;
+    const percentChange = prev.time > 0 ? (timeDiff / prev.time) * 100 : 0;
+    
+    return {
+      ...curr,
+      previousTime: prev.time,
+      change: percentChange > 5 ? 'slower' : percentChange < -5 ? 'faster' : 'same',
+      percentChange: Math.abs(percentChange).toFixed(1)
+    };
+  });
+}
+
+// Loading state management
+let isLoading = false;
+
+function setLoading(loading) {
+  isLoading = loading;
+  const overlay = document.getElementById('loading-overlay');
+  const refreshBtn = document.getElementById('refresh-btn');
+  const exportCsvBtn = document.getElementById('export-csv-btn');
+  const exportJsonBtn = document.getElementById('export-json-btn');
+  
+  if (overlay) {
+    overlay.classList.toggle('active', loading);
+  }
+  if (refreshBtn) {
+    refreshBtn.disabled = loading;
+    refreshBtn.innerHTML = loading ? '<span class="loading-spinner"></span>Loading...' : '🔄 Refresh';
+  }
+  if (exportCsvBtn) exportCsvBtn.disabled = loading;
+  if (exportJsonBtn) exportJsonBtn.disabled = loading;
+}
+
+async function refreshDashboard() {
+  if (isLoading) return;
+  try {
+    await safeAsync(loadDashboard)(true);
+  } catch (error) {
+    showError('Failed to refresh dashboard: ' + (error?.message || String(error)));
+  }
+}
+window.refreshDashboard = refreshDashboard;
+
+function getExportParams() {
+  const p = new URLSearchParams();
+  const s = document.getElementById('search-input')?.value; if (s) p.set('search', s);
+  const c = document.getElementById('category-filter')?.value; if (c) p.set('category', c);
+  const st = document.getElementById('status-filter')?.value; if (st) p.set('status', st);
+  const ts = document.getElementById('test-search-input')?.value; if (ts) p.set('test_search', ts);
+  const tc = document.getElementById('test-category-filter')?.value; if (tc) p.set('test_category', tc);
+  const tst = document.getElementById('test-status-filter')?.value; if (tst) p.set('test_status', tst);
+  const q = p.toString();
+  return q ? '?' + q : '';
+}
+
+async function exportCSV() {
+  if (isLoading) return;
+  try {
+    setLoading(true);
+    window.open('/api/export/csv' + getExportParams(), '_blank');
+    await new Promise(resolve => setTimeout(resolve, 500)); // Brief delay for UX
+  } catch (error) {
+    console.error('Export failed:', error);
+    showError('Failed to export CSV: ' + (error?.message || 'Unknown error'));
+  } finally {
+    setLoading(false);
+  }
+}
+
+async function exportJSON() {
+  if (isLoading) return;
+  try {
+    setLoading(true);
+    window.open('/api/export/json' + getExportParams(), '_blank');
+    await new Promise(resolve => setTimeout(resolve, 500)); // Brief delay for UX
+  } catch (error) {
+    console.error('Export failed:', error);
+    showError('Failed to export JSON: ' + (error?.message || 'Unknown error'));
+  } finally {
+    setLoading(false);
+  }
+}
+
+async function loadDashboard(showLoading = false) {
+  // Unicode-aware escapeHTML: null-safe, string coercion, only escape &<>"' (never splits surrogate pairs/emoji)
+  const escapeHTML = (str) => {
+    if (str == null) return '';
+    const s = String(str);
+    return s.replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;' }[m]));
+  };
+  
+  if (showLoading) {
+    setLoading(true);
+  }
+  
+  try {
+    const response = await fetch('/api/data');
+    if (!response.ok) {
+      throw new Error(\`HTTP \${response.status}: \${response.statusText}\`);
+    }
+    const data = await response.json();
+    
+    // Get filter values
+    const searchTerm = document.getElementById('search-input')?.value || '';
+    const category = document.getElementById('category-filter')?.value || '';
+    const status = document.getElementById('status-filter')?.value || '';
+    const testSearchTerm = document.getElementById('test-search-input')?.value || '';
+    const testCategory = document.getElementById('test-category-filter')?.value || '';
+    const testStatus = document.getElementById('test-status-filter')?.value || '';
+    
+    // Filter data
+    let filteredBenchmarks = filterData(data, searchTerm, category, status, 'benchmark');
+    let filteredTests = filterData(data, testSearchTerm, testCategory, testStatus, 'test');
+    
+    // Sort benchmarks
+    const benchSort = document.getElementById('benchmark-sort')?.value || 'name-asc';
+    if (benchSort === 'name-asc') filteredBenchmarks = [...filteredBenchmarks].sort((a, b) => a.name.localeCompare(b.name));
+    else if (benchSort === 'name-desc') filteredBenchmarks = [...filteredBenchmarks].sort((a, b) => b.name.localeCompare(a.name));
+    else if (benchSort === 'time-asc') filteredBenchmarks = [...filteredBenchmarks].sort((a, b) => a.time - b.time);
+    else if (benchSort === 'time-desc') filteredBenchmarks = [...filteredBenchmarks].sort((a, b) => b.time - a.time);
+    else if (benchSort === 'status') filteredBenchmarks = [...filteredBenchmarks].sort((a, b) => (a.status || '').localeCompare(b.status || ''));
+    
+    // Sort tests
+    const testSort = document.getElementById('test-sort')?.value || 'name-asc';
+    if (testSort === 'name-asc') filteredTests = [...filteredTests].sort((a, b) => a.name.localeCompare(b.name));
+    else if (testSort === 'name-desc') filteredTests = [...filteredTests].sort((a, b) => b.name.localeCompare(a.name));
+    else if (testSort === 'status') filteredTests = [...filteredTests].sort((a, b) => (a.status || '').localeCompare(b.status || ''));
+    
+    // Update stats
+    const quickWinsCompleted = data.quickWinsList.filter(w => w.status === 'completed').length;
+    document.getElementById('quickwins-count').textContent = quickWinsCompleted;
+    document.getElementById('quickwins-progress').style.width = (quickWinsCompleted / 17 * 100) + '%';
+    
+    document.getElementById('tests-passed').textContent = data.stats.testsPassed;
+    document.getElementById('tests-total').textContent = 'of ' + data.stats.testsTotal + ' total';
+    document.getElementById('tests-progress').style.width = (data.stats.testsPassed / data.stats.testsTotal * 100) + '%';
+    
+    document.getElementById('benchmarks-passed').textContent = data.stats.benchmarksPassed;
+    document.getElementById('benchmarks-total').textContent = 'of ' + data.stats.benchmarksTotal + ' total';
+    document.getElementById('benchmarks-progress').style.width = (data.stats.benchmarksPassed / data.stats.benchmarksTotal * 100) + '%';
+    
+    document.getElementById('performance-score').textContent = data.stats.performanceScore + '%';
+    document.getElementById('performance-progress').style.width = data.stats.performanceScore + '%';
+    
+    const byPaymentType = data.stats.byPaymentType || {};
+    const paymentTotal = Object.values(byPaymentType).reduce((a, b) => a + b, 0);
+    const paymentLabels = { venmo: 'Venmo', cashapp: 'Cash App', paypal: 'PayPal', other: 'Other' };
+    const formatNum = (n) => n.toLocaleString();
+    const entries = Object.entries(byPaymentType).filter(([, n]) => n > 0);
+    document.getElementById('payment-types-total').textContent = paymentTotal === 0 ? '0' : (entries.length === 1 ? (paymentLabels[entries[0][0]] || entries[0][0]) : formatNum(paymentTotal));
+    document.getElementById('payment-types-breakdown').textContent = paymentTotal === 0 ? 'No profiles' : entries.length === 1 ? formatNum(paymentTotal) + ' profiles' : entries.map(([k, n]) => (paymentLabels[k] || k) + ' ' + formatNum(n)).join(', ');
+    
+    document.getElementById('timestamp').textContent = 'Last updated: ' + new Date(data.timestamp).toLocaleString();
+    
+    // Render charts
+    renderPerformanceGauge(data.stats.performanceScore);
+    renderBenchmarkChart();
+
+    // Render quick wins (with HTML escaping and file click handlers)
+    const quickwinsList = document.getElementById('quickwins-list');
+    quickwinsList.innerHTML = data.quickWinsList.map(win => {
+      const icon = win.status === 'completed' ? '✅' : win.status === 'verified' ? '🔍' : '⏳';
+      const safeTitle = escapeHTML(win.title);
+      const safeImpact = escapeHTML(win.impact);
+      // Add clickable file links if files exist
+      const filesHtml = win.files && Array.isArray(win.files) && win.files.length > 0 
+        ? '<div class="item-details" style="font-size: 11px; color: #888; margin-top: 4px;">📁 Files: ' + win.files.map(f => {
+            const filePath = String(f);
+            const escapedPath = escapeHTML(filePath).replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+            return '<span class="file-link" style="cursor: pointer; text-decoration: underline; color: #00ff88;" data-file="' + escapedPath + '">' + escapeHTML(filePath) + '</span>';
+          }).join(', ') + '</div>'
+        : '';
+      return '<div class="item"><div class="item-content"><div class="item-title">' + icon + ' #' + win.id + ': ' + safeTitle + '<span class="category-badge cat-' + win.category.replace(' ', '-') + '">' + win.category + '</span></div><div class="item-details">' + safeImpact + '</div>' + filesHtml + '</div><span class="status-badge status-' + win.status + '">' + win.status + '</span></div>';
+    }).join('');
+
+    // Get previous run for comparison
+    let comparisonData = null;
+    try {
+      const historyResponse = await fetch('/api/history?hours=1');
+      const history = await historyResponse.json();
+      if (history.benchmarks && history.benchmarks.length > 0) {
+        // Get most recent previous run
+        const previousRun = history.benchmarks.reduce((acc, b) => {
+          if (!acc[b.name] || acc[b.name].timestamp < b.timestamp) {
+            acc[b.name] = b;
+          }
+          return acc;
+        }, {});
+        const previousBenchmarks = Object.values(previousRun);
+        comparisonData = compareBenchmarks(filteredBenchmarks, previousBenchmarks);
+      }
+    } catch (error) {
+      console.warn('Failed to load comparison data:', error);
+    }
+    
+    // Render benchmarks (with HTML escaping for safety)
+    const benchmarksList = document.getElementById('benchmarks-list');
+    benchmarksList.innerHTML = filteredBenchmarks.map(b => {
+      const ratio = b.target > 0 ? (b.time / b.target).toFixed(1) : 'N/A';
+      const ratioClass = parseFloat(ratio) < 1.5 ? 'ratio-good' : parseFloat(ratio) < 3 ? 'ratio-warning' : 'ratio-bad';
+      const icon = b.status === 'pass' ? '✅' : b.status === 'warning' ? '⚠️' : '❌';
+      const isolationBadge = b.isolated ? '<span class="badge" style="background: #0066ff; margin-left: 8px; padding: 2px 6px; border-radius: 3px; font-size: 10px;">🔒 Isolated</span>' : '';
+      
+      // Add comparison indicator
+      let comparisonBadge = '';
+      if (comparisonData) {
+        const comp = comparisonData.find((c) => c.name === b.name);
+        if (comp) {
+          if (comp.change === 'faster') {
+            comparisonBadge = '<span style="background: #00ff88; color: #000; margin-left: 8px; padding: 2px 6px; border-radius: 3px; font-size: 10px;">⬇️ ' + comp.percentChange + '% faster</span>';
+          } else if (comp.change === 'slower') {
+            comparisonBadge = '<span style="background: #ff4444; color: #fff; margin-left: 8px; padding: 2px 6px; border-radius: 3px; font-size: 10px;">⬆️ ' + comp.percentChange + '% slower</span>';
+          }
+        }
+      }
+      
+      const resourceInfo = b.resourceUsage ? '<div class="item-details" style="font-size: 11px; color: #888; margin-top: 4px;">💾 Memory: ' + (b.resourceUsage.maxRSS / 1024).toFixed(1) + ' KB | ⏱️ CPU: ' + ((b.resourceUsage.cpuTime.user + b.resourceUsage.cpuTime.system) / 1000).toFixed(2) + ' ms | 🕐 Total: ' + b.resourceUsage.executionTime.toFixed(2) + ' ms</div>' : '';
+      const safeNote = b.note ? escapeHTML(b.note) : '';
+      return '<div class="item"><div class="item-content"><div class="item-title">' + icon + ' ' + b.name + isolationBadge + comparisonBadge + '<span class="category-badge cat-' + b.category + '">' + b.category + '</span></div><div class="metric-row"><span class="metric-value">' + b.time.toFixed(3) + 'ms</span><span class="metric-target">target: ' + b.target.toFixed(3) + 'ms</span><span class="metric-ratio ' + ratioClass + '">' + ratio + 'x</span></div>' + (safeNote ? '<div class="item-details">' + safeNote + '</div>' : '') + resourceInfo + '</div><span class="status-badge status-' + b.status + '">' + b.status + '</span></div>';
+    }).join('');
+
+    // Render tests (with HTML escaping for safety)
+    const testsList = document.getElementById('tests-list');
+    testsList.innerHTML = filteredTests.map(test => {
+      const icon = test.status === 'pass' ? '✅' : '❌';
+      const safeMessage = test.message ? escapeHTML(test.message) : '';
+      return '<div class="item"><div class="item-content"><div class="item-title">' + icon + ' ' + test.name + '<span class="category-badge cat-' + test.category.replace(' ', '-') + '">' + test.category + '</span></div>' + (safeMessage ? '<div class="item-details">' + safeMessage + '</div>' : '') + '</div><span class="status-badge status-' + test.status + '">' + test.status + '</span></div>';
+    }).join('');
+
+    // Render P2P gateway results
+    const p2pList = document.getElementById('p2p-list');
+    if (p2pList && data.p2pResults) {
+      const gatewayFilter = document.getElementById('p2p-gateway-filter')?.value || '';
+      const operationFilter = document.getElementById('p2p-operation-filter')?.value || '';
+      const statusFilter = document.getElementById('p2p-status-filter')?.value || '';
+      
+      const filteredP2P = data.p2pResults.filter((p) => {
+        const matchesGateway = !gatewayFilter || p.gateway === gatewayFilter;
+        const matchesOperation = !operationFilter || p.operation === operationFilter;
+        const matchesStatus = !statusFilter || p.status === statusFilter;
+        return matchesGateway && matchesOperation && matchesStatus;
+      });
+      
+      const gatewayLabels = { venmo: 'Venmo', cashapp: 'Cash App', paypal: 'PayPal', zelle: 'Zelle', wise: 'Wise', revolut: 'Revolut' };
+      p2pList.innerHTML = filteredP2P.map((p) => {
+        const ratio = p.target > 0 ? (p.time / p.target).toFixed(1) : 'N/A';
+        const ratioClass = parseFloat(ratio) < 1.5 ? 'ratio-good' : parseFloat(ratio) < 3 ? 'ratio-warning' : 'ratio-bad';
+        const icon = p.status === 'pass' ? '✅' : p.status === 'warning' ? '⚠️' : '❌';
+        const gatewayLabel = gatewayLabels[p.gateway] || p.gateway;
+        const dryRunBadge = p.dryRun ? '<span style="background: #888; margin-left: 8px; padding: 2px 6px; border-radius: 3px; font-size: 10px;">🧪 Dry Run</span>' : '';
+        const safeNote = p.note ? escapeHTML(p.note) : '';
+        
+        // Build extended metrics info
+        const metricsInfo = [];
+        if (p.success !== undefined) metricsInfo.push('Success: ' + (p.success ? '✅' : '❌'));
+        if (p.statusCode !== undefined) metricsInfo.push('Status: ' + p.statusCode);
+        if (p.endpoint) metricsInfo.push('Endpoint: ' + escapeHTML(p.endpoint));
+        if (p.requestSize !== undefined) metricsInfo.push('Req: ' + (p.requestSize / 1024).toFixed(1) + 'KB');
+        if (p.responseSize !== undefined) metricsInfo.push('Resp: ' + (p.responseSize / 1024).toFixed(1) + 'KB');
+        if (p.errorMessage) metricsInfo.push('Error: ' + escapeHTML(p.errorMessage.substring(0, 50)));
+        
+        const extendedMetrics = metricsInfo.length > 0 
+          ? '<div class="item-details" style="font-size: 11px; color: #888; margin-top: 4px;">🔬 ' + metricsInfo.join(' | ') + '</div>' 
+          : '';
+        
+        const metadataInfo = p.metadata ? '<div class="item-details" style="font-size: 11px; color: #888; margin-top: 4px;">📊 ' + escapeHTML(JSON.stringify(p.metadata)) + '</div>' : '';
+        
+        return '<div class="item"><div class="item-content"><div class="item-title">' + icon + ' ' + gatewayLabel + ' - ' + p.operation + dryRunBadge + '</div><div class="metric-row"><span class="metric-value">' + p.time.toFixed(3) + 'ms</span><span class="metric-target">target: ' + p.target.toFixed(3) + 'ms</span><span class="metric-ratio ' + ratioClass + '">' + ratio + 'x</span></div>' + (safeNote ? '<div class="item-details">' + safeNote + '</div>' : '') + extendedMetrics + metadataInfo + '</div><span class="status-badge status-' + p.status + '">' + p.status + '</span></div>';
+      }).join('');
+      
+      // Render P2P chart if Chart.js is available
+      if (typeof Chart !== 'undefined') {
+        renderP2PChart(filteredP2P);
+      }
+    }
+
+    // Render Profile profiling results
+    const profilingList = document.getElementById('profiling-list');
+    if (profilingList && data.profileResults) {
+      const categoryFilter = document.getElementById('profile-category-filter')?.value || '';
+      const operationFilter = document.getElementById('profile-operation-filter')?.value || '';
+      const statusFilter = document.getElementById('profile-status-filter')?.value || '';
+      
+      const filteredProfile = data.profileResults.filter((p) => {
+        const matchesCategory = !categoryFilter || p.category === categoryFilter;
+        const matchesOperation = !operationFilter || p.operation === operationFilter;
+        const matchesStatus = !statusFilter || p.status === statusFilter;
+        return matchesCategory && matchesOperation && matchesStatus;
+      });
+      
+      profilingList.innerHTML = filteredProfile.map((p) => {
+        const ratio = p.target > 0 ? (p.time / p.target).toFixed(1) : 'N/A';
+        const ratioClass = parseFloat(ratio) < 1.5 ? 'ratio-good' : parseFloat(ratio) < 3 ? 'ratio-warning' : 'ratio-bad';
+        const icon = p.status === 'pass' ? '✅' : p.status === 'warning' ? '⚠️' : '❌';
+        const safeNote = p.note ? escapeHTML(p.note) : '';
+        const metadataInfo = p.metadata ? '<div class="item-details" style="font-size: 11px; color: #888; margin-top: 4px;">📊 ' + escapeHTML(JSON.stringify(p.metadata)) + '</div>' : '';
+        
+        // Build extended metrics info
+        const metricsInfo = [];
+        if (p.cpuTimeMs !== undefined) metricsInfo.push('CPU: ' + p.cpuTimeMs.toFixed(2) + 'ms');
+        if (p.peakMemoryMb !== undefined) metricsInfo.push('Peak Mem: ' + p.peakMemoryMb.toFixed(1) + 'MB');
+        if (p.memoryDeltaBytes !== undefined) metricsInfo.push('Mem Δ: ' + (p.memoryDeltaBytes / 1024).toFixed(1) + 'KB');
+        if (p.personalizationScore !== undefined) metricsInfo.push('Score: ' + p.personalizationScore.toFixed(3));
+        if (p.modelAccuracy !== undefined) metricsInfo.push('Accuracy: ' + (p.modelAccuracy * 100).toFixed(1) + '%');
+        if (p.modelLoss !== undefined) metricsInfo.push('Loss: ' + p.modelLoss.toFixed(4));
+        if (p.trainingSamples !== undefined) metricsInfo.push('Samples: ' + p.trainingSamples);
+        if (p.inferenceLatencyMs !== undefined) metricsInfo.push('Inference: ' + p.inferenceLatencyMs.toFixed(3) + 'ms');
+        if (p.featureCount !== undefined) metricsInfo.push('Features: ' + p.featureCount);
+        if (p.embeddingDimension !== undefined) metricsInfo.push('Dim: ' + p.embeddingDimension + 'D');
+        if (p.hllCardinalityEstimate !== undefined) metricsInfo.push('HLL: ' + p.hllCardinalityEstimate);
+        if (p.gnnNodes !== undefined) metricsInfo.push('Nodes: ' + p.gnnNodes);
+        if (p.gnnEdges !== undefined) metricsInfo.push('Edges: ' + p.gnnEdges);
+        if (p.r2ObjectSizeBytes !== undefined) metricsInfo.push('R2 Size: ' + (p.r2ObjectSizeBytes / 1024).toFixed(1) + 'KB');
+        
+        const extendedMetrics = metricsInfo.length > 0 
+          ? '<div class="item-details" style="font-size: 11px; color: #888; margin-top: 4px;">🔬 ' + metricsInfo.join(' | ') + '</div>' 
+          : '';
+        
+        const tagsInfo = p.tags && p.tags.length > 0
+          ? '<div class="item-details" style="font-size: 10px; color: #666; margin-top: 2px;">🏷️ ' + p.tags.map((t) => escapeHTML(t)).join(', ') + '</div>'
+          : '';
+        
+        return '<div class="item"><div class="item-content"><div class="item-title">' + icon + ' ' + p.operation + '<span class="category-badge cat-' + p.category + '">' + p.category + '</span></div><div class="metric-row"><span class="metric-value">' + p.time.toFixed(6) + 'ms</span><span class="metric-target">target: ' + p.target.toFixed(6) + 'ms</span><span class="metric-ratio ' + ratioClass + '">' + ratio + 'x</span></div>' + (safeNote ? '<div class="item-details">' + safeNote + '</div>' : '') + extendedMetrics + tagsInfo + metadataInfo + '</div><span class="status-badge status-' + p.status + '">' + p.status + '</span></div>';
+      }).join('');
+      
+      // Render Profile chart if Chart.js is available
+      if (typeof Chart !== 'undefined') {
+        renderProfileChart(filteredProfile);
+      }
+    }
+
+    // Render insights & recommendations (data-driven, actionable)
+    const insightsList = document.getElementById('insights-list');
+    const insights = [];
+    
+    // Performance score
+    if (data.stats.performanceScore < 50) {
+      insights.push({ type: 'warning', title: 'Performance Below Target', message: 'Benchmarks are not meeting targets. Focus on the Benchmarks tab and optimize hot paths or relax targets where appropriate.' });
+    } else if (data.stats.performanceScore >= 80) {
+      insights.push({ type: 'success', title: 'Performance On Track', message: data.stats.performanceScore + '% of benchmarks meet or beat targets. Keep an eye on trends in the chart.' });
+    }
+    
+    // Tests
+    if (data.stats.testsPassed === data.stats.testsTotal && data.stats.testsTotal > 0) {
+      insights.push({ type: 'success', title: 'All Tests Passing', message: 'All ' + data.stats.testsTotal + ' tests passed. Code quality checks are green.' });
+    }
+    const failingTests = filteredTests.filter(t => t.status === 'fail');
+    if (failingTests.length > 0) {
+      insights.push({ type: 'warning', title: 'Failing Tests', message: failingTests.length + ' test(s) failing: ' + failingTests.map(t => t.name).join(', ') + '. Fix these before merging.' });
+    }
+    const skippedTests = filteredTests.filter(t => t.status === 'skip');
+    if (skippedTests.length > 0) {
+      insights.push({ type: 'info', title: 'Skipped Tests', message: skippedTests.length + ' test(s) skipped. Consider enabling or removing: ' + skippedTests.map(t => t.name).slice(0, 5).join(', ') + (skippedTests.length > 5 ? '…' : '') });
+    }
+    
+    // Benchmarks (overall)
+    const slowBenchmarks = filteredBenchmarks.filter(b => b.status === 'fail');
+    if (slowBenchmarks.length > 0) {
+      insights.push({ type: 'info', title: 'Benchmarks Over Target', message: slowBenchmarks.length + ' benchmark(s) exceed target: ' + slowBenchmarks.map(b => b.name).join(', ') + '. Review in Benchmarks tab or relax targets if acceptable.' });
+    }
+    
+    // Per benchmark category: insights for each category type
+    const cap = (s) => (s && s.length) ? s.charAt(0).toUpperCase() + s.slice(1).replace(/-/g, ' ') : s;
+    const benchmarkCategories = [...new Set(filteredBenchmarks.map(b => b.category || 'performance'))];
+    benchmarkCategories.forEach(cat => {
+      const inCat = filteredBenchmarks.filter(b => (b.category || 'performance') === cat);
+      const failedInCat = inCat.filter(b => b.status === 'fail');
+      const warnInCat = inCat.filter(b => b.status === 'warning');
+      if (failedInCat.length > 0) {
+        insights.push({ type: 'info', title: cap(cat) + ' benchmarks', message: failedInCat.length + ' over target: ' + failedInCat.map(b => b.name).join(', ') + (inCat.length > 0 ? ' (' + failedInCat.length + '/' + inCat.length + ' in category).' : '.') });
+      }
+      if (warnInCat.length > 0 && failedInCat.length === 0) {
+        insights.push({ type: 'info', title: cap(cat) + ' benchmarks', message: warnInCat.length + ' near target (warning): ' + warnInCat.map(b => b.name).join(', ') });
+      }
+    });
+    
+    // Per test category: insights for each category type
+    const testCategories = [...new Set(filteredTests.map(t => t.category || 'other'))];
+    testCategories.forEach(cat => {
+      const inCat = filteredTests.filter(t => (t.category || 'other') === cat);
+      const failedInCat = inCat.filter(t => t.status === 'fail');
+      const skippedInCat = inCat.filter(t => t.status === 'skip');
+      if (failedInCat.length > 0) {
+        insights.push({ type: 'warning', title: cap(cat) + ' tests', message: failedInCat.length + ' failing: ' + failedInCat.map(t => t.name).join(', ') + (inCat.length > 0 ? ' (' + failedInCat.length + '/' + inCat.length + ' in category).' : '.') });
+      }
+      if (skippedInCat.length > 0 && failedInCat.length === 0) {
+        insights.push({ type: 'info', title: cap(cat) + ' tests', message: skippedInCat.length + ' skipped: ' + skippedInCat.map(t => t.name).slice(0, 3).join(', ') + (skippedInCat.length > 3 ? '…' : '') });
+      }
+    });
+    
+    // Comparison: regressions (slower) and improvements (faster)
+    if (comparisonData) {
+      const regressions = comparisonData.filter(c => c.change === 'slower');
+      const improvements = comparisonData.filter(c => c.change === 'faster');
+      if (regressions.length > 0) {
+        insights.push({ type: 'warning', title: 'Possible Regressions', message: regressions.length + ' benchmark(s) slower than previous run: ' + regressions.map(r => r.name + ' (' + r.percentChange + '%)').join(', ') + '. Check recent changes.' });
+      }
+      if (improvements.length > 0) {
+        insights.push({ type: 'success', title: 'Improvements', message: improvements.length + ' benchmark(s) faster than previous run: ' + improvements.map(i => i.name + ' (' + i.percentChange + '%)').join(', ') });
+      }
+    }
+    
+    // Quick wins progress
+    const totalQuickWins = 17;
+    if (quickWinsCompleted === totalQuickWins) {
+      insights.push({ type: 'info', title: 'Quick Wins Complete', message: 'All ' + totalQuickWins + ' quick wins are done. Focus on performance tuning and production hardening (see Roadmap).' });
+    } else {
+      insights.push({ type: 'info', title: 'Quick Wins Progress', message: quickWinsCompleted + ' of ' + totalQuickWins + ' quick wins complete. Tackle pending items in the Quick Wins tab.' });
+    }
+    
+    // Per payment type (from user-profile preferredGateway; byPaymentType + paymentLabels + formatNum already set above)
+    const totalProfiles = Object.values(byPaymentType).reduce((a, b) => a + b, 0);
+    const maxCount = Math.max(0, ...Object.values(byPaymentType));
+    Object.entries(byPaymentType).forEach(([type, count]) => {
+      if (count > 0) {
+        const label = paymentLabels[type] || type;
+        const primary = totalProfiles > 0 && count === maxCount && count > 0 ? ' (primary)' : '';
+        insights.push({ type: 'info', title: label, message: formatNum(count) + ' profile(s) use this payment type' + primary + (totalProfiles > 0 ? ' — ' + Math.round((count / totalProfiles) * 100) + '% of total.' : '.') });
+      }
+    });
+    
+    // Empty state
+    if (insights.length === 0) {
+      insights.push({ type: 'success', title: 'No Issues Detected', message: 'Nothing to report. Run benchmarks and tests to get tailored recommendations.' });
+    }
+    
+    const insightStyles = { success: 'border-left: 4px solid #00ff88; background: rgba(0,255,136,0.06);', warning: 'border-left: 4px solid #ffaa00; background: rgba(255,170,0,0.06);', info: 'border-left: 4px solid #0088ff; background: rgba(0,136,255,0.06);' };
+    insightsList.innerHTML = insights.map(insight => {
+      const icon = insight.type === 'success' ? '✅' : insight.type === 'warning' ? '⚠️' : '💡';
+      const style = insightStyles[insight.type] || insightStyles.info;
+      return '<div class="item insight-item" style="' + style + '"><div class="item-content"><div class="item-title">' + icon + ' ' + escapeHTML(insight.title) + '</div><div class="item-details">' + escapeHTML(insight.message) + '</div></div></div>';
+    }).join('');
+
+    // Render roadmap (progress bar, clickable items, optional links)
+    const roadmapList = document.getElementById('roadmap-list');
+    const roadmapProgressEl = document.getElementById('roadmap-progress');
+    const ROADMAP_STORAGE_KEY = 'dashboard-roadmap-status';
+    const getRoadmapOverrides = () => { try { return JSON.parse(localStorage.getItem(ROADMAP_STORAGE_KEY) || '{}'); } catch { return {}; } };
+    const roadmap = [
+      {
+        phase: 'Week 1: Bug Fixes & Testing',
+        priority: 'high',
+        time: '1 week',
+        difficulty: 'medium',
+        tip: 'NEXT_STEPS.md § Implementation Timeline · Week 1. Focus: fix failing benchmarks (isolated subprocess), Type Safety test, unit & integration tests.',
+        items: [
+          { title: 'Fix failing benchmarks (isolated subprocess issues)', status: 'in-progress', icon: '🔧', time: '2–4h', difficulty: 'medium', url: 'packages/dev-dashboard/src/benchmark-runner.ts', ref: 'NEXT_STEPS §1 · benchmark-runner.ts', tip: 'File: benchmark-runner.ts · NEXT_STEPS §1. Ensure JSON output from subprocess; check lines ~1034–1129 in enhanced-dashboard.ts.' },
+          { title: 'Fix Type Safety test', status: 'pending', icon: '✅', time: '1–2h', difficulty: 'easy', url: 'packages/dev-dashboard/src/enhanced-dashboard.ts', ref: 'NEXT_STEPS §2 · enhanced-dashboard.ts', tip: 'File: enhanced-dashboard.ts (~1436–1461), user-profile/core. NEXT_STEPS §2. Verify profile exists or add fallback test data.' },
+          { title: 'Add unit tests for core functions', status: 'pending', icon: '🧪', time: '4–6h', difficulty: 'medium', ref: 'NEXT_STEPS §3', tip: 'NEXT_STEPS §3. Test compareBenchmarks, filterData, escapeHTML, saveHistory, WebSocket, retry logic. Use bun test.' },
+          { title: 'Add integration tests', status: 'pending', icon: '🔗', time: '6–8h', difficulty: 'medium', ref: 'NEXT_STEPS §3', tip: 'NEXT_STEPS §3. Full dashboard load, WebSocket updates, export CSV/JSON, filtering, history API, alerts.' },
+        ]
+      },
+      {
+        phase: 'Week 2: Production Hardening',
+        priority: 'high',
+        time: '1 week',
+        difficulty: 'hard',
+        tip: 'NEXT_STEPS.md § Implementation Timeline · Week 2 & §6 Production Readiness. Security, monitoring, reliability.',
+        items: [
+          { title: 'Add authentication/authorization', status: 'pending', icon: '🔐', time: '1–2d', difficulty: 'hard', ref: 'NEXT_STEPS §6', tip: 'NEXT_STEPS §6 Security. Decide if dashboard needs auth; add rate limiting, CORS.' },
+          { title: 'Add rate limiting', status: 'pending', icon: '⚡', time: '2–4h', difficulty: 'easy', ref: 'NEXT_STEPS §6', tip: 'NEXT_STEPS §6. Protect API endpoints and WebSocket from abuse.' },
+          { title: 'Add monitoring/logging', status: 'pending', icon: '📊', time: '4–6h', difficulty: 'medium', ref: 'NEXT_STEPS §6', tip: 'NEXT_STEPS §6 Monitoring. Request logging, health check improvements.' },
+          { title: 'Add error tracking', status: 'pending', icon: '🐛', time: '2–4h', difficulty: 'medium', ref: 'NEXT_STEPS §6', tip: 'NEXT_STEPS §6. Centralized error tracking and alerting for production.' },
+          { title: 'Performance optimization', status: 'pending', icon: '⚡', time: '4–8h', difficulty: 'medium', ref: 'NEXT_STEPS §4', tip: 'NEXT_STEPS §4. SQLite indexes, history API cache, chart lazy load, pagination.' },
+        ]
+      },
+      {
+        phase: 'Week 3: Documentation & Polish',
+        priority: 'medium',
+        time: '1 week',
+        difficulty: 'easy',
+        tip: 'NEXT_STEPS.md § Implementation Timeline · Week 3 & §5 Documentation. API, deployment, user & troubleshooting guides.',
+        items: [
+          { title: 'Write API documentation', status: 'pending', icon: '📚', time: '4–6h', difficulty: 'easy', ref: 'NEXT_STEPS §5 · docs/API.md', tip: 'NEXT_STEPS §5. Create docs/API.md, WEBSOCKET.md; document config.toml.' },
+          { title: 'Write deployment guide', status: 'pending', icon: '🚀', time: '2–3h', difficulty: 'easy', ref: 'NEXT_STEPS §5 · DEPLOYMENT.md', tip: 'NEXT_STEPS §5. docs/DEPLOYMENT.md with deployment instructions.' },
+          { title: 'Write user guide', status: 'pending', icon: '👤', time: '2–4h', difficulty: 'easy', ref: 'NEXT_STEPS §5', tip: 'NEXT_STEPS §5. How to use dashboard: tabs, filters, export, roadmap.' },
+          { title: 'Add troubleshooting guide', status: 'pending', icon: '🔍', time: '2–3h', difficulty: 'easy', ref: 'NEXT_STEPS §5 · TROUBLESHOOTING.md', tip: 'NEXT_STEPS §5. docs/TROUBLESHOOTING.md for common issues and solutions.' },
+          { title: 'Code review and cleanup', status: 'pending', icon: '✨', time: '4–8h', difficulty: 'medium', ref: 'NEXT_STEPS §3 E2E & §5', tip: 'NEXT_STEPS §3 E2E & §5. Review and polish before release.' },
+        ]
+      },
+      {
+        phase: 'Week 4: Additional Features (Optional)',
+        priority: 'low',
+        time: '1 week',
+        difficulty: 'medium',
+        tip: 'NEXT_STEPS.md § Implementation Timeline · Week 4 & §7 Additional Features. Optional enhancements from feedback.',
+        items: [
+          { title: 'Add benchmark scheduling', status: 'pending', icon: '⏰', time: '4–6h', difficulty: 'medium', ref: 'NEXT_STEPS §7', tip: 'NEXT_STEPS §7. Run benchmarks at intervals; config.toml for frequency.' },
+          { title: 'Add email notifications for alerts', status: 'pending', icon: '📧', time: '2–4h', difficulty: 'medium', ref: 'NEXT_STEPS §7', tip: 'NEXT_STEPS §7. Alert channels: email in addition to webhook.' },
+          { title: 'Add Slack/Discord webhook integration', status: 'pending', icon: '💬', time: '2–4h', difficulty: 'easy', ref: 'NEXT_STEPS §7', tip: 'NEXT_STEPS §7. Send alerts to Slack/Discord webhooks.' },
+          { title: 'Add benchmark regression detection', status: 'pending', icon: '📉', time: '6–8h', difficulty: 'hard', ref: 'NEXT_STEPS §7', tip: 'NEXT_STEPS §7. Compare runs and flag regressions.' },
+          { title: 'Add test coverage metrics', status: 'pending', icon: '📈', time: '4–6h', difficulty: 'medium', ref: 'NEXT_STEPS §7', tip: 'NEXT_STEPS §7. Show coverage in dashboard or CI.' },
+        ]
+      },
+      {
+        phase: 'Quick Wins (Completed)',
+        priority: 'completed',
+        time: '—',
+        difficulty: 'easy',
+        tip: 'NEXT_STEPS.md § Quick Wins. Small improvements that are already done.',
+        items: [
+          { title: 'Fix benchmark-runner.ts stderr handling', status: 'completed', icon: '✅', time: '1h', difficulty: 'easy', ref: 'Quick Win #1', tip: 'Quick Win #1. benchmark-runner.ts JSON output.' },
+          { title: 'Add health check endpoint improvements', status: 'completed', icon: '✅', time: '1h', difficulty: 'easy', ref: 'Quick Win #3', tip: 'Quick Win #3. /api/health with detailed status.' },
+          { title: 'Add loading states in UI', status: 'completed', icon: '✅', time: '½h', difficulty: 'easy', ref: 'Quick Win #5', tip: 'Quick Win #5. Loading indicators during data fetch.' },
+          { title: 'Add error boundaries', status: 'completed', icon: '✅', time: '1h', difficulty: 'easy', ref: 'Quick Win #4', tip: 'Quick Win #4. Better error handling in UI.' },
+        ]
+      }
+    ];
+    const cycleStatus = (s) => (s === 'pending' ? 'in-progress' : s === 'in-progress' ? 'completed' : 'pending');
+    const renderRoadmap = () => {
+      const overrides = getRoadmapOverrides();
+      let completed = 0, total = 0;
+      roadmap.forEach((phase, pi) => { phase.items.forEach((_, ii) => { total++; const st = overrides[pi + '-' + ii] || phase.items[ii].status; if (st === 'completed') completed++; }); });
+      const pct = total ? Math.round((100 * completed) / total) : 0;
+      if (roadmapProgressEl) {
+        roadmapProgressEl.innerHTML = \`
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;" title="Progress and checkmarks are saved in this browser (localStorage). Hover phases and items for NEXT_STEPS.md and file cross-references.">
+            <span style="color: #aaa; font-size: 13px;">\${completed} of \${total} items complete</span>
+            <div style="flex: 1; min-width: 120px; max-width: 280px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+              <div style="width: \${pct}%; height: 100%; background: linear-gradient(90deg, #00aa66, #00ff88); border-radius: 4px; transition: width 0.2s;"></div>
+            </div>
+            <span style="color: #00ff88; font-weight: bold; font-size: 14px;">\${pct}%</span>
+          </div>
+        \`;
+      }
+      const diffColor = (d) => !d ? '#888' : d === 'easy' ? '#00cc66' : d === 'medium' ? '#e6b800' : '#e64d4d';
+      roadmapList.innerHTML = roadmap.map((phase, phaseIdx) => {
+        const priorityColor = phase.priority === 'high' ? '#ff4444' : phase.priority === 'medium' ? '#ffaa00' : phase.priority === 'low' ? '#888' : '#00ff88';
+        const priorityBg = phase.priority === 'high' ? 'rgba(255, 68, 68, 0.1)' : phase.priority === 'medium' ? 'rgba(255, 170, 0, 0.1)' : phase.priority === 'low' ? 'rgba(136, 136, 136, 0.1)' : 'rgba(0, 255, 136, 0.1)';
+        const phaseMeta = [ phase.time, phase.difficulty ].filter(Boolean).join(' · ');
+        return \`
+          <div class="item" style="margin-bottom: 20px; border-left: 4px solid \${priorityColor};">
+            <div class="item-content">
+              <div class="item-title" style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                <span style="padding: 4px 8px; background: \${priorityBg}; border-radius: 4px; font-size: 11px; font-weight: bold; color: \${priorityColor};">
+                  \${phase.priority === 'high' ? '🔴 High' : phase.priority === 'medium' ? '🟡 Medium' : phase.priority === 'low' ? '⚪ Low' : '✅ Completed'}
+                </span>
+                <span style="font-size: 18px; font-weight: bold; cursor: help; border-bottom: 1px dotted rgba(255,255,255,0.3);" title="\${escapeHTML(phase.tip || '')}">\${escapeHTML(phase.phase)}</span>
+                \${phaseMeta ? '<span style="font-size: 11px; color: #888; font-weight: normal;">⏱ ' + escapeHTML(phaseMeta) + '</span>' : ''}
+              </div>
+              <div style="display: grid; gap: 8px; margin-left: 20px;">
+                \${phase.items.map((item, itemIdx) => {
+                  const status = overrides[phaseIdx + '-' + itemIdx] || item.status;
+                  const statusColor = status === 'completed' ? '#00ff88' : status === 'in-progress' ? '#ffaa00' : '#888';
+                  const statusIcon = status === 'completed' ? '✅' : status === 'in-progress' ? '🔄' : '⏳';
+                  const statusLabel = status === 'completed' ? 'Done' : status === 'in-progress' ? 'In Progress' : 'Pending';
+                  const titleHtml = item.url ? '<a href="' + escapeHTML(item.url) + '" target="_blank" rel="noopener" style="color: #7dd3fc; text-decoration: none;">' + escapeHTML(item.title) + ' ↗</a>' : escapeHTML(item.title);
+                  const itemHover = [ item.tip, item.url ? 'Opens: ' + item.url : null, 'Click row to cycle: Pending → In Progress → Done' ].filter(Boolean).join('\\n');
+                  const timeBadge = item.time ? '<span style="font-size: 10px; color: #888;" title="Estimated time">⏱ ' + escapeHTML(item.time) + '</span>' : '';
+                  const diffBadge = item.difficulty ? '<span style="font-size: 10px; color: ' + diffColor(item.difficulty) + ';" title="Difficulty">' + (item.difficulty === 'easy' ? '🟢' : item.difficulty === 'medium' ? '🟡' : '🔴') + ' ' + escapeHTML(item.difficulty) + '</span>' : '';
+                  const refBadge = item.ref ? '<span style="font-size: 10px; padding: 2px 6px; background: rgba(125,211,252,0.15); border-radius: 3px; color: #7dd3fc; cursor: help;" title="' + escapeHTML(item.tip || '') + '">📎 ' + escapeHTML(item.ref) + '</span>' : '';
+                  return \`
+                    <div class="roadmap-item" data-phase="\${phaseIdx}" data-item="\${itemIdx}" style="display: flex; align-items: center; gap: 10px; padding: 8px; background: rgba(255,255,255,0.02); border-radius: 4px; cursor: pointer; transition: background 0.15s; flex-wrap: wrap;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.02)'" title="\${escapeHTML(itemHover)}">
+                      <span style="font-size: 16px;">\${item.icon}</span>
+                      <span style="flex: 1; min-width: 0; color: #fff;">\${titleHtml}</span>
+                      <span style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        \${timeBadge}
+                        \${diffBadge}
+                        \${refBadge}
+                        <span style="padding: 2px 8px; background: rgba(255,255,255,0.1); border-radius: 3px; font-size: 11px; color: \${statusColor};">
+                          \${statusIcon} \${statusLabel}
+                        </span>
+                      </span>
+                    </div>
+                  \`;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+        \`;
+      }).join('');
+      roadmapList.querySelectorAll('.roadmap-item').forEach(el => {
+        el.addEventListener('click', (e) => {
+          if (e.target.tagName === 'A') return;
+          const phaseIdx = parseInt(el.getAttribute('data-phase'), 10);
+          const itemIdx = parseInt(el.getAttribute('data-item'), 10);
+          const overrides = getRoadmapOverrides();
+          const key = phaseIdx + '-' + itemIdx;
+          const current = overrides[key] || roadmap[phaseIdx].items[itemIdx].status;
+          overrides[key] = cycleStatus(current);
+          try { localStorage.setItem(ROADMAP_STORAGE_KEY, JSON.stringify(overrides)); } catch (_) {}
+          renderRoadmap();
+        });
+      });
+    };
+    renderRoadmap();
+
+  } catch (error) {
+    // Use Bun.inspect for better error formatting
+    const errorMsg = typeof Bun !== 'undefined' && Bun.inspect 
+      ? Bun.inspect(error) 
+      : String(error);
+    console.error('Failed to load dashboard:', errorMsg);
+    
+    // Show error in UI
+    const content = document.getElementById('content') || document.body;
+    const errorHTML = '<div class="section" style="border-color: #ff4444;"><h2 style="color: #ff4444;">❌ Error Loading Dashboard</h2><p>' + escapeHTML(String(errorMsg)) + '</p><button onclick="loadDashboard(true)" class="refresh-btn" style="margin-top: 10px;">🔄 Retry</button></div>';
+    if (content.id === 'content') {
+      content.innerHTML = errorHTML;
+    } else {
+      content.insertAdjacentHTML('afterbegin', errorHTML);
+    }
+  } finally {
+    if (showLoading) {
+      setLoading(false);
+    }
+  }
+}
+
+// Chart instances
+let performanceGaugeChart = null;
+let benchmarkChart = null;
+let p2pChart = null;
+let profileChart = null;
+
+// Render performance gauge
+function renderPerformanceGauge(score) {
+  try {
+    const ctx = document.getElementById('performance-gauge');
+    if (!ctx) return;
+    
+    if (performanceGaugeChart) {
+      performanceGaugeChart.destroy();
+    }
+    
+    performanceGaugeChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        data: [score, 100 - score],
+        backgroundColor: ['#00ff88', '#333'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (context) => \`\${context.parsed}%\`
+          }
+        }
+      },
+      cutout: '70%'
+    }
+  });
+  } catch (error) {
+    console.error('Failed to render performance gauge:', error);
+    showError('Failed to render performance chart: ' + (error?.message || String(error)));
+  }
+}
+
+// Render benchmark trend chart
+async function renderBenchmarkChart() {
+  const ctx = document.getElementById('benchmark-chart');
+  if (!ctx) return;
+  const hours = parseInt(document.getElementById('chart-range')?.value || '24', 10) || 24;
+  try {
+    const response = await fetch('/api/history?hours=' + hours);
+    if (!response.ok) {
+      throw new Error(\`HTTP \${response.status}: \${response.statusText}\`);
+    }
+    const history = await response.json();
+    
+    if (!history.benchmarks || history.benchmarks.length === 0) return;
+    
+    // Group by benchmark name and get latest for each
+    const benchmarkMap = new Map();
+    history.benchmarks.forEach(b => {
+      if (!benchmarkMap.has(b.name) || benchmarkMap.get(b.name).timestamp < b.timestamp) {
+        benchmarkMap.set(b.name, b);
+      }
+    });
+    
+    const labels = Array.from(benchmarkMap.keys());
+    const times = labels.map(name => benchmarkMap.get(name).time);
+    const targets = labels.map(name => benchmarkMap.get(name).target);
+    
+    if (benchmarkChart) {
+      benchmarkChart.destroy();
+    }
+    
+    benchmarkChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Execution Time',
+          data: times,
+          borderColor: '#00ff88',
+          backgroundColor: 'rgba(0, 255, 136, 0.1)',
+          tension: 0.1,
+          fill: true
+        }, {
+          label: 'Target',
+          data: targets,
+          borderColor: '#ff4444',
+          borderDash: [5, 5],
+          tension: 0.1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          y: { 
+            beginAtZero: true,
+            ticks: { color: '#888' },
+            grid: { color: '#333' }
+          },
+          x: {
+            ticks: { color: '#888', maxRotation: 45, minRotation: 45 },
+            grid: { color: '#333' }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: { color: '#fff' }
+          }
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Failed to render benchmark chart:', error);
+    showError('Failed to render benchmark chart: ' + (error?.message || String(error)));
+  }
+}
+
+// Render P2P gateway comparison chart
+function renderP2PChart(p2pResults) {
+  try {
+    const ctx = document.getElementById('p2p-chart');
+    if (!ctx) return;
+    
+    if (p2pChart) {
+      p2pChart.destroy();
+    }
+    
+    // Group by gateway and operation
+    const gatewayData = {};
+    p2pResults.forEach((p) => {
+      const key = p.gateway + '-' + p.operation;
+      if (!gatewayData[key]) {
+        gatewayData[key] = { gateway: p.gateway, operation: p.operation, times: [] };
+      }
+      gatewayData[key].times.push(p.time);
+    });
+    
+    const labels = Object.keys(gatewayData).map(k => gatewayData[k].gateway + ' ' + gatewayData[k].operation);
+    const avgTimes = Object.values(gatewayData).map((g) => 
+      g.times.reduce((a, b) => a + b, 0) / g.times.length
+    );
+    
+    p2pChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Avg Time (ms)',
+          data: avgTimes,
+          backgroundColor: ['#00ff88', '#0066ff', '#8800ff'],
+          borderColor: ['#00cc6a', '#0052cc', '#6600cc'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          y: { beginAtZero: true, ticks: { color: '#888' }, grid: { color: '#333' } },
+          x: { ticks: { color: '#888', maxRotation: 45, minRotation: 45 }, grid: { color: '#333' } }
+        },
+        plugins: {
+          legend: { labels: { color: '#fff' } }
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Failed to render P2P chart:', error);
+  }
+}
+
+// Render Profile profiling chart
+function renderProfileChart(profileResults) {
+  try {
+    const ctx = document.getElementById('profile-chart');
+    if (!ctx) return;
+    
+    if (profileChart) {
+      profileChart.destroy();
+    }
+    
+    const labels = profileResults.map((p) => p.operation + ' (' + p.category + ')');
+    const times = profileResults.map((p) => p.time);
+    const targets = profileResults.map((p) => p.target);
+    
+    profileChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Execution Time',
+          data: times,
+          borderColor: '#00ff88',
+          backgroundColor: 'rgba(0, 255, 136, 0.1)',
+          tension: 0.1,
+          fill: true
+        }, {
+          label: 'Target',
+          data: targets,
+          borderColor: '#ff4444',
+          borderDash: [5, 5],
+          tension: 0.1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          y: { beginAtZero: true, ticks: { color: '#888' }, grid: { color: '#333' } },
+          x: { ticks: { color: '#888', maxRotation: 45, minRotation: 45 }, grid: { color: '#333' } }
+        },
+        plugins: {
+          legend: { labels: { color: '#fff' } }
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Failed to render profile chart:', error);
+  }
+}
+
+// Fetch benchmark table using Bun.inspect.table API
+async function fetchBenchmarkTable() {
+  try {
+    const response = await fetch('/api/benchmarks/table');
+    if (!response.ok) {
+      throw new Error(\`HTTP \${response.status}: \${response.statusText}\`);
+    }
+    const tableText = await response.text();
+    const tableElement = document.getElementById('benchmark-table');
+    const listElement = document.getElementById('benchmarks-list');
+    
+    if (tableElement && listElement) {
+      tableElement.textContent = tableText;
+      tableElement.style.display = tableElement.style.display === 'none' ? 'block' : 'none';
+      listElement.style.display = tableElement.style.display === 'block' ? 'none' : 'block';
+    }
+  } catch (error) {
+    console.error('Failed to fetch benchmark table:', error);
+    showError('Failed to fetch benchmark table: ' + (error?.message || String(error)));
+  }
+}
+
+// Open file in editor (using Bun.openInEditor API)
+async function openFileInEditor(filePath, line, column) {
+  try {
+    const response = await fetch('/api/open-file', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filePath, line, column }),
+    });
+    if (!response.ok) {
+      throw new Error(\`HTTP \${response.status}: \${response.statusText}\`);
+    }
+    const result = await response.json();
+    if (result.success) {
+      console.log('File opened in editor:', filePath);
+    } else {
+      throw new Error(result.error || 'Failed to open file');
+    }
+  } catch (error) {
+    console.error('Failed to open file in editor:', error);
+    showError('Failed to open file in editor: ' + (error?.message || String(error)));
+  }
+}
+
+// WebSocket connection for real-time updates
+let ws = null;
+let reconnectAttempts = 0;
+const maxReconnectAttempts = 5;
+
+function connectWebSocket() {
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const wsUrl = \`\${protocol}//\${window.location.host}/ws\`;
+  
+  ws = new WebSocket(wsUrl);
+  
+  ws.onopen = () => {
+    console.log('🔌 Connected to dashboard WebSocket');
+    reconnectAttempts = 0;
+    const el = document.getElementById('ws-status');
+    if (el) { el.textContent = '🟢 Live'; el.style.color = '#00ff88'; }
+    ws.send(JSON.stringify({
+      type: 'subscribe',
+      channels: ['*']
+    }));
+  };
+  
+  ws.onmessage = (event) => {
+    try {
+      const message = JSON.parse(event.data);
+      
+      switch (message.type) {
+      case 'connected':
+        console.log('✅ WebSocket connected:', message.message);
+        break;
+      case 'data:updated':
+        // Refresh dashboard when data updates
+        loadDashboard();
+        break;
+      case 'benchmark:complete':
+        // Update specific benchmark in real-time (optional enhancement)
+        console.log('📊 Benchmark completed:', message.data.name);
+        break;
+      case 'tests:complete':
+        // Update tests section
+        console.log('✅ Tests completed:', message.data);
+        loadDashboard();
+        break;
+      case 'alerts':
+        // Display alerts
+        if (message.data.alerts && message.data.alerts.length > 0) {
+          const alertBanner = document.getElementById('alert-banner');
+          const alertContent = document.getElementById('alert-content');
+          if (alertBanner && alertContent) {
+            alertContent.innerHTML = message.data.alerts.map((a) => \`<div>\${a}</div>\`).join('');
+            alertBanner.style.display = 'block';
+            // Auto-dismiss after 10 seconds
+            setTimeout(() => {
+              if (alertBanner) alertBanner.style.display = 'none';
+            }, 10000);
+          }
+        }
+        break;
+      case 'pong':
+        // Heartbeat response
+        break;
+      default:
+        console.log('📨 WebSocket message:', message);
+      }
+    } catch (error) {
+      console.error('Error processing WebSocket message:', error);
+      showError('Failed to process WebSocket message: ' + (error?.message || String(error)));
+    }
+  };
+  
+  ws.onerror = (error) => {
+    console.error('❌ WebSocket error:', error);
+    const el = document.getElementById('ws-status');
+    if (el) { el.textContent = '🔴 Error'; el.style.color = '#ff4444'; }
+    showError('WebSocket connection error. Attempting to reconnect...');
+  };
+  
+  ws.onclose = () => {
+    console.log('🔌 WebSocket disconnected');
+    const el = document.getElementById('ws-status');
+    if (reconnectAttempts < maxReconnectAttempts) {
+      if (el) { el.textContent = '🟡 Reconnecting…'; el.style.color = '#ffaa00'; }
+    } else {
+      if (el) { el.textContent = '🔴 Disconnected'; el.style.color = '#888'; }
+    }
+    if (reconnectAttempts < maxReconnectAttempts) {
+      const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
+      reconnectAttempts++;
+      console.log(\`🔄 Reconnecting in \${delay}ms... (attempt \${reconnectAttempts})\`);
+      setTimeout(() => {
+        try {
+          connectWebSocket();
+        } catch (error) {
+          console.error('Failed to reconnect WebSocket:', error);
+          showError('Failed to reconnect WebSocket: ' + (error?.message || String(error)));
+        }
+      }, delay);
+    } else {
+      showError('WebSocket reconnection failed after ' + maxReconnectAttempts + ' attempts');
+    }
+  };
+}
+
+// Connect on page load
+connectWebSocket();
+
+// Heartbeat to keep connection alive
+setInterval(() => {
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({ type: 'ping' }));
+  }
+}, 30000); // Every 30 seconds
+
+// Reconnect on visibility change (tab becomes visible)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && (!ws || ws.readyState === WebSocket.CLOSED)) {
+    connectWebSocket();
+  }
+});
+
+// Theme management
+function toggleTheme() {
+  const currentTheme = localStorage.getItem('theme') || 'dark';
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('theme', newTheme);
+  updateThemeStyles(newTheme);
+}
+
+function updateThemeStyles(theme) {
+  if (theme === 'light') {
+    document.body.style.background = 'linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%)';
+    document.body.style.color = '#000';
+  } else {
+    document.body.style.background = 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%)';
+    document.body.style.color = '#fff';
+  }
+}
+
+// Initialize theme
+const savedTheme = localStorage.getItem('theme') || 'dark';
+document.documentElement.setAttribute('data-theme', savedTheme);
+updateThemeStyles(savedTheme);
+
+// Add filter event listeners
+['search-input', 'category-filter', 'status-filter', 'benchmark-sort'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', loadDashboard);
+  if (el) el.addEventListener('change', loadDashboard);
+});
+
+['test-search-input', 'test-category-filter', 'test-status-filter', 'test-sort'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', loadDashboard);
+  if (el) el.addEventListener('change', loadDashboard);
+});
+
+['p2p-gateway-filter', 'p2p-operation-filter', 'p2p-status-filter'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('change', loadDashboard);
+});
+
+['profile-category-filter', 'profile-operation-filter', 'profile-status-filter'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('change', loadDashboard);
+});
+
+const chartRangeEl = document.getElementById('chart-range');
+if (chartRangeEl) chartRangeEl.addEventListener('change', () => renderBenchmarkChart());
+
+// Add click handler for file links using event delegation
+document.addEventListener('click', (e) => {
+  const target = e.target;
+  if (target && target.classList && target.classList.contains('file-link')) {
+    const filePath = target.getAttribute('data-file');
+    if (filePath) {
+      openFileInEditor(filePath, 1, 1);
+    }
+  }
+});
+
+loadDashboard();
+    const refreshInterval = ${refreshInterval} * 1000;
+    // Reduce polling frequency since we have WebSocket (keep as fallback)
+    setInterval(loadDashboard, refreshInterval * 2);
+  </script>
+</body>
+</html>

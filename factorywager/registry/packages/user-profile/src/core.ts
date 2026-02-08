@@ -357,6 +357,30 @@ export class UserProfileEngine {
   }
 
   /**
+   * Aggregate counts by payment type (preferredGateway) for dashboard/insights.
+   * Returns counts for venmo, cashapp, paypal; unknown gateways are grouped under 'other'.
+   */
+  getPaymentTypeCounts(): Record<string, number> {
+    const counts: Record<string, number> = { venmo: 0, cashapp: 0, paypal: 0, other: 0 };
+    try {
+      const rows = this.db.prepare('SELECT prefs FROM profiles').all() as { prefs: string }[];
+      for (const row of rows) {
+        try {
+          const prefs = JSON.parse(row.prefs) as { preferredGateway?: string; gateways?: string[] };
+          const gw = prefs.preferredGateway || prefs.gateways?.[0] || 'venmo';
+          if (gw in counts) (counts as Record<string, number>)[gw]++;
+          else counts.other++;
+        } catch {
+          counts.other++;
+        }
+      }
+    } catch {
+      // DB empty or unavailable
+    }
+    return counts;
+  }
+
+  /**
    * Query profiles by criteria
    */
   async queryProfiles(criteria: {

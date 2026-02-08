@@ -25,7 +25,9 @@
     "dev-dashboard": "bun run packages/dev-dashboard/src/enhanced-dashboard.ts",
     "dev-dashboard:watch": "bun --watch run packages/dev-dashboard/src/enhanced-dashboard.ts",
     "dev-dashboard:hot": "bun --hot run packages/dev-dashboard/src/enhanced-dashboard.ts",
-    "dev-dashboard:prod": "NODE_ENV=production bun run packages/dev-dashboard/src/enhanced-dashboard.ts"
+    "dev-dashboard:prod": "NODE_ENV=production bun run packages/dev-dashboard/src/enhanced-dashboard.ts",
+    "build:apps": "bun install && bun run build",
+    "doctor": "echo 'Checking dashboard routes...' && grep -q '/api/health' packages/dev-dashboard/src/enhanced-dashboard.ts && grep -q '/api/fraud' packages/dev-dashboard/src/enhanced-dashboard.ts && echo 'OK: /api/health and /api/fraud routes present.' || (echo 'Doctor: route check failed.'; exit 1)"
   },
   "devDependencies": {
     "@types/bun": "latest",
