@@ -682,6 +682,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       // Non-browser context: skip dashboard boot logic.
     } else {
     const HOT_RELOAD_ENABLED = ${hotReloadEnabled ? 'true' : 'false'};
+    const R2_LABEL = ${JSON.stringify(r2Label)};
     const INITIAL_SOURCE = ${JSON.stringify(initialSource)};
     const STORAGE_SOURCE_KEY = 'searchBenchActiveSource';
     const readStoredSource = () => {
@@ -1092,7 +1093,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       const samePack = Boolean(previous && previousPack === latestPack);
       const baselineMatch = baselineId ? previous?.id === baselineId : samePack;
       const validBaseline = Boolean(previous && samePack && baselineMatch);
-      const scopedPrevious = validBaseline ? previous : null;
+      const missingHistoricalBaseline = !previous;
+      const scopedPrevious = validBaseline
+        ? previous
+        : missingHistoricalBaseline
+          ? latest
+          : null;
       const currentTop = topProfile(latest);
       const previousTop = topProfile(scopedPrevious);
       const currentPath = latest.path || 'n/a';
@@ -1181,7 +1187,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       const strictRssDelta = (strictRssCurrent !== null && strictRssPrevious !== null)
         ? Number((strictRssCurrent - strictRssPrevious).toFixed(2))
         : null;
-      const hasBaseline = Boolean(validBaseline);
+      const hasBaseline = Boolean(validBaseline || missingHistoricalBaseline);
 
       const rollingQuality = Array.isArray(lastHistory?.snapshots)
         ? lastHistory.snapshots.slice(0, 5).map(s => Number(s.topScore || 0)).filter(n => Number.isFinite(n))
@@ -1219,9 +1225,11 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       const strictHeapVol = strictHeapDelta === null ? 'n/a' : classifyVolatility(Math.abs(strictHeapDelta), 5, 20);
       const strictRssStatus = deltaStatus(strictRssDelta, 'memory');
       const strictRssVol = strictRssDelta === null ? 'n/a' : classifyVolatility(Math.abs(strictRssDelta), 10, 40);
-      const baselineText = hasBaseline
+      const baselineText = validBaseline
         ? ('Same-pack ' + (baselineId || 'n/a'))
-        : ('No same-pack baseline' + (previous && !samePack ? ' (pack mismatch)' : (previous && !baselineMatch ? ' (baseline mismatch)' : '')));
+        : missingHistoricalBaseline
+          ? 'Baseline fallback (current snapshot)'
+          : ('No same-pack baseline' + (previous && !samePack ? ' (pack mismatch)' : (previous && !baselineMatch ? ' (baseline mismatch)' : '')));
       const coreLoopSummary = [
         'Q ' + signedDelta(qualityDelta),
         'R ' + signedDelta(reliabilityDelta),
@@ -1422,7 +1430,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         ? Math.max(0, Math.floor((Date.now() - latestPayloadTs) / 60000))
         : null;
       const cookieFreshness = cookieAgeMin === null
-        ? statusBadge('Unknown')
+        ? '<span class="badge status-warn" title="Cookie telemetry not synced from runtime storage yet">Not synced</span>'
         : cookieAgeMin <= 15
           ? statusBadge('Stable')
           : cookieAgeMin <= 60
@@ -1636,7 +1644,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     };
     const renderRss = (xmlText, source, meta) => {
       if (!xmlText || typeof xmlText !== 'string') {
-        rssEl.innerHTML = '<pre>No RSS feed available.</pre>';
+        rssEl.innerHTML = '<div class="meta"><span title="RSS unavailable: missing feed object or source not configured">-</span></div>';
         return;
       }
       try {
@@ -1669,13 +1677,18 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           rssMeta +
           '<table><thead><tr><th>Title</th><th>Published</th><th>Link</th></tr></thead><tbody>' + rows + '</tbody></table>';
       } catch {
-        rssEl.innerHTML = '<pre>RSS parse error.</pre>';
+        rssEl.innerHTML = '<div class="meta"><span title="RSS parse error: feed content invalid">-</span></div>';
       }
     };
     const setRssBadge = (label, mode = 'neutral') => {
       const cls = mode === 'new' ? 'status-warn' : mode === 'ok' ? 'status-good' : 'status-neutral';
       rssBadgeEl.className = 'badge rss-badge ' + cls;
       rssBadgeEl.textContent = label;
+      if (mode === 'neutral' && label === '-') {
+        rssBadgeEl.title = 'RSS unavailable: feed missing, not configured, or parse failed.';
+      } else {
+        rssBadgeEl.title = '';
+      }
     };
     const parseLatestRssGuid = (xmlText) => {
       try {
@@ -1704,26 +1717,78 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         loadBtn.onclick = () => loadLatest(activeSource);
       }
     };
-    const fetchJson = async (url) => {
-      const res = await fetch(url, {
-        credentials: 'same-origin',
-        cache: 'no-store',
-      });
-      const text = await res.text();
-      let data = null;
+    const fetchJson = async (url, timeoutMs = 5000) => {
+      const ctl = new AbortController();
+      const timeout = setTimeout(() => ctl.abort(), timeoutMs);
       try {
-        data = text ? JSON.parse(text) : null;
-      } catch {
-        throw new Error('Invalid JSON from ' + url);
+        const res = await fetch(url, {
+          credentials: 'same-origin',
+          cache: 'no-store',
+          signal: ctl.signal,
+        });
+        const text = await res.text();
+        let data = null;
+        try {
+          data = text ? JSON.parse(text) : null;
+        } catch {
+          throw { type: 'invalid_json', url, message: 'Invalid JSON response' };
+        }
+        if (!res.ok) {
+          const retryAfterHeader = res.headers.get('retry-after');
+          const retryAfter = retryAfterHeader ? Number.parseInt(retryAfterHeader, 10) : null;
+          throw {
+            type: 'http_error',
+            status: res.status,
+            url,
+            error: data?.error || null,
+            payload: data,
+            retryAfter: Number.isFinite(retryAfter) ? retryAfter : null,
+            message: (data && data.error) ? String(data.error) : ('HTTP ' + res.status),
+          };
+        }
+        return data;
+      } catch (err) {
+        if (err?.name === 'AbortError') {
+          throw {
+            type: 'timeout',
+            status: 0,
+            url,
+            message: 'Network timeout after ' + timeoutMs + 'ms',
+          };
+        }
+        throw err;
+      } finally {
+        clearTimeout(timeout);
       }
-      if (!res.ok) {
-        throw new Error((data && data.error) ? (url + ': ' + data.error) : (url + ': HTTP ' + res.status));
+    };
+    const classifyDashboardError = (errorLike) => {
+      const err = errorLike || {};
+      const code = String(err.error || err.message || '').toLowerCase();
+      const status = Number(err.status || 0);
+      if (err.type === 'timeout') {
+        return { kind: 'timeout', label: 'Network timeout (5s)', detail: 'Request timed out before response.' };
       }
-      return data;
+      if (code.includes('r2_get_failed')) {
+        return { kind: 'r2_get_failed', label: 'R2 connection failure', detail: 'Could not read object from R2.' };
+      }
+      if (status === 401) {
+        return { kind: 'auth', label: 'Authentication failure (401)', detail: 'Credentials rejected by upstream.' };
+      }
+      if (status === 404) {
+        return { kind: 'not_found', label: 'R2 object not found (404)', detail: 'Bucket/path object is missing.' };
+      }
+      if (status === 429) {
+        return { kind: 'rate_limit', label: 'Rate limited (429)', detail: 'Too many requests; retry later.' };
+      }
+      if (status >= 500) {
+        return { kind: 'server', label: 'Server error (500+)', detail: 'Upstream error while loading dashboard data.' };
+      }
+      return { kind: 'generic', label: 'Request failed', detail: String(err.message || 'Unknown error') };
     };
     let refreshInFlight = false;
     let refreshRetryTimer = null;
     let refreshRetryCount = 0;
+    let noticeRetryTimer = null;
     let lastRefreshSource = INITIAL_SOURCE;
     const formatTime = (d) => {
       try {
@@ -1747,6 +1812,36 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         clearInterval(refreshRetryTimer);
         refreshRetryTimer = null;
       }
+    };
+    const clearNoticeRetryTimer = () => {
+      if (noticeRetryTimer !== null) {
+        clearInterval(noticeRetryTimer);
+        noticeRetryTimer = null;
+      }
+    };
+    const setRetryNotice = (source, reason, seconds = 6) => {
+      clearNoticeRetryTimer();
+      let remain = Math.max(1, Number(seconds) || 6);
+      const render = () => {
+        setReportNotice(
+          '<span class="badge status-warn">Retry</span> <code>' + attrEscape(reason) + '</code> ' +
+          '<button id="retryNow" ' + (remain > 0 ? 'disabled' : '') + '>' + (remain > 0 ? ('Retry in ' + remain + 's') : 'Retry now') + '</button>',
+          'error'
+        );
+        const btn = document.getElementById('retryNow');
+        if (btn) {
+          btn.onclick = () => loadLatest(source);
+        }
+      };
+      render();
+      noticeRetryTimer = setInterval(() => {
+        remain -= 1;
+        if (remain < 0) {
+          clearNoticeRetryTimer();
+          remain = 0;
+        }
+        render();
+      }, 1000);
     };
     const setRefreshIdle = () => {
       clearRetryTimer();
@@ -1821,6 +1916,33 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         // ignore polling errors; dashboard remains usable
       }
     };
+    const renderLocalFallback = async () => {
+      const latestData = await fetchJson('/api/latest?source=local');
+      renderLatest(latestData);
+      currentLatestId = latestData?.id || currentLatestId;
+      knownLatestId = latestData?.id || knownLatestId;
+      const localData = await fetchJson('/api/index?source=local');
+      renderHistory(localData);
+      const manifest = await fetchJson('/api/publish-manifest?source=local');
+      renderPublish(manifest);
+      const inventory = await fetchJson('/api/r2-inventory?source=local&id=' + encodeURIComponent(latestData?.id || ''));
+      renderInventory(inventory);
+      const strictP95 = strictP95FromSnapshot(latestData);
+      const strictP95Threshold = asNumOrNull(latestData?.thresholdsApplied?.strictLatencyP95WarnMs);
+      const domainUrl =
+        '/api/domain-health?source=local' +
+        (strictP95 === null ? '' : '&strictP95=' + encodeURIComponent(String(strictP95))) +
+        (strictP95Threshold === null ? '' : '&strictP95Threshold=' + encodeURIComponent(String(strictP95Threshold)));
+      const domain = await fetchJson(domainUrl);
+      renderDomainHealth(domain);
+      const domainRegistryStatus = await fetchJson('/api/domain-registry-status');
+      renderDomainRegistryStatus(domainRegistryStatus);
+      const loop = await fetchJson('/api/loop-status?source=local');
+      renderLoopStatus(loop, latestData);
+      const rssMeta = await fetchJson('/api/rss-meta?source=local');
+      const rssRes = await fetch('/api/rss?source=local', { credentials: 'same-origin', cache: 'no-store' });
+      renderRss(await rssRes.text(), 'local', rssMeta);
+    };
     const checkForNewRssItems = async () => {
       try {
         const res = await fetch('/api/rss?source=' + activeSource);
@@ -1847,14 +1969,30 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         }
         knownRssGuid = latestGuid;
       } catch {
-        setRssBadge('RSS unavailable', 'neutral');
+        setRssBadge('-', 'neutral');
       }
     };
-    async function loadLatest(source) {
-      if (refreshInFlight) return;
-      refreshInFlight = true;
+    async function loadLatest(source, opts = {}) {
+      const attempt = Number(opts.attempt || 0);
+      const maxRetries = Number(opts.maxRetries || 3);
+      const internalRetry = Boolean(opts.internalRetry);
+      if (refreshInFlight && !internalRetry) return;
+      if (source === 'r2' && String(R2_LABEL || '').includes('(not configured)')) {
+        setReportNotice(
+          '<span class="badge status-warn">R2 not configured</span> set <code>R2_ACCOUNT_ID</code>, <code>R2_ACCESS_KEY_ID</code>, <code>R2_SECRET_ACCESS_KEY</code> or pass <code>--r2-base</code>.',
+          'error'
+        );
+        setRssBadge('-', 'neutral');
+        showToast('R2 not configured. Using local mode.', 'error', 3200);
+        return;
+      }
+      if (!internalRetry) {
+        refreshInFlight = true;
+      }
       lastRefreshSource = source;
-      setRefreshLoading();
+      if (attempt === 0) {
+        setRefreshLoading();
+      }
       try {
         activeSource = source;
         writeStoredSource(source);
@@ -1920,14 +2058,88 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         overviewState.rssMeta = guid ? ('guid ' + guid.slice(0, 16)) : 'guid n/a';
         renderOverview();
         setRefreshSuccess();
+        clearNoticeRetryTimer();
       } catch (error) {
-        setRssBadge('RSS unavailable', 'neutral');
-        const message = error instanceof Error ? error.message : String(error);
-        setReportNotice('<span class="badge status-bad">Refresh failed</span> <code>' + message + '</code>', 'error');
+        setRssBadge('-', 'neutral');
+        const classified = classifyDashboardError(error);
+        const timestamp = new Date().toISOString();
+        console.error('[dashboard-error][' + timestamp + ']', {
+          source,
+          error,
+          classified,
+        });
+        const message = classified.label + ' - ' + classified.detail;
         overviewState.rss = 'unavailable';
         overviewState.rssMeta = message;
         renderOverview();
         setRefreshErrorCountdown(6);
+        setRetryNotice(source, message, 6);
+        if (source === 'r2') {
+          const hasRetriesLeft = attempt < (maxRetries - 1);
+          if (classified.kind === 'r2_get_failed' && hasRetriesLeft) {
+            const waitMs = (attempt + 1) * 1000;
+            setReportNotice(
+              '<span class="badge status-warn">R2 connection failed</span> <code>' + attrEscape(message) + '</code> auto-retry ' + (attempt + 1) + '/' + maxRetries + ' in ' + Math.round(waitMs / 1000) + 's.',
+              'error'
+            );
+            await Bun.sleep(waitMs);
+            return await loadLatest(source, { attempt: attempt + 1, maxRetries, internalRetry: true });
+          }
+          if (classified.kind === 'timeout' && hasRetriesLeft) {
+            const waitMs = Math.min(12000, Math.pow(2, attempt + 1) * 1000);
+            setReportNotice(
+              '<span class="badge status-warn">Network timeout</span> <code>' + attrEscape(message) + '</code> retry with backoff in ' + Math.round(waitMs / 1000) + 's (' + (attempt + 1) + '/' + maxRetries + ').',
+              'error'
+            );
+            await Bun.sleep(waitMs);
+            return await loadLatest(source, { attempt: attempt + 1, maxRetries, internalRetry: true });
+          }
+          if (classified.kind === 'rate_limit' && hasRetriesLeft) {
+            const retryAfterSecRaw = Number(error?.retryAfter ?? error?.payload?.retryAfter ?? error?.payload?.retry_after ?? 5);
+            const retryAfterSec = Number.isFinite(retryAfterSecRaw) && retryAfterSecRaw > 0 ? retryAfterSecRaw : 5;
+            setReportNotice(
+              '<span class="badge status-warn">Rate limited</span> <code>' + attrEscape(message) + '</code> waiting retryAfter=' + retryAfterSec + 's (' + (attempt + 1) + '/' + maxRetries + ').',
+              'error'
+            );
+            await Bun.sleep(retryAfterSec * 1000);
+            return await loadLatest(source, { attempt: attempt + 1, maxRetries, internalRetry: true });
+          }
+          if (classified.kind === 'not_found') {
+            setReportNotice(
+              '<span class="badge status-bad">R2 bucket/object missing (404)</span> <code>' + attrEscape(message) + '</code> check <code>wrangler.toml</code> bucket binding and prefix.',
+              'error'
+            );
+          }
+          if (classified.kind === 'auth') {
+            showToast('Authentication failed (401). Check credentials.', 'error', 3600);
+            setReportNotice(
+              '<span class="badge status-bad">Auth failure (401)</span> <code>' + attrEscape(message) + '</code> check R2 credentials and token secrets.',
+              'error'
+            );
+          }
+        }
+        if (source === 'r2' && (classified.kind === 'r2_get_failed' || classified.kind === 'timeout' || classified.kind === 'server' || classified.kind === 'not_found' || classified.kind === 'auth' || classified.kind === 'rate_limit')) {
+          try {
+            await renderLocalFallback();
+            activeSource = 'local';
+            writeStoredSource('local');
+            setReportNotice(
+              '<span class="badge status-warn">R2 degraded</span> <code>' + attrEscape(message) + '</code> showing cached local data.',
+              'error'
+            );
+            showToast('Using cached local data after R2 failure', 'error', 3600);
+          } catch (fallbackErr) {
+            const fbMessage = fallbackErr?.message || String(fallbackErr);
+            setReportNotice(
+              '<span class="badge status-bad">Refresh failed</span> <code>' + attrEscape(message + '; local fallback failed: ' + fbMessage) + '</code>',
+              'error'
+            );
+          }
+          return;
+        }
+        if (classified.kind === 'generic' && source === 'r2' && !String(R2_LABEL || '').includes('credentialed')) {
+          setReportNotice('<span class="badge status-warn">R2 not configured</span> set <code>R2_ACCOUNT_ID</code>, <code>R2_ACCESS_KEY_ID</code>, <code>R2_SECRET_ACCESS_KEY</code> or <code>--r2-base</code>.', 'error');
+        }
       } finally {
         refreshInFlight = false;
       }
@@ -2004,7 +2216,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         renderOverview();
         setRefreshSuccess();
       } catch (error) {
-        setRssBadge('RSS unavailable', 'neutral');
+        setRssBadge('-', 'neutral');
         const message = error instanceof Error ? error.message : String(error);
         setReportNotice('<span class="badge status-bad">History refresh failed</span> <code>' + message + '</code>', 'error');
         overviewState.rss = 'unavailable';
