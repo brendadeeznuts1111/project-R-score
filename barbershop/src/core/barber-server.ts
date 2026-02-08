@@ -122,7 +122,8 @@ async function subscribeRedis(channel: string) {
     for (const ws of wsClients) {
       try {
         ws.send(message);
-      } catch {
+      } catch (err) {
+        // Client disconnected, remove from set
         wsClients.delete(ws);
       }
     }
@@ -178,7 +179,7 @@ async function getPaypalSecret() {
   if (PAYPAL_SECRET_ENV) return PAYPAL_SECRET_ENV;
   try {
     return (await getFactorySecret('PAYPAL_SECRET')) ?? '';
-  } catch {
+  } catch (err) {
     if (NODE_ENV === 'production') {
       throw new Error('PAYPAL_SECRET unavailable in production');
     }
@@ -296,7 +297,7 @@ async function redisHealthy() {
     const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 200));
     const pong = await Promise.race([redis.ping(), timeout]);
     return pong === 'PONG';
-  } catch {
+  } catch (err) {
     return false;
   }
 }
@@ -526,7 +527,7 @@ async function startServer(options: StartServerOptions = {}) {
           if (headersRaw) {
             try {
               headers = JSON.parse(headersRaw) as Record<string, string>;
-            } catch {
+            } catch (err) {
               return new Response(JSON.stringify({ ok: false, error: 'Invalid headers JSON' }), {
                 status: 400,
                 headers: responseHeaders('application/json; charset=utf-8'),
@@ -541,7 +542,7 @@ async function startServer(options: StartServerOptions = {}) {
               if (!Object.keys(headers).some(h => h.toLowerCase() === 'content-type')) {
                 headers['content-type'] = 'application/json';
               }
-            } catch {
+            } catch (err) {
               return new Response(JSON.stringify({ ok: false, error: 'Invalid body_json value' }), {
                 status: 400,
                 headers: responseHeaders('application/json; charset=utf-8'),

@@ -192,7 +192,7 @@ export class GeoLoadBalancer {
         
         clearTimeout(timeout);
         endpoint.healthy = response.ok;
-      } catch {
+      } catch (err) {
         endpoint.healthy = false;
       }
     }

@@ -120,7 +120,7 @@ export class FusionContextResolver {
       if (bunfig.default?.fusion?.features) {
         Object.assign(flags, bunfig.default.fusion.features);
       }
-    } catch {
+    } catch (err) {
       // bunfig.toml doesn't have fusion section
     }
 

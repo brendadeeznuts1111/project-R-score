@@ -6,7 +6,7 @@
  */
 
 import { Database } from 'bun:sqlite';
-import { getHistoryDatabase } from '../db/history.ts';
+import { getHistoryDatabase, getBenchmarkTrends } from '../db/history.ts';
 import { calculateProfileMetrics, calculateP2PMetrics } from '../metrics/calculators.ts';
 import {
   getWebhookMetrics,
@@ -367,6 +367,53 @@ export function handleHistoryRoute(req: Request): Promise<Response | null> {
       }
       
       return new Response(JSON.stringify(responseData), {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    } catch (error) {
+      return new Response(JSON.stringify({ error: error instanceof Error ? error.message : String(error) }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+  })();
+}
+
+/**
+ * Handle benchmark trends endpoint - aggregated data for Chart.js
+ */
+export function handleBenchmarkTrendsRoute(req: Request): Promise<Response | null> {
+  const url = new URL(req.url);
+  if (url.pathname !== '/api/benchmarks/trends') return Promise.resolve(null);
+
+  return (async () => {
+    try {
+      const hours = parseInt(url.searchParams.get('hours') || '24');
+      const bucket = parseInt(url.searchParams.get('bucket') || '60'); // minutes
+
+      const result = getBenchmarkTrends(hours, bucket);
+
+      // Transform to Chart.js-friendly format
+      const benchmarkNames = [...new Set(result.trends.map(t => t.name))];
+      const timestamps = [...new Set(result.trends.map(t => t.bucket))].sort((a, b) => a - b);
+
+      const datasets = benchmarkNames.map(name => {
+        const points = result.trends.filter(t => t.name === name);
+        return {
+          label: name,
+          data: timestamps.map(ts => {
+            const point = points.find(p => p.bucket === ts);
+            return point ? { x: ts, y: point.avg, p95: point.p95, passRate: point.passRate } : null;
+          }).filter(Boolean),
+          baseline: result.baseline[name],
+        };
+      });
+
+      return new Response(JSON.stringify({
+        labels: timestamps,
+        datasets,
+        regressions: result.regressions,
+        meta: { hours, bucket, generatedAt: Date.now() },
+      }), {
         headers: { 'Content-Type': 'application/json' },
       });
     } catch (error) {
@@ -1940,6 +1987,7 @@ export async function handleRoutes(req: Request, server: any, context: RouteCont
     () => handleDeviceTagsRoute(req),
     () => handleOpenFileRoute(req),
     () => handleHistoryRoute(req),
+    () => handleBenchmarkTrendsRoute(req),
     () => handleProfileMetricsRoute(req),
     () => handleP2PMetricsRoute(req),
     () => handleProfileTrendsRoute(req),

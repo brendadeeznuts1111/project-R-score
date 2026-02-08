@@ -31,7 +31,7 @@ QUERY:
 OPTIONS:
   --case-sensitive    Case-sensitive search (default: insensitive)
   --max-results <n>   Maximum results per source (default: 20)
-  --project-dir <dir> Project directory to search (default: ./packages)
+  --project-dir <dir> Project directory to search (default: .)
   --docs-only         Search only documentation
   --code-only         Search only project code
   --parallel          Show parallel execution timing
@@ -40,6 +40,7 @@ EXAMPLES:
   bun run scripts/quick-search.ts "Bun.serve"
   bun run scripts/quick-search.ts "SQLite" --max-results 10
   bun run scripts/quick-search.ts "markdown" --docs-only
+  bun run scripts/quick-search.ts "@lib/security" --code-only
   bun run scripts/quick-search.ts "performance" --code-only --project-dir ./src
   bun run scripts/quick-search.ts "fetch" --parallel
     `);
@@ -92,7 +93,7 @@ EXAMPLES:
       // Code only search
       const code = await searchProjectCode(
         query, 
-        options.projectDir || './packages',
+        options.projectDir || '.',
         {
           caseSensitive: options.caseSensitive,
           maxResults: options.maxResults
@@ -106,7 +107,7 @@ EXAMPLES:
       // Ghost Search - parallel docs and code
       const { docs, code } = await ghostSearch(
         query,
-        options.projectDir || './packages',
+        options.projectDir || '.',
         {
           caseSensitive: options.caseSensitive,
           maxResults: options.maxResults
@@ -164,7 +165,7 @@ if (process.argv.includes('--parallel')) {
   console.log('🏎️ Running parallel performance test...\n');
   
   const testQueries = ['Bun.serve', 'SQLite', 'fetch', 'markdown'];
-  const projectDir = './packages';
+  const projectDir = '.';
   
   const parallelStart = performance.now();
   

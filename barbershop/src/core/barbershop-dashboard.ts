@@ -1504,7 +1504,7 @@ const server = serve({
       if (headersRaw) {
         try {
           headers = JSON.parse(headersRaw) as Record<string, string>;
-        } catch {
+        } catch (err) {
           return Response.json({ ok: false, error: 'Invalid headers JSON' }, { status: 400 });
         }
       }
@@ -1516,7 +1516,7 @@ const server = serve({
           if (!Object.keys(headers).some(h => h.toLowerCase() === 'content-type')) {
             headers['content-type'] = 'application/json';
           }
-        } catch {
+        } catch (err) {
           return Response.json({ ok: false, error: 'Invalid body_json value' }, { status: 400 });
         }
       } else {

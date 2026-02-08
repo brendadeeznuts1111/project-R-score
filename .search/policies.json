@@ -1,0 +1,29 @@
+{
+  "pathExcludeContains": [
+    "/node_modules/",
+    "/dist/",
+    "/build/",
+    "/.git/"
+  ],
+  "authorityRules": [
+    { "contains": "/src/", "weight": 18 },
+    { "contains": "/lib/", "weight": 16 },
+    { "contains": "/packages/", "weight": 12 },
+    { "contains": "/tests/", "weight": 6 },
+    { "contains": "/test/", "weight": 6 },
+    { "contains": "/workspaces/", "weight": -6 },
+    { "contains": "/enterprise/", "weight": -4 },
+    { "contains": "/docs/", "weight": -8 },
+    { "contains": ".d.ts", "weight": -12 }
+  ],
+  "mirrorPenaltyContains": [
+    "/workspaces/",
+    "/dashboard/dashboard-worker/",
+    "/enterprise/packages/dashboard-worker/"
+  ],
+  "canonicalPreferContains": [
+    "/src/",
+    "/lib/",
+    "/packages/"
+  ]
+}

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FactoryWager Dev Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -2271,77 +2272,123 @@ function renderPerformanceGauge(score) {
   }
 }
 
-// Render benchmark trend chart
+// Render benchmark trend chart with real trend data
 async function renderBenchmarkChart() {
   const ctx = document.getElementById('benchmark-chart');
   if (!ctx) return;
   const hours = parseInt(document.getElementById('chart-range')?.value || '24', 10) || 24;
+  const bucket = hours <= 6 ? 15 : hours <= 24 ? 60 : 360; // 15min/1h/6h buckets
+
   try {
-    const response = await fetchWithTimeout('/api/history?hours=' + hours, { timeout: 20000 });
-    const history = await response.json();
-    
-    if (!history.benchmarks || history.benchmarks.length === 0) return;
-    
-    // Group by benchmark name and get latest for each
-    const benchmarkMap = new Map();
-    history.benchmarks.forEach(b => {
-      if (!benchmarkMap.has(b.name) || benchmarkMap.get(b.name).timestamp < b.timestamp) {
-        benchmarkMap.set(b.name, b);
+    const response = await fetchWithTimeout('/api/benchmarks/trends?hours=' + hours + '&bucket=' + bucket, { timeout: 20000 });
+    const data = await response.json();
+
+    if (!data.datasets || data.datasets.length === 0) {
+      // Fallback to empty chart
+      if (benchmarkChart) benchmarkChart.destroy();
+      return;
+    }
+
+    // Build Chart.js datasets from API response
+    const colors = ['#00ff88', '#00aaff', '#ff88ff', '#ffaa00', '#ff4444', '#88ff88'];
+    const datasets = data.datasets.map((ds, i) => ({
+      label: ds.label,
+      data: ds.data.map(pt => ({ x: pt.x, y: pt.y })),
+      borderColor: colors[i % colors.length],
+      backgroundColor: colors[i % colors.length] + '20',
+      tension: 0.3,
+      fill: false,
+      pointRadius: 2,
+      pointHoverRadius: 5,
+    }));
+
+    // Add baseline reference lines
+    data.datasets.forEach((ds, i) => {
+      if (ds.baseline?.avg) {
+        datasets.push({
+          label: ds.label + ' baseline',
+          data: data.labels.map(ts => ({ x: ts, y: ds.baseline.avg })),
+          borderColor: colors[i % colors.length] + '60',
+          borderDash: [4, 4],
+          pointRadius: 0,
+          fill: false,
+        });
       }
     });
-    
-    const labels = Array.from(benchmarkMap.keys());
-    const times = labels.map(name => benchmarkMap.get(name).time);
-    const targets = labels.map(name => benchmarkMap.get(name).target);
-    
+
     if (benchmarkChart) {
       benchmarkChart.destroy();
     }
-    
+
     benchmarkChart = new Chart(ctx, {
       type: 'line',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'Execution Time',
-          data: times,
-          borderColor: '#00ff88',
-          backgroundColor: 'rgba(0, 255, 136, 0.1)',
-          tension: 0.1,
-          fill: true
-        }, {
-          label: 'Target',
-          data: targets,
-          borderColor: '#ff4444',
-          borderDash: [5, 5],
-          tension: 0.1
-        }]
-      },
+      data: { datasets },
       options: {
         responsive: true,
         maintainAspectRatio: true,
+        interaction: { intersect: false, mode: 'index' },
         scales: {
-          y: { 
+          y: {
             beginAtZero: true,
+            title: { display: true, text: 'Time (ms)', color: '#888' },
             ticks: { color: '#888' },
             grid: { color: '#333' }
           },
           x: {
-            ticks: { color: '#888', maxRotation: 45, minRotation: 45 },
+            type: 'time',
+            time: { unit: hours <= 6 ? 'minute' : hours <= 24 ? 'hour' : 'day' },
+            ticks: { color: '#888', maxRotation: 0 },
             grid: { color: '#333' }
           }
         },
         plugins: {
-          legend: {
-            labels: { color: '#fff' }
+          legend: { labels: { color: '#fff', boxWidth: 12 } },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                const val = ctx.parsed.y?.toFixed(2) || ctx.raw?.y?.toFixed(2);
+                return ctx.dataset.label + ': ' + val + 'ms';
+              }
+            }
           }
         }
       }
     });
+
+    // Show regression warnings if any
+    showRegressionWarnings(data.regressions || []);
   } catch (error) {
     console.error('Failed to render benchmark chart:', error);
     showError('Failed to render benchmark chart: ' + (error?.message || String(error)));
   }
+}
+
+// Display regression warnings
+function showRegressionWarnings(regressions) {
+  let container = document.getElementById('regression-warnings');
+  if (!container) {
+    // Create container if it doesn't exist
+    const benchmarkSection = document.querySelector('#benchmarks-tab .section h2');
+    if (benchmarkSection) {
+      container = document.createElement('div');
+      container.id = 'regression-warnings';
+      container.style.cssText = 'margin-bottom: 15px;';
+      benchmarkSection.parentNode.insertBefore(container, benchmarkSection.nextSibling);
+    }
+  }
+  if (!container) return;
+
+  if (regressions.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+
+  container.innerHTML = regressions.map(r =>
+    '<div style="background: rgba(255, 68, 68, 0.15); border: 1px solid #ff4444; border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">' +
+      '<span style="color: #ff8888;"><strong>' + escapeHTML(r.name) + '</strong> regression detected</span>' +
+      '<span style="color: #ff4444; font-family: monospace;">+' + r.changePercent.toFixed(1) + '% (' + r.baseline.toFixed(2) + 'ms → ' + r.current.toFixed(2) + 'ms)</span>' +
+    '</div>'
+  ).join('');
 }
 
 // Render P2P gateway comparison chart

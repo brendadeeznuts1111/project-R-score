@@ -999,7 +999,7 @@ const server = serve({
         if (data.type === 'ping') {
           ws.send(JSON.stringify({ type: 'pong', time: Date.now() }));
         }
-      } catch {
+      } catch (err) {
         // Binary or invalid message
       }
     },
