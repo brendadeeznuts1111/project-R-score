@@ -1770,6 +1770,7 @@
     "search:bench:dashboard": "bun run scripts/search-benchmark-dashboard.ts",
     "search:bench:dashboard:watch": "bun --watch run scripts/search-benchmark-dashboard.ts --port 3099 --no-cookies --no-hot-reload",
     "r2-upload": "bun run scripts/r2-upload.ts",
+    "domain:health:online": "bun run scripts/domain-health-online.ts",
     "ab:test:build": "bun run scripts/ab-test-builder.ts",
     "ab:test:deploy": "bun run scripts/ab-test-builder.ts --deploy",
     "search:bun:features": "bun run scripts/search-smart.ts --path ./lib --runtime bun --artifact api --view clean --task delivery --group-limit 4",

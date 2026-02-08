@@ -5,7 +5,7 @@ import { existsSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createHmac, createHash } from 'node:crypto';
 import { S3Client } from 'bun';
-import { resolve4, resolveCname } from 'node:dns/promises';
+import { resolve4, resolveCname, resolveNs, Resolver } from 'node:dns/promises';
 import {
   CookieParser,
   StateManager,
@@ -1025,6 +1025,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           '<td>' + healthBadge(item.dnsResolved ? 1 : 0, item.dnsResolved ? '✓ resolved' : '✗ unresolved') + '</td>' +
           '<td>' + ((item.dnsRecords || []).slice(0, 2).join(', ') || 'n/a') + '</td>' +
           '<td>' + (item.dnsSource || 'live') + '</td>' +
+          '<td>' + (item.dnsResolved ? '—' : (item.lastCheckedAt || 'n/a')) + '</td>' +
           '<td>' + cookieSymbol + '</td>' +
         '</tr>'
       );
@@ -1044,7 +1045,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         '<div class="meta">dnsChecked=' + (data.dnsPrefetch?.checked ?? 0) + ' dnsResolved=' + (data.dnsPrefetch?.resolved ?? 0) + ' cacheTtlSec=' + (data.dnsPrefetch?.cacheTtlSec ?? 'n/a') + '</div>' +
         '<div class="meta">cookieTelemetry=' + (data.health?.cookie?.detail || 'n/a') + ' domainMatch=' + (data.health?.cookie?.domainMatchesRequested ?? 'n/a') + ' cookieScore=' + (Number.isFinite(cookieScoreValue) ? cookieScoreValue : 'n/a') + ' hex=' + cookieHexBadge + ' bar=' + cookieUnicodeBar + ' <span class="badge" style="background:' + cookieHexBadge + ';border-color:' + cookieHexBadge + ';color:#0b0d12">■</span></div>' +
         '<table><thead><tr><th>Type</th><th>Key</th><th>Exists</th><th>Last Modified</th></tr></thead><tbody>' + latestRows + '</tbody></table>' +
-        '<table style="margin-top:10px"><thead><tr><th>Subdomain</th><th>Full Domain</th><th>DNS</th><th>Records</th><th>Source</th><th>Cookie</th></tr></thead><tbody>' + (subRows || '<tr><td colspan="6">No subdomain data.</td></tr>') + '</tbody></table>';
+        '<table style="margin-top:10px"><thead><tr><th>Subdomain</th><th>Full Domain</th><th>DNS</th><th>Records</th><th>Source</th><th>Last Checked (Offline)</th><th>Cookie</th></tr></thead><tbody>' + (subRows || '<tr><td colspan="7">No subdomain data.</td></tr>') + '</tbody></table>';
     };
     const renderRss = (xmlText, source, meta) => {
       if (!xmlText || typeof xmlText !== 'string') {
@@ -1480,13 +1481,76 @@ async function main(): Promise<void> {
   const hotReloadClients = new Set<ReadableStreamDefaultController<Uint8Array>>();
   const sseEncoder = new TextEncoder();
   const dnsPrefetchTtlMs = 120000;
+  const nsCache = new Map<string, { expiresAt: number; servers: string[] }>();
   const dnsCache = new Map<string, {
     expiresAt: number;
     resolved: boolean;
     records: string[];
     source: 'A' | 'CNAME' | 'none';
-    error?: string;
+      error?: string;
   }>();
+
+  const zoneFromHost = (host: string): string => {
+    const parts = String(host || '').toLowerCase().split('.').filter(Boolean);
+    if (parts.length >= 2) return `${parts[parts.length - 2]}.${parts[parts.length - 1]}`;
+    return String(host || '').toLowerCase();
+  };
+
+  const resolveDnsAuthoritative = async (host: string): Promise<{
+    resolved: boolean;
+    records: string[];
+    source: 'A' | 'CNAME' | 'none';
+    error?: string;
+  }> => {
+    const zone = zoneFromHost(host);
+    const now = Date.now();
+    const cached = nsCache.get(zone);
+    let servers = cached && cached.expiresAt > now ? cached.servers : [];
+    if (servers.length === 0) {
+      try {
+        servers = (await resolveNs(zone)).filter(Boolean);
+      } catch {
+        servers = [];
+      }
+      if (servers.length > 0) {
+        nsCache.set(zone, { expiresAt: now + dnsPrefetchTtlMs, servers });
+      }
+    }
+    if (servers.length === 0) {
+      return { resolved: false, records: [], source: 'none', error: 'authoritative_nameservers_not_found' };
+    }
+
+    for (const server of servers) {
+      let serverIp = server;
+      try {
+        const nsIps = await resolve4(server.replace(/\.$/, ''));
+        if (Array.isArray(nsIps) && nsIps.length > 0) {
+          serverIp = nsIps[0];
+        }
+      } catch {
+        serverIp = server;
+      }
+      const resolver = new Resolver();
+      resolver.setServers([serverIp]);
+      try {
+        const a = await resolver.resolve4(host);
+        if (Array.isArray(a) && a.length > 0) {
+          return { resolved: true, records: a.slice(0, 4), source: 'A' };
+        }
+      } catch {
+        // try CNAME on same server
+      }
+      try {
+        const c = await resolver.resolveCname(host);
+        if (Array.isArray(c) && c.length > 0) {
+          return { resolved: true, records: c.slice(0, 4), source: 'CNAME' };
+        }
+      } catch {
+        // try next nameserver
+      }
+    }
+    return { resolved: false, records: [], source: 'none', error: 'authoritative_lookup_failed' };
+  };
 
   const getCachedRemoteJson = async (cacheKey: string, name: string): Promise<Response> => {
     const now = Date.now();
@@ -1728,12 +1792,17 @@ async function main(): Promise<void> {
           source: 'CNAME',
         };
       } catch (cnameError) {
-        result = {
-          resolved: false,
-          records: [],
-          source: 'none',
-          error: (cnameError instanceof Error ? cnameError.message : (aError instanceof Error ? aError.message : String(aError))),
-        };
+        const auth = await resolveDnsAuthoritative(host);
+        if (auth.resolved) {
+          result = auth;
+        } else {
+          result = {
+            resolved: false,
+            records: [],
+            source: 'none',
+            error: (cnameError instanceof Error ? cnameError.message : (aError instanceof Error ? aError.message : String(aError))),
+          };
+        }
       }
     }
 
@@ -2159,6 +2228,7 @@ async function main(): Promise<void> {
       managerNote = error instanceof Error ? error.message : String(error);
     }
 
+    const dnsCheckedAt = new Date().toISOString();
     const subdomains = await Promise.all(
       subdomainConfigs.map(async (entry) => {
         const dns = await resolveDnsPrefetch(entry.full_domain);
@@ -2171,6 +2241,7 @@ async function main(): Promise<void> {
           dnsRecords: dns.records,
           dnsSource: dns.cacheHit ? `cache:${dns.source}` : `prefetch:${dns.source}`,
           dnsError: dns.error || null,
+          lastCheckedAt: dnsCheckedAt,
         };
       })
     );
