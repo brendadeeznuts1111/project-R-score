@@ -6,7 +6,8 @@
     ".": "./index.ts",
     "./db": "./db.ts",
     "./middleware": "./middleware.ts",
-    "./server": "./server.ts"
+    "./server": "./server.ts",
+    "./stream": "./stream.ts"
   },
   "dependencies": {
     "stuff-a": "workspace:*"
@@ -17,7 +18,7 @@
   "scripts": {
     "preflight": "bun run --filter stuff-a config:validate && bun run build",
     "dev": "bun run preflight && bun --watch server.ts",
-    "build": "bun build index.ts db.ts middleware.ts rate-limit.ts logger.ts --outdir ./dist --splitting --target bun",
+    "build": "bun build index.ts db.ts middleware.ts rate-limit.ts logger.ts stream.ts --outdir ./dist --splitting --target bun",
     "test": "bun test",
     "serve": "bun run server.ts",
     "bench": "bun run bench.ts",

@@ -10,6 +10,10 @@
 
 import { Database } from 'bun:sqlite';
 import { z } from 'zod';
+import { logger } from './logger';
+import { handleError } from './error-handler';
+import { toJsonString, serializeBigInt } from './serialization';
+import { requireValidUserId } from './validation';
 
 // Type-safe profile preferences schema (v10.1)
 export const ProfilePrefsSchema = z.object({
@@ -44,12 +48,19 @@ export class UserProfileEngine {
   private secrets = Bun.secrets;
   private s3Bucket: string;
   private s3Region: string;
+  // Performance: Cache prepared statements for faster queries
+  private getProfileStmt: ReturnType<Database['prepare']>;
+  private getProgressStmt: ReturnType<Database['prepare']>;
 
   constructor(dbPath: string = './profiles.db', s3Config?: { bucket: string; region: string }) {
     // Bun.SQL zero-copy SQLite
     this.db = new Database(dbPath);
     this.s3Bucket = s3Config?.bucket || process.env.R2_REGISTRY_BUCKET || 'factorywager-profiles';
     this.s3Region = s3Config?.region || process.env.R2_REGION || 'us-east-1';
+    
+    // Pre-compile frequently used queries for better performance
+    this.getProfileStmt = this.db.prepare('SELECT prefs, progress FROM profiles WHERE userId = ?');
+    this.getProgressStmt = this.db.prepare('SELECT score, timestamp FROM progress_log WHERE userId = ? ORDER BY timestamp DESC LIMIT 10');
     
     // Initialize schema (v10.1)
     this.db.exec(`
@@ -95,16 +106,14 @@ export class UserProfileEngine {
    * @returns SHA-256 hash hex string (immutable ref)
    */
   async createProfile(prefs: ProfilePrefs): Promise<string> {
+    // Validate userId format
+    requireValidUserId(prefs.userId);
+    
     // Validate with Zod
     const validated = ProfilePrefsSchema.parse(prefs);
     
-    // Convert BigInt to string for JSON serialization
-    const serializable = JSON.parse(JSON.stringify(validated, (key, value) => 
-      typeof value === 'bigint' ? value.toString() : value
-    ));
-    
-    // Generate SHA-256 parity hash
-    const prefsJson = JSON.stringify(serializable);
+    // Convert BigInt to string for JSON serialization (optimized)
+    const prefsJson = toJsonString(validated);
     const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(prefsJson));
     const hashHex = Array.from(new Uint8Array(hashBuffer))
       .map(b => b.toString(16).padStart(2, '0'))
@@ -130,9 +139,10 @@ export class UserProfileEngine {
         { service: 'factorywager', name: `profile:${validated.userId}` },
         prefsJson
       );
-    } catch (error) {
+    } catch (error: unknown) {
       // Secrets might not be available in all environments
       // Non-fatal: profile is still saved to SQLite
+      logger.debug(`Bun.secrets not available for ${validated.userId}: ${handleError(error, 'createProfile.secrets', { log: false })}`);
     }
     
     // R2/S3 snapshot with zstd compression
@@ -144,48 +154,55 @@ export class UserProfileEngine {
   /**
    * Get user profile (secrets-first, fallback to SQLite)
    */
-  async getProfile(userId: string): Promise<ProfilePrefs | null> {
-    // Try Bun.secrets first (enterprise-scoped)
-      const secretPrefs = await Bun.secrets.get({ service: 'factorywager', name: `profile:${userId}` });
-    if (secretPrefs) {
+  async getProfile(userId: string, skipSecrets: boolean = false): Promise<ProfilePrefs | null> {
+    // Validate userId format
+    requireValidUserId(userId);
+    
+    // Try Bun.secrets first (enterprise-scoped) - skip in hot path for performance
+    if (!skipSecrets) {
       try {
-        return ProfilePrefsSchema.parse(JSON.parse(secretPrefs));
+        const secretPrefs = await Bun.secrets.get({ service: 'factorywager', name: `profile:${userId}` });
+        if (secretPrefs) {
+          try {
+            return ProfilePrefsSchema.parse(JSON.parse(secretPrefs));
+          } catch {
+            // Fall through to SQLite
+          }
+        }
       } catch {
-        // Fall through to SQLite
+        // Secrets not available, continue to SQLite
       }
     }
     
-    // Fallback to SQLite
-    const stmt = this.db.prepare('SELECT prefs, progress FROM profiles WHERE userId = ?');
-    const row = stmt.get(userId) as { prefs: string; progress: string } | undefined;
+    // SQLite query - use cached prepared statement for better performance
+    const row = this.getProfileStmt.get(userId) as { prefs: string; progress: string } | undefined;
     
     if (!row) return null;
     
-    // Verify parity (Golden Matrix: 9.64KB binary target)
-    // Note: Parity check may fail during schema migrations - log warning but don't fail
-    let prefs: ProfilePrefs;
+    // Parse JSON once (optimization: avoid double parsing)
+    let rawPrefs: any;
     try {
-      const rawPrefs = JSON.parse(row.prefs);
-      // Convert string timestamps back to BigInt
-      if (rawPrefs.progress) {
-        for (const key in rawPrefs.progress) {
-          if (rawPrefs.progress[key].timestamp && typeof rawPrefs.progress[key].timestamp === 'string') {
-            rawPrefs.progress[key].timestamp = BigInt(rawPrefs.progress[key].timestamp);
-          }
+      rawPrefs = JSON.parse(row.prefs);
+    } catch (error: unknown) {
+      logger.error(`Failed to parse profile data for ${userId}: ${handleError(error, 'getProfile.parse', { log: false })}`);
+      return null;
+    }
+    
+    // Convert string timestamps back to BigInt (optimized: single pass)
+    if (rawPrefs.progress) {
+      for (const key in rawPrefs.progress) {
+        if (rawPrefs.progress[key].timestamp && typeof rawPrefs.progress[key].timestamp === 'string') {
+          rawPrefs.progress[key].timestamp = BigInt(rawPrefs.progress[key].timestamp);
         }
       }
+    }
+    
+    // Parse with schema validation
+    let prefs: ProfilePrefs;
+    try {
       prefs = ProfilePrefsSchema.parse(rawPrefs);
     } catch (error) {
       // Schema migration: try to parse with defaults
-      const rawPrefs = JSON.parse(row.prefs);
-      // Convert string timestamps back to BigInt
-      if (rawPrefs.progress) {
-        for (const key in rawPrefs.progress) {
-          if (rawPrefs.progress[key].timestamp && typeof rawPrefs.progress[key].timestamp === 'string') {
-            rawPrefs.progress[key].timestamp = BigInt(rawPrefs.progress[key].timestamp);
-          }
-        }
-      }
       prefs = ProfilePrefsSchema.parse({
         ...rawPrefs,
         displayName: rawPrefs.displayName || rawPrefs.userId?.replace('@', ''),
@@ -197,29 +214,35 @@ export class UserProfileEngine {
       });
     }
     
-    const progress = JSON.parse(row.progress);
-    
-    // Recompute hash for verification (non-blocking during migrations)
+    // Parity check: Defer to background (non-blocking optimization)
+    // Parse progress separately and defer parity check entirely
     try {
-      // Convert BigInt to string for JSON serialization
-      const serializable = JSON.parse(JSON.stringify(prefs, (key, value) => 
-        typeof value === 'bigint' ? value.toString() : value
-      ));
-      const prefsJson = JSON.stringify(serializable);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(prefsJson));
-      const computedHash = Array.from(new Uint8Array(hashBuffer))
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('');
-      
-      if (progress.parity && progress.parity !== computedHash) {
-        // Log warning but don't fail - likely schema migration
-        console.warn(`Parity mismatch for profile ${userId} (likely schema migration): expected ${progress.parity}, got ${computedHash}`);
-        // Auto-fix by updating the profile with new hash
-        await this.createProfile(prefs);
+      const progress = JSON.parse(row.progress);
+      if (progress.parity) {
+        // Use setImmediate to defer expensive crypto operation (non-blocking)
+        setImmediate(async () => {
+          try {
+            const prefsJson = toJsonString(prefs);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(prefsJson));
+            const computedHash = Array.from(new Uint8Array(hashBuffer))
+              .map(b => b.toString(16).padStart(2, '0'))
+              .join('');
+            
+            if (progress.parity !== computedHash) {
+              logger.warn(`Parity mismatch for profile ${userId} (likely schema migration): expected ${progress.parity}, got ${computedHash}`);
+              // Auto-fix by updating the profile with new hash (non-blocking)
+              await this.createProfile(prefs).catch(() => {
+                // Ignore errors in background fix
+              });
+            }
+          } catch (error: unknown) {
+            // Parity check failed, but continue - profile is still valid
+            logger.warn(`Parity check failed for ${userId}: ${handleError(error, 'getProfile.parity', { log: false })}`);
+          }
+        });
       }
-    } catch (error) {
-      // Parity check failed, but continue - profile is still valid
-      console.warn(`Parity check failed for ${userId}:`, error);
+    } catch {
+      // Progress parsing failed, but profile is still valid
     }
     
     return prefs;
@@ -283,12 +306,12 @@ export class UserProfileEngine {
         });
         
         if (!response.ok) {
-          console.warn(`Failed to save profile snapshot to R2: ${response.status}`);
+          logger.warn(`Failed to save profile snapshot to R2: ${response.status}`);
         }
       }
-    } catch (error) {
+    } catch (error: unknown) {
       // Non-fatal: log but don't fail profile creation
-      console.warn(`S3 snapshot failed for ${userId}:`, error);
+      logger.warn(`S3 snapshot failed for ${userId}: ${handleError(error, 'saveToS3', { log: false })}`);
     }
   }
 
@@ -305,7 +328,7 @@ export class UserProfileEngine {
     try {
       for (const prefs of profiles) {
         const validated = ProfilePrefsSchema.parse(prefs);
-        const prefsJson = JSON.stringify(validated);
+        const prefsJson = toJsonString(validated);
         const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(prefsJson));
         const hashHex = Array.from(new Uint8Array(hashBuffer))
           .map(b => b.toString(16).padStart(2, '0'))
@@ -343,7 +366,7 @@ export class UserProfileEngine {
     limit?: number;
   }): Promise<ProfilePrefs[]> {
     let query = 'SELECT prefs FROM profiles WHERE 1=1';
-    const params: any[] = [];
+    const params: (string | number)[] = [];
     
     if (criteria.subLevel) {
       query += ' AND prefs LIKE ?';
@@ -386,7 +409,7 @@ export class UserProfileEngine {
    */
   async appendProgress(userId: string, entry: {
     milestone: string;
-    metadata?: any;
+    metadata?: Record<string, unknown>;
     score: number;
     hash?: string;
     timestamp?: number;
@@ -414,7 +437,7 @@ export class UserProfileEngine {
    */
   async saveProgress(userId: string, entry: {
     milestone: string;
-    metadata?: any;
+    metadata?: Record<string, unknown>;
     score: number;
   }): Promise<void> {
     await this.appendProgress(userId, entry);
@@ -443,7 +466,8 @@ export class UserProfileEngine {
     }
 
     // Get progress log entries
-    const stmt = this.db.prepare('SELECT score, timestamp FROM progress_log WHERE userId = ? ORDER BY timestamp DESC LIMIT 10');
+    // Use cached prepared statement for better performance
+    const stmt = this.getProgressStmt;
     const progressEntries = stmt.all(userId) as Array<{ score: number; timestamp: number }>;
 
     // Build 384-dimensional feature vector

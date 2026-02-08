@@ -1,6 +1,6 @@
 [
   {
-    "id": "alert-1770517368980-wiki.factory-wager.com",
+    "id": "alert-1770518756862-wiki.factory-wager.com",
     "type": "service_failure",
     "severity": "warning",
     "service": "wiki.factory-wager.com",
@@ -9,15 +9,15 @@
       "domain": "wiki.factory-wager.com",
       "status": "unhealthy",
       "statusCode": 404,
-      "responseTime": 176,
-      "timestamp": "2026-02-08T02:22:48.773Z",
+      "responseTime": 171,
+      "timestamp": "2026-02-08T02:45:56.582Z",
       "error": null
     },
-    "timestamp": "2026-02-08T02:22:48.980Z",
+    "timestamp": "2026-02-08T02:45:56.862Z",
     "acknowledged": false
   },
   {
-    "id": "alert-1770517368980-dashboard.factory-wager.com",
+    "id": "alert-1770518756862-dashboard.factory-wager.com",
     "type": "service_failure",
     "severity": "warning",
     "service": "dashboard.factory-wager.com",
@@ -26,15 +26,15 @@
       "domain": "dashboard.factory-wager.com",
       "status": "unhealthy",
       "statusCode": 404,
-      "responseTime": 91,
-      "timestamp": "2026-02-08T02:22:48.740Z",
+      "responseTime": 121,
+      "timestamp": "2026-02-08T02:45:56.597Z",
       "error": null
     },
-    "timestamp": "2026-02-08T02:22:48.980Z",
+    "timestamp": "2026-02-08T02:45:56.862Z",
     "acknowledged": false
   },
   {
-    "id": "alert-1770517368980-api.factory-wager.com",
+    "id": "alert-1770518756862-api.factory-wager.com",
     "type": "service_failure",
     "severity": "warning",
     "service": "api.factory-wager.com",
@@ -43,15 +43,15 @@
       "domain": "api.factory-wager.com",
       "status": "unhealthy",
       "statusCode": 404,
-      "responseTime": 169,
-      "timestamp": "2026-02-08T02:22:48.819Z",
+      "responseTime": 177,
+      "timestamp": "2026-02-08T02:45:56.653Z",
       "error": null
     },
-    "timestamp": "2026-02-08T02:22:48.980Z",
+    "timestamp": "2026-02-08T02:45:56.862Z",
     "acknowledged": false
   },
   {
-    "id": "alert-1770517368980-npm.factory-wager.com",
+    "id": "alert-1770518756862-npm.factory-wager.com",
     "type": "service_failure",
     "severity": "warning",
     "service": "npm.factory-wager.com",
@@ -60,15 +60,15 @@
       "domain": "npm.factory-wager.com",
       "status": "unhealthy",
       "statusCode": 404,
-      "responseTime": 123,
-      "timestamp": "2026-02-08T02:22:48.774Z",
+      "responseTime": 177,
+      "timestamp": "2026-02-08T02:45:56.654Z",
       "error": null
     },
-    "timestamp": "2026-02-08T02:22:48.980Z",
+    "timestamp": "2026-02-08T02:45:56.862Z",
     "acknowledged": false
   },
   {
-    "id": "alert-1770517368980-Wiki",
+    "id": "alert-1770518756862-Wiki",
     "type": "service_failure",
     "severity": "warning",
     "service": "Wiki",
@@ -79,15 +79,15 @@
       "type": "web",
       "status": "unhealthy",
       "statusCode": 404,
-      "responseTime": 82,
-      "timestamp": "2026-02-08T02:22:48.901Z",
+      "responseTime": 117,
+      "timestamp": "2026-02-08T02:45:56.771Z",
       "error": null
     },
-    "timestamp": "2026-02-08T02:22:48.980Z",
+    "timestamp": "2026-02-08T02:45:56.862Z",
     "acknowledged": false
   },
   {
-    "id": "alert-1770517368980-Dashboard",
+    "id": "alert-1770518756862-Dashboard",
     "type": "service_failure",
     "severity": "warning",
     "service": "Dashboard",
@@ -98,15 +98,15 @@
       "type": "web",
       "status": "unhealthy",
       "statusCode": 404,
-      "responseTime": 90,
-      "timestamp": "2026-02-08T02:22:48.910Z",
+      "responseTime": 206,
+      "timestamp": "2026-02-08T02:45:56.861Z",
       "error": null
     },
-    "timestamp": "2026-02-08T02:22:48.980Z",
+    "timestamp": "2026-02-08T02:45:56.862Z",
     "acknowledged": false
   },
   {
-    "id": "alert-1770517368980-API",
+    "id": "alert-1770518756862-API",
     "type": "service_failure",
     "severity": "warning",
     "service": "API",
@@ -117,15 +117,15 @@
       "type": "api",
       "status": "unhealthy",
       "statusCode": 404,
-      "responseTime": 159,
-      "timestamp": "2026-02-08T02:22:48.979Z",
+      "responseTime": 147,
+      "timestamp": "2026-02-08T02:45:56.803Z",
       "error": null
     },
-    "timestamp": "2026-02-08T02:22:48.980Z",
+    "timestamp": "2026-02-08T02:45:56.862Z",
     "acknowledged": false
   },
   {
-    "id": "alert-1770517368980-NPM Registry",
+    "id": "alert-1770518756862-NPM Registry",
     "type": "service_failure",
     "severity": "warning",
     "service": "NPM Registry",
@@ -136,11 +136,11 @@
       "type": "web",
       "status": "unhealthy",
       "statusCode": 404,
-      "responseTime": 92,
-      "timestamp": "2026-02-08T02:22:48.914Z",
+      "responseTime": 87,
+      "timestamp": "2026-02-08T02:45:56.745Z",
       "error": null
     },
-    "timestamp": "2026-02-08T02:22:48.980Z",
+    "timestamp": "2026-02-08T02:45:56.862Z",
     "acknowledged": false
   }
 ]

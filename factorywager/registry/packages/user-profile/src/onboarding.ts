@@ -7,6 +7,8 @@
  */
 
 import { UserProfileEngine, ProfilePrefs } from './core';
+import { logger } from './logger';
+import { handleError } from './error-handler';
 
 export interface OnboardingSession {
   userId: string;           // '@ashschaeffer1'
@@ -47,7 +49,7 @@ export async function onboardUser(session: OnboardingSession): Promise<Onboardin
     userId: session.userId,
     displayName: session.displayName || session.userId.replace('@', ''),
     dryRun: true,                    // v10.1: default safety on
-    gateways: ['venmo', 'cashapp', 'paypal'] as any,
+    gateways: ['venmo', 'cashapp', 'paypal'] as ProfilePrefs['gateways'],
     preferredGateway: 'venmo',
     location: 'New Orleans, LA',
     timezone: session.timezone || 'America/Chicago',
@@ -85,9 +87,9 @@ export async function onboardUser(session: OnboardingSession): Promise<Onboardin
         ip: session.ip,
       })
     );
-  } catch (error) {
+  } catch (error: unknown) {
     // Non-fatal - profile is still saved to SQLite
-    console.warn(`Failed to save sensitive prefs to Bun.secrets: ${error}`);
+    logger.warn(`Failed to save sensitive prefs to Bun.secrets: ${handleError(error, 'onboardUser.secrets', { log: false })}`);
   }
 
   return {

@@ -6,7 +6,7 @@
  * WebGL + Live Sync via WebSocket
  */
 
-import { UserProfileEngine, profileEngine } from '@factorywager/user-profile';
+import { UserProfileEngine, profileEngine, logger, handleError } from '@factorywager/user-profile';
 import { pubsub } from '@factorywager/user-profile';
 
 const engine = profileEngine;
@@ -326,7 +326,7 @@ export async function startAvatarDashboard(port: number = 3007) {
     },
     websocket: {
       open(ws) {
-        console.log(`✅ Avatar WebSocket connected: ${ws.data.connectedAt}`);
+        logger.info(`✅ Avatar WebSocket connected: ${ws.data.connectedAt}`);
         ws.subscribe('profile-trail');
       },
       async message(ws, message) {
@@ -358,12 +358,12 @@ export async function startAvatarDashboard(port: number = 3007) {
           } else if (data.type === 'subscribe') {
             ws.subscribe(data.channel);
           }
-        } catch (error) {
-          console.error('Avatar WebSocket message error:', error);
+        } catch (error: unknown) {
+          logger.error(`Avatar WebSocket message error: ${handleError(error, 'avatar-3d.WebSocket.message', { log: false })}`);
         }
       },
       close(ws) {
-        console.log('❌ Avatar WebSocket closed');
+        logger.info('❌ Avatar WebSocket closed');
       },
       perMessageDeflate: true,
     },
@@ -388,9 +388,9 @@ export async function startAvatarDashboard(port: number = 3007) {
     }));
   });
   
-  console.log(`🎭 FactoryWager 3D Avatar Dashboard v10.1`);
-  console.log(`   Dashboard: http://localhost:${port}/avatar`);
-  console.log(`   WebSocket: ws://localhost:${port}/ws`);
+  logger.info(`🎭 FactoryWager 3D Avatar Dashboard v10.1`);
+  logger.info(`   Dashboard: http://localhost:${port}/avatar`);
+  logger.info(`   WebSocket: ws://localhost:${port}/ws`);
   
   return server;
 }
@@ -398,5 +398,7 @@ export async function startAvatarDashboard(port: number = 3007) {
 // CLI entry point
 if (import.meta.main) {
   const port = parseInt(process.env.AVATAR_PORT || '3007', 10);
-  startAvatarDashboard(port).catch(console.error);
+  startAvatarDashboard(port).catch((error: unknown) => {
+    logger.error(`Avatar dashboard startup failed: ${handleError(error, 'avatar-3d.start', { log: false })}`);
+  });
 }

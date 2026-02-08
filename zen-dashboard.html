@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zen Documentation Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding: 20px; background: #0f172a; color: #e2e8f0; }
+        .dashboard { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .metric-card { background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; }
+        .metric-value { font-size: 2em; font-weight: bold; color: #3b82f6; }
+        .metric-label { color: #94a3b8; margin-top: 5px; }
+        .health-optimal { color: #22c55e; }
+        .search-history { background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; }
+        .search-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #334155; }
+        .search-item:last-child { border-bottom: none; }
+        .performance-chart { background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>🎪 Zen Documentation Dashboard</h1>
+            <p class="health-optimal">System Health: OPTIMAL</p>
+            <p>Last Update: 2/7/2026, 9:55:24 PM</p>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value">3</div>
+                <div class="metric-label">Total Searches</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">10.64ms</div>
+                <div class="metric-label">Average Search Time</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">430</div>
+                <div class="metric-label">Total Matches</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">3.82MB</div>
+                <div class="metric-label">Memory Usage</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">0</div>
+                <div class="metric-label">Network Streams</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">0</div>
+                <div class="metric-label">Virtual Files</div>
+            </div>
+        </div>
+        
+        <div class="search-history">
+            <h2>📜 Recent Searches</h2>
+            
+                <div class="search-item">
+                    <span>local - "zen"</span>
+                    <span>145 matches in 6.54ms</span>
+                </div>
+            
+                <div class="search-item">
+                    <span>local - "performance"</span>
+                    <span>144 matches in 6.05ms</span>
+                </div>
+            
+                <div class="search-item">
+                    <span>local - "bun"</span>
+                    <span>141 matches in 19.34ms</span>
+                </div>
+            
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "timestamp": 1770521281231,
+  "totalPages": 130,
+  "sections": {
+    "api": 45,
+    "runtime": 32,
+    "bundler": 18,
+    "test": 12,
+    "cli": 8,
+    "utilities": 15
+  },
+  "cacheSize": "2.4MB",
+  "version": "1.0.0"
+}

@@ -4,6 +4,9 @@
   "description": "XGBoost personalization booster with ONNX inference (0.001ms target)",
   "type": "module",
   "main": "src/index.ts",
+  "dependencies": {
+    "@factorywager/user-profile": "workspace:*"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   }

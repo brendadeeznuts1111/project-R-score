@@ -99,7 +99,17 @@ server = Bun.serve({
       }, 'DELETE', userByIdRoute(req.params.id)),
     },
     [ROUTES.METRICS]: (req) => withTiming(
-      () => Response.json({ ...db.stats(), logs: getRequestLogs(), rateLimit: getRateLimitMetrics() }),
+      () => {
+        const dbFile = Bun.file(':memory:');
+        return Response.json({
+          ...db.stats(),
+          dbFileSize: dbFile.size,
+          dbFileType: dbFile.type,
+          logs: getRequestLogs(),
+          rateLimit: getRateLimitMetrics(),
+          logFile: null,
+        });
+      },
       'GET', ROUTES.METRICS,
     ),
     [ROUTES.WS]: (req, server) => {
@@ -340,6 +350,13 @@ test('/metrics includes rateLimit object', async () => {
   expect(metrics.rateLimit).toBeDefined();
   expect(typeof metrics.rateLimit.totalAllowed).toBe('number');
   expect(typeof metrics.rateLimit.totalBlocked).toBe('number');
+});
+
+test('/metrics includes dbFileSize and dbFileType from BunFile', async () => {
+  const res = await fetch(`${BASE}${ROUTES.METRICS}`);
+  const metrics = await res.json();
+  expect(typeof metrics.dbFileSize).toBe('number');
+  expect(typeof metrics.dbFileType).toBe('string');
 });
 
 // ── Phase 2: Pagination + Bulk Update tests ──

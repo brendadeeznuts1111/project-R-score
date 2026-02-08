@@ -6,14 +6,28 @@
  */
 
 import { UserProfileEngine, ProfilePrefs, profileEngine } from './core';
+import { logger } from './logger';
+import { handleError } from './error-handler';
 
 const engine = profileEngine;
 
+// PubSub data interface for type safety
+export interface PubSubData {
+  userId: string;
+  change?: string[];
+  newHash?: string;
+  timestamp?: number;
+  updates?: Partial<ProfilePrefs>;
+  score?: number;
+  milestone?: string;
+  [key: string]: unknown;
+}
+
 // Simple pub/sub for real-time updates (v10.1)
 class PubSub {
-  private subscribers: Map<string, Set<(data: any) => void>> = new Map();
+  private subscribers: Map<string, Set<(data: PubSubData) => void>> = new Map();
 
-  subscribe(channel: string, callback: (data: any) => void): () => void {
+  subscribe(channel: string, callback: (data: PubSubData) => void): () => void {
     if (!this.subscribers.has(channel)) {
       this.subscribers.set(channel, new Set());
     }
@@ -25,14 +39,14 @@ class PubSub {
     };
   }
 
-  publish(channel: string, data: any): void {
+  publish(channel: string, data: PubSubData): void {
     const callbacks = this.subscribers.get(channel);
     if (callbacks) {
       callbacks.forEach(cb => {
         try {
           cb(data);
         } catch (error) {
-          console.error(`PubSub callback error on ${channel}:`, error);
+          handleError(error, `PubSub callback error on ${channel}`);
         }
       });
     }
@@ -43,7 +57,7 @@ export const pubsub = new PubSub();
 
 export interface ProgressEntry {
   milestone: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
   score: number;
   timestamp?: number;
 }
@@ -89,11 +103,11 @@ export async function updatePreferences(
       newHash,
       changes: Object.keys(updates),
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       status: 'error',
       userId,
-      message: error.message,
+      message: handleError(error, 'updatePreferences', { log: false }),
     };
   }
 }
@@ -144,7 +158,7 @@ export async function saveProgress(
     }
   } catch (error) {
     // Non-fatal - progress is still saved
-    console.warn(`Personalization boost failed for ${userId}:`, error);
+    logger.warn(`Personalization boost failed for ${userId}:`, handleError(error, 'saveProgress.personalization', { log: false }));
   }
 
   // Publish progress update
@@ -160,7 +174,8 @@ export async function saveProgress(
  * Get progress history for user
  */
 export async function getProgressHistory(userId: string, limit: number = 50): Promise<ProgressEntry[]> {
-  const db = (engine as any).db;
+  // Access internal db property - we know it exists on UserProfileEngine
+  const db = (engine as unknown as { db: { prepare: (query: string) => { all: (...args: unknown[]) => unknown[] } } }).db;
   const stmt = db.prepare('SELECT milestone, metadata, score, timestamp FROM progress_log WHERE userId = ? ORDER BY timestamp DESC LIMIT ?');
   const rows = stmt.all(userId, limit) as Array<{
     milestone: string;

@@ -6,7 +6,7 @@
  * URLPattern routing, permessage-deflate compression (3.5MB → 184KB)
  */
 
-import { UserProfileEngine, profileEngine } from '@factorywager/user-profile';
+import { UserProfileEngine, profileEngine, logger, handleError, createSerializableCopy } from '@factorywager/user-profile';
 import { PreferenceManager } from '@factorywager/pref-propagation';
 import { RedisProfileClient } from '@factorywager/redis-profile';
 import { XGBoostPersonalizationModel, xgboostPers } from '@factorywager/xgboost-pers';
@@ -174,9 +174,16 @@ const dashboardHTML = `
 /**
  * Get system status with latency measurements
  */
-async function getSystemStatus() {
+interface SystemStatusItem {
+  component: string;
+  status: string;
+  latencyP99: string;
+  confirmation: string;
+}
+
+async function getSystemStatus(): Promise<SystemStatusItem[]> {
   const userId = '@ashschaeffer1';
-  const status: any[] = [];
+  const status: SystemStatusItem[] = [];
   
   // 1. Profile Creation Endpoint
   try {
@@ -189,12 +196,12 @@ async function getSystemStatus() {
       latencyP99: `${latency.toFixed(2)} ms`,
       confirmation: profile ? 'Ready — birth command standing by' : 'Profile not found'
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     status.push({
       component: 'Profile Creation Endpoint',
       status: '🔴 ERROR',
       latencyP99: '—',
-      confirmation: `Error: ${error.message}`
+      confirmation: `Error: ${handleError(error, 'getSystemStatus.profile', { log: false })}`
     });
   }
   
@@ -209,13 +216,14 @@ async function getSystemStatus() {
       latencyP99: `${latency.toFixed(2)} ms`,
       confirmation: secret ? 'Your prefs are encrypted & accessible' : 'Using SQLite fallback'
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     status.push({
       component: 'Bun.secrets Read (enterprise)',
       status: '🟡 FALLBACK',
       latencyP99: '—',
       confirmation: 'Using SQLite fallback (normal)'
     });
+    logger.debug(`Bun.secrets fallback: ${handleError(error, 'getSystemStatus.secrets', { log: false })}`);
   }
   
   // 3. Progress Append (atomic + parity)
@@ -243,12 +251,12 @@ async function getSystemStatus() {
         confirmation: 'Profile not found'
       });
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     status.push({
       component: 'Progress Append (atomic + parity)',
       status: '🔴 ERROR',
       latencyP99: '—',
-      confirmation: `Error: ${error.message}`
+      confirmation: `Error: ${handleError(error, 'getSystemStatus.progress', { log: false })}`
     });
   }
   
@@ -256,7 +264,8 @@ async function getSystemStatus() {
   try {
     const profile = await profileEngine.getProfile(userId);
     if (profile) {
-      JSON.stringify(profile, (key, value) => typeof value === 'bigint' ? value.toString() : value);
+      // Test serialization (optimized)
+      createSerializableCopy(profile);
       status.push({
         component: 'JSON Serialization (BigInt fix)',
         status: '🟢 FIXED',
@@ -264,12 +273,12 @@ async function getSystemStatus() {
         confirmation: 'Timestamps now strings — no more errors'
       });
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     status.push({
       component: 'JSON Serialization (BigInt fix)',
       status: '🔴 ERROR',
       latencyP99: '—',
-      confirmation: `Error: ${error.message}`
+      confirmation: `Error: ${handleError(error, 'getSystemStatus.serialization', { log: false })}`
     });
   }
   
@@ -300,13 +309,14 @@ async function getSystemStatus() {
       latencyP99: `<${latency.toFixed(1)} ms`,
       confirmation: 'Real-time pref & progress sync active'
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     status.push({
       component: 'WebSocket (profile-trail channel)',
       status: '🟡 DISCONNECTED',
       latencyP99: '—',
       confirmation: 'Not connected'
     });
+    logger.debug(`WebSocket check: ${handleError(error, 'getSystemStatus.websocket', { log: false })}`);
   }
   
   // 8. 3D Avatar Rendering
@@ -338,12 +348,12 @@ async function getSystemStatus() {
         confirmation: `${(prediction.score * 100).toFixed(2)}% — peak personalization achieved`
       });
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     status.push({
       component: 'Personalization Score (XGBoost)',
       status: '🔴 ERROR',
       latencyP99: '—',
-      confirmation: `Error: ${error.message}`
+      confirmation: `Error: ${handleError(error, 'getSystemStatus.personalization', { log: false })}`
     });
   }
   
@@ -366,12 +376,12 @@ async function getSystemStatus() {
         confirmation: 'No safe scores configured'
       });
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     status.push({
       component: 'Safe Scores (cross-gateway)',
       status: '🔴 ERROR',
       latencyP99: '—',
-      confirmation: `Error: ${error.message}`
+      confirmation: `Error: ${handleError(error, 'getSystemStatus.safeScores', { log: false })}`
     });
   }
   
@@ -429,10 +439,8 @@ export async function startDashboard(config: DashboardConfig = {}) {
         });
         const prediction = await xgboostModel.predict(features);
         
-        // Convert BigInt to string for JSON serialization
-        const serializableProfile = JSON.parse(JSON.stringify(profile, (key, value) => 
-          typeof value === 'bigint' ? value.toString() : value
-        ));
+        // Convert BigInt to string for JSON serialization (optimized)
+        const serializableProfile = createSerializableCopy(profile);
         
         return new Response(JSON.stringify({
           ...serializableProfile,
@@ -462,7 +470,7 @@ export async function startDashboard(config: DashboardConfig = {}) {
     websocket: {
       // Pub/Sub real-time profile updates
       open(ws) {
-        console.log(`✅ WebSocket connected: ${ws.data.connectedAt}`);
+        logger.info(`✅ WebSocket connected: ${ws.data.connectedAt}`);
       },
       async message(ws, message) {
         try {
@@ -483,10 +491,8 @@ export async function startDashboard(config: DashboardConfig = {}) {
               });
               const prediction = await xgboostModel.predict(features);
               
-              // Convert BigInt to string for JSON serialization
-              const serializableProfile = JSON.parse(JSON.stringify(profile, (key, value) => 
-                typeof value === 'bigint' ? value.toString() : value
-              ));
+              // Convert BigInt to string for JSON serialization (optimized)
+              const serializableProfile = createSerializableCopy(profile);
               
               ws.send(JSON.stringify({
                 type: 'profile',
@@ -509,26 +515,27 @@ export async function startDashboard(config: DashboardConfig = {}) {
               channel: data.channel,
             }));
           }
-        } catch (error) {
-          console.error('WebSocket message error:', error);
+        } catch (error: unknown) {
+          const errorMessage = handleError(error, 'WebSocket.message', { log: false });
+          logger.error(`WebSocket message error: ${errorMessage}`);
           ws.send(JSON.stringify({
             type: 'error',
-            message: error.message,
+            message: errorMessage,
           }));
         }
       },
       close(ws) {
-        console.log('❌ WebSocket closed');
+        logger.info('❌ WebSocket closed');
       },
       // permessage-deflate compression (3.5MB → 184KB)
       perMessageDeflate: true,
     },
   });
   
-  console.log(`🚀 FactoryWager Profile Dashboard v10.0`);
-  console.log(`   Dashboard: http://${hostname}:${port}/dashboard`);
-  console.log(`   API: http://${hostname}:${port}/profile/:userId`);
-  console.log(`   WebSocket: ws://${hostname}:${port}/ws`);
+  logger.info(`🚀 FactoryWager Profile Dashboard v10.0`);
+  logger.info(`   Dashboard: http://${hostname}:${port}/dashboard`);
+  logger.info(`   API: http://${hostname}:${port}/profile/:userId`);
+  logger.info(`   WebSocket: ws://${hostname}:${port}/ws`);
   
   return server;
 }
@@ -566,7 +573,9 @@ if (import.meta.main) {
         stderr: 'ignore',
         stdin: 'ignore'
       });
-      console.log(`🌐 Opening browser: ${url}`);
+      logger.info(`🌐 Opening browser: ${url}`);
     }
-  }).catch(console.error);
+  }).catch((error: unknown) => {
+    logger.error(`Dashboard startup failed: ${handleError(error, 'startDashboard', { log: false })}`);
+  });
 }

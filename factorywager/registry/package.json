@@ -21,7 +21,8 @@
     "profiler": "bun --cpu-prof-md apps/profile-cli/src/cli.ts",
     "dashboard": "bun run packages/dashboard-profile/src/app.ts",
     "dashboard-profile": "bun run packages/dashboard-profile/src/app.ts",
-    "avatar": "bun run packages/dashboard-profile/src/avatar-3d.ts"
+    "avatar": "bun run packages/dashboard-profile/src/avatar-3d.ts",
+    "dev-dashboard": "bun run packages/dev-dashboard/src/enhanced-dashboard.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",

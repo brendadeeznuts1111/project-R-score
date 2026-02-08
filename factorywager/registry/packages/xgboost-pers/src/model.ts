@@ -6,6 +6,10 @@
  * Target: 99.9999999% personalization accuracy
  */
 
+import { logger } from '@factorywager/user-profile';
+import { handleError } from '@factorywager/user-profile';
+import type { ProfilePrefs } from '@factorywager/user-profile';
+
 export interface PersonalizationFeatures {
   // Preference delta (384 dimensions total)
   prefDelta: number[];
@@ -23,10 +27,15 @@ export interface PersonalizationPrediction {
   inferenceTime: number; // milliseconds
 }
 
+// Type for ONNX Runtime model (when available)
+interface ONNXModel {
+  run: (inputs: unknown) => Promise<unknown>;
+}
+
 export class XGBoostPersonalizationModel {
   private modelPath: string;
   private modelLoaded: boolean = false;
-  private model: any = null; // ONNX Runtime model
+  private model: ONNXModel | null = null;
   private static warningShown: boolean = false; // Only show warning once
 
   constructor(modelPath: string = './pers-booster.onnx') {
@@ -45,19 +54,19 @@ export class XGBoostPersonalizationModel {
         // For now, mark as loaded
         this.modelLoaded = true;
         if (!XGBoostPersonalizationModel.warningShown) {
-          console.log(`✅ Loaded XGBoost model from ${this.modelPath}`);
+          logger.info(`✅ Loaded XGBoost model from ${this.modelPath}`);
         }
       } else {
         // Only show warning once per process
         if (!XGBoostPersonalizationModel.warningShown) {
-          console.warn(`⚠️  ONNX model not found (${this.modelPath}) - using mock predictions (this is normal for development)`);
+          logger.warn(`⚠️  ONNX model not found (${this.modelPath}) - using mock predictions (this is normal for development)`);
           XGBoostPersonalizationModel.warningShown = true;
         }
         this.modelLoaded = false;
       }
-    } catch (error) {
+    } catch (error: unknown) {
       if (!XGBoostPersonalizationModel.warningShown) {
-        console.warn('Failed to load ONNX model:', error);
+        logger.warn(`Failed to load ONNX model: ${handleError(error, 'loadModel', { log: false })}`);
         XGBoostPersonalizationModel.warningShown = true;
       }
       this.modelLoaded = false;
@@ -69,8 +78,8 @@ export class XGBoostPersonalizationModel {
    */
   extractFeatures(data: {
     userId: string;
-    prefs: any;
-    progress: Record<string, any>;
+    prefs: ProfilePrefs;
+    progress: Record<string, { score: number; timestamp: bigint }>;
     geoIP?: string;
     subLevel?: string;
   }): PersonalizationFeatures {
@@ -87,7 +96,7 @@ export class XGBoostPersonalizationModel {
     
     // Historical scores from progress
     const historicalScores = Object.values(data.progress || {})
-      .map((p: any) => p.score || 0)
+      .map((p) => p.score || 0)
       .slice(-10); // Last 10 scores
     
     // Progress lag (time since last update)
@@ -171,13 +180,13 @@ export class XGBoostPersonalizationModel {
   /**
    * Calculate progress lag (time since last update)
    */
-  private calculateProgressLag(progress: Record<string, any>): number {
+  private calculateProgressLag(progress: Record<string, { score: number; timestamp: bigint }>): number {
     if (!progress || Object.keys(progress).length === 0) {
       return 1.0; // Max lag if no progress
     }
     
     const timestamps = Object.values(progress)
-      .map((p: any) => Number(p.timestamp || 0))
+      .map((p) => Number(p.timestamp || 0))
       .filter(t => t > 0);
     
     if (timestamps.length === 0) {
@@ -204,4 +213,6 @@ export class XGBoostPersonalizationModel {
 export const xgboostPers = new XGBoostPersonalizationModel();
 
 // Auto-load model on import
-xgboostPers.loadModel().catch(console.error);
+xgboostPers.loadModel().catch((error: unknown) => {
+  logger.error(`Failed to load XGBoost model: ${handleError(error, 'xgboostPers.loadModel', { log: false })}`);
+});

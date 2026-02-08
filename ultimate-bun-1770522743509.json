@@ -1,0 +1,16 @@
+{
+  "generated": "2026-02-08T03:52:23.509Z",
+  "totalResults": 2,
+  "results": [
+    {
+      "title": "bun Result 1",
+      "description": "Found via streaming",
+      "url": "https://bun.sh/docs/llms.txt"
+    },
+    {
+      "title": "bun Result 2",
+      "description": "High-performance match",
+      "url": "https://bun.sh/docs/llms.txt"
+    }
+  ]
+}

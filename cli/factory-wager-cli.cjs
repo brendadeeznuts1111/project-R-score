@@ -8,13 +8,37 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const { PerformanceOptimizer, optimizeCLICommand } = require('./performance-optimizations.cjs');
+const { DryRunManager, addDryRunOption, wrapCloudflareRequest } = require('./dry-run.cjs');
+const { SecretsManager } = require('../secrets-management.cjs');
 
 class FactoryWagerCLI {
     constructor() {
         this.configFile = path.join(process.cwd(), '.fw-config.json');
         this.config = this.loadConfig();
-        this.apiToken = process.env.FACTORY_WAGER_TOKEN || this.config.apiToken;
+        this.secretsManager = new SecretsManager();
+        
+        // Try to get API token from secrets manager first, then fallback to config
+        try {
+            this.apiToken = this.secretsManager.getSecret('FACTORY_WAGER_TOKEN');
+        } catch (error) {
+            this.apiToken = process.env.FACTORY_WAGER_TOKEN || this.config.apiToken;
+        }
+        
         this.zoneId = 'a3b7ba4bb62cb1b177b04b8675250674';
+        this.optimizer = new PerformanceOptimizer({
+            cacheTimeout: 30000,
+            maxCacheSize: 100,
+            maxConnections: 10
+        });
+        this.dryRunManager = new DryRunManager({
+            maxPreviewSize: 50
+        });
+        
+        // Check for dry-run flag
+        if (addDryRunOption(process.argv)) {
+            this.dryRunManager.enable();
+        }
         
         // Only require token for commands that need API access
         const needsAuth = ['dns', 'deploy', 'monitor'];
@@ -44,55 +68,65 @@ class FactoryWagerCLI {
     async executeCommand(args) {
         const [command, ...params] = args;
 
-        switch (command) {
-            case 'dns':
-                await this.handleDNS(params);
-                break;
-            case 'domains':
-                await this.handleDomains(params);
-                break;
-            case 'status':
-                await this.handleStatus(params);
-                break;
-            case 'deploy':
-                await this.handleDeploy(params);
-                break;
-            case 'monitor':
-                await this.handleMonitor(params);
-                break;
-            case 'auth':
-                await this.handleAuth(params);
-                break;
-            case 'config':
-                await this.handleConfig(params);
-                break;
-            case 'batch':
-                await this.handleBatch(params);
-                break;
-            case 'badges':
-                await this.handleBadges(params);
-                break;
-            case 'health':
-                await this.handleHealth(params);
-                break;
-            case 'backup':
-                await this.handleBackup(params);
-                break;
-            case 'performance':
-                await this.handlePerformance(params);
-                break;
-            case 'help':
-            case '--help':
-            case '-h':
-                this.showHelp();
-                break;
-            default:
-                if (!command) {
+        try {
+            switch (command) {
+                case 'dns':
+                    await this.handleDNS(params);
+                    break;
+                case 'domains':
+                    await this.handleDomains(params);
+                    break;
+                case 'status':
+                    await this.handleStatus(params);
+                    break;
+                case 'deploy':
+                    await this.handleDeploy(params);
+                    break;
+                case 'monitor':
+                    await this.handleMonitor(params);
+                    break;
+                case 'performance':
+                    await this.handlePerformance(params);
+                    break;
+                case 'secrets':
+                    await this.handleSecrets(params);
+                    break;
+                case 'auth':
+                    await this.handleAuth(params);
+                    break;
+                case 'config':
+                    await this.handleConfig(params);
+                    break;
+                case 'batch':
+                    await this.handleBatch(params);
+                    break;
+                case 'badges':
+                    await this.handleBadges(params);
+                    break;
+                case 'health':
+                    await this.handleHealth(params);
+                    break;
+                case 'backup':
+                    await this.handleBackup(params);
+                    break;
+                case 'help':
+                case '--help':
+                case '-h':
                     this.showHelp();
-                } else {
-                    console.error(`❌ Unknown command: ${command}`);
-                    this.showHelp();
-                }
+                    break;
+                default:
+                    if (!command) {
+                        this.showHelp();
+                    } else {
+                        console.error(`❌ Unknown command: ${command}`);
+                        this.showHelp();
+                    }
+            }
+        } finally {
+            // Show dry-run summary if enabled
+            if (this.dryRunManager.dryRun) {
+                this.dryRunManager.showSummary();
+            }
         }
     }
 
@@ -1262,8 +1296,257 @@ class FactoryWagerCLI {
         }
     }
 
+    async handlePerformance(params) {
+        const [action] = params;
+
+        switch (action) {
+            case 'stats':
+                this.showPerformanceStats();
+                break;
+            case 'optimize':
+                this.optimizePerformance();
+                break;
+            case 'clear-cache':
+                this.clearCache();
+                break;
+            default:
+                console.log(`
+📊 Performance Management
+
+USAGE:
+  fw-cli performance <action>
+
+ACTIONS:
+  stats       - Show performance statistics
+  optimize    - Run performance optimizations
+  clear-cache - Clear performance cache
+
+EXAMPLES:
+  fw-cli performance stats
+  fw-cli performance optimize
+  fw-cli performance clear-cache
+                `);
+        }
+    }
+
+    showPerformanceStats() {
+        const stats = this.optimizer.getPerformanceStats();
+        
+        console.log('📊 Performance Statistics');
+        console.log('========================');
+        console.log(`Cache Size: ${stats.cacheSize}/${stats.maxCacheSize} entries`);
+        console.log(`Cache Hits: ${stats.cacheHits}`);
+        console.log(`Cache Misses: ${stats.cacheMisses}`);
+        console.log(`Cache Hit Rate: ${(stats.cacheHitRate * 100).toFixed(1)}%`);
+        console.log(`Connection Pool: ${stats.connectionPoolSize} connections`);
+        console.log(`Memory Usage: ${(stats.memoryUsage.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+        console.log(`Total Memory: ${(stats.memoryUsage.heapTotal / 1024 / 1024).toFixed(2)} MB`);
+        console.log(`Cache Timeout: ${stats.cacheTimeout}ms`);
+    }
+
+    optimizePerformance() {
+        console.log('🚀 Running performance optimizations...');
+        this.optimizer.optimizeMemory();
+        console.log('✅ Performance optimization completed!');
+    }
+
+    clearCache() {
+        console.log('🧹 Clearing performance cache...');
+        this.optimizer.cache.clear();
+        console.log('✅ Cache cleared successfully!');
+    }
+
+    async handleSecrets(params) {
+        const [action] = params;
+
+        switch (action) {
+            case 'list':
+                this.listSecrets();
+                break;
+            case 'validate':
+                this.validateSecrets();
+                break;
+            case 'setup':
+                this.setupSecrets();
+                break;
+            case 'test':
+                this.testSecrets();
+                break;
+            default:
+                console.log(`
+🔐 Secrets Management
+
+USAGE:
+  fw-cli secrets <action>
+
+ACTIONS:
+  list       - List available secrets
+  validate   - Validate required secrets
+  setup      - Show setup guide
+  test       - Test secret loading
+
+EXAMPLES:
+  fw-cli secrets list
+  fw-cli secrets validate
+  fw-cli secrets setup
+                `);
+        }
+    }
+
+    listSecrets() {
+        console.log('🔐 Available Secrets:');
+        console.log('=====================');
+        
+        try {
+            const secrets = this.secretsManager.listSecrets();
+            if (secrets.length === 0) {
+                console.log('❌ No secrets found. Run "fw-cli secrets setup" for guidance.');
+                return;
+            }
+            
+            secrets.forEach(secret => {
+                const value = this.secretsManager.getSecret(secret);
+                const masked = secret.toLowerCase().includes('key') || secret.toLowerCase().includes('token') 
+                    ? `${value.substring(0, 4)}****` 
+                    : '[CONFIGURED]';
+                console.log(`✅ ${secret}: ${masked}`);
+            });
+        } catch (error) {
+            console.error('❌ Error listing secrets:', error.message);
+        }
+    }
+
+    validateSecrets() {
+        console.log('🔍 Validating Required Secrets...');
+        
+        try {
+            // Validate Cloudflare API token
+            try {
+                this.secretsManager.getSecret('CLOUDFLARE_API_TOKEN');
+                console.log('✅ CLOUDFLARE_API_TOKEN: Valid');
+            } catch (error) {
+                console.log('❌ CLOUDFLARE_API_TOKEN: Missing');
+            }
+
+            // Validate R2 secrets
+            try {
+                this.secretsManager.getR2Config();
+                console.log('✅ R2 secrets: Valid');
+            } catch (error) {
+                console.log('❌ R2 secrets: Missing or incomplete');
+            }
+
+            // Validate GitHub token
+            try {
+                this.secretsManager.getSecret('GITHUB_TOKEN');
+                console.log('✅ GITHUB_TOKEN: Valid');
+            } catch (error) {
+                console.log('⚠️ GITHUB_TOKEN: Missing (optional for GitHub operations)');
+            }
+
+            // Validate FactoryWager token
+            try {
+                this.secretsManager.getSecret('FACTORY_WAGER_TOKEN');
+                console.log('✅ FACTORY_WAGER_TOKEN: Valid');
+            } catch (error) {
+                console.log('⚠️ FACTORY_WAGER_TOKEN: Missing (using fallback)');
+            }
+
+        } catch (error) {
+            console.error('❌ Error validating secrets:', error.message);
+        }
+    }
+
+    setupSecrets() {
+        console.log('🔧 Secrets Setup Guide');
+        console.log('=======================');
+        console.log();
+        console.log('Method 1: Using Bun Secrets (Recommended)');
+        console.log('-------------------------------------------');
+        console.log('Bun.secrets.set("R2_SECRET_KEY", "my-secret-key");');
+        console.log('Bun.secrets.set("R2_ACCOUNT_ID", "your-account-id");');
+        console.log('Bun.secrets.set("R2_ACCESS_KEY_ID", "your-access-key");');
+        console.log('Bun.secrets.set("R2_SECRET_ACCESS_KEY", "your-secret-access-key");');
+        console.log('Bun.secrets.set("CLOUDFLARE_API_TOKEN", "your-cloudflare-token");');
+        console.log();
+        console.log('Method 2: Environment Variables');
+        console.log('--------------------------------');
+        console.log('export R2_SECRET_KEY="my-secret-key"');
+        console.log('export R2_ACCOUNT_ID="your-account-id"');
+        console.log('export R2_ACCESS_KEY_ID="your-access-key"');
+        console.log('export R2_SECRET_ACCESS_KEY="your-secret-access-key"');
+        console.log('export CLOUDFLARE_API_TOKEN="your-cloudflare-token"');
+        console.log();
+        console.log('Method 3: .env file');
+        console.log('-------------------');
+        console.log('Create a .env file with your secrets:');
+        console.log('R2_SECRET_KEY=my-secret-key');
+        console.log('R2_ACCOUNT_ID=your-account-id');
+        console.log('R2_ACCESS_KEY_ID=your-access-key');
+        console.log('R2_SECRET_ACCESS_KEY=your-secret-access-key');
+        console.log('CLOUDFLARE_API_TOKEN=your-cloudflare-token');
+        console.log();
+        console.log('🔒 Security Note: Never commit secrets to version control!');
+    }
+
+    testSecrets() {
+        console.log('🧪 Testing Secret Loading...');
+        
+        try {
+            // Test basic secret access
+            const secretsList = this.secretsManager.listSecrets();
+            console.log(`✅ Found ${secretsList.length} secrets`);
+            
+            // Test R2 config
+            try {
+                const r2Config = this.secretsManager.getR2Config();
+                console.log('✅ R2 configuration loaded successfully');
+                console.log(`   Account ID: ${r2Config.accountId.substring(0, 8)}****`);
+            } catch (error) {
+                console.log('❌ R2 configuration failed:', error.message);
+            }
+            
+            // Test Cloudflare config
+            try {
+                const cfConfig = this.secretsManager.getCloudflareConfig();
+                console.log('✅ Cloudflare configuration loaded successfully');
+                console.log(`   API Token: ${cfConfig.apiToken.substring(0, 8)}****`);
+            } catch (error) {
+                console.log('❌ Cloudflare configuration failed:', error.message);
+            }
+            
+            // Test GitHub config
+            try {
+                const ghConfig = this.secretsManager.getGitHubConfig();
+                console.log('✅ GitHub configuration loaded successfully');
+                console.log(`   Repository: ${ghConfig.owner}/${ghConfig.repo}`);
+            } catch (error) {
+                console.log('⚠️ GitHub configuration not available');
+            }
+            
+        } catch (error) {
+            console.error('❌ Secret testing failed:', error.message);
+        }
+    }
+
     // Utility Methods
     async cloudflareRequest(method, endpoint, data = null) {
+        // Check if dry-run mode is enabled
+        if (this.dryRunManager.dryRun) {
+            return await this.dryRunManager.previewCloudflareRequest(method, endpoint, data);
+        }
+        
+        // Generate proper cache key
+        const cacheKey = this.optimizer.generateCacheKey(method, endpoint, data);
+        
+        // Check cache for GET requests
+        if (method === 'GET') {
+            const cached = this.optimizer.getCachedData(cacheKey);
+            if (cached) {
+                return cached;
+            }
+        }
+        
         const url = `https://api.cloudflare.com/client/v4${endpoint}`;
         const options = {
             method,
@@ -1284,6 +1567,11 @@ class FactoryWagerCLI {
             throw new Error(result.errors?.[0]?.message || 'Cloudflare API error');
         }
 
+        // Cache successful GET requests
+        if (method === 'GET') {
+            this.optimizer.setCachedData(cacheKey, result);
+        }
+
         return result;
     }
 
@@ -1292,7 +1580,16 @@ class FactoryWagerCLI {
 🚀 FactoryWager CLI - Infrastructure Management
 
 USAGE:
-  fw-cli <command> [action] [options]
+  fw-cli <command> [action] [options] [--dryrun]
+
+OPTIONS:
+  --dryrun, -n    Preview operations without executing them
+                 Shows what would happen without making changes
+
+GLOBAL EXAMPLES:
+  fw-cli dns list --dryrun              Preview DNS list operation
+  fw-cli domains create test.com --dryrun  Preview domain creation
+  fw-cli status --dryrun                 Preview status check
 
 COMMANDS:
 
@@ -1360,6 +1657,17 @@ COMMANDS:
     fw-cli performance cli                    Test CLI commands
     fw-cli performance concurrent              Test concurrent requests
     fw-cli performance memory                 Test memory usage
+
+  📊 Performance Management:
+    fw-cli performance stats                   Show performance statistics
+    fw-cli performance optimize                Run performance optimizations
+    fw-cli performance clear-cache             Clear performance cache
+
+  🔐 Secrets Management:
+    fw-cli secrets list                        List available secrets
+    fw-cli secrets validate                    Validate required secrets
+    fw-cli secrets setup                       Show setup guide
+    fw-cli secrets test                        Test secret loading
 
   🚀 Deployment:
     fw-cli deploy dns                         Deploy DNS changes

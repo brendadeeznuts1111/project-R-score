@@ -6,7 +6,7 @@
  * Usage: bun profile:create --user @ashschaeffer1 --dry-run=true
  */
 
-import { UserProfileEngine, ProfilePrefs, profileEngine, onboardUser, updatePreferences, saveProgress } from '@factorywager/user-profile';
+import { ProfilePrefs, profileEngine, onboardUser, updatePreferences, logger, handleError } from '@factorywager/user-profile';
 import { PreferenceManager } from '@factorywager/pref-propagation';
 import { RedisProfileClient } from '@factorywager/redis-profile';
 import { XGBoostPersonalizationModel } from '@factorywager/xgboost-pers';
@@ -36,24 +36,24 @@ interface CLIOptions {
 async function handleCreate(options: CLIOptions) {
   const userId = options.user || options._?.[0];
   if (!userId) {
-    console.error('❌ User ID required (--user @username)');
+    logger.error('❌ User ID required (--user @username)');
     process.exit(1);
   }
 
   // Use v10.1 onboarding flow
-  console.log(`🚀 Onboarding user ${userId}...`);
+  logger.info(`🚀 Onboarding user ${userId}...`);
   const result = await onboardUser({
     userId,
     displayName: options['display-name'],
     timezone: 'America/Chicago',
-    subscription: (options['sub-level'] || options.sub || 'PremiumPlus') as any,
+    subscription: (options['sub-level'] || options.sub || 'PremiumPlus') as ProfilePrefs['subLevel'],
   });
 
   if (result.status === 'profile_exists') {
-    console.log(`⚠️  ${result.message}`);
+    logger.info(`⚠️  ${result.message}`);
   } else {
-    console.log(`✅ ${result.message}`);
-    console.log(`   Profile hash: ${result.hash}`);
+    logger.info(`✅ ${result.message}`);
+    logger.info(`   Profile hash: ${result.hash}`);
   }
 
   // Apply additional preferences if provided (even if profile exists)
@@ -64,7 +64,7 @@ async function handleCreate(options: CLIOptions) {
       updates.dryRun = options['dry-run'] === 'true' || options['dry-run'] === '1';
     }
     if (options.gateway) {
-      updates.preferredGateway = options.gateway as any;
+      updates.preferredGateway = options.gateway as ProfilePrefs['preferredGateway'];
     }
     if (location) {
       updates.location = location;
@@ -72,18 +72,18 @@ async function handleCreate(options: CLIOptions) {
 
     if (Object.keys(updates).length > 0) {
       await updatePreferences(userId, updates);
-      console.log(`✅ Applied additional preferences`);
+      logger.info(`✅ Applied additional preferences`);
     }
   }
 
   // Track in Redis HLL
   await redisClient.trackPreferenceUpdate(userId, 'dryRun', true);
-  console.log(`✅ Tracked in Redis HLL`);
+  logger.info(`✅ Tracked in Redis HLL`);
 
   // Open dashboard if requested
   if (options.open) {
-    const dashboardType = (options as any).avatar ? 'avatar' : 'dashboard';
-    const port = (options as any).port || 3006;
+    const dashboardType = (options as CLIOptions & { avatar?: boolean }).avatar ? 'avatar' : 'dashboard';
+    const port = (options as CLIOptions & { port?: number }).port || 3006;
     const dashboardUrl = dashboardType === 'avatar' 
       ? `http://localhost:${port}/avatar`
       : `http://localhost:${port}/dashboard`;
@@ -94,8 +94,8 @@ async function handleCreate(options: CLIOptions) {
       if (!response.ok) {
         throw new Error('Dashboard not responding');
       }
-    } catch (error) {
-      console.log(`⚠️  Dashboard not running on port ${port}. Starting dashboard server...`);
+    } catch (error: unknown) {
+      logger.info(`⚠️  Dashboard not running on port ${port}. Starting dashboard server...`);
       // Start dashboard in background
       const script = dashboardType === 'avatar'
         ? 'packages/dashboard-profile/src/avatar-3d.ts'
@@ -122,9 +122,10 @@ async function handleCreate(options: CLIOptions) {
         stderr: 'ignore',
         stdin: 'ignore'
       });
-      console.log(`🌐 Opening ${dashboardType} dashboard: ${dashboardUrl}`);
-    } catch (error) {
-      console.log(`⚠️  Could not open browser automatically. Please visit: ${dashboardUrl}`);
+      logger.info(`🌐 Opening ${dashboardType} dashboard: ${dashboardUrl}`);
+    } catch (error: unknown) {
+      logger.warn(`⚠️  Could not open browser automatically. Please visit: ${dashboardUrl}`);
+      logger.debug(`Browser open error: ${handleError(error, 'handleCreate.openBrowser', { log: false })}`);
     }
   }
 }
@@ -132,25 +133,25 @@ async function handleCreate(options: CLIOptions) {
 async function handleQuery(options: CLIOptions) {
   const userId = options.query || options._?.[0];
   if (!userId) {
-    console.error('❌ User ID required');
+    logger.error('❌ User ID required');
     process.exit(1);
   }
 
-  console.log(`🔍 Querying profile for ${userId}...`);
+  logger.info(`🔍 Querying profile for ${userId}...`);
   const profile = await engine.getProfile(userId);
 
   if (!profile) {
-    console.error(`❌ Profile not found: ${userId}`);
+    logger.error(`❌ Profile not found: ${userId}`);
     process.exit(1);
   }
 
-  console.log('\n📋 Profile:');
-  console.log(`   User ID: ${profile.userId}`);
-  console.log(`   Dry Run: ${profile.dryRun}`);
-  console.log(`   Gateways: ${profile.gateways.join(', ')}`);
-  console.log(`   Location: ${profile.location}`);
-  console.log(`   Subscription: ${profile.subLevel}`);
-  console.log(`   Progress: ${Object.keys(profile.progress).length} entries`);
+  logger.info('\n📋 Profile:');
+  logger.info(`   User ID: ${profile.userId}`);
+  logger.info(`   Dry Run: ${profile.dryRun}`);
+  logger.info(`   Gateways: ${profile.gateways.join(', ')}`);
+  logger.info(`   Location: ${profile.location}`);
+  logger.info(`   Subscription: ${profile.subLevel}`);
+  logger.info(`   Progress: ${Object.keys(profile.progress).length} entries`);
 
   // Get personalization score
   const features = xgboostModel.extractFeatures({
@@ -161,13 +162,13 @@ async function handleQuery(options: CLIOptions) {
     subLevel: profile.subLevel,
   });
   const prediction = await xgboostModel.predict(features);
-  console.log(`   Personalization Score: ${prediction.score.toFixed(4)} (${(prediction.score * 100).toFixed(2)}%)`);
+  logger.info(`   Personalization Score: ${prediction.score.toFixed(4)} (${(prediction.score * 100).toFixed(2)}%)`);
 
   // Get Redis stats
   const stats = await redisClient.getPreferenceStats(userId);
-  console.log('\n📊 Redis HLL Stats:');
+  logger.info('\n📊 Redis HLL Stats:');
   for (const [field, count] of Object.entries(stats)) {
-    console.log(`   ${field}: ${count} unique updates`);
+    logger.info(`   ${field}: ${count} unique updates`);
   }
 }
 
@@ -177,36 +178,42 @@ async function handleUpdate(options: CLIOptions) {
   const value = options.value;
 
   if (!userId || !field || value === undefined) {
-    console.error('❌ Usage: profile:update --update @user --field dryRun --value true');
+    logger.error('❌ Usage: profile:update --update @user --field dryRun --value true');
     process.exit(1);
   }
 
-  console.log(`🔄 Updating ${field} for ${userId}...`);
+  logger.info(`🔄 Updating ${field} for ${userId}...`);
 
   // Parse value
-  let parsedValue: any = value;
+  type ParsedValue = string | number | boolean | object;
+  let parsedValue: ParsedValue = value;
   if (value === 'true' || value === 'false') {
     parsedValue = value === 'true';
   } else if (!isNaN(Number(value))) {
     parsedValue = Number(value);
   } else if (value.startsWith('[') || value.startsWith('{')) {
-    parsedValue = JSON.parse(value);
+    try {
+      parsedValue = JSON.parse(value);
+    } catch (error: unknown) {
+      logger.error(`❌ Invalid JSON value: ${handleError(error, 'handleUpdate.parse', { log: false })}`);
+      process.exit(1);
+    }
   }
 
-  const result = await prefManager.updatePreference(userId, field as any, parsedValue);
-  console.log(`✅ Updated: ${result.propagated ? 'Propagated' : 'Failed'}`);
-  console.log(`   Personalization Score: ${result.personalizationScore.toFixed(4)}`);
+  const result = await prefManager.updatePreference(userId, field as keyof ProfilePrefs, parsedValue);
+  logger.info(`✅ Updated: ${result.propagated ? 'Propagated' : 'Failed'}`);
+  logger.info(`   Personalization Score: ${result.personalizationScore.toFixed(4)}`);
   if (result.anomalies.length > 0) {
-    console.log(`   ⚠️  Anomalies: ${result.anomalies.join(', ')}`);
+    logger.warn(`   ⚠️  Anomalies: ${result.anomalies.join(', ')}`);
   }
 
   // Update in engine
-  await engine.updateProfile(userId, { [field]: parsedValue } as any);
-  console.log(`✅ Profile saved`);
+  await engine.updateProfile(userId, { [field]: parsedValue } as Partial<ProfilePrefs>);
+  logger.info(`✅ Profile saved`);
 }
 
 async function handleBenchmark() {
-  console.log('⚡ Running profile benchmarks...\n');
+  logger.info('⚡ Running profile benchmarks...\n');
 
   // Benchmark: Create 50k profiles
   const profiles: ProfilePrefs[] = [];
@@ -224,7 +231,7 @@ async function handleBenchmark() {
   const startCreate = Bun.nanoseconds();
   await engine.batchCreateProfiles(profiles);
   const createTime = (Bun.nanoseconds() - startCreate) / 1_000_000;
-  console.log(`✅ Created 50k profiles: ${createTime.toFixed(3)}ms (target: 1ms)`);
+  logger.info(`✅ Created 50k profiles: ${createTime.toFixed(3)}ms (target: 1ms)`);
 
   // Benchmark: Query p99
   const startQuery = Bun.nanoseconds();
@@ -232,7 +239,7 @@ async function handleBenchmark() {
     await engine.getProfile(`@user${i}`);
   }
   const queryTime = (Bun.nanoseconds() - startQuery) / 1_000_000;
-  console.log(`✅ Queried 100 profiles: ${queryTime.toFixed(3)}ms (target: 0.8ms p99)`);
+  logger.info(`✅ Queried 100 profiles: ${queryTime.toFixed(3)}ms (target: 0.8ms p99)`);
 
   // Benchmark: Personalization prediction
   const features = xgboostModel.extractFeatures({
@@ -245,7 +252,7 @@ async function handleBenchmark() {
   const startPred = Bun.nanoseconds();
   await xgboostModel.predict(features);
   const predTime = (Bun.nanoseconds() - startPred) / 1_000_000;
-  console.log(`✅ Personalization prediction: ${predTime.toFixed(6)}ms (target: 0.001ms)`);
+  logger.info(`✅ Personalization prediction: ${predTime.toFixed(6)}ms (target: 0.001ms)`);
 }
 
 // Parse CLI arguments
@@ -261,17 +268,17 @@ for (let i = 1; i < args.length; i++) {
     if (key === 'open' || key === 'dry-run') {
       const nextArg = args[i + 1];
       if (nextArg && !nextArg.startsWith('--') && (nextArg === 'true' || nextArg === 'false')) {
-        (options as any)[key] = nextArg === 'true';
+        (options as CLIOptions)[key] = (nextArg === 'true') as boolean & string;
         i++; // Skip the value
       } else if (key === 'open') {
-        (options as any)[key] = true;
+        (options as CLIOptions).open = true;
       } else {
         const value = args[i + 1] && !args[i + 1].startsWith('--') ? args[++i] : 'true';
-        (options as any)[key] = value;
+        (options as CLIOptions)[key] = value as string;
       }
     } else {
       const value = args[i + 1] && !args[i + 1].startsWith('--') ? args[++i] : 'true';
-      (options as any)[key] = value;
+      (options as CLIOptions)[key] = value as string;
     }
   } else {
     options._!.push(arg);
@@ -296,7 +303,7 @@ for (let i = 1; i < args.length; i++) {
         break;
       case 'help':
       default:
-        console.log(`
+        logger.info(`
 🚀 FactoryWager Profile CLI v10.0
 
 Commands:
@@ -318,8 +325,8 @@ Examples:
   bun profile:bench
         `);
     }
-  } catch (error) {
-    console.error('❌ Error:', error);
+  } catch (error: unknown) {
+    logger.error(`❌ Error: ${handleError(error, 'CLI', { log: false })}`);
     process.exit(1);
   } finally {
     engine.close();

@@ -1,0 +1,45 @@
+# ⚡ Benchmark Configuration
+# Performance targets and test configurations
+
+[[benchmarks]]
+name = "Batch Create Profiles (avg)"
+target = 0.02
+unit = "ms"
+description = "Average time per profile in batch creation (target: 1ms per 50k)"
+category = "performance"
+iterations = 100
+
+[[benchmarks]]
+name = "Profile Query (single)"
+target = 0.8
+unit = "ms"
+description = "Single profile query p99 latency"
+category = "performance"
+iterations = 10
+
+[[benchmarks]]
+name = "JSON Serialization (1k ops)"
+target = 0.7
+unit = "ms"
+description = "JSON serialization with BigInt handling (1k operations)"
+category = "performance"
+iterations = 1000
+improvement_target = 30
+
+[[benchmarks]]
+name = "Input Validation (1k ops)"
+target = 0.001
+unit = "ms"
+description = "Input validation performance (1k operations)"
+category = "type-safety"
+iterations = 1000
+
+[performance_targets]
+profile_create_50k = 1.0
+profile_query_p99 = 0.8
+personalization_prediction = 0.001
+redis_hll_operation = 0.001
+
+[performance_notes]
+profile_query = "Currently ~7x slower than target - needs optimization"
+json_serialization = "Optimization in progress - may need further work"

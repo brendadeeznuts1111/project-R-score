@@ -6,6 +6,19 @@
  * Performance: 0.001ms p99 (Golden Matrix: 10.8ms target crushed)
  */
 
+import { logger } from '@factorywager/user-profile';
+import { handleError } from '@factorywager/user-profile';
+
+// Type for Bun's Redis client (when available)
+interface BunRedisClient {
+  pfadd: (key: string, element: string) => Promise<number>;
+  pfcount: (key: string) => Promise<number>;
+  pfmerge: (destKey: string, ...sourceKeys: string[]) => Promise<void>;
+  del: (key: string) => Promise<void>;
+  ping: () => Promise<string>;
+  quit: () => Promise<void>;
+}
+
 export interface RedisConfig {
   url?: string;
   host?: string;
@@ -20,7 +33,7 @@ export interface HLLStats {
 }
 
 export class RedisProfileClient {
-  private client: any; // Bun.RedisClient or compatible
+  private client: BunRedisClient | null = null;
   private connected: boolean = false;
 
   constructor(config: RedisConfig = {}) {
@@ -28,15 +41,18 @@ export class RedisProfileClient {
     
     try {
       // Use Bun's native Redis client if available
-      if (typeof Bun !== 'undefined' && typeof (Bun as any).RedisClient !== 'undefined') {
-        this.client = new (Bun as any).RedisClient({ url });
+      // Type assertion needed because Bun.RedisClient may not be in types yet
+      const BunRedis = typeof Bun !== 'undefined' ? (Bun as unknown as { RedisClient?: new (config: { url: string }) => BunRedisClient }).RedisClient : undefined;
+      if (BunRedis) {
+        this.client = new BunRedis({ url });
         this.connected = true;
       } else {
         // Fallback: mock mode for development
         this.connected = false;
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Silently fail in development - Redis is optional
+      logger.debug(`Redis connection failed: ${handleError(error, 'RedisProfileClient.constructor', { log: false })}`);
       this.connected = false;
     }
   }
@@ -59,8 +75,8 @@ export class RedisProfileClient {
       
       // Returns true if any element was new
       return results.some(r => r === 1);
-    } catch (error) {
-      console.error(`PFADD failed for key ${key}:`, error);
+    } catch (error: unknown) {
+      logger.error(`PFADD failed for key ${key}: ${handleError(error, 'pfadd', { log: false })}`);
       return false;
     }
   }
@@ -86,8 +102,8 @@ export class RedisProfileClient {
         await this.client.del(tempKey);
         return count;
       }
-    } catch (error) {
-      console.error(`PFCOUNT failed for keys ${keys.join(',')}:`, error);
+    } catch (error: unknown) {
+      logger.error(`PFCOUNT failed for keys ${keys.join(',')}: ${handleError(error, 'pfcount', { log: false })}`);
       return 0;
     }
   }
@@ -102,8 +118,8 @@ export class RedisProfileClient {
 
     try {
       await this.client.pfmerge(destKey, ...sourceKeys);
-    } catch (error) {
-      console.error(`PFMERGE failed:`, error);
+    } catch (error: unknown) {
+      logger.error(`PFMERGE failed: ${handleError(error, 'pfmerge', { log: false })}`);
     }
   }
 
@@ -113,7 +129,7 @@ export class RedisProfileClient {
   async trackPreferenceUpdate(
     userId: string,
     field: string,
-    value: any
+    value: unknown
   ): Promise<HLLStats> {
     const key = `profile:hll:${userId}:${field}`;
     const element = `${field}:${JSON.stringify(value)}:${Date.now()}`;
@@ -147,7 +163,7 @@ export class RedisProfileClient {
    * Batch track multiple preference updates
    */
   async batchTrackUpdates(
-    updates: Array<{ userId: string; field: string; value: any }>
+    updates: Array<{ userId: string; field: string; value: unknown }>
   ): Promise<HLLStats[]> {
     return Promise.all(
       updates.map(u => this.trackPreferenceUpdate(u.userId, u.field, u.value))

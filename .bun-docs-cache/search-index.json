@@ -1,0 +1,75 @@
+{
+  "timestamp": 1770521304681,
+  "domain": "bun.com",
+  "index": {
+    "api/http": {
+      "title": "HTTP API",
+      "path": "api/http",
+      "url": "https://bun.com/docs/api/http",
+      "description": "HTTP client and server utilities for making requests and handling responses",
+      "keywords": [
+        "http",
+        "fetch",
+        "request",
+        "response",
+        "server"
+      ],
+      "category": "api"
+    },
+    "runtime/serve": {
+      "title": "Bun.serve()",
+      "path": "runtime/serve",
+      "url": "https://bun.com/docs/runtime/serve",
+      "description": "Built-in HTTP server with WebSocket support and performance optimizations",
+      "keywords": [
+        "serve",
+        "server",
+        "http",
+        "websocket",
+        "performance"
+      ],
+      "category": "runtime"
+    },
+    "api/sqlite": {
+      "title": "SQLite Database",
+      "path": "api/sqlite",
+      "url": "https://bun.com/docs/api/sqlite",
+      "description": "Built-in SQLite database with JavaScript API and async support",
+      "keywords": [
+        "sqlite",
+        "database",
+        "sql",
+        "query",
+        "storage"
+      ],
+      "category": "api"
+    },
+    "bundler/linker": {
+      "title": "Bundler Linker",
+      "path": "bundler/linker",
+      "url": "https://bun.com/docs/bundler/linker",
+      "description": "Advanced linker configuration for optimal bundle performance",
+      "keywords": [
+        "linker",
+        "bundler",
+        "optimization",
+        "performance"
+      ],
+      "category": "bundler"
+    },
+    "runtime/fs": {
+      "title": "File System API",
+      "path": "runtime/fs",
+      "url": "https://bun.com/docs/runtime/fs",
+      "description": "High-performance file operations including copyfile and clonefile",
+      "keywords": [
+        "fs",
+        "file",
+        "copyfile",
+        "clonefile",
+        "hardlink"
+      ],
+      "category": "runtime"
+    }
+  }
+}

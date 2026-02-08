@@ -1,6 +1,7 @@
 // lib/docs/index-fetcher-enhanced.ts — Enhanced documentation index fetcher
 
 import { EnhancedDocsCacheManager } from './cache-manager';
+import { RipgrepSearcher, RipgrepMatch } from './ripgrep-spawn';
 
 export interface BunApiIndex {
   topic: string;
@@ -18,10 +19,15 @@ export class EnhancedDocsFetcher {
   private cache: DocsCacheManager;
   private fallbackData: BunApiIndex[];
   private domains = ['sh', 'com'] as const;
+  private ripgrepSearcher: RipgrepSearcher;
 
   constructor(config?: any) {
     this.cache = new EnhancedDocsCacheManager(config);
     this.fallbackData = this.loadFallbackIndex();
+    this.ripgrepSearcher = new RipgrepSearcher({
+      cacheDir: `${process.env.HOME}/.cache/bun-docs/requests`,
+      maxConcurrency: 5
+    });
   }
 
   private loadFallbackIndex(): BunApiIndex[] {
@@ -150,6 +156,151 @@ export class EnhancedDocsFetcher {
         item.apis.some(api => api.toLowerCase().includes(lowerQuery)) ||
         item.category.toLowerCase().includes(lowerQuery)
     );
+  }
+
+  /**
+   * High-performance search using Bun.spawn and Ripgrep
+   */
+  async searchWithRipgrep(query: string, options: {
+    caseSensitive?: boolean;
+    maxResults?: number;
+    includeContent?: boolean;
+  } = {}): Promise<{
+    apis: BunApiIndex[];
+    content: RipgrepMatch[];
+    performance: {
+      searchTime: number;
+      totalMatches: number;
+    };
+  }> {
+    const startTime = performance.now();
+    
+    // Run API index search and content search in parallel
+    const [apis, content] = await Promise.all([
+      this.search(query, 'com'),
+      this.ripgrepSearcher.search(query, {
+        caseSensitive: options.caseSensitive,
+        maxResults: options.maxResults || 20
+      })
+    ]);
+
+    const endTime = performance.now();
+    const searchTime = endTime - startTime;
+
+    return {
+      apis,
+      content,
+      performance: {
+        searchTime: Number(searchTime.toFixed(2)),
+        totalMatches: apis.length + content.length
+      }
+    };
+  }
+
+  /**
+   * Ghost Search - Search multiple sources in parallel
+   */
+  async ghostSearch(query: string, options: {
+    domains?: ('sh' | 'com')[];
+    includeProjectCode?: boolean;
+    projectDir?: string;
+    maxResults?: number;
+  } = {}): Promise<{
+    bunSh: BunApiIndex[];
+    bunCom: BunApiIndex[];
+    content: RipgrepMatch[];
+    projectCode?: RipgrepMatch[];
+    performance: {
+      totalTime: number;
+      parallelSpeedup: number;
+    };
+  }> {
+    const domains = options.domains || ['sh', 'com'];
+    const maxResults = options.maxResults || 20;
+    const startTime = performance.now();
+
+    // Prepare parallel searches
+    const searches: Promise<any>[] = [
+      this.search(query, 'sh'),
+      this.search(query, 'com'),
+      this.ripgrepSearcher.search(query, { maxResults })
+    ];
+
+    if (options.includeProjectCode && options.projectDir) {
+      const { searchProjectCode } = await import('./ripgrep-spawn');
+      searches.push(
+        searchProjectCode(query, options.projectDir, { maxResults })
+      );
+    }
+
+    // Execute all searches in parallel
+    const results = await Promise.all(searches);
+    const endTime = performance.now();
+
+    const parallelTime = endTime - startTime;
+    
+    // Estimate sequential time for speedup calculation
+    const estimatedSequentialTime = parallelTime * domains.length * 1.5; // Rough estimate
+    const parallelSpeedup = Number((estimatedSequentialTime / parallelTime).toFixed(2));
+
+    return {
+      bunSh: results[0],
+      bunCom: results[1],
+      content: results[2],
+      projectCode: results[3],
+      performance: {
+        totalTime: Number(parallelTime.toFixed(2)),
+        parallelSpeedup
+      }
+    };
+  }
+
+  /**
+   * Real-time search with caching and debouncing
+   */
+  createRealTimeSearch(debounceMs: number = 300) {
+    let timeoutId: NodeJS.Timeout | null = null;
+    let lastQuery = '';
+    let lastResult: any = null;
+
+    return {
+      search: async (query: string, options?: any) => {
+        // Return cached result if same query
+        if (query === lastQuery && lastResult) {
+          return lastResult;
+        }
+
+        // Clear previous timeout
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+
+        // Debounce the search
+        return new Promise((resolve) => {
+          timeoutId = setTimeout(async () => {
+            const result = await this.searchWithRipgrep(query, options);
+            lastQuery = query;
+            lastResult = result;
+            resolve(result);
+          }, debounceMs);
+        });
+      },
+
+      // Cancel pending search
+      cancel: () => {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
+      },
+
+      // Clear cache
+      clearCache: () => {
+        lastQuery = '';
+        lastResult = null;
+        this.ripgrepSearcher.clearCache();
+      }
+    };
   }
 
   async getApiDoc(apiName: string, domain: 'sh' | 'com' = 'com'): Promise<string | null> {

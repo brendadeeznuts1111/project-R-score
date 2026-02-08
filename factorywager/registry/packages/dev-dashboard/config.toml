@@ -1,0 +1,46 @@
+# 🎛️ Dev Dashboard Configuration
+
+[server]
+port = 3008
+hostname = "0.0.0.0"
+auto_refresh_interval = 5
+
+[dashboard]
+title = "FactoryWager Dev Dashboard"
+subtitle = "Tests, Benchmarks & Quick Wins Reports"
+theme = "dark"
+
+[theme.colors]
+primary = "#00ff88"
+background = "#0a0a0a"
+secondary = "#1a1a2e"
+text = "#ffffff"
+muted = "#888888"
+
+[theme.status]
+pass = "#00ff88"
+fail = "#ff4444"
+warning = "#ffaa00"
+pending = "#888888"
+
+[features]
+auto_refresh = true
+tabs = true
+progress_bars = true
+category_badges = true
+insights = true
+isolated_benchmarks = true  # Run benchmarks in isolated subprocesses for production monitoring
+
+[benchmarks]
+enabled = true
+warmup_iterations = 10
+max_iterations = 1000
+
+[tests]
+enabled = true
+timeout_ms = 5000
+
+[quick_wins]
+show_files = true
+show_impact = true
+group_by_category = true

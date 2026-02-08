@@ -4,6 +4,9 @@
   "description": "Redis HyperLogLog client for profile preference tracking",
   "type": "module",
   "main": "src/index.ts",
+  "dependencies": {
+    "@factorywager/user-profile": "workspace:*"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   }

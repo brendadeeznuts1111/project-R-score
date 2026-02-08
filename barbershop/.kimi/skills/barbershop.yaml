@@ -1,8 +1,9 @@
 name: barbershop
 description: |
-  Barbershop project development and operations skill.
-  Provides quick access to common development tasks, performance profiling,
-  security auditing, and monitoring operations.
+  Barbershop ELITE v4.5 - Ultimate Bun-native barbershop system.
+  16 elite modules: Dashboard, WASM, Streaming, Edge, Metrics,
+  Circuit Breaker, Security, Rate Limiter, GraphQL, Logger,
+  Scheduler, Config, Feature Flags, and Documentation.
 
 triggers:
   - barber
@@ -13,8 +14,101 @@ triggers:
   - vault
   - profile
   - benchmark
+  - elite
+  - wasm
+  - graphql
+  - metrics
+  - circuit
+  - ratelimit
+  - scheduler
+  - config
+  - flags
 
 actions:
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # ELITE MODULES - v4.5
+  # ═══════════════════════════════════════════════════════════════════════════════
+  
+  # Elite Demos
+  - name: elite-security-demo
+    description: Run security demo (Argon2id, HMAC)
+    command: bun run src/utils/elite-security.ts
+    
+  - name: elite-metrics-demo
+    description: Run Prometheus metrics demo
+    command: bun run src/core/barber-elite-metrics.ts
+    
+  - name: elite-circuit-demo
+    description: Run circuit breaker demo
+    command: bun run src/utils/elite-circuit-breaker.ts
+    
+  - name: elite-ratelimit-demo
+    description: Run rate limiter demo
+    command: bun run src/utils/elite-rate-limiter.ts
+    
+  - name: elite-graphql-demo
+    description: Run GraphQL demo
+    command: bun run src/utils/elite-graphql.ts
+    
+  - name: elite-logger-demo
+    description: Run structured logging demo
+    command: bun run src/utils/elite-logger.ts
+    
+  - name: elite-scheduler-demo
+    description: Run cron scheduler demo
+    command: bun run src/utils/elite-scheduler.ts
+    
+  - name: elite-config-demo
+    description: Run config manager demo
+    command: bun run src/utils/elite-config.ts
+    
+  - name: elite-flags-demo
+    description: Run feature flags demo
+    command: bun run src/utils/elite-flags.ts
+    
+  - name: elite-wasm-demo
+    description: Run WASM compute demo
+    command: bun run src/core/barber-elite-wasm.ts
+    
+  - name: elite-all-demos
+    description: Run all elite demos
+    command: |
+      echo "Running all 11 elite demos..." &&
+      bun run src/utils/elite-security.ts &&
+      bun run src/core/barber-elite-metrics.ts &&
+      bun run src/utils/elite-circuit-breaker.ts &&
+      bun run src/utils/elite-rate-limiter.ts &&
+      bun run src/utils/elite-graphql.ts &&
+      bun run src/utils/elite-logger.ts &&
+      bun run src/utils/elite-scheduler.ts &&
+      bun run src/utils/elite-config.ts &&
+      bun run src/utils/elite-flags.ts &&
+      bun run src/core/barber-elite-wasm.ts &&
+      echo "All demos complete!"
+
+  # Documentation Search
+  - name: docs-search
+    description: Search Bun documentation
+    command: bun run cli/bun-docs.ts search
+    args: [query]
+    
+  - name: docs-ultra
+    description: Ultra-fast ripgrep doc search
+    command: bun run cli/bun-docs-ultra.ts
+    args: [query]
+    
+  - name: docs-index
+    description: Update documentation index
+    command: bun run cli/bun-docs.ts index
+    
+  - name: docs-status
+    description: Check documentation index status
+    command: bun run cli/bun-docs.ts status
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # CORE DEVELOPMENT
+  # ═══════════════════════════════════════════════════════════════════════════════
+  
   # Development
   - name: start-server
     description: Start the barber server
@@ -24,6 +118,10 @@ actions:
     description: Start the dashboard
     command: bun run src/core/barbershop-dashboard.ts
     
+  - name: start-elite
+    description: Start ELITE dashboard server
+    command: bun run src/core/barber-elite-dashboard.ts
+    
   - name: dev-server
     description: Start server with hot reload
     command: bun --hot src/core/barber-server.ts
@@ -31,6 +129,10 @@ actions:
   - name: dev-dashboard
     description: Start dashboard with hot reload
     command: bun --hot src/core/barbershop-dashboard.ts
+    
+  - name: dev-elite
+    description: Start ELITE dashboard with hot reload
+    command: bun --hot src/core/barber-elite-dashboard.ts
 
   # Testing
   - name: test-all
@@ -44,8 +146,19 @@ actions:
   - name: test-integration
     description: Run integration tests only
     command: bun test tests/integration/
+    
+  - name: test-r2
+    description: Test R2 connection
+    command: bun run src/r2/r2-connection-test.ts
+    
+  - name: test-coverage
+    description: Run tests with coverage
+    command: bun test --coverage
 
-  # Performance & Profiling
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # PERFORMANCE & PROFILING
+  # ═══════════════════════════════════════════════════════════════════════════════
+  
   - name: profile-cpu
     description: Generate CPU profile with markdown output
     command: bun --cpu-prof --cpu-prof-md run src/core/barber-server.ts
@@ -62,6 +175,14 @@ actions:
     description: Quick sampling profile (10s)
     command: bun run src/profile/sampling-profile.ts --quick
     
+  - name: profile-upload
+    description: Upload profile to R2
+    command: bun run src/r2/upload-latest-profile.ts
+    
+  - name: profile-list
+    description: List R2 profiles
+    command: bun run src/r2/list-r2-profiles.ts
+    
   - name: benchmark
     description: Run benchmark suite
     command: bun run src/debug/benchmark.ts
@@ -69,11 +190,26 @@ actions:
   - name: benchmark-websocket
     description: Benchmark WebSocket performance
     command: bun run scripts/analysis/ws-secrets-bench.ts --connections 100 --duration 60
+    
+  - name: benchmark-vault
+    description: Benchmark vault simulation
+    command: bun run scripts/secrets/vault-sim.ts
 
-  # Security
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # SECURITY
+  # ═══════════════════════════════════════════════════════════════════════════════
+  
   - name: secrets-field
     description: Compute secrets field
     command: bun run scripts/secrets/secrets-field.ts --exposure 7.5
+    
+  - name: secrets-server
+    description: Start secrets field server
+    command: bun run scripts/secrets/secrets-field-server.ts
+    
+  - name: secrets-boost
+    description: Run secret boost
+    command: bun run scripts/secrets/secret-boost.ts
     
   - name: vault-sim
     description: Run vault simulation
@@ -87,7 +223,10 @@ actions:
     description: Run security citadel check
     command: bun run scripts/security/security-citadel.ts
 
-  # Monitoring
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # MONITORING & OPERATIONS
+  # ═══════════════════════════════════════════════════════════════════════════════
+  
   - name: monitor-status
     description: Check server health status
     command: curl -s http://localhost:3000/api/health | jq .
@@ -99,21 +238,11 @@ actions:
   - name: monitor-r2
     description: Check R2 mirror status
     command: curl -s http://localhost:3000/ops/r2-status | jq .
-
-  # Build
-  - name: build-server
-    description: Build server for production
-    command: bun build src/core/barber-server.ts --outfile dist/barber-server.js --minify --sourcemap --target=bun
     
-  - name: build-dashboard
-    description: Build dashboard for production
-    command: bun build src/core/barbershop-dashboard.ts --outfile dist/barbershop-dashboard.js --minify --target=bun
+  - name: monitor-telemetry
+    description: Get telemetry data
+    command: curl -s http://localhost:3000/telemetry | jq .
     
-  - name: build-meta
-    description: Build with metafile analysis
-    command: bun build src/core/barber-server.ts --outfile dist/barber-server.js --metafile=dist/meta.json --target=bun
-
-  # Operations
   - name: ops-monitor
     description: Monitor secret expirations
     command: bun run scripts/operations/monitor-expirations.ts
@@ -126,7 +255,38 @@ actions:
     description: Test rollback procedures
     command: bun run scripts/operations/test-rollback.ts
 
-  # Debug
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # BUILD & DEPLOY
+  # ═══════════════════════════════════════════════════════════════════════════════
+  
+  - name: build-server
+    description: Build server for production
+    command: bun build src/core/barber-server.ts --outfile dist/barber-server.js --minify --sourcemap --target=bun
+    
+  - name: build-dashboard
+    description: Build dashboard for production
+    command: bun build src/core/barbershop-dashboard.ts --outfile dist/barbershop-dashboard.js --minify --target=bun
+    
+  - name: build-elite
+    description: Build ELITE dashboard for production
+    command: bun build src/core/barber-elite-dashboard.ts --outfile dist/barber-elite-dashboard.js --minify --target=bun
+    
+  - name: build-meta
+    description: Build with metafile analysis
+    command: bun build src/core/barber-server.ts --outfile dist/barber-server.js --metafile=dist/meta.json --target=bun
+    
+  - name: build-all
+    description: Build all components
+    command: |
+      bun build src/core/barber-server.ts --outfile dist/barber-server.js --minify --target=bun &&
+      bun build src/core/barbershop-dashboard.ts --outfile dist/barbershop-dashboard.js --minify --target=bun &&
+      bun build src/core/barber-elite-dashboard.ts --outfile dist/barber-elite-dashboard.js --minify --target=bun &&
+      echo "All builds complete!"
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # DEBUG & ANALYSIS
+  # ═══════════════════════════════════════════════════════════════════════════════
+  
   - name: debug-config
     description: Debug configuration
     command: bun run src/debug/debug-config.ts
@@ -138,6 +298,18 @@ actions:
   - name: debug-fix
     description: Fix detected system gaps
     command: bun run src/debug/fix-system-gaps.ts
+    
+  - name: analyze-graphs
+    description: Generate analysis graphs
+    command: bun run scripts/analysis/generate-graphs.ts
+    
+  - name: openclaw-status
+    description: Check OpenClaw gateway status
+    command: bun run openclaw/cli.ts status
+    
+  - name: openclaw-profiles
+    description: List OpenClaw profiles
+    command: bun run openclaw/cli.ts profiles
 
 context:
   project_root: /Users/nolarose/Projects/barbershop
@@ -145,6 +317,23 @@ context:
   scripts_dir: scripts
   test_dir: tests
   docs_dir: docs
+  elite_modules:
+    - barber-elite-dashboard.ts
+    - barber-elite-fusion.ts
+    - barber-elite-wasm.ts
+    - barber-elite-streams.ts
+    - barber-elite-edge.ts
+    - barber-elite-metrics.ts
+    - elite-circuit-breaker.ts
+    - elite-security.ts
+    - elite-rate-limiter.ts
+    - elite-graphql.ts
+    - elite-logger.ts
+    - elite-scheduler.ts
+    - elite-config.ts
+    - elite-flags.ts
+    - bun-docs.ts
+    - bun-docs-ultra.ts
   
 mcp_servers:
   - name: barbershop-server

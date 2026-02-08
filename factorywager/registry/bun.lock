@@ -59,6 +59,9 @@
     "packages/redis-profile": {
       "name": "@factorywager/redis-profile",
       "version": "10.0.0",
+      "dependencies": {
+        "@factorywager/user-profile": "workspace:*",
+      },
       "devDependencies": {
         "@types/bun": "latest",
       },
@@ -88,6 +91,9 @@
     "packages/xgboost-pers": {
       "name": "@factorywager/xgboost-pers",
       "version": "10.0.0",
+      "dependencies": {
+        "@factorywager/user-profile": "workspace:*",
+      },
       "devDependencies": {
         "@types/bun": "latest",
       },

@@ -1,0 +1,24 @@
+{
+  "r2": {
+    "bucket": "bun-docs",
+    "endpoint": "https://your-account.r2.cloudflarestorage.com",
+    "publicUrl": "https://pub-your-account.r2.dev"
+  },
+  "rss": {
+    "feeds": [
+      "https://bun.com/rss.xml",
+      "https://github.com/brendadeeznuts1111/project-R-score/releases.atom"
+    ],
+    "updateInterval": 300000
+  },
+  "analytics": {
+    "enabled": true,
+    "trackViews": true,
+    "trackDownloads": true
+  },
+  "publishing": {
+    "autoGenerateRSS": true,
+    "compressAssets": true,
+    "generateSitemap": true
+  }
+}

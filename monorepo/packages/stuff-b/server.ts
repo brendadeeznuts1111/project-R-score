@@ -2,13 +2,13 @@ import { createUserService, bulkValidate } from './index';
 import { createDB } from './db';
 import { withCors, corsPreflightResponse, withTiming, getRequestLogs, checkAuth, withRateLimit } from './middleware';
 import { getRateLimitMetrics } from './rate-limit';
-import { logger } from './logger';
+import { logger, getLogFileInfo } from './logger';
 import { Errors, errorResponse } from 'stuff-a/errors';
 import { parseQuery } from 'stuff-a/query';
 import { UserUpdateSchema, BulkUpdateItemSchema } from 'stuff-a/update';
 import {
   DB, DEFAULT_PORT, DEFAULT_HOSTNAME, ROUTES, LIMITS,
-  AUTH, FEATURES, serverUrl, wsUrl, userByIdRoute,
+  AUTH, FEATURES, CONFIG_PATH, serverUrl, wsUrl, userByIdRoute,
 } from 'stuff-a/config';
 
 const db = createDB(DB.DEFAULT_PATH);
@@ -144,7 +144,15 @@ const server = Bun.serve({
         if (!FEATURES.ENABLE_METRICS) {
           return errorResponse(Errors.notFound('Metrics disabled'));
         }
-        return Response.json({ ...db.stats(), logs: getRequestLogs(), rateLimit: getRateLimitMetrics() });
+        const dbFile = Bun.file(DB.DEFAULT_PATH);
+        return Response.json({
+          ...db.stats(),
+          dbFileSize: dbFile.size,
+          dbFileType: dbFile.type,
+          logs: getRequestLogs(),
+          rateLimit: getRateLimitMetrics(),
+          logFile: getLogFileInfo(),
+        });
       },
       'GET', ROUTES.METRICS,
     ),
@@ -181,5 +189,6 @@ logger.info('Server started', { url: serverUrl() });
 logger.info('WebSocket available', { url: `${wsUrl()}${ROUTES.WS}` });
 logger.info('Database configured', { path: DB.DEFAULT_PATH });
 logger.info('Auth mode', { mode: AUTH.API_TOKEN ? 'enabled' : 'open' });
+logger.info('Config source', { path: CONFIG_PATH });
 
 export default server;

@@ -12,7 +12,7 @@ import { propagateProfile } from './propagate';
 export interface PreferenceUpdate {
   userId: string;
   field: keyof ProfilePrefs;
-  value: any;
+  value: unknown;
   timestamp: bigint;
   source: 'main' | 'progress' | 'gateway';
 }
@@ -34,7 +34,7 @@ export class PreferenceManager {
   async updatePreference(
     userId: string,
     field: keyof ProfilePrefs,
-    value: any,
+    value: unknown,
     source: PreferenceUpdate['source'] = 'main'
   ): Promise<PropagationResult> {
     const update: PreferenceUpdate = {
@@ -113,7 +113,7 @@ export class PreferenceManager {
   private async calculatePersonalizationScore(
     userId: string,
     field: keyof ProfilePrefs,
-    value: any
+    value: unknown
   ): Promise<number> {
     // This would integrate with XGBoost model
     // For now, return a mock score based on field consistency
@@ -141,7 +141,7 @@ export class PreferenceManager {
   private detectAnomalies(
     userId: string,
     field: keyof ProfilePrefs,
-    value: any
+    value: unknown
   ): string[] {
     const anomalies: string[] = [];
     const userUpdates = this.updates.get(userId) || [];

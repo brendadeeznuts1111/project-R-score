@@ -1,0 +1,13 @@
+{
+  "name": "@factorywager/dev-dashboard",
+  "version": "1.0.0",
+  "description": "Development dashboard for tests, benchmarks, and quick wins",
+  "type": "module",
+  "main": "src/server.ts",
+  "dependencies": {
+    "@factorywager/user-profile": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}
