@@ -1,7 +1,29 @@
 {
   "name": "stuff-a",
   "version": "1.0.0",
+  "module": "index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./hash": "./hash.ts",
+    "./generate": "./generate.ts",
+    "./config": "./config.ts"
+  },
   "dependencies": {
     "zod": "^4.3.5"
+  },
+  "devDependencies": {
+    "mitata": "^1.0.6"
+  },
+  "scripts": {
+    "dev": "bun --watch index.ts",
+    "build": "bun build index.ts hash.ts generate.ts config.ts --outdir ./dist --splitting --target bun",
+    "test": "bun test",
+    "bench": "bun run bench.ts",
+    "clean": "rm -rf dist",
+    "env:example": "bun run scripts/generate-env-example.ts",
+    "config:inspect": "bun run cli/config-inspector.ts",
+    "config:validate": "bun run cli/config-inspector.ts --validate",
+    "config:json": "bun run cli/config-inspector.ts --format=json",
+    "env:diff": "bun run cli/env-diff.ts"
   }
 }

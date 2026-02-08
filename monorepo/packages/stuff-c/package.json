@@ -1,0 +1,19 @@
+{
+  "name": "stuff-c",
+  "version": "1.0.0",
+  "module": "index.ts",
+  "bin": {
+    "stuff": "./cli.ts"
+  },
+  "dependencies": {
+    "stuff-a": "workspace:*",
+    "stuff-b": "workspace:*"
+  },
+  "scripts": {
+    "preflight": "bun run --filter stuff-a config:validate && bun run build",
+    "dev": "bun run preflight && bun --watch cli.ts -- health",
+    "build": "bun build cli.ts --compile --outfile dist/stuff --target bun",
+    "test": "bun test",
+    "clean": "rm -rf dist"
+  }
+}

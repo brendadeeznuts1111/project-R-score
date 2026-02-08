@@ -1,7 +1,26 @@
 {
   "name": "stuff-b",
   "version": "1.0.0",
+  "module": "index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./db": "./db.ts",
+    "./middleware": "./middleware.ts",
+    "./server": "./server.ts"
+  },
   "dependencies": {
     "stuff-a": "workspace:*"
+  },
+  "devDependencies": {
+    "mitata": "^1.0.6"
+  },
+  "scripts": {
+    "preflight": "bun run --filter stuff-a config:validate && bun run build",
+    "dev": "bun run preflight && bun --watch server.ts",
+    "build": "bun build index.ts db.ts middleware.ts --outdir ./dist --splitting --target bun",
+    "test": "bun test",
+    "serve": "bun run server.ts",
+    "bench": "bun run bench.ts",
+    "clean": "rm -rf dist"
   }
 }

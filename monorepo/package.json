@@ -1,20 +1,28 @@
 {
-  "name": "my-monorepo",
-  "version": "0.1.0",
+  "name": "stuff-monorepo",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
-  "author": "mike.hunt@factory.wager.com",
-  "license": "MIT",
-  "description": "Bun workspace monorepo root",
-  "engines": {
-    "bun": ">=1.3.8"
+  "workspaces": ["packages/*"],
+  "//": "Note: --filter '!pkg' is overridden by dependency resolution. Use explicit targets instead.",
+  "scripts": {
+    "dev": "bun run --parallel --filter '*' dev",
+    "build": "bun run --filter '*' build",
+    "build:config": "bun run --filter stuff-a build",
+    "build:apps": "bun run --filter stuff-b --filter stuff-c build",
+    "build:all": "bun run --filter '*' build",
+    "test": "bun run --parallel --no-exit-on-error --filter '*' test",
+    "test:ci": "bun run --parallel --filter '*' test -- --ci",
+    "test:apps": "bun run --parallel --filter stuff-b --filter stuff-c test",
+    "clean": "bun run --parallel --if-present --filter '*' clean",
+    "typecheck": "bun run --parallel --if-present --filter '*' typecheck",
+    "lint": "bun run --parallel --if-present --filter '*' lint",
+    "bench": "bun run --filter stuff-a bench",
+    "config:validate": "bun run -F stuff-a config:validate",
+    "doctor": "bash scripts/verify-cache-behavior.sh && bun run config:validate",
+    "ci": "bun run doctor && bun run build:config && bun run build:apps && bun run test:apps",
+    "env:example": "bun run packages/stuff-a/scripts/generate-env-example.ts"
   },
-  "publishConfig": {
-    "registry": "https://npm.factory-wager.com"
-  },
-  "dependencies": {
-    "zod": "4.3.6"
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.0.0"
   }
 }

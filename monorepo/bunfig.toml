@@ -1,10 +1,30 @@
+[install]
+# Exact versions for reproducible builds across stuff-a/b/c
+exact = true
+# Don't save if we're just checking (CI optimization)
+save = false
+registry = "https://npm.factory-wager.com"
+
 [install.scopes]
 "@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
 "@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
 
-[install]
-exact = true
-registry = "https://npm.factory-wager.com"
+[install.cache]
+# Standard location, but explicit for Docker/CI clarity
+dir = "~/.bun/install/cache"
+# Only disable for debugging cache issues
+disable = false
+# Keep false to use cached versions (faster CI)
+disableManifest = false
+
+[run]
+# Auto-install missing dependencies when running scripts
+auto-install = true
+
+[test]
+# Coverage settings for stuff-a/b/c test suites
+coverage = true
+coverageThreshold = 0.8
 
 [publish]
 registry = "https://npm.factory-wager.com"
