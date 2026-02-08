@@ -34,6 +34,14 @@ type BenchmarkPayload = {
   queries: string[];
   rankedProfiles: RankedProfile[];
   warnings?: string[];
+  coverage?: {
+    files: number;
+    lines: number;
+    uniqueFiles: number;
+    uniqueLines: number;
+    roots: string[];
+    overlapMode: string;
+  };
 };
 
 type SnapshotDelta = {
@@ -372,7 +380,7 @@ function profileReliability(profile: RankedProfile | null): number | null {
 }
 
 function runClassForQueryPack(queryPack: string): 'core-iterative' | 'daily-coverage' | 'ad-hoc' {
-  if (queryPack === 'core_delivery') return 'core-iterative';
+  if (queryPack === 'core_delivery' || queryPack === 'core_delivery_wide') return 'core-iterative';
   if (queryPack === 'bun_runtime_api' || queryPack === 'cleanup_noise') return 'daily-coverage';
   return 'ad-hoc';
 }
@@ -399,6 +407,12 @@ function renderSummaryMarkdown(
   lines.push(`- Baseline Snapshot: \`${baselineSnapshotId || 'none'}\``);
   if (typeof payload.concurrency === 'number') {
     lines.push(`- Concurrency: \`${payload.concurrency}\``);
+  }
+  if (payload.coverage) {
+    lines.push(`- Coverage LOC: \`${payload.coverage.lines}\``);
+    lines.push(`- Coverage Files: \`${payload.coverage.files}\``);
+    lines.push(`- Coverage Roots: \`${payload.coverage.roots.join(', ')}\``);
+    lines.push(`- Coverage Overlap Mode: \`${payload.coverage.overlapMode}\``);
   }
   lines.push(`- Queries: \`${payload.queries.join(', ')}\``);
   lines.push('');
@@ -577,6 +591,36 @@ async function main(): Promise<void> {
       session.disconnect();
     }
   })();
+  const coveragePath = resolve('reports/search-coverage-loc-latest.json');
+  const coverage = await (async () => {
+    if (!existsSync(coveragePath)) return null;
+    try {
+      const raw = JSON.parse(await readFile(coveragePath, 'utf8')) as {
+        roots?: string[];
+        overlap?: string;
+        totals?: {
+          files?: number;
+          lines?: number;
+          uniqueFiles?: number;
+          uniqueLines?: number;
+        };
+      };
+      if (!raw?.totals) return null;
+      return {
+        files: Number(raw.totals.files || 0),
+        lines: Number(raw.totals.lines || 0),
+        uniqueFiles: Number(raw.totals.uniqueFiles || 0),
+        uniqueLines: Number(raw.totals.uniqueLines || 0),
+        roots: Array.isArray(raw.roots) ? raw.roots : [],
+        overlapMode: raw.overlap || 'ignore',
+      };
+    } catch {
+      return null;
+    }
+  })();
+  if (coverage) {
+    payload.coverage = coverage;
+  }
   const policies = await loadSearchPolicies(options.path);
   const currentMetrics = snapshotMetrics(payload);
   const previousMetrics = previousPayload ? snapshotMetrics(previousPayload) : null;
@@ -678,6 +722,7 @@ async function main(): Promise<void> {
     baselineSnapshotId,
     delta,
     warnings,
+    coverage: coverage || null,
     gzip: options.gzip,
     uploadRetries: options.uploadRetries,
     uploadedObjects: 0,

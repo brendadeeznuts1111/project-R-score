@@ -184,6 +184,10 @@ function htmlShell(options: Options): string {
       <div id="trend"></div>
     </div>
     <div class="card">
+      <h2 style="margin:0 0 8px;font-size:16px">Loop Closure</h2>
+      <div id="loopStatus"></div>
+    </div>
+    <div class="card">
       <h2 style="margin:0 0 8px;font-size:16px">History</h2>
       <div id="history"></div>
     </div>
@@ -208,6 +212,7 @@ function htmlShell(options: Options): string {
     const latestEl = document.getElementById('latest');
     const historyEl = document.getElementById('history');
     const trendEl = document.getElementById('trend');
+    const loopStatusEl = document.getElementById('loopStatus');
     const publishEl = document.getElementById('publish');
     const inventoryEl = document.getElementById('inventory');
     const domainHealthEl = document.getElementById('domainHealth');
@@ -268,6 +273,11 @@ function htmlShell(options: Options): string {
       return 'status-neutral';
     };
     const warningBadge = (code) => '<span class="badge ' + warningBadgeClass(code) + '">' + code + '</span>';
+    const stageStatusBadge = (status) => {
+      const s = String(status || '').toLowerCase();
+      const cls = s === 'pass' ? 'status-good' : s === 'warn' ? 'status-warn' : s === 'fail' ? 'status-bad' : 'status-neutral';
+      return '<span class="badge ' + cls + '">' + s + '</span>';
+    };
     const asNumOrNull = (v) => {
       const n = Number(v);
       return Number.isFinite(n) ? n : null;
@@ -583,6 +593,61 @@ function htmlShell(options: Options): string {
       historyEl.innerHTML =
         '<table><thead><tr><th>Snapshot</th><th>Created</th><th>Query Pack</th><th>Top Profile</th><th>Top Score</th></tr></thead><tbody>' + rows + '</tbody></table>';
     };
+    const renderLoopStatus = (data, latestSnapshot) => {
+      if (!data || !Array.isArray(data.stages)) {
+        loopStatusEl.innerHTML = '<pre>No loop status found.</pre>';
+        return;
+      }
+
+      const localLatestId = latestSnapshot?.id || null;
+      const localWarnings = Array.isArray(latestSnapshot?.warnings) ? latestSnapshot.warnings : [];
+      const localCoverageLines = Number(latestSnapshot?.coverage?.lines || 0);
+      const statusCoverageLines = Number(data?.coverage?.lines || 0);
+      const warningsMatch = JSON.stringify([...localWarnings].sort()) === JSON.stringify([...(data.warnings || [])].sort());
+      const snapshotIdMatch = !localLatestId || data.latestSnapshotId === localLatestId;
+      const coverageMatch = localCoverageLines > 0 ? localCoverageLines === statusCoverageLines : true;
+
+      const stages = data.stages.map((stage) => ({ ...stage }));
+      const parityStage = stages.find((stage) => stage.id === 'dashboard_parity');
+      if (parityStage) {
+        const parityErrors = [];
+        if (!snapshotIdMatch) parityErrors.push('snapshot_id_mismatch');
+        if (!warningsMatch) parityErrors.push('warnings_mismatch');
+        if (!coverageMatch) parityErrors.push('coverage_mismatch');
+        if (parityErrors.length > 0) {
+          parityStage.status = 'fail';
+          parityStage.reason = 'Dashboard drift detected against loaded latest snapshot.';
+          parityStage.evidence = [
+            ...(parityStage.evidence || []),
+            ...parityErrors,
+          ];
+        }
+      }
+
+      const hasFail = stages.some((s) => s.status === 'fail');
+      const hasWarn = stages.some((s) => s.status === 'warn');
+      const closed = !hasFail && Boolean(data.loopClosed);
+      const loopBadge = statusBadge(closed ? 'Stable' : (hasWarn ? 'Watch' : 'Down'));
+      const rows = stages.map((stage) =>
+        '<tr>' +
+          '<td><code>' + stage.id + '</code></td>' +
+          '<td>' + stageStatusBadge(String(stage.status || 'neutral')) + '</td>' +
+          '<td>' + (stage.reason || '-') + '</td>' +
+          '<td>' + ((stage.evidence || []).map((e) => '<code>' + e + '</code>').join('<br/>') || '-') + '</td>' +
+        '</tr>'
+      ).join('');
+
+      loopStatusEl.innerHTML =
+        '<div class="meta">loopClosed=' + (closed ? 'yes' : 'no') +
+        ' ' + loopBadge +
+        ' snapshot=' + (data.latestSnapshotId || 'n/a') +
+        ' queryPack=' + (data.queryPack || 'n/a') +
+        ' coverageLOC=' + (statusCoverageLines || 'n/a') +
+        ' warnings=' + ((data.warnings || []).length || 0) +
+        '</div>' +
+        '<div class="meta">loopClosedReason=' + (data.loopClosedReason || 'n/a') + '</div>' +
+        '<table><thead><tr><th>Stage</th><th>Status</th><th>Reason</th><th>Evidence</th></tr></thead><tbody>' + rows + '</tbody></table>';
+    };
     const renderPublish = (data) => {
       if (!data || !Array.isArray(data.uploads)) {
         publishEl.innerHTML = '<pre>No publish manifest found.</pre>';
@@ -822,6 +887,9 @@ function htmlShell(options: Options): string {
       const domainRes = await fetch('/api/domain-health?source=' + source);
       const domain = await domainRes.json();
       renderDomainHealth(domain);
+      const loopRes = await fetch('/api/loop-status?source=local');
+      const loop = await loopRes.json();
+      renderLoopStatus(loop, data);
       const rssMetaRes = await fetch('/api/rss-meta?source=' + source);
       const rssMeta = await rssMetaRes.json();
       const rssRes = await fetch('/api/rss?source=' + source);
@@ -861,6 +929,9 @@ function htmlShell(options: Options): string {
       const domainRes = await fetch('/api/domain-health?source=local');
       const domain = await domainRes.json();
       renderDomainHealth(domain);
+      const loopRes = await fetch('/api/loop-status?source=local');
+      const loop = await loopRes.json();
+      renderLoopStatus(loop, latestData);
       const rssMetaRes = await fetch('/api/rss-meta?source=local');
       const rssMeta = await rssMetaRes.json();
       const rssRes = await fetch('/api/rss?source=local');
@@ -1055,6 +1126,7 @@ async function main(): Promise<void> {
   const latestJson = resolve(dir, 'latest.json');
   const indexJson = resolve(dir, 'index.json');
   const rssXml = resolve(dir, 'rss.xml');
+  const loopStatusJson = resolve('reports/search-loop-status-latest.json');
   const responseCache = new Map<string, CachedResponse>();
   const inflight = new Map<string, Promise<CachedResponse>>();
   const dnsPrefetchTtlMs = 120000;
@@ -1593,6 +1665,13 @@ async function main(): Promise<void> {
         const source = (url.searchParams.get('source') || 'local') as 'local' | 'r2';
         const meta = await buildRssStorageSummary(source);
         return Response.json(meta);
+      }
+      if (url.pathname === '/api/loop-status') {
+        const source = url.searchParams.get('source') || 'local';
+        if (source !== 'local') {
+          return Response.json({ error: 'loop_status_local_only', source }, { status: 400 });
+        }
+        return readLocalJson(loopStatusJson);
       }
       return new Response('Not found', { status: 404 });
     },
