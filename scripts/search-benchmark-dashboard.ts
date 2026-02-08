@@ -4069,6 +4069,10 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
               '<span><span class="kbd">Ctrl</span> + <span class="kbd">T</span></span>' +
             '</div>' +
             '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(10,22,43,0.4);border-radius:8px">' +
+              '<span>Show Performance Metrics</span>' +
+              '<span><span class="kbd">Ctrl</span> + <span class="kbd">P</span></span>' +
+            '</div>' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(10,22,43,0.4);border-radius:8px">' +
               '<span>Show this help</span>' +
               '<span><span class="kbd">?</span></span>' +
             '</div>' +
@@ -5511,6 +5515,71 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       showToast('Refresh failed. Countdown started.', 'error', 3200);
       refreshRetryTimer = setInterval(tick, 1000);
     };
+    
+    // Error recovery and circuit breaker
+    let consecutiveErrors = 0;
+    const MAX_CONSECUTIVE_ERRORS = 5;
+    let circuitOpen = false;
+    let circuitResetTimer = null;
+    
+    const recordError = () => {
+      consecutiveErrors++;
+      if (consecutiveErrors >= MAX_CONSECUTIVE_ERRORS) {
+        openCircuit();
+      }
+    };
+    
+    const recordSuccess = () => {
+      consecutiveErrors = 0;
+      if (circuitOpen) {
+        closeCircuit();
+      }
+    };
+    
+    const openCircuit = () => {
+      circuitOpen = true;
+      updateConnectionStatus('error');
+      showToast('Too many errors. Pausing auto-refresh for 60s.', 'error', 5000);
+      
+      // Stop auto-refresh
+      if (autoRefreshTimer) {
+        clearInterval(autoRefreshTimer);
+        autoRefreshTimer = null;
+      }
+      
+      // Auto-reset after 60s
+      circuitResetTimer = setTimeout(() => {
+        closeCircuit();
+      }, 60000);
+    };
+    
+    const closeCircuit = () => {
+      circuitOpen = false;
+      consecutiveErrors = 0;
+      if (circuitResetTimer) {
+        clearTimeout(circuitResetTimer);
+        circuitResetTimer = null;
+      }
+      updateConnectionStatus('connected');
+      showToast('Auto-refresh resumed', 'success');
+      updateAutoRefresh();
+    };
+    
+    // Safe fetch with error handling
+    const safeFetch = async (url, options = {}) => {
+      if (circuitOpen) {
+        throw new Error('Circuit breaker is open');
+      }
+      
+      try {
+        const res = await fetch(url, options);
+        recordSuccess();
+        return res;
+      } catch (err) {
+        recordError();
+        throw err;
+      }
+    };
     const countNewReports = (snapshots, baselineId) => {
       if (!Array.isArray(snapshots) || snapshots.length === 0 || !baselineId) return 0;
       const idx = snapshots.findIndex((s) => s.id === baselineId);
@@ -5613,7 +5682,77 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         setRssBadge('-', 'neutral');
       }
     };
+    
+    // Performance monitoring
+    const perfMetrics = {
+      loadTimes: [],
+      renderTimes: [],
+      errorCount: 0,
+      lastLoadTime: null
+    };
+    
+    const recordPerformance = (type, duration) => {
+      if (type === 'load') {
+        perfMetrics.loadTimes.push(duration);
+        perfMetrics.lastLoadTime = duration;
+        // Keep only last 10 measurements
+        if (perfMetrics.loadTimes.length > 10) {
+          perfMetrics.loadTimes.shift();
+        }
+      } else if (type === 'render') {
+        perfMetrics.renderTimes.push(duration);
+        if (perfMetrics.renderTimes.length > 10) {
+          perfMetrics.renderTimes.shift();
+        }
+      }
+    };
+    
+    window.showPerformanceMetrics = () => {
+      const avgLoad = perfMetrics.loadTimes.length > 0 
+        ? (perfMetrics.loadTimes.reduce((a, b) => a + b, 0) / perfMetrics.loadTimes.length).toFixed(0)
+        : 'N/A';
+      const avgRender = perfMetrics.renderTimes.length > 0
+        ? (perfMetrics.renderTimes.reduce((a, b) => a + b, 0) / perfMetrics.renderTimes.length).toFixed(0)
+        : 'N/A';
+      
+      const modal = document.createElement('div');
+      modal.className = 'modal-overlay';
+      modal.innerHTML = 
+        '<div class="modal" style="max-width:500px">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
+            '<h2 style="margin:0">📊 Performance Metrics</h2>' +
+            '<button onclick="this.closest(\'.modal-overlay\').remove()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>' +
+          '</div>' +
+          '<div class="stats-grid" style="margin-bottom:16px">' +
+            '<div class="stat-item">' +
+              '<div class="stat-value">' + avgLoad + '</div>' +
+              '<div class="stat-label">Avg Load (ms)</div>' +
+            '</div>' +
+            '<div class="stat-item">' +
+              '<div class="stat-value">' + avgRender + '</div>' +
+              '<div class="stat-label">Avg Render (ms)</div>' +
+            '</div>' +
+            '<div class="stat-item">' +
+              '<div class="stat-value">' + perfMetrics.errorCount + '</div>' +
+              '<div class="stat-label">Errors</div>' +
+            '</div>' +
+            '<div class="stat-item">' +
+              '<div class="stat-value">' + perfMetrics.loadTimes.length + '</div>' +
+              '<div class="stat-label">Samples</div>' +
+            '</div>' +
+          '</div>' +
+          '<div style="font-size:12px;color:var(--muted)">' +
+            '<div>Last load: ' + (perfMetrics.lastLoadTime ? perfMetrics.lastLoadTime + 'ms' : 'N/A') + '</div>' +
+            '<div style="margin-top:8px">Recent loads: ' + perfMetrics.loadTimes.slice(-5).join(', ') + ' ms</div>' +
+          '</div>' +
+        '</div>';
+      
+      document.body.appendChild(modal);
+      modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    };
+    
     async function loadLatest(source, opts = {}) {
+      const loadStart = performance.now();
       const attempt = Number(opts.attempt || 0);
       const maxRetries = Number(opts.maxRetries || 3);
       const internalRetry = Boolean(opts.internalRetry);
@@ -5687,6 +5826,11 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         overviewState.queryPack = String(data?.queryPack || 'n/a');
         applyUnifiedOverview(unified, data?.id || null, guid);
         renderOverview();
+        
+        // Record performance metrics
+        const loadEnd = performance.now();
+        recordPerformance('load', loadEnd - loadStart);
+        
         setRefreshSuccess();
         clearNoticeRetryTimer();
       } catch (error) {
@@ -6044,6 +6188,10 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           case 't':
             e.preventDefault();
             themeToggle.click();
+            break;
+          case 'p':
+            e.preventDefault();
+            showPerformanceMetrics();
             break;
         }
       }
