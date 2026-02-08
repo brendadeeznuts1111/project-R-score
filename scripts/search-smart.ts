@@ -31,6 +31,7 @@ interface SearchOptions {
   groupLimit?: number;
   view: ViewMode;
   task: TaskMode;
+  showMirrors: boolean;
 }
 
 interface QueryPlan {
@@ -52,6 +53,7 @@ interface SearchHit {
   qualityTag?: QualityTag;
   qualityScore?: number;
   duplicateCount?: number;
+  mirrorCount?: number;
   canonicalFile?: string;
   mirrorFiles?: string[];
 }
@@ -104,6 +106,7 @@ OPTIONS:
   --group-limit <n>    Max results per output group (default: unlimited)
   --case-sensitive     Case-sensitive matching
   --strict             Preset: --view clean --task delivery --group-limit 3
+  --show-mirrors       Print top mirror paths under canonical hits
   --kind <kind>        any|function|class|interface|type|enum|variable|import|export|call|callers|callees
   --of <symbol>        Target symbol for --kind callers|callees
   --view <mode>        clean|mixed|slop-only|all (default: clean)
@@ -115,7 +118,7 @@ EXAMPLES:
   bun run scripts/search-smart.ts "R2LifecycleManager" --kind class
   bun run scripts/search-smart.ts "R2LifecycleManager" --kind callers --of R2LifecycleManager
   bun run scripts/search-smart.ts "R2LifecycleManager" --kind callees --of R2LifecycleManager
-  bun run scripts/search-smart.ts "auth middleware" --strict
+  bun run scripts/search-smart.ts "auth middleware" --strict --show-mirrors
   bun run scripts/search-smart.ts "auth middleware" --view mixed --task delivery
   bun run scripts/search-smart.ts "generated declaration" --view slop-only --task cleanup
   bun run scripts/search-smart.ts "where auth is enforced" --limit 10
@@ -578,6 +581,7 @@ function parseArgs(argv: string[]): { query: string; options: SearchOptions } | 
     kind: 'any',
     view: 'clean',
     task: 'default',
+    showMirrors: false,
   };
 
   let query: string | null = null;
@@ -614,6 +618,11 @@ function parseArgs(argv: string[]): { query: string; options: SearchOptions } | 
       options.view = 'clean';
       options.task = 'delivery';
       options.groupLimit = 3;
+      continue;
+    }
+
+    if (arg === '--show-mirrors') {
+      options.showMirrors = true;
       continue;
     }
 
@@ -783,6 +792,11 @@ function printGroupedSection(title: string, hits: SearchHit[]): void {
       : '';
     console.log(`${i + 1}. ${relPath}:${hit.line} score=${hit.score.toFixed(1)}${quality}${dup}${mirrors}${canonical}`);
     console.log(`   ${snippet}`);
+    if (hit.mirrorFiles && hit.mirrorFiles.length > 0) {
+      const topMirrors = hit.mirrorFiles.slice(0, 3).map((path) => path.replace(/^\.\//, ''));
+      const extra = hit.mirrorFiles.length - topMirrors.length;
+      console.log(`   mirrors: ${topMirrors.join(', ')}${extra > 0 ? ` (+${extra} more)` : ''}`);
+    }
   }
   console.log('');
 }
@@ -797,6 +811,9 @@ function printTable(plan: QueryPlan, hits: SearchHit[], elapsedMs: number, optio
   }
   if (options.groupLimit && options.groupLimit > 0) {
     console.log(`Group limit: ${options.groupLimit}`);
+  }
+  if (options.showMirrors) {
+    console.log('Show mirrors: enabled');
   }
   if (plan.aliasHints.length > 0) {
     console.log(`Aliases: ${plan.aliasHints.join(', ')}`);
@@ -822,11 +839,14 @@ function printTable(plan: QueryPlan, hits: SearchHit[], elapsedMs: number, optio
     groups[classifyGroup(hit)].push(hit);
   }
 
-  printGroupedSection('Definitions', groups.Definitions);
-  printGroupedSection('Callers', groups.Callers);
-  printGroupedSection('Imports', groups.Imports);
-  printGroupedSection('Tests', groups.Tests);
-  printGroupedSection('Other', groups.Other);
+  const maybeStripMirrors = (items: SearchHit[]): SearchHit[] =>
+    options.showMirrors ? items : items.map((item) => ({ ...item, mirrorFiles: undefined }));
+
+  printGroupedSection('Definitions', maybeStripMirrors(groups.Definitions));
+  printGroupedSection('Callers', maybeStripMirrors(groups.Callers));
+  printGroupedSection('Imports', maybeStripMirrors(groups.Imports));
+  printGroupedSection('Tests', maybeStripMirrors(groups.Tests));
+  printGroupedSection('Other', maybeStripMirrors(groups.Other));
 
   console.log(`\nCompleted in ${elapsedMs.toFixed(2)}ms`);
 }
@@ -858,6 +878,7 @@ async function main(): Promise<void> {
             groupLimit: options.groupLimit || null,
             view: options.view,
             task: options.task,
+            showMirrors: options.showMirrors,
           },
           elapsedMs: Number(elapsedMs.toFixed(2)),
           hits,

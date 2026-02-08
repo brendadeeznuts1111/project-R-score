@@ -27,7 +27,7 @@ function parseProxyHeaders() {
   if (!OUTBOUND_PROXY_HEADERS_JSON) return undefined;
   try {
     return JSON.parse(OUTBOUND_PROXY_HEADERS_JSON) as Record<string, string>;
-  } catch {
+  } catch (err) {
     return undefined;
   }
 }
@@ -77,7 +77,7 @@ export function isPublicHttpUrl(rawUrl: string): boolean {
     if (host.startsWith('10.') || host.startsWith('192.168.') || host.startsWith('169.254.'))
       return false;
     return true;
-  } catch {
+  } catch (err) {
     return false;
   }
 }

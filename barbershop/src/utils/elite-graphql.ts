@@ -194,7 +194,7 @@ export class EliteGraphQLSchema {
           // Try to parse as JSON
           try {
             args[key] = JSON.parse(value);
-          } catch {
+          } catch (err) {
             args[key] = value.replace(/["']/g, '');
           }
         }

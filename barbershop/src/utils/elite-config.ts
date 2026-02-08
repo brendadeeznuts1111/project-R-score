@@ -163,7 +163,7 @@ export class EliteConfigManager<T extends Record<string, ConfigSchema<any>>> {
       const fileConfig = JSON.parse(fileContent);
       sources.push(fileConfig);
       console.log(`[CONFIG] Loaded from ${this.options.path}`);
-    } catch {
+    } catch (err) {
       console.log(`[CONFIG] No file at ${this.options.path}, using defaults/env`);
     }
     

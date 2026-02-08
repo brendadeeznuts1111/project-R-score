@@ -95,6 +95,10 @@ export class UserProfileEngine {
     } catch {
       // Migration failed, but continue - column might already exist
     }
+
+    // Pre-compile frequently used queries AFTER schema is ready
+    this.getProfileStmt = this.db.prepare('SELECT prefs, progress FROM profiles WHERE userId = ?');
+    this.getProgressStmt = this.db.prepare('SELECT score, timestamp FROM progress_log WHERE userId = ? ORDER BY timestamp DESC LIMIT 10');
   }
 
   /**
