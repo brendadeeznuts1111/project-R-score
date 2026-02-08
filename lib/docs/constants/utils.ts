@@ -531,23 +531,25 @@ export const BUN_UTILS_URLS = {
   },
 
   [UtilsCategory.NETWORKING]: {
-    MAIN: '/docs/api/utils#networking',
-    FETCH: '/docs/api/utils#fetch-utility',
-    SERVE: '/docs/api/utils#serve',
-    WEBSOCKET: '/docs/api/utils#websocket',
-    TCP: '/docs/api/utils#tcp',
-    UDP: '/docs/api/utils#udp',
-    DNS: '/docs/api/utils#dns',
+    MAIN: '/docs/runtime/networking',
+    FETCH: '/docs/runtime/networking/fetch#sending-an-http-request',
+    SERVE: '/docs/api/http#bun-serve',
+    WEBSOCKET: '/docs/runtime/http/websockets#reference',
+    TCP: '/docs/runtime/networking/tcp',
+    UDP: '/docs/api/udp',
+    DNS: '/docs/runtime/networking/dns#dns-caching-in-bun',
+    COOKIES: '/docs/runtime/cookies#cookiemap-class',
   },
 
   [UtilsCategory.PROCESS]: {
-    MAIN: '/docs/api/utils#process',
-    SPAWN: '/docs/api/utils#spawn',
-    EXEC: '/docs/api/utils#exec',
-    FORK: '/docs/api/utils#fork',
-    KILL: '/docs/api/utils#kill',
-    PID: '/docs/api/utils#pid',
-    SIGNALS: '/docs/api/utils#signals',
+    MAIN: '/docs/runtime/child-process#benchmarks',
+    SPAWN: '/docs/api/spawn',
+    EXEC: '/docs/api/spawn#blocking-api-bun-spawnSync',
+    FORK: '/docs/api/spawn',
+    KILL: '/docs/api/spawn',
+    PID: '/docs/runtime/child-process#benchmarks',
+    SIGNALS: '/docs/runtime/child-process#benchmarks',
+    ENV_VARS: '/docs/runtime/environment-variables#setting-environment-variables',
   },
 
   [UtilsCategory.VALIDATION]: {
@@ -576,10 +578,10 @@ export const BUN_UTILS_URLS = {
   },
 
   [UtilsCategory.PERFORMANCE]: {
-    MAIN: '/docs/api/performance',
+    MAIN: '/docs/pm/cli/publish#performance',
     GC: '/docs/api/gc',
-    PERFORMANCE_NOW: '/docs/api/performance',
-    MEMORY_USAGE: '/docs/api/performance',
+    PERFORMANCE_NOW: '/docs/pm/cli/publish#performance',
+    MEMORY_USAGE: '/docs/pm/cli/publish#performance',
   },
 
   [UtilsCategory.COLOR]: {
@@ -623,7 +625,7 @@ console.log(isBuffer(buf)); // true`,
 const buffer = toBuffer('Hello'); // Convert string to Buffer`,
   },
 
-  // https://bun.sh/docs/api/http
+  // https://bun.sh/docs/runtime/networking
   NETWORKING: {
     FETCH: `const res = await fetch("https://example.com");
 const text = await res.text();
@@ -666,9 +668,14 @@ console.log(text.length); // response body length`,
 
     DNS: `const records = await Bun.dns.lookup("example.com", { family: 4 });
 console.log(records); // [{ address: "93.184.216.34", family: 4 }]`,
+
+    COOKIES: `const jar = new CookieMap();
+jar.set("session", "abc123", { httpOnly: true, secure: true });
+console.log(jar.get("session")); // "abc123"
+console.log(jar.toHeader()); // "session=abc123; HttpOnly; Secure"`,
   },
 
-  // https://bun.sh/docs/runtime/child-processes
+  // https://bun.sh/docs/runtime/environment-variables#setting-environment-variables
   PROCESS: {
     SPAWN: `const proc = Bun.spawn(["echo", "hello"]);
 const exitCode = await proc.exited;
@@ -695,9 +702,14 @@ console.log("Parent PID:", process.ppid);`,
   console.log("Caught SIGINT, cleaning up...");
   process.exit(0);
 });`,
+
+    ENV_VARS: `// Bun auto-loads .env — no dotenv needed
+console.log("HOME:", process.env.HOME);
+process.env.MY_APP_MODE = "production";
+console.log("Mode:", process.env.MY_APP_MODE); // production`,
   },
 
-  // https://bun.sh/docs/api/utils#performance
+  // https://bun.sh/docs/pm/cli/publish#performance
   PERFORMANCE: {
     GC: `Bun.gc(true); // force garbage collection
 const mem = process.memoryUsage();
