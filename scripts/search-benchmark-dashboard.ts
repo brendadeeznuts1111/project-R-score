@@ -5,6 +5,7 @@ import { existsSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createHmac, createHash } from 'node:crypto';
 import { S3Client } from 'bun';
+import { resolve4, resolveCname } from 'node:dns/promises';
 
 type Options = {
   port: number;
@@ -12,6 +13,7 @@ type Options = {
   r2Base?: string;
   r2Prefix: string;
   cacheTtlMs: number;
+  domain: string;
 };
 
 type CachedResponse = {
@@ -28,6 +30,7 @@ function parseArgs(argv: string[]): Options {
     r2Base: Bun.env.SEARCH_BENCH_R2_PUBLIC_BASE,
     r2Prefix: Bun.env.R2_BENCH_PREFIX || 'reports/search-bench',
     cacheTtlMs: Number.parseInt(Bun.env.SEARCH_BENCH_CACHE_TTL_MS || '8000', 10) || 8000,
+    domain: Bun.env.SEARCH_BENCH_DOMAIN || 'factory-wager.com',
   };
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -56,6 +59,14 @@ function parseArgs(argv: string[]): Options {
     if (arg === '--cache-ttl-ms') {
       const n = Number.parseInt(argv[i + 1] || '', 10);
       if (Number.isFinite(n) && n >= 0) out.cacheTtlMs = n;
+      i += 1;
+      continue;
+    }
+    if (arg === '--domain') {
+      const value = (argv[i + 1] || '').trim().toLowerCase();
+      if (value) {
+        out.domain = value;
+      }
       i += 1;
       continue;
     }
@@ -249,6 +260,13 @@ function htmlShell(options: Options): string {
     };
     const statusBadge = (text) => '<span class="badge ' + statusBadgeClass(text) + '">' + text + '</span>';
     const volatilityBadge = (text) => '<span class="badge ' + volatilityBadgeClass(text) + '">' + text + '</span>';
+    const warningBadgeClass = (code) => {
+      const c = String(code || '').toLowerCase();
+      if (c === 'latency_p95_warn' || c === 'slop_rise_warn') return 'status-warn';
+      if (c === 'quality_drop_warn' || c === 'reliability_drop_warn' || c === 'strict_reliability_floor_warn') return 'status-bad';
+      return 'status-neutral';
+    };
+    const warningBadge = (code) => '<span class="badge ' + warningBadgeClass(code) + '">' + code + '</span>';
     const sparkline = (values) => {
       if (!Array.isArray(values) || values.length === 0) return 'n/a';
       const blocks = Array.from('▁▂▃▄▅▆▇█');
@@ -303,10 +321,12 @@ function htmlShell(options: Options): string {
           const density = uniquePct / Math.max(1, mirrors + 1);
           const noiseRatio = Math.min(100, slopPct + dupPct);
           const reliability = (signalPct * uniquePct) / 100;
+          const p95 = Number(p.latencyP95Ms || 0);
           return '<tr>' +
             '<td>' + (idx + 1) + '</td>' +
             '<td>' + p.profile + '</td>' +
             '<td>' + Number(p.qualityScore || 0).toFixed(2) + '</td>' +
+            '<td>' + p95.toFixed(2) + '</td>' +
             '<td>' + signalPct.toFixed(2) + '</td>' +
             '<td>' + uniquePct.toFixed(2) + '</td>' +
             '<td>' + slopPct.toFixed(2) + '</td>' +
@@ -318,9 +338,9 @@ function htmlShell(options: Options): string {
       ).join('');
       latestEl.innerHTML =
         '<div class="meta">snapshot=' + (data.id || 'n/a') + ' created=' + (data.createdAt || 'n/a') + '</div>' +
-        '<div class="meta">path=' + (data.path || 'n/a') + ' limit=' + (data.limit || 'n/a') + ' queries=' + ((data.queries || []).length || 0) + ' queryPack=' + (data.queryPack || 'core_delivery') + '</div>' +
+        '<div class="meta">path=' + (data.path || 'n/a') + ' limit=' + (data.limit || 'n/a') + ' queries=' + ((data.queries || []).length || 0) + ' queryPack=' + (data.queryPack || 'core_delivery') + ' deltaBasis=' + (data.deltaBasis || 'n/a') + '</div>' +
         '<div class="meta">warnings=' + ((Array.isArray(data.warnings) && data.warnings.length > 0) ? data.warnings.join(', ') : 'none') + '</div>' +
-        '<table><thead><tr><th>Rank</th><th>Profile</th><th>Quality</th><th>Signal%</th><th>Unique%</th><th>Slop%</th><th>Density</th><th>Noise Ratio</th><th>Reliability</th></tr></thead><tbody>' + rows + '</tbody></table>';
+        '<table><thead><tr><th>Rank</th><th>Profile</th><th>Quality</th><th>P95(ms)</th><th>Signal%</th><th>Unique%</th><th>Slop%</th><th>Density</th><th>Noise Ratio</th><th>Reliability</th></tr></thead><tbody>' + rows + '</tbody></table>';
       renderTrend(data, previousSnapshot);
     };
     const renderTrend = (latest, previous) => {
@@ -399,6 +419,7 @@ function htmlShell(options: Options): string {
       const queryCoverageDelta = (currentQueryCoverage !== null && previousQueryCoverage !== null)
         ? Number((currentQueryCoverage - previousQueryCoverage).toFixed(2))
         : null;
+      const hasBaseline = Boolean(previous && latest?.baselineSnapshotId);
 
       const rollingQuality = Array.isArray(lastHistory?.snapshots)
         ? lastHistory.snapshots.slice(0, 5).map(s => Number(s.topScore || 0)).filter(n => Number.isFinite(n))
@@ -427,9 +448,11 @@ function htmlShell(options: Options): string {
       const noiseVol = noiseDelta === null ? 'n/a' : classifyVolatility(Math.abs(noiseDelta), 1, 3);
       const relStatus = deltaStatus(reliabilityDelta, 'family');
       const relVol = reliabilityDelta === null ? 'n/a' : classifyVolatility(Math.abs(reliabilityDelta), 1, 3);
+      const baselineText = hasBaseline ? ('Same-pack ' + latest.baselineSnapshotId) : 'No same-pack baseline';
 
       trendEl.innerHTML =
         '<table><thead><tr><th>Metric</th><th>Current</th><th>Previous</th><th>Delta</th><th>Status</th><th>Volatility</th></tr></thead><tbody>' +
+          '<tr><td>Baseline</td><td colspan="3">' + baselineText + '</td><td>' + statusBadge(hasBaseline ? 'Stable' : 'Neutral') + '</td><td>' + volatilityBadge('Low') + '</td></tr>' +
           '<tr><td>Path</td><td><code>' + currentPath + '</code></td><td><code>' + previousPath + '</code></td><td>-</td><td>' + statusBadge(pathStatus(currentPath, previousPath)) + '</td><td>' + volatilityBadge('Low') + '</td></tr>' +
           '<tr><td>Queries</td><td>' + currentQueries + '</td><td>' + (previousQueries === null ? 'n/a' : previousQueries) + '</td><td>' + (queriesDelta === null ? '-' : queriesDelta) + '</td><td>' + statusBadge(queriesStatus) + '</td><td>' + volatilityBadge(queriesVol) + '</td></tr>' +
           '<tr><td>Top Quality</td><td>' + qualityCurrentText + '</td><td>' + qualityPrevText + '</td><td>' + signedDelta(qualityDelta) + '</td><td>' + statusBadge(qualityStatus) + '</td><td>' + volatilityBadge(qualityVol) + '</td></tr>' +
@@ -478,16 +501,24 @@ function htmlShell(options: Options): string {
       publishEl.innerHTML =
         '<div class="meta">snapshot=' + (data.id || 'n/a') +
         ' queryPack=' + (data.queryPack || 'core_delivery') +
+        ' runClass=' + (data.runClass || 'n/a') +
         ' concurrency=' + (data.concurrency ?? 'n/a') +
+        ' deltaBasis=' + (data.deltaBasis || 'n/a') +
+        ' baseline=' + (data.baselineSnapshotId || 'none') +
         ' uploadedObjects=' + (data.uploadedObjects || 0) +
         ' retries=' + (data.uploadRetries ?? 'n/a') +
         ' gzip=' + (data.gzip ? 'true' : 'false') +
         ' mode=' + (data.mode || 'n/a') +
         ' bucket=' + (data.bucket || 'n/a') +
         '</div>' +
-        '<div class="meta">warnings=' + ((Array.isArray(data.warnings) && data.warnings.length > 0) ? data.warnings.join(', ') : 'none') + '</div>' +
+        '<div class="meta">warnings=' + ((Array.isArray(data.warnings) && data.warnings.length > 0) ? data.warnings.map(warningBadge).join(' ') : 'none') + '</div>' +
         '<div class="meta">delta=' + JSON.stringify(data.delta || {}) + '</div>' +
         '<table><thead><tr><th>Key</th><th>Elapsed (ms)</th><th>Attempts</th></tr></thead><tbody>' + rows + '</tbody></table>';
+    };
+    const findPreviousSamePack = (snapshots, current) => {
+      if (!Array.isArray(snapshots) || !current) return null;
+      const currentPack = current.queryPack || 'core_delivery';
+      return snapshots.find((s) => s.id !== current.id && (s.queryPack || 'core_delivery') === currentPack) || null;
     };
     const renderInventory = (data) => {
       if (!data || !Array.isArray(data.items)) {
@@ -519,9 +550,20 @@ function htmlShell(options: Options): string {
           '<td>' + (item.lastModified || 'n/a') + '</td>' +
         '</tr>'
       ).join('');
+      const subRows = (data.subdomains || []).slice(0, 24).map((item) =>
+        '<tr>' +
+          '<td><code>' + item.subdomain + '</code></td>' +
+          '<td><code>' + item.fullDomain + '</code></td>' +
+          '<td>' + (item.dnsResolved ? 'yes' : 'no') + '</td>' +
+          '<td>' + ((item.dnsRecords || []).slice(0, 2).join(', ') || 'n/a') + '</td>' +
+          '<td>' + (item.dnsSource || 'live') + '</td>' +
+        '</tr>'
+      ).join('');
       domainHealthEl.innerHTML =
         '<div class="meta">domain=' + (data.domain || 'factory-wager.com') + ' knownSubdomains=' + (data.knownSubdomains ?? 'n/a') + ' source=' + (data.source || 'n/a') + '</div>' +
-        '<table><thead><tr><th>Type</th><th>Key</th><th>Exists</th><th>Last Modified</th></tr></thead><tbody>' + latestRows + '</tbody></table>';
+        '<div class="meta">dnsChecked=' + (data.dnsPrefetch?.checked ?? 0) + ' dnsResolved=' + (data.dnsPrefetch?.resolved ?? 0) + ' cacheTtlSec=' + (data.dnsPrefetch?.cacheTtlSec ?? 'n/a') + '</div>' +
+        '<table><thead><tr><th>Type</th><th>Key</th><th>Exists</th><th>Last Modified</th></tr></thead><tbody>' + latestRows + '</tbody></table>' +
+        '<table style="margin-top:10px"><thead><tr><th>Subdomain</th><th>Full Domain</th><th>DNS</th><th>Records</th><th>Source</th></tr></thead><tbody>' + (subRows || '<tr><td colspan="5">No subdomain data.</td></tr>') + '</tbody></table>';
     };
     const renderRss = (xmlText, source) => {
       if (!xmlText || typeof xmlText !== 'string') {
@@ -641,15 +683,15 @@ function htmlShell(options: Options): string {
       const indexRes = await fetch('/api/index?source=' + source);
       const indexData = await indexRes.json();
       lastHistory = indexData;
-      if (indexData && Array.isArray(indexData.snapshots) && indexData.snapshots.length > 1) {
-        const prevId = indexData.snapshots[1].id;
-        const prevRes = await fetch('/api/snapshot?id=' + encodeURIComponent(prevId) + '&source=' + source);
+      const res = await fetch('/api/latest?source=' + source);
+      const data = await res.json();
+      const prevEntry = findPreviousSamePack(indexData?.snapshots, data);
+      if (prevEntry?.id) {
+        const prevRes = await fetch('/api/snapshot?id=' + encodeURIComponent(prevEntry.id) + '&source=' + source);
         previousSnapshot = await prevRes.json();
       } else {
         previousSnapshot = null;
       }
-      const res = await fetch('/api/latest?source=' + source);
-      const data = await res.json();
       renderLatest(data);
       currentLatestId = data?.id || currentLatestId;
       knownLatestId = data?.id || knownLatestId;
@@ -678,15 +720,15 @@ function htmlShell(options: Options): string {
       const localRes = await fetch('/api/index');
       const localData = await localRes.json();
       renderHistory(localData);
-      if (localData && Array.isArray(localData.snapshots) && localData.snapshots.length > 1) {
-        const prevId = localData.snapshots[1].id;
-        const prevRes = await fetch('/api/snapshot?id=' + encodeURIComponent(prevId) + '&source=local');
+      const latestRes = await fetch('/api/latest?source=local');
+      const latestData = await latestRes.json();
+      const prevEntry = findPreviousSamePack(localData?.snapshots, latestData);
+      if (prevEntry?.id) {
+        const prevRes = await fetch('/api/snapshot?id=' + encodeURIComponent(prevEntry.id) + '&source=local');
         previousSnapshot = await prevRes.json();
       } else {
         previousSnapshot = null;
       }
-      const latestRes = await fetch('/api/latest?source=local');
-      const latestData = await latestRes.json();
       renderLatest(latestData);
       currentLatestId = latestData?.id || currentLatestId;
       knownLatestId = latestData?.id || knownLatestId;
@@ -894,6 +936,14 @@ async function main(): Promise<void> {
   const rssXml = resolve(dir, 'rss.xml');
   const responseCache = new Map<string, CachedResponse>();
   const inflight = new Map<string, Promise<CachedResponse>>();
+  const dnsPrefetchTtlMs = 120000;
+  const dnsCache = new Map<string, {
+    expiresAt: number;
+    resolved: boolean;
+    records: string[];
+    source: 'A' | 'CNAME' | 'none';
+    error?: string;
+  }>();
 
   const getCachedRemoteJson = async (cacheKey: string, name: string): Promise<Response> => {
     const now = Date.now();
@@ -1092,15 +1142,99 @@ async function main(): Promise<void> {
     };
   };
 
-  const buildDomainHealthSummary = async (source: 'local' | 'r2') => {
+  const resolveDnsPrefetch = async (host: string): Promise<{
+    resolved: boolean;
+    records: string[];
+    source: 'A' | 'CNAME' | 'none';
+    cacheHit: boolean;
+    error?: string;
+  }> => {
+    const key = host.toLowerCase();
+    const now = Date.now();
+    const cached = dnsCache.get(key);
+    if (cached && cached.expiresAt > now) {
+      return {
+        resolved: cached.resolved,
+        records: cached.records,
+        source: cached.source,
+        error: cached.error,
+        cacheHit: true,
+      };
+    }
+
+    let result: {
+      resolved: boolean;
+      records: string[];
+      source: 'A' | 'CNAME' | 'none';
+      error?: string;
+    };
+
+    try {
+      const aRecords = await resolve4(host);
+      result = {
+        resolved: Array.isArray(aRecords) && aRecords.length > 0,
+        records: (aRecords || []).slice(0, 4),
+        source: 'A',
+      };
+    } catch (aError) {
+      try {
+        const cnameRecords = await resolveCname(host);
+        result = {
+          resolved: Array.isArray(cnameRecords) && cnameRecords.length > 0,
+          records: (cnameRecords || []).slice(0, 4),
+          source: 'CNAME',
+        };
+      } catch (cnameError) {
+        result = {
+          resolved: false,
+          records: [],
+          source: 'none',
+          error: (cnameError instanceof Error ? cnameError.message : (aError instanceof Error ? aError.message : String(aError))),
+        };
+      }
+    }
+
+    dnsCache.set(key, {
+      expiresAt: now + dnsPrefetchTtlMs,
+      resolved: result.resolved,
+      records: result.records,
+      source: result.source,
+      error: result.error,
+    });
+
+    return { ...result, cacheHit: false };
+  };
+
+  const buildDomainHealthSummary = async (source: 'local' | 'r2', domain: string) => {
+    const domainNamespace = domain
+      .replace(/^\*\./, '')
+      .replace(/\.[a-z0-9-]+$/i, '');
     const prefixes = ['health', 'ssl', 'analytics'];
     let knownSubdomains: number | null = null;
     let managerNote: string | null = null;
+    let subdomainConfigs: Array<{
+      subdomain: string;
+      full_domain: string;
+      purpose?: string;
+      health_check_url?: string;
+    }> = [];
     try {
       const mod = await import('../lib/mcp/cloudflare-domain-manager');
       try {
-        const mgr = new mod.CloudflareDomainManager();
-        knownSubdomains = mgr.getAllSubdomains().length;
+        // CloudflareDomainManager currently has a fixed domain map; expose count only for default domain.
+        if (domain === 'factory-wager.com') {
+          const mgr = new mod.CloudflareDomainManager();
+          const all = mgr.getAllSubdomains();
+          knownSubdomains = all.length;
+          subdomainConfigs = all.map((entry) => ({
+            subdomain: entry.subdomain,
+            full_domain: entry.full_domain,
+            purpose: entry.purpose,
+            health_check_url: entry.health_check_url,
+          }));
+        } else {
+          managerNote = 'knownSubdomains unavailable for non-default domain map';
+        }
       } catch (error) {
         managerNote = error instanceof Error ? error.message : String(error);
       }
@@ -1108,15 +1242,39 @@ async function main(): Promise<void> {
       managerNote = error instanceof Error ? error.message : String(error);
     }
 
+    const subdomains = await Promise.all(
+      subdomainConfigs.map(async (entry) => {
+        const dns = await resolveDnsPrefetch(entry.full_domain);
+        return {
+          subdomain: entry.subdomain,
+          fullDomain: entry.full_domain,
+          purpose: entry.purpose || '',
+          healthCheckUrl: entry.health_check_url || null,
+          dnsResolved: dns.resolved,
+          dnsRecords: dns.records,
+          dnsSource: dns.cacheHit ? `cache:${dns.source}` : `prefetch:${dns.source}`,
+          dnsError: dns.error || null,
+        };
+      })
+    );
+    const dnsResolvedCount = subdomains.filter((entry) => entry.dnsResolved).length;
+    const dnsPrefetch = {
+      checked: subdomains.length,
+      resolved: dnsResolvedCount,
+      cacheTtlSec: Math.floor(dnsPrefetchTtlMs / 1000),
+    };
+
     if (source === 'local') {
       return {
         source,
-        domain: 'factory-wager.com',
+        domain,
         knownSubdomains,
         managerNote,
+        dnsPrefetch,
+        subdomains,
         latest: prefixes.map((type) => ({
           type,
-          key: `domains/factory-wager/cloudflare/${type}/YYYY-MM-DD.json`,
+          key: `domains/${domainNamespace}/cloudflare/${type}/YYYY-MM-DD.json`,
           exists: false,
           lastModified: null,
         })),
@@ -1125,10 +1283,10 @@ async function main(): Promise<void> {
 
     const r2 = resolveR2ReadOptions();
     if (!r2) {
-      return { error: 'r2_not_configured_for_domain_health', source, domain: 'factory-wager.com', knownSubdomains, managerNote };
+      return { error: 'r2_not_configured_for_domain_health', source, domain, knownSubdomains, managerNote };
     }
     const latest = await Promise.all(prefixes.map(async (type) => {
-      const prefix = `domains/factory-wager/cloudflare/${type}/`;
+      const prefix = `domains/${domainNamespace}/cloudflare/${type}/`;
       const listed = await S3Client.list(
         { prefix, limit: 1000 },
         {
@@ -1152,9 +1310,11 @@ async function main(): Promise<void> {
     }));
     return {
       source,
-      domain: 'factory-wager.com',
+      domain,
       knownSubdomains,
       managerNote,
+      dnsPrefetch,
+      subdomains,
       latest,
     };
   };
@@ -1231,7 +1391,8 @@ async function main(): Promise<void> {
       }
       if (url.pathname === '/api/domain-health') {
         const source = (url.searchParams.get('source') || 'local') as 'local' | 'r2';
-        const data = await buildDomainHealthSummary(source);
+        const domain = (url.searchParams.get('domain') || options.domain || 'factory-wager.com').trim().toLowerCase();
+        const data = await buildDomainHealthSummary(source, domain);
         return Response.json(data);
       }
       if (url.pathname === '/api/rss') {
@@ -1277,6 +1438,7 @@ async function main(): Promise<void> {
     }
   }
   console.log(ansi(`[search-bench:dashboard] cache-ttl-ms=${options.cacheTtlMs}`, '#a78bfa'));
+  console.log(ansi(`[search-bench:dashboard] domain=${options.domain}`, '#22d3ee'));
 }
 
 await main();
