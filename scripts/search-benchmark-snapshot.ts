@@ -380,6 +380,16 @@ async function main(): Promise<void> {
   const indexPath = resolve(outDir, 'index.json');
   const rssPath = resolve(outDir, 'rss.xml');
   const manifestPath = resolve(snapshotDir, 'publish-manifest.json');
+  const baseManifest = {
+    id,
+    createdAt,
+    gzip: options.gzip,
+    uploadRetries: options.uploadRetries,
+    uploadedObjects: 0,
+    uploads: [] as Array<{ key: string; attempts: number; elapsedMs: number }>,
+    rssKey: null as string | null,
+    mode: options.upload ? 'pending-upload' : 'local-only',
+  };
 
   const snapshotJsonText = JSON.stringify(snapshotData, null, 2);
   await writeFile(snapshotJsonPath, snapshotJsonText);
@@ -415,12 +425,26 @@ async function main(): Promise<void> {
   console.log(`[search-bench:snapshot] wrote ${rssPath}`);
 
   if (!options.upload) {
+    await writeFile(manifestPath, JSON.stringify(baseManifest, null, 2));
+    console.log(`[search-bench:snapshot] wrote ${manifestPath}`);
     console.log('[search-bench:snapshot] upload disabled (--no-upload)');
     return;
   }
 
   const r2 = resolveR2Config(options);
   if (!r2) {
+    await writeFile(
+      manifestPath,
+      JSON.stringify(
+        {
+          ...baseManifest,
+          mode: 'upload-skipped-missing-r2-config',
+        },
+        null,
+        2
+      )
+    );
+    console.log(`[search-bench:snapshot] wrote ${manifestPath}`);
     console.log('[search-bench:snapshot] R2 config missing; skipped upload');
     console.log('[search-bench:snapshot] required: R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY and R2_BUCKET_NAME (or R2_BUCKET), plus R2_ACCOUNT_ID or R2_ENDPOINT');
     return;
@@ -572,6 +596,7 @@ async function main(): Promise<void> {
     uploadedObjects: uploadStats.length,
     uploads: uploadStats.sort((a, b) => a.key.localeCompare(b.key)),
     rssKey,
+    mode: 'uploaded',
   };
   await writeFile(manifestPath, JSON.stringify(manifest, null, 2));
   console.log(`[search-bench:snapshot] wrote ${manifestPath}`);
