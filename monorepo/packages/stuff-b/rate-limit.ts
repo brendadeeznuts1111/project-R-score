@@ -44,8 +44,7 @@ export function resetRateLimits(): void {
   totalBlocked = 0;
 }
 
-// Periodic cleanup of stale IPs every 5 minutes
-setInterval(() => {
+export function cleanupStaleIPs(): void {
   const cutoff = Date.now() - LIMITS.RATE_LIMIT_WINDOW_MS;
   for (const [ip, timestamps] of hits) {
     while (timestamps.length > 0 && timestamps[0] < cutoff) {
@@ -53,4 +52,7 @@ setInterval(() => {
     }
     if (timestamps.length === 0) hits.delete(ip);
   }
-}, 5 * 60_000).unref();
+}
+
+// Periodic cleanup of stale IPs every 5 minutes
+setInterval(cleanupStaleIPs, 5 * 60_000).unref();

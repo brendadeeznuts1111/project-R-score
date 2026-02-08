@@ -1,5 +1,5 @@
-import { test, expect } from 'bun:test';
-import { healthCheck } from './index';
+import { test, expect, afterAll } from 'bun:test';
+import { healthCheck, seedUsers } from './index';
 
 test('healthCheck returns ok:false for unreachable server', async () => {
   const result = await healthCheck('http://localhost:19999');
@@ -152,4 +152,28 @@ test('usage includes --yes', async () => {
   const output = await new Response(proc.stdout).text();
   await proc.exited;
   expect(output).toContain('--yes');
+});
+
+// ── seedUsers coverage ──
+
+const seedPort = 13579;
+const seedServer = Bun.serve({
+  port: seedPort,
+  routes: {
+    '/users/bulk': {
+      POST: async (req) => {
+        const body = await req.json();
+        return Response.json({ created: Array.isArray(body) ? body.length : 0, errors: 0 });
+      },
+    },
+  },
+});
+
+afterAll(() => seedServer.stop());
+
+test('seedUsers sends users to server', async () => {
+  const result = await seedUsers(`http://localhost:${seedPort}`, 3);
+  expect(result.created).toBe(3);
+  expect(result.errors).toBe(0);
+  expect(result.durationMs).toBeGreaterThan(0);
 });

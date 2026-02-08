@@ -1,7 +1,7 @@
 import { test, expect, afterAll } from 'bun:test';
 import { createUserService, bulkValidate } from './index';
 import { createDB } from './db';
-import { withCors, corsPreflightResponse, withTiming, getRequestLogs, withRateLimit } from './middleware';
+import { withCors, corsPreflightResponse, withTiming, getRequestLogs, withRateLimit, checkAuth, hashToken } from './middleware';
 import { getRateLimitMetrics } from './rate-limit';
 import { Errors, errorResponse } from 'stuff-a/errors';
 import { parseQuery } from 'stuff-a/query';
@@ -442,4 +442,24 @@ test('DELETE 404 returns structured error code', async () => {
 test('invalid role query param returns 400', async () => {
   const res = await fetch(`${BASE}${ROUTES.USERS}?role=superadmin`);
   expect(res.status).toBe(400);
+});
+
+// ── Middleware unit tests for coverage ──
+
+test('checkAuth returns true when no API_TOKEN configured', async () => {
+  const req = new Request('http://localhost/');
+  const result = await checkAuth(req);
+  expect(result).toBe(true);
+});
+
+test('hashToken produces a bcrypt hash', async () => {
+  const hash = await hashToken('test-secret');
+  expect(hash).toMatch(/^\$2/);
+  expect(await Bun.password.verify('test-secret', hash)).toBe(true);
+});
+
+test('withRateLimit returns null when under limit', () => {
+  const req = new Request('http://localhost/', { headers: { 'x-forwarded-for': '192.168.99.99' } });
+  const result = withRateLimit(req);
+  expect(result).toBeNull();
 });

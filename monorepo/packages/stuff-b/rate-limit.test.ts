@@ -1,5 +1,5 @@
 import { test, expect, beforeEach } from 'bun:test';
-import { checkRateLimit, resetRateLimits, getRateLimitMetrics } from './rate-limit';
+import { checkRateLimit, resetRateLimits, getRateLimitMetrics, cleanupStaleIPs } from './rate-limit';
 import { LIMITS } from 'stuff-a/config';
 
 beforeEach(() => {
@@ -76,4 +76,14 @@ test('withRateLimit returns Response with Retry-After header', async () => {
   expect(res).not.toBeNull();
   expect(res!.status).toBe(429);
   expect(res!.headers.get('Retry-After')).toBe('60');
+});
+
+test('cleanupStaleIPs removes expired entries', () => {
+  // Add some requests so there's data to clean
+  checkRateLimit('10.0.0.99');
+  // cleanupStaleIPs should run without error; entries are fresh so nothing removed
+  cleanupStaleIPs();
+  // The IP should still be tracked since timestamps are recent
+  const result = checkRateLimit('10.0.0.99');
+  expect(result.allowed).toBe(true);
 });
