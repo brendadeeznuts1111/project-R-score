@@ -555,10 +555,15 @@ async function runWebSocketBenchmarks(): Promise<WebSocketBenchmarkResult[]> {
     // Import WebSocket benchmark module
     const { runWebSocketBenchmarks: runWSBenchmarks } = await import('./websocket/benchmark.ts');
     
-    // Get WebSocket URL from config or use default
-    const wsUrl = serverConfig.server?.websocket_url || `ws://${serverConfig.server?.hostname || 'localhost'}:${serverConfig.server?.port || 3008}/ws`;
+    // Get WebSocket URL from config, environment variable, or construct from server config
+    // Priority: config.toml > environment variable > constructed from server settings
+    const wsUrl = serverConfig.server?.websocket_url 
+      || process.env.WEBSOCKET_BENCHMARK_URL
+      || `ws://${serverConfig.server?.hostname || 'localhost'}:${serverConfig.server?.port || 3008}/ws`;
     
-    // Run WebSocket benchmarks
+    logger.info(`🔌 Running WebSocket benchmarks against: ${wsUrl}`);
+    
+    // Run WebSocket benchmarks (will use wsUrl or fall back to default)
     const wsResults = await runWSBenchmarks(wsUrl);
     results.push(...wsResults);
   } catch (error) {
@@ -569,7 +574,7 @@ async function runWebSocketBenchmarks(): Promise<WebSocketBenchmarkResult[]> {
       time: 0,
       target: 0,
       status: 'fail',
-      note: `❌ Error: ${error instanceof Error ? error.message : String(error)}`,
+      note: `❌ Error: ${error instanceof Error ? error.message : String(error)}. Ensure WebSocket server is running at configured URL.`,
       category: 'websocket',
     });
   }

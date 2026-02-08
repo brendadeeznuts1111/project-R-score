@@ -427,10 +427,27 @@ export async function benchmarkConcurrentConnections(
 
 /**
  * Run all WebSocket benchmarks
+ * 
+ * @param wsUrl - WebSocket server URL (defaults to ws://localhost:3008/ws)
+ *                Can be overridden via WEBSOCKET_BENCHMARK_URL environment variable
+ * 
+ * @example
+ * ```typescript
+ * // Use default URL
+ * const results = await runWebSocketBenchmarks();
+ * 
+ * // Use custom URL
+ * const results = await runWebSocketBenchmarks('ws://example.com:8080/ws');
+ * 
+ * // Use environment variable
+ * // WEBSOCKET_BENCHMARK_URL=ws://example.com:8080/ws bun run benchmark
+ * ```
  */
 export async function runWebSocketBenchmarks(
-  wsUrl: string = 'ws://localhost:3008/ws'
+  wsUrl?: string
 ): Promise<WebSocketBenchmarkResult[]> {
+  // Get URL from parameter, environment variable, or default
+  const url = wsUrl || process.env.WEBSOCKET_BENCHMARK_URL || 'ws://localhost:3008/ws';
   const results: WebSocketBenchmarkResult[] = [];
 
   logger.info('🔌 Starting WebSocket benchmarks...');

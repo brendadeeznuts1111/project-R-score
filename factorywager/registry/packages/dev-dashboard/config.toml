@@ -4,6 +4,8 @@
 port = 3008
 hostname = "0.0.0.0"
 auto_refresh_interval = 5
+# Optional: Override WebSocket URL for benchmarks
+# websocket_url = "ws://localhost:3008/ws"  # Defaults to ws://{hostname}:{port}/ws
 
 [dashboard]
 title = "FactoryWager Dev Dashboard"
@@ -30,6 +32,7 @@ progress_bars = true
 category_badges = true
 insights = true
 isolated_benchmarks = true  # Run benchmarks in isolated subprocesses for production monitoring
+websocket_benchmarks = true  # Enable WebSocket performance benchmarks (requires running server)
 
 [benchmarks]
 enabled = true
@@ -49,6 +52,8 @@ group_by_category = true
 enabled = true
 path = "/ws"
 compression = true
+# Optional: Override WebSocket URL for benchmarks (set in [server] section)
+# server.websocket_url = "ws://localhost:3008/ws"  # Defaults to ws://{hostname}:{port}/ws
 
 [history]
 enabled = true
