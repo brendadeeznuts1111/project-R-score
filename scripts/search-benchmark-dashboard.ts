@@ -167,7 +167,7 @@ function htmlShell(options: Options): string {
   <main>
     <div class="card">
       <h1>Search Benchmark Dashboard</h1>
-      <div class="meta">Local reports + optional R2: <code>${r2Label}</code><span id="rssBadge" class="badge status-neutral rss-badge">RSS idle</span></div>
+      <div class="meta">Local reports + optional R2: <code>${r2Label}</code><span id="strictP95Badge" class="badge status-neutral rss-badge">Strict p95 n/a</span><span id="rssBadge" class="badge status-neutral rss-badge">RSS idle</span></div>
       <div id="reportNotice" class="meta" style="margin-top:6px"></div>
       <div class="buttons">
         <button id="loadLocal">Load Local Latest</button>
@@ -213,6 +213,7 @@ function htmlShell(options: Options): string {
     const domainHealthEl = document.getElementById('domainHealth');
     const rssEl = document.getElementById('rss');
     const rssBadgeEl = document.getElementById('rssBadge');
+    const strictP95BadgeEl = document.getElementById('strictP95Badge');
     const reportNoticeEl = document.getElementById('reportNotice');
     let lastHistory = null;
     let previousSnapshot = null;
@@ -267,6 +268,25 @@ function htmlShell(options: Options): string {
       return 'status-neutral';
     };
     const warningBadge = (code) => '<span class="badge ' + warningBadgeClass(code) + '">' + code + '</span>';
+    const asNumOrNull = (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    };
+    const profileByName = (snapshot, name) => {
+      if (!snapshot || !Array.isArray(snapshot.rankedProfiles)) return null;
+      return snapshot.rankedProfiles.find((p) => String(p.profile || '').toLowerCase() === String(name || '').toLowerCase()) || null;
+    };
+    const setStrictP95Badge = (latest) => {
+      if (!strictP95BadgeEl) return;
+      const strict = profileByName(latest, 'strict');
+      const p95 = asNumOrNull(strict?.latencyP95Ms);
+      const warnings = Array.isArray(latest?.warnings) ? latest.warnings : [];
+      const hasWarn = warnings.includes('latency_p95_warn');
+      const cls = hasWarn ? 'status-bad' : (p95 === null ? 'status-neutral' : 'status-good');
+      const valueText = p95 === null ? 'n/a' : p95.toFixed(0) + 'ms';
+      strictP95BadgeEl.className = 'badge rss-badge ' + cls;
+      strictP95BadgeEl.textContent = hasWarn ? ('Strict p95 warn ' + valueText) : ('Strict p95 ' + valueText);
+    };
     const sparkline = (values) => {
       if (!Array.isArray(values) || values.length === 0) return 'n/a';
       const blocks = Array.from('▁▂▃▄▅▆▇█');
@@ -341,6 +361,7 @@ function htmlShell(options: Options): string {
         '<div class="meta">path=' + (data.path || 'n/a') + ' limit=' + (data.limit || 'n/a') + ' queries=' + ((data.queries || []).length || 0) + ' queryPack=' + (data.queryPack || 'core_delivery') + ' deltaBasis=' + (data.deltaBasis || 'n/a') + '</div>' +
         '<div class="meta">warnings=' + ((Array.isArray(data.warnings) && data.warnings.length > 0) ? data.warnings.join(', ') : 'none') + '</div>' +
         '<table><thead><tr><th>Rank</th><th>Profile</th><th>Quality</th><th>P95(ms)</th><th>Signal%</th><th>Unique%</th><th>Slop%</th><th>Density</th><th>Noise Ratio</th><th>Reliability</th></tr></thead><tbody>' + rows + '</tbody></table>';
+      setStrictP95Badge(data);
       renderTrend(data, previousSnapshot);
     };
     const renderTrend = (latest, previous) => {
@@ -348,13 +369,20 @@ function htmlShell(options: Options): string {
         trendEl.innerHTML = '<pre>No trend data.</pre>';
         return;
       }
+      const latestPack = latest.queryPack || 'core_delivery';
+      const previousPack = previous?.queryPack || null;
+      const baselineId = latest?.baselineSnapshotId || null;
+      const samePack = Boolean(previous && previousPack === latestPack);
+      const baselineMatch = baselineId ? previous?.id === baselineId : samePack;
+      const validBaseline = Boolean(previous && samePack && baselineMatch);
+      const scopedPrevious = validBaseline ? previous : null;
       const currentTop = topProfile(latest);
-      const previousTop = topProfile(previous);
+      const previousTop = topProfile(scopedPrevious);
       const currentPath = latest.path || 'n/a';
-      const previousPath = previous?.path || 'n/a';
+      const previousPath = scopedPrevious?.path || 'n/a';
 
       const currentQueries = Array.isArray(latest.queries) ? latest.queries.length : 0;
-      const previousQueries = Array.isArray(previous?.queries) ? previous.queries.length : null;
+      const previousQueries = Array.isArray(scopedPrevious?.queries) ? scopedPrevious.queries.length : null;
       const queriesDelta = previousQueries === null ? null : currentQueries - previousQueries;
 
       const currentQuality = currentTop ? Number(currentTop.qualityScore || 0) : null;
@@ -374,7 +402,7 @@ function htmlShell(options: Options): string {
           : null);
 
       const currentSlop = Number(avgSlopAcrossProfiles(latest).toFixed(2));
-      const previousSlopRaw = previous ? avgSlopAcrossProfiles(previous) : null;
+      const previousSlopRaw = scopedPrevious ? avgSlopAcrossProfiles(scopedPrevious) : null;
       const previousSlop = previousSlopRaw === null ? null : Number(previousSlopRaw.toFixed(2));
       const slopDelta = Number.isFinite(Number(latest?.delta?.avgSlop))
         ? Number(latest.delta.avgSlop)
@@ -419,7 +447,14 @@ function htmlShell(options: Options): string {
       const queryCoverageDelta = (currentQueryCoverage !== null && previousQueryCoverage !== null)
         ? Number((currentQueryCoverage - previousQueryCoverage).toFixed(2))
         : null;
-      const hasBaseline = Boolean(previous && latest?.baselineSnapshotId);
+      const strictCurrent = profileByName(latest, 'strict');
+      const strictPrevious = profileByName(scopedPrevious, 'strict');
+      const strictP95Current = asNumOrNull(strictCurrent?.latencyP95Ms);
+      const strictP95Previous = asNumOrNull(strictPrevious?.latencyP95Ms);
+      const strictP95Delta = (strictP95Current !== null && strictP95Previous !== null)
+        ? Number((strictP95Current - strictP95Previous).toFixed(2))
+        : null;
+      const hasBaseline = Boolean(validBaseline);
 
       const rollingQuality = Array.isArray(lastHistory?.snapshots)
         ? lastHistory.snapshots.slice(0, 5).map(s => Number(s.topScore || 0)).filter(n => Number.isFinite(n))
@@ -433,6 +468,7 @@ function htmlShell(options: Options): string {
       const [relCurrentText, relPrevText] = formatCurrentPrev(currentReliability, previousReliability);
       const [noiseCurrentText, noisePrevText] = formatCurrentPrev(currentNoise, previousNoise, '%');
       const [qcovCurrentText, qcovPrevText] = formatCurrentPrev(currentQueryCoverage, previousQueryCoverage, '%');
+      const [strictP95CurrentText, strictP95PrevText] = formatCurrentPrev(strictP95Current, strictP95Previous, 'ms');
 
       const queriesStatus = queriesDelta === null ? 'n/a' : (queriesDelta === 0 ? 'Static' : 'Changed');
       const queriesVol = queriesDelta === null ? 'n/a' : classifyVolatility(Math.abs(queriesDelta), 1, 3);
@@ -448,14 +484,48 @@ function htmlShell(options: Options): string {
       const noiseVol = noiseDelta === null ? 'n/a' : classifyVolatility(Math.abs(noiseDelta), 1, 3);
       const relStatus = deltaStatus(reliabilityDelta, 'family');
       const relVol = reliabilityDelta === null ? 'n/a' : classifyVolatility(Math.abs(reliabilityDelta), 1, 3);
-      const baselineText = hasBaseline ? ('Same-pack ' + latest.baselineSnapshotId) : 'No same-pack baseline';
+      const strictP95Status = strictP95Delta === null ? 'n/a' : (strictP95Delta <= 0 ? 'Improving' : 'Rising');
+      const strictP95Vol = strictP95Delta === null ? 'n/a' : classifyVolatility(Math.abs(strictP95Delta), 100, 400);
+      const baselineText = hasBaseline
+        ? ('Same-pack ' + (baselineId || 'n/a'))
+        : ('No same-pack baseline' + (previous && !samePack ? ' (pack mismatch)' : (previous && !baselineMatch ? ' (baseline mismatch)' : '')));
+      const coreLoopSummary = [
+        'Q ' + signedDelta(qualityDelta),
+        'R ' + signedDelta(reliabilityDelta),
+        'P95 ' + signedDelta(strictP95Delta, 'ms'),
+        'S ' + signedDelta(slopDelta, '%'),
+      ].join(' | ');
+      const coreLoopWarnings = Array.isArray(latest?.warnings)
+        ? latest.warnings.filter((code) =>
+            code === 'latency_p95_warn' ||
+            code === 'quality_drop_warn' ||
+            code === 'reliability_drop_warn' ||
+            code === 'slop_rise_warn' ||
+            code === 'strict_reliability_floor_warn'
+          )
+        : [];
+      const coreLoopStatus = coreLoopWarnings.length > 0 ? 'Changed' : (hasBaseline ? 'Stable' : 'Neutral');
+      const coreLoopVol = hasBaseline
+        ? classifyVolatility(
+            Math.max(
+              Math.abs(qualityDelta || 0),
+              Math.abs(reliabilityDelta || 0),
+              Math.abs(slopDelta || 0),
+              Math.abs(strictP95Delta || 0) / 100
+            ),
+            1,
+            3
+          )
+        : 'Low';
 
       trendEl.innerHTML =
         '<table><thead><tr><th>Metric</th><th>Current</th><th>Previous</th><th>Delta</th><th>Status</th><th>Volatility</th></tr></thead><tbody>' +
           '<tr><td>Baseline</td><td colspan="3">' + baselineText + '</td><td>' + statusBadge(hasBaseline ? 'Stable' : 'Neutral') + '</td><td>' + volatilityBadge('Low') + '</td></tr>' +
+          '<tr><td>Core Loop</td><td colspan="3">' + coreLoopSummary + (coreLoopWarnings.length ? (' | ' + coreLoopWarnings.map(warningBadge).join(' ')) : '') + '</td><td>' + statusBadge(coreLoopStatus) + '</td><td>' + volatilityBadge(coreLoopVol) + '</td></tr>' +
           '<tr><td>Path</td><td><code>' + currentPath + '</code></td><td><code>' + previousPath + '</code></td><td>-</td><td>' + statusBadge(pathStatus(currentPath, previousPath)) + '</td><td>' + volatilityBadge('Low') + '</td></tr>' +
           '<tr><td>Queries</td><td>' + currentQueries + '</td><td>' + (previousQueries === null ? 'n/a' : previousQueries) + '</td><td>' + (queriesDelta === null ? '-' : queriesDelta) + '</td><td>' + statusBadge(queriesStatus) + '</td><td>' + volatilityBadge(queriesVol) + '</td></tr>' +
           '<tr><td>Top Quality</td><td>' + qualityCurrentText + '</td><td>' + qualityPrevText + '</td><td>' + signedDelta(qualityDelta) + '</td><td>' + statusBadge(qualityStatus) + '</td><td>' + volatilityBadge(qualityVol) + '</td></tr>' +
+          '<tr><td>Strict p95</td><td>' + strictP95CurrentText + '</td><td>' + strictP95PrevText + '</td><td>' + signedDelta(strictP95Delta, 'ms') + '</td><td>' + statusBadge(strictP95Status) + '</td><td>' + volatilityBadge(strictP95Vol) + '</td></tr>' +
           '<tr><td>Top Quality (10)</td><td><span class="sparkline">' + qualitySpark + '</span></td><td colspan="2">latest ' + qualityCurrentText + '</td><td>' + statusBadge(qualityStatus) + '</td><td>' + volatilityBadge(classifyStdVolatility(qualityStdev)) + '</td></tr>' +
           '<tr><td>Family Cov.</td><td>' + familyCurrentText + '</td><td>' + familyPrevText + '</td><td>' + signedDelta(familyDelta, '%') + '</td><td>' + statusBadge(familyStatus) + '</td><td>' + volatilityBadge(familyVol) + '</td></tr>' +
           '<tr><td>Slop Avg.</td><td>' + slopCurrentText + '</td><td>' + slopPrevText + '</td><td>' + signedDelta(slopDelta, '%') + '</td><td>' + statusBadge(slopStatus) + '</td><td>' + volatilityBadge(slopVol) + '</td></tr>' +
@@ -518,6 +588,11 @@ function htmlShell(options: Options): string {
     const findPreviousSamePack = (snapshots, current) => {
       if (!Array.isArray(snapshots) || !current) return null;
       const currentPack = current.queryPack || 'core_delivery';
+      const baselineId = current.baselineSnapshotId || null;
+      if (baselineId) {
+        const byBaseline = snapshots.find((s) => s.id === baselineId && (s.queryPack || 'core_delivery') === currentPack);
+        if (byBaseline) return byBaseline;
+      }
       return snapshots.find((s) => s.id !== current.id && (s.queryPack || 'core_delivery') === currentPack) || null;
     };
     const renderInventory = (data) => {
