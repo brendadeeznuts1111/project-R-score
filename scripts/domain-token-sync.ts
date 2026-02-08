@@ -18,6 +18,22 @@ type DomainRegistry = {
   }>;
 };
 
+type SyncResult = {
+  registryPath: string;
+  domainTokenVarCount: number;
+  domainTokenVars: number;
+  tokenPreview: string;
+  applyBunSecrets: boolean;
+  applyBunSecretsEnabled: boolean;
+  appliedSuccess: number;
+  appliedFailed: number;
+  failures: Array<{ key: string; ok: boolean; detail: string }>;
+  commands: {
+    bunSecretsSet: string[];
+    wranglerSecretPut: string[];
+  };
+};
+
 function parseArgs(argv: string[]): Options {
   const out: Options = {
     registryPath: '.search/domain-registry.json',
@@ -58,6 +74,17 @@ function normalizeText(value: unknown): string {
   return String(value || '').trim();
 }
 
+function isPlaceholderToken(value: string): boolean {
+  const normalized = normalizeText(value).toLowerCase();
+  if (!normalized) return true;
+  return (
+    normalized === 'replace_me' ||
+    normalized === 'changeme' ||
+    normalized === 'your_token_here' ||
+    normalized === 'your-token-here'
+  );
+}
+
 function readTokenEnvVars(payload: DomainRegistry): string[] {
   const vars = new Set<string>();
   for (const row of payload.domains || []) {
@@ -70,6 +97,40 @@ function readTokenEnvVars(payload: DomainRegistry): string[] {
 function maskToken(token: string): string {
   if (token.length < 8) return '***';
   return `${token.slice(0, 4)}...${token.slice(-4)}`;
+}
+
+function printStructuredError(
+  code: string,
+  message: string,
+  options: Options,
+  extra: Record<string, unknown> = {}
+): never {
+  const payload = {
+    ok: false,
+    code,
+    message,
+    ...extra,
+  };
+  if (options.json) {
+    console.log(JSON.stringify(payload, null, 2));
+  } else {
+    console.error(`[domain-token-sync] ${code}: ${message}`);
+    if (extra.hint) {
+      console.error(`Hint: ${String(extra.hint)}`);
+    }
+  }
+  switch (code) {
+    case 'missing_token':
+      process.exit(2);
+    case 'placeholder_token':
+      process.exit(3);
+    case 'missing_token_env_vars':
+      process.exit(4);
+    case 'bun_secrets_unavailable':
+      process.exit(5);
+    default:
+      process.exit(1);
+  }
 }
 
 function runBunSecretsSet(key: string, token: string): { ok: boolean; detail: string } {
@@ -94,8 +155,39 @@ async function main(): Promise<void> {
   const token = normalizeText(options.token || Bun.env.FACTORY_WAGER_TOKEN);
 
   if (!token) {
-    console.error('[domain-token-sync] missing token: pass --token or set FACTORY_WAGER_TOKEN');
-    process.exit(2);
+    printStructuredError(
+      'missing_token',
+      'No token provided.',
+      options,
+      { hint: 'Pass --token <value> or set FACTORY_WAGER_TOKEN.' }
+    );
+  }
+  if (isPlaceholderToken(token)) {
+    printStructuredError(
+      'placeholder_token',
+      'Token is placeholder and cannot be applied.',
+      options,
+      { hint: 'Set FACTORY_WAGER_TOKEN to a real secret before applying.' }
+    );
+  }
+  if (tokenEnvVars.length === 0) {
+    printStructuredError(
+      'missing_token_env_vars',
+      'No token environment variables found in registry.',
+      options,
+      {
+        registryPath,
+        hint: 'Ensure .search/domain-registry.json has tokenEnvVar for each domain entry.',
+      }
+    );
+  }
+  if (options.applyBunSecrets && !Bun.which('bun')) {
+    printStructuredError(
+      'bun_secrets_unavailable',
+      'Bun executable is unavailable in PATH.',
+      options,
+      { hint: 'Install Bun or run from an environment where `bun` is available.' }
+    );
   }
 
   const bunCommands = tokenEnvVars.map((key) => `bun secrets set ${key} <token>`);
@@ -106,11 +198,13 @@ async function main(): Promise<void> {
     : [];
   const appliedFailures = applied.filter((row) => !row.ok);
 
-  const result = {
+  const result: SyncResult = {
     registryPath,
+    domainTokenVarCount: tokenEnvVars.length,
     domainTokenVars: tokenEnvVars.length,
     tokenPreview: maskToken(token),
     applyBunSecrets: options.applyBunSecrets,
+    applyBunSecretsEnabled: options.applyBunSecrets,
     appliedSuccess: applied.filter((row) => row.ok).length,
     appliedFailed: appliedFailures.length,
     failures: appliedFailures,

@@ -1,0 +1,27 @@
+# FactoryWager robots policy for Cloudflare AI Search crawler
+
+# Default policy
+User-agent: *
+Allow: /
+Disallow: /private/
+Disallow: /internal/
+Disallow: /tmp/
+
+# Cloudflare AI Search crawler
+User-agent: Cloudflare-AutoRAG
+Allow: /
+Disallow: /private/
+Disallow: /internal/
+Disallow: /tmp/
+
+# Optional: narrow crawl to canonical docs/content paths only
+# User-agent: Cloudflare-AutoRAG
+# Allow: /
+# Allow: /docs/
+# Allow: /wiki/
+# Disallow: /api/
+# Disallow: /admin/
+
+# Sitemaps advertised for crawler discovery
+Sitemap: https://wiki.factory-wager.com/sitemap.xml
+Sitemap: https://wiki.factory-wager.com/sitemap-pages.xml

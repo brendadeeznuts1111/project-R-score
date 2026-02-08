@@ -1804,6 +1804,7 @@
     "docs:fetch": "bun run lib/registry/package-docs.ts",
     "docs:sync": "bun run lib/registry/docs-sync.ts",
     "docs:rss": "bun run lib/registry/rss-aggregator.ts",
+    "sitemap:refresh": "bun run scripts/sitemap-refresh.ts",
     "cheatsheet": "bun run scripts/cheatsheet.js",
     "cheatsheet:search": "bun run scripts/cheatsheet.js search",
     "cheatsheet:tip": "bun run scripts/cheatsheet.js tip",
