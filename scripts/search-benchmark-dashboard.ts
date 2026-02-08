@@ -59,6 +59,7 @@ type CookieTelemetryInput = {
   dnsCookieChecked: number | null;
   dnsCookieResolved: number | null;
   dnsCookieRatio: number | null;
+  cookieUnresolved: string[];
 };
 
 function parseArgs(argv: string[]): Options {
@@ -964,6 +965,11 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       const cookieScoreValue = Number(data.health?.cookie?.cookieScore);
       const cookieHexBadge = String(data.health?.cookie?.hexBadge || '#666666');
       const cookieUnicodeBar = String(data.health?.cookie?.unicodeBar || '░░░░░░░░░░').normalize('NFC');
+      const cookieUnresolvedSet = new Set(
+        Array.isArray(data.health?.cookie?.unresolved)
+          ? data.health.cookie.unresolved.map((v) => String(v || '').trim().toLowerCase())
+          : []
+      );
       const cookieStatusText =
         'Cookie DNS ' +
         (Number.isFinite(cookieResolved) ? cookieResolved : 'n/a') +
@@ -987,14 +993,28 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         '</tr>'
       ).join('');
       const subRows = (data.subdomains || []).slice(0, 24).map((item) =>
+      {
+        const fullDomain = String(item.fullDomain || '').trim().toLowerCase();
+        const cookieSymbol = !data.health?.cookie?.enabled
+          ? '⚪'
+          : cookieUnresolvedSet.has(fullDomain)
+            ? '🍪⚠️'
+            : data.health?.cookie?.status === 'critical'
+              ? '🍪🔴'
+              : data.health?.cookie?.status === 'degraded'
+                ? '🍪🟡'
+                : '🍪🟢';
+        return (
         '<tr>' +
           '<td><code>' + item.subdomain + '</code></td>' +
           '<td><code>' + item.fullDomain + '</code></td>' +
           '<td>' + healthBadge(item.dnsResolved ? 1 : 0, item.dnsResolved ? '✓ resolved' : '✗ unresolved') + '</td>' +
           '<td>' + ((item.dnsRecords || []).slice(0, 2).join(', ') || 'n/a') + '</td>' +
           '<td>' + (item.dnsSource || 'live') + '</td>' +
+          '<td>' + cookieSymbol + '</td>' +
         '</tr>'
-      ).join('');
+      );
+      }).join('');
       domainHealthEl.innerHTML =
         '<div class="meta">domain=' + (data.domain || 'factory-wager.com') + ' zone=' + (data.zone || 'n/a') + ' account=' + (data.accountId || 'n/a') + ' knownSubdomains=' + (data.knownSubdomains ?? 'n/a') + ' source=' + sourceBadge(data.source || 'n/a') + '</div>' +
         '<div class="meta">' +
@@ -1010,7 +1030,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         '<div class="meta">dnsChecked=' + (data.dnsPrefetch?.checked ?? 0) + ' dnsResolved=' + (data.dnsPrefetch?.resolved ?? 0) + ' cacheTtlSec=' + (data.dnsPrefetch?.cacheTtlSec ?? 'n/a') + '</div>' +
         '<div class="meta">cookieTelemetry=' + (data.health?.cookie?.detail || 'n/a') + ' domainMatch=' + (data.health?.cookie?.domainMatchesRequested ?? 'n/a') + ' cookieScore=' + (Number.isFinite(cookieScoreValue) ? cookieScoreValue : 'n/a') + ' hex=' + cookieHexBadge + ' bar=' + cookieUnicodeBar + ' <span class="badge" style="background:' + cookieHexBadge + ';border-color:' + cookieHexBadge + ';color:#0b0d12">■</span></div>' +
         '<table><thead><tr><th>Type</th><th>Key</th><th>Exists</th><th>Last Modified</th></tr></thead><tbody>' + latestRows + '</tbody></table>' +
-        '<table style="margin-top:10px"><thead><tr><th>Subdomain</th><th>Full Domain</th><th>DNS</th><th>Records</th><th>Source</th></tr></thead><tbody>' + (subRows || '<tr><td colspan="5">No subdomain data.</td></tr>') + '</tbody></table>';
+        '<table style="margin-top:10px"><thead><tr><th>Subdomain</th><th>Full Domain</th><th>DNS</th><th>Records</th><th>Source</th><th>Cookie</th></tr></thead><tbody>' + (subRows || '<tr><td colspan="6">No subdomain data.</td></tr>') + '</tbody></table>';
     };
     const renderRss = (xmlText, source, meta) => {
       if (!xmlText || typeof xmlText !== 'string') {
@@ -1805,6 +1825,7 @@ async function main(): Promise<void> {
         domainMatchesRequested: null,
         syncDelta: null,
         detail: 'cookies disabled',
+        unresolved: [],
       };
     }
     const ratio = telemetry.dnsCookieRatio;
@@ -1824,6 +1845,7 @@ async function main(): Promise<void> {
         domainMatchesRequested: domainMatches,
         syncDelta: null,
         detail: `missing cookie telemetry for ${domain}`,
+        unresolved: telemetry.cookieUnresolved,
       };
     }
     if (!parsedDnsCookie || !parsedDomainCookie) {
@@ -1837,6 +1859,7 @@ async function main(): Promise<void> {
         domainMatchesRequested: domainMatches,
         syncDelta: null,
         detail: 'cookie telemetry parse failed',
+        unresolved: telemetry.cookieUnresolved,
       };
     }
     if (typeof ratio !== 'number' || !Number.isFinite(ratio)) {
@@ -1850,6 +1873,7 @@ async function main(): Promise<void> {
         domainMatchesRequested: domainMatches,
         syncDelta: null,
         detail: 'cookie dns ratio unavailable',
+        unresolved: telemetry.cookieUnresolved,
       };
     }
     const normalizedRatio = clamp01(ratio);
@@ -1875,6 +1899,7 @@ async function main(): Promise<void> {
         : syncDelta <= 0.05
           ? 'dns cookie synced'
           : 'dns cookie drift detected',
+      unresolved: telemetry.cookieUnresolved,
     };
   };
 
@@ -2051,6 +2076,7 @@ async function main(): Promise<void> {
             thresholds: { healthyEquals: 1.0, criticalBelow: 1.0 },
           },
           cookie: {
+            enabled: cookieHealth.enabled,
             status: cookieHealth.status,
             score: cookieHealth.score,
             cookieScore: cookieHealth.cookieScore,
@@ -2058,6 +2084,7 @@ async function main(): Promise<void> {
             rgb: cookieHealth.rgb,
             ansiBg: cookieHealth.ansiBg,
             unicodeBar: cookieHealth.unicodeBar,
+            unresolved: cookieHealth.unresolved,
             ratio: cookieHealth.ratio,
             checked: cookieHealth.checked,
             resolved: cookieHealth.resolved,
@@ -2162,6 +2189,7 @@ async function main(): Promise<void> {
           thresholds: { healthyEquals: 1.0, criticalBelow: 1.0 },
         },
         cookie: {
+          enabled: cookieHealth.enabled,
           status: cookieHealth.status,
           score: cookieHealth.score,
           cookieScore: cookieHealth.cookieScore,
@@ -2169,6 +2197,7 @@ async function main(): Promise<void> {
           rgb: cookieHealth.rgb,
           ansiBg: cookieHealth.ansiBg,
           unicodeBar: cookieHealth.unicodeBar,
+          unresolved: cookieHealth.unresolved,
           ratio: cookieHealth.ratio,
           checked: cookieHealth.checked,
           resolved: cookieHealth.resolved,
@@ -2400,6 +2429,9 @@ async function main(): Promise<void> {
             Number.isFinite(dnsCookieResolved) && dnsCookieResolved >= 0 ? dnsCookieResolved : null,
           dnsCookieRatio:
             typeof dnsCookieRatio === 'number' && Number.isFinite(dnsCookieRatio) ? dnsCookieRatio : null,
+          cookieUnresolved: Array.isArray(parsedSubdomainCookie?.unresolved)
+            ? parsedSubdomainCookie.unresolved.map((v) => String(v || '').trim().toLowerCase()).filter(Boolean)
+            : [],
         };
         const data = await buildDomainHealthSummary(source, domain, strictP95, cookieTelemetryInput);
         const state: DashboardState = {
