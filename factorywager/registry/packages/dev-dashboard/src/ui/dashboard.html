@@ -1661,7 +1661,7 @@ async function loadDashboard(showLoading = false) {
       roadmap.forEach((phase, pi) => { phase.items.forEach((_, ii) => { total++; const st = overrides[pi + '-' + ii] || phase.items[ii].status; if (st === 'completed') completed++; }); });
       const pct = total ? Math.round((100 * completed) / total) : 0;
       if (roadmapProgressEl) {
-        roadmapProgressEl.innerHTML = \`
+        roadmapProgressEl.innerHTML = `
           <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;" title="Progress and checkmarks are saved in this browser (localStorage). Hover phases and items for NEXT_STEPS.md and file cross-references.">
             <span style="color: #aaa; font-size: 13px;">\${completed} of \${total} items complete</span>
             <div style="flex: 1; min-width: 120px; max-width: 280px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
@@ -1669,14 +1669,14 @@ async function loadDashboard(showLoading = false) {
             </div>
             <span style="color: #00ff88; font-weight: bold; font-size: 14px;">\${pct}%</span>
           </div>
-        \`;
+          `;
       }
       const diffColor = (d) => !d ? '#888' : d === 'easy' ? '#00cc66' : d === 'medium' ? '#e6b800' : '#e64d4d';
       roadmapList.innerHTML = roadmap.map((phase, phaseIdx) => {
         const priorityColor = phase.priority === 'high' ? '#ff4444' : phase.priority === 'medium' ? '#ffaa00' : phase.priority === 'low' ? '#888' : '#00ff88';
         const priorityBg = phase.priority === 'high' ? 'rgba(255, 68, 68, 0.1)' : phase.priority === 'medium' ? 'rgba(255, 170, 0, 0.1)' : phase.priority === 'low' ? 'rgba(136, 136, 136, 0.1)' : 'rgba(0, 255, 136, 0.1)';
         const phaseMeta = [ phase.time, phase.difficulty ].filter(Boolean).join(' · ');
-        return \`
+        return `
           <div class="item" style="margin-bottom: 20px; border-left: 4px solid \${priorityColor};">
             <div class="item-content">
               <div class="item-title" style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
@@ -1697,7 +1697,7 @@ async function loadDashboard(showLoading = false) {
                   const timeBadge = item.time ? '<span style="font-size: 10px; color: #888;" title="Estimated time">⏱ ' + escapeHTML(item.time) + '</span>' : '';
                   const diffBadge = item.difficulty ? '<span style="font-size: 10px; color: ' + diffColor(item.difficulty) + ';" title="Difficulty">' + (item.difficulty === 'easy' ? '🟢' : item.difficulty === 'medium' ? '🟡' : '🔴') + ' ' + escapeHTML(item.difficulty) + '</span>' : '';
                   const refBadge = item.ref ? '<span style="font-size: 10px; padding: 2px 6px; background: rgba(125,211,252,0.15); border-radius: 3px; color: #7dd3fc; cursor: help;" title="' + escapeHTML(item.tip || '') + '">📎 ' + escapeHTML(item.ref) + '</span>' : '';
-                  return \`
+                  return `
                     <div class="roadmap-item" data-phase="\${phaseIdx}" data-item="\${itemIdx}" style="display: flex; align-items: center; gap: 10px; padding: 8px; background: rgba(255,255,255,0.02); border-radius: 4px; cursor: pointer; transition: background 0.15s; flex-wrap: wrap;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.02)'" title="\${escapeHTML(itemHover)}">
                       <span style="font-size: 16px;">\${item.icon}</span>
                       <span style="flex: 1; min-width: 0; color: #fff;">\${titleHtml}</span>
@@ -1710,12 +1710,12 @@ async function loadDashboard(showLoading = false) {
                         </span>
                       </span>
                     </div>
-                  \`;
+                  `;
                 }).join('')}
               </div>
             </div>
           </div>
-        \`;
+        `;
       }).join('');
       roadmapList.querySelectorAll('.roadmap-item').forEach(el => {
         el.addEventListener('click', (e) => {
@@ -1787,7 +1787,7 @@ function renderPerformanceGauge(score) {
         legend: { display: false },
         tooltip: {
           callbacks: {
-            label: (context) => \`\${context.parsed}%\`
+            label: (context) => `${context.parsed}%`
           }
         }
       },

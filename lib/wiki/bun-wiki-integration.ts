@@ -7,6 +7,10 @@
 
 import { BunDocumentationIntegration, type DocumentationPage, type DocumentationCategory, type CodeExample } from '../bun-documentation-integration';
 import { R2Storage } from '../r2/r2-storage-enhanced';
+import { withCircuitBreaker } from '../core/circuit-breaker';
+import { CacheManager } from '../core/cache-manager';
+import { Mutex } from '../core/safe-concurrency';
+import { crc32 } from '../core/crc32';
 
 // Constants
 const SYNC_MULTIPLIER = 60 * 1000; // Convert minutes to milliseconds
@@ -57,10 +61,10 @@ export interface WikiConfig {
 export class BunWikiIntegration {
   private docIntegration: BunDocumentationIntegration;
   private config: WikiConfig;
-  private wikiCache: Map<string, WikiPage> = new Map();
-  private wikiCategories: WikiCategory[] = [];
+  private wikiCache: CacheManager = new CacheManager({ defaultTTL: 1800000, maxSize: 500 });
+  private pageIds: Set<string> = new Set();
   private syncTimer?: NodeJS.Timeout;
-  private isSyncing = false; // Prevent race conditions
+  private syncMutex = new Mutex();
 
   constructor(docIntegration: BunDocumentationIntegration, config?: Partial<WikiConfig>) {
     this.config = {
@@ -235,8 +239,9 @@ export class BunWikiIntegration {
     };
 
     // Cache the page
-    this.wikiCache.set(wikiPage.id, wikiPage);
-    
+    await this.wikiCache.set(wikiPage.id, wikiPage, { tags: ['wiki', wikiPage.category] });
+    this.pageIds.add(wikiPage.id);
+
     return wikiPage;
   }
 
@@ -284,36 +289,6 @@ export class BunWikiIntegration {
   }
 
   /**
-   * Generate tags for wiki page
-   */
-  private generateTags(docPage: DocumentationPage): string[] {
-    const tags: string[] = [docPage.category.toLowerCase()];
-    
-    // Add specific tags based on content
-    if (docPage.examples && docPage.examples.length > 0) {
-      tags.push('examples', 'code-samples');
-    }
-    
-    if (docPage.title.toLowerCase().includes('server')) {
-      tags.push('server', 'http');
-    }
-    
-    if (docPage.title.toLowerCase().includes('database') || docPage.title.toLowerCase().includes('sqlite')) {
-      tags.push('database', 'storage');
-    }
-    
-    if (docPage.title.toLowerCase().includes('file')) {
-      tags.push('file-system', 'io');
-    }
-    
-    if (docPage.title.toLowerCase().includes('test')) {
-      tags.push('testing', 'test-runner');
-    }
-
-    return [...new Set(tags)];
-  }
-
-  /**
    * Generate wiki ID from path
    */
   private generateWikiId(path: string): string {
@@ -331,12 +306,13 @@ export class BunWikiIntegration {
     const results: WikiPage[] = [];
     const lowerQuery = query.toLowerCase();
 
-    for (const [id, page] of this.wikiCache) {
-      if (
+    for (const id of this.pageIds) {
+      const page = await this.wikiCache.get<WikiPage>(id);
+      if (page && (
         page.title.toLowerCase().includes(lowerQuery) ||
         page.content.toLowerCase().includes(lowerQuery) ||
         page.tags.some(tag => tag.toLowerCase().includes(lowerQuery))
-      ) {
+      )) {
         results.push(page);
       }
     }
@@ -347,8 +323,8 @@ export class BunWikiIntegration {
   /**
    * Get wiki page by ID
    */
-  getWikiPage(id: string): WikiPage | null {
-    return this.wikiCache.get(id) || null;
+  async getWikiPage(id: string): Promise<WikiPage | null> {
+    return await this.wikiCache.get<WikiPage>(id) ?? null;
   }
 
   /**
@@ -493,34 +469,27 @@ export class BunWikiIntegration {
    */
   private startAutoSync(): void {
     const intervalMs = this.config.syncInterval * SYNC_MULTIPLIER;
-    
-    this.syncTimer = setInterval(async () => {
-      // Prevent race conditions
-      if (this.isSyncing) {
-        console.log('⏳ Sync already in progress, skipping...');
-        return;
-      }
 
-      this.isSyncing = true;
-      try {
-        console.log('🔄 Auto-syncing wiki documentation...');
-        await this.generateWikiPages();
-        console.log('✅ Wiki documentation synced');
-      } catch (error) {
-        console.error('❌ Wiki sync failed:', error);
-      } finally {
-        this.isSyncing = false;
-      }
+    this.syncTimer = setInterval(async () => {
+      await this.syncMutex.withLock(async () => {
+        try {
+          console.log('🔄 Auto-syncing wiki documentation...');
+          await this.generateWikiPages();
+          console.log('✅ Wiki documentation synced');
+        } catch (error) {
+          console.error('❌ Wiki sync failed:', error);
+        }
+      });
     }, intervalMs);
   }
 
   /**
    * Cleanup method to prevent resource leaks
    */
-  cleanup(): void {
+  async cleanup(): Promise<void> {
     this.stopAutoSync();
-    this.wikiCache.clear();
-    this.wikiCategories = [];
+    await this.wikiCache.clear();
+    this.pageIds.clear();
   }
 
   /**
@@ -548,12 +517,20 @@ export class BunWikiIntegration {
       version: '1.0.0'
     };
 
-    await this.config.storage.upload('bun-wiki.json', JSON.stringify(wikiData, null, 2));
-    
+    const jsonPayload = JSON.stringify(wikiData, null, 2);
+    const checksum = crc32(jsonPayload);
+    console.log(`   CRC32 checksum for wiki data: ${checksum.hex}`);
+
+    await withCircuitBreaker('wiki-r2-storage', () =>
+      this.config.storage.upload('bun-wiki.json', jsonPayload)
+    );
+
     // Also save markdown version
     const markdownWiki = this.generateMarkdownWiki(categories);
-    await this.config.storage.upload('bun-wiki.md', markdownWiki);
-    
+    await withCircuitBreaker('wiki-r2-storage', () =>
+      this.config.storage.upload('bun-wiki.md', markdownWiki)
+    );
+
     console.log('💾 Wiki saved to storage');
   }
 
@@ -566,23 +543,25 @@ export class BunWikiIntegration {
     }
 
     try {
-      const wikiData = await this.config.storage.get('bun-wiki.json');
+      const wikiData = await withCircuitBreaker('wiki-r2-storage', () =>
+        this.config.storage.get('bun-wiki.json')
+      );
       if (wikiData) {
         try {
           const parsed = JSON.parse(wikiData);
-          
+
           // Clear existing cache to prevent stale data
-          this.wikiCache.clear();
-          
+          await this.wikiCache.clear();
+          this.pageIds.clear();
+
           // Rebuild cache with consistent keys (use id as primary key)
           for (const category of parsed.categories) {
             for (const page of category.pages) {
-              // Use page.id as the primary cache key for consistency
-              this.wikiCache.set(page.id, page);
+              await this.wikiCache.set(page.id, page, { tags: ['wiki', page.category] });
+              this.pageIds.add(page.id);
             }
           }
-          
-          this.wikiCategories = parsed.categories;
+
           console.log('✅ Loaded wiki data from cache');
         } catch (parseError) {
           console.warn('Failed to parse cached wiki data:', parseError);
@@ -597,24 +576,26 @@ export class BunWikiIntegration {
   /**
    * Get wiki statistics
    */
-  getWikiStats(): {
+  async getWikiStats(): Promise<{
     totalCategories: number;
     totalPages: number;
     totalExamples: number;
     lastSync: string;
-  } {
-    const categories = Array.from(this.wikiCache.values()).reduce((acc, page) => {
-      acc.add(page.category);
-      return acc;
-    }, new Set<string>());
+  }> {
+    const categories = new Set<string>();
+    let totalExamples = 0;
 
-    const totalExamples = Array.from(this.wikiCache.values()).reduce(
-      (total, page) => total + (page.examples?.length || 0), 0
-    );
+    for (const id of this.pageIds) {
+      const page = await this.wikiCache.get<WikiPage>(id);
+      if (page) {
+        categories.add(page.category);
+        totalExamples += page.examples?.length || 0;
+      }
+    }
 
     return {
       totalCategories: categories.size,
-      totalPages: this.wikiCache.size,
+      totalPages: this.pageIds.size,
       totalExamples,
       lastSync: new Date().toISOString()
     };

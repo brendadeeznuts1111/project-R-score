@@ -228,7 +228,9 @@ export async function sendWebhookAlert(
   options: WebhookOptions = {}
 ): Promise<WebhookResult> {
   // 🚨 Circuit Breaker: Check if circuit is open
-  const metrics = getWebhookMetrics();
+  // Note: getWebhookMetrics() is defined later in this file, but since it's in the same module
+  // and uses module-level variables, we can call it here
+  const metrics = getWebhookMetricsInternal();
   const now = Date.now();
   
   // Check if we should open the circuit breaker
@@ -241,10 +243,10 @@ export async function sendWebhookAlert(
   // Check if circuit breaker should be closed (cooldown period passed)
   if (circuitBreakerOpen && circuitBreakerOpenTime !== null) {
     const cooldownElapsed = now - circuitBreakerOpenTime;
-    if (cooldownElapsed > CIRCUIT_BREAKER_COOLDOWN) {
-      // Re-check failure rate before closing
-      const currentMetrics = getWebhookMetrics();
-      if (currentMetrics.failureRate === null || currentMetrics.failureRate < CIRCUIT_BREAKER_THRESHOLD / 2) {
+      if (cooldownElapsed > CIRCUIT_BREAKER_COOLDOWN) {
+        // Re-check failure rate before closing
+        const currentMetrics = getWebhookMetricsInternal();
+        if (currentMetrics.failureRate === null || currentMetrics.failureRate < CIRCUIT_BREAKER_THRESHOLD / 2) {
         circuitBreakerOpen = false;
         circuitBreakerOpenTime = null;
         logger.info(`✅ Circuit Breaker CLOSED: Failure rate recovered to ${currentMetrics.failureRate?.toFixed(1) || 0}%`);
@@ -682,7 +684,10 @@ export interface WebhookMetrics {
  * }
  * ```
  */
-export function getWebhookMetrics(): WebhookMetrics {
+/**
+ * Internal function to get webhook metrics (defined before sendWebhookAlert uses it)
+ */
+function getWebhookMetricsInternal(): WebhookMetrics {
   return {
     lastPreconnect: lastPreconnectTimestamp,
     attemptCount: totalAttempts,
@@ -691,6 +696,13 @@ export function getWebhookMetrics(): WebhookMetrics {
     circuitBreakerOpen,
     circuitBreakerOpenTime,
   };
+}
+
+/**
+ * Get webhook delivery metrics for monitoring (public export)
+ */
+export function getWebhookMetrics(): WebhookMetrics {
+  return getWebhookMetricsInternal();
 }
 
 /**

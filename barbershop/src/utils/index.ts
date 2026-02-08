@@ -3,13 +3,13 @@
  */
 
 // Logger
-export { logger, Logger, LogLevel } from './logger';
+export { logger, type Logger, type LogLevel } from './logger';
 
 // Fetch utilities
 export { fetchWithDefaults, isPublicHttpUrl, type FetchOptions } from './fetch-utils';
 
-// Crypto utilities
-export { checkCrypto } from './check-crypto';
+// Crypto utilities (script only, no exports)
+// check-crypto.ts is a diagnostic script: bun run src/utils/check-crypto.ts
 
 // CLI Table
 export {
@@ -98,3 +98,93 @@ export {
   getBunVersion,
   isMainModule,
 } from './bun-enhanced';
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ELITE MODULES - Production-grade utilities with Bun-native APIs
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// Elite Security - Password hashing, HMAC signing, token generation
+export {
+  ElitePasswordManager,
+  EliteRequestSigner,
+  EliteFastHash,
+  EliteTokenManager,
+  createEliteSecurity,
+  timingSafeEqual,
+  type PasswordConfig,
+  type HashAlgorithm,
+  type SecurityConfig,
+} from './elite-security';
+
+// Elite Circuit Breaker - Resilience pattern for external APIs
+export {
+  EliteCircuitBreaker,
+  CircuitBreakerError,
+  CircuitBreakerManager,
+  circuitBreakers,
+  withCircuitBreaker,
+  type CircuitBreakerConfig,
+  type CircuitMetrics,
+  type CircuitState,
+} from './elite-circuit-breaker';
+
+// Elite Rate Limiter - Token bucket & sliding window rate limiting
+export {
+  EliteRateLimiter,
+  MultiTierRateLimiter,
+  type RateLimitConfig,
+  type RateLimitResult,
+  type RateLimitHeaders,
+  type RateLimitStrategy,
+} from './elite-rate-limiter';
+
+// Elite Logger - Structured logging with async batching
+export {
+  EliteLogger,
+  LogLevel as EliteLogLevel,
+  type LoggerOptions as EliteLoggerOptions,
+  type LogEntry as EliteLogEntry,
+} from './elite-logger';
+
+// Elite Config - Type-safe configuration with schema validation
+export {
+  EliteConfigManager,
+  s as schema,
+  ServerConfigSchema,
+  DatabaseConfigSchema,
+  RedisConfigSchema,
+  AppConfigSchema,
+  type ConfigOptions,
+  type ConfigSchema,
+} from './elite-config';
+
+// Elite Feature Flags - A/B testing and gradual rollouts
+export {
+  EliteFeatureFlags,
+  featureFlags,
+  type FeatureFlag,
+  type BooleanFlag,
+  type GradualRolloutFlag,
+  type UserTargetedFlag,
+  type TimeBasedFlag,
+  type ABTestFlag,
+  type FeatureFlagContext,
+} from './elite-flags';
+
+// Elite Scheduler - Cron job scheduler with priorities
+export {
+  EliteScheduler,
+  scheduler,
+  type JobOptions,
+  type JobPriority,
+  type ScheduledJob,
+} from './elite-scheduler';
+
+// Elite GraphQL - Schema-first GraphQL with caching
+export {
+  EliteGraphQLSchema,
+  createBarberShopSchema,
+  type GraphQLType,
+  type GraphQLField,
+  type GraphQLResolver,
+} from './elite-graphql';

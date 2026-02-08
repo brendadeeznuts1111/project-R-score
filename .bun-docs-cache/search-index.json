@@ -1,11 +1,11 @@
 {
-  "timestamp": 1770521304681,
-  "domain": "bun.com",
+  "timestamp": 1770535379548,
+  "domain": "bun.sh",
   "index": {
     "api/http": {
       "title": "HTTP API",
       "path": "api/http",
-      "url": "https://bun.com/docs/api/http",
+      "url": "https://bun.sh/docs/api/http",
       "description": "HTTP client and server utilities for making requests and handling responses",
       "keywords": [
         "http",
@@ -19,7 +19,7 @@
     "runtime/serve": {
       "title": "Bun.serve()",
       "path": "runtime/serve",
-      "url": "https://bun.com/docs/runtime/serve",
+      "url": "https://bun.sh/docs/runtime/serve",
       "description": "Built-in HTTP server with WebSocket support and performance optimizations",
       "keywords": [
         "serve",
@@ -33,7 +33,7 @@
     "api/sqlite": {
       "title": "SQLite Database",
       "path": "api/sqlite",
-      "url": "https://bun.com/docs/api/sqlite",
+      "url": "https://bun.sh/docs/api/sqlite",
       "description": "Built-in SQLite database with JavaScript API and async support",
       "keywords": [
         "sqlite",
@@ -47,7 +47,7 @@
     "bundler/linker": {
       "title": "Bundler Linker",
       "path": "bundler/linker",
-      "url": "https://bun.com/docs/bundler/linker",
+      "url": "https://bun.sh/docs/bundler/linker",
       "description": "Advanced linker configuration for optimal bundle performance",
       "keywords": [
         "linker",
@@ -60,7 +60,7 @@
     "runtime/fs": {
       "title": "File System API",
       "path": "runtime/fs",
-      "url": "https://bun.com/docs/runtime/fs",
+      "url": "https://bun.sh/docs/runtime/fs",
       "description": "High-performance file operations including copyfile and clonefile",
       "keywords": [
         "fs",

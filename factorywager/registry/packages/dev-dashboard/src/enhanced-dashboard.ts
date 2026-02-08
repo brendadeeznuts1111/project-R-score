@@ -48,6 +48,8 @@ import {
 import { handleRoutes, type RouteContext } from './api/routes.ts';
 import { wsManager, broadcastUpdate } from './websocket/manager.ts';
 import { sendWebhookAlert, preconnectWebhook, tuneDNSStrategy } from './alerts/webhook.ts';
+import { runWebSocketBenchmarks as runWSBenchmarks } from './websocket/benchmark.ts';
+import { P2PGatewayBenchmark } from './p2p-gateway-benchmark.ts';
 
 // Load TOML configs using Bun's native TOML.parse API
 // More explicit than import() - gives us full control over parsing
@@ -56,6 +58,7 @@ const configFile = Bun.file(new URL('../config.toml', import.meta.url));
 const quickWinsFile = Bun.file(new URL('../quick-wins.toml', import.meta.url));
 const benchmarksFile = Bun.file(new URL('../benchmarks.toml', import.meta.url));
 
+// Top-level await is supported natively in Bun
 const dashboardConfig = Bun.TOML.parse(await configFile.text());
 const quickWinsConfig = Bun.TOML.parse(await quickWinsFile.text());
 const benchmarksConfig = Bun.TOML.parse(await benchmarksFile.text());
@@ -548,434 +551,63 @@ async function runBenchmarks(): Promise<BenchmarkResult[]> {
   return results;
 }
 
-// WebSocket Benchmarks
+// WebSocket Benchmarks - using imported function
 async function runWebSocketBenchmarks(): Promise<WebSocketBenchmarkResult[]> {
-  const results: WebSocketBenchmarkResult[] = [];
-  
-  // Check if WebSocket benchmarks are enabled
   if (serverConfig.features?.websocket_benchmarks === false) {
-    return results;
+    return [];
   }
   
   try {
-    // Import WebSocket benchmark module
-    const { runWebSocketBenchmarks: runWSBenchmarks } = await import('./websocket/benchmark.ts');
-    
-    // Get WebSocket URL from config, environment variable, or construct from server config
-    // Priority: config.toml > environment variable > constructed from server settings
     const wsUrl = serverConfig.server?.websocket_url 
       || process.env.WEBSOCKET_BENCHMARK_URL
       || `ws://${serverConfig.server?.hostname || 'localhost'}:${serverConfig.server?.port || 3008}/ws`;
     
     logger.info(`🔌 Running WebSocket benchmarks against: ${wsUrl}`);
-    
-    // Run WebSocket benchmarks (will use wsUrl or fall back to default)
-    const wsResults = await runWSBenchmarks(wsUrl);
-    results.push(...wsResults);
+    return await runWSBenchmarks(wsUrl);
   } catch (error) {
     logger.warn(`WebSocket benchmarks failed: ${error}`);
-    // Add error result
-    results.push({
+    return [{
       name: 'WebSocket Benchmarks',
       time: 0,
       target: 0,
       status: 'fail',
-      note: `❌ Error: ${error instanceof Error ? error.message : String(error)}. Ensure WebSocket server is running at configured URL.`,
+      note: `❌ Error: ${error instanceof Error ? error.message : String(error)}`,
       category: 'websocket',
-    });
+    }];
   }
-  
-  return results;
 }
 
-// P2P Gateway Benchmarks (Phase 5)
+// P2P Gateway Benchmarks - using dedicated benchmark class
 async function runP2PBenchmarks(): Promise<P2PGatewayResult[]> {
-  const results: P2PGatewayResult[] = [];
   const p2pConfig = dashboardConfig.p2p;
   
   if (!p2pConfig?.enabled) {
-    return results;
+    return [];
   }
   
-  const gateways = (p2pConfig.gateways || ['venmo', 'cashapp', 'paypal']) as P2PGateway[];
-  const labels = p2pConfig.labels || { venmo: 'Venmo', cashapp: 'Cash App', paypal: 'PayPal', zelle: 'Zelle', wise: 'Wise', revolut: 'Revolut' };
-  const benchmarkConfig = p2pConfig.benchmarks || {};
-  const monitoringConfig = p2pConfig.monitoring || {};
-  
-  const iterations = benchmarkConfig.iterations || 100;
-  const warmupIterations = benchmarkConfig.warmup_iterations || 10;
-  const operations = (benchmarkConfig.operations || ['create', 'query', 'switch', 'dry-run', 'full']) as P2POperation[];
-  const transactionAmounts = benchmarkConfig.transaction_amounts || [10.00, 100.00, 1000.00];
-  const currencies = benchmarkConfig.currencies || ['USD'];
-  const defaultCurrency = p2pConfig.default_currency || 'USD';
-  const includeDryRun = benchmarkConfig.include_dry_run !== false;
-  const includeFull = benchmarkConfig.include_full !== false;
-  
-  // Try to use the dedicated P2P benchmark class if available
-  const useDedicatedBenchmark = process.env.P2P_USE_DEDICATED_BENCHMARK !== 'false';
-  if (useDedicatedBenchmark) {
-    try {
-      const { P2PGatewayBenchmark } = await import('./p2p-gateway-benchmark.ts');
-      const benchmark = new P2PGatewayBenchmark({
-        gateways,
-        operations,
-        iterations,
-        includeDryRun,
-        includeFull,
-        transactionAmounts,
-        currencies,
-      }, historyDb);
-      
-      const { results: benchmarkResults } = await benchmark.runAllBenchmarks();
-      const dashboardResults = benchmark.toDashboardResults();
-      
-      logger.info(`✅ P2P benchmarks completed using dedicated benchmark class: ${benchmarkResults.length} operations`);
-      return dashboardResults;
-    } catch (error) {
-      logger.warn(`Failed to use dedicated P2P benchmark class, falling back to inline implementation: ${error}`);
-      // Fall through to inline implementation
-    }
-  }
-  
-  // Warmup iterations
-  if (warmupIterations > 0) {
-    try {
-      for (let i = 0; i < warmupIterations; i++) {
-        await profileEngine.getProfile('@ashschaeffer1', true);
-      }
-    } catch {
-      // Ignore warmup errors
-    }
-  }
-  
-  // Benchmark per-gateway operations
-  for (const gateway of gateways) {
-    const gatewayConfig = (p2pConfig.gateways as any)?.[gateway] || {};
+  try {
+    const gateways = (p2pConfig.gateways || ['venmo', 'cashapp', 'paypal']) as P2PGateway[];
+    const benchmarkConfig = p2pConfig.benchmarks || {};
     
-    // Skip if gateway is disabled
-    if (gatewayConfig.enabled === false) {
-      continue;
-    }
+    const benchmark = new P2PGatewayBenchmark({
+      gateways,
+      operations: (benchmarkConfig.operations || ['create', 'query', 'switch', 'dry-run', 'full']) as P2POperation[],
+      iterations: benchmarkConfig.iterations || 100,
+      includeDryRun: benchmarkConfig.include_dry_run !== false,
+      includeFull: benchmarkConfig.include_full !== false,
+      transactionAmounts: benchmarkConfig.transaction_amounts || [10.00, 100.00, 1000.00],
+      currencies: benchmarkConfig.currencies || ['USD'],
+    }, historyDb);
     
-    try {
-      const gatewayLabel = labels[gateway] || gateway;
-      const gatewayTimeout = gatewayConfig.timeout_ms || p2pConfig.transaction_timeout_seconds * 1000 || 30000;
-      const gatewayRetries = gatewayConfig.retry_count || 3;
-      
-      // Dry-run profile create (if in operations and enabled)
-      if ((operations.includes('dry-run') || operations.includes('create')) && includeDryRun) {
-        try {
-          const startDry = Bun.nanoseconds();
-          const profilesDry = Array.from({ length: Math.min(iterations, 50) }, (_, i) => ({
-            userId: `@p2ptest${gateway}${i}`,
-            dryRun: true,
-            gateways: [gateway] as ('venmo' | 'cashapp' | 'paypal' | '$ashschaeffer1')[],
-            location: 'Test City',
-            subLevel: 'PremiumPlus' as const,
-            progress: {},
-          }));
-          await profileEngine.batchCreateProfiles(profilesDry);
-          const timeDry = (Bun.nanoseconds() - startDry) / 1_000_000 / profilesDry.length;
-          
-          // Use gateway-specific timeout as target (scaled down for per-profile)
-          const targetDry = gatewayTimeout / 1000 / 100; // Convert to ms per profile
-          const success = timeDry < targetDry * 5;
-          
-          results.push({
-            gateway: gateway as P2PGateway,
-            operation: 'dry-run',
-            time: timeDry,
-            target: targetDry,
-            status: timeDry < targetDry * 2 ? 'pass' : timeDry < targetDry * 5 ? 'warning' : 'fail',
-            note: `✅ ${gatewayLabel} dry-run: ${timeDry.toFixed(3)}ms (timeout: ${gatewayTimeout}ms, retries: ${gatewayRetries})`,
-            dryRun: true,
-            success,
-            endpoint: `/api/profiles/batch`,
-            statusCode: success ? 200 : 500,
-            requestSize: JSON.stringify(profilesDry).length,
-            responseSize: profilesDry.length * 100, // Estimated
-            metadata: {
-              timeout: gatewayTimeout,
-              retries: gatewayRetries,
-              sandboxMode: gatewayConfig.sandbox_mode,
-              apiVersion: gatewayConfig.api_version,
-            },
-          });
-        } catch (error) {
-          results.push({
-            gateway: gateway as P2PGateway,
-            operation: 'dry-run',
-            time: 0,
-            target: gatewayTimeout / 1000 / 100,
-            status: 'fail',
-            note: `❌ Error: ${truncateSafe(String(error), 50)}`,
-            dryRun: true,
-            success: false,
-            errorMessage: truncateSafe(String(error), 200),
-            endpoint: `/api/profiles/batch`,
-            statusCode: 500,
-          });
-        }
-      }
-      
-      // Full profile create (if in operations and enabled)
-      if ((operations.includes('full') || operations.includes('create')) && includeFull &&
-          (process.env.NODE_ENV !== 'production' || gatewayConfig.sandbox_mode)) {
-        try {
-          const startFull = Bun.nanoseconds();
-          const profilesFull = Array.from({ length: Math.min(Math.floor(iterations / 2), 25) }, (_, i) => ({
-            userId: `@p2ptestfull${gateway}${i}`,
-            dryRun: false,
-            gateways: [gateway] as ('venmo' | 'cashapp' | 'paypal' | '$ashschaeffer1')[],
-            location: 'Test City',
-            subLevel: 'PremiumPlus' as const,
-            progress: {},
-          }));
-          await profileEngine.batchCreateProfiles(profilesFull);
-          const timeFull = (Bun.nanoseconds() - startFull) / 1_000_000 / profilesFull.length;
-          
-          const targetFull = gatewayTimeout / 1000 / 50; // Slightly higher target for full transactions
-          const success = timeFull < targetFull * 5;
-          
-          results.push({
-            gateway: gateway as P2PGateway,
-            operation: 'full',
-            time: timeFull,
-            target: targetFull,
-            status: timeFull < targetFull * 2 ? 'pass' : timeFull < targetFull * 5 ? 'warning' : 'fail',
-            note: `✅ ${gatewayLabel} full: ${timeFull.toFixed(3)}ms (sandbox: ${gatewayConfig.sandbox_mode || false})`,
-            dryRun: false,
-            success,
-            endpoint: `/api/profiles/batch`,
-            statusCode: success ? 200 : 500,
-            requestSize: JSON.stringify(profilesFull).length,
-            responseSize: profilesFull.length * 100,
-            metadata: {
-              sandboxMode: gatewayConfig.sandbox_mode,
-              apiVersion: gatewayConfig.api_version,
-            },
-          });
-        } catch (error) {
-          results.push({
-            gateway: gateway as P2PGateway,
-            operation: 'full',
-            time: 0,
-            target: gatewayTimeout / 1000 / 50,
-            status: 'fail',
-            note: `❌ Error: ${truncateSafe(String(error), 50)}`,
-            dryRun: false,
-            success: false,
-            errorMessage: truncateSafe(String(error), 200),
-            endpoint: `/api/profiles/batch`,
-            statusCode: 500,
-          });
-        }
-      }
-      
-      // Query benchmark (if in operations)
-      if (operations.includes('query')) {
-        try {
-          const queryIterations = Math.min(iterations, 100);
-          const startQuery = Bun.nanoseconds();
-          for (let i = 0; i < queryIterations; i++) {
-            await profileEngine.getProfile(`@p2ptest${gateway}${i % 10}`, true);
-          }
-          const timeQuery = (Bun.nanoseconds() - startQuery) / 1_000_000 / queryIterations;
-          
-          // Use monitoring alert threshold as target if available
-          const targetQuery = (monitoringConfig.alert_on_high_latency || 5000) / 1000; // Convert to seconds, then ms
-          const success = timeQuery < targetQuery * 0.5;
-          
-          results.push({
-            gateway: gateway as P2PGateway,
-            operation: 'query',
-            time: timeQuery,
-            target: targetQuery,
-            status: timeQuery < targetQuery * 0.2 ? 'pass' : timeQuery < targetQuery * 0.5 ? 'warning' : 'fail',
-            note: `✅ ${gatewayLabel} query: ${timeQuery.toFixed(3)}ms avg (${queryIterations} iterations, API v${gatewayConfig.api_version || 'v1'})`,
-            dryRun: false,
-            success,
-            endpoint: `/api/profiles/query`,
-            statusCode: success ? 200 : 500,
-            metadata: {
-              iterations: queryIterations,
-              apiVersion: gatewayConfig.api_version,
-            },
-          });
-        } catch (error) {
-          results.push({
-            gateway: gateway as P2PGateway,
-            operation: 'query',
-            time: 0,
-            target: (monitoringConfig.alert_on_high_latency || 5000) / 1000,
-            status: 'fail',
-            note: `❌ Error: ${truncateSafe(String(error), 50)}`,
-            dryRun: false,
-            success: false,
-            errorMessage: truncateSafe(String(error), 200),
-            endpoint: `/api/profiles/query`,
-            statusCode: 500,
-          });
-        }
-      }
-      
-      // Gateway switch benchmark (if in operations)
-      if (operations.includes('switch')) {
-        try {
-          const startSwitch = Bun.nanoseconds();
-          // Simulate gateway switch operation
-          const profile = await profileEngine.getProfile('@ashschaeffer1', true);
-          if (profile) {
-            // Gateway switch would happen here in actual implementation
-            await Bun.sleep(1); // Simulate switch operation
-            const timeSwitch = (Bun.nanoseconds() - startSwitch) / 1_000_000;
-            const targetSwitch = gatewayTimeout / 1000; // Use gateway timeout as target
-            const success = timeSwitch < targetSwitch;
-            
-            results.push({
-              gateway: gateway as P2PGateway,
-              operation: 'switch',
-              time: timeSwitch,
-              target: targetSwitch,
-              status: timeSwitch < targetSwitch * 0.5 ? 'pass' : timeSwitch < targetSwitch ? 'warning' : 'fail',
-              note: `✅ ${gatewayLabel} switch: ${timeSwitch.toFixed(3)}ms`,
-              dryRun: false,
-              success,
-              endpoint: `/api/profiles/switch-gateway`,
-              statusCode: success ? 200 : 500,
-              metadata: {
-                fromGateway: 'venmo',
-                toGateway: gateway,
-              },
-            });
-          }
-        } catch (error) {
-          results.push({
-            gateway: gateway as P2PGateway,
-            operation: 'switch',
-            time: 0,
-            target: gatewayTimeout / 1000,
-            status: 'fail',
-            note: `❌ Error: ${truncateSafe(String(error), 50)}`,
-            dryRun: false,
-            success: false,
-            errorMessage: truncateSafe(String(error), 200),
-            endpoint: `/api/profiles/switch-gateway`,
-            statusCode: 500,
-          });
-        }
-      }
-      
-      // Webhook benchmark (if in operations)
-      if (operations.includes('webhook') && gatewayConfig.webhook_verification) {
-        try {
-          const startWebhook = Bun.nanoseconds();
-          // Simulate webhook verification
-          await Bun.sleep(2); // Simulate webhook processing
-          const timeWebhook = (Bun.nanoseconds() - startWebhook) / 1_000_000;
-          const targetWebhook = 10; // 10ms target
-          const success = timeWebhook < targetWebhook * 2;
-          
-          results.push({
-            gateway: gateway as P2PGateway,
-            operation: 'webhook',
-            time: timeWebhook,
-            target: targetWebhook,
-            status: timeWebhook < targetWebhook * 2 ? 'pass' : timeWebhook < targetWebhook * 5 ? 'warning' : 'fail',
-            note: `✅ ${gatewayLabel} webhook: ${timeWebhook.toFixed(3)}ms`,
-            dryRun: false,
-            success,
-            endpoint: gatewayConfig.webhook_url || `/api/webhooks/${gateway}`,
-            statusCode: success ? 200 : 500,
-            metadata: {
-              webhookVerification: gatewayConfig.webhook_verification,
-            },
-          });
-        } catch (error) {
-          // Webhook not available - skip silently
-        }
-      }
-      
-      // Refund benchmark (if in operations and enabled)
-      if (operations.includes('refund') && benchmarkConfig.include_refunds) {
-        try {
-          const startRefund = Bun.nanoseconds();
-          // Simulate refund operation
-          await Bun.sleep(5); // Simulate refund processing
-          const timeRefund = (Bun.nanoseconds() - startRefund) / 1_000_000;
-          const targetRefund = 50; // 50ms target
-          const success = timeRefund < targetRefund * 2;
-          
-          results.push({
-            gateway: gateway as P2PGateway,
-            operation: 'refund',
-            time: timeRefund,
-            target: targetRefund,
-            status: timeRefund < targetRefund * 2 ? 'pass' : timeRefund < targetRefund * 5 ? 'warning' : 'fail',
-            note: `✅ ${gatewayLabel} refund: ${timeRefund.toFixed(3)}ms`,
-            dryRun: false,
-            success,
-            endpoint: `/api/transactions/refund`,
-            statusCode: success ? 200 : 500,
-            metadata: {
-              transactionAmount: transactionAmounts[0] || 10.00,
-              currency: defaultCurrency,
-            },
-          });
-        } catch (error) {
-          // Refund not available - skip silently
-        }
-      }
-      
-      // Dispute benchmark (if in operations and enabled)
-      if (operations.includes('dispute') && benchmarkConfig.include_disputes) {
-        try {
-          const startDispute = Bun.nanoseconds();
-          // Simulate dispute operation
-          await Bun.sleep(10); // Simulate dispute processing
-          const timeDispute = (Bun.nanoseconds() - startDispute) / 1_000_000;
-          const targetDispute = 100; // 100ms target
-          const success = timeDispute < targetDispute * 2;
-          
-          results.push({
-            gateway: gateway as P2PGateway,
-            operation: 'dispute',
-            time: timeDispute,
-            target: targetDispute,
-            status: timeDispute < targetDispute * 2 ? 'pass' : timeDispute < targetDispute * 5 ? 'warning' : 'fail',
-            note: `✅ ${gatewayLabel} dispute: ${timeDispute.toFixed(3)}ms`,
-            dryRun: false,
-            success,
-            endpoint: `/api/transactions/dispute`,
-            statusCode: success ? 200 : 500,
-            metadata: {
-              transactionAmount: transactionAmounts[0] || 10.00,
-              currency: defaultCurrency,
-            },
-          });
-        } catch (error) {
-          // Dispute not available - skip silently
-        }
-      }
-      
-    } catch (error) {
-      results.push({
-        gateway: gateway as P2PGateway,
-        operation: 'create',
-        time: 0,
-        target: 0.02,
-        status: 'fail',
-        note: `❌ Error: ${truncateSafe(String(error), 50)}`,
-        dryRun: false,
-        success: false,
-        errorMessage: truncateSafe(String(error), 200),
-        endpoint: `/api/profiles/create`,
-        statusCode: 500,
-      });
-    }
+    await benchmark.runAllBenchmarks();
+    const dashboardResults = benchmark.toDashboardResults();
+    
+    logger.info(`✅ P2P benchmarks completed: ${dashboardResults.length} operations`);
+    return dashboardResults;
+  } catch (error) {
+    logger.error(`P2P benchmarks failed: ${error}`);
+    return [];
   }
-  
-  return results;
 }
 
 // Profile Engine Profiling Benchmarks (Phase 6)
