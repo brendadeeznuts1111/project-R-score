@@ -44,3 +44,189 @@ timeout_ms = 5000
 show_files = true
 show_impact = true
 group_by_category = true
+
+[websocket]
+enabled = true
+path = "/ws"
+compression = true
+
+[history]
+enabled = true
+db_path = "./data/dashboard-history.db"
+retention_days = 30
+
+[alerts]
+enabled = true
+performance_threshold = 50
+failing_tests_threshold = 0
+slow_benchmarks_threshold = 3
+webhook_url = ""  # Optional webhook URL for alerts
+
+[export]
+csv_enabled = true
+json_enabled = true
+
+[retry]
+max_attempts = 3
+initial_delay_ms = 1000
+
+# Payment types for insights (from user-profile preferredGateway); labels for display
+[payment_types]
+types = ["venmo", "cashapp", "paypal"]
+labels = { venmo = "Venmo", cashapp = "Cash App", paypal = "PayPal" }
+
+# P2P gateway monitoring (Phase 5)
+[p2p]
+enabled = true
+default_currency = "USD"
+transaction_timeout_seconds = 300
+max_transaction_amount = 10000.00
+min_transaction_amount = 0.01
+gateways = ["venmo", "cashapp", "paypal"]
+labels = { venmo = "Venmo", cashapp = "Cash App", paypal = "PayPal" }
+per_gateway_benchmarks = true
+
+# Venmo Configuration
+[p2p.gateways.venmo]
+enabled = true
+sandbox_mode = true
+api_version = "v1"
+timeout_ms = 30000
+retry_count = 3
+webhook_verification = true
+rate_limit_per_minute = 60
+
+# Cash App Configuration
+[p2p.gateways.cashapp]
+enabled = true
+sandbox_mode = true
+api_version = "v2"
+timeout_ms = 25000
+retry_count = 2
+webhook_verification = true
+rate_limit_per_minute = 100
+
+# PayPal Configuration
+[p2p.gateways.paypal]
+enabled = true
+sandbox_mode = true
+api_version = "v2"
+timeout_ms = 35000
+retry_count = 3
+webhook_verification = true
+rate_limit_per_minute = 50
+
+# Benchmarks
+[p2p.benchmarks]
+iterations = 100
+warmup_iterations = 10
+transaction_amounts = [10.00, 100.00, 1000.00]
+currencies = ["USD", "EUR", "GBP"]
+operations = ["create", "query", "switch", "dry-run", "full"]
+include_refunds = true
+include_disputes = false
+
+# Security
+[p2p.security]
+encrypt_sensitive_data = true
+audit_all_transactions = true
+validate_signatures = true
+ip_whitelist = []
+
+# Monitoring
+[p2p.monitoring]
+log_all_requests = false
+metrics_collection_interval = 60
+alert_on_failure_rate = 5.0  # percentage
+alert_on_high_latency = 5000 # milliseconds
+
+# Profiling integration (Phase 6)
+[profiling]
+enabled = true
+mode = "production"  # "development", "staging", "production"
+data_retention_days = 30
+privacy_mode = true  # Anonymize personal data
+profile_engine_path = "../../user-profile/src"
+targets = { profile_create_50k = 1.0, profile_query_p99 = 0.8, xgboost_prediction = 0.001, redis_hll = 0.001 }
+include_xgboost = true
+include_redis_hll = true
+include_r2_snapshot = true
+
+# XGBoost Personalization
+[profiling.xgboost]
+enabled = true
+max_depth = 6
+learning_rate = 0.3
+n_estimators = 100
+objective = "reg:squarederror"
+early_stopping_rounds = 10
+validation_split = 0.2
+target_latency_ms = 0.001
+
+# Redis HyperLogLog
+[profiling.redis_hll]
+enabled = true
+precision = 14
+auto_merge = true
+merge_threshold = 1000
+ttl_days = 7
+cluster_mode = false
+
+# R2 Snapshots
+[profiling.r2]
+enabled = true
+bucket_name = "profile-snapshots"
+snapshot_interval_minutes = 60
+retention_days = 30
+compression = "gzip"
+encryption = true
+
+# Graph Neural Networks
+[profiling.gnn]
+enabled = true
+hidden_dim = 128
+num_layers = 2
+dropout_rate = 0.5
+propagation_steps = 3
+learning_rate = 0.001
+epochs = 50
+
+# Feature Engineering
+[profiling.features]
+cache_ttl_seconds = 3600
+vector_size = 256
+normalize_features = true
+feature_selection_enabled = true
+max_features = 1000
+
+# Performance Settings
+[profiling.performance]
+batch_size = 32
+max_concurrent_operations = 10
+circuit_breaker_enabled = true
+circuit_breaker_threshold = 5
+timeout_ms = 10000
+
+# Benchmarks
+[profiling.benchmarks]
+iterations = 50
+warmup_iterations = 5
+dataset_sizes = [100, 1000, 10000, 100000]
+operations = [
+  "create", 
+  "query", 
+  "update", 
+  "progress_save",
+  "xgboost_personalize",
+  "redis_hll_add",
+  "r2_snapshot",
+  "gnn_propagate"
+]
+
+# Monitoring
+[profiling.monitoring]
+collect_detailed_metrics = true
+log_personalization_scores = false
+alert_on_accuracy_drop = 10.0  # percentage
+alert_on_high_memory = 1024    # MB
+metrics_push_interval = 30     # seconds

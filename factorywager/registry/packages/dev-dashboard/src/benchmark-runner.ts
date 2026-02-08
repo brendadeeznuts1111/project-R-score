@@ -122,16 +122,24 @@ if (import.meta.path === Bun.main) {
     // Parse and run benchmark
     const config: BenchmarkConfig = JSON.parse(configText.trim());
     const result = await runBenchmark(config);
+    // Only output JSON to stdout (stderr is for logs/debugging)
+    // This ensures clean JSON parsing in the parent process
     console.log(JSON.stringify(result));
+    // Explicitly flush stdout to ensure output is sent
+    process.stdout.write('');
   } catch (error) {
-    console.error(JSON.stringify({
+    // Output error as JSON to stdout (not stderr) so parent can parse it
+    const errorResult = {
       name: 'Unknown',
       time: 0,
       target: 0,
       status: 'fail' as const,
       note: `❌ Error: ${error instanceof Error ? error.message : String(error)}`,
       category: 'performance',
-    }));
+    };
+    console.log(JSON.stringify(errorResult));
+    // Log to stderr for debugging (won't interfere with JSON parsing)
+    console.error(`[BENCHMARK ERROR] ${error instanceof Error ? error.message : String(error)}`);
     process.exit(1);
   }
 }

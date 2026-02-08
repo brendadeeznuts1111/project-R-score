@@ -4,6 +4,11 @@
   "description": "Development dashboard for tests, benchmarks, and quick wins",
   "type": "module",
   "main": "src/server.ts",
+  "scripts": {
+    "cli": "bun src/cli.ts",
+    "p2p-benchmark": "bun src/p2p-gateway-benchmark.ts",
+    "p2p-benchmark:help": "bun src/p2p-gateway-benchmark.ts --help"
+  },
   "dependencies": {
     "@factorywager/user-profile": "workspace:*"
   },
