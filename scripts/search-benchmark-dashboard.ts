@@ -10,7 +10,9 @@ import {
   CookieParser,
   StateManager,
   cookieFactory,
+  type DomainContextCookieData,
   type DashboardState,
+  type SubdomainStateCookieData,
 } from './lib/cookie-manager';
 import { createDomainContext } from './lib/domain-context';
 
@@ -43,6 +45,20 @@ type BuildMeta = {
 type ProxyConfig = {
   url: string;
   headers?: Record<string, string>;
+};
+
+type CookieTelemetryInput = {
+  enabled: boolean;
+  hasStateCookie: boolean;
+  hasDomainCookie: boolean;
+  hasSubdomainCookie: boolean;
+  parsedState: boolean;
+  parsedDomain: boolean;
+  parsedSubdomain: boolean;
+  domainMatchesRequested: boolean | null;
+  dnsCookieChecked: number | null;
+  dnsCookieResolved: number | null;
+  dnsCookieRatio: number | null;
 };
 
 function parseArgs(argv: string[]): Options {
@@ -934,11 +950,29 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       const storageRatio = latestCount > 0 ? latestPresent / latestCount : 0;
       const dnsStatus = String(data.health?.dns?.status || healthLabel(dnsRatio)).toLowerCase();
       const storageStatus = String(data.health?.storage?.status || healthLabel(storageRatio)).toLowerCase();
+      const cookieStatus = String(data.health?.cookie?.status || 'neutral').toLowerCase();
       const overallStatus = String(data.health?.overall?.status || dnsStatus).toLowerCase();
+      const overallScore = Number(data.health?.overall?.score);
+      const overallScoreText = Number.isFinite(overallScore) ? (overallScore * 100).toFixed(0) + '%' : 'n/a';
       const strictP95Ms = Number(data.health?.latency?.strictP95Ms);
       const strictP95Text = Number.isFinite(strictP95Ms) ? strictP95Ms.toFixed(0) + 'ms' : 'n/a';
       const dnsStatusText = 'DNS ' + dnsResolved + '/' + dnsChecked + ' ' + dnsStatus;
       const storageStatusText = 'Storage ' + latestPresent + '/' + latestCount + ' ' + storageStatus;
+      const cookieChecked = Number(data.health?.cookie?.checked);
+      const cookieResolved = Number(data.health?.cookie?.resolved);
+      const cookieSyncDelta = Number(data.health?.cookie?.syncDelta);
+      const cookieScoreValue = Number(data.health?.cookie?.cookieScore);
+      const cookieHexBadge = String(data.health?.cookie?.hexBadge || '#666666');
+      const cookieUnicodeBar = String(data.health?.cookie?.unicodeBar || '░░░░░░░░░░').normalize('NFC');
+      const cookieStatusText =
+        'Cookie DNS ' +
+        (Number.isFinite(cookieResolved) ? cookieResolved : 'n/a') +
+        '/' +
+        (Number.isFinite(cookieChecked) ? cookieChecked : 'n/a') +
+        ' ' +
+        cookieStatus +
+        (Number.isFinite(cookieScoreValue) ? ' score=' + cookieScoreValue : '') +
+        (Number.isFinite(cookieSyncDelta) ? ' (Δ ' + (cookieSyncDelta * 100).toFixed(0) + '%)' : '');
       const overallStatusText = 'Domain ' + overallStatus + (data.health?.latency?.degradedByStrictP95 ? ' (strict p95 ' + strictP95Text + ')' : '');
       const modeHint =
         data.source === 'local'
@@ -965,13 +999,16 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         '<div class="meta">domain=' + (data.domain || 'factory-wager.com') + ' zone=' + (data.zone || 'n/a') + ' account=' + (data.accountId || 'n/a') + ' knownSubdomains=' + (data.knownSubdomains ?? 'n/a') + ' source=' + sourceBadge(data.source || 'n/a') + '</div>' +
         '<div class="meta">' +
           healthBadge(healthRatioByState(overallStatus), overallStatusText) + ' ' +
+          healthBadge(Number.isFinite(overallScore) ? overallScore : healthRatioByState(overallStatus), 'Health score ' + overallScoreText) + ' ' +
           healthBadge(healthRatioByState(dnsStatus), dnsStatusText) + ' ' +
-          healthBadge(healthRatioByState(storageStatus), storageStatusText) +
+          healthBadge(healthRatioByState(storageStatus), storageStatusText) + ' ' +
+          healthBadge(healthRatioByState(cookieStatus), cookieStatusText) +
         '</div>' +
         '<div class="meta">' + modeHint + '</div>' +
         '<div class="meta">storage bucket=' + (data.storage?.bucket || 'n/a') + ' endpoint=' + (data.storage?.endpoint || 'n/a') + ' prefix=<code>' + (data.storage?.domainPrefix || 'n/a') + '</code></div>' +
         '<div class="meta">storageKey health=<code>' + (data.storage?.sampleKeys?.health || 'n/a') + '</code></div>' +
         '<div class="meta">dnsChecked=' + (data.dnsPrefetch?.checked ?? 0) + ' dnsResolved=' + (data.dnsPrefetch?.resolved ?? 0) + ' cacheTtlSec=' + (data.dnsPrefetch?.cacheTtlSec ?? 'n/a') + '</div>' +
+        '<div class="meta">cookieTelemetry=' + (data.health?.cookie?.detail || 'n/a') + ' domainMatch=' + (data.health?.cookie?.domainMatchesRequested ?? 'n/a') + ' cookieScore=' + (Number.isFinite(cookieScoreValue) ? cookieScoreValue : 'n/a') + ' hex=' + cookieHexBadge + ' bar=' + cookieUnicodeBar + ' <span class="badge" style="background:' + cookieHexBadge + ';border-color:' + cookieHexBadge + ';color:#0b0d12">■</span></div>' +
         '<table><thead><tr><th>Type</th><th>Key</th><th>Exists</th><th>Last Modified</th></tr></thead><tbody>' + latestRows + '</tbody></table>' +
         '<table style="margin-top:10px"><thead><tr><th>Subdomain</th><th>Full Domain</th><th>DNS</th><th>Records</th><th>Source</th></tr></thead><tbody>' + (subRows || '<tr><td colspan="5">No subdomain data.</td></tr>') + '</tbody></table>';
     };
@@ -1736,10 +1773,156 @@ async function main(): Promise<void> {
     }, 15000);
   }
 
+  const clamp01 = (value: number): number => Math.max(0, Math.min(1, value));
+
+  const statusFromRatio = (ratio: number): 'healthy' | 'degraded' | 'critical' => {
+    if (ratio >= 0.9) return 'healthy';
+    if (ratio >= 0.6) return 'degraded';
+    return 'critical';
+  };
+
+  const scoreByState = (status: string): number => {
+    const s = String(status || '').toLowerCase();
+    if (s === 'healthy') return 1;
+    if (s === 'degraded') return 0.7;
+    if (s === 'critical') return 0.05;
+    return 0.5;
+  };
+
+  const assessCookieTelemetry = (
+    telemetry: CookieTelemetryInput | null,
+    domain: string,
+    dnsRatio: number
+  ) => {
+    if (!telemetry || !telemetry.enabled) {
+      return {
+        enabled: false,
+        status: 'neutral',
+        score: 0.5,
+        ratio: null,
+        checked: null,
+        resolved: null,
+        domainMatchesRequested: null,
+        syncDelta: null,
+        detail: 'cookies disabled',
+      };
+    }
+    const ratio = telemetry.dnsCookieRatio;
+    const hasDnsCookie = telemetry.hasSubdomainCookie;
+    const parsedDnsCookie = telemetry.parsedSubdomain;
+    const hasDomainCookie = telemetry.hasDomainCookie;
+    const parsedDomainCookie = telemetry.parsedDomain;
+    const domainMatches = telemetry.domainMatchesRequested;
+    if (!hasDnsCookie || !hasDomainCookie) {
+      return {
+        enabled: true,
+        status: 'degraded',
+        score: 0.45,
+        ratio: null,
+        checked: telemetry.dnsCookieChecked,
+        resolved: telemetry.dnsCookieResolved,
+        domainMatchesRequested: domainMatches,
+        syncDelta: null,
+        detail: `missing cookie telemetry for ${domain}`,
+      };
+    }
+    if (!parsedDnsCookie || !parsedDomainCookie) {
+      return {
+        enabled: true,
+        status: 'critical',
+        score: 0.2,
+        ratio: null,
+        checked: telemetry.dnsCookieChecked,
+        resolved: telemetry.dnsCookieResolved,
+        domainMatchesRequested: domainMatches,
+        syncDelta: null,
+        detail: 'cookie telemetry parse failed',
+      };
+    }
+    if (typeof ratio !== 'number' || !Number.isFinite(ratio)) {
+      return {
+        enabled: true,
+        status: 'degraded',
+        score: 0.55,
+        ratio: null,
+        checked: telemetry.dnsCookieChecked,
+        resolved: telemetry.dnsCookieResolved,
+        domainMatchesRequested: domainMatches,
+        syncDelta: null,
+        detail: 'cookie dns ratio unavailable',
+      };
+    }
+    const normalizedRatio = clamp01(ratio);
+    const syncDelta = Math.abs(normalizedRatio - dnsRatio);
+    let score = normalizedRatio;
+    if (syncDelta <= 0.05) score += 0.15;
+    else if (syncDelta <= 0.15) score += 0.05;
+    else if (syncDelta >= 0.3) score -= 0.3;
+    else if (syncDelta >= 0.2) score -= 0.15;
+    if (domainMatches === false) score -= 0.25;
+    score = clamp01(score);
+    return {
+      enabled: true,
+      status: statusFromRatio(score),
+      score,
+      ratio: normalizedRatio,
+      checked: telemetry.dnsCookieChecked,
+      resolved: telemetry.dnsCookieResolved,
+      domainMatchesRequested: domainMatches,
+      syncDelta,
+      detail: domainMatches === false
+        ? 'cookie domain mismatch'
+        : syncDelta <= 0.05
+          ? 'dns cookie synced'
+          : 'dns cookie drift detected',
+    };
+  };
+
+  const hslToHex = (h: number, s: number, l: number): string => {
+    const sat = s / 100;
+    const light = l / 100;
+    const c = (1 - Math.abs(2 * light - 1)) * sat;
+    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+    const m = light - c / 2;
+    let r = 0;
+    let g = 0;
+    let b = 0;
+    if (h < 60) [r, g, b] = [c, x, 0];
+    else if (h < 120) [r, g, b] = [x, c, 0];
+    else if (h < 180) [r, g, b] = [0, c, x];
+    else if (h < 240) [r, g, b] = [0, x, c];
+    else if (h < 300) [r, g, b] = [x, 0, c];
+    else [r, g, b] = [c, 0, x];
+    const toHex = (v: number) => Math.round((v + m) * 255).toString(16).padStart(2, '0');
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+  };
+
+  const withCookieBadgeTelemetry = <T extends { score: number }>(cookieHealth: T) => {
+    const cookieScore = Math.round(clamp01(cookieHealth.score) * 100);
+    const hue = Math.round(clamp01(cookieHealth.score) * 120);
+    const hexBadge = hslToHex(hue, 85, 46);
+    const rgb = {
+      r: Number.parseInt(hexBadge.slice(1, 3), 16),
+      g: Number.parseInt(hexBadge.slice(3, 5), 16),
+      b: Number.parseInt(hexBadge.slice(5, 7), 16),
+    };
+    const filled = Math.max(0, Math.min(10, Math.round(cookieScore / 10)));
+    const unicodeBar = `${'█'.repeat(filled)}${'░'.repeat(10 - filled)}`;
+    return {
+      ...cookieHealth,
+      cookieScore,
+      hexBadge,
+      rgb,
+      ansiBg: `\\x1b[48;2;${rgb.r};${rgb.g};${rgb.b}m`,
+      unicodeBar,
+    };
+  };
+
   const buildDomainHealthSummary = async (
     source: 'local' | 'r2',
     domain: string,
-    strictP95Ms: number | null = null
+    strictP95Ms: number | null = null,
+    cookieTelemetryInput: CookieTelemetryInput | null = null
   ) => {
     const r2Read = resolveR2ReadOptions();
     const ctx = createDomainContext({
@@ -1808,6 +1991,7 @@ async function main(): Promise<void> {
       cacheTtlSec: Math.floor(dnsPrefetchTtlMs / 1000),
     };
     const dnsStatus = dnsRatio >= 0.9 ? 'healthy' : dnsRatio >= 0.5 ? 'degraded' : 'critical';
+    const cookieHealth = withCookieBadgeTelemetry(assessCookieTelemetry(cookieTelemetryInput, domain, dnsRatio));
     const thresholdStrictP95Ms = 900;
 
     if (source === 'local') {
@@ -1820,12 +2004,26 @@ async function main(): Promise<void> {
       const latestPresent = 0;
       const latestCount = latest.length;
       const storageStatus = latestCount > 0 && latestPresent === latestCount ? 'healthy' : 'critical';
+      const storageRatio = 0;
       const degradedByStrictP95 = typeof strictP95Ms === 'number' && Number.isFinite(strictP95Ms) && strictP95Ms > thresholdStrictP95Ms;
-      const overallStatus = storageStatus === 'critical'
+      const preliminaryStatus = storageStatus === 'critical'
         ? 'critical'
         : degradedByStrictP95
           ? 'degraded'
           : dnsStatus;
+      const latencyScore = degradedByStrictP95 ? 0.55 : (strictP95Ms === null ? 0.85 : 1);
+      const overallScore = clamp01(
+        dnsRatio * 0.4 +
+        storageRatio * 0.35 +
+        latencyScore * 0.15 +
+        cookieHealth.score * 0.1
+      );
+      const scoreStatus = statusFromRatio(overallScore);
+      const overallStatus = preliminaryStatus === 'critical'
+        ? 'critical'
+        : scoreByState(scoreStatus) < scoreByState(preliminaryStatus)
+          ? scoreStatus
+          : preliminaryStatus;
       return {
         source,
         domain,
@@ -1847,18 +2045,41 @@ async function main(): Promise<void> {
           },
           storage: {
             status: storageStatus,
-            ratio: 0,
+            ratio: storageRatio,
             present: latestPresent,
             checked: latestCount,
             thresholds: { healthyEquals: 1.0, criticalBelow: 1.0 },
+          },
+          cookie: {
+            status: cookieHealth.status,
+            score: cookieHealth.score,
+            cookieScore: cookieHealth.cookieScore,
+            hexBadge: cookieHealth.hexBadge,
+            rgb: cookieHealth.rgb,
+            ansiBg: cookieHealth.ansiBg,
+            unicodeBar: cookieHealth.unicodeBar,
+            ratio: cookieHealth.ratio,
+            checked: cookieHealth.checked,
+            resolved: cookieHealth.resolved,
+            domainMatchesRequested: cookieHealth.domainMatchesRequested,
+            syncDelta: cookieHealth.syncDelta,
+            detail: cookieHealth.detail,
           },
           latency: {
             strictP95Ms: typeof strictP95Ms === 'number' && Number.isFinite(strictP95Ms) ? strictP95Ms : null,
             degradedAboveMs: thresholdStrictP95Ms,
             degradedByStrictP95,
+            score: latencyScore,
           },
           overall: {
             status: overallStatus,
+            score: overallScore,
+            components: {
+              dns: dnsRatio,
+              storage: storageRatio,
+              latency: latencyScore,
+              cookie: cookieHealth.score,
+            },
           },
         },
       };
@@ -1896,11 +2117,24 @@ async function main(): Promise<void> {
     const storageRatio = latestCount > 0 ? latestPresent / latestCount : 0;
     const storageStatus = latestCount > 0 && latestPresent === latestCount ? 'healthy' : 'critical';
     const degradedByStrictP95 = typeof strictP95Ms === 'number' && Number.isFinite(strictP95Ms) && strictP95Ms > thresholdStrictP95Ms;
-    const overallStatus = storageStatus === 'critical'
+    const preliminaryStatus = storageStatus === 'critical'
       ? 'critical'
       : degradedByStrictP95
         ? 'degraded'
         : dnsStatus;
+    const latencyScore = degradedByStrictP95 ? 0.55 : (strictP95Ms === null ? 0.85 : 1);
+    const overallScore = clamp01(
+      dnsRatio * 0.4 +
+      storageRatio * 0.35 +
+      latencyScore * 0.15 +
+      cookieHealth.score * 0.1
+    );
+    const scoreStatus = statusFromRatio(overallScore);
+    const overallStatus = preliminaryStatus === 'critical'
+      ? 'critical'
+      : scoreByState(scoreStatus) < scoreByState(preliminaryStatus)
+        ? scoreStatus
+        : preliminaryStatus;
     return {
       source,
       domain,
@@ -1927,13 +2161,36 @@ async function main(): Promise<void> {
           checked: latestCount,
           thresholds: { healthyEquals: 1.0, criticalBelow: 1.0 },
         },
+        cookie: {
+          status: cookieHealth.status,
+          score: cookieHealth.score,
+          cookieScore: cookieHealth.cookieScore,
+          hexBadge: cookieHealth.hexBadge,
+          rgb: cookieHealth.rgb,
+          ansiBg: cookieHealth.ansiBg,
+          unicodeBar: cookieHealth.unicodeBar,
+          ratio: cookieHealth.ratio,
+          checked: cookieHealth.checked,
+          resolved: cookieHealth.resolved,
+          domainMatchesRequested: cookieHealth.domainMatchesRequested,
+          syncDelta: cookieHealth.syncDelta,
+          detail: cookieHealth.detail,
+        },
         latency: {
           strictP95Ms: typeof strictP95Ms === 'number' && Number.isFinite(strictP95Ms) ? strictP95Ms : null,
           degradedAboveMs: thresholdStrictP95Ms,
           degradedByStrictP95,
+          score: latencyScore,
         },
         overall: {
           status: overallStatus,
+          score: overallScore,
+          components: {
+            dns: dnsRatio,
+            storage: storageRatio,
+            latency: latencyScore,
+            cookie: cookieHealth.score,
+          },
         },
       },
     };
@@ -2107,7 +2364,44 @@ async function main(): Promise<void> {
         const strictP95Raw = url.searchParams.get('strictP95');
         const strictP95Ms = strictP95Raw === null ? null : Number(strictP95Raw);
         const strictP95 = Number.isFinite(strictP95Ms) ? strictP95Ms : null;
-        const data = await buildDomainHealthSummary(source, domain, strictP95);
+        const cookieHeader = req.headers.get('cookie') || '';
+        const cookieMap = options.cookies ? CookieParser.parseCookieHeader(cookieHeader) : new Map<string, string>();
+        const rawDomainCookie = cookieMap.get('secure_domain_ctx') || '';
+        const rawSubdomainCookie = cookieMap.get('secure_subdomain_state') || '';
+        const parsedDomainCookie = rawDomainCookie
+          ? CookieParser.parseSecureCookie<DomainContextCookieData>(rawDomainCookie, { compressed: true })
+          : null;
+        const parsedSubdomainCookie = rawSubdomainCookie
+          ? CookieParser.parseSecureCookie<SubdomainStateCookieData>(rawSubdomainCookie, { compressed: true })
+          : null;
+        const dnsCookieChecked = Number(parsedSubdomainCookie?.checked);
+        const dnsCookieResolved = Number(parsedSubdomainCookie?.resolved);
+        const dnsCookieRatio =
+          Number.isFinite(dnsCookieChecked) &&
+          dnsCookieChecked > 0 &&
+          Number.isFinite(dnsCookieResolved)
+            ? dnsCookieResolved / dnsCookieChecked
+            : null;
+        const cookieTelemetryInput: CookieTelemetryInput = {
+          enabled: options.cookies,
+          hasStateCookie: cookieMap.has('bfw_state'),
+          hasDomainCookie: Boolean(rawDomainCookie),
+          hasSubdomainCookie: Boolean(rawSubdomainCookie),
+          parsedState: Boolean(stateFromCookie),
+          parsedDomain: Boolean(parsedDomainCookie),
+          parsedSubdomain: Boolean(parsedSubdomainCookie),
+          domainMatchesRequested:
+            parsedDomainCookie?.domain
+              ? String(parsedDomainCookie.domain).trim().toLowerCase() === domain
+              : null,
+          dnsCookieChecked:
+            Number.isFinite(dnsCookieChecked) && dnsCookieChecked >= 0 ? dnsCookieChecked : null,
+          dnsCookieResolved:
+            Number.isFinite(dnsCookieResolved) && dnsCookieResolved >= 0 ? dnsCookieResolved : null,
+          dnsCookieRatio:
+            typeof dnsCookieRatio === 'number' && Number.isFinite(dnsCookieRatio) ? dnsCookieRatio : null,
+        };
+        const data = await buildDomainHealthSummary(source, domain, strictP95, cookieTelemetryInput);
         const state: DashboardState = {
           domain,
           accountId: String(data?.accountId || stateFromCookie?.accountId || ''),
