@@ -1749,6 +1749,7 @@
     "search:smart:index": "bun run scripts/search-smart-index.ts",
     "search:lib:cleanup": "bun run scripts/search-smart.ts --path ./lib --view slop-only --task cleanup --group-limit 5 --show-mirrors",
     "search:lib:cleanup:report": "bun run scripts/search-cleanup-report.ts",
+    "search:lib:organize:report": "bun run scripts/search-lib-organize-report.ts",
     "search:bench": "bun run scripts/search-benchmark.ts",
     "search:bench:lib": "bun run scripts/search-benchmark.ts --path ./lib --limit 40",
     "search:bench:lib:core": "bun run scripts/search-benchmark.ts --path ./lib --limit 40 --query-pack core_delivery",
