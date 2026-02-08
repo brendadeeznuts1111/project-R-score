@@ -8,9 +8,6 @@ export { logger, type Logger, type LogLevel } from './logger';
 // Fetch utilities
 export { fetchWithDefaults, isPublicHttpUrl, type FetchOptions } from './fetch-utils';
 
-// Crypto utilities (script only, no exports)
-// check-crypto.ts is a diagnostic script: bun run src/utils/check-crypto.ts
-
 // CLI Table
 export {
   generateTable,
@@ -64,61 +61,49 @@ export {
 
 // Bun-Enhanced Utilities
 export {
-  // Hashing
   fastHash,
   createStreamingHasher,
   hashPassword,
   verifyPassword,
   type HashAlgorithm,
   type PasswordOptions,
-  // Compression
   compressData,
   decompressData,
   type CompressionAlgorithm,
-  // Timing
   nanoseconds,
   measure,
   createTimer,
   sleep,
   peekPromise,
-  // File I/O
   fastWrite,
   fastReadText,
   fastReadJSON,
   streamFile,
-  // Semver
   parseSemver,
   compareVersions,
   satisfiesVersion,
-  // HTML
   escapeHTML,
-  // System
   which,
   openInEditor,
   getBunVersion,
   isMainModule,
 } from './bun-enhanced';
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// ELITE MODULES - Production-grade utilities with Bun-native APIs
-// ═══════════════════════════════════════════════════════════════════════════════
-
-// Elite Security - Password hashing, HMAC signing, token generation
+// Security - Password hashing, HMAC signing, token generation
 export {
-  ElitePasswordManager,
-  EliteRequestSigner,
-  EliteFastHash,
-  EliteTokenManager,
-  createEliteSecurity,
+  PasswordManager,
+  RequestSigner,
+  FastHash,
+  TokenManager,
+  createSecurity,
   timingSafeEqual,
   type PasswordConfig,
-  type HashAlgorithm,
   type SecurityConfig,
-} from './elite-security';
+} from './security';
 
-// Elite Circuit Breaker - Resilience pattern for external APIs
+// Circuit Breaker - Resilience pattern for external APIs
 export {
-  EliteCircuitBreaker,
+  CircuitBreaker,
   CircuitBreakerError,
   CircuitBreakerManager,
   circuitBreakers,
@@ -126,29 +111,29 @@ export {
   type CircuitBreakerConfig,
   type CircuitMetrics,
   type CircuitState,
-} from './elite-circuit-breaker';
+} from './circuit-breaker';
 
-// Elite Rate Limiter - Token bucket & sliding window rate limiting
+// Rate Limiter - Token bucket & sliding window rate limiting
 export {
-  EliteRateLimiter,
+  RateLimiter,
   MultiTierRateLimiter,
   type RateLimitConfig,
   type RateLimitResult,
   type RateLimitHeaders,
   type RateLimitStrategy,
-} from './elite-rate-limiter';
+} from './rate-limiter';
 
-// Elite Logger - Structured logging with async batching
+// Structured Logger - Async batching with rotation
 export {
-  EliteLogger,
-  LogLevel as EliteLogLevel,
-  type LoggerOptions as EliteLoggerOptions,
-  type LogEntry as EliteLogEntry,
-} from './elite-logger';
+  StructuredLogger,
+  type LogLevel as StructuredLogLevel,
+  type LoggerOptions,
+  type LogEntry,
+} from './structured-logger';
 
-// Elite Config - Type-safe configuration with schema validation
+// Config - Type-safe configuration with schema validation
 export {
-  EliteConfigManager,
+  ConfigManager,
   s as schema,
   ServerConfigSchema,
   DatabaseConfigSchema,
@@ -156,11 +141,11 @@ export {
   AppConfigSchema,
   type ConfigOptions,
   type ConfigSchema,
-} from './elite-config';
+} from './config-loader';
 
-// Elite Feature Flags - A/B testing and gradual rollouts
+// Feature Flags - A/B testing and gradual rollouts
 export {
-  EliteFeatureFlags,
+  FeatureFlags,
   featureFlags,
   type FeatureFlag,
   type BooleanFlag,
@@ -169,22 +154,22 @@ export {
   type TimeBasedFlag,
   type ABTestFlag,
   type FeatureFlagContext,
-} from './elite-flags';
+} from './feature-flags';
 
-// Elite Scheduler - Cron job scheduler with priorities
+// Scheduler - Cron job scheduler with priorities
 export {
-  EliteScheduler,
+  Scheduler,
   scheduler,
   type JobOptions,
   type JobPriority,
   type ScheduledJob,
-} from './elite-scheduler';
+} from './scheduler';
 
-// Elite GraphQL - Schema-first GraphQL with caching
+// GraphQL - Schema-first GraphQL with caching
 export {
-  EliteGraphQLSchema,
+  GraphQLSchema,
   createBarberShopSchema,
   type GraphQLType,
   type GraphQLField,
   type GraphQLResolver,
-} from './elite-graphql';
+} from './graphql';

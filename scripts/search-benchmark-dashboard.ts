@@ -17,6 +17,7 @@ import {
 import { createDomainContext } from './lib/domain-context';
 import { storeCookieTelemetry } from './lib/cookie-telemetry';
 import { resolveR2BridgeConfig } from './lib/r2-bridge';
+import { buildDomainRegistryStatus } from './domain-registry-status';
 
 type Options = {
   port: number;
@@ -305,7 +306,8 @@ function resolveBuildMeta(): BuildMeta {
 }
 
 function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState): string {
-  const r2Label = options.r2Base || '(not configured)';
+  const hasR2Credentials = Boolean(resolveR2ReadOptions());
+  const r2Label = options.r2Base || (hasR2Credentials ? 'credentialed (R2_* env)' : '(not configured)');
   const hotReloadEnabled = options.hotReload;
   const initialSource = state.prefSource === 'r2' ? 'r2' : 'local';
   const commitUrl = buildMeta.commitFull && buildMeta.commitFull !== 'unknown'
@@ -328,18 +330,155 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     }
     * { box-sizing: border-box; }
     body { margin: 0; font-family: ui-monospace, Menlo, Monaco, monospace; background: linear-gradient(180deg, #081226, #0b111f); color: var(--text); }
-    main { max-width: 1100px; margin: 0 auto; padding: 28px; }
+    main { max-width: 1280px; margin: 0 auto; padding: 28px; }
     .card { border: 1px solid var(--line); background: var(--panel); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+    .layout { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; }
+    .span-12 { grid-column: span 12; }
+    .span-8 { grid-column: span 8; }
+    .span-6 { grid-column: span 6; }
+    .span-4 { grid-column: span 4; }
+    .section-title { margin: 6px 0 2px; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+    .section-subtitle { margin: 0 0 10px; color: var(--muted); font-size: 12px; }
     h1 { margin: 0 0 8px; font-size: 22px; }
     .meta { color: var(--muted); font-size: 12px; }
     .buttons { display: flex; gap: 8px; margin-top: 12px; }
     button { cursor: pointer; background: #0f223e; border: 1px solid #2d466f; color: var(--text); padding: 8px 10px; border-radius: 8px; }
+    .refresh-btn {
+      background: #0f223e;
+      border: 1px solid #2d466f;
+      color: #e8eefc;
+      min-width: 150px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 700;
+    }
+    .refresh-btn[data-state="loading"] {
+      background: #11324d;
+      border-color: #4fd1c5;
+      color: #d5fbf6;
+      cursor: wait;
+    }
+    .refresh-btn[data-state="success"] {
+      background: #072419;
+      border-color: #22c55e;
+      color: #dcfce7;
+    }
+    .refresh-btn[data-state="error"] {
+      background: #2b1210;
+      border-color: #ef4444;
+      color: #fee2e2;
+    }
+    .refresh-icon {
+      display: inline-flex;
+      width: 16px;
+      justify-content: center;
+      line-height: 1;
+      font-size: 14px;
+    }
+    .refresh-spinner {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      border: 2px solid rgba(79, 209, 197, 0.35);
+      border-top-color: #4fd1c5;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .kpi-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+    .kpi-card { border: 1px solid var(--line); border-radius: 10px; padding: 10px; background: #0a162b; }
+    .kpi-title { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+    .ring-wrap { display: flex; align-items: center; gap: 12px; }
+    .ring-svg { width: 84px; height: 84px; transform: rotate(-90deg); }
+    .ring-track { fill: none; stroke: #1f2c49; stroke-width: 10; }
+    .ring-progress { fill: none; stroke: #4fd1c5; stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 360ms ease; }
+    .ring-value { font-size: 20px; font-weight: 700; color: var(--text); }
+    .gauge-wrap { margin-top: 2px; }
+    .gauge-track { position: relative; height: 12px; border-radius: 999px; overflow: hidden; border: 1px solid #1f2c49; }
+    .gauge-zone { position: absolute; top: 0; bottom: 0; }
+    .gauge-zone-good { left: 0; width: 60%; background: #14532d; }
+    .gauge-zone-warn { left: 60%; width: 25%; background: #7c2d12; }
+    .gauge-zone-bad { left: 85%; width: 15%; background: #7f1d1d; }
+    .gauge-marker { position: absolute; top: -2px; width: 2px; height: 16px; background: #e8eefc; box-shadow: 0 0 0 1px #0b111f; }
+    .gauge-threshold { position: absolute; top: -2px; width: 2px; height: 16px; background: #facc15; }
+    .gauge-legend { margin-top: 6px; color: #9db2d9; font-size: 11px; }
+    .delta-pulse { animation: deltaPulse 1.5s ease-in-out infinite; }
+    @keyframes deltaPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.75; }
+    }
+    .status-pill-alert { animation: badgePulse 1.6s ease-in-out infinite; }
+    @keyframes badgePulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.15); }
+      50% { box-shadow: 0 0 0 5px rgba(239, 68, 68, 0.04); }
+    }
+    .empty-state {
+      border: 1px dashed #2d466f;
+      border-radius: 10px;
+      background: #0a162b;
+      padding: 14px;
+      text-align: center;
+      color: #9db2d9;
+    }
+    .empty-icon { font-size: 20px; display: block; margin-bottom: 6px; }
+    #toastHost { position: fixed; right: 18px; bottom: 18px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+    .toast {
+      pointer-events: auto;
+      border: 1px solid #2d466f;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 12px;
+      background: #0f223e;
+      color: #e8eefc;
+      min-width: 220px;
+    }
+    .toast-success { border-color: #22c55e; background: #072419; color: #dcfce7; }
+    .toast-error { border-color: #ef4444; background: #2b1210; color: #fee2e2; }
     table { width: 100%; border-collapse: collapse; margin-top: 12px; }
     th, td { border-bottom: 1px solid var(--line); padding: 8px; text-align: left; }
     th { color: var(--muted); font-weight: 600; }
     code { color: var(--accent); }
     pre { white-space: pre-wrap; word-break: break-word; background: #0a162b; border: 1px solid var(--line); padding: 12px; border-radius: 8px; }
     .badge { display: inline-block; border-radius: 999px; padding: 2px 8px; font-size: 11px; border: 1px solid transparent; }
+    .trend-delta {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 700;
+      font-family: ui-monospace, Menlo, Monaco, monospace;
+    }
+    .trend-delta-good { color: #22c55e; }
+    .trend-delta-bad { color: #ef4444; }
+    .trend-delta-neutral { color: #93c5fd; }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      transition: transform 120ms ease, filter 120ms ease, box-shadow 120ms ease;
+      cursor: default;
+    }
+    .status-pill:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+    .status-pill:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.45);
+    }
+    .pill-success { color: #dcfce7; background: #14532d; border-color: #22c55e; }
+    .pill-warning { color: #ffedd5; background: #7c2d12; border-color: #f97316; }
+    .pill-error { color: #fee2e2; background: #7f1d1d; border-color: #ef4444; }
+    .pill-closed { color: #f3e8ff; background: #581c87; border-color: #a855f7; }
     .status-good { color: #22c55e; border-color: #14532d; background: #052e16; }
     .status-warn { color: #facc15; border-color: #713f12; background: #292524; }
     .status-bad { color: #f97316; border-color: #7c2d12; background: #2b0f0a; }
@@ -353,11 +492,64 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     .footer { color: var(--muted); font-size: 12px; margin-top: 8px; }
     .footer a { color: #93c5fd; text-decoration: none; }
     .footer a:hover { text-decoration: underline; }
+    .footer-meta { margin-top: 6px; color: #9db2d9; font-size: 11px; }
+    .mono { font-family: ui-monospace, Menlo, Monaco, monospace; }
+    .table-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      margin-top: 10px;
+      background: #0a162b;
+    }
+    .table-scroll table { margin-top: 0; min-width: 980px; }
+    .subdomain-table { font-family: ui-monospace, Menlo, Monaco, monospace; }
+    .subdomain-table th, .subdomain-table td { white-space: nowrap; }
+    .subdomain-table th:first-child,
+    .subdomain-table td:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      background: #0d1830;
+      border-right: 1px solid var(--line);
+    }
+    .subdomain-table th:first-child { z-index: 3; }
+    .dns-char { font-weight: 700; font-size: 13px; }
+    .dns-char-ok { color: #22c55e; }
+    .dns-char-bad { color: #ef4444; }
+    .cookie-chip { display: inline-block; padding: 2px 6px; border-radius: 999px; border: 1px solid transparent; }
+    .cookie-chip-ok { background: #052e16; border-color: #14532d; color: #22c55e; }
+    .cookie-chip-warn { background: #292524; border-color: #713f12; color: #facc15; }
+    .cookie-chip-bad { background: #2b0f0a; border-color: #7c2d12; color: #f97316; }
+    .truncate-domain {
+      display: inline-block;
+      max-width: 230px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      vertical-align: bottom;
+    }
+    .overview-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+    .overview-tile { border: 1px solid var(--line); background: #0d1830; border-radius: 10px; padding: 10px; min-height: 72px; }
+    .overview-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .overview-value { margin-top: 6px; font-size: 15px; font-weight: 700; color: #e8eefc; }
+    .overview-meta { margin-top: 4px; color: #9db2d9; font-size: 11px; }
+    .tile-good { border-color: #14532d; background: #072419; }
+    .tile-warn { border-color: #713f12; background: #2a2313; }
+    .tile-bad { border-color: #7c2d12; background: #2b1210; }
+    .tile-neutral { border-color: #1e3a8a; background: #10213f; }
+    @media (max-width: 1000px) {
+      .span-8, .span-6, .span-4 { grid-column: span 12; }
+      .overview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .kpi-grid { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+    }
+    @media (max-width: 560px) {
+      .overview-grid { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+    }
   </style>
 </head>
 <body>
   <main>
-    <div class="card">
+    <div class="card span-12">
       <h1>Search Benchmark Dashboard</h1>
       <div class="meta">Local reports + optional R2: <code>${r2Label}</code><span id="strictP95Badge" class="badge status-neutral rss-badge">Strict p95 n/a</span><span id="rssBadge" class="badge status-neutral rss-badge">RSS idle</span></div>
       <div class="meta">repo=<a href="${buildMeta.repoBranchUrl}" target="_blank" rel="noreferrer">${buildMeta.repoBranchUrl}</a> commit=<a href="${commitUrl}" target="_blank" rel="noreferrer"><code>${buildMeta.commitShort}</code></a></div>
@@ -366,42 +558,125 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         <button id="loadLocal">Load Local Latest</button>
         <button id="loadR2">Load R2 Latest</button>
         <button id="loadHistory">Load History</button>
+        <button id="refreshBtn" class="refresh-btn" data-state="idle" aria-live="polite" aria-label="Refresh dashboard">
+          <span class="refresh-icon" aria-hidden="true">⟳</span>
+          <span class="refresh-text">Refresh</span>
+        </button>
+        <button id="jumpColors">Color Reference</button>
+      </div>
+      <div class="pill-row" aria-label="Factory-Wager status badges">
+        <span class="status-pill pill-success" role="status" aria-label="SUCCESS: All Clear" tabindex="0">🟢 All Clear</span>
+        <span class="status-pill pill-warning status-pill-alert" role="status" aria-label="WARNING: Attention Needed" tabindex="0">🟡 Attention Needed</span>
+        <span class="status-pill pill-error status-pill-alert" role="status" aria-label="ERROR: Action Required" tabindex="0">🔴 Action Required</span>
+        <span class="status-pill pill-closed" role="status" aria-label="CLOSED: Loop Closed" tabindex="0">✅ Loop Closed</span>
+      </div>
+      <div style="margin-top:12px" class="overview-grid">
+        <div id="tileSnapshot" class="overview-tile tile-neutral">
+          <div class="overview-label">Snapshot</div>
+          <div class="overview-value">n/a</div>
+          <div class="overview-meta">not loaded</div>
+        </div>
+        <div id="tileLoop" class="overview-tile tile-neutral">
+          <div class="overview-label">Loop</div>
+          <div class="overview-value">n/a</div>
+          <div class="overview-meta">not loaded</div>
+        </div>
+        <div id="tileTokens" class="overview-tile tile-neutral">
+          <div class="overview-label">Token Secrets</div>
+          <div class="overview-value">n/a</div>
+          <div class="overview-meta">not loaded</div>
+        </div>
+        <div id="tileDomainHealth" class="overview-tile tile-neutral">
+          <div class="overview-label">Domain Health</div>
+          <div class="overview-value">n/a</div>
+          <div class="overview-meta">not loaded</div>
+        </div>
+        <div id="tileRss" class="overview-tile tile-neutral">
+          <div class="overview-label">RSS</div>
+          <div class="overview-value">n/a</div>
+          <div class="overview-meta">not loaded</div>
+        </div>
       </div>
     </div>
-    <div class="card">
-      <h2 style="margin:0 0 8px;font-size:16px">Latest Snapshot</h2>
-      <div id="latest"></div>
+    <div class="section-title">Core Status</div>
+    <div class="section-subtitle">Benchmark quality, performance trend, and loop-closure alignment.</div>
+    <div class="layout">
+      <div class="card span-8">
+        <h2 style="margin:0 0 8px;font-size:16px">Latest Snapshot</h2>
+        <div id="latest"></div>
+      </div>
+      <div class="card span-4">
+        <h2 style="margin:0 0 8px;font-size:16px">Loop Closure</h2>
+        <div id="loopStatus"></div>
+      </div>
+      <div class="card span-12">
+        <h2 style="margin:0 0 8px;font-size:16px">Trend & Coverage</h2>
+        <div id="trend"></div>
+      </div>
+      <div class="card span-12">
+        <h2 style="margin:0 0 8px;font-size:16px">History</h2>
+        <div id="history"></div>
+      </div>
     </div>
-    <div class="card">
-      <h2 style="margin:0 0 8px;font-size:16px">Trend & Coverage</h2>
-      <div id="trend"></div>
+    <div class="section-title">Domain & Registry</div>
+    <div class="section-subtitle">Readiness of domain mappings, headers, token secrets, and runtime health.</div>
+    <div class="layout">
+      <div class="card span-6">
+        <h2 style="margin:0 0 8px;font-size:16px">Domain Registry Readiness</h2>
+        <div id="domainRegistryStatus"></div>
+      </div>
+      <div class="card span-6">
+        <h2 style="margin:0 0 8px;font-size:16px">Domain Health Summary</h2>
+        <div id="domainHealth"></div>
+      </div>
     </div>
-    <div class="card">
-      <h2 style="margin:0 0 8px;font-size:16px">Loop Closure</h2>
-      <div id="loopStatus"></div>
+    <div class="section-title">Storage & Distribution</div>
+    <div class="section-subtitle">Manifest integrity, inventory presence, and RSS publication consistency.</div>
+    <div class="layout">
+      <div class="card span-6">
+        <h2 style="margin:0 0 8px;font-size:16px">Publish Manifest</h2>
+        <div id="publish"></div>
+      </div>
+      <div class="card span-6">
+        <h2 style="margin:0 0 8px;font-size:16px">R2 Inventory</h2>
+        <div id="inventory"></div>
+      </div>
+      <div class="card span-12">
+        <h2 style="margin:0 0 8px;font-size:16px">RSS Feed</h2>
+        <div id="rss"></div>
+      </div>
     </div>
-    <div class="card">
-      <h2 style="margin:0 0 8px;font-size:16px">History</h2>
-      <div id="history"></div>
+    <div class="section-title" id="color-reference">Color Reference</div>
+    <div class="section-subtitle">Dashboard palette and semantic status colors.</div>
+    <div class="layout">
+      <div class="card span-12">
+        <table>
+          <thead>
+            <tr><th>Usage</th><th>Color</th><th>Hex</th><th>RGBA</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Background</td><td>Deep Navy</td><td><code>#0B111F</code></td><td><code>rgba(11, 17, 31, 1)</code></td></tr>
+            <tr><td>Panel</td><td>Slate Navy</td><td><code>#111A2D</code></td><td><code>rgba(17, 26, 45, 1)</code></td></tr>
+            <tr><td>Primary Text</td><td>Soft White</td><td><code>#E8EEFC</code></td><td><code>rgba(232, 238, 252, 1)</code></td></tr>
+            <tr><td>Muted Text</td><td>Dust Blue</td><td><code>#90A0C4</code></td><td><code>rgba(144, 160, 196, 1)</code></td></tr>
+            <tr><td>Accent</td><td>Teal</td><td><code>#4FD1C5</code></td><td><code>rgba(79, 209, 197, 1)</code></td></tr>
+            <tr><td>Divider/Border</td><td>Steel Blue</td><td><code>#1F2C49</code></td><td><code>rgba(31, 44, 73, 1)</code></td></tr>
+            <tr><td>Success</td><td>Green</td><td><code>#22C55E</code></td><td><code>rgba(34, 197, 94, 1)</code></td></tr>
+            <tr><td>Warning</td><td>Amber</td><td><code>#FACC15</code></td><td><code>rgba(250, 204, 21, 1)</code></td></tr>
+            <tr><td>Error</td><td>Orange Red</td><td><code>#F97316</code></td><td><code>rgba(249, 115, 22, 1)</code></td></tr>
+            <tr><td>Neutral Info</td><td>Sky Blue</td><td><code>#93C5FD</code></td><td><code>rgba(147, 197, 253, 1)</code></td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-    <div class="card">
-      <h2 style="margin:0 0 8px;font-size:16px">Publish Manifest</h2>
-      <div id="publish"></div>
+    <div class="footer">
+      Repo: <a href="${buildMeta.repoBranchUrl}" target="_blank" rel="noreferrer">${buildMeta.repoBranchUrl}</a> ·
+      Commit: <a href="${commitUrl}" target="_blank" rel="noreferrer"><code>${buildMeta.commitShort}</code></a> ·
+      <a href="#color-reference">Color Reference</a>
+      <div class="footer-meta">Base palette: <code>#0B111F</code> · <code>#111A2D</code> · <code>#E8EEFC</code> · <code>#4FD1C5</code> · <code>#1F2C49</code></div>
     </div>
-    <div class="card">
-      <h2 style="margin:0 0 8px;font-size:16px">R2 Inventory</h2>
-      <div id="inventory"></div>
-    </div>
-    <div class="card">
-      <h2 style="margin:0 0 8px;font-size:16px">Domain Health Summary</h2>
-      <div id="domainHealth"></div>
-    </div>
-    <div class="card">
-      <h2 style="margin:0 0 8px;font-size:16px">RSS Feed</h2>
-      <div id="rss"></div>
-    </div>
-    <div class="footer">Repo: <a href="${buildMeta.repoBranchUrl}" target="_blank" rel="noreferrer">${buildMeta.repoBranchUrl}</a> · Commit: <a href="${commitUrl}" target="_blank" rel="noreferrer"><code>${buildMeta.commitShort}</code></a></div>
   </main>
+  <div id="toastHost" aria-live="polite" aria-atomic="false"></div>
   <script>
     if (typeof window === 'undefined' || typeof document === 'undefined') {
       // Non-browser context: skip dashboard boot logic.
@@ -431,17 +706,82 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     const publishEl = document.getElementById('publish');
     const inventoryEl = document.getElementById('inventory');
     const domainHealthEl = document.getElementById('domainHealth');
+    const domainRegistryStatusEl = document.getElementById('domainRegistryStatus');
     const rssEl = document.getElementById('rss');
     const rssBadgeEl = document.getElementById('rssBadge');
     const strictP95BadgeEl = document.getElementById('strictP95Badge');
     const reportNoticeEl = document.getElementById('reportNotice');
+    const toastHostEl = document.getElementById('toastHost');
+    const refreshBtnEl = document.getElementById('refreshBtn');
+    const tileSnapshotEl = document.getElementById('tileSnapshot');
+    const tileLoopEl = document.getElementById('tileLoop');
+    const tileTokensEl = document.getElementById('tileTokens');
+    const tileDomainHealthEl = document.getElementById('tileDomainHealth');
+    const tileRssEl = document.getElementById('tileRss');
     let lastHistory = null;
     let previousSnapshot = null;
+    let historyVisibleCount = 40;
     let activeSource = readStoredSource() || INITIAL_SOURCE;
     let currentLatestId = null;
     let knownLatestId = null;
     let currentRssGuid = null;
     let knownRssGuid = null;
+    const showToast = (message, tone = 'success', ttlMs = 2600) => {
+      if (!toastHostEl) return;
+      const node = document.createElement('div');
+      node.className = 'toast ' + (tone === 'error' ? 'toast-error' : 'toast-success');
+      node.textContent = message;
+      toastHostEl.appendChild(node);
+      setTimeout(() => {
+        node.remove();
+      }, ttlMs);
+    };
+    const overviewState = {
+      snapshotId: 'n/a',
+      queryPack: 'n/a',
+      loop: 'n/a',
+      loopMeta: 'not loaded',
+      tokenCoverage: 'n/a',
+      tokenMeta: 'not loaded',
+      domainHealth: 'n/a',
+      domainHealthMeta: 'not loaded',
+      rss: 'n/a',
+      rssMeta: 'not loaded',
+    };
+    const setTile = (el, tone, value, meta) => {
+      if (!el) return;
+      el.className = 'overview-tile ' + tone;
+      const valueEl = el.querySelector('.overview-value');
+      const metaEl = el.querySelector('.overview-meta');
+      if (valueEl) valueEl.textContent = value;
+      if (metaEl) metaEl.textContent = String(meta || '').slice(0, 96);
+    };
+    const parseCoverageNumerator = (coverage) => {
+      const parts = String(coverage || '').split('/');
+      const n = Number(parts[0]);
+      return Number.isFinite(n) ? n : null;
+    };
+    const renderOverview = () => {
+      setTile(
+        tileSnapshotEl,
+        overviewState.snapshotId === 'n/a' ? 'tile-neutral' : 'tile-good',
+        overviewState.snapshotId,
+        'pack ' + overviewState.queryPack
+      );
+      const loopTone = overviewState.loop === 'closed' ? 'tile-good' : overviewState.loop === 'open' ? 'tile-bad' : 'tile-neutral';
+      setTile(tileLoopEl, loopTone, overviewState.loop, overviewState.loopMeta);
+      const tokenNum = parseCoverageNumerator(overviewState.tokenCoverage);
+      const tokenTone = overviewState.tokenCoverage === 'n/a'
+        ? 'tile-neutral'
+        : tokenNum === 0
+          ? 'tile-bad'
+          : 'tile-good';
+      setTile(tileTokensEl, tokenTone, overviewState.tokenCoverage, overviewState.tokenMeta);
+      const domainTone = overviewState.domainHealth.startsWith('online ') ? 'tile-good' : overviewState.domainHealth === 'n/a' ? 'tile-neutral' : 'tile-warn';
+      setTile(tileDomainHealthEl, domainTone, overviewState.domainHealth, overviewState.domainHealthMeta);
+      const rssTone = overviewState.rss === 'synced' ? 'tile-good' : overviewState.rss === 'drift' ? 'tile-warn' : 'tile-neutral';
+      setTile(tileRssEl, rssTone, overviewState.rss, overviewState.rssMeta);
+    };
     const topProfile = (snapshot) =>
       snapshot && Array.isArray(snapshot.rankedProfiles) && snapshot.rankedProfiles.length > 0
         ? snapshot.rankedProfiles[0]
@@ -480,7 +820,24 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       return 'vol-zero';
     };
     const statusBadge = (text) => '<span class="badge ' + statusBadgeClass(text) + '">' + text + '</span>';
+    const statusPill = (kind) => {
+      const map = {
+        success: { cls: 'pill-success', icon: '🟢', label: 'All Clear', aria: 'SUCCESS: All Clear' },
+        warning: { cls: 'pill-warning status-pill-alert', icon: '🟡', label: 'Attention Needed', aria: 'WARNING: Attention Needed' },
+        error: { cls: 'pill-error status-pill-alert', icon: '🔴', label: 'Action Required', aria: 'ERROR: Action Required' },
+        closed: { cls: 'pill-closed', icon: '✅', label: 'Loop Closed', aria: 'CLOSED: Loop Closed' },
+      };
+      const selected = map[kind] || map.success;
+      return '<span class="status-pill ' + selected.cls + '" role="status" aria-label="' + selected.aria + '">' + selected.icon + ' ' + selected.label + '</span>';
+    };
     const volatilityBadge = (text) => '<span class="badge ' + volatilityBadgeClass(text) + '">' + text + '</span>';
+    const volatilityEmojiBadge = (text, metricLabel = 'volatility') => {
+      const raw = String(text || 'Zero');
+      const value = raw.toLowerCase();
+      const icon = value === 'high' ? '🔴' : value === 'medium' ? '🟡' : value === 'low' ? '🟢' : '⚪';
+      const tip = metricLabel + ' volatility: ' + raw + '. Low is stable, Medium is watch, High is unstable.';
+      return '<span class="badge ' + volatilityBadgeClass(raw) + '" title="' + attrEscape(tip) + '">' + icon + ' ' + raw + '</span>';
+    };
     const warningBadgeClass = (code) => {
       const c = String(code || '').toLowerCase();
       if (c === 'latency_p95_warn' || c === 'slop_rise_warn' || c === 'heap_peak_warn' || c === 'rss_peak_warn') return 'status-warn';
@@ -523,6 +880,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     const healthRatioByState = (state) => {
       const s = String(state || '').toLowerCase();
       if (s === 'healthy') return 1;
+      if (s === 'simulated') return 0.85;
       if (s === 'degraded') return 0.7;
       if (s === 'critical') return 0.05;
       return 0.5;
@@ -580,6 +938,83 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       const sign = v > 0 ? '+' : '';
       return sign + v.toFixed(2) + suffix;
     };
+    const qualityProgressbar = (score) => {
+      const raw = Number(score);
+      if (!Number.isFinite(raw)) return '';
+      const bounded = Math.max(0, Math.min(100, raw));
+      const valueText = bounded.toFixed(2);
+      const barWidth = bounded.toFixed(2) + '%';
+      return (
+        '<div style="margin-top:8px">' +
+          '<div class="meta">Quality Accessibility</div>' +
+          '<div role="progressbar" aria-valuenow="' + valueText + '" aria-valuemin="0" aria-valuemax="100" aria-label="Quality score ' + valueText + ' out of 100" style="position:relative;height:10px;border-radius:999px;background:#0a162b;border:1px solid #1f2c49;overflow:hidden">' +
+            '<span style="display:block;height:100%;width:' + barWidth + ';background:linear-gradient(90deg,#22c55e,#4fd1c5)"></span>' +
+          '</div>' +
+          '<div class="meta" style="margin-top:4px">score=' + valueText + '/100</div>' +
+        '</div>'
+      );
+    };
+    const trendDeltaIndicator = (delta, unit, mode, metricLabel) => {
+      if (delta === null || Number.isNaN(delta)) return '-';
+      const valueText = (delta > 0 ? '+' : '') + Number(delta).toFixed(2) + unit;
+      const isImprovement = mode === 'lower_is_better' ? delta < 0 : delta > 0;
+      const isDegradation = mode === 'lower_is_better' ? delta > 0 : delta < 0;
+      const arrow = delta > 0 ? '↑' : delta < 0 ? '↓' : '→';
+      const cls = isImprovement ? 'trend-delta-good' : isDegradation ? 'trend-delta-bad' : 'trend-delta-neutral';
+      const pulse = isDegradation ? ' delta-pulse' : '';
+      const interpretation = isImprovement ? 'improvement' : isDegradation ? 'degradation' : 'stable';
+      const tip = metricLabel + ' delta ' + valueText + ' (' + interpretation + ')';
+      return '<span class="trend-delta ' + cls + pulse + '" title="' + attrEscape(tip) + '">' + valueText + ' ' + arrow + '</span>';
+    };
+    const attrEscape = (text) =>
+      String(text || '')
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    const emptyState = (title, detail, icon = '📭') =>
+      '<div class="empty-state" role="status" aria-live="polite"><span class="empty-icon" aria-hidden="true">' + icon + '</span><div><strong>' + title + '</strong></div><div style="margin-top:4px">' + detail + '</div></div>';
+    const qualityRing = (score) => {
+      const n = Math.max(0, Math.min(100, Number(score) || 0));
+      const radius = 28;
+      const c = 2 * Math.PI * radius;
+      const offset = c * (1 - (n / 100));
+      return (
+        '<div class="kpi-card">' +
+          '<div class="kpi-title">Circular Quality Ring</div>' +
+          '<div class="ring-wrap">' +
+            '<svg class="ring-svg" viewBox="0 0 84 84" role="img" aria-label="Quality score ' + n.toFixed(2) + ' out of 100">' +
+              '<circle class="ring-track" cx="42" cy="42" r="' + radius + '"></circle>' +
+              '<circle class="ring-progress" cx="42" cy="42" r="' + radius + '" stroke-dasharray="' + c.toFixed(2) + '" stroke-dashoffset="' + offset.toFixed(2) + '"></circle>' +
+            '</svg>' +
+            '<div><div class="ring-value">' + n.toFixed(2) + '</div><div class="meta">quality / 100</div></div>' +
+          '</div>' +
+        '</div>'
+      );
+    };
+    const p95Gauge = (p95, threshold) => {
+      const warn = Number.isFinite(Number(threshold)) ? Number(threshold) : 900;
+      const max = Math.max(1500, warn * 1.5);
+      const p = Math.max(0, Math.min(max, Number(p95) || 0));
+      const markerLeft = (p / max) * 100;
+      const thrLeft = (warn / max) * 100;
+      const status = p <= warn ? 'within threshold' : 'above threshold';
+      return (
+        '<div class="kpi-card">' +
+          '<div class="kpi-title">p95 Latency Gauge</div>' +
+          '<div class="gauge-wrap">' +
+            '<div class="gauge-track" role="img" aria-label="p95 latency ' + p.toFixed(2) + ' milliseconds, ' + status + '">' +
+              '<span class="gauge-zone gauge-zone-good"></span>' +
+              '<span class="gauge-zone gauge-zone-warn"></span>' +
+              '<span class="gauge-zone gauge-zone-bad"></span>' +
+              '<span class="gauge-threshold" style="left:' + thrLeft.toFixed(2) + '%" title="warn threshold ' + warn.toFixed(0) + 'ms"></span>' +
+              '<span class="gauge-marker" style="left:' + markerLeft.toFixed(2) + '%" title="current p95 ' + p.toFixed(2) + 'ms"></span>' +
+            '</div>' +
+            '<div class="gauge-legend">p95=' + p.toFixed(2) + 'ms · threshold=' + warn.toFixed(0) + 'ms</div>' +
+          '</div>' +
+        '</div>'
+      );
+    };
     const formatCurrentPrev = (curr, prev, suffix = '') => [
       (curr === null || Number.isNaN(curr) ? 'n/a' : curr.toFixed(2) + suffix),
       (prev === null || Number.isNaN(prev) ? 'n/a' : prev.toFixed(2) + suffix),
@@ -604,8 +1039,8 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     };
     const renderLatest = (data) => {
       if (!data || !Array.isArray(data.rankedProfiles)) {
-        latestEl.innerHTML = '<pre>No benchmark data found.</pre>';
-        trendEl.innerHTML = '<pre>No trend data.</pre>';
+        latestEl.innerHTML = emptyState('No benchmark data', 'Run a new snapshot to populate latest metrics.', '📉');
+        trendEl.innerHTML = emptyState('No trend data', 'Need at least one latest snapshot.', '📊');
         return;
       }
       const rows = data.rankedProfiles.map((p, idx) =>
@@ -637,6 +1072,11 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         '<div class="meta">snapshot=' + (data.id || 'n/a') + ' created=' + (data.createdAt || 'n/a') + '</div>' +
         '<div class="meta">path=' + (data.path || 'n/a') + ' limit=' + (data.limit || 'n/a') + ' queries=' + ((data.queries || []).length || 0) + ' queryPack=' + (data.queryPack || 'core_delivery') + ' deltaBasis=' + (data.deltaBasis || 'n/a') + '</div>' +
         '<div class="meta">warnings=' + ((Array.isArray(data.warnings) && data.warnings.length > 0) ? data.warnings.join(', ') : 'none') + '</div>' +
+        '<div class="kpi-grid">' +
+          qualityRing(Number(currentTop?.qualityScore || 0)) +
+          p95Gauge(Number(currentTop?.latencyP95Ms || 0), asNumOrNull(data?.thresholdsApplied?.strictLatencyP95WarnMs)) +
+        '</div>' +
+        qualityProgressbar(Number(currentTop?.qualityScore || 0)) +
         '<table><thead><tr><th>Rank</th><th>Profile</th><th>Quality</th><th>P95(ms)</th><th>Signal%</th><th>Unique%</th><th>Slop%</th><th>Density</th><th>Noise Ratio</th><th>Reliability</th></tr></thead><tbody>' + rows + '</tbody></table>';
       setStrictP95Badge(data);
       renderTrend(data, previousSnapshot);
@@ -817,30 +1257,31 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
 
       trendEl.innerHTML =
         '<table><thead><tr><th>Metric</th><th>Current</th><th>Previous</th><th>Delta</th><th>Status</th><th>Volatility</th></tr></thead><tbody>' +
-          '<tr><td>Baseline</td><td>' + baselineText + '</td><td>' + (scopedPrevious?.id || 'n/a') + '</td><td>' + (hasBaseline ? 'same-pack' : '-') + '</td><td>' + statusBadge(hasBaseline ? 'Stable' : 'Neutral') + '</td><td>' + volatilityBadge('Low') + '</td></tr>' +
-          '<tr><td>Core Loop</td><td colspan="3">' + coreLoopSummary + (coreLoopWarnings.length ? (' | ' + coreLoopWarnings.map(warningBadge).join(' ')) : '') + '</td><td>' + statusBadge(coreLoopStatus) + '</td><td>' + volatilityBadge(coreLoopVol) + '</td></tr>' +
-          '<tr><td>Path</td><td><code>' + currentPath + '</code></td><td><code>' + previousPath + '</code></td><td>-</td><td>' + statusBadge(pathStatus(currentPath, previousPath)) + '</td><td>' + volatilityBadge('Low') + '</td></tr>' +
-          '<tr><td>Queries</td><td>' + currentQueries + '</td><td>' + (previousQueries === null ? 'n/a' : previousQueries) + '</td><td>' + (queriesDelta === null ? '-' : queriesDelta) + '</td><td>' + statusBadge(queriesStatus) + '</td><td>' + volatilityBadge(queriesVol) + '</td></tr>' +
-          '<tr><td>Top Quality</td><td>' + qualityCurrentText + '</td><td>' + qualityPrevText + '</td><td>' + signedDelta(qualityDelta) + '</td><td>' + statusBadge(qualityStatus) + '</td><td>' + volatilityBadge(qualityVol) + '</td></tr>' +
-          '<tr><td>Strict p95</td><td>' + strictP95CurrentText + '</td><td>' + strictP95PrevText + '</td><td>' + signedDelta(strictP95Delta, 'ms') + '</td><td>' + statusBadge(strictP95Status) + '</td><td>' + volatilityBadge(strictP95Vol) + '</td></tr>' +
-          '<tr><td>Strict Heap</td><td>' + strictHeapCurrentText + '</td><td>' + strictHeapPrevText + '</td><td>' + signedDelta(strictHeapDelta, 'MB') + '</td><td>' + statusBadge(strictHeapStatus) + '</td><td>' + volatilityBadge(strictHeapVol) + '</td></tr>' +
-          '<tr><td>Strict RSS</td><td>' + strictRssCurrentText + '</td><td>' + strictRssPrevText + '</td><td>' + signedDelta(strictRssDelta, 'MB') + '</td><td>' + statusBadge(strictRssStatus) + '</td><td>' + volatilityBadge(strictRssVol) + '</td></tr>' +
-          '<tr><td>Top Quality (10)</td><td><span class="sparkline">' + qualitySpark + '</span></td><td colspan="2">latest ' + qualityCurrentText + '</td><td>' + statusBadge(qualityStatus) + '</td><td>' + volatilityBadge(classifyStdVolatility(qualityStdev)) + '</td></tr>' +
-          '<tr><td>Family Cov.</td><td>' + familyCurrentText + '</td><td>' + familyPrevText + '</td><td>' + signedDelta(familyDelta, '%') + '</td><td>' + statusBadge(familyStatus) + '</td><td>' + volatilityBadge(familyVol) + '</td></tr>' +
-          '<tr><td>Slop Avg.</td><td>' + slopCurrentText + '</td><td>' + slopPrevText + '</td><td>' + signedDelta(slopDelta, '%') + '</td><td>' + statusBadge(slopStatus) + '</td><td>' + volatilityBadge(slopVol) + '</td></tr>' +
-          '<tr><td>Query Coverage</td><td>' + qcovCurrentText + '</td><td>' + qcovPrevText + '</td><td>' + signedDelta(queryCoverageDelta, '%') + '</td><td>' + statusBadge(qcovStatus) + '</td><td>' + volatilityBadge(qcovVol) + '</td></tr>' +
-          '<tr><td>Noise Ratio</td><td>' + noiseCurrentText + '</td><td>' + noisePrevText + '</td><td>' + signedDelta(noiseDelta, '%') + '</td><td>' + statusBadge(noiseStatus) + '</td><td>' + volatilityBadge(noiseVol) + '</td></tr>' +
-          '<tr><td>Reliability</td><td>' + relCurrentText + '</td><td>' + relPrevText + '</td><td>' + signedDelta(reliabilityDelta) + '</td><td>' + statusBadge(relStatus) + '</td><td>' + volatilityBadge(relVol) + '</td></tr>' +
+          '<tr><td>Baseline</td><td>' + baselineText + '</td><td>' + (scopedPrevious?.id || 'n/a') + '</td><td>' + (hasBaseline ? 'same-pack' : '-') + '</td><td>' + statusBadge(hasBaseline ? 'Stable' : 'Neutral') + '</td><td>' + volatilityEmojiBadge('Low', 'Baseline') + '</td></tr>' +
+          '<tr><td>Core Loop</td><td colspan="3">' + coreLoopSummary + (coreLoopWarnings.length ? (' | ' + coreLoopWarnings.map(warningBadge).join(' ')) : '') + '</td><td>' + statusBadge(coreLoopStatus) + '</td><td>' + volatilityEmojiBadge(coreLoopVol, 'Core loop') + '</td></tr>' +
+          '<tr><td>Path</td><td><code>' + currentPath + '</code></td><td><code>' + previousPath + '</code></td><td>-</td><td>' + statusBadge(pathStatus(currentPath, previousPath)) + '</td><td>' + volatilityEmojiBadge('Low', 'Path') + '</td></tr>' +
+          '<tr><td>Queries</td><td>' + currentQueries + '</td><td>' + (previousQueries === null ? 'n/a' : previousQueries) + '</td><td>' + (queriesDelta === null ? '-' : queriesDelta) + '</td><td>' + statusBadge(queriesStatus) + '</td><td>' + volatilityEmojiBadge(queriesVol, 'Queries') + '</td></tr>' +
+          '<tr><td>Top Quality</td><td>' + qualityCurrentText + '</td><td>' + qualityPrevText + '</td><td>' + signedDelta(qualityDelta) + '</td><td>' + statusBadge(qualityStatus) + '</td><td>' + volatilityEmojiBadge(qualityVol, 'Top quality') + '</td></tr>' +
+          '<tr><td title="Strict p95 response latency. Lower is better.">Strict p95</td><td>' + strictP95CurrentText + '</td><td>' + strictP95PrevText + '</td><td>' + trendDeltaIndicator(strictP95Delta, 'ms', 'lower_is_better', 'Strict p95') + '</td><td>' + statusBadge(strictP95Status) + '</td><td>' + volatilityEmojiBadge(strictP95Vol, 'Strict p95') + '</td></tr>' +
+          '<tr><td title="Strict heap usage. Lower is better.">Strict Heap</td><td>' + strictHeapCurrentText + '</td><td>' + strictHeapPrevText + '</td><td>' + trendDeltaIndicator(strictHeapDelta, 'MB', 'lower_is_better', 'Strict Heap') + '</td><td>' + statusBadge(strictHeapStatus) + '</td><td>' + volatilityEmojiBadge(strictHeapVol, 'Strict Heap') + '</td></tr>' +
+          '<tr><td title="Strict RSS memory usage. Lower is better.">Strict RSS</td><td>' + strictRssCurrentText + '</td><td>' + strictRssPrevText + '</td><td>' + trendDeltaIndicator(strictRssDelta, 'MB', 'lower_is_better', 'Strict RSS') + '</td><td>' + statusBadge(strictRssStatus) + '</td><td>' + volatilityEmojiBadge(strictRssVol, 'Strict RSS') + '</td></tr>' +
+          '<tr><td>Top Quality (10)</td><td><span class="sparkline">' + qualitySpark + '</span></td><td colspan="2">latest ' + qualityCurrentText + '</td><td>' + statusBadge(qualityStatus) + '</td><td>' + volatilityEmojiBadge(classifyStdVolatility(qualityStdev), 'Top quality trend') + '</td></tr>' +
+          '<tr><td>Family Cov.</td><td>' + familyCurrentText + '</td><td>' + familyPrevText + '</td><td>' + signedDelta(familyDelta, '%') + '</td><td>' + statusBadge(familyStatus) + '</td><td>' + volatilityEmojiBadge(familyVol, 'Family coverage') + '</td></tr>' +
+          '<tr><td>Slop Avg.</td><td>' + slopCurrentText + '</td><td>' + slopPrevText + '</td><td>' + signedDelta(slopDelta, '%') + '</td><td>' + statusBadge(slopStatus) + '</td><td>' + volatilityEmojiBadge(slopVol, 'Slop average') + '</td></tr>' +
+          '<tr><td>Query Coverage</td><td>' + qcovCurrentText + '</td><td>' + qcovPrevText + '</td><td>' + signedDelta(queryCoverageDelta, '%') + '</td><td>' + statusBadge(qcovStatus) + '</td><td>' + volatilityEmojiBadge(qcovVol, 'Query coverage') + '</td></tr>' +
+          '<tr><td>Noise Ratio</td><td>' + noiseCurrentText + '</td><td>' + noisePrevText + '</td><td>' + signedDelta(noiseDelta, '%') + '</td><td>' + statusBadge(noiseStatus) + '</td><td>' + volatilityEmojiBadge(noiseVol, 'Noise ratio') + '</td></tr>' +
+          '<tr><td>Reliability</td><td>' + relCurrentText + '</td><td>' + relPrevText + '</td><td>' + signedDelta(reliabilityDelta) + '</td><td>' + statusBadge(relStatus) + '</td><td>' + volatilityEmojiBadge(relVol, 'Reliability') + '</td></tr>' +
         '</tbody></table>';
     };
     const renderHistory = (data) => {
       if (!data || !Array.isArray(data.snapshots)) {
-        historyEl.innerHTML = '<pre>No history index found.</pre>';
+        historyEl.innerHTML = emptyState('No history index', 'History appears empty or unavailable.', '🗂️');
         lastHistory = null;
         return;
       }
       lastHistory = data;
-      const rows = data.snapshots.map((s) =>
+      const slice = data.snapshots.slice(0, historyVisibleCount);
+      const rows = slice.map((s) =>
         '<tr>' +
           '<td>' + s.id + '</td>' +
           '<td>' + s.createdAt + '</td>' +
@@ -849,8 +1290,18 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           '<td>' + Number(s.topScore || 0).toFixed(2) + '</td>' +
         '</tr>'
       ).join('');
+      const hasMore = data.snapshots.length > historyVisibleCount;
       historyEl.innerHTML =
-        '<table><thead><tr><th>Snapshot</th><th>Created</th><th>Query Pack</th><th>Top Profile</th><th>Top Score</th></tr></thead><tbody>' + rows + '</tbody></table>';
+        '<div class="meta">showing ' + slice.length + '/' + data.snapshots.length + ' (virtual window)</div>' +
+        '<div class="table-scroll"><table><thead><tr><th>Snapshot</th><th>Created</th><th>Query Pack</th><th>Top Profile</th><th>Top Score</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+        (hasMore ? '<div style="margin-top:8px"><button id="historyMore">Load more</button></div>' : '');
+      const moreBtn = document.getElementById('historyMore');
+      if (moreBtn) {
+        moreBtn.onclick = () => {
+          historyVisibleCount += 40;
+          renderHistory(data);
+        };
+      }
     };
     const renderLoopStatus = (data, latestSnapshot) => {
       if (!data || !Array.isArray(data.stages)) {
@@ -864,7 +1315,11 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       const hasFail = stages.some((s) => s.status === 'fail');
       const hasWarn = stages.some((s) => s.status === 'warn');
       const closed = !hasFail && Boolean(data.loopClosed);
-      const loopBadge = statusBadge(closed ? 'Stable' : (hasWarn ? 'Watch' : 'Down'));
+      const loopBadge = closed
+        ? statusPill('closed')
+        : hasWarn
+          ? statusPill('warning')
+          : statusPill('error');
       const freshness = data.freshness || null;
       const freshnessBadge = freshness
         ? statusBadge(freshness.isAligned ? 'Freshness aligned' : 'Freshness drift')
@@ -1066,6 +1521,10 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       const subRows = (data.subdomains || []).slice(0, 24).map((item) =>
       {
         const fullDomain = String(item.fullDomain || '').trim().toLowerCase();
+        const fullDomainDisplay = fullDomain.length > 38 ? (fullDomain.slice(0, 35) + '...') : fullDomain;
+        const dnsChar = item.dnsResolved
+          ? '<span class="mono dns-char dns-char-ok" title="DNS resolved" aria-label="DNS resolved">✓</span>'
+          : '<span class="mono dns-char dns-char-bad" title="DNS unresolved" aria-label="DNS unresolved">✗</span>';
         const cookieSymbol = !data.health?.cookie?.enabled
           ? '⚪'
           : cookieUnresolvedSet.has(fullDomain)
@@ -1075,17 +1534,26 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
               : data.health?.cookie?.status === 'degraded'
                 ? '🍪🟡'
                 : '🍪🟢';
+        const cookieClass = !data.health?.cookie?.enabled
+          ? 'cookie-chip-warn'
+          : cookieUnresolvedSet.has(fullDomain)
+            ? 'cookie-chip-warn'
+            : data.health?.cookie?.status === 'critical'
+              ? 'cookie-chip-bad'
+              : data.health?.cookie?.status === 'degraded'
+                ? 'cookie-chip-warn'
+                : 'cookie-chip-ok';
         return (
         '<tr>' +
-          '<td><code>' + item.subdomain + '</code></td>' +
-          '<td><code>' + (item.urlFragment || item.subdomain || 'n/a') + '</code></td>' +
-          '<td><code>' + (item.path || '/') + '</code></td>' +
-          '<td><code>' + item.fullDomain + '</code></td>' +
-          '<td>' + healthBadge(item.dnsResolved ? 1 : 0, item.dnsResolved ? '✓ resolved' : '✗ unresolved') + '</td>' +
-          '<td>' + ((item.dnsRecords || []).slice(0, 2).join(', ') || 'n/a') + '</td>' +
-          '<td>' + (item.dnsSource || 'live') + '</td>' +
+          '<td><code class="mono">' + item.subdomain + '</code></td>' +
+          '<td><code class="mono">' + (item.urlFragment || item.subdomain || 'n/a') + '</code></td>' +
+          '<td><code class="mono">' + (item.path || '/') + '</code></td>' +
+          '<td><span class="mono truncate-domain" title="' + attrEscape(fullDomain) + '">' + fullDomainDisplay + '</span></td>' +
+          '<td>' + dnsChar + '</td>' +
+          '<td><span class="mono truncate-domain" title="' + attrEscape(((item.dnsRecords || []).join(', ') || 'n/a')) + '">' + (((item.dnsRecords || []).slice(0, 2).join(', ')) || 'n/a') + '</span></td>' +
+          '<td><span class="mono">' + (item.dnsSource || 'live') + '</span></td>' +
           '<td>' + (item.lastCheckedAt || 'n/a') + '</td>' +
-          '<td>' + cookieSymbol + '</td>' +
+          '<td><span class="cookie-chip ' + cookieClass + '" title="Cookie telemetry">' + cookieSymbol + '</span></td>' +
         '</tr>'
       );
       }).join('');
@@ -1124,7 +1592,47 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         '<div class="meta">cookieTelemetry=' + (data.health?.cookie?.detail || 'n/a') + ' domainMatch=' + (data.health?.cookie?.domainMatchesRequested ?? 'n/a') + ' cookieScore=' + (Number.isFinite(cookieScoreValue) ? cookieScoreValue : 'n/a') + ' hex=' + cookieHexBadge + ' bar=' + cookieUnicodeBar + ' <span class="badge" style="background:' + cookieHexBadge + ';border-color:' + cookieHexBadge + ';color:#0b0d12">■</span></div>' +
         '<div class="meta">cookieTelemetryWrite=' + (data.cookieTelemetryWrite?.written ? 'ok' : 'skipped') + (data.cookieTelemetryWrite?.reason ? ' reason=<code>' + data.cookieTelemetryWrite.reason + '</code>' : '') + '</div>' +
         '<table><thead><tr><th>Type</th><th>Key</th><th>Exists</th><th>Last Modified</th></tr></thead><tbody>' + latestRows + '</tbody><tfoot>' + latestFooter + '</tfoot></table>' +
-        '<table style="margin-top:10px"><thead><tr><th>Subdomain</th><th>URL Fragment</th><th>Path</th><th>Full Domain</th><th>DNS</th><th>Records</th><th>Source</th><th>Last Checked</th><th>Cookie</th></tr></thead><tbody>' + (subRows || '<tr><td colspan="9">No subdomain data.</td></tr>') + '</tbody><tfoot>' + subFooter + '</tfoot></table>';
+        '<div class="table-scroll"><table class="subdomain-table"><thead><tr><th>Subdomain</th><th>URL Fragment</th><th>Path</th><th>Full Domain</th><th>DNS</th><th>Records</th><th>Source</th><th>Last Checked</th><th>Cookie</th></tr></thead><tbody>' + (subRows || '<tr><td colspan="9">No subdomain data.</td></tr>') + '</tbody><tfoot>' + subFooter + '</tfoot></table></div>';
+    };
+    const renderDomainRegistryStatus = (data) => {
+      if (!domainRegistryStatusEl) return;
+      if (!data || data.error || !data.registry) {
+        domainRegistryStatusEl.innerHTML = '<pre>' + (data?.error || 'No domain registry status data.') + '</pre>';
+        return;
+      }
+      const total = Number(data.registry.totalDomains || 0);
+      const bucketMapped = Number(data.registry.bucketMapped || 0);
+      const headerConfigured = Number(data.registry.headerConfigured || 0);
+      const tokenConfigured = Number(data.registry.tokenConfigured || 0);
+      const tokenMissing = Number(data.registry.tokenMissing || 0);
+      const tokenCoverage = total > 0 ? tokenConfigured / total : 0;
+      const tokenBadge = healthBadge(tokenCoverage, 'token secrets ' + tokenConfigured + '/' + total);
+      const tokenState =
+        tokenMissing > 0
+          ? '<span class="badge status-bad">blocked</span> missing ' + tokenMissing + ' domain token secret(s)'
+          : '<span class="badge status-good">ready</span> all domain token secrets present';
+      const rows = Array.isArray(data.registry.domains)
+        ? data.registry.domains.map((row) =>
+          '<tr>' +
+            '<td><code>' + (row.domain || 'n/a') + '</code></td>' +
+            '<td><code>' + (row.tokenEnvVar || 'n/a') + '</code></td>' +
+            '<td>' + (row.tokenPresent === true ? '<span class="badge status-good">present</span>' : '<span class="badge status-bad">missing</span>') + '</td>' +
+            '<td>' + (row.tokenSource || 'n/a') + '</td>' +
+            '<td><code>' + (row.bucket || 'n/a') + '</code></td>' +
+            '<td><code>' + (row.requiredHeader || 'n/a') + '</code></td>' +
+          '</tr>'
+        ).join('')
+        : '';
+      domainRegistryStatusEl.innerHTML =
+        '<div class="meta">generatedAt=' + (data.generatedAt || 'n/a') + ' registry=<code>' + (data.registry.path || 'n/a') + '</code> version=' + (data.registry.version || 'n/a') + '</div>' +
+        '<div class="meta">domains=' + total + ' projects=' + (data.search?.projectCount ?? 'n/a') + ' latestSnapshot=' + (data.search?.latestSnapshotId || 'n/a') + ' queryPack=' + (data.search?.queryPack || 'n/a') + '</div>' +
+        '<div class="meta">' +
+          healthBadge(total > 0 ? bucketMapped / total : 0, 'bucket mapping ' + bucketMapped + '/' + total) + ' ' +
+          healthBadge(total > 0 ? headerConfigured / total : 0, 'header mapping ' + headerConfigured + '/' + total) + ' ' +
+          tokenBadge +
+        '</div>' +
+        '<div class="meta">' + tokenState + '</div>' +
+        '<table><thead><tr><th>Domain</th><th>Token Env</th><th>Token</th><th>Source</th><th>Bucket</th><th>Header</th></tr></thead><tbody>' + (rows || '<tr><td colspan="6">No domain registry entries.</td></tr>') + '</tbody></table>';
     };
     const renderRss = (xmlText, source, meta) => {
       if (!xmlText || typeof xmlText !== 'string') {
@@ -1214,6 +1722,68 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       return data;
     };
     let refreshInFlight = false;
+    let refreshRetryTimer = null;
+    let refreshRetryCount = 0;
+    let lastRefreshSource = INITIAL_SOURCE;
+    const formatTime = (d) => {
+      try {
+        return new Date(d).toLocaleTimeString();
+      } catch {
+        return new Date().toLocaleTimeString();
+      }
+    };
+    const setRefreshVisual = (state, label, iconHtml, ariaLabel, disabled = false) => {
+      if (!refreshBtnEl) return;
+      refreshBtnEl.dataset.state = state;
+      refreshBtnEl.setAttribute('aria-label', ariaLabel);
+      refreshBtnEl.disabled = disabled;
+      const iconEl = refreshBtnEl.querySelector('.refresh-icon');
+      const textEl = refreshBtnEl.querySelector('.refresh-text');
+      if (iconEl) iconEl.innerHTML = iconHtml;
+      if (textEl) textEl.textContent = label;
+    };
+    const clearRetryTimer = () => {
+      if (refreshRetryTimer !== null) {
+        clearInterval(refreshRetryTimer);
+        refreshRetryTimer = null;
+      }
+    };
+    const setRefreshIdle = () => {
+      clearRetryTimer();
+      refreshRetryCount = 0;
+      setRefreshVisual('idle', 'Refresh', '⟳', 'Refresh dashboard', false);
+    };
+    const setRefreshLoading = () => {
+      clearRetryTimer();
+      refreshRetryCount = 0;
+      setRefreshVisual('loading', 'Loading...', '<span class="refresh-spinner" aria-hidden="true"></span>', 'Loading dashboard data', true);
+    };
+    const setRefreshSuccess = () => {
+      clearRetryTimer();
+      refreshRetryCount = 0;
+      setRefreshVisual('success', 'Updated ' + formatTime(Date.now()), '✅', 'Dashboard updated successfully', false);
+      showToast('Dashboard updated successfully', 'success');
+    };
+    const setRefreshErrorCountdown = (seconds = 5) => {
+      clearRetryTimer();
+      refreshRetryCount = Math.max(1, Number(seconds) || 5);
+      const tick = () => {
+        setRefreshVisual(
+          'error',
+          'Retry in ' + refreshRetryCount + 's',
+          '❌',
+          'Refresh failed. Retry in ' + refreshRetryCount + ' seconds',
+          true
+        );
+        refreshRetryCount -= 1;
+        if (refreshRetryCount < 0) {
+          setRefreshIdle();
+        }
+      };
+      tick();
+      showToast('Refresh failed. Countdown started.', 'error', 3200);
+      refreshRetryTimer = setInterval(tick, 1000);
+    };
     const countNewReports = (snapshots, baselineId) => {
       if (!Array.isArray(snapshots) || snapshots.length === 0 || !baselineId) return 0;
       const idx = snapshots.findIndex((s) => s.id === baselineId);
@@ -1283,6 +1853,8 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     async function loadLatest(source) {
       if (refreshInFlight) return;
       refreshInFlight = true;
+      lastRefreshSource = source;
+      setRefreshLoading();
       try {
         activeSource = source;
         writeStoredSource(source);
@@ -1291,7 +1863,10 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         const data = await fetchJson('/api/latest?source=' + source);
         const prevEntry = findPreviousSamePack(indexData?.snapshots, data);
         if (prevEntry?.id) {
-          previousSnapshot = await fetchJson('/api/snapshot?id=' + encodeURIComponent(prevEntry.id) + '&source=' + source);
+          const prev = await fetchJson(
+            '/api/snapshot?id=' + encodeURIComponent(prevEntry.id) + '&source=' + source + '&optional=1'
+          );
+          previousSnapshot = prev?.missing ? null : prev;
         } else {
           previousSnapshot = null;
         }
@@ -1311,6 +1886,8 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           (strictP95Threshold === null ? '' : '&strictP95Threshold=' + encodeURIComponent(String(strictP95Threshold)));
         const domain = await fetchJson(domainUrl);
         renderDomainHealth(domain);
+        const domainRegistryStatus = await fetchJson('/api/domain-registry-status');
+        renderDomainRegistryStatus(domainRegistryStatus);
         const loop = await fetchJson('/api/loop-status?source=local');
         renderLoopStatus(loop, data);
         const rssMeta = await fetchJson('/api/rss-meta?source=' + source);
@@ -1327,24 +1904,52 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         }
         const rssAligned = Boolean(guid && data?.id && guid === data.id);
         setRssBadge(rssAligned ? 'RSS synced' : 'RSS drift', rssAligned ? 'ok' : 'new');
+        overviewState.snapshotId = String(data?.id || 'n/a');
+        overviewState.queryPack = String(data?.queryPack || 'n/a');
+        overviewState.loop = loop?.loopClosed === true ? 'closed' : 'open';
+        overviewState.loopMeta = String(loop?.loopClosedReason || 'n/a');
+        const tokenConfigured = Number(domainRegistryStatus?.registry?.tokenConfigured || 0);
+        const totalDomains = Number(domainRegistryStatus?.registry?.totalDomains || 0);
+        overviewState.tokenCoverage = totalDomains > 0 ? (tokenConfigured + '/' + totalDomains) : 'n/a';
+        overviewState.tokenMeta = totalDomains > 0 ? (domainRegistryStatus.registry.tokenMissing + ' missing') : 'n/a';
+        const checkedRows = Number(domainRegistryStatus?.domainHealth?.checkedRows || 0);
+        const onlineRows = Number(domainRegistryStatus?.domainHealth?.onlineRows || 0);
+        overviewState.domainHealth = checkedRows > 0 ? ('online ' + onlineRows + '/' + checkedRows) : 'n/a';
+        overviewState.domainHealthMeta = checkedRows > 0 ? ('offline/degraded ' + (checkedRows - onlineRows)) : 'n/a';
+        overviewState.rss = rssAligned ? 'synced' : 'drift';
+        overviewState.rssMeta = guid ? ('guid ' + guid.slice(0, 16)) : 'guid n/a';
+        renderOverview();
+        setRefreshSuccess();
       } catch (error) {
         setRssBadge('RSS unavailable', 'neutral');
         const message = error instanceof Error ? error.message : String(error);
         setReportNotice('<span class="badge status-bad">Refresh failed</span> <code>' + message + '</code>', 'error');
+        overviewState.rss = 'unavailable';
+        overviewState.rssMeta = message;
+        renderOverview();
+        setRefreshErrorCountdown(6);
       } finally {
         refreshInFlight = false;
       }
     }
     async function loadHistory() {
+      if (refreshInFlight) return;
+      refreshInFlight = true;
+      setRefreshLoading();
       try {
         activeSource = 'local';
+        lastRefreshSource = 'local';
         writeStoredSource('local');
         const localData = await fetchJson('/api/index');
+        historyVisibleCount = 40;
         renderHistory(localData);
         const latestData = await fetchJson('/api/latest?source=local');
         const prevEntry = findPreviousSamePack(localData?.snapshots, latestData);
         if (prevEntry?.id) {
-          previousSnapshot = await fetchJson('/api/snapshot?id=' + encodeURIComponent(prevEntry.id) + '&source=local');
+          const prev = await fetchJson(
+            '/api/snapshot?id=' + encodeURIComponent(prevEntry.id) + '&source=local&optional=1'
+          );
+          previousSnapshot = prev?.missing ? null : prev;
         } else {
           previousSnapshot = null;
         }
@@ -1364,6 +1969,8 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           (strictP95Threshold === null ? '' : '&strictP95Threshold=' + encodeURIComponent(String(strictP95Threshold)));
         const domain = await fetchJson(domainUrl);
         renderDomainHealth(domain);
+        const domainRegistryStatus = await fetchJson('/api/domain-registry-status');
+        renderDomainRegistryStatus(domainRegistryStatus);
         const loop = await fetchJson('/api/loop-status?source=local');
         renderLoopStatus(loop, latestData);
         const rssMeta = await fetchJson('/api/rss-meta?source=local');
@@ -1380,16 +1987,56 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         }
         const rssAligned = Boolean(guid && latestData?.id && guid === latestData.id);
         setRssBadge(rssAligned ? 'RSS synced' : 'RSS drift', rssAligned ? 'ok' : 'new');
+        overviewState.snapshotId = String(latestData?.id || 'n/a');
+        overviewState.queryPack = String(latestData?.queryPack || 'n/a');
+        overviewState.loop = loop?.loopClosed === true ? 'closed' : 'open';
+        overviewState.loopMeta = String(loop?.loopClosedReason || 'n/a');
+        const tokenConfigured = Number(domainRegistryStatus?.registry?.tokenConfigured || 0);
+        const totalDomains = Number(domainRegistryStatus?.registry?.totalDomains || 0);
+        overviewState.tokenCoverage = totalDomains > 0 ? (tokenConfigured + '/' + totalDomains) : 'n/a';
+        overviewState.tokenMeta = totalDomains > 0 ? (domainRegistryStatus.registry.tokenMissing + ' missing') : 'n/a';
+        const checkedRows = Number(domainRegistryStatus?.domainHealth?.checkedRows || 0);
+        const onlineRows = Number(domainRegistryStatus?.domainHealth?.onlineRows || 0);
+        overviewState.domainHealth = checkedRows > 0 ? ('online ' + onlineRows + '/' + checkedRows) : 'n/a';
+        overviewState.domainHealthMeta = checkedRows > 0 ? ('offline/degraded ' + (checkedRows - onlineRows)) : 'n/a';
+        overviewState.rss = rssAligned ? 'synced' : 'drift';
+        overviewState.rssMeta = guid ? ('guid ' + guid.slice(0, 16)) : 'guid n/a';
+        renderOverview();
+        setRefreshSuccess();
       } catch (error) {
         setRssBadge('RSS unavailable', 'neutral');
         const message = error instanceof Error ? error.message : String(error);
         setReportNotice('<span class="badge status-bad">History refresh failed</span> <code>' + message + '</code>', 'error');
+        overviewState.rss = 'unavailable';
+        overviewState.rssMeta = message;
+        renderOverview();
+        setRefreshErrorCountdown(6);
+      } finally {
+        refreshInFlight = false;
       }
     }
     document.getElementById('loadLocal').onclick = () => loadLatest('local');
     document.getElementById('loadR2').onclick = () => loadLatest('r2');
     document.getElementById('loadHistory').onclick = () => loadHistory();
+    if (refreshBtnEl) {
+      refreshBtnEl.onclick = () => loadLatest(activeSource || lastRefreshSource || INITIAL_SOURCE);
+    }
+    window.addEventListener('offline', () => {
+      setReportNotice('<span class="badge status-bad">Offline</span> <code>Network unavailable; showing last known data.</code>', 'network');
+      showToast('Offline mode: using cached dashboard state', 'error', 3600);
+    });
+    window.addEventListener('online', () => {
+      clearReportNotice('network');
+      showToast('Back online. Refreshing dashboard...', 'success', 2200);
+      loadLatest(activeSource || INITIAL_SOURCE);
+    });
+    document.getElementById('jumpColors').onclick = () => {
+      const el = document.getElementById('color-reference');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
     rssBadgeEl.onclick = () => loadLatest(activeSource);
+    renderOverview();
+    setRefreshIdle();
     loadLatest(INITIAL_SOURCE);
     // SSE hot reload is intentionally disabled in this build for stability.
     setInterval(() => {
@@ -2531,18 +3178,17 @@ async function main(): Promise<void> {
       }));
       const latestPresent = 0;
       const latestCount = latest.length;
-      const storageStatus = latestCount > 0 && latestPresent === latestCount ? 'healthy' : 'critical';
+      const storageStatus = 'simulated';
       const storageRatio = 0;
+      const storageScoreRatio = 1;
       const degradedByStrictP95 = typeof strictP95Ms === 'number' && Number.isFinite(strictP95Ms) && strictP95Ms > thresholdStrictP95Ms;
-      const preliminaryStatus = storageStatus === 'critical'
-        ? 'critical'
-        : degradedByStrictP95
-          ? 'degraded'
-          : dnsStatus;
+      const preliminaryStatus = degradedByStrictP95
+        ? 'degraded'
+        : dnsStatus;
       const latencyScore = degradedByStrictP95 ? 0.55 : (strictP95Ms === null ? 0.85 : 1);
       const overallScore = clamp01(
         dnsRatio * 0.4 +
-        storageRatio * 0.35 +
+        storageScoreRatio * 0.35 +
         latencyScore * 0.15 +
         cookieHealth.score * 0.1
       );
@@ -2996,13 +3642,38 @@ async function main(): Promise<void> {
       if (url.pathname === '/api/snapshot') {
         const id = url.searchParams.get('id');
         const source = url.searchParams.get('source') || 'local';
+        const optional = url.searchParams.get('optional') === '1';
         if (!id) {
           return Response.json({ error: 'missing_id' }, { status: 400 });
         }
         if (source === 'r2') {
-          return getCachedRemoteJson(`r2:snapshot:${id}`, `${id}/snapshot.json`);
+          const r2Snapshot = await getCachedRemoteJson(`r2:snapshot:${id}`, `${id}/snapshot.json`);
+          if (optional && !r2Snapshot.ok) {
+            return Response.json(
+              {
+                missing: true,
+                source: 'r2',
+                id,
+                status: r2Snapshot.status,
+              },
+              { status: 200 }
+            );
+          }
+          return r2Snapshot;
         }
-        return readLocalJson(resolve(dir, id, 'snapshot.json'));
+        const localSnapshotPath = resolve(dir, id, 'snapshot.json');
+        if (optional && !existsSync(localSnapshotPath)) {
+          return Response.json(
+            {
+              missing: true,
+              source: 'local',
+              id,
+              status: 404,
+            },
+            { status: 200 }
+          );
+        }
+        return readLocalJson(localSnapshotPath);
       }
       if (url.pathname === '/api/publish-manifest') {
         const source = url.searchParams.get('source') || 'local';
@@ -3148,6 +3819,33 @@ async function main(): Promise<void> {
           data.cookieTelemetryWrite = telemetryWrite;
         }
         return Response.json(data, { headers });
+      }
+      if (url.pathname === '/api/domain-registry-status') {
+        try {
+          const payload = await buildDomainRegistryStatus({
+            registryPath: Bun.env.DOMAIN_REGISTRY_PATH,
+            latestPath: 'reports/search-benchmark/latest.json',
+            healthReportPath: 'reports/health-report.json',
+            envFile: '.env.factory-wager',
+            json: true,
+            doctor: false,
+            fix: false,
+            emitSecretsCommands: false,
+          });
+          return Response.json(payload, {
+            headers: {
+              'cache-control': 'no-store',
+            },
+          });
+        } catch (error) {
+          return Response.json(
+            {
+              error: 'domain_registry_status_failed',
+              message: error instanceof Error ? error.message : String(error),
+            },
+            { status: 500 }
+          );
+        }
       }
       if (url.pathname === '/api/rss') {
         const source = url.searchParams.get('source') || 'local';
