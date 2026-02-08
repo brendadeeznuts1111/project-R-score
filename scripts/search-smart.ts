@@ -81,6 +81,43 @@ interface SearchHit {
   runtimeTag?: RuntimeTag;
 }
 
+// Stable object shape for hot-path result allocation to reduce structure churn.
+class SearchResult implements SearchHit {
+  file: string;
+  line: number;
+  text: string;
+  score: number;
+  reason: string[];
+  kind: 'definition' | 'usage';
+  symbolKind?: SymbolSearchKind;
+  qualityTag?: QualityTag;
+  qualityScore?: number;
+  duplicateCount?: number;
+  mirrorCount?: number;
+  canonicalFile?: string;
+  mirrorFiles?: string[];
+  familyId?: string;
+  scopeTag?: ScopeTag;
+  artifactTag?: ArtifactTag;
+  runtimeTag?: RuntimeTag;
+
+  constructor(
+    file: string,
+    line: number,
+    text: string,
+    score: number,
+    reason: string[],
+    kind: 'definition' | 'usage'
+  ) {
+    this.file = file;
+    this.line = line;
+    this.text = text;
+    this.score = score;
+    this.reason = reason;
+    this.kind = kind;
+  }
+}
+
 type RgEvent = {
   type: string;
   data?: {
@@ -375,8 +412,9 @@ async function runRipgrep(pattern: string, roots: string[], options: SearchOptio
     return [];
   }
 
-  const hits: SearchHit[] = [];
   const lines = text.split('\n').filter(Boolean);
+  const hits = new Array<SearchHit>(lines.length);
+  let hitCount = 0;
 
   for (const line of lines) {
     let parsed: RgEvent;
@@ -398,17 +436,18 @@ async function runRipgrep(pattern: string, roots: string[], options: SearchOptio
       continue;
     }
 
-    hits.push({
+    hits[hitCount] = new SearchResult(
       file,
-      line: lineNumber,
-      text: snippet.trim(),
-      score: 0,
-      reason: [`matched: ${pattern}`],
-      kind: classifyHit(snippet),
-    });
+      lineNumber,
+      snippet.trim(),
+      0,
+      [`matched: ${pattern}`],
+      classifyHit(snippet)
+    );
+    hitCount += 1;
   }
 
-  return hits;
+  return hitCount === hits.length ? hits : hits.slice(0, hitCount);
 }
 
 function classifyHit(line: string): 'definition' | 'usage' {
@@ -819,15 +858,16 @@ function sortFinalAssemblyHits(hits: SearchHit[], policies: SearchPolicies): Sea
 
 function fromSymbolHit(hit: SymbolSearchHit): SearchHit {
   const isCallerHit = hit.reason.some((reason) => reason.includes('call edge'));
-  return {
-    file: hit.file,
-    line: hit.line,
-    text: hit.context,
-    score: hit.score + 12,
-    reason: [...hit.reason, 'symbol-index boost'],
-    kind: hit.kind === 'import' || hit.kind === 'call' || isCallerHit ? 'usage' : 'definition',
-    symbolKind: hit.kind,
-  };
+  const out = new SearchResult(
+    hit.file,
+    hit.line,
+    hit.context,
+    hit.score + 12,
+    [...hit.reason, 'symbol-index boost'],
+    hit.kind === 'import' || hit.kind === 'call' || isCallerHit ? 'usage' : 'definition'
+  );
+  out.symbolKind = hit.kind;
+  return out;
 }
 
 async function smartSearch(plan: QueryPlan, options: SearchOptions): Promise<SearchHit[]> {
@@ -842,14 +882,24 @@ async function smartSearch(plan: QueryPlan, options: SearchOptions): Promise<Sea
     .filter((term) => !STOP_WORDS.has(term.toLowerCase()))
     .slice(0, termBudget);
 
+  // Avoid recreating async arrow closures that capture full query context each run.
+  const staticRoots = plan.roots;
+  const staticOptions = options;
+  async function runTermSearch(term: string): Promise<SearchHit[]> {
+    return runRipgrep(term, staticRoots, staticOptions);
+  }
+
   const retrievalBatches = await mapWithConcurrency(
     candidateTerms,
     retrievalConcurrency,
-    (term) => runRipgrep(term, plan.roots, options)
+    runTermSearch
   );
 
   const retrieved = retrievalBatches.flat();
-  const rescored = retrieved.map((hit) => scoreHit(hit, enrichedPlan, policies, intent));
+  const rescored = new Array<SearchHit>(retrieved.length);
+  for (let i = 0; i < retrieved.length; i += 1) {
+    rescored[i] = scoreHit(retrieved[i], enrichedPlan, policies, intent);
+  }
   const symbolQuery = options.targetSymbol?.trim() || enrichedPlan.normalized;
   const symbolHits = searchSymbolIndex(symbolQuery, {
     rootDir: options.rootDir,
@@ -858,20 +908,30 @@ async function smartSearch(plan: QueryPlan, options: SearchOptions): Promise<Sea
   }).map(fromSymbolHit);
 
   const lexicalPool = options.kind === 'any' ? rescored : [];
-
-  const deduped = dedupeHits([...lexicalPool, ...symbolHits])
-    .map((hit) => applyQualityModel(hit, options, policies, intent, policies.importQualityPenalty))
-    .map((hit) => attachTaxonomy(hit))
-    .filter((hit) => hitAllowedByView(hit, options.view))
-    .filter((hit) => passesTaxonomyFilters(hit, options))
-    .sort((a, b) => b.score - a.score || a.file.localeCompare(b.file) || a.line - b.line);
+  const deduped = dedupeHits([...lexicalPool, ...symbolHits]);
+  const filtered = new Array<SearchHit>(deduped.length);
+  let filteredCount = 0;
+  for (let i = 0; i < deduped.length; i += 1) {
+    const qualityApplied = applyQualityModel(deduped[i], options, policies, intent, policies.importQualityPenalty);
+    const withTaxonomy = attachTaxonomy(qualityApplied);
+    if (!hitAllowedByView(withTaxonomy, options.view)) {
+      continue;
+    }
+    if (!passesTaxonomyFilters(withTaxonomy, options)) {
+      continue;
+    }
+    filtered[filteredCount] = withTaxonomy;
+    filteredCount += 1;
+  }
+  const filteredHits = filteredCount === filtered.length ? filtered : filtered.slice(0, filteredCount);
+  filteredHits.sort((a, b) => b.score - a.score || a.file.localeCompare(b.file) || a.line - b.line);
 
   const familyData = await buildCanonicalFamilies(
-    deduped.map((hit) => hit.file),
+    filteredHits.map((hit) => hit.file),
     { rootDir: options.rootDir, policies }
   );
 
-  const collapsed = collapseFamilyAwareHits(collapseDuplicateClusters(deduped, options.overlapMode), familyData.byFile, options)
+  const collapsed = collapseFamilyAwareHits(collapseDuplicateClusters(filteredHits, options.overlapMode), familyData.byFile, options)
     .sort((a, b) => b.score - a.score || a.file.localeCompare(b.file) || a.line - b.line);
 
   const familyCapped = applyFamilyCap(collapsed, familyCap);

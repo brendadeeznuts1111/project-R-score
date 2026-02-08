@@ -58,7 +58,7 @@
     "strictLatencyP95WarnMs": 900,
     "strictReliabilityFloor": 45,
     "strictPeakHeapWarnMB": 60,
-    "strictPeakRssWarnMB": 260
+    "strictPeakRssWarnMB": 240
   },
   "queryBoosts": {
     "bunRuntimeBoost": 18,
