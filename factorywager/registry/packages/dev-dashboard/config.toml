@@ -87,12 +87,12 @@ default_currency = "USD"
 transaction_timeout_seconds = 300
 max_transaction_amount = 10000.00
 min_transaction_amount = 0.01
-gateways = ["venmo", "cashapp", "paypal"]
+gateway_list = ["venmo", "cashapp", "paypal"]
 labels = { venmo = "Venmo", cashapp = "Cash App", paypal = "PayPal" }
 per_gateway_benchmarks = true
 
 # Venmo Configuration
-[p2p.gateways.venmo]
+[p2p.gateway_configs.venmo]
 enabled = true
 sandbox_mode = true
 api_version = "v1"
@@ -102,7 +102,7 @@ webhook_verification = true
 rate_limit_per_minute = 60
 
 # Cash App Configuration
-[p2p.gateways.cashapp]
+[p2p.gateway_configs.cashapp]
 enabled = true
 sandbox_mode = true
 api_version = "v2"
@@ -112,7 +112,7 @@ webhook_verification = true
 rate_limit_per_minute = 100
 
 # PayPal Configuration
-[p2p.gateways.paypal]
+[p2p.gateway_configs.paypal]
 enabled = true
 sandbox_mode = true
 api_version = "v2"
