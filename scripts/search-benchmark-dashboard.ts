@@ -362,6 +362,22 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     } else {
     const HOT_RELOAD_ENABLED = ${hotReloadEnabled ? 'true' : 'false'};
     const INITIAL_SOURCE = ${JSON.stringify(initialSource)};
+    const STORAGE_SOURCE_KEY = 'searchBenchActiveSource';
+    const readStoredSource = () => {
+      try {
+        const v = window.localStorage.getItem(STORAGE_SOURCE_KEY);
+        return v === 'r2' ? 'r2' : (v === 'local' ? 'local' : null);
+      } catch {
+        return null;
+      }
+    };
+    const writeStoredSource = (source) => {
+      try {
+        window.localStorage.setItem(STORAGE_SOURCE_KEY, source);
+      } catch {
+        // ignore storage errors
+      }
+    };
     const latestEl = document.getElementById('latest');
     const historyEl = document.getElementById('history');
     const trendEl = document.getElementById('trend');
@@ -375,7 +391,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     const reportNoticeEl = document.getElementById('reportNotice');
     let lastHistory = null;
     let previousSnapshot = null;
-    let activeSource = INITIAL_SOURCE;
+    let activeSource = readStoredSource() || INITIAL_SOURCE;
     let currentLatestId = null;
     let knownLatestId = null;
     let currentRssGuid = null;
@@ -1100,6 +1116,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       refreshInFlight = true;
       try {
         activeSource = source;
+        writeStoredSource(source);
         const indexData = await fetchJson('/api/index?source=' + source);
         lastHistory = indexData;
         const data = await fetchJson('/api/latest?source=' + source);
@@ -1147,6 +1164,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     async function loadHistory() {
       try {
         activeSource = 'local';
+        writeStoredSource('local');
         const localData = await fetchJson('/api/index');
         renderHistory(localData);
         const latestData = await fetchJson('/api/latest?source=local');
@@ -1981,6 +1999,27 @@ async function main(): Promise<void> {
           uptimeSec: Math.floor((Date.now() - startedAt) / 1000),
           now: new Date().toISOString(),
           port: options.port,
+        }, {
+          headers: {
+            'cache-control': 'no-store',
+          },
+        });
+      }
+      if (url.pathname === '/api/status') {
+        return Response.json({
+          ok: true,
+          service: 'search-benchmark-dashboard',
+          startedAt: new Date(startedAt).toISOString(),
+          uptimeSec: Math.floor((Date.now() - startedAt) / 1000),
+          port: options.port,
+          mode: {
+            cookies: options.cookies,
+            hotReload: options.hotReload,
+          },
+          r2: {
+            credentialed: Boolean(resolveR2ReadOptions()),
+            base: options.r2Base || null,
+          },
         }, {
           headers: {
             'cache-control': 'no-store',
