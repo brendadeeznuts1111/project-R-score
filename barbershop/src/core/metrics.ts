@@ -1,22 +1,18 @@
 #!/usr/bin/env bun
 /**
- * BarberShop ELITE Metrics & Monitoring
- * ======================================
+ * Metrics Module
  * Prometheus-compatible metrics with real-time dashboards
  * 
- * Elite Features:
+ * Features:
  * - Prometheus exposition format
- * - Histograms, Counters, Gauges, Summaries
+ * - Histograms, Counters, Gauges
  * - Real-time streaming metrics
- * - Custom metric collectors
  * - Bun.nanoseconds() precision timing
  */
 
-import { nanoseconds, spawn } from 'bun';
+import { nanoseconds } from 'bun';
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// METRIC TYPES
-// ═══════════════════════════════════════════════════════════════════════════════
+// Types
 
 type MetricType = 'counter' | 'gauge' | 'histogram' | 'summary';
 
@@ -24,17 +20,9 @@ interface MetricLabels {
   [key: string]: string;
 }
 
-interface MetricValue {
-  value: number;
-  labels: MetricLabels;
-  timestamp?: number;
-}
+// Histogram with exponential buckets
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// HISTOGRAM WITH EXPONENTIAL BUCKETS
-// ═══════════════════════════════════════════════════════════════════════════════
-
-class EliteHistogram {
+class Histogram {
   private buckets: Map<number, number> = new Map();
   private sum = 0;
   private count = 0;
@@ -54,7 +42,6 @@ class EliteHistogram {
   observe(value: number, labels: MetricLabels = {}): void {
     this.sum += value;
     this.count++;
-    
     for (const bound of this.bucketBounds) {
       if (value <= bound) {
         this.buckets.set(bound, (this.buckets.get(bound) || 0) + 1);
@@ -93,11 +80,9 @@ class EliteHistogram {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// COUNTER (monotonically increasing)
-// ═══════════════════════════════════════════════════════════════════════════════
+// Counter (monotonically increasing)
 
-class EliteCounter {
+class Counter {
   private value = 0;
   
   constructor(private name: string, private description: string) {}
@@ -125,11 +110,9 @@ class EliteCounter {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// GAUGE (can go up or down)
-// ═══════════════════════════════════════════════════════════════════════════════
+// Gauge (can go up or down)
 
-class EliteGauge {
+class Gauge {
   private value = 0;
   
   constructor(private name: string, private description: string) {}
@@ -165,42 +148,26 @@ class EliteGauge {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// ELITE METRICS REGISTRY
-// ═══════════════════════════════════════════════════════════════════════════════
+// Metrics Registry
 
-export class EliteMetricsRegistry {
-  private histograms = new Map<string, EliteHistogram>();
-  private counters = new Map<string, EliteCounter>();
-  private gauges = new Map<string, EliteGauge>();
+export class MetricsRegistry {
+  private histograms = new Map<string, Histogram>();
+  private counters = new Map<string, Counter>();
+  private gauges = new Map<string, Gauge>();
   private customCollectors: (() => string)[] = [];
   
-  // Latency histogram for HTTP requests
-  readonly httpRequestDuration = new EliteHistogram(
+  readonly httpRequestDuration = new Histogram(
     'http_request_duration_seconds',
     'HTTP request latency in seconds',
     [0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5]
   );
   
-  // Request counter
-  readonly httpRequestsTotal = new EliteCounter(
-    'http_requests_total',
-    'Total HTTP requests'
-  );
-  
-  // Active connections gauge
-  readonly activeConnections = new EliteGauge(
-    'active_connections',
-    'Number of active connections'
-  );
-  
-  // Cache metrics
-  readonly cacheHits = new EliteCounter('cache_hits_total', 'Cache hits');
-  readonly cacheMisses = new EliteCounter('cache_misses_total', 'Cache misses');
-  
-  // WebSocket metrics
-  readonly wsConnectionsTotal = new EliteCounter('ws_connections_total', 'WebSocket connections');
-  readonly wsMessagesTotal = new EliteCounter('ws_messages_total', 'WebSocket messages');
+  readonly httpRequestsTotal = new Counter('http_requests_total', 'Total HTTP requests');
+  readonly activeConnections = new Gauge('active_connections', 'Number of active connections');
+  readonly cacheHits = new Counter('cache_hits_total', 'Cache hits');
+  readonly cacheMisses = new Counter('cache_misses_total', 'Cache misses');
+  readonly wsConnectionsTotal = new Counter('ws_connections_total', 'WebSocket connections');
+  readonly wsMessagesTotal = new Counter('ws_messages_total', 'WebSocket messages');
   
   constructor() {
     this.histograms.set('http_request_duration_seconds', this.httpRequestDuration);
@@ -212,74 +179,46 @@ export class EliteMetricsRegistry {
     this.counters.set('ws_messages_total', this.wsMessagesTotal);
   }
   
-  /**
-   * Record HTTP request with automatic timing
-   */
   recordHttpRequest(method: string, path: string, status: number, durationMs: number): void {
     const durationSec = durationMs / 1000;
     const labels = { method, path, status: status.toString() };
-    
     this.httpRequestDuration.observe(durationSec, labels);
     this.httpRequestsTotal.inc();
   }
   
-  /**
-   * Record cache operation
-   */
   recordCache(hit: boolean): void {
     if (hit) this.cacheHits.inc();
     else this.cacheMisses.inc();
   }
   
-  /**
-   * Record WebSocket connection
-   */
   recordWsConnection(delta: number): void {
     this.wsConnectionsTotal.inc();
     this.activeConnections.inc(delta);
   }
   
-  /**
-   * Record WebSocket message
-   */
   recordWsMessage(): void {
     this.wsMessagesTotal.inc();
   }
   
-  /**
-   * Add custom collector
-   */
   addCollector(fn: () => string): void {
     this.customCollectors.push(fn);
   }
   
-  /**
-   * Export all metrics in Prometheus format
-   */
   export(): string {
     let output = '';
-    
-    // Add build info
     output += `# HELP bun_build_info Build information\n`;
     output += `# TYPE bun_build_info gauge\n`;
     output += `bun_build_info{version="${Bun.version}"} 1\n\n`;
     
-    // Histograms
     for (const [name, hist] of this.histograms) {
       output += hist.format() + '\n';
     }
-    
-    // Counters
     for (const [name, counter] of this.counters) {
       output += counter.format() + '\n';
     }
-    
-    // Gauges
     for (const [name, gauge] of this.gauges) {
       output += gauge.format() + '\n';
     }
-    
-    // Custom collectors
     for (const collector of this.customCollectors) {
       output += collector() + '\n';
     }
@@ -287,21 +226,14 @@ export class EliteMetricsRegistry {
     return output;
   }
   
-  /**
-   * Reset all metrics
-   */
   reset(): void {
     for (const hist of this.histograms.values()) hist.reset();
     for (const counter of this.counters.values()) counter.reset();
     for (const gauge of this.gauges.values()) gauge.reset();
   }
   
-  /**
-   * Create timer for automatic latency tracking
-   */
   startTimer(labels: Record<string, string> = {}): () => void {
     const startNs = nanoseconds();
-    
     return () => {
       const elapsedMs = Number(nanoseconds() - startNs) / 1e6;
       this.httpRequestDuration.observe(elapsedMs / 1000, labels);
@@ -309,9 +241,7 @@ export class EliteMetricsRegistry {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// SYSTEM METRICS COLLECTOR
-// ═══════════════════════════════════════════════════════════════════════════════
+// System metrics collector
 
 export function collectSystemMetrics(): string {
   const memUsage = process.memoryUsage();
@@ -323,7 +253,6 @@ export function collectSystemMetrics(): string {
   output += `process_memory_bytes{type="heapTotal"} ${memUsage.heapTotal}\n`;
   output += `process_memory_bytes{type="external"} ${memUsage.external || 0}\n\n`;
   
-  // CPU usage (if available)
   try {
     const cpuUsage = process.cpuUsage();
     output += '# HELP process_cpu_seconds_total CPU time\n';
@@ -332,7 +261,6 @@ export function collectSystemMetrics(): string {
     output += `process_cpu_seconds_total{mode="system"} ${cpuUsage.system / 1e6}\n\n`;
   } catch (err) {}
   
-  // Uptime
   output += '# HELP process_uptime_seconds Process uptime\n';
   output += '# TYPE process_uptime_seconds gauge\n';
   output += `process_uptime_seconds ${process.uptime()}\n\n`;
@@ -340,15 +268,13 @@ export function collectSystemMetrics(): string {
   return output;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// REAL-TIME METRICS STREAM
-// ═══════════════════════════════════════════════════════════════════════════════
+// Real-time metrics stream
 
 export class MetricsStreamer {
   private subscribers = new Set<(metrics: string) => void>();
   private interval: Timer | null = null;
   
-  constructor(private registry: EliteMetricsRegistry, private intervalMs = 5000) {}
+  constructor(private registry: MetricsRegistry, private intervalMs = 5000) {}
   
   start(): void {
     this.interval = setInterval(() => {
@@ -372,95 +298,39 @@ export class MetricsStreamer {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// SINGLETON INSTANCE
-// ═══════════════════════════════════════════════════════════════════════════════
+// Singleton
 
-export const metrics = new EliteMetricsRegistry();
-
-// Add system metrics collector
+export const metrics = new MetricsRegistry();
 metrics.addCollector(collectSystemMetrics);
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// DEMO
-// ═══════════════════════════════════════════════════════════════════════════════
+// Backward compatibility
+export const EliteMetricsRegistry = MetricsRegistry;
 
+// Types
+export type MetricSeries = { name: string; values: number[] };
+export type MetricCollector = () => string;
+export type MetricsSnapshot = { timestamp: number; metrics: string };
+
+// Demo
 if (import.meta.main) {
-  console.log(`
-╔══════════════════════════════════════════════════════════════════╗
-║  📊 ELITE METRICS & MONITORING                                   ║
-╠══════════════════════════════════════════════════════════════════╣
-║  Prometheus-compatible • Real-time • Bun-native                  ║
-╚══════════════════════════════════════════════════════════════════╝
-`);
+  console.log(`\n📊 Metrics Module\n`);
   
-  // Simulate HTTP requests
-  console.log('Simulating HTTP requests...\n');
-  
-  const methods = ['GET', 'POST', 'PUT'];
-  const paths = ['/api/barbers', '/api/tickets', '/api/checkout'];
-  const statuses = [200, 200, 201, 404, 500];
-  
+  // Simulate traffic
   for (let i = 0; i < 100; i++) {
-    const method = methods[Math.floor(Math.random() * methods.length)];
-    const path = paths[Math.floor(Math.random() * paths.length)];
-    const status = statuses[Math.floor(Math.random() * statuses.length)];
-    const latency = Math.random() * 100 + 5; // 5-105ms
-    
+    const method = ['GET', 'POST', 'PUT'][Math.floor(Math.random() * 3)];
+    const path = ['/api/barbers', '/api/tickets', '/api/checkout'][Math.floor(Math.random() * 3)];
+    const status = [200, 200, 201, 404, 500][Math.floor(Math.random() * 5)];
+    const latency = Math.random() * 100 + 5;
     metrics.recordHttpRequest(method, path, status, latency);
-    
-    // Random cache hits
     metrics.recordCache(Math.random() > 0.3);
   }
   
-  // Simulate WebSocket activity
-  console.log('Simulating WebSocket activity...\n');
-  
-  metrics.recordWsConnection(5);
-  for (let i = 0; i < 50; i++) {
-    metrics.recordWsMessage();
-  }
-  
-  // Set gauge
   metrics.activeConnections.set(15);
   
-  // Export metrics
-  console.log('Prometheus Metrics Export:');
-  console.log('='.repeat(60));
+  console.log('Prometheus Export:');
   console.log(metrics.export());
   
-  // Real-time streaming demo
-  console.log('Starting real-time metrics stream (5s)...\n');
-  
-  const streamer = new MetricsStreamer(metrics, 1000);
-  let updates = 0;
-  
-  const unsubscribe = streamer.subscribe((data) => {
-    updates++;
-    console.log(`[Update ${updates}] ${data.split('\n').length} lines`);
-  });
-  
-  streamer.start();
-  
-  // Simulate more traffic
-  const interval = setInterval(() => {
-    metrics.httpRequestsTotal.inc();
-  }, 500);
-  
-  // Stop after 5 seconds
-  setTimeout(() => {
-    clearInterval(interval);
-    streamer.stop();
-    unsubscribe();
-    
-    console.log('\n✅ Metrics demo complete!');
-    console.log('\nUse with Prometheus:');
-    console.log('  1. Start your Bun server');
-    console.log('  2. Scrape /metrics endpoint');
-    console.log('  3. Visualize in Grafana');
-    
-    process.exit(0);
-  }, 5000);
+  console.log('✅ Metrics demo complete!\n');
 }
 
 export default metrics;

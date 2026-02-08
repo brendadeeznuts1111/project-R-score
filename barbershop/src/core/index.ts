@@ -2,65 +2,122 @@
  * Core Module - Main application exports
  */
 
-export { renderAdminDashboard, renderClientDashboard } from './ui-v2';
-export type { BundleLineItem, TipInput, Barber, Ticket } from './barbershop-dashboard';
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// ELITE DASHBOARD & METRICS MODULES
-// ═══════════════════════════════════════════════════════════════════════════════
-
-// Elite Metrics - Prometheus-compatible metrics collection
+// Metrics - Prometheus-compatible metrics collection
 export {
-  EliteMetricsRegistry,
+  MetricsRegistry,
   collectSystemMetrics,
   MetricsStreamer,
   metrics,
   type MetricSeries,
   type MetricCollector,
   type MetricsSnapshot,
-} from './barber-elite-metrics';
+} from './metrics';
 
-// Elite Dashboard - WebSocket hub with real-time sync
+// Streaming Pipeline
 export {
-  server as eliteServer,
-  telemetry,
-  eliteDb,
-  wsManager,
-} from './barber-elite-dashboard';
+  StreamingPipeline,
+  streamFileWithProgress,
+  type StreamMetrics,
+  type PipelineConfig,
+} from './streams';
 
-// Elite Fusion - Predictive analytics runtime
+// WASM Engine
 export {
-  EliteFusionRuntime,
-  createFusionContext,
-  withFusion,
-  generateFusionReport,
-  type FusionContext,
-  type FusionSession,
-  type FusionMetrics,
-} from './barber-elite-fusion';
+  WasmEngine,
+  wasmEngine,
+  type WasmModule,
+  type WasmConfig,
+} from './wasm-engine';
 
-// Elite Edge - Edge routing and geo-distribution
+// Edge Router
 export {
   EdgeRouter,
   GeoLoadBalancer,
   EdgeKVCache,
   createEdgeHandler,
-  type EdgeContext,
-  type ExecutionContext,
-} from './barber-elite-edge';
+} from './edge-router';
 
-// Elite Streams - WebSocket streaming with backpressure
+// Realtime Dashboard
 export {
-  EliteStreamingPipeline,
-  streamFileWithProgress,
-  type StreamMetrics,
-  type PipelineConfig,
-} from './barber-elite-streams';
+  server as realtimeServer,
+  telemetry,
+  eliteDb as db,
+  wsManager,
+} from './realtime-dashboard';
 
-// Elite WASM - WebAssembly compute with SIMD
+// Fusion Runtime
 export {
-  EliteWasmEngine,
-  wasmEngine,
-  type WasmModule,
-  type WasmConfig,
-} from './barber-elite-wasm';
+  FusionContextResolver,
+  FusionContextExecutor,
+  FusionDatabase,
+  FusionCache,
+  FusionUtils,
+  SchemaValidator,
+  SampleAccountAges,
+  SampleBarberActions,
+  type FusionContext,
+  type ContextualExecutionResult,
+  type ValidationResult,
+} from './barber-fusion-runtime';
+
+// Backward compatibility aliases
+export { MetricsRegistry as EliteMetricsRegistry } from './metrics';
+export { StreamingPipeline as EliteStreamingPipeline } from './streams';
+export { WasmEngine as EliteWasmEngine } from './wasm-engine';
+
+// Payment Routing System
+export {
+  PaymentRouting,
+  createPaymentSplit,
+  getPaymentSplit,
+  getPaymentSplitByTicket,
+  updatePaymentSplitStatus,
+  getPendingSplits,
+  calculateSplit,
+  createPaymentRoute,
+  getPaymentRoute,
+  getRoutesByBarber,
+  getActiveRoutes,
+  updatePaymentRoute,
+  deletePaymentRoute,
+  findBestRoute,
+  resetDailyRouteTotals,
+  createFallbackPlan,
+  getFallbackPlan,
+  getFallbackPlansByRoute,
+  executeFallback,
+  createRoutingConfig,
+  getRoutingConfig,
+  getActiveRoutingConfig,
+  setActiveRoutingConfig,
+  getRoutingStats,
+  recordRoutingStats,
+  evaluateRouteCondition,
+  type PaymentSplitType,
+  type PaymentRouteStatus,
+  type FallbackTrigger,
+  type PaymentMethod,
+  type PaymentSplitRecipient,
+  type PaymentSplit,
+  type PaymentRoute,
+  type PaymentRouteCondition,
+  type FallbackPlan,
+  type FallbackExecution,
+  type RoutingConfig,
+  type RouteEvaluationContext,
+  type SplitCalculationInput,
+  type SplitCalculationResult,
+  type PaymentRoutingStats,
+} from './payment-routing';
+
+// Payment Routing UI
+export {
+  PaymentRoutingUI,
+  renderPaymentRoutingPanel,
+  renderRouteForm,
+  renderFallbackForm,
+  renderSplitForm,
+  renderConfigForm,
+  type SplitRecipientUI,
+  type PendingPaymentUI,
+} from './payment-routing-ui';
