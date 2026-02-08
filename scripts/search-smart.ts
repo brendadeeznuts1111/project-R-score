@@ -181,6 +181,30 @@ function unique(values: string[]): string[] {
   return Array.from(new Set(values.filter(Boolean)));
 }
 
+async function mapWithConcurrency<T, R>(
+  items: T[],
+  concurrency: number,
+  worker: (item: T, index: number) => Promise<R>
+): Promise<R[]> {
+  const size = Math.max(1, Math.min(concurrency, items.length || 1));
+  const out = new Array<R>(items.length);
+  let cursor = 0;
+
+  async function runWorker(): Promise<void> {
+    while (true) {
+      const index = cursor;
+      cursor += 1;
+      if (index >= items.length) {
+        return;
+      }
+      out[index] = await worker(items[index], index);
+    }
+  }
+
+  await Promise.all(Array.from({ length: size }, () => runWorker()));
+  return out;
+}
+
 function featurePolicyMatches(
   normalizedQuery: string,
   policy: BunFeaturePolicy
@@ -795,13 +819,17 @@ async function smartSearch(plan: QueryPlan, options: SearchOptions): Promise<Sea
   const enrichedPlan = applyFeaturePoliciesToPlan(plan, policies);
   const intent = detectQueryIntent(enrichedPlan);
   const familyCap = options.familyCap && options.familyCap > 0 ? options.familyCap : policies.familyCap;
+  const termBudget = options.task === 'delivery' ? 8 : 10;
+  const retrievalConcurrency = options.task === 'delivery' ? 3 : 4;
   const candidateTerms = enrichedPlan.terms
     .filter((term) => term.length >= 3)
     .filter((term) => !STOP_WORDS.has(term.toLowerCase()))
-    .slice(0, 10);
+    .slice(0, termBudget);
 
-  const retrievalBatches = await Promise.all(
-    candidateTerms.map((term) => runRipgrep(term, plan.roots, options))
+  const retrievalBatches = await mapWithConcurrency(
+    candidateTerms,
+    retrievalConcurrency,
+    (term) => runRipgrep(term, plan.roots, options)
   );
 
   const retrieved = retrievalBatches.flat();

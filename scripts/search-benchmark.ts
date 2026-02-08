@@ -12,7 +12,10 @@ type Profile = {
 
 type QueryResultSummary = {
   query: string;
+  // Engine time emitted by search-smart (semantic retrieval/ranking runtime).
   elapsedMs: number;
+  // End-to-end wall time for the benchmark invocation of this query.
+  wallElapsedMs: number;
   total: number;
   slop: number;
   duplicate: number;
@@ -195,6 +198,7 @@ function summarizeQuery(query: string, payload: any): QueryResultSummary {
   return {
     query,
     elapsedMs: Number(payload?.elapsedMs || 0),
+    wallElapsedMs: Number(payload?.wallElapsedMs || 0),
     total,
     slop,
     duplicate,
@@ -270,8 +274,7 @@ async function main(): Promise<void> {
     const querySummaries = await mapWithConcurrency(queries, concurrency, async (query) => {
       const started = performance.now();
       const payload = await runSearch(query, path, limit, profile.args);
-      const elapsedMs = Number((performance.now() - started).toFixed(2));
-      payload.elapsedMs = elapsedMs;
+      payload.wallElapsedMs = Number((performance.now() - started).toFixed(2));
       return summarizeQuery(query, payload);
     });
     return aggregateProfile(profile, querySummaries);
