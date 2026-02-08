@@ -1,5 +1,8 @@
 // lib/package/package-manager.ts — Package management with Bun API analysis and R2 integration
 
+import { withCircuitBreaker } from '../core/circuit-breaker';
+import { ConcurrencyManagers } from '../core/safe-concurrency';
+
 export interface PackageInfo {
   name: string;
   version: string;
@@ -29,11 +32,10 @@ export interface PackageDependencyGraph {
 export class PackageManager {
   private projectRoot: string;
   private cacheDir: string;
-  private r2Storage?: any; // R2Storage type
 
-  constructor(projectRoot: string = process.cwd()) {
+  constructor(projectRoot: string = Bun.env.PWD || process.cwd()) {
     this.projectRoot = projectRoot;
-    this.cacheDir = `${process.env.HOME || process.env.USERPROFILE || '/tmp'}/.cache/bun-docs/packages`;
+    this.cacheDir = `${Bun.env.HOME || '/tmp'}/.cache/bun-docs/packages`;
     try {
       Bun.$`mkdir -p ${this.cacheDir}`.quiet();
     } catch {
@@ -168,9 +170,16 @@ export class PackageManager {
       docsUrls: pkg.bunDocs?.map(d => d.url) || [],
     };
 
-    // Analyze dependencies
-    for (const [dep, version] of Object.entries(pkg.dependencies || {})) {
-      const depInfo = await this.analyzeDependency(dep, version as string);
+    // Analyze dependencies with concurrency control
+    const depEntries = Object.entries(pkg.dependencies || {});
+    const depResults = await Promise.all(
+      depEntries.map(([dep, version]) =>
+        ConcurrencyManagers.networkRequests.withPermit(() =>
+          this.analyzeDependency(dep, version as string)
+        )
+      )
+    );
+    for (const depInfo of depResults) {
       graph.dependencies.push(depInfo);
       graph.size += depInfo.size;
     }
@@ -181,7 +190,9 @@ export class PackageManager {
   private async analyzeDependency(name: string, version: string): Promise<PackageDependencyGraph> {
     // Try to fetch from npm registry
     try {
-      const response = await fetch(`https://registry.npmjs.org/${name}/${version}`);
+      const response = await withCircuitBreaker('npm-registry', () =>
+        fetch(`https://registry.npmjs.org/${name}/${version}`)
+      );
       if (response.ok) {
         const pkg = (await response.json()) as any;
 

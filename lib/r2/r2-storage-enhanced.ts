@@ -1,6 +1,11 @@
 // lib/r2/r2-storage-enhanced.ts — Enhanced R2 storage with package integration
 
 import { RSS_URLS } from '../../config/urls';
+import { withCircuitBreaker } from '../core/circuit-breaker';
+import { crc32 } from '../core/crc32';
+import { ConcurrencyManagers } from '../core/safe-concurrency';
+
+const R2_CB_CONFIG = { failureThreshold: 5, resetTimeoutMs: 30000, callTimeoutMs: 10000 };
 
 export interface R2StorageConfig {
   accountId: string;
@@ -57,11 +62,17 @@ export class R2Storage {
 
   async uploadPackageDocs(packageName: string, docs: any): Promise<string> {
     const bucketName = await this.getOrCreateBucket(packageName);
-    const key = `packages/${packageName}/${Date.now()}/docs.json`;
-    
-    const compressedData = Buffer.from(JSON.stringify(docs));
-    await this.put(bucketName, key, compressedData);
-    
+    const timestamp = Date.now();
+    const key = `packages/${packageName}/${timestamp}/docs.json`;
+
+    const compressedData = Bun.gzipSync(Buffer.from(JSON.stringify(docs)));
+    const checksum = crc32(new Uint8Array(compressedData));
+    await this.put(bucketName, key, Buffer.from(compressedData), checksum.hex);
+
+    // Also generate and upload HTML docs
+    const html = await this.generateHtmlDocs(packageName, docs);
+    await this.put(bucketName, `packages/${packageName}/${timestamp}/index.html`, Buffer.from(html));
+
     return `https://${bucketName}.${this.config.accountId}.r2.dev/packages/${packageName}/`;
   }
 
@@ -106,10 +117,13 @@ export class R2Storage {
 
     const bucket = await this.getOrCreateBucket(packageName);
 
-    for (const [key, value] of localCache.entries()) {
-      const data = Buffer.from(JSON.stringify(value));
-      await this.put(this.config.defaultBucket, `cache/${packageName}/${key}`, data);
-    }
+    const uploads = [...localCache.entries()].map(([key, value]) =>
+      ConcurrencyManagers.networkRequests.withPermit(async () => {
+        const data = Buffer.from(JSON.stringify(value));
+        await this.put(this.config.defaultBucket, `cache/${packageName}/${key}`, data);
+      })
+    );
+    await Promise.all(uploads);
 
     console.log(`Uploaded ${localCache.size} items`);
   }
@@ -122,7 +136,14 @@ export class R2Storage {
     const data = await this.getPrivate(await this.getOrCreateBucket(packageName), key);
     if (!data) return null;
 
-    return JSON.parse(data.toString());
+    // Verify CRC32 integrity (log warning on mismatch, don't throw)
+    const checksum = crc32(new Uint8Array(data));
+    // Note: actual header verification would require storing/fetching the expected CRC
+    // For now we compute it for logging/debugging
+    console.log(`CRC32 for ${key}: ${checksum.hex}`);
+
+    const decompressed = Bun.gunzipSync(new Uint8Array(data));
+    return JSON.parse(Buffer.from(decompressed).toString());
   }
 
   async listPackages(): Promise<Array<{ name: string; versions: string[]; lastUpdated: string }>> {
@@ -149,26 +170,37 @@ export class R2Storage {
   // Core R2 operations
   private async createBucket(bucketName: string): Promise<void> {
     // R2 API call to create bucket
-    const response = await fetch(`${this.endpoint}/buckets`, {
-      method: 'POST',
-      headers: this.getAuthHeaders('POST', '/buckets'),
-      body: JSON.stringify({ bucket: bucketName }),
-    });
-
-    if (!response.ok) throw new Error(`Failed to create bucket: ${response.statusText}`);
-  }
-
-  private async put(bucket: string, key: string, data: Buffer): Promise<void> {
-    try {
-      const response = await fetch(`${this.endpoint}/${bucket}/${key}`, {
-        method: 'PUT',
-        headers: this.getAuthHeaders('PUT', `/${bucket}/${key}`),
-        body: new Uint8Array(data),
+    await withCircuitBreaker('r2-storage', async () => {
+      const response = await fetch(`${this.endpoint}/buckets`, {
+        method: 'POST',
+        headers: this.getAuthHeaders('POST', '/buckets'),
+        body: JSON.stringify({ bucket: bucketName }),
       });
 
-      if (!response.ok) {
-        throw new Error(`Failed to upload to R2: ${response.status} ${response.statusText}`);
-      }
+      if (!response.ok) throw new Error(`Failed to create bucket: ${response.statusText}`);
+    }, R2_CB_CONFIG);
+  }
+
+  private async put(bucket: string, key: string, data: Buffer, crc32Hex?: string): Promise<void> {
+    try {
+      await withCircuitBreaker('r2-storage', async () => {
+        const headers: Record<string, string> = {
+          ...this.getAuthHeaders('PUT', `/${bucket}/${key}`) as Record<string, string>,
+        };
+        if (crc32Hex) {
+          headers['x-amz-meta-crc32'] = crc32Hex;
+        }
+
+        const response = await fetch(`${this.endpoint}/${bucket}/${key}`, {
+          method: 'PUT',
+          headers,
+          body: new Uint8Array(data),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to upload to R2: ${response.status} ${response.statusText}`);
+        }
+      }, R2_CB_CONFIG);
     } catch (error) {
       console.error(`Failed to put ${bucket}/${key}:`, error);
       throw error; // Re-throw to allow caller to handle
@@ -177,12 +209,14 @@ export class R2Storage {
 
   private async getPrivate(bucket: string, key: string): Promise<Buffer | null> {
     try {
-      const response = await fetch(`${this.endpoint}/${bucket}/${key}`, {
-        headers: this.getAuthHeaders('GET', `/${bucket}/${key}`),
-      });
+      return await withCircuitBreaker('r2-storage', async () => {
+        const response = await fetch(`${this.endpoint}/${bucket}/${key}`, {
+          headers: this.getAuthHeaders('GET', `/${bucket}/${key}`),
+        });
 
-      if (!response.ok) return null;
-      return Buffer.from(await response.arrayBuffer());
+        if (!response.ok) return null;
+        return Buffer.from(await response.arrayBuffer());
+      }, R2_CB_CONFIG);
     } catch (error) {
       console.error(`Failed to get ${bucket}/${key}:`, error);
       return null;
@@ -210,17 +244,19 @@ export class R2Storage {
 
   private async listObjects(prefix: string): Promise<any[]> {
     try {
-      const response = await fetch(`${this.endpoint}/${this.config.defaultBucket}?prefix=${prefix}`, {
-        headers: this.getAuthHeaders('GET', `/${this.config.defaultBucket}`),
-      });
+      return await withCircuitBreaker('r2-storage', async () => {
+        const response = await fetch(`${this.endpoint}/${this.config.defaultBucket}?prefix=${prefix}`, {
+          headers: this.getAuthHeaders('GET', `/${this.config.defaultBucket}`),
+        });
 
-      if (!response.ok) {
-        throw new Error(`Failed to list objects: ${response.status} ${response.statusText}`);
-      }
+        if (!response.ok) {
+          throw new Error(`Failed to list objects: ${response.status} ${response.statusText}`);
+        }
 
-      const xml = await response.text();
-      // Parse XML response
-      return this.parseListObjectsResponse(xml);
+        const xml = await response.text();
+        // Parse XML response
+        return this.parseListObjectsResponse(xml);
+      }, R2_CB_CONFIG);
     } catch (error) {
       console.error('Failed to list objects:', error);
       return [];
@@ -240,7 +276,7 @@ export class R2Storage {
     if (keyMatches) {
       for (const match of keyMatches) {
         const key = match.replace(/<Key>([^<]+)<\/Key>/, '$1');
-        objects.push({ key });
+        objects.push({ Key: key });
       }
     }
     

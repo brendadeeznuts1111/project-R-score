@@ -1,6 +1,9 @@
 // lib/rss/rss-manager.ts — RSS feed integration with caching and storage
 
 import type { PackageInfo } from '../package/package-manager';
+import { withCircuitBreaker } from '../core/circuit-breaker';
+import { CacheManager } from '../core/cache-manager';
+import { AtomicFileOperations } from '../core/atomic-file-operations';
 
 export interface RSSFeedItem {
   title: string;
@@ -32,13 +35,13 @@ export interface FeedSubscription {
 export class RSSManager {
   private feeds: Map<string, RSSFeed>;
   private subscriptions: FeedSubscription[];
-  private cache: Map<string, { feed: RSSFeed; timestamp: number }>;
+  private cache: CacheManager;
   private r2Storage?: any; // R2Storage type
 
   constructor(r2Storage?: any) {
     this.feeds = new Map();
     this.subscriptions = [];
-    this.cache = new Map();
+    this.cache = new CacheManager({ defaultTTL: 300000, maxSize: 100 });
     this.r2Storage = r2Storage;
     this.loadSubscriptions();
   }
@@ -61,25 +64,27 @@ export class RSSManager {
 
   async fetchFeed(feedUrl: string): Promise<RSSFeed> {
     // Check cache first
-    const cached = this.cache.get(feedUrl);
-    if (cached && Date.now() - cached.timestamp < 5 * 60 * 1000) {
-      return cached.feed;
+    const cached = await this.cache.get<RSSFeed>(feedUrl);
+    if (cached) {
+      return cached;
     }
 
     try {
-      const response = await fetch(feedUrl, {
-        headers: {
-          'User-Agent': 'Bun-Docs-RSS/1.0',
-        },
-      });
+      const response = await withCircuitBreaker('rss-feeds', () =>
+        fetch(feedUrl, {
+          headers: {
+            'User-Agent': 'Bun-Docs-RSS/1.0',
+          },
+        })
+      );
 
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       const xml = await response.text();
       const feed = this.parseRSS(xml);
 
-      // Cache for 5 minutes
-      this.cache.set(feedUrl, { feed, timestamp: Date.now() });
+      // Cache with CacheManager (TTL handled by manager)
+      await this.cache.set(feedUrl, feed, { tags: ['rss'] });
 
       // Store in R2 if available
       if (this.r2Storage) {
@@ -259,10 +264,11 @@ export class RSSManager {
 
   private async loadSubscriptions(): Promise<void> {
     try {
-      const homeDir = process.env.HOME || process.env.USERPROFILE || '/tmp';
-      const subscriptionsFile = Bun.file(`${homeDir}/.config/bun-docs/subscriptions.json`);
-      if (await subscriptionsFile.exists()) {
-        this.subscriptions = (await subscriptionsFile.json()) as FeedSubscription[];
+      const homeDir = Bun.env.HOME || '/tmp';
+      const filePath = `${homeDir}/.config/bun-docs/subscriptions.json`;
+      if (await Bun.file(filePath).exists()) {
+        const content = await AtomicFileOperations.readSafe(filePath);
+        this.subscriptions = JSON.parse(content) as FeedSubscription[];
       }
     } catch (error) {
       console.warn('Failed to load subscriptions:', error);
@@ -271,8 +277,8 @@ export class RSSManager {
 
   private async saveSubscriptions(): Promise<void> {
     try {
-      const homeDir = process.env.HOME || process.env.USERPROFILE || '/tmp';
-      await Bun.write(
+      const homeDir = Bun.env.HOME || '/tmp';
+      await AtomicFileOperations.writeAtomic(
         `${homeDir}/.config/bun-docs/subscriptions.json`,
         JSON.stringify(this.subscriptions, null, 2)
       );

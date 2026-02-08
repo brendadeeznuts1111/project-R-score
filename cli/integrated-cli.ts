@@ -7,7 +7,7 @@
  * and enhanced documentation workflows.
  */
 
-import { PackageManager, type PackageInfo } from '@fw/package';
+import { PackageManager, type PackageInfo } from '../lib/package/package-manager.ts';
 import { R2Storage, type R2StorageConfig } from '../lib/r2/r2-storage-enhanced.ts';
 import { RSSManager, type RSSFeed } from '../lib/rss/rss-manager.ts';
 
@@ -29,7 +29,7 @@ class IntegratedCLI {
   }
   
   async run() {
-    const args = process.argv.slice(2);
+    const args = Bun.argv.slice(2);
     const command = args[0];
     
     switch (command) {
@@ -72,7 +72,7 @@ class IntegratedCLI {
   }
   
   async initPackage(args: string[]) {
-    const packageName = args[0] || (await Bun.$`basename ${process.cwd()}`.text()).trim();
+    const packageName = args[0] || (await Bun.$`basename ${Bun.env.PWD || process.cwd()}`.text()).trim();
     
     console.log(`🚀 Initializing ${packageName}...`);
     
@@ -239,7 +239,7 @@ class IntegratedCLI {
         break;
         
       case 'sync':
-        const localCache = new Map(); // Get actual cache
+        const localCache = new Map(); // TODO: placeholder — populate from actual package cache
         await this.r2Storage.syncPackageCache(
           (await this.packageManager.analyzePackage()).name,
           localCache
@@ -296,7 +296,7 @@ class IntegratedCLI {
           const feedUrl = await this.rssManager.publishPackageFeed(pkgInfo.name, feed);
           console.log(`✅ Published RSS feed: ${feedUrl}`);
         } else {
-          const xml = this.generateRSS(feed);
+          const xml = generateRSS(feed);
           await Bun.write('./docs/feed.rss', xml);
           console.log('✅ Generated feed.rss');
         }
@@ -412,17 +412,17 @@ class IntegratedCLI {
   }
   
   private hasR2Credentials(): boolean {
-    return !!(process.env.R2_ACCOUNT_ID && 
-              process.env.R2_ACCESS_KEY_ID && 
-              process.env.R2_SECRET_ACCESS_KEY);
+    return !!(Bun.env.R2_ACCOUNT_ID &&
+              Bun.env.R2_ACCESS_KEY_ID &&
+              Bun.env.R2_SECRET_ACCESS_KEY);
   }
-  
+
   private loadR2Config(): R2StorageConfig {
     return {
-      accountId: process.env.R2_ACCOUNT_ID!,
-      accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
-      defaultBucket: process.env.R2_BUCKET || 'bun-docs-global'
+      accountId: Bun.env.R2_ACCOUNT_ID!,
+      accessKeyId: Bun.env.R2_ACCESS_KEY_ID!,
+      secretAccessKey: Bun.env.R2_SECRET_ACCESS_KEY!,
+      defaultBucket: Bun.env.R2_BUCKET || 'bun-docs-global'
     };
   }
   
@@ -565,3 +565,4 @@ function generateRSS(feed: RSSFeed): string {
 // Run CLI
 const cli = new IntegratedCLI();
 await cli.run();
+process.exit(0);
