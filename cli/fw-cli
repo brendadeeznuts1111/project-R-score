@@ -7,7 +7,7 @@ set -e
 
 # Get script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CLI_SCRIPT="$SCRIPT_DIR/factory-wager-cli.js"
+CLI_SCRIPT="$SCRIPT_DIR/factory-wager-cli.cjs"
 
 # Check if Node.js is available
 if ! command -v node &> /dev/null; then
