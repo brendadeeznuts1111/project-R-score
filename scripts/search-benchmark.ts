@@ -59,6 +59,7 @@ function parseArgs(argv: string[]): {
   queries?: string[];
   queryPack: string;
   concurrency: number;
+  concurrencyExplicit: boolean;
   overlap: 'ignore' | 'remove';
 } {
   let path = './lib';
@@ -66,6 +67,7 @@ function parseArgs(argv: string[]): {
   let queries: string[] | undefined;
   let queryPack = 'core_delivery';
   let concurrency = 4;
+  let concurrencyExplicit = false;
   let overlap: 'ignore' | 'remove' = 'ignore';
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -101,6 +103,7 @@ function parseArgs(argv: string[]): {
       const n = Number.parseInt(argv[i + 1] || '', 10);
       if (Number.isFinite(n) && n > 0) {
         concurrency = Math.min(32, n);
+        concurrencyExplicit = true;
       }
       i += 1;
       continue;
@@ -115,7 +118,7 @@ function parseArgs(argv: string[]): {
     }
   }
 
-  return { path, limit, queries, queryPack, concurrency, overlap };
+  return { path, limit, queries, queryPack, concurrency, concurrencyExplicit, overlap };
 }
 
 async function loadQueryPacks(): Promise<QueryPacks> {
@@ -286,7 +289,10 @@ function aggregateProfile(profile: Profile, querySummaries: QueryResultSummary[]
 }
 
 async function main(): Promise<void> {
-  const { path, limit, queries: overrideQueries, queryPack, concurrency, overlap } = parseArgs(process.argv.slice(2));
+  const { path, limit, queries: overrideQueries, queryPack, concurrency, concurrencyExplicit, overlap } = parseArgs(process.argv.slice(2));
+  const effectiveConcurrency = !concurrencyExplicit && path.includes(',')
+    ? Math.min(concurrency, 2)
+    : concurrency;
   const packs = await loadQueryPacks();
   const queries = overrideQueries || packs[queryPack] || packs.core_delivery || [...FALLBACK_CORE_QUERIES];
 
@@ -299,8 +305,8 @@ async function main(): Promise<void> {
 
   const summaries: ProfileSummary[] = [];
 
-  const profileSummaries = await mapWithConcurrency(profiles, Math.min(concurrency, profiles.length), async (profile) => {
-    const querySummaries = await mapWithConcurrency(queries, concurrency, async (query) => {
+  const profileSummaries = await mapWithConcurrency(profiles, Math.min(effectiveConcurrency, profiles.length), async (profile) => {
+    const querySummaries = await mapWithConcurrency(queries, effectiveConcurrency, async (query) => {
       const started = performance.now();
       const payload = await runSearch(query, path, limit, overlap, profile.args);
       payload.wallElapsedMs = Number((performance.now() - started).toFixed(2));
@@ -317,7 +323,7 @@ async function main(): Promise<void> {
     path,
     limit,
     queryPack,
-    concurrency,
+    concurrency: effectiveConcurrency,
     overlap,
     queries,
     rankedProfiles: summaries,

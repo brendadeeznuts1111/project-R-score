@@ -4,6 +4,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { S3Client } from 'bun';
+import inspector from 'node:inspector/promises';
 import { loadSearchPolicies } from '../lib/docs/canonical-family';
 
 type RankedProfile = {
@@ -74,6 +75,7 @@ type CliOptions = {
   publicBase?: string;
   gzip: boolean;
   uploadRetries: number;
+  cpuProfilePath?: string;
 };
 
 type R2Config = {
@@ -161,6 +163,7 @@ function parseArgs(argv: string[]): CliOptions {
     prefix: Bun.env.R2_BENCH_PREFIX || 'reports/search-bench',
     gzip: true,
     uploadRetries: Number.parseInt(Bun.env.R2_UPLOAD_RETRIES || '3', 10) || 3,
+    cpuProfilePath: Bun.env.SEARCH_BENCH_CPU_PROFILE || undefined,
   };
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -234,6 +237,11 @@ function parseArgs(argv: string[]): CliOptions {
     if (arg === '--upload-retries') {
       const n = Number.parseInt(argv[i + 1] || '', 10);
       if (Number.isFinite(n) && n >= 0) out.uploadRetries = n;
+      i += 1;
+      continue;
+    }
+    if (arg === '--profile-cpu') {
+      out.cpuProfilePath = argv[i + 1] || out.cpuProfilePath;
       i += 1;
       continue;
     }
@@ -546,7 +554,25 @@ async function main(): Promise<void> {
     }
   }
 
-  const payload = await runBenchmark(options);
+  const payload = await (async () => {
+    if (!options.cpuProfilePath) {
+      return runBenchmark(options);
+    }
+    const session = new inspector.Session();
+    session.connect();
+    try {
+      await session.post('Profiler.enable');
+      await session.post('Profiler.start');
+      const result = await runBenchmark(options);
+      const { profile } = await session.post('Profiler.stop');
+      await session.post('Profiler.disable');
+      await writeFile(resolve(options.cpuProfilePath), JSON.stringify(profile, null, 2));
+      console.log(`[search-bench:snapshot] wrote cpu profile ${resolve(options.cpuProfilePath)}`);
+      return result;
+    } finally {
+      session.disconnect();
+    }
+  })();
   const policies = await loadSearchPolicies(options.path);
   const currentMetrics = snapshotMetrics(payload);
   const previousMetrics = previousPayload ? snapshotMetrics(previousPayload) : null;
