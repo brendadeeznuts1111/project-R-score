@@ -119,7 +119,7 @@ async function runDemo(): Promise<void> {
 
     // 9. Get wiki statistics
     console.log('\n📊 Wiki Statistics:');
-    const wikiStats = wikiIntegration.getWikiStats();
+    const wikiStats = await wikiIntegration.getWikiStats();
     console.log(`  📁 Categories: ${wikiStats.totalCategories}`);
     console.log(`  📄 Pages: ${wikiStats.totalPages}`);
     console.log(`  💡 Examples: ${wikiStats.totalExamples}`);
@@ -154,7 +154,7 @@ async function runDemo(): Promise<void> {
     console.log('  🔄 Auto-sync & Caching');
 
     // Cleanup
-    wikiIntegration.cleanup();
+    await wikiIntegration.cleanup();
     console.log('\n🧹 Cleanup complete');
 
   } catch (error) {
@@ -228,7 +228,7 @@ async function interactiveDemo(): Promise<void> {
   console.log('- Export documentation in different formats');
   console.log('- View real-time metrics and examples');
 
-  wikiIntegration.cleanup();
+  await wikiIntegration.cleanup();
 }
 
 // Run demo if this file is executed directly
