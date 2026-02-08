@@ -1243,3 +1243,17 @@ describe('Default Export', () => {
     expect(module.default).toBe(EliteLogger);
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MODULE RESTORE
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// Restore original fs/promises module after all tests complete
+describe('Module Cleanup', () => {
+  test('restore fs/promises', () => {
+    // Using mock.module with actual implementations to restore
+    const actualFs = require('node:fs/promises');
+    mock.module('node:fs/promises', () => actualFs);
+    expect(true).toBe(true);
+  });
+});
