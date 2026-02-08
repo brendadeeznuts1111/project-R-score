@@ -120,7 +120,7 @@ export class DepthOptimizer {
     // Estimate size (handle circular references)
     try {
       analysis.sizeEstimate += JSON.stringify(obj).length;
-    } catch (error) {
+    } catch (error: any) {
       // Handle circular references
       analysis.sizeEstimate += 1000; // Estimated size for circular structures
       analysis.hasCircular = true;
@@ -254,7 +254,7 @@ export class AdaptiveDepthManager {
   // Dynamically adjust depth based on what's happening
   async runWithAdaptiveDepth(
     benchmark: () => Promise<any>,
-    options: AdaptiveOptions = {}
+    _options: AdaptiveOptions = {}
   ): Promise<any> {
     const phases = {
       startup: { depth: 3, reason: 'Initialization phase' },
@@ -275,7 +275,7 @@ export class AdaptiveDepthManager {
       this.setDepth(phases.completion.depth, phases.completion.reason);
       
       return result;
-    } catch (error) {
+    } catch (error: any) {
       // Error phase - increase depth for analysis
       this.setDepth(this.depthStrategies.onError, `Error: ${error.message}`);
       throw error;
@@ -403,7 +403,7 @@ export class DepthExplorer {
     };
   }
 
-  private static isVisibleAtDepth(line: string, depth: number, index: number): boolean {
+  private static isVisibleAtDepth(line: string, depth: number, _index: number): boolean {
     const indent = line.match(/^(\s*)/)?.[1]?.length || 0;
     const lineDepth = Math.floor(indent / 2) + 1;
     return lineDepth <= depth;
