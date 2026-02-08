@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="104" height="20" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .label { fill: #fff; font-family: Arial, sans-serif; font-size: 11px; font-weight: bold; }
+      .message { fill: #fff; font-family: Arial, sans-serif; font-size: 11px; }
+      .label-bg { fill: #555; }
+      .status-bg { fill: #22c55e; }
+    </style>
+  </defs>
+  <rect class="label-bg" x="0" y="0" width="42" height="20" rx="3"/>
+  <rect class="status-bg" x="42" y="0" width="63" height="20" rx="3"/>
+  <text class="label" x="21" y="14" text-anchor="middle">SSL</text>
+  <text class="message" x="73" y="14" text-anchor="middle">Valid</text>
+</svg>

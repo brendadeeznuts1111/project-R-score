@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="224" height="20" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .label { fill: #fff; font-family: Arial, sans-serif; font-size: 11px; font-weight: bold; }
+      .message { fill: #fff; font-family: Arial, sans-serif; font-size: 11px; }
+      .label-bg { fill: #555; }
+      .status-bg { fill: #f59e0b; }
+    </style>
+  </defs>
+  <rect class="label-bg" x="0" y="0" width="90" height="20" rx="3"/>
+  <rect class="status-bg" x="90" y="0" width="135" height="20" rx="3"/>
+  <text class="label" x="45" y="14" text-anchor="middle">Cloudflare</text>
+  <text class="message" x="157" y="14" text-anchor="middle">Proxy Enabled</text>
+</svg>
