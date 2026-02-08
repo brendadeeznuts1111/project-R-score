@@ -1768,6 +1768,7 @@
     "search:bench:snapshot:cleanup:local": "bun run scripts/search-benchmark-snapshot.ts --path ./lib --limit 40 --query-pack cleanup_noise --no-upload",
     "search:bench:snapshot:daily:local": "bun run scripts/search-benchmark-snapshot.ts --path ./lib --limit 40 --query-pack bun_runtime_api --no-upload && bun run scripts/search-benchmark-snapshot.ts --path ./lib --limit 40 --query-pack cleanup_noise --no-upload",
     "search:bench:dashboard": "bun run scripts/search-benchmark-dashboard.ts",
+    "search:bench:dashboard:watch": "bun --watch run scripts/search-benchmark-dashboard.ts --port 3099 --no-cookies --no-hot-reload",
     "r2-upload": "bun run scripts/r2-upload.ts",
     "search:bun:features": "bun run scripts/search-smart.ts --path ./lib --runtime bun --artifact api --view clean --task delivery --group-limit 4",
     "search:loop:status": "bun run scripts/search-loop-status.ts",

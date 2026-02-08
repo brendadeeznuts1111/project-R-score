@@ -258,9 +258,10 @@ function resolveBuildMeta(): BuildMeta {
   };
 }
 
-function htmlShell(options: Options, buildMeta: BuildMeta): string {
+function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState): string {
   const r2Label = options.r2Base || '(not configured)';
   const hotReloadEnabled = options.hotReload;
+  const initialSource = state.prefSource === 'r2' ? 'r2' : 'local';
   const commitUrl = buildMeta.commitFull && buildMeta.commitFull !== 'unknown'
     ? `${buildMeta.repoUrl.replace(/\/+$/g, '')}/commit/${buildMeta.commitFull}`
     : buildMeta.repoUrl;
@@ -360,6 +361,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta): string {
       // Non-browser context: skip dashboard boot logic.
     } else {
     const HOT_RELOAD_ENABLED = ${hotReloadEnabled ? 'true' : 'false'};
+    const INITIAL_SOURCE = ${JSON.stringify(initialSource)};
     const latestEl = document.getElementById('latest');
     const historyEl = document.getElementById('history');
     const trendEl = document.getElementById('trend');
@@ -373,7 +375,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta): string {
     const reportNoticeEl = document.getElementById('reportNotice');
     let lastHistory = null;
     let previousSnapshot = null;
-    let activeSource = 'local';
+    let activeSource = INITIAL_SOURCE;
     let currentLatestId = null;
     let knownLatestId = null;
     let currentRssGuid = null;
@@ -1191,8 +1193,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta): string {
     document.getElementById('loadR2').onclick = () => loadLatest('r2');
     document.getElementById('loadHistory').onclick = () => loadHistory();
     rssBadgeEl.onclick = () => loadLatest(activeSource);
-    loadLatest('local');
-    loadHistory();
+    loadLatest(INITIAL_SOURCE);
     // SSE hot reload is intentionally disabled in this build for stability.
     setInterval(() => {
       checkForNewReports();
@@ -1366,6 +1367,7 @@ async function loadRemoteJson(options: Options, name: string): Promise<Response>
 }
 
 async function main(): Promise<void> {
+  const startedAt = Date.now();
   process.on('uncaughtException', (error) => {
     console.error('[search-bench:dashboard] uncaughtException', error);
   });
@@ -1958,6 +1960,7 @@ async function main(): Promise<void> {
         accountId: '',
         lastSnapshot: '',
         prefMetric: stateFromCookie?.prefMetric || 'latency',
+        prefSource: stateFromCookie?.prefSource || 'local',
       };
       if (url.pathname === '/' || url.pathname === '/dashboard') {
         const state = stateFromCookie || defaultState;
@@ -1969,7 +1972,20 @@ async function main(): Promise<void> {
         if (options.cookies) {
           headers.append('set-cookie', StateManager.serialize(state, url));
         }
-        return new Response(htmlShell(options, buildMeta), { headers });
+        return new Response(htmlShell(options, buildMeta, state), { headers });
+      }
+      if (url.pathname === '/healthz') {
+        return Response.json({
+          ok: true,
+          service: 'search-benchmark-dashboard',
+          uptimeSec: Math.floor((Date.now() - startedAt) / 1000),
+          now: new Date().toISOString(),
+          port: options.port,
+        }, {
+          headers: {
+            'cache-control': 'no-store',
+          },
+        });
       }
       if (url.pathname === '/api/latest') {
         const source = url.searchParams.get('source') || 'local';
@@ -2049,6 +2065,7 @@ async function main(): Promise<void> {
           accountId: String(data?.accountId || stateFromCookie?.accountId || ''),
           lastSnapshot: deriveLastSnapshotFromHealth(data),
           prefMetric: stateFromCookie?.prefMetric || 'latency',
+          prefSource: source,
         };
         const headers = new Headers({
           'cache-control': 'no-store',

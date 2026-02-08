@@ -5,6 +5,7 @@ export type DashboardState = {
   accountId: string;
   lastSnapshot: string;
   prefMetric: 'latency' | 'memory';
+  prefSource?: 'local' | 'r2';
 };
 
 function normalizeDomain(domain: string): string {
@@ -24,11 +25,13 @@ function fromCookieValue(value: string): DashboardState | null {
     const domain = normalizeDomain(parsed.domain || '');
     if (!domain) return null;
     const prefMetric = parsed.prefMetric === 'memory' ? 'memory' : 'latency';
+    const prefSource = parsed.prefSource === 'r2' ? 'r2' : 'local';
     return {
       domain,
       accountId: String(parsed.accountId || ''),
       lastSnapshot: String(parsed.lastSnapshot || ''),
       prefMetric,
+      prefSource,
     };
   } catch {
     return null;
