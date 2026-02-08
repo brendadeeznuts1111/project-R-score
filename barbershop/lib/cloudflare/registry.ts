@@ -341,6 +341,7 @@ export interface BarberPayout {
 
   // Transactions included
   transactionIds: string[];
+  [key: string]: any;
 }
 
 // ==================== Barber Advance ====================
@@ -360,6 +361,7 @@ export interface BarberAdvance {
     fromPayoutId: string;
     deductedAt: string;
   }[];
+  [key: string]: any;
 }
 
 // ==================== Insufficient Funds Handler ====================
@@ -393,6 +395,7 @@ export interface PaymentNotification {
   read: boolean;
   createdAt: string;
   actionUrl?: string;
+  [key: string]: any;
 }
 
 /**
