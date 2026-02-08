@@ -403,8 +403,10 @@ export function createWebhookHooks(config: WebhookConfig): readonly WorkflowHook
  */
 export interface PersistenceStore {
   save(executionId: string, data: unknown): Promise<void>;
-  YAML.parse(executionId: string): Promise<unknown | null>;
+  parse(executionId: string): Promise<unknown | null>;
   delete(executionId: string): Promise<void>;
+  /** Namespace accessor so callers can use store.YAML.parse() */
+  readonly YAML: this;
 }
 
 /**
@@ -413,11 +415,13 @@ export interface PersistenceStore {
 class InMemoryPersistenceStore implements PersistenceStore {
   private readonly store = new Map<string, unknown>();
 
+  get YAML() { return this; }
+
   async save(executionId: string, data: unknown): Promise<void> {
     this.store.set(executionId, data);
   }
 
-  async YAML.parse(executionId: string): Promise<unknown | null> {
+  async parse(executionId: string): Promise<unknown | null> {
     return this.store.get(executionId) ?? null;
   }
 

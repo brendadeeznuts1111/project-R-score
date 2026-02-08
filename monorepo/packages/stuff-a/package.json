@@ -6,7 +6,10 @@
     ".": "./index.ts",
     "./hash": "./hash.ts",
     "./generate": "./generate.ts",
-    "./config": "./config.ts"
+    "./config": "./config.ts",
+    "./errors": "./errors.ts",
+    "./query": "./query.ts",
+    "./update": "./update.ts"
   },
   "dependencies": {
     "zod": "^4.3.5"
@@ -16,7 +19,7 @@
   },
   "scripts": {
     "dev": "bun --watch index.ts",
-    "build": "bun build index.ts hash.ts generate.ts config.ts --outdir ./dist --splitting --target bun",
+    "build": "bun build index.ts hash.ts generate.ts config.ts errors.ts query.ts update.ts --outdir ./dist --splitting --target bun",
     "test": "bun test",
     "bench": "bun run bench.ts",
     "clean": "rm -rf dist",

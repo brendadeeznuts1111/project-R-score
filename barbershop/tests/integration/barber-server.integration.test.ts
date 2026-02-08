@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
-import { startServer } from '../barber-server';
+import { startServer } from '../../src/core/barber-server';
 
 const PORT = 3123;
 let server: { stop: () => void } | null = null;

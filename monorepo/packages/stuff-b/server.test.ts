@@ -1,7 +1,10 @@
 import { test, expect, afterAll } from 'bun:test';
 import { createUserService, bulkValidate } from './index';
 import { createDB } from './db';
-import { withCors, corsPreflightResponse, withTiming, getRequestLogs } from './middleware';
+import { withCors, corsPreflightResponse, withTiming, getRequestLogs, withRateLimit } from './middleware';
+import { Errors, errorResponse } from 'stuff-a/errors';
+import { parseQuery } from 'stuff-a/query';
+import { UserUpdateSchema } from 'stuff-a/update';
 import {
   DEFAULT_TEST_PORT, ROUTES, LIMITS, HEADERS,
   serverUrl, wsUrl, userByIdRoute,
@@ -20,10 +23,11 @@ server = Bun.serve({
   port: DEFAULT_TEST_PORT,
   routes: {
     [ROUTES.USERS]: {
-      GET: (req) => withTiming(
-        () => Response.json(svc.list()),
-        'GET', ROUTES.USERS,
-      ),
+      GET: (req) => withTiming(() => {
+        const url = new URL(req.url);
+        const query = parseQuery(url.searchParams);
+        return Response.json(db.search(query));
+      }, 'GET', ROUTES.USERS),
       POST: (req) => withTiming(async () => {
         try {
           const body = await req.json();
@@ -31,7 +35,7 @@ server = Bun.serve({
           db.insert(user);
           return Response.json(user, { status: 201 });
         } catch (e) {
-          return Response.json({ error: String(e) }, { status: 400 });
+          return errorResponse(Errors.badRequest(String(e)));
         }
       }, 'POST', ROUTES.USERS),
       OPTIONS: () => corsPreflightResponse(),
@@ -40,7 +44,7 @@ server = Bun.serve({
       POST: (req) => withTiming(async () => {
         const body = await req.json();
         if (!Array.isArray(body)) {
-          return Response.json({ error: 'Expected array' }, { status: 400 });
+          return errorResponse(Errors.badRequest('Expected array'));
         }
         const result = bulkValidate(body);
         db.insertMany(result.valid);
@@ -52,14 +56,25 @@ server = Bun.serve({
       GET: (req) => withTiming(
         () => {
           const user = db.get(req.params.id);
-          if (!user) return Response.json({ error: 'Not found' }, { status: 404 });
+          if (!user) return errorResponse(Errors.notFound());
           return Response.json(user);
         },
         'GET', userByIdRoute(req.params.id),
       ),
+      PATCH: (req) => withTiming(async () => {
+        try {
+          const body = await req.json();
+          const changes = UserUpdateSchema.parse(body);
+          const updated = db.update(req.params.id, changes);
+          if (!updated) return errorResponse(Errors.notFound());
+          return Response.json(updated);
+        } catch (e) {
+          return errorResponse(Errors.badRequest(String(e)));
+        }
+      }, 'PATCH', userByIdRoute(req.params.id)),
       DELETE: (req) => withTiming(() => {
         const deleted = db.delete(req.params.id);
-        if (!deleted) return Response.json({ error: 'Not found' }, { status: 404 });
+        if (!deleted) return errorResponse(Errors.notFound());
         return Response.json({ deleted: true });
       }, 'DELETE', userByIdRoute(req.params.id)),
     },
@@ -179,6 +194,7 @@ test('OPTIONS returns CORS preflight', async () => {
   const res = await fetch(`${BASE}${ROUTES.USERS}`, { method: 'OPTIONS' });
   expect(res.status).toBe(204);
   expect(res.headers.get('Access-Control-Allow-Methods')).toContain('POST');
+  expect(res.headers.get('Access-Control-Allow-Methods')).toContain('PATCH');
 });
 
 test('DELETE /users/:id removes user', async () => {
@@ -201,4 +217,86 @@ test('WebSocket connects and receives welcome', async () => {
   expect(parsed.event).toBe('connected');
   expect(parsed.data.users).toBeGreaterThanOrEqual(0);
   ws.close();
+});
+
+// ── New tests: PATCH, search, structured errors ──
+
+test('PATCH /users/:id updates user', async () => {
+  // Re-create user for PATCH tests
+  const res = await fetch(`${BASE}${ROUTES.USERS}`, {
+    method: 'POST',
+    headers: HEADERS.JSON,
+    body: JSON.stringify({ ...validUser, email: 'alice-patch@example.com' }),
+  });
+  expect(res.status).toBe(201);
+
+  const patchRes = await fetch(`${BASE}${userByIdRoute(validUser.id)}`, {
+    method: 'PATCH',
+    headers: HEADERS.JSON,
+    body: JSON.stringify({ name: 'Alice Patched' }),
+  });
+  expect(patchRes.status).toBe(200);
+  const updated = await patchRes.json();
+  expect(updated.name).toBe('Alice Patched');
+});
+
+test('PATCH /users/:id returns 404 for missing user', async () => {
+  const res = await fetch(`${BASE}${userByIdRoute('nonexistent-uuid')}`, {
+    method: 'PATCH',
+    headers: HEADERS.JSON,
+    body: JSON.stringify({ name: 'Ghost' }),
+  });
+  expect(res.status).toBe(404);
+  const body = await res.json();
+  expect(body.code).toBe('NOT_FOUND');
+});
+
+test('PATCH /users/:id rejects empty body', async () => {
+  const res = await fetch(`${BASE}${userByIdRoute(validUser.id)}`, {
+    method: 'PATCH',
+    headers: HEADERS.JSON,
+    body: JSON.stringify({}),
+  });
+  expect(res.status).toBe(400);
+  const body = await res.json();
+  expect(body.code).toBe('BAD_REQUEST');
+});
+
+test('GET /users with search params filters results', async () => {
+  const res = await fetch(`${BASE}${ROUTES.USERS}?search=Alice`);
+  const users = await res.json();
+  expect(users.length).toBeGreaterThanOrEqual(1);
+  expect(users.every((u: any) => u.name.includes('Alice'))).toBe(true);
+});
+
+test('GET /users with role param filters by role', async () => {
+  const res = await fetch(`${BASE}${ROUTES.USERS}?role=admin`);
+  const users = await res.json();
+  expect(users.every((u: any) => u.role === 'admin')).toBe(true);
+});
+
+test('GET /users with limit param limits results', async () => {
+  const res = await fetch(`${BASE}${ROUTES.USERS}?limit=1`);
+  const users = await res.json();
+  expect(users.length).toBeLessThanOrEqual(1);
+});
+
+test('structured error has code field', async () => {
+  const res = await fetch(`${BASE}${userByIdRoute('does-not-exist')}`);
+  expect(res.status).toBe(404);
+  const body = await res.json();
+  expect(body.code).toBe('NOT_FOUND');
+  expect(body.error).toBe('Not found');
+  expect(body.status).toBe(404);
+});
+
+test('POST /users 400 has structured error', async () => {
+  const res = await fetch(`${BASE}${ROUTES.USERS}`, {
+    method: 'POST',
+    headers: HEADERS.JSON,
+    body: JSON.stringify({ name: '' }),
+  });
+  expect(res.status).toBe(400);
+  const body = await res.json();
+  expect(body.code).toBe('BAD_REQUEST');
 });

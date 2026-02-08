@@ -1,4 +1,6 @@
 [install]
+# Strict dependency isolation — prevents phantom dependencies in workspaces
+linker = "isolated"
 # Exact versions for reproducible builds across stuff-a/b/c
 exact = true
 # Don't save if we're just checking (CI optimization)

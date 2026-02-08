@@ -48,4 +48,14 @@ else
   echo "✅ Cache enabled"
 fi
 
+# 4. Verify lockfile configVersion (isolated linker requires v1)
+if grep -q '"configVersion": 0' bun.lock 2>/dev/null; then
+  echo "⚠️  Warning: Lockfile is using legacy configVersion 0 (Hoisted)."
+  echo "    Run 'bun install --linker isolated' to upgrade."
+elif grep -q '"configVersion": 1' bun.lock 2>/dev/null; then
+  echo "✅ Lockfile is modern (v1 Isolated)"
+else
+  echo "⚠️  Could not determine lockfile configVersion"
+fi
+
 echo "✅ Cache verification complete"

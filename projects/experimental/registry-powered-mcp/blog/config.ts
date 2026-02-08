@@ -63,7 +63,10 @@ export class DynamicConfigManager {
    * Load configuration from file
    * Uses Bun.file() for zero-copy I/O
    */
-  async YAML.parse(): Promise<BlogConfig> {
+  /** Namespace accessor so callers can use instance.YAML.parse() */
+  get YAML() { return this; }
+
+  async parse(): Promise<BlogConfig> {
     try {
       const file = Bun.file(this.configPath);
 

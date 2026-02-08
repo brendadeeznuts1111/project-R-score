@@ -1,0 +1,146 @@
+[
+  {
+    "id": "alert-1770517368980-wiki.factory-wager.com",
+    "type": "service_failure",
+    "severity": "warning",
+    "service": "wiki.factory-wager.com",
+    "message": "wiki.factory-wager.com is unhealthy",
+    "details": {
+      "domain": "wiki.factory-wager.com",
+      "status": "unhealthy",
+      "statusCode": 404,
+      "responseTime": 176,
+      "timestamp": "2026-02-08T02:22:48.773Z",
+      "error": null
+    },
+    "timestamp": "2026-02-08T02:22:48.980Z",
+    "acknowledged": false
+  },
+  {
+    "id": "alert-1770517368980-dashboard.factory-wager.com",
+    "type": "service_failure",
+    "severity": "warning",
+    "service": "dashboard.factory-wager.com",
+    "message": "dashboard.factory-wager.com is unhealthy",
+    "details": {
+      "domain": "dashboard.factory-wager.com",
+      "status": "unhealthy",
+      "statusCode": 404,
+      "responseTime": 91,
+      "timestamp": "2026-02-08T02:22:48.740Z",
+      "error": null
+    },
+    "timestamp": "2026-02-08T02:22:48.980Z",
+    "acknowledged": false
+  },
+  {
+    "id": "alert-1770517368980-api.factory-wager.com",
+    "type": "service_failure",
+    "severity": "warning",
+    "service": "api.factory-wager.com",
+    "message": "api.factory-wager.com is unhealthy",
+    "details": {
+      "domain": "api.factory-wager.com",
+      "status": "unhealthy",
+      "statusCode": 404,
+      "responseTime": 169,
+      "timestamp": "2026-02-08T02:22:48.819Z",
+      "error": null
+    },
+    "timestamp": "2026-02-08T02:22:48.980Z",
+    "acknowledged": false
+  },
+  {
+    "id": "alert-1770517368980-npm.factory-wager.com",
+    "type": "service_failure",
+    "severity": "warning",
+    "service": "npm.factory-wager.com",
+    "message": "npm.factory-wager.com is unhealthy",
+    "details": {
+      "domain": "npm.factory-wager.com",
+      "status": "unhealthy",
+      "statusCode": 404,
+      "responseTime": 123,
+      "timestamp": "2026-02-08T02:22:48.774Z",
+      "error": null
+    },
+    "timestamp": "2026-02-08T02:22:48.980Z",
+    "acknowledged": false
+  },
+  {
+    "id": "alert-1770517368980-Wiki",
+    "type": "service_failure",
+    "severity": "warning",
+    "service": "Wiki",
+    "message": "Wiki is unhealthy",
+    "details": {
+      "name": "Wiki",
+      "url": "https://wiki.factory-wager.com",
+      "type": "web",
+      "status": "unhealthy",
+      "statusCode": 404,
+      "responseTime": 82,
+      "timestamp": "2026-02-08T02:22:48.901Z",
+      "error": null
+    },
+    "timestamp": "2026-02-08T02:22:48.980Z",
+    "acknowledged": false
+  },
+  {
+    "id": "alert-1770517368980-Dashboard",
+    "type": "service_failure",
+    "severity": "warning",
+    "service": "Dashboard",
+    "message": "Dashboard is unhealthy",
+    "details": {
+      "name": "Dashboard",
+      "url": "https://dashboard.factory-wager.com",
+      "type": "web",
+      "status": "unhealthy",
+      "statusCode": 404,
+      "responseTime": 90,
+      "timestamp": "2026-02-08T02:22:48.910Z",
+      "error": null
+    },
+    "timestamp": "2026-02-08T02:22:48.980Z",
+    "acknowledged": false
+  },
+  {
+    "id": "alert-1770517368980-API",
+    "type": "service_failure",
+    "severity": "warning",
+    "service": "API",
+    "message": "API is unhealthy",
+    "details": {
+      "name": "API",
+      "url": "https://api.factory-wager.com/health",
+      "type": "api",
+      "status": "unhealthy",
+      "statusCode": 404,
+      "responseTime": 159,
+      "timestamp": "2026-02-08T02:22:48.979Z",
+      "error": null
+    },
+    "timestamp": "2026-02-08T02:22:48.980Z",
+    "acknowledged": false
+  },
+  {
+    "id": "alert-1770517368980-NPM Registry",
+    "type": "service_failure",
+    "severity": "warning",
+    "service": "NPM Registry",
+    "message": "NPM Registry is unhealthy",
+    "details": {
+      "name": "NPM Registry",
+      "url": "https://npm.factory-wager.com",
+      "type": "web",
+      "status": "unhealthy",
+      "statusCode": 404,
+      "responseTime": 92,
+      "timestamp": "2026-02-08T02:22:48.914Z",
+      "error": null
+    },
+    "timestamp": "2026-02-08T02:22:48.980Z",
+    "acknowledged": false
+  }
+]

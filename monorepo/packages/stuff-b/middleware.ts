@@ -1,4 +1,6 @@
 import { HEADERS, LIMITS, AUTH } from 'stuff-a/config';
+import { Errors, errorResponse } from 'stuff-a/errors';
+import { checkRateLimit } from './rate-limit';
 
 export function withCors(res: Response): Response {
   for (const [key, value] of Object.entries(HEADERS.CORS)) {
@@ -53,4 +55,17 @@ export async function checkAuth(req: Request): Promise<boolean> {
 
 export async function hashToken(plaintext: string): Promise<string> {
   return await Bun.password.hash(plaintext, { algorithm: 'bcrypt', cost: AUTH.BCRYPT_COST });
+}
+
+export function withRateLimit(req: Request): Response | null {
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim()
+    ?? req.headers.get('x-real-ip')
+    ?? 'unknown';
+  const result = checkRateLimit(ip);
+  if (!result.allowed) {
+    const res = errorResponse(Errors.rateLimited());
+    res.headers.set('Retry-After', '60');
+    return res;
+  }
+  return null;
 }

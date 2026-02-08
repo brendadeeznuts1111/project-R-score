@@ -331,8 +331,73 @@ export function generateLayoutCSS(): string {
   `;
 }
 
+// Cookie Security Badge Component
+export interface CookieSecurityBadge {
+  grade: 'A+' | 'A' | 'B' | 'C' | 'D' | 'F' | '?';
+  integrated: boolean;
+  score?: number;
+}
+
+// Bright hex colors for badge states
+const BADGE_COLORS = {
+  'A+': { bg: '#00FF00', text: '#000000', glow: '0 0 10px #00FF00' },      // Neon Green
+  'A':  { bg: '#00FF88', text: '#000000', glow: '0 0 10px #00FF88' },      // Bright Green
+  'B':  { bg: '#88FF00', text: '#000000', glow: '0 0 10px #88FF00' },      // Lime
+  'C':  { bg: '#FFDD00', text: '#000000', glow: '0 0 10px #FFDD00' },      // Yellow
+  'D':  { bg: '#FF8800', text: '#000000', glow: '0 0 10px #FF8800' },      // Orange
+  'F':  { bg: '#FF0044', text: '#FFFFFF', glow: '0 0 15px #FF0044' },      // Bright Red
+  '?':  { bg: '#00DDFF', text: '#000000', glow: '0 0 10px #00DDFF' },      // Cyan (checking)
+  'off':{ bg: '#888888', text: '#FFFFFF', glow: 'none' },                   // Gray (off)
+};
+
+export function renderCookieSecurityBadge(badge: CookieSecurityBadge = { grade: '?', integrated: false }): string {
+  const colors = BADGE_COLORS[badge.grade] || BADGE_COLORS['?'];
+  const statusText = badge.integrated ? `🍪 v3.26 ${badge.grade}` : '🍪 Checking...';
+  const title = badge.integrated 
+    ? `Cookie Security v3.26 | Grade: ${badge.grade} | Score: ${badge.score || 'N/A'}/100` 
+    : 'Checking cookie security integration...';
+  
+  return `
+    <div id="cookie-security-badge" class="cookie-security-badge" 
+         style="
+           background: ${colors.bg};
+           color: ${colors.text};
+           box-shadow: ${colors.glow};
+           padding: 0.375rem 0.75rem;
+           border-radius: 9999px;
+           font-size: 0.75rem;
+           font-weight: 700;
+           font-family: monospace;
+           display: inline-flex;
+           align-items: center;
+           gap: 0.375rem;
+           cursor: help;
+           transition: all 0.3s ease;
+           text-transform: uppercase;
+           letter-spacing: 0.02em;
+           border: 2px solid ${colors.bg};
+           animation: badgePulse 2s infinite;
+         "
+         title="${title}"
+    >
+      <span class="badge-icon">🔒</span>
+      <span class="badge-text">${statusText}</span>
+    </div>
+    <style>
+      @keyframes badgePulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.9; transform: scale(1.02); }
+      }
+      .cookie-security-badge:hover {
+        transform: scale(1.05) !important;
+        filter: brightness(1.1);
+      }
+    </style>
+  `;
+}
+
 // Render header component
-export function renderHeader(config: HeaderConfig): string {
+export function renderHeader(config: HeaderConfig, showCookieBadge: boolean = true): string {
   const navItems =
     config.navItems
       ?.map(
@@ -358,6 +423,8 @@ export function renderHeader(config: HeaderConfig): string {
   `
     : '';
 
+  const cookieBadge = showCookieBadge ? renderCookieSecurityBadge() : '';
+
   return `
     <header class="fw-header">
       <div class="fw-header-inner">
@@ -374,6 +441,7 @@ export function renderHeader(config: HeaderConfig): string {
         </nav>
 
         <div class="fw-header-actions">
+          ${cookieBadge}
           <button class="fw-notification-btn">
             🔔
             <span class="fw-notification-badge">3</span>
@@ -431,6 +499,7 @@ export function renderLayout(params: {
   footer?: FooterConfig;
   content: string;
   resourceHints?: string;
+  showCookieBadge?: boolean;
 }): string {
   return `<!DOCTYPE html>
 <html lang="en" data-theme="light">
@@ -445,7 +514,7 @@ export function renderLayout(params: {
   </style>
 </head>
 <body>
-  ${renderHeader(params.header)}
+  ${renderHeader(params.header, params.showCookieBadge !== false)}
 
   <main class="fw-main">
     ${params.content}
@@ -468,6 +537,63 @@ export function renderLayout(params: {
     if (saved) {
       document.documentElement.setAttribute('data-theme', saved);
     }
+
+    // Cookie Security v3.26 Integration Check
+    (function checkCookieSecurity() {
+      const badge = document.getElementById('cookie-security-badge');
+      if (!badge) return;
+
+      // Check for secure cookie indicators
+      const checks = {
+        secure: document.cookie.includes('Secure') || location.protocol === 'https:',
+        httpOnly: document.cookie.includes('HttpOnly'),
+        sameSite: document.cookie.includes('SameSite'),
+        hasSession: document.cookie.includes('session') || document.cookie.includes('sid'),
+      };
+
+      // Calculate grade based on checks
+      let score = 0;
+      if (checks.secure) score += 30;
+      if (checks.httpOnly) score += 30;
+      if (checks.sameSite) score += 20;
+      if (checks.hasSession) score += 20;
+
+      let grade = 'F';
+      if (score >= 95) grade = 'A+';
+      else if (score >= 90) grade = 'A';
+      else if (score >= 80) grade = 'B';
+      else if (score >= 70) grade = 'C';
+      else if (score >= 60) grade = 'D';
+
+      // Bright hex colors matching server-side
+      const colors = {
+        'A+': { bg: '#00FF00', text: '#000000', glow: '0 0 10px #00FF00' },
+        'A':  { bg: '#00FF88', text: '#000000', glow: '0 0 10px #00FF88' },
+        'B':  { bg: '#88FF00', text: '#000000', glow: '0 0 10px #88FF00' },
+        'C':  { bg: '#FFDD00', text: '#000000', glow: '0 0 10px #FFDD00' },
+        'D':  { bg: '#FF8800', text: '#000000', glow: '0 0 10px #FF8800' },
+        'F':  { bg: '#FF0044', text: '#FFFFFF', glow: '0 0 15px #FF0044' },
+      }[grade] || colors['F'];
+
+      // Update badge
+      badge.style.background = colors.bg;
+      badge.style.color = colors.text;
+      badge.style.boxShadow = colors.glow;
+      badge.style.borderColor = colors.bg;
+      
+      const badgeText = badge.querySelector('.badge-text');
+      if (badgeText) {
+        badgeText.textContent = '🍪 v3.26 ' + grade;
+      }
+      
+      badge.title = 'Cookie Security v3.26 | Grade: ' + grade + ' | Score: ' + score + '/100 | ' +
+        'Secure: ' + (checks.secure ? '✓' : '✗') + ', ' +
+        'HttpOnly: ' + (checks.httpOnly ? '✓' : '✗') + ', ' +
+        'SameSite: ' + (checks.sameSite ? '✓' : '✗') + ', ' +
+        'Session: ' + (checks.hasSession ? '✓' : '✗');
+
+      console.log('🍪 Cookie Security v3.26 | Grade:', grade, '| Score:', score + '/100');
+    })();
   </script>
 </body>
 </html>`;

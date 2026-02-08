@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🍪 Cookie Security v3.26 Badge Demo</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: #fff;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 0.5rem;
+      font-size: 2rem;
+    }
+    .subtitle {
+      text-align: center;
+      color: #888;
+      margin-bottom: 2rem;
+    }
+    .badge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+    .badge-card {
+      background: #16213e;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      border: 1px solid #0f3460;
+    }
+    .badge-card h3 {
+      margin-bottom: 1rem;
+      color: #e94560;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+    }
+    
+    /* Badge Styles */
+    .cookie-security-badge {
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      font-family: monospace;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      border: 2px solid;
+      animation: badgePulse 2s infinite;
+      cursor: help;
+      transition: all 0.3s ease;
+    }
+    .cookie-security-badge:hover {
+      transform: scale(1.05);
+      filter: brightness(1.1);
+    }
+    
+    @keyframes badgePulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.9; transform: scale(1.02); }
+    }
+    
+    /* Grade Colors */
+    .badge-a-plus {
+      background: #00FF00;
+      color: #000000;
+      box-shadow: 0 0 20px #00FF00, 0 0 40px #00FF0040;
+      border-color: #00FF00;
+    }
+    .badge-a {
+      background: #00FF88;
+      color: #000000;
+      box-shadow: 0 0 20px #00FF88, 0 0 40px #00FF8840;
+      border-color: #00FF88;
+    }
+    .badge-b {
+      background: #88FF00;
+      color: #000000;
+      box-shadow: 0 0 20px #88FF00, 0 0 40px #88FF0040;
+      border-color: #88FF00;
+    }
+    .badge-c {
+      background: #FFDD00;
+      color: #000000;
+      box-shadow: 0 0 20px #FFDD00, 0 0 40px #FFDD0040;
+      border-color: #FFDD00;
+    }
+    .badge-d {
+      background: #FF8800;
+      color: #000000;
+      box-shadow: 0 0 20px #FF8800, 0 0 40px #FF880040;
+      border-color: #FF8800;
+    }
+    .badge-f {
+      background: #FF0044;
+      color: #FFFFFF;
+      box-shadow: 0 0 20px #FF0044, 0 0 40px #FF004440;
+      border-color: #FF0044;
+    }
+    .badge-checking {
+      background: #00DDFF;
+      color: #000000;
+      box-shadow: 0 0 20px #00DDFF, 0 0 40px #00DDFF40;
+      border-color: #00DDFF;
+      animation: spinPulse 1.5s infinite;
+    }
+    
+    @keyframes spinPulse {
+      0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+      50% { opacity: 0.7; transform: scale(1.05) rotate(2deg); }
+    }
+    
+    /* Header Demo */
+    .header-demo {
+      background: #0f3460;
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 2rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .header-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #e94560, #0f3460);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+    .header-title {
+      font-weight: 700;
+    }
+    .header-subtitle {
+      font-size: 0.75rem;
+      color: #888;
+      text-transform: uppercase;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    /* Simulated integration check */
+    .integration-check {
+      background: #16213e;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+    }
+    .integration-check h2 {
+      margin-bottom: 1rem;
+      color: #00FF88;
+    }
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #0f3460;
+    }
+    .check-item:last-child {
+      border-bottom: none;
+    }
+    .check-status {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .check-pass {
+      background: #00FF00;
+      color: #000;
+    }
+    .check-fail {
+      background: #FF0044;
+      color: #fff;
+    }
+    .check-warn {
+      background: #FFDD00;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🍪 Cookie Security v3.26 Badge System</h1>
+    <p class="subtitle">Bright hex color-coded integration status badges</p>
+    
+    <div class="badge-grid">
+      <div class="badge-card">
+        <h3>Grade A+ (95-100)</h3>
+        <span class="cookie-security-badge badge-a-plus">
+          <span>🔒</span>
+          <span>🍪 v3.26 A+</span>
+        </span>
+      </div>
+      <div class="badge-card">
+        <h3>Grade A (90-94)</h3>
+        <span class="cookie-security-badge badge-a">
+          <span>🔒</span>
+          <span>🍪 v3.26 A</span>
+        </span>
+      </div>
+      <div class="badge-card">
+        <h3>Grade B (80-89)</h3>
+        <span class="cookie-security-badge badge-b">
+          <span>🔒</span>
+          <span>🍪 v3.26 B</span>
+        </span>
+      </div>
+      <div class="badge-card">
+        <h3>Grade C (70-79)</h3>
+        <span class="cookie-security-badge badge-c">
+          <span>🔒</span>
+          <span>🍪 v3.26 C</span>
+        </span>
+      </div>
+      <div class="badge-card">
+        <h3>Grade D (60-69)</h3>
+        <span class="cookie-security-badge badge-d">
+          <span>🔒</span>
+          <span>🍪 v3.26 D</span>
+        </span>
+      </div>
+      <div class="badge-card">
+        <h3>Grade F (&lt;60)</h3>
+        <span class="cookie-security-badge badge-f">
+          <span>🔓</span>
+          <span>🍪 v3.26 F</span>
+        </span>
+      </div>
+    </div>
+    
+    <div class="header-demo">
+      <div class="header-brand">
+        <div class="header-logo">👑</div>
+        <div>
+          <div class="header-title">Admin Control Room</div>
+          <div class="header-subtitle">God View</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span class="cookie-security-badge badge-a-plus" title="Cookie Security v3.26 | Grade: A+ | Score: 100/100">
+          <span>🔒</span>
+          <span>🍪 v3.26 A+</span>
+        </span>
+        <button style="background: #16213e; border: 1px solid #0f3460; padding: 0.5rem; border-radius: 6px; color: #fff; cursor: pointer;">🔔</button>
+        <button style="background: #16213e; border: 1px solid #0f3460; padding: 0.5rem; border-radius: 6px; color: #fff; cursor: pointer;">🎨</button>
+      </div>
+    </div>
+    
+    <div class="integration-check">
+      <h2>🔍 Integration Check Results</h2>
+      <div id="check-results">
+        <div class="check-item">
+          <span class="check-status check-pass">✓</span>
+          <span>Cookie Security Module Loaded</span>
+        </div>
+        <div class="check-item">
+          <span class="check-status" id="check-secure">?</span>
+          <span>Secure Flag Present</span>
+        </div>
+        <div class="check-item">
+          <span class="check-status" id="check-httponly">?</span>
+          <span>HttpOnly Flag Present</span>
+        </div>
+        <div class="check-item">
+          <span class="check-status" id="check-samesite">?</span>
+          <span>SameSite Attribute Present</span>
+        </div>
+        <div class="check-item">
+          <span class="check-status" id="check-session">?</span>
+          <span>Session Cookie Detected</span>
+        </div>
+      </div>
+      <div style="margin-top: 1.5rem; text-align: center;">
+        <span id="live-badge" class="cookie-security-badge badge-checking">
+          <span>🍪</span>
+          <span>Checking...</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Simulate integration check
+    setTimeout(() => {
+      const checks = {
+        secure: location.protocol === 'https:' || document.cookie.includes('Secure'),
+        httpOnly: document.cookie.includes('HttpOnly'),
+        sameSite: document.cookie.includes('SameSite'),
+        session: document.cookie.includes('session') || document.cookie.includes('sid')
+      };
+      
+      let score = 0;
+      if (checks.secure) score += 30;
+      if (checks.httpOnly) score += 30;
+      if (checks.sameSite) score += 20;
+      if (checks.session) score += 20;
+      
+      let grade = 'F';
+      if (score >= 95) grade = 'A+';
+      else if (score >= 90) grade = 'A';
+      else if (score >= 80) grade = 'B';
+      else if (score >= 70) grade = 'C';
+      else if (score >= 60) grade = 'D';
+      
+      const gradeClass = {
+        'A+': 'badge-a-plus',
+        'A': 'badge-a',
+        'B': 'badge-b',
+        'C': 'badge-c',
+        'D': 'badge-d',
+        'F': 'badge-f'
+      }[grade];
+      
+      const liveBadge = document.getElementById('live-badge');
+      liveBadge.className = 'cookie-security-badge ' + gradeClass;
+      liveBadge.innerHTML = '<span>🔒</span><span>🍪 v3.26 ' + grade + '</span>';
+      liveBadge.title = 'Cookie Security v3.26 | Grade: ' + grade + ' | Score: ' + score + '/100';
+      
+      // Update check statuses
+      document.getElementById('check-secure').textContent = checks.secure ? '✓' : '✗';
+      document.getElementById('check-secure').className = 'check-status ' + (checks.secure ? 'check-pass' : 'check-fail');
+      
+      document.getElementById('check-httponly').textContent = checks.httpOnly ? '✓' : '✗';
+      document.getElementById('check-httponly').className = 'check-status ' + (checks.httpOnly ? 'check-pass' : 'check-fail');
+      
+      document.getElementById('check-samesite').textContent = checks.sameSite ? '✓' : '✗';
+      document.getElementById('check-samesite').className = 'check-status ' + (checks.sameSite ? 'check-pass' : 'check-fail');
+      
+      document.getElementById('check-session').textContent = checks.session ? '✓' : '✗';
+      document.getElementById('check-session').className = 'check-status ' + (checks.session ? 'check-pass' : 'check-warn');
+      
+      console.log('🍪 Cookie Security v3.26 | Grade:', grade, '| Score:', score + '/100');
+    }, 1000);
+  </script>
+</body>
+</html>

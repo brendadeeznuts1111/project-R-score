@@ -63,3 +63,35 @@ test('insertMany ignores duplicates', () => {
   const count = db.insertMany(dupes);
   expect(count).toBe(0); // already exists
 });
+
+test('search by name', () => {
+  const results = db.search({ search: 'Alice', sort: 'created_at', order: 'desc', limit: 20, offset: 0 });
+  expect(results.length).toBeGreaterThanOrEqual(1);
+  expect(results[0].name).toBe('Alice');
+});
+
+test('search by role', () => {
+  const results = db.search({ role: 'admin', sort: 'created_at', order: 'desc', limit: 20, offset: 0 });
+  expect(results.every(u => u.role === 'admin')).toBe(true);
+});
+
+test('search with limit', () => {
+  const results = db.search({ sort: 'created_at', order: 'desc', limit: 1, offset: 0 });
+  expect(results.length).toBeLessThanOrEqual(1);
+});
+
+test('search with no matches', () => {
+  const results = db.search({ search: 'zzz_no_match_zzz', sort: 'created_at', order: 'desc', limit: 20, offset: 0 });
+  expect(results.length).toBe(0);
+});
+
+test('update name', () => {
+  const updated = db.update(validUser.id, { name: 'Alice Updated' });
+  expect(updated).not.toBeNull();
+  expect(updated!.name).toBe('Alice Updated');
+});
+
+test('update returns null for missing user', () => {
+  const updated = db.update('nonexistent-id', { name: 'Test' });
+  expect(updated).toBeNull();
+});

@@ -1,6 +1,9 @@
 import { createUserService, bulkValidate } from './index';
 import { createDB } from './db';
-import { withCors, corsPreflightResponse, withTiming, getRequestLogs, checkAuth } from './middleware';
+import { withCors, corsPreflightResponse, withTiming, getRequestLogs, checkAuth, withRateLimit } from './middleware';
+import { Errors, errorResponse } from 'stuff-a/errors';
+import { parseQuery } from 'stuff-a/query';
+import { UserUpdateSchema } from 'stuff-a/update';
 import {
   DB, DEFAULT_PORT, DEFAULT_HOSTNAME, ROUTES, LIMITS,
   AUTH, FEATURES, serverUrl, wsUrl, userByIdRoute,
@@ -23,18 +26,21 @@ function broadcast(event: string, data: unknown) {
   }
 }
 
-export default Bun.serve({
+const server = Bun.serve({
   port: DEFAULT_PORT,
   hostname: DEFAULT_HOSTNAME,
   routes: {
     [ROUTES.USERS]: {
-      GET: (req) => withTiming(
-        () => Response.json(svc.list()),
-        'GET', ROUTES.USERS,
-      ),
+      GET: (req) => withTiming(() => {
+        const url = new URL(req.url);
+        const query = parseQuery(url.searchParams);
+        return Response.json(db.search(query));
+      }, 'GET', ROUTES.USERS),
       POST: (req) => withTiming(async () => {
+        const rateLimited = withRateLimit(req);
+        if (rateLimited) return rateLimited;
         if (!await checkAuth(req)) {
-          return Response.json({ error: 'Unauthorized' }, { status: 401 });
+          return errorResponse(Errors.unauthorized());
         }
         try {
           const body = await req.json();
@@ -43,19 +49,21 @@ export default Bun.serve({
           broadcast('user:created', user);
           return Response.json(user, { status: 201 });
         } catch (e) {
-          return Response.json({ error: String(e) }, { status: 400 });
+          return errorResponse(Errors.badRequest(String(e)));
         }
       }, 'POST', ROUTES.USERS),
       OPTIONS: () => corsPreflightResponse(),
     },
     '/users/bulk': {
       POST: (req) => withTiming(async () => {
+        const rateLimited = withRateLimit(req);
+        if (rateLimited) return rateLimited;
         if (!await checkAuth(req)) {
-          return Response.json({ error: 'Unauthorized' }, { status: 401 });
+          return errorResponse(Errors.unauthorized());
         }
         const body = await req.json();
         if (!Array.isArray(body)) {
-          return Response.json({ error: 'Expected array' }, { status: 400 });
+          return errorResponse(Errors.badRequest('Expected array'));
         }
         const result = bulkValidate(body);
         const inserted = db.insertMany(result.valid);
@@ -69,17 +77,36 @@ export default Bun.serve({
       GET: (req) => withTiming(
         () => {
           const user = db.get(req.params.id);
-          if (!user) return Response.json({ error: 'Not found' }, { status: 404 });
+          if (!user) return errorResponse(Errors.notFound());
           return Response.json(user);
         },
         'GET', userByIdRoute(req.params.id),
       ),
-      DELETE: (req) => withTiming(async () => {
+      PATCH: (req) => withTiming(async () => {
+        const rateLimited = withRateLimit(req);
+        if (rateLimited) return rateLimited;
         if (!await checkAuth(req)) {
-          return Response.json({ error: 'Unauthorized' }, { status: 401 });
+          return errorResponse(Errors.unauthorized());
+        }
+        try {
+          const body = await req.json();
+          const changes = UserUpdateSchema.parse(body);
+          const updated = db.update(req.params.id, changes);
+          if (!updated) return errorResponse(Errors.notFound());
+          broadcast('user:updated', updated);
+          return Response.json(updated);
+        } catch (e) {
+          return errorResponse(Errors.badRequest(String(e)));
+        }
+      }, 'PATCH', userByIdRoute(req.params.id)),
+      DELETE: (req) => withTiming(async () => {
+        const rateLimited = withRateLimit(req);
+        if (rateLimited) return rateLimited;
+        if (!await checkAuth(req)) {
+          return errorResponse(Errors.unauthorized());
         }
         const deleted = db.delete(req.params.id);
-        if (!deleted) return Response.json({ error: 'Not found' }, { status: 404 });
+        if (!deleted) return errorResponse(Errors.notFound());
         broadcast('user:deleted', { id: req.params.id });
         return Response.json({ deleted: true });
       }, 'DELETE', userByIdRoute(req.params.id)),
@@ -88,7 +115,7 @@ export default Bun.serve({
     [ROUTES.METRICS]: (req) => withTiming(
       () => {
         if (!FEATURES.ENABLE_METRICS) {
-          return Response.json({ error: 'Metrics disabled' }, { status: 404 });
+          return errorResponse(Errors.notFound('Metrics disabled'));
         }
         return Response.json({ ...db.stats(), logs: getRequestLogs() });
       },
@@ -114,7 +141,18 @@ export default Bun.serve({
   },
 });
 
+// Graceful shutdown
+function shutdown() {
+  server.stop();
+  db.close();
+  process.exit(0);
+}
+process.on('SIGTERM', shutdown);
+process.on('SIGINT', shutdown);
+
 console.log(`stuff-b server listening on ${serverUrl()}`);
 console.log(`  WebSocket: ${wsUrl()}${ROUTES.WS}`);
 console.log(`  Database: ${DB.DEFAULT_PATH}`);
 console.log(`  Auth: ${AUTH.API_TOKEN ? 'enabled' : 'open'}`);
+
+export default server;

@@ -45,7 +45,10 @@ export class WorkflowConfigLoader {
   /**
    * Load workflow configuration from TOML file
    */
-  static async YAML.parse(path: string): Promise<WorkflowTomlConfig> {
+  /** Namespace accessor so callers can use WorkflowConfigLoader.YAML.parse() */
+  static readonly YAML = WorkflowConfigLoader;
+
+  static async parse(path: string): Promise<WorkflowTomlConfig> {
     // Return cached config if available
     if (this.cachedConfig) {
       return this.cachedConfig;

@@ -182,8 +182,8 @@ class RegistryClient {
         return {
             workingRegistries: this.workingRegistries.length,
             totalRegistries: this.config.fallbacks.length + 1,
-            cacheSize: this.cache.size,
-            cacheKeys: Array.from(this.cache.keys())
+            cacheSize: this.cache ? this.cache.size : 0,
+            cacheKeys: this.cache ? Array.from(this.cache.keys()) : []
         };
     }
 

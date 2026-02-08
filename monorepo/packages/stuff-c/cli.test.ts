@@ -15,6 +15,10 @@ test('CLI shows usage with no args', async () => {
   const output = await new Response(proc.stdout).text();
   await proc.exited;
   expect(output).toContain('stuff — CLI for the stuff monorepo');
+  expect(output).toContain('list');
+  expect(output).toContain('update');
+  expect(output).toContain('delete');
+  expect(output).toContain('--json');
 });
 
 test('CLI validate accepts valid user JSON', async () => {
@@ -55,4 +59,53 @@ test('CLI info shows version info', async () => {
   expect(output).toContain('stuff-c');
   expect(output).toContain('stuff-a');
   expect(output).toContain('Bun');
+});
+
+test('CLI delete shows usage when no id', async () => {
+  const proc = Bun.spawn(['bun', 'run', 'cli.ts', 'delete'], {
+    cwd: import.meta.dir,
+    stdout: 'pipe',
+    stderr: 'pipe',
+  });
+  const exitCode = await proc.exited;
+  const stderr = await new Response(proc.stderr).text();
+  expect(exitCode).toBe(1);
+  expect(stderr).toContain('Usage: stuff delete <id>');
+});
+
+test('CLI update shows usage when args missing', async () => {
+  const proc = Bun.spawn(['bun', 'run', 'cli.ts', 'update'], {
+    cwd: import.meta.dir,
+    stdout: 'pipe',
+    stderr: 'pipe',
+  });
+  const exitCode = await proc.exited;
+  const stderr = await new Response(proc.stderr).text();
+  expect(exitCode).toBe(1);
+  expect(stderr).toContain('Usage: stuff update <id> <json>');
+});
+
+test('CLI health --json outputs parseable JSON', async () => {
+  const proc = Bun.spawn(['bun', 'run', 'cli.ts', 'health', '--json'], {
+    cwd: import.meta.dir,
+    stdout: 'pipe',
+    stderr: 'pipe',
+  });
+  const output = await new Response(proc.stdout).text();
+  await proc.exited;
+  const parsed = JSON.parse(output);
+  expect(typeof parsed.ok).toBe('boolean');
+  expect(typeof parsed.latencyMs).toBe('number');
+});
+
+test('CLI info --json outputs parseable JSON', async () => {
+  const proc = Bun.spawn(['bun', 'run', 'cli.ts', 'info', '--json'], {
+    cwd: import.meta.dir,
+    stdout: 'pipe',
+  });
+  const output = await new Response(proc.stdout).text();
+  await proc.exited;
+  const parsed = JSON.parse(output);
+  expect(parsed['stuff-c']).toBeDefined();
+  expect(parsed.runtime).toContain('Bun');
 });

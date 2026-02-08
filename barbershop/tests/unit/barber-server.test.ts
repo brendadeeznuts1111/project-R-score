@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { buildReport, parseClearRequest } from '../barber-server';
+import { buildReport, parseClearRequest } from '../../src/core/barber-server';
 
 describe('barber-server helpers', () => {
   test('parseClearRequest matches /clear with key', () => {

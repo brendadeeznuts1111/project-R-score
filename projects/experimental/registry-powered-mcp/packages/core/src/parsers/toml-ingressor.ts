@@ -74,6 +74,9 @@ export interface RegistryConfig {
 }
 
 export class RegistryLoader {
+  /** Namespace accessor so callers can use RegistryLoader.YAML.parse() */
+  static readonly YAML = RegistryLoader;
+
   /**
    * Load registry configuration with Zero-Parser Fusion
    *
@@ -84,7 +87,7 @@ export class RegistryLoader {
    * @param path - Path to registry.toml file (ignored in standalone builds)
    * @returns Parsed and validated registry configuration
    */
-  static async YAML.parse(path: string = './registry.toml'): Promise<RegistryConfig> {
+  static async parse(path: string = './registry.toml'): Promise<RegistryConfig> {
     try {
       let config: RegistryConfig;
 

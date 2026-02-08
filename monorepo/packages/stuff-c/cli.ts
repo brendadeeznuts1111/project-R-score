@@ -9,8 +9,29 @@ import {
 import { createDB } from 'stuff-b/db';
 import { healthCheck, seedUsers } from './index';
 
-const [cmd, ...args] = process.argv.slice(2);
+const argv = process.argv.slice(2);
+
+// Extract global --json flag
+const jsonIdx = argv.indexOf('--json');
+const jsonOutput = jsonIdx !== -1;
+if (jsonIdx !== -1) argv.splice(jsonIdx, 1);
+
+const [cmd, ...args] = argv;
 const SERVER = process.env.STUFF_SERVER ?? serverUrl();
+
+function output(data: unknown, humanFn: (d: any) => void): void {
+  if (jsonOutput) {
+    console.log(JSON.stringify(data, null, 2));
+  } else {
+    humanFn(data);
+  }
+}
+
+function flag(name: string): string | undefined {
+  const prefix = `--${name}=`;
+  const arg = args.find(a => a.startsWith(prefix));
+  return arg?.slice(prefix.length);
+}
 
 const usage = `stuff — CLI for the stuff monorepo
 
@@ -21,12 +42,16 @@ Usage:
   stuff seed <count>              Seed N random users to server
   stuff generate <count>          Generate random users (local, no server)
   stuff metrics                   Show server metrics
+  stuff list [--role=] [--search=] [--limit=]  List/search users
+  stuff update <id> <json>        Update user (PATCH)
+  stuff delete <id>               Delete user by ID
   stuff watch                     Watch server events via WebSocket
   stuff serve                     Start stuff-b server as child process
   stuff load [total] [concurrency]  HTTP load test against server
   stuff info                      Show monorepo info
 
 Options:
+  --json                          Output as JSON (works with health, metrics, list, delete, update, info)
   STUFF_SERVER=<url>              Server URL (default: ${serverUrl()})
   STUFF_DB_PATH=<path>            Database path (default: ${DB.DEFAULT_PATH})
   ${AUTH.API_TOKEN_ENV}=<hash>    Bcrypt hash for bearer token auth`;
@@ -34,9 +59,11 @@ Options:
 switch (cmd) {
   case 'health': {
     const result = await healthCheck(SERVER);
-    console.log(result.ok
-      ? `OK  ${SERVER}  ${result.latencyMs.toFixed(1)}ms`
-      : `FAIL  ${SERVER}  ${result.latencyMs.toFixed(1)}ms`);
+    output(result, (r) => {
+      console.log(r.ok
+        ? `OK  ${SERVER}  ${r.latencyMs.toFixed(1)}ms`
+        : `FAIL  ${SERVER}  ${r.latencyMs.toFixed(1)}ms`);
+    });
     process.exit(result.ok ? 0 : 1);
     break;
   }
@@ -86,11 +113,100 @@ switch (cmd) {
     try {
       const res = await fetch(`${SERVER}${ROUTES.METRICS}`);
       const metrics = await res.json() as { count: number; sizeBytes: number; path: string; logs: unknown[] };
-      console.log(`Server: ${SERVER}`);
-      console.log(`  Users: ${metrics.count}`);
-      console.log(`  DB size: ${(metrics.sizeBytes / 1024).toFixed(1)} KB`);
-      console.log(`  DB path: ${metrics.path}`);
-      console.log(`  Request logs: ${metrics.logs.length}`);
+      output(metrics, (m) => {
+        console.log(`Server: ${SERVER}`);
+        console.log(`  Users: ${m.count}`);
+        console.log(`  DB size: ${(m.sizeBytes / 1024).toFixed(1)} KB`);
+        console.log(`  DB path: ${m.path}`);
+        console.log(`  Request logs: ${m.logs.length}`);
+      });
+    } catch {
+      console.error(`Cannot reach ${SERVER}`);
+      process.exit(1);
+    }
+    break;
+  }
+
+  case 'list': {
+    try {
+      const params = new URLSearchParams();
+      const role = flag('role');
+      const search = flag('search');
+      const limit = flag('limit');
+      if (role) params.set('role', role);
+      if (search) params.set('search', search);
+      if (limit) params.set('limit', limit);
+      const qs = params.toString();
+      const url = `${SERVER}${ROUTES.USERS}${qs ? `?${qs}` : ''}`;
+      const res = await fetch(url);
+      const users = await res.json() as { id: string; name: string; email: string; role: string }[];
+      output(users, (list) => {
+        if (list.length === 0) {
+          console.log('No users found.');
+          return;
+        }
+        console.log(`${'ID'.padEnd(38)} ${'NAME'.padEnd(20)} ${'ROLE'.padEnd(8)} EMAIL`);
+        for (const u of list) {
+          console.log(`${u.id.padEnd(38)} ${u.name.padEnd(20)} ${u.role.padEnd(8)} ${u.email}`);
+        }
+        console.log(`\n${list.length} user(s)`);
+      });
+    } catch {
+      console.error(`Cannot reach ${SERVER}`);
+      process.exit(1);
+    }
+    break;
+  }
+
+  case 'delete': {
+    const id = args[0];
+    if (!id) {
+      console.error('Usage: stuff delete <id>');
+      process.exit(1);
+    }
+    try {
+      const res = await fetch(`${SERVER}/users/${id}`, { method: 'DELETE' });
+      const body = await res.json();
+      output(body, (b) => {
+        if (res.status === 200) {
+          console.log(`Deleted user ${id}`);
+        } else {
+          console.error(`Failed: ${b.error ?? 'unknown error'}`);
+          process.exit(1);
+        }
+      });
+    } catch {
+      console.error(`Cannot reach ${SERVER}`);
+      process.exit(1);
+    }
+    break;
+  }
+
+  case 'update': {
+    const id = args[0];
+    const json = args[1];
+    if (!id || !json) {
+      console.error('Usage: stuff update <id> <json>');
+      process.exit(1);
+    }
+    try {
+      const res = await fetch(`${SERVER}/users/${id}`, {
+        method: 'PATCH',
+        headers: HEADERS.JSON,
+        body: json,
+      });
+      const body = await res.json();
+      output(body, (b) => {
+        if (res.status === 200) {
+          console.log(`Updated user ${id}:`);
+          console.log(`  Name:  ${b.name}`);
+          console.log(`  Email: ${b.email}`);
+          console.log(`  Role:  ${b.role}`);
+        } else {
+          console.error(`Failed: ${b.error ?? 'unknown error'}`);
+          process.exit(1);
+        }
+      });
     } catch {
       console.error(`Cannot reach ${SERVER}`);
       process.exit(1);
@@ -211,11 +327,20 @@ switch (cmd) {
     const root = await Bun.file(import.meta.dir + '/package.json').json();
     const stuffA = await Bun.file(import.meta.dir + '/../stuff-a/package.json').json();
     const stuffB = await Bun.file(import.meta.dir + '/../stuff-b/package.json').json();
-    console.log(`stuff-c  v${root.version}`);
-    console.log(`  stuff-a  v${stuffA.version}  (zod ${stuffA.dependencies.zod})`);
-    console.log(`  stuff-b  v${stuffB.version}  (depends on stuff-a)`);
-    console.log(`  server   ${SERVER}`);
-    console.log(`  runtime  Bun ${Bun.version}`);
+    const data = {
+      'stuff-c': root.version,
+      'stuff-a': { version: stuffA.version, zod: stuffA.dependencies.zod },
+      'stuff-b': { version: stuffB.version },
+      server: SERVER,
+      runtime: `Bun ${Bun.version}`,
+    };
+    output(data, () => {
+      console.log(`stuff-c  v${root.version}`);
+      console.log(`  stuff-a  v${stuffA.version}  (zod ${stuffA.dependencies.zod})`);
+      console.log(`  stuff-b  v${stuffB.version}  (depends on stuff-a)`);
+      console.log(`  server   ${SERVER}`);
+      console.log(`  runtime  Bun ${Bun.version}`);
+    });
     break;
   }
 

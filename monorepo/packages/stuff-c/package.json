@@ -7,7 +7,8 @@
   },
   "dependencies": {
     "stuff-a": "workspace:*",
-    "stuff-b": "workspace:*"
+    "stuff-b": "workspace:*",
+    "zod": "4.3.6"
   },
   "scripts": {
     "preflight": "bun run --filter stuff-a config:validate && bun run build",

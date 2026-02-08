@@ -28,7 +28,7 @@ export const HEADERS = {
   JSON: { 'Content-Type': 'application/json' },
   CORS: {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   },
   RESPONSE_TIME: 'X-Response-Time',
@@ -63,6 +63,8 @@ export const LIMITS = {
   MAX_SEED_COUNT: 10000,
   LOAD_TEST_DEFAULT_DURATION: 30,
   LOAD_TEST_DEFAULT_CONCURRENCY: 10,
+  RATE_LIMIT_WINDOW_MS: 60_000,
+  RATE_LIMIT_MAX_REQUESTS: 100,
 } as const;
 
 // ── Feature Flags ──

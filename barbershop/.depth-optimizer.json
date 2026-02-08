@@ -1,0 +1,12 @@
+{
+  "defaultDepth": 3,
+  "maxDepth": 8,
+  "environment": "--save",
+  "streamingThreshold": 10485760,
+  "circularHandling": "mark",
+  "strategies": [
+    "progressive",
+    "static",
+    "adaptive"
+  ]
+}

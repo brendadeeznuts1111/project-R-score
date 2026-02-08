@@ -1,5 +1,7 @@
 import { Database } from 'bun:sqlite';
 import type { User } from 'stuff-a';
+import type { UserQuery } from 'stuff-a/query';
+import type { UserUpdate } from 'stuff-a/update';
 import { DB, LIMITS } from 'stuff-a/config';
 
 export interface UserRow {
@@ -82,6 +84,43 @@ export class UserDB {
       sizeBytes: (this.db.query('SELECT page_count * page_size as size FROM pragma_page_count(), pragma_page_size()').get() as { size: number }).size,
       path: this.db.filename,
     };
+  }
+
+  search(query: UserQuery): User[] {
+    const conditions: string[] = [];
+    const params: any[] = [];
+
+    if (query.search) {
+      conditions.push('(name LIKE ? OR email LIKE ?)');
+      params.push(`%${query.search}%`, `%${query.search}%`);
+    }
+    if (query.role) {
+      conditions.push('role = ?');
+      params.push(query.role);
+    }
+
+    const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+    const sql = `SELECT * FROM users ${where} ORDER BY ${query.sort} ${query.order} LIMIT ? OFFSET ?`;
+    params.push(query.limit, query.offset);
+
+    const rows = this.db.query(sql).all(...params) as UserRow[];
+    return rows.map(this.rowToUser);
+  }
+
+  update(id: string, changes: UserUpdate): User | null {
+    const sets: string[] = [];
+    const params: any[] = [];
+
+    if (changes.name !== undefined) { sets.push('name = ?'); params.push(changes.name); }
+    if (changes.email !== undefined) { sets.push('email = ?'); params.push(changes.email); }
+    if (changes.role !== undefined) { sets.push('role = ?'); params.push(changes.role); }
+
+    if (sets.length === 0) return null;
+
+    params.push(id);
+    const result = this.db.run(`UPDATE users SET ${sets.join(', ')} WHERE id = ?`, params);
+    if (result.changes === 0) return null;
+    return this.get(id);
   }
 
   close(): void {
