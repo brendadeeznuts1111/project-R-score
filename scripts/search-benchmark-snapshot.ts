@@ -9,6 +9,9 @@ import { loadSearchPolicies } from '../lib/docs/canonical-family';
 type RankedProfile = {
   profile: string;
   label: string;
+  latencyP50Ms: number;
+  latencyP95Ms: number;
+  latencyMaxMs: number;
   avgSignalPct: number;
   avgSlopPct: number;
   avgDuplicatePct: number;
@@ -34,6 +37,8 @@ type SnapshotDelta = {
   noiseRatio: number | null;
   reliability: number | null;
 };
+
+type DeltaBasis = 'same-pack';
 
 type SnapshotIndexEntry = {
   id: string;
@@ -330,12 +335,34 @@ function computeDelta(
   };
 }
 
+function profileById(payload: BenchmarkPayload | null, id: string): RankedProfile | null {
+  if (!payload || !Array.isArray(payload.rankedProfiles)) {
+    return null;
+  }
+  return payload.rankedProfiles.find((p) => p.profile === id) || null;
+}
+
+function profileReliability(profile: RankedProfile | null): number | null {
+  if (!profile) {
+    return null;
+  }
+  return Number((((Number(profile.avgSignalPct || 0) * Number(profile.avgUniqueFamilyPct || 0)) / 100)).toFixed(2));
+}
+
+function runClassForQueryPack(queryPack: string): 'core-iterative' | 'daily-coverage' | 'ad-hoc' {
+  if (queryPack === 'core_delivery') return 'core-iterative';
+  if (queryPack === 'bun_runtime_api' || queryPack === 'cleanup_noise') return 'daily-coverage';
+  return 'ad-hoc';
+}
+
 function renderSummaryMarkdown(
   id: string,
   createdAt: string,
   payload: BenchmarkPayload,
   delta: SnapshotDelta,
-  warnings: string[]
+  warnings: string[],
+  deltaBasis: DeltaBasis,
+  baselineSnapshotId: string | null
 ): string {
   const lines: string[] = [];
   lines.push(`# Search Benchmark Snapshot`);
@@ -345,13 +372,18 @@ function renderSummaryMarkdown(
   lines.push(`- Path: \`${payload.path}\``);
   lines.push(`- Limit: \`${payload.limit}\``);
   lines.push(`- Query Pack: \`${payload.queryPack || 'core_delivery'}\``);
+  lines.push(`- Delta Basis: \`${deltaBasis}\``);
+  lines.push(`- Baseline Snapshot: \`${baselineSnapshotId || 'none'}\``);
   if (typeof payload.concurrency === 'number') {
     lines.push(`- Concurrency: \`${payload.concurrency}\``);
   }
   lines.push(`- Queries: \`${payload.queries.join(', ')}\``);
   lines.push('');
-  lines.push(`## Trend Delta (vs previous snapshot)`);
+  lines.push(`## Trend Delta (vs same-pack previous snapshot)`);
   lines.push('');
+  if (!baselineSnapshotId) {
+    lines.push(`- delta_basis: \`unavailable_same_pack\``);
+  }
   lines.push(`- topQuality: \`${delta.topQuality ?? 'n/a'}\``);
   lines.push(`- familyCoverage: \`${delta.familyCoverage ?? 'n/a'}\``);
   lines.push(`- avgSlop: \`${delta.avgSlop ?? 'n/a'}\``);
@@ -369,12 +401,12 @@ function renderSummaryMarkdown(
   lines.push('');
   lines.push(`## Ranked Profiles`);
   lines.push('');
-  lines.push(`| Rank | Profile | Quality | Signal% | Unique Family% | Slop% | Duplicate% |`);
-  lines.push(`|---:|---|---:|---:|---:|---:|---:|`);
+  lines.push(`| Rank | Profile | Quality | Signal% | Unique Family% | Slop% | Duplicate% | P95(ms) |`);
+  lines.push(`|---:|---|---:|---:|---:|---:|---:|---:|`);
 
   payload.rankedProfiles.forEach((p, idx) => {
     lines.push(
-      `| ${idx + 1} | ${p.profile} | ${p.qualityScore.toFixed(2)} | ${p.avgSignalPct.toFixed(2)} | ${p.avgUniqueFamilyPct.toFixed(2)} | ${p.avgSlopPct.toFixed(2)} | ${p.avgDuplicatePct.toFixed(2)} |`
+      `| ${idx + 1} | ${p.profile} | ${p.qualityScore.toFixed(2)} | ${p.avgSignalPct.toFixed(2)} | ${p.avgUniqueFamilyPct.toFixed(2)} | ${p.avgSlopPct.toFixed(2)} | ${p.avgDuplicatePct.toFixed(2)} | ${Number(p.latencyP95Ms || 0).toFixed(2)} |`
     );
   });
 
@@ -484,15 +516,21 @@ async function main(): Promise<void> {
   const outDir = resolve(options.outputDir);
   const indexPath = resolve(outDir, 'index.json');
   const existingIndex = await readIndex(indexPath);
+  const queryPack = options.queryPack || 'core_delivery';
+  const deltaBasis: DeltaBasis = 'same-pack';
   let previousPayload: BenchmarkPayload | null = null;
-  const previousSnapshotId = existingIndex.snapshots?.[0]?.id;
+  let baselineSnapshotId: string | null = null;
+  const previousEntry = existingIndex.snapshots.find((s) => (s.queryPack || 'core_delivery') === queryPack);
+  const previousSnapshotId = previousEntry?.id || null;
   if (previousSnapshotId) {
+    baselineSnapshotId = previousSnapshotId;
     const previousPath = resolve(outDir, previousSnapshotId, 'snapshot.json');
     if (existsSync(previousPath)) {
       try {
         previousPayload = JSON.parse(await readFile(previousPath, 'utf8')) as BenchmarkPayload;
       } catch {
         previousPayload = null;
+        baselineSnapshotId = null;
       }
     }
   }
@@ -503,18 +541,57 @@ async function main(): Promise<void> {
   const previousMetrics = previousPayload ? snapshotMetrics(previousPayload) : null;
   const delta = computeDelta(currentMetrics, previousMetrics);
   const warnings: string[] = [];
-  if (delta.topQuality !== null && delta.topQuality < policies.scoreThresholds.qualityDropWarn) {
+  const strictCurrent = profileById(payload, 'strict');
+  const strictPrevious = profileById(previousPayload, 'strict');
+  const strictQualityDelta =
+    strictCurrent && strictPrevious
+      ? Number((strictCurrent.qualityScore - strictPrevious.qualityScore).toFixed(2))
+      : null;
+  const strictSlopDelta =
+    strictCurrent && strictPrevious
+      ? Number((strictCurrent.avgSlopPct - strictPrevious.avgSlopPct).toFixed(2))
+      : null;
+  const strictReliabilityDelta = (() => {
+    const curr = profileReliability(strictCurrent);
+    const prev = profileReliability(strictPrevious);
+    if (curr === null || prev === null) return null;
+    return Number((curr - prev).toFixed(2));
+  })();
+  const strictReliabilityNow = profileReliability(strictCurrent);
+
+  if (strictQualityDelta !== null && strictQualityDelta < policies.scoreThresholds.qualityDropWarn) {
     warnings.push('quality_drop_warn');
   }
-  if (delta.avgSlop !== null && delta.avgSlop > policies.scoreThresholds.slopRiseWarn) {
+  if (strictSlopDelta !== null && strictSlopDelta > policies.scoreThresholds.slopRiseWarn) {
     warnings.push('slop_rise_warn');
   }
-  if (delta.reliability !== null && delta.reliability < policies.scoreThresholds.reliabilityDropWarn) {
+  if (strictReliabilityDelta !== null && strictReliabilityDelta < policies.scoreThresholds.reliabilityDropWarn) {
     warnings.push('reliability_drop_warn');
+  }
+  if (
+    strictCurrent &&
+    typeof strictCurrent.latencyP95Ms === 'number' &&
+    strictCurrent.latencyP95Ms > policies.scoreThresholds.strictLatencyP95WarnMs
+  ) {
+    warnings.push('latency_p95_warn');
+  }
+  if (
+    strictReliabilityNow !== null &&
+    strictReliabilityNow < policies.scoreThresholds.strictReliabilityFloor
+  ) {
+    warnings.push('strict_reliability_floor_warn');
   }
   payload.warnings = warnings;
 
-  const summaryMd = renderSummaryMarkdown(id, createdAt, payload, delta, warnings);
+  const summaryMd = renderSummaryMarkdown(
+    id,
+    createdAt,
+    payload,
+    delta,
+    warnings,
+    deltaBasis,
+    baselineSnapshotId
+  );
 
   const snapshotDir = resolve(outDir, id);
   await mkdir(snapshotDir, { recursive: true });
@@ -522,6 +599,8 @@ async function main(): Promise<void> {
   const snapshotData = {
     id,
     createdAt,
+    deltaBasis,
+    baselineSnapshotId,
     delta,
     warnings,
     ...payload,
@@ -537,7 +616,10 @@ async function main(): Promise<void> {
     id,
     createdAt,
     queryPack: payload.queryPack || options.queryPack || 'core_delivery',
+    runClass: runClassForQueryPack(payload.queryPack || options.queryPack || 'core_delivery'),
     concurrency: payload.concurrency ?? options.concurrency ?? null,
+    deltaBasis,
+    baselineSnapshotId,
     delta,
     warnings,
     gzip: options.gzip,
@@ -748,7 +830,10 @@ async function main(): Promise<void> {
     id,
     createdAt,
     queryPack: payload.queryPack || options.queryPack || 'core_delivery',
+    runClass: runClassForQueryPack(payload.queryPack || options.queryPack || 'core_delivery'),
     concurrency: payload.concurrency ?? options.concurrency ?? null,
+    deltaBasis,
+    baselineSnapshotId,
     delta,
     warnings,
     bucket: r2.bucket,

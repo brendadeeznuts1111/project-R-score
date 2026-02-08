@@ -12,6 +12,7 @@ type Profile = {
 
 type QueryResultSummary = {
   query: string;
+  elapsedMs: number;
   total: number;
   slop: number;
   duplicate: number;
@@ -25,6 +26,9 @@ type QueryResultSummary = {
 type ProfileSummary = {
   profile: string;
   label: string;
+  latencyP50Ms: number;
+  latencyP95Ms: number;
+  latencyMaxMs: number;
   avgSignalPct: number;
   avgSlopPct: number;
   avgDuplicatePct: number;
@@ -190,6 +194,7 @@ function summarizeQuery(query: string, payload: any): QueryResultSummary {
 
   return {
     query,
+    elapsedMs: Number(payload?.elapsedMs || 0),
     total,
     slop,
     duplicate,
@@ -201,8 +206,21 @@ function summarizeQuery(query: string, payload: any): QueryResultSummary {
   };
 }
 
+function percentile(values: number[], p: number): number {
+  if (values.length === 0) {
+    return 0;
+  }
+  const sorted = [...values].sort((a, b) => a - b);
+  const idx = Math.min(sorted.length - 1, Math.max(0, Math.ceil((p / 100) * sorted.length) - 1));
+  return sorted[idx];
+}
+
 function aggregateProfile(profile: Profile, querySummaries: QueryResultSummary[]): ProfileSummary {
   const n = querySummaries.length || 1;
+  const latencies = querySummaries.map((q) => Number(q.elapsedMs || 0)).filter((v) => Number.isFinite(v) && v >= 0);
+  const latencyP50Ms = Number(percentile(latencies, 50).toFixed(2));
+  const latencyP95Ms = Number(percentile(latencies, 95).toFixed(2));
+  const latencyMaxMs = Number((latencies.length > 0 ? Math.max(...latencies) : 0).toFixed(2));
 
   const avgSignalPct = Number((querySummaries.reduce((a, q) => a + q.signalPct, 0) / n).toFixed(2));
   const avgSlopPct = Number((querySummaries.reduce((a, q) => a + (q.total ? (q.slop / q.total) * 100 : 0), 0) / n).toFixed(2));
@@ -221,6 +239,9 @@ function aggregateProfile(profile: Profile, querySummaries: QueryResultSummary[]
   return {
     profile: profile.id,
     label: profile.label,
+    latencyP50Ms,
+    latencyP95Ms,
+    latencyMaxMs,
     avgSignalPct,
     avgSlopPct,
     avgDuplicatePct,
@@ -247,7 +268,10 @@ async function main(): Promise<void> {
 
   const profileSummaries = await mapWithConcurrency(profiles, Math.min(concurrency, profiles.length), async (profile) => {
     const querySummaries = await mapWithConcurrency(queries, concurrency, async (query) => {
+      const started = performance.now();
       const payload = await runSearch(query, path, limit, profile.args);
+      const elapsedMs = Number((performance.now() - started).toFixed(2));
+      payload.elapsedMs = elapsedMs;
       return summarizeQuery(query, payload);
     });
     return aggregateProfile(profile, querySummaries);
