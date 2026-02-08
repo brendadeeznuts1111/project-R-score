@@ -6,7 +6,12 @@ import { resolve } from 'node:path';
 import { createHmac, createHash } from 'node:crypto';
 import { S3Client } from 'bun';
 import { resolve4, resolveCname } from 'node:dns/promises';
-import { StateManager, type DashboardState } from './lib/cookie-manager';
+import {
+  CookieParser,
+  StateManager,
+  cookieFactory,
+  type DashboardState,
+} from './lib/cookie-manager';
 import { createDomainContext } from './lib/domain-context';
 
 type Options = {
@@ -1973,6 +1978,10 @@ async function main(): Promise<void> {
     fetch: async (req: Request) => {
       const url = new URL(req.url);
       const stateFromCookie = options.cookies ? StateManager.parse(req) : null;
+      if (options.cookies) {
+        const rawCookie = req.headers.get('cookie') || '';
+        CookieParser.parseBatch([rawCookie], { parallel: true });
+      }
       const defaultState: DashboardState = {
         domain: options.domain,
         accountId: '',
@@ -2112,6 +2121,31 @@ async function main(): Promise<void> {
         });
         if (options.cookies) {
           headers.append('set-cookie', StateManager.serialize(state, url));
+          const pipeline = CookieParser.createTransformPipeline()
+            .secure()
+            .rename((oldName) => `secure_${oldName}`)
+            .setPath('/api');
+          const domainCookie = pipeline.process(
+            cookieFactory.domainContext({
+              domain,
+              zone: String(data?.zone || domain),
+              accountId: String(data?.accountId || ''),
+              source,
+              prefix: String(data?.storage?.domainPrefix || ''),
+            })
+          );
+          const unresolved = Array.isArray(data?.subdomains)
+            ? data.subdomains.filter((s: any) => !s?.dnsResolved).map((s: any) => String(s?.fullDomain || s?.subdomain || ''))
+            : [];
+          const subdomainCookie = pipeline.process(
+            cookieFactory.subdomainState({
+              checked: Number(data?.dnsPrefetch?.checked || 0),
+              resolved: Number(data?.dnsPrefetch?.resolved || 0),
+              unresolved,
+            })
+          );
+          headers.append('set-cookie', domainCookie.toString());
+          headers.append('set-cookie', subdomainCookie.toString());
         }
         return Response.json(data, { headers });
       }
