@@ -278,6 +278,41 @@ function htmlShell(options: Options): string {
       const cls = s === 'pass' ? 'status-good' : s === 'warn' ? 'status-warn' : s === 'fail' ? 'status-bad' : 'status-neutral';
       return '<span class="badge ' + cls + '">' + s + '</span>';
     };
+    const clamp01 = (value) => Math.max(0, Math.min(1, Number(value) || 0));
+    const healthTone = (ratio) => Math.round(clamp01(ratio) * 120);
+    const healthIcon = (ratio) => {
+      if (ratio >= 0.9) return '🟢';
+      if (ratio >= 0.6) return '🟡';
+      return '🔴';
+    };
+    const healthLabel = (ratio) => {
+      if (ratio >= 0.9) return 'healthy';
+      if (ratio >= 0.6) return 'degraded';
+      return 'critical';
+    };
+    const healthBadge = (ratio, text) => {
+      const bounded = clamp01(ratio);
+      const hue = healthTone(bounded);
+      const fg = 'hsl(' + hue + ' 100% 88%)';
+      const bg = 'hsl(' + hue + ' 70% 18% / 0.85)';
+      const border = 'hsl(' + hue + ' 90% 46% / 0.75)';
+      return '<span class="badge" style="color:' + fg + ';background:' + bg + ';border-color:' + border + '">' +
+        healthIcon(bounded) + ' ' + text +
+      '</span>';
+    };
+    const healthRatioByState = (state) => {
+      const s = String(state || '').toLowerCase();
+      if (s === 'healthy') return 1;
+      if (s === 'degraded') return 0.7;
+      if (s === 'critical') return 0.05;
+      return 0.5;
+    };
+    const strictP95FromSnapshot = (snapshot) => {
+      if (!snapshot || !Array.isArray(snapshot.rankedProfiles)) return null;
+      const strict = snapshot.rankedProfiles.find((p) => String(p.profile || '').toLowerCase() === 'strict') || null;
+      const p95 = Number(strict?.latencyP95Ms);
+      return Number.isFinite(p95) ? p95 : null;
+    };
     const asNumOrNull = (v) => {
       const n = Number(v);
       return Number.isFinite(n) ? n : null;
@@ -712,11 +747,25 @@ function htmlShell(options: Options): string {
         domainHealthEl.innerHTML = '<pre>' + (data?.error || 'No domain health data.') + '</pre>';
         return;
       }
+      const dnsChecked = Number(data.dnsPrefetch?.checked || 0);
+      const dnsResolved = Number(data.dnsPrefetch?.resolved || 0);
+      const dnsRatio = dnsChecked > 0 ? dnsResolved / dnsChecked : 0;
+      const latestCount = Array.isArray(data.latest) ? data.latest.length : 0;
+      const latestPresent = Array.isArray(data.latest) ? data.latest.filter((item) => item.exists).length : 0;
+      const storageRatio = latestCount > 0 ? latestPresent / latestCount : 0;
+      const dnsStatus = String(data.health?.dns?.status || healthLabel(dnsRatio)).toLowerCase();
+      const storageStatus = String(data.health?.storage?.status || healthLabel(storageRatio)).toLowerCase();
+      const overallStatus = String(data.health?.overall?.status || dnsStatus).toLowerCase();
+      const strictP95Ms = Number(data.health?.latency?.strictP95Ms);
+      const strictP95Text = Number.isFinite(strictP95Ms) ? strictP95Ms.toFixed(0) + 'ms' : 'n/a';
+      const dnsStatusText = 'DNS ' + dnsResolved + '/' + dnsChecked + ' ' + dnsStatus;
+      const storageStatusText = 'Storage ' + latestPresent + '/' + latestCount + ' ' + storageStatus;
+      const overallStatusText = 'Domain ' + overallStatus + (data.health?.latency?.degradedByStrictP95 ? ' (strict p95 ' + strictP95Text + ')' : '');
       const latestRows = (data.latest || []).map((item) =>
         '<tr>' +
           '<td><code>' + item.type + '</code></td>' +
           '<td><code>' + item.key + '</code></td>' +
-          '<td>' + (item.exists ? 'yes' : 'no') + '</td>' +
+          '<td>' + healthBadge(item.exists ? 1 : 0, item.exists ? '✓ present' : '✗ missing') + '</td>' +
           '<td>' + (item.lastModified || 'n/a') + '</td>' +
         '</tr>'
       ).join('');
@@ -724,13 +773,18 @@ function htmlShell(options: Options): string {
         '<tr>' +
           '<td><code>' + item.subdomain + '</code></td>' +
           '<td><code>' + item.fullDomain + '</code></td>' +
-          '<td>' + (item.dnsResolved ? 'yes' : 'no') + '</td>' +
+          '<td>' + healthBadge(item.dnsResolved ? 1 : 0, item.dnsResolved ? '✓ resolved' : '✗ unresolved') + '</td>' +
           '<td>' + ((item.dnsRecords || []).slice(0, 2).join(', ') || 'n/a') + '</td>' +
           '<td>' + (item.dnsSource || 'live') + '</td>' +
         '</tr>'
       ).join('');
       domainHealthEl.innerHTML =
         '<div class="meta">domain=' + (data.domain || 'factory-wager.com') + ' zone=' + (data.zone || 'n/a') + ' account=' + (data.accountId || 'n/a') + ' knownSubdomains=' + (data.knownSubdomains ?? 'n/a') + ' source=' + (data.source || 'n/a') + '</div>' +
+        '<div class="meta">' +
+          healthBadge(healthRatioByState(overallStatus), overallStatusText) + ' ' +
+          healthBadge(healthRatioByState(dnsStatus), dnsStatusText) + ' ' +
+          healthBadge(healthRatioByState(storageStatus), storageStatusText) +
+        '</div>' +
         '<div class="meta">storage bucket=' + (data.storage?.bucket || 'n/a') + ' endpoint=' + (data.storage?.endpoint || 'n/a') + ' prefix=<code>' + (data.storage?.domainPrefix || 'n/a') + '</code></div>' +
         '<div class="meta">storageKey health=<code>' + (data.storage?.sampleKeys?.health || 'n/a') + '</code></div>' +
         '<div class="meta">dnsChecked=' + (data.dnsPrefetch?.checked ?? 0) + ' dnsResolved=' + (data.dnsPrefetch?.resolved ?? 0) + ' cacheTtlSec=' + (data.dnsPrefetch?.cacheTtlSec ?? 'n/a') + '</div>' +
@@ -884,7 +938,9 @@ function htmlShell(options: Options): string {
       const inventoryRes = await fetch('/api/r2-inventory?source=' + source + '&id=' + encodeURIComponent(data?.id || ''));
       const inventory = await inventoryRes.json();
       renderInventory(inventory);
-      const domainRes = await fetch('/api/domain-health?source=' + source);
+      const strictP95 = strictP95FromSnapshot(data);
+      const domainUrl = '/api/domain-health?source=' + source + (strictP95 === null ? '' : '&strictP95=' + encodeURIComponent(String(strictP95)));
+      const domainRes = await fetch(domainUrl);
       const domain = await domainRes.json();
       renderDomainHealth(domain);
       const loopRes = await fetch('/api/loop-status?source=local');
@@ -926,7 +982,9 @@ function htmlShell(options: Options): string {
       const inventoryRes = await fetch('/api/r2-inventory?source=local&id=' + encodeURIComponent(latestData?.id || ''));
       const inventory = await inventoryRes.json();
       renderInventory(inventory);
-      const domainRes = await fetch('/api/domain-health?source=local');
+      const strictP95 = strictP95FromSnapshot(latestData);
+      const domainUrl = '/api/domain-health?source=local' + (strictP95 === null ? '' : '&strictP95=' + encodeURIComponent(String(strictP95)));
+      const domainRes = await fetch(domainUrl);
       const domain = await domainRes.json();
       renderDomainHealth(domain);
       const loopRes = await fetch('/api/loop-status?source=local');
@@ -1398,17 +1456,23 @@ async function main(): Promise<void> {
     return { ...result, cacheHit: false };
   };
 
-  const buildDomainHealthSummary = async (source: 'local' | 'r2', domain: string) => {
+  const buildDomainHealthSummary = async (
+    source: 'local' | 'r2',
+    domain: string,
+    strictP95Ms: number | null = null
+  ) => {
     const domainNamespace = domain
       .replace(/^\*\./, '')
       .replace(/\.[a-z0-9-]+$/i, '');
-    const rawAccountId = (Bun.env.CLOUDFLARE_ACCOUNT_ID || '').trim();
-    const accountId = rawAccountId
+    const r2Read = resolveR2ReadOptions();
+    const endpointForAccount = (r2Read?.endpoint || Bun.env.R2_ENDPOINT || '').trim();
+    const endpointAccountId = endpointForAccount.match(/^https?:\/\/([a-z0-9]+)\.r2\.cloudflarestorage\.com/i)?.[1] || '';
+    const rawAccountId = (Bun.env.CLOUDFLARE_ACCOUNT_ID || Bun.env.R2_ACCOUNT_ID || endpointAccountId || '').trim();
+    const accountId = rawAccountId.length >= 8
       ? `${rawAccountId.slice(0, 4)}...${rawAccountId.slice(-4)}`
-      : null;
+      : rawAccountId || null;
     const zone = (Bun.env.CLOUDFLARE_ZONE_NAME || Bun.env.CLOUDFLARE_ZONE_ID || domain).trim() || domain;
     const prefixes = ['health', 'ssl', 'analytics'];
-    const r2Read = resolveR2ReadOptions();
     const storage = {
       bucket: r2Read?.bucket || Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || Bun.env.R2_BENCH_BUCKET || null,
       endpoint: r2Read?.endpoint || Bun.env.R2_ENDPOINT || Bun.env.SEARCH_BENCH_R2_PUBLIC_BASE || null,
@@ -1467,13 +1531,31 @@ async function main(): Promise<void> {
       })
     );
     const dnsResolvedCount = subdomains.filter((entry) => entry.dnsResolved).length;
+    const dnsRatio = subdomains.length > 0 ? dnsResolvedCount / subdomains.length : 0;
     const dnsPrefetch = {
       checked: subdomains.length,
       resolved: dnsResolvedCount,
       cacheTtlSec: Math.floor(dnsPrefetchTtlMs / 1000),
     };
+    const dnsStatus = dnsRatio >= 0.9 ? 'healthy' : dnsRatio >= 0.5 ? 'degraded' : 'critical';
+    const thresholdStrictP95Ms = 900;
 
     if (source === 'local') {
+      const latest = prefixes.map((type) => ({
+        type,
+        key: `domains/${domainNamespace}/cloudflare/${type}/YYYY-MM-DD.json`,
+        exists: false,
+        lastModified: null,
+      }));
+      const latestPresent = 0;
+      const latestCount = latest.length;
+      const storageStatus = latestCount > 0 && latestPresent === latestCount ? 'healthy' : 'critical';
+      const degradedByStrictP95 = typeof strictP95Ms === 'number' && Number.isFinite(strictP95Ms) && strictP95Ms > thresholdStrictP95Ms;
+      const overallStatus = storageStatus === 'critical'
+        ? 'critical'
+        : degradedByStrictP95
+          ? 'degraded'
+          : dnsStatus;
       return {
         source,
         domain,
@@ -1484,12 +1566,31 @@ async function main(): Promise<void> {
         managerNote,
         dnsPrefetch,
         subdomains,
-        latest: prefixes.map((type) => ({
-          type,
-          key: `domains/${domainNamespace}/cloudflare/${type}/YYYY-MM-DD.json`,
-          exists: false,
-          lastModified: null,
-        })),
+        latest,
+        health: {
+          dns: {
+            status: dnsStatus,
+            ratio: dnsRatio,
+            resolved: dnsResolvedCount,
+            checked: subdomains.length,
+            thresholds: { healthyMin: 0.9, criticalBelow: 0.5 },
+          },
+          storage: {
+            status: storageStatus,
+            ratio: 0,
+            present: latestPresent,
+            checked: latestCount,
+            thresholds: { healthyEquals: 1.0, criticalBelow: 1.0 },
+          },
+          latency: {
+            strictP95Ms: typeof strictP95Ms === 'number' && Number.isFinite(strictP95Ms) ? strictP95Ms : null,
+            degradedAboveMs: thresholdStrictP95Ms,
+            degradedByStrictP95,
+          },
+          overall: {
+            status: overallStatus,
+          },
+        },
       };
     }
 
@@ -1520,6 +1621,16 @@ async function main(): Promise<void> {
         lastModified: top?.lastModified || null,
       };
     }));
+    const latestPresent = latest.filter((item) => item.exists).length;
+    const latestCount = latest.length;
+    const storageRatio = latestCount > 0 ? latestPresent / latestCount : 0;
+    const storageStatus = latestCount > 0 && latestPresent === latestCount ? 'healthy' : 'critical';
+    const degradedByStrictP95 = typeof strictP95Ms === 'number' && Number.isFinite(strictP95Ms) && strictP95Ms > thresholdStrictP95Ms;
+    const overallStatus = storageStatus === 'critical'
+      ? 'critical'
+      : degradedByStrictP95
+        ? 'degraded'
+        : dnsStatus;
     return {
       source,
       domain,
@@ -1531,6 +1642,30 @@ async function main(): Promise<void> {
       dnsPrefetch,
       subdomains,
       latest,
+      health: {
+        dns: {
+          status: dnsStatus,
+          ratio: dnsRatio,
+          resolved: dnsResolvedCount,
+          checked: subdomains.length,
+          thresholds: { healthyMin: 0.9, criticalBelow: 0.5 },
+        },
+        storage: {
+          status: storageStatus,
+          ratio: storageRatio,
+          present: latestPresent,
+          checked: latestCount,
+          thresholds: { healthyEquals: 1.0, criticalBelow: 1.0 },
+        },
+        latency: {
+          strictP95Ms: typeof strictP95Ms === 'number' && Number.isFinite(strictP95Ms) ? strictP95Ms : null,
+          degradedAboveMs: thresholdStrictP95Ms,
+          degradedByStrictP95,
+        },
+        overall: {
+          status: overallStatus,
+        },
+      },
     };
   };
 
@@ -1633,7 +1768,10 @@ async function main(): Promise<void> {
       if (url.pathname === '/api/domain-health') {
         const source = (url.searchParams.get('source') || 'local') as 'local' | 'r2';
         const domain = (url.searchParams.get('domain') || options.domain || 'factory-wager.com').trim().toLowerCase();
-        const data = await buildDomainHealthSummary(source, domain);
+        const strictP95Raw = url.searchParams.get('strictP95');
+        const strictP95Ms = strictP95Raw === null ? null : Number(strictP95Raw);
+        const strictP95 = Number.isFinite(strictP95Ms) ? strictP95Ms : null;
+        const data = await buildDomainHealthSummary(source, domain, strictP95);
         return Response.json(data);
       }
       if (url.pathname === '/api/rss') {
