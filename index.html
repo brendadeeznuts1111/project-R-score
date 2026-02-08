@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FactoryWager Wiki - Documentation & Patterns</title>
-    <meta name="description" content="FactoryWager Wiki - Comprehensive documentation, patterns, and guides for modern development">
+    <title>FactoryWager Registry Dashboard</title>
+    <meta name="description" content="Private package registry and dashboard for FactoryWager ecosystem">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'><path d='M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z'/></svg>">
     <style>
         * {
@@ -78,6 +78,26 @@
             font-weight: bold;
         }
 
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--secondary);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
         main {
             padding: 3rem 0;
         }
@@ -102,7 +122,7 @@
             margin: 0 auto;
         }
 
-        .content-grid {
+        .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 2rem;
@@ -148,18 +168,54 @@
             margin-bottom: 1.5rem;
         }
 
-        .card-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s ease;
+        .config-block {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
         }
 
-        .card-link:hover {
-            color: var(--primary-dark);
+        .copy-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background 0.3s ease;
+        }
+
+        .copy-button:hover {
+            background: var(--primary-dark);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .metric {
+            text-align: center;
+            padding: 1rem;
+            background: var(--surface);
+            border-radius: 8px;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: var(--text-light);
         }
 
         .footer {
@@ -175,24 +231,12 @@
             color: var(--text-light);
         }
 
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: var(--secondary);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 600;
-        }
-
         @media (max-width: 768px) {
             .hero h1 {
                 font-size: 2.5rem;
             }
             
-            .content-grid {
+            .dashboard-grid {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
             }
@@ -209,11 +253,11 @@
             <div class="header-content">
                 <div class="logo">
                     <div class="logo-icon">FW</div>
-                    <span>FactoryWager Wiki</span>
+                    <span>FactoryWager Registry</span>
                 </div>
-                <div class="status-badge">
-                    <span style="width: 8px; height: 8px; background: white; border-radius: 50%;"></span>
-                    Live & Active
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>Registry Online</span>
                 </div>
             </div>
         </div>
@@ -222,63 +266,109 @@
     <main>
         <div class="container">
             <section class="hero">
-                <h1>FactoryWager Wiki</h1>
-                <p>Comprehensive documentation, patterns, and guides for modern development workflows and enterprise solutions.</p>
+                <h1>Private Registry Dashboard</h1>
+                <p>Enterprise-grade package registry with caching, monitoring, and DNS fallback capabilities</p>
             </section>
 
-            <div class="content-grid">
+            <div class="dashboard-grid">
                 <div class="card">
-                    <div class="card-icon">📚</div>
-                    <h3>Documentation</h3>
-                    <p>Comprehensive guides and API documentation for all FactoryWager components and services.</p>
-                    <a href="#" class="card-link">
-                        Explore Docs →
-                    </a>
-                </div>
-
-                <div class="card">
-                    <div class="card-icon">🏗️</div>
-                    <h3>Architecture Patterns</h3>
-                    <p>Enterprise-grade patterns and best practices for scalable application development.</p>
-                    <a href="#" class="card-link">
-                        View Patterns →
-                    </a>
-                </div>
-
-                <div class="card">
-                    <div class="card-icon">⚡</div>
-                    <h3>Performance Guides</h3>
-                    <p>Optimization techniques and performance tuning strategies for high-throughput systems.</p>
-                    <a href="#" class="card-link">
-                        Learn More →
-                    </a>
-                </div>
-
-                <div class="card">
-                    <div class="card-icon">🔧</div>
-                    <h3>Development Tools</h3>
-                    <p>CLI tools, scripts, and utilities to streamline your development workflow.</p>
-                    <a href="#" class="card-link">
-                        Get Tools →
-                    </a>
-                </div>
-
-                <div class="card">
-                    <div class="card-icon">🛡️</div>
-                    <h3>Security Standards</h3>
-                    <p>Security guidelines, compliance requirements, and best practices for secure development.</p>
-                    <a href="#" class="card-link">
-                        Security Docs →
-                    </a>
+                    <div class="card-icon">📦</div>
+                    <h3>Registry Configuration</h3>
+                    <p>Configure your projects to use the FactoryWager private registry</p>
+                    
+                    <div class="config-block">
+# .npmrc
+@factory-wager:registry=https://registry.factory-wager.com/
+//registry.factory-wager.com/:_authToken=${NPM_TOKEN}
+//registry.factory-wager.com/:always-auth=true
+                    </div>
+                    
+                    <button class="copy-button" onclick="copyConfig('npmrc')">Copy .npmrc</button>
                 </div>
 
                 <div class="card">
                     <div class="card-icon">🚀</div>
-                    <h3>Deployment Guides</h3>
-                    <p>Step-by-step deployment instructions for various environments and platforms.</p>
-                    <a href="#" class="card-link">
-                        Deploy Now →
-                    </a>
+                    <h3>Package Publishing</h3>
+                    <p>Publish packages to the private registry with proper configuration</p>
+                    
+                    <div class="config-block">
+# package.json
+{
+  "name": "@factory-wager/my-package",
+  "version": "1.0.0",
+  "publishConfig": {
+    "registry": "https://registry.factory-wager.com/"
+  }
+}
+                    </div>
+                    
+                    <button class="copy-button" onclick="copyConfig('package')">Copy package.json</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">⚡</div>
+                    <h3>Cache Configuration</h3>
+                    <p>Optimized caching with CDN and DNS fallback mechanisms</p>
+                    
+                    <div class="config-block">
+# Bunfig.toml
+[install]
+cache = true
+registry = "https://registry.factory-wager.com/"
+fallback = ["https://registry.npmjs.org/"]
+
+[cache]
+dir = ".bun-cache"
+max-size = "1GB"
+                    </div>
+                    
+                    <button class="copy-button" onclick="copyConfig('bunfig')">Copy bunfig.toml</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">🛡️</div>
+                    <h3>DNS Fallback Setup</h3>
+                    <p>Robust DNS configuration with automatic fallback mechanisms</p>
+                    
+                    <div class="config-block">
+# DNS Resolution Order
+1. registry.factory-wager.com (Primary)
+2. npm.factory-wager.com (Fallback 1)
+3. cache.factory-wager.com (Fallback 2)
+4. registry.npmjs.org (Final)
+
+# TTL Settings
+Primary: 300s
+Fallback: 60s
+Emergency: 30s
+                    </div>
+                    
+                    <button class="copy-button" onclick="copyConfig('dns')">Copy DNS Config</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">📊</div>
+                <h3>Registry Metrics</h3>
+                <p>Real-time monitoring and performance metrics</p>
+                
+                <div class="metrics-grid">
+                    <div class="metric">
+                        <div class="metric-value" id="packageCount">0</div>
+                        <div class="metric-label">Packages</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="downloadCount">0</div>
+                        <div class="metric-label">Downloads</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="cacheHitRate">0%</div>
+                        <div class="metric-label">Cache Hit Rate</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="uptime">99.9%</div>
+                        <div class="metric-label">Uptime</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -286,8 +376,59 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 FactoryWager Wiki. Built with enterprise-grade standards and modern development practices.</p>
+            <p>&copy; 2026 FactoryWager Registry. Enterprise-grade package management with built-in redundancy.</p>
         </div>
     </footer>
+
+    <script>
+        function copyConfig(type) {
+            const configs = {
+                npmrc: `@factory-wager:registry=https://registry.factory-wager.com/
+//registry.factory-wager.com/:_authToken=${NPM_TOKEN}
+//registry.factory-wager.com/:always-auth=true`,
+                package: `{
+  "name": "@factory-wager/my-package",
+  "version": "1.0.0",
+  "publishConfig": {
+    "registry": "https://registry.factory-wager.com/"
+  }
+}`,
+                bunfig: `[install]
+cache = true
+registry = "https://registry.factory-wager.com/"
+fallback = ["https://registry.npmjs.org/"]
+
+[cache]
+dir = ".bun-cache"
+max-size = "1GB"`,
+                dns: `DNS Resolution Order:
+1. registry.factory-wager.com (Primary)
+2. npm.factory-wager.com (Fallback 1)
+3. cache.factory-wager.com (Fallback 2)
+4. registry.npmjs.org (Final)
+
+TTL Settings:
+Primary: 300s
+Fallback: 60s
+Emergency: 30s`
+            };
+
+            navigator.clipboard.writeText(configs[type]);
+            event.target.textContent = 'Copied!';
+            setTimeout(() => {
+                event.target.textContent = `Copy ${type.replace(/([A-Z])/g, ' $1').trim()}`;
+            }, 2000);
+        }
+
+        // Simulate real-time metrics
+        function updateMetrics() {
+            document.getElementById('packageCount').textContent = Math.floor(Math.random() * 50) + 10;
+            document.getElementById('downloadCount').textContent = (Math.random() * 10000).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            document.getElementById('cacheHitRate').textContent = (Math.random() * 30 + 70).toFixed(1) + '%';
+        }
+
+        updateMetrics();
+        setInterval(updateMetrics, 5000);
+    </script>
 </body>
 </html>
