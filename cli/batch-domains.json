@@ -1,0 +1,109 @@
+{
+  "description": "FactoryWager batch domain configuration",
+  "version": "1.0.0",
+  "created": "2026-02-08T02:15:00Z",
+  "domains": [
+    {
+      "name": "analytics.factory-wager.com",
+      "target": "github",
+      "description": "Analytics and metrics dashboard",
+      "priority": "high"
+    },
+    {
+      "name": "monitoring.factory-wager.com", 
+      "target": "github",
+      "description": "System monitoring and alerts",
+      "priority": "high"
+    },
+    {
+      "name": "health.factory-wager.com",
+      "target": "github", 
+      "description": "Health check endpoint",
+      "priority": "critical"
+    },
+    {
+      "name": "auth.factory-wager.com",
+      "target": "github",
+      "description": "Authentication service",
+      "priority": "critical"
+    },
+    {
+      "name": "security.factory-wager.com",
+      "target": "github",
+      "description": "Security center",
+      "priority": "high"
+    },
+    {
+      "name": "wagers.factory-wager.com",
+      "target": "github",
+      "description": "Main wagering platform",
+      "priority": "critical"
+    },
+    {
+      "name": "billing.factory-wager.com",
+      "target": "github",
+      "description": "Billing and payments",
+      "priority": "high"
+    },
+    {
+      "name": "customers.factory-wager.com",
+      "target": "github",
+      "description": "Customer portal",
+      "priority": "medium"
+    },
+    {
+      "name": "reports.factory-wager.com",
+      "target": "github",
+      "description": "Reports and analytics",
+      "priority": "medium"
+    },
+    {
+      "name": "settings.factory-wager.com",
+      "target": "github",
+      "description": "Settings management",
+      "priority": "medium"
+    },
+    {
+      "name": "agents.factory-wager.com",
+      "target": "github",
+      "description": "AI agents platform",
+      "priority": "low"
+    },
+    {
+      "name": "telegram.factory-wager.com",
+      "target": "github",
+      "description": "Telegram integration",
+      "priority": "low"
+    },
+    {
+      "name": "governance.factory-wager.com",
+      "target": "github",
+      "description": "Governance portal",
+      "priority": "low"
+    },
+    {
+      "name": "plive.factory-wager.com",
+      "target": "github",
+      "description": "Live betting data",
+      "priority": "high"
+    },
+    {
+      "name": "storage.factory-wager.com",
+      "target": "github",
+      "description": "Direct storage access",
+      "priority": "medium"
+    },
+    {
+      "name": "matrix.factory-wager.com",
+      "target": "github",
+      "description": "Matrix services",
+      "priority": "high"
+    },
+    {
+      "name": "r2.factory-wager.com",
+      "target": "github",
+      "description": "R2 storage gateway",
+      "priority": "critical"
+    }
+  ]
+}
