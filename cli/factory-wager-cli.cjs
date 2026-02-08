@@ -72,6 +72,15 @@ class FactoryWagerCLI {
             case 'badges':
                 await this.handleBadges(params);
                 break;
+            case 'health':
+                await this.handleHealth(params);
+                break;
+            case 'backup':
+                await this.handleBackup(params);
+                break;
+            case 'performance':
+                await this.handlePerformance(params);
+                break;
             case 'help':
             case '--help':
             case '-h':
@@ -483,6 +492,351 @@ class FactoryWagerCLI {
         setTimeout(() => {
             console.log('\n✅ All badges updated successfully!');
         }, 1500);
+    }
+
+    async handleHealth(params) {
+        const [action, ...args] = params;
+
+        switch (action) {
+            case 'check':
+                await this.healthCheck(args);
+                break;
+            case 'start':
+                await this.startHealthMonitoring(args);
+                break;
+            case 'status':
+                await this.healthStatus(args);
+                break;
+            case 'report':
+                await this.healthReport(args);
+                break;
+            case 'alerts':
+                await this.healthAlerts(args);
+                break;
+            default:
+                await this.healthCheck(args);
+        }
+    }
+
+    async healthCheck(args) {
+        console.log('🏥 Performing health check...');
+        
+        try {
+            const HealthMonitor = require('./health-monitor.cjs');
+            const monitor = new HealthMonitor();
+            const result = await monitor.performHealthCheck();
+            
+            console.log(`\n📊 Health Check Results:`);
+            console.log(`Status: ${result.status.toUpperCase()}`);
+            console.log(`Health: ${result.healthPercentage.toFixed(1)}%`);
+            console.log(`Duration: ${result.duration}ms`);
+            
+            if (result.status !== 'healthy') {
+                console.log(`\n⚠️  Issues detected:`);
+                result.results.filter(r => r.status !== 'healthy').forEach(issue => {
+                    console.log(`  ❌ ${issue.name || issue.domain}: ${issue.status}`);
+                    if (issue.error) console.log(`     ${issue.error}`);
+                });
+            }
+            
+        } catch (error) {
+            console.error('❌ Health check failed:', error.message);
+        }
+    }
+
+    async startHealthMonitoring(args) {
+        console.log('🚀 Starting health monitoring...');
+        console.log('Press Ctrl+C to stop monitoring');
+        
+        try {
+            const HealthMonitor = require('./health-monitor.cjs');
+            const monitor = new HealthMonitor();
+            await monitor.startMonitoring();
+        } catch (error) {
+            console.error('❌ Failed to start health monitoring:', error.message);
+        }
+    }
+
+    async healthStatus(args) {
+        try {
+            const HealthMonitor = require('./health-monitor.cjs');
+            const monitor = new HealthMonitor();
+            const status = monitor.getStatus();
+            
+            console.log('📊 Health Monitor Status:');
+            console.log(`Overall: ${status.status.overall.toUpperCase()}`);
+            console.log(`Uptime: ${status.uptime}`);
+            console.log(`Total Checks: ${status.metrics.totalChecks}`);
+            console.log(`Success Rate: ${(status.metrics.successfulChecks / status.metrics.totalChecks * 100).toFixed(1)}%`);
+            console.log(`Active Alerts: ${status.alerts.filter(a => !a.acknowledged).length}`);
+            
+        } catch (error) {
+            console.error('❌ Failed to get health status:', error.message);
+        }
+    }
+
+    async healthReport(args) {
+        const reportFile = './reports/health-report.html';
+        
+        if (require('fs').existsSync(reportFile)) {
+            console.log(`📊 Opening health report: ${reportFile}`);
+            try {
+                const { execSync } = require('child_process');
+                execSync(`open ${reportFile}`, { stdio: 'inherit' });
+            } catch (error) {
+                console.log(`📁 Open manually: ${reportFile}`);
+            }
+        } else {
+            console.log('❌ No health report found. Run "fw-cli health check" first.');
+        }
+    }
+
+    async healthAlerts(args) {
+        const alertsFile = './alerts/alerts.json';
+        
+        if (require('fs').existsSync(alertsFile)) {
+            try {
+                const alerts = JSON.parse(require('fs').readFileSync(alertsFile, 'utf8'));
+                const unacknowledged = alerts.filter(a => !a.acknowledged);
+                
+                console.log(`🚨 Alerts (${unacknowledged.length} active):`);
+                if (unacknowledged.length === 0) {
+                    console.log('✅ No active alerts');
+                } else {
+                    unacknowledged.forEach(alert => {
+                        console.log(`  ${alert.severity.toUpperCase()}: ${alert.message}`);
+                        console.log(`    ${alert.timestamp}`);
+                    });
+                }
+            } catch (error) {
+                console.error('❌ Failed to read alerts:', error.message);
+            }
+        } else {
+            console.log('✅ No alerts found');
+        }
+    }
+
+    async handleBackup(params) {
+        const [action, ...args] = params;
+
+        switch (action) {
+            case 'create':
+                await this.createBackup(args);
+                break;
+            case 'restore':
+                await this.restoreBackup(args);
+                break;
+            case 'list':
+                await this.listBackges(args);
+                break;
+            case 'delete':
+                await this.deleteBackup(args);
+                break;
+            case 'schedule':
+                await this.scheduleBackup(args);
+                break;
+            default:
+                await this.createBackup(args);
+        }
+    }
+
+    async createBackup(args) {
+        console.log('💾 Creating backup...');
+        
+        try {
+            const BackupUtility = require('./backup-utility.cjs');
+            const backup = new BackupUtility();
+            
+            const options = {};
+            args.forEach(arg => {
+                if (arg === '--include-logs') options.includeLogs = true;
+                if (arg.startsWith('--description=')) options.description = arg.split('=')[1];
+            });
+            
+            const result = await backup.createBackup(options);
+            
+            if (result.success) {
+                console.log(`✅ Backup created: ${result.backupPath}`);
+            } else {
+                console.error('❌ Backup failed:', result.error);
+            }
+            
+        } catch (error) {
+            console.error('❌ Backup failed:', error.message);
+        }
+    }
+
+    async restoreBackup(args) {
+        if (args.length === 0) {
+            console.error('❌ Please specify backup file to restore');
+            return;
+        }
+        
+        console.log('🔄 Restoring backup...');
+        
+        try {
+            const BackupUtility = require('./backup-utility.cjs');
+            const backup = new BackupUtility();
+            
+            const options = {};
+            args.forEach(arg => {
+                if (arg === '--overwrite') options.overwrite = true;
+                if (arg === '--restore-domains') options.includeDomains = true;
+            });
+            
+            const result = await backup.restoreBackup(args[0], options);
+            
+            if (result.success) {
+                console.log('✅ Backup restored successfully');
+            } else {
+                console.error('❌ Restore failed:', result.error);
+            }
+            
+        } catch (error) {
+            console.error('❌ Restore failed:', error.message);
+        }
+    }
+
+    async listBackges(args) {
+        try {
+            const BackupUtility = require('./backup-utility.cjs');
+            const backup = new BackupUtility();
+            backup.listBackups();
+        } catch (error) {
+            console.error('❌ Failed to list backups:', error.message);
+        }
+    }
+
+    async deleteBackup(args) {
+        if (args.length === 0) {
+            console.error('❌ Please specify backup file to delete');
+            return;
+        }
+        
+        console.log('🗑️  Deleting backup...');
+        
+        try {
+            const BackupUtility = require('./backup-utility.cjs');
+            const backup = new BackupUtility();
+            const result = await backup.deleteBackup(args[0]);
+            
+            if (result.success) {
+                console.log('✅ Backup deleted successfully');
+            } else {
+                console.error('❌ Delete failed:', result.error);
+            }
+            
+        } catch (error) {
+            console.error('❌ Delete failed:', error.message);
+        }
+    }
+
+    async scheduleBackup(args) {
+        try {
+            const BackupUtility = require('./backup-utility.cjs');
+            const backup = new BackupUtility();
+            
+            const options = {};
+            args.forEach(arg => {
+                if (arg.startsWith('--interval=')) options.interval = arg.split('=')[1];
+                if (arg.startsWith('--retention=')) options.retention = parseInt(arg.split('=')[1]);
+                if (arg === '--include-logs') options.includeLogs = true;
+            });
+            
+            backup.scheduleBackup(options);
+            
+        } catch (error) {
+            console.error('❌ Failed to schedule backup:', error.message);
+        }
+    }
+
+    async handlePerformance(params) {
+        const [action, ...args] = params;
+
+        switch (action) {
+            case 'test':
+                await this.performanceTest(args);
+                break;
+            case 'dns':
+                await this.performanceTestDNS(args);
+                break;
+            case 'http':
+                await this.performanceTestHTTP(args);
+                break;
+            case 'cli':
+                await this.performanceTestCLI(args);
+                break;
+            case 'concurrent':
+                await this.performanceTestConcurrent(args);
+                break;
+            case 'memory':
+                await this.performanceTestMemory(args);
+                break;
+            default:
+                await this.performanceTest(args);
+        }
+    }
+
+    async performanceTest(args) {
+        console.log('🚀 Running performance test suite...');
+        
+        try {
+            const PerformanceTester = require('./performance-test.cjs');
+            const tester = new PerformanceTester();
+            await tester.runFullSuite();
+        } catch (error) {
+            console.error('❌ Performance test failed:', error.message);
+        }
+    }
+
+    async performanceTestDNS(args) {
+        try {
+            const PerformanceTester = require('./performance-test.cjs');
+            const tester = new PerformanceTester();
+            await tester.testDNSResolution();
+        } catch (error) {
+            console.error('❌ DNS performance test failed:', error.message);
+        }
+    }
+
+    async performanceTestHTTP(args) {
+        try {
+            const PerformanceTester = require('./performance-test.cjs');
+            const tester = new PerformanceTester();
+            await tester.testHTTPResponse();
+        } catch (error) {
+            console.error('❌ HTTP performance test failed:', error.message);
+        }
+    }
+
+    async performanceTestCLI(args) {
+        try {
+            const PerformanceTester = require('./performance-test.cjs');
+            const tester = new PerformanceTester();
+            await tester.testCLICommands();
+        } catch (error) {
+            console.error('❌ CLI performance test failed:', error.message);
+        }
+    }
+
+    async performanceTestConcurrent(args) {
+        try {
+            const PerformanceTester = require('./performance-test.cjs');
+            const tester = new PerformanceTester();
+            await tester.testConcurrentRequests();
+        } catch (error) {
+            console.error('❌ Concurrent performance test failed:', error.message);
+        }
+    }
+
+    async performanceTestMemory(args) {
+        try {
+            const PerformanceTester = require('./performance-test.cjs');
+            const tester = new PerformanceTester();
+            await tester.testMemoryUsage();
+        } catch (error) {
+            console.error('❌ Memory performance test failed:', error.message);
+        }
     }
 
     // DNS Management Methods
@@ -985,6 +1339,28 @@ COMMANDS:
     fw-cli badges show [name]                 Show badge viewer
     fw-cli badges update                      Update badge status
 
+  🏥 Health Monitoring:
+    fw-cli health check                       Perform health check
+    fw-cli health start                       Start continuous monitoring
+    fw-cli health status                      Show monitor status
+    fw-cli health report                      Open health report
+    fw-cli health alerts                      Show active alerts
+
+  💾 Backup & Restore:
+    fw-cli backup create [--options]          Create backup
+    fw-cli backup restore <file> [--options]  Restore from backup
+    fw-cli backup list                        List available backups
+    fw-cli backup delete <file>               Delete backup
+    fw-cli backup schedule [--options]        Schedule automatic backups
+
+  🚀 Performance Testing:
+    fw-cli performance test                   Run full performance suite
+    fw-cli performance dns                    Test DNS resolution
+    fw-cli performance http                   Test HTTP responses
+    fw-cli performance cli                    Test CLI commands
+    fw-cli performance concurrent              Test concurrent requests
+    fw-cli performance memory                 Test memory usage
+
   🚀 Deployment:
     fw-cli deploy dns                         Deploy DNS changes
     fw-cli deploy content <path>              Deploy content
@@ -996,7 +1372,9 @@ EXAMPLES:
   fw-cli domains test wiki.factory-wager.com
   fw-cli status
   fw-cli badges generate infrastructure
-  fw-cli auth setup your_api_token_here
+  fw-cli health check
+  fw-cli backup create --description="Before deployment"
+  fw-cli performance test
 
 For more help, visit: https://wiki.factory-wager.com/cli
         `);
