@@ -40,6 +40,8 @@ export interface ScoreThresholdsPolicy {
   reliabilityDropWarn?: number;
   strictLatencyP95WarnMs?: number;
   strictReliabilityFloor?: number;
+  strictPeakHeapWarnMB?: number;
+  strictPeakRssWarnMB?: number;
 }
 
 export interface SearchPolicies {
@@ -128,6 +130,8 @@ const DEFAULT_POLICIES: SearchPolicies = {
     reliabilityDropWarn: -2.0,
     strictLatencyP95WarnMs: 900,
     strictReliabilityFloor: 45,
+    strictPeakHeapWarnMB: 60,
+    strictPeakRssWarnMB: 260,
   },
 };
 
@@ -206,6 +210,12 @@ function mergePolicies(raw: Partial<SearchPolicies> | null | undefined): SearchP
       strictReliabilityFloor: typeof raw.scoreThresholds?.strictReliabilityFloor === 'number'
         ? raw.scoreThresholds.strictReliabilityFloor
         : DEFAULT_POLICIES.scoreThresholds.strictReliabilityFloor,
+      strictPeakHeapWarnMB: typeof raw.scoreThresholds?.strictPeakHeapWarnMB === 'number'
+        ? raw.scoreThresholds.strictPeakHeapWarnMB
+        : DEFAULT_POLICIES.scoreThresholds.strictPeakHeapWarnMB,
+      strictPeakRssWarnMB: typeof raw.scoreThresholds?.strictPeakRssWarnMB === 'number'
+        ? raw.scoreThresholds.strictPeakRssWarnMB
+        : DEFAULT_POLICIES.scoreThresholds.strictPeakRssWarnMB,
     },
   };
 }

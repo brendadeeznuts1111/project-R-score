@@ -56,7 +56,9 @@
     "slopRiseWarn": 2.0,
     "reliabilityDropWarn": -2.0,
     "strictLatencyP95WarnMs": 900,
-    "strictReliabilityFloor": 45
+    "strictReliabilityFloor": 45,
+    "strictPeakHeapWarnMB": 60,
+    "strictPeakRssWarnMB": 260
   },
   "queryBoosts": {
     "bunRuntimeBoost": 18,

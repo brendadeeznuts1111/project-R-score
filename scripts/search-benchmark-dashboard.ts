@@ -263,7 +263,7 @@ function htmlShell(options: Options): string {
     const volatilityBadge = (text) => '<span class="badge ' + volatilityBadgeClass(text) + '">' + text + '</span>';
     const warningBadgeClass = (code) => {
       const c = String(code || '').toLowerCase();
-      if (c === 'latency_p95_warn' || c === 'slop_rise_warn') return 'status-warn';
+      if (c === 'latency_p95_warn' || c === 'slop_rise_warn' || c === 'heap_peak_warn' || c === 'rss_peak_warn') return 'status-warn';
       if (c === 'quality_drop_warn' || c === 'reliability_drop_warn' || c === 'strict_reliability_floor_warn') return 'status-bad';
       return 'status-neutral';
     };
@@ -498,6 +498,8 @@ function htmlShell(options: Options): string {
       const coreLoopWarnings = Array.isArray(latest?.warnings)
         ? latest.warnings.filter((code) =>
             code === 'latency_p95_warn' ||
+            code === 'heap_peak_warn' ||
+            code === 'rss_peak_warn' ||
             code === 'quality_drop_warn' ||
             code === 'reliability_drop_warn' ||
             code === 'slop_rise_warn' ||

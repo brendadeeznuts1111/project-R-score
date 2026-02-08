@@ -617,6 +617,20 @@ async function main(): Promise<void> {
     warnings.push('latency_p95_warn');
   }
   if (
+    strictCurrent &&
+    typeof strictCurrent.peakHeapUsedMB === 'number' &&
+    strictCurrent.peakHeapUsedMB > policies.scoreThresholds.strictPeakHeapWarnMB
+  ) {
+    warnings.push('heap_peak_warn');
+  }
+  if (
+    strictCurrent &&
+    typeof strictCurrent.peakRssMB === 'number' &&
+    strictCurrent.peakRssMB > policies.scoreThresholds.strictPeakRssWarnMB
+  ) {
+    warnings.push('rss_peak_warn');
+  }
+  if (
     strictReliabilityNow !== null &&
     strictReliabilityNow < policies.scoreThresholds.strictReliabilityFloor
   ) {
