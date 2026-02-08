@@ -522,6 +522,13 @@ type TipInput = {
   value?: number;
 };
 
+interface Service {
+  name: string;
+  price?: number;
+  duration?: number;
+  [key: string]: unknown;
+}
+
 function roundMoney(value: number) {
   return Math.round(value * 100) / 100;
 }
@@ -1736,7 +1743,7 @@ const server = serve({
           tickets.push({
             id: t.id,
             customer: t.customerName,
-            services: JSON.parse(t.services || '[]').map((s: any) => s.name),
+            services: JSON.parse(t.services || '[]').map((s: Service) => s.name),
             amount: parseFloat(t.totalAmount),
           });
         }
@@ -1924,7 +1931,7 @@ const server = serve({
             ticket: {
               id: ticketId,
               customer: body.customerName,
-              services: body.services.map((s: any) => s.name),
+              services: body.services.map((s: Service) => s.name),
               amount: body.totalAmount,
             },
             assignedTo: barber.id,
