@@ -91,5 +91,6 @@ describe('search loop status freshness', () => {
     expect(out.freshness.isAligned).toBe(false);
     expect(freshnessStage?.status).toBe('fail');
     expect(out.loopClosed).toBe(false);
+    expect(String(out.loopClosedReason || '')).toContain('One or more stages failed');
   });
 });

@@ -3,6 +3,12 @@
 import { existsSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import {
+  LOOP_FRESHNESS_WINDOW_MINUTES,
+  formatLoopClosedReason,
+  isLoopClosedByPolicy,
+  normalizeWarningCode,
+} from './lib/search-status-contract';
 
 type StageStatus = 'pass' | 'warn' | 'fail';
 
@@ -175,14 +181,16 @@ async function main(): Promise<void> {
 
   const strict = profileByName(latest, 'strict');
   const strictReliability = reliability(strict);
-  const warnings = Array.isArray(latest?.warnings) ? latest!.warnings : [];
+  const warnings = Array.isArray(latest?.warnings)
+    ? latest!.warnings.map((code) => normalizeWarningCode(code)).filter(Boolean)
+    : [];
   const latestSnapshotIdSeen = index?.snapshots?.[0]?.id || null;
   const loopStatusSnapshotId = latest?.id || null;
   const isAligned = Boolean(latestSnapshotIdSeen && loopStatusSnapshotId && latestSnapshotIdSeen === loopStatusSnapshotId);
   // Loop-status freshness is based on status generation age (not snapshot age).
   // At generation time this is effectively fresh; API readers may recompute over time.
   const staleMinutes = 0;
-  const freshnessWindowMinutes = 15;
+  const freshnessWindowMinutes = LOOP_FRESHNESS_WINDOW_MINUTES;
   const hasQualityWarn = warnings.includes('quality_drop_warn') || warnings.includes('slop_rise_warn') || warnings.includes('reliability_drop_warn');
   const hasLatencyWarn = warnings.includes('latency_p95_warn');
   const hasMemoryWarn = warnings.includes('heap_peak_warn') || warnings.includes('rss_peak_warn');
@@ -296,16 +304,9 @@ async function main(): Promise<void> {
     );
   }
 
-  const hasFail = stages.some((s) => s.status === 'fail');
-  const disallowedWarns = stages.filter(
-    (s) => s.status === 'warn' && !['signal_latency', 'signal_memory', 'status_freshness'].includes(s.id)
-  );
-  const loopClosed = !hasFail && disallowedWarns.length === 0;
-  const loopClosedReason = loopClosed
-    ? 'All stages passed or are allowed warning states (latency/memory), including dashboard parity inputs.'
-    : hasFail
-      ? `One or more stages failed: ${stages.filter((s) => s.status === 'fail').map((s) => s.id).join(', ')}`
-      : `Disallowed warning stages present: ${disallowedWarns.map((s) => s.id).join(', ')}`;
+  const loopPolicy = isLoopClosedByPolicy(stages as any);
+  const loopClosed = loopPolicy.loopClosed;
+  const loopClosedReason = formatLoopClosedReason(stages as any);
 
   const output: LoopStatus = {
     generatedAt,

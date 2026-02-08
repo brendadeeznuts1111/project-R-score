@@ -23,6 +23,7 @@ import {
   type DomainHealthSummary,
 } from './lib/domain-health-read';
 import { applyDomainFusion } from './lib/search-domain-fusion';
+import { computeOverallStatus, type StatusLevel } from './lib/search-status-contract';
 
 type ViewMode = 'clean' | 'mixed' | 'slop-only' | 'all';
 type TaskMode = 'default' | 'delivery' | 'cleanup';
@@ -101,6 +102,14 @@ interface SearchHit {
   fusionReason?: string[];
   domainSnapshotRef?: string;
   policyReasons?: string[];
+}
+
+function readinessToStatusLevel(value: string | undefined): StatusLevel {
+  const status = String(value || '').toLowerCase();
+  if (status === 'healthy') return 'ok';
+  if (status === 'degraded') return 'warn';
+  if (status === 'critical') return 'fail';
+  return 'unknown';
 }
 
 // Stable object shape for hot-path result allocation to reduce structure churn.
@@ -1660,8 +1669,8 @@ async function main(): Promise<void> {
       JSON.stringify(basePayload, null, 2)
     );
     if (options.fusionEnabled && options.fusionFailOnCritical) {
-      const status = fusionReport?.readiness.status || 'degraded';
-      process.exit(status === 'critical' ? 3 : status === 'degraded' ? 2 : 0);
+      const status = computeOverallStatus([readinessToStatusLevel(fusionReport?.readiness.status)]);
+      process.exit(status === 'fail' ? 3 : status === 'warn' ? 2 : 0);
     }
     return;
   }
@@ -1681,8 +1690,8 @@ async function main(): Promise<void> {
   }
 
   if (options.fusionEnabled && options.fusionFailOnCritical) {
-    const status = fusionReport?.readiness.status || 'degraded';
-    process.exit(status === 'critical' ? 3 : status === 'degraded' ? 2 : 0);
+    const status = computeOverallStatus([readinessToStatusLevel(fusionReport?.readiness.status)]);
+    process.exit(status === 'fail' ? 3 : status === 'warn' ? 2 : 0);
   }
 }
 

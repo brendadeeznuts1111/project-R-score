@@ -31,6 +31,9 @@ jobs:
       - name: Search Status Contract Tests
         run: bun test tests/search-status-contract.test.ts
 
+      - name: Unified Search Status Strict Gate
+        run: bun run search:status:unified:strict
+
       - name: Domain Registry Contract Tests
         run: bun test tests/domain-registry.test.ts tests/domain-registry-status.test.ts
 

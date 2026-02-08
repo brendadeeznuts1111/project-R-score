@@ -1793,6 +1793,8 @@
     "search:bun:features": "bun run scripts/search-smart.ts --path ./lib --runtime bun --artifact api --view clean --task delivery --group-limit 4",
     "search:loop:status": "bun run scripts/search-loop-status.ts",
     "search:loop:runbook": "bun run scripts/search-loop-runbook.ts",
+    "search:status:unified": "bun run scripts/search-unified-status.ts --json",
+    "search:status:unified:strict": "bun run scripts/search-unified-status.ts --json --strict",
     "search:loop:check:local": "bun run search:coverage:loc:wide && bun run search:bench:snapshot:core:wide:local && bun run search:loop:status && bun run search:loop:runbook",
     "docs:open": "bun run cli/docs-cli.ts open",
     "docs:index": "bun run cli/docs-cli.ts index",

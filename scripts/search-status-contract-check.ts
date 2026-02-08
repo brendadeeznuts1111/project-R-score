@@ -3,6 +3,7 @@
 import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { normalizeWarningCode } from './lib/search-status-contract';
 
 type ContractInput = {
   latestJsonPath: string;
@@ -16,6 +17,7 @@ type ContractResult = {
     id: string;
     ok: boolean;
     detail: string;
+    status?: 'ok' | 'fail';
   }>;
   summary: {
     latestId: string | null;
@@ -44,19 +46,19 @@ export async function runSearchStatusContract(input: ContractInput): Promise<Con
   const rssPath = resolve(input.rssPath);
 
   if (!existsSync(latestPath)) {
-    checks.push({ id: 'latest_exists', ok: false, detail: `missing ${latestPath}` });
+    checks.push({ id: 'latest_exists', ok: false, detail: `missing ${latestPath}`, status: 'fail' });
   } else {
-    checks.push({ id: 'latest_exists', ok: true, detail: latestPath });
+    checks.push({ id: 'latest_exists', ok: true, detail: latestPath, status: 'ok' });
   }
   if (!existsSync(loopPath)) {
-    checks.push({ id: 'loop_exists', ok: false, detail: `missing ${loopPath}` });
+    checks.push({ id: 'loop_exists', ok: false, detail: `missing ${loopPath}`, status: 'fail' });
   } else {
-    checks.push({ id: 'loop_exists', ok: true, detail: loopPath });
+    checks.push({ id: 'loop_exists', ok: true, detail: loopPath, status: 'ok' });
   }
   if (!existsSync(rssPath)) {
-    checks.push({ id: 'rss_exists', ok: false, detail: `missing ${rssPath}` });
+    checks.push({ id: 'rss_exists', ok: false, detail: `missing ${rssPath}`, status: 'fail' });
   } else {
-    checks.push({ id: 'rss_exists', ok: true, detail: rssPath });
+    checks.push({ id: 'rss_exists', ok: true, detail: rssPath, status: 'ok' });
   }
   if (checks.some((c) => !c.ok)) {
     return {
@@ -78,14 +80,20 @@ export async function runSearchStatusContract(input: ContractInput): Promise<Con
     id: 'latest_loop_id_alignment',
     ok: Boolean(latestId && loopStatusSnapshotId && latestId === loopStatusSnapshotId),
     detail: `latest=${latestId || 'n/a'} loop=${loopStatusSnapshotId || 'n/a'}`,
+    status: latestId && loopStatusSnapshotId && latestId === loopStatusSnapshotId ? 'ok' : 'fail',
   });
 
-  const latestWarnings = Array.isArray(latest?.warnings) ? [...latest.warnings].sort() : [];
-  const loopWarnings = Array.isArray(loop?.warnings) ? [...loop.warnings].sort() : [];
+  const latestWarnings = Array.isArray(latest?.warnings)
+    ? [...latest.warnings].map((code) => normalizeWarningCode(code)).sort()
+    : [];
+  const loopWarnings = Array.isArray(loop?.warnings)
+    ? [...loop.warnings].map((code) => normalizeWarningCode(code)).sort()
+    : [];
   checks.push({
     id: 'latest_loop_warning_alignment',
     ok: JSON.stringify(latestWarnings) === JSON.stringify(loopWarnings),
     detail: `latest=[${latestWarnings.join(',')}] loop=[${loopWarnings.join(',')}]`,
+    status: JSON.stringify(latestWarnings) === JSON.stringify(loopWarnings) ? 'ok' : 'fail',
   });
 
   const latestCoverageLines = Number(latest?.coverage?.lines || 0);
@@ -94,12 +102,14 @@ export async function runSearchStatusContract(input: ContractInput): Promise<Con
     id: 'latest_loop_coverage_alignment',
     ok: latestCoverageLines > 0 && latestCoverageLines === loopCoverageLines,
     detail: `latest=${latestCoverageLines} loop=${loopCoverageLines}`,
+    status: latestCoverageLines > 0 && latestCoverageLines === loopCoverageLines ? 'ok' : 'fail',
   });
 
   checks.push({
     id: 'rss_latest_guid_alignment',
     ok: Boolean(latestId && rssFirstGuid && latestId === rssFirstGuid),
     detail: `latest=${latestId || 'n/a'} rssGuid=${rssFirstGuid || 'n/a'}`,
+    status: latestId && rssFirstGuid && latestId === rssFirstGuid ? 'ok' : 'fail',
   });
 
   const ok = checks.every((c) => c.ok);

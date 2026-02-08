@@ -47,6 +47,7 @@ describe('search status contract checker', () => {
       rssPath: join(dir, 'reports', 'search-benchmark', 'rss.xml'),
     });
     expect(result.ok).toBe(true);
+    expect(result.checks.every((c) => c.status === 'ok')).toBe(true);
   });
 
   test('fails when ids drift between artifacts', async () => {
@@ -65,5 +66,6 @@ describe('search status contract checker', () => {
     expect(result.ok).toBe(false);
     const idCheck = result.checks.find((c) => c.id === 'latest_loop_id_alignment');
     expect(idCheck?.ok).toBe(false);
+    expect(idCheck?.status).toBe('fail');
   });
 });
