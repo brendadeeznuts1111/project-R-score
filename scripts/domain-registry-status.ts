@@ -139,6 +139,7 @@ export async function buildDomainRegistryStatus(options: Options) {
         requiredHeader: row.requiredHeader,
         tokenEnvVar: row.tokenEnvVar,
         tokenPresent: row.tokenPresent,
+        tokenSource: row.tokenSource,
       })),
       error: registry.error || null,
     },

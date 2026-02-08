@@ -34,6 +34,7 @@ export type ResolvedDomainRegistry = {
   requiredHeader: string | null;
   tokenEnvVar: string | null;
   tokenPresent: boolean | null;
+  tokenSource: 'domain' | 'shared' | 'missing' | 'none';
   mappingSource: 'registry' | 'fallback';
   registryPath: string;
   registryVersion: string | null;
@@ -135,7 +136,17 @@ export async function resolveDomainRegistry(
     || `domains/${namespace}/cloudflare`;
   const tokenEnvVar = normalizeText(entry?.tokenEnvVar);
   const tokenRaw = tokenEnvVar ? normalizeText(Bun.env[tokenEnvVar]) : null;
-  const tokenPresent = tokenEnvVar ? !isPlaceholderSecret(tokenRaw) : null;
+  const sharedTokenRaw = normalizeText(Bun.env.FACTORY_WAGER_TOKEN);
+  const domainTokenPresent = tokenEnvVar ? !isPlaceholderSecret(tokenRaw) : false;
+  const sharedTokenPresent = !isPlaceholderSecret(sharedTokenRaw);
+  const tokenPresent = tokenEnvVar ? (domainTokenPresent || sharedTokenPresent) : null;
+  const tokenSource: ResolvedDomainRegistry['tokenSource'] = !tokenEnvVar
+    ? 'none'
+    : domainTokenPresent
+      ? 'domain'
+      : sharedTokenPresent
+        ? 'shared'
+        : 'missing';
 
   return {
     domain: normalized,
@@ -150,6 +161,7 @@ export async function resolveDomainRegistry(
       || null,
     tokenEnvVar,
     tokenPresent,
+    tokenSource,
     mappingSource: entry ? 'registry' : 'fallback',
     registryPath: data.path,
     registryVersion: data.version,
