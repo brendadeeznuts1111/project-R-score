@@ -533,12 +533,14 @@ export const BUN_UTILS_URLS = {
   [UtilsCategory.NETWORKING]: {
     MAIN: '/docs/runtime/networking',
     FETCH: '/docs/runtime/networking/fetch#sending-an-http-request',
-    SERVE: '/docs/api/http#bun-serve',
+    SERVE: '/docs/runtime/http/server#reference',
     WEBSOCKET: '/docs/runtime/http/websockets#reference',
     TCP: '/docs/runtime/networking/tcp',
-    UDP: '/docs/api/udp',
+    UDP: '/docs/runtime/networking/udp',
     DNS: '/docs/runtime/networking/dns#dns-caching-in-bun',
     COOKIES: '/docs/runtime/cookies#cookiemap-class',
+    METRICS: '/docs/runtime/http/metrics',
+    ERROR_HANDLING: '/docs/runtime/http/error-handling',
   },
 
   [UtilsCategory.PROCESS]: {
@@ -550,6 +552,19 @@ export const BUN_UTILS_URLS = {
     PID: '/docs/runtime/child-process#benchmarks',
     SIGNALS: '/docs/runtime/child-process#benchmarks',
     ENV_VARS: '/docs/runtime/environment-variables#setting-environment-variables',
+    BUNFIG_GLOBAL: '/docs/runtime/bunfig#global-vs-local',
+    BUNFIG_TEST: '/docs/runtime/bunfig#test-runner',
+    BUNFIG_PKG: '/docs/runtime/bunfig#package-manager',
+    SECRETS: '/docs/runtime/secrets#api',
+    CONSOLE: '/docs/runtime/console#object-inspection-depth',
+    YAML: '/docs/runtime/yaml#runtime-api',
+    MARKDOWN: '/docs/runtime/markdown#bun-markdown-html',
+    JSON5: '/docs/runtime/json5#runtime-api',
+    JSONL: '/docs/runtime/jsonl#bun-jsonl-parse',
+    HTML_REWRITER: '/docs/runtime/html-rewriter#usage',
+    HASHING: '/docs/runtime/hashing#bun-password',
+    GLOB: '/docs/runtime/glob#quickstart',
+    SEMVER: '/docs/runtime/semver#bun-semver-satisfies-version-string-range-string--boolean',
   },
 
   [UtilsCategory.VALIDATION]: {
@@ -585,8 +600,8 @@ export const BUN_UTILS_URLS = {
   },
 
   [UtilsCategory.COLOR]: {
-    MAIN: '/docs/api/color',
-    COLOR: '/docs/api/color#bun-color',
+    MAIN: '/docs/runtime/color#flexible-input',
+    COLOR: '/docs/runtime/color#flexible-input',
     ANSI: '/docs/api/color#ansi',
     ANSI_16: '/docs/api/color#ansi-16',
     ANSI_256: '/docs/api/color#ansi-256',
@@ -594,6 +609,8 @@ export const BUN_UTILS_URLS = {
     RGB: '/docs/api/color#rgb',
     RGBA: '/docs/api/color#rgba',
     HSL: '/docs/api/color#hsl',
+    GLOBALS: '/docs/runtime/globals',
+    BUN_APIS: '/docs/runtime/bun-apis',
   },
 } as const;
 
@@ -673,6 +690,18 @@ console.log(records); // [{ address: "93.184.216.34", family: 4 }]`,
 jar.set("session", "abc123", { httpOnly: true, secure: true });
 console.log(jar.get("session")); // "abc123"
 console.log(jar.toHeader()); // "session=abc123; HttpOnly; Secure"`,
+
+    METRICS: `const server = Bun.serve({
+  fetch(req) { return new Response("ok"); },
+});
+// server.requestCount, server.pendingRequests, server.pendingWebSockets`,
+
+    ERROR_HANDLING: `Bun.serve({
+  fetch(req) { return new Response("ok"); },
+  error(err) {
+    return new Response("Internal Server Error", { status: 500 });
+  },
+});`,
   },
 
   // https://bun.sh/docs/runtime/environment-variables#setting-environment-variables
@@ -707,6 +736,83 @@ console.log("Parent PID:", process.ppid);`,
 console.log("HOME:", process.env.HOME);
 process.env.MY_APP_MODE = "production";
 console.log("Mode:", process.env.MY_APP_MODE); // production`,
+
+    BUNFIG_GLOBAL: `// bunfig.toml — global (~/.bunfig.toml) vs local (project/bunfig.toml)
+// [install]
+// registry = "https://registry.npmjs.org/"
+// Local bunfig.toml overrides global settings`,
+
+    BUNFIG_TEST: `// bunfig.toml — test runner configuration
+// [test]
+// coverage = true
+// coverageThreshold = { line = 0.8, function = 0.8 }
+// timeout = 5000
+// preload = ["./test-setup.ts"]`,
+
+    BUNFIG_PKG: `// bunfig.toml — package manager configuration
+// [install]
+// exact = true
+// peer = false
+// production = false
+// lockfile.save = true`,
+
+    SECRETS: `// Bun auto-loads .env.local — secrets never leak to child processes
+const apiKey = process.env.API_KEY; // loaded from .env.local
+console.log(typeof apiKey); // "string"
+// Bun.spawn inherits env but .env.local values are excluded by default`,
+
+    CONSOLE: `// Control nested object display depth
+console.log({ a: { b: { c: { d: "deep" } } } });
+// Default depth: 2 — override via BUN_CONFIG_MAX_DEPTH=10`,
+
+    YAML: `const data = YAML.parse(\`
+name: factory-wager
+version: 1.0.0
+features:
+  - websockets
+  - r2
+\`);
+console.log(data.name); // "factory-wager"`,
+
+    MARKDOWN: `const html = Bun.markdown.html("# Hello\\n\\n**Bold** text");
+console.log(html); // <h1>Hello</h1>\\n<p><strong>Bold</strong> text</p>`,
+
+    JSON5: `const data = JSON5.parse(\`{
+  // comments allowed
+  name: 'factory-wager',
+  port: 3000,
+}\`);
+console.log(data.name); // "factory-wager"`,
+
+    JSONL: `const lines = Bun.JSONL.parse(\`
+{"id":1,"name":"alice"}
+{"id":2,"name":"bob"}
+\`);
+for (const obj of lines) {
+  console.log(obj.name); // "alice", "bob"
+}`,
+
+    HTML_REWRITER: `const rewriter = new HTMLRewriter()
+  .on("a", {
+    element(el) { el.setAttribute("target", "_blank"); },
+  });
+const res = rewriter.transform(new Response("<a href='/'>Link</a>"));
+console.log(await res.text()); // <a href="/" target="_blank">Link</a>`,
+
+    HASHING: `const hash = await Bun.password.hash("my-secret-password");
+console.log(hash); // $argon2id$...
+const valid = await Bun.password.verify("my-secret-password", hash);
+console.log(valid); // true`,
+
+    GLOB: `const glob = new Bun.Glob("**/*.ts");
+for await (const path of glob.scan({ cwd: "./src" })) {
+  console.log(path); // src/index.ts, src/utils/helpers.ts, ...
+}`,
+
+    SEMVER: `const ok = Bun.semver.satisfies("1.4.0", ">=1.0.0 <2.0.0");
+console.log(ok); // true
+const order = Bun.semver.order("1.4.0", "1.3.9");
+console.log(order); // 1 (first is greater)`,
   },
 
   // https://bun.sh/docs/pm/cli/publish#performance
@@ -743,6 +849,18 @@ const [r, g, b] = color('coral', 'rgb'); // [255, 127, 80]`,
 
     HSL: `import { color } from 'bun';
 const [h, s, l] = color('#ff6347', 'hsl'); // [9, 100, 64]`,
+
+    GLOBALS: `// Built-in globals — no imports needed
+console.log(Bun.version); // "1.4.0"
+console.log(Bun.revision); // git commit hash
+console.log(typeof fetch); // "function" (global)
+console.log(typeof Bun); // "object" (global)`,
+
+    BUN_APIS: `// Core Bun APIs available on the global Bun object
+Bun.sleep(100); // sleep 100ms
+Bun.sleepSync(50); // blocking sleep
+const id = Bun.nanoseconds(); // high-res timestamp
+console.log(Bun.main); // path to entrypoint`,
   },
 } as const;
 
