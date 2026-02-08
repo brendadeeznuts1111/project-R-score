@@ -40,7 +40,7 @@ const HOST = env.HOST ?? '0.0.0.0';
 const SERVER_NAME = env.SERVER_NAME ?? 'Native Barber Server';
 const KEEP_ALIVE_TIMEOUT_SEC = Number(env.KEEP_ALIVE_TIMEOUT_SEC ?? 5);
 const KEEP_ALIVE_MAX = Number(env.KEEP_ALIVE_MAX ?? 1000);
-const LIFECYCLE_KEY = env.LIFECYCLE_KEY ?? 'godmode123';
+const LIFECYCLE_KEY = env.LIFECYCLE_KEY ?? '';
 const AUTO_UNREF = env.AUTO_UNREF === 'true';
 const DNS_PREFETCH_HOSTS = (env.DNS_PREFETCH_HOSTS ?? 'example.com')
   .split(',')
@@ -100,6 +100,7 @@ function validateEnv() {
     if (!PAYPAL_SECRET_ENV) {
       throw new Error('Missing PAYPAL_SECRET in production');
     }
+    requireEnv('LIFECYCLE_KEY', LIFECYCLE_KEY);
   }
   if ((TLS_KEY_PATH && !TLS_CERT_PATH) || (!TLS_KEY_PATH && TLS_CERT_PATH)) {
     throw new Error('TLS_KEY_PATH and TLS_CERT_PATH must be set together');
@@ -590,7 +591,7 @@ async function startServer(options: StartServerOptions = {}) {
 
         if (url.pathname === '/ops/lifecycle') {
           const key = url.searchParams.get('key');
-          if (key !== LIFECYCLE_KEY) {
+          if (!key || !LIFECYCLE_KEY || key !== LIFECYCLE_KEY) {
             return new Response(
               JSON.stringify({ ok: false, error: 'Unauthorized lifecycle key' }),
               {

@@ -274,7 +274,7 @@ export function renderAdminDashboardV3(resourceHints: string): string {
 
     <script>
       const wsProto = location.protocol === 'https:' ? 'wss' : 'ws';
-      const ws = new WebSocket(wsProto + '://' + location.host + '/admin/ws?key=godmode123');
+      const ws = new WebSocket(wsProto + '://' + location.host + '/admin/ws?key=' + (window.LIFECYCLE_KEY || 'development'));
       const events = [];
       
       const pushEvent = (evt) => {

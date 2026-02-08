@@ -60,7 +60,7 @@ const SERVER_NAME = env.SERVER_NAME ?? 'Barbershop Dashboard';
 const PUBLIC_BASE_URL = env.PUBLIC_BASE_URL ?? `http://localhost:${SERVER_PORT}`;
 const KEEP_ALIVE_TIMEOUT_SEC = Number(env.KEEP_ALIVE_TIMEOUT_SEC ?? 5);
 const KEEP_ALIVE_MAX = Number(env.KEEP_ALIVE_MAX ?? 1000);
-const LIFECYCLE_KEY = env.LIFECYCLE_KEY ?? 'godmode123';
+const LIFECYCLE_KEY = env.LIFECYCLE_KEY ?? '';
 const UPLOAD_TIMEOUT_SEC = Number(env.UPLOAD_TIMEOUT_SEC ?? 60);
 const AUTO_UNREF = env.AUTO_UNREF === 'true';
 const UPLOAD_DIR = new URL('./uploads', import.meta.url).pathname;
@@ -727,7 +727,7 @@ const ADMIN_DASHBOARD = `
 
   <script>
     const wsProto = location.protocol === 'https:' ? 'wss' : 'ws';
-    const ws = new WebSocket(wsProto + '://' + location.host + '/admin/ws?key=godmode123');
+    const ws = new WebSocket(wsProto + '://' + location.host + '/admin/ws?key=' + (window.LIFECYCLE_KEY || 'development'));
     
     ws.onopen = () => {
       log('🟢 Connected to admin telemetry stream');
@@ -1644,7 +1644,7 @@ const server = serve({
     '/admin': () => textResponse(getAdminDashboard(), 'text/html; charset=utf-8'),
     '/admin/ws': req => {
       const url = new URL(req.url);
-      if (url.searchParams.get('key') !== 'godmode123') {
+      if (url.searchParams.get('key') !== LIFECYCLE_KEY) {
         return new Response('Unauthorized', { status: 401 });
       }
       const upgraded = server.upgrade(req, { data: { type: 'admin', id: randomUUIDv7() } });
@@ -2117,7 +2117,7 @@ Port:                   ${server.port}
 Base URL:               ${PUBLIC_BASE_URL}
 
 📊 ADMIN (God View):     ${PUBLIC_BASE_URL}/admin
-   🔑 Access Key:        godmode123
+   🔑 Access Key:        [set via LIFECYCLE_KEY env var]
    
 💇 CLIENT (Book):        ${PUBLIC_BASE_URL}/
                         ${PUBLIC_BASE_URL}/client
@@ -2126,7 +2126,7 @@ Base URL:               ${PUBLIC_BASE_URL}
    🔑 Test Codes:        JB, MS, CK
 
 WEBSOCKET:              ${PUBLIC_BASE_URL.replace(/^http/, 'ws')}/ws/dashboard
-                        ${PUBLIC_BASE_URL.replace(/^http/, 'ws')}/admin/ws?key=godmode123
+                        ${PUBLIC_BASE_URL.replace(/^http/, 'ws')}/admin/ws?key=[LIFECYCLE_KEY]
 
 SECURITY:
 🔐 Secure cookies with __Host- prefix
