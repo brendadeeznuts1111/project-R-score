@@ -6,6 +6,8 @@ import { resolve } from 'node:path';
 import { createHmac, createHash } from 'node:crypto';
 import { S3Client } from 'bun';
 import { resolve4, resolveCname } from 'node:dns/promises';
+import { StateManager, type DashboardState } from './lib/cookie-manager';
+import { createDomainContext } from './lib/domain-context';
 
 type Options = {
   port: number;
@@ -14,6 +16,8 @@ type Options = {
   r2Prefix: string;
   cacheTtlMs: number;
   domain: string;
+  hotReload: boolean;
+  cookies: boolean;
 };
 
 type CachedResponse = {
@@ -21,6 +25,11 @@ type CachedResponse = {
   status: number;
   body: string;
   contentType: string;
+};
+
+type ProxyConfig = {
+  url: string;
+  headers?: Record<string, string>;
 };
 
 function parseArgs(argv: string[]): Options {
@@ -31,6 +40,8 @@ function parseArgs(argv: string[]): Options {
     r2Prefix: Bun.env.R2_BENCH_PREFIX || 'reports/search-bench',
     cacheTtlMs: Number.parseInt(Bun.env.SEARCH_BENCH_CACHE_TTL_MS || '8000', 10) || 8000,
     domain: Bun.env.SEARCH_BENCH_DOMAIN || 'factory-wager.com',
+    hotReload: Bun.env.SEARCH_BENCH_HOT_RELOAD !== '0',
+    cookies: Bun.env.SEARCH_BENCH_DISABLE_COOKIES !== '1',
   };
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -70,6 +81,22 @@ function parseArgs(argv: string[]): Options {
       i += 1;
       continue;
     }
+    if (arg === '--hot-reload') {
+      out.hotReload = true;
+      continue;
+    }
+    if (arg === '--no-hot-reload') {
+      out.hotReload = false;
+      continue;
+    }
+    if (arg === '--no-cookies') {
+      out.cookies = false;
+      continue;
+    }
+    if (arg === '--cookies') {
+      out.cookies = true;
+      continue;
+    }
   }
 
   return out;
@@ -93,6 +120,32 @@ function resolveR2ReadOptions():
     accessKeyId,
     secretAccessKey,
   };
+}
+
+function resolveProxyConfig(): ProxyConfig | null {
+  const url = (Bun.env.SEARCH_BENCH_PROXY_URL || '').trim();
+  if (!url) return null;
+  const headers: Record<string, string> = {};
+  const auth = (Bun.env.SEARCH_BENCH_PROXY_AUTH || '').trim();
+  if (auth) headers['Proxy-Authorization'] = auth;
+  for (const [key, value] of Object.entries(Bun.env)) {
+    if (!key.startsWith('SEARCH_BENCH_PROXY_HEADER_')) continue;
+    if (!value) continue;
+    const headerName = key.replace('SEARCH_BENCH_PROXY_HEADER_', '').replace(/_/g, '-');
+    if (headerName) headers[headerName] = String(value);
+  }
+  return Object.keys(headers).length > 0 ? { url, headers } : { url };
+}
+
+async function proxyFetch(input: string | URL, init: RequestInit = {}): Promise<Response> {
+  const proxy = resolveProxyConfig();
+  if (!proxy) return fetch(input, init);
+  const proxyOpt = proxy.headers ? { url: proxy.url, headers: proxy.headers } : proxy.url;
+  return fetch(input, {
+    ...init,
+    // Bun fetch extension
+    proxy: proxyOpt as any,
+  } as any);
 }
 
 async function readLocalJson(path: string): Promise<Response> {
@@ -122,6 +175,7 @@ function finalizeJsonResponse(
 
 function htmlShell(options: Options): string {
   const r2Label = options.r2Base || '(not configured)';
+  const hotReloadEnabled = options.hotReload;
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -209,6 +263,10 @@ function htmlShell(options: Options): string {
     </div>
   </main>
   <script>
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      // Non-browser context: skip dashboard boot logic.
+    } else {
+    const HOT_RELOAD_ENABLED = ${hotReloadEnabled ? 'true' : 'false'};
     const latestEl = document.getElementById('latest');
     const historyEl = document.getElementById('history');
     const trendEl = document.getElementById('trend');
@@ -854,6 +912,24 @@ function htmlShell(options: Options): string {
         loadBtn.onclick = () => loadLatest(activeSource);
       }
     };
+    const fetchJson = async (url) => {
+      const res = await fetch(url, {
+        credentials: 'same-origin',
+        cache: 'no-store',
+      });
+      const text = await res.text();
+      let data = null;
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch {
+        throw new Error('Invalid JSON from ' + url);
+      }
+      if (!res.ok) {
+        throw new Error((data && data.error) ? (url + ': ' + data.error) : (url + ': HTTP ' + res.status));
+      }
+      return data;
+    };
+    let refreshInFlight = false;
     const countNewReports = (snapshots, baselineId) => {
       if (!Array.isArray(snapshots) || snapshots.length === 0 || !baselineId) return 0;
       const idx = snapshots.findIndex((s) => s.id === baselineId);
@@ -915,92 +991,98 @@ function htmlShell(options: Options): string {
       }
     };
     async function loadLatest(source) {
-      activeSource = source;
-      const indexRes = await fetch('/api/index?source=' + source);
-      const indexData = await indexRes.json();
-      lastHistory = indexData;
-      const res = await fetch('/api/latest?source=' + source);
-      const data = await res.json();
-      const prevEntry = findPreviousSamePack(indexData?.snapshots, data);
-      if (prevEntry?.id) {
-        const prevRes = await fetch('/api/snapshot?id=' + encodeURIComponent(prevEntry.id) + '&source=' + source);
-        previousSnapshot = await prevRes.json();
-      } else {
-        previousSnapshot = null;
+      if (refreshInFlight) return;
+      refreshInFlight = true;
+      try {
+        activeSource = source;
+        const indexData = await fetchJson('/api/index?source=' + source);
+        lastHistory = indexData;
+        const data = await fetchJson('/api/latest?source=' + source);
+        const prevEntry = findPreviousSamePack(indexData?.snapshots, data);
+        if (prevEntry?.id) {
+          previousSnapshot = await fetchJson('/api/snapshot?id=' + encodeURIComponent(prevEntry.id) + '&source=' + source);
+        } else {
+          previousSnapshot = null;
+        }
+        renderLatest(data);
+        currentLatestId = data?.id || currentLatestId;
+        knownLatestId = data?.id || knownLatestId;
+        clearReportNotice();
+        const manifest = await fetchJson('/api/publish-manifest?source=' + source);
+        renderPublish(manifest);
+        const inventory = await fetchJson('/api/r2-inventory?source=' + source + '&id=' + encodeURIComponent(data?.id || ''));
+        renderInventory(inventory);
+        const strictP95 = strictP95FromSnapshot(data);
+        const domainUrl = '/api/domain-health?source=' + source + (strictP95 === null ? '' : '&strictP95=' + encodeURIComponent(String(strictP95)));
+        const domain = await fetchJson(domainUrl);
+        renderDomainHealth(domain);
+        const loop = await fetchJson('/api/loop-status?source=local');
+        renderLoopStatus(loop, data);
+        const rssMeta = await fetchJson('/api/rss-meta?source=' + source);
+        const rssRes = await fetch('/api/rss?source=' + source, {
+          credentials: 'same-origin',
+          cache: 'no-store',
+        });
+        const rssText = await rssRes.text();
+        renderRss(rssText, source, rssMeta);
+        const guid = parseLatestRssGuid(rssText);
+        if (guid) {
+          currentRssGuid = guid;
+          knownRssGuid = guid;
+        }
+        setRssBadge('RSS synced', 'ok');
+      } catch (error) {
+        setRssBadge('RSS unavailable', 'neutral');
+        const message = error instanceof Error ? error.message : String(error);
+        setReportNotice('<span class="badge status-bad">Refresh failed</span> <code>' + message + '</code>');
+      } finally {
+        refreshInFlight = false;
       }
-      renderLatest(data);
-      currentLatestId = data?.id || currentLatestId;
-      knownLatestId = data?.id || knownLatestId;
-      clearReportNotice();
-      const manifestRes = await fetch('/api/publish-manifest?source=' + source);
-      const manifest = await manifestRes.json();
-      renderPublish(manifest);
-      const inventoryRes = await fetch('/api/r2-inventory?source=' + source + '&id=' + encodeURIComponent(data?.id || ''));
-      const inventory = await inventoryRes.json();
-      renderInventory(inventory);
-      const strictP95 = strictP95FromSnapshot(data);
-      const domainUrl = '/api/domain-health?source=' + source + (strictP95 === null ? '' : '&strictP95=' + encodeURIComponent(String(strictP95)));
-      const domainRes = await fetch(domainUrl);
-      const domain = await domainRes.json();
-      renderDomainHealth(domain);
-      const loopRes = await fetch('/api/loop-status?source=local');
-      const loop = await loopRes.json();
-      renderLoopStatus(loop, data);
-      const rssMetaRes = await fetch('/api/rss-meta?source=' + source);
-      const rssMeta = await rssMetaRes.json();
-      const rssRes = await fetch('/api/rss?source=' + source);
-      const rssText = await rssRes.text();
-      renderRss(rssText, source, rssMeta);
-      const guid = parseLatestRssGuid(rssText);
-      if (guid) {
-        currentRssGuid = guid;
-        knownRssGuid = guid;
-      }
-      setRssBadge('RSS synced', 'ok');
     }
     async function loadHistory() {
-      activeSource = 'local';
-      const localRes = await fetch('/api/index');
-      const localData = await localRes.json();
-      renderHistory(localData);
-      const latestRes = await fetch('/api/latest?source=local');
-      const latestData = await latestRes.json();
-      const prevEntry = findPreviousSamePack(localData?.snapshots, latestData);
-      if (prevEntry?.id) {
-        const prevRes = await fetch('/api/snapshot?id=' + encodeURIComponent(prevEntry.id) + '&source=local');
-        previousSnapshot = await prevRes.json();
-      } else {
-        previousSnapshot = null;
+      try {
+        activeSource = 'local';
+        const localData = await fetchJson('/api/index');
+        renderHistory(localData);
+        const latestData = await fetchJson('/api/latest?source=local');
+        const prevEntry = findPreviousSamePack(localData?.snapshots, latestData);
+        if (prevEntry?.id) {
+          previousSnapshot = await fetchJson('/api/snapshot?id=' + encodeURIComponent(prevEntry.id) + '&source=local');
+        } else {
+          previousSnapshot = null;
+        }
+        renderLatest(latestData);
+        currentLatestId = latestData?.id || currentLatestId;
+        knownLatestId = latestData?.id || knownLatestId;
+        clearReportNotice();
+        const manifest = await fetchJson('/api/publish-manifest?source=local');
+        renderPublish(manifest);
+        const inventory = await fetchJson('/api/r2-inventory?source=local&id=' + encodeURIComponent(latestData?.id || ''));
+        renderInventory(inventory);
+        const strictP95 = strictP95FromSnapshot(latestData);
+        const domainUrl = '/api/domain-health?source=local' + (strictP95 === null ? '' : '&strictP95=' + encodeURIComponent(String(strictP95)));
+        const domain = await fetchJson(domainUrl);
+        renderDomainHealth(domain);
+        const loop = await fetchJson('/api/loop-status?source=local');
+        renderLoopStatus(loop, latestData);
+        const rssMeta = await fetchJson('/api/rss-meta?source=local');
+        const rssRes = await fetch('/api/rss?source=local', {
+          credentials: 'same-origin',
+          cache: 'no-store',
+        });
+        const rssText = await rssRes.text();
+        renderRss(rssText, 'local', rssMeta);
+        const guid = parseLatestRssGuid(rssText);
+        if (guid) {
+          currentRssGuid = guid;
+          knownRssGuid = guid;
+        }
+        setRssBadge('RSS synced', 'ok');
+      } catch (error) {
+        setRssBadge('RSS unavailable', 'neutral');
+        const message = error instanceof Error ? error.message : String(error);
+        setReportNotice('<span class="badge status-bad">History refresh failed</span> <code>' + message + '</code>');
       }
-      renderLatest(latestData);
-      currentLatestId = latestData?.id || currentLatestId;
-      knownLatestId = latestData?.id || knownLatestId;
-      clearReportNotice();
-      const manifestRes = await fetch('/api/publish-manifest?source=local');
-      const manifest = await manifestRes.json();
-      renderPublish(manifest);
-      const inventoryRes = await fetch('/api/r2-inventory?source=local&id=' + encodeURIComponent(latestData?.id || ''));
-      const inventory = await inventoryRes.json();
-      renderInventory(inventory);
-      const strictP95 = strictP95FromSnapshot(latestData);
-      const domainUrl = '/api/domain-health?source=local' + (strictP95 === null ? '' : '&strictP95=' + encodeURIComponent(String(strictP95)));
-      const domainRes = await fetch(domainUrl);
-      const domain = await domainRes.json();
-      renderDomainHealth(domain);
-      const loopRes = await fetch('/api/loop-status?source=local');
-      const loop = await loopRes.json();
-      renderLoopStatus(loop, latestData);
-      const rssMetaRes = await fetch('/api/rss-meta?source=local');
-      const rssMeta = await rssMetaRes.json();
-      const rssRes = await fetch('/api/rss?source=local');
-      const rssText = await rssRes.text();
-      renderRss(rssText, 'local', rssMeta);
-      const guid = parseLatestRssGuid(rssText);
-      if (guid) {
-        currentRssGuid = guid;
-        knownRssGuid = guid;
-      }
-      setRssBadge('RSS synced', 'ok');
     }
     document.getElementById('loadLocal').onclick = () => loadLatest('local');
     document.getElementById('loadR2').onclick = () => loadLatest('r2');
@@ -1008,10 +1090,12 @@ function htmlShell(options: Options): string {
     rssBadgeEl.onclick = () => loadLatest(activeSource);
     loadLatest('local');
     loadHistory();
+    // SSE hot reload is intentionally disabled in this build for stability.
     setInterval(() => {
       checkForNewReports();
       checkForNewRssItems();
     }, 15000);
+    }
   </script>
 </body>
 </html>`;
@@ -1022,7 +1106,7 @@ async function fetchR2Json(r2Base: string, name: string): Promise<Response> {
   const targets = [`${base}/${name}.gz`, `${base}/${name}`];
 
   for (const target of targets) {
-    const res = await fetch(target);
+    const res = await proxyFetch(target, { cache: 'no-store' });
     if (!res.ok) {
       continue;
     }
@@ -1096,7 +1180,7 @@ async function fetchR2ObjectBySignature(
   const authorization = `AWS4-HMAC-SHA256 Credential=${accessKeyId}/${scope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
   const url = `${endpoint.replace(/\/+$/g, '')}/${bucket}/${encodeKey(key)}`;
 
-  return fetch(url, {
+  return proxyFetch(url, {
     method: 'GET',
     headers: {
       Authorization: authorization,
@@ -1179,6 +1263,12 @@ async function loadRemoteJson(options: Options, name: string): Promise<Response>
 }
 
 async function main(): Promise<void> {
+  process.on('uncaughtException', (error) => {
+    console.error('[search-bench:dashboard] uncaughtException', error);
+  });
+  process.on('unhandledRejection', (error) => {
+    console.error('[search-bench:dashboard] unhandledRejection', error);
+  });
   const options = parseArgs(process.argv.slice(2));
   const dir = resolve(options.dir);
   const latestJson = resolve(dir, 'latest.json');
@@ -1187,6 +1277,8 @@ async function main(): Promise<void> {
   const loopStatusJson = resolve('reports/search-loop-status-latest.json');
   const responseCache = new Map<string, CachedResponse>();
   const inflight = new Map<string, Promise<CachedResponse>>();
+  const hotReloadClients = new Set<ReadableStreamDefaultController<Uint8Array>>();
+  const sseEncoder = new TextEncoder();
   const dnsPrefetchTtlMs = 120000;
   const dnsCache = new Map<string, {
     expiresAt: number;
@@ -1377,7 +1469,7 @@ async function main(): Promise<void> {
       `rss.xml`,
     ];
     const items = await Promise.all(targets.map(async (name) => {
-      const res = await fetch(`${base}/${name}`, { method: 'HEAD' });
+      const res = await proxyFetch(`${base}/${name}`, { method: 'HEAD', cache: 'no-store' });
       return {
         name,
         exists: res.ok,
@@ -1456,33 +1548,82 @@ async function main(): Promise<void> {
     return { ...result, cacheHit: false };
   };
 
+  const sseWrite = (
+    controller: ReadableStreamDefaultController<Uint8Array>,
+    event: string,
+    payload: unknown
+  ) => {
+    controller.enqueue(sseEncoder.encode(`event: ${event}\ndata: ${JSON.stringify(payload)}\n\n`));
+  };
+
+  const broadcastHotReload = (reason: string) => {
+    const payload = { type: 'reload', reason, at: new Date().toISOString() };
+    for (const controller of hotReloadClients) {
+      try {
+        sseWrite(controller, 'reload', payload);
+      } catch {
+        hotReloadClients.delete(controller);
+      }
+    }
+  };
+
+  if (options.hotReload) {
+    const watchedPaths = [
+      Bun.main,
+      latestJson,
+      indexJson,
+      rssXml,
+      loopStatusJson,
+    ];
+    const mtimes = new Map<string, number>();
+    const readMtime = (file: string): number => {
+      try {
+        return existsSync(file) ? statSync(file).mtimeMs : 0;
+      } catch {
+        return 0;
+      }
+    };
+    for (const file of watchedPaths) {
+      mtimes.set(file, readMtime(file));
+    }
+    setInterval(() => {
+      for (const file of watchedPaths) {
+        const prev = mtimes.get(file) || 0;
+        const next = readMtime(file);
+        if (next !== prev) {
+          mtimes.set(file, next);
+          broadcastHotReload(file);
+        }
+      }
+    }, 1000);
+    setInterval(() => {
+      for (const controller of hotReloadClients) {
+        try {
+          sseWrite(controller, 'ping', { at: Date.now() });
+        } catch {
+          hotReloadClients.delete(controller);
+        }
+      }
+    }, 15000);
+  }
+
   const buildDomainHealthSummary = async (
     source: 'local' | 'r2',
     domain: string,
     strictP95Ms: number | null = null
   ) => {
-    const domainNamespace = domain
-      .replace(/^\*\./, '')
-      .replace(/\.[a-z0-9-]+$/i, '');
     const r2Read = resolveR2ReadOptions();
-    const endpointForAccount = (r2Read?.endpoint || Bun.env.R2_ENDPOINT || '').trim();
-    const endpointAccountId = endpointForAccount.match(/^https?:\/\/([a-z0-9]+)\.r2\.cloudflarestorage\.com/i)?.[1] || '';
-    const rawAccountId = (Bun.env.CLOUDFLARE_ACCOUNT_ID || Bun.env.R2_ACCOUNT_ID || endpointAccountId || '').trim();
-    const accountId = rawAccountId.length >= 8
-      ? `${rawAccountId.slice(0, 4)}...${rawAccountId.slice(-4)}`
-      : rawAccountId || null;
-    const zone = (Bun.env.CLOUDFLARE_ZONE_NAME || Bun.env.CLOUDFLARE_ZONE_ID || domain).trim() || domain;
-    const prefixes = ['health', 'ssl', 'analytics'];
-    const storage = {
+    const ctx = createDomainContext({
+      domain,
+      zone: Bun.env.CLOUDFLARE_ZONE_NAME || Bun.env.CLOUDFLARE_ZONE_ID || domain,
       bucket: r2Read?.bucket || Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || Bun.env.R2_BENCH_BUCKET || null,
       endpoint: r2Read?.endpoint || Bun.env.R2_ENDPOINT || Bun.env.SEARCH_BENCH_R2_PUBLIC_BASE || null,
-      domainPrefix: `domains/${domainNamespace}/cloudflare/`,
-      sampleKeys: {
-        health: `domains/${domainNamespace}/cloudflare/health/YYYY-MM-DD.json`,
-        ssl: `domains/${domainNamespace}/cloudflare/ssl/YYYY-MM-DD.json`,
-        analytics: `domains/${domainNamespace}/cloudflare/analytics/YYYY-MM-DD.json`,
-      },
-    };
+      accountIdRaw: Bun.env.CLOUDFLARE_ACCOUNT_ID || Bun.env.R2_ACCOUNT_ID || null,
+    });
+    const prefixes = ['health', 'ssl', 'analytics'];
+    const storage = ctx.storage;
+    const accountId = ctx.accountId;
+    const zone = ctx.zone;
     let knownSubdomains: number | null = null;
     let managerNote: string | null = null;
     let subdomainConfigs: Array<{
@@ -1543,7 +1684,7 @@ async function main(): Promise<void> {
     if (source === 'local') {
       const latest = prefixes.map((type) => ({
         type,
-        key: `domains/${domainNamespace}/cloudflare/${type}/YYYY-MM-DD.json`,
+        key: `${ctx.prefix}/${type}/YYYY-MM-DD.json`,
         exists: false,
         lastModified: null,
       }));
@@ -1599,7 +1740,7 @@ async function main(): Promise<void> {
       return { error: 'r2_not_configured_for_domain_health', source, domain, zone, accountId, storage, knownSubdomains, managerNote };
     }
     const latest = await Promise.all(prefixes.map(async (type) => {
-      const prefix = `domains/${domainNamespace}/cloudflare/${type}/`;
+      const prefix = `${ctx.prefix}/${type}/`;
       const listed = await S3Client.list(
         { prefix, limit: 1000 },
         {
@@ -1695,14 +1836,36 @@ async function main(): Promise<void> {
     };
   };
 
+  const deriveLastSnapshotFromHealth = (data: any): string => {
+    const key = data?.latest?.find((item: any) => item?.type === 'health')?.key;
+    if (!key || typeof key !== 'string') return '';
+    const parts = key.split('/');
+    const file = parts[parts.length - 1] || '';
+    return file.replace(/\.json$/i, '');
+  };
+
   Bun.serve({
     port: options.port,
     fetch: async (req: Request) => {
       const url = new URL(req.url);
+      const stateFromCookie = options.cookies ? StateManager.parse(req) : null;
+      const defaultState: DashboardState = {
+        domain: options.domain,
+        accountId: '',
+        lastSnapshot: '',
+        prefMetric: stateFromCookie?.prefMetric || 'latency',
+      };
       if (url.pathname === '/' || url.pathname === '/dashboard') {
-        return new Response(htmlShell(options), {
-          headers: { 'content-type': 'text/html; charset=utf-8' },
+        const state = stateFromCookie || defaultState;
+        const headers = new Headers({
+          'content-type': 'text/html; charset=utf-8',
+          'cache-control': 'no-store',
+          vary: 'Cookie',
         });
+        if (options.cookies) {
+          headers.append('set-cookie', StateManager.serialize(state, url));
+        }
+        return new Response(htmlShell(options), { headers });
       }
       if (url.pathname === '/api/latest') {
         const source = url.searchParams.get('source') || 'local';
@@ -1767,12 +1930,30 @@ async function main(): Promise<void> {
       }
       if (url.pathname === '/api/domain-health') {
         const source = (url.searchParams.get('source') || 'local') as 'local' | 'r2';
-        const domain = (url.searchParams.get('domain') || options.domain || 'factory-wager.com').trim().toLowerCase();
+        const domain = (
+          url.searchParams.get('domain') ||
+          stateFromCookie?.domain ||
+          options.domain ||
+          'factory-wager.com'
+        ).trim().toLowerCase();
         const strictP95Raw = url.searchParams.get('strictP95');
         const strictP95Ms = strictP95Raw === null ? null : Number(strictP95Raw);
         const strictP95 = Number.isFinite(strictP95Ms) ? strictP95Ms : null;
         const data = await buildDomainHealthSummary(source, domain, strictP95);
-        return Response.json(data);
+        const state: DashboardState = {
+          domain,
+          accountId: String(data?.accountId || stateFromCookie?.accountId || ''),
+          lastSnapshot: deriveLastSnapshotFromHealth(data),
+          prefMetric: stateFromCookie?.prefMetric || 'latency',
+        };
+        const headers = new Headers({
+          'cache-control': 'no-store',
+          vary: 'Cookie',
+        });
+        if (options.cookies) {
+          headers.append('set-cookie', StateManager.serialize(state, url));
+        }
+        return Response.json(data, { headers });
       }
       if (url.pathname === '/api/rss') {
         const source = url.searchParams.get('source') || 'local';
@@ -1811,6 +1992,37 @@ async function main(): Promise<void> {
         }
         return readLocalJson(loopStatusJson);
       }
+      if (url.pathname === '/api/dev-events') {
+        if (!options.hotReload) {
+          return new Response('event: disabled\ndata: {"hotReload":false}\n\n', {
+            headers: {
+              'content-type': 'text/event-stream; charset=utf-8',
+              'cache-control': 'no-store',
+              connection: 'keep-alive',
+            },
+          });
+        }
+        let localController: ReadableStreamDefaultController<Uint8Array> | null = null;
+        const stream = new ReadableStream<Uint8Array>({
+          start(controller) {
+            localController = controller;
+            hotReloadClients.add(controller);
+            sseWrite(controller, 'connected', { at: new Date().toISOString() });
+          },
+          cancel() {
+            if (localController) {
+              hotReloadClients.delete(localController);
+            }
+          },
+        });
+        return new Response(stream, {
+          headers: {
+            'content-type': 'text/event-stream; charset=utf-8',
+            'cache-control': 'no-cache, no-transform',
+            connection: 'keep-alive',
+          },
+        });
+      }
       return new Response('Not found', { status: 404 });
     },
   });
@@ -1818,6 +2030,10 @@ async function main(): Promise<void> {
   const ansi = (text: string, hex: string): string => `${Bun.color(hex, 'ansi')}${text}\x1b[0m`;
   console.log(ansi(`[search-bench:dashboard] http://localhost:${options.port}/dashboard`, '#22c55e'));
   console.log(ansi(`[search-bench:dashboard] dir=${dir}`, '#60a5fa'));
+  const proxyCfg = resolveProxyConfig();
+  if (proxyCfg) {
+    console.log(ansi(`[search-bench:dashboard] proxy=${proxyCfg.url}`, '#f59e0b'));
+  }
   if (options.r2Base) {
     console.log(ansi(`[search-bench:dashboard] r2-base=${options.r2Base}`, '#f59e0b'));
   } else {

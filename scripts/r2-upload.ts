@@ -1,7 +1,12 @@
 #!/usr/bin/env bun
 
-import { S3Client } from 'bun';
 import { resolve4, resolveCname } from 'node:dns/promises';
+import { createDomainContext } from './lib/domain-context';
+import {
+  resolveR2BridgeConfig,
+  uploadCompressedStateToR2,
+  uploadJsonToR2,
+} from './lib/r2-bridge';
 
 type Options = {
   domain: string;
@@ -14,13 +19,8 @@ type Options = {
   source: string;
   timeoutMs: number;
   apply: boolean;
-};
-
-type R2Config = {
-  bucket: string;
-  endpoint: string;
-  accessKeyId: string;
-  secretAccessKey: string;
+  sessionId: string;
+  writeSessionState: boolean;
 };
 
 type SubdomainEntry = {
@@ -55,6 +55,8 @@ function parseArgs(argv: string[]): Options {
     source: 'r2-upload.ts',
     timeoutMs: Number.parseInt(Bun.env.DOMAIN_HEALTH_DNS_TIMEOUT_MS || '1000', 10) || 1000,
     apply: false,
+    sessionId: crypto.randomUUID(),
+    writeSessionState: false,
   };
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -121,22 +123,23 @@ function parseArgs(argv: string[]): Options {
       out.apply = false;
       continue;
     }
+    if (arg === '--session-id') {
+      const v = (argv[i + 1] || '').trim();
+      if (v) out.sessionId = v;
+      i += 1;
+      continue;
+    }
+    if (arg === '--session-state') {
+      out.writeSessionState = true;
+      continue;
+    }
+    if (arg === '--no-session-state') {
+      out.writeSessionState = false;
+      continue;
+    }
   }
 
   return out;
-}
-
-function resolveR2Config(options: Options): R2Config {
-  const accessKeyId = (Bun.env.R2_ACCESS_KEY_ID || '').trim();
-  const secretAccessKey = (Bun.env.R2_SECRET_ACCESS_KEY || '').trim();
-  const bucket = options.bucket;
-  const endpoint = options.endpoint;
-  if (!bucket || !endpoint || !accessKeyId || !secretAccessKey) {
-    throw new Error(
-      'Missing R2 config. Required: R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, plus bucket and endpoint.'
-    );
-  }
-  return { bucket, endpoint, accessKeyId, secretAccessKey };
 }
 
 async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
@@ -198,28 +201,21 @@ async function loadSubdomains(domain: string): Promise<Array<{ subdomain: string
   }));
 }
 
-function maskAccountId(endpoint: string): string | null {
-  const accountId = endpoint.match(/^https?:\/\/([a-z0-9]+)\.r2\.cloudflarestorage\.com/i)?.[1] || '';
-  if (!accountId) return null;
-  if (accountId.length < 8) return accountId;
-  return `${accountId.slice(0, 4)}...${accountId.slice(-4)}`;
-}
-
-async function uploadJson(r2: R2Config, key: string, data: unknown): Promise<void> {
-  await S3Client.write(key, JSON.stringify(data, null, 2), {
-    bucket: r2.bucket,
-    endpoint: r2.endpoint,
-    accessKeyId: r2.accessKeyId,
-    secretAccessKey: r2.secretAccessKey,
-    type: 'application/json',
-  });
-}
-
 async function main(): Promise<void> {
   const options = parseArgs(process.argv.slice(2));
-  const r2 = resolveR2Config(options);
+  const r2 = resolveR2BridgeConfig({
+    endpoint: options.endpoint,
+    bucket: options.bucket,
+  });
+  const ctx = createDomainContext({
+    domain: options.domain,
+    zone: options.zone,
+    endpoint: r2.endpoint,
+    bucket: r2.bucket,
+    explicitPrefix: options.prefix,
+  });
 
-  const subdomains = await loadSubdomains(options.domain);
+  const subdomains = await loadSubdomains(ctx.domain);
   const checks = await Promise.all(
     subdomains.map(async (entry) => {
       const dns = await resolveDns(entry.fullDomain, options.timeoutMs);
@@ -240,13 +236,13 @@ async function main(): Promise<void> {
   const checked = checks.length;
   const dnsRatio = checked > 0 ? resolved / checked : 0;
   const now = new Date().toISOString();
-  const accountMasked = maskAccountId(r2.endpoint);
+  const accountMasked = ctx.accountId;
 
   const healthPayload = {
     timestamp: now,
     source: options.source,
-    domain: options.domain,
-    zone: options.zone,
+    domain: ctx.domain,
+    zone: ctx.zone,
     accountId: accountMasked,
     dnsPrefetch: {
       checked,
@@ -268,7 +264,7 @@ async function main(): Promise<void> {
   const sslPayload = {
     timestamp: now,
     source: options.source,
-    domain: options.domain,
+    domain: ctx.domain,
     ssl_overview: {
       total_certificates: checked,
       valid_certificates: checks.filter((c) => c.dnsResolved).length,
@@ -286,7 +282,7 @@ async function main(): Promise<void> {
   const analyticsPayload = {
     timestamp: now,
     source: options.source,
-    domain: options.domain,
+    domain: ctx.domain,
     dashboard_summary: {
       total_subdomains: checked,
       resolved_subdomains: resolved,
@@ -301,17 +297,21 @@ async function main(): Promise<void> {
     unresolved_subdomains: checks.filter((c) => !c.dnsResolved).map((c) => c.fullDomain),
   };
 
-  const healthKey = `${options.prefix}/health/${options.date}.json`;
-  const sslKey = `${options.prefix}/ssl/${options.date}.json`;
-  const analyticsKey = `${options.prefix}/analytics/${options.date}.json`;
+  const healthKey = `${ctx.prefix}/health/${options.date}.json`;
+  const sslKey = `${ctx.prefix}/ssl/${options.date}.json`;
+  const analyticsKey = `${ctx.prefix}/analytics/${options.date}.json`;
+  const sessionStateKey = `domains/${ctx.namespace}/sessions/${options.sessionId}/state.zst`;
 
-  console.log(`[r2-upload] domain=${options.domain} zone=${options.zone} account=${accountMasked || 'n/a'}`);
+  console.log(`[r2-upload] domain=${ctx.domain} zone=${ctx.zone} account=${accountMasked || 'n/a'}`);
   console.log(`[r2-upload] bucket=${r2.bucket} endpoint=${r2.endpoint}`);
-  console.log(`[r2-upload] prefix=${options.prefix}`);
+  console.log(`[r2-upload] prefix=${ctx.prefix}`);
   console.log(`[r2-upload] dnsChecked=${checked} dnsResolved=${resolved} cacheTtlSec=${options.cacheTtlSec}`);
   console.log(`[r2-upload] key health=${healthKey}`);
   console.log(`[r2-upload] key ssl=${sslKey}`);
   console.log(`[r2-upload] key analytics=${analyticsKey}`);
+  if (options.writeSessionState) {
+    console.log(`[r2-upload] key sessionState=${sessionStateKey}`);
+  }
 
   if (!options.apply) {
     console.log('[r2-upload] dry-run mode (no upload). Use --apply to write objects.');
@@ -319,13 +319,34 @@ async function main(): Promise<void> {
   }
 
   await Promise.all([
-    uploadJson(r2, healthKey, healthPayload),
-    uploadJson(r2, sslKey, sslPayload),
-    uploadJson(r2, analyticsKey, analyticsPayload),
+    uploadJsonToR2(r2, healthKey, healthPayload),
+    uploadJsonToR2(r2, sslKey, sslPayload),
+    uploadJsonToR2(r2, analyticsKey, analyticsPayload),
   ]);
+
+  if (options.writeSessionState) {
+    await uploadCompressedStateToR2(r2, sessionStateKey, {
+      sessionId: options.sessionId,
+      savedAt: now,
+      context: {
+        domain: ctx.domain,
+        zone: ctx.zone,
+        accountId: ctx.accountId,
+        bucket: r2.bucket,
+        endpoint: r2.endpoint,
+        prefix: ctx.prefix,
+      },
+      dns: {
+        checked,
+        resolved,
+        ratio: Number(dnsRatio.toFixed(4)),
+        unresolvedSubdomains: checks.filter((c) => !c.dnsResolved).map((c) => c.fullDomain),
+      },
+    });
+    console.log('[r2-upload] uploaded compressed session bridge state');
+  }
 
   console.log('[r2-upload] uploaded 3 objects successfully');
 }
 
 await main();
-
