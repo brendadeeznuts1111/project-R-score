@@ -17,6 +17,12 @@ import {
   type SearchPolicies,
 } from '../lib/docs/canonical-family';
 import { resolve } from 'node:path';
+import {
+  evaluateReadiness,
+  loadDomainHealthSummary,
+  type DomainHealthSummary,
+} from './lib/domain-health-read';
+import { applyDomainFusion } from './lib/search-domain-fusion';
 
 type ViewMode = 'clean' | 'mixed' | 'slop-only' | 'all';
 type TaskMode = 'default' | 'delivery' | 'cleanup';
@@ -42,6 +48,18 @@ interface SearchOptions {
   artifactFilter?: ArtifactTag[];
   runtimeFilter?: RuntimeTag[];
   overlapMode: 'ignore' | 'remove';
+  fusionEnabled: boolean;
+  fusionDomain: string;
+  fusionSource: 'local' | 'r2';
+  fusionStrictP95?: number;
+  fusionWeight: number;
+  fusionJson: boolean;
+  fusionFailOnCritical: boolean;
+  explainPolicy: boolean;
+  defaultsApplied: {
+    strictPreset: boolean;
+    implicitScopeCode: boolean;
+  };
 }
 
 interface QueryPlan {
@@ -79,6 +97,10 @@ interface SearchHit {
   scopeTag?: ScopeTag;
   artifactTag?: ArtifactTag;
   runtimeTag?: RuntimeTag;
+  fusionScore?: number;
+  fusionReason?: string[];
+  domainSnapshotRef?: string;
+  policyReasons?: string[];
 }
 
 // Stable object shape for hot-path result allocation to reduce structure churn.
@@ -100,6 +122,7 @@ class SearchResult implements SearchHit {
   scopeTag?: ScopeTag;
   artifactTag?: ArtifactTag;
   runtimeTag?: RuntimeTag;
+  policyReasons?: string[];
 
   constructor(
     file: string,
@@ -189,6 +212,13 @@ OPTIONS:
   --artifact, -A <list> Filter artifacts: api,constant,global,type,example,cli
   --runtime, -R <list> Filter runtime: bun,ts,js
   --overlap <mode>     ignore|remove duplicate overlap (default: ignore)
+  --fusion-domain <d>  Enable domain fusion with domain (default: factory-wager.com)
+  --fusion-source <s>  local|r2 domain health source (default: local)
+  --fusion-strict-p95 <ms> Strict p95 threshold for readiness/fusion penalty
+  --fusion-weight <n>  Domain fusion weight between 0 and 1 (default: 0.35)
+  --fusion-json        Include fusion metadata in JSON output
+  --fusion-fail-on-critical Exit non-zero if readiness is critical
+  --explain-policy     Include resolved policy/debug metadata (JSON + text)
   --json               Emit JSON output
 
 EXAMPLES:
@@ -914,13 +944,17 @@ async function smartSearch(plan: QueryPlan, options: SearchOptions): Promise<Sea
   for (let i = 0; i < deduped.length; i += 1) {
     const qualityApplied = applyQualityModel(deduped[i], options, policies, intent, policies.importQualityPenalty);
     const withTaxonomy = attachTaxonomy(qualityApplied);
-    if (!hitAllowedByView(withTaxonomy, options.view)) {
+    const withPolicyReasons: SearchHit = {
+      ...withTaxonomy,
+      policyReasons: unique(withTaxonomy.reason || []),
+    };
+    if (!hitAllowedByView(withPolicyReasons, options.view)) {
       continue;
     }
-    if (!passesTaxonomyFilters(withTaxonomy, options)) {
+    if (!passesTaxonomyFilters(withPolicyReasons, options)) {
       continue;
     }
-    filtered[filteredCount] = withTaxonomy;
+    filtered[filteredCount] = withPolicyReasons;
     filteredCount += 1;
   }
   const filteredHits = filteredCount === filtered.length ? filtered : filtered.slice(0, filteredCount);
@@ -961,6 +995,17 @@ function parseArgs(argv: string[]): { query: string; options: SearchOptions } | 
     task: 'default',
     showMirrors: false,
     overlapMode: 'ignore',
+    fusionEnabled: false,
+    fusionDomain: 'factory-wager.com',
+    fusionSource: 'local',
+    fusionWeight: 0.35,
+    fusionJson: false,
+    fusionFailOnCritical: false,
+    explainPolicy: false,
+    defaultsApplied: {
+      strictPreset: false,
+      implicitScopeCode: false,
+    },
   };
 
   let query: string | null = null;
@@ -1089,6 +1134,63 @@ function parseArgs(argv: string[]): { query: string; options: SearchOptions } | 
       continue;
     }
 
+    if (arg === '--fusion-domain') {
+      const value = (argv[i + 1] || '').trim().toLowerCase();
+      if (value) {
+        options.fusionDomain = value;
+        options.fusionEnabled = true;
+      }
+      i += 1;
+      continue;
+    }
+
+    if (arg === '--fusion-source') {
+      const value = (argv[i + 1] || '').trim().toLowerCase();
+      if (value === 'local' || value === 'r2') {
+        options.fusionSource = value;
+        options.fusionEnabled = true;
+      }
+      i += 1;
+      continue;
+    }
+
+    if (arg === '--fusion-strict-p95') {
+      const value = Number.parseFloat(argv[i + 1] || '');
+      if (Number.isFinite(value) && value > 0) {
+        options.fusionStrictP95 = value;
+        options.fusionEnabled = true;
+      }
+      i += 1;
+      continue;
+    }
+
+    if (arg === '--fusion-weight') {
+      const value = Number.parseFloat(argv[i + 1] || '');
+      if (Number.isFinite(value)) {
+        options.fusionWeight = Math.max(0, Math.min(1, value));
+        options.fusionEnabled = true;
+      }
+      i += 1;
+      continue;
+    }
+
+    if (arg === '--fusion-json') {
+      options.fusionJson = true;
+      options.fusionEnabled = true;
+      continue;
+    }
+
+    if (arg === '--fusion-fail-on-critical') {
+      options.fusionFailOnCritical = true;
+      options.fusionEnabled = true;
+      continue;
+    }
+
+    if (arg === '--explain-policy') {
+      options.explainPolicy = true;
+      continue;
+    }
+
     if (arg === '--of') {
       options.targetSymbol = argv[i + 1] || '';
       i += 1;
@@ -1122,10 +1224,16 @@ function parseArgs(argv: string[]): { query: string; options: SearchOptions } | 
 
   if (options.task === 'delivery' && !scopeExplicitlySet && !queryLooksDocsIntent(query)) {
     options.scopeFilter = ['code'];
+    options.defaultsApplied.implicitScopeCode = true;
   }
 
   if (strictRequested && !scopeExplicitlySet) {
     options.scopeFilter = ['code'];
+    options.defaultsApplied.implicitScopeCode = true;
+  }
+
+  if (strictRequested) {
+    options.defaultsApplied.strictPreset = true;
   }
 
   return { query, options };
@@ -1335,8 +1443,12 @@ function printGroupedSection(title: string, hits: SearchHit[], options: SearchOp
     const canonical = hit.canonicalFile && hit.canonicalFile !== hit.file
       ? ` canonical=${hit.canonicalFile}`
       : '';
-    console.log(`${i + 1}. ${relPath}:${hit.line} score=${hit.score.toFixed(1)}${quality}${taxonomy}${dup}${mirrors}${canonical}`);
+    const fusion = Number.isFinite(hit.fusionScore) ? ` fusion=${(hit.fusionScore as number).toFixed(3)}` : '';
+    console.log(`${i + 1}. ${relPath}:${hit.line} score=${hit.score.toFixed(1)}${fusion}${quality}${taxonomy}${dup}${mirrors}${canonical}`);
     console.log(`   ${snippet}`);
+    if (Number.isFinite(hit.fusionScore) && hit.fusionReason && hit.fusionReason.length > 0) {
+      console.log(`   fusion: ${hit.fusionReason.slice(0, 2).join('; ')}`);
+    }
     if (options.showMirrors && hit.file === hit.canonicalFile && hit.mirrorFiles && hit.mirrorFiles.length > 0) {
       const topMirrors = hit.mirrorFiles.slice(0, 3).map((path) => path.replace(/^\.\//, ''));
       const extra = hit.mirrorFiles.length - topMirrors.length;
@@ -1346,7 +1458,19 @@ function printGroupedSection(title: string, hits: SearchHit[], options: SearchOp
   console.log('');
 }
 
-function printTable(plan: QueryPlan, hits: SearchHit[], elapsedMs: number, options: SearchOptions): void {
+type FusionReport = {
+  summary: DomainHealthSummary;
+  readiness: ReturnType<typeof evaluateReadiness>;
+  error?: string;
+};
+
+function printTable(
+  plan: QueryPlan,
+  hits: SearchHit[],
+  elapsedMs: number,
+  options: SearchOptions,
+  fusion?: FusionReport
+): void {
   console.log(`Smart Search: "${plan.raw}"`);
   console.log(`Roots: ${plan.roots.join(', ')}`);
   console.log(`View/Task: ${options.view}/${options.task}`);
@@ -1372,6 +1496,16 @@ function printTable(plan: QueryPlan, hits: SearchHit[], elapsedMs: number, optio
   }
   if (plan.aliasHints.length > 0) {
     console.log(`Aliases: ${plan.aliasHints.join(', ')}`);
+  }
+  if (fusion) {
+    console.log(
+      `Fusion: domain=${fusion.summary.domain} source=${fusion.summary.source} weight=${options.fusionWeight.toFixed(2)} readiness=${fusion.readiness.status}`
+    );
+    if (Number.isFinite(options.fusionStrictP95)) {
+      console.log(
+        `Fusion strict p95: threshold=${options.fusionStrictP95}ms observed=${fusion.readiness.metrics.strictP95Ms ?? 'n/a'}`
+      );
+    }
   }
   console.log(`Expanded terms: ${plan.terms.slice(0, 10).join(', ')}${plan.terms.length > 10 ? '...' : ''}`);
   console.log('');
@@ -1415,8 +1549,44 @@ async function main(): Promise<void> {
   const plan = applyFeaturePoliciesToPlan(basePlan, policies);
 
   const start = performance.now();
-  const hits = await smartSearch(plan, options);
+  let hits = await smartSearch(plan, options);
   const elapsedMs = performance.now() - start;
+  let fusionReport: FusionReport | undefined;
+
+  if (options.fusionEnabled) {
+    try {
+      const summary = await loadDomainHealthSummary({
+        domain: options.fusionDomain,
+        source: options.fusionSource,
+        strictP95: options.fusionStrictP95,
+      });
+      const readiness = evaluateReadiness(summary, options.fusionStrictP95);
+      const fusedHits = applyDomainFusion(hits, summary, {
+        fusionWeight: options.fusionWeight,
+        strictP95Threshold: options.fusionStrictP95,
+      });
+      hits = fusedHits;
+      fusionReport = { summary, readiness };
+    } catch (error) {
+      const fallbackSummary: DomainHealthSummary = {
+        domain: options.fusionDomain,
+        source: options.fusionSource,
+        checkedAt: new Date().toISOString(),
+        overall: { status: 'degraded', score: 0.35 },
+        dns: { status: 'unknown', score: 0.35 },
+        storage: { status: 'critical', score: 0.15 },
+        cookie: { status: 'unknown', score: 0.35 },
+        notes: [`fusion_load_failed:${error instanceof Error ? error.message : String(error)}`],
+      };
+      const readiness = evaluateReadiness(fallbackSummary, options.fusionStrictP95);
+      fusionReport = {
+        summary: fallbackSummary,
+        readiness,
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
+
   const mem = process.memoryUsage();
   const memory = {
     rssMB: Number((mem.rss / (1024 * 1024)).toFixed(2)),
@@ -1427,38 +1597,93 @@ async function main(): Promise<void> {
   };
 
   if (options.json) {
-    console.log(
-      JSON.stringify(
-        {
-          query: plan.raw,
-          normalizedQuery: plan.normalized,
-          roots: plan.roots,
-          expandedTerms: plan.terms,
-          mode: {
-            kind: options.kind,
-            of: options.targetSymbol || null,
-            groupLimit: options.groupLimit || null,
-            familyCap: options.familyCap || null,
-            view: options.view,
-            task: options.task,
-            overlap: options.overlapMode,
-            showMirrors: options.showMirrors,
-            scope: options.scopeFilter || null,
-            artifact: options.artifactFilter || null,
-            runtime: options.runtimeFilter || null,
-          },
-          elapsedMs: Number(elapsedMs.toFixed(2)),
-          memory,
-          hits,
+    const basePayload: Record<string, unknown> = {
+      query: plan.raw,
+      normalizedQuery: plan.normalized,
+      roots: plan.roots,
+      expandedTerms: plan.terms,
+      mode: {
+        kind: options.kind,
+        of: options.targetSymbol || null,
+        groupLimit: options.groupLimit || null,
+        familyCap: options.familyCap || null,
+        view: options.view,
+        task: options.task,
+        overlap: options.overlapMode,
+        showMirrors: options.showMirrors,
+        scope: options.scopeFilter || null,
+        artifact: options.artifactFilter || null,
+        runtime: options.runtimeFilter || null,
+      },
+      elapsedMs: Number(elapsedMs.toFixed(2)),
+      memory,
+      hits,
+    };
+
+    if (options.explainPolicy) {
+      basePayload.policy = {
+        defaultsApplied: options.defaultsApplied,
+        taskView: { task: options.task, view: options.view },
+        filters: {
+          scope: options.scopeFilter || [],
+          artifact: options.artifactFilter || [],
+          runtime: options.runtimeFilter || [],
         },
-        null,
-        2
-      )
+        scoring: {
+          familyCap: options.familyCap ?? policies.familyCap,
+          importDampeningPenalty: policies.importDampeningPenalty,
+          importQualityPenalty: policies.importQualityPenalty,
+          familyGroupWeights: policies.familyGroupWeights,
+          deliveryDemotionPaths: policies.deliveryDemotionContains.length,
+          deliveryDemotionExceptions: policies.deliveryDemotionExceptions.length,
+        },
+      };
+    }
+
+    if (options.fusionEnabled) {
+      basePayload.fusion = {
+        enabled: true,
+        domain: options.fusionDomain,
+        source: options.fusionSource,
+        weight: Number(options.fusionWeight.toFixed(4)),
+        strictP95: options.fusionStrictP95 ?? null,
+        summary: fusionReport?.summary || null,
+        error: fusionReport?.error || null,
+      };
+      basePayload.results = hits;
+      if (options.fusionJson || options.fusionFailOnCritical) {
+        basePayload.readiness = fusionReport?.readiness || null;
+      }
+    }
+
+    console.log(
+      JSON.stringify(basePayload, null, 2)
     );
+    if (options.fusionEnabled && options.fusionFailOnCritical) {
+      const status = fusionReport?.readiness.status || 'degraded';
+      process.exit(status === 'critical' ? 3 : status === 'degraded' ? 2 : 0);
+    }
     return;
   }
 
-  printTable(plan, hits, elapsedMs, options);
+  printTable(plan, hits, elapsedMs, options, fusionReport);
+  if (options.explainPolicy) {
+    console.log('Policy:');
+    console.log(
+      `  defaults strictPreset=${options.defaultsApplied.strictPreset ? 'yes' : 'no'} implicitScopeCode=${options.defaultsApplied.implicitScopeCode ? 'yes' : 'no'}`
+    );
+    console.log(
+      `  scoring familyCap=${options.familyCap ?? policies.familyCap} importDampening=${policies.importDampeningPenalty} importQuality=${policies.importQualityPenalty}`
+    );
+    console.log(
+      `  filters scope=${options.scopeFilter?.join(',') || '*'} artifact=${options.artifactFilter?.join(',') || '*'} runtime=${options.runtimeFilter?.join(',') || '*'}`
+    );
+  }
+
+  if (options.fusionEnabled && options.fusionFailOnCritical) {
+    const status = fusionReport?.readiness.status || 'degraded';
+    process.exit(status === 'critical' ? 3 : status === 'degraded' ? 2 : 0);
+  }
 }
 
 await main();

@@ -58,6 +58,7 @@ export interface SearchPolicies {
   familyGroupWeights: Required<FamilyGroupWeights>;
   deliveryDemotionExceptions: string[];
   scoreThresholds: Required<ScoreThresholdsPolicy>;
+  scoreThresholdsByQueryPack: Record<string, Partial<ScoreThresholdsPolicy>>;
 }
 
 export interface CanonicalFamily {
@@ -133,6 +134,7 @@ const DEFAULT_POLICIES: SearchPolicies = {
     strictPeakHeapWarnMB: 60,
     strictPeakRssWarnMB: 260,
   },
+  scoreThresholdsByQueryPack: {},
 };
 
 function mergePolicies(raw: Partial<SearchPolicies> | null | undefined): SearchPolicies {
@@ -217,6 +219,29 @@ function mergePolicies(raw: Partial<SearchPolicies> | null | undefined): SearchP
         ? raw.scoreThresholds.strictPeakRssWarnMB
         : DEFAULT_POLICIES.scoreThresholds.strictPeakRssWarnMB,
     },
+    scoreThresholdsByQueryPack: raw.scoreThresholdsByQueryPack || DEFAULT_POLICIES.scoreThresholdsByQueryPack,
+  };
+}
+
+export function resolveScoreThresholdsForQueryPack(
+  policies: SearchPolicies,
+  queryPack?: string | null
+): Required<ScoreThresholdsPolicy> {
+  if (!queryPack) {
+    return { ...policies.scoreThresholds };
+  }
+  const pack = String(queryPack || '').trim();
+  if (!pack) {
+    return { ...policies.scoreThresholds };
+  }
+  const byPack = policies.scoreThresholdsByQueryPack || {};
+  const override = byPack[pack];
+  if (!override) {
+    return { ...policies.scoreThresholds };
+  }
+  return {
+    ...policies.scoreThresholds,
+    ...override,
   };
 }
 

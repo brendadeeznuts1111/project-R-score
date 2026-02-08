@@ -15,6 +15,8 @@ import {
   type SubdomainStateCookieData,
 } from './lib/cookie-manager';
 import { createDomainContext } from './lib/domain-context';
+import { storeCookieTelemetry } from './lib/cookie-telemetry';
+import { resolveR2BridgeConfig } from './lib/r2-bridge';
 
 type Options = {
   port: number;
@@ -74,6 +76,14 @@ type R2CookieTelemetry = {
   source: 'r2' | 'default' | 'error';
   key: string;
   error?: string;
+};
+
+type InventoryItem = {
+  name: string;
+  exists: boolean;
+  size: number | null;
+  lastModified: string | null;
+  category?: 'snapshot' | 'domain-cookie' | 'domain-health';
 };
 
 function parseArgs(argv: string[]): Options {
@@ -537,10 +547,14 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       const p95 = asNumOrNull(strict?.latencyP95Ms);
       const warnings = Array.isArray(latest?.warnings) ? latest.warnings : [];
       const hasWarn = warnings.includes('latency_p95_warn');
+      const threshold = asNumOrNull(latest?.thresholdsApplied?.strictLatencyP95WarnMs);
+      const queryPack = String(latest?.queryPack || 'core_delivery');
       const cls = hasWarn ? 'status-bad' : (p95 === null ? 'status-neutral' : 'status-good');
       const valueText = p95 === null ? 'n/a' : p95.toFixed(0) + 'ms';
+      const thresholdText = threshold === null ? 'n/a' : threshold.toFixed(0) + 'ms';
+      const context = ' (thr ' + thresholdText + ', pack ' + queryPack + ')';
       strictP95BadgeEl.className = 'badge rss-badge ' + cls;
-      strictP95BadgeEl.textContent = hasWarn ? ('Strict p95 warn ' + valueText) : ('Strict p95 ' + valueText);
+      strictP95BadgeEl.textContent = hasWarn ? ('Strict p95 warn ' + valueText + context) : ('Strict p95 ' + valueText + context);
     };
     const sparkline = (values) => {
       if (!Array.isArray(values) || values.length === 0) return 'n/a';
@@ -873,6 +887,15 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       const hasWarn = stages.some((s) => s.status === 'warn');
       const closed = !hasFail && Boolean(data.loopClosed);
       const loopBadge = statusBadge(closed ? 'Stable' : (hasWarn ? 'Watch' : 'Down'));
+      const freshness = data.freshness || null;
+      const freshnessBadge = freshness
+        ? statusBadge(freshness.isAligned ? 'Freshness aligned' : 'Freshness drift')
+        : statusBadge('Freshness unknown');
+      const freshnessText = freshness
+        ? ('latestSeen=' + (freshness.latestSnapshotIdSeen || 'none') +
+          ' loopSnapshot=' + (freshness.loopStatusSnapshotId || 'none') +
+          ' staleMinutes=' + (freshness.staleMinutes ?? 'n/a'))
+        : 'freshness unavailable';
       const rows = stages.map((stage) =>
         '<tr>' +
           '<td><code>' + stage.id + '</code></td>' +
@@ -890,8 +913,16 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         ' coverageLOC=' + (statusCoverageLines || 'n/a') +
         ' warnings=' + ((data.warnings || []).length || 0) +
         '</div>' +
+        '<div class="meta">' + freshnessBadge + ' ' + freshnessText + '</div>' +
         '<div class="meta">loopClosedReason=' + (data.loopClosedReason || 'n/a') + '</div>' +
         '<table><thead><tr><th>Stage</th><th>Status</th><th>Reason</th><th>Evidence</th></tr></thead><tbody>' + rows + '</tbody></table>';
+
+      const freshnessStage = stages.find((stage) => stage.id === 'status_freshness');
+      if (freshnessStage?.status === 'fail') {
+        setReportNotice('<span class="badge status-bad">Loop freshness drift</span> <code>' + (freshnessStage.reason || 'status_freshness failed') + '</code>');
+      } else if (freshnessStage?.status === 'warn') {
+        setReportNotice('<span class="badge status-warn">Loop freshness stale</span> <code>' + (freshnessStage.reason || 'status_freshness warning') + '</code>');
+      }
     };
     const renderPublish = (data) => {
       if (!data || !Array.isArray(data.uploads)) {
@@ -940,8 +971,27 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         inventoryEl.innerHTML = '<pre>No inventory available.</pre>';
         return;
       }
+      const total = data.items.length;
+      const present = data.items.filter((item) => item.exists).length;
+      const cookieItems = data.items.filter((item) => item.category === 'domain-cookie');
+      const cookiePresent = cookieItems.filter((item) => item.exists).length;
+      const latestPayloadItem = cookieItems.find((item) => String(item.name || '').endsWith('/latest_payload'));
+      const latestPayloadTs = latestPayloadItem?.lastModified ? Date.parse(String(latestPayloadItem.lastModified)) : NaN;
+      const cookieAgeMin = Number.isFinite(latestPayloadTs)
+        ? Math.max(0, Math.floor((Date.now() - latestPayloadTs) / 60000))
+        : null;
+      const cookieFreshness = cookieAgeMin === null
+        ? statusBadge('Unknown')
+        : cookieAgeMin <= 15
+          ? statusBadge('Stable')
+          : cookieAgeMin <= 60
+            ? statusBadge('Watch')
+            : statusBadge('Down');
+      const healthItems = data.items.filter((item) => item.category === 'domain-health');
+      const healthPresent = healthItems.filter((item) => item.exists).length;
       const rows = data.items.map((item) =>
         '<tr>' +
+          '<td>' + (item.category || 'snapshot') + '</td>' +
           '<td><code>' + item.name + '</code></td>' +
           '<td>' + (item.exists ? 'yes' : 'no') + '</td>' +
           '<td>' + (item.size ?? 'n/a') + '</td>' +
@@ -950,7 +1000,9 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       ).join('');
       inventoryEl.innerHTML =
         '<div class="meta">snapshot=' + (data.snapshotId || 'n/a') + ' source=' + (data.source || 'local') + ' freshnessSec=' + (data.freshnessSec ?? 'n/a') + '</div>' +
-        '<table><thead><tr><th>Object</th><th>Exists</th><th>Size</th><th>Last Modified</th></tr></thead><tbody>' + rows + '</tbody></table>';
+        '<div class="meta">objects=' + present + '/' + total + ' cookies=' + cookiePresent + '/' + cookieItems.length + ' domainHealth=' + healthPresent + '/' + healthItems.length + '</div>' +
+        '<div class="meta">cookieTelemetry=' + cookieFreshness + ' age=' + (cookieAgeMin === null ? 'n/a' : (cookieAgeMin + 'm')) + '</div>' +
+        '<table><thead><tr><th>Category</th><th>Object</th><th>Exists</th><th>Size</th><th>Last Modified</th></tr></thead><tbody>' + rows + '</tbody></table>';
     };
     const renderDomainHealth = (data) => {
       if (!data || data.error) {
@@ -1076,6 +1128,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         '<div class="meta">storageKey health=<code>' + (data.storage?.sampleKeys?.health || 'n/a') + '</code></div>' +
         '<div class="meta">dnsChecked=' + (data.dnsPrefetch?.checked ?? 0) + ' dnsResolved=' + (data.dnsPrefetch?.resolved ?? 0) + ' cacheTtlSec=' + (data.dnsPrefetch?.cacheTtlSec ?? 'n/a') + '</div>' +
         '<div class="meta">cookieTelemetry=' + (data.health?.cookie?.detail || 'n/a') + ' domainMatch=' + (data.health?.cookie?.domainMatchesRequested ?? 'n/a') + ' cookieScore=' + (Number.isFinite(cookieScoreValue) ? cookieScoreValue : 'n/a') + ' hex=' + cookieHexBadge + ' bar=' + cookieUnicodeBar + ' <span class="badge" style="background:' + cookieHexBadge + ';border-color:' + cookieHexBadge + ';color:#0b0d12">■</span></div>' +
+        '<div class="meta">cookieTelemetryWrite=' + (data.cookieTelemetryWrite?.written ? 'ok' : 'skipped') + (data.cookieTelemetryWrite?.reason ? ' reason=<code>' + data.cookieTelemetryWrite.reason + '</code>' : '') + '</div>' +
         '<table><thead><tr><th>Type</th><th>Key</th><th>Exists</th><th>Last Modified</th></tr></thead><tbody>' + latestRows + '</tbody><tfoot>' + latestFooter + '</tfoot></table>' +
         '<table style="margin-top:10px"><thead><tr><th>Subdomain</th><th>URL Fragment</th><th>Path</th><th>Full Domain</th><th>DNS</th><th>Records</th><th>Source</th><th>Last Checked</th><th>Cookie</th></tr></thead><tbody>' + (subRows || '<tr><td colspan="9">No subdomain data.</td></tr>') + '</tbody><tfoot>' + subFooter + '</tfoot></table>';
     };
@@ -1127,7 +1180,8 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
         const first = doc.querySelector('item');
         if (!first) return null;
-        return first.querySelector('guid')?.textContent || first.querySelector('link')?.textContent || null;
+        const raw = first.querySelector('guid')?.textContent || first.querySelector('link')?.textContent || null;
+        return raw ? String(raw).trim() : null;
       } catch {
         return null;
       }
@@ -1206,12 +1260,17 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         if (!currentRssGuid) {
           currentRssGuid = latestGuid;
           knownRssGuid = latestGuid;
-          setRssBadge('RSS synced', 'ok');
+          if (currentLatestId && latestGuid !== currentLatestId) {
+            const short = latestGuid.length > 22 ? latestGuid.slice(0, 22) + '...' : latestGuid;
+            setRssBadge('RSS drift: ' + short, 'new');
+          } else {
+            setRssBadge('RSS synced', 'ok');
+          }
           return;
         }
-        if (latestGuid !== currentRssGuid) {
+        if (latestGuid !== currentRssGuid || (currentLatestId && latestGuid !== currentLatestId)) {
           const short = latestGuid.length > 22 ? latestGuid.slice(0, 22) + '...' : latestGuid;
-          setRssBadge('RSS update: ' + short, 'new');
+          setRssBadge((currentLatestId && latestGuid !== currentLatestId) ? ('RSS drift: ' + short) : ('RSS update: ' + short), 'new');
         } else {
           setRssBadge('RSS synced', 'ok');
         }
@@ -1261,7 +1320,8 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           currentRssGuid = guid;
           knownRssGuid = guid;
         }
-        setRssBadge('RSS synced', 'ok');
+        const rssAligned = Boolean(guid && data?.id && guid === data.id);
+        setRssBadge(rssAligned ? 'RSS synced' : 'RSS drift', rssAligned ? 'ok' : 'new');
       } catch (error) {
         setRssBadge('RSS unavailable', 'neutral');
         const message = error instanceof Error ? error.message : String(error);
@@ -1309,7 +1369,8 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           currentRssGuid = guid;
           knownRssGuid = guid;
         }
-        setRssBadge('RSS synced', 'ok');
+        const rssAligned = Boolean(guid && latestData?.id && guid === latestData.id);
+        setRssBadge(rssAligned ? 'RSS synced' : 'RSS drift', rssAligned ? 'ok' : 'new');
       } catch (error) {
         setRssBadge('RSS unavailable', 'neutral');
         const message = error instanceof Error ? error.message : String(error);
@@ -1660,9 +1721,9 @@ async function main(): Promise<void> {
 
   const buildInventoryLocal = async (snapshotId: string | null) => {
     const id = snapshotId || await resolveLatestSnapshotId('local');
-    const mk = (name: string, path: string) => {
+    const mk = (name: string, path: string, category: InventoryItem['category'] = 'snapshot'): InventoryItem => {
       if (!existsSync(path)) {
-        return { name, exists: false, size: null, lastModified: null };
+        return { name, exists: false, size: null, lastModified: null, category };
       }
       const st = statSync(path);
       return {
@@ -1670,17 +1731,20 @@ async function main(): Promise<void> {
         exists: true,
         size: st.size,
         lastModified: new Date(st.mtimeMs).toISOString(),
+        category,
       };
     };
-    const items = [
-      mk('snapshot.json', id ? resolve(dir, id, 'snapshot.json') : resolve(dir, '__missing__/snapshot.json')),
-      mk('summary.md', id ? resolve(dir, id, 'summary.md') : resolve(dir, '__missing__/summary.md')),
-      mk('snapshot.json.gz', id ? resolve(dir, id, 'snapshot.json.gz') : resolve(dir, '__missing__/snapshot.json.gz')),
-      mk('summary.md.gz', id ? resolve(dir, id, 'summary.md.gz') : resolve(dir, '__missing__/summary.md.gz')),
-      mk('publish-manifest.json', id ? resolve(dir, id, 'publish-manifest.json') : resolve(dir, '__missing__/publish-manifest.json')),
-      mk('rss.xml', resolve(dir, 'rss.xml')),
+    const items: InventoryItem[] = [
+      mk('snapshot.json', id ? resolve(dir, id, 'snapshot.json') : resolve(dir, '__missing__/snapshot.json'), 'snapshot'),
+      mk('summary.md', id ? resolve(dir, id, 'summary.md') : resolve(dir, '__missing__/summary.md'), 'snapshot'),
+      mk('snapshot.json.gz', id ? resolve(dir, id, 'snapshot.json.gz') : resolve(dir, '__missing__/snapshot.json.gz'), 'snapshot'),
+      mk('summary.md.gz', id ? resolve(dir, id, 'summary.md.gz') : resolve(dir, '__missing__/summary.md.gz'), 'snapshot'),
+      mk('publish-manifest.json', id ? resolve(dir, id, 'publish-manifest.json') : resolve(dir, '__missing__/publish-manifest.json'), 'snapshot'),
+      mk('rss.xml', resolve(dir, 'rss.xml'), 'snapshot'),
+      mk('health-report.json', resolve('reports', 'health-report.json'), 'domain-health'),
     ];
     const latestTs = items
+      .filter((it) => it.category === 'snapshot')
       .map((it) => (it.lastModified ? Date.parse(it.lastModified) : 0))
       .reduce((a, b) => Math.max(a, b), 0);
     return {
@@ -1707,6 +1771,10 @@ async function main(): Promise<void> {
         `${prefix}/${id}/summary.md.gz`,
         `${prefix}/${id}/publish-manifest.json`,
         `${prefix}/rss.xml`,
+        `cookies/${options.domain}/secure_domain_ctx`,
+        `cookies/${options.domain}/secure_subdomain_state`,
+        `cookies/${options.domain}/latest_payload`,
+        `domains/${options.domain}/cookies.json`,
       ];
       const listed = await S3Client.list(
         { prefix: `${prefix}/${id}/` },
@@ -1726,22 +1794,53 @@ async function main(): Promise<void> {
           secretAccessKey: r2.secretAccessKey,
         }
       );
+      const cookieListed = await S3Client.list(
+        { prefix: `cookies/${options.domain}/`, limit: 1000 },
+        {
+          bucket: r2.bucket,
+          endpoint: r2.endpoint,
+          accessKeyId: r2.accessKeyId,
+          secretAccessKey: r2.secretAccessKey,
+        }
+      );
+      const domainListed = await S3Client.list(
+        { prefix: `domains/${options.domain}/`, limit: 1000 },
+        {
+          bucket: r2.bucket,
+          endpoint: r2.endpoint,
+          accessKeyId: r2.accessKeyId,
+          secretAccessKey: r2.secretAccessKey,
+        }
+      );
       const contents = [...(listed.contents || []), ...(rootListed.contents || [])] as Array<{
         key: string;
         size?: number;
         lastModified?: string;
       }>;
-      const byKey = new Map(contents.map((c) => [c.key, c]));
-      const items = keys.map((key) => {
+      const extras = [...(cookieListed.contents || []), ...(domainListed.contents || [])] as Array<{
+        key: string;
+        size?: number;
+        lastModified?: string;
+      }>;
+      const allContents = [...contents, ...extras];
+      const byKey = new Map(allContents.map((c) => [c.key, c]));
+      const items: InventoryItem[] = keys.map((key) => {
         const item = byKey.get(key);
+        const category: InventoryItem['category'] = key.includes('/snapshot') || key.includes('/summary') || key.includes('/publish-manifest') || key.endsWith('/rss.xml')
+          ? 'snapshot'
+          : key.startsWith('cookies/')
+            ? 'domain-cookie'
+            : 'domain-health';
         return {
           name: key.replace(`${prefix}/`, ''),
           exists: Boolean(item),
           size: item?.size ?? null,
           lastModified: item?.lastModified ?? null,
+          category,
         };
       });
       const latestTs = items
+        .filter((it) => it.category === 'snapshot')
         .map((it) => (it.lastModified ? Date.parse(it.lastModified) : 0))
         .reduce((a, b) => Math.max(a, b), 0);
       return {
@@ -1763,20 +1862,34 @@ async function main(): Promise<void> {
       `${id}/summary.md.gz`,
       `${id}/publish-manifest.json`,
       `rss.xml`,
+      `cookies/${options.domain}/secure_domain_ctx`,
+      `cookies/${options.domain}/secure_subdomain_state`,
+      `cookies/${options.domain}/latest_payload`,
+      `domains/${options.domain}/cookies.json`,
     ];
-    const items = await Promise.all(targets.map(async (name) => {
+    const items: InventoryItem[] = await Promise.all(targets.map(async (name) => {
       const res = await proxyFetch(`${base}/${name}`, { method: 'HEAD', cache: 'no-store' });
+      const category: InventoryItem['category'] = name.startsWith('cookies/')
+        ? 'domain-cookie'
+        : name.startsWith('domains/')
+          ? 'domain-health'
+          : 'snapshot';
       return {
         name,
         exists: res.ok,
         size: Number(res.headers.get('content-length') || 0) || null,
         lastModified: res.headers.get('last-modified') || null,
+        category,
       };
     }));
+    const latestTs = items
+      .filter((it) => it.category === 'snapshot')
+      .map((it) => (it.lastModified ? Date.parse(it.lastModified) : 0))
+      .reduce((a, b) => Math.max(a, b), 0);
     return {
       source: 'r2',
       snapshotId: id,
-      freshnessSec: null,
+      freshnessSec: latestTs > 0 ? Math.max(0, Math.floor((Date.now() - latestTs) / 1000)) : null,
       items,
     };
   };
@@ -2172,39 +2285,109 @@ async function main(): Promise<void> {
   };
 
   const fetchCookieTelemetry = async (domain: string): Promise<R2CookieTelemetry> => {
-    const key = `domains/${domain}/cookies.json`;
+    const legacyKey = `domains/${domain}/cookies.json`;
     const fallback = defaultCookieTelemetry(domain);
     const r2 = resolveR2ReadOptions();
-    if (!r2) return { ...fallback, key };
-    try {
-      const objectRes = await fetchR2ObjectBySignature(
-        r2.endpoint,
-        r2.bucket,
-        key,
-        r2.accessKeyId,
-        r2.secretAccessKey
-      );
-      if (!objectRes.ok) {
-        return { ...fallback, source: objectRes.status === 404 ? 'default' : 'error', key, error: `status_${objectRes.status}` };
+    if (!r2) return { ...fallback, key: legacyKey };
+    const getJsonByKey = async (key: string): Promise<{ ok: boolean; status: number; parsed?: any; error?: string }> => {
+      try {
+        const objectRes = await fetchR2ObjectBySignature(
+          r2.endpoint,
+          r2.bucket,
+          key,
+          r2.accessKeyId,
+          r2.secretAccessKey
+        );
+        if (!objectRes.ok) {
+          return { ok: false, status: objectRes.status };
+        }
+        const text = await objectRes.text();
+        return { ok: true, status: 200, parsed: JSON.parse(text) };
+      } catch (error) {
+        return {
+          ok: false,
+          status: 500,
+          error: error instanceof Error ? error.message : String(error),
+        };
       }
-      const text = await objectRes.text();
-      const parsed = JSON.parse(text);
-      const rows = normalizeCookieRows(parsed);
-      const computed = computeCookieScore(rows);
-      const payloadUnresolved = Array.isArray(parsed?.unresolved)
-        ? parsed.unresolved.map((v: any) => String(v || '').trim().toLowerCase()).filter(Boolean)
+    };
+    try {
+      const legacy = await getJsonByKey(legacyKey);
+      if (legacy.ok) {
+        const parsed = legacy.parsed;
+        const rows = normalizeCookieRows(parsed);
+        const computed = computeCookieScore(rows);
+        const payloadUnresolved = Array.isArray(parsed?.unresolved)
+          ? parsed.unresolved.map((v: any) => String(v || '').trim().toLowerCase()).filter(Boolean)
+          : [];
+        return {
+          ...computed,
+          unresolved: Array.from(new Set([...computed.unresolved, ...payloadUnresolved])),
+          source: 'r2',
+          key: legacyKey,
+        };
+      }
+
+      const ctxKey = `cookies/${domain}/secure_domain_ctx`;
+      const stateKey = `cookies/${domain}/secure_subdomain_state`;
+      const payloadKey = `cookies/${domain}/latest_payload`;
+      const [ctxRes, stateRes, payloadRes] = await Promise.all([
+        getJsonByKey(ctxKey),
+        getJsonByKey(stateKey),
+        getJsonByKey(payloadKey),
+      ]);
+
+      if (!ctxRes.ok && !stateRes.ok && !payloadRes.ok) {
+        const code = legacy.status || ctxRes.status || stateRes.status || payloadRes.status;
+        return {
+          ...fallback,
+          source: code === 404 ? 'default' : 'error',
+          key: `${ctxKey},${stateKey},${payloadKey}`,
+          error: `status_${code}`,
+        };
+      }
+
+      const ctx = ctxRes.parsed || {};
+      const state = stateRes.parsed || {};
+      const payload = payloadRes.parsed || {};
+      const secure = parseBooleanLike(ctx?.secure);
+      const httpOnly = parseBooleanLike(ctx?.httpOnly);
+      const sameSite = String(ctx?.sameSite || '').trim().toLowerCase();
+      const active = parseBooleanLike(state?.active);
+      const cookieCount = Number(payload?.cookies);
+      const keyCount = Array.isArray(payload?.keys) ? payload.keys.length : 0;
+
+      let rawScore = 0;
+      if (secure) rawScore += 0.3;
+      if (httpOnly) rawScore += 0.3;
+      if (sameSite === 'strict') rawScore += 0.2;
+      else if (sameSite === 'lax') rawScore += 0.1;
+      if (active) rawScore += 0.1;
+      if (Number.isFinite(cookieCount) && cookieCount > 0) rawScore += 0.05;
+      if (keyCount > 0) rawScore += 0.05;
+      rawScore = clamp01(rawScore);
+      const score = Math.round(rawScore * 100);
+
+      const unresolved = Array.isArray(state?.unresolved)
+        ? state.unresolved.map((v: any) => String(v || '').trim().toLowerCase()).filter(Boolean)
         : [];
       return {
-        ...computed,
-        unresolved: Array.from(new Set([...computed.unresolved, ...payloadUnresolved])),
+        score,
+        disabled: false,
+        total: Number.isFinite(cookieCount) && cookieCount >= 0 ? cookieCount : (active ? 1 : 0),
+        secureCount: secure ? 1 : 0,
+        httpOnlyCount: httpOnly ? 1 : 0,
+        sameSiteCount: sameSite === 'strict' || sameSite === 'lax' ? 1 : 0,
+        expiryCount: 0,
+        unresolved,
         source: 'r2',
-        key,
+        key: `${ctxKey},${stateKey},${payloadKey}`,
       };
     } catch (error) {
       return {
         ...fallback,
         source: 'error',
-        key,
+        key: legacyKey,
         error: error instanceof Error ? error.message : String(error),
       };
     }
@@ -2672,6 +2855,33 @@ async function main(): Promise<void> {
     };
   };
 
+  const persistCookieTelemetry = async (
+    domain: string,
+    cookies: Map<string, string>
+  ): Promise<{ written: boolean; reason?: string }> => {
+    try {
+      const r2 = resolveR2BridgeConfig();
+      const bucketAdapter = {
+        put: async (key: string, value: string) => {
+          await S3Client.write(key, value, {
+            bucket: r2.bucket,
+            endpoint: r2.endpoint,
+            accessKeyId: r2.accessKeyId,
+            secretAccessKey: r2.secretAccessKey,
+            type: 'application/json',
+          });
+        },
+      };
+      await storeCookieTelemetry(domain, cookies, bucketAdapter);
+      return { written: true };
+    } catch (error) {
+      return {
+        written: false,
+        reason: error instanceof Error ? error.message : String(error),
+      };
+    }
+  };
+
   Bun.serve({
     port: options.port,
     fetch: async (req: Request) => {
@@ -2866,7 +3076,7 @@ async function main(): Promise<void> {
             ? parsedSubdomainCookie.unresolved.map((v) => String(v || '').trim().toLowerCase()).filter(Boolean)
             : [],
         };
-        const data = await buildDomainHealthSummary(source, domain, strictP95, cookieTelemetryInput);
+        const data: any = await buildDomainHealthSummary(source, domain, strictP95, cookieTelemetryInput);
         const state: DashboardState = {
           domain,
           accountId: String(data?.accountId || stateFromCookie?.accountId || ''),
@@ -2905,6 +3115,13 @@ async function main(): Promise<void> {
           );
           headers.append('set-cookie', domainCookie.toString());
           headers.append('set-cookie', subdomainCookie.toString());
+
+          const telemetryCookieMap = new Map(cookieMap);
+          telemetryCookieMap.set('secure_domain_ctx', String(domainCookie.value || ''));
+          telemetryCookieMap.set('secure_subdomain_state', String(subdomainCookie.value || ''));
+          telemetryCookieMap.set('bfw_state', 'present');
+          const telemetryWrite = await persistCookieTelemetry(domain, telemetryCookieMap);
+          data.cookieTelemetryWrite = telemetryWrite;
         }
         return Response.json(data, { headers });
       }
@@ -2943,7 +3160,35 @@ async function main(): Promise<void> {
         if (source !== 'local') {
           return Response.json({ error: 'loop_status_local_only', source }, { status: 400 });
         }
-        return readLocalJson(loopStatusJson);
+        if (!existsSync(loopStatusJson)) {
+          return Response.json({ error: 'not_found', path: loopStatusJson }, { status: 404 });
+        }
+        const raw = JSON.parse(await readFile(loopStatusJson, 'utf8')) as any;
+        let latestId: string | null = null;
+        if (existsSync(latestJson)) {
+          try {
+            const latest = JSON.parse(await readFile(latestJson, 'utf8')) as any;
+            latestId = latest?.id || null;
+          } catch {
+            latestId = null;
+          }
+        }
+        const generatedAtMs = Date.parse(String(raw?.generatedAt || ''));
+        const staleMinutes = Number.isFinite(generatedAtMs)
+          ? Number(Math.max(0, (Date.now() - generatedAtMs) / 60000).toFixed(2))
+          : null;
+        const loopSnapshotId = raw?.latestSnapshotId || null;
+        const freshness = {
+          latestSnapshotIdSeen: latestId || null,
+          loopStatusSnapshotId: loopSnapshotId,
+          isAligned: Boolean(latestId && loopSnapshotId && latestId === loopSnapshotId),
+          staleMinutes,
+        };
+        raw.freshness = {
+          ...(raw?.freshness || {}),
+          ...freshness,
+        };
+        return Response.json(raw);
       }
       if (url.pathname === '/api/dev-events') {
         if (!options.hotReload) {

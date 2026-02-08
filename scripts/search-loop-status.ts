@@ -14,7 +14,8 @@ type Stage = {
     | 'signal_quality'
     | 'signal_latency'
     | 'signal_memory'
-    | 'dashboard_parity';
+    | 'dashboard_parity'
+    | 'status_freshness';
   status: StageStatus;
   reason: string;
   evidence?: string[];
@@ -35,6 +36,12 @@ type LoopStatus = {
   queryPack: string | null;
   warnings: string[];
   coverage: CoverageKpi;
+  freshness: {
+    latestSnapshotIdSeen: string | null;
+    loopStatusSnapshotId: string | null;
+    isAligned: boolean;
+    staleMinutes: number | null;
+  };
   stages: Stage[];
   loopClosed: boolean;
   loopClosedReason: string;
@@ -42,6 +49,7 @@ type LoopStatus = {
 
 type LatestSnapshot = {
   id?: string;
+  createdAt?: string;
   queryPack?: string;
   warnings?: string[];
   deltaBasis?: string;
@@ -125,6 +133,10 @@ function buildMarkdown(status: LoopStatus): string {
   lines.push(`- Loop Closed: \`${status.loopClosed ? 'yes' : 'no'}\``);
   lines.push(`- Loop Closed Reason: ${status.loopClosedReason}`);
   lines.push(`- Active Warnings: ${status.warnings.length > 0 ? status.warnings.join(', ') : 'none'}`);
+  lines.push(`- Freshness Aligned: \`${status.freshness.isAligned ? 'yes' : 'no'}\``);
+  lines.push(`- Freshness Stale Minutes: \`${status.freshness.staleMinutes ?? 'n/a'}\``);
+  lines.push(`- Latest Snapshot Seen: \`${status.freshness.latestSnapshotIdSeen || 'none'}\``);
+  lines.push(`- Loop Snapshot ID: \`${status.freshness.loopStatusSnapshotId || 'none'}\``);
   lines.push('');
   lines.push('## Coverage KPI');
   if (!status.coverage) {
@@ -163,6 +175,15 @@ async function main(): Promise<void> {
   const strict = profileByName(latest, 'strict');
   const strictReliability = reliability(strict);
   const warnings = Array.isArray(latest?.warnings) ? latest!.warnings : [];
+  const latestSnapshotIdSeen = index?.snapshots?.[0]?.id || null;
+  const loopStatusSnapshotId = latest?.id || null;
+  const isAligned = Boolean(latestSnapshotIdSeen && loopStatusSnapshotId && latestSnapshotIdSeen === loopStatusSnapshotId);
+  const staleMinutes = (() => {
+    const created = latest?.createdAt ? Date.parse(latest.createdAt) : Number.NaN;
+    if (!Number.isFinite(created)) return null;
+    return Number(Math.max(0, (Date.now() - created) / 60000).toFixed(2));
+  })();
+  const freshnessWindowMinutes = 15;
   const hasQualityWarn = warnings.includes('quality_drop_warn') || warnings.includes('slop_rise_warn') || warnings.includes('reliability_drop_warn');
   const hasLatencyWarn = warnings.includes('latency_p95_warn');
   const hasMemoryWarn = warnings.includes('heap_peak_warn') || warnings.includes('rss_peak_warn');
@@ -247,6 +268,34 @@ async function main(): Promise<void> {
       ? stage('dashboard_parity', 'pass', 'Loop status includes snapshot/warnings/coverage for dashboard parity checks.', [latestPath, coveragePath])
       : stage('dashboard_parity', 'fail', 'Missing parity inputs for dashboard stage.', [latestPath, coveragePath])
   );
+  if (!latestSnapshotIdSeen || !loopStatusSnapshotId || !isAligned) {
+    stages.push(
+      stage(
+        'status_freshness',
+        'fail',
+        'Loop status snapshot is misaligned with latest benchmark snapshot.',
+        [`latestSeen=${latestSnapshotIdSeen || 'none'}`, `loopSnapshot=${loopStatusSnapshotId || 'none'}`]
+      )
+    );
+  } else if (staleMinutes !== null && staleMinutes > freshnessWindowMinutes) {
+    stages.push(
+      stage(
+        'status_freshness',
+        'warn',
+        `Loop status snapshot is older than ${freshnessWindowMinutes} minutes.`,
+        [`staleMinutes=${staleMinutes.toFixed(2)}`, `freshnessWindow=${freshnessWindowMinutes}`]
+      )
+    );
+  } else {
+    stages.push(
+      stage(
+        'status_freshness',
+        'pass',
+        'Loop status snapshot is aligned and fresh.',
+        [`staleMinutes=${staleMinutes === null ? 'n/a' : staleMinutes.toFixed(2)}`]
+      )
+    );
+  }
 
   const hasFail = stages.some((s) => s.status === 'fail');
   const disallowedWarns = stages.filter((s) => s.status === 'warn' && !['signal_latency', 'signal_memory'].includes(s.id));
@@ -263,6 +312,12 @@ async function main(): Promise<void> {
     queryPack: latest?.queryPack || null,
     warnings,
     coverage,
+    freshness: {
+      latestSnapshotIdSeen,
+      loopStatusSnapshotId,
+      isAligned,
+      staleMinutes,
+    },
     stages,
     loopClosed,
     loopClosedReason,
@@ -275,4 +330,3 @@ async function main(): Promise<void> {
 }
 
 await main();
-

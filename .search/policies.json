@@ -60,6 +60,11 @@
     "strictPeakHeapWarnMB": 60,
     "strictPeakRssWarnMB": 240
   },
+  "scoreThresholdsByQueryPack": {
+    "core_delivery_wide": {
+      "strictLatencyP95WarnMs": 1100
+    }
+  },
   "queryBoosts": {
     "bunRuntimeBoost": 18,
     "apiArtifactBoost": 8,

@@ -5,7 +5,12 @@ import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { S3Client } from 'bun';
 import inspector from 'node:inspector/promises';
-import { loadSearchPolicies } from '../lib/docs/canonical-family';
+import {
+  loadSearchPolicies,
+  resolveScoreThresholdsForQueryPack,
+  type ScoreThresholdsPolicy,
+} from '../lib/docs/canonical-family';
+import { evaluateStrictWarnings } from './lib/search-benchmark-thresholds';
 
 type RankedProfile = {
   profile: string;
@@ -34,6 +39,20 @@ type BenchmarkPayload = {
   queries: string[];
   rankedProfiles: RankedProfile[];
   warnings?: string[];
+  thresholdsApplied?: Required<ScoreThresholdsPolicy>;
+  warningContext?: {
+    queryPack: string;
+    strictMetrics: {
+      qualityDelta: number | null;
+      slopDelta: number | null;
+      reliabilityDelta: number | null;
+      reliabilityNow: number | null;
+      latencyP95Ms: number | null;
+      peakHeapUsedMB: number | null;
+      peakRssMB: number | null;
+    };
+    thresholds: Required<ScoreThresholdsPolicy>;
+  };
   coverage?: {
     files: number;
     lines: number;
@@ -402,6 +421,11 @@ function renderSummaryMarkdown(
   lines.push(`- Path: \`${payload.path}\``);
   lines.push(`- Limit: \`${payload.limit}\``);
   lines.push(`- Query Pack: \`${payload.queryPack || 'core_delivery'}\``);
+  if (payload.thresholdsApplied) {
+    lines.push(`- Strict p95 Threshold: \`${payload.thresholdsApplied.strictLatencyP95WarnMs}ms\``);
+    lines.push(`- Strict Heap Threshold: \`${payload.thresholdsApplied.strictPeakHeapWarnMB}MB\``);
+    lines.push(`- Strict RSS Threshold: \`${payload.thresholdsApplied.strictPeakRssWarnMB}MB\``);
+  }
   lines.push(`- Overlap Mode: \`${payload.overlap || 'ignore'}\``);
   lines.push(`- Delta Basis: \`${deltaBasis}\``);
   lines.push(`- Baseline Snapshot: \`${baselineSnapshotId || 'none'}\``);
@@ -428,6 +452,9 @@ function renderSummaryMarkdown(
   lines.push(`- reliability: \`${delta.reliability ?? 'n/a'}\``);
   lines.push('');
   lines.push(`## Warnings`);
+  if (payload.warningContext) {
+    lines.push(`- warningContext.queryPack: \`${payload.warningContext.queryPack}\``);
+  }
   if (warnings.length === 0) {
     lines.push(`- none`);
   } else {
@@ -622,10 +649,13 @@ async function main(): Promise<void> {
     payload.coverage = coverage;
   }
   const policies = await loadSearchPolicies(options.path);
+  const thresholdsApplied = resolveScoreThresholdsForQueryPack(
+    policies,
+    payload.queryPack || options.queryPack || queryPack
+  );
   const currentMetrics = snapshotMetrics(payload);
   const previousMetrics = previousPayload ? snapshotMetrics(previousPayload) : null;
   const delta = computeDelta(currentMetrics, previousMetrics);
-  const warnings: string[] = [];
   const strictCurrent = profileById(payload, 'strict');
   const strictPrevious = profileById(previousPayload, 'strict');
   const strictQualityDelta =
@@ -644,43 +674,33 @@ async function main(): Promise<void> {
   })();
   const strictReliabilityNow = profileReliability(strictCurrent);
 
-  if (strictQualityDelta !== null && strictQualityDelta < policies.scoreThresholds.qualityDropWarn) {
-    warnings.push('quality_drop_warn');
-  }
-  if (strictSlopDelta !== null && strictSlopDelta > policies.scoreThresholds.slopRiseWarn) {
-    warnings.push('slop_rise_warn');
-  }
-  if (strictReliabilityDelta !== null && strictReliabilityDelta < policies.scoreThresholds.reliabilityDropWarn) {
-    warnings.push('reliability_drop_warn');
-  }
-  if (
-    strictCurrent &&
-    typeof strictCurrent.latencyP95Ms === 'number' &&
-    strictCurrent.latencyP95Ms > policies.scoreThresholds.strictLatencyP95WarnMs
-  ) {
-    warnings.push('latency_p95_warn');
-  }
-  if (
-    strictCurrent &&
-    typeof strictCurrent.peakHeapUsedMB === 'number' &&
-    strictCurrent.peakHeapUsedMB > policies.scoreThresholds.strictPeakHeapWarnMB
-  ) {
-    warnings.push('heap_peak_warn');
-  }
-  if (
-    strictCurrent &&
-    typeof strictCurrent.peakRssMB === 'number' &&
-    strictCurrent.peakRssMB > policies.scoreThresholds.strictPeakRssWarnMB
-  ) {
-    warnings.push('rss_peak_warn');
-  }
-  if (
-    strictReliabilityNow !== null &&
-    strictReliabilityNow < policies.scoreThresholds.strictReliabilityFloor
-  ) {
-    warnings.push('strict_reliability_floor_warn');
-  }
+  const warnings = evaluateStrictWarnings(
+    {
+      qualityDelta: strictQualityDelta,
+      slopDelta: strictSlopDelta,
+      reliabilityDelta: strictReliabilityDelta,
+      reliabilityNow: strictReliabilityNow,
+      latencyP95Ms: strictCurrent?.latencyP95Ms ?? null,
+      peakHeapUsedMB: strictCurrent?.peakHeapUsedMB ?? null,
+      peakRssMB: strictCurrent?.peakRssMB ?? null,
+    },
+    thresholdsApplied
+  );
   payload.warnings = warnings;
+  payload.thresholdsApplied = thresholdsApplied;
+  payload.warningContext = {
+    queryPack: payload.queryPack || options.queryPack || queryPack,
+    strictMetrics: {
+      qualityDelta: strictQualityDelta,
+      slopDelta: strictSlopDelta,
+      reliabilityDelta: strictReliabilityDelta,
+      reliabilityNow: strictReliabilityNow,
+      latencyP95Ms: strictCurrent?.latencyP95Ms ?? null,
+      peakHeapUsedMB: strictCurrent?.peakHeapUsedMB ?? null,
+      peakRssMB: strictCurrent?.peakRssMB ?? null,
+    },
+    thresholds: thresholdsApplied,
+  };
 
   const summaryMd = renderSummaryMarkdown(
     id,
