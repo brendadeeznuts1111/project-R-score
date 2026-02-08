@@ -285,6 +285,17 @@ cp .env.example .env
 bun run src/secrets/setup-secrets.ts
 ```
 
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [`docs/OPERATIONS.md`](docs/OPERATIONS.md) | Admin, Client, and Barber operations guide |
+| [`docs/OPENCLAW.md`](docs/OPENCLAW.md) | Matrix profile gateway & Bun Context integration |
+| [`docs/THEMES.md`](docs/THEMES.md) | FactoryWager theme system & brand palette |
+| [`docs/OPTIMIZATION.md`](docs/OPTIMIZATION.md) | Performance optimizations & benchmarks |
+| [`AGENTS.md`](AGENTS.md) | AI agent context & coding guidelines |
+| [`QUICK-REF.md`](QUICK-REF.md) | Command reference & quick start |
+
 ## Key Files
 
 - `src/core/barbershop-dashboard.ts`: Full 3-view dashboard demo (admin/client/barber)

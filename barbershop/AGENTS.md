@@ -9,22 +9,22 @@ This file provides essential context for AI coding agents working on the Barbers
 ### Key Features
 
 - **3-View Dashboard System**: Admin (God View), Client (Customer), and Barber (Worker) portals
-- **Ticketing System**: Service assignment and completion flow
-- **Unified Payment Gateway**: Support for PayPal, CashApp, and Venmo with smart routing
+- **Payment Gateway Integration**: Unified payment system supporting PayPal, CashApp, and Venmo
+- **Ticketing System**: Service assignment and completion flow with ticket lifecycle management
 - **API Server**: REST API with WebSocket support, telemetry, and R2 cloud storage integration
 - **Theme System**: FactoryWager-branded UI with multiple themes (factorywager, light, dark, professional)
 - **Secrets Management**: Namespace-aware secret lifecycle with Bun.secrets integration
 - **Cloudflare Integration**: Domain management, DNS, SSL, caching, and analytics via CLI tools
-- **OpenClaw Gateway**: Matrix profile system with Bun Context and Enhanced Table Engine
+- **OpenClaw Gateway**: Matrix profile system with Bun Context v3.28 and Enhanced Table Engine
 - **Profile System**: Sampling profiler with R2 upload capabilities
 
-### Technology Stack
+## Technology Stack
 
 | Component | Technology |
 |-----------|------------|
 | Runtime | Bun >=1.3.6 |
 | Language | TypeScript (ES2022, ESNext modules) |
-| Database | SQLite (via `bun:sqlite`) |
+| Database | SQLite (via `bun:sqlite`) - in-memory |
 | Cache | Redis (via `bun:redis`) |
 | Storage | Cloudflare R2 (S3-compatible) |
 | Frontend | Vanilla HTML/JS with Bun-bundled assets |
@@ -40,13 +40,15 @@ barbershop/
 │   │   ├── barber-server.ts           # API server (HTTP + WebSocket)
 │   │   ├── barbershop-dashboard.ts    # 3-view dashboard server
 │   │   ├── barbershop-tickets.ts      # Ticketing demo
-│   │   ├── barber-cashapp-protips.ts  # CashApp payment with risk detection
-│   │   ├── barber-fusion-runtime.ts   # Fusion runtime with context
+│   │   ├── gateway-dashboard.ts       # Payment gateway dashboard
+│   │   ├── barber-cashapp-protips.ts  # CashApp integration
+│   │   ├── barber-fusion-runtime.ts   # Fusion runtime with OpenClaw
 │   │   ├── barber-fusion-schema.ts    # Fusion schema definitions
 │   │   ├── barber-fusion-types.ts     # Fusion type definitions
 │   │   ├── ui-v2.ts                   # React-style UI components
 │   │   ├── ui-v3.ts                   # Enhanced UI components
-│   │   └── theme-loader.ts            # Theme loading utilities
+│   │   ├── bunlock.ts                 # Bun-native lock system
+│   │   └── theme-loader.ts            # Dynamic theme loading
 │   ├── dashboard/              # Dashboard System v2
 │   │   ├── index.ts                   # Unified exports
 │   │   ├── builder.ts                 # Dashboard builder API
@@ -77,19 +79,23 @@ barbershop/
 │   │   ├── cli-table.ts               # Unicode-aware table formatting
 │   │   ├── wasm-table.ts              # WebAssembly.Table compute hooks
 │   │   ├── header-compression.ts
+│   │   ├── elite-*.ts                 # Elite utilities (circuit breaker, rate limiter, etc.)
 │   │   ├── logger.ts
 │   │   └── index.ts
 │   ├── config/                 # Configuration
 │   │   ├── bun-config.ts
 │   │   ├── domain.ts
 │   │   └── theme.ts
+│   ├── benchmarking/           # Depth configuration & benchmarking
+│   │   ├── depth-hooks.ts
+│   │   └── depth-optimizer.ts
 │   └── debug/                  # Debug/diagnostics
 │       ├── benchmark.ts
 │       ├── debug-config.ts
 │       ├── test-system-gaps.ts
 │       └── fix-system-gaps.ts
 ├── lib/                        # Shared libraries
-│   ├── bun-context.ts                 # Bun Context with global config
+│   ├── bun-context.ts                 # Bun Context v3.28
 │   ├── table-engine-v3.28.ts          # Enhanced table engine
 │   ├── cookie-security-v3.26.ts
 │   ├── cloudflare/             # Cloudflare API client
@@ -120,7 +126,7 @@ barbershop/
 │   │   └── index.ts
 │   └── utils/                  # Documentation utilities
 │       └── docs/
-├── openclaw/                   # Matrix profile gateway
+├── openclaw/                   # Matrix profile gateway (v3.28)
 │   ├── gateway.ts                     # Core API with context binding
 │   ├── cli.ts                         # CLI interface (11 commands)
 │   ├── oneliner.ts                    # One-liner CLI (--cwd, --env-file)
@@ -134,6 +140,7 @@ barbershop/
 │   ├── dashboard/              # Dashboard serving
 │   ├── analysis/               # Analysis tools
 │   ├── domain/                 # Cloudflare domain CLI tools
+│   ├── benchmarking/           # Depth configuration CLI
 │   └── shared/                 # Shared utilities
 ├── tests/
 │   ├── unit/                   # Unit tests (Bun test runner)
@@ -160,9 +167,32 @@ barbershop/
 ├── dist/                       # Build output
 ├── manifest.toml               # Project manifest
 ├── bunfig.toml                 # Bun configuration
-├── package.json                # Package scripts
-└── tsconfig.json               # TypeScript configuration
+└── package.json                # Package scripts
 ```
+
+## Key Configuration Files
+
+### bunfig.toml
+Bun runtime configuration with serve, run, install, build, and test settings:
+- Port: 3000, Host: 0.0.0.0
+- Test coverage threshold: 80%
+- Preload: `./src/config/bun-config.ts`
+- Build target: bun
+
+### manifest.toml
+Central project configuration defining:
+- Entrypoints (dashboard, tickets, server, fusion, cashapp)
+- Flows (customer_booking, checkout_bundle, barber_clock_in, ticket_lifecycle)
+- Dashboard configurations (admin, client, barber, analytics, payments)
+- Payment gateway settings (PayPal, CashApp, Venmo)
+- API routes, barber profiles, themes, security settings
+
+### tsconfig.json
+TypeScript configuration:
+- Target: ES2022
+- Module: ESNext with bundler resolution
+- Strict mode: Enabled (all strict flags on)
+- Declaration files generated with source maps
 
 ## Build and Run Commands
 
@@ -183,6 +213,8 @@ bun run dev:dashboard      # Dashboard hot reload
 bun run start:server       # API server with WebSocket
 bun run start:dashboard    # Dashboard only
 bun run start:tickets      # Ticketing demo
+bun run start:gateway      # Gateway dashboard
+bun run start:openclaw     # OpenClaw dashboard server
 ```
 
 ### Building
@@ -190,11 +222,11 @@ bun run start:tickets      # Ticketing demo
 # Standard builds
 bun run build              # Browser bundle
 bun run build:server       # Server build (bun target)
-bun run build:dashboard    # Dashboard build
+ bun run build:dashboard    # Dashboard build
+bun run build:meta         # With metafile analysis
 
 # Production
 bun run build:prod         # Minified + sourcemap
-bun run build:meta         # With metafile analysis
 
 # Optimized v2 builds
 bun run build:dashboard:v2
@@ -203,9 +235,7 @@ bun run build:cloudflare
 bun run build:all          # Build all v2 components
 ```
 
-## Testing
-
-### Running Tests
+### Testing
 ```bash
 bun run test               # All tests
 bun run test:unit          # Unit tests only
@@ -216,32 +246,95 @@ bun run test:profile       # Profile tests
 bun run test:types         # TypeScript type checking
 ```
 
-### Test Framework
-- **Runner**: Bun's built-in test runner (`bun:test`)
-- **Pattern**: `*.test.ts`
-- **Location**: `tests/unit/` and `tests/integration/`
-- **Setup**: `tests/setup.ts` is preloaded for all tests
+### Profiling & Performance
+```bash
+# Runtime profiling (generates markdown)
+bun run profile:cpu        # CPU profile
+bun run profile:heap       # Heap profile
 
-### Test Setup
-The test setup file (`tests/setup.ts`):
-- Sets `NODE_ENV=test`
-- Sets test secrets (`CSRF_SECRET`, `VARIANT_SECRET`)
-- Mocks console methods unless `VERBOSE_TESTS` is set
-- Provides `restoreConsole()` utility
+# Sampling profiles
+bun run profile:sampling
+bun run profile:quick
+bun run profile:upload     # Upload to R2
+bun run profile:list       # List R2 profiles
 
-### Test Structure
-```typescript
-import { describe, expect, test } from 'bun:test';
-
-describe('feature-name', () => {
-  test('should behave correctly', () => {
-    expect(result).toBe(expected);
-  });
-});
+# Benchmarks
+bun run benchmark
+bun run benchmark:websocket
+bun run benchmark:vault
 ```
 
-### Coverage
-Coverage is enabled in `bunfig.toml` with threshold 0.8 (80%).
+### Monitoring & Operations
+```bash
+# Health checks
+bun run monitor:status     # /api/health
+bun run monitor:runtime    # /ops/runtime
+bun run monitor:r2         # /ops/r2-status
+
+# Operations
+bun run ops:monitor        # Monitor expirations
+bun run ops:lifecycle      # FactoryWager lifecycle
+bun run ops:rollback       # Test rollback
+
+# Security
+bun run security:audit     # Security audit
+bun run security:citadel   # Security citadel
+
+# Secrets
+bun run secrets:field      # Secrets field
+bun run secrets:server     # Secrets server
+bun run secrets:boost      # Secret boost
+bun run secrets:vault      # Vault simulator
+```
+
+### Cloudflare Domain Management
+```bash
+# Domain operations
+bun run domain:zones       # List zones
+bun run domain:dns         # DNS records
+bun run domain:ssl         # SSL/TLS status
+bun run domain:cache       # Cache management
+bun run domain:analytics   # Analytics
+bun run domain:setup       # Setup factory-wager
+bun run domain:verify      # Verify configuration
+
+# Unified CLI (themed)
+bun run cf:unified
+bun run cf:themed          # Interactive themed CLI
+
+# Cloudflare Secrets Bridge
+bun run cf:secrets:status
+bun run cf:secrets:setup
+bun run cf:secrets:set-token
+bun run cf:secrets:history
+bun run cf:secrets:rotate
+bun run cf:secrets:schedule
+```
+
+### OpenClaw Gateway (Matrix Profiles) v3.28
+```bash
+# Gateway status
+bun run openclaw:status          # Check gateway status + context hash
+bun run openclaw:bridge          # Check Matrix bridge status
+bun run openclaw:version         # Show version info
+
+# Profile management
+bun run openclaw:profiles        # List available profiles
+bun run openclaw:bind <profile>  # Bind directory to profile
+bun run openclaw:switch <profile># Switch active profile
+bun run openclaw:profile_status  # Show binding status
+
+# Shell execution with context
+bun run openclaw:exec <command>  # Execute with profile context
+bun run openclaw:context <cmd>   # Execute with bun-context resolution
+
+# Dashboard Server
+bun run openclaw:dashboard       # Start dashboard server (port 8765)
+
+# Table Engine
+bun run openclaw:table           # Show full dashboard with tables
+bun run openclaw:table:compact   # Show compact dashboard
+```
 
 ## Code Style Guidelines
 
@@ -280,17 +373,10 @@ import { fetchWithDefaults } from '../utils/fetch-utils';
 import { logger } from '../utils/logger';
 ```
 
-### File Organization
-- Use `index.ts` as the public API for each module
-- Group related exports in the index file
-- Use descriptive comments with `// ═══` separators for sections
-- Document public APIs with JSDoc comments
-
-## Bun-Native APIs (Preferred)
-
+### Bun-Native APIs (Preferred)
 | Operation | Bun API | Benefit |
 |-----------|---------|---------|
-| Hashing | `Bun.hash()` | 10-100x faster |
+| Hashing | `Bun.hash()` | 25x faster |
 | Password | `Bun.password` | Native Argon2 |
 | Compression | `Bun.gzip()` / `Bun.zstd()` | 1.5x faster |
 | File I/O | `Bun.file()` / `Bun.write()` | 2-3x faster |
@@ -304,105 +390,76 @@ import { logger } from '../utils/logger';
 | CryptoHasher | `Bun.CryptoHasher` | Streaming hashes |
 | Peek | `Bun.peek()` | Promise introspection |
 | Secrets | `Bun.secrets` | macOS Keychain |
-| String Width | `Bun.stringWidth()` | Unicode-aware |
-| Color | `Bun.color()` | HSL/hex color conversion |
+| stringWidth | `Bun.stringWidth` | Unicode-aware width |
 
-### Example Usage
+### Error Handling
 ```typescript
-import { 
-  fastHash,           // Bun.hash
-  hashPassword,       // Bun.password
-  compressData,       // Bun.gzip/zstd
-  nanoseconds,        // Bun.nanoseconds
-  fastWrite,          // Bun.write
-  sleep,              // Bun.sleep
-  parseSemver,        // Bun.semver
-  escapeHTML,         // Bun.escapeHTML
-} from './src/utils/bun-enhanced';
+// Structured logging
+function logInfo(event: string, details: Record<string, unknown>) {
+  console.log(JSON.stringify({ event, ...details }));
+}
+
+// Validation functions
+function requireEnv(name: string, value: string) {
+  if (!value) throw new Error(`Missing required env: ${name}`);
+}
 ```
 
-## Environment Configuration
+### File Organization
+- Use `index.ts` as the public API for each module
+- Group related exports in the index file
+- Use descriptive comments with `// ═══` separators for sections
+- Document public APIs with JSDoc comments
 
-### Required Environment Variables
+## Testing Strategy
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `SERVER_NAME` | `Barbershop Dev` | Display name in logs/headers |
-| `HOST` | `0.0.0.0` | Bind host |
-| `PORT` / `BUN_PORT` | `3000` | Bind port (BUN_PORT checked first) |
-| `PUBLIC_BASE_URL` | `http://localhost:3000` | External URL for docs |
-| `NODE_ENV` | `development` | Environment mode |
+### Test Framework
+- **Runner**: Bun's built-in test runner (`bun:test`)
+- **Pattern**: `*.test.ts`
+- **Location**: `tests/unit/` and `tests/integration/`
+- **Setup**: `tests/setup.ts` is preloaded for all tests
 
-### R2 / S3 Configuration
+### Test Setup
+The test setup file (`tests/setup.ts`):
+- Sets `NODE_ENV=test`
+- Sets test secrets (`CSRF_SECRET`, `VARIANT_SECRET`)
+- Mocks console methods unless `VERBOSE_TESTS` is set
+- Provides `restoreConsole()` utility
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `R2_ACCOUNT_ID` | Yes* | Cloudflare account ID |
-| `R2_BUCKET_NAME` | Yes* | R2 bucket name |
-| `R2_ACCESS_KEY_ID` | Yes* | S3-compatible access key |
-| `R2_SECRET_ACCESS_KEY` | Yes* | S3-compatible secret |
-| `R2_ENDPOINT` | Optional | Custom endpoint URL |
+### Test Structure
+```typescript
+import { describe, expect, test } from 'bun:test';
 
-*Or use Bun.secrets with `USE_BUN_SECRETS=true`
+describe('feature-name', () => {
+  test('should behave correctly', () => {
+    expect(result).toBe(expected);
+  });
+});
+```
 
-### Security Configuration
+### Integration Tests
+- Start actual server on test port
+- Test HTTP endpoints
+- Test WebSocket upgrades
+- Clean up in `afterAll`
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `LIFECYCLE_KEY` | `godmode123` | Key for `/ops/lifecycle` actions |
-| `JWT_SECRET` | - | JWT signing secret |
-| `MANAGER_KEY` | - | Required in production |
-| `PAYPAL_SECRET` | - | PayPal API secret |
-| `ADMIN_KEY` | `godmode123` | Admin access key |
-| `CSRF_SECRET` | - | CSRF protection secret |
-
-### Payment Gateway Configuration
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `PAYPAL_CLIENT_ID` | For PayPal | PayPal client ID |
-| `PAYPAL_CLIENT_SECRET` | For PayPal | PayPal client secret |
-| `CASHAPP_BUSINESS_TAG` | For CashApp | Business Cashtag |
-| `CASHAPP_WEBHOOK_SECRET` | For CashApp | Webhook verification |
-| `VENMO_CLIENT_ID` | For Venmo | Venmo client ID |
-| `VENMO_ACCESS_TOKEN` | For Venmo | Venmo access token |
-
-### Cloudflare API
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `CLOUDFLARE_API_TOKEN` | For CF ops | API token with Zone:Read, DNS:Edit, etc. |
-| `CLOUDFLARE_ACCOUNT_ID` | For CF ops | Cloudflare account ID |
-
-### Other Important Variables
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `KEEP_ALIVE_TIMEOUT_SEC` | `5` | Keep-alive timeout |
-| `KEEP_ALIVE_MAX` | `1000` | Keep-alive max requests |
-| `FETCH_TIMEOUT_MS` | `5000` | Outbound fetch timeout |
-| `FETCH_VERBOSE` | `false` | Verbose fetch logging |
-| `UPLOAD_TIMEOUT_SEC` | `60` | Form upload timeout |
-| `AUTO_UNREF` | `false` | Call `server.unref()` on startup |
-| `USE_BUN_SECRETS` | `false` | Enable Bun.secrets (macOS Keychain) |
-| `METRICS_ENABLED` | `true` | Enable metrics collection |
-| `LOG_LEVEL` | `info` | Logging level |
-| `TLS_KEY_PATH` | - | TLS private key path |
-| `TLS_CERT_PATH` | - | TLS certificate path |
-| `ALLOW_INSECURE_WS` | `false` | Allow insecure WebSocket (dev only) |
-
-### Setup
+### Running Tests
 ```bash
-# Copy template
-cp .env.example .env
+# Specific test file
+bun test tests/unit/barber-server.test.ts
 
-# Edit with your values
-# Or use Bun.secrets setup
-bun run setup:r2
+# All unit tests
+bun run test:unit
 
-# Check secrets health
-bun run src/secrets/secrets-doctor.ts
+# All integration tests
+bun run test:integration
+
+# With verbose output
+VERBOSE_TESTS=1 bun run test
 ```
+
+### Coverage
+Coverage is enabled in `bunfig.toml` with threshold 0.8 (80%).
 
 ## Security Considerations
 
@@ -447,6 +504,91 @@ if (NODE_ENV === 'production') {
 - `TLS_KEY_PATH` and `TLS_CERT_PATH` must be set together
 - Optional CA certificate via `TLS_CA_PATH`
 
+## Environment Configuration
+
+### Required Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `SERVER_NAME` | `Barbershop Dev` | Display name in logs/headers |
+| `HOST` | `0.0.0.0` | Bind host |
+| `PORT` / `BUN_PORT` | `3000` | Bind port (BUN_PORT checked first) |
+| `PUBLIC_BASE_URL` | `http://localhost:3000` | External URL for docs |
+| `NODE_ENV` | `development` | Environment mode |
+
+### R2 / S3 Configuration
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `R2_ACCOUNT_ID` | Yes* | Cloudflare account ID |
+| `R2_BUCKET_NAME` | Yes* | R2 bucket name |
+| `R2_ACCESS_KEY_ID` | Yes* | S3-compatible access key |
+| `R2_SECRET_ACCESS_KEY` | Yes* | S3-compatible secret |
+| `R2_ENDPOINT` | Optional | Custom endpoint URL |
+
+*Or use Bun.secrets with `USE_BUN_SECRETS=true`
+
+### Security Configuration
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `LIFECYCLE_KEY` | `godmode123` | Key for `/ops/lifecycle` actions |
+| `JWT_SECRET` | - | JWT signing secret |
+| `MANAGER_KEY` | - | Required in production |
+| `PAYPAL_SECRET` | - | PayPal API secret |
+| `ADMIN_KEY` | `godmode123` | Admin access key |
+| `CSRF_SECRET` | - | CSRF protection secret |
+| `VARIANT_SECRET` | - | A/B testing variant secret |
+
+### Cloudflare API
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `CLOUDFLARE_API_TOKEN` | For CF ops | API token with Zone:Read, DNS:Edit, etc. |
+| `CLOUDFLARE_ACCOUNT_ID` | For CF ops | Cloudflare account ID |
+
+### Payment Gateway Configuration
+
+| Variable | Gateway | Description |
+|----------|---------|-------------|
+| `PAYPAL_CLIENT_ID` | PayPal | PayPal client ID |
+| `PAYPAL_CLIENT_SECRET` | PayPal | PayPal client secret |
+| `CASHAPP_BUSINESS_TAG` | CashApp | Business Cashtag |
+| `CASHAPP_WEBHOOK_SECRET` | CashApp | Webhook verification |
+| `VENMO_CLIENT_ID` | Venmo | Venmo client ID |
+| `VENMO_ACCESS_TOKEN` | Venmo | Venmo access token |
+| `VENMO_MERCHANT_ID` | Venmo | Venmo merchant ID |
+
+### Other Important Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `KEEP_ALIVE_TIMEOUT_SEC` | `5` | Keep-alive timeout |
+| `KEEP_ALIVE_MAX` | `1000` | Keep-alive max requests |
+| `FETCH_TIMEOUT_MS` | `5000` | Outbound fetch timeout |
+| `FETCH_VERBOSE` | `false` | Verbose fetch logging |
+| `UPLOAD_TIMEOUT_SEC` | `60` | Form upload timeout |
+| `AUTO_UNREF` | `false` | Call `server.unref()` on startup |
+| `USE_BUN_SECRETS` | `false` | Enable Bun.secrets (macOS Keychain) |
+| `METRICS_ENABLED` | `true` | Enable metrics collection |
+| `LOG_LEVEL` | `info` | Logging level |
+| `ALLOW_INSECURE_WS` | `false` | Allow insecure WebSocket (dev only) |
+| `DNS_PREFETCH_HOSTS` | `example.com` | Comma-separated hosts for DNS prefetch |
+| `DNS_WARMUP_HOSTS` | `DNS_PREFETCH_HOSTS` | Hosts to resolve at startup |
+
+### Setup
+```bash
+# Copy template
+cp .env.example .env
+
+# Edit with your values
+# Or use Bun.secrets setup
+bun run setup:r2
+
+# Check secrets health
+bun run src/secrets/secrets-doctor.ts
+```
+
 ## Key Runtime Endpoints
 
 ### Main Dashboard URLs
@@ -469,13 +611,13 @@ if (NODE_ENV === 'production') {
 - `GET /barber/stats?barberId=xxx` - Barber statistics
 
 ### Payment Endpoints
-- `POST /payment/process` - Unified payment processing
+- `POST /payment/process` - Unified payment gateway
 - `POST /payment/paypal/create-order` - Create PayPal order
 - `POST /payment/paypal/capture-order` - Capture PayPal order
 - `POST /payment/cashapp/process` - Process CashApp payment
-- `POST /payment/cashapp/detect-new` - Detect new CashApp accounts
-- `POST /payment/venmo/charge` - Charge via Venmo
-- `POST /payment/venmo/split` - Split payment between barbers
+- `POST /payment/cashapp/detect-new` - Detect new CashApp account
+- `POST /payment/venmo/charge` - Create Venmo charge
+- `POST /payment/venmo/split` - Split payment
 
 ### Operations Endpoints
 - `GET /ops/runtime` - Runtime metrics
@@ -487,6 +629,12 @@ if (NODE_ENV === 'production') {
 ### WebSocket
 - `ws://localhost:3000/ws/dashboard` - Admin real-time stream
 - `ws://localhost:3000/admin/ws?key=godmode123` - Authenticated admin stream
+
+### OpenClaw Dashboard Server (port 8765)
+- `GET /context-run` - Execute with context
+- `POST /context-run` - Execute with context (POST)
+- `GET /context-cache` - View context cache
+- `POST /context-clear` - Clear context cache
 
 ## Theme System
 
@@ -512,6 +660,12 @@ Themes are defined in TOML files in `themes/config/`:
 - `dark.toml` - Dark mode
 - `professional.toml` - Corporate style
 
+### Theme Testing
+```bash
+bun test tests/theme-palette.test.ts
+open demo/theme-showcase.html
+```
+
 ## Table Engine v3.28
 
 ### Features
@@ -522,7 +676,7 @@ Themes are defined in TOML files in `themes/config/`:
 
 ### Formatters
 ```typescript
-import { formatters } from './lib/table-engine-v3.28.ts';
+import { formatters } from '../lib/table-engine-v3.28.ts';
 
 formatters.status(true)        // "● ACTIVE" (green)
 formatters.status('warning')   // "● WARNING" (yellow)
@@ -537,99 +691,96 @@ formatters.variant('A')        // "▣ A" (cyan)
 formatters.token('abc123')     // "🔒 abc…" (masked)
 ```
 
-## Error Handling
+## Bun Context v3.28
 
-### Structured Logging
+The Bun Context system provides global configuration resolution and context-aware execution:
+
 ```typescript
-function logInfo(event: string, details: Record<string, unknown>) {
-  console.log(JSON.stringify({ event, ...details }));
+import { 
+  loadGlobalConfig, 
+  executeWithContext,
+  parseFlags 
+} from './lib/bun-context.ts';
+
+// Load global configuration
+const config = await loadGlobalConfig({ cwd: './my-project' });
+
+// Execute with full context resolution
+const session = await executeWithContext(['bun', 'test'], { useCache: true });
+```
+
+### Context Resolution Order
+1. package.json scripts
+2. Source files (.ts, .tsx, .js, .jsx)
+3. Binaries (via Bun.which)
+4. System commands
+
+## Dashboard System v2
+
+The Dashboard System provides a unified API for creating dashboards:
+
+```typescript
+import { 
+  createDashboard, 
+  createAdminDashboard,
+  createClientDashboard,
+  createBarberDashboard,
+  useDashboard 
+} from './src/dashboard';
+
+// Create a dashboard
+const dashboard = createDashboard({ 
+  view: 'admin', 
+  theme: 'professional' 
+}).buildAdminDashboard();
+
+// Use composition API
+const { metrics, widgets, refresh } = useDashboard({ 
+  view: 'admin',
+  autoRefresh: true 
+});
+```
+
+## Payment Gateway Integration
+
+### Unified Payment Endpoint
+```typescript
+// POST /payment/process
+{
+  "amount": 45.00,
+  "currency": "USD",
+  "customer_id": "cust_123",
+  "gateway_preference": "auto",  // or "paypal", "cashapp", "venmo"
+  "tip_amount": 6.75,
+  "split_between": ["barber_jb"],
+  "metadata": {
+    "services": ["Haircut", "Beard Trim"],
+    "barber_code": "JB"
+  }
 }
 ```
 
-### Validation Functions
-```typescript
-function requireEnv(name: string, value: string) {
-  if (!value) throw new Error(`Missing required env: ${name}`);
-}
-```
-
-## Profiling & Performance
-
-### Runtime Profiling
-```bash
-# CPU profile (generates markdown)
-bun run profile:cpu
-
-# Heap profile
-bun run profile:heap
-
-# Sampling profiles
-bun run profile:sampling
-bun run profile:quick
-bun run profile:upload     # Upload to R2
-bun run profile:list       # List R2 profiles
-```
-
-### Benchmarks
-```bash
-bun run benchmark
-bun run benchmark:websocket
-bun run benchmark:vault
-```
-
-## Cloudflare Domain Management
-
-```bash
-# Domain operations
-bun run domain:zones       # List zones
-bun run domain:dns         # DNS records
-bun run domain:ssl         # SSL/TLS status
-bun run domain:cache       # Cache management
-bun run domain:analytics   # Analytics
-bun run domain:setup       # Setup factory-wager
-bun run domain:verify      # Verify configuration
-
-# Unified CLI (themed)
-bun run cf:unified
-bun run cf:themed          # Interactive themed CLI
-
-# Cloudflare Secrets Bridge
-bun run cf:secrets:status
-bun run cf:secrets:rotate
-bun run cf:secrets:schedule
-```
-
-## OpenClaw Gateway (Matrix Profiles)
-
-```bash
-# Gateway status
-bun run openclaw:status          # Check gateway status
-bun run openclaw:bridge          # Check Matrix bridge status
-bun run openclaw:version         # Show version info
-
-# Profile management
-bun run openclaw:profiles        # List available profiles
-bun run openclaw:bind <profile>  # Bind directory to profile
-bun run openclaw:switch <profile># Switch active profile
-bun run openclaw:profile_status  # Show binding status
-
-# Shell execution with context
-bun run openclaw:exec <command>  # Execute with profile context
-
-# Context Dashboard Server
-bun run openclaw:dashboard       # Start dashboard server (port 8765)
-```
+### Routing Logic
+- Amount < $50 + CashApp preferred → CashApp
+- Amount ≥ $100 OR Venmo preferred → Venmo
+- New account + high amount → PayPal (buyer protection)
+- Split payment → Venmo
 
 ## Documentation References
 
+### Core Documentation
 - `README.md` - Main project documentation
-- `CLIENT.md` - Client-facing flow documentation
-- `ADMIN.md` - Admin flow documentation
+- `AGENTS.md` - AI agent context & coding guidelines (this file)
 - `QUICK-REF.md` - Quick reference commands
-- `THEME_PALETTE.md` - Theme system documentation
+
+### Consolidated Guides
+- `docs/OPERATIONS.md` - Admin, Client, and Barber operations (merged from ADMIN.md, CLIENT.md, FACTORY_WAGER_CHEATSHEET.md)
+- `docs/OPENCLAW.md` - Matrix profile gateway & Bun Context integration (merged from OPENCLAW_INTEGRATION.md, OPENCLAW_BARBERSHOP_INTEGRATION.md)
+- `docs/THEMES.md` - FactoryWager theme system & brand palette (merged from THEME_PALETTE.md, THEME_UPDATE_SUMMARY.md)
+- `docs/OPTIMIZATION.md` - Performance optimizations & benchmarks (merged from DASHBOARD_OPTIMIZATION_SUMMARY.md, OPTIMIZATION_COMPLETE.md)
+
+### Reference
 - `QUICK-REF-cookie-security.md` - Cookie security reference
-- `OPENCLAW_INTEGRATION.md` - OpenClaw integration guide
-- `DASHBOARD_OPTIMIZATION_SUMMARY.md` - Dashboard optimization notes
 - `openclaw/README.md` - OpenClaw gateway documentation
 - `docs/` - Extended documentation directory
 - `themes/BUILD.md` - Theme build documentation
@@ -665,8 +816,20 @@ curl "http://localhost:3000/ops/lifecycle?action=stop&key=godmode123"
 curl "http://localhost:3000/ops/lifecycle?action=stop_force&key=godmode123"
 ```
 
-## Fetch Diagnostics
+## Deployment Notes
 
+### Docker
+```bash
+bun run docker:build
+bun run docker:run
+```
+
+### R2 Mirror
+Two modes supported:
+1. **bun-r2**: Direct `r2_upload` / `r2_status` APIs
+2. **s3client**: Fallback to Bun `S3Client` for S3-compatible endpoints
+
+### Fetch Diagnostics
 Supports comprehensive fetch testing:
 - `url` - Target URL
 - `method` - GET/POST/PUT/PATCH/DELETE/HEAD/OPTIONS
