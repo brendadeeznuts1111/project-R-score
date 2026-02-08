@@ -51,7 +51,7 @@
         }
 
         .header-content {
-            padding: 1.5rem 0;
+            padding: 1rem 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -78,31 +78,6 @@
             font-weight: bold;
         }
 
-        .status {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: var(--secondary);
-            color: white;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: white;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
         main {
             padding: 3rem 0;
         }
@@ -122,223 +97,108 @@
 
         .hero p {
             font-size: 1.25rem;
-            opacity: 0.95;
+            opacity: 0.9;
             max-width: 600px;
-            margin: 0 auto 2rem;
+            margin: 0 auto;
         }
 
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 4rem;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1.5rem;
-            border-radius: 16px;
-            text-align: center;
-            box-shadow: var(--shadow-lg);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            color: var(--text-light);
-            font-weight: 500;
-        }
-
-        .sections {
+        .content-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 2rem;
-            margin-bottom: 4rem;
+            margin-bottom: 3rem;
         }
 
-        .section-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .section-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-        }
-
-        .section-header {
-            padding: 1.5rem;
-            background: var(--primary);
-            color: white;
-        }
-
-        .section-header h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .section-header p {
-            opacity: 0.9;
-            font-size: 0.875rem;
-        }
-
-        .section-content {
-            padding: 1.5rem;
-        }
-
-        .resource-list {
-            list-style: none;
-        }
-
-        .resource-item {
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .resource-item:last-child {
-            border-bottom: none;
-        }
-
-        .resource-link {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-
-        .resource-link:hover {
-            color: var(--primary-dark);
-        }
-
-        .resource-badge {
-            background: var(--surface);
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: var(--text-light);
-        }
-
-        .getting-started {
+        .card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 16px;
             padding: 2rem;
             box-shadow: var(--shadow-lg);
-            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .getting-started h2 {
-            color: var(--primary);
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
         }
 
-        .steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .step {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .step-number {
-            width: 32px;
-            height: 32px;
+        .card-icon {
+            width: 60px;
+            height: 60px;
             background: var(--primary);
-            color: white;
-            border-radius: 50%;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
-            flex-shrink: 0;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
         }
 
-        .step-content h3 {
-            margin-bottom: 0.5rem;
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
             color: var(--text);
         }
 
-        .step-content p {
+        .card p {
             color: var(--text-light);
-            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
         }
 
-        footer {
+        .card-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .card-link:hover {
+            color: var(--primary-dark);
+        }
+
+        .footer {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border);
             padding: 2rem 0;
             text-align: center;
-            border-top: 1px solid var(--border);
             margin-top: 4rem;
         }
 
-        .footer-content {
+        .footer p {
             color: var(--text-light);
         }
 
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-top: 1rem;
-        }
-
-        .footer-link {
-            color: var(--primary);
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-
-        .footer-link:hover {
-            color: var(--primary-dark);
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--secondary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
         }
 
         @media (max-width: 768px) {
             .hero h1 {
                 font-size: 2.5rem;
             }
-
-            .hero p {
-                font-size: 1.125rem;
-            }
-
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .sections {
+            
+            .content-grid {
                 grid-template-columns: 1fr;
+                gap: 1.5rem;
             }
-
-            .steps {
-                grid-template-columns: 1fr;
+            
+            .card {
+                padding: 1.5rem;
             }
         }
     </style>
@@ -351,9 +211,9 @@
                     <div class="logo-icon">FW</div>
                     <span>FactoryWager Wiki</span>
                 </div>
-                <div class="status">
-                    <div class="status-dot"></div>
-                    <span>Live & Active</span>
+                <div class="status-badge">
+                    <span style="width: 8px; height: 8px; background: white; border-radius: 50%;"></span>
+                    Live & Active
                 </div>
             </div>
         </div>
@@ -363,323 +223,71 @@
         <div class="container">
             <section class="hero">
                 <h1>FactoryWager Wiki</h1>
-                <p>Comprehensive documentation, patterns, and guides for modern development with Bun and enterprise-grade tools</p>
+                <p>Comprehensive documentation, patterns, and guides for modern development workflows and enterprise solutions.</p>
             </section>
 
-            <section class="stats">
-                <div class="stat-card">
-                    <div class="stat-number">300+</div>
-                    <div class="stat-label">Documentation Pages</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">15</div>
-                    <div class="stat-label">Core Features</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">50+</div>
-                    <div class="stat-label">Code Patterns</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">100%</div>
-                    <div class="stat-label">TypeScript Coverage</div>
-                </div>
-            </section>
-
-            <section class="getting-started">
-                <h2>🚀 Getting Started</h2>
-                <p>Welcome to the FactoryWager Wiki - your comprehensive resource for modern development patterns, Bun runtime features, and enterprise-grade automation tools.</p>
-                
-                <div class="steps">
-                    <div class="step">
-                        <div class="step-number">1</div>
-                        <div class="step-content">
-                            <h3>Explore Features</h3>
-                            <p>Browse our comprehensive documentation covering Bun runtime, performance optimization, and advanced patterns</p>
-                        </div>
-                    </div>
-                    <div class="step">
-                        <div class="step-number">2</div>
-                        <div class="step-content">
-                            <h3>Try Examples</h3>
-                            <p>Run interactive code examples and see real-time performance metrics and benchmarks</p>
-                        </div>
-                    </div>
-                    <div class="step">
-                        <div class="step-number">3</div>
-                        <div class="step-content">
-                            <h3>Integrate & Build</h3>
-                            <p>Use our patterns and tools to accelerate your development with enterprise-grade solutions</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="sections">
-                <div class="section-card">
-                    <div class="section-header">
-                        <h2>📚 Core Documentation</h2>
-                        <p>Essential Bun runtime and API documentation</p>
-                    </div>
-                    <div class="section-content">
-                        <ul class="resource-list">
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">Bun Runtime API</a>
-                                <span class="resource-badge">Core</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">File System Operations</a>
-                                <span class="resource-badge">Essential</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">HTTP Server & Networking</a>
-                                <span class="resource-badge">Core</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">SQLite Database</a>
-                                <span class="resource-badge">Database</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">Package Manager</a>
-                                <span class="resource-badge">Tools</span>
-                            </li>
-                        </ul>
-                    </div>
+            <div class="content-grid">
+                <div class="card">
+                    <div class="card-icon">📚</div>
+                    <h3>Documentation</h3>
+                    <p>Comprehensive guides and API documentation for all FactoryWager components and services.</p>
+                    <a href="#" class="card-link">
+                        Explore Docs →
+                    </a>
                 </div>
 
-                <div class="section-card">
-                    <div class="section-header" style="background: #22c55e;">
-                        <h2>⚡ Performance & Optimization</h2>
-                        <p>Advanced performance monitoring and optimization tools</p>
-                    </div>
-                    <div class="section-content">
-                        <ul class="resource-list">
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">Performance Monitoring</a>
-                                <span class="resource-badge">Advanced</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">Memory Management</a>
-                                <span class="resource-badge">Critical</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">Bulk Operations</a>
-                                <span class="resource-badge">Enterprise</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">Server Optimization</a>
-                                <span class="resource-badge">Performance</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">Benchmarking Tools</a>
-                                <span class="resource-badge">Analytics</span>
-                            </li>
-                        </ul>
-                    </div>
+                <div class="card">
+                    <div class="card-icon">🏗️</div>
+                    <h3>Architecture Patterns</h3>
+                    <p>Enterprise-grade patterns and best practices for scalable application development.</p>
+                    <a href="#" class="card-link">
+                        View Patterns →
+                    </a>
                 </div>
 
-                <div class="section-card">
-                    <div class="section-header" style="background: #f59e0b;">
-                        <h2>🔧 Developer Tools</h2>
-                        <p>Professional development and debugging utilities</p>
-                    </div>
-                    <div class="section-content">
-                        <ul class="resource-list">
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">Editor Integration</a>
-                                <span class="resource-badge">VS Code</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">CLI Utilities</a>
-                                <span class="resource-badge">Tools</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">Object Inspection</a>
-                                <span class="resource-badge">Debugging</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">ANSI Colors</a>
-                                <span class="resource-badge">Terminal</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">Data Processing</a>
-                                <span class="resource-badge">Utilities</span>
-                            </li>
-                        </ul>
-                    </div>
+                <div class="card">
+                    <div class="card-icon">⚡</div>
+                    <h3>Performance Guides</h3>
+                    <p>Optimization techniques and performance tuning strategies for high-throughput systems.</p>
+                    <a href="#" class="card-link">
+                        Learn More →
+                    </a>
                 </div>
 
-                <div class="section-card">
-                    <div class="section-header" style="background: #ef4444;">
-                        <h2>🛡️ Security & Best Practices</h2>
-                        <p>Security implementations and enterprise patterns</p>
-                    </div>
-                    <div class="section-content">
-                        <ul class="resource-list">
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">CSRF Protection</a>
-                                <span class="resource-badge">Security</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">Password Hashing</a>
-                                <span class="resource-badge">Authentication</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">HTML Escaping</a>
-                                <span class="resource-badge">XSS Protection</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">Cryptographic Functions</a>
-                                <span class="resource-badge">Security</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">Error Handling</a>
-                                <span class="resource-badge">Reliability</span>
-                            </li>
-                        </ul>
-                    </div>
+                <div class="card">
+                    <div class="card-icon">🔧</div>
+                    <h3>Development Tools</h3>
+                    <p>CLI tools, scripts, and utilities to streamline your development workflow.</p>
+                    <a href="#" class="card-link">
+                        Get Tools →
+                    </a>
                 </div>
 
-                <div class="section-card">
-                    <div class="section-header" style="background: #8b5cf6;">
-                        <h2>🌟 Bun v1.3.8 Features</h2>
-                        <p>Latest cutting-edge features and capabilities</p>
-                    </div>
-                    <div class="section-content">
-                        <ul class="resource-list">
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">Markdown Parser</a>
-                                <span class="resource-badge">New</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">Build Analyzer</a>
-                                <span class="resource-badge">LLM-Friendly</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">Enhanced Performance</a>
-                                <span class="resource-badge">Optimized</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">CommonMark Compliance</a>
-                                <span class="resource-badge">Standards</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">GFM Extensions</a>
-                                <span class="resource-badge">GitHub</span>
-                            </li>
-                        </ul>
-                    </div>
+                <div class="card">
+                    <div class="card-icon">🛡️</div>
+                    <h3>Security Standards</h3>
+                    <p>Security guidelines, compliance requirements, and best practices for secure development.</p>
+                    <a href="#" class="card-link">
+                        Security Docs →
+                    </a>
                 </div>
 
-                <div class="section-card">
-                    <div class="section-header" style="background: #06b6d4;">
-                        <h2>🤖 AI & Automation</h2>
-                        <p>AI-powered tools and enterprise automation</p>
-                    </div>
-                    <div class="section-content">
-                        <ul class="resource-list">
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">AI Operations Manager</a>
-                                <span class="resource-badge">Enterprise</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">Machine Learning Models</a>
-                                <span class="resource-badge">AI/ML</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">Advanced Caching</a>
-                                <span class="resource-badge">Performance</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">Circuit Breaker</a>
-                                <span class="resource-badge">Resilience</span>
-                            </li>
-                            <li class="resource-item">
-                                <a href="#" class="resource-link">Health Monitoring</a>
-                                <span class="resource-badge">Observability</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </main>
-
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <p>&copy; 2026 FactoryWager Wiki. Built with Bun, TypeScript, and modern web technologies.</p>
-                <div class="footer-links">
-                    <a href="#" class="footer-link">Documentation</a>
-                    <a href="#" class="footer-link">GitHub</a>
-                    <a href="#" class="footer-link">Community</a>
-                    <a href="#" class="footer-link">Contributing</a>
+                <div class="card">
+                    <div class="card-icon">🚀</div>
+                    <h3>Deployment Guides</h3>
+                    <p>Step-by-step deployment instructions for various environments and platforms.</p>
+                    <a href="#" class="card-link">
+                        Deploy Now →
+                    </a>
                 </div>
             </div>
         </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 FactoryWager Wiki. Built with enterprise-grade standards and modern development practices.</p>
+        </div>
     </footer>
-
-    <script>
-        // Add smooth scrolling and interactive elements
-        document.addEventListener('DOMContentLoaded', function() {
-            // Smooth scroll for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth' });
-                    }
-                });
-            });
-
-            // Add hover effects to cards
-            const cards = document.querySelectorAll('.stat-card, .section-card');
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-5px) scale(1.02)';
-                });
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0) scale(1)';
-                });
-            });
-
-            // Animate stats on scroll
-            const observerOptions = {
-                threshold: 0.5,
-                rootMargin: '0px'
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const statNumbers = entry.target.querySelectorAll('.stat-number');
-                        statNumbers.forEach(stat => {
-                            const finalValue = stat.textContent;
-                            const isPercentage = finalValue.includes('%');
-                            const isPlus = finalValue.includes('+');
-                            const numericValue = parseInt(finalValue.replace(/\D/g, ''));
-                            
-                            let currentValue = 0;
-                            const increment = numericValue / 50;
-                            const timer = setInterval(() => {
-                                currentValue += increment;
-                                if (currentValue >= numericValue) {
-                                    currentValue = numericValue;
-                                    clearInterval(timer);
-                                }
-                                stat.textContent = Math.floor(currentValue) + (isPercentage ? '%' : '') + (isPlus ? '+' : '');
-                            }, 30);
-                        });
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
-
-            const statsSection = document.querySelector('.stats');
-            if (statsSection) {
-                observer.observe(statsSection);
-            }
-        });
-    </script>
 </body>
 </html>
