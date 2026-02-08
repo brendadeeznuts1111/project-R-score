@@ -16,6 +16,8 @@ type QueryResultSummary = {
   elapsedMs: number;
   // End-to-end wall time for the benchmark invocation of this query.
   wallElapsedMs: number;
+  rssMB: number;
+  heapUsedMB: number;
   total: number;
   slop: number;
   duplicate: number;
@@ -32,6 +34,10 @@ type ProfileSummary = {
   latencyP50Ms: number;
   latencyP95Ms: number;
   latencyMaxMs: number;
+  peakRssMB: number;
+  peakHeapUsedMB: number;
+  avgRssMB: number;
+  avgHeapUsedMB: number;
   avgSignalPct: number;
   avgSlopPct: number;
   avgDuplicatePct: number;
@@ -231,6 +237,8 @@ function summarizeQuery(query: string, payload: any): QueryResultSummary {
     query,
     elapsedMs: Number(payload?.elapsedMs || 0),
     wallElapsedMs: Number(payload?.wallElapsedMs || 0),
+    rssMB: Number(payload?.memory?.rssMB || 0),
+    heapUsedMB: Number(payload?.memory?.heapUsedMB || 0),
     total,
     slop,
     duplicate,
@@ -257,6 +265,12 @@ function aggregateProfile(profile: Profile, querySummaries: QueryResultSummary[]
   const latencyP50Ms = Number(percentile(latencies, 50).toFixed(2));
   const latencyP95Ms = Number(percentile(latencies, 95).toFixed(2));
   const latencyMaxMs = Number((latencies.length > 0 ? Math.max(...latencies) : 0).toFixed(2));
+  const rssValues = querySummaries.map((q) => Number(q.rssMB || 0)).filter((v) => Number.isFinite(v) && v >= 0);
+  const heapValues = querySummaries.map((q) => Number(q.heapUsedMB || 0)).filter((v) => Number.isFinite(v) && v >= 0);
+  const peakRssMB = Number((rssValues.length > 0 ? Math.max(...rssValues) : 0).toFixed(2));
+  const peakHeapUsedMB = Number((heapValues.length > 0 ? Math.max(...heapValues) : 0).toFixed(2));
+  const avgRssMB = Number((rssValues.reduce((a, b) => a + b, 0) / (rssValues.length || 1)).toFixed(2));
+  const avgHeapUsedMB = Number((heapValues.reduce((a, b) => a + b, 0) / (heapValues.length || 1)).toFixed(2));
 
   const avgSignalPct = Number((querySummaries.reduce((a, q) => a + q.signalPct, 0) / n).toFixed(2));
   const avgSlopPct = Number((querySummaries.reduce((a, q) => a + (q.total ? (q.slop / q.total) * 100 : 0), 0) / n).toFixed(2));
@@ -278,6 +292,10 @@ function aggregateProfile(profile: Profile, querySummaries: QueryResultSummary[]
     latencyP50Ms,
     latencyP95Ms,
     latencyMaxMs,
+    peakRssMB,
+    peakHeapUsedMB,
+    avgRssMB,
+    avgHeapUsedMB,
     avgSignalPct,
     avgSlopPct,
     avgDuplicatePct,

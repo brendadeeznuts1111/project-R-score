@@ -13,6 +13,10 @@ type RankedProfile = {
   latencyP50Ms: number;
   latencyP95Ms: number;
   latencyMaxMs: number;
+  peakRssMB?: number;
+  peakHeapUsedMB?: number;
+  avgRssMB?: number;
+  avgHeapUsedMB?: number;
   avgSignalPct: number;
   avgSlopPct: number;
   avgDuplicatePct: number;
@@ -420,12 +424,12 @@ function renderSummaryMarkdown(
   lines.push('');
   lines.push(`## Ranked Profiles`);
   lines.push('');
-  lines.push(`| Rank | Profile | Quality | Signal% | Unique Family% | Slop% | Duplicate% | P95(ms) |`);
-  lines.push(`|---:|---|---:|---:|---:|---:|---:|---:|`);
+  lines.push(`| Rank | Profile | Quality | Signal% | Unique Family% | Slop% | Duplicate% | P95(ms) | Peak Heap(MB) | Peak RSS(MB) |`);
+  lines.push(`|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|`);
 
   payload.rankedProfiles.forEach((p, idx) => {
     lines.push(
-      `| ${idx + 1} | ${p.profile} | ${p.qualityScore.toFixed(2)} | ${p.avgSignalPct.toFixed(2)} | ${p.avgUniqueFamilyPct.toFixed(2)} | ${p.avgSlopPct.toFixed(2)} | ${p.avgDuplicatePct.toFixed(2)} | ${Number(p.latencyP95Ms || 0).toFixed(2)} |`
+      `| ${idx + 1} | ${p.profile} | ${p.qualityScore.toFixed(2)} | ${p.avgSignalPct.toFixed(2)} | ${p.avgUniqueFamilyPct.toFixed(2)} | ${p.avgSlopPct.toFixed(2)} | ${p.avgDuplicatePct.toFixed(2)} | ${Number(p.latencyP95Ms || 0).toFixed(2)} | ${Number(p.peakHeapUsedMB || 0).toFixed(2)} | ${Number(p.peakRssMB || 0).toFixed(2)} |`
     );
   });
 

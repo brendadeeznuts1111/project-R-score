@@ -1357,6 +1357,14 @@ async function main(): Promise<void> {
   const start = performance.now();
   const hits = await smartSearch(plan, options);
   const elapsedMs = performance.now() - start;
+  const mem = process.memoryUsage();
+  const memory = {
+    rssMB: Number((mem.rss / (1024 * 1024)).toFixed(2)),
+    heapUsedMB: Number((mem.heapUsed / (1024 * 1024)).toFixed(2)),
+    heapTotalMB: Number((mem.heapTotal / (1024 * 1024)).toFixed(2)),
+    externalMB: Number((mem.external / (1024 * 1024)).toFixed(2)),
+    arrayBuffersMB: Number((((mem as any).arrayBuffers || 0) / (1024 * 1024)).toFixed(2)),
+  };
 
   if (options.json) {
     console.log(
@@ -1380,6 +1388,7 @@ async function main(): Promise<void> {
             runtime: options.runtimeFilter || null,
           },
           elapsedMs: Number(elapsedMs.toFixed(2)),
+          memory,
           hits,
         },
         null,
