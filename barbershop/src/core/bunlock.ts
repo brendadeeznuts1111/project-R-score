@@ -91,8 +91,8 @@ export class BunLock {
     try {
       stmt.run(lockId, resource, owner, now, expiresAt, ttl, meta ? JSON.stringify(meta) : null);
       return lockId;
-    } catch (error: any) {
-      if (error.message?.includes('UNIQUE constraint failed')) {
+    } catch (error) {
+      if (error instanceof Error && error.message?.includes('UNIQUE constraint failed')) {
         return null; // Resource already locked
       }
       throw error;

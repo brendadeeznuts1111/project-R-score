@@ -338,7 +338,11 @@ await pubsub.connect();
 await initR2Mirror();
 
 // ==================== TELEMETRY LOGGER ====================
-function logTelemetry(eventType: string, data: any, ip: string) {
+interface TelemetryData {
+  [key: string]: string | number | boolean | null | undefined;
+}
+
+function logTelemetry(eventType: string, data: TelemetryData, ip: string) {
   const entry = {
     eventType,
     data,
