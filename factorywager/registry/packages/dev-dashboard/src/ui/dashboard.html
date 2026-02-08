@@ -1663,11 +1663,11 @@ async function loadDashboard(showLoading = false) {
       if (roadmapProgressEl) {
         roadmapProgressEl.innerHTML = `
           <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;" title="Progress and checkmarks are saved in this browser (localStorage). Hover phases and items for NEXT_STEPS.md and file cross-references.">
-            <span style="color: #aaa; font-size: 13px;">\${completed} of \${total} items complete</span>
+            <span style="color: #aaa; font-size: 13px;">${completed} of ${total} items complete</span>
             <div style="flex: 1; min-width: 120px; max-width: 280px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
-              <div style="width: \${pct}%; height: 100%; background: linear-gradient(90deg, #00aa66, #00ff88); border-radius: 4px; transition: width 0.2s;"></div>
+              <div style="width: ${pct}%; height: 100%; background: linear-gradient(90deg, #00aa66, #00ff88); border-radius: 4px; transition: width 0.2s;"></div>
             </div>
-            <span style="color: #00ff88; font-weight: bold; font-size: 14px;">\${pct}%</span>
+            <span style="color: #00ff88; font-weight: bold; font-size: 14px;">${pct}%</span>
           </div>
           `;
       }
@@ -1677,45 +1677,32 @@ async function loadDashboard(showLoading = false) {
         const priorityBg = phase.priority === 'high' ? 'rgba(255, 68, 68, 0.1)' : phase.priority === 'medium' ? 'rgba(255, 170, 0, 0.1)' : phase.priority === 'low' ? 'rgba(136, 136, 136, 0.1)' : 'rgba(0, 255, 136, 0.1)';
         const phaseMeta = [ phase.time, phase.difficulty ].filter(Boolean).join(' · ');
         return `
-          <div class="item" style="margin-bottom: 20px; border-left: 4px solid \${priorityColor};">
+          <div class="item" style="margin-bottom: 20px; border-left: 4px solid ${priorityColor};">
             <div class="item-content">
               <div class="item-title" style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                <span style="padding: 4px 8px; background: \${priorityBg}; border-radius: 4px; font-size: 11px; font-weight: bold; color: \${priorityColor};">
+                <span style="padding: 4px 8px; background: ${priorityBg}; border-radius: 4px; font-size: 11px; font-weight: bold; color: ${priorityColor};">
                   \${phase.priority === 'high' ? '🔴 High' : phase.priority === 'medium' ? '🟡 Medium' : phase.priority === 'low' ? '⚪ Low' : '✅ Completed'}
                 </span>
-                <span style="font-size: 18px; font-weight: bold; cursor: help; border-bottom: 1px dotted rgba(255,255,255,0.3);" title="\${escapeHTML(phase.tip || '')}">\${escapeHTML(phase.phase)}</span>
+                <span style="font-size: 18px; font-weight: bold; cursor: help; border-bottom: 1px dotted rgba(255,255,255,0.3);" title="${escapeHTML(phase.tip || '')}">${escapeHTML(phase.phase)}</span>
                 \${phaseMeta ? '<span style="font-size: 11px; color: #888; font-weight: normal;">⏱ ' + escapeHTML(phaseMeta) + '</span>' : ''}
               </div>
               <div style="display: grid; gap: 8px; margin-left: 20px;">
-                \${phase.items.map((item, itemIdx) => {
+                ${phase.items.map((item, itemIdx) => {
                   const status = overrides[phaseIdx + '-' + itemIdx] || item.status;
                   const statusColor = status === 'completed' ? '#00ff88' : status === 'in-progress' ? '#ffaa00' : '#888';
                   const statusIcon = status === 'completed' ? '✅' : status === 'in-progress' ? '🔄' : '⏳';
                   const statusLabel = status === 'completed' ? 'Done' : status === 'in-progress' ? 'In Progress' : 'Pending';
                   const titleHtml = item.url ? '<a href="' + escapeHTML(item.url) + '" target="_blank" rel="noopener" style="color: #7dd3fc; text-decoration: none;">' + escapeHTML(item.title) + ' ↗</a>' : escapeHTML(item.title);
-                  const itemHover = [ item.tip, item.url ? 'Opens: ' + item.url : null, 'Click row to cycle: Pending → In Progress → Done' ].filter(Boolean).join('\\n');
+                  const itemHover = [ item.tip, item.url ? 'Opens: ' + escapeHTML(item.url) : null, 'Click row to cycle: Pending → In Progress → Done' ].filter(Boolean).join('\n');
                   const timeBadge = item.time ? '<span style="font-size: 10px; color: #888;" title="Estimated time">⏱ ' + escapeHTML(item.time) + '</span>' : '';
                   const diffBadge = item.difficulty ? '<span style="font-size: 10px; color: ' + diffColor(item.difficulty) + ';" title="Difficulty">' + (item.difficulty === 'easy' ? '🟢' : item.difficulty === 'medium' ? '🟡' : '🔴') + ' ' + escapeHTML(item.difficulty) + '</span>' : '';
                   const refBadge = item.ref ? '<span style="font-size: 10px; padding: 2px 6px; background: rgba(125,211,252,0.15); border-radius: 3px; color: #7dd3fc; cursor: help;" title="' + escapeHTML(item.tip || '') + '">📎 ' + escapeHTML(item.ref) + '</span>' : '';
-                  return `
-                    <div class="roadmap-item" data-phase="\${phaseIdx}" data-item="\${itemIdx}" style="display: flex; align-items: center; gap: 10px; padding: 8px; background: rgba(255,255,255,0.02); border-radius: 4px; cursor: pointer; transition: background 0.15s; flex-wrap: wrap;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='rgba(255,255,255,0.02)'" title="\${escapeHTML(itemHover)}">
-                      <span style="font-size: 16px;">\${item.icon}</span>
-                      <span style="flex: 1; min-width: 0; color: #fff;">\${titleHtml}</span>
-                      <span style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                        \${timeBadge}
-                        \${diffBadge}
-                        \${refBadge}
-                        <span style="padding: 2px 8px; background: rgba(255,255,255,0.1); border-radius: 3px; font-size: 11px; color: \${statusColor};">
-                          \${statusIcon} \${statusLabel}
-                        </span>
-                      </span>
-                    </div>
-                  `;
+                  return '<div class="roadmap-item" data-phase="' + phaseIdx + '" data-item="' + itemIdx + '" style="display: flex; align-items: center; gap: 10px; padding: 8px; background: rgba(255,255,255,0.02); border-radius: 4px; cursor: pointer; transition: background 0.15s; flex-wrap: wrap;" onmouseover="this.style.background=\'rgba(255,255,255,0.06)\'" onmouseout="this.style.background=\'rgba(255,255,255,0.02)\'" title="' + escapeHTML(itemHover) + '"><span style="font-size: 16px;">' + item.icon + '</span><span style="flex: 1; min-width: 0; color: #fff;">' + titleHtml + '</span><span style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">' + timeBadge + diffBadge + refBadge + '<span style="padding: 2px 8px; background: rgba(255,255,255,0.1); border-radius: 3px; font-size: 11px; color: ' + statusColor + ';">' + statusIcon + ' ' + statusLabel + '</span></span></div>';
                 }).join('')}
-              </div>
-            </div>
+              </div>        
+              </div>  
           </div>
-        `;
+          `;
       }).join('');
       roadmapList.querySelectorAll('.roadmap-item').forEach(el => {
         el.addEventListener('click', (e) => {
@@ -1723,7 +1710,7 @@ async function loadDashboard(showLoading = false) {
           const phaseIdx = parseInt(el.getAttribute('data-phase'), 10);
           const itemIdx = parseInt(el.getAttribute('data-item'), 10);
           const overrides = getRoadmapOverrides();
-          const key = phaseIdx + '-' + itemIdx;
+          const key = phaseIdx + '-' + itemIdx;  
           const current = overrides[key] || roadmap[phaseIdx].items[itemIdx].status;
           overrides[key] = cycleStatus(current);
           try { localStorage.setItem(ROADMAP_STORAGE_KEY, JSON.stringify(overrides)); } catch (_) {}
@@ -1787,7 +1774,7 @@ function renderPerformanceGauge(score) {
         legend: { display: false },
         tooltip: {
           callbacks: {
-            label: (context) => `${context.parsed}%`
+            label: (context) => context.parsed + '%'
           }
         }
       },
@@ -2024,7 +2011,7 @@ const maxReconnectAttempts = 5;
 
 function connectWebSocket() {
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-  const wsUrl = \`\${protocol}//\${window.location.host}/ws\`;
+  const wsUrl = protocol + '//' + window.location.host + '/ws';
   
   ws = new WebSocket(wsUrl);
   
@@ -2066,7 +2053,7 @@ function connectWebSocket() {
           const alertBanner = document.getElementById('alert-banner');
           const alertContent = document.getElementById('alert-content');
           if (alertBanner && alertContent) {
-            alertContent.innerHTML = message.data.alerts.map((a) => \`<div>\${a}</div>\`).join('');
+            alertContent.innerHTML = message.data.alerts.map((a) => '<div>' + a + '</div>').join('');
             alertBanner.style.display = 'block';
             // Auto-dismiss after 10 seconds
             setTimeout(() => {
@@ -2105,7 +2092,7 @@ function connectWebSocket() {
     if (reconnectAttempts < maxReconnectAttempts) {
       const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
       reconnectAttempts++;
-      console.log(\`🔄 Reconnecting in \${delay}ms... (attempt \${reconnectAttempts})\`);
+      console.log('🔄 Reconnecting in ' + delay + 'ms... (attempt ' + reconnectAttempts + ')');
       setTimeout(() => {
         try {
           connectWebSocket();
