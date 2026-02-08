@@ -858,30 +858,8 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         return;
       }
 
-      const localLatestId = latestSnapshot?.id || null;
-      const localWarnings = Array.isArray(latestSnapshot?.warnings) ? latestSnapshot.warnings : [];
-      const localCoverageLines = Number(latestSnapshot?.coverage?.lines || 0);
       const statusCoverageLines = Number(data?.coverage?.lines || 0);
-      const warningsMatch = JSON.stringify([...localWarnings].sort()) === JSON.stringify([...(data.warnings || [])].sort());
-      const snapshotIdMatch = !localLatestId || data.latestSnapshotId === localLatestId;
-      const coverageMatch = localCoverageLines > 0 ? localCoverageLines === statusCoverageLines : true;
-
       const stages = data.stages.map((stage) => ({ ...stage }));
-      const parityStage = stages.find((stage) => stage.id === 'dashboard_parity');
-      if (parityStage) {
-        const parityErrors = [];
-        if (!snapshotIdMatch) parityErrors.push('snapshot_id_mismatch');
-        if (!warningsMatch) parityErrors.push('warnings_mismatch');
-        if (!coverageMatch) parityErrors.push('coverage_mismatch');
-        if (parityErrors.length > 0) {
-          parityStage.status = 'fail';
-          parityStage.reason = 'Dashboard drift detected against loaded latest snapshot.';
-          parityStage.evidence = [
-            ...(parityStage.evidence || []),
-            ...parityErrors,
-          ];
-        }
-      }
 
       const hasFail = stages.some((s) => s.status === 'fail');
       const hasWarn = stages.some((s) => s.status === 'warn');

@@ -1,0 +1,32 @@
+name: Search Governance
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - feat/**
+      - codex/**
+
+jobs:
+  governance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Policy Governance Guard
+        run: bun run scripts/check-search-policy-governance.ts
+
+      - name: Search Status Contract Tests
+        run: bun test tests/search-status-contract.test.ts

@@ -1,0 +1,110 @@
+#!/usr/bin/env bun
+
+import { existsSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+
+type PolicyShape = {
+  policyVersion?: string;
+  policyChangeRationale?: Record<string, string>;
+};
+
+function runGit(args: string[]): { code: number; stdout: string } {
+  const proc = Bun.spawnSync(['git', ...args], {
+    cwd: process.cwd(),
+    stdout: 'pipe',
+    stderr: 'ignore',
+  });
+  return {
+    code: proc.exitCode,
+    stdout: new TextDecoder().decode(proc.stdout).trim(),
+  };
+}
+
+function resolveDiffRange(): string {
+  const baseRef = (Bun.env.GITHUB_BASE_REF || '').trim();
+  if (baseRef) {
+    const fetch = runGit(['fetch', 'origin', baseRef, '--depth', '1']);
+    if (fetch.code === 0) {
+      return `origin/${baseRef}...HEAD`;
+    }
+  }
+  const headPrev = runGit(['rev-parse', '--verify', 'HEAD~1']);
+  if (headPrev.code === 0) {
+    return 'HEAD~1...HEAD';
+  }
+  return 'HEAD';
+}
+
+function fileListFromDiff(range: string): string[] {
+  const diff = runGit(['diff', '--name-only', range]);
+  if (diff.code !== 0 || !diff.stdout) return [];
+  return diff.stdout.split('\n').map((v) => v.trim()).filter(Boolean);
+}
+
+function policyThresholdChanged(range: string): boolean {
+  const out = runGit(['diff', '--unified=0', range, '--', '.search/policies.json']);
+  if (out.code !== 0 || !out.stdout) return false;
+  return /scoreThresholdsByQueryPack|strictLatencyP95WarnMs|strictPeakHeapWarnMB|strictPeakRssWarnMB|strictReliabilityFloor|qualityDropWarn|slopRiseWarn|reliabilityDropWarn/.test(out.stdout);
+}
+
+async function main(): Promise<void> {
+  const range = resolveDiffRange();
+  const changed = fileListFromDiff(range);
+  const policyPath = '.search/policies.json';
+  const changelogPath = '.search/POLICY_CHANGELOG.md';
+  const policyChanged = changed.includes(policyPath);
+  const thresholdChanged = policyChanged && policyThresholdChanged(range);
+
+  const errors: string[] = [];
+
+  if (policyChanged) {
+    const path = resolve(policyPath);
+    if (!existsSync(path)) {
+      errors.push(`missing ${policyPath}`);
+    } else {
+      const raw = JSON.parse(await readFile(path, 'utf8')) as PolicyShape;
+      if (!raw.policyVersion || !String(raw.policyVersion).trim()) {
+        errors.push('policyVersion is required in .search/policies.json');
+      }
+      const rationale = raw.policyChangeRationale || {};
+      if (Object.keys(rationale).length === 0) {
+        errors.push('policyChangeRationale is required and must include at least one key');
+      }
+      if (existsSync(resolve(changelogPath))) {
+        const log = await readFile(resolve(changelogPath), 'utf8');
+        if (raw.policyVersion && !log.includes(String(raw.policyVersion))) {
+          errors.push(`.search/POLICY_CHANGELOG.md must include policyVersion ${raw.policyVersion}`);
+        }
+      } else {
+        errors.push(`missing ${changelogPath}`);
+      }
+    }
+  }
+
+  if (thresholdChanged) {
+    const testChanged = changed.some((file) => /^tests\/.*\.test\.ts$/.test(file));
+    const changelogChanged = changed.includes(changelogPath);
+    if (!testChanged) {
+      errors.push('threshold policy changed but no test file changed under tests/*.test.ts');
+    }
+    if (!changelogChanged) {
+      errors.push('threshold policy changed but .search/POLICY_CHANGELOG.md was not updated');
+    }
+  }
+
+  if (errors.length > 0) {
+    console.error('[policy-governance] failed');
+    for (const err of errors) {
+      console.error(`- ${err}`);
+    }
+    process.exit(1);
+  }
+
+  console.log('[policy-governance] ok');
+  console.log(`range=${range}`);
+  console.log(`policyChanged=${policyChanged}`);
+  console.log(`thresholdChanged=${thresholdChanged}`);
+}
+
+await main();

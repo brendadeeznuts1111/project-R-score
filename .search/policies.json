@@ -1,4 +1,8 @@
 {
+  "policyVersion": "2026.02.08.3",
+  "policyChangeRationale": {
+    "core_delivery_wide.strictLatencyP95WarnMs": "Wide-pack strict runs are stable around ~1030-1040ms; threshold set to 1100ms to avoid false warnings while preserving regression headroom."
+  },
   "pathExcludeContains": [
     "/node_modules/",
     "/dist/",
