@@ -79,7 +79,7 @@ export class DepthOptimizer {
     };
   }
 
-  private static analyzeObjectStructure(obj: any): StructureAnalysis {
+  private analyzeObjectStructure(obj: any): StructureAnalysis {
     const analysis: StructureAnalysis = {
       maxDepth: 0,
       totalNestedObjects: 0,
@@ -320,7 +320,7 @@ export class AdaptiveDepthManager {
   }
 
   private calculateComplexityScore(data: any): number {
-    const analysis = DepthOptimizer.analyzeObjectStructure(data);
+    const analysis = this.analyzeObjectStructure(data);
     
     // Normalize complexity score (0-1)
     const depthScore = Math.min(analysis.maxDepth / 10, 1);
