@@ -67,6 +67,7 @@ export interface TelemetryHeaders {
   'x-fw-events'?: string;
   'x-fw-metrics'?: string;
   'x-fw-trace-id'?: string;
+  [key: string]: string | undefined;
 }
 
 export interface ConformanceHeaders {
@@ -74,6 +75,7 @@ export interface ConformanceHeaders {
   'x-fw-security-level': string;
   'x-fw-integrity-hash'?: string;
   'x-fw-audit-log'?: string;
+  [key: string]: string | undefined;
 }
 
 /**
