@@ -246,8 +246,8 @@ function htmlShell(options: Options): string {
     const statusBadgeClass = (status) => {
       const s = String(status || '').toLowerCase();
       if (['up', 'improving', 'stable', 'locked'].includes(s)) return 'status-good';
-      if (['plateau', 'unchanged', 'static', 'neutral'].includes(s)) return 'status-neutral';
-      if (['changed', 'rising'].includes(s)) return 'status-warn';
+      if (['plateau', 'unchanged', 'static', 'neutral', 'flat'].includes(s)) return 'status-neutral';
+      if (['changed', 'rising', 'watch'].includes(s)) return 'status-warn';
       if (['down'].includes(s)) return 'status-bad';
       return 'status-neutral';
     };
@@ -323,6 +323,14 @@ function htmlShell(options: Options): string {
       }
       if (kind === 'quality') return delta > 0 ? 'Up' : 'Down';
       if (kind === 'slop') return delta < 0 ? 'Improving' : 'Rising';
+      if (kind === 'latency') {
+        if (Math.abs(delta) < 25) return 'Flat';
+        return delta < 0 ? 'Improving' : 'Rising';
+      }
+      if (kind === 'memory') {
+        if (Math.abs(delta) < 5) return 'Flat';
+        return delta < 0 ? 'Improving' : 'Rising';
+      }
       return delta > 0 ? 'Up' : 'Down';
     };
     const renderLatest = (data) => {
@@ -451,8 +459,18 @@ function htmlShell(options: Options): string {
       const strictPrevious = profileByName(scopedPrevious, 'strict');
       const strictP95Current = asNumOrNull(strictCurrent?.latencyP95Ms);
       const strictP95Previous = asNumOrNull(strictPrevious?.latencyP95Ms);
+      const strictHeapCurrent = asNumOrNull(strictCurrent?.peakHeapUsedMB);
+      const strictHeapPrevious = asNumOrNull(strictPrevious?.peakHeapUsedMB);
+      const strictRssCurrent = asNumOrNull(strictCurrent?.peakRssMB);
+      const strictRssPrevious = asNumOrNull(strictPrevious?.peakRssMB);
       const strictP95Delta = (strictP95Current !== null && strictP95Previous !== null)
         ? Number((strictP95Current - strictP95Previous).toFixed(2))
+        : null;
+      const strictHeapDelta = (strictHeapCurrent !== null && strictHeapPrevious !== null)
+        ? Number((strictHeapCurrent - strictHeapPrevious).toFixed(2))
+        : null;
+      const strictRssDelta = (strictRssCurrent !== null && strictRssPrevious !== null)
+        ? Number((strictRssCurrent - strictRssPrevious).toFixed(2))
         : null;
       const hasBaseline = Boolean(validBaseline);
 
@@ -469,6 +487,8 @@ function htmlShell(options: Options): string {
       const [noiseCurrentText, noisePrevText] = formatCurrentPrev(currentNoise, previousNoise, '%');
       const [qcovCurrentText, qcovPrevText] = formatCurrentPrev(currentQueryCoverage, previousQueryCoverage, '%');
       const [strictP95CurrentText, strictP95PrevText] = formatCurrentPrev(strictP95Current, strictP95Previous, 'ms');
+      const [strictHeapCurrentText, strictHeapPrevText] = formatCurrentPrev(strictHeapCurrent, strictHeapPrevious, 'MB');
+      const [strictRssCurrentText, strictRssPrevText] = formatCurrentPrev(strictRssCurrent, strictRssPrevious, 'MB');
 
       const queriesStatus = queriesDelta === null ? 'n/a' : (queriesDelta === 0 ? 'Static' : 'Changed');
       const queriesVol = queriesDelta === null ? 'n/a' : classifyVolatility(Math.abs(queriesDelta), 1, 3);
@@ -484,8 +504,12 @@ function htmlShell(options: Options): string {
       const noiseVol = noiseDelta === null ? 'n/a' : classifyVolatility(Math.abs(noiseDelta), 1, 3);
       const relStatus = deltaStatus(reliabilityDelta, 'family');
       const relVol = reliabilityDelta === null ? 'n/a' : classifyVolatility(Math.abs(reliabilityDelta), 1, 3);
-      const strictP95Status = strictP95Delta === null ? 'n/a' : (strictP95Delta <= 0 ? 'Improving' : 'Rising');
-      const strictP95Vol = strictP95Delta === null ? 'n/a' : classifyVolatility(Math.abs(strictP95Delta), 100, 400);
+      const strictP95Status = deltaStatus(strictP95Delta, 'latency');
+      const strictP95Vol = strictP95Delta === null ? 'n/a' : classifyVolatility(Math.abs(strictP95Delta), 25, 150);
+      const strictHeapStatus = deltaStatus(strictHeapDelta, 'memory');
+      const strictHeapVol = strictHeapDelta === null ? 'n/a' : classifyVolatility(Math.abs(strictHeapDelta), 5, 20);
+      const strictRssStatus = deltaStatus(strictRssDelta, 'memory');
+      const strictRssVol = strictRssDelta === null ? 'n/a' : classifyVolatility(Math.abs(strictRssDelta), 10, 40);
       const baselineText = hasBaseline
         ? ('Same-pack ' + (baselineId || 'n/a'))
         : ('No same-pack baseline' + (previous && !samePack ? ' (pack mismatch)' : (previous && !baselineMatch ? ' (baseline mismatch)' : '')));
@@ -506,7 +530,9 @@ function htmlShell(options: Options): string {
             code === 'strict_reliability_floor_warn'
           )
         : [];
-      const coreLoopStatus = coreLoopWarnings.length > 0 ? 'Changed' : (hasBaseline ? 'Stable' : 'Neutral');
+      const coreLoopStatus = coreLoopWarnings.length > 0
+        ? ((strictP95Status === 'Flat' && qualityStatus === 'Plateau' && relStatus === 'Locked') ? 'Watch' : 'Changed')
+        : (hasBaseline ? 'Stable' : 'Neutral');
       const coreLoopVol = hasBaseline
         ? classifyVolatility(
             Math.max(
@@ -522,12 +548,14 @@ function htmlShell(options: Options): string {
 
       trendEl.innerHTML =
         '<table><thead><tr><th>Metric</th><th>Current</th><th>Previous</th><th>Delta</th><th>Status</th><th>Volatility</th></tr></thead><tbody>' +
-          '<tr><td>Baseline</td><td colspan="3">' + baselineText + '</td><td>' + statusBadge(hasBaseline ? 'Stable' : 'Neutral') + '</td><td>' + volatilityBadge('Low') + '</td></tr>' +
+          '<tr><td>Baseline</td><td>' + baselineText + '</td><td>' + (scopedPrevious?.id || 'n/a') + '</td><td>' + (hasBaseline ? 'same-pack' : '-') + '</td><td>' + statusBadge(hasBaseline ? 'Stable' : 'Neutral') + '</td><td>' + volatilityBadge('Low') + '</td></tr>' +
           '<tr><td>Core Loop</td><td colspan="3">' + coreLoopSummary + (coreLoopWarnings.length ? (' | ' + coreLoopWarnings.map(warningBadge).join(' ')) : '') + '</td><td>' + statusBadge(coreLoopStatus) + '</td><td>' + volatilityBadge(coreLoopVol) + '</td></tr>' +
           '<tr><td>Path</td><td><code>' + currentPath + '</code></td><td><code>' + previousPath + '</code></td><td>-</td><td>' + statusBadge(pathStatus(currentPath, previousPath)) + '</td><td>' + volatilityBadge('Low') + '</td></tr>' +
           '<tr><td>Queries</td><td>' + currentQueries + '</td><td>' + (previousQueries === null ? 'n/a' : previousQueries) + '</td><td>' + (queriesDelta === null ? '-' : queriesDelta) + '</td><td>' + statusBadge(queriesStatus) + '</td><td>' + volatilityBadge(queriesVol) + '</td></tr>' +
           '<tr><td>Top Quality</td><td>' + qualityCurrentText + '</td><td>' + qualityPrevText + '</td><td>' + signedDelta(qualityDelta) + '</td><td>' + statusBadge(qualityStatus) + '</td><td>' + volatilityBadge(qualityVol) + '</td></tr>' +
           '<tr><td>Strict p95</td><td>' + strictP95CurrentText + '</td><td>' + strictP95PrevText + '</td><td>' + signedDelta(strictP95Delta, 'ms') + '</td><td>' + statusBadge(strictP95Status) + '</td><td>' + volatilityBadge(strictP95Vol) + '</td></tr>' +
+          '<tr><td>Strict Heap</td><td>' + strictHeapCurrentText + '</td><td>' + strictHeapPrevText + '</td><td>' + signedDelta(strictHeapDelta, 'MB') + '</td><td>' + statusBadge(strictHeapStatus) + '</td><td>' + volatilityBadge(strictHeapVol) + '</td></tr>' +
+          '<tr><td>Strict RSS</td><td>' + strictRssCurrentText + '</td><td>' + strictRssPrevText + '</td><td>' + signedDelta(strictRssDelta, 'MB') + '</td><td>' + statusBadge(strictRssStatus) + '</td><td>' + volatilityBadge(strictRssVol) + '</td></tr>' +
           '<tr><td>Top Quality (10)</td><td><span class="sparkline">' + qualitySpark + '</span></td><td colspan="2">latest ' + qualityCurrentText + '</td><td>' + statusBadge(qualityStatus) + '</td><td>' + volatilityBadge(classifyStdVolatility(qualityStdev)) + '</td></tr>' +
           '<tr><td>Family Cov.</td><td>' + familyCurrentText + '</td><td>' + familyPrevText + '</td><td>' + signedDelta(familyDelta, '%') + '</td><td>' + statusBadge(familyStatus) + '</td><td>' + volatilityBadge(familyVol) + '</td></tr>' +
           '<tr><td>Slop Avg.</td><td>' + slopCurrentText + '</td><td>' + slopPrevText + '</td><td>' + signedDelta(slopDelta, '%') + '</td><td>' + statusBadge(slopStatus) + '</td><td>' + volatilityBadge(slopVol) + '</td></tr>' +
