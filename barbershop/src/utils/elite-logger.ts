@@ -257,7 +257,7 @@ export class EliteLogger {
         if (await file.exists()) {
           await Bun.write(newPath, file);
         }
-      } catch {}
+      } catch (err) {}
     }
     
     // Compress current file

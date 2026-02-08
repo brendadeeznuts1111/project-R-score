@@ -141,7 +141,7 @@ async function isReachable(url: string) {
     const res = await fetch(url, { method: 'GET', signal: controller.signal });
     clearTimeout(timeout);
     return res.ok;
-  } catch {
+  } catch (err) {
     return false;
   }
 }
@@ -150,7 +150,7 @@ function extractPort(url: string) {
   try {
     const parsed = new URL(url);
     return parsed.port || (parsed.protocol === 'https:' ? '443' : '80');
-  } catch {
+  } catch (err) {
     return '3001';
   }
 }

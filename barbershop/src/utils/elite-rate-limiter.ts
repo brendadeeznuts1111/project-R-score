@@ -291,7 +291,7 @@ export class EliteRateLimiter {
       await redis.del(`${fullKey}:bucket`);
       await redis.del(`${fullKey}:sliding`);
       await redis.del(`${fullKey}:fixed`);
-    } catch {}
+    } catch (err) {}
   }
   
   /**

@@ -330,7 +330,7 @@ export function collectSystemMetrics(): string {
     output += '# TYPE process_cpu_seconds_total counter\n';
     output += `process_cpu_seconds_total{mode="user"} ${cpuUsage.user / 1e6}\n`;
     output += `process_cpu_seconds_total{mode="system"} ${cpuUsage.system / 1e6}\n\n`;
-  } catch {}
+  } catch (err) {}
   
   // Uptime
   output += '# HELP process_uptime_seconds Process uptime\n';

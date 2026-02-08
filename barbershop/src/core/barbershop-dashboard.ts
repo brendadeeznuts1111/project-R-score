@@ -2154,7 +2154,7 @@ function shutdown(signal: string) {
   clearInterval(telemetryInterval);
   try {
     server.stop(true);
-  } catch {}
+  } catch (err) {}
   console.log(`[${SERVER_NAME}] graceful shutdown via ${signal}`);
   process.exit(0);
 }

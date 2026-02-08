@@ -710,7 +710,7 @@ async function startServer(options: StartServerOptions = {}) {
     const shutdown = (signal: string) => {
       try {
         server.stop(true);
-      } catch {}
+      } catch (err) {}
       logInfo('shutdown', { signal, name: SERVER_NAME });
       process.exit(0);
     };

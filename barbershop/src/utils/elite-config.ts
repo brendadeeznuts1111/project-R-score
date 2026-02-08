@@ -264,7 +264,7 @@ export class EliteConfigManager<T extends Record<string, ConfigSchema<any>>> {
           }
         }
       });
-    } catch {}
+    } catch (err) {}
   }
   
   /**
