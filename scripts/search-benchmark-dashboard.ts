@@ -62,6 +62,20 @@ type CookieTelemetryInput = {
   cookieUnresolved: string[];
 };
 
+type R2CookieTelemetry = {
+  score: number;
+  disabled: boolean;
+  total: number;
+  secureCount: number;
+  httpOnlyCount: number;
+  sameSiteCount: number;
+  expiryCount: number;
+  unresolved: string[];
+  source: 'r2' | 'default' | 'error';
+  key: string;
+  error?: string;
+};
+
 function parseArgs(argv: string[]): Options {
   const out: Options = {
     port: 3099,
@@ -1943,6 +1957,158 @@ async function main(): Promise<void> {
     };
   };
 
+  const defaultCookieTelemetry = (domain: string): R2CookieTelemetry => ({
+    score: 50,
+    disabled: true,
+    total: 0,
+    secureCount: 0,
+    httpOnlyCount: 0,
+    sameSiteCount: 0,
+    expiryCount: 0,
+    unresolved: [],
+    source: 'default',
+    key: `domains/${domain}/cookies.json`,
+  });
+
+  const normalizeCookieRows = (payload: any): any[] => {
+    if (Array.isArray(payload)) return payload;
+    if (payload && typeof payload === 'object') {
+      if (Array.isArray(payload.cookies)) return payload.cookies;
+      if (Array.isArray(payload.items)) return payload.items;
+      if (Array.isArray(payload.entries)) return payload.entries;
+    }
+    return [];
+  };
+
+  const normalizeCookieObject = (row: any): Record<string, any> | null => {
+    if (!row) return null;
+    if (row instanceof Map) return Object.fromEntries(row.entries());
+    if (Array.isArray(row)) {
+      if (row.length === 2 && typeof row[0] === 'string') {
+        if (row[1] && typeof row[1] === 'object') {
+          return { name: row[0], ...(row[1] as Record<string, any>) };
+        }
+        return { name: row[0], value: row[1] };
+      }
+      return null;
+    }
+    if (typeof row === 'object') {
+      if (row.cookie && typeof row.cookie === 'object') return row.cookie as Record<string, any>;
+      return row as Record<string, any>;
+    }
+    return null;
+  };
+
+  const parseBooleanLike = (value: any): boolean => {
+    if (value === true) return true;
+    if (value === false) return false;
+    const text = String(value || '').trim().toLowerCase();
+    return text === '1' || text === 'true' || text === 'yes' || text === 'on';
+  };
+
+  const computeCookieScore = (rows: any[]): Omit<R2CookieTelemetry, 'source' | 'key' | 'error'> => {
+    const cookies = rows
+      .map((row) => normalizeCookieObject(row))
+      .filter((v): v is Record<string, any> => Boolean(v));
+    const total = cookies.length;
+    if (total === 0) {
+      return {
+        score: 50,
+        disabled: true,
+        total: 0,
+        secureCount: 0,
+        httpOnlyCount: 0,
+        sameSiteCount: 0,
+        expiryCount: 0,
+        unresolved: [],
+      };
+    }
+
+    let secureCount = 0;
+    let httpOnlyCount = 0;
+    let sameSiteCount = 0;
+    let expiryCount = 0;
+    const unresolved = new Set<string>();
+    const nowMs = Date.now();
+
+    for (const cookie of cookies) {
+      if (parseBooleanLike(cookie.secure)) secureCount += 1;
+      if (parseBooleanLike(cookie.httpOnly ?? cookie.httponly)) httpOnlyCount += 1;
+      const sameSite = String(cookie.sameSite ?? cookie.samesite ?? '').trim().toLowerCase();
+      if (sameSite === 'strict' || sameSite === 'lax') sameSiteCount += 1;
+      const maxAge = Number(cookie.maxAge ?? cookie.max_age);
+      const expiresMs = Number(
+        cookie.expiresMs ??
+        cookie.expires_ms ??
+        (cookie.expires ? Date.parse(String(cookie.expires)) : NaN)
+      );
+      if ((Number.isFinite(maxAge) && maxAge > 0) || (Number.isFinite(expiresMs) && expiresMs > nowMs)) {
+        expiryCount += 1;
+      }
+      if (Array.isArray(cookie.unresolved)) {
+        for (const host of cookie.unresolved) {
+          const normalized = String(host || '').trim().toLowerCase();
+          if (normalized) unresolved.add(normalized);
+        }
+      }
+    }
+
+    const secureRatio = secureCount / total;
+    const httpOnlyRatio = httpOnlyCount / total;
+    const sameSiteRatio = sameSiteCount / total;
+    const expiryRatio = expiryCount / total;
+    const score = Math.round(clamp01((secureRatio + httpOnlyRatio + sameSiteRatio + expiryRatio) / 4) * 100);
+    return {
+      score,
+      disabled: false,
+      total,
+      secureCount,
+      httpOnlyCount,
+      sameSiteCount,
+      expiryCount,
+      unresolved: Array.from(unresolved),
+    };
+  };
+
+  const fetchCookieTelemetry = async (domain: string): Promise<R2CookieTelemetry> => {
+    const key = `domains/${domain}/cookies.json`;
+    const fallback = defaultCookieTelemetry(domain);
+    const r2 = resolveR2ReadOptions();
+    if (!r2) return { ...fallback, key };
+    try {
+      const objectRes = await fetchR2ObjectBySignature(
+        r2.endpoint,
+        r2.bucket,
+        key,
+        r2.accessKeyId,
+        r2.secretAccessKey
+      );
+      if (!objectRes.ok) {
+        return { ...fallback, source: objectRes.status === 404 ? 'default' : 'error', key, error: `status_${objectRes.status}` };
+      }
+      const text = await objectRes.text();
+      const parsed = JSON.parse(text);
+      const rows = normalizeCookieRows(parsed);
+      const computed = computeCookieScore(rows);
+      const payloadUnresolved = Array.isArray(parsed?.unresolved)
+        ? parsed.unresolved.map((v: any) => String(v || '').trim().toLowerCase()).filter(Boolean)
+        : [];
+      return {
+        ...computed,
+        unresolved: Array.from(new Set([...computed.unresolved, ...payloadUnresolved])),
+        source: 'r2',
+        key,
+      };
+    } catch (error) {
+      return {
+        ...fallback,
+        source: 'error',
+        key,
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  };
+
   const buildDomainHealthSummary = async (
     source: 'local' | 'r2',
     domain: string,
@@ -2016,7 +2182,35 @@ async function main(): Promise<void> {
       cacheTtlSec: Math.floor(dnsPrefetchTtlMs / 1000),
     };
     const dnsStatus = dnsRatio >= 0.9 ? 'healthy' : dnsRatio >= 0.5 ? 'degraded' : 'critical';
-    const cookieHealth = withCookieBadgeTelemetry(assessCookieTelemetry(cookieTelemetryInput, domain, dnsRatio));
+    const requestCookieHealth = assessCookieTelemetry(cookieTelemetryInput, domain, dnsRatio);
+    const r2CookieTelemetry = await fetchCookieTelemetry(domain);
+    const r2CookieScoreNorm = clamp01((Number(r2CookieTelemetry.score) || 0) / 100);
+    const requestCookieScoreNorm = clamp01(Number(requestCookieHealth.score) || 0);
+    const hasRequestCookieSignal =
+      requestCookieHealth.enabled &&
+      requestCookieHealth.detail !== 'cookies disabled' &&
+      requestCookieHealth.detail !== `missing cookie telemetry for ${domain}`;
+    const mergedCookieScore = hasRequestCookieSignal
+      ? clamp01(requestCookieScoreNorm * 0.7 + r2CookieScoreNorm * 0.3)
+      : r2CookieScoreNorm;
+    const mergedCookieStatus = statusFromRatio(mergedCookieScore);
+    const mergedCookieUnresolved = Array.from(
+      new Set([
+        ...(requestCookieHealth.unresolved || []),
+        ...(r2CookieTelemetry.unresolved || []),
+      ])
+    );
+    const cookieHealth = withCookieBadgeTelemetry({
+      ...requestCookieHealth,
+      enabled: requestCookieHealth.enabled || !r2CookieTelemetry.disabled,
+      status: mergedCookieStatus,
+      score: mergedCookieScore,
+      unresolved: mergedCookieUnresolved,
+      detail:
+        `${requestCookieHealth.detail}; r2 cookies ${r2CookieTelemetry.total} score=${r2CookieTelemetry.score}` +
+        (r2CookieTelemetry.error ? ` (${r2CookieTelemetry.error})` : ''),
+      r2: r2CookieTelemetry,
+    });
     const thresholdStrictP95Ms = 900;
 
     if (source === 'local') {
@@ -2085,6 +2279,7 @@ async function main(): Promise<void> {
             ansiBg: cookieHealth.ansiBg,
             unicodeBar: cookieHealth.unicodeBar,
             unresolved: cookieHealth.unresolved,
+            r2: cookieHealth.r2,
             ratio: cookieHealth.ratio,
             checked: cookieHealth.checked,
             resolved: cookieHealth.resolved,
@@ -2198,6 +2393,7 @@ async function main(): Promise<void> {
           ansiBg: cookieHealth.ansiBg,
           unicodeBar: cookieHealth.unicodeBar,
           unresolved: cookieHealth.unresolved,
+          r2: cookieHealth.r2,
           ratio: cookieHealth.ratio,
           checked: cookieHealth.checked,
           resolved: cookieHealth.resolved,
