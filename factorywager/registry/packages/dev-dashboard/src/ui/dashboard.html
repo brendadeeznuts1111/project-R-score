@@ -13,6 +13,15 @@ body {
   color: #fff;
   padding: 20px;
   min-height: 100vh;
+  transition: background 0.2s, color 0.2s;
+}
+body.dashboard-theme-light {
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+  color: #111;
+}
+body.dashboard-theme-blue {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+  color: #e2e8f0;
 }
 .header {
   margin-bottom: 30px;
@@ -321,7 +330,7 @@ body {
 }
   </style>
 </head>
-<body>
+<body class="{{THEME_CLASS}}">
   <div class="header">
 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
   <div>
@@ -330,7 +339,13 @@ body {
   </div>
   <div style="display: flex; align-items: center; gap: 12px;">
     <span id="ws-status" title="WebSocket connection" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: rgba(0,0,0,0.2); border-radius: 8px; font-size: 13px; color: #888;">🔴 Disconnected</span>
-    <button id="theme-toggle" onclick="toggleTheme()" style="padding: 8px 16px; background: rgba(255,255,255,0.1); border: 1px solid #333; border-radius: 8px; color: #fff; cursor: pointer; font-size: 20px;">🌓</button>
+    <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #888;">Theme:
+      <select id="theme-select" onchange="applyDashboardTheme(this.value)" style="padding: 6px 10px; background: rgba(255,255,255,0.1); border: 1px solid #333; border-radius: 6px; color: inherit; cursor: pointer;">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+        <option value="blue">Blue</option>
+      </select>
+    </label>
   </div>
 </div>
   </div>
@@ -394,6 +409,9 @@ body {
 <div class="tab" onclick="showTab('fraud')">🛡️ Fraud</div>
 <div class="tab" onclick="showTab('insights')">💡 Insights</div>
 <div class="tab" onclick="showTab('roadmap')">🗺️ Roadmap</div>
+<div class="tab" onclick="showTab('cloudphones')">📱 Cloud Phones</div>
+<div class="tab" onclick="showTab('analytics')">📈 Analytics</div>
+<div class="tab" onclick="showTab('goldenprofile')">🥇 Golden Profile</div>
   </div>
 
   <div id="quickwins-tab" class="tab-content active">
@@ -560,6 +578,129 @@ body {
   <div id="roadmap-progress" style="margin-bottom: 16px;"></div>
   <div id="roadmap-list"></div>
 </div>
+  </div>
+
+  <div id="cloudphones-tab" class="tab-content">
+<div class="section">
+  <h2>📱 Cloud Phones (DuoPlus)</h2>
+  <p style="color: #888; font-size: 13px; margin-bottom: 16px;">Add device IDs to load fragments from the DuoPlus Cloud Phone API. Device list is stored in cookies.</p>
+  <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px;">
+    <label style="color: #888; font-size: 13px;">Group:</label>
+    <select id="cloudphone-group-filter" style="padding: 6px 10px; border: 1px solid #333; border-radius: 4px; background: rgba(255,255,255,0.05); color: #fff; min-width: 140px;">
+      <option value="">All devices</option>
+    </select>
+  </div>
+  <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 20px;">
+    <input type="text" id="cloudphone-device-id" placeholder="Device / image ID" style="padding: 8px 12px; border: 1px solid #333; border-radius: 4px; background: rgba(255,255,255,0.05); color: #fff; min-width: 180px;" />
+    <button type="button" id="cloudphone-add-btn" style="padding: 8px 16px; background: #00ff88; color: #0a0a0a; border: none; border-radius: 4px; cursor: pointer;">Add device</button>
+    <button type="button" id="cloudphone-compare-btn" style="padding: 8px 16px; background: #0066ff; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Compare selected</button>
+    <button type="button" id="cloudphone-export-btn" style="padding: 8px 16px; background: #555; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Export</button>
+  </div>
+  <div id="cloudphones-export-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 24px; min-width: 320px;">
+      <h3 style="margin: 0 0 16px 0;">Export device report</h3>
+      <p style="margin: 0 0 12px 0; color: #888; font-size: 13px;">Scope: <span id="export-scope-label">All my devices</span></p>
+      <div style="margin-bottom: 12px;">
+        <label style="display: block; margin-bottom: 4px; color: #aaa;">Format</label>
+        <select id="export-format" style="width: 100%; padding: 8px; background: #222; border: 1px solid #333; color: #fff; border-radius: 4px;">
+          <option value="json">JSON</option>
+          <option value="csv">CSV</option>
+          <option value="html">HTML</option>
+        </select>
+      </div>
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; margin-bottom: 4px; color: #aaa;">Template</label>
+        <select id="export-template" style="width: 100%; padding: 8px; background: #222; border: 1px solid #333; color: #fff; border-radius: 4px;">
+          <option value="full">Full</option>
+          <option value="summary">Summary</option>
+        </select>
+      </div>
+      <div style="display: flex; gap: 8px; justify-content: flex-end;">
+        <button type="button" id="export-modal-cancel" style="padding: 8px 16px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
+        <button type="button" id="export-modal-submit" style="padding: 8px 16px; background: #00ff88; color: #0a0a0a; border: none; border-radius: 4px; cursor: pointer;">Export</button>
+      </div>
+    </div>
+  </div>
+  <div id="cloudphones-comparison-panel" style="display: none; margin-bottom: 20px; padding: 16px; border: 1px solid #333; border-radius: 8px; background: rgba(255,255,255,0.03);"></div>
+  <div id="cloudphones-device-alerts" style="margin-bottom: 16px;"></div>
+  <div id="cloudphones-list" style="display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));"></div>
+  <style>
+  .device-fragment { border: 1px solid #333; border-radius: 8px; padding: 16px; margin: 0; background: rgba(255,255,255,0.03); transition: all 0.2s; }
+  .device-fragment.dark-theme { border-color: #333; }
+  .device-fragment .device-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .device-fragment .device-header h3 { font-size: 16px; margin: 0; color: #fff; }
+  .device-fragment .device-status.online { color: #00ff88; }
+  .device-fragment .device-status.offline { color: #ff4444; }
+  .device-fragment .device-details { margin: 12px 0; }
+  .device-fragment .detail-row { display: flex; margin: 6px 0; font-size: 13px; }
+  .device-fragment .detail-row .label { font-weight: 600; min-width: 100px; color: #888; }
+  .device-fragment .detail-row .value { color: #ccc; }
+  .device-fragment .device-error { color: #ff4444; font-size: 12px; margin: 8px 0; }
+  .device-fragment .device-actions { margin-top: 12px; display: flex; gap: 8px; }
+  .device-fragment .btn-refresh, .device-fragment .btn-details { padding: 6px 12px; background: rgba(255,255,255,0.1); border: 1px solid #333; border-radius: 4px; color: #fff; cursor: pointer; font-size: 12px; }
+  .device-fragment .btn-refresh:hover, .device-fragment .btn-details:hover { background: rgba(0,255,136,0.2); border-color: #00ff88; }
+  .device-card-wrapper { position: relative; }
+  .device-card-wrapper input[type="checkbox"] { position: absolute; top: 8px; right: 8px; z-index: 1; }
+  .comparison-view.grid .devices-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .comparison-view .device-card { border: 1px solid #333; border-radius: 8px; padding: 12px; background: rgba(255,255,255,0.03); }
+  .comparison-view .device-score { font-weight: bold; color: #00ff88; margin: 8px 0; }
+  .comparison-view .differences-panel { margin-top: 16px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px; }
+  .comparison-view .difference-item { margin: 10px 0; padding: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; }
+  .profile-tier.tier-bronze { background: #cd7f32; color: #fff; }
+  .profile-tier.tier-silver { background: #c0c0c0; color: #000; }
+  .profile-tier.tier-gold { background: #ffd700; color: #000; }
+  .profile-tier.tier-platinum { background: #e5e4e2; color: #000; }
+  .profile-tier.tier-unranked { background: #444; color: #888; }
+  </style>
+</div>
+  </div>
+
+  <div id="goldenprofile-tab" class="tab-content">
+    <div class="section">
+      <h2>🥇 Golden Profile &amp; Payments</h2>
+      <p style="color: #888; font-size: 13px; margin-bottom: 16px;">Integration score, tiers, payment gateways (Venmo, Cash App, Apple Pay), and behavior.</p>
+      <div id="goldenprofile-header" style="margin-bottom: 20px; padding: 16px; border: 1px solid #333; border-radius: 8px; background: rgba(255,255,255,0.03);"></div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div>
+          <h3 style="color: #aaa; font-size: 14px;">Score components</h3>
+          <div id="goldenprofile-components" style="padding: 12px; border: 1px solid #333; border-radius: 8px; font-size: 13px;"></div>
+        </div>
+        <div>
+          <h3 style="color: #aaa; font-size: 14px;">Recommendations</h3>
+          <div id="goldenprofile-recommendations" style="padding: 12px; border: 1px solid #333; border-radius: 8px; font-size: 13px;"></div>
+        </div>
+      </div>
+      <h3 style="color: #aaa; font-size: 14px; margin-top: 20px;">Payment gateways</h3>
+      <div id="goldenprofile-payments" style="margin-bottom: 16px;"></div>
+      <button type="button" id="goldenprofile-link-payment" style="padding: 8px 16px; background: #333; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Link payment method</button>
+      <h3 style="color: #aaa; font-size: 14px; margin-top: 20px;">Behavior &amp; leaderboard</h3>
+      <div id="goldenprofile-behavior" style="margin-bottom: 12px;"></div>
+      <div id="goldenprofile-leaderboard" style="padding: 12px; border: 1px solid #333; border-radius: 8px; font-size: 13px;"></div>
+    </div>
+  </div>
+
+  <div id="analytics-tab" class="tab-content">
+    <div class="section">
+      <h2>📈 Analytics &amp; Agent network</h2>
+      <p style="color: #888; font-size: 13px; margin-bottom: 16px;">Agent interaction network, heatmap, and experiment impact.</p>
+      <div style="display: grid; gap: 24px;">
+        <div>
+          <h3 style="color: #aaa; font-size: 14px; margin-bottom: 10px;">Agent network</h3>
+          <div id="analytics-network" style="min-height: 200px; padding: 16px; border: 1px solid #333; border-radius: 8px; background: rgba(255,255,255,0.03); font-size: 13px;"></div>
+        </div>
+        <div>
+          <h3 style="color: #aaa; font-size: 14px; margin-bottom: 10px;">Interaction heatmap (by day/hour)</h3>
+          <div id="analytics-heatmap" style="min-height: 200px; padding: 16px; border: 1px solid #333; border-radius: 8px; background: rgba(255,255,255,0.03); font-size: 12px; overflow-x: auto;"></div>
+        </div>
+        <div>
+          <h3 style="color: #aaa; font-size: 14px; margin-bottom: 10px;">Experiment impact</h3>
+          <select id="analytics-experiment-select" style="padding: 8px 12px; background: #222; border: 1px solid #333; color: #fff; border-radius: 4px; margin-bottom: 10px;">
+            <option value="">Select experiment</option>
+          </select>
+          <div id="analytics-impact" style="min-height: 120px; padding: 16px; border: 1px solid #333; border-radius: 8px; background: rgba(255,255,255,0.03); font-size: 13px;"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -833,6 +974,12 @@ function showTab(tabName) {
         loadWebhookPulse();
         loadCookieAnalytics();
       }, 5000);
+    } else if (tabName === 'cloudphones') {
+      loadCloudPhonesTab();
+    } else if (tabName === 'analytics') {
+      loadAnalyticsTab();
+    } else if (tabName === 'goldenprofile') {
+      loadGoldenProfileTab();
     } else {
       // Clear interval when switching away from fraud tab
       if (window.webhookPulseInterval) {
@@ -917,6 +1064,343 @@ async function loadCookieAnalytics() {
     console.error('Failed to load cookie analytics:', error);
     // Don't show error to user, just log it
   }
+}
+
+// Golden Profile tab: score, payments, behavior, leaderboard
+async function loadGoldenProfileTab() {
+  const headerEl = document.getElementById('goldenprofile-header');
+  const componentsEl = document.getElementById('goldenprofile-components');
+  const recsEl = document.getElementById('goldenprofile-recommendations');
+  const paymentsEl = document.getElementById('goldenprofile-payments');
+  const behaviorEl = document.getElementById('goldenprofile-behavior');
+  const leaderboardEl = document.getElementById('goldenprofile-leaderboard');
+  const linkBtn = document.getElementById('goldenprofile-link-payment');
+  if (!headerEl || !componentsEl || !recsEl) return;
+  try {
+    const [scoreR, gatewaysR, behaviorR, leaderboardR] = await Promise.all([
+      fetch('/api/profile/score', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) }),
+      fetch('/api/payment/gateways'),
+      fetch('/api/behavior/score'),
+      fetch('/api/behavior/leaderboard?limit=10'),
+    ]);
+    const score = await scoreR.json().catch(() => ({}));
+    const gateways = await gatewaysR.json().catch(() => ({}));
+    const behavior = await behaviorR.json().catch(() => ({}));
+    const leaderboardData = await leaderboardR.json().catch(() => ({}));
+    const tier = score.tier || 'bronze';
+    const tierClass = 'tier-' + tier;
+    headerEl.innerHTML = '<div class="profile-tier ' + tierClass + '" style="display:inline-block; padding:8px 16px; border-radius:8px; margin-right:12px; font-weight:bold;">' + (tier || '').toUpperCase() + ' TIER</div>' +
+      '<span style="color:#aaa;">Integration Score: <strong style="color:#0f8;">' + (score.score != null ? Math.round(score.score) : 0) + '</strong>/100</span>';
+    if (score.components) {
+      componentsEl.innerHTML = Object.entries(score.components).map(function(kv) {
+        return '<div style="margin:6px 0;"><strong>' + escapeHTML(String(kv[0]).replace(/_/g, ' ')) + ':</strong> ' + (kv[1] != null ? Math.round(Number(kv[1])) : 0) + '/100</div>';
+      }).join('');
+    } else componentsEl.textContent = 'No components yet.';
+    if (score.recommendations && score.recommendations.length) {
+      recsEl.innerHTML = score.recommendations.map(function(r) {
+        return '<div style="margin:6px 0; color:#ccc;">' + escapeHTML(r.priority || '') + ': ' + escapeHTML(r.action || '') + ' (+' + (r.potentialGain || 0) + ' pts)</div>';
+      }).join('');
+    } else recsEl.textContent = 'No recommendations.';
+    if (paymentsEl) {
+      paymentsEl.innerHTML = '<p style="color:#888;">Link Venmo, Cash App, or Apple Pay via API. Gateways: ' + escapeHTML(JSON.stringify(Object.keys(gateways))) + '</p>';
+    }
+    if (behaviorEl && behavior.totalScore != null) {
+      behaviorEl.innerHTML = '<p>Behavior score: <strong>' + Math.round(behavior.totalScore) + '</strong>/100. Ranking: ' + (behavior.ranking || '-') + '. Badges: ' + (behavior.badges && behavior.badges.length ? behavior.badges.map(function(b) { return b.icon + ' ' + escapeHTML(b.name); }).join(', ') : 'None') + '</p>';
+    }
+    if (leaderboardEl && leaderboardData.leaderboard && leaderboardData.leaderboard.length) {
+      leaderboardEl.innerHTML = '<ol style="margin:0; padding-left:20px;">' + leaderboardData.leaderboard.map(function(a, i) {
+        return '<li style="margin:6px 0;">' + escapeHTML(a.name) + ' — ' + Math.round(a.score) + ' (' + escapeHTML(a.tier) + ')</li>';
+      }).join('') + '</ol>';
+    } else if (leaderboardEl) leaderboardEl.textContent = 'No leaderboard data yet.';
+    if (linkBtn) {
+      linkBtn.onclick = function() {
+        const gateway = prompt('Gateway (venmo / cashapp / apple_pay):', 'venmo');
+        if (!gateway) return;
+        fetch('/api/payment/link', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ gateway: gateway.trim(), authData: {} }) })
+          .then(function(r) { return r.json(); })
+          .then(function(d) { alert(d.message || (d.error || 'Done')); if (d.success) loadGoldenProfileTab(); })
+          .catch(function() { alert('Failed'); });
+      };
+    }
+  } catch (e) {
+    if (headerEl) headerEl.textContent = 'Failed to load Golden Profile.';
+  }
+}
+
+// Analytics tab: agent network, heatmap, experiment impact
+async function loadAnalyticsTab() {
+  const networkEl = document.getElementById('analytics-network');
+  const heatmapEl = document.getElementById('analytics-heatmap');
+  const impactEl = document.getElementById('analytics-impact');
+  const experimentSelect = document.getElementById('analytics-experiment-select');
+  if (!networkEl || !heatmapEl || !impactEl) return;
+  try {
+    const [networkR, heatmapR, experimentsR] = await Promise.all([
+      fetch('/api/analytics/agents/network'),
+      fetch('/api/analytics/agents/heatmap?hours=168'),
+      fetch('/api/experiments'),
+    ]);
+    const network = await networkR.json().catch(() => ({ nodes: [], edges: [] }));
+    const heatmap = await heatmapR.json().catch(() => ({ cells: [], dayLabels: [], hourLabels: [] }));
+    const experimentsData = await experimentsR.json().catch(() => ({ experiments: [] }));
+    const experiments = experimentsData.experiments || [];
+    if (network.nodes && network.nodes.length) {
+      networkEl.innerHTML = '<div style="margin-bottom:8px;">Nodes: ' + network.nodes.length + ', Edges: ' + (network.edges?.length || 0) + '</div>' +
+        network.nodes.map(function(n) {
+          return '<span style="display:inline-block; margin:4px 8px 4px 0; padding:4px 10px; background:rgba(0,255,136,0.15); border-radius:6px; color:#0f8;">' + escapeHTML(n.label) + '</span>';
+        }).join('');
+      if (network.edges && network.edges.length) {
+        networkEl.innerHTML += '<div style="margin-top:12px; color:#888;">Connections: ' + network.edges.map(function(e) {
+          return escapeHTML(e.from) + ' → ' + escapeHTML(e.to) + ' (' + e.weight + ')';
+        }).join(', ') + '</div>';
+      }
+    } else {
+      networkEl.textContent = 'No agent interactions yet. Use social_interaction or device alerts to see data.';
+    }
+    if (heatmap.cells && heatmap.cells.length) {
+      const maxCount = Math.max.apply(null, heatmap.cells.map(function(c) { return c.count; })) || 1;
+      const grid = [];
+      for (let day = 0; day < 7; day++) {
+        const row = heatmap.cells.filter(function(c) { return c.day === day; }).sort(function(a, b) { return a.hour - b.hour; });
+        grid.push(row.map(function(c) {
+          const pct = Math.round((c.count / maxCount) * 100);
+          return '<span style="display:inline-block; width:20px; height:20px; margin:1px; background:rgba(0,255,136,' + (0.1 + 0.9 * (c.count / maxCount)) + '); border-radius:2px;" title="' + (heatmap.dayLabels && heatmap.dayLabels[day] ? heatmap.dayLabels[day] : 'Day ' + day) + ' ' + c.hour + ':00 - ' + c.count + '">' + (c.count > 0 ? c.count : '') + '</span>';
+        }).join(''));
+      }
+      heatmapEl.innerHTML = '<div style="font-size:11px; color:#888;">Rows = Sun–Sat, Cols = 0h–23h</div><div style="white-space:nowrap;">' + grid.join('<br>') + '</div>';
+    } else {
+      heatmapEl.textContent = 'No heatmap data yet.';
+    }
+    if (experimentSelect) {
+      experimentSelect.innerHTML = '<option value="">Select experiment</option>' + experiments.map(function(e) {
+        return '<option value="' + escapeHTML(e.id) + '">' + escapeHTML(e.name || e.id) + '</option>';
+      }).join('');
+      experimentSelect.onchange = function() {
+        const id = experimentSelect.value;
+        if (!id) { impactEl.textContent = ''; return; }
+        fetch('/api/experiments/' + encodeURIComponent(id) + '/impact').then(function(r) { return r.json(); }).then(function(data) {
+          if (data.variants && data.variants.length) {
+            impactEl.innerHTML = '<strong>' + escapeHTML(data.experimentName || '') + '</strong><br><br>' + data.variants.map(function(v) {
+              return '<div style="margin:8px 0; padding:8px; background:rgba(255,255,255,0.05); border-radius:6px;">' + escapeHTML(v.variantName) + ': assignments=' + v.assignments + ', conversions=' + v.conversions + ', conversionRate=' + (v.conversionRate != null ? (v.conversionRate * 100).toFixed(1) + '%' : '-') + ', engagement=' + v.engagement + '</div>';
+            }).join('');
+          } else {
+            impactEl.textContent = 'No results.';
+          }
+        }).catch(function() { impactEl.textContent = 'Failed to load impact.'; });
+      };
+    }
+  } catch (e) {
+    if (networkEl) networkEl.textContent = 'Failed to load analytics.';
+    if (heatmapEl) heatmapEl.textContent = 'Failed to load heatmap.';
+    if (impactEl) impactEl.textContent = 'Failed to load impact.';
+  }
+}
+
+// Cloud Phones tab: load device list from cookie and fetch fragments
+async function loadCloudPhonesTab() {
+  const listEl = document.getElementById('cloudphones-list');
+  const addBtn = document.getElementById('cloudphone-add-btn');
+  const inputEl = document.getElementById('cloudphone-device-id');
+  if (!listEl) return;
+
+  try {
+    const r = await fetch('/api/dashboard/my-devices');
+    const data = await r.json().catch(() => ({ deviceIds: [] }));
+    let deviceIds = data.deviceIds || [];
+    const groupFilter = document.getElementById('cloudphone-group-filter');
+    const groupValue = groupFilter ? groupFilter.value : '';
+    if (groupValue) {
+      const gr = await fetch('/api/dashboard/groups');
+      const gData = await gr.json().catch(() => ({ groups: {} }));
+      const group = gData.groups && gData.groups[groupValue];
+      if (group && group.devices && group.devices.length) {
+        deviceIds = deviceIds.filter(function(id) { return group.devices.indexOf(id) !== -1; });
+      }
+    }
+    const groupsR = await fetch('/api/dashboard/groups');
+    const groupsData = await groupsR.json().catch(() => ({ groups: {} }));
+    const groups = groupsData.groups || {};
+    if (groupFilter) {
+      groupFilter.innerHTML = '<option value="">All devices</option>' +
+        Object.keys(groups).map(function(k) {
+          return '<option value="' + escapeHTML(k) + '">' + escapeHTML(groups[k].name || k) + '</option>';
+        }).join('');
+      groupFilter.value = groupValue;
+    }
+    listEl.innerHTML = '';
+    for (const id of deviceIds) {
+      const fragR = await fetch('/api/fragment/device/' + encodeURIComponent(id) + '?nocache=' + Date.now());
+      const html = await fragR.text();
+      if (fragR.ok) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'device-card-wrapper';
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.setAttribute('data-device-id', id);
+        cb.title = 'Select for comparison';
+        wrapper.appendChild(cb);
+        const wrap = document.createElement('div');
+        wrap.innerHTML = html.trim();
+        const frag = wrap.firstElementChild;
+        if (frag) {
+          const tagsEl = document.createElement('div');
+          tagsEl.className = 'device-tags';
+          tagsEl.setAttribute('data-device-id', id);
+          tagsEl.style.cssText = 'margin-top:8px; font-size:11px; color:#888;';
+          wrapper.appendChild(frag);
+          wrapper.appendChild(tagsEl);
+          listEl.appendChild(wrapper);
+          frag.querySelectorAll('.btn-refresh').forEach(btn => {
+            btn.addEventListener('click', () => refreshCloudPhoneFragment(btn.getAttribute('data-device-id')));
+          });
+          frag.querySelectorAll('.btn-details').forEach(btn => {
+            btn.addEventListener('click', () => {});
+          });
+          fetch('/api/dashboard/devices/' + encodeURIComponent(id) + '/tags')
+            .then(function(res) { return res.json(); })
+            .then(function(d) {
+              const el = wrapper.querySelector('.device-tags');
+              if (el && d.tags && d.tags.length) {
+                el.textContent = 'Tags: ' + d.tags.join(', ');
+              }
+            })
+            .catch(function() {});
+        }
+      } else {
+        listEl.appendChild(document.createElement('div')).innerHTML = '<div class="device-fragment dark-theme" style="padding:16px;"><p class="device-error">Device ' + escapeHTML(id) + ': ' + (fragR.status === 503 ? 'DuoPlus not configured' : fragR.status === 403 ? 'Access denied' : 'Failed to load') + '</p></div>';
+      }
+    }
+
+    if (typeof ws !== 'undefined' && ws && ws.readyState === 1) {
+      deviceIds.forEach(function(id) {
+        ws.send(JSON.stringify({ type: 'subscribe_device', deviceId: id }));
+      });
+    }
+    if (groupFilter) {
+      groupFilter.addEventListener('change', function() { loadCloudPhonesTab(); });
+    }
+
+    if (addBtn && inputEl) {
+      addBtn.onclick = async () => {
+        const id = (inputEl.value || '').trim();
+        if (!id) return;
+        const r2 = await fetch('/api/dashboard/my-devices');
+        const d = await r2.json().catch(() => ({ deviceIds: [] }));
+        const ids = d.deviceIds || [];
+        if (ids.includes(id)) { loadCloudPhonesTab(); return; }
+        ids.push(id);
+        await fetch('/api/dashboard/my-devices', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deviceIds: ids }) });
+        inputEl.value = '';
+        loadCloudPhonesTab();
+      };
+    }
+    const compareBtn = document.getElementById('cloudphone-compare-btn');
+    const comparisonPanel = document.getElementById('cloudphones-comparison-panel');
+    if (compareBtn && comparisonPanel) {
+      compareBtn.onclick = async () => {
+        const checked = listEl.querySelectorAll('input[type="checkbox"][data-device-id]:checked');
+        const ids = Array.from(checked).map(function(el) { return el.getAttribute('data-device-id'); }).filter(Boolean);
+        if (ids.length < 2) {
+          comparisonPanel.style.display = 'none';
+          return;
+        }
+        try {
+          const r = await fetch('/api/devices/compare', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ deviceIds: ids, layout: 'grid' }),
+          });
+          const data = await r.json().catch(() => ({}));
+          if (data.html) {
+            comparisonPanel.innerHTML = data.html;
+            comparisonPanel.style.display = 'block';
+          } else {
+            comparisonPanel.innerHTML = '<p style="color:#888;">Comparison failed.</p>';
+            comparisonPanel.style.display = 'block';
+          }
+        } catch (err) {
+          comparisonPanel.innerHTML = '<p style="color:#f44;">Failed to compare devices.</p>';
+          comparisonPanel.style.display = 'block';
+        }
+      };
+    }
+    const exportBtn = document.getElementById('cloudphone-export-btn');
+    const exportModal = document.getElementById('cloudphones-export-modal');
+    const exportScopeLabel = document.getElementById('export-scope-label');
+    const exportFormat = document.getElementById('export-format');
+    const exportTemplate = document.getElementById('export-template');
+    const exportCancel = document.getElementById('export-modal-cancel');
+    const exportSubmit = document.getElementById('export-modal-submit');
+    if (exportBtn && exportModal) {
+      exportBtn.onclick = function() {
+        const checked = listEl.querySelectorAll('input[type="checkbox"][data-device-id]:checked');
+        const count = checked.length;
+        if (exportScopeLabel) exportScopeLabel.textContent = count > 0 ? 'Selected devices (' + count + ')' : 'All my devices';
+        exportModal.style.display = 'flex';
+      };
+    }
+    if (exportCancel && exportModal) exportCancel.onclick = function() { exportModal.style.display = 'none'; };
+    if (exportSubmit && exportModal && exportFormat && exportTemplate) {
+      exportSubmit.onclick = async function() {
+        const checked = listEl.querySelectorAll('input[type="checkbox"][data-device-id]:checked');
+        const deviceIds = checked.length > 0
+          ? Array.from(checked).map(function(el) { return el.getAttribute('data-device-id'); }).filter(Boolean)
+          : [];
+        try {
+          const r = await fetch('/api/reports/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              deviceIds: deviceIds,
+              format: exportFormat.value || 'json',
+              template: exportTemplate.value || 'full',
+            }),
+          });
+          if (!r.ok) {
+            const err = await r.json().catch(() => ({}));
+            alert(err.error || 'Export failed');
+            return;
+          }
+          const blob = await r.blob();
+          const ct = r.headers.get('Content-Type') || '';
+          const disp = r.headers.get('Content-Disposition') || '';
+          const m = disp.match(/filename="([^"]+)"/);
+          const filename = m ? m[1] : 'devices-report.' + (exportFormat.value || 'json');
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          a.click();
+          URL.revokeObjectURL(url);
+          exportModal.style.display = 'none';
+        } catch (err) {
+          alert('Export failed');
+        }
+      };
+    }
+  } catch (e) {
+    listEl.innerHTML = '<p style="color:#888;">Failed to load devices. DuoPlus may not be configured (set DUOPLUS_API_URL and enable in config).</p>';
+  }
+}
+
+function refreshCloudPhoneFragment(deviceId) {
+  if (!deviceId) return;
+  const listEl = document.getElementById('cloudphones-list');
+  const frag = listEl && listEl.querySelector('[data-device-id="' + CSS.escape(deviceId) + '"]');
+  if (!frag) return;
+  fetch('/api/fragment/device/' + encodeURIComponent(deviceId) + '?nocache=' + Date.now())
+    .then(r => r.text())
+    .then(html => {
+      const wrap = document.createElement('div');
+      wrap.innerHTML = html.trim();
+      const newFrag = wrap.firstElementChild;
+      if (newFrag) {
+        frag.replaceWith(newFrag);
+        newFrag.querySelectorAll('.btn-refresh').forEach(btn => { btn.addEventListener('click', () => refreshCloudPhoneFragment(btn.getAttribute('data-device-id'))); });
+        newFrag.querySelectorAll('.btn-details').forEach(btn => { btn.addEventListener('click', () => {}); });
+      }
+    })
+    .catch(() => {});
 }
 
 // Webhook Pulse Widget: Live health monitoring
@@ -2062,6 +2546,40 @@ function connectWebSocket() {
           }
         }
         break;
+      case 'device_update':
+        if (message.data && message.data.deviceId) {
+          refreshCloudPhoneFragment(message.data.deviceId);
+        }
+        break;
+      case 'device_alert':
+        if (message.data && message.data.deviceId) {
+          const panel = document.getElementById('cloudphones-device-alerts');
+          if (panel) {
+            const a = message.data;
+            const severity = a.severity || 'info';
+            const color = severity === 'critical' ? '#f44' : severity === 'warning' ? '#fa0' : '#0af';
+            const div = document.createElement('div');
+            div.setAttribute('data-alert-id', a.id || '');
+            div.style.cssText = 'padding:10px 12px; margin-bottom:8px; border-radius:6px; border-left:4px solid ' + color + '; background:rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;';
+            div.innerHTML = '<span><strong>Device ' + escapeHTML(a.deviceId) + '</strong>: ' + escapeHTML(a.message || '') + '</span>' +
+              (a.acknowledged ? '' : '<button type="button" class="device-alert-ack" data-alert-id="' + escapeHTML(a.id || '') + '" style="padding:4px 10px; background:#333; color:#fff; border:none; border-radius:4px; cursor:pointer; font-size:12px;">Ack</button>');
+            panel.appendChild(div);
+            const ackBtn = div.querySelector('.device-alert-ack');
+            if (ackBtn) {
+              ackBtn.onclick = function() {
+                const id = ackBtn.getAttribute('data-alert-id');
+                if (!id) return;
+                fetch('/api/alerts/device/' + encodeURIComponent(id) + '/ack', { method: 'POST' }).then(function() {
+                  const span = document.createElement('span');
+                  span.style.color = '#888';
+                  span.textContent = 'Acknowledged';
+                  ackBtn.replaceWith(span);
+                });
+              };
+            }
+          }
+        }
+        break;
       case 'pong':
         // Heartbeat response
         break;
@@ -2124,29 +2642,39 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
-// Theme management
-function toggleTheme() {
-  const currentTheme = localStorage.getItem('theme') || 'dark';
-  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', newTheme);
-  localStorage.setItem('theme', newTheme);
-  updateThemeStyles(newTheme);
-}
-
-function updateThemeStyles(theme) {
-  if (theme === 'light') {
-    document.body.style.background = 'linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%)';
-    document.body.style.color = '#000';
-  } else {
-    document.body.style.background = 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%)';
-    document.body.style.color = '#fff';
+// Theme management (cookie-based via /api/dashboard/preferences)
+async function applyDashboardTheme(theme) {
+  try {
+    const r = await fetch('/api/dashboard/preferences', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ theme }),
+    });
+    if (!r.ok) return;
+    document.body.className = document.body.className.replace(/\bdashboard-theme-\w+/g, '') + ' dashboard-theme-' + theme;
+    if (theme === 'light') {
+      document.body.style.background = 'linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%)';
+      document.body.style.color = '#111';
+    } else if (theme === 'blue') {
+      document.body.style.background = 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)';
+      document.body.style.color = '#e2e8f0';
+    } else {
+      document.body.style.background = 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%)';
+      document.body.style.color = '#fff';
+    }
+  } catch (e) {
+    console.error('Failed to save theme:', e);
   }
 }
 
-// Initialize theme
-const savedTheme = localStorage.getItem('theme') || 'dark';
-document.documentElement.setAttribute('data-theme', savedTheme);
-updateThemeStyles(savedTheme);
+// Initialize theme from current body class (set by server from cookies)
+(function initThemeSelect() {
+  const sel = document.getElementById('theme-select');
+  if (!sel) return;
+  const m = document.body.className.match(/dashboard-theme-(dark|light|blue)/);
+  const current = m ? m[1] : 'dark';
+  sel.value = current;
+})();
 
 // Add filter event listeners
 ['search-input', 'category-filter', 'status-filter', 'benchmark-sort'].forEach(id => {

@@ -48,6 +48,10 @@
     "benchmark": "bun run src/debug/benchmark.ts",
     "benchmark:websocket": "bun run scripts/analysis/ws-secrets-bench.ts",
     "benchmark:vault": "bun run scripts/secrets/vault-sim.ts",
+    "benchmark:elite": "bun run benchmarks/run-all.bench.ts",
+    "benchmark:elite:security": "bun run benchmarks/elite-security.bench.ts",
+    "benchmark:elite:resilience": "bun run benchmarks/elite-resilience.bench.ts",
+    "benchmark:elite:infrastructure": "bun run benchmarks/elite-infrastructure.bench.ts",
     "secrets:field": "bun run scripts/secrets/secrets-field.ts",
     "secrets:server": "bun run scripts/secrets/secrets-field-server.ts",
     "secrets:boost": "bun run scripts/secrets/secret-boost.ts",
@@ -175,7 +179,8 @@
     "bun": "latest"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "mitata": "1.0.34"
   },
   "engines": {
     "bun": ">=1.3.6"

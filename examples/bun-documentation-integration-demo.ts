@@ -6,10 +6,9 @@
  * Demonstrates the complete integration of Bun documentation with the existing wiki and library systems.
  */
 
-import { 
+import {
   BunDocumentationIntegration,
   BunWikiIntegration,
-  R2Storage,
   PackageManager
 } from '../lib';
 

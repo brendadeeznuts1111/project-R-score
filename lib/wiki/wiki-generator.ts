@@ -558,8 +558,8 @@ async function main(): Promise<void> {
 // EXPORTS & ENTRY
 // ============================================================================
 
-export {
-  WikiURLGenerator,
+// Backwards compatibility - class wrapper for existing imports
+const WikiURLGenerator = {
   generateWikiURLs,
   generateMarkdownWiki,
   generateHTMLWiki,
@@ -568,8 +568,8 @@ export {
   generateUtilityPage,
 };
 
-// Backwards compatibility - class wrapper for existing imports
-const WikiURLGenerator = {
+export {
+  WikiURLGenerator,
   generateWikiURLs,
   generateMarkdownWiki,
   generateHTMLWiki,

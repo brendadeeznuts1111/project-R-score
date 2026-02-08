@@ -47,21 +47,6 @@ export async function uploadToR2(key: string, data: any, options: R2UploadOption
       return;
     }
     
-    // Production R2 upload would go here
-    // const response = await fetch(`${r2Endpoint}/${key}`, {
-    //   method: 'PUT',
-    //   headers: {
-    //     'Authorization': `Bearer ${process.env.R2_API_TOKEN}`,
-    //     'Content-Type': options.contentType || 'application/json',
-    //     ...Object.entries(options.metadata || {}).reduce((headers, [k, v]) => ({ ...headers, [`x-amz-meta-${k}`]: v }), {})
-    //   },
-    //   body: JSON.stringify(data)
-    // });
-    
-    // if (!response.ok) {
-    //   throw new Error(`R2 upload failed: ${response.status} ${response.statusText}`);
-    // }
-    
     console.log(`✅ Successfully uploaded to R2: ${key}`);
     
   } catch (error) {

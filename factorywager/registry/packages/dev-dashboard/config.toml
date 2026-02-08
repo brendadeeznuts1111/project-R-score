@@ -235,3 +235,12 @@ log_personalization_scores = false
 alert_on_accuracy_drop = 10.0  # percentage
 alert_on_high_memory = 1024    # MB
 metrics_push_interval = 30     # seconds
+
+# DuoPlus Cloud Phone API (optional - for Cloud Phones tab)
+# Set DUOPLUS_API_URL and optionally DUOPLUS_API_KEY in env to enable
+[duoplus]
+enabled = false
+api_base_url = ""   # e.g. https://api.duoplus.net (or use env DUOPLUS_API_URL)
+# api_key = ""      # optional; or use env DUOPLUS_API_KEY
+polling_interval_sec = 10   # real-time device poll interval (when subscribers exist)
+realtime_enabled = true     # enable WebSocket device_update broadcasts

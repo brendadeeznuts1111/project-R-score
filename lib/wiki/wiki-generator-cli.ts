@@ -573,7 +573,7 @@ Use these keywords to quickly find utilities:
 
   // Add analytics
   if (config.includeAnalytics) {
-    content += `## � Analytics
+    content += `## 📈 Analytics
 
 ### Generation Statistics
 - **Total Generation Time**: ${analytics.generationTime}ms
@@ -1164,67 +1164,40 @@ function generateHTMLWiki(
 }
 
 /**
- * Generate JSON wiki data for API integration
- */
-function generateJSONWiki(wikiData: WikiData): string {
-  console.log('\n📄 GENERATING JSON WIKI DATA...');
-
-  const jsonData = {
-    metadata: {
-      total: wikiData.total,
-      categories: Object.keys(wikiData.categories).length,
-      generated: new Date().toISOString(),
-      version: '1.0.0',
-    },
-    categories: wikiData.categories,
-    pages: wikiData.wikiPages,
-    cliPages: wikiData.cliPages || [],
-    quickReference: QUICK_REFERENCE_URLS,
-    api: {
-      base_url: 'https://wiki.company.com/api/v1',
-      endpoints: {
-        list_pages: '/pages',
-        get_page: '/pages/{id}',
-        search: '/search?q={query}',
-        category: '/categories/{category}',
-      },
-    },
-  };
-
-  return JSON.stringify(jsonData, null, 2);
-}
-
-/**
  * Create wiki files
  */
 async function createWikiFiles(config: Partial<WikiConfig> = {}): Promise<void> {
   const finalConfig = { ...defaultConfig, ...config };
   console.log('\n📁 CREATING WIKI FILES...');
 
-  // Generate wiki data
+  // Generate wiki data with analytics and search index
+  const startTime = Date.now();
   const wikiData = generateWikiURLs(config);
+  const generationTime = Date.now() - startTime;
+  const analytics = generateAnalytics(wikiData, generationTime);
+  const searchIndex = generateSearchIndex(wikiData);
 
   // Create output directory
-  const outputDir = './internal-wiki';
+  const outputDir = finalConfig.outputDir;
 
   try {
     // Create markdown
     if (finalConfig.format === 'markdown' || finalConfig.format === 'all') {
-      const markdownContent = generateMarkdownWiki(wikiData);
+      const markdownContent = generateMarkdownWiki(wikiData, finalConfig, analytics, searchIndex);
       await AtomicFileOperations.writeAtomic(`${outputDir}/bun-utilities-wiki.md`, markdownContent);
       console.log('   ✅ Created: bun-utilities-wiki.md');
     }
 
     // Create HTML
     if (finalConfig.format === 'html' || finalConfig.format === 'all') {
-      const htmlContent = generateHTMLWiki(wikiData);
+      const htmlContent = generateHTMLWiki(wikiData, finalConfig, analytics, searchIndex);
       await AtomicFileOperations.writeAtomic(`${outputDir}/bun-utilities-wiki.html`, htmlContent);
       console.log('   ✅ Created: bun-utilities-wiki.html');
     }
 
     // Create JSON
     if (finalConfig.format === 'json' || finalConfig.format === 'all') {
-      const jsonContent = generateJSONWiki(wikiData);
+      const jsonContent = generateJSONWiki(wikiData, analytics, searchIndex);
       await AtomicFileOperations.writeAtomic(`${outputDir}/bun-utilities-wiki.json`, jsonContent);
       console.log('   ✅ Created: bun-utilities-wiki.json');
     }

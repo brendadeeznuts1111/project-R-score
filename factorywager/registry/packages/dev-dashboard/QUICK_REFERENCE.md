@@ -13,6 +13,15 @@ curl http://localhost:3008/api/health/webhook
 
 # Cookie analytics
 curl http://localhost:3008/api/fraud/cookie-telemetry
+
+# Dashboard preferences (cookie-managed theme, layout, etc.)
+curl http://localhost:3008/api/dashboard/preferences
+curl -X POST http://localhost:3008/api/dashboard/preferences -H "Content-Type: application/json" -d '{"theme":"light"}'
+
+# Cloud Phones (DuoPlus) - device list and fragments (set DUOPLUS_API_URL to enable)
+curl http://localhost:3008/api/dashboard/my-devices
+curl -X POST http://localhost:3008/api/dashboard/my-devices -H "Content-Type: application/json" -d '{"deviceIds":["device-1"]}'
+curl http://localhost:3008/api/fragment/device/device-1
 ```
 
 ### Global Telemetry (Add to ~/.zshrc)

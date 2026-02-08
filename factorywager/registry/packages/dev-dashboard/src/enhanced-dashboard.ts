@@ -50,6 +50,20 @@ import { wsManager, broadcastUpdate } from './websocket/manager.ts';
 import { sendWebhookAlert, preconnectWebhook, tuneDNSStrategy } from './alerts/webhook.ts';
 import { runWebSocketBenchmarks as runWSBenchmarks } from './websocket/benchmark.ts';
 import { P2PGatewayBenchmark } from './p2p-gateway-benchmark.ts';
+import { DuoPlusFragmentLoader } from './duoplus/fragment-loader.ts';
+import { DeviceMonitor } from './duoplus/device-monitor.ts';
+import { DeviceComparisonEngine } from './duoplus/comparison.ts';
+import { DeviceReportExporter } from './duoplus/reports.ts';
+import { DeviceAlertSystem } from './duoplus/alerts.ts';
+import { ABTestingFramework } from './ab-testing.ts';
+import { SocialFeed } from './social.ts';
+import { AgentInteractionVisualizer } from './agent-viz.ts';
+import { GoldenProfileSystem } from './golden-profile.ts';
+import { PaymentGatewaySystem } from './payment-gateway.ts';
+import { FraudDetectionSystem } from './fraud-detection.ts';
+import { AppleIDIntegration } from './apple-id.ts';
+import { AgentBehaviorScorer } from './agent-behavior-scoring.ts';
+import { getOrSetAgentId } from './ab-testing.ts';
 
 // Load TOML configs using Bun's native TOML.parse API
 // More explicit than import() - gives us full control over parsing
@@ -66,6 +80,70 @@ const benchmarksConfig = Bun.TOML.parse(await benchmarksFile.text());
 // Extract config values early for use in template literals
 const serverConfig = dashboardConfig;
 const refreshInterval = serverConfig.server?.auto_refresh_interval || 5;
+
+// DuoPlus Cloud Phone (optional) - from config or env
+const duoplusConfig = (dashboardConfig as any).duoplus;
+const duoplusBaseUrl = process.env.DUOPLUS_API_URL || duoplusConfig?.api_base_url || '';
+const duoplusApiKey = process.env.DUOPLUS_API_KEY || duoplusConfig?.api_key;
+const duoplusEnabled = Boolean(duoplusBaseUrl) && (duoplusConfig?.enabled !== false);
+const duoplusLoader = duoplusEnabled
+  ? new DuoPlusFragmentLoader({ apiBaseUrl: duoplusBaseUrl, apiKey: duoplusApiKey })
+  : null;
+const duoplusRealtime =
+  duoplusEnabled &&
+  (duoplusConfig?.realtime_enabled !== false) &&
+  Boolean(duoplusLoader);
+const duoplusPollingSec = Math.max(
+  5,
+  parseInt(String(duoplusConfig?.polling_interval_sec ?? 10), 10) || 10
+);
+const socialFeed = new SocialFeed();
+socialFeed.setSendToAgent((agentId, type, data) => {
+  const ws = wsManager.getClientByAgentId(agentId);
+  if (ws) wsManager.sendToClient(ws, type, data);
+});
+const deviceAlerts =
+  duoplusRealtime && duoplusLoader
+    ? new DeviceAlertSystem(broadcastUpdate, undefined, (alert) => {
+        socialFeed.pushDeviceAlert(alert.deviceId, alert.id, alert.message);
+      })
+    : null;
+const deviceMonitor =
+  duoplusRealtime && duoplusLoader
+    ? new DeviceMonitor(duoplusLoader, broadcastUpdate, {
+        pollingIntervalMs: duoplusPollingSec * 1000,
+        enabled: true,
+        onStateChange: (deviceId, prev, cur) => deviceAlerts?.checkAlerts(deviceId, prev, cur),
+      })
+    : null;
+const comparisonEngine = duoplusLoader ? new DeviceComparisonEngine(duoplusLoader) : null;
+const reportExporter = duoplusLoader ? new DeviceReportExporter(duoplusLoader) : null;
+const abTesting = new ABTestingFramework();
+const agentViz = new AgentInteractionVisualizer(abTesting, socialFeed);
+const goldenProfile = new GoldenProfileSystem();
+goldenProfile.setDuoPlusLoader(duoplusLoader);
+goldenProfile.setAgentIdResolver((cookieHeader) => getOrSetAgentId(cookieHeader).agentId);
+const fraudDetection = new FraudDetectionSystem();
+const paymentGateway = new PaymentGatewaySystem();
+paymentGateway.setGoldenProfile(goldenProfile);
+paymentGateway.setFraudDetection(fraudDetection);
+fraudDetection.setTransactionSource(
+  (agentId, gateway, windowMs) => paymentGateway.getRecentTransactionCount(agentId, gateway, windowMs),
+  (agentId) => paymentGateway.getAgentAverageAmount(agentId)
+);
+const appleID = new AppleIDIntegration();
+appleID.setGoldenProfile(goldenProfile);
+const agentBehaviorScorer = new AgentBehaviorScorer();
+agentBehaviorScorer.setGoldenProfile(goldenProfile);
+agentBehaviorScorer.setDataSources(
+  (agentId) => abTesting.getInteractionsForAgent(agentId),
+  (agentId) => {
+    const interactions = socialFeed.getInteractions(500);
+    return interactions
+      .filter((i) => i.fromAgent === agentId || i.toAgent === agentId)
+      .map((i) => ({ type: i.type, fromAgent: i.fromAgent, toAgent: i.toAgent }));
+  }
+);
 
 // History retention (prune old rows per config)
 const retentionDays = Math.max(1, parseInt(String(dashboardConfig.history?.retention_days || 30), 10) || 30);
@@ -1539,6 +1617,18 @@ const server = Bun.serve({
       CACHE_TTL,
       fraudEngine,
       wsClients: wsManager,
+      duoplusLoader,
+      comparisonEngine,
+      reportExporter,
+      deviceAlerts,
+      abTesting,
+      socialFeed,
+      agentViz,
+      goldenProfile,
+      paymentGateway,
+      fraudDetection,
+      appleID,
+      agentBehaviorScorer,
     };
     
     // Delegate to routes module
@@ -1548,6 +1638,11 @@ const server = Bun.serve({
 
 // Set server instance in WebSocket manager for pub/sub broadcasting
 wsManager.setServer(server);
+if (deviceMonitor) {
+  wsManager.setDeviceMonitor(deviceMonitor);
+}
+wsManager.setABTesting(abTesting);
+wsManager.setSocialFeed(socialFeed);
 
 // HMR support - preserve server and WebSocket connections on hot reload
 if (import.meta.hot) {
@@ -1584,3 +1679,5 @@ logger.info(`   Config: TOML-based via Bun.TOML.parse (${quickWinsSummary?.total
 logger.info(`   Isolation: ${useIsolation ? '✅ Enabled (subprocess mode)' : '❌ Disabled (in-process mode)'}`);
 logger.info(`   Set BENCHMARK_ISOLATION=false to disable isolation mode`);
 logger.info(`   💡 Tip: Use 'bun --watch run dev-dashboard' for auto-reload`);
+
+}

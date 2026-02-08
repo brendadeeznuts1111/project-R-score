@@ -623,6 +623,97 @@ console.log(isBuffer(buf)); // true`,
 const buffer = toBuffer('Hello'); // Convert string to Buffer`,
   },
 
+  // https://bun.sh/docs/api/http
+  NETWORKING: {
+    FETCH: `const res = await fetch("https://example.com");
+const text = await res.text();
+console.log(text.length); // response body length`,
+
+    SERVE: `Bun.serve({
+  port: 3000,
+  fetch(req) {
+    return new Response("Hello from Bun.serve!");
+  },
+});`,
+
+    WEBSOCKET: `Bun.serve({
+  fetch(req, server) {
+    if (server.upgrade(req)) return; // upgrade to WebSocket
+    return new Response("Not a WebSocket request", { status: 400 });
+  },
+  websocket: {
+    message(ws, msg) { ws.send("echo: " + msg); },
+  },
+});`,
+
+    TCP: `const server = Bun.listen({
+  hostname: "localhost",
+  port: 8080,
+  socket: {
+    data(socket, data) { socket.write(data); }, // echo
+    open(socket) { console.log("TCP client connected"); },
+  },
+});`,
+
+    UDP: `const socket = await Bun.udpSocket({
+  port: 41234,
+  socket: {
+    data(socket, buf, port, addr) {
+      console.log("UDP from", addr, ":", buf.toString());
+    },
+  },
+});`,
+
+    DNS: `const records = await Bun.dns.lookup("example.com", { family: 4 });
+console.log(records); // [{ address: "93.184.216.34", family: 4 }]`,
+  },
+
+  // https://bun.sh/docs/runtime/child-processes
+  PROCESS: {
+    SPAWN: `const proc = Bun.spawn(["echo", "hello"]);
+const exitCode = await proc.exited;
+console.log("exit:", exitCode); // 0`,
+
+    EXEC: `const proc = Bun.spawn(["ls", "-la"], { stdout: "pipe" });
+const output = await new Response(proc.stdout).text();
+console.log(output);`,
+
+    FORK: `const proc = Bun.spawn(["bun", "worker.ts"], {
+  env: { ...process.env, WORKER_ID: "1" },
+  stdout: "pipe",
+});
+console.log("Worker PID:", proc.pid);`,
+
+    KILL: `const proc = Bun.spawn(["sleep", "60"]);
+proc.kill(); // sends SIGTERM
+console.log("Killed process", proc.pid);`,
+
+    PID: `console.log("Current PID:", process.pid);
+console.log("Parent PID:", process.ppid);`,
+
+    SIGNALS: `process.on("SIGINT", () => {
+  console.log("Caught SIGINT, cleaning up...");
+  process.exit(0);
+});`,
+  },
+
+  // https://bun.sh/docs/api/utils#performance
+  PERFORMANCE: {
+    GC: `Bun.gc(true); // force garbage collection
+const mem = process.memoryUsage();
+console.log("Heap used:", (mem.heapUsed / 1024 / 1024).toFixed(1), "MB");`,
+
+    PERFORMANCE_NOW: `const start = performance.now();
+// ... work ...
+const elapsed = performance.now() - start;
+console.log("Elapsed:", elapsed.toFixed(3), "ms");`,
+
+    MEMORY_USAGE: `const mem = process.memoryUsage();
+console.log("RSS:", (mem.rss / 1024 / 1024).toFixed(1), "MB");
+console.log("Heap total:", (mem.heapTotal / 1024 / 1024).toFixed(1), "MB");
+console.log("Heap used:", (mem.heapUsed / 1024 / 1024).toFixed(1), "MB");`,
+  },
+
   COLOR: {
     COLOR: `import { color } from 'bun';
 const red = color('red', 'css'); // 'rgb(255, 0, 0)'

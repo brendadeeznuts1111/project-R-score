@@ -14,6 +14,7 @@
  */
 
 import { logger } from '../../user-profile/src/index.ts';
+import type { DeviceMonitor } from '../duoplus/device-monitor.ts';
 
 /**
  * WebSocket client data type
@@ -28,6 +29,7 @@ export interface WebSocketData {
   clientId: string;
   sessionId?: string;
   userId?: string;
+  agentId?: string;
 }
 
 /**
@@ -65,12 +67,44 @@ export interface WebSocketClient {
 export class WebSocketManager {
   private server: any = null; // Bun server instance (set after Bun.serve())
   private clientCount = 0;
+  private deviceMonitor: DeviceMonitor | null = null;
+  private abTesting: import('../ab-testing.ts').ABTestingFramework | null = null;
+  private socialFeed: import('../social.ts').SocialFeed | null = null;
+  private agentSockets = new Map<string, WebSocketClient>();
 
   /**
    * Set the Bun server instance (called after Bun.serve())
    */
   setServer(server: any): void {
     this.server = server;
+  }
+
+  /**
+   * Set the device monitor for subscribe_device / unsubscribe_device (optional).
+   */
+  setDeviceMonitor(monitor: DeviceMonitor | null): void {
+    this.deviceMonitor = monitor;
+  }
+
+  /**
+   * Set the A/B testing framework for agent_action (optional).
+   */
+  setABTesting(ab: import('../ab-testing.ts').ABTestingFramework | null): void {
+    this.abTesting = ab;
+  }
+
+  /**
+   * Set the social feed for social_interaction (optional).
+   */
+  setSocialFeed(feed: import('../social.ts').SocialFeed | null): void {
+    this.socialFeed = feed;
+  }
+
+  /**
+   * Get client by agent ID (for sendToAgent).
+   */
+  getClientByAgentId(agentId: string): WebSocketClient | null {
+    return this.agentSockets.get(agentId) ?? null;
   }
 
   /**
@@ -258,6 +292,50 @@ export class WebSocketManager {
             channels: Array.from(ws.data.subscriptions),
           });
           break;
+        case 'subscribe_device':
+          if (this.deviceMonitor && typeof data.deviceId === 'string') {
+            this.deviceMonitor.subscribe(data.deviceId, ws);
+            if (!ws.isSubscribed('dashboard:device_update')) {
+              ws.subscribe('dashboard:device_update');
+            }
+            if (!ws.isSubscribed('dashboard:device_alert')) {
+              ws.subscribe('dashboard:device_alert');
+            }
+            this.sendToClient(ws, 'device_subscribed', { deviceId: data.deviceId });
+          }
+          break;
+        case 'unsubscribe_device':
+          if (this.deviceMonitor && typeof data.deviceId === 'string') {
+            this.deviceMonitor.unsubscribe(data.deviceId, ws);
+            this.sendToClient(ws, 'device_unsubscribed', { deviceId: data.deviceId });
+          }
+          break;
+        case 'register_agent':
+          if (typeof data.agentId === 'string') {
+            (ws.data as { agentId?: string }).agentId = data.agentId;
+            this.agentSockets.set(data.agentId, ws);
+            this.sendToClient(ws, 'agent_registered', { agentId: data.agentId });
+          }
+          break;
+        case 'agent_action':
+          if (this.abTesting && typeof data.experimentId === 'string' && typeof data.variantId === 'string' && typeof data.action === 'string') {
+            const agentId = (ws.data as { agentId?: string }).agentId || ws.data.clientId;
+            this.abTesting.recordInteraction(agentId, data.experimentId, data.variantId, data.action, {
+              target: typeof data.target === 'string' ? data.target : undefined,
+              metadata: data.metadata && typeof data.metadata === 'object' ? data.metadata as Record<string, unknown> : undefined,
+            });
+          }
+          break;
+        case 'social_interaction':
+          if (this.socialFeed && typeof data.fromAgent === 'string' && typeof data.toAgent === 'string' && typeof data.type === 'string') {
+            this.socialFeed.handleSocialInteraction(
+              data.fromAgent,
+              data.toAgent,
+              data.type,
+              typeof data.content === 'string' ? data.content : undefined
+            );
+          }
+          break;
         default:
           logger.warn(`Unknown WebSocket message type: ${data.type}`);
       }
@@ -315,7 +393,9 @@ export class WebSocketManager {
    * Bun automatically unsubscribes from topics when connection closes.
    */
   handleClose(ws: WebSocketClient, code?: number, message?: string): void {
-    // Unsubscribe from all topics (Bun does this automatically, but we log it)
+    const agentId = (ws.data as { agentId?: string }).agentId;
+    if (agentId) this.agentSockets.delete(agentId);
+    this.deviceMonitor?.unsubscribeAll(ws);
     logger.debug(`WebSocket closed: code=${code}, message=${message || 'none'}`);
     this.remove(ws);
   }
