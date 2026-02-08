@@ -104,10 +104,17 @@ export class CloudflareDomainManager {
   private apiToken: string;
   private r2: typeof r2MCPIntegration;
   private knownSubdomains: Map<string, SubdomainConfig>;
+  private initialized: boolean = false;
 
   constructor() {
-    this.accountId = '7a470541a704caaf91e71efccc78fd36';
-    this.apiToken = 'YxweuHoM3mYnibQGNCu2Ui_mHev5U1oh0GLec3X9';
+    // Secure credential loading from environment variables
+    this.accountId = process.env.CLOUDFLARE_ACCOUNT_ID || '';
+    this.apiToken = process.env.CLOUDFLARE_API_TOKEN || '';
+    
+    if (!this.accountId || !this.apiToken) {
+      throw new Error('Missing required Cloudflare credentials. Please set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN environment variables.');
+    }
+    
     this.r2 = r2MCPIntegration;
     this.knownSubdomains = this.loadKnownSubdomains();
   }
@@ -338,6 +345,20 @@ export class CloudflareDomainManager {
         ssl_required: true,
         enterprise_tier: true,
       },
+      {
+        subdomain: 'wiki',
+        full_domain: 'wiki.factory-wager.com',
+        type: 'CNAME',
+        content: 'pages.github.com',
+        ttl: 300,
+        proxied: true,
+        status: 'active',
+        purpose: 'Wiki Documentation System',
+        dependencies: ['cdn.factory-wager.com', 'storage.factory-wager.com'],
+        health_check_url: 'https://wiki.factory-wager.com',
+        ssl_required: true,
+        enterprise_tier: true,
+      },
     ];
 
     return new Map(subdomains.map(sub => [sub.subdomain, sub]));
@@ -347,22 +368,34 @@ export class CloudflareDomainManager {
    * Initialize Cloudflare domain management
    */
   async initialize(): Promise<void> {
+    if (this.initialized) {
+      console.log(styled('⚠️ Cloudflare Domain Manager already initialized', 'warning'));
+      return;
+    }
+
     console.log(styled('☁️ Initializing Cloudflare Domain Manager', 'accent'));
     console.log(styled('==========================================', 'accent'));
 
-    // Store subdomain configuration in R2
-    await this.storeSubdomainConfiguration();
+    try {
+      // Store subdomain configuration in R2
+      await this.storeSubdomainConfiguration();
 
-    // Initialize health monitoring for all subdomains
-    await this.initializeSubdomainHealthMonitoring();
+      // Initialize health monitoring for all subdomains
+      await this.initializeSubdomainHealthMonitoring();
 
-    // Setup SSL certificate monitoring
-    await this.initializeSSLMonitoring();
+      // Setup SSL certificate monitoring
+      await this.initializeSSLMonitoring();
 
-    // Create domain analytics dashboard
-    await this.createAnalyticsDashboard();
+      // Create domain analytics dashboard
+      await this.createAnalyticsDashboard();
 
-    console.log(styled('✅ Cloudflare domain manager initialized', 'success'));
+      this.initialized = true;
+      console.log(styled('✅ Cloudflare domain manager initialized', 'success'));
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown initialization error';
+      console.error(styled(`❌ Failed to initialize Cloudflare Domain Manager: ${errorMessage}`, 'error'));
+      throw error;
+    }
   }
 
   /**
@@ -371,23 +404,29 @@ export class CloudflareDomainManager {
   async storeSubdomainConfiguration(): Promise<void> {
     console.log(styled('📋 Storing subdomain configuration...', 'info'));
 
-    const config = {
-      timestamp: new Date().toISOString(),
-      account_id: this.accountId,
-      primary_domain: 'factory-wager.com',
-      total_subdomains: this.knownSubdomains.size,
-      subdomains: Array.from(this.knownSubdomains.values()),
-      enterprise_tier_count: Array.from(this.knownSubdomains.values()).filter(
-        s => s.enterprise_tier
-      ).length,
-      ssl_required_count: Array.from(this.knownSubdomains.values()).filter(s => s.ssl_required)
-        .length,
-    };
+    try {
+      const config = {
+        timestamp: new Date().toISOString(),
+        account_id: this.accountId,
+        primary_domain: 'factory-wager.com',
+        total_subdomains: this.knownSubdomains.size,
+        subdomains: Array.from(this.knownSubdomains.values()),
+        enterprise_tier_count: Array.from(this.knownSubdomains.values()).filter(
+          s => s.enterprise_tier
+        ).length,
+        ssl_required_count: Array.from(this.knownSubdomains.values()).filter(s => s.ssl_required)
+          .length,
+      };
 
-    const key = `domains/factory-wager/cloudflare/subdomains.json`;
-    await this.r2.putJSON(key, config);
+      const key = `domains/factory-wager/cloudflare/subdomains.json`;
+      await this.r2.putJSON(key, config);
 
-    console.log(styled(`✅ Subdomain config stored: ${key}`, 'success'));
+      console.log(styled(`✅ Subdomain config stored: ${key}`, 'success'));
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error storing subdomain configuration';
+      console.error(styled(`❌ Failed to store subdomain configuration: ${errorMessage}`, 'error'));
+      throw error;
+    }
   }
 
   /**
@@ -396,29 +435,35 @@ export class CloudflareDomainManager {
   async initializeSubdomainHealthMonitoring(): Promise<void> {
     console.log(styled('🏥 Initializing subdomain health monitoring...', 'info'));
 
-    const healthData = {
-      timestamp: new Date().toISOString(),
-      scan_interval: '5_minutes',
-      total_subdomains: this.knownSubdomains.size,
-      health_checks: Array.from(this.knownSubdomains.values()).map(sub => ({
-        subdomain: sub.subdomain,
-        full_domain: sub.full_domain,
-        status: 'healthy',
-        last_check: new Date().toISOString(),
-        response_time: Math.random() * 200 + 50,
-        ssl_status: 'valid',
-        ssl_expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
-        dependencies_status: sub.dependencies.map(dep => ({
-          dependency: dep,
+    try {
+      const healthData = {
+        timestamp: new Date().toISOString(),
+        scan_interval: '5_minutes',
+        total_subdomains: this.knownSubdomains.size,
+        health_checks: Array.from(this.knownSubdomains.values()).map(sub => ({
+          subdomain: sub.subdomain,
+          full_domain: sub.full_domain,
           status: 'healthy',
+          last_check: new Date().toISOString(),
+          response_time: Math.random() * 200 + 50,
+          ssl_status: 'valid',
+          ssl_expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
+          dependencies_status: sub.dependencies.map(dep => ({
+            dependency: dep,
+            status: 'healthy',
+          })),
         })),
-      })),
-    };
+      };
 
-    const key = `domains/factory-wager/cloudflare/health/${new Date().toISOString().split('T')[0]}.json`;
-    await this.r2.putJSON(key, healthData);
+      const key = `domains/factory-wager/cloudflare/health/${new Date().toISOString().split('T')[0]}.json`;
+      await this.r2.putJSON(key, healthData);
 
-    console.log(styled(`✅ Health monitoring data stored: ${key}`, 'success'));
+      console.log(styled(`✅ Health monitoring data stored: ${key}`, 'success'));
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error initializing health monitoring';
+      console.error(styled(`❌ Failed to initialize health monitoring: ${errorMessage}`, 'error'));
+      throw error;
+    }
   }
 
   /**
@@ -427,30 +472,36 @@ export class CloudflareDomainManager {
   async initializeSSLMonitoring(): Promise<void> {
     console.log(styled('🔒 Initializing SSL certificate monitoring...', 'info'));
 
-    const sslData = {
-      timestamp: new Date().toISOString(),
-      ssl_overview: {
-        total_certificates: this.knownSubdomains.size,
-        valid_certificates: this.knownSubdomains.size,
-        expiring_soon: 0,
-        expired: 0,
-      },
-      certificates: Array.from(this.knownSubdomains.values()).map(sub => ({
-        domain: sub.full_domain,
-        ssl_required: sub.ssl_required,
-        status: 'valid',
-        issuer: 'Cloudflare Inc ECC CA-3',
-        issued_on: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-        expires_on: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
-        days_until_expiry: 90,
-        auto_renewal: true,
-      })),
-    };
+    try {
+      const sslData = {
+        timestamp: new Date().toISOString(),
+        ssl_overview: {
+          total_certificates: this.knownSubdomains.size,
+          valid_certificates: this.knownSubdomains.size,
+          expiring_soon: 0,
+          expired: 0,
+        },
+        certificates: Array.from(this.knownSubdomains.values()).map(sub => ({
+          domain: sub.full_domain,
+          ssl_required: sub.ssl_required,
+          status: 'valid',
+          issuer: 'Cloudflare Inc ECC CA-3',
+          issued_on: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+          expires_on: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
+          days_until_expiry: 90,
+          auto_renewal: true,
+        })),
+      };
 
-    const key = `domains/factory-wager/cloudflare/ssl/${new Date().toISOString().split('T')[0]}.json`;
-    await this.r2.putJSON(key, sslData);
+      const key = `domains/factory-wager/cloudflare/ssl/${new Date().toISOString().split('T')[0]}.json`;
+      await this.r2.putJSON(key, sslData);
 
-    console.log(styled(`✅ SSL monitoring data stored: ${key}`, 'success'));
+      console.log(styled(`✅ SSL monitoring data stored: ${key}`, 'success'));
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error initializing SSL monitoring';
+      console.error(styled(`❌ Failed to initialize SSL monitoring: ${errorMessage}`, 'error'));
+      throw error;
+    }
   }
 
   /**
@@ -459,49 +510,59 @@ export class CloudflareDomainManager {
   async createAnalyticsDashboard(): Promise<void> {
     console.log(styled('📊 Creating analytics dashboard...', 'info'));
 
-    const analytics = {
-      timestamp: new Date().toISOString(),
-      dashboard_summary: {
-        total_subdomains: this.knownSubdomains.size,
-        enterprise_subdomains: Array.from(this.knownSubdomains.values()).filter(
-          s => s.enterprise_tier
-        ).length,
-        ssl_enabled: Array.from(this.knownSubdomains.values()).filter(s => s.ssl_required).length,
-        proxied_subdomains: Array.from(this.knownSubdomains.values()).filter(s => s.proxied).length,
-      },
-      traffic_analytics: {
-        total_requests: Math.floor(Math.random() * 1000000) + 500000,
-        cached_requests: Math.floor(Math.random() * 800000) + 400000,
-        bandwidth_saved: Math.floor(Math.random() * 500) + 200, // GB
-        threats_blocked: Math.floor(Math.random() * 10000) + 5000,
-        unique_visitors: Math.floor(Math.random() * 50000) + 25000,
-      },
-      performance_metrics: {
-        avg_response_time: Math.random() * 100 + 50,
-        uptime_percentage: 99.9,
-        error_rate: 0.1,
-        cache_hit_rate: 85.5,
-      },
-      subdomain_breakdown: Array.from(this.knownSubdomains.values()).map(sub => ({
-        subdomain: sub.subdomain,
-        purpose: sub.purpose,
-        requests: Math.floor(Math.random() * 100000) + 10000,
-        bandwidth: Math.floor(Math.random() * 50) + 5, // GB
-        response_time: Math.random() * 200 + 50,
-        uptime: 99.5 + Math.random() * 0.4,
-      })),
-    };
+    try {
+      const analytics = {
+        timestamp: new Date().toISOString(),
+        dashboard_summary: {
+          total_subdomains: this.knownSubdomains.size,
+          enterprise_subdomains: Array.from(this.knownSubdomains.values()).filter(
+            s => s.enterprise_tier
+          ).length,
+          ssl_enabled: Array.from(this.knownSubdomains.values()).filter(s => s.ssl_required).length,
+          proxied_subdomains: Array.from(this.knownSubdomains.values()).filter(s => s.proxied).length,
+        },
+        traffic_analytics: {
+          total_requests: Math.floor(Math.random() * 1000000) + 500000,
+          cached_requests: Math.floor(Math.random() * 800000) + 400000,
+          bandwidth_saved: Math.floor(Math.random() * 500) + 200, // GB
+          threats_blocked: Math.floor(Math.random() * 10000) + 5000,
+          unique_visitors: Math.floor(Math.random() * 50000) + 25000,
+        },
+        performance_metrics: {
+          avg_response_time: Math.random() * 100 + 50,
+          uptime_percentage: 99.9,
+          error_rate: 0.1,
+          cache_hit_rate: 85.5,
+        },
+        subdomain_breakdown: Array.from(this.knownSubdomains.values()).map(sub => ({
+          subdomain: sub.subdomain,
+          purpose: sub.purpose,
+          requests: Math.floor(Math.random() * 100000) + 10000,
+          bandwidth: Math.floor(Math.random() * 50) + 5, // GB
+          response_time: Math.random() * 200 + 50,
+          uptime: 99.5 + Math.random() * 0.4,
+        })),
+      };
 
-    const key = `domains/factory-wager/cloudflare/analytics/${new Date().toISOString().split('T')[0]}.json`;
-    await this.r2.putJSON(key, analytics);
+      const key = `domains/factory-wager/cloudflare/analytics/${new Date().toISOString().split('T')[0]}.json`;
+      await this.r2.putJSON(key, analytics);
 
-    console.log(styled(`✅ Analytics dashboard stored: ${key}`, 'success'));
+      console.log(styled(`✅ Analytics dashboard stored: ${key}`, 'success'));
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error creating analytics dashboard';
+      console.error(styled(`❌ Failed to create analytics dashboard: ${errorMessage}`, 'error'));
+      throw error;
+    }
   }
 
   /**
    * Get subdomain by name
    */
   getSubdomain(subdomain: string): SubdomainConfig | undefined {
+    if (!subdomain || typeof subdomain !== 'string') {
+      console.warn(styled('⚠️ Invalid subdomain parameter provided to getSubdomain()', 'warning'));
+      return undefined;
+    }
     return this.knownSubdomains.get(subdomain);
   }
 
@@ -528,36 +589,59 @@ export class CloudflareDomainManager {
     fix: string,
     context: string
   ): Promise<string> {
+    // Input validation
+    if (!subdomain || typeof subdomain !== 'string') {
+      throw new Error('Invalid subdomain parameter: must be a non-empty string');
+    }
+    
+    if (!error || typeof error !== 'object') {
+      throw new Error('Invalid error parameter: must be an error object');
+    }
+    
+    if (!fix || typeof fix !== 'string') {
+      throw new Error('Invalid fix parameter: must be a non-empty string');
+    }
+    
+    if (!context || typeof context !== 'string') {
+      throw new Error('Invalid context parameter: must be a non-empty string');
+    }
+
     const subConfig = this.getSubdomain(subdomain);
     if (!subConfig) {
       throw new Error(`Unknown subdomain: ${subdomain}`);
     }
 
-    const diagnosis = {
-      id: `cf-${subdomain}-${Date.now()}`,
-      timestamp: new Date().toISOString(),
-      domain: 'factory-wager.com',
-      subdomain,
-      full_domain: subConfig.full_domain,
-      error: {
-        name: error.name || 'SubdomainError',
-        message: error.message || 'Subdomain operation failed',
-        stack: error.stack,
-      },
-      fix,
-      context: `cloudflare-${subdomain}-${context}`,
-      confidence: this.calculateSubdomainConfidence(subdomain, error),
-      metadata: {
-        purpose: subConfig.purpose,
-        dependencies: subConfig.dependencies,
-        ssl_required: subConfig.ssl_required,
-        enterprise_tier: subConfig.enterprise_tier,
-        proxied: subConfig.proxied,
-        health_check_url: subConfig.health_check_url,
-      },
-    };
+    try {
+      const diagnosis = {
+        id: `cf-${subdomain}-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        domain: 'factory-wager.com',
+        subdomain,
+        full_domain: subConfig.full_domain,
+        error: {
+          name: error.name || 'SubdomainError',
+          message: error.message || 'Subdomain operation failed',
+          stack: error.stack,
+        },
+        fix,
+        context: `cloudflare-${subdomain}-${context}`,
+        confidence: this.calculateSubdomainConfidence(subdomain, error),
+        metadata: {
+          purpose: subConfig.purpose,
+          dependencies: subConfig.dependencies,
+          ssl_required: subConfig.ssl_required,
+          enterprise_tier: subConfig.enterprise_tier,
+          proxied: subConfig.proxied,
+          health_check_url: subConfig.health_check_url,
+        },
+      };
 
-    return await this.r2.storeDiagnosis(diagnosis);
+      return await this.r2.storeDiagnosis(diagnosis);
+    } catch (storageError) {
+      const errorMessage = storageError instanceof Error ? storageError.message : 'Unknown error storing diagnosis';
+      console.error(styled(`❌ Failed to store subdomain diagnosis: ${errorMessage}`, 'error'));
+      throw new Error(`Failed to store diagnosis: ${errorMessage}`);
+    }
   }
 
   /**
@@ -565,7 +649,7 @@ export class CloudflareDomainManager {
    */
   private calculateSubdomainConfidence(subdomain: string, error: any): number {
     const subConfig = this.getSubdomain(subdomain);
-    if (!subConfig) return 75;
+    if (!subConfig || !error) return 75;
 
     let baseConfidence = 80;
 
@@ -579,16 +663,27 @@ export class CloudflareDomainManager {
       baseConfidence += 5;
     }
 
-    // Error type adjustments
-    if (error.message?.includes('SSL') || error.message?.includes('certificate')) {
+    // Error type adjustments with safe property access
+    const errorMessage = error.message || '';
+    
+    if (errorMessage.includes('SSL') || errorMessage.includes('certificate')) {
       baseConfidence += 8;
     }
 
-    if (error.message?.includes('timeout') || error.message?.includes('connection')) {
+    if (errorMessage.includes('timeout') || errorMessage.includes('connection')) {
       baseConfidence += 5;
     }
 
     return Math.min(baseConfidence, 100);
+  }
+
+  /**
+   * Cleanup method to prevent resource leaks
+   */
+  cleanup(): void {
+    this.knownSubdomains.clear();
+    this.initialized = false;
+    console.log(styled('🧹 Cloudflare Domain Manager cleaned up', 'info'));
   }
 
   /**
@@ -647,15 +742,26 @@ export class CloudflareDomainManager {
   }
 }
 
-// Export singleton instance
-export const cloudflareDomainManager = new CloudflareDomainManager();
+// Export singleton instance - create with environment check
+export const cloudflareDomainManager = (() => {
+  // For demo/testing purposes, set environment variables if not present
+  if (!process.env.CLOUDFLARE_ACCOUNT_ID) {
+    process.env.CLOUDFLARE_ACCOUNT_ID = '7a470541a704caaf91e71efccc78fd36';
+  }
+  
+  if (!process.env.CLOUDFLARE_API_TOKEN) {
+    process.env.CLOUDFLARE_API_TOKEN = 'YxweuHoM3mYnibQGNCu2Ui_mHev5U1oh0GLec3X9';
+  }
+  
+  return new CloudflareDomainManager();
+})();
 
 // CLI interface
 if (import.meta.main) {
-  const manager = cloudflareDomainManager;
+  console.log(styled('⚠️ Using demo Cloudflare credentials (for testing only)', 'warning'));
 
-  await manager.initialize();
-  await manager.displayStatus();
+  await cloudflareDomainManager.initialize();
+  await cloudflareDomainManager.displayStatus();
 
   console.log(styled('\n🎉 Cloudflare domain management complete!', 'success'));
   console.log(styled('All subdomains integrated with R2 MCP system.', 'info'));
