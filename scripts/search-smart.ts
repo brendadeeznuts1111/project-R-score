@@ -27,6 +27,7 @@ type RuntimeTag = 'bun' | 'ts' | 'js';
 
 interface SearchOptions {
   rootDir: string;
+  rootDirs: string[];
   limit: number;
   caseSensitive: boolean;
   json: boolean;
@@ -40,6 +41,7 @@ interface SearchOptions {
   scopeFilter?: ScopeTag[];
   artifactFilter?: ArtifactTag[];
   runtimeFilter?: RuntimeTag[];
+  overlapMode: 'ignore' | 'remove';
 }
 
 interface QueryPlan {
@@ -135,7 +137,7 @@ USAGE:
   bun run scripts/search-smart.ts <query> [options]
 
 OPTIONS:
-  --path <dir>         Directory to search (default: .)
+  --path <dir[,dir]>   Directory to search (repeatable, CSV allowed; default: .)
   --limit <n>          Max returned results (default: 20)
   --group-limit <n>    Max results per output group (default: unlimited)
   --family-cap <n>     Max hits per canonical family (default: policies.json)
@@ -149,6 +151,7 @@ OPTIONS:
   --scope, -S <list>   Filter scopes: code,docs,tests,generated (comma-separated)
   --artifact, -A <list> Filter artifacts: api,constant,global,type,example,cli
   --runtime, -R <list> Filter runtime: bun,ts,js
+  --overlap <mode>     ignore|remove duplicate overlap (default: ignore)
   --json               Emit JSON output
 
 EXAMPLES:
@@ -159,12 +162,21 @@ EXAMPLES:
   bun run scripts/search-smart.ts "auth middleware" --strict --show-mirrors
   bun run scripts/search-smart.ts "auth middleware" --family-cap 2
   bun run scripts/search-smart.ts "Bun.serve" --runtime bun --artifact api
+  bun run scripts/search-smart.ts "validator" --path ./lib,./packages/docs-tools/src --strict --overlap remove
   bun run scripts/search-smart.ts "constants" --scope code --artifact constant
   bun run scripts/search-smart.ts "auth middleware" --view mixed --task delivery
   bun run scripts/search-smart.ts "generated declaration" --view slop-only --task cleanup
   bun run scripts/search-smart.ts "where auth is enforced" --limit 10
   bun run scripts/search-smart.ts "cache invalidation" --path ./lib
 `);
+}
+
+function parsePathList(raw: string | undefined): string[] {
+  if (!raw) return [];
+  return raw
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean);
 }
 
 function splitIdentifierPieces(input: string): string[] {
@@ -290,19 +302,19 @@ function isDeliveryDemotionPath(filePath: string, policies: SearchPolicies): boo
   return /\/lib\/docs\/.*(generator|template|validator)/i.test(lower);
 }
 
-function buildQueryPlan(rawQuery: string, rootDir: string): QueryPlan {
+function buildQueryPlan(rawQuery: string, roots: string[]): QueryPlan {
   const normalized = rawQuery.trim();
   const lower = normalized.toLowerCase();
 
   const terms: string[] = [normalized];
   const aliasHints: string[] = [];
-  const roots = [rootDir];
+  const resolvedRoots = [...roots];
 
   if (lower.includes('@lib')) {
     aliasHints.push('@lib/* -> ./lib/*');
     terms.push(normalized.replace(/@lib\//gi, 'lib/'));
     terms.push(normalized.replace(/@lib\//gi, 'lib/').replace(/\//g, ' '));
-    roots.push('./lib');
+    resolvedRoots.push('./lib');
   }
 
   const parts = splitIdentifierPieces(normalized);
@@ -323,7 +335,7 @@ function buildQueryPlan(rawQuery: string, rootDir: string): QueryPlan {
   return {
     raw: rawQuery,
     normalized,
-    roots: unique(roots),
+    roots: unique(resolvedRoots),
     terms: unique(terms).slice(0, 24),
     aliasHints,
   };
@@ -674,7 +686,7 @@ function fingerprintHit(hit: SearchHit): string {
   return `${symbol}:${normalized}`;
 }
 
-function collapseDuplicateClusters(hits: SearchHit[]): SearchHit[] {
+function collapseDuplicateClusters(hits: SearchHit[], overlapMode: 'ignore' | 'remove'): SearchHit[] {
   const clusters = new Map<string, SearchHit[]>();
   for (const hit of hits) {
     const fp = fingerprintHit(hit);
@@ -689,9 +701,11 @@ function collapseDuplicateClusters(hits: SearchHit[]): SearchHit[] {
     const canonical = { ...sorted[0] };
     const duplicates = sorted.length - 1;
     if (duplicates > 0) {
-      canonical.duplicateCount = duplicates;
-      canonical.qualityTag = canonical.qualityTag === 'core' ? 'duplicate' : canonical.qualityTag;
-      canonical.reason = [...canonical.reason, `collapsed ${duplicates} similar matches`];
+      if (overlapMode === 'ignore') {
+        canonical.duplicateCount = duplicates;
+        canonical.qualityTag = canonical.qualityTag === 'core' ? 'duplicate' : canonical.qualityTag;
+      }
+      canonical.reason = [...canonical.reason, `collapsed ${duplicates} similar matches (${overlapMode})`];
     }
     collapsed.push(canonical);
   }
@@ -750,9 +764,11 @@ function collapseFamilyAwareHits(
     const winner = { ...sorted[0] };
     const duplicates = sorted.length - 1;
     if (duplicates > 0) {
-      winner.duplicateCount = (winner.duplicateCount || 0) + duplicates;
-      winner.qualityTag = winner.qualityTag === 'core' ? 'duplicate' : winner.qualityTag;
-      winner.reason = [...winner.reason, `collapsed ${duplicates} family-similar matches`];
+      if (options.overlapMode === 'ignore') {
+        winner.duplicateCount = (winner.duplicateCount || 0) + duplicates;
+        winner.qualityTag = winner.qualityTag === 'core' ? 'duplicate' : winner.qualityTag;
+      }
+      winner.reason = [...winner.reason, `collapsed ${duplicates} family-similar matches (${options.overlapMode})`];
     }
 
     collapsed.push(winner);
@@ -855,7 +871,7 @@ async function smartSearch(plan: QueryPlan, options: SearchOptions): Promise<Sea
     { rootDir: options.rootDir, policies }
   );
 
-  const collapsed = collapseFamilyAwareHits(collapseDuplicateClusters(deduped), familyData.byFile, options)
+  const collapsed = collapseFamilyAwareHits(collapseDuplicateClusters(deduped, options.overlapMode), familyData.byFile, options)
     .sort((a, b) => b.score - a.score || a.file.localeCompare(b.file) || a.line - b.line);
 
   const familyCapped = applyFamilyCap(collapsed, familyCap);
@@ -876,6 +892,7 @@ function parseArgs(argv: string[]): { query: string; options: SearchOptions } | 
 
   const options: SearchOptions = {
     rootDir: '.',
+    rootDirs: ['.'],
     limit: 20,
     caseSensitive: false,
     json: false,
@@ -883,6 +900,7 @@ function parseArgs(argv: string[]): { query: string; options: SearchOptions } | 
     view: 'clean',
     task: 'default',
     showMirrors: false,
+    overlapMode: 'ignore',
   };
 
   let query: string | null = null;
@@ -899,7 +917,14 @@ function parseArgs(argv: string[]): { query: string; options: SearchOptions } | 
     }
 
     if (arg === '--path') {
-      options.rootDir = argv[i + 1] || options.rootDir;
+      const parsed = parsePathList(argv[i + 1]);
+      if (parsed.length > 0) {
+        const current = options.rootDirs.length === 1 && options.rootDirs[0] === '.'
+          ? []
+          : [...options.rootDirs];
+        options.rootDirs = unique([...current, ...parsed]);
+        options.rootDir = options.rootDirs[0] || options.rootDir;
+      }
       i += 1;
       continue;
     }
@@ -991,6 +1016,15 @@ function parseArgs(argv: string[]): { query: string; options: SearchOptions } | 
 
     if (arg === '--runtime' || arg === '-R') {
       options.runtimeFilter = parseEnumList(argv[i + 1], ['bun', 'ts', 'js']);
+      i += 1;
+      continue;
+    }
+
+    if (arg === '--overlap') {
+      const value = (argv[i + 1] || '').trim().toLowerCase();
+      if (value === 'ignore' || value === 'remove') {
+        options.overlapMode = value;
+      }
       i += 1;
       continue;
     }
@@ -1266,6 +1300,7 @@ function printTable(plan: QueryPlan, hits: SearchHit[], elapsedMs: number, optio
   if (options.familyCap && options.familyCap > 0) {
     console.log(`Family cap: ${options.familyCap}`);
   }
+  console.log(`Overlap: ${options.overlapMode}`);
   if (options.showMirrors) {
     console.log('Show mirrors: enabled');
   }
@@ -1315,7 +1350,7 @@ async function main(): Promise<void> {
   }
 
   const { query, options } = parsed;
-  const basePlan = buildQueryPlan(query, options.rootDir);
+  const basePlan = buildQueryPlan(query, options.rootDirs);
   const policies = await loadSearchPolicies(options.rootDir);
   const plan = applyFeaturePoliciesToPlan(basePlan, policies);
 
@@ -1338,6 +1373,7 @@ async function main(): Promise<void> {
             familyCap: options.familyCap || null,
             view: options.view,
             task: options.task,
+            overlap: options.overlapMode,
             showMirrors: options.showMirrors,
             scope: options.scopeFilter || null,
             artifact: options.artifactFilter || null,

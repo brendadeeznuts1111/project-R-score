@@ -25,6 +25,7 @@ type BenchmarkPayload = {
   limit: number;
   queryPack?: string;
   concurrency?: number;
+  overlap?: 'ignore' | 'remove';
   queries: string[];
   rankedProfiles: RankedProfile[];
   warnings?: string[];
@@ -63,6 +64,7 @@ type CliOptions = {
   limit: number;
   queryPack?: string;
   concurrency?: number;
+  overlap: 'ignore' | 'remove';
   queries?: string;
   outputDir: string;
   id?: string;
@@ -153,6 +155,7 @@ function parseArgs(argv: string[]): CliOptions {
   const out: CliOptions = {
     path: './lib',
     limit: 40,
+    overlap: 'ignore',
     outputDir: './reports/search-benchmark',
     upload: true,
     prefix: Bun.env.R2_BENCH_PREFIX || 'reports/search-bench',
@@ -186,6 +189,12 @@ function parseArgs(argv: string[]): CliOptions {
     if (arg === '--concurrency') {
       const n = Number.parseInt(argv[i + 1] || '', 10);
       if (Number.isFinite(n) && n > 0) out.concurrency = Math.min(32, n);
+      i += 1;
+      continue;
+    }
+    if (arg === '--overlap') {
+      const value = (argv[i + 1] || '').trim().toLowerCase();
+      if (value === 'ignore' || value === 'remove') out.overlap = value;
       i += 1;
       continue;
     }
@@ -262,6 +271,7 @@ async function runBenchmark(options: CliOptions): Promise<BenchmarkPayload> {
   if (options.concurrency && options.concurrency > 0) {
     args.push('--concurrency', String(options.concurrency));
   }
+  args.push('--overlap', options.overlap);
 
   const proc = Bun.spawn(args, { stdout: 'pipe', stderr: 'pipe' });
   const stdout = await new Response(proc.stdout).text();
@@ -372,6 +382,7 @@ function renderSummaryMarkdown(
   lines.push(`- Path: \`${payload.path}\``);
   lines.push(`- Limit: \`${payload.limit}\``);
   lines.push(`- Query Pack: \`${payload.queryPack || 'core_delivery'}\``);
+  lines.push(`- Overlap Mode: \`${payload.overlap || 'ignore'}\``);
   lines.push(`- Delta Basis: \`${deltaBasis}\``);
   lines.push(`- Baseline Snapshot: \`${baselineSnapshotId || 'none'}\``);
   if (typeof payload.concurrency === 'number') {
@@ -616,6 +627,7 @@ async function main(): Promise<void> {
     id,
     createdAt,
     queryPack: payload.queryPack || options.queryPack || 'core_delivery',
+    overlap: payload.overlap || options.overlap,
     runClass: runClassForQueryPack(payload.queryPack || options.queryPack || 'core_delivery'),
     concurrency: payload.concurrency ?? options.concurrency ?? null,
     deltaBasis,

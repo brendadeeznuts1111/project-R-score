@@ -59,12 +59,14 @@ function parseArgs(argv: string[]): {
   queries?: string[];
   queryPack: string;
   concurrency: number;
+  overlap: 'ignore' | 'remove';
 } {
   let path = './lib';
   let limit = 40;
   let queries: string[] | undefined;
   let queryPack = 'core_delivery';
   let concurrency = 4;
+  let overlap: 'ignore' | 'remove' = 'ignore';
 
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
@@ -103,9 +105,17 @@ function parseArgs(argv: string[]): {
       i += 1;
       continue;
     }
+    if (arg === '--overlap') {
+      const value = (argv[i + 1] || '').trim().toLowerCase();
+      if (value === 'ignore' || value === 'remove') {
+        overlap = value;
+      }
+      i += 1;
+      continue;
+    }
   }
 
-  return { path, limit, queries, queryPack, concurrency };
+  return { path, limit, queries, queryPack, concurrency, overlap };
 }
 
 async function loadQueryPacks(): Promise<QueryPacks> {
@@ -144,8 +154,27 @@ function parseJsonPayload(output: string): any {
   return JSON.parse(output.slice(idx));
 }
 
-async function runSearch(query: string, path: string, limit: number, args: string[]): Promise<any> {
-  const cmd = ['bun', 'run', 'search:smart', query, '--path', path, '--limit', String(limit), '--json', ...args].join(' ');
+async function runSearch(
+  query: string,
+  path: string,
+  limit: number,
+  overlap: 'ignore' | 'remove',
+  args: string[]
+): Promise<any> {
+  const cmd = [
+    'bun',
+    'run',
+    'search:smart',
+    query,
+    '--path',
+    path,
+    '--limit',
+    String(limit),
+    '--overlap',
+    overlap,
+    '--json',
+    ...args,
+  ].join(' ');
   const output = await Bun.$`${{ raw: cmd }}`.text();
   return parseJsonPayload(output);
 }
@@ -257,7 +286,7 @@ function aggregateProfile(profile: Profile, querySummaries: QueryResultSummary[]
 }
 
 async function main(): Promise<void> {
-  const { path, limit, queries: overrideQueries, queryPack, concurrency } = parseArgs(process.argv.slice(2));
+  const { path, limit, queries: overrideQueries, queryPack, concurrency, overlap } = parseArgs(process.argv.slice(2));
   const packs = await loadQueryPacks();
   const queries = overrideQueries || packs[queryPack] || packs.core_delivery || [...FALLBACK_CORE_QUERIES];
 
@@ -273,7 +302,7 @@ async function main(): Promise<void> {
   const profileSummaries = await mapWithConcurrency(profiles, Math.min(concurrency, profiles.length), async (profile) => {
     const querySummaries = await mapWithConcurrency(queries, concurrency, async (query) => {
       const started = performance.now();
-      const payload = await runSearch(query, path, limit, profile.args);
+      const payload = await runSearch(query, path, limit, overlap, profile.args);
       payload.wallElapsedMs = Number((performance.now() - started).toFixed(2));
       return summarizeQuery(query, payload);
     });
@@ -289,6 +318,7 @@ async function main(): Promise<void> {
     limit,
     queryPack,
     concurrency,
+    overlap,
     queries,
     rankedProfiles: summaries,
   }, null, 2));
