@@ -8,6 +8,7 @@ import {
 } from 'stuff-a/config';
 import { createDB } from 'stuff-b/db';
 import { healthCheck, seedUsers } from './index';
+import { green, red, yellow, cyan, bold, dim, setStripColors } from './colors';
 
 const argv = process.argv.slice(2);
 
@@ -15,6 +16,12 @@ const argv = process.argv.slice(2);
 const jsonIdx = argv.indexOf('--json');
 const jsonOutput = jsonIdx !== -1;
 if (jsonIdx !== -1) argv.splice(jsonIdx, 1);
+if (jsonOutput) setStripColors(true);
+
+// Extract --yes flag
+const yesIdx = argv.indexOf('--yes');
+const yesFlag = yesIdx !== -1;
+if (yesIdx !== -1) argv.splice(yesIdx, 1);
 
 const [cmd, ...args] = argv;
 const SERVER = process.env.STUFF_SERVER ?? serverUrl();
@@ -44,7 +51,7 @@ Usage:
   stuff metrics                   Show server metrics
   stuff list [--role=] [--search=] [--limit=]  List/search users
   stuff update <id> <json>        Update user (PATCH)
-  stuff delete <id>               Delete user by ID
+  stuff delete <id> [--yes]        Delete user by ID
   stuff watch                     Watch server events via WebSocket
   stuff serve                     Start stuff-b server as child process
   stuff load [total] [concurrency]  HTTP load test against server
@@ -61,8 +68,8 @@ switch (cmd) {
     const result = await healthCheck(SERVER);
     output(result, (r) => {
       console.log(r.ok
-        ? `OK  ${SERVER}  ${r.latencyMs.toFixed(1)}ms`
-        : `FAIL  ${SERVER}  ${r.latencyMs.toFixed(1)}ms`);
+        ? `${green('OK')}  ${SERVER}  ${r.latencyMs.toFixed(1)}ms`
+        : `${red('FAIL')}  ${SERVER}  ${r.latencyMs.toFixed(1)}ms`);
     });
     process.exit(result.ok ? 0 : 1);
     break;
@@ -114,11 +121,11 @@ switch (cmd) {
       const res = await fetch(`${SERVER}${ROUTES.METRICS}`);
       const metrics = await res.json() as { count: number; sizeBytes: number; path: string; logs: unknown[] };
       output(metrics, (m) => {
-        console.log(`Server: ${SERVER}`);
-        console.log(`  Users: ${m.count}`);
-        console.log(`  DB size: ${(m.sizeBytes / 1024).toFixed(1)} KB`);
-        console.log(`  DB path: ${m.path}`);
-        console.log(`  Request logs: ${m.logs.length}`);
+        console.log(`${cyan('Server:')} ${SERVER}`);
+        console.log(`  ${cyan('Users:')} ${m.count}`);
+        console.log(`  ${cyan('DB size:')} ${(m.sizeBytes / 1024).toFixed(1)} KB`);
+        console.log(`  ${cyan('DB path:')} ${m.path}`);
+        console.log(`  ${cyan('Request logs:')} ${m.logs.length}`);
       });
     } catch {
       console.error(`Cannot reach ${SERVER}`);
@@ -139,17 +146,18 @@ switch (cmd) {
       const qs = params.toString();
       const url = `${SERVER}${ROUTES.USERS}${qs ? `?${qs}` : ''}`;
       const res = await fetch(url);
-      const users = await res.json() as { id: string; name: string; email: string; role: string }[];
-      output(users, (list) => {
-        if (list.length === 0) {
+      const body = await res.json() as { users: { id: string; name: string; email: string; role: string }[]; total: number; limit: number; offset: number };
+      const { users, total } = body;
+      output(body, () => {
+        if (users.length === 0) {
           console.log('No users found.');
           return;
         }
-        console.log(`${'ID'.padEnd(38)} ${'NAME'.padEnd(20)} ${'ROLE'.padEnd(8)} EMAIL`);
-        for (const u of list) {
-          console.log(`${u.id.padEnd(38)} ${u.name.padEnd(20)} ${u.role.padEnd(8)} ${u.email}`);
+        console.log(`${cyan('ID'.padEnd(38))} ${cyan('NAME'.padEnd(20))} ${cyan('ROLE'.padEnd(8))} ${cyan('EMAIL')}`);
+        for (const u of users) {
+          console.log(`${dim(u.id.padEnd(38))} ${u.name.padEnd(20)} ${u.role.padEnd(8)} ${u.email}`);
         }
-        console.log(`\n${list.length} user(s)`);
+        console.log(`\n${users.length} of ${total} user(s)`);
       });
     } catch {
       console.error(`Cannot reach ${SERVER}`);
@@ -161,22 +169,29 @@ switch (cmd) {
   case 'delete': {
     const id = args[0];
     if (!id) {
-      console.error('Usage: stuff delete <id>');
+      console.error('Usage: stuff delete <id> [--yes]');
       process.exit(1);
+    }
+    if (!yesFlag && !jsonOutput) {
+      const answer = prompt(`Delete user ${id}? [y/N]`);
+      if (answer?.toLowerCase() !== 'y') {
+        console.log('Cancelled');
+        process.exit(0);
+      }
     }
     try {
       const res = await fetch(`${SERVER}/users/${id}`, { method: 'DELETE' });
       const body = await res.json();
       output(body, (b) => {
         if (res.status === 200) {
-          console.log(`Deleted user ${id}`);
+          console.log(green(`Deleted user ${id}`));
         } else {
-          console.error(`Failed: ${b.error ?? 'unknown error'}`);
+          console.error(red(`Failed: ${b.error ?? 'unknown error'}`));
           process.exit(1);
         }
       });
     } catch {
-      console.error(`Cannot reach ${SERVER}`);
+      console.error(red(`Cannot reach ${SERVER}`));
       process.exit(1);
     }
     break;
@@ -198,12 +213,12 @@ switch (cmd) {
       const body = await res.json();
       output(body, (b) => {
         if (res.status === 200) {
-          console.log(`Updated user ${id}:`);
+          console.log(green(`Updated user ${id}:`));
           console.log(`  Name:  ${b.name}`);
           console.log(`  Email: ${b.email}`);
           console.log(`  Role:  ${b.role}`);
         } else {
-          console.error(`Failed: ${b.error ?? 'unknown error'}`);
+          console.error(red(`Failed: ${b.error ?? 'unknown error'}`));
           process.exit(1);
         }
       });

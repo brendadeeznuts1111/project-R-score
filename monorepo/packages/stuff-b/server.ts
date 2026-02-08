@@ -1,9 +1,11 @@
 import { createUserService, bulkValidate } from './index';
 import { createDB } from './db';
 import { withCors, corsPreflightResponse, withTiming, getRequestLogs, checkAuth, withRateLimit } from './middleware';
+import { getRateLimitMetrics } from './rate-limit';
+import { logger } from './logger';
 import { Errors, errorResponse } from 'stuff-a/errors';
 import { parseQuery } from 'stuff-a/query';
-import { UserUpdateSchema } from 'stuff-a/update';
+import { UserUpdateSchema, BulkUpdateItemSchema } from 'stuff-a/update';
 import {
   DB, DEFAULT_PORT, DEFAULT_HOSTNAME, ROUTES, LIMITS,
   AUTH, FEATURES, serverUrl, wsUrl, userByIdRoute,
@@ -32,9 +34,15 @@ const server = Bun.serve({
   routes: {
     [ROUTES.USERS]: {
       GET: (req) => withTiming(() => {
-        const url = new URL(req.url);
-        const query = parseQuery(url.searchParams);
-        return Response.json(db.search(query));
+        try {
+          const url = new URL(req.url);
+          const query = parseQuery(url.searchParams);
+          const users = db.search(query);
+          const total = db.countFiltered(query);
+          return Response.json({ users, total, limit: query.limit, offset: query.offset });
+        } catch (e) {
+          return errorResponse(Errors.badRequest(String(e)));
+        }
       }, 'GET', ROUTES.USERS),
       POST: (req) => withTiming(async () => {
         const rateLimited = withRateLimit(req);
@@ -71,6 +79,25 @@ const server = Bun.serve({
         broadcast('users:bulk', { created: inserted, errors: result.errors });
         return Response.json({ created: result.valid.length, errors: result.errors });
       }, 'POST', '/users/bulk'),
+      PATCH: (req) => withTiming(async () => {
+        const rateLimited = withRateLimit(req);
+        if (rateLimited) return rateLimited;
+        if (!await checkAuth(req)) {
+          return errorResponse(Errors.unauthorized());
+        }
+        try {
+          const body = await req.json();
+          if (!Array.isArray(body)) {
+            return errorResponse(Errors.badRequest('Expected array'));
+          }
+          const items = body.map((item: unknown) => BulkUpdateItemSchema.parse(item));
+          const result = db.updateMany(items);
+          broadcast('users:bulk-updated', result);
+          return Response.json(result);
+        } catch (e) {
+          return errorResponse(Errors.badRequest(String(e)));
+        }
+      }, 'PATCH', '/users/bulk'),
       OPTIONS: () => corsPreflightResponse(),
     },
     '/users/:id': {
@@ -117,7 +144,7 @@ const server = Bun.serve({
         if (!FEATURES.ENABLE_METRICS) {
           return errorResponse(Errors.notFound('Metrics disabled'));
         }
-        return Response.json({ ...db.stats(), logs: getRequestLogs() });
+        return Response.json({ ...db.stats(), logs: getRequestLogs(), rateLimit: getRateLimitMetrics() });
       },
       'GET', ROUTES.METRICS,
     ),
@@ -150,9 +177,9 @@ function shutdown() {
 process.on('SIGTERM', shutdown);
 process.on('SIGINT', shutdown);
 
-console.log(`stuff-b server listening on ${serverUrl()}`);
-console.log(`  WebSocket: ${wsUrl()}${ROUTES.WS}`);
-console.log(`  Database: ${DB.DEFAULT_PATH}`);
-console.log(`  Auth: ${AUTH.API_TOKEN ? 'enabled' : 'open'}`);
+logger.info('Server started', { url: serverUrl() });
+logger.info('WebSocket available', { url: `${wsUrl()}${ROUTES.WS}` });
+logger.info('Database configured', { path: DB.DEFAULT_PATH });
+logger.info('Auth mode', { mode: AUTH.API_TOKEN ? 'enabled' : 'open' });
 
 export default server;

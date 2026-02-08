@@ -1,7 +1,7 @@
 import { Database } from 'bun:sqlite';
 import type { User } from 'stuff-a';
 import type { UserQuery } from 'stuff-a/query';
-import type { UserUpdate } from 'stuff-a/update';
+import type { UserUpdate, BulkUpdateItem } from 'stuff-a/update';
 import { DB, LIMITS } from 'stuff-a/config';
 
 export interface UserRow {
@@ -86,7 +86,7 @@ export class UserDB {
     };
   }
 
-  search(query: UserQuery): User[] {
+  private buildWhere(query: UserQuery): { where: string; params: any[] } {
     const conditions: string[] = [];
     const params: any[] = [];
 
@@ -100,11 +100,47 @@ export class UserDB {
     }
 
     const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+    return { where, params };
+  }
+
+  search(query: UserQuery): User[] {
+    const { where, params } = this.buildWhere(query);
     const sql = `SELECT * FROM users ${where} ORDER BY ${query.sort} ${query.order} LIMIT ? OFFSET ?`;
     params.push(query.limit, query.offset);
 
     const rows = this.db.query(sql).all(...params) as UserRow[];
     return rows.map(this.rowToUser);
+  }
+
+  countFiltered(query: UserQuery): number {
+    const { where, params } = this.buildWhere(query);
+    const sql = `SELECT COUNT(*) as n FROM users ${where}`;
+    return (this.db.query(sql).get(...params) as { n: number }).n;
+  }
+
+  updateMany(items: BulkUpdateItem[]): { updated: number; notFound: string[]; errors: string[] } {
+    const notFound: string[] = [];
+    const errors: string[] = [];
+    let updated = 0;
+
+    const tx = this.db.transaction((rows: BulkUpdateItem[]) => {
+      for (const item of rows) {
+        const { id, ...changes } = item;
+        try {
+          const result = this.update(id, changes);
+          if (result) {
+            updated++;
+          } else {
+            notFound.push(id);
+          }
+        } catch (e) {
+          errors.push(id);
+        }
+      }
+    });
+    tx(items);
+
+    return { updated, notFound, errors };
   }
 
   update(id: string, changes: UserUpdate): User | null {

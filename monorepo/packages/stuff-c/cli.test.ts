@@ -70,7 +70,7 @@ test('CLI delete shows usage when no id', async () => {
   const exitCode = await proc.exited;
   const stderr = await new Response(proc.stderr).text();
   expect(exitCode).toBe(1);
-  expect(stderr).toContain('Usage: stuff delete <id>');
+  expect(stderr).toContain('Usage: stuff delete <id> [--yes]');
 });
 
 test('CLI update shows usage when args missing', async () => {
@@ -108,4 +108,48 @@ test('CLI info --json outputs parseable JSON', async () => {
   const parsed = JSON.parse(output);
   expect(parsed['stuff-c']).toBeDefined();
   expect(parsed.runtime).toContain('Bun');
+});
+
+test('unknown command exits with code 1', async () => {
+  const proc = Bun.spawn(['bun', 'run', 'cli.ts', 'nonexistent-command'], {
+    cwd: import.meta.dir,
+    stdout: 'pipe',
+  });
+  const exitCode = await proc.exited;
+  expect(exitCode).toBe(1);
+});
+
+test('generate 0 outputs "Generated 0 users"', async () => {
+  const proc = Bun.spawn(['bun', 'run', 'cli.ts', 'generate', '0'], {
+    cwd: import.meta.dir,
+    stdout: 'pipe',
+  });
+  const output = await new Response(proc.stdout).text();
+  await proc.exited;
+  expect(output).toContain('Generated 0 users');
+});
+
+test('delete --yes bypasses prompt', async () => {
+  // --yes with unreachable server should still skip prompt and fail on fetch
+  const proc = Bun.spawn(['bun', 'run', 'cli.ts', 'delete', 'some-id', '--yes'], {
+    cwd: import.meta.dir,
+    env: { ...process.env, STUFF_SERVER: 'http://localhost:19999' },
+    stdout: 'pipe',
+    stderr: 'pipe',
+  });
+  const exitCode = await proc.exited;
+  const stderr = await new Response(proc.stderr).text();
+  // Should not prompt, just fail on connection
+  expect(exitCode).toBe(1);
+  expect(stderr).toContain('Cannot reach');
+});
+
+test('usage includes --yes', async () => {
+  const proc = Bun.spawn(['bun', 'run', 'cli.ts'], {
+    cwd: import.meta.dir,
+    stdout: 'pipe',
+  });
+  const output = await new Response(proc.stdout).text();
+  await proc.exited;
+  expect(output).toContain('--yes');
 });

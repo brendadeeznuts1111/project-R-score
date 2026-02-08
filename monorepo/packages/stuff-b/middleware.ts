@@ -19,6 +19,7 @@ export interface RequestLog {
   status: number;
   durationMs: number;
   ts: number;
+  requestId: string;
 }
 
 const logs: RequestLog[] = [];
@@ -37,11 +38,13 @@ export async function withTiming(
   method: string,
   path: string,
 ): Promise<Response> {
+  const requestId = crypto.randomUUID();
   const t0 = Bun.nanoseconds();
   const res = await handler();
   const durationMs = (Bun.nanoseconds() - t0) / 1e6;
-  logRequest({ method, path, status: res.status, durationMs, ts: Date.now() });
+  logRequest({ method, path, status: res.status, durationMs, ts: Date.now(), requestId });
   res.headers.set(HEADERS.RESPONSE_TIME, `${durationMs.toFixed(2)}ms`);
+  res.headers.set('X-Request-Id', requestId);
   return withCors(res);
 }
 

@@ -2,9 +2,10 @@ import { test, expect, afterAll } from 'bun:test';
 import { createUserService, bulkValidate } from './index';
 import { createDB } from './db';
 import { withCors, corsPreflightResponse, withTiming, getRequestLogs, withRateLimit } from './middleware';
+import { getRateLimitMetrics } from './rate-limit';
 import { Errors, errorResponse } from 'stuff-a/errors';
 import { parseQuery } from 'stuff-a/query';
-import { UserUpdateSchema } from 'stuff-a/update';
+import { UserUpdateSchema, BulkUpdateItemSchema } from 'stuff-a/update';
 import {
   DEFAULT_TEST_PORT, ROUTES, LIMITS, HEADERS,
   serverUrl, wsUrl, userByIdRoute,
@@ -24,9 +25,15 @@ server = Bun.serve({
   routes: {
     [ROUTES.USERS]: {
       GET: (req) => withTiming(() => {
-        const url = new URL(req.url);
-        const query = parseQuery(url.searchParams);
-        return Response.json(db.search(query));
+        try {
+          const url = new URL(req.url);
+          const query = parseQuery(url.searchParams);
+          const users = db.search(query);
+          const total = db.countFiltered(query);
+          return Response.json({ users, total, limit: query.limit, offset: query.offset });
+        } catch (e) {
+          return errorResponse(Errors.badRequest(String(e)));
+        }
       }, 'GET', ROUTES.USERS),
       POST: (req) => withTiming(async () => {
         try {
@@ -51,6 +58,19 @@ server = Bun.serve({
         for (const user of result.valid) svc.create(user);
         return Response.json({ created: result.valid.length, errors: result.errors });
       }, 'POST', '/users/bulk'),
+      PATCH: (req) => withTiming(async () => {
+        try {
+          const body = await req.json();
+          if (!Array.isArray(body)) {
+            return errorResponse(Errors.badRequest('Expected array'));
+          }
+          const items = body.map((item: unknown) => BulkUpdateItemSchema.parse(item));
+          const result = db.updateMany(items);
+          return Response.json(result);
+        } catch (e) {
+          return errorResponse(Errors.badRequest(String(e)));
+        }
+      }, 'PATCH', '/users/bulk'),
     },
     '/users/:id': {
       GET: (req) => withTiming(
@@ -79,7 +99,7 @@ server = Bun.serve({
       }, 'DELETE', userByIdRoute(req.params.id)),
     },
     [ROUTES.METRICS]: (req) => withTiming(
-      () => Response.json({ ...db.stats(), logs: getRequestLogs() }),
+      () => Response.json({ ...db.stats(), logs: getRequestLogs(), rateLimit: getRateLimitMetrics() }),
       'GET', ROUTES.METRICS,
     ),
     [ROUTES.WS]: (req, server) => {
@@ -130,8 +150,11 @@ test('POST /users creates user', async () => {
 
 test('GET /users lists users', async () => {
   const res = await fetch(`${BASE}${ROUTES.USERS}`);
-  const users = await res.json();
-  expect(users.length).toBeGreaterThanOrEqual(1);
+  const body = await res.json();
+  expect(body.users.length).toBeGreaterThanOrEqual(1);
+  expect(typeof body.total).toBe('number');
+  expect(typeof body.limit).toBe('number');
+  expect(typeof body.offset).toBe('number');
 });
 
 test('GET /users/:id returns user', async () => {
@@ -264,21 +287,22 @@ test('PATCH /users/:id rejects empty body', async () => {
 
 test('GET /users with search params filters results', async () => {
   const res = await fetch(`${BASE}${ROUTES.USERS}?search=Alice`);
-  const users = await res.json();
-  expect(users.length).toBeGreaterThanOrEqual(1);
-  expect(users.every((u: any) => u.name.includes('Alice'))).toBe(true);
+  const body = await res.json();
+  expect(body.users.length).toBeGreaterThanOrEqual(1);
+  expect(body.users.every((u: any) => u.name.includes('Alice'))).toBe(true);
 });
 
 test('GET /users with role param filters by role', async () => {
   const res = await fetch(`${BASE}${ROUTES.USERS}?role=admin`);
-  const users = await res.json();
-  expect(users.every((u: any) => u.role === 'admin')).toBe(true);
+  const body = await res.json();
+  expect(body.users.every((u: any) => u.role === 'admin')).toBe(true);
 });
 
 test('GET /users with limit param limits results', async () => {
   const res = await fetch(`${BASE}${ROUTES.USERS}?limit=1`);
-  const users = await res.json();
-  expect(users.length).toBeLessThanOrEqual(1);
+  const body = await res.json();
+  expect(body.users.length).toBeLessThanOrEqual(1);
+  expect(body.limit).toBe(1);
 });
 
 test('structured error has code field', async () => {
@@ -299,4 +323,123 @@ test('POST /users 400 has structured error', async () => {
   expect(res.status).toBe(400);
   const body = await res.json();
   expect(body.code).toBe('BAD_REQUEST');
+});
+
+// ── Phase 1: Observability tests ──
+
+test('response includes X-Request-Id header', async () => {
+  const res = await fetch(`${BASE}${ROUTES.USERS}`);
+  const requestId = res.headers.get('X-Request-Id');
+  expect(requestId).toBeTruthy();
+  expect(requestId).toMatch(/^[0-9a-f]{8}-/);
+});
+
+test('/metrics includes rateLimit object', async () => {
+  const res = await fetch(`${BASE}${ROUTES.METRICS}`);
+  const metrics = await res.json();
+  expect(metrics.rateLimit).toBeDefined();
+  expect(typeof metrics.rateLimit.totalAllowed).toBe('number');
+  expect(typeof metrics.rateLimit.totalBlocked).toBe('number');
+});
+
+// ── Phase 2: Pagination + Bulk Update tests ──
+
+test('GET /users pagination total reflects filtered count', async () => {
+  const res = await fetch(`${BASE}${ROUTES.USERS}?role=admin`);
+  const body = await res.json();
+  expect(body.total).toBe(body.users.length);
+});
+
+test('PATCH /users/bulk updates multiple users', async () => {
+  // Create a second user to bulk update
+  const user2 = { ...validUser, id: '880e8400-e29b-41d4-a716-446655440000', email: 'bulk-test@example.com' };
+  await fetch(`${BASE}${ROUTES.USERS}`, {
+    method: 'POST',
+    headers: HEADERS.JSON,
+    body: JSON.stringify(user2),
+  });
+
+  const res = await fetch(`${BASE}/users/bulk`, {
+    method: 'PATCH',
+    headers: HEADERS.JSON,
+    body: JSON.stringify([
+      { id: validUser.id, name: 'Alice Bulk' },
+      { id: user2.id, name: 'Bulk User 2' },
+    ]),
+  });
+  expect(res.status).toBe(200);
+  const result = await res.json();
+  expect(result.updated).toBe(2);
+  expect(result.notFound).toHaveLength(0);
+});
+
+test('PATCH /users/bulk tracks notFound IDs', async () => {
+  const res = await fetch(`${BASE}/users/bulk`, {
+    method: 'PATCH',
+    headers: HEADERS.JSON,
+    body: JSON.stringify([
+      { id: '990e8400-e29b-41d4-a716-446655440000', name: 'Ghost' },
+    ]),
+  });
+  expect(res.status).toBe(200);
+  const result = await res.json();
+  expect(result.updated).toBe(0);
+  expect(result.notFound).toContain('990e8400-e29b-41d4-a716-446655440000');
+});
+
+test('PATCH /users/bulk rejects non-array', async () => {
+  const res = await fetch(`${BASE}/users/bulk`, {
+    method: 'PATCH',
+    headers: HEADERS.JSON,
+    body: JSON.stringify({ id: validUser.id, name: 'nope' }),
+  });
+  expect(res.status).toBe(400);
+});
+
+// ── Phase 3: Edge case tests ──
+
+test('malformed JSON body returns 400', async () => {
+  const res = await fetch(`${BASE}${ROUTES.USERS}`, {
+    method: 'POST',
+    headers: HEADERS.JSON,
+    body: '{invalid json',
+  });
+  expect(res.status).toBe(400);
+});
+
+test('PATCH with extra field ignores it', async () => {
+  const res = await fetch(`${BASE}${userByIdRoute(validUser.id)}`, {
+    method: 'PATCH',
+    headers: HEADERS.JSON,
+    body: JSON.stringify({ name: 'Alice Extra', unknownField: 'ignored' }),
+  });
+  expect(res.status).toBe(200);
+  const body = await res.json();
+  expect(body.name).toBe('Alice Extra');
+  expect(body.unknownField).toBeUndefined();
+});
+
+test('bulk PATCH non-array returns structured error', async () => {
+  const res = await fetch(`${BASE}/users/bulk`, {
+    method: 'PATCH',
+    headers: HEADERS.JSON,
+    body: JSON.stringify('not-an-array'),
+  });
+  expect(res.status).toBe(400);
+  const body = await res.json();
+  expect(body.code).toBe('BAD_REQUEST');
+});
+
+test('DELETE 404 returns structured error code', async () => {
+  const res = await fetch(`${BASE}${userByIdRoute('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa')}`, {
+    method: 'DELETE',
+  });
+  expect(res.status).toBe(404);
+  const body = await res.json();
+  expect(body.code).toBe('NOT_FOUND');
+});
+
+test('invalid role query param returns 400', async () => {
+  const res = await fetch(`${BASE}${ROUTES.USERS}?role=superadmin`);
+  expect(res.status).toBe(400);
 });

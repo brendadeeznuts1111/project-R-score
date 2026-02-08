@@ -1,9 +1,14 @@
 import { LIMITS, FEATURES } from 'stuff-a/config';
 
 const hits = new Map<string, number[]>();
+let totalAllowed = 0;
+let totalBlocked = 0;
 
 export function checkRateLimit(ip: string): { allowed: boolean; remaining: number } {
-  if (!FEATURES.RATE_LIMITING) return { allowed: true, remaining: LIMITS.RATE_LIMIT_MAX_REQUESTS };
+  if (!FEATURES.RATE_LIMITING) {
+    totalAllowed++;
+    return { allowed: true, remaining: LIMITS.RATE_LIMIT_MAX_REQUESTS };
+  }
 
   const now = Date.now();
   const windowStart = now - LIMITS.RATE_LIMIT_WINDOW_MS;
@@ -20,15 +25,23 @@ export function checkRateLimit(ip: string): { allowed: boolean; remaining: numbe
   }
 
   if (timestamps.length >= LIMITS.RATE_LIMIT_MAX_REQUESTS) {
+    totalBlocked++;
     return { allowed: false, remaining: 0 };
   }
 
   timestamps.push(now);
+  totalAllowed++;
   return { allowed: true, remaining: LIMITS.RATE_LIMIT_MAX_REQUESTS - timestamps.length };
+}
+
+export function getRateLimitMetrics(): { totalAllowed: number; totalBlocked: number } {
+  return { totalAllowed, totalBlocked };
 }
 
 export function resetRateLimits(): void {
   hits.clear();
+  totalAllowed = 0;
+  totalBlocked = 0;
 }
 
 // Periodic cleanup of stale IPs every 5 minutes

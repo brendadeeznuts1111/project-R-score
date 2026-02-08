@@ -24,3 +24,7 @@ test('rejects empty object', () => {
 test('rejects invalid email', () => {
   expect(() => UserUpdateSchema.parse({ email: 'not-an-email' })).toThrow();
 });
+
+test('rejects invalid role superadmin', () => {
+  expect(() => UserUpdateSchema.parse({ role: 'superadmin' })).toThrow();
+});

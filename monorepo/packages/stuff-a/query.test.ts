@@ -38,3 +38,15 @@ test('parseQuery handles empty params', () => {
   expect(query.role).toBeUndefined();
   expect(query.limit).toBe(20);
 });
+
+test('rejects limit=0', () => {
+  expect(() => UserQuerySchema.parse({ limit: 0 })).toThrow();
+});
+
+test('rejects limit=101', () => {
+  expect(() => UserQuerySchema.parse({ limit: 101 })).toThrow();
+});
+
+test('rejects offset=-1', () => {
+  expect(() => UserQuerySchema.parse({ offset: -1 })).toThrow();
+});

@@ -35,3 +35,27 @@ test('safeValidateUser returns error for bad role', () => {
   });
   expect(result.success).toBe(false);
 });
+
+test('non-UUID id fails validation', () => {
+  expect(() =>
+    validateUser({
+      id: 'not-a-uuid',
+      name: 'Test',
+      email: 'test@example.com',
+      role: 'user',
+      createdAt: '2026-01-01',
+    }),
+  ).toThrow();
+});
+
+test('empty name fails validation', () => {
+  expect(() =>
+    validateUser({
+      id: '550e8400-e29b-41d4-a716-446655440000',
+      name: '',
+      email: 'test@example.com',
+      role: 'user',
+      createdAt: '2026-01-01',
+    }),
+  ).toThrow();
+});
