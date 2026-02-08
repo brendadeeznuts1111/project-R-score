@@ -22,7 +22,10 @@
     "dashboard": "bun run packages/dashboard-profile/src/app.ts",
     "dashboard-profile": "bun run packages/dashboard-profile/src/app.ts",
     "avatar": "bun run packages/dashboard-profile/src/avatar-3d.ts",
-    "dev-dashboard": "bun run packages/dev-dashboard/src/enhanced-dashboard.ts"
+    "dev-dashboard": "bun run packages/dev-dashboard/src/enhanced-dashboard.ts",
+    "dev-dashboard:watch": "bun --watch run packages/dev-dashboard/src/enhanced-dashboard.ts",
+    "dev-dashboard:hot": "bun --hot run packages/dev-dashboard/src/enhanced-dashboard.ts",
+    "dev-dashboard:prod": "NODE_ENV=production bun run packages/dev-dashboard/src/enhanced-dashboard.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",

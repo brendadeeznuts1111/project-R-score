@@ -321,7 +321,12 @@ const HTML = `<!DOCTYPE html>
   <div id="benchmarks-tab" class="tab-content">
     <div class="section">
       <h2>⚡ Performance Benchmarks</h2>
+      <div style="margin-bottom: 10px;">
+        <button onclick="fetchBenchmarkTable()" style="padding: 8px 16px; background: #0066ff; color: white; border: none; border-radius: 4px; cursor: pointer;">📊 View as Table</button>
+        <button onclick="window.open('/api/benchmarks/table', '_blank')" style="padding: 8px 16px; background: #00ff88; color: #0a0a0a; border: none; border-radius: 4px; cursor: pointer; margin-left: 8px;">🔗 Open Table (New Tab)</button>
+      </div>
       <div id="benchmarks-list"></div>
+      <pre id="benchmark-table" style="display: none; background: #1a1a2e; padding: 15px; border-radius: 4px; overflow-x: auto; font-family: monospace; font-size: 12px;"></pre>
     </div>
   </div>
 
@@ -370,29 +375,40 @@ const HTML = `<!DOCTYPE html>
         
         document.getElementById('timestamp').textContent = 'Last updated: ' + new Date(data.timestamp).toLocaleString();
 
-        // Render quick wins
+        // Render quick wins (with HTML escaping and file click handlers)
         const quickwinsList = document.getElementById('quickwins-list');
+        const escapeHTML = (str) => str.replace(/[&<>"']/g, m => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;'}[m]));
         quickwinsList.innerHTML = data.quickWinsList.map(win => {
           const icon = win.status === 'completed' ? '✅' : win.status === 'verified' ? '🔍' : '⏳';
-          return '<div class="item"><div class="item-content"><div class="item-title">' + icon + ' #' + win.id + ': ' + win.title + '<span class="category-badge cat-' + win.category.replace(' ', '-') + '">' + win.category + '</span></div><div class="item-details">' + win.impact + '</div></div><span class="status-badge status-' + win.status + '">' + win.status + '</span></div>';
+          const safeTitle = escapeHTML(win.title);
+          const safeImpact = escapeHTML(win.impact);
+          // Add clickable file links if files exist
+          const filesHtml = win.files && Array.isArray(win.files) && win.files.length > 0 
+            ? '<div class="item-details" style="font-size: 11px; color: #888; margin-top: 4px;">📁 Files: ' + win.files.map(f => '<span style="cursor: pointer; text-decoration: underline; color: #00ff88;" onclick="openFileInEditor(\'' + escapeHTML(String(f)) + '\', 1, 1)">' + escapeHTML(String(f)) + '</span>').join(', ') + '</div>'
+            : '';
+          return '<div class="item"><div class="item-content"><div class="item-title">' + icon + ' #' + win.id + ': ' + safeTitle + '<span class="category-badge cat-' + win.category.replace(' ', '-') + '">' + win.category + '</span></div><div class="item-details">' + safeImpact + '</div>' + filesHtml + '</div><span class="status-badge status-' + win.status + '">' + win.status + '</span></div>';
         }).join('');
 
-        // Render benchmarks
+        // Render benchmarks (with HTML escaping for safety)
         const benchmarksList = document.getElementById('benchmarks-list');
+        const escapeHTML = (str) => str.replace(/[&<>"']/g, m => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;'}[m]));
         benchmarksList.innerHTML = data.benchmarks.map(b => {
           const ratio = b.target > 0 ? (b.time / b.target).toFixed(1) : 'N/A';
           const ratioClass = parseFloat(ratio) < 1.5 ? 'ratio-good' : parseFloat(ratio) < 3 ? 'ratio-warning' : 'ratio-bad';
           const icon = b.status === 'pass' ? '✅' : b.status === 'warning' ? '⚠️' : '❌';
           const isolationBadge = b.isolated ? '<span class="badge" style="background: #0066ff; margin-left: 8px; padding: 2px 6px; border-radius: 3px; font-size: 10px;">🔒 Isolated</span>' : '';
           const resourceInfo = b.resourceUsage ? '<div class="item-details" style="font-size: 11px; color: #888; margin-top: 4px;">💾 Memory: ' + (b.resourceUsage.maxRSS / 1024).toFixed(1) + ' KB | ⏱️ CPU: ' + ((b.resourceUsage.cpuTime.user + b.resourceUsage.cpuTime.system) / 1000).toFixed(2) + ' ms | 🕐 Total: ' + b.resourceUsage.executionTime.toFixed(2) + ' ms</div>' : '';
-          return '<div class="item"><div class="item-content"><div class="item-title">' + icon + ' ' + b.name + isolationBadge + '<span class="category-badge cat-' + b.category + '">' + b.category + '</span></div><div class="metric-row"><span class="metric-value">' + b.time.toFixed(3) + 'ms</span><span class="metric-target">target: ' + b.target.toFixed(3) + 'ms</span><span class="metric-ratio ' + ratioClass + '">' + ratio + 'x</span></div>' + (b.note ? '<div class="item-details">' + b.note + '</div>' : '') + resourceInfo + '</div><span class="status-badge status-' + b.status + '">' + b.status + '</span></div>';
+          const safeNote = b.note ? escapeHTML(b.note) : '';
+          return '<div class="item"><div class="item-content"><div class="item-title">' + icon + ' ' + b.name + isolationBadge + '<span class="category-badge cat-' + b.category + '">' + b.category + '</span></div><div class="metric-row"><span class="metric-value">' + b.time.toFixed(3) + 'ms</span><span class="metric-target">target: ' + b.target.toFixed(3) + 'ms</span><span class="metric-ratio ' + ratioClass + '">' + ratio + 'x</span></div>' + (safeNote ? '<div class="item-details">' + safeNote + '</div>' : '') + resourceInfo + '</div><span class="status-badge status-' + b.status + '">' + b.status + '</span></div>';
         }).join('');
 
-        // Render tests
+        // Render tests (with HTML escaping for safety)
         const testsList = document.getElementById('tests-list');
+        const escapeHTML = (str) => str.replace(/[&<>"']/g, m => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;'}[m]));
         testsList.innerHTML = data.tests.map(test => {
           const icon = test.status === 'pass' ? '✅' : '❌';
-          return '<div class="item"><div class="item-content"><div class="item-title">' + icon + ' ' + test.name + '<span class="category-badge cat-' + test.category.replace(' ', '-') + '">' + test.category + '</span></div>' + (test.message ? '<div class="item-details">' + test.message + '</div>' : '') + '</div><span class="status-badge status-' + test.status + '">' + test.status + '</span></div>';
+          const safeMessage = test.message ? escapeHTML(test.message) : '';
+          return '<div class="item"><div class="item-content"><div class="item-title">' + icon + ' ' + test.name + '<span class="category-badge cat-' + test.category.replace(' ', '-') + '">' + test.category + '</span></div>' + (safeMessage ? '<div class="item-details">' + safeMessage + '</div>' : '') + '</div><span class="status-badge status-' + test.status + '">' + test.status + '</span></div>';
         }).join('');
 
         // Render insights
@@ -429,6 +445,43 @@ const HTML = `<!DOCTYPE html>
       }
     }
 
+    // Fetch benchmark table using Bun.inspect.table API
+    async function fetchBenchmarkTable() {
+      try {
+        const response = await fetch('/api/benchmarks/table');
+        const tableText = await response.text();
+        const tableElement = document.getElementById('benchmark-table');
+        const listElement = document.getElementById('benchmarks-list');
+        
+        if (tableElement && listElement) {
+          tableElement.textContent = tableText;
+          tableElement.style.display = tableElement.style.display === 'none' ? 'block' : 'none';
+          listElement.style.display = tableElement.style.display === 'block' ? 'none' : 'block';
+        }
+      } catch (error) {
+        console.error('Failed to fetch benchmark table:', error);
+      }
+    }
+    
+    // Open file in editor (using Bun.openInEditor API)
+    async function openFileInEditor(filePath, line, column) {
+      try {
+        const response = await fetch('/api/open-file', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filePath, line, column }),
+        });
+        const result = await response.json();
+        if (result.success) {
+          console.log('File opened in editor:', filePath);
+        } else {
+          console.error('Failed to open file:', result.error);
+        }
+      } catch (error) {
+        console.error('Failed to open file in editor:', error);
+      }
+    }
+    
     loadDashboard();
     const refreshInterval = ${refreshInterval} * 1000;
     setInterval(loadDashboard, refreshInterval);
@@ -441,7 +494,6 @@ const HTML = `<!DOCTYPE html>
  */
 async function runBenchmarkIsolated(benchConfig: any): Promise<BenchmarkResult> {
   const startTime = Bun.nanoseconds();
-  const benchmarkRunnerPath = new URL('./benchmark-runner.ts', import.meta.url).pathname;
   
   // Use Bun.which to verify bun is available (fallback to 'bun' if not found)
   const bunPath = Bun.which('bun') || 'bun';
@@ -457,11 +509,18 @@ async function runBenchmarkIsolated(benchConfig: any): Promise<BenchmarkResult> 
     category: benchConfig.category || 'performance',
   });
   
-  // Use absolute path for more reliable spawning
-  const absoluteRunnerPath = new URL('./benchmark-runner.ts', import.meta.url).pathname;
+  // Get absolute path to benchmark runner using Bun.fileURLToPath
+  const benchmarkRunnerUrl = new URL('./benchmark-runner.ts', import.meta.url);
+  const benchmarkRunnerPath = Bun.fileURLToPath(benchmarkRunnerUrl.toString());
   
+  // Set working directory to ensure relative imports work
+  const cwd = new URL('..', import.meta.url).pathname; // Parent of src/
+  
+  // Use Bun's optimized runtime flags for subprocess
+  // --smol flag can be added for memory-constrained environments
   const proc = Bun.spawn({
-    cmd: [bunPath, absoluteRunnerPath], // Direct execution (no 'run')
+    cmd: [bunPath, benchmarkRunnerPath], // Direct execution (faster - no 'run' overhead)
+    cwd: cwd, // Set working directory for relative imports
     stdin: 'ignore', // Don't inherit stdin (prevents blocking)
     stdout: 'pipe',
     stderr: 'pipe',
@@ -777,14 +836,20 @@ async function runTests(): Promise<TestResult[]> {
     results.push({ name: 'Input Validation', status: 'fail', message: String(e).substring(0, 100), category: 'type-safety' });
   }
 
-  // Test 2: Error Handling
+  // Test 2: Error Handling (using Bun.deepEquals for comparison)
   try {
     const { handleError } = await import('../../user-profile/src/index.ts');
     const msg1 = handleError(new Error('test'), 'test', { log: false });
     const msg2 = handleError('string', 'test', { log: false });
     const msg3 = handleError({ custom: 'object' }, 'test', { log: false });
-    if (msg1 === 'test' && msg2 === 'string' && msg3.includes('object')) {
-      results.push({ name: 'Error Handling', status: 'pass', message: 'Handles Error, string, and object types safely', category: 'code-quality' });
+    
+    // Use Bun.deepEquals to verify expected error messages
+    const expectedMessages = { msg1: 'test', msg2: 'string' };
+    const actualMessages = { msg1, msg2 };
+    const messagesMatch = Bun.deepEquals(actualMessages, expectedMessages);
+    
+    if (messagesMatch && msg3.includes('object')) {
+      results.push({ name: 'Error Handling', status: 'pass', message: 'Handles Error, string, and object types safely (verified with Bun.deepEquals)', category: 'code-quality' });
     } else {
       results.push({ name: 'Error Handling', status: 'fail', message: 'Error extraction inconsistent', category: 'code-quality' });
     }
@@ -818,14 +883,28 @@ async function runTests(): Promise<TestResult[]> {
     results.push({ name: 'Serialization', status: 'fail', message: String(e).substring(0, 100), category: 'code-quality' });
   }
 
-  // Test 5: Type Safety
+  // Test 5: Type Safety (using Bun.deepEquals for comparison)
   try {
     const { profileEngine } = await import('../../user-profile/src/index.ts');
     const profile = await profileEngine.getProfile('@ashschaeffer1');
-    if (profile && typeof profile.userId === 'string' && Array.isArray(profile.gateways)) {
-      results.push({ name: 'Type Safety', status: 'pass', message: 'Profile types are correct', category: 'type-safety' });
+    if (profile) {
+      // Use Bun.deepEquals to verify profile structure
+      const expectedStructure = {
+        userId: '@ashschaeffer1',
+        gateways: ['venmo'],
+      };
+      const hasCorrectStructure = Bun.deepEquals(
+        { userId: profile.userId, gateways: profile.gateways },
+        { userId: expectedStructure.userId, gateways: expectedStructure.gateways }
+      );
+      
+      if (hasCorrectStructure && typeof profile.userId === 'string' && Array.isArray(profile.gateways)) {
+        results.push({ name: 'Type Safety', status: 'pass', message: 'Profile types are correct (verified with Bun.deepEquals)', category: 'type-safety' });
+      } else {
+        results.push({ name: 'Type Safety', status: 'fail', message: 'Type mismatches detected', category: 'type-safety' });
+      }
     } else {
-      results.push({ name: 'Type Safety', status: 'fail', message: 'Type mismatches detected', category: 'type-safety' });
+      results.push({ name: 'Type Safety', status: 'fail', message: 'Profile not found', category: 'type-safety' });
     }
   } catch (e) {
     results.push({ name: 'Type Safety', status: 'fail', message: String(e).substring(0, 100), category: 'type-safety' });
@@ -880,12 +959,76 @@ async function getData() {
 Bun.serve({
   port: serverConfig.server?.port || 3008,
   hostname: serverConfig.server?.hostname || '0.0.0.0',
+  // Enable hot reload in development (Bun runtime feature)
+  development: {
+    hmr: process.env.NODE_ENV !== 'production',
+    watch: process.env.NODE_ENV !== 'production',
+  },
   async fetch(req) {
     const url = new URL(req.url);
+    
+    // API endpoint for dashboard data
     if (url.pathname === '/api/data') {
       return new Response(JSON.stringify(await getData()), {
         headers: { 'Content-Type': 'application/json' },
       });
+    }
+    
+    // API endpoint for opening files in editor (using Bun.openInEditor)
+    if (url.pathname === '/api/open-file' && req.method === 'POST') {
+      try {
+        const body = await req.json();
+        const { filePath, line, column } = body;
+        
+        if (!filePath) {
+          return new Response(JSON.stringify({ error: 'filePath required' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        
+        // Use Bun.openInEditor to open file
+        Bun.openInEditor(filePath, {
+          line: line || 1,
+          column: column || 1,
+        });
+        
+        return new Response(JSON.stringify({ success: true, message: `Opened ${filePath} in editor` }), {
+          headers: { 'Content-Type': 'application/json' },
+        });
+      } catch (error) {
+        return new Response(JSON.stringify({ error: error instanceof Error ? error.message : String(error) }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+    }
+    
+    // API endpoint for benchmark table (using Bun.inspect.table)
+    if (url.pathname === '/api/benchmarks/table') {
+      try {
+        const data = await getData();
+        const tableData = data.benchmarks.map(b => ({
+          name: b.name,
+          time: `${b.time.toFixed(3)}ms`,
+          target: `${b.target.toFixed(3)}ms`,
+          status: b.status,
+          category: b.category,
+        }));
+        
+        // Use Bun.inspect.table for formatted table output
+        const tableString = Bun.inspect.table(tableData, ['name', 'time', 'target', 'status', 'category'], {
+          colors: true,
+        });
+        
+        return new Response(tableString, {
+          headers: { 'Content-Type': 'text/plain' },
+        });
+      } catch (error) {
+        return new Response(`Error: ${error instanceof Error ? error.message : String(error)}`, {
+          status: 500,
+        });
+      }
     }
     return new Response(HTML, { headers: { 'Content-Type': 'text/html' } });
   },
@@ -901,10 +1044,13 @@ const useIsolation = process.env.BENCHMARK_ISOLATION !== 'false' &&
 const isMainEntry = import.meta.path === Bun.main;
 const bunVersion = Bun.version;
 const bunRevision = Bun.revision?.substring(0, 8) || 'unknown';
+const isProduction = process.env.NODE_ENV === 'production';
 
 logger.info(`🎛️  Enhanced Dev Dashboard: http://localhost:${port}`);
 logger.info(`   Entry: ${isMainEntry ? '✅ Main script' : '⚠️ Imported module'}`);
 logger.info(`   Bun: v${bunVersion} (${bunRevision})`);
+logger.info(`   Mode: ${isProduction ? '🏭 Production' : '🔧 Development'} ${!isProduction ? '(HMR enabled)' : ''}`);
 logger.info(`   Config: TOML-based via Bun.TOML.parse (${quickWinsSummary?.total || 17} quick wins, ${benchmarksList.length} benchmarks)`);
 logger.info(`   Isolation: ${useIsolation ? '✅ Enabled (subprocess mode)' : '❌ Disabled (in-process mode)'}`);
 logger.info(`   Set BENCHMARK_ISOLATION=false to disable isolation mode`);
+logger.info(`   💡 Tip: Use 'bun --watch run dev-dashboard' for auto-reload`);
