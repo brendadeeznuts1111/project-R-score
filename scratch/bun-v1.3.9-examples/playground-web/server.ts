@@ -10,24 +10,39 @@ import { readFile } from "node:fs/promises";
 import { createServer } from "node:net";
 import { join } from "node:path";
 
-const DEDICATED_PORT = Number(process.env.PLAYGROUND_PORT || process.env.PORT || 3011);
-const PORT_RANGE = process.env.PLAYGROUND_PORT_RANGE || "3011-3020";
-const MAX_CONCURRENT_REQUESTS = Number(process.env.PLAYGROUND_MAX_CONCURRENT_REQUESTS || 200);
-const MAX_COMMAND_WORKERS = Number(process.env.PLAYGROUND_MAX_COMMAND_WORKERS || 2);
-const PREFETCH_ENABLED = parseBool(process.env.PLAYGROUND_PREFETCH_ENABLED, false);
-const PRECONNECT_ENABLED = parseBool(process.env.PLAYGROUND_PRECONNECT_ENABLED, false);
+const BASE_STANDARD = Object.freeze({
+  dedicatedPort: 3011,
+  portRange: "3011-3020",
+  maxConcurrentRequests: 200,
+  maxCommandWorkers: 2,
+  prefetchEnabled: false,
+  preconnectEnabled: false,
+  smokeTimeoutMs: 2000,
+  fetchTimeoutMs: 30000,
+  maxBodySizeMb: 10,
+  streamChunkSize: 16384,
+  fetchDecompress: true,
+  fetchVerbose: "off",
+});
+
+const DEDICATED_PORT = parseFirstNumberEnv(["PLAYGROUND_PORT", "PORT"], BASE_STANDARD.dedicatedPort, { min: 1, max: 65535 });
+const PORT_RANGE = process.env.PLAYGROUND_PORT_RANGE || BASE_STANDARD.portRange;
+const MAX_CONCURRENT_REQUESTS = parseNumberEnv("PLAYGROUND_MAX_CONCURRENT_REQUESTS", BASE_STANDARD.maxConcurrentRequests, { min: 1, max: 100000 });
+const MAX_COMMAND_WORKERS = parseNumberEnv("PLAYGROUND_MAX_COMMAND_WORKERS", BASE_STANDARD.maxCommandWorkers, { min: 1, max: 64 });
+const PREFETCH_ENABLED = parseBool(process.env.PLAYGROUND_PREFETCH_ENABLED, BASE_STANDARD.prefetchEnabled);
+const PRECONNECT_ENABLED = parseBool(process.env.PLAYGROUND_PRECONNECT_ENABLED, BASE_STANDARD.preconnectEnabled);
 const PREFETCH_HOSTS = parseList(process.env.PLAYGROUND_PREFETCH_HOSTS);
 const PRECONNECT_URLS = parseList(process.env.PLAYGROUND_PRECONNECT_URLS);
-const SMOKE_TIMEOUT_MS = Number(process.env.PLAYGROUND_SMOKE_TIMEOUT_MS || 2000);
+const SMOKE_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_SMOKE_TIMEOUT_MS", BASE_STANDARD.smokeTimeoutMs, { min: 100, max: 120000 });
 const SMOKE_URLS = parseList(process.env.PLAYGROUND_SMOKE_URLS);
-const FETCH_TIMEOUT_MS = Number(process.env.PLAYGROUND_FETCH_TIMEOUT_MS || 30000);
-const MAX_BODY_SIZE_MB = Number(process.env.PLAYGROUND_MAX_BODY_SIZE_MB || 10);
+const FETCH_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_FETCH_TIMEOUT_MS", BASE_STANDARD.fetchTimeoutMs, { min: 100, max: 300000 });
+const MAX_BODY_SIZE_MB = parseNumberEnv("PLAYGROUND_MAX_BODY_SIZE_MB", BASE_STANDARD.maxBodySizeMb, { min: 1, max: 1024, integer: false });
 const MAX_BODY_SIZE_BYTES = Math.max(1, Math.floor(MAX_BODY_SIZE_MB * 1024 * 1024));
 const PROXY_DEFAULT = process.env.PLAYGROUND_PROXY_DEFAULT || "";
 const PROXY_AUTH_TOKEN = process.env.PLAYGROUND_PROXY_AUTH_TOKEN || "";
-const STREAM_CHUNK_SIZE = Number(process.env.PLAYGROUND_STREAM_CHUNK_SIZE || 16384);
-const FETCH_DECOMPRESS = parseBool(process.env.PLAYGROUND_FETCH_DECOMPRESS, true);
-const FETCH_VERBOSE = parseFetchVerbose(process.env.PLAYGROUND_FETCH_VERBOSE);
+const STREAM_CHUNK_SIZE = parseNumberEnv("PLAYGROUND_STREAM_CHUNK_SIZE", BASE_STANDARD.streamChunkSize, { min: 256, max: 1048576 });
+const FETCH_DECOMPRESS = parseBool(process.env.PLAYGROUND_FETCH_DECOMPRESS, BASE_STANDARD.fetchDecompress);
+const FETCH_VERBOSE = parseFetchVerbose(process.env.PLAYGROUND_FETCH_VERBOSE, BASE_STANDARD.fetchVerbose);
 const PROJECT_ROOT = join(import.meta.dir, "..", "..", "..");
 const BRAND_REPORTS_DIR = join(PROJECT_ROOT, "reports", "brand-bench");
 let inFlightRequests = 0;
@@ -266,7 +281,10 @@ async function withCommandWorker<T>(fn: () => Promise<T>): Promise<T> {
 
 function parseBool(value: string | undefined, defaultValue: boolean): boolean {
   if (!value) return defaultValue;
-  return value === "1" || value.toLowerCase() === "true" || value.toLowerCase() === "yes";
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "1" || normalized === "true" || normalized === "yes") return true;
+  if (normalized === "0" || normalized === "false" || normalized === "no") return false;
+  return defaultValue;
 }
 
 function parseList(value: string | undefined): string[] {
@@ -274,10 +292,40 @@ function parseList(value: string | undefined): string[] {
   return value.split(",").map(v => v.trim()).filter(Boolean);
 }
 
-function parseFetchVerbose(value: string | undefined): boolean | "curl" | undefined {
-  if (!value || value === "off" || value === "0" || value.toLowerCase() === "false") return undefined;
-  if (value === "curl") return "curl";
-  if (value === "1" || value.toLowerCase() === "true") return true;
+function parseNumberEnv(
+  name: string,
+  baseStandard: number,
+  options: { min?: number; max?: number; integer?: boolean } = {}
+): number {
+  const raw = process.env[name];
+  if (raw === undefined || raw === null || raw.trim() === "") return baseStandard;
+  const num = Number(raw);
+  if (!Number.isFinite(num)) return baseStandard;
+  const integer = options.integer !== false;
+  const normalized = integer ? Math.trunc(num) : num;
+  if (options.min !== undefined && normalized < options.min) return baseStandard;
+  if (options.max !== undefined && normalized > options.max) return baseStandard;
+  return normalized;
+}
+
+function parseFirstNumberEnv(
+  names: string[],
+  baseStandard: number,
+  options: { min?: number; max?: number; integer?: boolean } = {}
+): number {
+  for (const name of names) {
+    const raw = process.env[name];
+    if (raw === undefined || raw === null || raw.trim() === "") continue;
+    return parseNumberEnv(name, baseStandard, options);
+  }
+  return baseStandard;
+}
+
+function parseFetchVerbose(value: string | undefined, baseStandard: string): boolean | "curl" | undefined {
+  const effective = (value || baseStandard).trim().toLowerCase();
+  if (!effective || effective === "off" || effective === "0" || effective === "false") return undefined;
+  if (effective === "curl") return "curl";
+  if (effective === "1" || effective === "true") return true;
   return undefined;
 }
 
