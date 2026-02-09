@@ -8,6 +8,7 @@ type ProxyConfig = {
   url: string;           // http://proxy.company.com:8080
   username?: string;
   password?: string;
+  headers?: Record<string, string>;
 };
 
 type WebSocketConnection = {
@@ -18,6 +19,32 @@ type WebSocketConnection = {
   messagesSent: number;
   messagesReceived: number;
 };
+
+type TlsConfig = {
+  rejectUnauthorized?: boolean;
+  ca?: string | Uint8Array;
+  cert?: string | Uint8Array;
+  key?: string | Uint8Array;
+  passphrase?: string;
+};
+
+function envBoolean(value?: string): boolean {
+  return value === '1' || value === 'true';
+}
+
+function loadProxyDefaults(): { proxy?: ProxyConfig; tls?: TlsConfig } {
+  const url = Bun.env.WS_PROXY_URL?.trim();
+  if (!url) return {};
+  const proxy: ProxyConfig = {
+    url,
+    username: Bun.env.WS_PROXY_USERNAME?.trim() || undefined,
+    password: Bun.env.WS_PROXY_PASSWORD?.trim() || undefined,
+  };
+  const authHeader = Bun.env.WS_PROXY_AUTHORIZATION?.trim();
+  if (authHeader) proxy.headers = { 'Proxy-Authorization': authHeader };
+  const tls: TlsConfig | undefined = envBoolean(Bun.env.WS_TLS_INSECURE) ? { rejectUnauthorized: false } : undefined;
+  return { proxy, tls };
+}
 
 // ==================== PROXY WEBSOCKET CLIENT ====================
 class ProxyWebSocketClient {
@@ -47,14 +74,15 @@ class ProxyWebSocketClient {
   async connect(
     url: string, 
     proxy?: ProxyConfig | string,
-    protocols?: string | string[]
+    protocols?: string | string[],
+    tls?: TlsConfig
   ): Promise<WebSocketConnection> {
     const id = `ws_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     
     // Bun v1.3.6+: WebSocket proxy in 2nd parameter (options object)
     const wsOptions: WebSocketInit & { 
       proxy?: string | { url: string; headers?: Record<string, string> };
-      tls?: { rejectUnauthorized?: boolean };
+      tls?: Record<string, unknown>;
     } = {};
     
     if (proxy) {
@@ -70,10 +98,11 @@ class ProxyWebSocketClient {
           urlObj.password = proxy.password;
           proxyUrl = urlObj.toString();
         }
-        wsOptions.proxy = proxyUrl;
+        wsOptions.proxy = proxy.headers ? { url: proxyUrl, headers: proxy.headers } : proxyUrl;
       }
       console.log(`🌐 Connecting through proxy: ${typeof wsOptions.proxy === 'string' ? wsOptions.proxy.replace(/:\/\/[^:]+:[^@]+@/, '://***@') : '[configured]'}`);
     }
+    if (tls) wsOptions.tls = { ...tls };
     
     // Note: protocols go in the options object too if using proxy
     const ws = new WebSocket(url, protocols ? { ...wsOptions, protocols } : wsOptions);
@@ -87,28 +116,6 @@ class ProxyWebSocketClient {
       messagesReceived: 0
     };
     
-    // Setup event handlers
-    ws.onopen = () => {
-      console.log(`✅ WebSocket ${id} connected${proxy ? ' via proxy' : ''}`);
-      redis.publish('ws:connected', JSON.stringify({ id, url, proxy: !!proxy }));
-    };
-    
-    ws.onmessage = (event) => {
-      conn.messagesReceived++;
-      this.handleMessage(id, event.data);
-    };
-    
-    ws.onclose = (event) => {
-      console.log(`❌ WebSocket ${id} closed: ${event.code} ${event.reason}`);
-      this.connections.delete(id);
-      redis.publish('ws:disconnected', JSON.stringify({ id, code: event.code }));
-    };
-    
-    ws.onerror = (error) => {
-      console.error(`💥 WebSocket ${id} error:`, error);
-      redis.publish('ws:error', JSON.stringify({ id, error: String(error) }));
-    };
-    
     this.connections.set(id, conn);
     
     // Wait for connection
@@ -116,10 +123,23 @@ class ProxyWebSocketClient {
       const timeout = setTimeout(() => reject(new Error('Connection timeout')), 10000);
       ws.onopen = () => {
         clearTimeout(timeout);
+        console.log(`✅ WebSocket ${id} connected${proxy ? ' via proxy' : ''}`);
+        redis.publish('ws:connected', JSON.stringify({ id, url, proxy: !!proxy }));
         resolve();
+      };
+      ws.onmessage = (event) => {
+        conn.messagesReceived++;
+        this.handleMessage(id, event.data);
+      };
+      ws.onclose = (event) => {
+        console.log(`❌ WebSocket ${id} closed: ${event.code} ${event.reason}`);
+        this.connections.delete(id);
+        redis.publish('ws:disconnected', JSON.stringify({ id, code: event.code }));
       };
       ws.onerror = (err) => {
         clearTimeout(timeout);
+        console.error(`💥 WebSocket ${id} error:`, err);
+        redis.publish('ws:error', JSON.stringify({ id, error: String(err) }));
         reject(err);
       };
     });
@@ -233,6 +253,7 @@ const wss = serve({
 
 // ==================== DEMO ====================
 async function runDemo() {
+  const defaults = loadProxyDefaults();
   console.log(`
 🌐 Bun v1.3.6 WebSocket Proxy Support Demo
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -271,6 +292,9 @@ Usage:
   });
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 `);
+  if (defaults.proxy) {
+    console.log(`Env proxy default detected: ${defaults.proxy.url}`);
+  }
 
   // Create proxy client
   const client = new ProxyWebSocketClient();
@@ -289,10 +313,22 @@ Usage:
   
   // Test 2: Simulated proxy connection (would need actual proxy)
   console.log('\n--- Test 2: Proxy Configuration Demo ---');
-  console.log('To use proxy:');
-  console.log('  const ws = new WebSocket(url, {');
-  console.log('    proxy: "http://proxy.company.com:8080"');
-  console.log('  });');
+  if (defaults.proxy) {
+    try {
+      const proxied = await client.connect('ws://localhost:3006/ws', defaults.proxy, undefined, defaults.tls);
+      client.send(proxied.id, { type: 'test', msg: 'Proxy defaults are configured via env.' });
+      await new Promise((r) => setTimeout(r, 1000));
+      client.disconnect(proxied.id);
+    } catch (err) {
+      console.error('Proxy demo connection failed (check WS_PROXY_URL):', err);
+    }
+  } else {
+    console.log('To use proxy:');
+    console.log('  export WS_PROXY_URL="http://proxy.company.com:8080"');
+    console.log('  export WS_PROXY_USERNAME="user"');
+    console.log('  export WS_PROXY_PASSWORD="pass"');
+    console.log('  export WS_TLS_INSECURE="true"   # optional');
+  }
   
   // Show current stats
   console.log('\n--- Connection Stats ---');

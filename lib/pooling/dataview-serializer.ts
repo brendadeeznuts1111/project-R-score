@@ -222,15 +222,8 @@ export class DataViewProfileSerializer {
   }
   
   private calculateChecksum(data: Uint8Array): number {
-    // Simple CRC32 implementation
-    let crc = 0xFFFFFFFF;
-    for (let i = 0; i < data.length; i++) {
-      crc ^= data[i];
-      for (let j = 0; j < 8; j++) {
-        crc = (crc >>> 1) ^ (0xEDB88320 & -(crc & 1));
-      }
-    }
-    return (crc ^ 0xFFFFFFFF) >>> 0;
+    // Bun v1.3.6+: hardware-accelerated CRC32 (zlib-backed).
+    return Bun.hash.crc32(data) >>> 0;
   }
   
   // Public utility methods

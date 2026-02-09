@@ -58,6 +58,8 @@ export interface ProfileUploaderConfig {
   accessKeyId?: string;
   /** Explicit secret. If omitted, S3Client reads S3_SECRET_ACCESS_KEY / AWS_SECRET_ACCESS_KEY from env/bun.secrets. */
   secretAccessKey?: string;
+  /** S3 Requester Pays support: set true for requester-pays buckets. */
+  requestPayer?: boolean;
   prefix?: string;
   profilesDir?: string;
 }
@@ -118,6 +120,7 @@ export function resolveUploaderConfig(): ProfileUploaderConfig {
     endpoint: Bun.env.R2_ENDPOINT || Bun.env.S3_ENDPOINT || (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : undefined),
     accessKeyId: Bun.env.R2_ACCESS_KEY_ID || Bun.env.S3_ACCESS_KEY_ID || undefined,
     secretAccessKey: Bun.env.R2_SECRET_ACCESS_KEY || Bun.env.S3_SECRET_ACCESS_KEY || undefined,
+    requestPayer: Bun.env.R2_REQUEST_PAYER === '1' || Bun.env.R2_REQUEST_PAYER === 'true',
     prefix: Bun.env.R2_PROFILE_PREFIX || 'profiles',
     profilesDir: Bun.env.PROFILE_OUTPUT_DIR || './profiles',
   };
@@ -131,7 +134,7 @@ export class ProfileSessionUploader {
   private prefix: string;
   private uploaded = new Set<string>();
   /** S3 options — only includes fields that are explicitly set. Bun resolves the rest from bun.secrets. */
-  private s3Opts: Record<string, string>;
+  private s3Opts: Record<string, string | boolean>;
 
   constructor(config: ProfileUploaderConfig = {}, terminal?: TerminalIdentity) {
     this.config = config;
@@ -139,11 +142,12 @@ export class ProfileSessionUploader {
     this.prefix = config.prefix || 'profiles';
 
     // Build S3 options, omitting undefined so Bun falls back to bun.secrets / env
-    const opts: Record<string, string> = {};
+    const opts: Record<string, string | boolean> = {};
     if (config.bucket) opts.bucket = config.bucket;
     if (config.endpoint) opts.endpoint = config.endpoint;
     if (config.accessKeyId) opts.accessKeyId = config.accessKeyId;
     if (config.secretAccessKey) opts.secretAccessKey = config.secretAccessKey;
+    if (config.requestPayer) opts.requestPayer = true;
     this.s3Opts = opts;
   }
 

@@ -21,5 +21,6 @@ This is a sample documentation file.
 
 - Bun-first engineering policy: `docs/bun/BUN_FIRST_POLICY.md`
 - JSON response rule: prefer `Response.json(data)` over `new Response(JSON.stringify(data))`
+- Runtime baseline: enforce Bun v1.3.6+ reliability/security fixes listed in `docs/bun/BUN_FIRST_POLICY.md`
 
 For more information, run `bun-docs --help`.

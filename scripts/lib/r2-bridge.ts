@@ -5,6 +5,7 @@ export type R2BridgeConfig = {
   bucket: string;
   accessKeyId: string;
   secretAccessKey: string;
+  requestPayer?: boolean;
 };
 
 export function resolveR2BridgeConfig(input?: {
@@ -12,6 +13,7 @@ export function resolveR2BridgeConfig(input?: {
   bucket?: string;
   accessKeyId?: string;
   secretAccessKey?: string;
+  requestPayer?: boolean;
 }): R2BridgeConfig {
   const accountId = Bun.env.R2_ACCOUNT_ID || Bun.env.CLOUDFLARE_ACCOUNT_ID || '';
   const endpoint =
@@ -20,13 +22,15 @@ export function resolveR2BridgeConfig(input?: {
     (input?.bucket || Bun.env.R2_BENCH_BUCKET || Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || '').trim();
   const accessKeyId = (input?.accessKeyId || Bun.env.R2_ACCESS_KEY_ID || '').trim();
   const secretAccessKey = (input?.secretAccessKey || Bun.env.R2_SECRET_ACCESS_KEY || '').trim();
+  const requestPayer =
+    input?.requestPayer ?? (Bun.env.R2_REQUEST_PAYER === '1' || Bun.env.R2_REQUEST_PAYER === 'true');
 
   if (!endpoint || !bucket || !accessKeyId || !secretAccessKey) {
     throw new Error(
       'Missing R2 config. Required: endpoint, bucket, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY.'
     );
   }
-  return { endpoint, bucket, accessKeyId, secretAccessKey };
+  return { endpoint, bucket, accessKeyId, secretAccessKey, requestPayer };
 }
 
 export async function uploadJsonToR2(
@@ -34,13 +38,15 @@ export async function uploadJsonToR2(
   key: string,
   data: unknown
 ): Promise<void> {
-  await S3Client.write(key, JSON.stringify(data, null, 2), {
+  const writeOpts: Record<string, unknown> = {
     bucket: r2.bucket,
     endpoint: r2.endpoint,
     accessKeyId: r2.accessKeyId,
     secretAccessKey: r2.secretAccessKey,
     type: 'application/json',
-  });
+  };
+  if (r2.requestPayer) writeOpts.requestPayer = true;
+  await S3Client.write(key, JSON.stringify(data, null, 2), writeOpts);
 }
 
 export function encodeBridgePayload(payload: unknown): Uint8Array {
@@ -67,12 +73,13 @@ export async function uploadCompressedStateToR2(
   payload: unknown
 ): Promise<void> {
   const encoded = encodeBridgePayload(payload);
-  await S3Client.write(key, encoded, {
+  const writeOpts: Record<string, unknown> = {
     bucket: r2.bucket,
     endpoint: r2.endpoint,
     accessKeyId: r2.accessKeyId,
     secretAccessKey: r2.secretAccessKey,
     type: 'application/octet-stream',
-  });
+  };
+  if (r2.requestPayer) writeOpts.requestPayer = true;
+  await S3Client.write(key, encoded, writeOpts);
 }
-

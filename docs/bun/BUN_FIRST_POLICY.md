@@ -68,6 +68,40 @@
 
 ---
 
+## 🔒 Runtime Reliability & Security Baseline (Bun v1.3.6+)
+
+Track and enforce these fixes/features in runtime-sensitive codepaths:
+
+### Node compatibility fixes
+- `node:http`: CONNECT handler must preserve pipelined `head` bytes (workerd/KJ compatibility).
+- temp dir resolution must follow Node order: `TMPDIR` -> `TMP` -> `TEMP`.
+- `node:zlib`: avoid repeated `reset()` leak patterns in Brotli/Zstd/Zlib stream-heavy loops.
+- `ws` compatibility: ensure proxy flows support the `agent` option when interop requires it.
+- `node:http2`: verify flow-control-sensitive endpoints under load.
+
+### Bun API/runtime fixes to rely on
+- `Bun.write()`: safe large file writes (>2GB), `mode` option must be honored for `Bun.file()` copies.
+- proxy stack: handle concurrent 407 auth failures, `NO_PROXY` empty-entry parsing edge cases.
+- `Bun.serve()` streaming proxying: validate no retained streams in long-lived routes.
+- subprocess/shell: guard rare stdin cleanup and `&>` redirect edge cases.
+- worker-thread async ops: avoid premature GC assumptions in zstd/scrypt/transpiler-heavy jobs.
+
+### Data/DB correctness
+- MySQL Bun SQL: `BINARY`/`VARBINARY`/`BLOB` must stay `Buffer`, not coerced UTF-8 strings.
+- Postgres Bun SQL: arrays with large strings/JSON (>16KB) and empty arrays (`{}`) must parse cleanly.
+- SQL JSON parse failures must throw `SyntaxError` and never silently coerce to empty values.
+- S3 credential validation: reject invalid `pageSize`, `partSize`, `retry` outside allowed ranges.
+
+### Security requirements
+- Null-byte rejection is required for `Bun.spawn`, `Bun.spawnSync`, env vars, and shell templates.
+- TLS wildcard matching must follow RFC 6125 section 6.4.3; do not add permissive overrides.
+
+### Required review checks
+- File-copy permissions: when using `Bun.write(target, Bun.file(source), { mode })`, always set and verify explicit `mode`; never rely on inherited source permissions.
+- Null-byte hardening (CWE-158): reject or sanitize `\0` in process args, env values, and shell template inputs before constructing spawn/shell calls.
+
+---
+
 ## 🚀 Implementation Examples
 
 ### File Operations - Bun First
