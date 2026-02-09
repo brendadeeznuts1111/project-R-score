@@ -1,0 +1,21 @@
+{
+  "name": "bun-v1.3.9-practical-examples",
+  "version": "1.0.0",
+  "type": "module",
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "test": "bun test",
+    "test:proxy": "NO_PROXY=localhost,127.0.0.1 bun test proxy.test.ts",
+    "build:cli": "bun build --compile --bytecode --format=esm ./cli.ts --outfile ./dist/my-cli",
+    "profile": "bun --cpu-prof benchmark.ts",
+    "profile:high-res": "bun --cpu-prof --cpu-prof-interval 250 benchmark.ts",
+    "markdown-simd": "bun run markdown-simd.ts",
+    "server": "echo 'Server starting...' && sleep 2 && echo 'Server ready on :3000'",
+    "client": "echo 'Client starting...' && sleep 1 && echo 'Client ready on :5173'",
+    "db": "echo 'Database starting...' && sleep 0.5 && echo 'DB connected'",
+    "dev": "bun run --parallel server client db"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

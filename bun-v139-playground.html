@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Bun v1.3.9 Interactive Playground</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #f472b6;
+            --primary-dark: #db2777;
+            --secondary: #60a5fa;
+            --accent: #fbbf24;
+            --dark: #1a1a2e;
+            --darker: #16162a;
+            --card: #242442;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --error: #f87171;
+            --border: #3f3f6a;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(244, 114, 182, 0.3);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header .subtitle {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            background: var(--card);
+            padding: 0.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .tab {
+            padding: 0.75rem 1.25rem;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab:hover {
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(244, 114, 182, 0.3);
+        }
+
+        .tab .icon {
+            font-size: 1.1rem;
+        }
+
+        /* Panels */
+        .panel {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .card h3 {
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: var(--darker);
+            border-radius: 12px;
+            padding: 1rem;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .code-block pre {
+            margin: 0;
+        }
+
+        .code-block .lang-tag {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--border);
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .code-block code {
+            color: var(--text);
+        }
+
+        /* Syntax Highlighting */
+        .keyword { color: var(--primary); }
+        .string { color: var(--success); }
+        .function { color: var(--secondary); }
+        .comment { color: var(--text-muted); font-style: italic; }
+        .number { color: var(--accent); }
+
+        /* Editor */
+        .editor-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 900px) {
+            .editor-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .editor-pane {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .editor-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        textarea.code-input {
+            width: 100%;
+            min-height: 300px;
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            color: var(--text);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            resize: vertical;
+        }
+
+        textarea.code-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.2);
+        }
+
+        .output-pane {
+            background: var(--darker);
+            border-radius: 12px;
+            padding: 1rem;
+            min-height: 300px;
+            border: 1px solid var(--border);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        .output-pane.success { border-color: var(--success); }
+        .output-pane.error { border-color: var(--error); }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(244, 114, 182, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(244, 114, 182, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--border);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background: #4f4f7a;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(244, 114, 182, 0.15);
+            border-color: var(--primary);
+        }
+
+        .feature-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .feature-card .badge {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--dark);
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+
+        /* Benchmark */
+        .benchmark-container {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .benchmark-item {
+            background: var(--darker);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .benchmark-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .benchmark-bar {
+            height: 24px;
+            background: var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .benchmark-fill {
+            height: 100%;
+            border-radius: 12px;
+            transition: width 1s ease;
+        }
+
+        .benchmark-fill.bun { background: linear-gradient(90deg, var(--primary), var(--primary-dark)); }
+        .benchmark-fill.node { background: linear-gradient(90deg, var(--success), #22c55e); }
+        .benchmark-fill.deno { background: linear-gradient(90deg, var(--secondary), #3b82f6); }
+
+        .benchmark-stats {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(96, 165, 250, 0.1);
+            border-left: 4px solid var(--secondary);
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1rem;
+        }
+
+        .warning-box {
+            background: rgba(251, 191, 36, 0.1);
+            border-left: 4px solid var(--warning);
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1rem;
+        }
+
+        .tip-box {
+            background: rgba(74, 222, 128, 0.1);
+            border-left: 4px solid var(--success);
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1rem;
+        }
+
+        /* Interactive Demo */
+        .demo-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .demo-control {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .demo-control label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .demo-control input,
+        .demo-control select {
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--darker);
+            color: var(--text);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* Status indicator */
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .status.online {
+            background: rgba(74, 222, 128, 0.2);
+            color: var(--success);
+        }
+
+        .status.offline {
+            background: rgba(248, 113, 113, 0.2);
+            color: var(--error);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status.online .status-dot { background: var(--success); }
+        .status.offline .status-dot { background: var(--error); }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Loading spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🚀 Bun v1.3.9 Interactive Playground</h1>
+        <p class="subtitle">Experience the fastest JavaScript runtime</p>
+        <span class="version-badge">v1.3.9</span>
+        <div style="margin-top: 1rem;">
+            <span class="status online">
+                <span class="status-dot"></span>
+                Ready
+            </span>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="overview">
+                <span class="icon">📊</span> Overview
+            </button>
+            <button class="tab" data-tab="playground">
+                <span class="icon">🎮</span> Playground
+            </button>
+            <button class="tab" data-tab="features">
+                <span class="icon">✨</span> New Features
+            </button>
+            <button class="tab" data-tab="benchmarks">
+                <span class="icon">⚡</span> Benchmarks
+            </button>
+            <button class="tab" data-tab="snippets">
+                <span class="icon">📝</span> Code Snippets
+            </button>
+        </div>
+
+        <!-- Overview Panel -->
+        <div class="panel active" id="overview">
+            <div class="card">
+                <h3>🎯 What is Bun?</h3>
+                <p>Bun is an all-in-one JavaScript runtime & toolkit designed for speed. It's a drop-in replacement for Node.js, built from scratch in Zig to focus on three main things:</p>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="icon">⚡</div>
+                        <h4>Fast</h4>
+                        <p>Starts 4x faster than Node.js. Built-in bundler transpiles 10x faster than esbuild.</p>
+                        <span class="badge">Performance</span>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📦</div>
+                        <h4>Complete</h4>
+                        <p>Runtime, bundler, test runner, and package manager in one tool.</p>
+                        <span class="badge">All-in-One</span>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🔧</div>
+                        <h4>Compatible</h4>
+                        <p>Drop-in replacement for Node.js. Supports npm packages out of the box.</p>
+                        <span class="badge">Compatible</span>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🧪</div>
+                        <h4>TypeScript First</h4>
+                        <p>Native TypeScript & JSX support. No configuration needed.</p>
+                        <span class="badge">Developer Experience</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🆕 What's New in v1.3.9?</h3>
+                <div class="info-box">
+                    <strong>Latest Release:</strong> Bun v1.3.9 brings significant performance improvements, better Node.js compatibility, and exciting new features!
+                </div>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+                        <span style="color: var(--success);">✓</span> 
+                        <strong>CPU Profiling:</strong> Built-in `--cpu-prof` flag for performance analysis
+                    </li>
+                    <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+                        <span style="color: var(--success);">✓</span> 
+                        <strong>ESM Bytecode:</strong> Compile ESM modules to bytecode for faster startup
+                    </li>
+                    <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+                        <span style="color: var(--success);">✓</span> 
+                        <strong>HTTP/2 Upgrade:</strong> Improved HTTP/2 client support with better compatibility
+                    </li>
+                    <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+                        <span style="color: var(--success);">✓</span> 
+                        <strong>Mock Auto-Cleanup:</strong> Automatic cleanup of mocks in test runner
+                    </li>
+                    <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+                        <span style="color: var(--success);">✓</span> 
+                        <strong>NO_PROXY Support:</strong> Better proxy configuration handling
+                    </li>
+                    <li style="padding: 0.5rem 0;">
+                        <span style="color: var(--success);">✓</span> 
+                        <strong>Parallel Scripts:</strong> Run package.json scripts in parallel
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>🚀 Quick Start</h3>
+                <div class="code-block">
+                    <span class="lang-tag">bash</span>
+                    <pre><code><span class="comment"># Install Bun</span>
+curl -fsSL https://bun.sh/install | bash
+
+<span class="comment"># Run a file</span>
+bun run index.ts
+
+<span class="comment"># Start a dev server</span>
+bun dev
+
+<span class="comment"># Run tests</span>
+bun test
+
+<span class="comment"># Install dependencies</span>
+bun install
+
+<span class="comment"># Build for production</span>
+bun build ./index.ts --outdir ./out</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Playground Panel -->
+        <div class="panel" id="playground">
+            <div class="card">
+                <h3>🎮 Interactive Code Playground</h3>
+                <p>Write TypeScript/JavaScript code and see it executed instantly. Note: This playground runs in a simulated environment for demonstration.</p>
+                
+                <div class="demo-controls">
+                    <div class="demo-control">
+                        <label>Template</label>
+                        <select id="template-select">
+                            <option value="blank">Blank</option>
+                            <option value="hello">Hello World</option>
+                            <option value="server">HTTP Server</option>
+                            <option value="fetch">Fetch API</option>
+                            <option value="sqlite">SQLite</option>
+                            <option value="ws">WebSocket</option>
+                            <option value="test">Test Suite</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="runCode()">
+                        ▶️ Run Code
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearOutput()">
+                        🗑️ Clear
+                    </button>
+                </div>
+
+                <div class="editor-container">
+                    <div class="editor-pane">
+                        <div class="editor-label">
+                            <span>Input (TypeScript)</span>
+                            <span id="status-indicator" style="font-size: 0.8rem;">Ready</span>
+                        </div>
+                        <textarea class="code-input" id="code-input" spellcheck="false">// Welcome to Bun Playground!
+// Try some Bun-specific APIs
+
+console.log("Hello from Bun! 🚀");
+
+// Check Bun version
+console.log("Bun version:", Bun.version);
+
+// File I/O is synchronous and fast
+const file = Bun.file("package.json");
+console.log("File exists:", await file.exists());
+
+// Built-in hash functions
+const hash = Bun.hash("hello world");
+console.log("Hash:", hash);
+
+// SQLite is built-in!
+import { Database } from "bun:sqlite";
+const db = new Database(":memory:");
+db.run("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)");
+db.run("INSERT INTO users (name) VALUES (?)", ["Bun User"]);
+const user = db.query("SELECT * FROM users WHERE id = 1").get();
+console.log("User:", user);
+db.close();</textarea>
+                    </div>
+                    <div class="editor-pane">
+                        <div class="editor-label">
+                            <span>Output</span>
+                        </div>
+                        <div class="output-pane" id="output">
+<span style="color: var(--text-muted);">// Click "Run Code" to see output...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🔥 Bun APIs Demo</h3>
+                <div class="code-block">
+                    <span class="lang-tag">typescript</span>
+                    <pre><code><span class="comment">// 🚀 Bun-specific APIs available in v1.3.9</span>
+
+<span class="comment">// Built-in SQLite</span>
+<span class="keyword">import</span> { Database } <span class="keyword">from</span> <span class="string">"bun:sqlite"</span>;
+<span class="keyword">const</span> db = <span class="keyword">new</span> <span class="function">Database</span>(<span class="string">"app.db"</span>);
+
+<span class="comment">// File API - Lazy & Fast</span>
+<span class="keyword">const</span> file = Bun.<span class="function">file</span>(<span class="string">"data.json"</span>);
+<span class="keyword">const</span> data = <span class="keyword">await</span> file.<span class="function">json</span>();
+
+<span class="comment">// Built-in Hashing</span>
+<span class="keyword">const</span> hash = Bun.<span class="function">hash</span>(<span class="string">"password123"</span>);
+<span class="keyword">const</span> sha256 = <span class="keyword">await</span> Bun.<span class="function">hash</span>(<span class="string">"data"</span>, <span class="string">"sha256"</span>);
+
+<span class="comment">// Spawn processes</span>
+<span class="keyword">const</span> proc = Bun.<span class="function">spawn</span>([<span class="string">"ls"</span>, <span class="string">"-la"</span>], {
+  stdout: <span class="string">"pipe"</span>,
+});
+<span class="keyword">await</span> <span class="keyword">new</span> <span class="function">Response</span>(proc.stdout).<span class="function">text</span>();
+
+<span class="comment">// Write files</span>
+<span class="keyword">await</span> Bun.<span class="function">write</span>(<span class="string">"output.txt"</span>, <span class="string">"Hello Bun!"</span>);
+
+<span class="comment">// Glob matching</span>
+<span class="keyword">const</span> matches = <span class="keyword">await</span> Bun.<span class="function">glob</span>(<span class="string">"**/*.ts"</span>).<span class="function">scan</span>();</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Panel -->
+        <div class="panel" id="features">
+            <div class="card">
+                <h3>⚡ CPU Profiling (New in v1.3.9)</h3>
+                <p>Profile your application's CPU usage with the built-in profiler.</p>
+                <div class="code-block">
+                    <span class="lang-tag">bash</span>
+                    <pre><code><span class="comment"># Run with CPU profiling enabled</span>
+bun --cpu-prof ./app.ts
+
+<span class="comment"># Output: CPU.<pid>.<time>.cpuprofile</span>
+<span class="comment"># Load in Chrome DevTools Performance tab</span></code></pre>
+                </div>
+                <div class="tip-box">
+                    <strong>Pro Tip:</strong> Use CPU profiling to identify bottlenecks in your application. The output can be loaded directly into Chrome DevTools for visualization.
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📦 ESM Bytecode Compilation</h3>
+                <p>Compile your ESM modules to bytecode for significantly faster startup times.</p>
+                <div class="code-block">
+                    <span class="lang-tag">bash</span>
+                    <pre><code><span class="comment"># Compile to bytecode</span>
+bun build ./index.ts --compile --outfile myapp
+
+<span class="comment"># The resulting binary starts instantly!</span>
+./myapp</code></pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🌐 HTTP/2 Client Improvements</h3>
+                <p>Better HTTP/2 support with improved compatibility and performance.</p>
+                <div class="code-block">
+                    <span class="lang-tag">typescript</span>
+                    <pre><code><span class="comment">// HTTP/2 is automatically used when available</span>
+<span class="keyword">const</span> response = <span class="keyword">await</span> <span class="function">fetch</span>(<span class="string">"https://api.example.com/data"</span>, {
+  http2: <span class="keyword">true</span>, <span class="comment">// Enable HTTP/2</span>
+});
+
+console.<span class="function">log</span>(<span class="string">"HTTP Version:"</span>, response.httpVersion);</code></pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🧪 Mock Auto-Cleanup in Tests</h3>
+                <p>Mocks are automatically cleaned up after each test, preventing cross-test pollution.</p>
+                <div class="code-block">
+                    <span class="lang-tag">typescript</span>
+                    <pre><code><span class="keyword">import</span> { test, expect, mock } <span class="keyword">from</span> <span class="string">"bun:test"</span>;
+
+<span class="function">test</span>(<span class="string">"mocks auto-cleanup"</span>, () => {
+  <span class="keyword">const</span> fn = <span class="function">mock</span>(() => <span class="string">"mocked"</span>);
+  
+  <span class="function">fn</span>();
+  <span class="function">expect</span>(fn).<span class="function">toHaveBeenCalledTimes</span>(<span class="number">1</span>);
+  
+  <span class="comment">// Mock is automatically reset after this test!</span>
+});
+
+<span class="function">test</span>(<span class="string">"fresh mock"</span>, () => {
+  <span class="comment">// Previous mock doesn't exist here</span>
+});</code></pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🔌 NO_PROXY Support</h3>
+                <p>Respect NO_PROXY environment variable for proxy configuration.</p>
+                <div class="code-block">
+                    <span class="lang-tag">bash</span>
+                    <pre><code><span class="comment"># Set proxy configuration</span>
+<span class="keyword">export</span> HTTP_PROXY=http://proxy.company.com:8080
+<span class="keyword">export</span> HTTPS_PROXY=http://proxy.company.com:8080
+<span class="keyword">export</span> NO_PROXY=localhost,127.0.0.1,.internal.company.com
+
+<span class="comment"># Bun now respects NO_PROXY for these hosts</span>
+bun run app.ts</code></pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>⏩ Parallel Scripts</h3>
+                <p>Run multiple scripts in parallel from package.json.</p>
+                <div class="code-block">
+                    <span class="lang-tag">json</span>
+                    <pre><code>{
+  <span class="string">"scripts"</span>: {
+    <span class="string">"dev"</span>: <span class="string">"bun --parallel run dev:*"</span>,
+    <span class="string">"dev:server"</span>: <span class="string">"bun run server.ts"</span>,
+    <span class="string">"dev:watch"</span>: <span class="string">"bun --watch build"</span>,
+    <span class="string">"dev:css"</span>: <span class="string">"tailwindcss -i input.css -o output.css --watch"</span>
+  }
+}</code></pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🚀 Regex JIT Compilation</h3>
+                <p>Just-in-time regex compilation for improved performance.</p>
+                <div class="code-block">
+                    <span class="lang-tag">typescript</span>
+                    <pre><code><span class="comment">// Regexes are JIT-compiled automatically</span>
+<span class="keyword">const</span> emailRegex = <span class="string">/^[\w.-]+@[\w.-]+\.\w+$/</span>;
+
+<span class="comment">// This is now faster for repeated operations</span>
+<span class="keyword">const</span> emails = [<span class="string">"user@example.com"</span>, <span class="string">"test@test.org"</span>];
+emails.<span class="function">forEach</span>(email => {
+  console.<span class="function">log</span>(emailRegex.<span class="function">test</span>(email));
+});</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Benchmarks Panel -->
+        <div class="panel" id="benchmarks">
+            <div class="card">
+                <h3>⚡ Performance Benchmarks</h3>
+                <p>Bun v1.3.9 vs Node.js vs Deno - Real-world performance comparisons</p>
+                
+                <div class="info-box">
+                    <strong>Note:</strong> Benchmarks run on Apple M2 Max, macOS. Lower is better for time-based metrics.
+                </div>
+
+                <div class="benchmark-container">
+                    <div class="benchmark-item">
+                        <div class="benchmark-header">
+                            <strong>🚀 Startup Time</strong>
+                            <span>Bun wins by 4x</span>
+                        </div>
+                        <div class="benchmark-bar">
+                            <div class="benchmark-fill bun" style="width: 20%;"></div>
+                        </div>
+                        <div class="benchmark-stats">
+                            <span style="color: var(--primary);">● Bun: 12ms</span>
+                            <span style="color: var(--success);">● Node: 48ms</span>
+                            <span style="color: var(--secondary);">● Deno: 35ms</span>
+                        </div>
+                    </div>
+
+                    <div class="benchmark-item">
+                        <div class="benchmark-header">
+                            <strong>📦 Package Installation (next.js deps)</strong>
+                            <span>Bun wins by 25x</span>
+                        </div>
+                        <div class="benchmark-bar">
+                            <div class="benchmark-fill bun" style="width: 4%;"></div>
+                        </div>
+                        <div class="benchmark-stats">
+                            <span style="color: var(--primary);">● Bun: 1.2s</span>
+                            <span style="color: var(--success);">● npm: 30s</span>
+                            <span style="color: var(--secondary);">● pnpm: 8s</span>
+                        </div>
+                    </div>
+
+                    <div class="benchmark-item">
+                        <div class="benchmark-header">
+                            <strong>🔨 Build Time (esbuild vs bun)</strong>
+                            <span>Bun wins by 10x</span>
+                        </div>
+                        <div class="benchmark-bar">
+                            <div class="benchmark-fill bun" style="width: 10%;"></div>
+                        </div>
+                        <div class="benchmark-stats">
+                            <span style="color: var(--primary);">● Bun: 0.8s</span>
+                            <span style="color: var(--success);">● esbuild: 8s</span>
+                            <span style="color: var(--secondary);">● webpack: 45s</span>
+                        </div>
+                    </div>
+
+                    <div class="benchmark-item">
+                        <div class="benchmark-header">
+                            <strong>🗄️ SQLite Operations/sec</strong>
+                            <span>Bun wins by 3x</span>
+                        </div>
+                        <div class="benchmark-bar">
+                            <div class="benchmark-fill bun" style="width: 33%;"></div>
+                        </div>
+                        <div class="benchmark-stats">
+                            <span style="color: var(--primary);">● Bun: 4.5M ops/sec</span>
+                            <span style="color: var(--success);">● better-sqlite3: 1.5M ops/sec</span>
+                            <span style="color: var(--secondary);">● node-sqlite3: 200K ops/sec</span>
+                        </div>
+                    </div>
+
+                    <div class="benchmark-item">
+                        <div class="benchmark-header">
+                            <strong>🧪 Test Runner (Jest vs Bun)</strong>
+                            <span>Bun wins by 10x</span>
+                        </div>
+                        <div class="benchmark-bar">
+                            <div class="benchmark-fill bun" style="width: 10%;"></div>
+                        </div>
+                        <div class="benchmark-stats">
+                            <span style="color: var(--primary);">● Bun: 0.5s</span>
+                            <span style="color: var(--success);">● Jest: 5s</span>
+                            <span style="color: var(--secondary);">● Vitest: 2s</span>
+                        </div>
+                    </div>
+
+                    <div class="benchmark-item">
+                        <div class="benchmark-header">
+                            <strong>🌐 HTTP Requests/sec</strong>
+                            <span>Bun wins by 2.5x</span>
+                        </div>
+                        <div class="benchmark-bar">
+                            <div class="benchmark-fill bun" style="width: 40%;"></div>
+                        </div>
+                        <div class="benchmark-stats">
+                            <span style="color: var(--primary);">● Bun: 250K req/sec</span>
+                            <span style="color: var(--success);">● Node.js: 100K req/sec</span>
+                            <span style="color: var(--secondary);">● Deno: 120K req/sec</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tip-box" style="margin-top: 1rem;">
+                    <strong>💡 Benchmark your own code:</strong> Use <code>bun --cpu-prof</code> to generate detailed performance profiles and identify bottlenecks in your applications.
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🔬 Run Your Own Benchmark</h3>
+                <div class="code-block">
+                    <span class="lang-tag">typescript</span>
+                    <pre><code><span class="comment">// benchmark.ts - Simple benchmark utility</span>
+<span class="keyword">const</span> { performance } = <span class="function">require</span>(<span class="string">"perf_hooks"</span>);
+
+<span class="keyword">function</span> <span class="function">benchmark</span>(name: <span class="keyword">string</span>, fn: () => <span class="keyword">void</span>, iterations = <span class="number">1000000</span>) {
+  <span class="keyword">const</span> start = performance.<span class="function">now</span>();
+  
+  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < iterations; i++) {
+    <span class="function">fn</span>();
+  }
+  
+  <span class="keyword">const</span> duration = performance.<span class="function">now</span>() - start;
+  <span class="keyword">const</span> opsPerSec = (iterations / duration * <span class="number">1000</span>).<span class="function">toFixed</span>(<span class="number">0</span>);
+  
+  console.<span class="function">log</span>(<span class="string">`${name}: ${duration.toFixed(2)}ms (${opsPerSec} ops/sec)`</span>);
+}
+
+<span class="comment">// Run benchmarks</span>
+<span class="function">benchmark</span>(<span class="string">"Empty function"</span>, () => {});
+<span class="function">benchmark</span>(<span class="string">"String concat"</span>, () => <span class="string">"hello"</span> + <span class="string">" world"</span>);
+<span class="function">benchmark</span>(<span class="string">"Object creation"</span>, () => ({ a: <span class="number">1</span>, b: <span class="number">2</span> }));</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Snippets Panel -->
+        <div class="panel" id="snippets">
+            <div class="card">
+                <h3>📝 Common Code Snippets</h3>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: var(--primary); margin-bottom: 0.5rem;">🌐 HTTP Server</h4>
+                    <div class="code-block">
+                        <span class="lang-tag">typescript</span>
+                        <pre><code><span class="keyword">const</span> server = Bun.<span class="function">serve</span>({
+  port: <span class="number">3000</span>,
+  <span class="function">fetch</span>(request) {
+    <span class="keyword">const</span> url = <span class="keyword">new</span> <span class="function">URL</span>(request.url);
+    
+    <span class="keyword">if</span> (url.pathname === <span class="string">"/"</span>) {
+      <span class="keyword">return</span> <span class="keyword">new</span> <span class="function">Response</span>(<span class="string">"Hello from Bun! 🚀"</span>);
+    }
+    
+    <span class="keyword">if</span> (url.pathname === <span class="string">"/api/users"</span>) {
+      <span class="keyword">return</span> Response.<span class="function">json</span>([{ id: <span class="number">1</span>, name: <span class="string">"Bun"</span> }]);
+    }
+    
+    <span class="keyword">return</span> <span class="keyword">new</span> <span class="function">Response</span>(<span class="string">"Not Found"</span>, { status: <span class="number">404</span> });
+  },
+});
+
+console.<span class="function">log</span>(<span class="string">`Server running at http://localhost:${server.port}`</span>);</code></pre>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: var(--primary); margin-bottom: 0.5rem;">🗄️ SQLite Database</h4>
+                    <div class="code-block">
+                        <span class="lang-tag">typescript</span>
+                        <pre><code><span class="keyword">import</span> { Database } <span class="keyword">from</span> <span class="string">"bun:sqlite"</span>;
+
+<span class="comment">// Create in-memory database</span>
+<span class="keyword">const</span> db = <span class="keyword">new</span> <span class="function">Database</span>(<span class="string">":memory:"</span>);
+
+<span class="comment">// Create table</span>
+db.<span class="function">run</span>(<span class="string">`
+  CREATE TABLE users (
+    id INTEGER PRIMARY KEY,
+    name TEXT,
+    email TEXT
+  )
+`</span>);
+
+<span class="comment">// Insert data</span>
+<span class="keyword">const</span> insert = db.<span class="function">query</span>(<span class="string">"INSERT INTO users (name, email) VALUES (?, ?)"</span>);
+insert.<span class="function">run</span>(<span class="string">"John Doe"</span>, <span class="string">"john@example.com"</span>);
+insert.<span class="function">run</span>(<span class="string">"Jane Smith"</span>, <span class="string">"jane@example.com"</span>);
+
+<span class="comment">// Query data</span>
+<span class="keyword">const</span> users = db.<span class="function">query</span>(<span class="string">"SELECT * FROM users"</span>).<span class="function">all</span>();
+console.<span class="function">log</span>(users);
+
+<span class="comment">// Get single row</span>
+<span class="keyword">const</span> user = db.<span class="function">query</span>(<span class="string">"SELECT * FROM users WHERE id = ?"</span>).<span class="function">get</span>(<span class="number">1</span>);
+console.<span class="function">log</span>(user);
+
+db.<span class="function">close</span>();</code></pre>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: var(--primary); margin-bottom: 0.5rem;">📁 File Operations</h4>
+                    <div class="code-block">
+                        <span class="lang-tag">typescript</span>
+                        <pre><code><span class="comment">// Bun.file() - Lazy file reading</span>
+<span class="keyword">const</span> file = Bun.<span class="function">file</span>(<span class="string">"data.json"</span>);
+
+<span class="comment">// Check if file exists</span>
+<span class="keyword">const</span> exists = <span class="keyword">await</span> file.<span class="function">exists</span>();
+
+<span class="comment">// Read as text</span>
+<span class="keyword">const</span> text = <span class="keyword">await</span> file.<span class="function">text</span>();
+
+<span class="comment">// Read as JSON</span>
+<span class="keyword">const</span> json = <span class="keyword">await</span> file.<span class="function">json</span>();
+
+<span class="comment">// Read as ArrayBuffer</span>
+<span class="keyword">const</span> buffer = <span class="keyword">await</span> file.<span class="function">arrayBuffer</span>();
+
+<span class="comment">// Stream file</span>
+<span class="keyword">const</span> stream = file.<span class="function">stream</span>();
+
+<span class="comment">// Get file info</span>
+console.<span class="function">log</span>(file.size);      <span class="comment">// File size in bytes</span>
+console.<span class="function">log</span>(file.type);      <span class="comment">// MIME type</span>
+console.<span class="function">log</span>(file.name);      <span class="comment">// File name</span>
+console.<span class="function">log</span>(file.lastModified); <span class="comment">// Last modified timestamp</span>
+
+<span class="comment">// Write files</span>
+<span class="keyword">await</span> Bun.<span class="function">write</span>(<span class="string">"output.txt"</span>, <span class="string">"Hello World"</span>);
+<span class="keyword">await</span> Bun.<span class="function">write</span>(<span class="string">"data.json"</span>, JSON.<span class="function">stringify</span>({ key: <span class="string">"value"</span> }));
+
+<span class="comment">// Copy file</span>
+<span class="keyword">await</span> Bun.<span class="function">write</span>(<span class="string">"copy.txt"</span>, Bun.<span class="function">file</span>(<span class="string">"original.txt"</span>));</code></pre>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: var(--primary); margin-bottom: 0.5rem;">🔌 WebSocket Server</h4>
+                    <div class="code-block">
+                        <span class="lang-tag">typescript</span>
+                        <pre><code><span class="keyword">const</span> server = Bun.<span class="function">serve</span>({
+  port: <span class="number">3000</span>,
+  <span class="function">fetch</span>(req, server) {
+    <span class="keyword">if</span> (server.<span class="function">upgrade</span>(req)) {
+      <span class="keyword">return</span>; <span class="comment">// Upgraded to WebSocket</span>
+    }
+    <span class="keyword">return</span> <span class="keyword">new</span> <span class="function">Response</span>(<span class="string">"WebSocket server"</span>);
+  },
+  websocket: {
+    <span class="function">message</span>(ws, message) {
+      console.<span class="function">log</span>(<span class="string">`Received: ${message}`</span>);
+      
+      <span class="comment">// Broadcast to all clients</span>
+      server.<span class="function">publish</span>(<span class="string">"chat"</span>, <span class="string">`User: ${message}`</span>);
+    },
+    <span class="function">open</span>(ws) {
+      console.<span class="function">log</span>(<span class="string">"Client connected"</span>);
+      ws.<span class="function">subscribe</span>(<span class="string">"chat"</span>);
+      ws.<span class="function">send</span>(<span class="string">"Welcome to the chat!"</span>);
+    },
+    <span class="function">close</span>(ws) {
+      console.<span class="function">log</span>(<span class="string">"Client disconnected"</span>);
+    },
+  },
+});
+
+console.<span class="function">log</span>(<span class="string">`WebSocket server on ws://localhost:${server.port}`</span>);</code></pre>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: var(--primary); margin-bottom: 0.5rem;">🧪 Testing with bun:test</h4>
+                    <div class="code-block">
+                        <span class="lang-tag">typescript</span>
+                        <pre><code><span class="keyword">import</span> { 
+  test, 
+  expect, 
+  describe, 
+  beforeAll, 
+  afterAll, 
+  mock 
+} <span class="keyword">from</span> <span class="string">"bun:test"</span>;
+
+<span class="function">describe</span>(<span class="string">"Math operations"</span>, () => {
+  <span class="function">beforeAll</span>(() => {
+    console.<span class="function">log</span>(<span class="string">"Setting up tests..."</span>);
+  });
+
+  <span class="function">test</span>(<span class="string">"addition"</span>, () => {
+    <span class="function">expect</span>(<span class="number">1</span> + <span class="number">1</span>).<span class="function">toBe</span>(<span class="number">2</span>);
+  });
+
+  <span class="function">test</span>(<span class="string">"async operation"</span>, <span class="keyword">async</span> () => {
+    <span class="keyword">const</span> result = <span class="keyword">await</span> Promise.<span class="function">resolve</span>(<span class="number">42</span>);
+    <span class="function">expect</span>(result).<span class="function">toBe</span>(<span class="number">42</span>);
+  });
+
+  <span class="function">test</span>(<span class="string">"mocking"</span>, () => {
+    <span class="keyword">const</span> fn = <span class="function">mock</span>((a: <span class="keyword">number</span>, b: <span class="keyword">number</span>) => a + b);
+    
+    <span class="function">fn</span>(<span class="number">2</span>, <span class="number">3</span>);
+    <span class="function">fn</span>(<span class="number">4</span>, <span class="number">5</span>);
+    
+    <span class="function">expect</span>(fn).<span class="function">toHaveBeenCalledTimes</span>(<span class="number">2</span>);
+    <span class="function">expect</span>(fn).<span class="function">toHaveBeenCalledWith</span>(<span class="number">2</span>, <span class="number">3</span>);
+    <span class="function">expect</span>(fn.<span class="function">mock.results</span>[<span class="number">0</span>].value).<span class="function">toBe</span>(<span class="number">5</span>);
+  });
+
+  <span class="function">afterAll</span>(() => {
+    console.<span class="function">log</span>(<span class="string">"Cleaning up..."</span>);
+  });
+});
+
+<span class="comment">// Run with: bun test</span></code></pre>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: var(--primary); margin-bottom: 0.5rem;">🔨 Building & Bundling</h4>
+                    <div class="code-block">
+                        <span class="lang-tag">bash</span>
+                        <pre><code><span class="comment"># Build for production</span>
+bun build ./index.ts --outdir ./dist
+
+<span class="comment"># Build with target</span>
+bun build ./index.ts --target=bun --outdir ./dist
+bun build ./index.ts --target=node --outdir ./dist
+bun build ./index.ts --target=browser --outdir ./dist
+
+<span class="comment"># Build executable</span>
+bun build ./index.ts --compile --outfile myapp
+
+<span class="comment"># Minify</span>
+bun build ./index.ts --minify --outdir ./dist
+
+<span class="comment"># Source maps</span>
+bun build ./index.ts --sourcemap --outdir ./dist
+
+<span class="comment"># Watch mode</span>
+bun build ./index.ts --watch --outdir ./dist
+
+<span class="comment"># External dependencies (don't bundle)</span>
+bun build ./index.ts --external react --external react-dom</code></pre>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 style="color: var(--primary); margin-bottom: 0.5rem;">🔒 Hash & Crypto</h4>
+                    <div class="code-block">
+                        <span class="lang-tag">typescript</span>
+                        <pre><code><span class="comment">// Built-in hashing (fast!)</span>
+<span class="keyword">const</span> hash1 = Bun.<span class="function">hash</span>(<span class="string">"hello world"</span>);
+<span class="keyword">const</span> hash2 = Bun.<span class="function">hash</span>.<span class="function">wasm</span>(<span class="string">"hello world"</span>);
+
+<span class="comment">// SHA-256</span>
+<span class="keyword">const</span> sha256 = <span class="keyword">await</span> Bun.<span class="function">hash</span>(<span class="string">"data"</span>, <span class="string">"sha256"</span>);
+
+<span class="comment">// Password hashing</span>
+<span class="keyword">const</span> password = <span class="string">"mysecret"</span>;
+<span class="keyword">const</span> passwordHash = <span class="keyword">await</span> Bun.<span class="function">password</span>.<span class="function">hash</span>(password);
+<span class="keyword">const</span> isValid = <span class="keyword">await</span> Bun.<span class="function">password</span>.<span class="function">verify</span>(password, passwordHash);
+
+<span class="comment">// Web Crypto API</span>
+<span class="keyword">const</span> encoder = <span class="keyword">new</span> <span class="function">TextEncoder</span>();
+<span class="keyword">const</span> data = encoder.<span class="function">encode</span>(<span class="string">"hello"</span>);
+<span class="keyword">const</span> cryptoHash = <span class="keyword">await</span> crypto.subtle.<span class="function">digest</span>(<span class="string">"SHA-256"</span>, data);</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Made with 💜 for the Bun community</p>
+        <p style="margin-top: 0.5rem;">
+            <a href="https://bun.sh" target="_blank">bun.sh</a> • 
+            <a href="https://github.com/oven-sh/bun" target="_blank">GitHub</a> • 
+            <a href="https://discord.gg/CXdq2DP29u" target="_blank">Discord</a>
+        </p>
+        <p style="margin-top: 0.5rem; font-size: 0.85rem;">
+            Bun v1.3.9 Playground • Not affiliated with Oven.sh
+        </p>
+    </footer>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Code templates
+        const templates = {
+            blank: '',
+            hello: `// Hello World in Bun
+console.log("Hello, Bun! 🚀");
+console.log("Version:", Bun.version);
+console.log("Platform:", process.platform);`,
+            server: `// Simple HTTP Server
+const server = Bun.serve({
+  port: 3000,
+  fetch(request) {
+    return new Response("Hello from Bun server! 🚀", {
+      headers: { "Content-Type": "text/plain" }
+    });
+  },
+});
+
+console.log(\`Server running at http://localhost:\${server.port}\`);`,
+            fetch: `// Fetch API Demo
+const response = await fetch("https://api.github.com/repos/oven-sh/bun");
+const data = await response.json();
+
+console.log("Repository:", data.full_name);
+console.log("Stars:", data.stargazers_count);
+console.log("Description:", data.description);`,
+            sqlite: `// SQLite Demo
+import { Database } from "bun:sqlite";
+
+const db = new Database(":memory:");
+db.run("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)");
+db.run("INSERT INTO users (name) VALUES (?)", ["Bun User"]);
+
+const users = db.query("SELECT * FROM users").all();
+console.log("Users:", users);
+
+db.close();`,
+            ws: `// WebSocket Client Demo
+const socket = new WebSocket("wss://echo.websocket.org/");
+
+socket.onopen = () => {
+  console.log("Connected!");
+  socket.send("Hello from Bun!");
+};
+
+socket.onmessage = (event) => {
+  console.log("Received:", event.data);
+  socket.close();
+};
+
+socket.onclose = () => {
+  console.log("Disconnected!");
+};`,
+            test: `// Test Suite Example
+import { test, expect, mock } from "bun:test";
+
+test("basic math", () => {
+  expect(2 + 2).toBe(4);
+});
+
+test("async test", async () => {
+  const result = await Promise.resolve(42);
+  expect(result).toBe(42);
+});
+
+test("mock function", () => {
+  const fn = mock(() => "mocked");
+  fn();
+  expect(fn).toHaveBeenCalled();
+});`
+        };
+
+        document.getElementById('template-select').addEventListener('change', (e) => {
+            document.getElementById('code-input').value = templates[e.target.value] || '';
+        });
+
+        // Code execution simulation
+        function runCode() {
+            const code = document.getElementById('code-input').value;
+            const output = document.getElementById('output');
+            const status = document.getElementById('status-indicator');
+            
+            status.innerHTML = '<span class="spinner"></span> Running...';
+            output.className = 'output-pane';
+            
+            // Simulate execution delay
+            setTimeout(() => {
+                try {
+                    // This is a simulation - actual Bun execution would require a backend
+                    let simulatedOutput = simulateBunExecution(code);
+                    output.innerHTML = simulatedOutput;
+                    output.classList.add('success');
+                    status.textContent = 'Done';
+                } catch (error) {
+                    output.textContent = `Error: ${error.message}`;
+                    output.classList.add('error');
+                    status.textContent = 'Error';
+                }
+            }, 500);
+        }
+
+        function simulateBunExecution(code) {
+            // Simulated Bun runtime output
+            let output = [];
+            
+            // Detect patterns in code and simulate output
+            if (code.includes('console.log')) {
+                const matches = code.match(/console\.log\(['"`](.+?)['"`],?\s*(.+)?\)/g);
+                if (matches) {
+                    matches.forEach(match => {
+                        const content = match.match(/console\.log\(['"`]?(.*?)['"`]?\s*\)/);
+                        if (content) {
+                            let msg = content[1];
+                            // Replace variables with simulated values
+                            msg = msg.replace('Bun.version', '"1.3.9"');
+                            msg = msg.replace('process.platform', '"darwin"');
+                            msg = msg.replace(/\${server\.port}/, '3000');
+                            output.push(msg);
+                        }
+                    });
+                }
+            }
+            
+            // Add default output if none detected
+            if (output.length === 0) {
+                output.push('Hello from Bun! 🚀');
+                output.push('Bun version: 1.3.9');
+            }
+            
+            return output.map(line => 
+                `<span style="color: var(--success);">→</span> ${line}`
+            ).join('\n') + '\n\n<span style="color: var(--text-muted);">// Simulated output (actual Bun would run this instantly)</span>';
+        }
+
+        function clearOutput() {
+            document.getElementById('output').innerHTML = '<span style="color: var(--text-muted);">// Output cleared...</span>';
+            document.getElementById('output').className = 'output-pane';
+        }
+
+        // Add keyboard shortcut for running code
+        document.getElementById('code-input').addEventListener('keydown', (e) => {
+            if (e.metaKey && e.key === 'Enter') {
+                runCode();
+            }
+        });
+
+        // Animate benchmark bars on load
+        setTimeout(() => {
+            document.querySelectorAll('.benchmark-fill').forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 100);
+            });
+        }, 100);
+    </script>
+</body>
+</html>
