@@ -227,6 +227,24 @@ header h1 {
   margin-bottom: 10px;
 }
 
+/* Feature card category colors */
+.feature-governance h3 { color: #f59e0b; }
+.feature-governance { border-left: 4px solid #f59e0b; }
+.feature-process h3 { color: #10b981; }
+.feature-process { border-left: 4px solid #10b981; }
+.feature-orchestration h3 { color: #8b5cf6; }
+.feature-orchestration { border-left: 4px solid #8b5cf6; }
+.feature-networking h3 { color: #3b82f6; }
+.feature-networking { border-left: 4px solid #3b82f6; }
+.feature-testing h3 { color: #ec4899; }
+.feature-testing { border-left: 4px solid #ec4899; }
+.feature-performance h3 { color: #f97316; }
+.feature-performance { border-left: 4px solid #f97316; }
+.feature-profiling h3 { color: #06b6d4; }
+.feature-profiling { border-left: 4px solid #06b6d4; }
+.feature-build h3 { color: #6366f1; }
+.feature-build { border-left: 4px solid #6366f1; }
+
 .demo-header {
   margin-bottom: 30px;
 }
