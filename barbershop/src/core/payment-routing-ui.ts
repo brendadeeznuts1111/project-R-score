@@ -1146,7 +1146,7 @@ export function renderPaymentRoutingPanel(): string {
 
 // ==================== FORM TEMPLATES ====================
 
-function renderRouteForm(): string {
+export function renderRouteForm(): string {
   return `
     <div class="form-group">
       <label class="form-label">Route Name</label>
@@ -1195,7 +1195,7 @@ function renderRouteForm(): string {
   `;
 }
 
-function renderFallbackForm(): string {
+export function renderFallbackForm(): string {
   return `
     <div class="form-group">
       <label class="form-label">Plan Name</label>
@@ -1250,7 +1250,7 @@ function renderFallbackForm(): string {
   `;
 }
 
-function renderSplitForm(): string {
+export function renderSplitForm(): string {
   return `
     <div class="form-row">
       <div class="form-group">
@@ -1290,7 +1290,7 @@ function renderSplitForm(): string {
   `;
 }
 
-function renderConfigForm(): string {
+export function renderConfigForm(): string {
   return `
     <div class="config-section">
       <div class="config-section-title">Routing Behavior</div>

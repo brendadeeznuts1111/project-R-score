@@ -5257,6 +5257,157 @@ const server = serve({
         });
       }
       
+      // ==================== PAYMENT ROUTING API ====================
+      // Payment Routes API
+      if (path === '/payment/routes' && req.method === 'GET') {
+        const routes = await getActiveRoutes();
+        return Response.json({ success: true, routes });
+      }
+
+      if (path === '/payment/routes' && req.method === 'POST') {
+        const body = await req.json();
+        const route = await createPaymentRoute(body.name, body.barberId, {
+          barberName: body.barberName,
+          paymentMethods: body.paymentMethods,
+          priority: body.priority,
+          status: body.status,
+          maxDailyAmount: body.maxDailyAmount,
+          maxTransactionAmount: body.maxTransactionAmount,
+        });
+        return Response.json({ success: true, route });
+      }
+
+      if (path.startsWith('/payment/routes/') && req.method === 'GET') {
+        const id = path.replace('/payment/routes/', '');
+        const route = await getPaymentRoute(id);
+        if (!route) {
+          return Response.json({ success: false, error: 'Route not found' }, { status: 404 });
+        }
+        return Response.json(route);
+      }
+
+      if (path.startsWith('/payment/routes/') && req.method === 'PUT') {
+        const id = path.replace('/payment/routes/', '');
+        const body = await req.json();
+        const route = await updatePaymentRoute(id, body);
+        if (!route) {
+          return Response.json({ success: false, error: 'Route not found' }, { status: 404 });
+        }
+        return Response.json({ success: true, route });
+      }
+
+      if (path.startsWith('/payment/routes/') && req.method === 'DELETE') {
+        const id = path.replace('/payment/routes/', '');
+        const deleted = await deletePaymentRoute(id);
+        return Response.json({ success: deleted });
+      }
+
+      // Payment Fallbacks API
+      if (path === '/payment/fallbacks' && req.method === 'GET') {
+        const fallbacks = await getAllFallbackPlans();
+        return Response.json({ success: true, fallbacks });
+      }
+
+      if (path === '/payment/fallbacks' && req.method === 'POST') {
+        const body = await req.json();
+        const fallback = await createFallbackPlan(body.name, body.primaryRouteId, {
+          fallbackRouteIds: body.fallbackRouteIds,
+          trigger: body.trigger,
+          retryCount: body.retryCount,
+          retryDelayMs: body.retryDelayMs,
+          notifyOnFallback: body.notifyOnFallback,
+          status: body.status,
+        });
+        return Response.json({ success: true, fallback });
+      }
+
+      if (path.startsWith('/payment/fallbacks/') && req.method === 'GET') {
+        const id = path.replace('/payment/fallbacks/', '');
+        const fallback = await getFallbackPlan(id);
+        if (!fallback) {
+          return Response.json({ success: false, error: 'Fallback not found' }, { status: 404 });
+        }
+        return Response.json(fallback);
+      }
+
+      // Payment Config API
+      if (path === '/payment/config' && req.method === 'GET') {
+        const config = await getActiveRoutingConfig();
+        if (!config) {
+          return Response.json({
+            id: 'default',
+            enableAutoRouting: true,
+            enableFallbacks: true,
+            splitThreshold: 100,
+            defaultSplitType: 'percentage',
+            maxSplitRecipients: 5,
+            routingStrategy: 'priority',
+          });
+        }
+        return Response.json(config);
+      }
+
+      if (path === '/payment/config' && req.method === 'PUT') {
+        const body = await req.json();
+        let config = await getActiveRoutingConfig();
+        if (!config) {
+          config = await createRoutingConfig('Default Config', body);
+          await setActiveRoutingConfig(config.id);
+        } else {
+          config = await createRoutingConfig(config.name, { ...config, ...body });
+          await setActiveRoutingConfig(config.id);
+        }
+        return Response.json({ success: true, config });
+      }
+
+      // Payment Splits API
+      if (path === '/payment/splits/pending' && req.method === 'GET') {
+        const splits = await getPendingSplits();
+        return Response.json({ success: true, splits });
+      }
+
+      if (path.startsWith('/payment/splits/') && req.method === 'GET') {
+        const id = path.replace('/payment/splits/', '').replace('/process', '');
+        if (id.includes('/process')) {
+          // Handle process endpoint separately
+        } else {
+          const split = await getPaymentSplit(id);
+          if (!split) {
+            return Response.json({ success: false, error: 'Split not found' }, { status: 404 });
+          }
+          return Response.json(split);
+        }
+      }
+
+      if (path.startsWith('/payment/splits/') && req.method === 'PUT') {
+        const id = path.replace('/payment/splits/', '');
+        const body = await req.json();
+        const split = await getPaymentSplit(id);
+        if (!split) {
+          return Response.json({ success: false, error: 'Split not found' }, { status: 404 });
+        }
+        const newSplit = await createPaymentSplit(split.ticketId, split.totalAmount, body.recipients || []);
+        return Response.json({ success: true, split: newSplit });
+      }
+
+      if (path.match(/^\/payment\/splits\/[^\/]+\/process$/) && req.method === 'POST') {
+        const match = path.match(/^\/payment\/splits\/([^\/]+)\/process$/);
+        if (match) {
+          const id = match[1];
+          await updatePaymentSplitStatus(id, 'processing');
+          setTimeout(async () => {
+            await updatePaymentSplitStatus(id, 'completed');
+          }, 1000);
+          return Response.json({ success: true });
+        }
+      }
+
+      // Barbers list for payment routing UI
+      if (path === '/barbers' && req.method === 'GET') {
+        const barbers = eliteDb.getBarbers();
+        return Response.json({ barbers: barbers.map((b: any) => ({ id: b.id, name: b.name, code: b.code })) });
+      }
+
       // Default: redirect to elite admin
       return Response.redirect('/elite/admin', 302);
       
