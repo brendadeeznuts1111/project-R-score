@@ -97,4 +97,27 @@ describe('search benchmark dashboard unified status api', () => {
     expect(payload.service).toBe('search-benchmark-dashboard');
     expect(payload.mode && typeof payload.mode.cookies === 'boolean').toBe(true);
   });
+
+  test('returns latest payload with gate telemetry fields', async () => {
+    const port = 37000 + Math.floor(Math.random() * 1000);
+    const child = Bun.spawn(['bun', 'run', 'scripts/search-benchmark-dashboard.ts', '--port', String(port)], {
+      cwd: process.cwd(),
+      stdout: 'ignore',
+      stderr: 'ignore',
+    });
+    children.push(child);
+
+    await waitFor(`http://127.0.0.1:${port}/healthz`);
+
+    const res = await fetch(`http://127.0.0.1:${port}/api/latest?source=local`, { cache: 'no-store' });
+    expect(res.ok).toBe(true);
+    expect((res.headers.get('x-search-status-source') || '').toLowerCase()).toBe('local');
+
+    const payload = await res.json() as any;
+    expect(typeof payload.id).toBe('string');
+    expect(typeof payload.gateCheckedAt).toBe('string');
+    const hasGate = payload.gate && typeof payload.gate === 'object' && typeof payload.gate.anomalyType === 'string';
+    const hasGateError = typeof payload.gateError === 'string' && payload.gateError.length > 0;
+    expect(hasGate || hasGateError).toBe(true);
+  });
 });

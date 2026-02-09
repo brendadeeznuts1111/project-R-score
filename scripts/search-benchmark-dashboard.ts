@@ -35,6 +35,7 @@ import { storeCookieTelemetry } from './lib/cookie-telemetry';
 import { resolveR2BridgeConfig } from './lib/r2-bridge';
 import { buildDomainRegistryStatus } from './domain-registry-status';
 import { buildUnifiedStatus } from './search-unified-status';
+import { comparePayload, compareSnapshotPayload, type CompareResultPayload, type Snapshot } from './search-benchmark-pin';
 import {
   LOOP_FRESHNESS_WINDOW_MINUTES,
   formatLoopClosedReason,
@@ -114,6 +115,14 @@ type JsonRouteOptions = {
   status?: number;
   source?: 'local' | 'r2' | 'mixed' | 'none';
   extraHeaders?: Record<string, string>;
+};
+
+type LatestApiPayload = Record<string, unknown> & {
+  id?: string;
+  warnings?: string[];
+  gate?: CompareResultPayload;
+  gateError?: string;
+  gateCheckedAt?: string;
 };
 
 function parseArgs(argv: string[]): Options {
@@ -3978,6 +3987,34 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           '<div style="font-size:12px;color:var(--muted);margin-bottom:8px">Quality Distribution</div>' +
           '<canvas id="qualityChart" class="chart-canvas" style="width:100%;height:100px;background:rgba(10,22,43,0.3);border-radius:8px"></canvas>' +
         '</div>';
+
+      const gate = data && typeof data.gate === 'object' ? data.gate : null;
+      const gateError = typeof data.gateError === 'string' ? data.gateError : '';
+      const gatePills = [];
+      if (gate && typeof gate.anomalyType === 'string') {
+        const gateClass = gate.failures && gate.failures.length > 0
+          ? 'pill-error'
+          : gate.warnings && gate.warnings.length > 0
+            ? 'pill-warning'
+            : 'pill-success';
+        gatePills.push('<span class="status-pill ' + gateClass + '">🧭 anomaly: ' + gate.anomalyType + '</span>');
+      }
+      if (gate && Array.isArray(gate.failures) && gate.failures.length > 0) {
+        gatePills.push('<span class="status-pill pill-error">🚨 gate fail: ' + gate.failures.join(', ') + '</span>');
+      }
+      if (gate && Array.isArray(gate.warnings) && gate.warnings.length > 0) {
+        gatePills.push('<span class="status-pill pill-warning">⚠️ gate warn: ' + gate.warnings.join(', ') + '</span>');
+      }
+      if (gateError) {
+        gatePills.push('<span class="status-pill pill-warning">⚠️ gate unavailable</span>');
+      }
+      const gateMetaHtml = gate
+        ? '<div class="meta" style="margin:4px 0 12px">gate baseline=' + ((gate.baseline && gate.baseline.snapshot && gate.baseline.snapshot.id) || 'n/a') +
+          ' current=' + ((gate.current && gate.current.snapshot && gate.current.snapshot.id) || 'n/a') +
+          ' checked=' + (data.gateCheckedAt ? new Date(data.gateCheckedAt).toLocaleString() : 'n/a') + '</div>'
+        : gateError
+          ? '<div class="meta" style="margin:4px 0 12px">gate error: ' + gateError + '</div>'
+          : '';
       
       latestEl.innerHTML =
         '<div class="meta" style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px">' +
@@ -3989,6 +4026,10 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         (Array.isArray(data.warnings) && data.warnings.length > 0 
           ? '<div class="pill-row" style="margin-bottom:16px">' + data.warnings.map(w => '<span class="status-pill pill-warning">⚠️ ' + w + '</span>').join('') + '</div>'
           : '') +
+        (gatePills.length > 0
+          ? '<div class="pill-row" style="margin-bottom:12px">' + gatePills.join('') + '</div>'
+          : '') +
+        gateMetaHtml +
         statsHtml +
         metricCards +
         chartHtml +
@@ -6677,6 +6718,57 @@ async function main(): Promise<void> {
     }
   };
 
+  const canonicalBaselinePath = resolve('.search/search-benchmark-pinned-baseline.json');
+  let latestGateCache:
+    | { source: 'local' | 'r2'; snapshotId: string; payload: CompareResultPayload; checkedAt: string }
+    | { source: 'local' | 'r2'; snapshotId: string; error: string; checkedAt: string }
+    | null = null;
+
+  const enrichLatestWithGate = async (
+    payload: LatestApiPayload,
+    source: 'local' | 'r2'
+  ): Promise<LatestApiPayload> => {
+    const snapshotId = String(payload.id || '').trim();
+    const checkedAt = new Date().toISOString();
+    const base: LatestApiPayload = {
+      ...payload,
+      gateCheckedAt: checkedAt,
+      warnings: Array.isArray(payload.warnings) ? payload.warnings : [],
+    };
+
+    if (!snapshotId) {
+      return { ...base, gateError: 'missing_snapshot_id' };
+    }
+
+    if (latestGateCache && latestGateCache.snapshotId === snapshotId && latestGateCache.source === source) {
+      if ('payload' in latestGateCache) {
+        return {
+          ...base,
+          gate: latestGateCache.payload,
+          gateCheckedAt: latestGateCache.checkedAt,
+        };
+      }
+      return {
+        ...base,
+        gateError: latestGateCache.error,
+        gateCheckedAt: latestGateCache.checkedAt,
+      };
+    }
+
+    try {
+      const gate =
+        source === 'r2'
+          ? await compareSnapshotPayload(payload as Snapshot, undefined, canonicalBaselinePath, false, 'r2:latest.json')
+          : await comparePayload(latestJson, undefined, canonicalBaselinePath);
+      latestGateCache = { source, snapshotId, payload: gate, checkedAt };
+      return { ...base, gate, gateCheckedAt: checkedAt };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      latestGateCache = { source, snapshotId, error: message, checkedAt };
+      return { ...base, gateError: message, gateCheckedAt: checkedAt };
+    }
+  };
+
   const buildInventoryLocal = async (snapshotId: string | null) => {
     const id = snapshotId || await resolveLatestSnapshotId('local');
     const mk = (name: string, path: string, category: InventoryItem['category'] = 'snapshot'): InventoryItem => {
@@ -7968,9 +8060,47 @@ async function main(): Promise<void> {
       if (url.pathname === '/api/latest') {
         const source = url.searchParams.get('source') || 'local';
         if (source === 'r2') {
-          return getCachedRemoteJson('r2:latest', 'latest.json');
+          const remote = await getCachedRemoteJson('r2:latest', 'latest.json');
+          if (!remote.ok) return remote;
+          try {
+            const latest = await remote.json() as LatestApiPayload;
+            const enriched = await enrichLatestWithGate(latest, 'r2');
+            return jsonResponse(enriched, { source: 'r2' });
+          } catch (error) {
+            return jsonResponse(
+              {
+                error: 'invalid_json',
+                message: error instanceof Error ? error.message : String(error),
+                path: 'r2:latest.json',
+              },
+              { status: 500, source: 'r2' }
+            );
+          }
         }
-        return readLocalJson(latestJson);
+        if (!existsSync(latestJson)) {
+          return jsonResponse(
+            {
+              error: 'not_found',
+              message: `Resource not found: ${latestJson}`,
+              path: latestJson,
+            },
+            { status: 404, source: 'local' }
+          );
+        }
+        try {
+          const latest = await Bun.file(latestJson).json() as LatestApiPayload;
+          const enriched = await enrichLatestWithGate(latest, 'local');
+          return jsonResponse(enriched, { source: 'local' });
+        } catch (error) {
+          return jsonResponse(
+            {
+              error: 'invalid_json',
+              message: error instanceof Error ? error.message : String(error),
+              path: latestJson,
+            },
+            { status: 500, source: 'local' }
+          );
+        }
       }
       if (url.pathname === '/api/index') {
         const source = url.searchParams.get('source') || 'local';

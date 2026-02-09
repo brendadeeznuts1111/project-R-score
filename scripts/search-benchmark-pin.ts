@@ -4,6 +4,16 @@ import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 
+type Severity = 'ok' | 'warn' | 'fail';
+type AnomalyType =
+  | 'stable'
+  | 'latency_spike'
+  | 'memory_spike'
+  | 'quality_drop'
+  | 'mixed_regression'
+  | 'pack_mismatch'
+  | 'env_noise';
+
 type RankedProfile = {
   profile?: string;
   label?: string;
@@ -14,7 +24,7 @@ type RankedProfile = {
   avgUniqueFamilyPct?: number;
 };
 
-type Snapshot = {
+export type Snapshot = {
   id?: string;
   createdAt?: string;
   queryPack?: string;
@@ -52,13 +62,56 @@ type PinnedBaseline = {
 };
 
 type CompareThresholds = {
-  maxP95RegressionMs: number;
-  maxHeapRegressionMB: number;
-  minQualityDelta: number;
-  minReliabilityDelta: number;
+  fail: {
+    maxP95RegressionMs: number;
+    maxHeapRegressionMB: number;
+    minQualityDelta: number;
+    minReliabilityDelta: number;
+  };
+  warn: {
+    maxP95RegressionMs: number;
+    maxHeapRegressionMB: number;
+    minQualityDelta: number;
+    minReliabilityDelta: number;
+  };
 };
 
-function usage(): void {
+export type CompareResultPayload = {
+  ok: boolean;
+  strict: boolean;
+  baselinePath: string;
+  currentPath: string;
+  baseline: {
+    snapshot: PinnedBaseline['snapshot'];
+    strict: PinnedBaseline['strict'];
+  };
+  current: {
+    snapshot: PinnedBaseline['snapshot'];
+    strict: PinnedBaseline['strict'];
+  };
+  compatibility: {
+    queryPackMatch: boolean;
+    baselineQueryPack: string;
+    currentQueryPack: string;
+    note: string;
+  };
+  delta: {
+    absolute: Record<string, number>;
+    percent: Record<string, number | null>;
+  };
+  severity: Record<string, Severity>;
+  anomalyType: AnomalyType;
+  thresholds: CompareThresholds;
+  failures: string[];
+  warnings: string[];
+  trend: {
+    enabled: false;
+    window: null;
+    note: string;
+  };
+};
+
+export function usage(): void {
   console.log(`
 Search Benchmark Pinning
 
@@ -69,25 +122,31 @@ USAGE:
 OPTIONS:
   --from <path>       Source snapshot (default: reports/search-benchmark/latest.json)
   --out <path>        Pinned baseline file (default: .search/search-benchmark-pinned-baseline.json)
-  --baseline <path>   Baseline file for compare (default: --out path)
+  --baseline <path>   Baseline file for compare (default: auto by query-pack, then canonical)
   --json              Print compare payload as JSON
   --strict            Exit non-zero on regression threshold failures (default: true)
   --no-strict         Never fail process in compare mode
 
 THRESHOLDS (env):
-  SEARCH_BENCH_PIN_MAX_P95_REGRESSION_MS   default 75
-  SEARCH_BENCH_PIN_MAX_HEAP_REGRESSION_MB  default 8
-  SEARCH_BENCH_PIN_MIN_QUALITY_DELTA       default -1
-  SEARCH_BENCH_PIN_MIN_RELIABILITY_DELTA   default -1.5
+  FAIL:
+    SEARCH_BENCH_PIN_MAX_P95_REGRESSION_MS   default 75
+    SEARCH_BENCH_PIN_MAX_HEAP_REGRESSION_MB  default 8
+    SEARCH_BENCH_PIN_MIN_QUALITY_DELTA       default -1
+    SEARCH_BENCH_PIN_MIN_RELIABILITY_DELTA   default -1.5
+  WARN:
+    SEARCH_BENCH_PIN_WARN_MAX_P95_REGRESSION_MS   default 40
+    SEARCH_BENCH_PIN_WARN_MAX_HEAP_REGRESSION_MB  default 4
+    SEARCH_BENCH_PIN_WARN_MIN_QUALITY_DELTA       default -0.5
+    SEARCH_BENCH_PIN_WARN_MIN_RELIABILITY_DELTA   default -0.75
 `);
 }
 
-function num(input: unknown, fallback = 0): number {
+export function num(input: unknown, fallback = 0): number {
   const n = Number(input);
   return Number.isFinite(n) ? n : fallback;
 }
 
-function findStrictProfile(snapshot: Snapshot): RankedProfile {
+export function findStrictProfile(snapshot: Snapshot): RankedProfile {
   const profiles = Array.isArray(snapshot.rankedProfiles) ? snapshot.rankedProfiles : [];
   return (
     profiles.find((p) => String(p.profile || '').toLowerCase() === 'strict') ||
@@ -97,7 +156,7 @@ function findStrictProfile(snapshot: Snapshot): RankedProfile {
   );
 }
 
-function toBaseline(snapshot: Snapshot, source: string): PinnedBaseline {
+export function toBaseline(snapshot: Snapshot, source: string): PinnedBaseline {
   const strict = findStrictProfile(snapshot);
   return {
     version: 1,
@@ -124,25 +183,109 @@ function toBaseline(snapshot: Snapshot, source: string): PinnedBaseline {
   };
 }
 
-async function readJson<T>(path: string): Promise<T> {
+export async function readJson<T>(path: string): Promise<T> {
   const raw = await readFile(path, 'utf8');
   return JSON.parse(raw) as T;
 }
 
-function thresholds(): CompareThresholds {
+export function thresholds(): CompareThresholds {
   return {
-    maxP95RegressionMs: num(Bun.env.SEARCH_BENCH_PIN_MAX_P95_REGRESSION_MS, 75),
-    maxHeapRegressionMB: num(Bun.env.SEARCH_BENCH_PIN_MAX_HEAP_REGRESSION_MB, 8),
-    minQualityDelta: num(Bun.env.SEARCH_BENCH_PIN_MIN_QUALITY_DELTA, -1),
-    minReliabilityDelta: num(Bun.env.SEARCH_BENCH_PIN_MIN_RELIABILITY_DELTA, -1.5),
+    fail: {
+      maxP95RegressionMs: num(Bun.env.SEARCH_BENCH_PIN_MAX_P95_REGRESSION_MS, 75),
+      maxHeapRegressionMB: num(Bun.env.SEARCH_BENCH_PIN_MAX_HEAP_REGRESSION_MB, 8),
+      minQualityDelta: num(Bun.env.SEARCH_BENCH_PIN_MIN_QUALITY_DELTA, -1),
+      minReliabilityDelta: num(Bun.env.SEARCH_BENCH_PIN_MIN_RELIABILITY_DELTA, -1.5),
+    },
+    warn: {
+      maxP95RegressionMs: num(Bun.env.SEARCH_BENCH_PIN_WARN_MAX_P95_REGRESSION_MS, 40),
+      maxHeapRegressionMB: num(Bun.env.SEARCH_BENCH_PIN_WARN_MAX_HEAP_REGRESSION_MB, 4),
+      minQualityDelta: num(Bun.env.SEARCH_BENCH_PIN_WARN_MIN_QUALITY_DELTA, -0.5),
+      minReliabilityDelta: num(Bun.env.SEARCH_BENCH_PIN_WARN_MIN_RELIABILITY_DELTA, -0.75),
+    },
   };
 }
 
-function parseArgs(argv: string[]): {
+function classifyAnomalyType(
+  failures: string[],
+  warnings: string[],
+  compatibility: { queryPackMatch: boolean },
+  deltaAbsolute: { latencyP95Ms: number; peakHeapUsedMB: number; qualityScore: number; reliabilityPct: number }
+): AnomalyType {
+  if (!compatibility.queryPackMatch) return 'pack_mismatch';
+  if (failures.length === 0 && warnings.length === 0) return 'stable';
+
+  const latencyFlag = failures.includes('latencyP95Ms') || warnings.includes('latencyP95Ms');
+  const memoryFlag = failures.includes('peakHeapUsedMB') || warnings.includes('peakHeapUsedMB');
+  const qualityFlag = failures.includes('qualityScore') || failures.includes('reliabilityPct') ||
+    warnings.includes('qualityScore') || warnings.includes('reliabilityPct');
+
+  if (latencyFlag && !memoryFlag && !qualityFlag) return 'latency_spike';
+  if (!latencyFlag && memoryFlag && !qualityFlag) return 'memory_spike';
+  if (!latencyFlag && !memoryFlag && qualityFlag) return 'quality_drop';
+  if (latencyFlag || memoryFlag || qualityFlag) return 'mixed_regression';
+
+  // Fallback for edge cases where thresholds are quiet but small absolute drift appears.
+  if (
+    Math.abs(deltaAbsolute.latencyP95Ms) > 0 ||
+    Math.abs(deltaAbsolute.peakHeapUsedMB) > 0 ||
+    Math.abs(deltaAbsolute.qualityScore) > 0 ||
+    Math.abs(deltaAbsolute.reliabilityPct) > 0
+  ) {
+    return 'env_noise';
+  }
+  return 'stable';
+}
+
+function safePct(delta: number, baseline: number): number | null {
+  if (!Number.isFinite(baseline) || baseline === 0) return null;
+  return Number(((delta / baseline) * 100).toFixed(4));
+}
+
+function severityForHigherIsWorse(
+  delta: number,
+  warnThreshold: number,
+  failThreshold: number
+): Severity {
+  if (delta > failThreshold) return 'fail';
+  if (delta > warnThreshold) return 'warn';
+  return 'ok';
+}
+
+function severityForLowerIsWorse(
+  delta: number,
+  warnFloor: number,
+  failFloor: number
+): Severity {
+  if (delta < failFloor) return 'fail';
+  if (delta < warnFloor) return 'warn';
+  return 'ok';
+}
+
+export function buildPackBaselinePath(defaultPath: string, queryPack: string): string {
+  const pack = String(queryPack || '').trim();
+  if (!pack) return defaultPath;
+  const dir = dirname(defaultPath);
+  return resolve(dir, `search-benchmark-pinned-baseline.${pack}.json`);
+}
+
+export function resolveBaselinePath(
+  explicitBaselinePath: string | undefined,
+  defaultPath: string,
+  currentQueryPack: string
+): string {
+  if (explicitBaselinePath) return resolve(explicitBaselinePath);
+  const packPath = buildPackBaselinePath(defaultPath, currentQueryPack);
+  if (packPath !== defaultPath && existsSync(packPath)) {
+    return packPath;
+  }
+  return defaultPath;
+}
+
+export function parseArgs(argv: string[]): {
   mode: 'pin' | 'compare';
   fromPath: string;
   outPath: string;
-  baselinePath: string;
+  baselinePath?: string;
   json: boolean;
   strict: boolean;
 } | null {
@@ -157,7 +300,7 @@ function parseArgs(argv: string[]): {
 
   let fromPath = resolve('reports/search-benchmark/latest.json');
   let outPath = resolve('.search/search-benchmark-pinned-baseline.json');
-  let baselinePath = outPath;
+  let baselinePath: string | undefined;
   let json = false;
   let strict = true;
 
@@ -170,12 +313,11 @@ function parseArgs(argv: string[]): {
     }
     if (arg === '--out') {
       outPath = resolve(rest[i + 1] || outPath);
-      baselinePath = outPath;
       i += 1;
       continue;
     }
     if (arg === '--baseline') {
-      baselinePath = resolve(rest[i + 1] || baselinePath);
+      baselinePath = resolve(rest[i + 1] || outPath);
       i += 1;
       continue;
     }
@@ -196,7 +338,7 @@ function parseArgs(argv: string[]): {
   return { mode, fromPath, outPath, baselinePath, json, strict };
 }
 
-async function pin(fromPath: string, outPath: string): Promise<void> {
+export async function pin(fromPath: string, outPath: string): Promise<void> {
   if (!existsSync(fromPath)) {
     throw new Error(`Snapshot not found: ${fromPath}`);
   }
@@ -216,24 +358,47 @@ async function pin(fromPath: string, outPath: string): Promise<void> {
   );
 }
 
-async function compare(
+export async function comparePayload(
   fromPath: string,
-  baselinePath: string,
-  asJson: boolean,
-  strict: boolean
-): Promise<void> {
+  baselinePathInput: string | undefined,
+  outPath: string,
+  strict = false
+): Promise<CompareResultPayload> {
   if (!existsSync(fromPath)) {
     throw new Error(`Current snapshot not found: ${fromPath}`);
   }
+
+  const current = toBaseline(await readJson<Snapshot>(fromPath), fromPath);
+  return compareResolved(current, baselinePathInput, outPath, strict, fromPath);
+}
+
+export async function compareSnapshotPayload(
+  snapshot: Snapshot,
+  baselinePathInput: string | undefined,
+  outPath: string,
+  strict = false,
+  currentPath = 'snapshot:inline'
+): Promise<CompareResultPayload> {
+  const current = toBaseline(snapshot, currentPath);
+  return compareResolved(current, baselinePathInput, outPath, strict, currentPath);
+}
+
+async function compareResolved(
+  current: PinnedBaseline,
+  baselinePathInput: string | undefined,
+  outPath: string,
+  strict: boolean,
+  currentPath: string
+): Promise<CompareResultPayload> {
+  const baselinePath = resolveBaselinePath(baselinePathInput, outPath, current.snapshot.queryPack);
   if (!existsSync(baselinePath)) {
     throw new Error(`Pinned baseline not found: ${baselinePath}`);
   }
 
-  const current = toBaseline(await readJson<Snapshot>(fromPath), fromPath);
   const baseline = await readJson<PinnedBaseline>(baselinePath);
   const gate = thresholds();
 
-  const diff = {
+  const deltaAbsolute = {
     latencyP95Ms: Number((current.strict.latencyP95Ms - baseline.strict.latencyP95Ms).toFixed(4)),
     peakHeapUsedMB: Number((current.strict.peakHeapUsedMB - baseline.strict.peakHeapUsedMB).toFixed(4)),
     peakRssMB: Number((current.strict.peakRssMB - baseline.strict.peakRssMB).toFixed(4)),
@@ -241,25 +406,59 @@ async function compare(
     reliabilityPct: Number((current.strict.reliabilityPct - baseline.strict.reliabilityPct).toFixed(4)),
   };
 
+  const deltaPercent = {
+    latencyP95Ms: safePct(deltaAbsolute.latencyP95Ms, baseline.strict.latencyP95Ms),
+    peakHeapUsedMB: safePct(deltaAbsolute.peakHeapUsedMB, baseline.strict.peakHeapUsedMB),
+    peakRssMB: safePct(deltaAbsolute.peakRssMB, baseline.strict.peakRssMB),
+    qualityScore: safePct(deltaAbsolute.qualityScore, baseline.strict.qualityScore),
+    reliabilityPct: safePct(deltaAbsolute.reliabilityPct, baseline.strict.reliabilityPct),
+  };
+
+  const severity = {
+    latencyP95Ms: severityForHigherIsWorse(
+      deltaAbsolute.latencyP95Ms,
+      gate.warn.maxP95RegressionMs,
+      gate.fail.maxP95RegressionMs
+    ),
+    peakHeapUsedMB: severityForHigherIsWorse(
+      deltaAbsolute.peakHeapUsedMB,
+      gate.warn.maxHeapRegressionMB,
+      gate.fail.maxHeapRegressionMB
+    ),
+    qualityScore: severityForLowerIsWorse(
+      deltaAbsolute.qualityScore,
+      gate.warn.minQualityDelta,
+      gate.fail.minQualityDelta
+    ),
+    reliabilityPct: severityForLowerIsWorse(
+      deltaAbsolute.reliabilityPct,
+      gate.warn.minReliabilityDelta,
+      gate.fail.minReliabilityDelta
+    ),
+  };
+
   const failures: string[] = [];
-  if (diff.latencyP95Ms > gate.maxP95RegressionMs) {
-    failures.push(`latencyP95 regression ${diff.latencyP95Ms}ms > ${gate.maxP95RegressionMs}ms`);
-  }
-  if (diff.peakHeapUsedMB > gate.maxHeapRegressionMB) {
-    failures.push(`heap regression ${diff.peakHeapUsedMB}MB > ${gate.maxHeapRegressionMB}MB`);
-  }
-  if (diff.qualityScore < gate.minQualityDelta) {
-    failures.push(`quality delta ${diff.qualityScore} < ${gate.minQualityDelta}`);
-  }
-  if (diff.reliabilityPct < gate.minReliabilityDelta) {
-    failures.push(`reliability delta ${diff.reliabilityPct} < ${gate.minReliabilityDelta}`);
+  const warnings: string[] = [];
+  for (const [metric, level] of Object.entries(severity)) {
+    if (level === 'fail') failures.push(metric);
+    if (level === 'warn') warnings.push(metric);
   }
 
-  const payload = {
+  const compatibility = {
+    queryPackMatch: baseline.snapshot.queryPack === current.snapshot.queryPack,
+    baselineQueryPack: baseline.snapshot.queryPack,
+    currentQueryPack: current.snapshot.queryPack,
+    note:
+      baseline.snapshot.queryPack === current.snapshot.queryPack
+        ? 'queryPack aligned'
+        : 'queryPack mismatch; comparison may be less representative',
+  };
+
+  const payload: CompareResultPayload = {
     ok: failures.length === 0,
     strict,
     baselinePath,
-    currentPath: fromPath,
+    currentPath,
     baseline: {
       snapshot: baseline.snapshot,
       strict: baseline.strict,
@@ -268,34 +467,63 @@ async function compare(
       snapshot: current.snapshot,
       strict: current.strict,
     },
-    delta: diff,
+    compatibility,
+    delta: {
+      absolute: deltaAbsolute,
+      percent: deltaPercent,
+    },
+    severity,
+    anomalyType: classifyAnomalyType(failures, warnings, compatibility, deltaAbsolute),
     thresholds: gate,
     failures,
+    warnings,
+    trend: {
+      enabled: false,
+      window: null,
+      note: 'trend hook reserved for N-run rolling analysis',
+    },
   };
+
+  return payload;
+}
+
+export async function compare(
+  fromPath: string,
+  baselinePathInput: string | undefined,
+  outPath: string,
+  asJson: boolean,
+  strict: boolean
+): Promise<CompareResultPayload> {
+  const payload = await comparePayload(fromPath, baselinePathInput, outPath, strict);
 
   if (asJson) {
     console.log(JSON.stringify(payload, null, 2));
   } else {
-    console.log(`[search:bench:compare] baseline=${baseline.snapshot.id} current=${current.snapshot.id}`);
+    console.log(`[search:bench:compare] baseline=${payload.baseline.snapshot.id} current=${payload.current.snapshot.id}`);
     console.log(
-      `[search:bench:compare] Δp95=${diff.latencyP95Ms}ms Δheap=${diff.peakHeapUsedMB}MB Δquality=${diff.qualityScore} Δreliability=${diff.reliabilityPct}`
+      `[search:bench:compare] Δp95=${payload.delta.absolute.latencyP95Ms}ms (${payload.delta.percent.latencyP95Ms ?? 'n/a'}%) Δheap=${payload.delta.absolute.peakHeapUsedMB}MB (${payload.delta.percent.peakHeapUsedMB ?? 'n/a'}%) Δquality=${payload.delta.absolute.qualityScore} Δreliability=${payload.delta.absolute.reliabilityPct}`
     );
-    if (failures.length > 0) {
-      console.log('[search:bench:compare] regressions:');
-      for (const failure of failures) {
-        console.log(`  - ${failure}`);
-      }
+    console.log(
+      `[search:bench:compare] compatibility=${payload.compatibility.queryPackMatch ? 'aligned' : 'mismatch'} baselinePack=${payload.compatibility.baselineQueryPack || 'none'} currentPack=${payload.compatibility.currentQueryPack || 'none'}`
+    );
+    console.log(`[search:bench:compare] anomalyType=${payload.anomalyType}`);
+    if (payload.failures.length > 0) {
+      console.log(`[search:bench:compare] fail metrics: ${payload.failures.join(', ')}`);
     } else {
       console.log('[search:bench:compare] no threshold regressions');
     }
+    if (payload.warnings.length > 0) {
+      console.log(`[search:bench:compare] warn metrics: ${payload.warnings.join(', ')}`);
+    }
   }
 
-  if (strict && failures.length > 0) {
+  if (strict && payload.failures.length > 0) {
     process.exitCode = 1;
   }
+  return payload;
 }
 
-async function main(): Promise<void> {
+export async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
   if (!args) return;
 
@@ -304,7 +532,9 @@ async function main(): Promise<void> {
     return;
   }
 
-  await compare(args.fromPath, args.baselinePath, args.json, args.strict);
+  await compare(args.fromPath, args.baselinePath, args.outPath, args.json, args.strict);
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}
