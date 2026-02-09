@@ -1,9 +1,9 @@
 # Nolarose Unified Benchmark Suite
 
-[![Benchmark Status](https://img.shields.io/badge/dynamic/json?label=Benchmark%20Status&query=status&url=https://metrics.factory-wager.com/api/benchmarks/status)](https://metrics.factory-wager.com/benchmarks)
-[![Performance](https://img.shields.io/badge/dynamic/json?label=Performance&query=score&url=https://metrics.factory-wager.com/api/benchmarks/performance)](https://metrics.factory-wager.com/benchmarks)
-[![Coverage](https://img.shields.io/badge/dynamic/json?label=Coverage&query=coverage&url=https://metrics.factory-wager.com/api/benchmarks/coverage)](https://metrics.factory-wager.com/benchmarks)
-[![Last Run](https://img.shields.io/badge/dynamic/json?label=Last%20Run&query=timestamp&url=https://metrics.factory-wager.com/api/benchmarks/last-run)](https://metrics.factory-wager.com/benchmarks)
+[![Benchmark Status](https://img.shields.io/badge/dynamic/json?label=Benchmark%20Status&query=status&url=https://monitor.factory-wager.com/api/benchmarks/status)](https://monitor.factory-wager.com/benchmarks)
+[![Performance](https://img.shields.io/badge/dynamic/json?label=Performance&query=score&url=https://monitor.factory-wager.com/api/benchmarks/performance)](https://monitor.factory-wager.com/benchmarks)
+[![Coverage](https://img.shields.io/badge/dynamic/json?label=Coverage&query=coverage&url=https://monitor.factory-wager.com/api/benchmarks/coverage)](https://monitor.factory-wager.com/benchmarks)
+[![Last Run](https://img.shields.io/badge/dynamic/json?label=Last%20Run&query=timestamp&url=https://monitor.factory-wager.com/api/benchmarks/last-run)](https://monitor.factory-wager.com/benchmarks)
 
 [![Tier](https://img.shields.io/badge/Tier-1380-purple)](https://factory-wager.com)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -27,13 +27,13 @@ The badges are powered by JSON endpoints that can be queried:
 
 ```bash
 # Get current status
-curl https://metrics.factory-wager.com/api/benchmarks/status
+curl https://monitor.factory-wager.com/api/benchmarks/status
 
 # Get performance score
-curl https://metrics.factory-wager.com/api/benchmarks/performance
+curl https://monitor.factory-wager.com/api/benchmarks/performance
 
 # Get all metrics
-curl https://metrics.factory-wager.com/api/benchmarks/all
+curl https://monitor.factory-wager.com/api/benchmarks/all
 ```
 
 ### Local Badge Server
@@ -291,7 +291,7 @@ The benchmark suite supports three profiles:
 | **Production** | <https://factory-wager.com>           | Main application      |
 | **Staging**     | <https://staging.factory-wager.com>   | Pre-production testing |
 | **API**         | <https://api.factory-wager.com>       | REST API endpoints    |
-| **Metrics**     | <https://metrics.factory-wager.com>   | Performance metrics   |
+| **Metrics**     | <https://monitor.factory-wager.com>   | Performance metrics   |
 
 ### Storage & CDN
 
@@ -305,7 +305,7 @@ The benchmark suite supports three profiles:
 
 | Service     | URL                                    | Purpose               |
 |-------------|----------------------------------------|-----------------------|
-| **Dashboard** | <https://dashboard.factory-wager.com> | Management interface  |
+| **Dashboard** | <https://docs.factory-wager.com> | Management interface  |
 | **Admin**     | <https://admin.factory-wager.com>     | Admin panel           |
 | **Logs**      | <https://logs.factory-wager.com>      | Log aggregation       |
 | **Health**    | <https://health.factory-wager.com>    | Health checks         |
@@ -317,7 +317,7 @@ The benchmark suite supports three profiles:
 | **Local Dev** | <http://localhost:3000>                | Local development     |
 | **Test**      | <https://test.factory-wager.com>       | Testing environment   |
 | **Dev API**   | <https://dev-api.factory-wager.com>    | Development API       |
-| **Metrics Dev** | <https://dev-metrics.factory-wager.com> | Dev metrics          |
+| **Metrics Dev** | <https://dev-monitor.factory-wager.com> | Dev metrics          |
 
 ## �🧹 Cleanup (After Migration)
 

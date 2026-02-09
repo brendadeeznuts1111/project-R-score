@@ -12,7 +12,7 @@ A comprehensive real-time dashboard for monitoring search benchmark performance 
 # Start the dashboard
 bun scripts/search-benchmark-dashboard.ts
 
-# Access at http://localhost:3099/dashboard
+# Access at localhost:3099/dashboard
 ```
 
 ## ✨ Features
@@ -105,7 +105,7 @@ export SEARCH_BENCH_HOT_RELOAD=1
 bun scripts/search-benchmark-dashboard.ts \
   --port 3099 \
   --dir ./reports/search-benchmark \
-  --r2-base https://your-r2-public-url \
+  --r2-base <your-r2-public-url> \
   --cache-ttl-ms 8000 \
   --domain factory-wager.com \
   --hot-reload

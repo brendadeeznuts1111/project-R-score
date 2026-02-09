@@ -56,7 +56,7 @@ curl -X POST -H "Content-Type: application/json" \
 
 **Dynamic Dashboard Types:**
 - **admin.factory-wager.com** → Full admin dashboard with comprehensive metrics
-- **client.factory-wager.com** → Client dashboard with limited features
+- **docs.factory-wager.com** → Client dashboard with limited features
 - **user.factory-wager.com** → Basic user dashboard with minimal UI
 - **Default** → User dashboard (fallback)
 

@@ -220,7 +220,7 @@ const commands = {
       console.log('🌐 LIVE UNIFIED PLATFORM:');
       console.log('Primary Domain: factory-wager.com');
       console.log('Unified Dashboard: monitor.factory-wager.com');
-      console.log('Merchant Dashboard: dashboard.factory-wager.com');
+      console.log('Merchant Dashboard: docs.factory-wager.com');
       console.log('API Gateway: api.factory-wager.com');
       console.log('SDK Portal: sdk.factory-wager.com');
       console.log('');

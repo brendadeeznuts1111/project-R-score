@@ -43,7 +43,7 @@ const environments: Record<string, EnvironmentURLs> = {
     },
     STORAGE: {
       files: 'https://factory-wager-registry.utahj4754.workers.dev/files',
-      r2: 'https://api.factory-wager.com/r2',
+      r2: 'https://registry.factory-wager.com',
       apple: 'https://factory-wager-registry.utahj4754.workers.dev/apple'
     },
     EMAIL: {
@@ -80,7 +80,7 @@ const environments: Record<string, EnvironmentURLs> = {
     },
     STORAGE: {
       files: 'https://staging-files.factory-wager.com',
-      r2: 'https://staging-api.factory-wager.com/r2',
+      r2: 'https://staging-registry.factory-wager.com',
       apple: 'https://staging-apple.factory-wager.com'
     },
     EMAIL: {

@@ -1501,9 +1501,9 @@ function generateMarkdownWikiWithR2(
 
     content += `
 ### R2 Data Access
-- **Dashboard**: [View Dashboard](https://dashboard.factory-wager.com)
+- **Dashboard**: [View Dashboard](https://docs.factory-wager.com)
 - **R2 Browser**: [Browse Data](https://r2.factory-wager.com)
-- **API**: [REST API](https://api.factory-wager.com/r2)
+- **Registry**: [Registry Portal](https://registry.factory-wager.com)
 
 ---
 `;
@@ -1550,7 +1550,7 @@ function generateHTMLWikiWithR2(
             </div>
 
             <div style="margin-top: 20px;">
-                <a href="https://dashboard.factory-wager.com" target="_blank" class="utility-table a" style="padding: 10px 20px; background: var(--accent-color); color: white; text-decoration: none; border-radius: 5px; margin-right: 10px;">
+                <a href="https://docs.factory-wager.com" target="_blank" class="utility-table a" style="padding: 10px 20px; background: var(--accent-color); color: white; text-decoration: none; border-radius: 5px; margin-right: 10px;">
                     🚀 Open Dashboard
                 </a>
                 <a href="https://r2.factory-wager.com" target="_blank" class="utility-table a" style="padding: 10px 20px; background: var(--accent-color); color: white; text-decoration: none; border-radius: 5px;">
@@ -1592,9 +1592,9 @@ function generateJSONWikiWithR2(
         metrics: !!r2Data.metrics,
       },
       endpoints: {
-        dashboard: 'https://dashboard.factory-wager.com',
+        dashboard: 'https://docs.factory-wager.com',
         r2Browser: 'https://r2.factory-wager.com',
-        api: 'https://api.factory-wager.com/r2',
+        api: 'https://registry.factory-wager.com',
       },
       data: r2Data,
     };
@@ -1680,9 +1680,9 @@ ${
 }
 
 ## Access Points
-- **Dashboard**: https://dashboard.factory-wager.com
+- **Dashboard**: https://docs.factory-wager.com
 - **R2 Browser**: https://r2.factory-wager.com
-- **API**: https://api.factory-wager.com/r2
+- **Registry**: https://registry.factory-wager.com
 
 ## Integration Benefits
 1. **Real-time Data**: Live metrics and system status

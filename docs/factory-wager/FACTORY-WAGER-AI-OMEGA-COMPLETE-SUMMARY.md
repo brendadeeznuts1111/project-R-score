@@ -65,7 +65,7 @@ const AI_TEMPLATES = {
   
   // Subdomain (3 templates)
   'admin dashboard': 'curl -H "Host: admin.factory-wager.com" http://localhost:3000',
-  'client panel': 'curl -H "Host: client.factory-wager.com" http://localhost:3000',
+  'client panel': 'curl -H "Host: docs.factory-wager.com" http://localhost:3000',
   'user dashboard': 'curl -H "Host: user.factory-wager.com" http://localhost:3000/dashboard/user'
 };
 ```

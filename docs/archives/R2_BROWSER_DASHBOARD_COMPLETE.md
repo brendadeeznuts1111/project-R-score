@@ -71,9 +71,9 @@ Your complete R2 browser and dashboard system is now fully integrated with the F
 ### **Access Points**
 ```text
 🔗 Dashboard URLs
-├── Main Dashboard: https://dashboard.factory-wager.com
+├── Main Dashboard: https://docs.factory-wager.com
 ├── R2 Browser: https://r2.factory-wager.com
-├── API Endpoint: https://api.factory-wager.com/r2
+├── API Endpoint: https://registry.factory-wager.com
 └── Health Check: https://api.factory-wager.com/health
 ```
 
@@ -256,7 +256,7 @@ bun run scripts/r2-cli.ts list --prefix=dashboard/ --env-fallback
 ### **Dashboard Access**
 ```bash
 # Open dashboard in browser (simulated)
-open https://dashboard.factory-wager.com
+open https://docs.factory-wager.com
 
 # Access R2 browser
 open https://r2.factory-wager.com

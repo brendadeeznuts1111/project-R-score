@@ -179,7 +179,7 @@ $ fw-cli performance test --dryrun
 ✅ READ: GET https://wiki.factory-wager.com
    Impact: 🟢 Low
 
-✅ READ: GET https://dashboard.factory-wager.com
+✅ READ: GET https://docs.factory-wager.com
    Impact: 🟢 Low
 
 ✅ READ: GET https://api.factory-wager.com

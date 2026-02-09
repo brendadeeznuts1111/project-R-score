@@ -132,7 +132,7 @@ class HealthMonitor {
         // Define critical domains to check
         const criticalDomains = [
             'wiki.factory-wager.com',
-            'dashboard.factory-wager.com',
+            'docs.factory-wager.com',
             'api.factory-wager.com',
             'registry.factory-wager.com',
             'registry.factory-wager.com'
@@ -141,7 +141,7 @@ class HealthMonitor {
         // Define services to check
         const services = [
             { name: 'Wiki', url: 'https://wiki.factory-wager.com', type: 'web' },
-            { name: 'Dashboard', url: 'https://dashboard.factory-wager.com', type: 'web' },
+            { name: 'Dashboard', url: 'https://docs.factory-wager.com', type: 'web' },
             { name: 'API', url: 'https://api.factory-wager.com/health', type: 'api', expectedStatus: 200 },
             { name: 'Registry', url: 'https://registry.factory-wager.com', type: 'web' },
             { name: 'NPM Registry', url: 'https://registry.factory-wager.com', type: 'web' }

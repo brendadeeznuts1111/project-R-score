@@ -32,7 +32,7 @@ All service URLs are properly formatted:
 - Website: factory-wager.com
 - API: api.factory-wager.com
 - Docs: docs.factory-wager.com
-- Dashboard: dashboard.factory-wager.com
+- Dashboard: docs.factory-wager.com
 - Admin: admin.factory-wager.com
 - Blog: blog.factory-wager.com
 - Status: status.factory-wager.com
@@ -51,7 +51,7 @@ All service URLs are properly formatted:
 
 ### Platform Services
 - Registry: registry.factory-wager.com
-- Metrics: metrics.factory-wager.com
+- Metrics: monitor.factory-wager.com
 - Logs: logs.factory-wager.com
 - Tracing: tracing.factory-wager.com
 

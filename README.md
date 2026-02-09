@@ -47,7 +47,7 @@ Enterprise infrastructure and developer platform built with **Bun** + **TypeScri
 | 📖 Docs | [docs/](https://github.com/brendadeeznuts1111/project-R-score/tree/feat/bun-docs-mcp/docs) |
 | 🌐 Website | [factory-wager.com](https://factory-wager.com) |
 | 🔌 API | [api.factory-wager.com](https://api.factory-wager.com) |
-| 📊 Dashboard | [dashboard.factory-wager.com](https://dashboard.factory-wager.com) |
+| 📊 Dashboard | [docs.factory-wager.com](https://docs.factory-wager.com) |
 
 ## 📁 Repository Structure
 
@@ -113,7 +113,7 @@ This project is licensed under the [MIT License](LICENSE).
 | 🌐 Website | [factory-wager.com](https://factory-wager.com) |
 | 🔌 API | [api.factory-wager.com](https://api.factory-wager.com) |
 | 📖 Docs | [docs.factory-wager.com](https://docs.factory-wager.com) |
-| 📊 Dashboard | [dashboard.factory-wager.com](https://dashboard.factory-wager.com) |
+| 📊 Dashboard | [docs.factory-wager.com](https://docs.factory-wager.com) |
 | 🔧 Admin | [admin.factory-wager.com](https://admin.factory-wager.com) |
 | 📝 Blog | [blog.factory-wager.com](https://blog.factory-wager.com) |
 | 📈 Status | [status.factory-wager.com](https://status.factory-wager.com) |
@@ -138,7 +138,7 @@ This project is licensed under the [MIT License](LICENSE).
 | Service | URL |
 |---------|-----|
 | 📦 Registry | [registry.factory-wager.com](https://registry.factory-wager.com) |
-| 📊 Metrics | [metrics.factory-wager.com](https://metrics.factory-wager.com) |
+| 📊 Metrics | [monitor.factory-wager.com](https://monitor.factory-wager.com) |
 | 📝 Logs | [logs.factory-wager.com](https://logs.factory-wager.com) |
 | 🔍 Tracing | [tracing.factory-wager.com](https://tracing.factory-wager.com) |
 

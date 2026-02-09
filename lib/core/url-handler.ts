@@ -204,9 +204,15 @@ export class URLHandler {
    * Parse URL with enhanced features
    */
   static parse(url: string, base?: string): EnhancedURL {
+    const maxLength = this.defaultOptions.maxLength;
+    const trimmedInput = typeof url === 'string' ? url.trim() : '';
+    if (maxLength !== undefined && trimmedInput.length > maxLength) {
+      throw new ValidationError(`Invalid URL string: Must be no more than ${maxLength} characters`);
+    }
+
     const validation = Validator.string({
       required: true,
-      maxLength: this.defaultOptions.maxLength,
+      maxLength,
       sanitize: true,
     });
 
@@ -539,7 +545,7 @@ export class FactoryWagerURLUtils {
   private static readonly ALLOWED_HOSTS = [
     'factory-wager.com',
     'duoplus.com',
-    'dashboard.factory-wager.com',
+    'registry.factory-wager.com',
     'r2.factory-wager.com',
     'api.factory-wager.com',
     'docs.factory-wager.com',
@@ -563,7 +569,7 @@ export class FactoryWagerURLUtils {
    * Create dashboard URL with fragment
    */
   static createDashboardURL(section?: string, fragment?: Record<string, string>): string {
-    let url = 'https://dashboard.factory-wager.com';
+    let url = 'https://docs.factory-wager.com';
 
     if (section) {
       url += `/${section}`;
@@ -613,7 +619,7 @@ export class FactoryWagerURLUtils {
       const enhancedURL = URLHandler.parse(url);
       const hostname = enhancedURL.hostname;
 
-      if (hostname.includes('dashboard')) return 'dashboard';
+      if (hostname.includes('dashboard') || hostname === 'docs.factory-wager.com') return 'dashboard';
       if (hostname.includes('r2')) return 'r2';
       if (hostname.includes('api')) return 'api';
       if (hostname.includes('wiki')) return 'wiki';

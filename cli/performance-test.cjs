@@ -30,7 +30,7 @@ class PerformanceTester {
             timeout: 10000,
             domains: [
                 'wiki.factory-wager.com',
-                'dashboard.factory-wager.com',
+                'docs.factory-wager.com',
                 'api.factory-wager.com',
                 'registry.factory-wager.com',
                 'registry.factory-wager.com'

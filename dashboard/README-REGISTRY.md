@@ -12,7 +12,7 @@ bun run start:business-registry
 bun run dashboard/business-registry.ts
 ```
 
-Then visit: **http://localhost:3004/registry**
+Then visit: `localhost:3004/registry`
 
 ## 📊 Features
 
@@ -50,7 +50,7 @@ Each card displays:
 ./examples/seed-example-businesses.sh
 
 # Then view the registry
-open http://localhost:3004/registry
+open 'http://localhost:3004/registry'
 ```
 
 ## 🎯 Use Cases
@@ -66,7 +66,7 @@ open http://localhost:3004/registry
 Set in environment variables:
 - `REGISTRY_PORT` - Port for registry server (default: 3004)
 - `REDIS_URL` - Redis connection URL
-- `PROXY_URL` - Base URL for payment links (default: http://localhost:3002)
+- `PROXY_URL` - Base URL for payment links (default: `http://localhost:3002`)
 
 ## 📱 Responsive Design
 

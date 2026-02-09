@@ -18,9 +18,9 @@
 
 
 ## Access Points
-- **Dashboard**: https://dashboard.factory-wager.com
+- **Dashboard**: https://docs.factory-wager.com
 - **R2 Browser**: https://r2.factory-wager.com
-- **API**: https://api.factory-wager.com/r2
+- **API**: https://registry.factory-wager.com
 
 ## Integration Benefits
 1. **Real-time Data**: Live metrics and system status

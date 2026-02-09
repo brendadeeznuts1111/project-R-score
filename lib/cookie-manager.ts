@@ -361,7 +361,7 @@ export class CookieManager {
   private sendToAnalytics(data: any): void {
     if (typeof fetch === 'undefined') return;
 
-    fetch('https://metrics.factory-wager.com/events', {
+    fetch('https://monitor.factory-wager.com/events', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

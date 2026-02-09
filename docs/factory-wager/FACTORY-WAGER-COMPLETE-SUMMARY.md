@@ -132,7 +132,7 @@ curl -H "Host: admin.factory-wager.com" http://localhost:3000
 # Route: Admin Dashboard, Analytics, User Management
 
 # Client Portal
-curl -H "Host: client.factory-wager.com" http://localhost:3000
+curl -H "Host: docs.factory-wager.com" http://localhost:3000
 # Route: Projects, Billing, Support
 
 # User Dashboard

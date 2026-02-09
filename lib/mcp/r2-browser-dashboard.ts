@@ -888,9 +888,9 @@ export class R2BrowserDashboard {
     console.log(styled(`  Error Count: ${this.metrics.systemHealth.errorCount}`, 'muted'));
 
     console.log(styled('\n🔗 Access URLs:', 'info'));
-    console.log(styled(`  Dashboard: https://dashboard.factory-wager.com`, 'muted'));
+    console.log(styled(`  Dashboard: https://docs.factory-wager.com`, 'muted'));
     console.log(styled(`  R2 Browser: https://r2.factory-wager.com`, 'muted'));
-    console.log(styled(`  API: https://api.factory-wager.com/r2`, 'muted'));
+    console.log(styled(`  Registry: https://registry.factory-wager.com`, 'muted'));
   }
 }
 
@@ -906,5 +906,5 @@ if (import.meta.main) {
   await dashboard.displayStatus();
 
   console.log(styled('\n🎉 R2 Browser & Dashboard complete!', 'success'));
-  console.log(styled('Access your dashboard at: https://dashboard.factory-wager.com 🌐', 'info'));
+  console.log(styled('Access your dashboard at: https://docs.factory-wager.com 🌐', 'info'));
 }

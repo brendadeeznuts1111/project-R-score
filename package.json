@@ -422,7 +422,7 @@
   "subdomains": {
     "api": "https://api.factory-wager.com",
     "docs": "https://docs.factory-wager.com",
-    "dashboard": "https://dashboard.factory-wager.com",
+    "dashboard": "https://docs.factory-wager.com",
     "admin": "https://admin.factory-wager.com",
     "blog": "https://blog.factory-wager.com",
     "status": "https://status.factory-wager.com"
@@ -571,7 +571,7 @@
   "monitoring": {
     "observability": {
       "provider": "prometheus",
-      "endpoint": "https://metrics.factory-wager.com",
+      "endpoint": "https://monitor.factory-wager.com",
       "retention": "30d",
       "metrics": {
         "application": [
@@ -1033,7 +1033,7 @@
         "status": "status.factory-wager.com"
       },
       "services": {
-        "dashboard": "dashboard.factory-wager.com",
+        "dashboard": "docs.factory-wager.com",
         "admin": "admin.factory-wager.com",
         "docs": "docs.factory-wager.com",
         "blog": "blog.factory-wager.com",

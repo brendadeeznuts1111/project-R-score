@@ -36,7 +36,7 @@ export class DomainIntegrator {
         'api.factory-wager.com',
         'monitor.factory-wager.com',
         'sdk.factory-wager.com',
-        'dashboard.factory-wager.com'
+        'docs.factory-wager.com'
       ]
     };
   }
@@ -113,7 +113,7 @@ export class DomainIntegrator {
       'api.factory-wager.com': 'api.duoplus.com',
       'monitor.factory-wager.com': 'monitor.duoplus.com',
       'sdk.factory-wager.com': 'developers.duoplus.com',
-      'dashboard.factory-wager.com': 'dashboard.duoplus.com'
+      'docs.factory-wager.com': 'dashboard.duoplus.com'
     };
     
     for (const [subdomain, target] of Object.entries(cnameRecords)) {
@@ -245,7 +245,7 @@ export class DomainIntegrator {
       await new Promise(resolve => setTimeout(resolve, 200));
     }
     
-    console.log('   🌐 Dashboard: https://dashboard.factory-wager.com');
+    console.log('   🌐 Dashboard: https://docs.factory-wager.com');
     console.log('✅ Merchant dashboard deployed');
   }
 
@@ -310,7 +310,7 @@ export class DomainIntegrator {
         dashboard: 'https://monitor.factory-wager.com',
         api: 'https://api.factory-wager.com',
         sdk: 'https://sdk.factory-wager.com',
-        merchant: 'https://dashboard.factory-wager.com'
+        merchant: 'https://docs.factory-wager.com'
       }
     };
     

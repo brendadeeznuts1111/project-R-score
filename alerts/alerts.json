@@ -17,13 +17,13 @@
     "acknowledged": false
   },
   {
-    "id": "alert-1770518756862-dashboard.factory-wager.com",
+    "id": "alert-1770518756862-docs.factory-wager.com",
     "type": "service_failure",
     "severity": "warning",
-    "service": "dashboard.factory-wager.com",
-    "message": "dashboard.factory-wager.com is unhealthy",
+    "service": "docs.factory-wager.com",
+    "message": "docs.factory-wager.com is unhealthy",
     "details": {
-      "domain": "dashboard.factory-wager.com",
+      "domain": "docs.factory-wager.com",
       "status": "unhealthy",
       "statusCode": 404,
       "responseTime": 121,
@@ -94,7 +94,7 @@
     "message": "Dashboard is unhealthy",
     "details": {
       "name": "Dashboard",
-      "url": "https://dashboard.factory-wager.com",
+      "url": "https://docs.factory-wager.com",
       "type": "web",
       "status": "unhealthy",
       "statusCode": 404,

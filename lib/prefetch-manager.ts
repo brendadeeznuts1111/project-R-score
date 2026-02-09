@@ -44,14 +44,14 @@ export class PrefetchManager {
       enabled: true,
       resources: [
         { type: 'dns', url: 'https://registry.factory-wager.com' },
-        { type: 'dns', url: 'https://registry.factory-wager.com' },
-        { type: 'dns', url: 'https://cache.factory-wager.com' },
-        { type: 'dns', url: 'https://metrics.factory-wager.com' },
-        { type: 'dns', url: 'https://dashboard.factory-wager.com' },
+        { type: 'dns', url: 'https://monitor.factory-wager.com' },
         { type: 'dns', url: 'https://docs.factory-wager.com' },
-        { type: 'dns', url: 'https://client.factory-wager.com' },
         { type: 'dns', url: 'https://admin.factory-wager.com' },
+        { type: 'dns', url: 'https://api.factory-wager.com' },
         { type: 'dns', url: 'https://cdn.factory-wager.com' },
+        { type: 'dns', url: 'https://wiki.factory-wager.com' },
+        { type: 'dns', url: 'https://blog.factory-wager.com' },
+        { type: 'dns', url: 'https://support.factory-wager.com' },
         { type: 'dns', url: 'https://fonts.googleapis.com' },
         { type: 'dns', url: 'https://fonts.gstatic.com' },
         { type: 'dns', url: 'https://cdn.jsdelivr.net' }
@@ -70,7 +70,7 @@ export class PrefetchManager {
         },
         { 
           type: 'preconnect', 
-          url: 'https://metrics.factory-wager.com',
+          url: 'https://monitor.factory-wager.com',
           priority: 'high'
         },
         { 
@@ -86,9 +86,9 @@ export class PrefetchManager {
       name: 'Navigation Prefetching',
       enabled: true,
       resources: [
-        { type: 'prefetch', url: 'https://dashboard.factory-wager.com/' },
         { type: 'prefetch', url: 'https://docs.factory-wager.com/' },
-        { type: 'prefetch', url: 'https://client.factory-wager.com/' }
+        { type: 'prefetch', url: 'https://registry.factory-wager.com/' },
+        { type: 'prefetch', url: 'https://wiki.factory-wager.com/' }
       ],
       conditions: () => {
         // Only prefetch on stable connections

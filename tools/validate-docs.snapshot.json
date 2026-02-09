@@ -4,14 +4,9 @@
   "runtime": "Bun 1.3.8",
   "checks": {
     "URL patterns": {
-      "totalIssues": 2,
-      "bySource": {
-        "dns": 2
-      },
-      "knownIssues": [
-        "lib/har-analyzer/domain-mapper.test.ts:69 — docs.bun.sh (dns)",
-        "lib/utils/error-handling-demo.ts:135 — docs.bun.sh (dns)"
-      ]
+      "totalIssues": 0,
+      "bySource": {},
+      "knownIssues": []
     },
     "Enum definitions": {
       "totalIssues": 0,
@@ -23,9 +18,7 @@
     }
   },
   "totals": {
-    "totalIssues": 2,
-    "bySource": {
-      "dns": 2
-    }
+    "totalIssues": 0,
+    "bySource": {}
   }
 }

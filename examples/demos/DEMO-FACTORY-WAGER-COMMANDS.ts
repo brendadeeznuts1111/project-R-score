@@ -202,7 +202,7 @@ class FactoryWagerCommandDemo {
 
     // Subdomain Client
     const result2 = await this.executeCommand(
-      'curl -s -H "Host: client.factory-wager.com" http://localhost:3000 || echo "Client Route: Projects, Billing, Support"',
+      'curl -s -H "Host: docs.factory-wager.com" http://localhost:3000 || echo "Client Route: Projects, Billing, Support"',
       "Subdomain Routing",
       "client"
     );

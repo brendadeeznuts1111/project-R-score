@@ -7,7 +7,7 @@ frozen-lockfile = false
 # Fallback registries in order of preference
 fallback = [
     "https://registry.factory-wager.com/",
-    "https://cache.factory-wager.com/",
+    "https://cdn.factory-wager.com/",
     "https://registry.npmjs.org/"
 ]
 
@@ -31,7 +31,7 @@ index-ttl = 600           # 10 minutes for index
 primary = "registry.factory-wager.com"
 fallbacks = [
     "registry.factory-wager.com",
-    "cache.factory-wager.com"
+    "cdn.factory-wager.com"
 ]
 emergency = "registry.npmjs.org"
 
@@ -51,7 +51,7 @@ timeout = 3000
 
 # Authentication for fallback registries
 //registry.factory-wager.com/:_authToken = "${FACTORY_WAGER_TOKEN}"
-//cache.factory-wager.com/:_authToken = "${FACTORY_WAGER_TOKEN}"
+//cdn.factory-wager.com/:_authToken = "${FACTORY_WAGER_TOKEN}"
 
 [ publish ]
 # Publishing configuration
@@ -80,7 +80,7 @@ verbose = false
 
 # Performance monitoring
 enable-metrics = true
-metrics-endpoint = "https://metrics.factory-wager.com/bun-install"
+metrics-endpoint = "https://monitor.factory-wager.com/bun-install"
 
 [security]
 # Security settings
@@ -92,7 +92,7 @@ check-certificates = true
 allowed-origins = [
     "registry.factory-wager.com",
     "registry.factory-wager.com", 
-    "cache.factory-wager.com",
+    "cdn.factory-wager.com",
     "registry.npmjs.org"
 ]
 

@@ -449,8 +449,8 @@ jobs:
 ### Live Metrics
 
 ### R2 Data Access
-- **Dashboard**: [View Dashboard](https://dashboard.factory-wager.com)
+- **Dashboard**: [View Dashboard](https://docs.factory-wager.com)
 - **R2 Browser**: [Browse Data](https://r2.factory-wager.com)
-- **API**: [REST API](https://api.factory-wager.com/r2)
+- **API**: [REST API](https://registry.factory-wager.com)
 
 ---

@@ -27,7 +27,7 @@
 - In Pages project → Custom domains
 - Add all your domains:
   - wiki.factory-wager.com
-  - dashboard.factory-wager.com
+  - docs.factory-wager.com
   - api.factory-wager.com
   - etc.
 

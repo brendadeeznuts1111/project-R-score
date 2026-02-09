@@ -389,12 +389,12 @@ describe('FactoryWagerURLUtils', () => {
   describe('createDashboardURL', () => {
     test('should create dashboard URL', () => {
       const url = FactoryWagerURLUtils.createDashboardURL();
-      expect(url).toBe('https://dashboard.factory-wager.com');
+      expect(url).toBe('https://docs.factory-wager.com');
     });
 
     test('should create dashboard URL with section', () => {
       const url = FactoryWagerURLUtils.createDashboardURL('analytics');
-      expect(url).toBe('https://dashboard.factory-wager.com/analytics');
+      expect(url).toBe('https://docs.factory-wager.com/analytics');
     });
 
     test('should create dashboard URL with fragment', () => {
@@ -403,7 +403,7 @@ describe('FactoryWagerURLUtils', () => {
         period: '7d'
       });
 
-      expect(url.includes('https://dashboard.factory-wager.com/analytics')).toBe(true);
+      expect(url.includes('https://docs.factory-wager.com/analytics')).toBe(true);
       expect(url.includes('tab=overview')).toBe(true);
       expect(url.includes('period=7d')).toBe(true);
     });
@@ -432,7 +432,7 @@ describe('FactoryWagerURLUtils', () => {
   describe('validateFactoryWagerURL', () => {
     test('should validate FactoryWager URLs', () => {
       expect(FactoryWagerURLUtils.validateFactoryWagerURL('https://factory-wager.com')).toBe(true);
-      expect(FactoryWagerURLUtils.validateFactoryWagerURL('https://dashboard.factory-wager.com')).toBe(true);
+      expect(FactoryWagerURLUtils.validateFactoryWagerURL('https://docs.factory-wager.com')).toBe(true);
       expect(FactoryWagerURLUtils.validateFactoryWagerURL('https://r2.factory-wager.com')).toBe(true);
     });
 
@@ -444,7 +444,7 @@ describe('FactoryWagerURLUtils', () => {
 
   describe('extractService', () => {
     test('should extract service from URL', () => {
-      expect(FactoryWagerURLUtils.extractService('https://dashboard.factory-wager.com')).toBe('dashboard');
+      expect(FactoryWagerURLUtils.extractService('https://docs.factory-wager.com')).toBe('dashboard');
       expect(FactoryWagerURLUtils.extractService('https://r2.factory-wager.com')).toBe('r2');
       expect(FactoryWagerURLUtils.extractService('https://api.factory-wager.com')).toBe('api');
       expect(FactoryWagerURLUtils.extractService('https://wiki.factory-wager.com')).toBe('wiki');

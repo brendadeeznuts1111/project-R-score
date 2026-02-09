@@ -127,7 +127,7 @@ curl -H "Host: admin.factory-wager.com" http://localhost:3000
 # Result: Admin Route
 
 # Subdomain Client
-curl -H "Host: client.factory-wager.com" http://localhost:3000
+curl -H "Host: docs.factory-wager.com" http://localhost:3000
 # Result: Client
 
 # Multi-Subdomain
@@ -306,7 +306,7 @@ bun run junior-runner --ws-sync
 curl -H "Host: admin.factory-wager.com" http://localhost:3000
 
 # Client portal access  
-curl -H "Host: client.factory-wager.com" http://localhost:3000
+curl -H "Host: docs.factory-wager.com" http://localhost:3000
 
 # User dashboard
 curl -H "Host: user.factory-wager.com:3000" http://localhost/dashboard/user

@@ -19,6 +19,8 @@ type Options = {
 type HealthRow = {
   domain: string;
   status: string;
+  statusCode: number | null;
+  error: string | null;
 };
 
 function parseArgs(argv: string[]): Options {
@@ -92,7 +94,10 @@ function parseHealthRows(payload: any): HealthRow[] {
     .map((row: any) => {
       const domain = String(row?.domain || row?.url || '').trim().toLowerCase();
       const status = String(row?.status || '').trim().toLowerCase();
-      return { domain, status };
+      const statusCodeValue = Number.parseInt(String(row?.statusCode ?? ''), 10);
+      const statusCode = Number.isFinite(statusCodeValue) ? statusCodeValue : null;
+      const error = row?.error == null ? null : String(row.error);
+      return { domain, status, statusCode, error };
     })
     .filter((row) => Boolean(row.domain));
 }
@@ -112,8 +117,13 @@ export async function buildDomainRegistryStatus(options: Options) {
   const headerConfigured = resolvedDomains.filter((row) => Boolean(row.requiredHeader)).length;
   const bucketMapped = resolvedDomains.filter((row) => Boolean(row.bucket)).length;
 
-  const onlineRows = healthRows.filter((row) => row.status === 'healthy');
-  const degradedRows = healthRows.filter((row) => row.status !== 'healthy');
+  const healthyRows = healthRows.filter((row) => row.status === 'healthy');
+  const reachableRows = healthRows.filter((row) => {
+    if (row.status === 'healthy') return true;
+    if (row.error) return false;
+    return row.statusCode !== null && row.statusCode >= 100 && row.statusCode < 500;
+  });
+  const unreachableRows = Math.max(0, healthRows.length - reachableRows.length);
   const projects = String(latest?.path || '')
     .split(',')
     .map((part) => part.trim())
@@ -152,9 +162,12 @@ export async function buildDomainRegistryStatus(options: Options) {
     },
     domainHealth: {
       checkedRows: healthRows.length,
-      onlineRows: onlineRows.length,
-      offlineOrDegradedRows: degradedRows.length,
-      onlineRatio: healthRows.length > 0 ? Number((onlineRows.length / healthRows.length).toFixed(4)) : null,
+      onlineRows: healthyRows.length,
+      reachableRows: reachableRows.length,
+      offlineOrDegradedRows: Math.max(0, healthRows.length - healthyRows.length),
+      unreachableRows,
+      onlineRatio: healthRows.length > 0 ? Number((healthyRows.length / healthRows.length).toFixed(4)) : null,
+      reachableRatio: healthRows.length > 0 ? Number((reachableRows.length / healthRows.length).toFixed(4)) : null,
     },
   };
 }
@@ -359,7 +372,8 @@ async function main(): Promise<void> {
   console.log(`- required header configured: ${payload.registry.headerConfigured}/${payload.registry.totalDomains}`);
   console.log(`- token configured: ${payload.registry.tokenConfigured}/${payload.registry.totalDomains}`);
   console.log(`- search projects: ${payload.search.projectCount}`);
-  console.log(`- health rows online: ${payload.domainHealth.onlineRows}/${payload.domainHealth.checkedRows}`);
+  console.log(`- health rows online (healthy): ${payload.domainHealth.onlineRows}/${payload.domainHealth.checkedRows}`);
+  console.log(`- health rows reachable: ${payload.domainHealth.reachableRows}/${payload.domainHealth.checkedRows}`);
 }
 
 if (import.meta.main) {

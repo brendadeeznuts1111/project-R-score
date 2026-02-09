@@ -213,12 +213,12 @@ cli/
 ### GitHub Pages Domains
 - Target: `brendadeeznuts1111.github.io`
 - Used for: Static sites, dashboards, documentation
-- Examples: `wiki.factory-wager.com`, `dashboard.factory-wager.com`
+- Examples: `wiki.factory-wager.com`, `docs.factory-wager.com`
 
 ### R2 Bucket Domains
 - Target: `public.r2.dev`
 - Used for: Dynamic content, APIs, storage
-- Examples: `api.factory-wager.com`, `metrics.factory-wager.com`
+- Examples: `api.factory-wager.com`, `monitor.factory-wager.com`
 
 ## 📊 Examples
 
