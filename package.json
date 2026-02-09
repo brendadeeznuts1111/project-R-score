@@ -1679,6 +1679,7 @@
     "build:barbershop:meta": "bun run barbershop/build-metadata.ts",
     "security:audit": "bun audit",
     "security:guard:deps": "bun run scripts/security-dependency-guard.ts",
+    "security:ci": "bun run security:guard:deps && bun run security:audit",
     "security:check": "bun run scripts/security-check.ts",
     "validate:bun-urls": "bun run scripts/validate-bun-urls.ts",
     "validate:github": "bun run scripts/bun-github-validation.ts",

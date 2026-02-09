@@ -9,10 +9,10 @@ type PackageJson = {
   optionalDependencies?: Record<string, string>;
 };
 
-const BLOCKED_PACKAGES = ['aws-sdk', 'event-stream'] as const;
-const CORE_SCAN_DIRS = ['scripts', 'server', 'lib', 'packages', 'src', 'dashboard', 'tests'] as const;
+export const BLOCKED_PACKAGES = ['aws-sdk', 'event-stream'] as const;
+export const CORE_SCAN_DIRS = ['scripts', 'server', 'lib', 'packages', 'src', 'dashboard', 'tests'] as const;
 
-function listBlockedDeps(pkg: PackageJson): Array<{ section: string; name: string; version: string }> {
+export function listBlockedDeps(pkg: PackageJson): Array<{ section: string; name: string; version: string }> {
   const out: Array<{ section: string; name: string; version: string }> = [];
   const sections: Array<['dependencies' | 'devDependencies' | 'optionalDependencies', Record<string, string> | undefined]> = [
     ['dependencies', pkg.dependencies],
@@ -31,7 +31,7 @@ function listBlockedDeps(pkg: PackageJson): Array<{ section: string; name: strin
   return out;
 }
 
-function rgAvailable(): boolean {
+export function rgAvailable(): boolean {
   try {
     return Boolean(Bun.which('rg'));
   } catch {
@@ -39,7 +39,7 @@ function rgAvailable(): boolean {
   }
 }
 
-function scanBlockedImportsWithRipgrep(): string {
+export function scanBlockedImportsWithRipgrep(): string {
   const pattern = "(from ['\\\"](aws-sdk|event-stream)['\\\"]|require\\(['\\\"](aws-sdk|event-stream)['\\\"]\\))";
   const proc = Bun.spawnSync(
     ['rg', '-n', '-S', pattern, ...CORE_SCAN_DIRS],
@@ -48,7 +48,7 @@ function scanBlockedImportsWithRipgrep(): string {
   return proc.exitCode === 0 ? proc.stdout.toString().trim() : '';
 }
 
-function scanBlockedImportsWithGrep(): string {
+export function scanBlockedImportsWithGrep(): string {
   const pattern = "from ['\\\"]aws-sdk['\\\"]|from ['\\\"]event-stream['\\\"]|require\\(['\\\"]aws-sdk['\\\"]\\)|require\\(['\\\"]event-stream['\\\"]\\)";
   const proc = Bun.spawnSync(
     ['grep', '-RInE', pattern, ...CORE_SCAN_DIRS],
@@ -57,7 +57,7 @@ function scanBlockedImportsWithGrep(): string {
   return proc.exitCode === 0 ? proc.stdout.toString().trim() : '';
 }
 
-async function main(): Promise<void> {
+export async function main(): Promise<void> {
   const pkgPath = resolve('package.json');
   const raw = JSON.parse(await readFile(pkgPath, 'utf8')) as PackageJson;
   const blockedDeps = listBlockedDeps(raw);
@@ -82,5 +82,6 @@ async function main(): Promise<void> {
   process.exit(1);
 }
 
-await main();
-
+if (import.meta.main) {
+  await main();
+}
