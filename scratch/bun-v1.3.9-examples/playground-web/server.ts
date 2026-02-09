@@ -88,6 +88,15 @@ curl -s http://localhost:<port>/api/control/protocol-matrix
 `,
   },
   {
+    id: "protocol-scorecard",
+    name: "Protocol Scorecard",
+    description: "Team-agreed protocol scorecard with architectural impact column",
+    category: "Governance",
+    code: `# Inspect team protocol scorecard
+curl -s http://localhost:<port>/api/control/protocol-scorecard
+`,
+  },
+  {
     id: "multipart-progress",
     name: "Multipart Progress Tracking",
     description: "Simulate upload progress events for multipart/file body types",
@@ -618,6 +627,111 @@ function getProtocolMatrix() {
   };
 }
 
+function getProtocolScorecard() {
+  return {
+    generatedAt: new Date().toISOString(),
+    version: "team-v1",
+    columns: ["Criteria", "HTTP", "HTTPS", "S3", "File", "Data", "Blob", "Unix", "Impact"],
+    rows: [
+      {
+        criteria: "Latency",
+        http: "Low",
+        https: "Low-Med",
+        s3: "Med",
+        file: "Instant",
+        data: "Instant",
+        blob: "Instant",
+        unix: "Low",
+        impact: "High for user-facing p95/p99 paths",
+      },
+      {
+        criteria: "Throughput",
+        http: "High",
+        https: "High",
+        s3: "Very High",
+        file: "Max",
+        data: "N/A",
+        blob: "N/A",
+        unix: "Max",
+        impact: "High for batch/export and media pipelines",
+      },
+      {
+        criteria: "Security",
+        http: "Low",
+        https: "Very High",
+        s3: "Very High",
+        file: "High",
+        data: "Medium",
+        blob: "Medium",
+        unix: "High",
+        impact: "Critical for production and compliance boundaries",
+      },
+      {
+        criteria: "Scalability",
+        http: "High",
+        https: "High",
+        s3: "Very High",
+        file: "Single Host",
+        data: "N/A",
+        blob: "Session",
+        unix: "High (Single Host)",
+        impact: "High for horizontal growth and ops load",
+      },
+      {
+        criteria: "Cost",
+        http: "Low",
+        https: "Low",
+        s3: "$/GB",
+        file: "Low",
+        data: "Low",
+        blob: "Memory",
+        unix: "Low",
+        impact: "Medium for sustained throughput at scale",
+      },
+      {
+        criteria: "Reliability",
+        http: "High",
+        https: "High",
+        s3: "Very High",
+        file: "High",
+        data: "Immutable",
+        blob: "Session-bound",
+        unix: "High",
+        impact: "High for uptime-sensitive control paths",
+      },
+      {
+        criteria: "Use for >100MB",
+        http: "Yes",
+        https: "Yes",
+        s3: "Best",
+        file: "Yes",
+        data: "No",
+        blob: "No",
+        unix: "Yes",
+        impact: "Critical for avoiding memory blowups",
+      },
+      {
+        criteria: "Use for <1KB",
+        http: "Yes",
+        https: "Yes (h2 multiplex)",
+        s3: "No",
+        file: "No",
+        data: "Best",
+        blob: "Best",
+        unix: "Yes",
+        impact: "Medium for metadata/control-plane chatter",
+      },
+    ],
+    rules: [
+      "Default external traffic to HTTPS.",
+      "Default large object persistence to S3.",
+      "Default high-throughput same-host IPC to Unix sockets.",
+      "Use data/blob only for short-lived utility payloads.",
+      "Use plain HTTP only in trusted internal boundaries.",
+    ],
+  };
+}
+
 function withTimeoutSignal(timeoutMs: number): AbortSignal {
   return AbortSignal.timeout(timeoutMs);
 }
@@ -928,6 +1042,8 @@ const routes = {
   },
 
   "/api/control/protocol-matrix": () => getProtocolMatrix(),
+
+  "/api/control/protocol-scorecard": () => getProtocolScorecard(),
   
   "/api/run/:id": async (req: Request) => {
     const url = new URL(req.url);
@@ -978,6 +1094,17 @@ const routes = {
       return new Response(JSON.stringify({
         success: true,
         output: JSON.stringify(matrix, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "protocol-scorecard") {
+      const scorecard = routes["/api/control/protocol-scorecard"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(scorecard, null, 2),
         exitCode: 0,
       }), {
         headers: { "Content-Type": "application/json" },
@@ -1115,6 +1242,10 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/protocol-matrix") {
         return jsonResponse(routes["/api/control/protocol-matrix"]());
+      }
+
+      if (url.pathname === "/api/control/protocol-scorecard") {
+        return jsonResponse(routes["/api/control/protocol-scorecard"]());
       }
       
       const demoMatch = url.pathname.match(/^\/api\/demo\/(.+)$/);
