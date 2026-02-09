@@ -76,6 +76,7 @@ temp/
 profiles/
 *.profile.json
 *-profile-*.json
+*.cpuprofile
 CPU.*.md
 Heap.*.md
 
