@@ -22,7 +22,7 @@ We use a **bright HSL color system** for all visual elements:
 | 💗 Pink | `hsl(320, 100%, 65%)` | WebSocket |
 | 🔴 Red | `hsl(0, 100%, 60%)` | Security |
 
-See [`.github/HSL-COLOR-SYSTEM.md`](.github/HSL-COLOR-SYSTEM.md) for full specifications.
+See [`.github/HSL-COLOR-SYSTEM.md`](../../.github/HSL-COLOR-SYSTEM.md) for full specifications.
 
 ## 🚀 Quick Start
 
