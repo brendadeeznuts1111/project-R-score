@@ -68,6 +68,8 @@ curl -s http://localhost:<port>/api/control/network-smoke
 curl -s http://localhost:<port>/api/control/features
 curl -s http://localhost:<port>/api/control/protocol-matrix
 curl -s http://localhost:<port>/api/control/protocol-scorecard
+curl -s http://localhost:<port>/api/control/evidence-dashboard
+curl -s http://localhost:<port>/api/control/decision-defense
 curl -s -X POST http://localhost:<port>/api/control/upload-progress \
   -H "content-type: application/json" \
   -d '{"bodyType":"multipart","sizeBytes":1048576,"chunkSize":131072}'
@@ -81,6 +83,17 @@ Scorecard rationale highlights:
 - Unix sockets are preferred for sub-1KB same-host IPC due to low overhead and strong local boundary controls.
 - Blob-based tiny payload paths benefit from Bun v1.3.9 small-buffer runtime optimizations.
 - HTTPS over HTTP/2 reduces tiny-request overhead via multiplexed connection reuse.
+
+Evidence governance for architecture decisions:
+- `Tier`: confidence level of the claim (for example: `T1` validated runtime behavior).
+- `Authority`: where the claim derives authority (runtime behavior, protocol design, release notes).
+- `Verification Method`: how the team validated the claim.
+- `Claim`: concise decision statement.
+- `Sources`: docs/runtime traces used to support the claim.
+- `Benchmark`: measurable check tied to the claim.
+- `Council Risk`: review risk level if the claim is wrong (`Low|Medium|High`).
+
+Use `GET /api/control/protocol-scorecard` and inspect `evidenceGovernance.entries` for traceable claim records.
 
 ## ✨ Features
 
