@@ -38,7 +38,6 @@ const SMOKE_URLS = parseList(process.env.PLAYGROUND_SMOKE_URLS);
 const FETCH_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_FETCH_TIMEOUT_MS", BASE_STANDARD.fetchTimeoutMs, { min: 100, max: 300000 });
 const MAX_BODY_SIZE_MB = parseNumberEnv("PLAYGROUND_MAX_BODY_SIZE_MB", BASE_STANDARD.maxBodySizeMb, { min: 1, max: 1024, integer: false });
 const MAX_BODY_SIZE_BYTES = Math.max(1, Math.floor(MAX_BODY_SIZE_MB * 1024 * 1024));
-const PROXY_DEFAULT = process.env.PLAYGROUND_PROXY_DEFAULT || "";
 const PROXY_AUTH_TOKEN = process.env.PLAYGROUND_PROXY_AUTH_TOKEN || "";
 const STREAM_CHUNK_SIZE = parseNumberEnv("PLAYGROUND_STREAM_CHUNK_SIZE", BASE_STANDARD.streamChunkSize, { min: 256, max: 1048576 });
 const FETCH_DECOMPRESS = parseBool(process.env.PLAYGROUND_FETCH_DECOMPRESS, BASE_STANDARD.fetchDecompress);
@@ -48,6 +47,33 @@ const BRAND_REPORTS_DIR = join(PROJECT_ROOT, "reports", "brand-bench");
 let inFlightRequests = 0;
 let activeCommands = 0;
 const commandWaiters: Array<() => void> = [];
+
+type FeatureRequest = Request | null;
+type FeatureDefinition<T> = {
+  envVar: string | string[];
+  parse: (val: string) => T;
+  default: T | ((req?: FeatureRequest) => T);
+};
+
+const featureDefinitions: Record<string, FeatureDefinition<unknown>> = {
+  bodyType: {
+    envVar: "PLAYGROUND_BODY_TYPE",
+    parse: (val: string) => val.trim().toLowerCase(),
+    default: (req?: FeatureRequest) => {
+      const contentType = req?.headers.get("content-type")?.toLowerCase() || "";
+      if (contentType.includes("application/json")) return "json";
+      if (contentType.includes("application/x-www-form-urlencoded")) return "form";
+      if (contentType.includes("multipart/form-data")) return "multipart";
+      if (contentType.includes("application/octet-stream")) return "binary";
+      return "text";
+    },
+  },
+  proxy: {
+    envVar: ["PLAYGROUND_PROXY_URL", "PLAYGROUND_PROXY_DEFAULT", "HTTP_PROXY", "HTTPS_PROXY"],
+    parse: (val: string) => val.trim(),
+    default: null,
+  },
+};
 
 // Demo configurations
 const DEMOS = [
@@ -329,6 +355,37 @@ function parseFetchVerbose(value: string | undefined, baseStandard: string): boo
   return undefined;
 }
 
+function resolveFeature<T>(name: string, req: FeatureRequest = null): T {
+  const def = featureDefinitions[name] as FeatureDefinition<T> | undefined;
+  if (!def) {
+    throw new Error(`Unknown feature definition: ${name}`);
+  }
+
+  const envVars = Array.isArray(def.envVar) ? def.envVar : [def.envVar];
+  for (const envVar of envVars) {
+    const raw = process.env[envVar];
+    if (raw === undefined || raw === null || raw.trim() === "") continue;
+    try {
+      const parsed = def.parse(raw);
+      if (parsed !== undefined && parsed !== null && String(parsed).trim() !== "") {
+        return parsed;
+      }
+    } catch {
+      // Ignore parse failures and continue to next source.
+    }
+  }
+
+  return typeof def.default === "function"
+    ? (def.default as (req?: FeatureRequest) => T)(req)
+    : def.default;
+}
+
+function resolveAllFeatures(req: FeatureRequest = null): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.keys(featureDefinitions).map(name => [name, resolveFeature(name, req)])
+  );
+}
+
 function shouldBypassProxy(targetUrl: string): boolean {
   let host = "";
   try {
@@ -390,16 +447,17 @@ async function timedFetch(url: string, timeoutMs: number): Promise<{ url: string
       fetchOptions.verbose = FETCH_VERBOSE;
     }
 
-    const canUseProxy = PROXY_DEFAULT && !shouldBypassProxy(url);
+    const resolvedProxy = resolveFeature<string | null>("proxy");
+    const canUseProxy = Boolean(resolvedProxy) && !shouldBypassProxy(url);
     if (canUseProxy && PROXY_AUTH_TOKEN) {
       fetchOptions.proxy = {
-        url: PROXY_DEFAULT,
+        url: resolvedProxy as string,
         headers: {
           "Proxy-Authorization": `Bearer ${PROXY_AUTH_TOKEN}`,
         },
       };
     } else if (canUseProxy) {
-      fetchOptions.proxy = PROXY_DEFAULT;
+      fetchOptions.proxy = resolvedProxy as string;
     }
 
     const res = await fetch(url, fetchOptions);
@@ -512,6 +570,7 @@ const routes = {
     bunVersion: Bun.version || "1.3.9+",
     platform: process.platform,
     arch: process.arch,
+    features: resolveAllFeatures(),
     controlPlane: {
       prefetchEnabled: PREFETCH_ENABLED,
       preconnectEnabled: PRECONNECT_ENABLED,
@@ -524,7 +583,7 @@ const routes = {
       fetchVerbose: FETCH_VERBOSE ?? "off",
       maxBodySizeMb: MAX_BODY_SIZE_MB,
       streamChunkSize: STREAM_CHUNK_SIZE,
-      proxyDefaultEnabled: Boolean(PROXY_DEFAULT),
+      proxyDefaultEnabled: Boolean(resolveFeature<string | null>("proxy")),
       proxyAuthConfigured: Boolean(PROXY_AUTH_TOKEN),
     },
   }),
@@ -613,6 +672,10 @@ const routes = {
       },
     };
   },
+
+  "/api/control/features": (req: Request) => ({
+    features: resolveAllFeatures(req),
+  }),
 
   "/api/control/network-smoke": async (req: Request) => {
     const base = new URL(req.url).origin;
@@ -751,6 +814,10 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/network-smoke") {
         return jsonResponse(await routes["/api/control/network-smoke"](req));
+      }
+
+      if (url.pathname === "/api/control/features") {
+        return jsonResponse(routes["/api/control/features"](req));
       }
       
       const demoMatch = url.pathname.match(/^\/api\/demo\/(.+)$/);

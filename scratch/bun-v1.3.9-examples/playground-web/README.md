@@ -30,6 +30,8 @@ PLAYGROUND_FETCH_TIMEOUT_MS=30000 \
 PLAYGROUND_FETCH_DECOMPRESS=true \
 PLAYGROUND_FETCH_VERBOSE=off \
 PLAYGROUND_MAX_BODY_SIZE_MB=10 \
+PLAYGROUND_BODY_TYPE=text \
+PLAYGROUND_PROXY_URL=http://proxy.internal:8080 \
 PLAYGROUND_PROXY_DEFAULT=http://proxy.internal:8080 \
 PLAYGROUND_PROXY_AUTH_TOKEN=secret-token \
 PLAYGROUND_STREAM_CHUNK_SIZE=16384 \
@@ -50,6 +52,8 @@ bun start
 - `PLAYGROUND_FETCH_DECOMPRESS`: enable/disable automatic response decompression for smoke fetches
 - `PLAYGROUND_FETCH_VERBOSE`: fetch debug output mode (`off|true|curl`)
 - `PLAYGROUND_MAX_BODY_SIZE_MB`: response body size limit for smoke fetches
+- `PLAYGROUND_BODY_TYPE`: base request body type (`text|json|form|multipart|binary`)
+- `PLAYGROUND_PROXY_URL`: primary proxy URL (preferred over legacy/default proxy var)
 - `PLAYGROUND_PROXY_DEFAULT`: optional default proxy URL for smoke fetches
 - `PLAYGROUND_PROXY_AUTH_TOKEN`: optional proxy auth bearer token
 - `PLAYGROUND_STREAM_CHUNK_SIZE`: byte window used in response size accounting
@@ -59,6 +63,7 @@ Smoke endpoint:
 
 ```bash
 curl -s http://localhost:<port>/api/control/network-smoke
+curl -s http://localhost:<port>/api/control/features
 ```
 
 ## ✨ Features
