@@ -48,7 +48,7 @@ export class PrefetchManager {
         { type: 'dns', url: 'https://cache.factory-wager.com' },
         { type: 'dns', url: 'https://metrics.factory-wager.com' },
         { type: 'dns', url: 'https://dashboard.factory-wager.com' },
-        { type: 'dns', url: 'https://wiki.factory-wager.com' },
+        { type: 'dns', url: 'https://docs.factory-wager.com' },
         { type: 'dns', url: 'https://client.factory-wager.com' },
         { type: 'dns', url: 'https://admin.factory-wager.com' },
         { type: 'dns', url: 'https://cdn.factory-wager.com' },
@@ -87,7 +87,7 @@ export class PrefetchManager {
       enabled: true,
       resources: [
         { type: 'prefetch', url: 'https://dashboard.factory-wager.com/' },
-        { type: 'prefetch', url: 'https://wiki.factory-wager.com/' },
+        { type: 'prefetch', url: 'https://docs.factory-wager.com/' },
         { type: 'prefetch', url: 'https://client.factory-wager.com/' }
       ],
       conditions: () => {

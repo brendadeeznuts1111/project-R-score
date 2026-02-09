@@ -542,7 +542,7 @@ export class FactoryWagerURLUtils {
     'dashboard.factory-wager.com',
     'r2.factory-wager.com',
     'api.factory-wager.com',
-    'wiki.factory-wager.com',
+    'docs.factory-wager.com',
   ];
 
   /**

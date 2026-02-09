@@ -353,7 +353,7 @@ export FACTORY_WAGER_TOKEN="test_token"
 
 ## 📞 Support
 
-- **Documentation**: https://wiki.factory-wager.com/cli
+- **Documentation**: https://docs.factory-wager.com/cli
 - **Issues**: https://github.com/brendadeeznuts1111/project-R-score/issues
 - **Discussions**: https://github.com/brendadeeznuts1111/project-R-score/discussions
 

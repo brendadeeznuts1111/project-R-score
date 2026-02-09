@@ -11,7 +11,7 @@ type SitemapPage = {
   priority: string;
 };
 
-const DEFAULT_DOMAIN = 'wiki.factory-wager.com';
+const DEFAULT_DOMAIN = 'docs.factory-wager.com';
 const PUBLIC_DIR = resolve('public');
 const SITEMAP_INDEX_PATH = resolve(PUBLIC_DIR, 'sitemap.xml');
 const SITEMAP_PAGES_PATH = resolve(PUBLIC_DIR, 'sitemap-pages.xml');
