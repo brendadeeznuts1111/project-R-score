@@ -27,10 +27,16 @@ async function refreshHeaderState() {
   if (infoResult.status === 'fulfilled') {
     runtimeInfo = infoResult.value;
     document.getElementById('bun-version').textContent = `v${runtimeInfo.bunVersion}`;
+    document.getElementById('bun-revision').textContent = `${runtimeInfo.bunRevision || 'unknown'}`;
+    document.getElementById('git-commit-hash').textContent = `${runtimeInfo.gitCommitHash || 'unset'}`;
+    document.getElementById('git-commit-hash-source').textContent = `${runtimeInfo.gitCommitHashSource || 'unknown'}`;
     document.getElementById('platform').textContent = `${runtimeInfo.platform} (${runtimeInfo.arch})`;
   } else {
     console.error('Failed to load Bun info:', infoResult.reason);
     document.getElementById('bun-version').textContent = 'v1.3.9+';
+    document.getElementById('bun-revision').textContent = 'unknown';
+    document.getElementById('git-commit-hash').textContent = 'unset';
+    document.getElementById('git-commit-hash-source').textContent = 'unknown';
     document.getElementById('platform').textContent = navigator.platform;
   }
 
@@ -68,6 +74,18 @@ function renderHeaderBadges() {
     badges.push({
       text: `Port ${runtimeInfo.runtime.dedicatedPort} (${runtimeInfo.runtime.portRange})`,
       cls: 'warn',
+    });
+    badges.push({
+      text: `Rev ${String(runtimeInfo.bunRevision || 'unknown').slice(0, 8)}`,
+      cls: 'success',
+    });
+    badges.push({
+      text: `Git ${String(runtimeInfo.gitCommitHash || 'unset').slice(0, 12)}`,
+      cls: runtimeInfo.gitCommitHash && runtimeInfo.gitCommitHash !== 'unset' ? 'success' : 'warn',
+    });
+    badges.push({
+      text: `GitSrc ${runtimeInfo.gitCommitHashSource || 'unknown'}`,
+      cls: runtimeInfo.gitCommitHashSource === 'env' ? 'warn' : 'success',
     });
   }
 

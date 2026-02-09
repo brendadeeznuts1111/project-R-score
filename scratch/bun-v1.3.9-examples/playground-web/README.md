@@ -63,6 +63,12 @@ bun start
 - `PLAYGROUND_SMOKE_URLS`: optional explicit smoke URL list (defaults to local info/status APIs)
 - `PLAYGROUND_BRAND_STATUS_STRICT_PROBE`: enable strict benchmark probe in `/api/brand/status` (default `false` to avoid extra command load)
 
+Header/runtime metadata now includes:
+- `Bun.version`
+- `Bun.revision`
+- `gitCommitHash` (from `GIT_COMMIT_HASH` env or macro fallback)
+- `gitCommitHashSource` (`env|macro`)
+
 Smoke endpoint:
 
 ```bash

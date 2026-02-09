@@ -9,6 +9,7 @@ import { serve } from "bun";
 import { readFile } from "node:fs/promises";
 import { createServer } from "node:net";
 import { join } from "node:path";
+import { getBuildMetadata, getGitCommitHash } from "./build-metadata" with { type: "macro" };
 
 const BASE_STANDARD = Object.freeze({
   dedicatedPort: 3011,
@@ -50,6 +51,11 @@ const FETCH_DECOMPRESS = parseBool(process.env.PLAYGROUND_FETCH_DECOMPRESS, BASE
 const FETCH_VERBOSE = parseFetchVerbose(process.env.PLAYGROUND_FETCH_VERBOSE, BASE_STANDARD.fetchVerbose);
 const S3_DEFAULT_CONTENT_TYPE = process.env.PLAYGROUND_S3_DEFAULT_CONTENT_TYPE || "application/octet-stream";
 const BRAND_STATUS_STRICT_PROBE = parseBool(process.env.PLAYGROUND_BRAND_STATUS_STRICT_PROBE, false);
+const MACRO_GIT_COMMIT_HASH = getGitCommitHash();
+const GIT_COMMIT_HASH = (process.env.GIT_COMMIT_HASH || "").trim() || MACRO_GIT_COMMIT_HASH || "unset";
+const GIT_COMMIT_HASH_SOURCE = (process.env.GIT_COMMIT_HASH || "").trim() ? "env" : "macro";
+const BUILD_METADATA = await getBuildMetadata();
+const BUN_REVISION = Bun.revision || "unknown";
 const PROJECT_ROOT = join(import.meta.dir, "..", "..", "..");
 const BRAND_REPORTS_DIR = join(PROJECT_ROOT, "reports", "brand-bench");
 const BRAND_GOVERNANCE_PATH = join(BRAND_REPORTS_DIR, "governance.json");
@@ -1215,6 +1221,10 @@ async function resolvePort(): Promise<number> {
 const routes = {
   "/api/info": () => ({
     bunVersion: Bun.version || "1.3.9+",
+    bunRevision: BUN_REVISION,
+    gitCommitHash: GIT_COMMIT_HASH,
+    gitCommitHashSource: GIT_COMMIT_HASH_SOURCE,
+    buildMetadata: BUILD_METADATA,
     platform: process.platform,
     arch: process.arch,
     features: resolveAllFeatures(),
