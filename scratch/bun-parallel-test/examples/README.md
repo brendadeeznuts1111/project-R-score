@@ -14,7 +14,7 @@ Runnable examples for features in the [scorecard](../NOTES.md).
 | [h2-connection-upgrade.ts](h2-connection-upgrade.ts) | #7 | net.Server → Http2SecureServer handoff | `bun run examples/h2-connection-upgrade.ts` |
 | [regexp-jit-bench.ts](regexp-jit-bench.ts) | #10-11 | Fixed-count JIT + SIMD prefix benchmarks | `bun run examples/regexp-jit-bench.ts` |
 | [unicode-regex-jit.test.ts](unicode-regex-jit.test.ts) | #10-11 | Unicode fixed-count regex correctness + perf gate | `bun test ./examples/unicode-regex-jit.test.ts` |
-| [jsc-engine-bench.ts](jsc-engine-bench.ts) | #12-14 | Set/Map size, Object.defineProperty, String.replace ropes | `bun run examples/jsc-engine-bench.ts` |
+| [jsc-engine-bench.ts](jsc-engine-bench.ts) | #8-9, #12-14 | startsWith, trim, Set/Map size, defineProperty, replace ropes | `bun run examples/jsc-engine-bench.ts` |
 | [markdown-api.ts](markdown-api.ts) | #15-16, #18 | Bun.markdown.html/render/react API | `bun run examples/markdown-api.ts` |
 | [abort-signal-perf.ts](abort-signal-perf.ts) | #17 | AbortSignal.abort() optimization bench | `bun run examples/abort-signal-perf.ts` |
 | [crc32-seed.ts](crc32-seed.ts) | #19 | CRC32 with optional seed parameter | `bun run examples/crc32-seed.ts` |
@@ -29,7 +29,7 @@ These scorecard features don't have runnable examples for valid reasons:
 
 | Feature # | Description | Reason |
 |-----------|-------------|--------|
-| #8-9 | Faster String.trim / String.startsWith | Benchmarked inline in NOTES.md; gains are transparent |
+| #8-9 | Faster String.trim / String.startsWith | Now included in [jsc-engine-bench.ts](jsc-engine-bench.ts) |
 | #25 | SIGILL fix ARMv8.0 | Platform-specific (ARM only), not reproducible on Apple Silicon |
 | #26 | Hardened chunked encoding | Internal security fix |
 | #27 | Shell double-free fix | Internal stability fix |

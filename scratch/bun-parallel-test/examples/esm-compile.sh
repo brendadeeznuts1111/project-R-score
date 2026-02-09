@@ -2,11 +2,16 @@
 # ESM bytecode compilation
 # Feature #20 — PR #26402 — New in Bun 1.3.9
 #
-# ESM modules can now be compiled to standalone executables.
-# Previously only CJS was supported.
+# Using --bytecode with --format=esm is now supported.
+# Previously, --bytecode only worked with CommonJS.
 #
-# import.meta.main is true, import.meta.path points to
-# /$bunfs/root/<name> (virtual FS inside binary).
+# Without an explicit --format, --bytecode still defaults to CJS.
+# A future Bun version may change that default to ESM.
 
-bun build --compile app.ts --outfile app
-./app
+# ESM bytecode — the new capability
+bun build --compile --bytecode --format=esm app.ts --outfile app-esm
+./app-esm
+
+# CJS bytecode — existing behavior (--bytecode defaults to CJS)
+bun build --compile --bytecode app.ts --outfile app-cjs
+./app-cjs
