@@ -13,12 +13,18 @@ jobs:
   security-audit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Dependency Guard
+        run: bun run security:guard:deps
       
       - name: Check for event-stream
         run: |
@@ -39,23 +45,38 @@ jobs:
       
       - name: Verify CORS configuration
         run: |
-          if grep -q 'origin: "*"' feedback-server.ts; then
-            echo "❌ Wildcard CORS found"
-            exit 1
+          if [ -f feedback-server.ts ]; then
+            if grep -q 'origin: "*"' feedback-server.ts; then
+              echo "❌ Wildcard CORS found"
+              exit 1
+            fi
+            echo "✅ CORS properly configured"
+          else
+            echo "ℹ️ feedback-server.ts not present, skipping CORS grep check"
           fi
-          echo "✅ CORS properly configured"
       
       - name: Check authentication
         run: |
-          # Verify auth middleware exists
-          if ! grep -q "requireAuth\|requireApiKey" feedback-server.ts; then
-            echo "⚠️  Authentication middleware not found"
+          if [ -f feedback-server.ts ]; then
+            # Verify auth middleware exists
+            if ! grep -q "requireAuth\|requireApiKey" feedback-server.ts; then
+              echo "⚠️  Authentication middleware not found"
+            fi
+          else
+            echo "ℹ️ feedback-server.ts not present, skipping authentication grep check"
           fi
       
       - name: Check token hashing
         run: |
-          if grep -q "console.log.*token.*\$\{" pm.ts; then
-            echo "❌ Plaintext token logging found"
-            exit 1
+          if [ -f pm.ts ]; then
+            if grep -q "console.log.*token.*\$\{" pm.ts; then
+              echo "❌ Plaintext token logging found"
+              exit 1
+            fi
+            echo "✅ Token hashing verified"
+          else
+            echo "ℹ️ pm.ts not present, skipping token hashing grep check"
           fi
-          echo "✅ Token hashing verified"
+
+      - name: Bun Security Audit
+        run: bun run security:audit
