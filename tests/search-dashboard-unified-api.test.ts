@@ -96,6 +96,9 @@ describe('search benchmark dashboard unified status api', () => {
     expect(payload.ok).toBe(true);
     expect(payload.service).toBe('search-benchmark-dashboard');
     expect(payload.mode && typeof payload.mode.cookies === 'boolean').toBe(true);
+    expect(payload.telemetry && payload.telemetry.benchmarkGate).toBeTruthy();
+    expect(payload.telemetry.benchmarkGate.source).toBe('local');
+    expect(typeof payload.telemetry.benchmarkGate.available).toBe('boolean');
   });
 
   test('returns latest payload with gate telemetry fields', async () => {

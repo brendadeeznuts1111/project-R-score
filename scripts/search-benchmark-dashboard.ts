@@ -6769,6 +6769,33 @@ async function main(): Promise<void> {
     }
   };
 
+  const loadLatestPayload = async (
+    source: 'local' | 'r2'
+  ): Promise<{ ok: true; payload: LatestApiPayload } | { ok: false; error: string }> => {
+    if (source === 'r2') {
+      const remote = await getCachedRemoteJson('r2:latest', 'latest.json');
+      if (!remote.ok) {
+        return { ok: false, error: `r2_latest_http_${remote.status}` };
+      }
+      try {
+        const payload = await remote.json() as LatestApiPayload;
+        return { ok: true, payload };
+      } catch (error) {
+        return { ok: false, error: error instanceof Error ? error.message : String(error) };
+      }
+    }
+
+    if (!existsSync(latestJson)) {
+      return { ok: false, error: 'latest_json_missing' };
+    }
+    try {
+      const payload = await Bun.file(latestJson).json() as LatestApiPayload;
+      return { ok: true, payload };
+    } catch (error) {
+      return { ok: false, error: error instanceof Error ? error.message : String(error) };
+    }
+  };
+
   const buildInventoryLocal = async (snapshotId: string | null) => {
     const id = snapshotId || await resolveLatestSnapshotId('local');
     const mk = (name: string, path: string, category: InventoryItem['category'] = 'snapshot'): InventoryItem => {
@@ -7978,6 +8005,34 @@ async function main(): Promise<void> {
         );
       }
       if (url.pathname === '/api/status' || url.pathname === '/api/dashboard/status') {
+        const telemetrySource = (url.searchParams.get('source') || 'local') === 'r2' ? 'r2' : 'local';
+        let benchmarkGate: Record<string, unknown> = {
+          source: telemetrySource,
+          available: false,
+        };
+        const latestLoaded = await loadLatestPayload(telemetrySource);
+        if (latestLoaded.ok) {
+          const enriched = await enrichLatestWithGate(latestLoaded.payload, telemetrySource);
+          const gate = enriched.gate;
+          benchmarkGate = {
+            source: telemetrySource,
+            available: Boolean(gate),
+            snapshotId: enriched.id || null,
+            checkedAt: enriched.gateCheckedAt || null,
+            anomalyType: gate?.anomalyType || null,
+            failures: Array.isArray(gate?.failures) ? gate!.failures : [],
+            warnings: Array.isArray(gate?.warnings) ? gate!.warnings : [],
+            ok: gate ? gate.ok : null,
+            gateError: enriched.gateError || null,
+          };
+        } else {
+          benchmarkGate = {
+            source: telemetrySource,
+            available: false,
+            gateError: latestLoaded.error,
+          };
+        }
+
         return jsonResponse(
           {
             ok: true,
@@ -7992,6 +8047,9 @@ async function main(): Promise<void> {
             r2: {
               credentialed: Boolean(resolveR2ReadOptions()),
               base: options.r2Base || null,
+            },
+            telemetry: {
+              benchmarkGate,
             },
           },
           { source: 'mixed' }
