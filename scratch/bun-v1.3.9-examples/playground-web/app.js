@@ -6,8 +6,92 @@ let runtimeInfo = null;
 let brandGateSummary = null;
 let governanceSummary = null;
 
+// Toast notification system
+function showToast(message, type = 'success', duration = 3000) {
+  let container = document.querySelector('.toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.className = 'toast-container';
+    document.body.appendChild(container);
+  }
+  
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `
+    <span>${type === 'success' ? '✓' : type === 'error' ? '✗' : 'ℹ'}</span>
+    <span>${escapeHtml(message)}</span>
+  `;
+  
+  container.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.classList.add('hide');
+    setTimeout(() => toast.remove(), 300);
+  }, duration);
+}
+
+// Copy to clipboard - exposed globally
+window.copyToClipboard = async function(elementId) {
+  console.log('Copy triggered for:', elementId);
+  
+  const element = document.getElementById(elementId);
+  if (!element) {
+    console.error('Element not found:', elementId);
+    showToast('Element not found', 'error');
+    return;
+  }
+  
+  const text = element.textContent?.trim() || '';
+  console.log('Text to copy:', text);
+  
+  if (!text || text === '...' || text === 'v' || text.includes('skeleton') || text === 'unset' || text === 'unknown') {
+    showToast('Wait for data to load first', 'error');
+    return;
+  }
+  
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.cssText = 'position:fixed;left:-9999px;opacity:0;';
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      const success = document.execCommand('copy');
+      document.body.removeChild(textarea);
+      if (!success) throw new Error('execCommand failed');
+    }
+    
+    // Find and update button
+    const btn = element.parentElement.querySelector('.copy-btn');
+    if (btn) {
+      btn.textContent = '✓';
+      btn.style.opacity = '1';
+      setTimeout(() => btn.textContent = '📋', 1500);
+    }
+    
+    showToast(`Copied: ${text.slice(0, 40)}${text.length > 40 ? '...' : ''}`);
+  } catch (err) {
+    console.error('Copy error:', err);
+    showToast('Copy failed - try Ctrl+C', 'error');
+  }
+};
+
+// Update connection status
+function updateConnectionStatus(online) {
+  const dot = document.getElementById('connection-status');
+  if (dot) {
+    dot.className = 'status-dot ' + (online ? 'online' : 'offline');
+  }
+}
+
 // Initialize
 async function init() {
+  // Set up keyboard shortcuts
+  setupKeyboardShortcuts();
+  
   await refreshHeaderState();
   
   // Load demos
@@ -15,9 +99,90 @@ async function init() {
   
   // Set up event listeners
   setupEventListeners();
+  
+  // Mark as online
+  updateConnectionStatus(true);
+  
+  // Show welcome toast
+  showToast('Bun Playground loaded! Press ? for shortcuts', 'success', 5000);
+}
+
+// Keyboard shortcuts
+function setupKeyboardShortcuts() {
+  document.addEventListener('keydown', (e) => {
+    // Ignore if typing in an input
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    
+    switch (e.key) {
+      case '?':
+        e.preventDefault();
+        showShortcutsHelp();
+        break;
+      case '/':
+        e.preventDefault();
+        focusDemoSearch();
+        break;
+      case 'Escape':
+        closeAnyModal();
+        break;
+      case 'r':
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          refreshHeaderState();
+          showToast('Refreshed!', 'success');
+        }
+        break;
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+        const demoIndex = parseInt(e.key) - 1;
+        selectDemoByIndex(demoIndex);
+        break;
+    }
+  });
+}
+
+function showShortcutsHelp() {
+  const help = `
+Keyboard Shortcuts:
+  ? - Show this help
+  / - Focus search
+  1-6 - Select demo
+  Esc - Close/clear
+  Ctrl+R - Refresh data
+  `;
+  alert(help);
+}
+
+function focusDemoSearch() {
+  const search = document.querySelector('.demo-search');
+  if (search) search.focus();
+}
+
+function closeAnyModal() {
+  // Close any open modals or clear selection
+  document.querySelectorAll('.demo-item').forEach(item => item.classList.remove('active'));
+}
+
+function selectDemoByIndex(index) {
+  const items = document.querySelectorAll('.demo-item');
+  if (items[index]) {
+    items[index].click();
+    items[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
 }
 
 async function refreshHeaderState() {
+  // Set skeleton loading state
+  const skeleton = '<span class="skeleton" style="display: inline-block; width: 60px; height: 1em;"></span>';
+  const skeletonLong = '<span class="skeleton" style="display: inline-block; width: 100px; height: 1em;"></span>';
+  document.getElementById('bun-version').innerHTML = skeleton;
+  document.getElementById('bun-revision').innerHTML = skeletonLong;
+  document.getElementById('git-commit-hash').innerHTML = skeletonLong;
+  
   const [infoResult, gateResult, governanceResult] = await Promise.allSettled([
     fetch('/api/info').then(r => r.json()),
     fetch('/api/brand/status').then(r => r.json()),
@@ -31,6 +196,7 @@ async function refreshHeaderState() {
     document.getElementById('git-commit-hash').textContent = `${runtimeInfo.gitCommitHash || 'unset'}`;
     document.getElementById('git-commit-hash-source').textContent = `${runtimeInfo.gitCommitHashSource || 'unknown'}`;
     document.getElementById('platform').textContent = `${runtimeInfo.platform} (${runtimeInfo.arch})`;
+    updateConnectionStatus(true);
   } else {
     console.error('Failed to load Bun info:', infoResult.reason);
     document.getElementById('bun-version').textContent = 'v1.3.9+';
@@ -38,6 +204,8 @@ async function refreshHeaderState() {
     document.getElementById('git-commit-hash').textContent = 'unset';
     document.getElementById('git-commit-hash-source').textContent = 'unknown';
     document.getElementById('platform').textContent = navigator.platform;
+    updateConnectionStatus(false);
+    showToast('Failed to load runtime info', 'error');
   }
 
   if (gateResult.status === 'fulfilled') {
@@ -180,12 +348,17 @@ async function loadDemos() {
   }
 }
 
-function renderDemoList() {
+function renderDemoList(filter = '') {
   const list = document.getElementById('demo-list');
   
   // Group by category
   const categories = {};
   demos.forEach(demo => {
+    // Filter if search term provided
+    if (filter && !demo.name.toLowerCase().includes(filter.toLowerCase()) && 
+        !demo.description.toLowerCase().includes(filter.toLowerCase())) {
+      return;
+    }
     if (!categories[demo.category]) {
       categories[demo.category] = [];
     }
@@ -193,11 +366,22 @@ function renderDemoList() {
   });
   
   let html = '';
+  
+  // Add search input
+  html += `<input type="text" class="demo-search" placeholder="🔍 Search demos... (press / to focus)" oninput="renderDemoList(this.value)">`;
+  
+  // Show count
+  const totalDemos = Object.values(categories).flat().length;
+  if (filter) {
+    html += `<div style="font-size: 0.8em; color: var(--text-secondary); margin-bottom: 10px;">${totalDemos} demo${totalDemos !== 1 ? 's' : ''} found</div>`;
+  }
+  
   Object.entries(categories).forEach(([category, categoryDemos]) => {
-    html += `<div class="category-header">${category}</div>`;
-    categoryDemos.forEach(demo => {
+    html += `<div class="category-header">${category} <span style="opacity: 0.6;">(${categoryDemos.length})</span></div>`;
+    categoryDemos.forEach((demo, idx) => {
+      const shortcut = idx < 6 ? `<kbd>${idx + 1}</kbd>` : '';
       html += `
-        <div class="demo-item" data-id="${demo.id}">
+        <div class="demo-item" data-id="${demo.id}" tabindex="0">
           <h3>${demo.name}</h3>
           <p>${demo.description}</p>
           <div class="category">${demo.category}</div>

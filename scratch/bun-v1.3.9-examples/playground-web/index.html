@@ -5,29 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bun v1.3.9 Playground</title>
   <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/micro-polish.css">
+  <link rel="stylesheet" href="/command-palette.css">
 </head>
 <body>
+  <!-- Theme Toggle -->
+  <button class="theme-toggle" onclick="toggleTheme()" data-tooltip="Toggle theme" id="theme-btn">🌙</button>
+  
+  <!-- Performance Monitor -->
+  <div class="perf-monitor" id="perf-monitor" style="display: none;">
+    <div class="perf-item"><span>FPS:</span><span class="perf-value" id="fps">60</span></div>
+    <div class="perf-item"><span>MEM:</span><span class="perf-value" id="memory">--</span></div>
+    <div class="perf-item"><span>REQ:</span><span class="perf-value" id="req-count">0</span></div>
+  </div>
+  
+  <!-- Mini Dashboard -->
+  <div class="mini-dashboard" id="mini-dash">
+    <button class="mini-dashboard-toggle" onclick="toggleMiniDash()" title="Toggle metrics">📊</button>
+    <div style="font-weight: 600; margin-bottom: 10px; color: var(--accent); font-size: 0.9em;">📊 Pool Metrics</div>
+    <div class="mini-metric"><span>Requests</span><span id="mini-pool">0 / 200</span></div>
+    <div class="mini-metric"><span>Workers</span><span id="mini-workers">0 / 2</span></div>
+    <div class="mini-metric"><span>Port</span><span id="mini-port">3011</span></div>
+    <div class="mini-metric"><span>Uptime</span><span id="mini-uptime">0s</span></div>
+  </div>
+
   <div class="container">
     <header>
       <h1>🚀 Bun v1.3.9 Interactive Playground</h1>
       <p class="subtitle">Explore all the new features and improvements</p>
       <div class="version-info">
-        <span>Bun version: <span id="bun-version">Loading...</span></span>
-        <span>Revision: <span id="bun-revision">Loading...</span></span>
-        <span>Git: <span id="git-commit-hash">Loading...</span></span>
-        <span>Git source: <span id="git-commit-hash-source">Loading...</span></span>
-        <span>Platform: <span id="platform">Loading...</span></span>
+        <span class="version-item" data-copy="bun-version">Bun version: <span id="bun-version" class="copyable">...</span><button class="copy-btn" onclick="copyToClipboard('bun-version')" title="Copy">📋</button></span>
+        <span class="version-item" data-copy="bun-revision">Revision: <span id="bun-revision" class="copyable">...</span><button class="copy-btn" onclick="copyToClipboard('bun-revision')" title="Copy">📋</button></span>
+        <span class="version-item" data-copy="git-commit-hash">Git: <span id="git-commit-hash" class="copyable">...</span><button class="copy-btn" onclick="copyToClipboard('git-commit-hash')" title="Copy">📋</button></span>
+        <span class="version-item">Git source: <span id="git-commit-hash-source">...</span></span>
+        <span class="version-item">Platform: <span id="platform">...</span><span class="status-dot" id="connection-status" title="Connection status"></span></span>
       </div>
-      <p class="subtitle" style="font-size:0.9em;">
+      <p class="subtitle macro-links">
         Macros docs:
-        <a href="https://bun.com/docs/bundler/macros#embed-latest-git-commit-hash:~:text=build%20it%2C%20the-,getGitCommitHash,-is%20replaced%20with" target="_blank" rel="noopener noreferrer" style="color:#00d9ff;">getGitCommitHash macro</a>
+        <a href="https://bun.com/docs/bundler/macros#embed-latest-git-commit-hash:~:text=build%20it%2C%20the-,getGitCommitHash,-is%20replaced%20with" target="_blank" rel="noopener noreferrer">getGitCommitHash macro</a>
         ·
-        <a href="https://bun.com/docs/bundler/macros#embed-latest-git-commit-hash:~:text=process.env.GIT_COMMIT_HASH" target="_blank" rel="noopener noreferrer" style="color:#00d9ff;">process.env.GIT_COMMIT_HASH</a>
+        <a href="https://bun.com/docs/bundler/macros#embed-latest-git-commit-hash:~:text=process.env.GIT_COMMIT_HASH" target="_blank" rel="noopener noreferrer">process.env.GIT_COMMIT_HASH</a>
       </p>
       <div id="header-badges" class="header-badges">
         <span class="badge">Loading control-plane...</span>
       </div>
     </header>
+
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumbs" id="breadcrumbs">
+      <span class="breadcrumb-item" onclick="goHome()">🏠 Playground</span>
+      <span class="breadcrumb-separator">›</span>
+      <span class="breadcrumb-item active" id="breadcrumb-current">Home</span>
+    </nav>
 
     <div class="main-content">
       <aside class="sidebar">
@@ -40,35 +69,39 @@
       <main class="demo-viewer">
         <div id="demo-content" class="demo-content">
           <div class="welcome">
-            <h2>👋 Welcome!</h2>
-            <p>Select a demo from the sidebar to get started.</p>
-            <p style="margin-top: 1rem; font-size: 0.9em; color: #666;">
-              💡 <strong>Tip:</strong> Check out the <a href="https://github.com/brendadeeznuts1111/project-R-score/tree/main/scratch/bun-v1.3.9-examples/advanced" target="_blank" rel="noopener noreferrer" style="color: #0066cc;">advanced patterns</a> for production-ready examples and integration patterns.
-            </p>
-            <div class="features-grid">
-              <div class="feature-card">
-                <h3>📦 Script Orchestration</h3>
-                <p>Parallel & sequential script execution</p>
+            <div class="welcome-hero">
+              <p class="welcome-kicker">Playground Home</p>
+              <h2>Build, test, and validate Bun workflows fast</h2>
+              <p class="welcome-intro">Pick a demo from the sidebar to run live examples with production-oriented defaults.</p>
+              <p class="welcome-tip">
+                Start with <strong>Governance</strong> to validate canonical decision and benchmark status in one call. Need deeper patterns?
+                Browse <a href="https://github.com/brendadeeznuts1111/project-R-score/tree/main/scratch/bun-v1.3.9-examples/advanced" target="_blank" rel="noopener noreferrer">advanced examples</a>.
+              </p>
+            </div>
+            <div class="features-grid" aria-label="Demo categories">
+              <div class="feature-card feature-orchestration">
+                <h3><span class="feature-emoji" aria-hidden="true">📦</span> Script Orchestration</h3>
+                <p>Coordinate parallel and sequential scripts with deterministic output.</p>
               </div>
-              <div class="feature-card">
-                <h3>🔌 Networking</h3>
-                <p>HTTP/2 upgrades & NO_PROXY</p>
+              <div class="feature-card feature-networking">
+                <h3><span class="feature-emoji" aria-hidden="true">🔌</span> Networking</h3>
+                <p>Validate HTTP/2 upgrades and proxy-safe routing behavior.</p>
               </div>
-              <div class="feature-card">
-                <h3>🧪 Testing</h3>
-                <p>Mock auto-cleanup with Symbol.dispose</p>
+              <div class="feature-card feature-testing">
+                <h3><span class="feature-emoji" aria-hidden="true">🧪</span> Testing</h3>
+                <p>Exercise mock lifecycle and cleanup with modern test primitives.</p>
               </div>
-              <div class="feature-card">
-                <h3>⚡ Performance</h3>
-                <p>RegExp JIT, Markdown, String optimizations</p>
+              <div class="feature-card feature-performance">
+                <h3><span class="feature-emoji" aria-hidden="true">⚡</span> Performance</h3>
+                <p>Benchmark hot paths including JIT, markdown, and string operations.</p>
               </div>
-              <div class="feature-card">
-                <h3>📊 Profiling</h3>
-                <p>Configurable CPU profiling intervals</p>
+              <div class="feature-card feature-profiling">
+                <h3><span class="feature-emoji" aria-hidden="true">📊</span> Profiling</h3>
+                <p>Tune CPU profiling cadence and inspect runtime bottlenecks quickly.</p>
               </div>
-              <div class="feature-card">
-                <h3>📦 Build</h3>
-                <p>ESM bytecode compilation</p>
+              <div class="feature-card feature-build">
+                <h3><span class="feature-emoji" aria-hidden="true">🏗️</span> Build</h3>
+                <p>Ship compact bundles with ESM bytecode compilation workflows.</p>
               </div>
             </div>
           </div>
@@ -78,5 +111,41 @@
   </div>
 
   <script type="module" src="/app.js"></script>
+  <script src="/micro-polish.js"></script>
+  <script src="/command-palette.js"></script>
+  <script src="/url-sharing.js"></script>
+  <script>
+    // Direct inline copy function for reliability
+    function copyToClipboard(elementId) {
+      console.log('Inline copy for:', elementId);
+      const el = document.getElementById(elementId);
+      if (!el) { alert('Element not found: ' + elementId); return; }
+      
+      const text = el.textContent?.trim() || '';
+      console.log('Text:', text);
+      
+      if (!text || text === '...' || text.includes('v') && text.length < 3) {
+        alert('Wait for data to load');
+        return;
+      }
+      
+      // Simple copy
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Copied: ' + text);
+      }).catch(() => {
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        alert('Copied: ' + text);
+      });
+    }
+    
+    // Also expose globally
+    window.copyToClipboard = copyToClipboard;
+  </script>
 </body>
 </html>

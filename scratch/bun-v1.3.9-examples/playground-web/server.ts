@@ -569,15 +569,143 @@ const stderr = await proc.stderr.text();`,
     code: `// Check stdin status
 console.log("Is TTY:", process.stdin.isTTY);
 
-// Read from stdin
-const reader = process.stdin.getReader();
-const result = await reader.read();
-reader.releaseLock();
+// Read from stdin using async iterator
+let input = '';
+for await (const chunk of process.stdin) {
+  input += chunk;
+}
+const trimmed = input.trim();
+console.log("Input:", trimmed);`,
+  },
+  {
+    id: "argv-demo",
+    name: "Command-Line Arguments (argv)",
+    description: "Parse command-line arguments with Bun.argv",
+    category: "Process",
+    code: `// Bun.argv contains full command-line
+console.log("Bun.argv:", Bun.argv);
+console.log("Script:", Bun.argv[1]);
+console.log("Arguments:", Bun.argv.slice(2));
 
-if (result.value) {
-  const input = new TextDecoder().decode(result.value).trim();
-  console.log("Input:", input);
+// Parse flags and values
+const args = Bun.argv.slice(2);
+const flags = args.filter(arg => arg.startsWith('--'));
+const values = args.filter(arg => !arg.startsWith('--'));
+
+// Parse key=value pairs
+const parsed: Record<string, string> = {};
+for (const arg of args) {
+  if (arg.includes('=')) {
+    const [key, value] = arg.split('=');
+    parsed[key.replace(/^--/, '')] = value;
+  }
+}
+
+// Using Bun.parseArgs()
+const { values } = Bun.parseArgs({
+  args: args,
+  options: {
+    port: { type: 'string', default: '3000' },
+    verbose: { type: 'boolean', default: false },
+  },
+});`,
+  },
+  {
+    id: "ctrl-c-demo",
+    name: "Handling CTRL+C",
+    description: "Listen for and handle SIGINT signal",
+    category: "Process",
+    code: `let interruptCount = 0;
+
+process.on("SIGINT", () => {
+  interruptCount++;
+  console.log(\`CTRL+C pressed! (count: \${interruptCount})\`);
+  
+  if (interruptCount >= 3) {
+    console.log("Exiting...");
+    process.exit(0);
+  } else {
+    console.log(\`Press \${3 - interruptCount} more time(s) to exit\`);
+  }
+});
+
+// Handle beforeExit and exit
+process.on("beforeExit", () => {
+  console.log("Event loop empty");
+});
+
+process.on("exit", (code) => {
+  console.log(\`Exiting with code: \${code}\`);
+});`,
+  },
+  {
+    id: "signals-demo",
+    name: "OS Signals",
+    description: "Handle SIGTERM, SIGHUP, and other OS signals",
+    category: "Process",
+    code: `// Handle SIGTERM (termination request)
+process.on("SIGTERM", () => {
+  console.log("SIGTERM received");
+  gracefulShutdown();
+});
+
+// Handle SIGHUP (terminal closed)
+process.on("SIGHUP", () => {
+  console.log("SIGHUP received (terminal closed)");
+  gracefulShutdown();
+});
+
+// Handle beforeExit and exit
+process.on("beforeExit", (code) => {
+  console.log(\`beforeExit: code \${code}\`);
+});
+
+process.on("exit", (code) => {
+  console.log(\`exit: code \${code}\`);
+});
+
+function gracefulShutdown() {
+  console.log("Shutting down gracefully...");
+  setTimeout(() => process.exit(0), 500);
 }`,
+  },
+  {
+    id: "spawn-demo",
+    name: "Spawn Child Processes",
+    description: "Spawn processes with Bun.spawn()",
+    category: "Process",
+    code: `// Basic spawn
+const proc1 = Bun.spawn(["echo", "Hello!"]);
+const output1 = await proc1.stdout.text();
+
+// Spawn with options
+const proc2 = Bun.spawn({
+  cmd: ["pwd"],
+  cwd: "/tmp",
+  env: { ...process.env, CUSTOM: "value" },
+});
+
+// Read stdout and stderr
+const proc3 = Bun.spawn({
+  cmd: ["ls", "-la"],
+  stdout: "pipe",
+  stderr: "pipe",
+});
+const [out, err] = await Promise.all([
+  proc3.stdout.text(),
+  proc3.stderr.text(),
+]);
+
+// Exit handling
+const proc4 = Bun.spawn({
+  cmd: ["sleep", "1"],
+  onExit(proc, exitCode) {
+    console.log(\`Exited: \${exitCode}\`);
+  },
+});
+
+// Kill a process
+proc4.kill("SIGTERM");`,
   },
 ];
 
