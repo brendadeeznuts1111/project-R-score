@@ -53,4 +53,32 @@ describe('InstrumentedDomain', () => {
     expect(tensionResources.enhanced).toEqual([]);
     expect(tensionResources.optional.length).toBeGreaterThan(0);
   });
+
+  test('records timing map entries after resource loading', async () => {
+    const domain = new InstrumentedDomain({
+      id: 'timed.example.com',
+      color: '#444444',
+      memory: 512,
+      tension: 0.9,
+    });
+
+    await domain.loadResources();
+    const timings = domain.getTimings();
+    expect(timings.has('core')).toBe(true);
+    expect(timings.has('enhanced')).toBe(true);
+    expect(timings.has('optional')).toBe(true);
+  });
+
+  test('enforces scenario boundaries at threshold edges', async () => {
+    const atBoundary = new InstrumentedDomain({
+      id: 'boundary.example.com',
+      color: '#555555',
+      memory: 256,
+      tension: 0.8,
+    });
+
+    const resources = await atBoundary.loadResources();
+    expect(resources.enhanced.length).toBeGreaterThan(0);
+    expect(resources.optional.length).toBeGreaterThan(0);
+  });
 });
