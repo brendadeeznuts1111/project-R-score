@@ -45,6 +45,9 @@ const FETCH_VERBOSE = parseFetchVerbose(process.env.PLAYGROUND_FETCH_VERBOSE, BA
 const S3_DEFAULT_CONTENT_TYPE = process.env.PLAYGROUND_S3_DEFAULT_CONTENT_TYPE || "application/octet-stream";
 const PROJECT_ROOT = join(import.meta.dir, "..", "..", "..");
 const BRAND_REPORTS_DIR = join(PROJECT_ROOT, "reports", "brand-bench");
+const BRAND_GOVERNANCE_PATH = join(BRAND_REPORTS_DIR, "governance.json");
+const DECISIONS_ROOT = join(PROJECT_ROOT, "docs", "decisions");
+const DECISIONS_INDEX_PATH = join(DECISIONS_ROOT, "index.json");
 let inFlightRequests = 0;
 let activeCommands = 0;
 const commandWaiters: Array<() => void> = [];
@@ -109,8 +112,81 @@ const featureDefinitions: Record<string, FeatureDefinition<unknown>> = {
   },
 };
 
+async function readJsonSafe(path: string): Promise<any | null> {
+  try {
+    const raw = await readFile(path, "utf8");
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function impactFromGates(input: { warn?: string; strict?: string }): "Low" | "Medium" | "High" {
+  if (input.strict === "fail" || input.warn === "fail") return "High";
+  if (input.strict === "warn" || input.warn === "warn") return "Medium";
+  return "Low";
+}
+
+async function readDecisionGovernanceSnapshot(): Promise<{
+  decisionId: string | null;
+  status: "APPROVED" | "REVIEW_REQUIRED" | "REJECTED" | "UNKNOWN";
+  evidenceTierCoverage: string[];
+  hasT1T2: boolean;
+  expiry: string | null;
+  evidenceScore: number | null;
+  digest: string | null;
+  evidencePath: string | null;
+}> {
+  const index = await readJsonSafe(DECISIONS_INDEX_PATH);
+  const first = Array.isArray(index?.decisions) ? index.decisions[0] : null;
+  if (!first?.evidence_path) {
+    return {
+      decisionId: null,
+      status: "UNKNOWN",
+      evidenceTierCoverage: [],
+      hasT1T2: false,
+      expiry: null,
+      evidenceScore: null,
+      digest: null,
+      evidencePath: null,
+    };
+  }
+  const evidencePath = join(DECISIONS_ROOT, String(first.evidence_path));
+  const evidence = await readJsonSafe(evidencePath);
+  const sources = Array.isArray(evidence?.sources) ? evidence.sources : [];
+  const verifiedTiers = Array.from(
+    new Set(
+      sources
+        .filter((source: any) => source?.verified)
+        .map((source: any) => String(source.tier || ""))
+        .filter(Boolean)
+    )
+  ).sort();
+  const hasT1T2 = verifiedTiers.includes("T1") && verifiedTiers.includes("T2");
+
+  return {
+    decisionId: String(evidence?.decision_id || first.decision_id || ""),
+    status: (evidence?.status || first.status || "UNKNOWN") as "APPROVED" | "REVIEW_REQUIRED" | "REJECTED" | "UNKNOWN",
+    evidenceTierCoverage: verifiedTiers,
+    hasT1T2,
+    expiry: evidence?.expiry || null,
+    evidenceScore: Number.isFinite(Number(evidence?.evidence_score)) ? Number(evidence.evidence_score) : null,
+    digest: evidence?.evidence_digest || first.evidence_digest || null,
+    evidencePath,
+  };
+}
+
 // Demo configurations
 const DEMOS = [
+  {
+    id: "governance-status",
+    name: "Governance Status (Canonical)",
+    description: "Read canonical decision and benchmark governance status from repo artifacts",
+    category: "Governance",
+    code: `# Canonical governance status
+curl -s http://localhost:<port>/api/control/governance-status
+`,
+  },
   {
     id: "decision-defense",
     name: "Decision Defense Validator",
@@ -1177,10 +1253,13 @@ const routes = {
   "/api/brand/status": async () => {
     const latestPath = join(BRAND_REPORTS_DIR, "latest.json");
     const baselinePath = join(BRAND_REPORTS_DIR, "pinned-baseline.json");
+    const governancePath = BRAND_GOVERNANCE_PATH;
+    const decisionSnapshot = await readDecisionGovernanceSnapshot();
 
-    const [latestRaw, baselineRaw, warnEval, strictEval] = await Promise.all([
+    const [latestRaw, baselineRaw, governanceJson, warnEval, strictEval] = await Promise.all([
       readFile(latestPath, "utf8").catch(() => null),
       readFile(baselinePath, "utf8").catch(() => null),
+      readJsonSafe(governancePath),
       runCommand(["bun", "run", "scripts/brand-bench-evaluate.ts", "--json"], PROJECT_ROOT),
       runCommand(["bun", "run", "scripts/brand-bench-evaluate.ts", "--json", "--strict"], PROJECT_ROOT),
     ]);
@@ -1199,6 +1278,14 @@ const routes = {
       paths: {
         latestPath,
         baselinePath,
+        governancePath,
+        decisionsIndexPath: DECISIONS_INDEX_PATH,
+      },
+      decision: decisionSnapshot,
+      governance: {
+        mode: governanceJson?.mode || "warn",
+        warnCycle: Number.isFinite(Number(governanceJson?.warnCycle)) ? Number(governanceJson.warnCycle) : 1,
+        warnCyclesTotal: Number.isFinite(Number(governanceJson?.warnCyclesTotal)) ? Number(governanceJson.warnCyclesTotal) : 5,
       },
       latest: latestJson
         ? {
@@ -1221,6 +1308,9 @@ const routes = {
             status: warnEvalJson.status,
             anomalyType: warnEvalJson.anomalyType,
             violations: warnEvalJson.violations?.length ?? 0,
+            gateMode: warnEvalJson.gateMode ?? "warn",
+            warnCycle: warnEvalJson.warnCycle ?? 1,
+            warnCyclesTotal: warnEvalJson.warnCyclesTotal ?? 5,
           }
         : { ok: false, status: "fail", anomalyType: "stable", violations: null, raw: warnEval.output || warnEval.error },
       strictGate: strictEvalJson
@@ -1229,12 +1319,39 @@ const routes = {
             status: strictEvalJson.status,
             anomalyType: strictEvalJson.anomalyType,
             violations: strictEvalJson.violations?.length ?? 0,
+            gateMode: strictEvalJson.gateMode ?? "strict",
+            warnCycle: strictEvalJson.warnCycle ?? 1,
+            warnCyclesTotal: strictEvalJson.warnCyclesTotal ?? 5,
           }
         : { ok: false, status: "fail", anomalyType: "stable", violations: null, raw: strictEval.output || strictEval.error },
+      impact: impactFromGates({
+        warn: warnEvalJson?.status,
+        strict: strictEvalJson?.status,
+      }),
       exits: {
         warn: warnEval.exitCode,
         strict: strictEval.exitCode,
       },
+    };
+  },
+
+  "/api/control/governance-status": async () => {
+    const [brandStatus, decisionSnapshot] = await Promise.all([
+      routes["/api/brand/status"](),
+      readDecisionGovernanceSnapshot(),
+    ]);
+
+    return {
+      generatedAt: new Date().toISOString(),
+      decision: decisionSnapshot,
+      benchmarkGate: {
+        mode: brandStatus.governance?.mode || "warn",
+        warnCycle: brandStatus.governance?.warnCycle || 1,
+        warnCyclesTotal: brandStatus.governance?.warnCyclesTotal || 5,
+        warnStatus: brandStatus.warnGate?.status || "unknown",
+        strictStatus: brandStatus.strictGate?.status || "unknown",
+      },
+      impact: brandStatus.impact || "Low",
     };
   },
 
@@ -1365,6 +1482,17 @@ const routes = {
 
     if (id === "decision-defense") {
       const dashboard = routes["/api/control/decision-defense"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(dashboard, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "governance-status") {
+      const dashboard = await routes["/api/control/governance-status"]();
       return new Response(JSON.stringify({
         success: true,
         output: JSON.stringify(dashboard, null, 2),
@@ -1517,6 +1645,10 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/decision-defense") {
         return jsonResponse(routes["/api/control/decision-defense"]());
+      }
+
+      if (url.pathname === "/api/control/governance-status") {
+        return jsonResponse(await routes["/api/control/governance-status"]());
       }
       
       const demoMatch = url.pathname.match(/^\/api\/demo\/(.+)$/);

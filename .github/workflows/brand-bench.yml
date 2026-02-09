@@ -9,6 +9,8 @@ on:
 jobs:
   brand-bench:
     runs-on: ubuntu-latest
+    env:
+      BRAND_BENCH_STRICT: ${{ vars.BRAND_BENCH_STRICT || '0' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -20,12 +22,28 @@ jobs:
       - name: Install
         run: bun install --frozen-lockfile
 
+      - name: Prepare Artifact Directories
+        run: mkdir -p reports/brand-bench reports/brand-bench/profiles
+
+      - name: Verify Decision Evidence
+        run: bun run decision:evidence:verify > reports/brand-bench/decision-evidence-verify.json
+
       - name: Run Brand Benchmark
         run: bun run brand:bench:run --iterations=3000 --warmup=300
 
       - name: Evaluate Brand Benchmark (warn mode)
-        continue-on-error: true
-        run: bun run brand:bench:evaluate
+        run: bun run brand:bench:evaluate > reports/brand-bench/evaluate-warn.json
+
+      - name: Optional Strict Gate
+        if: ${{ env.BRAND_BENCH_STRICT == '1' }}
+        run: bun run scripts/brand-bench-evaluate.ts --json --strict > reports/brand-bench/evaluate-strict.json
+
+      - name: Summarize Benchmark Gate
+        run: |
+          echo "## Brand Bench Gate" >> "$GITHUB_STEP_SUMMARY"
+          echo "\`\`\`json" >> "$GITHUB_STEP_SUMMARY"
+          cat reports/brand-bench/evaluate-warn.json >> "$GITHUB_STEP_SUMMARY"
+          echo "\`\`\`" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload Brand Bench Artifacts
         uses: actions/upload-artifact@v4
@@ -35,3 +53,4 @@ jobs:
           path: |
             reports/brand-bench/*.json
             reports/brand-bench/profiles/*.cpuprofile
+            docs/decisions/**/*.json

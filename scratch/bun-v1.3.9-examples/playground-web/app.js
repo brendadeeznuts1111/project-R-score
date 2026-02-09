@@ -4,6 +4,7 @@ let currentDemo = null;
 let demos = [];
 let runtimeInfo = null;
 let brandGateSummary = null;
+let governanceSummary = null;
 
 // Initialize
 async function init() {
@@ -17,9 +18,10 @@ async function init() {
 }
 
 async function refreshHeaderState() {
-  const [infoResult, gateResult] = await Promise.allSettled([
+  const [infoResult, gateResult, governanceResult] = await Promise.allSettled([
     fetch('/api/info').then(r => r.json()),
     fetch('/api/brand/status').then(r => r.json()),
+    fetch('/api/control/governance-status').then(r => r.json()),
   ]);
 
   if (infoResult.status === 'fulfilled') {
@@ -37,6 +39,12 @@ async function refreshHeaderState() {
   } else {
     console.error('Failed to load brand gate summary:', gateResult.reason);
     brandGateSummary = null;
+  }
+
+  if (governanceResult.status === 'fulfilled') {
+    governanceSummary = governanceResult.value;
+  } else {
+    governanceSummary = null;
   }
 
   renderHeaderBadges();
@@ -86,6 +94,35 @@ function renderHeaderBadges() {
     badges.push({
       text: `Gate(strict): ${brandGateSummary.strictGate.status}`,
       cls: badgeClassForStatus(brandGateSummary.strictGate.status),
+    });
+  }
+
+  if (governanceSummary?.decision) {
+    badges.push({
+      text: `Decision: ${governanceSummary.decision.status}`,
+      cls: governanceSummary.decision.status === 'APPROVED' ? 'success' : 'warn',
+    });
+    badges.push({
+      text: `Evidence: ${governanceSummary.decision.hasT1T2 ? 'T1+T2' : 'Missing T1/T2'}`,
+      cls: governanceSummary.decision.hasT1T2 ? 'success' : 'error',
+    });
+  }
+
+  if (governanceSummary?.benchmarkGate) {
+    const gate = governanceSummary.benchmarkGate;
+    const modeLabel = gate.mode === 'strict'
+      ? 'STRICT'
+      : `WARN CYCLE ${gate.warnCycle}/${gate.warnCyclesTotal}`;
+    badges.push({
+      text: `Bench Gate: ${modeLabel}`,
+      cls: gate.mode === 'strict' ? 'error' : 'warn',
+    });
+  }
+
+  if (governanceSummary?.impact) {
+    badges.push({
+      text: `Impact: ${governanceSummary.impact}`,
+      cls: governanceSummary.impact === 'Low' ? 'success' : governanceSummary.impact === 'Medium' ? 'warn' : 'error',
     });
   }
 

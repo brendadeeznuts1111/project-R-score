@@ -32,6 +32,7 @@ type EvaluateOptions = {
   json: boolean;
   currentPath: string;
   baselinePath: string;
+  governancePath: string;
 };
 
 function parseArgs(argv: string[]): EvaluateOptions {
@@ -40,8 +41,15 @@ function parseArgs(argv: string[]): EvaluateOptions {
     json: argv.includes('--json'),
     currentPath: resolve(argv.find(a => a.startsWith('--current='))?.split('=')[1] || 'reports/brand-bench/latest.json'),
     baselinePath: resolve(argv.find(a => a.startsWith('--baseline='))?.split('=')[1] || 'reports/brand-bench/pinned-baseline.json'),
+    governancePath: resolve(argv.find(a => a.startsWith('--governance='))?.split('=')[1] || 'reports/brand-bench/governance.json'),
   };
 }
+
+type BenchGovernance = {
+  mode?: 'warn' | 'strict';
+  warnCycle?: number;
+  warnCyclesTotal?: number;
+};
 
 function pctDelta(current: number, baseline: number): number {
   if (!Number.isFinite(baseline) || baseline === 0) return 0;
@@ -102,7 +110,14 @@ function compareMetric(
 export function evaluateBrandBench(
   current: BrandBenchReport,
   baseline: BrandBenchReport,
-  options: { strict: boolean; currentPath: string; baselinePath: string }
+  options: {
+    strict: boolean;
+    currentPath: string;
+    baselinePath: string;
+    gateMode?: 'warn' | 'strict';
+    warnCycle?: number;
+    warnCyclesTotal?: number;
+  }
 ): BrandBenchEvaluation {
   const violations: BrandBenchViolation[] = [];
 
@@ -157,6 +172,9 @@ export function evaluateBrandBench(
   return {
     ok: status !== 'fail' || !options.strict,
     strict: options.strict,
+    gateMode: options.gateMode,
+    warnCycle: options.warnCycle,
+    warnCyclesTotal: options.warnCyclesTotal,
     status,
     anomalyType: anomalyTypeFrom(violations),
     baselinePath: options.baselinePath,
@@ -170,9 +188,20 @@ export function evaluateBrandBench(
 
 async function main(): Promise<void> {
   const options = parseArgs(process.argv.slice(2));
+  let governance: BenchGovernance = {};
 
   let current: BrandBenchReport;
   let baselinePinned: BrandBenchPinnedBaseline;
+  try {
+    governance = JSON.parse(await readFile(options.governancePath, 'utf8')) as BenchGovernance;
+  } catch {
+    governance = {};
+  }
+
+  const strict = options.strict || governance.mode === 'strict';
+  const gateMode: 'warn' | 'strict' = strict ? 'strict' : 'warn';
+  const warnCycle = Number.isFinite(governance.warnCycle) ? Number(governance.warnCycle) : 1;
+  const warnCyclesTotal = Number.isFinite(governance.warnCyclesTotal) ? Number(governance.warnCyclesTotal) : 5;
 
   try {
     current = JSON.parse(await readFile(options.currentPath, 'utf8')) as BrandBenchReport;
@@ -185,7 +214,10 @@ async function main(): Promise<void> {
   } catch {
     const result: BrandBenchEvaluation = {
       ok: true,
-      strict: options.strict,
+      strict,
+      gateMode,
+      warnCycle,
+      warnCyclesTotal,
       status: 'warn',
       anomalyType: 'stable',
       baselinePath: options.baselinePath,
@@ -214,7 +246,10 @@ async function main(): Promise<void> {
   if (!baselinePinned.report) {
     const result: BrandBenchEvaluation = {
       ok: true,
-      strict: options.strict,
+      strict,
+      gateMode,
+      warnCycle,
+      warnCyclesTotal,
       status: 'warn',
       anomalyType: 'stable',
       baselinePath: options.baselinePath,
@@ -241,7 +276,10 @@ async function main(): Promise<void> {
   }
 
   const result = evaluateBrandBench(current, baselinePinned.report, {
-    strict: options.strict,
+    strict,
+    gateMode,
+    warnCycle,
+    warnCyclesTotal,
     currentPath: options.currentPath,
     baselinePath: options.baselinePath,
   });
@@ -252,7 +290,7 @@ async function main(): Promise<void> {
     console.log(`status=${result.status} anomalyType=${result.anomalyType} violations=${result.violations.length}`);
   }
 
-  process.exit(options.strict && result.status === 'fail' ? 1 : 0);
+  process.exit(strict && result.status === 'fail' ? 1 : 0);
 }
 
 if (import.meta.main) {

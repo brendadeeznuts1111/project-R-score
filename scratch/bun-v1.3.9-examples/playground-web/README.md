@@ -70,6 +70,7 @@ curl -s http://localhost:<port>/api/control/protocol-matrix
 curl -s http://localhost:<port>/api/control/protocol-scorecard
 curl -s http://localhost:<port>/api/control/evidence-dashboard
 curl -s http://localhost:<port>/api/control/decision-defense
+curl -s http://localhost:<port>/api/control/governance-status
 curl -s -X POST http://localhost:<port>/api/control/upload-progress \
   -H "content-type: application/json" \
   -d '{"bodyType":"multipart","sizeBytes":1048576,"chunkSize":131072}'
@@ -94,6 +95,7 @@ Evidence governance for architecture decisions:
 - `Council Risk`: review risk level if the claim is wrong (`Low|Medium|High`).
 
 Use `GET /api/control/protocol-scorecard` and inspect `evidenceGovernance.entries` for traceable claim records.
+Use `GET /api/control/governance-status` to view canonical decision status (`APPROVED/REVIEW_REQUIRED`), tier coverage (`T1+T2`), and benchmark gate cycle mode (`WARN n/5` or `STRICT`).
 
 ## ✨ Features
 

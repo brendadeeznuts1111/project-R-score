@@ -55,6 +55,9 @@ export type BrandBenchPinnedBaseline = {
 export type BrandBenchEvaluation = {
   ok: boolean;
   strict: boolean;
+  gateMode?: 'warn' | 'strict';
+  warnCycle?: number;
+  warnCyclesTotal?: number;
   status: BrandBenchStatus;
   anomalyType: 'stable' | 'latency_spike' | 'throughput_drop' | 'memory_increase';
   baselinePath: string;

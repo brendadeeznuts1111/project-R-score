@@ -1,0 +1,21 @@
+{
+  "decision_id": "BUN-UPGRADE-2024-003",
+  "artifacts": [
+    {
+      "type": "benchmark",
+      "path": "reports/brand-bench/latest.json",
+      "required": true
+    },
+    {
+      "type": "benchmark-baseline",
+      "path": "reports/brand-bench/pinned-baseline.json",
+      "required": true
+    },
+    {
+      "type": "profiles",
+      "path": "reports/brand-bench/profiles/",
+      "required": false
+    }
+  ]
+}
+

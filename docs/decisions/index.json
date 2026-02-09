@@ -1,0 +1,10 @@
+{
+  "decisions": [
+    {
+      "decision_id": "BUN-UPGRADE-2024-003",
+      "evidence_path": "BUN-UPGRADE-2024-003/evidence.json",
+      "status": "APPROVED",
+      "evidence_digest": "sha256:c5579178a12cbaebed7614f5f966856d600a473f02bc8486069a458f0293f97d"
+    }
+  ]
+}

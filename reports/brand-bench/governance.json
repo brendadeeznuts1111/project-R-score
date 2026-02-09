@@ -1,0 +1,8 @@
+{
+  "mode": "warn",
+  "warnCycle": 1,
+  "warnCyclesTotal": 5,
+  "strictAfterWarnCycles": true,
+  "notes": "Warn-only during stabilization window. Promote to strict in CI by flag once variance is acceptable."
+}
+
