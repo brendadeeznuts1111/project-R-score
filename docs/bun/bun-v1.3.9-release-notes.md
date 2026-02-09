@@ -270,6 +270,8 @@ netServer.listen(8443);
 Pattern: accept raw TCP on `net.Server`, emit `'connection'` on the H2 server
 to hand off the socket. Previously broken in Bun, now fixed.
 
+Regression coverage in this repo: `tests/http2-net-upgrade.test.ts`.
+
 ## Symbol.dispose support for mock() and spyOn()
 
 `mock()` and `spyOn()` now implement `Symbol.dispose`, enabling the `using`
