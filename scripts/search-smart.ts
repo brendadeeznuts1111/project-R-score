@@ -439,6 +439,7 @@ async function runRipgrep(pattern: string, roots: string[], options: SearchOptio
   args.push(pattern);
   args.push(...roots);
 
+  // 🔒 BUN FIX: Subprocess stdin cleanup edge case fixed (automatic)
   const proc = Bun.spawn(args, {
     stdout: 'pipe',
     stderr: 'ignore',

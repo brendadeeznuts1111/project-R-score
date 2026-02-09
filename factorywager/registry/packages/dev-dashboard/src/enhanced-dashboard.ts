@@ -140,6 +140,12 @@ const server = Bun.serve({
     hmr: process.env.NODE_ENV !== 'production',
     watch: process.env.NODE_ENV !== 'production',
   },
+  /**
+   * WebSocket configuration with Bun security fixes applied
+   * - perMessageDeflate: true (with 128MB decompression limit protection)
+   * - Prevents decompression bomb DoS attacks
+   * @see BUN-SECURITY-FIXES-INTEGRATION.md
+   */
   websocket: {
     data: {} as import('./websocket/manager.ts').WebSocketData,
     message: (ws, message) => wsManager.handleMessage(ws, message),
@@ -149,6 +155,7 @@ const server = Bun.serve({
     drain: (ws) => {
       logger.debug('WebSocket drain event - ready for more data');
     },
+    // Bun Security Fix: 128MB decompression limit prevents DoS attacks
     perMessageDeflate: true,
     idleTimeout: 120,
     maxPayloadLength: 16 * 1024 * 1024,

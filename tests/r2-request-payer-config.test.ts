@@ -11,7 +11,7 @@ const ENV_KEYS = [
 ] as const;
 
 const baselineEnv: Record<string, string | undefined> = Object.fromEntries(
-  ENV_KEYS.map((key) => [key, Bun.env[key]])
+  ENV_KEYS.map(key => [key, Bun.env[key]])
 );
 
 function setBaseR2Env() {
@@ -77,7 +77,8 @@ describe('R2 requestPayer parsing', () => {
     expect(enabledOpts.requestPayer).toBe(true);
 
     const disabled = new ProfileSessionUploader({ requestPayer: false });
-    const disabledOpts = (disabled as unknown as { s3Opts: Record<string, string | boolean> }).s3Opts;
+    const disabledOpts = (disabled as unknown as { s3Opts: Record<string, string | boolean> })
+      .s3Opts;
     expect(disabledOpts.requestPayer).toBeUndefined();
   });
 });

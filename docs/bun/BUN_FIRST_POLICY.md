@@ -133,6 +133,9 @@ Track and enforce these fixes/features in runtime-sensitive codepaths:
   `docs/generated/bun-release-notes/`, not project root.
 - Demo/template runnable files belong in `examples/demos/bun/`, not project
   root.
+- Test artifacts and scratch fixtures belong in `tests/root-artifacts/`.
+- Runtime logs belong in `logs/`.
+- Local telemetry/database artifacts belong in `data/`.
 - Root-level generated artifacts must be moved before merge.
 
 ---

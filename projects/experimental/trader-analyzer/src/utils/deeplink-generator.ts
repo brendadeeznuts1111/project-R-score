@@ -7,6 +7,9 @@
  * Performance Note: Bun automatically uses SIMD-optimized decodeURIComponent for URL parsing
  * @see docs/BUN-SIMD-URI-DECODING.md
  * @see https://github.com/oven-sh/bun/blob/5eb2145b3104f48eadd601518904e56aaa9937bf/src/bun.js/bindings/decodeURIComponentSIMD.cpp#L21-L271
+ *
+ * 🔒 BUN FIX: URLSearchParams.prototype.size is now configurable: true (Web IDL spec compliance)
+ * @see BUN-SECURITY-FIXES-INTEGRATION.md
  */
 
 import type { HyperBunUIContext } from "../services/ui-context-rewriter";
@@ -110,7 +113,7 @@ export class DeepLinkGenerator {
 			);
 		}
 
-		const params = new URLSearchParams();
+		const params = new URLSearchParams(); // Bun Fix: configurable .size property per Web IDL spec
 
 		// Mandatory parameters (RFC 001 Section 3.1 / RFC 9.1.1.9.1.4.0)
 		const alertId = `${alert.event_identifier}-${alert.detection_timestamp}`;

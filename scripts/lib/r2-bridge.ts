@@ -22,10 +22,18 @@ export function resolveR2BridgeConfig(input?: {
   requestPayer?: boolean;
 }): R2BridgeConfig {
   const accountId = Bun.env.R2_ACCOUNT_ID || Bun.env.CLOUDFLARE_ACCOUNT_ID || '';
-  const endpoint =
-    (input?.endpoint || Bun.env.R2_ENDPOINT || (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : '')).trim();
-  const bucket =
-    (input?.bucket || Bun.env.R2_BENCH_BUCKET || Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || '').trim();
+  const endpoint = (
+    input?.endpoint ||
+    Bun.env.R2_ENDPOINT ||
+    (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : '')
+  ).trim();
+  const bucket = (
+    input?.bucket ||
+    Bun.env.R2_BENCH_BUCKET ||
+    Bun.env.R2_BUCKET ||
+    Bun.env.R2_BUCKET_NAME ||
+    ''
+  ).trim();
   const accessKeyId = (input?.accessKeyId || Bun.env.R2_ACCESS_KEY_ID || '').trim();
   const secretAccessKey = (input?.secretAccessKey || Bun.env.R2_SECRET_ACCESS_KEY || '').trim();
   const requestPayer = input?.requestPayer ?? parseTruthyEnv(Bun.env.R2_REQUEST_PAYER);

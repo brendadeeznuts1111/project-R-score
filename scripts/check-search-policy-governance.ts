@@ -9,52 +9,59 @@ type PolicyShape = {
   policyChangeRationale?: Record<string, string>;
 };
 
-function runGit(args: string[]): { code: number; stdout: string } {
-  const proc = Bun.spawnSync(['git', ...args], {
+async function runGit(args: string[]): Promise<{ code: number; stdout: string }> {
+  const proc = Bun.spawn(['git', ...args], {
     cwd: process.cwd(),
     stdout: 'pipe',
     stderr: 'ignore',
   });
+  const stdout = await new Response(proc.stdout).text();
+  const code = await proc.exited;
   return {
-    code: proc.exitCode,
-    stdout: new TextDecoder().decode(proc.stdout).trim(),
+    code,
+    stdout: stdout.trim(),
   };
 }
 
-function resolveDiffRange(): string {
+async function resolveDiffRange(): Promise<string> {
   const baseRef = (Bun.env.GITHUB_BASE_REF || '').trim();
   if (baseRef) {
-    const fetch = runGit(['fetch', 'origin', baseRef, '--depth', '1']);
+    const fetch = await runGit(['fetch', 'origin', baseRef, '--depth', '1']);
     if (fetch.code === 0) {
       return `origin/${baseRef}...HEAD`;
     }
   }
-  const headPrev = runGit(['rev-parse', '--verify', 'HEAD~1']);
+  const headPrev = await runGit(['rev-parse', '--verify', 'HEAD~1']);
   if (headPrev.code === 0) {
     return 'HEAD~1...HEAD';
   }
   return 'HEAD';
 }
 
-function fileListFromDiff(range: string): string[] {
-  const diff = runGit(['diff', '--name-only', range]);
+async function fileListFromDiff(range: string): Promise<string[]> {
+  const diff = await runGit(['diff', '--name-only', range]);
   if (diff.code !== 0 || !diff.stdout) return [];
-  return diff.stdout.split('\n').map((v) => v.trim()).filter(Boolean);
+  return diff.stdout
+    .split('\n')
+    .map(v => v.trim())
+    .filter(Boolean);
 }
 
-function policyThresholdChanged(range: string): boolean {
-  const out = runGit(['diff', '--unified=0', range, '--', '.search/policies.json']);
+async function policyThresholdChanged(range: string): Promise<boolean> {
+  const out = await runGit(['diff', '--unified=0', range, '--', '.search/policies.json']);
   if (out.code !== 0 || !out.stdout) return false;
-  return /scoreThresholdsByQueryPack|strictLatencyP95WarnMs|strictPeakHeapWarnMB|strictPeakRssWarnMB|strictReliabilityFloor|qualityDropWarn|slopRiseWarn|reliabilityDropWarn/.test(out.stdout);
+  return /scoreThresholdsByQueryPack|strictLatencyP95WarnMs|strictPeakHeapWarnMB|strictPeakRssWarnMB|strictReliabilityFloor|qualityDropWarn|slopRiseWarn|reliabilityDropWarn/.test(
+    out.stdout
+  );
 }
 
 async function main(): Promise<void> {
-  const range = resolveDiffRange();
-  const changed = fileListFromDiff(range);
+  const range = await resolveDiffRange();
+  const changed = await fileListFromDiff(range);
   const policyPath = '.search/policies.json';
   const changelogPath = '.search/POLICY_CHANGELOG.md';
   const policyChanged = changed.includes(policyPath);
-  const thresholdChanged = policyChanged && policyThresholdChanged(range);
+  const thresholdChanged = policyChanged && (await policyThresholdChanged(range));
 
   const errors: string[] = [];
 
@@ -74,7 +81,9 @@ async function main(): Promise<void> {
       if (existsSync(resolve(changelogPath))) {
         const log = await readFile(resolve(changelogPath), 'utf8');
         if (raw.policyVersion && !log.includes(String(raw.policyVersion))) {
-          errors.push(`.search/POLICY_CHANGELOG.md must include policyVersion ${raw.policyVersion}`);
+          errors.push(
+            `.search/POLICY_CHANGELOG.md must include policyVersion ${raw.policyVersion}`
+          );
         }
       } else {
         errors.push(`missing ${changelogPath}`);
@@ -83,7 +92,7 @@ async function main(): Promise<void> {
   }
 
   if (thresholdChanged) {
-    const testChanged = changed.some((file) => /^tests\/.*\.test\.ts$/.test(file));
+    const testChanged = changed.some(file => /^tests\/.*\.test\.ts$/.test(file));
     const changelogChanged = changed.includes(changelogPath);
     if (!testChanged) {
       errors.push('threshold policy changed but no test file changed under tests/*.test.ts');

@@ -27,4 +27,20 @@ This is a sample documentation file.
 - Generated release-note docs: `docs/generated/bun-release-notes/`
 - Demo/template outputs location: `examples/demos/bun/`
 
+## Root Hygiene
+
+Allowed root file categories:
+
+- Core project config and manifests (`package.json`, lock/config files,
+  top-level docs like `README.md`)
+- Entrypoints and intentionally user-facing static assets
+
+Everything else should be organized into purpose folders:
+
+- Generated docs/release notes -> `docs/generated/...`
+- Demo/template runnable files -> `examples/demos/...`
+- Test artifact files -> `tests/root-artifacts/`
+- Runtime logs -> `logs/`
+- Local telemetry/db artifacts -> `data/`
+
 For more information, run `bun-docs --help`.

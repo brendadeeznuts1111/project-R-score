@@ -5,7 +5,7 @@ import { serve, redis } from 'bun';
 
 // ==================== TYPES ====================
 type ProxyConfig = {
-  url: string;           // http://proxy.company.com:8080
+  url: string; // http://proxy.company.com:8080
   username?: string;
   password?: string;
   headers?: Record<string, string>;
@@ -42,29 +42,31 @@ function loadProxyDefaults(): { proxy?: ProxyConfig; tls?: TlsConfig } {
   };
   const authHeader = Bun.env.WS_PROXY_AUTHORIZATION?.trim();
   if (authHeader) proxy.headers = { 'Proxy-Authorization': authHeader };
-  const tls: TlsConfig | undefined = envBoolean(Bun.env.WS_TLS_INSECURE) ? { rejectUnauthorized: false } : undefined;
+  const tls: TlsConfig | undefined = envBoolean(Bun.env.WS_TLS_INSECURE)
+    ? { rejectUnauthorized: false }
+    : undefined;
   return { proxy, tls };
 }
 
 // ==================== PROXY WEBSOCKET CLIENT ====================
 class ProxyWebSocketClient {
   private connections = new Map<string, WebSocketConnection>();
-  
+
   /**
    * Connect to WebSocket through HTTP/HTTPS proxy (Bun v1.3.6+)
-   * 
+   *
    * Usage:
    *   // Simple proxy URL
    *   new WebSocket("wss://example.com", { proxy: "http://proxy:8080" });
-   * 
+   *
    *   // With authentication
    *   new WebSocket("wss://example.com", { proxy: "http://user:pass@proxy:8080" });
-   * 
+   *
    *   // Object format with custom headers
    *   new WebSocket("wss://example.com", {
    *     proxy: { url: "http://proxy:8080", headers: { "Proxy-Authorization": "Bearer token" } }
    *   });
-   * 
+   *
    *   // HTTPS proxy with TLS options
    *   new WebSocket("wss://example.com", {
    *     proxy: "https://proxy:8443",
@@ -72,19 +74,19 @@ class ProxyWebSocketClient {
    *   });
    */
   async connect(
-    url: string, 
+    url: string,
     proxy?: ProxyConfig | string,
     protocols?: string | string[],
     tls?: TlsConfig
   ): Promise<WebSocketConnection> {
     const id = `ws_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-    
+
     // Bun v1.3.6+: WebSocket proxy in 2nd parameter (options object)
-    const wsOptions: WebSocketInit & { 
+    const wsOptions: WebSocketInit & {
       proxy?: string | { url: string; headers?: Record<string, string> };
       tls?: Record<string, unknown>;
     } = {};
-    
+
     if (proxy) {
       if (typeof proxy === 'string') {
         // Simple proxy URL string
@@ -100,24 +102,26 @@ class ProxyWebSocketClient {
         }
         wsOptions.proxy = proxy.headers ? { url: proxyUrl, headers: proxy.headers } : proxyUrl;
       }
-      console.log(`🌐 Connecting through proxy: ${typeof wsOptions.proxy === 'string' ? wsOptions.proxy.replace(/:\/\/[^:]+:[^@]+@/, '://***@') : '[configured]'}`);
+      console.log(
+        `🌐 Connecting through proxy: ${typeof wsOptions.proxy === 'string' ? wsOptions.proxy.replace(/:\/\/[^:]+:[^@]+@/, '://***@') : '[configured]'}`
+      );
     }
     if (tls) wsOptions.tls = { ...tls };
-    
+
     // Note: protocols go in the options object too if using proxy
     const ws = new WebSocket(url, protocols ? { ...wsOptions, protocols } : wsOptions);
-    
+
     const conn: WebSocketConnection = {
       id,
       ws,
       proxy,
       connectedAt: new Date().toISOString(),
       messagesSent: 0,
-      messagesReceived: 0
+      messagesReceived: 0,
     };
-    
+
     this.connections.set(id, conn);
-    
+
     // Wait for connection
     await new Promise<void>((resolve, reject) => {
       const cleanup = () => {
@@ -136,16 +140,16 @@ class ProxyWebSocketClient {
         redis.publish('ws:connected', JSON.stringify({ id, url, proxy: !!proxy }));
         resolve();
       };
-      ws.onmessage = (event) => {
+      ws.onmessage = event => {
         conn.messagesReceived++;
         this.handleMessage(id, event.data);
       };
-      ws.onclose = (event) => {
+      ws.onclose = event => {
         console.log(`❌ WebSocket ${id} closed: ${event.code} ${event.reason}`);
         this.connections.delete(id);
         redis.publish('ws:disconnected', JSON.stringify({ id, code: event.code }));
       };
-      ws.onerror = (err) => {
+      ws.onerror = err => {
         clearTimeout(timeout);
         cleanup();
         try {
@@ -156,14 +160,14 @@ class ProxyWebSocketClient {
         reject(err);
       };
     });
-    
+
     return conn;
   }
-  
+
   private handleMessage(connId: string, data: any): void {
     console.log(`📨 ${connId}: ${data.toString().substring(0, 100)}`);
   }
-  
+
   send(connId: string, message: string | object): void {
     const conn = this.connections.get(connId);
     if (conn && conn.ws.readyState === WebSocket.OPEN) {
@@ -172,7 +176,7 @@ class ProxyWebSocketClient {
       conn.messagesSent++;
     }
   }
-  
+
   disconnect(connId: string): void {
     const conn = this.connections.get(connId);
     if (conn) {
@@ -180,7 +184,7 @@ class ProxyWebSocketClient {
       this.connections.delete(connId);
     }
   }
-  
+
   getStats(): object {
     const stats: Record<string, any> = {};
     for (const [id, conn] of this.connections) {
@@ -189,7 +193,7 @@ class ProxyWebSocketClient {
         connectedAt: conn.connectedAt,
         messagesSent: conn.messagesSent,
         messagesReceived: conn.messagesReceived,
-        readyState: conn.ws.readyState
+        readyState: conn.ws.readyState,
       };
     }
     return stats;
@@ -208,27 +212,31 @@ const wss = serve({
     message(ws, message) {
       const data = JSON.parse(message.toString());
       console.log('📥 Server received:', data);
-      
+
       // Echo back
       ws.send(JSON.stringify({ type: 'echo', received: data, timestamp: Date.now() }));
-      
+
       // Broadcast to all
-      ws.publish('broadcast', JSON.stringify({ type: 'broadcast', from: data.clientId, msg: data.msg }));
+      ws.publish(
+        'broadcast',
+        JSON.stringify({ type: 'broadcast', from: data.clientId, msg: data.msg })
+      );
     },
     close(ws, code, reason) {
       console.log('🔌 Client disconnected:', code, reason);
-    }
+    },
   },
   fetch(req, server) {
     const url = new URL(req.url);
-    
+
     if (url.pathname === '/ws') {
       const upgraded = server.upgrade(req);
       if (upgraded) return undefined;
     }
-    
+
     if (url.pathname === '/proxy-demo') {
-      return new Response(`
+      return new Response(
+        `
         <!DOCTYPE html>
         <html>
         <head><title>Bun WebSocket Proxy Demo</title></head>
@@ -249,19 +257,21 @@ const wss = serve({
           </script>
         </body>
         </html>
-      `, { headers: { 'Content-Type': 'text/html' } });
+      `,
+        { headers: { 'Content-Type': 'text/html' } }
+      );
     }
-    
+
     return Response.json({
       service: 'Bun WebSocket Proxy Demo',
       version: '1.3.6',
       endpoints: {
         websocket: '/ws',
         demo: '/proxy-demo',
-        stats: '/stats'
-      }
+        stats: '/stats',
+      },
     });
-  }
+  },
 });
 
 // ==================== DEMO ====================
@@ -311,26 +321,31 @@ Usage:
 
   // Create proxy client
   const client = new ProxyWebSocketClient();
-  
+
   // Test 1: Direct connection (no proxy)
   console.log('\n--- Test 1: Direct Connection ---');
   try {
     const direct = await client.connect('ws://localhost:3006/ws');
     client.send(direct.id, { type: 'test', msg: 'Direct connection works!' });
-    
+
     await new Promise(r => setTimeout(r, 1000));
     client.disconnect(direct.id);
   } catch (err) {
     console.error('Direct connection failed:', err);
   }
-  
+
   // Test 2: Simulated proxy connection (would need actual proxy)
   console.log('\n--- Test 2: Proxy Configuration Demo ---');
   if (defaults.proxy) {
     try {
-      const proxied = await client.connect('ws://localhost:3006/ws', defaults.proxy, undefined, defaults.tls);
+      const proxied = await client.connect(
+        'ws://localhost:3006/ws',
+        defaults.proxy,
+        undefined,
+        defaults.tls
+      );
       client.send(proxied.id, { type: 'test', msg: 'Proxy defaults are configured via env.' });
-      await new Promise((r) => setTimeout(r, 1000));
+      await new Promise(r => setTimeout(r, 1000));
       client.disconnect(proxied.id);
     } catch (err) {
       console.error('Proxy demo connection failed (check WS_PROXY_URL):', err);
@@ -342,7 +357,7 @@ Usage:
     console.log('  export WS_PROXY_PASSWORD="pass"');
     console.log('  export WS_TLS_INSECURE="true"   # optional');
   }
-  
+
   // Show current stats
   console.log('\n--- Connection Stats ---');
   console.log(client.getStats());

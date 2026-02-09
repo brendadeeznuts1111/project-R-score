@@ -1,26 +1,7 @@
 // payment-routing.ts - Payment Splitting, Routing Configuration, and Fallback Plans
 // Handles split payments among multiple barbers, routing rules, and fallback scenarios
 
-import { RedisClient } from 'bun';
-
-// Lazy Redis connection - only connect when needed
-let _redis: ReturnType<typeof RedisClient> | null = null;
-
-function getRedis() {
-  if (!_redis) {
-    const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
-    _redis = RedisClient(REDIS_URL);
-  }
-  return _redis;
-}
-
-// For convenience, export a proxy that lazily connects
-const redis = new Proxy({} as ReturnType<typeof RedisClient>, {
-  get(_target, prop) {
-    const r = getRedis();
-    return (r as Record<string, unknown>)[prop];
-  }
-});
+import { redis } from 'bun';
 
 // ==================== TYPES ====================
 
@@ -713,6 +694,16 @@ export async function getFallbackPlansByRoute(routeId: string): Promise<Fallback
   return plans;
 }
 
+export async function getAllFallbackPlans(): Promise<FallbackPlan[]> {
+  const ids = await redis.smembers(REDIS_KEYS.fallbacksActive);
+  const plans: FallbackPlan[] = [];
+  for (const id of ids) {
+    const plan = await getFallbackPlan(id);
+    if (plan) plans.push(plan);
+  }
+  return plans;
+}
+
 export async function executeFallback(
   planId: string,
   trigger: FallbackTrigger,
@@ -951,6 +942,7 @@ export const PaymentRouting = {
   createFallbackPlan,
   getFallbackPlan,
   getFallbackPlansByRoute,
+  getAllFallbackPlans,
   executeFallback,
   
   // Config operations

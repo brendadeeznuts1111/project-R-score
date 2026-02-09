@@ -1,9 +1,0 @@
-ID,Name,Category,Complexity,Tags,Use Case,Code Type,Ops/sec
-cookie-variant-a,Cookie A/B Testing - Variant A,cookies,simple,ab-testing;variant;cookie;ui;admin,A/B testing UI variants,curl,66576
-r2-upload-profile,R2 Profile Upload,r2,intermediate,r2;upload;storage;cloudflare;json,Object storage upload,r2,634840
-cdn-etag-generation,CDN ETag Generation,cdn,simple,etag;hash;sha256;cdn;crypto,Cache validation and ETag generation,crypto,13233
-subdomain-routing-admin,Subdomain Admin Routing,subdomains,simple,subdomain;routing;host-header;admin;reverse-proxy,Subdomain routing simulation,curl,189970
-junior-runner-post,JuniorRunner Profile POST,profiling,simple,junior-runner;post;markdown;profile;api,Profile data submission,curl,800000
-s3-presign-download,S3 Presign Download URL,s3-presign,advanced,s3;presign;download;attachment;content-disposition,Secure file download URLs,s3,45000
-performance-benchmark,Performance Benchmark Test,performance,intermediate,benchmark;performance;timing;crypto;optimization,Performance testing and optimization,bun-e,1411433
-bulk-operations-parallel,Bulk Operations Parallel,performance,intermediate,bulk;parallel;promise-all;optimization;concurrency,Bulk data processing optimization,bun-e,1454545

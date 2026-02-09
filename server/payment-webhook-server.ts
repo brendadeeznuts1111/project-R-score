@@ -1,10 +1,10 @@
 #!/usr/bin/env bun
 /**
  * Payment Webhook Server
- * 
+ *
  * Full Production Payment Flow:
  * User Pays (@ashschaeffer1) → PayPal/Venmo Webhook → Super-Profile Query → Risk Check → Deposit/Approve!
- * 
+ *
  * Flow:
  * ┌─────────────────┐    Webhook    ┌──────────────┐    Query     ┌──────────────────┐
  * │ User Sends $    │ ─────────────▶│ Bun Server   │ ───────────▶ │ Pinecone/Redis   │
@@ -25,7 +25,7 @@
  *                     │ Deposit $    │ │ Notify User     │ │ Fraud Alert  │
  *                     │ (Payout API) │ │ "Approved!"     │ │ (PubSub)     │
  *                     └──────────────┘ └─────────────────┘ └──────────────┘
- * 
+ *
  * Features:
  * - Optional Fusion: Skips if no prior profile (defaults APPROVE)
  * - Fast: <500ms end-to-end (vector query cached)
@@ -41,7 +41,7 @@ import { Pinecone } from '@pinecone-database/pinecone';
 // Configuration
 // ============================================================================
 
-const PORT = Number(Bun.env.PAYMENT_SERVER_PORT ?? 3001);  // Use 3001 to avoid conflict with main server
+const PORT = Number(Bun.env.PAYMENT_SERVER_PORT ?? 3001); // Use 3001 to avoid conflict with main server
 const REDIS_URL = Bun.env.REDIS_URL ?? 'redis://localhost:6379';
 const PINECONE_API_KEY = Bun.env.PINECONE_API_KEY ?? '';
 const PINECONE_INDEX = Bun.env.PINECONE_INDEX ?? 'super-profiles';
@@ -49,12 +49,13 @@ const PINECONE_DIM = Number(Bun.env.PINECONE_DIM ?? 384);
 
 const PAYPAL_WEBHOOK_SECRET = Bun.env.PAYPAL_WEBHOOK_SECRET ?? '';
 const VENMO_WEBHOOK_SECRET = Bun.env.VENMO_WEBHOOK_SECRET ?? '';
+const VERBOSE = Bun.env.BUN_VERBOSE === '1';
 
 // Risk thresholds
 const RISK_THRESHOLDS = {
-  LOW_SCORE_MIN: 0.95,    // Score must be > 0.95 for auto-approve
-  LOW_DRIFT_MAX: 0.01,    // Drift must be < 0.01 for auto-approve
-  HIGH_DRIFT_MIN: 0.05,   // Drift > 0.05 triggers high risk
+  LOW_SCORE_MIN: 0.95, // Score must be > 0.95 for auto-approve
+  LOW_DRIFT_MAX: 0.01, // Drift must be < 0.01 for auto-approve
+  HIGH_DRIFT_MIN: 0.05, // Drift > 0.05 triggers high risk
 };
 
 // ============================================================================
@@ -84,21 +85,27 @@ export type PaymentResult = {
   timestamp: string;
 };
 
+function vlog(...args: unknown[]): void {
+  if (VERBOSE) console.log(...args);
+}
+
+function jsonResponse(body: unknown, init?: ResponseInit): Response {
+  return Response.json(body, init);
+}
+
 // ============================================================================
 // Redis & Pinecone Setup
 // ============================================================================
 
 const redis = new Redis(REDIS_URL, {
-  retryStrategy: (times) => Math.min(times * 50, 2000),
+  retryStrategy: times => Math.min(times * 50, 2000),
   maxRetriesPerRequest: 3,
 });
 
-redis.on('error', (err) => console.error('Redis error:', err.message));
-redis.on('connect', () => console.log('✅ Redis connected'));
+redis.on('error', err => console.error('Redis error:', err.message));
+redis.on('connect', () => vlog('✅ Redis connected'));
 
-const pc = PINECONE_API_KEY
-  ? new Pinecone({ apiKey: PINECONE_API_KEY })
-  : null;
+const pc = PINECONE_API_KEY ? new Pinecone({ apiKey: PINECONE_API_KEY }) : null;
 const index = pc ? pc.index(PINECONE_INDEX) : null;
 
 if (!pc) {
@@ -116,13 +123,13 @@ function hmacSha256Hex(secret: string, payload: string): string {
 function verifyPayPalWebhook(body: string, headers: Headers): boolean {
   const sig = headers.get('paypal-transmission-sig');
   if (!sig) return false;
-  
+
   // Development fallback: accept when secret is not configured
   if (!PAYPAL_WEBHOOK_SECRET) {
-    console.log('⚠️  PayPal webhook secret not set - accepting (dev mode)');
+    vlog('⚠️  PayPal webhook secret not set - accepting (dev mode)');
     return true;
   }
-  
+
   const expected = hmacSha256Hex(PAYPAL_WEBHOOK_SECRET, body);
   return sig === expected || sig === `v1=${expected}` || sig.startsWith('primary=');
 }
@@ -130,12 +137,12 @@ function verifyPayPalWebhook(body: string, headers: Headers): boolean {
 function verifyVenmoWebhook(body: string, headers: Headers): boolean {
   const sig = headers.get('x-venmo-signature');
   if (!sig) return false;
-  
+
   if (!VENMO_WEBHOOK_SECRET) {
-    console.log('⚠️  Venmo webhook secret not set - accepting (dev mode)');
+    vlog('⚠️  Venmo webhook secret not set - accepting (dev mode)');
     return true;
   }
-  
+
   const expected = hmacSha256Hex(VENMO_WEBHOOK_SECRET, body);
   return sig === expected || sig === `v1=${expected}`;
 }
@@ -146,39 +153,39 @@ function verifyVenmoWebhook(body: string, headers: Headers): boolean {
 
 async function getSuperProfile(userId: string): Promise<SuperProfile | null> {
   if (!index) {
-    console.log(`📭 No Pinecone index - returning null profile for ${userId}`);
+    vlog(`📭 No Pinecone index - returning null profile for ${userId}`);
     return null;
   }
-  
+
   const startTime = performance.now();
-  
+
   try {
     // Use a neutral query vector (in production, use user's actual embedding)
     const vector = new Array(PINECONE_DIM).fill(0.1);
-    
+
     const result = await index.query({
       topK: 1,
       vector,
       filter: { userId },
     });
-    
+
     const match = result.matches?.[0];
     if (!match || !match.metadata) {
-      console.log(`📭 No profile found for ${userId}`);
+      vlog(`📭 No profile found for ${userId}`);
       return null;
     }
-    
-    const meta = match.metadata as any;
+
+    const meta = match.metadata as Record<string, unknown>;
     const profile: SuperProfile = {
       userId: meta.userId ?? userId,
       score: Number(meta.score ?? 0),
       drift: Number(meta.drift ?? 0),
       updatedAt: meta.updatedAt,
     };
-    
+
     const duration = (performance.now() - startTime).toFixed(2);
-    console.log(`✅ Profile query: ${duration}ms | Score: ${profile.score} | Drift: ${profile.drift}`);
-    
+    vlog(`✅ Profile query: ${duration}ms | Score: ${profile.score} | Drift: ${profile.drift}`);
+
     return profile;
   } catch (err: any) {
     console.error(`❌ Profile query failed: ${err.message}`);
@@ -191,31 +198,33 @@ function assessRisk(profile: SuperProfile | null): RiskAssessment {
   if (!profile) {
     return { risk: 'low', reason: 'No profile: auto-approve (optional fusion)' };
   }
-  
+
   // Low risk: high score, low drift
-  if (profile.score > RISK_THRESHOLDS.LOW_SCORE_MIN && 
-      profile.drift < RISK_THRESHOLDS.LOW_DRIFT_MAX) {
-    return { 
-      risk: 'low', 
+  if (
+    profile.score > RISK_THRESHOLDS.LOW_SCORE_MIN &&
+    profile.drift < RISK_THRESHOLDS.LOW_DRIFT_MAX
+  ) {
+    return {
+      risk: 'low',
       reason: 'Super-profile match: high score, low drift',
-      profile 
+      profile,
     };
   }
-  
+
   // High risk: significant drift (possible account takeover)
   if (profile.drift > RISK_THRESHOLDS.HIGH_DRIFT_MIN) {
-    return { 
-      risk: 'high', 
+    return {
+      risk: 'high',
       reason: 'High drift: possible account takeover',
-      profile 
+      profile,
     };
   }
-  
+
   // Medium risk: review needed
-  return { 
-    risk: 'medium', 
+  return {
+    risk: 'medium',
     reason: `Review required: score=${profile.score.toFixed(2)}, drift=${profile.drift.toFixed(4)}`,
-    profile 
+    profile,
   };
 }
 
@@ -225,33 +234,50 @@ function assessRisk(profile: SuperProfile | null): RiskAssessment {
 
 async function deposit(userId: string, amount: number): Promise<void> {
   // TODO: Wire to actual PayPal Payouts API or banking API
-  console.log(`💰 DEPOSIT: $${amount.toFixed(2)} → ${userId}`);
-  
-  await redis.publish('DEPOSIT_SUCCESS', JSON.stringify({
-    userId,
-    amount,
-    timestamp: new Date().toISOString(),
-  }));
+  vlog(`💰 DEPOSIT: $${amount.toFixed(2)} → ${userId}`);
+
+  await redis.publish(
+    'DEPOSIT_SUCCESS',
+    JSON.stringify({
+      userId,
+      amount,
+      timestamp: new Date().toISOString(),
+    })
+  );
 }
 
-async function publishFraudAlert(userId: string, risk: RiskAssessment, amount: number): Promise<void> {
-  console.log(`🚨 FRAUD ALERT: ${userId} - ${risk.reason}`);
-  
-  await redis.publish('FRAUD_ALERT', JSON.stringify({
-    userId,
-    amount,
-    risk,
-    timestamp: new Date().toISOString(),
-  }));
+async function publishFraudAlert(
+  userId: string,
+  risk: RiskAssessment,
+  amount: number
+): Promise<void> {
+  vlog(`🚨 FRAUD ALERT: ${userId} - ${risk.reason}`);
+
+  await redis.publish(
+    'FRAUD_ALERT',
+    JSON.stringify({
+      userId,
+      amount,
+      risk,
+      timestamp: new Date().toISOString(),
+    })
+  );
 }
 
-async function publishProfileFuse(userId: string, status: string, risk: RiskAssessment): Promise<void> {
-  await redis.publish('PROFILE_FUSE', JSON.stringify({
-    userId,
-    status,
-    risk,
-    timestamp: new Date().toISOString(),
-  }));
+async function publishProfileFuse(
+  userId: string,
+  status: string,
+  risk: RiskAssessment
+): Promise<void> {
+  await redis.publish(
+    'PROFILE_FUSE',
+    JSON.stringify({
+      userId,
+      status,
+      risk,
+      timestamp: new Date().toISOString(),
+    })
+  );
 }
 
 // ============================================================================
@@ -259,21 +285,21 @@ async function publishProfileFuse(userId: string, status: string, risk: RiskAsse
 // ============================================================================
 
 async function handlePaymentFlow(
-  userId: string, 
-  amount: number, 
+  userId: string,
+  amount: number,
   source: 'paypal' | 'venmo'
 ): Promise<PaymentResult> {
   const startTime = performance.now();
-  
+
   // Step 1: Fetch super-profile
   const profile = await getSuperProfile(userId);
-  
+
   // Step 2: Risk assessment
   const risk = assessRisk(profile);
-  
+
   // Step 3: Decision
   let result: PaymentResult;
-  
+
   if (risk.risk === 'low') {
     await deposit(userId, amount);
     await publishProfileFuse(userId, 'risk_ok', risk);
@@ -303,10 +329,10 @@ async function handlePaymentFlow(
       timestamp: new Date().toISOString(),
     };
   }
-  
+
   const duration = (performance.now() - startTime).toFixed(2);
-  console.log(`⏱️  Total flow time: ${duration}ms`);
-  
+  vlog(`⏱️  Total flow time: ${duration}ms`);
+
   return result;
 }
 
@@ -314,28 +340,30 @@ async function handlePaymentFlow(
 // Webhook Parsers
 // ============================================================================
 
-function parsePayPalUserId(event: any): string {
-  const email = event?.resource?.payer?.payer_info?.email ?? 
-                event?.resource?.sender_email ?? '';
+function parsePayPalUserId(event: unknown): string {
+  const source = event as Record<string, any>;
+  const email = source?.resource?.payer?.payer_info?.email ?? source?.resource?.sender_email ?? '';
   const handle = email ? `@${email.split('@')[0]}` : '@unknown';
   return handle;
 }
 
-function parsePayPalAmount(event: any): number {
-  const amount = event?.resource?.amount?.total ?? 
-                 event?.resource?.transactions?.[0]?.amount?.total ?? 0;
+function parsePayPalAmount(event: unknown): number {
+  const source = event as Record<string, any>;
+  const amount =
+    source?.resource?.amount?.total ?? source?.resource?.transactions?.[0]?.amount?.total ?? 0;
   return Number(amount);
 }
 
-function parseVenmoUserId(event: any): string {
-  const username = event?.data?.actor?.username ?? 
-                   event?.data?.payment?.actor?.username ?? 'unknown';
+function parseVenmoUserId(event: unknown): string {
+  const source = event as Record<string, any>;
+  const username =
+    source?.data?.actor?.username ?? source?.data?.payment?.actor?.username ?? 'unknown';
   return username.startsWith('@') ? username : `@${username}`;
 }
 
-function parseVenmoAmount(event: any): number {
-  const amount = event?.data?.amount ?? 
-                 event?.data?.payment?.amount ?? 0;
+function parseVenmoAmount(event: unknown): number {
+  const source = event as Record<string, any>;
+  const amount = source?.data?.amount ?? source?.data?.payment?.amount ?? 0;
   // Venmo amounts may be strings like "10.00"
   return typeof amount === 'string' ? parseFloat(amount) : Number(amount);
 }
@@ -349,123 +377,121 @@ const server = Bun.serve({
   async fetch(req) {
     const url = new URL(req.url);
     const path = url.pathname;
-    
+
     // CORS headers
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     };
-    
+
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
-    
+
     // Health check
     if (path === '/health') {
-      return new Response(JSON.stringify({
-        status: 'ok',
-        pinecone: pc ? 'connected' : 'disabled',
-        redis: redis.status === 'ready' ? 'connected' : 'disconnected',
-        timestamp: new Date().toISOString(),
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return jsonResponse(
+        {
+          status: 'ok',
+          pinecone: pc ? 'connected' : 'disabled',
+          redis: redis.status === 'ready' ? 'connected' : 'disconnected',
+          timestamp: new Date().toISOString(),
+        },
+        {
+          headers: corsHeaders,
+        }
+      );
     }
-    
+
     // PayPal webhook
     if (path === '/webhook/paypal' && req.method === 'POST') {
       const body = await req.text();
-      
+
       if (!verifyPayPalWebhook(body, req.headers)) {
         console.error('❌ Invalid PayPal signature');
         return new Response('Invalid signature', { status: 401, headers: corsHeaders });
       }
-      
+
       try {
         const event = JSON.parse(body);
-        console.log(`📬 PayPal event: ${event.event_type}`);
-        
+        vlog(`📬 PayPal event: ${event.event_type}`);
+
         if (event.event_type === 'PAYMENT.SALE.COMPLETED') {
           const userId = parsePayPalUserId(event);
           const amount = parsePayPalAmount(event);
-          
-          console.log(`💳 PayPal payment: ${userId} - $${amount}`);
-          
+
+          vlog(`💳 PayPal payment: ${userId} - $${amount}`);
+
           const result = await handlePaymentFlow(userId, amount, 'paypal');
-          
-          return new Response(JSON.stringify(result), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
+
+          return jsonResponse(result, { headers: corsHeaders });
         }
-        
-        return new Response(JSON.stringify({ received: true }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      } catch (err: any) {
-        console.error('❌ PayPal webhook error:', err.message);
-        return new Response(`Error: ${err.message}`, { status: 400, headers: corsHeaders });
+
+        return jsonResponse({ received: true }, { headers: corsHeaders });
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err);
+        console.error('❌ PayPal webhook error:', message);
+        return new Response(`Error: ${message}`, { status: 400, headers: corsHeaders });
       }
     }
-    
+
     // Venmo webhook
     if (path === '/webhook/venmo' && req.method === 'POST') {
       const body = await req.text();
-      
+
       if (!verifyVenmoWebhook(body, req.headers)) {
         console.error('❌ Invalid Venmo signature');
         return new Response('Invalid signature', { status: 401, headers: corsHeaders });
       }
-      
+
       try {
         const event = JSON.parse(body);
-        console.log(`📬 Venmo event: ${event.type}`);
-        
+        vlog(`📬 Venmo event: ${event.type}`);
+
         if (event.type === 'payment.created') {
           const userId = parseVenmoUserId(event);
           const amount = parseVenmoAmount(event);
-          
-          console.log(`💳 Venmo payment: ${userId} - $${amount}`);
-          
+
+          vlog(`💳 Venmo payment: ${userId} - $${amount}`);
+
           const result = await handlePaymentFlow(userId, amount, 'venmo');
-          
-          return new Response(JSON.stringify(result), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
+
+          return jsonResponse(result, { headers: corsHeaders });
         }
-        
-        return new Response(JSON.stringify({ received: true }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      } catch (err: any) {
-        console.error('❌ Venmo webhook error:', err.message);
-        return new Response(`Error: ${err.message}`, { status: 400, headers: corsHeaders });
+
+        return jsonResponse({ received: true }, { headers: corsHeaders });
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err);
+        console.error('❌ Venmo webhook error:', message);
+        return new Response(`Error: ${message}`, { status: 400, headers: corsHeaders });
       }
     }
-    
+
     // Test endpoint for manual triggering
     if (path === '/test/payment' && req.method === 'POST') {
       try {
         const body = await req.json();
         const { userId, amount, source = 'test' } = body;
-        
+
         if (!userId || !amount) {
           return new Response('Missing userId or amount', { status: 400, headers: corsHeaders });
         }
-        
-        const result = await handlePaymentFlow(userId, Number(amount), source as any);
-        
-        return new Response(JSON.stringify(result, null, 2), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      } catch (err: any) {
-        return new Response(`Error: ${err.message}`, { status: 400, headers: corsHeaders });
+
+        const normalizedSource: 'paypal' | 'venmo' = source === 'venmo' ? 'venmo' : 'paypal';
+        const result = await handlePaymentFlow(userId, Number(amount), normalizedSource);
+
+        return jsonResponse(result, { headers: corsHeaders });
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err);
+        return new Response(`Error: ${message}`, { status: 400, headers: corsHeaders });
       }
     }
-    
+
     // Root endpoint with documentation
     if (path === '/') {
-      return new Response(`
+      return new Response(
+        `
 <!DOCTYPE html>
 <html>
 <head>
@@ -523,9 +549,11 @@ User Pays → Webhook → Bun Server → Pinecone Query → Risk Check → Depos
   </ul>
 </body>
 </html>
-      `, { headers: { ...corsHeaders, 'Content-Type': 'text/html' } });
+      `,
+        { headers: { ...corsHeaders, 'Content-Type': 'text/html' } }
+      );
     }
-    
+
     return new Response('Not found', { status: 404, headers: corsHeaders });
   },
 });
@@ -534,23 +562,25 @@ User Pays → Webhook → Bun Server → Pinecone Query → Risk Check → Depos
 // Startup
 // ============================================================================
 
-console.log('');
-console.log('╔════════════════════════════════════════════════════════════╗');
-console.log('║     🦘 Payment Webhook Server (Bun-Optimized)              ║');
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log(`║  URL:     http://localhost:${PORT}                        ║`);
-console.log(`║  Health:  http://localhost:${PORT}/health                 ║`);
-console.log('╠════════════════════════════════════════════════════════════╣');
-console.log('║  Endpoints:                                                ║');
-console.log(`║    • POST /webhook/paypal                                  ║`);
-console.log(`║    • POST /webhook/venmo                                   ║`);
-console.log(`║    • POST /test/payment                                    ║`);
-console.log('╚════════════════════════════════════════════════════════════╝');
-console.log('');
-console.log('Test with:');
-console.log(`  curl -X POST http://localhost:${PORT}/test/payment \\\`);
-console.log(`    -H "Content-Type: application/json" \\\`);
-console.log(`    -d '{"userId":"@ashschaeffer1","amount":10.00}'`);
-console.log('');
+if (VERBOSE) {
+  console.log('');
+  console.log('╔════════════════════════════════════════════════════════════╗');
+  console.log('║     🦘 Payment Webhook Server (Bun-Optimized)              ║');
+  console.log('╠════════════════════════════════════════════════════════════╣');
+  console.log(`║  URL:     http://localhost:${PORT}                        ║`);
+  console.log(`║  Health:  http://localhost:${PORT}/health                 ║`);
+  console.log('╠════════════════════════════════════════════════════════════╣');
+  console.log('║  Endpoints:                                                ║');
+  console.log(`║    • POST /webhook/paypal                                  ║`);
+  console.log(`║    • POST /webhook/venmo                                   ║`);
+  console.log(`║    • POST /test/payment                                    ║`);
+  console.log('╚════════════════════════════════════════════════════════════╝');
+  console.log('');
+  console.log('Test with:');
+  console.log(`  curl -X POST http://localhost:${PORT}/test/payment \\`);
+  console.log('    -H "Content-Type: application/json" \\');
+  console.log(`    -d '{"userId":"@ashschaeffer1","amount":10.00}'`);
+  console.log('');
+}
 
 export default server;

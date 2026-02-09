@@ -742,7 +742,7 @@ export function renderPaymentRoutingPanel(): string {
                   \${s.recipients.map(r => \`
                     <span class="recipient-chip">
                       \${r.barberName || r.barberId}: 
-                      <span class="recipient-amount">$\${r.splitType === 'percentage' ? r.splitValue + '%' : r.splitValue.toFixed(2)}</span>
+                      <span class="recipient-amount">\${'$'}\${r.splitType === 'percentage' ? r.splitValue + '%' : r.splitValue.toFixed(2)}</span>
                     </span>
                   \`).join('')}
                 </div>

@@ -109,10 +109,12 @@ class AdvancedWebSocketServer extends EventEmitter {
 
   private initializeServer(): void {
     // 🚀 BUN 1.1.X OPTIMIZATION: Native WebSocket server with compression enabled
+    // 🔒 BUN SECURITY FIX: perMessageDeflate now enforces 128MB decompression limit
+    // @see BUN-SECURITY-FIXES-INTEGRATION.md
     this.server = serve({
       port: this.port,
       websocket: {
-        // Enable WebSocket compression (permessage-deflate)
+        // Enable WebSocket compression (permessage-deflate) with 128MB decompression protection
         perMessageDeflate: true,
         maxPayloadLength: 1024 * 1024, // 1MB max payload
         idleTimeout: 300, // 5 minutes

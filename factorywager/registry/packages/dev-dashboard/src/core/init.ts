@@ -57,6 +57,7 @@ export interface DashboardSystems {
 
 /**
  * Load TOML configs using Bun's native TOML.parse API
+ * 🔒 BUN FIX: Bun.TOML.parse now has stack overflow protection for deeply nested structures
  */
 export async function loadConfigs(baseUrl: string): Promise<DashboardConfigs> {
   const configFile = Bun.file(new URL('../config.toml', baseUrl));

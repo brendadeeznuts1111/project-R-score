@@ -18,7 +18,13 @@
 
 import { S3Client } from 'bun';
 import { resolve, basename, join } from 'node:path';
-import { type ProfileType, profileTimestamp, profileR2Key, manifestR2Key, generateSessionId } from '../core/fw-types';
+import {
+  type ProfileType,
+  profileTimestamp,
+  profileR2Key,
+  manifestR2Key,
+  generateSessionId,
+} from '../core/fw-types';
 
 // ==================== Types ====================
 
@@ -81,7 +87,9 @@ function parseTruthyEnv(value?: string): boolean {
  */
 const PROFILE_FILENAME_RE = /^(CPU|Heap)\.(\d+)\.(\d+)\.md$/;
 
-function parseProfileFilename(filename: string): { type: ProfileType; timestamp: string; pid: number } | null {
+function parseProfileFilename(
+  filename: string
+): { type: ProfileType; timestamp: string; pid: number } | null {
   const match = filename.match(PROFILE_FILENAME_RE);
   if (!match) return null;
   return {
@@ -123,7 +131,10 @@ export function resolveUploaderConfig(): ProfileUploaderConfig {
 
   return {
     bucket: Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || Bun.env.S3_BUCKET || undefined,
-    endpoint: Bun.env.R2_ENDPOINT || Bun.env.S3_ENDPOINT || (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : undefined),
+    endpoint:
+      Bun.env.R2_ENDPOINT ||
+      Bun.env.S3_ENDPOINT ||
+      (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : undefined),
     accessKeyId: Bun.env.R2_ACCESS_KEY_ID || Bun.env.S3_ACCESS_KEY_ID || undefined,
     secretAccessKey: Bun.env.R2_SECRET_ACCESS_KEY || Bun.env.S3_SECRET_ACCESS_KEY || undefined,
     requestPayer: parseTruthyEnv(Bun.env.R2_REQUEST_PAYER),
@@ -174,11 +185,13 @@ export class ProfileSessionUploader {
     const parsed = parseProfileFilename(filename);
 
     if (!parsed) {
-      throw new Error(`Not a Bun profile file: ${filename} (expected CPU.{ts}.{pid}.md or Heap.{ts}.{pid}.md)`);
+      throw new Error(
+        `Not a Bun profile file: ${filename} (expected CPU.{ts}.{pid}.md or Heap.{ts}.{pid}.md)`
+      );
     }
 
     const file = Bun.file(absPath);
-    if (!await file.exists()) {
+    if (!(await file.exists())) {
       throw new Error(`Profile file not found: ${absPath}`);
     }
 
@@ -287,7 +300,9 @@ if (import.meta.main) {
   } else {
     console.log(`Uploaded ${entries.length} profile(s):`);
     for (const entry of entries) {
-      console.log(`  ${entry.type.toUpperCase()} ${entry.filename} -> ${entry.r2Key} (${(entry.sizeBytes / 1024).toFixed(1)} KB)`);
+      console.log(
+        `  ${entry.type.toUpperCase()} ${entry.filename} -> ${entry.r2Key} (${(entry.sizeBytes / 1024).toFixed(1)} KB)`
+      );
     }
   }
 }
