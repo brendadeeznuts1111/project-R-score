@@ -2,26 +2,107 @@
 
 let currentDemo = null;
 let demos = [];
+let runtimeInfo = null;
+let brandGateSummary = null;
 
 // Initialize
 async function init() {
-  // Get Bun version info from server
-  try {
-    const response = await fetch('/api/info');
-    const info = await response.json();
-    document.getElementById('bun-version').textContent = `v${info.bunVersion}`;
-    document.getElementById('platform').textContent = `${info.platform} (${info.arch})`;
-  } catch (error) {
-    console.error('Failed to load Bun info:', error);
-    document.getElementById('bun-version').textContent = 'v1.3.9+';
-    document.getElementById('platform').textContent = navigator.platform;
-  }
+  await refreshHeaderState();
   
   // Load demos
   await loadDemos();
   
   // Set up event listeners
   setupEventListeners();
+}
+
+async function refreshHeaderState() {
+  const [infoResult, gateResult] = await Promise.allSettled([
+    fetch('/api/info').then(r => r.json()),
+    fetch('/api/brand/status').then(r => r.json()),
+  ]);
+
+  if (infoResult.status === 'fulfilled') {
+    runtimeInfo = infoResult.value;
+    document.getElementById('bun-version').textContent = `v${runtimeInfo.bunVersion}`;
+    document.getElementById('platform').textContent = `${runtimeInfo.platform} (${runtimeInfo.arch})`;
+  } else {
+    console.error('Failed to load Bun info:', infoResult.reason);
+    document.getElementById('bun-version').textContent = 'v1.3.9+';
+    document.getElementById('platform').textContent = navigator.platform;
+  }
+
+  if (gateResult.status === 'fulfilled') {
+    brandGateSummary = gateResult.value;
+  } else {
+    console.error('Failed to load brand gate summary:', gateResult.reason);
+    brandGateSummary = null;
+  }
+
+  renderHeaderBadges();
+}
+
+function renderHeaderBadges() {
+  const badgesEl = document.getElementById('header-badges');
+  if (!badgesEl) return;
+
+  const badges = [];
+
+  if (runtimeInfo?.runtime) {
+    badges.push({
+      text: `Pool ${runtimeInfo.runtime.maxConcurrentRequests} req`,
+      cls: 'success',
+    });
+    badges.push({
+      text: `Workers ${runtimeInfo.runtime.maxCommandWorkers}`,
+      cls: 'success',
+    });
+    badges.push({
+      text: `Port ${runtimeInfo.runtime.dedicatedPort} (${runtimeInfo.runtime.portRange})`,
+      cls: 'warn',
+    });
+  }
+
+  if (runtimeInfo?.controlPlane) {
+    const cp = runtimeInfo.controlPlane;
+    badges.push({
+      text: `Prefetch ${cp.prefetchEnabled ? 'ON' : 'OFF'}`,
+      cls: cp.prefetchEnabled ? 'success' : 'warn',
+    });
+    badges.push({
+      text: `Preconnect ${cp.preconnectEnabled ? 'ON' : 'OFF'}`,
+      cls: cp.preconnectEnabled ? 'success' : 'warn',
+    });
+  }
+
+  if (brandGateSummary?.warnGate) {
+    badges.push({
+      text: `Gate(warn): ${brandGateSummary.warnGate.status}`,
+      cls: badgeClassForStatus(brandGateSummary.warnGate.status),
+    });
+  }
+
+  if (brandGateSummary?.strictGate) {
+    badges.push({
+      text: `Gate(strict): ${brandGateSummary.strictGate.status}`,
+      cls: badgeClassForStatus(brandGateSummary.strictGate.status),
+    });
+  }
+
+  if (badges.length === 0) {
+    badgesEl.innerHTML = '<span class="badge error">Header telemetry unavailable</span>';
+    return;
+  }
+
+  badgesEl.innerHTML = badges
+    .map(({ text, cls }) => `<span class="badge ${cls}">${escapeHtml(text)}</span>`)
+    .join('');
+}
+
+function badgeClassForStatus(status) {
+  if (status === 'ok') return 'success';
+  if (status === 'warn') return 'warn';
+  return 'error';
 }
 
 async function loadDemos() {
@@ -159,6 +240,9 @@ async function runDemo(id) {
   } finally {
     runBtn.disabled = false;
     runBtn.textContent = '▶ Run Demo';
+    if (id === 'brand-bench-gate' || id === 'control-plane') {
+      await refreshHeaderState();
+    }
   }
 }
 
@@ -198,6 +282,8 @@ async function refreshBrandGateStatus() {
   try {
     const response = await fetch('/api/brand/status');
     const data = await response.json();
+    brandGateSummary = data;
+    renderHeaderBadges();
 
     const lines = [
       `latestRunId: ${data.latest?.runId ?? 'n/a'}`,
@@ -213,6 +299,8 @@ async function refreshBrandGateStatus() {
   } catch (error) {
     statusDiv.className = 'output error';
     statusDiv.textContent = `Failed to load gate status: ${error.message}`;
+    brandGateSummary = null;
+    renderHeaderBadges();
   }
 }
 

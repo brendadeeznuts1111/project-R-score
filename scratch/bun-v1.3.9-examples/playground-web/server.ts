@@ -20,6 +20,14 @@ const PREFETCH_HOSTS = parseList(process.env.PLAYGROUND_PREFETCH_HOSTS);
 const PRECONNECT_URLS = parseList(process.env.PLAYGROUND_PRECONNECT_URLS);
 const SMOKE_TIMEOUT_MS = Number(process.env.PLAYGROUND_SMOKE_TIMEOUT_MS || 2000);
 const SMOKE_URLS = parseList(process.env.PLAYGROUND_SMOKE_URLS);
+const FETCH_TIMEOUT_MS = Number(process.env.PLAYGROUND_FETCH_TIMEOUT_MS || 30000);
+const MAX_BODY_SIZE_MB = Number(process.env.PLAYGROUND_MAX_BODY_SIZE_MB || 10);
+const MAX_BODY_SIZE_BYTES = Math.max(1, Math.floor(MAX_BODY_SIZE_MB * 1024 * 1024));
+const PROXY_DEFAULT = process.env.PLAYGROUND_PROXY_DEFAULT || "";
+const PROXY_AUTH_TOKEN = process.env.PLAYGROUND_PROXY_AUTH_TOKEN || "";
+const STREAM_CHUNK_SIZE = Number(process.env.PLAYGROUND_STREAM_CHUNK_SIZE || 16384);
+const FETCH_DECOMPRESS = parseBool(process.env.PLAYGROUND_FETCH_DECOMPRESS, true);
+const FETCH_VERBOSE = parseFetchVerbose(process.env.PLAYGROUND_FETCH_VERBOSE);
 const PROJECT_ROOT = join(import.meta.dir, "..", "..", "..");
 const BRAND_REPORTS_DIR = join(PROJECT_ROOT, "reports", "brand-bench");
 let inFlightRequests = 0;
@@ -266,15 +274,88 @@ function parseList(value: string | undefined): string[] {
   return value.split(",").map(v => v.trim()).filter(Boolean);
 }
 
+function parseFetchVerbose(value: string | undefined): boolean | "curl" | undefined {
+  if (!value || value === "off" || value === "0" || value.toLowerCase() === "false") return undefined;
+  if (value === "curl") return "curl";
+  if (value === "1" || value.toLowerCase() === "true") return true;
+  return undefined;
+}
+
+function shouldBypassProxy(targetUrl: string): boolean {
+  let host = "";
+  try {
+    host = new URL(targetUrl).hostname.toLowerCase();
+  } catch {
+    return false;
+  }
+  if (host === "localhost" || host === "127.0.0.1" || host === "::1") return true;
+
+  const noProxy = parseList(process.env.NO_PROXY || process.env.no_proxy);
+  return noProxy.some(entry => {
+    const normalized = entry.toLowerCase();
+    if (normalized.startsWith(".")) {
+      return host.endsWith(normalized);
+    }
+    return host === normalized;
+  });
+}
+
 function withTimeoutSignal(timeoutMs: number): AbortSignal {
   return AbortSignal.timeout(timeoutMs);
+}
+
+async function readResponseWithLimit(response: Response, maxBytes: number): Promise<void> {
+  if (!response.body) return;
+  const reader = response.body.getReader();
+  let totalBytes = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    if (!value) continue;
+    // Track bytes with a configurable chunk window to keep accounting predictable.
+    for (let i = 0; i < value.byteLength; i += STREAM_CHUNK_SIZE) {
+      const step = Math.min(STREAM_CHUNK_SIZE, value.byteLength - i);
+      totalBytes += step;
+      if (totalBytes > maxBytes) {
+        reader.cancel();
+        throw new Error(`Response body exceeds limit (${maxBytes} bytes)`);
+      }
+    }
+  }
 }
 
 async function timedFetch(url: string, timeoutMs: number): Promise<{ url: string; ok: boolean; status: number | null; latencyMs: number; error?: string }> {
   const start = performance.now();
   try {
-    const res = await fetch(url, { signal: withTimeoutSignal(timeoutMs), keepalive: true });
-    await res.arrayBuffer();
+    const effectiveTimeoutMs = timeoutMs > 0 ? timeoutMs : FETCH_TIMEOUT_MS;
+    const fetchOptions: RequestInit & {
+      proxy?: string | { url: string; headers?: Record<string, string> };
+      decompress?: boolean;
+      verbose?: boolean | "curl";
+    } = {
+      signal: withTimeoutSignal(effectiveTimeoutMs),
+      keepalive: true,
+      decompress: FETCH_DECOMPRESS,
+    };
+    if (FETCH_VERBOSE !== undefined) {
+      fetchOptions.verbose = FETCH_VERBOSE;
+    }
+
+    const canUseProxy = PROXY_DEFAULT && !shouldBypassProxy(url);
+    if (canUseProxy && PROXY_AUTH_TOKEN) {
+      fetchOptions.proxy = {
+        url: PROXY_DEFAULT,
+        headers: {
+          "Proxy-Authorization": `Bearer ${PROXY_AUTH_TOKEN}`,
+        },
+      };
+    } else if (canUseProxy) {
+      fetchOptions.proxy = PROXY_DEFAULT;
+    }
+
+    const res = await fetch(url, fetchOptions);
+    await readResponseWithLimit(res, MAX_BODY_SIZE_BYTES);
     return {
       url,
       ok: res.ok,
@@ -390,6 +471,13 @@ const routes = {
       preconnectUrls: PRECONNECT_URLS,
       smokeTimeoutMs: SMOKE_TIMEOUT_MS,
       smokeUrls: SMOKE_URLS,
+      fetchTimeoutMs: FETCH_TIMEOUT_MS,
+      fetchDecompress: FETCH_DECOMPRESS,
+      fetchVerbose: FETCH_VERBOSE ?? "off",
+      maxBodySizeMb: MAX_BODY_SIZE_MB,
+      streamChunkSize: STREAM_CHUNK_SIZE,
+      proxyDefaultEnabled: Boolean(PROXY_DEFAULT),
+      proxyAuthConfigured: Boolean(PROXY_AUTH_TOKEN),
     },
   }),
   

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bun v1.3.9 Playground</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🚀 Bun v1.3.9 Interactive Playground</h1>
+      <p class="subtitle">Explore all the new features and improvements</p>
+      <div class="version-info">
+        <span>Bun version: <span id="bun-version">Loading...</span></span>
+        <span>Platform: <span id="platform">Loading...</span></span>
+      </div>
+      <div id="header-badges" class="header-badges">
+        <span class="badge">Loading control-plane...</span>
+      </div>
+    </header>
+
+    <div class="main-content">
+      <aside class="sidebar">
+        <h2>Demos</h2>
+        <div id="demo-list" class="demo-list">
+          <div class="loading">Loading demos...</div>
+        </div>
+      </aside>
+
+      <main class="demo-viewer">
+        <div id="demo-content" class="demo-content">
+          <div class="welcome">
+            <h2>👋 Welcome!</h2>
+            <p>Select a demo from the sidebar to get started.</p>
+            <p style="margin-top: 1rem; font-size: 0.9em; color: #666;">
+              💡 <strong>Tip:</strong> Check out the <a href="../advanced/README.md" target="_blank" style="color: #0066cc;">advanced patterns</a> for production-ready examples and integration patterns.
+            </p>
+            <div class="features-grid">
+              <div class="feature-card">
+                <h3>📦 Script Orchestration</h3>
+                <p>Parallel & sequential script execution</p>
+              </div>
+              <div class="feature-card">
+                <h3>🔌 Networking</h3>
+                <p>HTTP/2 upgrades & NO_PROXY</p>
+              </div>
+              <div class="feature-card">
+                <h3>🧪 Testing</h3>
+                <p>Mock auto-cleanup with Symbol.dispose</p>
+              </div>
+              <div class="feature-card">
+                <h3>⚡ Performance</h3>
+                <p>RegExp JIT, Markdown, String optimizations</p>
+              </div>
+              <div class="feature-card">
+                <h3>📊 Profiling</h3>
+                <p>Configurable CPU profiling intervals</p>
+              </div>
+              <div class="feature-card">
+                <h3>📦 Build</h3>
+                <p>ESM bytecode compilation</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

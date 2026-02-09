@@ -26,6 +26,13 @@ PLAYGROUND_PRECONNECT_ENABLED=0 \
 PLAYGROUND_PREFETCH_HOSTS=api.example.com,r2.example.com \
 PLAYGROUND_PRECONNECT_URLS=https://api.example.com,https://r2.example.com \
 PLAYGROUND_SMOKE_TIMEOUT_MS=2000 \
+PLAYGROUND_FETCH_TIMEOUT_MS=30000 \
+PLAYGROUND_FETCH_DECOMPRESS=true \
+PLAYGROUND_FETCH_VERBOSE=off \
+PLAYGROUND_MAX_BODY_SIZE_MB=10 \
+PLAYGROUND_PROXY_DEFAULT=http://proxy.internal:8080 \
+PLAYGROUND_PROXY_AUTH_TOKEN=secret-token \
+PLAYGROUND_STREAM_CHUNK_SIZE=16384 \
 PLAYGROUND_SMOKE_URLS=http://localhost:3011/api/info,http://localhost:3011/api/brand/status \
 bun start
 ```
@@ -39,6 +46,13 @@ bun start
 - `PLAYGROUND_PREFETCH_HOSTS`: comma-separated hostnames for DNS prefetch
 - `PLAYGROUND_PRECONNECT_URLS`: comma-separated URLs for preconnect
 - `PLAYGROUND_SMOKE_TIMEOUT_MS`: timeout per smoke test request
+- `PLAYGROUND_FETCH_TIMEOUT_MS`: default fetch timeout for control-plane fetches
+- `PLAYGROUND_FETCH_DECOMPRESS`: enable/disable automatic response decompression for smoke fetches
+- `PLAYGROUND_FETCH_VERBOSE`: fetch debug output mode (`off|true|curl`)
+- `PLAYGROUND_MAX_BODY_SIZE_MB`: response body size limit for smoke fetches
+- `PLAYGROUND_PROXY_DEFAULT`: optional default proxy URL for smoke fetches
+- `PLAYGROUND_PROXY_AUTH_TOKEN`: optional proxy auth bearer token
+- `PLAYGROUND_STREAM_CHUNK_SIZE`: byte window used in response size accounting
 - `PLAYGROUND_SMOKE_URLS`: optional explicit smoke URL list (defaults to local info/status APIs)
 
 Smoke endpoint:
