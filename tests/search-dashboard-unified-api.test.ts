@@ -122,6 +122,10 @@ describe('search benchmark dashboard unified status api', () => {
     const hasGate = payload.gate && typeof payload.gate === 'object' && typeof payload.gate.anomalyType === 'string';
     const hasGateError = typeof payload.gateError === 'string' && payload.gateError.length > 0;
     expect(hasGate || hasGateError).toBe(true);
+    expect(payload.branding).toBeTruthy();
+    expect(payload.branding.apexDomain).toBe('factory-wager.com');
+    expect(typeof payload.branding.resolvedSeed).toBe('number');
+    expect(typeof payload.branding.palette.primary).toBe('string');
   });
 
   test('supports dashboard status telemetry source switch', async () => {

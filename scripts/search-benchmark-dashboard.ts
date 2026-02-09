@@ -8167,6 +8167,17 @@ async function main(): Promise<void> {
         }
       }
       if (url.pathname === '/api/latest') {
+        const requestedDomain =
+          (url.searchParams.get('domain') || stateFromCookie?.domain || options.domain || 'factory-wager.com')
+            .trim()
+            .toLowerCase();
+        const hostHeader = String(req.headers.get('host') || '').trim().toLowerCase();
+        const hostForBranding = hostHeader.replace(/:\d+$/, '');
+        const hostLooksLocal =
+          hostForBranding === 'localhost' ||
+          /^(\d{1,3}\.){3}\d{1,3}$/.test(hostForBranding) ||
+          hostForBranding.includes(':');
+        const branding = resolveDomainBranding(hostLooksLocal ? requestedDomain : hostForBranding || requestedDomain);
         const source = url.searchParams.get('source') || 'local';
         if (source === 'r2') {
           const remote = await getCachedRemoteJson('r2:latest', 'latest.json');
@@ -8174,6 +8185,11 @@ async function main(): Promise<void> {
           try {
             const latest = await remote.json() as LatestApiPayload;
             const enriched = await enrichLatestWithGate(latest, 'r2');
+            (enriched as any).branding = {
+              ...branding,
+              requestedDomain,
+              host: hostHeader || null,
+            };
             return jsonResponse(enriched, { source: 'r2' });
           } catch (error) {
             return jsonResponse(
@@ -8199,6 +8215,11 @@ async function main(): Promise<void> {
         try {
           const latest = await Bun.file(latestJson).json() as LatestApiPayload;
           const enriched = await enrichLatestWithGate(latest, 'local');
+          (enriched as any).branding = {
+            ...branding,
+            requestedDomain,
+            host: hostHeader || null,
+          };
           return jsonResponse(enriched, { source: 'local' });
         } catch (error) {
           return jsonResponse(
