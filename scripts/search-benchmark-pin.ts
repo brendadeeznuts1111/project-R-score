@@ -68,7 +68,7 @@ USAGE:
 
 OPTIONS:
   --from <path>       Source snapshot (default: reports/search-benchmark/latest.json)
-  --out <path>        Pinned baseline file (default: reports/search-benchmark/pinned-baseline.json)
+  --out <path>        Pinned baseline file (default: .search/search-benchmark-pinned-baseline.json)
   --baseline <path>   Baseline file for compare (default: --out path)
   --json              Print compare payload as JSON
   --strict            Exit non-zero on regression threshold failures (default: true)
@@ -156,7 +156,7 @@ function parseArgs(argv: string[]): {
   const rest = first === 'pin' || first === 'compare' ? argv.slice(1) : argv;
 
   let fromPath = resolve('reports/search-benchmark/latest.json');
-  let outPath = resolve('reports/search-benchmark/pinned-baseline.json');
+  let outPath = resolve('.search/search-benchmark-pinned-baseline.json');
   let baselinePath = outPath;
   let json = false;
   let strict = true;
