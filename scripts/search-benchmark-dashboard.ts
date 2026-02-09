@@ -4106,6 +4106,13 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
                 '</div>' +
                 '<div style="font-size:12px;color:var(--muted)">Get server status and uptime</div>' +
               '</div>' +
+              '<div style="padding:12px;background:rgba(10,22,43,0.4);border-radius:8px;border-left:3px solid var(--accent)">' +
+                '<div style="display:flex;gap:8px;margin-bottom:4px">' +
+                  '<span class="badge status-good">GET</span>' +
+                  '<code>/api/dashboard/status</code>' +
+                '</div>' +
+                '<div style="font-size:12px;color:var(--muted)">Stable alias for dashboard status</div>' +
+              '</div>' +
               '<div style="padding:12px;background:rgba(10,22,43,0.4);border-radius:8px;border-left:3px solid var(--warning)">' +
                 '<div style="display:flex;gap:8px;margin-bottom:4px">' +
                   '<span class="badge status-warn">GET</span>' +
@@ -7878,7 +7885,7 @@ async function main(): Promise<void> {
           { source: 'mixed' }
         );
       }
-      if (url.pathname === '/api/status') {
+      if (url.pathname === '/api/status' || url.pathname === '/api/dashboard/status') {
         return jsonResponse(
           {
             ok: true,

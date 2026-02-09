@@ -45,8 +45,8 @@ Enterprise infrastructure and developer platform built with **Bun** + **TypeScri
 | 🏠 Repository | [project-R-score](https://github.com/brendadeeznuts1111/project-R-score) |
 | 🌿 Branch | [feat/bun-docs-mcp](https://github.com/brendadeeznuts1111/project-R-score/tree/feat/bun-docs-mcp) |
 | 📖 Docs | [docs/](https://github.com/brendadeeznuts1111/project-R-score/tree/feat/bun-docs-mcp/docs) |
-| 🌐 Website | [factory-wager.com](https://factory-wager.com) |
-| 🔌 API | [api.factory-wager.com](https://api.factory-wager.com) |
+| 🌐 Website | [docs.factory-wager.com](https://docs.factory-wager.com) |
+| 🔌 API Health | [registry.factory-wager.com/health](https://registry.factory-wager.com/health) |
 | 📊 Dashboard | [docs.factory-wager.com](https://docs.factory-wager.com) |
 
 ## 📁 Repository Structure
@@ -107,40 +107,18 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## 🌐 Infrastructure URLs
 
-### Main Services
+### Active Public Endpoints (verified 2026-02-09)
 | Service | URL |
 |---------|-----|
-| 🌐 Website | [factory-wager.com](https://factory-wager.com) |
-| 🔌 API | [api.factory-wager.com](https://api.factory-wager.com) |
 | 📖 Docs | [docs.factory-wager.com](https://docs.factory-wager.com) |
-| 📊 Dashboard | [docs.factory-wager.com](https://docs.factory-wager.com) |
-| 🔧 Admin | [admin.factory-wager.com](https://admin.factory-wager.com) |
-| 📝 Blog | [blog.factory-wager.com](https://blog.factory-wager.com) |
-| 📈 Status | [status.factory-wager.com](https://status.factory-wager.com) |
-
-### CDN Endpoints
-| Region | URL |
-|--------|-----|
-| 🌍 Primary | [cdn.factory-wager.com](https://cdn.factory-wager.com) |
-| 🗂️ Assets | [assets.factory-wager.com](https://assets.factory-wager.com) |
-| 📦 Static | [static.factory-wager.com](https://static.factory-wager.com) |
-| 🎬 Media | [media.factory-wager.com](https://media.factory-wager.com) |
-
-### Regional CDN
-| Region | URL |
-|--------|-----|
-| 🇺🇸 US East | [cdn-us-east.factory-wager.com](https://cdn-us-east.factory-wager.com) |
-| 🇺🇸 US West | [cdn-us-west.factory-wager.com](https://cdn-us-west.factory-wager.com) |
-| 🇪🇺 EU West | [cdn-eu.factory-wager.com](https://cdn-eu.factory-wager.com) |
-| 🌏 Asia Pacific | [cdn-ap.factory-wager.com](https://cdn-ap.factory-wager.com) |
-
-### Platform Services
-| Service | URL |
-|---------|-----|
 | 📦 Registry | [registry.factory-wager.com](https://registry.factory-wager.com) |
-| 📊 Metrics | [monitor.factory-wager.com](https://monitor.factory-wager.com) |
-| 📝 Logs | [logs.factory-wager.com](https://logs.factory-wager.com) |
-| 🔍 Tracing | [tracing.factory-wager.com](https://tracing.factory-wager.com) |
+| 🔌 Registry Health | [registry.factory-wager.com/health](https://registry.factory-wager.com/health) |
+
+### Provisioned / Internal Domains (may return 404 until deployed)
+`factory-wager.com`, `api.factory-wager.com`, `admin.factory-wager.com`, `blog.factory-wager.com`,
+`status.factory-wager.com`, `monitor.factory-wager.com`, `logs.factory-wager.com`, `tracing.factory-wager.com`,
+`cdn.factory-wager.com`, `assets.factory-wager.com`, `static.factory-wager.com`, `media.factory-wager.com`,
+`cdn-us-east.factory-wager.com`, `cdn-us-west.factory-wager.com`, `cdn-eu.factory-wager.com`, `cdn-ap.factory-wager.com`
 
 ---
 

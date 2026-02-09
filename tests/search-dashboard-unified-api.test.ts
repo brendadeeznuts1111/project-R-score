@@ -77,4 +77,24 @@ describe('search benchmark dashboard unified status api', () => {
     const legacyPayload = await legacyRes.json() as any;
     expect(typeof legacyPayload).toBe('object');
   });
+
+  test('supports dashboard status alias route', async () => {
+    const port = 36000 + Math.floor(Math.random() * 1000);
+    const child = Bun.spawn(['bun', 'run', 'scripts/search-benchmark-dashboard.ts', '--port', String(port)], {
+      cwd: process.cwd(),
+      stdout: 'ignore',
+      stderr: 'ignore',
+    });
+    children.push(child);
+
+    await waitFor(`http://127.0.0.1:${port}/healthz`);
+
+    const res = await fetch(`http://127.0.0.1:${port}/api/dashboard/status`, { cache: 'no-store' });
+    expect(res.ok).toBe(true);
+    expect((res.headers.get('x-search-status-source') || '').toLowerCase()).toBe('mixed');
+    const payload = await res.json() as any;
+    expect(payload.ok).toBe(true);
+    expect(payload.service).toBe('search-benchmark-dashboard');
+    expect(payload.mode && typeof payload.mode.cookies === 'boolean').toBe(true);
+  });
 });
