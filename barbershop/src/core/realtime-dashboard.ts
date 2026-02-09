@@ -5277,6 +5277,25 @@ const server = serve({
         return Response.json({ success: true, route });
       }
 
+      // PUT /payment/routes/reorder - Reorder a route's priority
+      if (path === '/payment/routes/reorder' && req.method === 'PUT') {
+        const body = await req.json();
+        const { route_id, new_priority } = body;
+        
+        if (!route_id || typeof new_priority !== 'number') {
+          return Response.json({ 
+            success: false, 
+            error: 'route_id and new_priority are required' 
+          }, { status: 400 });
+        }
+        
+        const route = await updatePaymentRoute(route_id, { priority: new_priority });
+        if (!route) {
+          return Response.json({ success: false, error: 'Route not found' }, { status: 404 });
+        }
+        return Response.json({ success: true, route });
+      }
+
       if (path.startsWith('/payment/routes/') && req.method === 'GET') {
         const id = path.replace('/payment/routes/', '');
         const route = await getPaymentRoute(id);
