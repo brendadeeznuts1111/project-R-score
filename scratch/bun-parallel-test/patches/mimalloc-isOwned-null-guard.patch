@@ -1,0 +1,28 @@
+From: nolarose
+Subject: fix: guard null pointer in Heap.isOwned before calling mi_heap_check_owned
+
+`isOwned` accepts `?*anyopaque` but passes it directly to
+`mi_heap_check_owned`, which is declared as taking `*const anyopaque`
+(non-optional). When `p` is null the raw optional bits are forwarded
+to the C function, which dereferences a guaranteed-non-null pointer —
+undefined behavior.
+
+Return false early for null, unwrap otherwise.
+
+---
+ src/allocators/mimalloc.zig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/allocators/mimalloc.zig b/src/allocators/mimalloc.zig
+index abc1234..def5678 100644
+--- a/src/allocators/mimalloc.zig
++++ b/src/allocators/mimalloc.zig
+@@ -62,7 +62,8 @@ pub const Heap = opaque {
+     }
+
+     pub fn isOwned(self: *Heap, p: ?*anyopaque) bool {
+-        return mi_heap_check_owned(self, p);
++        const ptr = p orelse return false;
++        return mi_heap_check_owned(self, @ptrCast(ptr));
+     }
+ };
