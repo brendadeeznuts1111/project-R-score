@@ -1,6 +1,28 @@
 # 🤝 Contributing to FactoryWager
 
+<div align="center">
+
+[![Bun](https://img.shields.io/badge/⚡%20Bun-bb33ff?style=flat-square)](https://bun.sh)
+[![TypeScript](https://img.shields.io/badge/🔷%20TypeScript-1a8cff?style=flat-square)](https://typescriptlang.org)
+[![License](https://img.shields.io/badge/📜%20License-00e673?style=flat-square)](LICENSE)
+
+</div>
+
 Thank you for your interest in contributing to FactoryWager! This guide will help you get started with contributing to our enterprise platform.
+
+## 🎨 Visual Identity
+
+We use a **bright HSL color system** for all visual elements:
+
+| Color | HSL | Usage |
+|-------|-----|-------|
+| 🔮 Purple | `hsl(280, 100%, 60%)` | Bun Runtime |
+| 🔷 Blue | `hsl(210, 100%, 55%)` | TypeScript |
+| 🍀 Green | `hsl(150, 100%, 45%)` | Real-time Features |
+| 💗 Pink | `hsl(320, 100%, 65%)` | WebSocket |
+| 🔴 Red | `hsl(0, 100%, 60%)` | Security |
+
+See [`.github/HSL-COLOR-SYSTEM.md`](.github/HSL-COLOR-SYSTEM.md) for full specifications.
 
 ## 🚀 Quick Start
 

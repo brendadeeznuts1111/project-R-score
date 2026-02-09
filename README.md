@@ -29,30 +29,87 @@
 
 Enterprise infrastructure and developer platform built with **Bun** + **TypeScript**.
 
+## 📑 Table of Contents
+
+- [Quick Links](#-quick-links)
+- [Repository Structure](#-repository-structure)
+- [Features](#-features)
+- [Documentation](#-documentation)
+- [Contributing](#-contributing)
+- [License](#-license)
+
 ## 🚀 Quick Links
 
-- Repo: [project-R-score](https://github.com/brendadeeznuts1111/project-R-score)
-- Branch: [feat/bun-docs-mcp](https://github.com/brendadeeznuts1111/project-R-score/tree/feat/bun-docs-mcp)
-- README: [README.md](https://github.com/brendadeeznuts1111/project-R-score/blob/feat/bun-docs-mcp/README.md)
-- Docs: [docs/](https://github.com/brendadeeznuts1111/project-R-score/tree/feat/bun-docs-mcp/docs)
-- Main site: [factory-wager.com](https://factory-wager.com)
-- Docs site: [docs.factory-wager.com](https://docs.factory-wager.com)
-- API: [api.factory-wager.com](https://api.factory-wager.com)
-- Dashboard: [dashboard.factory-wager.com](https://dashboard.factory-wager.com)
+| Resource | Link |
+|----------|------|
+| 🏠 Repository | [project-R-score](https://github.com/brendadeeznuts1111/project-R-score) |
+| 🌿 Branch | [feat/bun-docs-mcp](https://github.com/brendadeeznuts1111/project-R-score/tree/feat/bun-docs-mcp) |
+| 📖 Docs | [docs/](https://github.com/brendadeeznuts1111/project-R-score/tree/feat/bun-docs-mcp/docs) |
+| 🌐 Website | [factory-wager.com](https://factory-wager.com) |
+| 🔌 API | [api.factory-wager.com](https://api.factory-wager.com) |
+| 📊 Dashboard | [dashboard.factory-wager.com](https://dashboard.factory-wager.com) |
 
-## Repository
+## 📁 Repository Structure
 
-- Working repository: [project-R-score](https://github.com/brendadeeznuts1111/project-R-score)
-- Active branch: [feat/bun-docs-mcp](https://github.com/brendadeeznuts1111/project-R-score/tree/feat/bun-docs-mcp)
-- README file: [README.md](https://github.com/brendadeeznuts1111/project-R-score/blob/feat/bun-docs-mcp/README.md)
-- Docs folder: [docs/](https://github.com/brendadeeznuts1111/project-R-score/tree/feat/bun-docs-mcp/docs)
-- Upstream repository: [factorywager-enterprise](https://github.com/factorywager/factorywager-enterprise)
+```
+.
+├── 📁 archive/          # Archived projects & data
+├── 📁 assets/           # Static assets (SVG, images)
+├── 📁 config/           # Configuration files
+├── 📁 database/         # Database files (.db)
+├── 📁 data/             # Data exports & JSON files
+├── 📁 docs/             # Documentation (organized by topic)
+│   ├── bun-analysis/    # Bun feature analysis
+│   ├── wiki/            # Wiki documentation
+│   ├── venmo/           # Venmo integration
+│   └── ...
+├── 📁 examples/         # Demo files
+│   └── demos/           # TypeScript demos
+├── 📁 logs/             # Log files
+├── 📁 public/           # Public assets
+│   └── dashboards/      # HTML dashboards
+├── 📁 scripts/          # Utility scripts
+│   └── deploy/          # Deployment scripts
+└── 📁 src/              # Source code
+```
 
-## Primary Domain
+## ✨ Features
 
-- Root: [factory-wager.com](https://factory-wager.com)
+- ⚡ **Bun Runtime** - High-performance JavaScript runtime
+- 🔷 **TypeScript** - Full type safety
+- 🔄 **Real-time** - WebSocket live updates
+- 🔌 **WebSocket** - Bidirectional communication
+- 💳 **Payments** - Multi-gateway payment processing
+- 🔒 **Security** - Hardened security layer
+- 📊 **Analytics** - Real-time data analytics
+- 📈 **Dashboard** - Interactive dashboards
+- 🤖 **MCP** - Model Context Protocol
+- 🔍 **Vectorize** - Vector database integration
 
-## App Subdomains
+## 📚 Documentation
+
+| Topic | Location |
+|-------|----------|
+| 🎨 HSL Color System | [`.github/HSL-COLOR-SYSTEM.md`](.github/HSL-COLOR-SYSTEM.md) |
+| 🔧 Bun Analysis | [`docs/bun-analysis/`](docs/bun-analysis/) |
+| 📖 Contributing | [`docs/contributing/CONTRIBUTING.md`](docs/contributing/CONTRIBUTING.md) |
+| 🔒 Security | [`docs/security/`](docs/security/) |
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](docs/contributing/CONTRIBUTING.md) for details.
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+<div align="center">
+
+**[⬆ Back to Top](#-factorywager)**
+
+</div>
 
 - API: [api.factory-wager.com](https://api.factory-wager.com)
 - Docs: [docs.factory-wager.com](https://docs.factory-wager.com)
