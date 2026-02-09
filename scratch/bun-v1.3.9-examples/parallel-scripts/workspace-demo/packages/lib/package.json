@@ -1,0 +1,9 @@
+{
+  "name": "lib",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "echo '[lib] Building library...' && sleep 1 && echo '[lib] Build complete'",
+    "test": "echo '[lib] Running tests...' && sleep 1 && echo '[lib] Tests passed'",
+    "lint": "echo '[lib] Linting...' && sleep 0.5"
+  }
+}

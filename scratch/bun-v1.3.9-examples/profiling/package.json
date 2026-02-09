@@ -1,0 +1,11 @@
+{
+  "name": "cpu-profiling-demo",
+  "version": "1.0.0",
+  "scripts": {
+    "profile": "bun --cpu-prof cpu-profile-demo.ts",
+    "profile:high-res": "bun --cpu-prof --cpu-prof-interval 500 cpu-profile-demo.ts",
+    "profile:ultra": "bun --cpu-prof --cpu-prof-interval 250 cpu-profile-demo.ts",
+    "compare": "bash profile-compare.sh",
+    "view": "bun x speedscope CPU.*.cpuprofile"
+  }
+}

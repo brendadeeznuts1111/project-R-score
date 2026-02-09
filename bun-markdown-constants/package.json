@@ -9,11 +9,23 @@
     ".": {
       "types": "./src/index.ts",
       "import": "./src/index.ts"
+    },
+    "./types": {
+      "types": "./src/types.ts",
+      "import": "./src/types.ts"
+    },
+    "./utils": {
+      "types": "./src/utils.ts",
+      "import": "./src/utils.ts"
     }
   },
   "scripts": {
     "build": "bun build src/index.ts --outdir dist --target node",
-    "dev": "bun --watch src/index.ts"
+    "dev": "bun --watch src/index.ts",
+    "test": "bun test",
+    "verify": "bun test/verify.ts",
+    "benchmark": "bun benchmark/performance.bench.ts",
+    "demo": "bun demo/demo.ts"
   },
   "keywords": [
     "bun",

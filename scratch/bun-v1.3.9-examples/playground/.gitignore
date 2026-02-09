@@ -1,0 +1,5 @@
+*.pem
+demo-package.json
+example-esm.ts
+*.cpuprofile
+dist/

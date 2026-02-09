@@ -1,0 +1,11 @@
+{
+  "name": "bun-v1.3.9-benchmarks",
+  "version": "1.0.0",
+  "description": "Performance benchmarks for Bun v1.3.9",
+  "scripts": {
+    "regex": "bun run regex-jit-benchmark.ts",
+    "markdown": "bun run markdown-performance.ts",
+    "string": "bun run string-optimizations.ts",
+    "all": "bun run --parallel regex markdown string"
+  }
+}

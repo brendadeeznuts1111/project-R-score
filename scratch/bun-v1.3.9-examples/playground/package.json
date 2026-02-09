@@ -1,0 +1,18 @@
+{
+  "name": "bun-v1.3.9-playground",
+  "version": "1.0.0",
+  "description": "Interactive playground showcasing all Bun v1.3.9 features",
+  "type": "module",
+  "scripts": {
+    "start": "bun run playground.ts",
+    "menu": "bun run playground.ts",
+    "all": "bun run --parallel demo:parallel demo:http2 demo:mocks demo:proxy demo:profiling demo:bytecode demo:performance",
+    "demo:parallel": "bun run demos/parallel-scripts.ts",
+    "demo:http2": "bun run demos/http2-upgrade.ts",
+    "demo:mocks": "bun run demos/mock-dispose.ts",
+    "demo:proxy": "bun run demos/no-proxy.ts",
+    "demo:profiling": "bun run demos/cpu-profiling.ts",
+    "demo:bytecode": "bun run demos/esm-bytecode.ts",
+    "demo:performance": "bun run demos/performance.ts"
+  }
+}

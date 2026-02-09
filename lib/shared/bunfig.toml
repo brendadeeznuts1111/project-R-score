@@ -1,0 +1,10 @@
+[install.scopes]
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
+
+[install]
+exact = true
+registry = "https://registry.factory-wager.com"
+
+[publish]
+registry = "https://registry.factory-wager.com"

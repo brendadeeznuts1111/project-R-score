@@ -1,0 +1,17 @@
+{
+  "name": "parallel-scripts-demo",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "echo 'Building...' && sleep 1 && echo 'Build complete'",
+    "test": "echo 'Running tests...' && sleep 1 && echo 'Tests passed'",
+    "lint": "echo 'Linting...' && sleep 0.5 && echo 'Lint complete'",
+    "typecheck": "echo 'Type checking...' && sleep 0.5 && echo 'Type check complete'",
+    "build:client": "echo '[client] Building client...' && sleep 1",
+    "build:server": "echo '[server] Building server...' && sleep 1",
+    "build:shared": "echo '[shared] Building shared...' && sleep 0.5",
+    "prebuild": "echo 'Pre-build hook'",
+    "postbuild": "echo 'Post-build hook'",
+    "dev": "echo 'Starting dev server...' && sleep 2",
+    "watch": "echo 'Watching files...' && sleep 2"
+  }
+}

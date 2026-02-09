@@ -927,3 +927,54 @@ export function memoryStressTest() {
   
   return { avgMemory, maxMemory, minMemory, results };
 }
+
+// ============================================================================
+// EXPORTS - Types and Utilities
+// ============================================================================
+
+// Re-export types
+export type {
+  MarkdownOptions,
+  HtmlRendererOptions,
+  ReactRendererOptions,
+  HeadingRenderer,
+  ParagraphRenderer,
+  LinkRenderer,
+  CodeRenderer,
+  CodeSpanRenderer,
+  StrongRenderer,
+  EmphasisRenderer,
+  HtmlRendererCollection,
+  Cache,
+  CacheStats,
+  LruCacheEntry,
+  BenchmarkResult,
+  BenchmarkSuite,
+  MemoryMeasurement,
+  ValidationResult,
+  SecurityScanResult,
+  MarkdownConfig,
+  PresetConfig,
+} from './types';
+
+// Re-export utilities
+export {
+  validateMarkdown,
+  securityScan,
+  extractText,
+  countWords,
+  estimateReadingTime,
+  truncateMarkdown,
+  calculateCacheStats,
+  hashContent,
+  debounce,
+  throttle,
+  measureTime,
+  withRetry,
+  escapeRegExp,
+  slugify,
+  stripHtml,
+} from './utils';
+
+// Re-export errors
+export { MarkdownParseError, MarkdownSecurityError } from './types';

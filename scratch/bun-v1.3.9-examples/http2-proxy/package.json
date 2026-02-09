@@ -1,0 +1,13 @@
+{
+  "name": "http2-proxy-demo",
+  "version": "1.0.0",
+  "scripts": {
+    "h2:direct": "bun run http2-server.ts direct",
+    "h2:upgrade": "bun run http2-server.ts upgrade",
+    "h2:health": "bun run http2-server.ts health",
+    "no-proxy": "bun run no-proxy-demo.ts",
+    "no-proxy:live": "bun run no-proxy-demo.ts --live",
+    "test:h2": "curl -k --http2 https://localhost:8443/ 2>/dev/null || echo 'Server not running'",
+    "gen:certs": "openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes -subj '/CN=localhost'"
+  }
+}

@@ -10,7 +10,7 @@ console.log("🧪 Quick Entry Guard Test\n");
 
 // Test that the shared entry guard utility works
 try {
-  const { isDirectExecution, ensureDirectExecution } = await import("../shared/tools/entry-guard.ts");
+  const { isDirectExecution, ensureDirectExecution } = await import("../lib/shared/tools/entry-guard.ts");
   
   console.log("✅ Entry guard utility imports successfully");
   
