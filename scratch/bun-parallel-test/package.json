@@ -17,6 +17,10 @@
     "test": "bun run test-runner.ts",
     "slow": "bun run slow.ts",
     "fail": "bun run fail.ts",
-    "env-check": "bun run env-check.ts"
+    "env-check": "bun run env-check.ts",
+    "dev": "bun run --parallel server client database",
+    "server": "echo '[server] Starting API server...' && sleep 1 && echo '[server] Listening on :3000'",
+    "client": "echo '[client] Starting dev server...' && sleep 0.8 && echo '[client] Ready on :5173'",
+    "database": "echo '[database] Starting DB...' && sleep 0.5 && echo '[database] Connected'"
   }
 }

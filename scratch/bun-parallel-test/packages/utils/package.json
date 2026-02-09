@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "build": "echo '[@test/utils] Building utils...' && sleep 0.3 && echo '[@test/utils] Build done'",
-    "test": "echo '[@test/utils] Testing utils...' && sleep 0.3 && echo '[@test/utils] Tests passed'"
+    "test": "echo '[@test/utils] Testing utils...' && sleep 0.3 && echo '[@test/utils] Tests passed'",
+    "ci": "echo '[@test/utils] CI: build+test...' && sleep 0.4 && echo '[@test/utils] CI passed'",
+    "deploy:prod": "echo '[@test/utils] Deploying to prod...' && sleep 0.5 && echo '[@test/utils] Deployed'"
   }
 }

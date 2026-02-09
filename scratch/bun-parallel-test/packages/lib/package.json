@@ -4,6 +4,8 @@
   "scripts": {
     "build": "echo '[@test/lib] Building lib...' && sleep 0.6 && echo '[@test/lib] Build done'",
     "lint": "echo '[@test/lib] Linting lib...' && sleep 0.2 && echo '[@test/lib] Lint clean'",
-    "test": "echo '[@test/lib] Testing lib...' && sleep 0.5 && echo '[@test/lib] Tests passed'"
+    "test": "echo '[@test/lib] Testing lib...' && sleep 0.5 && echo '[@test/lib] Tests passed'",
+    "ci": "echo '[@test/lib] CI: build+lint+test...' && sleep 0.5 && echo '[@test/lib] CI passed'",
+    "deploy:prod": "echo '[@test/lib] Deploying to prod...' && sleep 0.6 && echo '[@test/lib] Deployed'"
   }
 }
