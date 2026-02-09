@@ -77,6 +77,11 @@ curl -s -X POST http://localhost:<port>/api/control/s3-content-type-batch \
   -d '{"keys":["app.js","styles.css","readme.md","archive.bin"]}'
 ```
 
+Scorecard rationale highlights:
+- Unix sockets are preferred for sub-1KB same-host IPC due to low overhead and strong local boundary controls.
+- Blob-based tiny payload paths benefit from Bun v1.3.9 small-buffer runtime optimizations.
+- HTTPS over HTTP/2 reduces tiny-request overhead via multiplexed connection reuse.
+
 ## ✨ Features
 
 - 🎨 **Modern UI** - Beautiful, responsive design

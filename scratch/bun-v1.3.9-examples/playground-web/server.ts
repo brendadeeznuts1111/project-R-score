@@ -729,6 +729,12 @@ function getProtocolScorecard() {
       "Use data/blob only for short-lived utility payloads.",
       "Use plain HTTP only in trusted internal boundaries.",
     ],
+    rationale: {
+      sub1kbUnix: "Unix sockets are strong for sub-1KB IPC due to minimal network stack overhead and local socket-path security boundaries.",
+      sub1kbBlob: "Blob-backed small payload handling benefits from Bun v1.3.9 runtime optimizations, making short-lived in-memory exchanges efficient.",
+      sub1kbHttps: "HTTP/2 multiplexing reduces per-request overhead for tiny HTTPS payloads by reusing a single encrypted connection.",
+      governance: "Capturing the why alongside scorecard values reduces ambiguity and helps teams align on tradeoffs during reviews.",
+    },
   };
 }
 
