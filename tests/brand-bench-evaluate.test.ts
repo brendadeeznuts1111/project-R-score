@@ -64,8 +64,16 @@ describe('brand bench evaluate', () => {
 
     expect(result.status).toBe('ok');
     expect(result.anomalyType).toBe('stable');
-    expect(result.violations).toHaveLength(0);
-    expect(result.gateMode).toBe('warn');
+    expect(Bun.deepEquals(result.violations, [], true)).toBe(true);
+    expect(Bun.deepEquals(
+      {
+        gateMode: result.gateMode,
+        warnCycle: result.warnCycle,
+        warnCyclesTotal: result.warnCyclesTotal,
+      },
+      { gateMode: 'warn', warnCycle: 1, warnCyclesTotal: 5 },
+      true
+    )).toBe(true);
   });
 
   test('warn mode reports warn but keeps ok true', () => {
@@ -96,7 +104,11 @@ describe('brand bench evaluate', () => {
     expect(result.status).toBe('warn');
     expect(result.ok).toBe(true);
     expect(result.anomalyType).toBe('latency_spike');
-    expect(result.warnCycle).toBe(2);
+    expect(Bun.deepEquals(
+      { gateMode: result.gateMode, warnCycle: result.warnCycle, warnCyclesTotal: result.warnCyclesTotal },
+      { gateMode: 'warn', warnCycle: 2, warnCyclesTotal: 5 },
+      true
+    )).toBe(true);
   });
 
   test('strict mode fail remains non-ok', () => {
@@ -124,6 +136,10 @@ describe('brand bench evaluate', () => {
     expect(result.status).toBe('fail');
     expect(result.ok).toBe(false);
     expect(result.anomalyType).toBe('throughput_drop');
-    expect(result.gateMode).toBe('strict');
+    expect(Bun.deepEquals(
+      { gateMode: result.gateMode, warnCycle: result.warnCycle, warnCyclesTotal: result.warnCyclesTotal },
+      { gateMode: 'strict', warnCycle: 5, warnCyclesTotal: 5 },
+      true
+    )).toBe(true);
   });
 });

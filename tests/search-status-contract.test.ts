@@ -46,7 +46,11 @@ describe('search status contract checker', () => {
       loopStatusPath: join(dir, 'reports', 'search-loop-status-latest.json'),
       rssPath: join(dir, 'reports', 'search-benchmark', 'rss.xml'),
     });
-    expect(result.ok).toBe(true);
+    expect(Bun.deepEquals(
+      { ok: result.ok, checksLen: result.checks.length > 0 },
+      { ok: true, checksLen: true },
+      true
+    )).toBe(true);
     expect(result.checks.every((c) => c.status === 'ok')).toBe(true);
   });
 
@@ -63,9 +67,12 @@ describe('search status contract checker', () => {
       loopStatusPath: join(dir, 'reports', 'search-loop-status-latest.json'),
       rssPath: join(dir, 'reports', 'search-benchmark', 'rss.xml'),
     });
-    expect(result.ok).toBe(false);
+    expect(Bun.deepEquals({ ok: result.ok }, { ok: false }, true)).toBe(true);
     const idCheck = result.checks.find((c) => c.id === 'latest_loop_id_alignment');
-    expect(idCheck?.ok).toBe(false);
-    expect(idCheck?.status).toBe('fail');
+    expect(Bun.deepEquals(
+      { ok: idCheck?.ok, status: idCheck?.status },
+      { ok: false, status: 'fail' },
+      true
+    )).toBe(true);
   });
 });

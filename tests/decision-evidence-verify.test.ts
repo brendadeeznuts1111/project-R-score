@@ -72,7 +72,23 @@ describe('decision evidence verify', () => {
 
     const result = await verifyDecisionEvidence({ root, json: true });
     expect(result.ok).toBe(true);
-    expect(result.results[0]?.valid).toBe(true);
+    expect(Bun.deepEquals(
+      {
+        valid: result.results[0]?.valid,
+        hasT1: result.results[0]?.hasT1,
+        hasT2: result.results[0]?.hasT2,
+        statusDeclared: result.results[0]?.statusDeclared,
+        statusExpected: result.results[0]?.statusExpected,
+      },
+      {
+        valid: true,
+        hasT1: true,
+        hasT2: true,
+        statusDeclared: 'APPROVED',
+        statusExpected: 'APPROVED',
+      },
+      true
+    )).toBe(true);
   });
 
   test('fails for digest mismatch and expired approved status', async () => {
@@ -119,7 +135,14 @@ describe('decision evidence verify', () => {
 
     const result = await verifyDecisionEvidence({ root, json: true });
     expect(result.ok).toBe(false);
-    expect(result.results[0]?.errors.some((err) => err.includes('digest mismatch'))).toBe(true);
-    expect(result.results[0]?.errors.some((err) => err.includes('status mismatch'))).toBe(true);
+    const errors = result.results[0]?.errors || [];
+    expect(Bun.deepEquals(
+      {
+        hasDigestMismatch: errors.some((err) => err.includes('digest mismatch')),
+        hasStatusMismatch: errors.some((err) => err.includes('status mismatch')),
+      },
+      { hasDigestMismatch: true, hasStatusMismatch: true },
+      true
+    )).toBe(true);
   });
 });
