@@ -123,4 +123,23 @@ describe('search benchmark dashboard unified status api', () => {
     const hasGateError = typeof payload.gateError === 'string' && payload.gateError.length > 0;
     expect(hasGate || hasGateError).toBe(true);
   });
+
+  test('supports dashboard status telemetry source switch', async () => {
+    const port = 38000 + Math.floor(Math.random() * 1000);
+    const child = Bun.spawn(['bun', 'run', 'scripts/search-benchmark-dashboard.ts', '--port', String(port)], {
+      cwd: process.cwd(),
+      stdout: 'ignore',
+      stderr: 'ignore',
+    });
+    children.push(child);
+
+    await waitFor(`http://127.0.0.1:${port}/healthz`);
+
+    const res = await fetch(`http://127.0.0.1:${port}/api/dashboard/status?source=r2`, { cache: 'no-store' });
+    expect(res.ok).toBe(true);
+    const payload = await res.json() as any;
+    expect(payload.telemetry && payload.telemetry.benchmarkGate).toBeTruthy();
+    expect(payload.telemetry.benchmarkGate.source).toBe('r2');
+    expect(typeof payload.telemetry.benchmarkGate.available).toBe('boolean');
+  });
 });

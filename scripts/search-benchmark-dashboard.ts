@@ -3288,6 +3288,20 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       rss: 'n/a',
       rssMeta: 'not loaded',
       unifiedStatus: 'unknown',
+      benchAnomalyType: 'n/a',
+      benchGateOk: null,
+      benchFailCount: 0,
+      benchWarnCount: 0,
+      benchSource: 'local',
+    };
+    const applyDashboardStatusOverview = (statusPayload) => {
+      const gate = statusPayload?.telemetry?.benchmarkGate;
+      if (!gate || typeof gate !== 'object') return;
+      overviewState.benchSource = String(gate.source || overviewState.benchSource || 'local');
+      overviewState.benchAnomalyType = String(gate.anomalyType || (gate.available ? 'stable' : 'n/a'));
+      overviewState.benchGateOk = typeof gate.ok === 'boolean' ? gate.ok : null;
+      overviewState.benchFailCount = Array.isArray(gate.failures) ? gate.failures.length : 0;
+      overviewState.benchWarnCount = Array.isArray(gate.warnings) ? gate.warnings.length : 0;
     };
     const applyUnifiedOverview = (unified, latestId, guid) => {
       if (!unified || typeof unified !== 'object') return;
@@ -3361,8 +3375,24 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       if (systemStatusPillsEl) {
         const unified = String(overviewState.unifiedStatus || 'unknown').toLowerCase();
         const leadKind = unified === 'fail' ? 'error' : unified === 'warn' ? 'warning' : 'success';
+        const benchPill = (() => {
+          const anomaly = String(overviewState.benchAnomalyType || 'n/a');
+          const source = String(overviewState.benchSource || 'local');
+          const fails = Number(overviewState.benchFailCount || 0);
+          const warns = Number(overviewState.benchWarnCount || 0);
+          if (fails > 0) {
+            return '<span class="status-pill pill-error status-pill-alert" role="status" aria-label="ERROR: Benchmark gate failing">🚨 Bench fail (' + fails + ', ' + source + ')</span>';
+          }
+          if (warns > 0) {
+            return '<span class="status-pill pill-warning status-pill-alert" role="status" aria-label="WARNING: Benchmark gate warning">⚠️ Bench warn (' + warns + ', ' + source + ')</span>';
+          }
+          if (overviewState.benchGateOk === true) {
+            return '<span class="status-pill pill-success" role="status" aria-label="SUCCESS: Benchmark gate passing">🧭 ' + anomaly + ' (' + source + ')</span>';
+          }
+          return '<span class="status-pill pill-warning" role="status" aria-label="WARNING: Benchmark gate unavailable">🧭 gate unavailable</span>';
+        })();
         systemStatusPillsEl.innerHTML =
-          statusPill(leadKind) + statusPill('warning') + statusPill('error') + (overviewState.loop === 'closed' ? statusPill('closed') : '');
+          statusPill(leadKind) + statusPill('warning') + statusPill('error') + benchPill + (overviewState.loop === 'closed' ? statusPill('closed') : '');
       }
     };
     const topProfile = (snapshot) =>
@@ -5706,11 +5736,13 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       const loop = await fetchJson('/api/loop-status?source=local');
       renderLoopStatus(loop, latestData);
       const unified = await fetchJson('/api/search-status-unified?source=local&domain=' + encodeURIComponent(DEFAULT_DOMAIN));
+      const dashboardStatus = await fetchJson('/api/dashboard/status?source=local');
       const rssMeta = await fetchJson('/api/rss-meta?source=local');
       const rssRes = await fetch('/api/rss?source=local', { credentials: 'same-origin', cache: 'no-store' });
       const rssText = await rssRes.text();
       renderRss(rssText, 'local', rssMeta);
       const guid = parseLatestRssGuid(rssText);
+      applyDashboardStatusOverview(dashboardStatus);
       applyUnifiedOverview(unified, latestData?.id || null, guid);
       renderOverview();
     };
@@ -5867,9 +5899,10 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         renderDomainHealth(domain);
         const domainRegistryStatus = await fetchJson('/api/domain-registry-status');
         renderDomainRegistryStatus(domainRegistryStatus);
-        const loop = await fetchJson('/api/loop-status?source=local');
+        const loop = await fetchJson('/api/loop-status?source=' + source);
         renderLoopStatus(loop, data);
         const unified = await fetchJson('/api/search-status-unified?source=' + source + '&domain=' + encodeURIComponent(DEFAULT_DOMAIN));
+        const dashboardStatus = await fetchJson('/api/dashboard/status?source=' + source);
         const rssMeta = await fetchJson('/api/rss-meta?source=' + source);
         const rssRes = await fetch('/api/rss?source=' + source, {
           credentials: 'same-origin',
@@ -5885,6 +5918,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         const rssAligned = Boolean(guid && data?.id && guid === data.id);
         setRssBadge(rssAligned ? 'RSS synced' : 'RSS drift', rssAligned ? 'ok' : 'new');
         overviewState.queryPack = String(data?.queryPack || 'n/a');
+        applyDashboardStatusOverview(dashboardStatus);
         applyUnifiedOverview(unified, data?.id || null, guid);
         renderOverview();
         
