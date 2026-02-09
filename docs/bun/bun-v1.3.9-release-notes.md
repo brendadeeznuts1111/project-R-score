@@ -223,6 +223,9 @@ bun run --parallel "build:*"
 # All workspace packages, one script
 bun run --parallel --filter '*' build
 
+# All workspace packages, one script (sequential)
+bun run --sequential --workspaces build
+
 # All workspace packages, multiple scripts
 bun run --parallel --filter '*' build lint test
 
@@ -412,10 +415,28 @@ process.env.HTTPS_PROXY = "http://bad-proxy:9999";
 
 // This bypasses the proxy because example.com is in NO_PROXY
 await fetch("https://example.com"); // → 200 (not proxy error)
+
+// Explicit proxy option is also bypassed when NO_PROXY matches
+await fetch("http://localhost:3000/api", {
+  proxy: "http://my-proxy:8080",
+});
+
+const ws = new WebSocket("ws://localhost:3000/ws", {
+  proxy: "http://my-proxy:8080",
+});
 ```
 
 Tested: request to example.com succeeds despite `HTTPS_PROXY` pointing to
 a nonexistent proxy.
+
+## TypeScript types: Socket.reload options shape
+
+`Socket.reload()` now expects the runtime shape `{ socket: handler }` in Bun
+types (instead of passing the handler object directly).
+
+Local coverage in this repo:
+- `tests/bun-socket-typing.ts`
+- `types/bun-reload.d.ts`
 
 ## stringWidth: Thai/Lao spacing vowel fix
 
