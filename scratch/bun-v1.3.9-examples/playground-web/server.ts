@@ -9,7 +9,8 @@ import { serve } from "bun";
 import { readFile } from "node:fs/promises";
 import { createServer } from "node:net";
 import { join } from "node:path";
-import { getBuildMetadata, getGitCommitHash } from "./build-metadata" with { type: "macro" };
+import { getBuildMetadata } from "./build-metadata" with { type: "macro" };
+import { getGitCommitHash } from "./getGitCommitHash.ts" with { type: "macro" };
 
 const BASE_STANDARD = Object.freeze({
   dedicatedPort: 3011,
@@ -417,7 +418,7 @@ bun build --compile --bytecode ./cli.ts`,
 /(?:abc)+/        // Variable count → interpreter
 
 // Markdown (3-15% faster)
-Bun.Markdown.toHTML(markdown);
+Bun.markdown.html(markdown);
 Bun.markdown.react(markdown);
 
 // String optimizations (automatic)
@@ -454,6 +455,129 @@ await fetch(url2);  // ✅ No longer hangs
 
 // Fixed: ARMv8.0 aarch64 CPU crashes
 // ✅ Bun now works on older ARM processors`,
+  },
+  {
+    id: "markdown-advanced",
+    name: "Advanced Markdown (v1.3.8)",
+    description: "Bun.markdown.html(), .render(), .react() with GFM extensions",
+    category: "Features",
+    code: `// Basic HTML rendering
+Bun.markdown.html("# Hello **world**");
+
+// GFM Extensions (tables, strikethrough, task lists)
+const gfm = \`
+| Name | Value |
+|------|-------|
+| Bun  | Fast  |
+
+- [x] Done
+- [ ] Pending
+
+~~deleted~~ text
+\`;
+Bun.markdown.html(gfm);
+
+// Custom render with callbacks
+Bun.markdown.render("# Title", {
+  heading: (children, { level }) => 
+    \`<h\${level} class="title">\${children}</h\${level}>\`,
+});
+
+// React elements (React 19 by default)
+const element = Bun.markdown.react("# Hello **world**");`,
+  },
+  {
+    id: "symbol-dispose",
+    name: "Symbol.dispose for Mocks (v1.3.9)",
+    description: "Automatic mock cleanup with 'using' keyword",
+    category: "Testing",
+    code: `import { spyOn, mock, test } from "bun:test";
+
+test("auto-restores spy", () => {
+  const obj = { method: () => "original" };
+  
+  {
+    using spy = spyOn(obj, "method").mockReturnValue("mocked");
+    expect(obj.method()).toBe("mocked");
+  }
+  
+  // Automatically restored when spy leaves scope
+  expect(obj.method()).toBe("original");
+});
+
+// Manual dispose also works
+const fn = mock(() => "value");
+fn();
+fn[Symbol.dispose](); // Same as fn.mockRestore()
+expect(fn).toHaveBeenCalledTimes(0);`,
+  },
+  {
+    id: "ipc-communication",
+    name: "IPC Communication",
+    description: "Spawn child processes and communicate via Bun.spawn() IPC",
+    category: "Features",
+    code: `// Spawn child process with IPC
+const child = Bun.spawn({
+  cmd: [process.execPath, "child.ts"],
+  ipc(message) {
+    console.log("Parent received:", message);
+  },
+});
+
+// Send messages to child
+child.send("Hello from parent!");
+child.send({ type: "command", data: [1, 2, 3] });
+
+// In child.ts:
+process.send({ type: "ready", pid: process.pid });
+process.on("message", (msg) => {
+  console.log("Child received:", msg);
+  process.send({ echo: msg });
+});`,
+  },
+  {
+    id: "process-basics",
+    name: "Process Basics",
+    description: "Command-line args, env vars, stdout/stderr, uptime, timezone",
+    category: "Process",
+    code: `// Command-line arguments
+console.log("Arguments:", Bun.argv.slice(2));
+
+// Environment variables
+console.log("PATH:", process.env.PATH);
+process.env.MY_VAR = "value";
+
+// Process info
+console.log("PID:", process.pid);
+console.log("Uptime:", process.uptime());
+console.log("Platform:", process.platform);
+
+// Timezone
+console.log("Timezone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
+process.env.TZ = "America/New_York";
+
+// Spawn with stdout/stderr
+const proc = Bun.spawn(["echo", "hello"]);
+const output = await proc.stdout.text();
+const stderr = await proc.stderr.text();`,
+  },
+  {
+    id: "stdin-demo",
+    name: "Stdin Input",
+    description: "Reading user input from standard input",
+    category: "Process",
+    code: `// Check stdin status
+console.log("Is TTY:", process.stdin.isTTY);
+
+// Read from stdin
+const reader = process.stdin.getReader();
+const result = await reader.read();
+reader.releaseLock();
+
+if (result.value) {
+  const input = new TextDecoder().decode(result.value).trim();
+  console.log("Input:", input);
+}`,
   },
 ];
 
@@ -767,7 +891,7 @@ function getProtocolMatrix() {
   };
 }
 
-function getProtocolScorecard() {
+async function getProtocolScorecard() {
   return {
     generatedAt: new Date().toISOString(),
     version: "team-v1",
@@ -915,6 +1039,135 @@ function getProtocolScorecard() {
         },
       ],
     },
+    evidence_sources: await (async () => {
+      const sources: DecisionSource[] = [
+        { tier: "T1", reference: "35f815431 (release commit)", verified: true },
+        { tier: "T2", reference: "ac63cc259d74 (RegExp JIT)", verified: true },
+        { tier: "T2", reference: "1f7d7d5a8c23 (String.startsWith)", verified: true },
+        { tier: "T3", reference: "2e2c23521a24 (Map/Set.size)", verified: true },
+      ];
+      const { score, defensible, gaps } = DecisionDefender.validateDecision({
+        id: "BUN-UPGRADE-2024-003",
+        claim: "Bun v1.3.9 verified commits provide targeted runtime optimizations",
+        sources,
+        benchmarks: (() => {
+          // Isolated bench: Map/Set.size ns/op via Bun.nanoseconds()
+          const map = new Map(); for (let i = 0; i < 1000; i++) map.set("k" + i, i);
+          const set = new Set(); for (let i = 0; i < 1000; i++) set.add(i);
+          const WARMUP = 5_000, ITERS = 1_000_000;
+          let sink = 0;
+          for (let i = 0; i < WARMUP; i++) { sink += map.size; sink += set.size; }
+          const t0 = Bun.nanoseconds();
+          for (let i = 0; i < ITERS; i++) sink += map.size;
+          const mapNsPerOp = (Bun.nanoseconds() - t0) / ITERS;
+          const t1 = Bun.nanoseconds();
+          for (let i = 0; i < ITERS; i++) sink += set.size;
+          const setNsPerOp = (Bun.nanoseconds() - t1) / ITERS;
+          void sink;
+          return [
+            { name: "Map.size ns/op (isolated)", result: Number(mapNsPerOp.toFixed(2)), threshold: 10 },
+            { name: "Set.size ns/op (isolated)", result: Number(setNsPerOp.toFixed(2)), threshold: 10 },
+          ];
+        })(),
+      });
+      return {
+        bun_v1_3_9: {
+          release_notes_url: "https://bun.com/blog/bun-v1.3.9",
+          verified_commits: ["35f815431", "ac63cc259d74", "1f7d7d5a8c23", "2e2c23521a24"],
+          evidence_package: "BUN-UPGRADE-2024-003",
+          runtime: (() => {
+            const os = require("node:os");
+            return {
+              runtime: "Bun",
+              bunVersion: Bun.version,
+              bunRevision: Bun.revision,
+              gitCommit: Bun.spawnSync(["git", "rev-parse", "HEAD"]).stdout.toString().trim(),
+              platform: process.platform,
+              arch: process.arch,
+              osRelease: os.release(),
+              cpuModel: os.cpus()[0]?.model ?? "unknown",
+              cpuCores: os.cpus().length,
+              totalMemoryMB: Math.round(os.totalmem() / 1024 / 1024),
+              pid: process.pid,
+            };
+          })(),
+          profile: (() => {
+            const { existsSync, readdirSync } = require("node:fs");
+            const { join } = require("node:path");
+            const profileDir = "reports/brand-bench/profiles";
+            const baselinePath = "reports/brand-bench/pinned-baseline.json";
+            const profiles: string[] = [];
+            if (existsSync(profileDir)) {
+              for (const f of readdirSync(profileDir)) {
+                if (f.endsWith(".cpuprofile")) profiles.push(join(profileDir, f));
+              }
+            }
+            let pinnedRunId: string | null = null;
+            if (existsSync(baselinePath)) {
+              try {
+                const pinned = JSON.parse(require("node:fs").readFileSync(baselinePath, "utf8"));
+                pinnedRunId = pinned.baselineRunId ?? null;
+              } catch {}
+            }
+            return {
+              pinnedBaselineRunId: pinnedRunId,
+              profileDir,
+              profileFiles: profiles,
+              count: profiles.length,
+            };
+          })(),
+          snapshot: await (async () => {
+            const mem = process.memoryUsage();
+            const heap = Bun.generateHeapSnapshot();
+            let bundleSnapshot: Record<string, unknown> | null = null;
+            try {
+              const result = await Bun.build({
+                entrypoints: [import.meta.path],
+                metafile: true,
+                target: "bun",
+                splitting: false,
+                throw: false,
+              });
+              if (result.metafile) {
+                const inputs = Object.entries(result.metafile.inputs);
+                const outputs = Object.entries(result.metafile.outputs);
+                bundleSnapshot = {
+                  source: "Bun.build({ metafile: true })",
+                  inputCount: inputs.length,
+                  outputCount: outputs.length,
+                  totalInputBytes: inputs.reduce((s: number, [, m]: any) => s + (m.bytes || 0), 0),
+                  totalOutputBytes: outputs.reduce((s: number, [, m]: any) => s + (m.bytes || 0), 0),
+                  largestInputs: inputs
+                    .sort(([, a]: any, [, b]: any) => (b.bytes || 0) - (a.bytes || 0))
+                    .slice(0, 5)
+                    .map(([p, m]: any) => ({ path: p, bytes: m.bytes })),
+                };
+              }
+            } catch {}
+            return {
+              takenAt: new Date().toISOString(),
+              memory: {
+                heapUsedMB: Math.round(mem.heapUsed / 1024 / 1024 * 100) / 100,
+                heapTotalMB: Math.round(mem.heapTotal / 1024 / 1024 * 100) / 100,
+                rssMB: Math.round(mem.rss / 1024 / 1024 * 100) / 100,
+                externalMB: Math.round(mem.external / 1024 / 1024 * 100) / 100,
+              },
+              heap: {
+                version: heap.version,
+                type: heap.type,
+                nodeCount: heap.nodes?.length ?? 0,
+                edgeCount: heap.edges?.length ?? 0,
+                classCount: heap.nodeClassNames?.length ?? 0,
+              },
+              bundle: bundleSnapshot,
+            };
+          })(),
+          score,
+          defensible,
+          gaps,
+        },
+      };
+    })(),
     evidenceTracking: EVIDENCE_DASHBOARD["protocol-scorecard"],
   };
 }
@@ -1424,7 +1677,7 @@ const routes = {
 
   "/api/control/protocol-matrix": () => getProtocolMatrix(),
 
-  "/api/control/protocol-scorecard": () => getProtocolScorecard(),
+  "/api/control/protocol-scorecard": () => getProtocolScorecard(),  // returns Promise
 
   "/api/control/evidence-dashboard": () => getEvidenceDashboard(),
 
@@ -1486,7 +1739,7 @@ const routes = {
     }
 
     if (id === "protocol-scorecard") {
-      const scorecard = routes["/api/control/protocol-scorecard"]();
+      const scorecard = await routes["/api/control/protocol-scorecard"]();
       return new Response(JSON.stringify({
         success: true,
         output: JSON.stringify(scorecard, null, 2),
@@ -1663,7 +1916,7 @@ async function handleRequest(req: Request): Promise<Response> {
       }
 
       if (url.pathname === "/api/control/protocol-scorecard") {
-        return jsonResponse(routes["/api/control/protocol-scorecard"]());
+        return jsonResponse(await routes["/api/control/protocol-scorecard"]());
       }
 
       if (url.pathname === "/api/control/evidence-dashboard") {
@@ -1693,8 +1946,14 @@ async function handleRequest(req: Request): Promise<Response> {
     const staticFiles: Record<string, { file: string; contentType: string }> = {
       "/": { file: "index.html", contentType: "text/html" },
       "/index.html": { file: "index.html", contentType: "text/html" },
+      "/enhanced.html": { file: "enhanced.html", contentType: "text/html" },
       "/styles.css": { file: "styles.css", contentType: "text/css" },
+      "/micro-polish.css": { file: "micro-polish.css", contentType: "text/css" },
+      "/command-palette.css": { file: "command-palette.css", contentType: "text/css" },
       "/app.js": { file: "app.js", contentType: "application/javascript" },
+      "/micro-polish.js": { file: "micro-polish.js", contentType: "application/javascript" },
+      "/command-palette.js": { file: "command-palette.js", contentType: "application/javascript" },
+      "/url-sharing.js": { file: "url-sharing.js", contentType: "application/javascript" },
     };
     
     const staticFile = staticFiles[url.pathname];
@@ -1716,10 +1975,27 @@ async function handleRequest(req: Request): Promise<Response> {
 const ACTIVE_PORT = await resolvePort();
 const warmupState = await runWarmup();
 
+// Create abort controller for graceful shutdown
+const ac = new AbortController();
+
+// Handle OS signals per Bun docs: https://bun.com/docs/guides/process/os-signals
+process.on('SIGINT', () => {
+  console.log('\n\n👋 SIGINT received, shutting down gracefully...');
+  ac.abort();
+  process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+  console.log('\n\n👋 SIGTERM received, shutting down gracefully...');
+  ac.abort();
+  process.exit(0);
+});
+
 // Serve the application
 serve({
   port: ACTIVE_PORT,
   fetch: handleRequest,
+  signal: ac.signal,
 });
 
 console.log(`🚀 Bun v1.3.9 Browser Playground`);
@@ -1731,3 +2007,4 @@ console.log(
 console.log(
   `🛰️ Warmup: prefetch=${warmupState.prefetch.length} preconnect=${warmupState.preconnect.length} enabled=${!warmupState.skipped}`
 );
+console.log(`\n💡 Press Ctrl+C to stop gracefully`);

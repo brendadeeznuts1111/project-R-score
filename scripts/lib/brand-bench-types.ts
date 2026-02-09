@@ -30,9 +30,16 @@ export type BrandBenchViolation = {
 export type BrandBenchReport = {
   runId: string;
   createdAt: string;
+  runtime: "Bun";
   bunVersion: string;
+  bunRevision: string;
+  gitCommit: string;
   platform: string;
   arch: string;
+  osRelease: string;
+  cpuModel: string;
+  cpuCores: number;
+  totalMemoryMB: number;
   seedSet: number[];
   iterations: number;
   warmup: number;

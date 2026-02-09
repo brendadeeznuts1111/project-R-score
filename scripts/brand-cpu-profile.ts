@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 import { mkdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
+import { createShutdown } from './lib/graceful-shutdown';
 
 function nowRunId(): string {
   return new Date().toISOString().replace(/[-:.]/g, '').replace('Z', 'Z');
@@ -66,24 +67,31 @@ async function main(): Promise<void> {
   }
   args.push(...options.passthrough);
 
-  const child = Bun.spawnSync(args, {
+  const child = Bun.spawn(args, {
     cwd: process.cwd(),
     stdout: 'inherit',
     stderr: 'inherit',
   });
 
+  const shutdown = createShutdown({ name: 'brand-cpu-profile', quiet: true });
+  shutdown.onCleanup(() => { child.kill('SIGTERM'); });
+
+  const exitCode = await child.exited;
+  shutdown.dispose();
+
   const payload = {
-    ok: child.exitCode === 0,
+    ok: exitCode === 0,
     target: options.target,
     interval: options.interval,
     seed: options.seed,
     runId: options.runId,
     profileFile: join(options.profilesDir, profileName),
-    exitCode: child.exitCode,
+    exitCode,
+    interrupted: shutdown.requested,
   };
 
   console.log(JSON.stringify(payload, null, 2));
-  process.exit(child.exitCode ?? 1);
+  process.exit(exitCode ?? 1);
 }
 
 if (import.meta.main) {

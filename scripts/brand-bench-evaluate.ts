@@ -8,6 +8,7 @@ import type {
   BrandBenchSeverity,
   BrandBenchViolation,
 } from './lib/brand-bench-types';
+import { createShutdown } from './lib/graceful-shutdown';
 
 const THRESHOLDS = {
   warn: {
@@ -294,5 +295,7 @@ async function main(): Promise<void> {
 }
 
 if (import.meta.main) {
+  const shutdown = createShutdown({ name: 'brand-bench-evaluate', autoExit: true });
   await main();
+  shutdown.dispose();
 }
