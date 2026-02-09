@@ -9,6 +9,13 @@ type PolicyShape = {
   policyChangeRationale?: Record<string, string>;
 };
 
+function fetchDepthArg(): string {
+  const raw = (Bun.env.SEARCH_GOVERNANCE_FETCH_DEPTH || '5').trim();
+  const value = Number(raw);
+  const depth = Number.isFinite(value) && value > 0 ? Math.floor(value) : 5;
+  return `--depth=${depth}`;
+}
+
 async function runGit(args: string[]): Promise<{ code: number; stdout: string }> {
   const proc = Bun.spawn(['git', ...args], {
     cwd: process.cwd(),
@@ -26,7 +33,7 @@ async function runGit(args: string[]): Promise<{ code: number; stdout: string }>
 async function resolveDiffRange(): Promise<string> {
   const baseRef = (Bun.env.GITHUB_BASE_REF || '').trim();
   if (baseRef) {
-    const fetch = await runGit(['fetch', 'origin', baseRef, '--depth', '1']);
+    const fetch = await runGit(['fetch', 'origin', baseRef, fetchDepthArg()]);
     if (fetch.code === 0) {
       return `origin/${baseRef}...HEAD`;
     }
@@ -56,6 +63,7 @@ async function policyThresholdChanged(range: string): Promise<boolean> {
 }
 
 async function main(): Promise<void> {
+  const fetchDepth = fetchDepthArg();
   const range = await resolveDiffRange();
   const changed = await fileListFromDiff(range);
   const policyPath = '.search/policies.json';
@@ -111,6 +119,7 @@ async function main(): Promise<void> {
   }
 
   console.log('[policy-governance] ok');
+  console.log(`fetchDepth=${fetchDepth}`);
   console.log(`range=${range}`);
   console.log(`policyChanged=${policyChanged}`);
   console.log(`thresholdChanged=${thresholdChanged}`);

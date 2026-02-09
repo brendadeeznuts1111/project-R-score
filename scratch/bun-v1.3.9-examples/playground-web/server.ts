@@ -21,6 +21,7 @@ const BASE_STANDARD = Object.freeze({
   fetchTimeoutMs: 30000,
   maxBodySizeMb: 10,
   streamChunkSize: 16384,
+  searchGovernanceFetchDepth: 5,
   fetchDecompress: true,
   fetchVerbose: "off",
 });
@@ -40,9 +41,15 @@ const MAX_BODY_SIZE_MB = parseNumberEnv("PLAYGROUND_MAX_BODY_SIZE_MB", BASE_STAN
 const MAX_BODY_SIZE_BYTES = Math.max(1, Math.floor(MAX_BODY_SIZE_MB * 1024 * 1024));
 const PROXY_AUTH_TOKEN = process.env.PLAYGROUND_PROXY_AUTH_TOKEN || "";
 const STREAM_CHUNK_SIZE = parseNumberEnv("PLAYGROUND_STREAM_CHUNK_SIZE", BASE_STANDARD.streamChunkSize, { min: 256, max: 1048576 });
+const SEARCH_GOVERNANCE_FETCH_DEPTH = parseNumberEnv(
+  "SEARCH_GOVERNANCE_FETCH_DEPTH",
+  BASE_STANDARD.searchGovernanceFetchDepth,
+  { min: 1, max: 200000 }
+);
 const FETCH_DECOMPRESS = parseBool(process.env.PLAYGROUND_FETCH_DECOMPRESS, BASE_STANDARD.fetchDecompress);
 const FETCH_VERBOSE = parseFetchVerbose(process.env.PLAYGROUND_FETCH_VERBOSE, BASE_STANDARD.fetchVerbose);
 const S3_DEFAULT_CONTENT_TYPE = process.env.PLAYGROUND_S3_DEFAULT_CONTENT_TYPE || "application/octet-stream";
+const BRAND_STATUS_STRICT_PROBE = parseBool(process.env.PLAYGROUND_BRAND_STATUS_STRICT_PROBE, false);
 const PROJECT_ROOT = join(import.meta.dir, "..", "..", "..");
 const BRAND_REPORTS_DIR = join(PROJECT_ROOT, "reports", "brand-bench");
 const BRAND_GOVERNANCE_PATH = join(BRAND_REPORTS_DIR, "governance.json");
@@ -1224,6 +1231,7 @@ const routes = {
       s3DefaultContentType: S3_DEFAULT_CONTENT_TYPE,
       maxBodySizeMb: MAX_BODY_SIZE_MB,
       streamChunkSize: STREAM_CHUNK_SIZE,
+      searchGovernanceFetchDepth: SEARCH_GOVERNANCE_FETCH_DEPTH,
       proxyDefaultEnabled: Boolean(resolveFeature<string | null>("proxy")),
       proxyAuthConfigured: Boolean(PROXY_AUTH_TOKEN),
     },
@@ -1261,7 +1269,9 @@ const routes = {
       readFile(baselinePath, "utf8").catch(() => null),
       readJsonSafe(governancePath),
       runCommand(["bun", "run", "scripts/brand-bench-evaluate.ts", "--json"], PROJECT_ROOT),
-      runCommand(["bun", "run", "scripts/brand-bench-evaluate.ts", "--json", "--strict"], PROJECT_ROOT),
+      BRAND_STATUS_STRICT_PROBE
+        ? runCommand(["bun", "run", "scripts/brand-bench-evaluate.ts", "--json", "--strict"], PROJECT_ROOT)
+        : Promise.resolve({ output: "", error: "", exitCode: 0 }),
     ]);
 
     let latestJson: any = null;
@@ -1286,6 +1296,7 @@ const routes = {
         mode: governanceJson?.mode || "warn",
         warnCycle: Number.isFinite(Number(governanceJson?.warnCycle)) ? Number(governanceJson.warnCycle) : 1,
         warnCyclesTotal: Number.isFinite(Number(governanceJson?.warnCyclesTotal)) ? Number(governanceJson.warnCyclesTotal) : 5,
+        strictProbeEnabled: BRAND_STATUS_STRICT_PROBE,
       },
       latest: latestJson
         ? {
@@ -1323,7 +1334,13 @@ const routes = {
             warnCycle: strictEvalJson.warnCycle ?? 1,
             warnCyclesTotal: strictEvalJson.warnCyclesTotal ?? 5,
           }
-        : { ok: false, status: "fail", anomalyType: "stable", violations: null, raw: strictEval.output || strictEval.error },
+        : {
+            ok: BRAND_STATUS_STRICT_PROBE ? false : true,
+            status: BRAND_STATUS_STRICT_PROBE ? "fail" : "unknown",
+            anomalyType: "stable",
+            violations: null,
+            raw: BRAND_STATUS_STRICT_PROBE ? (strictEval.output || strictEval.error) : "strict probe disabled",
+          },
       impact: impactFromGates({
         warn: warnEvalJson?.status,
         strict: strictEvalJson?.status,

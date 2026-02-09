@@ -58,8 +58,10 @@ bun start
 - `PLAYGROUND_PROXY_DEFAULT`: optional default proxy URL for smoke fetches
 - `PLAYGROUND_PROXY_AUTH_TOKEN`: optional proxy auth bearer token
 - `PLAYGROUND_STREAM_CHUNK_SIZE`: byte window used in response size accounting
+- `SEARCH_GOVERNANCE_FETCH_DEPTH`: governance git fetch depth used by policy checks (default `5`, shown in header as `Gov Depth`)
 - `PLAYGROUND_S3_DEFAULT_CONTENT_TYPE`: fallback MIME when key extension is unknown
 - `PLAYGROUND_SMOKE_URLS`: optional explicit smoke URL list (defaults to local info/status APIs)
+- `PLAYGROUND_BRAND_STATUS_STRICT_PROBE`: enable strict benchmark probe in `/api/brand/status` (default `false` to avoid extra command load)
 
 Smoke endpoint:
 

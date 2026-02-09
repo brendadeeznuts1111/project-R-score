@@ -81,6 +81,10 @@ function renderHeaderBadges() {
       text: `Preconnect ${cp.preconnectEnabled ? 'ON' : 'OFF'}`,
       cls: cp.preconnectEnabled ? 'success' : 'warn',
     });
+    badges.push({
+      text: `Gov Depth ${cp.searchGovernanceFetchDepth ?? 'n/a'}`,
+      cls: 'warn',
+    });
   }
 
   if (brandGateSummary?.warnGate) {
@@ -91,9 +95,12 @@ function renderHeaderBadges() {
   }
 
   if (brandGateSummary?.strictGate) {
+    const strictState = brandGateSummary.governance?.strictProbeEnabled
+      ? brandGateSummary.strictGate.status
+      : 'disabled';
     badges.push({
-      text: `Gate(strict): ${brandGateSummary.strictGate.status}`,
-      cls: badgeClassForStatus(brandGateSummary.strictGate.status),
+      text: `Gate(strict): ${strictState}`,
+      cls: strictState === 'disabled' ? 'warn' : badgeClassForStatus(strictState),
     });
   }
 
