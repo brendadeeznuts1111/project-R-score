@@ -1,0 +1,672 @@
+#!/usr/bin/env bun
+/**
+ * Bun v1.3.9 Browser Playground Server
+ * 
+ * Web-based playground showcasing all Bun v1.3.9 features
+ */
+
+import { serve } from "bun";
+import { readFile } from "node:fs/promises";
+import { createServer } from "node:net";
+import { join } from "node:path";
+
+const DEDICATED_PORT = Number(process.env.PLAYGROUND_PORT || process.env.PORT || 3011);
+const PORT_RANGE = process.env.PLAYGROUND_PORT_RANGE || "3011-3020";
+const MAX_CONCURRENT_REQUESTS = Number(process.env.PLAYGROUND_MAX_CONCURRENT_REQUESTS || 200);
+const MAX_COMMAND_WORKERS = Number(process.env.PLAYGROUND_MAX_COMMAND_WORKERS || 2);
+const PREFETCH_ENABLED = parseBool(process.env.PLAYGROUND_PREFETCH_ENABLED, false);
+const PRECONNECT_ENABLED = parseBool(process.env.PLAYGROUND_PRECONNECT_ENABLED, false);
+const PREFETCH_HOSTS = parseList(process.env.PLAYGROUND_PREFETCH_HOSTS);
+const PRECONNECT_URLS = parseList(process.env.PLAYGROUND_PRECONNECT_URLS);
+const SMOKE_TIMEOUT_MS = Number(process.env.PLAYGROUND_SMOKE_TIMEOUT_MS || 2000);
+const SMOKE_URLS = parseList(process.env.PLAYGROUND_SMOKE_URLS);
+const PROJECT_ROOT = join(import.meta.dir, "..", "..", "..");
+const BRAND_REPORTS_DIR = join(PROJECT_ROOT, "reports", "brand-bench");
+let inFlightRequests = 0;
+let activeCommands = 0;
+const commandWaiters: Array<() => void> = [];
+
+// Demo configurations
+const DEMOS = [
+  {
+    id: "control-plane",
+    name: "Network Control Plane",
+    description: "Optional prefetch/preconnect warmup with smoke-test validation",
+    category: "Governance",
+    code: `# Optional warmup controls (off by default)
+PLAYGROUND_PREFETCH_ENABLED=1
+PLAYGROUND_PRECONNECT_ENABLED=1
+PLAYGROUND_PREFETCH_HOSTS=api.example.com,r2.example.com
+PLAYGROUND_PRECONNECT_URLS=https://api.example.com,https://r2.example.com
+
+# Validate impact without forcing rollout
+curl -s http://localhost:<port>/api/control/network-smoke
+`,
+  },
+  {
+    id: "brand-bench-gate",
+    name: "Brand Bench Gate (Canonical)",
+    description: "Run and inspect canonical branding benchmark + gate status",
+    category: "Governance",
+    code: `# Canonical runner + evaluator
+bun run brand:bench:all
+
+# Inspect gate in warn mode (PR-cycle phase)
+bun run brand:bench:evaluate
+
+# Inspect strict mode readiness
+bun run scripts/brand-bench-evaluate.ts --json --strict
+
+# Optional baseline promotion (manual)
+bun run brand:bench:pin --from=reports/brand-bench/latest.json --rationale="..."
+`,
+  },
+  {
+    id: "parallel",
+    name: "Parallel & Sequential Scripts",
+    description: "Run multiple scripts concurrently or sequentially with pre/post grouping",
+    category: "Script Orchestration",
+    code: `// Example: Parallel script execution
+bun run --parallel build test lint
+
+// Example: Sequential execution  
+bun run --sequential build test
+
+// Example: Workspace support
+bun run --parallel --filter '*' build
+
+// Example: Pre/post scripts automatically grouped
+// prebuild → build → postbuild runs as a unit
+bun run --parallel build test
+
+// Example: Error handling
+bun run --parallel --no-exit-on-error --filter '*' test
+
+// Note: --parallel/--sequential don't respect dependency order
+// Use --filter for dependency-aware execution`,
+  },
+  {
+    id: "http2",
+    name: "HTTP/2 Connection Upgrades",
+    description: "net.Server → Http2SecureServer connection upgrade",
+    category: "Networking",
+    code: `import { createServer } from "node:net";
+import { createSecureServer } from "node:http2";
+
+const h2Server = createSecureServer({ key, cert });
+h2Server.on("stream", (stream, headers) => {
+  stream.respond({ ":status": 200 });
+  stream.end("Hello over HTTP/2!");
+});
+
+const netServer = createServer((rawSocket) => {
+  h2Server.emit("connection", rawSocket);
+});`,
+  },
+  {
+    id: "mocks",
+    name: "Mock Auto-Cleanup",
+    description: "Automatic mock restoration with Symbol.dispose",
+    category: "Testing",
+    code: `import { spyOn, test } from "bun:test";
+
+test("auto-restores spy", () => {
+  const obj = { method: () => "original" };
+  
+  {
+    using spy = spyOn(obj, "method").mockReturnValue("mocked");
+    expect(obj.method()).toBe("mocked");
+  }
+  
+  // Automatically restored
+  expect(obj.method()).toBe("original");
+});`,
+  },
+  {
+    id: "proxy",
+    name: "NO_PROXY Environment Variable",
+    description: "NO_PROXY now respected even with explicit proxy",
+    category: "Networking",
+    code: `// Previously, setting NO_PROXY only worked when the proxy was
+// auto-detected from http_proxy/HTTP_PROXY environment variables.
+// If you explicitly passed a proxy option to fetch() or new WebSocket(),
+// the NO_PROXY environment variable was ignored.
+
+// Now, NO_PROXY is always checked — even when a proxy is explicitly
+// provided via the proxy option.
+
+// NO_PROXY=localhost
+// Previously, this would still use the proxy. Now it correctly bypasses it.
+await fetch("http://localhost:3000/api", {
+  proxy: "http://my-proxy:8080",
+});
+
+// Same fix applies to WebSocket
+const ws = new WebSocket("ws://localhost:3000/ws", {
+  proxy: "http://my-proxy:8080",
+});`,
+  },
+  {
+    id: "profiling",
+    name: "CPU Profiling Interval",
+    description: "Configurable CPU profiler sampling interval",
+    category: "Performance",
+    code: `// Default interval (1000μs)
+bun --cpu-prof index.js
+
+// Higher resolution (500μs)
+bun --cpu-prof --cpu-prof-interval 500 index.js
+
+// Very high resolution (250μs)
+bun --cpu-prof --cpu-prof-interval 250 index.js`,
+  },
+  {
+    id: "bytecode",
+    name: "ESM Bytecode Compilation",
+    description: "ESM bytecode support in --compile",
+    category: "Build",
+    code: `// ESM bytecode (NEW in v1.3.9)
+bun build --compile --bytecode --format=esm ./cli.ts
+
+// CJS bytecode (existing)
+bun build --compile --bytecode --format=cjs ./cli.ts
+
+// Default (CJS, may change to ESM in future)
+bun build --compile --bytecode ./cli.ts`,
+  },
+  {
+    id: "performance",
+    name: "Performance Optimizations",
+    description: "RegExp JIT, Markdown, String optimizations",
+    category: "Performance",
+    code: `// RegExp JIT (3.9x faster)
+/(?:abc){3}/      // Fixed-count → JIT-optimized
+/(?:abc)+/        // Variable count → interpreter
+
+// Markdown (3-15% faster)
+Bun.Markdown.toHTML(markdown);
+Bun.markdown.react(markdown);
+
+// String optimizations (automatic)
+str.startsWith("prefix");  // 1.42x faster
+str.trim();                 // 1.17x faster
+
+// Collection size (automatic)
+set.size;  // 2.24x faster
+map.size;   // 2.74x faster
+
+// AbortSignal (faster with no listeners)
+signal.abort();  // Optimized in Bun v1.3.9`,
+  },
+  {
+    id: "bugfixes",
+    name: "Key Bugfixes",
+    description: "Important bugfixes and compatibility improvements",
+    category: "Bugfixes",
+    code: `// Fixed: Windows existsSync('.') now works correctly
+import { existsSync } from "node:fs";
+existsSync('.');  // ✅ Now works on Windows
+
+// Fixed: Function.prototype.toString() compatibility
+function test() {}
+test.toString();  // ✅ Returns correct string representation
+
+// Fixed: WebSocket crash on certain messages
+const ws = new WebSocket("ws://example.com");
+ws.send(data);  // ✅ More stable
+
+// Fixed: Sequential HTTP requests
+await fetch(url1);
+await fetch(url2);  // ✅ No longer hangs
+
+// Fixed: ARMv8.0 aarch64 CPU crashes
+// ✅ Bun now works on older ARM processors`,
+  },
+];
+
+async function runCommand(cmd: string[], cwd: string): Promise<{ output: string; error: string; exitCode: number }> {
+  return withCommandWorker(async () => {
+    const proc = Bun.spawn({
+      cmd,
+      stdout: "pipe",
+      stderr: "pipe",
+      cwd,
+    });
+
+    const [output, error] = await Promise.all([
+      new Response(proc.stdout).text(),
+      new Response(proc.stderr).text(),
+    ]);
+    const exitCode = await proc.exited;
+    return { output, error, exitCode };
+  });
+}
+
+async function withCommandWorker<T>(fn: () => Promise<T>): Promise<T> {
+  if (activeCommands >= MAX_COMMAND_WORKERS) {
+    await new Promise<void>(resolve => commandWaiters.push(resolve));
+  }
+  activeCommands++;
+  try {
+    return await fn();
+  } finally {
+    activeCommands--;
+    const next = commandWaiters.shift();
+    if (next) next();
+  }
+}
+
+function parseBool(value: string | undefined, defaultValue: boolean): boolean {
+  if (!value) return defaultValue;
+  return value === "1" || value.toLowerCase() === "true" || value.toLowerCase() === "yes";
+}
+
+function parseList(value: string | undefined): string[] {
+  if (!value) return [];
+  return value.split(",").map(v => v.trim()).filter(Boolean);
+}
+
+function withTimeoutSignal(timeoutMs: number): AbortSignal {
+  return AbortSignal.timeout(timeoutMs);
+}
+
+async function timedFetch(url: string, timeoutMs: number): Promise<{ url: string; ok: boolean; status: number | null; latencyMs: number; error?: string }> {
+  const start = performance.now();
+  try {
+    const res = await fetch(url, { signal: withTimeoutSignal(timeoutMs), keepalive: true });
+    await res.arrayBuffer();
+    return {
+      url,
+      ok: res.ok,
+      status: res.status,
+      latencyMs: Number((performance.now() - start).toFixed(2)),
+    };
+  } catch (error) {
+    return {
+      url,
+      ok: false,
+      status: null,
+      latencyMs: Number((performance.now() - start).toFixed(2)),
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
+async function runWarmup(): Promise<{ prefetch: string[]; preconnect: string[]; skipped: boolean }> {
+  const warmedPrefetch: string[] = [];
+  const warmedPreconnect: string[] = [];
+  const bunDns = (Bun as any).dns;
+  const fetchWithPreconnect = fetch as typeof fetch & { preconnect?: (url: string) => Promise<void> | void };
+
+  if (!PREFETCH_ENABLED && !PRECONNECT_ENABLED) {
+    return { prefetch: warmedPrefetch, preconnect: warmedPreconnect, skipped: true };
+  }
+
+  if (PREFETCH_ENABLED && bunDns?.prefetch) {
+    await Promise.all(
+      PREFETCH_HOSTS.map(async host => {
+        try {
+          await bunDns.prefetch(host);
+          warmedPrefetch.push(host);
+        } catch {}
+      })
+    );
+  }
+
+  if (PRECONNECT_ENABLED && fetchWithPreconnect.preconnect) {
+    await Promise.all(
+      PRECONNECT_URLS.map(async url => {
+        try {
+          await fetchWithPreconnect.preconnect!(url);
+          warmedPreconnect.push(url);
+        } catch {}
+      })
+    );
+  }
+
+  return { prefetch: warmedPrefetch, preconnect: warmedPreconnect, skipped: false };
+}
+
+async function runNetworkSmoke(baseUrl: string): Promise<{
+  timestamp: string;
+  timeoutMs: number;
+  urls: string[];
+  results: Array<{ url: string; ok: boolean; status: number | null; latencyMs: number; error?: string }>;
+}> {
+  const defaults = [
+    `${baseUrl}/api/info`,
+    `${baseUrl}/api/brand/status`,
+  ];
+  const urls = SMOKE_URLS.length > 0 ? SMOKE_URLS : defaults;
+  const results = await Promise.all(urls.map(url => timedFetch(url, SMOKE_TIMEOUT_MS)));
+  return {
+    timestamp: new Date().toISOString(),
+    timeoutMs: SMOKE_TIMEOUT_MS,
+    urls,
+    results,
+  };
+}
+
+function parsePortRange(range: string): { start: number; end: number } {
+  const match = range.trim().match(/^(\d+)-(\d+)$/);
+  if (!match) return { start: DEDICATED_PORT, end: DEDICATED_PORT };
+  const start = Number(match[1]);
+  const end = Number(match[2]);
+  return start <= end ? { start, end } : { start: end, end: start };
+}
+
+async function isPortAvailable(port: number): Promise<boolean> {
+  return await new Promise(resolve => {
+    const probe = createServer();
+    probe.once("error", () => resolve(false));
+    probe.once("listening", () => {
+      probe.close(() => resolve(true));
+    });
+    probe.listen(port);
+  });
+}
+
+async function resolvePort(): Promise<number> {
+  if (await isPortAvailable(DEDICATED_PORT)) return DEDICATED_PORT;
+  const { start, end } = parsePortRange(PORT_RANGE);
+  for (let port = start; port <= end; port++) {
+    if (await isPortAvailable(port)) return port;
+  }
+  throw new Error(
+    `No available playground port. dedicated=${DEDICATED_PORT} range=${PORT_RANGE}`
+  );
+}
+
+// API routes
+const routes = {
+  "/api/info": () => ({
+    bunVersion: Bun.version || "1.3.9+",
+    platform: process.platform,
+    arch: process.arch,
+    controlPlane: {
+      prefetchEnabled: PREFETCH_ENABLED,
+      preconnectEnabled: PRECONNECT_ENABLED,
+      prefetchHosts: PREFETCH_HOSTS,
+      preconnectUrls: PRECONNECT_URLS,
+      smokeTimeoutMs: SMOKE_TIMEOUT_MS,
+      smokeUrls: SMOKE_URLS,
+    },
+  }),
+  
+  "/api/demos": () => ({
+    demos: DEMOS,
+  }),
+  
+  "/api/demo/:id": async (req: Request) => {
+    const url = new URL(req.url);
+    const id = url.pathname.split("/").pop();
+    const demo = DEMOS.find(d => d.id === id);
+    
+    if (!demo) {
+      return new Response(JSON.stringify({ error: "Demo not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    
+    return new Response(JSON.stringify(demo), {
+      headers: { "Content-Type": "application/json" },
+    });
+  },
+
+  "/api/brand/status": async () => {
+    const latestPath = join(BRAND_REPORTS_DIR, "latest.json");
+    const baselinePath = join(BRAND_REPORTS_DIR, "pinned-baseline.json");
+
+    const [latestRaw, baselineRaw, warnEval, strictEval] = await Promise.all([
+      readFile(latestPath, "utf8").catch(() => null),
+      readFile(baselinePath, "utf8").catch(() => null),
+      runCommand(["bun", "run", "scripts/brand-bench-evaluate.ts", "--json"], PROJECT_ROOT),
+      runCommand(["bun", "run", "scripts/brand-bench-evaluate.ts", "--json", "--strict"], PROJECT_ROOT),
+    ]);
+
+    let latestJson: any = null;
+    let baselineJson: any = null;
+    let warnEvalJson: any = null;
+    let strictEvalJson: any = null;
+
+    try { latestJson = latestRaw ? JSON.parse(latestRaw) : null; } catch {}
+    try { baselineJson = baselineRaw ? JSON.parse(baselineRaw) : null; } catch {}
+    try { warnEvalJson = warnEval.output ? JSON.parse(warnEval.output) : null; } catch {}
+    try { strictEvalJson = strictEval.output ? JSON.parse(strictEval.output) : null; } catch {}
+
+    return {
+      paths: {
+        latestPath,
+        baselinePath,
+      },
+      latest: latestJson
+        ? {
+            runId: latestJson.runId,
+            createdAt: latestJson.createdAt,
+            seedCount: Array.isArray(latestJson.seedSet) ? latestJson.seedSet.length : null,
+          }
+        : null,
+      baseline: baselineJson
+        ? {
+            baselineRunId: baselineJson.baselineRunId,
+            previousBaselineRunId: baselineJson.previousBaselineRunId,
+            pinnedAt: baselineJson.pinnedAt,
+            rationale: baselineJson.rationale,
+          }
+        : null,
+      warnGate: warnEvalJson
+        ? {
+            ok: warnEvalJson.ok,
+            status: warnEvalJson.status,
+            anomalyType: warnEvalJson.anomalyType,
+            violations: warnEvalJson.violations?.length ?? 0,
+          }
+        : { ok: false, status: "fail", anomalyType: "stable", violations: null, raw: warnEval.output || warnEval.error },
+      strictGate: strictEvalJson
+        ? {
+            ok: strictEvalJson.ok,
+            status: strictEvalJson.status,
+            anomalyType: strictEvalJson.anomalyType,
+            violations: strictEvalJson.violations?.length ?? 0,
+          }
+        : { ok: false, status: "fail", anomalyType: "stable", violations: null, raw: strictEval.output || strictEval.error },
+      exits: {
+        warn: warnEval.exitCode,
+        strict: strictEval.exitCode,
+      },
+    };
+  },
+
+  "/api/control/network-smoke": async (req: Request) => {
+    const base = new URL(req.url).origin;
+    const smoke = await runNetworkSmoke(base);
+    const failures = smoke.results.filter(r => !r.ok).length;
+    return {
+      ok: failures === 0,
+      failures,
+      ...smoke,
+    };
+  },
+  
+  "/api/run/:id": async (req: Request) => {
+    const url = new URL(req.url);
+    const id = url.pathname.split("/").pop();
+
+    if (id === "control-plane") {
+      const smoke = await routes["/api/control/network-smoke"](req);
+      return new Response(JSON.stringify({
+        success: smoke.ok,
+        output: JSON.stringify(smoke, null, 2),
+        exitCode: smoke.ok ? 0 : 1,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "brand-bench-gate") {
+      try {
+        const result = await runCommand(["bun", "run", "brand:bench:all"], PROJECT_ROOT);
+        return new Response(JSON.stringify({
+          success: result.exitCode === 0,
+          output: result.output || (result.exitCode === 0 ? "Brand bench gate run completed." : ""),
+          error: result.error || undefined,
+          exitCode: result.exitCode,
+        }), {
+          headers: { "Content-Type": "application/json" },
+        });
+      } catch (err) {
+        return new Response(JSON.stringify({
+          success: false,
+          error: err instanceof Error ? err.message : String(err),
+          output: "",
+        }), {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+    }
+    
+    // Map demo IDs to script names (some demos have different names)
+    const scriptMap: Record<string, string> = {
+      "parallel": "parallel-scripts",
+      "http2": "http2-upgrade",
+      "mocks": "mock-dispose",
+      "proxy": "no-proxy",
+      "profiling": "cpu-profiling",
+      "bytecode": "esm-bytecode",
+      "performance": "performance",
+      "bugfixes": "bugfixes",
+    };
+    
+    const scriptName = scriptMap[id || ""] || id;
+    
+    // Run the demo script from the parent demos directory
+    const demoScript = join(import.meta.dir, "..", "playground", "demos", `${scriptName}.ts`);
+    
+    try {
+      const { output, error, exitCode } = await runCommand(["bun", "run", demoScript], import.meta.dir);
+      
+      return new Response(JSON.stringify({
+        success: exitCode === 0,
+        output: output || (exitCode === 0 ? "Demo completed successfully!" : ""),
+        error: error || undefined,
+        exitCode,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (err) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: err instanceof Error ? err.message : String(err),
+        output: "",
+      }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+  },
+};
+
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+async function handleRequest(req: Request): Promise<Response> {
+  if (inFlightRequests >= MAX_CONCURRENT_REQUESTS) {
+    return jsonResponse(
+      {
+        error: "Playground is at max concurrent request capacity.",
+        maxConcurrentRequests: MAX_CONCURRENT_REQUESTS,
+      },
+      503
+    );
+  }
+  inFlightRequests++;
+  try {
+    const url = new URL(req.url);
+    
+    // API routes
+    if (url.pathname.startsWith("/api/")) {
+      if (url.pathname === "/api/info") {
+        return jsonResponse({
+          ...routes["/api/info"](),
+          runtime: {
+            dedicatedPort: DEDICATED_PORT,
+            portRange: PORT_RANGE,
+            maxConcurrentRequests: MAX_CONCURRENT_REQUESTS,
+            maxCommandWorkers: MAX_COMMAND_WORKERS,
+            inFlightRequests,
+            activeCommands,
+          },
+        });
+      }
+      
+      if (url.pathname === "/api/demos") {
+        return jsonResponse(routes["/api/demos"]());
+      }
+
+      if (url.pathname === "/api/brand/status") {
+        return jsonResponse(await routes["/api/brand/status"]());
+      }
+
+      if (url.pathname === "/api/control/network-smoke") {
+        return jsonResponse(await routes["/api/control/network-smoke"](req));
+      }
+      
+      const demoMatch = url.pathname.match(/^\/api\/demo\/(.+)$/);
+      if (demoMatch) {
+        return await routes["/api/demo/:id"](req);
+      }
+      
+      const runMatch = url.pathname.match(/^\/api\/run\/(.+)$/);
+      if (runMatch) {
+        return await routes["/api/run/:id"](req);
+      }
+    }
+    
+    // Serve static files
+    const staticFiles: Record<string, { file: string; contentType: string }> = {
+      "/": { file: "index.html", contentType: "text/html" },
+      "/index.html": { file: "index.html", contentType: "text/html" },
+      "/styles.css": { file: "styles.css", contentType: "text/css" },
+      "/app.js": { file: "app.js", contentType: "application/javascript" },
+    };
+    
+    const staticFile = staticFiles[url.pathname];
+    if (staticFile) {
+      const file = Bun.file(join(import.meta.dir, staticFile.file));
+      if (await file.exists()) {
+        return new Response(file, {
+          headers: { "Content-Type": staticFile.contentType },
+        });
+      }
+    }
+    
+    return new Response("Not Found", { status: 404 });
+  } finally {
+    inFlightRequests--;
+  }
+}
+
+const ACTIVE_PORT = await resolvePort();
+const warmupState = await runWarmup();
+
+// Serve the application
+serve({
+  port: ACTIVE_PORT,
+  fetch: handleRequest,
+});
+
+console.log(`🚀 Bun v1.3.9 Browser Playground`);
+console.log(`📡 Server running at http://localhost:${ACTIVE_PORT}`);
+console.log(`🌐 Open http://localhost:${ACTIVE_PORT} in your browser`);
+console.log(
+  `🧰 Pooling: maxRequests=${MAX_CONCURRENT_REQUESTS} maxCommandWorkers=${MAX_COMMAND_WORKERS} range=${PORT_RANGE}`
+);
+console.log(
+  `🛰️ Warmup: prefetch=${warmupState.prefetch.length} preconnect=${warmupState.preconnect.length} enabled=${!warmupState.skipped}`
+);
