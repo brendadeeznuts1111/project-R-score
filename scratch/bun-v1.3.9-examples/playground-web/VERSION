@@ -1,0 +1,13 @@
+{
+  "version": "1.3.9-playground-2.0",
+  "commit": "d564d44c",
+  "date": "2026-02-09 17:37:00 -0600",
+  "bunVersion": "1.3.9",
+  "features": [
+    "governance-dashboard",
+    "process-demos",
+    "signal-handling",
+    "pool-metrics",
+    "protocol-scorecard"
+  ]
+}

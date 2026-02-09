@@ -1,32 +1,68 @@
 {
-  "mcpServers": {
-    "unified-shell": {
-      "command": "/opt/homebrew/bin/bun",
-      "args": [
-        "run",
-        "/Users/nolarose/.kimi/tools/unified-shell-bridge.ts"
-      ],
-      "env": {
-        "MATRIX_PROFILES_DIR": "/Users/nolarose/.matrix/profiles",
-        "TERMINAL_BINDING_ENABLED": "true",
-        "OPENCLAW_GATEWAY_TOKEN": "env:OPENCLAW_GATEWAY_TOKEN",
-        "KIMI_SHELL_MODE": "unified"
-      },
-      "description": "Unified Shell Bridge: Kimi Shell + OpenClaw + Profile Terminal"
+  "name": "unified-shell-bridge",
+  "version": "2.0.0",
+  "description": "Kimi Shell + OpenClaw + Profile Terminal unified MCP bridge",
+  "command": "bun",
+  "args": [
+    "run",
+    "${HOME}/.kimi/tools/unified-shell-bridge.ts"
+  ],
+  "tools": [
+    {
+      "name": "shell_execute",
+      "description": "Execute shell command with profile/OpenClaw context"
     },
-    "bun-local": {
-      "command": "/opt/homebrew/bin/bun",
-      "args": [
-        "run",
-        "node_modules/mcp-bun/dist/index.js"
-      ],
-      "env": {
-        "DISABLE_NOTIFICATIONS": "true",
-        "EVAL_DIRECTORIES": "/Users/nolarose:/tmp:/Users/nolarose/Projects",
-        "BUN_RUNTIME": "true",
-        "BUN_TERMINAL_ENABLED": "true"
-      },
-      "description": "Bun execution with terminal integration"
+    {
+      "name": "shell_execute_stream",
+      "description": "Execute shell command with streaming output"
+    },
+    {
+      "name": "openclaw_status",
+      "description": "Check OpenClaw gateway status"
+    },
+    {
+      "name": "openclaw_gateway_restart",
+      "description": "Restart OpenClaw gateway"
+    },
+    {
+      "name": "profile_list",
+      "description": "List available Matrix profiles"
+    },
+    {
+      "name": "profile_bind",
+      "description": "Bind current directory to profile"
+    },
+    {
+      "name": "profile_switch",
+      "description": "Switch to different profile"
+    },
+    {
+      "name": "profile_status",
+      "description": "Show profile-terminal binding status"
+    },
+    {
+      "name": "matrix_agent_status",
+      "description": "Check Matrix Agent status"
+    },
+    {
+      "name": "bridge_health",
+      "description": "Check bridge health and telemetry"
+    },
+    {
+      "name": "cron_list",
+      "description": "List configured cron jobs"
     }
-  }
+  ],
+  "features": {
+    "signal_handling": {
+      "sigint": true,
+      "sigterm": true,
+      "sighup": true,
+      "graceful_shutdown": true
+    },
+    "telemetry": true,
+    "health_check": true,
+    "structured_logging": true
+  },
+  "bun_version": ">= 1.3.0"
 }

@@ -12,386 +12,346 @@
  * @bun >= 1.3.0
  */
 
-import { run, bench, group } from "mitata";
 import { $ } from "bun";
+import { executeCommand, getHealthStatus } from "./unified-shell-bridge";
 
 // ============================================================================
-// Benchmark Configuration
+// Benchmark Utilities
 // ============================================================================
 
-const CONFIG = {
-  warmup: 100,
-  iterations: 1000,
-  signalIterations: 100,
-};
+interface BenchmarkResult {
+  name: string;
+  iterations: number;
+  totalMs: number;
+  avgMs: number;
+  minMs: number;
+  maxMs: number;
+  opsPerSecond: number;
+}
 
-// ============================================================================
-// Signal Handling Benchmarks
-// ============================================================================
-
-group("Signal Handling", () => {
-  bench("register SIGINT handler", async () => {
-    const handler = () => {};
-    process.on("SIGINT", handler);
-    process.removeListener("SIGINT", handler);
-  });
-
-  bench("check listener count", () => {
-    process.listenerCount("SIGINT");
-  });
-
-  bench("emit signal to self (process.kill)", async () => {
-    // Note: This is a simulation - actual signal handling benchmarked separately
+async function benchmark(
+  name: string,
+  fn: () => Promise<void> | void,
+  iterations: number = 1000
+): Promise<BenchmarkResult> {
+  const times: number[] = [];
+  
+  // Warmup
+  for (let i = 0; i < Math.min(100, iterations / 10); i++) {
+    await fn();
+  }
+  
+  // Actual benchmark
+  const totalStart = performance.now();
+  for (let i = 0; i < iterations; i++) {
     const start = performance.now();
-    process.emit("SIGINT");
-    return performance.now() - start;
-  });
-});
+    await fn();
+    times.push(performance.now() - start);
+  }
+  const totalMs = performance.now() - totalStart;
+  
+  const avgMs = times.reduce((a, b) => a + b, 0) / times.length;
+  const minMs = Math.min(...times);
+  const maxMs = Math.max(...times);
+  const opsPerSecond = (iterations / totalMs) * 1000;
+  
+  return {
+    name,
+    iterations,
+    totalMs,
+    avgMs,
+    minMs,
+    maxMs,
+    opsPerSecond,
+  };
+}
+
+function printResult(result: BenchmarkResult): void {
+  console.log(`\n  ${result.name}`);
+  console.log(`    Iterations: ${result.iterations.toLocaleString()}`);
+  console.log(`    Total: ${result.totalMs.toFixed(2)}ms`);
+  console.log(`    Average: ${result.avgMs.toFixed(4)}ms`);
+  console.log(`    Min: ${result.minMs.toFixed(4)}ms`);
+  console.log(`    Max: ${result.maxMs.toFixed(4)}ms`);
+  console.log(`    Ops/sec: ${result.opsPerSecond.toFixed(0)}`);
+}
 
 // ============================================================================
-// Command Execution Benchmarks
+// Benchmark Groups
 // ============================================================================
 
-group("Command Execution", () => {
-  bench("simple echo command", async () => {
-    const result = await $`echo hello`.nothrow();
-    return result.exitCode;
-  });
-
-  bench("command with env var", async () => {
-    const result = await $`echo $TEST_VAR`
-      .env({ TEST_VAR: "test" })
-      .nothrow();
-    return result.exitCode;
-  });
-
-  bench("command with cwd", async () => {
-    const result = await $`pwd`
-      .cwd("/tmp")
-      .nothrow();
-    return result.exitCode;
-  });
-
-  bench("command with output capture", async () => {
-    const result = await $`echo hello world`.nothrow();
-    return result.stdout.toString().length;
-  });
-
-  bench("sequential commands", async () => {
-    for (let i = 0; i < 10; i++) {
-      await $`echo ${i}`.nothrow();
-    }
-  });
-
-  bench("concurrent commands (10)", async () => {
-    const promises = [];
-    for (let i = 0; i < 10; i++) {
-      promises.push($`echo ${i}`.nothrow());
-    }
-    await Promise.all(promises);
-  });
-});
-
-// ============================================================================
-// Bun-specific Benchmarks
-// ============================================================================
-
-group("Bun Native APIs", () => {
-  bench("Bun.sleep (1ms)", async () => {
-    await Bun.sleep(1);
-  });
-
-  bench("setTimeout (1ms)", async () => {
-    return new Promise(resolve => setTimeout(resolve, 1));
-  });
-
-  bench("Bun.spawn (simple)", async () => {
-    const proc = Bun.spawn(["echo", "hello"], {
-      stdout: "pipe",
-    });
-    await proc.exited;
-  });
-
-  bench("$ template literal", async () => {
-    await $`echo hello`.nothrow();
-  });
-
-  bench("Bun.file read", async () => {
-    const file = Bun.file(import.meta.path);
-    await file.text();
-  });
-
-  bench("JSON parse/stringify", () => {
-    const data = { test: "data", number: 123, bool: true };
-    const str = JSON.stringify(data);
-    JSON.parse(str);
-  });
-});
-
-// ============================================================================
-// Memory & Resource Benchmarks
-// ============================================================================
-
-group("Memory & Resources", () => {
-  let resources: any[] = [];
-
-  bench("cleanup handler registration", () => {
-    const handlers: Array<() => Promise<void>> = [];
-    for (let i = 0; i < 100; i++) {
-      handlers.push(async () => {});
-    }
-  });
-
-  bench("process info access", () => {
-    return {
-      pid: process.pid,
-      uptime: process.uptime(),
-      memory: process.memoryUsage(),
-    };
-  });
-
-  bench("environment variable access", () => {
-    const home = process.env.HOME;
-    const path = process.env.PATH;
-    return { home, path };
-  });
-});
-
-// ============================================================================
-// JSON-RPC MCP Benchmarks
-// ============================================================================
-
-group("MCP Protocol", () => {
-  bench("JSON-RPC request parse", () => {
-    const request = {
-      jsonrpc: "2.0",
-      id: 1,
-      method: "tools/call",
-      params: {
-        name: "shell_execute",
-        arguments: { command: "echo test" },
-      },
-    };
-    const str = JSON.stringify(request);
-    JSON.parse(str);
-  });
-
-  bench("JSON-RPC response serialize", () => {
-    const response = {
-      jsonrpc: "2.0",
-      id: 1,
-      result: {
-        content: [{ type: "text", text: "output" }],
-      },
-    };
-    JSON.stringify(response);
-  });
-
-  bench("tool dispatch simulation", () => {
-    const tools: Record<string, Function> = {
-      shell_execute: () => ({ stdout: "", stderr: "", exitCode: 0 }),
-      openclaw_status: () => ({ running: true }),
-      profile_list: () => ({ profiles: [] }),
-      bridge_health: () => ({ status: "healthy" }),
-    };
-    
-    const toolName = "shell_execute";
-    const handler = tools[toolName];
-    if (handler) handler();
-  });
-});
-
-// ============================================================================
-// Real-world Scenario Benchmarks
-// ============================================================================
-
-group("Real-world Scenarios", () => {
-  bench("typical shell workflow", async () => {
-    // Simulate: check health -> execute command -> get status
-    const health = { status: "healthy", pid: process.pid };
-    const result = await $`echo "command output"`.nothrow();
-    const status = { success: result.exitCode === 0 };
-    return { health, output: result.stdout.toString(), status };
-  });
-
-  bench("profile switch workflow", async () => {
-    // Simulate: list profiles -> switch -> verify
-    const profiles = ["dev", "prod", "staging"];
-    const currentProfile = "dev";
-    const env = { MATRIX_ACTIVE_PROFILE: currentProfile };
-    const result = await $`echo $MATRIX_ACTIVE_PROFILE`
-      .env(env)
-      .nothrow();
-    return { profiles, current: result.stdout.toString() };
-  });
-
-  bench("signal stress test", async () => {
-    // Register and remove multiple handlers
-    const handlers: Array<() => void> = [];
-    
-    for (let i = 0; i < 10; i++) {
+async function runSignalBenchmarks(): Promise<void> {
+  console.log("\n📡 Signal Handling Benchmarks");
+  console.log("==============================");
+  
+  // Signal handler registration
+  const regResult = await benchmark(
+    "Register/Remove SIGINT handler",
+    () => {
       const handler = () => {};
-      handlers.push(handler);
-      process.on("SIGUSR1", handler);
-    }
-    
-    // Clean up
-    for (const handler of handlers) {
-      process.removeListener("SIGUSR1", handler);
-    }
-  });
-});
+      process.on("SIGINT", handler);
+      process.removeListener("SIGINT", handler);
+    },
+    10000
+  );
+  printResult(regResult);
+  
+  // Listener count check
+  const countResult = await benchmark(
+    "Check listener count",
+    () => {
+      process.listenerCount("SIGINT");
+    },
+    100000
+  );
+  printResult(countResult);
+}
 
-// ============================================================================
-// Comparison Benchmarks: Bun vs Node patterns
-// ============================================================================
+async function runCommandBenchmarks(): Promise<void> {
+  console.log("\n⚡ Command Execution Benchmarks");
+  console.log("===============================");
+  
+  // Simple command
+  const simpleResult = await benchmark(
+    "Simple echo command",
+    async () => {
+      await $`echo hello`.nothrow();
+    },
+    100
+  );
+  printResult(simpleResult);
+  
+  // Command with env
+  const envResult = await benchmark(
+    "Command with env var",
+    async () => {
+      await $`echo $TEST_VAR`.env({ TEST_VAR: "test" }).nothrow();
+    },
+    100
+  );
+  printResult(envResult);
+  
+  // Command with cwd
+  const cwdResult = await benchmark(
+    "Command with cwd",
+    async () => {
+      await $`pwd`.cwd("/tmp").nothrow();
+    },
+    100
+  );
+  printResult(cwdResult);
+  
+  // Via executeCommand
+  const execResult = await benchmark(
+    "executeCommand wrapper",
+    async () => {
+      await executeCommand("echo test");
+    },
+    50
+  );
+  printResult(execResult);
+}
 
-group("Pattern Comparisons", () => {
-  // Signal handling comparison
-  bench("Bun signal handler (process.on)", () => {
-    const handler = () => {};
-    process.on("SIGINT", handler);
-    process.removeListener("SIGINT", handler);
-  });
+async function runBunApiBenchmarks(): Promise<void> {
+  console.log("\n🔥 Bun Native API Benchmarks");
+  console.log("=============================");
+  
+  // Bun.sleep
+  const sleepResult = await benchmark(
+    "Bun.sleep (1ms)",
+    async () => {
+      await Bun.sleep(1);
+    },
+    100
+  );
+  printResult(sleepResult);
+  
+  // setTimeout comparison
+  const timeoutResult = await benchmark(
+    "setTimeout (1ms)",
+    async () => {
+      await new Promise(resolve => setTimeout(resolve, 1));
+    },
+    100
+  );
+  printResult(timeoutResult);
+  
+  // Bun.spawn
+  const spawnResult = await benchmark(
+    "Bun.spawn (simple)",
+    async () => {
+      const proc = Bun.spawn(["echo", "hello"], { stdout: "pipe" });
+      await proc.exited;
+    },
+    100
+  );
+  printResult(spawnResult);
+  
+  // $ template literal
+  const templateResult = await benchmark(
+    "$ template literal",
+    async () => {
+      await $`echo hello`.nothrow();
+    },
+    100
+  );
+  printResult(templateResult);
+  
+  // JSON operations
+  const jsonResult = await benchmark(
+    "JSON parse/stringify",
+    () => {
+      const data = { test: "data", number: 123, bool: true };
+      const str = JSON.stringify(data);
+      JSON.parse(str);
+    },
+    100000
+  );
+  printResult(jsonResult);
+}
 
-  // Command execution comparison
-  bench("Bun.$ vs Bun.spawn", async () => {
-    // Bun.$ (template literal)
-    const result1 = await $`echo hello`.nothrow();
-    
-    // Bun.spawn (explicit)
-    const proc = Bun.spawn(["echo", "hello"], { stdout: "pipe" });
-    await proc.exited;
-    
-    return { exitCode1: result1.exitCode, exitCode2: proc.exitCode };
-  });
-
-  // File operations
-  bench("Bun.file vs fs.readFile", async () => {
-    // Bun.file (native)
-    const bunFile = Bun.file(import.meta.path);
-    await bunFile.text();
-    
-    // Node fs (for comparison)
-    const fs = await import("fs/promises");
-    await fs.readFile(import.meta.path, "utf-8");
-  });
-});
-
-// ============================================================================
-// Startup/Shutdown Benchmarks
-// ============================================================================
-
-group("Startup/Shutdown", () => {
-  bench("minimal startup time", () => {
-    const start = performance.now();
-    // Simulate minimal init
-    const state = {
-      isShuttingDown: false,
-      receivedSignals: [],
-      startTime: Date.now(),
-    };
-    const handlers: Array<() => Promise<void>> = [];
-    return performance.now() - start;
-  });
-
-  bench("signal handler setup", () => {
-    const start = performance.now();
-    
-    const handlers: Array<() => void> = [];
-    const sigintHandler = () => {};
-    const sigtermHandler = () => {};
-    const sighupHandler = () => {};
-    
-    process.on("SIGINT", sigintHandler);
-    process.on("SIGTERM", sigtermHandler);
-    process.on("SIGHUP", sighupHandler);
-    
-    // Cleanup
-    process.removeListener("SIGINT", sigintHandler);
-    process.removeListener("SIGTERM", sigtermHandler);
-    process.removeListener("SIGHUP", sighupHandler);
-    
-    return performance.now() - start;
-  });
-
-  bench("cleanup execution (10 handlers)", async () => {
-    const handlers: Array<() => Promise<void>> = [];
-    
-    for (let i = 0; i < 10; i++) {
-      handlers.push(async () => {
-        // Simulate cleanup work
-        await Bun.sleep(0);
-      });
-    }
-    
-    const start = performance.now();
-    for (const handler of handlers) {
-      await handler();
-    }
-    return performance.now() - start;
-  });
-});
-
-// ============================================================================
-// Throughput Benchmarks
-// ============================================================================
-
-group("Throughput", () => {
-  bench("commands per second (estimate)", async () => {
-    const iterations = 100;
-    const start = performance.now();
-    
-    for (let i = 0; i < iterations; i++) {
-      await $`true`.nothrow();
-    }
-    
-    const duration = performance.now() - start;
-    const perSecond = (iterations / duration) * 1000;
-    return perSecond;
-  }, { iterations: 5 });
-
-  bench("JSON-RPC messages per second", () => {
-    const iterations = 10000;
-    const request = {
-      jsonrpc: "2.0",
-      id: 1,
-      method: "tools/call",
-      params: { name: "test", arguments: {} },
-    };
-    
-    const start = performance.now();
-    
-    for (let i = 0; i < iterations; i++) {
+async function runMcpBenchmarks(): Promise<void> {
+  console.log("\n🔌 MCP Protocol Benchmarks");
+  console.log("===========================");
+  
+  // JSON-RPC request parse
+  const parseResult = await benchmark(
+    "JSON-RPC parse/serialize",
+    () => {
+      const request = {
+        jsonrpc: "2.0",
+        id: 1,
+        method: "tools/call",
+        params: {
+          name: "shell_execute",
+          arguments: { command: "echo test" },
+        },
+      };
       const str = JSON.stringify(request);
       JSON.parse(str);
-    }
-    
-    const duration = performance.now() - start;
-    const perSecond = (iterations / duration) * 1000;
-    return perSecond;
-  });
-});
+    },
+    100000
+  );
+  printResult(parseResult);
+  
+  // Tool dispatch simulation
+  const toolResult = await benchmark(
+    "Tool dispatch simulation",
+    () => {
+      const tools: Record<string, Function> = {
+        shell_execute: () => ({ stdout: "", stderr: "", exitCode: 0 }),
+        openclaw_status: () => ({ running: true }),
+        profile_list: () => ({ profiles: [] }),
+        bridge_health: () => ({ status: "healthy" }),
+      };
+      
+      const toolName = "shell_execute";
+      const handler = tools[toolName];
+      if (handler) handler();
+    },
+    100000
+  );
+  printResult(toolResult);
+  
+  // Health check
+  const healthResult = await benchmark(
+    "Health check",
+    async () => {
+      await getHealthStatus();
+    },
+    10000
+  );
+  printResult(healthResult);
+}
+
+async function runThroughputBenchmarks(): Promise<void> {
+  console.log("\n📊 Throughput Benchmarks");
+  console.log("========================");
+  
+  // JSON-RPC throughput
+  const iterations = 50000;
+  const start = performance.now();
+  
+  const request = {
+    jsonrpc: "2.0",
+    id: 1,
+    method: "tools/call",
+    params: { name: "test", arguments: {} },
+  };
+  
+  for (let i = 0; i < iterations; i++) {
+    const str = JSON.stringify(request);
+    JSON.parse(str);
+  }
+  
+  const duration = performance.now() - start;
+  const perSecond = (iterations / duration) * 1000;
+  
+  console.log(`\n  JSON-RPC messages`);
+  console.log(`    Iterations: ${iterations.toLocaleString()}`);
+  console.log(`    Duration: ${duration.toFixed(2)}ms`);
+  console.log(`    Messages/sec: ${perSecond.toFixed(0)}`);
+}
+
+async function runRealWorldBenchmarks(): Promise<void> {
+  console.log("\n🌍 Real-World Scenario Benchmarks");
+  console.log("==================================");
+  
+  // Typical workflow
+  const workflowResult = await benchmark(
+    "Typical shell workflow",
+    async () => {
+      await getHealthStatus();
+      await executeCommand("echo test");
+      await getHealthStatus();
+    },
+    20
+  );
+  printResult(workflowResult);
+  
+  // Concurrent commands
+  const concurrentResult = await benchmark(
+    "Concurrent commands (10)",
+    async () => {
+      const promises = [];
+      for (let i = 0; i < 10; i++) {
+        promises.push($`echo ${i}`.nothrow());
+      }
+      await Promise.all(promises);
+    },
+    20
+  );
+  printResult(concurrentResult);
+}
 
 // ============================================================================
 // Main
 // ============================================================================
 
-console.log("🔥 Unified Shell Bridge Benchmark Suite");
-console.log("========================================\n");
-console.log(`Bun version: ${Bun.version}`);
-console.log(`Platform: ${process.platform}`);
-console.log(`Architecture: ${process.arch}`);
-console.log(`\nRunning benchmarks...\n`);
+async function main(): Promise<void> {
+  console.log("🔥 Unified Shell Bridge Benchmark Suite");
+  console.log("========================================\n");
+  console.log(`Bun version: ${Bun.version}`);
+  console.log(`Platform: ${process.platform}`);
+  console.log(`Architecture: ${process.arch}`);
+  console.log(`PID: ${process.pid}`);
+  
+  const startTime = performance.now();
+  
+  await runSignalBenchmarks();
+  await runCommandBenchmarks();
+  await runBunApiBenchmarks();
+  await runMcpBenchmarks();
+  await runThroughputBenchmarks();
+  await runRealWorldBenchmarks();
+  
+  const totalTime = performance.now() - startTime;
+  
+  console.log("\n" + "=".repeat(50));
+  console.log(`✅ All benchmarks complete in ${totalTime.toFixed(0)}ms`);
+  console.log("=".repeat(50) + "\n");
+}
 
-// Run benchmarks with mitata
-await run({
-  avg: true,
-  json: false,
-  colors: true,
-  min_max: true,
-  collect: false,
-  percentiles: [50, 75, 99],
-});
-
-console.log("\n✅ Benchmarks complete!");
+if (import.meta.main) {
+  main().catch(console.error);
+}

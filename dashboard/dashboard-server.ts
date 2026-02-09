@@ -319,6 +319,49 @@ serve({
       }
     }
 
+    // Serve Bun Playground
+    if (path === '/bun-playground') {
+      try {
+        const file = Bun.file('./dashboard/bun-playground.html');
+        if (await file.exists()) {
+          return new Response(file, {
+            headers: { 'Content-Type': 'text/html' }
+          });
+        }
+      } catch {
+        // Fall through to 404
+      }
+    }
+
+    // Serve Navigation Hub
+    if (path === '/hub' || path === '/nav') {
+      try {
+        const file = Bun.file('./dashboard/navigation-hub.html');
+        if (await file.exists()) {
+          return new Response(file, {
+            headers: { 'Content-Type': 'text/html' }
+          });
+        }
+      } catch {
+        // Fall through to 404
+      }
+    }
+
+    // Serve public dashboards
+    if (path.startsWith('/dashboards/')) {
+      try {
+        const filePath = resolve('./public' + path);
+        const file = Bun.file(filePath);
+        if (await file.exists()) {
+          return new Response(file, {
+            headers: { 'Content-Type': 'text/html' }
+          });
+        }
+      } catch {
+        // Fall through to 404
+      }
+    }
+
     // Static files
     if (path.startsWith('/dashboard/')) {
       try {

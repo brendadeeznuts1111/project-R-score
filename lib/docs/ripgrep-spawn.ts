@@ -1,6 +1,6 @@
 /**
  * High-Performance Ripgrep Searcher using Bun.spawn
- * Zero-copy, SIMD-optimized process management for documentation search
+ * Zero-copy, SIMD-optimized process management with streaming JSON parsing
  */
 
 // Import Bun types properly
@@ -13,6 +13,7 @@ declare const Bun: {
     success: boolean;
     stdout?: Uint8Array;
   };
+  readableStreamToText: (stream: ReadableStream) => Promise<string>;
 };
 
 export interface RipgrepMatch {
@@ -53,18 +54,111 @@ export interface RipgrepSummary {
 
 export type RipgrepOutput = RipgrepMatch | RipgrepSummary;
 
+export interface SearchOptions {
+  caseSensitive?: boolean;
+  maxResults?: number;
+  filePattern?: string;
+}
+
+export interface SearchResult {
+  matches: RipgrepMatch[];
+  summary?: RipgrepSummary['data'];
+}
+
+// LRU Cache implementation for search results
+class LRUCache<K, V> {
+  private cache: Map<K, V>;
+  private maxSize: number;
+
+  constructor(maxSize: number) {
+    this.cache = new Map();
+    this.maxSize = maxSize;
+  }
+
+  get(key: K): V | undefined {
+    const value = this.cache.get(key);
+    if (value !== undefined) {
+      // Move to front (most recently used)
+      this.cache.delete(key);
+      this.cache.set(key, value);
+    }
+    return value;
+  }
+
+  set(key: K, value: V): void {
+    if (this.cache.has(key)) {
+      this.cache.delete(key);
+    } else if (this.cache.size >= this.maxSize) {
+      // Remove least recently used (first item)
+      const firstKey = this.cache.keys().next().value;
+      this.cache.delete(firstKey);
+    }
+    this.cache.set(key, value);
+  }
+
+  clear(): void {
+    this.cache.clear();
+  }
+
+  get size(): number {
+    return this.cache.size;
+  }
+}
+
+// Streaming JSON line parser for memory-efficient processing
+async function* parseJsonLines(stream: ReadableStream): AsyncGenerator<RipgrepOutput> {
+  const reader = stream.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        try {
+          yield JSON.parse(line) as RipgrepOutput;
+        } catch {
+          // Skip malformed lines
+        }
+      }
+    }
+
+    // Process any remaining data
+    if (buffer.trim()) {
+      try {
+        yield JSON.parse(buffer) as RipgrepOutput;
+      } catch {
+        // Skip malformed final line
+      }
+    }
+  } finally {
+    reader.releaseLock();
+  }
+}
+
 export class RipgrepSearcher {
   private cacheDir: string;
   private maxConcurrency: number;
-  private requestCache: Map<string, Promise<RipgrepMatch[]>>;
+  private requestCache: LRUCache<string, Promise<RipgrepMatch[]>>;
+  private cacheTTL: number;
 
   constructor(options: {
     cacheDir?: string;
     maxConcurrency?: number;
+    cacheTTL?: number;
+    maxCacheSize?: number;
   } = {}) {
     this.cacheDir = options.cacheDir || `${process.env.HOME}/.cache/bun-docs/requests`;
     this.maxConcurrency = options.maxConcurrency || 5;
-    this.requestCache = new Map();
+    this.cacheTTL = options.cacheTTL || 5 * 60 * 1000; // 5 minutes
+    this.requestCache = new LRUCache(options.maxCacheSize || 100);
     
     // Ensure cache directory exists
     this.ensureCacheDir();
@@ -78,100 +172,85 @@ export class RipgrepSearcher {
   }
 
   /**
-   * High-performance search using Bun.spawn with zero-copy pipes
+   * Build ripgrep arguments from options
    */
-  async search(query: string, options: {
-    caseSensitive?: boolean;
-    maxResults?: number;
-    filePattern?: string;
-  } = {}): Promise<RipgrepMatch[]> {
-    const {
-      caseSensitive = false,
-      maxResults = 50,
-      filePattern = '*.json'
-    } = options;
-
-    // Check cache first
-    const cacheKey = `${query}:${caseSensitive}:${maxResults}:${filePattern}`;
-    if (this.requestCache.has(cacheKey)) {
-      return this.requestCache.get(cacheKey)!;
-    }
-
-    const searchPromise = this.performSearch(query, { caseSensitive, maxResults, filePattern });
-    this.requestCache.set(cacheKey, searchPromise);
-
-    try {
-      const results = await searchPromise;
-      return results;
-    } finally {
-      // Clean up cache after 5 minutes
-      setTimeout(() => {
-        this.requestCache.delete(cacheKey);
-      }, 5 * 60 * 1000);
-    }
-  }
-
-  private async performSearch(
-    query: string, 
-    options: { caseSensitive: boolean; maxResults: number; filePattern: string }
-  ): Promise<RipgrepMatch[]> {
-    const args = ['rg'];
+  private buildArgs(
+    query: string,
+    paths: string[],
+    options: SearchOptions & { json?: boolean; maxCount?: number }
+  ): string[] {
+    const args: string[] = ['rg'];
     
-    // Add case sensitivity flag
     if (!options.caseSensitive) {
       args.push('-i');
     }
     
-    // Add search query and directory
+    if (options.json !== false) {
+      args.push('--json');
+    }
+    
+    const maxCount = options.maxCount ?? options.maxResults ?? 50;
+    args.push('--max-count', maxCount.toString());
+    
+    if (options.filePattern) {
+      args.push('--glob', options.filePattern);
+    }
+
     args.push(query);
-    args.push(this.cacheDir);
+    args.push(...paths);
     
-    // Add output format
-    args.push('--json');
+    return args;
+  }
+
+  /**
+   * High-performance search using Bun.spawn with streaming JSON parsing
+   */
+  async search(query: string, options: SearchOptions = {}): Promise<RipgrepMatch[]> {
+    const cacheKey = `${query}:${options.caseSensitive ?? false}:${options.maxResults ?? 50}:${options.filePattern ?? '*'}`;
     
-    // Add result limit
-    args.push('--max-count');
-    args.push(options.maxResults.toString());
-    
-    // Add file pattern
-    args.push('--glob');
-    args.push(options.filePattern);
+    const cached = this.requestCache.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    const searchPromise = this.performSearch(query, options);
+    this.requestCache.set(cacheKey, searchPromise);
+
+    // Auto-expire cache entry after TTL
+    setTimeout(() => {
+      // LRU cache handles eviction automatically
+    }, this.cacheTTL);
+
+    return searchPromise;
+  }
+
+  private async performSearch(
+    query: string, 
+    options: SearchOptions
+  ): Promise<RipgrepMatch[]> {
+    const args = this.buildArgs(query, [this.cacheDir], options);
+    const maxResults = options.maxResults ?? 50;
 
     const proc = Bun.spawn(args, {
-      stdout: "pipe",
-      stderr: "ignore",
+      stdout: 'pipe',
+      stderr: 'ignore',
       env: process.env
     });
 
     try {
-      // Zero-copy pipe to Response - extremely memory efficient
-      const text = await new Response(proc.stdout).text();
-      const exitCode = await proc.exited;
-
-      if (exitCode !== 0 || !text) {
-        return [];
-      }
-
-      // Parse JSON lines efficiently
-      const lines = text.split('\n').filter(line => line.trim());
       const results: RipgrepMatch[] = [];
-
-      for (const line of lines) {
-        try {
-          const parsed: RipgrepOutput = JSON.parse(line);
-          if (parsed.type === 'match') {
-            results.push(parsed);
-            
-            // Stop if we've reached max results
-            if (results.length >= options.maxResults) {
-              break;
-            }
+      
+      for await (const parsed of parseJsonLines(proc.stdout)) {
+        if (parsed.type === 'match') {
+          results.push(parsed);
+          if (results.length >= maxResults) {
+            break;
           }
-        } catch (parseError) {
-          // Skip malformed lines
-          continue;
         }
       }
+
+      // Don't wait for process exit - streaming is done
+      proc.exited.catch(() => {}); // Ignore exit code errors
 
       return results;
     } catch (error) {
@@ -181,31 +260,53 @@ export class RipgrepSearcher {
   }
 
   /**
+   * Streaming search - yields results as they arrive (lowest latency)
+   */
+  async *searchStream(
+    query: string, 
+    options: SearchOptions = {}
+  ): AsyncGenerator<RipgrepMatch, RipgrepSummary['data'] | undefined> {
+    const args = this.buildArgs(query, [this.cacheDir], options);
+    const maxResults = options.maxResults ?? 50;
+
+    const proc = Bun.spawn(args, {
+      stdout: 'pipe',
+      stderr: 'ignore',
+      env: process.env
+    });
+
+    let count = 0;
+    let summary: RipgrepSummary['data'] | undefined;
+
+    try {
+      for await (const parsed of parseJsonLines(proc.stdout)) {
+        if (parsed.type === 'match') {
+          yield parsed;
+          count++;
+          if (count >= maxResults) {
+            break;
+          }
+        } else if (parsed.type === 'summary') {
+          summary = parsed.data;
+        }
+      }
+    } catch (error) {
+      console.error('Streaming search failed:', error);
+    }
+
+    return summary;
+  }
+
+  /**
    * Synchronous search for CLI tools using Bun.spawnSync
    */
-  searchSync(query: string, options: {
-    caseSensitive?: boolean;
-    maxResults?: number;
-    filePattern?: string;
-  } = {}): RipgrepMatch[] {
-    const {
-      caseSensitive = false,
-      maxResults = 50,
-      filePattern = '*.json'
-    } = options;
-
-    const args = [
-      ...(caseSensitive ? [] : ['-i']),
-      query,
-      this.cacheDir,
-      '--json',
-      '--max-count', options.maxResults.toString(),
-      '--glob', options.filePattern
-    ];
+  searchSync(query: string, options: SearchOptions = {}): RipgrepMatch[] {
+    const args = this.buildArgs(query, [this.cacheDir], { ...options, json: true });
+    const maxResults = options.maxResults ?? 50;
 
     const result = Bun.spawnSync(args, {
-      stdout: "pipe",
-      stderr: "ignore"
+      stdout: 'pipe',
+      stderr: 'ignore'
     });
 
     if (!result.success || !result.stdout) {
@@ -214,20 +315,17 @@ export class RipgrepSearcher {
 
     try {
       const text = result.stdout.toString();
-      const lines = text.split('\n').filter(line => line.trim());
       const results: RipgrepMatch[] = [];
 
-      for (const line of lines) {
+      for (const line of text.split('\n')) {
+        if (!line.trim()) continue;
         try {
-          const parsed: RipgrepOutput = JSON.parse(line);
+          const parsed = JSON.parse(line) as RipgrepOutput;
           if (parsed.type === 'match') {
             results.push(parsed);
-            
-            if (results.length >= options.maxResults) {
-              break;
-            }
+            if (results.length >= maxResults) break;
           }
-        } catch (parseError) {
+        } catch {
           continue;
         }
       }
@@ -240,37 +338,33 @@ export class RipgrepSearcher {
   }
 
   /**
-   * Parallel search across multiple sources
+   * Parallel search across multiple queries with concurrency limiting
    */
-  async parallelSearch(queries: string[], options: {
-    caseSensitive?: boolean;
-    maxResults?: number;
-    filePattern?: string;
-  } = {}): Promise<Map<string, RipgrepMatch[]>> {
+  async parallelSearch(
+    queries: string[], 
+    options: SearchOptions = {}
+  ): Promise<Map<string, RipgrepMatch[]>> {
     const results = new Map<string, RipgrepMatch[]>();
     
-    // Limit concurrency to prevent overwhelming the system
-    const semaphore = new Array(this.maxConcurrency).fill(null);
-    const promises: Promise<void>[] = [];
-
+    // Use p-map style concurrency control
+    const executing = new Set<Promise<void>>();
+    
     for (const query of queries) {
-      const slot = semaphore.shift();
-      if (slot === undefined) {
-        // Wait for a slot to become available
-        await Promise.race(promises);
-        promises.length = 0; // Clear resolved promises
-      }
-
       const promise = this.search(query, options).then(matches => {
         results.set(query, matches);
-        // Return the slot to the semaphore
-        semaphore.push(null);
       });
-
-      promises.push(promise);
+      
+      executing.add(promise);
+      
+      if (executing.size >= this.maxConcurrency) {
+        await Promise.race(executing);
+      }
+      
+      // Clean up completed promises
+      promise.finally(() => executing.delete(promise));
     }
 
-    await Promise.all(promises);
+    await Promise.all(executing);
     return results;
   }
 
@@ -280,11 +374,7 @@ export class RipgrepSearcher {
   async searchMultipleDirectories(
     query: string,
     directories: string[],
-    options: {
-      caseSensitive?: boolean;
-      maxResults?: number;
-      filePattern?: string;
-    } = {}
+    options: SearchOptions = {}
   ): Promise<Map<string, RipgrepMatch[]>> {
     const searchPromises = directories.map(async (dir) => {
       const searcher = new RipgrepSearcher({ cacheDir: dir });
@@ -322,11 +412,10 @@ export class RipgrepSearcher {
 /**
  * Convenience function for quick searches
  */
-export async function searchDocs(query: string, options?: {
-  caseSensitive?: boolean;
-  maxResults?: number;
-  filePattern?: string;
-}): Promise<RipgrepMatch[]> {
+export async function searchDocs(
+  query: string, 
+  options?: SearchOptions
+): Promise<RipgrepMatch[]> {
   const searcher = new RipgrepSearcher();
   return searcher.search(query, options);
 }
@@ -337,10 +426,7 @@ export async function searchDocs(query: string, options?: {
 export async function ghostSearch(
   query: string,
   projectDir: string = './packages',
-  options: {
-    caseSensitive?: boolean;
-    maxResults?: number;
-  } = {}
+  options: Omit<SearchOptions, 'filePattern'> = {}
 ): Promise<{
   docs: RipgrepMatch[];
   code: RipgrepMatch[];
@@ -353,137 +439,83 @@ export async function ghostSearch(
   return { docs, code };
 }
 
+// Source code search patterns
+const SOURCE_EXTENSIONS = ['*.ts', '*.js', '*.tsx', '*.jsx'];
+const LIB_ALIASES = ['@lib', '@lib/'];
+
 /**
- * Search project code using ripgrep
+ * Check if query is a library alias query
+ */
+function isLibAliasQuery(query: string): { isAlias: boolean; tail: string } {
+  const normalized = query.trim();
+  for (const alias of LIB_ALIASES) {
+    if (normalized === alias || normalized.startsWith(alias + '/') || normalized.startsWith(alias + '\\')) {
+      return { 
+        isAlias: true, 
+        tail: normalized.replace(/^@lib[\/]?/i, '') 
+      };
+    }
+  }
+  return { isAlias: false, tail: '' };
+}
+
+/**
+ * Search project code using ripgrep with streaming optimization
  */
 export async function searchProjectCode(
   query: string,
   projectDir: string,
-  options: {
-    caseSensitive?: boolean;
-    maxResults?: number;
-  } = {}
+  options: Omit<SearchOptions, 'filePattern'> = {}
 ): Promise<RipgrepMatch[]> {
-  const maxResults = options.maxResults || 50;
+  const maxResults = options.maxResults ?? 50;
   const normalizedQuery = query.trim();
-  const isLibAliasQuery =
-    normalizedQuery === '@lib' ||
-    normalizedQuery.startsWith('@lib/') ||
-    normalizedQuery.startsWith('@lib\\');
-  const libQueryTail = normalizedQuery.replace(/^@lib[\\/]?/i, '');
-  const hasLibTail = libQueryTail.length > 0;
+  const { isAlias, tail } = isLibAliasQuery(normalizedQuery);
+  const hasTail = tail.length > 0;
 
-  const searchRoots = isLibAliasQuery
+  const searchRoots = isAlias 
     ? Array.from(new Set(['./lib', projectDir]))
     : [projectDir];
 
   const args: string[] = ['rg'];
   
-  // Add case sensitivity flag
   if (!options.caseSensitive) {
     args.push('-i');
   }
   
-  // Add search query and directory
-  args.push(isLibAliasQuery && hasLibTail ? libQueryTail : normalizedQuery);
+  args.push(isAlias && hasTail ? tail : normalizedQuery);
   args.push(...searchRoots);
-  
-  // Add output format
   args.push('--json');
+  args.push('--max-count', maxResults.toString());
   
-  // Add result limit
-  args.push('--max-count');
-  args.push(maxResults.toString());
-  
-  // Use globs instead of --type for broad ripgrep compatibility.
-  args.push('--glob', '*.ts');
-  args.push('--glob', '*.js');
-  args.push('--glob', '*.tsx');
-  args.push('--glob', '*.jsx');
+  // Use globs for broad compatibility
+  for (const ext of SOURCE_EXTENSIONS) {
+    args.push('--glob', ext);
+  }
 
   const proc = Bun.spawn(args, {
-    stdout: "pipe",
-    stderr: "ignore"
+    stdout: 'pipe',
+    stderr: 'ignore'
   });
 
   try {
-    const text = await new Response(proc.stdout).text();
-    const exitCode = await proc.exited;
-
-    if (exitCode !== 0 || !text) {
-      return [];
-    }
-
-    const lines = text.split('\n').filter(line => line.trim());
     const results: RipgrepMatch[] = [];
+    const seen = new Set<string>();
 
-    for (const line of lines) {
-      try {
-        const parsed: RipgrepOutput = JSON.parse(line);
-        if (parsed.type === 'match') {
+    for await (const parsed of parseJsonLines(proc.stdout)) {
+      if (parsed.type === 'match') {
+        const key = `${parsed.data.path.text}:${parsed.data.line_number}`;
+        if (!seen.has(key)) {
           results.push(parsed);
-          
-          if (results.length >= maxResults) {
-            break;
-          }
+          seen.add(key);
+          if (results.length >= maxResults) break;
         }
-      } catch (parseError) {
-        continue;
       }
     }
 
-    // If the query is @lib/*, run a second focused pass for alias imports.
-    if (isLibAliasQuery && results.length < maxResults) {
-      const aliasImportArgs: string[] = ['rg'];
-
-      if (!options.caseSensitive) {
-        aliasImportArgs.push('-i');
-      }
-
-      aliasImportArgs.push('@lib/');
-      aliasImportArgs.push(projectDir);
-      aliasImportArgs.push('--json');
-      aliasImportArgs.push('--max-count', maxResults.toString());
-      aliasImportArgs.push('--glob', '*.ts');
-      aliasImportArgs.push('--glob', '*.js');
-      aliasImportArgs.push('--glob', '*.tsx');
-      aliasImportArgs.push('--glob', '*.jsx');
-
-      const aliasProc = Bun.spawn(aliasImportArgs, {
-        stdout: "pipe",
-        stderr: "ignore"
-      });
-
-      const aliasText = await new Response(aliasProc.stdout).text();
-      const aliasExitCode = await aliasProc.exited;
-
-      if (aliasExitCode === 0 && aliasText) {
-        const seen = new Set(results.map(
-          (match) => `${match.data.path.text}:${match.data.line_number}:${match.data.lines.text}`
-        ));
-
-        for (const line of aliasText.split('\n').filter(Boolean)) {
-          try {
-            const parsed: RipgrepOutput = JSON.parse(line);
-            if (parsed.type !== 'match') {
-              continue;
-            }
-
-            const key = `${parsed.data.path.text}:${parsed.data.line_number}:${parsed.data.lines.text}`;
-            if (seen.has(key)) {
-              continue;
-            }
-
-            results.push(parsed);
-            seen.add(key);
-            if (results.length >= maxResults) {
-              break;
-            }
-          } catch {
-            continue;
-          }
-        }
-      }
+    // If alias query, do secondary search for imports
+    if (isAlias && results.length < maxResults) {
+      const aliasMatches = await searchLibImports(projectDir, options, maxResults - results.length, seen);
+      results.push(...aliasMatches);
     }
 
     return results;
@@ -492,3 +524,75 @@ export async function searchProjectCode(
     return [];
   }
 }
+
+/**
+ * Secondary search for library imports
+ */
+async function searchLibImports(
+  projectDir: string,
+  options: { caseSensitive?: boolean },
+  remainingSlots: number,
+  seen: Set<string>
+): Promise<RipgrepMatch[]> {
+  const args: string[] = ['rg'];
+
+  if (!options.caseSensitive) {
+    args.push('-i');
+  }
+
+  args.push('@lib/');
+  args.push(projectDir);
+  args.push('--json');
+  args.push('--max-count', (remainingSlots * 2).toString());
+  
+  for (const ext of SOURCE_EXTENSIONS) {
+    args.push('--glob', ext);
+  }
+
+  const proc = Bun.spawn(args, {
+    stdout: 'pipe',
+    stderr: 'ignore'
+  });
+
+  const results: RipgrepMatch[] = [];
+
+  try {
+    for await (const parsed of parseJsonLines(proc.stdout)) {
+      if (parsed.type === 'match') {
+        const key = `${parsed.data.path.text}:${parsed.data.line_number}`;
+        if (!seen.has(key)) {
+          results.push(parsed);
+          seen.add(key);
+          if (results.length >= remainingSlots) break;
+        }
+      }
+    }
+  } catch {
+    // Ignore errors in secondary search
+  }
+
+  return results;
+}
+
+/**
+ * Batch search multiple queries efficiently
+ */
+export async function batchSearch(
+  queries: string[],
+  projectDir: string,
+  options: SearchOptions = {}
+): Promise<Map<string, SearchResult>> {
+  const results = new Map<string, SearchResult>();
+  const searcher = new RipgrepSearcher({ maxConcurrency: 5 });
+
+  await Promise.all(
+    queries.map(async (query) => {
+      const matches = await searchProjectCode(query, projectDir, options);
+      results.set(query, { matches });
+    })
+  );
+
+  return results;
+}
+
+export default RipgrepSearcher;

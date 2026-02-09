@@ -166,18 +166,19 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Add to init
-const originalInit = init;
-init = async function() {
-  await originalInit();
-  // Wait for runtimeInfo to be populated
-  let attempts = 0;
-  const waitForRuntime = setInterval(() => {
-    if (runtimeInfo?.runtime || attempts > 20) {
-      clearInterval(waitForRuntime);
-      updateMiniDash();
-      setInterval(updateMiniDash, 5000);
-    }
-    attempts++;
-  }, 100);
-};
+// Initialize mini dashboard immediately - it fetches its own data
+document.addEventListener('DOMContentLoaded', () => {
+  // Initial update
+  updateMiniDash();
+  // Update every 5 seconds
+  setInterval(updateMiniDash, 5000);
+});
+
+// Also hook into app init if available for sync with app data
+if (typeof init !== 'undefined') {
+  const originalInit = init;
+  init = async function() {
+    await originalInit();
+    updateMiniDash();
+  };
+}

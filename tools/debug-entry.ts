@@ -6,7 +6,7 @@ console.log("Bun.main:", Bun.main);
 console.log("import.meta.path:", import.meta.path);
 console.log("Are they equal?", import.meta.path === Bun.main);
 
-import { ensureDirectExecution } from "../shared/tools/entry-guard";
+import { ensureDirectExecution } from "../lib/shared/tools/entry-guard";
 
 console.log("Imported guard successfully");
 
