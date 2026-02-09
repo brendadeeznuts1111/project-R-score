@@ -75,9 +75,9 @@ const proc5 = Bun.spawn({
   stdout: "pipe",
 });
 
-const writer = proc5.stdin.getWriter();
-await writer.write(new TextEncoder().encode("Hello from parent!"));
-await writer.close();
+// Write to stdin using Bun's native writer
+await proc5.stdin.write("Hello from parent!");
+await proc5.stdin.end();
 
 const output5 = await proc5.stdout.text();
 console.log("Child received:", output5.trim());

@@ -95,19 +95,20 @@ Or press CTRL+C in this terminal.
 console.log("\n3️⃣ Waiting for signals...");
 console.log("-".repeat(70));
 console.log(`(Process PID: ${process.pid})`);
-console.log("(Will exit automatically after 30 seconds)\n");
+console.log("(Will exit automatically after 5 seconds)\n");
 
 // Keep process alive
 let seconds = 0;
 const interval = setInterval(() => {
-  seconds += 5;
+  seconds += 1;
   console.log(`   Waiting... (${seconds}s elapsed)`);
   
-  if (seconds >= 30) {
+  if (seconds >= 5) {
     clearInterval(interval);
     console.log("\n⏱️  Timeout reached, exiting...");
     process.exit(0);
   }
-}, 5000);
+}, 1000);
 
-console.log("💡 Send a signal or press CTRL+C to see the handlers in action!\n");
+console.log("💡 Send a signal or press CTRL+C to see the handlers in action!");
+console.log("   (Demo will auto-exit after 5 seconds)\n");
