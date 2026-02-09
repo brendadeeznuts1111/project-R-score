@@ -66,6 +66,7 @@ Smoke endpoint:
 ```bash
 curl -s http://localhost:<port>/api/control/network-smoke
 curl -s http://localhost:<port>/api/control/features
+curl -s http://localhost:<port>/api/control/protocol-matrix
 curl -s -X POST http://localhost:<port>/api/control/upload-progress \
   -H "content-type: application/json" \
   -d '{"bodyType":"multipart","sizeBytes":1048576,"chunkSize":131072}'

@@ -79,6 +79,15 @@ const featureDefinitions: Record<string, FeatureDefinition<unknown>> = {
 // Demo configurations
 const DEMOS = [
   {
+    id: "protocol-matrix",
+    name: "Protocol Support Matrix",
+    description: "Bun-accurate fetch/network protocol capabilities and constraints",
+    category: "Governance",
+    code: `# Inspect Bun protocol matrix (runtime semantics)
+curl -s http://localhost:<port>/api/control/protocol-matrix
+`,
+  },
+  {
     id: "multipart-progress",
     name: "Multipart Progress Tracking",
     description: "Simulate upload progress events for multipart/file body types",
@@ -503,6 +512,112 @@ async function buildUploadProgress(req: Request): Promise<{
   };
 }
 
+function getProtocolMatrix() {
+  return {
+    generatedAt: new Date().toISOString(),
+    source: "bun-runtime-playground",
+    protocols: [
+      {
+        protocol: "HTTP",
+        scheme: "http://",
+        defaultPort: 80,
+        auth: "none or app-level",
+        bodySupport: "all standard fetch body types",
+        streaming: "request and response streaming supported",
+        caching: "no built-in fetch cache layer by default",
+        cors: "server-side fetch; browser CORS policy not enforced here",
+        security: "unencrypted transport; use only trusted/internal paths",
+        maxSize: "practical memory/network limits",
+        useCase: "internal services, local development",
+      },
+      {
+        protocol: "HTTPS",
+        scheme: "https://",
+        defaultPort: 443,
+        auth: "TLS + app auth (tokens, mTLS, etc.)",
+        bodySupport: "all standard fetch body types",
+        streaming: "request and response streaming supported",
+        caching: "no built-in fetch cache layer by default",
+        cors: "server-side fetch; browser CORS policy not enforced here",
+        security: "encrypted transport with certificate validation",
+        maxSize: "practical memory/network limits",
+        useCase: "production APIs and external integrations",
+      },
+      {
+        protocol: "HTTP/2",
+        scheme: "https:// (ALPN negotiated)",
+        defaultPort: 443,
+        auth: "TLS + app auth",
+        bodySupport: "all standard fetch body types",
+        streaming: "multiplexed streams over a single connection",
+        caching: "no built-in fetch cache layer by default",
+        cors: "server-side fetch; browser CORS policy not enforced here",
+        security: "encrypted binary framing via TLS",
+        maxSize: "practical memory/network limits",
+        useCase: "high-throughput services with connection efficiency",
+      },
+      {
+        protocol: "S3-compatible",
+        scheme: "s3:// and https:// provider endpoints",
+        defaultPort: 443,
+        auth: "provider credentials/signing/presigned URLs",
+        bodySupport: "streaming PUT/POST with multipart support",
+        streaming: "multipart uploads and streamed transfer supported",
+        caching: "object-store policy controlled",
+        cors: "bucket policy and endpoint policy controlled",
+        security: "signed requests and provider TLS",
+        maxSize: "provider/object-store limits",
+        useCase: "object storage and backups",
+      },
+      {
+        protocol: "Unix Socket HTTP",
+        scheme: "http(s) + unix request option",
+        defaultPort: null,
+        auth: "filesystem ACL/permissions",
+        bodySupport: "all standard fetch body types",
+        streaming: "request and response streaming supported",
+        caching: "no built-in fetch cache layer by default",
+        cors: "not browser-origin based in server runtime",
+        security: "local IPC boundary via socket permissions",
+        maxSize: "socket buffer and runtime limits",
+        useCase: "local IPC and daemon communication",
+      },
+      {
+        protocol: "file://",
+        scheme: "file://",
+        defaultPort: null,
+        auth: "filesystem permissions",
+        bodySupport: "read path support only in fetch contexts",
+        streaming: "implementation-dependent; often materialized reads",
+        caching: "filesystem semantics",
+        cors: "not browser-origin based in server runtime",
+        security: "local file access controls",
+        maxSize: "filesystem limits",
+        useCase: "local assets and config reads",
+      },
+      {
+        protocol: "data:/blob:",
+        scheme: "data:, blob:",
+        defaultPort: null,
+        auth: "none (in-memory/inlined data)",
+        bodySupport: "read payloads; write semantics are API-specific",
+        streaming: "typically non-streaming payload semantics",
+        caching: "runtime/object-lifecycle semantics",
+        cors: "not browser-origin based in server runtime",
+        security: "process-memory scoped data handling",
+        maxSize: "runtime memory limits",
+        useCase: "small inline payloads and temporary in-memory URLs",
+      },
+    ],
+    notes: [
+      "Bun server-side fetch does not enforce browser CORS policy.",
+      "HTTP/2 is negotiated over HTTPS via ALPN, not a separate fetch scheme.",
+      "Use proxy object form for proxy auth headers.",
+      "Use request options and env controls for deterministic production behavior.",
+    ],
+  };
+}
+
 function withTimeoutSignal(timeoutMs: number): AbortSignal {
   return AbortSignal.timeout(timeoutMs);
 }
@@ -811,6 +926,8 @@ const routes = {
       items: keys.map(key => ({ key, contentType: contentTypeFromS3Key(key) })),
     };
   },
+
+  "/api/control/protocol-matrix": () => getProtocolMatrix(),
   
   "/api/run/:id": async (req: Request) => {
     const url = new URL(req.url);
@@ -850,6 +967,17 @@ const routes = {
       return new Response(JSON.stringify({
         success: true,
         output: JSON.stringify(preview, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "protocol-matrix") {
+      const matrix = routes["/api/control/protocol-matrix"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(matrix, null, 2),
         exitCode: 0,
       }), {
         headers: { "Content-Type": "application/json" },
@@ -983,6 +1111,10 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/s3-content-type-batch") {
         return jsonResponse(await routes["/api/control/s3-content-type-batch"](req));
+      }
+
+      if (url.pathname === "/api/control/protocol-matrix") {
+        return jsonResponse(routes["/api/control/protocol-matrix"]());
       }
       
       const demoMatch = url.pathname.match(/^\/api\/demo\/(.+)$/);
