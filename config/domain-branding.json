@@ -1,0 +1,28 @@
+{
+  "default": {
+    "baseSeed": 210,
+    "saturation": 90,
+    "lightness": 60
+  },
+  "domains": {
+    "factory-wager.com": {
+      "baseSeed": 210,
+      "saturation": 90,
+      "lightness": 60,
+      "subdomainOffsets": {
+        "@": 0,
+        "www": 0,
+        "dashboard": 0,
+        "docs": -20,
+        "api": 15,
+        "status": 45,
+        "monitor": 45,
+        "admin": 10,
+        "cdn": 20,
+        "registry": 12,
+        "r2": 18,
+        "blog": -10
+      }
+    }
+  }
+}

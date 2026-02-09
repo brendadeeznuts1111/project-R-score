@@ -69,6 +69,22 @@ const DEFAULT_CONFIG: Required<DomainBrandingConfig> = {
 };
 
 let cachedConfig: Required<DomainBrandingConfig> | null = null;
+const RESOLUTION_CACHE = new Map<string, DomainBrandingResolution>();
+const CACHE_MAX = 256;
+
+const THREE_PART_PUBLIC_SUFFIXES = new Set([
+  'co.uk',
+  'org.uk',
+  'gov.uk',
+  'ac.uk',
+  'com.au',
+  'net.au',
+  'org.au',
+  'co.jp',
+  'com.br',
+  'com.mx',
+  'com.tr',
+]);
 
 function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
@@ -78,11 +94,26 @@ function normalizeHue(seed: number): number {
   return ((seed % 360) + 360) % 360;
 }
 
-function splitDomain(input: string): { apexDomain: string; subdomain: string } {
+function splitDomain(
+  input: string,
+  cfg: Required<DomainBrandingConfig>
+): { apexDomain: string; subdomain: string } {
   const normalized = String(input || '')
     .trim()
     .toLowerCase()
     .replace(/:\d+$/, '');
+
+  const configuredDomains = Object.keys(cfg.domains || {}).sort((a, b) => b.length - a.length);
+  for (const domain of configuredDomains) {
+    if (normalized === domain) {
+      return { apexDomain: domain, subdomain: '@' };
+    }
+    if (normalized.endsWith(`.${domain}`)) {
+      const subdomain = normalized.slice(0, normalized.length - domain.length - 1) || '@';
+      return { apexDomain: domain, subdomain };
+    }
+  }
+
   const labels = normalized.split('.').filter(Boolean);
   if (labels.length < 2) {
     return {
@@ -91,8 +122,10 @@ function splitDomain(input: string): { apexDomain: string; subdomain: string } {
     };
   }
 
-  const apexDomain = labels.slice(-2).join('.');
-  const subdomain = labels.length > 2 ? labels.slice(0, -2).join('.') : '@';
+  const suffix2 = labels.slice(-2).join('.');
+  const apexPartCount = labels.length >= 3 && THREE_PART_PUBLIC_SUFFIXES.has(suffix2) ? 3 : 2;
+  const apexDomain = labels.slice(-apexPartCount).join('.');
+  const subdomain = labels.length > apexPartCount ? labels.slice(0, -apexPartCount).join('.') : '@';
   return { apexDomain, subdomain };
 }
 
@@ -125,8 +158,14 @@ function loadConfig(): Required<DomainBrandingConfig> {
 }
 
 export function resolveDomainBranding(domainOrHost: string): DomainBrandingResolution {
+  const normalizedInput = String(domainOrHost || '').trim().toLowerCase();
+  const cached = RESOLUTION_CACHE.get(normalizedInput);
+  if (cached) {
+    return cached;
+  }
+
   const cfg = loadConfig();
-  const { apexDomain, subdomain } = splitDomain(domainOrHost);
+  const { apexDomain, subdomain } = splitDomain(normalizedInput, cfg);
   const domainCfg = cfg.domains[apexDomain] || {};
 
   const baseSeed = clamp(Number(domainCfg.baseSeed ?? cfg.default.baseSeed), 0, 360);
@@ -134,8 +173,9 @@ export function resolveDomainBranding(domainOrHost: string): DomainBrandingResol
   const lightness = clamp(Number(domainCfg.lightness ?? cfg.default.lightness), 0, 100);
 
   const offsets = domainCfg.subdomainOffsets || {};
-  const rootLabel = subdomain === '@' ? '@' : subdomain.split('.')[0] || '@';
-  const offset = Number(offsets[subdomain] ?? offsets[rootLabel] ?? offsets['@'] ?? 0);
+  const labels = subdomain === '@' ? [] : subdomain.split('.').filter(Boolean);
+  const nearestLabel = labels.length > 0 ? labels[labels.length - 1] : '@';
+  const offset = Number(offsets[subdomain] ?? offsets[nearestLabel] ?? offsets['@'] ?? 0);
 
   const resolvedSeed = normalizeHue(baseSeed + offset);
   const primary = `hsl(${resolvedSeed}, ${saturation}%, ${lightness}%)`;
@@ -145,8 +185,8 @@ export function resolveDomainBranding(domainOrHost: string): DomainBrandingResol
   const contrast = checkContrast(parseHSL(primary), parseHSL(accent));
   const generated = generatePalette({ h: resolvedSeed, s: saturation, l: lightness });
 
-  return {
-    requestDomain: String(domainOrHost || '').trim().toLowerCase(),
+  const resolved: DomainBrandingResolution = {
+    requestDomain: normalizedInput,
     apexDomain,
     subdomain,
     baseSeed,
@@ -164,4 +204,11 @@ export function resolveDomainBranding(domainOrHost: string): DomainBrandingResol
       level: contrast.level,
     },
   };
+
+  if (RESOLUTION_CACHE.size >= CACHE_MAX) {
+    RESOLUTION_CACHE.clear();
+  }
+  RESOLUTION_CACHE.set(normalizedInput, resolved);
+
+  return resolved;
 }

@@ -175,6 +175,9 @@ credentials/
 **/auth/
 **/credentials/.env.production
 .env.secret
+!config/
+config/*
+!config/domain-branding.json
 
 # Clawdbot - temporarily ignored
 clawdbot/

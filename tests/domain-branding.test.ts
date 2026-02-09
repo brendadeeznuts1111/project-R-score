@@ -32,4 +32,17 @@ describe('domain branding resolver', () => {
     expect(branding.subdomain).toBe('dashboard');
     expect(branding.resolvedSeed).toBe(210);
   });
+
+  test('uses nearest apex label offset for nested subdomains', () => {
+    const branding = resolveDomainBranding('v2.api.factory-wager.com');
+    expect(branding.subdomain).toBe('v2.api');
+    expect(branding.offset).toBe(15);
+    expect(branding.resolvedSeed).toBe(225);
+  });
+
+  test('falls back to three-part apex for common public suffixes', () => {
+    const branding = resolveDomainBranding('api.example.co.uk');
+    expect(branding.apexDomain).toBe('example.co.uk');
+    expect(branding.subdomain).toBe('api');
+  });
 });
