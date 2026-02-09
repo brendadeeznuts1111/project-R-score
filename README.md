@@ -1,8 +1,35 @@
-# FactoryWager
+# ⚡ FactoryWager
 
-Enterprise infrastructure and developer platform built with Bun + TypeScript.
+<div align="center">
 
-## Quick Links
+<!-- Animated HSL Color Badges -->
+<img src="https://img.shields.io/badge/Runtime-Bun-bb33ff?style=for-the-badge&labelColor=8114b8" alt="Runtime: Bun" />
+<img src="https://img.shields.io/badge/Language-TypeScript-1a8cff?style=for-the-badge&labelColor=1259a1" alt="Language: TypeScript" />
+<img src="https://img.shields.io/badge/Features-Real--time-00e673?style=for-the-badge&labelColor=0f8a4d" alt="Features: Real-time" />
+<img src="https://img.shields.io/badge/Protocol-WebSocket-ff4dc4?style=for-the-badge&labelColor=cf1791" alt="Protocol: WebSocket" />
+<img src="https://img.shields.io/badge/Security-Hardened-ff3333?style=for-the-badge&labelColor=b81414" alt="Security: Hardened" />
+<img src="https://img.shields.io/badge/Database-Vectorize-00ff00?style=for-the-badge&labelColor=12a112" alt="Database: Vectorize" />
+
+<!-- HSL Color Topic Tags -->
+<br><br>
+<img src="https://img.shields.io/badge/⚡%20bun--runtime-bb33ff?style=for-the-badge&logoColor=white" alt="bun-runtime" />
+<img src="https://img.shields.io/badge/🔷%20typescript-1a8cff?style=for-the-badge&logoColor=white" alt="typescript" />
+<img src="https://img.shields.io/badge/🔄%20real--time-00e673?style=for-the-badge&logoColor=white" alt="real-time" />
+<img src="https://img.shields.io/badge/🔌%20websocket-ff4dc4?style=for-the-badge&logoColor=white" alt="websocket" />
+<img src="https://img.shields.io/badge/💳%20payments-ffc61a?style=for-the-badge&logoColor=white" alt="payments" />
+<img src="https://img.shields.io/badge/🔒%20security-ff3333?style=for-the-badge&logoColor=white" alt="security" />
+<img src="https://img.shields.io/badge/📊%20analytics-00ffff?style=for-the-badge&logoColor=white" alt="analytics" />
+<img src="https://img.shields.io/badge/📈%20dashboard-9966ff?style=for-the-badge&logoColor=white" alt="dashboard" />
+<img src="https://img.shields.io/badge/🤖%20mcp-ff8c1a?style=for-the-badge&logoColor=white" alt="mcp" />
+<img src="https://img.shields.io/badge/🔍%20vectorize-00ff00?style=for-the-badge&logoColor=white" alt="vectorize" />
+
+</div>
+
+---
+
+Enterprise infrastructure and developer platform built with **Bun** + **TypeScript**.
+
+## 🚀 Quick Links
 
 - Repo: [project-R-score](https://github.com/brendadeeznuts1111/project-R-score)
 - Branch: [feat/bun-docs-mcp](https://github.com/brendadeeznuts1111/project-R-score/tree/feat/bun-docs-mcp)
