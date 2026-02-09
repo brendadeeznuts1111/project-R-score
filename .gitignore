@@ -25,6 +25,7 @@ out/
 .vite/
 .cache/
 *.js
+!scratch/bun-v1.3.9-examples/playground-web/app.js
 *.js.map
 *.tsbuildinfo
 
