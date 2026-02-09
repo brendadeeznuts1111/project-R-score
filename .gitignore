@@ -182,3 +182,6 @@ config/*
 
 # Clawdbot - temporarily ignored
 clawdbot/
+
+# NPM Cache (should not be committed)
+.npm-cache/
