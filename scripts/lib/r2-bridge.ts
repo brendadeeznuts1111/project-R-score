@@ -8,6 +8,12 @@ export type R2BridgeConfig = {
   requestPayer?: boolean;
 };
 
+function parseTruthyEnv(value?: string): boolean {
+  if (!value) return false;
+  const normalized = value.trim().toLowerCase();
+  return normalized === '1' || normalized === 'true' || normalized === 'yes' || normalized === 'on';
+}
+
 export function resolveR2BridgeConfig(input?: {
   endpoint?: string;
   bucket?: string;
@@ -22,8 +28,7 @@ export function resolveR2BridgeConfig(input?: {
     (input?.bucket || Bun.env.R2_BENCH_BUCKET || Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || '').trim();
   const accessKeyId = (input?.accessKeyId || Bun.env.R2_ACCESS_KEY_ID || '').trim();
   const secretAccessKey = (input?.secretAccessKey || Bun.env.R2_SECRET_ACCESS_KEY || '').trim();
-  const requestPayer =
-    input?.requestPayer ?? (Bun.env.R2_REQUEST_PAYER === '1' || Bun.env.R2_REQUEST_PAYER === 'true');
+  const requestPayer = input?.requestPayer ?? parseTruthyEnv(Bun.env.R2_REQUEST_PAYER);
 
   if (!endpoint || !bucket || !accessKeyId || !secretAccessKey) {
     throw new Error(

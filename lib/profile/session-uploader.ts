@@ -64,6 +64,12 @@ export interface ProfileUploaderConfig {
   profilesDir?: string;
 }
 
+function parseTruthyEnv(value?: string): boolean {
+  if (!value) return false;
+  const normalized = value.trim().toLowerCase();
+  return normalized === '1' || normalized === 'true' || normalized === 'yes' || normalized === 'on';
+}
+
 // ==================== Naming Convention ====================
 
 /**
@@ -120,7 +126,7 @@ export function resolveUploaderConfig(): ProfileUploaderConfig {
     endpoint: Bun.env.R2_ENDPOINT || Bun.env.S3_ENDPOINT || (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : undefined),
     accessKeyId: Bun.env.R2_ACCESS_KEY_ID || Bun.env.S3_ACCESS_KEY_ID || undefined,
     secretAccessKey: Bun.env.R2_SECRET_ACCESS_KEY || Bun.env.S3_SECRET_ACCESS_KEY || undefined,
-    requestPayer: Bun.env.R2_REQUEST_PAYER === '1' || Bun.env.R2_REQUEST_PAYER === 'true',
+    requestPayer: parseTruthyEnv(Bun.env.R2_REQUEST_PAYER),
     prefix: Bun.env.R2_PROFILE_PREFIX || 'profiles',
     profilesDir: Bun.env.PROFILE_OUTPUT_DIR || './profiles',
   };

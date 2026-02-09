@@ -120,7 +120,16 @@ class ProxyWebSocketClient {
     
     // Wait for connection
     await new Promise<void>((resolve, reject) => {
-      const timeout = setTimeout(() => reject(new Error('Connection timeout')), 10000);
+      const cleanup = () => {
+        this.connections.delete(id);
+      };
+      const timeout = setTimeout(() => {
+        cleanup();
+        try {
+          ws.close();
+        } catch {}
+        reject(new Error('Connection timeout'));
+      }, 10000);
       ws.onopen = () => {
         clearTimeout(timeout);
         console.log(`✅ WebSocket ${id} connected${proxy ? ' via proxy' : ''}`);
@@ -138,6 +147,10 @@ class ProxyWebSocketClient {
       };
       ws.onerror = (err) => {
         clearTimeout(timeout);
+        cleanup();
+        try {
+          ws.close();
+        } catch {}
         console.error(`💥 WebSocket ${id} error:`, err);
         redis.publish('ws:error', JSON.stringify({ id, error: String(err) }));
         reject(err);
