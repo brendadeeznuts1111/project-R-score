@@ -1,6 +1,6 @@
 // server/server.ts
 import { BUN_DOCS, TYPED_ARRAY_URLS, RSS_URLS } from '../config/urls.ts';
-import { FetchService } from '../services/fetch-service.ts';
+import { FetchService } from '../services/core/fetch-service.ts';
 
 const fetchService = new FetchService();
 

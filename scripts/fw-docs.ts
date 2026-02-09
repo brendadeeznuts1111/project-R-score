@@ -17,7 +17,7 @@ import { BunMCPClient } from '../lib/mcp/bun-mcp-client.ts';
 import { styled, FW_COLORS, log, colorBar, createSpinner } from '../lib/theme/colors.ts';
 import { masterTokenManager, DEFAULT_PERMISSIONS } from '../lib/security/master-token.ts';
 import { mcpAuthMiddleware } from '../lib/mcp/auth-middleware.ts';
-import { SecretManager } from '../lib/security/secrets.ts';
+import { SecretManager } from '../lib/security/secrets-v5.ts';
 
 const mcp = new BunMCPClient();
 

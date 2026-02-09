@@ -1,7 +1,7 @@
 // server/server-fixed.ts
 import { BUN_DOCS, TYPED_ARRAY_URLS, RSS_URLS } from '../config/urls.ts';
-import { FetchService } from '../services/fetch-service.ts';
-import { AdvancedFetchService } from '../services/advanced-fetch-service.ts';
+import { FetchService } from '../services/core/fetch-service.ts';
+import { AdvancedFetchService } from '../services/core/advanced-fetch-service.ts';
 
 const fetchService = new FetchService();
 const advancedFetchService = new AdvancedFetchService();
@@ -272,7 +272,7 @@ async function handleAdvancedFetchDemo(): Promise<Response> {
   const demoCode = `// Advanced Bun Fetch Features Demo
 // This demonstrates all the advanced features from Bun's fetch documentation
 
-import { AdvancedFetchService } from '../services/advanced-fetch-service.ts';
+import { AdvancedFetchService } from '../services/core/advanced-fetch-service.ts';
 import { dns } from 'bun';
 
 const service = new AdvancedFetchService();

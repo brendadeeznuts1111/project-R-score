@@ -3,13 +3,14 @@ import {
   $, nanoseconds, inspect, deepEquals, escapeHTML, openInEditor, color,
   stringWidth, stripANSI, Glob, TOML, resolveSync, file, write, spawn
 } from "bun";
-import {
-  BUN_PROFILES_SECRET_NAMES,
-  BUN_PROFILES_ENV_MAP,
-  BUN_PROFILES_DEFAULT_NAMESPACE,
-  deriveKeychainService,
-  profileKeychainGet
-} from "./profiles";
+// TODO: ./profiles module not found in scripts/ — locate or restore profiles module
+// import {
+//   BUN_PROFILES_SECRET_NAMES,
+//   BUN_PROFILES_ENV_MAP,
+//   BUN_PROFILES_DEFAULT_NAMESPACE,
+//   deriveKeychainService,
+//   profileKeychainGet
+// } from "./profiles";
 import { validateHost, validatePort, sanitizeEnvVar } from "../lib/utils/env-validator";
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -21,7 +22,7 @@ import {
   generateStatusConfig,
   STATUS_HUES,
   HSL_SWEET_SPOTS,
-} from "../lib/utils/advanced-hsl-colors.js";
+} from "../lib/utils/advanced-hsl-colors.ts";
 
 const BUN_STATUS_GLYPHS = {
   success: { glyph: "✓", baseHue: STATUS_HUES.success },

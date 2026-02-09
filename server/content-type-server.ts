@@ -372,7 +372,7 @@ function handleDefault(): Response {
 
 // Handle verbose logging demo
 async function handleVerboseDemo(): Promise<Response> {
-  const { VerboseFetchDemo } = await import('../services/verbose-fetch-demo.ts');
+  const { VerboseFetchDemo } = await import('../services/demos/verbose-fetch-demo.ts');
   const demo = new VerboseFetchDemo();
   
   // Run demo in background

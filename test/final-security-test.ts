@@ -2,7 +2,7 @@
 
 import { enhancedSecurityManager } from '../lib/security/enhanced-security-manager';
 import { securityConfig } from '../lib/security/config-manager';
-import { secretManager } from '../barbershop/lib/security/secrets';
+import { secretManager } from '../barbershop/lib/secrets/core/secrets';
 
 async function testAsyncInitializationFix(): Promise<boolean> {
   console.log('🧪 Testing Async Initialization Fix...');

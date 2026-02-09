@@ -3,9 +3,9 @@
 
 import { enhancedSecurityManager } from '../lib/security/enhanced-security-manager';
 import { securityConfig } from '../lib/security/config-manager';
-import { secretManager } from '../barbershop/lib/security/secrets';
-import { versionGraph } from '../barbershop/lib/security/version-graph';
-import { secretLifecycleManager } from '../barbershop/lib/security/secret-lifecycle';
+import { secretManager } from '../barbershop/lib/secrets/core/secrets';
+import { versionGraph } from '../barbershop/lib/secrets/core/version-graph';
+import { secretLifecycleManager } from '../barbershop/lib/secrets/core/secret-lifecycle';
 
 async function testEnvironmentBypassFix(): Promise<boolean> {
   console.log('🧪 Testing Environment Bypass Fix...');

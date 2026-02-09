@@ -1,6 +1,7 @@
 // lib/utils/index.ts — Central utility functions
 
-import { FACTORYWAGER_CONFIG } from './config';
+// TODO: FACTORYWAGER_CONFIG source module missing — re-enable when config is restored
+// import { FACTORYWAGER_CONFIG } from './config';
 
 import type { Severity, PerformanceMetrics } from '../core/fw-types';
 

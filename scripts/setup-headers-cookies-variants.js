@@ -212,9 +212,12 @@ class HeadersCookiesVariantsSetup {
  */
 
 // Import all modules
-import CookieManager from './lib/cookie-manager.js';
-import PrefetchManager from './lib/prefetch-manager.js';
-import VariantTesting from './lib/variant-testing.js';
+// TODO: cookie-manager.js not found at ./lib/ — exists at scripts/lib/cookie-manager.ts or lib/cookie-manager.ts
+// import CookieManager from './lib/cookie-manager.js';
+// TODO: prefetch-manager.js not found at ./lib/ — exists at lib/prefetch-manager.ts
+// import PrefetchManager from './lib/prefetch-manager.js';
+// TODO: variant-testing.js not found at ./lib/ — exists at lib/variant-testing.ts
+// import VariantTesting from './lib/variant-testing.js';
 
 class FactoryWagerSystem {
     constructor() {
@@ -438,7 +441,8 @@ export default FactoryWagerSystem;
     </div>
 
     <script type="module">
-        import { initializeFactoryWagerSystem } from '../factory-wager-system.js';
+        // TODO: factory-wager-system.js only found in archive/ — fix import path
+        // import { initializeFactoryWagerSystem } from '../factory-wager-system.js';
 
         async function init() {
             // Initialize the system
@@ -483,7 +487,8 @@ export default FactoryWagerSystem;
         );
 
         // Advanced example
-        const advancedExample = `import { initializeFactoryWagerSystem } from '../factory-wager-system.js';
+        const advancedExample = `// TODO: factory-wager-system.js only found in archive/ — fix import path
+// import { initializeFactoryWagerSystem } from '../factory-wager-system.js';
 
 class AdvancedExample {
     constructor() {

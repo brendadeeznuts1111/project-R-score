@@ -5,10 +5,10 @@ import { domainIntegration } from './domain-integration';
 import { duoplusIntegration } from './duoplus-integration';
 import { cloudflareDomainManager } from './cloudflare-domain-manager';
 import { dnsSynchronization } from './dns-sync';
-import { EnterpriseSecretsManager } from '../enterprise-secrets';
+import { EnterpriseSecretsManager } from '../security/enterprise-secrets';
 import { VersionedSecretManager } from '../security/versioned-secrets';
 import { masterTokenManager } from '../security/master-token';
-import { hardenedFetch } from '../hardened-fetch';
+import { hardenedFetch } from '../http/hardened-fetch';
 import { styled, FW_COLORS } from '../theme/colors';
 import { FACTORYWAGER_VERSION, R2_CONFIG, PERFORMANCE_THRESHOLDS } from '../constants/index';
 

@@ -141,7 +141,7 @@ oShortcut.Save
   }
 
   async openDocsInMYBUNDOCS11(query: string, domain: 'sh' | 'com' = 'com'): Promise<void> {
-    const { EnhancedDocsFetcher } = await import('./docs/index-fetcher-enhanced');
+    const { EnhancedDocsFetcher } = await import('../docs/index-fetcher-enhanced');
     const fetcher = new EnhancedDocsFetcher();
     const results = await fetcher.search(query, domain);
 

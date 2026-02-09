@@ -54,7 +54,7 @@ if (directTest.exitCode >= 0 && directTest.exitCode <= 1) {
 // Test 4: Test with a non-guarded module (should work)
 console.log("4️⃣  Testing import of non-guarded module...");
 try {
-  await import("../project-colors.ts");
+  await import("../utils/project-colors.ts");
   console.log("✅ Non-guarded module import works\n");
 } catch (err) {
   console.log(`❌ Non-guarded module import failed: ${err}\n`);

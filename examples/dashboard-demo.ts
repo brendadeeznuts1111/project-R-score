@@ -33,7 +33,7 @@ function getDashboards(): Record<string, DashboardInfo> {
     live: {
       name: "Live Dashboard",
       description: "Real-time dashboard with live data streaming",
-      command: "import('./lib/ansi-dashboard.ts').then(m=>m.startLiveDashboard())",
+      command: "import('../lib/cli/ansi-dashboard.ts').then(m=>m.startLiveDashboard())",
       features: [
         "Live data streaming",
         "ANSI terminal interface",

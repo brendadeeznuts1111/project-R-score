@@ -8,7 +8,7 @@ import {
   BunSecurityEngine, 
   createSecurityMiddleware,
   SecurityError 
-} from './bun-security-integration-v4.js';
+} from './bun-security-integration-v4';
 
 export interface SecurityTestResult {
   testName: string;

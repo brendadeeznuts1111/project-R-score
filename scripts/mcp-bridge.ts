@@ -22,7 +22,7 @@ import {
 
 import { BunMCPClient } from '../lib/mcp/bun-mcp-client.ts';
 import { styled, FW_COLORS } from '../lib/theme/colors.ts';
-import { SecretManager } from '../lib/security/secrets.ts';
+import { SecretManager } from '../lib/security/secrets-v5.ts';
 import { r2MCPIntegration } from '../lib/mcp/r2-integration.ts';
 import { mcpAuthMiddleware, extractTokenFromRequest, AuthContext } from '../lib/mcp/auth-middleware.ts';
 import { MCPWikiGenerator } from '../lib/mcp/wiki-generator-mcp.ts';

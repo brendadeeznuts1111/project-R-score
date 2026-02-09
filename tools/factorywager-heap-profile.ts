@@ -14,7 +14,9 @@ import { styled, log, FW_COLORS, generateVisualMetadata } from '../lib/theme/col
  * Generated automatically by optimize-examples-prefetch.ts
  */
 import { Utils } from '../lib/utils/index';
-import type { R2Metadata } from '../lib/types/index';
+// TODO: types/index module not found at expected path
+// import type { R2Metadata } from '../lib/types/index';
+type R2Metadata = Record<string, string>;
 
 // Simulate heap profile markdown
 function generateHeapProfile(): string {

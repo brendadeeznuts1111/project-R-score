@@ -167,7 +167,7 @@ export class FilterDashboard {
 
   private async runFilterWithStreaming(request: FilterRequest): Promise<FilterSummary> {
     // Create a custom implementation that streams progress
-    const { discoverWorkspacePackages, filterPackages } = await import('../lib/filter-runner');
+    const { discoverWorkspacePackages, filterPackages } = await import('../../lib/filter-runner');
     
     const startTime = performance.now();
     
@@ -252,7 +252,7 @@ export class FilterDashboard {
   }
 
   private async handlePackageList(req: Request): Promise<Response> {
-    const { discoverWorkspacePackages } = await import('../lib/filter-runner');
+    const { discoverWorkspacePackages } = await import('../../lib/filter-runner');
     const packages = await discoverWorkspacePackages();
     
     return Response.json({
@@ -267,7 +267,7 @@ export class FilterDashboard {
   }
 
   private async handleScriptList(req: Request): Promise<Response> {
-    const { discoverWorkspacePackages } = await import('../lib/filter-runner');
+    const { discoverWorkspacePackages } = await import('../../lib/filter-runner');
     const packages = await discoverWorkspacePackages();
     
     const allScripts = new Set<string>();
