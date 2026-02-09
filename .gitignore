@@ -16,6 +16,7 @@ bun.lockb
 
 # Build outputs
 dist/
+.artifacts/
 build/
 !src/build/
 out/

@@ -40,6 +40,7 @@
 | `http.createServer()` | `Bun.serve()` | **Native performance** |
 | `https.createServer()` | `Bun.serve()` with TLS | **Built-in HTTPS** |
 | `require("https")` | `Bun.serve()` | **Simplified API** |
+| `new Response(JSON.stringify(data))` | `Response.json(data)` | **Parity in Bun v1.3.6+** |
 
 ### YAML Configuration Operations
 | ❌ External Library | ✅ Bun Equivalent | Performance Gain |

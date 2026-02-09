@@ -1,7 +1,26 @@
 // payment-routing.ts - Payment Splitting, Routing Configuration, and Fallback Plans
 // Handles split payments among multiple barbers, routing rules, and fallback scenarios
 
-import { redis } from 'bun';
+import { RedisClient } from 'bun';
+
+// Lazy Redis connection - only connect when needed
+let _redis: ReturnType<typeof RedisClient> | null = null;
+
+function getRedis() {
+  if (!_redis) {
+    const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+    _redis = RedisClient(REDIS_URL);
+  }
+  return _redis;
+}
+
+// For convenience, export a proxy that lazily connects
+const redis = new Proxy({} as ReturnType<typeof RedisClient>, {
+  get(_target, prop) {
+    const r = getRedis();
+    return (r as Record<string, unknown>)[prop];
+  }
+});
 
 // ==================== TYPES ====================
 

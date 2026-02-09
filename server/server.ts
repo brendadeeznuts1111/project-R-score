@@ -114,9 +114,7 @@ console.log(\`TypedArray docs status: \${typedArrayResponse.status}\`);
       }
     };
     
-    return new Response(JSON.stringify(urls, null, 2), {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return Response.json(urls);
   },
   
   // Generate our own RSS feed
@@ -179,9 +177,7 @@ console.log(\`TypedArray docs status: \${typedArrayResponse.status}\`);
       ],
     };
     
-    return new Response(JSON.stringify(feed, null, 2), {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return Response.json(feed);
   },
   
   // Root endpoint

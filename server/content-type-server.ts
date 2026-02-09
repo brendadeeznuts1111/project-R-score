@@ -77,9 +77,8 @@ function handleContentTypeExamples(): Response {
     }
   };
   
-  return new Response(JSON.stringify(examples, null, 2), {
+  return Response.json(examples, {
     headers: { 
-      'Content-Type': CONTENT_TYPES.JSON,
       'Cache-Control': 'public, max-age=3600'
     },
   });
@@ -118,9 +117,8 @@ async function handleContentTypeTest(request: Request): Promise<Response> {
     documentation: `${BUN_DOCS.BASE}/runtime/networking/fetch#content-type-handling` 
   };
   
-  return new Response(JSON.stringify(response, null, 2), {
+  return Response.json(response, {
     headers: { 
-      'Content-Type': CONTENT_TYPES.JSON,
       'X-Content-Type-Received': contentType
     },
   });
@@ -173,9 +171,8 @@ return new Response(uint8Array, {
   }
   
   // Return JSON response
-  return new Response(JSON.stringify(responseData, null, 2), {
+  return Response.json(responseData, {
     headers: { 
-      'Content-Type': CONTENT_TYPES.JSON,
       'Cache-Control': 'public, max-age=3600'
     },
   });
@@ -224,9 +221,8 @@ await fetch('/api/content-type/auto-detect', {
     documentation: `${BUN_DOCS.BASE}/runtime/networking/fetch#content-type-handling` 
   };
   
-  return new Response(JSON.stringify(response, null, 2), {
+  return Response.json(response, {
     headers: { 
-      'Content-Type': CONTENT_TYPES.JSON,
       'X-Content-Type-Auto-Detected': autoDetectedType
     },
   });

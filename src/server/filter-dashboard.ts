@@ -84,9 +84,8 @@ export class FilterDashboard {
       }
     } catch (error) {
       console.error('Request error:', error);
-      return new Response(JSON.stringify({ error: String(error) }), {
+      return Response.json({ error: String(error) }, {
         status: 500,
-        headers: { 'Content-Type': 'application/json' }
       });
     }
   }

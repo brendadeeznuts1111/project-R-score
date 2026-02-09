@@ -287,7 +287,24 @@ function finalizeJsonResponse(
   return new Response(body, { status, headers });
 }
 
-function resolveBuildMeta(): BuildMeta {
+async function runGitText(args: string[]): Promise<string> {
+  try {
+    const proc = Bun.spawn(['git', ...args], {
+      cwd: process.cwd(),
+      stdout: 'pipe',
+      stderr: 'ignore',
+    });
+    const [exitCode, text] = await Promise.all([
+      proc.exited,
+      new Response(proc.stdout).text(),
+    ]);
+    return exitCode === 0 ? text.trim() : '';
+  } catch {
+    return '';
+  }
+}
+
+async function resolveBuildMeta(): Promise<BuildMeta> {
   const normalizeRepoUrl = (value: string): string => {
     const raw = String(value || '').trim();
     if (!raw) return '';
@@ -301,18 +318,8 @@ function resolveBuildMeta(): BuildMeta {
   };
   let repoUrl = normalizeRepoUrl(Bun.env.SEARCH_BENCH_REPO_URL || Bun.env.REPO_URL || '');
   if (!repoUrl) {
-    try {
-      const out = Bun.spawnSync(['git', 'remote', 'get-url', 'origin'], {
-        cwd: process.cwd(),
-        stdout: 'pipe',
-        stderr: 'ignore',
-      });
-      if (out.exitCode === 0) {
-        repoUrl = normalizeRepoUrl(new TextDecoder().decode(out.stdout));
-      }
-    } catch {
-      repoUrl = '';
-    }
+    const remote = await runGitText(['remote', 'get-url', 'origin']);
+    if (remote) repoUrl = normalizeRepoUrl(remote);
   }
   if (!repoUrl) {
     repoUrl = 'https://github.com/brendadeeznuts1111/project-R-score';
@@ -321,32 +328,10 @@ function resolveBuildMeta(): BuildMeta {
   let commitFull = envSha;
   let branchName = (Bun.env.GIT_BRANCH || '').trim();
   if (!commitFull) {
-    try {
-      const out = Bun.spawnSync(['git', 'rev-parse', 'HEAD'], {
-        cwd: process.cwd(),
-        stdout: 'pipe',
-        stderr: 'ignore',
-      });
-      if (out.exitCode === 0) {
-        commitFull = new TextDecoder().decode(out.stdout).trim();
-      }
-    } catch {
-      commitFull = '';
-    }
+    commitFull = await runGitText(['rev-parse', 'HEAD']);
   }
   if (!branchName) {
-    try {
-      const out = Bun.spawnSync(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], {
-        cwd: process.cwd(),
-        stdout: 'pipe',
-        stderr: 'ignore',
-      });
-      if (out.exitCode === 0) {
-        branchName = new TextDecoder().decode(out.stdout).trim();
-      }
-    } catch {
-      branchName = '';
-    }
+    branchName = await runGitText(['rev-parse', '--abbrev-ref', 'HEAD']);
   }
   if (!branchName) branchName = 'main';
   const commitShort = commitFull ? commitFull.slice(0, 8) : 'unknown';
@@ -6522,7 +6507,7 @@ async function main(): Promise<void> {
     console.error('[search-bench:dashboard] unhandledRejection', error);
   });
   const options = parseArgs(process.argv.slice(2));
-  const buildMeta = resolveBuildMeta();
+  const buildMeta = await resolveBuildMeta();
   const dir = resolve(options.dir);
   const latestJson = resolve(dir, 'latest.json');
   const indexJson = resolve(dir, 'index.json');

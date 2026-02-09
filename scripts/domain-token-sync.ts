@@ -133,17 +133,22 @@ function printStructuredError(
   }
 }
 
-function runBunSecretsSet(key: string, token: string): { ok: boolean; detail: string } {
-  const proc = Bun.spawnSync(['bun', 'secrets', 'set', key, token], {
+async function runBunSecretsSet(key: string, token: string): Promise<{ ok: boolean; detail: string }> {
+  const proc = Bun.spawn(['bun', 'secrets', 'set', key, token], {
     cwd: process.cwd(),
     stdout: 'pipe',
     stderr: 'pipe',
   });
-  if (proc.exitCode === 0) {
+  const [exitCode, stdoutText, stderrText] = await Promise.all([
+    proc.exited,
+    new Response(proc.stdout).text(),
+    new Response(proc.stderr).text(),
+  ]);
+  if (exitCode === 0) {
     return { ok: true, detail: `set ${key}` };
   }
-  const err = new TextDecoder().decode(proc.stderr || new Uint8Array()).trim();
-  const out = new TextDecoder().decode(proc.stdout || new Uint8Array()).trim();
+  const err = stderrText.trim();
+  const out = stdoutText.trim();
   return { ok: false, detail: err || out || `failed set ${key}` };
 }
 
@@ -194,7 +199,7 @@ async function main(): Promise<void> {
   const wranglerCommands = tokenEnvVars.map((key) => `wrangler secret put ${key}`);
 
   const applied = options.applyBunSecrets
-    ? tokenEnvVars.map((key) => ({ key, ...runBunSecretsSet(key, token) }))
+    ? await Promise.all(tokenEnvVars.map(async (key) => ({ key, ...(await runBunSecretsSet(key, token)) })))
     : [];
   const appliedFailures = applied.filter((row) => !row.ok);
 

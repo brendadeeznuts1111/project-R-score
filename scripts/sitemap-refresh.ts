@@ -52,13 +52,14 @@ async function detectDomain(): Promise<string> {
 
 async function gitLastmod(filePath: string): Promise<string> {
   const rel = filePath.replace(`${process.cwd()}/`, '');
-  const proc = Bun.spawnSync(['git', 'log', '-1', '--format=%cI', '--', rel], {
+  const proc = Bun.spawn(['git', 'log', '-1', '--format=%cI', '--', rel], {
     cwd: process.cwd(),
     stdout: 'pipe',
     stderr: 'ignore',
   });
-  const out = new TextDecoder().decode(proc.stdout || new Uint8Array()).trim();
-  if (proc.exitCode === 0 && out) return out;
+  const out = new TextDecoder().decode(await new Response(proc.stdout).arrayBuffer()).trim();
+  const exitCode = await proc.exited;
+  if (exitCode === 0 && out) return out;
   return new Date().toISOString();
 }
 

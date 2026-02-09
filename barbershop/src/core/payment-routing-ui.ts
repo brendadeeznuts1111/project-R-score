@@ -1,10 +1,7 @@
 // payment-routing-ui.ts - Admin Payment Routing UI Components
 // Split payments, routing configuration, and fallback plans management
 
-import {
-  generateLayoutCSS,
-  generateThemeCSS,
-} from './ui-components';
+// Self-contained UI - all styles are inline
 
 const RESOURCE_HINTS = '';
 
@@ -745,7 +742,7 @@ export function renderPaymentRoutingPanel(): string {
                   \${s.recipients.map(r => \`
                     <span class="recipient-chip">
                       \${r.barberName || r.barberId}: 
-                      <span class="recipient-amount">\$${r.splitType === 'percentage' ? r.splitValue + '%' : r.splitValue.toFixed(2)}</span>
+                      <span class="recipient-amount">$\${r.splitType === 'percentage' ? r.splitValue + '%' : r.splitValue.toFixed(2)}</span>
                     </span>
                   \`).join('')}
                 </div>
