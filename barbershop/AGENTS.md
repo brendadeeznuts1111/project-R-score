@@ -696,10 +696,10 @@ formatters.token('abc123')     // "🔒 abc…" (masked)
 The Bun Context system provides global configuration resolution and context-aware execution:
 
 ```typescript
-import { 
-  loadGlobalConfig, 
+import {
+  loadGlobalConfig,
   executeWithContext,
-  parseFlags 
+  parseFlags
 } from './lib/bun-context.ts';
 
 // Load global configuration
@@ -720,24 +720,24 @@ const session = await executeWithContext(['bun', 'test'], { useCache: true });
 The Dashboard System provides a unified API for creating dashboards:
 
 ```typescript
-import { 
-  createDashboard, 
+import {
+  createDashboard,
   createAdminDashboard,
   createClientDashboard,
   createBarberDashboard,
-  useDashboard 
+  useDashboard
 } from './src/dashboard';
 
 // Create a dashboard
-const dashboard = createDashboard({ 
-  view: 'admin', 
-  theme: 'professional' 
+const dashboard = createDashboard({
+  view: 'admin',
+  theme: 'professional'
 }).buildAdminDashboard();
 
 // Use composition API
-const { metrics, widgets, refresh } = useDashboard({ 
+const { metrics, widgets, refresh } = useDashboard({
   view: 'admin',
-  autoRefresh: true 
+  autoRefresh: true
 });
 ```
 

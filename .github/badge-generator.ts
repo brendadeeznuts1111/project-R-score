@@ -79,11 +79,11 @@ function generateBadgeUrl(badge: BadgeConfig): string {
     labelColor: (badge.labelColor || '555').replace(/[hsl()%]/g, '').replace(/,/g, '-'),
     style: badge.style || 'flat'
   });
-  
+
   // Use shields.io with custom colors
   const colorHex = hslToHex(badge.color);
   const labelColorHex = hslToHex(badge.labelColor || 'hsl(0,0%,33%)');
-  
+
   return `https://img.shields.io/badge/${encodeURIComponent(badge.label)}-${encodeURIComponent(badge.message)}-${colorHex}?style=${badge.style}&labelColor=${labelColorHex}`;
 }
 
@@ -91,19 +91,19 @@ function hslToHex(hsl: string): string {
   // Parse HSL values
   const match = hsl.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
   if (!match) return 'blue';
-  
+
   let [_, h, s, l] = match.map(Number);
   s /= 100;
   l /= 100;
-  
+
   const k = (n: number) => (n + h / 30) % 12;
   const a = s * Math.min(l, 1 - l);
   const f = (n: number) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-  
+
   const r = Math.round(255 * f(0));
   const g = Math.round(255 * f(8));
   const b = Math.round(255 * f(4));
-  
+
   return ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 }
 

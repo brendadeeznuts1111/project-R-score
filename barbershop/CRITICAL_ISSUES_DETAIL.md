@@ -77,7 +77,7 @@ try {
 } catch (error) {
   // At minimum, log to stderr
   console.error('[EliteLogger] Failed to flush logs:', error);
-  
+
   // Better: use error reporting service
   errorReporter.capture(error, { context: 'logger_flush' });
 }
@@ -171,14 +171,14 @@ Excessive use of `any`, `unknown`, and `@ts-ignore` undermines TypeScript's type
 // src/benchmarking/depth-optimizer.ts
 function analyzeObjectStructure(obj: any): StructureAnalysis
 
-// src/lib/cloudflare/registry.ts  
+// src/lib/cloudflare/registry.ts
 interface PlaygroundConfig {
   // ... fields ...
   [key: string]: any;  // Escapes all type safety
 }
 
 // Multiple error handlers
-catch (error: any) {  
+catch (error: any) {
   // Loses error type information
 }
 ```
@@ -232,9 +232,9 @@ console.log(`[barbershop] Server started on port ${PORT}`);
 console.log(`   🔑 Access Key: ${LIFECYCLE_KEY}`);  // Security leak!
 
 // Should be: Structured, async, secure
-logger.info('Server started', { 
-  port: PORT, 
-  requestId: context.requestId 
+logger.info('Server started', {
+  port: PORT,
+  requestId: context.requestId
 });
 ```
 

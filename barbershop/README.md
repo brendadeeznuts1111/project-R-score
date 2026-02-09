@@ -292,3 +292,4 @@ bun run lint      # Lint code
 bun run fmt       # Format code
 bun run typecheck # Type check
 bun run build:prod # Production build
+```
