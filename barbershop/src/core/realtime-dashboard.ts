@@ -45,6 +45,24 @@ import { createTier1380Table, formatters } from '../../lib/table-engine';
 import { generateBarberTemplatePage } from './barber-payment-template';
 import { generateEntityTrackingDashboard } from './entity-tracking-dashboard';
 import { vectorizeClient } from './vectorize-client';
+import {
+  createPaymentRoute,
+  getPaymentRoute,
+  getActiveRoutes,
+  updatePaymentRoute,
+  deletePaymentRoute,
+  createFallbackPlan,
+  getFallbackPlan,
+  getAllFallbackPlans,
+  createRoutingConfig,
+  getRoutingConfig,
+  getActiveRoutingConfig,
+  setActiveRoutingConfig,
+  createPaymentSplit,
+  getPaymentSplit,
+  getPendingSplits,
+  updatePaymentSplitStatus,
+} from './payment-routing';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ELITE CONFIGURATION
