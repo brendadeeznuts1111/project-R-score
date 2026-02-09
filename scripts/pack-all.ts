@@ -13,7 +13,7 @@
  * ```
  * 
  * @see {@link https://bun.sh/docs/cli/pm} Bun Package Manager
- * @see {@link https://npm.factory-wager.com} FactoryWager NPM Registry
+ * @see {@link https://registry.factory-wager.com} FactoryWager NPM Registry
  * @see {@link https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com/factory-wager-registry} R2 Storage
  */
 
@@ -25,7 +25,7 @@ import { mkdir } from "node:fs/promises";
 const PACKS_DIR = "./dist/packs";
 
 /** Registry URL for FactoryWager packages */
-const REGISTRY_URL = process.env.REGISTRY_URL || "https://npm.factory-wager.com";
+const REGISTRY_URL = process.env.REGISTRY_URL || "https://registry.factory-wager.com";
 
 /** R2 bucket URL for package storage */
 const R2_BUCKET_URL = process.env.R2_BUCKET_URL || 

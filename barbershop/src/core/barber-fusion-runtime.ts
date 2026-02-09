@@ -38,6 +38,43 @@ interface ContextualExecutionResult<T> {
   cached: boolean;
 }
 
+interface BarberAction {
+  id: string;
+  name: string;
+  category: string;
+  priority: string;
+  timing: string;
+  durationSeconds: number;
+  script: string;
+  purpose: string;
+  expectedOutcome: string;
+  successMetric: string;
+  successRate: number;
+  canAutomate: boolean;
+  appliesTo: string[];
+  fusionTiers: string[];
+  commissionBonus: number;
+  requiresTraining: boolean;
+  trainingVideo: string;
+  createdAt: string;
+}
+
+interface AccountAgeRecord {
+  tier: string;
+  label: string;
+  label_es: string;
+  day_min: number;
+  day_max: number;
+  trust_multiplier: number;
+  risk_level: string;
+  cashapp_daily_limit: number;
+  cashapp_weekly_limit: number;
+  instant_deposit_available: number;
+  hold_period_days: number;
+  badge: string;
+  color: string;
+}
+
 // ==================== CONTEXT RESOLUTION ====================
 
 export class FusionContextResolver {
@@ -120,7 +157,7 @@ export class FusionContextResolver {
       if (bunfig.default?.fusion?.features) {
         Object.assign(flags, bunfig.default.fusion.features);
       }
-    } catch {
+    } catch (err) {
       // bunfig.toml doesn't have fusion section
     }
 
@@ -227,9 +264,24 @@ export class FusionContextExecutor {
 
 interface ValidationError {
   field: string;
-  value: any;
+  value: unknown;
   expected: string;
   message: string;
+}
+
+interface AccountAgeData {
+  tier?: string;
+  label?: string;
+  dayRange?: string;
+  trustMultiplier?: number;
+  riskLevel?: string;
+  [key: string]: unknown;
+}
+
+interface BarberActionData {
+  action?: string;
+  barberId?: string;
+  [key: string]: unknown;
 }
 
 interface ValidationResult {
@@ -239,7 +291,7 @@ interface ValidationResult {
 }
 
 export class SchemaValidator {
-  static validateAccountAge(data: any): ValidationResult {
+  static validateAccountAge(data: AccountAgeData): ValidationResult {
     const errors: ValidationError[] = [];
     const warnings: string[] = [];
 
@@ -323,7 +375,7 @@ export class SchemaValidator {
     return { valid: errors.length === 0, errors, warnings };
   }
 
-  static validateBarberAction(data: any): ValidationResult {
+  static validateBarberAction(data: BarberActionData): ValidationResult {
     const errors: ValidationError[] = [];
     const warnings: string[] = [];
 
@@ -554,7 +606,7 @@ export class FusionUtils {
     return Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60 * 24));
   }
 
-  static getActionsFor(accountAge: AccountAgeTier, fusionTier: FusionTier): any[] {
+  static getActionsFor(accountAge: AccountAgeTier, fusionTier: FusionTier): BarberAction[] {
     return SampleBarberActions.filter(
       action => action.appliesTo.includes(accountAge) && action.fusionTiers.includes(fusionTier)
     );
@@ -684,8 +736,8 @@ export class FusionDatabase {
     return this.db.query('SELECT * FROM account_ages WHERE tier = ?').get(tier);
   }
 
-  getAllAccountAges() {
-    return this.db.query('SELECT * FROM account_ages ORDER BY day_min').all();
+  getAllAccountAges(): AccountAgeRecord[] {
+    return this.db.query('SELECT * FROM account_ages ORDER BY day_min').all() as AccountAgeRecord[];
   }
 
   logAction(
@@ -732,7 +784,7 @@ export class FusionDatabase {
 // ==================== REDIS CACHE HELPERS ====================
 
 export class FusionCache {
-  static async cacheAccountAge(tier: AccountAgeTier, data: any, ttl: number = 3600) {
+  static async cacheAccountAge(tier: AccountAgeTier, data: AccountAgeData, ttl: number = 3600) {
     await redis.setex(`fusion:account_age:${tier}`, ttl, JSON.stringify(data));
   }
 
@@ -741,7 +793,7 @@ export class FusionCache {
     return data ? JSON.parse(data) : null;
   }
 
-  static async cacheActionsFor(accountAge: AccountAgeTier, fusionTier: FusionTier, actions: any[]) {
+  static async cacheActionsFor(accountAge: AccountAgeTier, fusionTier: FusionTier, actions: BarberAction[]) {
     const key = `fusion:actions:${accountAge}:${fusionTier}`;
     await redis.setex(key, 1800, JSON.stringify(actions));
   }
@@ -843,7 +895,7 @@ export async function runDemo() {
 
   await FusionContextExecutor.executeDbWithContext(db, async (database) => {
     const allAges = database.getAllAccountAges();
-    console.log('Account ages in DB:', allAges.map((a: any) => a.tier).join(', '));
+    console.log('Account ages in DB:', allAges.map((a: AccountAgeRecord) => a.tier).join(', '));
 
     // Log context operation
     database.logContextOperation(

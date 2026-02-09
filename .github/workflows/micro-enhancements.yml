@@ -1,0 +1,28 @@
+name: Micro Enhancements
+
+on:
+  push:
+    branches: [ main, feat/* ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Check for trailing whitespace
+        run: |
+          echo "🔍 Checking for trailing whitespace..."
+          ! git grep -n '[[:space:]]$' -- '*.ts' '*.md' '*.json' || true
+      
+      - name: Verify file permissions
+        run: |
+          echo "🔍 Checking file permissions..."
+          find . -type f -name "*.sh" ! -perm /111 -ls 2>/dev/null || true
+      
+      - name: Check for empty files
+        run: |
+          echo "🔍 Checking for empty files..."
+          find . -type f -empty -not -path "./.git/*" -ls 2>/dev/null || true

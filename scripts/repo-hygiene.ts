@@ -12,10 +12,11 @@
  *        bun scripts/repo-hygiene.ts --staged  # only check staged files (pre-commit)
  */
 
-import { Glob } from "bun";
-import { join, relative } from "path";
+import { Glob } from 'bun';
+import { join } from 'path';
+import { readdir } from 'node:fs/promises';
 
-const ROOT = join(import.meta.dir, "..");
+const ROOT = join(import.meta.dir, '..');
 
 // Patterns that should never appear as tracked/staged files
 const STRAY_PATTERNS = [
@@ -31,20 +32,34 @@ const STRAY_PATTERNS = [
   /\.jsonl$/,
   // Log files
   /\.log$/,
+  // Root demo/template drift
+  /^DEMO-.*\.(ts|js|md|json)$/,
+  /^demo-.*\.(ts|js|md|json|txt|bin)$/,
+  // Root temp/test drift
+  /^temp-.*\.(ts|js|tsx|md|json)$/,
+  /^test-.*\.(ts|js|md|json|txt)$/,
+  /^type-test\..+$/,
+  /^url-test\..+$/,
+  /^fd-test\..+$/,
+  // Root Bun analysis docs that must be archived
+  /^BUN-.*(SUMMARY|ANALYSIS|INTEGRATION)\.md$/,
+  // Root telemetry/db artifacts
+  /^.*\.(db|rdb)$/,
+  /^telemetry.*$/,
 ];
 
 // Files that must never be staged (contain secrets)
 const SECRETS_FILES = [
-  ".bunfig.toml",
-  ".env",
-  ".env.production",
-  ".env.secret",
-  ".env.enc",
-  ".env.local",
+  '.bunfig.toml',
+  '.env',
+  '.env.production',
+  '.env.secret',
+  '.env.enc',
+  '.env.local',
 ];
 
 // Directories to scan for stray output files
-const SCAN_DIRS = [".", "utils"];
+const SCAN_DIRS = ['.', 'utils'];
 
 interface Violation {
   file: string;
@@ -54,15 +69,28 @@ interface Violation {
 async function findStrayFiles(): Promise<Violation[]> {
   const violations: Violation[] = [];
 
+  // Root-level filename scan (captures patterns beyond json/md/log extensions)
+  const rootEntries = await readdir(ROOT, { withFileTypes: true });
+  for (const entry of rootEntries) {
+    if (!entry.isFile()) continue;
+    const file = entry.name;
+    for (const pattern of STRAY_PATTERNS) {
+      if (pattern.test(file)) {
+        violations.push({ file, rule: 'stray-output-root' });
+        break;
+      }
+    }
+  }
+
   for (const dir of SCAN_DIRS) {
     const absDir = join(ROOT, dir);
-    const glob = new Glob("*.{json,jsonl,log,md}");
+    const glob = new Glob('*.{json,jsonl,log,md}');
 
     for await (const file of glob.scan({ cwd: absDir, absolute: false })) {
       for (const pattern of STRAY_PATTERNS) {
         if (pattern.test(file)) {
-          const rel = dir === "." ? file : `${dir}/${file}`;
-          violations.push({ file: rel, rule: "stray-output" });
+          const rel = dir === '.' ? file : `${dir}/${file}`;
+          violations.push({ file: rel, rule: 'stray-output' });
           break;
         }
       }
@@ -74,16 +102,16 @@ async function findStrayFiles(): Promise<Violation[]> {
 
 async function checkStagedSecrets(): Promise<Violation[]> {
   const violations: Violation[] = [];
-  const proc = Bun.spawn(["git", "diff", "--cached", "--name-only"], {
+  const proc = Bun.spawn(['git', 'diff', '--cached', '--name-only'], {
     cwd: ROOT,
-    stdout: "pipe",
+    stdout: 'pipe',
   });
-  const staged = (await new Response(proc.stdout).text()).trim().split("\n").filter(Boolean);
+  const staged = (await new Response(proc.stdout).text()).trim().split('\n').filter(Boolean);
 
   for (const file of staged) {
-    const basename = file.split("/").pop()!;
+    const basename = file.split('/').pop()!;
     if (SECRETS_FILES.includes(basename) || SECRETS_FILES.includes(file)) {
-      violations.push({ file, rule: "secrets-staged" });
+      violations.push({ file, rule: 'secrets-staged' });
     }
   }
 
@@ -92,17 +120,17 @@ async function checkStagedSecrets(): Promise<Violation[]> {
 
 async function checkStagedStray(): Promise<Violation[]> {
   const violations: Violation[] = [];
-  const proc = Bun.spawn(["git", "diff", "--cached", "--name-only"], {
+  const proc = Bun.spawn(['git', 'diff', '--cached', '--name-only'], {
     cwd: ROOT,
-    stdout: "pipe",
+    stdout: 'pipe',
   });
-  const staged = (await new Response(proc.stdout).text()).trim().split("\n").filter(Boolean);
+  const staged = (await new Response(proc.stdout).text()).trim().split('\n').filter(Boolean);
 
   for (const file of staged) {
-    const basename = file.split("/").pop()!;
+    const basename = file.split('/').pop()!;
     for (const pattern of STRAY_PATTERNS) {
       if (pattern.test(basename)) {
-        violations.push({ file, rule: "stray-output-staged" });
+        violations.push({ file, rule: 'stray-output-staged' });
         break;
       }
     }
@@ -112,7 +140,7 @@ async function checkStagedStray(): Promise<Violation[]> {
 }
 
 async function main() {
-  const stagedOnly = process.argv.includes("--staged");
+  const stagedOnly = process.argv.includes('--staged');
   const violations: Violation[] = [];
 
   if (stagedOnly) {
@@ -126,15 +154,15 @@ async function main() {
   }
 
   if (violations.length === 0) {
-    console.log("✅ Repo hygiene: clean");
+    console.log('✅ Repo hygiene: clean');
     process.exit(0);
   }
 
   console.log(`❌ Repo hygiene: ${violations.length} violation(s)\n`);
   console.log(
     Bun.inspect.table(
-      violations.map((v) => ({ file: v.file, rule: v.rule })),
-      ["file", "rule"],
+      violations.map(v => ({ file: v.file, rule: v.rule })),
+      ['file', 'rule'],
       { colors: true }
     )
   );

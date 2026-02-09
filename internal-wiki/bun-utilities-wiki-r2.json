@@ -2586,9 +2586,9 @@
       "metrics": false
     },
     "endpoints": {
-      "dashboard": "https://dashboard.factory-wager.com",
+      "dashboard": "https://docs.factory-wager.com",
       "r2Browser": "https://r2.factory-wager.com",
-      "api": "https://api.factory-wager.com/r2"
+      "api": "https://registry.factory-wager.com"
     },
     "data": {
       "timestamp": "2026-02-07T05:12:09.855Z",

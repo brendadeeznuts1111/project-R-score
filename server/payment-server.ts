@@ -206,7 +206,7 @@ Bun.serve({
         const userId = parsePayPalUserId(event);
         const amount = Number(event?.resource?.amount?.total ?? 0);
         const result = await handleRiskFlow(userId, amount);
-        return new Response(JSON.stringify(result));
+        return Response.json(result);
       }
       return new Response('Ignored');
     }
@@ -221,7 +221,7 @@ Bun.serve({
         const userId = parseVenmoUserId(event);
         const amount = Number(event?.data?.amount ?? 0);
         const result = await handleRiskFlow(userId, amount);
-        return new Response(JSON.stringify(result));
+        return Response.json(result);
       }
       return new Response('Ignored');
     }

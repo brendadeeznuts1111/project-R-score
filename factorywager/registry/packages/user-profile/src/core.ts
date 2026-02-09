@@ -57,12 +57,8 @@ export class UserProfileEngine {
     this.db = new Database(dbPath);
     this.s3Bucket = s3Config?.bucket || process.env.R2_REGISTRY_BUCKET || 'factorywager-profiles';
     this.s3Region = s3Config?.region || process.env.R2_REGION || 'us-east-1';
-    
-    // Pre-compile frequently used queries for better performance
-    this.getProfileStmt = this.db.prepare('SELECT prefs, progress FROM profiles WHERE userId = ?');
-    this.getProgressStmt = this.db.prepare('SELECT score, timestamp FROM progress_log WHERE userId = ? ORDER BY timestamp DESC LIMIT 10');
-    
-    // Initialize schema (v10.1)
+
+    // Initialize schema FIRST (v10.1)
     this.db.exec(`
       CREATE TABLE IF NOT EXISTS profiles (
         userId TEXT PRIMARY KEY,
@@ -99,6 +95,10 @@ export class UserProfileEngine {
     } catch {
       // Migration failed, but continue - column might already exist
     }
+
+    // Pre-compile frequently used queries AFTER schema is ready
+    this.getProfileStmt = this.db.prepare('SELECT prefs, progress FROM profiles WHERE userId = ?');
+    this.getProgressStmt = this.db.prepare('SELECT score, timestamp FROM progress_log WHERE userId = ? ORDER BY timestamp DESC LIMIT 10');
   }
 
   /**

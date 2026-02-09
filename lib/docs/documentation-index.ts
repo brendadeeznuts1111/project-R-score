@@ -29,14 +29,14 @@ import {
   FRAGMENT_BUILDERS,
   FRAGMENT_PARSERS,
 } from './constants/fragments';
-import { EnterpriseDocumentationURLBuilder, docsURLBuilder } from './builders/url-builder';
+import { EnterpriseDocumentationURLBuilder, docsURLBuilder } from '../../packages/docs-tools/src/builders/url-builder';
 import type {
   DocumentationURLOptions,
   TypedArrayURLOptions,
   EnterpriseAPIURLOptions,
   SyscallOptimizationURLOptions,
-} from './builders/url-builder';
-import { EnhancedDocumentationURLValidator } from './builders/validator';
+} from '../../packages/docs-tools/src/builders/url-builder';
+import { EnhancedDocumentationURLValidator } from '../../packages/docs-tools/src/builders/validator';
 import { EnterpriseDocumentationURLValidator as DocumentationURLValidatorNew } from './builders/validator-enhanced';
 import type {
   DocumentationMetadata,

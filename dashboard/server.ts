@@ -24,10 +24,10 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.CORE_RUNTIME,
         documentation: {
           technical: 'https://bun.sh/docs/runtime',
-          reference: 'https://bun.com/reference/runtime',
-          guides: 'https://bun.com/guides/understanding-runtime',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/runtime',
-          github: 'https://github.com/oven-sh/bun/tree/main/packages/bun-runtime'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples',
+          github: 'https://github.com/oven-sh/bun'
         },
         endpoints: ['/api/runtime/info', '/api/runtime/metrics', '/api/runtime/config'],
         relatedSections: ['watch-mode', 'debugging', 'bunfig'],
@@ -42,9 +42,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.CORE_RUNTIME,
         documentation: {
           technical: 'https://bun.sh/docs/runtime/watch-mode',
-          reference: 'https://bun.com/reference/cli/watch',
-          guides: 'https://bun.com/guides/hot-reload',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/watch-mode'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/watch/start', '/api/watch/stop', '/api/watch/list'],
         relatedSections: ['bun-runtime', 'debugging'],
@@ -59,9 +59,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.CORE_RUNTIME,
         documentation: {
           technical: 'https://bun.sh/docs/runtime/debugging',
-          reference: 'https://bun.com/reference/debugging',
-          guides: 'https://bun.com/guides/debugging-bun',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/debugging'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/debug/start', '/api/debug/inspect', '/api/debug/trace'],
         relatedSections: ['bun-runtime', 'watch-mode'],
@@ -76,9 +76,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.CORE_RUNTIME,
         documentation: {
           technical: 'https://bun.sh/docs/runtime/bunfig',
-          reference: 'https://bun.com/reference/configuration',
-          guides: 'https://bun.com/guides/configuration',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/bunfig'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/config/load', '/api/config/validate', '/api/config/generate'],
         relatedSections: ['bun-runtime', 'file-system'],
@@ -102,9 +102,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.FILE_SYSTEM,
         documentation: {
           technical: 'https://bun.sh/docs/runtime/file-types',
-          reference: 'https://bun.com/reference/file-system',
-          guides: 'https://bun.com/guides/file-handling',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/file-types'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/files/types', '/api/files/validate', '/api/files/convert'],
         relatedSections: ['module-resolution', 'plugins'],
@@ -119,9 +119,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.FILE_SYSTEM,
         documentation: {
           technical: 'https://bun.sh/docs/runtime/modules',
-          reference: 'https://bun.com/reference/modules',
-          guides: 'https://bun.com/guides/module-system',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/modules'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/modules/resolve', '/api/modules/cache', '/api/modules/analyze'],
         relatedSections: ['file-types', 'jsx', 'auto-install'],
@@ -136,9 +136,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.FILE_SYSTEM,
         documentation: {
           technical: 'https://bun.sh/docs/runtime/jsx',
-          reference: 'https://bun.com/reference/jsx',
-          guides: 'https://bun.com/guides/jsx-react',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/jsx'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/jsx/transform', '/api/jsx/configure', '/api/jsx/analyze'],
         relatedSections: ['module-resolution', 'plugins'],
@@ -153,9 +153,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.FILE_SYSTEM,
         documentation: {
           technical: 'https://bun.sh/docs/runtime/auto-install',
-          reference: 'https://bun.com/reference/auto-install',
-          guides: 'https://bun.com/guides/dependency-management',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/auto-install'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/deps/install', '/api/deps/check', '/api/deps/update'],
         relatedSections: ['module-resolution', 'plugins'],
@@ -170,9 +170,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.FILE_SYSTEM,
         documentation: {
           technical: 'https://bun.sh/docs/runtime/plugins',
-          reference: 'https://bun.com/reference/plugins',
-          guides: 'https://bun.com/guides/creating-plugins',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/plugins'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/plugins/load', '/api/plugins/register', '/api/plugins/list'],
         relatedSections: ['file-types', 'module-resolution'],
@@ -196,9 +196,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.HTTP_SERVER,
         documentation: {
           technical: 'https://bun.sh/docs/api/http',
-          reference: 'https://bun.com/reference/api/http',
-          guides: 'https://bun.com/guides/http-server',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/http-server'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/server/create', '/api/server/start', '/api/server/stop'],
         relatedSections: ['routing', 'cookies', 'tls'],
@@ -213,9 +213,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.HTTP_SERVER,
         documentation: {
           technical: 'https://bun.sh/docs/api/serve#routing',
-          reference: 'https://bun.com/reference/routing',
-          guides: 'https://bun.com/guides/routing',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/routing'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/routes/list', '/api/routes/match', '/api/routes/add'],
         relatedSections: ['http-server-core', 'file-system-router'],
@@ -239,9 +239,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.NETWORKING,
         documentation: {
           technical: 'https://bun.sh/docs/runtime/networking/fetch',
-          reference: 'https://bun.com/reference/api/fetch',
-          guides: 'https://bun.com/guides/making-http-requests',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/fetch'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/fetch/request', '/api/fetch/batch', '/api/fetch/mock'],
         relatedSections: ['websockets', 'dns'],
@@ -256,9 +256,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.NETWORKING,
         documentation: {
           technical: 'https://bun.sh/docs/api/websocket',
-          reference: 'https://bun.com/reference/api/websocket',
-          guides: 'https://bun.com/guides/websockets',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/websockets'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/websocket/connect', '/api/websocket/broadcast', '/api/websocket/rooms'],
         relatedSections: ['fetch', 'tcp'],
@@ -282,9 +282,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.DATA_STORAGE,
         documentation: {
           technical: 'https://bun.sh/docs/runtime/filesystem',
-          reference: 'https://bun.com/reference/file-io',
-          guides: 'https://bun.com/guides/file-operations',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/file-io'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/files/read', '/api/files/write', '/api/files/stream'],
         relatedSections: ['streams', 'binary-data'],
@@ -299,9 +299,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.DATA_STORAGE,
         documentation: {
           technical: 'https://bun.sh/docs/runtime/binary-data',
-          reference: 'https://bun.com/reference/binary-data',
-          guides: 'https://bun.com/guides/working-with-binary-data',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/binary-data'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/binary/encode', '/api/binary/decode', '/api/binary/transform'],
         relatedSections: ['file-io', 'streams', 'archive'],
@@ -316,9 +316,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.DATA_STORAGE,
         documentation: {
           technical: 'https://bun.sh/docs/api/sql',
-          reference: 'https://bun.com/reference/api/sql',
-          guides: 'https://bun.com/guides/sql-databases',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/sql'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/sql/query', '/api/sql/transaction', '/api/sql/migrate'],
         relatedSections: ['sqlite', 's3'],
@@ -342,9 +342,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.CONCURRENCY,
         documentation: {
           technical: 'https://bun.sh/docs/runtime/workers',
-          reference: 'https://bun.com/reference/api/workers',
-          guides: 'https://bun.com/guides/parallel-processing',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/workers'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/workers/create', '/api/workers/pool', '/api/workers/terminate'],
         relatedSections: ['process-system', 'utilities'],
@@ -368,9 +368,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.PROCESS_SYSTEM,
         documentation: {
           technical: 'https://bun.sh/docs/runtime/environment',
-          reference: 'https://bun.com/reference/environment',
-          guides: 'https://bun.com/guides/environment-variables',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/environment'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/env/get', '/api/env/set', '/api/env/validate'],
         relatedSections: ['shell', 'spawn'],
@@ -385,9 +385,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.PROCESS_SYSTEM,
         documentation: {
           technical: 'https://bun.sh/docs/api/shell',
-          reference: 'https://bun.com/reference/api/shell',
-          guides: 'https://bun.com/guides/shell-integration',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/shell'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/shell/execute', '/api/shell/pipe', '/api/shell/escape'],
         relatedSections: ['spawn', 'environment-variables'],
@@ -411,9 +411,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.UTILITIES,
         documentation: {
           technical: 'https://bun.sh/docs/runtime/secrets',
-          reference: 'https://bun.com/reference/secrets',
-          guides: 'https://bun.com/guides/secrets-management',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/secrets'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/secrets/encrypt', '/api/secrets/decrypt', '/api/secrets/rotate'],
         relatedSections: ['hashing', 'cookies'],
@@ -428,9 +428,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.UTILITIES,
         documentation: {
           technical: 'https://bun.sh/docs/runtime/yaml',
-          reference: 'https://bun.com/reference/yaml',
-          guides: 'https://bun.com/guides/yaml-configuration',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/yaml'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/yaml/parse', '/api/yaml/stringify', '/api/yaml/validate'],
         relatedSections: ['json5', 'jsonl'],
@@ -445,9 +445,9 @@ export const DASHBOARD_MODULES: DashboardModuleConfig[] = [
         category: DashboardModule.UTILITIES,
         documentation: {
           technical: 'https://bun.sh/docs/runtime/hashing',
-          reference: 'https://bun.com/reference/hashing',
-          guides: 'https://bun.com/guides/cryptographic-hashing',
-          examples: 'https://github.com/oven-sh/bun/tree/main/examples/hashing'
+          reference: 'https://bun.com/reference',
+          guides: 'https://bun.com/guides',
+          examples: 'https://bun.sh/docs/examples'
         },
         endpoints: ['/api/hash/compute', '/api/hash/verify', '/api/hash/stream'],
         relatedSections: ['secrets', 'binary-data'],

@@ -23,6 +23,15 @@ interface CLIOptions {
   cwd?: string;
   entrypoint?: string;
   output?: string;
+  outputDir?: string;
+  buildOutDir?: string;
+  nativeMetafileJson?: string;
+  nativeMetafileMd?: string;
+  nativeMetafile?: boolean;
+  useVirtualFiles?: boolean;
+  memoryOnly?: boolean;
+  overrideConfig?: 'prod' | 'dev';
+  reactFastRefresh?: boolean;
   format?: 'json' | 'md' | 'csv';
   profile?: boolean;
   analyze?: boolean;
@@ -30,7 +39,7 @@ interface CLIOptions {
 
 function parseArgs(): CLIOptions {
   const args = process.argv.slice(2);
-  const options: CLIOptions = {};
+  const options: CLIOptions = { useVirtualFiles: true };
   
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
@@ -43,6 +52,37 @@ function parseArgs(): CLIOptions {
         break;
       case '--output':
         options.output = args[++i];
+        break;
+      case '--output-dir':
+        options.outputDir = args[++i];
+        break;
+      case '--build-outdir':
+        options.buildOutDir = args[++i];
+        break;
+      case '--native-metafile':
+        options.nativeMetafile = true;
+        break;
+      case '--native-metafile-json':
+        options.nativeMetafileJson = args[++i];
+        break;
+      case '--native-metafile-md':
+        options.nativeMetafileMd = args[++i];
+        break;
+      case '--no-virtual-files':
+        options.useVirtualFiles = false;
+        break;
+      case '--memory-only':
+        options.memoryOnly = true;
+        break;
+      case '--override-config': {
+        const value = args[++i] as 'prod' | 'dev';
+        if (value === 'prod' || value === 'dev') {
+          options.overrideConfig = value;
+        }
+        break;
+      }
+      case '--react-fast-refresh':
+        options.reactFastRefresh = true;
         break;
       case '--format':
         options.format = args[++i] as 'json' | 'md' | 'csv';
@@ -65,13 +105,42 @@ async function main() {
   
   const options = parseArgs();
   const cwd = options.cwd || process.cwd();
+  const outputDir = options.outputDir || options.output || join(process.cwd(), '.artifacts', 'metafiles');
+  const buildOutDir = options.buildOutDir || join(process.cwd(), '.artifacts', 'dist-meta');
+  const nativeStamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const buildId = crypto.randomUUID();
+  const buildTime = Date.now();
+  const nativeMetafileJsonPath = options.nativeMetafileJson || (options.nativeMetafile ? join(outputDir, `bun-metafile-${nativeStamp}.json`) : undefined);
+  const nativeMetafileMdPath = options.nativeMetafileMd || (options.nativeMetafile ? join(outputDir, `bun-metafile-${nativeStamp}.md`) : undefined);
+  const configOverrideContents = options.overrideConfig
+    ? [
+        `export const API_URL = ${JSON.stringify(options.overrideConfig === 'prod' ? 'https://api.production.com' : 'http://localhost:3000')};`,
+        `export const DEBUG = ${options.overrideConfig === 'prod' ? 'false' : 'true'};`,
+        `export const BUILD_ID = ${JSON.stringify(buildId)};`,
+        `export const BUILD_TIME = ${buildTime};`,
+      ].join('\n')
+    : undefined;
+  const overrideFileMap = configOverrideContents
+    ? {
+        './src/config.ts': configOverrideContents,
+        [join(cwd, 'src', 'config.ts')]: configOverrideContents,
+      }
+    : {};
   
   console.log(c.yellow('📁 Configuration:'));
-  console.log(c.gray(`  Working Directory: ${cwd}`));
-  console.log(c.gray(`  Entrypoint: ${options.entrypoint || 'auto-detect'}`));
-  console.log(c.gray(`  Output Format: ${options.format || 'json'}`));
-  console.log(c.gray(`  Profile Mode: ${options.profile ? 'enabled' : 'disabled'}`));
-  console.log(c.gray(`  Analysis Mode: ${options.analyze ? 'enabled' : 'disabled'}\n`));
+    console.log(c.gray(`  Working Directory: ${cwd}`));
+    console.log(c.gray(`  Entrypoint: ${options.entrypoint || 'auto-detect'}`));
+    console.log(c.gray(`  Output Format: ${options.format || 'json'}`));
+    console.log(c.gray(`  Metafile Output Dir: ${outputDir}`));
+    console.log(c.gray(`  Build Out Dir: ${buildOutDir}`));
+    console.log(c.gray(`  Memory-only Build: ${options.memoryOnly ? 'enabled' : 'disabled'}`));
+    if (nativeMetafileJsonPath) console.log(c.gray(`  Native Metafile JSON: ${nativeMetafileJsonPath}`));
+    if (nativeMetafileMdPath) console.log(c.gray(`  Native Metafile MD: ${nativeMetafileMdPath}`));
+    console.log(c.gray(`  Virtual Files Build Mode: ${options.useVirtualFiles ? 'enabled' : 'disabled'}`));
+    if (options.overrideConfig) console.log(c.gray(`  Config Override: ${options.overrideConfig} (./src/config.ts)`));
+    console.log(c.gray(`  React Fast Refresh: ${options.reactFastRefresh ? 'enabled' : 'disabled'}`));
+    console.log(c.gray(`  Profile Mode: ${options.profile ? 'enabled' : 'disabled'}`));
+    console.log(c.gray(`  Analysis Mode: ${options.analyze ? 'enabled' : 'disabled'}\n`));
   
   try {
     // Step 1: Load Global Configuration
@@ -87,6 +156,10 @@ async function main() {
     };
     
     const globalConfig = await loadGlobalConfig(flags);
+    const effectiveFiles = {
+      ...(options.useVirtualFiles ? (globalConfig.virtualFiles || {}) : {}),
+      ...overrideFileMap,
+    };
     const configTime = performance.now() - startTime;
     
     console.log(c.green('✅ Global Configuration Loaded:'));
@@ -101,13 +174,15 @@ async function main() {
     
     const entrypoints = options.entrypoint ? [options.entrypoint] : ['junior-runner.ts'];
     
-    // Simple build without virtual files to avoid issues
+    // Bun.build files support: inject virtual/override files at build time.
     const buildResult = await Bun.build({
       entrypoints: entrypoints.map(e => join(cwd, e)),
+      files: Object.keys(effectiveFiles).length > 0 ? effectiveFiles : undefined,
       metafile: true,
-      outdir: './dist-meta',
+      outdir: options.memoryOnly ? undefined : buildOutDir,
       target: 'browser',
-      format: 'esm'
+      format: 'esm',
+      reactFastRefresh: options.reactFastRefresh
     });
     
     // Create a simple metafile result structure
@@ -131,6 +206,34 @@ async function main() {
     console.log(c.gray(`  Outputs: ${Object.keys(buildResultWithMetafile.outputs || {}).length}`));
     console.log(c.gray(`  Bundle Size: ${((buildResultWithMetafile.bundleSize || 0) / 1024).toFixed(2)}KB`));
     console.log(c.gray(`  Build Time: ${buildTime.toFixed(2)}ms\n`));
+    console.log(c.gray(`  Build Artifacts: ${(buildResult.outputs || []).length}`));
+    for (const artifact of (buildResult.outputs || [])) {
+      const size = typeof artifact.size === 'number' ? `${artifact.size} bytes` : 'unknown';
+      console.log(c.gray(`    - kind=${artifact.kind}, loader=${artifact.loader}, path=${artifact.path}, size=${size}`));
+    }
+    console.log('');
+
+    if (nativeMetafileJsonPath || nativeMetafileMdPath) {
+      console.log(c.yellow('🧾 Step 2b: Emitting Native Bun Metafile Outputs...'));
+      const nativeStart = performance.now();
+      await Bun.build({
+        entrypoints: entrypoints.map(e => join(cwd, e)),
+        files: Object.keys(effectiveFiles).length > 0 ? effectiveFiles : undefined,
+        metafile: {
+          ...(nativeMetafileJsonPath ? { json: nativeMetafileJsonPath } : {}),
+          ...(nativeMetafileMdPath ? { markdown: nativeMetafileMdPath } : {}),
+        },
+        outdir: options.memoryOnly ? undefined : buildOutDir,
+        target: 'browser',
+        format: 'esm',
+        reactFastRefresh: options.reactFastRefresh
+      });
+      const nativeTime = performance.now() - nativeStart;
+      console.log(c.green('✅ Native Bun Metafiles Emitted:'));
+      if (nativeMetafileJsonPath) console.log(c.gray(`  JSON: ${nativeMetafileJsonPath}`));
+      if (nativeMetafileMdPath) console.log(c.gray(`  Markdown: ${nativeMetafileMdPath}`));
+      console.log(c.gray(`  Native Emit Time: ${nativeTime.toFixed(2)}ms\n`));
+    }
     
     // Step 3: Enhanced Profile (if requested)
     let profileResult = null;
@@ -157,7 +260,7 @@ async function main() {
     const exportStartTime = performance.now();
     
     const format = options.format || 'json';
-    await exportMetafile(buildResultWithMetafile, format as 'json' | 'md' | 'csv');
+    await exportMetafile(buildResultWithMetafile, format as 'json' | 'md' | 'csv', outputDir);
     
     const exportTime = performance.now() - exportStartTime;
     

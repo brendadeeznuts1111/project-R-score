@@ -8,12 +8,17 @@
  */
 
 import { serve } from "bun";
+import { resolve } from 'node:path';
 import { masterTokenManager } from '../lib/security/master-token.ts';
 import { r2MCPIntegration } from '../lib/mcp/r2-integration.ts';
 
 const PORT = parseInt(process.env.DASHBOARD_PORT || '3456', 10);
 const DASHBOARD_HOST = process.env.DASHBOARD_HOST || process.env.SERVER_HOST || 'localhost';
 const DASHBOARD_HTML = './dashboard/web-dashboard.html';
+const DASHBOARD_ROOT = resolve('./dashboard');
+
+const DASHBOARD_CACHE_TTL_MS = Number.parseInt(process.env.DASHBOARD_CACHE_TTL_MS || '2000', 10) || 2000;
+let dashboardDataCache: { expiresAt: number; value: Awaited<ReturnType<typeof collectDashboardData>> } | null = null;
 
 // CORS headers for API endpoints
 const corsHeaders = {
@@ -163,6 +168,90 @@ async function collectDashboardData() {
   };
 }
 
+async function collectDashboardDataCached() {
+  const now = Date.now();
+  if (dashboardDataCache && dashboardDataCache.expiresAt > now) {
+    return dashboardDataCache.value;
+  }
+  const value = await collectDashboardData();
+  dashboardDataCache = { value, expiresAt: now + DASHBOARD_CACHE_TTL_MS };
+  return value;
+}
+
+function stringifyError(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
+
+async function collectDashboardDebugData(
+  requestURL: string,
+  deep: boolean
+): Promise<Record<string, unknown>> {
+  const startedAt = Date.now();
+  const routeMap = {
+    api: ['/api/dashboard', '/api/dashboard/debug', '/api/health'],
+    ui: ['/', '/dashboard', '/dashboard/*'],
+  };
+
+  const r2Config = r2MCPIntegration.getConfigStatus();
+  const r2: Record<string, unknown> = { config: r2Config };
+
+  const statsStarted = Date.now();
+  try {
+    const stats = await r2MCPIntegration.getBucketStats();
+    r2.stats = stats;
+    r2.statsLatencyMs = Date.now() - statsStarted;
+  } catch (error) {
+    r2.statsError = stringifyError(error);
+    r2.statsLatencyMs = Date.now() - statsStarted;
+  }
+
+  if (deep) {
+    const connectionStarted = Date.now();
+    try {
+      const connection = await r2MCPIntegration.testConnection();
+      r2.connection = connection ? 'ok' : 'failed';
+      r2.connectionLatencyMs = Date.now() - connectionStarted;
+    } catch (error) {
+      r2.connection = 'error';
+      r2.connectionError = stringifyError(error);
+      r2.connectionLatencyMs = Date.now() - connectionStarted;
+    }
+
+    const listStarted = Date.now();
+    try {
+      const items = await r2MCPIntegration.listMCPData('mcp/');
+      r2.listLatencyMs = Date.now() - listStarted;
+      r2.sampleObjects = items.slice(0, 5);
+    } catch (error) {
+      r2.listLatencyMs = Date.now() - listStarted;
+      r2.listError = stringifyError(error);
+    }
+  }
+
+  return {
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    request: requestURL,
+    deep,
+    latencyMs: Date.now() - startedAt,
+    cache: {
+      enabled: true,
+      ttlMs: DASHBOARD_CACHE_TTL_MS,
+      hasValue: Boolean(dashboardDataCache),
+      expiresInMs: dashboardDataCache ? Math.max(0, dashboardDataCache.expiresAt - Date.now()) : 0,
+    },
+    routes: routeMap,
+    runtime: {
+      uptimeSeconds: Number(process.uptime().toFixed(2)),
+      memoryMB: Number((process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)),
+      dashboardHost: DASHBOARD_HOST,
+      dashboardPort: PORT,
+    },
+    r2,
+  };
+}
+
 // Start server
 console.log(`🏭 Starting FactoryWager MCP Dashboard Server...`);
 console.log(`📊 Dashboard: http://${DASHBOARD_HOST}:${PORT}`);
@@ -183,14 +272,29 @@ serve({
     // API endpoints
     if (path === '/api/dashboard') {
       try {
-        const data = await collectDashboardData();
+        const data = await collectDashboardDataCached();
         return new Response(JSON.stringify(data), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       } catch (error) {
-        return new Response(JSON.stringify({ error: error.message }), {
+        return new Response(JSON.stringify({ error: stringifyError(error) }), {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+    }
+
+    if (path === '/api/dashboard/debug') {
+      try {
+        const deep = url.searchParams.get('deep') === '1';
+        const data = await collectDashboardDebugData(url.toString(), deep);
+        return new Response(JSON.stringify(data), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
+        });
+      } catch (error) {
+        return new Response(JSON.stringify({ error: stringifyError(error) }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
         });
       }
     }
@@ -218,7 +322,10 @@ serve({
     // Static files
     if (path.startsWith('/dashboard/')) {
       try {
-        const filePath = '.' + path;
+        const filePath = resolve('.' + path);
+        if (!filePath.startsWith(DASHBOARD_ROOT + '/')) {
+          return new Response('Not Found', { status: 404 });
+        }
         const file = Bun.file(filePath);
         if (await file.exists()) {
           const ext = path.split('.').pop();

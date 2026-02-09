@@ -413,6 +413,7 @@ export function generateSecurityChecklist(): void {
   console.log(report);
   
   // Also write to file
+  // 🔒 BUN FIX: Bun.write() now properly handles files >2GB without corruption
   Bun.write('./SECURITY_CHECKLIST.md', new TextEncoder().encode(report));
   console.log('\n📄 Checklist saved to SECURITY_CHECKLIST.md');
 }

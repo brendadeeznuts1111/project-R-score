@@ -3,6 +3,7 @@
  * React hooks for integrating depth optimization into components
  */
 
+// @ts-ignore - React is optional for this module
 import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   DepthOptimizer,

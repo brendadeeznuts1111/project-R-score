@@ -260,7 +260,7 @@ export function wrapText(text: string, maxWidth: number): string[] {
         Bun as unknown as { wrapAnsi: (text: string, width: number) => string }
       ).wrapAnsi(text, maxWidth);
       return wrapped.split('\n');
-    } catch {
+    } catch (err) {
       // Fall through to manual wrapping
     }
   }

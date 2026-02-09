@@ -1,7 +1,14 @@
 #!/usr/bin/env bun
 
-// Demonstration of Bun v1.3.6 HTTP/2 flow control improvements
-console.log("🚀 Bun v1.3.6 HTTP/2 Flow Control Improvements");
+// Demonstration of Bun v1.3.6+ HTTP/2 flow control improvements
+// 🔒 BUN FIXES APPLIED:
+// - No extra empty DATA frames (AWS ALB compatibility)
+// - DEFAULT_WINDOW_SIZE until SETTINGS_ACK per RFC 7540
+// - NGHTTP2_PROTOCOL_ERROR with Fauna fixed
+// - gRPC NGHTTP2_FRAME_SIZE_ERROR with non-default maxFrameSize fixed
+// - Settings validation (no truncation of large values)
+// - maxHeaderListSize checking per RFC 7540 Section 6.5.2
+console.log("🚀 Bun v1.3.6+ HTTP/2 Flow Control & Protocol Fixes");
 console.log("=".repeat(55));
 
 // Test 1: HTTP/2 Flow Control Overview

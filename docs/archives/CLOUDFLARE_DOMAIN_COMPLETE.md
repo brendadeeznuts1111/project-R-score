@@ -19,7 +19,7 @@ Your complete Cloudflare-managed domain infrastructure is now integrated with yo
 ### **Complete Subdomain Infrastructure (16 Total)**
 ```text
 🏢 Enterprise Subdomains (15):
-├── npm.factory-wager.com     → Package Registry (CNAME → npmjs.org)
+├── registry.factory-wager.com     → Package Registry (CNAME → npmjs.org)
 ├── api.factory-wager.com      → Backend API Services (A → 192.168.1.100)
 ├── cdn.factory-wager.com      → Content Delivery (CNAME → Cloudflare)
 ├── monitor.factory-wager.com  → Observability (A → 192.168.1.101)
@@ -138,7 +138,7 @@ Claude: "Analyze DNS performance for api.factory-wager.com"
 
 Claude: "Check SSL certificate expiration dates"
 
-Claude: "Store diagnosis for npm.factory-wager.com timeout error"
+Claude: "Store diagnosis for registry.factory-wager.com timeout error"
 
 Claude: "Get traffic analytics for cdn.factory-wager.com"
 

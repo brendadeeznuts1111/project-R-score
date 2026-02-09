@@ -53,7 +53,7 @@ lockfile = true
 # Enable install cache
 cache = true
 # Registry configuration
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"
 # Timeout configuration
 timeout = 30000
 
@@ -75,8 +75,8 @@ __TEST__ = "process.env.NODE_ENV === 'test'"
 level = "debug"
 
 [publish]
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"
 
 [install.scopes]
-"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
-"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }

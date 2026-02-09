@@ -10,7 +10,7 @@ auto = "fallback"
 
 # Private registry configuration for @graph scoped packages
 [install.scopes."@graph"]
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"
 token = "$GRAPH_NPM_TOKEN"
 
 # Alternative: Use Bun.secrets for secure token storage
@@ -24,8 +24,8 @@ token = "$GRAPH_NPM_TOKEN"
 # See: docs/BUN-WORKSPACES.md
 
 [publish]
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"
 
 [install.scopes]
-"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
-"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }

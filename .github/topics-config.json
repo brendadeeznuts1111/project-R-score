@@ -1,0 +1,54 @@
+{
+  "topics": [
+    {
+      "name": "bun-runtime",
+      "color": "hsl(280, 100%, 60%)",
+      "description": "Bun JavaScript Runtime"
+    },
+    {
+      "name": "typescript",
+      "color": "hsl(210, 100%, 55%)",
+      "description": "TypeScript Language"
+    },
+    {
+      "name": "real-time",
+      "color": "hsl(150, 100%, 45%)",
+      "description": "Real-time Data Processing"
+    },
+    {
+      "name": "websocket",
+      "color": "hsl(320, 100%, 65%)",
+      "description": "WebSocket Communication"
+    },
+    {
+      "name": "payment-gateway",
+      "color": "hsl(45, 100%, 55%)",
+      "description": "Payment Processing"
+    },
+    {
+      "name": "security",
+      "color": "hsl(0, 100%, 60%)",
+      "description": "Security Features"
+    },
+    {
+      "name": "analytics",
+      "color": "hsl(180, 100%, 50%)",
+      "description": "Data Analytics"
+    },
+    {
+      "name": "dashboard",
+      "color": "hsl(260, 100%, 70%)",
+      "description": "Interactive Dashboards"
+    },
+    {
+      "name": "mcp",
+      "color": "hsl(30, 100%, 55%)",
+      "description": "Model Context Protocol"
+    },
+    {
+      "name": "vectorize",
+      "color": "hsl(120, 100%, 50%)",
+      "description": "Vector Database"
+    }
+  ]
+}

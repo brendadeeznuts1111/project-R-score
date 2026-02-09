@@ -190,7 +190,7 @@ async function urlValidationSecurity() {
   console.log('='.repeat(50));
 
   const testURLs = [
-    'https://dashboard.factory-wager.com/analytics#tab=overview&period=7d',
+    'https://docs.factory-wager.com/analytics#tab=overview&period=7d',
     'https://r2.factory-wager.com/diagnoses#key=test.json&view=object',
     'https://api.factory-wager.com/diagnoses?severity=high',
     'https://malicious-site.com/fake-dashboard',
@@ -215,7 +215,7 @@ async function urlValidationSecurity() {
   }
 
   // Demonstrate secure URL parsing
-  const userProvidedURL = 'https://dashboard.factory-wager.com/analytics#tab=overview&period=7d';
+  const userProvidedURL = 'https://docs.factory-wager.com/analytics#tab=overview&period=7d';
   
   if (FactoryWagerURLUtils.validateFactoryWagerURL(userProvidedURL)) {
     const parsed = URLHandler.parse(userProvidedURL);
@@ -236,7 +236,7 @@ async function complexFragmentOperations() {
   console.log('='.repeat(50));
 
   // Create a complex URL with multiple fragment parameters
-  let url = 'https://dashboard.factory-wager.com/analytics';
+  let url = 'https://docs.factory-wager.com/analytics';
   
   // Add multiple parameters
   url = URLFragmentUtils.setFragmentParam(url, 'tab', 'performance');
@@ -291,7 +291,7 @@ async function realWorldDashboardIntegration() {
 
   // Simulate dashboard initialization
   class DashboardApp {
-    private currentURL: string = 'https://dashboard.factory-wager.com';
+    private currentURL: string = 'https://docs.factory-wager.com';
     private r2: R2MCPIntegration;
 
     constructor() {
@@ -366,7 +366,7 @@ async function realWorldDashboardIntegration() {
   await dashboard.shareR2Object('mcp/diagnoses/critical-issue.json', 7200);
 
   // Handle deep linking
-  const deepLinkURL = 'https://dashboard.factory-wager.com/analytics#tab=errors&period=7d&filter=severity:high';
+  const deepLinkURL = 'https://docs.factory-wager.com/analytics#tab=errors&period=7d&filter=severity:high';
   dashboard.handleDeepLink(deepLinkURL);
 }
 

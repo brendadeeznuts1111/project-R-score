@@ -219,6 +219,7 @@ const output = await new Response(proc.stdout).text();
 console.log("Git status:", output.slice(0, 100));
 
 // Shell with template literals
+// 🔒 BUN FIX: Bun Shell crash (opencode) and EBADF errors with &> redirect fixed
 const result = await Bun.$`echo "Tier-1380" | wc -c`;
 console.log("Char count:", result.stdout.toString().trim());
 

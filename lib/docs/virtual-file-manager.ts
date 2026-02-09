@@ -3,7 +3,7 @@
  * Demonstrates advanced Bun.file virtual file management
  */
 
-import { TemplateDocumentationScanner } from './template-scanner';
+import { TemplateDocumentationScanner } from '../../packages/docs-tools/src/template-scanner';
 
 /**
  * Virtual File Manager

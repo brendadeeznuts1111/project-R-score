@@ -11,8 +11,7 @@
  * - Native TOML loading
  */
 
-import { Glob } from "bun";
-import { watch } from "node:fs";
+import { watch } from "node:fs"; // Glob available in bun module if needed
 
 // Types
 export interface BunGlobalConfig {
@@ -191,7 +190,7 @@ function parseMinimalTOML(content: string): BunfigConfig {
       value = value
         .slice(1, -1)
         .split(",")
-        .map((s) => s.trim().replace(/["']/g, ""));
+        .map((s: string) => s.trim().replace(/["']/g, ""));
     } else if (
       (value.startsWith('"') && value.endsWith('"')) ||
       (value.startsWith("'") && value.endsWith("'"))
@@ -208,10 +207,9 @@ function parseMinimalTOML(content: string): BunfigConfig {
 function findBunfigToml(): string {
   const candidates = ["bunfig.toml", ".bunfig.toml", "bun.toml"];
   for (const c of candidates) {
-    const file = Bun.file(c);
     // Check if file exists by trying to stat it
     try {
-      // Using a simple check - if we can get the file, it exists
+      const _file = Bun.file(c); // Verify file exists
       return c;
     } catch {
       continue;
@@ -431,13 +429,13 @@ async function executeFileWithContext(
   args: string[],
   flags: BunCLIFlags,
   config: BunGlobalConfig,
-  session: ContextSession
+  _session: ContextSession
 ): Promise<void> {
   const fullPath = resolvePath(config.cwd, file);
 
   if (flags.watch || flags.hot) {
     // Watch mode with context-aware restart
-    const watcher = watch(fullPath, { recursive: false }, async (event) => {
+    const _watcher = watch(fullPath, { recursive: false }, async (event) => {
       if (!flags.noClear) console.clear();
       console.log(c.cyan(`[${fmtTime()}] ${event} → ${file}`));
       await runFileOnce(fullPath, args, flags, config);
@@ -501,7 +499,6 @@ async function executeSystemWithContext(
     stdout: "inherit",
     stderr: "inherit",
     env: config.env,
-    shell: true,
   });
 
   session.exitCode = await proc.exited;

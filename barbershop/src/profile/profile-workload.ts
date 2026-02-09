@@ -20,7 +20,7 @@ for (let i = 0; i < iterations; i++) {
     await res.text();
     if (res.ok) ok += 1;
     else fail += 1;
-  } catch {
+  } catch (err) {
     fail += 1;
   }
 }

@@ -16,6 +16,7 @@ bun.lockb
 
 # Build outputs
 dist/
+.artifacts/
 build/
 !src/build/
 out/
@@ -87,7 +88,6 @@ reports/
 *.archive/
 
 # Working directories
-scratch/
 temp/
 tmp/
 data/

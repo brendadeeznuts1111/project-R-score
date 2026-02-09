@@ -213,12 +213,12 @@ cli/
 ### GitHub Pages Domains
 - Target: `brendadeeznuts1111.github.io`
 - Used for: Static sites, dashboards, documentation
-- Examples: `wiki.factory-wager.com`, `dashboard.factory-wager.com`
+- Examples: `wiki.factory-wager.com`, `docs.factory-wager.com`
 
 ### R2 Bucket Domains
 - Target: `public.r2.dev`
 - Used for: Dynamic content, APIs, storage
-- Examples: `api.factory-wager.com`, `metrics.factory-wager.com`
+- Examples: `api.factory-wager.com`, `monitor.factory-wager.com`
 
 ## 📊 Examples
 
@@ -353,7 +353,7 @@ export FACTORY_WAGER_TOKEN="test_token"
 
 ## 📞 Support
 
-- **Documentation**: https://wiki.factory-wager.com/cli
+- **Documentation**: https://docs.factory-wager.com/cli
 - **Issues**: https://github.com/brendadeeznuts1111/project-R-score/issues
 - **Discussions**: https://github.com/brendadeeznuts1111/project-R-score/discussions
 

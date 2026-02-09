@@ -41,7 +41,7 @@ This report provides a comprehensive analysis of untracked files and URL validat
 | local | 4 | 0 | 0 | N/A (skipped) |
 
 ### **🚨 Critical Issues Found**
-1. **Broken Registry URL**: `https://npm.factory-wager.com` - Connection failed
+1. **Broken Registry URL**: `https://registry.factory-wager.com` - Connection failed
 2. **Slow Documentation**: Main bun.sh docs taking 2505ms (performance concern)
 
 ### **⚡ Performance Analysis**
@@ -148,7 +148,7 @@ git add server.ts services/
 - **Documentation**: Review `docs/` visual documentation
 
 ### **3. URL Fixes Required**
-- **Fix Broken Registry**: Update `https://npm.factory-wager.com` URLs
+- **Fix Broken Registry**: Update `https://registry.factory-wager.com` URLs
 - **Performance Optimization**: Investigate slow bun.sh documentation loads
 - **Local URLs**: Replace example.com URLs with production equivalents
 

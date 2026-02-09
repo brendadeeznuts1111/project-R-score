@@ -364,6 +364,19 @@ export async function searchProjectCode(
     maxResults?: number;
   } = {}
 ): Promise<RipgrepMatch[]> {
+  const maxResults = options.maxResults || 50;
+  const normalizedQuery = query.trim();
+  const isLibAliasQuery =
+    normalizedQuery === '@lib' ||
+    normalizedQuery.startsWith('@lib/') ||
+    normalizedQuery.startsWith('@lib\\');
+  const libQueryTail = normalizedQuery.replace(/^@lib[\\/]?/i, '');
+  const hasLibTail = libQueryTail.length > 0;
+
+  const searchRoots = isLibAliasQuery
+    ? Array.from(new Set(['./lib', projectDir]))
+    : [projectDir];
+
   const args: string[] = ['rg'];
   
   // Add case sensitivity flag
@@ -372,21 +385,21 @@ export async function searchProjectCode(
   }
   
   // Add search query and directory
-  args.push(query);
-  args.push(projectDir);
+  args.push(isLibAliasQuery && hasLibTail ? libQueryTail : normalizedQuery);
+  args.push(...searchRoots);
   
   // Add output format
   args.push('--json');
   
   // Add result limit
   args.push('--max-count');
-  args.push((options.maxResults || 50).toString());
+  args.push(maxResults.toString());
   
-  // Add file types
-  args.push('--type', 'ts');
-  args.push('--type', 'js');
-  args.push('--type', 'tsx');
-  args.push('--type', 'jsx');
+  // Use globs instead of --type for broad ripgrep compatibility.
+  args.push('--glob', '*.ts');
+  args.push('--glob', '*.js');
+  args.push('--glob', '*.tsx');
+  args.push('--glob', '*.jsx');
 
   const proc = Bun.spawn(args, {
     stdout: "pipe",
@@ -410,12 +423,66 @@ export async function searchProjectCode(
         if (parsed.type === 'match') {
           results.push(parsed);
           
-          if (results.length >= (options.maxResults || 50)) {
+          if (results.length >= maxResults) {
             break;
           }
         }
       } catch (parseError) {
         continue;
+      }
+    }
+
+    // If the query is @lib/*, run a second focused pass for alias imports.
+    if (isLibAliasQuery && results.length < maxResults) {
+      const aliasImportArgs: string[] = ['rg'];
+
+      if (!options.caseSensitive) {
+        aliasImportArgs.push('-i');
+      }
+
+      aliasImportArgs.push('@lib/');
+      aliasImportArgs.push(projectDir);
+      aliasImportArgs.push('--json');
+      aliasImportArgs.push('--max-count', maxResults.toString());
+      aliasImportArgs.push('--glob', '*.ts');
+      aliasImportArgs.push('--glob', '*.js');
+      aliasImportArgs.push('--glob', '*.tsx');
+      aliasImportArgs.push('--glob', '*.jsx');
+
+      const aliasProc = Bun.spawn(aliasImportArgs, {
+        stdout: "pipe",
+        stderr: "ignore"
+      });
+
+      const aliasText = await new Response(aliasProc.stdout).text();
+      const aliasExitCode = await aliasProc.exited;
+
+      if (aliasExitCode === 0 && aliasText) {
+        const seen = new Set(results.map(
+          (match) => `${match.data.path.text}:${match.data.line_number}:${match.data.lines.text}`
+        ));
+
+        for (const line of aliasText.split('\n').filter(Boolean)) {
+          try {
+            const parsed: RipgrepOutput = JSON.parse(line);
+            if (parsed.type !== 'match') {
+              continue;
+            }
+
+            const key = `${parsed.data.path.text}:${parsed.data.line_number}:${parsed.data.lines.text}`;
+            if (seen.has(key)) {
+              continue;
+            }
+
+            results.push(parsed);
+            seen.add(key);
+            if (results.length >= maxResults) {
+              break;
+            }
+          } catch {
+            continue;
+          }
+        }
       }
     }
 

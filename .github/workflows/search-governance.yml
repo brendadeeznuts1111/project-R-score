@@ -1,0 +1,50 @@
+name: Search Governance
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - feat/**
+      - codex/**
+
+jobs:
+  governance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Policy Governance Guard
+        run: bun run scripts/check-search-policy-governance.ts
+
+      - name: Search Status Contract Tests
+        run: bun test tests/search-status-contract.test.ts
+
+      - name: Unified Search Status Strict Gate
+        run: bun run search:status:unified:strict
+
+      - name: Domain Registry Contract Tests
+        run: bun test tests/domain-registry.test.ts tests/domain-registry-status.test.ts
+
+      - name: Domain Registry Status Smoke
+        run: bun run scripts/domain-registry-status.ts --json
+
+      - name: Verify Pinned Search Benchmark Baseline
+        run: test -f .search/search-benchmark-pinned-baseline.json
+
+      - name: Generate Search Benchmark Snapshot (Core Wide, Local)
+        run: bun run search:bench:snapshot:core:wide:local
+
+      - name: Search Benchmark Regression Gate
+        run: bun run search:bench:gate --json

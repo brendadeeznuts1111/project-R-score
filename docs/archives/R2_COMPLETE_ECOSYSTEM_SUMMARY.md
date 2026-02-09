@@ -170,9 +170,9 @@ Your comprehensive R2-powered ecosystem is now fully operational with advanced f
 - **Categories**: 8 organized data categories
 
 ### **Access Points**
-- **Main Dashboard**: https://dashboard.factory-wager.com
+- **Main Dashboard**: https://docs.factory-wager.com
 - **R2 Browser**: https://r2.factory-wager.com  
-- **API Endpoint**: https://api.factory-wager.com/r2
+- **API Endpoint**: https://registry.factory-wager.com
 - **Health Check**: https://api.factory-wager.com/health
 
 ---
@@ -351,9 +351,9 @@ bun run scripts/r2-cli.ts get-json dashboard/index.html --env-fallback
 - **Wiki Generator**: R2-integrated documentation ready
 
 ### **🔧 Access Points**
-- **Dashboard**: https://dashboard.factory-wager.com
+- **Dashboard**: https://docs.factory-wager.com
 - **R2 Browser**: https://r2.factory-wager.com
-- **API**: https://api.factory-wager.com/r2
+- **API**: https://registry.factory-wager.com
 - **Documentation**: Generated wiki with R2 data
 - **MCP Tools**: Available in Claude Desktop
 

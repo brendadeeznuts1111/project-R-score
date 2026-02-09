@@ -7,6 +7,24 @@ import { Database } from 'bun:sqlite';
 import manifestData from '../../manifest.toml' with { type: 'toml' };
 import { fetchWithDefaults, isPublicHttpUrl } from '../utils/fetch-utils';
 import { getFactorySecret } from '../secrets/factory-secrets';
+import {
+  createPaymentRoute,
+  getPaymentRoute,
+  getActiveRoutes,
+  updatePaymentRoute,
+  deletePaymentRoute,
+  createFallbackPlan,
+  getFallbackPlan,
+  getAllFallbackPlans,
+  createRoutingConfig,
+  getRoutingConfig,
+  getActiveRoutingConfig,
+  setActiveRoutingConfig,
+  createPaymentSplit,
+  getPaymentSplit,
+  getPendingSplits,
+  updatePaymentSplitStatus,
+} from './payment-routing';
 
 export type BarberRecord = {
   id: string;
@@ -40,7 +58,7 @@ const HOST = env.HOST ?? '0.0.0.0';
 const SERVER_NAME = env.SERVER_NAME ?? 'Native Barber Server';
 const KEEP_ALIVE_TIMEOUT_SEC = Number(env.KEEP_ALIVE_TIMEOUT_SEC ?? 5);
 const KEEP_ALIVE_MAX = Number(env.KEEP_ALIVE_MAX ?? 1000);
-const LIFECYCLE_KEY = env.LIFECYCLE_KEY ?? 'godmode123';
+const LIFECYCLE_KEY = env.LIFECYCLE_KEY ?? '';
 const AUTO_UNREF = env.AUTO_UNREF === 'true';
 const DNS_PREFETCH_HOSTS = (env.DNS_PREFETCH_HOSTS ?? 'example.com')
   .split(',')
@@ -100,6 +118,7 @@ function validateEnv() {
     if (!PAYPAL_SECRET_ENV) {
       throw new Error('Missing PAYPAL_SECRET in production');
     }
+    requireEnv('LIFECYCLE_KEY', LIFECYCLE_KEY);
   }
   if ((TLS_KEY_PATH && !TLS_CERT_PATH) || (!TLS_KEY_PATH && TLS_CERT_PATH)) {
     throw new Error('TLS_KEY_PATH and TLS_CERT_PATH must be set together');
@@ -121,7 +140,8 @@ async function subscribeRedis(channel: string) {
     for (const ws of wsClients) {
       try {
         ws.send(message);
-      } catch {
+      } catch (err) {
+        // Client disconnected, remove from set
         wsClients.delete(ws);
       }
     }
@@ -177,7 +197,7 @@ async function getPaypalSecret() {
   if (PAYPAL_SECRET_ENV) return PAYPAL_SECRET_ENV;
   try {
     return (await getFactorySecret('PAYPAL_SECRET')) ?? '';
-  } catch {
+  } catch (err) {
     if (NODE_ENV === 'production') {
       throw new Error('PAYPAL_SECRET unavailable in production');
     }
@@ -295,7 +315,7 @@ async function redisHealthy() {
     const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 200));
     const pong = await Promise.race([redis.ping(), timeout]);
     return pong === 'PONG';
-  } catch {
+  } catch (err) {
     return false;
   }
 }
@@ -525,7 +545,7 @@ async function startServer(options: StartServerOptions = {}) {
           if (headersRaw) {
             try {
               headers = JSON.parse(headersRaw) as Record<string, string>;
-            } catch {
+            } catch (err) {
               return new Response(JSON.stringify({ ok: false, error: 'Invalid headers JSON' }), {
                 status: 400,
                 headers: responseHeaders('application/json; charset=utf-8'),
@@ -540,7 +560,7 @@ async function startServer(options: StartServerOptions = {}) {
               if (!Object.keys(headers).some(h => h.toLowerCase() === 'content-type')) {
                 headers['content-type'] = 'application/json';
               }
-            } catch {
+            } catch (err) {
               return new Response(JSON.stringify({ ok: false, error: 'Invalid body_json value' }), {
                 status: 400,
                 headers: responseHeaders('application/json; charset=utf-8'),
@@ -590,7 +610,7 @@ async function startServer(options: StartServerOptions = {}) {
 
         if (url.pathname === '/ops/lifecycle') {
           const key = url.searchParams.get('key');
-          if (key !== LIFECYCLE_KEY) {
+          if (!key || !LIFECYCLE_KEY || key !== LIFECYCLE_KEY) {
             return new Response(
               JSON.stringify({ ok: false, error: 'Unauthorized lifecycle key' }),
               {
@@ -639,6 +659,200 @@ async function startServer(options: StartServerOptions = {}) {
             }),
             { headers: responseHeaders('application/json; charset=utf-8') }
           );
+        }
+
+        // ==================== PAYMENT ROUTES API ====================
+        if (url.pathname === '/payment/routes' && req.method === 'GET') {
+          const routes = await getActiveRoutes();
+          return new Response(JSON.stringify({ success: true, routes }), {
+            headers: responseHeaders('application/json; charset=utf-8'),
+          });
+        }
+
+        if (url.pathname === '/payment/routes' && req.method === 'POST') {
+          const body = await req.json();
+          const route = await createPaymentRoute(body.name, body.barberId, {
+            barberName: body.barberName,
+            paymentMethods: body.paymentMethods,
+            priority: body.priority,
+            status: body.status,
+            maxDailyAmount: body.maxDailyAmount,
+            maxTransactionAmount: body.maxTransactionAmount,
+          });
+          return new Response(JSON.stringify({ success: true, route }), {
+            headers: responseHeaders('application/json; charset=utf-8'),
+          });
+        }
+
+        if (url.pathname.startsWith('/payment/routes/') && req.method === 'GET') {
+          const id = url.pathname.replace('/payment/routes/', '');
+          const route = await getPaymentRoute(id);
+          if (!route) {
+            return new Response(JSON.stringify({ success: false, error: 'Route not found' }), {
+              status: 404,
+              headers: responseHeaders('application/json; charset=utf-8'),
+            });
+          }
+          return new Response(JSON.stringify(route), {
+            headers: responseHeaders('application/json; charset=utf-8'),
+          });
+        }
+
+        if (url.pathname.startsWith('/payment/routes/') && req.method === 'PUT') {
+          const id = url.pathname.replace('/payment/routes/', '');
+          const body = await req.json();
+          const route = await updatePaymentRoute(id, body);
+          if (!route) {
+            return new Response(JSON.stringify({ success: false, error: 'Route not found' }), {
+              status: 404,
+              headers: responseHeaders('application/json; charset=utf-8'),
+            });
+          }
+          return new Response(JSON.stringify({ success: true, route }), {
+            headers: responseHeaders('application/json; charset=utf-8'),
+          });
+        }
+
+        if (url.pathname.startsWith('/payment/routes/') && req.method === 'DELETE') {
+          const id = url.pathname.replace('/payment/routes/', '');
+          const deleted = await deletePaymentRoute(id);
+          return new Response(JSON.stringify({ success: deleted }), {
+            headers: responseHeaders('application/json; charset=utf-8'),
+          });
+        }
+
+        // ==================== PAYMENT FALLBACKS API ====================
+        if (url.pathname === '/payment/fallbacks' && req.method === 'GET') {
+          const fallbacks = await getAllFallbackPlans();
+          return new Response(JSON.stringify({ success: true, fallbacks }), {
+            headers: responseHeaders('application/json; charset=utf-8'),
+          });
+        }
+
+        if (url.pathname === '/payment/fallbacks' && req.method === 'POST') {
+          const body = await req.json();
+          const fallback = await createFallbackPlan(body.name, body.primaryRouteId, {
+            fallbackRouteIds: body.fallbackRouteIds,
+            trigger: body.trigger,
+            retryCount: body.retryCount,
+            retryDelayMs: body.retryDelayMs,
+            notifyOnFallback: body.notifyOnFallback,
+            status: body.status,
+          });
+          return new Response(JSON.stringify({ success: true, fallback }), {
+            headers: responseHeaders('application/json; charset=utf-8'),
+          });
+        }
+
+        if (url.pathname.startsWith('/payment/fallbacks/') && req.method === 'GET') {
+          const id = url.pathname.replace('/payment/fallbacks/', '');
+          const fallback = await getFallbackPlan(id);
+          if (!fallback) {
+            return new Response(JSON.stringify({ success: false, error: 'Fallback not found' }), {
+              status: 404,
+              headers: responseHeaders('application/json; charset=utf-8'),
+            });
+          }
+          return new Response(JSON.stringify(fallback), {
+            headers: responseHeaders('application/json; charset=utf-8'),
+          });
+        }
+
+        // ==================== PAYMENT CONFIG API ====================
+        if (url.pathname === '/payment/config' && req.method === 'GET') {
+          const config = await getActiveRoutingConfig();
+          if (!config) {
+            // Return default config if none exists
+            return new Response(
+              JSON.stringify({
+                id: 'default',
+                enableAutoRouting: true,
+                enableFallbacks: true,
+                splitThreshold: 100,
+                defaultSplitType: 'percentage',
+                maxSplitRecipients: 5,
+                routingStrategy: 'priority',
+              }),
+              { headers: responseHeaders('application/json; charset=utf-8') }
+            );
+          }
+          return new Response(JSON.stringify(config), {
+            headers: responseHeaders('application/json; charset=utf-8'),
+          });
+        }
+
+        if (url.pathname === '/payment/config' && req.method === 'PUT') {
+          const body = await req.json();
+          // Get or create active config
+          let config = await getActiveRoutingConfig();
+          if (!config) {
+            config = await createRoutingConfig('Default Config', body);
+            await setActiveRoutingConfig(config.id);
+          } else {
+            // Create new config with updates (immutable pattern)
+            config = await createRoutingConfig(config.name, {
+              ...config,
+              ...body,
+            });
+            await setActiveRoutingConfig(config.id);
+          }
+          return new Response(JSON.stringify({ success: true, config }), {
+            headers: responseHeaders('application/json; charset=utf-8'),
+          });
+        }
+
+        // ==================== PAYMENT SPLITS API ====================
+        if (url.pathname === '/payment/splits/pending' && req.method === 'GET') {
+          const splits = await getPendingSplits();
+          return new Response(JSON.stringify({ success: true, splits }), {
+            headers: responseHeaders('application/json; charset=utf-8'),
+          });
+        }
+
+        if (url.pathname.startsWith('/payment/splits/') && !url.pathname.endsWith('/process') && req.method === 'GET') {
+          const id = url.pathname.replace('/payment/splits/', '');
+          const split = await getPaymentSplit(id);
+          if (!split) {
+            return new Response(JSON.stringify({ success: false, error: 'Split not found' }), {
+              status: 404,
+              headers: responseHeaders('application/json; charset=utf-8'),
+            });
+          }
+          return new Response(JSON.stringify(split), {
+            headers: responseHeaders('application/json; charset=utf-8'),
+          });
+        }
+
+        if (url.pathname.startsWith('/payment/splits/') && !url.pathname.endsWith('/process') && req.method === 'PUT') {
+          const id = url.pathname.replace('/payment/splits/', '');
+          const body = await req.json();
+          // Update split recipients
+          const split = await getPaymentSplit(id);
+          if (!split) {
+            return new Response(JSON.stringify({ success: false, error: 'Split not found' }), {
+              status: 404,
+              headers: responseHeaders('application/json; charset=utf-8'),
+            });
+          }
+          // Recreate split with new recipients
+          const newSplit = await createPaymentSplit(split.ticketId, split.totalAmount, body.recipients || []);
+          return new Response(JSON.stringify({ success: true, split: newSplit }), {
+            headers: responseHeaders('application/json; charset=utf-8'),
+          });
+        }
+
+        if (url.pathname.endsWith('/payment/splits/process') || url.pathname.endsWith('/process') && url.pathname.includes('/payment/splits/')) {
+          if (req.method === 'POST') {
+            const id = url.pathname.replace('/payment/splits/', '').replace('/process', '');
+            await updatePaymentSplitStatus(id, 'processing');
+            // Simulate processing
+            setTimeout(async () => {
+              await updatePaymentSplitStatus(id, 'completed');
+            }, 1000);
+            return new Response(JSON.stringify({ success: true }), {
+              headers: responseHeaders('application/json; charset=utf-8'),
+            });
+          }
         }
 
         return new Response('🦘 Native Barber: Redis+SQLite+WS+TLS+Secrets+Cookies', {
@@ -708,7 +922,7 @@ async function startServer(options: StartServerOptions = {}) {
     const shutdown = (signal: string) => {
       try {
         server.stop(true);
-      } catch {}
+      } catch (err) {}
       logInfo('shutdown', { signal, name: SERVER_NAME });
       process.exit(0);
     };

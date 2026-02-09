@@ -21,7 +21,7 @@ I have successfully implemented a robust URL handling system with comprehensive 
 ### **🔍 URL Parsing & Validation**
 ```typescript
 // Enhanced URL parsing with fragments
-const url = new EnhancedURL('https://dashboard.factory-wager.com/analytics#tab=overview&period=7d');
+const url = new EnhancedURL('https://docs.factory-wager.com/analytics#tab=overview&period=7d');
 console.log(url.fragment); // 'tab=overview&period=7d'
 console.log(url.hasFragment()); // true
 
@@ -190,7 +190,7 @@ function handleDeepLink(url: string) {
 const isValid = FactoryWagerURLUtils.validateFactoryWagerURL(url, {
   allowedHosts: [
     'factory-wager.com',
-    'dashboard.factory-wager.com',
+    'docs.factory-wager.com',
     'r2.factory-wager.com',
     'api.factory-wager.com'
   ],

@@ -1,0 +1,155 @@
+/* Repository Tags - Bright Animated HSL Colors */
+
+:root {
+  /* Core HSL Colors - High Saturation, Bright */
+  --tag-bun: hsl(280, 100%, 60%);
+  --tag-bun-glow: hsl(280, 100%, 70%);
+  
+  --tag-typescript: hsl(210, 100%, 55%);
+  --tag-typescript-glow: hsl(210, 100%, 65%);
+  
+  --tag-realtime: hsl(150, 100%, 45%);
+  --tag-realtime-glow: hsl(150, 100%, 55%);
+  
+  --tag-websocket: hsl(320, 100%, 65%);
+  --tag-websocket-glow: hsl(320, 100%, 75%);
+  
+  --tag-payment: hsl(45, 100%, 55%);
+  --tag-payment-glow: hsl(45, 100%, 65%);
+  
+  --tag-security: hsl(0, 100%, 60%);
+  --tag-security-glow: hsl(0, 100%, 70%);
+  
+  --tag-analytics: hsl(180, 100%, 50%);
+  --tag-analytics-glow: hsl(180, 100%, 60%);
+  
+  --tag-dashboard: hsl(260, 100%, 70%);
+  --tag-dashboard-glow: hsl(260, 100%, 80%);
+  
+  --tag-mcp: hsl(30, 100%, 55%);
+  --tag-mcp-glow: hsl(30, 100%, 65%);
+  
+  --tag-vectorize: hsl(120, 100%, 50%);
+  --tag-vectorize-glow: hsl(120, 100%, 60%);
+}
+
+/* Animated Tag Base */
+.repo-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glow Animation */
+@keyframes tagPulse {
+  0%, 100% {
+    box-shadow: 0 0 5px currentColor, 0 0 10px currentColor;
+  }
+  50% {
+    box-shadow: 0 0 15px currentColor, 0 0 25px currentColor, 0 0 35px currentColor;
+  }
+}
+
+@keyframes tagShimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* Individual Tag Styles */
+.tag-bun {
+  background: linear-gradient(135deg, var(--tag-bun), hsl(290, 100%, 65%));
+  color: white;
+  animation: tagPulse 2s ease-in-out infinite;
+}
+
+.tag-typescript {
+  background: linear-gradient(135deg, var(--tag-typescript), hsl(200, 100%, 60%));
+  color: white;
+  animation: tagPulse 2.2s ease-in-out infinite;
+}
+
+.tag-realtime {
+  background: linear-gradient(135deg, var(--tag-realtime), hsl(140, 100%, 50%));
+  color: #000;
+  animation: tagPulse 1.8s ease-in-out infinite;
+}
+
+.tag-websocket {
+  background: linear-gradient(135deg, var(--tag-websocket), hsl(310, 100%, 70%));
+  color: white;
+  animation: tagPulse 2.4s ease-in-out infinite;
+}
+
+.tag-payment {
+  background: linear-gradient(135deg, var(--tag-payment), hsl(55, 100%, 60%));
+  color: #000;
+  animation: tagPulse 2.1s ease-in-out infinite;
+}
+
+.tag-security {
+  background: linear-gradient(135deg, var(--tag-security), hsl(10, 100%, 65%));
+  color: white;
+  animation: tagPulse 1.9s ease-in-out infinite;
+}
+
+.tag-analytics {
+  background: linear-gradient(135deg, var(--tag-analytics), hsl(170, 100%, 55%));
+  color: #000;
+  animation: tagPulse 2.3s ease-in-out infinite;
+}
+
+.tag-dashboard {
+  background: linear-gradient(135deg, var(--tag-dashboard), hsl(270, 100%, 75%));
+  color: #000;
+  animation: tagPulse 2.5s ease-in-out infinite;
+}
+
+.tag-mcp {
+  background: linear-gradient(135deg, var(--tag-mcp), hsl(40, 100%, 60%));
+  color: #000;
+  animation: tagPulse 2.0s ease-in-out infinite;
+}
+
+.tag-vectorize {
+  background: linear-gradient(135deg, var(--tag-vectorize), hsl(110, 100%, 55%));
+  color: #000;
+  animation: tagPulse 2.2s ease-in-out infinite;
+}
+
+/* Hover Effects */
+.repo-tag:hover {
+  transform: translateY(-2px) scale(1.05);
+  filter: brightness(1.1);
+}
+
+/* Shimmer Effect */
+.repo-tag::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: tagShimmer 3s linear infinite;
+  pointer-events: none;
+}

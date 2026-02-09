@@ -14,7 +14,7 @@
  * ```
  * 
  * @see {@link https://developers.cloudflare.com/r2/} Cloudflare R2 Docs
- * @see {@link https://npm.factory-wager.com} FactoryWager NPM Registry
+ * @see {@link https://registry.factory-wager.com} FactoryWager NPM Registry
  * @see {@link https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com} R2 Endpoint
  */
 
@@ -31,7 +31,7 @@ const R2_SECRET_ACCESS_KEY = "35e3bfdec97455b9a0a7caf62d26b23edaae70642c36aeb223
 const R2_ENDPOINT = `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
 
 /** FactoryWager registry URL */
-const REGISTRY_URL = process.env.REGISTRY_URL || "https://npm.factory-wager.com";
+const REGISTRY_URL = process.env.REGISTRY_URL || "https://registry.factory-wager.com";
 
 /** Default bucket name */
 const DEFAULT_BUCKET = "bun-secrets";

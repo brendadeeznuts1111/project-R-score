@@ -14,7 +14,7 @@ import {
 } from './cli-constants-validation';
 
 // Import documentation validator for integration
-import { DocumentationValidator } from '../docs/documentation-validator';
+import { DocumentationValidator } from '../../packages/docs-tools/src/documentation-validator';
 
 // ============================================================================
 // CLI ARGUMENT PARSING

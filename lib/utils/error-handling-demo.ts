@@ -127,7 +127,7 @@ async function demonstrateErrorHandling() {
 
     // Fallback URL
     console.log('🔄 Using fallback documentation URL...');
-    console.log('   Fallback: https://docs.bun.sh');
+    console.log('   Fallback: https://bun.sh/docs');
   }
 
   // 6. TYPE ERROR HANDLING

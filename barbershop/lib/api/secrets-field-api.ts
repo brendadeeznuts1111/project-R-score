@@ -1,9 +1,9 @@
 // lib/api/secrets-field-api.ts - 3D Secret Field API Endpoints
 
-import { SecretsField } from '../security/secrets-field';
-import { RedisVault } from '../security/redis-vault';
-import { factoryWagerSecurityCitadel } from '../security/factorywager-security-citadel';
-import { integratedSecretManager } from '../security/integrated-secret-manager';
+import { SecretsField } from '../secrets/core/secrets-field';
+import { RedisVault } from '../secrets/core/redis-vault';
+import { factoryWagerSecurityCitadel } from '../secrets/core/factorywager-security-citadel';
+import { integratedSecretManager } from '../secrets/core/integrated-secret-manager';
 
 interface SystemState {
   id: string;
@@ -118,7 +118,7 @@ export class SecretsFieldAPI {
       await this.cacheFieldData(targetSystemId, field3D);
 
       return field3D;
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Failed to generate 3D field:', error.message);
       throw new Error(`Field generation failed: ${error.message}`);
     }
@@ -162,7 +162,7 @@ export class SecretsFieldAPI {
           if (result) {
             rotated.push(result);
           }
-        } catch (error) {
+        } catch (error: any) {
           errors.push(`Failed to rotate ${request.secretKey}: ${error.message}`);
         }
       } else {
@@ -175,7 +175,7 @@ export class SecretsFieldAPI {
             if (result) {
               rotated.push(result);
             }
-          } catch (error) {
+          } catch (error: any) {
             errors.push(`Failed to rotate ${secretKey}: ${error.message}`);
           }
         }
@@ -209,7 +209,7 @@ export class SecretsFieldAPI {
 
       console.log(`✅ Rotation completed: ${rotated.length} rotated, ${errors.length} errors`);
       return response;
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Rotation failed:', error.message);
       throw new Error(`Rotation failed: ${error.message}`);
     }
@@ -243,14 +243,14 @@ export class SecretsFieldAPI {
                 data: compressedData,
                 timestamp: new Date().toISOString(),
               });
-            } catch (error) {
+            } catch (error: any) {
               console.warn('WebSocket send error:', error.message);
             }
           });
 
           lastFieldData = fieldData;
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('WebSocket update error:', error.message);
       }
     };
@@ -377,7 +377,7 @@ export class SecretsFieldAPI {
           analytics: analytics,
         },
       };
-    } catch (error) {
+    } catch (error: any) {
       return {
         id: systemId,
         main: {
@@ -447,7 +447,7 @@ export class SecretsFieldAPI {
         newValue,
         timestamp: new Date().toISOString(),
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error(`Failed to rotate ${secretKey}:`, error.message);
       throw error;
     }
@@ -469,7 +469,7 @@ export class SecretsFieldAPI {
   /**
    * Generate new secret value
    */
-  private static generateSecretValue(secretKey: string): string {
+  private static generateSecretValue(_secretKey: string): string {
     const length = 32;
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
@@ -495,7 +495,7 @@ export class SecretsFieldAPI {
           timestamp: new Date().toISOString(),
         }
       );
-    } catch (error) {
+    } catch (error: any) {
       console.warn('Failed to cache field data:', error.message);
     }
   }

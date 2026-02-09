@@ -2,7 +2,7 @@
 
 /**
  * 🏗️ Unified Base Server for Bun Documentation System
- * 
+ *
  * Combines the best features from all existing servers:
  * - Uses enhanced documentation system (like CLI)
  * - Proper domain distinction (bun.sh vs bun.com)
@@ -10,11 +10,11 @@
  * - Advanced fetch demonstrations
  * - Caching and performance optimizations
  * - Chrome app integration
- * 
+ *
  * Port: 3000 (main unified server)
  */
 
-import { 
+import {
   EnhancedEnterpriseDocumentationURLBuilder,
   docsURLBuilder,
   EnhancedDocumentationURLValidator,
@@ -24,13 +24,10 @@ import {
   ENTERPRISE_DOCUMENTATION_BASE_URLS,
   DOCUMENTATION_URL_MAPPINGS,
   ENTERPRISE_DOCUMENTATION_PATHS,
-  QUICK_REFERENCE_URLS
+  QUICK_REFERENCE_URLS,
 } from '../lib/docs/documentation-index.ts';
 
-import { 
-  EnhancedDocsFetcher,
-  BunApiIndex 
-} from '../lib/docs/index-fetcher-enhanced.ts';
+import { EnhancedDocsFetcher, BunApiIndex } from '../lib/docs/index-fetcher-enhanced.ts';
 
 import { ChromeAppManager } from '../lib/cli/chrome-integration';
 
@@ -41,22 +38,22 @@ import { RSSIntegrationService, RSSFeedItem } from '../services/rss-integration'
 import { CacheFactory, CacheMiddleware } from '../lib/performance/cache-management.ts';
 
 // Import security middleware
-import { 
-  SecurityMiddleware, 
-  SecurityPresets, 
+import {
+  SecurityMiddleware,
+  SecurityPresets,
   createCORSHeaders,
-  createSecurityMiddleware 
+  createSecurityMiddleware,
 } from '../lib/security/rate-limiting-security.ts';
 
 // Initialize services
 const docsFetcher = new EnhancedDocsFetcher({
   ttl: 6 * 60 * 60 * 1000, // 6 hours
-  offlineMode: false
+  offlineMode: false,
 });
 
 const chromeManager = new ChromeAppManager({
   appName: 'Bun Documentation Server',
-  appUrl: 'https://bun.com/docs'
+  appUrl: 'https://bun.com/docs',
 });
 
 // Initialize RSS integration service
@@ -75,14 +72,14 @@ try {
     process.env.NODE_ENV === 'production' ? 'productionAPI' : 'development',
     {
       rateLimit: {
-        maxRequests: process.env.NODE_ENV === 'production' ? 100 : 1000
+        maxRequests: process.env.NODE_ENV === 'production' ? 100 : 1000,
       },
       securityHeaders: {
         customHeaders: {
           'X-Server-Version': '1.0.0',
-          'X-Powered-By': 'Bun'
-        }
-      }
+          'X-Powered-By': 'Bun',
+        },
+      },
     }
   );
 } catch (error) {
@@ -93,16 +90,14 @@ try {
     apply: async (request: Request, handler: () => Promise<Response>) => {
       console.warn('Security middleware bypassed due to initialization failure');
       return await handler();
-    }
+    },
   } as SecurityMiddleware;
 }
 
 // Initialize CORS headers with error handling
 try {
   corsHeaders = createCORSHeaders(
-    process.env.NODE_ENV === 'production' ? 
-      ['https://bun.sh', 'https://bun.com'] : 
-      ['*'],
+    process.env.NODE_ENV === 'production' ? ['https://bun.sh', 'https://bun.com'] : ['*'],
     ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Client-Version']
   );
@@ -112,19 +107,28 @@ try {
   corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   };
 }
 
 // Unified server configuration
 const SERVER_PORT = parseInt(process.env.SERVER_PORT || '3000', 10);
 const SERVER_HOST = process.env.SERVER_HOST || 'localhost';
+const VERBOSE = Bun.env.BUN_VERBOSE === '1';
+
+type JsonObject = Record<string, unknown>;
+type CacheStatsProvider = { cache: { getStats(): unknown } };
+
+function jsonResponse(body: unknown, init?: ResponseInit): Response {
+  return Response.json(body, init);
+}
+
 const server = Bun.serve({
   port: SERVER_PORT,
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
     const path = url.pathname;
-    
+
     // Handle OPTIONS requests for CORS
     if (request.method === 'OPTIONS') {
       const response = new Response(null, { status: 200 });
@@ -133,7 +137,7 @@ const server = Bun.serve({
       });
       return response;
     }
-    
+
     // Apply security middleware
     return await securityMiddleware.apply(request, async () => {
       try {
@@ -141,18 +145,21 @@ const server = Bun.serve({
         const handler = getRouteHandler(path);
         if (handler) {
           const response = await handler(request, url);
-          
+
           // Add CORS headers to all responses
           Object.entries(corsHeaders).forEach(([key, value]) => {
             response.headers.set(key, value);
           });
-          
+
           return response;
         }
-        
+
         return handleNotFound(request, url);
       } catch (error) {
-        console.error(`❌ Server error for ${path}:`, error instanceof Error ? error.message : String(error));
+        console.error(
+          `❌ Server error for ${path}:`,
+          error instanceof Error ? error.message : String(error)
+        );
         return handleError(error, request, url);
       }
     });
@@ -167,7 +174,7 @@ function getRouteHandler(path: string): ((request: Request, url: URL) => Promise
     // Root and documentation
     '/': handleRoot,
     '/health': handleHealth,
-    
+
     // Enhanced documentation endpoints (using CLI approach)
     '/docs/search': handleDocumentationSearch,
     '/docs/index': handleDocumentationIndex,
@@ -186,57 +193,57 @@ function getRouteHandler(path: string): ((request: Request, url: URL) => Promise
     '/api/validator/normalize': handleURLNormalization,
     '/api/validator/migration': handleURLMigration,
     '/api/examples/usage': handleUsageExamples,
-    
+
     // RSS integration endpoints
     '/api/rss/fetch': handleRSSFetch,
     '/api/rss/combined': handleCombinedRSS,
     '/api/rss/documentation': handleDocumentationRSS,
     '/api/rss/feed': handleGeneratedRSSFeed,
     '/api/sources/comparison': handleDocumentationSourcesComparison,
-    
+
     // GitHub integration endpoints
     '/api/github/parse': handleGitHubURLParse,
     '/api/github/commit': handleGitHubCommitURL,
     '/api/github/bun-types': handleBunTypesURL,
     '/api/github/text-fragment': handleTextFragmentDemo,
     '/api/github/critical-urls': handleCriticalURLs,
-    
+
     // CLI tooling demonstrations
     '/api/cli/cookie-scanner': handleCookieScannerDemo,
     '/api/cli/efficiency': handleCLIEfficiencyDemo,
-    
+
     // Domain-specific endpoints
     '/docs/bun-sh': handleBunShDocs,
     '/docs/bun-com': handleBunComDocs,
     '/docs/reference': handleReferenceDocs,
     '/docs/guides': handleGuidesDocs,
-    
+
     // API demonstrations
     '/api/fetch/demo': handleFetchDemo,
     '/api/fetch/advanced': handleAdvancedFetch,
     '/api/content-types': handleContentTypes,
     '/api/typed-arrays': handleTypedArrays,
     '/api/streaming': handleStreamingDemo,
-    
+
     // RSS and feeds
     '/api/feeds': handleFeeds,
     '/api/feeds/rss': handleRSSFeed,
     '/api/feeds/json': handleJSONFeed,
-    
+
     // CLI integration
     '/cli/search': handleCLISearch,
     '/cli/open': handleCLIOpen,
     '/cli/app': handleChromeApp,
-    
+
     // Cache management
     '/cache/stats': handleCacheStats,
     '/cache/clear': handleCacheClear,
-    
+
     // Testing endpoints
     '/test/all': handleTestAll,
     '/test/performance': handlePerformanceTest,
   };
-  
+
   return routes[path] || null;
 }
 
@@ -246,7 +253,7 @@ function getRouteHandler(path: string): ((request: Request, url: URL) => Promise
 async function handleRoot(request: Request, url: URL): Promise<Response> {
   const html = generateDashboardHTML();
   return new Response(html, {
-    headers: { 'Content-Type': 'text/html' }
+    headers: { 'Content-Type': 'text/html' },
   });
 }
 
@@ -262,15 +269,13 @@ async function handleHealth(request: Request, url: URL): Promise<Response> {
     services: {
       docsFetcher: 'connected',
       chromeManager: 'ready',
-      cache: responseCache.size + ' entries'
+      cache: responseCache.size + ' entries',
     },
     domains: Object.values(DocumentationDomain),
-    providers: Object.values(DocumentationProvider)
+    providers: Object.values(DocumentationProvider),
   };
-  
-  return new Response(JSON.stringify(health, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
-  });
+
+  return jsonResponse(health);
 }
 
 /**
@@ -278,15 +283,15 @@ async function handleHealth(request: Request, url: URL): Promise<Response> {
  */
 async function handleDocumentationSearch(request: Request, url: URL): Promise<Response> {
   const query = url.searchParams.get('q') || '';
-  const domain = url.searchParams.get('domain') as 'sh' | 'com' || 'sh';
-  
+  const domain = (url.searchParams.get('domain') as 'sh' | 'com') || 'sh';
+
   if (!query) {
-    return new Response(JSON.stringify({ error: 'Query parameter required' }), { status: 400 });
+    return jsonResponse({ error: 'Query parameter required' }, { status: 400 });
   }
-  
+
   try {
     const results = await docsFetcher.search(query, domain);
-    
+
     const response = {
       query,
       domain,
@@ -296,22 +301,23 @@ async function handleDocumentationSearch(request: Request, url: URL): Promise<Re
         category: r.category,
         urls: {
           sh: r.domains.sh,
-          com: r.domains.com
+          com: r.domains.com,
         },
         enhancedUrls: {
           typedArray: docsURLBuilder.buildTypedArrayURL({ fragment: 'OVERVIEW' }),
           fetchAPI: docsURLBuilder.buildFetchAPIDocsURL(),
-          enterprise: docsURLBuilder.buildEnterpriseAPIURL({ version: 'v1', endpoint: 'demo' })
-        }
+          enterprise: docsURLBuilder.buildEnterpriseAPIURL({ version: 'v1', endpoint: 'demo' }),
+        },
       })),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
-    
-    return new Response(JSON.stringify(response, null, 2), {
-      headers: { 'Content-Type': 'application/json' }
-    });
+
+    return jsonResponse(response);
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    return jsonResponse(
+      { error: error instanceof Error ? error.message : String(error) },
+      { status: 500 }
+    );
   }
 }
 
@@ -321,18 +327,19 @@ async function handleDocumentationSearch(request: Request, url: URL): Promise<Re
 async function handleDocumentationIndex(request: Request, url: URL): Promise<Response> {
   try {
     await docsFetcher.updateFallbackData();
-    
+
     const response = {
       message: 'Documentation index updated',
       timestamp: new Date().toISOString(),
-      cacheStats: (docsFetcher as any).cache.getStats()
+      cacheStats: (docsFetcher as unknown as CacheStatsProvider).cache.getStats(),
     };
-    
-    return new Response(JSON.stringify(response, null, 2), {
-      headers: { 'Content-Type': 'application/json' }
-    });
+
+    return jsonResponse(response);
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    return jsonResponse(
+      { error: error instanceof Error ? error.message : String(error) },
+      { status: 500 }
+    );
   }
 }
 
@@ -344,12 +351,10 @@ async function handleDocumentationProviders(request: Request, url: URL): Promise
     provider: key,
     type: DOCUMENTATION_URL_MAPPINGS[urls.BASE]?.type || 'unknown',
     audience: DOCUMENTATION_URL_MAPPINGS[urls.BASE]?.audience || 'all_users',
-    urls: urls
+    urls: urls,
   }));
-  
-  return new Response(JSON.stringify({ providers }, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
-  });
+
+  return jsonResponse({ providers });
 }
 
 /**
@@ -357,23 +362,23 @@ async function handleDocumentationProviders(request: Request, url: URL): Promise
  */
 async function handleBunShDocs(request: Request, url: URL): Promise<Response> {
   const section = url.searchParams.get('section') || 'api';
-  
+
   const urls = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_OFFICIAL];
   const targetUrl = urls[section.toUpperCase() as keyof typeof urls] || urls.DOCS;
-  
+
   try {
     const response = await fetch(targetUrl);
     const content = await response.text();
-    
+
     return new Response(content, {
-      headers: { 
+      headers: {
         'Content-Type': 'text/html',
         'X-Source-URL': targetUrl,
-        'X-Provider': DocumentationProvider.BUN_OFFICIAL
-      }
+        'X-Provider': DocumentationProvider.BUN_OFFICIAL,
+      },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: `Failed to fetch from ${targetUrl}` }), { status: 500 });
+    return jsonResponse({ error: `Failed to fetch from ${targetUrl}` }, { status: 500 });
   }
 }
 
@@ -382,23 +387,23 @@ async function handleBunShDocs(request: Request, url: URL): Promise<Response> {
  */
 async function handleBunComDocs(request: Request, url: URL): Promise<Response> {
   const section = url.searchParams.get('section') || 'guides';
-  
+
   const urls = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_GUIDES];
   const targetUrl = urls[section.toUpperCase() as keyof typeof urls] || urls.GUIDES;
-  
+
   try {
     const response = await fetch(targetUrl);
     const content = await response.text();
-    
+
     return new Response(content, {
-      headers: { 
+      headers: {
         'Content-Type': 'text/html',
         'X-Source-URL': targetUrl,
-        'X-Provider': DocumentationProvider.BUN_GUIDES
-      }
+        'X-Provider': DocumentationProvider.BUN_GUIDES,
+      },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: `Failed to fetch from ${targetUrl}` }), { status: 500 });
+    return jsonResponse({ error: `Failed to fetch from ${targetUrl}` }, { status: 500 });
   }
 }
 
@@ -408,28 +413,28 @@ async function handleBunComDocs(request: Request, url: URL): Promise<Response> {
 async function handleReferenceDocs(request: Request, url: URL): Promise<Response> {
   const urls = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_REFERENCE];
   const section = url.searchParams.get('section') || 'REFERENCE';
-  
+
   // If a specific section is requested, proxy that content
   if (section && section !== 'overview' && urls[section.toUpperCase() as keyof typeof urls]) {
     const targetUrl = urls[section.toUpperCase() as keyof typeof urls] as string;
-    
+
     try {
       const response = await fetch(targetUrl);
       const content = await response.text();
-      
+
       return new Response(content, {
-        headers: { 
+        headers: {
           'Content-Type': 'text/html',
           'X-Source-URL': targetUrl,
           'X-Provider': DocumentationProvider.BUN_REFERENCE,
-          'X-Section': section
-        }
+          'X-Section': section,
+        },
       });
     } catch (error) {
-      return new Response(JSON.stringify({ error: `Failed to fetch from ${targetUrl}` }), { status: 500 });
+      return jsonResponse({ error: `Failed to fetch from ${targetUrl}` }, { status: 500 });
     }
   }
-  
+
   // Return overview of all reference sections
   const response = {
     provider: DocumentationProvider.BUN_REFERENCE,
@@ -446,28 +451,26 @@ async function handleReferenceDocs(request: Request, url: URL): Promise<Response
       tutorials: urls.TUTORIALS,
       cookbook: urls.COOKBOOK,
       cheatsheet: urls.CHEATSHEET,
-      glossary: urls.GLOSSARY
+      glossary: urls.GLOSSARY,
     },
     textFragments: urls.TEXT_FRAGMENT_EXAMPLES,
     enhancedUrls: {
       typedArrayMethods: docsURLBuilder.buildTypedArrayURL({ fragment: 'METHODS' }),
       typedArrayPerformance: docsURLBuilder.buildTypedArrayURL({ fragment: 'PERFORMANCE' }),
-      syscallOptimization: docsURLBuilder.buildSyscallOptimizationURL({ 
-        operation: 'copy_file_range', 
-        platform: 'linux' 
+      syscallOptimization: docsURLBuilder.buildSyscallOptimizationURL({
+        operation: 'copy_file_range',
+        platform: 'linux',
       }),
-      enterpriseAPI: docsURLBuilder.buildEnterpriseAPIURL({ version: 'v1', endpoint: 'reference' })
+      enterpriseAPI: docsURLBuilder.buildEnterpriseAPIURL({ version: 'v1', endpoint: 'reference' }),
     },
     usage: {
       browseSections: '/docs/reference?section=api',
       directAccess: urls.REFERENCE,
-      textFragmentExample: urls.TEXT_FRAGMENT_EXAMPLES.NODE_ZLIB
-    }
+      textFragmentExample: urls.TEXT_FRAGMENT_EXAMPLES.NODE_ZLIB,
+    },
   };
-  
-  return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
-  });
+
+  return jsonResponse(response);
 }
 
 /**
@@ -476,7 +479,7 @@ async function handleReferenceDocs(request: Request, url: URL): Promise<Response
 async function handleGitHubDocs(request: Request, url: URL): Promise<Response> {
   const urls = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.GITHUB_ENTERPRISE];
   const section = url.searchParams.get('section') || 'BASE';
-  
+
   const response = {
     provider: DocumentationProvider.GITHUB_ENTERPRISE,
     description: 'GitHub Enterprise and API Documentation',
@@ -487,18 +490,16 @@ async function handleGitHubDocs(request: Request, url: URL): Promise<Response> {
       apiV3: urls.API_V3,
       apiV4: urls.API_V4,
       rawContent: urls.RAW_CONTENT,
-      gist: urls.GIST
+      gist: urls.GIST,
     },
     usage: {
       apiAccess: urls.API_V3,
       graphql: urls.API_V4,
-      rawFiles: urls.RAW_CONTENT + '/oven-sh/bun/main/README.md'
-    }
+      rawFiles: urls.RAW_CONTENT + '/oven-sh/bun/main/README.md',
+    },
   };
-  
-  return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
-  });
+
+  return jsonResponse(response);
 }
 
 /**
@@ -507,7 +508,7 @@ async function handleGitHubDocs(request: Request, url: URL): Promise<Response> {
 async function handleMDNDocs(request: Request, url: URL): Promise<Response> {
   const urls = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.MDN_WEB_DOCS];
   const search = url.searchParams.get('search') || '';
-  
+
   const response = {
     provider: DocumentationProvider.MDN_WEB_DOCS,
     description: 'Mozilla Developer Network Documentation',
@@ -516,19 +517,25 @@ async function handleMDNDocs(request: Request, url: URL): Promise<Response> {
       main: urls.BASE,
       english: urls.EN_US,
       api: urls.API,
-      search: urls.SEARCH
+      search: urls.SEARCH,
     },
     currentSearch: search,
     searchUrl: search ? `${urls.SEARCH}?q=${encodeURIComponent(search)}` : urls.SEARCH,
     commonTopics: [
-      'JavaScript', 'TypeScript', 'Web APIs', 'HTTP', 'CSS', 'HTML',
-      'Fetch API', 'Typed Arrays', 'Streams', 'Web Workers'
-    ]
+      'JavaScript',
+      'TypeScript',
+      'Web APIs',
+      'HTTP',
+      'CSS',
+      'HTML',
+      'Fetch API',
+      'Typed Arrays',
+      'Streams',
+      'Web Workers',
+    ],
   };
-  
-  return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
-  });
+
+  return jsonResponse(response);
 }
 
 /**
@@ -536,7 +543,7 @@ async function handleMDNDocs(request: Request, url: URL): Promise<Response> {
  */
 async function handlePerformanceGuides(request: Request, url: URL): Promise<Response> {
   const urls = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.PERFORMANCE_GUIDES];
-  
+
   const response = {
     provider: DocumentationProvider.PERFORMANCE_GUIDES,
     description: 'Web Performance Optimization Guides',
@@ -545,21 +552,19 @@ async function handlePerformanceGuides(request: Request, url: URL): Promise<Resp
       main: urls.BASE,
       metrics: urls.METRICS,
       optimization: urls.OPTIMIZATION,
-      tools: urls.TOOLS
+      tools: urls.TOOLS,
     },
     bunOptimization: {
       typedArrays: docsURLBuilder.buildTypedArrayURL({ fragment: 'PERFORMANCE' }),
-      syscalls: docsURLBuilder.buildSyscallOptimizationURL({ 
-        operation: 'read', 
-        platform: 'linux' 
+      syscalls: docsURLBuilder.buildSyscallOptimizationURL({
+        operation: 'read',
+        platform: 'linux',
       }),
-      benchmarks: 'https://bun.sh/docs/benchmarks'
-    }
+      benchmarks: 'https://bun.sh/docs/benchmarks',
+    },
   };
-  
-  return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
-  });
+
+  return jsonResponse(response);
 }
 
 /**
@@ -567,7 +572,7 @@ async function handlePerformanceGuides(request: Request, url: URL): Promise<Resp
  */
 async function handleInternalWiki(request: Request, url: URL): Promise<Response> {
   const urls = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.INTERNAL_WIKI];
-  
+
   const response = {
     provider: DocumentationProvider.INTERNAL_WIKI,
     description: 'Internal Documentation Wiki',
@@ -576,15 +581,13 @@ async function handleInternalWiki(request: Request, url: URL): Promise<Response>
       main: urls.BASE,
       api: urls.API,
       search: urls.SEARCH,
-      categories: urls.CATEGORIES
+      categories: urls.CATEGORIES,
     },
     note: 'This provider is configured for internal enterprise use',
-    environment: process.env.INTERNAL_WIKI_URL ? 'custom' : 'default'
+    environment: process.env.INTERNAL_WIKI_URL ? 'custom' : 'default',
   };
-  
-  return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
-  });
+
+  return jsonResponse(response);
 }
 
 /**
@@ -593,38 +596,41 @@ async function handleInternalWiki(request: Request, url: URL): Promise<Response>
 async function handleDocumentationPaths(request: Request, url: URL): Promise<Response> {
   const provider = url.searchParams.get('provider') as DocumentationProvider;
   const category = url.searchParams.get('category') as DocumentationCategory;
-  
-  let response: any = {
+
+  const response: JsonObject = {
     description: 'Enhanced Documentation Path Constants',
     totalProviders: Object.keys(ENTERPRISE_DOCUMENTATION_PATHS).length,
-    providers: {}
+    providers: {},
   };
-  
+
   // If specific provider requested
   if (provider && ENTERPRISE_DOCUMENTATION_PATHS[provider]) {
     response.providers[provider] = ENTERPRISE_DOCUMENTATION_PATHS[provider];
-    
+
     // If specific category requested
     if (category && ENTERPRISE_DOCUMENTATION_PATHS[provider][category]) {
       response.providers[provider] = {
-        [category]: ENTERPRISE_DOCUMENTATION_PATHS[provider][category]
+        [category]: ENTERPRISE_DOCUMENTATION_PATHS[provider][category],
       };
     }
   } else {
     // Show all providers
     response.providers = ENTERPRISE_DOCUMENTATION_PATHS;
   }
-  
+
   // Add usage examples
   response.usage = {
     getAllPaths: '/docs/paths',
     getProvider: '/docs/paths?provider=BUN_OFFICIAL',
     getCategory: '/docs/paths?provider=BUN_OFFICIAL&category=API_REFERENCE',
-    examplePath: ENTERPRISE_DOCUMENTATION_PATHS[DocumentationProvider.BUN_OFFICIAL]?.[DocumentationCategory.API_REFERENCE]?.OVERVIEW
+    examplePath:
+      ENTERPRISE_DOCUMENTATION_PATHS[DocumentationProvider.BUN_OFFICIAL]?.[
+        DocumentationCategory.API_REFERENCE
+      ]?.OVERVIEW,
   };
-  
+
   return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -633,39 +639,41 @@ async function handleDocumentationPaths(request: Request, url: URL): Promise<Res
  */
 async function handleQuickReference(request: Request, url: URL): Promise<Response> {
   const section = url.searchParams.get('section') || 'all';
-  
-  let response: any = {
+
+  const response: JsonObject = {
     description: 'Quick Reference URLs for Common Documentation',
-    sections: {}
+    sections: {},
   };
-  
+
   if (section === 'all') {
     response.sections = QUICK_REFERENCE_URLS;
   } else if (QUICK_REFERENCE_URLS[section.toUpperCase() as keyof typeof QUICK_REFERENCE_URLS]) {
     response.sections = {
-      [section.toUpperCase()]: QUICK_REFERENCE_URLS[section.toUpperCase() as keyof typeof QUICK_REFERENCE_URLS]
+      [section.toUpperCase()]:
+        QUICK_REFERENCE_URLS[section.toUpperCase() as keyof typeof QUICK_REFERENCE_URLS],
     };
   } else {
-    return new Response(JSON.stringify({ 
-      error: 'Invalid section',
-      availableSections: Object.keys(QUICK_REFERENCE_URLS)
-    }), { status: 400 });
+    return jsonResponse(
+      {
+        error: 'Invalid section',
+        availableSections: Object.keys(QUICK_REFERENCE_URLS),
+      },
+      { status: 400 }
+    );
   }
-  
+
   // Add enhanced URL builder examples
   response.enhancedExamples = {
     typedArrayOverview: docsURLBuilder.buildTypedArrayURL({ fragment: 'OVERVIEW' }),
     fetchAPIDocs: docsURLBuilder.buildFetchAPIDocsURL(),
     enterpriseAPI: docsURLBuilder.buildEnterpriseAPIURL({ version: 'v1', endpoint: 'demo' }),
-    syscallOptimization: docsURLBuilder.buildSyscallOptimizationURL({ 
-      operation: 'read', 
-      platform: 'linux' 
-    })
+    syscallOptimization: docsURLBuilder.buildSyscallOptimizationURL({
+      operation: 'read',
+      platform: 'linux',
+    }),
   };
-  
-  return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
-  });
+
+  return jsonResponse(response);
 }
 
 /**
@@ -673,46 +681,46 @@ async function handleQuickReference(request: Request, url: URL): Promise<Respons
  */
 async function handleURLBuilderDemo(request: Request, url: URL): Promise<Response> {
   const demo = url.searchParams.get('demo') || 'all';
-  
-  let response: any = {
+
+  const response: JsonObject = {
     title: 'Enhanced Enterprise Documentation URL Builder Demo',
-    description: 'Demonstrates advanced URL building capabilities with caching and analytics'
+    description: 'Demonstrates advanced URL building capabilities with caching and analytics',
   };
-  
+
   switch (demo) {
     case 'typed-arrays':
       response.examples = {
         technical: docsURLBuilder.buildTypedArrayURL('OVERVIEW'),
         interactive: docsURLBuilder.buildTypedArrayURL('METHODS', { preferInteractive: true }),
-        withExamples: docsURLBuilder.buildTypedArrayURL('EXAMPLES', { includeExamples: true })
+        withExamples: docsURLBuilder.buildTypedArrayURL('EXAMPLES', { includeExamples: true }),
       };
       break;
-      
+
     case 'reference-portal':
       response.examples = {
         api: docsURLBuilder.buildReferencePortalURL('API', 'overview'),
         cli: docsURLBuilder.buildReferencePortalURL('CLI', 'installation'),
-        config: docsURLBuilder.buildReferencePortalURL('CONFIG', undefined, { language: 'en' })
+        config: docsURLBuilder.buildReferencePortalURL('CONFIG', undefined, { language: 'en' }),
       };
       break;
-      
+
     case 'guides':
       response.examples = {
         gettingStarted: docsURLBuilder.buildGuideURL('getting-started'),
         tutorial: docsURLBuilder.buildGuideURL('tutorials', 'step-1', { step: 1 }),
-        interactive: docsURLBuilder.buildGuideURL('interactive', undefined, { interactive: true })
+        interactive: docsURLBuilder.buildGuideURL('interactive', undefined, { interactive: true }),
       };
       break;
-      
+
     case 'rss-feeds':
       response.examples = {
         main: docsURLBuilder.buildRSSFeedURL('main'),
         technical: docsURLBuilder.buildRSSFeedURL('technical'),
         blog: docsURLBuilder.buildRSSFeedURL('blog'),
-        releases: docsURLBuilder.buildRSSFeedURL('releases')
+        releases: docsURLBuilder.buildRSSFeedURL('releases'),
       };
       break;
-      
+
     case 'advanced':
       response.examples = {
         customURL: docsURLBuilder.buildURL(
@@ -730,41 +738,39 @@ async function handleURLBuilderDemo(request: Request, url: URL): Promise<Respons
           'enterprise',
           { tier: 'enterprise' },
           { preferInteractive: true, includeTracking: true }
-        )
+        ),
       };
       break;
-      
+
     default: // all
       response.examples = {
         typedArrays: {
           technical: docsURLBuilder.buildTypedArrayURL('OVERVIEW'),
-          interactive: docsURLBuilder.buildTypedArrayURL('METHODS', { preferInteractive: true })
+          interactive: docsURLBuilder.buildTypedArrayURL('METHODS', { preferInteractive: true }),
         },
         referencePortal: {
           api: docsURLBuilder.buildReferencePortalURL('API'),
-          cli: docsURLBuilder.buildReferencePortalURL('CLI')
+          cli: docsURLBuilder.buildReferencePortalURL('CLI'),
         },
         guides: {
           gettingStarted: docsURLBuilder.buildGuideURL('getting-started'),
-          tutorial: docsURLBuilder.buildGuideURL('tutorials', 'step-1', { step: 1 })
+          tutorial: docsURLBuilder.buildGuideURL('tutorials', 'step-1', { step: 1 }),
         },
         rssFeeds: {
           main: docsURLBuilder.buildRSSFeedURL('main'),
-          technical: docsURLBuilder.buildRSSFeedURL('technical')
+          technical: docsURLBuilder.buildRSSFeedURL('technical'),
         },
-        quickReference: docsURLBuilder.getQuickReferenceURLs()
+        quickReference: docsURLBuilder.getQuickReferenceURLs(),
       };
   }
-  
+
   response.usage = {
     allDemos: '/api/url-builder/demo',
     specificDemo: '/api/url-builder/demo?demo=typed-arrays',
-    availableDemos: ['typed-arrays', 'reference-portal', 'guides', 'rss-feeds', 'advanced', 'all']
+    availableDemos: ['typed-arrays', 'reference-portal', 'guides', 'rss-feeds', 'advanced', 'all'],
   };
-  
-  return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
-  });
+
+  return jsonResponse(response);
 }
 
 /**
@@ -772,7 +778,7 @@ async function handleURLBuilderDemo(request: Request, url: URL): Promise<Respons
  */
 async function handleURLBuilderStats(request: Request, url: URL): Promise<Response> {
   const stats = docsURLBuilder.getAccessStats();
-  
+
   const response = {
     title: 'URL Builder Analytics & Statistics',
     timestamp: new Date().toISOString(),
@@ -781,16 +787,16 @@ async function handleURLBuilderStats(request: Request, url: URL): Promise<Respon
       caching: 'Enabled',
       analytics: 'Enabled',
       accessLog: stats.totalAccesses + ' entries',
-      providers: Object.keys(stats.byProvider)
+      providers: Object.keys(stats.byProvider),
     },
     performance: {
       cacheHits: 'Available via getInstance()',
-      memoryUsage: 'Minimal with Map-based caching'
-    }
+      memoryUsage: 'Minimal with Map-based caching',
+    },
   };
-  
+
   return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -799,16 +805,19 @@ async function handleURLBuilderStats(request: Request, url: URL): Promise<Respon
  */
 async function handleURLValidation(request: Request, url: URL): Promise<Response> {
   const targetURL = url.searchParams.get('url');
-  
+
   if (!targetURL) {
-    return new Response(JSON.stringify({ 
-      error: 'URL parameter required',
-      usage: '/api/validator/validate?url=https://bun.sh/docs/api/fetch'
-    }), { status: 400 });
+    return new Response(
+      JSON.stringify({
+        error: 'URL parameter required',
+        usage: '/api/validator/validate?url=https://bun.sh/docs/api/fetch',
+      }),
+      { status: 400 }
+    );
   }
-  
+
   const validation = EnhancedDocumentationURLValidator.validateBunDocumentationURL(targetURL);
-  
+
   const response = {
     url: targetURL,
     validation,
@@ -818,18 +827,14 @@ async function handleURLValidation(request: Request, url: URL): Promise<Response
         'https://bun.sh/docs/api/fetch',
         'https://bun.com/reference/api',
         'https://bun.com/guides/getting-started',
-        'https://bun.com/rss.xml'
+        'https://bun.com/rss.xml',
       ],
-      invalid: [
-        'https://example.com/not-bun-docs',
-        'not-a-url',
-        'https://bun.sh/unknown-path'
-      ]
-    }
+      invalid: ['https://example.com/not-bun-docs', 'not-a-url', 'https://bun.sh/unknown-path'],
+    },
   };
-  
+
   return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -838,27 +843,36 @@ async function handleURLValidation(request: Request, url: URL): Promise<Response
  */
 async function handleBestDocumentationSource(request: Request, url: URL): Promise<Response> {
   const topic = url.searchParams.get('topic') || 'getting started';
-  const audience = url.searchParams.get('audience') as 'developers' | 'beginners' | 'all' || 'developers';
-  
+  const audience =
+    (url.searchParams.get('audience') as 'developers' | 'beginners' | 'all') || 'developers';
+
   const bestSource = EnhancedDocumentationURLValidator.getBestDocumentationSource(topic, audience);
-  
+
   const response = {
     topic,
     audience,
     recommendation: bestSource,
     alternatives: {
       technical: EnhancedDocumentationURLValidator.getBestDocumentationSource(topic, 'developers'),
-      beginner: EnhancedDocumentationURLValidator.getBestDocumentationSource(topic, 'beginners')
+      beginner: EnhancedDocumentationURLValidator.getBestDocumentationSource(topic, 'beginners'),
     },
     availableTopics: [
-      'typedarray', 'fetch', 'getting started', 'api', 'rss',
-      'runtime', 'filesystem', 'websocket', 'sql', 'testing'
+      'typedarray',
+      'fetch',
+      'getting started',
+      'api',
+      'rss',
+      'runtime',
+      'filesystem',
+      'websocket',
+      'sql',
+      'testing',
     ],
-    usage: '/api/validator/best-source?topic=fetch&audience=developers'
+    usage: '/api/validator/best-source?topic=fetch&audience=developers',
   };
-  
+
   return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -869,33 +883,39 @@ async function handleURLNormalization(request: Request, url: URL): Promise<Respo
   const targetURL = url.searchParams.get('url');
   const preferredDomain = url.searchParams.get('domain') as 'bun.sh' | 'bun.com';
   const language = url.searchParams.get('language');
-  
+
   if (!targetURL) {
-    return new Response(JSON.stringify({ 
-      error: 'URL parameter required',
-      usage: '/api/validator/normalize?url=https://bun.sh/docs/api&domain=bun.com&language=en'
-    }), { status: 400 });
+    return new Response(
+      JSON.stringify({
+        error: 'URL parameter required',
+        usage: '/api/validator/normalize?url=https://bun.sh/docs/api&domain=bun.com&language=en',
+      }),
+      { status: 400 }
+    );
   }
-  
+
   const preferences = {
     preferredDomain: preferredDomain || undefined,
-    language: language || undefined
+    language: language || undefined,
   };
-  
-  const normalizedURL = EnhancedDocumentationURLValidator.normalizeDocumentationURL(targetURL, preferences);
+
+  const normalizedURL = EnhancedDocumentationURLValidator.normalizeDocumentationURL(
+    targetURL,
+    preferences
+  );
   const validation = EnhancedDocumentationURLValidator.validateBunDocumentationURL(targetURL);
-  
+
   const response = {
     original: targetURL,
     normalized: normalizedURL,
     preferences,
     validation,
     changed: targetURL !== normalizedURL,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
-  
+
   return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -904,16 +924,19 @@ async function handleURLNormalization(request: Request, url: URL): Promise<Respo
  */
 async function handleURLMigration(request: Request, url: URL): Promise<Response> {
   const targetURL = url.searchParams.get('url');
-  
+
   if (!targetURL) {
-    return new Response(JSON.stringify({ 
-      error: 'URL parameter required',
-      usage: '/api/validator/migration?url=https://bun.sh/docs/api/fetch'
-    }), { status: 400 });
+    return new Response(
+      JSON.stringify({
+        error: 'URL parameter required',
+        usage: '/api/validator/migration?url=https://bun.sh/docs/api/fetch',
+      }),
+      { status: 400 }
+    );
   }
-  
+
   const migration = EnhancedDocumentationURLValidator.needsMigration(targetURL);
-  
+
   const response = {
     url: targetURL,
     migration,
@@ -921,13 +944,13 @@ async function handleURLMigration(request: Request, url: URL): Promise<Response>
     recommendations: {
       keepAsIs: !migration.needsUpdate,
       migrateNow: migration.needsUpdate ? migration.migrationPath : null,
-      reviewManual: migration.needsUpdate ? 'Review migration path carefully' : null
+      reviewManual: migration.needsUpdate ? 'Review migration path carefully' : null,
     },
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
-  
+
   return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -936,50 +959,50 @@ async function handleURLMigration(request: Request, url: URL): Promise<Response>
  */
 async function handleUsageExamples(request: Request, url: URL): Promise<Response> {
   const example = url.searchParams.get('example') || 'all';
-  
-  let response: any = {
+
+  const response: JsonObject = {
     title: 'Enhanced Documentation System - Usage Examples',
     description: 'Practical examples of using the URL builder and validator',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
-  
+
   switch (example) {
     case 'reference-portal':
       response.example = {
         title: 'Example 1: Access bun.com/reference portal',
         code: `const referencePortal = docsURLBuilder.buildReferencePortalURL('api');`,
         result: docsURLBuilder.buildReferencePortalURL('api'),
-        explanation: 'Builds a URL to the API reference section with tracking'
+        explanation: 'Builds a URL to the API reference section with tracking',
       };
       break;
-      
+
     case 'guides':
       response.example = {
         title: 'Example 2: Access bun.com/guides',
         code: `const gettingStartedGuide = docsURLBuilder.buildGuideURL('getting-started');`,
         result: docsURLBuilder.buildGuideURL('getting-started'),
-        explanation: 'Creates a URL to the getting started guide with analytics'
+        explanation: 'Creates a URL to the getting started guide with analytics',
       };
       break;
-      
+
     case 'rss':
       response.example = {
         title: 'Example 3: Access bun.com/rss.xml',
         code: `const mainRSS = docsURLBuilder.buildRSSFeedURL('main');`,
         result: docsURLBuilder.buildRSSFeedURL('main'),
-        explanation: 'Generates RSS feed URL with format parameter'
+        explanation: 'Generates RSS feed URL with format parameter',
       };
       break;
-      
+
     case 'typed-arrays':
       response.example = {
         title: 'Example 4: Get all typed array documentation URLs',
         code: `const typedArrayURLs = docsURLBuilder.getQuickReferenceURLs().TYPED_ARRAY;`,
         result: docsURLBuilder.getQuickReferenceURLs().TYPED_ARRAY,
-        explanation: 'Returns all typed array URLs across different domains'
+        explanation: 'Returns all typed array URLs across different domains',
       };
       break;
-      
+
     case 'validation':
       response.example = {
         title: 'Example 5: Validate and categorize a URL',
@@ -989,10 +1012,10 @@ async function handleUsageExamples(request: Request, url: URL): Promise<Response
         result: EnhancedDocumentationURLValidator.validateBunDocumentationURL(
           'https://bun.com/reference/api/fetch#timeout'
         ),
-        explanation: 'Validates URL and extracts metadata including provider, type, and audience'
+        explanation: 'Validates URL and extracts metadata including provider, type, and audience',
       };
       break;
-      
+
     case 'best-source':
       response.example = {
         title: 'Example 6: Get best documentation source for a topic',
@@ -1004,57 +1027,55 @@ async function handleUsageExamples(request: Request, url: URL): Promise<Response
           'fetch api',
           'beginners'
         ),
-        explanation: 'Recommends optimal documentation source based on topic and audience'
+        explanation: 'Recommends optimal documentation source based on topic and audience',
       };
       break;
-      
+
     case 'topic-urls':
       response.example = {
         title: 'Example 7: Get all documentation for RSS',
         code: `const allRSSURLs = docsURLBuilder.getAllDocumentationForTopic('rss');`,
         result: docsURLBuilder.getAllDocumentationForTopic('rss'),
-        explanation: 'Returns all available URLs for a specific topic across providers'
+        explanation: 'Returns all available URLs for a specific topic across providers',
       };
       break;
-      
+
     case 'migration':
       response.example = {
         title: 'Example 8: Check if URL needs migration',
         code: `const migrationCheck = EnhancedDocumentationURLValidator.needsMigration(
   'https://bun.sh/docs/api/utils'
 );`,
-        result: EnhancedDocumentationURLValidator.needsMigration(
-          'https://bun.sh/docs/api/utils'
-        ),
-        explanation: 'Detects URLs that should be migrated to newer formats'
+        result: EnhancedDocumentationURLValidator.needsMigration('https://bun.sh/docs/api/utils'),
+        explanation: 'Detects URLs that should be migrated to newer formats',
       };
       break;
-      
+
     default: // all
       response.examples = [
         {
           title: 'Example 1: Access bun.com/reference portal',
           code: `const referencePortal = docsURLBuilder.buildReferencePortalURL('api');`,
           result: docsURLBuilder.buildReferencePortalURL('api'),
-          explanation: 'Builds a URL to the API reference section with tracking'
+          explanation: 'Builds a URL to the API reference section with tracking',
         },
         {
           title: 'Example 2: Access bun.com/guides',
           code: `const gettingStartedGuide = docsURLBuilder.buildGuideURL('getting-started');`,
           result: docsURLBuilder.buildGuideURL('getting-started'),
-          explanation: 'Creates a URL to the getting started guide with analytics'
+          explanation: 'Creates a URL to the getting started guide with analytics',
         },
         {
           title: 'Example 3: Access bun.com/rss.xml',
           code: `const mainRSS = docsURLBuilder.buildRSSFeedURL('main');`,
           result: docsURLBuilder.buildRSSFeedURL('main'),
-          explanation: 'Generates RSS feed URL with format parameter'
+          explanation: 'Generates RSS feed URL with format parameter',
         },
         {
           title: 'Example 4: Get all typed array documentation URLs',
           code: `const typedArrayURLs = docsURLBuilder.getQuickReferenceURLs().TYPED_ARRAY;`,
           result: docsURLBuilder.getQuickReferenceURLs().TYPED_ARRAY,
-          explanation: 'Returns all typed array URLs across different domains'
+          explanation: 'Returns all typed array URLs across different domains',
         },
         {
           title: 'Example 5: Validate and categorize a URL',
@@ -1064,7 +1085,7 @@ async function handleUsageExamples(request: Request, url: URL): Promise<Response
           result: EnhancedDocumentationURLValidator.validateBunDocumentationURL(
             'https://bun.com/reference/api/fetch#timeout'
           ),
-          explanation: 'Validates URL and extracts metadata including provider, type, and audience'
+          explanation: 'Validates URL and extracts metadata including provider, type, and audience',
         },
         {
           title: 'Example 6: Get best documentation source for a topic',
@@ -1076,56 +1097,59 @@ async function handleUsageExamples(request: Request, url: URL): Promise<Response
             'fetch api',
             'beginners'
           ),
-          explanation: 'Recommends optimal documentation source based on topic and audience'
+          explanation: 'Recommends optimal documentation source based on topic and audience',
         },
         {
           title: 'Example 7: Get all documentation for RSS',
           code: `const allRSSURLs = docsURLBuilder.getAllDocumentationForTopic('rss');`,
           result: docsURLBuilder.getAllDocumentationForTopic('rss'),
-          explanation: 'Returns all available URLs for a specific topic across providers'
+          explanation: 'Returns all available URLs for a specific topic across providers',
         },
         {
           title: 'Example 8: Check if URL needs migration',
           code: `const migrationCheck = EnhancedDocumentationURLValidator.needsMigration(
   'https://bun.sh/docs/api/utils'
 );`,
-          result: EnhancedDocumentationURLValidator.needsMigration(
-            'https://bun.sh/docs/api/utils'
-          ),
-          explanation: 'Detects URLs that should be migrated to newer formats'
-        }
+          result: EnhancedDocumentationURLValidator.needsMigration('https://bun.sh/docs/api/utils'),
+          explanation: 'Detects URLs that should be migrated to newer formats',
+        },
       ];
   }
-  
+
   response.usage = {
     allExamples: '/api/examples/usage',
     specificExample: '/api/examples/usage?example=typed-arrays',
     availableExamples: [
-      'reference-portal', 'guides', 'rss', 'typed-arrays',
-      'validation', 'best-source', 'topic-urls', 'migration', 'all'
-    ]
+      'reference-portal',
+      'guides',
+      'rss',
+      'typed-arrays',
+      'validation',
+      'best-source',
+      'topic-urls',
+      'migration',
+      'all',
+    ],
   };
-  
+
   response.imports = {
     urlBuilder: "import { docsURLBuilder } from 'lib/docs/documentation-index';",
     validator: "import { EnhancedDocumentationURLValidator } from 'lib/docs/documentation-index';",
-    both: "import { docsURLBuilder, EnhancedDocumentationURLValidator } from 'lib/docs/documentation-index';"
+    both: "import { docsURLBuilder, EnhancedDocumentationURLValidator } from 'lib/docs/documentation-index';",
   };
-  
-  return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
-  });
+
+  return jsonResponse(response);
 }
 
 /**
  * RSS Feed Fetch Handler
  */
 async function handleRSSFetch(request: Request, url: URL): Promise<Response> {
-  const feedType = url.searchParams.get('type') as 'main' | 'blog' | 'releases' || 'main';
-  
+  const feedType = (url.searchParams.get('type') as 'main' | 'blog' | 'releases') || 'main';
+
   try {
     const items = await rssService.fetchBunComRSS(feedType);
-    
+
     const response = {
       feedType,
       itemCount: items.length,
@@ -1133,19 +1157,22 @@ async function handleRSSFetch(request: Request, url: URL): Promise<Response> {
       timestamp: new Date().toISOString(),
       cacheInfo: {
         ttl: '5 minutes',
-        cached: items.length > 0
-      }
+        cached: items.length > 0,
+      },
     };
-    
+
     return new Response(JSON.stringify(response, null, 2), {
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ 
-      error: 'Failed to fetch RSS feed',
-      message: error.message,
-      feedType
-    }), { status: 500 });
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to fetch RSS feed',
+        message: error.message,
+        feedType,
+      }),
+      { status: 500 }
+    );
   }
 }
 
@@ -1154,26 +1181,29 @@ async function handleRSSFetch(request: Request, url: URL): Promise<Response> {
  */
 async function handleCombinedRSS(request: Request, url: URL): Promise<Response> {
   const limit = parseInt(url.searchParams.get('limit') || '20');
-  
+
   try {
     const items = await rssService.getCombinedRSSFeed(limit);
-    
+
     const response = {
       description: `Combined RSS feed from all Bun sources (${limit} items)`,
       itemCount: items.length,
       items,
       timestamp: new Date().toISOString(),
-      sources: ['main', 'blog', 'releases']
+      sources: ['main', 'blog', 'releases'],
     };
-    
+
     return new Response(JSON.stringify(response, null, 2), {
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ 
-      error: 'Failed to fetch combined RSS feed',
-      message: error.message
-    }), { status: 500 });
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to fetch combined RSS feed',
+        message: error.message,
+      }),
+      { status: 500 }
+    );
   }
 }
 
@@ -1183,18 +1213,21 @@ async function handleCombinedRSS(request: Request, url: URL): Promise<Response> 
 async function handleDocumentationRSS(request: Request, url: URL): Promise<Response> {
   try {
     const rssXML = await rssService.generateDocumentationRSSFeed();
-    
+
     return new Response(rssXML, {
-      headers: { 
+      headers: {
         'Content-Type': 'application/rss+xml',
-        'Cache-Control': 'public, max-age=300' // 5 minutes
-      }
+        'Cache-Control': 'public, max-age=300', // 5 minutes
+      },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ 
-      error: 'Failed to generate documentation RSS feed',
-      message: error.message
-    }), { status: 500 });
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to generate documentation RSS feed',
+        message: error.message,
+      }),
+      { status: 500 }
+    );
   }
 }
 
@@ -1203,19 +1236,19 @@ async function handleDocumentationRSS(request: Request, url: URL): Promise<Respo
  */
 async function handleGeneratedRSSFeed(request: Request, url: URL): Promise<Response> {
   const format = url.searchParams.get('format') || 'json';
-  
+
   try {
     if (format === 'xml') {
       const rssXML = await rssService.generateDocumentationRSSFeed();
       return new Response(rssXML, {
-        headers: { 'Content-Type': 'application/rss+xml' }
+        headers: { 'Content-Type': 'application/rss+xml' },
       });
     }
-    
+
     // Default: JSON format
     const items = await rssService.getCombinedRSSFeed(15);
     const typedArrayURLs = docsURLBuilder.getQuickReferenceURLs().TYPED_ARRAY;
-    
+
     const response = {
       title: 'Bun Documentation Updates',
       description: 'Latest updates from all Bun documentation sources',
@@ -1229,7 +1262,7 @@ async function handleGeneratedRSSFeed(request: Request, url: URL): Promise<Respo
           description: 'Complete TypedArray reference with examples',
           pubDate: new Date().toISOString(),
           guid: typedArrayURLs.TECHNICAL,
-          category: ['Documentation', 'API']
+          category: ['Documentation', 'API'],
         },
         ...items.map(item => ({
           title: item.title,
@@ -1237,19 +1270,22 @@ async function handleGeneratedRSSFeed(request: Request, url: URL): Promise<Respo
           description: item.description,
           pubDate: item.pubDate.toISOString(),
           guid: item.guid,
-          category: item.category || []
-        }))
-      ]
+          category: item.category || [],
+        })),
+      ],
     };
-    
+
     return new Response(JSON.stringify(response, null, 2), {
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ 
-      error: 'Failed to generate RSS feed',
-      message: error.message
-    }), { status: 500 });
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to generate RSS feed',
+        message: error.message,
+      }),
+      { status: 500 }
+    );
   }
 }
 
@@ -1258,53 +1294,59 @@ async function handleGeneratedRSSFeed(request: Request, url: URL): Promise<Respo
  */
 async function handleDocumentationSourcesComparison(request: Request, url: URL): Promise<Response> {
   const topic = url.searchParams.get('topic') || 'binary-data';
-  
+
   // Direct URL examples
   const directURLs = {
     technicalDocs: 'https://bun.sh/docs/runtime/binary-data#typedarray',
     referencePortal: 'https://bun.com/reference/api/binary-data',
     gettingStarted: 'https://bun.com/guides/getting-started',
-    rssFeed: 'https://bun.com/rss.xml'
+    rssFeed: 'https://bun.com/rss.xml',
   };
-  
+
   // Builder examples
   const builder = docsURLBuilder;
   const builderURLs = {
     technicalDocs: builder.buildTypedArrayURL('METHODS'),
     referencePortal: builder.buildReferencePortalURL('api/binary-data'),
     gettingStarted: builder.buildGuideURL('working-with-binary-data'),
-    rssFeed: builder.buildRSSFeedURL('main')
+    rssFeed: builder.buildRSSFeedURL('main'),
   };
-  
+
   // Quick reference URLs
   const quickRefURLs = builder.getQuickReferenceURLs();
-  
+
   // Validation results
   const validationResults = Object.entries(directURLs).map(([key, url]) => ({
     source: key,
     url,
-    validation: EnhancedDocumentationURLValidator.validateBunDocumentationURL(url)
+    validation: EnhancedDocumentationURLValidator.validateBunDocumentationURL(url),
   }));
-  
+
   // Best source recommendations
   const bestSources = {
-    developers: EnhancedDocumentationURLValidator.getBestDocumentationSource('typedarray', 'developers'),
-    beginners: EnhancedDocumentationURLValidator.getBestDocumentationSource('typedarray', 'beginners'),
-    all: EnhancedDocumentationURLValidator.getBestDocumentationSource('typedarray', 'all')
+    developers: EnhancedDocumentationURLValidator.getBestDocumentationSource(
+      'typedarray',
+      'developers'
+    ),
+    beginners: EnhancedDocumentationURLValidator.getBestDocumentationSource(
+      'typedarray',
+      'beginners'
+    ),
+    all: EnhancedDocumentationURLValidator.getBestDocumentationSource('typedarray', 'all'),
   };
-  
+
   const response = {
     title: 'Documentation Sources Comparison',
     topic,
     timestamp: new Date().toISOString(),
-    
+
     // Direct URL access
     directURLs: {
       description: 'Access documentation using direct URLs',
       examples: directURLs,
-      usage: 'const technicalDocs = "https://bun.sh/docs/runtime/binary-data#typedarray";'
+      usage: 'const technicalDocs = "https://bun.sh/docs/runtime/binary-data#typedarray";',
     },
-    
+
     // URL builder access
     builderURLs: {
       description: 'Access documentation using the enhanced URL builder',
@@ -1314,10 +1356,10 @@ async function handleDocumentationSourcesComparison(request: Request, url: URL):
         'Type-safe URL construction',
         'Automatic tracking parameters',
         'Cache optimization',
-        'Analytics integration'
-      ]
+        'Analytics integration',
+      ],
     },
-    
+
     // Quick reference access
     quickReference: {
       description: 'Predefined URL collections for common topics',
@@ -1325,17 +1367,17 @@ async function handleDocumentationSourcesComparison(request: Request, url: URL):
       fetchAPI: quickRefURLs.FETCH_API,
       rssFeeds: quickRefURLs.RSS_FEEDS,
       gettingStarted: quickRefURLs.GETTING_STARTED,
-      usage: 'const urls = docsURLBuilder.getQuickReferenceURLs().TYPED_ARRAY;'
+      usage: 'const urls = docsURLBuilder.getQuickReferenceURLs().TYPED_ARRAY;',
     },
-    
+
     // Validation results
     validation: {
       description: 'URL validation and categorization results',
       results: validationResults,
       validProviders: validationResults.filter(r => r.validation.isValid).length,
-      totalProviders: validationResults.length
+      totalProviders: validationResults.length,
     },
-    
+
     // Best source recommendations
     recommendations: {
       description: 'Optimal documentation source by audience',
@@ -1343,39 +1385,39 @@ async function handleDocumentationSourcesComparison(request: Request, url: URL):
       explanation: {
         technical: 'bun.sh for in-depth technical documentation',
         reference: 'bun.com/reference for interactive API reference',
-        guides: 'bun.com/guides for step-by-step tutorials'
-      }
+        guides: 'bun.com/guides for step-by-step tutorials',
+      },
     },
-    
+
     // Usage patterns
     usagePatterns: {
       directAccess: {
         pattern: 'Direct URL strings',
         pros: ['Simple', 'No dependencies', 'Immediate'],
-        cons: ['Hard to maintain', 'No validation', 'No analytics']
+        cons: ['Hard to maintain', 'No validation', 'No analytics'],
       },
       builderPattern: {
         pattern: 'URL Builder pattern',
         pros: ['Type-safe', 'Validated', 'Analytics', 'Caching'],
-        cons: ['Requires import', 'Slight overhead']
+        cons: ['Requires import', 'Slight overhead'],
       },
       quickReference: {
         pattern: 'Quick reference collections',
         pros: ['Predefined', 'Topic-based', 'Multiple sources'],
-        cons: ['Limited topics', 'Static structure']
-      }
+        cons: ['Limited topics', 'Static structure'],
+      },
     },
-    
+
     // Recommendation
     recommendation: {
       forProduction: 'Use URL Builder for type safety and analytics',
       forDevelopment: 'Use Quick Reference for rapid prototyping',
-      forExamples: 'Use Direct URLs in documentation examples'
-    }
+      forExamples: 'Use Direct URLs in documentation examples',
+    },
   };
-  
+
   return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -1384,18 +1426,21 @@ async function handleDocumentationSourcesComparison(request: Request, url: URL):
  */
 async function handleGitHubURLParse(request: Request, url: URL): Promise<Response> {
   const targetURL = url.searchParams.get('url');
-  
+
   if (!targetURL) {
-    return new Response(JSON.stringify({ 
-      error: 'URL parameter required',
-      usage: '/api/github/parse?url=https://github.com/oven-sh/bun/tree/main/packages/bun-types'
-    }), { status: 400 });
+    return new Response(
+      JSON.stringify({
+        error: 'URL parameter required',
+        usage: '/api/github/parse?url=https://github.com/oven-sh/bun/tree/main/packages/bun-types',
+      }),
+      { status: 400 }
+    );
   }
-  
+
   // Use the enhanced validator to parse GitHub URL
   const parsed = EnhancedDocumentationURLValidator.parseGitHubURL(targetURL);
   const textFragment = EnhancedDocumentationURLValidator.extractTextFragment(targetURL);
-  
+
   const response = {
     originalURL: targetURL,
     parsed,
@@ -1404,18 +1449,18 @@ async function handleGitHubURLParse(request: Request, url: URL): Promise<Respons
       isValid: parsed.isValid,
       isSpecificCommit: EnhancedDocumentationURLValidator.isSpecificCommitURL(targetURL),
       isBunTypes: EnhancedDocumentationURLValidator.isBunTypesURL(targetURL),
-      commitHash: EnhancedDocumentationURLValidator.extractCommitHash(targetURL)
+      commitHash: EnhancedDocumentationURLValidator.extractCommitHash(targetURL),
     },
     examples: {
       commitURL: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types',
       blobURL: 'https://github.com/oven-sh/bun/blob/main/packages/bun-types/index.d.ts',
       issueURL: 'https://github.com/oven-sh/bun/issues/1234',
-      pullURL: 'https://github.com/oven-sh/bun/pull/5678'
-    }
+      pullURL: 'https://github.com/oven-sh/bun/pull/5678',
+    },
   };
-  
+
   return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -1425,12 +1470,18 @@ async function handleGitHubURLParse(request: Request, url: URL): Promise<Respons
 async function handleGitHubCommitURL(request: Request, url: URL): Promise<Response> {
   const commitHash = url.searchParams.get('commit') || 'main';
   const path = url.searchParams.get('path') || 'packages/bun-types';
-  const viewType = url.searchParams.get('view') as 'tree' | 'blob' || 'tree';
-  
+  const viewType = (url.searchParams.get('view') as 'tree' | 'blob') || 'tree';
+
   // Build GitHub commit URL using enhanced builder
-  const commitURL = docsURLBuilder.buildGitHubCommitURL('oven-sh', 'bun', commitHash, path, viewType);
+  const commitURL = docsURLBuilder.buildGitHubCommitURL(
+    'oven-sh',
+    'bun',
+    commitHash,
+    path,
+    viewType
+  );
   const rawURL = docsURLBuilder.buildGitHubRawURL(commitHash, path);
-  
+
   const response = {
     commitHash,
     path,
@@ -1438,19 +1489,19 @@ async function handleGitHubCommitURL(request: Request, url: URL): Promise<Respon
     urls: {
       tree: docsURLBuilder.buildGitHubCommitURL('oven-sh', 'bun', commitHash, path, 'tree'),
       blob: docsURLBuilder.buildGitHubCommitURL('oven-sh', 'bun', commitHash, path, 'blob'),
-      raw: rawURL
+      raw: rawURL,
     },
     exampleCommit: {
       hash: 'main',
       short: 'af76296',
-      url: docsURLBuilder.getExampleCommitURL()
+      url: docsURLBuilder.getExampleCommitURL(),
     },
     packageURLs: docsURLBuilder.getGitHubPackageURLs('bun-types', commitHash),
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
-  
+
   return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -1459,10 +1510,10 @@ async function handleGitHubCommitURL(request: Request, url: URL): Promise<Respon
  */
 async function handleBunTypesURL(request: Request, url: URL): Promise<Response> {
   const commitHash = url.searchParams.get('commit') || 'main';
-  
+
   const typeDefURLs = docsURLBuilder.getTypeDefinitionURLs();
   const packageURLs = docsURLBuilder.getGitHubPackageURLs('bun-types', commitHash);
-  
+
   const response = {
     description: 'Bun TypeScript Definitions - Complete URL Collection',
     commitHash,
@@ -1472,23 +1523,23 @@ async function handleBunTypesURL(request: Request, url: URL): Promise<Response> 
       index: docsURLBuilder.buildBunTypesURL(commitHash, '/index.d.ts'),
       bunTypes: docsURLBuilder.buildBunTypesURL(commitHash, '/bun.d.ts'),
       globals: docsURLBuilder.buildBunTypesURL(commitHash, '/globals.d.ts'),
-      packageJson: docsURLBuilder.buildBunTypesURL(commitHash, '/package.json')
+      packageJson: docsURLBuilder.buildBunTypesURL(commitHash, '/package.json'),
     },
     npmIntegration: {
       packageName: 'bun-types',
       npmURL: typeDefURLs.npmPackage,
       installCommand: 'npm install --save-dev bun-types',
-      typescriptConfig: '"types": ["bun-types"]'
+      typescriptConfig: '"types": ["bun-types"]',
     },
     usage: {
       import: "import { Bun } from 'bun-types';",
       global: 'declare global { const Bun: typeof Bun; }',
-      tsconfig: '{ "compilerOptions": { "types": ["bun-types"] } }'
-    }
+      tsconfig: '{ "compilerOptions": { "types": ["bun-types"] } }',
+    },
   };
-  
+
   return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -1498,14 +1549,14 @@ async function handleBunTypesURL(request: Request, url: URL): Promise<Response> 
 async function handleTextFragmentDemo(request: Request, url: URL): Promise<Response> {
   const text = url.searchParams.get('text') || 'node:zlib';
   const baseURL = url.searchParams.get('base') || 'https://bun.com/reference';
-  
+
   // Build text fragment URL
   const textFragmentURL = docsURLBuilder.buildURLWithTextFragment(baseURL, text);
   const commonFragments = docsURLBuilder.getCommonTextFragmentURLs();
-  
+
   // Parse text fragment from URL
   const parsedFragment = EnhancedDocumentationURLValidator.extractTextFragment(textFragmentURL);
-  
+
   const response = {
     description: 'Text Fragment URL Generation and Parsing',
     baseURL,
@@ -1517,39 +1568,39 @@ async function handleTextFragmentDemo(request: Request, url: URL): Promise<Respo
       {
         name: 'node:zlib',
         url: docsURLBuilder.buildBunReferenceWithTextFragment('node:zlib'),
-        description: 'Direct link to node:zlib compatibility section'
+        description: 'Direct link to node:zlib compatibility section',
       },
       {
         name: 'Bun API Reference',
         url: docsURLBuilder.buildBunReferenceWithTextFragment('Bun API Reference'),
-        description: 'Link to main API reference section'
+        description: 'Link to main API reference section',
       },
       {
         name: 'TypedArray methods',
         url: docsURLBuilder.buildBunReferenceWithTextFragment('TypedArray methods'),
-        description: 'Link to TypedArray methods documentation'
-      }
+        description: 'Link to TypedArray methods documentation',
+      },
     ],
     advanced: {
-      withPrefix: docsURLBuilder.buildURLWithTextFragment(baseURL, 'API Reference', { 
-        prefix: 'Bun', 
-        suffix: 'documentation' 
+      withPrefix: docsURLBuilder.buildURLWithTextFragment(baseURL, 'API Reference', {
+        prefix: 'Bun',
+        suffix: 'documentation',
       }),
-      withRange: docsURLBuilder.buildURLWithTextFragment(baseURL, 'start', { 
-        textEnd: 'end' 
+      withRange: docsURLBuilder.buildURLWithTextFragment(baseURL, 'start', {
+        textEnd: 'end',
       }),
-      encoded: encodeURIComponent('Special characters & symbols')
+      encoded: encodeURIComponent('Special characters & symbols'),
     },
     browserSupport: {
       chrome: '✅ Supported (Chrome 89+)',
       firefox: '✅ Supported (Firefox 90+)',
       safari: '✅ Supported (Safari 14+)',
-      edge: '✅ Supported (Edge 89+)'
-    }
+      edge: '✅ Supported (Edge 89+)',
+    },
   };
-  
+
   return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -1563,39 +1614,39 @@ async function handleCriticalURLs(request: Request, url: URL): Promise<Response>
       main: 'https://bun.com/reference',
       api: 'https://bun.com/reference/api',
       cli: 'https://bun.com/reference/cli',
-      textFragments: docsURLBuilder.getCommonTextFragmentURLs()
+      textFragments: docsURLBuilder.getCommonTextFragmentURLs(),
     },
-    
+
     guidesPortal: {
       main: 'https://bun.com/guides',
-      gettingStarted: 'https://bun.com/guides/getting-started'
+      gettingStarted: 'https://bun.com/guides/getting-started',
     },
-    
+
     rssFeeds: {
       main: 'https://bun.com/rss.xml',
       blog: 'https://bun.com/blog/rss.xml',
-      technical: 'https://bun.sh/rss.xml'
+      technical: 'https://bun.sh/rss.xml',
     },
-    
+
     // GitHub resources
     github: {
       repository: 'https://github.com/oven-sh/bun',
       bunTypes: {
         latest: docsURLBuilder.buildBunTypesURL(),
         specificCommit: docsURLBuilder.getExampleCommitURL(),
-        npm: 'https://www.npmjs.com/package/bun-types'
+        npm: 'https://www.npmjs.com/package/bun-types',
       },
-      packages: docsURLBuilder.getGitHubPackageURLs('bun-types')
+      packages: docsURLBuilder.getGitHubPackageURLs('bun-types'),
     },
-    
+
     // Technical documentation
     technicalDocs: {
       typedArray: docsURLBuilder.buildTypedArrayURL('OVERVIEW'),
       fetchAPI: docsURLBuilder.buildFetchAPIDocsURL(),
-      binaryData: 'https://bun.sh/docs/runtime/binary-data'
-    }
+      binaryData: 'https://bun.sh/docs/runtime/binary-data',
+    },
   };
-  
+
   const response = {
     title: 'Critical Documentation URLs - Complete Collection',
     timestamp: new Date().toISOString(),
@@ -1605,27 +1656,27 @@ async function handleCriticalURLs(request: Request, url: URL): Promise<Response>
       guides: 'https://bun.com/guides',
       rss: 'https://bun.com/rss.xml',
       github: 'https://github.com/oven-sh/bun',
-      bunTypes: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types'
+      bunTypes: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types',
     },
     textFragments: {
       nodeZlib: 'https://bun.com/reference#:~:text=node%3Azlib',
-      bunAPI: 'https://bun.com/reference#:~:text=Bun%20API%20Reference'
+      bunAPI: 'https://bun.com/reference#:~:text=Bun%20API%20Reference',
     },
     exampleCommit: {
       hash: 'main',
       short: 'af76296',
       url: docsURLBuilder.getExampleCommitURL(),
-      description: 'Example commit showing bun-types package structure'
+      description: 'Example commit showing bun-types package structure',
     },
     usage: {
       direct: 'Use URLs directly for simple access',
       builder: 'Use docsURLBuilder for type-safe construction',
-      validation: 'Use EnhancedDocumentationURLValidator for analysis'
-    }
+      validation: 'Use EnhancedDocumentationURLValidator for analysis',
+    },
   };
-  
+
   return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -1636,25 +1687,25 @@ async function handleCookieScannerDemo(request: Request, url: URL): Promise<Resp
   const projectId = url.searchParams.get('projectId') || 'demo-project';
   const sessionId = url.searchParams.get('sessionId') || crypto.randomUUID();
   const r2Bucket = url.searchParams.get('bucket') || process.env.R2_BUCKET || 'scanner-cookies';
-  
+
   // Simulate the cookie scanner logic
   const cookies = { projectId, sessionId };
   const jsonString = JSON.stringify(cookies);
   const compressed = Bun.zstdCompressSync(jsonString);
   const prefixed = Buffer.concat([Buffer.from([0x01]), compressed]);
-  
+
   // Simulate the wrapped output
   const wrap = Bun.wrapAnsi;
   const msg = `🆔 ${projectId} 📊 ${sessionId} 📦 ${prefixed.length}B R2: ${r2Bucket}`;
   const wrappedOutput = wrap(msg, 80);
-  
+
   const response = {
     title: 'Cookie Scanner CLI Tool Demonstration',
     description: 'Efficient CLI tool for cookie data compression and R2 storage',
     inputs: {
       projectId,
       sessionId,
-      r2Bucket
+      r2Bucket,
     },
     processing: {
       originalData: cookies,
@@ -1662,7 +1713,7 @@ async function handleCookieScannerDemo(request: Request, url: URL): Promise<Resp
       jsonSize: `${jsonString.length}B`,
       compressedSize: `${compressed.length}B`,
       finalSize: `${prefixed.length}B`,
-      compressionRatio: `${((1 - compressed.length / jsonString.length) * 100).toFixed(1)}%`
+      compressionRatio: `${((1 - compressed.length / jsonString.length) * 100).toFixed(1)}%`,
     },
     output: {
       wrappedMessage: wrappedOutput,
@@ -1671,30 +1722,30 @@ async function handleCookieScannerDemo(request: Request, url: URL): Promise<Resp
         sessionId,
         bundle: `${prefixed.length}B`,
         bucket: r2Bucket,
-        status: '✅ READY'
-      }
+        status: '✅ READY',
+      },
     },
     cliUsage: {
       command: `R2_BUCKET=${r2Bucket} PROJECT_ID=${projectId} bun tools/cookie-scanner.ts ${sessionId}`,
-      oneLiner: `bun -e 'const a=process.argv.slice(2);const p=a[0]||"demo";const s=a[1]||crypto.randomUUID();const c={p,s};const z=Bun.zstdCompressSync(JSON.stringify(c));const b=Buffer.concat([Buffer.from([0x01]),z]);console.log({p,s,bundle:b.length+"B",bucket:process.env.R2_BUCKET||"scanner-cookies",status:"✅"})' ${projectId} ${sessionId}`
+      oneLiner: `bun -e 'const a=process.argv.slice(2);const p=a[0]||"demo";const s=a[1]||crypto.randomUUID();const c={p,s};const z=Bun.zstdCompressSync(JSON.stringify(c));const b=Buffer.concat([Buffer.from([0x01]),z]);console.log({p,s,bundle:b.length+"B",bucket:process.env.R2_BUCKET||"scanner-cookies",status:"✅"})' ${projectId} ${sessionId}`,
     },
     benefits: [
       'Efficient ZSTD compression',
       'Binary prefix for type identification',
       'UUID-based session tracking',
       'Environment variable configuration',
-      'Minimal dependencies'
+      'Minimal dependencies',
     ],
     extensions: [
       'Add encryption before compression',
       'Include timestamp metadata',
       'Batch processing support',
-      'Streaming for large datasets'
-    ]
+      'Streaming for large datasets',
+    ],
   };
-  
+
   return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -1703,13 +1754,13 @@ async function handleCookieScannerDemo(request: Request, url: URL): Promise<Resp
  */
 async function handleCLIEfficiencyDemo(request: Request, url: URL): Promise<Response> {
   const demo = url.searchParams.get('demo') || 'all';
-  
-  let response: any = {
+
+  const response: JsonObject = {
     title: 'CLI Tooling Efficiency Patterns',
     description: 'Demonstrations of efficient CLI tooling with Bun',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
-  
+
   switch (demo) {
     case 'args':
       response.example = {
@@ -1719,21 +1770,21 @@ const getPos = (i, fallback = '') => args[i] ?? fallback
 const projectId = getPos(0, process.env.PROJECT_ID || 'default')
 const sessionId = getPos(1, crypto.randomUUID())`,
         explanation: 'Clean argument handling with fallbacks and environment support',
-        benefits: ['Type-safe fallbacks', 'Environment integration', 'Minimal code']
+        benefits: ['Type-safe fallbacks', 'Environment integration', 'Minimal code'],
       };
       break;
-      
+
     case 'compression':
       response.example = {
         title: 'Native Compression',
         code: `const data = { projectId, sessionId }
 const compressed = Bun.zstdCompressSync(JSON.stringify(data))
 const prefixed = Buffer.concat([Buffer.from([0x01]), compressed])`,
-        explanation: 'Using Bun\'s native ZSTD compression for efficient storage',
-        benefits: ['Native performance', 'Binary prefixes', 'Buffer operations']
+        explanation: "Using Bun's native ZSTD compression for efficient storage",
+        benefits: ['Native performance', 'Binary prefixes', 'Buffer operations'],
       };
       break;
-      
+
     case 'output':
       response.example = {
         title: 'Formatted Output',
@@ -1741,19 +1792,19 @@ const prefixed = Buffer.concat([Buffer.from([0x01]), compressed])`,
 const msg = \`🆔 \${projectId} 📊 \${sessionId} 📦 \${prefixed.length}B R2: \${bucket}\`
 console.log(wrap(msg, 80))`,
         explanation: 'Clean, wrapped output with emoji indicators',
-        benefits: ['Readability', 'Terminal wrapping', 'Visual indicators']
+        benefits: ['Readability', 'Terminal wrapping', 'Visual indicators'],
       };
       break;
-      
+
     case 'one-liner':
       response.example = {
         title: 'One-Liner CLI',
         code: `bun -e 'const a=process.argv.slice(2);const p=a[0]||"demo";const s=a[1]||crypto.randomUUID();const c={p,s};const z=Bun.zstdCompressSync(JSON.stringify(c));console.log({p,s,size:z.length+"B",status:"✅"})'`,
         explanation: 'Complete functionality in a single command',
-        benefits: ['Portability', 'No files needed', 'Quick deployment']
+        benefits: ['Portability', 'No files needed', 'Quick deployment'],
       };
       break;
-      
+
     default: // all
       response.examples = [
         {
@@ -1763,15 +1814,15 @@ const getPos = (i, fallback = '') => args[i] ?? fallback
 const projectId = getPos(0, process.env.PROJECT_ID || 'default')
 const sessionId = getPos(1, crypto.randomUUID())`,
           explanation: 'Clean argument handling with fallbacks',
-          benefits: ['Type-safe fallbacks', 'Environment integration']
+          benefits: ['Type-safe fallbacks', 'Environment integration'],
         },
         {
           title: 'Native Compression',
           code: `const data = { projectId, sessionId }
 const compressed = Bun.zstdCompressSync(JSON.stringify(data))
 const prefixed = Buffer.concat([Buffer.from([0x01]), compressed])`,
-          explanation: 'Using Bun\'s native ZSTD compression',
-          benefits: ['Native performance', 'Binary prefixes']
+          explanation: "Using Bun's native ZSTD compression",
+          benefits: ['Native performance', 'Binary prefixes'],
         },
         {
           title: 'Formatted Output',
@@ -1779,40 +1830,40 @@ const prefixed = Buffer.concat([Buffer.from([0x01]), compressed])`,
 const msg = \`🆔 \${projectId} 📊 \${sessionId} 📦 \${prefixed.length}B\`
 console.log(wrap(msg, 80))`,
           explanation: 'Clean, wrapped output with indicators',
-          benefits: ['Readability', 'Terminal wrapping']
+          benefits: ['Readability', 'Terminal wrapping'],
         },
         {
           title: 'One-Liner CLI',
           code: `bun -e 'const a=process.argv.slice(2);const p=a[0]||"demo";const c={p};console.log({p,size:JSON.stringify(c).length+"B"})'`,
           explanation: 'Complete functionality in one command',
-          benefits: ['Portability', 'No files needed']
-        }
+          benefits: ['Portability', 'No files needed'],
+        },
       ];
   }
-  
+
   response.patterns = {
     argumentHandling: {
       description: 'Clean argument parsing with fallbacks',
       pattern: 'const getPos = (i, fallback) => args[i] ?? fallback',
-      useCase: 'CLI tools with optional parameters'
+      useCase: 'CLI tools with optional parameters',
     },
     compression: {
       description: 'Native compression for data storage',
       pattern: 'Bun.zstdCompressSync(JSON.stringify(data))',
-      useCase: 'Efficient data storage and transmission'
+      useCase: 'Efficient data storage and transmission',
     },
     output: {
       description: 'Formatted terminal output',
       pattern: 'Bun.wrapAnsi(message, width)',
-      useCase: 'Readable CLI output with wrapping'
+      useCase: 'Readable CLI output with wrapping',
     },
     oneLiner: {
       description: 'Complete functionality in single command',
       pattern: 'bun -e "..." args',
-      useCase: 'Quick scripts and portable tools'
-    }
+      useCase: 'Quick scripts and portable tools',
+    },
   };
-  
+
   response.bunAdvantages = [
     'Native ZSTD compression',
     'Built-in UUID generation',
@@ -1820,11 +1871,11 @@ console.log(wrap(msg, 80))`,
     'Buffer operations',
     'JSON utilities',
     'Environment variable access',
-    'One-liner execution'
+    'One-liner execution',
   ];
-  
+
   return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -1833,23 +1884,23 @@ console.log(wrap(msg, 80))`,
  */
 async function handleGuidesDocs(request: Request, url: URL): Promise<Response> {
   const urls = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_GUIDES];
-  
+
   const response = {
     provider: DocumentationProvider.BUN_GUIDES,
     description: 'Tutorials & Guides Portal',
     urls: urls,
     categories: [
       'getting-started',
-      'tutorials', 
+      'tutorials',
       'how-to',
       'best-practices',
       'migration',
-      'troubleshooting'
-    ]
+      'troubleshooting',
+    ],
   };
-  
+
   return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -1864,18 +1915,18 @@ async function handleFetchDemo(request: Request, url: URL): Promise<Response> {
       basic: {
         code: `const response = await fetch('${docsURLBuilder.buildTypedArrayURL({ fragment: 'OVERVIEW' })}');
 console.log(response.status);`,
-        description: 'Basic fetch with enhanced URL builder'
+        description: 'Basic fetch with enhanced URL builder',
       },
       advanced: {
-        code: `const response = await fetch('${docsURLBuilder.buildEnterpriseAPIURL({ 
-          version: 'v1', 
-          endpoint: 'users' 
+        code: `const response = await fetch('${docsURLBuilder.buildEnterpriseAPIURL({
+          version: 'v1',
+          endpoint: 'users',
         })}', {
   headers: { 'Content-Type': 'application/json' },
   method: 'POST',
   body: JSON.stringify({ name: 'Bun User' })
 });`,
-        description: 'Advanced fetch with enterprise API'
+        description: 'Advanced fetch with enterprise API',
       },
       typedArrays: {
         code: `const uint8Array = new Uint8Array([1, 2, 3, 4, 5]);
@@ -1884,18 +1935,18 @@ const response = await fetch('/api/content-types', {
   body: uint8Array,
   headers: { 'Content-Type': 'application/octet-stream' }
 });`,
-        description: 'Typed array handling'
-      }
+        description: 'Typed array handling',
+      },
     },
     documentation: {
       official: 'https://bun.sh/docs/runtime/networking/fetch',
       typedArrays: docsURLBuilder.buildTypedArrayURL({ fragment: 'OVERVIEW' }),
-      enterprise: docsURLBuilder.buildEnterpriseAPIURL({ version: 'v1', endpoint: 'overview' })
-    }
+      enterprise: docsURLBuilder.buildEnterpriseAPIURL({ version: 'v1', endpoint: 'overview' }),
+    },
   };
-  
+
   return new Response(JSON.stringify(demo, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -1908,7 +1959,7 @@ async function handleAdvancedFetch(request: Request, url: URL): Promise<Response
       description: 'Request timeout with AbortSignal.timeout()',
       example: `const response = await fetch(url, {
   signal: AbortSignal.timeout(5000) // 5 second timeout
-});`
+});`,
     },
     streaming: {
       description: 'Request/response streaming',
@@ -1919,7 +1970,7 @@ async function handleAdvancedFetch(request: Request, url: URL): Promise<Response
   }
 });
 
-await fetch(url, { body: stream, method: 'POST' });`
+await fetch(url, { body: stream, method: 'POST' }); // Bun Fix: ReadableStream properly released after request`,
     },
     tls: {
       description: 'TLS configuration',
@@ -1928,18 +1979,18 @@ await fetch(url, { body: stream, method: 'POST' });`
     key: Bun.file('/path/to/key.pem'),
     cert: Bun.file('/path/to/cert.pem')
   }
-});`
+});`,
     },
     unix: {
       description: 'Unix domain sockets',
       example: `await fetch(url, {
   unix: '/path/to/socket.sock'
-});`
-    }
+});`,
+    },
   };
-  
+
   return new Response(JSON.stringify({ features }, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -1950,35 +2001,35 @@ async function handleContentTypes(request: Request, url: URL): Promise<Response>
   if (request.method === 'POST') {
     const contentType = request.headers.get('content-type') || 'unknown';
     const body = await request.arrayBuffer();
-    
+
     const response = {
       received: {
         contentType,
         size: body.byteLength,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
       supportedTypes: [
         'application/json',
         'text/plain',
         'application/octet-stream',
         'multipart/form-data',
-        'application/x-www-form-urlencoded'
-      ]
+        'application/x-www-form-urlencoded',
+      ],
     };
-    
+
     return new Response(JSON.stringify(response), {
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
   }
-  
+
   const types = {
     json: { endpoint: '/api/content-types', method: 'POST', body: '{"message": "Hello"}' },
     binary: { endpoint: '/api/content-types', method: 'POST', body: 'Uint8Array data' },
-    text: { endpoint: '/api/content-types', method: 'POST', body: 'Plain text' }
+    text: { endpoint: '/api/content-types', method: 'POST', body: 'Plain text' },
   };
-  
+
   return new Response(JSON.stringify({ types }), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -1987,7 +2038,7 @@ async function handleContentTypes(request: Request, url: URL): Promise<Response>
  */
 async function handleTypedArrays(request: Request, url: URL): Promise<Response> {
   const fragment = url.searchParams.get('fragment') || 'OVERVIEW';
-  
+
   const response = {
     description: 'Typed Array Integration with Enhanced Documentation',
     urls: {
@@ -1995,20 +2046,22 @@ async function handleTypedArrays(request: Request, url: URL): Promise<Response> 
       methods: docsURLBuilder.buildTypedArrayURL({ fragment: 'METHODS' }),
       conversion: docsURLBuilder.buildTypedArrayURL({ fragment: 'CONVERSION' }),
       performance: docsURLBuilder.buildTypedArrayURL({ fragment: 'PERFORMANCE' }),
-      examples: docsURLBuilder.buildTypedArrayURL({ fragment: 'EXAMPLES' })
+      examples: docsURLBuilder.buildTypedArrayURL({ fragment: 'EXAMPLES' }),
     },
-    current: docsURLBuilder.buildTypedArrayURL({ fragment: fragment as any }),
+    current: docsURLBuilder.buildTypedArrayURL({
+      fragment: fragment as TypedArrayURLOptions['fragment'],
+    }),
     examples: {
       create: `const uint8Array = new Uint8Array([1, 2, 3, 4, 5]);`,
       fetch: `const response = await fetch('${docsURLBuilder.buildTypedArrayURL({ fragment: 'OVERVIEW' })}');`,
       stream: `for await (const chunk of response.body) {
   console.log(chunk); // Uint8Array
-}`
-    }
+}`,
+    },
   };
-  
+
   return new Response(JSON.stringify(response, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -2023,23 +2076,23 @@ async function handleStreamingDemo(request: Request, url: URL): Promise<Response
         'Stream started',
         'Processing data...',
         'Almost done...',
-        'Stream completed'
+        'Stream completed',
       ];
-      
+
       for (const message of messages) {
         controller.enqueue(encoder.encode(message + '\n'));
         await Bun.sleep(500);
       }
-      
+
       controller.close();
-    }
+    },
   });
-  
+
   return new Response(stream, {
     headers: {
       'Content-Type': 'text/plain',
-      'X-Streaming-Demo': 'true'
-    }
+      'X-Streaming-Demo': 'true',
+    },
   });
 }
 
@@ -2049,7 +2102,7 @@ async function handleStreamingDemo(request: Request, url: URL): Promise<Response
 async function handleFeeds(request: Request, url: URL): Promise<Response> {
   const urls = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_RSS];
   const feedsUrls = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_FEEDS];
-  
+
   const feeds = {
     // bun.com feeds
     main: urls.MAIN_RSS,
@@ -2058,10 +2111,10 @@ async function handleFeeds(request: Request, url: URL): Promise<Response> {
     security: urls.SECURITY_RSS,
     community: urls.COMMUNITY_RSS,
     guides: urls.GUIDES_RSS,
-    
+
     // bun.sh technical feeds
     technical: urls.TECHNICAL_RSS,
-    
+
     // Unified feeds from BUN_FEEDS provider
     unified: {
       main: feedsUrls.MAIN_FEED,
@@ -2069,12 +2122,12 @@ async function handleFeeds(request: Request, url: URL): Promise<Response> {
       blog: feedsUrls.BLOG_FEED,
       releases: feedsUrls.RELEASES_FEED,
       security: feedsUrls.SECURITY_FEED,
-      community: feedsUrls.COMMUNITY_FEED
-    }
+      community: feedsUrls.COMMUNITY_FEED,
+    },
   };
-  
+
   return new Response(JSON.stringify({ feeds }, null, 2), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 
@@ -2083,20 +2136,20 @@ async function handleFeeds(request: Request, url: URL): Promise<Response> {
  */
 async function handleRSSFeed(request: Request, url: URL): Promise<Response> {
   const feedUrl = url.searchParams.get('url') || 'https://bun.com/rss.xml';
-  
+
   try {
     const response = await fetch(feedUrl);
     const content = await response.text();
-    
+
     return new Response(content, {
       headers: {
         'Content-Type': 'application/rss+xml',
-        'X-Source-URL': feedUrl
-      }
+        'X-Source-URL': feedUrl,
+      },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: `Failed to fetch RSS feed: ${error.message}` }), { 
-      status: 500 
+    return new Response(JSON.stringify({ error: `Failed to fetch RSS feed: ${error.message}` }), {
+      status: 500,
     });
   }
 }
@@ -2116,13 +2169,13 @@ async function handleJSONFeed(request: Request, url: URL): Promise<Response> {
         title: 'Enhanced Documentation System',
         url: docsURLBuilder.buildTypedArrayURL({ fragment: 'OVERVIEW' }),
         content_text: 'New unified documentation system with enhanced URL building',
-        date_published: new Date().toISOString()
-      }
-    ]
+        date_published: new Date().toISOString(),
+      },
+    ],
   };
-  
+
   return new Response(JSON.stringify(feed), {
-    headers: { 'Content-Type': 'application/feed+json' }
+    headers: { 'Content-Type': 'application/feed+json' },
   });
 }
 
@@ -2131,17 +2184,17 @@ async function handleJSONFeed(request: Request, url: URL): Promise<Response> {
  */
 async function handleCLISearch(request: Request, url: URL): Promise<Response> {
   const query = url.searchParams.get('q') || '';
-  const domain = url.searchParams.get('domain') as 'sh' | 'com' || 'sh';
-  
+  const domain = (url.searchParams.get('domain') as 'sh' | 'com') || 'sh';
+
   if (!query) {
     return new Response(JSON.stringify({ error: 'Query parameter required' }), { status: 400 });
   }
-  
+
   try {
     const results = await docsFetcher.search(query, domain);
-    
+
     return new Response(JSON.stringify({ results }), {
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
@@ -2153,15 +2206,17 @@ async function handleCLISearch(request: Request, url: URL): Promise<Response> {
  */
 async function handleCLIOpen(request: Request, url: URL): Promise<Response> {
   const query = url.searchParams.get('q') || '';
-  const domain = url.searchParams.get('domain') as 'sh' | 'com' || 'sh';
+  const domain = (url.searchParams.get('domain') as 'sh' | 'com') || 'sh';
   const appMode = url.searchParams.get('app') === 'true';
-  
+
   try {
     await chromeManager.openDocs(query, domain, appMode);
-    
-    return new Response(JSON.stringify({ 
-      message: `Opened docs for "${query}" in ${domain} domain${appMode ? ' (app mode)' : ''}` 
-    }));
+
+    return new Response(
+      JSON.stringify({
+        message: `Opened docs for "${query}" in ${domain} domain${appMode ? ' (app mode)' : ''}`,
+      })
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
@@ -2171,8 +2226,8 @@ async function handleCLIOpen(request: Request, url: URL): Promise<Response> {
  * Chrome app creation
  */
 async function handleChromeApp(request: Request, url: URL): Promise<Response> {
-  const domain = url.searchParams.get('domain') as 'sh' | 'com' || 'com';
-  
+  const domain = (url.searchParams.get('domain') as 'sh' | 'com') || 'com';
+
   try {
     const result = await chromeManager.createApp(domain);
     return new Response(JSON.stringify(result));
@@ -2186,15 +2241,21 @@ async function handleChromeApp(request: Request, url: URL): Promise<Response> {
  */
 async function handleCacheStats(request: Request, url: URL): Promise<Response> {
   const serverCache = responseCache.getStats();
-  const docsCache = (docsFetcher as any).cache.getStats();
-  
-  return new Response(JSON.stringify({
-    server: {
-      ...serverCache,
-      ttl: CACHE_TTL / 1000 / 60 + ' minutes'
-    },
-    documentation: docsCache
-  }, null, 2));
+  const docsCache = (docsFetcher as unknown as CacheStatsProvider).cache.getStats();
+
+  return new Response(
+    JSON.stringify(
+      {
+        server: {
+          ...serverCache,
+          ttl: CACHE_TTL / 1000 / 60 + ' minutes',
+        },
+        documentation: docsCache,
+      },
+      null,
+      2
+    )
+  );
 }
 
 /**
@@ -2203,11 +2264,13 @@ async function handleCacheStats(request: Request, url: URL): Promise<Response> {
 async function handleCacheClear(request: Request, url: URL): Promise<Response> {
   responseCache.clear();
   await docsFetcher.updateFallbackData();
-  
-  return new Response(JSON.stringify({ 
-    message: 'Cache cleared successfully',
-    timestamp: new Date().toISOString()
-  }));
+
+  return new Response(
+    JSON.stringify({
+      message: 'Cache cleared successfully',
+      timestamp: new Date().toISOString(),
+    })
+  );
 }
 
 /**
@@ -2216,41 +2279,41 @@ async function handleCacheClear(request: Request, url: URL): Promise<Response> {
 async function handleTestAll(request: Request, url: URL): Promise<Response> {
   const tests = [];
   const baseUrl = url.origin;
-  
+
   // Test basic endpoints
   const endpoints = [
     '/health',
     '/docs/providers',
     '/api/fetch/demo',
     '/docs/search?q=fetch',
-    '/cache/stats'
+    '/cache/stats',
   ];
-  
+
   for (const endpoint of endpoints) {
     try {
       const response = await fetch(baseUrl + endpoint);
       tests.push({
         endpoint,
         status: response.status,
-        success: response.ok
+        success: response.ok,
       });
     } catch (error) {
       tests.push({
         endpoint,
         error: error.message,
-        success: false
+        success: false,
       });
     }
   }
-  
+
   const summary = {
     timestamp: new Date().toISOString(),
     totalTests: tests.length,
     passed: tests.filter(t => t.success).length,
     failed: tests.filter(t => !t.success).length,
-    tests
+    tests,
   };
-  
+
   return new Response(JSON.stringify(summary, null, 2));
 }
 
@@ -2259,37 +2322,37 @@ async function handleTestAll(request: Request, url: URL): Promise<Response> {
  */
 async function handlePerformanceTest(request: Request, url: URL): Promise<Response> {
   const start = performance.now();
-  
+
   // Test URL builder performance
   const urlBuilderStart = performance.now();
   for (let i = 0; i < 1000; i++) {
     docsURLBuilder.buildTypedArrayURL({ fragment: 'OVERVIEW' });
   }
   const urlBuilderTime = performance.now() - urlBuilderStart;
-  
+
   // Test validator performance
   const validatorStart = performance.now();
   for (let i = 0; i < 1000; i++) {
     DocumentationURLValidator.validateURL('https://bun.sh/docs/api');
   }
   const validatorTime = performance.now() - validatorStart;
-  
+
   const totalTime = performance.now() - start;
-  
+
   const results = {
     urlBuilder: {
       operations: 1000,
       time: urlBuilderTime.toFixed(2) + 'ms',
-      avgTime: (urlBuilderTime / 1000).toFixed(4) + 'ms'
+      avgTime: (urlBuilderTime / 1000).toFixed(4) + 'ms',
     },
     validator: {
       operations: 1000,
       time: validatorTime.toFixed(2) + 'ms',
-      avgTime: (validatorTime / 1000).toFixed(4) + 'ms'
+      avgTime: (validatorTime / 1000).toFixed(4) + 'ms',
     },
-    total: totalTime.toFixed(2) + 'ms'
+    total: totalTime.toFixed(2) + 'ms',
   };
-  
+
   return new Response(JSON.stringify(results, null, 2));
 }
 
@@ -2297,47 +2360,79 @@ async function handlePerformanceTest(request: Request, url: URL): Promise<Respon
  * Error handler
  */
 function handleError(error: Error, request: Request, url: URL): Response {
-  console.error(`❌ Error handling ${url.pathname}:`, error instanceof Error ? error.message : String(error));
-  
-  return new Response(JSON.stringify({
-    error: 'Internal server error',
-    message: error.message,
-    path: url.pathname,
-    timestamp: new Date().toISOString()
-  }), { 
-    status: 500,
-    headers: { 'Content-Type': 'application/json' }
-  });
+  console.error(
+    `❌ Error handling ${url.pathname}:`,
+    error instanceof Error ? error.message : String(error)
+  );
+
+  return new Response(
+    JSON.stringify({
+      error: 'Internal server error',
+      message: error.message,
+      path: url.pathname,
+      timestamp: new Date().toISOString(),
+    }),
+    {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    }
+  );
 }
 
 /**
  * 404 handler
  */
 function handleNotFound(request: Request, url: URL): Response {
-  return new Response(JSON.stringify({
-    error: 'Endpoint not found',
-    path: url.pathname,
-    availableEndpoints: [
-      '/', '/health', '/docs/search', '/docs/providers',
-      '/docs/github', '/docs/mdn', '/docs/performance', '/docs/internal',
-      '/docs/paths', '/docs/quick-ref',
-      '/docs/reference', '/docs/guides',
-      '/api/fetch/demo', '/api/content-types', '/api/typed-arrays',
-      '/api/url-builder/demo', '/api/url-builder/stats',
-      '/api/validator/validate', '/api/validator/best-source',
-      '/api/validator/normalize', '/api/validator/migration',
-      '/api/examples/usage', '/api/sources/comparison',
-      '/api/github/parse', '/api/github/commit', '/api/github/bun-types', 
-      '/api/github/text-fragment', '/api/github/critical-urls',
-      '/api/cli/cookie-scanner', '/api/cli/efficiency',
-      '/api/rss/fetch', '/api/rss/combined', '/api/rss/documentation', '/api/rss/feed',
-      '/cli/search', '/cache/stats', '/test/all'
-    ],
-    timestamp: new Date().toISOString()
-  }), { 
-    status: 404,
-    headers: { 'Content-Type': 'application/json' }
-  });
+  return new Response(
+    JSON.stringify({
+      error: 'Endpoint not found',
+      path: url.pathname,
+      availableEndpoints: [
+        '/',
+        '/health',
+        '/docs/search',
+        '/docs/providers',
+        '/docs/github',
+        '/docs/mdn',
+        '/docs/performance',
+        '/docs/internal',
+        '/docs/paths',
+        '/docs/quick-ref',
+        '/docs/reference',
+        '/docs/guides',
+        '/api/fetch/demo',
+        '/api/content-types',
+        '/api/typed-arrays',
+        '/api/url-builder/demo',
+        '/api/url-builder/stats',
+        '/api/validator/validate',
+        '/api/validator/best-source',
+        '/api/validator/normalize',
+        '/api/validator/migration',
+        '/api/examples/usage',
+        '/api/sources/comparison',
+        '/api/github/parse',
+        '/api/github/commit',
+        '/api/github/bun-types',
+        '/api/github/text-fragment',
+        '/api/github/critical-urls',
+        '/api/cli/cookie-scanner',
+        '/api/cli/efficiency',
+        '/api/rss/fetch',
+        '/api/rss/combined',
+        '/api/rss/documentation',
+        '/api/rss/feed',
+        '/cli/search',
+        '/cache/stats',
+        '/test/all',
+      ],
+      timestamp: new Date().toISOString(),
+    }),
+    {
+      status: 404,
+      headers: { 'Content-Type': 'application/json' },
+    }
+  );
 }
 
 /**
@@ -2700,7 +2795,9 @@ Security: https://bun.com/security/rss.xml</code></pre>
 </html>`;
 }
 
-console.log(`🏗️ Unified Base Server running on http://${SERVER_HOST}:${SERVER_PORT}`);
-console.log(`📚 Documentation: https://bun.sh/docs | https://bun.com/guides`);
-console.log(`💻 CLI Integration: Available via /cli/* endpoints`);
-console.log(`⚡ Enhanced Features: Domain distinction, caching, Chrome apps`);
+if (VERBOSE) {
+  console.log(`🏗️ Unified Base Server running on http://${SERVER_HOST}:${SERVER_PORT}`);
+  console.log(`📚 Documentation: https://bun.sh/docs | https://bun.com/guides`);
+  console.log(`💻 CLI Integration: Available via /cli/* endpoints`);
+  console.log(`⚡ Enhanced Features: Domain distinction, caching, Chrome apps`);
+}

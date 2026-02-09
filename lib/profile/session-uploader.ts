@@ -18,7 +18,13 @@
 
 import { S3Client } from 'bun';
 import { resolve, basename, join } from 'node:path';
-import { type ProfileType, profileTimestamp, profileR2Key, manifestR2Key, generateSessionId } from '../core/fw-types';
+import {
+  type ProfileType,
+  profileTimestamp,
+  profileR2Key,
+  manifestR2Key,
+  generateSessionId,
+} from '../core/fw-types';
 
 // ==================== Types ====================
 
@@ -58,8 +64,16 @@ export interface ProfileUploaderConfig {
   accessKeyId?: string;
   /** Explicit secret. If omitted, S3Client reads S3_SECRET_ACCESS_KEY / AWS_SECRET_ACCESS_KEY from env/bun.secrets. */
   secretAccessKey?: string;
+  /** S3 Requester Pays support: set true for requester-pays buckets. */
+  requestPayer?: boolean;
   prefix?: string;
   profilesDir?: string;
+}
+
+function parseTruthyEnv(value?: string): boolean {
+  if (!value) return false;
+  const normalized = value.trim().toLowerCase();
+  return normalized === '1' || normalized === 'true' || normalized === 'yes' || normalized === 'on';
 }
 
 // ==================== Naming Convention ====================
@@ -73,7 +87,9 @@ export interface ProfileUploaderConfig {
  */
 const PROFILE_FILENAME_RE = /^(CPU|Heap)\.(\d+)\.(\d+)\.md$/;
 
-function parseProfileFilename(filename: string): { type: ProfileType; timestamp: string; pid: number } | null {
+function parseProfileFilename(
+  filename: string
+): { type: ProfileType; timestamp: string; pid: number } | null {
   const match = filename.match(PROFILE_FILENAME_RE);
   if (!match) return null;
   return {
@@ -115,9 +131,13 @@ export function resolveUploaderConfig(): ProfileUploaderConfig {
 
   return {
     bucket: Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || Bun.env.S3_BUCKET || undefined,
-    endpoint: Bun.env.R2_ENDPOINT || Bun.env.S3_ENDPOINT || (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : undefined),
+    endpoint:
+      Bun.env.R2_ENDPOINT ||
+      Bun.env.S3_ENDPOINT ||
+      (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : undefined),
     accessKeyId: Bun.env.R2_ACCESS_KEY_ID || Bun.env.S3_ACCESS_KEY_ID || undefined,
     secretAccessKey: Bun.env.R2_SECRET_ACCESS_KEY || Bun.env.S3_SECRET_ACCESS_KEY || undefined,
+    requestPayer: parseTruthyEnv(Bun.env.R2_REQUEST_PAYER),
     prefix: Bun.env.R2_PROFILE_PREFIX || 'profiles',
     profilesDir: Bun.env.PROFILE_OUTPUT_DIR || './profiles',
   };
@@ -131,7 +151,7 @@ export class ProfileSessionUploader {
   private prefix: string;
   private uploaded = new Set<string>();
   /** S3 options — only includes fields that are explicitly set. Bun resolves the rest from bun.secrets. */
-  private s3Opts: Record<string, string>;
+  private s3Opts: Record<string, string | boolean>;
 
   constructor(config: ProfileUploaderConfig = {}, terminal?: TerminalIdentity) {
     this.config = config;
@@ -139,11 +159,12 @@ export class ProfileSessionUploader {
     this.prefix = config.prefix || 'profiles';
 
     // Build S3 options, omitting undefined so Bun falls back to bun.secrets / env
-    const opts: Record<string, string> = {};
+    const opts: Record<string, string | boolean> = {};
     if (config.bucket) opts.bucket = config.bucket;
     if (config.endpoint) opts.endpoint = config.endpoint;
     if (config.accessKeyId) opts.accessKeyId = config.accessKeyId;
     if (config.secretAccessKey) opts.secretAccessKey = config.secretAccessKey;
+    if (config.requestPayer) opts.requestPayer = true;
     this.s3Opts = opts;
   }
 
@@ -164,11 +185,13 @@ export class ProfileSessionUploader {
     const parsed = parseProfileFilename(filename);
 
     if (!parsed) {
-      throw new Error(`Not a Bun profile file: ${filename} (expected CPU.{ts}.{pid}.md or Heap.{ts}.{pid}.md)`);
+      throw new Error(
+        `Not a Bun profile file: ${filename} (expected CPU.{ts}.{pid}.md or Heap.{ts}.{pid}.md)`
+      );
     }
 
     const file = Bun.file(absPath);
-    if (!await file.exists()) {
+    if (!(await file.exists())) {
       throw new Error(`Profile file not found: ${absPath}`);
     }
 
@@ -277,7 +300,9 @@ if (import.meta.main) {
   } else {
     console.log(`Uploaded ${entries.length} profile(s):`);
     for (const entry of entries) {
-      console.log(`  ${entry.type.toUpperCase()} ${entry.filename} -> ${entry.r2Key} (${(entry.sizeBytes / 1024).toFixed(1)} KB)`);
+      console.log(
+        `  ${entry.type.toUpperCase()} ${entry.filename} -> ${entry.r2Key} (${(entry.sizeBytes / 1024).toFixed(1)} KB)`
+      );
     }
   }
 }

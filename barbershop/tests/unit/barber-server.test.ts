@@ -1,3 +1,6 @@
+// Set test environment variables BEFORE importing the server
+process.env.LIFECYCLE_KEY = process.env.LIFECYCLE_KEY || 'test-lifecycle-key';
+
 import { describe, expect, test, beforeEach, afterEach, spyOn, mock } from 'bun:test';
 import { buildReport, parseClearRequest, startServer } from '../../src/core/barber-server';
 
@@ -438,7 +441,7 @@ describe('HTTP Route Handlers', () => {
     });
 
     test('returns status with valid key', async () => {
-      const response = await fetch(`${baseUrl}/ops/lifecycle?key=godmode123`);
+      const response = await fetch(`${baseUrl}/ops/lifecycle?key=test-lifecycle-key`);
       const data = await response.json();
       
       expect(response.status).toBe(200);
@@ -449,7 +452,7 @@ describe('HTTP Route Handlers', () => {
     });
 
     test('handles ref action', async () => {
-      const response = await fetch(`${baseUrl}/ops/lifecycle?action=ref&key=godmode123`);
+      const response = await fetch(`${baseUrl}/ops/lifecycle?action=ref&key=test-lifecycle-key`);
       const data = await response.json();
       
       expect(response.status).toBe(200);
@@ -458,7 +461,7 @@ describe('HTTP Route Handlers', () => {
     });
 
     test('handles unref action', async () => {
-      const response = await fetch(`${baseUrl}/ops/lifecycle?action=unref&key=godmode123`);
+      const response = await fetch(`${baseUrl}/ops/lifecycle?action=unref&key=test-lifecycle-key`);
       const data = await response.json();
       
       expect(response.status).toBe(200);
@@ -469,7 +472,7 @@ describe('HTTP Route Handlers', () => {
     test('handles stop action', async () => {
       // Note: Don't actually call stop as it would shut down our test server
       // Just verify the endpoint structure
-      const response = await fetch(`${baseUrl}/ops/lifecycle?action=status&key=godmode123`);
+      const response = await fetch(`${baseUrl}/ops/lifecycle?action=status&key=test-lifecycle-key`);
       expect(response.status).toBe(200);
     });
   });
@@ -727,7 +730,7 @@ describe('Error Handling', () => {
     });
 
     test('rejects key with whitespace', async () => {
-      const response = await fetch(`${baseUrl}/ops/lifecycle?key=godmode123%20`);
+      const response = await fetch(`${baseUrl}/ops/lifecycle?key=test-lifecycle-key%20`);
       expect(response.status).toBe(401);
     });
 
@@ -829,7 +832,7 @@ describe('Cookie Handling', () => {
   });
 
   test('session cookie has correct attributes', async () => {
-    const response = await fetch(`${baseUrl}/clear?key=godmode123`);
+    const response = await fetch(`${baseUrl}/clear?key=test-lifecycle-key`);
     const setCookie = response.headers.get('set-cookie');
     
     // The /clear endpoint may not always set cookies depending on internal state

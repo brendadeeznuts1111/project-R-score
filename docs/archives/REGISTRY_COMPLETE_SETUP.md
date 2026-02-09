@@ -88,7 +88,7 @@ bun run registry:start
 # Deploy Cloudflare Worker
 bun run registry:deploy:cdn
 
-# Your registry is now at npm.factory-wager.com
+# Your registry is now at registry.factory-wager.com
 ```
 
 ### 4. Configure npm Client
@@ -98,7 +98,7 @@ bun run registry:deploy:cdn
 npm config set registry http://localhost:4873
 
 # Or CDN
-npm config set registry https://npm.factory-wager.com
+npm config set registry https://registry.factory-wager.com
 
 # With authentication
 npm login --registry http://localhost:4873
@@ -282,7 +282,7 @@ bun run registry:deploy:staging
 
 ### DNS Configuration
 
-Already configured for `npm.factory-wager.com`!
+Already configured for `registry.factory-wager.com`!
 
 ---
 

@@ -80,7 +80,7 @@ export class CookieManager {
       if (parsed.compressed) {
         return this.decompressCookie(parsed);
       }
-    } catch {
+    } catch (err) {
       // Not JSON, return as-is
     }
 
@@ -105,7 +105,7 @@ export class CookieManager {
         originalSize,
         compressedSize: base64.length,
       };
-    } catch {
+    } catch (err) {
       // Fallback to gzip
       const compressed = compressData(data, 'gzip');
       const base64 = Buffer.from(compressed).toString('base64');
@@ -157,7 +157,7 @@ export class CookieManager {
       const parsed = JSON.parse(value);
       const decompressed = this.decompressCookie(parsed);
       return JSON.parse(decompressed);
-    } catch {
+    } catch (err) {
       return null;
     }
   }
@@ -266,7 +266,7 @@ export class CookieManager {
         if (parsed.compressed) {
           compressedCount++;
         }
-      } catch {
+      } catch (err) {
         // Not compressed
       }
     }
@@ -332,7 +332,7 @@ export function parseTelemetryCookie(cookieValue: string): TelemetryData | null 
     const buffer = Buffer.from(cookieValue, 'base64');
     const decompressed = decompressData(buffer, 'zstd');
     return JSON.parse(new TextDecoder().decode(decompressed));
-  } catch {
+  } catch (err) {
     return null;
   }
 }

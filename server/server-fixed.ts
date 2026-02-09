@@ -81,9 +81,7 @@ async function handleTypedArrayURLs(): Promise<Response> {
     }
   };
   
-  return new Response(JSON.stringify(urls, null, 2), {
-    headers: { 'Content-Type': 'application/json' },
-  });
+  return Response.json(urls);
 }
 
 // Generate our own RSS feed
@@ -146,9 +144,7 @@ async function generateJSONFeed(): Promise<Response> {
     ],
   };
   
-  return new Response(JSON.stringify(feed, null, 2), {
-    headers: { 'Content-Type': 'application/json' },
-  });
+  return Response.json(feed);
 }
 
 // Root endpoint

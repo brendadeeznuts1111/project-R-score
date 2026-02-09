@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "bun-docs": {
+      "type": "stdio",
+      "command": "/Users/nolarose/.bun/bin/bun",
+      "args": ["run", "/Users/nolarose/Projects/tools/bun-docs-mcp.ts"]
+    }
+  }
+}

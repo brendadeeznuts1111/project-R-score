@@ -57,7 +57,7 @@ workers = 4
 [install]
 exact = true
 # Core registry configuration - using standard npm registry
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"
 
 # Installation behavior - standard defaults
 dev = true
@@ -119,8 +119,8 @@ dnsTtl = 300                     # DNS cache TTL in seconds (5 minutes)
 
 # Private registry scopes with authentication (no trailing spaces)
 [install.scopes]
-"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
-"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
 "@fire22" = { url = "$FIRE22_REGISTRY_URL", token = "$FIRE22_REGISTRY_TOKEN" }
 "@enterprise" = { url = "$FIRE22_ENTERPRISE_REGISTRY_URL", token = "$FIRE22_ENTERPRISE_TOKEN" }
 "@private" = { url = "$FIRE22_PRIVATE_REGISTRY_URL", username = "$FIRE22_PRIVATE_USER", password = "$FIRE22_PRIVATE_PASS" }
@@ -1184,4 +1184,4 @@ performance_alerting = { enabled = true, latency_threshold_ms = 100, error_rate_
 user_experience_monitoring = { enabled = true, apdex_target = 0.8 }
 
 [publish]
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"

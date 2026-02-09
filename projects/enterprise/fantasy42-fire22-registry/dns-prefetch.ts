@@ -7,6 +7,6 @@ import { dns } from "bun";
 dns.prefetch("api.fire22.com", 443);
 dns.prefetch("dev.registry.sportsbet.com", 443);
 dns.prefetch("localhost", 443);
-dns.prefetch("npm.factory-wager.com", 443);
+dns.prefetch("registry.factory-wager.com", 443);
 dns.prefetch("registry.npmjs.org", 443);
 dns.prefetch("registry.sportsbet.com", 443);

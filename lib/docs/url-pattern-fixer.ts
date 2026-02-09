@@ -39,15 +39,15 @@ const URL_PATTERNS = {
   },
 
   registry: {
-    broken: ['https://npm.factory-wager.com', 'https://npm.factory-wager.com/'],
+    broken: ['https://registry.factory-wager.com', 'https://registry.factory-wager.com/'],
     fixed: ['https://registry.npmjs.org'],
   },
 };
 
 // Known issues and fixes
 const URL_FIXES = {
-  'https://npm.factory-wager.com': 'https://registry.npmjs.org',
-  'https://npm.factory-wager.com/': 'https://registry.npmjs.org/',
+  'https://registry.factory-wager.com': 'https://registry.npmjs.org',
+  'https://registry.factory-wager.com/': 'https://registry.npmjs.org/',
   'https://bun.sh/docs': 'https://bun.sh/docs/cli', // Performance optimization
 };
 

@@ -78,7 +78,7 @@ export class DomainIntegration {
         tier: 'enterprise',
       },
       subdomains: {
-        npm: 'npm.factory-wager.com',
+        npm: 'registry.factory-wager.com',
         api: 'api.factory-wager.com',
         cdn: 'cdn.factory-wager.com',
         monitor: 'monitor.factory-wager.com',

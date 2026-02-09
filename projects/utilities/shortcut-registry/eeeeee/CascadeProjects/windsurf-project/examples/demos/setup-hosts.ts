@@ -9,7 +9,7 @@ console.log("🔧 Configuring Enterprise Hostnames for Local Development");
 
 const HOSTS_CONFIG = [
     '127.0.0.1 api.factory-wager.com',
-    '127.0.0.1 dashboard.factory-wager.com',
+    '127.0.0.1 docs.factory-wager.com',
     '127.0.0.1 admin.factory-wager.com',
     '127.0.0.1 fraud.factory-wager.com',
     '127.0.0.1 shop.factory-wager.com',
@@ -75,7 +75,7 @@ async function verifyHosts() {
     try {
         console.log("\n🔍 Verifying hostname configuration...");
         
-        for (const hostname of ['api.factory-wager.com', 'dashboard.factory-wager.com']) {
+        for (const hostname of ['api.factory-wager.com', 'docs.factory-wager.com']) {
             try {
                 const result = await exec(`ping -c 1 ${hostname}`, { stdout: 'pipe' });
                 if (result.exitCode === 0) {

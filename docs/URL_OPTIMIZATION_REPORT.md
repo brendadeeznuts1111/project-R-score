@@ -21,8 +21,8 @@ Generated: 2026-02-05T02:37:13.777Z
 ## 🔧 Fixes Applied
 
 ### Broken URLs
-- `https://npm.factory-wager.com` → `https://registry.npmjs.org` (completed)
-- `https://npm.factory-wager.com/` → `https://registry.npmjs.org/` (completed)
+- `https://registry.factory-wager.com` → `https://registry.npmjs.org` (completed)
+- `https://registry.factory-wager.com/` → `https://registry.npmjs.org/` (completed)
 
 ### Performance Optimizations
 - `https://bun.sh/docs` → `https://bun.sh/docs/cli` (Reduced load time)

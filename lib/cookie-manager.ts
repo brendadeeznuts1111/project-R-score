@@ -260,8 +260,19 @@ export class CookieManager {
     if (typeof document === 'undefined') return;
 
     let cookieString = `${config.name}=${encodeURIComponent(config.value)}`;
-    
-    if (config.domain) {
+
+    const runtimeHost =
+      typeof window !== 'undefined' && window.location?.hostname
+        ? String(window.location.hostname).toLowerCase()
+        : '';
+    const cookieDomain = config.domain ? String(config.domain).replace(/^\./, '').toLowerCase() : '';
+    const canSetDomain =
+      Boolean(cookieDomain) &&
+      Boolean(runtimeHost) &&
+      (runtimeHost === cookieDomain || runtimeHost.endsWith(`.${cookieDomain}`));
+
+    // Only set Domain when host actually matches; this avoids rejected cookies on localhost/dev hosts.
+    if (config.domain && canSetDomain) {
       cookieString += `; domain=${config.domain}`;
     }
     
@@ -273,18 +284,18 @@ export class CookieManager {
       cookieString += `; expires=${config.expires.toUTCString()}`;
     }
     
-    if (config.maxAge) {
+    if (config.maxAge !== undefined) {
       cookieString += `; max-age=${config.maxAge}`;
     }
     
-    if (config.secure) {
+    // SameSite=None requires Secure in modern browsers.
+    const requireSecure = config.sameSite === 'none';
+    if (config.secure || requireSecure) {
       cookieString += `; secure`;
     }
     
-    if (config.httpOnly) {
-      cookieString += `; httponly`;
-    }
-    
+    // HttpOnly cannot be set from JavaScript; browsers ignore it on document.cookie.
+
     if (config.sameSite) {
       cookieString += `; samesite=${config.sameSite}`;
     }
@@ -331,8 +342,13 @@ export class CookieManager {
     const cookieArray = document.cookie.split(';');
 
     for (let cookie of cookieArray) {
-      const [name, value] = cookie.trim().split('=');
-      if (name && value) {
+      cookie = cookie.trim();
+      if (!cookie) continue;
+      const eqIndex = cookie.indexOf('=');
+      if (eqIndex <= 0) continue;
+      const name = cookie.slice(0, eqIndex);
+      const value = cookie.slice(eqIndex + 1);
+      if (name) {
         cookies[name] = decodeURIComponent(value);
       }
     }
@@ -361,7 +377,7 @@ export class CookieManager {
   private sendToAnalytics(data: any): void {
     if (typeof fetch === 'undefined') return;
 
-    fetch('https://metrics.factory-wager.com/events', {
+    fetch('https://monitor.factory-wager.com/events', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

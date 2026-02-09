@@ -1029,8 +1029,8 @@ class FactoryWagerCLI {
             console.log('⚠️  API token not configured. Showing domain overview only.\n');
             
             const githubDomains = [
-                'wiki.factory-wager.com', 'dashboard.factory-wager.com', 'client.factory-wager.com',
-                'npm.factory-wager.com', 'r2.factory-wager.com', 'matrix.factory-wager.com',
+                'wiki.factory-wager.com', 'docs.factory-wager.com', 'docs.factory-wager.com',
+                'registry.factory-wager.com', 'r2.factory-wager.com', 'matrix.factory-wager.com',
                 'health.factory-wager.com', 'auth.factory-wager.com', 'storage.factory-wager.com',
                 'analytics.factory-wager.com', 'monitoring.factory-wager.com', 'wagers.factory-wager.com',
                 'billing.factory-wager.com', 'reports.factory-wager.com', 'customers.factory-wager.com',
@@ -1041,9 +1041,9 @@ class FactoryWagerCLI {
             const r2Domains = [
                 'admin.factory-wager.com', 'api.factory-wager.com', 'app.factory-wager.com',
                 'artifacts.factory-wager.com', 'audits.factory-wager.com', 'backups.factory-wager.com',
-                'blog.factory-wager.com', 'cache.factory-wager.com', 'cdn.factory-wager.com',
+                'blog.factory-wager.com', 'cdn.factory-wager.com', 'cdn.factory-wager.com',
                 'docs.factory-wager.com', 'images.factory-wager.com', 'logs.factory-wager.com',
-                'metrics.factory-wager.com', 'profiles.factory-wager.com', 'registry.factory-wager.com',
+                'monitor.factory-wager.com', 'profiles.factory-wager.com', 'registry.factory-wager.com',
                 'rss.factory-wager.com', 'staging.factory-wager.com', 'www.factory-wager.com'
             ];
             
@@ -1209,7 +1209,7 @@ class FactoryWagerCLI {
             console.log(`🔧 Cloudflare Proxy: ${domains.filter(d => d.proxied).length} enabled`);
             
             console.log('\n🏥 Quick Health Check:');
-            const testDomains = ['wiki.factory-wager.com', 'dashboard.factory-wager.com', 'api.factory-wager.com'];
+            const testDomains = ['wiki.factory-wager.com', 'docs.factory-wager.com', 'api.factory-wager.com'];
             
             for (const domain of testDomains) {
                 try {

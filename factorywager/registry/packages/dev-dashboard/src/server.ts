@@ -5,7 +5,7 @@
  * Development dashboard showing tests, benchmarks, and quick wins reports
  */
 
-import { profileEngine, logger } from '../user-profile/src/index.ts';
+import { profileEngine, logger } from '../../user-profile/src/index.ts';
 
 interface BenchmarkResult {
   name: string;

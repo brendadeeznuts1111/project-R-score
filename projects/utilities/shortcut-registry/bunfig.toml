@@ -3,7 +3,7 @@
 
 [install]
 exact = true
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"
 # Use isolated linker to prevent phantom dependencies
 linker = "isolated"
 # Auto-install peer dependencies
@@ -14,8 +14,8 @@ production = false
 # trustedDependencies = []
 
 [install.scopes]
-"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
-"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
 # Scope-specific configuration
 # Example: "@myorg/*" = { token = "..." }
 
@@ -29,4 +29,4 @@ production = false
 # bun = "latest"
 
 [publish]
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"

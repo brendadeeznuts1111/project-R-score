@@ -7,7 +7,7 @@ if (import.meta.path !== Bun.main) {
 
 import { URLValidator, ConstantValidator, ValidationReporter } from './cli-constants-validation';
 
-import { DocumentationValidator } from '../docs/documentation-validator';
+import { DocumentationValidator } from '../../packages/docs-tools/src/documentation-validator';
 import { UntrackedFilesAnalyzer } from '../docs/untracked-files-analyzer';
 
 // ============================================================================

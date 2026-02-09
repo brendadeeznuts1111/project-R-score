@@ -17,7 +17,7 @@ Your enterprise domain infrastructure is now fully integrated with your R2 MCP s
 
 ### **Subdomains Integrated**
 ```text
-📡 npm.factory-wager.com     → Package Registry
+📡 registry.factory-wager.com     → Package Registry
 📡 api.factory-wager.com      → Backend Services
 📡 cdn.factory-wager.com      → Content Delivery
 📡 monitor.factory-wager.com  → Observability
@@ -104,7 +104,7 @@ Claude: "Search for Bun.secrets.get with factory-wager.com enterprise security c
 
 Claude: "Get domain metrics for api.factory-wager.com subdomain health"
 
-Claude: "Store diagnosis for npm.factory-wager.com registry timeout error"
+Claude: "Store diagnosis for registry.factory-wager.com registry timeout error"
 
 Claude: "Analyze Venmo family dispute patterns and suggest resolutions"
 ```

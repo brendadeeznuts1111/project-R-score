@@ -165,7 +165,7 @@ async function benchmarkFileIO(): Promise<BenchmarkResult> {
   try {
     await Bun.file(tempFileBun).delete?.();
     await Bun.file(tempFileNode).delete?.();
-  } catch {}
+  } catch (err) {}
 
   return {
     name: 'File I/O (1MB x 50 RW)',

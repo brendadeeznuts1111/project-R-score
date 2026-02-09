@@ -129,9 +129,8 @@ export class PerformanceMonitor {
       cache: await this.getCacheStats(),
     };
     
-    return new Response(JSON.stringify(protocolStats, null, 2), {
+    return Response.json(protocolStats, {
       headers: {
-        'content-type': 'application/json',
         'cache-control': 'no-cache',
       },
     });

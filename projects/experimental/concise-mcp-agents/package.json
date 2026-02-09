@@ -240,6 +240,6 @@
   },
   "homepage": "https://github.com/your-org/bun-enhanced-agents#readme",
   "publishConfig": {
-    "registry": "https://npm.factory-wager.com"
+    "registry": "https://registry.factory-wager.com"
   }
 }

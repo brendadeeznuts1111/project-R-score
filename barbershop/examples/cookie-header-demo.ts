@@ -15,8 +15,7 @@ import {
   HeaderCompressor,
   compressRequestHeaders,
   decompressResponseHeaders,
-  createTelemetryCookie,
-  parseTelemetryCookie,
+  // createTelemetryCookie, parseTelemetryCookie - available in CookieManager
 } from '../src/utils';
 
 const ANSI = {

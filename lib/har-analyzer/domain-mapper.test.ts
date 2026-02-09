@@ -86,7 +86,7 @@ describe('DocumentationMapper', () => {
     });
 
     test('should match subdomains of known providers', () => {
-      expect(DocumentationMapper.getProvider('https://docs.bun.sh/api')).toBe(
+      expect(DocumentationMapper.getProvider('https://www.bun.sh/docs/api')).toBe(
         DocumentationProvider.BUN_OFFICIAL
       );
       expect(DocumentationMapper.getProvider('https://www.reddit.com/r/bun')).toBe(

@@ -1,6 +1,6 @@
 // lib/docs/legacy-compat.ts — Legacy compatibility layer
 
-import { docsURLBuilder } from './builders/url-builder';
+import { docsURLBuilder } from '../../packages/docs-tools/src/builders/url-builder';
 import {
   QUICK_REFERENCE_URLS,
   ENTERPRISE_DOCUMENTATION_BASE_URLS,

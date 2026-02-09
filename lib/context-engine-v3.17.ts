@@ -9,6 +9,7 @@
 
 import { executeBunCLI, parseOfficialFlags, BunCLIFlags } from './bun-cli-native-v3.15';
 import { readFileSync } from 'fs';
+import { mkdir } from 'fs/promises';
 import { join } from 'path';
 import { executeWithContext } from './context-run-server';
 
@@ -73,10 +74,8 @@ export async function loadGlobalConfig(flags: BunCLIFlags): Promise<GlobalConfig
   // Load and parse JSONC tsconfig
   try {
     const tsconfigPath = `${config.cwd}/tsconfig.json`;
-    // JSONC tsconfig - using regular JSON.parse for now since Bun.JSONC may not be available
-    const tsconfigContent = await Bun.file(tsconfigPath).arrayBuffer();
-    const text = new TextDecoder().decode(tsconfigContent);
-    config.tsconfig = JSON.parse(text);
+    const text = await Bun.file(tsconfigPath).text();
+    config.tsconfig = Bun.JSONC.parse(text);
   } catch (error) {
     console.log(c.yellow(`⚠️  Could not load tsconfig.json: ${error}`));
     config.tsconfig = {
@@ -263,26 +262,29 @@ export function generateContextDashboard(results: Array<{name: string, data: any
  */
 export async function exportMetafile(
   metafile: any, 
-  format: 'json' | 'md' | 'csv' = 'json'
+  format: 'json' | 'md' | 'csv' = 'json',
+  outputDir = '.'
 ): Promise<void> {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const dir = outputDir.replace(/\/+$/g, '') || '.';
+  await mkdir(dir, { recursive: true });
   
   switch (format) {
     case 'json':
-      await Bun.write(`./metafile-${timestamp}.json`, new TextEncoder().encode(JSON.stringify(metafile, null, 2)));
-      console.log(c.green(`✅ Metafile exported to JSON: metafile-${timestamp}.json`));
+      await Bun.write(`${dir}/metafile-${timestamp}.json`, new TextEncoder().encode(JSON.stringify(metafile, null, 2)));
+      console.log(c.green(`✅ Metafile exported to JSON: ${dir}/metafile-${timestamp}.json`));
       break;
       
     case 'md':
       const mdContent = generateMetafileMarkdown(metafile);
-      await Bun.write(`./metafile-${timestamp}.md`, new TextEncoder().encode(mdContent));
-      console.log(c.green(`✅ Metafile exported to Markdown: metafile-${timestamp}.md`));
+      await Bun.write(`${dir}/metafile-${timestamp}.md`, new TextEncoder().encode(mdContent));
+      console.log(c.green(`✅ Metafile exported to Markdown: ${dir}/metafile-${timestamp}.md`));
       break;
       
     case 'csv':
       const csvContent = generateMetafileCSV(metafile);
-      await Bun.write(`./metafile-${timestamp}.csv`, new TextEncoder().encode(csvContent));
-      console.log(c.green(`✅ Metafile exported to CSV: metafile-${timestamp}.csv`));
+      await Bun.write(`${dir}/metafile-${timestamp}.csv`, new TextEncoder().encode(csvContent));
+      console.log(c.green(`✅ Metafile exported to CSV: ${dir}/metafile-${timestamp}.csv`));
       break;
   }
 }

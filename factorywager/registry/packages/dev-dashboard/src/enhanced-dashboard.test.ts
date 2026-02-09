@@ -34,7 +34,7 @@ describe('Enhanced Dashboard', () => {
       // Check for essential elements
       expect(html).toContain('<html');
       expect(html).toContain('<head>');
-      expect(html).toContain('<body>');
+      expect(html).toContain('<body'); // May have class attribute
       expect(html).toContain('<script'); // Should have JavaScript
       expect(html).toContain('<style'); // Should have CSS
     });

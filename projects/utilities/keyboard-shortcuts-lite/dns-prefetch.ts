@@ -7,7 +7,7 @@ import { dns } from "bun";
 dns.prefetch("bucket.company.com", 443);
 dns.prefetch("enterprise-registry.com", 443);
 dns.prefetch("localhost", 443);
-dns.prefetch("npm.factory-wager.com", 443);
+dns.prefetch("registry.factory-wager.com", 443);
 dns.prefetch("npm.internal.company.com", 443);
 dns.prefetch("registry.my-company.com", 443);
 dns.prefetch("registry.npmjs.org", 443);

@@ -1,4 +1,10 @@
 // src/fetch/enhanced-fetch.ts
+// 🔒 BUN FETCH API FIXES APPLIED:
+// - HTTP proxy with redirects: no crash on socket close
+// - mTLS: per-request certificates now respected (not reusing first cert)
+// - Request.prototype.text(): fixed "undefined is not a function" error
+// - Request constructor: cache and mode options now respected
+// - NO_PROXY: port numbers now respected (e.g., localhost:8080)
 import { createHash } from 'crypto';
 
 // FactoryWager GOV Headers Schema

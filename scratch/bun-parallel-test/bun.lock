@@ -1,0 +1,28 @@
+{
+  "lockfileVersion": 1,
+  "configVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "bun-parallel-test",
+    },
+    "packages/app": {
+      "name": "@test/app",
+      "version": "1.0.0",
+    },
+    "packages/lib": {
+      "name": "@test/lib",
+      "version": "1.0.0",
+    },
+    "packages/utils": {
+      "name": "@test/utils",
+      "version": "1.0.0",
+    },
+  },
+  "packages": {
+    "@test/app": ["@test/app@workspace:packages/app"],
+
+    "@test/lib": ["@test/lib@workspace:packages/lib"],
+
+    "@test/utils": ["@test/utils@workspace:packages/utils"],
+  }
+}

@@ -67,6 +67,7 @@ export interface TelemetryHeaders {
   'x-fw-events'?: string;
   'x-fw-metrics'?: string;
   'x-fw-trace-id'?: string;
+  [key: string]: string | undefined;
 }
 
 export interface ConformanceHeaders {
@@ -74,6 +75,7 @@ export interface ConformanceHeaders {
   'x-fw-security-level': string;
   'x-fw-integrity-hash'?: string;
   'x-fw-audit-log'?: string;
+  [key: string]: string | undefined;
 }
 
 /**
@@ -345,13 +347,13 @@ export class HeaderCompressor {
       try {
         // Try to parse as JSON first
         result['parsedEvents'] = JSON.parse(events);
-      } catch {
+      } catch (err) {
         // Try to decompress
         try {
           const buffer = Buffer.from(events, 'base64');
           const decompressed = decompressData(buffer, 'zstd');
           result['parsedEvents'] = JSON.parse(new TextDecoder().decode(decompressed));
-        } catch {
+        } catch (err) {
           result['x-fw-events'] = events;
         }
       }
@@ -361,7 +363,7 @@ export class HeaderCompressor {
     if (metrics) {
       try {
         result['parsedMetrics'] = JSON.parse(metrics);
-      } catch {
+      } catch (err) {
         result['x-fw-metrics'] = metrics;
       }
     }

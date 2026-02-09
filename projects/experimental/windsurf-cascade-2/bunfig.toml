@@ -2,7 +2,7 @@
 # Optimized for ultra-fast package management and deployment
 
 [install]
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"
 # Use Bun's ultra-fast package manager with caching
 cache = true
 frozenLockfile = false
@@ -19,8 +19,8 @@ enable = true
 dir = ".bun-cache"
 
 [install.scopes]
-"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
-"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://npm.factory-wager.com/" }
+"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
+"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
 # Configure registry for trading packages
 "@trading" = "https://registry.npmjs.org"
 
@@ -109,4 +109,4 @@ wasm = true
 native = true
 
 [publish]
-registry = "https://npm.factory-wager.com"
+registry = "https://registry.factory-wager.com"

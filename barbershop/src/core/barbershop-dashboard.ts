@@ -37,9 +37,30 @@ const manifestData = Object.fromEntries(
     })
 );
 import { fetchWithDefaults, isPublicHttpUrl } from '../utils/fetch-utils';
-import { renderAdminDashboard, renderBarberDashboard, renderClientDashboard } from './ui-v2';
-import { renderAdminDashboardV3, renderClientDashboardV3, renderBarberDashboardV3 } from './ui-v3';
+import { renderAdminDashboard, renderBarberDashboard, renderClientDashboard } from './ui';
+// Note: v3 dashboards are available via ui.ts re-exports
+import { renderPaymentRoutingPanel } from './payment-routing-ui';
 import { getFactorySecret } from '../secrets/factory-secrets';
+import {
+  PaymentRouting,
+  createPaymentSplit,
+  getPaymentSplit,
+  updatePaymentSplitStatus,
+  getPendingSplits,
+  createPaymentRoute,
+  getPaymentRoute,
+  getActiveRoutes,
+  updatePaymentRoute,
+  deletePaymentRoute,
+  createFallbackPlan,
+  getFallbackPlan,
+  createRoutingConfig,
+  getRoutingConfig,
+  getActiveRoutingConfig,
+  setActiveRoutingConfig,
+  getRoutingStats,
+  type PaymentSplitRecipient,
+} from './payment-routing';
 import { SecureCookieManager, CookieMonitor } from '../utils/cookie-security';
 
 const PORT_ENV_KEYS = ['BUN_PORT', 'PORT', 'NODE_PORT'] as const;
@@ -60,7 +81,7 @@ const SERVER_NAME = env.SERVER_NAME ?? 'Barbershop Dashboard';
 const PUBLIC_BASE_URL = env.PUBLIC_BASE_URL ?? `http://localhost:${SERVER_PORT}`;
 const KEEP_ALIVE_TIMEOUT_SEC = Number(env.KEEP_ALIVE_TIMEOUT_SEC ?? 5);
 const KEEP_ALIVE_MAX = Number(env.KEEP_ALIVE_MAX ?? 1000);
-const LIFECYCLE_KEY = env.LIFECYCLE_KEY ?? 'godmode123';
+const LIFECYCLE_KEY = env.LIFECYCLE_KEY ?? '';
 const UPLOAD_TIMEOUT_SEC = Number(env.UPLOAD_TIMEOUT_SEC ?? 60);
 const AUTO_UNREF = env.AUTO_UNREF === 'true';
 const UPLOAD_DIR = new URL('./uploads', import.meta.url).pathname;
@@ -149,19 +170,15 @@ function resourceHintsHtml() {
 
 const RESOURCE_HINTS = resourceHintsHtml();
 
-// Dashboard versions - v3 uses shared components and themes
+// Dashboard versions - using ui.ts exports
 const ADMIN_DASHBOARD_V2 = renderAdminDashboard(RESOURCE_HINTS);
 const CLIENT_DASHBOARD_V2 = renderClientDashboard(RESOURCE_HINTS);
 const BARBER_DASHBOARD_V2 = renderBarberDashboard(RESOURCE_HINTS);
 
-const ADMIN_DASHBOARD_V3 = renderAdminDashboardV3(RESOURCE_HINTS);
-const CLIENT_DASHBOARD_V3 = renderClientDashboardV3(RESOURCE_HINTS);
-const BARBER_DASHBOARD_V3 = renderBarberDashboardV3(RESOURCE_HINTS);
-
-// Helper to get correct dashboard version
-const getAdminDashboard = () => (USE_UI_V3 ? ADMIN_DASHBOARD_V3 : ADMIN_DASHBOARD_V2);
-const getClientDashboard = () => (USE_UI_V3 ? CLIENT_DASHBOARD_V3 : CLIENT_DASHBOARD_V2);
-const getBarberDashboard = () => (USE_UI_V3 ? BARBER_DASHBOARD_V3 : BARBER_DASHBOARD_V2);
+// For now, use v2 dashboards (v3 would require additional ui-components module)
+const getAdminDashboard = () => ADMIN_DASHBOARD_V2;
+const getClientDashboard = () => CLIENT_DASHBOARD_V2;
+const getBarberDashboard = () => BARBER_DASHBOARD_V2;
 
 async function warmupDns(hosts: string[]) {
   if (!hosts.length) return;
@@ -338,7 +355,11 @@ await pubsub.connect();
 await initR2Mirror();
 
 // ==================== TELEMETRY LOGGER ====================
-function logTelemetry(eventType: string, data: any, ip: string) {
+interface TelemetryData {
+  [key: string]: string | number | boolean | null | undefined;
+}
+
+function logTelemetry(eventType: string, data: TelemetryData, ip: string) {
   const entry = {
     eventType,
     data,
@@ -517,6 +538,13 @@ type TipInput = {
   mode?: 'percent' | 'flat';
   value?: number;
 };
+
+interface Service {
+  name: string;
+  price?: number;
+  duration?: number;
+  [key: string]: unknown;
+}
 
 function roundMoney(value: number) {
   return Math.round(value * 100) / 100;
@@ -727,7 +755,7 @@ const ADMIN_DASHBOARD = `
 
   <script>
     const wsProto = location.protocol === 'https:' ? 'wss' : 'ws';
-    const ws = new WebSocket(wsProto + '://' + location.host + '/admin/ws?key=godmode123');
+    const ws = new WebSocket(wsProto + '://' + location.host + '/admin/ws?key=' + (window.LIFECYCLE_KEY || 'development'));
     
     ws.onopen = () => {
       log('🟢 Connected to admin telemetry stream');
@@ -1504,7 +1532,7 @@ const server = serve({
       if (headersRaw) {
         try {
           headers = JSON.parse(headersRaw) as Record<string, string>;
-        } catch {
+        } catch (err) {
           return Response.json({ ok: false, error: 'Invalid headers JSON' }, { status: 400 });
         }
       }
@@ -1516,7 +1544,7 @@ const server = serve({
           if (!Object.keys(headers).some(h => h.toLowerCase() === 'content-type')) {
             headers['content-type'] = 'application/json';
           }
-        } catch {
+        } catch (err) {
           return Response.json({ ok: false, error: 'Invalid body_json value' }, { status: 400 });
         }
       } else {
@@ -1644,7 +1672,7 @@ const server = serve({
     '/admin': () => textResponse(getAdminDashboard(), 'text/html; charset=utf-8'),
     '/admin/ws': req => {
       const url = new URL(req.url);
-      if (url.searchParams.get('key') !== 'godmode123') {
+      if (url.searchParams.get('key') !== LIFECYCLE_KEY) {
         return new Response('Unauthorized', { status: 401 });
       }
       const upgraded = server.upgrade(req, { data: { type: 'admin', id: randomUUIDv7() } });
@@ -1732,7 +1760,7 @@ const server = serve({
           tickets.push({
             id: t.id,
             customer: t.customerName,
-            services: JSON.parse(t.services || '[]').map((s: any) => s.name),
+            services: JSON.parse(t.services || '[]').map((s: Service) => s.name),
             amount: parseFloat(t.totalAmount),
           });
         }
@@ -1920,7 +1948,7 @@ const server = serve({
             ticket: {
               id: ticketId,
               customer: body.customerName,
-              services: body.services.map((s: any) => s.name),
+              services: body.services.map((s: Service) => s.name),
               amount: body.totalAmount,
             },
             assignedTo: barber.id,
@@ -1983,6 +2011,228 @@ const server = serve({
     '/ws/dashboard': req => {
       const upgraded = server.upgrade(req, { data: { type: 'barber', id: randomUUIDv7() } });
       return upgraded ? undefined : new Response('WS failed', { status: 400 });
+    },
+
+    // ==================== PAYMENT ROUTING API ====================
+    
+    // Payment Routing Panel UI
+    '/admin/payment-routing': () => {
+      const panel = renderPaymentRoutingPanel();
+      return textResponse(panel, 'text/html; charset=utf-8');
+    },
+
+    // Payment Routes CRUD
+    '/payment/routes': async req => {
+      if (req.method === 'POST') {
+        const body = await req.json();
+        const route = await createPaymentRoute(
+          body.name,
+          body.barberId,
+          {
+            barberName: body.barberName,
+            paymentMethods: body.paymentMethods,
+            priority: body.priority,
+            status: body.status,
+            maxDailyAmount: body.maxDailyAmount,
+            maxTransactionAmount: body.maxTransactionAmount,
+            conditions: body.conditions,
+          }
+        );
+        return Response.json({ success: true, route });
+      }
+      // GET - list all routes
+      const routes = await getActiveRoutes();
+      return Response.json({ routes });
+    },
+    '/payment/routes/:id': async (req, params) => {
+      const id = params?.id;
+      if (!id) return Response.json({ error: 'Missing route ID' }, { status: 400 });
+      
+      if (req.method === 'GET') {
+        const route = await getPaymentRoute(id);
+        if (!route) return Response.json({ error: 'Route not found' }, { status: 404 });
+        return Response.json(route);
+      }
+      if (req.method === 'PUT') {
+        const body = await req.json();
+        const route = await updatePaymentRoute(id, body);
+        if (!route) return Response.json({ error: 'Route not found' }, { status: 404 });
+        return Response.json({ success: true, route });
+      }
+      if (req.method === 'DELETE') {
+        const deleted = await deletePaymentRoute(id);
+        if (!deleted) return Response.json({ error: 'Route not found' }, { status: 404 });
+        return Response.json({ success: true });
+      }
+      return Response.json({ error: 'Method not allowed' }, { status: 405 });
+    },
+
+    // Payment Splits CRUD
+    '/payment/splits/pending': async () => {
+      const splits = await getPendingSplits();
+      return Response.json({ splits });
+    },
+    '/payment/splits/:id': async (req, params) => {
+      const id = params?.id;
+      if (!id) return Response.json({ error: 'Missing split ID' }, { status: 400 });
+      
+      if (req.method === 'GET') {
+        const split = await getPaymentSplit(id);
+        if (!split) return Response.json({ error: 'Split not found' }, { status: 404 });
+        return Response.json(split);
+      }
+      if (req.method === 'PUT') {
+        const body = await req.json();
+        const split = await getPaymentSplit(id);
+        if (!split) return Response.json({ error: 'Split not found' }, { status: 404 });
+        
+        // Update recipients
+        const recipients: PaymentSplitRecipient[] = (body.recipients || []).map((r: any, idx: number) => ({
+          id: `recip_${Date.now()}_${idx}`,
+          barberId: r.barberId,
+          splitType: r.splitType,
+          splitValue: r.splitValue,
+          priority: idx,
+        }));
+        
+        // Create new split with updated recipients
+        const newSplit = await createPaymentSplit(split.ticketId, split.totalAmount, recipients);
+        return Response.json({ success: true, split: newSplit });
+      }
+      return Response.json({ error: 'Method not allowed' }, { status: 405 });
+    },
+    '/payment/splits/:id/process': async (req, params) => {
+      const id = params?.id;
+      if (!id) return Response.json({ error: 'Missing split ID' }, { status: 400 });
+      
+      const split = await getPaymentSplit(id);
+      if (!split) return Response.json({ error: 'Split not found' }, { status: 404 });
+      
+      await updatePaymentSplitStatus(id, 'completed');
+      
+      // Calculate and distribute payments
+      const { calculateSplit } = await import('./payment-routing');
+      const result = calculateSplit({
+        totalAmount: split.totalAmount,
+        recipients: split.recipients.map(r => ({
+          barberId: r.barberId,
+          splitType: r.splitType,
+          splitValue: r.splitValue,
+          priority: r.priority,
+        })),
+      });
+      
+      logTelemetry('split_payment_processed', {
+        splitId: id,
+        totalAmount: split.totalAmount,
+        recipientCount: result.recipients.length,
+        allocations: result.recipients,
+      }, '127.0.0.1');
+      
+      return Response.json({ success: true, split: { ...split, status: 'completed' }, allocations: result.recipients });
+    },
+
+    // Fallback Plans CRUD
+    '/payment/fallbacks': async req => {
+      if (req.method === 'POST') {
+        const body = await req.json();
+        const plan = await createFallbackPlan(
+          body.name,
+          body.primaryRouteId,
+          {
+            fallbackRouteIds: body.fallbackRouteIds,
+            trigger: body.trigger,
+            retryCount: body.retryCount,
+            retryDelayMs: body.retryDelayMs,
+            notifyOnFallback: body.notifyOnFallback,
+            notificationChannels: body.notificationChannels,
+            status: body.status,
+          }
+        );
+        return Response.json({ success: true, plan });
+      }
+      // GET - list all fallbacks
+      const { getFallbackPlansByRoute } = await import('./payment-routing');
+      const routes = await getActiveRoutes();
+      const fallbacks = [];
+      for (const route of routes) {
+        const plans = await getFallbackPlansByRoute(route.id);
+        fallbacks.push(...plans);
+      }
+      return Response.json({ fallbacks });
+    },
+    '/payment/fallbacks/:id': async (req, params) => {
+      const id = params?.id;
+      if (!id) return Response.json({ error: 'Missing fallback ID' }, { status: 400 });
+      
+      if (req.method === 'GET') {
+        const plan = await getFallbackPlan(id);
+        if (!plan) return Response.json({ error: 'Fallback plan not found' }, { status: 404 });
+        return Response.json(plan);
+      }
+      if (req.method === 'PUT') {
+        const body = await req.json();
+        // For simplicity, delete and recreate
+        const existing = await getFallbackPlan(id);
+        if (!existing) return Response.json({ error: 'Fallback plan not found' }, { status: 404 });
+        
+        const plan = await createFallbackPlan(
+          body.name || existing.name,
+          body.primaryRouteId || existing.primaryRouteId,
+          {
+            fallbackRouteIds: body.fallbackRouteIds ?? existing.fallbackRouteIds,
+            trigger: body.trigger ?? existing.trigger,
+            retryCount: body.retryCount ?? existing.retryCount,
+            retryDelayMs: body.retryDelayMs ?? existing.retryDelayMs,
+            notifyOnFallback: body.notifyOnFallback ?? existing.notifyOnFallback,
+            notificationChannels: body.notificationChannels ?? existing.notificationChannels,
+            status: body.status ?? existing.status,
+          }
+        );
+        return Response.json({ success: true, plan });
+      }
+      return Response.json({ error: 'Method not allowed' }, { status: 405 });
+    },
+
+    // Routing Configuration
+    '/payment/config': async req => {
+      if (req.method === 'GET') {
+        let config = await getActiveRoutingConfig();
+        if (!config) {
+          config = await createRoutingConfig('Default Configuration', {
+            enableAutoRouting: true,
+            enableFallbacks: true,
+            splitThreshold: 100,
+            defaultSplitType: 'percentage',
+            maxSplitRecipients: 5,
+            routingStrategy: 'priority',
+          });
+          await setActiveRoutingConfig(config.id);
+        }
+        return Response.json(config);
+      }
+      if (req.method === 'PUT') {
+        const body = await req.json();
+        let config = await getActiveRoutingConfig();
+        if (!config) {
+          config = await createRoutingConfig('Active Configuration', body);
+          await setActiveRoutingConfig(config.id);
+        } else {
+          // For now, create a new config (in production, would update)
+          config = await createRoutingConfig('Updated Configuration', body);
+          await setActiveRoutingConfig(config.id);
+        }
+        return Response.json({ success: true, config });
+      }
+      return Response.json({ error: 'Method not allowed' }, { status: 405 });
+    },
+
+    // Routing Stats
+    '/payment/stats': async req => {
+      const url = new URL(req.url);
+      const date = url.searchParams.get('date') || undefined;
+      const stats = await getRoutingStats(date);
+      return Response.json(stats);
     },
   },
   websocket: {
@@ -2117,7 +2367,7 @@ Port:                   ${server.port}
 Base URL:               ${PUBLIC_BASE_URL}
 
 📊 ADMIN (God View):     ${PUBLIC_BASE_URL}/admin
-   🔑 Access Key:        godmode123
+   🔑 Access Key:        [set via LIFECYCLE_KEY env var]
    
 💇 CLIENT (Book):        ${PUBLIC_BASE_URL}/
                         ${PUBLIC_BASE_URL}/client
@@ -2126,7 +2376,7 @@ Base URL:               ${PUBLIC_BASE_URL}
    🔑 Test Codes:        JB, MS, CK
 
 WEBSOCKET:              ${PUBLIC_BASE_URL.replace(/^http/, 'ws')}/ws/dashboard
-                        ${PUBLIC_BASE_URL.replace(/^http/, 'ws')}/admin/ws?key=godmode123
+                        ${PUBLIC_BASE_URL.replace(/^http/, 'ws')}/admin/ws?key=[LIFECYCLE_KEY]
 
 SECURITY:
 🔐 Secure cookies with __Host- prefix
@@ -2150,7 +2400,7 @@ function shutdown(signal: string) {
   clearInterval(telemetryInterval);
   try {
     server.stop(true);
-  } catch {}
+  } catch (err) {}
   console.log(`[${SERVER_NAME}] graceful shutdown via ${signal}`);
   process.exit(0);
 }

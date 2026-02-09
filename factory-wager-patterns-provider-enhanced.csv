@@ -1,5 +1,0 @@
-ID,Name,Category,Primary Provider,Related Providers,Integration Providers,Tags,Complexity,Ops/Sec
-cookie-variant-a,Cookie A/B Testing - Variant A,cookies,bun_official,mdn_web_docs;github,bun_official;cloudflare;vercel,ab-testing;variant;cookie;ui;admin;http;header,simple,66576
-r2-upload-profile,R2 Profile Upload,r2,cloudflare,bun_official;github,cloudflare;bun_official;github,r2;upload;storage;cloudflare;json;object-storage,intermediate,634840
-s3-presign-download,S3 Presigned Download URL,s3-presign,bun_official,github;cloudflare,bun_official;cloudflare;github,s3;presign;download;attachment;content-disposition;v1.3.7,advanced,45000
-performance-benchmark,Performance Benchmark Suite,performance,bun_official,performance_guides;mdn_web_docs,bun_official;performance_guides;mdn_web_docs,benchmark;performance;timing;crypto;optimization;measurement,intermediate,1432989

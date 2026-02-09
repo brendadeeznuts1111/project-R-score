@@ -12,7 +12,7 @@ import {
   AutoHealer,
 } from './cli-constants-validation';
 
-import { DocumentationValidator } from '../docs/documentation-validator';
+import { DocumentationValidator } from '../../packages/docs-tools/src/documentation-validator';
 
 // Import documentation components
 import { DOCS, DOC_PATHS, URL_PATTERNS, DocsReference } from '../docs/reference';

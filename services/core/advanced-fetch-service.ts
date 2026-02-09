@@ -83,11 +83,15 @@ export class AdvancedFetchService {
     return bytes;
   }
   
-  // Demonstrate POST with streaming body
+  /**
+   * POST with streaming body
+   * Bun Fix Applied: ReadableStream is properly released after request completion (memory leak fix)
+   * @see BUN-SECURITY-FIXES-INTEGRATION.md
+   */
   async postWithStream(url: string, data: string[]): Promise<Response> {
     console.log(`📤 POSTing streaming data to ${url}...`);
     
-    // Create a readable stream
+    // Create a readable stream - Bun now properly releases this after fetch completes
     const stream = new ReadableStream({
       start(controller) {
         data.forEach((chunk, index) => {

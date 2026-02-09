@@ -207,7 +207,7 @@ R2_REGISTRY_BUCKET=npm-registry
 {
   // Bun v1.3.7: Comments in config!
   name: "FactoryWager Registry",
-  url: "https://npm.factory-wager.com",
+  url: "https://registry.factory-wager.com",
   
   storage: {
     type: "r2",
@@ -219,7 +219,7 @@ R2_REGISTRY_BUCKET=npm-registry
   
   cdn: {
     enabled: true,
-    url: "https://npm.factory-wager.com",
+    url: "https://registry.factory-wager.com",
     // Bun v1.3.7: Signed URLs with custom disposition
     signedUrls: true,
     expirySeconds: 3600,

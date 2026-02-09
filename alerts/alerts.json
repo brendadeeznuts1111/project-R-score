@@ -17,13 +17,13 @@
     "acknowledged": false
   },
   {
-    "id": "alert-1770518756862-dashboard.factory-wager.com",
+    "id": "alert-1770518756862-docs.factory-wager.com",
     "type": "service_failure",
     "severity": "warning",
-    "service": "dashboard.factory-wager.com",
-    "message": "dashboard.factory-wager.com is unhealthy",
+    "service": "docs.factory-wager.com",
+    "message": "docs.factory-wager.com is unhealthy",
     "details": {
-      "domain": "dashboard.factory-wager.com",
+      "domain": "docs.factory-wager.com",
       "status": "unhealthy",
       "statusCode": 404,
       "responseTime": 121,
@@ -51,13 +51,13 @@
     "acknowledged": false
   },
   {
-    "id": "alert-1770518756862-npm.factory-wager.com",
+    "id": "alert-1770518756862-registry.factory-wager.com",
     "type": "service_failure",
     "severity": "warning",
-    "service": "npm.factory-wager.com",
-    "message": "npm.factory-wager.com is unhealthy",
+    "service": "registry.factory-wager.com",
+    "message": "registry.factory-wager.com is unhealthy",
     "details": {
-      "domain": "npm.factory-wager.com",
+      "domain": "registry.factory-wager.com",
       "status": "unhealthy",
       "statusCode": 404,
       "responseTime": 177,
@@ -94,7 +94,7 @@
     "message": "Dashboard is unhealthy",
     "details": {
       "name": "Dashboard",
-      "url": "https://dashboard.factory-wager.com",
+      "url": "https://docs.factory-wager.com",
       "type": "web",
       "status": "unhealthy",
       "statusCode": 404,
@@ -132,7 +132,7 @@
     "message": "NPM Registry is unhealthy",
     "details": {
       "name": "NPM Registry",
-      "url": "https://npm.factory-wager.com",
+      "url": "https://registry.factory-wager.com",
       "type": "web",
       "status": "unhealthy",
       "statusCode": 404,

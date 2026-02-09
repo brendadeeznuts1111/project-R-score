@@ -7,6 +7,7 @@
 process.env.NODE_ENV = 'test';
 process.env.CSRF_SECRET = 'test-csrf-secret-for-testing-only';
 process.env.VARIANT_SECRET = 'test-variant-secret-for-testing-only';
+process.env.LIFECYCLE_KEY = process.env.LIFECYCLE_KEY || 'test-lifecycle-key';
 
 // Mock console methods for cleaner test output
 const originalConsoleLog = console.log;

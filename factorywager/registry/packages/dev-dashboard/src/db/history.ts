@@ -4,7 +4,7 @@
 
 import { Database } from 'bun:sqlite';
 import { join } from 'path';
-import { logger } from '../../user-profile/src/index.ts';
+import { logger } from '../../../user-profile/src/index.ts';
 import type {
   BenchmarkResult,
   TestResult,
@@ -387,4 +387,141 @@ export function pruneHistory(): void {
   } catch (error) {
     logger.warn(`Failed to prune history: ${error}`);
   }
+}
+
+export interface TrendDataPoint {
+  bucket: number;
+  name: string;
+  avg: number;
+  min: number;
+  max: number;
+  p50: number;
+  p95: number;
+  count: number;
+  passRate: number;
+}
+
+export interface TrendResult {
+  trends: TrendDataPoint[];
+  baseline: Record<string, { avg: number; p95: number }>;
+  regressions: Array<{ name: string; current: number; baseline: number; changePercent: number }>;
+}
+
+/**
+ * Get benchmark trends aggregated by time bucket
+ */
+export function getBenchmarkTrends(hours: number = 24, bucketMinutes: number = 60): TrendResult {
+  const db = getHistoryDatabase();
+  const since = Date.now() - hours * 60 * 60 * 1000;
+  const bucketMs = bucketMinutes * 60 * 1000;
+
+  // Get raw data points
+  const rows = db.prepare(`
+    SELECT name, time, status, timestamp
+    FROM benchmark_history
+    WHERE timestamp > ?
+    ORDER BY name, timestamp ASC
+  `).all(since) as Array<{ name: string; time: number; status: string; timestamp: number }>;
+
+  // Group by name and time bucket
+  const buckets = new Map<string, Map<number, { times: number[]; passes: number; total: number }>>();
+
+  for (const row of rows) {
+    const bucket = Math.floor(row.timestamp / bucketMs) * bucketMs;
+    if (!buckets.has(row.name)) {
+      buckets.set(row.name, new Map());
+    }
+    const nameBuckets = buckets.get(row.name)!;
+    if (!nameBuckets.has(bucket)) {
+      nameBuckets.set(bucket, { times: [], passes: 0, total: 0 });
+    }
+    const b = nameBuckets.get(bucket)!;
+    b.times.push(row.time);
+    b.total++;
+    if (row.status === 'pass' || row.status === 'warning') b.passes++;
+  }
+
+  // Calculate percentiles
+  const percentile = (arr: number[], p: number): number => {
+    if (arr.length === 0) return 0;
+    const sorted = [...arr].sort((a, b) => a - b);
+    const idx = Math.ceil((p / 100) * sorted.length) - 1;
+    return sorted[Math.max(0, idx)];
+  };
+
+  // Build trend data points
+  const trends: TrendDataPoint[] = [];
+  for (const [name, nameBuckets] of buckets) {
+    for (const [bucket, data] of nameBuckets) {
+      const times = data.times;
+      trends.push({
+        bucket,
+        name,
+        avg: times.reduce((a, b) => a + b, 0) / times.length,
+        min: Math.min(...times),
+        max: Math.max(...times),
+        p50: percentile(times, 50),
+        p95: percentile(times, 95),
+        count: data.total,
+        passRate: data.total > 0 ? (data.passes / data.total) * 100 : 0,
+      });
+    }
+  }
+
+  // Sort by bucket time
+  trends.sort((a, b) => a.bucket - b.bucket);
+
+  // Calculate 7-day baseline for regression detection
+  const baselineSince = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const baselineRows = db.prepare(`
+    SELECT name, AVG(time) as avg, time
+    FROM benchmark_history
+    WHERE timestamp > ? AND timestamp < ?
+    GROUP BY name
+  `).all(baselineSince, since) as Array<{ name: string; avg: number; time: number }>;
+
+  // Get all times per name for p95 calculation
+  const baselineByName = new Map<string, number[]>();
+  const allBaselineRows = db.prepare(`
+    SELECT name, time
+    FROM benchmark_history
+    WHERE timestamp > ? AND timestamp < ?
+  `).all(baselineSince, since) as Array<{ name: string; time: number }>;
+
+  for (const row of allBaselineRows) {
+    if (!baselineByName.has(row.name)) baselineByName.set(row.name, []);
+    baselineByName.get(row.name)!.push(row.time);
+  }
+
+  const baseline: Record<string, { avg: number; p95: number }> = {};
+  for (const row of baselineRows) {
+    const times = baselineByName.get(row.name) || [];
+    baseline[row.name] = {
+      avg: row.avg,
+      p95: percentile(times, 95),
+    };
+  }
+
+  // Detect regressions (>10% slower than baseline)
+  const regressions: TrendResult['regressions'] = [];
+  const latestByName = new Map<string, number>();
+
+  // Get most recent value per benchmark
+  for (let i = trends.length - 1; i >= 0; i--) {
+    if (!latestByName.has(trends[i].name)) {
+      latestByName.set(trends[i].name, trends[i].avg);
+    }
+  }
+
+  for (const [name, current] of latestByName) {
+    const base = baseline[name];
+    if (base && base.avg > 0) {
+      const changePercent = ((current - base.avg) / base.avg) * 100;
+      if (changePercent > 10) {
+        regressions.push({ name, current, baseline: base.avg, changePercent });
+      }
+    }
+  }
+
+  return { trends, baseline, regressions };
 }
