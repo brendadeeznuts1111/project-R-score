@@ -9,7 +9,7 @@
  * @see {@link https://bun.sh/docs/api/utils} String utilities
  */
 
-import { config, getEnvConfig, getCachePath } from '../utils/doc-urls-config.ts';
+import { config, getEnvConfig, getCachePath } from '../../utils/doc-urls-config.ts';
 
 /**
  * 🚀 Prefetch Optimizations

@@ -1,6 +1,7 @@
 // lib/mcp/r2-integration.ts — R2 integration with race condition fixes
 
-import { r2MCPIntegration as baseR2Integration } from './r2-integration-base';
+// TODO: r2-integration-base module does not exist — re-enable when created
+// import { r2MCPIntegration as baseR2Integration } from './r2-integration-base';
 import { styled, FW_COLORS } from '../theme/colors';
 import {
   handleError,

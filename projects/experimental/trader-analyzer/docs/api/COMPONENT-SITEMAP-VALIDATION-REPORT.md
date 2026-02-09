@@ -153,4 +153,3 @@ bun run verify:sitemap
 - **Remaining**: -5 points (mechanical HTML updates + optional enhancements)
 
 **The sitemap is production-ready** with all critical fixes applied. Remaining tasks are mechanical HTML updates and optional enhancements.
-#

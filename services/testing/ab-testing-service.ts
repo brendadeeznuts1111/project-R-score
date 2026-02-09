@@ -7,7 +7,7 @@
  */
 
 import { serve } from "bun";
-import { validatePort } from '../lib/utils/env-validator';
+import { validatePort } from '../../lib/utils/env-validator';
 
 /**
  * 🚀 Prefetch Optimizations

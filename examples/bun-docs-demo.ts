@@ -6,7 +6,7 @@
 
 import { EnhancedDocsFetcher } from '../lib/docs/index-fetcher-enhanced'
 import { ChromeAppManager } from '../lib/cli/chrome-integration'
-import { ScannerWithDocs } from '../scanner-integration'
+import { ScannerWithDocs } from '../tools/scanner-integration'
 
 async function demoDocsSystem() {
   console.log('🚀 Bun Documentation System Demo')

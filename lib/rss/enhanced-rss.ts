@@ -1,6 +1,6 @@
 // lib/rss/enhanced-rss.ts — Enhanced metrics feed generator
 
-import { CONTENT_TYPES } from '../config/content-types';
+import { CONTENT_TYPES } from '../../config/content-types';
 
 export interface MetricsData {
   rscore: {

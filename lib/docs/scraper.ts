@@ -1,6 +1,6 @@
 // lib/docs/scraper.ts — Documentation link extraction
 
-import { BUN_DOCS } from '../config/urls';
+import { BUN_DOCS } from './urls';
 
 export interface DocPointer {
   url: string;

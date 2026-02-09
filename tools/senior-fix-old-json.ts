@@ -1,7 +1,9 @@
 #!/usr/bin/env bun
 // tools/senior-fix-old-json.ts — Enhance existing JSON with markdown feature counts
 
-import { scanFeatures } from '../lib/docs/markdown-scanner';
+// TODO: markdown-scanner module not found in project
+// import { scanFeatures } from '../lib/docs/markdown-scanner';
+const scanFeatures = (md: string) => ({ features: [] as string[] });
 
 // Read old JSON
 const oldJson = JSON.parse(await Bun.file('junior-1770398420427.json').text());

@@ -11,7 +11,7 @@
  */
 
 import { BunMCPClient, SearchResult, Diagnosis } from '../lib/mcp/bun-mcp-client.ts';
-import { SecretManager } from '../lib/security/secrets.ts';
+import { SecretManager } from '../lib/security/secrets-v5.ts';
 import { styled, FW_COLORS, log, colorBar } from '../lib/theme/colors.ts';
 import { r2MCPIntegration, DiagnosisEntry, AuditEntry } from '../lib/mcp/r2-integration.ts';
 

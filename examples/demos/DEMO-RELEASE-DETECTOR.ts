@@ -1,7 +1,7 @@
 // Demo: Bun Complete Release Detector in Action
 // Demonstrates monitoring all sources and processing a new release
 
-import { BunReleaseDetector } from './BUN-COMPLETE-RELEASE-DETECTOR';
+import { BunReleaseDetector } from '../../docs/bun-complete/BUN-COMPLETE-RELEASE-DETECTOR';
 
 async function demonstrateReleaseDetector() {
   console.log('🚀 Bun Complete Release Detector Demo');

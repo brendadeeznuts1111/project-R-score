@@ -1378,7 +1378,7 @@ async function example21_Http2Multiplexing() {
   writeColored(`                     fetch('https://bun.sh/blog'),\n`, 'white');
   writeColored(`                     fetch('https://bun.sh/docs/api/utils')]);\n`, 'white');
   writeColored(`   console.timeEnd('serial');\n`, 'white');
-  writeColored(`   const {BunHTTP2Multiplexer} = await import('./lib/http2-multiplexer.ts');\n`, 'white');
+  writeColored(`   const {BunHTTP2Multiplexer} = await import('./lib/http/http2-multiplexer.ts');\n`, 'white');
   writeColored(`   const m = new BunHTTP2Multiplexer();\n`, 'white');
   writeColored(`   console.time('h2');\n`, 'white');
   writeColored(`   await m.connect('bun.sh', 443);\n`, 'white');
@@ -1405,7 +1405,7 @@ async function example21_Http2Multiplexing() {
   // Concurrent RSC requests pattern
   writeColored(`\n📝 Concurrent RSC Requests Pattern:\n`, 'magenta');
   writeColored(`   Multiple concurrent RSC prefetch requests on single HTTP/2 connection:\n\n`, 'yellow');
-  writeColored(`   bun -e "const{ BunHTTP2Multiplexer }=await import('./lib/http2-multiplexer.ts');\n`, 'white');
+  writeColored(`   bun -e "const{ BunHTTP2Multiplexer }=await import('./lib/http/http2-multiplexer.ts');\n`, 'white');
   writeColored(`   const m = new BunHTTP2Multiplexer();\n`, 'white');
   writeColored(`   console.time('h2');\n`, 'white');
   writeColored(`   await m.connect('bun.sh', 443);\n`, 'white');

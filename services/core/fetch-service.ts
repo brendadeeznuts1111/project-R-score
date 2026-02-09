@@ -1,5 +1,5 @@
 // services/fetch-service.ts
-import { BUN_DOCS, TYPED_ARRAY_URLS, RSS_URLS } from '../config/urls.ts';
+import { BUN_DOCS, TYPED_ARRAY_URLS, RSS_URLS } from '../../config/urls.ts';
 
 /**
  * 🚀 Prefetch Optimizations

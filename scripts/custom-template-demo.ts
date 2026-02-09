@@ -10,7 +10,7 @@
  * 4. Export template configurations
  */
 
-import { MCPWikiGenerator, WikiTemplate } from '../lib/mcp/wiki-generator-mcp.js';
+import { MCPWikiGenerator, WikiTemplate } from '../lib/mcp/wiki-generator-mcp';
 
 async function demonstrateCustomTemplates() {
   console.log('🎯 Custom Wiki Template System Demo');

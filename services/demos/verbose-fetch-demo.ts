@@ -1,5 +1,5 @@
 // services/verbose-fetch-demo.ts
-import { CONTENT_TYPES, ContentTypeHandler } from '../config/content-types.ts';
+import { CONTENT_TYPES, ContentTypeHandler } from '../../config/content-types.ts';
 
 /**
  * 🚀 Prefetch Optimizations
@@ -11,7 +11,7 @@ import { CONTENT_TYPES, ContentTypeHandler } from '../config/content-types.ts';
  * 
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { BUN_DOCS, TYPED_ARRAY_URLS } from '../config/urls.ts';
+import { BUN_DOCS, TYPED_ARRAY_URLS } from '../../config/urls.ts';
 
 // Use existing API URL pattern
 const API_BASE_URL = process.env.API_BASE_URL || 'http://example.com';

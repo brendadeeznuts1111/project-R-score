@@ -9,7 +9,7 @@
 import { readFileSync, readdirSync, statSync } from "fs";
 import { join } from "path";
 import { URLNormalizer } from "../lib/docs/constants/utils.ts";
-import { urlService } from "../lib/services/url-service.ts";
+import { urlService } from "../lib/core/url-service.ts";
 
 // ============================================================================
 // INTERFACES

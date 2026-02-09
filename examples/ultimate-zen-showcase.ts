@@ -7,7 +7,7 @@
 
 import { ZenStreamSearcher } from '../lib/docs/stream-search';
 import { FetchAndRipStreamer, DOCUMENTATION_URLS } from '../lib/docs/fetch-and-rip';
-import { TemplateDocumentationScanner } from '../lib/docs/template-scanner';
+import { TemplateDocumentationScanner } from '../packages/docs-tools/src/template-scanner';
 import { VirtualFileManager } from '../lib/docs/virtual-file-manager';
 import { ZenDocumentationSystem } from '../lib/docs/zen-io-system';
 

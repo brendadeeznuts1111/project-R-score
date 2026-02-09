@@ -294,7 +294,7 @@ async function demoRealWorldIntegration() {
   console.log('\n3️⃣  Programmatic Usage:');
   console.log(`
    // TypeScript/JavaScript
-   import { buildAndAnalyze } from './src/build/enhanced-builder';
+   import { buildAndAnalyze } from '../src/build/enhanced-builder';
    
    const result = await buildAndAnalyze(
      ['src/index.ts'],

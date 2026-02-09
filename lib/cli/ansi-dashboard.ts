@@ -1,6 +1,6 @@
 // lib/cli/ansi-dashboard.ts — ANSI dashboard for metrics visualization
 
-import { CONTENT_TYPES } from '../config/content-types';
+import { CONTENT_TYPES } from '../../config/content-types';
 
 // Mock metrics feed (would integrate with your tier1380-metrics.ts)
 interface MetricsData {

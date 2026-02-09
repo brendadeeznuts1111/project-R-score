@@ -110,7 +110,7 @@ export class PackageManager {
   ): Promise<{ api: string; url: string; category: string } | null> {
     try {
       // Try to import the docs fetcher
-      const { EnhancedDocsFetcher } = await import('../docs/index-fetcher-enhanced.ts');
+      const { EnhancedDocsFetcher } = await import('../../../lib/docs/index-fetcher-enhanced.ts');
       const fetcher = new EnhancedDocsFetcher();
       const results = await fetcher.search(api);
 

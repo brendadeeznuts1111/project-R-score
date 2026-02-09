@@ -32,7 +32,8 @@ import { EnhancedDocsFetcher, BunApiIndex } from '../lib/docs/index-fetcher-enha
 import { ChromeAppManager } from '../lib/cli/chrome-integration';
 
 // Import RSS integration service
-import { RSSIntegrationService, RSSFeedItem } from '../services/rss-integration';
+// TODO: rss-integration module does not exist — re-enable once created or relocated
+// import { RSSIntegrationService, RSSFeedItem } from '../services/rss-integration';
 
 // Import advanced cache management
 import { CacheFactory, CacheMiddleware } from '../lib/performance/cache-management.ts';

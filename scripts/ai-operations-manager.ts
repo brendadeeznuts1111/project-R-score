@@ -7,7 +7,7 @@
  * for optimizing platform operations.
  */
 
-import { logger } from "../lib/monitoring/structured-logger";
+import { logger } from "../lib/core/structured-logger";
 import { globalCaches } from "../lib/performance/cache-manager";
 
 export interface AICommand {

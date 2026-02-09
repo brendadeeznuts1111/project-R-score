@@ -1402,7 +1402,7 @@ async function handleLargeFileDemo(request: Request): Promise<Response> {
 }
 
 async function runContentTypeDemo(): Promise<Response> {
-  const { ContentTypeDemo } = await import('../services/content-type-demo.ts');
+  const { ContentTypeDemo } = await import('../services/demos/content-type-demo.ts');
   const demo = new ContentTypeDemo();
   
   // Run demo in background

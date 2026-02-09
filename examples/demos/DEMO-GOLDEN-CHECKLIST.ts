@@ -7,14 +7,14 @@ import {
   GoldenPattern,
   GoldenCategory,
   generateGoldenChecklistReport
-} from './BUN-GOLDEN-CHECKLIST-TYPES';
+} from '../../docs/bun/BUN-GOLDEN-CHECKLIST-TYPES';
 
 import {
   GoldenChecklistGenerator,
   ThemeChecklist,
   ReleaseChecklist,
   ComprehensiveReport
-} from './BUN-GOLDEN-CHECKLIST-GENERATOR';
+} from '../../docs/bun/BUN-GOLDEN-CHECKLIST-GENERATOR';
 
 async function demonstrateGoldenChecklist() {
   console.log('🏆 Bun Golden Checklist System Demo');

@@ -2,7 +2,10 @@
 // tools/server.ts — Web server with cookie/session handling and fetch proxy
 
 import { validateHost } from '../lib/utils/env-validator';
-import { fetchProxy, type ProxyRequest } from './services/fetch-proxy';
+// TODO: fetch-proxy module not found in tools/services/
+// import { fetchProxy, type ProxyRequest } from './services/fetch-proxy';
+type ProxyRequest = { url: string; method?: string; headers?: Record<string, string> };
+const fetchProxy = async (req: ProxyRequest) => fetch(req.url, { method: req.method, headers: req.headers });
 
 /**
  * 🚀 Prefetch Optimizations

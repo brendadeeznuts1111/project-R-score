@@ -1,12 +1,13 @@
 // service-color-secrets.ts — Colored Status Matrix with Full Bun Utils Integration
 import { $, nanoseconds, inspect, deepEquals, escapeHTML, openInEditor, color, stringWidth, stripANSI, Glob, TOML, resolveSync } from "bun";
-import {
-  BUN_PROFILES_SECRET_NAMES,
-  BUN_PROFILES_ENV_MAP,
-  BUN_PROFILES_DEFAULT_NAMESPACE,
-  deriveKeychainService,
-  profileKeychainGet
-} from "./profiles";
+// TODO: ./profiles module not found in scripts/ — locate or restore profiles module
+// import {
+//   BUN_PROFILES_SECRET_NAMES,
+//   BUN_PROFILES_ENV_MAP,
+//   BUN_PROFILES_DEFAULT_NAMESPACE,
+//   deriveKeychainService,
+//   profileKeychainGet
+// } from "./profiles";
 import { ConcurrencyManagers } from "../lib/core/safe-concurrency";
 import { AtomicFileOperations } from "../lib/core/atomic-file-operations";
 
