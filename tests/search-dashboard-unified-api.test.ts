@@ -51,4 +51,30 @@ describe('search benchmark dashboard unified status api', () => {
     expect(payload.overall && typeof payload.overall.status === 'string').toBe(true);
     expect(Array.isArray(payload.contractChecks)).toBe(true);
   });
+
+  test('returns dashboard debug payload and keeps legacy sessions route', async () => {
+    const port = 35000 + Math.floor(Math.random() * 1000);
+    const child = Bun.spawn(['bun', 'run', 'scripts/search-benchmark-dashboard.ts', '--port', String(port)], {
+      cwd: process.cwd(),
+      stdout: 'ignore',
+      stderr: 'ignore',
+    });
+    children.push(child);
+
+    await waitFor(`http://127.0.0.1:${port}/healthz`);
+
+    const debugRes = await fetch(`http://127.0.0.1:${port}/api/dashboard/debug`, { cache: 'no-store' });
+    expect(debugRes.ok).toBe(true);
+    expect((debugRes.headers.get('x-search-status-source') || '').toLowerCase()).toBe('mixed');
+    const debugPayload = await debugRes.json() as any;
+    expect(debugPayload.ok).toBe(true);
+    expect(debugPayload.debug?.route).toBe('/api/dashboard/debug');
+    expect(typeof debugPayload.r2?.sessions).toBe('object');
+
+    const legacyRes = await fetch(`http://127.0.0.1:${port}/api/debug/r2-sessions`, { cache: 'no-store' });
+    expect(legacyRes.ok).toBe(true);
+    expect((legacyRes.headers.get('x-search-status-source') || '').toLowerCase()).toBe('r2');
+    const legacyPayload = await legacyRes.json() as any;
+    expect(typeof legacyPayload).toBe('object');
+  });
 });
