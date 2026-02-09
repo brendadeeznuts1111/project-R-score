@@ -64,6 +64,7 @@ const DECISIONS_ROOT = join(PROJECT_ROOT, "docs", "decisions");
 const DECISIONS_INDEX_PATH = join(DECISIONS_ROOT, "index.json");
 let inFlightRequests = 0;
 let activeCommands = 0;
+const serverStartTime = Date.now();
 const commandWaiters: Array<() => void> = [];
 
 const EVIDENCE_DASHBOARD = {
@@ -2008,6 +2009,7 @@ async function handleRequest(req: Request): Promise<Response> {
     // API routes
     if (url.pathname.startsWith("/api/")) {
       if (url.pathname === "/api/info") {
+        const uptimeMs = Date.now() - serverStartTime;
         return jsonResponse({
           ...routes["/api/info"](),
           runtime: {
@@ -2017,6 +2019,7 @@ async function handleRequest(req: Request): Promise<Response> {
             maxCommandWorkers: MAX_COMMAND_WORKERS,
             inFlightRequests,
             activeCommands,
+            uptimeMs,
           },
         });
       }
