@@ -8,12 +8,17 @@
  */
 
 import { serve } from "bun";
+import { resolve } from 'node:path';
 import { masterTokenManager } from '../lib/security/master-token.ts';
 import { r2MCPIntegration } from '../lib/mcp/r2-integration.ts';
 
 const PORT = parseInt(process.env.DASHBOARD_PORT || '3456', 10);
 const DASHBOARD_HOST = process.env.DASHBOARD_HOST || process.env.SERVER_HOST || 'localhost';
 const DASHBOARD_HTML = './dashboard/web-dashboard.html';
+const DASHBOARD_ROOT = resolve('./dashboard');
+
+const DASHBOARD_CACHE_TTL_MS = Number.parseInt(process.env.DASHBOARD_CACHE_TTL_MS || '2000', 10) || 2000;
+let dashboardDataCache: { expiresAt: number; value: Awaited<ReturnType<typeof collectDashboardData>> } | null = null;
 
 // CORS headers for API endpoints
 const corsHeaders = {
@@ -163,6 +168,16 @@ async function collectDashboardData() {
   };
 }
 
+async function collectDashboardDataCached() {
+  const now = Date.now();
+  if (dashboardDataCache && dashboardDataCache.expiresAt > now) {
+    return dashboardDataCache.value;
+  }
+  const value = await collectDashboardData();
+  dashboardDataCache = { value, expiresAt: now + DASHBOARD_CACHE_TTL_MS };
+  return value;
+}
+
 // Start server
 console.log(`🏭 Starting FactoryWager MCP Dashboard Server...`);
 console.log(`📊 Dashboard: http://${DASHBOARD_HOST}:${PORT}`);
@@ -183,7 +198,7 @@ serve({
     // API endpoints
     if (path === '/api/dashboard') {
       try {
-        const data = await collectDashboardData();
+        const data = await collectDashboardDataCached();
         return new Response(JSON.stringify(data), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
@@ -218,7 +233,10 @@ serve({
     // Static files
     if (path.startsWith('/dashboard/')) {
       try {
-        const filePath = '.' + path;
+        const filePath = resolve('.' + path);
+        if (!filePath.startsWith(DASHBOARD_ROOT + '/')) {
+          return new Response('Not Found', { status: 404 });
+        }
         const file = Bun.file(filePath);
         if (await file.exists()) {
           const ext = path.split('.').pop();
