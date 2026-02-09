@@ -33,6 +33,7 @@ import {
 import { createDomainContext } from './lib/domain-context';
 import { storeCookieTelemetry } from './lib/cookie-telemetry';
 import { resolveR2BridgeConfig } from './lib/r2-bridge';
+import { resolveDomainBranding } from './lib/domain-branding';
 import { buildDomainRegistryStatus } from './domain-registry-status';
 import { buildUnifiedStatus } from './search-unified-status';
 import { comparePayload, compareSnapshotPayload, type CompareResultPayload, type Snapshot } from './search-benchmark-pin';
@@ -8040,6 +8041,17 @@ async function main(): Promise<void> {
       }
       if (url.pathname === '/api/status' || url.pathname === '/api/dashboard/status') {
         const telemetrySource = (url.searchParams.get('source') || 'local') === 'r2' ? 'r2' : 'local';
+        const requestedDomain =
+          (url.searchParams.get('domain') || stateFromCookie?.domain || options.domain || 'factory-wager.com')
+            .trim()
+            .toLowerCase();
+        const hostHeader = String(req.headers.get('host') || '').trim().toLowerCase();
+        const hostForBranding = hostHeader.replace(/:\d+$/, '');
+        const hostLooksLocal =
+          hostForBranding === 'localhost' ||
+          /^(\d{1,3}\.){3}\d{1,3}$/.test(hostForBranding) ||
+          hostForBranding.includes(':');
+        const branding = resolveDomainBranding(hostLooksLocal ? requestedDomain : hostForBranding || requestedDomain);
         let benchmarkGate: Record<string, unknown> = {
           source: telemetrySource,
           available: false,
@@ -8084,6 +8096,11 @@ async function main(): Promise<void> {
             },
             telemetry: {
               benchmarkGate,
+              branding: {
+                ...branding,
+                requestedDomain,
+                host: hostHeader || null,
+              },
             },
           },
           { source: 'mixed' }
@@ -8340,6 +8357,7 @@ async function main(): Promise<void> {
           cookieTelemetryInput,
           strictP95Threshold
         );
+        data.branding = resolveDomainBranding(domain);
         const state: DashboardState = {
           domain,
           accountId: String(data?.accountId || stateFromCookie?.accountId || ''),

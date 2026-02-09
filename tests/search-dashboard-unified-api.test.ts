@@ -141,5 +141,9 @@ describe('search benchmark dashboard unified status api', () => {
     expect(payload.telemetry && payload.telemetry.benchmarkGate).toBeTruthy();
     expect(payload.telemetry.benchmarkGate.source).toBe('r2');
     expect(typeof payload.telemetry.benchmarkGate.available).toBe('boolean');
+    expect(payload.telemetry.branding).toBeTruthy();
+    expect(payload.telemetry.branding.apexDomain).toBe('factory-wager.com');
+    expect(typeof payload.telemetry.branding.resolvedSeed).toBe('number');
+    expect(typeof payload.telemetry.branding.palette.primary).toBe('string');
   });
 });
