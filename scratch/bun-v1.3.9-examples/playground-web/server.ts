@@ -1019,7 +1019,16 @@ function getProtocolMatrix() {
   };
 }
 
-async function getProtocolScorecard() {
+async function getProtocolScorecard(params?: { use?: string; size?: number }) {
+  // Dynamic recommendation based on context
+  const recommend = (() => {
+    if (params?.use === 'external') return 'HTTPS';
+    if ((params?.size || 0) > 100_000_000) return 'S3';
+    if (params?.use === 'internal_ipc') return 'Unix';
+    if (params?.use === 'ephemeral') return 'Data';
+    return 'HTTPS'; // default
+  })();
+  
   return {
     generatedAt: new Date().toISOString(),
     version: "team-v1",
@@ -1127,6 +1136,7 @@ async function getProtocolScorecard() {
       sub1kbHttps: "HTTP/2 multiplexing reduces per-request overhead for tiny HTTPS payloads by reusing a single encrypted connection.",
       governance: "Capturing the why alongside scorecard values reduces ambiguity and helps teams align on tradeoffs during reviews.",
     },
+    recommend,
     evidenceGovernance: {
       fields: [
         "Tier",
@@ -2044,7 +2054,9 @@ async function handleRequest(req: Request): Promise<Response> {
       }
 
       if (url.pathname === "/api/control/protocol-scorecard") {
-        return jsonResponse(await routes["/api/control/protocol-scorecard"]());
+        const use = url.searchParams.get('use') || undefined;
+        const size = parseInt(url.searchParams.get('size') || '0') || undefined;
+        return jsonResponse(await getProtocolScorecard({ use, size }));
       }
 
       if (url.pathname === "/api/control/evidence-dashboard") {
