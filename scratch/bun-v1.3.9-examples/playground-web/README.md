@@ -35,6 +35,7 @@ PLAYGROUND_PROXY_URL=http://proxy.internal:8080 \
 PLAYGROUND_PROXY_DEFAULT=http://proxy.internal:8080 \
 PLAYGROUND_PROXY_AUTH_TOKEN=secret-token \
 PLAYGROUND_STREAM_CHUNK_SIZE=16384 \
+PLAYGROUND_S3_DEFAULT_CONTENT_TYPE=application/octet-stream \
 PLAYGROUND_SMOKE_URLS=http://localhost:3011/api/info,http://localhost:3011/api/brand/status \
 bun start
 ```
@@ -57,6 +58,7 @@ bun start
 - `PLAYGROUND_PROXY_DEFAULT`: optional default proxy URL for smoke fetches
 - `PLAYGROUND_PROXY_AUTH_TOKEN`: optional proxy auth bearer token
 - `PLAYGROUND_STREAM_CHUNK_SIZE`: byte window used in response size accounting
+- `PLAYGROUND_S3_DEFAULT_CONTENT_TYPE`: fallback MIME when key extension is unknown
 - `PLAYGROUND_SMOKE_URLS`: optional explicit smoke URL list (defaults to local info/status APIs)
 
 Smoke endpoint:
@@ -64,6 +66,13 @@ Smoke endpoint:
 ```bash
 curl -s http://localhost:<port>/api/control/network-smoke
 curl -s http://localhost:<port>/api/control/features
+curl -s -X POST http://localhost:<port>/api/control/upload-progress \
+  -H "content-type: application/json" \
+  -d '{"bodyType":"multipart","sizeBytes":1048576,"chunkSize":131072}'
+curl -s "http://localhost:<port>/api/control/s3-content-type?key=assets/logo.svg"
+curl -s -X POST http://localhost:<port>/api/control/s3-content-type-batch \
+  -H "content-type: application/json" \
+  -d '{"keys":["app.js","styles.css","readme.md","archive.bin"]}'
 ```
 
 ## ✨ Features

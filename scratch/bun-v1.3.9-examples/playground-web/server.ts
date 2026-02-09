@@ -42,6 +42,7 @@ const PROXY_AUTH_TOKEN = process.env.PLAYGROUND_PROXY_AUTH_TOKEN || "";
 const STREAM_CHUNK_SIZE = parseNumberEnv("PLAYGROUND_STREAM_CHUNK_SIZE", BASE_STANDARD.streamChunkSize, { min: 256, max: 1048576 });
 const FETCH_DECOMPRESS = parseBool(process.env.PLAYGROUND_FETCH_DECOMPRESS, BASE_STANDARD.fetchDecompress);
 const FETCH_VERBOSE = parseFetchVerbose(process.env.PLAYGROUND_FETCH_VERBOSE, BASE_STANDARD.fetchVerbose);
+const S3_DEFAULT_CONTENT_TYPE = process.env.PLAYGROUND_S3_DEFAULT_CONTENT_TYPE || "application/octet-stream";
 const PROJECT_ROOT = join(import.meta.dir, "..", "..", "..");
 const BRAND_REPORTS_DIR = join(PROJECT_ROOT, "reports", "brand-bench");
 let inFlightRequests = 0;
@@ -77,6 +78,31 @@ const featureDefinitions: Record<string, FeatureDefinition<unknown>> = {
 
 // Demo configurations
 const DEMOS = [
+  {
+    id: "multipart-progress",
+    name: "Multipart Progress Tracking",
+    description: "Simulate upload progress events for multipart/file body types",
+    category: "Governance",
+    code: `# Simulate multipart upload progress
+curl -s -X POST http://localhost:<port>/api/control/upload-progress \\
+  -H "content-type: application/json" \\
+  -d '{"bodyType":"multipart","sizeBytes":5242880,"chunkSize":262144}'
+`,
+  },
+  {
+    id: "s3-content-type",
+    name: "S3 Content-Type Mapping",
+    description: "Resolve MIME type from object key extension for S3/R2 writes",
+    category: "Governance",
+    code: `# Single key
+curl -s "http://localhost:<port>/api/control/s3-content-type?key=assets/logo.svg"
+
+# Batch keys
+curl -s -X POST http://localhost:<port>/api/control/s3-content-type-batch \\
+  -H "content-type: application/json" \\
+  -d '{"keys":["app.js","styles.css","readme.md","archive.bin"]}'
+`,
+  },
   {
     id: "control-plane",
     name: "Network Control Plane",
@@ -405,6 +431,78 @@ function shouldBypassProxy(targetUrl: string): boolean {
   });
 }
 
+function contentTypeFromS3Key(key: string): string {
+  const normalized = key.toLowerCase();
+  const ext = normalized.includes(".") ? normalized.slice(normalized.lastIndexOf(".")) : "";
+  const map: Record<string, string> = {
+    ".html": "text/html; charset=utf-8",
+    ".htm": "text/html; charset=utf-8",
+    ".css": "text/css; charset=utf-8",
+    ".js": "application/javascript; charset=utf-8",
+    ".mjs": "application/javascript; charset=utf-8",
+    ".json": "application/json; charset=utf-8",
+    ".txt": "text/plain; charset=utf-8",
+    ".md": "text/markdown; charset=utf-8",
+    ".xml": "application/xml; charset=utf-8",
+    ".svg": "image/svg+xml",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".gif": "image/gif",
+    ".webp": "image/webp",
+    ".ico": "image/x-icon",
+    ".avif": "image/avif",
+    ".pdf": "application/pdf",
+    ".zip": "application/zip",
+    ".wasm": "application/wasm",
+    ".csv": "text/csv; charset=utf-8",
+  };
+  return map[ext] || S3_DEFAULT_CONTENT_TYPE;
+}
+
+async function parseJsonBody(req: Request): Promise<any> {
+  try {
+    return await req.json();
+  } catch {
+    return {};
+  }
+}
+
+async function buildUploadProgress(req: Request): Promise<{
+  ok: boolean;
+  bodyType: string;
+  sizeBytes: number;
+  chunkSize: number;
+  parts: number;
+  progress: Array<{ part: number; uploadedBytes: number; percent: number }>;
+}> {
+  const body = await parseJsonBody(req);
+  const bodyType = String(body.bodyType || resolveFeature<string>("bodyType", req) || "multipart").toLowerCase();
+  const sizeBytes = Math.max(1, Number(body.sizeBytes || 5 * 1024 * 1024));
+  const chunkSize = Math.max(256, Number(body.chunkSize || 256 * 1024));
+  const parts = Math.ceil(sizeBytes / chunkSize);
+  const progress: Array<{ part: number; uploadedBytes: number; percent: number }> = [];
+
+  let uploaded = 0;
+  for (let part = 1; part <= parts; part++) {
+    uploaded = Math.min(sizeBytes, uploaded + chunkSize);
+    progress.push({
+      part,
+      uploadedBytes: uploaded,
+      percent: Number(((uploaded / sizeBytes) * 100).toFixed(2)),
+    });
+  }
+
+  return {
+    ok: true,
+    bodyType,
+    sizeBytes,
+    chunkSize,
+    parts,
+    progress,
+  };
+}
+
 function withTimeoutSignal(timeoutMs: number): AbortSignal {
   return AbortSignal.timeout(timeoutMs);
 }
@@ -581,6 +679,7 @@ const routes = {
       fetchTimeoutMs: FETCH_TIMEOUT_MS,
       fetchDecompress: FETCH_DECOMPRESS,
       fetchVerbose: FETCH_VERBOSE ?? "off",
+      s3DefaultContentType: S3_DEFAULT_CONTENT_TYPE,
       maxBodySizeMb: MAX_BODY_SIZE_MB,
       streamChunkSize: STREAM_CHUNK_SIZE,
       proxyDefaultEnabled: Boolean(resolveFeature<string | null>("proxy")),
@@ -687,6 +786,31 @@ const routes = {
       ...smoke,
     };
   },
+
+  "/api/control/upload-progress": async (req: Request) => {
+    const upload = await buildUploadProgress(req);
+    return upload;
+  },
+
+  "/api/control/s3-content-type": (req: Request) => {
+    const url = new URL(req.url);
+    const key = url.searchParams.get("key") || "";
+    return {
+      key,
+      contentType: contentTypeFromS3Key(key),
+      defaultContentType: S3_DEFAULT_CONTENT_TYPE,
+    };
+  },
+
+  "/api/control/s3-content-type-batch": async (req: Request) => {
+    const body = await parseJsonBody(req);
+    const keys = Array.isArray(body.keys) ? body.keys.map((k: unknown) => String(k)) : [];
+    return {
+      count: keys.length,
+      defaultContentType: S3_DEFAULT_CONTENT_TYPE,
+      items: keys.map(key => ({ key, contentType: contentTypeFromS3Key(key) })),
+    };
+  },
   
   "/api/run/:id": async (req: Request) => {
     const url = new URL(req.url);
@@ -698,6 +822,35 @@ const routes = {
         success: smoke.ok,
         output: JSON.stringify(smoke, null, 2),
         exitCode: smoke.ok ? 0 : 1,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "multipart-progress") {
+      const simulated = await routes["/api/control/upload-progress"](req);
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(simulated, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "s3-content-type") {
+      const preview = {
+        count: 4,
+        defaultContentType: S3_DEFAULT_CONTENT_TYPE,
+        items: ["app.js", "styles.css", "readme.md", "archive.bin"].map(key => ({
+          key,
+          contentType: contentTypeFromS3Key(key),
+        })),
+      };
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(preview, null, 2),
+        exitCode: 0,
       }), {
         headers: { "Content-Type": "application/json" },
       });
@@ -818,6 +971,18 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/features") {
         return jsonResponse(routes["/api/control/features"](req));
+      }
+
+      if (url.pathname === "/api/control/upload-progress") {
+        return jsonResponse(await routes["/api/control/upload-progress"](req));
+      }
+
+      if (url.pathname === "/api/control/s3-content-type") {
+        return jsonResponse(routes["/api/control/s3-content-type"](req));
+      }
+
+      if (url.pathname === "/api/control/s3-content-type-batch") {
+        return jsonResponse(await routes["/api/control/s3-content-type-batch"](req));
       }
       
       const demoMatch = url.pathname.match(/^\/api\/demo\/(.+)$/);
