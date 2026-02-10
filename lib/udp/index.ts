@@ -29,6 +29,11 @@ export {
   encodePacketHeader,
   PACKET_HEADER_SIZE,
   PACKET_VERSION,
+  FLAG_CRC32,
+  CRC_SIZE,
   stripPacketHeader,
+  computeCRC,
+  appendCRC,
+  verifyAndStripCRC,
 } from "./packet-id";
 export type { PacketEncodeOptions, PacketHeader } from "./packet-id";

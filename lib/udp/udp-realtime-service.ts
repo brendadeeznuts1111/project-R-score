@@ -12,7 +12,11 @@ import {
   decodePacketHeader,
   encodePacketHeader,
   PACKET_HEADER_SIZE,
+  FLAG_CRC32,
+  CRC_SIZE,
   stripPacketHeader,
+  appendCRC,
+  verifyAndStripCRC,
 } from "./packet-id";
 
 type UDPSocket = Bun.udp.Socket<"buffer"> | Bun.udp.ConnectedSocket<"buffer">;
@@ -79,6 +83,7 @@ export class UDPRealtimeService {
         let timestampUs: bigint | undefined;
         let scope: UDPDatagram["scope"];
         let flags: number | undefined;
+        let crcValid: boolean | undefined;
 
         if (this.config.packetTracking) {
           const header = decodePacketHeader(data);
@@ -89,6 +94,13 @@ export class UDPRealtimeService {
             scope = header.scope;
             flags = header.flags;
             payload = stripPacketHeader(data);
+
+            if (header.flags & FLAG_CRC32) {
+              const result = verifyAndStripCRC(payload);
+              crcValid = result.crcValid;
+              payload = result.payload;
+            }
+
             this.trackInbound(header.sequenceId, header.sourceId);
           } else if (data.byteLength >= 4) {
             // Backward compatibility for legacy 4-byte sequence prefix.
@@ -109,6 +121,7 @@ export class UDPRealtimeService {
           timestampUs,
           scope,
           flags,
+          crcValid,
         };
         for (const h of this.dataHandlers) h(datagram);
       },
@@ -259,15 +272,18 @@ export class UDPRealtimeService {
 
   private frameOutbound(data: Bun.udp.Data): Buffer {
     const payload = toBuffer(data);
+    const baseFlags = this.config.packetTrackingFlags ?? 0;
     const header = encodePacketHeader({
       scope: this.config.packetTrackingScope ?? "site-local",
-      flags: this.config.packetTrackingFlags ?? 0,
+      flags: baseFlags | FLAG_CRC32,
       sourceId: this.sourceId,
       sequenceId: this.outSeq++,
     });
-    const framed = Buffer.allocUnsafe(PACKET_HEADER_SIZE + payload.byteLength);
+    // CRC covers payload only — verified after header is stripped on receive
+    const payloadWithCRC = appendCRC(payload);
+    const framed = Buffer.allocUnsafe(PACKET_HEADER_SIZE + payloadWithCRC.byteLength);
     header.copy(framed, 0);
-    payload.copy(framed, PACKET_HEADER_SIZE);
+    payloadWithCRC.copy(framed, PACKET_HEADER_SIZE);
     return framed;
   }
 

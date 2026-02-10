@@ -19,6 +19,8 @@ export interface PacketEncodeOptions {
 
 export const PACKET_HEADER_SIZE = 16;
 export const PACKET_VERSION = 3;
+export const FLAG_CRC32 = 0x01;
+export const CRC_SIZE = 4;
 
 const SCOPE_TO_CODE: Record<string, number> = {
   "interface-local": 0x01,
@@ -44,7 +46,7 @@ export function encodePacketHeader(options: PacketEncodeOptions = {}): Buffer {
   const scope = options.scope ?? "site-local";
   const sequenceId = normalizeUint32(options.sequenceId ?? 0);
   const sourceId = normalizeUint16(options.sourceId ?? 0);
-  const timestampUs = options.timestampUs ?? BigInt(Date.now()) * BigInt(1000);
+  const timestampUs = options.timestampUs ?? BigInt(Math.floor(Bun.nanoseconds() / 1000));
 
   const out = Buffer.allocUnsafe(PACKET_HEADER_SIZE);
   out.writeUInt8((PACKET_VERSION << 4) | flags, 0);
@@ -76,6 +78,29 @@ export function decodePacketHeader(buf: Buffer): PacketHeader | null {
 export function stripPacketHeader(buf: Buffer): Buffer {
   if (!Buffer.isBuffer(buf) || buf.byteLength <= PACKET_HEADER_SIZE) return Buffer.alloc(0);
   return buf.subarray(PACKET_HEADER_SIZE);
+}
+
+export function computeCRC(data: Buffer): number {
+  return Bun.hash.crc32(data);
+}
+
+export function appendCRC(buf: Buffer): Buffer {
+  const crc = Bun.hash.crc32(buf);
+  const out = Buffer.allocUnsafe(buf.byteLength + CRC_SIZE);
+  buf.copy(out, 0);
+  out.writeUInt32BE(crc >>> 0, buf.byteLength);
+  return out;
+}
+
+export function verifyAndStripCRC(buf: Buffer): { payload: Buffer; crcValid: boolean } {
+  if (buf.byteLength < CRC_SIZE) {
+    return { payload: buf, crcValid: false };
+  }
+  const payloadEnd = buf.byteLength - CRC_SIZE;
+  const payload = buf.subarray(0, payloadEnd);
+  const expected = buf.readUInt32BE(payloadEnd);
+  const actual = Bun.hash.crc32(payload) >>> 0;
+  return { payload, crcValid: actual === expected };
 }
 
 function normalizeNibble(value: number): number {

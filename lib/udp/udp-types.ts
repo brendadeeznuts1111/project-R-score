@@ -25,6 +25,7 @@ export interface UDPDatagram {
   timestampUs?: bigint;
   scope?: "interface-local" | "link-local" | "site-local" | "organization" | "global" | "admin";
   flags?: number;
+  crcValid?: boolean;
 }
 
 export interface UDPServiceMetrics {

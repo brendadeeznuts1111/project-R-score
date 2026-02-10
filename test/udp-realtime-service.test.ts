@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach, afterEach, spyOn, type Mock } from "bun:test";
 import { UDPRealtimeService } from "../lib/udp/udp-realtime-service";
 import type { UDPSendPacket } from "../lib/udp/udp-types";
-import { decodePacketHeader, encodePacketHeader, PACKET_HEADER_SIZE } from "../lib/udp/packet-id";
+import { decodePacketHeader, encodePacketHeader, PACKET_HEADER_SIZE, CRC_SIZE, FLAG_CRC32, appendCRC } from "../lib/udp/packet-id";
 
 // ---------------------------------------------------------------------------
 // FakeUDPSocket — mirrors the subset of Bun.udp.Socket / ConnectedSocket
@@ -406,14 +406,16 @@ describe("UDPRealtimeService", () => {
   // ====== Packet Tracking ======
 
   describe("packet tracking", () => {
-    /** Build a framed buffer: 16-byte v3 header + payload */
+    /** Build a framed buffer: 16-byte v3 header + payload + 4-byte CRC trailer */
     function framedBuf(seq: number, payload: string): Buffer {
       const header = encodePacketHeader({
         scope: "site-local",
+        flags: FLAG_CRC32,
         sourceId: 1,
         sequenceId: seq,
       });
-      return Buffer.concat([header, Buffer.from(payload)]);
+      const body = Buffer.concat([header, Buffer.from(payload)]);
+      return appendCRC(body);
     }
 
     test("send prepends 16-byte sequence header", async () => {
@@ -426,11 +428,11 @@ describe("UDPRealtimeService", () => {
       const buf0 = fakeSocket.sendCalls[0][0] as Buffer;
       const buf1 = fakeSocket.sendCalls[1][0] as Buffer;
 
-      // seq 0, then seq 1
+      // seq 0, then seq 1; payload sits between header and 4-byte CRC trailer
       expect(decodePacketHeader(buf0)?.sequenceId).toBe(0);
-      expect(buf0.subarray(PACKET_HEADER_SIZE).toString()).toBe("hi");
+      expect(buf0.subarray(PACKET_HEADER_SIZE, buf0.byteLength - CRC_SIZE).toString()).toBe("hi");
       expect(decodePacketHeader(buf1)?.sequenceId).toBe(1);
-      expect(buf1.subarray(PACKET_HEADER_SIZE).toString()).toBe("yo");
+      expect(buf1.subarray(PACKET_HEADER_SIZE, buf1.byteLength - CRC_SIZE).toString()).toBe("yo");
     });
 
     test("sequenceId increments in metrics", async () => {
@@ -445,8 +447,8 @@ describe("UDPRealtimeService", () => {
     test("bytesSent includes header overhead", async () => {
       svc = new UDPRealtimeService({ packetTracking: true });
       await svc.bind();
-      svc.send("hi", 1234, "127.0.0.1"); // 2 payload + 16 header = 18
-      expect(svc.getMetrics().bytesSent).toBe(18);
+      svc.send("hi", 1234, "127.0.0.1"); // 2 payload + 16 header + 4 CRC = 22
+      expect(svc.getMetrics().bytesSent).toBe(PACKET_HEADER_SIZE + 2 + CRC_SIZE);
     });
 
     test("receive strips header and exposes sequenceId", async () => {
@@ -601,7 +603,8 @@ describe("UDPRealtimeService", () => {
       expect(decoded!.sequenceId).toBe(0);
       expect(decoded!.sourceId).toBe(777);
       expect(decoded!.scope).toBe("site-local");
-      const payload = Buffer.from(arg).subarray(16).toString();
+      const raw = Buffer.from(arg);
+      const payload = raw.subarray(PACKET_HEADER_SIZE, raw.byteLength - CRC_SIZE).toString();
       expect(payload).toBe("hello");
     });
 
@@ -636,6 +639,37 @@ describe("UDPRealtimeService", () => {
       expect(typeof got[0].sourceId).toBe("number");
       expect(typeof got[0].timestampUs).toBe("bigint");
       expect(got[0].data.toString()).toBe("abc");
+      expect(got[0].crcValid).toBe(true);
+    });
+
+    test("crcValid is true for intact packet", async () => {
+      svc = new UDPRealtimeService({ packetTracking: true });
+      await svc.bind();
+      const got: any[] = [];
+      svc.onMessage((d) => got.push(d));
+
+      // Send then loop the outbound frame back as inbound
+      svc.send("integrity", 3000, "10.0.0.1");
+      const wire = Buffer.from(fakeSocket.sendCalls[0][0] as Buffer);
+      fakeSocket.simulateIncomingData(wire, 3000, "10.0.0.1");
+
+      expect(got[0].crcValid).toBe(true);
+      expect(got[0].data.toString()).toBe("integrity");
+    });
+
+    test("crcValid is false for corrupted packet", async () => {
+      svc = new UDPRealtimeService({ packetTracking: true });
+      await svc.bind();
+      const got: any[] = [];
+      svc.onMessage((d) => got.push(d));
+
+      // Build a valid frame, then corrupt a payload byte
+      svc.send("clean", 3000, "10.0.0.1");
+      const wire = Buffer.from(fakeSocket.sendCalls[0][0] as Buffer);
+      wire[PACKET_HEADER_SIZE] ^= 0xff; // flip first payload byte
+      fakeSocket.simulateIncomingData(wire, 3000, "10.0.0.1");
+
+      expect(got[0].crcValid).toBe(false);
     });
   });
 });
