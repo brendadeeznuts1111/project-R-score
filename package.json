@@ -1624,6 +1624,7 @@
     "ci:demo:bench:gate": "bun run demo:bench:core:gate",
     "ci:dashboard:nonblocking": "DASHBOARD_TEST_PORT=3401 DASHBOARD_TEST_ALLOW_PORT_FALLBACK=true DASHBOARD_TEST_PORT_RANGE=3401-3450 bun run test:dashboard:suite",
     "ci:dashboard:required": "bun run ci:bun:check && DASHBOARD_TEST_PORT=3401 DASHBOARD_TEST_ALLOW_PORT_FALLBACK=true DASHBOARD_TEST_PORT_RANGE=3401-3450 bun run test:dashboard:suite && DASHBOARD_TEST_PORT=3401 DASHBOARD_TEST_ALLOW_PORT_FALLBACK=true DASHBOARD_TEST_PORT_RANGE=3401-3450 bun run dashboard:protocol:check",
+    "ci:smoke": "DASHBOARD_TEST_PORT=3401 DASHBOARD_TEST_ALLOW_PORT_FALLBACK=true DASHBOARD_TEST_PORT_RANGE=3401-3450 bun run scripts/ci-smoke.ts",
     "dashboard:monitor": "bun run dashboard/mcp-overview.ts monitor",
     "dashboard:web": "bun run examples/dashboard-demo.ts web",
     "dashboard:ansi": "bun run lib/ansi-dashboard.ts",
