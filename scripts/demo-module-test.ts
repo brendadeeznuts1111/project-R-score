@@ -39,14 +39,28 @@ function main() {
   }
 
   const contract = JSON.parse(readFileSync(CONTRACT_PATH, "utf8")) as {
-    modules: Record<string, { testCommand?: string; benchCommand?: string; language?: string; flags?: string[] }>;
+    modules: Record<
+      string,
+      {
+        testCommand?: string;
+        benchCommand?: string;
+        language?: string;
+        flags?: string[];
+        benchmarkBaseline?: {
+          mode?: string;
+          iterations?: number;
+          minOpsPerSec?: number;
+          sourceIds?: string[];
+        };
+      }
+    >;
   };
   const meta = contract.modules[id];
   if (!meta) {
     console.error(`[demo-test] missing contract entry for '${id}'`);
     process.exit(1);
   }
-  if (!meta.testCommand || !meta.benchCommand || !meta.language || !Array.isArray(meta.flags)) {
+  if (!meta.testCommand || !meta.benchCommand || !meta.language || !Array.isArray(meta.flags) || !meta.benchmarkBaseline) {
     console.error(`[demo-test] incomplete contract for '${id}'`);
     process.exit(1);
   }

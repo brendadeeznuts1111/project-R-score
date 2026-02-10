@@ -10,6 +10,12 @@ type DemoContract = {
   flags: string[];
   benchCommand: string;
   testCommand: string;
+  benchmarkBaseline?: {
+    mode: "hash" | "string" | "map-size";
+    iterations: number;
+    minOpsPerSec: number;
+    sourceIds: string[];
+  };
 };
 
 type DemoContractFile = {
@@ -22,7 +28,7 @@ type DemoContractFile = {
 const ROOT = process.cwd();
 const SERVER_PATH = join(ROOT, "scratch", "bun-v1.3.9-examples", "playground-web", "server.ts");
 const CONTRACT_PATH = join(ROOT, "scratch", "bun-v1.3.9-examples", "playground-web", "demo-module-contract.json");
-const REQUIRED_KEYS = ["language", "defaults", "flags", "benchCommand", "testCommand"] as const;
+const REQUIRED_KEYS = ["language", "defaults", "flags", "benchCommand", "testCommand", "benchmarkBaseline"] as const;
 
 function collectDemoIds(source: string): string[] {
   const marker = "const DEMOS_BASE = [";
@@ -89,6 +95,22 @@ function main() {
     }
     if (!String(contract.testCommand).startsWith("bun run ")) {
       errors.push(`${id}.testCommand must start with 'bun run '`);
+    }
+    if (!contract.benchmarkBaseline) {
+      errors.push(`${id}.benchmarkBaseline is missing`);
+    } else {
+      if (!["hash", "string", "map-size"].includes(contract.benchmarkBaseline.mode)) {
+        errors.push(`${id}.benchmarkBaseline.mode invalid`);
+      }
+      if (!Number.isFinite(contract.benchmarkBaseline.iterations) || contract.benchmarkBaseline.iterations <= 0) {
+        errors.push(`${id}.benchmarkBaseline.iterations must be > 0`);
+      }
+      if (!Number.isFinite(contract.benchmarkBaseline.minOpsPerSec) || contract.benchmarkBaseline.minOpsPerSec <= 0) {
+        errors.push(`${id}.benchmarkBaseline.minOpsPerSec must be > 0`);
+      }
+      if (!Array.isArray(contract.benchmarkBaseline.sourceIds) || contract.benchmarkBaseline.sourceIds.length === 0) {
+        errors.push(`${id}.benchmarkBaseline.sourceIds must be a non-empty string[]`);
+      }
     }
 
     const tier1 = validateTier1SourcesForDemo(id);

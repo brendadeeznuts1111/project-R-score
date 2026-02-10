@@ -221,6 +221,24 @@ async function run(): Promise<number> {
       `status=${security.res.status} components=${security.json?.components?.length ?? 0}`
     );
 
+    const projectHealth = await fetchJson("/api/control/project-health");
+    check(
+      checks,
+      "project-health-benchmark-contract",
+      projectHealth.res.status === 200 &&
+        typeof projectHealth.json?.source === "string" &&
+        Number.isFinite(projectHealth.json?.health?.weightedScore) &&
+        typeof projectHealth.json?.benchmarkStatus?.available === "boolean" &&
+        typeof projectHealth.json?.benchmarkStatus?.status === "string" &&
+        Number.isFinite(projectHealth.json?.benchmarkStatus?.summary?.total) &&
+        Number.isFinite(projectHealth.json?.benchmarkStatus?.summary?.pass) &&
+        Number.isFinite(projectHealth.json?.benchmarkStatus?.summary?.fail) &&
+        typeof projectHealth.json?.benchmarkStatus?.gate?.compared === "boolean" &&
+        typeof projectHealth.json?.benchmarkStatus?.gate?.pass === "boolean" &&
+        Number.isFinite(projectHealth.json?.benchmarkStatus?.gate?.failures),
+      `status=${projectHealth.res.status} benchStatus=${projectHealth.json?.benchmarkStatus?.status ?? "n/a"}`
+    );
+
     const domain = await fetchJson("/api/control/domain-graph?domain=orchestration");
     check(
       checks,

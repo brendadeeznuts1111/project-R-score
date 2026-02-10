@@ -247,6 +247,10 @@ bun run demo:bench:all
 # Benchmark a focused slice (protocol/governance ids)
 bun run demo:bench:core
 
+# Compare against last persisted snapshot and fail on regressions
+bun run demo:bench:all:gate
+bun run demo:bench:core:gate
+
 # Single demo full loop (test + benchmark + source-backed baseline)
 bun run validate:demo --id=parallel
 ```
@@ -260,6 +264,10 @@ Tier-1 source policy for demo baselines:
   - [Keep-Alive header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Keep-Alive)
 - Linux kernel docs:
   - [send_sig API reference](https://www.kernel.org/doc/html/latest/core-api/kernel-api.html#c.send_sig)
+
+Benchmark snapshots are persisted to:
+- `reports/demo-bench/latest.json`
+- `reports/demo-bench/snapshot-<timestamp>.json`
 
 Expected severity snapshots:
 - `load=85`: `utilization=fail`, `capacity=fail`, `headroom=warn`

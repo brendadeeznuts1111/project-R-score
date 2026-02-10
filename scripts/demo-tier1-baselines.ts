@@ -22,8 +22,20 @@ export type DemoBaseline = {
   sourceIds: string[];
 };
 
+type ContractBenchmarkBaseline = {
+  mode: "hash" | "string" | "map-size";
+  iterations: number;
+  minOpsPerSec: number;
+  sourceIds: string[];
+};
+
 type DemoContractFile = {
-  modules: Record<string, unknown>;
+  modules: Record<
+    string,
+    {
+      benchmarkBaseline?: ContractBenchmarkBaseline;
+    }
+  >;
 };
 
 const ROOT = process.cwd();
@@ -98,6 +110,15 @@ function getAllDemoIds(): string[] {
   return Object.keys(contract.modules || {});
 }
 
+function loadContractBaselines(): Record<string, ContractBenchmarkBaseline | undefined> {
+  const contract = JSON.parse(readFileSync(CONTRACT_PATH, "utf8")) as DemoContractFile;
+  const out: Record<string, ContractBenchmarkBaseline | undefined> = {};
+  for (const [id, module] of Object.entries(contract.modules || {})) {
+    out[id] = module?.benchmarkBaseline;
+  }
+  return out;
+}
+
 function pickMode(id: string): DemoBaseline["benchmark"]["mode"] {
   if (id.includes("performance") || id.includes("markdown") || id.includes("stringwidth")) return "string";
   if (id.includes("protocol") || id.includes("governance") || id.includes("health")) return "map-size";
@@ -119,20 +140,26 @@ function pickSources(id: string): string[] {
   return ["bun_release_v139", "bun_docs_test_writing", "mdn_keep_alive"];
 }
 
-export function buildBaselineForDemo(id: string): DemoBaseline {
+export function buildBaselineForDemo(
+  id: string,
+  baselineOverrides?: Record<string, ContractBenchmarkBaseline | undefined>,
+): DemoBaseline {
+  const override = baselineOverrides?.[id];
+  const mode = override?.mode || pickMode(id);
+  const defaultIterations = mode === "map-size" ? 2_000_000 : 200_000;
   return {
     id,
     benchmark: {
-      mode: pickMode(id),
-      iterations: 200_000,
-      minOpsPerSec: 50_000,
+      mode,
+      iterations: override?.iterations || defaultIterations,
+      minOpsPerSec: override?.minOpsPerSec || 50_000,
     },
-    sourceIds: pickSources(id),
+    sourceIds: Array.isArray(override?.sourceIds) && override.sourceIds.length > 0 ? override.sourceIds : pickSources(id),
   };
 }
 
 export function validateTier1SourcesForDemo(id: string): { ok: boolean; errors: string[]; baseline: DemoBaseline } {
-  const baseline = buildBaselineForDemo(id);
+  const baseline = buildBaselineForDemo(id, loadContractBaselines());
   const errors: string[] = [];
   if (baseline.sourceIds.length === 0) errors.push(`${id}: missing sourceIds`);
 
@@ -160,9 +187,11 @@ export function validateTier1SourcesForDemo(id: string): { ok: boolean; errors: 
 export function validateTier1CoverageAcrossDemos(ids: string[]): { ok: boolean; errors: string[] } {
   const errors: string[] = [];
   const providersSeen = new Set<Tier1Provider>();
+  const baselineOverrides = loadContractBaselines();
 
   for (const id of ids) {
-    const { ok, errors: localErrors, baseline } = validateTier1SourcesForDemo(id);
+    const baseline = buildBaselineForDemo(id, baselineOverrides);
+    const { ok, errors: localErrors } = validateTier1SourcesForDemo(id);
     if (!ok) errors.push(...localErrors);
     for (const sourceId of baseline.sourceIds) {
       const source = TIER1_SOURCES[sourceId];

@@ -6,6 +6,7 @@ let runtimeInfo = null;
 let brandGateSummary = null;
 let governanceSummary = null;
 let orchestrationSummary = null;
+let projectHealthSummary = null;
 let demoSearchQuery = '';
 let trendSummaryTimer = null;
 const shortcutState = {
@@ -407,11 +408,12 @@ async function refreshHeaderState() {
   document.getElementById('bun-revision').innerHTML = skeletonLong;
   document.getElementById('git-commit-hash').innerHTML = skeletonLong;
   
-  const [infoResult, gateResult, governanceResult, orchestrationStatusResult] = await Promise.allSettled([
+  const [infoResult, gateResult, governanceResult, orchestrationStatusResult, projectHealthResult] = await Promise.allSettled([
     fetch('/api/info').then(r => r.json()),
     fetch('/api/brand/status').then(r => r.json()),
     fetch('/api/control/governance-status').then(r => r.json()),
     fetch('/api/control/script-orchestration/status').then(r => r.json()),
+    fetch('/api/control/project-health').then(r => r.json()),
   ]);
 
   if (infoResult.status === 'fulfilled') {
@@ -450,6 +452,12 @@ async function refreshHeaderState() {
     orchestrationSummary = orchestrationStatusResult.value;
   } else {
     orchestrationSummary = null;
+  }
+
+  if (projectHealthResult.status === 'fulfilled') {
+    projectHealthSummary = projectHealthResult.value;
+  } else {
+    projectHealthSummary = null;
   }
 
   renderHeaderBadges();
@@ -562,6 +570,19 @@ function renderHeaderBadges() {
     badges.push({
       text: `Impact: ${governanceSummary.impact}`,
       cls: governanceSummary.impact === 'Low' ? 'success' : governanceSummary.impact === 'Medium' ? 'warn' : 'error',
+    });
+  }
+
+  if (projectHealthSummary?.benchmarkStatus) {
+    const bench = projectHealthSummary.benchmarkStatus;
+    const benchState = String(bench.status || 'warn');
+    badges.push({
+      text: `DemoBench: ${String(benchState).toUpperCase()}`,
+      cls: benchState === 'ok' ? 'success' : benchState === 'warn' ? 'warn' : 'error',
+    });
+    badges.push({
+      text: `Bench ${bench.summary?.pass ?? 0}/${bench.summary?.total ?? 0}`,
+      cls: Number(bench.summary?.fail || 0) > 0 ? 'error' : 'success',
     });
   }
 
@@ -837,6 +858,16 @@ function renderDemo(demo) {
       </div>
     `
     : '';
+  const projectHealthPanel = demo.id === 'project-health-metrics'
+    ? `
+      <div class="code-block" style="margin-top: 1rem;">
+        <button class="run-btn" onclick="refreshProjectHealthMetrics()">
+          ↻ Refresh Project Health
+        </button>
+        <div id="project-health-output" class="output" style="display: block; margin-top: 0.75rem;">Loading project health metrics...</div>
+      </div>
+    `
+    : '';
   const historicalTrendsPanel = demo.id === 'historical-sqlite-trends'
     ? `
       <div class="code-block" style="margin-top: 1rem;">
@@ -934,6 +965,7 @@ function renderDemo(demo) {
     ${performanceImpactPanel}
     ${securityPosturePanel}
     ${domainTopologyPanel}
+    ${projectHealthPanel}
     ${bundleMetafilePanel}
     ${historicalTrendsPanel}
     ${protocolMatrixPanel}
@@ -961,6 +993,9 @@ function renderDemo(demo) {
   }
   if (demo.id === 'domain-topology') {
     refreshDomainTopologyGraph();
+  }
+  if (demo.id === 'project-health-metrics') {
+    refreshProjectHealthMetrics();
   }
   if (demo.id === 'historical-sqlite-trends') {
     refreshHistoricalTrends();
@@ -1049,6 +1084,7 @@ function setupEventListeners() {
   window.refreshPerformanceImpactMatrix = refreshPerformanceImpactMatrix;
   window.refreshSecurityPostureReport = refreshSecurityPostureReport;
   window.refreshDomainTopologyGraph = refreshDomainTopologyGraph;
+  window.refreshProjectHealthMetrics = refreshProjectHealthMetrics;
   window.refreshBundleMetafileAnalysis = refreshBundleMetafileAnalysis;
   window.refreshHistoricalTrends = refreshHistoricalTrends;
   window.refreshHttp2RuntimeStatus = refreshHttp2RuntimeStatus;
@@ -1472,6 +1508,40 @@ async function refreshDomainTopologyGraph() {
   } catch (error) {
     statusDiv.className = 'output error';
     statusDiv.textContent = `Failed to load domain topology graph: ${error.message}`;
+  }
+}
+
+async function refreshProjectHealthMetrics() {
+  const statusDiv = document.getElementById('project-health-output');
+  if (!statusDiv) return;
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = 'Loading project health metrics...';
+
+  try {
+    const response = await fetch('/api/control/project-health');
+    const data = await response.json();
+    const health = data.health || {};
+    const risks = Array.isArray(health.risks) ? health.risks : [];
+    const bench = data.benchmarkStatus || {};
+
+    const lines = [
+      `generatedAt: ${data.generatedAt || 'unknown'}`,
+      `source: ${data.source || 'unknown'}`,
+      `health score: ${health.weightedScore ?? 'n/a'} | atRisk=${health.atRisk ? 'yes' : 'no'} | risks=${risks.length}`,
+      `deployment ratio: ${typeof health.deploymentRatio === 'number' ? (health.deploymentRatio * 100).toFixed(1) + '%' : 'n/a'}`,
+      `bench status: ${bench.status || 'unknown'} | compared=${bench.gate?.compared ? 'yes' : 'no'} | pass=${bench.gate?.pass ? 'yes' : 'no'}`,
+      `bench snapshot: pass=${bench.summary?.pass ?? 0}/${bench.summary?.total ?? 0} fail=${bench.summary?.fail ?? 0}`,
+      '',
+      ...risks.slice(0, 8).map((r) => `${r.severity.toUpperCase()} | ${r.id} | value=${r.value} target=${r.target} | ${r.reason}`),
+    ];
+
+    const benchState = String(bench.status || 'warn');
+    statusDiv.className = benchState === 'ok' ? 'output success' : benchState === 'warn' ? 'output warn' : 'output error';
+    statusDiv.textContent = lines.join('\n');
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `Failed to load project health metrics: ${error.message}`;
   }
 }
 

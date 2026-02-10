@@ -8,6 +8,7 @@
 import { serve } from "bun";
 import { Database } from "bun:sqlite";
 import { mkdir, readFile, readdir } from "node:fs/promises";
+import { readFileSync } from "node:fs";
 import { createServer, type Server as NetServer } from "node:net";
 import { connect as connectHttp2, createSecureServer, type Http2SecureServer } from "node:http2";
 import { extname, join, normalize, resolve as resolvePath, sep } from "node:path";
@@ -81,6 +82,7 @@ const BRAND_GOVERNANCE_PATH = join(BRAND_REPORTS_DIR, "governance.json");
 const DECISIONS_ROOT = join(PROJECT_ROOT, "docs", "decisions");
 const DECISIONS_INDEX_PATH = join(DECISIONS_ROOT, "index.json");
 const DEFAULT_BUNDLE_ANALYZE_ENTRYPOINT = join(import.meta.dir, "server.ts");
+const DEMO_BENCH_LATEST_PATH = join(PROJECT_ROOT, "reports", "demo-bench", "latest.json");
 const DASHBOARD_METRICS_DB_PATH =
   process.env.PLAYGROUND_METRICS_DB_PATH ||
   join(PROJECT_ROOT, ".cache", "playground-dashboard-metrics.sqlite");
@@ -2665,6 +2667,79 @@ function summarizeRequestTraces(limit: number) {
   };
 }
 
+function readDemoBenchStatus() {
+  type DemoBenchSnapshot = {
+    generatedAt?: string;
+    summary?: {
+      total?: number;
+      pass?: number;
+      fail?: number;
+      compareLast?: boolean;
+      regressionFailures?: number;
+    };
+    gate?: {
+      compared?: boolean;
+      pass?: boolean;
+      failures?: number;
+    };
+  };
+
+  let snapshot: DemoBenchSnapshot | null = null;
+  try {
+    snapshot = JSON.parse(readFileSync(DEMO_BENCH_LATEST_PATH, "utf8")) as DemoBenchSnapshot;
+  } catch {
+    snapshot = null;
+  }
+
+  if (!snapshot) {
+    return {
+      available: false,
+      path: DEMO_BENCH_LATEST_PATH,
+      status: "warn",
+      summary: {
+        total: 0,
+        pass: 0,
+        fail: 0,
+      },
+      gate: {
+        compared: false,
+        pass: true,
+        failures: 0,
+      },
+      message: "No persisted demo benchmark snapshot yet.",
+    };
+  }
+
+  const fail = Number(snapshot.summary?.fail || 0);
+  const compared = Boolean(snapshot.gate?.compared);
+  const gatePass = Boolean(snapshot.gate?.pass ?? true);
+  const gateFailures = Number(snapshot.gate?.failures || snapshot.summary?.regressionFailures || 0);
+  const status = fail > 0 || gateFailures > 0 || !gatePass ? "fail" : compared ? "ok" : "warn";
+
+  return {
+    available: true,
+    path: DEMO_BENCH_LATEST_PATH,
+    generatedAt: snapshot.generatedAt || null,
+    status,
+    summary: {
+      total: Number(snapshot.summary?.total || 0),
+      pass: Number(snapshot.summary?.pass || 0),
+      fail,
+    },
+    gate: {
+      compared,
+      pass: gatePass,
+      failures: gateFailures,
+    },
+    message:
+      status === "fail"
+        ? "Benchmark gate failing or regressions detected."
+        : status === "warn"
+          ? "Benchmark snapshot exists without compare-last gate."
+          : "Benchmark gate passing against last snapshot.",
+  };
+}
+
 async function runCommand(cmd: string[], cwd: string): Promise<{ output: string; error: string; exitCode: number }> {
   return withCommandWorker(async () => {
     const proc = Bun.spawn({
@@ -4474,6 +4549,7 @@ const routes = {
         targets: SuccessMetrics.targets,
       },
       health: calculateSuccessHealth(SuccessMetrics),
+      benchmarkStatus: readDemoBenchStatus(),
       verdict: ExecutiveVerdict,
     },
   }),
@@ -4958,6 +5034,7 @@ const routes = {
     source: "dashboard/project-health.ts",
     successMetrics: SuccessMetrics,
     health: calculateSuccessHealth(SuccessMetrics),
+    benchmarkStatus: readDemoBenchStatus(),
     recommendations: ProjectRecommendations,
     verdict: ExecutiveVerdict,
   }),
