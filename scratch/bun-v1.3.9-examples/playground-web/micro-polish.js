@@ -428,6 +428,10 @@ async function updateMiniDash() {
   const workerQueueDepth = miniSnapshot?.workerQueue?.queuedTasks ?? livePool?.workers?.queuedTasks ?? 0;
   const workerInFlightTasks = miniSnapshot?.workerQueue?.inFlightTasks ?? livePool?.workers?.inFlightTasks ?? 0;
   const workerQueueSeverity = miniSnapshot?.workerQueue?.severity ?? (workerQueueDepth > maxWorkers * 2 ? 'fail' : workerQueueDepth > 0 ? 'warn' : 'ok');
+  const workerTimedOutTasks = miniSnapshot?.workerHardening?.timedOutTasks ?? livePool?.workers?.timedOutTasks ?? 0;
+  const workerRejectedTasks = miniSnapshot?.workerHardening?.rejectedTasks ?? livePool?.workers?.rejectedTasks ?? 0;
+  const workerTimedOutSeverity = miniSnapshot?.workerHardening?.timedOutSeverity ?? (workerTimedOutTasks > 0 ? 'fail' : 'ok');
+  const workerRejectedSeverity = miniSnapshot?.workerHardening?.rejectedSeverity ?? (workerRejectedTasks > 0 ? 'warn' : 'ok');
   const bottleneckSeverity = miniSnapshot?.bottleneck?.severity;
   const capacitySeverity = miniSnapshot?.capacity?.severity;
   const headroomConnSeverity = miniSnapshot?.headroom?.connections?.severity;
@@ -473,6 +477,16 @@ async function updateMiniDash() {
   if (workerQueueEl) {
     workerQueueEl.textContent = `${workerQueueDepth} (in-flight ${workerInFlightTasks})`;
     setValueSeverityByLabel(workerQueueEl, workerQueueSeverity);
+  }
+  const workerTimeoutsEl = document.getElementById('mini-worker-timeouts');
+  if (workerTimeoutsEl) {
+    workerTimeoutsEl.textContent = `${workerTimedOutTasks}`;
+    setValueSeverityByLabel(workerTimeoutsEl, workerTimedOutSeverity);
+  }
+  const workerRejectionsEl = document.getElementById('mini-worker-rejections');
+  if (workerRejectionsEl) {
+    workerRejectionsEl.textContent = `${workerRejectedTasks}`;
+    setValueSeverityByLabel(workerRejectionsEl, workerRejectedSeverity);
   }
   document.getElementById('mini-port').textContent = rt.dedicatedPort;
   setBar('mini-pool-bar', inFlight, maxRequests);

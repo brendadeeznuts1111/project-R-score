@@ -3517,6 +3517,8 @@ function buildLivePoolSnapshot() {
       loadPerConnection: perConnectionWorkerLoad,
       queuedTasks: workerStats.queued,
       inFlightTasks: workerStats.inFlight,
+      timedOutTasks: workerStats.timedOutTasks,
+      rejectedTasks: workerStats.rejectedTasks,
       status: workerUtilization >= 1 ? "saturated" : workerUtilization >= 0.75 ? "high" : "healthy",
     },
     capacity: {
@@ -3539,12 +3541,16 @@ function buildMiniDashboardSnapshot() {
   const headroomConnectionsPct = Math.round((live.connections.available / Math.max(1, live.connections.max)) * 100);
   const headroomWorkersPct = Math.round((live.workers.available / Math.max(1, live.workers.max)) * 100);
   const workerQueueDepth = Number(live.workers.queuedTasks || 0);
+  const workerTimedOutTasks = Number(live.workers.timedOutTasks || 0);
+  const workerRejectedTasks = Number(live.workers.rejectedTasks || 0);
   const workerQueueSeverity =
     workerQueueDepth > live.workers.max * 2
       ? "fail"
       : workerQueueDepth > 0
         ? "warn"
         : "ok";
+  const workerTimedOutSeverity = workerTimedOutTasks > 0 ? "fail" : "ok";
+  const workerRejectedSeverity = workerRejectedTasks > 0 ? "warn" : "ok";
 
   const snapshot = {
     generatedAt: new Date().toISOString(),
@@ -3583,6 +3589,12 @@ function buildMiniDashboardSnapshot() {
       queuedTasks: workerQueueDepth,
       inFlightTasks: Number(live.workers.inFlightTasks || 0),
       severity: workerQueueSeverity,
+    },
+    workerHardening: {
+      timedOutTasks: workerTimedOutTasks,
+      rejectedTasks: workerRejectedTasks,
+      timedOutSeverity: workerTimedOutSeverity,
+      rejectedSeverity: workerRejectedSeverity,
     },
     pooling: {
       live,
