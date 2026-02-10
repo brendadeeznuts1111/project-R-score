@@ -7,6 +7,7 @@ let brandGateSummary = null;
 let governanceSummary = null;
 let orchestrationSummary = null;
 let demoSearchQuery = '';
+let trendSummaryTimer = null;
 const shortcutState = {
   pendingLeader: null,
   pendingAt: 0,
@@ -705,6 +706,15 @@ async function selectDemo(id) {
 
 function renderDemo(demo) {
   const content = document.getElementById('demo-content');
+  const trendSummaryBlock = `
+    <div class="trend-summary-card">
+      <div class="trend-summary-header">
+        <strong>SQLite Trend Summary</strong>
+        <button class="run-btn trend-summary-refresh" onclick="refreshMainTrendSummary()">↻ Refresh</button>
+      </div>
+      <div id="main-trend-summary" class="trend-summary-body">Loading trend summary...</div>
+    </div>
+  `;
   const brandGatePanel = demo.id === 'brand-bench-gate'
     ? `
       <div class="code-block" style="margin-top: 1rem;">
@@ -849,6 +859,7 @@ function renderDemo(demo) {
       <h2>${demo.name}</h2>
       <p>${demo.description}</p>
     </div>
+    ${trendSummaryBlock}
     
     <div class="code-block">
       <button class="copy-btn" onclick="copyCode(this)">Copy</button>
@@ -906,6 +917,8 @@ function renderDemo(demo) {
   if (demo.id === 'script-orchestration-control') {
     refreshOrchestrationStatus();
   }
+  refreshMainTrendSummary();
+  startMainTrendSummaryAutoRefresh();
 }
 
 async function runDemo(id) {
@@ -982,11 +995,61 @@ function setupEventListeners() {
   window.refreshOrchestrationStatus = refreshOrchestrationStatus;
   window.executeOrchestrationMode = executeOrchestrationMode;
   window.runOrchestrationFullLoop = runOrchestrationFullLoop;
+  window.refreshMainTrendSummary = refreshMainTrendSummary;
   window.refreshHeaderState = refreshHeaderState;
   window.loadDemo = (id) => {
     selectDemo(id);
   };
   window.focusDemoSearch = focusDemoSearch;
+}
+
+function startMainTrendSummaryAutoRefresh() {
+  if (trendSummaryTimer) {
+    clearInterval(trendSummaryTimer);
+    trendSummaryTimer = null;
+  }
+  trendSummaryTimer = setInterval(() => {
+    refreshMainTrendSummary();
+  }, 10000);
+}
+
+async function refreshMainTrendSummary() {
+  const statusDiv = document.getElementById('main-trend-summary');
+  if (!statusDiv) return;
+
+  statusDiv.textContent = 'Loading trend summary...';
+  statusDiv.className = 'trend-summary-body';
+
+  try {
+    const response = await fetch('/api/dashboard/trends/summary?minutes=60&limit=120');
+    const data = await response.json();
+    const summary = data.summary || {};
+    const severityCounts = summary.severityCounts || {};
+    const deltaLoad = Number(summary.deltaLoadMaxPct || 0);
+    const failCount = Number(severityCounts.fail || 0);
+    const driftLoadClass = deltaLoad > 0 ? 'drift-badge drift-warn' : 'drift-badge drift-ok';
+    const failClass = failCount > 0 ? 'drift-badge drift-fail' : 'drift-badge drift-ok';
+    const loadSpark = String(summary.sparklineLoad || '').trim() || '..........';
+    const capSpark = String(summary.sparklineCapacity || '').trim() || '..........';
+
+    statusDiv.innerHTML = `
+      <div class="trend-summary-row">
+        <span>Load</span>
+        <code>${escapeHtml(loadSpark)}</code>
+      </div>
+      <div class="trend-summary-row">
+        <span>Capacity</span>
+        <code>${escapeHtml(capSpark)}</code>
+      </div>
+      <div class="trend-summary-alerts">
+        <span class="${driftLoadClass}">Δ Load ${deltaLoad > 0 ? '+' : ''}${deltaLoad.toFixed(2)}%</span>
+        <span class="${failClass}">Fail Samples ${failCount}</span>
+      </div>
+    `;
+  } catch (error) {
+    statusDiv.classList.add('trend-summary-error');
+    statusDiv.textContent = `Trend summary unavailable: ${error.message}`;
+  }
 }
 
 async function refreshBrandGateStatus() {

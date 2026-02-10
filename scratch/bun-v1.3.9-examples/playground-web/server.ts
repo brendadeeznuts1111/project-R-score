@@ -2740,6 +2740,12 @@ function getCapacityTrend(minutesRaw: number, limitRaw: number) {
 
   const latest = points[0] || null;
   const oldest = points[points.length - 1] || null;
+  const sparkBars = "▁▂▃▄▅▆▇█";
+  const toSparkChar = (valuePct: number) => {
+    const pct = Math.max(0, Math.min(100, Number(valuePct || 0)));
+    const index = Math.min(sparkBars.length - 1, Math.floor((pct / 100) * (sparkBars.length - 1)));
+    return sparkBars[index];
+  };
   const avgLoadMaxPct = points.length
     ? Number((points.reduce((sum, p) => sum + p.loadMaxPct, 0) / points.length).toFixed(2))
     : 0;
@@ -2793,6 +2799,20 @@ function getCapacityTrend(minutesRaw: number, limitRaw: number) {
   const observedWindowMs = Math.max(0, lastTsMs - firstTsMs);
   const requestedWindowMs = minutes * 60_000;
   const windowCoveragePct = requestedWindowMs > 0 ? Number(((observedWindowMs / requestedWindowMs) * 100).toFixed(2)) : 0;
+  const sparklinePoints = points
+    .slice(0, 20)
+    .reverse()
+    .map((point) => {
+      const match = /C(\d+)%\s+W(\d+)%/.exec(String(point.capacitySummary || ""));
+      const c = match ? Number(match[1]) : 0;
+      const w = match ? Number(match[2]) : 0;
+      return {
+        loadMaxPct: Number(point.loadMaxPct || 0),
+        capacityPct: Math.min(c, w),
+      };
+    });
+  const sparklineLoad = sparklinePoints.map((p) => toSparkChar(p.loadMaxPct)).join("");
+  const sparklineCapacity = sparklinePoints.map((p) => toSparkChar(p.capacityPct)).join("");
 
   return {
     generatedAt: new Date().toISOString(),
@@ -2817,6 +2837,8 @@ function getCapacityTrend(minutesRaw: number, limitRaw: number) {
       observedWindowMs,
       requestedWindowMs,
       windowCoveragePct,
+      sparklineLoad,
+      sparklineCapacity,
       latest,
       oldest,
     },

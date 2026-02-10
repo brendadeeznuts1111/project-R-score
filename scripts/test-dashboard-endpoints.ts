@@ -113,6 +113,8 @@ async function run(): Promise<number> {
         Number.isFinite(trendSummary.json?.summary?.avgLoadMaxPct) &&
         Number.isFinite(trendSummary.json?.summary?.avgCapacityPct) &&
         Number.isFinite(trendSummary.json?.summary?.windowCoveragePct) &&
+        typeof trendSummary.json?.summary?.sparklineLoad === "string" &&
+        typeof trendSummary.json?.summary?.sparklineCapacity === "string" &&
         Number.isFinite(trendSummary.json?.window?.minutes) &&
         Number.isFinite(trendSummary.json?.window?.limit),
       `status=${trendSummary.res.status} count=${trendSummary.json?.summary?.count}`

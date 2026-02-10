@@ -265,6 +265,79 @@ header h1 {
   margin-bottom: 10px;
 }
 
+.trend-summary-card {
+  margin-bottom: 18px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-tertiary);
+}
+
+.trend-summary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.trend-summary-refresh {
+  font-size: 0.8em;
+  padding: 4px 8px;
+}
+
+.trend-summary-body {
+  font-size: 0.92em;
+}
+
+.trend-summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.trend-summary-row code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  color: var(--text-primary);
+}
+
+.trend-summary-alerts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.drift-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: 0.8em;
+}
+
+.drift-ok {
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.drift-warn {
+  border-color: var(--warning);
+  color: var(--warning);
+}
+
+.drift-fail {
+  border-color: var(--error);
+  color: var(--error);
+}
+
+.trend-summary-error {
+  color: var(--error);
+}
+
 .demo-header p {
   color: var(--text-secondary);
   font-size: 1.1em;
