@@ -1,11 +1,11 @@
 #!/usr/bin/env bun
 
-const HOST = process.env.DASHBOARD_HOST || "localhost";
-const PORT = Number.parseInt(
-  process.env.DASHBOARD_PORT || process.env.PLAYGROUND_PORT || process.env.PORT || "3011",
-  10
-);
-const BASE = `http://${HOST}:${PORT}`;
+import {
+  applyDashboardTestEnv,
+  getDashboardTestConfig,
+  withDashboardServer,
+} from "./lib/dashboard-test-server";
+
 const PROTOCOL_FLAG = Bun.argv.find((arg) => arg.startsWith("--protocol="));
 const PROTOCOL = PROTOCOL_FLAG ? PROTOCOL_FLAG.split("=")[1]?.toLowerCase() : "";
 
@@ -71,7 +71,8 @@ type CheckResult = {
 };
 
 async function fetchJson(path: string, init?: RequestInit) {
-  const res = await fetch(`${BASE}${path}`, init);
+  const { base } = getDashboardTestConfig();
+  const res = await fetch(`${base}${path}`, init);
   const text = await res.text();
   let json: unknown = null;
   try {
@@ -193,9 +194,14 @@ async function run(): Promise<number> {
     const status = check.ok ? "PASS" : "FAIL";
     console.log(`[${status}] ${check.name} :: ${check.details}`);
   }
-  console.log(`Checked ${checks.length} protocol assertions against ${BASE}${PROTOCOL ? ` (protocol=${PROTOCOL})` : ""}`);
+  const { base } = getDashboardTestConfig();
+  console.log(`Checked ${checks.length} protocol assertions against ${base}${PROTOCOL ? ` (protocol=${PROTOCOL})` : ""}`);
   return failed.length === 0 ? 0 : 1;
 }
 
-const code = await run();
-process.exit(code);
+if (import.meta.main) {
+  const config = getDashboardTestConfig();
+  applyDashboardTestEnv(config);
+  const code = await withDashboardServer(config.host, config.port, run);
+  process.exit(code);
+}
