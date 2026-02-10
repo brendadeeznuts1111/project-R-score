@@ -6555,9 +6555,27 @@ const routes = {
   "/api/control/worker-pool": async () => {
     const stats = getCommandWorkerStats();
     const latest = await readJsonSafe(WORKER_POOL_BENCH_LATEST_PATH);
+    const diagnostics = {
+      workers: Number(stats.max || 0),
+      busy: Number(stats.active || 0),
+      queued: Number(stats.queued || 0),
+      inFlight: Number(stats.inFlight || 0),
+      timedOutTasks: Number(stats.timedOutTasks || 0),
+      rejectedTasks: Number(stats.rejectedTasks || 0),
+      createdWorkers: Number(stats.createdWorkers || 0),
+      replacedWorkers: Number(stats.replacedWorkers || 0),
+      availableWorkers: Math.max(0, Number(stats.max || 0) - Number(stats.active || 0)),
+      queuePressurePct: Number(
+        (
+          (Number(stats.queued || 0) / Math.max(1, Number(stats.max || 1))) * 100
+        ).toFixed(1)
+      ),
+      lastErrors: Array.isArray(stats.lastErrors) ? stats.lastErrors : [],
+    };
     return {
       generatedAt: new Date().toISOString(),
       pool: stats,
+      diagnostics,
       config: {
         minWorkers: WORKER_POOL_MIN,
         maxWorkers: WORKER_POOL_MAX,

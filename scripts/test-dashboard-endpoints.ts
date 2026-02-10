@@ -217,6 +217,28 @@ async function run(): Promise<number> {
       `status=${socketRuntime.res.status} clients=${socketRuntime.json?.sockets?.connectedClients ?? "n/a"}`
     );
 
+    const workerPoolRuntime = await fetchJson("/api/control/worker-pool");
+    check(
+      checks,
+      "worker-pool-contract",
+      workerPoolRuntime.res.status === 200 &&
+        Number.isFinite(workerPoolRuntime.json?.pool?.active) &&
+        Number.isFinite(workerPoolRuntime.json?.pool?.max) &&
+        Number.isFinite(workerPoolRuntime.json?.pool?.queued) &&
+        Number.isFinite(workerPoolRuntime.json?.pool?.inFlight) &&
+        Number.isFinite(workerPoolRuntime.json?.pool?.timedOutTasks) &&
+        Number.isFinite(workerPoolRuntime.json?.pool?.rejectedTasks) &&
+        Number.isFinite(workerPoolRuntime.json?.diagnostics?.workers) &&
+        Number.isFinite(workerPoolRuntime.json?.diagnostics?.busy) &&
+        Number.isFinite(workerPoolRuntime.json?.diagnostics?.queued) &&
+        Number.isFinite(workerPoolRuntime.json?.diagnostics?.inFlight) &&
+        Array.isArray(workerPoolRuntime.json?.diagnostics?.lastErrors) &&
+        Number.isFinite(workerPoolRuntime.json?.config?.minWorkers) &&
+        Number.isFinite(workerPoolRuntime.json?.config?.maxWorkers) &&
+        ["ok", "warn", "fail"].includes(String(workerPoolRuntime.json?.queueSeverity || "")),
+      `status=${workerPoolRuntime.res.status} workers=${workerPoolRuntime.json?.diagnostics?.busy ?? "n/a"}/${workerPoolRuntime.json?.diagnostics?.workers ?? "n/a"} queued=${workerPoolRuntime.json?.diagnostics?.queued ?? "n/a"}`
+    );
+
     const udpRuntime = await fetchJson("/api/control/udp/runtime");
     check(
       checks,

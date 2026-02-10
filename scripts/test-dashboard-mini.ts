@@ -103,8 +103,25 @@ async function run(): Promise<number> {
         Number.isFinite(miniJson?.pooling?.live?.connections?.inFlight) &&
         Number.isFinite(miniJson?.pooling?.live?.connections?.max) &&
         Number.isFinite(miniJson?.pooling?.live?.workers?.active) &&
-        Number.isFinite(miniJson?.pooling?.live?.workers?.max),
+        Number.isFinite(miniJson?.pooling?.live?.workers?.max) &&
+        Number.isFinite(miniJson?.pooling?.live?.workers?.timedOutTasks) &&
+        Number.isFinite(miniJson?.pooling?.live?.workers?.rejectedTasks),
       details: `poolingLive=${JSON.stringify(miniJson?.pooling?.live ?? null)}`,
+    });
+    checks.push({
+      name: "mini-worker-hardening-shape",
+      ok:
+        Number.isFinite(miniJson?.workerQueue?.queuedTasks) &&
+        Number.isFinite(miniJson?.workerQueue?.inFlightTasks) &&
+        ["ok", "warn", "fail"].includes(String(miniJson?.workerQueue?.severity || "")) &&
+        Number.isFinite(miniJson?.workerHardening?.timedOutTasks) &&
+        Number.isFinite(miniJson?.workerHardening?.rejectedTasks) &&
+        ["ok", "warn", "fail"].includes(String(miniJson?.workerHardening?.timedOutSeverity || "")) &&
+        ["ok", "warn", "fail"].includes(String(miniJson?.workerHardening?.rejectedSeverity || "")),
+      details: `workerHardening=${JSON.stringify({
+        workerQueue: miniJson?.workerQueue ?? null,
+        workerHardening: miniJson?.workerHardening ?? null,
+      })}`,
     });
     checks.push({
       name: "mini-process-socket-shape",

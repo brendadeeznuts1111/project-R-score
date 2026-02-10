@@ -1141,9 +1141,11 @@ function renderDemo(demo) {
         <div style="display:flex; flex-wrap:wrap; gap:8px;">
           <button class="run-btn" onclick="refreshProcessRuntimeStatus()">↻ Refresh Process Runtime</button>
           <button class="run-btn" onclick="refreshSocketRuntimeStatus()">↻ Refresh Socket Runtime</button>
+          <button class="run-btn" onclick="refreshWorkerPoolDiagnostics()">↻ Refresh Worker Pool</button>
         </div>
         <div id="process-runtime-output" class="output" style="display:block; margin-top:0.75rem;">Loading process runtime...</div>
         <div id="socket-runtime-output" class="output" style="display:block; margin-top:0.75rem;">Loading socket runtime...</div>
+        <div id="worker-pool-output" class="output" style="display:block; margin-top:0.75rem;">Loading worker pool diagnostics...</div>
       </div>
     `
     : '';
@@ -1313,6 +1315,7 @@ function renderDemo(demo) {
   if (processSocketPanel) {
     refreshProcessRuntimeStatus();
     refreshSocketRuntimeStatus();
+    refreshWorkerPoolDiagnostics();
   }
   if (demo.id === 'ipc-communication') {
     refreshUdpRuntimeStatus();
@@ -2261,6 +2264,54 @@ async function refreshSocketRuntimeStatus() {
   } catch (error) {
     statusDiv.className = 'output error';
     statusDiv.textContent = `Failed to load socket runtime: ${error.message}`;
+  }
+}
+
+async function refreshWorkerPoolDiagnostics() {
+  const statusDiv = document.getElementById('worker-pool-output');
+  if (!statusDiv) return;
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = 'Loading worker pool diagnostics...';
+
+  try {
+    const response = await fetch('/api/control/worker-pool');
+    const data = await response.json();
+    const pool = data?.pool || {};
+    const diagnostics = data?.diagnostics || {};
+    const config = data?.config || {};
+    const latestBench = data?.latestBench || {};
+    const lastErrors = Array.isArray(diagnostics?.lastErrors)
+      ? diagnostics.lastErrors.slice(-6)
+      : [];
+    const gate = latestBench?.gate || {};
+    const snapshot = latestBench?.snapshot || {};
+
+    const lines = [
+      `generatedAt: ${data?.generatedAt || 'n/a'}`,
+      `severity: ${data?.queueSeverity || 'n/a'}`,
+      `workers: ${diagnostics?.busy ?? pool?.active ?? 0}/${diagnostics?.workers ?? pool?.max ?? 0} available=${diagnostics?.availableWorkers ?? 'n/a'}`,
+      `queue: queued=${diagnostics?.queued ?? pool?.queued ?? 0} inFlight=${diagnostics?.inFlight ?? pool?.inFlight ?? 0} pressure=${diagnostics?.queuePressurePct ?? 'n/a'}%`,
+      `hardening: timedOut=${diagnostics?.timedOutTasks ?? pool?.timedOutTasks ?? 0} rejected=${diagnostics?.rejectedTasks ?? pool?.rejectedTasks ?? 0}`,
+      `lifecycle: created=${diagnostics?.createdWorkers ?? pool?.createdWorkers ?? 0} replaced=${diagnostics?.replacedWorkers ?? pool?.replacedWorkers ?? 0}`,
+      `config: min=${config?.minWorkers ?? 'n/a'} max=${config?.maxWorkers ?? 'n/a'} queueMax=${config?.maxQueueSize ?? 'n/a'} timeoutMs=${config?.taskTimeoutMs ?? 'n/a'}`,
+      `bench: pass=${String(gate?.pass ?? false)} compared=${String(gate?.compared ?? false)} p95=${snapshot?.latencyMs?.p95 ?? 'n/a'}ms`,
+      '',
+      'last errors:',
+      ...(lastErrors.length > 0
+        ? lastErrors.map((row) => `  ${row?.at || 'n/a'} | ${row?.event || 'event'} | ${row?.message || 'n/a'}`)
+        : ['  (none)']),
+    ];
+
+    statusDiv.className = String(data?.queueSeverity || 'ok') === 'fail'
+      ? 'output error'
+      : String(data?.queueSeverity || 'ok') === 'warn'
+        ? 'output warn'
+        : 'output success';
+    statusDiv.textContent = lines.join('\n');
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `Failed to load worker pool diagnostics: ${error.message}`;
   }
 }
 
