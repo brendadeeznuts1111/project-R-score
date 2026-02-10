@@ -1,39 +1,54 @@
-import { test, expect, describe, beforeEach } from 'bun:test';
+import { test, expect, describe, beforeEach, afterEach } from 'bun:test';
 import { VectorizeClient } from '../../src/core/vectorize-client';
 
 describe('VectorizeClient', () => {
   let client: VectorizeClient;
   const mockWorkerUrl = 'http://localhost:8787';
+  const originalFetch = global.fetch;
 
   beforeEach(() => {
-    client = new VectorizeClient(mockWorkerUrl, false); // Disabled for testing
+    client = new VectorizeClient(mockWorkerUrl, true);
   });
 
-  test('should check availability', async () => {
+  afterEach(() => {
+    global.fetch = originalFetch;
+  });
+
+  test('returns true when enabled and health endpoint responds with 200', async () => {
     // Mock fetch for health check
-    global.fetch = async () => {
+    global.fetch = (async () => {
       return new Response(JSON.stringify({ status: 'ok' }), { status: 200 });
-    } as any;
+    }) as any;
 
     const available = await client.isAvailable();
     expect(available).toBe(true);
   });
 
-  test('should handle unavailable service', async () => {
-    global.fetch = async () => {
+  test('returns false when service is unreachable', async () => {
+    global.fetch = (async () => {
       throw new Error('Network error');
-    } as any;
+    }) as any;
 
     const client = new VectorizeClient(mockWorkerUrl, true);
     const available = await client.isAvailable();
     expect(available).toBe(false);
   });
 
+  test('returns false when vectorize is disabled even if endpoint is healthy', async () => {
+    global.fetch = (async () => {
+      return new Response(JSON.stringify({ status: 'ok' }), { status: 200 });
+    }) as any;
+
+    const disabledClient = new VectorizeClient(mockWorkerUrl, false);
+    const available = await disabledClient.isAvailable();
+    expect(available).toBe(false);
+  });
+
   test('should generate embeddings', async () => {
     const mockEmbedding = new Array(768).fill(0.1);
-    global.fetch = async () => {
+    global.fetch = (async () => {
       return new Response(JSON.stringify({ embedding: mockEmbedding }), { status: 200 });
-    } as any;
+    }) as any;
 
     const client = new VectorizeClient(mockWorkerUrl, true);
     const embedding = await client.embedText('test text');
@@ -55,9 +70,9 @@ describe('VectorizeClient', () => {
       },
     ];
 
-    global.fetch = async () => {
+    global.fetch = (async () => {
       return new Response(JSON.stringify({ matches: mockMatches }), { status: 200 });
-    } as any;
+    }) as any;
 
     const client = new VectorizeClient(mockWorkerUrl, true);
     const results = await client.queryBarbers('haircut', { status: 'active' });
@@ -67,9 +82,9 @@ describe('VectorizeClient', () => {
   });
 
   test('should handle errors gracefully', async () => {
-    global.fetch = async () => {
+    global.fetch = (async () => {
       return new Response(JSON.stringify({ error: 'Service unavailable' }), { status: 500 });
-    } as any;
+    }) as any;
 
     const client = new VectorizeClient(mockWorkerUrl, true);
     await expect(client.embedText('test')).rejects.toThrow();
@@ -79,10 +94,10 @@ describe('VectorizeClient', () => {
     const mockEmbedding = new Array(768).fill(0.1);
     let fetchCount = 0;
 
-    global.fetch = async () => {
+    global.fetch = (async () => {
       fetchCount++;
       return new Response(JSON.stringify({ embedding: mockEmbedding }), { status: 200 });
-    } as any;
+    }) as any;
 
     const client = new VectorizeClient(mockWorkerUrl, true);
     
