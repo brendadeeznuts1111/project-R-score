@@ -6023,18 +6023,18 @@ capacityBroadcastTimer = setInterval(() => {
   httpServer.publish(CAPACITY_WS_TOPIC, JSON.stringify(buildMiniDashboardSnapshot()));
 }, CAPACITY_WS_BROADCAST_MS);
 
-console.log(`🚀 Bun v1.3.9 Browser Playground`);
-console.log(`📡 Server running at http://localhost:${ACTIVE_PORT}`);
-console.log(`🌐 Open http://localhost:${ACTIVE_PORT} in your browser`);
+console.log(`Bun v1.3.9 Browser Playground`);
+console.log(`Server running at http://localhost:${ACTIVE_PORT}`);
+console.log(`Open http://localhost:${ACTIVE_PORT} in your browser`);
 console.log(
-  `🧰 Pooling: maxRequests=${MAX_CONCURRENT_REQUESTS} maxCommandWorkers=${MAX_COMMAND_WORKERS} range=${PORT_RANGE}`
+  `Pooling: maxRequests=${MAX_CONCURRENT_REQUESTS} maxCommandWorkers=${MAX_COMMAND_WORKERS} range=${PORT_RANGE}`
 );
-console.log(`📶 Capacity stream: ws://localhost:${ACTIVE_PORT}${CAPACITY_WS_PATH} topic=${CAPACITY_WS_TOPIC} every=${CAPACITY_WS_BROADCAST_MS}ms`);
+console.log(`Capacity stream: ws://localhost:${ACTIVE_PORT}${CAPACITY_WS_PATH} topic=${CAPACITY_WS_TOPIC} every=${CAPACITY_WS_BROADCAST_MS}ms`);
 console.log(
-  `🛰️ Warmup: prefetch=${warmupState.prefetch.length} preconnect=${warmupState.preconnect.length} enabled=${!warmupState.skipped}`
+  `Warmup: prefetch=${warmupState.prefetch.length} preconnect=${warmupState.preconnect.length} enabled=${!warmupState.skipped}`
 );
 console.log(
-  `🧯 Runtime guards: ignoreSighup=${IGNORE_SIGHUP} exitOnUnhandledRejection=${EXIT_ON_UNHANDLED_REJECTION} exitOnUncaughtException=${EXIT_ON_UNCAUGHT_EXCEPTION}`
+  `Runtime guards: ignoreSighup=${IGNORE_SIGHUP} exitOnUnhandledRejection=${EXIT_ON_UNHANDLED_REJECTION} exitOnUncaughtException=${EXIT_ON_UNCAUGHT_EXCEPTION}`
 );
-console.log(`🛑 Shutdown timeout: ${SHUTDOWN_TIMEOUT_MS}ms`);
-console.log(`\n💡 Press Ctrl+C to stop gracefully`);
+console.log(`Shutdown timeout: ${SHUTDOWN_TIMEOUT_MS}ms`);
+console.log(`\nPress Ctrl+C to stop gracefully`);

@@ -1333,7 +1333,7 @@ async function refreshComponentStatusMatrix() {
       return `${mark} | ${row.component} | cov=${row.testCoverage} | budget=${row.performanceBudget} | sec=${row.securityReview} | prod=${row.production}`;
     });
 
-    statusDiv.className = (summary.betaCount ?? 0) > 0 ? 'output success' : 'output success';
+    statusDiv.className = (summary.betaCount ?? 0) > 0 ? 'output warn' : 'output success';
     statusDiv.textContent = header.concat(topRows).join('\n');
   } catch (error) {
     statusDiv.className = 'output error';
@@ -1367,7 +1367,7 @@ async function refreshDeploymentReadinessMatrix() {
       ...beta.slice(0, 4).map((row) => `  ${row.component} | readiness=${row.readiness} | blockers=${(row.blockers || []).length}`),
     ];
 
-    statusDiv.className = beta.length > 0 ? 'output success' : 'output success';
+    statusDiv.className = beta.length > 0 ? 'output warn' : 'output success';
     statusDiv.textContent = lines.join('\n');
   } catch (error) {
     statusDiv.className = 'output error';

@@ -478,6 +478,10 @@ header h1 {
   border-color: var(--success);
 }
 
+.output.warn {
+  border-color: var(--warning);
+}
+
 .output.error {
   border-color: var(--error);
 }
