@@ -697,7 +697,7 @@
       "license": "MIT"
     },
     "performance": {
-      "max_concurrent_requests": 10000,
+      "max_concurrent_requests": 1e4,
       "request_timeout": "30s",
       "connection_pool_size": 100,
       "cache_ttl": "300s",
@@ -727,7 +727,7 @@
       "max_memory": "1gb",
       "eviction_policy": "lru",
       "compression": true,
-      "max_keys": 1000000,
+      "max_keys": 1e6,
       "cleanup_interval": "600s"
     },
     "api": {
@@ -768,7 +768,7 @@
     },
     "limits": {
       "max_file_upload_size": "100mb",
-      "max_api_calls_per_hour": 10000,
+      "max_api_calls_per_hour": 1e4,
       "max_concurrent_sessions": 1000,
       "max_storage_per_user": "10gb",
       "max_bandwidth_per_month": "1tb",
@@ -1609,7 +1609,7 @@
     "http:migrate": "bun run examples/migrate-http-client.ts && bun run http:test",
     "playground:http": "bun run http:debug",
     "playground:fix": "bun run http:migrate",
-    "test": "bun test ./tests ./lib ./utils ./barbershop ./bun-markdown-constants",
+    "test": "bun test ./tests ./lib ./utils ./cli ./barbershop ./bun-markdown-constants",
     "test:agent": "AGENT=1 bun test ./tests ./lib ./utils ./barbershop ./bun-markdown-constants",
     "test:ci": "bun test --bail --reporter=junit --reporter-outfile=./reports/junit/bun-test.xml ./tests ./lib ./utils ./barbershop ./bun-markdown-constants",
     "test:coverage": "bun test --coverage ./tests ./lib ./utils ./barbershop ./bun-markdown-constants",
