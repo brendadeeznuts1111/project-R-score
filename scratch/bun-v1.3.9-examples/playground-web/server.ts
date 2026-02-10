@@ -813,6 +813,49 @@ environment = "node"
   }
 }`,
   },
+  {
+    id: "test-lifecycle",
+    name: "Test Lifecycle Hooks",
+    description: "beforeAll, afterAll, beforeEach, afterEach setup and cleanup",
+    category: "Testing",
+    code: `import { test, beforeAll, afterAll, beforeEach, afterEach } from "bun:test";
+
+let database: Database;
+
+beforeAll(() => {
+  database = new Database();  // Runs once
+});
+
+afterAll(() => {
+  database.close();  // Cleanup once
+});
+
+beforeEach(() => {
+  // Runs before each test
+});
+
+afterEach(() => {
+  // Runs after each test
+});`,
+  },
+  {
+    id: "test-filtering",
+    name: "Test Filtering",
+    description: "CLI patterns, test.only, test.skip for selective test execution",
+    category: "Testing",
+    code: `// CLI filtering
+bun test --test-name-pattern="auth"
+bun test -t "API"
+
+// Code-level filtering
+test.only("focus", () => {});   // Only run this
+test.skip("skip", () => {});     // Skip this
+test.todo("todo", () => {});     // Pending
+
+// Describe-level
+describe.only("module", () => {});
+describe.skip("legacy", () => {});`,
+  },
 ];
 
 async function runCommand(cmd: string[], cwd: string): Promise<{ output: string; error: string; exitCode: number }> {
@@ -2097,6 +2140,8 @@ const routes = {
       "brand-bench-results": "brand-bench-results",
       "test-timeouts": "timeouts-demo",
       "test-config": "config-demo",
+      "test-lifecycle": "lifecycle-demo",
+      "test-filtering": "filtering-demo",
     };
     
     const scriptName = scriptMap[id || ""] || id;
