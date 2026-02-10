@@ -43,9 +43,10 @@ export class ProtocolCircuitBreaker {
     if (entry.state === "CLOSED") return true;
 
     if (entry.state === "OPEN") {
-      if (Date.now() - entry.openedAt >= this.config.cooldownMs) {
+      const now = Date.now();
+      if (now - entry.openedAt >= this.config.cooldownMs) {
         entry.state = "HALF_OPEN";
-        entry.lastStateChange = Date.now();
+        entry.lastStateChange = now;
         return true;
       }
       return false;
@@ -62,7 +63,7 @@ export class ProtocolCircuitBreaker {
 
     if (entry.state === "HALF_OPEN") {
       entry.state = "CLOSED";
-      entry.window = [];
+      entry.window.length = 0;
       entry.lastStateChange = Date.now();
     }
   }
@@ -72,20 +73,22 @@ export class ProtocolCircuitBreaker {
     entry.window.push(false);
     this.trimWindow(entry);
 
+    const now = Date.now();
+
     if (entry.state === "HALF_OPEN") {
       entry.state = "OPEN";
-      entry.openedAt = Date.now();
-      entry.lastStateChange = Date.now();
+      entry.openedAt = now;
+      entry.lastStateChange = now;
       return;
     }
 
     if (entry.state === "CLOSED" && entry.window.length >= this.config.windowSize) {
-      const failures = entry.window.filter((ok) => !ok).length;
-      const rate = failures / entry.window.length;
-      if (rate >= this.config.failureRateThreshold) {
+      let failures = 0;
+      for (const ok of entry.window) if (!ok) failures++;
+      if (failures / entry.window.length >= this.config.failureRateThreshold) {
         entry.state = "OPEN";
-        entry.openedAt = Date.now();
-        entry.lastStateChange = Date.now();
+        entry.openedAt = now;
+        entry.lastStateChange = now;
       }
     }
   }
@@ -104,9 +107,10 @@ export class ProtocolCircuitBreaker {
     }
 
     // Check if OPEN should transition to HALF_OPEN for snapshot accuracy
-    if (entry.state === "OPEN" && Date.now() - entry.openedAt >= this.config.cooldownMs) {
+    const now = Date.now();
+    if (entry.state === "OPEN" && now - entry.openedAt >= this.config.cooldownMs) {
       entry.state = "HALF_OPEN";
-      entry.lastStateChange = Date.now();
+      entry.lastStateChange = now;
     }
 
     let failures = 0;

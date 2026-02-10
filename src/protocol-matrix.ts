@@ -2,12 +2,12 @@ import type { ProtocolCircuitBreaker } from "./protocol-circuit-breaker";
 
 export type Protocol = "http" | "https" | "ws" | "wss" | "s3" | "file" | "data" | "blob" | "unix";
 
-export type ProtocolConfig = {
+export interface ProtocolConfig {
   maxSize: number;
   timeout: number;
   fallbackChain: Protocol[];
   retryStrategy: { maxAttempts: number; backoff: number };
-};
+}
 
 export const PROTOCOL_MATRIX: Record<Protocol, ProtocolConfig> = {
   data: {
@@ -66,7 +66,7 @@ export const PROTOCOL_MATRIX: Record<Protocol, ProtocolConfig> = {
   },
 };
 
-export type ExecuteRequest = {
+export interface ExecuteRequest {
   data: unknown;
   size?: number;
   options?: {
@@ -75,14 +75,14 @@ export type ExecuteRequest = {
     cache?: boolean;
     protocol?: Protocol;
   };
-};
+}
 
-export type ExecuteResult = {
+export interface ExecuteResult {
   success: boolean;
   protocol: Protocol;
   data: unknown;
   metadata: { latency: number; cacheHit: boolean };
-};
+}
 
 type CacheEntry = { result: ExecuteResult; expires: number };
 
@@ -142,7 +142,7 @@ export class ProtocolOrchestrator {
     }
     this.activeConcurrent++;
 
-    const size = request.size ?? JSON.stringify(request.data).length;
+    const size = request.size ?? cacheKey.length;
     const selected = request.options?.protocol
       ? { primary: request.options.protocol }
       : this.selectProtocol(size, request.options);
@@ -150,7 +150,6 @@ export class ProtocolOrchestrator {
     const config = PROTOCOL_MATRIX[selected.primary];
     const chain = [selected.primary, ...config.fallbackChain];
 
-    let lastError: Error | undefined;
     const start = performance.now();
 
     try {
@@ -174,9 +173,8 @@ export class ProtocolOrchestrator {
           }
 
           return result;
-        } catch (err) {
+        } catch {
           this.circuitBreaker?.recordFailure(protocol);
-          lastError = err instanceof Error ? err : new Error(String(err));
         }
       }
 
@@ -197,7 +195,7 @@ export class ProtocolOrchestrator {
     switch (protocol) {
       case "data":
         return Promise.resolve({
-          encoded: Buffer.from(JSON.stringify(data)).toString("base64"),
+          encoded: btoa(JSON.stringify(data)),
         });
       case "blob":
         return Promise.resolve({

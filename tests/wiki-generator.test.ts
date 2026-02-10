@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'bun:test';
+import { describe, it, expect, beforeEach, afterEach, spyOn } from 'bun:test';
 import { MCPWikiGenerator } from '../lib/mcp/wiki-generator-mcp';
 import { DocumentationProvider } from '../lib/docs/constants/enums';
 
@@ -83,8 +83,12 @@ describe('MCPWikiGenerator', () => {
 
     it('should cleanup old metrics', () => {
       expect(() => MCPWikiGenerator.cleanupOldMetrics()).not.toThrow();
-      expect(() => MCPWikiGenerator.cleanupOldMetrics(-1)).not.toThrow(); // Invalid input
-      expect(() => MCPWikiGenerator.cleanupOldMetrics('invalid' as any)).not.toThrow(); // Invalid input
+
+      // Invalid inputs should warn but not throw — silence console during validation
+      using warn = spyOn(console, 'warn').mockImplementation(() => {});
+      expect(() => MCPWikiGenerator.cleanupOldMetrics(-1)).not.toThrow();
+      expect(() => MCPWikiGenerator.cleanupOldMetrics('invalid' as any)).not.toThrow();
+      expect(warn).toHaveBeenCalledTimes(2);
     });
   });
 

@@ -13,7 +13,7 @@ export interface BridgeMetrics {
 }
 
 export class ProtocolWorkerBridge {
-  private pool: UltraWorkerPool<ExecuteRequest, ExecuteResult>;
+  private readonly pool: UltraWorkerPool<ExecuteRequest, ExecuteResult>;
   private readonly sizeThreshold: number;
   private mainThreadCount = 0;
   private workerCount = 0;

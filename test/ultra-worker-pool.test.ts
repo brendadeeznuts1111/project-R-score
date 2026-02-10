@@ -453,9 +453,7 @@ describe("UltraWorkerPool fastPath", () => {
 describe("UltraWorkerPool getStats", () => {
   test("reports accurate stats after mixed operations", async () => {
     using spy = spyOn(globalThis, "Worker");
-    let workerCount = 0;
     spy.mockImplementation((() => {
-      workerCount++;
       return new FakeWorker({ autoReply: true, replyDelayMs: 0 });
     }) as any);
 
