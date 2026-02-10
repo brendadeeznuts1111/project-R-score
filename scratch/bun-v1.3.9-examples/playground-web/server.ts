@@ -356,6 +356,20 @@ type BunV139FeatureMatrixRow = {
   productionReady: string;
 };
 
+type ComponentStatusRow = {
+  component: string;
+  file: string;
+  status: string;
+  owner: string;
+  lastCommit: string;
+  testCoverage: string;
+  performanceBudget: string;
+  dependencies: string;
+  securityReview: string;
+  documentation: string;
+  production: string;
+};
+
 const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
   {
     feature: "Parallel Scripts",
@@ -496,6 +510,191 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     performanceImpact: "~6% micro-bench",
     memoryImpact: "-16ms/1M calls",
     productionReady: "yes (all platforms)",
+  },
+];
+
+const COMPONENT_STATUS_MATRIX: ComponentStatusRow[] = [
+  {
+    component: "CPU Profiling",
+    file: "batch-profiler.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "94%",
+    performanceBudget: "<2% overhead",
+    dependencies: "Bun.FFI",
+    securityReview: "Q1-2026",
+    documentation: "./docs/profiler.md",
+    production: "5 regions",
+  },
+  {
+    component: "ESM Bytecode",
+    file: "esm-bytecode/compile.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "89%",
+    performanceBudget: "50ms cold start",
+    dependencies: "Bun.build",
+    securityReview: "Q1-2026",
+    documentation: "./docs/bytecode.md",
+    production: "5 regions",
+  },
+  {
+    component: "ARM Stability",
+    file: "runtime/arm-dispatch.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "100%",
+    performanceBudget: "Zero SIGILL",
+    dependencies: "mimalloc",
+    securityReview: "Q1-2026",
+    documentation: "./docs/arm.md",
+    production: "5 regions",
+  },
+  {
+    component: "Markdown SIMD",
+    file: "docs/pipeline.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "87%",
+    performanceBudget: "3-15% faster",
+    dependencies: "Bun.Markdown",
+    securityReview: "Q1-2026",
+    documentation: "./docs/markdown.md",
+    production: "5 regions",
+  },
+  {
+    component: "React Markdown",
+    file: "dashboard/ssr.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "91%",
+    performanceBudget: "-6% heap",
+    dependencies: "Bun.markdown.react",
+    securityReview: "Q1-2026",
+    documentation: "./docs/react-md.md",
+    production: "5 regions",
+  },
+  {
+    component: "Abort Optimize",
+    file: "fetch/client.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "93%",
+    performanceBudget: "-16ms/1M",
+    dependencies: "AbortController",
+    securityReview: "Q1-2026",
+    documentation: "./docs/abort.md",
+    production: "5 regions",
+  },
+  {
+    component: "Parallel Scripts",
+    file: "parallel-runner/core.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "96%",
+    performanceBudget: "95ms/500 scripts",
+    dependencies: "Bun.spawn",
+    securityReview: "Q1-2026",
+    documentation: "./docs/parallel.md",
+    production: "5 regions",
+  },
+  {
+    component: "Symbol.dispose",
+    file: "mock-dispose/client.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "98%",
+    performanceBudget: "Zero cleanup",
+    dependencies: "bun:test",
+    securityReview: "Q1-2026",
+    documentation: "./docs/mocks.md",
+    production: "5 regions",
+  },
+  {
+    component: "HTTP/2 Upgrade",
+    file: "http-upgrade/orchestrator.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "88%",
+    performanceBudget: "30-40% throughput",
+    dependencies: "node:http2",
+    securityReview: "Q1-2026",
+    documentation: "./docs/http2.md",
+    production: "5 regions",
+  },
+  {
+    component: "NO_PROXY Fix",
+    file: "secure-fetch/index.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "92%",
+    performanceBudget: "Bypass validation",
+    dependencies: "fetch",
+    securityReview: "Q1-2026",
+    documentation: "./docs/noproxy.md",
+    production: "5 regions",
+  },
+  {
+    component: "Protocol Resilience",
+    file: "protocols/resilience-chain.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "90%",
+    performanceBudget: "Auto-failover",
+    dependencies: "Bun.fetch",
+    securityReview: "Q1-2026",
+    documentation: "./docs/resilience.md",
+    production: "5 regions",
+  },
+  {
+    component: "Mini Dashboard",
+    file: "micro-polish.js",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "85%",
+    performanceBudget: "<16ms render",
+    dependencies: "Bun.serve",
+    securityReview: "Q1-2026",
+    documentation: "./docs/mini-dash.md",
+    production: "5 regions",
+  },
+  {
+    component: "WebSocket Gateway",
+    file: "ws-gateway.ts",
+    status: "beta",
+    owner: "@nolarose",
+    lastCommit: "HEAD",
+    testCoverage: "78%",
+    performanceBudget: "<1ms latency",
+    dependencies: "Bun.serve",
+    securityReview: "Q2-2026",
+    documentation: "./docs/ws.md",
+    production: "staging",
+  },
+  {
+    component: "Predictive Cache",
+    file: "caching/predictive.ts",
+    status: "beta",
+    owner: "@nolarose",
+    lastCommit: "HEAD",
+    testCoverage: "72%",
+    performanceBudget: "90% hit rate",
+    dependencies: "Bun.FFI",
+    securityReview: "Q2-2026",
+    documentation: "./docs/predictive.md",
+    production: "staging",
   },
 ];
 
@@ -1192,6 +1391,18 @@ curl -s http://localhost:<port>/api/control/feature-matrix | jq .
 
 # Focus only environment overrides
 curl -s http://localhost:<port>/api/control/feature-matrix | jq '.rows[] | {feature, environmentOverride}'
+`,
+  },
+  {
+    id: "component-status-matrix",
+    name: "Component Status Matrix",
+    description: "Operational status, ownership, test coverage, and production posture by component",
+    category: "Governance",
+    code: `# Inspect component readiness matrix
+curl -s http://localhost:<port>/api/control/component-status | jq .
+
+# Show unstable components only
+curl -s http://localhost:<port>/api/control/component-status | jq '.rows[] | select(.status != "stable")'
 `,
   },
   {
@@ -3790,6 +4001,39 @@ const routes = {
     };
   },
 
+  "/api/control/component-status": () => {
+    const rows = COMPONENT_STATUS_MATRIX.map((row) => ({
+      ...row,
+      stable: row.status === "stable",
+    }));
+    const stableCount = rows.filter((row) => row.stable).length;
+
+    return {
+      generatedAt: new Date().toISOString(),
+      source: "playground-component-status-matrix",
+      summary: {
+        rowCount: rows.length,
+        stableCount,
+        betaCount: rows.length - stableCount,
+      },
+      columns: [
+        "component",
+        "file",
+        "status",
+        "owner",
+        "lastCommit",
+        "testCoverage",
+        "performanceBudget",
+        "dependencies",
+        "securityReview",
+        "documentation",
+        "production",
+        "stable",
+      ],
+      rows,
+    };
+  },
+
   "/api/control/network-smoke": async (req: Request) => {
     const base = new URL(req.url).origin;
     const smoke = await runNetworkSmoke(base);
@@ -4012,6 +4256,17 @@ const routes = {
       return new Response(JSON.stringify({
         success: true,
         output: JSON.stringify(scorecard, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "component-status-matrix") {
+      const matrix = routes["/api/control/component-status"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(matrix, null, 2),
         exitCode: 0,
       }), {
         headers: { "Content-Type": "application/json" },
@@ -4397,6 +4652,10 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/feature-matrix") {
         return jsonResponse(routes["/api/control/feature-matrix"]());
+      }
+
+      if (url.pathname === "/api/control/component-status") {
+        return jsonResponse(routes["/api/control/component-status"]());
       }
 
       if (url.pathname === "/api/control/upload-progress") {

@@ -78,6 +78,7 @@ Smoke endpoint:
 curl -s http://localhost:<port>/api/control/network-smoke
 curl -s http://localhost:<port>/api/control/features
 curl -s http://localhost:<port>/api/control/protocol-matrix
+curl -s http://localhost:<port>/api/control/component-status
 curl -s http://localhost:<port>/api/control/protocol-scorecard
 curl -s http://localhost:<port>/api/control/evidence-dashboard
 curl -s http://localhost:<port>/api/control/decision-defense
@@ -106,6 +107,9 @@ Mini dashboard APIs:
   - `summary`: `{ count, avgLoadMaxPct, latest, oldest }`
   - `points[]`: rolling snapshot rows (`loadMaxPct`, `capacitySummary`, `bottleneck`, headroom percentages)
 - `WS /ws/capacity`: broadcasts `dashboard/mini`-shape payload every second for real-time mini-card updates
+
+Governance component matrix API:
+- `GET /api/control/component-status`: operational inventory with owner, test coverage, performance budget, security review, docs pointer, and production posture.
 
 Mini dashboard UI rows now include:
 - `Bottleneck`

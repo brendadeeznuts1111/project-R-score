@@ -104,6 +104,22 @@ async function run(): Promise<number> {
         ["ok", "warn", "fail"].includes(String(severity.json?.severity?.headroom || "")),
       `status=${severity.res.status}`
     );
+
+    const components = await fetchJson("/api/control/component-status");
+    check(
+      checks,
+      "component-status-contract",
+      components.res.status === 200 &&
+        Number.isFinite(components.json?.summary?.rowCount) &&
+        Number.isFinite(components.json?.summary?.stableCount) &&
+        Number.isFinite(components.json?.summary?.betaCount) &&
+        Array.isArray(components.json?.rows) &&
+        components.json?.rows.length >= 10 &&
+        typeof components.json?.rows?.[0]?.component === "string" &&
+        typeof components.json?.rows?.[0]?.file === "string" &&
+        typeof components.json?.rows?.[0]?.status === "string",
+      `status=${components.res.status} rows=${components.json?.rows?.length ?? 0}`
+    );
   } catch (error) {
     check(
       checks,

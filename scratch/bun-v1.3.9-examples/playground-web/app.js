@@ -725,6 +725,16 @@ function renderDemo(demo) {
       </div>
     `
     : '';
+  const componentStatusPanel = demo.id === 'component-status-matrix'
+    ? `
+      <div class="code-block" style="margin-top: 1rem;">
+        <button class="run-btn" onclick="refreshComponentStatusMatrix()">
+          ↻ Refresh Component Status
+        </button>
+        <div id="component-status-matrix-output" class="output" style="display: block; margin-top: 0.75rem;">Loading component status matrix...</div>
+      </div>
+    `
+    : '';
   const protocolMatrixPanel = demo.id === 'protocol-matrix'
     ? `
       <div class="code-block" style="margin-top: 1rem;">
@@ -784,6 +794,7 @@ function renderDemo(demo) {
     <div id="demo-output" class="output" style="display: none;"></div>
     ${brandGatePanel}
     ${featureMatrixPanel}
+    ${componentStatusPanel}
     ${protocolMatrixPanel}
     ${http2RuntimePanel}
     ${orchestrationPanel}
@@ -794,6 +805,9 @@ function renderDemo(demo) {
   }
   if (demo.id === 'feature-matrix') {
     refreshFeatureMatrixStatus();
+  }
+  if (demo.id === 'component-status-matrix') {
+    refreshComponentStatusMatrix();
   }
   if (demo.id === 'protocol-matrix') {
     refreshProtocolMatrixStatus();
@@ -869,6 +883,7 @@ function setupEventListeners() {
   window.copyCode = copyCode;
   window.refreshBrandGateStatus = refreshBrandGateStatus;
   window.refreshFeatureMatrixStatus = refreshFeatureMatrixStatus;
+  window.refreshComponentStatusMatrix = refreshComponentStatusMatrix;
   window.refreshHttp2RuntimeStatus = refreshHttp2RuntimeStatus;
   window.executeHttp2RuntimeAction = executeHttp2RuntimeAction;
   window.refreshOrchestrationStatus = refreshOrchestrationStatus;
@@ -947,6 +962,39 @@ async function refreshFeatureMatrixStatus() {
   } catch (error) {
     statusDiv.className = 'output error';
     statusDiv.textContent = `Failed to load feature matrix: ${error.message}`;
+  }
+}
+
+async function refreshComponentStatusMatrix() {
+  const statusDiv = document.getElementById('component-status-matrix-output');
+  if (!statusDiv) return;
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = 'Loading component status matrix...';
+
+  try {
+    const response = await fetch('/api/control/component-status');
+    const data = await response.json();
+    const summary = data.summary || {};
+    const rows = Array.isArray(data.rows) ? data.rows : [];
+
+    const header = [
+      `generatedAt: ${data.generatedAt || 'unknown'}`,
+      `stable: ${summary.stableCount ?? 0}/${summary.rowCount ?? rows.length}`,
+      `beta: ${summary.betaCount ?? 0}`,
+      '',
+    ];
+
+    const topRows = rows.slice(0, 12).map((row) => {
+      const mark = row.stable ? 'STABLE' : 'BETA';
+      return `${mark} | ${row.component} | cov=${row.testCoverage} | budget=${row.performanceBudget} | sec=${row.securityReview} | prod=${row.production}`;
+    });
+
+    statusDiv.className = (summary.betaCount ?? 0) > 0 ? 'output success' : 'output success';
+    statusDiv.textContent = header.concat(topRows).join('\n');
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `Failed to load component status matrix: ${error.message}`;
   }
 }
 
