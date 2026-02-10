@@ -789,6 +789,30 @@ test("slow test", async () => {
 // Default timeout is 5000ms (5 seconds)
 // Set to 0 to disable timeout`,
   },
+  {
+    id: "test-config",
+    name: "Test Configuration",
+    description: "bunfig.toml and package.json test configuration options",
+    category: "Testing",
+    code: `// bunfig.toml
+[test]
+preload = ["./setup.ts"]
+coverage = true
+coverageThreshold = 0.8
+timeout = 10000
+environment = "node"
+
+// OR package.json
+{
+  "bun": {
+    "test": {
+      "preload": ["./setup.ts"],
+      "coverage": true,
+      "timeout": 10000
+    }
+  }
+}`,
+  },
 ];
 
 async function runCommand(cmd: string[], cwd: string): Promise<{ output: string; error: string; exitCode: number }> {
@@ -2072,6 +2096,7 @@ const routes = {
       "inspect-table": "inspect-table-demo",
       "brand-bench-results": "brand-bench-results",
       "test-timeouts": "timeouts-demo",
+      "test-config": "config-demo",
     };
     
     const scriptName = scriptMap[id || ""] || id;
