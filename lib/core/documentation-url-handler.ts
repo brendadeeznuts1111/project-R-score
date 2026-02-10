@@ -78,7 +78,7 @@ export class DocumentationURLHandler {
       }
 
       // Add fragment
-      if (config.fragment || config.anchor) {
+      if ((config.fragment && Object.keys(config.fragment).length > 0) || config.anchor) {
         const fragmentData = { ...config.fragment };
         if (config.anchor) {
           fragmentData.anchor = config.anchor;
@@ -124,7 +124,8 @@ export class DocumentationURLHandler {
         return new URL(categoryUrls[page as keyof typeof categoryUrls], baseUrl).toString();
       }
 
-      return new URL(categoryUrls.MAIN, baseUrl).toString();
+      const mainPath = (categoryUrls as Record<string, string>).MAIN ?? '/docs/cli';
+      return new URL(mainPath, baseUrl).toString();
     }
 
     return new URL('/docs/api/utils', baseUrl).toString();
@@ -208,14 +209,19 @@ export class DocumentationURLHandler {
           // Extract category from path
           const cliMatch = parsed.pathname.match(/\/docs\/cli\/([a-z]+)/);
           if (cliMatch) {
-            category = Object.values(CLICategory).find(cat =>
-              CLI_DOCUMENTATION_URLS[cat as CLICategory]?.MAIN.includes(cliMatch[1])
-            );
+            category = Object.values(CLICategory).find((cat) => {
+              const paths = Object.values(CLI_DOCUMENTATION_URLS[cat as CLICategory] ?? {});
+              return paths.some((path) => path.includes(cliMatch[1]));
+            });
           }
         }
       } else if (parsed.hostname === 'github.com') {
         type = 'github';
         category = parsed.pathname.replace('/oven-sh/bun', '');
+      }
+
+      if (!type) {
+        return { valid: false };
       }
 
       // Extract anchor from fragment
@@ -250,8 +256,7 @@ export class DocumentationURLHandler {
         pattern,
         groups,
       };
-    } catch (error) {
-      handleError(error, 'DocumentationURLHandler.parseDocumentationURL', 'medium');
+    } catch {
       return { valid: false };
     }
   }

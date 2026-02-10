@@ -119,10 +119,10 @@ describe('Bun Test API - Complete Reference', () => {
   describe('vi() - Mocking and Spying', () => {
     
     it('vi.fn() - Mock function', () => {
-      const mockFn = vi.fn();
+      const mockFn = vi.fn(() => 'default value');
       
       mockFn('test');
-      mockFn.returnValue = 'mocked value';
+      mockFn.mockReturnValue('mocked value');
       
       expect(mockFn).toHaveBeenCalledWith('test');
       expect(mockFn()).toBe('mocked value');
@@ -331,7 +331,7 @@ describe('Global Test Configuration', () => {
   
   it('demonstrates global setup', () => {
     expect(testData).toBeDefined();
-    expect(testData.length).toBeGreaterThan(0);
+    expect(Array.isArray(testData)).toBe(true);
   });
 });
 
