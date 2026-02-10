@@ -45,32 +45,52 @@ console.log(`Speedup:                   ${speedup.toFixed(2)}x`);
 console.log(`Expected (v1.3.9):         ~3.9x`);
 
 // Markdown Demo
-console.log("\n📝 2. Markdown Performance");
+console.log("\n📝 2. Markdown Performance (SIMD-Accelerated)");
 console.log("-".repeat(70));
 
-const markdown = `# Hello World
+const smallMarkdown = "# Hello\n\nThis is **bold** text.";
+const mediumMarkdown = `# Document
 
-This is **bold** and *italic* text.
+This is a paragraph with **bold** and *italic* text.
 
+## Section 1
 - Item 1
 - Item 2
 - Item 3
 
 \`\`\`javascript
-console.log("Hello");
+const x = 1;
+console.log(x);
 \`\`\`
 `;
 
-const markdownIterations = 10_000;
-const markdownStart = performance.now();
-for (let i = 0; i < markdownIterations; i++) {
-  Bun.markdown.html(markdown);
-}
-const markdownEnd = performance.now();
-const markdownAvg = (markdownEnd - markdownStart) / markdownIterations;
+console.log("Bun.markdown.html() - SIMD-accelerated HTML escaping");
+console.log("(&, <, >, \" characters)");
 
-console.log(`Average render time:       ${(markdownAvg * 1000).toFixed(2)} µs`);
-console.log(`Expected improvement:      3-15% faster (SIMD-accelerated)`);
+const smallIterations = 100_000;
+const smallStart = performance.now();
+for (let i = 0; i < smallIterations; i++) {
+  Bun.markdown.html(smallMarkdown);
+}
+const smallEnd = performance.now();
+const smallAvg = (smallEnd - smallStart) / smallIterations;
+
+console.log(`Small doc (${smallMarkdown.length} chars):  ${(smallAvg * 1000).toFixed(2)} µs`);
+console.log(`Expected: ~28% faster for small documents`);
+
+// React markdown
+console.log("\nBun.markdown.react() - Cached HTML tag strings");
+const reactIterations = 50_000;
+const reactStart = performance.now();
+for (let i = 0; i < reactIterations; i++) {
+  Bun.markdown.react(smallMarkdown);
+}
+const reactEnd = performance.now();
+const reactAvg = (reactEnd - reactStart) / reactIterations;
+
+console.log(`React render: ${(reactAvg * 1000).toFixed(2)} µs`);
+console.log(`Improvements: 28% faster (small), 7% faster (medium/large)`);
+console.log(`Memory: 40% fewer string objects, 6% less heap`);
 
 // String optimizations
 console.log("\n🔤 3. String Optimizations");
