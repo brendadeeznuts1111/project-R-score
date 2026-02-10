@@ -600,6 +600,16 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     productionReady: "yes (all platforms)",
   },
   {
+    feature: "Bun.markdown API",
+    cliOrApi: "Bun.markdown.html/render/react",
+    defaultBehavior: "Built-in parser (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Custom markdown rendering, ANSI output, React SSR",
+    performanceImpact: "Fast CommonMark-compliant parser (md4c Zig port)",
+    memoryImpact: "None",
+    productionReady: "yes (all platforms)",
+  },
+  {
     feature: "React Markdown",
     cliOrApi: "Bun.markdown.react()",
     defaultBehavior: "Baseline",
@@ -618,6 +628,16 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     performanceImpact: "~6% micro-bench",
     memoryImpact: "-16ms/1M calls",
     productionReady: "yes (all platforms)",
+  },
+  {
+    feature: "metafile markdown output",
+    cliOrApi: "bun build --metafile-md",
+    defaultBehavior: "Off unless flag is set",
+    environmentOverride: "—",
+    integration: "LLM-friendly bundle graph markdown reports",
+    performanceImpact: "Faster triage of module bloat via markdown summaries",
+    memoryImpact: "Small report-generation overhead",
+    productionReady: "yes",
   },
   {
     feature: "Node fs '.' Windows Fix",
@@ -640,12 +660,62 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     productionReady: "yes",
   },
   {
+    feature: "mimalloc update",
+    cliOrApi: "runtime allocator",
+    defaultBehavior: "Updated (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "General runtime stability",
+    performanceImpact: "Stability and allocator correctness improvements",
+    memoryImpact: "Allocator-level optimizations",
+    productionReady: "yes",
+  },
+  {
+    feature: "N-API typeof AsyncContextFrame fix",
+    cliOrApi: "napi_typeof",
+    defaultBehavior: "Fixed callback typing (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Native addons with AsyncLocalStorage",
+    performanceImpact: "Correctness fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "heap snapshot crash fix",
+    cliOrApi: "heap snapshot generation",
+    defaultBehavior: "Stability fix (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Production debugging and profiling",
+    performanceImpact: "Stability fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "node:vm SyntheticModule async_hooks fix",
+    cliOrApi: "node:vm + node:async_hooks",
+    defaultBehavior: "Crash fix (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "React Email preview and vm-heavy workloads",
+    performanceImpact: "Stability fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
     feature: "node:http2 Rare Crash Fixes",
     cliOrApi: "node:http2",
     defaultBehavior: "Stability fix (v1.3.9+)",
     environmentOverride: "—",
     integration: "HTTP/2 upgrade runtimes and proxies",
     performanceImpact: "Stability under long-lived traffic",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "HTTP/2 gRPC stream state fix",
+    cliOrApi: "node:http2 stream state",
+    defaultBehavior: "gRPC stability fix (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "gRPC streaming clients (Firestore/@grpc/grpc-js)",
+    performanceImpact: "Prevents DEADLINE_EXCEEDED regressions",
     memoryImpact: "None",
     productionReady: "yes",
   },
@@ -715,6 +785,16 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     defaultBehavior: "Type fix (v1.3.9+)",
     environmentOverride: "—",
     integration: "Requires { socket: handler } TypeScript shape",
+    performanceImpact: "Correctness fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "npm i -g bun Windows cmd-shim fix",
+    cliOrApi: "npm global install wrappers",
+    defaultBehavior: "Fixed cmd-shim wrapper generation (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Windows global Bun install via npm",
     performanceImpact: "Correctness fix",
     memoryImpact: "None",
     productionReady: "yes",
@@ -1859,6 +1939,10 @@ curl -s "http://localhost:<port>/api/control/bundle/analyze" | jq .
 
 # Analyze a specific entry (workspace-relative path)
 curl -s "http://localhost:<port>/api/control/bundle/analyze?entry=scratch/bun-v1.3.9-examples/playground-web/app.js" | jq .
+
+# Bun CLI metafile markdown output
+bun build entry.js --metafile-md --outdir=dist
+bun build entry.js --metafile=meta.json --metafile-md=meta.md --outdir=dist
 
 # Local CLI scripts
 bun run analyze:bundle -- --entry=scratch/bun-v1.3.9-examples/playground-web/server.ts
@@ -4572,9 +4656,16 @@ const routes = {
       "String.trim Intrinsic",
       "Object.defineProperty Intrinsic",
       "String.replace Rope Return",
+      "Bun.markdown API",
+      "metafile markdown output",
       "Node fs '.' Windows Fix",
+      "mimalloc update",
+      "N-API typeof AsyncContextFrame fix",
+      "heap snapshot crash fix",
+      "node:vm SyntheticModule async_hooks fix",
       "Function.toString Compatibility",
       "node:http2 Rare Crash Fixes",
+      "HTTP/2 gRPC stream state fix",
       "Bun.stringWidth Thai/Lao Fix",
       "WebSocket blob Client Crash Fix",
       "Proxy Keep-Alive Absolute-URL Fix",
@@ -4582,6 +4673,7 @@ const routes = {
       "CompileTarget SIMD Type Fix",
       "CompileTarget Baseline/Modern Type Fix",
       "Socket.reload Type Fix",
+      "npm i -g bun Windows cmd-shim fix",
     ]);
     const bunV139Plus = isBunVersionAtLeast(Bun.version || "0.0.0", [1, 3, 9]);
 

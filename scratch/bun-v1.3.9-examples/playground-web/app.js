@@ -1256,13 +1256,21 @@ async function refreshFeatureMatrixStatus() {
       'String.trim Intrinsic',
       'Object.defineProperty Intrinsic',
       'String.replace Rope Return',
+      'Bun.markdown API',
+      'metafile markdown output',
       'node:http2 Rare Crash Fixes',
+      'mimalloc update',
+      'N-API typeof AsyncContextFrame fix',
+      'heap snapshot crash fix',
+      'node:vm SyntheticModule async_hooks fix',
+      'HTTP/2 gRPC stream state fix',
       'Bun.stringWidth Thai/Lao Fix',
       'Proxy Keep-Alive Absolute-URL Fix',
       'HTTP Chunked Parser Smuggling Fix',
       'CompileTarget SIMD Type Fix',
       'CompileTarget Baseline/Modern Type Fix',
       'Socket.reload Type Fix',
+      'npm i -g bun Windows cmd-shim fix',
     ]);
     const header = [
       `version: ${data.version || 'unknown'}`,
@@ -1275,7 +1283,7 @@ async function refreshFeatureMatrixStatus() {
 
     const spotlightRows = rows
       .filter((row) => spotlightFeatures.has(String(row.feature || '')))
-      .slice(0, 12)
+      .slice(0, 18)
       .map((row) => {
         const mark = row.active ? 'ON ' : 'OFF';
         return `${mark} | ${row.feature} | impact=${row.performanceImpact} | ready=${row.productionReady}`;

@@ -249,11 +249,19 @@ async function run(): Promise<number> {
         featureNames.has("String.trim Intrinsic") &&
         featureNames.has("Object.defineProperty Intrinsic") &&
         featureNames.has("String.replace Rope Return") &&
+        featureNames.has("Bun.markdown API") &&
+        featureNames.has("metafile markdown output") &&
+        featureNames.has("mimalloc update") &&
+        featureNames.has("N-API typeof AsyncContextFrame fix") &&
+        featureNames.has("heap snapshot crash fix") &&
+        featureNames.has("node:vm SyntheticModule async_hooks fix") &&
         featureNames.has("node:http2 Rare Crash Fixes") &&
+        featureNames.has("HTTP/2 gRPC stream state fix") &&
         featureNames.has("HTTP Chunked Parser Smuggling Fix") &&
         featureNames.has("CompileTarget SIMD Type Fix") &&
         featureNames.has("CompileTarget Baseline/Modern Type Fix") &&
-        featureNames.has("Socket.reload Type Fix"),
+        featureNames.has("Socket.reload Type Fix") &&
+        featureNames.has("npm i -g bun Windows cmd-shim fix"),
       `status=${featureMatrix.res.status} rows=${featureRows.length}`
     );
 
