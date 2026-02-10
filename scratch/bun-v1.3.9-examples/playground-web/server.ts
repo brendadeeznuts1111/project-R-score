@@ -41,7 +41,7 @@ import {
 
 const BASE_STANDARD = Object.freeze({
   dedicatedPort: 3011,
-  portRange: "3011-3020",
+  portRange: "3011-3031",
   maxConcurrentRequests: 200,
   maxCommandWorkers: 2,
   prefetchEnabled: true,
@@ -73,7 +73,7 @@ const WORKER_POOL_TASK_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_WORKER_POOL_TASK_
 const PREFETCH_ENABLED = parseBool(process.env.PLAYGROUND_PREFETCH_ENABLED, BASE_STANDARD.prefetchEnabled);
 const PRECONNECT_ENABLED = parseBool(process.env.PLAYGROUND_PRECONNECT_ENABLED, BASE_STANDARD.preconnectEnabled);
 const DEFAULT_PREFETCH_HOSTS = ["registry.factory-wager.com", "docs.factory-wager.com"];
-const DEFAULT_PRECONNECT_URLS = [`http://localhost:${DEDICATED_PORT}`];
+const DEFAULT_PRECONNECT_URLS = [`http://${PLAYGROUND_HOST}:${DEDICATED_PORT}`];
 const PREFETCH_HOSTS = (() => {
   const configured = parseList(process.env.PLAYGROUND_PREFETCH_HOSTS);
   return configured.length > 0 ? configured : (PREFETCH_ENABLED ? DEFAULT_PREFETCH_HOSTS : []);
@@ -4827,8 +4827,9 @@ async function resolvePort(): Promise<number> {
       ? "unknown owner"
       : `pid=${owner.ownerPid ?? "unknown"} cmd=${owner.ownerCommand ?? "unknown"}`;
     throw new Error(
-      `Playground port ${DEDICATED_PORT} is already in use (${ownerDetail}). ` +
-        "Set PLAYGROUND_ALLOW_PORT_FALLBACK=true to allow automatic remapping."
+      `Playground host/port ${PLAYGROUND_HOST}:${DEDICATED_PORT} is already in use (${ownerDetail}). ` +
+        `Run "lsof -nP -iTCP:${DEDICATED_PORT} -sTCP:LISTEN" and stop that process, ` +
+        "or set PLAYGROUND_ALLOW_PORT_FALLBACK=true to allow deterministic remapping."
     );
   }
   const { start, end } = parsePortRange(PORT_RANGE);
@@ -8253,6 +8254,7 @@ httpServer = serve({
             "Content-Type": "application/json",
             "x-trace-id": traceId,
             "x-trace-duration-ms": String(durationMs),
+            ...(url.pathname.startsWith("/api/") ? (getCorsHeaders(req) as Record<string, string>) : {}),
           },
         }
       );
@@ -8304,12 +8306,14 @@ capacityBroadcastTimer = setInterval(() => {
 }, CAPACITY_WS_BROADCAST_MS);
 
 console.log(`Bun v1.3.9 Browser Playground`);
-console.log(`Server running at http://localhost:${ACTIVE_PORT}`);
-console.log(`Open http://localhost:${ACTIVE_PORT} in your browser`);
+console.log(`Server running at http://${PLAYGROUND_HOST}:${ACTIVE_PORT}`);
+console.log(`Open http://${PLAYGROUND_HOST}:${ACTIVE_PORT} in your browser`);
 console.log(
   `Pooling: maxRequests=${MAX_CONCURRENT_REQUESTS} maxCommandWorkers=${MAX_COMMAND_WORKERS} range=${PORT_RANGE}`
 );
-console.log(`Capacity stream: ws://localhost:${ACTIVE_PORT}${CAPACITY_WS_PATH} topic=${CAPACITY_WS_TOPIC} every=${CAPACITY_WS_BROADCAST_MS}ms`);
+console.log(`Capacity stream: ws://${PLAYGROUND_HOST}:${ACTIVE_PORT}${CAPACITY_WS_PATH} topic=${CAPACITY_WS_TOPIC} every=${CAPACITY_WS_BROADCAST_MS}ms`);
+console.log(`Runtime API: http://${PLAYGROUND_HOST}:${ACTIVE_PORT}/api/control/process/runtime`);
+console.log(`Drift API: http://${PLAYGROUND_HOST}:${ACTIVE_PORT}/api/control/runtime/drift`);
 console.log(
   `Warmup: prefetch=${warmupState.prefetch.length} preconnect=${warmupState.preconnect.length} enabled=${!warmupState.skipped}`
 );

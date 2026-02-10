@@ -699,7 +699,13 @@ async function refreshHeaderState() {
 
 async function refreshRuntimeDriftStatus() {
   try {
-    const response = await resilientFetch('/api/control/runtime/drift', { cache: 'no-store', attemptsPerOrigin: 1 });
+    const response = await resilientFetch('/api/control/runtime/drift', {
+      cache: 'no-store',
+      attemptsPerOrigin: 1,
+      headers: {
+        'x-client-git-sha': String(runtimeInfo?.gitCommitHash || '').trim(),
+      },
+    });
     const data = await response.json();
     runtimeDriftInfo = data || null;
     runtimeHeartbeatLastOkMs = Date.now();

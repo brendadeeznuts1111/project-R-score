@@ -37,6 +37,8 @@ describe("RuntimePortsPanel", () => {
 
   test("scan() reports failure when endpoint is unavailable", async () => {
     const panel = new RuntimePortsPanel("http://localhost:65534", { autoStart: false });
+    // Override candidates so the fallback to a running server doesn't rescue the test
+    (panel as any).candidates = ["http://localhost:65534"];
     const result = await panel.scan();
     expect(result.ok).toBe(false);
     expect(typeof result.error).toBe("string");

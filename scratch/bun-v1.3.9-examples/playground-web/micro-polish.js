@@ -585,7 +585,7 @@ async function updateMiniDash() {
     const wsSeverity = miniSnapshot?.sockets?.severity ?? (wsClients > 0 ? 'ok' : miniDashState.wsConnected ? 'warn' : 'warn');
     setValueSeverityByLabel(miniWsClientsEl, wsSeverity);
   }
-  document.getElementById('mini-port').textContent = rt.dedicatedPort;
+  document.getElementById('mini-port').textContent = String(rt.boundPort ?? rt.port ?? rt.dedicatedPort ?? '3011');
   setBar('mini-pool-bar', inFlight, maxRequests);
   setBar('mini-worker-bar', activeWorkers, maxWorkers);
   renderGovernanceChip(miniDashState.governance);

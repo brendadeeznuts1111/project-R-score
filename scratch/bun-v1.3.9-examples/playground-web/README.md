@@ -47,6 +47,10 @@ bun start
 - `PLAYGROUND_PORT`: preferred dedicated port (default: `3011` unless `PORT` set)
 - `PLAYGROUND_ALLOW_PORT_FALLBACK`: when `true`, remap within `PLAYGROUND_PORT_RANGE` if requested port is busy (default: `false`, fail-fast)
 - `PLAYGROUND_PORT_RANGE`: fallback range used only when `PLAYGROUND_ALLOW_PORT_FALLBACK=true`
+- `PLAYGROUND_HOST`: bind host for Bun.serve (default `127.0.0.1`)
+- `PLAYGROUND_RUNTIME_ORIGINS`: canonical UI/API fallback origins (comma-separated)
+- `PLAYGROUND_RUNTIME_STALE_MS`: stale heartbeat threshold for runtime drift banner (default `15000`)
+- `PLAYGROUND_WS_BROADCAST_MS`: websocket broadcast interval for mini dashboard stream (default `1000`)
 - `PLAYGROUND_MAX_CONCURRENT_REQUESTS`: HTTP request cap before `503`
 - `PLAYGROUND_MAX_COMMAND_WORKERS`: max concurrent demo command executions
 - `PLAYGROUND_PREFETCH_ENABLED`: enable DNS prefetch warmup (`0|1`)
@@ -128,6 +132,8 @@ Mini dashboard APIs:
 - `GET /api/dashboard/trends/summary?minutes=60&limit=120`: summary-only historical view for compact dashboard cards and trend health widgets
 - `GET /api/trends/summary` and `GET /api/trend-summary`: aliases for `GET /api/dashboard/trends/summary`
 - `GET /api/control/secrets/runtime`: Bun.secrets runtime diagnostics (platform backend + service contract + fallback policy)
+- `GET /api/control/process/runtime`: canonical runtime contract (`requestedPort`, `boundPort`, `host`, `pid`, `ppid`, `startedAt`, `uptimeSec`, `gitSha`, `buildSha`, `runtimeNonce`, `status`)
+- `GET /api/control/runtime/drift`: runtime drift state (`drift`, `serverSha`, `clientSha`, `stale`, `lastSyncAt`, `reasons[]`)
 - `WS /ws/capacity`: broadcasts `dashboard/mini`-shape payload every second for real-time mini-card updates
 
 Governance component matrix API:
@@ -164,6 +170,8 @@ Worker-pool diagnostics APIs:
 Validate mini dashboard contract from repo root:
 
 ```bash
+bun run playground:runtime:check
+bun run playground:smoke
 bun run test:dashboard:mini
 bun run test:dashboard:endpoints
 bun run test:dashboard:websocket

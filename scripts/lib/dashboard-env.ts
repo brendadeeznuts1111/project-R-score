@@ -22,7 +22,7 @@ export function parseBooleanEnv(value: string | undefined, fallback: boolean): b
 }
 
 export function resolveDashboardHost(): string {
-  return process.env.DASHBOARD_HOST || process.env.SERVER_HOST || "localhost";
+  return process.env.PLAYGROUND_HOST || process.env.DASHBOARD_HOST || process.env.SERVER_HOST || "127.0.0.1";
 }
 
 export function resolveDashboardPort(fallback = 3401): number {
@@ -65,7 +65,7 @@ export function resolvePlaygroundPortPolicy(portFallback = 3011): PlaygroundPort
     requestedPort,
     portRange:
       process.env.PLAYGROUND_PORT_RANGE ||
-      (allowFallback ? "3011-3020" : `${requestedPort}-${requestedPort}`),
+      (allowFallback ? "3011-3031" : `${requestedPort}-${requestedPort}`),
     allowFallback,
   };
 }
