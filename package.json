@@ -1607,6 +1607,8 @@
     "demo:contract:validate": "bun run scripts/validate-demo-modules.ts",
     "demo:module:test": "bun run scripts/demo-module-test.ts",
     "demo:module:bench": "bun run scripts/demo-module-bench.ts",
+    "validate:demo": "bun run scripts/validate-demo.ts",
+    "bench:performance-trilogy": "bun run bench/performance-trilogy.ts",
     "ci:demo:contract": "bun run demo:contract:validate",
     "ci:dashboard:nonblocking": "bun run test:dashboard:suite",
     "ci:dashboard:required": "bun run ci:bun:check && bun run test:dashboard:suite",

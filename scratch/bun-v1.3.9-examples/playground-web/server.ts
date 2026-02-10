@@ -1853,6 +1853,35 @@ map.size;   // 2.74x faster
 signal.abort();  // Optimized in Bun v1.3.9`,
   },
   {
+    id: "markdown-simd",
+    name: "Markdown SIMD Rendering",
+    description: "SIMD-accelerated markdown escaping path for HTML entities in Bun v1.3.9",
+    category: "Performance",
+    code: `// Markdown SIMD path in Bun v1.3.9
+const markdown = "# Hello\\n\\nWorld & <script>";
+const html = Bun.markdown.html(markdown);
+console.log(html);`,
+  },
+  {
+    id: "react-markdown-cache",
+    name: "React Markdown Tag Cache",
+    description: "Bun.markdown.react() tag string cache optimization in v1.3.9",
+    category: "Performance",
+    code: `// React markdown renderer cache path
+const element = Bun.markdown.react("# Title\\n\\nParagraph");
+console.log(typeof element); // object`,
+  },
+  {
+    id: "abort-signal-optimize",
+    name: "AbortSignal No-Listener Optimize",
+    description: "AbortSignal.abort() fast-path when no listeners are registered",
+    category: "Performance",
+    code: `// No-listener abort fast-path
+const controller = new AbortController();
+controller.abort();
+console.log(controller.signal.aborted); // true`,
+  },
+  {
     id: "bugfixes",
     name: "Key Bugfixes",
     description: "Important bugfixes and compatibility improvements",
@@ -2324,6 +2353,35 @@ bun test --watch`,
 ];
 
 const DEMOS = buildDemoRegistry(DEMOS_BASE);
+
+function runPerformanceTrilogyMicroBench() {
+  const markdownInput = `# Hello\n\nWorld & <script>${"x".repeat(1024)}`;
+
+  const run = (name: string, iterations: number, fn: () => void) => {
+    const start = performance.now();
+    for (let i = 0; i < iterations; i++) fn();
+    const elapsedMs = Math.max(0.001, performance.now() - start);
+    const opsPerSec = Math.round((iterations / elapsedMs) * 1000);
+    return { name, iterations, elapsedMs: Number(elapsedMs.toFixed(3)), opsPerSec };
+  };
+
+  const markdown = run("markdown-simd", 50_000, () => {
+    Bun.markdown.html(markdownInput);
+  });
+  const reactMarkdown = run("react-markdown-cache", 50_000, () => {
+    Bun.markdown.react(markdownInput);
+  });
+  const abortFastPath = run("abort-signal-optimize", 1_000_000, () => {
+    const controller = new AbortController();
+    controller.abort();
+  });
+
+  return {
+    generatedAt: new Date().toISOString(),
+    source: "bun-v1.3.9-performance-trilogy",
+    results: [markdown, reactMarkdown, abortFastPath],
+  };
+}
 
 async function runCommand(cmd: string[], cwd: string): Promise<{ output: string; error: string; exitCode: number }> {
   return withCommandWorker(async () => {
@@ -4793,6 +4851,21 @@ const routes = {
         success: loop.ok === true,
         output: JSON.stringify(loop, null, 2),
         exitCode: loop.ok === true ? 0 : 1,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "markdown-simd" || id === "react-markdown-cache" || id === "abort-signal-optimize") {
+      const trilogy = runPerformanceTrilogyMicroBench();
+      const focus = trilogy.results.find((r) => r.name === id);
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify({
+          ...focus,
+          trilogy: trilogy.results,
+        }, null, 2),
+        exitCode: 0,
       }), {
         headers: { "Content-Type": "application/json" },
       });

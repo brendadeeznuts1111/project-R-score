@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "total": 50,
-  "generatedAt": "2026-02-10T07:40:58.539Z",
+  "total": 53,
+  "generatedAt": "2026-02-10T07:43:37.219Z",
   "modules": {
     "governance-status": {
       "language": "bash",
@@ -469,6 +469,55 @@
       ],
       "benchCommand": "bun run scripts/demo-module-bench.ts --id=performance",
       "testCommand": "bun run scripts/demo-module-test.ts --id=performance"
+    },
+    "markdown-simd": {
+      "language": "typescript",
+      "defaults": {
+        "simd": true,
+        "escapeChars": [
+          "&",
+          "<",
+          ">",
+          "\""
+        ]
+      },
+      "flags": [
+        "--simd",
+        "--no-simd"
+      ],
+      "benchCommand": "bun run bench/performance-trilogy.ts -- --focus=markdown-simd",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=markdown-simd"
+    },
+    "react-markdown-cache": {
+      "language": "typescript",
+      "defaults": {
+        "cacheTags": [
+          "div",
+          "p",
+          "h1",
+          "h2",
+          "h3",
+          "h4",
+          "h5",
+          "h6"
+        ]
+      },
+      "flags": [
+        "--cache-tags"
+      ],
+      "benchCommand": "bun run bench/performance-trilogy.ts -- --focus=react-markdown-cache",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=react-markdown-cache"
+    },
+    "abort-signal-optimize": {
+      "language": "typescript",
+      "defaults": {
+        "skipEventCreation": true
+      },
+      "flags": [
+        "--no-listeners"
+      ],
+      "benchCommand": "bun run bench/performance-trilogy.ts -- --focus=abort-signal-optimize",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=abort-signal-optimize"
     },
     "bugfixes": {
       "language": "typescript",
