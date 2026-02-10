@@ -1904,7 +1904,7 @@
     "pack:all": "bun run scripts/pack-all.ts",
     "npm:token": "bun run scripts/npm-token.ts",
     "deploy:staging": "bun run deployment/deploy-staging.sh",
-    "deploy:production": "bun run deployment/deploy-production.sh",
+    "deploy:production": "bash deployment/deploy-production.sh deploy",
     "mcp:bun": "bun run lib/mcp/bun-mcp-server.ts",
     "mcp:tools": "bun run scripts/fw-tools-mcp.ts",
     "mcp:bridge": "bun run scripts/mcp-bridge.ts",
