@@ -1,114 +1,105 @@
 #!/usr/bin/env bun
 /**
  * Demo: OS Signals (SIGINT, SIGTERM, etc.)
- * 
+ *
  * https://bun.com/docs/guides/process/os-signals
  */
 
-console.log("📡 Bun OS Signals Demo\n");
-console.log("=".repeat(70));
+console.log("📡 Bun OS Signals Demo (Deterministic Cleanup)\n");
+console.log("=".repeat(74));
 
-console.log("\n1️⃣ Available Signal Handlers");
-console.log("-".repeat(70));
-console.log(`Supported signals in Bun:
-  • SIGINT   - Interrupt (CTRL+C)
-  • SIGTERM  - Termination request
-  • SIGKILL  - Force kill (cannot be caught)
-  • SIGUSR1  - User-defined signal 1
-  • SIGUSR2  - User-defined signal 2
-  • SIGHUP   - Hang up (terminal closed)
-  • SIGALRM  - Alarm clock
-  • SIGWINCH - Window resize
-`);
+const managedChildren = new Set<ReturnType<typeof Bun.spawn>>();
+let shuttingDown = false;
 
-// Track received signals
-const receivedSignals: string[] = [];
-
-// Handle SIGINT
-process.on("SIGINT", () => {
-  receivedSignals.push("SIGINT");
-  console.log("\n📥 Received: SIGINT (CTRL+C)");
-  console.log("   → Cleaning up and exiting gracefully...");
-  gracefulShutdown("SIGINT");
-});
-
-// Handle SIGTERM
-process.on("SIGTERM", () => {
-  receivedSignals.push("SIGTERM");
-  console.log("\n📥 Received: SIGTERM");
-  console.log("   → Termination requested, shutting down...");
-  gracefulShutdown("SIGTERM");
-});
-
-// Handle SIGHUP (terminal closed)
-process.on("SIGHUP", () => {
-  receivedSignals.push("SIGHUP");
-  console.log("\n📥 Received: SIGHUP (terminal closed)");
-  gracefulShutdown("SIGHUP");
-});
-
-// Handle beforeExit
-process.on("beforeExit", (code) => {
-  console.log(`\n📤 beforeExit: Event loop is empty (code: ${code})`);
-  if (receivedSignals.length > 0) {
-    console.log(`   Signals received: ${receivedSignals.join(", ")}`);
-  }
-});
-
-// Handle exit
-process.on("exit", (code) => {
-  console.log(`\n🚪 exit: Process exiting with code ${code}`);
-});
-
-// Graceful shutdown function
-function gracefulShutdown(signal: string) {
-  console.log(`\n🔄 Graceful shutdown initiated by ${signal}`);
-  console.log("   1. Stopping new connections...");
-  console.log("   2. Closing existing connections...");
-  console.log("   3. Saving state...");
-  console.log("   4. Exiting...\n");
-  
-  // Simulate cleanup delay
-  setTimeout(() => {
-    console.log("✅ Cleanup complete!");
-    process.exit(0);
-  }, 500);
+function registerChild(child: ReturnType<typeof Bun.spawn>) {
+  managedChildren.add(child);
+  child.exited.finally(() => managedChildren.delete(child));
 }
 
-// Demo instructions
-console.log("\n2️⃣ Testing Signals");
-console.log("-".repeat(70));
-console.log(`Run these commands in another terminal:
+function sleep(ms: number) {
+  return Bun.sleep(ms);
+}
 
-  Send SIGINT (same as CTRL+C):
-    kill -INT ${process.pid}
+async function gracefulShutdown(signal: string, exitCode = 0) {
+  if (shuttingDown) return;
+  shuttingDown = true;
 
-  Send SIGTERM:
-    kill -TERM ${process.pid}
-
-  Send SIGHUP:
-    kill -HUP ${process.pid}
-
-Or press CTRL+C in this terminal.
-`);
-
-console.log("\n3️⃣ Waiting for signals...");
-console.log("-".repeat(70));
-console.log(`(Process PID: ${process.pid})`);
-console.log("(Will exit automatically after 5 seconds)\n");
-
-// Keep process alive
-let seconds = 0;
-const interval = setInterval(() => {
-  seconds += 1;
-  console.log(`   Waiting... (${seconds}s elapsed)`);
-  
-  if (seconds >= 5) {
-    clearInterval(interval);
-    console.log("\n⏱️  Timeout reached, exiting...");
-    process.exit(0);
+  console.log(`\n🔄 gracefulShutdown(${signal})`);
+  console.log(`   step 1/4: freeze intake`);
+  console.log(`   step 2/4: forward SIGTERM to ${managedChildren.size} child(ren)`);
+  for (const child of managedChildren) {
+    try {
+      child.kill("SIGTERM");
+    } catch {
+      // already exited
+    }
   }
-}, 1000);
+  console.log("   step 3/4: wait for child drain");
+  const drainStart = Date.now();
+  while (managedChildren.size > 0 && Date.now() - drainStart < 800) {
+    await sleep(25);
+  }
+  if (managedChildren.size > 0) {
+    console.log(`   drain timeout -> force SIGKILL ${managedChildren.size} child(ren)`);
+    for (const child of managedChildren) {
+      try {
+        child.kill("SIGKILL");
+      } catch {
+        // already exited
+      }
+    }
+  }
+  console.log(`   step 4/4: exit(${exitCode})`);
+  process.exit(exitCode);
+}
 
-console.log("💡 Send a signal or press CTRL+C to see the handlers in action!");
-console.log("   (Demo will auto-exit after 5 seconds)\n");
+process.on("SIGINT", () => void gracefulShutdown("SIGINT"));
+process.on("SIGTERM", () => void gracefulShutdown("SIGTERM"));
+process.on("SIGHUP", () => void gracefulShutdown("SIGHUP"));
+
+process.on("beforeExit", (code) => {
+  console.log(`[lifecycle] beforeExit code=${code}`);
+});
+process.on("exit", (code) => {
+  console.log(`[lifecycle] exit code=${code}`);
+});
+
+console.log("\n1️⃣ Parent/Child choreography");
+console.log("-".repeat(74));
+console.log(`parent pid: ${process.pid}`);
+const child = Bun.spawn({
+  cmd: [
+    process.execPath,
+    "-e",
+    `
+      process.on("SIGTERM", () => {
+        console.log("[child] SIGTERM received");
+        setTimeout(() => process.exit(0), 60);
+      });
+      setInterval(() => console.log("[child] tick"), 120);
+    `,
+  ],
+  stdout: "pipe",
+  stderr: "pipe",
+});
+registerChild(child);
+
+const reader = (async () => {
+  for await (const chunk of child.stdout) {
+    const line = new TextDecoder().decode(chunk).trim();
+    if (line) console.log(line);
+  }
+})();
+
+console.log("\n2️⃣ Deterministic signal simulation");
+console.log("-".repeat(74));
+console.log("sending SIGTERM to parent in 400ms...");
+setTimeout(() => {
+  process.kill(process.pid, "SIGTERM");
+}, 400);
+
+await Promise.race([
+  child.exited,
+  sleep(1500),
+]);
+await reader;

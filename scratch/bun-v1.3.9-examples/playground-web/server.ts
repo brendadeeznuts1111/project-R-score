@@ -2649,71 +2649,69 @@ process.on("exit", (code) => {
   {
     id: "signals-demo",
     name: "OS Signals",
-    description: "Handle SIGTERM, SIGHUP, and other OS signals",
+    description: "Deterministic shutdown ordering with child signal forwarding",
     category: "Process",
-    code: `// Handle SIGTERM (termination request)
-process.on("SIGTERM", () => {
-  console.log("SIGTERM received");
-  gracefulShutdown();
-});
+    code: `const children = new Set();
+let shuttingDown = false;
 
-// Handle SIGHUP (terminal closed)
-process.on("SIGHUP", () => {
-  console.log("SIGHUP received (terminal closed)");
-  gracefulShutdown();
-});
+function register(child) {
+  children.add(child);
+  child.exited.finally(() => children.delete(child));
+}
 
-// Handle beforeExit and exit
-process.on("beforeExit", (code) => {
-  console.log(\`beforeExit: code \${code}\`);
-});
+async function gracefulShutdown(signal) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log("freeze intake");
+  for (const child of children) child.kill("SIGTERM");
+  const started = Date.now();
+  while (children.size > 0 && Date.now() - started < 800) {
+    await Bun.sleep(25);
+  }
+  if (children.size > 0) {
+    for (const child of children) child.kill("SIGKILL");
+  }
+  process.exit(0);
+}
 
-process.on("exit", (code) => {
-  console.log(\`exit: code \${code}\`);
-});
-
-function gracefulShutdown() {
-  console.log("Shutting down gracefully...");
-  setTimeout(() => process.exit(0), 500);
-}`,
+process.on("SIGINT", () => void gracefulShutdown("SIGINT"));
+process.on("SIGTERM", () => void gracefulShutdown("SIGTERM"));
+process.on("SIGHUP", () => void gracefulShutdown("SIGHUP"));`,
   },
   {
     id: "spawn-demo",
     name: "Spawn Child Processes",
-    description: "Spawn processes with Bun.spawn()",
+    description: "Spawn processes with timeout control, signal forwarding, and cleanup",
     category: "Process",
-    code: `// Basic spawn
-const proc1 = Bun.spawn(["echo", "Hello!"]);
-const output1 = await proc1.stdout.text();
+    code: `const children = new Set();
 
-// Spawn with options
-const proc2 = Bun.spawn({
-  cmd: ["pwd"],
-  cwd: "/tmp",
-  env: { ...process.env, CUSTOM: "value" },
-});
+function register(child) {
+  children.add(child);
+  child.exited.finally(() => children.delete(child));
+}
 
-// Read stdout and stderr
-const proc3 = Bun.spawn({
-  cmd: ["ls", "-la"],
-  stdout: "pipe",
-  stderr: "pipe",
-});
-const [out, err] = await Promise.all([
-  proc3.stdout.text(),
-  proc3.stderr.text(),
-]);
+function terminateChildren(signal = "SIGTERM") {
+  for (const child of children) child.kill(signal);
+}
 
-// Exit handling
-const proc4 = Bun.spawn({
-  cmd: ["sleep", "1"],
-  onExit(proc, exitCode) {
-    console.log(\`Exited: \${exitCode}\`);
-  },
-});
+process.on("SIGINT", () => terminateChildren("SIGTERM"));
+process.on("SIGTERM", () => terminateChildren("SIGTERM"));
 
-// Kill a process
-proc4.kill("SIGTERM");`,
+async function spawnManaged(cmd, timeoutMs = 1000) {
+  const child = Bun.spawn({ cmd, stdout: "pipe", stderr: "pipe" });
+  register(child);
+  const timer = setTimeout(() => child.kill("SIGTERM"), timeoutMs);
+  const [stdout, stderr, exitCode] = await Promise.all([
+    child.stdout.text(),
+    child.stderr.text(),
+    child.exited,
+  ]);
+  clearTimeout(timer);
+  return { stdout, stderr, exitCode };
+}
+
+const result = await spawnManaged([process.execPath, "-e", "console.log('ok')"], 800);
+console.log(result);`,
   },
   {
     id: "test-timeouts",
