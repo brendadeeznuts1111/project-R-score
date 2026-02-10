@@ -5,7 +5,11 @@
  * Demonstrates Bun.inspect.table() with live benchmark results
  */
 
+// Detect if running in playground (no TTY) vs terminal
+const useColors = process.stdout.isTTY && !process.env.PLAYGROUND_NO_COLORS;
+
 console.log("🏃 Running Brand Benchmarks...\n");
+console.log(`Colors: ${useColors ? "enabled (TTY)" : "disabled (non-interactive)"}\n`);
 
 // Simulate benchmark operations
 const operations = [
@@ -36,7 +40,7 @@ console.log("📊 Benchmark Results:");
 console.log(Bun.inspect.table(
   results,
   ["operation", "ops/sec", "time (ms)", "performance"],
-  { colors: true }
+  { colors: useColors }
 ));
 
 // Find best performer

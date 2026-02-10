@@ -5,8 +5,12 @@
  * https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options
  */
 
+// Detect if running in playground (no TTY) vs terminal
+const useColors = process.stdout.isTTY && !process.env.PLAYGROUND_NO_COLORS;
+
 console.log("📊 Bun.inspect.table() Demo\n");
 console.log("=".repeat(70));
+console.log(`Colors: ${useColors ? "enabled (TTY detected)" : "disabled (non-interactive)"}`);
 
 // Demo 1: Simple data
 console.log("\n1️⃣ Simple Benchmark Results");
@@ -21,7 +25,7 @@ const benchmarkResults = [
 console.log(Bun.inspect.table(
   benchmarkResults,
   ["operation", "opsPerSec", "ms"],
-  { colors: true }
+  { colors: useColors }
 ));
 
 // Demo 2: With ratings
@@ -36,7 +40,7 @@ const ratedResults = benchmarkResults.map(r => ({
 console.log(Bun.inspect.table(
   ratedResults,
   ["operation", "opsPerSec", "ms", "rating"],
-  { colors: true }
+  { colors: useColors }
 ));
 
 // Demo 3: Configuration comparison
@@ -52,7 +56,7 @@ const configDiff = [
 console.log(Bun.inspect.table(
   configDiff,
   ["property", "actual", "expected", "match"],
-  { colors: true }
+  { colors: useColors }
 ));
 
 console.log("\n✅ Bun.inspect.table() demo complete!");
