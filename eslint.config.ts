@@ -1,7 +1,6 @@
 // eslint.config.ts — FactoryWager Enterprise Platform Configuration
 import tseslint from 'typescript-eslint';
 import { Linter } from 'eslint';
-import { join } from 'path';
 import importPlugin from 'eslint-plugin-import';
 import security from 'eslint-plugin-security';
 
@@ -37,8 +36,8 @@ export default tseslint.config(
     },
     settings: {
       'import/resolver': {
-        typescript: {
-          project: join(import.meta.dirname, 'tsconfig.json'),
+        node: {
+          extensions: ['.js', '.mjs', '.cjs', '.ts', '.tsx', '.d.ts'],
         },
       },
     },
@@ -46,6 +45,20 @@ export default tseslint.config(
 
   // Core rules
   {
+    files: ['**/*.ts', '**/*.tsx'],
+    plugins: {
+      security,
+      '@typescript-eslint': tseslint.plugin,
+      'import': importPlugin,
+    },
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        project: ['./tsconfig.json', './tsconfig.*.json'],
+        tsconfigRootDir: import.meta.dirname,
+        warnOnUnsupportedTypeScriptVersion: true,
+      },
+    },
     rules: {
       // ────────────────────────────────────────────────────────────────
       // @typescript-eslint/naming-convention — Enhanced with project-specific rules
@@ -228,6 +241,8 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-call': 'error',
       '@typescript-eslint/no-unsafe-member-access': 'error',
       '@typescript-eslint/no-unsafe-return': 'error',
+      // Disabled until strictNullChecks is enabled in project tsconfig.
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
 
       // ────────────────────────────────────────────────────────────────
       // Enhanced code quality rules
@@ -351,7 +366,7 @@ export default tseslint.config(
 
       // Prevent throwing literals (must throw Error objects)
       'no-throw-literal': 'error',
-      '@typescript-eslint/no-throw-literal': 'error',
+      '@typescript-eslint/only-throw-error': 'error',
 
       // Ensure rejections are handled in try-catch
       '@typescript-eslint/no-unused-expressions': [
@@ -447,9 +462,23 @@ export default tseslint.config(
     },
   },
 
-  // Type-checked rules
-  ...tseslint.configs.recommendedTypeChecked,
-  ...tseslint.configs.stylisticTypeChecked,
+  // Type-checked rules (scope to TS files only)
+  ...tseslint.configs.recommendedTypeChecked.map((config) => ({
+    ...config,
+    files: ['**/*.ts', '**/*.tsx'],
+  })),
+  ...tseslint.configs.stylisticTypeChecked.map((config) => ({
+    ...config,
+    files: ['**/*.ts', '**/*.tsx'],
+  })),
+
+  // Project override: keep strictNullChecks-dependent rule off until tsconfig strictNullChecks=true.
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    rules: {
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
+    },
+  },
 
   // Override rules for specific files
   {

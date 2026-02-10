@@ -5,6 +5,10 @@ let demos = [];
 let runtimeInfo = null;
 let brandGateSummary = null;
 let governanceSummary = null;
+const shortcutState = {
+  pendingLeader: null,
+  pendingAt: 0,
+};
 
 // Toast notification system
 function showToast(message, type = 'success', duration = 3000) {
@@ -110,10 +114,78 @@ async function init() {
 // Keyboard shortcuts
 function setupKeyboardShortcuts() {
   document.addEventListener('keydown', (e) => {
-    // Ignore if typing in an input
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-    
-    switch (e.key) {
+    if (isTypingContext(e)) return;
+
+    const key = e.key.toLowerCase();
+    const withMeta = e.ctrlKey || e.metaKey;
+    const withAlt = e.altKey;
+    const now = Date.now();
+
+    if (shortcutState.pendingLeader && now - shortcutState.pendingAt > 1200) {
+      shortcutState.pendingLeader = null;
+    }
+
+    // Cmd/Ctrl+K opens command palette
+    if (withMeta && !e.shiftKey && key === 'k') {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      if (isPaletteOpen()) {
+        closeCommandPalette();
+      } else {
+        openCommandPalette();
+      }
+      return;
+    }
+
+    if (isPaletteOpen()) return;
+
+    // Cmd/Ctrl+R refreshes runtime and governance data
+    if (withMeta && key === 'r') {
+      e.preventDefault();
+      refreshHeaderState();
+      showToast('Refreshed!', 'success');
+      return;
+    }
+
+    // Cmd/Ctrl+Enter runs current demo
+    if (withMeta && key === 'enter') {
+      e.preventDefault();
+      runCurrentDemo();
+      return;
+    }
+
+    // Cmd/Ctrl+Shift+C copies current demo code
+    if (withMeta && e.shiftKey && key === 'c') {
+      e.preventDefault();
+      copyCurrentCodeBlock();
+      return;
+    }
+
+    // Keep Alt+P free for perf monitor (defined in micro-polish.js)
+    if (withAlt) return;
+
+    if (shortcutState.pendingLeader === 'g') {
+      shortcutState.pendingLeader = null;
+      if (key === 'h') {
+        e.preventDefault();
+        closeAnyModal();
+        if (typeof window.goHome === 'function') window.goHome();
+        return;
+      }
+      if (key === 'r') {
+        e.preventDefault();
+        refreshHeaderState();
+        showToast('Header data refreshed', 'success');
+        return;
+      }
+      if (key === 'd') {
+        e.preventDefault();
+        if (typeof window.toggleMiniDash === 'function') window.toggleMiniDash();
+        return;
+      }
+    }
+
+    switch (key) {
       case '?':
         e.preventDefault();
         showShortcutsHelp();
@@ -122,15 +194,38 @@ function setupKeyboardShortcuts() {
         e.preventDefault();
         focusDemoSearch();
         break;
-      case 'Escape':
+      case 'escape':
         closeAnyModal();
         break;
-      case 'r':
-        if (e.ctrlKey || e.metaKey) {
-          e.preventDefault();
-          refreshHeaderState();
-          showToast('Refreshed!', 'success');
-        }
+      case 'g':
+        shortcutState.pendingLeader = 'g';
+        shortcutState.pendingAt = now;
+        break;
+      case 'j':
+      case ']':
+        e.preventDefault();
+        navigateDemoByOffset(1);
+        break;
+      case 'k':
+      case '[':
+        e.preventDefault();
+        navigateDemoByOffset(-1);
+        break;
+      case '.':
+        e.preventDefault();
+        runCurrentDemo();
+        break;
+      case 'm':
+        e.preventDefault();
+        if (typeof window.toggleMiniDash === 'function') window.toggleMiniDash();
+        break;
+      case 't':
+        e.preventDefault();
+        if (typeof window.toggleTheme === 'function') window.toggleTheme();
+        break;
+      case 'y':
+        e.preventDefault();
+        copyCurrentCodeBlock();
         break;
       case '1':
       case '2':
@@ -145,14 +240,91 @@ function setupKeyboardShortcuts() {
   });
 }
 
+function isTypingContext(e) {
+  const target = e.target;
+  if (!target) return false;
+  if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return true;
+  if (target.isContentEditable) return true;
+  return Boolean(target.closest && target.closest('.command-palette.active'));
+}
+
+function isPaletteOpen() {
+  return Boolean(document.querySelector('.command-palette-overlay.active'));
+}
+
+function openCommandPalette() {
+  if (window.commandPalette && typeof window.commandPalette.open === 'function') {
+    window.commandPalette.open();
+  } else {
+    showToast('Command palette not ready', 'error');
+  }
+}
+
+function closeCommandPalette() {
+  if (window.commandPalette && typeof window.commandPalette.close === 'function') {
+    window.commandPalette.close();
+  }
+}
+
+function getDemoItems() {
+  return Array.from(document.querySelectorAll('.demo-item'));
+}
+
+function navigateDemoByOffset(offset) {
+  const items = getDemoItems();
+  if (items.length === 0) return;
+  const currentIndex = items.findIndex((item) => item.classList.contains('active'));
+  const nextIndex = currentIndex === -1
+    ? (offset > 0 ? 0 : items.length - 1)
+    : (currentIndex + offset + items.length) % items.length;
+  const next = items[nextIndex];
+  next.click();
+  next.focus();
+  next.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function runCurrentDemo() {
+  if (!currentDemo || !currentDemo.id) {
+    showToast('Select a demo first', 'error');
+    return;
+  }
+  runDemo(currentDemo.id);
+}
+
+function copyCurrentCodeBlock() {
+  const code = document.querySelector('#demo-content pre code');
+  if (!code) {
+    showToast('No demo code selected', 'error');
+    return;
+  }
+  navigator.clipboard.writeText(code.textContent || '').then(() => {
+    showToast('Demo code copied');
+  }).catch(() => {
+    showToast('Copy failed - try Cmd/Ctrl+C', 'error');
+  });
+}
+
 function showShortcutsHelp() {
   const help = `
 Keyboard Shortcuts:
-  ? - Show this help
-  / - Focus search
-  1-6 - Select demo
-  Esc - Close/clear
-  Ctrl+R - Refresh data
+  ?              Show this help
+  /              Focus search
+  Cmd/Ctrl+K     Open command palette
+  Cmd/Ctrl+R     Refresh control-plane data
+  Cmd/Ctrl+Enter Run current demo
+  Cmd/Ctrl+Shift+C Copy current demo code
+  1-6            Jump to quick demos
+  J / K          Next / previous demo
+  ] / [          Next / previous demo (alt nav)
+  .              Run current demo
+  Y              Copy current demo code
+  M              Toggle mini dashboard
+  T              Toggle theme
+  G then H       Go home
+  G then R       Refresh header telemetry
+  G then D       Toggle mini dashboard
+  Alt+P          Toggle performance monitor
+  Esc            Clear selection / close
   `;
   alert(help);
 }
@@ -271,6 +443,12 @@ function renderHeaderBadges() {
       text: `Gov Depth ${cp.searchGovernanceFetchDepth ?? 'n/a'}`,
       cls: 'warn',
     });
+    if (cp.sigillCaveat) {
+      badges.push({
+        text: cp.sigillCaveat,
+        cls: (runtimeInfo.platform === 'linux' && runtimeInfo.arch === 'arm64') ? 'success' : 'warn',
+      });
+    }
   }
 
   if (brandGateSummary?.warnGate) {

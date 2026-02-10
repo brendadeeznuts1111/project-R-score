@@ -63,7 +63,11 @@ export class EnhancedURL {
         hash: hasTrailingHash ? '#' : fullURL.hash,
       };
     } catch (error) {
-      handleError(error, 'EnhancedURL.parseURL', 'medium');
+      // Invalid user input should fail validation without noisy error telemetry.
+      // Reserve structured error logging for unexpected internal failures.
+      if (!(error instanceof TypeError)) {
+        handleError(error, 'EnhancedURL.parseURL', 'medium');
+      }
       throw new ValidationError(`Invalid URL: ${url}`);
     }
   }

@@ -6,9 +6,9 @@
  */
 
 import { serve } from "bun";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import { createServer } from "node:net";
-import { join } from "node:path";
+import { extname, join, normalize, resolve as resolvePath, sep } from "node:path";
 import { getBuildMetadata } from "./build-metadata" with { type: "macro" };
 import { getGitCommitHash } from "./getGitCommitHash.ts" with { type: "macro" };
 
@@ -116,6 +116,62 @@ type FeatureDefinition<T> = {
   parse: (val: string) => T;
   default: T | ((req?: FeatureRequest) => T);
 };
+type AuthMethod =
+  | "none"
+  | "basic"
+  | "bearer"
+  | "tls"
+  | "mtls"
+  | "oauth2"
+  | "aws-sigv4"
+  | "iam-role"
+  | "presigned-url"
+  | "posix-acl"
+  | "filesystem"
+  | "inline"
+  | "object-url";
+type BodyType =
+  | "string"
+  | "json"
+  | "form"
+  | "blob"
+  | "arrayBuffer"
+  | "uint8array"
+  | "stream"
+  | "file"
+  | "formdata"
+  | "urlsearchparams"
+  | "inline";
+type CORSPolicy = "same-origin" | "cors-enabled" | "bucket-policy" | "n/a";
+type ProtocolSecurityProfile = {
+  encrypted: boolean;
+  mitmVulnerable: boolean;
+  certValidation: boolean;
+  recommended: boolean;
+  pathTraversal?: "protected";
+  xssRisk?: "sanitize";
+  memoryBacked?: boolean;
+  localOnly?: boolean;
+};
+type ProtocolHandlerContext = {
+  req: Request;
+  method: string;
+  headers: Record<string, string>;
+  body?: BodyInit | null;
+};
+type ProtocolHandler = (url: string, ctx: ProtocolHandlerContext) => Promise<Response>;
+type ProtocolConfig = {
+  scheme: string;
+  defaultPort: number | null;
+  authMethods: AuthMethod[];
+  bodyTypes: BodyType[];
+  streaming: boolean;
+  cacheable: boolean;
+  corsPolicy: CORSPolicy;
+  securityProfile: ProtocolSecurityProfile;
+  maxSize: number | null;
+  handler: ProtocolHandler;
+};
 
 const featureDefinitions: Record<string, FeatureDefinition<unknown>> = {
   bodyType: {
@@ -144,6 +200,282 @@ async function readJsonSafe(path: string): Promise<any | null> {
   } catch {
     return null;
   }
+}
+
+function getMimeType(path: string): string {
+  const ext = extname(path).toLowerCase();
+  const map: Record<string, string> = {
+    ".html": "text/html; charset=utf-8",
+    ".css": "text/css; charset=utf-8",
+    ".js": "application/javascript; charset=utf-8",
+    ".mjs": "application/javascript; charset=utf-8",
+    ".json": "application/json; charset=utf-8",
+    ".txt": "text/plain; charset=utf-8",
+    ".md": "text/markdown; charset=utf-8",
+    ".svg": "image/svg+xml",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".gif": "image/gif",
+    ".webp": "image/webp",
+    ".pdf": "application/pdf",
+    ".wasm": "application/wasm",
+  };
+  return map[ext] || "application/octet-stream";
+}
+
+function resolveProtocolFromUrl(rawUrl: string): string {
+  if (rawUrl.startsWith("http+unix://")) return "http+unix:";
+  return new URL(rawUrl).protocol;
+}
+
+function parseHttpUnixUrl(rawUrl: string): { socketPath: string; targetUrl: string } {
+  const stripped = rawUrl.slice("http+unix://".length);
+  const marker = stripped.indexOf(":/");
+  if (marker < 1) {
+    throw new Error("Invalid http+unix URL. Expected format: http+unix://%2Fpath%2Fsock:/request/path");
+  }
+  const encodedSocket = stripped.slice(0, marker);
+  const requestPath = stripped.slice(marker + 1);
+  const socketPath = decodeURIComponent(encodedSocket);
+  const normalizedPath = requestPath.startsWith("/") ? requestPath : `/${requestPath}`;
+  return { socketPath, targetUrl: `http://localhost${normalizedPath}` };
+}
+
+function isWithinBasePath(candidatePath: string, basePath: string): boolean {
+  if (candidatePath === basePath) return true;
+  return candidatePath.startsWith(basePath.endsWith(sep) ? basePath : `${basePath}${sep}`);
+}
+
+const httpHandler: ProtocolHandler = async (url, ctx) => {
+  return await fetch(url, {
+    method: ctx.method,
+    headers: ctx.headers,
+    body: ctx.body,
+  });
+};
+
+const httpsHandler: ProtocolHandler = async (url, ctx) => {
+  return await fetch(url, {
+    method: ctx.method,
+    headers: ctx.headers,
+    body: ctx.body,
+  });
+};
+
+const fileHandler: ProtocolHandler = async (url) => {
+  const urlObj = new URL(url);
+  const requestedPath = normalize(decodeURIComponent(urlObj.pathname));
+  const resolvedPath = resolvePath(requestedPath);
+  const allowedBase = resolvePath(process.env.PLAYGROUND_FILE_BASE_PATH || "/tmp");
+  if (!isWithinBasePath(resolvedPath, allowedBase)) {
+    throw new Error(`Path ${resolvedPath} outside allowed base ${allowedBase}`);
+  }
+
+  const file = Bun.file(resolvedPath);
+  if (!(await file.exists())) {
+    return new Response(JSON.stringify({ error: "File not found", path: resolvedPath }), {
+      status: 404,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+  const stat = await file.stat();
+  return new Response(file, {
+    headers: {
+      "Content-Type": getMimeType(resolvedPath),
+      "Content-Length": String(stat.size),
+      "X-Content-Type-Options": "nosniff",
+      "Cache-Control": "private, no-store",
+    },
+  });
+};
+
+const dataHandler: ProtocolHandler = async (url) => {
+  return await fetch(url);
+};
+
+const blobHandler: ProtocolHandler = async (url) => {
+  return await fetch(url);
+};
+
+const s3Handler: ProtocolHandler = async (url, ctx) => {
+  return await fetch(url, {
+    method: ctx.method,
+    headers: ctx.headers,
+    body: ctx.body,
+    s3: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      region: process.env.AWS_REGION || "us-east-1",
+      endpoint: process.env.S3_ENDPOINT,
+    },
+  } as RequestInit);
+};
+
+const unixSocketHandler: ProtocolHandler = async (url, ctx) => {
+  const parsed = parseHttpUnixUrl(url);
+  const init: RequestInit & { unix?: string } = {
+    method: ctx.method,
+    headers: ctx.headers,
+    body: ctx.body,
+    unix: parsed.socketPath,
+  };
+  return await fetch(parsed.targetUrl, init);
+};
+
+const PROTOCOL_REGISTRY: Record<string, ProtocolConfig> = {
+  "http:": {
+    scheme: "http",
+    defaultPort: 80,
+    authMethods: ["none", "basic", "bearer"],
+    bodyTypes: ["string", "json", "form", "blob", "arrayBuffer", "uint8array", "stream", "file", "formdata", "urlsearchparams"],
+    streaming: true,
+    cacheable: false,
+    corsPolicy: "same-origin",
+    securityProfile: { encrypted: false, mitmVulnerable: true, certValidation: false, recommended: false },
+    maxSize: Number.POSITIVE_INFINITY,
+    handler: httpHandler,
+  },
+  "https:": {
+    scheme: "https",
+    defaultPort: 443,
+    authMethods: ["tls", "mtls", "basic", "bearer", "oauth2"],
+    bodyTypes: ["string", "json", "form", "blob", "arrayBuffer", "uint8array", "stream", "file", "formdata", "urlsearchparams"],
+    streaming: true,
+    cacheable: true,
+    corsPolicy: "cors-enabled",
+    securityProfile: { encrypted: true, mitmVulnerable: false, certValidation: true, recommended: true },
+    maxSize: Number.POSITIVE_INFINITY,
+    handler: httpsHandler,
+  },
+  "s3:": {
+    scheme: "s3",
+    defaultPort: 443,
+    authMethods: ["aws-sigv4", "iam-role", "presigned-url"],
+    bodyTypes: ["string", "blob", "file", "stream", "arrayBuffer", "uint8array"],
+    streaming: true,
+    cacheable: true,
+    corsPolicy: "bucket-policy",
+    securityProfile: { encrypted: true, mitmVulnerable: false, certValidation: true, recommended: true },
+    maxSize: 5 * 1024 * 1024 * 1024 * 1024,
+    handler: s3Handler,
+  },
+  "file:": {
+    scheme: "file",
+    defaultPort: null,
+    authMethods: ["posix-acl", "filesystem"],
+    bodyTypes: ["file"],
+    streaming: false,
+    cacheable: false,
+    corsPolicy: "n/a",
+    securityProfile: { encrypted: false, mitmVulnerable: false, certValidation: false, recommended: true, pathTraversal: "protected" },
+    maxSize: null,
+    handler: fileHandler,
+  },
+  "data:": {
+    scheme: "data",
+    defaultPort: null,
+    authMethods: ["inline"],
+    bodyTypes: ["inline"],
+    streaming: false,
+    cacheable: true,
+    corsPolicy: "n/a",
+    securityProfile: { encrypted: false, mitmVulnerable: false, certValidation: false, recommended: true, xssRisk: "sanitize" },
+    maxSize: 2 * 1024 * 1024,
+    handler: dataHandler,
+  },
+  "blob:": {
+    scheme: "blob",
+    defaultPort: null,
+    authMethods: ["object-url"],
+    bodyTypes: ["blob"],
+    streaming: false,
+    cacheable: false,
+    corsPolicy: "n/a",
+    securityProfile: { encrypted: false, mitmVulnerable: false, certValidation: false, recommended: true, memoryBacked: true },
+    maxSize: null,
+    handler: blobHandler,
+  },
+  "http+unix:": {
+    scheme: "http+unix",
+    defaultPort: null,
+    authMethods: ["filesystem"],
+    bodyTypes: ["string", "json", "form", "blob", "arrayBuffer", "uint8array", "stream", "formdata", "urlsearchparams"],
+    streaming: true,
+    cacheable: false,
+    corsPolicy: "n/a",
+    securityProfile: { encrypted: false, mitmVulnerable: false, certValidation: false, recommended: true, localOnly: true },
+    maxSize: null,
+    handler: unixSocketHandler,
+  },
+};
+
+async function getWorkspaceOrchestrationPanel() {
+  const rootPackagePath = join(PROJECT_ROOT, "package.json");
+  const rootPackage = await readJsonSafe(rootPackagePath);
+  const rootScripts = rootPackage?.scripts ?? {};
+  const workspaces = Array.isArray(rootPackage?.workspaces) ? rootPackage.workspaces : [];
+
+  const workspaceDirs: string[] = [];
+  if (workspaces.includes("packages/*")) {
+    try {
+      const entries = await readdir(join(PROJECT_ROOT, "packages"), { withFileTypes: true });
+      for (const entry of entries) {
+        if (entry.isDirectory()) {
+          workspaceDirs.push(join(PROJECT_ROOT, "packages", entry.name));
+        }
+      }
+    } catch {
+      // Leave workspaceDirs empty if packages/ is unavailable.
+    }
+  }
+
+  const workspacePackages: Array<{
+    name: string;
+    path: string;
+    scripts: string[];
+  }> = [];
+
+  for (const workspaceDir of workspaceDirs) {
+    const packageJsonPath = join(workspaceDir, "package.json");
+    const pkg = await readJsonSafe(packageJsonPath);
+    if (!pkg) continue;
+    const scriptNames = Object.keys(pkg.scripts ?? {});
+    workspacePackages.push({
+      name: String(pkg.name || workspaceDir.split("/").pop() || "unknown"),
+      path: workspaceDir.replace(PROJECT_ROOT + "/", ""),
+      scripts: scriptNames.sort(),
+    });
+  }
+
+  const rootExamples = [
+    "bun run --parallel --if-present workspaces:build workspaces:lint workspaces:test",
+    "bun run --sequential --if-present workspaces:build workspaces:lint workspaces:test",
+    "bun run --parallel --workspaces --if-present build lint test",
+    "bun run --sequential --workspaces --if-present build",
+    "bun run --parallel --no-exit-on-error --workspaces --if-present test",
+  ];
+
+  return {
+    generatedAt: new Date().toISOString(),
+    rootPackage: {
+      name: String(rootPackage?.name || "unknown"),
+      path: "package.json",
+      workspacePatterns: workspaces,
+      scriptCount: Object.keys(rootScripts).length,
+      keyScripts: Object.keys(rootScripts)
+        .filter((name) => /workspaces:|build|lint|test|dev/.test(name))
+        .slice(0, 24),
+    },
+    workspacePackages: workspacePackages.slice(0, 40),
+    recommendedCommands: rootExamples,
+    notes: [
+      "--parallel and --sequential start scripts directly; they do not enforce workspace dependency order.",
+      "Use --workspaces --if-present in this repo because workspace packages may not all define build/lint/test scripts.",
+      "Use bun --filter when dependency-order execution is required for build pipelines.",
+      "Use --if-present to skip packages that do not define a script.",
+    ],
+  };
 }
 
 function impactFromGates(input: { warn?: string; strict?: string }): "Low" | "Medium" | "High" {
@@ -249,6 +581,22 @@ curl -s http://localhost:<port>/api/control/protocol-scorecard
 `,
   },
   {
+    id: "protocol-router-tier1380",
+    name: "Protocol Router (Tier-1380)",
+    description: "Hardened protocol registry and secure routing contract for /api/fetch/protocol-router",
+    category: "Governance",
+    code: `# Inspect protocol registry contract (dry run)
+curl -s -X POST http://localhost:<port>/api/fetch/protocol-router \\
+  -H "content-type: application/json" \\
+  -d '{"url":"https://example.com","dryRun":true}'
+
+# Execute request through hardened protocol router
+curl -s -X POST http://localhost:<port>/api/fetch/protocol-router \\
+  -H "content-type: application/json" \\
+  -d '{"url":"https://example.com","method":"GET"}'
+`,
+  },
+  {
     id: "multipart-progress",
     name: "Multipart Progress Tracking",
     description: "Simulate upload progress events for multipart/file body types",
@@ -331,6 +679,22 @@ bun run --parallel --no-exit-on-error --filter '*' test
 // Use --filter for dependency-aware execution`,
   },
   {
+    id: "workspace-runner-panel",
+    name: "Workspace Runner Panel",
+    description: "Live workspace-aware --parallel/--sequential commands from root package.json",
+    category: "Script Orchestration",
+    code: `# Read real workspace scripts + recommended commands
+curl -s http://localhost:<port>/api/control/script-orchestration-panel | jq .
+
+# Root-level orchestration (repo-canonical)
+bun run --parallel --if-present workspaces:build workspaces:lint workspaces:test
+bun run --sequential --if-present workspaces:build workspaces:lint workspaces:test
+
+# Direct workspace scripts (skip missing scripts)
+bun run --parallel --workspaces --if-present build lint test
+bun run --sequential --workspaces --if-present build`,
+  },
+  {
     id: "http2",
     name: "HTTP/2 Connection Upgrades",
     description: "net.Server → Http2SecureServer connection upgrade",
@@ -392,6 +756,20 @@ const ws = new WebSocket("ws://localhost:3000/ws", {
 });`,
   },
   {
+    id: "no-proxy-explicit",
+    name: "NO_PROXY + Explicit Proxy",
+    description: "Explicit proxy option now honors NO_PROXY for fetch/WebSocket",
+    category: "Networking",
+    code: `# Works with explicit proxy option now
+NO_PROXY=localhost bun -e '
+const res = await fetch("http://localhost:3000/api", { proxy: "http://my-proxy:8080" });
+console.log(res.status);
+'
+
+// WebSocket also honors NO_PROXY
+const ws = new WebSocket("ws://localhost:3000/ws", { proxy: "http://my-proxy:8080" });`,
+  },
+  {
     id: "profiling",
     name: "CPU Profiling Interval",
     description: "Configurable CPU profiler sampling interval",
@@ -406,6 +784,20 @@ bun --cpu-prof --cpu-prof-interval 500 index.js
 bun --cpu-prof --cpu-prof-interval 250 index.js`,
   },
   {
+    id: "cpu-prof-interval-explicit",
+    name: "--cpu-prof-interval (Explicit)",
+    description: "Node-compatible CPU sampling interval flag in microseconds",
+    category: "Performance",
+    code: `# Default 1000us
+bun --cpu-prof index.js
+
+# Higher resolution sampling
+bun --cpu-prof --cpu-prof-interval 500 index.js
+
+# If used without --cpu-prof or --cpu-prof-md, Bun warns
+bun --cpu-prof-interval 500 index.js`,
+  },
+  {
     id: "bytecode",
     name: "ESM Bytecode Compilation",
     description: "ESM bytecode support in --compile",
@@ -418,6 +810,19 @@ bun build --compile --bytecode --format=cjs ./cli.ts
 
 // Default (CJS, may change to ESM in future)
 bun build --compile --bytecode ./cli.ts`,
+  },
+  {
+    id: "esm-bytecode-explicit",
+    name: "ESM Bytecode Compile (Explicit)",
+    description: "--compile + --bytecode now supports --format=esm",
+    category: "Build",
+    code: `# ESM bytecode (supported)
+bun build --compile --bytecode --format=esm ./cli.ts
+
+# CJS bytecode remains supported
+bun build --compile --bytecode --format=cjs ./cli.ts
+
+# Without explicit format, bytecode still defaults to cjs`,
   },
   {
     id: "performance",
@@ -520,6 +925,27 @@ test("auto-restores spy", () => {
 const fn = mock(() => "value");
 fn();
 fn[Symbol.dispose](); // Same as fn.mockRestore()
+expect(fn).toHaveBeenCalledTimes(0);`,
+  },
+  {
+    id: "symbol-dispose-explicit",
+    name: "Symbol.dispose with mock()/spyOn()",
+    description: "Disposable test doubles with using and direct Symbol.dispose",
+    category: "Testing",
+    code: `import { test, expect, spyOn, mock } from "bun:test";
+
+test("spy restores automatically", () => {
+  const obj = { method: () => "original" };
+  {
+    using spy = spyOn(obj, "method").mockReturnValue("mocked");
+    expect(obj.method()).toBe("mocked");
+  }
+  expect(obj.method()).toBe("original");
+});
+
+const fn = mock(() => "value");
+fn();
+fn[Symbol.dispose](); // alias of mockRestore()
 expect(fn).toHaveBeenCalledTimes(0);`,
   },
   {
@@ -1043,6 +1469,135 @@ async function parseJsonBody(req: Request): Promise<any> {
     return await req.json();
   } catch {
     return {};
+  }
+}
+
+function sanitizeHeaders(input: unknown): Record<string, string> {
+  if (!input || typeof input !== "object") return {};
+  const result: Record<string, string> = {};
+  for (const [key, value] of Object.entries(input as Record<string, unknown>)) {
+    if (!key) continue;
+    if (typeof value !== "string") continue;
+    const normalizedKey = key.trim();
+    const normalizedValue = value.trim();
+    if (!normalizedKey || !normalizedValue) continue;
+    result[normalizedKey] = normalizedValue;
+  }
+  return result;
+}
+
+function parseProtocolBody(bodyType: string, body: unknown): BodyInit | null {
+  if (body === undefined || body === null) return null;
+  switch (bodyType) {
+    case "json":
+      return typeof body === "string" ? body : JSON.stringify(body);
+    case "string":
+    case "form":
+    case "inline":
+      return String(body);
+    case "urlsearchparams":
+      if (typeof body === "object" && body !== null) {
+        return new URLSearchParams(body as Record<string, string>).toString();
+      }
+      return String(body);
+    case "uint8array":
+      return body instanceof Uint8Array ? body : new Uint8Array(Array.isArray(body) ? body : []);
+    default:
+      return body as BodyInit;
+  }
+}
+
+async function runProtocolRouter(req: Request) {
+  const payload = await parseJsonBody(req);
+  const url = String(payload.url || "");
+  if (!url) {
+    return {
+      ok: false,
+      error: "Missing required field: url",
+      usage: { method: "POST", path: "/api/fetch/protocol-router", body: { url: "https://example.com", method: "GET", dryRun: true } },
+    };
+  }
+
+  let protocol: string;
+  try {
+    protocol = resolveProtocolFromUrl(url);
+  } catch {
+    return { ok: false, error: `Invalid URL: ${url}` };
+  }
+
+  const config = PROTOCOL_REGISTRY[protocol];
+  if (!config) {
+    return {
+      ok: false,
+      error: `Unsupported protocol: ${protocol}`,
+      supportedProtocols: Object.keys(PROTOCOL_REGISTRY),
+    };
+  }
+
+  const method = String(payload.method || req.method || "GET").toUpperCase();
+  const requestedBodyType = String(payload.bodyType || "string").toLowerCase();
+  const dryRun = payload.dryRun !== false;
+
+  if (!config.bodyTypes.includes(requestedBodyType as BodyType)) {
+    return {
+      ok: false,
+      error: `Unsupported bodyType '${requestedBodyType}' for protocol '${protocol}'`,
+      allowedBodyTypes: config.bodyTypes,
+    };
+  }
+
+  const headers = sanitizeHeaders(payload.headers);
+  const metadata = {
+    protocol,
+    scheme: config.scheme,
+    defaultPort: config.defaultPort,
+    authMethods: config.authMethods,
+    bodyTypes: config.bodyTypes,
+    streaming: config.streaming,
+    cacheable: config.cacheable,
+    corsPolicy: config.corsPolicy,
+    securityProfile: config.securityProfile,
+    maxSize: config.maxSize,
+  };
+
+  if (dryRun) {
+    return { ok: true, dryRun: true, metadata };
+  }
+
+  try {
+    const response = await config.handler(url, {
+      req,
+      method,
+      headers,
+      body: parseProtocolBody(requestedBodyType, payload.body),
+    });
+
+    let responseBody = "";
+    try {
+      responseBody = await response.text();
+      if (responseBody.length > MAX_BODY_SIZE_BYTES) {
+        responseBody = `${responseBody.slice(0, MAX_BODY_SIZE_BYTES)}\n...truncated`;
+      }
+    } catch {
+      responseBody = "";
+    }
+
+    return {
+      ok: response.ok,
+      dryRun: false,
+      metadata,
+      status: response.status,
+      statusText: response.statusText,
+      headers: Object.fromEntries(response.headers.entries()),
+      bodyPreview: responseBody,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      dryRun: false,
+      metadata,
+      error: error instanceof Error ? error.message : String(error),
+    };
   }
 }
 
@@ -1828,6 +2383,10 @@ const routes = {
       searchGovernanceFetchDepth: SEARCH_GOVERNANCE_FETCH_DEPTH,
       proxyDefaultEnabled: Boolean(resolveFeature<string | null>("proxy")),
       proxyAuthConfigured: Boolean(PROXY_AUTH_TOKEN),
+      sigillCaveat:
+        process.platform === "linux" && process.arch === "arm64"
+          ? "SIGILL ARMv8.0 fix applies to this Linux aarch64 platform."
+          : "SIGILL ARMv8.0 fix applies to Linux aarch64 only (not this host).",
     },
   }),
   
@@ -1966,6 +2525,10 @@ const routes = {
     };
   },
 
+  "/api/fetch/protocol-router": async (req: Request) => {
+    return await runProtocolRouter(req);
+  },
+
   "/api/control/features": (req: Request) => ({
     features: resolveAllFeatures(req),
   }),
@@ -1979,6 +2542,10 @@ const routes = {
       failures,
       ...smoke,
     };
+  },
+
+  "/api/control/script-orchestration-panel": async () => {
+    return await getWorkspaceOrchestrationPanel();
   },
 
   "/api/control/upload-progress": async (req: Request) => {
@@ -2024,6 +2591,17 @@ const routes = {
         success: smoke.ok,
         output: JSON.stringify(smoke, null, 2),
         exitCode: smoke.ok ? 0 : 1,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "workspace-runner-panel") {
+      const panel = await routes["/api/control/script-orchestration-panel"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(panel, null, 2),
+        exitCode: 0,
       }), {
         headers: { "Content-Type": "application/json" },
       });
@@ -2080,6 +2658,28 @@ const routes = {
       });
     }
 
+    if (id === "protocol-router-tier1380") {
+      const dryRun = await routes["/api/fetch/protocol-router"](
+        new Request("http://localhost/api/fetch/protocol-router", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            url: "https://example.com",
+            method: "GET",
+            dryRun: true,
+            bodyType: "string",
+          }),
+        })
+      );
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(dryRun, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     if (id === "evidence-dashboard") {
       const dashboard = routes["/api/control/evidence-dashboard"]();
       return new Response(JSON.stringify({
@@ -2107,6 +2707,76 @@ const routes = {
       return new Response(JSON.stringify({
         success: true,
         output: JSON.stringify(dashboard, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "no-proxy-explicit" || id === "proxy") {
+      const sample = {
+        env: { NO_PROXY: "localhost" },
+        request: {
+          url: "http://localhost:3000/api",
+          proxy: "http://my-proxy:8080",
+        },
+        expected: "Proxy bypassed for localhost due to NO_PROXY",
+        appliesTo: ["fetch", "WebSocket"],
+      };
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(sample, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "symbol-dispose-explicit" || id === "symbol-dispose" || id === "mocks") {
+      const sample = {
+        pattern: "using + Symbol.dispose",
+        behavior: "Auto-restores spy/mock when leaving scope",
+        alias: "fn[Symbol.dispose]() === fn.mockRestore()",
+      };
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(sample, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "cpu-prof-interval-explicit" || id === "profiling") {
+      const sample = {
+        defaultIntervalMicros: 1000,
+        commandExamples: [
+          "bun --cpu-prof --cpu-prof-interval 500 index.js",
+          "bun --cpu-prof --cpu-prof-interval 250 index.js",
+        ],
+        note: "--cpu-prof-interval without --cpu-prof emits warning",
+      };
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(sample, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "esm-bytecode-explicit" || id === "bytecode") {
+      const sample = {
+        supported: true,
+        commands: [
+          "bun build --compile --bytecode --format=esm ./cli.ts",
+          "bun build --compile --bytecode --format=cjs ./cli.ts",
+        ],
+        defaultWithoutFormat: "cjs",
+      };
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(sample, null, 2),
         exitCode: 0,
       }), {
         headers: { "Content-Type": "application/json" },
@@ -2248,6 +2918,10 @@ async function handleRequest(req: Request): Promise<Response> {
         return jsonResponse(await routes["/api/control/network-smoke"](req));
       }
 
+      if (url.pathname === "/api/control/script-orchestration-panel") {
+        return jsonResponse(await routes["/api/control/script-orchestration-panel"]());
+      }
+
       if (url.pathname === "/api/control/features") {
         return jsonResponse(routes["/api/control/features"](req));
       }
@@ -2284,6 +2958,10 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/governance-status") {
         return jsonResponse(await routes["/api/control/governance-status"]());
+      }
+
+      if (url.pathname === "/api/fetch/protocol-router") {
+        return jsonResponse(await routes["/api/fetch/protocol-router"](req));
       }
       
       const demoMatch = url.pathname.match(/^\/api\/demo\/(.+)$/);
@@ -2332,22 +3010,84 @@ const warmupState = await runWarmup();
 
 // Create abort controller for graceful shutdown
 const ac = new AbortController();
+const SHUTDOWN_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_SHUTDOWN_TIMEOUT_MS", 5000, {
+  min: 500,
+  max: 300000,
+});
+let shuttingDown = false;
+let httpServer: ReturnType<typeof serve> | null = null;
 
-// Handle OS signals per Bun docs: https://bun.com/docs/guides/process/os-signals
-process.on('SIGINT', () => {
-  console.log('\n\n👋 SIGINT received, shutting down gracefully...');
-  ac.abort();
-  process.exit(0);
+async function waitForInFlightDrain(timeoutMs: number): Promise<boolean> {
+  const start = Date.now();
+  while (inFlightRequests > 0 && Date.now() - start < timeoutMs) {
+    await Bun.sleep(50);
+  }
+  return inFlightRequests === 0;
+}
+
+async function gracefulShutdown(reason: string, exitCode = 0, error?: unknown) {
+  if (shuttingDown) {
+    return;
+  }
+  shuttingDown = true;
+
+  const startedAt = Date.now();
+  const reasonPrefix = `[shutdown] ${reason}`;
+  if (error) {
+    console.error(`${reasonPrefix} error:`, error);
+  } else {
+    console.log(`${reasonPrefix} requested`);
+  }
+
+  const forceExitTimer = setTimeout(() => {
+    console.error(`[shutdown] forced exit after ${SHUTDOWN_TIMEOUT_MS}ms`);
+    process.exit(exitCode === 0 ? 1 : exitCode);
+  }, SHUTDOWN_TIMEOUT_MS);
+
+  try {
+    // Stop accepting new work and ask Bun.serve() to drain inflight fetch handlers.
+    ac.abort();
+    if (httpServer) {
+      httpServer.stop(true);
+    }
+
+    const drained = await waitForInFlightDrain(Math.max(250, SHUTDOWN_TIMEOUT_MS - 250));
+    if (!drained) {
+      console.warn(`[shutdown] in-flight requests did not drain before timeout (remaining=${inFlightRequests})`);
+    }
+    console.log(`[shutdown] completed in ${Date.now() - startedAt}ms`);
+  } catch (shutdownError) {
+    console.error(`[shutdown] failed:`, shutdownError);
+    exitCode = exitCode === 0 ? 1 : exitCode;
+  } finally {
+    clearTimeout(forceExitTimer);
+    process.exit(exitCode);
+  }
+}
+
+// Default process lifecycle and signal handling.
+process.on("SIGINT", () => {
+  void gracefulShutdown("SIGINT", 0);
 });
 
-process.on('SIGTERM', () => {
-  console.log('\n\n👋 SIGTERM received, shutting down gracefully...');
-  ac.abort();
-  process.exit(0);
+process.on("SIGTERM", () => {
+  void gracefulShutdown("SIGTERM", 0);
+});
+
+process.on("SIGHUP", () => {
+  void gracefulShutdown("SIGHUP", 0);
+});
+
+process.on("unhandledRejection", (error) => {
+  void gracefulShutdown("unhandledRejection", 1, error);
+});
+
+process.on("uncaughtException", (error) => {
+  void gracefulShutdown("uncaughtException", 1, error);
 });
 
 // Serve the application
-serve({
+httpServer = serve({
   port: ACTIVE_PORT,
   fetch: handleRequest,
   signal: ac.signal,
@@ -2362,4 +3102,5 @@ console.log(
 console.log(
   `🛰️ Warmup: prefetch=${warmupState.prefetch.length} preconnect=${warmupState.preconnect.length} enabled=${!warmupState.skipped}`
 );
+console.log(`🛑 Shutdown timeout: ${SHUTDOWN_TIMEOUT_MS}ms`);
 console.log(`\n💡 Press Ctrl+C to stop gracefully`);
