@@ -340,6 +340,19 @@ header h1 {
   color: var(--error);
 }
 
+.bundle-summary-card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.86rem;
+}
+
 .demo-contract-head {
   display: flex;
   flex-wrap: wrap;

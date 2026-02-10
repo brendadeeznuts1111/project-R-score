@@ -863,6 +863,7 @@ function renderDemo(demo) {
             ↻ Analyze Bundle Metafile
           </button>
         </div>
+        <div id="bundle-metafile-summary" class="bundle-summary-card">Loading bundle budget...</div>
         <div id="bundle-metafile-output" class="output" style="display: block; margin-top: 0.75rem;">Loading bundle metafile analysis...</div>
       </div>
     `
@@ -1465,6 +1466,7 @@ async function refreshDomainTopologyGraph() {
 
 async function refreshBundleMetafileAnalysis() {
   const statusDiv = document.getElementById('bundle-metafile-output');
+  const summaryDiv = document.getElementById('bundle-metafile-summary');
   if (!statusDiv) return;
 
   const entryEl = document.getElementById('bundle-analyze-entry');
@@ -1473,6 +1475,9 @@ async function refreshBundleMetafileAnalysis() {
 
   statusDiv.className = 'output loading';
   statusDiv.textContent = `Analyzing bundle metafile${entry ? ` (${entry})` : ''}...`;
+  if (summaryDiv) {
+    summaryDiv.textContent = 'Computing budget status...';
+  }
 
   try {
     const response = await fetch(`/api/control/bundle/analyze${query}`);
@@ -1480,6 +1485,9 @@ async function refreshBundleMetafileAnalysis() {
     if (!response.ok || data?.ok === false) {
       statusDiv.className = 'output error';
       statusDiv.textContent = `Bundle analyze failed: ${data?.error || `status=${response.status}`}`;
+      if (summaryDiv) {
+        summaryDiv.innerHTML = `<span class="drift-badge drift-fail">budget: fail</span><span>bundle analysis unavailable</span>`;
+      }
       return;
     }
 
@@ -1487,6 +1495,22 @@ async function refreshBundleMetafileAnalysis() {
     const inputs = Array.isArray(data.largestInputs) ? data.largestInputs : [];
     const outputs = Array.isArray(data.largestOutputs) ? data.largestOutputs : [];
     const externals = Array.isArray(data.externalDependencies) ? data.externalDependencies : [];
+    const outputBytes = Number(summary.outputBytes || 0);
+    const outputKb = Number((outputBytes / 1024).toFixed(2));
+    const outputMb = Number((outputBytes / (1024 * 1024)).toFixed(3));
+    const budgetClass = outputBytes > 1024 * 1024
+      ? 'drift-badge drift-fail'
+      : outputBytes > 512 * 1024
+        ? 'drift-badge drift-warn'
+        : 'drift-badge drift-ok';
+    const budgetLabel = outputBytes > 1024 * 1024 ? 'budget: fail' : outputBytes > 512 * 1024 ? 'budget: warn' : 'budget: ok';
+    if (summaryDiv) {
+      summaryDiv.innerHTML = `
+        <span class="${budgetClass}">${budgetLabel}</span>
+        <span>output ${outputKb} KB (${outputMb} MB)</span>
+        <span class="drift-badge drift-ok">ratio ${summary.compressionRatio ?? 'n/a'}</span>
+      `;
+    }
 
     const lines = [
       `generatedAt: ${data.generatedAt || 'unknown'}`,
@@ -1511,6 +1535,9 @@ async function refreshBundleMetafileAnalysis() {
   } catch (error) {
     statusDiv.className = 'output error';
     statusDiv.textContent = `Failed to analyze bundle metafile: ${error.message}`;
+    if (summaryDiv) {
+      summaryDiv.innerHTML = `<span class="drift-badge drift-fail">budget: fail</span><span>${escapeHtml(error.message)}</span>`;
+    }
   }
 }
 
