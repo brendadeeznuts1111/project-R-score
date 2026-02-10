@@ -1,0 +1,13 @@
+name = "barbershop"
+version = "3.8.0"
+description = "Barbershop local runtime manifest"
+service = "Native Barber Server"
+
+[runtime]
+host = "127.0.0.1"
+port = 3000
+
+[features]
+telemetry = true
+lifecycle = true
+payments = true
