@@ -232,6 +232,29 @@ List all registered demo IDs and contract metadata:
 curl -s http://localhost:3011/api/demos | jq '.demos[] | {id, language, flags, benchCommand, testCommand}'
 ```
 
+Tier-1 baseline checks:
+
+```bash
+# Contract shape + per-demo tier-1 baseline enforcement
+bun run demo:contract:validate
+
+# Tier-1 source/provider coverage across all demos
+bun run demo:tier1:check
+
+# Single demo full loop (test + benchmark + source-backed baseline)
+bun run validate:demo --id=parallel
+```
+
+Tier-1 source policy for demo baselines:
+- Bun blog/release/docs:
+  - [Bun v1.3.9 blog](https://bun.com/blog/bun-v1.3.9)
+  - [Bun v1.3.9 release](https://github.com/oven-sh/bun/releases/tag/bun-v1.3.9)
+  - [Bun test docs](https://bun.com/docs/test)
+- MDN:
+  - [Keep-Alive header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Keep-Alive)
+- Linux kernel docs:
+  - [send_sig API reference](https://www.kernel.org/doc/html/latest/core-api/kernel-api.html#c.send_sig)
+
 Expected severity snapshots:
 - `load=85`: `utilization=fail`, `capacity=fail`, `headroom=warn`
 - `load=60`: `utilization=warn`, `capacity=warn`, `headroom=ok`

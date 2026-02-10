@@ -2,6 +2,7 @@
 
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { validateTier1SourcesForDemo } from "./demo-tier1-baselines";
 
 const ROOT = process.cwd();
 const SERVER_PATH = join(ROOT, "scratch", "bun-v1.3.9-examples", "playground-web", "server.ts");
@@ -50,7 +51,15 @@ function main() {
     process.exit(1);
   }
 
-  console.log(`[demo-test][pass] id=${id} language=${meta.language} flags=${meta.flags.length}`);
+  const tier1 = validateTier1SourcesForDemo(id);
+  if (!tier1.ok) {
+    for (const err of tier1.errors) console.error(`[demo-test][fail] ${err}`);
+    process.exit(1);
+  }
+
+  console.log(
+    `[demo-test][pass] id=${id} language=${meta.language} flags=${meta.flags.length} tier1Sources=${tier1.baseline.sourceIds.length}`
+  );
 }
 
 main();

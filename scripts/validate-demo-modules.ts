@@ -2,6 +2,7 @@
 
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { validateTier1CoverageAcrossDemos, validateTier1SourcesForDemo } from "./demo-tier1-baselines";
 
 type DemoContract = {
   language: string;
@@ -89,6 +90,16 @@ function main() {
     if (!String(contract.testCommand).startsWith("bun run ")) {
       errors.push(`${id}.testCommand must start with 'bun run '`);
     }
+
+    const tier1 = validateTier1SourcesForDemo(id);
+    if (!tier1.ok) {
+      errors.push(...tier1.errors);
+    }
+  }
+
+  const tier1Coverage = validateTier1CoverageAcrossDemos(demoIds);
+  if (!tier1Coverage.ok) {
+    errors.push(...tier1Coverage.errors);
   }
 
   if (errors.length > 0) {
