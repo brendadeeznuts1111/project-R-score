@@ -197,6 +197,16 @@ Use `GET /api/control/governance-status` to view canonical decision status (`APP
 - 🎯 **Categorized** - Organized by feature category
 - 🔄 **Real-time** - See demo output in real-time
 
+## 📈 Performance Improvements (v2.1.0)
+
+### New in Bun v1.3.9
+- **String#startsWith**: 1.42x faster (5.76x faster with constant folding)
+- **Set#size and Map#size**: 2.24x to 2.74x faster
+- **String#trim**: 1.10x to 1.42x faster
+- **String#replace**: now returns ropes (lazy concatenation) to avoid unnecessary allocations
+
+These improvements make our bundle analysis faster, especially when processing large numbers of files and strings.
+
 ## 📋 Available Demos
 
 ### Script Orchestration
