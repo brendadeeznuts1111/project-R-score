@@ -55,9 +55,10 @@ Open http://localhost:18790/dashboard
 
 ### Bun-Native Signal Handling
 - ✅ SIGINT/SIGTERM/SIGHUP handlers
-- ✅ Graceful shutdown with cleanup
+- ✅ Graceful shutdown with cleanup (SIGTERM)
+- ✅ Force kill fallback (SIGKILL)
 - ✅ Configurable timeout (5s default)
-- ✅ Exit codes: 0 (normal), 130 (SIGINT), 143 (SIGTERM)
+- ✅ Exit codes: 0 (normal), 130 (SIGINT), 143 (SIGTERM), 137 (SIGKILL)
 
 ### Zsh Integration
 - ✅ Auto-detects official zsh-kimi-cli plugin
