@@ -787,6 +787,22 @@ function renderDemo(demo) {
       </div>
     `
     : '';
+  const historicalTrendsPanel = demo.id === 'historical-sqlite-trends'
+    ? `
+      <div class="code-block" style="margin-top: 1rem;">
+        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+          <label for="historical-trends-minutes">Window (minutes):</label>
+          <input id="historical-trends-minutes" type="number" min="1" max="1440" value="60" style="width:96px;" />
+          <label for="historical-trends-limit">Limit:</label>
+          <input id="historical-trends-limit" type="number" min="1" max="10000" value="120" style="width:96px;" />
+          <button class="run-btn" onclick="refreshHistoricalTrends()">
+            ↻ Refresh Historical Trends
+          </button>
+        </div>
+        <div id="historical-trends-output" class="output" style="display: block; margin-top: 0.75rem;">Loading historical SQLite trend summary...</div>
+      </div>
+    `
+    : '';
   const protocolMatrixPanel = demo.id === 'protocol-matrix'
     ? `
       <div class="code-block" style="margin-top: 1rem;">
@@ -851,6 +867,7 @@ function renderDemo(demo) {
     ${performanceImpactPanel}
     ${securityPosturePanel}
     ${domainTopologyPanel}
+    ${historicalTrendsPanel}
     ${protocolMatrixPanel}
     ${http2RuntimePanel}
     ${orchestrationPanel}
@@ -876,6 +893,9 @@ function renderDemo(demo) {
   }
   if (demo.id === 'domain-topology') {
     refreshDomainTopologyGraph();
+  }
+  if (demo.id === 'historical-sqlite-trends') {
+    refreshHistoricalTrends();
   }
   if (demo.id === 'protocol-matrix') {
     refreshProtocolMatrixStatus();
@@ -956,6 +976,7 @@ function setupEventListeners() {
   window.refreshPerformanceImpactMatrix = refreshPerformanceImpactMatrix;
   window.refreshSecurityPostureReport = refreshSecurityPostureReport;
   window.refreshDomainTopologyGraph = refreshDomainTopologyGraph;
+  window.refreshHistoricalTrends = refreshHistoricalTrends;
   window.refreshHttp2RuntimeStatus = refreshHttp2RuntimeStatus;
   window.executeHttp2RuntimeAction = executeHttp2RuntimeAction;
   window.refreshOrchestrationStatus = refreshOrchestrationStatus;
@@ -1201,6 +1222,45 @@ async function refreshDomainTopologyGraph() {
   } catch (error) {
     statusDiv.className = 'output error';
     statusDiv.textContent = `Failed to load domain topology graph: ${error.message}`;
+  }
+}
+
+async function refreshHistoricalTrends() {
+  const statusDiv = document.getElementById('historical-trends-output');
+  if (!statusDiv) return;
+
+  const minutesEl = document.getElementById('historical-trends-minutes');
+  const limitEl = document.getElementById('historical-trends-limit');
+  const minutes = Math.max(1, Math.min(1440, Number(minutesEl?.value || 60)));
+  const limit = Math.max(1, Math.min(10000, Number(limitEl?.value || 120)));
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = `Loading historical trends (minutes=${minutes}, limit=${limit})...`;
+
+  try {
+    const response = await fetch(`/api/dashboard/trends?minutes=${encodeURIComponent(minutes)}&limit=${encodeURIComponent(limit)}`);
+    const data = await response.json();
+    const summary = data.summary || {};
+    const severityCounts = summary.severityCounts || {};
+    const points = Array.isArray(data.points) ? data.points : [];
+
+    const lines = [
+      `generatedAt: ${data.generatedAt || 'unknown'}`,
+      `source: ${data.source || 'unknown'} | initialized: ${String(data.initialized)}`,
+      `window: minutes=${data.window?.minutes ?? minutes} limit=${data.window?.limit ?? limit} coverage=${summary.windowCoveragePct ?? 0}%`,
+      `count=${summary.count ?? points.length} avgLoad=${summary.avgLoadMaxPct ?? 'n/a'} avgCap=${summary.avgCapacityPct ?? 'n/a'} deltaLoad=${summary.deltaLoadMaxPct ?? 0} deltaCap=${summary.deltaCapacityPct ?? 0}`,
+      `severityCounts: ok=${severityCounts.ok ?? 0} warn=${severityCounts.warn ?? 0} fail=${severityCounts.fail ?? 0} unknown=${severityCounts.unknown ?? 0}`,
+      `bottleneckChanges: ${summary.bottleneckChanges ?? 0}`,
+      '',
+      'latest points:',
+      ...points.slice(0, 8).map((p) => `${p.createdAt} | load=${p.loadMaxPct}% | ${p.capacitySummary} | bottleneck=${p.bottleneck}`),
+    ];
+
+    statusDiv.className = 'output success';
+    statusDiv.textContent = lines.join('\n');
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `Failed to load historical trends: ${error.message}`;
   }
 }
 

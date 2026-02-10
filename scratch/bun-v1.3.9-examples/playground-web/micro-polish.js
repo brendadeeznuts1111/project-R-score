@@ -29,6 +29,8 @@ const miniDashState = {
   orchestrationTrend: [],
   loadTrend: [],
   capacityTrend: [],
+  trendSource: 'local',
+  dashboardTrends: null,
   lastSyncMs: 0,
   lastFetchLatencyMs: 0,
   consecutiveFailures: 0,
@@ -321,6 +323,42 @@ function renderPercentTrend(elId, values) {
   el.textContent = spark.padStart(10, '·').slice(-10);
 }
 
+function capacitySummaryToPct(summary) {
+  const text = String(summary || '');
+  const match = /C(\d+)%\s+W(\d+)%/.exec(text);
+  if (!match) return null;
+  const c = Number(match[1]);
+  const w = Number(match[2]);
+  return Math.max(0, Math.min(100, Math.min(c, w)));
+}
+
+function applyPersistedTrends(trendsPayload) {
+  const points = Array.isArray(trendsPayload?.points) ? trendsPayload.points : [];
+  if (points.length === 0) return false;
+
+  const ordered = points.slice(0, 10).reverse();
+  const loadValues = [];
+  const capValues = [];
+  for (const point of ordered) {
+    if (Number.isFinite(point?.loadMaxPct)) {
+      loadValues.push(Math.max(0, Math.min(100, Number(point.loadMaxPct))));
+    }
+    const capPct = capacitySummaryToPct(point?.capacitySummary);
+    if (Number.isFinite(capPct)) {
+      capValues.push(Number(capPct));
+    }
+  }
+
+  if (loadValues.length > 0) {
+    miniDashState.loadTrend = loadValues.slice(-10);
+  }
+  if (capValues.length > 0) {
+    miniDashState.capacityTrend = capValues.slice(-10);
+  }
+  miniDashState.trendSource = 'sqlite';
+  return loadValues.length > 0 || capValues.length > 0;
+}
+
 // Update mini dashboard metrics
 async function updateMiniDash() {
   if (miniDashState.refreshInFlight) return;
@@ -328,11 +366,12 @@ async function updateMiniDash() {
   const fetchStarted = performance.now();
   // Fetch fresh runtime and governance snapshots
   try {
-    const [infoRes, govRes, orchRes, miniRes] = await Promise.allSettled([
+    const [infoRes, govRes, orchRes, miniRes, trendsRes] = await Promise.allSettled([
       fetch('/api/info').then((r) => r.json()),
       fetch('/api/control/governance-status').then((r) => r.json()),
       fetch('/api/control/script-orchestration/status').then((r) => r.json()),
       fetch('/api/dashboard/mini').then((r) => r.json()),
+      fetch('/api/dashboard/trends?minutes=15&limit=10').then((r) => r.json()),
     ]);
     if (infoRes.status === 'fulfilled' && infoRes.value?.runtime) {
       miniDashState.runtimeInfo = infoRes.value;
@@ -350,6 +389,9 @@ async function updateMiniDash() {
     }
     if (miniRes && miniRes.status === 'fulfilled') {
       miniDashState.dashboardMini = miniRes.value;
+    }
+    if (trendsRes && trendsRes.status === 'fulfilled') {
+      miniDashState.dashboardTrends = trendsRes.value;
     }
     miniDashState.consecutiveFailures = 0;
     miniDashState.lastSyncMs = Date.now();
@@ -392,10 +434,14 @@ async function updateMiniDash() {
     reqPct >= 75 || workerPct >= 75 ? 'high' : 'healthy';
   const capPct = Math.min(reqCapPct, workerCapPct);
 
-  miniDashState.loadTrend.push(loadPct);
-  if (miniDashState.loadTrend.length > 10) miniDashState.loadTrend.shift();
-  miniDashState.capacityTrend.push(capPct);
-  if (miniDashState.capacityTrend.length > 10) miniDashState.capacityTrend.shift();
+  const persistedApplied = applyPersistedTrends(miniDashState.dashboardTrends);
+  if (!persistedApplied) {
+    miniDashState.trendSource = 'local';
+    miniDashState.loadTrend.push(loadPct);
+    if (miniDashState.loadTrend.length > 10) miniDashState.loadTrend.shift();
+    miniDashState.capacityTrend.push(capPct);
+    if (miniDashState.capacityTrend.length > 10) miniDashState.capacityTrend.shift();
+  }
   
   document.getElementById('mini-pool').textContent = `${inFlight} / ${maxRequests}`;
   document.getElementById('mini-workers').textContent = `${activeWorkers} / ${maxWorkers}`;
@@ -459,7 +505,8 @@ async function updateMiniDash() {
       freshnessEl.textContent = '--';
     } else {
       const ageSec = Math.max(0, Math.round((Date.now() - miniDashState.lastSyncMs) / 1000));
-      freshnessEl.textContent = ageSec <= 1 ? 'live' : `${ageSec}s ago`;
+      const trendTag = miniDashState.trendSource === 'sqlite' ? 'sqlite' : 'live';
+      freshnessEl.textContent = ageSec <= 1 ? trendTag : `${ageSec}s ago (${trendTag})`;
     }
   }
 }

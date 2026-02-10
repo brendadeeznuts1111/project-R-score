@@ -89,9 +89,33 @@ async function run(): Promise<number> {
         trends.json?.source === "sqlite" &&
         trends.json?.initialized === true &&
         Number.isFinite(trends.json?.summary?.count) &&
+        Number.isFinite(trends.json?.summary?.avgLoadMaxPct) &&
+        Number.isFinite(trends.json?.summary?.avgCapacityPct) &&
+        Number.isFinite(trends.json?.summary?.deltaLoadMaxPct) &&
+        Number.isFinite(trends.json?.summary?.deltaCapacityPct) &&
+        Number.isFinite(trends.json?.summary?.windowCoveragePct) &&
+        Number.isFinite(trends.json?.summary?.severityCounts?.ok) &&
+        Number.isFinite(trends.json?.summary?.severityCounts?.warn) &&
+        Number.isFinite(trends.json?.summary?.severityCounts?.fail) &&
         Array.isArray(trends.json?.points) &&
         trends.json?.summary?.count >= 1,
       `status=${trends.res.status} count=${trends.json?.summary?.count}`
+    );
+
+    const trendSummary = await fetchJson("/api/dashboard/trends/summary?minutes=15&limit=50");
+    check(
+      checks,
+      "dashboard-trends-summary-contract",
+      trendSummary.res.status === 200 &&
+        trendSummary.json?.source === "sqlite" &&
+        trendSummary.json?.initialized === true &&
+        Number.isFinite(trendSummary.json?.summary?.count) &&
+        Number.isFinite(trendSummary.json?.summary?.avgLoadMaxPct) &&
+        Number.isFinite(trendSummary.json?.summary?.avgCapacityPct) &&
+        Number.isFinite(trendSummary.json?.summary?.windowCoveragePct) &&
+        Number.isFinite(trendSummary.json?.window?.minutes) &&
+        Number.isFinite(trendSummary.json?.window?.limit),
+      `status=${trendSummary.res.status} count=${trendSummary.json?.summary?.count}`
     );
 
     const severity = await fetchJson("/api/dashboard/severity-test?load=42");

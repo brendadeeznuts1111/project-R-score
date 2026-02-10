@@ -96,6 +96,7 @@ curl -s -X POST http://localhost:<port>/api/control/s3-content-type-batch \
   -d '{"keys":["app.js","styles.css","readme.md","archive.bin"]}'
 curl -s http://localhost:<port>/api/dashboard/mini
 curl -s "http://localhost:<port>/api/dashboard/severity-test?load=85"
+curl -s "http://localhost:<port>/api/dashboard/trends/summary?minutes=60&limit=120" | jq .
 ```
 
 Mini dashboard APIs:
@@ -108,8 +109,9 @@ Mini dashboard APIs:
   - `capacity`: `ok|warn|fail` using `>50`, `20-50`, `<20`
   - `headroom`: `ok|warn|fail` using `>30`, `10-30`, `<10`
 - `GET /api/dashboard/trends?minutes=60&limit=120`: historical SQLite-backed capacity timeline
-  - `summary`: `{ count, avgLoadMaxPct, latest, oldest }`
+  - `summary`: `{ count, avgLoadMaxPct, avgCapacityPct, deltaLoadMaxPct, deltaCapacityPct, severityCounts, bottleneckChanges, windowCoveragePct, latest, oldest }`
   - `points[]`: rolling snapshot rows (`loadMaxPct`, `capacitySummary`, `bottleneck`, headroom percentages)
+- `GET /api/dashboard/trends/summary?minutes=60&limit=120`: summary-only historical view for compact dashboard cards and trend health widgets
 - `WS /ws/capacity`: broadcasts `dashboard/mini`-shape payload every second for real-time mini-card updates
 
 Governance component matrix API:

@@ -1330,6 +1330,21 @@ bun run brand:bench:pin --from=reports/brand-bench/latest.json --rationale="..."
 `,
   },
   {
+    id: "historical-sqlite-trends",
+    name: "Historical SQLite Trends",
+    description: "Persisted mini-dash capacity snapshots with trend summary and timeline API",
+    category: "Governance",
+    code: `# Read persisted trend summary (SQLite-backed)
+curl -s "http://localhost:<port>/api/dashboard/trends?minutes=60&limit=120" | jq '.summary'
+
+# Read trend points for charting and deltas
+curl -s "http://localhost:<port>/api/dashboard/trends?minutes=15&limit=30" | jq '.points'
+
+# Summary-only convenience endpoint
+curl -s "http://localhost:<port>/api/dashboard/trends/summary?minutes=60&limit=120" | jq .
+`,
+  },
+  {
     id: "parallel",
     name: "Parallel & Sequential Scripts",
     description: "Run multiple scripts concurrently or sequentially with pre/post grouping",
@@ -2728,6 +2743,56 @@ function getCapacityTrend(minutesRaw: number, limitRaw: number) {
   const avgLoadMaxPct = points.length
     ? Number((points.reduce((sum, p) => sum + p.loadMaxPct, 0) / points.length).toFixed(2))
     : 0;
+  const avgCapacityPct = points.length
+    ? Number(
+        (
+          points.reduce((sum, p) => {
+            const summary = String(p.capacitySummary || "");
+            const match = /C(\d+)%\s+W(\d+)%/.exec(summary);
+            const c = match ? Number(match[1]) : 0;
+            const w = match ? Number(match[2]) : 0;
+            return sum + Math.min(c, w);
+          }, 0) / points.length
+        ).toFixed(2)
+      )
+    : 0;
+  const latestCapacityPct = latest
+    ? Math.min(
+        Number(/C(\d+)%/.exec(String(latest.capacitySummary || ""))?.[1] || 0),
+        Number(/W(\d+)%/.exec(String(latest.capacitySummary || ""))?.[1] || 0)
+      )
+    : 0;
+  const oldestCapacityPct = oldest
+    ? Math.min(
+        Number(/C(\d+)%/.exec(String(oldest.capacitySummary || ""))?.[1] || 0),
+        Number(/W(\d+)%/.exec(String(oldest.capacitySummary || ""))?.[1] || 0)
+      )
+    : 0;
+  const deltaLoadMaxPct = latest && oldest ? Number((latest.loadMaxPct - oldest.loadMaxPct).toFixed(2)) : 0;
+  const deltaCapacityPct = latest && oldest ? Number((latestCapacityPct - oldestCapacityPct).toFixed(2)) : 0;
+  const severityCounts = points.reduce(
+    (acc, p) => {
+      const key = String(p.capacitySeverity || "unknown");
+      if (key === "ok" || key === "warn" || key === "fail") {
+        acc[key] += 1;
+      } else {
+        acc.unknown += 1;
+      }
+      return acc;
+    },
+    { ok: 0, warn: 0, fail: 0, unknown: 0 }
+  );
+  const bottleneckChanges = points.reduce((count, point, index) => {
+    if (index === 0) return 0;
+    const prev = String(points[index - 1]?.bottleneck || "");
+    const curr = String(point?.bottleneck || "");
+    return prev && curr && prev !== curr ? count + 1 : count;
+  }, 0);
+  const firstTsMs = points.length > 0 ? Number(points[points.length - 1].tsMs || 0) : 0;
+  const lastTsMs = points.length > 0 ? Number(points[0].tsMs || 0) : 0;
+  const observedWindowMs = Math.max(0, lastTsMs - firstTsMs);
+  const requestedWindowMs = minutes * 60_000;
+  const windowCoveragePct = requestedWindowMs > 0 ? Number(((observedWindowMs / requestedWindowMs) * 100).toFixed(2)) : 0;
 
   return {
     generatedAt: new Date().toISOString(),
@@ -2742,6 +2807,16 @@ function getCapacityTrend(minutesRaw: number, limitRaw: number) {
     summary: {
       count: points.length,
       avgLoadMaxPct,
+      avgCapacityPct,
+      deltaLoadMaxPct,
+      deltaCapacityPct,
+      severityCounts,
+      bottleneckChanges,
+      firstTsMs,
+      lastTsMs,
+      observedWindowMs,
+      requestedWindowMs,
+      windowCoveragePct,
       latest,
       oldest,
     },
@@ -3811,6 +3886,20 @@ const routes = {
     const limit = Number.parseInt(url.searchParams.get("limit") || "120", 10);
     return getCapacityTrend(minutes, limit);
   },
+  "/api/dashboard/trends/summary": (req: Request) => {
+    const url = new URL(req.url);
+    const minutes = Number.parseInt(url.searchParams.get("minutes") || "60", 10);
+    const limit = Number.parseInt(url.searchParams.get("limit") || "120", 10);
+    const trend = getCapacityTrend(minutes, limit);
+    return {
+      generatedAt: trend.generatedAt,
+      source: trend.source,
+      dbPath: trend.dbPath,
+      initialized: trend.initialized,
+      window: trend.window,
+      summary: trend.summary,
+    };
+  },
   "/api/dashboard/severity-test": (req: Request) => {
     const url = new URL(req.url);
     const loadPctRaw = Number.parseFloat(url.searchParams.get("load") || "0");
@@ -4394,6 +4483,19 @@ const routes = {
       });
     }
 
+    if (id === "historical-sqlite-trends") {
+      const trend = routes["/api/dashboard/trends"](
+        new Request("http://localhost/api/dashboard/trends?minutes=60&limit=120")
+      );
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(trend, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     if (id === "protocol-router-tier1380") {
       const dryRun = await routes["/api/fetch/protocol-router"](
         new Request("http://localhost/api/fetch/protocol-router", {
@@ -4697,6 +4799,10 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/dashboard/trends") {
         return jsonResponse(routes["/api/dashboard/trends"](req));
+      }
+
+      if (url.pathname === "/api/dashboard/trends/summary") {
+        return jsonResponse(routes["/api/dashboard/trends/summary"](req));
       }
 
       if (url.pathname === "/api/dashboard/severity-test") {
