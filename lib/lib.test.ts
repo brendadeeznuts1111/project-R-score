@@ -918,15 +918,15 @@ describe('spyOn deep', () => {
       },
     };
 
-    const spy = spyOn(obj, 'greet');
-    obj.greet('world');
-    obj.greet('bun');
+    {
+      using spy = spyOn(obj, 'greet');
+      obj.greet('world');
+      obj.greet('bun');
 
-    expect(spy).toHaveBeenCalledTimes(2);
-    expect(spy).toHaveBeenCalledWith('bun');
-    expect(spy.mock.results[0].value).toBe('Hello, world');
-
-    spy.mockRestore();
+      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledWith('bun');
+      expect(spy.mock.results[0].value).toBe('Hello, world');
+    }
     expect(obj.greet('restored')).toBe('Hello, restored');
   });
 
@@ -937,10 +937,10 @@ describe('spyOn deep', () => {
       },
     };
 
-    const spy = spyOn(math, 'add').mockImplementation((a, b) => a * b);
-    expect(math.add(3, 4)).toBe(12);
-
-    spy.mockRestore();
+    {
+      using spy = spyOn(math, 'add').mockImplementation((a, b) => a * b);
+      expect(math.add(3, 4)).toBe(12);
+    }
     expect(math.add(3, 4)).toBe(7);
   });
 });
