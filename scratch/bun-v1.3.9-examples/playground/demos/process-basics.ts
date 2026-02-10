@@ -26,6 +26,12 @@ console.log("Bun version from env:", process.env.BUN_VERSION || "(not set)");
 process.env.MY_VAR = "hello from bun";
 console.log("Set MY_VAR:", process.env.MY_VAR);
 
+// NODE_ENV behavior
+console.log("\n📦 NODE_ENV Behavior");
+console.log("Default NODE_ENV:", process.env.NODE_ENV || "(not set - defaults to 'development')");
+console.log("In Bun, NODE_ENV defaults to 'development' for bun run/bun test");
+console.log("Can be overridden: NODE_ENV=production bun run script.ts");
+
 // 3. Process info
 console.log("\n3️⃣ Process Information");
 console.log("-".repeat(70));
