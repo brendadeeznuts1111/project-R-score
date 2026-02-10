@@ -22,11 +22,31 @@
   <!-- Mini Dashboard -->
   <div class="mini-dashboard" id="mini-dash">
     <button class="mini-dashboard-toggle" onclick="toggleMiniDash()" title="Toggle metrics">📊</button>
-    <div style="font-weight: 600; margin-bottom: 10px; color: var(--accent); font-size: 0.9em;">📊 Pool Metrics</div>
+    <div class="mini-header-row">
+      <div class="mini-title">📊 Pool Metrics</div>
+      <span id="mini-gov" class="mini-chip mini-chip-pending">Gov: ...</span>
+    </div>
+    <div class="mini-header-row mini-header-row-secondary">
+      <span id="mini-health" class="mini-chip mini-chip-pending">Pool: ...</span>
+      <span id="mini-latency" class="mini-chip mini-chip-pending">API: --ms</span>
+      <span id="mini-orch" class="mini-chip mini-chip-pending">Orch: ...</span>
+      <span id="mini-dns" class="mini-chip mini-chip-pending">DNS: ...</span>
+      <span id="mini-resilience" class="mini-chip mini-chip-pending">Res: ...</span>
+    </div>
     <div class="mini-metric"><span>Requests</span><span id="mini-pool">0 / 200</span></div>
+    <div class="mini-bar"><div id="mini-pool-bar" class="mini-bar-fill"></div></div>
     <div class="mini-metric"><span>Workers</span><span id="mini-workers">0 / 2</span></div>
+    <div class="mini-bar"><div id="mini-worker-bar" class="mini-bar-fill"></div></div>
+    <div class="mini-metric"><span>Load</span><span id="mini-load">0%</span></div>
+    <div class="mini-metric"><span>Bottleneck</span><span id="mini-bottleneck">--</span></div>
+    <div class="mini-metric"><span>Capacity</span><span id="mini-capacity">--</span></div>
+    <div class="mini-metric"><span>Headroom (Conn)</span><span id="mini-headroom-connections">--</span></div>
+    <div class="mini-metric"><span>Headroom (Workers)</span><span id="mini-headroom-workers">--</span></div>
     <div class="mini-metric"><span>Port</span><span id="mini-port">3011</span></div>
     <div class="mini-metric"><span>Uptime</span><span id="mini-uptime">0s</span></div>
+    <div class="mini-metric"><span>Last Sync</span><span id="mini-sync">--</span></div>
+    <div class="mini-metric"><span>Freshness</span><span id="mini-freshness">--</span></div>
+    <div class="mini-metric"><span>Orch Trend</span><span id="mini-orch-trend">..........</span></div>
   </div>
 
   <div class="container">

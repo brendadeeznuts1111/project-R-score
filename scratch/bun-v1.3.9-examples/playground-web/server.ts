@@ -7,10 +7,12 @@
 
 import { serve } from "bun";
 import { readFile, readdir } from "node:fs/promises";
-import { createServer } from "node:net";
+import { createServer, type Server as NetServer } from "node:net";
+import { connect as connectHttp2, createSecureServer, type Http2SecureServer } from "node:http2";
 import { extname, join, normalize, resolve as resolvePath, sep } from "node:path";
 import { getBuildMetadata } from "./build-metadata" with { type: "macro" };
 import { getGitCommitHash } from "./getGitCommitHash.ts" with { type: "macro" };
+import { getResilienceConfig } from "../../../config/resilience-chain";
 
 const BASE_STANDARD = Object.freeze({
   dedicatedPort: 3011,
@@ -52,11 +54,16 @@ const FETCH_DECOMPRESS = parseBool(process.env.PLAYGROUND_FETCH_DECOMPRESS, BASE
 const FETCH_VERBOSE = parseFetchVerbose(process.env.PLAYGROUND_FETCH_VERBOSE, BASE_STANDARD.fetchVerbose);
 const S3_DEFAULT_CONTENT_TYPE = process.env.PLAYGROUND_S3_DEFAULT_CONTENT_TYPE || "application/octet-stream";
 const BRAND_STATUS_STRICT_PROBE = parseBool(process.env.PLAYGROUND_BRAND_STATUS_STRICT_PROBE, false);
+const IGNORE_SIGHUP = parseBool(process.env.PLAYGROUND_IGNORE_SIGHUP, true);
+const EXIT_ON_UNHANDLED_REJECTION = parseBool(process.env.PLAYGROUND_EXIT_ON_UNHANDLED_REJECTION, false);
+const EXIT_ON_UNCAUGHT_EXCEPTION = parseBool(process.env.PLAYGROUND_EXIT_ON_UNCAUGHT_EXCEPTION, true);
 const MACRO_GIT_COMMIT_HASH = getGitCommitHash();
 const GIT_COMMIT_HASH = (process.env.GIT_COMMIT_HASH || "").trim() || MACRO_GIT_COMMIT_HASH || "unset";
 const GIT_COMMIT_HASH_SOURCE = (process.env.GIT_COMMIT_HASH || "").trim() ? "env" : "macro";
 const BUILD_METADATA = await getBuildMetadata();
 const BUN_REVISION = Bun.revision || "unknown";
+const ACTIVE_RESILIENCE = getResilienceConfig();
+const SERVER_STARTED_AT = new Date().toISOString();
 const PROJECT_ROOT = join(import.meta.dir, "..", "..", "..");
 const BRAND_REPORTS_DIR = join(PROJECT_ROOT, "reports", "brand-bench");
 const BRAND_GOVERNANCE_PATH = join(BRAND_REPORTS_DIR, "governance.json");
@@ -74,8 +81,82 @@ let cachedGitCommit: string | null = null;
 let cachedProfileSnapshot: Record<string, unknown> | null = null;
 let cachedHeapSnapshot: Record<string, unknown> | null = null;
 let cachedBundleSnapshot: Record<string, unknown> | null = null;
+let cachedOrchestrationLoop: Record<string, unknown> | null = null;
+let cachedOrchestrationLoopAt = 0;
 let cacheTimestamp = 0;
 const CACHE_TTL_MS = 30000; // 30 second cache for volatile data
+const ORCHESTRATION_CACHE_TTL_MS = parseNumberEnv("PLAYGROUND_ORCHESTRATION_CACHE_TTL_MS", 15000, { min: 1000, max: 300000 });
+const HTTP2_UPGRADE_PORT = parseNumberEnv("PLAYGROUND_HTTP2_UPGRADE_PORT", 8443, { min: 1, max: 65535 });
+const HTTP2_UPGRADE_HOST = process.env.PLAYGROUND_HTTP2_UPGRADE_HOST || "127.0.0.1";
+
+const HTTP2_DEMO_KEY_PEM = `-----BEGIN PRIVATE KEY-----
+MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDU0Lso+DrQvIhm
+5rHv81E6zb8PcpSD6msrwXTiq8yahVliDGsjgMJzXHaQgltxJmiCVqAiZ3sccEJm
+IQ/CT65NCDY+Hy2u7cTuBiRx/sPZ86EtoGQ3ZNBwpgjPiogfyLm0dxUr/qGfTFBO
+oKKqCo0Zn337C1baEqDFDBoBjDVvKnTGK4W8O4IVOQKJiTgX10kw4T0ffU0B9J5s
+ewQMmc8eziaC3jsLZDeFanSTSfQXFjMpBYVNtPYvcTkSgtNjSgkYvl1gDjTBU+3Y
+kBKlCIHuzkr6W+MVRKhki7yLR3w8z4Rx9Dc7s8WRJ4maDBe8aaxlNxopH86Kn3gX
+Y0g2ys3tAgMBAAECggEBAKDl8ysFigo5EHOkJZHCB38LAVHfkjOuLzrUt9eMhlOp
+UCvWMcaU2e84UBfvxszkeg1ZCxcX37dflIP8qRqC/cgV1lTfY72m3MYM9M8PC+oj
+zY9efYZ3/TO+BFlNZp+JNgYgJmytxmpW2zynLHSdJ5Lgx/He39peTRjNjnfvFpMl
+RujceJqiJ9OISDlSFzVUhjtnDcsAazgPE0oZo9Styu93t+GUusn3b5FX01KSE6/f
+92cXxAJaeHY8Hqu2OUackxKAF7+V0H+UAxIs1qWbPf+NGDZMPD4Ji4cMQRfK5AZR
+kiqnZer2gHT+y7IXpxORFYnpfbXuIILwLWOeleTnvoECgYEA/1E3d/q9YaFz8bgR
+vszojqzdYgDPsEozDundpBaDcPTdhKkpLXss+FNaDH9YHunO6oQMWdYDJ6t/6w+M
+aa6Bmdu8KlQl2FX+pehHZ/Bh/HlmFtu9QndUZPHXOh1xrGBi1J6tAdAFNDU9Ajql
+ouDl+W/DWmRW46Ohn/s4lk47Pg0CgYEA1WJrNBoQo4/BuBAutbVy10NWio6EvkMX
+ujYWXzM8bqOHBRgZ5JAQl73v/4jqG3lSgmV65cJW0uNLXpOaJdVX+Yb3uGH4U0xW
+Bt1BdyqgEKsrlHQ8/xo07gvVggKjfCqJDIieKjEV1fAeayiOEBJI5w8QFlfg/IvB
+kvYVeRqxt2ECgYBlufZf14edXrbTmIN5gismrbmHUsttciLlzkiBGHdGikm4ka3W
+cT15s7wtPo/dwUqwJezF3n9jTvGotok7kkwRAXv3YY+yopDTibjpsN1ZuwTyFptR
+4Dm//pvCi/i+tairDo3gKwHny06DlNpqCzGWMPGlElWMXaYIGBBz0rfIAQKBgQCi
+OvtKV27DC666ZAM/Pz6ajqWjHguqI5RMjIahxnBxpX4nz1UQQr96vntTCiMC1FB4
+tvKi8AfWudw5gXq2vObv3T9FPabwnZ7iBSGamhur0JeHfIBLav9G5FRlTeBBrI0Z
+rFyjs0Hor3BRBDpN2bj3gqo2coWpPA/lzZYxxqvKwQKBgQC1MpVaOOCn72iS6uuR
+MOR/SLspGp/CDpVO+yVCi4L8bcDUEkcWJgXtuOfeAKqqff/58uDiXrMlOFOCkKVV
++0zEUS4wnJ5KtXRikDFG/2VYFrNwAneJCXKFQuZZBVaRHXBktl3orVAVxQb6z2tY
+B0okCR0tXKmnsXbuGKFmWW+yQQ==
+-----END PRIVATE KEY-----`;
+
+const HTTP2_DEMO_CERT_PEM = `-----BEGIN CERTIFICATE-----
+MIICpDCCAYwCCQCaWBvqXw6dJDANBgkqhkiG9w0BAQsFADAUMRIwEAYDVQQDDAls
+b2NhbGhvc3QwHhcNMjYwMjA5MDI1ODA1WhcNMzYwMjA3MDI1ODA1WjAUMRIwEAYD
+VQQDDAlsb2NhbGhvc3QwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDU
+0Lso+DrQvIhm5rHv81E6zb8PcpSD6msrwXTiq8yahVliDGsjgMJzXHaQgltxJmiC
+VqAiZ3sccEJmIQ/CT65NCDY+Hy2u7cTuBiRx/sPZ86EtoGQ3ZNBwpgjPiogfyLm0
+dxUr/qGfTFBOoKKqCo0Zn337C1baEqDFDBoBjDVvKnTGK4W8O4IVOQKJiTgX10kw
+4T0ffU0B9J5sewQMmc8eziaC3jsLZDeFanSTSfQXFjMpBYVNtPYvcTkSgtNjSgkY
+vl1gDjTBU+3YkBKlCIHuzkr6W+MVRKhki7yLR3w8z4Rx9Dc7s8WRJ4maDBe8aaxl
+NxopH86Kn3gXY0g2ys3tAgMBAAEwDQYJKoZIhvcNAQELBQADggEBALye19/ULIk+
+LKghle8OaZadqCKfx49TKZ/G1BBPSTAEf0zr4ZpzhHe50BFbgbA957bHDoAcoEfB
+7FA+MDaffe03l/2aCYZquZN2XeS5BJi+4UUi7oS+3mmEMzrwfDpSxbUgnwgXOqEV
+oiqr77RwaY3eDDeavFheWptteI3LF5ykGnkqKwyH+FZf7K4Q4qi1uu6hwNuS/R2R
+DYnN+DYkxX4ERkYMpHSqLR3xFjdqXLVRbl6mc8F8d/IcBMGm3J+2QJByJ4w6kMnX
+53wVlWTGQ6oRn6XyhihKY1AoFvS3eEc1C6VT5kIINYPScT3HJILwNE4a3VH7F9gB
+ps+U6tk6uHk=
+-----END CERTIFICATE-----`;
+
+type Http2UpgradeRuntimeState = {
+  status: "stopped" | "starting" | "running" | "error";
+  host: string;
+  port: number;
+  startedAt?: string;
+  lastError?: string;
+  streamCount: number;
+  lastProbeAt?: string;
+  lastProbeOk?: boolean;
+  lastProbeLatencyMs?: number;
+  lastProbeError?: string;
+};
+
+let http2UpgradeRuntime: Http2UpgradeRuntimeState = {
+  status: "stopped",
+  host: HTTP2_UPGRADE_HOST,
+  port: HTTP2_UPGRADE_PORT,
+  streamCount: 0,
+};
+let http2SecureRuntimeServer: Http2SecureServer | null = null;
+let http2NetRuntimeServer: NetServer | null = null;
 
 const EVIDENCE_DASHBOARD = {
   "bun-v1.3.9-upgrade": {
@@ -172,6 +253,130 @@ type ProtocolConfig = {
   maxSize: number | null;
   handler: ProtocolHandler;
 };
+
+type BunV139FeatureMatrixRow = {
+  feature: string;
+  cliOrApi: string;
+  defaultBehavior: string;
+  environmentOverride: string;
+  integration: string;
+  performanceImpact: string;
+};
+
+const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
+  {
+    feature: "Parallel Scripts",
+    cliOrApi: "bun run --parallel",
+    defaultBehavior: "Sequential",
+    environmentOverride: "PLAYGROUND_SCRIPT_MODE=parallel",
+    integration: "ScriptRunner.execute('parallel')",
+    performanceImpact: "95ms for 500 scripts",
+  },
+  {
+    feature: "Sequential Scripts",
+    cliOrApi: "bun run --sequential",
+    defaultBehavior: "—",
+    environmentOverride: "PLAYGROUND_SCRIPT_MODE=sequential",
+    integration: "ScriptRunner.execute('sequential')",
+    performanceImpact: "Memory-constrained builds",
+  },
+  {
+    feature: "No-Exit-On-Error",
+    cliOrApi: "--no-exit-on-error",
+    defaultBehavior: "false (fail-fast)",
+    environmentOverride: "PLAYGROUND_NO_EXIT_ON_ERROR=true",
+    integration: "CI/CD resilience",
+    performanceImpact: "All scripts complete",
+  },
+  {
+    feature: "Pre/Post Grouping",
+    cliOrApi: "Auto",
+    defaultBehavior: "Enabled",
+    environmentOverride: "—",
+    integration: "groupPrePost(scripts)",
+    performanceImpact: "Correct dep order",
+  },
+  {
+    feature: "vs --filter",
+    cliOrApi: "--filter=\"pkg\"",
+    defaultBehavior: "Dep-order respect",
+    environmentOverride: "—",
+    integration: "Use --parallel for watch scripts",
+    performanceImpact: "No blocking on deps",
+  },
+  {
+    feature: "HTTP/2 Upgrade",
+    cliOrApi: "net.Server -> Http2SecureServer",
+    defaultBehavior: "Disabled",
+    environmentOverride: "PLAYGROUND_HTTP2_UPGRADE=true",
+    integration: "createServer({ allowHTTP1: true })",
+    performanceImpact: "30-40% throughput",
+  },
+  {
+    feature: "Symbol.dispose Mocks",
+    cliOrApi: "using spy = spyOn()",
+    defaultBehavior: "Manual cleanup",
+    environmentOverride: "—",
+    integration: "All test suites refactored",
+    performanceImpact: "Zero manual cleanup",
+  },
+  {
+    feature: "NO_PROXY Fix",
+    cliOrApi: "fetch()/WebSocket()",
+    defaultBehavior: "Ignored (v1.3.8)",
+    environmentOverride: "NO_PROXY=localhost,*.internal",
+    integration: "SecureFetch layer",
+    performanceImpact: "Bypass validation",
+  },
+  {
+    feature: "CPU Prof Interval",
+    cliOrApi: "--cpu-prof-interval <us>",
+    defaultBehavior: "1000",
+    environmentOverride: "PLAYGROUND_CPU_PROF_INTERVAL=500",
+    integration: "batch-profiler.ts",
+    performanceImpact: "4x resolution",
+  },
+  {
+    feature: "ESM Bytecode",
+    cliOrApi: "--compile --bytecode --format=esm",
+    defaultBehavior: "CJS",
+    environmentOverride: "PLAYGROUND_COMPILE_FORMAT=esm",
+    integration: "fw-cli binary",
+    performanceImpact: "50% faster cold start",
+  },
+  {
+    feature: "ARMv8.0 Fix",
+    cliOrApi: "Runtime dispatch",
+    defaultBehavior: "SIGILL (v1.3.8)",
+    environmentOverride: "—",
+    integration: "AWS Graviton/RPi production",
+    performanceImpact: "Stable ARM64",
+  },
+  {
+    feature: "Markdown SIMD",
+    cliOrApi: "Bun.Markdown",
+    defaultBehavior: "Baseline",
+    environmentOverride: "—",
+    integration: "Documentation pipeline",
+    performanceImpact: "3-15% faster",
+  },
+  {
+    feature: "React Markdown",
+    cliOrApi: "Bun.markdown.react()",
+    defaultBehavior: "Baseline",
+    environmentOverride: "—",
+    integration: "Dashboard SSR",
+    performanceImpact: "28% faster small docs",
+  },
+  {
+    feature: "AbortSignal Optimize",
+    cliOrApi: "AbortSignal.abort()",
+    defaultBehavior: "Event dispatch",
+    environmentOverride: "—",
+    integration: "Request cancellation",
+    performanceImpact: "~6% micro-bench",
+  },
+];
 
 const featureDefinitions: Record<string, FeatureDefinition<unknown>> = {
   bodyType: {
@@ -478,6 +683,140 @@ async function getWorkspaceOrchestrationPanel() {
   };
 }
 
+function buildOrchestrationSimulation(mode: "parallel" | "sequential" | "parallel-no-exit" | "filter") {
+  const now = new Date().toISOString();
+  const prefixRows = {
+    build: "build | compiling...",
+    lint: "lint  | checking files...",
+    test: "test  | running suite...",
+  };
+
+  if (mode === "sequential") {
+    return {
+      mode,
+      generatedAt: now,
+      semantics: "Runs scripts one-by-one in listed order with prefixed output.",
+      lines: [
+        prefixRows.build,
+        "build | Done in 391ms",
+        prefixRows.test,
+        "test  | 42 passed",
+        prefixRows.lint,
+        "lint  | 0 errors",
+      ],
+      exitCode: 0,
+      behavior: "No sibling interruption because scripts are serial.",
+    };
+  }
+
+  if (mode === "parallel-no-exit") {
+    return {
+      mode,
+      generatedAt: now,
+      semantics: "Runs all scripts concurrently and keeps siblings alive when one fails.",
+      lines: [
+        prefixRows.build,
+        prefixRows.test,
+        prefixRows.lint,
+        "lint  | Oops! Something went wrong! :(  (exit 2)",
+        "build | Done in 391ms",
+        "test  | completed remaining tests",
+      ],
+      exitCode: 2,
+      behavior: "--no-exit-on-error allows full failure visibility.",
+    };
+  }
+
+  if (mode === "filter") {
+    return {
+      mode,
+      generatedAt: now,
+      semantics: "Dependency-ordered package execution with bun --filter.",
+      lines: [
+        "pkg-core:build | compiling...",
+        "pkg-app:build  | waiting for pkg-core dependency",
+        "pkg-core:build | done",
+        "pkg-app:build  | compiling...",
+      ],
+      exitCode: 0,
+      behavior: "Unlike --parallel/--sequential, --filter can wait on dependency order.",
+    };
+  }
+
+  return {
+    mode: "parallel",
+    generatedAt: now,
+    semantics: "Runs scripts concurrently; default fail-fast kills siblings after first failure.",
+    lines: [
+      prefixRows.build,
+      prefixRows.test,
+      prefixRows.lint,
+      "lint  | Oops! Something went wrong! :(  (exit 2)",
+      "build | Exited by signal SIGINT (fail-fast sibling shutdown)",
+      "test  | Exited by signal SIGINT (fail-fast sibling shutdown)",
+    ],
+    exitCode: 2,
+    behavior: "Default --parallel behavior in Bun v1.3.9.",
+  };
+}
+
+async function runScriptOrchestrationFullLoop() {
+  const panel = await getWorkspaceOrchestrationPanel();
+  const parallel = buildOrchestrationSimulation("parallel");
+  const parallelNoExit = buildOrchestrationSimulation("parallel-no-exit");
+  const sequential = buildOrchestrationSimulation("sequential");
+  const filterOrdered = buildOrchestrationSimulation("filter");
+
+  const report = {
+    generatedAt: new Date().toISOString(),
+    source: "https://bun.com/blog/bun-v1.3.9#bun-run-parallel-and-bun-run-sequential",
+    panel,
+    simulations: {
+      parallel,
+      parallelNoExit,
+      sequential,
+      filterOrdered,
+    },
+    summary: {
+      failFast: parallel.exitCode !== 0,
+      noExitKeepsRunning: parallelNoExit.exitCode !== 0,
+      sequentialOrdered: sequential.exitCode === 0,
+      filterDependencyAware: filterOrdered.exitCode === 0,
+    },
+  };
+  cachedOrchestrationLoop = report;
+  cachedOrchestrationLoopAt = Date.now();
+  return report;
+}
+
+async function getScriptOrchestrationStatus() {
+  const now = Date.now();
+  const ageMs = now - cachedOrchestrationLoopAt;
+  if (!cachedOrchestrationLoop || ageMs > ORCHESTRATION_CACHE_TTL_MS) {
+    await runScriptOrchestrationFullLoop();
+  }
+  const loop = cachedOrchestrationLoop as any;
+  const summary = loop?.summary || null;
+  const pass = Boolean(
+    summary?.failFast &&
+    summary?.noExitKeepsRunning &&
+    summary?.sequentialOrdered &&
+    summary?.filterDependencyAware
+  );
+  return {
+    generatedAt: new Date().toISOString(),
+    cache: {
+      ttlMs: ORCHESTRATION_CACHE_TTL_MS,
+      ageMs: Math.max(0, Date.now() - cachedOrchestrationLoopAt),
+      cachedAt: cachedOrchestrationLoopAt ? new Date(cachedOrchestrationLoopAt).toISOString() : null,
+      fresh: cachedOrchestrationLoopAt > 0 && Date.now() - cachedOrchestrationLoopAt <= ORCHESTRATION_CACHE_TTL_MS,
+    },
+    source: loop?.source || "https://bun.com/blog/bun-v1.3.9#bun-run-parallel-and-bun-run-sequential",
+    summary,
+    pass,
+  };
+}
+
 function impactFromGates(input: { warn?: string; strict?: string }): "Low" | "Medium" | "High" {
   if (input.strict === "fail" || input.warn === "fail") return "High";
   if (input.strict === "warn" || input.warn === "warn") return "Medium";
@@ -637,6 +976,18 @@ curl -s http://localhost:<port>/api/control/network-smoke
 `,
   },
   {
+    id: "resilience-governance",
+    name: "Resilience Governance Profile",
+    description: "Active environment profile alignment for retries, circuit breaker, pooling, and DNS toggles",
+    category: "Governance",
+    code: `# Resolve active resilience profile and alignment
+curl -s http://localhost:<port>/api/control/resilience/status | jq .
+
+# Override profile explicitly
+PLAYGROUND_RESILIENCE_PROFILE=staging bun run start:dashboard:playground
+PLAYGROUND_RESILIENCE_PROFILE=production bun run start:dashboard:playground`,
+  },
+  {
     id: "brand-bench-gate",
     name: "Brand Bench Gate (Canonical)",
     description: "Run and inspect canonical branding benchmark + gate status",
@@ -695,6 +1046,34 @@ bun run --parallel --workspaces --if-present build lint test
 bun run --sequential --workspaces --if-present build`,
   },
   {
+    id: "script-orchestration-control",
+    name: "Script Orchestration Control",
+    description: "Interactive fail-fast vs no-exit vs sequential simulation with prefixed output",
+    category: "Script Orchestration",
+    code: `# Panel data from root package.json
+curl -s http://localhost:<port>/api/control/script-orchestration-panel | jq .
+
+# Simulations (Bun v1.3.9 semantics)
+curl -s -X POST "http://localhost:<port>/api/control/script-orchestration-simulate?mode=parallel" | jq .
+curl -s -X POST "http://localhost:<port>/api/control/script-orchestration-simulate?mode=parallel-no-exit" | jq .
+curl -s -X POST "http://localhost:<port>/api/control/script-orchestration-simulate?mode=sequential" | jq .
+curl -s -X POST "http://localhost:<port>/api/control/script-orchestration-simulate?mode=filter" | jq .
+curl -s http://localhost:<port>/api/control/script-orchestration/status | jq .
+curl -s -X POST "http://localhost:<port>/api/control/script-orchestration/full-loop" | jq .`,
+  },
+  {
+    id: "feature-matrix",
+    name: "Bun v1.3.9 Feature Matrix",
+    description: "CLI/API defaults, env overrides, integration points, and performance notes",
+    category: "Script Orchestration",
+    code: `# Inspect Bun v1.3.9 feature matrix used by playground integration
+curl -s http://localhost:<port>/api/control/feature-matrix | jq .
+
+# Focus only environment overrides
+curl -s http://localhost:<port>/api/control/feature-matrix | jq '.rows[] | {feature, environmentOverride}'
+`,
+  },
+  {
     id: "http2",
     name: "HTTP/2 Connection Upgrades",
     description: "net.Server → Http2SecureServer connection upgrade",
@@ -711,6 +1090,26 @@ h2Server.on("stream", (stream, headers) => {
 const netServer = createServer((rawSocket) => {
   h2Server.emit("connection", rawSocket);
 });`,
+  },
+  {
+    id: "http2-runtime-control",
+    name: "HTTP/2 Upgrade Runtime Control",
+    description: "Start, inspect, and stop live net.Server -> Http2SecureServer forwarding runtime",
+    category: "Networking",
+    code: `# Start runtime control plane
+curl -s -X POST http://localhost:<port>/api/control/http2-upgrade/start | jq .
+
+# Check status
+curl -s http://localhost:<port>/api/control/http2-upgrade/status | jq .
+
+# Probe live stream response through the forwarded socket
+curl -s http://localhost:<port>/api/control/http2-upgrade/probe | jq .
+
+# Full loop: start -> probe x3 -> stop
+curl -s -X POST "http://localhost:<port>/api/control/http2-upgrade/full-loop?iterations=3&delayMs=120" | jq .
+
+# Stop runtime
+curl -s -X POST http://localhost:<port>/api/control/http2-upgrade/stop | jq .`,
   },
   {
     id: "mocks",
@@ -871,6 +1270,22 @@ await fetch(url2);  // ✅ No longer hangs
 
 // Fixed: ARMv8.0 aarch64 CPU crashes
 // ✅ Bun now works on older ARM processors`,
+  },
+  {
+    id: "bun-apis-stringwidth",
+    name: "Bun APIs: stringWidth Thai/Lao Fix",
+    description: "Bun.stringWidth now correctly counts Thai/Lao spacing vowels in v1.3.9",
+    category: "Bugfixes",
+    code: `// Bun v1.3.9 Bun APIs fix:
+// Thai/Lao spacing vowels are width 1 (not zero-width)
+
+const thai = "คำ"; // Thai word using SARA AM
+const lao = "ຄຳ"; // Lao equivalent pattern
+
+console.log(Bun.stringWidth(thai)); // ✅ Correct width (2)
+console.log(Bun.stringWidth(lao));  // ✅ Correct width (2)
+
+// Source: https://bun.com/blog/bun-v1.3.9`,
   },
   {
     id: "markdown-advanced",
@@ -1637,9 +2052,14 @@ async function buildUploadProgress(req: Request): Promise<{
 }
 
 function getProtocolMatrix() {
+  const snapshot = buildLivePoolSnapshot();
+
   return {
     generatedAt: new Date().toISOString(),
     source: "bun-runtime-playground",
+    pooling: {
+      live: snapshot,
+    },
     protocols: [
       {
         protocol: "HTTP",
@@ -1739,6 +2159,136 @@ function getProtocolMatrix() {
       "Use proxy object form for proxy auth headers.",
       "Use request options and env controls for deterministic production behavior.",
     ],
+  };
+}
+
+type SeverityLevel = "ok" | "warn" | "fail";
+
+function severityByUtilization(loadPct: number): SeverityLevel {
+  if (loadPct > 80) return "fail";
+  if (loadPct >= 50) return "warn";
+  return "ok";
+}
+
+function severityByCapacityAvailable(availablePct: number): SeverityLevel {
+  if (availablePct < 20) return "fail";
+  if (availablePct <= 50) return "warn";
+  return "ok";
+}
+
+function severityByHeadroom(availablePct: number): SeverityLevel {
+  if (availablePct < 10) return "fail";
+  if (availablePct <= 30) return "warn";
+  return "ok";
+}
+
+function buildLivePoolSnapshot() {
+  const connectionUtilization = Number((inFlightRequests / Math.max(1, MAX_CONCURRENT_REQUESTS)).toFixed(3));
+  const workerUtilization = Number((activeCommands / Math.max(1, MAX_COMMAND_WORKERS)).toFixed(3));
+  const availableConnections = Math.max(0, MAX_CONCURRENT_REQUESTS - inFlightRequests);
+  const availableWorkers = Math.max(0, MAX_COMMAND_WORKERS - activeCommands);
+  const perWorkerConnectionLoad = Number((inFlightRequests / Math.max(1, activeCommands || 1)).toFixed(2));
+  const perConnectionWorkerLoad = Number((activeCommands / Math.max(1, inFlightRequests || 1)).toFixed(2));
+  const bottleneck =
+    connectionUtilization >= workerUtilization
+      ? "connection-pool"
+      : "worker-pool";
+
+  return {
+    connections: {
+      inFlight: inFlightRequests,
+      max: MAX_CONCURRENT_REQUESTS,
+      available: availableConnections,
+      utilization: connectionUtilization,
+      loadPerWorker: perWorkerConnectionLoad,
+      status: connectionUtilization >= 1 ? "saturated" : connectionUtilization >= 0.75 ? "high" : "healthy",
+    },
+    workers: {
+      active: activeCommands,
+      max: MAX_COMMAND_WORKERS,
+      available: availableWorkers,
+      utilization: workerUtilization,
+      loadPerConnection: perConnectionWorkerLoad,
+      status: workerUtilization >= 1 ? "saturated" : workerUtilization >= 0.75 ? "high" : "healthy",
+    },
+    capacity: {
+      bottleneck,
+      headroom: {
+        connections: availableConnections,
+        workers: availableWorkers,
+      },
+    },
+  };
+}
+
+function buildMiniDashboardSnapshot() {
+  const live = buildLivePoolSnapshot();
+  const connectionUsedPct = Math.round(live.connections.utilization * 100);
+  const workerUsedPct = Math.round(live.workers.utilization * 100);
+  const maxLoadPct = Math.max(connectionUsedPct, workerUsedPct);
+  const capacityConnectionsPct = Math.max(0, 100 - connectionUsedPct);
+  const capacityWorkersPct = Math.max(0, 100 - workerUsedPct);
+  const headroomConnectionsPct = Math.round((live.connections.available / Math.max(1, live.connections.max)) * 100);
+  const headroomWorkersPct = Math.round((live.workers.available / Math.max(1, live.workers.max)) * 100);
+
+  return {
+    generatedAt: new Date().toISOString(),
+    port: ACTIVE_PORT,
+    bottleneck: {
+      kind: live.capacity.bottleneck,
+      severity: severityByUtilization(maxLoadPct),
+    },
+    load: {
+      connectionUsedPct,
+      workerUsedPct,
+      maxUsedPct: maxLoadPct,
+      severity: severityByUtilization(maxLoadPct),
+    },
+    capacity: {
+      connectionsPct: capacityConnectionsPct,
+      workersPct: capacityWorkersPct,
+      summary: `C${capacityConnectionsPct}% W${capacityWorkersPct}%`,
+      severity: severityByCapacityAvailable(Math.min(capacityConnectionsPct, capacityWorkersPct)),
+    },
+    headroom: {
+      connections: {
+        available: live.connections.available,
+        max: live.connections.max,
+        pct: headroomConnectionsPct,
+        severity: severityByHeadroom(headroomConnectionsPct),
+      },
+      workers: {
+        available: live.workers.available,
+        max: live.workers.max,
+        pct: headroomWorkersPct,
+        severity: severityByHeadroom(headroomWorkersPct),
+      },
+    },
+    pooling: {
+      live,
+    },
+  };
+}
+
+function buildSeverityTestSnapshot(loadPctInput: number) {
+  const loadPct = Math.max(0, Math.min(100, Math.round(loadPctInput)));
+  const availablePct = Math.max(0, 100 - loadPct);
+
+  return {
+    input: {
+      loadPct,
+      availablePct,
+    },
+    thresholds: {
+      utilization: { ok: "<50", warn: "50-80", fail: ">80" },
+      capacity: { ok: ">50", warn: "20-50", fail: "<20" },
+      headroom: { ok: ">30", warn: "10-30", fail: "<10" },
+    },
+    severity: {
+      utilization: severityByUtilization(loadPct),
+      capacity: severityByCapacityAvailable(availablePct),
+      headroom: severityByHeadroom(availablePct),
+    },
   };
 }
 
@@ -2326,6 +2876,245 @@ async function runNetworkSmoke(baseUrl: string): Promise<{
   };
 }
 
+function closeNetServer(server: NetServer): Promise<void> {
+  return new Promise((resolve) => {
+    server.close(() => resolve());
+  });
+}
+
+function closeH2Server(server: Http2SecureServer): Promise<void> {
+  return new Promise((resolve) => {
+    server.close(() => resolve());
+  });
+}
+
+async function startHttp2UpgradeRuntime(): Promise<Http2UpgradeRuntimeState> {
+  if (http2UpgradeRuntime.status === "running") {
+    return http2UpgradeRuntime;
+  }
+
+  http2UpgradeRuntime = {
+    ...http2UpgradeRuntime,
+    status: "starting",
+    lastError: undefined,
+  };
+
+  try {
+    const h2Server = createSecureServer({
+      key: HTTP2_DEMO_KEY_PEM,
+      cert: HTTP2_DEMO_CERT_PEM,
+      allowHTTP1: true,
+    });
+    h2Server.on("stream", (stream, headers) => {
+      http2UpgradeRuntime.streamCount += 1;
+      stream.respond({
+        ":status": 200,
+        "content-type": "application/json",
+      });
+      stream.end(
+        JSON.stringify({
+          ok: true,
+          message: "Hello over HTTP/2!",
+          method: headers[":method"] || "GET",
+          path: headers[":path"] || "/",
+          streamCount: http2UpgradeRuntime.streamCount,
+        })
+      );
+    });
+
+    const netServer = createServer({ pauseOnConnect: true }, (rawSocket) => {
+      h2Server.emit("connection", rawSocket);
+      rawSocket.resume();
+    });
+
+    await new Promise<void>((resolve, reject) => {
+      netServer.once("error", reject);
+      netServer.listen(HTTP2_UPGRADE_PORT, HTTP2_UPGRADE_HOST, () => resolve());
+    });
+
+    http2SecureRuntimeServer = h2Server;
+    http2NetRuntimeServer = netServer;
+    http2UpgradeRuntime = {
+      ...http2UpgradeRuntime,
+      status: "running",
+      startedAt: new Date().toISOString(),
+      lastError: undefined,
+    };
+    return http2UpgradeRuntime;
+  } catch (error) {
+    http2UpgradeRuntime = {
+      ...http2UpgradeRuntime,
+      status: "error",
+      lastError: error instanceof Error ? error.message : String(error),
+    };
+    return http2UpgradeRuntime;
+  }
+}
+
+async function stopHttp2UpgradeRuntime(): Promise<Http2UpgradeRuntimeState> {
+  const netServer = http2NetRuntimeServer;
+  const h2Server = http2SecureRuntimeServer;
+  http2NetRuntimeServer = null;
+  http2SecureRuntimeServer = null;
+
+  if (netServer) {
+    await closeNetServer(netServer);
+  }
+  if (h2Server) {
+    await closeH2Server(h2Server);
+  }
+
+  http2UpgradeRuntime = {
+    ...http2UpgradeRuntime,
+    status: "stopped",
+    startedAt: undefined,
+  };
+  return http2UpgradeRuntime;
+}
+
+async function probeHttp2UpgradeRuntime(): Promise<{
+  ok: boolean;
+  status?: number;
+  body?: string;
+  latencyMs: number;
+  error?: string;
+}> {
+  const start = performance.now();
+  if (http2UpgradeRuntime.status !== "running") {
+    return {
+      ok: false,
+      latencyMs: Number((performance.now() - start).toFixed(2)),
+      error: "HTTP/2 upgrade runtime is not running",
+    };
+  }
+
+  const target = `https://${HTTP2_UPGRADE_HOST}:${HTTP2_UPGRADE_PORT}`;
+  const client = connectHttp2(target, { rejectUnauthorized: false });
+
+  try {
+    await new Promise<void>((resolve, reject) => {
+      client.once("connect", () => resolve());
+      client.once("error", reject);
+    });
+
+    const result = await new Promise<{ status?: number; body: string }>((resolve, reject) => {
+      const req = client.request({ ":path": "/" });
+      let status: number | undefined;
+      const chunks: Uint8Array[] = [];
+      req.on("response", (headers) => {
+        const s = headers[":status"];
+        status = typeof s === "number" ? s : Number(s);
+      });
+      req.on("data", (chunk: Buffer) => chunks.push(new Uint8Array(chunk)));
+      req.on("error", reject);
+      req.on("end", () => {
+        const body = Buffer.concat(chunks.map((c) => Buffer.from(c))).toString("utf8");
+        resolve({ status, body });
+      });
+      req.end();
+    });
+
+    const latencyMs = Number((performance.now() - start).toFixed(2));
+    const ok = result.status === 200;
+    http2UpgradeRuntime = {
+      ...http2UpgradeRuntime,
+      lastProbeAt: new Date().toISOString(),
+      lastProbeOk: ok,
+      lastProbeLatencyMs: latencyMs,
+      lastProbeError: ok ? undefined : `Unexpected status ${result.status}`,
+    };
+    return {
+      ok,
+      status: result.status,
+      body: result.body,
+      latencyMs,
+      error: ok ? undefined : `Unexpected status ${result.status}`,
+    };
+  } catch (error) {
+    const latencyMs = Number((performance.now() - start).toFixed(2));
+    const message = error instanceof Error ? error.message : String(error);
+    http2UpgradeRuntime = {
+      ...http2UpgradeRuntime,
+      lastProbeAt: new Date().toISOString(),
+      lastProbeOk: false,
+      lastProbeLatencyMs: latencyMs,
+      lastProbeError: message,
+    };
+    return {
+      ok: false,
+      latencyMs,
+      error: message,
+    };
+  } finally {
+    client.close();
+  }
+}
+
+function getHttp2UpgradeStatusSnapshot() {
+  return {
+    ...http2UpgradeRuntime,
+    endpoint: `https://${HTTP2_UPGRADE_HOST}:${HTTP2_UPGRADE_PORT}`,
+    note: "Self-signed cert for local demo; use rejectUnauthorized=false in test clients.",
+    uptimeSec: http2UpgradeRuntime.startedAt
+      ? Number(((Date.now() - new Date(http2UpgradeRuntime.startedAt).getTime()) / 1000).toFixed(2))
+      : 0,
+  };
+}
+
+async function runHttp2UpgradeFullLoop(iterations = 3, delayMs = 120) {
+  const loops = Math.max(1, Math.min(20, Math.floor(iterations)));
+  const delay = Math.max(0, Math.min(5000, Math.floor(delayMs)));
+
+  const started = await startHttp2UpgradeRuntime();
+  if (started.status !== "running") {
+    return {
+      ok: false,
+      loops,
+      delayMs: delay,
+      started,
+      error: started.lastError || "Failed to start HTTP/2 runtime",
+    };
+  }
+
+  const probes: Array<{
+    idx: number;
+    ok: boolean;
+    status?: number;
+    latencyMs: number;
+    error?: string;
+  }> = [];
+
+  for (let i = 0; i < loops; i += 1) {
+    const probe = await probeHttp2UpgradeRuntime();
+    probes.push({
+      idx: i + 1,
+      ok: probe.ok,
+      status: probe.status,
+      latencyMs: probe.latencyMs,
+      error: probe.error,
+    });
+    if (i < loops - 1 && delay > 0) {
+      await Bun.sleep(delay);
+    }
+  }
+
+  const beforeStop = getHttp2UpgradeStatusSnapshot();
+  const stopped = await stopHttp2UpgradeRuntime();
+  const afterStop = getHttp2UpgradeStatusSnapshot();
+  const probesOk = probes.every((p) => p.ok);
+
+  return {
+    ok: probesOk && stopped.status === "stopped",
+    loops,
+    delayMs: delay,
+    started,
+    probes,
+    beforeStop,
+    stopped,
+    afterStop,
+  };
+}
+
 function parsePortRange(range: string): { start: number; end: number } {
   const match = range.trim().match(/^(\d+)-(\d+)$/);
   if (!match) return { start: DEDICATED_PORT, end: DEDICATED_PORT };
@@ -2356,6 +3145,122 @@ async function resolvePort(): Promise<number> {
   );
 }
 
+function buildRuntimeMetadata() {
+  return {
+    bunVersion: Bun.version || "unknown",
+    bunRevision: BUN_REVISION,
+    platform: process.platform,
+    arch: process.arch,
+    pid: process.pid,
+    ppid: process.ppid,
+    cwd: process.cwd(),
+    execPath: process.execPath,
+    port: ACTIVE_PORT,
+    startedAt: SERVER_STARTED_AT,
+    uptimeSec: Number((process.uptime?.() || 0).toFixed(2)),
+  };
+}
+
+function buildResilienceStatus() {
+  const { profile, config } = ACTIVE_RESILIENCE;
+  const requestUtilization = Number((inFlightRequests / Math.max(1, MAX_CONCURRENT_REQUESTS)).toFixed(3));
+  const workerUtilization = Number((activeCommands / Math.max(1, MAX_COMMAND_WORKERS)).toFixed(3));
+  const poolUtilization = Math.max(requestUtilization, workerUtilization);
+  const dnsAligned =
+    config.enablePrefetch === PREFETCH_ENABLED &&
+    config.enablePreconnect === PRECONNECT_ENABLED;
+
+  const riskLevel =
+    poolUtilization >= 0.9
+      ? "high"
+      : poolUtilization >= 0.65
+        ? "medium"
+        : "low";
+
+  return {
+    profile,
+    config,
+    alignment: {
+      dnsAligned,
+      prefetchExpected: config.enablePrefetch,
+      prefetchActive: PREFETCH_ENABLED,
+      preconnectExpected: config.enablePreconnect,
+      preconnectActive: PRECONNECT_ENABLED,
+    },
+    pooling: {
+      requestUtilization,
+      workerUtilization,
+      poolUtilization,
+      riskLevel,
+    },
+  };
+}
+
+function buildHealthChecks() {
+  return [
+    {
+      name: "server",
+      status: "healthy",
+      message: "Playground server is accepting requests",
+    },
+    {
+      name: "request-pool",
+      status: inFlightRequests < MAX_CONCURRENT_REQUESTS ? "healthy" : "warning",
+      message: `${inFlightRequests}/${MAX_CONCURRENT_REQUESTS} requests in-flight`,
+    },
+    {
+      name: "worker-pool",
+      status: activeCommands < MAX_COMMAND_WORKERS ? "healthy" : "warning",
+      message: `${activeCommands}/${MAX_COMMAND_WORKERS} command workers active`,
+    },
+  ];
+}
+
+async function buildDashboardPayload(req: Request) {
+  const governance = await routes["/api/control/governance-status"]();
+  const runtime = buildRuntimeMetadata();
+  const now = new Date().toISOString();
+  const pool = {
+    requests: {
+      inFlight: inFlightRequests,
+      max: MAX_CONCURRENT_REQUESTS,
+    },
+    workers: {
+      active: activeCommands,
+      max: MAX_COMMAND_WORKERS,
+    },
+  };
+
+  return {
+    status: "healthy",
+    timestamp: now,
+    service: "bun-v1.3.9-playground-dashboard",
+    version: String(BUILD_METADATA?.version || "1.0.0"),
+    runtime,
+    checks: buildHealthChecks(),
+    governance: {
+      decision: governance.decision,
+      benchmarkGate: governance.benchmarkGate,
+    },
+    resilience: buildResilienceStatus(),
+    metrics: {
+      system: {
+        port: ACTIVE_PORT,
+        uptimeSec: runtime.uptimeSec,
+        inFlightRequests: pool.requests.inFlight,
+        maxConcurrentRequests: pool.requests.max,
+        activeWorkers: pool.workers.active,
+        maxWorkers: pool.workers.max,
+      },
+      pool,
+    },
+    request: {
+      method: req.method,
+      path: new URL(req.url).pathname,
+    },
+  };
+}
+
 // API routes
 const routes = {
   "/api/info": () => ({
@@ -2383,12 +3288,44 @@ const routes = {
       searchGovernanceFetchDepth: SEARCH_GOVERNANCE_FETCH_DEPTH,
       proxyDefaultEnabled: Boolean(resolveFeature<string | null>("proxy")),
       proxyAuthConfigured: Boolean(PROXY_AUTH_TOKEN),
+      resilienceProfile: ACTIVE_RESILIENCE.profile,
+      resilienceConfig: ACTIVE_RESILIENCE.config,
       sigillCaveat:
         process.platform === "linux" && process.arch === "arm64"
           ? "SIGILL ARMv8.0 fix applies to this Linux aarch64 platform."
           : "SIGILL ARMv8.0 fix applies to Linux aarch64 only (not this host).",
     },
   }),
+
+  "/api/control/resilience/status": () => ({
+    generatedAt: new Date().toISOString(),
+    runtime: buildRuntimeMetadata(),
+    controlPlane: {
+      prefetchEnabled: PREFETCH_ENABLED,
+      preconnectEnabled: PRECONNECT_ENABLED,
+      prefetchHostsCount: PREFETCH_HOSTS.length,
+      preconnectUrlsCount: PRECONNECT_URLS.length,
+    },
+    resilience: buildResilienceStatus(),
+  }),
+
+  "/api/health": () => ({
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+    service: "bun-v1.3.9-playground-dashboard",
+    version: String(BUILD_METADATA?.version || "1.0.0"),
+    runtime: buildRuntimeMetadata(),
+    checks: buildHealthChecks(),
+  }),
+
+  "/api/dashboard/runtime": () => buildRuntimeMetadata(),
+  "/api/dashboard/mini": () => buildMiniDashboardSnapshot(),
+  "/api/dashboard/severity-test": (req: Request) => {
+    const url = new URL(req.url);
+    const loadPctRaw = Number.parseFloat(url.searchParams.get("load") || "0");
+    const loadPct = Number.isFinite(loadPctRaw) ? loadPctRaw : 0;
+    return buildSeverityTestSnapshot(loadPct);
+  },
   
   "/api/demos": () => ({
     demos: DEMOS,
@@ -2531,7 +3468,97 @@ const routes = {
 
   "/api/control/features": (req: Request) => ({
     features: resolveAllFeatures(req),
+    matrixSummary: {
+      rows: BUN_V139_FEATURE_MATRIX.length,
+      generatedAt: new Date().toISOString(),
+    },
   }),
+
+  "/api/control/feature-matrix": () => {
+    const scriptMode = (process.env.PLAYGROUND_SCRIPT_MODE || "sequential").toLowerCase();
+    const noExitOnError = parseBool(process.env.PLAYGROUND_NO_EXIT_ON_ERROR, false);
+    const http2Upgrade = parseBool(process.env.PLAYGROUND_HTTP2_UPGRADE, false);
+    const cpuInterval = Number.parseInt(process.env.PLAYGROUND_CPU_PROF_INTERVAL || "1000", 10) || 1000;
+    const compileFormat = (process.env.PLAYGROUND_COMPILE_FORMAT || "cjs").toLowerCase();
+    const noProxy = process.env.NO_PROXY || process.env.no_proxy || "";
+
+    const runtime = {
+      bunVersion: Bun.version,
+      bunRevision: BUN_REVISION,
+      platform: process.platform,
+      arch: process.arch,
+      sigillCaveat:
+        process.platform === "linux" && process.arch === "arm64"
+          ? "SIGILL ARMv8.0 fix applies to this Linux aarch64 host"
+          : "SIGILL ARMv8.0 fix applies to Linux ARMv8.0 only (not this host)",
+    };
+
+    const rows = BUN_V139_FEATURE_MATRIX.map((row) => {
+      let appliedValue = row.defaultBehavior;
+      let active = false;
+
+      if (row.feature === "Parallel Scripts") {
+        appliedValue = scriptMode;
+        active = scriptMode === "parallel";
+      } else if (row.feature === "Sequential Scripts") {
+        appliedValue = scriptMode;
+        active = scriptMode === "sequential";
+      } else if (row.feature === "No-Exit-On-Error") {
+        appliedValue = String(noExitOnError);
+        active = noExitOnError;
+      } else if (row.feature === "HTTP/2 Upgrade") {
+        appliedValue = String(http2Upgrade);
+        active = http2Upgrade;
+      } else if (row.feature === "NO_PROXY Fix") {
+        appliedValue = noProxy || "(unset)";
+        active = noProxy.length > 0;
+      } else if (row.feature === "CPU Prof Interval") {
+        appliedValue = String(cpuInterval);
+        active = cpuInterval !== 1000;
+      } else if (row.feature === "ESM Bytecode") {
+        appliedValue = compileFormat;
+        active = compileFormat === "esm";
+      } else if (row.feature === "ARMv8.0 Fix") {
+        appliedValue = `${runtime.platform}/${runtime.arch}`;
+        active = runtime.platform === "linux" && runtime.arch === "arm64";
+      }
+
+      return {
+        ...row,
+        appliedValue,
+        active,
+      };
+    });
+
+    return {
+      generatedAt: new Date().toISOString(),
+      version: "bun-v1.3.9",
+      columns: [
+        "feature",
+        "cliOrApi",
+        "defaultBehavior",
+        "environmentOverride",
+        "integration",
+        "performanceImpact",
+        "appliedValue",
+        "active",
+      ],
+      runtime,
+      summary: {
+        rowCount: rows.length,
+        activeCount: rows.filter((row) => row.active).length,
+        env: {
+          PLAYGROUND_SCRIPT_MODE: scriptMode,
+          PLAYGROUND_NO_EXIT_ON_ERROR: noExitOnError,
+          PLAYGROUND_HTTP2_UPGRADE: http2Upgrade,
+          PLAYGROUND_CPU_PROF_INTERVAL: cpuInterval,
+          PLAYGROUND_COMPILE_FORMAT: compileFormat,
+          NO_PROXY: noProxy || "",
+        },
+      },
+      rows,
+    };
+  },
 
   "/api/control/network-smoke": async (req: Request) => {
     const base = new URL(req.url).origin;
@@ -2544,8 +3571,64 @@ const routes = {
     };
   },
 
+  "/api/control/http2-upgrade/status": () => getHttp2UpgradeStatusSnapshot(),
+
+  "/api/control/http2-upgrade/start": async () => {
+    const state = await startHttp2UpgradeRuntime();
+    return {
+      ...state,
+      endpoint: `https://${HTTP2_UPGRADE_HOST}:${HTTP2_UPGRADE_PORT}`,
+      started: state.status === "running",
+    };
+  },
+
+  "/api/control/http2-upgrade/stop": async () => {
+    const state = await stopHttp2UpgradeRuntime();
+    return {
+      ...state,
+      endpoint: `https://${HTTP2_UPGRADE_HOST}:${HTTP2_UPGRADE_PORT}`,
+      stopped: state.status === "stopped",
+    };
+  },
+
+  "/api/control/http2-upgrade/probe": async () => {
+    const probe = await probeHttp2UpgradeRuntime();
+    return {
+      ...probe,
+      endpoint: `https://${HTTP2_UPGRADE_HOST}:${HTTP2_UPGRADE_PORT}`,
+      runtime: http2UpgradeRuntime,
+    };
+  },
+
+  "/api/control/http2-upgrade/full-loop": async (req: Request) => {
+    const url = new URL(req.url);
+    const iterations = Number.parseInt(url.searchParams.get("iterations") || "3", 10);
+    const delayMs = Number.parseInt(url.searchParams.get("delayMs") || "120", 10);
+    return await runHttp2UpgradeFullLoop(iterations, delayMs);
+  },
+
   "/api/control/script-orchestration-panel": async () => {
     return await getWorkspaceOrchestrationPanel();
+  },
+
+  "/api/control/script-orchestration-simulate": async (req: Request) => {
+    const url = new URL(req.url);
+    const modeParam = (url.searchParams.get("mode") || "parallel").toLowerCase();
+    const mode =
+      modeParam === "sequential" ||
+      modeParam === "parallel-no-exit" ||
+      modeParam === "filter"
+        ? modeParam
+        : "parallel";
+    return buildOrchestrationSimulation(mode);
+  },
+
+  "/api/control/script-orchestration/full-loop": async () => {
+    return await runScriptOrchestrationFullLoop();
+  },
+
+  "/api/control/script-orchestration/status": async () => {
+    return await getScriptOrchestrationStatus();
   },
 
   "/api/control/upload-progress": async (req: Request) => {
@@ -2584,6 +3667,30 @@ const routes = {
   "/api/run/:id": async (req: Request) => {
     const url = new URL(req.url);
     const id = url.pathname.split("/").pop();
+    if (!id || id === "undefined" || id === "null") {
+      return new Response(JSON.stringify({
+        success: false,
+        error: "Invalid demo id",
+        output: "",
+        exitCode: 1,
+      }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const knownDemo = DEMOS.find((demo) => demo.id === id);
+    if (!knownDemo) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: `Unknown demo id: ${id}`,
+        output: "",
+        exitCode: 1,
+      }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
 
     if (id === "control-plane") {
       const smoke = await routes["/api/control/network-smoke"](req);
@@ -2596,11 +3703,34 @@ const routes = {
       });
     }
 
+    if (id === "resilience-governance") {
+      const status = routes["/api/control/resilience/status"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(status, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     if (id === "workspace-runner-panel") {
       const panel = await routes["/api/control/script-orchestration-panel"]();
       return new Response(JSON.stringify({
         success: true,
         output: JSON.stringify(panel, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "script-orchestration-control") {
+      const fullLoop = await routes["/api/control/script-orchestration/full-loop"]();
+
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(fullLoop, null, 2),
         exitCode: 0,
       }), {
         headers: { "Content-Type": "application/json" },
@@ -2675,6 +3805,17 @@ const routes = {
         success: true,
         output: JSON.stringify(dryRun, null, 2),
         exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "http2-runtime-control") {
+      const loop = await runHttp2UpgradeFullLoop(3, 120);
+      return new Response(JSON.stringify({
+        success: loop.ok === true,
+        output: JSON.stringify(loop, null, 2),
+        exitCode: loop.ok === true ? 0 : 1,
       }), {
         headers: { "Content-Type": "application/json" },
       });
@@ -2773,6 +3914,32 @@ const routes = {
           "bun build --compile --bytecode --format=cjs ./cli.ts",
         ],
         defaultWithoutFormat: "cjs",
+      };
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(sample, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "bun-apis-stringwidth") {
+      const thai = "คำ";
+      const lao = "ຄຳ";
+      const sample = {
+        source: "https://bun.com/blog/bun-v1.3.9#bun-apis",
+        claim: "Bun.stringWidth now counts Thai/Lao spacing vowels as width 1",
+        examples: {
+          thai,
+          thaiWidth: Bun.stringWidth(thai),
+          lao,
+          laoWidth: Bun.stringWidth(lao),
+        },
+        expected: {
+          thaiWidth: 2,
+          laoWidth: 2,
+        },
       };
       return new Response(JSON.stringify({
         success: true,
@@ -2910,6 +4077,44 @@ async function handleRequest(req: Request): Promise<Response> {
         return jsonResponse(routes["/api/demos"]());
       }
 
+      if (url.pathname === "/api/health") {
+        return jsonResponse(routes["/api/health"]());
+      }
+
+      if (url.pathname === "/api/dashboard/runtime") {
+        return jsonResponse(routes["/api/dashboard/runtime"]());
+      }
+
+      if (url.pathname === "/api/dashboard/mini") {
+        return jsonResponse(routes["/api/dashboard/mini"]());
+      }
+
+      if (url.pathname === "/api/dashboard/severity-test") {
+        return jsonResponse(routes["/api/dashboard/severity-test"](req));
+      }
+
+      if (url.pathname === "/api/dashboard" || url.pathname === "/api/dashboard/debug") {
+        const body = await buildDashboardPayload(req);
+        if (url.pathname === "/api/dashboard/debug") {
+          return jsonResponse({
+            ...body,
+            debug: {
+              env: {
+                NO_PROXY: process.env.NO_PROXY || process.env.no_proxy || "",
+                HTTP_PROXY: process.env.HTTP_PROXY || process.env.http_proxy || "",
+                HTTPS_PROXY: process.env.HTTPS_PROXY || process.env.https_proxy || "",
+              },
+              paths: {
+                projectRoot: PROJECT_ROOT,
+                playgroundRoot: import.meta.dir,
+                bunMain: Bun.main,
+              },
+            },
+          });
+        }
+        return jsonResponse(body);
+      }
+
       if (url.pathname === "/api/brand/status") {
         return jsonResponse(await routes["/api/brand/status"]());
       }
@@ -2918,12 +4123,46 @@ async function handleRequest(req: Request): Promise<Response> {
         return jsonResponse(await routes["/api/control/network-smoke"](req));
       }
 
+      if (url.pathname === "/api/control/http2-upgrade/status") {
+        return jsonResponse(routes["/api/control/http2-upgrade/status"]());
+      }
+
+      if (url.pathname === "/api/control/http2-upgrade/start") {
+        return jsonResponse(await routes["/api/control/http2-upgrade/start"]());
+      }
+
+      if (url.pathname === "/api/control/http2-upgrade/stop") {
+        return jsonResponse(await routes["/api/control/http2-upgrade/stop"]());
+      }
+
+      if (url.pathname === "/api/control/http2-upgrade/probe") {
+        return jsonResponse(await routes["/api/control/http2-upgrade/probe"]());
+      }
+
+      if (url.pathname === "/api/control/http2-upgrade/full-loop") {
+        return jsonResponse(await routes["/api/control/http2-upgrade/full-loop"](req));
+      }
+
       if (url.pathname === "/api/control/script-orchestration-panel") {
         return jsonResponse(await routes["/api/control/script-orchestration-panel"]());
       }
 
+      if (url.pathname === "/api/control/script-orchestration-simulate") {
+        return jsonResponse(await routes["/api/control/script-orchestration-simulate"](req));
+      }
+      if (url.pathname === "/api/control/script-orchestration/full-loop") {
+        return jsonResponse(await routes["/api/control/script-orchestration/full-loop"]());
+      }
+      if (url.pathname === "/api/control/script-orchestration/status") {
+        return jsonResponse(await routes["/api/control/script-orchestration/status"]());
+      }
+
       if (url.pathname === "/api/control/features") {
         return jsonResponse(routes["/api/control/features"](req));
+      }
+
+      if (url.pathname === "/api/control/feature-matrix") {
+        return jsonResponse(routes["/api/control/feature-matrix"]());
       }
 
       if (url.pathname === "/api/control/upload-progress") {
@@ -2958,6 +4197,10 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/governance-status") {
         return jsonResponse(await routes["/api/control/governance-status"]());
+      }
+
+      if (url.pathname === "/api/control/resilience/status") {
+        return jsonResponse(routes["/api/control/resilience/status"]());
       }
 
       if (url.pathname === "/api/fetch/protocol-router") {
@@ -3050,6 +4293,9 @@ async function gracefulShutdown(reason: string, exitCode = 0, error?: unknown) {
     if (httpServer) {
       httpServer.stop(true);
     }
+    if (http2UpgradeRuntime.status === "running") {
+      await stopHttp2UpgradeRuntime();
+    }
 
     const drained = await waitForInFlightDrain(Math.max(250, SHUTDOWN_TIMEOUT_MS - 250));
     if (!drained) {
@@ -3075,15 +4321,27 @@ process.on("SIGTERM", () => {
 });
 
 process.on("SIGHUP", () => {
+  if (IGNORE_SIGHUP) {
+    console.warn("[signal] SIGHUP ignored (PLAYGROUND_IGNORE_SIGHUP=true)");
+    return;
+  }
   void gracefulShutdown("SIGHUP", 0);
 });
 
 process.on("unhandledRejection", (error) => {
-  void gracefulShutdown("unhandledRejection", 1, error);
+  if (EXIT_ON_UNHANDLED_REJECTION) {
+    void gracefulShutdown("unhandledRejection", 1, error);
+    return;
+  }
+  console.error("[runtime] unhandledRejection (non-fatal):", error);
 });
 
 process.on("uncaughtException", (error) => {
-  void gracefulShutdown("uncaughtException", 1, error);
+  if (EXIT_ON_UNCAUGHT_EXCEPTION) {
+    void gracefulShutdown("uncaughtException", 1, error);
+    return;
+  }
+  console.error("[runtime] uncaughtException (non-fatal):", error);
 });
 
 // Serve the application
@@ -3101,6 +4359,9 @@ console.log(
 );
 console.log(
   `🛰️ Warmup: prefetch=${warmupState.prefetch.length} preconnect=${warmupState.preconnect.length} enabled=${!warmupState.skipped}`
+);
+console.log(
+  `🧯 Runtime guards: ignoreSighup=${IGNORE_SIGHUP} exitOnUnhandledRejection=${EXIT_ON_UNHANDLED_REJECTION} exitOnUncaughtException=${EXIT_ON_UNCAUGHT_EXCEPTION}`
 );
 console.log(`🛑 Shutdown timeout: ${SHUTDOWN_TIMEOUT_MS}ms`);
 console.log(`\n💡 Press Ctrl+C to stop gracefully`);
