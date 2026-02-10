@@ -12,6 +12,13 @@ let demoSearchQuery = '';
 let activeCategoryFilter = '';
 let welcomeTemplateHtml = '';
 let trendSummaryTimer = null;
+let runtimeHeartbeatTimer = null;
+let runtimeHeartbeatLastOkMs = 0;
+let runtimeDriftInfo = null;
+const runtimeFetchContext = {
+  origins: [],
+  staleMs: 15000,
+};
 const shortcutState = {
   pendingLeader: null,
   pendingAt: 0,
@@ -119,6 +126,7 @@ async function init() {
   }
   
   await refreshHeaderState();
+  startRuntimeHeartbeat();
   
   // Load demos
   await loadDemos();
@@ -587,18 +595,27 @@ function selectDemoByIndex(index) {
 function renderRuntimeDriftBanner(info) {
   const banner = document.getElementById('runtime-drift-banner');
   if (!banner) return;
-  const versioning = info?.versioning || info?.runtime?.versioning || null;
-  const hasDrift = Boolean(versioning?.hasDrift);
-  if (!hasDrift) {
+  const drift = runtimeDriftInfo?.drift ?? Boolean((info?.versioning || info?.runtime?.versioning || null)?.hasDrift);
+  const staleMs = Number(runtimeFetchContext.staleMs || 15000);
+  const stale = runtimeHeartbeatLastOkMs > 0
+    ? (Date.now() - runtimeHeartbeatLastOkMs > staleMs)
+    : false;
+  if (!drift && !stale) {
     banner.style.display = 'none';
     banner.textContent = '';
     return;
   }
-  const runtimeSha = String(versioning?.runtimeGitCommit || 'unknown').slice(0, 12);
-  const repoSha = String(versioning?.repoHeadGitCommit || 'unknown').slice(0, 12);
+  const runtimeSha = String(runtimeDriftInfo?.serverSha || info?.versioning?.runtimeGitCommit || 'unknown').slice(0, 12);
+  const repoSha = String(runtimeDriftInfo?.clientSha || info?.versioning?.repoHeadGitCommit || 'unknown').slice(0, 12);
+  const reasons = Array.isArray(runtimeDriftInfo?.reasons) ? runtimeDriftInfo.reasons.join(', ') : 'none';
   banner.style.display = 'block';
+  if (stale) {
+    banner.textContent =
+      `Runtime stale: no successful heartbeat for >${Math.round(staleMs / 1000)}s. Run "bun run playground:dev" and check "curl -sS http://127.0.0.1:3011/api/health".`;
+    return;
+  }
   banner.textContent =
-    `Runtime drift detected: process ${runtimeSha} != repo ${repoSha}. Restart with "bun run playground:dev".`;
+    `Runtime drift detected: process ${runtimeSha} != repo ${repoSha} (reasons: ${reasons}). Restart with "bun run playground:dev".`;
 }
 
 async function refreshHeaderState() {
@@ -625,6 +642,13 @@ async function refreshHeaderState() {
     document.getElementById('git-commit-hash').textContent = `${runtimeInfo.gitCommitHash || 'unset'}`;
     document.getElementById('git-commit-hash-source').textContent = `${runtimeInfo.gitCommitHashSource || 'unknown'}`;
     document.getElementById('platform').textContent = `${runtimeInfo.platform} (${runtimeInfo.arch})`;
+    const runtime = runtimeInfo?.runtime || {};
+    if (Array.isArray(runtime.runtimeOrigins) && runtime.runtimeOrigins.length > 0) {
+      runtimeFetchContext.origins = [...new Set(runtime.runtimeOrigins)];
+    }
+    if (Number.isFinite(Number(runtime.runtimeStaleMs))) {
+      runtimeFetchContext.staleMs = Number(runtime.runtimeStaleMs);
+    }
     renderRuntimeDriftBanner(runtimeInfo);
     updateConnectionStatus(true);
   } else {
@@ -671,6 +695,28 @@ async function refreshHeaderState() {
   }
 
   renderHeaderBadges();
+}
+
+async function refreshRuntimeDriftStatus() {
+  try {
+    const response = await resilientFetch('/api/control/runtime/drift', { cache: 'no-store', attemptsPerOrigin: 1 });
+    const data = await response.json();
+    runtimeDriftInfo = data || null;
+    runtimeHeartbeatLastOkMs = Date.now();
+  } catch (_) {
+    // Keep previous drift info; stale logic will mark outage.
+  } finally {
+    renderRuntimeDriftBanner(runtimeInfo);
+  }
+}
+
+function startRuntimeHeartbeat() {
+  if (runtimeHeartbeatTimer) {
+    clearInterval(runtimeHeartbeatTimer);
+    runtimeHeartbeatTimer = null;
+  }
+  refreshRuntimeDriftStatus();
+  runtimeHeartbeatTimer = setInterval(refreshRuntimeDriftStatus, 2000);
 }
 
 function renderHeaderBadges() {
@@ -1636,7 +1682,13 @@ async function refreshMainTrendSummary() {
     `;
   } catch (error) {
     statusDiv.classList.add('trend-summary-error');
-    statusDiv.textContent = `Trend summary unavailable: ${error.message}`;
+    const fallbackBase = runtimeFetchContext.origins[0] || window.location.origin || 'http://127.0.0.1:3011';
+    statusDiv.innerHTML = `
+      <div>Trend summary unavailable: ${escapeHtml(error.message)}</div>
+      <div class="trend-summary-row"><span>Runtime</span><code>${escapeHtml(fallbackBase)}</code></div>
+      <div class="trend-summary-row"><span>Recovery</span><code>bun run playground:dev</code></div>
+      <div class="trend-summary-row"><span>Health Probe</span><code>curl -sS ${escapeHtml(fallbackBase)}/api/health</code></div>
+    `;
   }
 }
 
@@ -1706,24 +1758,32 @@ async function refreshMainRuntimePorts() {
     `;
   } catch (error) {
     statusDiv.classList.add('trend-summary-error');
-    statusDiv.textContent = `Runtime ports unavailable: ${error.message}`;
+    const fallbackBase = runtimeFetchContext.origins[0] || window.location.origin || 'http://127.0.0.1:3011';
+    statusDiv.innerHTML = `
+      <div>Runtime ports unavailable: ${escapeHtml(error.message)}</div>
+      <div class="trend-summary-row"><span>Recovery</span><code>bun run playground:dev</code></div>
+      <div class="trend-summary-row"><span>Port Owner</span><code>lsof -nP -iTCP:3011 -sTCP:LISTEN</code></div>
+      <div class="trend-summary-row"><span>Health Probe</span><code>curl -sS ${escapeHtml(fallbackBase)}/api/control/process/runtime</code></div>
+    `;
   }
 }
 
 async function resilientFetch(path, options = {}) {
   const { attemptsPerOrigin: attemptsPerOriginOption, ...fetchOptions } = options || {};
   const fallbackPort = window.location.port || '3011';
+  const contractOrigins = Array.isArray(runtimeFetchContext.origins) ? runtimeFetchContext.origins : [];
   const rawOrigins = [
     window.location.origin,
-    `http://localhost:${fallbackPort}`,
+    ...contractOrigins,
     `http://127.0.0.1:${fallbackPort}`,
-    'http://localhost:3011',
+    `http://localhost:${fallbackPort}`,
     'http://127.0.0.1:3011',
+    'http://localhost:3011',
   ];
   const origins = [...new Set(rawOrigins.filter((origin) => /^https?:\/\//.test(origin)))];
   const attemptsPerOrigin = Math.max(
     1,
-    Math.min(3, Number(attemptsPerOriginOption || 1))
+    Math.min(2, Number(attemptsPerOriginOption || 1))
   );
   let lastError = null;
   const attempted = new Set();

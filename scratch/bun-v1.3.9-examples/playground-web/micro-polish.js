@@ -27,6 +27,7 @@ const miniDashState = {
   governance: null,
   orchestration: null,
   dashboardMini: null,
+  workerDiagnostics: null,
   orchestrationTrend: [],
   loadTrend: [],
   capacityTrend: [],
@@ -429,13 +430,14 @@ async function updateMiniDash() {
   const fetchStarted = performance.now();
   // Fetch fresh runtime and governance snapshots
   try {
-    const [infoRes, govRes, orchRes, miniRes, trendsRes, secretsRes] = await Promise.allSettled([
+    const [infoRes, govRes, orchRes, miniRes, trendsRes, secretsRes, workerDiagRes] = await Promise.allSettled([
       fetch('/api/info').then((r) => r.json()),
       fetch('/api/control/governance-status').then((r) => r.json()),
       fetch('/api/control/script-orchestration/status').then((r) => r.json()),
       fetch('/api/dashboard/mini').then((r) => r.json()),
       fetch('/api/dashboard/trends?minutes=15&limit=10').then((r) => r.json()),
       fetch('/api/control/secrets/runtime').then((r) => r.json()),
+      fetch('/api/control/worker-pool/diagnostics').then((r) => r.json()),
     ]);
     if (infoRes.status === 'fulfilled' && infoRes.value?.runtime) {
       miniDashState.runtimeInfo = infoRes.value;
@@ -460,6 +462,9 @@ async function updateMiniDash() {
     if (secretsRes && secretsRes.status === 'fulfilled') {
       miniDashState.secretsRuntime = secretsRes.value;
     }
+    if (workerDiagRes && workerDiagRes.status === 'fulfilled') {
+      miniDashState.workerDiagnostics = workerDiagRes.value;
+    }
     miniDashState.consecutiveFailures = 0;
     miniDashState.lastSyncMs = Date.now();
     miniDashState.lastFetchLatencyMs = Math.max(1, Math.round(performance.now() - fetchStarted));
@@ -480,8 +485,9 @@ async function updateMiniDash() {
   const liveWorkers = livePool?.workers || {};
   const inFlight = liveConnections.inFlight ?? rt.inFlightRequests ?? 0;
   const maxRequests = liveConnections.max ?? rt.maxConcurrentRequests ?? 1;
-  const activeWorkers = liveWorkers.active ?? rt.activeCommands ?? 0;
-  const maxWorkers = liveWorkers.max ?? rt.maxCommandWorkers ?? 1;
+  const activeWorkers = liveWorkers.active ?? rt.busyCommands ?? rt.activeCommands ?? 0;
+  const provisionedWorkers = liveWorkers.provisioned ?? rt.provisionedWorkers ?? liveWorkers.max ?? rt.maxCommandWorkers ?? 1;
+  const maxWorkers = liveWorkers.maxConfigured ?? rt.maxCommandWorkers ?? liveWorkers.max ?? 1;
   const reqPct = Math.round((Math.max(0, inFlight) / Math.max(1, maxRequests)) * 100);
   const workerPct = Math.round((Math.max(0, activeWorkers) / Math.max(1, maxWorkers)) * 100);
   const reqCapPct = miniSnapshot?.capacity?.connectionsPct ?? Math.max(0, 100 - reqPct);
@@ -496,14 +502,20 @@ async function updateMiniDash() {
   const workerInFlightTasks = miniSnapshot?.workerQueue?.inFlightTasks ?? livePool?.workers?.inFlightTasks ?? 0;
   const workerTimedOutTasks = miniSnapshot?.workerHardening?.timedOutTasks ?? livePool?.workers?.timedOutTasks ?? 0;
   const workerRejectedTasks = miniSnapshot?.workerHardening?.rejectedTasks ?? livePool?.workers?.rejectedTasks ?? 0;
+  const diagnostics = miniDashState.workerDiagnostics || {};
+  const diagnosticsValues = diagnostics?.diagnostics || diagnostics;
+  const workerQueueDepthFromDiag = Number(diagnosticsValues?.queued ?? workerQueueDepth);
+  const workerInFlightFromDiag = Number(diagnosticsValues?.inFlight ?? workerInFlightTasks);
+  const workerTimedOutFromDiag = Number(diagnosticsValues?.timedOutTasks ?? workerTimedOutTasks);
+  const workerRejectedFromDiag = Number(diagnosticsValues?.rejectedTasks ?? workerRejectedTasks);
   const workerQueueSeverity = miniSnapshot?.workerQueue?.severity ??
-    (workerQueueDepth > maxWorkers * 2 || workerTimedOutTasks > 0
+    (workerQueueDepthFromDiag > maxWorkers * 2 || workerTimedOutFromDiag > 0
       ? 'fail'
-      : workerQueueDepth > 0 || workerRejectedTasks > 0
+      : workerQueueDepthFromDiag > 0 || workerRejectedFromDiag > 0
         ? 'warn'
         : 'ok');
-  const workerTimedOutSeverity = miniSnapshot?.workerHardening?.timedOutSeverity ?? (workerTimedOutTasks > 0 ? 'fail' : 'ok');
-  const workerRejectedSeverity = miniSnapshot?.workerHardening?.rejectedSeverity ?? (workerRejectedTasks > 0 ? 'warn' : 'ok');
+  const workerTimedOutSeverity = miniSnapshot?.workerHardening?.timedOutSeverity ?? (workerTimedOutFromDiag > 0 ? 'fail' : 'ok');
+  const workerRejectedSeverity = miniSnapshot?.workerHardening?.rejectedSeverity ?? (workerRejectedFromDiag > 0 ? 'warn' : 'ok');
   const bottleneckSeverity = miniSnapshot?.bottleneck?.severity;
   const capacitySeverity = miniSnapshot?.capacity?.severity;
   const headroomConnSeverity = miniSnapshot?.headroom?.connections?.severity;
@@ -523,7 +535,7 @@ async function updateMiniDash() {
   }
   
   document.getElementById('mini-pool').textContent = `${inFlight} / ${maxRequests}`;
-  document.getElementById('mini-workers').textContent = `${activeWorkers} / ${maxWorkers}`;
+  document.getElementById('mini-workers').textContent = `${activeWorkers} / ${provisionedWorkers} (cap ${maxWorkers})`;
   document.getElementById('mini-load').textContent = `${loadPct}%`;
   const bottleneckEl = document.getElementById('mini-bottleneck');
   if (bottleneckEl) {
@@ -547,17 +559,17 @@ async function updateMiniDash() {
   }
   const workerQueueEl = document.getElementById('mini-worker-queue');
   if (workerQueueEl) {
-    workerQueueEl.textContent = `${workerQueueDepth} (in-flight ${workerInFlightTasks})`;
+    workerQueueEl.textContent = `${workerQueueDepthFromDiag} (in-flight ${workerInFlightFromDiag})`;
     setValueSeverityByLabel(workerQueueEl, workerQueueSeverity);
   }
   const workerTimeoutsEl = document.getElementById('mini-worker-timeouts');
   if (workerTimeoutsEl) {
-    workerTimeoutsEl.textContent = `${workerTimedOutTasks}`;
+    workerTimeoutsEl.textContent = `${workerTimedOutFromDiag}`;
     setValueSeverityByLabel(workerTimeoutsEl, workerTimedOutSeverity);
   }
   const workerRejectionsEl = document.getElementById('mini-worker-rejections');
   if (workerRejectionsEl) {
-    workerRejectionsEl.textContent = `${workerRejectedTasks}`;
+    workerRejectionsEl.textContent = `${workerRejectedFromDiag}`;
     setValueSeverityByLabel(workerRejectionsEl, workerRejectedSeverity);
   }
   const miniPidEl = document.getElementById('mini-pid');

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-02-04T22:50:26.038Z",
+  "generated": "2026-02-10T04:14:21.038Z",
   "baseUrl": "https://bun.sh/docs",
   "typedArray": {
     "base": "https://bun.sh/docs/runtime/binary-data#typedarray",
@@ -18,8 +18,8 @@
     "networking": "https://bun.sh/docs/runtime/networking"
   },
   "feeds": {
-    "rss": "https://bun.sh/feed.xml",
+    "rss": "https://bun.sh/rss.xml",
     "updates": "https://bun.sh/updates/feed.xml",
-    "our_feed": "http://localhost:3000/feed/rss"
+    "our_feed": "http://example.com/feed/rss"
   }
 }

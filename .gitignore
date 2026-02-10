@@ -183,6 +183,13 @@ credentials/
 config/*
 !config/domain-branding.json
 
+# Runtime artifacts
+profiles.db
+metrics/
+plugins/
+wrangler.toml
+lib/ab-testing/bench-results.json
+
 # Clawdbot - temporarily ignored
 clawdbot/
 

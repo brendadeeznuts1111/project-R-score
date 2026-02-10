@@ -14,6 +14,7 @@ import { connect as connectHttp2, createSecureServer, type Http2SecureServer } f
 import { extname, join, normalize, resolve as resolvePath, sep } from "node:path";
 import { setEnvironmentData } from "worker_threads";
 import { resolvePlaygroundPortPolicy } from "../../../scripts/lib/dashboard-env";
+import { RuntimeEnv } from "../../../lib/env/runtime";
 import { getBuildMetadata } from "./build-metadata" with { type: "macro" };
 import { getGitCommitHash } from "./getGitCommitHash.ts" with { type: "macro" };
 import { getResilienceConfig } from "../../../config/resilience-chain";
@@ -54,8 +55,10 @@ const BASE_STANDARD = Object.freeze({
   fetchVerbose: "off",
 });
 
+const RUNTIME_ENV = RuntimeEnv.read();
 const PORT_POLICY = resolvePlaygroundPortPolicy(BASE_STANDARD.dedicatedPort);
-const DEDICATED_PORT = PORT_POLICY.requestedPort;
+const DEDICATED_PORT = RUNTIME_ENV.port || PORT_POLICY.requestedPort;
+const PLAYGROUND_HOST = RUNTIME_ENV.host || PORT_POLICY.host || "127.0.0.1";
 const ALLOW_PORT_FALLBACK = PORT_POLICY.allowFallback;
 const PORT_RANGE = PORT_POLICY.portRange;
 const MAX_CONCURRENT_REQUESTS = parseNumberEnv("PLAYGROUND_MAX_CONCURRENT_REQUESTS", BASE_STANDARD.maxConcurrentRequests, { min: 1, max: 100000 });
@@ -115,6 +118,7 @@ const MACRO_GIT_COMMIT_HASH = getGitCommitHash();
 const GIT_COMMIT_HASH = (process.env.GIT_COMMIT_HASH || "").trim() || MACRO_GIT_COMMIT_HASH || "unset";
 const GIT_COMMIT_HASH_SOURCE = (process.env.GIT_COMMIT_HASH || "").trim() ? "env" : "macro";
 const BUILD_METADATA = await getBuildMetadata();
+const BUILD_SHA = String((BUILD_METADATA as Record<string, unknown> | null)?.gitCommitHash || GIT_COMMIT_HASH || "unknown");
 const BUN_REVISION = Bun.revision || "unknown";
 const ACTIVE_RESILIENCE = getResilienceConfig();
 const SERVER_STARTED_AT = new Date().toISOString();
@@ -3263,12 +3267,39 @@ function contentTypeFromS3Key(key: string): string {
   return map[ext] || S3_DEFAULT_CONTENT_TYPE;
 }
 
-async function parseJsonBody(req: Request): Promise<any> {
-  try {
-    return await req.json();
-  } catch {
-    return {};
+class ApiHttpError extends Error {
+  status: number;
+  code: string;
+  hint: string;
+
+  constructor(status: number, message: string, code: string, hint: string) {
+    super(message);
+    this.status = status;
+    this.code = code;
+    this.hint = hint;
   }
+}
+
+function isApiHttpError(error: unknown): error is ApiHttpError {
+  return error instanceof ApiHttpError;
+}
+
+function parseJsonBody(req: Request): Promise<any> {
+  return (async () => {
+    const raw = await req.text();
+    const trimmed = raw.trim();
+    if (!trimmed) return {};
+    try {
+      return JSON.parse(trimmed);
+    } catch {
+      throw new ApiHttpError(
+        400,
+        "Invalid JSON request body",
+        "INVALID_JSON_BODY",
+        "Send valid JSON payload (Content-Type: application/json)."
+      );
+    }
+  })();
 }
 
 function sanitizeHeaders(input: unknown): Record<string, string> {
@@ -3304,6 +3335,33 @@ function parseProtocolBody(bodyType: string, body: unknown): BodyInit | null {
     default:
       return body as BodyInit;
   }
+}
+
+function classifyExternalError(error: unknown): "CREDENTIALS" | "NETWORK" | "TIMEOUT" | "NOT_FOUND" | "UNKNOWN" {
+  const message = String(error instanceof Error ? error.message : error || "").toLowerCase();
+  if (
+    message.includes("credential") ||
+    message.includes("access key") ||
+    message.includes("secretaccesskey") ||
+    message.includes("signature")
+  ) {
+    return "CREDENTIALS";
+  }
+  if (message.includes("timeout") || message.includes("timed out") || message.includes("abort")) {
+    return "TIMEOUT";
+  }
+  if (message.includes("not found") || message.includes("404") || message.includes("no such key")) {
+    return "NOT_FOUND";
+  }
+  if (
+    message.includes("network") ||
+    message.includes("econn") ||
+    message.includes("enotfound") ||
+    message.includes("refused")
+  ) {
+    return "NETWORK";
+  }
+  return "UNKNOWN";
 }
 
 async function runProtocolRouter(req: Request) {
@@ -3391,10 +3449,12 @@ async function runProtocolRouter(req: Request) {
       bodyPreview: responseBody,
     };
   } catch (error) {
+    const errorType = classifyExternalError(error);
     return {
       ok: false,
       dryRun: false,
       metadata,
+      errorType,
       error: error instanceof Error ? error.message : String(error),
     };
   }
@@ -4755,7 +4815,7 @@ async function isPortAvailable(port: number): Promise<boolean> {
     probe.once("listening", () => {
       probe.close(() => resolve(true));
     });
-    probe.listen(port);
+    probe.listen({ port, host: PLAYGROUND_HOST });
   });
 }
 
@@ -4789,6 +4849,14 @@ function buildRuntimeMetadata() {
     arch: process.arch,
     pid: process.pid,
     ppid: process.ppid,
+    host: PLAYGROUND_HOST,
+    requestedPort: DEDICATED_PORT,
+    boundPort: ACTIVE_PORT,
+    status: shuttingDown ? "shutting_down" : "running",
+    runtimeNonce: `${process.pid}-${serverStartTime}`,
+    gitSha: GIT_COMMIT_HASH,
+    buildSha: BUILD_SHA,
+    lastSyncAt: new Date().toISOString(),
     cwd: process.cwd(),
     execPath: process.execPath,
     port: ACTIVE_PORT,
@@ -4800,6 +4868,8 @@ function buildRuntimeMetadata() {
     },
     startedAt: SERVER_STARTED_AT,
     uptimeSec: Number((process.uptime?.() || 0).toFixed(2)),
+    runtimeStaleMs: RUNTIME_STALE_MS,
+    runtimeOrigins: buildRuntimeOrigins(),
     metricsStore: {
       type: "sqlite",
       path: DASHBOARD_METRICS_DB_PATH,
@@ -4851,7 +4921,7 @@ function buildRuntimePortStatus() {
   const activeOwner = detectPortOwner(ACTIVE_PORT);
   return {
     generatedAt: new Date().toISOString(),
-    host: "localhost",
+    host: PLAYGROUND_HOST,
     requestedPort: DEDICATED_PORT,
     activePort: ACTIVE_PORT,
     portRange: PORT_RANGE,
@@ -4866,6 +4936,16 @@ function buildRuntimePortStatus() {
       shuttingDown,
     },
   };
+}
+
+function buildRuntimeOrigins() {
+  const candidateOrigins = [
+    ...RUNTIME_ENV.runtimeOrigins,
+    `http://${PLAYGROUND_HOST}:${ACTIVE_PORT}`,
+    `http://127.0.0.1:${ACTIVE_PORT}`,
+    `http://localhost:${ACTIVE_PORT}`,
+  ];
+  return Array.from(new Set(candidateOrigins.filter((origin) => /^https?:\/\//.test(origin))));
 }
 
 function detectPortOwner(port: number) {
@@ -5380,6 +5460,7 @@ function buildHealthChecks(routeTable?: Record<string, unknown>) {
     const requiredControlRoutes = [
       "/api/control/runtime/ports",
       "/api/control/process/runtime",
+      "/api/control/runtime/drift",
       "/api/control/worker-pool/diagnostics",
       "/api/dashboard/trends/summary",
     ];
@@ -5514,9 +5595,48 @@ const routes = {
 
   "/api/control/process/runtime": () => ({
     generatedAt: new Date().toISOString(),
+    requestedPort: DEDICATED_PORT,
+    boundPort: ACTIVE_PORT,
+    host: PLAYGROUND_HOST,
+    pid: process.pid,
+    ppid: process.ppid,
+    startedAt: SERVER_STARTED_AT,
+    uptimeSec: Number((process.uptime?.() || 0).toFixed(2)),
+    gitSha: GIT_COMMIT_HASH,
+    buildSha: BUILD_SHA,
+    runtimeNonce: `${process.pid}-${serverStartTime}`,
+    status: shuttingDown ? "shutting_down" : "running",
+    runtimeOrigins: buildRuntimeOrigins(),
+    runtimeStaleMs: RUNTIME_STALE_MS,
     process: buildProcessRuntimeSnapshot(),
     sockets: buildSocketRuntimeSnapshot(),
   }),
+
+  "/api/control/runtime/drift": (req: Request) => {
+    const version = getRuntimeVersionState();
+    const reqUrl = new URL(req.url);
+    const clientSha =
+      String(req.headers.get("x-client-git-sha") || reqUrl.searchParams.get("clientSha") || "").trim() ||
+      String(version.repoHeadGitCommit || "unknown");
+    const reasons: string[] = [];
+    const drift = Boolean(version.hasDrift || (clientSha !== "unknown" && clientSha !== version.runtimeGitCommit));
+    if (drift) {
+      reasons.push("runtime-git-sha-mismatch");
+    }
+    if (ACTIVE_PORT !== DEDICATED_PORT) {
+      reasons.push("port-remapped");
+    }
+    return {
+      generatedAt: new Date().toISOString(),
+      drift,
+      stale: false,
+      serverSha: String(version.runtimeGitCommit || "unknown"),
+      clientSha,
+      lastSyncAt: new Date().toISOString(),
+      reasons,
+      status: shuttingDown ? "shutting_down" : "running",
+    };
+  },
 
   "/api/control/runtime/ports": () => buildRuntimePortStatus(),
 
@@ -5546,7 +5666,7 @@ const routes = {
   }),
 
   "/api/control/udp/open": async (req: Request) => {
-    const body = await parseJsonBody(req).catch(() => ({}));
+    const body = await parseJsonBody(req);
     const host = String(body?.hostname || udpControlState.boundHost || "0.0.0.0");
     const desiredPortRaw = Number.parseInt(String(body?.port ?? "0"), 10);
     const desiredPort = Number.isFinite(desiredPortRaw) && desiredPortRaw >= 0 ? desiredPortRaw : 0;
@@ -5590,7 +5710,7 @@ const routes = {
   },
 
   "/api/control/udp/options": async (req: Request) => {
-    const body = await parseJsonBody(req).catch(() => ({}));
+    const body = await parseJsonBody(req);
     try {
       const socket = await ensureUdpControlSocket();
       if (typeof body?.broadcast === "boolean") {
@@ -5638,7 +5758,7 @@ const routes = {
   },
 
   "/api/control/udp/peer": async (req: Request) => {
-    const body = await parseJsonBody(req).catch(() => ({}));
+    const body = await parseJsonBody(req);
     const hostname = normalizeUdpAddress(body?.hostname);
     const port = parseUdpPort(body?.port);
     if (!hostname || !port || isIP(hostname) === 0) {
@@ -5659,7 +5779,7 @@ const routes = {
   },
 
   "/api/control/udp/send": async (req: Request) => {
-    const body = await parseJsonBody(req).catch(() => ({}));
+    const body = await parseJsonBody(req);
     const payload = String(body?.payload ?? "playground-udp-ping");
     const hostname = normalizeUdpAddress(body?.hostname) || udpControlState.connectedPeer?.hostname || null;
     const port = parseUdpPort(body?.port) || udpControlState.connectedPeer?.port || null;
@@ -5702,7 +5822,7 @@ const routes = {
   },
 
   "/api/control/udp/send-many": async (req: Request) => {
-    const body = await parseJsonBody(req).catch(() => ({}));
+    const body = await parseJsonBody(req);
     const packets = Array.isArray(body?.packets) ? body.packets : [];
     if (packets.length === 0) {
       return {
@@ -5780,7 +5900,7 @@ const routes = {
   },
 
   "/api/control/udp/profile/select": async (req: Request) => {
-    const body = await parseJsonBody(req).catch(() => ({}));
+    const body = await parseJsonBody(req);
     const scope = body?.scope;
     const reliability = body?.reliability;
     const security = body?.security;
@@ -5820,7 +5940,7 @@ const routes = {
   },
 
   "/api/control/udp/multicast/join": async (req: Request) => {
-    const body = await parseJsonBody(req).catch(() => ({}));
+    const body = await parseJsonBody(req);
     const group = String(body?.group || "").trim();
     const interfaceAddress = normalizeInterfaceAddress(body?.interfaceAddress);
     if (!group) {
@@ -5852,7 +5972,7 @@ const routes = {
   },
 
   "/api/control/udp/multicast/leave": async (req: Request) => {
-    const body = await parseJsonBody(req).catch(() => ({}));
+    const body = await parseJsonBody(req);
     const group = String(body?.group || "").trim();
     const interfaceAddress = normalizeInterfaceAddress(body?.interfaceAddress);
     if (!group) {
@@ -5881,7 +6001,7 @@ const routes = {
   },
 
   "/api/control/udp/ssm/join": async (req: Request) => {
-    const body = await parseJsonBody(req).catch(() => ({}));
+    const body = await parseJsonBody(req);
     const source = String(body?.source || "").trim();
     const group = String(body?.group || "").trim();
     if (!source || !group) {
@@ -5912,7 +6032,7 @@ const routes = {
   },
 
   "/api/control/udp/ssm/leave": async (req: Request) => {
-    const body = await parseJsonBody(req).catch(() => ({}));
+    const body = await parseJsonBody(req);
     const source = String(body?.source || "").trim();
     const group = String(body?.group || "").trim();
     if (!source || !group) {
@@ -6766,6 +6886,19 @@ const routes = {
     };
     return {
       generatedAt: new Date().toISOString(),
+      workers: diagnostics.workers,
+      busy: diagnostics.busy,
+      queued: diagnostics.queued,
+      inFlight: diagnostics.inFlight,
+      timedOutTasks: diagnostics.timedOutTasks,
+      rejectedTasks: diagnostics.rejectedTasks,
+      lastErrors: diagnostics.lastErrors,
+      capacity: {
+        minWorkers: diagnostics.minWorkers,
+        maxWorkers: diagnostics.maxWorkers,
+        availableWorkers: diagnostics.availableWorkers,
+        scalableHeadroom: diagnostics.scalableHeadroom,
+      },
       diagnostics,
       queueSeverity: severityByWorkerPoolSignals(stats),
       latestBench: latest,
@@ -7421,6 +7554,28 @@ function jsonResponse(body: unknown, status = 200): Response {
   });
 }
 
+function getCorsHeaders(req: Request): HeadersInit {
+  const origin = req.headers.get("origin");
+  const reqUrl = new URL(req.url);
+  const sameOrigin = origin ? origin === reqUrl.origin : true;
+  const defaults = [`http://${PLAYGROUND_HOST}:${ACTIVE_PORT}`, `http://127.0.0.1:${ACTIVE_PORT}`, `http://localhost:${ACTIVE_PORT}`];
+  const configured = String(process.env.PLAYGROUND_CORS_ORIGINS || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+  const allowList = new Set([...defaults, ...configured]);
+  const resolvedOrigin = origin && allowList.has(origin) ? origin : (sameOrigin ? reqUrl.origin : null);
+  const headers: Record<string, string> = {
+    "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Playground-Token",
+  };
+  if (resolvedOrigin) {
+    headers["Access-Control-Allow-Origin"] = resolvedOrigin;
+    headers["Vary"] = "Origin";
+  }
+  return headers;
+}
+
 async function handleRequest(req: Request): Promise<Response> {
   if (inFlightRequests >= MAX_CONCURRENT_REQUESTS) {
     return jsonResponse(
@@ -7434,6 +7589,9 @@ async function handleRequest(req: Request): Promise<Response> {
   inFlightRequests++;
   try {
     const url = new URL(req.url);
+    if (url.pathname.startsWith("/api/") && req.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: getCorsHeaders(req) });
+    }
 
     // Canonicalize trailing slashes for deterministic URL handling.
     if (url.pathname.length > 1 && url.pathname.endsWith("/")) {
@@ -7451,7 +7609,13 @@ async function handleRequest(req: Request): Promise<Response> {
           ...info,
           runtime: {
             dedicatedPort: DEDICATED_PORT,
+            requestedPort: DEDICATED_PORT,
+            boundPort: ACTIVE_PORT,
+            host: PLAYGROUND_HOST,
             portRange: PORT_RANGE,
+            allowPortFallback: ALLOW_PORT_FALLBACK,
+            runtimeOrigins: buildRuntimeOrigins(),
+            runtimeStaleMs: RUNTIME_STALE_MS,
             maxConcurrentRequests: MAX_CONCURRENT_REQUESTS,
             maxCommandWorkers: getCommandWorkerStats().configuredMax,
             minCommandWorkers: getCommandWorkerStats().configuredMin,
@@ -7465,6 +7629,10 @@ async function handleRequest(req: Request): Promise<Response> {
             wsClients: wsClientCount,
             wsBroadcastCount,
             uptimeMs,
+            gitSha: GIT_COMMIT_HASH,
+            buildSha: BUILD_SHA,
+            runtimeNonce: `${process.pid}-${serverStartTime}`,
+            status: shuttingDown ? "shutting_down" : "running",
           },
         });
       }
@@ -7544,6 +7712,9 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/runtime/ports") {
         return jsonResponse(routes["/api/control/runtime/ports"]());
+      }
+      if (url.pathname === "/api/control/runtime/drift") {
+        return jsonResponse(routes["/api/control/runtime/drift"](req));
       }
 
       if (url.pathname === "/api/control/socket/runtime") {
@@ -7812,10 +7983,19 @@ const SHUTDOWN_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_SHUTDOWN_TIMEOUT_MS", 500
 });
 const CAPACITY_WS_PATH = "/ws/capacity";
 const CAPACITY_WS_TOPIC = "dashboard-capacity-updates";
-const CAPACITY_WS_BROADCAST_MS = parseNumberEnv("PLAYGROUND_WS_BROADCAST_MS", 1000, {
+const CAPACITY_WS_BROADCAST_MS = parseNumberEnv(
+  "PLAYGROUND_WS_BROADCAST_MS",
+  Number(RUNTIME_ENV.wsBroadcastMs || 1000),
+  {
   min: 250,
   max: 10000,
-});
+}
+);
+const RUNTIME_STALE_MS = parseNumberEnv(
+  "PLAYGROUND_RUNTIME_STALE_MS",
+  Number(RUNTIME_ENV.runtimeStaleMs || 15000),
+  { min: 1000, max: 300000 }
+);
 const UDP_SELF_TEST_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_UDP_SELF_TEST_TIMEOUT_MS", 1500, {
   min: 100,
   max: 10000,
@@ -7936,6 +8116,7 @@ process.on("uncaughtException", (error) => {
 
 // Serve the application
 httpServer = serve({
+  hostname: PLAYGROUND_HOST,
   port: ACTIVE_PORT,
   fetch: async (req, server) => {
     const url = new URL(req.url);
@@ -7944,6 +8125,40 @@ httpServer = serve({
     const inFlightAtStart = inFlightRequests;
     const activeCommandsAtStart = getCommandWorkerStats().active;
     if (url.pathname === CAPACITY_WS_PATH) {
+      const origin = req.headers.get("origin");
+      const requestHost = req.headers.get("host") || "";
+      const localHostSet = new Set(["localhost", "127.0.0.1", "::1", PLAYGROUND_HOST]);
+      const hostOnly = requestHost.split(":")[0].toLowerCase();
+      const originHost = origin ? (() => {
+        try { return new URL(origin).hostname.toLowerCase(); } catch { return ""; }
+      })() : "";
+      const originAllowed = !origin || localHostSet.has(originHost);
+      const isLocalHost = localHostSet.has(hostOnly);
+      if (!originAllowed) {
+        return jsonResponse(
+          {
+            error: "WebSocket origin not allowed",
+            code: "WS_ORIGIN_FORBIDDEN",
+            hint: "Use localhost/127.0.0.1 origin for /ws/capacity.",
+          },
+          403
+        );
+      }
+      const wsToken = String(process.env.PLAYGROUND_WS_AUTH_TOKEN || "").trim();
+      if (!isLocalHost && wsToken) {
+        const tokenFromHeader = req.headers.get("x-playground-token") || "";
+        const tokenFromQuery = url.searchParams.get("token") || "";
+        if (tokenFromHeader !== wsToken && tokenFromQuery !== wsToken) {
+          return jsonResponse(
+            {
+              error: "WebSocket auth token required for non-local access",
+              code: "WS_TOKEN_REQUIRED",
+              hint: "Set header x-playground-token or ?token=<PLAYGROUND_WS_AUTH_TOKEN>.",
+            },
+            401
+          );
+        }
+      }
       const upgraded = server.upgrade(req, {
         data: {
           connectedAt: Date.now(),
@@ -7972,6 +8187,12 @@ httpServer = serve({
       const headers = new Headers(response.headers);
       headers.set("x-trace-id", traceId);
       headers.set("x-trace-duration-ms", String(durationMs));
+      if (url.pathname.startsWith("/api/")) {
+        const corsHeaders = getCorsHeaders(req);
+        for (const [key, value] of Object.entries(corsHeaders as Record<string, string>)) {
+          headers.set(key, value);
+        }
+      }
       recordRequestTrace({
         id: traceId,
         at: new Date().toISOString(),
@@ -7990,6 +8211,25 @@ httpServer = serve({
     } catch (error) {
       const durationMs = Number((performance.now() - startedAt).toFixed(2));
       const detail = error instanceof Error ? error.message : String(error);
+      if (isApiHttpError(error)) {
+        return new Response(
+          JSON.stringify({
+            error: error.message,
+            code: error.code,
+            hint: error.hint,
+            traceId,
+          }),
+          {
+            status: error.status,
+            headers: {
+              "Content-Type": "application/json",
+              "x-trace-id": traceId,
+              "x-trace-duration-ms": String(durationMs),
+              ...(url.pathname.startsWith("/api/") ? (getCorsHeaders(req) as Record<string, string>) : {}),
+            },
+          }
+        );
+      }
       recordRequestTrace({
         id: traceId,
         at: new Date().toISOString(),

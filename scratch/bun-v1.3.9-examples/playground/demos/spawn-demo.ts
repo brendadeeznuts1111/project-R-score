@@ -1,121 +1,172 @@
 #!/usr/bin/env bun
 /**
- * Demo: Spawn Child Processes
- * 
+ * Demo: Spawn Child Processes (Hardened Lifecycle)
+ *
  * https://bun.com/docs/guides/process/spawn
  */
 
-console.log("🔧 Bun Spawn Demo\n");
-console.log("=".repeat(70));
+type ManagedResult = {
+  stdout: string;
+  stderr: string;
+  exitCode: number | null;
+  timedOut: boolean;
+};
 
-// 1. Basic spawn
-console.log("\n1️⃣ Basic Spawn");
-console.log("-".repeat(70));
+const managedChildren = new Set<ReturnType<typeof Bun.spawn>>();
 
-const proc1 = Bun.spawn(["echo", "Hello from child process!"]);
-const output1 = await proc1.stdout.text();
-console.log("Output:", output1.trim());
-console.log("Exit code:", await proc1.exited);
-
-// 2. Spawn with options
-console.log("\n2️⃣ Spawn with Options");
-console.log("-".repeat(70));
-
-const proc2 = Bun.spawn({
-  cmd: ["pwd"],
-  cwd: "/tmp",
-  env: { ...process.env, CUSTOM_VAR: "hello" },
-});
-
-const output2 = await proc2.stdout.text();
-console.log("Working directory: /tmp");
-console.log("Output:", output2.trim());
-
-// 3. Read stdout and stderr
-console.log("\n3️⃣ Reading stdout and stderr");
-console.log("-".repeat(70));
-
-const proc3 = Bun.spawn({
-  cmd: ["ls", "-la", "/tmp"],
-  stdout: "pipe",
-  stderr: "pipe",
-});
-
-const [stdout3, stderr3, exitCode3] = await Promise.all([
-  proc3.stdout.text(),
-  proc3.stderr.text(),
-  proc3.exited,
-]);
-
-console.log("stdout length:", stdout3.length, "bytes");
-console.log("stderr length:", stderr3.length, "bytes");
-console.log("Exit code:", exitCode3);
-
-// 4. Stream output
-console.log("\n4️⃣ Streaming Output");
-console.log("-".repeat(70));
-
-const proc4 = Bun.spawn({
-  cmd: ["echo", "line1\nline2\nline3"],
-  stdout: "pipe",
-});
-
-console.log("Streaming lines:");
-for await (const line of proc4.stdout) {
-  console.log("  →", new TextDecoder().decode(line).trim());
+function registerChild(child: ReturnType<typeof Bun.spawn>) {
+  managedChildren.add(child);
+  child.exited.finally(() => {
+    managedChildren.delete(child);
+  });
 }
 
-// 5. Write to stdin
-console.log("\n5️⃣ Writing to Child stdin");
-console.log("-".repeat(70));
+function killAllChildren(signal: "SIGTERM" | "SIGKILL") {
+  for (const child of managedChildren) {
+    try {
+      child.kill(signal);
+    } catch {
+      // Child may already be gone.
+    }
+  }
+}
 
-const proc5 = Bun.spawn({
-  cmd: ["cat"],
-  stdin: "pipe",
-  stdout: "pipe",
-});
+for (const sig of ["SIGINT", "SIGTERM"] as const) {
+  process.on(sig, () => {
+    console.log(`\n[manager] ${sig} received -> forwarding SIGTERM to ${managedChildren.size} child(ren)`);
+    killAllChildren("SIGTERM");
+  });
+}
 
-// Write to stdin using Bun's native writer
-await proc5.stdin.write("Hello from parent!");
-await proc5.stdin.end();
+async function spawnManaged(cmd: string[], timeoutMs = 1000): Promise<ManagedResult> {
+  const child = Bun.spawn({
+    cmd,
+    stdout: "pipe",
+    stderr: "pipe",
+  });
+  registerChild(child);
 
-const output5 = await proc5.stdout.text();
-console.log("Child received:", output5.trim());
+  let timedOut = false;
+  const timer = setTimeout(() => {
+    timedOut = true;
+    try {
+      child.kill("SIGTERM");
+    } catch {
+      // already exited
+    }
+    setTimeout(() => {
+      try {
+        child.kill("SIGKILL");
+      } catch {
+        // already exited
+      }
+    }, 200);
+  }, timeoutMs);
 
-// 6. Exit handling
-console.log("\n6️⃣ Exit Handler");
-console.log("-".repeat(70));
+  const [stdout, stderr, exitCode] = await Promise.all([
+    child.stdout.text(),
+    child.stderr.text(),
+    child.exited,
+  ]);
+  clearTimeout(timer);
+  return { stdout, stderr, exitCode, timedOut };
+}
 
-const proc6 = Bun.spawn({
-  cmd: ["sleep", "0.5"],
-  onExit(proc, exitCode, signalCode, error) {
-    console.log(`Process exited with code: ${exitCode}`);
-    console.log(`Signal: ${signalCode || "none"}`);
-  },
-});
+function bunEval(code: string): string[] {
+  return [process.execPath, "-e", code];
+}
 
-await proc6.exited;
+console.log("🔧 Bun Spawn Demo (Process Lifecycle Hardening)\n");
+console.log("=".repeat(74));
 
-// 7. Kill a process
-console.log("\n7️⃣ Killing a Process");
-console.log("-".repeat(70));
+console.log("\n1️⃣ Basic Spawn + Reap");
+console.log("-".repeat(74));
+{
+  const result = await spawnManaged(bunEval(`console.log("Hello from child process!")`), 1200);
+  console.log("stdout:", result.stdout.trim());
+  console.log("exitCode:", result.exitCode);
+}
 
-const proc7 = Bun.spawn(["sleep", "10"]);
-console.log("Spawned long-running process (PID will be shown if available)");
+console.log("\n2️⃣ Spawn with Scoped Env + cwd");
+console.log("-".repeat(74));
+{
+  const child = Bun.spawn({
+    cmd: bunEval(`console.log(process.cwd()); console.log(process.env.CUSTOM_VAR || "missing")`),
+    cwd: "/tmp",
+    env: { ...process.env, CUSTOM_VAR: "hello" },
+    stdout: "pipe",
+    stderr: "pipe",
+  });
+  registerChild(child);
+  const [stdout, exitCode] = await Promise.all([child.stdout.text(), child.exited]);
+  const lines = stdout.trim().split("\n");
+  console.log("cwd:", lines[0] || "(none)");
+  console.log("CUSTOM_VAR:", lines[1] || "(none)");
+  console.log("exitCode:", exitCode);
+}
 
-// Kill after short delay
-setTimeout(() => {
-  console.log("Killing process...");
-  proc7.kill("SIGTERM");
-}, 100);
+console.log("\n3️⃣ Stream Child Output");
+console.log("-".repeat(74));
+{
+  const child = Bun.spawn({
+    cmd: bunEval(`
+      let i = 0;
+      const timer = setInterval(() => {
+        i++;
+        console.log("tick:" + i);
+        if (i >= 3) {
+          clearInterval(timer);
+          process.exit(0);
+        }
+      }, 50);
+    `),
+    stdout: "pipe",
+    stderr: "pipe",
+  });
+  registerChild(child);
+  for await (const chunk of child.stdout) {
+    console.log("stream >", new TextDecoder().decode(chunk).trim());
+  }
+  console.log("exitCode:", await child.exited);
+}
 
-const exit7 = await proc7.exited;
-console.log("Killed process exit code:", exit7);
+console.log("\n4️⃣ Timeout + Forced Termination");
+console.log("-".repeat(74));
+{
+  const longRunning = await spawnManaged(
+    bunEval(`
+      setInterval(() => {
+        console.log("still-running");
+      }, 100);
+    `),
+    250
+  );
+  console.log("timedOut:", longRunning.timedOut);
+  console.log("exitCode:", longRunning.exitCode);
+}
 
-console.log("\n✅ Spawn demo complete!");
-console.log("\n💡 Common patterns:");
-console.log("   Bun.spawn(['cmd', 'arg'])           - Simple spawn");
-console.log("   Bun.spawn({ cmd, cwd, env })        - With options");
-console.log("   proc.stdout.text()                  - Read output");
-console.log("   proc.kill('SIGTERM')                - Kill process");
-console.log("   await proc.exited                   - Wait for exit");
+console.log("\n5️⃣ IPC Handshake");
+console.log("-".repeat(74));
+{
+  let child: ReturnType<typeof Bun.spawn>;
+  child = Bun.spawn({
+    cmd: bunEval(`
+      process.send?.({ type: "ready", pid: process.pid });
+      process.on("message", (msg) => {
+        process.send?.({ type: "echo", payload: msg, pid: process.pid });
+        process.exit(0);
+      });
+    `),
+    ipc(message) {
+      console.log("ipc <", JSON.stringify(message));
+      if (message && (message as any).type === "ready") {
+        child.send({ ping: "pong" });
+      }
+    },
+  });
+  registerChild(child);
+  console.log("exitCode:", await child.exited);
+}
+
+console.log("\n✅ Spawn demo complete (no orphan children)");
+console.log("Active child count:", managedChildren.size);
