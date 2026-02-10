@@ -42,26 +42,26 @@ export class MulticastAddressSelector {
       case "admin":
         // 239.0.0.0/8 — admin-scoped / private
         return {
-          address: `239.${this.octet(h, 192, 251)}.${this.octet(h >> 8, 0, 255)}.${this.octet(h >> 16, 1, 254)}`,
+          address: `239.${this.octet(h, 192, 251)}.${this.octet(h >>> 8, 0, 255)}.${this.octet(h >>> 16, 1, 254)}`,
           ttl: scaleTTL(req.scale, 15, 31, 63),
         };
       case "organization":
         // IPv4: admin-scoped with wider TTL to span multiple sites
         return {
-          address: `239.${this.octet(h, 0, 191)}.${this.octet(h >> 8, 0, 255)}.${this.octet(h >> 16, 1, 254)}`,
+          address: `239.${this.octet(h, 0, 191)}.${this.octet(h >>> 8, 0, 255)}.${this.octet(h >>> 16, 1, 254)}`,
           ttl: scaleTTL(req.scale, 31, 63, 127),
         };
       case "global":
         if (req.security === "encrypt") {
           // 232.0.0.0/8 — SSM for tighter sender control
           return {
-            address: `232.${this.octet(h, 1, 254)}.${this.octet(h >> 8, 0, 255)}.${this.octet(h >> 16, 1, 254)}`,
+            address: `232.${this.octet(h, 1, 254)}.${this.octet(h >>> 8, 0, 255)}.${this.octet(h >>> 16, 1, 254)}`,
             ttl: scaleTTL(req.scale, 64, 96, 127),
           };
         }
         // 224.1.0.0+ — avoid 224.0.0.0/24 local control block
         return {
-          address: `224.${this.octet(h, 1, 255)}.${this.octet(h >> 8, 0, 255)}.${this.octet(h >> 16, 1, 254)}`,
+          address: `224.${this.octet(h, 1, 255)}.${this.octet(h >>> 8, 0, 255)}.${this.octet(h >>> 16, 1, 254)}`,
           ttl: scaleTTL(req.scale, 48, 64, 96),
         };
     }

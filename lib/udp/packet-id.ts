@@ -119,5 +119,6 @@ function normalizeUint16(value: number): number {
 
 function normalizeUint32(value: number): number {
   const int = Number.isFinite(value) ? Math.trunc(value) : 0;
+  if (int < 0) return 0;
   return int >>> 0;
 }

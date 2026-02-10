@@ -8,7 +8,7 @@ export interface UDPServiceConfig {
   multicastTTL?: number;
   multicastLoopback?: boolean;
   packetTracking?: boolean;
-  packetTrackingScope?: "link-local" | "site-local" | "global" | "admin";
+  packetTrackingScope?: "interface-local" | "link-local" | "site-local" | "organization" | "global" | "admin";
   packetTrackingFlags?: number;
   packetSourceId?: number;
 }

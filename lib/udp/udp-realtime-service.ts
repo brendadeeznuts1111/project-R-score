@@ -13,7 +13,6 @@ import {
   encodePacketHeader,
   PACKET_HEADER_SIZE,
   FLAG_CRC32,
-  CRC_SIZE,
   stripPacketHeader,
   appendCRC,
   verifyAndStripCRC,
@@ -135,21 +134,27 @@ export class UDPRealtimeService {
       },
     };
 
-    if (this.isConnected) {
-      this.socket = await Bun.udpSocket({
-        hostname: this.config.hostname,
-        port: this.config.port,
-        socket: handler as Bun.udp.ConnectedSocketHandler<"buffer">,
-        connect: this.config.connect!,
-      });
-      this._state = "connected";
-    } else {
-      this.socket = await Bun.udpSocket({
-        hostname: this.config.hostname,
-        port: this.config.port,
-        socket: handler as Bun.udp.SocketHandler<"buffer">,
-      });
-      this._state = "bound";
+    try {
+      if (this.isConnected) {
+        this.socket = await Bun.udpSocket({
+          hostname: this.config.hostname,
+          port: this.config.port,
+          socket: handler as Bun.udp.ConnectedSocketHandler<"buffer">,
+          connect: this.config.connect!,
+        });
+        this._state = "connected";
+      } else {
+        this.socket = await Bun.udpSocket({
+          hostname: this.config.hostname,
+          port: this.config.port,
+          socket: handler as Bun.udp.SocketHandler<"buffer">,
+        });
+        this._state = "bound";
+      }
+    } catch (err) {
+      this._state = "idle";
+      this.isConnected = false;
+      throw err;
     }
 
     this.applySocketOptions();

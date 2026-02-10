@@ -24,6 +24,7 @@ class FakeUDPSocket {
   closed = false;
   binaryType = "buffer" as const;
   address = { address: "0.0.0.0", port: 9999, family: "IPv4" } as any;
+  isConnected = false;
 
   handler: CapturedHandler = {};
 
@@ -44,9 +45,10 @@ class FakeUDPSocket {
 
   sendMany(packets: any[]): number {
     this.sendManyCalls.push(packets);
-    // For unconnected: every 3 elements = 1 packet; for connected: each element = 1 packet
-    // We return the full count (tests that need partial send can override)
-    return packets.length;
+    // Bun returns number of datagrams sent.
+    // For unconnected: every 3 flat elements = 1 datagram.
+    // For connected: each element = 1 datagram.
+    return this.isConnected ? packets.length : Math.floor(packets.length / 3);
   }
 
   close(): void {
@@ -125,6 +127,7 @@ function installSpy(): void {
     if (opts.socket) {
       fakeSocket.handler = opts.socket;
     }
+    fakeSocket.isConnected = !!opts.connect;
     return Promise.resolve(fakeSocket as any);
   }) as any);
 }
@@ -186,6 +189,17 @@ describe("UDPRealtimeService", () => {
       svc.close();
       svc.close(); // should not throw
       expect(svc.state).toBe("closed");
+    });
+
+    test("bind failure resets state to idle", async () => {
+      udpSpy.mockImplementation((() => Promise.reject(new Error("EADDRINUSE"))) as any);
+      svc = new UDPRealtimeService();
+      await expect(svc.bind()).rejects.toThrow("EADDRINUSE");
+      expect(svc.state).toBe("idle");
+      // Can retry bind after failure
+      installSpy();
+      await svc.bind();
+      expect(svc.state).toBe("bound");
     });
 
     test("reset returns to idle with zeroed metrics", async () => {
@@ -253,8 +267,8 @@ describe("UDPRealtimeService", () => {
         { data: "bbb", port: 4001, address: "10.0.0.2" },
       ];
       const sent = svc.sendMany(packets);
-      // FakeUDPSocket.sendMany returns packets.length (flat array length = 6)
-      expect(sent).toBe(6);
+      // Bun returns number of datagrams sent (2), not flat array length
+      expect(sent).toBe(2);
       expect(fakeSocket.sendManyCalls).toHaveLength(1);
       expect(fakeSocket.sendManyCalls[0]).toEqual(["aaa", 4000, "10.0.0.1", "bbb", 4001, "10.0.0.2"]);
     });
@@ -406,7 +420,8 @@ describe("UDPRealtimeService", () => {
   // ====== Packet Tracking ======
 
   describe("packet tracking", () => {
-    /** Build a framed buffer: 16-byte v3 header + payload + 4-byte CRC trailer */
+    /** Build a framed buffer: 16-byte v3 header + payload + 4-byte CRC trailer.
+     *  CRC covers payload only (matches production frameOutbound). */
     function framedBuf(seq: number, payload: string): Buffer {
       const header = encodePacketHeader({
         scope: "site-local",
@@ -414,8 +429,12 @@ describe("UDPRealtimeService", () => {
         sourceId: 1,
         sequenceId: seq,
       });
-      const body = Buffer.concat([header, Buffer.from(payload)]);
-      return appendCRC(body);
+      const payloadBuf = Buffer.from(payload);
+      const payloadWithCRC = appendCRC(payloadBuf);
+      const framed = Buffer.allocUnsafe(PACKET_HEADER_SIZE + payloadWithCRC.byteLength);
+      header.copy(framed, 0);
+      payloadWithCRC.copy(framed, PACKET_HEADER_SIZE);
+      return framed;
     }
 
     test("send prepends 16-byte sequence header", async () => {
@@ -451,7 +470,7 @@ describe("UDPRealtimeService", () => {
       expect(svc.getMetrics().bytesSent).toBe(PACKET_HEADER_SIZE + 2 + CRC_SIZE);
     });
 
-    test("receive strips header and exposes sequenceId", async () => {
+    test("receive strips header and exposes sequenceId with valid CRC", async () => {
       svc = new UDPRealtimeService({ packetTracking: true });
       await svc.bind();
       const received: any[] = [];
@@ -462,6 +481,7 @@ describe("UDPRealtimeService", () => {
       expect(received).toHaveLength(1);
       expect(received[0].sequenceId).toBe(0);
       expect(received[0].data.toString()).toBe("hello");
+      expect(received[0].crcValid).toBe(true);
     });
 
     test("in-order packets: no loss or reorder", async () => {
@@ -670,6 +690,177 @@ describe("UDPRealtimeService", () => {
       fakeSocket.simulateIncomingData(wire, 3000, "10.0.0.1");
 
       expect(got[0].crcValid).toBe(false);
+    });
+  });
+
+  // ====== Multi-source tracking ======
+
+  describe("multi-source tracking", () => {
+    /** Build a framed buffer from a specific source */
+    function framedFrom(sourceId: number, seq: number, payload: string): Buffer {
+      const header = encodePacketHeader({
+        scope: "site-local",
+        flags: FLAG_CRC32,
+        sourceId,
+        sequenceId: seq,
+      });
+      const payloadBuf = Buffer.from(payload);
+      const payloadWithCRC = appendCRC(payloadBuf);
+      const framed = Buffer.allocUnsafe(PACKET_HEADER_SIZE + payloadWithCRC.byteLength);
+      header.copy(framed, 0);
+      payloadWithCRC.copy(framed, PACKET_HEADER_SIZE);
+      return framed;
+    }
+
+    test("tracks sequences independently per source", async () => {
+      svc = new UDPRealtimeService({ packetTracking: true });
+      await svc.bind();
+      svc.onMessage(() => {});
+
+      // Source 1: in-order 0,1,2
+      fakeSocket.simulateIncomingData(framedFrom(1, 0, "a"), 3000, "1.1.1.1");
+      fakeSocket.simulateIncomingData(framedFrom(1, 1, "b"), 3000, "1.1.1.1");
+      fakeSocket.simulateIncomingData(framedFrom(1, 2, "c"), 3000, "1.1.1.1");
+
+      // Source 2: in-order 0,1
+      fakeSocket.simulateIncomingData(framedFrom(2, 0, "x"), 3000, "2.2.2.2");
+      fakeSocket.simulateIncomingData(framedFrom(2, 1, "y"), 3000, "2.2.2.2");
+
+      const m = svc.getMetrics();
+      expect(m.packetsLost).toBe(0);
+      expect(m.packetsOutOfOrder).toBe(0);
+      expect(m.packetsDuplicate).toBe(0);
+    });
+
+    test("loss on one source does not affect another", async () => {
+      svc = new UDPRealtimeService({ packetTracking: true });
+      await svc.bind();
+      svc.onMessage(() => {});
+
+      // Source 1: skip seq 1
+      fakeSocket.simulateIncomingData(framedFrom(1, 0, "a"), 3000, "1.1.1.1");
+      fakeSocket.simulateIncomingData(framedFrom(1, 3, "d"), 3000, "1.1.1.1");
+
+      // Source 2: all in-order
+      fakeSocket.simulateIncomingData(framedFrom(2, 0, "x"), 3000, "2.2.2.2");
+      fakeSocket.simulateIncomingData(framedFrom(2, 1, "y"), 3000, "2.2.2.2");
+
+      const m = svc.getMetrics();
+      expect(m.packetsLost).toBe(2); // only source 1 lost 2 (seqs 1,2)
+      expect(m.packetsOutOfOrder).toBe(0);
+    });
+
+    test("duplicate detection is per-source", async () => {
+      svc = new UDPRealtimeService({ packetTracking: true });
+      await svc.bind();
+      svc.onMessage(() => {});
+
+      fakeSocket.simulateIncomingData(framedFrom(1, 0, "a"), 3000, "1.1.1.1");
+      fakeSocket.simulateIncomingData(framedFrom(2, 0, "b"), 3000, "2.2.2.2"); // same seq, different source — NOT dup
+      fakeSocket.simulateIncomingData(framedFrom(1, 0, "a"), 3000, "1.1.1.1"); // same source + seq — dup
+
+      expect(svc.getMetrics().packetsDuplicate).toBe(1);
+    });
+  });
+
+  // ====== Legacy 4-byte fallback ======
+
+  describe("legacy 4-byte fallback", () => {
+    test("receives legacy 4-byte sequence prefix", async () => {
+      svc = new UDPRealtimeService({ packetTracking: true });
+      await svc.bind();
+      const received: any[] = [];
+      svc.onMessage((dg) => received.push(dg));
+
+      // Build a legacy packet: 4-byte seq (BE) + payload (no v3 header)
+      const legacy = Buffer.allocUnsafe(4 + 5);
+      legacy.writeUInt32BE(42, 0);
+      Buffer.from("hello").copy(legacy, 4);
+      fakeSocket.simulateIncomingData(legacy, 3000, "1.1.1.1");
+
+      expect(received).toHaveLength(1);
+      expect(received[0].sequenceId).toBe(42);
+      expect(received[0].sourceId).toBe(0);
+      expect(received[0].data.toString()).toBe("hello");
+    });
+  });
+
+  // ====== Edge cases ======
+
+  describe("edge cases", () => {
+    test("send throws after close", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+      svc.close();
+      expect(() => svc.send("x", 1234, "127.0.0.1")).toThrow('Cannot send: state is "closed"');
+    });
+
+    test("sendMany throws after close", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+      svc.close();
+      expect(() => svc.sendMany(["x"])).toThrow('Cannot sendMany: state is "closed"');
+    });
+
+    test("joinMulticast throws on unbound socket", () => {
+      svc = new UDPRealtimeService();
+      expect(() => svc.joinMulticast("239.1.2.3")).toThrow("Socket not bound");
+    });
+
+    test("leaveMulticast throws on unbound socket", () => {
+      svc = new UDPRealtimeService();
+      expect(() => svc.leaveMulticast("239.1.2.3")).toThrow("Socket not bound");
+    });
+
+    test("packetSourceId config is respected", async () => {
+      svc = new UDPRealtimeService({ packetTracking: true, packetSourceId: 1234 });
+      await svc.bind();
+      svc.send("test", 1000, "127.0.0.1");
+      const buf = fakeSocket.sendCalls[0][0] as Buffer;
+      const hdr = decodePacketHeader(buf);
+      expect(hdr!.sourceId).toBe(1234);
+    });
+
+    test("packetSourceId is clamped to uint16 range", async () => {
+      svc = new UDPRealtimeService({ packetTracking: true, packetSourceId: 99999 });
+      await svc.bind();
+      svc.send("test", 1000, "127.0.0.1");
+      const buf = fakeSocket.sendCalls[0][0] as Buffer;
+      const hdr = decodePacketHeader(buf);
+      expect(hdr!.sourceId).toBe(0xffff);
+    });
+
+    test("send with Buffer data", async () => {
+      svc = new UDPRealtimeService({ packetTracking: true });
+      await svc.bind();
+      svc.send(Buffer.from("buf"), 1234, "127.0.0.1");
+      const buf = fakeSocket.sendCalls[0][0] as Buffer;
+      expect(buf.subarray(PACKET_HEADER_SIZE, buf.byteLength - CRC_SIZE).toString()).toBe("buf");
+    });
+
+    test("send with Uint8Array data", async () => {
+      svc = new UDPRealtimeService({ packetTracking: true });
+      await svc.bind();
+      svc.send(new Uint8Array([65, 66, 67]), 1234, "127.0.0.1");
+      const buf = fakeSocket.sendCalls[0][0] as Buffer;
+      expect(buf.subarray(PACKET_HEADER_SIZE, buf.byteLength - CRC_SIZE).toString()).toBe("ABC");
+    });
+
+    test("sendMany with packetTracking on unconnected", async () => {
+      svc = new UDPRealtimeService({ packetTracking: true });
+      await svc.bind();
+      const packets: UDPSendPacket[] = [
+        { data: "aaa", port: 4000, address: "10.0.0.1" },
+        { data: "bbb", port: 4001, address: "10.0.0.2" },
+      ];
+      const sent = svc.sendMany(packets);
+      expect(sent).toBe(2);
+
+      // Each flat entry should be a framed Buffer, not raw string
+      const flat = fakeSocket.sendManyCalls[0];
+      expect(Buffer.isBuffer(flat[0])).toBe(true);
+      expect(decodePacketHeader(flat[0] as Buffer)?.sequenceId).toBe(0);
+      expect(decodePacketHeader(flat[3] as Buffer)?.sequenceId).toBe(1);
     });
   });
 });
