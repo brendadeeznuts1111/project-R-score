@@ -340,6 +340,43 @@ header h1 {
   color: var(--error);
 }
 
+.demo-contract-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.demo-contract-chip {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 0.78em;
+  color: var(--text-secondary);
+}
+
+.demo-contract-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.demo-contract-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.demo-contract-label {
+  font-size: 0.82em;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
 .demo-header p {
   color: var(--text-secondary);
   font-size: 1.1em;

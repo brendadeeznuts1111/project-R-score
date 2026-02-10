@@ -227,6 +227,28 @@ async function run(): Promise<number> {
         featureNames.has("HTTP Chunked Parser Smuggling Fix"),
       `status=${featureMatrix.res.status} rows=${featureRows.length}`
     );
+
+    const demoValidate = await fetchJson("/api/control/demo-module/validate?id=markdown-simd");
+    check(
+      checks,
+      "demo-module-validate-contract",
+      demoValidate.res.status === 200 &&
+        demoValidate.json?.ok === true &&
+        demoValidate.json?.id === "markdown-simd" &&
+        Number.isFinite(demoValidate.json?.exitCode),
+      `status=${demoValidate.res.status} ok=${String(demoValidate.json?.ok)}`
+    );
+
+    const demoBench = await fetchJson("/api/control/demo-module/bench?id=markdown-simd");
+    check(
+      checks,
+      "demo-module-bench-contract",
+      demoBench.res.status === 200 &&
+        demoBench.json?.ok === true &&
+        demoBench.json?.id === "markdown-simd" &&
+        Number.isFinite(demoBench.json?.exitCode),
+      `status=${demoBench.res.status} ok=${String(demoBench.json?.ok)}`
+    );
   } catch (error) {
     check(
       checks,

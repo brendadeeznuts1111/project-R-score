@@ -706,6 +706,44 @@ async function selectDemo(id) {
 
 function renderDemo(demo) {
   const content = document.getElementById('demo-content');
+  const language = String(demo.language || 'text');
+  const defaultsJson = JSON.stringify(demo.defaults || {}, null, 2);
+  const flags = Array.isArray(demo.flags) ? demo.flags : [];
+  const benchCommand = String(demo.benchCommand || '');
+  const testCommand = String(demo.testCommand || '');
+  const demoContractPanel = `
+    <div class="code-block" style="margin-top: 1rem;">
+      <div class="demo-contract-head">
+        <span class="demo-contract-chip">lang: ${escapeHtml(language)}</span>
+        <span class="demo-contract-chip">flags: ${flags.length}</span>
+      </div>
+      <div class="demo-contract-actions">
+        <button class="run-btn" onclick="runDemoContractValidate('${demo.id}')">✅ Validate Module</button>
+        <button class="run-btn" onclick="runDemoContractBench('${demo.id}')">📈 Bench Module</button>
+      </div>
+      <div class="demo-contract-grid">
+        <div>
+          <div class="demo-contract-label">Defaults</div>
+          <pre><code>${escapeHtml(defaultsJson)}</code></pre>
+        </div>
+        <div>
+          <div class="demo-contract-label">Flags</div>
+          <pre><code>${escapeHtml(flags.join('\n') || '(none)')}</code></pre>
+        </div>
+      </div>
+      <div class="demo-contract-grid">
+        <div>
+          <div class="demo-contract-label">testCommand</div>
+          <pre><code>${escapeHtml(testCommand || '(missing)')}</code></pre>
+        </div>
+        <div>
+          <div class="demo-contract-label">benchCommand</div>
+          <pre><code>${escapeHtml(benchCommand || '(missing)')}</code></pre>
+        </div>
+      </div>
+      <div id="demo-contract-output" class="output" style="display:none; margin-top:0.75rem;"></div>
+    </div>
+  `;
   const trendSummaryBlock = `
     <div class="trend-summary-card">
       <div class="trend-summary-header">
@@ -860,10 +898,11 @@ function renderDemo(demo) {
       <p>${demo.description}</p>
     </div>
     ${trendSummaryBlock}
+    ${demoContractPanel}
     
     <div class="code-block">
       <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-      <pre><code>${escapeHtml(demo.code)}</code></pre>
+      <pre><code class="language-${escapeHtml(language)}">${escapeHtml(demo.code)}</code></pre>
     </div>
     
     <button id="demo-run-btn" class="run-btn" onclick="runDemo('${demo.id}')">
@@ -996,11 +1035,39 @@ function setupEventListeners() {
   window.executeOrchestrationMode = executeOrchestrationMode;
   window.runOrchestrationFullLoop = runOrchestrationFullLoop;
   window.refreshMainTrendSummary = refreshMainTrendSummary;
+  window.runDemoContractValidate = runDemoContractValidate;
+  window.runDemoContractBench = runDemoContractBench;
   window.refreshHeaderState = refreshHeaderState;
   window.loadDemo = (id) => {
     selectDemo(id);
   };
   window.focusDemoSearch = focusDemoSearch;
+}
+
+async function runDemoContractAction(path) {
+  const out = document.getElementById('demo-contract-output');
+  if (!out) return;
+  out.style.display = 'block';
+  out.className = 'output loading';
+  out.textContent = 'Running contract action...';
+  try {
+    const response = await fetch(path);
+    const data = await response.json();
+    const ok = Boolean(data?.ok);
+    out.className = ok ? 'output success' : 'output error';
+    out.textContent = data?.output || data?.error || JSON.stringify(data, null, 2);
+  } catch (error) {
+    out.className = 'output error';
+    out.textContent = `Contract action failed: ${error.message}`;
+  }
+}
+
+async function runDemoContractValidate(id) {
+  await runDemoContractAction(`/api/control/demo-module/validate?id=${encodeURIComponent(id)}`);
+}
+
+async function runDemoContractBench(id) {
+  await runDemoContractAction(`/api/control/demo-module/bench?id=${encodeURIComponent(id)}`);
 }
 
 function startMainTrendSummaryAutoRefresh() {

@@ -4469,6 +4469,66 @@ const routes = {
     };
   },
 
+  "/api/control/demo-module/validate": async (req: Request) => {
+    const url = new URL(req.url);
+    const id = String(url.searchParams.get("id") || "").trim();
+    if (!id) {
+      return {
+        ok: false,
+        id: "",
+        exitCode: 1,
+        error: "Missing required query parameter: id",
+      };
+    }
+    const knownDemo = DEMOS.find((demo) => demo.id === id);
+    if (!knownDemo) {
+      return {
+        ok: false,
+        id,
+        exitCode: 1,
+        error: `Unknown demo id: ${id}`,
+      };
+    }
+    const result = await runCommand(["bun", "run", "validate:demo", "--", `--id=${id}`], PROJECT_ROOT);
+    return {
+      ok: result.exitCode === 0,
+      id,
+      exitCode: result.exitCode,
+      output: result.output,
+      error: result.error,
+    };
+  },
+
+  "/api/control/demo-module/bench": async (req: Request) => {
+    const url = new URL(req.url);
+    const id = String(url.searchParams.get("id") || "").trim();
+    if (!id) {
+      return {
+        ok: false,
+        id: "",
+        exitCode: 1,
+        error: "Missing required query parameter: id",
+      };
+    }
+    const knownDemo = DEMOS.find((demo) => demo.id === id);
+    if (!knownDemo) {
+      return {
+        ok: false,
+        id,
+        exitCode: 1,
+        error: `Unknown demo id: ${id}`,
+      };
+    }
+    const result = await runCommand(["bun", "run", "demo:module:bench", "--", `--id=${id}`], PROJECT_ROOT);
+    return {
+      ok: result.exitCode === 0,
+      id,
+      exitCode: result.exitCode,
+      output: result.output,
+      error: result.error,
+    };
+  },
+
   "/api/control/component-status": () => {
     const rows = COMPONENT_STATUS_MATRIX.map((row) => ({
       ...row,
@@ -5221,6 +5281,14 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/feature-matrix") {
         return jsonResponse(routes["/api/control/feature-matrix"]());
+      }
+
+      if (url.pathname === "/api/control/demo-module/validate") {
+        return jsonResponse(await routes["/api/control/demo-module/validate"](req));
+      }
+
+      if (url.pathname === "/api/control/demo-module/bench") {
+        return jsonResponse(await routes["/api/control/demo-module/bench"](req));
       }
 
       if (url.pathname === "/api/control/component-status") {
