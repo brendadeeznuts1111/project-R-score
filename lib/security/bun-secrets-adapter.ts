@@ -31,6 +31,28 @@ function hasBunSecrets(): boolean {
   return typeof Bun !== 'undefined' && typeof Bun.secrets !== 'undefined';
 }
 
+export type SecretsRuntimeInfo = {
+  available: boolean;
+  platform: NodeJS.Platform;
+  backend: 'macos-keychain' | 'windows-credential-manager' | 'linux-libsecret' | 'unknown';
+};
+
+function detectSecretsBackend(platform: NodeJS.Platform): SecretsRuntimeInfo['backend'] {
+  if (platform === 'darwin') return 'macos-keychain';
+  if (platform === 'win32') return 'windows-credential-manager';
+  if (platform === 'linux') return 'linux-libsecret';
+  return 'unknown';
+}
+
+export function getSecretsRuntimeInfo(): SecretsRuntimeInfo {
+  const platform = process.platform;
+  return {
+    available: hasBunSecrets(),
+    platform,
+    backend: detectSecretsBackend(platform),
+  };
+}
+
 export function validateSecretServiceName(service: string): string[] {
   const warnings: string[] = [];
   if (!service.includes('.')) {

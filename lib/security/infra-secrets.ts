@@ -12,8 +12,10 @@ const DEFAULT_INFRA_SERVICES = [
   Bun.env.FW_INFRA_SECRETS_SERVICE || 'com.factorywager.infra',
   Bun.env.FW_R2_SECRETS_SERVICE || 'com.factorywager.r2',
   Bun.env.REGISTRY_SECRETS_SERVICE || 'com.factorywager.registry',
-  'default',
 ];
+
+const ALLOW_GENERIC_SECRET_SERVICE =
+  String(Bun.env.FW_ALLOW_GENERIC_SECRET_SERVICE || '').toLowerCase() === 'true';
 
 function uniq(values: Array<string | undefined>): string[] {
   return [...new Set(values.filter((v): v is string => !!v && v.trim().length > 0))];
@@ -48,7 +50,10 @@ export async function resolveR2InfraConfig(options: {
   bucketFallback?: string;
   endpointOptional?: boolean;
 } = {}): Promise<ResolvedR2Config> {
-  const services = uniq(options.services || DEFAULT_INFRA_SERVICES);
+  const requestedServices = options.services || DEFAULT_INFRA_SERVICES;
+  const services = uniq(
+    ALLOW_GENERIC_SECRET_SERVICE ? [...requestedServices, 'default'] : requestedServices
+  );
   const bucketFallback = options.bucketFallback || 'npm-registry';
 
   const accountId = await resolveSecretField('R2_ACCOUNT_ID', ['R2_ACCOUNT_ID'], services);

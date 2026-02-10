@@ -34,6 +34,8 @@ PLAYGROUND_BODY_TYPE=text \
 PLAYGROUND_PROXY_URL=http://proxy.internal:8080 \
 PLAYGROUND_PROXY_DEFAULT=http://proxy.internal:8080 \
 PLAYGROUND_PROXY_AUTH_TOKEN=secret-token \
+PLAYGROUND_SECRETS_SERVICE=com.factorywager.playground.dashboard \
+PLAYGROUND_SECRETS_LEGACY_SERVICES=com.factorywager.playground \
 PLAYGROUND_STREAM_CHUNK_SIZE=16384 \
 PLAYGROUND_S3_DEFAULT_CONTENT_TYPE=application/octet-stream \
 PLAYGROUND_SMOKE_URLS=http://localhost:3011/api/info,http://localhost:3011/api/brand/status \
@@ -57,6 +59,8 @@ bun start
 - `PLAYGROUND_PROXY_URL`: primary proxy URL (preferred over legacy/default proxy var)
 - `PLAYGROUND_PROXY_DEFAULT`: optional default proxy URL for smoke fetches
 - `PLAYGROUND_PROXY_AUTH_TOKEN`: optional proxy auth bearer token
+- `PLAYGROUND_SECRETS_SERVICE`: primary Bun.secrets service namespace for playground integration
+- `PLAYGROUND_SECRETS_LEGACY_SERVICES`: comma-separated legacy service namespaces for safe migration
 - `PLAYGROUND_STREAM_CHUNK_SIZE`: byte window used in response size accounting
 - `SEARCH_GOVERNANCE_FETCH_DEPTH`: governance git fetch depth used by policy checks (default `5`, shown in header as `Gov Depth`)
 - `PLAYGROUND_S3_DEFAULT_CONTENT_TYPE`: fallback MIME when key extension is unknown
@@ -76,6 +80,7 @@ Smoke endpoint:
 
 ```bash
 curl -s http://localhost:<port>/api/control/network-smoke
+curl -s http://localhost:<port>/api/control/secrets/runtime
 curl -s http://localhost:<port>/api/control/features
 curl -s http://localhost:<port>/api/control/protocol-matrix
 curl -s http://localhost:<port>/api/control/component-status
@@ -98,6 +103,8 @@ curl -s http://localhost:<port>/api/dashboard/mini
 curl -s "http://localhost:<port>/api/dashboard/severity-test?load=85"
 curl -s "http://localhost:<port>/api/dashboard/traces?limit=20" | jq .
 curl -s "http://localhost:<port>/api/dashboard/trends/summary?minutes=60&limit=120" | jq .
+curl -s "http://localhost:<port>/api/trends/summary?minutes=60&limit=120" | jq .
+curl -s "http://localhost:<port>/api/trend-summary?minutes=60&limit=120" | jq .
 curl -s http://localhost:<port>/api/control/bundle/analyze | jq .
 ```
 
@@ -114,6 +121,8 @@ Mini dashboard APIs:
   - `summary`: `{ count, avgLoadMaxPct, avgCapacityPct, deltaLoadMaxPct, deltaCapacityPct, severityCounts, bottleneckChanges, windowCoveragePct, latest, oldest }`
   - `points[]`: rolling snapshot rows (`loadMaxPct`, `capacitySummary`, `bottleneck`, headroom percentages)
 - `GET /api/dashboard/trends/summary?minutes=60&limit=120`: summary-only historical view for compact dashboard cards and trend health widgets
+- `GET /api/trends/summary` and `GET /api/trend-summary`: aliases for `GET /api/dashboard/trends/summary`
+- `GET /api/control/secrets/runtime`: Bun.secrets runtime diagnostics (platform backend + service contract + fallback policy)
 - `WS /ws/capacity`: broadcasts `dashboard/mini`-shape payload every second for real-time mini-card updates
 
 Governance component matrix API:

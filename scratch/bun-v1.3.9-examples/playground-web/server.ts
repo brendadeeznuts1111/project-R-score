@@ -23,6 +23,7 @@ import { listDomains, renderDomainGraph, renderFullHierarchy } from "../../../do
 import { UltraWorkerPool } from "../../../workers/ultra-pool";
 import { resilientFetchBun } from "../../../src/fetch/resilient-bun";
 import { UltraResilientFetch } from "../../../src/fetch/resilient-ultra";
+import { getSecretsRuntimeInfo } from "../../../lib/security/bun-secrets-adapter";
 import {
   ExecutiveVerdict,
   ProjectRecommendations,
@@ -85,6 +86,9 @@ const REGISTRY_CACHE_TTL_MS = parseNumberEnv("PLAYGROUND_REGISTRY_CACHE_TTL_MS",
   min: 1000,
   max: 300000,
 });
+const PLAYGROUND_SECRETS_SERVICE =
+  process.env.PLAYGROUND_SECRETS_SERVICE || "com.factorywager.playground.dashboard";
+const PLAYGROUND_SECRETS_LEGACY_SERVICES = parseList(process.env.PLAYGROUND_SECRETS_LEGACY_SERVICES);
 const STREAM_CHUNK_SIZE = parseNumberEnv("PLAYGROUND_STREAM_CHUNK_SIZE", BASE_STANDARD.streamChunkSize, { min: 256, max: 1048576 });
 const SEARCH_GOVERNANCE_FETCH_DEPTH = parseNumberEnv(
   "SEARCH_GOVERNANCE_FETCH_DEPTH",
@@ -4865,6 +4869,25 @@ const routes = {
     resilience: buildResilienceStatus(),
   }),
 
+  "/api/control/secrets/runtime": () => {
+    const runtime = getSecretsRuntimeInfo();
+    return {
+      timestamp: new Date().toISOString(),
+      runtime,
+      serviceContract: {
+        primaryService: PLAYGROUND_SECRETS_SERVICE,
+        legacyServices: PLAYGROUND_SECRETS_LEGACY_SERVICES,
+        genericFallbackEnabled:
+          String(process.env.FW_ALLOW_GENERIC_SECRET_SERVICE || "").toLowerCase() === "true",
+      },
+      guidance: [
+        "Use Bun.secrets with object options: { service, name }.",
+        "Use reverse-domain service names to avoid cross-tool collisions.",
+        "Avoid generic service names unless FW_ALLOW_GENERIC_SECRET_SERVICE=true is explicitly set.",
+      ],
+    };
+  },
+
   "/api/health": () => ({
     status: "healthy",
     timestamp: new Date().toISOString(),
@@ -4905,6 +4928,8 @@ const routes = {
       summary: trend.summary,
     };
   },
+  "/api/trends/summary": (req: Request) => routes["/api/dashboard/trends/summary"](req),
+  "/api/trend-summary": (req: Request) => routes["/api/dashboard/trends/summary"](req),
   "/api/dashboard/severity-test": (req: Request) => {
     const url = new URL(req.url);
     const loadPctRaw = Number.parseFloat(url.searchParams.get("load") || "0");
@@ -6308,6 +6333,14 @@ async function handleRequest(req: Request): Promise<Response> {
         return jsonResponse(routes["/api/dashboard/trends/summary"](req));
       }
 
+      if (url.pathname === "/api/trends/summary") {
+        return jsonResponse(routes["/api/trends/summary"](req));
+      }
+
+      if (url.pathname === "/api/trend-summary") {
+        return jsonResponse(routes["/api/trend-summary"](req));
+      }
+
       if (url.pathname === "/api/dashboard/severity-test") {
         return jsonResponse(routes["/api/dashboard/severity-test"](req));
       }
@@ -6343,6 +6376,10 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/network-smoke") {
         return jsonResponse(await routes["/api/control/network-smoke"](req));
+      }
+
+      if (url.pathname === "/api/control/secrets/runtime") {
+        return jsonResponse(routes["/api/control/secrets/runtime"]());
       }
 
       if (url.pathname === "/api/control/http2-upgrade/status") {

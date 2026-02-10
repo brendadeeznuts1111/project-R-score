@@ -1185,7 +1185,11 @@ async function refreshMainTrendSummary() {
   statusDiv.className = 'trend-summary-body';
 
   try {
-    const response = await resilientFetch('/api/dashboard/trends/summary?minutes=60&limit=120', {
+    const response = await resilientFetchAny([
+      '/api/dashboard/trends/summary?minutes=60&limit=120',
+      '/api/trends/summary?minutes=60&limit=120',
+      '/api/trend-summary?minutes=60&limit=120',
+    ], {
       cache: 'no-store',
     });
     const data = await response.json();
@@ -1271,6 +1275,19 @@ async function resilientFetch(path, options = {}) {
   }
 
   throw new Error(`Service unavailable after trying ${origins.length} endpoints x${attemptsPerOrigin}${lastError ? `: ${lastError.message}` : ''}`);
+}
+
+async function resilientFetchAny(paths, options = {}) {
+  const list = Array.isArray(paths) ? paths : [paths];
+  let lastError = null;
+  for (const path of list) {
+    try {
+      return await resilientFetch(path, options);
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+    }
+  }
+  throw lastError || new Error('Service unavailable');
 }
 
 async function refreshBrandGateStatus() {
