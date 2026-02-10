@@ -59,6 +59,7 @@ yarn-error.log*
 # Environment variables
 .env
 .env.local
+.env.secret.local
 .env.*.local
 .env.*
 .env.production
@@ -112,6 +113,7 @@ coverage/
 # Temporary and example files
 example*-*
 test*-*
+!scripts/test-*.ts
 *.tmp
 *.temp
 
