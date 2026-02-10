@@ -52,9 +52,10 @@ const netServer = createServer((rawSocket) => {
   h2Server.emit("connection", rawSocket);
 });
 
-const PORT = 8443;
+const PORT = 0; // Use random available port for demo
 netServer.listen(PORT, () => {
-  console.log(`✅ Server listening on port ${PORT}`);
+  const actualPort = (netServer.address() as { port: number }).port;
+  console.log(`✅ Server listening on port ${actualPort}`);
   console.log(`   Pattern: net.Server → Http2SecureServer`);
   console.log(`   This pattern now works correctly in Bun v1.3.9!`);
   console.log("\n💡 This is used by:");
@@ -79,5 +80,15 @@ process.on("SIGINT", () => {
   process.exit(0);
 });
 
-// Keep process alive
-await new Promise(() => {});
+// Demo complete - show pattern and exit (don't keep server running in demo mode)
+console.log("\n✅ HTTP/2 Connection Upgrade pattern demonstration complete!");
+console.log("   Server would normally keep running for actual traffic.");
+
+// Cleanup
+netServer.close();
+h2Server.close();
+
+try {
+  unlinkSync(keyPath);
+  unlinkSync(certPath);
+} catch {}

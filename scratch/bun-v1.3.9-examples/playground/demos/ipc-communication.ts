@@ -28,8 +28,8 @@ const child = Bun.spawn({
         timestamp: Date.now()
       });
       
-      // Exit after response
-      setTimeout(() => process.exit(0), 100);
+      // Exit after response (give parent time to send second message)
+      setTimeout(() => process.exit(0), 500);
     });
   `],
   ipc(message) {
