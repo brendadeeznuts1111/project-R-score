@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "total": 53,
-  "generatedAt": "2026-02-10T07:43:37.219Z",
+  "total": 54,
+  "generatedAt": "2026-02-10T07:56:52.435Z",
   "modules": {
     "governance-status": {
       "language": "bash",
@@ -781,6 +781,22 @@
       ],
       "benchCommand": "bun run scripts/demo-module-bench.ts --id=test-exec-control",
       "testCommand": "bun run scripts/demo-module-test.ts --id=test-exec-control"
+    },
+    "build-metafile": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "entry": "scratch/bun-v1.3.9-examples/playground-web/server.ts",
+        "maxKb": 5120
+      },
+      "flags": [
+        "--entry",
+        "--output",
+        "--max-kb"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=build-metafile",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=build-metafile"
     }
   }
 }

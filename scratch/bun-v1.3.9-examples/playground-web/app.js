@@ -853,6 +853,20 @@ function renderDemo(demo) {
       </div>
     `
     : '';
+  const bundleMetafilePanel = demo.id === 'build-metafile'
+    ? `
+      <div class="code-block" style="margin-top: 1rem;">
+        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+          <label for="bundle-analyze-entry">Entry:</label>
+          <input id="bundle-analyze-entry" type="text" value="scratch/bun-v1.3.9-examples/playground-web/server.ts" style="width:min(720px,100%);" />
+          <button class="run-btn" onclick="refreshBundleMetafileAnalysis()">
+            ↻ Analyze Bundle Metafile
+          </button>
+        </div>
+        <div id="bundle-metafile-output" class="output" style="display: block; margin-top: 0.75rem;">Loading bundle metafile analysis...</div>
+      </div>
+    `
+    : '';
   const protocolMatrixPanel = demo.id === 'protocol-matrix'
     ? `
       <div class="code-block" style="margin-top: 1rem;">
@@ -919,6 +933,7 @@ function renderDemo(demo) {
     ${performanceImpactPanel}
     ${securityPosturePanel}
     ${domainTopologyPanel}
+    ${bundleMetafilePanel}
     ${historicalTrendsPanel}
     ${protocolMatrixPanel}
     ${http2RuntimePanel}
@@ -948,6 +963,9 @@ function renderDemo(demo) {
   }
   if (demo.id === 'historical-sqlite-trends') {
     refreshHistoricalTrends();
+  }
+  if (demo.id === 'build-metafile') {
+    refreshBundleMetafileAnalysis();
   }
   if (demo.id === 'protocol-matrix') {
     refreshProtocolMatrixStatus();
@@ -1030,6 +1048,7 @@ function setupEventListeners() {
   window.refreshPerformanceImpactMatrix = refreshPerformanceImpactMatrix;
   window.refreshSecurityPostureReport = refreshSecurityPostureReport;
   window.refreshDomainTopologyGraph = refreshDomainTopologyGraph;
+  window.refreshBundleMetafileAnalysis = refreshBundleMetafileAnalysis;
   window.refreshHistoricalTrends = refreshHistoricalTrends;
   window.refreshHttp2RuntimeStatus = refreshHttp2RuntimeStatus;
   window.executeHttp2RuntimeAction = executeHttp2RuntimeAction;
@@ -1441,6 +1460,57 @@ async function refreshDomainTopologyGraph() {
   } catch (error) {
     statusDiv.className = 'output error';
     statusDiv.textContent = `Failed to load domain topology graph: ${error.message}`;
+  }
+}
+
+async function refreshBundleMetafileAnalysis() {
+  const statusDiv = document.getElementById('bundle-metafile-output');
+  if (!statusDiv) return;
+
+  const entryEl = document.getElementById('bundle-analyze-entry');
+  const entry = String(entryEl?.value || '').trim();
+  const query = entry ? `?entry=${encodeURIComponent(entry)}` : '';
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = `Analyzing bundle metafile${entry ? ` (${entry})` : ''}...`;
+
+  try {
+    const response = await fetch(`/api/control/bundle/analyze${query}`);
+    const data = await response.json();
+    if (!response.ok || data?.ok === false) {
+      statusDiv.className = 'output error';
+      statusDiv.textContent = `Bundle analyze failed: ${data?.error || `status=${response.status}`}`;
+      return;
+    }
+
+    const summary = data.summary || {};
+    const inputs = Array.isArray(data.largestInputs) ? data.largestInputs : [];
+    const outputs = Array.isArray(data.largestOutputs) ? data.largestOutputs : [];
+    const externals = Array.isArray(data.externalDependencies) ? data.externalDependencies : [];
+
+    const lines = [
+      `generatedAt: ${data.generatedAt || 'unknown'}`,
+      `source: ${data.source || 'unknown'}`,
+      `entrypoint: ${data.entrypoint || 'n/a'}`,
+      `inputs=${summary.inputCount ?? 0} outputs=${summary.outputCount ?? 0}`,
+      `bytes: in=${summary.inputBytes ?? 0} out=${summary.outputBytes ?? 0} ratio=${summary.compressionRatio ?? 'n/a'}`,
+      `externalDependencyCount=${summary.externalDependencyCount ?? externals.length}`,
+      '',
+      'largest inputs:',
+      ...inputs.slice(0, 5).map((row) => `  ${row.path} | ${row.bytes} bytes`),
+      '',
+      'largest outputs:',
+      ...outputs.slice(0, 5).map((row) => `  ${row.path} | ${row.bytes} bytes`),
+      '',
+      'externals:',
+      ...(externals.length > 0 ? externals.slice(0, 10).map((dep) => `  ${dep}`) : ['  (none)']),
+    ];
+
+    statusDiv.className = 'output success';
+    statusDiv.textContent = lines.join('\n');
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `Failed to analyze bundle metafile: ${error.message}`;
   }
 }
 

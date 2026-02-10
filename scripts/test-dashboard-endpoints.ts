@@ -228,6 +228,24 @@ async function run(): Promise<number> {
       `status=${featureMatrix.res.status} rows=${featureRows.length}`
     );
 
+    const bundleAnalyze = await fetchJson("/api/control/bundle/analyze");
+    check(
+      checks,
+      "bundle-analyze-contract",
+      bundleAnalyze.res.status === 200 &&
+        bundleAnalyze.json?.ok === true &&
+        typeof bundleAnalyze.json?.entrypoint === "string" &&
+        Number.isFinite(bundleAnalyze.json?.summary?.inputCount) &&
+        Number.isFinite(bundleAnalyze.json?.summary?.outputCount) &&
+        Number.isFinite(bundleAnalyze.json?.summary?.inputBytes) &&
+        Number.isFinite(bundleAnalyze.json?.summary?.outputBytes) &&
+        Number.isFinite(bundleAnalyze.json?.summary?.compressionRatio) &&
+        Array.isArray(bundleAnalyze.json?.largestInputs) &&
+        Array.isArray(bundleAnalyze.json?.largestOutputs) &&
+        Array.isArray(bundleAnalyze.json?.externalDependencies),
+      `status=${bundleAnalyze.res.status} ok=${String(bundleAnalyze.json?.ok)}`
+    );
+
     const demoValidate = await fetchJson("/api/control/demo-module/validate?id=markdown-simd");
     check(
       checks,

@@ -74,6 +74,7 @@ const BRAND_REPORTS_DIR = join(PROJECT_ROOT, "reports", "brand-bench");
 const BRAND_GOVERNANCE_PATH = join(BRAND_REPORTS_DIR, "governance.json");
 const DECISIONS_ROOT = join(PROJECT_ROOT, "docs", "decisions");
 const DECISIONS_INDEX_PATH = join(DECISIONS_ROOT, "index.json");
+const DEFAULT_BUNDLE_ANALYZE_ENTRYPOINT = join(import.meta.dir, "server.ts");
 const DASHBOARD_METRICS_DB_PATH =
   process.env.PLAYGROUND_METRICS_DB_PATH ||
   join(PROJECT_ROOT, ".cache", "playground-dashboard-metrics.sqlite");
@@ -98,6 +99,7 @@ let cachedGitCommit: string | null = null;
 let cachedProfileSnapshot: Record<string, unknown> | null = null;
 let cachedHeapSnapshot: Record<string, unknown> | null = null;
 let cachedBundleSnapshot: Record<string, unknown> | null = null;
+let cachedBundleAnalysisByEntrypoint = new Map<string, { at: number; payload: Record<string, unknown> }>();
 let cachedOrchestrationLoop: Record<string, unknown> | null = null;
 let cachedOrchestrationLoopAt = 0;
 let cacheTimestamp = 0;
@@ -1802,6 +1804,22 @@ bun --cpu-prof --cpu-prof-interval 500 index.js
 bun --cpu-prof-interval 500 index.js`,
   },
   {
+    id: "build-metafile",
+    name: "Build Metafile Analysis",
+    description: "CLI + API bundle metafile analysis with size, largest files, and externals",
+    category: "Build",
+    code: `# API summary (dashboard route)
+curl -s "http://localhost:<port>/api/control/bundle/analyze" | jq .
+
+# Analyze a specific entry (workspace-relative path)
+curl -s "http://localhost:<port>/api/control/bundle/analyze?entry=scratch/bun-v1.3.9-examples/playground-web/app.js" | jq .
+
+# Local CLI scripts
+bun run analyze:bundle -- --entry=scratch/bun-v1.3.9-examples/playground-web/server.ts
+bun run validate:budget -- --entry=scratch/bun-v1.3.9-examples/playground-web/server.ts --max-kb=5120
+bun run report:bundle -- --entry=scratch/bun-v1.3.9-examples/playground-web/server.ts --output=reports/bundle-analysis.md`,
+  },
+  {
     id: "bytecode",
     name: "ESM Bytecode Compilation",
     description: "ESM bytecode support in --compile",
@@ -2381,6 +2399,78 @@ function runPerformanceTrilogyMicroBench() {
     source: "bun-v1.3.9-performance-trilogy",
     results: [markdown, reactMarkdown, abortFastPath],
   };
+}
+
+async function analyzeBundleMetafile(entrypoint: string) {
+  const now = Date.now();
+  const cached = cachedBundleAnalysisByEntrypoint.get(entrypoint);
+  if (cached && now - cached.at < CACHE_TTL_MS) {
+    return cached.payload;
+  }
+
+  const buildResult = await Bun.build({
+    entrypoints: [entrypoint],
+    target: "bun",
+    format: "esm",
+    splitting: false,
+    metafile: true,
+    write: false,
+    throw: false,
+  });
+
+  if (!buildResult.metafile) {
+    const payload = {
+      ok: false,
+      generatedAt: new Date().toISOString(),
+      source: "Bun.build({ metafile: true })",
+      entrypoint,
+      error: "Metafile was not generated",
+      logs: (buildResult.logs || []).map((log) => String(log?.message || "")).filter(Boolean),
+    };
+    cachedBundleAnalysisByEntrypoint.set(entrypoint, { at: now, payload });
+    return payload;
+  }
+
+  const inputEntries = Object.entries(buildResult.metafile.inputs || {});
+  const outputEntries = Object.entries(buildResult.metafile.outputs || {});
+  const inputBytes = inputEntries.reduce((sum, [, meta]: any) => sum + Number(meta?.bytes || 0), 0);
+  const outputBytes = outputEntries.reduce((sum, [, meta]: any) => sum + Number(meta?.bytes || 0), 0);
+  const ratio = inputBytes > 0 ? Number((outputBytes / inputBytes).toFixed(4)) : 0;
+  const externalDependencies = new Set<string>();
+
+  for (const [, meta] of inputEntries as any[]) {
+    const imports = Array.isArray(meta?.imports) ? meta.imports : [];
+    for (const imp of imports) {
+      if (imp?.external) externalDependencies.add(String(imp.path));
+    }
+  }
+
+  const payload = {
+    ok: true,
+    generatedAt: new Date().toISOString(),
+    source: "Bun.build({ metafile: true })",
+    entrypoint,
+    summary: {
+      inputCount: inputEntries.length,
+      outputCount: outputEntries.length,
+      inputBytes,
+      outputBytes,
+      compressionRatio: ratio,
+      externalDependencyCount: externalDependencies.size,
+    },
+    largestInputs: inputEntries
+      .sort(([, a]: any, [, b]: any) => Number(b?.bytes || 0) - Number(a?.bytes || 0))
+      .slice(0, 10)
+      .map(([path, meta]: any) => ({ path, bytes: Number(meta?.bytes || 0) })),
+    largestOutputs: outputEntries
+      .sort(([, a]: any, [, b]: any) => Number(b?.bytes || 0) - Number(a?.bytes || 0))
+      .slice(0, 10)
+      .map(([path, meta]: any) => ({ path, bytes: Number(meta?.bytes || 0) })),
+    externalDependencies: Array.from(externalDependencies).sort(),
+  };
+
+  cachedBundleAnalysisByEntrypoint.set(entrypoint, { at: now, payload });
+  return payload;
 }
 
 async function runCommand(cmd: string[], cwd: string): Promise<{ output: string; error: string; exitCode: number }> {
@@ -4654,6 +4744,39 @@ const routes = {
     };
   },
 
+  "/api/control/bundle/analyze": async (req: Request) => {
+    const url = new URL(req.url);
+    const entryArg = String(url.searchParams.get("entry") || "").trim();
+    const resolved = entryArg
+      ? resolvePath(PROJECT_ROOT, entryArg)
+      : DEFAULT_BUNDLE_ANALYZE_ENTRYPOINT;
+    const normalizedRoot = normalize(PROJECT_ROOT + sep);
+    const normalizedResolved = normalize(resolved);
+
+    if (!normalizedResolved.startsWith(normalizedRoot) && normalizedResolved !== normalize(PROJECT_ROOT)) {
+      return {
+        ok: false,
+        generatedAt: new Date().toISOString(),
+        source: "Bun.build({ metafile: true })",
+        entrypoint: resolved,
+        error: "entry must resolve inside project root",
+      };
+    }
+
+    const exists = await Bun.file(resolved).exists();
+    if (!exists) {
+      return {
+        ok: false,
+        generatedAt: new Date().toISOString(),
+        source: "Bun.build({ metafile: true })",
+        entrypoint: resolved,
+        error: "entrypoint file not found",
+      };
+    }
+
+    return await analyzeBundleMetafile(resolved);
+  },
+
   "/api/control/network-smoke": async (req: Request) => {
     const base = new URL(req.url).origin;
     const smoke = await runNetworkSmoke(base);
@@ -5381,6 +5504,10 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/domain-graph") {
         return jsonResponse(routes["/api/control/domain-graph"](req));
+      }
+
+      if (url.pathname === "/api/control/bundle/analyze") {
+        return jsonResponse(await routes["/api/control/bundle/analyze"](req));
       }
 
       if (url.pathname === "/api/control/upload-progress") {
