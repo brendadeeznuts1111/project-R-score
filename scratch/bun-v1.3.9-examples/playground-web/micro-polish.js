@@ -33,7 +33,13 @@ const miniDashState = {
   lastFetchLatencyMs: 0,
   consecutiveFailures: 0,
   refreshInFlight: false,
+  wsConnected: false,
+  wsLastMessageMs: 0,
+  wsReconnects: 0,
 };
+
+let capacitySocket = null;
+let capacitySocketRetryTimer = null;
 
 function setBar(elId, used, max) {
   const el = document.getElementById(elId);
@@ -146,6 +152,27 @@ function renderLatencyChip(latencyMs, failures) {
   chip.textContent = `API: ${latencyMs}ms`;
 }
 
+function renderStreamChip() {
+  const chip = document.getElementById('mini-stream');
+  if (!chip) return;
+  chip.classList.add('mini-chip-tight');
+  if (!miniDashState.wsConnected) {
+    chip.className = 'mini-chip mini-chip-warn mini-chip-tight';
+    chip.textContent = `Stream: RETRY (${miniDashState.wsReconnects})`;
+    return;
+  }
+  const ageSec = miniDashState.wsLastMessageMs
+    ? Math.max(0, Math.round((Date.now() - miniDashState.wsLastMessageMs) / 1000))
+    : 99;
+  if (ageSec <= 2) {
+    chip.className = 'mini-chip mini-chip-ok mini-chip-tight';
+    chip.textContent = `Stream: LIVE (${ageSec}s)`;
+    return;
+  }
+  chip.className = 'mini-chip mini-chip-warn mini-chip-tight';
+  chip.textContent = `Stream: STALE (${ageSec}s)`;
+}
+
 function renderOrchestrationChip(orchestration) {
   const chip = document.getElementById('mini-orch');
   if (!chip) return;
@@ -210,6 +237,70 @@ function renderOrchestrationTrend() {
     return;
   }
   trend.textContent = values.map((v) => (v ? '●' : '○')).join('');
+}
+
+function capacityWsUrl() {
+  const proto = window.location.protocol === 'https:' ? 'wss' : 'ws';
+  return `${proto}://${window.location.host}/ws/capacity`;
+}
+
+function scheduleCapacityReconnect() {
+  if (capacitySocketRetryTimer) return;
+  capacitySocketRetryTimer = setTimeout(() => {
+    capacitySocketRetryTimer = null;
+    connectCapacitySocket();
+  }, 1500);
+}
+
+function connectCapacitySocket() {
+  try {
+    if (capacitySocket && (
+      capacitySocket.readyState === WebSocket.OPEN ||
+      capacitySocket.readyState === WebSocket.CONNECTING
+    )) {
+      return;
+    }
+    const ws = new WebSocket(capacityWsUrl());
+    capacitySocket = ws;
+
+    ws.addEventListener('open', () => {
+      miniDashState.wsConnected = true;
+      miniDashState.wsLastMessageMs = Date.now();
+      renderStreamChip();
+      try {
+        ws.send('ping');
+      } catch (_) {}
+    });
+
+    ws.addEventListener('message', (event) => {
+      miniDashState.wsLastMessageMs = Date.now();
+      try {
+        const payload = JSON.parse(String(event.data || '{}'));
+        if (payload && payload.capacity && payload.headroom && payload.bottleneck) {
+          miniDashState.dashboardMini = payload;
+        }
+      } catch (_) {
+        // Ignore non-JSON payloads from stream.
+      }
+      renderStreamChip();
+    });
+
+    ws.addEventListener('close', () => {
+      miniDashState.wsConnected = false;
+      miniDashState.wsReconnects += 1;
+      renderStreamChip();
+      scheduleCapacityReconnect();
+    });
+
+    ws.addEventListener('error', () => {
+      miniDashState.wsConnected = false;
+      renderStreamChip();
+    });
+  } catch (_) {
+    miniDashState.wsConnected = false;
+    renderStreamChip();
+    scheduleCapacityReconnect();
+  }
 }
 
 function sparkChar(valuePct) {
@@ -335,6 +426,7 @@ async function updateMiniDash() {
   renderGovernanceChip(miniDashState.governance);
   renderPoolHealthChip(loadPct, miniDashState.consecutiveFailures, poolStatus, bottleneck);
   renderLatencyChip(miniDashState.lastFetchLatencyMs, miniDashState.consecutiveFailures);
+  renderStreamChip();
   renderOrchestrationChip(miniDashState.orchestration);
   renderDnsChip(miniDashState.runtimeInfo);
   renderResilienceChip(miniDashState.runtimeInfo);
@@ -487,6 +579,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   // Initial update
   updateMiniDash();
+  connectCapacitySocket();
+  renderStreamChip();
   // Update every 3 seconds for smoother live state
   setInterval(updateMiniDash, 3000);
 });

@@ -102,6 +102,7 @@ Mini dashboard APIs:
   - `utilization`: `ok|warn|fail` using `<50`, `50-80`, `>80`
   - `capacity`: `ok|warn|fail` using `>50`, `20-50`, `<20`
   - `headroom`: `ok|warn|fail` using `>30`, `10-30`, `<10`
+- `WS /ws/capacity`: broadcasts `dashboard/mini`-shape payload every second for real-time mini-card updates
 
 Mini dashboard UI rows now include:
 - `Bottleneck`
@@ -113,6 +114,7 @@ Validate mini dashboard contract from repo root:
 
 ```bash
 bun run test:dashboard:mini
+bun run test:dashboard:websocket
 ```
 
 Local verify runbook (single green pass):
@@ -126,6 +128,9 @@ curl -s http://localhost:3011/api/dashboard/mini | jq '{bottleneck,capacity,head
 curl -s "http://localhost:3011/api/dashboard/severity-test?load=85" | jq '.severity'
 curl -s "http://localhost:3011/api/dashboard/severity-test?load=60" | jq '.severity'
 curl -s "http://localhost:3011/api/dashboard/severity-test?load=30" | jq '.severity'
+
+# Optional websocket smoke (requires wscat)
+wscat -c ws://localhost:3011/ws/capacity
 ```
 
 Expected severity snapshots:

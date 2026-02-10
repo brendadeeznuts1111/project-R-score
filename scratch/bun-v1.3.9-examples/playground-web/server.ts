@@ -4257,8 +4257,15 @@ const SHUTDOWN_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_SHUTDOWN_TIMEOUT_MS", 500
   min: 500,
   max: 300000,
 });
+const CAPACITY_WS_PATH = "/ws/capacity";
+const CAPACITY_WS_TOPIC = "dashboard-capacity-updates";
+const CAPACITY_WS_BROADCAST_MS = parseNumberEnv("PLAYGROUND_WS_BROADCAST_MS", 1000, {
+  min: 250,
+  max: 10000,
+});
 let shuttingDown = false;
 let httpServer: ReturnType<typeof serve> | null = null;
+let capacityBroadcastTimer: ReturnType<typeof setInterval> | null = null;
 
 async function waitForInFlightDrain(timeoutMs: number): Promise<boolean> {
   const start = Date.now();
@@ -4290,6 +4297,10 @@ async function gracefulShutdown(reason: string, exitCode = 0, error?: unknown) {
   try {
     // Stop accepting new work and ask Bun.serve() to drain inflight fetch handlers.
     ac.abort();
+    if (capacityBroadcastTimer) {
+      clearInterval(capacityBroadcastTimer);
+      capacityBroadcastTimer = null;
+    }
     if (httpServer) {
       httpServer.stop(true);
     }
@@ -4347,9 +4358,48 @@ process.on("uncaughtException", (error) => {
 // Serve the application
 httpServer = serve({
   port: ACTIVE_PORT,
-  fetch: handleRequest,
+  fetch: (req, server) => {
+    const url = new URL(req.url);
+    if (url.pathname === CAPACITY_WS_PATH) {
+      const upgraded = server.upgrade(req, {
+        data: {
+          connectedAt: Date.now(),
+          userAgent: req.headers.get("user-agent") || "unknown",
+        },
+      });
+      return upgraded
+        ? undefined
+        : new Response("WebSocket upgrade failed", { status: 400 });
+    }
+    return handleRequest(req);
+  },
+  websocket: {
+    data: {} as { connectedAt: number; userAgent: string },
+    open(ws) {
+      ws.subscribe(CAPACITY_WS_TOPIC);
+      ws.send(JSON.stringify(buildMiniDashboardSnapshot()));
+    },
+    message(ws, message) {
+      const text = typeof message === "string" ? message.toLowerCase() : "";
+      if (text === "ping") {
+        ws.send(JSON.stringify({
+          type: "pong",
+          timestamp: new Date().toISOString(),
+          topic: CAPACITY_WS_TOPIC,
+        }));
+      }
+    },
+    close(ws) {
+      ws.unsubscribe(CAPACITY_WS_TOPIC);
+    },
+  },
   signal: ac.signal,
 });
+
+capacityBroadcastTimer = setInterval(() => {
+  if (!httpServer || shuttingDown) return;
+  httpServer.publish(CAPACITY_WS_TOPIC, JSON.stringify(buildMiniDashboardSnapshot()));
+}, CAPACITY_WS_BROADCAST_MS);
 
 console.log(`🚀 Bun v1.3.9 Browser Playground`);
 console.log(`📡 Server running at http://localhost:${ACTIVE_PORT}`);
@@ -4357,6 +4407,7 @@ console.log(`🌐 Open http://localhost:${ACTIVE_PORT} in your browser`);
 console.log(
   `🧰 Pooling: maxRequests=${MAX_CONCURRENT_REQUESTS} maxCommandWorkers=${MAX_COMMAND_WORKERS} range=${PORT_RANGE}`
 );
+console.log(`📶 Capacity stream: ws://localhost:${ACTIVE_PORT}${CAPACITY_WS_PATH} topic=${CAPACITY_WS_TOPIC} every=${CAPACITY_WS_BROADCAST_MS}ms`);
 console.log(
   `🛰️ Warmup: prefetch=${warmupState.prefetch.length} preconnect=${warmupState.preconnect.length} enabled=${!warmupState.skipped}`
 );

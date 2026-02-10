@@ -1593,6 +1593,7 @@
     "dashboard:protocol:check": "bun run scripts/dashboard-protocol-check.ts",
     "test:dashboard:mini": "bun run scripts/test-dashboard-mini.ts",
     "test:dashboard:endpoints": "bun run scripts/test-dashboard-endpoints.ts",
+    "test:dashboard:websocket": "bun run scripts/test-dashboard-websocket.ts",
     "test:dashboard:suite": "bun run scripts/test-dashboard-suite.ts",
     "ci:dashboard:nonblocking": "bun run test:dashboard:suite",
     "ci:dashboard:required": "bun run ci:bun:check && bun run test:dashboard:suite",

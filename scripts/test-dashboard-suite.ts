@@ -61,7 +61,11 @@ async function run(): Promise<number> {
     const endpointCode = await endpoints.exited;
     if (endpointCode !== 0) return endpointCode;
 
-    console.log("[PASS] dashboard-suite :: mini + endpoints green");
+    const websocket = spawnCmd(["bun", "run", "test:dashboard:websocket"]);
+    const websocketCode = await websocket.exited;
+    if (websocketCode !== 0) return websocketCode;
+
+    console.log("[PASS] dashboard-suite :: mini + endpoints + websocket green");
     return 0;
   } finally {
     if (startedHere && serverProc) {
