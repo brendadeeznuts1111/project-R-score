@@ -425,6 +425,9 @@ async function updateMiniDash() {
   const workerHeadroom = miniSnapshot?.headroom?.workers?.available ?? livePool?.capacity?.headroom?.workers ?? Math.max(0, maxWorkers - activeWorkers);
   const connectionHeadroomPct = miniSnapshot?.headroom?.connections?.pct ?? Math.round((Math.max(0, connectionHeadroom) / Math.max(1, maxRequests)) * 100);
   const workerHeadroomPct = miniSnapshot?.headroom?.workers?.pct ?? Math.round((Math.max(0, workerHeadroom) / Math.max(1, maxWorkers)) * 100);
+  const workerQueueDepth = miniSnapshot?.workerQueue?.queuedTasks ?? livePool?.workers?.queuedTasks ?? 0;
+  const workerInFlightTasks = miniSnapshot?.workerQueue?.inFlightTasks ?? livePool?.workers?.inFlightTasks ?? 0;
+  const workerQueueSeverity = miniSnapshot?.workerQueue?.severity ?? (workerQueueDepth > maxWorkers * 2 ? 'fail' : workerQueueDepth > 0 ? 'warn' : 'ok');
   const bottleneckSeverity = miniSnapshot?.bottleneck?.severity;
   const capacitySeverity = miniSnapshot?.capacity?.severity;
   const headroomConnSeverity = miniSnapshot?.headroom?.connections?.severity;
@@ -465,6 +468,11 @@ async function updateMiniDash() {
   if (headroomWorkersEl) {
     headroomWorkersEl.textContent = `${workerHeadroom} (${workerHeadroomPct}%)`;
     setValueSeverityByLabel(headroomWorkersEl, headroomWorkersSeverity);
+  }
+  const workerQueueEl = document.getElementById('mini-worker-queue');
+  if (workerQueueEl) {
+    workerQueueEl.textContent = `${workerQueueDepth} (in-flight ${workerInFlightTasks})`;
+    setValueSeverityByLabel(workerQueueEl, workerQueueSeverity);
   }
   document.getElementById('mini-port').textContent = rt.dedicatedPort;
   setBar('mini-pool-bar', inFlight, maxRequests);

@@ -7,7 +7,7 @@
 
 import { serve } from "bun";
 import { Database } from "bun:sqlite";
-import { mkdir, readFile, readdir } from "node:fs/promises";
+import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import { createServer, type Server as NetServer } from "node:net";
 import { connect as connectHttp2, createSecureServer, type Http2SecureServer } from "node:http2";
@@ -107,6 +107,18 @@ const DECISIONS_ROOT = join(PROJECT_ROOT, "docs", "decisions");
 const DECISIONS_INDEX_PATH = join(DECISIONS_ROOT, "index.json");
 const DEFAULT_BUNDLE_ANALYZE_ENTRYPOINT = join(import.meta.dir, "server.ts");
 const DEMO_BENCH_LATEST_PATH = join(PROJECT_ROOT, "reports", "demo-bench", "latest.json");
+const WORKER_POOL_BENCH_DIR = join(PROJECT_ROOT, "reports", "worker-pool-bench");
+const WORKER_POOL_BENCH_LATEST_PATH = join(WORKER_POOL_BENCH_DIR, "latest.json");
+const WORKER_POOL_BENCH_MAX_P95_MS = parseNumberEnv("PLAYGROUND_WORKER_BENCH_MAX_P95_MS", 40, {
+  min: 1,
+  max: 10_000,
+  integer: false,
+});
+const WORKER_POOL_BENCH_MAX_REGRESSION_PCT = parseNumberEnv(
+  "PLAYGROUND_WORKER_BENCH_MAX_REGRESSION_PCT",
+  20,
+  { min: 0, max: 500, integer: false }
+);
 const DASHBOARD_METRICS_DB_PATH =
   process.env.PLAYGROUND_METRICS_DB_PATH ||
   join(PROJECT_ROOT, ".cache", "playground-dashboard-metrics.sqlite");
@@ -140,6 +152,11 @@ function getCommandWorkerStats() {
   return {
     active: stats.busyWorkers,
     max: stats.workers,
+    queued: stats.queuedTasks,
+    inFlight: stats.inFlightTasks,
+    createdWorkers: stats.createdWorkers,
+    replacedWorkers: stats.replacedWorkers,
+    lastErrors: stats.lastErrors,
   };
 }
 
@@ -1065,6 +1082,127 @@ async function readJsonSafe(path: string): Promise<any | null> {
   } catch {
     return null;
   }
+}
+
+function percentile(values: number[], p: number): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const idx = Math.min(sorted.length - 1, Math.floor((sorted.length - 1) * p));
+  return Number(sorted[idx].toFixed(2));
+}
+
+async function runWorkerPoolBench(iterations: number, concurrency: number) {
+  const durations: number[] = [];
+  let success = 0;
+  let failures = 0;
+  let cursor = 0;
+  const startedAt = Date.now();
+
+  const workers = Array.from({ length: Math.max(1, concurrency) }, async () => {
+    while (true) {
+      const current = cursor;
+      cursor += 1;
+      if (current >= iterations) break;
+
+      const begin = performance.now();
+      const result = await runCommand(["bun", "-e", "console.log('worker-bench-ok')"], PROJECT_ROOT);
+      const elapsed = Number((performance.now() - begin).toFixed(2));
+      durations.push(elapsed);
+      if (result.exitCode === 0) {
+        success += 1;
+      } else {
+        failures += 1;
+      }
+    }
+  });
+
+  await Promise.all(workers);
+  const totalMs = Date.now() - startedAt;
+  const avgMs = durations.length
+    ? Number((durations.reduce((sum, n) => sum + n, 0) / durations.length).toFixed(2))
+    : 0;
+  const p50 = percentile(durations, 0.5);
+  const p95 = percentile(durations, 0.95);
+  const min = durations.length ? Math.min(...durations) : 0;
+  const max = durations.length ? Math.max(...durations) : 0;
+  const throughput = totalMs > 0 ? Number(((success / totalMs) * 1000).toFixed(2)) : 0;
+  const errorRate = iterations > 0 ? Number((failures / iterations).toFixed(4)) : 0;
+
+  return {
+    generatedAt: new Date().toISOString(),
+    iterations,
+    concurrency,
+    totals: {
+      success,
+      failures,
+      totalMs,
+    },
+    latencyMs: {
+      min: Number(min.toFixed(2)),
+      p50,
+      p95,
+      max: Number(max.toFixed(2)),
+      avg: avgMs,
+    },
+    throughputPerSec: throughput,
+    errorRate,
+    pool: getCommandWorkerStats(),
+  };
+}
+
+function compareWorkerBenchVsLast(current: any, previous: any | null) {
+  if (!previous) {
+    const pass = current.latencyMs.p95 <= WORKER_POOL_BENCH_MAX_P95_MS && current.errorRate === 0;
+    return {
+      compared: false,
+      pass,
+      failures: pass ? [] : [`p95>${WORKER_POOL_BENCH_MAX_P95_MS}ms or non-zero errorRate`],
+      regressionPct: null,
+    };
+  }
+
+  const prevP95 = Number(previous?.latencyMs?.p95 || 0);
+  const currP95 = Number(current?.latencyMs?.p95 || 0);
+  const regressionPct = prevP95 > 0 ? Number((((currP95 - prevP95) / prevP95) * 100).toFixed(2)) : 0;
+  const failures: string[] = [];
+
+  if (currP95 > WORKER_POOL_BENCH_MAX_P95_MS) {
+    failures.push(`p95 ${currP95}ms exceeds max ${WORKER_POOL_BENCH_MAX_P95_MS}ms`);
+  }
+  if (regressionPct > WORKER_POOL_BENCH_MAX_REGRESSION_PCT) {
+    failures.push(`p95 regression ${regressionPct}% exceeds ${WORKER_POOL_BENCH_MAX_REGRESSION_PCT}%`);
+  }
+  if (Number(current?.errorRate || 0) > 0) {
+    failures.push(`errorRate ${current.errorRate} must be 0`);
+  }
+
+  return {
+    compared: true,
+    pass: failures.length === 0,
+    failures,
+    previousP95Ms: prevP95,
+    currentP95Ms: currP95,
+    regressionPct,
+  };
+}
+
+async function persistWorkerBenchSnapshot(snapshot: any, gate: any) {
+  await mkdir(WORKER_POOL_BENCH_DIR, { recursive: true });
+  const ts = Date.now();
+  const record = {
+    snapshotId: `worker-pool-${ts}`,
+    generatedAt: new Date(ts).toISOString(),
+    thresholds: {
+      maxP95Ms: WORKER_POOL_BENCH_MAX_P95_MS,
+      maxRegressionPct: WORKER_POOL_BENCH_MAX_REGRESSION_PCT,
+    },
+    snapshot,
+    gate,
+  };
+  const snapPath = join(WORKER_POOL_BENCH_DIR, `snapshot-${ts}.json`);
+  await writeFile(snapPath, `${JSON.stringify(record, null, 2)}\n`, "utf8");
+  await writeFile(WORKER_POOL_BENCH_LATEST_PATH, `${JSON.stringify(record, null, 2)}\n`, "utf8");
+  return { path: snapPath, latestPath: WORKER_POOL_BENCH_LATEST_PATH, record };
 }
 
 async function probeUrlHealth(url: string, timeoutMs: number): Promise<{
@@ -3368,6 +3506,8 @@ function buildLivePoolSnapshot() {
       available: availableWorkers,
       utilization: workerUtilization,
       loadPerConnection: perConnectionWorkerLoad,
+      queuedTasks: workerStats.queued,
+      inFlightTasks: workerStats.inFlight,
       status: workerUtilization >= 1 ? "saturated" : workerUtilization >= 0.75 ? "high" : "healthy",
     },
     capacity: {
@@ -3389,6 +3529,13 @@ function buildMiniDashboardSnapshot() {
   const capacityWorkersPct = Math.max(0, 100 - workerUsedPct);
   const headroomConnectionsPct = Math.round((live.connections.available / Math.max(1, live.connections.max)) * 100);
   const headroomWorkersPct = Math.round((live.workers.available / Math.max(1, live.workers.max)) * 100);
+  const workerQueueDepth = Number(live.workers.queuedTasks || 0);
+  const workerQueueSeverity =
+    workerQueueDepth > live.workers.max * 2
+      ? "fail"
+      : workerQueueDepth > 0
+        ? "warn"
+        : "ok";
 
   const snapshot = {
     generatedAt: new Date().toISOString(),
@@ -3422,6 +3569,11 @@ function buildMiniDashboardSnapshot() {
         pct: headroomWorkersPct,
         severity: severityByHeadroom(headroomWorkersPct),
       },
+    },
+    workerQueue: {
+      queuedTasks: workerQueueDepth,
+      inFlightTasks: Number(live.workers.inFlightTasks || 0),
+      severity: workerQueueSeverity,
     },
     pooling: {
       live,
@@ -5394,6 +5546,44 @@ const routes = {
     };
   },
 
+  "/api/control/worker-pool": async () => {
+    const stats = getCommandWorkerStats();
+    const latest = await readJsonSafe(WORKER_POOL_BENCH_LATEST_PATH);
+    return {
+      generatedAt: new Date().toISOString(),
+      pool: stats,
+      config: {
+        minWorkers: WORKER_POOL_MIN,
+        maxWorkers: WORKER_POOL_MAX,
+        defaultEnvKeys: Object.keys(WORKER_DEFAULT_ENV),
+      },
+      queueSeverity:
+        stats.queued > stats.max * 2 ? "fail" : stats.queued > 0 ? "warn" : "ok",
+      latestBench: latest,
+    };
+  },
+
+  "/api/control/worker-pool/bench": async (req: Request) => {
+    const url = new URL(req.url);
+    const iterationsRaw = Number.parseInt(url.searchParams.get("iterations") || "40", 10);
+    const concurrencyRaw = Number.parseInt(url.searchParams.get("concurrency") || "4", 10);
+    const iterations = Math.max(5, Math.min(1000, Number.isFinite(iterationsRaw) ? iterationsRaw : 40));
+    const concurrency = Math.max(1, Math.min(32, Number.isFinite(concurrencyRaw) ? concurrencyRaw : 4));
+    const previous = await readJsonSafe(WORKER_POOL_BENCH_LATEST_PATH);
+    const snapshot = await runWorkerPoolBench(iterations, concurrency);
+    const gate = compareWorkerBenchVsLast(snapshot, previous?.snapshot || null);
+    const persisted = await persistWorkerBenchSnapshot(snapshot, gate);
+    return {
+      generatedAt: new Date().toISOString(),
+      snapshot,
+      gate,
+      persisted: {
+        snapshotPath: persisted.path,
+        latestPath: persisted.latestPath,
+      },
+    };
+  },
+
   "/api/control/upload-progress": async (req: Request) => {
     const upload = await buildUploadProgress(req);
     return upload;
@@ -6145,6 +6335,14 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/worker-env/bench") {
         return jsonResponse(await routes["/api/control/worker-env/bench"](req));
+      }
+
+      if (url.pathname === "/api/control/worker-pool") {
+        return jsonResponse(await routes["/api/control/worker-pool"]());
+      }
+
+      if (url.pathname === "/api/control/worker-pool/bench") {
+        return jsonResponse(await routes["/api/control/worker-pool/bench"](req));
       }
 
       if (url.pathname === "/api/control/features") {

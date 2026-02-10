@@ -36,6 +36,9 @@ export interface WorkerPoolStats {
   busyWorkers: number;
   queuedTasks: number;
   inFlightTasks: number;
+  createdWorkers: number;
+  replacedWorkers: number;
+  lastErrors: Array<{ at: string; event: string; message: string }>;
 }
 
 export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
@@ -46,6 +49,9 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
   private workerToTaskId = new Map<Worker, TaskId>();
   private taskSeq = 0;
   private closed = false;
+  private createdWorkers = 0;
+  private replacedWorkers = 0;
+  private errorHistory: Array<{ at: string; event: string; message: string }> = [];
 
   constructor(private readonly config: WorkerPoolConfig) {
     if (config.minWorkers < 1) throw new Error("minWorkers must be >= 1");
@@ -90,6 +96,9 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
       busyWorkers,
       queuedTasks: this.queue.length,
       inFlightTasks: this.pendingByTaskId.size,
+      createdWorkers: this.createdWorkers,
+      replacedWorkers: this.replacedWorkers,
+      lastErrors: [...this.errorHistory],
     };
   }
 
@@ -124,6 +133,7 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
     const worker = new Worker(this.config.workerUrl, {
       preload: this.config.preload,
     });
+    this.createdWorkers += 1;
 
     worker.addEventListener("open", () => {
       this.inFlightByWorker.set(worker, null);
@@ -136,6 +146,7 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
 
     worker.addEventListener("error", (event) => {
       const taskId = this.workerToTaskId.get(worker);
+      this.recordError("worker-error", event.error ?? new Error(event.message || "Worker error"));
       if (taskId !== undefined) {
         const task = this.pendingByTaskId.get(taskId);
         task?.reject(event.error ?? new Error(event.message || "Worker error"));
@@ -233,6 +244,7 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
       this.workers.splice(idx, 1);
     }
     this.inFlightByWorker.delete(worker);
+    this.replacedWorkers += 1;
 
     const taskId = this.workerToTaskId.get(worker);
     this.workerToTaskId.delete(worker);
@@ -240,6 +252,7 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
       const task = this.pendingByTaskId.get(taskId);
       this.pendingByTaskId.delete(taskId);
       task?.reject(new Error("Worker closed before task completed"));
+      this.recordError("worker-close", new Error(`Worker closed before task ${taskId} completed`));
     }
 
     if (!this.closed && this.workers.length < this.config.minWorkers) {
@@ -247,5 +260,16 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
     }
     this.processQueue();
   }
-}
 
+  private recordError(event: string, error: unknown): void {
+    const message = error instanceof Error ? error.message : String(error);
+    this.errorHistory.push({
+      at: new Date().toISOString(),
+      event,
+      message,
+    });
+    if (this.errorHistory.length > 25) {
+      this.errorHistory.shift();
+    }
+  }
+}
