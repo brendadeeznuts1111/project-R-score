@@ -32,6 +32,7 @@ const miniDashState = {
   lastSyncMs: 0,
   lastFetchLatencyMs: 0,
   consecutiveFailures: 0,
+  refreshInFlight: false,
 };
 
 function setBar(elId, used, max) {
@@ -231,6 +232,8 @@ function renderPercentTrend(elId, values) {
 
 // Update mini dashboard metrics
 async function updateMiniDash() {
+  if (miniDashState.refreshInFlight) return;
+  miniDashState.refreshInFlight = true;
   const fetchStarted = performance.now();
   // Fetch fresh runtime and governance snapshots
   try {
@@ -264,6 +267,8 @@ async function updateMiniDash() {
     // Silent fail - use cached data
     miniDashState.consecutiveFailures += 1;
     miniDashState.lastFetchLatencyMs = Math.max(1, Math.round(performance.now() - fetchStarted));
+  } finally {
+    miniDashState.refreshInFlight = false;
   }
   
   if (!miniDashState.runtimeInfo?.runtime) return;

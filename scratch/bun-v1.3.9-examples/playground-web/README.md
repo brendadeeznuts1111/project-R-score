@@ -115,6 +115,24 @@ Validate mini dashboard contract from repo root:
 bun run test:dashboard:mini
 ```
 
+Local verify runbook (single green pass):
+
+```bash
+# Starts playground server if needed, then runs mini + endpoint checks
+bun run test:dashboard:suite
+
+# Snapshot sanity checks
+curl -s http://localhost:3011/api/dashboard/mini | jq '{bottleneck,capacity,headroom}'
+curl -s "http://localhost:3011/api/dashboard/severity-test?load=85" | jq '.severity'
+curl -s "http://localhost:3011/api/dashboard/severity-test?load=60" | jq '.severity'
+curl -s "http://localhost:3011/api/dashboard/severity-test?load=30" | jq '.severity'
+```
+
+Expected severity snapshots:
+- `load=85`: `utilization=fail`, `capacity=fail`, `headroom=warn`
+- `load=60`: `utilization=warn`, `capacity=warn`, `headroom=ok`
+- `load=30`: `utilization=ok`, `capacity=ok`, `headroom=ok`
+
 Scorecard rationale highlights:
 - Unix sockets are preferred for sub-1KB same-host IPC due to low overhead and strong local boundary controls.
 - Blob-based tiny payload paths benefit from Bun v1.3.9 small-buffer runtime optimizations.

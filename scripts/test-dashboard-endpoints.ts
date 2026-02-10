@@ -1,0 +1,112 @@
+#!/usr/bin/env bun
+
+const HOST = process.env.DASHBOARD_HOST || "localhost";
+const PORT = Number.parseInt(process.env.DASHBOARD_PORT || "3011", 10);
+const BASE = `http://${HOST}:${PORT}`;
+
+type CheckResult = {
+  name: string;
+  ok: boolean;
+  details: string;
+};
+
+async function fetchJson(path: string) {
+  const res = await fetch(`${BASE}${path}`);
+  const text = await res.text();
+  let json: any = null;
+  try {
+    json = text ? JSON.parse(text) : null;
+  } catch {
+    json = null;
+  }
+  return { res, json, text };
+}
+
+function check(checks: CheckResult[], name: string, ok: boolean, details: string) {
+  checks.push({ name, ok, details });
+}
+
+async function run(): Promise<number> {
+  const checks: CheckResult[] = [];
+
+  try {
+    const health = await fetchJson("/api/health");
+    check(
+      checks,
+      "health-contract",
+      health.res.status === 200 &&
+        typeof health.json?.status === "string" &&
+        typeof health.json?.timestamp === "string" &&
+        typeof health.json?.service === "string" &&
+        typeof health.json?.version === "string" &&
+        typeof health.json?.runtime?.bunVersion === "string" &&
+        Array.isArray(health.json?.checks),
+      `status=${health.res.status}`
+    );
+
+    const dashboard = await fetchJson("/api/dashboard");
+    check(
+      checks,
+      "dashboard-contract",
+      dashboard.res.status === 200 &&
+        typeof dashboard.json?.status === "string" &&
+        typeof dashboard.json?.runtime?.bunVersion === "string" &&
+        Number.isFinite(dashboard.json?.metrics?.system?.inFlightRequests) &&
+        Number.isFinite(dashboard.json?.metrics?.system?.activeWorkers),
+      `status=${dashboard.res.status}`
+    );
+
+    const runtime = await fetchJson("/api/dashboard/runtime");
+    check(
+      checks,
+      "dashboard-runtime-contract",
+      runtime.res.status === 200 &&
+        typeof runtime.json?.bunVersion === "string" &&
+        typeof runtime.json?.bunRevision === "string" &&
+        typeof runtime.json?.platform === "string" &&
+        typeof runtime.json?.arch === "string" &&
+        Number.isFinite(runtime.json?.pid) &&
+        Number.isFinite(runtime.json?.port),
+      `status=${runtime.res.status}`
+    );
+
+    const mini = await fetchJson("/api/dashboard/mini");
+    check(
+      checks,
+      "dashboard-mini-contract",
+      mini.res.status === 200 &&
+        typeof mini.json?.capacity?.summary === "string" &&
+        Number.isFinite(mini.json?.headroom?.connections?.pct) &&
+        Number.isFinite(mini.json?.headroom?.workers?.pct),
+      `status=${mini.res.status}`
+    );
+
+    const severity = await fetchJson("/api/dashboard/severity-test?load=42");
+    check(
+      checks,
+      "dashboard-severity-contract",
+      severity.res.status === 200 &&
+        ["ok", "warn", "fail"].includes(String(severity.json?.severity?.utilization || "")) &&
+        ["ok", "warn", "fail"].includes(String(severity.json?.severity?.capacity || "")) &&
+        ["ok", "warn", "fail"].includes(String(severity.json?.severity?.headroom || "")),
+      `status=${severity.res.status}`
+    );
+  } catch (error) {
+    check(
+      checks,
+      "runner",
+      false,
+      error instanceof Error ? error.message : String(error)
+    );
+  }
+
+  const failed = checks.filter((c) => !c.ok);
+  for (const c of checks) {
+    console.log(`[${c.ok ? "PASS" : "FAIL"}] ${c.name} :: ${c.details}`);
+  }
+  console.log(`Checked ${checks.length} dashboard endpoint assertions against ${BASE}`);
+  return failed.length === 0 ? 0 : 1;
+}
+
+const code = await run();
+process.exit(code);

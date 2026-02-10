@@ -10,6 +10,10 @@ type CheckResult = {
   details: string;
 };
 
+function isObject(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
 async function fetchJson(path: string) {
   const res = await fetch(`${BASE}${path}`);
   const text = await res.text();
@@ -48,17 +52,58 @@ async function run(): Promise<number> {
       details: `status=${mini.res.status}`,
     });
     checks.push({
+      name: "mini-shape-core",
+      ok:
+        isObject(miniJson) &&
+        typeof miniJson.generatedAt === "string" &&
+        Number.isFinite(miniJson.port) &&
+        isObject(miniJson.bottleneck) &&
+        isObject(miniJson.capacity) &&
+        isObject(miniJson.headroom) &&
+        isObject(miniJson.pooling),
+      details: `core=${JSON.stringify({
+        generatedAt: miniJson?.generatedAt,
+        port: miniJson?.port,
+        hasBottleneck: isObject(miniJson?.bottleneck),
+        hasCapacity: isObject(miniJson?.capacity),
+        hasHeadroom: isObject(miniJson?.headroom),
+        hasPooling: isObject(miniJson?.pooling),
+      })}`,
+    });
+    checks.push({
       name: "mini-has-capacity",
       ok: typeof miniJson?.capacity?.summary === "string" &&
         Number.isFinite(miniJson?.capacity?.connectionsPct) &&
-        Number.isFinite(miniJson?.capacity?.workersPct),
+        Number.isFinite(miniJson?.capacity?.workersPct) &&
+        ["ok", "warn", "fail"].includes(String(miniJson?.capacity?.severity || "")),
       details: `capacity=${JSON.stringify(miniJson?.capacity ?? null)}`,
     });
     checks.push({
       name: "mini-has-headroom",
-      ok: Number.isFinite(miniJson?.headroom?.connections?.pct) &&
-        Number.isFinite(miniJson?.headroom?.workers?.pct),
+      ok:
+        Number.isFinite(miniJson?.headroom?.connections?.pct) &&
+        Number.isFinite(miniJson?.headroom?.workers?.pct) &&
+        Number.isFinite(miniJson?.headroom?.connections?.available) &&
+        Number.isFinite(miniJson?.headroom?.workers?.available) &&
+        ["ok", "warn", "fail"].includes(String(miniJson?.headroom?.connections?.severity || "")) &&
+        ["ok", "warn", "fail"].includes(String(miniJson?.headroom?.workers?.severity || "")),
       details: `headroom=${JSON.stringify(miniJson?.headroom ?? null)}`,
+    });
+    checks.push({
+      name: "mini-has-bottleneck",
+      ok:
+        typeof miniJson?.bottleneck?.kind === "string" &&
+        ["ok", "warn", "fail"].includes(String(miniJson?.bottleneck?.severity || "")),
+      details: `bottleneck=${JSON.stringify(miniJson?.bottleneck ?? null)}`,
+    });
+    checks.push({
+      name: "mini-pooling-live-shape",
+      ok:
+        Number.isFinite(miniJson?.pooling?.live?.connections?.inFlight) &&
+        Number.isFinite(miniJson?.pooling?.live?.connections?.max) &&
+        Number.isFinite(miniJson?.pooling?.live?.workers?.active) &&
+        Number.isFinite(miniJson?.pooling?.live?.workers?.max),
+      details: `poolingLive=${JSON.stringify(miniJson?.pooling?.live ?? null)}`,
     });
 
     const sev85 = await fetchJson("/api/dashboard/severity-test?load=85");
