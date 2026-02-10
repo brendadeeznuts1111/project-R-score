@@ -1031,8 +1031,8 @@ async function refreshMainTrendSummary() {
     const failRatePct = count > 0 ? Number(((failCount / count) * 100).toFixed(1)) : 0;
     const driftArrow = deltaLoad > 0 ? '↑' : deltaLoad < 0 ? '↓' : '→';
     const driftLoadClass =
-      deltaLoad >= 10 ? 'drift-badge drift-fail' :
-      deltaLoad > 0 ? 'drift-badge drift-warn' :
+      deltaLoad > 50 ? 'drift-badge drift-fail' :
+      deltaLoad >= 20 ? 'drift-badge drift-warn' :
       'drift-badge drift-ok';
     const failClass =
       failCount >= 3 || failRatePct >= 20 ? 'drift-badge drift-fail' :
@@ -1040,13 +1040,13 @@ async function refreshMainTrendSummary() {
       'drift-badge drift-ok';
     const coveragePct = Number(summary.windowCoveragePct || 0);
     const coverageClass =
-      coveragePct < 30 ? 'drift-badge drift-fail' :
-      coveragePct < 70 ? 'drift-badge drift-warn' :
+      coveragePct < 70 ? 'drift-badge drift-fail' :
+      coveragePct <= 90 ? 'drift-badge drift-warn' :
       'drift-badge drift-ok';
     const bottleneckChanges = Number(summary.bottleneckChanges || 0);
     const bottleneckClass =
-      bottleneckChanges >= 5 ? 'drift-badge drift-fail' :
-      bottleneckChanges >= 2 ? 'drift-badge drift-warn' :
+      bottleneckChanges > 5 ? 'drift-badge drift-fail' :
+      bottleneckChanges >= 3 ? 'drift-badge drift-warn' :
       'drift-badge drift-ok';
     const loadSpark = String(summary.sparklineLoad || '').trim() || '..........';
     const capSpark = String(summary.sparklineCapacity || '').trim() || '..........';
