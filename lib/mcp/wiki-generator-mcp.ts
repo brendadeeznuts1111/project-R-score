@@ -192,63 +192,7 @@ export class MCPWikiGenerator {
     return MCPWikiGenerator.templateMap.get(name);
   }
 
-  /**
-   * Enhanced template registration with metadata tracking
-   * @param template Template object with required fields
-   */
-  static registerCustomTemplate(template: WikiTemplate): void {
-    // Input validation
-    if (!template || typeof template !== 'object') {
-      throw new Error('Template must be a valid object');
-    }
-    
-    if (!template.name || typeof template.name !== 'string' || template.name.trim().length === 0) {
-      throw new Error('Template must have a valid name');
-    }
-    
-    if (!template.provider || !Object.values(DocumentationProvider).includes(template.provider)) {
-      throw new Error('Template must have a valid provider from DocumentationProvider enum');
-    }
-    
-    if (!template.format || typeof template.format !== 'string') {
-      throw new Error('Template must have a valid format');
-    }
-
-    // Add timestamps if not provided
-    const now = new Date().toISOString();
-    const enhancedTemplate = {
-      ...template,
-      createdAt: template.createdAt || now,
-      updatedAt: now,
-      version: template.version || '1.0.0',
-      usageCount: template.usageCount || 0,
-    };
-
-    // Check for duplicates and update
-    const existingIndex = MCPWikiGenerator.customTemplates.findIndex(t => t.name === template.name);
-    if (existingIndex >= 0) {
-      MCPWikiGenerator.customTemplates[existingIndex] = enhancedTemplate;
-      MCPWikiGenerator.templateMap.set(template.name, enhancedTemplate); // Update cache
-      console.log(styled(`📝 Updated custom template: ${template.name}`, 'info'));
-    } else {
-      MCPWikiGenerator.customTemplates.push(enhancedTemplate);
-      MCPWikiGenerator.templateMap.set(template.name, enhancedTemplate); // Add to cache
-      console.log(styled(`📝 Registered custom template: ${template.name}`, 'success'));
-    }
-    
-    // Mark map as initialized since we've manually updated it
-    MCPWikiGenerator.mapInitialized = true;
-
-    // Initialize metrics tracking
-    if (!MCPWikiGenerator.templateMetrics.has(template.name)) {
-      MCPWikiGenerator.templateMetrics.set(template.name, {
-        totalGenerations: 0,
-        successfulGenerations: 0,
-        averageGenerationTime: 0,
-        lastUsed: now,
-      });
-    }
-  }
+  // registerCustomTemplate is defined further down in the class (near line 1610+)
 
   /**
    * Advanced template search and filtering
@@ -446,9 +390,11 @@ export class MCPWikiGenerator {
    * @param maxAge Maximum age in milliseconds (default: 30 days)
    */
   static cleanupOldMetrics(maxAge?: number): void {
-    // Input validation
-    if (typeof maxAge !== 'number' || maxAge < 0) {
-      console.warn(styled('⚠️ Invalid maxAge provided to cleanupOldMetrics, using default', 'warning'));
+    // Input validation — undefined/omitted is normal, only warn on truly invalid values
+    if (maxAge === undefined || typeof maxAge !== 'number' || maxAge < 0) {
+      if (maxAge !== undefined) {
+        console.warn(styled('⚠️ Invalid maxAge provided to cleanupOldMetrics, using default', 'warning'));
+      }
       maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days default
     }
     
@@ -475,7 +421,9 @@ export class MCPWikiGenerator {
     }
     
     toDelete.forEach(name => MCPWikiGenerator.templateMetrics.delete(name));
-    console.log(styled(`🧹 Cleaned up ${toDelete.length} old template metrics`, 'info'));
+    if (toDelete.length > 0) {
+      console.log(styled(`🧹 Cleaned up ${toDelete.length} old template metrics`, 'info'));
+    }
   }
 
   /**
@@ -914,7 +862,7 @@ export class MCPWikiGenerator {
     const templateText = `${template.name} ${template.description} ${template.tags?.join(' ')}`.toLowerCase();
 
     // Provider matching
-    if (message.includes(template.provider.toLowerCase())) {
+    if (template.provider && message.includes(template.provider.toLowerCase())) {
       score += 0.3;
     }
 
@@ -1609,25 +1557,48 @@ export class MCPWikiGenerator {
    * Register a custom wiki template for internal tools
    */
   static registerCustomTemplate(template: WikiTemplate): void {
+    if (!template || typeof template !== 'object') {
+      throw new Error('Template must be a valid object');
+    }
+
     // Validate template structure
     if (!template.name || !template.baseUrl || !template.format) {
       throw new Error('Template must have name, baseUrl, and format');
     }
-    
+
     // Validate format is one of the allowed types
     const validFormats: WikiFormat[] = ['markdown', 'html', 'json', 'all'];
     if (!validFormats.includes(template.format)) {
       throw new Error(`Invalid format '${template.format}'. Must be one of: ${validFormats.join(', ')}`);
     }
-    
+
+    // Add timestamps if not provided
+    const now = new Date().toISOString();
+    const enhancedTemplate = {
+      ...template,
+      createdAt: template.createdAt || now,
+      updatedAt: now,
+      version: template.version || '1.0.0',
+    };
+
     // Check for duplicates
     const existingIndex = MCPWikiGenerator.customTemplates.findIndex(t => t.name === template.name);
     if (existingIndex >= 0) {
-      MCPWikiGenerator.customTemplates[existingIndex] = template;
-      console.log(styled(`📝 Updated custom template: ${template.name}`, 'info'));
+      MCPWikiGenerator.customTemplates[existingIndex] = enhancedTemplate;
+      MCPWikiGenerator.templateMap?.set(template.name, enhancedTemplate);
     } else {
-      MCPWikiGenerator.customTemplates.push(template);
-      console.log(styled(`📝 Registered custom template: ${template.name}`, 'success'));
+      MCPWikiGenerator.customTemplates.push(enhancedTemplate);
+      MCPWikiGenerator.templateMap?.set(template.name, enhancedTemplate);
+    }
+
+    // Initialize metrics tracking
+    if (!MCPWikiGenerator.templateMetrics.has(template.name)) {
+      MCPWikiGenerator.templateMetrics.set(template.name, {
+        totalGenerations: 0,
+        successfulGenerations: 0,
+        averageGenerationTime: 0,
+        lastUsed: now,
+      });
     }
   }
 

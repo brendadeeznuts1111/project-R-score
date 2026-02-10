@@ -1,3 +1,5 @@
+import type { ProtocolCircuitBreaker } from "./protocol-circuit-breaker";
+
 export type Protocol = "http" | "https" | "ws" | "wss" | "s3" | "file" | "data" | "blob" | "unix";
 
 export type ProtocolConfig = {
@@ -64,7 +66,7 @@ export const PROTOCOL_MATRIX: Record<Protocol, ProtocolConfig> = {
   },
 };
 
-type ExecuteRequest = {
+export type ExecuteRequest = {
   data: unknown;
   size?: number;
   options?: {
@@ -75,7 +77,7 @@ type ExecuteRequest = {
   };
 };
 
-type ExecuteResult = {
+export type ExecuteResult = {
   success: boolean;
   protocol: Protocol;
   data: unknown;
@@ -91,6 +93,15 @@ export class ProtocolOrchestrator {
   private static cache = new Map<string, CacheEntry>();
   private static metrics = new Map<Protocol, number>();
   private static activeConcurrent = 0;
+  private static circuitBreaker: ProtocolCircuitBreaker | null = null;
+
+  static setCircuitBreaker(cb: ProtocolCircuitBreaker): void {
+    this.circuitBreaker = cb;
+  }
+
+  static getCircuitBreaker(): ProtocolCircuitBreaker | null {
+    return this.circuitBreaker;
+  }
 
   static clearCache(): void {
     this.cache.clear();
@@ -144,8 +155,10 @@ export class ProtocolOrchestrator {
 
     try {
       for (const protocol of chain) {
+        if (this.circuitBreaker && !this.circuitBreaker.isAvailable(protocol)) continue;
         try {
           const data = await this.executeProtocol(protocol, request.data);
+          this.circuitBreaker?.recordSuccess(protocol);
           const latency = performance.now() - start;
           this.bumpMetric(protocol);
 
@@ -162,6 +175,7 @@ export class ProtocolOrchestrator {
 
           return result;
         } catch (err) {
+          this.circuitBreaker?.recordFailure(protocol);
           lastError = err instanceof Error ? err : new Error(String(err));
         }
       }
@@ -231,6 +245,7 @@ export class ProtocolOrchestrator {
     this.cache.clear();
     this.metrics.clear();
     this.activeConcurrent = 0;
+    this.circuitBreaker?.resetAll();
   }
 
   private static bumpMetric(protocol: Protocol): void {

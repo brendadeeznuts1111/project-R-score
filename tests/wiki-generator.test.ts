@@ -4,7 +4,7 @@ import { DocumentationProvider } from '../lib/docs/constants/enums';
 
 const makeTemplate = (name: string) => ({
   name,
-  provider: DocumentationProvider.CONFLUENCE,
+  provider: DocumentationProvider.INTERNAL_WIKI,
   baseUrl: 'https://docs.example.com',
   format: 'markdown' as const,
   content: '# Test Template',
