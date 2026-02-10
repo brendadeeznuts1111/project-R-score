@@ -1,8 +1,21 @@
 # Kimi Shell Integration v2.0
 
-## Unified Shell Bridge
+## Overview
 
-The unified shell bridge integrates **Kimi Shell**, **OpenClaw**, and **Profile Terminal** into a single MCP interface with Bun-native signal handling and graceful shutdown.
+This package provides a **Unified Shell Bridge** that integrates **Kimi Shell**, **OpenClaw**, and **Profile Terminal** into a single MCP interface with Bun-native signal handling and graceful shutdown.
+
+> **Note**: For Zsh integration with Kimi CLI, see the official [MoonshotAI/zsh-kimi-cli](https://github.com/MoonshotAI/zsh-kimi-cli) plugin. This bridge complements (not replaces) the official Zsh plugin by providing MCP server capabilities.
+
+### Relationship to Official Plugins
+
+| Component | Purpose | Repository |
+|-----------|---------|------------|
+| **zsh-kimi-cli** | Zsh keybindings (Ctrl-X) for Kimi CLI | [MoonshotAI/zsh-kimi-cli](https://github.com/MoonshotAI/zsh-kimi-cli) |
+| **unified-shell-bridge** | MCP server with OpenClaw/Profile integration | This package |
+
+Use both together:
+1. Install official Zsh plugin for terminal interaction
+2. Use unified bridge for MCP tooling and automation
 
 ### Location
 - **Bridge**: `~/.kimi/tools/unified-shell-bridge.ts`
@@ -84,14 +97,43 @@ export MATRIX_PROFILES_DIR="$HOME/.matrix/profiles"
 export OPENCLAW_GATEWAY_TOKEN=$(bun -e 'const t=await Bun.secrets.get({service:"com.openclaw.gateway",name:"gateway_token"});console.log(t)')
 ```
 
+### Installation
+
+#### Step 1: Install Official Zsh Plugin (Recommended)
+
+```bash
+# Oh My Zsh
+git clone https://github.com/MoonshotAI/zsh-kimi-cli.git \
+  ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/kimi-cli
+# Add to ~/.zshrc: plugins=(... kimi-cli)
+
+# Zinit
+zinit light MoonshotAI/zsh-kimi-cli
+
+# Manual
+git clone https://github.com/MoonshotAI/zsh-kimi-cli.git ~/.zsh/kimi-cli
+echo "source ~/.zsh/kimi-cli/kimi-cli.plugin.zsh" >> ~/.zshrc
+```
+
+#### Step 2: Install Unified Shell Bridge
+
+```bash
+# Copy bridge to Kimi tools directory
+mkdir -p ~/.kimi/tools
+cp unified-shell-bridge.ts ~/.kimi/tools/
+cp mcp.json ~/.kimi/
+```
+
 ### Quick Commands
 
 ```bash
-# Start Kimi MCP server
+# Start Kimi MCP server (unified bridge)
 kimi mcp serve
-
-# Or use unified bridge directly
+# Or directly:
 bun run ~/.kimi/tools/unified-shell-bridge.ts
+
+# In Zsh: Press Ctrl-X to start Kimi CLI mode
+# Then use MCP tools via unified bridge
 
 # Run tests
 bun test projects/analysis/matrix-analysis/scripts/kimi-shell-integration/unified-shell-bridge.test.ts
