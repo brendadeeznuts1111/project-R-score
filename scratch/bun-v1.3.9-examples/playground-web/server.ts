@@ -537,6 +537,27 @@ process.on("message", (msg) => {
 });`,
   },
   {
+    id: "brand-bench-results",
+    name: "Brand Benchmark Results",
+    description: "Run brand benchmarks and display results with Bun.inspect.table() formatting",
+    category: "Performance",
+    code: `// Run brand benchmarks with table output
+bun run scripts/brand-bench.ts
+
+// Sample output with Bun.inspect.table():
+// 📊 Benchmark Results:
+// ┌───┬───────────────────────────┬─────────┬───────────┬─────────────┐
+// │   │ operation                 │ ops/sec │ time (ms) │ performance │
+// ├───┼───────────────────────────┼─────────┼───────────┼─────────────┤
+// │ 0 │ brand.generatePalette     │ 146147  │ 1368.48   │ ✅ OK       │
+// │ 1 │ brand.Bun.color(hex)      │ 3054848 │ 130.94    │ 🔥 Fast     │
+// │ 2 │ brand.Bun.color(ansi)     │ 3513039 │ 113.86    │ 🔥 Fast     │
+// │ 3 │ brand.Bun.markdown.render │ 1287645 │ 93.19     │ 🔥 Fast     │
+// │ 4 │ brand.Bun.markdown.react  │ 762851  │ 157.30    │ ⚡ Good      │
+// └───┴───────────────────────────┴─────────┴───────────┴─────────────┘
+// 🏆 Best: brand.Bun.color(ansi)`,
+  },
+  {
     id: "inspect-table",
     name: "Bun.inspect.table()",
     description: "Formatted table output for benchmarks, config diffs, and data comparison",
