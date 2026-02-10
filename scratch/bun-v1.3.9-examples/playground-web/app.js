@@ -1142,6 +1142,7 @@ function renderDemo(demo) {
           <button class="run-btn" onclick="refreshProcessRuntimeStatus()">↻ Refresh Process Runtime</button>
           <button class="run-btn" onclick="refreshSocketRuntimeStatus()">↻ Refresh Socket Runtime</button>
           <button class="run-btn" onclick="refreshWorkerPoolDiagnostics()">↻ Refresh Worker Pool</button>
+          <button class="run-btn" onclick="runWorkerPoolBench()">📈 Bench Worker Pool</button>
         </div>
         <div id="process-runtime-output" class="output" style="display:block; margin-top:0.75rem;">Loading process runtime...</div>
         <div id="socket-runtime-output" class="output" style="display:block; margin-top:0.75rem;">Loading socket runtime...</div>
@@ -2275,11 +2276,15 @@ async function refreshWorkerPoolDiagnostics() {
   statusDiv.textContent = 'Loading worker pool diagnostics...';
 
   try {
-    const response = await fetch('/api/control/worker-pool');
-    const data = await response.json();
-    const pool = data?.pool || {};
+    const [diagRes, fullRes] = await Promise.all([
+      fetch('/api/control/worker-pool/diagnostics'),
+      fetch('/api/control/worker-pool'),
+    ]);
+    const data = await diagRes.json();
+    const full = await fullRes.json();
+    const pool = full?.pool || {};
     const diagnostics = data?.diagnostics || {};
-    const config = data?.config || {};
+    const config = full?.config || {};
     const latestBench = data?.latestBench || {};
     const lastErrors = Array.isArray(diagnostics?.lastErrors)
       ? diagnostics.lastErrors.slice(-6)
@@ -2312,6 +2317,36 @@ async function refreshWorkerPoolDiagnostics() {
   } catch (error) {
     statusDiv.className = 'output error';
     statusDiv.textContent = `Failed to load worker pool diagnostics: ${error.message}`;
+  }
+}
+
+async function runWorkerPoolBench() {
+  const statusDiv = document.getElementById('worker-pool-output');
+  if (!statusDiv) return;
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = 'Running worker pool benchmark snapshot...';
+
+  try {
+    const response = await fetch('/api/control/worker-pool/bench?iterations=40&concurrency=4', {
+      method: 'POST',
+    });
+    const data = await response.json();
+    const snapshot = data?.snapshot || {};
+    const gate = data?.gate || {};
+    const lines = [
+      `generatedAt: ${data?.generatedAt || 'n/a'}`,
+      `gate: pass=${String(gate?.pass ?? false)} compared=${String(gate?.compared ?? false)} reason=${gate?.reason || 'n/a'}`,
+      `latencyMs: p50=${snapshot?.latencyMs?.p50 ?? 'n/a'} p95=${snapshot?.latencyMs?.p95 ?? 'n/a'} max=${snapshot?.latencyMs?.max ?? 'n/a'}`,
+      `throughputRps: ${snapshot?.throughputRps ?? 'n/a'}`,
+      `persisted: ${data?.persisted?.snapshotPath || 'n/a'}`,
+    ];
+    statusDiv.className = gate?.pass ? 'output success' : 'output warn';
+    statusDiv.textContent = lines.join('\n');
+    await refreshWorkerPoolDiagnostics();
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `Worker pool benchmark failed: ${error.message}`;
   }
 }
 
