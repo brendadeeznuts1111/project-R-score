@@ -1,9 +1,9 @@
 #!/usr/bin/env bun
-import { withDashboardServer } from "./lib/dashboard-test-server";
-
-const HOST = process.env.DASHBOARD_HOST || "localhost";
-const PORT = Number.parseInt(process.env.DASHBOARD_PORT || "3011", 10);
-const BASE = `http://${HOST}:${PORT}`;
+import {
+  applyDashboardTestEnv,
+  getDashboardTestConfig,
+  withDashboardServer,
+} from "./lib/dashboard-test-server";
 
 type CheckResult = {
   name: string;
@@ -12,7 +12,8 @@ type CheckResult = {
 };
 
 async function fetchJson(path: string) {
-  const res = await fetch(`${BASE}${path}`);
+  const { base } = getDashboardTestConfig();
+  const res = await fetch(`${base}${path}`);
   const text = await res.text();
   let json: any = null;
   try {
@@ -24,7 +25,8 @@ async function fetchJson(path: string) {
 }
 
 async function fetchJsonWithInit(path: string, init: RequestInit) {
-  const res = await fetch(`${BASE}${path}`, init);
+  const { base } = getDashboardTestConfig();
+  const res = await fetch(`${base}${path}`, init);
   const text = await res.text();
   let json: any = null;
   try {
@@ -643,9 +645,18 @@ async function run(): Promise<number> {
   for (const c of checks) {
     console.log(`[${c.ok ? "PASS" : "FAIL"}] ${c.name} :: ${c.details}`);
   }
-  console.log(`Checked ${checks.length} dashboard endpoint assertions against ${BASE}`);
+  const { base } = getDashboardTestConfig();
+  console.log(`Checked ${checks.length} dashboard endpoint assertions against ${base}`);
   return failed.length === 0 ? 0 : 1;
 }
 
-const code = await withDashboardServer(HOST, PORT, run);
-process.exit(code);
+export async function runDashboardEndpointChecks(): Promise<number> {
+  return run();
+}
+
+if (import.meta.main) {
+  const config = getDashboardTestConfig();
+  applyDashboardTestEnv(config);
+  const code = await withDashboardServer(config.host, config.port, runDashboardEndpointChecks);
+  process.exit(code);
+}

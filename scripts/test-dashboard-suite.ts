@@ -1,33 +1,28 @@
 #!/usr/bin/env bun
-
-function spawnCmd(cmd: string[]) {
-  return Bun.spawn({
-    cmd,
-    stdout: "inherit",
-    stderr: "inherit",
-    stdin: "ignore",
-    env: {
-      ...process.env,
-    },
-  });
-}
+import {
+  applyDashboardTestEnv,
+  getDashboardTestConfig,
+  withDashboardServer,
+} from "./lib/dashboard-test-server";
+import { runDashboardMiniChecks } from "./test-dashboard-mini";
+import { runDashboardEndpointChecks } from "./test-dashboard-endpoints";
+import { runDashboardWebsocketChecks } from "./test-dashboard-websocket";
 
 async function run(): Promise<number> {
-  const mini = spawnCmd(["bun", "run", "test:dashboard:mini"]);
-  const miniCode = await mini.exited;
+  const miniCode = await runDashboardMiniChecks();
   if (miniCode !== 0) return miniCode;
 
-  const endpoints = spawnCmd(["bun", "run", "test:dashboard:endpoints"]);
-  const endpointCode = await endpoints.exited;
+  const endpointCode = await runDashboardEndpointChecks();
   if (endpointCode !== 0) return endpointCode;
 
-  const websocket = spawnCmd(["bun", "run", "test:dashboard:websocket"]);
-  const websocketCode = await websocket.exited;
+  const websocketCode = await runDashboardWebsocketChecks();
   if (websocketCode !== 0) return websocketCode;
 
   console.log("[PASS] dashboard-suite :: mini + endpoints + websocket green");
   return 0;
 }
 
-const code = await run();
+const config = getDashboardTestConfig();
+applyDashboardTestEnv(config);
+const code = await withDashboardServer(config.host, config.port, run);
 process.exit(code);

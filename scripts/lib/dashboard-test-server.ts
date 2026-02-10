@@ -1,5 +1,33 @@
 const SERVER_CMD = ["bun", "run", "scratch/bun-v1.3.9-examples/playground-web/server.ts"];
 
+export type DashboardTestConfig = {
+  host: string;
+  port: number;
+  base: string;
+};
+
+export function getDashboardTestConfig(): DashboardTestConfig {
+  const host = process.env.DASHBOARD_HOST || "localhost";
+  const port = Number.parseInt(
+    process.env.DASHBOARD_TEST_PORT ||
+      process.env.DASHBOARD_PORT ||
+      process.env.PLAYGROUND_PORT ||
+      process.env.PORT ||
+      "3401",
+    10
+  );
+  const safePort = Number.isFinite(port) && port > 0 ? port : 3401;
+  const base = `http://${host}:${safePort}`;
+  return { host, port: safePort, base };
+}
+
+export function applyDashboardTestEnv(config: DashboardTestConfig): void {
+  process.env.DASHBOARD_HOST = config.host;
+  process.env.DASHBOARD_PORT = String(config.port);
+  process.env.PLAYGROUND_PORT = String(config.port);
+  process.env.PORT = String(config.port);
+}
+
 export async function withDashboardServer<T>(
   host: string,
   port: number,

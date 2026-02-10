@@ -1,10 +1,9 @@
 #!/usr/bin/env bun
-import { withDashboardServer } from "./lib/dashboard-test-server";
-
-const HOST = process.env.DASHBOARD_HOST || "localhost";
-const PORT = Number.parseInt(process.env.DASHBOARD_PORT || "3011", 10);
-const URL = `ws://${HOST}:${PORT}/ws/capacity`;
-const BASE = `http://${HOST}:${PORT}`;
+import {
+  applyDashboardTestEnv,
+  getDashboardTestConfig,
+  withDashboardServer,
+} from "./lib/dashboard-test-server";
 
 type CheckResult = {
   name: string;
@@ -20,10 +19,12 @@ function printChecks(checks: CheckResult[]) {
 
 async function run(): Promise<number> {
   const checks: CheckResult[] = [];
+  const { host, port, base } = getDashboardTestConfig();
+  const wsUrl = `ws://${host}:${port}/ws/capacity`;
 
   try {
     const message = await new Promise<any>((resolve, reject) => {
-      const ws = new WebSocket(URL);
+      const ws = new WebSocket(wsUrl);
       const timeout = setTimeout(() => {
         try {
           ws.close();
@@ -76,7 +77,7 @@ async function run(): Promise<number> {
       })}`,
     });
 
-    const socketRuntimeRes = await fetch(`${BASE}/api/control/socket/runtime`);
+    const socketRuntimeRes = await fetch(`${base}/api/control/socket/runtime`);
     const socketRuntime = await socketRuntimeRes.json();
     checks.push({
       name: "websocket-runtime-counters",
@@ -101,9 +102,17 @@ async function run(): Promise<number> {
 
   printChecks(checks);
   const failed = checks.filter((c) => !c.ok);
-  console.log(`Checked ${checks.length} websocket assertions against ${URL}`);
+  console.log(`Checked ${checks.length} websocket assertions against ${wsUrl}`);
   return failed.length === 0 ? 0 : 1;
 }
 
-const code = await withDashboardServer(HOST, PORT, run);
-process.exit(code);
+export async function runDashboardWebsocketChecks(): Promise<number> {
+  return run();
+}
+
+if (import.meta.main) {
+  const config = getDashboardTestConfig();
+  applyDashboardTestEnv(config);
+  const code = await withDashboardServer(config.host, config.port, runDashboardWebsocketChecks);
+  process.exit(code);
+}

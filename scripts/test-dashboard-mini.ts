@@ -1,9 +1,9 @@
 #!/usr/bin/env bun
-import { withDashboardServer } from "./lib/dashboard-test-server";
-
-const HOST = process.env.DASHBOARD_HOST || "localhost";
-const PORT = Number.parseInt(process.env.DASHBOARD_PORT || "3011", 10);
-const BASE = `http://${HOST}:${PORT}`;
+import {
+  applyDashboardTestEnv,
+  getDashboardTestConfig,
+  withDashboardServer,
+} from "./lib/dashboard-test-server";
 
 type CheckResult = {
   name: string;
@@ -16,7 +16,8 @@ function isObject(value: unknown): value is Record<string, unknown> {
 }
 
 async function fetchJson(path: string) {
-  const res = await fetch(`${BASE}${path}`);
+  const { base } = getDashboardTestConfig();
+  const res = await fetch(`${base}${path}`);
   const text = await res.text();
   let json: any = null;
   try {
@@ -160,9 +161,18 @@ async function run(): Promise<number> {
   for (const check of checks) {
     console.log(`[${check.ok ? "PASS" : "FAIL"}] ${check.name} :: ${check.details}`);
   }
-  console.log(`Checked ${checks.length} dashboard mini assertions against ${BASE}`);
+  const { base } = getDashboardTestConfig();
+  console.log(`Checked ${checks.length} dashboard mini assertions against ${base}`);
   return failed.length === 0 ? 0 : 1;
 }
 
-const code = await withDashboardServer(HOST, PORT, run);
-process.exit(code);
+export async function runDashboardMiniChecks(): Promise<number> {
+  return run();
+}
+
+if (import.meta.main) {
+  const config = getDashboardTestConfig();
+  applyDashboardTestEnv(config);
+  const code = await withDashboardServer(config.host, config.port, runDashboardMiniChecks);
+  process.exit(code);
+}
