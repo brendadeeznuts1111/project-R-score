@@ -4529,6 +4529,75 @@ const routes = {
     };
   },
 
+  "/api/control/demo-module/full-loop": async (req: Request) => {
+    const url = new URL(req.url);
+    const id = String(url.searchParams.get("id") || "").trim();
+    if (!id) {
+      return {
+        ok: false,
+        id: "",
+        error: "Missing required query parameter: id",
+      };
+    }
+
+    const knownDemo = DEMOS.find((demo) => demo.id === id);
+    if (!knownDemo) {
+      return {
+        ok: false,
+        id,
+        error: `Unknown demo id: ${id}`,
+      };
+    }
+
+    const startedAt = Date.now();
+    const validate = await runCommand(["bun", "run", "validate:demo", "--", `--id=${id}`], PROJECT_ROOT);
+    const bench = validate.exitCode === 0
+      ? await runCommand(["bun", "run", "demo:module:bench", "--", `--id=${id}`], PROJECT_ROOT)
+      : { output: "", error: "skipped: validate failed", exitCode: 1 };
+    const runDemo = bench.exitCode === 0
+      ? await routes["/api/run/:id"](
+          new Request(`http://localhost/api/run/${id}`, {
+            method: "GET",
+          })
+        )
+      : null;
+    let runResult: any = null;
+    if (runDemo) {
+      try {
+        runResult = await runDemo.json();
+      } catch {
+        runResult = { success: false, error: "unable to parse demo run response" };
+      }
+    }
+
+    const ok = validate.exitCode === 0 && bench.exitCode === 0 && Boolean(runResult?.success);
+    return {
+      ok,
+      id,
+      durationMs: Date.now() - startedAt,
+      steps: {
+        validate: {
+          ok: validate.exitCode === 0,
+          exitCode: validate.exitCode,
+          output: validate.output,
+          error: validate.error,
+        },
+        bench: {
+          ok: bench.exitCode === 0,
+          exitCode: bench.exitCode,
+          output: bench.output,
+          error: bench.error,
+        },
+        run: {
+          ok: Boolean(runResult?.success),
+          exitCode: Number(runResult?.exitCode ?? (runResult?.success ? 0 : 1)),
+          output: runResult?.output || "",
+          error: runResult?.error || "",
+        },
+      },
+    };
+  },
+
   "/api/control/component-status": () => {
     const rows = COMPONENT_STATUS_MATRIX.map((row) => ({
       ...row,
@@ -5289,6 +5358,9 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/demo-module/bench") {
         return jsonResponse(await routes["/api/control/demo-module/bench"](req));
+      }
+      if (url.pathname === "/api/control/demo-module/full-loop") {
+        return jsonResponse(await routes["/api/control/demo-module/full-loop"](req));
       }
 
       if (url.pathname === "/api/control/component-status") {

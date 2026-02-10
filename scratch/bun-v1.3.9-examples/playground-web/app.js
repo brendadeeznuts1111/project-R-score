@@ -716,10 +716,12 @@ function renderDemo(demo) {
       <div class="demo-contract-head">
         <span class="demo-contract-chip">lang: ${escapeHtml(language)}</span>
         <span class="demo-contract-chip">flags: ${flags.length}</span>
+        <span id="demo-contract-status-chip" class="demo-contract-chip">status: unknown</span>
       </div>
       <div class="demo-contract-actions">
         <button class="run-btn" onclick="runDemoContractValidate('${demo.id}')">✅ Validate Module</button>
         <button class="run-btn" onclick="runDemoContractBench('${demo.id}')">📈 Bench Module</button>
+        <button class="run-btn" onclick="runDemoContractFullLoop('${demo.id}')">🔁 Full Loop</button>
       </div>
       <div class="demo-contract-grid">
         <div>
@@ -1037,6 +1039,7 @@ function setupEventListeners() {
   window.refreshMainTrendSummary = refreshMainTrendSummary;
   window.runDemoContractValidate = runDemoContractValidate;
   window.runDemoContractBench = runDemoContractBench;
+  window.runDemoContractFullLoop = runDemoContractFullLoop;
   window.refreshHeaderState = refreshHeaderState;
   window.loadDemo = (id) => {
     selectDemo(id);
@@ -1046,19 +1049,23 @@ function setupEventListeners() {
 
 async function runDemoContractAction(path) {
   const out = document.getElementById('demo-contract-output');
+  const statusChip = document.getElementById('demo-contract-status-chip');
   if (!out) return;
   out.style.display = 'block';
   out.className = 'output loading';
   out.textContent = 'Running contract action...';
+  if (statusChip) statusChip.textContent = 'status: running';
   try {
     const response = await fetch(path);
     const data = await response.json();
     const ok = Boolean(data?.ok);
     out.className = ok ? 'output success' : 'output error';
     out.textContent = data?.output || data?.error || JSON.stringify(data, null, 2);
+    if (statusChip) statusChip.textContent = `status: ${ok ? 'pass' : 'fail'}`;
   } catch (error) {
     out.className = 'output error';
     out.textContent = `Contract action failed: ${error.message}`;
+    if (statusChip) statusChip.textContent = 'status: fail';
   }
 }
 
@@ -1068,6 +1075,40 @@ async function runDemoContractValidate(id) {
 
 async function runDemoContractBench(id) {
   await runDemoContractAction(`/api/control/demo-module/bench?id=${encodeURIComponent(id)}`);
+}
+
+async function runDemoContractFullLoop(id) {
+  const out = document.getElementById('demo-contract-output');
+  const statusChip = document.getElementById('demo-contract-status-chip');
+  if (!out) return;
+  out.style.display = 'block';
+  out.className = 'output loading';
+  out.textContent = 'Running full loop (validate + bench + demo run)...';
+  if (statusChip) statusChip.textContent = 'status: running';
+  try {
+    const response = await fetch(`/api/control/demo-module/full-loop?id=${encodeURIComponent(id)}`);
+    const data = await response.json();
+    const ok = Boolean(data?.ok);
+    const steps = data?.steps || {};
+    out.className = ok ? 'output success' : 'output error';
+    out.textContent = [
+      `id=${data?.id || id}`,
+      `ok=${String(ok)} durationMs=${data?.durationMs ?? 'n/a'}`,
+      `validate: ok=${String(steps?.validate?.ok)} exit=${steps?.validate?.exitCode ?? 'n/a'}`,
+      `bench: ok=${String(steps?.bench?.ok)} exit=${steps?.bench?.exitCode ?? 'n/a'}`,
+      `run: ok=${String(steps?.run?.ok)} exit=${steps?.run?.exitCode ?? 'n/a'}`,
+      '',
+      String(steps?.run?.output || steps?.run?.error || ''),
+    ].join('\n');
+    if (statusChip) statusChip.textContent = `status: ${ok ? 'pass' : 'fail'}`;
+    if (ok) {
+      await refreshHeaderState();
+    }
+  } catch (error) {
+    out.className = 'output error';
+    out.textContent = `Full loop failed: ${error.message}`;
+    if (statusChip) statusChip.textContent = 'status: fail';
+  }
 }
 
 function startMainTrendSummaryAutoRefresh() {

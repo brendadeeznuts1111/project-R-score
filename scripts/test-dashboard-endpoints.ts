@@ -249,6 +249,20 @@ async function run(): Promise<number> {
         Number.isFinite(demoBench.json?.exitCode),
       `status=${demoBench.res.status} ok=${String(demoBench.json?.ok)}`
     );
+
+    const demoFullLoop = await fetchJson("/api/control/demo-module/full-loop?id=markdown-simd");
+    check(
+      checks,
+      "demo-module-full-loop-contract",
+      demoFullLoop.res.status === 200 &&
+        demoFullLoop.json?.ok === true &&
+        demoFullLoop.json?.id === "markdown-simd" &&
+        Number.isFinite(demoFullLoop.json?.durationMs) &&
+        demoFullLoop.json?.steps?.validate?.ok === true &&
+        demoFullLoop.json?.steps?.bench?.ok === true &&
+        demoFullLoop.json?.steps?.run?.ok === true,
+      `status=${demoFullLoop.res.status} ok=${String(demoFullLoop.json?.ok)}`
+    );
   } catch (error) {
     check(
       checks,
