@@ -46,3 +46,13 @@ console.log("  • Test fails with timeout error if exceeded");
 
 console.log("\n🚀 Run with:");
 console.log("  bun test my-test.ts");
+
+console.log("\n⚙️  CLI Flags Integration:");
+console.log("-".repeat(70));
+console.log("bun test --timeout 10000       # Set default timeout to 10s");
+console.log("bun test --bail                # Stop on first failure");
+console.log("bun test --test-name-pattern   # Run tests matching pattern");
+console.log("");
+console.log("Example:");
+console.log("  bun test --timeout 30000 --bail tests/");
+console.log("    (30s timeout, stop on first fail, run all in tests/)");
