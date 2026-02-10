@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import { withDashboardServer } from "./lib/dashboard-test-server";
 
 const HOST = process.env.DASHBOARD_HOST || "localhost";
 const PORT = Number.parseInt(process.env.DASHBOARD_PORT || "3011", 10);
@@ -298,5 +299,5 @@ async function run(): Promise<number> {
   return failed.length === 0 ? 0 : 1;
 }
 
-const code = await run();
+const code = await withDashboardServer(HOST, PORT, run);
 process.exit(code);
