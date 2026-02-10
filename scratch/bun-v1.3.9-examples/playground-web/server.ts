@@ -856,6 +856,25 @@ test.todo("todo", () => {});     // Pending
 describe.only("module", () => {});
 describe.skip("legacy", () => {});`,
   },
+  {
+    id: "test-exec-control",
+    name: "Test Execution Control",
+    description: "Concurrent tests, randomization, reruns, bail, watch mode",
+    category: "Testing",
+    code: `// Concurrent execution
+bun test --concurrent
+bun test --concurrent --max-concurrency 4
+
+// Randomize & rerun
+test.concurrent("parallel 1", async () => {});
+test.serial("sequential 1", () => {});
+bun test --randomize --seed 12345
+bun test --rerun-each 100
+
+// Bail & watch
+bun test --bail
+bun test --watch`,
+  },
 ];
 
 async function runCommand(cmd: string[], cwd: string): Promise<{ output: string; error: string; exitCode: number }> {
@@ -2142,6 +2161,7 @@ const routes = {
       "test-config": "config-demo",
       "test-lifecycle": "lifecycle-demo",
       "test-filtering": "filtering-demo",
+      "test-exec-control": "exec-control-demo",
     };
     
     const scriptName = scriptMap[id || ""] || id;
