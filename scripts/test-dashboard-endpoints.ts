@@ -250,7 +250,10 @@ async function run(): Promise<number> {
         featureNames.has("Object.defineProperty Intrinsic") &&
         featureNames.has("String.replace Rope Return") &&
         featureNames.has("node:http2 Rare Crash Fixes") &&
-        featureNames.has("HTTP Chunked Parser Smuggling Fix"),
+        featureNames.has("HTTP Chunked Parser Smuggling Fix") &&
+        featureNames.has("CompileTarget SIMD Type Fix") &&
+        featureNames.has("CompileTarget Baseline/Modern Type Fix") &&
+        featureNames.has("Socket.reload Type Fix"),
       `status=${featureMatrix.res.status} rows=${featureRows.length}`
     );
 

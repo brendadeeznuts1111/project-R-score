@@ -689,6 +689,36 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     memoryImpact: "None",
     productionReady: "yes",
   },
+  {
+    feature: "CompileTarget SIMD Type Fix",
+    cliOrApi: "Bun.Build.CompileTarget",
+    defaultBehavior: "Type fix (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Cross-compile target selection in TypeScript",
+    performanceImpact: "Correctness fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "CompileTarget Baseline/Modern Type Fix",
+    cliOrApi: "Bun.Build.CompileTarget",
+    defaultBehavior: "Type fix (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "bun-linux-x64-baseline / bun-linux-x64-modern TS support",
+    performanceImpact: "Correctness fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "Socket.reload Type Fix",
+    cliOrApi: "Socket.reload()",
+    defaultBehavior: "Type fix (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Requires { socket: handler } TypeScript shape",
+    performanceImpact: "Correctness fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
 ];
 
 const COMPONENT_STATUS_MATRIX: ComponentStatusRow[] = [
@@ -4549,6 +4579,9 @@ const routes = {
       "WebSocket blob Client Crash Fix",
       "Proxy Keep-Alive Absolute-URL Fix",
       "HTTP Chunked Parser Smuggling Fix",
+      "CompileTarget SIMD Type Fix",
+      "CompileTarget Baseline/Modern Type Fix",
+      "Socket.reload Type Fix",
     ]);
     const bunV139Plus = isBunVersionAtLeast(Bun.version || "0.0.0", [1, 3, 9]);
 

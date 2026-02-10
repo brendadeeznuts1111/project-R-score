@@ -1260,6 +1260,9 @@ async function refreshFeatureMatrixStatus() {
       'Bun.stringWidth Thai/Lao Fix',
       'Proxy Keep-Alive Absolute-URL Fix',
       'HTTP Chunked Parser Smuggling Fix',
+      'CompileTarget SIMD Type Fix',
+      'CompileTarget Baseline/Modern Type Fix',
+      'Socket.reload Type Fix',
     ]);
     const header = [
       `version: ${data.version || 'unknown'}`,
