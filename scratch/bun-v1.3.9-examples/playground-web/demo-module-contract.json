@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "total": 56,
-  "generatedAt": "2026-02-10T16:42:50.617Z",
+  "total": 57,
+  "generatedAt": "2026-02-10T16:55:21.363Z",
   "modules": {
     "governance-status": {
       "language": "bash",
@@ -1377,6 +1377,32 @@
       ],
       "benchCommand": "bun run scripts/demo-module-bench.ts --id=registry-integration",
       "testCommand": "bun run scripts/demo-module-test.ts --id=registry-integration",
+      "benchmarkBaseline": {
+        "mode": "map-size",
+        "iterations": 2000000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "resilient-fetch-ultra": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "retries": 3,
+        "circuitBreakerEnabled": true,
+        "predictiveEnabled": true
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=resilient-fetch-ultra",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=resilient-fetch-ultra",
       "benchmarkBaseline": {
         "mode": "map-size",
         "iterations": 2000000,

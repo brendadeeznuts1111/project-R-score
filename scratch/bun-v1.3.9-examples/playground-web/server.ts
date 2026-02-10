@@ -19,6 +19,8 @@ import { summarizeDeploymentReadiness } from "../../../deployment/readiness-matr
 import { summarizePerformanceImpact } from "../../../analysis/performance-impact";
 import { summarizeSecurityPosture } from "../../../security/posture-report";
 import { listDomains, renderDomainGraph, renderFullHierarchy } from "../../../docs/domain-renderer";
+import { resilientFetchBun } from "../../../src/fetch/resilient-bun";
+import { UltraResilientFetch } from "../../../src/fetch/resilient-ultra";
 import {
   ExecutiveVerdict,
   ProjectRecommendations,
@@ -1042,8 +1044,15 @@ async function probeUrlHealth(url: string, timeoutMs: number): Promise<{
 }> {
   const start = performance.now();
   try {
-    const response = await fetch(url, {
-      signal: AbortSignal.timeout(timeoutMs),
+    const parsed = new URL(url);
+    const path = `${parsed.pathname}${parsed.search}`;
+    const origin = `${parsed.protocol}//${parsed.host}`;
+    const response = await resilientFetchBun(path, {
+      origins: [origin],
+      timeoutMs,
+      retries: 2,
+      backoffMs: 150,
+      method: "GET",
       redirect: "follow",
     });
     return {
@@ -1784,6 +1793,18 @@ curl -s http://localhost:<port>/api/info | jq '.registry'
 
 # feature matrix summary includes registry state
 curl -s http://localhost:<port>/api/control/feature-matrix | jq '.registry'
+`,
+  },
+  {
+    id: "resilient-fetch-ultra",
+    name: "Resilient Fetch Ultra",
+    description: "Circuit-breaker + predictive + health-aware failover fetch client (Tier-1380)",
+    category: "Governance",
+    code: `# Run resilient fetch ultra demo payload
+curl -s http://localhost:<port>/api/run/resilient-fetch-ultra | jq .
+
+# Inspect health endpoint used by failover
+curl -s http://localhost:<port>/api/health | jq '{status, runtime: {port: .runtime.port}}'
 `,
   },
   {
@@ -5456,6 +5477,17 @@ const routes = {
       });
     }
 
+    if (id === "feature-matrix") {
+      const matrix = await routes["/api/control/feature-matrix"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(matrix, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     if (id === "deployment-readiness-matrix") {
       const matrix = routes["/api/control/deployment-readiness"]();
       return new Response(JSON.stringify({
@@ -5620,6 +5652,63 @@ const routes = {
       });
     }
 
+    if (id === "resilient-fetch-ultra") {
+      const ultra = new UltraResilientFetch({
+        origins: [
+          { url: "http://localhost:3999", weight: 10, priority: 1, tags: ["fallback"] },
+          { url: `http://localhost:${ACTIVE_PORT}`, weight: 100, priority: 2, tags: ["local-primary"] },
+        ],
+        timeoutMs: 2000,
+        retries: 2,
+        backoffMs: 50,
+        backoffMultiplier: 2,
+        maxBackoffMs: 400,
+        circuitBreaker: {
+          enabled: true,
+          failureThreshold: 2,
+          resetTimeoutMs: 5000,
+          halfOpenMaxCalls: 1,
+        },
+        predictive: {
+          enabled: true,
+          latencyThresholdMs: 250,
+          errorRateThreshold: 0.25,
+        },
+        metrics: {
+          enabled: true,
+        },
+      });
+      try {
+        const response = await ultra.fetch("/api/health");
+        const body = await response.json();
+        return new Response(JSON.stringify({
+          success: true,
+          exitCode: 0,
+          output: JSON.stringify({
+            responseStatus: response.status,
+            service: body?.service ?? null,
+            report: ultra.getMetricsReport(),
+          }, null, 2),
+        }), {
+          headers: { "Content-Type": "application/json" },
+        });
+      } catch (error) {
+        return new Response(JSON.stringify({
+          success: false,
+          exitCode: 1,
+          error: error instanceof Error ? error.message : String(error),
+          output: JSON.stringify({
+            report: ultra.getMetricsReport(),
+          }, null, 2),
+        }), {
+          headers: { "Content-Type": "application/json" },
+          status: 500,
+        });
+      } finally {
+        ultra.close();
+      }
+    }
+
     if (id === "no-proxy-explicit" || id === "proxy") {
       const sample = {
         env: { NO_PROXY: "localhost" },
@@ -5771,6 +5860,20 @@ const routes = {
     
     // Run the demo script from the parent demos directory
     const demoScript = join(import.meta.dir, "..", "playground", "demos", `${scriptName}.ts`);
+    const demoScriptFile = Bun.file(demoScript);
+    if (!(await demoScriptFile.exists())) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: `Demo script not mapped or missing: ${scriptName}.ts`,
+        output: "",
+        exitCode: 1,
+        id,
+        scriptName,
+      }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
     
     try {
       const { output, error, exitCode } = await runCommand(["bun", "run", demoScript], import.meta.dir);
