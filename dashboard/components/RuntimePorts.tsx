@@ -16,10 +16,12 @@ export type RuntimePortsScan = {
 export class RuntimePortsPanel {
   readonly base: string;
   readonly candidates: string[];
+  readonly autoStart: boolean;
 
-  constructor(base?: string) {
+  constructor(base?: string, options?: { autoStart?: boolean }) {
     const resolved = resolveDashboardEnvConfig(3011).base;
     this.base = base || resolved;
+    this.autoStart = options?.autoStart ?? true;
     this.candidates = Array.from(
       new Set([
         this.base,
@@ -60,6 +62,15 @@ export class RuntimePortsPanel {
         lastError = `${base}: ${error instanceof Error ? error.message : String(error)}`;
       }
     }
+    if (!this.autoStart) {
+      return {
+        ok: false,
+        base: this.base,
+        status: 0,
+        error: lastError || "No runtime ports endpoint reachable",
+      };
+    }
+
     try {
       const { getDashboardTestConfig, applyDashboardTestEnv, withDashboardServer } = await import(
         "../../scripts/lib/dashboard-test-server"
