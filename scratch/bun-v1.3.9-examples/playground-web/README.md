@@ -10,7 +10,7 @@ bun install
 bun start
 ```
 
-Then open http://localhost:3000 in your browser!
+Then open http://localhost:3011 in your browser!
 
 ## Port + Pooling Controls
 
@@ -62,6 +62,9 @@ bun start
 - `PLAYGROUND_S3_DEFAULT_CONTENT_TYPE`: fallback MIME when key extension is unknown
 - `PLAYGROUND_SMOKE_URLS`: optional explicit smoke URL list (defaults to local info/status APIs)
 - `PLAYGROUND_BRAND_STATUS_STRICT_PROBE`: enable strict benchmark probe in `/api/brand/status` (default `false` to avoid extra command load)
+- `PLAYGROUND_IGNORE_SIGHUP`: ignore terminal hangup signal to reduce accidental shutdowns (default `true`)
+- `PLAYGROUND_EXIT_ON_UNHANDLED_REJECTION`: treat unhandled promise rejections as fatal and exit (default `false`)
+- `PLAYGROUND_EXIT_ON_UNCAUGHT_EXCEPTION`: treat uncaught exceptions as fatal and exit (default `true`)
 
 Header/runtime metadata now includes:
 - `Bun.version`
@@ -86,6 +89,30 @@ curl -s "http://localhost:<port>/api/control/s3-content-type?key=assets/logo.svg
 curl -s -X POST http://localhost:<port>/api/control/s3-content-type-batch \
   -H "content-type: application/json" \
   -d '{"keys":["app.js","styles.css","readme.md","archive.bin"]}'
+curl -s http://localhost:<port>/api/dashboard/mini
+curl -s "http://localhost:<port>/api/dashboard/severity-test?load=85"
+```
+
+Mini dashboard APIs:
+- `GET /api/dashboard/mini`: live pool snapshot plus mini-card friendly values:
+  - `bottleneck`: `{ kind, severity }`
+  - `capacity`: `{ connectionsPct, workersPct, summary, severity }`
+  - `headroom.connections|workers`: `{ available, max, pct, severity }`
+- `GET /api/dashboard/severity-test?load=<0-100>`: deterministic severity mapping for:
+  - `utilization`: `ok|warn|fail` using `<50`, `50-80`, `>80`
+  - `capacity`: `ok|warn|fail` using `>50`, `20-50`, `<20`
+  - `headroom`: `ok|warn|fail` using `>30`, `10-30`, `<10`
+
+Mini dashboard UI rows now include:
+- `Bottleneck`
+- `Capacity`
+- `Headroom (Conn)`
+- `Headroom (Workers)`
+
+Validate mini dashboard contract from repo root:
+
+```bash
+bun run test:dashboard:mini
 ```
 
 Scorecard rationale highlights:
@@ -145,7 +172,7 @@ Use `GET /api/control/governance-status` to view canonical decision status (`APP
 
 2. **Open in browser:**
    ```
-   http://localhost:3000
+   http://localhost:3011
    ```
 
 3. **Select a demo** from the sidebar
@@ -161,6 +188,11 @@ Run in development mode with hot reload:
 ```bash
 bun run dev
 ```
+
+Keep the process alive:
+- Run `bun run start` in one terminal and keep it open.
+- Use another terminal tab for tests/commands.
+- HTTP keep-alive keeps connections open; it does not restart a process after exit.
 
 ## 📁 Structure
 
