@@ -92,8 +92,8 @@ class SecretsPerformanceAnalysis {
     for (let i = 0; i < 10; i++) {
       const start = performance.now();
       const results = await Promise.all(
-        this.testSecrets.map(secret => 
-          Bun.secrets.get(this.serviceName, secret.name)
+        this.testSecrets.map(secret =>
+          Bun.secrets.get({ service: this.serviceName, name: secret.name })
         )
       );
       const end = performance.now();
@@ -173,8 +173,8 @@ class SecretsPerformanceAnalysis {
     // Load all secrets into memory (simulate legacy behavior)
     console.log(`\n📦 Loading 50 secrets (legacy simulation)...`);
     const allSecrets = await Promise.all(
-      this.testSecrets.map(secret => 
-        Bun.secrets.get(this.serviceName, secret.name)
+      this.testSecrets.map(secret =>
+        Bun.secrets.get({ service: this.serviceName, name: secret.name })
       )
     );
 
@@ -217,8 +217,10 @@ class SecretsPerformanceAnalysis {
     console.log(`🔐 Loading ${criticalSecrets.length} critical secrets...`);
     const criticalLoadStart = performance.now();
     await Promise.all(
-      criticalSecrets.map(name => 
-        Bun.secrets.get(this.serviceName, name).catch(() => `demo-${name.toLowerCase()}`)
+      criticalSecrets.map(name =>
+        Bun.secrets
+          .get({ service: this.serviceName, name })
+          .catch(() => `demo-${name.toLowerCase()}`)
       )
     );
     const criticalLoadEnd = performance.now();
@@ -227,8 +229,8 @@ class SecretsPerformanceAnalysis {
     console.log(`⚙️  Loading configuration secrets...`);
     const configLoadStart = performance.now();
     await Promise.all(
-      this.testSecrets.slice(0, 10).map(secret => 
-        Bun.secrets.get(this.serviceName, secret.name)
+      this.testSecrets.slice(0, 10).map(secret =>
+        Bun.secrets.get({ service: this.serviceName, name: secret.name })
       )
     );
     const configLoadEnd = performance.now();
@@ -237,8 +239,8 @@ class SecretsPerformanceAnalysis {
     console.log(`📊 Loading monitoring secrets...`);
     const monitorLoadStart = performance.now();
     await Promise.all(
-      this.testSecrets.slice(10, 20).map(secret => 
-        Bun.secrets.get(this.serviceName, secret.name)
+      this.testSecrets.slice(10, 20).map(secret =>
+        Bun.secrets.get({ service: this.serviceName, name: secret.name })
       )
     );
     const monitorLoadEnd = performance.now();

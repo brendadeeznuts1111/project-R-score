@@ -135,10 +135,11 @@ export class UserProfileEngine {
     // Bun.secrets persist (CRED_PERSIST_ENTERPRISE scoped)
     // Windows Credential Manager per-user scoping
     try {
-      await Bun.secrets.set(
-        { service: 'factorywager', name: `profile:${validated.userId}` },
-        prefsJson
-      );
+      await Bun.secrets.set({
+        service: 'factorywager',
+        name: `profile:${validated.userId}`,
+        value: prefsJson,
+      });
     } catch (error: unknown) {
       // Secrets might not be available in all environments
       // Non-fatal: profile is still saved to SQLite

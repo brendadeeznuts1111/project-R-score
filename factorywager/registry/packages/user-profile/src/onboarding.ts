@@ -79,14 +79,15 @@ export async function onboardUser(session: OnboardingSession): Promise<Onboardin
 
   // Step 3 — Persist sensitive prefs via Bun.secrets (enterprise scope)
   try {
-    await Bun.secrets.set(
-      { service: 'factorywager', name: `profile:${session.userId}:sensitive` },
-      JSON.stringify({
+    await Bun.secrets.set({
+      service: 'factorywager',
+      name: `profile:${session.userId}:sensitive`,
+      value: JSON.stringify({
         preferredPaymentMethods: ['venmo'],
-        lastSafeScore: 0.8842,           // Ashley's legendary clearance
+        lastSafeScore: 0.8842, // Ashley's legendary clearance
         ip: session.ip,
-      })
-    );
+      }),
+    });
   } catch (error: unknown) {
     // Non-fatal - profile is still saved to SQLite
     logger.warn(`Failed to save sensitive prefs to Bun.secrets: ${handleError(error, 'onboardUser.secrets', { log: false })}`);
