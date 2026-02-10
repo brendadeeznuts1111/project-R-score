@@ -5,19 +5,20 @@
  * providing seamless access to Bun's comprehensive API documentation.
  */
 
-import { BunDocumentationIntegration, type DocumentationPage, type DocumentationCategory, type CodeExample } from '../bun-documentation-integration';
-import { R2Storage } from '../r2/r2-storage-enhanced';
-import { withCircuitBreaker } from '../core/circuit-breaker';
+import type { BunDocumentationIntegration} from '../bun-documentation-integration';
+import { type DocumentationPage, type DocumentationCategory, type CodeExample } from '../bun-documentation-integration';
 import { CacheManager } from '../core/cache-manager';
-import { Mutex } from '../core/safe-concurrency';
+import { withCircuitBreaker } from '../core/circuit-breaker';
 import { crc32 } from '../core/crc32';
+import { Mutex } from '../core/safe-concurrency';
+import { R2Storage } from '../r2/r2-storage-enhanced';
 
 // Constants
 const SYNC_MULTIPLIER = 60 * 1000; // Convert minutes to milliseconds
 const DEFAULT_SYNC_INTERVAL = 30; // Default sync interval in minutes
 
 // Error logging utility
-const logError = (context: string, error: any): void => {
+const logError = (context: string, error: unknown): void => {
   console.error(`[WikiIntegration:${context}]`, error);
 };
 
@@ -50,7 +51,7 @@ export interface WikiCategory {
 
 export interface WikiConfig {
   baseUrl: string;
-  storage?: any; // R2Storage instance
+  storage?: unknown; // R2Storage instance
   autoSync: boolean;
   syncInterval: number; // minutes
 }
@@ -62,7 +63,7 @@ export class BunWikiIntegration {
   private docIntegration: BunDocumentationIntegration;
   private config: WikiConfig;
   private wikiCache: CacheManager = new CacheManager({ defaultTTL: 1800000, maxSize: 500 });
-  private pageIds: Set<string> = new Set();
+  private pageIds = new Set<string>();
   private syncTimer?: NodeJS.Timeout;
   private syncMutex = new Mutex();
 
@@ -116,7 +117,7 @@ export class BunWikiIntegration {
 
     for (const docCategory of docIndex.categories) {
       // Validate category structure
-      if (!docCategory || !docCategory.name) {
+      if (!docCategory?.name) {
         logWarning('generateWikiPages', `Invalid category found, skipping: ${JSON.stringify(docCategory)}`);
         continue;
       }
@@ -135,7 +136,7 @@ export class BunWikiIntegration {
    */
   private async convertToWikiCategory(docCategory: DocumentationCategory): Promise<WikiCategory | null> {
     // Validate input
-    if (!docCategory || !docCategory.name) {
+    if (!docCategory?.name) {
       console.warn('Invalid documentation category:', docCategory);
       return null;
     }
@@ -145,7 +146,7 @@ export class BunWikiIntegration {
     if (Array.isArray(docCategory.pages)) {
       for (const docPage of docCategory.pages) {
         // Validate page structure
-        if (!docPage || !docPage.title) {
+        if (!docPage?.title) {
           console.warn('Invalid documentation page found, skipping:', docPage);
           continue;
         }
@@ -220,7 +221,7 @@ export class BunWikiIntegration {
    */
   private async convertToWikiPage(docPage: DocumentationPage): Promise<WikiPage | null> {
     // Validate input
-    if (!docPage || !docPage.title) {
+    if (!docPage?.title) {
       console.warn('Invalid documentation page:', docPage);
       return null;
     }

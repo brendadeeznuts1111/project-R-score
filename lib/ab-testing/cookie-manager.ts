@@ -7,10 +7,10 @@ import { ABTestManager } from './manager';
  * Preserves the positional-args registerTest() signature used by existing consumers.
  */
 export class ABTestingManager {
-  private inner: ABTestManager;
+  private _inner: ABTestManager;
 
   constructor(cookieString?: string) {
-    this.inner = new ABTestManager(cookieString ?? null);
+    this._inner = new ABTestManager(cookieString ?? null);
   }
 
   registerTest(
@@ -18,8 +18,8 @@ export class ABTestingManager {
     variants: string[],
     options?: { weights?: number[]; cookieName?: string; expiryDays?: number }
   ): void {
-    const weights = options?.weights ?? Array(variants.length).fill(100 / variants.length);
-    this.inner.registerTest({
+    const weights: number[] = options?.weights ?? Array.from({ length: variants.length }, () => 100 / variants.length);
+    this._inner.registerTest({
       id: testId,
       variants,
       weights,
@@ -29,22 +29,22 @@ export class ABTestingManager {
   }
 
   getVariant(testId: string): string {
-    return this.inner.getVariant(testId);
+    return this._inner.getVariant(testId);
   }
 
   getAllAssignments(): Record<string, string> {
-    return this.inner.getAllAssignments();
+    return this._inner.getAllAssignments();
   }
 
   forceAssignVariant(testId: string, variant: string): void {
-    this.inner.forceAssign(testId, variant);
+    this._inner.forceAssign(testId, variant);
   }
 
   clearAssignment(testId: string): void {
-    this.inner.clear(testId);
+    this._inner.clear(testId);
   }
 
   getResponseHeaders(): string[] {
-    return this.inner.getSetCookieHeaders();
+    return this._inner.getSetCookieHeaders();
   }
 }
