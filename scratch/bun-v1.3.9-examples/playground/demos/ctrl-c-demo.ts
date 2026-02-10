@@ -1,60 +1,92 @@
 #!/usr/bin/env bun
 /**
  * Demo: Handling CTRL+C (SIGINT)
- * 
+ *
  * https://bun.com/docs/guides/process/ctrl-c
  */
 
-console.log("⌨️  Bun CTRL+C Demo\n");
-console.log("=".repeat(70));
+console.log("⌨️  Bun CTRL+C Demo (Hardened)\n");
+console.log("=".repeat(74));
 
-console.log("\n1️⃣ Listening for CTRL+C (SIGINT)");
-console.log("-".repeat(70));
-console.log("Press CTRL+C to trigger the handler...\n");
-
+const resources: Array<{ name: string; close: () => Promise<void> | void }> = [];
+let shuttingDown = false;
 let interruptCount = 0;
-const maxInterrupts = 3;
 
-// Handle SIGINT (CTRL+C)
+function registerResource(name: string, close: () => Promise<void> | void) {
+  resources.push({ name, close });
+}
+
+async function gracefulShutdown(reason: string, exitCode = 0) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+
+  console.log(`\n🔄 gracefulShutdown(${reason})`);
+  console.log(`   step 1/3: stop intake`);
+  console.log(`   step 2/3: close ${resources.length} resource(s) in reverse order`);
+  for (const resource of resources.slice().reverse()) {
+    console.log(`   - closing ${resource.name}`);
+    await resource.close();
+  }
+  console.log(`   step 3/3: exit(${exitCode})`);
+  process.exit(exitCode);
+}
+
 process.on("SIGINT", () => {
-  interruptCount++;
-  console.log(`\n⚡ CTRL+C pressed! (count: ${interruptCount})`);
-  
-  if (interruptCount >= maxInterrupts) {
-    console.log("👋 Exiting after 3 interrupts...");
-    process.exit(0);
-  } else {
-    console.log(`   Press CTRL+C ${maxInterrupts - interruptCount} more time(s) to exit`);
-    console.log("   (Or wait for timeout)\n");
+  interruptCount += 1;
+  console.log(`\n⚡ SIGINT received (count=${interruptCount})`);
+  if (interruptCount >= 2) {
+    void gracefulShutdown("SIGINT");
+    return;
   }
+  console.log("   send SIGINT again to confirm shutdown");
 });
 
-// Also handle beforeExit
-process.on("beforeExit", () => {
-  console.log("\n📤 Process beforeExit event (event loop empty)");
+process.on("beforeExit", (code) => {
+  console.log(`[lifecycle] beforeExit code=${code}`);
 });
-
-// And exit
 process.on("exit", (code) => {
-  console.log(`\n🚪 Process exit event with code: ${code}`);
+  console.log(`[lifecycle] exit code=${code}`);
 });
 
-// Simulate work
-console.log("2️⃣ Simulating work (press CTRL+C to interrupt)...");
-console.log("-".repeat(70));
+console.log("\n1️⃣ Registering resources");
+console.log("-".repeat(74));
+let ticks = 0;
+const heartbeat = setInterval(() => {
+  ticks += 1;
+  console.log(`heartbeat ${ticks}`);
+}, 120);
+registerResource("heartbeat-interval", () => clearInterval(heartbeat));
 
-let counter = 0;
-const interval = setInterval(() => {
-  counter++;
-  console.log(`   Working... ${counter}s`);
-  
-  if (counter >= 10) {
-    clearInterval(interval);
-    console.log("\n✅ Work completed without interruption!");
-    process.exit(0);
+const worker = Bun.spawn({
+  cmd: [
+    process.execPath,
+    "-e",
+    `
+      process.on("SIGTERM", () => process.exit(0));
+      setInterval(() => console.log("[child] alive"), 200);
+    `,
+  ],
+  stdout: "pipe",
+  stderr: "pipe",
+});
+registerResource("child-process", () => {
+  try {
+    worker.kill("SIGTERM");
+  } catch {
+    // already exited
   }
-}, 1000);
+});
+void (async () => {
+  for await (const chunk of worker.stdout) {
+    const line = new TextDecoder().decode(chunk).trim();
+    if (line) console.log(line);
+  }
+})();
 
-// Keep process alive
-console.log("\n💡 Try pressing CTRL+C multiple times!");
-console.log("   (Will auto-exit after 10 seconds)\n");
+console.log("\n2️⃣ Deterministic SIGINT simulation");
+console.log("-".repeat(74));
+console.log("sending SIGINT now, then a confirming SIGINT in 300ms...");
+process.kill(process.pid, "SIGINT");
+setTimeout(() => {
+  process.kill(process.pid, "SIGINT");
+}, 300);

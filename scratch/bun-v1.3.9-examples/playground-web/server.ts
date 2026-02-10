@@ -2621,30 +2621,27 @@ const { values } = Bun.parseArgs({
   {
     id: "ctrl-c-demo",
     name: "Handling CTRL+C",
-    description: "Listen for and handle SIGINT signal",
+    description: "Two-step SIGINT confirm with deterministic cleanup ordering",
     category: "Process",
-    code: `let interruptCount = 0;
+    code: `const resources = [];
+let shuttingDown = false;
+let interruptCount = 0;
+
+async function gracefulShutdown(reason) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  for (const r of resources.slice().reverse()) await r.close();
+  process.exit(0);
+}
 
 process.on("SIGINT", () => {
-  interruptCount++;
-  console.log(\`CTRL+C pressed! (count: \${interruptCount})\`);
-  
-  if (interruptCount >= 3) {
-    console.log("Exiting...");
-    process.exit(0);
-  } else {
-    console.log(\`Press \${3 - interruptCount} more time(s) to exit\`);
-  }
+  interruptCount += 1;
+  if (interruptCount >= 2) return void gracefulShutdown("SIGINT");
+  console.log("send SIGINT again to confirm shutdown");
 });
 
-// Handle beforeExit and exit
-process.on("beforeExit", () => {
-  console.log("Event loop empty");
-});
-
-process.on("exit", (code) => {
-  console.log(\`Exiting with code: \${code}\`);
-});`,
+process.on("beforeExit", (code) => console.log("beforeExit", code));
+process.on("exit", (code) => console.log("exit", code));`,
   },
   {
     id: "signals-demo",
