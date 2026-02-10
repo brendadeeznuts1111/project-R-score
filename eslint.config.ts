@@ -579,6 +579,8 @@ export default tseslint.config(
     files: [
       'lib/ai/ai-operations-manager.ts',
       'lib/ai/anomaly-detector.ts',
+      'lib/ai/smart-cache-manager.ts',
+      'lib/ai/smart-cache-manager.test.ts',
     ],
     rules: {
       'import/order': 'error',
@@ -587,21 +589,6 @@ export default tseslint.config(
       '@typescript-eslint/require-await': 'error',
       '@typescript-eslint/no-unused-vars': 'error',
       '@typescript-eslint/promise-function-async': 'error',
-    },
-  },
-
-  // TODO(@nolarose, 2026-02-10): Temporary hard-file carveout for AI debt burn-down.
-  // Remove this override file-by-file as each target passes the strict subset.
-  {
-    files: [
-      'lib/ai/smart-cache-manager.ts',
-      'lib/ai/smart-cache-manager.test.ts',
-    ],
-    rules: {
-      'import/order': 'off',
-      '@typescript-eslint/no-floating-promises': 'off',
-      '@typescript-eslint/require-await': 'off',
-      '@typescript-eslint/no-unused-vars': 'off',
     },
   },
 

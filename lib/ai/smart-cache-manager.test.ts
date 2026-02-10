@@ -3,7 +3,7 @@
 import { test, expect, describe, afterEach, mock, beforeEach } from 'bun:test';
 
 // Mock dependencies
-mock.module('../core/structured-logger', () => ({
+void mock.module('../core/structured-logger', () => ({
   logger: {
     info: () => {},
     warn: () => {},
@@ -13,20 +13,33 @@ mock.module('../core/structured-logger', () => ({
   },
 }));
 
-mock.module('./ai-operations-manager', () => ({
+void mock.module('./ai-operations-manager', () => ({
   aiOperations: {
-    submitCommand: async () => 'mock-id',
-    getOptimizationSuggestions: async () => [],
-    predict: async () => ({ resource: {}, performance: {}, confidence: 0.5 }),
-    getHealthStatus: async () => ({ status: 'healthy' }),
+    submitCommand: async () => {
+      await Promise.resolve();
+      return 'mock-id';
+    },
+    getOptimizationSuggestions: async () => {
+      await Promise.resolve();
+      return [];
+    },
+    predict: async () => {
+      await Promise.resolve();
+      return { resource: {}, performance: {}, confidence: 0.5 };
+    },
+    getHealthStatus: async () => {
+      await Promise.resolve();
+      return { status: 'healthy' };
+    },
     stop: () => {},
   },
 }));
 
-mock.module('../performance/cache-manager', () => {
+void mock.module('../performance/cache-manager', () => {
   class MockCacheManager {
     private store = new Map();
     async get(key: any) {
+      await Promise.resolve();
       const entry = this.store.get(key);
       if (!entry) return undefined;
       if (entry.expiry && Date.now() > entry.expiry) {
@@ -36,12 +49,15 @@ mock.module('../performance/cache-manager', () => {
       return entry.value;
     }
     async set(key: any, value: any, ttl?: number) {
+      await Promise.resolve();
       this.store.set(key, { value, expiry: ttl ? Date.now() + ttl : undefined });
     }
     async delete(key: any) {
+      await Promise.resolve();
       return this.store.delete(key);
     }
     async clear() {
+      await Promise.resolve();
       this.store.clear();
     }
     getStats() {
@@ -92,7 +108,7 @@ describe('SmartCacheManager', () => {
   test('constructor with default config', () => {
     const c = new SmartCacheManager();
     expect(c).toBeDefined();
-    c.stop();
+    void c.stop();
   });
 
   test('constructor with custom config', () => {
@@ -105,7 +121,7 @@ describe('SmartCacheManager', () => {
       autoOptimization: false,
     });
     expect(c).toBeDefined();
-    c.stop();
+    void c.stop();
   });
 
   test('set and get a value', async () => {
@@ -150,7 +166,7 @@ describe('SmartCacheManager', () => {
     expect(typeof results.itemsPreloaded).toBe('number');
   });
 
-  test('getIntelligenceMetrics returns metrics', async () => {
+  test('getIntelligenceMetrics returns metrics', () => {
     const metrics = cache.getIntelligenceMetrics();
     expect(metrics).toHaveProperty('patternsLearned');
     expect(metrics).toHaveProperty('predictionsActive');
