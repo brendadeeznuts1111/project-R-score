@@ -96,7 +96,9 @@ curl -s -X POST http://localhost:<port>/api/control/s3-content-type-batch \
   -d '{"keys":["app.js","styles.css","readme.md","archive.bin"]}'
 curl -s http://localhost:<port>/api/dashboard/mini
 curl -s "http://localhost:<port>/api/dashboard/severity-test?load=85"
+curl -s "http://localhost:<port>/api/dashboard/traces?limit=20" | jq .
 curl -s "http://localhost:<port>/api/dashboard/trends/summary?minutes=60&limit=120" | jq .
+curl -s http://localhost:<port>/api/control/bundle/analyze | jq .
 ```
 
 Mini dashboard APIs:
@@ -190,12 +192,11 @@ Use `GET /api/control/governance-status` to view canonical decision status (`APP
 
 ## ✨ Features
 
-- 🎨 **Modern UI** - Beautiful, responsive design
-- 📱 **Mobile Friendly** - Works on all devices
-- ⚡ **Interactive** - Run demos directly in the browser
-- 📋 **Code Examples** - Copy code with one click
-- 🎯 **Categorized** - Organized by feature category
-- 🔄 **Real-time** - See demo output in real-time
+- Responsive dashboard UI for local Bun demos
+- Keyboard-first command menu flow in the demo viewer
+- Live mini metrics (pool, bottleneck, headroom, trend summary)
+- Real API-backed demos for Bun v1.3.9 release features
+- Local governance/evidence endpoints for decision traceability
 
 ## 📈 Performance Improvements (v2.1.0)
 
@@ -273,9 +274,91 @@ playground-web/
 
 ## 🌐 API Endpoints
 
-- `GET /api/demos` - Get all demos
-- `GET /api/demo/:id` - Get specific demo
-- `POST /api/run/:id` - Run a demo and get output
+- `GET /api/demos` - list demo metadata and code blocks
+- `GET /api/demo/:id` - fetch one demo payload
+- `POST /api/run/:id` - execute a demo command
+- `GET /api/dashboard/mini` - compact pool + headroom snapshot
+- `GET /api/dashboard/severity-test?load=<0-100>` - threshold mapping check
+- `GET /api/dashboard/traces?limit=<n>` - recent trace events
+- `GET /api/dashboard/trends?minutes=60&limit=120` - time-window trend series
+- `GET /api/dashboard/trends/summary?minutes=60&limit=120` - compact trend summary
+- `GET /api/control/bundle/analyze` - bundle analysis summary for dashboard panel
+- `GET /api/control/domain-graph?domain=<full|presentation|orchestration|protocol|security|performance|observability>` - Mermaid-wrapped topology source
+
+## 🧭 Mermaid Diagrams
+
+### Runtime Request Path
+
+```mermaid
+flowchart LR
+  B["Browser UI"] --> A1["GET /api/demos"]
+  B --> A2["GET /api/dashboard/mini"]
+  B --> A3["GET /api/dashboard/trends/summary"]
+  B --> A4["GET /api/dashboard/traces"]
+  B --> A5["POST /api/run/:id"]
+  A1 --> S["server.ts"]
+  A2 --> S
+  A3 --> S
+  A4 --> S
+  A5 --> S
+  S --> DB["SQLite metrics store"]
+  S --> W["Worker pool / command runner"]
+```
+
+### Trend Snapshot Pipeline
+
+```mermaid
+flowchart TD
+  T["1s sampler"] --> I["Collect pool stats"]
+  I --> P["Compute severity + bottleneck"]
+  P --> W["Write row to SQLite"]
+  W --> R["Retention trim"]
+  R --> Q["/api/dashboard/trends* queries"]
+  Q --> U["Mini card + sparkline render"]
+```
+
+### Domain Topology Feed
+
+```mermaid
+flowchart TD
+  C["/api/control/domain-graph"] --> D["Domain selector"]
+  D --> F["full"]
+  D --> P["presentation"]
+  D --> O["orchestration"]
+  D --> R["protocol"]
+  D --> S["security"]
+  D --> E["performance"]
+  D --> V["observability"]
+  F --> M["Mermaid source payload"]
+  P --> M
+  O --> M
+  R --> M
+  S --> M
+  E --> M
+  V --> M
+```
+
+### Script Execution Semantics (`--parallel` vs `--sequential`)
+
+```mermaid
+flowchart TD
+  S["bun run <mode> build test lint"] --> M{"Mode"}
+  M --> P["--parallel"]
+  M --> Q["--sequential"]
+
+  P --> P1["Start all script groups immediately"]
+  Q --> Q1["Run script groups one-by-one in order"]
+
+  P1 --> O1["Prefixed interleaved output"]
+  Q1 --> O2["Prefixed ordered output"]
+
+  O1 --> F{"Any script fails?"}
+  O2 --> F
+
+  F -->|"No"| E0["Exit 0"]
+  F -->|"Yes + default"| E1["Fail-fast: stop remaining scripts"]
+  F -->|"Yes + --no-exit-on-error"| E2["Continue others, exit non-zero at end"]
+```
 
 ## 🎨 Features Showcased
 
@@ -292,6 +375,7 @@ All Bun v1.3.9 features are demonstrated with:
 - [Examples](../README.md) - All examples and documentation
 - [Official Release Notes](https://bun.com/blog/bun-v1.3.9)
 
-## 🎉 Enjoy!
+## Notes
 
-Explore all the new features in Bun v1.3.9 through this interactive browser playground!
+- This is a local playground service, separate from public docs dashboards.
+- For stable local behavior, keep one foreground server process and run tests from a second terminal.
