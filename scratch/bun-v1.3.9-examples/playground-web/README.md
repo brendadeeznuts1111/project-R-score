@@ -163,6 +163,31 @@ curl -s "http://localhost:3011/api/dashboard/severity-test?load=30" | jq '.sever
 wscat -c ws://localhost:3011/ws/capacity
 ```
 
+Execution matrix:
+
+```bash
+# Required fail-fast lane
+bun run --parallel build test lint
+
+# Diagnostic lane (collect all failures)
+bun run --parallel --no-exit-on-error build test lint
+
+# Ordered execution (memory-constrained / deterministic ordering)
+bun run --sequential build test lint
+```
+
+`--parallel` starts script groups immediately and fails fast by default.
+`--sequential` runs script groups in order.
+Use `--no-exit-on-error` when you need full failure inventory in one pass.
+
+NO_PROXY behavior (Bun v1.3.9+):
+
+```bash
+NO_PROXY=localhost,127.0.0.1 bun test ./scratch
+```
+
+If code passes an explicit `proxy` option to `fetch()`/`WebSocket`, Bun still applies `NO_PROXY` matching before proxy routing.
+
 Expected severity snapshots:
 - `load=85`: `utilization=fail`, `capacity=fail`, `headroom=warn`
 - `load=60`: `utilization=warn`, `capacity=warn`, `headroom=ok`
@@ -189,6 +214,29 @@ Evidence governance for architecture decisions:
 
 Use `GET /api/control/protocol-scorecard` and inspect `evidenceGovernance.entries` for traceable claim records.
 Use `GET /api/control/governance-status` to view canonical decision status (`APPROVED/REVIEW_REQUIRED`), tier coverage (`T1+T2`), and benchmark gate cycle mode (`WARN n/5` or `STRICT`).
+
+## Troubleshooting
+
+- Server exits after terminal closes:
+  - Keep the Bun process in a foreground terminal session; HTTP keep-alive preserves connections only, not process lifetime.
+- `localhost:3011` shows nothing after restart:
+  - Check port owner: `lsof -nP -iTCP:3011 -sTCP:LISTEN`
+  - Re-run service in foreground: `bun start`
+- Dashboard API not loading:
+  - Verify health and mini endpoints:
+    - `curl -s http://localhost:3011/api/dashboard/mini | jq .`
+    - `curl -s "http://localhost:3011/api/dashboard/trends/summary?minutes=15&limit=20" | jq .`
+
+```mermaid
+flowchart TD
+  A["Cannot open http://localhost:3011"] --> B{"Port 3011 listening?"}
+  B -->|"No"| C["Run bun start in foreground terminal"]
+  B -->|"Yes"| D{"Owner is playground server?"}
+  D -->|"No"| E["Stop conflicting process or switch PLAYGROUND_PORT"]
+  D -->|"Yes"| F{"API responds?"}
+  F -->|"No"| G["Check server logs and /api/dashboard/mini probe"]
+  F -->|"Yes"| H["Open UI and verify demo fetches /api/dashboard/*"]
+```
 
 ## ✨ Features
 
