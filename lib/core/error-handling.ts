@@ -150,7 +150,7 @@ export class ErrorHandler {
    */
   private generateErrorCode(error: R2IntegrationError, context: string): string {
     const timestamp = Date.now().toString(36);
-    const hash = Buffer.from(`${context}-${error.code}`).toString('base64').slice(0, 8);
+    const hash = btoa(`${context}-${error.code}`).slice(0, 8);
     return `${error.code}-${hash}-${timestamp}`;
   }
 
@@ -261,14 +261,10 @@ export async function safeAsyncWithRetry<T>(
   retryDelay: number = 1000,
   fallback?: T
 ): Promise<T | undefined> {
-  let lastError: unknown;
-
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       return await operation();
     } catch (error) {
-      lastError = error;
-
       if (attempt === maxRetries) {
         handleError(error, context, ErrorSeverity.HIGH);
         return fallback;
@@ -279,6 +275,6 @@ export async function safeAsyncWithRetry<T>(
     }
   }
 
-  handleError(lastError, context, ErrorSeverity.HIGH);
+  // Unreachable when maxRetries >= 1, but satisfies return type
   return fallback;
 }

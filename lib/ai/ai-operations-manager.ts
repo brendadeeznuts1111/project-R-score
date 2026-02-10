@@ -1,10 +1,12 @@
 // lib/ai/ai-operations-manager.ts — AI operations manager for platform automation
 
+import { EventEmitter } from 'events';
+
+import { YAML } from 'bun';
+
+import { Mutex } from '../core/safe-concurrency';
 import { logger } from '../core/structured-logger';
 import { globalCaches } from '../performance/cache-manager';
-import { YAML } from 'bun';
-import { Mutex } from '../core/safe-concurrency';
-import { EventEmitter } from 'events';
 
 export interface AICommand {
   id: string;
@@ -263,7 +265,7 @@ export class AdvancedLRUCache<T> extends EventEmitter {
     }
 
     // Update statistics atomically
-    this.updateStats(async () => {
+    void this.updateStats(() => {
       this.totalSets++;
       if (startTime > 0) {
         this.totalAccessTime += Bun.nanoseconds() - startTime;
@@ -285,7 +287,7 @@ export class AdvancedLRUCache<T> extends EventEmitter {
     const node = this.cache.get(key);
 
     if (!node) {
-      this.updateStats(async () => {
+      void this.updateStats(() => {
         this.misses++;
         this.totalGets++;
       });
@@ -307,7 +309,7 @@ export class AdvancedLRUCache<T> extends EventEmitter {
       this.cache.delete(key);
       this.frequencyMap.delete(key);
 
-      this.updateStats(async () => {
+      void this.updateStats(() => {
         this.misses++;
         this.totalGets++;
       });
@@ -329,7 +331,7 @@ export class AdvancedLRUCache<T> extends EventEmitter {
     }
 
     // Update statistics and move node
-    this.updateStats(async () => {
+    void this.updateStats(() => {
       this.hits++;
       this.totalGets++;
       if (startTime > 0) {
@@ -411,8 +413,6 @@ export class AdvancedLRUCache<T> extends EventEmitter {
   }
 
   clear(): void {
-    const oldSize = this.cache.size;
-
     this.cache.clear();
     this.frequencyMap.clear();
     this.head.next = this.tail;
@@ -464,7 +464,7 @@ export class AdvancedLRUCache<T> extends EventEmitter {
   // Enhanced utility methods
   private async updateStats(updateFn: () => void): Promise<void> {
     if (!this.enableStats) return;
-    await this.statsMutex.withLock(async () => {
+    await this.statsMutex.withLock(() => {
       updateFn();
     });
   }
@@ -510,7 +510,7 @@ export class AdvancedLRUCache<T> extends EventEmitter {
       if (typeof item === 'object') {
         // Safe JSON.stringify with circular reference handling
         const seen = new WeakSet();
-        const jsonString = JSON.stringify(item, (key, value) => {
+        const jsonString = JSON.stringify(item, (_key, value) => {
           if (typeof value === 'object' && value !== null) {
             if (seen.has(value)) {
               return '[Circular]';
@@ -916,7 +916,7 @@ export class AIOperationsManager extends EventEmitter {
     command: Omit<AICommand, 'id' | 'timestamp'>,
     clientIp?: string
   ): Promise<string> {
-    return await this.mutex.withLock(async () => {
+    return await this.mutex.withLock(() => {
       // Rate limiting
       if (clientIp && !this.checkRateLimit(clientIp)) {
         throw new Error('Rate limit exceeded');
@@ -1212,6 +1212,7 @@ export class AIOperationsManager extends EventEmitter {
       });
     }
 
+    await Promise.resolve();
     return suggestions;
   }
 
@@ -1455,28 +1456,30 @@ export class AIOperationsManager extends EventEmitter {
    * Start processing command queue
    */
   private startProcessing(): void {
-    this.processingTimer = setInterval(async () => {
+    this.processingTimer = setInterval(() => {
       if (!this.processing && this.commandQueue.length > 0) {
         this.processing = true;
 
-        try {
-          // Get the first command but don't remove it yet
-          const command = this.commandQueue[0];
-          if (command) {
-            await this.executeOptimization(command.id);
-            // Only remove after successful execution
+        void (async () => {
+          try {
+            // Get the first command but don't remove it yet
+            const command = this.commandQueue[0];
+            if (command) {
+              await this.executeOptimization(command.id);
+              // Only remove after successful execution
+              this.commandQueue.shift();
+            }
+          } catch (error) {
+            logger.error(
+              'Error processing AI command',
+              error instanceof Error ? error : new Error(String(error))
+            );
+            // Remove failed command to prevent infinite loops
             this.commandQueue.shift();
+          } finally {
+            this.processing = false;
           }
-        } catch (error) {
-          logger.error(
-            'Error processing AI command',
-            error instanceof Error ? error : new Error(String(error))
-          );
-          // Remove failed command to prevent infinite loops
-          this.commandQueue.shift();
-        } finally {
-          this.processing = false;
-        }
+        })();
       }
     }, 1000); // Process commands every second
   }
@@ -1653,7 +1656,7 @@ export class AIOperationsManager extends EventEmitter {
     let values: number[] = [];
     switch (metric) {
       case 'cache_hit_rate':
-        values = recentMetrics.map(m => 0.85); // Mock cache hit rate
+        values = recentMetrics.map(_m => 0.85); // Mock cache hit rate
         break;
       case 'memory_usage':
         values = recentMetrics.map(m => m.memory.used / m.memory.total);
@@ -1727,33 +1730,37 @@ export class AIOperationsManager extends EventEmitter {
       const dataPoints = timeframe === 'hour' ? 60 : timeframe === 'day' ? 144 : 1008;
       const interval = timeframe === 'hour' ? 60000 : timeframe === 'day' ? 600000 : 3600000;
 
-      return Array.from({ length: Math.min(dataPoints, this.metricsHistory.length) }, (_, i) => {
-        const metric =
-          this.metricsHistory[this.metricsHistory.length - 1 - i] || this.getCurrentMetrics();
-        return {
-          timestamp: Date.now() - i * interval,
-          cpu: metric.cpu.usage,
-          memory: (metric.memory.used / metric.memory.total) * 100,
-          storage: 20 + Math.random() * 10,
-          responseTime: metric.performance.responseTime,
-          throughput: metric.performance.throughput,
-          errorRate: metric.performance.errorRate,
-        };
-      });
+      return await Promise.resolve(
+        Array.from({ length: Math.min(dataPoints, this.metricsHistory.length) }, (_, i) => {
+          const metric =
+            this.metricsHistory[this.metricsHistory.length - 1 - i] || this.getCurrentMetrics();
+          return {
+            timestamp: Date.now() - i * interval,
+            cpu: metric.cpu.usage,
+            memory: (metric.memory.used / metric.memory.total) * 100,
+            storage: 20 + Math.random() * 10,
+            responseTime: metric.performance.responseTime,
+            throughput: metric.performance.throughput,
+            errorRate: metric.performance.errorRate,
+          };
+        })
+      );
     }
 
     // Fallback to mock data
     const dataPoints = timeframe === 'hour' ? 60 : timeframe === 'day' ? 144 : 1008;
 
-    return Array.from({ length: dataPoints }, (_, i) => ({
-      timestamp: Date.now() - (dataPoints - i) * 60000,
-      cpu: 30 + Math.random() * 40,
-      memory: 40 + Math.random() * 30,
-      storage: 20 + Math.random() * 10,
-      responseTime: 50 + Math.random() * 100,
-      throughput: 100 + Math.random() * 200,
-      errorRate: Math.random() * 5,
-    }));
+    return await Promise.resolve(
+      Array.from({ length: dataPoints }, (_, i) => ({
+        timestamp: Date.now() - (dataPoints - i) * 60000,
+        cpu: 30 + Math.random() * 40,
+        memory: 40 + Math.random() * 30,
+        storage: 20 + Math.random() * 10,
+        responseTime: 50 + Math.random() * 100,
+        throughput: 100 + Math.random() * 200,
+        errorRate: Math.random() * 5,
+      }))
+    );
   }
 
   /**
@@ -1827,7 +1834,7 @@ export class AIOperationsManager extends EventEmitter {
    * Get fallback prediction when circuit breaker is open
    */
   private getFallbackPrediction(
-    timeframe: 'hour' | 'day' | 'week',
+    _timeframe: 'hour' | 'day' | 'week',
     correlationId: string
   ): {
     resource: { cpu: number; memory: number; storage: number };
@@ -1901,6 +1908,7 @@ export class AIOperationsManager extends EventEmitter {
       ['ai', 'optimization']
     );
 
+    await Promise.resolve();
     return improvements;
   }
 
@@ -1955,6 +1963,7 @@ export class AIOperationsManager extends EventEmitter {
       ['ai', 'automation']
     );
 
+    await Promise.resolve();
     return improvements;
   }
 
@@ -2035,6 +2044,7 @@ export class AIOperationsManager extends EventEmitter {
       async () => {
         const memUsage = process.memoryUsage();
         const usageRatio = memUsage.heapUsed / memUsage.heapTotal;
+        await Promise.resolve();
         return {
           name: 'memory',
           status: usageRatio > 0.9 ? 'fail' : usageRatio > 0.8 ? 'warn' : 'pass',
@@ -2043,6 +2053,7 @@ export class AIOperationsManager extends EventEmitter {
       },
       async () => {
         const queueSize = this.commandQueue.length;
+        await Promise.resolve();
         return {
           name: 'command_queue',
           status: queueSize > 100 ? 'fail' : queueSize > 50 ? 'warn' : 'pass',
@@ -2051,6 +2062,7 @@ export class AIOperationsManager extends EventEmitter {
       },
       async () => {
         const insightsCount = this.insights.length;
+        await Promise.resolve();
         return {
           name: 'insights_storage',
           status: insightsCount > 950 ? 'warn' : 'pass',
@@ -2061,6 +2073,7 @@ export class AIOperationsManager extends EventEmitter {
         const openBreakers = Array.from(this.circuitBreakers.values()).filter(
           b => b.state === 'open'
         ).length;
+        await Promise.resolve();
         return {
           name: 'circuit_breakers',
           status: openBreakers > 2 ? 'fail' : openBreakers > 0 ? 'warn' : 'pass',

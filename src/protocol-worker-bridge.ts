@@ -17,6 +17,7 @@ export class ProtocolWorkerBridge {
   private readonly sizeThreshold: number;
   private mainThreadCount = 0;
   private workerCount = 0;
+  private terminated = false;
 
   constructor(config: BridgeConfig) {
     this.sizeThreshold = config.sizeThreshold;
@@ -33,6 +34,10 @@ export class ProtocolWorkerBridge {
   }
 
   async execute(request: ExecuteRequest): Promise<ExecuteResult> {
+    if (this.terminated) {
+      throw new Error("ProtocolWorkerBridge is terminated");
+    }
+
     const size = request.size ?? JSON.stringify(request.data).length;
 
     if (size < this.sizeThreshold) {
@@ -53,6 +58,7 @@ export class ProtocolWorkerBridge {
   }
 
   terminate(): void {
+    this.terminated = true;
     this.pool.terminateAll("bridge terminated");
   }
 }

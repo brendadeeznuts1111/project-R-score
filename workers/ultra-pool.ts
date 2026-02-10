@@ -61,15 +61,23 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
   private errorHistory: Array<{ at: string; event: string; message: string }> = [];
   private timeoutByTaskId = new Map<TaskId, ReturnType<typeof setTimeout>>();
 
+  // Resolved config defaults — computed once in constructor
+  private readonly maxQueueSize: number;
+  private readonly taskTimeoutMs: number;
+  private readonly maxErrorHistory: number;
+
   constructor(private readonly config: WorkerPoolConfig) {
     if (config.minWorkers < 1) throw new Error("minWorkers must be >= 1");
     if (config.maxWorkers < config.minWorkers) {
       throw new Error("maxWorkers must be >= minWorkers");
     }
-    if ((config.maxQueueSize ?? Number.POSITIVE_INFINITY) < 1) {
+    this.maxQueueSize = config.maxQueueSize ?? Number.POSITIVE_INFINITY;
+    this.taskTimeoutMs = config.taskTimeoutMs ?? 0;
+    this.maxErrorHistory = config.maxErrorHistory ?? 25;
+    if (this.maxQueueSize < 1) {
       throw new Error("maxQueueSize must be >= 1");
     }
-    if ((config.taskTimeoutMs ?? 0) < 0) {
+    if (this.taskTimeoutMs < 0) {
       throw new Error("taskTimeoutMs must be >= 0");
     }
     for (let i = 0; i < config.minWorkers; i += 1) {
@@ -82,10 +90,10 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
       throw new Error("UltraWorkerPool is closed");
     }
 
-    return await new Promise<TResult>((resolve, reject) => {
-      if (this.queue.length >= (this.config.maxQueueSize ?? Number.POSITIVE_INFINITY)) {
+    return new Promise<TResult>((resolve, reject) => {
+      if (this.queue.length >= this.maxQueueSize) {
         this.rejectedTasks += 1;
-        const err = new Error(`UltraWorkerPool queue limit reached (${this.config.maxQueueSize})`);
+        const err = new Error(`UltraWorkerPool queue limit reached (${this.maxQueueSize})`);
         this.recordError("queue-overflow", err);
         reject(err);
         return;
@@ -98,20 +106,15 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
         resolve,
         reject,
       };
-      this.queue.push(task);
-      // Higher priority first. Stable tie-break by enqueue time then task id.
-      this.queue.sort((a, b) => {
-        if (a.priority !== b.priority) return b.priority - a.priority;
-        if (a.enqueuedAt !== b.enqueuedAt) return a.enqueuedAt - b.enqueuedAt;
-        return a.id - b.id;
-      });
+      this.insertSorted(task);
       this.maybeScaleUp();
       this.processQueue();
     });
   }
 
   getStats(): WorkerPoolStats {
-    const busyWorkers = Array.from(this.inFlightByWorker.values()).filter((id) => id !== null).length;
+    let busyWorkers = 0;
+    for (const id of this.inFlightByWorker.values()) if (id !== null) busyWorkers++;
     return {
       workers: this.workers.length,
       busyWorkers,
@@ -148,7 +151,7 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
       worker.terminate();
     }
 
-    this.workers = [];
+    this.workers.length = 0;
     this.inFlightByWorker.clear();
     this.workerToTaskId.clear();
   }
@@ -169,11 +172,11 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
     });
 
     worker.addEventListener("error", (event) => {
+      const err = event.error ?? new Error(event.message || "Worker error");
+      this.recordError("worker-error", err);
       const taskId = this.workerToTaskId.get(worker);
-      this.recordError("worker-error", event.error ?? new Error(event.message || "Worker error"));
       if (taskId !== undefined) {
-        const task = this.pendingByTaskId.get(taskId);
-        task?.reject(event.error ?? new Error(event.message || "Worker error"));
+        this.pendingByTaskId.get(taskId)?.reject(err);
         this.pendingByTaskId.delete(taskId);
       }
       this.replaceWorker(worker);
@@ -225,8 +228,7 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
         continue;
       }
 
-      const timeoutMs = this.config.taskTimeoutMs ?? 0;
-      if (timeoutMs > 0) {
+      if (this.taskTimeoutMs > 0) {
         const timer = setTimeout(() => {
           if (this.closed) return;
           const timedOutTask = this.pendingByTaskId.get(task.id);
@@ -235,13 +237,37 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
           this.pendingByTaskId.delete(task.id);
           this.workerToTaskId.delete(worker);
           this.inFlightByWorker.set(worker, null);
-          this.recordError("task-timeout", new Error(`Task ${task.id} timed out after ${timeoutMs}ms`));
-          timedOutTask.reject(new Error(`Worker task timeout after ${timeoutMs}ms`));
+          this.recordError("task-timeout", new Error(`Task ${task.id} timed out after ${this.taskTimeoutMs}ms`));
+          timedOutTask.reject(new Error(`Worker task timeout after ${this.taskTimeoutMs}ms`));
           this.processQueue();
-        }, timeoutMs);
+        }, this.taskTimeoutMs);
         this.timeoutByTaskId.set(task.id, timer);
       }
     }
+  }
+
+  /** Binary insertion — O(log n) vs O(n log n) full sort on every execute. */
+  private insertSorted(task: WorkerTask<TPayload, TResult>): void {
+    const q = this.queue;
+    let lo = 0;
+    let hi = q.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >>> 1;
+      const cmp = this.compareTasks(task, q[mid]);
+      if (cmp < 0) {
+        hi = mid;
+      } else {
+        lo = mid + 1;
+      }
+    }
+    q.splice(lo, 0, task);
+  }
+
+  /** Stable comparison: higher priority first, then FIFO by enqueue time, then task id. */
+  private compareTasks(a: WorkerTask<TPayload, TResult>, b: WorkerTask<TPayload, TResult>): number {
+    if (a.priority !== b.priority) return b.priority - a.priority;
+    if (a.enqueuedAt !== b.enqueuedAt) return a.enqueuedAt - b.enqueuedAt;
+    return a.id - b.id;
   }
 
   private optimizeForFastPath(payload: TPayload): TPayload {
@@ -249,10 +275,10 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
     if (typeof payload !== "object" || payload === null) return payload;
     if (Object.getPrototypeOf(payload) !== Object.prototype) return payload;
 
-    for (const key of Object.keys(payload as Record<string, unknown>)) {
-      const value = (payload as Record<string, unknown>)[key];
-      const type = typeof value;
-      if (type !== "string" && type !== "number" && type !== "boolean" && value !== null && value !== undefined) {
+    const record = payload as Record<string, unknown>;
+    for (const key of Object.keys(record)) {
+      const type = typeof record[key];
+      if (type !== "string" && type !== "number" && type !== "boolean" && record[key] !== null && record[key] !== undefined) {
         return payload;
       }
     }
@@ -290,13 +316,9 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
   }
 
   private replaceWorker(worker: Worker): void {
-    if (!this.inFlightByWorker.has(worker) && !this.workerToTaskId.has(worker) && !this.workers.includes(worker)) {
-      return;
-    }
     const idx = this.workers.indexOf(worker);
-    if (idx >= 0) {
-      this.workers.splice(idx, 1);
-    }
+    if (idx < 0 && !this.inFlightByWorker.has(worker)) return;
+    if (idx >= 0) this.workers.splice(idx, 1);
     this.inFlightByWorker.delete(worker);
     this.replacedWorkers += 1;
 
@@ -323,7 +345,7 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
       event,
       message,
     });
-    if (this.errorHistory.length > (this.config.maxErrorHistory ?? 25)) {
+    if (this.errorHistory.length > this.maxErrorHistory) {
       this.errorHistory.shift();
     }
   }

@@ -6,13 +6,18 @@
  * Comprehensive tests for race conditions, error handling, validation, and edge cases
  */
 
-import { beforeEach, describe, expect, spyOn, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, spyOn, test, type Mock } from "bun:test";
 import { R2MCPIntegration } from '../lib/mcp/r2-integration-fixed.ts';
-import { R2ConnectionError } from '../lib/core/error-handling.ts';
+import { ErrorHandler, R2ConnectionError } from '../lib/core/error-handling.ts';
 import { globalCache } from '../lib/core/cache-manager.ts';
 
 describe('R2MCPIntegration', () => {
   let r2Integration: R2MCPIntegration;
+
+  // Suppress all console output from R2 operational + error logging
+  let logSpy: Mock<typeof console.log>;
+  let errorSpy: Mock<typeof console.error>;
+
   const withRandomSpy = <T>(fn: () => Promise<T> | T) => async () => {
     using randomSpy = spyOn(Math, 'random').mockReturnValue(0.99);
     return await fn();
@@ -57,8 +62,13 @@ describe('R2MCPIntegration', () => {
   };
 
   beforeEach(() => {
-    // Reset cache before each test
+    // Suppress console output from R2 operational + error logging
+    logSpy = spyOn(console, 'log').mockImplementation(() => {});
+    errorSpy = spyOn(console, 'error').mockImplementation(() => {});
+
+    // Reset cache and error tracking before each test
     globalCache.clear();
+    ErrorHandler.getInstance().resetTracking();
 
     // Create new instance with test config
     r2Integration = new R2MCPIntegration({
@@ -67,6 +77,11 @@ describe('R2MCPIntegration', () => {
       secretAccessKey: 'test-secret',
       bucketName: 'test-bucket'
     });
+  });
+
+  afterEach(() => {
+    logSpy.mockRestore();
+    errorSpy.mockRestore();
   });
 
   describe('Initialization', () => {

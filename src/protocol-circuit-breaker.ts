@@ -17,6 +17,7 @@ export interface CircuitSnapshot {
 
 interface CircuitEntry {
   window: boolean[]; // true = success, false = failure
+  failureCount: number; // incremental — avoids O(n) recount
   state: CircuitState;
   openedAt: number;
   lastStateChange: number;
@@ -30,7 +31,7 @@ const DEFAULT_CONFIG: ProtocolCircuitConfig = {
 
 export class ProtocolCircuitBreaker {
   private readonly config: ProtocolCircuitConfig;
-  private circuits = new Map<string, CircuitEntry>();
+  private readonly circuits = new Map<string, CircuitEntry>();
 
   constructor(config?: Partial<ProtocolCircuitConfig>) {
     this.config = { ...DEFAULT_CONFIG, ...config };
@@ -58,20 +59,19 @@ export class ProtocolCircuitBreaker {
 
   recordSuccess(protocol: string): void {
     const entry = this.getOrCreate(protocol);
-    entry.window.push(true);
-    this.trimWindow(entry);
+    this.pushAndTrim(entry, true);
 
     if (entry.state === "HALF_OPEN") {
       entry.state = "CLOSED";
       entry.window.length = 0;
+      entry.failureCount = 0;
       entry.lastStateChange = Date.now();
     }
   }
 
   recordFailure(protocol: string): void {
     const entry = this.getOrCreate(protocol);
-    entry.window.push(false);
-    this.trimWindow(entry);
+    this.pushAndTrim(entry, false);
 
     const now = Date.now();
 
@@ -83,9 +83,7 @@ export class ProtocolCircuitBreaker {
     }
 
     if (entry.state === "CLOSED" && entry.window.length >= this.config.windowSize) {
-      let failures = 0;
-      for (const ok of entry.window) if (!ok) failures++;
-      if (failures / entry.window.length >= this.config.failureRateThreshold) {
+      if (entry.failureCount / entry.window.length >= this.config.failureRateThreshold) {
         entry.state = "OPEN";
         entry.openedAt = now;
         entry.lastStateChange = now;
@@ -113,8 +111,7 @@ export class ProtocolCircuitBreaker {
       entry.lastStateChange = now;
     }
 
-    let failures = 0;
-    for (const ok of entry.window) if (!ok) failures++;
+    const failures = entry.failureCount;
     const successes = entry.window.length - failures;
 
     return {
@@ -148,6 +145,7 @@ export class ProtocolCircuitBreaker {
     if (!entry) {
       entry = {
         window: [],
+        failureCount: 0,
         state: "CLOSED",
         openedAt: 0,
         lastStateChange: Date.now(),
@@ -157,9 +155,13 @@ export class ProtocolCircuitBreaker {
     return entry;
   }
 
-  private trimWindow(entry: CircuitEntry): void {
+  /** Push result and trim window, maintaining failureCount incrementally. */
+  private pushAndTrim(entry: CircuitEntry, success: boolean): void {
+    entry.window.push(success);
+    if (!success) entry.failureCount++;
     while (entry.window.length > this.config.windowSize) {
-      entry.window.shift();
+      const evicted = entry.window.shift();
+      if (evicted === false) entry.failureCount--;
     }
   }
 }

@@ -6,7 +6,7 @@
  * Comprehensive tests for race conditions, transactions, and batch processing
  */
 
-import { describe, test, expect, beforeEach } from "bun:test";
+import { describe, test, expect, beforeEach, spyOn } from "bun:test";
 import {
   ConcurrentOperationsManager,
   BatchProcessor,
@@ -258,6 +258,8 @@ describe('ConcurrentOperationsManager', () => {
     });
 
     test('should handle rollback failures gracefully', async () => {
+      using _log = spyOn(console, 'log').mockImplementation(() => {});
+
       const operations: TransactionOperation<string>[] = [
         {
           id: 'op1',

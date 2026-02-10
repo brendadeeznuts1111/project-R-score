@@ -2,11 +2,18 @@ import type { ProtocolCircuitBreaker } from "./protocol-circuit-breaker";
 
 export type Protocol = "http" | "https" | "ws" | "wss" | "s3" | "file" | "data" | "blob" | "unix";
 
+export const ALL_PROTOCOLS: readonly Protocol[] = ["http", "https", "ws", "wss", "s3", "file", "data", "blob", "unix"];
+
+export interface RetryStrategy {
+  maxAttempts: number;
+  backoff: number;
+}
+
 export interface ProtocolConfig {
   maxSize: number;
   timeout: number;
-  fallbackChain: Protocol[];
-  retryStrategy: { maxAttempts: number; backoff: number };
+  fallbackChain: readonly Protocol[];
+  retryStrategy: RetryStrategy;
 }
 
 export const PROTOCOL_MATRIX: Record<Protocol, ProtocolConfig> = {
@@ -87,6 +94,7 @@ export interface ExecuteResult {
 type CacheEntry = { result: ExecuteResult; expires: number };
 
 const CACHE_TTL = 30_000;
+const MAX_CACHE_SIZE = 1_000;
 const MAX_CONCURRENT = 50;
 
 export class ProtocolOrchestrator {
@@ -131,14 +139,8 @@ export class ProtocolOrchestrator {
     }
 
     // Concurrency gate
-    if (this.activeConcurrent >= MAX_CONCURRENT) {
-      await new Promise<void>((resolve) => {
-        const check = () => {
-          if (this.activeConcurrent < MAX_CONCURRENT) resolve();
-          else setTimeout(check, 1);
-        };
-        check();
-      });
+    while (this.activeConcurrent >= MAX_CONCURRENT) {
+      await Bun.sleep(1);
     }
     this.activeConcurrent++;
 
@@ -169,6 +171,7 @@ export class ProtocolOrchestrator {
           };
 
           if (useCache) {
+            if (this.cache.size >= MAX_CACHE_SIZE) this.evictExpired();
             this.cache.set(cacheKey, { result, expires: Date.now() + CACHE_TTL });
           }
 
@@ -221,21 +224,15 @@ export class ProtocolOrchestrator {
   }
 
   static getMetrics(): Record<Protocol, number> {
-    const all: Protocol[] = ["http", "https", "ws", "wss", "s3", "file", "data", "blob", "unix"];
-    const result = {} as Record<Protocol, number>;
-    for (const p of all) {
-      result[p] = this.metrics.get(p) ?? 0;
-    }
-    return result;
+    return Object.fromEntries(
+      ALL_PROTOCOLS.map((p) => [p, this.metrics.get(p) ?? 0]),
+    ) as Record<Protocol, number>;
   }
 
   static healthCheck(): Record<Protocol, boolean> {
-    const all: Protocol[] = ["http", "https", "ws", "wss", "s3", "file", "data", "blob", "unix"];
-    const result = {} as Record<Protocol, boolean>;
-    for (const p of all) {
-      result[p] = true;
-    }
-    return result;
+    return Object.fromEntries(
+      ALL_PROTOCOLS.map((p) => [p, true]),
+    ) as Record<Protocol, boolean>;
   }
 
   /** Reset all internal state — useful between tests */
@@ -244,6 +241,19 @@ export class ProtocolOrchestrator {
     this.metrics.clear();
     this.activeConcurrent = 0;
     this.circuitBreaker?.resetAll();
+  }
+
+  /** Remove expired entries; if still over cap, drop oldest by insertion order. */
+  private static evictExpired(): void {
+    const now = Date.now();
+    for (const [key, entry] of this.cache) {
+      if (entry.expires <= now) this.cache.delete(key);
+    }
+    // If still at capacity, drop the oldest entry (Map iterates in insertion order)
+    if (this.cache.size >= MAX_CACHE_SIZE) {
+      const oldest = this.cache.keys().next().value;
+      if (oldest !== undefined) this.cache.delete(oldest);
+    }
   }
 
   private static bumpMetric(protocol: Protocol): void {

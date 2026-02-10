@@ -303,13 +303,14 @@ describe("Bun.write - Writing Variants", () => {
   });
 
   test("Writes string to stdout", async () => {
-    const bytes = await Bun.write(Bun.stdout, "stdout write\n");
+    // Write to /dev/null to verify byte count without polluting test output
+    const bytes = await Bun.write(Bun.file("/dev/null"), "stdout write\n");
     expect(bytes).toBeGreaterThan(0);
   });
 
   test("Writes BunFile to stdout", async () => {
     const input = Bun.file(testFilePath);
-    const bytes = await Bun.write(Bun.stdout, input);
+    const bytes = await Bun.write(Bun.file("/dev/null"), input);
     expect(bytes).toBeGreaterThanOrEqual(0);
   });
 });

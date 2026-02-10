@@ -1,12 +1,13 @@
 // lib/mcp/r2-integration-fixed.ts — R2 integration with race condition fixes
 
-import { styled, FW_COLORS } from '../theme/colors';
+import { styled } from '../theme/colors';
 import {
   handleError,
   safeAsync,
   safeAsyncWithRetry,
   R2ConnectionError,
   R2DataError,
+  ErrorSeverity,
 } from '../core/error-handling';
 import { validateR2Key } from '../core/validation';
 import { globalCache } from '../core/cache-manager';
@@ -59,8 +60,8 @@ export interface MetricsEntry {
  * Enhanced R2 Integration Class
  */
 export class R2MCPIntegration {
-  private config: R2Config;
-  private initialized: boolean = false;
+  private readonly config: R2Config;
+  private initialized = false;
 
   constructor(config?: Partial<R2Config>) {
     const resolvedAccessKey =
@@ -108,7 +109,7 @@ export class R2MCPIntegration {
       this.initialized = true;
       console.log(styled('✅ R2 integration initialized', 'success'));
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.initialize', 'critical');
+      handleError(error, 'R2MCPIntegration.initialize', ErrorSeverity.CRITICAL);
       throw error;
     }
   }
@@ -136,7 +137,7 @@ export class R2MCPIntegration {
 
       return key;
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.storeDiagnosis', 'high');
+      handleError(error, 'R2MCPIntegration.storeDiagnosis', ErrorSeverity.HIGH);
       throw error;
     }
   }
@@ -164,7 +165,7 @@ export class R2MCPIntegration {
 
       return key;
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.storeAuditEntry', 'high');
+      handleError(error, 'R2MCPIntegration.storeAuditEntry', ErrorSeverity.HIGH);
       throw error;
     }
   }
@@ -210,7 +211,7 @@ export class R2MCPIntegration {
         similar.map(
           (entry: any) => () =>
             this.getJSON(entry.key).catch(error => {
-              handleError(error, `fetchAudit-${entry.key}`, 'medium');
+              handleError(error, `fetchAudit-${entry.key}`, ErrorSeverity.MEDIUM);
               return null;
             })
         ),
@@ -230,7 +231,7 @@ export class R2MCPIntegration {
 
       return fullEntries;
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.searchAudits', 'medium');
+      handleError(error, 'R2MCPIntegration.searchAudits', ErrorSeverity.MEDIUM);
       return [];
     }
   }
@@ -258,7 +259,7 @@ export class R2MCPIntegration {
 
       return key;
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.storeMetrics', 'high');
+      handleError(error, 'R2MCPIntegration.storeMetrics', ErrorSeverity.HIGH);
       throw error;
     }
   }
@@ -300,7 +301,7 @@ export class R2MCPIntegration {
 
       return data;
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.getJSON', 'medium');
+      handleError(error, 'R2MCPIntegration.getJSON', ErrorSeverity.MEDIUM);
       return null;
     }
   }
@@ -332,7 +333,7 @@ export class R2MCPIntegration {
 
       return validatedKey;
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.putJSON', 'high');
+      handleError(error, 'R2MCPIntegration.putJSON', ErrorSeverity.HIGH);
       throw error;
     }
   }
@@ -376,7 +377,7 @@ export class R2MCPIntegration {
 
       return urlWithFragment;
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.generateSignedURL', 'high');
+      handleError(error, 'R2MCPIntegration.generateSignedURL', ErrorSeverity.HIGH);
       throw error;
     }
   }
@@ -425,7 +426,7 @@ export class R2MCPIntegration {
 
       return { valid: true, service, fragment };
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.parseFactoryWagerURL', 'medium');
+      handleError(error, 'R2MCPIntegration.parseFactoryWagerURL', ErrorSeverity.MEDIUM);
       return { valid: false };
     }
   }
@@ -453,7 +454,7 @@ export class R2MCPIntegration {
         },
       };
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.getConfigStatus', 'medium');
+      handleError(error, 'R2MCPIntegration.getConfigStatus', ErrorSeverity.MEDIUM);
       return { connected: false, config: {} };
     }
   }
@@ -466,7 +467,7 @@ export class R2MCPIntegration {
       const indexKey = 'mcp/indexes/diagnoses.json';
       const index = await globalCache.getOrSet(
         indexKey,
-        () => this.getJSON(indexKey) || { entries: [], lastUpdated: new Date().toISOString() },
+        async () => (await this.getJSON(indexKey)) ?? { entries: [], lastUpdated: new Date().toISOString() },
         { ttl: 300000, tags: ['diagnoses', 'index'] }
       );
 
@@ -491,7 +492,7 @@ export class R2MCPIntegration {
       // Invalidate cache
       await globalCache.invalidateByTags(['diagnoses', 'index']);
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.updateDiagnosisIndex', 'low');
+      handleError(error, 'R2MCPIntegration.updateDiagnosisIndex', ErrorSeverity.LOW);
     }
   }
 
@@ -503,7 +504,7 @@ export class R2MCPIntegration {
       const indexKey = 'mcp/indexes/audits.json';
       const index = await globalCache.getOrSet(
         indexKey,
-        () => this.getJSON(indexKey) || { entries: [], lastUpdated: new Date().toISOString() },
+        async () => (await this.getJSON(indexKey)) ?? { entries: [], lastUpdated: new Date().toISOString() },
         { ttl: 300000, tags: ['audits', 'index'] }
       );
 
@@ -528,7 +529,7 @@ export class R2MCPIntegration {
       // Invalidate cache
       await globalCache.invalidateByTags(['audits', 'index']);
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.updateAuditIndex', 'low');
+      handleError(error, 'R2MCPIntegration.updateAuditIndex', ErrorSeverity.LOW);
     }
   }
 
@@ -540,8 +541,8 @@ export class R2MCPIntegration {
       const indexKey = 'mcp/indexes/metrics.json';
       const index = await globalCache.getOrSet(
         indexKey,
-        () =>
-          this.getJSON(indexKey) || {
+        async () =>
+          (await this.getJSON(indexKey)) ?? {
             queries: [],
             usage: [],
             lastUpdated: new Date().toISOString(),
@@ -569,7 +570,7 @@ export class R2MCPIntegration {
       // Invalidate cache
       await globalCache.invalidateByTags(['metrics', 'index']);
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.updateMetricsIndex', 'low');
+      handleError(error, 'R2MCPIntegration.updateMetricsIndex', ErrorSeverity.LOW);
     }
   }
 
@@ -617,7 +618,7 @@ export class R2MCPIntegration {
 
       return retrieved && retrieved.test === true;
     } catch (error) {
-      handleError(error, 'R2MCPIntegration.testConnection', 'medium');
+      handleError(error, 'R2MCPIntegration.testConnection', ErrorSeverity.MEDIUM);
       return false;
     }
   }

@@ -200,7 +200,7 @@ describe("ProtocolWorkerBridge", () => {
     expect(workerResult).toHaveProperty("metadata");
   });
 
-  test("terminate cleans up pool", async () => {
+  test("terminate cleans up pool and rejects both paths", async () => {
     using workerSpy = spyOn(globalThis, "Worker");
     const workers: FakeWorker[] = [];
     workerSpy.mockImplementation((() => {
@@ -218,10 +218,15 @@ describe("ProtocolWorkerBridge", () => {
     expect(workers).toHaveLength(2);
     bridge.terminate();
 
-    // After termination, executing should fail
+    // Worker path rejects after termination
     await expect(
       bridge.execute({ data: "after-terminate", size: 1000 }),
-    ).rejects.toThrow();
+    ).rejects.toThrow("ProtocolWorkerBridge is terminated");
+
+    // Main-thread path also rejects after termination
+    await expect(
+      bridge.execute({ data: "small", size: 10 }),
+    ).rejects.toThrow("ProtocolWorkerBridge is terminated");
   });
 
   test("multiple concurrent mixed requests", async () => {

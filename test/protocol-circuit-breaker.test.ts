@@ -68,15 +68,11 @@ describe("ProtocolCircuitBreaker standalone", () => {
     for (let i = 0; i < 4; i++) cb.recordFailure("https");
     expect(cb.getSnapshot("https").state).toBe("OPEN");
 
-    // Manipulate time by overriding Date.now
-    const realNow = Date.now;
-    Date.now = () => realNow() + 15;
-    try {
-      expect(cb.isAvailable("https")).toBe(true);
-      expect(cb.getSnapshot("https").state).toBe("HALF_OPEN");
-    } finally {
-      Date.now = realNow;
-    }
+    using dateNow = spyOn(Date, "now");
+    dateNow.mockReturnValue(Date.now() + 15);
+
+    expect(cb.isAvailable("https")).toBe(true);
+    expect(cb.getSnapshot("https").state).toBe("HALF_OPEN");
   });
 
   test("HALF_OPEN → CLOSED on success", () => {
@@ -89,19 +85,14 @@ describe("ProtocolCircuitBreaker standalone", () => {
     for (let i = 0; i < 4; i++) cb.recordFailure("https");
     expect(cb.getSnapshot("https").state).toBe("OPEN");
 
-    // Transition to HALF_OPEN
-    const realNow = Date.now;
-    Date.now = () => realNow() + 15;
-    try {
-      cb.isAvailable("https"); // triggers HALF_OPEN
-      expect(cb.getSnapshot("https").state).toBe("HALF_OPEN");
+    using dateNow = spyOn(Date, "now");
+    dateNow.mockReturnValue(Date.now() + 15);
 
-      // Probe succeeds → CLOSED
-      cb.recordSuccess("https");
-      expect(cb.getSnapshot("https").state).toBe("CLOSED");
-    } finally {
-      Date.now = realNow;
-    }
+    cb.isAvailable("https"); // triggers HALF_OPEN
+    expect(cb.getSnapshot("https").state).toBe("HALF_OPEN");
+
+    cb.recordSuccess("https");
+    expect(cb.getSnapshot("https").state).toBe("CLOSED");
   });
 
   test("HALF_OPEN → OPEN on failure", () => {
@@ -113,18 +104,14 @@ describe("ProtocolCircuitBreaker standalone", () => {
 
     for (let i = 0; i < 4; i++) cb.recordFailure("https");
 
-    const realNow = Date.now;
-    Date.now = () => realNow() + 15;
-    try {
-      cb.isAvailable("https"); // triggers HALF_OPEN
-      expect(cb.getSnapshot("https").state).toBe("HALF_OPEN");
+    using dateNow = spyOn(Date, "now");
+    dateNow.mockReturnValue(Date.now() + 15);
 
-      // Probe fails → back to OPEN
-      cb.recordFailure("https");
-      expect(cb.getSnapshot("https").state).toBe("OPEN");
-    } finally {
-      Date.now = realNow;
-    }
+    cb.isAvailable("https"); // triggers HALF_OPEN
+    expect(cb.getSnapshot("https").state).toBe("HALF_OPEN");
+
+    cb.recordFailure("https");
+    expect(cb.getSnapshot("https").state).toBe("OPEN");
   });
 });
 
@@ -150,7 +137,7 @@ describe("ProtocolCircuitBreaker integration", () => {
 
     using spy = spyOn(ProtocolOrchestrator, "executeProtocol");
     const calledProtocols: Protocol[] = [];
-    spy.mockImplementation(async (protocol: Protocol, data: unknown) => {
+    spy.mockImplementation(async (protocol: Protocol) => {
       calledProtocols.push(protocol);
       return { result: protocol };
     });
