@@ -1734,6 +1734,7 @@
     "security:check": "bun run scripts/security-check.ts",
     "security:secrets:local": "bun run scripts/secrets-scan-local.ts",
     "security:secrets:conformance": "bun run scripts/secrets-conformance-check.ts",
+    "security:secrets:infra:check": "bun run scripts/secrets-infra-integration-check.ts",
     "validate:bun-urls": "bun run scripts/validate-bun-urls.ts",
     "validate:github": "bun run scripts/bun-github-validation.ts",
     "benchmark": "bun run scripts/benchmark.ts",

@@ -25,6 +25,7 @@ import {
   manifestR2Key,
   generateSessionId,
 } from '../core/fw-types';
+import { resolveR2InfraConfig } from '../security/infra-secrets';
 
 // ==================== Types ====================
 
@@ -140,6 +141,28 @@ export function resolveUploaderConfig(): ProfileUploaderConfig {
     requestPayer: parseTruthyEnv(Bun.env.R2_REQUEST_PAYER),
     prefix: Bun.env.R2_PROFILE_PREFIX || 'profiles',
     profilesDir: Bun.env.PROFILE_OUTPUT_DIR || './profiles',
+  };
+}
+
+export async function resolveUploaderConfigAsync(): Promise<ProfileUploaderConfig> {
+  const base = resolveUploaderConfig();
+  const infra = await resolveR2InfraConfig({
+    services: [
+      Bun.env.PROFILE_SECRETS_SERVICE || 'factorywager',
+      Bun.env.FW_R2_SECRETS_SERVICE || 'com.factorywager.r2',
+      Bun.env.FW_INFRA_SECRETS_SERVICE || 'com.factorywager.infra',
+      'default',
+    ],
+    bucketFallback: base.bucket || 'profiles',
+    endpointOptional: true,
+  });
+
+  return {
+    ...base,
+    bucket: base.bucket || infra.bucketName || base.bucket,
+    endpoint: base.endpoint || infra.endpoint || base.endpoint,
+    accessKeyId: base.accessKeyId || infra.accessKeyId || base.accessKeyId,
+    secretAccessKey: base.secretAccessKey || infra.secretAccessKey || base.secretAccessKey,
   };
 }
 
@@ -284,7 +307,7 @@ export class ProfileSessionUploader {
 // ==================== CLI ====================
 
 if (import.meta.main) {
-  const config = resolveUploaderConfig();
+  const config = await resolveUploaderConfigAsync();
   const uploader = new ProfileSessionUploader(config);
   const identity = uploader.getTerminalIdentity();
 

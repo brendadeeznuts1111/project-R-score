@@ -14,6 +14,7 @@ import { logger } from './logger';
 import { handleError } from './error-handler';
 import { toJsonString, serializeBigInt } from './serialization';
 import { requireValidUserId } from './validation';
+import { resolveProfileSecretsService } from '../../../../../lib/security/infra-secrets';
 
 // Type-safe profile preferences schema (v10.1)
 export const ProfilePrefsSchema = z.object({
@@ -51,6 +52,7 @@ export class UserProfileEngine {
   // Performance: Cache prepared statements for faster queries
   private getProfileStmt: ReturnType<Database['prepare']>;
   private getProgressStmt: ReturnType<Database['prepare']>;
+  private readonly profileSecretsService: string;
 
   constructor(dbPath: string = './profiles.db', s3Config?: { bucket: string; region: string }) {
     // Bun.SQL zero-copy SQLite
@@ -99,6 +101,7 @@ export class UserProfileEngine {
     // Pre-compile frequently used queries AFTER schema is ready
     this.getProfileStmt = this.db.prepare('SELECT prefs, progress FROM profiles WHERE userId = ?');
     this.getProgressStmt = this.db.prepare('SELECT score, timestamp FROM progress_log WHERE userId = ? ORDER BY timestamp DESC LIMIT 10');
+    this.profileSecretsService = resolveProfileSecretsService();
   }
 
   /**
@@ -136,7 +139,7 @@ export class UserProfileEngine {
     // Windows Credential Manager per-user scoping
     try {
       await Bun.secrets.set({
-        service: 'factorywager',
+        service: this.profileSecretsService,
         name: `profile:${validated.userId}`,
         value: prefsJson,
       });
@@ -162,7 +165,10 @@ export class UserProfileEngine {
     // Try Bun.secrets first (enterprise-scoped) - skip in hot path for performance
     if (!skipSecrets) {
       try {
-        const secretPrefs = await Bun.secrets.get({ service: 'factorywager', name: `profile:${userId}` });
+        const secretPrefs = await Bun.secrets.get({
+          service: this.profileSecretsService,
+          name: `profile:${userId}`,
+        });
         if (secretPrefs) {
           try {
             return ProfilePrefsSchema.parse(JSON.parse(secretPrefs));

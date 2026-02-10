@@ -9,6 +9,7 @@
 import { UserProfileEngine, ProfilePrefs } from './core';
 import { logger } from './logger';
 import { handleError } from './error-handler';
+import { resolveProfileSecretsService } from '../../../../../lib/security/infra-secrets';
 
 export interface OnboardingSession {
   userId: string;           // '@ashschaeffer1'
@@ -26,6 +27,7 @@ export interface OnboardingResult {
 }
 
 const engine = new UserProfileEngine();
+const PROFILE_SECRETS_SERVICE = resolveProfileSecretsService();
 
 /**
  * Onboard a new user - creates minimal viable profile on first login
@@ -80,7 +82,7 @@ export async function onboardUser(session: OnboardingSession): Promise<Onboardin
   // Step 3 — Persist sensitive prefs via Bun.secrets (enterprise scope)
   try {
     await Bun.secrets.set({
-      service: 'factorywager',
+      service: PROFILE_SECRETS_SERVICE,
       name: `profile:${session.userId}:sensitive`,
       value: JSON.stringify({
         preferredPaymentMethods: ['venmo'],
