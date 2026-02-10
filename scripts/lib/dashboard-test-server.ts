@@ -125,6 +125,10 @@ export async function withDashboardServer<T>(
     if (!alreadyUp) {
       const available = await isPortAvailable(activePort);
       if (!available) {
+        const becameHealthy = await waitForUp(2000);
+        if (becameHealthy) {
+          return await run();
+        }
         if (!allowFallback) {
           const owner = detectPortOwner(activePort);
           const ownerDetail = owner.ownerPid || owner.ownerCommand

@@ -4792,6 +4792,28 @@ function buildRuntimeMetadata() {
   };
 }
 
+function buildRuntimePortStatus() {
+  const requestedOwner = detectPortOwner(DEDICATED_PORT);
+  const activeOwner = detectPortOwner(ACTIVE_PORT);
+  return {
+    generatedAt: new Date().toISOString(),
+    host: "localhost",
+    requestedPort: DEDICATED_PORT,
+    activePort: ACTIVE_PORT,
+    portRange: PORT_RANGE,
+    fallbackAllowed: ALLOW_PORT_FALLBACK,
+    remapped: ACTIVE_PORT !== DEDICATED_PORT,
+    requestedPortOwner: requestedOwner,
+    activePortOwner: activeOwner,
+    process: {
+      pid: process.pid,
+      ppid: process.ppid,
+      signalCount,
+      shuttingDown,
+    },
+  };
+}
+
 function detectPortOwner(port: number) {
   try {
     const out = Bun.spawnSync({
@@ -5401,6 +5423,8 @@ const routes = {
     process: buildProcessRuntimeSnapshot(),
     sockets: buildSocketRuntimeSnapshot(),
   }),
+
+  "/api/control/runtime/ports": () => buildRuntimePortStatus(),
 
   "/api/control/socket/runtime": () => ({
     generatedAt: new Date().toISOString(),
@@ -7402,6 +7426,10 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/process/runtime") {
         return jsonResponse(routes["/api/control/process/runtime"]());
+      }
+
+      if (url.pathname === "/api/control/runtime/ports") {
+        return jsonResponse(routes["/api/control/runtime/ports"]());
       }
 
       if (url.pathname === "/api/control/socket/runtime") {

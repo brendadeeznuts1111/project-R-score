@@ -205,6 +205,20 @@ async function run(): Promise<number> {
       `status=${processRuntime.res.status} pid=${processRuntime.json?.process?.pid ?? "n/a"}`
     );
 
+    const runtimePorts = await fetchJson("/api/control/runtime/ports");
+    check(
+      checks,
+      "runtime-ports-contract",
+      runtimePorts.res.status === 200 &&
+        Number.isFinite(runtimePorts.json?.requestedPort) &&
+        Number.isFinite(runtimePorts.json?.activePort) &&
+        typeof runtimePorts.json?.portRange === "string" &&
+        typeof runtimePorts.json?.fallbackAllowed === "boolean" &&
+        typeof runtimePorts.json?.remapped === "boolean" &&
+        Number.isFinite(runtimePorts.json?.process?.pid),
+      `status=${runtimePorts.res.status} requested=${runtimePorts.json?.requestedPort ?? "n/a"} active=${runtimePorts.json?.activePort ?? "n/a"}`
+    );
+
     const socketRuntime = await fetchJson("/api/control/socket/runtime");
     check(
       checks,

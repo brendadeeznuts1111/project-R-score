@@ -3,6 +3,7 @@
 let currentDemo = null;
 let demos = [];
 let runtimeInfo = null;
+let runtimePortsInfo = null;
 let brandGateSummary = null;
 let governanceSummary = null;
 let orchestrationSummary = null;
@@ -591,8 +592,9 @@ async function refreshHeaderState() {
   document.getElementById('bun-revision').innerHTML = skeletonLong;
   document.getElementById('git-commit-hash').innerHTML = skeletonLong;
   
-  const [infoResult, gateResult, governanceResult, orchestrationStatusResult, projectHealthResult] = await Promise.allSettled([
+  const [infoResult, portsResult, gateResult, governanceResult, orchestrationStatusResult, projectHealthResult] = await Promise.allSettled([
     fetch('/api/info').then(r => r.json()),
+    fetch('/api/control/runtime/ports').then(r => r.json()),
     fetch('/api/brand/status').then(r => r.json()),
     fetch('/api/control/governance-status').then(r => r.json()),
     fetch('/api/control/script-orchestration/status').then(r => r.json()),
@@ -616,6 +618,12 @@ async function refreshHeaderState() {
     document.getElementById('platform').textContent = navigator.platform;
     updateConnectionStatus(false);
     showToast('Failed to load runtime info', 'error');
+  }
+
+  if (portsResult.status === 'fulfilled') {
+    runtimePortsInfo = portsResult.value;
+  } else {
+    runtimePortsInfo = null;
   }
 
   if (gateResult.status === 'fulfilled') {
@@ -685,6 +693,30 @@ function renderHeaderBadges() {
       text: `GitSrc ${runtimeInfo.gitCommitHashSource || 'unknown'}`,
       cls: runtimeInfo.gitCommitHashSource === 'env' ? 'warn' : 'success',
     });
+  }
+
+  if (runtimePortsInfo) {
+    const requested = Number(runtimePortsInfo.requestedPort || 0);
+    const active = Number(runtimePortsInfo.activePort || 0);
+    const remapped = Boolean(runtimePortsInfo.remapped);
+    const fallbackAllowed = Boolean(runtimePortsInfo.fallbackAllowed);
+    const requestedOwner = runtimePortsInfo.requestedPortOwner || {};
+    const ownerPid = requestedOwner.ownerPid ?? null;
+    const ownerCmd = requestedOwner.ownerCommand ?? null;
+    badges.push({
+      text: `PortMap ${requested || 'n/a'}→${active || 'n/a'}`,
+      cls: remapped ? 'warn' : 'success',
+    });
+    badges.push({
+      text: `Fallback ${fallbackAllowed ? 'ON' : 'OFF'}`,
+      cls: fallbackAllowed ? 'warn' : 'success',
+    });
+    if (remapped && (ownerPid || ownerCmd)) {
+      badges.push({
+        text: `Owner ${ownerCmd || 'proc'}:${ownerPid || 'n/a'}`,
+        cls: 'warn',
+      });
+    }
   }
 
   if (runtimeInfo?.controlPlane) {
