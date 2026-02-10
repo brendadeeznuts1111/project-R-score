@@ -152,6 +152,22 @@ async function run(): Promise<number> {
         typeof performance.json?.components?.[0]?.gain === "string",
       `status=${performance.res.status} components=${performance.json?.components?.length ?? 0}`
     );
+
+    const security = await fetchJson("/api/control/security-posture");
+    check(
+      checks,
+      "security-posture-contract",
+      security.res.status === 200 &&
+        Number.isFinite(security.json?.summary?.reviewed) &&
+        Number.isFinite(security.json?.summary?.pending) &&
+        Number.isFinite(security.json?.summary?.criticalIssues) &&
+        Number.isFinite(security.json?.totals?.componentCount) &&
+        Array.isArray(security.json?.components) &&
+        security.json?.components?.length >= 1 &&
+        typeof security.json?.components?.[0]?.file === "string" &&
+        typeof security.json?.components?.[0]?.reviewDate === "string",
+      `status=${security.res.status} components=${security.json?.components?.length ?? 0}`
+    );
   } catch (error) {
     check(
       checks,

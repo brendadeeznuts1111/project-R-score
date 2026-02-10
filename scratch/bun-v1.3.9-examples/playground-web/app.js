@@ -755,6 +755,16 @@ function renderDemo(demo) {
       </div>
     `
     : '';
+  const securityPosturePanel = demo.id === 'security-posture-report'
+    ? `
+      <div class="code-block" style="margin-top: 1rem;">
+        <button class="run-btn" onclick="refreshSecurityPostureReport()">
+          ↻ Refresh Security Posture
+        </button>
+        <div id="security-posture-output" class="output" style="display: block; margin-top: 0.75rem;">Loading security posture report...</div>
+      </div>
+    `
+    : '';
   const protocolMatrixPanel = demo.id === 'protocol-matrix'
     ? `
       <div class="code-block" style="margin-top: 1rem;">
@@ -817,6 +827,7 @@ function renderDemo(demo) {
     ${componentStatusPanel}
     ${deploymentReadinessPanel}
     ${performanceImpactPanel}
+    ${securityPosturePanel}
     ${protocolMatrixPanel}
     ${http2RuntimePanel}
     ${orchestrationPanel}
@@ -836,6 +847,9 @@ function renderDemo(demo) {
   }
   if (demo.id === 'performance-impact-matrix') {
     refreshPerformanceImpactMatrix();
+  }
+  if (demo.id === 'security-posture-report') {
+    refreshSecurityPostureReport();
   }
   if (demo.id === 'protocol-matrix') {
     refreshProtocolMatrixStatus();
@@ -914,6 +928,7 @@ function setupEventListeners() {
   window.refreshComponentStatusMatrix = refreshComponentStatusMatrix;
   window.refreshDeploymentReadinessMatrix = refreshDeploymentReadinessMatrix;
   window.refreshPerformanceImpactMatrix = refreshPerformanceImpactMatrix;
+  window.refreshSecurityPostureReport = refreshSecurityPostureReport;
   window.refreshHttp2RuntimeStatus = refreshHttp2RuntimeStatus;
   window.executeHttp2RuntimeAction = executeHttp2RuntimeAction;
   window.refreshOrchestrationStatus = refreshOrchestrationStatus;
@@ -1092,6 +1107,41 @@ async function refreshPerformanceImpactMatrix() {
   } catch (error) {
     statusDiv.className = 'output error';
     statusDiv.textContent = `Failed to load performance impact matrix: ${error.message}`;
+  }
+}
+
+async function refreshSecurityPostureReport() {
+  const statusDiv = document.getElementById('security-posture-output');
+  if (!statusDiv) return;
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = 'Loading security posture report...';
+
+  try {
+    const response = await fetch('/api/control/security-posture');
+    const data = await response.json();
+    const summary = data.summary || {};
+    const totals = data.totals || {};
+    const components = Array.isArray(data.components) ? data.components : [];
+
+    const lines = [
+      `generatedAt: ${data.generatedAt || 'unknown'}`,
+      `source: ${data.source || 'unknown'}`,
+      `reviewed: ${summary.reviewed ?? 0} | pending: ${summary.pending ?? 0} | reviewedPct: ${totals.reviewedPct ?? 0}%`,
+      `issues: critical=${summary.criticalIssues ?? 0} high=${summary.highIssues ?? 0} medium=${summary.mediumIssues ?? 0}`,
+      '',
+      ...components.slice(0, 10).map((row) => {
+        const findingsCount = Array.isArray(row.findings) ? row.findings.length : 0;
+        const blockersCount = Array.isArray(row.blockers) ? row.blockers.length : 0;
+        return `${row.file} | review=${row.reviewDate || 'pending'} | findings=${findingsCount} | blockers=${blockersCount}`;
+      }),
+    ];
+
+    statusDiv.className = 'output success';
+    statusDiv.textContent = lines.join('\n');
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `Failed to load security posture report: ${error.message}`;
   }
 }
 

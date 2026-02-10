@@ -81,6 +81,7 @@ curl -s http://localhost:<port>/api/control/protocol-matrix
 curl -s http://localhost:<port>/api/control/component-status
 curl -s http://localhost:<port>/api/control/deployment-readiness
 curl -s http://localhost:<port>/api/control/performance-impact
+curl -s http://localhost:<port>/api/control/security-posture
 curl -s http://localhost:<port>/api/control/protocol-scorecard
 curl -s http://localhost:<port>/api/control/evidence-dashboard
 curl -s http://localhost:<port>/api/control/decision-defense
@@ -118,6 +119,9 @@ Deployment readiness API:
 
 Performance impact API:
 - `GET /api/control/performance-impact`: Bun v1.3.9 before/after performance matrix with component-level gain/impact rows.
+
+Security posture API:
+- `GET /api/control/security-posture`: security review summary and component-level findings/blockers/compliance posture.
 
 Mini dashboard UI rows now include:
 - `Bottleneck`

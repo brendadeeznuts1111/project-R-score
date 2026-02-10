@@ -16,6 +16,7 @@ import { getGitCommitHash } from "./getGitCommitHash.ts" with { type: "macro" };
 import { getResilienceConfig } from "../../../config/resilience-chain";
 import { summarizeDeploymentReadiness } from "../../../deployment/readiness-matrix";
 import { summarizePerformanceImpact } from "../../../analysis/performance-impact";
+import { summarizeSecurityPosture } from "../../../security/posture-report";
 
 const BASE_STANDARD = Object.freeze({
   dedicatedPort: 3011,
@@ -1429,6 +1430,18 @@ curl -s http://localhost:<port>/api/control/performance-impact | jq .
 
 # Focus on top-gain components
 curl -s http://localhost:<port>/api/control/performance-impact | jq '.components[] | {name, metric, gain, impact}'
+`,
+  },
+  {
+    id: "security-posture-report",
+    name: "Security Posture Report",
+    description: "Component-level review status, findings, blockers, and compliance posture",
+    category: "Governance",
+    code: `# Inspect security posture report
+curl -s http://localhost:<port>/api/control/security-posture | jq .
+
+# Focus on unresolved/pending review areas
+curl -s http://localhost:<port>/api/control/security-posture | jq '.components[] | {file, reviewDate, riskAssessment, blockers, findings}'
 `,
   },
   {
@@ -4062,6 +4075,7 @@ const routes = {
 
   "/api/control/deployment-readiness": () => summarizeDeploymentReadiness(),
   "/api/control/performance-impact": () => summarizePerformanceImpact(),
+  "/api/control/security-posture": () => summarizeSecurityPosture(),
 
   "/api/control/network-smoke": async (req: Request) => {
     const base = new URL(req.url).origin;
@@ -4318,6 +4332,17 @@ const routes = {
       return new Response(JSON.stringify({
         success: true,
         output: JSON.stringify(matrix, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "security-posture-report") {
+      const report = routes["/api/control/security-posture"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(report, null, 2),
         exitCode: 0,
       }), {
         headers: { "Content-Type": "application/json" },
@@ -4715,6 +4740,10 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/performance-impact") {
         return jsonResponse(routes["/api/control/performance-impact"]());
+      }
+
+      if (url.pathname === "/api/control/security-posture") {
+        return jsonResponse(routes["/api/control/security-posture"]());
       }
 
       if (url.pathname === "/api/control/upload-progress") {
