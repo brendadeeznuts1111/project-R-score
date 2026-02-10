@@ -38,8 +38,11 @@ async function createTestConfigFile(content: Record<string, unknown>): Promise<s
   return filename;
 }
 
-async function cleanupTestFiles(): Promise<void> {
-  // Clean up all tracked temp directories
+async function cleanupTestFiles(force = false): Promise<void> {
+  // Avoid deleting shared temp dirs during per-test teardown because
+  // Bun may run tests concurrently and another test can still be using them.
+  if (!force) return;
+
   for (const dir of tempDirectories) {
     try {
       if (existsSync(dir)) {
@@ -1540,5 +1543,5 @@ describe('EliteConfigManager - File Loading Errors', () => {
 // Global cleanup after all tests
 import { afterAll } from "bun:test";
 afterAll(async () => {
-  await cleanupTestFiles();
+  await cleanupTestFiles(true);
 });
