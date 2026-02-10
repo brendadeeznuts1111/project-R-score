@@ -2005,6 +2005,17 @@ const routes = {
       "bytecode": "esm-bytecode",
       "performance": "performance",
       "bugfixes": "bugfixes",
+      "markdown-advanced": "markdown-advanced",
+      "symbol-dispose": "symbol-dispose",
+      "ipc-communication": "ipc-communication",
+      "process-basics": "process-basics",
+      "stdin-demo": "stdin-demo",
+      "argv-demo": "argv-demo",
+      "ctrl-c-demo": "ctrl-c-demo",
+      "signals-demo": "signals-demo",
+      "spawn-demo": "spawn-demo",
+      "inspect-table": "inspect-table-demo",
+      "brand-bench-results": "brand-bench-results",
     };
     
     const scriptName = scriptMap[id || ""] || id;
