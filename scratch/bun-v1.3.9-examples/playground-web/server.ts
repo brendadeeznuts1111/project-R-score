@@ -2061,10 +2061,14 @@ const routes = {
     try {
       const { output, error, exitCode } = await runCommand(["bun", "run", demoScript], import.meta.dir);
       
+      // Strip ANSI codes for clean JSON output (Bun.stripANSI handles all ANSI escape sequences)
+      const cleanOutput = output ? Bun.stripANSI(output) : (exitCode === 0 ? "Demo completed successfully!" : "");
+      const cleanError = error ? Bun.stripANSI(error) : undefined;
+      
       return new Response(JSON.stringify({
         success: exitCode === 0,
-        output: output || (exitCode === 0 ? "Demo completed successfully!" : ""),
-        error: error || undefined,
+        output: cleanOutput,
+        error: cleanError,
         exitCode,
       }), {
         headers: { "Content-Type": "application/json" },
@@ -2072,7 +2076,7 @@ const routes = {
     } catch (err) {
       return new Response(JSON.stringify({
         success: false,
-        error: err instanceof Error ? err.message : String(err),
+        error: err instanceof Error ? Bun.stripANSI(err.message) : Bun.stripANSI(String(err)),
         output: "",
       }), {
         status: 500,
