@@ -666,8 +666,8 @@ function renderHeaderBadges() {
       cls: 'success',
     });
     badges.push({
-      text: `Workers ${runtimeInfo.runtime.maxCommandWorkers}`,
-      cls: 'success',
+      text: `Workers ${runtimeInfo.runtime.busyCommands ?? runtimeInfo.runtime.activeCommands ?? 0}/${runtimeInfo.runtime.provisionedWorkers ?? runtimeInfo.runtime.maxCommandWorkers ?? 'n/a'} (cap ${runtimeInfo.runtime.maxCommandWorkers ?? 'n/a'})`,
+      cls: Number(runtimeInfo.runtime.busyCommands ?? runtimeInfo.runtime.activeCommands ?? 0) > 0 ? 'warn' : 'success',
     });
     badges.push({
       text: `Port ${runtimeInfo.runtime.dedicatedPort} (${runtimeInfo.runtime.portRange})`,
@@ -1626,14 +1626,30 @@ async function refreshMainRuntimePorts() {
     const response = await resilientFetchAny([
       '/api/control/runtime/ports',
       '/api/control/process/runtime',
+      '/api/info',
     ], {
       cache: 'no-store',
     });
     const data = await response.json();
-    const requestedPort = Number(data.requestedPort || 0);
-    const activePort = Number(data.activePort || 0);
-    const remapped = Boolean(data.remapped);
-    const fallbackAllowed = Boolean(data.fallbackAllowed);
+
+    const requestedPort = Number(
+      data?.requestedPort ??
+      data?.runtime?.requestedPort ??
+      data?.runtime?.dedicatedPort ??
+      data?.runtime?.port ??
+      0
+    );
+    const activePort = Number(
+      data?.activePort ??
+      data?.runtime?.activePort ??
+      data?.runtime?.port ??
+      requestedPort
+    );
+    const remapped = Boolean(
+      data?.remapped ??
+      (requestedPort > 0 && activePort > 0 ? requestedPort !== activePort : false)
+    );
+    const fallbackAllowed = Boolean(data?.fallbackAllowed ?? data?.runtime?.allowPortFallback ?? false);
     const ownerPid = data?.requestedPortOwner?.ownerPid ?? null;
     const ownerCommand = data?.requestedPortOwner?.ownerCommand ?? null;
     const host = String(data.host || window.location.hostname || 'localhost');
@@ -1670,6 +1686,7 @@ async function refreshMainRuntimePorts() {
 }
 
 async function resilientFetch(path, options = {}) {
+  const { attemptsPerOrigin: attemptsPerOriginOption, ...fetchOptions } = options || {};
   const fallbackPort = window.location.port || '3011';
   const rawOrigins = [
     window.location.origin,
@@ -1679,17 +1696,20 @@ async function resilientFetch(path, options = {}) {
     'http://127.0.0.1:3011',
   ];
   const origins = [...new Set(rawOrigins.filter((origin) => /^https?:\/\//.test(origin)))];
-  const attemptsPerOrigin = 2;
+  const attemptsPerOrigin = Math.max(
+    1,
+    Math.min(3, Number(attemptsPerOriginOption || 1))
+  );
   let lastError = null;
-  const attempted = [];
+  const attempted = new Set();
 
   for (const origin of origins) {
     for (let attempt = 1; attempt <= attemptsPerOrigin; attempt += 1) {
       const target = `${origin}${path}`;
-      attempted.push(target);
+      attempted.add(target);
       try {
         const response = await fetch(target, {
-          ...options,
+          ...fetchOptions,
           signal: AbortSignal.timeout(5000),
         });
         if (response.ok) return response;
@@ -1702,11 +1722,12 @@ async function resilientFetch(path, options = {}) {
     }
   }
 
-  const attemptedPreview = attempted.slice(0, 4).join(", ");
+  const attemptedList = Array.from(attempted);
+  const attemptedPreview = attemptedList.slice(0, 4).join(", ");
   throw new Error(
     `Service unavailable after trying ${origins.length} endpoint(s) x${attemptsPerOrigin}` +
       `${lastError ? `: ${lastError.message}` : ""}` +
-      `${attemptedPreview ? ` (attempted: ${attemptedPreview}${attempted.length > 4 ? ", ..." : ""})` : ""}`
+      `${attemptedPreview ? ` (attempted: ${attemptedPreview}${attemptedList.length > 4 ? ", ..." : ""})` : ""}`
   );
 }
 
