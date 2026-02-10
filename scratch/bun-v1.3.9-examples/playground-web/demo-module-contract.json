@@ -1,0 +1,737 @@
+{
+  "version": 1,
+  "total": 50,
+  "generatedAt": "2026-02-10T07:40:58.539Z",
+  "modules": {
+    "governance-status": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=governance-status",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=governance-status"
+    },
+    "decision-defense": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=decision-defense",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=decision-defense"
+    },
+    "evidence-dashboard": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=evidence-dashboard",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=evidence-dashboard"
+    },
+    "protocol-matrix": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=protocol-matrix",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=protocol-matrix"
+    },
+    "protocol-scorecard": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=protocol-scorecard",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=protocol-scorecard"
+    },
+    "protocol-router-tier1380": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=protocol-router-tier1380",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=protocol-router-tier1380"
+    },
+    "multipart-progress": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=multipart-progress",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=multipart-progress"
+    },
+    "s3-content-type": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=s3-content-type",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=s3-content-type"
+    },
+    "control-plane": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=control-plane",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=control-plane"
+    },
+    "resilience-governance": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=resilience-governance",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=resilience-governance"
+    },
+    "brand-bench-gate": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=brand-bench-gate",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=brand-bench-gate"
+    },
+    "historical-sqlite-trends": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=historical-sqlite-trends",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=historical-sqlite-trends"
+    },
+    "parallel": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "scriptMode": "parallel",
+        "workspaceFilter": "*"
+      },
+      "flags": [
+        "--parallel",
+        "--sequential",
+        "--no-exit-on-error",
+        "--filter"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=parallel",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=parallel"
+    },
+    "workspace-runner-panel": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "scriptMode": "parallel",
+        "workspaceFilter": "*"
+      },
+      "flags": [
+        "--parallel",
+        "--sequential",
+        "--no-exit-on-error",
+        "--filter"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=workspace-runner-panel",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=workspace-runner-panel"
+    },
+    "script-orchestration-control": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "scriptMode": "parallel",
+        "workspaceFilter": "*"
+      },
+      "flags": [
+        "--parallel",
+        "--sequential",
+        "--no-exit-on-error",
+        "--filter"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=script-orchestration-control",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=script-orchestration-control"
+    },
+    "feature-matrix": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "scriptMode": "parallel",
+        "workspaceFilter": "*"
+      },
+      "flags": [
+        "--parallel",
+        "--sequential",
+        "--no-exit-on-error",
+        "--filter"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=feature-matrix",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=feature-matrix"
+    },
+    "component-status-matrix": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=component-status-matrix",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=component-status-matrix"
+    },
+    "deployment-readiness-matrix": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=deployment-readiness-matrix",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=deployment-readiness-matrix"
+    },
+    "performance-impact-matrix": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=performance-impact-matrix",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=performance-impact-matrix"
+    },
+    "security-posture-report": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=security-posture-report",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=security-posture-report"
+    },
+    "domain-topology": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=domain-topology",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=domain-topology"
+    },
+    "http2": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "host": "localhost",
+        "timeoutMs": 5000
+      },
+      "flags": [
+        "--network",
+        "--proxy-aware"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=http2",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=http2"
+    },
+    "http2-runtime-control": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "host": "localhost",
+        "timeoutMs": 5000
+      },
+      "flags": [
+        "--network",
+        "--proxy-aware"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=http2-runtime-control",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=http2-runtime-control"
+    },
+    "mocks": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "testRunner": "bun:test"
+      },
+      "flags": [
+        "--bail=1",
+        "--timeout=5000"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=mocks",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=mocks"
+    },
+    "proxy": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "host": "localhost",
+        "timeoutMs": 5000
+      },
+      "flags": [
+        "--network",
+        "--proxy-aware"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=proxy",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=proxy"
+    },
+    "no-proxy-explicit": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "host": "localhost",
+        "timeoutMs": 5000
+      },
+      "flags": [
+        "--network",
+        "--proxy-aware"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=no-proxy-explicit",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=no-proxy-explicit"
+    },
+    "profiling": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 10000,
+        "sampleIntervalUs": 1000
+      },
+      "flags": [
+        "--cpu-prof",
+        "--cpu-prof-interval"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=profiling",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=profiling"
+    },
+    "cpu-prof-interval-explicit": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 10000,
+        "sampleIntervalUs": 1000
+      },
+      "flags": [
+        "--cpu-prof",
+        "--cpu-prof-interval"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=cpu-prof-interval-explicit",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=cpu-prof-interval-explicit"
+    },
+    "bytecode": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 10000,
+        "format": "esm",
+        "bytecode": true
+      },
+      "flags": [
+        "--compile",
+        "--bytecode",
+        "--format=esm"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=bytecode",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=bytecode"
+    },
+    "esm-bytecode-explicit": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 10000,
+        "format": "esm",
+        "bytecode": true
+      },
+      "flags": [
+        "--compile",
+        "--bytecode",
+        "--format=esm"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=esm-bytecode-explicit",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=esm-bytecode-explicit"
+    },
+    "performance": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 10000,
+        "sampleIntervalUs": 1000
+      },
+      "flags": [
+        "--cpu-prof",
+        "--cpu-prof-interval"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=performance",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=performance"
+    },
+    "bugfixes": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "compatTarget": "bun-v1.3.9"
+      },
+      "flags": [
+        "--compat-check",
+        "--stability"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=bugfixes",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=bugfixes"
+    },
+    "bun-apis-stringwidth": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "compatTarget": "bun-v1.3.9"
+      },
+      "flags": [
+        "--compat-check",
+        "--stability"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=bun-apis-stringwidth",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=bun-apis-stringwidth"
+    },
+    "markdown-advanced": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "runtime": "bun"
+      },
+      "flags": [
+        "--feature-demo"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=markdown-advanced",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=markdown-advanced"
+    },
+    "symbol-dispose": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "testRunner": "bun:test"
+      },
+      "flags": [
+        "--bail=1",
+        "--timeout=5000"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=symbol-dispose",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=symbol-dispose"
+    },
+    "symbol-dispose-explicit": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "testRunner": "bun:test"
+      },
+      "flags": [
+        "--bail=1",
+        "--timeout=5000"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=symbol-dispose-explicit",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=symbol-dispose-explicit"
+    },
+    "ipc-communication": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "runtime": "bun"
+      },
+      "flags": [
+        "--feature-demo"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=ipc-communication",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=ipc-communication"
+    },
+    "brand-bench-results": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 10000,
+        "sampleIntervalUs": 1000
+      },
+      "flags": [
+        "--cpu-prof",
+        "--cpu-prof-interval"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=brand-bench-results",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=brand-bench-results"
+    },
+    "inspect-table": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "runtime": "bun"
+      },
+      "flags": [
+        "--feature-demo"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=inspect-table",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=inspect-table"
+    },
+    "process-basics": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "runtime": "bun"
+      },
+      "flags": [
+        "--process",
+        "--signals"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=process-basics",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=process-basics"
+    },
+    "stdin-demo": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "runtime": "bun"
+      },
+      "flags": [
+        "--process",
+        "--signals"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=stdin-demo",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=stdin-demo"
+    },
+    "argv-demo": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "runtime": "bun"
+      },
+      "flags": [
+        "--process",
+        "--signals"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=argv-demo",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=argv-demo"
+    },
+    "ctrl-c-demo": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "runtime": "bun"
+      },
+      "flags": [
+        "--process",
+        "--signals"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=ctrl-c-demo",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=ctrl-c-demo"
+    },
+    "signals-demo": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "runtime": "bun"
+      },
+      "flags": [
+        "--process",
+        "--signals"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=signals-demo",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=signals-demo"
+    },
+    "spawn-demo": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "runtime": "bun"
+      },
+      "flags": [
+        "--process",
+        "--signals"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=spawn-demo",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=spawn-demo"
+    },
+    "test-timeouts": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "testRunner": "bun:test"
+      },
+      "flags": [
+        "--bail=1",
+        "--timeout=5000"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=test-timeouts",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=test-timeouts"
+    },
+    "test-config": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "testRunner": "bun:test"
+      },
+      "flags": [
+        "--bail=1",
+        "--timeout=5000"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=test-config",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=test-config"
+    },
+    "test-lifecycle": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "testRunner": "bun:test"
+      },
+      "flags": [
+        "--bail=1",
+        "--timeout=5000"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=test-lifecycle",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=test-lifecycle"
+    },
+    "test-filtering": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "testRunner": "bun:test"
+      },
+      "flags": [
+        "--bail=1",
+        "--timeout=5000"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=test-filtering",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=test-filtering"
+    },
+    "test-exec-control": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "testRunner": "bun:test"
+      },
+      "flags": [
+        "--bail=1",
+        "--timeout=5000"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=test-exec-control",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=test-exec-control"
+    }
+  }
+}

@@ -77,6 +77,7 @@ const DECISIONS_INDEX_PATH = join(DECISIONS_ROOT, "index.json");
 const DASHBOARD_METRICS_DB_PATH =
   process.env.PLAYGROUND_METRICS_DB_PATH ||
   join(PROJECT_ROOT, ".cache", "playground-dashboard-metrics.sqlite");
+const DEMO_MODULE_CONTRACT_PATH = join(import.meta.dir, "demo-module-contract.json");
 const DASHBOARD_METRICS_RETENTION_ROWS = parseNumberEnv("PLAYGROUND_METRICS_RETENTION_ROWS", 5000, {
   min: 100,
   max: 1000000,
@@ -372,6 +373,21 @@ type ComponentStatusRow = {
   securityReview: string;
   documentation: string;
   production: string;
+};
+
+type DemoModuleContract = {
+  language: string;
+  defaults: Record<string, unknown>;
+  flags: string[];
+  benchCommand: string;
+  testCommand: string;
+};
+
+type DemoModuleContractFile = {
+  version: number;
+  total: number;
+  generatedAt: string;
+  modules: Record<string, DemoModuleContract>;
 };
 
 const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
@@ -1336,8 +1352,58 @@ async function readDecisionGovernanceSnapshot(): Promise<{
   };
 }
 
+async function loadDemoModuleContracts(): Promise<Record<string, DemoModuleContract>> {
+  const fallback: Record<string, DemoModuleContract> = {};
+  try {
+    const raw = await readFile(DEMO_MODULE_CONTRACT_PATH, "utf8");
+    const parsed = JSON.parse(raw) as DemoModuleContractFile;
+    if (!parsed || typeof parsed !== "object" || !parsed.modules || typeof parsed.modules !== "object") {
+      throw new Error("Invalid demo-module-contract.json shape");
+    }
+    return parsed.modules;
+  } catch (error) {
+    console.warn("[playground] demo module contract load failed:", error instanceof Error ? error.message : String(error));
+    return fallback;
+  }
+}
+
+const DEMO_MODULE_CONTRACTS = await loadDemoModuleContracts();
+const DEMO_CONTRACT_REQUIRED_KEYS = ["language", "defaults", "flags", "benchCommand", "testCommand"] as const;
+
+function buildDemoRegistry<T extends { id: string }>(demos: T[]): Array<T & DemoModuleContract> {
+  const missing: string[] = [];
+  const registry = demos.map((demo) => {
+    const contract = DEMO_MODULE_CONTRACTS[demo.id];
+    if (!contract) {
+      missing.push(`${demo.id} (missing contract entry)`);
+      return null;
+    }
+
+    for (const key of DEMO_CONTRACT_REQUIRED_KEYS) {
+      const value = (contract as any)[key];
+      const emptyArray = Array.isArray(value) && value.length === 0;
+      const emptyString = typeof value === "string" && value.trim() === "";
+      const missingValue = value === null || value === undefined || emptyArray || emptyString;
+      if (missingValue) {
+        missing.push(`${demo.id}.${key}`);
+      }
+    }
+
+    return {
+      ...demo,
+      ...contract,
+    };
+  }).filter(Boolean) as Array<T & DemoModuleContract>;
+
+  if (missing.length > 0) {
+    throw new Error(`Demo contract missing required fields: ${missing.join(", ")}`);
+  }
+
+  return registry;
+}
+
 // Demo configurations
-const DEMOS = [
+const DEMOS_BASE = [
   {
     id: "governance-status",
     name: "Governance Status (Canonical)",
@@ -2256,6 +2322,8 @@ bun test --bail
 bun test --watch`,
   },
 ];
+
+const DEMOS = buildDemoRegistry(DEMOS_BASE);
 
 async function runCommand(cmd: string[], cwd: string): Promise<{ output: string; error: string; exitCode: number }> {
   return withCommandWorker(async () => {
