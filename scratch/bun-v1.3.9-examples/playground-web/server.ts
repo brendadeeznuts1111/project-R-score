@@ -486,6 +486,76 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     productionReady: "yes (Cortex-A53+)",
   },
   {
+    feature: "RegExp SIMD Prefix Search",
+    cliOrApi: "JavaScriptCore RegExp engine",
+    defaultBehavior: "Enabled (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Regex-heavy parsers and validators",
+    performanceImpact: "Faster alternative-prefix scans",
+    memoryImpact: "None",
+    productionReady: "yes (ARM64/x64)",
+  },
+  {
+    feature: "RegExp Fixed-Count Parentheses JIT",
+    cliOrApi: "JavaScriptCore RegExp JIT",
+    defaultBehavior: "Enabled (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Patterns like (?:abc){3} and (a+){2}b",
+    performanceImpact: "~3.9x on affected patterns",
+    memoryImpact: "None",
+    productionReady: "yes (all platforms)",
+  },
+  {
+    feature: "String.startsWith Intrinsic",
+    cliOrApi: "String.prototype.startsWith",
+    defaultBehavior: "Optimized (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Routing, guards, URL normalization",
+    performanceImpact: "1.22x-5.76x faster",
+    memoryImpact: "None",
+    productionReady: "yes (all platforms)",
+  },
+  {
+    feature: "Set/Map.size Intrinsic",
+    cliOrApi: "Set#size / Map#size",
+    defaultBehavior: "Optimized (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Hot-path metrics and collection checks",
+    performanceImpact: "2.24x-2.74x faster",
+    memoryImpact: "None",
+    productionReady: "yes (all platforms)",
+  },
+  {
+    feature: "String.trim Intrinsic",
+    cliOrApi: "trim / trimStart / trimEnd",
+    defaultBehavior: "Optimized (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Input sanitation and CLI parsing",
+    performanceImpact: "1.10x-1.42x faster",
+    memoryImpact: "None",
+    productionReady: "yes (all platforms)",
+  },
+  {
+    feature: "Object.defineProperty Intrinsic",
+    cliOrApi: "Object.defineProperty",
+    defaultBehavior: "Optimized path (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Dynamic descriptors and framework internals",
+    performanceImpact: "Groundwork for descriptor specialization",
+    memoryImpact: "None",
+    productionReady: "yes (all platforms)",
+  },
+  {
+    feature: "String.replace Rope Return",
+    cliOrApi: "String.prototype.replace",
+    defaultBehavior: "Rope result (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Short-lived transformed strings",
+    performanceImpact: "Lower copy overhead on string replacement",
+    memoryImpact: "Lower transient allocation pressure",
+    productionReady: "yes (all platforms)",
+  },
+  {
     feature: "Markdown SIMD",
     cliOrApi: "Bun.Markdown",
     defaultBehavior: "Baseline",
@@ -514,6 +584,76 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     performanceImpact: "~6% micro-bench",
     memoryImpact: "-16ms/1M calls",
     productionReady: "yes (all platforms)",
+  },
+  {
+    feature: "Node fs '.' Windows Fix",
+    cliOrApi: "node:fs existsSync/statSync",
+    defaultBehavior: "Fixed (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Cross-platform filesystem checks",
+    performanceImpact: "Correctness fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "Function.toString Compatibility",
+    cliOrApi: "Function.prototype.toString",
+    defaultBehavior: "V8-compatible whitespace (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Tooling and snapshot parity",
+    performanceImpact: "Correctness fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "node:http2 Rare Crash Fixes",
+    cliOrApi: "node:http2",
+    defaultBehavior: "Stability fix (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "HTTP/2 upgrade runtimes and proxies",
+    performanceImpact: "Stability under long-lived traffic",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "Bun.stringWidth Thai/Lao Fix",
+    cliOrApi: "Bun.stringWidth",
+    defaultBehavior: "Correct width for spacing vowels (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "CLI/table rendering in i18n output",
+    performanceImpact: "Correctness fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "WebSocket blob Client Crash Fix",
+    cliOrApi: "WebSocket client (binaryType='blob')",
+    defaultBehavior: "Stability fix (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Blob-mode socket streams",
+    performanceImpact: "Stability fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "Proxy Keep-Alive Absolute-URL Fix",
+    cliOrApi: "HTTP proxy request parsing",
+    defaultBehavior: "Fixed keep-alive sequencing (v1.3.9+)",
+    environmentOverride: "NO_PROXY / proxy options",
+    integration: "Proxy servers and forwarded absolute URLs",
+    performanceImpact: "Fixes 2nd+ request hang",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "HTTP Chunked Parser Smuggling Fix",
+    cliOrApi: "HTTP server parser",
+    defaultBehavior: "Security fix (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Server-side request parsing",
+    performanceImpact: "Security hardening",
+    memoryImpact: "None",
+    productionReady: "yes",
   },
 ];
 
@@ -3798,6 +3938,24 @@ function buildHealthChecks() {
   ];
 }
 
+function parseBunVersionParts(version: string): [number, number, number] {
+  const base = String(version || "")
+    .split("-")[0]
+    .split("+")[0];
+  const [majorRaw, minorRaw, patchRaw] = base.split(".");
+  const major = Number.parseInt(majorRaw || "0", 10) || 0;
+  const minor = Number.parseInt(minorRaw || "0", 10) || 0;
+  const patch = Number.parseInt(patchRaw || "0", 10) || 0;
+  return [major, minor, patch];
+}
+
+function isBunVersionAtLeast(version: string, target: [number, number, number]): boolean {
+  const current = parseBunVersionParts(version);
+  if (current[0] !== target[0]) return current[0] > target[0];
+  if (current[1] !== target[1]) return current[1] > target[1];
+  return current[2] >= target[2];
+}
+
 async function buildDashboardPayload(req: Request) {
   const governance = await routes["/api/control/governance-status"]();
   const runtime = buildRuntimeMetadata();
@@ -4095,6 +4253,24 @@ const routes = {
           : "SIGILL ARMv8.0 fix applies to Linux ARMv8.0 only (not this host)",
     };
 
+    const intrinsicJitFeatures = new Set<string>([
+      "RegExp SIMD Prefix Search",
+      "RegExp Fixed-Count Parentheses JIT",
+      "String.startsWith Intrinsic",
+      "Set/Map.size Intrinsic",
+      "String.trim Intrinsic",
+      "Object.defineProperty Intrinsic",
+      "String.replace Rope Return",
+      "Node fs '.' Windows Fix",
+      "Function.toString Compatibility",
+      "node:http2 Rare Crash Fixes",
+      "Bun.stringWidth Thai/Lao Fix",
+      "WebSocket blob Client Crash Fix",
+      "Proxy Keep-Alive Absolute-URL Fix",
+      "HTTP Chunked Parser Smuggling Fix",
+    ]);
+    const bunV139Plus = isBunVersionAtLeast(Bun.version || "0.0.0", [1, 3, 9]);
+
     const rows = BUN_V139_FEATURE_MATRIX.map((row) => {
       let appliedValue = row.defaultBehavior;
       let active = false;
@@ -4123,6 +4299,9 @@ const routes = {
       } else if (row.feature === "ARMv8.0 Fix") {
         appliedValue = `${runtime.platform}/${runtime.arch}`;
         active = runtime.platform === "linux" && runtime.arch === "arm64";
+      } else if (intrinsicJitFeatures.has(row.feature)) {
+        appliedValue = bunV139Plus ? `enabled (${Bun.version})` : `requires >=1.3.9 (${Bun.version})`;
+        active = bunV139Plus;
       }
 
       return {

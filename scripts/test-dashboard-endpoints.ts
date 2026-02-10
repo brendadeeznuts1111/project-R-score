@@ -206,6 +206,27 @@ async function run(): Promise<number> {
         String(domain.json?.mermaid || "").includes("```mermaid"),
       `status=${domain.res.status} domain=${domain.json?.domain ?? "n/a"}`
     );
+
+    const featureMatrix = await fetchJson("/api/control/feature-matrix");
+    const featureRows = Array.isArray(featureMatrix.json?.rows) ? featureMatrix.json.rows : [];
+    const featureNames = new Set(featureRows.map((row: any) => String(row?.feature || "")));
+    check(
+      checks,
+      "feature-matrix-contract",
+      featureMatrix.res.status === 200 &&
+        Number.isFinite(featureMatrix.json?.summary?.rowCount) &&
+        featureRows.length >= 20 &&
+        featureNames.has("RegExp SIMD Prefix Search") &&
+        featureNames.has("RegExp Fixed-Count Parentheses JIT") &&
+        featureNames.has("String.startsWith Intrinsic") &&
+        featureNames.has("Set/Map.size Intrinsic") &&
+        featureNames.has("String.trim Intrinsic") &&
+        featureNames.has("Object.defineProperty Intrinsic") &&
+        featureNames.has("String.replace Rope Return") &&
+        featureNames.has("node:http2 Rare Crash Fixes") &&
+        featureNames.has("HTTP Chunked Parser Smuggling Fix"),
+      `status=${featureMatrix.res.status} rows=${featureRows.length}`
+    );
   } catch (error) {
     check(
       checks,

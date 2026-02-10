@@ -1120,14 +1120,40 @@ async function refreshFeatureMatrixStatus() {
     const runtime = data.runtime || {};
     const summary = data.summary || {};
     const rows = Array.isArray(data.rows) ? data.rows : [];
+    const spotlightFeatures = new Set([
+      'RegExp SIMD Prefix Search',
+      'RegExp Fixed-Count Parentheses JIT',
+      'String.startsWith Intrinsic',
+      'Set/Map.size Intrinsic',
+      'String.trim Intrinsic',
+      'Object.defineProperty Intrinsic',
+      'String.replace Rope Return',
+      'node:http2 Rare Crash Fixes',
+      'Bun.stringWidth Thai/Lao Fix',
+      'Proxy Keep-Alive Absolute-URL Fix',
+      'HTTP Chunked Parser Smuggling Fix',
+    ]);
     const header = [
       `version: ${data.version || 'unknown'}`,
       `runtime: ${runtime.platform || 'unknown'}/${runtime.arch || 'unknown'} bun=${runtime.bunVersion || 'unknown'}`,
       `active: ${summary.activeCount ?? 0}/${summary.rowCount ?? rows.length}`,
       `sigill: ${runtime.sigillCaveat || 'n/a'}`,
       '',
+      'spotlight:',
     ];
 
+    const spotlightRows = rows
+      .filter((row) => spotlightFeatures.has(String(row.feature || '')))
+      .slice(0, 12)
+      .map((row) => {
+        const mark = row.active ? 'ON ' : 'OFF';
+        return `${mark} | ${row.feature} | impact=${row.performanceImpact} | ready=${row.productionReady}`;
+      });
+
+    const topRowsHeader = [
+      '',
+      'matrix top rows:',
+    ];
     const topRows = rows
       .slice(0, 10)
       .map((row) => {
@@ -1136,7 +1162,7 @@ async function refreshFeatureMatrixStatus() {
       });
 
     statusDiv.className = 'output success';
-    statusDiv.textContent = header.concat(topRows).join('\n');
+    statusDiv.textContent = header.concat(spotlightRows, topRowsHeader, topRows).join('\n');
   } catch (error) {
     statusDiv.className = 'output error';
     statusDiv.textContent = `Failed to load feature matrix: ${error.message}`;
