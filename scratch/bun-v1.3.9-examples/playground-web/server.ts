@@ -537,6 +537,36 @@ process.on("message", (msg) => {
 });`,
   },
   {
+    id: "inspect-table",
+    name: "Bun.inspect.table()",
+    description: "Formatted table output for benchmarks, config diffs, and data comparison",
+    category: "Features",
+    code: `// Formatted table output with Bun.inspect.table()
+const results = [
+  { operation: "generatePalette", opsPerSec: 146147, ms: 1368.5 },
+  { operation: "Bun.color(hex)", opsPerSec: 3054848, ms: 130.9 },
+  { operation: "Bun.color(ansi)", opsPerSec: 3513039, ms: 113.9 },
+];
+
+console.log(Bun.inspect.table(
+  results,
+  ["operation", "opsPerSec", "ms"],
+  { colors: true }
+));
+
+// With ratings
+const rated = results.map(r => ({
+  ...r,
+  rating: r.opsPerSec > 3_000_000 ? "🔥 Fast" : "⚡ Good"
+}));
+
+console.log(Bun.inspect.table(
+  rated,
+  ["operation", "opsPerSec", "ms", "rating"],
+  { colors: true }
+));`,
+  },
+  {
     id: "process-basics",
     name: "Process Basics",
     description: "Command-line args, env vars, stdout/stderr, uptime, timezone",
