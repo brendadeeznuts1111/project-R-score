@@ -765,6 +765,28 @@ function renderDemo(demo) {
       </div>
     `
     : '';
+  const domainTopologyPanel = demo.id === 'domain-topology'
+    ? `
+      <div class="code-block" style="margin-top: 1rem;">
+        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+          <label for="domain-topology-select">Domain:</label>
+          <select id="domain-topology-select">
+            <option value="full">full</option>
+            <option value="presentation">presentation</option>
+            <option value="orchestration">orchestration</option>
+            <option value="protocol">protocol</option>
+            <option value="security">security</option>
+            <option value="performance">performance</option>
+            <option value="observability">observability</option>
+          </select>
+          <button class="run-btn" onclick="refreshDomainTopologyGraph()">
+            ↻ Refresh Domain Graph
+          </button>
+        </div>
+        <div id="domain-topology-output" class="output" style="display: block; margin-top: 0.75rem;">Loading domain topology graph...</div>
+      </div>
+    `
+    : '';
   const protocolMatrixPanel = demo.id === 'protocol-matrix'
     ? `
       <div class="code-block" style="margin-top: 1rem;">
@@ -828,6 +850,7 @@ function renderDemo(demo) {
     ${deploymentReadinessPanel}
     ${performanceImpactPanel}
     ${securityPosturePanel}
+    ${domainTopologyPanel}
     ${protocolMatrixPanel}
     ${http2RuntimePanel}
     ${orchestrationPanel}
@@ -850,6 +873,9 @@ function renderDemo(demo) {
   }
   if (demo.id === 'security-posture-report') {
     refreshSecurityPostureReport();
+  }
+  if (demo.id === 'domain-topology') {
+    refreshDomainTopologyGraph();
   }
   if (demo.id === 'protocol-matrix') {
     refreshProtocolMatrixStatus();
@@ -929,6 +955,7 @@ function setupEventListeners() {
   window.refreshDeploymentReadinessMatrix = refreshDeploymentReadinessMatrix;
   window.refreshPerformanceImpactMatrix = refreshPerformanceImpactMatrix;
   window.refreshSecurityPostureReport = refreshSecurityPostureReport;
+  window.refreshDomainTopologyGraph = refreshDomainTopologyGraph;
   window.refreshHttp2RuntimeStatus = refreshHttp2RuntimeStatus;
   window.executeHttp2RuntimeAction = executeHttp2RuntimeAction;
   window.refreshOrchestrationStatus = refreshOrchestrationStatus;
@@ -1142,6 +1169,38 @@ async function refreshSecurityPostureReport() {
   } catch (error) {
     statusDiv.className = 'output error';
     statusDiv.textContent = `Failed to load security posture report: ${error.message}`;
+  }
+}
+
+async function refreshDomainTopologyGraph() {
+  const statusDiv = document.getElementById('domain-topology-output');
+  if (!statusDiv) return;
+
+  const select = document.getElementById('domain-topology-select');
+  const domain = select && typeof select.value === 'string' ? select.value : 'full';
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = `Loading domain graph (${domain})...`;
+
+  try {
+    const response = await fetch(`/api/control/domain-graph?domain=${encodeURIComponent(domain)}`);
+    const data = await response.json();
+    const available = Array.isArray(data.availableDomains) ? data.availableDomains.join(', ') : 'n/a';
+
+    const lines = [
+      `generatedAt: ${data.generatedAt || 'unknown'}`,
+      `source: ${data.source || 'unknown'}`,
+      `domain: ${data.domain || domain}`,
+      `available: ${available}`,
+      '',
+      String(data.mermaid || ''),
+    ];
+
+    statusDiv.className = 'output success';
+    statusDiv.textContent = lines.join('\n');
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `Failed to load domain topology graph: ${error.message}`;
   }
 }
 

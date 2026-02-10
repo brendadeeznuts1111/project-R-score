@@ -17,6 +17,7 @@ import { getResilienceConfig } from "../../../config/resilience-chain";
 import { summarizeDeploymentReadiness } from "../../../deployment/readiness-matrix";
 import { summarizePerformanceImpact } from "../../../analysis/performance-impact";
 import { summarizeSecurityPosture } from "../../../security/posture-report";
+import { listDomains, renderDomainGraph, renderFullHierarchy } from "../../../docs/domain-renderer";
 
 const BASE_STANDARD = Object.freeze({
   dedicatedPort: 3011,
@@ -409,7 +410,7 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     cliOrApi: "Auto",
     defaultBehavior: "Enabled",
     environmentOverride: "—",
-    integration: "groupPrePost(scripts)",
+    integration: "Bun run groups pre<name>/<name>/post<name> automatically",
     performanceImpact: "Correct dep order",
     memoryImpact: "n/a",
     productionReady: "yes",
@@ -1442,6 +1443,18 @@ curl -s http://localhost:<port>/api/control/security-posture | jq .
 
 # Focus on unresolved/pending review areas
 curl -s http://localhost:<port>/api/control/security-posture | jq '.components[] | {file, reviewDate, riskAssessment, blockers, findings}'
+`,
+  },
+  {
+    id: "domain-topology",
+    name: "Domain Topology",
+    description: "Domain-scoped Mermaid hierarchy and per-domain graph rendering",
+    category: "Governance",
+    code: `# Full hierarchy graph
+curl -s "http://localhost:<port>/api/control/domain-graph?domain=full" | jq .
+
+# Domain-scoped graph
+curl -s "http://localhost:<port>/api/control/domain-graph?domain=orchestration" | jq .
 `,
   },
   {
@@ -4076,6 +4089,25 @@ const routes = {
   "/api/control/deployment-readiness": () => summarizeDeploymentReadiness(),
   "/api/control/performance-impact": () => summarizePerformanceImpact(),
   "/api/control/security-posture": () => summarizeSecurityPosture(),
+  "/api/control/domain-graph": (req: Request) => {
+    const url = new URL(req.url);
+    const domain = (url.searchParams.get("domain") || "full").toLowerCase();
+    const domains = listDomains();
+    const isDomain = domains.includes(domain as (typeof domains)[number]);
+    const mermaid = domain === "full"
+      ? renderFullHierarchy()
+      : isDomain
+        ? renderDomainGraph(domain as (typeof domains)[number])
+        : renderFullHierarchy();
+
+    return {
+      generatedAt: new Date().toISOString(),
+      source: "tier-1380-domain-renderer",
+      domain: domain === "full" || isDomain ? domain : "full",
+      availableDomains: ["full", ...domains],
+      mermaid,
+    };
+  },
 
   "/api/control/network-smoke": async (req: Request) => {
     const base = new URL(req.url).origin;
@@ -4343,6 +4375,19 @@ const routes = {
       return new Response(JSON.stringify({
         success: true,
         output: JSON.stringify(report, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "domain-topology") {
+      const graph = routes["/api/control/domain-graph"](
+        new Request("http://localhost/api/control/domain-graph?domain=full")
+      );
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(graph, null, 2),
         exitCode: 0,
       }), {
         headers: { "Content-Type": "application/json" },
@@ -4744,6 +4789,10 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/security-posture") {
         return jsonResponse(routes["/api/control/security-posture"]());
+      }
+
+      if (url.pathname === "/api/control/domain-graph") {
+        return jsonResponse(routes["/api/control/domain-graph"](req));
       }
 
       if (url.pathname === "/api/control/upload-progress") {

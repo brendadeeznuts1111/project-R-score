@@ -82,6 +82,7 @@ curl -s http://localhost:<port>/api/control/component-status
 curl -s http://localhost:<port>/api/control/deployment-readiness
 curl -s http://localhost:<port>/api/control/performance-impact
 curl -s http://localhost:<port>/api/control/security-posture
+curl -s "http://localhost:<port>/api/control/domain-graph?domain=full"
 curl -s http://localhost:<port>/api/control/protocol-scorecard
 curl -s http://localhost:<port>/api/control/evidence-dashboard
 curl -s http://localhost:<port>/api/control/decision-defense
@@ -122,6 +123,9 @@ Performance impact API:
 
 Security posture API:
 - `GET /api/control/security-posture`: security review summary and component-level findings/blockers/compliance posture.
+
+Domain topology API:
+- `GET /api/control/domain-graph?domain=<full|presentation|orchestration|protocol|security|performance|observability>`: Mermaid-wrapped domain graph source for live topology panels.
 
 Mini dashboard UI rows now include:
 - `Bottleneck`

@@ -168,6 +168,18 @@ async function run(): Promise<number> {
         typeof security.json?.components?.[0]?.reviewDate === "string",
       `status=${security.res.status} components=${security.json?.components?.length ?? 0}`
     );
+
+    const domain = await fetchJson("/api/control/domain-graph?domain=orchestration");
+    check(
+      checks,
+      "domain-graph-contract",
+      domain.res.status === 200 &&
+        typeof domain.json?.domain === "string" &&
+        Array.isArray(domain.json?.availableDomains) &&
+        typeof domain.json?.mermaid === "string" &&
+        String(domain.json?.mermaid || "").includes("```mermaid"),
+      `status=${domain.res.status} domain=${domain.json?.domain ?? "n/a"}`
+    );
   } catch (error) {
     check(
       checks,
