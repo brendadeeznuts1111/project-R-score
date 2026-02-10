@@ -769,6 +769,26 @@ const proc4 = Bun.spawn({
 // Kill a process
 proc4.kill("SIGTERM");`,
   },
+  {
+    id: "test-timeouts",
+    name: "Test Timeouts",
+    description: "Per-test timeout configuration for bun:test",
+    category: "Testing",
+    code: `import { test, expect } from "bun:test";
+
+// Fast test with 1 second timeout
+test("fast test", () => {
+  expect(1 + 1).toBe(2);
+}, 1000);
+
+// Slow test with 10 second timeout
+test("slow test", async () => {
+  await new Promise(resolve => setTimeout(resolve, 8000));
+}, 10000);
+
+// Default timeout is 5000ms (5 seconds)
+// Set to 0 to disable timeout`,
+  },
 ];
 
 async function runCommand(cmd: string[], cwd: string): Promise<{ output: string; error: string; exitCode: number }> {
@@ -2051,6 +2071,7 @@ const routes = {
       "spawn-demo": "spawn-demo",
       "inspect-table": "inspect-table-demo",
       "brand-bench-results": "brand-bench-results",
+      "test-timeouts": "timeouts-demo",
     };
     
     const scriptName = scriptMap[id || ""] || id;
