@@ -288,7 +288,31 @@ async function main(): Promise<void> {
   if (options.json) {
     console.log(JSON.stringify(result, null, 2));
   } else {
-    console.log(`status=${result.status} anomalyType=${result.anomalyType} violations=${result.violations.length}`);
+    // Use Bun.inspect.table() for formatted summary
+    const useColors = process.stdout.isTTY;
+    
+    console.log(`\n📊 Brand Bench Evaluation Summary`);
+    console.log(`Status: ${result.status.toUpperCase()}`);
+    console.log(`Mode: ${result.gateMode} (${result.warnCycle}/${result.warnCyclesTotal})`);
+    console.log(`Anomaly: ${result.anomalyType}`);
+    
+    if (result.violations.length > 0) {
+      const tableData = result.violations.map(v => ({
+        metric: v.metric.split('.').pop() || v.metric,
+        kind: v.kind,
+        severity: v.severity === 'fail' ? '❌ FAIL' : v.severity === 'warn' ? '⚠️ WARN' : '✅ OK',
+        delta: `${v.deltaPct > 0 ? '+' : ''}${v.deltaPct.toFixed(1)}%`,
+      }));
+      
+      console.log('\nViolations:');
+      console.log(Bun.inspect.table(
+        tableData,
+        ['metric', 'kind', 'severity', 'delta'],
+        { colors: useColors }
+      ));
+    } else {
+      console.log('\n✅ No violations detected');
+    }
   }
 
   process.exit(strict && result.status === 'fail' ? 1 : 0);
