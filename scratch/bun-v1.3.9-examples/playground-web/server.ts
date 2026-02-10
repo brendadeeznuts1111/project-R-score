@@ -12,6 +12,7 @@ import { readFileSync } from "node:fs";
 import { createServer, type Server as NetServer } from "node:net";
 import { connect as connectHttp2, createSecureServer, type Http2SecureServer } from "node:http2";
 import { extname, join, normalize, resolve as resolvePath, sep } from "node:path";
+import { setEnvironmentData } from "worker_threads";
 import { getBuildMetadata } from "./build-metadata" with { type: "macro" };
 import { getGitCommitHash } from "./getGitCommitHash.ts" with { type: "macro" };
 import { getResilienceConfig } from "../../../config/resilience-chain";
@@ -132,6 +133,7 @@ const commandWorkerPool = new UltraWorkerPool<
 const WORKER_DEFAULT_ENV: Record<string, string> = {
   NO_PROXY: (process.env.NO_PROXY || process.env.no_proxy || "localhost,127.0.0.1").trim(),
 };
+setEnvironmentData("playground.workerDefaultEnv", WORKER_DEFAULT_ENV);
 
 function getCommandWorkerStats() {
   const stats = commandWorkerPool.getStats();

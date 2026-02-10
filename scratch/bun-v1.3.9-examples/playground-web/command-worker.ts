@@ -1,3 +1,5 @@
+import { getEnvironmentData } from "worker_threads";
+
 type RunCommandTask = {
   type: "run-command";
   cmd: string[];
@@ -20,8 +22,11 @@ type ResultEnvelope = {
 };
 
 async function executeRunCommand(task: RunCommandTask) {
+  const workerDefaultEnv =
+    (getEnvironmentData("playground.workerDefaultEnv") as Record<string, string> | undefined) || {};
   const mergedEnv = {
     ...process.env,
+    ...workerDefaultEnv,
     ...(task.env || {}),
   };
   const proc = Bun.spawn({
