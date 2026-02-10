@@ -60,7 +60,7 @@ const ALLOW_PORT_FALLBACK = PORT_POLICY.allowFallback;
 const PORT_RANGE = PORT_POLICY.portRange;
 const MAX_CONCURRENT_REQUESTS = parseNumberEnv("PLAYGROUND_MAX_CONCURRENT_REQUESTS", BASE_STANDARD.maxConcurrentRequests, { min: 1, max: 100000 });
 const MAX_COMMAND_WORKERS = parseNumberEnv("PLAYGROUND_MAX_COMMAND_WORKERS", BASE_STANDARD.maxCommandWorkers, { min: 1, max: 64 });
-const WORKER_POOL_MIN = parseNumberEnv("PLAYGROUND_WORKER_POOL_MIN", MAX_COMMAND_WORKERS, { min: 1, max: 64 });
+const WORKER_POOL_MIN = parseNumberEnv("PLAYGROUND_WORKER_POOL_MIN", 1, { min: 1, max: 64 });
 const WORKER_POOL_MAX = parseNumberEnv("PLAYGROUND_WORKER_POOL_MAX", MAX_COMMAND_WORKERS, { min: 1, max: 64 });
 const WORKER_POOL_QUEUE_MAX = parseNumberEnv("PLAYGROUND_WORKER_POOL_QUEUE_MAX", 200, { min: 1, max: 10000 });
 const WORKER_POOL_TASK_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_WORKER_POOL_TASK_TIMEOUT_MS", 15000, {
@@ -170,9 +170,20 @@ setEnvironmentData("playground.workerDefaultEnv", WORKER_DEFAULT_ENV);
 
 function getCommandWorkerStats() {
   const stats = commandWorkerPool.getStats();
+  const provisionedWorkers = Number(stats.workers || 0);
+  const busyWorkers = Number(stats.busyWorkers || 0);
+  const configuredMax = Number(WORKER_POOL_MAX || 1);
+  const configuredMin = Number(WORKER_POOL_MIN || 1);
   return {
-    active: stats.busyWorkers,
-    max: stats.workers,
+    active: busyWorkers, // backwards compatible alias: active = busy workers
+    busy: busyWorkers,
+    max: configuredMax, // backwards compatible alias: max = configured cap
+    provisioned: provisionedWorkers,
+    configuredMin,
+    configuredMax,
+    provisionedAvailable: Math.max(0, provisionedWorkers - busyWorkers),
+    scalableHeadroom: Math.max(0, configuredMax - provisionedWorkers),
+    available: Math.max(0, configuredMax - busyWorkers),
     queued: stats.queuedTasks,
     inFlight: stats.inFlightTasks,
     createdWorkers: stats.createdWorkers,
@@ -3571,9 +3582,9 @@ function severityByWorkerPoolSignals(
 function buildLivePoolSnapshot() {
   const workerStats = getCommandWorkerStats();
   const connectionUtilization = Number((inFlightRequests / Math.max(1, MAX_CONCURRENT_REQUESTS)).toFixed(3));
-  const workerUtilization = Number((workerStats.active / Math.max(1, workerStats.max)).toFixed(3));
+  const workerUtilization = Number((workerStats.active / Math.max(1, workerStats.configuredMax)).toFixed(3));
   const availableConnections = Math.max(0, MAX_CONCURRENT_REQUESTS - inFlightRequests);
-  const availableWorkers = Math.max(0, workerStats.max - workerStats.active);
+  const availableWorkers = Math.max(0, workerStats.available);
   const perWorkerConnectionLoad = Number((inFlightRequests / Math.max(1, workerStats.active || 1)).toFixed(2));
   const perConnectionWorkerLoad = Number((workerStats.active / Math.max(1, inFlightRequests || 1)).toFixed(2));
   const bottleneck =
@@ -3592,8 +3603,14 @@ function buildLivePoolSnapshot() {
     },
     workers: {
       active: workerStats.active,
+      busy: workerStats.busy,
       max: workerStats.max,
+      maxConfigured: workerStats.configuredMax,
+      minConfigured: workerStats.configuredMin,
+      provisioned: workerStats.provisioned,
       available: availableWorkers,
+      provisionedAvailable: workerStats.provisionedAvailable,
+      scalableHeadroom: workerStats.scalableHeadroom,
       utilization: workerUtilization,
       loadPerConnection: perConnectionWorkerLoad,
       queuedTasks: workerStats.queued,
@@ -6599,7 +6616,9 @@ const routes = {
     const stats = getCommandWorkerStats();
     const latest = await readJsonSafe(WORKER_POOL_BENCH_LATEST_PATH);
     const diagnostics = {
-      workers: Number(stats.max || 0),
+      workers: Number(stats.provisioned || 0),
+      minWorkers: Number(stats.configuredMin || 0),
+      maxWorkers: Number(stats.configuredMax || 0),
       busy: Number(stats.active || 0),
       queued: Number(stats.queued || 0),
       inFlight: Number(stats.inFlight || 0),
@@ -6607,10 +6626,11 @@ const routes = {
       rejectedTasks: Number(stats.rejectedTasks || 0),
       createdWorkers: Number(stats.createdWorkers || 0),
       replacedWorkers: Number(stats.replacedWorkers || 0),
-      availableWorkers: Math.max(0, Number(stats.max || 0) - Number(stats.active || 0)),
+      availableWorkers: Number(stats.provisionedAvailable || 0),
+      scalableHeadroom: Number(stats.scalableHeadroom || 0),
       queuePressurePct: Number(
         (
-          (Number(stats.queued || 0) / Math.max(1, Number(stats.max || 1))) * 100
+          (Number(stats.queued || 0) / Math.max(1, Number(stats.configuredMax || 1))) * 100
         ).toFixed(1)
       ),
       lastErrors: Array.isArray(stats.lastErrors) ? stats.lastErrors : [],
@@ -6635,7 +6655,9 @@ const routes = {
     const stats = getCommandWorkerStats();
     const latest = await readJsonSafe(WORKER_POOL_BENCH_LATEST_PATH);
     const diagnostics = {
-      workers: Number(stats.max || 0),
+      workers: Number(stats.provisioned || 0),
+      minWorkers: Number(stats.configuredMin || 0),
+      maxWorkers: Number(stats.configuredMax || 0),
       busy: Number(stats.active || 0),
       queued: Number(stats.queued || 0),
       inFlight: Number(stats.inFlight || 0),
@@ -6644,10 +6666,11 @@ const routes = {
       rejectedTasks: Number(stats.rejectedTasks || 0),
       createdWorkers: Number(stats.createdWorkers || 0),
       replacedWorkers: Number(stats.replacedWorkers || 0),
-      availableWorkers: Math.max(0, Number(stats.max || 0) - Number(stats.active || 0)),
+      availableWorkers: Number(stats.provisionedAvailable || 0),
+      scalableHeadroom: Number(stats.scalableHeadroom || 0),
       queuePressurePct: Number(
         (
-          (Number(stats.queued || 0) / Math.max(1, Number(stats.max || 1))) * 100
+          (Number(stats.queued || 0) / Math.max(1, Number(stats.configuredMax || 1))) * 100
         ).toFixed(1)
       ),
       lastErrors: Array.isArray(stats.lastErrors) ? stats.lastErrors : [],
@@ -7341,7 +7364,10 @@ async function handleRequest(req: Request): Promise<Response> {
             dedicatedPort: DEDICATED_PORT,
             portRange: PORT_RANGE,
             maxConcurrentRequests: MAX_CONCURRENT_REQUESTS,
-            maxCommandWorkers: getCommandWorkerStats().max,
+            maxCommandWorkers: getCommandWorkerStats().configuredMax,
+            minCommandWorkers: getCommandWorkerStats().configuredMin,
+            provisionedWorkers: getCommandWorkerStats().provisioned,
+            busyCommands: getCommandWorkerStats().active,
             inFlightRequests,
             activeCommands: getCommandWorkerStats().active,
             pid: process.pid,

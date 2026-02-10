@@ -9,6 +9,7 @@ export interface WorkerPoolConfig {
   maxQueueSize?: number;
   taskTimeoutMs?: number;
   maxErrorHistory?: number;
+  idleScaleDownMs?: number;
 }
 
 export interface WorkerTask<TPayload = unknown, TResult = unknown> {
@@ -36,6 +37,8 @@ export interface WorkerResultMessage<TResult = unknown> {
 
 export interface WorkerPoolStats {
   workers: number;
+  minWorkers: number;
+  maxWorkers: number;
   busyWorkers: number;
   queuedTasks: number;
   inFlightTasks: number;
@@ -60,11 +63,14 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
   private rejectedTasks = 0;
   private errorHistory: Array<{ at: string; event: string; message: string }> = [];
   private timeoutByTaskId = new Map<TaskId, ReturnType<typeof setTimeout>>();
+  private idleSinceByWorker = new Map<Worker, number>();
+  private idleReapTimer: ReturnType<typeof setInterval> | null = null;
 
   // Resolved config defaults — computed once in constructor
   private readonly maxQueueSize: number;
   private readonly taskTimeoutMs: number;
   private readonly maxErrorHistory: number;
+  private readonly idleScaleDownMs: number;
 
   constructor(private readonly config: WorkerPoolConfig) {
     if (config.minWorkers < 1) throw new Error("minWorkers must be >= 1");
@@ -74,6 +80,7 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
     this.maxQueueSize = config.maxQueueSize ?? Number.POSITIVE_INFINITY;
     this.taskTimeoutMs = config.taskTimeoutMs ?? 0;
     this.maxErrorHistory = config.maxErrorHistory ?? 25;
+    this.idleScaleDownMs = config.idleScaleDownMs ?? 10000;
     if (this.maxQueueSize < 1) {
       throw new Error("maxQueueSize must be >= 1");
     }
@@ -82,6 +89,12 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
     }
     for (let i = 0; i < config.minWorkers; i += 1) {
       this.spawnWorker();
+    }
+
+    if (this.idleScaleDownMs > 0) {
+      const intervalMs = Math.max(100, Math.min(this.idleScaleDownMs, 1000));
+      this.idleReapTimer = setInterval(() => this.reapIdleWorkers(), intervalMs);
+      this.idleReapTimer.unref?.();
     }
   }
 
@@ -117,6 +130,8 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
     for (const id of this.inFlightByWorker.values()) if (id !== null) busyWorkers++;
     return {
       workers: this.workers.length,
+      minWorkers: this.config.minWorkers,
+      maxWorkers: this.config.maxWorkers,
       busyWorkers,
       queuedTasks: this.queue.length,
       inFlightTasks: this.pendingByTaskId.size,
@@ -136,6 +151,10 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
 
   terminateAll(reason = "pool terminated"): void {
     this.closed = true;
+    if (this.idleReapTimer) {
+      clearInterval(this.idleReapTimer);
+      this.idleReapTimer = null;
+    }
     while (this.queue.length > 0) {
       const task = this.queue.shift();
       task?.reject(new Error(reason));
@@ -164,6 +183,7 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
 
     worker.addEventListener("open", () => {
       this.inFlightByWorker.set(worker, null);
+      this.idleSinceByWorker.set(worker, Date.now());
       this.processQueue();
     });
 
@@ -188,6 +208,7 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
 
     this.workers.push(worker);
     this.inFlightByWorker.set(worker, null);
+    this.idleSinceByWorker.set(worker, Date.now());
     return worker;
   }
 
@@ -215,12 +236,14 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
       };
 
       this.inFlightByWorker.set(worker, task.id);
+      this.idleSinceByWorker.delete(worker);
       this.pendingByTaskId.set(task.id, task);
       this.workerToTaskId.set(worker, task.id);
       try {
         worker.postMessage(message);
       } catch (error) {
         this.inFlightByWorker.set(worker, null);
+        this.idleSinceByWorker.set(worker, Date.now());
         this.pendingByTaskId.delete(task.id);
         this.workerToTaskId.delete(worker);
         this.recordError("post-message-failed", error);
@@ -237,6 +260,7 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
           this.pendingByTaskId.delete(task.id);
           this.workerToTaskId.delete(worker);
           this.inFlightByWorker.set(worker, null);
+          this.idleSinceByWorker.set(worker, Date.now());
           this.recordError("task-timeout", new Error(`Task ${task.id} timed out after ${this.taskTimeoutMs}ms`));
           timedOutTask.reject(new Error(`Worker task timeout after ${this.taskTimeoutMs}ms`));
           this.processQueue();
@@ -298,6 +322,7 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
     this.pendingByTaskId.delete(taskId);
     this.workerToTaskId.delete(worker);
     this.inFlightByWorker.set(worker, null);
+    this.idleSinceByWorker.set(worker, Date.now());
 
     if (!task) {
       this.processQueue();
@@ -313,6 +338,7 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
     }
 
     this.processQueue();
+    this.maybeScaleDown();
   }
 
   private replaceWorker(worker: Worker): void {
@@ -320,6 +346,7 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
     if (idx < 0 && !this.inFlightByWorker.has(worker)) return;
     if (idx >= 0) this.workers.splice(idx, 1);
     this.inFlightByWorker.delete(worker);
+    this.idleSinceByWorker.delete(worker);
     this.replacedWorkers += 1;
 
     const taskId = this.workerToTaskId.get(worker);
@@ -336,6 +363,54 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
       this.spawnWorker();
     }
     this.processQueue();
+  }
+
+  private maybeScaleDown(): void {
+    if (this.closed) return;
+    if (this.queue.length > 0) return;
+    this.reapIdleWorkers();
+  }
+
+  private reapIdleWorkers(): void {
+    if (this.closed) return;
+    if (this.idleScaleDownMs <= 0) return;
+    if (this.queue.length > 0 || this.pendingByTaskId.size > 0) return;
+
+    while (this.workers.length > this.config.minWorkers) {
+      const idleWorker = this.selectIdleWorkerForTermination();
+      if (!idleWorker) break;
+      const idleSince = this.idleSinceByWorker.get(idleWorker) ?? 0;
+      const idleAgeMs = Date.now() - idleSince;
+      if (idleAgeMs < this.idleScaleDownMs) break;
+      this.removeWorker(idleWorker);
+    }
+  }
+
+  private selectIdleWorkerForTermination(): Worker | null {
+    let candidate: Worker | null = null;
+    let oldestIdleSince = Number.POSITIVE_INFINITY;
+    for (const worker of this.workers) {
+      if (this.inFlightByWorker.get(worker) !== null) continue;
+      const idleSince = this.idleSinceByWorker.get(worker) ?? Date.now();
+      if (idleSince < oldestIdleSince) {
+        oldestIdleSince = idleSince;
+        candidate = worker;
+      }
+    }
+    return candidate;
+  }
+
+  private removeWorker(worker: Worker): void {
+    const idx = this.workers.indexOf(worker);
+    if (idx >= 0) this.workers.splice(idx, 1);
+    this.inFlightByWorker.delete(worker);
+    this.idleSinceByWorker.delete(worker);
+    this.workerToTaskId.delete(worker);
+    try {
+      worker.terminate();
+    } catch {
+      // best-effort cleanup on shutdown/scale-down path
+    }
   }
 
   private recordError(event: string, error: unknown): void {

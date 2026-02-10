@@ -388,6 +388,47 @@ describe("UltraWorkerPool dynamic scaling", () => {
     pool.terminateAll();
     await Promise.allSettled(tasks);
   });
+
+  test("scales down idle workers back to minWorkers", async () => {
+    using spy = spyOn(globalThis, "Worker");
+    const workers: FakeWorker[] = [];
+    spy.mockImplementation((() => {
+      const w = new FakeWorker({ autoReply: false });
+      w.postMessage = (msg: WorkerTaskMessage<string>) => {
+        setTimeout(() => {
+          w.emit("message", {
+            data: {
+              type: "result",
+              id: msg.id,
+              ok: true,
+              value: `ok:${msg.payload}`,
+            },
+          });
+        }, 10);
+      };
+      workers.push(w);
+      return w;
+    }) as any);
+
+    const pool = new UltraWorkerPool<string, string>({
+      workerUrl: "./fake.ts",
+      minWorkers: 1,
+      maxWorkers: 3,
+      idleScaleDownMs: 20,
+    });
+    pools.push(pool);
+
+    const t1 = pool.execute("task-1");
+    const t2 = pool.execute("task-2");
+    const t3 = pool.execute("task-3");
+    await Bun.sleep(10);
+    expect(pool.getStats().workers).toBe(3);
+
+    await Promise.all([t1, t2, t3]);
+
+    await Bun.sleep(200);
+    expect(pool.getStats().workers).toBe(1);
+  });
 });
 
 // ─── fastPath optimization ─────────────────────────────────────────
