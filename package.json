@@ -1593,6 +1593,7 @@
     "dashboard:protocol:check": "bun run scripts/dashboard-protocol-check.ts",
     "dashboard:status:report": "bun run dashboard/status-monitor.ts",
     "deployment:readiness": "bun run deployment/readiness-matrix.ts",
+    "analysis:performance-impact": "bun run analysis/performance-impact.ts",
     "test:dashboard:mini": "bun run scripts/test-dashboard-mini.ts",
     "test:dashboard:endpoints": "bun run scripts/test-dashboard-endpoints.ts",
     "test:dashboard:websocket": "bun run scripts/test-dashboard-websocket.ts",

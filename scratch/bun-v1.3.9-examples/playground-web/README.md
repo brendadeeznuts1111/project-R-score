@@ -80,6 +80,7 @@ curl -s http://localhost:<port>/api/control/features
 curl -s http://localhost:<port>/api/control/protocol-matrix
 curl -s http://localhost:<port>/api/control/component-status
 curl -s http://localhost:<port>/api/control/deployment-readiness
+curl -s http://localhost:<port>/api/control/performance-impact
 curl -s http://localhost:<port>/api/control/protocol-scorecard
 curl -s http://localhost:<port>/api/control/evidence-dashboard
 curl -s http://localhost:<port>/api/control/decision-defense
@@ -114,6 +115,9 @@ Governance component matrix API:
 
 Deployment readiness API:
 - `GET /api/control/deployment-readiness`: production-ready (12) vs beta-staging (2) matrix with deployment plans, blockers, and action plans.
+
+Performance impact API:
+- `GET /api/control/performance-impact`: Bun v1.3.9 before/after performance matrix with component-level gain/impact rows.
 
 Mini dashboard UI rows now include:
 - `Bottleneck`

@@ -135,6 +135,23 @@ async function run(): Promise<number> {
         readiness.json?.matrix?.betaStaging?.length >= 1,
       `status=${readiness.res.status} ready=${readiness.json?.matrix?.productionReady?.length ?? 0} beta=${readiness.json?.matrix?.betaStaging?.length ?? 0}`
     );
+
+    const performance = await fetchJson("/api/control/performance-impact");
+    check(
+      checks,
+      "performance-impact-contract",
+      performance.res.status === 200 &&
+        typeof performance.json?.overall?.before === "string" &&
+        typeof performance.json?.overall?.after === "string" &&
+        typeof performance.json?.overall?.improvement === "string" &&
+        Number.isFinite(performance.json?.summary?.componentCount) &&
+        Array.isArray(performance.json?.components) &&
+        performance.json?.components?.length >= 5 &&
+        typeof performance.json?.components?.[0]?.name === "string" &&
+        typeof performance.json?.components?.[0]?.metric === "string" &&
+        typeof performance.json?.components?.[0]?.gain === "string",
+      `status=${performance.res.status} components=${performance.json?.components?.length ?? 0}`
+    );
   } catch (error) {
     check(
       checks,

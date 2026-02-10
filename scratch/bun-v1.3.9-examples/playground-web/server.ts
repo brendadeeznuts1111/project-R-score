@@ -15,6 +15,7 @@ import { getBuildMetadata } from "./build-metadata" with { type: "macro" };
 import { getGitCommitHash } from "./getGitCommitHash.ts" with { type: "macro" };
 import { getResilienceConfig } from "../../../config/resilience-chain";
 import { summarizeDeploymentReadiness } from "../../../deployment/readiness-matrix";
+import { summarizePerformanceImpact } from "../../../analysis/performance-impact";
 
 const BASE_STANDARD = Object.freeze({
   dedicatedPort: 3011,
@@ -1416,6 +1417,18 @@ curl -s http://localhost:<port>/api/control/deployment-readiness | jq .
 
 # Focus on beta blockers
 curl -s http://localhost:<port>/api/control/deployment-readiness | jq '.matrix.betaStaging[] | {component, blockers, actionPlan}'
+`,
+  },
+  {
+    id: "performance-impact-matrix",
+    name: "Performance Impact Matrix",
+    description: "Before/after metrics and operational impact for Bun v1.3.9 optimizations",
+    category: "Governance",
+    code: `# Inspect performance impact matrix
+curl -s http://localhost:<port>/api/control/performance-impact | jq .
+
+# Focus on top-gain components
+curl -s http://localhost:<port>/api/control/performance-impact | jq '.components[] | {name, metric, gain, impact}'
 `,
   },
   {
@@ -4048,6 +4061,7 @@ const routes = {
   },
 
   "/api/control/deployment-readiness": () => summarizeDeploymentReadiness(),
+  "/api/control/performance-impact": () => summarizePerformanceImpact(),
 
   "/api/control/network-smoke": async (req: Request) => {
     const base = new URL(req.url).origin;
@@ -4290,6 +4304,17 @@ const routes = {
 
     if (id === "deployment-readiness-matrix") {
       const matrix = routes["/api/control/deployment-readiness"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(matrix, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "performance-impact-matrix") {
+      const matrix = routes["/api/control/performance-impact"]();
       return new Response(JSON.stringify({
         success: true,
         output: JSON.stringify(matrix, null, 2),
@@ -4686,6 +4711,10 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/deployment-readiness") {
         return jsonResponse(routes["/api/control/deployment-readiness"]());
+      }
+
+      if (url.pathname === "/api/control/performance-impact") {
+        return jsonResponse(routes["/api/control/performance-impact"]());
       }
 
       if (url.pathname === "/api/control/upload-progress") {

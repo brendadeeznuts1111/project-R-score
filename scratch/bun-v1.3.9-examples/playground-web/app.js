@@ -745,6 +745,16 @@ function renderDemo(demo) {
       </div>
     `
     : '';
+  const performanceImpactPanel = demo.id === 'performance-impact-matrix'
+    ? `
+      <div class="code-block" style="margin-top: 1rem;">
+        <button class="run-btn" onclick="refreshPerformanceImpactMatrix()">
+          ↻ Refresh Performance Impact
+        </button>
+        <div id="performance-impact-output" class="output" style="display: block; margin-top: 0.75rem;">Loading performance impact matrix...</div>
+      </div>
+    `
+    : '';
   const protocolMatrixPanel = demo.id === 'protocol-matrix'
     ? `
       <div class="code-block" style="margin-top: 1rem;">
@@ -806,6 +816,7 @@ function renderDemo(demo) {
     ${featureMatrixPanel}
     ${componentStatusPanel}
     ${deploymentReadinessPanel}
+    ${performanceImpactPanel}
     ${protocolMatrixPanel}
     ${http2RuntimePanel}
     ${orchestrationPanel}
@@ -822,6 +833,9 @@ function renderDemo(demo) {
   }
   if (demo.id === 'deployment-readiness-matrix') {
     refreshDeploymentReadinessMatrix();
+  }
+  if (demo.id === 'performance-impact-matrix') {
+    refreshPerformanceImpactMatrix();
   }
   if (demo.id === 'protocol-matrix') {
     refreshProtocolMatrixStatus();
@@ -899,6 +913,7 @@ function setupEventListeners() {
   window.refreshFeatureMatrixStatus = refreshFeatureMatrixStatus;
   window.refreshComponentStatusMatrix = refreshComponentStatusMatrix;
   window.refreshDeploymentReadinessMatrix = refreshDeploymentReadinessMatrix;
+  window.refreshPerformanceImpactMatrix = refreshPerformanceImpactMatrix;
   window.refreshHttp2RuntimeStatus = refreshHttp2RuntimeStatus;
   window.executeHttp2RuntimeAction = executeHttp2RuntimeAction;
   window.refreshOrchestrationStatus = refreshOrchestrationStatus;
@@ -1044,6 +1059,39 @@ async function refreshDeploymentReadinessMatrix() {
   } catch (error) {
     statusDiv.className = 'output error';
     statusDiv.textContent = `Failed to load deployment readiness matrix: ${error.message}`;
+  }
+}
+
+async function refreshPerformanceImpactMatrix() {
+  const statusDiv = document.getElementById('performance-impact-output');
+  if (!statusDiv) return;
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = 'Loading performance impact matrix...';
+
+  try {
+    const response = await fetch('/api/control/performance-impact');
+    const data = await response.json();
+    const overall = data.overall || {};
+    const summary = data.summary || {};
+    const components = Array.isArray(data.components) ? data.components : [];
+
+    const lines = [
+      `generatedAt: ${data.generatedAt || 'unknown'}`,
+      `source: ${data.source || 'unknown'}`,
+      `overall: ${overall.before || 'n/a'} -> ${overall.after || 'n/a'} (${overall.improvement || 'n/a'})`,
+      `components: ${summary.componentCount ?? components.length} | topGain: ${summary.topGain || 'n/a'}`,
+      '',
+      ...components.slice(0, 10).map((row) => {
+        return `${row.name} | ${row.metric} | ${row.before} -> ${row.after} | gain=${row.gain}`;
+      }),
+    ];
+
+    statusDiv.className = 'output success';
+    statusDiv.textContent = lines.join('\n');
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `Failed to load performance impact matrix: ${error.message}`;
   }
 }
 
