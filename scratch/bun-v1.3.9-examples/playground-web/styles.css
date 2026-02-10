@@ -301,6 +301,7 @@ header h1 {
 .trend-summary-row code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   color: var(--text-primary);
+  letter-spacing: 0.04em;
 }
 
 .trend-summary-alerts {
@@ -317,6 +318,7 @@ header h1 {
   border-radius: 999px;
   border: 1px solid var(--border);
   font-size: 0.8em;
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .drift-ok {

@@ -1027,10 +1027,30 @@ async function refreshMainTrendSummary() {
     const severityCounts = summary.severityCounts || {};
     const deltaLoad = Number(summary.deltaLoadMaxPct || 0);
     const failCount = Number(severityCounts.fail || 0);
-    const driftLoadClass = deltaLoad > 0 ? 'drift-badge drift-warn' : 'drift-badge drift-ok';
-    const failClass = failCount > 0 ? 'drift-badge drift-fail' : 'drift-badge drift-ok';
+    const count = Number(summary.count || 0);
+    const failRatePct = count > 0 ? Number(((failCount / count) * 100).toFixed(1)) : 0;
+    const driftArrow = deltaLoad > 0 ? '↑' : deltaLoad < 0 ? '↓' : '→';
+    const driftLoadClass =
+      deltaLoad >= 10 ? 'drift-badge drift-fail' :
+      deltaLoad > 0 ? 'drift-badge drift-warn' :
+      'drift-badge drift-ok';
+    const failClass =
+      failCount >= 3 || failRatePct >= 20 ? 'drift-badge drift-fail' :
+      failCount > 0 ? 'drift-badge drift-warn' :
+      'drift-badge drift-ok';
+    const coveragePct = Number(summary.windowCoveragePct || 0);
+    const coverageClass =
+      coveragePct < 30 ? 'drift-badge drift-fail' :
+      coveragePct < 70 ? 'drift-badge drift-warn' :
+      'drift-badge drift-ok';
+    const bottleneckChanges = Number(summary.bottleneckChanges || 0);
+    const bottleneckClass =
+      bottleneckChanges >= 5 ? 'drift-badge drift-fail' :
+      bottleneckChanges >= 2 ? 'drift-badge drift-warn' :
+      'drift-badge drift-ok';
     const loadSpark = String(summary.sparklineLoad || '').trim() || '..........';
     const capSpark = String(summary.sparklineCapacity || '').trim() || '..........';
+    const requestedMinutes = Number(data?.window?.minutes || 60);
 
     statusDiv.innerHTML = `
       <div class="trend-summary-row">
@@ -1042,8 +1062,10 @@ async function refreshMainTrendSummary() {
         <code>${escapeHtml(capSpark)}</code>
       </div>
       <div class="trend-summary-alerts">
-        <span class="${driftLoadClass}">Δ Load ${deltaLoad > 0 ? '+' : ''}${deltaLoad.toFixed(2)}%</span>
-        <span class="${failClass}">Fail Samples ${failCount}</span>
+        <span class="${driftLoadClass}">Drift ${driftArrow} ${deltaLoad > 0 ? '+' : ''}${deltaLoad.toFixed(2)}%</span>
+        <span class="${failClass}">Fail ${failCount}/${count} (${failRatePct}%)</span>
+        <span class="${coverageClass}">Window ${coveragePct.toFixed(1)}% of ${requestedMinutes}m</span>
+        <span class="${bottleneckClass}">Bottleneck flips ${bottleneckChanges}</span>
       </div>
     `;
   } catch (error) {
