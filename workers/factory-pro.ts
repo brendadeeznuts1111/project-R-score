@@ -55,6 +55,11 @@ export class ProWorkerFactory {
         : undefined,
     });
 
+    // Revoke blob URL after worker loads to free memory
+    if (config.taskType === "inline") {
+      worker.addEventListener("open", () => URL.revokeObjectURL(script));
+    }
+
     if (config.name) {
       this.registry.set(config.name, { worker, config });
     }

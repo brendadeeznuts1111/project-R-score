@@ -518,12 +518,16 @@ export class SkillOrchestrator {
    */
   private async executeFlowStep(step: FlowNode, domain: Domain): Promise<any> {
     const text = step.text.toLowerCase();
+    const healthIntent =
+      text.includes('health') || text.includes('vital') || text.includes('status');
+    const diagnosticIntent =
+      text.includes('diagnose') || text.includes('diagnostic') || text.includes('diagnosis');
     
-    if (text.includes('check') && text.includes('health')) {
+    if (text.includes('check') && healthIntent) {
       return await domain.checkHealth?.() ?? { healthy: true };
     }
     
-    if (text.includes('diagnose')) {
+    if (diagnosticIntent) {
       return await domain.autoDiagnose?.() ?? { found: false };
     }
     
