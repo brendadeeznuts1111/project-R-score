@@ -81,6 +81,19 @@ async function run(): Promise<number> {
       `status=${mini.res.status}`
     );
 
+    const trends = await fetchJson("/api/dashboard/trends?minutes=15&limit=50");
+    check(
+      checks,
+      "dashboard-trends-contract",
+      trends.res.status === 200 &&
+        trends.json?.source === "sqlite" &&
+        trends.json?.initialized === true &&
+        Number.isFinite(trends.json?.summary?.count) &&
+        Array.isArray(trends.json?.points) &&
+        trends.json?.summary?.count >= 1,
+      `status=${trends.res.status} count=${trends.json?.summary?.count}`
+    );
+
     const severity = await fetchJson("/api/dashboard/severity-test?load=42");
     check(
       checks,

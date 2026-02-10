@@ -6,7 +6,8 @@
  */
 
 import { serve } from "bun";
-import { readFile, readdir } from "node:fs/promises";
+import { Database } from "bun:sqlite";
+import { mkdir, readFile, readdir } from "node:fs/promises";
 import { createServer, type Server as NetServer } from "node:net";
 import { connect as connectHttp2, createSecureServer, type Http2SecureServer } from "node:http2";
 import { extname, join, normalize, resolve as resolvePath, sep } from "node:path";
@@ -69,6 +70,17 @@ const BRAND_REPORTS_DIR = join(PROJECT_ROOT, "reports", "brand-bench");
 const BRAND_GOVERNANCE_PATH = join(BRAND_REPORTS_DIR, "governance.json");
 const DECISIONS_ROOT = join(PROJECT_ROOT, "docs", "decisions");
 const DECISIONS_INDEX_PATH = join(DECISIONS_ROOT, "index.json");
+const DASHBOARD_METRICS_DB_PATH =
+  process.env.PLAYGROUND_METRICS_DB_PATH ||
+  join(PROJECT_ROOT, ".cache", "playground-dashboard-metrics.sqlite");
+const DASHBOARD_METRICS_RETENTION_ROWS = parseNumberEnv("PLAYGROUND_METRICS_RETENTION_ROWS", 5000, {
+  min: 100,
+  max: 1000000,
+});
+const DASHBOARD_METRICS_INTERVAL_MS = parseNumberEnv("PLAYGROUND_METRICS_INTERVAL_MS", 1000, {
+  min: 250,
+  max: 60000,
+});
 let inFlightRequests = 0;
 let activeCommands = 0;
 const serverStartTime = Date.now();
@@ -84,6 +96,12 @@ let cachedBundleSnapshot: Record<string, unknown> | null = null;
 let cachedOrchestrationLoop: Record<string, unknown> | null = null;
 let cachedOrchestrationLoopAt = 0;
 let cacheTimestamp = 0;
+let capacityMetricsDb: Database | null = null;
+let capacityInsertStmt: ReturnType<Database["prepare"]> | null = null;
+let capacityPruneStmt: ReturnType<Database["prepare"]> | null = null;
+let capacitySelectStmt: ReturnType<Database["prepare"]> | null = null;
+let capacityMetricsLastPersistMs = 0;
+let capacityMetricsPersistedCount = 0;
 const CACHE_TTL_MS = 30000; // 30 second cache for volatile data
 const ORCHESTRATION_CACHE_TTL_MS = parseNumberEnv("PLAYGROUND_ORCHESTRATION_CACHE_TTL_MS", 15000, { min: 1000, max: 300000 });
 const HTTP2_UPGRADE_PORT = parseNumberEnv("PLAYGROUND_HTTP2_UPGRADE_PORT", 8443, { min: 1, max: 65535 });
@@ -157,6 +175,79 @@ let http2UpgradeRuntime: Http2UpgradeRuntimeState = {
 };
 let http2SecureRuntimeServer: Http2SecureServer | null = null;
 let http2NetRuntimeServer: NetServer | null = null;
+
+async function initCapacityMetricsStore() {
+  const dbDir = normalize(join(DASHBOARD_METRICS_DB_PATH, ".."));
+  await mkdir(dbDir, { recursive: true });
+
+  const db = new Database(DASHBOARD_METRICS_DB_PATH);
+  db.run("PRAGMA journal_mode = WAL");
+  db.run("PRAGMA synchronous = NORMAL");
+  db.run("PRAGMA temp_store = MEMORY");
+  db.run(`
+    CREATE TABLE IF NOT EXISTS capacity_snapshots (
+      ts_ms INTEGER PRIMARY KEY,
+      created_at TEXT NOT NULL,
+      port INTEGER NOT NULL,
+      bottleneck TEXT NOT NULL,
+      bottleneck_severity TEXT NOT NULL,
+      load_connection_pct INTEGER NOT NULL,
+      load_worker_pct INTEGER NOT NULL,
+      load_max_pct INTEGER NOT NULL,
+      capacity_connections_pct INTEGER NOT NULL,
+      capacity_workers_pct INTEGER NOT NULL,
+      capacity_summary TEXT NOT NULL,
+      capacity_severity TEXT NOT NULL,
+      headroom_connections INTEGER NOT NULL,
+      headroom_connections_pct INTEGER NOT NULL,
+      headroom_connections_severity TEXT NOT NULL,
+      headroom_workers INTEGER NOT NULL,
+      headroom_workers_pct INTEGER NOT NULL,
+      headroom_workers_severity TEXT NOT NULL
+    )
+  `);
+  db.run("CREATE INDEX IF NOT EXISTS idx_capacity_snapshots_ts ON capacity_snapshots (ts_ms DESC)");
+
+  capacityMetricsDb = db;
+  capacityInsertStmt = db.prepare(`
+    INSERT OR REPLACE INTO capacity_snapshots (
+      ts_ms,
+      created_at,
+      port,
+      bottleneck,
+      bottleneck_severity,
+      load_connection_pct,
+      load_worker_pct,
+      load_max_pct,
+      capacity_connections_pct,
+      capacity_workers_pct,
+      capacity_summary,
+      capacity_severity,
+      headroom_connections,
+      headroom_connections_pct,
+      headroom_connections_severity,
+      headroom_workers,
+      headroom_workers_pct,
+      headroom_workers_severity
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+  capacityPruneStmt = db.prepare(`
+    DELETE FROM capacity_snapshots
+    WHERE ts_ms IN (
+      SELECT ts_ms
+      FROM capacity_snapshots
+      ORDER BY ts_ms DESC
+      LIMIT -1 OFFSET ?
+    )
+  `);
+  capacitySelectStmt = db.prepare(`
+    SELECT *
+    FROM capacity_snapshots
+    WHERE ts_ms >= ?
+    ORDER BY ts_ms DESC
+    LIMIT ?
+  `);
+}
 
 const EVIDENCE_DASHBOARD = {
   "bun-v1.3.9-upgrade": {
@@ -2231,7 +2322,7 @@ function buildMiniDashboardSnapshot() {
   const headroomConnectionsPct = Math.round((live.connections.available / Math.max(1, live.connections.max)) * 100);
   const headroomWorkersPct = Math.round((live.workers.available / Math.max(1, live.workers.max)) * 100);
 
-  return {
+  const snapshot = {
     generatedAt: new Date().toISOString(),
     port: ACTIVE_PORT,
     bottleneck: {
@@ -2267,6 +2358,101 @@ function buildMiniDashboardSnapshot() {
     pooling: {
       live,
     },
+  };
+  persistCapacitySnapshot(snapshot);
+  return snapshot;
+}
+
+function persistCapacitySnapshot(snapshot: ReturnType<typeof buildMiniDashboardSnapshot>) {
+  if (!capacityInsertStmt || !capacityPruneStmt) return;
+
+  const tsMs = Date.now();
+  if (tsMs - capacityMetricsLastPersistMs < DASHBOARD_METRICS_INTERVAL_MS) {
+    return;
+  }
+
+  capacityMetricsLastPersistMs = tsMs;
+  capacityInsertStmt.run(
+    tsMs,
+    snapshot.generatedAt,
+    snapshot.port,
+    snapshot.bottleneck.kind,
+    snapshot.bottleneck.severity,
+    snapshot.load.connectionUsedPct,
+    snapshot.load.workerUsedPct,
+    snapshot.load.maxUsedPct,
+    snapshot.capacity.connectionsPct,
+    snapshot.capacity.workersPct,
+    snapshot.capacity.summary,
+    snapshot.capacity.severity,
+    snapshot.headroom.connections.available,
+    snapshot.headroom.connections.pct,
+    snapshot.headroom.connections.severity,
+    snapshot.headroom.workers.available,
+    snapshot.headroom.workers.pct,
+    snapshot.headroom.workers.severity
+  );
+
+  capacityMetricsPersistedCount += 1;
+  if (capacityMetricsPersistedCount % 50 === 0) {
+    capacityPruneStmt.run(DASHBOARD_METRICS_RETENTION_ROWS);
+  }
+}
+
+function getCapacityTrend(minutesRaw: number, limitRaw: number) {
+  if (!capacitySelectStmt) {
+    return {
+      generatedAt: new Date().toISOString(),
+      source: "sqlite",
+      dbPath: DASHBOARD_METRICS_DB_PATH,
+      initialized: false,
+      window: { minutes: 0, limit: 0, sinceMs: 0 },
+      summary: { count: 0 },
+      points: [],
+    };
+  }
+
+  const minutes = Math.max(1, Math.min(24 * 60, Math.floor(minutesRaw || 60)));
+  const limit = Math.max(1, Math.min(10000, Math.floor(limitRaw || 120)));
+  const sinceMs = Date.now() - minutes * 60_000;
+  const rows = capacitySelectStmt.all(sinceMs, limit) as Array<Record<string, unknown>>;
+  const points = rows.map((row) => ({
+    tsMs: Number(row.ts_ms || 0),
+    createdAt: String(row.created_at || ""),
+    loadMaxPct: Number(row.load_max_pct || 0),
+    connectionUsedPct: Number(row.load_connection_pct || 0),
+    workerUsedPct: Number(row.load_worker_pct || 0),
+    capacitySummary: String(row.capacity_summary || ""),
+    capacitySeverity: String(row.capacity_severity || ""),
+    connectionHeadroomPct: Number(row.headroom_connections_pct || 0),
+    workerHeadroomPct: Number(row.headroom_workers_pct || 0),
+    bottleneck: String(row.bottleneck || ""),
+    bottleneckSeverity: String(row.bottleneck_severity || ""),
+  }));
+
+  const latest = points[0] || null;
+  const oldest = points[points.length - 1] || null;
+  const avgLoadMaxPct = points.length
+    ? Number((points.reduce((sum, p) => sum + p.loadMaxPct, 0) / points.length).toFixed(2))
+    : 0;
+
+  return {
+    generatedAt: new Date().toISOString(),
+    source: "sqlite",
+    dbPath: DASHBOARD_METRICS_DB_PATH,
+    initialized: true,
+    window: {
+      minutes,
+      limit,
+      sinceMs,
+    },
+    summary: {
+      count: points.length,
+      avgLoadMaxPct,
+      latest,
+      oldest,
+    },
+    points,
   };
 }
 
@@ -3158,6 +3344,12 @@ function buildRuntimeMetadata() {
     port: ACTIVE_PORT,
     startedAt: SERVER_STARTED_AT,
     uptimeSec: Number((process.uptime?.() || 0).toFixed(2)),
+    metricsStore: {
+      type: "sqlite",
+      path: DASHBOARD_METRICS_DB_PATH,
+      retentionRows: DASHBOARD_METRICS_RETENTION_ROWS,
+      snapshotIntervalMs: DASHBOARD_METRICS_INTERVAL_MS,
+    },
   };
 }
 
@@ -3320,6 +3512,12 @@ const routes = {
 
   "/api/dashboard/runtime": () => buildRuntimeMetadata(),
   "/api/dashboard/mini": () => buildMiniDashboardSnapshot(),
+  "/api/dashboard/trends": (req: Request) => {
+    const url = new URL(req.url);
+    const minutes = Number.parseInt(url.searchParams.get("minutes") || "60", 10);
+    const limit = Number.parseInt(url.searchParams.get("limit") || "120", 10);
+    return getCapacityTrend(minutes, limit);
+  },
   "/api/dashboard/severity-test": (req: Request) => {
     const url = new URL(req.url);
     const loadPctRaw = Number.parseFloat(url.searchParams.get("load") || "0");
@@ -4089,6 +4287,10 @@ async function handleRequest(req: Request): Promise<Response> {
         return jsonResponse(routes["/api/dashboard/mini"]());
       }
 
+      if (url.pathname === "/api/dashboard/trends") {
+        return jsonResponse(routes["/api/dashboard/trends"](req));
+      }
+
       if (url.pathname === "/api/dashboard/severity-test") {
         return jsonResponse(routes["/api/dashboard/severity-test"](req));
       }
@@ -4248,6 +4450,7 @@ async function handleRequest(req: Request): Promise<Response> {
   }
 }
 
+await initCapacityMetricsStore();
 const ACTIVE_PORT = await resolvePort();
 const warmupState = await runWarmup();
 
@@ -4306,6 +4509,10 @@ async function gracefulShutdown(reason: string, exitCode = 0, error?: unknown) {
     }
     if (http2UpgradeRuntime.status === "running") {
       await stopHttp2UpgradeRuntime();
+    }
+    if (capacityMetricsDb) {
+      capacityMetricsDb.close();
+      capacityMetricsDb = null;
     }
 
     const drained = await waitForInFlightDrain(Math.max(250, SHUTDOWN_TIMEOUT_MS - 250));
