@@ -352,6 +352,8 @@ type BunV139FeatureMatrixRow = {
   environmentOverride: string;
   integration: string;
   performanceImpact: string;
+  memoryImpact: string;
+  productionReady: string;
 };
 
 const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
@@ -362,6 +364,8 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     environmentOverride: "PLAYGROUND_SCRIPT_MODE=parallel",
     integration: "ScriptRunner.execute('parallel')",
     performanceImpact: "95ms for 500 scripts",
+    memoryImpact: "n/a",
+    productionReady: "yes",
   },
   {
     feature: "Sequential Scripts",
@@ -370,6 +374,8 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     environmentOverride: "PLAYGROUND_SCRIPT_MODE=sequential",
     integration: "ScriptRunner.execute('sequential')",
     performanceImpact: "Memory-constrained builds",
+    memoryImpact: "lower peak usage",
+    productionReady: "yes",
   },
   {
     feature: "No-Exit-On-Error",
@@ -378,6 +384,8 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     environmentOverride: "PLAYGROUND_NO_EXIT_ON_ERROR=true",
     integration: "CI/CD resilience",
     performanceImpact: "All scripts complete",
+    memoryImpact: "n/a",
+    productionReady: "yes",
   },
   {
     feature: "Pre/Post Grouping",
@@ -386,6 +394,8 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     environmentOverride: "—",
     integration: "groupPrePost(scripts)",
     performanceImpact: "Correct dep order",
+    memoryImpact: "n/a",
+    productionReady: "yes",
   },
   {
     feature: "vs --filter",
@@ -394,6 +404,8 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     environmentOverride: "—",
     integration: "Use --parallel for watch scripts",
     performanceImpact: "No blocking on deps",
+    memoryImpact: "n/a",
+    productionReady: "yes",
   },
   {
     feature: "HTTP/2 Upgrade",
@@ -402,6 +414,8 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     environmentOverride: "PLAYGROUND_HTTP2_UPGRADE=true",
     integration: "createServer({ allowHTTP1: true })",
     performanceImpact: "30-40% throughput",
+    memoryImpact: "n/a",
+    productionReady: "yes",
   },
   {
     feature: "Symbol.dispose Mocks",
@@ -410,6 +424,8 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     environmentOverride: "—",
     integration: "All test suites refactored",
     performanceImpact: "Zero manual cleanup",
+    memoryImpact: "small reduction in retained mocks",
+    productionReady: "yes",
   },
   {
     feature: "NO_PROXY Fix",
@@ -418,6 +434,8 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     environmentOverride: "NO_PROXY=localhost,*.internal",
     integration: "SecureFetch layer",
     performanceImpact: "Bypass validation",
+    memoryImpact: "n/a",
+    productionReady: "yes",
   },
   {
     feature: "CPU Prof Interval",
@@ -426,6 +444,8 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     environmentOverride: "PLAYGROUND_CPU_PROF_INTERVAL=500",
     integration: "batch-profiler.ts",
     performanceImpact: "4x resolution",
+    memoryImpact: "+2% overhead",
+    productionReady: "yes (ARM64/x64)",
   },
   {
     feature: "ESM Bytecode",
@@ -434,14 +454,18 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     environmentOverride: "PLAYGROUND_COMPILE_FORMAT=esm",
     integration: "fw-cli binary",
     performanceImpact: "50% faster cold start",
+    memoryImpact: "-20% heap",
+    productionReady: "yes (v1.3.9+)",
   },
   {
     feature: "ARMv8.0 Fix",
     cliOrApi: "Runtime dispatch",
-    defaultBehavior: "SIGILL (v1.3.8)",
+    defaultBehavior: "SIGILL risk (v1.3.8)",
     environmentOverride: "—",
     integration: "AWS Graviton/RPi production",
-    performanceImpact: "Stable ARM64",
+    performanceImpact: "Stable",
+    memoryImpact: "None",
+    productionReady: "yes (Cortex-A53+)",
   },
   {
     feature: "Markdown SIMD",
@@ -450,6 +474,8 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     environmentOverride: "—",
     integration: "Documentation pipeline",
     performanceImpact: "3-15% faster",
+    memoryImpact: "None",
+    productionReady: "yes (all platforms)",
   },
   {
     feature: "React Markdown",
@@ -458,6 +484,8 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     environmentOverride: "—",
     integration: "Dashboard SSR",
     performanceImpact: "28% faster small docs",
+    memoryImpact: "-6% heap, -40% objects",
+    productionReady: "yes (all platforms)",
   },
   {
     feature: "AbortSignal Optimize",
@@ -466,6 +494,8 @@ const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
     environmentOverride: "—",
     integration: "Request cancellation",
     performanceImpact: "~6% micro-bench",
+    memoryImpact: "-16ms/1M calls",
+    productionReady: "yes (all platforms)",
   },
 ];
 
@@ -3738,6 +3768,8 @@ const routes = {
         "environmentOverride",
         "integration",
         "performanceImpact",
+        "memoryImpact",
+        "productionReady",
         "appliedValue",
         "active",
       ],

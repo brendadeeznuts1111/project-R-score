@@ -5,6 +5,8 @@ let demos = [];
 let runtimeInfo = null;
 let brandGateSummary = null;
 let governanceSummary = null;
+let orchestrationSummary = null;
+let demoSearchQuery = '';
 const shortcutState = {
   pendingLeader: null,
   pendingAt: 0,
@@ -137,6 +139,20 @@ function setupKeyboardShortcuts() {
       return;
     }
 
+    // Cmd/Ctrl+L focuses demo search
+    if (withMeta && key === 'l') {
+      e.preventDefault();
+      focusDemoSearch();
+      return;
+    }
+
+    // Alt+/ quickly focuses demo search
+    if (withAlt && key === '/') {
+      e.preventDefault();
+      focusDemoSearch();
+      return;
+    }
+
     if (isPaletteOpen()) return;
 
     // Cmd/Ctrl+R refreshes runtime and governance data
@@ -144,6 +160,15 @@ function setupKeyboardShortcuts() {
       e.preventDefault();
       refreshHeaderState();
       showToast('Refreshed!', 'success');
+      return;
+    }
+
+    // Cmd/Ctrl+Shift+O runs orchestration full loop and refreshes badges
+    if (withMeta && e.shiftKey && key === 'o') {
+      e.preventDefault();
+      runOrchestrationFullLoop();
+      refreshHeaderState();
+      showToast('Orchestration full loop triggered', 'success');
       return;
     }
 
@@ -181,6 +206,23 @@ function setupKeyboardShortcuts() {
       if (key === 'd') {
         e.preventDefault();
         if (typeof window.toggleMiniDash === 'function') window.toggleMiniDash();
+        return;
+      }
+      if (key === 's') {
+        e.preventDefault();
+        focusDemoSearch();
+        return;
+      }
+      if (key === 'k') {
+        e.preventDefault();
+        openCommandPalette();
+        return;
+      }
+      if (key === 'o') {
+        e.preventDefault();
+        if (typeof window.loadDemo === 'function') {
+          window.loadDemo('script-orchestration-control');
+        }
         return;
       }
     }
@@ -309,8 +351,10 @@ function showShortcutsHelp() {
 Keyboard Shortcuts:
   ?              Show this help
   /              Focus search
+  Cmd/Ctrl+L     Focus search
   Cmd/Ctrl+K     Open command palette
   Cmd/Ctrl+R     Refresh control-plane data
+  Cmd/Ctrl+Shift+O Run orchestration full loop
   Cmd/Ctrl+Enter Run current demo
   Cmd/Ctrl+Shift+C Copy current demo code
   1-6            Jump to quick demos
@@ -323,7 +367,11 @@ Keyboard Shortcuts:
   G then H       Go home
   G then R       Refresh header telemetry
   G then D       Toggle mini dashboard
+  G then S       Focus search
+  G then K       Open command palette
+  G then O       Open orchestration control
   Alt+P          Toggle performance monitor
+  Alt+/          Focus search
   Esc            Clear selection / close
   `;
   alert(help);
@@ -331,7 +379,10 @@ Keyboard Shortcuts:
 
 function focusDemoSearch() {
   const search = document.querySelector('.demo-search');
-  if (search) search.focus();
+  if (search) {
+    search.focus();
+    search.select();
+  }
 }
 
 function closeAnyModal() {
@@ -355,10 +406,11 @@ async function refreshHeaderState() {
   document.getElementById('bun-revision').innerHTML = skeletonLong;
   document.getElementById('git-commit-hash').innerHTML = skeletonLong;
   
-  const [infoResult, gateResult, governanceResult] = await Promise.allSettled([
+  const [infoResult, gateResult, governanceResult, orchestrationStatusResult] = await Promise.allSettled([
     fetch('/api/info').then(r => r.json()),
     fetch('/api/brand/status').then(r => r.json()),
     fetch('/api/control/governance-status').then(r => r.json()),
+    fetch('/api/control/script-orchestration/status').then(r => r.json()),
   ]);
 
   if (infoResult.status === 'fulfilled') {
@@ -391,6 +443,12 @@ async function refreshHeaderState() {
     governanceSummary = governanceResult.value;
   } else {
     governanceSummary = null;
+  }
+
+  if (orchestrationStatusResult.status === 'fulfilled') {
+    orchestrationSummary = orchestrationStatusResult.value;
+  } else {
+    orchestrationSummary = null;
   }
 
   renderHeaderBadges();
@@ -442,6 +500,15 @@ function renderHeaderBadges() {
     badges.push({
       text: `Gov Depth ${cp.searchGovernanceFetchDepth ?? 'n/a'}`,
       cls: 'warn',
+    });
+    badges.push({
+      text: `Resilience: ${String(cp.resilienceProfile || 'unknown').toUpperCase()}`,
+      cls: cp.resilienceProfile === 'production' ? 'error' : cp.resilienceProfile === 'staging' ? 'warn' : 'success',
+    });
+    const dnsActive = Boolean(cp.prefetchEnabled || cp.preconnectEnabled);
+    badges.push({
+      text: `DNS Warmup: ${dnsActive ? 'ON' : 'OFF'}`,
+      cls: dnsActive ? 'success' : 'warn',
     });
     if (cp.sigillCaveat) {
       badges.push({
@@ -497,6 +564,22 @@ function renderHeaderBadges() {
     });
   }
 
+  if (orchestrationSummary?.summary) {
+    const s = orchestrationSummary.summary;
+    const pass = Boolean(s.failFast && s.noExitKeepsRunning && s.sequentialOrdered && s.filterDependencyAware);
+    badges.push({
+      text: `Orchestration: ${pass ? 'PASS' : 'FAIL'}`,
+      cls: pass ? 'success' : 'error',
+    });
+    if (orchestrationSummary?.cache?.ageMs != null) {
+      const ageSec = Math.round(Number(orchestrationSummary.cache.ageMs) / 1000);
+      badges.push({
+        text: `Orch Age: ${ageSec}s`,
+        cls: ageSec <= 15 ? 'success' : ageSec <= 60 ? 'warn' : 'error',
+      });
+    }
+  }
+
   if (badges.length === 0) {
     badgesEl.innerHTML = '<span class="badge error">Header telemetry unavailable</span>';
     return;
@@ -527,26 +610,36 @@ async function loadDemos() {
 }
 
 function renderDemoList(filter = '') {
+  demoSearchQuery = filter;
   const list = document.getElementById('demo-list');
   
   // Group by category
   const categories = {};
   demos.forEach(demo => {
-    // Filter if search term provided
-    if (filter && !demo.name.toLowerCase().includes(filter.toLowerCase()) && 
-        !demo.description.toLowerCase().includes(filter.toLowerCase())) {
-      return;
+    // Broader search: id, name, description, category, and code snippet
+    const q = filter.trim().toLowerCase();
+    if (q) {
+      const haystack = [
+        demo.id || '',
+        demo.name || '',
+        demo.description || '',
+        demo.category || '',
+        demo.code || '',
+      ].join(' ').toLowerCase();
+      if (!haystack.includes(q)) {
+        return;
+      }
     }
     if (!categories[demo.category]) {
       categories[demo.category] = [];
     }
     categories[demo.category].push(demo);
   });
-  
+
   let html = '';
   
   // Add search input
-  html += `<input type="text" class="demo-search" placeholder="🔍 Search demos... (press / to focus)" oninput="renderDemoList(this.value)">`;
+  html += `<input type="text" class="demo-search" placeholder="🔍 Search demos... (/ or ⌘L, ⌘K palette, g then s)" value="${escapeHtml(filter)}" oninput="renderDemoList(this.value)">`;
   
   // Show count
   const totalDemos = Object.values(categories).flat().length;
@@ -580,6 +673,10 @@ function renderDemoList(filter = '') {
 }
 
 async function selectDemo(id) {
+  if (!id || id === 'undefined' || id === 'null') {
+    showToast('Invalid demo selection', 'error');
+    return;
+  }
   // Update active state
   document.querySelectorAll('.demo-item').forEach(item => {
     item.classList.toggle('active', item.dataset.id === id);
@@ -589,12 +686,20 @@ async function selectDemo(id) {
   try {
     const response = await fetch(`/api/demo/${id}`);
     const demo = await response.json();
+    if (!response.ok) {
+      const msg = demo?.error || `Demo '${id}' is not available on this server`;
+      throw new Error(msg);
+    }
+    if (!demo || !demo.id || !demo.name || !demo.code) {
+      throw new Error(`Demo payload for '${id}' is incomplete`);
+    }
     currentDemo = demo;
     renderDemo(demo);
   } catch (error) {
     console.error('Failed to load demo:', error);
+    showToast(`Failed to load demo: ${error.message}`, 'error');
     document.getElementById('demo-content').innerHTML = 
-      '<div class="error">Failed to load demo</div>';
+      `<div class="error">Failed to load demo: ${escapeHtml(error.message || 'unknown error')}</div>`;
   }
 }
 
@@ -607,6 +712,55 @@ function renderDemo(demo) {
           ↻ Refresh Gate Status
         </button>
         <div id="brand-gate-status" class="output" style="display: block; margin-top: 0.75rem;">Loading gate status...</div>
+      </div>
+    `
+    : '';
+  const featureMatrixPanel = demo.id === 'feature-matrix'
+    ? `
+      <div class="code-block" style="margin-top: 1rem;">
+        <button class="run-btn" onclick="refreshFeatureMatrixStatus()">
+          ↻ Refresh Feature Matrix
+        </button>
+        <div id="feature-matrix-status" class="output" style="display: block; margin-top: 0.75rem;">Loading feature matrix...</div>
+      </div>
+    `
+    : '';
+  const protocolMatrixPanel = demo.id === 'protocol-matrix'
+    ? `
+      <div class="code-block" style="margin-top: 1rem;">
+        <button class="run-btn" onclick="refreshProtocolMatrixStatus()">
+          ↻ Refresh Protocol + Pool Matrix
+        </button>
+        <div id="protocol-matrix-status" class="output" style="display: block; margin-top: 0.75rem;">Loading protocol + pool matrix...</div>
+      </div>
+    `
+    : '';
+  const http2RuntimePanel = demo.id === 'http2-runtime-control'
+    ? `
+      <div class="code-block" style="margin-top: 1rem;">
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+          <button class="run-btn" onclick="executeHttp2RuntimeAction('start')">▶ Start HTTP/2 Runtime</button>
+          <button class="run-btn" onclick="executeHttp2RuntimeAction('full-loop')">⟳ Full Loop</button>
+          <button class="run-btn" onclick="executeHttp2RuntimeAction('probe')">🧪 Probe Runtime</button>
+          <button class="run-btn" onclick="refreshHttp2RuntimeStatus()">↻ Refresh Status</button>
+          <button class="run-btn" onclick="executeHttp2RuntimeAction('stop')">■ Stop Runtime</button>
+        </div>
+        <div id="http2-runtime-status" class="output" style="display:block; margin-top:0.75rem;">Loading HTTP/2 runtime status...</div>
+      </div>
+    `
+    : '';
+  const orchestrationPanel = demo.id === 'script-orchestration-control'
+    ? `
+      <div class="code-block" style="margin-top: 1rem;">
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+          <button class="run-btn" onclick="refreshOrchestrationStatus()">↻ Refresh Panel</button>
+          <button class="run-btn" onclick="runOrchestrationFullLoop()">⟳ Full Loop</button>
+          <button class="run-btn" onclick="executeOrchestrationMode('parallel')">▶ Parallel (fail-fast)</button>
+          <button class="run-btn" onclick="executeOrchestrationMode('parallel-no-exit')">▶ Parallel (--no-exit-on-error)</button>
+          <button class="run-btn" onclick="executeOrchestrationMode('sequential')">▶ Sequential</button>
+          <button class="run-btn" onclick="executeOrchestrationMode('filter')">▶ --filter (dep-order)</button>
+        </div>
+        <div id="orchestration-status" class="output" style="display:block; margin-top:0.75rem;">Loading orchestration status...</div>
       </div>
     `
     : '';
@@ -623,22 +777,42 @@ function renderDemo(demo) {
       <pre><code>${escapeHtml(demo.code)}</code></pre>
     </div>
     
-    <button class="run-btn" onclick="runDemo('${demo.id}')">
+    <button id="demo-run-btn" class="run-btn" onclick="runDemo('${demo.id}')">
       ▶ Run Demo
     </button>
     
     <div id="demo-output" class="output" style="display: none;"></div>
     ${brandGatePanel}
+    ${featureMatrixPanel}
+    ${protocolMatrixPanel}
+    ${http2RuntimePanel}
+    ${orchestrationPanel}
   `;
 
   if (demo.id === 'brand-bench-gate') {
     refreshBrandGateStatus();
   }
+  if (demo.id === 'feature-matrix') {
+    refreshFeatureMatrixStatus();
+  }
+  if (demo.id === 'protocol-matrix') {
+    refreshProtocolMatrixStatus();
+  }
+  if (demo.id === 'http2-runtime-control') {
+    refreshHttp2RuntimeStatus();
+  }
+  if (demo.id === 'script-orchestration-control') {
+    refreshOrchestrationStatus();
+  }
 }
 
 async function runDemo(id) {
+  if (!id || id === 'undefined' || id === 'null') {
+    showToast('No valid demo selected', 'error');
+    return;
+  }
   const outputDiv = document.getElementById('demo-output');
-  const runBtn = document.querySelector('.run-btn');
+  const runBtn = document.getElementById('demo-run-btn') || document.querySelector('.run-btn');
   
   // Show loading state
   outputDiv.style.display = 'block';
@@ -664,7 +838,7 @@ async function runDemo(id) {
   } finally {
     runBtn.disabled = false;
     runBtn.textContent = '▶ Run Demo';
-    if (id === 'brand-bench-gate' || id === 'control-plane') {
+    if (id === 'brand-bench-gate' || id === 'control-plane' || id === 'script-orchestration-control') {
       await refreshHeaderState();
     }
   }
@@ -694,6 +868,17 @@ function setupEventListeners() {
   window.runDemo = runDemo;
   window.copyCode = copyCode;
   window.refreshBrandGateStatus = refreshBrandGateStatus;
+  window.refreshFeatureMatrixStatus = refreshFeatureMatrixStatus;
+  window.refreshHttp2RuntimeStatus = refreshHttp2RuntimeStatus;
+  window.executeHttp2RuntimeAction = executeHttp2RuntimeAction;
+  window.refreshOrchestrationStatus = refreshOrchestrationStatus;
+  window.executeOrchestrationMode = executeOrchestrationMode;
+  window.runOrchestrationFullLoop = runOrchestrationFullLoop;
+  window.refreshHeaderState = refreshHeaderState;
+  window.loadDemo = (id) => {
+    selectDemo(id);
+  };
+  window.focusDemoSearch = focusDemoSearch;
 }
 
 async function refreshBrandGateStatus() {
@@ -725,6 +910,262 @@ async function refreshBrandGateStatus() {
     statusDiv.textContent = `Failed to load gate status: ${error.message}`;
     brandGateSummary = null;
     renderHeaderBadges();
+  }
+}
+
+async function refreshFeatureMatrixStatus() {
+  const statusDiv = document.getElementById('feature-matrix-status');
+  if (!statusDiv) return;
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = 'Loading Bun v1.3.9 feature matrix...';
+
+  try {
+    const response = await fetch('/api/control/feature-matrix');
+    const data = await response.json();
+
+    const runtime = data.runtime || {};
+    const summary = data.summary || {};
+    const rows = Array.isArray(data.rows) ? data.rows : [];
+    const header = [
+      `version: ${data.version || 'unknown'}`,
+      `runtime: ${runtime.platform || 'unknown'}/${runtime.arch || 'unknown'} bun=${runtime.bunVersion || 'unknown'}`,
+      `active: ${summary.activeCount ?? 0}/${summary.rowCount ?? rows.length}`,
+      `sigill: ${runtime.sigillCaveat || 'n/a'}`,
+      '',
+    ];
+
+    const topRows = rows
+      .slice(0, 10)
+      .map((row) => {
+        const mark = row.active ? 'ON ' : 'OFF';
+        return `${mark} | ${row.feature} | applied=${row.appliedValue} | mem=${row.memoryImpact || 'n/a'} | prod=${row.productionReady || 'n/a'}`;
+      });
+
+    statusDiv.className = 'output success';
+    statusDiv.textContent = header.concat(topRows).join('\n');
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `Failed to load feature matrix: ${error.message}`;
+  }
+}
+
+function formatPct(value) {
+  const num = Number(value || 0);
+  return `${Math.round(num * 100)}%`;
+}
+
+async function refreshProtocolMatrixStatus() {
+  const statusDiv = document.getElementById('protocol-matrix-status');
+  if (!statusDiv) return;
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = 'Loading protocol matrix and live pool state...';
+
+  try {
+    const response = await fetch('/api/control/protocol-matrix');
+    const data = await response.json();
+
+    const protocols = Array.isArray(data.protocols) ? data.protocols : [];
+    const pooling = data.pooling?.live || {};
+    const connections = pooling.connections || {};
+    const workers = pooling.workers || {};
+    const capacity = pooling.capacity || {};
+    const header = [
+      `generatedAt: ${data.generatedAt || 'unknown'}`,
+      `source: ${data.source || 'unknown'}`,
+      `protocols: ${protocols.length}`,
+      '',
+      `connections: ${connections.inFlight ?? 0}/${connections.max ?? 0} | util=${formatPct(connections.utilization)} | status=${connections.status || 'unknown'} | perWorker=${connections.loadPerWorker ?? 0}`,
+      `workers: ${workers.active ?? 0}/${workers.max ?? 0} | util=${formatPct(workers.utilization)} | status=${workers.status || 'unknown'} | perConnection=${workers.loadPerConnection ?? 0}`,
+      `headroom: connections=${capacity.headroom?.connections ?? 0} workers=${capacity.headroom?.workers ?? 0} | bottleneck=${capacity.bottleneck || 'n/a'}`,
+      '',
+      'protocols:',
+    ];
+
+    const rows = protocols.slice(0, 8).map((row) => {
+      return `${row.protocol} | ${row.scheme} | ${row.useCase}`;
+    });
+
+    statusDiv.className = 'output success';
+    statusDiv.textContent = header.concat(rows).join('\n');
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `Failed to load protocol matrix: ${error.message}`;
+  }
+}
+
+async function refreshHttp2RuntimeStatus() {
+  const statusDiv = document.getElementById('http2-runtime-status');
+  if (!statusDiv) return;
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = 'Loading HTTP/2 runtime status...';
+
+  try {
+    const response = await fetch('/api/control/http2-upgrade/status');
+    const data = await response.json();
+    const lines = [
+      `status: ${data.status || 'unknown'}`,
+      `endpoint: ${data.endpoint || 'n/a'}`,
+      `streams: ${data.streamCount ?? 0}`,
+      `uptimeSec: ${data.uptimeSec ?? 0}`,
+      `lastProbeOk: ${String(data.lastProbeOk ?? false)}`,
+      `lastProbeLatencyMs: ${data.lastProbeLatencyMs ?? 'n/a'}`,
+      `lastProbeError: ${data.lastProbeError || 'none'}`,
+    ];
+    statusDiv.className = data.status === 'running' ? 'output success' : 'output error';
+    statusDiv.textContent = lines.join('\n');
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `Failed to load HTTP/2 runtime status: ${error.message}`;
+  }
+}
+
+async function executeHttp2RuntimeAction(action) {
+  const statusDiv = document.getElementById('http2-runtime-status');
+  if (!statusDiv) return;
+
+  const pathMap = {
+    start: '/api/control/http2-upgrade/start',
+    'full-loop': '/api/control/http2-upgrade/full-loop?iterations=3&delayMs=120',
+    probe: '/api/control/http2-upgrade/probe',
+    stop: '/api/control/http2-upgrade/stop',
+  };
+  const path = pathMap[action];
+  if (!path) return;
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = `Executing HTTP/2 action: ${action}...`;
+
+  try {
+    const method = action === 'probe' ? 'GET' : 'POST';
+    const response = await fetch(path, { method });
+    const data = await response.json();
+
+    const ok = action === 'probe' ? Boolean(data.ok) : (action === 'stop' ? Boolean(data.stopped) : Boolean(data.started));
+    statusDiv.className = ok ? 'output success' : 'output error';
+    statusDiv.textContent = JSON.stringify(data, null, 2);
+    await refreshHttp2RuntimeStatus();
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `HTTP/2 action failed (${action}): ${error.message}`;
+  }
+}
+
+async function refreshOrchestrationStatus() {
+  const statusDiv = document.getElementById('orchestration-status');
+  if (!statusDiv) return;
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = 'Loading script orchestration panel...';
+
+  try {
+    const [panelRes, statusRes] = await Promise.all([
+      fetch('/api/control/script-orchestration-panel'),
+      fetch('/api/control/script-orchestration/status'),
+    ]);
+    const data = await panelRes.json();
+    const statusData = await statusRes.json();
+
+    const root = data.rootPackage || {};
+    const notes = Array.isArray(data.notes) ? data.notes.slice(0, 4) : [];
+    const commands = Array.isArray(data.recommendedCommands) ? data.recommendedCommands.slice(0, 5) : [];
+    const packageRows = Array.isArray(data.workspacePackages) ? data.workspacePackages.slice(0, 8) : [];
+    const summary = statusData.summary || {};
+    const pass = Boolean(statusData.pass);
+    const ageSec = Math.round(Number(statusData?.cache?.ageMs || 0) / 1000);
+
+    const lines = [
+      `orchestration: ${pass ? 'PASS' : 'FAIL'} (age=${ageSec}s)`,
+      `checks: failFast=${String(summary.failFast)} noExit=${String(summary.noExitKeepsRunning)} sequential=${String(summary.sequentialOrdered)} filter=${String(summary.filterDependencyAware)}`,
+      '',
+      `root: ${root.name || 'unknown'} (${root.path || 'package.json'})`,
+      `workspaces: ${(root.workspacePatterns || []).join(', ') || '(none)'}`,
+      `scriptCount: ${root.scriptCount ?? 0}`,
+      `keyScripts: ${(root.keyScripts || []).slice(0, 8).join(', ') || '(none)'}`,
+      '',
+      'recommended:',
+      ...commands.map((cmd) => `  ${cmd}`),
+      '',
+      'workspacePackages:',
+      ...packageRows.map((pkg) => `  ${pkg.name} (${pkg.path}) scripts=${(pkg.scripts || []).length}`),
+      '',
+      'notes:',
+      ...notes.map((note) => `  - ${note}`),
+    ];
+
+    statusDiv.className = pass ? 'output success' : 'output error';
+    statusDiv.textContent = lines.join('\n');
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `Failed to load script orchestration panel: ${error.message}`;
+  }
+}
+
+async function executeOrchestrationMode(mode) {
+  const statusDiv = document.getElementById('orchestration-status');
+  if (!statusDiv) return;
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = `Running orchestration simulation: ${mode}...`;
+
+  try {
+    const response = await fetch(`/api/control/script-orchestration-simulate?mode=${encodeURIComponent(mode)}`, {
+      method: 'POST',
+    });
+    const data = await response.json();
+
+    const lines = [
+      `mode: ${data.mode || mode}`,
+      `semantics: ${data.semantics || 'n/a'}`,
+      `behavior: ${data.behavior || 'n/a'}`,
+      `exitCode: ${data.exitCode ?? 'n/a'}`,
+      '',
+      ...((Array.isArray(data.lines) ? data.lines : []).map((line) => String(line))),
+    ];
+
+    const ok = Number(data.exitCode ?? 1) === 0;
+    statusDiv.className = ok ? 'output success' : 'output error';
+    statusDiv.textContent = lines.join('\n');
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `Orchestration simulation failed: ${error.message}`;
+  }
+}
+
+async function runOrchestrationFullLoop() {
+  const statusDiv = document.getElementById('orchestration-status');
+  if (!statusDiv) return;
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = 'Running orchestration full loop...';
+
+  try {
+    const response = await fetch('/api/control/script-orchestration/full-loop', { method: 'POST' });
+    const data = await response.json();
+    const summary = data.summary || {};
+
+    const lines = [
+      `source: ${data.source || 'n/a'}`,
+      `generatedAt: ${data.generatedAt || 'n/a'}`,
+      `failFast: ${String(summary.failFast)}`,
+      `noExitKeepsRunning: ${String(summary.noExitKeepsRunning)}`,
+      `sequentialOrdered: ${String(summary.sequentialOrdered)}`,
+      `filterDependencyAware: ${String(summary.filterDependencyAware)}`,
+      '',
+      'parallel:',
+      ...((data.simulations?.parallel?.lines || []).map((line) => `  ${line}`)),
+      '',
+      'parallel-no-exit:',
+      ...((data.simulations?.parallelNoExit?.lines || []).map((line) => `  ${line}`)),
+    ];
+
+    statusDiv.className = 'output success';
+    statusDiv.textContent = lines.join('\n');
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `Orchestration full loop failed: ${error.message}`;
   }
 }
 
