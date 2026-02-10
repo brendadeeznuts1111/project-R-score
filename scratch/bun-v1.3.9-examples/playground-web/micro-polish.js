@@ -27,6 +27,8 @@ const miniDashState = {
   orchestration: null,
   dashboardMini: null,
   orchestrationTrend: [],
+  loadTrend: [],
+  capacityTrend: [],
   lastSyncMs: 0,
   lastFetchLatencyMs: 0,
   consecutiveFailures: 0,
@@ -209,6 +211,24 @@ function renderOrchestrationTrend() {
   trend.textContent = values.map((v) => (v ? '●' : '○')).join('');
 }
 
+function sparkChar(valuePct) {
+  const bars = '▁▂▃▄▅▆▇█';
+  const pct = Math.max(0, Math.min(100, Number(valuePct || 0)));
+  const idx = Math.min(bars.length - 1, Math.floor((pct / 100) * (bars.length - 1)));
+  return bars[idx];
+}
+
+function renderPercentTrend(elId, values) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  if (!Array.isArray(values) || values.length === 0) {
+    el.textContent = '..........';
+    return;
+  }
+  const spark = values.map((v) => sparkChar(v)).join('');
+  el.textContent = spark.padStart(10, '·').slice(-10);
+}
+
 // Update mini dashboard metrics
 async function updateMiniDash() {
   const fetchStarted = performance.now();
@@ -274,6 +294,12 @@ async function updateMiniDash() {
   const poolStatus =
     reqPct >= 100 || workerPct >= 100 ? 'saturated' :
     reqPct >= 75 || workerPct >= 75 ? 'high' : 'healthy';
+  const capPct = Math.min(reqCapPct, workerCapPct);
+
+  miniDashState.loadTrend.push(loadPct);
+  if (miniDashState.loadTrend.length > 10) miniDashState.loadTrend.shift();
+  miniDashState.capacityTrend.push(capPct);
+  if (miniDashState.capacityTrend.length > 10) miniDashState.capacityTrend.shift();
   
   document.getElementById('mini-pool').textContent = `${inFlight} / ${maxRequests}`;
   document.getElementById('mini-workers').textContent = `${activeWorkers} / ${maxWorkers}`;
@@ -308,6 +334,8 @@ async function updateMiniDash() {
   renderDnsChip(miniDashState.runtimeInfo);
   renderResilienceChip(miniDashState.runtimeInfo);
   renderOrchestrationTrend();
+  renderPercentTrend('mini-load-trend', miniDashState.loadTrend);
+  renderPercentTrend('mini-capacity-trend', miniDashState.capacityTrend);
   
   // Update uptime from server
   if (rt.uptimeMs) {
