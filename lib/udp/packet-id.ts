@@ -20,6 +20,7 @@ export interface PacketEncodeOptions {
 export const PACKET_HEADER_SIZE = 16;
 export const PACKET_VERSION = 3;
 export const FLAG_CRC32 = 0x01;
+export const FLAG_HEARTBEAT = 0x02;
 export const CRC_SIZE = 4;
 
 const SCOPE_TO_CODE: Record<string, number> = {

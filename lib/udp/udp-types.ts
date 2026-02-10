@@ -11,9 +11,19 @@ export interface UDPServiceConfig {
   packetTrackingScope?: "interface-local" | "link-local" | "site-local" | "organization" | "global" | "admin";
   packetTrackingFlags?: number;
   packetSourceId?: number;
+  /** Sliding-window size for duplicate detection (default 2048). */
+  dedupWindow?: number;
+  /** Default timeout in ms for graceful shutdown (default 5000). */
+  shutdownTimeoutMs?: number;
+  /** Heartbeat interval in ms. Requires packetTracking. 0 = disabled (default). */
+  heartbeatIntervalMs?: number;
+  /** Peer stale timeout in ms. Fires onStale when peer silent this long (default 3× heartbeat). */
+  heartbeatTimeoutMs?: number;
+  /** Auto-flush interval in ms for batched sends. 0 = disabled (default). */
+  batchFlushIntervalMs?: number;
 }
 
-export type UDPServiceState = "idle" | "binding" | "bound" | "connected" | "closed";
+export type UDPServiceState = "idle" | "binding" | "bound" | "connected" | "draining" | "closed";
 
 export interface UDPDatagram {
   data: Buffer;
@@ -41,6 +51,20 @@ export interface UDPServiceMetrics {
   sequenceId: number;
   state: UDPServiceState;
   boundPort: number | null;
+  uptimeMs: number;
+  heartbeatsSent: number;
+  heartbeatsReceived: number;
+  stalePeers: number;
+  pendingBatchSize: number;
+  batchFlushes: number;
+}
+
+export interface PeerInfo {
+  address: string;
+  port: number;
+  sourceId?: number;
+  lastSeenAt: number;
+  stale: boolean;
 }
 
 export interface UDPSendPacket {
@@ -52,3 +76,5 @@ export interface UDPSendPacket {
 export type DataHandler = (datagram: UDPDatagram) => void;
 export type DrainHandler = () => void;
 export type ErrorHandler = (error: Error) => void;
+export type ShutdownHandler = () => void;
+export type StaleHandler = (peer: PeerInfo) => void;

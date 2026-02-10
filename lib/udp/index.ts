@@ -8,9 +8,12 @@ export type {
   UDPDatagram,
   UDPServiceMetrics,
   UDPSendPacket,
+  PeerInfo,
   DataHandler,
   DrainHandler,
   ErrorHandler,
+  ShutdownHandler,
+  StaleHandler,
 } from "./udp-types";
 
 export { MulticastAddressSelector } from "./multicast-selector";
@@ -30,6 +33,7 @@ export {
   PACKET_HEADER_SIZE,
   PACKET_VERSION,
   FLAG_CRC32,
+  FLAG_HEARTBEAT,
   CRC_SIZE,
   stripPacketHeader,
   computeCRC,

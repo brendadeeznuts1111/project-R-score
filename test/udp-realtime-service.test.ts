@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach, afterEach, spyOn, type Mock } from "bun:test";
 import { UDPRealtimeService } from "../lib/udp/udp-realtime-service";
 import type { UDPSendPacket } from "../lib/udp/udp-types";
-import { decodePacketHeader, encodePacketHeader, PACKET_HEADER_SIZE, CRC_SIZE, FLAG_CRC32, appendCRC } from "../lib/udp/packet-id";
+import { decodePacketHeader, encodePacketHeader, PACKET_HEADER_SIZE, CRC_SIZE, FLAG_CRC32, FLAG_HEARTBEAT, appendCRC } from "../lib/udp/packet-id";
 
 // ---------------------------------------------------------------------------
 // FakeUDPSocket — mirrors the subset of Bun.udp.Socket / ConnectedSocket
@@ -861,6 +861,683 @@ describe("UDPRealtimeService", () => {
       expect(Buffer.isBuffer(flat[0])).toBe(true);
       expect(decodePacketHeader(flat[0] as Buffer)?.sequenceId).toBe(0);
       expect(decodePacketHeader(flat[3] as Buffer)?.sequenceId).toBe(1);
+    });
+  });
+
+  // ====== Handler removal ======
+
+  describe("handler removal", () => {
+    test("offMessage removes a registered handler", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+      let count = 0;
+      const handler = () => { count++; };
+      svc.onMessage(handler);
+      fakeSocket.simulateIncomingData(Buffer.from("a"), 3000, "1.1.1.1");
+      expect(count).toBe(1);
+
+      expect(svc.offMessage(handler)).toBe(true);
+      fakeSocket.simulateIncomingData(Buffer.from("b"), 3000, "1.1.1.1");
+      expect(count).toBe(1); // not incremented
+    });
+
+    test("offMessage returns false for unknown handler", () => {
+      svc = new UDPRealtimeService();
+      expect(svc.offMessage(() => {})).toBe(false);
+    });
+
+    test("offDrainEvent removes a registered handler", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+      let count = 0;
+      const handler = () => { count++; };
+      svc.onDrainEvent(handler);
+      fakeSocket.simulateDrain();
+      expect(count).toBe(1);
+
+      svc.offDrainEvent(handler);
+      fakeSocket.simulateDrain();
+      expect(count).toBe(1);
+    });
+
+    test("offErrorEvent removes a registered handler", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+      let count = 0;
+      const handler = () => { count++; };
+      svc.onErrorEvent(handler);
+      fakeSocket.simulateError(new Error("e"));
+      expect(count).toBe(1);
+
+      svc.offErrorEvent(handler);
+      fakeSocket.simulateError(new Error("e2"));
+      expect(count).toBe(1);
+    });
+
+    test("onShutdown and offShutdown work", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+      let called = false;
+      const handler = () => { called = true; };
+      svc.onShutdown(handler);
+      expect(svc.offShutdown(handler)).toBe(true);
+
+      await svc.shutdown(10);
+      expect(called).toBe(false); // was removed before shutdown
+    });
+  });
+
+  // ====== Graceful shutdown ======
+
+  describe("graceful shutdown", () => {
+    test("shutdown transitions through draining to closed", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+
+      const promise = svc.shutdown(50);
+      // State is draining before resolved (or closed after timeout)
+      expect(svc.state === "draining" || svc.state === "closed").toBe(true);
+
+      await promise;
+      expect(svc.state).toBe("closed");
+      expect(fakeSocket.closed).toBe(true);
+    });
+
+    test("shutdown fires shutdown handlers", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+      let shutdownCalled = false;
+      svc.onShutdown(() => { shutdownCalled = true; });
+
+      await svc.shutdown(10);
+      expect(shutdownCalled).toBe(true);
+    });
+
+    test("shutdown resolves immediately on drain event", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+
+      const start = performance.now();
+      const promise = svc.shutdown(5000);
+
+      // Simulate drain immediately
+      fakeSocket.simulateDrain();
+      await promise;
+
+      const elapsed = performance.now() - start;
+      expect(elapsed).toBeLessThan(100); // should be near-instant, not 5000ms
+      expect(svc.state).toBe("closed");
+    });
+
+    test("send throws during draining", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+
+      const promise = svc.shutdown(5000);
+      // State is draining — send should be rejected
+      if (svc.state === "draining") {
+        expect(() => svc.send("x", 1234, "127.0.0.1")).toThrow();
+      }
+
+      fakeSocket.simulateDrain();
+      await promise;
+    });
+
+    test("double shutdown returns same promise", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+
+      const p1 = svc.shutdown(50);
+      const p2 = svc.shutdown(50);
+      expect(p1).toBe(p2);
+
+      await p1;
+    });
+
+    test("shutdown on idle service just closes", async () => {
+      svc = new UDPRealtimeService();
+      await svc.shutdown();
+      expect(svc.state).toBe("closed");
+    });
+
+    test("shutdown on already-closed service is no-op", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+      svc.close();
+      await svc.shutdown(); // should not throw
+      expect(svc.state).toBe("closed");
+    });
+
+    test("shutdown uses config.shutdownTimeoutMs as default", async () => {
+      svc = new UDPRealtimeService({ shutdownTimeoutMs: 10 });
+      await svc.bind();
+
+      const start = performance.now();
+      await svc.shutdown(); // no explicit timeout — uses config default
+      const elapsed = performance.now() - start;
+
+      expect(svc.state).toBe("closed");
+      // Should timeout around 10ms, not 5000ms default
+      expect(elapsed).toBeLessThan(500);
+    });
+  });
+
+  // ====== Sequence wrapping ======
+
+  describe("sequence wrapping", () => {
+    test("outSeq wraps at uint32 max", async () => {
+      svc = new UDPRealtimeService({ packetTracking: true });
+      await svc.bind();
+
+      // Manually set outSeq near the wrap point by sending packets
+      // We can't set it directly, but we can check the wrap via metrics
+      // after sending. Use a different approach: send, check seq in header.
+
+      // Hack: access private outSeq via Object property for testing
+      (svc as any).outSeq = 0xFFFFFFFF;
+      svc.send("wrap", 1234, "127.0.0.1");
+
+      const buf = fakeSocket.sendCalls[0][0] as Buffer;
+      const hdr = decodePacketHeader(buf);
+      expect(hdr!.sequenceId).toBe(0xFFFFFFFF);
+
+      // Next send should wrap to 0
+      svc.send("wrapped", 1234, "127.0.0.1");
+      const buf2 = fakeSocket.sendCalls[1][0] as Buffer;
+      const hdr2 = decodePacketHeader(buf2);
+      expect(hdr2!.sequenceId).toBe(0);
+    });
+  });
+
+  // ====== Configurable dedup window ======
+
+  describe("configurable dedup window", () => {
+    function framedFrom(sourceId: number, seq: number, payload: string): Buffer {
+      const header = encodePacketHeader({
+        scope: "site-local",
+        flags: FLAG_CRC32,
+        sourceId,
+        sequenceId: seq,
+      });
+      const payloadBuf = Buffer.from(payload);
+      const payloadWithCRC = appendCRC(payloadBuf);
+      const framed = Buffer.allocUnsafe(PACKET_HEADER_SIZE + payloadWithCRC.byteLength);
+      header.copy(framed, 0);
+      payloadWithCRC.copy(framed, PACKET_HEADER_SIZE);
+      return framed;
+    }
+
+    test("custom dedupWindow controls pruning", async () => {
+      // Use a tiny window so duplicates outside the window are not caught
+      svc = new UDPRealtimeService({ packetTracking: true, dedupWindow: 2 });
+      await svc.bind();
+      svc.onMessage(() => {});
+
+      // Send seqs 0, 1, 2, 3 — window holds only last 2
+      fakeSocket.simulateIncomingData(framedFrom(1, 0, "a"), 3000, "1.1.1.1");
+      fakeSocket.simulateIncomingData(framedFrom(1, 1, "b"), 3000, "1.1.1.1");
+      fakeSocket.simulateIncomingData(framedFrom(1, 2, "c"), 3000, "1.1.1.1");
+      fakeSocket.simulateIncomingData(framedFrom(1, 3, "d"), 3000, "1.1.1.1");
+
+      // Resend seq 0 — was pruned from window, so NOT detected as duplicate
+      fakeSocket.simulateIncomingData(framedFrom(1, 0, "a"), 3000, "1.1.1.1");
+      expect(svc.getMetrics().packetsDuplicate).toBe(0);
+
+      // Resend seq 3 — still in window, so IS detected as duplicate
+      fakeSocket.simulateIncomingData(framedFrom(1, 3, "d"), 3000, "1.1.1.1");
+      expect(svc.getMetrics().packetsDuplicate).toBe(1);
+    });
+
+    test("defaults to 2048 when not specified", () => {
+      svc = new UDPRealtimeService({ packetTracking: true });
+      expect((svc as any).dedupWindow).toBe(2048);
+    });
+  });
+
+  // ====== Uptime tracking ======
+
+  describe("uptime tracking", () => {
+    test("uptimeMs is 0 before bind", () => {
+      svc = new UDPRealtimeService();
+      expect(svc.getMetrics().uptimeMs).toBe(0);
+    });
+
+    test("uptimeMs is positive after bind", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+      // Small sleep to ensure non-zero
+      await Bun.sleep(5);
+      const m = svc.getMetrics();
+      expect(m.uptimeMs).toBeGreaterThan(0);
+    });
+
+    test("uptimeMs is 0 after close", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+      svc.close();
+      expect(svc.getMetrics().uptimeMs).toBe(0);
+    });
+
+    test("uptimeMs is 0 after reset", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+      svc.reset();
+      expect(svc.getMetrics().uptimeMs).toBe(0);
+    });
+  });
+
+  // ====== Heartbeat ======
+
+  describe("heartbeat", () => {
+    /** Build a heartbeat packet matching the wire format sendHeartbeat() produces. */
+    function heartbeatPacket(sourceId: number, seq: number): Buffer {
+      const header = encodePacketHeader({
+        scope: "site-local",
+        flags: FLAG_CRC32 | FLAG_HEARTBEAT,
+        sourceId,
+        sequenceId: seq,
+      });
+      const payloadWithCRC = appendCRC(Buffer.alloc(0));
+      const framed = Buffer.allocUnsafe(PACKET_HEADER_SIZE + payloadWithCRC.byteLength);
+      header.copy(framed, 0);
+      payloadWithCRC.copy(framed, PACKET_HEADER_SIZE);
+      return framed;
+    }
+
+    test("incoming heartbeat increments heartbeatsReceived and skips data handler", async () => {
+      svc = new UDPRealtimeService({ packetTracking: true });
+      await svc.bind();
+      let dataCalled = false;
+      svc.onMessage(() => { dataCalled = true; });
+
+      fakeSocket.simulateIncomingData(heartbeatPacket(42, 0), 3000, "1.2.3.4");
+
+      expect(dataCalled).toBe(false);
+      expect(svc.getMetrics().heartbeatsReceived).toBe(1);
+      expect(svc.getMetrics().packetsReceived).toBe(1);
+    });
+
+    test("incoming heartbeat still registers peer", async () => {
+      svc = new UDPRealtimeService({ packetTracking: true });
+      await svc.bind();
+
+      fakeSocket.simulateIncomingData(heartbeatPacket(42, 0), 3000, "1.2.3.4");
+
+      const peers = svc.getPeers();
+      expect(peers).toHaveLength(1);
+      expect(peers[0].address).toBe("1.2.3.4");
+      expect(peers[0].port).toBe(3000);
+      expect(peers[0].sourceId).toBe(42);
+    });
+
+    test("heartbeat timer sends FLAG_HEARTBEAT on connected socket", async () => {
+      svc = new UDPRealtimeService({
+        packetTracking: true,
+        heartbeatIntervalMs: 15,
+        connect: { hostname: "127.0.0.1", port: 5000 },
+      });
+      await svc.bind();
+
+      await Bun.sleep(40);
+      svc.close();
+
+      const m = svc.getMetrics();
+      expect(m.heartbeatsSent).toBeGreaterThanOrEqual(1);
+      expect(fakeSocket.sendCalls.length).toBeGreaterThanOrEqual(1);
+
+      const hdr = decodePacketHeader(fakeSocket.sendCalls[0][0] as Buffer);
+      expect(hdr).not.toBeNull();
+      expect(hdr!.flags & FLAG_HEARTBEAT).toBeTruthy();
+      expect(hdr!.flags & FLAG_CRC32).toBeTruthy();
+    });
+
+    test("heartbeat not started without packetTracking", async () => {
+      svc = new UDPRealtimeService({
+        heartbeatIntervalMs: 10,
+        connect: { hostname: "127.0.0.1", port: 5000 },
+      });
+      await svc.bind();
+
+      await Bun.sleep(30);
+      expect(svc.getMetrics().heartbeatsSent).toBe(0);
+      expect(fakeSocket.sendCalls).toHaveLength(0);
+      svc.close();
+    });
+
+    test("heartbeat not started when heartbeatIntervalMs is 0", async () => {
+      svc = new UDPRealtimeService({
+        packetTracking: true,
+        heartbeatIntervalMs: 0,
+        connect: { hostname: "127.0.0.1", port: 5000 },
+      });
+      await svc.bind();
+
+      await Bun.sleep(30);
+      expect(svc.getMetrics().heartbeatsSent).toBe(0);
+      svc.close();
+    });
+
+    test("heartbeat increments outgoing sequence", async () => {
+      svc = new UDPRealtimeService({
+        packetTracking: true,
+        heartbeatIntervalMs: 10,
+        connect: { hostname: "127.0.0.1", port: 5000 },
+      });
+      await svc.bind();
+
+      await Bun.sleep(35);
+      svc.close();
+
+      const hbCount = svc.getMetrics().heartbeatsSent;
+      expect(hbCount).toBeGreaterThanOrEqual(1);
+      expect(svc.getMetrics().sequenceId).toBe(hbCount);
+    });
+
+    test("close stops heartbeat timer", async () => {
+      svc = new UDPRealtimeService({
+        packetTracking: true,
+        heartbeatIntervalMs: 10,
+        connect: { hostname: "127.0.0.1", port: 5000 },
+      });
+      await svc.bind();
+      svc.close();
+
+      const countAfterClose = fakeSocket.sendCalls.length;
+      await Bun.sleep(40);
+
+      expect(fakeSocket.sendCalls.length).toBe(countAfterClose);
+    });
+
+    test("multiple heartbeat receives from same peer do not duplicate peer entry", async () => {
+      svc = new UDPRealtimeService({ packetTracking: true });
+      await svc.bind();
+
+      fakeSocket.simulateIncomingData(heartbeatPacket(42, 0), 3000, "1.2.3.4");
+      fakeSocket.simulateIncomingData(heartbeatPacket(42, 1), 3000, "1.2.3.4");
+      fakeSocket.simulateIncomingData(heartbeatPacket(42, 2), 3000, "1.2.3.4");
+
+      expect(svc.getPeers()).toHaveLength(1);
+      expect(svc.getMetrics().heartbeatsReceived).toBe(3);
+    });
+  });
+
+  // ====== Peer tracking ======
+
+  describe("peer tracking", () => {
+    test("incoming data registers peers", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+      svc.onMessage(() => {});
+
+      fakeSocket.simulateIncomingData(Buffer.from("a"), 3000, "1.1.1.1");
+      fakeSocket.simulateIncomingData(Buffer.from("b"), 4000, "2.2.2.2");
+
+      const peers = svc.getPeers();
+      expect(peers).toHaveLength(2);
+      expect(peers.find(p => p.address === "1.1.1.1")?.port).toBe(3000);
+      expect(peers.find(p => p.address === "2.2.2.2")?.port).toBe(4000);
+    });
+
+    test("same peer updates lastSeenAt", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+      svc.onMessage(() => {});
+
+      fakeSocket.simulateIncomingData(Buffer.from("a"), 3000, "1.1.1.1");
+      const first = svc.getPeers()[0].lastSeenAt;
+
+      await Bun.sleep(5);
+      fakeSocket.simulateIncomingData(Buffer.from("b"), 3000, "1.1.1.1");
+      const second = svc.getPeers()[0].lastSeenAt;
+
+      expect(second).toBeGreaterThan(first);
+      expect(svc.getPeers()).toHaveLength(1);
+    });
+
+    test("stale peer detection fires onStale", async () => {
+      svc = new UDPRealtimeService({ packetTracking: true, heartbeatIntervalMs: 10 });
+      await svc.bind();
+      const stalePeers: any[] = [];
+      svc.onStale((peer) => stalePeers.push(peer));
+
+      fakeSocket.simulateIncomingData(Buffer.from("x"), 3000, "1.1.1.1");
+
+      // Manually trigger stale check after a small delay
+      await Bun.sleep(5);
+      (svc as any).checkStalePeers(1); // 1ms timeout — peer was seen 5ms ago
+
+      expect(stalePeers).toHaveLength(1);
+      expect(stalePeers[0].address).toBe("1.1.1.1");
+      expect(stalePeers[0].stale).toBe(true);
+      expect(svc.getMetrics().stalePeers).toBe(1);
+      svc.close();
+    });
+
+    test("peer revives from stale when new data arrives", async () => {
+      svc = new UDPRealtimeService({ packetTracking: true, heartbeatIntervalMs: 10 });
+      await svc.bind();
+
+      fakeSocket.simulateIncomingData(Buffer.from("x"), 3000, "1.1.1.1");
+
+      // Force stale
+      await Bun.sleep(5);
+      (svc as any).checkStalePeers(1);
+      expect(svc.getPeers()[0].stale).toBe(true);
+      expect(svc.getMetrics().stalePeers).toBe(1);
+
+      // New data revives peer
+      fakeSocket.simulateIncomingData(Buffer.from("y"), 3000, "1.1.1.1");
+      expect(svc.getPeers()[0].stale).toBe(false);
+      expect(svc.getMetrics().stalePeers).toBe(0);
+      svc.close();
+    });
+
+    test("offStale removes handler", async () => {
+      svc = new UDPRealtimeService({ packetTracking: true, heartbeatIntervalMs: 10 });
+      await svc.bind();
+      let count = 0;
+      const handler = () => { count++; };
+      svc.onStale(handler);
+      svc.offStale(handler);
+
+      fakeSocket.simulateIncomingData(Buffer.from("x"), 3000, "1.1.1.1");
+      await Bun.sleep(5);
+      (svc as any).checkStalePeers(1);
+
+      expect(count).toBe(0);
+      svc.close();
+    });
+
+    test("getPeers returns empty before any data", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+      expect(svc.getPeers()).toEqual([]);
+    });
+
+    test("reset clears peers", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+      svc.onMessage(() => {});
+
+      fakeSocket.simulateIncomingData(Buffer.from("a"), 3000, "1.1.1.1");
+      expect(svc.getPeers()).toHaveLength(1);
+
+      svc.reset();
+      expect(svc.getPeers()).toEqual([]);
+    });
+
+    test("stale onStale fires with a copy, not reference", async () => {
+      svc = new UDPRealtimeService({ packetTracking: true, heartbeatIntervalMs: 10 });
+      await svc.bind();
+      const captured: any[] = [];
+      svc.onStale((peer) => captured.push(peer));
+
+      fakeSocket.simulateIncomingData(Buffer.from("x"), 3000, "1.1.1.1");
+      await Bun.sleep(5);
+      (svc as any).checkStalePeers(1);
+
+      // Mutating the captured peer should not affect internal state
+      captured[0].address = "mutated";
+      expect(svc.getPeers()[0].address).toBe("1.1.1.1");
+      svc.close();
+    });
+  });
+
+  // ====== Batch send ======
+
+  describe("batch send", () => {
+    test("scheduleSend queues datagrams for unconnected socket", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+
+      svc.scheduleSend("a", 4000, "10.0.0.1");
+      svc.scheduleSend("b", 4001, "10.0.0.2");
+
+      expect(svc.pendingBatchSize).toBe(2);
+      expect(fakeSocket.sendManyCalls).toHaveLength(0);
+    });
+
+    test("scheduleSend queues for connected socket", async () => {
+      svc = new UDPRealtimeService({ connect: { hostname: "127.0.0.1", port: 5000 } });
+      await svc.bind();
+
+      svc.scheduleSend("a");
+      svc.scheduleSend("b");
+
+      expect(svc.pendingBatchSize).toBe(2);
+    });
+
+    test("flush sends all queued unconnected datagrams via sendMany", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+
+      svc.scheduleSend("a", 4000, "10.0.0.1");
+      svc.scheduleSend("b", 4001, "10.0.0.2");
+
+      const sent = svc.flush();
+      expect(sent).toBe(2);
+      expect(svc.pendingBatchSize).toBe(0);
+      expect(fakeSocket.sendManyCalls).toHaveLength(1);
+      expect(fakeSocket.sendManyCalls[0]).toEqual(["a", 4000, "10.0.0.1", "b", 4001, "10.0.0.2"]);
+    });
+
+    test("flush sends all queued connected datagrams", async () => {
+      svc = new UDPRealtimeService({ connect: { hostname: "127.0.0.1", port: 5000 } });
+      await svc.bind();
+
+      svc.scheduleSend("x");
+      svc.scheduleSend("y");
+
+      const sent = svc.flush();
+      expect(sent).toBe(2);
+      expect(fakeSocket.sendManyCalls[0]).toEqual(["x", "y"]);
+    });
+
+    test("flush returns 0 when queue is empty", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+
+      expect(svc.flush()).toBe(0);
+      expect(svc.getMetrics().batchFlushes).toBe(0);
+    });
+
+    test("batchFlushes metric increments on non-empty flush", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+
+      svc.scheduleSend("a", 4000, "10.0.0.1");
+      svc.flush();
+      svc.scheduleSend("b", 4001, "10.0.0.2");
+      svc.flush();
+
+      expect(svc.getMetrics().batchFlushes).toBe(2);
+    });
+
+    test("pendingBatchSize in metrics matches getter", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+
+      svc.scheduleSend("a", 4000, "10.0.0.1");
+      svc.scheduleSend("b", 4001, "10.0.0.2");
+
+      expect(svc.getMetrics().pendingBatchSize).toBe(2);
+      expect(svc.getMetrics().pendingBatchSize).toBe(svc.pendingBatchSize);
+    });
+
+    test("auto-flush timer flushes on interval", async () => {
+      svc = new UDPRealtimeService({ batchFlushIntervalMs: 15 });
+      await svc.bind();
+
+      svc.scheduleSend("a", 4000, "10.0.0.1");
+      svc.scheduleSend("b", 4001, "10.0.0.2");
+
+      await Bun.sleep(40);
+
+      expect(svc.pendingBatchSize).toBe(0);
+      expect(fakeSocket.sendManyCalls.length).toBeGreaterThanOrEqual(1);
+      expect(svc.getMetrics().batchFlushes).toBeGreaterThanOrEqual(1);
+      svc.close();
+    });
+
+    test("scheduleSend throws when not bound", () => {
+      svc = new UDPRealtimeService();
+      expect(() => svc.scheduleSend("x", 1234, "127.0.0.1")).toThrow('Cannot scheduleSend: state is "idle"');
+    });
+
+    test("scheduleSend throws for unconnected without port/address", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+      expect(() => svc.scheduleSend("x")).toThrow("Port and address are required");
+    });
+
+    test("shutdown flushes pending batch before closing", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+
+      svc.scheduleSend("a", 4000, "10.0.0.1");
+      svc.scheduleSend("b", 4001, "10.0.0.2");
+
+      await svc.shutdown(10);
+
+      expect(fakeSocket.sendManyCalls.length).toBeGreaterThanOrEqual(1);
+      expect(svc.getMetrics().batchFlushes).toBeGreaterThanOrEqual(1);
+    });
+
+    test("close stops batch timer without flushing", async () => {
+      svc = new UDPRealtimeService({ batchFlushIntervalMs: 15 });
+      await svc.bind();
+
+      svc.scheduleSend("a", 4000, "10.0.0.1");
+      svc.close();
+
+      await Bun.sleep(40);
+      // close() stops timer — queued data is NOT flushed
+      expect(fakeSocket.sendManyCalls).toHaveLength(0);
+    });
+
+    test("reset clears batch queues", async () => {
+      svc = new UDPRealtimeService();
+      await svc.bind();
+
+      svc.scheduleSend("a", 4000, "10.0.0.1");
+      expect(svc.pendingBatchSize).toBe(1);
+
+      svc.reset();
+      expect(svc.pendingBatchSize).toBe(0);
+    });
+
+    test("flush with packetTracking frames payloads", async () => {
+      svc = new UDPRealtimeService({ packetTracking: true });
+      await svc.bind();
+
+      svc.scheduleSend("hello", 4000, "10.0.0.1");
+      svc.flush();
+
+      const flat = fakeSocket.sendManyCalls[0];
+      expect(Buffer.isBuffer(flat[0])).toBe(true);
+      const hdr = decodePacketHeader(flat[0] as Buffer);
+      expect(hdr).not.toBeNull();
+      expect(hdr!.sequenceId).toBe(0);
     });
   });
 });
