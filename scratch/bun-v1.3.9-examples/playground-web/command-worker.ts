@@ -2,6 +2,7 @@ type RunCommandTask = {
   type: "run-command";
   cmd: string[];
   cwd: string;
+  env?: Record<string, string>;
 };
 
 type TaskEnvelope = {
@@ -19,11 +20,16 @@ type ResultEnvelope = {
 };
 
 async function executeRunCommand(task: RunCommandTask) {
+  const mergedEnv = {
+    ...process.env,
+    ...(task.env || {}),
+  };
   const proc = Bun.spawn({
     cmd: task.cmd,
     stdout: "pipe",
     stderr: "pipe",
     cwd: task.cwd,
+    env: mergedEnv,
   });
 
   const [output, error] = await Promise.all([
@@ -62,4 +68,3 @@ self.onmessage = async (event: MessageEvent<TaskEnvelope>) => {
     self.postMessage(response);
   }
 };
-

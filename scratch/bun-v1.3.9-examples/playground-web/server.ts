@@ -121,7 +121,7 @@ const DASHBOARD_METRICS_INTERVAL_MS = parseNumberEnv("PLAYGROUND_METRICS_INTERVA
 let inFlightRequests = 0;
 const serverStartTime = Date.now();
 const commandWorkerPool = new UltraWorkerPool<
-  { type: "run-command"; cmd: string[]; cwd: string },
+  { type: "run-command"; cmd: string[]; cwd: string; env?: Record<string, string> },
   { output: string; error: string; exitCode: number }
 >({
   workerUrl: new URL("./command-worker.ts", import.meta.url),
@@ -129,6 +129,9 @@ const commandWorkerPool = new UltraWorkerPool<
   maxWorkers: Math.max(1, WORKER_POOL_MAX),
   fastPath: true,
 });
+const WORKER_DEFAULT_ENV: Record<string, string> = {
+  NO_PROXY: (process.env.NO_PROXY || process.env.no_proxy || "localhost,127.0.0.1").trim(),
+};
 
 function getCommandWorkerStats() {
   const stats = commandWorkerPool.getStats();
@@ -2887,11 +2890,19 @@ function readDemoBenchStatus() {
   };
 }
 
-async function runCommand(cmd: string[], cwd: string): Promise<{ output: string; error: string; exitCode: number }> {
+async function runCommand(
+  cmd: string[],
+  cwd: string,
+  env?: Record<string, string>
+): Promise<{ output: string; error: string; exitCode: number }> {
   return await commandWorkerPool.execute({
     type: "run-command",
     cmd,
     cwd,
+    env: {
+      ...WORKER_DEFAULT_ENV,
+      ...(env || {}),
+    },
   });
 }
 
@@ -5299,6 +5310,88 @@ const routes = {
     return await getScriptOrchestrationStatus();
   },
 
+  "/api/control/worker-env": async (req: Request) => {
+    const url = new URL(req.url);
+    const key = String(url.searchParams.get("key") || "NO_PROXY").trim();
+    const injected = `probe-${Date.now()}`;
+    const probeScript = `console.log(JSON.stringify({ key: "${key}", value: process.env["${key}"] ?? null, injected: process.env.PLAYGROUND_ENV_PROBE ?? null, pid: process.pid }))`;
+    const result = await runCommand(["bun", "-e", probeScript], PROJECT_ROOT, {
+      PLAYGROUND_ENV_PROBE: injected,
+    });
+    let parsed: Record<string, unknown> | null = null;
+    try {
+      parsed = result.output ? JSON.parse(result.output.trim()) : null;
+    } catch {
+      parsed = null;
+    }
+
+    const available = Boolean(parsed && parsed.value !== null && parsed.value !== undefined && String(parsed.value).length > 0);
+    const mapped = Boolean(parsed && parsed.injected === injected);
+    return {
+      generatedAt: new Date().toISOString(),
+      key,
+      available,
+      mapped,
+      worker: parsed,
+      workerPool: getCommandWorkerStats(),
+      commandExitCode: result.exitCode,
+      commandError: result.error || null,
+    };
+  },
+
+  "/api/control/worker-env/bench": async (req: Request) => {
+    const url = new URL(req.url);
+    const key = String(url.searchParams.get("key") || "NO_PROXY").trim();
+    const iterationsRaw = Number.parseInt(url.searchParams.get("iterations") || "10", 10);
+    const iterations = Math.max(1, Math.min(100, Number.isFinite(iterationsRaw) ? iterationsRaw : 10));
+    const samples: number[] = [];
+    let mappedCount = 0;
+    let availableCount = 0;
+
+    for (let i = 0; i < iterations; i += 1) {
+      const probeValue = `probe-${i}-${Date.now()}`;
+      const probeScript = `console.log(JSON.stringify({ key: "${key}", value: process.env["${key}"] ?? null, injected: process.env.PLAYGROUND_ENV_PROBE ?? null }))`;
+      const started = performance.now();
+      const result = await runCommand(["bun", "-e", probeScript], PROJECT_ROOT, {
+        PLAYGROUND_ENV_PROBE: probeValue,
+      });
+      const durationMs = Number((performance.now() - started).toFixed(2));
+      samples.push(durationMs);
+
+      try {
+        const parsed = JSON.parse(result.output.trim());
+        if (parsed?.injected === probeValue) mappedCount += 1;
+        if (parsed?.value !== null && parsed?.value !== undefined && String(parsed.value).length > 0) {
+          availableCount += 1;
+        }
+      } catch {
+        // ignore parse failure, counted by missing mapped/available increments
+      }
+    }
+
+    const sorted = [...samples].sort((a, b) => a - b);
+    const percentile = (p: number) => sorted[Math.min(sorted.length - 1, Math.floor((sorted.length - 1) * p))];
+    const avg = Number((samples.reduce((sum, n) => sum + n, 0) / Math.max(1, samples.length)).toFixed(2));
+
+    return {
+      generatedAt: new Date().toISOString(),
+      key,
+      iterations,
+      workerPool: getCommandWorkerStats(),
+      envMapping: {
+        mapped: mappedCount,
+        available: availableCount,
+      },
+      latencyMs: {
+        min: sorted[0] ?? 0,
+        p50: percentile(0.5),
+        p95: percentile(0.95),
+        max: sorted[sorted.length - 1] ?? 0,
+        avg,
+      },
+    };
+  },
+
   "/api/control/upload-progress": async (req: Request) => {
     const upload = await buildUploadProgress(req);
     return upload;
@@ -6042,6 +6135,14 @@ async function handleRequest(req: Request): Promise<Response> {
       }
       if (url.pathname === "/api/control/script-orchestration/status") {
         return jsonResponse(await routes["/api/control/script-orchestration/status"]());
+      }
+
+      if (url.pathname === "/api/control/worker-env") {
+        return jsonResponse(await routes["/api/control/worker-env"](req));
+      }
+
+      if (url.pathname === "/api/control/worker-env/bench") {
+        return jsonResponse(await routes["/api/control/worker-env/bench"](req));
       }
 
       if (url.pathname === "/api/control/features") {
