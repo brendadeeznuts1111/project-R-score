@@ -10,6 +10,11 @@
 
 import { Database } from 'bun:sqlite';
 import { vectorizeClient } from '../src/core/vectorize-client';
+import {
+  deleteSecret as deleteManagedSecret,
+  getSecret as getManagedSecret,
+  setSecret as setManagedSecret,
+} from '../lib/cloudflare/bun-secrets-adapter';
 
 const VERSION = '1.0.0';
 // Use UTI format for service name (best practice for CLI tools)
@@ -145,62 +150,32 @@ ${color('Examples:', 'bright')}
  * Get secret from Bun.secrets or environment
  */
 async function getSecret(service: string, name: string): Promise<string | undefined> {
-  // Try Bun.secrets first
-  if (typeof Bun !== 'undefined' && 'secrets' in Bun) {
-    try {
-      // Try new UTI format first (best practice)
-      const value = await Bun.secrets.get(service, name);
-      if (value) return value;
-      
-      // Fallback: try legacy 'cloudflare' service name for backward compatibility
-      if (service === CF_SERVICE) {
-        const legacyValue = await Bun.secrets.get('cloudflare', name);
-        if (legacyValue) return legacyValue;
-      }
-    } catch (error: any) {
-      // Fall through to environment
-    }
-  }
-
-  // Fallback to environment variables
-  // Note: envVarMap uses old 'cloudflare' key for backward compatibility
-  const envVarMap: Record<string, string> = {
-    'com.barbershop.vectorize:api_token': 'CLOUDFLARE_API_TOKEN',
-    'com.barbershop.vectorize:account_id': 'CLOUDFLARE_ACCOUNT_ID',
-    // Legacy support for old 'cloudflare' service name
-    'cloudflare:api_token': 'CLOUDFLARE_API_TOKEN',
-    'cloudflare:account_id': 'CLOUDFLARE_ACCOUNT_ID',
-  };
-  const key = `${service}:${name}`;
-  return Bun.env[envVarMap[key] || key.toUpperCase().replace(':', '_')];
+  const value = await getManagedSecret({
+    service,
+    name,
+    legacyServices: service === CF_SERVICE ? ['cloudflare'] : [],
+  });
+  return value ?? undefined;
 }
 
 /**
  * Store secret in Bun.secrets
  */
 async function setSecret(service: string, name: string, value: string): Promise<void> {
-  if (typeof Bun !== 'undefined' && 'secrets' in Bun) {
-    try {
-      // Bun.secrets.set accepts options object or positional args
-      await Bun.secrets.set(service, name, value);
-      console.log(color(`✅ Stored ${name} in Bun.secrets (${service})`, 'green'));
-      return;
-    } catch (error: any) {
-      console.log(color(`⚠️  Bun.secrets.set failed: ${error.message}`, 'yellow'));
-      console.log(color(`   Falling back to environment variable`, 'dim'));
-    }
-  }
-
-  // Fallback: set environment variable
-  const envVarMap: Record<string, string> = {
-    'cloudflare:api_token': 'CLOUDFLARE_API_TOKEN',
-    'cloudflare:account_id': 'CLOUDFLARE_ACCOUNT_ID',
-  };
-  const key = `${service}:${name}`;
-  const envVar = envVarMap[key];
-  if (envVar) {
+  try {
+    await setManagedSecret({ service, name, value });
+    console.log(color(`✅ Stored ${name} in Bun.secrets (${service})`, 'green'));
+  } catch (error: any) {
+    const envVarMap: Record<string, string> = {
+      'com.barbershop.vectorize:api_token': 'CLOUDFLARE_API_TOKEN',
+      'com.barbershop.vectorize:account_id': 'CLOUDFLARE_ACCOUNT_ID',
+      'cloudflare:api_token': 'CLOUDFLARE_API_TOKEN',
+      'cloudflare:account_id': 'CLOUDFLARE_ACCOUNT_ID',
+    };
+    const envVar = envVarMap[`${service}:${name}`];
+    if (!envVar) throw error;
     Bun.env[envVar] = value;
-    console.log(color(`✅ Set ${envVar} environment variable`, 'green'));
+    console.log(color(`⚠️  Bun.secrets unavailable (${error.message}); set ${envVar} for this process`, 'yellow'));
   }
 }
 
@@ -259,11 +234,7 @@ async function handleSecrets(args: ParsedArgs) {
 
     case 'delete-token': {
       try {
-        // Bun.secrets.delete requires options object format (not positional)
-        const deleted = await Bun.secrets.delete({
-          service: CF_SERVICE,
-          name: TOKEN_NAME,
-        });
+        const deleted = await deleteManagedSecret({ service: CF_SERVICE, name: TOKEN_NAME });
         if (deleted) {
           console.log(color('✅ Token deleted from Bun.secrets', 'green'));
         } else {
@@ -278,11 +249,7 @@ async function handleSecrets(args: ParsedArgs) {
 
     case 'delete-account-id': {
       try {
-        // Bun.secrets.delete requires options object format (not positional)
-        const deleted = await Bun.secrets.delete({
-          service: CF_SERVICE,
-          name: ACCOUNT_ID_NAME,
-        });
+        const deleted = await deleteManagedSecret({ service: CF_SERVICE, name: ACCOUNT_ID_NAME });
         if (deleted) {
           console.log(color('✅ Account ID deleted from Bun.secrets', 'green'));
         } else {
@@ -306,11 +273,11 @@ async function handleSecrets(args: ParsedArgs) {
 
       // Migrate API token
       try {
-        const oldToken = await Bun.secrets.get('cloudflare', TOKEN_NAME);
+        const oldToken = await getManagedSecret({ service: 'cloudflare', name: TOKEN_NAME, legacyServices: [] });
         if (oldToken) {
-          const newToken = await Bun.secrets.get(CF_SERVICE, TOKEN_NAME);
+          const newToken = await getManagedSecret({ service: CF_SERVICE, name: TOKEN_NAME, legacyServices: [] });
           if (!newToken) {
-            await Bun.secrets.set(CF_SERVICE, TOKEN_NAME, oldToken);
+            await setManagedSecret({ service: CF_SERVICE, name: TOKEN_NAME, value: oldToken });
             console.log(color('  ✅ Migrated API token', 'green'));
             migrated++;
           } else {
@@ -327,11 +294,11 @@ async function handleSecrets(args: ParsedArgs) {
 
       // Migrate Account ID
       try {
-        const oldAccountId = await Bun.secrets.get('cloudflare', ACCOUNT_ID_NAME);
+        const oldAccountId = await getManagedSecret({ service: 'cloudflare', name: ACCOUNT_ID_NAME, legacyServices: [] });
         if (oldAccountId) {
-          const newAccountId = await Bun.secrets.get(CF_SERVICE, ACCOUNT_ID_NAME);
+          const newAccountId = await getManagedSecret({ service: CF_SERVICE, name: ACCOUNT_ID_NAME, legacyServices: [] });
           if (!newAccountId) {
-            await Bun.secrets.set(CF_SERVICE, ACCOUNT_ID_NAME, oldAccountId);
+            await setManagedSecret({ service: CF_SERVICE, name: ACCOUNT_ID_NAME, value: oldAccountId });
             console.log(color('  ✅ Migrated Account ID', 'green'));
             migrated++;
           } else {

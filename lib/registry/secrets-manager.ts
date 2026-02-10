@@ -2,6 +2,7 @@
 
 import { styled } from '../theme/colors';
 import { R2StorageAdapter } from './r2-storage';
+import { deleteSecret, getSecret, setSecret } from '../security/bun-secrets-adapter';
 
 // Use bun.secrets if available (Bun 1.2+)
 const secrets = (Bun as any).secrets;
@@ -45,6 +46,7 @@ export class RegistrySecretsManager {
   private cache = new Map<string, SecretEntry>();
   private cacheExpiry = new Map<string, number>();
   private CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+  private readonly localSecretsService: string;
 
   constructor(r2Config?: ConstructorParameters<typeof R2StorageAdapter>[0]) {
     this.storage = new R2StorageAdapter({
@@ -52,6 +54,7 @@ export class RegistrySecretsManager {
       bucketName: r2Config?.bucketName || process.env.R2_SECRETS_BUCKET || 'npm-registry',
       prefix: 'secrets/',
     });
+    this.localSecretsService = Bun.env.REGISTRY_SECRETS_SERVICE || 'com.factorywager.registry';
   }
 
   /**
@@ -111,7 +114,11 @@ export class RegistrySecretsManager {
     // Use bun.secrets if requested
     if (options.useBunSecrets && secrets) {
       try {
-        await secrets.set(key, value);
+        await setSecret({
+          service: this.localSecretsService,
+          name: key,
+          value,
+        });
       } catch (error) {
         console.warn(styled(`⚠️ bun.secrets failed: ${error.message}`, 'warning'));
       }
@@ -137,7 +144,10 @@ export class RegistrySecretsManager {
     // Try bun.secrets first
     if (secrets) {
       try {
-        const value = await secrets.get(key);
+        const value = await getSecret({
+          service: this.localSecretsService,
+          name: key,
+        });
         if (value) {
           const entry: SecretEntry = {
             key,
@@ -260,7 +270,10 @@ export class RegistrySecretsManager {
       // Delete from bun.secrets
       if (secrets) {
         try {
-          await secrets.delete(key);
+          await deleteSecret({
+            service: this.localSecretsService,
+            name: key,
+          });
         } catch {
           // Ignore
         }

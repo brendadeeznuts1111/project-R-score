@@ -13,7 +13,6 @@ import { styled } from '../lib/theme/colors.ts';
 import { secrets } from 'bun';
 
 type SecretApiMode = 'legacy-manager' | 'service-name';
-const versionedManager = new VersionedSecretManager();
 
 function getArgValue(name: string): string {
   const direct = Bun.argv.find((arg) => arg.startsWith(`${name}=`));
@@ -25,15 +24,10 @@ function getArgValue(name: string): string {
 
 async function detectSecretApiMode(service: string): Promise<SecretApiMode> {
   try {
-    await versionedManager.getWithVersion('__rollback_probe__');
+    await secrets.get({ service, name: '__rollback_probe__' });
+    return 'service-name';
+  } catch {
     return 'legacy-manager';
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    if (message.includes('Expected options to be an object')) {
-      await secrets.get({ service, name: '__rollback_probe__' });
-      return 'service-name';
-    }
-    throw error;
   }
 }
 
@@ -41,7 +35,8 @@ async function getCurrentAndTarget(
   key: string,
   targetVersion: string,
   service: string,
-  mode: SecretApiMode
+  mode: SecretApiMode,
+  versionedManager: VersionedSecretManager
 ): Promise<{
   current: { value: string; version: string };
   target: { value: string; version: string };
@@ -94,7 +89,14 @@ async function main() {
     console.log('');
 
     const mode = await detectSecretApiMode(service);
-    const { current, target } = await getCurrentAndTarget(key, targetVersion, service, mode);
+    const versionedManager = new VersionedSecretManager(service);
+    const { current, target } = await getCurrentAndTarget(
+      key,
+      targetVersion,
+      service,
+      mode,
+      versionedManager
+    );
 
     // Get current state
     console.log(styled('📊 Current State:', 'accent'));
