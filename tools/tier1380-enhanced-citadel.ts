@@ -1,8 +1,6 @@
 #!/usr/bin/env bun
 // tools/tier1380-enhanced-citadel.ts — Enhanced Tier-1380 with config loader and caching
 
-import { loadABTestConfig, compressAndHashData, ABTestCache } from "../lib/config/env-loader";
-
 /**
  * 🚀 Prefetch Optimizations
  *
@@ -15,6 +13,85 @@ import { loadABTestConfig, compressAndHashData, ABTestCache } from "../lib/confi
  */
 import { createHash } from "crypto";
 import { getSignedR2URL } from "../lib/r2/signed-url";
+
+class ABTestCache {
+  private readonly store = new Map<string, { value: unknown; expiresAt: number }>();
+  private hits = 0;
+  private misses = 0;
+
+  get<T>(key: string): T | null {
+    const row = this.store.get(key);
+    if (!row) {
+      this.misses++;
+      return null;
+    }
+    if (Date.now() > row.expiresAt) {
+      this.store.delete(key);
+      this.misses++;
+      return null;
+    }
+    this.hits++;
+    return row.value as T;
+  }
+
+  set<T>(key: string, value: T, ttlMs = 300_000): void {
+    this.store.set(key, { value, expiresAt: Date.now() + ttlMs });
+  }
+
+  clear(): void {
+    this.store.clear();
+    this.hits = 0;
+    this.misses = 0;
+  }
+
+  stats(): {
+    size: number;
+    hitRate: number;
+    memoryUsage: number;
+    oldestEntry?: number;
+    newestEntry?: number;
+  } {
+    const size = this.store.size;
+    const total = this.hits + this.misses;
+    const hitRate = total > 0 ? this.hits / total : 0;
+    const memoryUsage = JSON.stringify([...this.store]).length;
+
+    let oldestEntry: number | undefined;
+    let newestEntry: number | undefined;
+
+    for (const [, value] of this.store) {
+      if (!oldestEntry || value.expiresAt < oldestEntry) {
+        oldestEntry = value.expiresAt;
+      }
+      if (!newestEntry || value.expiresAt > newestEntry) {
+        newestEntry = value.expiresAt;
+      }
+    }
+
+    return { size, hitRate, memoryUsage, oldestEntry, newestEntry };
+  }
+}
+
+function loadABTestConfig(): Record<string, any> {
+  const defaults = {
+    url_structure: { variants: ["direct", "fragments"], weights: [50, 50] },
+    doc_layout: { variants: ["sidebar", "topnav"], weights: [60, 40] },
+    cta_color: { variants: ["blue", "green", "orange"], weights: [34, 33, 33] },
+    content_density: { variants: ["compact", "balanced", "spacious"], weights: [20, 60, 20] },
+  };
+
+  const raw = process.env.TIER1380_AB_TEST_CONFIG;
+  if (!raw) return defaults;
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object") {
+      return { ...defaults, ...parsed };
+    }
+  } catch {
+    // Fall back to defaults on malformed JSON.
+  }
+  return defaults;
+}
 
 interface Tier1380EnhancedConfig {
   r2Bucket: string;
@@ -112,6 +189,7 @@ export class Tier1380EnhancedCitadel {
     compressedData: Uint8Array;
     key: string;
     cacheHit: boolean;
+    signedAccessUrl?: string;
   }> {
     const startTime = performance.now();
 
@@ -340,36 +418,14 @@ export class Tier1380EnhancedCitadel {
     oldestEntry?: number;
     newestEntry?: number;
   } {
-    // This is a simplified version - in production, you'd track actual hits/misses
-    const cacheSize = this.cache['cache'].size;
-    const memoryUsage = JSON.stringify([...this.cache['cache']]).length;
-
-    let oldestEntry: number | undefined;
-    let newestEntry: number | undefined;
-
-    for (const [, value] of this.cache['cache']) {
-      if (!oldestEntry || value.timestamp < oldestEntry) {
-        oldestEntry = value.timestamp;
-      }
-      if (!newestEntry || value.timestamp > newestEntry) {
-        newestEntry = value.timestamp;
-      }
-    }
-
-    return {
-      size: cacheSize,
-      hitRate: 0, // Would be tracked in production
-      memoryUsage,
-      oldestEntry,
-      newestEntry
-    };
+    return this.cache.stats();
   }
 
   /**
    * Clear cache
    */
   clearCache(): void {
-    this.cache['cache'].clear();
+    this.cache.clear();
     console.log("🗑️ Tier-1380 cache cleared");
   }
 
@@ -428,7 +484,7 @@ export class Tier1380EnhancedCitadel {
 
 // Export for Cloudflare Workers with enhanced features
 export default {
-  async fetch(req: Request, env: { R2_BUCKET: R2_BUCKET }): Promise<Response> {
+  async fetch(req: Request, env: { R2_BUCKET: R2Bucket }): Promise<Response> {
     const citadel = new Tier1380EnhancedCitadel({
       r2Bucket: env.R2_BUCKET.bucketName,
       publicApiUrl: "https://api.tier1380.com",
@@ -472,7 +528,7 @@ export default {
         }
 
         // Create enhanced snapshot
-        const { snapshot, compressedData, key, cacheHit } = await citadel.createEnhancedSnapshot(headers, cookieMap);
+        const { snapshot, compressedData, key, cacheHit, signedAccessUrl } = await citadel.createEnhancedSnapshot(headers, cookieMap);
 
         // Put to R2
         const result = await citadel.putEnhancedSnapshotToR2(env.R2_BUCKET, key, compressedData, snapshot, cacheHit);
