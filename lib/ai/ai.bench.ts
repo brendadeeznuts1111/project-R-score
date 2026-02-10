@@ -2,10 +2,12 @@
 // Run: bun lib/ai/ai.bench.ts
 // Tip: MIMALLOC_SHOW_STATS=1 bun lib/ai/ai.bench.ts for allocator stats
 
-import { AdvancedLRUCache, AIOperationsManager } from './ai-operations-manager';
+import { YAML } from 'bun';
+import { heapStats } from 'bun:jsc';
+
+import { AdvancedLRUCache } from './ai-operations-manager';
 import { AnomalyDetector } from './anomaly-detector';
 import { SmartCacheManager } from './smart-cache-manager';
-import { heapStats } from 'bun:jsc';
 
 const ITERATIONS = 10_000;
 
@@ -128,8 +130,6 @@ results.push(
 // ============================================================================
 
 console.log('— Parsing —');
-
-import { YAML } from 'bun';
 
 const sampleYaml = `
 cookie:

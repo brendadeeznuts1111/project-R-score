@@ -1,22 +1,20 @@
 // lib/ai/bunMarkdownExamples.ts — Markdown constants usage examples
 
 import React, { useMemo, useState, useEffect } from 'react';
+
 import {
+  ERRORS,
+  HTML_RENDERERS,
+  MarkdownCache,
   MARKDOWN_FEATURES,
   MARKDOWN_SECURITY,
-  MARKDOWN_DOMAINS,
-  HTML_RENDERERS,
-  TEXT_RENDERERS,
-  TERMINAL_RENDERERS,
-  REACT_COMPONENTS,
   MarkdownPresets,
-  MarkdownCache,
-  VALIDATION,
-  Sanitizers,
-  PERFORMANCE,
-  ERRORS,
-  CONFIG_MATRIX,
   MIGRATION,
+  PERFORMANCE,
+  Sanitizers,
+  TERMINAL_RENDERERS,
+  TEXT_RENDERERS,
+  VALIDATION,
 } from './bunMarkdownConstants';
 
 // ============================================================================
@@ -216,9 +214,9 @@ interface RenderMarkdownResponse {
 }
 
 /** API endpoint for rendering markdown */
-export async function renderMarkdownAPI(
+export function renderMarkdownAPI(
   request: RenderMarkdownRequest
-): Promise<RenderMarkdownResponse> {
+): RenderMarkdownResponse {
   try {
     const { markdown, options = {} } = request;
 

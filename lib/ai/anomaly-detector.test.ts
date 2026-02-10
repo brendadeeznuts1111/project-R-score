@@ -3,7 +3,7 @@
 import { test, expect, describe, afterEach, mock, beforeEach } from 'bun:test';
 
 // Mock dependencies
-mock.module('../core/structured-logger', () => ({
+void mock.module('../core/structured-logger', () => ({
   logger: {
     info: () => {},
     warn: () => {},
@@ -13,7 +13,7 @@ mock.module('../core/structured-logger', () => ({
   },
 }));
 
-mock.module('../security/secret-audit-logger', () => ({
+void mock.module('../security/secret-audit-logger', () => ({
   auditLogger: {
     logSecretAccessFailure: async () => {},
     logSecretAccess: async () => {},

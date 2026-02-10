@@ -256,7 +256,7 @@ export const TEXT_RENDERERS = {
 
   /** Slack/chat formatting */
   SLACK: {
-    heading: (children: string, { level }: { level: number }) => `*${children}*\n`,
+    heading: (children: string, { level: _level }: { level: number }) => `*${children}*\n`,
     paragraph: (children: string) => `${children}\n`,
     strong: (children: string) => `*${children}*`,
     emphasis: (children: string) => `_${children}_`,
@@ -298,7 +298,7 @@ export const TERMINAL_RENDERERS = {
 
   /** Simple monochrome */
   MONOCHROME: {
-    heading: (children: string, { level }: { level: number }) =>
+    heading: (children: string, { level: _level }: { level: number }) =>
       `${'='.repeat(children.length)}\n${children}\n${'='.repeat(children.length)}\n`,
     paragraph: (children: string) => `${children}\n`,
     strong: (children: string) => children,

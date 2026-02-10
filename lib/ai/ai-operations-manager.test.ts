@@ -3,7 +3,7 @@
 import { test, expect, describe, afterEach, mock, beforeEach } from 'bun:test';
 
 // Mock dependencies before importing the module under test
-mock.module('../core/structured-logger', () => ({
+void mock.module('../core/structured-logger', () => ({
   logger: {
     info: () => {},
     warn: () => {},
@@ -13,7 +13,7 @@ mock.module('../core/structured-logger', () => ({
   },
 }));
 
-mock.module('../performance/cache-manager', () => ({
+void mock.module('../performance/cache-manager', () => ({
   globalCaches: {
     secrets: {
       getStats: () => ({
