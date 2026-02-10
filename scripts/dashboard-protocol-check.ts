@@ -1,7 +1,10 @@
 #!/usr/bin/env bun
 
 const HOST = process.env.DASHBOARD_HOST || "localhost";
-const PORT = Number.parseInt(process.env.DASHBOARD_PORT || "3011", 10);
+const PORT = Number.parseInt(
+  process.env.DASHBOARD_PORT || process.env.PLAYGROUND_PORT || process.env.PORT || "3011",
+  10
+);
 const BASE = `http://${HOST}:${PORT}`;
 const PROTOCOL_FLAG = Bun.argv.find((arg) => arg.startsWith("--protocol="));
 const PROTOCOL = PROTOCOL_FLAG ? PROTOCOL_FLAG.split("=")[1]?.toLowerCase() : "";

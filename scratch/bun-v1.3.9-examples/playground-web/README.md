@@ -14,10 +14,11 @@ Then open http://localhost:3011 in your browser!
 
 ## Port + Pooling Controls
 
-Use a dedicated playground port with fallback range and bounded concurrency:
+Use a dedicated playground port with explicit fallback policy and bounded concurrency:
 
 ```bash
 PLAYGROUND_PORT=3000 \
+PLAYGROUND_ALLOW_PORT_FALLBACK=false \
 PLAYGROUND_PORT_RANGE=3011-3020 \
 PLAYGROUND_MAX_CONCURRENT_REQUESTS=200 \
 PLAYGROUND_MAX_COMMAND_WORKERS=2 \
@@ -42,8 +43,10 @@ PLAYGROUND_SMOKE_URLS=http://localhost:3011/api/info,http://localhost:3011/api/b
 bun start
 ```
 
+- `DASHBOARD_PORT`: alias for `PLAYGROUND_PORT` (checked first when set)
 - `PLAYGROUND_PORT`: preferred dedicated port (default: `3011` unless `PORT` set)
-- `PLAYGROUND_PORT_RANGE`: fallback range if dedicated port is busy
+- `PLAYGROUND_ALLOW_PORT_FALLBACK`: when `true`, remap within `PLAYGROUND_PORT_RANGE` if requested port is busy (default: `false`, fail-fast)
+- `PLAYGROUND_PORT_RANGE`: fallback range used only when `PLAYGROUND_ALLOW_PORT_FALLBACK=true`
 - `PLAYGROUND_MAX_CONCURRENT_REQUESTS`: HTTP request cap before `503`
 - `PLAYGROUND_MAX_COMMAND_WORKERS`: max concurrent demo command executions
 - `PLAYGROUND_PREFETCH_ENABLED`: enable DNS prefetch warmup (`0|1`)
