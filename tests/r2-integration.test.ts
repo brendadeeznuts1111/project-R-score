@@ -6,17 +6,57 @@
  * Comprehensive tests for race conditions, error handling, validation, and edge cases
  */
 
-import { afterEach, beforeEach, describe, expect, spyOn, test } from "bun:test";
+import { beforeEach, describe, expect, spyOn, test } from "bun:test";
 import { R2MCPIntegration } from '../lib/mcp/r2-integration-fixed.ts';
 import { R2ConnectionError } from '../lib/core/error-handling.ts';
 import { globalCache } from '../lib/core/cache-manager.ts';
 
 describe('R2MCPIntegration', () => {
   let r2Integration: R2MCPIntegration;
-  let randomSpy: ReturnType<typeof spyOn>;
+  const withRandomSpy = <T>(fn: () => Promise<T> | T) => async () => {
+    using randomSpy = spyOn(Math, 'random').mockReturnValue(0.99);
+    return await fn();
+  };
+  const testWithRandom = (name: string, fn: Parameters<typeof test>[1]) =>
+    test(name, withRandomSpy(fn as () => Promise<unknown> | unknown));
+  const initializeR2 = async () => {
+    await r2Integration.initialize();
+  };
+  const seedAuditFixtures = async () => {
+    await initializeR2();
+    const audits = [
+      {
+        id: 'audit-1',
+        timestamp: new Date().toISOString(),
+        action: 'user-login',
+        resource: 'auth',
+        details: {},
+        success: true
+      },
+      {
+        id: 'audit-2',
+        timestamp: new Date().toISOString(),
+        action: 'user-logout',
+        resource: 'auth',
+        details: {},
+        success: true
+      },
+      {
+        id: 'audit-3',
+        timestamp: new Date().toISOString(),
+        action: 'file-upload',
+        resource: 'storage',
+        details: {},
+        success: false
+      }
+    ];
+
+    for (const audit of audits) {
+      await r2Integration.storeAuditEntry(audit);
+    }
+  };
 
   beforeEach(() => {
-    randomSpy = spyOn(Math, 'random').mockReturnValue(0.99);
     // Reset cache before each test
     globalCache.clear();
 
@@ -29,12 +69,8 @@ describe('R2MCPIntegration', () => {
     });
   });
 
-  afterEach(() => {
-    randomSpy.mockRestore();
-  });
-
   describe('Initialization', () => {
-    test('should initialize successfully with valid config', async () => {
+    testWithRandom('should initialize successfully with valid config', async () => {
       await r2Integration.initialize();
 
       const status = await r2Integration.getConfigStatus();
@@ -43,7 +79,7 @@ describe('R2MCPIntegration', () => {
       expect(status.config.bucketName).toBe('test-bucket');
     });
 
-    test('should fail initialization with missing account ID', async () => {
+    testWithRandom('should fail initialization with missing account ID', async () => {
       const invalidR2 = new R2MCPIntegration({
         accountId: '',
         accessKeyId: 'test-key',
@@ -54,7 +90,7 @@ describe('R2MCPIntegration', () => {
       await expect(invalidR2.initialize()).rejects.toThrow('Account ID is required');
     });
 
-    test('should fail initialization with missing access key', async () => {
+    testWithRandom('should fail initialization with missing access key', async () => {
       const invalidR2 = new R2MCPIntegration({
         accountId: 'test-account',
         accessKeyId: '',
@@ -65,7 +101,7 @@ describe('R2MCPIntegration', () => {
       await expect(invalidR2.initialize()).rejects.toThrow('Access Key ID is required');
     });
 
-    test('should handle connection test failure', async () => {
+    testWithRandom('should handle connection test failure', async () => {
       const failingR2 = new R2MCPIntegration({
         accountId: 'test-account',
         accessKeyId: 'test-key',
@@ -76,14 +112,52 @@ describe('R2MCPIntegration', () => {
 
       await expect(failingR2.initialize()).rejects.toThrow('Failed to establish R2 connection');
     });
+
+    testWithRandom('should resolve S3-compatible env aliases for R2 naming', async () => {
+      const prev = {
+        r2Bucket: process.env.R2_BUCKET_NAME,
+        s3Bucket: process.env.S3_BUCKET_NAME,
+        awsBucket: process.env.AWS_BUCKET_NAME,
+        r2Access: process.env.R2_ACCESS_KEY_ID,
+        awsAccess: process.env.AWS_ACCESS_KEY_ID,
+        r2Secret: process.env.R2_SECRET_ACCESS_KEY,
+        awsSecret: process.env.AWS_SECRET_ACCESS_KEY,
+      };
+
+      process.env.R2_BUCKET_NAME = '';
+      process.env.S3_BUCKET_NAME = 's3-alias-bucket';
+      process.env.AWS_BUCKET_NAME = 'aws-alias-bucket';
+      process.env.R2_ACCESS_KEY_ID = '';
+      process.env.AWS_ACCESS_KEY_ID = 'aws-access-key';
+      process.env.R2_SECRET_ACCESS_KEY = '';
+      process.env.AWS_SECRET_ACCESS_KEY = 'aws-secret-key';
+
+      try {
+        const aliased = new R2MCPIntegration({ accountId: 'test-account' });
+        const status = await aliased.getConfigStatus();
+        expect(status.config.bucketName).toBe('s3-alias-bucket');
+      } finally {
+        if (prev.r2Bucket === undefined) delete process.env.R2_BUCKET_NAME;
+        else process.env.R2_BUCKET_NAME = prev.r2Bucket;
+        if (prev.s3Bucket === undefined) delete process.env.S3_BUCKET_NAME;
+        else process.env.S3_BUCKET_NAME = prev.s3Bucket;
+        if (prev.awsBucket === undefined) delete process.env.AWS_BUCKET_NAME;
+        else process.env.AWS_BUCKET_NAME = prev.awsBucket;
+        if (prev.r2Access === undefined) delete process.env.R2_ACCESS_KEY_ID;
+        else process.env.R2_ACCESS_KEY_ID = prev.r2Access;
+        if (prev.awsAccess === undefined) delete process.env.AWS_ACCESS_KEY_ID;
+        else process.env.AWS_ACCESS_KEY_ID = prev.awsAccess;
+        if (prev.r2Secret === undefined) delete process.env.R2_SECRET_ACCESS_KEY;
+        else process.env.R2_SECRET_ACCESS_KEY = prev.r2Secret;
+        if (prev.awsSecret === undefined) delete process.env.AWS_SECRET_ACCESS_KEY;
+        else process.env.AWS_SECRET_ACCESS_KEY = prev.awsSecret;
+      }
+    });
   });
 
   describe('Diagnosis Storage', () => {
-    beforeEach(async () => {
-      await r2Integration.initialize();
-    });
-
-    test('should store diagnosis successfully', async () => {
+    testWithRandom('should store diagnosis successfully', async () => {
+      await initializeR2();
       const diagnosis = {
         id: 'test-diagnosis-1',
         timestamp: new Date().toISOString(),
@@ -101,7 +175,8 @@ describe('R2MCPIntegration', () => {
       expect(key.includes('mcp/diagnoses/')).toBe(true);
     });
 
-    test('should reject diagnosis with invalid ID characters', async () => {
+    testWithRandom('should reject diagnosis with invalid ID characters', async () => {
+      await initializeR2();
       const invalidDiagnosis = {
         id: 'invalid<id>',
         timestamp: new Date().toISOString(),
@@ -118,7 +193,8 @@ describe('R2MCPIntegration', () => {
       ).rejects.toThrow('Invalid diagnosis key');
     });
 
-    test('should handle diagnosis storage failure gracefully', async () => {
+    testWithRandom('should handle diagnosis storage failure gracefully', async () => {
+      await initializeR2();
       const diagnosis = {
         id: 'test-diagnosis-fail',
         timestamp: new Date().toISOString(),
@@ -137,11 +213,8 @@ describe('R2MCPIntegration', () => {
   });
 
   describe('Audit Storage', () => {
-    beforeEach(async () => {
-      await r2Integration.initialize();
-    });
-
-    test('should store audit entry successfully', async () => {
+    testWithRandom('should store audit entry successfully', async () => {
+      await initializeR2();
       const audit = {
         id: 'test-audit-1',
         timestamp: new Date().toISOString(),
@@ -158,7 +231,8 @@ describe('R2MCPIntegration', () => {
       expect(key.includes('mcp/audits/')).toBe(true);
     });
 
-    test('should reject audit with invalid characters in ID', async () => {
+    testWithRandom('should reject audit with invalid characters in ID', async () => {
+      await initializeR2();
       const invalidAudit = {
         id: 'invalid<audit>id',
         timestamp: new Date().toISOString(),
@@ -173,7 +247,8 @@ describe('R2MCPIntegration', () => {
       ).rejects.toThrow('Invalid audit key');
     });
 
-    test('should handle audit storage with missing optional fields', async () => {
+    testWithRandom('should handle audit storage with missing optional fields', async () => {
+      await initializeR2();
       const minimalAudit = {
         id: 'minimal-audit',
         timestamp: new Date().toISOString(),
@@ -189,43 +264,8 @@ describe('R2MCPIntegration', () => {
   });
 
   describe('Audit Search', () => {
-    beforeEach(async () => {
-      await r2Integration.initialize();
-
-      // Store some test audits
-      const audits = [
-        {
-          id: 'audit-1',
-          timestamp: new Date().toISOString(),
-          action: 'user-login',
-          resource: 'auth',
-          details: {},
-          success: true
-        },
-        {
-          id: 'audit-2',
-          timestamp: new Date().toISOString(),
-          action: 'user-logout',
-          resource: 'auth',
-          details: {},
-          success: true
-        },
-        {
-          id: 'audit-3',
-          timestamp: new Date().toISOString(),
-          action: 'file-upload',
-          resource: 'storage',
-          details: {},
-          success: false
-        }
-      ];
-
-      for (const audit of audits) {
-        await r2Integration.storeAuditEntry(audit);
-      }
-    });
-
-    test('should search audits by action', async () => {
+    testWithRandom('should search audits by action', async () => {
+      await seedAuditFixtures();
       const results = await r2Integration.searchAudits('login', 10);
 
       expect(results.length >= 0).toBe(true);
@@ -234,25 +274,29 @@ describe('R2MCPIntegration', () => {
       }
     });
 
-    test('should search audits by resource', async () => {
+    testWithRandom('should search audits by resource', async () => {
+      await seedAuditFixtures();
       const results = await r2Integration.searchAudits('auth', 10);
 
       expect(results.length >= 0).toBe(true);
     });
 
-    test('should return empty results for non-existent query', async () => {
+    testWithRandom('should return empty results for non-existent query', async () => {
+      await seedAuditFixtures();
       const results = await r2Integration.searchAudits('non-existent', 10);
 
       expect(results.length).toBe(0);
     });
 
-    test('should limit search results', async () => {
+    testWithRandom('should limit search results', async () => {
+      await seedAuditFixtures();
       const results = await r2Integration.searchAudits('', 2);
 
       expect(results.length <= 2).toBe(true);
     });
 
-    test('should handle search failures gracefully', async () => {
+    testWithRandom('should handle search failures gracefully', async () => {
+      await seedAuditFixtures();
       // Mock a search failure
       const results = await r2Integration.searchAudits('', 10);
 
@@ -262,11 +306,8 @@ describe('R2MCPIntegration', () => {
   });
 
   describe('Metrics Storage', () => {
-    beforeEach(async () => {
-      await r2Integration.initialize();
-    });
-
-    test('should store metrics successfully', async () => {
+    testWithRandom('should store metrics successfully', async () => {
+      await initializeR2();
       const metrics = {
         id: 'test-metrics-1',
         timestamp: new Date().toISOString(),
@@ -281,7 +322,8 @@ describe('R2MCPIntegration', () => {
       expect(key.includes('mcp/metrics/')).toBe(true);
     });
 
-    test('should reject metrics with invalid ID format', async () => {
+    testWithRandom('should reject metrics with invalid ID format', async () => {
+      await initializeR2();
       const invalidMetrics = {
         id: 'invalid<metrics>',
         timestamp: new Date().toISOString(),
@@ -295,7 +337,8 @@ describe('R2MCPIntegration', () => {
       ).rejects.toThrow('Invalid metrics key');
     });
 
-    test('should handle metrics with complex data', async () => {
+    testWithRandom('should handle metrics with complex data', async () => {
+      await initializeR2();
       const complexMetrics = {
         id: 'complex-metrics',
         timestamp: new Date().toISOString(),
@@ -314,11 +357,8 @@ describe('R2MCPIntegration', () => {
   });
 
   describe('JSON Operations', () => {
-    beforeEach(async () => {
-      await r2Integration.initialize();
-    });
-
-    test('should store and retrieve JSON data', async () => {
+    testWithRandom('should store and retrieve JSON data', async () => {
+      await initializeR2();
       const testData = { test: true, value: 42, message: 'Hello World' };
       const key = 'test/json-data';
 
@@ -331,17 +371,20 @@ describe('R2MCPIntegration', () => {
       expect(retrieved.message).toBe('Hello World');
     });
 
-    test('should return null for non-existent key', async () => {
+    testWithRandom('should return null for non-existent key', async () => {
+      await initializeR2();
       const result = await r2Integration.getJSON('non-existent-key');
       expect(result).toBeNull();
     });
 
-    test('returns null for invalid key format', async () => {
+    testWithRandom('returns null for invalid key format', async () => {
+      await initializeR2();
       const result = await r2Integration.getJSON('invalid key with spaces');
       expect(result).toBeNull();
     });
 
-    test('should cache retrieved data', async () => {
+    testWithRandom('should cache retrieved data', async () => {
+      await initializeR2();
       const testData = { cached: true };
       const key = 'test/cache-data';
 
@@ -359,11 +402,8 @@ describe('R2MCPIntegration', () => {
   });
 
   describe('Cache Integration', () => {
-    beforeEach(async () => {
-      await r2Integration.initialize();
-    });
-
-    test('should invalidate cache on data updates', async () => {
+    testWithRandom('should invalidate cache on data updates', async () => {
+      await initializeR2();
       const key = 'test/cache-invalidation';
       const initialData = { version: 1 };
       const updatedData = { version: 2 };
@@ -383,7 +423,8 @@ describe('R2MCPIntegration', () => {
       expect(second.version).toBe(2);
     });
 
-    test('should handle cache misses gracefully', async () => {
+    testWithRandom('should handle cache misses gracefully', async () => {
+      await initializeR2();
       // Clear cache
       await globalCache.clear();
 
@@ -393,7 +434,7 @@ describe('R2MCPIntegration', () => {
   });
 
   describe('Error Handling', () => {
-    test('should handle operations before initialization', async () => {
+    testWithRandom('should handle operations before initialization', async () => {
       const uninitializedR2 = new R2MCPIntegration({
         accountId: 'test-account',
         accessKeyId: 'test-key',
@@ -415,7 +456,7 @@ describe('R2MCPIntegration', () => {
       ).rejects.toThrow('R2 integration not initialized');
     });
 
-    test('returns simulated payload for test-prefixed keys', async () => {
+    testWithRandom('returns simulated payload for test-prefixed keys', async () => {
       await r2Integration.initialize();
       const result = await r2Integration.getJSON('test/malformed');
       expect(result).toBeDefined();
@@ -424,11 +465,8 @@ describe('R2MCPIntegration', () => {
   });
 
   describe('Concurrent Operations', () => {
-    beforeEach(async () => {
-      await r2Integration.initialize();
-    });
-
-    test('should handle concurrent diagnosis storage', async () => {
+    testWithRandom('should handle concurrent diagnosis storage', async () => {
+      await initializeR2();
       const diagnoses = Array.from({ length: 10 }, (_, i) => ({
         id: `concurrent-diagnosis-${i}`,
         timestamp: new Date().toISOString(),
@@ -452,7 +490,8 @@ describe('R2MCPIntegration', () => {
       expect(successful.length).toBe(diagnoses.length);
     });
 
-    test('should handle concurrent search operations', async () => {
+    testWithRandom('should handle concurrent search operations', async () => {
+      await initializeR2();
       const searches = Array.from({ length: 5 }, (_, i) =>
         r2Integration.searchAudits(`query-${i}`, 5)
       );
@@ -466,17 +505,15 @@ describe('R2MCPIntegration', () => {
   });
 
   describe('Edge Cases', () => {
-    beforeEach(async () => {
-      await r2Integration.initialize();
-    });
-
-    test('returns null for keys that violate validation limits', async () => {
+    testWithRandom('returns null for keys that violate validation limits', async () => {
+      await initializeR2();
       const longKey = 'test/' + 'a'.repeat(2000);
       const result = await r2Integration.getJSON(longKey);
       expect(result).toBeNull();
     });
 
-    test('should handle special characters in data', async () => {
+    testWithRandom('should handle special characters in data', async () => {
+      await initializeR2();
       const specialData = {
         unicode: 'Hello 世界 🌍',
         quotes: 'Single "double" quotes',
@@ -493,7 +530,8 @@ describe('R2MCPIntegration', () => {
       expect(retrieved.quotes).toBe(specialData.quotes);
     });
 
-    test('should handle empty objects and arrays', async () => {
+    testWithRandom('should handle empty objects and arrays', async () => {
+      await initializeR2();
       const emptyData = {
         emptyObject: {},
         emptyArray: [],

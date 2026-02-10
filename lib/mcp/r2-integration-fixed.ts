@@ -63,12 +63,30 @@ export class R2MCPIntegration {
   private initialized: boolean = false;
 
   constructor(config?: Partial<R2Config>) {
+    const resolvedAccessKey =
+      process.env.R2_ACCESS_KEY_ID ||
+      process.env.AWS_ACCESS_KEY_ID ||
+      '';
+    const resolvedSecretKey =
+      process.env.R2_SECRET_ACCESS_KEY ||
+      process.env.AWS_SECRET_ACCESS_KEY ||
+      '';
+    const resolvedBucketName =
+      process.env.R2_BUCKET_NAME ||
+      process.env.S3_BUCKET_NAME ||
+      process.env.AWS_BUCKET_NAME ||
+      'scanner-cookies';
+    const resolvedEndpoint =
+      process.env.R2_ENDPOINT ||
+      process.env.S3_ENDPOINT;
+
     this.config = {
       accountId: process.env.R2_ACCOUNT_ID || '7a470541a704caaf91e71efccc78fd36',
-      accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
-      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
-      bucketName: process.env.R2_BUCKET_NAME || 'scanner-cookies',
-      endpoint: process.env.R2_ENDPOINT,
+      accessKeyId: resolvedAccessKey,
+      secretAccessKey: resolvedSecretKey,
+      // Accept S3-compatible env aliases while retaining R2-first naming.
+      bucketName: resolvedBucketName,
+      endpoint: resolvedEndpoint,
       ...config,
     };
   }
