@@ -1185,7 +1185,9 @@ async function refreshMainTrendSummary() {
   statusDiv.className = 'trend-summary-body';
 
   try {
-    const response = await fetch('/api/dashboard/trends/summary?minutes=60&limit=120');
+    const response = await resilientFetch('/api/dashboard/trends/summary?minutes=60&limit=120', {
+      cache: 'no-store',
+    });
     const data = await response.json();
     const summary = data.summary || {};
     const severityCounts = summary.severityCounts || {};
@@ -1236,6 +1238,39 @@ async function refreshMainTrendSummary() {
     statusDiv.classList.add('trend-summary-error');
     statusDiv.textContent = `Trend summary unavailable: ${error.message}`;
   }
+}
+
+async function resilientFetch(path, options = {}) {
+  const fallbackPort = window.location.port || '3011';
+  const rawOrigins = [
+    window.location.origin,
+    `http://localhost:${fallbackPort}`,
+    `http://127.0.0.1:${fallbackPort}`,
+    'http://localhost:3011',
+    'http://127.0.0.1:3011',
+  ];
+  const origins = [...new Set(rawOrigins.filter((origin) => /^https?:\/\//.test(origin)))];
+  const attemptsPerOrigin = 2;
+  let lastError = null;
+
+  for (const origin of origins) {
+    for (let attempt = 1; attempt <= attemptsPerOrigin; attempt += 1) {
+      try {
+        const response = await fetch(`${origin}${path}`, {
+          ...options,
+          signal: AbortSignal.timeout(5000),
+        });
+        if (response.ok) return response;
+        lastError = new Error(`HTTP ${response.status} from ${origin}`);
+        console.warn(`Attempt ${attempt}/${attemptsPerOrigin} failed for ${origin}${path}: ${response.status}`);
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+        console.warn(`Fetch attempt ${attempt}/${attemptsPerOrigin} failed for origin ${origin}: ${lastError.message}`);
+      }
+    }
+  }
+
+  throw new Error(`Service unavailable after trying ${origins.length} endpoints x${attemptsPerOrigin}${lastError ? `: ${lastError.message}` : ''}`);
 }
 
 async function refreshBrandGateStatus() {
