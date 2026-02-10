@@ -998,6 +998,13 @@ function renderDemo(demo) {
       </div>
       <div id="main-trend-summary" class="trend-summary-body">Loading trend summary...</div>
     </div>
+    <div class="trend-summary-card">
+      <div class="trend-summary-header">
+        <strong>Runtime Ports</strong>
+        <button class="run-btn trend-summary-refresh" onclick="refreshMainRuntimePorts()">↻ Refresh</button>
+      </div>
+      <div id="main-runtime-ports" class="trend-summary-body">Loading runtime ports...</div>
+    </div>
   `;
   const brandGatePanel = demo.id === 'brand-bench-gate'
     ? `
@@ -1354,6 +1361,7 @@ function renderDemo(demo) {
     refreshUdpRuntimeStatus();
   }
   refreshMainTrendSummary();
+  refreshMainRuntimePorts();
   startMainTrendSummaryAutoRefresh();
 }
 
@@ -1536,6 +1544,7 @@ function startMainTrendSummaryAutoRefresh() {
   }
   trendSummaryTimer = setInterval(() => {
     refreshMainTrendSummary();
+    refreshMainRuntimePorts();
   }, 10000);
 }
 
@@ -1603,6 +1612,60 @@ async function refreshMainTrendSummary() {
   } catch (error) {
     statusDiv.classList.add('trend-summary-error');
     statusDiv.textContent = `Trend summary unavailable: ${error.message}`;
+  }
+}
+
+async function refreshMainRuntimePorts() {
+  const statusDiv = document.getElementById('main-runtime-ports');
+  if (!statusDiv) return;
+
+  statusDiv.textContent = 'Loading runtime ports...';
+  statusDiv.className = 'trend-summary-body';
+
+  try {
+    const response = await resilientFetchAny([
+      '/api/control/runtime/ports',
+      '/api/control/process/runtime',
+    ], {
+      cache: 'no-store',
+    });
+    const data = await response.json();
+    const requestedPort = Number(data.requestedPort || 0);
+    const activePort = Number(data.activePort || 0);
+    const remapped = Boolean(data.remapped);
+    const fallbackAllowed = Boolean(data.fallbackAllowed);
+    const ownerPid = data?.requestedPortOwner?.ownerPid ?? null;
+    const ownerCommand = data?.requestedPortOwner?.ownerCommand ?? null;
+    const host = String(data.host || window.location.hostname || 'localhost');
+    const apiBase = `http://${host}:${activePort || requestedPort || window.location.port || '3011'}`;
+    const ownerText = ownerPid || ownerCommand ? `${ownerCommand || 'proc'}:${ownerPid || 'n/a'}` : 'none';
+
+    const portMapClass = remapped ? 'drift-badge drift-warn' : 'drift-badge drift-ok';
+    const fallbackClass = fallbackAllowed ? 'drift-badge drift-warn' : 'drift-badge drift-ok';
+    const ownerClass = remapped && ownerText !== 'none' ? 'drift-badge drift-warn' : 'drift-badge drift-ok';
+
+    statusDiv.innerHTML = `
+      <div class="trend-summary-row">
+        <span>Requested → Active</span>
+        <code>${requestedPort || 'n/a'} → ${activePort || 'n/a'}</code>
+      </div>
+      <div class="trend-summary-row">
+        <span>API Base</span>
+        <code>${escapeHtml(apiBase)}</code>
+      </div>
+      <div class="trend-summary-alerts">
+        <span class="${portMapClass}">Remapped ${remapped ? 'YES' : 'NO'}</span>
+        <span class="${fallbackClass}">Fallback ${fallbackAllowed ? 'ON' : 'OFF'}</span>
+        <span class="${ownerClass}">Owner ${escapeHtml(ownerText)}</span>
+      </div>
+      <div class="trend-summary-row runtime-ports-actions">
+        <span>Quick check</span>
+        <code>lsof -nP -iTCP:${requestedPort || activePort || 0} -sTCP:LISTEN</code>
+      </div>
+    `;
+  } catch (error) {
+    statusDiv.classList.add('trend-summary-error');
+    statusDiv.textContent = `Runtime ports unavailable: ${error.message}`;
   }
 }
 

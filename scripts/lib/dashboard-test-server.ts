@@ -1,4 +1,5 @@
 import { createServer } from "node:net";
+import { applyDashboardEnv, resolveDashboardEnvConfig } from "./dashboard-env";
 
 const SERVER_CMD = ["bun", "run", "scratch/bun-v1.3.9-examples/playground-web/server.ts"];
 
@@ -9,34 +10,12 @@ export type DashboardTestConfig = {
 };
 
 export function getDashboardTestConfig(): DashboardTestConfig {
-  const host = process.env.DASHBOARD_HOST || "localhost";
-  const port = Number.parseInt(
-    process.env.DASHBOARD_TEST_PORT ||
-      process.env.DASHBOARD_PORT ||
-      process.env.PLAYGROUND_PORT ||
-      process.env.PORT ||
-      "3401",
-    10
-  );
-  const safePort = Number.isFinite(port) && port > 0 ? port : 3401;
-  const base = `http://${host}:${safePort}`;
-  return { host, port: safePort, base };
+  const config = resolveDashboardEnvConfig(3401);
+  return { host: config.host, port: config.port, base: config.base };
 }
 
 export function applyDashboardTestEnv(config: DashboardTestConfig): void {
-  process.env.DASHBOARD_HOST = config.host;
-  process.env.DASHBOARD_TEST_PORT = String(config.port);
-  process.env.DASHBOARD_PORT = String(config.port);
-  process.env.PLAYGROUND_PORT = String(config.port);
-  process.env.PORT = String(config.port);
-}
-
-function parseBooleanEnv(value: string | undefined, fallback: boolean): boolean {
-  if (value == null) return fallback;
-  const normalized = value.trim().toLowerCase();
-  if (normalized === "1" || normalized === "true" || normalized === "yes" || normalized === "on") return true;
-  if (normalized === "0" || normalized === "false" || normalized === "no" || normalized === "off") return false;
-  return fallback;
+  applyDashboardEnv(config);
 }
 
 function parsePortRange(value: string, fallbackStart: number, fallbackEnd: number): { start: number; end: number } {
@@ -60,8 +39,7 @@ async function isPortAvailable(port: number): Promise<boolean> {
 }
 
 async function findFallbackPort(fromPort: number): Promise<number | null> {
-  const defaultRange = `${fromPort}-${Math.min(fromPort + 40, 65535)}`;
-  const configuredRange = process.env.DASHBOARD_TEST_PORT_RANGE || defaultRange;
+  const configuredRange = resolveDashboardEnvConfig(fromPort).portRange;
   const { start, end } = parsePortRange(configuredRange, fromPort, Math.min(fromPort + 40, 65535));
   for (let candidate = start; candidate <= end; candidate += 1) {
     if (await isPortAvailable(candidate)) {
@@ -96,7 +74,7 @@ export async function withDashboardServer<T>(
   port: number,
   run: () => Promise<T>,
 ): Promise<T> {
-  const allowFallback = parseBooleanEnv(process.env.DASHBOARD_TEST_ALLOW_PORT_FALLBACK, true);
+  const allowFallback = resolveDashboardEnvConfig(port).allowFallback;
   let activePort = port;
   let base = `http://${host}:${activePort}`;
   let serverProc: ReturnType<typeof Bun.spawn> | null = null;
@@ -150,11 +128,7 @@ export async function withDashboardServer<T>(
         base = `http://${host}:${activePort}`;
       }
 
-      process.env.DASHBOARD_HOST = host;
-      process.env.DASHBOARD_TEST_PORT = String(activePort);
-      process.env.DASHBOARD_PORT = String(activePort);
-      process.env.PLAYGROUND_PORT = String(activePort);
-      process.env.PORT = String(activePort);
+      applyDashboardEnv({ host, port: activePort });
 
       serverProc = Bun.spawn({
         cmd: SERVER_CMD,

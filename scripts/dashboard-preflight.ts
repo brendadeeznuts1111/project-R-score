@@ -2,26 +2,20 @@
 
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { parseBooleanEnv, resolveDashboardEnvConfig } from './lib/dashboard-env';
 
 const ROOT = resolve(import.meta.dir, '..');
-const REQUESTED_PORT = Number.parseInt(process.env.DASHBOARD_PORT ?? '3456', 10) || 3456;
+const DASHBOARD_ENV = resolveDashboardEnvConfig(3456);
+const REQUESTED_PORT = DASHBOARD_ENV.port;
 const MIN_BUN = [1, 3, 9] as const;
 const RECOMMENDED_BUN = [1, 3, 10] as const;
 const ALLOW_CANARY_BUN = parseBooleanEnv(process.env.ALLOW_CANARY_BUN, false);
-const DASHBOARD_HOST = process.env.DASHBOARD_HOST || '127.0.0.1';
+const DASHBOARD_HOST = DASHBOARD_ENV.host || '127.0.0.1';
 
 type Level = 'PASS' | 'WARN' | 'FAIL';
 type Check = { name: string; level: Level; detail: string };
 
 const checks: Check[] = [];
-
-function parseBooleanEnv(value: string | undefined, fallback: boolean): boolean {
-  if (!value) return fallback;
-  const normalized = value.trim().toLowerCase();
-  if (['1', 'true', 'yes', 'on'].includes(normalized)) return true;
-  if (['0', 'false', 'no', 'off'].includes(normalized)) return false;
-  return fallback;
-}
 
 function addCheck(name: string, level: Level, detail: string) {
   checks.push({ name, level, detail });

@@ -304,6 +304,11 @@ header h1 {
   letter-spacing: 0.04em;
 }
 
+.runtime-ports-actions code {
+  font-size: 0.8em;
+  opacity: 0.9;
+}
+
 .trend-summary-alerts {
   display: flex;
   flex-wrap: wrap;

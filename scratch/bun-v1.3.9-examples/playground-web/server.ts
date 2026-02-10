@@ -13,6 +13,7 @@ import { createServer, isIP, type Server as NetServer } from "node:net";
 import { connect as connectHttp2, createSecureServer, type Http2SecureServer } from "node:http2";
 import { extname, join, normalize, resolve as resolvePath, sep } from "node:path";
 import { setEnvironmentData } from "worker_threads";
+import { resolvePlaygroundPortPolicy } from "../../../scripts/lib/dashboard-env";
 import { getBuildMetadata } from "./build-metadata" with { type: "macro" };
 import { getGitCommitHash } from "./getGitCommitHash.ts" with { type: "macro" };
 import { getResilienceConfig } from "../../../config/resilience-chain";
@@ -53,12 +54,10 @@ const BASE_STANDARD = Object.freeze({
   fetchVerbose: "off",
 });
 
-const DEDICATED_PORT = parseFirstNumberEnv(["DASHBOARD_PORT", "PLAYGROUND_PORT", "PORT"], BASE_STANDARD.dedicatedPort, {
-  min: 1,
-  max: 65535,
-});
-const ALLOW_PORT_FALLBACK = parseBool(process.env.PLAYGROUND_ALLOW_PORT_FALLBACK, false);
-const PORT_RANGE = process.env.PLAYGROUND_PORT_RANGE || BASE_STANDARD.portRange;
+const PORT_POLICY = resolvePlaygroundPortPolicy(BASE_STANDARD.dedicatedPort);
+const DEDICATED_PORT = PORT_POLICY.requestedPort;
+const ALLOW_PORT_FALLBACK = PORT_POLICY.allowFallback;
+const PORT_RANGE = PORT_POLICY.portRange;
 const MAX_CONCURRENT_REQUESTS = parseNumberEnv("PLAYGROUND_MAX_CONCURRENT_REQUESTS", BASE_STANDARD.maxConcurrentRequests, { min: 1, max: 100000 });
 const MAX_COMMAND_WORKERS = parseNumberEnv("PLAYGROUND_MAX_COMMAND_WORKERS", BASE_STANDARD.maxCommandWorkers, { min: 1, max: 64 });
 const WORKER_POOL_MIN = parseNumberEnv("PLAYGROUND_WORKER_POOL_MIN", MAX_COMMAND_WORKERS, { min: 1, max: 64 });
