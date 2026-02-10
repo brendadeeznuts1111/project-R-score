@@ -256,6 +256,26 @@ async function run(): Promise<number> {
       `status=${workerPoolDiagnostics.res.status} workers=${workerPoolDiagnostics.json?.diagnostics?.busy ?? "n/a"}/${workerPoolDiagnostics.json?.diagnostics?.workers ?? "n/a"} inFlight=${workerPoolDiagnostics.json?.diagnostics?.inFlight ?? "n/a"}`
     );
 
+    const workerPoolBench = await fetchJsonWithInit("/api/control/worker-pool/bench?iterations=8&concurrency=2", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{}",
+    });
+    check(
+      checks,
+      "worker-pool-bench-contract",
+      workerPoolBench.res.status === 200 &&
+        Number.isFinite(workerPoolBench.json?.snapshot?.latencyMs?.p50) &&
+        Number.isFinite(workerPoolBench.json?.snapshot?.latencyMs?.p95) &&
+        Number.isFinite(workerPoolBench.json?.snapshot?.throughputPerSec) &&
+        typeof workerPoolBench.json?.gate?.compared === "boolean" &&
+        typeof workerPoolBench.json?.gate?.pass === "boolean" &&
+        (Array.isArray(workerPoolBench.json?.gate?.failures) || Number.isFinite(workerPoolBench.json?.gate?.regressionPct)) &&
+        typeof workerPoolBench.json?.persisted?.snapshotPath === "string" &&
+        typeof workerPoolBench.json?.persisted?.latestPath === "string",
+      `status=${workerPoolBench.res.status} pass=${String(workerPoolBench.json?.gate?.pass)} compared=${String(workerPoolBench.json?.gate?.compared)} p95=${String(workerPoolBench.json?.snapshot?.latencyMs?.p95 ?? "n/a")}`
+    );
+
     const udpRuntime = await fetchJson("/api/control/udp/runtime");
     check(
       checks,

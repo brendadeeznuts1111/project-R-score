@@ -113,6 +113,8 @@ Mini dashboard APIs:
   - `bottleneck`: `{ kind, severity }`
   - `capacity`: `{ connectionsPct, workersPct, summary, severity }`
   - `headroom.connections|workers`: `{ available, max, pct, severity }`
+  - `workerQueue`: `{ queuedTasks, inFlightTasks, severity }`
+  - `workerHardening`: `{ timedOutTasks, rejectedTasks, timedOutSeverity, rejectedSeverity }`
 - `GET /api/dashboard/severity-test?load=<0-100>`: deterministic severity mapping for:
   - `utilization`: `ok|warn|fail` using `<50`, `50-80`, `>80`
   - `capacity`: `ok|warn|fail` using `>50`, `20-50`, `<20`
@@ -145,6 +147,16 @@ Mini dashboard UI rows now include:
 - `Capacity`
 - `Headroom (Conn)`
 - `Headroom (Workers)`
+- `Worker Queue`
+- `Worker Timeouts`
+- `Worker Rejections`
+
+Worker-pool diagnostics APIs:
+- `GET /api/control/worker-pool`: full pool/config snapshot with queue severity and latest bench.
+- `GET /api/control/worker-pool/diagnostics`: compact diagnostics payload:
+  - `workers`, `busy`, `queued`, `inFlight`, `timedOutTasks`, `rejectedTasks`, `lastErrors[]`
+- `POST /api/control/worker-pool/bench?iterations=<n>&concurrency=<n>`:
+  - executes a persisted worker-pool benchmark snapshot with compare-vs-last gate result.
 
 Validate mini dashboard contract from repo root:
 
