@@ -3487,6 +3487,21 @@ function severityByHeadroom(availablePct: number): SeverityLevel {
   return "ok";
 }
 
+function severityByWorkerPoolSignals(
+  stats: {
+    queued: number;
+    max: number;
+    timedOutTasks?: number;
+    rejectedTasks?: number;
+  }
+): SeverityLevel {
+  const timedOutTasks = Number(stats.timedOutTasks || 0);
+  const rejectedTasks = Number(stats.rejectedTasks || 0);
+  if (stats.queued > stats.max * 2 || timedOutTasks > 0) return "fail";
+  if (stats.queued > 0 || rejectedTasks > 0) return "warn";
+  return "ok";
+}
+
 function buildLivePoolSnapshot() {
   const workerStats = getCommandWorkerStats();
   const connectionUtilization = Number((inFlightRequests / Math.max(1, MAX_CONCURRENT_REQUESTS)).toFixed(3));
@@ -3543,12 +3558,12 @@ function buildMiniDashboardSnapshot() {
   const workerQueueDepth = Number(live.workers.queuedTasks || 0);
   const workerTimedOutTasks = Number(live.workers.timedOutTasks || 0);
   const workerRejectedTasks = Number(live.workers.rejectedTasks || 0);
-  const workerQueueSeverity =
-    workerQueueDepth > live.workers.max * 2
-      ? "fail"
-      : workerQueueDepth > 0
-        ? "warn"
-        : "ok";
+  const workerQueueSeverity = severityByWorkerPoolSignals({
+    queued: workerQueueDepth,
+    max: Number(live.workers.max || 1),
+    timedOutTasks: workerTimedOutTasks,
+    rejectedTasks: workerRejectedTasks,
+  });
   const workerTimedOutSeverity = workerTimedOutTasks > 0 ? "fail" : "ok";
   const workerRejectedSeverity = workerRejectedTasks > 0 ? "warn" : "ok";
 
@@ -5351,15 +5366,28 @@ const routes = {
     governanceHealth: calculateSuccessHealth(SuccessMetrics),
   }),
   "/api/control/security-posture": () => summarizeSecurityPosture(),
-  "/api/control/project-health": () => ({
-    generatedAt: new Date().toISOString(),
-    source: "dashboard/project-health.ts",
-    successMetrics: SuccessMetrics,
-    health: calculateSuccessHealth(SuccessMetrics),
-    benchmarkStatus: readDemoBenchStatus(),
-    recommendations: ProjectRecommendations,
-    verdict: ExecutiveVerdict,
-  }),
+  "/api/control/project-health": () => {
+    const workerPool = getCommandWorkerStats();
+    return {
+      generatedAt: new Date().toISOString(),
+      source: "dashboard/project-health.ts",
+      successMetrics: SuccessMetrics,
+      health: calculateSuccessHealth(SuccessMetrics),
+      benchmarkStatus: readDemoBenchStatus(),
+      runtimeWorkerPool: {
+        ...workerPool,
+        severity: severityByWorkerPoolSignals(workerPool),
+        config: {
+          minWorkers: WORKER_POOL_MIN,
+          maxWorkers: WORKER_POOL_MAX,
+          maxQueueSize: WORKER_POOL_QUEUE_MAX,
+          taskTimeoutMs: WORKER_POOL_TASK_TIMEOUT_MS,
+        },
+      },
+      recommendations: ProjectRecommendations,
+      verdict: ExecutiveVerdict,
+    };
+  },
   "/api/control/domain-graph": (req: Request) => {
     const url = new URL(req.url);
     const domain = (url.searchParams.get("domain") || "full").toLowerCase();
@@ -5580,12 +5608,7 @@ const routes = {
         taskTimeoutMs: WORKER_POOL_TASK_TIMEOUT_MS,
         defaultEnvKeys: Object.keys(WORKER_DEFAULT_ENV),
       },
-      queueSeverity:
-        stats.queued > stats.max * 2 || stats.timedOutTasks > 0
-          ? "fail"
-          : stats.queued > 0 || stats.rejectedTasks > 0
-            ? "warn"
-            : "ok",
+      queueSeverity: severityByWorkerPoolSignals(stats),
       latestBench: latest,
     };
   },

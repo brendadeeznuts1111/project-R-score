@@ -427,9 +427,14 @@ async function updateMiniDash() {
   const workerHeadroomPct = miniSnapshot?.headroom?.workers?.pct ?? Math.round((Math.max(0, workerHeadroom) / Math.max(1, maxWorkers)) * 100);
   const workerQueueDepth = miniSnapshot?.workerQueue?.queuedTasks ?? livePool?.workers?.queuedTasks ?? 0;
   const workerInFlightTasks = miniSnapshot?.workerQueue?.inFlightTasks ?? livePool?.workers?.inFlightTasks ?? 0;
-  const workerQueueSeverity = miniSnapshot?.workerQueue?.severity ?? (workerQueueDepth > maxWorkers * 2 ? 'fail' : workerQueueDepth > 0 ? 'warn' : 'ok');
   const workerTimedOutTasks = miniSnapshot?.workerHardening?.timedOutTasks ?? livePool?.workers?.timedOutTasks ?? 0;
   const workerRejectedTasks = miniSnapshot?.workerHardening?.rejectedTasks ?? livePool?.workers?.rejectedTasks ?? 0;
+  const workerQueueSeverity = miniSnapshot?.workerQueue?.severity ??
+    (workerQueueDepth > maxWorkers * 2 || workerTimedOutTasks > 0
+      ? 'fail'
+      : workerQueueDepth > 0 || workerRejectedTasks > 0
+        ? 'warn'
+        : 'ok');
   const workerTimedOutSeverity = miniSnapshot?.workerHardening?.timedOutSeverity ?? (workerTimedOutTasks > 0 ? 'fail' : 'ok');
   const workerRejectedSeverity = miniSnapshot?.workerHardening?.rejectedSeverity ?? (workerRejectedTasks > 0 ? 'warn' : 'ok');
   const bottleneckSeverity = miniSnapshot?.bottleneck?.severity;
