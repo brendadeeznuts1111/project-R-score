@@ -17,7 +17,7 @@ type ResultEnvelope = {
   type: "result";
   id: number;
   ok: boolean;
-  value?: { output: string; error: string; exitCode: number };
+  value?: { output: string; error: string; exitCode: number; childPid: number | null };
   error?: string;
 };
 
@@ -42,7 +42,12 @@ async function executeRunCommand(task: RunCommandTask) {
     new Response(proc.stderr).text(),
   ]);
   const exitCode = await proc.exited;
-  return { output, error, exitCode };
+  return {
+    output,
+    error,
+    exitCode,
+    childPid: typeof proc.pid === "number" ? proc.pid : null,
+  };
 }
 
 self.onmessage = async (event: MessageEvent<TaskEnvelope>) => {

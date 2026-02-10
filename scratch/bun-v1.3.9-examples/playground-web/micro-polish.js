@@ -560,6 +560,19 @@ async function updateMiniDash() {
     workerRejectionsEl.textContent = `${workerRejectedTasks}`;
     setValueSeverityByLabel(workerRejectionsEl, workerRejectedSeverity);
   }
+  const miniPidEl = document.getElementById('mini-pid');
+  if (miniPidEl) {
+    const pid = miniSnapshot?.process?.pid ?? rt.pid ?? '--';
+    miniPidEl.textContent = String(pid);
+    setValueSeverityByLabel(miniPidEl, miniSnapshot?.process?.shuttingDown ? 'warn' : 'ok');
+  }
+  const miniWsClientsEl = document.getElementById('mini-ws-clients');
+  if (miniWsClientsEl) {
+    const wsClients = Number(miniSnapshot?.sockets?.connectedClients ?? rt.wsClients ?? 0);
+    miniWsClientsEl.textContent = `${wsClients}`;
+    const wsSeverity = miniSnapshot?.sockets?.severity ?? (wsClients > 0 ? 'ok' : miniDashState.wsConnected ? 'warn' : 'warn');
+    setValueSeverityByLabel(miniWsClientsEl, wsSeverity);
+  }
   document.getElementById('mini-port').textContent = rt.dedicatedPort;
   setBar('mini-pool-bar', inFlight, maxRequests);
   setBar('mini-worker-bar', activeWorkers, maxWorkers);

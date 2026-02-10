@@ -75,7 +75,9 @@ async function run(): Promise<number> {
         typeof runtime.json?.platform === "string" &&
         typeof runtime.json?.arch === "string" &&
         Number.isFinite(runtime.json?.pid) &&
-        Number.isFinite(runtime.json?.port),
+        Number.isFinite(runtime.json?.port) &&
+        Number.isFinite(runtime.json?.process?.pid) &&
+        Number.isFinite(runtime.json?.sockets?.connectedClients),
       `status=${runtime.res.status}`
     );
 
@@ -171,6 +173,36 @@ async function run(): Promise<number> {
         typeof components.json?.rows?.[0]?.file === "string" &&
         typeof components.json?.rows?.[0]?.status === "string",
       `status=${components.res.status} rows=${components.json?.rows?.length ?? 0}`
+    );
+
+    const processRuntime = await fetchJson("/api/control/process/runtime");
+    check(
+      checks,
+      "process-runtime-contract",
+      processRuntime.res.status === 200 &&
+        Number.isFinite(processRuntime.json?.process?.pid) &&
+        Number.isFinite(processRuntime.json?.process?.ppid) &&
+        Number.isFinite(processRuntime.json?.process?.inFlightRequests) &&
+        Number.isFinite(processRuntime.json?.process?.maxConcurrentRequests) &&
+        Number.isFinite(processRuntime.json?.process?.workerPool?.active) &&
+        Number.isFinite(processRuntime.json?.process?.workerPool?.queued) &&
+        Array.isArray(processRuntime.json?.process?.commands?.recent) &&
+        typeof processRuntime.json?.process?.shuttingDown === "boolean",
+      `status=${processRuntime.res.status} pid=${processRuntime.json?.process?.pid ?? "n/a"}`
+    );
+
+    const socketRuntime = await fetchJson("/api/control/socket/runtime");
+    check(
+      checks,
+      "socket-runtime-contract",
+      socketRuntime.res.status === 200 &&
+        typeof socketRuntime.json?.sockets?.path === "string" &&
+        typeof socketRuntime.json?.sockets?.topic === "string" &&
+        Number.isFinite(socketRuntime.json?.sockets?.connectedClients) &&
+        Number.isFinite(socketRuntime.json?.sockets?.totalConnections) &&
+        Number.isFinite(socketRuntime.json?.sockets?.broadcastCount) &&
+        Number.isFinite(socketRuntime.json?.process?.pid),
+      `status=${socketRuntime.res.status} clients=${socketRuntime.json?.sockets?.connectedClients ?? "n/a"}`
     );
 
     const readiness = await fetchJson("/api/control/deployment-readiness");

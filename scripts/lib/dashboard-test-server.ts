@@ -39,6 +39,8 @@ export async function withDashboardServer<T>(
           ...process.env,
           DASHBOARD_HOST: host,
           DASHBOARD_PORT: String(port),
+          PLAYGROUND_PORT: String(port),
+          PORT: String(port),
         },
       });
       startedHere = true;

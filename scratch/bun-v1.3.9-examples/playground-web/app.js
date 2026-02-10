@@ -666,6 +666,14 @@ function renderHeaderBadges() {
       cls: 'warn',
     });
     badges.push({
+      text: `PID ${runtimeInfo.runtime.pid ?? 'n/a'}`,
+      cls: 'success',
+    });
+    badges.push({
+      text: `WS ${runtimeInfo.runtime.wsClients ?? 0}`,
+      cls: Number(runtimeInfo.runtime.wsClients || 0) > 0 ? 'success' : 'warn',
+    });
+    badges.push({
       text: `Rev ${String(runtimeInfo.bunRevision || 'unknown').slice(0, 8)}`,
       cls: 'success',
     });
@@ -1121,6 +1129,24 @@ function renderDemo(demo) {
       </div>
     `
     : '';
+  const processSocketPanel = (
+    String(demo.id || '').includes('process') ||
+    String(demo.id || '').includes('spawn') ||
+    String(demo.id || '').includes('signals') ||
+    demo.id === 'http2-runtime-control' ||
+    demo.id === 'script-orchestration-control'
+  )
+    ? `
+      <div class="code-block" style="margin-top: 1rem;">
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+          <button class="run-btn" onclick="refreshProcessRuntimeStatus()">↻ Refresh Process Runtime</button>
+          <button class="run-btn" onclick="refreshSocketRuntimeStatus()">↻ Refresh Socket Runtime</button>
+        </div>
+        <div id="process-runtime-output" class="output" style="display:block; margin-top:0.75rem;">Loading process runtime...</div>
+        <div id="socket-runtime-output" class="output" style="display:block; margin-top:0.75rem;">Loading socket runtime...</div>
+      </div>
+    `
+    : '';
   
   content.innerHTML = `
     <div class="demo-header">
@@ -1154,6 +1180,7 @@ function renderDemo(demo) {
     ${protocolMatrixPanel}
     ${http2RuntimePanel}
     ${orchestrationPanel}
+    ${processSocketPanel}
   `;
 
   if (demo.id === 'brand-bench-gate') {
@@ -1194,6 +1221,10 @@ function renderDemo(demo) {
   }
   if (demo.id === 'script-orchestration-control') {
     refreshOrchestrationStatus();
+  }
+  if (processSocketPanel) {
+    refreshProcessRuntimeStatus();
+    refreshSocketRuntimeStatus();
   }
   refreshMainTrendSummary();
   startMainTrendSummaryAutoRefresh();
@@ -1274,6 +1305,8 @@ function setupEventListeners() {
   window.refreshHttp2RuntimeStatus = refreshHttp2RuntimeStatus;
   window.executeHttp2RuntimeAction = executeHttp2RuntimeAction;
   window.refreshOrchestrationStatus = refreshOrchestrationStatus;
+  window.refreshProcessRuntimeStatus = refreshProcessRuntimeStatus;
+  window.refreshSocketRuntimeStatus = refreshSocketRuntimeStatus;
   window.executeOrchestrationMode = executeOrchestrationMode;
   window.runOrchestrationFullLoop = runOrchestrationFullLoop;
   window.refreshMainTrendSummary = refreshMainTrendSummary;
@@ -2054,6 +2087,76 @@ async function refreshOrchestrationStatus() {
   } catch (error) {
     statusDiv.className = 'output error';
     statusDiv.textContent = `Failed to load script orchestration panel: ${error.message}`;
+  }
+}
+
+async function refreshProcessRuntimeStatus() {
+  const statusDiv = document.getElementById('process-runtime-output');
+  if (!statusDiv) return;
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = 'Loading process runtime...';
+
+  try {
+    const response = await fetch('/api/control/process/runtime');
+    const data = await response.json();
+    const processRuntime = data?.process || {};
+    const workerPool = processRuntime?.workerPool || {};
+    const commands = processRuntime?.commands || {};
+    const portOwner = processRuntime?.portOwner || {};
+    const recent = Array.isArray(commands?.recent) ? commands.recent.slice(-5) : [];
+
+    const lines = [
+      `generatedAt: ${data?.generatedAt || 'n/a'}`,
+      `pid: ${processRuntime?.pid ?? 'n/a'} ppid: ${processRuntime?.ppid ?? 'n/a'}`,
+      `uptimeSec: ${processRuntime?.uptimeSec ?? 'n/a'} shuttingDown: ${String(processRuntime?.shuttingDown)}`,
+      `signals: ${processRuntime?.signalCount ?? 0} shutdownReason: ${processRuntime?.shutdownReason || 'none'}`,
+      `inFlightRequests: ${processRuntime?.inFlightRequests ?? 0}/${processRuntime?.maxConcurrentRequests ?? 'n/a'}`,
+      `workerPool: active=${workerPool?.active ?? 0}/${workerPool?.max ?? 0} queued=${workerPool?.queued ?? 0} inFlight=${workerPool?.inFlight ?? 0} timeout=${workerPool?.timedOutTasks ?? 0} reject=${workerPool?.rejectedTasks ?? 0}`,
+      `commands: started=${commands?.started ?? 0} completed=${commands?.completed ?? 0} failed=${commands?.failed ?? 0} lastExit=${commands?.lastExitCode ?? 'n/a'}`,
+      `portOwner: available=${String(portOwner?.available)} command=${portOwner?.ownerCommand ?? 'n/a'} pid=${portOwner?.ownerPid ?? 'n/a'}`,
+      '',
+      'recent commands:',
+      ...recent.map((row) => `  ${row?.at || 'n/a'} | pid=${row?.childPid ?? 'n/a'} | exit=${row?.exitCode ?? 'n/a'} | ${row?.durationMs ?? 'n/a'}ms | ${row?.cmd || ''}`),
+    ];
+
+    statusDiv.className = processRuntime?.shuttingDown ? 'output warn' : 'output success';
+    statusDiv.textContent = lines.join('\n');
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `Failed to load process runtime: ${error.message}`;
+  }
+}
+
+async function refreshSocketRuntimeStatus() {
+  const statusDiv = document.getElementById('socket-runtime-output');
+  if (!statusDiv) return;
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = 'Loading socket runtime...';
+
+  try {
+    const response = await fetch('/api/control/socket/runtime');
+    const data = await response.json();
+    const sockets = data?.sockets || {};
+    const processRuntime = data?.process || {};
+
+    const lines = [
+      `generatedAt: ${data?.generatedAt || 'n/a'}`,
+      `path: ${sockets?.path || 'n/a'} topic: ${sockets?.topic || 'n/a'}`,
+      `connectedClients: ${sockets?.connectedClients ?? 0} totalConnections: ${sockets?.totalConnections ?? 0}`,
+      `messages: total=${sockets?.totalMessages ?? 0} ping=${sockets?.pingMessages ?? 0} broadcast=${sockets?.broadcastCount ?? 0}`,
+      `lastMessageAt: ${sockets?.lastMessageAt || 'n/a'}`,
+      `lastBroadcastAt: ${sockets?.lastBroadcastAt || 'n/a'}`,
+      `lastError: ${sockets?.lastError || 'none'}`,
+      `process: pid=${processRuntime?.pid ?? 'n/a'} shuttingDown=${String(processRuntime?.shuttingDown)} signalCount=${processRuntime?.signalCount ?? 0}`,
+    ];
+
+    statusDiv.className = sockets?.lastError ? 'output warn' : 'output success';
+    statusDiv.textContent = lines.join('\n');
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `Failed to load socket runtime: ${error.message}`;
   }
 }
 

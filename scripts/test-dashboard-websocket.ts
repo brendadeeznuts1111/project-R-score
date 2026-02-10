@@ -4,6 +4,7 @@ import { withDashboardServer } from "./lib/dashboard-test-server";
 const HOST = process.env.DASHBOARD_HOST || "localhost";
 const PORT = Number.parseInt(process.env.DASHBOARD_PORT || "3011", 10);
 const URL = `ws://${HOST}:${PORT}/ws/capacity`;
+const BASE = `http://${HOST}:${PORT}`;
 
 type CheckResult = {
   name: string;
@@ -72,6 +73,22 @@ async function run(): Promise<number> {
         generatedAt: message?.generatedAt,
         bottleneck: message?.bottleneck,
         capacity: message?.capacity,
+      })}`,
+    });
+
+    const socketRuntimeRes = await fetch(`${BASE}/api/control/socket/runtime`);
+    const socketRuntime = await socketRuntimeRes.json();
+    checks.push({
+      name: "websocket-runtime-counters",
+      ok:
+        socketRuntimeRes.status === 200 &&
+        Number.isFinite(socketRuntime?.sockets?.totalConnections) &&
+        Number.isFinite(socketRuntime?.sockets?.totalMessages) &&
+        Number.isFinite(socketRuntime?.sockets?.broadcastCount),
+      details: `socketRuntime=${JSON.stringify({
+        totalConnections: socketRuntime?.sockets?.totalConnections,
+        totalMessages: socketRuntime?.sockets?.totalMessages,
+        broadcastCount: socketRuntime?.sockets?.broadcastCount,
       })}`,
     });
   } catch (error) {

@@ -207,6 +207,23 @@ type RequestTrace = {
   error?: string;
 };
 const requestTraces: RequestTrace[] = [];
+const commandExecutionState = {
+  started: 0,
+  completed: 0,
+  failed: 0,
+  lastStartedAt: null as string | null,
+  lastCompletedAt: null as string | null,
+  lastFailure: null as string | null,
+  lastExitCode: null as number | null,
+  recent: [] as Array<{
+    at: string;
+    cmd: string;
+    cwd: string;
+    childPid: number | null;
+    durationMs: number;
+    exitCode: number;
+  }>,
+};
 const CACHE_TTL_MS = 30000; // 30 second cache for volatile data
 const ORCHESTRATION_CACHE_TTL_MS = parseNumberEnv("PLAYGROUND_ORCHESTRATION_CACHE_TTL_MS", 15000, { min: 1000, max: 300000 });
 const HTTP2_UPGRADE_PORT = parseNumberEnv("PLAYGROUND_HTTP2_UPGRADE_PORT", 8443, { min: 1, max: 65535 });
@@ -3042,16 +3059,56 @@ async function runCommand(
   cmd: string[],
   cwd: string,
   env?: Record<string, string>
-): Promise<{ output: string; error: string; exitCode: number }> {
-  return await commandWorkerPool.execute({
-    type: "run-command",
-    cmd,
-    cwd,
-    env: {
-      ...WORKER_DEFAULT_ENV,
-      ...(env || {}),
-    },
-  });
+): Promise<{ output: string; error: string; exitCode: number; childPid: number | null }> {
+  const startedAt = Date.now();
+  commandExecutionState.started += 1;
+  commandExecutionState.lastStartedAt = new Date(startedAt).toISOString();
+  const cmdLabel = cmd.join(" ");
+  try {
+    const result = await commandWorkerPool.execute({
+      type: "run-command",
+      cmd,
+      cwd,
+      env: {
+        ...WORKER_DEFAULT_ENV,
+        ...(env || {}),
+      },
+    });
+    commandExecutionState.completed += 1;
+    commandExecutionState.lastCompletedAt = new Date().toISOString();
+    commandExecutionState.lastExitCode = Number(result.exitCode ?? -1);
+    if (result.exitCode !== 0) {
+      commandExecutionState.failed += 1;
+      commandExecutionState.lastFailure = result.error || `exitCode=${result.exitCode}`;
+    }
+    commandExecutionState.recent.push({
+      at: new Date().toISOString(),
+      cmd: cmdLabel,
+      cwd,
+      childPid: result.childPid ?? null,
+      durationMs: Date.now() - startedAt,
+      exitCode: Number(result.exitCode ?? -1),
+    });
+    if (commandExecutionState.recent.length > 25) {
+      commandExecutionState.recent.shift();
+    }
+    return result;
+  } catch (error) {
+    commandExecutionState.failed += 1;
+    commandExecutionState.lastFailure = error instanceof Error ? error.message : String(error);
+    commandExecutionState.recent.push({
+      at: new Date().toISOString(),
+      cmd: cmdLabel,
+      cwd,
+      childPid: null,
+      durationMs: Date.now() - startedAt,
+      exitCode: -1,
+    });
+    if (commandExecutionState.recent.length > 25) {
+      commandExecutionState.recent.shift();
+    }
+    throw error;
+  }
 }
 
 function parseBool(value: string | undefined, defaultValue: boolean): boolean {
@@ -3609,6 +3666,18 @@ function buildMiniDashboardSnapshot() {
       rejectedTasks: workerRejectedTasks,
       timedOutSeverity: workerTimedOutSeverity,
       rejectedSeverity: workerRejectedSeverity,
+    },
+    process: {
+      pid: process.pid,
+      signalCount,
+      shuttingDown,
+      shutdownReason,
+    },
+    sockets: {
+      connectedClients: wsClientCount,
+      totalMessages: wsTotalMessages,
+      broadcastCount: wsBroadcastCount,
+      severity: wsClientCount > 0 ? "ok" : wsLastError ? "warn" : "ok",
     },
     pooling: {
       live,
@@ -4691,6 +4760,91 @@ function buildRuntimeMetadata() {
       retentionRows: DASHBOARD_METRICS_RETENTION_ROWS,
       snapshotIntervalMs: DASHBOARD_METRICS_INTERVAL_MS,
     },
+    process: buildProcessRuntimeSnapshot(),
+    sockets: buildSocketRuntimeSnapshot(),
+  };
+}
+
+function detectPortOwner(port: number) {
+  try {
+    const out = Bun.spawnSync({
+      cmd: ["lsof", "-nP", `-iTCP:${port}`, "-sTCP:LISTEN"],
+      cwd: PROJECT_ROOT,
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+    const text = out.stdout.toString().trim();
+    const lines = text.split("\n").map((line) => line.trim()).filter(Boolean);
+    if (lines.length < 2) {
+      return {
+        available: true,
+        ownerPid: null,
+        ownerCommand: null,
+      };
+    }
+    const parts = lines[1].split(/\s+/);
+    return {
+      available: false,
+      ownerCommand: parts[0] || null,
+      ownerPid: Number.parseInt(parts[1] || "", 10) || null,
+    };
+  } catch {
+    return {
+      available: null,
+      ownerPid: null,
+      ownerCommand: null,
+    };
+  }
+}
+
+function buildSocketRuntimeSnapshot() {
+  return {
+    path: CAPACITY_WS_PATH,
+    topic: CAPACITY_WS_TOPIC,
+    broadcastEveryMs: CAPACITY_WS_BROADCAST_MS,
+    connectedClients: wsClientCount,
+    totalConnections: wsTotalConnections,
+    totalMessages: wsTotalMessages,
+    pingMessages: wsPingMessages,
+    broadcastCount: wsBroadcastCount,
+    lastMessageAt: wsLastMessageAt,
+    lastBroadcastAt: wsLastBroadcastAt,
+    lastError: wsLastError,
+  };
+}
+
+function buildProcessRuntimeSnapshot() {
+  const workerStats = getCommandWorkerStats();
+  return {
+    pid: process.pid,
+    ppid: process.ppid,
+    startedAt: SERVER_STARTED_AT,
+    uptimeSec: Number((process.uptime?.() || 0).toFixed(2)),
+    shuttingDown,
+    shutdownReason,
+    shutdownStartedAt,
+    signalCount,
+    inFlightRequests,
+    maxConcurrentRequests: MAX_CONCURRENT_REQUESTS,
+    workerPool: {
+      active: workerStats.active,
+      max: workerStats.max,
+      queued: workerStats.queued,
+      inFlight: workerStats.inFlight,
+      timedOutTasks: workerStats.timedOutTasks,
+      rejectedTasks: workerStats.rejectedTasks,
+    },
+    commands: {
+      started: commandExecutionState.started,
+      completed: commandExecutionState.completed,
+      failed: commandExecutionState.failed,
+      lastStartedAt: commandExecutionState.lastStartedAt,
+      lastCompletedAt: commandExecutionState.lastCompletedAt,
+      lastFailure: commandExecutionState.lastFailure,
+      lastExitCode: commandExecutionState.lastExitCode,
+      recent: commandExecutionState.recent.slice(-10),
+    },
+    portOwner: detectPortOwner(ACTIVE_PORT),
   };
 }
 
@@ -4862,6 +5016,22 @@ const routes = {
       preconnectUrlsCount: PRECONNECT_URLS.length,
     },
     resilience: buildResilienceStatus(),
+  }),
+
+  "/api/control/process/runtime": () => ({
+    generatedAt: new Date().toISOString(),
+    process: buildProcessRuntimeSnapshot(),
+    sockets: buildSocketRuntimeSnapshot(),
+  }),
+
+  "/api/control/socket/runtime": () => ({
+    generatedAt: new Date().toISOString(),
+    sockets: buildSocketRuntimeSnapshot(),
+    process: {
+      pid: process.pid,
+      shuttingDown,
+      signalCount,
+    },
   }),
 
   "/api/control/secrets/runtime": () => {
@@ -6284,6 +6454,13 @@ async function handleRequest(req: Request): Promise<Response> {
   inFlightRequests++;
   try {
     const url = new URL(req.url);
+
+    // Canonicalize trailing slashes for deterministic URL handling.
+    if (url.pathname.length > 1 && url.pathname.endsWith("/")) {
+      const normalized = new URL(req.url);
+      normalized.pathname = normalized.pathname.replace(/\/+$/, "");
+      return Response.redirect(normalized.toString(), 307);
+    }
     
     // API routes
     if (url.pathname.startsWith("/api/")) {
@@ -6299,6 +6476,11 @@ async function handleRequest(req: Request): Promise<Response> {
             maxCommandWorkers: getCommandWorkerStats().max,
             inFlightRequests,
             activeCommands: getCommandWorkerStats().active,
+            pid: process.pid,
+            ppid: process.ppid,
+            signalCount,
+            wsClients: wsClientCount,
+            wsBroadcastCount,
             uptimeMs,
           },
         });
@@ -6371,6 +6553,14 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/network-smoke") {
         return jsonResponse(await routes["/api/control/network-smoke"](req));
+      }
+
+      if (url.pathname === "/api/control/process/runtime") {
+        return jsonResponse(routes["/api/control/process/runtime"]());
+      }
+
+      if (url.pathname === "/api/control/socket/runtime") {
+        return jsonResponse(routes["/api/control/socket/runtime"]());
       }
 
       if (url.pathname === "/api/control/secrets/runtime") {
@@ -6580,6 +6770,17 @@ const CAPACITY_WS_BROADCAST_MS = parseNumberEnv("PLAYGROUND_WS_BROADCAST_MS", 10
 let shuttingDown = false;
 let httpServer: ReturnType<typeof serve> | null = null;
 let capacityBroadcastTimer: ReturnType<typeof setInterval> | null = null;
+let shutdownReason: string | null = null;
+let shutdownStartedAt: string | null = null;
+let signalCount = 0;
+let wsClientCount = 0;
+let wsTotalConnections = 0;
+let wsTotalMessages = 0;
+let wsPingMessages = 0;
+let wsBroadcastCount = 0;
+let wsLastMessageAt: string | null = null;
+let wsLastBroadcastAt: string | null = null;
+let wsLastError: string | null = null;
 
 async function waitForInFlightDrain(timeoutMs: number): Promise<boolean> {
   const start = Date.now();
@@ -6594,6 +6795,8 @@ async function gracefulShutdown(reason: string, exitCode = 0, error?: unknown) {
     return;
   }
   shuttingDown = true;
+  shutdownReason = reason;
+  shutdownStartedAt = new Date().toISOString();
 
   const startedAt = Date.now();
   const reasonPrefix = `[shutdown] ${reason}`;
@@ -6643,14 +6846,17 @@ async function gracefulShutdown(reason: string, exitCode = 0, error?: unknown) {
 
 // Default process lifecycle and signal handling.
 process.on("SIGINT", () => {
+  signalCount += 1;
   void gracefulShutdown("SIGINT", 0);
 });
 
 process.on("SIGTERM", () => {
+  signalCount += 1;
   void gracefulShutdown("SIGTERM", 0);
 });
 
 process.on("SIGHUP", () => {
+  signalCount += 1;
   if (IGNORE_SIGHUP) {
     console.warn("[signal] SIGHUP ignored (PLAYGROUND_IGNORE_SIGHUP=true)");
     return;
@@ -6761,12 +6967,18 @@ httpServer = serve({
   websocket: {
     data: {} as { connectedAt: number; userAgent: string },
     open(ws) {
+      wsClientCount += 1;
+      wsTotalConnections += 1;
+      wsLastMessageAt = new Date().toISOString();
       ws.subscribe(CAPACITY_WS_TOPIC);
       ws.send(JSON.stringify(buildMiniDashboardSnapshot()));
     },
     message(ws, message) {
+      wsTotalMessages += 1;
+      wsLastMessageAt = new Date().toISOString();
       const text = typeof message === "string" ? message.toLowerCase() : "";
       if (text === "ping") {
+        wsPingMessages += 1;
         ws.send(JSON.stringify({
           type: "pong",
           timestamp: new Date().toISOString(),
@@ -6775,7 +6987,16 @@ httpServer = serve({
       }
     },
     close(ws) {
+      wsClientCount = Math.max(0, wsClientCount - 1);
+      wsLastMessageAt = new Date().toISOString();
       ws.unsubscribe(CAPACITY_WS_TOPIC);
+    },
+    drain(ws) {
+      wsClientCount = Math.max(0, wsClientCount - 1);
+      ws.unsubscribe(CAPACITY_WS_TOPIC);
+    },
+    error(_ws, error) {
+      wsLastError = error instanceof Error ? error.message : String(error);
     },
   },
   signal: ac.signal,
@@ -6783,6 +7004,8 @@ httpServer = serve({
 
 capacityBroadcastTimer = setInterval(() => {
   if (!httpServer || shuttingDown) return;
+  wsBroadcastCount += 1;
+  wsLastBroadcastAt = new Date().toISOString();
   httpServer.publish(CAPACITY_WS_TOPIC, JSON.stringify(buildMiniDashboardSnapshot()));
 }, CAPACITY_WS_BROADCAST_MS);
 

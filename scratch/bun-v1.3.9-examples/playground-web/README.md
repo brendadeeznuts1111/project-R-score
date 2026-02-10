@@ -420,6 +420,8 @@ playground-web/
 - `GET /api/dashboard/traces?limit=<n>` - recent trace events
 - `GET /api/dashboard/trends?minutes=60&limit=120` - time-window trend series
 - `GET /api/dashboard/trends/summary?minutes=60&limit=120` - compact trend summary
+- `GET /api/control/process/runtime` - server PID, shutdown state, command telemetry, and port-owner diagnostics
+- `GET /api/control/socket/runtime` - WebSocket path/topic, client/message/broadcast counters, and socket error state
 - `GET /api/control/bundle/analyze` - bundle analysis summary for dashboard panel
 - `GET /api/control/domain-graph?domain=<full|presentation|orchestration|protocol|security|performance|observability>` - Mermaid-wrapped topology source
 

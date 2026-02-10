@@ -106,6 +106,16 @@ async function run(): Promise<number> {
         Number.isFinite(miniJson?.pooling?.live?.workers?.max),
       details: `poolingLive=${JSON.stringify(miniJson?.pooling?.live ?? null)}`,
     });
+    checks.push({
+      name: "mini-process-socket-shape",
+      ok:
+        Number.isFinite(miniJson?.process?.pid) &&
+        typeof miniJson?.process?.shuttingDown === "boolean" &&
+        Number.isFinite(miniJson?.sockets?.connectedClients) &&
+        Number.isFinite(miniJson?.sockets?.broadcastCount) &&
+        ["ok", "warn", "fail"].includes(String(miniJson?.sockets?.severity || "")),
+      details: `process=${JSON.stringify(miniJson?.process ?? null)} sockets=${JSON.stringify(miniJson?.sockets ?? null)}`,
+    });
 
     const sev85 = await fetchJson("/api/dashboard/severity-test?load=85");
     checkEquals(checks, "severity-85-utilization", sev85.json?.severity?.utilization, "fail");
