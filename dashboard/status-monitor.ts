@@ -1,4 +1,5 @@
 import type { ComponentStatus, HealthScore } from "./types";
+import { SuccessMetrics, calculateSuccessHealth } from "./project-health";
 
 type RawComponentRow = {
   id: string;
@@ -171,6 +172,7 @@ class ProjectStatusMonitor {
 
   generateReport(): string {
     const health = this.calculateHealthScore();
+    const governanceHealth = calculateSuccessHealth(SuccessMetrics);
     const total = this.components.size || 14;
     const badge = health.overall >= 90 ? "OK" : health.overall >= 75 ? "WARN" : "FAIL";
 
@@ -194,6 +196,12 @@ ${this.getNeedsAttention().map((c) => `- ${c.id}: ${c.coverage}% coverage, statu
 
 ### RECOMMENDATIONS
 ${this.generateRecommendations()}
+
+### GOVERNANCE HEALTH
+- Weighted Score: ${governanceHealth.weightedScore}/100
+- Deployment Ratio: ${(governanceHealth.deploymentRatio * 100).toFixed(1)}%
+- At Risk: ${governanceHealth.atRisk ? "yes" : "no"}
+- Risks: ${governanceHealth.risks.length}
 `.trim();
   }
 }
@@ -206,4 +214,3 @@ export function buildProjectStatusReport(): string {
 if (import.meta.main) {
   console.log(buildProjectStatusReport());
 }
-

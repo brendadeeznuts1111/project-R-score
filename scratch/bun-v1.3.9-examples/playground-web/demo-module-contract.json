@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "total": 54,
+  "total": 55,
   "generatedAt": "2026-02-10T07:56:52.435Z",
   "modules": {
     "governance-status": {
@@ -797,6 +797,21 @@
       ],
       "benchCommand": "bun run scripts/demo-module-bench.ts --id=build-metafile",
       "testCommand": "bun run scripts/demo-module-test.ts --id=build-metafile"
+    },
+    "project-health-metrics": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=project-health-metrics",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=project-health-metrics"
     }
   }
 }

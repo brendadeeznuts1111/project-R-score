@@ -18,6 +18,12 @@ import { summarizeDeploymentReadiness } from "../../../deployment/readiness-matr
 import { summarizePerformanceImpact } from "../../../analysis/performance-impact";
 import { summarizeSecurityPosture } from "../../../security/posture-report";
 import { listDomains, renderDomainGraph, renderFullHierarchy } from "../../../docs/domain-renderer";
+import {
+  ExecutiveVerdict,
+  ProjectRecommendations,
+  SuccessMetrics,
+  calculateSuccessHealth,
+} from "../../../dashboard/project-health";
 
 const BASE_STANDARD = Object.freeze({
   dedicatedPort: 3011,
@@ -1756,6 +1762,18 @@ curl -s http://localhost:<port>/api/control/component-status | jq .
 
 # Show unstable components only
 curl -s http://localhost:<port>/api/control/component-status | jq '.rows[] | select(.status != "stable")'
+`,
+  },
+  {
+    id: "project-health-metrics",
+    name: "Project Health Metrics",
+    description: "Success metrics, weighted health score, risk indicators, and roadmap targets",
+    category: "Governance",
+    code: `# Inspect current success metrics + computed health/risk posture
+curl -s http://localhost:<port>/api/control/project-health | jq .
+
+# Focus on risk deltas only
+curl -s http://localhost:<port>/api/control/project-health | jq '.health.risks'
 `,
   },
   {
@@ -3516,6 +3534,10 @@ async function getProtocolScorecard(params?: { use?: string; size?: number }) {
       governance: "Capturing the why alongside scorecard values reduces ambiguity and helps teams align on tradeoffs during reviews.",
     },
     recommend,
+    monitoring: {
+      governanceHealth: calculateSuccessHealth(SuccessMetrics),
+      successMetricsCurrent: SuccessMetrics.current,
+    },
     evidenceGovernance: {
       fields: [
         "Tier",
@@ -4446,6 +4468,14 @@ const routes = {
     version: String(BUILD_METADATA?.version || "1.0.0"),
     runtime: buildRuntimeMetadata(),
     checks: buildHealthChecks(),
+    governance: {
+      successMetrics: {
+        current: SuccessMetrics.current,
+        targets: SuccessMetrics.targets,
+      },
+      health: calculateSuccessHealth(SuccessMetrics),
+      verdict: ExecutiveVerdict,
+    },
   }),
 
   "/api/dashboard/runtime": () => buildRuntimeMetadata(),
@@ -4884,6 +4914,7 @@ const routes = {
       stable: row.status === "stable",
     }));
     const stableCount = rows.filter((row) => row.stable).length;
+    const health = calculateSuccessHealth(SuccessMetrics);
 
     return {
       generatedAt: new Date().toISOString(),
@@ -4892,6 +4923,11 @@ const routes = {
         rowCount: rows.length,
         stableCount,
         betaCount: rows.length - stableCount,
+      },
+      governanceHealth: {
+        weightedScore: health.weightedScore,
+        atRisk: health.atRisk,
+        risks: health.risks,
       },
       columns: [
         "component",
@@ -4912,8 +4948,19 @@ const routes = {
   },
 
   "/api/control/deployment-readiness": () => summarizeDeploymentReadiness(),
-  "/api/control/performance-impact": () => summarizePerformanceImpact(),
+  "/api/control/performance-impact": () => ({
+    ...summarizePerformanceImpact(),
+    governanceHealth: calculateSuccessHealth(SuccessMetrics),
+  }),
   "/api/control/security-posture": () => summarizeSecurityPosture(),
+  "/api/control/project-health": () => ({
+    generatedAt: new Date().toISOString(),
+    source: "dashboard/project-health.ts",
+    successMetrics: SuccessMetrics,
+    health: calculateSuccessHealth(SuccessMetrics),
+    recommendations: ProjectRecommendations,
+    verdict: ExecutiveVerdict,
+  }),
   "/api/control/domain-graph": (req: Request) => {
     const url = new URL(req.url);
     const domain = (url.searchParams.get("domain") || "full").toLowerCase();
@@ -4930,6 +4977,7 @@ const routes = {
       source: "tier-1380-domain-renderer",
       domain: domain === "full" || isDomain ? domain : "full",
       availableDomains: ["full", ...domains],
+      governanceHealth: calculateSuccessHealth(SuccessMetrics),
       mermaid,
     };
   },
@@ -5063,7 +5111,12 @@ const routes = {
     };
   },
 
-  "/api/control/protocol-matrix": () => getProtocolMatrix(),
+  "/api/control/protocol-matrix": () => ({
+    ...getProtocolMatrix(),
+    monitoring: {
+      governanceHealth: calculateSuccessHealth(SuccessMetrics),
+    },
+  }),
 
   "/api/control/protocol-scorecard": () => getProtocolScorecard(),  // returns Promise
 
@@ -5200,6 +5253,17 @@ const routes = {
       return new Response(JSON.stringify({
         success: true,
         output: JSON.stringify(matrix, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "project-health-metrics") {
+      const health = routes["/api/control/project-health"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(health, null, 2),
         exitCode: 0,
       }), {
         headers: { "Content-Type": "application/json" },
@@ -5694,6 +5758,10 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/component-status") {
         return jsonResponse(routes["/api/control/component-status"]());
+      }
+
+      if (url.pathname === "/api/control/project-health") {
+        return jsonResponse(routes["/api/control/project-health"]());
       }
 
       if (url.pathname === "/api/control/deployment-readiness") {
