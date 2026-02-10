@@ -52,6 +52,11 @@ const MAX_CONCURRENT_REQUESTS = parseNumberEnv("PLAYGROUND_MAX_CONCURRENT_REQUES
 const MAX_COMMAND_WORKERS = parseNumberEnv("PLAYGROUND_MAX_COMMAND_WORKERS", BASE_STANDARD.maxCommandWorkers, { min: 1, max: 64 });
 const WORKER_POOL_MIN = parseNumberEnv("PLAYGROUND_WORKER_POOL_MIN", MAX_COMMAND_WORKERS, { min: 1, max: 64 });
 const WORKER_POOL_MAX = parseNumberEnv("PLAYGROUND_WORKER_POOL_MAX", MAX_COMMAND_WORKERS, { min: 1, max: 64 });
+const WORKER_POOL_QUEUE_MAX = parseNumberEnv("PLAYGROUND_WORKER_POOL_QUEUE_MAX", 200, { min: 1, max: 10000 });
+const WORKER_POOL_TASK_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_WORKER_POOL_TASK_TIMEOUT_MS", 15000, {
+  min: 100,
+  max: 300000,
+});
 const PREFETCH_ENABLED = parseBool(process.env.PLAYGROUND_PREFETCH_ENABLED, BASE_STANDARD.prefetchEnabled);
 const PRECONNECT_ENABLED = parseBool(process.env.PLAYGROUND_PRECONNECT_ENABLED, BASE_STANDARD.preconnectEnabled);
 const DEFAULT_PREFETCH_HOSTS = ["registry.factory-wager.com", "docs.factory-wager.com"];
@@ -141,6 +146,8 @@ const commandWorkerPool = new UltraWorkerPool<
   minWorkers: Math.max(1, Math.min(WORKER_POOL_MIN, WORKER_POOL_MAX)),
   maxWorkers: Math.max(1, WORKER_POOL_MAX),
   fastPath: true,
+  maxQueueSize: WORKER_POOL_QUEUE_MAX,
+  taskTimeoutMs: WORKER_POOL_TASK_TIMEOUT_MS,
 });
 const WORKER_DEFAULT_ENV: Record<string, string> = {
   NO_PROXY: (process.env.NO_PROXY || process.env.no_proxy || "localhost,127.0.0.1").trim(),
@@ -156,6 +163,8 @@ function getCommandWorkerStats() {
     inFlight: stats.inFlightTasks,
     createdWorkers: stats.createdWorkers,
     replacedWorkers: stats.replacedWorkers,
+    timedOutTasks: stats.timedOutTasks,
+    rejectedTasks: stats.rejectedTasks,
     lastErrors: stats.lastErrors,
   };
 }
@@ -5555,10 +5564,16 @@ const routes = {
       config: {
         minWorkers: WORKER_POOL_MIN,
         maxWorkers: WORKER_POOL_MAX,
+        maxQueueSize: WORKER_POOL_QUEUE_MAX,
+        taskTimeoutMs: WORKER_POOL_TASK_TIMEOUT_MS,
         defaultEnvKeys: Object.keys(WORKER_DEFAULT_ENV),
       },
       queueSeverity:
-        stats.queued > stats.max * 2 ? "fail" : stats.queued > 0 ? "warn" : "ok",
+        stats.queued > stats.max * 2 || stats.timedOutTasks > 0
+          ? "fail"
+          : stats.queued > 0 || stats.rejectedTasks > 0
+            ? "warn"
+            : "ok",
       latestBench: latest,
     };
   },

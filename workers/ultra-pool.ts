@@ -6,6 +6,9 @@ export interface WorkerPoolConfig {
   maxWorkers: number;
   preload?: string[];
   fastPath?: boolean;
+  maxQueueSize?: number;
+  taskTimeoutMs?: number;
+  maxErrorHistory?: number;
 }
 
 export interface WorkerTask<TPayload = unknown, TResult = unknown> {
@@ -38,6 +41,8 @@ export interface WorkerPoolStats {
   inFlightTasks: number;
   createdWorkers: number;
   replacedWorkers: number;
+  timedOutTasks: number;
+  rejectedTasks: number;
   lastErrors: Array<{ at: string; event: string; message: string }>;
 }
 
@@ -51,12 +56,21 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
   private closed = false;
   private createdWorkers = 0;
   private replacedWorkers = 0;
+  private timedOutTasks = 0;
+  private rejectedTasks = 0;
   private errorHistory: Array<{ at: string; event: string; message: string }> = [];
+  private timeoutByTaskId = new Map<TaskId, ReturnType<typeof setTimeout>>();
 
   constructor(private readonly config: WorkerPoolConfig) {
     if (config.minWorkers < 1) throw new Error("minWorkers must be >= 1");
     if (config.maxWorkers < config.minWorkers) {
       throw new Error("maxWorkers must be >= minWorkers");
+    }
+    if ((config.maxQueueSize ?? Number.POSITIVE_INFINITY) < 1) {
+      throw new Error("maxQueueSize must be >= 1");
+    }
+    if ((config.taskTimeoutMs ?? 0) < 0) {
+      throw new Error("taskTimeoutMs must be >= 0");
     }
     for (let i = 0; i < config.minWorkers; i += 1) {
       this.spawnWorker();
@@ -69,6 +83,13 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
     }
 
     return await new Promise<TResult>((resolve, reject) => {
+      if (this.queue.length >= (this.config.maxQueueSize ?? Number.POSITIVE_INFINITY)) {
+        this.rejectedTasks += 1;
+        const err = new Error(`UltraWorkerPool queue limit reached (${this.config.maxQueueSize})`);
+        this.recordError("queue-overflow", err);
+        reject(err);
+        return;
+      }
       const task: WorkerTask<TPayload, TResult> = {
         id: ++this.taskSeq,
         payload,
@@ -98,6 +119,8 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
       inFlightTasks: this.pendingByTaskId.size,
       createdWorkers: this.createdWorkers,
       replacedWorkers: this.replacedWorkers,
+      timedOutTasks: this.timedOutTasks,
+      rejectedTasks: this.rejectedTasks,
       lastErrors: [...this.errorHistory],
     };
   }
@@ -116,6 +139,7 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
     }
 
     for (const [taskId, task] of this.pendingByTaskId.entries()) {
+      this.clearTaskTimeout(taskId);
       task.reject(new Error(reason));
       this.pendingByTaskId.delete(taskId);
     }
@@ -190,7 +214,33 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
       this.inFlightByWorker.set(worker, task.id);
       this.pendingByTaskId.set(task.id, task);
       this.workerToTaskId.set(worker, task.id);
-      worker.postMessage(message);
+      try {
+        worker.postMessage(message);
+      } catch (error) {
+        this.inFlightByWorker.set(worker, null);
+        this.pendingByTaskId.delete(task.id);
+        this.workerToTaskId.delete(worker);
+        this.recordError("post-message-failed", error);
+        task.reject(error instanceof Error ? error : new Error(String(error)));
+        continue;
+      }
+
+      const timeoutMs = this.config.taskTimeoutMs ?? 0;
+      if (timeoutMs > 0) {
+        const timer = setTimeout(() => {
+          if (this.closed) return;
+          const timedOutTask = this.pendingByTaskId.get(task.id);
+          if (!timedOutTask) return;
+          this.timedOutTasks += 1;
+          this.pendingByTaskId.delete(task.id);
+          this.workerToTaskId.delete(worker);
+          this.inFlightByWorker.set(worker, null);
+          this.recordError("task-timeout", new Error(`Task ${task.id} timed out after ${timeoutMs}ms`));
+          timedOutTask.reject(new Error(`Worker task timeout after ${timeoutMs}ms`));
+          this.processQueue();
+        }, timeoutMs);
+        this.timeoutByTaskId.set(task.id, timer);
+      }
     }
   }
 
@@ -216,6 +266,7 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
   private handleResponse(worker: Worker, message: WorkerResultMessage<TResult>): void {
     const taskId = this.workerToTaskId.get(worker);
     if (taskId === undefined) return;
+    this.clearTaskTimeout(taskId);
 
     const task = this.pendingByTaskId.get(taskId);
     this.pendingByTaskId.delete(taskId);
@@ -239,6 +290,9 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
   }
 
   private replaceWorker(worker: Worker): void {
+    if (!this.inFlightByWorker.has(worker) && !this.workerToTaskId.has(worker) && !this.workers.includes(worker)) {
+      return;
+    }
     const idx = this.workers.indexOf(worker);
     if (idx >= 0) {
       this.workers.splice(idx, 1);
@@ -250,6 +304,7 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
     this.workerToTaskId.delete(worker);
     if (taskId !== undefined) {
       const task = this.pendingByTaskId.get(taskId);
+      this.clearTaskTimeout(taskId);
       this.pendingByTaskId.delete(taskId);
       task?.reject(new Error("Worker closed before task completed"));
       this.recordError("worker-close", new Error(`Worker closed before task ${taskId} completed`));
@@ -268,8 +323,15 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
       event,
       message,
     });
-    if (this.errorHistory.length > 25) {
+    if (this.errorHistory.length > (this.config.maxErrorHistory ?? 25)) {
       this.errorHistory.shift();
     }
+  }
+
+  private clearTaskTimeout(taskId: TaskId): void {
+    const timer = this.timeoutByTaskId.get(taskId);
+    if (!timer) return;
+    clearTimeout(timer);
+    this.timeoutByTaskId.delete(taskId);
   }
 }
