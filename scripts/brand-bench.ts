@@ -15,6 +15,20 @@ function print(result: { name: string; opsPerSec: number; ms: number }): void {
   console.log(`${result.name}: ${result.opsPerSec.toFixed(0)} ops/sec (${result.ms.toFixed(1)} ms)`);
 }
 
+function printTable(results: { name: string; opsPerSec: number; ms: number }[]): void {
+  console.log('\n📊 Benchmark Results:');
+  console.log(Bun.inspect.table(
+    results.map(r => ({
+      operation: r.name,
+      'ops/sec': r.opsPerSec.toFixed(0),
+      'time (ms)': r.ms.toFixed(2),
+      performance: r.opsPerSec > 1_000_000 ? '🔥 Fast' : r.opsPerSec > 500_000 ? '⚡ Good' : '✅ OK'
+    })),
+    ['operation', 'ops/sec', 'time (ms)', 'performance'],
+    { colors: true }
+  ));
+}
+
 function main(): void {
   const seed = 210;
   const hsl = `hsl(${seed}, 90%, 60%)`;
@@ -38,10 +52,14 @@ function main(): void {
     }, 120_000),
   ];
 
+  // Print individual results
   for (const r of results) print(r);
+  
+  // Print formatted table
+  printTable(results);
 
   const best = results.reduce((a, b) => (a.opsPerSec > b.opsPerSec ? a : b));
-  console.log(`best: ${best.name}`);
+  console.log(`\n🏆 Best: ${best.name} (${best.opsPerSec.toFixed(0)} ops/sec)`);
 }
 
 if (import.meta.main) {
