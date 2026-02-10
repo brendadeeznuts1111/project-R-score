@@ -48,19 +48,31 @@ console.log("Uptime (seconds):", process.uptime().toFixed(2));
 console.log("Start time:", new Date(Date.now() - process.uptime() * 1000).toISOString());
 
 // 5. Time zone
-console.log("\n5️⃣ Time Zone");
+console.log("\n5️⃣ Time Zone (Multiple changes work in Bun!)");
 console.log("-".repeat(70));
-console.log("Timezone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
-console.log("Offset:", new Date().getTimezoneOffset(), "minutes");
+console.log("Initial timezone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
+console.log("Initial offset:", new Date().getTimezoneOffset(), "minutes");
 
-// Set timezone (works in Bun)
-const originalTZ = process.env.TZ;
-process.env.TZ = "America/New_York";
-console.log("After setting TZ=America/New_York:");
+// Unlike Jest, Bun allows multiple TZ changes at runtime
+console.log("\n🌎 Changing to Los Angeles:");
+process.env.TZ = "America/Los_Angeles";
+console.log("  Timezone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
+console.log("  Offset:", new Date().getTimezoneOffset(), "minutes");
 console.log("  Time:", new Date().toLocaleTimeString());
 
-// Restore
-if (originalTZ) process.env.TZ = originalTZ;
+console.log("\n🗽 Changing to New York:");
+process.env.TZ = "America/New_York";
+console.log("  Timezone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
+console.log("  Offset:", new Date().getTimezoneOffset(), "minutes");
+console.log("  Time:", new Date().toLocaleTimeString());
+
+console.log("\n🗼 Changing to Paris:");
+process.env.TZ = "Europe/Paris";
+console.log("  Timezone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
+console.log("  Offset:", new Date().getTimezoneOffset(), "minutes");
+console.log("  Time:", new Date().toLocaleTimeString());
+
+console.log("\n✅ Bun allows multiple TZ changes at runtime (unlike Jest)!");
 
 // 6. Spawn with stdout/stderr
 console.log("\n6️⃣ Spawn Process with stdout/stderr");
