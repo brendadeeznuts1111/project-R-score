@@ -99,7 +99,7 @@ const mockRenderContent = jest.fn().mockResolvedValue(undefined);
 describe('ThinkingBlockRenderer', () => {
   beforeEach(() => {
     jest.useFakeTimers();
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
   });
 
   afterEach(() => {

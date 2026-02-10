@@ -11,7 +11,7 @@ describe('ClaudianService', () => {
   let service: ClaudianService;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
 
     const storageMock = {
       addDenyRule: jest.fn().mockResolvedValue(undefined),

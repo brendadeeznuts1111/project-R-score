@@ -86,7 +86,7 @@ describe('ExternalContextSelector', () => {
   let callbacks: ReturnType<typeof createMockCallbacks>;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     // By default, all paths are valid (exist on filesystem)
     (fs.statSync as jest.Mock).mockReturnValue({ isDirectory: () => true });
     parentEl = createMockElement();
@@ -518,7 +518,7 @@ describe('ExternalContextSelector', () => {
 
   describe('Path Validation', () => {
     beforeEach(() => {
-      jest.clearAllMocks();
+      (globalThis as any).jest?.clearAllMocks?.();
     });
 
     it('should filter out invalid paths on setPersistentPaths (app load)', () => {

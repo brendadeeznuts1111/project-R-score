@@ -73,7 +73,7 @@ describe('AgentManager', () => {
   const VAULT_AGENTS_DIR = path.join(VAULT_PATH, '.claude/agents');
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     // os.homedir is already mocked to return HOME_DIR
     mockFs.existsSync.mockReturnValue(false);
     mockFs.readdirSync.mockReturnValue([]);

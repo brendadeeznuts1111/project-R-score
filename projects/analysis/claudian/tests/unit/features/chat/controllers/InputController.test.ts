@@ -150,7 +150,7 @@ describe('InputController - Message Queue', () => {
   let inputEl: ReturnType<typeof createMockInputEl>;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     deps = createMockDeps();
     inputEl = deps.getInputEl() as ReturnType<typeof createMockInputEl>;
     controller = new InputController(deps);

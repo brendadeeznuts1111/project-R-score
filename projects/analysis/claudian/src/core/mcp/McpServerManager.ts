@@ -9,7 +9,7 @@ import type { ClaudianMcpServer, McpServerConfig } from '../types';
 
 /** Storage interface for loading MCP servers. */
 export interface McpStorageAdapter {
-  YAML.parse(): Promise<ClaudianMcpServer[]>;
+  ['YAML.parse'](): Promise<ClaudianMcpServer[]>;
 }
 
 /** Manages MCP server configurations. */
@@ -23,7 +23,7 @@ export class McpServerManager {
 
   /** Load servers from storage. */
   async loadServers(): Promise<void> {
-    this.servers = await this.storage.YAML.parse();
+    this.servers = await this.storage['YAML.parse']();
   }
 
   /** Get all loaded servers. */

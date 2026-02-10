@@ -162,7 +162,7 @@ describe('ClaudianService', () => {
   let mockPlugin: any;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     resetMockMessages();
     mockPlugin = createMockPlugin();
     service = new ClaudianService(mockPlugin, createMockMcpManager());

@@ -21,7 +21,7 @@ const mockedHostname = os.hostname as jest.Mock;
 
 describe('ClaudeCliResolver', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     mockedHostname.mockReturnValue('test-host');
   });
 
@@ -176,7 +176,7 @@ describe('ClaudeCliResolver', () => {
 
 describe('resolveClaudeCliPath', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
   });
 
   it('should return hostname path when valid file exists', () => {

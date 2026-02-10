@@ -141,7 +141,7 @@ describe('Sync Subagent Renderer', () => {
   let parentEl: MockElement;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     parentEl = createMockElement('div');
   });
 
@@ -306,7 +306,7 @@ describe('keyboard navigation', () => {
   let parentEl: MockElement;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     parentEl = createMockElement('div');
   });
 
@@ -370,7 +370,7 @@ describe('Async Subagent Renderer', () => {
   let parentEl: MockElement;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     parentEl = createMockElement('div');
   });
 

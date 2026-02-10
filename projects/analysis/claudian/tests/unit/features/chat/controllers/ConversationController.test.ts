@@ -141,7 +141,7 @@ describe('ConversationController - Queue Management', () => {
   let deps: ConversationControllerDeps;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     deps = createMockDeps();
     controller = new ConversationController(deps);
   });
@@ -325,7 +325,7 @@ describe('ConversationController - initializeWelcome', () => {
   let deps: ConversationControllerDeps;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     deps = createMockDeps();
     controller = new ConversationController(deps);
   });
@@ -404,7 +404,7 @@ describe('ConversationController - Title Generation', () => {
   let mockTitleService: any;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     mockTitleService = {
       generateTitle: jest.fn().mockResolvedValue(undefined),
       cancel: jest.fn(),
@@ -597,7 +597,7 @@ describe('ConversationController - MCP Server Persistence', () => {
   let mockMcpServerSelector: any;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     mockMcpServerSelector = {
       clearEnabled: jest.fn(),
       getEnabledServers: jest.fn().mockReturnValue(new Set(['mcp-server-1', 'mcp-server-2'])),
@@ -715,7 +715,7 @@ describe('ConversationController - Race Condition Guards', () => {
   let deps: ConversationControllerDeps;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     deps = createMockDeps();
     controller = new ConversationController(deps);
   });
@@ -869,7 +869,7 @@ describe('ConversationController - Persistent External Context Paths', () => {
   let mockExternalContextSelector: any;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     mockExternalContextSelector = {
       getExternalContexts: jest.fn().mockReturnValue([]),
       setExternalContexts: jest.fn(),
@@ -1043,7 +1043,7 @@ describe('ConversationController - Persistent External Context Paths', () => {
         externalContextPaths: ['/path/a'], // Only had A when originally created
       });
 
-      jest.clearAllMocks();
+      (globalThis as any).jest?.clearAllMocks?.();
       await controller.switchTo('session-0');
 
       // Should get BOTH paths because session is empty (msg=0)
@@ -1060,7 +1060,7 @@ describe('ConversationController - Previous SDK Session IDs', () => {
   let mockAgentService: any;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     mockAgentService = {
       getSessionId: jest.fn().mockReturnValue(null),
       setSessionId: jest.fn(),

@@ -33,7 +33,7 @@ export class McpStorage {
   constructor(private adapter: VaultFileAdapter) {}
 
   /** Load MCP servers from .claude/mcp.json. */
-  async YAML.parse(): Promise<ClaudianMcpServer[]> {
+  async ['YAML.parse'](): Promise<ClaudianMcpServer[]> {
     try {
       if (!(await this.adapter.exists(MCP_CONFIG_PATH))) {
         return [];

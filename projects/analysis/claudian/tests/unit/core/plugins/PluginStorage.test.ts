@@ -20,7 +20,7 @@ describe('PluginStorage', () => {
   const installedPluginsPath = path.join(homeDir, '.claude', 'plugins', 'installed_plugins.json');
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
   });
 
   describe('loadPlugins', () => {

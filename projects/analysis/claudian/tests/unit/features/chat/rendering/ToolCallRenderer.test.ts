@@ -116,7 +116,7 @@ function createToolCall(overrides: Partial<ToolCallInfo> = {}): ToolCallInfo {
 
 describe('ToolCallRenderer', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
   });
 
   describe('renderToolCall', () => {
