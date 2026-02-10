@@ -63,43 +63,57 @@ export class ConcurrentOperationsManager {
   ): Promise<OperationResult<T>[]> {
     const finalConfig = { ...this.defaultConfig, ...config };
     const results: OperationResult<T>[] = [];
+    const maxConcurrency = Math.max(1, finalConfig.maxConcurrency);
+    let nextIndex = 0;
+    let shouldStop = false;
 
-    // Use Promise.allSettled to handle individual failures
-    const settledResults = await Promise.allSettled(
-      operations.map((op, index) => this.executeOperation(op, `op-${index}`, finalConfig))
-    );
-
-    // Convert settled results to operation results
-    for (let i = 0; i < settledResults.length; i++) {
-      const settled = settledResults[i];
-      const operationId = `op-${i}`;
+    const runOperationAtIndex = async (index: number): Promise<void> => {
+      const operationId = `op-${index}`;
       const startTime = Date.now();
 
-      if (settled.status === 'fulfilled') {
-        results.push({
+      try {
+        const data = await this.executeOperation(operations[index], operationId, finalConfig);
+        results[index] = {
           success: true,
-          data: settled.value,
+          data,
           operationId,
           duration: Date.now() - startTime,
-        });
-      } else {
-        const error = settled.reason;
-        results.push({
+        };
+      } catch (error) {
+        results[index] = {
           success: false,
           error: error instanceof Error ? error.message : 'Unknown error',
           operationId,
           duration: Date.now() - startTime,
-        });
-
-        // Fail fast if configured and this is an error
+        };
         if (finalConfig.failFast) {
-          // Cancel remaining operations
-          break;
+          shouldStop = true;
         }
       }
-    }
+    };
 
-    return results;
+    const worker = async (): Promise<void> => {
+      while (true) {
+        if (shouldStop) return;
+        const currentIndex = nextIndex;
+        nextIndex += 1;
+        if (currentIndex >= operations.length) return;
+        await runOperationAtIndex(currentIndex);
+      }
+    };
+
+    await Promise.all(
+      Array.from({ length: Math.min(maxConcurrency, operations.length) }, () => worker())
+    );
+
+    const ordered = results.filter(Boolean);
+    if (finalConfig.failFast) {
+      const firstFailure = ordered.findIndex((result) => !result.success);
+      if (firstFailure >= 0) {
+        return ordered.slice(0, firstFailure + 1);
+      }
+    }
+    return ordered;
   }
 
   /**
@@ -124,7 +138,24 @@ export class ConcurrentOperationsManager {
       );
 
       if (readyOperations.length === 0) {
-        // Circular dependency or all remaining operations have failed dependencies
+        // Mark operations blocked by failed dependencies as failed.
+        const blocked = operations.filter(
+          (op) =>
+            !completed.has(op.id) &&
+            !failed.has(op.id) &&
+            (op.dependencies?.some((dep) => failed.has(dep)) ?? false)
+        );
+        if (blocked.length > 0) {
+          for (const op of blocked) {
+            failed.add(op.id);
+            results.push({
+              success: false,
+              error: `Dependency failed for operation ${op.id}`,
+              operationId: op.id,
+              duration: 0,
+            });
+          }
+        }
         break;
       }
 
@@ -141,7 +172,7 @@ export class ConcurrentOperationsManager {
 
         if (result.success) {
           completed.add(operation.id);
-          results.push(result);
+          results.push({ ...result, operationId: operation.id });
         } else {
           failed.add(operation.id);
 
@@ -154,7 +185,7 @@ export class ConcurrentOperationsManager {
             }
           }
 
-          results.push(result);
+          results.push({ ...result, operationId: operation.id });
         }
       }
     }

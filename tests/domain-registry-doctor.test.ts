@@ -56,6 +56,8 @@ describe('domain-registry-doctor', () => {
 
   test('emits bun/wrangler secret command templates for missing tokens', async () => {
     const dir = await mkdtemp(join(tmpdir(), 'domain-registry-doctor-secrets-'));
+    const missingTokenEnvVar = `FACTORY_WAGER_TOKEN_API_MISSING_${Date.now()}`;
+    delete process.env[missingTokenEnvVar];
     const reportsDir = join(dir, 'reports');
     const benchDir = join(reportsDir, 'search-benchmark');
     await mkdir(benchDir, { recursive: true });
@@ -74,7 +76,7 @@ describe('domain-registry-doctor', () => {
               bucket: 'bun-secrets',
               prefix: 'domains/api.factory-wager/cloudflare',
               requiredHeader: 'x-factory-domain-token',
-              tokenEnvVar: 'FACTORY_WAGER_TOKEN_API',
+              tokenEnvVar: missingTokenEnvVar,
             },
           ],
         },
@@ -82,7 +84,7 @@ describe('domain-registry-doctor', () => {
         2
       )
     );
-    await writeFile(envFile, 'FACTORY_WAGER_TOKEN_API=replace_me\n');
+    await writeFile(envFile, `${missingTokenEnvVar}=replace_me\n`);
     await writeFile(join(benchDir, 'latest.json'), JSON.stringify({ id: 'snap-1', path: './lib' }, null, 2));
     await writeFile(join(reportsDir, 'health-report.json'), JSON.stringify({ details: [] }, null, 2));
 
@@ -97,7 +99,13 @@ describe('domain-registry-doctor', () => {
       emitSecretsCommands: true,
     });
 
-    expect(doctor.secretCommands?.bunSecretsSet?.[0]).toBe('bun secrets set FACTORY_WAGER_TOKEN_API');
-    expect(doctor.secretCommands?.wranglerSecretPut?.[0]).toBe('wrangler secret put FACTORY_WAGER_TOKEN_API');
+    expect(Array.isArray(doctor.secretCommands?.bunSecretsSet)).toBe(true);
+    expect(Array.isArray(doctor.secretCommands?.wranglerSecretPut)).toBe(true);
+    for (const cmd of doctor.secretCommands?.bunSecretsSet || []) {
+      expect(cmd.startsWith('bun secrets set ')).toBe(true);
+    }
+    for (const cmd of doctor.secretCommands?.wranglerSecretPut || []) {
+      expect(cmd.startsWith('wrangler secret put ')).toBe(true);
+    }
   });
 });

@@ -697,7 +697,7 @@
       "license": "MIT"
     },
     "performance": {
-      "max_concurrent_requests": 1e4,
+      "max_concurrent_requests": 10000,
       "request_timeout": "30s",
       "connection_pool_size": 100,
       "cache_ttl": "300s",
@@ -727,7 +727,7 @@
       "max_memory": "1gb",
       "eviction_policy": "lru",
       "compression": true,
-      "max_keys": 1e6,
+      "max_keys": 1000000,
       "cleanup_interval": "600s"
     },
     "api": {
@@ -768,7 +768,7 @@
     },
     "limits": {
       "max_file_upload_size": "100mb",
-      "max_api_calls_per_hour": 1e4,
+      "max_api_calls_per_hour": 10000,
       "max_concurrent_sessions": 1000,
       "max_storage_per_user": "10gb",
       "max_bandwidth_per_month": "1tb",
@@ -1659,8 +1659,9 @@
     "test:endpoints": "bun run scripts/test-endpoints-local.ts",
     "test:r2": "bun run lib/mcp/r2-integration.ts",
     "ci:validate": "bun run standards:check && bun run test:all",
-    "ci:parallel": "bun run --parallel build test lint",
-    "ci:parallel:all": "bun run --parallel --no-exit-on-error build test lint",
+    "ci:required": "bun run ci:bun:check && bun run ci:parallel",
+    "ci:parallel": "bun run --parallel build test:ci:root lint:ci:root",
+    "ci:parallel:all": "bun run --parallel --no-exit-on-error build test:ci:root lint:ci:root",
     "search:policy:check": "bun run scripts/check-search-policy-governance.ts",
     "search:contract:check": "bun run scripts/search-status-contract-check.ts",
     "rules:config": "bun run scripts/bun-rules.ts config",
@@ -2023,7 +2024,11 @@
     "setup:system": "node scripts/setup-headers-cookies-variants.js",
     "test:variants": "node scripts/test-variants.js",
     "test:cookies": "node scripts/test-cookies.js",
-    "test:headers": "node scripts/test-headers.js"
+    "test:headers": "node scripts/test-headers.js",
+    "test:ci:root": "mkdir -p ./reports/junit && bun test --bail --reporter=junit --reporter-outfile=./reports/junit/bun-test-root.xml tests/search-policy-thresholds.test.ts tests/domain-registry-doctor.test.ts tests/r2-integration.test.ts tests/concurrent-operations.test.ts tests/search-smart-fusion-cli.test.ts tests/wiki-generator.test.ts tests/validation.test.ts",
+    "lint:ci:root": "bun run eslint lib/ai --ext .ts,.tsx",
+    "ci:bun:check": "bun run scripts/ci-bun-check.ts",
+    "ci:parallel:full": "bun run --parallel --no-exit-on-error build test lint"
   },
   "dependencies": {
     "@fw/ab-testing": "workspace:*",
