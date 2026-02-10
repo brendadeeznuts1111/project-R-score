@@ -1482,11 +1482,12 @@ async function refreshBundleMetafileAnalysis() {
   try {
     const response = await fetch(`/api/control/bundle/analyze${query}`);
     const data = await response.json();
+    const traceId = response.headers.get('x-trace-id') || 'n/a';
     if (!response.ok || data?.ok === false) {
       statusDiv.className = 'output error';
       statusDiv.textContent = `Bundle analyze failed: ${data?.error || `status=${response.status}`}`;
       if (summaryDiv) {
-        summaryDiv.innerHTML = `<span class="drift-badge drift-fail">budget: fail</span><span>bundle analysis unavailable</span>`;
+        summaryDiv.innerHTML = `<span class="drift-badge drift-fail">budget: fail</span><span>bundle analysis unavailable</span><span class="drift-badge drift-warn">trace ${escapeHtml(traceId)}</span>`;
       }
       return;
     }
@@ -1509,6 +1510,7 @@ async function refreshBundleMetafileAnalysis() {
         <span class="${budgetClass}">${budgetLabel}</span>
         <span>output ${outputKb} KB (${outputMb} MB)</span>
         <span class="drift-badge drift-ok">ratio ${summary.compressionRatio ?? 'n/a'}</span>
+        <span class="drift-badge drift-warn">trace ${escapeHtml(traceId)}</span>
       `;
     }
 

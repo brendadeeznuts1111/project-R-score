@@ -109,6 +109,22 @@ let capacityPruneStmt: ReturnType<Database["prepare"]> | null = null;
 let capacitySelectStmt: ReturnType<Database["prepare"]> | null = null;
 let capacityMetricsLastPersistMs = 0;
 let capacityMetricsPersistedCount = 0;
+const REQUEST_TRACE_BUFFER_SIZE = parseNumberEnv("PLAYGROUND_TRACE_BUFFER_SIZE", 300, {
+  min: 50,
+  max: 5000,
+});
+type RequestTrace = {
+  id: string;
+  at: string;
+  method: string;
+  path: string;
+  status: number;
+  durationMs: number;
+  inFlightAtStart: number;
+  activeCommandsAtStart: number;
+  error?: string;
+};
+const requestTraces: RequestTrace[] = [];
 const CACHE_TTL_MS = 30000; // 30 second cache for volatile data
 const ORCHESTRATION_CACHE_TTL_MS = parseNumberEnv("PLAYGROUND_ORCHESTRATION_CACHE_TTL_MS", 15000, { min: 1000, max: 300000 });
 const HTTP2_UPGRADE_PORT = parseNumberEnv("PLAYGROUND_HTTP2_UPGRADE_PORT", 8443, { min: 1, max: 65535 });
@@ -2473,6 +2489,50 @@ async function analyzeBundleMetafile(entrypoint: string) {
   return payload;
 }
 
+function nextTraceId() {
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function recordRequestTrace(trace: RequestTrace) {
+  requestTraces.push(trace);
+  if (requestTraces.length > REQUEST_TRACE_BUFFER_SIZE) {
+    requestTraces.shift();
+  }
+}
+
+function summarizeRequestTraces(limit: number) {
+  const safeLimit = Number.isFinite(limit)
+    ? Math.max(1, Math.min(REQUEST_TRACE_BUFFER_SIZE, Math.floor(limit)))
+    : 50;
+  const traces = requestTraces.slice(-safeLimit).reverse();
+  const statusBuckets = { ok2xx: 0, warn4xx: 0, fail5xx: 0, other: 0 };
+  let slowOver250ms = 0;
+  let slowOver1000ms = 0;
+
+  for (const trace of traces) {
+    if (trace.status >= 200 && trace.status < 300) statusBuckets.ok2xx++;
+    else if (trace.status >= 400 && trace.status < 500) statusBuckets.warn4xx++;
+    else if (trace.status >= 500) statusBuckets.fail5xx++;
+    else statusBuckets.other++;
+    if (trace.durationMs > 250) slowOver250ms++;
+    if (trace.durationMs > 1000) slowOver1000ms++;
+  }
+
+  return {
+    generatedAt: new Date().toISOString(),
+    source: "in-memory-request-traces",
+    limit: safeLimit,
+    bufferSize: requestTraces.length,
+    capacity: REQUEST_TRACE_BUFFER_SIZE,
+    summary: {
+      statusBuckets,
+      slowOver250ms,
+      slowOver1000ms,
+    },
+    traces,
+  };
+}
+
 async function runCommand(cmd: string[], cwd: string): Promise<{ output: string; error: string; exitCode: number }> {
   return withCommandWorker(async () => {
     const proc = Bun.spawn({
@@ -4302,6 +4362,11 @@ const routes = {
     const loadPct = Number.isFinite(loadPctRaw) ? loadPctRaw : 0;
     return buildSeverityTestSnapshot(loadPct);
   },
+  "/api/dashboard/traces": (req: Request) => {
+    const url = new URL(req.url);
+    const limit = Number.parseInt(url.searchParams.get("limit") || "50", 10);
+    return summarizeRequestTraces(limit);
+  },
   
   "/api/demos": () => ({
     demos: DEMOS,
@@ -5415,6 +5480,9 @@ async function handleRequest(req: Request): Promise<Response> {
       if (url.pathname === "/api/dashboard/severity-test") {
         return jsonResponse(routes["/api/dashboard/severity-test"](req));
       }
+      if (url.pathname === "/api/dashboard/traces") {
+        return jsonResponse(routes["/api/dashboard/traces"](req));
+      }
 
       if (url.pathname === "/api/dashboard" || url.pathname === "/api/dashboard/debug") {
         const body = await buildDashboardPayload(req);
@@ -5721,8 +5789,12 @@ process.on("uncaughtException", (error) => {
 // Serve the application
 httpServer = serve({
   port: ACTIVE_PORT,
-  fetch: (req, server) => {
+  fetch: async (req, server) => {
     const url = new URL(req.url);
+    const traceId = nextTraceId();
+    const startedAt = performance.now();
+    const inFlightAtStart = inFlightRequests;
+    const activeCommandsAtStart = activeCommands;
     if (url.pathname === CAPACITY_WS_PATH) {
       const upgraded = server.upgrade(req, {
         data: {
@@ -5730,11 +5802,73 @@ httpServer = serve({
           userAgent: req.headers.get("user-agent") || "unknown",
         },
       });
+      if (upgraded) {
+        recordRequestTrace({
+          id: traceId,
+          at: new Date().toISOString(),
+          method: req.method,
+          path: url.pathname,
+          status: 101,
+          durationMs: Number((performance.now() - startedAt).toFixed(2)),
+          inFlightAtStart,
+          activeCommandsAtStart,
+        });
+      }
       return upgraded
         ? undefined
         : new Response("WebSocket upgrade failed", { status: 400 });
     }
-    return handleRequest(req);
+    try {
+      const response = await handleRequest(req);
+      const durationMs = Number((performance.now() - startedAt).toFixed(2));
+      const headers = new Headers(response.headers);
+      headers.set("x-trace-id", traceId);
+      headers.set("x-trace-duration-ms", String(durationMs));
+      recordRequestTrace({
+        id: traceId,
+        at: new Date().toISOString(),
+        method: req.method,
+        path: url.pathname,
+        status: response.status,
+        durationMs,
+        inFlightAtStart,
+        activeCommandsAtStart,
+      });
+      return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers,
+      });
+    } catch (error) {
+      const durationMs = Number((performance.now() - startedAt).toFixed(2));
+      const detail = error instanceof Error ? error.message : String(error);
+      recordRequestTrace({
+        id: traceId,
+        at: new Date().toISOString(),
+        method: req.method,
+        path: url.pathname,
+        status: 500,
+        durationMs,
+        inFlightAtStart,
+        activeCommandsAtStart,
+        error: detail,
+      });
+      return new Response(
+        JSON.stringify({
+          error: "Unhandled playground request failure",
+          traceId,
+          detail,
+        }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+            "x-trace-id": traceId,
+            "x-trace-duration-ms": String(durationMs),
+          },
+        }
+      );
+    }
   },
   websocket: {
     data: {} as { connectedAt: number; userAgent: string },

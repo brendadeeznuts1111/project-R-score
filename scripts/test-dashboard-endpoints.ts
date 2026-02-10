@@ -44,6 +44,14 @@ async function run(): Promise<number> {
         Array.isArray(health.json?.checks),
       `status=${health.res.status}`
     );
+    check(
+      checks,
+      "health-trace-header",
+      typeof health.res.headers.get("x-trace-id") === "string" &&
+        String(health.res.headers.get("x-trace-id") || "").length >= 6 &&
+        Number.isFinite(Number.parseFloat(String(health.res.headers.get("x-trace-duration-ms") || "NaN"))),
+      `traceId=${String(health.res.headers.get("x-trace-id") || "missing")} duration=${String(health.res.headers.get("x-trace-duration-ms") || "missing")}`
+    );
 
     const dashboard = await fetchJson("/api/dashboard");
     check(
@@ -119,6 +127,23 @@ async function run(): Promise<number> {
         Number.isFinite(trendSummary.json?.window?.minutes) &&
         Number.isFinite(trendSummary.json?.window?.limit),
       `status=${trendSummary.res.status} count=${trendSummary.json?.summary?.count}`
+    );
+
+    const traces = await fetchJson("/api/dashboard/traces?limit=20");
+    check(
+      checks,
+      "dashboard-traces-contract",
+      traces.res.status === 200 &&
+        traces.json?.source === "in-memory-request-traces" &&
+        Number.isFinite(traces.json?.bufferSize) &&
+        Number.isFinite(traces.json?.capacity) &&
+        Number.isFinite(traces.json?.summary?.statusBuckets?.ok2xx) &&
+        Array.isArray(traces.json?.traces) &&
+        traces.json?.traces?.length >= 1 &&
+        typeof traces.json?.traces?.[0]?.id === "string" &&
+        typeof traces.json?.traces?.[0]?.path === "string" &&
+        Number.isFinite(traces.json?.traces?.[0]?.status),
+      `status=${traces.res.status} traces=${traces.json?.traces?.length ?? 0}`
     );
 
     const severity = await fetchJson("/api/dashboard/severity-test?load=42");
