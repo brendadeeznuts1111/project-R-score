@@ -23,6 +23,18 @@ async function fetchJson(path: string) {
   return { res, json, text };
 }
 
+async function fetchJsonWithInit(path: string, init: RequestInit) {
+  const res = await fetch(`${BASE}${path}`, init);
+  const text = await res.text();
+  let json: any = null;
+  try {
+    json = text ? JSON.parse(text) : null;
+  } catch {
+    json = null;
+  }
+  return { res, json, text };
+}
+
 function check(checks: CheckResult[], name: string, ok: boolean, details: string) {
   checks.push({ name, ok, details });
 }
@@ -203,6 +215,162 @@ async function run(): Promise<number> {
         Number.isFinite(socketRuntime.json?.sockets?.broadcastCount) &&
         Number.isFinite(socketRuntime.json?.process?.pid),
       `status=${socketRuntime.res.status} clients=${socketRuntime.json?.sockets?.connectedClients ?? "n/a"}`
+    );
+
+    const udpRuntime = await fetchJson("/api/control/udp/runtime");
+    check(
+      checks,
+      "udp-runtime-contract",
+      udpRuntime.res.status === 200 &&
+        typeof udpRuntime.json?.udp?.supported === "boolean" &&
+        Number.isFinite(udpRuntime.json?.udp?.timeoutMs) &&
+        typeof udpRuntime.json?.udp?.control?.isOpen === "boolean" &&
+        typeof udpRuntime.json?.udp?.control?.packetTracking === "boolean" &&
+        Number.isFinite(udpRuntime.json?.udp?.control?.packetSourceId) &&
+        Number.isFinite(udpRuntime.json?.udp?.control?.nextSequenceId) &&
+        Array.isArray(udpRuntime.json?.udp?.control?.multicastMemberships) &&
+        Array.isArray(udpRuntime.json?.udp?.control?.sourceSpecificMemberships) &&
+        Number.isFinite(udpRuntime.json?.udp?.state?.totalRuns) &&
+        Number.isFinite(udpRuntime.json?.udp?.state?.totalFailures) &&
+        Number.isFinite(udpRuntime.json?.process?.pid),
+      `status=${udpRuntime.res.status} supported=${String(udpRuntime.json?.udp?.supported)}`
+    );
+
+    const udpSelfTest = await fetchJson("/api/control/udp/self-test");
+    check(
+      checks,
+      "udp-self-test-contract",
+      udpSelfTest.res.status === 200 &&
+        typeof udpSelfTest.json?.ok === "boolean" &&
+        Number.isFinite(udpSelfTest.json?.runtime?.timeoutMs) &&
+        Number.isFinite(udpSelfTest.json?.runtime?.state?.totalRuns),
+      `status=${udpSelfTest.res.status} ok=${String(udpSelfTest.json?.ok)}`
+    );
+
+    const udpOpen = await fetchJsonWithInit("/api/control/udp/open", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ hostname: "0.0.0.0", port: 0 }),
+    });
+    check(
+      checks,
+      "udp-open-contract",
+      udpOpen.res.status === 200 &&
+        typeof udpOpen.json?.ok === "boolean" &&
+        Number.isFinite(udpOpen.json?.udp?.control?.boundPort),
+      `status=${udpOpen.res.status} ok=${String(udpOpen.json?.ok)} port=${String(udpOpen.json?.udp?.control?.boundPort ?? "n/a")}`
+    );
+
+    const udpOptions = await fetchJsonWithInit("/api/control/udp/options", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ttl: 64, multicastTTL: 2, multicastLoopback: true }),
+    });
+    check(
+      checks,
+      "udp-options-contract",
+      udpOptions.res.status === 200 &&
+        typeof udpOptions.json?.ok === "boolean" &&
+        Number.isFinite(udpOptions.json?.udp?.control?.options?.ttl),
+      `status=${udpOptions.res.status} ok=${String(udpOptions.json?.ok)} ttl=${String(udpOptions.json?.udp?.control?.options?.ttl ?? "n/a")}`
+    );
+
+    const udpPeer = await fetchJsonWithInit("/api/control/udp/peer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ hostname: "127.0.0.1", port: udpOpen.json?.udp?.control?.boundPort }),
+    });
+    check(
+      checks,
+      "udp-peer-contract",
+      udpPeer.res.status === 200 &&
+        udpPeer.json?.ok === true &&
+        udpPeer.json?.peer?.hostname === "127.0.0.1" &&
+        Number.isFinite(udpPeer.json?.peer?.port),
+      `status=${udpPeer.res.status} ok=${String(udpPeer.json?.ok)} peer=${String(udpPeer.json?.peer?.hostname ?? "n/a")}:${String(udpPeer.json?.peer?.port ?? "n/a")}`
+    );
+
+    const udpSend = await fetchJsonWithInit("/api/control/udp/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        hostname: "127.0.0.1",
+        port: udpOpen.json?.udp?.control?.boundPort,
+        payload: "dashboard-endpoint-udp-send",
+      }),
+    });
+    check(
+      checks,
+      "udp-send-contract",
+      udpSend.res.status === 200 &&
+        typeof udpSend.json?.ok === "boolean" &&
+        typeof udpSend.json?.to === "string" &&
+        typeof udpSend.json?.packet?.tracked === "boolean" &&
+        Number.isFinite(udpSend.json?.packet?.header?.sequenceId) &&
+        Number.isFinite(udpSend.json?.packet?.header?.sourceId) &&
+        typeof udpSend.json?.packet?.header?.timestampUs === "string" &&
+        Number.isFinite(udpSend.json?.udp?.control?.sendsAttempted),
+      `status=${udpSend.res.status} ok=${String(udpSend.json?.ok)} sends=${String(udpSend.json?.udp?.control?.sendsAttempted ?? "n/a")}`
+    );
+
+    const udpSendMany = await fetchJsonWithInit("/api/control/udp/send-many", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        packets: [
+          { hostname: "127.0.0.1", port: udpOpen.json?.udp?.control?.boundPort, payload: "p1" },
+          { hostname: "127.0.0.1", port: udpOpen.json?.udp?.control?.boundPort, payload: "p2" },
+        ],
+      }),
+    });
+    check(
+      checks,
+      "udp-send-many-contract",
+      udpSendMany.res.status === 200 &&
+        typeof udpSendMany.json?.ok === "boolean" &&
+        Number.isFinite(udpSendMany.json?.sent) &&
+        Number.isFinite(udpSendMany.json?.requested) &&
+        Array.isArray(udpSendMany.json?.packets) &&
+        Number.isFinite(udpSendMany.json?.packets?.[0]?.header?.sequenceId) &&
+        Number.isFinite(udpSendMany.json?.packets?.[1]?.header?.sequenceId) &&
+        Number.isFinite(udpSendMany.json?.udp?.control?.sendManyPacketsSent),
+      `status=${udpSendMany.res.status} ok=${String(udpSendMany.json?.ok)} sent=${String(udpSendMany.json?.sent ?? "n/a")}/${String(udpSendMany.json?.requested ?? "n/a")}`
+    );
+
+    const udpProfile = await fetchJsonWithInit("/api/control/udp/profile/select", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        scope: "site-local",
+        reliability: "reliable",
+        security: "encrypt",
+        scale: "large",
+        ipFamily: "ipv4",
+      }),
+    });
+    check(
+      checks,
+      "udp-profile-select-contract",
+      udpProfile.res.status === 200 &&
+        udpProfile.json?.ok === true &&
+        typeof udpProfile.json?.selection?.address === "string" &&
+        Number.isFinite(udpProfile.json?.selection?.ttl) &&
+        typeof udpProfile.json?.selection?.isMulticast === "boolean",
+      `status=${udpProfile.res.status} ok=${String(udpProfile.json?.ok)} selection=${String(udpProfile.json?.selection?.address ?? "n/a")} ttl=${String(udpProfile.json?.selection?.ttl ?? "n/a")}`
+    );
+
+    const udpClose = await fetchJsonWithInit("/api/control/udp/close", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{}",
+    });
+    check(
+      checks,
+      "udp-close-contract",
+      udpClose.res.status === 200 &&
+        udpClose.json?.ok === true &&
+        udpClose.json?.udp?.control?.isOpen === false,
+      `status=${udpClose.res.status} ok=${String(udpClose.json?.ok)} isOpen=${String(udpClose.json?.udp?.control?.isOpen)}`
     );
 
     const readiness = await fetchJson("/api/control/deployment-readiness");

@@ -422,6 +422,20 @@ playground-web/
 - `GET /api/dashboard/trends/summary?minutes=60&limit=120` - compact trend summary
 - `GET /api/control/process/runtime` - server PID, shutdown state, command telemetry, and port-owner diagnostics
 - `GET /api/control/socket/runtime` - WebSocket path/topic, client/message/broadcast counters, and socket error state
+- `GET /api/control/udp/runtime` - UDP capability and latest self-test state (runs/failures/latency)
+- `POST /api/control/udp/self-test` - local loopback UDP probe using `Bun.udpSocket()`
+- `POST /api/control/udp/open` - open managed UDP control socket (host/port)
+- `POST /api/control/udp/close` - close managed UDP control socket
+- `POST /api/control/udp/options` - apply socket options (`broadcast`, `ttl`, `multicastTTL`, `multicastLoopback`, `multicastInterface`)
+- `POST /api/control/udp/peer` - set default UDP destination (`hostname`, `port`)
+- `POST /api/control/udp/send` - send one UDP datagram to configured/default peer
+- `POST /api/control/udp/send-many` - send batched UDP datagrams using `sendMany()`
+- `POST /api/control/udp/send` and `POST /api/control/udp/send-many` include packet-header metadata (`sequenceId`, `sourceId`, `timestampUs`) when UDP packet tracking is enabled
+- `POST /api/control/udp/profile/select` - choose multicast address + TTL from named profile (`scope`, `reliability`, `security`, `scale`, `ipFamily`)
+- `POST /api/control/udp/multicast/join` - join multicast group (`group`, optional `interfaceAddress`)
+- `POST /api/control/udp/multicast/leave` - leave multicast group
+- `POST /api/control/udp/ssm/join` - join source-specific multicast (`source`, `group`)
+- `POST /api/control/udp/ssm/leave` - leave source-specific multicast
 - `GET /api/control/bundle/analyze` - bundle analysis summary for dashboard panel
 - `GET /api/control/domain-graph?domain=<full|presentation|orchestration|protocol|security|performance|observability>` - Mermaid-wrapped topology source
 

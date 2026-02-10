@@ -9,7 +9,7 @@ import { serve } from "bun";
 import { Database } from "bun:sqlite";
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { readFileSync } from "node:fs";
-import { createServer, type Server as NetServer } from "node:net";
+import { createServer, isIP, type Server as NetServer } from "node:net";
 import { connect as connectHttp2, createSecureServer, type Http2SecureServer } from "node:http2";
 import { extname, join, normalize, resolve as resolvePath, sep } from "node:path";
 import { setEnvironmentData } from "worker_threads";
@@ -30,6 +30,12 @@ import {
   SuccessMetrics,
   calculateSuccessHealth,
 } from "../../../dashboard/project-health";
+import { MulticastAddressSelector } from "../../../lib/udp/multicast-selector";
+import {
+  decodePacketHeader,
+  encodePacketHeader,
+  PACKET_HEADER_SIZE,
+} from "../../../lib/udp/packet-id";
 
 const BASE_STANDARD = Object.freeze({
   dedicatedPort: 3011,
@@ -142,6 +148,7 @@ const DASHBOARD_METRICS_INTERVAL_MS = parseNumberEnv("PLAYGROUND_METRICS_INTERVA
 });
 let inFlightRequests = 0;
 const serverStartTime = Date.now();
+const multicastAddressSelector = new MulticastAddressSelector();
 const commandWorkerPool = new UltraWorkerPool<
   { type: "run-command"; cmd: string[]; cwd: string; env?: Record<string, string> },
   { output: string; error: string; exitCode: number }
@@ -4813,6 +4820,357 @@ function buildSocketRuntimeSnapshot() {
   };
 }
 
+const udpRuntimeState = {
+  totalRuns: 0,
+  totalFailures: 0,
+  lastRunAt: null as string | null,
+  lastDurationMs: null as number | null,
+  lastOk: null as boolean | null,
+  lastError: null as string | null,
+  lastPayload: null as string | null,
+  lastReceivedFrom: null as string | null,
+  lastServerPort: null as number | null,
+};
+
+let udpControlSocket: any = null;
+const udpControlState = {
+  isOpen: false,
+  boundHost: "0.0.0.0",
+  boundPort: null as number | null,
+  connectedPeer: null as { hostname: string; port: number } | null,
+  options: {
+    broadcast: null as boolean | null,
+    ttl: null as number | null,
+    multicastTTL: null as number | null,
+    multicastLoopback: null as boolean | null,
+    multicastInterface: null as string | null,
+  },
+  multicastMemberships: [] as Array<{ group: string; interfaceAddress: string | null }>,
+  sourceSpecificMemberships: [] as Array<{ source: string; group: string }>,
+  lastControlError: null as string | null,
+  messagesReceived: 0,
+  bytesReceived: 0,
+  lastMessageAt: null as string | null,
+  lastMessageFrom: null as string | null,
+  drainEvents: 0,
+  sendsAttempted: 0,
+  sendsSucceeded: 0,
+  sendManyAttempted: 0,
+  sendManyPacketsRequested: 0,
+  sendManyPacketsSent: 0,
+  backpressureEvents: 0,
+  lastOperationAt: null as string | null,
+  lastSendTo: null as string | null,
+  lastSendPayloadPreview: null as string | null,
+  packetTracking: parseBool(process.env.PLAYGROUND_UDP_PACKET_TRACKING, true),
+  packetSourceId: Math.floor(Math.random() * 0x10000),
+  nextSequenceId: 0,
+  lastTxHeader: null as null | {
+    sequenceId: number;
+    sourceId: number;
+    scope: string;
+    flags: number;
+    timestampUs: string;
+    payloadBytes: number;
+    wireBytes: number;
+  },
+  lastRxHeader: null as null | {
+    sequenceId: number;
+    sourceId: number;
+    scope: string;
+    flags: number;
+    timestampUs: string;
+    payloadBytes: number;
+    wireBytes: number;
+  },
+};
+
+function normalizeInterfaceAddress(value: unknown): string | null {
+  const str = String(value || "").trim();
+  return str ? str : null;
+}
+
+function normalizeUdpAddress(value: unknown): string | null {
+  const str = String(value || "").trim();
+  return str ? str : null;
+}
+
+function parseUdpPort(value: unknown): number | null {
+  const raw = Number.parseInt(String(value ?? ""), 10);
+  if (!Number.isFinite(raw)) return null;
+  if (raw < 1 || raw > 65535) return null;
+  return raw;
+}
+
+function isMulticastAddress(address: string): boolean {
+  const family = isIP(address);
+  if (family === 4) {
+    const first = Number.parseInt(address.split(".")[0] || "0", 10);
+    return first >= 224 && first <= 239;
+  }
+  if (family === 6) {
+    return address.toLowerCase().startsWith("ff");
+  }
+  return false;
+}
+
+function isValidBindAddress(address: string): boolean {
+  const family = isIP(address);
+  if (family === 4 || family === 6) return true;
+  return address === "localhost";
+}
+
+function formatPayloadPreview(value: unknown, max = 120): string {
+  const str = typeof value === "string" ? value : JSON.stringify(value);
+  return str.length > max ? `${str.slice(0, max)}…` : str;
+}
+
+function buildUdpWirePayload(
+  payload: string | Buffer,
+  scope: "link-local" | "site-local" | "global" | "admin" = "site-local",
+  flags = 0
+): {
+  data: string | Buffer;
+  header: null | {
+    sequenceId: number;
+    sourceId: number;
+    scope: string;
+    flags: number;
+    timestampUs: string;
+    payloadBytes: number;
+    wireBytes: number;
+  };
+} {
+  const payloadBuffer = Buffer.isBuffer(payload) ? payload : Buffer.from(payload);
+  if (!udpControlState.packetTracking) {
+    return { data: payloadBuffer, header: null };
+  }
+  const sequenceId = udpControlState.nextSequenceId >>> 0;
+  udpControlState.nextSequenceId = (udpControlState.nextSequenceId + 1) >>> 0;
+  const header = encodePacketHeader({
+    scope,
+    flags,
+    sourceId: udpControlState.packetSourceId,
+    sequenceId,
+  });
+  const wire = Buffer.concat([header, payloadBuffer]);
+  const decoded = decodePacketHeader(wire);
+  return {
+    data: wire,
+    header: decoded
+      ? {
+          sequenceId: decoded.sequenceId,
+          sourceId: decoded.sourceId,
+          scope: decoded.scope,
+          flags: decoded.flags,
+          timestampUs: decoded.timestampUs.toString(),
+          payloadBytes: payloadBuffer.byteLength,
+          wireBytes: wire.byteLength,
+        }
+      : null,
+  };
+}
+
+function isValidMulticastScope(value: unknown): value is "link-local" | "site-local" | "global" | "admin" {
+  return value === "link-local" || value === "site-local" || value === "global" || value === "admin";
+}
+
+function isValidReliability(value: unknown): value is "best-effort" | "reliable" {
+  return value === "best-effort" || value === "reliable";
+}
+
+function isValidSecurity(value: unknown): value is "none" | "auth" | "encrypt" {
+  return value === "none" || value === "auth" || value === "encrypt";
+}
+
+function isValidScale(value: unknown): value is "small" | "medium" | "large" {
+  return value === "small" || value === "medium" || value === "large";
+}
+
+function isValidIpFamily(value: unknown): value is "ipv4" | "ipv6" {
+  return value === "ipv4" || value === "ipv6";
+}
+
+async function ensureUdpControlSocket() {
+  if (udpControlSocket) return udpControlSocket;
+  const socket = await Bun.udpSocket({
+    hostname: udpControlState.boundHost,
+    port: udpControlState.boundPort ?? 0,
+    socket: {
+      data(_socket, buf, port, addr) {
+        udpControlState.messagesReceived += 1;
+        udpControlState.bytesReceived += buf.byteLength;
+        udpControlState.lastMessageAt = new Date().toISOString();
+        udpControlState.lastMessageFrom = `${addr}:${port}`;
+        udpControlState.lastOperationAt = udpControlState.lastMessageAt;
+        const decoded = decodePacketHeader(buf);
+        if (decoded) {
+          udpControlState.lastRxHeader = {
+            sequenceId: decoded.sequenceId,
+            sourceId: decoded.sourceId,
+            scope: decoded.scope,
+            flags: decoded.flags,
+            timestampUs: decoded.timestampUs.toString(),
+            payloadBytes: Math.max(0, buf.byteLength - PACKET_HEADER_SIZE),
+            wireBytes: buf.byteLength,
+          };
+        } else {
+          udpControlState.lastRxHeader = null;
+        }
+      },
+      drain() {
+        udpControlState.drainEvents += 1;
+        udpControlState.backpressureEvents += 1;
+        udpControlState.lastOperationAt = new Date().toISOString();
+      },
+      error(_socket, err) {
+        udpControlState.lastControlError = err instanceof Error ? err.message : String(err);
+        udpControlState.lastOperationAt = new Date().toISOString();
+      },
+    },
+  });
+  udpControlSocket = socket;
+  udpControlState.isOpen = true;
+  udpControlState.boundPort = socket.port;
+  udpControlState.lastControlError = null;
+  return udpControlSocket;
+}
+
+function closeUdpControlSocket() {
+  if (!udpControlSocket) return;
+  try {
+    udpControlSocket.close?.();
+  } catch {}
+  udpControlSocket = null;
+  udpControlState.isOpen = false;
+  udpControlState.boundPort = null;
+  udpControlState.connectedPeer = null;
+  udpControlState.multicastMemberships = [];
+  udpControlState.sourceSpecificMemberships = [];
+  udpControlState.drainEvents = 0;
+  udpControlState.sendsAttempted = 0;
+  udpControlState.sendsSucceeded = 0;
+  udpControlState.sendManyAttempted = 0;
+  udpControlState.sendManyPacketsRequested = 0;
+  udpControlState.sendManyPacketsSent = 0;
+  udpControlState.backpressureEvents = 0;
+  udpControlState.lastOperationAt = null;
+  udpControlState.lastSendTo = null;
+  udpControlState.lastSendPayloadPreview = null;
+  udpControlState.nextSequenceId = 0;
+  udpControlState.lastTxHeader = null;
+  udpControlState.lastRxHeader = null;
+}
+
+function buildUdpRuntimeSnapshot() {
+  return {
+    supported: typeof Bun.udpSocket === "function",
+    timeoutMs: UDP_SELF_TEST_TIMEOUT_MS,
+    control: {
+      ...udpControlState,
+    },
+    state: { ...udpRuntimeState },
+  };
+}
+
+async function runUdpSelfTest() {
+  udpRuntimeState.totalRuns += 1;
+  udpRuntimeState.lastRunAt = new Date().toISOString();
+
+  if (typeof Bun.udpSocket !== "function") {
+    const message = "Bun.udpSocket is not available in this runtime";
+    udpRuntimeState.totalFailures += 1;
+    udpRuntimeState.lastOk = false;
+    udpRuntimeState.lastError = message;
+    return {
+      ok: false,
+      message,
+      runtime: buildUdpRuntimeSnapshot(),
+    };
+  }
+
+  const start = Date.now();
+  const payload = `udp-self-test:${Date.now()}:${Math.random().toString(16).slice(2, 8)}`;
+  let server: any = null;
+  let client: any = null;
+
+  try {
+    let settled = false;
+    let resolvePacket: (value: { message: string; from: string; port: number }) => void = () => {};
+    let rejectPacket: (reason?: unknown) => void = () => {};
+    const packetPromise = new Promise<{ message: string; from: string; port: number }>((resolve, reject) => {
+      resolvePacket = resolve;
+      rejectPacket = reject;
+    });
+
+    server = await Bun.udpSocket({
+      socket: {
+        data(_socket, buf, port, addr) {
+          if (settled) return;
+          settled = true;
+          resolvePacket({ message: buf.toString(), from: addr, port });
+        },
+      },
+    });
+    client = await Bun.udpSocket({});
+
+    const timeout = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      rejectPacket(new Error(`UDP self-test timed out after ${UDP_SELF_TEST_TIMEOUT_MS}ms`));
+    }, UDP_SELF_TEST_TIMEOUT_MS);
+
+    const sent = client.send(payload, server.port, "127.0.0.1");
+    if (sent === false) {
+      clearTimeout(timeout);
+      throw new Error("UDP self-test backpressure: send returned false");
+    }
+
+    const packet = await packetPromise.finally(() => clearTimeout(timeout));
+    const durationMs = Date.now() - start;
+
+    udpRuntimeState.lastDurationMs = durationMs;
+    udpRuntimeState.lastOk = true;
+    udpRuntimeState.lastError = null;
+    udpRuntimeState.lastPayload = payload;
+    udpRuntimeState.lastReceivedFrom = `${packet.from}:${packet.port}`;
+    udpRuntimeState.lastServerPort = server.port;
+
+    return {
+      ok: packet.message === payload,
+      expectedPayload: payload,
+      receivedPayload: packet.message,
+      from: `${packet.from}:${packet.port}`,
+      serverPort: server.port,
+      durationMs,
+      runtime: buildUdpRuntimeSnapshot(),
+    };
+  } catch (error) {
+    const durationMs = Date.now() - start;
+    const message = error instanceof Error ? error.message : String(error);
+    udpRuntimeState.totalFailures += 1;
+    udpRuntimeState.lastDurationMs = durationMs;
+    udpRuntimeState.lastOk = false;
+    udpRuntimeState.lastError = message;
+    udpRuntimeState.lastPayload = payload;
+    udpRuntimeState.lastReceivedFrom = null;
+    udpRuntimeState.lastServerPort = server?.port ?? null;
+    return {
+      ok: false,
+      error: message,
+      durationMs,
+      runtime: buildUdpRuntimeSnapshot(),
+    };
+  } finally {
+    try {
+      client?.close?.();
+    } catch {}
+    try {
+      server?.close?.();
+    } catch {}
+  }
+}
+
 function buildProcessRuntimeSnapshot() {
   const workerStats = getCommandWorkerStats();
   return {
@@ -5033,6 +5391,415 @@ const routes = {
       signalCount,
     },
   }),
+
+  "/api/control/udp/runtime": () => ({
+    generatedAt: new Date().toISOString(),
+    udp: buildUdpRuntimeSnapshot(),
+    process: {
+      pid: process.pid,
+      shuttingDown,
+      signalCount,
+    },
+  }),
+
+  "/api/control/udp/self-test": async () => ({
+    generatedAt: new Date().toISOString(),
+    ...(await runUdpSelfTest()),
+  }),
+
+  "/api/control/udp/open": async (req: Request) => {
+    const body = await parseJsonBody(req).catch(() => ({}));
+    const host = String(body?.hostname || udpControlState.boundHost || "0.0.0.0");
+    const desiredPortRaw = Number.parseInt(String(body?.port ?? "0"), 10);
+    const desiredPort = Number.isFinite(desiredPortRaw) && desiredPortRaw >= 0 ? desiredPortRaw : 0;
+    if (!isValidBindAddress(host)) {
+      return {
+        ok: false,
+        error: `Invalid UDP bind host: ${host}`,
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    }
+    if (udpControlSocket) {
+      closeUdpControlSocket();
+    }
+    udpControlState.boundHost = host;
+    udpControlState.boundPort = desiredPort || null;
+    try {
+      const socket = await ensureUdpControlSocket();
+      return {
+        ok: true,
+        host,
+        port: socket.port,
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      udpControlState.lastControlError = message;
+      return {
+        ok: false,
+        error: message,
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    }
+  },
+
+  "/api/control/udp/close": async () => {
+    closeUdpControlSocket();
+    return {
+      ok: true,
+      udp: buildUdpRuntimeSnapshot(),
+    };
+  },
+
+  "/api/control/udp/options": async (req: Request) => {
+    const body = await parseJsonBody(req).catch(() => ({}));
+    try {
+      const socket = await ensureUdpControlSocket();
+      if (typeof body?.broadcast === "boolean") {
+        socket.setBroadcast(body.broadcast);
+        udpControlState.options.broadcast = body.broadcast;
+      }
+      if (body?.ttl !== undefined) {
+        const ttl = Number.parseInt(String(body.ttl), 10);
+        if (Number.isFinite(ttl) && ttl > 0) {
+          socket.setTTL(ttl);
+          udpControlState.options.ttl = ttl;
+        }
+      }
+      if (body?.multicastTTL !== undefined) {
+        const multicastTTL = Number.parseInt(String(body.multicastTTL), 10);
+        if (Number.isFinite(multicastTTL) && multicastTTL > 0) {
+          socket.setMulticastTTL(multicastTTL);
+          udpControlState.options.multicastTTL = multicastTTL;
+        }
+      }
+      if (typeof body?.multicastLoopback === "boolean") {
+        socket.setMulticastLoopback(body.multicastLoopback);
+        udpControlState.options.multicastLoopback = body.multicastLoopback;
+      }
+      if (body?.multicastInterface !== undefined) {
+        const iface = String(body.multicastInterface || "").trim();
+        if (iface) {
+          socket.setMulticastInterface(iface);
+          udpControlState.options.multicastInterface = iface;
+        }
+      }
+      return {
+        ok: true,
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      udpControlState.lastControlError = message;
+      return {
+        ok: false,
+        error: message,
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    }
+  },
+
+  "/api/control/udp/peer": async (req: Request) => {
+    const body = await parseJsonBody(req).catch(() => ({}));
+    const hostname = normalizeUdpAddress(body?.hostname);
+    const port = parseUdpPort(body?.port);
+    if (!hostname || !port || isIP(hostname) === 0) {
+      return {
+        ok: false,
+        error: "Invalid UDP peer; expected { hostname: <ip>, port: <1-65535> }",
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    }
+    await ensureUdpControlSocket();
+    udpControlState.connectedPeer = { hostname, port };
+    udpControlState.lastOperationAt = new Date().toISOString();
+    return {
+      ok: true,
+      peer: udpControlState.connectedPeer,
+      udp: buildUdpRuntimeSnapshot(),
+    };
+  },
+
+  "/api/control/udp/send": async (req: Request) => {
+    const body = await parseJsonBody(req).catch(() => ({}));
+    const payload = String(body?.payload ?? "playground-udp-ping");
+    const hostname = normalizeUdpAddress(body?.hostname) || udpControlState.connectedPeer?.hostname || null;
+    const port = parseUdpPort(body?.port) || udpControlState.connectedPeer?.port || null;
+    if (!hostname || !port || isIP(hostname) === 0) {
+      return {
+        ok: false,
+        error: "Invalid destination; set peer via /api/control/udp/peer or pass { hostname, port }",
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    }
+    try {
+      const socket = await ensureUdpControlSocket();
+      udpControlState.sendsAttempted += 1;
+      const tracked = buildUdpWirePayload(payload, "site-local", 0);
+      const ok = socket.send(tracked.data, port, hostname);
+      if (ok) {
+        udpControlState.sendsSucceeded += 1;
+      } else {
+        udpControlState.backpressureEvents += 1;
+      }
+      udpControlState.lastOperationAt = new Date().toISOString();
+      udpControlState.lastSendTo = `${hostname}:${port}`;
+      udpControlState.lastSendPayloadPreview = formatPayloadPreview(payload);
+      udpControlState.lastTxHeader = tracked.header;
+      return {
+        ok,
+        sent: ok === true ? 1 : 0,
+        to: `${hostname}:${port}`,
+        packet: {
+          tracked: udpControlState.packetTracking,
+          header: tracked.header,
+        },
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      udpControlState.lastControlError = message;
+      return { ok: false, error: message, udp: buildUdpRuntimeSnapshot() };
+    }
+  },
+
+  "/api/control/udp/send-many": async (req: Request) => {
+    const body = await parseJsonBody(req).catch(() => ({}));
+    const packets = Array.isArray(body?.packets) ? body.packets : [];
+    if (packets.length === 0) {
+      return {
+        ok: false,
+        error: "Missing packets; expected non-empty packets[]",
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    }
+    if (packets.length > 128) {
+      return {
+        ok: false,
+        error: "Too many packets; max 128 per send-many call",
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    }
+    const flat: Array<string | number> = [];
+    const packetHeaders: Array<{
+      index: number;
+      header: null | {
+        sequenceId: number;
+        sourceId: number;
+        scope: string;
+        flags: number;
+        timestampUs: string;
+        payloadBytes: number;
+        wireBytes: number;
+      };
+      to: string;
+    }> = [];
+    for (const packet of packets) {
+      const payload = String(packet?.payload ?? "");
+      const hostname = normalizeUdpAddress(packet?.hostname) || udpControlState.connectedPeer?.hostname || null;
+      const port = parseUdpPort(packet?.port) || udpControlState.connectedPeer?.port || null;
+      if (!payload || !hostname || !port || isIP(hostname) === 0) {
+        return {
+          ok: false,
+          error: "Invalid packet entry; each packet requires payload + destination IP + port",
+          udp: buildUdpRuntimeSnapshot(),
+        };
+      }
+      const tracked = buildUdpWirePayload(payload, "site-local", 0);
+      flat.push(tracked.data as string | Buffer, port, hostname);
+      packetHeaders.push({
+        index: packetHeaders.length,
+        header: tracked.header,
+        to: `${hostname}:${port}`,
+      });
+    }
+    try {
+      const socket = await ensureUdpControlSocket();
+      udpControlState.sendManyAttempted += 1;
+      udpControlState.sendManyPacketsRequested += packets.length;
+      const sent = socket.sendMany(flat);
+      udpControlState.sendManyPacketsSent += sent;
+      if (sent < packets.length) {
+        udpControlState.backpressureEvents += 1;
+      }
+      udpControlState.lastOperationAt = new Date().toISOString();
+      const last = packets[packets.length - 1];
+      udpControlState.lastSendTo = `${last.hostname ?? udpControlState.connectedPeer?.hostname}:${last.port ?? udpControlState.connectedPeer?.port}`;
+      udpControlState.lastSendPayloadPreview = formatPayloadPreview(last.payload ?? "");
+      udpControlState.lastTxHeader = packetHeaders.length > 0 ? packetHeaders[packetHeaders.length - 1].header : null;
+      return {
+        ok: sent === packets.length,
+        sent,
+        requested: packets.length,
+        packets: packetHeaders,
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      udpControlState.lastControlError = message;
+      return { ok: false, error: message, udp: buildUdpRuntimeSnapshot() };
+    }
+  },
+
+  "/api/control/udp/profile/select": async (req: Request) => {
+    const body = await parseJsonBody(req).catch(() => ({}));
+    const scope = body?.scope;
+    const reliability = body?.reliability;
+    const security = body?.security;
+    const scale = body?.scale;
+    const ipFamily = body?.ipFamily;
+    if (
+      !isValidMulticastScope(scope) ||
+      !isValidReliability(reliability) ||
+      !isValidSecurity(security) ||
+      !isValidScale(scale) ||
+      !isValidIpFamily(ipFamily)
+    ) {
+      return {
+        ok: false,
+        error:
+          "Invalid profile; expected { scope: link-local|site-local|global|admin, reliability: best-effort|reliable, security: none|auth|encrypt, scale: small|medium|large, ipFamily: ipv4|ipv6 }",
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    }
+    const selected = multicastAddressSelector.select({
+      scope,
+      reliability,
+      security,
+      scale,
+      ipFamily,
+    });
+    return {
+      ok: true,
+      profile: { scope, reliability, security, scale, ipFamily },
+      selection: {
+        address: selected.address,
+        ttl: selected.ttl,
+        isMulticast: isMulticastAddress(selected.address),
+      },
+      udp: buildUdpRuntimeSnapshot(),
+    };
+  },
+
+  "/api/control/udp/multicast/join": async (req: Request) => {
+    const body = await parseJsonBody(req).catch(() => ({}));
+    const group = String(body?.group || "").trim();
+    const interfaceAddress = normalizeInterfaceAddress(body?.interfaceAddress);
+    if (!group) {
+      return { ok: false, error: "Missing required field: group", udp: buildUdpRuntimeSnapshot() };
+    }
+    if (!isMulticastAddress(group)) {
+      return { ok: false, error: `Invalid multicast group: ${group}`, udp: buildUdpRuntimeSnapshot() };
+    }
+    if (interfaceAddress && isIP(interfaceAddress) === 0) {
+      return { ok: false, error: `Invalid interfaceAddress: ${interfaceAddress}`, udp: buildUdpRuntimeSnapshot() };
+    }
+    try {
+      const socket = await ensureUdpControlSocket();
+      const joined = socket.addMembership(group, interfaceAddress ?? undefined);
+      if (joined) {
+        const exists = udpControlState.multicastMemberships.some(
+          (m) => m.group === group && m.interfaceAddress === interfaceAddress
+        );
+        if (!exists) {
+          udpControlState.multicastMemberships.push({ group, interfaceAddress });
+        }
+      }
+      return { ok: joined, group, interfaceAddress, udp: buildUdpRuntimeSnapshot() };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      udpControlState.lastControlError = message;
+      return { ok: false, error: message, udp: buildUdpRuntimeSnapshot() };
+    }
+  },
+
+  "/api/control/udp/multicast/leave": async (req: Request) => {
+    const body = await parseJsonBody(req).catch(() => ({}));
+    const group = String(body?.group || "").trim();
+    const interfaceAddress = normalizeInterfaceAddress(body?.interfaceAddress);
+    if (!group) {
+      return { ok: false, error: "Missing required field: group", udp: buildUdpRuntimeSnapshot() };
+    }
+    if (!isMulticastAddress(group)) {
+      return { ok: false, error: `Invalid multicast group: ${group}`, udp: buildUdpRuntimeSnapshot() };
+    }
+    if (interfaceAddress && isIP(interfaceAddress) === 0) {
+      return { ok: false, error: `Invalid interfaceAddress: ${interfaceAddress}`, udp: buildUdpRuntimeSnapshot() };
+    }
+    try {
+      const socket = await ensureUdpControlSocket();
+      const left = socket.dropMembership(group, interfaceAddress ?? undefined);
+      if (left) {
+        udpControlState.multicastMemberships = udpControlState.multicastMemberships.filter(
+          (m) => !(m.group === group && m.interfaceAddress === interfaceAddress)
+        );
+      }
+      return { ok: left, group, interfaceAddress, udp: buildUdpRuntimeSnapshot() };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      udpControlState.lastControlError = message;
+      return { ok: false, error: message, udp: buildUdpRuntimeSnapshot() };
+    }
+  },
+
+  "/api/control/udp/ssm/join": async (req: Request) => {
+    const body = await parseJsonBody(req).catch(() => ({}));
+    const source = String(body?.source || "").trim();
+    const group = String(body?.group || "").trim();
+    if (!source || !group) {
+      return { ok: false, error: "Missing required fields: source, group", udp: buildUdpRuntimeSnapshot() };
+    }
+    const sourceFamily = isIP(source);
+    const groupFamily = isIP(group);
+    if (sourceFamily === 0 || groupFamily === 0 || sourceFamily !== groupFamily || !isMulticastAddress(group)) {
+      return { ok: false, error: "Invalid SSM source/group; both must be same-family IP and group must be multicast", udp: buildUdpRuntimeSnapshot() };
+    }
+    try {
+      const socket = await ensureUdpControlSocket();
+      const joined = socket.addSourceSpecificMembership(source, group);
+      if (joined) {
+        const exists = udpControlState.sourceSpecificMemberships.some(
+          (m) => m.source === source && m.group === group
+        );
+        if (!exists) {
+          udpControlState.sourceSpecificMemberships.push({ source, group });
+        }
+      }
+      return { ok: joined, source, group, udp: buildUdpRuntimeSnapshot() };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      udpControlState.lastControlError = message;
+      return { ok: false, error: message, udp: buildUdpRuntimeSnapshot() };
+    }
+  },
+
+  "/api/control/udp/ssm/leave": async (req: Request) => {
+    const body = await parseJsonBody(req).catch(() => ({}));
+    const source = String(body?.source || "").trim();
+    const group = String(body?.group || "").trim();
+    if (!source || !group) {
+      return { ok: false, error: "Missing required fields: source, group", udp: buildUdpRuntimeSnapshot() };
+    }
+    const sourceFamily = isIP(source);
+    const groupFamily = isIP(group);
+    if (sourceFamily === 0 || groupFamily === 0 || sourceFamily !== groupFamily || !isMulticastAddress(group)) {
+      return { ok: false, error: "Invalid SSM source/group; both must be same-family IP and group must be multicast", udp: buildUdpRuntimeSnapshot() };
+    }
+    try {
+      const socket = await ensureUdpControlSocket();
+      const left = socket.dropSourceSpecificMembership(source, group);
+      if (left) {
+        udpControlState.sourceSpecificMemberships = udpControlState.sourceSpecificMemberships.filter(
+          (m) => !(m.source === source && m.group === group)
+        );
+      }
+      return { ok: left, source, group, udp: buildUdpRuntimeSnapshot() };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      udpControlState.lastControlError = message;
+      return { ok: false, error: message, udp: buildUdpRuntimeSnapshot() };
+    }
+  },
 
   "/api/control/secrets/runtime": () => {
     const runtime = getSecretsRuntimeInfo();
@@ -5964,6 +6731,17 @@ const routes = {
       });
     }
 
+    if (id === "ipc-communication") {
+      const udp = await routes["/api/control/udp/self-test"]();
+      return new Response(JSON.stringify({
+        success: Boolean((udp as any)?.ok),
+        output: JSON.stringify(udp, null, 2),
+        exitCode: (udp as any)?.ok ? 0 : 1,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     if (id === "protocol-matrix") {
       const matrix = routes["/api/control/protocol-matrix"]();
       return new Response(JSON.stringify({
@@ -6563,6 +7341,58 @@ async function handleRequest(req: Request): Promise<Response> {
         return jsonResponse(routes["/api/control/socket/runtime"]());
       }
 
+      if (url.pathname === "/api/control/udp/runtime") {
+        return jsonResponse(routes["/api/control/udp/runtime"]());
+      }
+
+      if (url.pathname === "/api/control/udp/self-test") {
+        return jsonResponse(await routes["/api/control/udp/self-test"]());
+      }
+
+      if (url.pathname === "/api/control/udp/open") {
+        return jsonResponse(await routes["/api/control/udp/open"](req));
+      }
+
+      if (url.pathname === "/api/control/udp/close") {
+        return jsonResponse(await routes["/api/control/udp/close"]());
+      }
+
+      if (url.pathname === "/api/control/udp/options") {
+        return jsonResponse(await routes["/api/control/udp/options"](req));
+      }
+
+      if (url.pathname === "/api/control/udp/peer") {
+        return jsonResponse(await routes["/api/control/udp/peer"](req));
+      }
+
+      if (url.pathname === "/api/control/udp/send") {
+        return jsonResponse(await routes["/api/control/udp/send"](req));
+      }
+
+      if (url.pathname === "/api/control/udp/send-many") {
+        return jsonResponse(await routes["/api/control/udp/send-many"](req));
+      }
+
+      if (url.pathname === "/api/control/udp/profile/select") {
+        return jsonResponse(await routes["/api/control/udp/profile/select"](req));
+      }
+
+      if (url.pathname === "/api/control/udp/multicast/join") {
+        return jsonResponse(await routes["/api/control/udp/multicast/join"](req));
+      }
+
+      if (url.pathname === "/api/control/udp/multicast/leave") {
+        return jsonResponse(await routes["/api/control/udp/multicast/leave"](req));
+      }
+
+      if (url.pathname === "/api/control/udp/ssm/join") {
+        return jsonResponse(await routes["/api/control/udp/ssm/join"](req));
+      }
+
+      if (url.pathname === "/api/control/udp/ssm/leave") {
+        return jsonResponse(await routes["/api/control/udp/ssm/leave"](req));
+      }
+
       if (url.pathname === "/api/control/secrets/runtime") {
         return jsonResponse(routes["/api/control/secrets/runtime"]());
       }
@@ -6767,6 +7597,10 @@ const CAPACITY_WS_BROADCAST_MS = parseNumberEnv("PLAYGROUND_WS_BROADCAST_MS", 10
   min: 250,
   max: 10000,
 });
+const UDP_SELF_TEST_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_UDP_SELF_TEST_TIMEOUT_MS", 1500, {
+  min: 100,
+  max: 10000,
+});
 let shuttingDown = false;
 let httpServer: ReturnType<typeof serve> | null = null;
 let capacityBroadcastTimer: ReturnType<typeof setInterval> | null = null;
@@ -6828,6 +7662,7 @@ async function gracefulShutdown(reason: string, exitCode = 0, error?: unknown) {
       capacityMetricsDb.close();
       capacityMetricsDb = null;
     }
+    closeUdpControlSocket();
     commandWorkerPool.terminateAll("playground shutdown");
 
     const drained = await waitForInFlightDrain(Math.max(250, SHUTDOWN_TIMEOUT_MS - 250));

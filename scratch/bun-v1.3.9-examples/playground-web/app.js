@@ -1147,6 +1147,93 @@ function renderDemo(demo) {
       </div>
     `
     : '';
+  const udpRuntimePanel = demo.id === 'ipc-communication'
+    ? `
+      <div class="code-block" style="margin-top: 1rem;">
+        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+          <label for="udp-host">Host</label>
+          <input id="udp-host" type="text" value="0.0.0.0" style="width:140px;" />
+          <label for="udp-port">Port</label>
+          <input id="udp-port" type="number" min="0" max="65535" value="0" style="width:90px;" />
+          <button class="run-btn" onclick="openUdpControlSocket()">▶ Open UDP Control Socket</button>
+          <button class="run-btn" onclick="closeUdpControlSocket()">■ Close UDP Control Socket</button>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:0.5rem;">
+          <label for="udp-ttl">TTL</label>
+          <input id="udp-ttl" type="number" min="1" max="255" value="64" style="width:80px;" />
+          <label for="udp-multicast-ttl">M-TTL</label>
+          <input id="udp-multicast-ttl" type="number" min="1" max="255" value="2" style="width:80px;" />
+          <label><input id="udp-broadcast" type="checkbox" /> broadcast</label>
+          <label><input id="udp-multicast-loopback" type="checkbox" checked /> m-loopback</label>
+          <button class="run-btn" onclick="applyUdpOptions()">⚙ Apply UDP Options</button>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:0.5rem;">
+          <label for="udp-group">Group</label>
+          <input id="udp-group" type="text" value="224.0.0.251" style="width:140px;" />
+          <label for="udp-iface">Interface</label>
+          <input id="udp-iface" type="text" value="" placeholder="optional" style="width:160px;" />
+          <button class="run-btn" onclick="joinUdpMulticast()">＋ Join Multicast</button>
+          <button class="run-btn" onclick="leaveUdpMulticast()">－ Leave Multicast</button>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:0.5rem;">
+          <label for="udp-ssm-source">SSM Source</label>
+          <input id="udp-ssm-source" type="text" value="127.0.0.1" style="width:120px;" />
+          <label for="udp-ssm-group">SSM Group</label>
+          <input id="udp-ssm-group" type="text" value="232.0.0.1" style="width:120px;" />
+          <button class="run-btn" onclick="joinUdpSsm()">＋ Join SSM</button>
+          <button class="run-btn" onclick="leaveUdpSsm()">－ Leave SSM</button>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:0.5rem;">
+          <label for="udp-profile-scope">Scope</label>
+          <select id="udp-profile-scope">
+            <option value="link-local">link-local</option>
+            <option value="site-local" selected>site-local</option>
+            <option value="global">global</option>
+            <option value="admin">admin</option>
+          </select>
+          <label for="udp-profile-reliability">Reliability</label>
+          <select id="udp-profile-reliability">
+            <option value="best-effort" selected>best-effort</option>
+            <option value="reliable">reliable</option>
+          </select>
+          <label for="udp-profile-security">Security</label>
+          <select id="udp-profile-security">
+            <option value="none" selected>none</option>
+            <option value="auth">auth</option>
+            <option value="encrypt">encrypt</option>
+          </select>
+          <label for="udp-profile-scale">Scale</label>
+          <select id="udp-profile-scale">
+            <option value="small">small</option>
+            <option value="medium" selected>medium</option>
+            <option value="large">large</option>
+          </select>
+          <label for="udp-profile-ip-family">IP</label>
+          <select id="udp-profile-ip-family">
+            <option value="ipv4" selected>ipv4</option>
+            <option value="ipv6">ipv6</option>
+          </select>
+          <button class="run-btn" onclick="selectUdpProfile()">🧭 Select Profile</button>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:0.5rem;">
+          <label for="udp-dest-host">Dest</label>
+          <input id="udp-dest-host" type="text" value="127.0.0.1" style="width:120px;" />
+          <label for="udp-dest-port">Port</label>
+          <input id="udp-dest-port" type="number" min="1" max="65535" value="41234" style="width:90px;" />
+          <label for="udp-payload">Payload</label>
+          <input id="udp-payload" type="text" value="playground-udp-message" style="width:200px;" />
+          <button class="run-btn" onclick="setUdpPeer()">🎯 Set Peer</button>
+          <button class="run-btn" onclick="sendUdpPacket()">📤 Send</button>
+          <button class="run-btn" onclick="sendUdpMany()">📦 Send Many</button>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:0.5rem;">
+          <button class="run-btn" onclick="refreshUdpRuntimeStatus()">↻ Refresh UDP Runtime</button>
+          <button class="run-btn" onclick="runUdpSelfTest()">🧪 Run UDP Self Test</button>
+        </div>
+        <div id="udp-runtime-output" class="output" style="display:block; margin-top:0.75rem;">Loading UDP runtime...</div>
+      </div>
+    `
+    : '';
   
   content.innerHTML = `
     <div class="demo-header">
@@ -1181,6 +1268,7 @@ function renderDemo(demo) {
     ${http2RuntimePanel}
     ${orchestrationPanel}
     ${processSocketPanel}
+    ${udpRuntimePanel}
   `;
 
   if (demo.id === 'brand-bench-gate') {
@@ -1225,6 +1313,9 @@ function renderDemo(demo) {
   if (processSocketPanel) {
     refreshProcessRuntimeStatus();
     refreshSocketRuntimeStatus();
+  }
+  if (demo.id === 'ipc-communication') {
+    refreshUdpRuntimeStatus();
   }
   refreshMainTrendSummary();
   startMainTrendSummaryAutoRefresh();
@@ -1307,6 +1398,19 @@ function setupEventListeners() {
   window.refreshOrchestrationStatus = refreshOrchestrationStatus;
   window.refreshProcessRuntimeStatus = refreshProcessRuntimeStatus;
   window.refreshSocketRuntimeStatus = refreshSocketRuntimeStatus;
+  window.refreshUdpRuntimeStatus = refreshUdpRuntimeStatus;
+  window.runUdpSelfTest = runUdpSelfTest;
+  window.openUdpControlSocket = openUdpControlSocket;
+  window.closeUdpControlSocket = closeUdpControlSocket;
+  window.applyUdpOptions = applyUdpOptions;
+  window.joinUdpMulticast = joinUdpMulticast;
+  window.leaveUdpMulticast = leaveUdpMulticast;
+  window.joinUdpSsm = joinUdpSsm;
+  window.leaveUdpSsm = leaveUdpSsm;
+  window.selectUdpProfile = selectUdpProfile;
+  window.setUdpPeer = setUdpPeer;
+  window.sendUdpPacket = sendUdpPacket;
+  window.sendUdpMany = sendUdpMany;
   window.executeOrchestrationMode = executeOrchestrationMode;
   window.runOrchestrationFullLoop = runOrchestrationFullLoop;
   window.refreshMainTrendSummary = refreshMainTrendSummary;
@@ -2157,6 +2261,321 @@ async function refreshSocketRuntimeStatus() {
   } catch (error) {
     statusDiv.className = 'output error';
     statusDiv.textContent = `Failed to load socket runtime: ${error.message}`;
+  }
+}
+
+async function refreshUdpRuntimeStatus() {
+  const statusDiv = document.getElementById('udp-runtime-output');
+  if (!statusDiv) return;
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = 'Loading UDP runtime...';
+
+  try {
+    const response = await fetch('/api/control/udp/runtime');
+    const data = await response.json();
+    const udp = data?.udp || {};
+    const state = udp?.state || {};
+    const control = udp?.control || {};
+    const memberships = Array.isArray(control?.multicastMemberships) ? control.multicastMemberships : [];
+    const ssmMemberships = Array.isArray(control?.sourceSpecificMemberships) ? control.sourceSpecificMemberships : [];
+
+    const lines = [
+      `generatedAt: ${data?.generatedAt || 'n/a'}`,
+      `supported: ${String(udp?.supported)} timeoutMs=${udp?.timeoutMs ?? 'n/a'}`,
+      `runs: ${state?.totalRuns ?? 0} failures: ${state?.totalFailures ?? 0}`,
+      `lastOk: ${String(state?.lastOk)} durationMs: ${state?.lastDurationMs ?? 'n/a'}`,
+      `lastRunAt: ${state?.lastRunAt || 'n/a'}`,
+      `lastServerPort: ${state?.lastServerPort ?? 'n/a'}`,
+      `lastReceivedFrom: ${state?.lastReceivedFrom || 'n/a'}`,
+      `lastError: ${state?.lastError || 'none'}`,
+      '',
+      `controlOpen: ${String(control?.isOpen)} host=${control?.boundHost || 'n/a'} port=${control?.boundPort ?? 'n/a'}`,
+      `controlMessages: ${control?.messagesReceived ?? 0} bytes=${control?.bytesReceived ?? 0} lastFrom=${control?.lastMessageFrom || 'n/a'}`,
+      `send: attempted=${control?.sendsAttempted ?? 0} succeeded=${control?.sendsSucceeded ?? 0} lastTo=${control?.lastSendTo || 'n/a'}`,
+      `sendMany: calls=${control?.sendManyAttempted ?? 0} requested=${control?.sendManyPacketsRequested ?? 0} sent=${control?.sendManyPacketsSent ?? 0}`,
+      `drain/backpressure: drainEvents=${control?.drainEvents ?? 0} backpressure=${control?.backpressureEvents ?? 0}`,
+      `packetTracking: ${String(control?.packetTracking)} sourceId=${control?.packetSourceId ?? 'n/a'} nextSeq=${control?.nextSequenceId ?? 'n/a'}`,
+      `lastTxHeader: ${control?.lastTxHeader ? `seq=${control.lastTxHeader.sequenceId} src=${control.lastTxHeader.sourceId} scope=${control.lastTxHeader.scope}` : 'none'}`,
+      `lastRxHeader: ${control?.lastRxHeader ? `seq=${control.lastRxHeader.sequenceId} src=${control.lastRxHeader.sourceId} scope=${control.lastRxHeader.scope}` : 'none'}`,
+      `options: broadcast=${String(control?.options?.broadcast)} ttl=${control?.options?.ttl ?? 'n/a'} mTTL=${control?.options?.multicastTTL ?? 'n/a'} mLoop=${String(control?.options?.multicastLoopback)} iface=${control?.options?.multicastInterface || 'n/a'}`,
+      `multicast: ${memberships.length} membership(s)`,
+      ...memberships.map((m) => `  - ${m.group}${m.interfaceAddress ? ` @ ${m.interfaceAddress}` : ''}`),
+      `ssm: ${ssmMemberships.length} membership(s)`,
+      ...ssmMemberships.map((m) => `  - ${m.source} -> ${m.group}`),
+      `lastControlError: ${control?.lastControlError || 'none'}`,
+    ];
+
+    statusDiv.className = (state?.lastOk === false || control?.lastControlError) ? 'output warn' : 'output success';
+    statusDiv.textContent = lines.join('\n');
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `Failed to load UDP runtime: ${error.message}`;
+  }
+}
+
+async function postUdpControl(path, payload = undefined) {
+  const response = await fetch(path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: payload ? JSON.stringify(payload) : '{}',
+  });
+  return response.json();
+}
+
+async function runUdpSelfTest() {
+  const statusDiv = document.getElementById('udp-runtime-output');
+  if (!statusDiv) return;
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = 'Running UDP self-test...';
+
+  try {
+    const response = await fetch('/api/control/udp/self-test', { method: 'POST' });
+    const data = await response.json();
+    statusDiv.className = data?.ok ? 'output success' : 'output error';
+    statusDiv.textContent = JSON.stringify(data, null, 2);
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `UDP self-test failed: ${error.message}`;
+  }
+}
+
+async function openUdpControlSocket() {
+  const host = document.getElementById('udp-host')?.value || '0.0.0.0';
+  const portRaw = Number.parseInt(document.getElementById('udp-port')?.value || '0', 10);
+  const payload = { hostname: String(host).trim(), port: Number.isFinite(portRaw) ? portRaw : 0 };
+  const out = document.getElementById('udp-runtime-output');
+  if (!out) return;
+  out.className = 'output loading';
+  out.textContent = 'Opening UDP control socket...';
+  try {
+    const data = await postUdpControl('/api/control/udp/open', payload);
+    out.className = data?.ok ? 'output success' : 'output error';
+    out.textContent = JSON.stringify(data, null, 2);
+    await refreshUdpRuntimeStatus();
+  } catch (error) {
+    out.className = 'output error';
+    out.textContent = `Open UDP control socket failed: ${error.message}`;
+  }
+}
+
+async function closeUdpControlSocket() {
+  const out = document.getElementById('udp-runtime-output');
+  if (!out) return;
+  out.className = 'output loading';
+  out.textContent = 'Closing UDP control socket...';
+  try {
+    const data = await postUdpControl('/api/control/udp/close');
+    out.className = data?.ok ? 'output success' : 'output error';
+    out.textContent = JSON.stringify(data, null, 2);
+    await refreshUdpRuntimeStatus();
+  } catch (error) {
+    out.className = 'output error';
+    out.textContent = `Close UDP control socket failed: ${error.message}`;
+  }
+}
+
+async function applyUdpOptions() {
+  const ttl = Number.parseInt(document.getElementById('udp-ttl')?.value || '64', 10);
+  const multicastTTL = Number.parseInt(document.getElementById('udp-multicast-ttl')?.value || '2', 10);
+  const broadcast = Boolean(document.getElementById('udp-broadcast')?.checked);
+  const multicastLoopback = Boolean(document.getElementById('udp-multicast-loopback')?.checked);
+  const out = document.getElementById('udp-runtime-output');
+  if (!out) return;
+  out.className = 'output loading';
+  out.textContent = 'Applying UDP socket options...';
+  try {
+    const data = await postUdpControl('/api/control/udp/options', {
+      ttl,
+      multicastTTL,
+      broadcast,
+      multicastLoopback,
+    });
+    out.className = data?.ok ? 'output success' : 'output error';
+    out.textContent = JSON.stringify(data, null, 2);
+    await refreshUdpRuntimeStatus();
+  } catch (error) {
+    out.className = 'output error';
+    out.textContent = `Apply UDP options failed: ${error.message}`;
+  }
+}
+
+async function joinUdpMulticast() {
+  const group = document.getElementById('udp-group')?.value || '';
+  const interfaceAddress = document.getElementById('udp-iface')?.value || '';
+  const out = document.getElementById('udp-runtime-output');
+  if (!out) return;
+  out.className = 'output loading';
+  out.textContent = 'Joining multicast group...';
+  try {
+    const data = await postUdpControl('/api/control/udp/multicast/join', { group, interfaceAddress });
+    out.className = data?.ok ? 'output success' : 'output error';
+    out.textContent = JSON.stringify(data, null, 2);
+    await refreshUdpRuntimeStatus();
+  } catch (error) {
+    out.className = 'output error';
+    out.textContent = `Join multicast failed: ${error.message}`;
+  }
+}
+
+async function leaveUdpMulticast() {
+  const group = document.getElementById('udp-group')?.value || '';
+  const interfaceAddress = document.getElementById('udp-iface')?.value || '';
+  const out = document.getElementById('udp-runtime-output');
+  if (!out) return;
+  out.className = 'output loading';
+  out.textContent = 'Leaving multicast group...';
+  try {
+    const data = await postUdpControl('/api/control/udp/multicast/leave', { group, interfaceAddress });
+    out.className = data?.ok ? 'output success' : 'output error';
+    out.textContent = JSON.stringify(data, null, 2);
+    await refreshUdpRuntimeStatus();
+  } catch (error) {
+    out.className = 'output error';
+    out.textContent = `Leave multicast failed: ${error.message}`;
+  }
+}
+
+async function joinUdpSsm() {
+  const source = document.getElementById('udp-ssm-source')?.value || '';
+  const group = document.getElementById('udp-ssm-group')?.value || '';
+  const out = document.getElementById('udp-runtime-output');
+  if (!out) return;
+  out.className = 'output loading';
+  out.textContent = 'Joining source-specific multicast...';
+  try {
+    const data = await postUdpControl('/api/control/udp/ssm/join', { source, group });
+    out.className = data?.ok ? 'output success' : 'output error';
+    out.textContent = JSON.stringify(data, null, 2);
+    await refreshUdpRuntimeStatus();
+  } catch (error) {
+    out.className = 'output error';
+    out.textContent = `Join SSM failed: ${error.message}`;
+  }
+}
+
+async function leaveUdpSsm() {
+  const source = document.getElementById('udp-ssm-source')?.value || '';
+  const group = document.getElementById('udp-ssm-group')?.value || '';
+  const out = document.getElementById('udp-runtime-output');
+  if (!out) return;
+  out.className = 'output loading';
+  out.textContent = 'Leaving source-specific multicast...';
+  try {
+    const data = await postUdpControl('/api/control/udp/ssm/leave', { source, group });
+    out.className = data?.ok ? 'output success' : 'output error';
+    out.textContent = JSON.stringify(data, null, 2);
+    await refreshUdpRuntimeStatus();
+  } catch (error) {
+    out.className = 'output error';
+    out.textContent = `Leave SSM failed: ${error.message}`;
+  }
+}
+
+async function selectUdpProfile() {
+  const scope = document.getElementById('udp-profile-scope')?.value || 'site-local';
+  const reliability = document.getElementById('udp-profile-reliability')?.value || 'best-effort';
+  const security = document.getElementById('udp-profile-security')?.value || 'none';
+  const scale = document.getElementById('udp-profile-scale')?.value || 'medium';
+  const ipFamily = document.getElementById('udp-profile-ip-family')?.value || 'ipv4';
+  const out = document.getElementById('udp-runtime-output');
+  if (!out) return;
+  out.className = 'output loading';
+  out.textContent = 'Selecting UDP multicast profile...';
+  try {
+    const data = await postUdpControl('/api/control/udp/profile/select', {
+      scope,
+      reliability,
+      security,
+      scale,
+      ipFamily,
+    });
+    if (data?.ok && data?.selection?.address) {
+      const groupInput = document.getElementById('udp-group');
+      if (groupInput) groupInput.value = String(data.selection.address);
+      const ttlInput = document.getElementById('udp-ttl');
+      if (ttlInput && Number.isFinite(data.selection.ttl)) {
+        ttlInput.value = String(data.selection.ttl);
+      }
+      const multicastTtlInput = document.getElementById('udp-multicast-ttl');
+      if (multicastTtlInput && Number.isFinite(data.selection.ttl)) {
+        multicastTtlInput.value = String(Math.max(1, Math.min(255, data.selection.ttl)));
+      }
+      if (String(ipFamily) === 'ipv6') {
+        const ssmGroup = document.getElementById('udp-ssm-group');
+        if (ssmGroup && security === 'encrypt' && String(data.selection.address).startsWith('ff3e::')) {
+          ssmGroup.value = String(data.selection.address);
+        }
+      }
+    }
+    out.className = data?.ok ? 'output success' : 'output error';
+    out.textContent = JSON.stringify(data, null, 2);
+    await refreshUdpRuntimeStatus();
+  } catch (error) {
+    out.className = 'output error';
+    out.textContent = `Select UDP profile failed: ${error.message}`;
+  }
+}
+
+async function setUdpPeer() {
+  const hostname = document.getElementById('udp-dest-host')?.value || '';
+  const port = Number.parseInt(document.getElementById('udp-dest-port')?.value || '', 10);
+  const out = document.getElementById('udp-runtime-output');
+  if (!out) return;
+  out.className = 'output loading';
+  out.textContent = 'Setting UDP peer...';
+  try {
+    const data = await postUdpControl('/api/control/udp/peer', { hostname, port });
+    out.className = data?.ok ? 'output success' : 'output error';
+    out.textContent = JSON.stringify(data, null, 2);
+    await refreshUdpRuntimeStatus();
+  } catch (error) {
+    out.className = 'output error';
+    out.textContent = `Set UDP peer failed: ${error.message}`;
+  }
+}
+
+async function sendUdpPacket() {
+  const hostname = document.getElementById('udp-dest-host')?.value || '';
+  const port = Number.parseInt(document.getElementById('udp-dest-port')?.value || '', 10);
+  const payload = document.getElementById('udp-payload')?.value || 'playground-udp-message';
+  const out = document.getElementById('udp-runtime-output');
+  if (!out) return;
+  out.className = 'output loading';
+  out.textContent = 'Sending UDP packet...';
+  try {
+    const data = await postUdpControl('/api/control/udp/send', { hostname, port, payload });
+    out.className = data?.ok ? 'output success' : 'output error';
+    out.textContent = JSON.stringify(data, null, 2);
+    await refreshUdpRuntimeStatus();
+  } catch (error) {
+    out.className = 'output error';
+    out.textContent = `Send UDP packet failed: ${error.message}`;
+  }
+}
+
+async function sendUdpMany() {
+  const hostname = document.getElementById('udp-dest-host')?.value || '';
+  const port = Number.parseInt(document.getElementById('udp-dest-port')?.value || '', 10);
+  const payload = document.getElementById('udp-payload')?.value || 'playground-udp-message';
+  const out = document.getElementById('udp-runtime-output');
+  if (!out) return;
+  out.className = 'output loading';
+  out.textContent = 'Sending UDP packet batch...';
+  try {
+    const packets = [
+      { hostname, port, payload: `${payload}#1` },
+      { hostname, port, payload: `${payload}#2` },
+      { hostname, port, payload: `${payload}#3` },
+    ];
+    const data = await postUdpControl('/api/control/udp/send-many', { packets });
+    out.className = data?.ok ? 'output success' : 'output error';
+    out.textContent = JSON.stringify(data, null, 2);
+    await refreshUdpRuntimeStatus();
+  } catch (error) {
+    out.className = 'output error';
+    out.textContent = `Send UDP batch failed: ${error.message}`;
   }
 }
 
