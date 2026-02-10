@@ -23,6 +23,7 @@ function toggleMiniDash() {
 
 const miniDashState = {
   runtimeInfo: null,
+  secretsRuntime: null,
   governance: null,
   orchestration: null,
   dashboardMini: null,
@@ -230,6 +231,38 @@ function renderResilienceChip(runtimeInfo) {
   chip.textContent = `Res: ${String(profile).toUpperCase()}`;
 }
 
+function renderSecretsChip(secretsRuntime) {
+  const chip = document.getElementById('mini-secrets');
+  if (!chip) return;
+  chip.classList.add('mini-chip-tight');
+
+  const runtime = secretsRuntime?.runtime;
+  if (!runtime) {
+    chip.className = 'mini-chip mini-chip-pending mini-chip-tight';
+    chip.textContent = 'Sec: ...';
+    chip.title = '';
+    return;
+  }
+
+  const available = Boolean(runtime.available);
+  const backend = String(runtime.backend || 'unknown');
+  const backendLabel = backend
+    .replace('macos-keychain', 'keychain')
+    .replace('windows-credential-manager', 'credmgr')
+    .replace('linux-libsecret', 'libsecret')
+    .replace('unknown', 'unknown');
+  const service = String(secretsRuntime?.serviceContract?.primaryService || '');
+  const genericFallbackEnabled = Boolean(secretsRuntime?.serviceContract?.genericFallbackEnabled);
+
+  chip.className = available
+    ? `mini-chip ${genericFallbackEnabled ? 'mini-chip-warn' : 'mini-chip-ok'} mini-chip-tight`
+    : 'mini-chip mini-chip-fail mini-chip-tight';
+  chip.textContent = `Sec: ${available ? backendLabel : 'OFF'}`;
+  chip.title = service
+    ? `service=${service}${genericFallbackEnabled ? ' (generic fallback enabled)' : ''}`
+    : '';
+}
+
 function renderOrchestrationTrend() {
   const trend = document.getElementById('mini-orch-trend');
   if (!trend) return;
@@ -366,12 +399,13 @@ async function updateMiniDash() {
   const fetchStarted = performance.now();
   // Fetch fresh runtime and governance snapshots
   try {
-    const [infoRes, govRes, orchRes, miniRes, trendsRes] = await Promise.allSettled([
+    const [infoRes, govRes, orchRes, miniRes, trendsRes, secretsRes] = await Promise.allSettled([
       fetch('/api/info').then((r) => r.json()),
       fetch('/api/control/governance-status').then((r) => r.json()),
       fetch('/api/control/script-orchestration/status').then((r) => r.json()),
       fetch('/api/dashboard/mini').then((r) => r.json()),
       fetch('/api/dashboard/trends?minutes=15&limit=10').then((r) => r.json()),
+      fetch('/api/control/secrets/runtime').then((r) => r.json()),
     ]);
     if (infoRes.status === 'fulfilled' && infoRes.value?.runtime) {
       miniDashState.runtimeInfo = infoRes.value;
@@ -392,6 +426,9 @@ async function updateMiniDash() {
     }
     if (trendsRes && trendsRes.status === 'fulfilled') {
       miniDashState.dashboardTrends = trendsRes.value;
+    }
+    if (secretsRes && secretsRes.status === 'fulfilled') {
+      miniDashState.secretsRuntime = secretsRes.value;
     }
     miniDashState.consecutiveFailures = 0;
     miniDashState.lastSyncMs = Date.now();
@@ -502,6 +539,7 @@ async function updateMiniDash() {
   renderStreamChip();
   renderOrchestrationChip(miniDashState.orchestration);
   renderDnsChip(miniDashState.runtimeInfo);
+  renderSecretsChip(miniDashState.secretsRuntime);
   renderResilienceChip(miniDashState.runtimeInfo);
   renderOrchestrationTrend();
   renderPercentTrend('mini-load-trend', miniDashState.loadTrend);
