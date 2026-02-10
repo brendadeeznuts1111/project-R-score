@@ -56,6 +56,16 @@ const FETCH_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_FETCH_TIMEOUT_MS", BASE_STAN
 const MAX_BODY_SIZE_MB = parseNumberEnv("PLAYGROUND_MAX_BODY_SIZE_MB", BASE_STANDARD.maxBodySizeMb, { min: 1, max: 1024, integer: false });
 const MAX_BODY_SIZE_BYTES = Math.max(1, Math.floor(MAX_BODY_SIZE_MB * 1024 * 1024));
 const PROXY_AUTH_TOKEN = process.env.PLAYGROUND_PROXY_AUTH_TOKEN || "";
+const REGISTRY_HEALTH_URL = process.env.PLAYGROUND_REGISTRY_HEALTH_URL || "https://registry.factory-wager.com/health";
+const REGISTRY_DOCS_URL = process.env.PLAYGROUND_REGISTRY_DOCS_URL || "https://docs.factory-wager.com";
+const REGISTRY_REQUEST_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_REGISTRY_TIMEOUT_MS", 2500, {
+  min: 250,
+  max: 20000,
+});
+const REGISTRY_CACHE_TTL_MS = parseNumberEnv("PLAYGROUND_REGISTRY_CACHE_TTL_MS", 15000, {
+  min: 1000,
+  max: 300000,
+});
 const STREAM_CHUNK_SIZE = parseNumberEnv("PLAYGROUND_STREAM_CHUNK_SIZE", BASE_STANDARD.streamChunkSize, { min: 256, max: 1048576 });
 const SEARCH_GOVERNANCE_FETCH_DEPTH = parseNumberEnv(
   "SEARCH_GOVERNANCE_FETCH_DEPTH",
@@ -111,6 +121,7 @@ let cachedBundleAnalysisByEntrypoint = new Map<string, { at: number; payload: Re
 let cachedOrchestrationLoop: Record<string, unknown> | null = null;
 let cachedOrchestrationLoopAt = 0;
 let cacheTimestamp = 0;
+let cachedRegistryStatus: { at: number; payload: Record<string, unknown> } | null = null;
 let capacityMetricsDb: Database | null = null;
 let capacityInsertStmt: ReturnType<Database["prepare"]> | null = null;
 let capacityPruneStmt: ReturnType<Database["prepare"]> | null = null;
@@ -1023,6 +1034,80 @@ async function readJsonSafe(path: string): Promise<any | null> {
   }
 }
 
+async function probeUrlHealth(url: string, timeoutMs: number): Promise<{
+  ok: boolean;
+  status: number | null;
+  latencyMs: number;
+  error: string | null;
+}> {
+  const start = performance.now();
+  try {
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(timeoutMs),
+      redirect: "follow",
+    });
+    return {
+      ok: response.ok,
+      status: response.status,
+      latencyMs: Math.round((performance.now() - start) * 100) / 100,
+      error: null,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      status: null,
+      latencyMs: Math.round((performance.now() - start) * 100) / 100,
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
+async function getRegistryIntegrationStatus(force = false): Promise<Record<string, unknown>> {
+  const now = Date.now();
+  if (!force && cachedRegistryStatus && now - cachedRegistryStatus.at < REGISTRY_CACHE_TTL_MS) {
+    return cachedRegistryStatus.payload;
+  }
+
+  const [healthProbe, docsProbe] = await Promise.all([
+    probeUrlHealth(REGISTRY_HEALTH_URL, REGISTRY_REQUEST_TIMEOUT_MS),
+    probeUrlHealth(REGISTRY_DOCS_URL, REGISTRY_REQUEST_TIMEOUT_MS),
+  ]);
+
+  const payload = {
+    generatedAt: new Date(now).toISOString(),
+    cacheTtlMs: REGISTRY_CACHE_TTL_MS,
+    configured: true,
+    endpoints: {
+      health: {
+        url: REGISTRY_HEALTH_URL,
+        ...healthProbe,
+      },
+      docs: {
+        url: REGISTRY_DOCS_URL,
+        ...docsProbe,
+      },
+    },
+    r2: {
+      bucketName: (process.env.R2_BUCKET_NAME || process.env.S3_BUCKET_NAME || "scanner-cookies").trim(),
+      source: process.env.R2_BUCKET_NAME
+        ? "R2_BUCKET_NAME"
+        : process.env.S3_BUCKET_NAME
+          ? "S3_BUCKET_NAME"
+          : "default",
+    },
+    versioning: {
+      packageVersion: String(BUILD_METADATA?.version || "1.0.0"),
+      gitCommitHash: GIT_COMMIT_HASH,
+      gitCommitHashSource: GIT_COMMIT_HASH_SOURCE,
+    },
+    noProxy: process.env.NO_PROXY || process.env.no_proxy || "",
+    status: healthProbe.ok && docsProbe.ok ? "ok" : "degraded",
+  };
+
+  cachedRegistryStatus = { at: now, payload };
+  return payload;
+}
+
 function getMimeType(path: string): string {
   const ext = extname(path).toLowerCase();
   const map: Record<string, string> = {
@@ -1684,6 +1769,21 @@ curl -s "http://localhost:<port>/api/dashboard/trends?minutes=15&limit=30" | jq 
 
 # Summary-only convenience endpoint
 curl -s "http://localhost:<port>/api/dashboard/trends/summary?minutes=60&limit=120" | jq .
+`,
+  },
+  {
+    id: "registry-integration",
+    name: "Registry Integration",
+    description: "Live registry/docs health + R2 bucket/versioning details wired into dashboard APIs",
+    category: "Governance",
+    code: `# Registry integration status
+curl -s http://localhost:<port>/api/control/registry-integration | jq .
+
+# api/info now includes a registry block
+curl -s http://localhost:<port>/api/info | jq '.registry'
+
+# feature matrix summary includes registry state
+curl -s http://localhost:<port>/api/control/feature-matrix | jq '.registry'
 `,
   },
   {
@@ -4490,7 +4590,7 @@ async function buildDashboardPayload(req: Request) {
 
 // API routes
 const routes = {
-  "/api/info": () => ({
+  "/api/info": async () => ({
     bunVersion: Bun.version || "1.3.9+",
     bunRevision: BUN_REVISION,
     gitCommitHash: GIT_COMMIT_HASH,
@@ -4499,6 +4599,7 @@ const routes = {
     platform: process.platform,
     arch: process.arch,
     features: resolveAllFeatures(),
+    registry: await getRegistryIntegrationStatus(),
     controlPlane: {
       prefetchEnabled: PREFETCH_ENABLED,
       preconnectEnabled: PRECONNECT_ENABLED,
@@ -4735,7 +4836,13 @@ const routes = {
     },
   }),
 
-  "/api/control/feature-matrix": () => {
+  "/api/control/registry-integration": async () => ({
+    generatedAt: new Date().toISOString(),
+    runtime: buildRuntimeMetadata(),
+    registry: await getRegistryIntegrationStatus(),
+  }),
+
+  "/api/control/feature-matrix": async () => {
     const scriptMode = (process.env.PLAYGROUND_SCRIPT_MODE || "sequential").toLowerCase();
     const noExitOnError = parseBool(process.env.PLAYGROUND_NO_EXIT_ON_ERROR, false);
     const http2Upgrade = parseBool(process.env.PLAYGROUND_HTTP2_UPGRADE, false);
@@ -4823,6 +4930,7 @@ const routes = {
       };
     });
 
+    const registry = await getRegistryIntegrationStatus();
     return {
       generatedAt: new Date().toISOString(),
       version: "bun-v1.3.9",
@@ -4839,6 +4947,7 @@ const routes = {
         "active",
       ],
       runtime,
+      registry,
       summary: {
         rowCount: rows.length,
         activeCount: rows.filter((row) => row.active).length,
@@ -5500,6 +5609,17 @@ const routes = {
       });
     }
 
+    if (id === "registry-integration") {
+      const payload = await routes["/api/control/registry-integration"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(payload, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     if (id === "no-proxy-explicit" || id === "proxy") {
       const sample = {
         env: { NO_PROXY: "localhost" },
@@ -5705,8 +5825,9 @@ async function handleRequest(req: Request): Promise<Response> {
     if (url.pathname.startsWith("/api/")) {
       if (url.pathname === "/api/info") {
         const uptimeMs = Date.now() - serverStartTime;
+        const info = await routes["/api/info"]();
         return jsonResponse({
-          ...routes["/api/info"](),
+          ...info,
           runtime: {
             dedicatedPort: DEDICATED_PORT,
             portRange: PORT_RANGE,
@@ -5819,7 +5940,11 @@ async function handleRequest(req: Request): Promise<Response> {
       }
 
       if (url.pathname === "/api/control/feature-matrix") {
-        return jsonResponse(routes["/api/control/feature-matrix"]());
+        return jsonResponse(await routes["/api/control/feature-matrix"]());
+      }
+
+      if (url.pathname === "/api/control/registry-integration") {
+        return jsonResponse(await routes["/api/control/registry-integration"]());
       }
 
       if (url.pathname === "/api/control/demo-module/validate") {

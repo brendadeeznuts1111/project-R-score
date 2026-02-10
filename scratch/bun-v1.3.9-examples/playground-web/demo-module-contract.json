@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "total": 55,
-  "generatedAt": "2026-02-10T16:17:44.610Z",
+  "total": 56,
+  "generatedAt": "2026-02-10T16:42:50.617Z",
   "modules": {
     "governance-status": {
       "language": "bash",
@@ -1352,6 +1352,31 @@
       ],
       "benchCommand": "bun run scripts/demo-module-bench.ts --id=project-health-metrics",
       "testCommand": "bun run scripts/demo-module-test.ts --id=project-health-metrics",
+      "benchmarkBaseline": {
+        "mode": "map-size",
+        "iterations": 2000000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "registry-integration": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=registry-integration",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=registry-integration",
       "benchmarkBaseline": {
         "mode": "map-size",
         "iterations": 2000000,
