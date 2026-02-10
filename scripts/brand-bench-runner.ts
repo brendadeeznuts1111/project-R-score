@@ -339,7 +339,18 @@ export async function runBrandBench(options: RunnerOptions): Promise<BrandBenchR
   await writeFile(latestPath, JSON.stringify(report, null, 2));
 
   if (!options.quiet) {
-    console.log(`brand-bench report: ${runPath}`);
+    // Print operations table
+    console.log('\n📊 Brand Bench Results:');
+    const opsTable = Object.entries(operations).map(([name, metric]) => ({
+      operation: name,
+      'ops/sec': metric.opsPerSec.toFixed(0),
+      p50: `${metric.p50Ms.toFixed(3)}ms`,
+      p95: `${metric.p95Ms.toFixed(3)}ms`,
+      rating: metric.opsPerSec > 2_000_000 ? '🔥 Fast' : metric.opsPerSec > 1_000_000 ? '⚡ Good' : '✅ OK'
+    }));
+    console.log(Bun.inspect.table(opsTable, ['operation', 'ops/sec', 'p50', 'p95', 'rating'], { colors: true }));
+    
+    console.log(`\nbrand-bench report: ${runPath}`);
     console.log(`brand-bench latest: ${latestPath}`);
   }
 
