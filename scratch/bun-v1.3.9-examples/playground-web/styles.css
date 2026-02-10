@@ -682,6 +682,60 @@ header h1 {
   transform: translateY(-2px) scale(0.98);
 }
 
+.feature-card.card-mapped {
+  cursor: pointer;
+  position: relative;
+}
+
+.feature-card.card-mapped:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.feature-card-meta {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 0.72em;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.feature-card.card-unavailable {
+  opacity: 0.55;
+}
+
+.feature-card.card-unavailable:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--border);
+}
+
+.demo-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 10px;
+  margin-bottom: 10px;
+  font-size: 0.78em;
+  color: var(--text-secondary);
+}
+
+.demo-filter-pill-clear {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-primary);
+  border-radius: 999px;
+  width: 20px;
+  height: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
 /* Search/filter input */
 .demo-search {
   width: 100%;
@@ -703,6 +757,22 @@ header h1 {
 
 .demo-search::placeholder {
   color: var(--text-secondary);
+}
+
+.header-actions {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.run-btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+}
+
+#mini-link-mode {
+  cursor: pointer;
 }
 
 /* Keyboard shortcut hints */

@@ -8,10 +8,22 @@ let governanceSummary = null;
 let orchestrationSummary = null;
 let projectHealthSummary = null;
 let demoSearchQuery = '';
+let activeCategoryFilter = '';
+let welcomeTemplateHtml = '';
 let trendSummaryTimer = null;
 const shortcutState = {
   pendingLeader: null,
   pendingAt: 0,
+};
+const homeCardClassFallbacks = {
+  'feature-governance': { category: 'governance', preferredDemoIds: ['brand-bench-gate'] },
+  'feature-process': { category: 'process', preferredDemoIds: [] },
+  'feature-orchestration': { category: 'orchestration', preferredDemoIds: ['script-orchestration-control'] },
+  'feature-networking': { category: 'network', preferredDemoIds: ['http2-runtime-control', 'protocol-matrix'] },
+  'feature-testing': { category: 'testing', preferredDemoIds: [] },
+  'feature-performance': { category: 'performance', preferredDemoIds: [] },
+  'feature-profiling': { category: 'profiling', preferredDemoIds: [] },
+  'feature-build': { category: 'build', preferredDemoIds: ['build-metafile'] },
 };
 
 // Toast notification system
@@ -99,11 +111,18 @@ function updateConnectionStatus(online) {
 async function init() {
   // Set up keyboard shortcuts
   setupKeyboardShortcuts();
+
+  const demoContent = document.getElementById('demo-content');
+  if (demoContent) {
+    welcomeTemplateHtml = demoContent.innerHTML;
+  }
   
   await refreshHeaderState();
   
   // Load demos
   await loadDemos();
+
+  bindHomeFeatureCards();
   
   // Set up event listeners
   setupEventListeners();
@@ -185,6 +204,17 @@ function setupKeyboardShortcuts() {
     if (withMeta && e.shiftKey && key === 'c') {
       e.preventDefault();
       copyCurrentCodeBlock();
+      return;
+    }
+
+    // Cmd/Ctrl+Shift+L copies deep link for current state.
+    if (withMeta && e.shiftKey && key === 'l') {
+      e.preventDefault();
+      if (typeof window.copyPlaygroundLink === 'function') {
+        window.copyPlaygroundLink('query');
+      } else {
+        showToast('Share links not ready', 'error');
+      }
       return;
     }
 
@@ -359,6 +389,7 @@ Keyboard Shortcuts:
   Cmd/Ctrl+Shift+O Run orchestration full loop
   Cmd/Ctrl+Enter Run current demo
   Cmd/Ctrl+Shift+C Copy current demo code
+  Cmd/Ctrl+Shift+L Copy deep link
   1-6            Jump to quick demos
   J / K          Next / previous demo
   ] / [          Next / previous demo (alt nav)
@@ -385,6 +416,158 @@ function focusDemoSearch() {
     search.focus();
     search.select();
   }
+}
+
+function normalizeText(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+function resolveCategoryFilter(rawCategory) {
+  const query = normalizeText(rawCategory);
+  if (!query) return '';
+  const categories = Array.from(new Set(demos.map((demo) => String(demo.category || '').trim()))).filter(Boolean);
+  const exact = categories.find((category) => normalizeText(category) === query);
+  if (exact) return exact;
+  const includes = categories.find((category) => normalizeText(category).includes(query) || query.includes(normalizeText(category)));
+  return includes || rawCategory;
+}
+
+function getFilteredDemos(searchQuery = demoSearchQuery, categoryFilter = activeCategoryFilter) {
+  const q = normalizeText(searchQuery);
+  const categoryQ = normalizeText(categoryFilter);
+  return demos.filter((demo) => {
+    if (categoryQ) {
+      const demoCategory = normalizeText(demo.category);
+      if (!demoCategory.includes(categoryQ)) return false;
+    }
+    if (!q) return true;
+    const haystack = [
+      demo.id || '',
+      demo.name || '',
+      demo.description || '',
+      demo.category || '',
+      demo.code || '',
+    ].join(' ').toLowerCase();
+    return haystack.includes(q);
+  });
+}
+
+function findPreferredDemoId(preferredIds = [], filteredDemos = []) {
+  for (const id of preferredIds) {
+    if (filteredDemos.some((demo) => demo.id === id)) return id;
+  }
+  return filteredDemos[0]?.id || null;
+}
+
+function showWelcome() {
+  const content = document.getElementById('demo-content');
+  if (!content) return;
+  currentDemo = null;
+  document.querySelectorAll('.demo-item').forEach((item) => item.classList.remove('active'));
+  content.innerHTML = welcomeTemplateHtml || '<div class="welcome"><h2>Playground Home</h2></div>';
+  bindHomeFeatureCards();
+  if (typeof window.updateBreadcrumbs === 'function') {
+    window.updateBreadcrumbs();
+  }
+  publishNavigationState({ replace: false });
+}
+
+function applyDemoCategoryFilter(rawCategory, options = {}) {
+  const opts = {
+    autoSelect: false,
+    showHome: true,
+    clearSearch: true,
+    preferredDemoIds: [],
+    ...options,
+  };
+  activeCategoryFilter = resolveCategoryFilter(rawCategory);
+  if (opts.clearSearch) {
+    demoSearchQuery = '';
+  }
+  if (opts.showHome) {
+    showWelcome();
+  }
+  renderDemoList(demoSearchQuery);
+  if (opts.autoSelect) {
+    const filteredDemos = getFilteredDemos(demoSearchQuery, activeCategoryFilter);
+    const targetId = findPreferredDemoId(opts.preferredDemoIds, filteredDemos);
+    if (targetId) {
+      selectDemo(targetId);
+    } else {
+      showToast(`No demos found for "${activeCategoryFilter}"`, 'error');
+    }
+  } else {
+    showToast(
+      activeCategoryFilter
+        ? `Filtered demos to ${activeCategoryFilter}`
+        : 'Category filter cleared',
+      'success',
+      2000,
+    );
+  }
+  publishNavigationState({ replace: false });
+}
+
+function clearDemoCategoryFilter() {
+  activeCategoryFilter = '';
+  renderDemoList(demoSearchQuery);
+  showToast('Category filter cleared', 'success', 1800);
+  publishNavigationState({ replace: false });
+}
+
+function bindHomeFeatureCards() {
+  const cards = document.querySelectorAll('.feature-card');
+  cards.forEach((card) => {
+    if (!(card instanceof HTMLElement)) return;
+    const classFallback = Object.entries(homeCardClassFallbacks).find(([className]) => card.classList.contains(className))?.[1];
+    const category = card.dataset.homeCategory || classFallback?.category || '';
+    if (!category) return;
+    const preferredDemoIds = [
+      card.dataset.homeDemo || '',
+      ...(classFallback?.preferredDemoIds || []),
+    ].filter(Boolean);
+    const categoryMatchCount = demos.filter((demo) => normalizeText(demo.category).includes(normalizeText(category))).length;
+    card.classList.add('card-mapped');
+    let meta = card.querySelector('.feature-card-meta');
+    if (!meta) {
+      meta = document.createElement('span');
+      meta.className = 'feature-card-meta';
+      card.appendChild(meta);
+    }
+    meta.textContent = `${categoryMatchCount} demo${categoryMatchCount === 1 ? '' : 's'}`;
+    const unavailable = categoryMatchCount === 0;
+    card.classList.toggle('card-unavailable', unavailable);
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', `${card.innerText.trim()} demos`);
+    card.onclick = () => {
+      if (unavailable) {
+        showToast(`No demos mapped for ${category}`, 'error');
+        return;
+      }
+      applyDemoCategoryFilter(category, { autoSelect: true, showHome: false, clearSearch: true, preferredDemoIds });
+    };
+    card.onkeydown = (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        if (unavailable) {
+          showToast(`No demos mapped for ${category}`, 'error');
+          return;
+        }
+        applyDemoCategoryFilter(category, { autoSelect: true, showHome: false, clearSearch: true, preferredDemoIds });
+      }
+    };
+  });
+}
+
+function publishNavigationState(options = {}) {
+  const detail = {
+    demoId: currentDemo?.id || '',
+    category: activeCategoryFilter || '',
+    search: demoSearchQuery || '',
+    replace: Boolean(options.replace),
+  };
+  window.dispatchEvent(new CustomEvent('playground:navigation', { detail }));
 }
 
 function closeAnyModal() {
@@ -635,23 +818,11 @@ function renderDemoList(filter = '') {
   demoSearchQuery = filter;
   const list = document.getElementById('demo-list');
   
+  const filteredDemos = getFilteredDemos(demoSearchQuery, activeCategoryFilter);
+
   // Group by category
   const categories = {};
-  demos.forEach(demo => {
-    // Broader search: id, name, description, category, and code snippet
-    const q = filter.trim().toLowerCase();
-    if (q) {
-      const haystack = [
-        demo.id || '',
-        demo.name || '',
-        demo.description || '',
-        demo.category || '',
-        demo.code || '',
-      ].join(' ').toLowerCase();
-      if (!haystack.includes(q)) {
-        return;
-      }
-    }
+  filteredDemos.forEach(demo => {
     if (!categories[demo.category]) {
       categories[demo.category] = [];
     }
@@ -661,12 +832,18 @@ function renderDemoList(filter = '') {
   let html = '';
   
   // Add search input
-  html += `<input type="text" class="demo-search" placeholder="🔍 Search demos... (/ or ⌘L, ⌘K palette, g then s)" value="${escapeHtml(filter)}" oninput="renderDemoList(this.value)">`;
+  html += `<input type="text" class="demo-search" placeholder="🔍 Search demos... (/ or ⌘L, ⌘K palette, g then s)" value="${escapeHtml(demoSearchQuery)}" oninput="renderDemoList(this.value)">`;
+  if (activeCategoryFilter) {
+    html += `<div class="demo-filter-pill">Category: ${escapeHtml(activeCategoryFilter)} <button class="demo-filter-pill-clear" onclick="clearDemoCategoryFilter()" aria-label="Clear category filter">×</button></div>`;
+  }
   
   // Show count
   const totalDemos = Object.values(categories).flat().length;
-  if (filter) {
-    html += `<div style="font-size: 0.8em; color: var(--text-secondary); margin-bottom: 10px;">${totalDemos} demo${totalDemos !== 1 ? 's' : ''} found</div>`;
+  if (demoSearchQuery || activeCategoryFilter) {
+    html += `<div style="font-size: 0.8em; color: var(--text-secondary); margin-bottom: 10px;">${totalDemos} demo${totalDemos !== 1 ? 's' : ''} found${activeCategoryFilter ? ` in ${escapeHtml(activeCategoryFilter)}` : ''}</div>`;
+  }
+  if (totalDemos === 0) {
+    html += '<div class="error">No demos match the current search/filter.</div>';
   }
   
   Object.entries(categories).forEach(([category, categoryDemos]) => {
@@ -692,6 +869,8 @@ function renderDemoList(filter = '') {
       selectDemo(id);
     });
   });
+
+  publishNavigationState({ replace: true });
 }
 
 async function selectDemo(id) {
@@ -717,6 +896,10 @@ async function selectDemo(id) {
     }
     currentDemo = demo;
     renderDemo(demo);
+    if (typeof window.updateBreadcrumbs === 'function') {
+      window.updateBreadcrumbs(demo.category, demo.name);
+    }
+    publishNavigationState({ replace: false });
   } catch (error) {
     console.error('Failed to load demo:', error);
     showToast(`Failed to load demo: ${error.message}`, 'error');
@@ -1075,6 +1258,7 @@ function escapeHtml(text) {
 
 function setupEventListeners() {
   // Make functions globally available
+  window.showToast = showToast;
   window.runDemo = runDemo;
   window.copyCode = copyCode;
   window.refreshBrandGateStatus = refreshBrandGateStatus;
@@ -1101,6 +1285,11 @@ function setupEventListeners() {
     selectDemo(id);
   };
   window.focusDemoSearch = focusDemoSearch;
+  window.renderDemoList = renderDemoList;
+  window.showWelcome = showWelcome;
+  window.applyDemoCategoryFilter = applyDemoCategoryFilter;
+  window.clearDemoCategoryFilter = clearDemoCategoryFilter;
+  window.publishNavigationState = publishNavigationState;
 }
 
 async function runDemoContractAction(path) {

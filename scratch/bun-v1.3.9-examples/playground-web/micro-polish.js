@@ -39,6 +39,7 @@ const miniDashState = {
   wsConnected: false,
   wsLastMessageMs: 0,
   wsReconnects: 0,
+  linkMode: 'unknown',
 };
 
 let capacitySocket = null;
@@ -213,6 +214,35 @@ function renderDnsChip(runtimeInfo) {
   const enabled = Boolean(cp.prefetchEnabled || cp.preconnectEnabled);
   chip.className = enabled ? 'mini-chip mini-chip-ok mini-chip-tight' : 'mini-chip mini-chip-warn mini-chip-tight';
   chip.textContent = `DNS: ${enabled ? 'ON' : 'OFF'}`;
+}
+
+function renderLinkModeChip() {
+  const chip = document.getElementById('mini-link-mode');
+  if (!chip) return;
+  const mode = String(miniDashState.linkMode || 'unknown').toLowerCase();
+  chip.classList.add('mini-chip-tight');
+  if (mode === 'query') {
+    chip.className = 'mini-chip mini-chip-ok mini-chip-tight';
+    chip.textContent = 'Link: QUERY';
+    return;
+  }
+  if (mode === 'hash') {
+    chip.className = 'mini-chip mini-chip-warn mini-chip-tight';
+    chip.textContent = 'Link: HASH';
+    return;
+  }
+  if (mode === 'text-fragment') {
+    chip.className = 'mini-chip mini-chip-warn mini-chip-tight';
+    chip.textContent = 'Link: TEXT';
+    return;
+  }
+  if (mode === 'none') {
+    chip.className = 'mini-chip mini-chip-pending mini-chip-tight';
+    chip.textContent = 'Link: NONE';
+    return;
+  }
+  chip.className = 'mini-chip mini-chip-pending mini-chip-tight';
+  chip.textContent = 'Link: ...';
 }
 
 function renderResilienceChip(runtimeInfo) {
@@ -539,6 +569,7 @@ async function updateMiniDash() {
   renderStreamChip();
   renderOrchestrationChip(miniDashState.orchestration);
   renderDnsChip(miniDashState.runtimeInfo);
+  renderLinkModeChip();
   renderSecretsChip(miniDashState.secretsRuntime);
   renderResilienceChip(miniDashState.runtimeInfo);
   renderOrchestrationTrend();
@@ -597,13 +628,24 @@ function updateBreadcrumbs(category, demo) {
 }
 
 function goHome() {
-  showWelcome();
+  if (typeof window.showWelcome === 'function') {
+    window.showWelcome();
+  }
   updateBreadcrumbs();
 }
 
 function filterCategory(category) {
-  renderDemoList();
-  // Would filter by category
+  if (typeof window.applyDemoCategoryFilter === 'function') {
+    window.applyDemoCategoryFilter(category, {
+      autoSelect: false,
+      showHome: true,
+      clearSearch: true,
+    });
+    return;
+  }
+  if (typeof window.renderDemoList === 'function') {
+    window.renderDemoList('');
+  }
 }
 
 // Performance Monitor
@@ -695,6 +737,12 @@ document.addEventListener('DOMContentLoaded', () => {
   renderStreamChip();
   // Update every 3 seconds for smoother live state
   setInterval(updateMiniDash, 3000);
+});
+
+window.addEventListener('playground:link-mode', (event) => {
+  const detail = event && event.detail ? event.detail : {};
+  miniDashState.linkMode = String(detail.mode || 'unknown');
+  renderLinkModeChip();
 });
 
 // Also hook into app init if available for sync with app data

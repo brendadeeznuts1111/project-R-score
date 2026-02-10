@@ -32,6 +32,7 @@
       <span id="mini-stream" class="mini-chip mini-chip-pending">Stream: ...</span>
       <span id="mini-orch" class="mini-chip mini-chip-pending">Orch: ...</span>
       <span id="mini-dns" class="mini-chip mini-chip-pending">DNS: ...</span>
+      <span id="mini-link-mode" class="mini-chip mini-chip-pending" title="Toggle query/hash link mode" onclick="cyclePlaygroundLinkMode()">Link: ...</span>
       <span id="mini-secrets" class="mini-chip mini-chip-pending">Sec: ...</span>
       <span id="mini-resilience" class="mini-chip mini-chip-pending">Res: ...</span>
     </div>
@@ -76,6 +77,10 @@
       <div id="header-badges" class="header-badges">
         <span class="badge">Loading control-plane...</span>
       </div>
+      <div class="header-actions">
+        <button id="share-link-btn" class="run-btn run-btn-ghost" onclick="copyPlaygroundLink('query')">🔗 Copy Link</button>
+        <button id="share-hash-btn" class="run-btn run-btn-ghost" onclick="copyPlaygroundLink('hash')"># Copy Hash Link</button>
+      </div>
     </header>
 
     <!-- Breadcrumbs -->
@@ -105,35 +110,35 @@
               </p>
             </div>
             <div class="features-grid" aria-label="Demo categories">
-              <div class="feature-card feature-governance">
+              <div class="feature-card feature-governance" data-home-category="governance" data-home-demo="brand-bench-gate">
                 <h3><span class="feature-emoji" aria-hidden="true">🛡️</span> Governance</h3>
                 <p>Validate canonical decisions, benchmark gates, and evidence tiers.</p>
               </div>
-              <div class="feature-card feature-process">
+              <div class="feature-card feature-process" data-home-category="process">
                 <h3><span class="feature-emoji" aria-hidden="true">⚙️</span> Process</h3>
                 <p>Signal handling, argv parsing, stdin/stdout, and child process spawning.</p>
               </div>
-              <div class="feature-card feature-orchestration">
+              <div class="feature-card feature-orchestration" data-home-category="orchestration" data-home-demo="script-orchestration-control">
                 <h3><span class="feature-emoji" aria-hidden="true">📦</span> Script Orchestration</h3>
                 <p>Coordinate parallel and sequential scripts with deterministic output.</p>
               </div>
-              <div class="feature-card feature-networking">
+              <div class="feature-card feature-networking" data-home-category="network" data-home-demo="http2-runtime-control">
                 <h3><span class="feature-emoji" aria-hidden="true">🔌</span> Networking</h3>
                 <p>Validate HTTP/2 upgrades and proxy-safe routing behavior.</p>
               </div>
-              <div class="feature-card feature-testing">
+              <div class="feature-card feature-testing" data-home-category="testing">
                 <h3><span class="feature-emoji" aria-hidden="true">🧪</span> Testing</h3>
                 <p>Exercise mock lifecycle and cleanup with modern test primitives.</p>
               </div>
-              <div class="feature-card feature-performance">
+              <div class="feature-card feature-performance" data-home-category="performance">
                 <h3><span class="feature-emoji" aria-hidden="true">⚡</span> Performance</h3>
                 <p>Benchmark hot paths including JIT, markdown, and string operations.</p>
               </div>
-              <div class="feature-card feature-profiling">
+              <div class="feature-card feature-profiling" data-home-category="profiling">
                 <h3><span class="feature-emoji" aria-hidden="true">📊</span> Profiling</h3>
                 <p>Tune CPU profiling cadence and inspect runtime bottlenecks quickly.</p>
               </div>
-              <div class="feature-card feature-build">
+              <div class="feature-card feature-build" data-home-category="build" data-home-demo="build-metafile">
                 <h3><span class="feature-emoji" aria-hidden="true">🏗️</span> Build</h3>
                 <p>Ship compact bundles with ESM bytecode compilation workflows.</p>
               </div>
