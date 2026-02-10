@@ -1608,6 +1608,8 @@
     "demo:tier1:check": "bun run scripts/demo-tier1-baselines.ts",
     "demo:module:test": "bun run scripts/demo-module-test.ts",
     "demo:module:bench": "bun run scripts/demo-module-bench.ts",
+    "demo:bench:all": "bun run scripts/demo-benchmark-sweep.ts",
+    "demo:bench:core": "bun run scripts/demo-benchmark-sweep.ts --filter=protocol --limit=12",
     "validate:demo": "bun run scripts/validate-demo.ts",
     "analyze:bundle": "bun run scripts/analyze-bundle.ts",
     "validate:budget": "bun run scripts/validate-bundle-budget.ts",

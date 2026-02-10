@@ -241,6 +241,12 @@ bun run demo:contract:validate
 # Tier-1 source/provider coverage across all demos
 bun run demo:tier1:check
 
+# Benchmark all demos with source-backed gates
+bun run demo:bench:all
+
+# Benchmark a focused slice (protocol/governance ids)
+bun run demo:bench:core
+
 # Single demo full loop (test + benchmark + source-backed baseline)
 bun run validate:demo --id=parallel
 ```
