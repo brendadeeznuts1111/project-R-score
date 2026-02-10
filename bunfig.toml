@@ -1,2 +1,6 @@
 [install]
 exact = true
+
+[test]
+root = "."
+exclude = ["clawdbot"]
