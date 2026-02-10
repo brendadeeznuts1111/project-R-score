@@ -58,10 +58,14 @@ export function applyDashboardEnv(config: Pick<DashboardEnvConfig, "host" | "por
 }
 
 export function resolvePlaygroundPortPolicy(portFallback = 3011): PlaygroundPortPolicy {
+  const requestedPort = resolveDashboardPort(portFallback);
+  const allowFallback = parseBooleanEnv(process.env.PLAYGROUND_ALLOW_PORT_FALLBACK, false);
   return {
     host: resolveDashboardHost(),
-    requestedPort: resolveDashboardPort(portFallback),
-    portRange: process.env.PLAYGROUND_PORT_RANGE || "3011-3020",
-    allowFallback: parseBooleanEnv(process.env.PLAYGROUND_ALLOW_PORT_FALLBACK, false),
+    requestedPort,
+    portRange:
+      process.env.PLAYGROUND_PORT_RANGE ||
+      (allowFallback ? "3011-3020" : `${requestedPort}-${requestedPort}`),
+    allowFallback,
   };
 }

@@ -69,6 +69,18 @@ header h1 {
   justify-content: center;
 }
 
+.runtime-drift-banner {
+  margin: 12px auto 0;
+  max-width: 960px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--error);
+  color: var(--error);
+  background: rgba(255, 68, 68, 0.12);
+  font-size: 0.86rem;
+  text-align: left;
+}
+
 .badge {
   display: inline-flex;
   align-items: center;

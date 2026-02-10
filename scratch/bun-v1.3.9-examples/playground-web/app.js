@@ -584,6 +584,23 @@ function selectDemoByIndex(index) {
   }
 }
 
+function renderRuntimeDriftBanner(info) {
+  const banner = document.getElementById('runtime-drift-banner');
+  if (!banner) return;
+  const versioning = info?.versioning || info?.runtime?.versioning || null;
+  const hasDrift = Boolean(versioning?.hasDrift);
+  if (!hasDrift) {
+    banner.style.display = 'none';
+    banner.textContent = '';
+    return;
+  }
+  const runtimeSha = String(versioning?.runtimeGitCommit || 'unknown').slice(0, 12);
+  const repoSha = String(versioning?.repoHeadGitCommit || 'unknown').slice(0, 12);
+  banner.style.display = 'block';
+  banner.textContent =
+    `Runtime drift detected: process ${runtimeSha} != repo ${repoSha}. Restart with "bun run playground:dev".`;
+}
+
 async function refreshHeaderState() {
   // Set skeleton loading state
   const skeleton = '<span class="skeleton" style="display: inline-block; width: 60px; height: 1em;"></span>';
@@ -608,6 +625,7 @@ async function refreshHeaderState() {
     document.getElementById('git-commit-hash').textContent = `${runtimeInfo.gitCommitHash || 'unset'}`;
     document.getElementById('git-commit-hash-source').textContent = `${runtimeInfo.gitCommitHashSource || 'unknown'}`;
     document.getElementById('platform').textContent = `${runtimeInfo.platform} (${runtimeInfo.arch})`;
+    renderRuntimeDriftBanner(runtimeInfo);
     updateConnectionStatus(true);
   } else {
     console.error('Failed to load Bun info:', infoResult.reason);
@@ -616,6 +634,7 @@ async function refreshHeaderState() {
     document.getElementById('git-commit-hash').textContent = 'unset';
     document.getElementById('git-commit-hash-source').textContent = 'unknown';
     document.getElementById('platform').textContent = navigator.platform;
+    renderRuntimeDriftBanner(null);
     updateConnectionStatus(false);
     showToast('Failed to load runtime info', 'error');
   }
@@ -693,6 +712,12 @@ function renderHeaderBadges() {
       text: `GitSrc ${runtimeInfo.gitCommitHashSource || 'unknown'}`,
       cls: runtimeInfo.gitCommitHashSource === 'env' ? 'warn' : 'success',
     });
+    if (runtimeInfo?.versioning?.hasDrift) {
+      badges.push({
+        text: `Drift ${String(runtimeInfo.versioning.runtimeGitCommit || '').slice(0, 8)}→${String(runtimeInfo.versioning.repoHeadGitCommit || '').slice(0, 8)}`,
+        cls: 'error',
+      });
+    }
   }
 
   if (runtimePortsInfo) {

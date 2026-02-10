@@ -198,6 +198,8 @@ function getCommandWorkerStats() {
 let cachedBenchmarkResult: { name: string; result: number; threshold: number }[] | null = null;
 let cachedRuntimeSnapshot: Record<string, unknown> | null = null;
 let cachedGitCommit: string | null = null;
+let cachedRepoGitHead: string | null = null;
+let cachedRepoGitHeadAt = 0;
 let cachedProfileSnapshot: Record<string, unknown> | null = null;
 let cachedHeapSnapshot: Record<string, unknown> | null = null;
 let cachedBundleSnapshot: Record<string, unknown> | null = null;
@@ -4779,6 +4781,7 @@ async function resolvePort(): Promise<number> {
 }
 
 function buildRuntimeMetadata() {
+  const version = getRuntimeVersionState();
   return {
     bunVersion: Bun.version || "unknown",
     bunRevision: BUN_REVISION,
@@ -4805,6 +4808,41 @@ function buildRuntimeMetadata() {
     },
     process: buildProcessRuntimeSnapshot(),
     sockets: buildSocketRuntimeSnapshot(),
+    versioning: version,
+  };
+}
+
+function readRepoGitHead(maxAgeMs = 5000): string {
+  const now = Date.now();
+  if (cachedRepoGitHead && now - cachedRepoGitHeadAt <= maxAgeMs) {
+    return cachedRepoGitHead;
+  }
+  try {
+    const out = Bun.spawnSync({
+      cmd: ["git", "rev-parse", "HEAD"],
+      cwd: PROJECT_ROOT,
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+    const value = out.stdout.toString().trim();
+    cachedRepoGitHead = value || "unknown";
+  } catch {
+    cachedRepoGitHead = "unknown";
+  }
+  cachedRepoGitHeadAt = now;
+  return cachedRepoGitHead;
+}
+
+function getRuntimeVersionState() {
+  const runtimeGitCommit = String(GIT_COMMIT_HASH || "unknown");
+  const repoHeadGitCommit = String(readRepoGitHead());
+  return {
+    runtimeGitCommit,
+    repoHeadGitCommit,
+    hasDrift:
+      runtimeGitCommit !== "unknown" &&
+      repoHeadGitCommit !== "unknown" &&
+      runtimeGitCommit !== repoHeadGitCommit,
   };
 }
 
@@ -5300,25 +5338,64 @@ function buildResilienceStatus() {
   };
 }
 
-function buildHealthChecks() {
+function buildHealthChecks(routeTable?: Record<string, unknown>) {
   const workerStats = getCommandWorkerStats();
-  return [
+  const version = getRuntimeVersionState();
+  const checks = [
     {
       name: "server",
       status: "healthy",
       message: "Playground server is accepting requests",
+      recommendedAction: null,
     },
     {
       name: "request-pool",
       status: inFlightRequests < MAX_CONCURRENT_REQUESTS ? "healthy" : "warning",
       message: `${inFlightRequests}/${MAX_CONCURRENT_REQUESTS} requests in-flight`,
+      recommendedAction:
+        inFlightRequests < MAX_CONCURRENT_REQUESTS
+          ? null
+          : "Reduce local load or raise PLAYGROUND_MAX_CONCURRENT_REQUESTS for this host.",
     },
     {
       name: "worker-pool",
       status: workerStats.active < workerStats.max ? "healthy" : "warning",
       message: `${workerStats.active}/${workerStats.max} bun worker threads active`,
+      recommendedAction:
+        workerStats.active < workerStats.max
+          ? null
+          : "Increase PLAYGROUND_WORKER_POOL_MAX or reduce long-running tasks.",
     },
-  ];
+    {
+      name: "runtime-version",
+      status: version.hasDrift ? "warning" : "healthy",
+      message: version.hasDrift
+        ? `Runtime drift detected: process=${version.runtimeGitCommit.slice(0, 12)} repo=${version.repoHeadGitCommit.slice(0, 12)}`
+        : "Runtime git commit matches repository HEAD",
+      recommendedAction: version.hasDrift ? "Restart with `bun run playground:dev`." : null,
+    },
+  ] as Array<Record<string, unknown>>;
+
+  if (routeTable) {
+    const requiredControlRoutes = [
+      "/api/control/runtime/ports",
+      "/api/control/process/runtime",
+      "/api/control/worker-pool/diagnostics",
+      "/api/dashboard/trends/summary",
+    ];
+    const missing = requiredControlRoutes.filter((path) => typeof routeTable[path] !== "function");
+    checks.push({
+      name: "route-contract",
+      status: missing.length === 0 ? "healthy" : "warning",
+      message:
+        missing.length === 0
+          ? "All required control routes are registered"
+          : `Missing control routes: ${missing.join(", ")}`,
+      recommendedAction:
+        missing.length === 0 ? null : "Restart playground server from latest source (`bun run playground:dev`).",
+    });
+  }
+  return checks;
 }
 
 function parseBunVersionParts(version: string): [number, number, number] {
@@ -5420,6 +5497,7 @@ const routes = {
           ? "SIGILL ARMv8.0 fix applies to this Linux aarch64 platform."
           : "SIGILL ARMv8.0 fix applies to Linux aarch64 only (not this host).",
     },
+    versioning: getRuntimeVersionState(),
   }),
 
   "/api/control/resilience/status": () => ({
@@ -5880,23 +5958,34 @@ const routes = {
     };
   },
 
-  "/api/health": () => ({
-    status: "healthy",
-    timestamp: new Date().toISOString(),
-    service: "bun-v1.3.9-playground-dashboard",
-    version: String(BUILD_METADATA?.version || "1.0.0"),
-    runtime: buildRuntimeMetadata(),
-    checks: buildHealthChecks(),
-    governance: {
-      successMetrics: {
-        current: SuccessMetrics.current,
-        targets: SuccessMetrics.targets,
+  "/api/health": () => {
+    const checks = buildHealthChecks(routes as Record<string, unknown>);
+    const degraded = checks.some((check) => check.status === "warning" || check.status === "fail");
+    return {
+      status: degraded ? "degraded" : "healthy",
+      timestamp: new Date().toISOString(),
+      service: "bun-v1.3.9-playground-dashboard",
+      version: String(BUILD_METADATA?.version || "1.0.0"),
+      runtime: buildRuntimeMetadata(),
+      checks,
+      recovery: {
+        startup: "bun run playground:dev",
+        staleRuntime:
+          "If runtime-version is warning, restart the playground process so runtime Git SHA matches repository HEAD.",
+        portConflict:
+          "If port conflict occurs, stop the owning process or set PLAYGROUND_PORT to an unused port.",
       },
-      health: calculateSuccessHealth(SuccessMetrics),
-      benchmarkStatus: readDemoBenchStatus(),
-      verdict: ExecutiveVerdict,
-    },
-  }),
+      governance: {
+        successMetrics: {
+          current: SuccessMetrics.current,
+          targets: SuccessMetrics.targets,
+        },
+        health: calculateSuccessHealth(SuccessMetrics),
+        benchmarkStatus: readDemoBenchStatus(),
+        verdict: ExecutiveVerdict,
+      },
+    };
+  },
 
   "/api/dashboard/runtime": () => buildRuntimeMetadata(),
   "/api/dashboard/mini": () => buildMiniDashboardSnapshot(),
@@ -6459,8 +6548,8 @@ const routes = {
     return await analyzeBundleMetafile(resolved);
   },
 
-  "/api/control/network-smoke": async (req: Request) => {
-    const base = new URL(req.url).origin;
+  "/api/control/network-smoke": async (_req: Request) => {
+    const base = `http://localhost:${ACTIVE_PORT}`;
     const smoke = await runNetworkSmoke(base);
     const failures = smoke.results.filter(r => !r.ok).length;
     return {

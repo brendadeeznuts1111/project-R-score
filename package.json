@@ -1585,6 +1585,7 @@
     "deploy:orchestrate": "bun run pipeline/deployment-orchestrator.ts",
     "start:dashboard:mcp": "bun run dashboard/dashboard-server.ts",
     "start:dashboard:playground": "bun run scratch/bun-v1.3.9-examples/playground-web/server.ts",
+    "playground:dev": "bun run scripts/playground-dev.ts",
     "start:business-registry": "bun run dashboard/business-registry.ts",
     "start:profile-dash": "bun run dashboard/profile/app.ts",
     "start:profile-dash:live": "bun run dashboard/profile/app-integrated.ts",
