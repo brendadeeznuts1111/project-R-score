@@ -1617,6 +1617,7 @@
     "bench:performance-trilogy": "bun run bench/performance-trilogy.ts",
     "ci:demo:contract": "bun run demo:contract:validate",
     "ci:demo:tier1": "bun run demo:tier1:check",
+    "ci:demo:bench": "bun run demo:bench:core",
     "ci:dashboard:nonblocking": "bun run test:dashboard:suite",
     "ci:dashboard:required": "bun run ci:bun:check && bun run test:dashboard:suite",
     "dashboard:monitor": "bun run dashboard/mcp-overview.ts monitor",
