@@ -79,6 +79,7 @@ curl -s http://localhost:<port>/api/control/network-smoke
 curl -s http://localhost:<port>/api/control/features
 curl -s http://localhost:<port>/api/control/protocol-matrix
 curl -s http://localhost:<port>/api/control/component-status
+curl -s http://localhost:<port>/api/control/deployment-readiness
 curl -s http://localhost:<port>/api/control/protocol-scorecard
 curl -s http://localhost:<port>/api/control/evidence-dashboard
 curl -s http://localhost:<port>/api/control/decision-defense
@@ -111,6 +112,9 @@ Mini dashboard APIs:
 Governance component matrix API:
 - `GET /api/control/component-status`: operational inventory with owner, test coverage, performance budget, security review, docs pointer, and production posture.
 
+Deployment readiness API:
+- `GET /api/control/deployment-readiness`: production-ready (12) vs beta-staging (2) matrix with deployment plans, blockers, and action plans.
+
 Mini dashboard UI rows now include:
 - `Bottleneck`
 - `Capacity`
@@ -123,6 +127,7 @@ Validate mini dashboard contract from repo root:
 bun run test:dashboard:mini
 bun run test:dashboard:endpoints
 bun run test:dashboard:websocket
+bun run deployment:readiness
 ```
 
 Local verify runbook (single green pass):

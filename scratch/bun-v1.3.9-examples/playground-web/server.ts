@@ -14,6 +14,7 @@ import { extname, join, normalize, resolve as resolvePath, sep } from "node:path
 import { getBuildMetadata } from "./build-metadata" with { type: "macro" };
 import { getGitCommitHash } from "./getGitCommitHash.ts" with { type: "macro" };
 import { getResilienceConfig } from "../../../config/resilience-chain";
+import { summarizeDeploymentReadiness } from "../../../deployment/readiness-matrix";
 
 const BASE_STANDARD = Object.freeze({
   dedicatedPort: 3011,
@@ -1403,6 +1404,18 @@ curl -s http://localhost:<port>/api/control/component-status | jq .
 
 # Show unstable components only
 curl -s http://localhost:<port>/api/control/component-status | jq '.rows[] | select(.status != "stable")'
+`,
+  },
+  {
+    id: "deployment-readiness-matrix",
+    name: "Deployment Readiness Matrix",
+    description: "Production-ready vs beta-staging deployment plans and blockers",
+    category: "Governance",
+    code: `# Inspect deployment readiness matrix
+curl -s http://localhost:<port>/api/control/deployment-readiness | jq .
+
+# Focus on beta blockers
+curl -s http://localhost:<port>/api/control/deployment-readiness | jq '.matrix.betaStaging[] | {component, blockers, actionPlan}'
 `,
   },
   {
@@ -4034,6 +4047,8 @@ const routes = {
     };
   },
 
+  "/api/control/deployment-readiness": () => summarizeDeploymentReadiness(),
+
   "/api/control/network-smoke": async (req: Request) => {
     const base = new URL(req.url).origin;
     const smoke = await runNetworkSmoke(base);
@@ -4264,6 +4279,17 @@ const routes = {
 
     if (id === "component-status-matrix") {
       const matrix = routes["/api/control/component-status"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(matrix, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "deployment-readiness-matrix") {
+      const matrix = routes["/api/control/deployment-readiness"]();
       return new Response(JSON.stringify({
         success: true,
         output: JSON.stringify(matrix, null, 2),
@@ -4656,6 +4682,10 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/component-status") {
         return jsonResponse(routes["/api/control/component-status"]());
+      }
+
+      if (url.pathname === "/api/control/deployment-readiness") {
+        return jsonResponse(routes["/api/control/deployment-readiness"]());
       }
 
       if (url.pathname === "/api/control/upload-progress") {

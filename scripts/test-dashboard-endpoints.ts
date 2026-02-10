@@ -120,6 +120,21 @@ async function run(): Promise<number> {
         typeof components.json?.rows?.[0]?.status === "string",
       `status=${components.res.status} rows=${components.json?.rows?.length ?? 0}`
     );
+
+    const readiness = await fetchJson("/api/control/deployment-readiness");
+    check(
+      checks,
+      "deployment-readiness-contract",
+      readiness.res.status === 200 &&
+        Number.isFinite(readiness.json?.summary?.productionReadyCount) &&
+        Number.isFinite(readiness.json?.summary?.betaStagingCount) &&
+        Number.isFinite(readiness.json?.summary?.overallReadiness) &&
+        Array.isArray(readiness.json?.matrix?.productionReady) &&
+        Array.isArray(readiness.json?.matrix?.betaStaging) &&
+        readiness.json?.matrix?.productionReady?.length >= 10 &&
+        readiness.json?.matrix?.betaStaging?.length >= 1,
+      `status=${readiness.res.status} ready=${readiness.json?.matrix?.productionReady?.length ?? 0} beta=${readiness.json?.matrix?.betaStaging?.length ?? 0}`
+    );
   } catch (error) {
     check(
       checks,

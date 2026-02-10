@@ -1592,6 +1592,7 @@
     "dashboard:preflight:local": "ALLOW_CANARY_BUN=true bun run scripts/dashboard-preflight.ts",
     "dashboard:protocol:check": "bun run scripts/dashboard-protocol-check.ts",
     "dashboard:status:report": "bun run dashboard/status-monitor.ts",
+    "deployment:readiness": "bun run deployment/readiness-matrix.ts",
     "test:dashboard:mini": "bun run scripts/test-dashboard-mini.ts",
     "test:dashboard:endpoints": "bun run scripts/test-dashboard-endpoints.ts",
     "test:dashboard:websocket": "bun run scripts/test-dashboard-websocket.ts",

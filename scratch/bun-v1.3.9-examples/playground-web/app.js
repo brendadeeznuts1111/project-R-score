@@ -735,6 +735,16 @@ function renderDemo(demo) {
       </div>
     `
     : '';
+  const deploymentReadinessPanel = demo.id === 'deployment-readiness-matrix'
+    ? `
+      <div class="code-block" style="margin-top: 1rem;">
+        <button class="run-btn" onclick="refreshDeploymentReadinessMatrix()">
+          ↻ Refresh Deployment Readiness
+        </button>
+        <div id="deployment-readiness-output" class="output" style="display: block; margin-top: 0.75rem;">Loading deployment readiness matrix...</div>
+      </div>
+    `
+    : '';
   const protocolMatrixPanel = demo.id === 'protocol-matrix'
     ? `
       <div class="code-block" style="margin-top: 1rem;">
@@ -795,6 +805,7 @@ function renderDemo(demo) {
     ${brandGatePanel}
     ${featureMatrixPanel}
     ${componentStatusPanel}
+    ${deploymentReadinessPanel}
     ${protocolMatrixPanel}
     ${http2RuntimePanel}
     ${orchestrationPanel}
@@ -808,6 +819,9 @@ function renderDemo(demo) {
   }
   if (demo.id === 'component-status-matrix') {
     refreshComponentStatusMatrix();
+  }
+  if (demo.id === 'deployment-readiness-matrix') {
+    refreshDeploymentReadinessMatrix();
   }
   if (demo.id === 'protocol-matrix') {
     refreshProtocolMatrixStatus();
@@ -884,6 +898,7 @@ function setupEventListeners() {
   window.refreshBrandGateStatus = refreshBrandGateStatus;
   window.refreshFeatureMatrixStatus = refreshFeatureMatrixStatus;
   window.refreshComponentStatusMatrix = refreshComponentStatusMatrix;
+  window.refreshDeploymentReadinessMatrix = refreshDeploymentReadinessMatrix;
   window.refreshHttp2RuntimeStatus = refreshHttp2RuntimeStatus;
   window.executeHttp2RuntimeAction = executeHttp2RuntimeAction;
   window.refreshOrchestrationStatus = refreshOrchestrationStatus;
@@ -995,6 +1010,40 @@ async function refreshComponentStatusMatrix() {
   } catch (error) {
     statusDiv.className = 'output error';
     statusDiv.textContent = `Failed to load component status matrix: ${error.message}`;
+  }
+}
+
+async function refreshDeploymentReadinessMatrix() {
+  const statusDiv = document.getElementById('deployment-readiness-output');
+  if (!statusDiv) return;
+
+  statusDiv.className = 'output loading';
+  statusDiv.textContent = 'Loading deployment readiness matrix...';
+
+  try {
+    const response = await fetch('/api/control/deployment-readiness');
+    const data = await response.json();
+    const summary = data.summary || {};
+    const ready = Array.isArray(data.matrix?.productionReady) ? data.matrix.productionReady : [];
+    const beta = Array.isArray(data.matrix?.betaStaging) ? data.matrix.betaStaging : [];
+
+    const lines = [
+      `generatedAt: ${data.generatedAt || 'unknown'}`,
+      `productionReady: ${summary.productionReadyCount ?? ready.length} | betaStaging: ${summary.betaStagingCount ?? beta.length}`,
+      `avgReady: ${summary.averageProductionReadiness ?? 'n/a'} | avgBeta: ${summary.averageBetaReadiness ?? 'n/a'} | overall: ${summary.overallReadiness ?? 'n/a'}`,
+      '',
+      'production:',
+      ...ready.slice(0, 8).map((row) => `  ${row.component} | readiness=${row.readiness} | ${row.deploymentPlan.strategy} | regions=${(row.deploymentPlan.regions || []).length}`),
+      '',
+      'beta:',
+      ...beta.slice(0, 4).map((row) => `  ${row.component} | readiness=${row.readiness} | blockers=${(row.blockers || []).length}`),
+    ];
+
+    statusDiv.className = beta.length > 0 ? 'output success' : 'output success';
+    statusDiv.textContent = lines.join('\n');
+  } catch (error) {
+    statusDiv.className = 'output error';
+    statusDiv.textContent = `Failed to load deployment readiness matrix: ${error.message}`;
   }
 }
 
