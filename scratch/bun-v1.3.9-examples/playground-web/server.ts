@@ -53,7 +53,11 @@ const BASE_STANDARD = Object.freeze({
   fetchVerbose: "off",
 });
 
-const DEDICATED_PORT = parseFirstNumberEnv(["PLAYGROUND_PORT", "PORT"], BASE_STANDARD.dedicatedPort, { min: 1, max: 65535 });
+const DEDICATED_PORT = parseFirstNumberEnv(["DASHBOARD_PORT", "PLAYGROUND_PORT", "PORT"], BASE_STANDARD.dedicatedPort, {
+  min: 1,
+  max: 65535,
+});
+const ALLOW_PORT_FALLBACK = parseBool(process.env.PLAYGROUND_ALLOW_PORT_FALLBACK, false);
 const PORT_RANGE = process.env.PLAYGROUND_PORT_RANGE || BASE_STANDARD.portRange;
 const MAX_CONCURRENT_REQUESTS = parseNumberEnv("PLAYGROUND_MAX_CONCURRENT_REQUESTS", BASE_STANDARD.maxConcurrentRequests, { min: 1, max: 100000 });
 const MAX_COMMAND_WORKERS = parseNumberEnv("PLAYGROUND_MAX_COMMAND_WORKERS", BASE_STANDARD.maxCommandWorkers, { min: 1, max: 64 });
@@ -4739,6 +4743,16 @@ async function isPortAvailable(port: number): Promise<boolean> {
 
 async function resolvePort(): Promise<number> {
   if (await isPortAvailable(DEDICATED_PORT)) return DEDICATED_PORT;
+  const owner = detectPortOwner(DEDICATED_PORT);
+  if (!ALLOW_PORT_FALLBACK) {
+    const ownerDetail = owner.available
+      ? "unknown owner"
+      : `pid=${owner.ownerPid ?? "unknown"} cmd=${owner.ownerCommand ?? "unknown"}`;
+    throw new Error(
+      `Playground port ${DEDICATED_PORT} is already in use (${ownerDetail}). ` +
+        "Set PLAYGROUND_ALLOW_PORT_FALLBACK=true to allow automatic remapping."
+    );
+  }
   const { start, end } = parsePortRange(PORT_RANGE);
   for (let port = start; port <= end; port++) {
     if (await isPortAvailable(port)) return port;
@@ -4759,6 +4773,12 @@ function buildRuntimeMetadata() {
     cwd: process.cwd(),
     execPath: process.execPath,
     port: ACTIVE_PORT,
+    portPolicy: {
+      requested: DEDICATED_PORT,
+      fallbackAllowed: ALLOW_PORT_FALLBACK,
+      remapped: ACTIVE_PORT !== DEDICATED_PORT,
+      range: PORT_RANGE,
+    },
     startedAt: SERVER_STARTED_AT,
     uptimeSec: Number((process.uptime?.() || 0).toFixed(2)),
     metricsStore: {
@@ -7634,6 +7654,12 @@ async function handleRequest(req: Request): Promise<Response> {
 
 await initCapacityMetricsStore();
 const ACTIVE_PORT = await resolvePort();
+if (ACTIVE_PORT !== DEDICATED_PORT) {
+  console.warn(
+    `[startup] requested port ${DEDICATED_PORT} unavailable; remapped to ${ACTIVE_PORT} ` +
+      "(PLAYGROUND_ALLOW_PORT_FALLBACK=true)"
+  );
+}
 const warmupState = await runWarmup();
 
 // Create abort controller for graceful shutdown

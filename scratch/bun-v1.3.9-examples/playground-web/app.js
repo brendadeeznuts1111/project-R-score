@@ -1586,17 +1586,20 @@ async function resilientFetch(path, options = {}) {
   const origins = [...new Set(rawOrigins.filter((origin) => /^https?:\/\//.test(origin)))];
   const attemptsPerOrigin = 2;
   let lastError = null;
+  const attempted = [];
 
   for (const origin of origins) {
     for (let attempt = 1; attempt <= attemptsPerOrigin; attempt += 1) {
+      const target = `${origin}${path}`;
+      attempted.push(target);
       try {
-        const response = await fetch(`${origin}${path}`, {
+        const response = await fetch(target, {
           ...options,
           signal: AbortSignal.timeout(5000),
         });
         if (response.ok) return response;
         lastError = new Error(`HTTP ${response.status} from ${origin}`);
-        console.warn(`Attempt ${attempt}/${attemptsPerOrigin} failed for ${origin}${path}: ${response.status}`);
+        console.warn(`Attempt ${attempt}/${attemptsPerOrigin} failed for ${target}: ${response.status}`);
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
         console.warn(`Fetch attempt ${attempt}/${attemptsPerOrigin} failed for origin ${origin}: ${lastError.message}`);
@@ -1604,7 +1607,12 @@ async function resilientFetch(path, options = {}) {
     }
   }
 
-  throw new Error(`Service unavailable after trying ${origins.length} endpoints x${attemptsPerOrigin}${lastError ? `: ${lastError.message}` : ''}`);
+  const attemptedPreview = attempted.slice(0, 4).join(", ");
+  throw new Error(
+    `Service unavailable after trying ${origins.length} endpoint(s) x${attemptsPerOrigin}` +
+      `${lastError ? `: ${lastError.message}` : ""}` +
+      `${attemptedPreview ? ` (attempted: ${attemptedPreview}${attempted.length > 4 ? ", ..." : ""})` : ""}`
+  );
 }
 
 async function resilientFetchAny(paths, options = {}) {
