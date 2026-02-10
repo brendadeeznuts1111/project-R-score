@@ -5075,6 +5075,19 @@ const routes = {
       });
     }
 
+    if (id === "build-metafile") {
+      const bundle = await routes["/api/control/bundle/analyze"](
+        new Request("http://localhost/api/control/bundle/analyze")
+      );
+      return new Response(JSON.stringify({
+        success: bundle?.ok === true,
+        output: JSON.stringify(bundle, null, 2),
+        exitCode: bundle?.ok === true ? 0 : 1,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     if (id === "protocol-router-tier1380") {
       const dryRun = await routes["/api/fetch/protocol-router"](
         new Request("http://localhost/api/fetch/protocol-router", {

@@ -247,6 +247,27 @@ async function run(): Promise<number> {
       `status=${bundleAnalyze.res.status} ok=${String(bundleAnalyze.json?.ok)}`
     );
 
+    const bundleAnalyzeEntry = await fetchJson("/api/control/bundle/analyze?entry=scratch/bun-v1.3.9-examples/playground-web/app.js");
+    check(
+      checks,
+      "bundle-analyze-entry-contract",
+      bundleAnalyzeEntry.res.status === 200 &&
+        bundleAnalyzeEntry.json?.ok === true &&
+        typeof bundleAnalyzeEntry.json?.entrypoint === "string" &&
+        String(bundleAnalyzeEntry.json?.entrypoint).endsWith("/scratch/bun-v1.3.9-examples/playground-web/app.js"),
+      `status=${bundleAnalyzeEntry.res.status} ok=${String(bundleAnalyzeEntry.json?.ok)} entry=${String(bundleAnalyzeEntry.json?.entrypoint || "n/a")}`
+    );
+
+    const bundleAnalyzeBlocked = await fetchJson("/api/control/bundle/analyze?entry=../outside.ts");
+    check(
+      checks,
+      "bundle-analyze-entry-blocked-contract",
+      bundleAnalyzeBlocked.res.status === 200 &&
+        bundleAnalyzeBlocked.json?.ok === false &&
+        typeof bundleAnalyzeBlocked.json?.error === "string",
+      `status=${bundleAnalyzeBlocked.res.status} ok=${String(bundleAnalyzeBlocked.json?.ok)} error=${String(bundleAnalyzeBlocked.json?.error || "n/a")}`
+    );
+
     const demoValidate = await fetchJson("/api/control/demo-module/validate?id=markdown-simd");
     check(
       checks,
@@ -281,6 +302,20 @@ async function run(): Promise<number> {
         demoFullLoop.json?.steps?.bench?.ok === true &&
         demoFullLoop.json?.steps?.run?.ok === true,
       `status=${demoFullLoop.res.status} ok=${String(demoFullLoop.json?.ok)}`
+    );
+
+    const buildMetafileFullLoop = await fetchJson("/api/control/demo-module/full-loop?id=build-metafile");
+    check(
+      checks,
+      "demo-module-full-loop-build-metafile-contract",
+      buildMetafileFullLoop.res.status === 200 &&
+        buildMetafileFullLoop.json?.ok === true &&
+        buildMetafileFullLoop.json?.id === "build-metafile" &&
+        Number.isFinite(buildMetafileFullLoop.json?.durationMs) &&
+        buildMetafileFullLoop.json?.steps?.validate?.ok === true &&
+        buildMetafileFullLoop.json?.steps?.bench?.ok === true &&
+        buildMetafileFullLoop.json?.steps?.run?.ok === true,
+      `status=${buildMetafileFullLoop.res.status} ok=${String(buildMetafileFullLoop.json?.ok)}`
     );
   } catch (error) {
     check(
