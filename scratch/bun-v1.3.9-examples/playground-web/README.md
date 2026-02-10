@@ -188,6 +188,50 @@ NO_PROXY=localhost,127.0.0.1 bun test ./scratch
 
 If code passes an explicit `proxy` option to `fetch()`/`WebSocket`, Bun still applies `NO_PROXY` matching before proxy routing.
 
+## Bun Version + Demo Module Cross-Reference
+
+Version checks:
+
+```bash
+# Declared playground baseline
+cat ./VERSION | jq '{version,bunVersion,commit,date}'
+
+# Runtime values from server
+curl -s http://localhost:3011/api/control/features | jq .
+```
+
+Quick module map (demo id -> runnable module script):
+
+| Bun v1.3.9 feature | Demo ID | Module script |
+| --- | --- | --- |
+| `bun run --parallel/--sequential` | `parallel` | `../playground/demos/parallel-scripts.ts` |
+| HTTP/2 net.Server upgrade path | `http2` | `../playground/demos/http2-upgrade.ts` |
+| `Symbol.dispose` in tests | `symbol-dispose` | `../playground/demos/symbol-dispose.ts` |
+| NO_PROXY proxy-bypass behavior | `proxy` | `../playground/demos/no-proxy.ts` |
+| CPU profiling (`--cpu-prof*`) | `profiling` | `../playground/demos/cpu-profiling.ts` |
+| ESM bytecode compile | `bytecode` | `../playground/demos/esm-bytecode.ts` |
+| Perf/JIT/runtime highlights | `performance` | `../playground/demos/performance.ts` |
+| Bugfix spotlight set | `bugfixes` | `../playground/demos/bugfixes.ts` |
+
+Contract validation/bench per demo ID:
+
+```bash
+# Validate module contract for one demo ID
+curl -s "http://localhost:3011/api/control/demo-module/validate?id=parallel" | jq .
+
+# Run contract bench for one demo ID
+curl -s "http://localhost:3011/api/control/demo-module/bench?id=parallel" | jq .
+
+# Full loop: validate + bench + demo run
+curl -s "http://localhost:3011/api/control/demo-module/full-loop?id=parallel" | jq .
+```
+
+List all registered demo IDs and contract metadata:
+
+```bash
+curl -s http://localhost:3011/api/demos | jq '.demos[] | {id, language, flags, benchCommand, testCommand}'
+```
+
 Expected severity snapshots:
 - `load=85`: `utilization=fail`, `capacity=fail`, `headroom=warn`
 - `load=60`: `utilization=warn`, `capacity=warn`, `headroom=ok`
