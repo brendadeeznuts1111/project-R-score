@@ -67,6 +67,16 @@ let activeCommands = 0;
 const serverStartTime = Date.now();
 const commandWaiters: Array<() => void> = [];
 
+// Cache expensive computations
+let cachedBenchmarkResult: { name: string; result: number; threshold: number }[] | null = null;
+let cachedRuntimeSnapshot: Record<string, unknown> | null = null;
+let cachedGitCommit: string | null = null;
+let cachedProfileSnapshot: Record<string, unknown> | null = null;
+let cachedHeapSnapshot: Record<string, unknown> | null = null;
+let cachedBundleSnapshot: Record<string, unknown> | null = null;
+let cacheTimestamp = 0;
+const CACHE_TTL_MS = 30000; // 30 second cache for volatile data
+
 const EVIDENCE_DASHBOARD = {
   "bun-v1.3.9-upgrade": {
     sources: [
@@ -1236,29 +1246,30 @@ async function getProtocolScorecard(params?: { use?: string; size?: number }) {
         { tier: "T2", reference: "1f7d7d5a8c23 (String.startsWith)", verified: true },
         { tier: "T3", reference: "2e2c23521a24 (Map/Set.size)", verified: true },
       ];
+      // Compute benchmarks once and cache
+      if (!cachedBenchmarkResult) {
+        const map = new Map(); for (let i = 0; i < 1000; i++) map.set("k" + i, i);
+        const set = new Set(); for (let i = 0; i < 1000; i++) set.add(i);
+        const WARMUP = 5_000, ITERS = 1_000_000;
+        let sink = 0;
+        for (let i = 0; i < WARMUP; i++) { sink += map.size; sink += set.size; }
+        const t0 = Bun.nanoseconds();
+        for (let i = 0; i < ITERS; i++) sink += map.size;
+        const mapNsPerOp = (Bun.nanoseconds() - t0) / ITERS;
+        const t1 = Bun.nanoseconds();
+        for (let i = 0; i < ITERS; i++) sink += set.size;
+        const setNsPerOp = (Bun.nanoseconds() - t1) / ITERS;
+        void sink;
+        cachedBenchmarkResult = [
+          { name: "Map.size ns/op (isolated)", result: Number(mapNsPerOp.toFixed(2)), threshold: 10 },
+          { name: "Set.size ns/op (isolated)", result: Number(setNsPerOp.toFixed(2)), threshold: 10 },
+        ];
+      }
       const { score, defensible, gaps } = DecisionDefender.validateDecision({
         id: "BUN-UPGRADE-2024-003",
         claim: "Bun v1.3.9 verified commits provide targeted runtime optimizations",
         sources,
-        benchmarks: (() => {
-          // Isolated bench: Map/Set.size ns/op via Bun.nanoseconds()
-          const map = new Map(); for (let i = 0; i < 1000; i++) map.set("k" + i, i);
-          const set = new Set(); for (let i = 0; i < 1000; i++) set.add(i);
-          const WARMUP = 5_000, ITERS = 1_000_000;
-          let sink = 0;
-          for (let i = 0; i < WARMUP; i++) { sink += map.size; sink += set.size; }
-          const t0 = Bun.nanoseconds();
-          for (let i = 0; i < ITERS; i++) sink += map.size;
-          const mapNsPerOp = (Bun.nanoseconds() - t0) / ITERS;
-          const t1 = Bun.nanoseconds();
-          for (let i = 0; i < ITERS; i++) sink += set.size;
-          const setNsPerOp = (Bun.nanoseconds() - t1) / ITERS;
-          void sink;
-          return [
-            { name: "Map.size ns/op (isolated)", result: Number(mapNsPerOp.toFixed(2)), threshold: 10 },
-            { name: "Set.size ns/op (isolated)", result: Number(setNsPerOp.toFixed(2)), threshold: 10 },
-          ];
-        })(),
+        benchmarks: cachedBenchmarkResult,
       });
       return {
         bun_v1_3_9: {
@@ -1266,12 +1277,21 @@ async function getProtocolScorecard(params?: { use?: string; size?: number }) {
           verified_commits: ["35f815431", "ac63cc259d74", "1f7d7d5a8c23", "2e2c23521a24"],
           evidence_package: "BUN-UPGRADE-2024-003",
           runtime: (() => {
+            if (cachedRuntimeSnapshot) return cachedRuntimeSnapshot;
             const os = require("node:os");
-            return {
+            // Cache git commit to avoid spawnSync on every request
+            if (!cachedGitCommit) {
+              try {
+                cachedGitCommit = Bun.spawnSync(["git", "rev-parse", "HEAD"]).stdout.toString().trim();
+              } catch {
+                cachedGitCommit = "unknown";
+              }
+            }
+            cachedRuntimeSnapshot = {
               runtime: "Bun",
               bunVersion: Bun.version,
               bunRevision: Bun.revision,
-              gitCommit: Bun.spawnSync(["git", "rev-parse", "HEAD"]).stdout.toString().trim(),
+              gitCommit: cachedGitCommit,
               platform: process.platform,
               arch: process.arch,
               osRelease: os.release(),
@@ -1280,8 +1300,13 @@ async function getProtocolScorecard(params?: { use?: string; size?: number }) {
               totalMemoryMB: Math.round(os.totalmem() / 1024 / 1024),
               pid: process.pid,
             };
+            return cachedRuntimeSnapshot;
           })(),
           profile: (() => {
+            // Use cached profile data if fresh
+            if (cachedProfileSnapshot && (Date.now() - cacheTimestamp) < CACHE_TTL_MS) {
+              return cachedProfileSnapshot;
+            }
             const { existsSync, readdirSync } = require("node:fs");
             const { join } = require("node:path");
             const profileDir = "reports/brand-bench/profiles";
@@ -1299,42 +1324,50 @@ async function getProtocolScorecard(params?: { use?: string; size?: number }) {
                 pinnedRunId = pinned.baselineRunId ?? null;
               } catch {}
             }
-            return {
+            cachedProfileSnapshot = {
               pinnedBaselineRunId: pinnedRunId,
               profileDir,
               profileFiles: profiles,
               count: profiles.length,
             };
+            return cachedProfileSnapshot;
           })(),
           snapshot: await (async () => {
+            // Return cached snapshot if fresh
+            if (cachedHeapSnapshot && (Date.now() - cacheTimestamp) < CACHE_TTL_MS) {
+              return cachedHeapSnapshot;
+            }
             const mem = process.memoryUsage();
             const heap = Bun.generateHeapSnapshot();
             let bundleSnapshot: Record<string, unknown> | null = null;
-            try {
-              const result = await Bun.build({
-                entrypoints: [import.meta.path],
-                metafile: true,
-                target: "bun",
-                splitting: false,
-                throw: false,
-              });
-              if (result.metafile) {
-                const inputs = Object.entries(result.metafile.inputs);
-                const outputs = Object.entries(result.metafile.outputs);
-                bundleSnapshot = {
-                  source: "Bun.build({ metafile: true })",
-                  inputCount: inputs.length,
-                  outputCount: outputs.length,
-                  totalInputBytes: inputs.reduce((s: number, [, m]: any) => s + (m.bytes || 0), 0),
-                  totalOutputBytes: outputs.reduce((s: number, [, m]: any) => s + (m.bytes || 0), 0),
-                  largestInputs: inputs
-                    .sort(([, a]: any, [, b]: any) => (b.bytes || 0) - (a.bytes || 0))
-                    .slice(0, 5)
-                    .map(([p, m]: any) => ({ path: p, bytes: m.bytes })),
-                };
-              }
-            } catch {}
-            return {
+            // Only compute bundle snapshot once (it's expensive)
+            if (!cachedBundleSnapshot) {
+              try {
+                const result = await Bun.build({
+                  entrypoints: [import.meta.path],
+                  metafile: true,
+                  target: "bun",
+                  splitting: false,
+                  throw: false,
+                });
+                if (result.metafile) {
+                  const inputs = Object.entries(result.metafile.inputs);
+                  const outputs = Object.entries(result.metafile.outputs);
+                  cachedBundleSnapshot = {
+                    source: "Bun.build({ metafile: true })",
+                    inputCount: inputs.length,
+                    outputCount: outputs.length,
+                    totalInputBytes: inputs.reduce((s: number, [, m]: any) => s + (m.bytes || 0), 0),
+                    totalOutputBytes: outputs.reduce((s: number, [, m]: any) => s + (m.bytes || 0), 0),
+                    largestInputs: inputs
+                      .sort(([, a]: any, [, b]: any) => (b.bytes || 0) - (a.bytes || 0))
+                      .slice(0, 5)
+                      .map(([p, m]: any) => ({ path: p, bytes: m.bytes })),
+                  };
+                }
+              } catch {}
+            }
+            cachedHeapSnapshot = {
               takenAt: new Date().toISOString(),
               memory: {
                 heapUsedMB: Math.round(mem.heapUsed / 1024 / 1024 * 100) / 100,
@@ -1349,8 +1382,10 @@ async function getProtocolScorecard(params?: { use?: string; size?: number }) {
                 edgeCount: heap.edges?.length ?? 0,
                 classCount: heap.nodeClassNames?.length ?? 0,
               },
-              bundle: bundleSnapshot,
+              bundle: cachedBundleSnapshot,
             };
+            cacheTimestamp = Date.now();
+            return cachedHeapSnapshot;
           })(),
           score,
           defensible,
