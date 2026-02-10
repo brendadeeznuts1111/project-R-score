@@ -24,8 +24,9 @@ const packageJson = {
   }
 };
 
-// Write package.json
-await Bun.write(join(demoDir, "demo-package.json"), JSON.stringify(packageJson, null, 2));
+// Write package.json (Bun requires it to be named exactly package.json)
+const packageJsonPath = join(demoDir, "package.json");
+await Bun.write(packageJsonPath, JSON.stringify(packageJson, null, 2));
 
 console.log("\n📦 Example 1: Parallel Execution");
 console.log("Command: bun run --parallel build test lint");
@@ -79,7 +80,7 @@ console.log("  • Output format: 'script-name | output'");
 
 // Cleanup
 try {
-  const file = Bun.file(join(demoDir, "demo-package.json"));
+  const file = Bun.file(packageJsonPath);
   if (await file.exists()) {
     await file.unlink();
   }
