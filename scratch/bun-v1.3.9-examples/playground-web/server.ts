@@ -19,6 +19,7 @@ import { summarizeDeploymentReadiness } from "../../../deployment/readiness-matr
 import { summarizePerformanceImpact } from "../../../analysis/performance-impact";
 import { summarizeSecurityPosture } from "../../../security/posture-report";
 import { listDomains, renderDomainGraph, renderFullHierarchy } from "../../../docs/domain-renderer";
+import { UltraWorkerPool } from "../../../workers/ultra-pool";
 import { resilientFetchBun } from "../../../src/fetch/resilient-bun";
 import { UltraResilientFetch } from "../../../src/fetch/resilient-ultra";
 import {
@@ -33,8 +34,8 @@ const BASE_STANDARD = Object.freeze({
   portRange: "3011-3020",
   maxConcurrentRequests: 200,
   maxCommandWorkers: 2,
-  prefetchEnabled: false,
-  preconnectEnabled: false,
+  prefetchEnabled: true,
+  preconnectEnabled: true,
   smokeTimeoutMs: 2000,
   fetchTimeoutMs: 30000,
   maxBodySizeMb: 10,
@@ -48,10 +49,20 @@ const DEDICATED_PORT = parseFirstNumberEnv(["PLAYGROUND_PORT", "PORT"], BASE_STA
 const PORT_RANGE = process.env.PLAYGROUND_PORT_RANGE || BASE_STANDARD.portRange;
 const MAX_CONCURRENT_REQUESTS = parseNumberEnv("PLAYGROUND_MAX_CONCURRENT_REQUESTS", BASE_STANDARD.maxConcurrentRequests, { min: 1, max: 100000 });
 const MAX_COMMAND_WORKERS = parseNumberEnv("PLAYGROUND_MAX_COMMAND_WORKERS", BASE_STANDARD.maxCommandWorkers, { min: 1, max: 64 });
+const WORKER_POOL_MIN = parseNumberEnv("PLAYGROUND_WORKER_POOL_MIN", MAX_COMMAND_WORKERS, { min: 1, max: 64 });
+const WORKER_POOL_MAX = parseNumberEnv("PLAYGROUND_WORKER_POOL_MAX", MAX_COMMAND_WORKERS, { min: 1, max: 64 });
 const PREFETCH_ENABLED = parseBool(process.env.PLAYGROUND_PREFETCH_ENABLED, BASE_STANDARD.prefetchEnabled);
 const PRECONNECT_ENABLED = parseBool(process.env.PLAYGROUND_PRECONNECT_ENABLED, BASE_STANDARD.preconnectEnabled);
-const PREFETCH_HOSTS = parseList(process.env.PLAYGROUND_PREFETCH_HOSTS);
-const PRECONNECT_URLS = parseList(process.env.PLAYGROUND_PRECONNECT_URLS);
+const DEFAULT_PREFETCH_HOSTS = ["registry.factory-wager.com", "docs.factory-wager.com"];
+const DEFAULT_PRECONNECT_URLS = [`http://localhost:${DEDICATED_PORT}`];
+const PREFETCH_HOSTS = (() => {
+  const configured = parseList(process.env.PLAYGROUND_PREFETCH_HOSTS);
+  return configured.length > 0 ? configured : (PREFETCH_ENABLED ? DEFAULT_PREFETCH_HOSTS : []);
+})();
+const PRECONNECT_URLS = (() => {
+  const configured = parseList(process.env.PLAYGROUND_PRECONNECT_URLS);
+  return configured.length > 0 ? configured : (PRECONNECT_ENABLED ? DEFAULT_PRECONNECT_URLS : []);
+})();
 const SMOKE_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_SMOKE_TIMEOUT_MS", BASE_STANDARD.smokeTimeoutMs, { min: 100, max: 120000 });
 const SMOKE_URLS = parseList(process.env.PLAYGROUND_SMOKE_URLS);
 const FETCH_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_FETCH_TIMEOUT_MS", BASE_STANDARD.fetchTimeoutMs, { min: 100, max: 300000 });
@@ -108,9 +119,24 @@ const DASHBOARD_METRICS_INTERVAL_MS = parseNumberEnv("PLAYGROUND_METRICS_INTERVA
   max: 60000,
 });
 let inFlightRequests = 0;
-let activeCommands = 0;
 const serverStartTime = Date.now();
-const commandWaiters: Array<() => void> = [];
+const commandWorkerPool = new UltraWorkerPool<
+  { type: "run-command"; cmd: string[]; cwd: string },
+  { output: string; error: string; exitCode: number }
+>({
+  workerUrl: new URL("./command-worker.ts", import.meta.url),
+  minWorkers: Math.max(1, Math.min(WORKER_POOL_MIN, WORKER_POOL_MAX)),
+  maxWorkers: Math.max(1, WORKER_POOL_MAX),
+  fastPath: true,
+});
+
+function getCommandWorkerStats() {
+  const stats = commandWorkerPool.getStats();
+  return {
+    active: stats.busyWorkers,
+    max: stats.workers,
+  };
+}
 
 // Cache expensive computations
 let cachedBenchmarkResult: { name: string; result: number; threshold: number }[] | null = null;
@@ -2862,35 +2888,11 @@ function readDemoBenchStatus() {
 }
 
 async function runCommand(cmd: string[], cwd: string): Promise<{ output: string; error: string; exitCode: number }> {
-  return withCommandWorker(async () => {
-    const proc = Bun.spawn({
-      cmd,
-      stdout: "pipe",
-      stderr: "pipe",
-      cwd,
-    });
-
-    const [output, error] = await Promise.all([
-      new Response(proc.stdout).text(),
-      new Response(proc.stderr).text(),
-    ]);
-    const exitCode = await proc.exited;
-    return { output, error, exitCode };
+  return await commandWorkerPool.execute({
+    type: "run-command",
+    cmd,
+    cwd,
   });
-}
-
-async function withCommandWorker<T>(fn: () => Promise<T>): Promise<T> {
-  if (activeCommands >= MAX_COMMAND_WORKERS) {
-    await new Promise<void>(resolve => commandWaiters.push(resolve));
-  }
-  activeCommands++;
-  try {
-    return await fn();
-  } finally {
-    activeCommands--;
-    const next = commandWaiters.shift();
-    if (next) next();
-  }
 }
 
 function parseBool(value: string | undefined, defaultValue: boolean): boolean {
@@ -3326,12 +3328,13 @@ function severityByHeadroom(availablePct: number): SeverityLevel {
 }
 
 function buildLivePoolSnapshot() {
+  const workerStats = getCommandWorkerStats();
   const connectionUtilization = Number((inFlightRequests / Math.max(1, MAX_CONCURRENT_REQUESTS)).toFixed(3));
-  const workerUtilization = Number((activeCommands / Math.max(1, MAX_COMMAND_WORKERS)).toFixed(3));
+  const workerUtilization = Number((workerStats.active / Math.max(1, workerStats.max)).toFixed(3));
   const availableConnections = Math.max(0, MAX_CONCURRENT_REQUESTS - inFlightRequests);
-  const availableWorkers = Math.max(0, MAX_COMMAND_WORKERS - activeCommands);
-  const perWorkerConnectionLoad = Number((inFlightRequests / Math.max(1, activeCommands || 1)).toFixed(2));
-  const perConnectionWorkerLoad = Number((activeCommands / Math.max(1, inFlightRequests || 1)).toFixed(2));
+  const availableWorkers = Math.max(0, workerStats.max - workerStats.active);
+  const perWorkerConnectionLoad = Number((inFlightRequests / Math.max(1, workerStats.active || 1)).toFixed(2));
+  const perConnectionWorkerLoad = Number((workerStats.active / Math.max(1, inFlightRequests || 1)).toFixed(2));
   const bottleneck =
     connectionUtilization >= workerUtilization
       ? "connection-pool"
@@ -3347,8 +3350,8 @@ function buildLivePoolSnapshot() {
       status: connectionUtilization >= 1 ? "saturated" : connectionUtilization >= 0.75 ? "high" : "healthy",
     },
     workers: {
-      active: activeCommands,
-      max: MAX_COMMAND_WORKERS,
+      active: workerStats.active,
+      max: workerStats.max,
       available: availableWorkers,
       utilization: workerUtilization,
       loadPerConnection: perConnectionWorkerLoad,
@@ -4492,9 +4495,10 @@ function buildRuntimeMetadata() {
 }
 
 function buildResilienceStatus() {
+  const workerStats = getCommandWorkerStats();
   const { profile, config } = ACTIVE_RESILIENCE;
   const requestUtilization = Number((inFlightRequests / Math.max(1, MAX_CONCURRENT_REQUESTS)).toFixed(3));
-  const workerUtilization = Number((activeCommands / Math.max(1, MAX_COMMAND_WORKERS)).toFixed(3));
+  const workerUtilization = Number((workerStats.active / Math.max(1, workerStats.max)).toFixed(3));
   const poolUtilization = Math.max(requestUtilization, workerUtilization);
   const dnsAligned =
     config.enablePrefetch === PREFETCH_ENABLED &&
@@ -4527,6 +4531,7 @@ function buildResilienceStatus() {
 }
 
 function buildHealthChecks() {
+  const workerStats = getCommandWorkerStats();
   return [
     {
       name: "server",
@@ -4540,8 +4545,8 @@ function buildHealthChecks() {
     },
     {
       name: "worker-pool",
-      status: activeCommands < MAX_COMMAND_WORKERS ? "healthy" : "warning",
-      message: `${activeCommands}/${MAX_COMMAND_WORKERS} command workers active`,
+      status: workerStats.active < workerStats.max ? "healthy" : "warning",
+      message: `${workerStats.active}/${workerStats.max} bun worker threads active`,
     },
   ];
 }
@@ -4568,14 +4573,15 @@ async function buildDashboardPayload(req: Request) {
   const governance = await routes["/api/control/governance-status"]();
   const runtime = buildRuntimeMetadata();
   const now = new Date().toISOString();
+  const workerStats = getCommandWorkerStats();
   const pool = {
     requests: {
       inFlight: inFlightRequests,
       max: MAX_CONCURRENT_REQUESTS,
     },
     workers: {
-      active: activeCommands,
-      max: MAX_COMMAND_WORKERS,
+      active: workerStats.active,
+      max: workerStats.max,
     },
   };
 
@@ -5935,9 +5941,9 @@ async function handleRequest(req: Request): Promise<Response> {
             dedicatedPort: DEDICATED_PORT,
             portRange: PORT_RANGE,
             maxConcurrentRequests: MAX_CONCURRENT_REQUESTS,
-            maxCommandWorkers: MAX_COMMAND_WORKERS,
+            maxCommandWorkers: getCommandWorkerStats().max,
             inFlightRequests,
-            activeCommands,
+            activeCommands: getCommandWorkerStats().active,
             uptimeMs,
           },
         });
@@ -6236,6 +6242,7 @@ async function gracefulShutdown(reason: string, exitCode = 0, error?: unknown) {
       capacityMetricsDb.close();
       capacityMetricsDb = null;
     }
+    commandWorkerPool.terminateAll("playground shutdown");
 
     const drained = await waitForInFlightDrain(Math.max(250, SHUTDOWN_TIMEOUT_MS - 250));
     if (!drained) {
@@ -6292,7 +6299,7 @@ httpServer = serve({
     const traceId = nextTraceId();
     const startedAt = performance.now();
     const inFlightAtStart = inFlightRequests;
-    const activeCommandsAtStart = activeCommands;
+    const activeCommandsAtStart = getCommandWorkerStats().active;
     if (url.pathname === CAPACITY_WS_PATH) {
       const upgraded = server.upgrade(req, {
         data: {
