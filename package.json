@@ -1610,7 +1610,7 @@
     "playground:http": "bun run http:debug",
     "playground:fix": "bun run http:migrate",
     "test": "bun test ./tests ./lib ./utils ./cli ./barbershop ./bun-markdown-constants",
-    "test:agent": "AGENT=1 bun test ./tests ./lib ./utils ./barbershop ./bun-markdown-constants",
+    "test:agent": "AGENT=1 bun test ./tests ./lib ./utils ./cli ./barbershop ./bun-markdown-constants",
     "test:ci": "bun test --bail --reporter=junit --reporter-outfile=./reports/junit/bun-test.xml ./tests ./lib ./utils ./barbershop ./bun-markdown-constants",
     "test:coverage": "bun test --coverage ./tests ./lib ./utils ./barbershop ./bun-markdown-constants",
     "test:watch": "bun test --watch ./tests ./lib ./utils ./barbershop ./bun-markdown-constants",
@@ -2029,6 +2029,8 @@
     "test:ci:root:dots": "bun test --timeout=10000 --max-concurrency=20 --bail=1 --dots tests/search-policy-thresholds.test.ts tests/domain-registry-doctor.test.ts tests/r2-integration.test.ts tests/concurrent-operations.test.ts tests/search-smart-fusion-cli.test.ts tests/wiki-generator.test.ts tests/validation.test.ts",
     "test:ci:root:rerun": "bun test --timeout=10000 --max-concurrency=20 --bail=1 --rerun-each=2 tests/search-policy-thresholds.test.ts tests/domain-registry-doctor.test.ts tests/r2-integration.test.ts tests/concurrent-operations.test.ts tests/search-smart-fusion-cli.test.ts tests/wiki-generator.test.ts tests/validation.test.ts",
     "test:ci:root:random": "bun test --timeout=10000 --max-concurrency=20 --bail=1 --randomize --seed=1337 tests/search-policy-thresholds.test.ts tests/domain-registry-doctor.test.ts tests/r2-integration.test.ts tests/concurrent-operations.test.ts tests/search-smart-fusion-cli.test.ts tests/wiki-generator.test.ts tests/validation.test.ts",
+    "test:scoped:bail": "bun run test --bail=10",
+    "test:concurrent:safe": "AGENT=1 bun test --concurrent --max-concurrency=4 --timeout=10000 --bail=1 ./tests ./lib ./utils ./cli ./barbershop ./bun-markdown-constants",
     "lint:ci:root": "bun run eslint lib/ai --ext .ts,.tsx",
     "ci:bun:check": "bun run scripts/ci-bun-check.ts",
     "ci:parallel:full": "bun run --parallel --no-exit-on-error build test lint"
