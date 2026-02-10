@@ -2025,7 +2025,10 @@
     "test:variants": "node scripts/test-variants.js",
     "test:cookies": "node scripts/test-cookies.js",
     "test:headers": "node scripts/test-headers.js",
-    "test:ci:root": "mkdir -p ./reports/junit && bun test --bail --reporter=junit --reporter-outfile=./reports/junit/bun-test-root.xml tests/search-policy-thresholds.test.ts tests/domain-registry-doctor.test.ts tests/r2-integration.test.ts tests/concurrent-operations.test.ts tests/search-smart-fusion-cli.test.ts tests/wiki-generator.test.ts tests/validation.test.ts",
+    "test:ci:root": "mkdir -p ./reports/junit && bun test --timeout=10000 --max-concurrency=20 --bail=1 --reporter=junit --reporter-outfile=./reports/junit/bun-test-root.xml tests/search-policy-thresholds.test.ts tests/domain-registry-doctor.test.ts tests/r2-integration.test.ts tests/concurrent-operations.test.ts tests/search-smart-fusion-cli.test.ts tests/wiki-generator.test.ts tests/validation.test.ts",
+    "test:ci:root:dots": "bun test --timeout=10000 --max-concurrency=20 --bail=1 --dots tests/search-policy-thresholds.test.ts tests/domain-registry-doctor.test.ts tests/r2-integration.test.ts tests/concurrent-operations.test.ts tests/search-smart-fusion-cli.test.ts tests/wiki-generator.test.ts tests/validation.test.ts",
+    "test:ci:root:rerun": "bun test --timeout=10000 --max-concurrency=20 --bail=1 --rerun-each=2 tests/search-policy-thresholds.test.ts tests/domain-registry-doctor.test.ts tests/r2-integration.test.ts tests/concurrent-operations.test.ts tests/search-smart-fusion-cli.test.ts tests/wiki-generator.test.ts tests/validation.test.ts",
+    "test:ci:root:random": "bun test --timeout=10000 --max-concurrency=20 --bail=1 --randomize --seed=1337 tests/search-policy-thresholds.test.ts tests/domain-registry-doctor.test.ts tests/r2-integration.test.ts tests/concurrent-operations.test.ts tests/search-smart-fusion-cli.test.ts tests/wiki-generator.test.ts tests/validation.test.ts",
     "lint:ci:root": "bun run eslint lib/ai --ext .ts,.tsx",
     "ci:bun:check": "bun run scripts/ci-bun-check.ts",
     "ci:parallel:full": "bun run --parallel --no-exit-on-error build test lint"
