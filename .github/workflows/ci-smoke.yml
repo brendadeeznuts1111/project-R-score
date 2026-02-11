@@ -1,0 +1,13 @@
+name: CI Smoke Test
+
+on:
+  push:
+    branches: [main, fix/ci-pipeline]
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo
+        run: echo "CI smoke test passed"
