@@ -663,7 +663,15 @@ export function createSecurityMiddleware(config?: Partial<SecurityConfig>) {
     // 🛡️ CSRF VALIDATION (for state-changing requests)
     const csrfValidation = await validateCSRF(request, cookies, session);
     
-    // 📊 RECORD SECURITY EVENT
+    // 📊 RECORD SECURITY EVENTS
+    if (!csrfValidation.valid) {
+      security.recordSecurityEvent('failed_attempt', {
+        path: new URL(request.url).pathname,
+        method: request.method,
+        reason: 'csrf_validation_failed',
+        sessionId: session?.id,
+      });
+    }
     security.recordSecurityEvent('request_processed', {
       path: new URL(request.url).pathname,
       method: request.method,
