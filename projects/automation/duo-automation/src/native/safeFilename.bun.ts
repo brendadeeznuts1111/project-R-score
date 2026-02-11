@@ -12,21 +12,28 @@
  */
 
 export function safeFilename(input: string, maxLength: number = 255): string {
+  const bunRuntime = getBunRuntime();
+
   // [BUN-NATIVE] Optimized path for Bun runtime
-  if (globalThis.Bun && Bun._filenameSanitizer) {
-    return Bun._filenameSanitizer(input, maxLength);
+  if (bunRuntime?._filenameSanitizer) {
+    return bunRuntime._filenameSanitizer(input, maxLength);
   }
 
   // Fallback for non-Bun environments (TypeScript only)
   return _userlandSafeFilename(input, maxLength);
 }
 
-// Internal Bun binding (not exposed to user code)
-declare global {
-  var Bun: {
-    _filenameSanitizer: (input: string, maxLength: number) => string;
-    _contentDispositionEncoder: (filename: string, type: "inline" | "attachment") => string;
-  } | undefined;
+type BunRuntimeWithInternals = {
+  _filenameSanitizer?: (input: string, maxLength: number) => string;
+  _contentDispositionEncoder?: (filename: string, type: "inline" | "attachment") => string;
+};
+
+function getBunRuntime(): BunRuntimeWithInternals | undefined {
+  const bunRuntime = (globalThis as typeof globalThis & { Bun?: unknown }).Bun;
+  if (!bunRuntime || typeof bunRuntime !== "object") {
+    return undefined;
+  }
+  return bunRuntime as BunRuntimeWithInternals;
 }
 
 // Userland fallback (never called in Bun)
@@ -48,9 +55,11 @@ export function encodeContentDisposition(
   filename: string,
   type: "inline" | "attachment" = "attachment"
 ): string {
+  const bunRuntime = getBunRuntime();
+
   // [BUN-NATIVE] Use OS-optimized encoder
-  if (globalThis.Bun && Bun._contentDispositionEncoder) {
-    return Bun._contentDispositionEncoder(filename, type);
+  if (bunRuntime?._contentDispositionEncoder) {
+    return bunRuntime._contentDispositionEncoder(filename, type);
   }
   
   // RFC 6266 compliant fallback
