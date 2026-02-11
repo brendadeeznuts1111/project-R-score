@@ -185,6 +185,8 @@ config/*
 
 # Runtime artifacts
 profiles.db
+deployment.log
+dump.rdb
 metrics/
 plugins/
 wrangler.toml
