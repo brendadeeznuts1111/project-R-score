@@ -1,6 +1,6 @@
 // lib/versioning/version-tracking-examples.ts — Usage examples for version tracking
 
-import VersionTracker, { UtilsCategory } from './version-tracking';
+import VersionTracker from './version-tracking';
 
 // ============================================================================
 // BASIC USAGE EXAMPLES
@@ -127,9 +127,11 @@ async function healthMonitoringExample() {
     enableHealthChecks: true,
     rollbackPolicy: {
       enabled: true,
+      maxRollbackVersions: 5,
       autoRollbackOnError: true,
       healthCheckThreshold: 10.0, // 10% error rate threshold
       rollbackTimeout: 180,
+      requireApproval: false,
     },
   });
 
@@ -212,6 +214,10 @@ async function multiComponentDeploymentExample() {
     maxVersionsPerComponent: 8,
     rollbackPolicy: {
       enabled: true,
+      maxRollbackVersions: 5,
+      autoRollbackOnError: true,
+      healthCheckThreshold: 5.0,
+      rollbackTimeout: 300,
       requireApproval: true,
       approvedBy: ['dev-lead@company.com', 'ops-lead@company.com'],
     },
@@ -379,8 +385,11 @@ async function monitoringDashboardExample() {
     enableHealthChecks: true,
     rollbackPolicy: {
       enabled: true,
+      maxRollbackVersions: 5,
       autoRollbackOnError: true,
       healthCheckThreshold: 8.0,
+      rollbackTimeout: 300,
+      requireApproval: false,
     },
   });
 

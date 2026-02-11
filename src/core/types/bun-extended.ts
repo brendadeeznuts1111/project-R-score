@@ -1,63 +1,60 @@
 // src/core/types/bun-extended.ts
-import type { Bun, Server } from 'bun';
+// Application-level server and options types (not augmenting Bun globals)
+import type { Server as BunServer } from 'bun';
 
-declare global {
-  namespace Bun {
-    interface Server {
-      // Now includes protocol property
-      protocol: 'http' | 'https' | 'http2' | 'http3';
-      
-      // Enhanced performance properties
-      performance: {
-        requestsPerSecond: number;
-        avgResponseTime: number;
-        activeConnections: number;
-        bytesTransferred: {
-          total: number;
-          compressed: number;
-          uncompressed: number;
-          compressionRatio: number;
-        };
-        cacheStats: {
-          hits: number;
-          misses: number;
-          ratio: number;
-        };
-      };
-      
-      // Extended methods
-      getRequestMetrics(): RequestMetrics[];
-      getCompressionStats(): CompressionStats;
-      getProtocolMetrics(): ProtocolMetrics;
-    }
-    
-    interface ServeOptions {
-      // Enhanced options
-      protocol?: 'http' | 'https' | 'http2' | 'http3' | 'auto';
-      compression?: {
-        enabled?: boolean;
-        algorithms?: ('gzip' | 'brotli' | 'deflate' | 'zstd')[];
-        minSize?: number;
-        level?: number;
-      };
-      caching?: {
-        enabled?: boolean;
-        maxAge?: number;
-        sMaxAge?: number;
-        staleWhileRevalidate?: number;
-        public?: boolean;
-        immutable?: boolean;
-      };
-      monitoring?: {
-        enabled?: boolean;
-        interval?: number;
-        metricsEndpoint?: string;
-        logSlowRequests?: boolean;
-        slowRequestThreshold?: number;
-      };
-    }
-  }
+export interface EnhancedServerConfig {
+  protocol?: 'http' | 'https' | 'http2' | 'http3' | 'auto';
+  compression?: {
+    enabled?: boolean;
+    algorithms?: ('gzip' | 'brotli' | 'deflate' | 'zstd')[];
+    minSize?: number;
+    level?: number;
+  };
+  caching?: {
+    enabled?: boolean;
+    maxAge?: number;
+    sMaxAge?: number;
+    staleWhileRevalidate?: number;
+    public?: boolean;
+    immutable?: boolean;
+  };
+  monitoring?: {
+    enabled?: boolean;
+    interval?: number;
+    metricsEndpoint?: string;
+    logSlowRequests?: boolean;
+    slowRequestThreshold?: number;
+  };
 }
+
+export type ServerProtocol = 'http' | 'https' | 'http2' | 'http3';
+
+export interface ServerPerformanceState {
+  requestsPerSecond: number;
+  avgResponseTime: number;
+  activeConnections: number;
+  bytesTransferred: {
+    total: number;
+    compressed: number;
+    uncompressed: number;
+    compressionRatio: number;
+  };
+  cacheStats: {
+    hits: number;
+    misses: number;
+    ratio: number;
+  };
+}
+
+export type EnhancedServeOptions = Bun.ServeOptions & EnhancedServerConfig;
+
+export type EnhancedServer = BunServer<unknown> & {
+  protocol: ServerProtocol;
+  performance?: ServerPerformanceState;
+  getRequestMetrics?: () => RequestMetrics[];
+  getCompressionStats?: () => CompressionStats;
+  getProtocolMetrics?: () => ProtocolMetrics;
+};
 
 export interface RequestMetrics {
   id: string;
@@ -83,6 +80,7 @@ export interface RequestMetrics {
 export interface CompressionStats {
   enabled: boolean;
   algorithms: string[];
+  ratio?: number;
   savings: {
     total: number;
     byAlgorithm: Record<string, number>;

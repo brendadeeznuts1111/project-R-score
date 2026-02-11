@@ -1,21 +1,14 @@
 // src/build/types.ts
 // Type definitions for Bun Build Metafile v4.0
 
-export type ImportKind = 
-  | 'import-statement'
-  | 'import-call'
-  | 'require-call'
-  | 'require-resolve'
-  | 'dynamic-import'
-  | 'import-rule'
-  | 'url-token'
-  | 'entry-point';
+export type ImportKind = Bun.ImportKind;
 
 export interface ImportMeta {
   path: string;
   kind: ImportKind;
   original?: string;
   external?: boolean;
+  with?: Record<string, string>;
 }
 
 export interface InputMeta {
@@ -37,10 +30,7 @@ export interface OutputMeta {
   cssBundle?: string;
 }
 
-export interface BuildMetafile {
-  inputs: Record<string, InputMeta>;
-  outputs: Record<string, OutputMeta>;
-}
+export type BuildMetafile = NonNullable<Bun.BuildOutput["metafile"]>;
 
 export interface MetafileOptions {
   json?: string;

@@ -697,7 +697,7 @@
       "license": "MIT"
     },
     "performance": {
-      "max_concurrent_requests": 10000,
+      "max_concurrent_requests": 1e4,
       "request_timeout": "30s",
       "connection_pool_size": 100,
       "cache_ttl": "300s",
@@ -727,7 +727,7 @@
       "max_memory": "1gb",
       "eviction_policy": "lru",
       "compression": true,
-      "max_keys": 1000000,
+      "max_keys": 1e6,
       "cleanup_interval": "600s"
     },
     "api": {
@@ -768,7 +768,7 @@
     },
     "limits": {
       "max_file_upload_size": "100mb",
-      "max_api_calls_per_hour": 10000,
+      "max_api_calls_per_hour": 1e4,
       "max_concurrent_sessions": 1000,
       "max_storage_per_user": "10gb",
       "max_bandwidth_per_month": "1tb",
@@ -1719,7 +1719,8 @@
     "lint:fix": "bun run eslint lib/ --ext .ts --fix",
     "format": "bun run prettier --write lib/**/*.ts",
     "format:check": "bun run prettier --check lib/**/*.ts",
-    "type-check": "bun run tsc --noEmit",
+    "type-check": "bun run tsc -b tsconfig.check.json",
+    "type-check:ci": "bun run tsc -b tsconfig.ci.json",
     "standards:check": "bun run url:check && bun run lint && bun run type-check",
     "guard:bun-first": "bun run packages/guards/src/bun-first-guard.ts lib/**/*.ts",
     "guard:bun-first:strict": "bun run packages/guards/src/bun-first-guard.ts lib/**/*.ts tools/**/*.ts cli/**/*.ts",
@@ -2141,6 +2142,7 @@
     "@types/ws": "^8.18.1",
     "@typescript-eslint/eslint-plugin": "^8.55.0",
     "@typescript-eslint/parser": "^8.55.0",
+    "bun-types": "1.3.8",
     "eslint": "^9.39.2",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-security": "^3.0.1",

@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "noEmit": true,
+    "incremental": true,
+    "tsBuildInfoFile": "../../.cache/tsbuildinfo/packages-package.tsbuildinfo"
+  },
+  "include": ["src/**/*", "../../lib/**/*"],
+  "exclude": ["node_modules", "dist", "build"]
+}

@@ -1,6 +1,6 @@
 // lib/rip/index.ts — Core code analysis and transmutation engine
 
-import { file } from 'bun';
+import { readFileSync } from 'node:fs';
 
 // ============================================================================
 // CORE TYPES & INTERFACES
@@ -63,7 +63,7 @@ export class RipgrepEngine {
    */
   private loadConfig(configPath: string): RipgrepConfig {
     try {
-      const configText = file(configPath).text();
+      const configText = readFileSync(configPath, 'utf8');
       // Simple YAML parsing for now - in production, use proper YAML parser
       return this.parseConfig(configText);
     } catch (error) {

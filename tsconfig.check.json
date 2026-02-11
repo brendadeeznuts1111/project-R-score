@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": true,
+    "types": ["bun-types"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "tsBuildInfoFile": ".cache/tsbuildinfo/check.tsbuildinfo"
+  },
+  "include": [
+    "src/**/*",
+    "lib/udp/**/*",
+    "lib/env/**/*",
+    "workers/protocol-bridge-worker.ts",
+    "workers/ultra-pool.ts",
+    "scripts/lib/dashboard-env.ts",
+    "scripts/lib/graceful-shutdown.ts",
+    "types/**/*",
+    "index.ts"
+  ],
+  "exclude": ["node_modules", "dist", "build", "env.d.ts", "**/*.test.ts", "**/*.bench.ts"]
+}

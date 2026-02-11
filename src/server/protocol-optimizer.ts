@@ -1,12 +1,11 @@
 // src/server/protocol-optimizer.ts
-import type { Bun } from 'bun';
-import type { CompressionStats, ProtocolMetrics } from '../core/types/bun-extended';
+import type { EnhancedServer, CompressionStats, ProtocolMetrics } from '../core/types/bun-extended';
 
 export class ProtocolOptimizer {
-  constructor(private server: Bun.Server) {}
+  constructor(private server: EnhancedServer) {}
   
   public optimizeForProtocol(): void {
-    const protocol = this.server.protocol;
+    const protocol = this.server.protocol as string;
     
     console.log(`🔧 Optimizing for protocol: ${protocol}`);
     
@@ -115,7 +114,7 @@ export class ProtocolOptimizer {
   
   public getProtocolRecommendations(): string[] {
     const recommendations: string[] = [];
-    const protocol = this.server.protocol;
+    const protocol = this.server.protocol as string;
     
     if (protocol === 'http') {
       recommendations.push('⚠️ Upgrade to HTTPS for security');
@@ -128,7 +127,8 @@ export class ProtocolOptimizer {
     
     // Check compression stats
     const compressionStats = this.server.getCompressionStats?.();
-    if (compressionStats && compressionStats.ratio < 0.6) {
+    const compressionRatio = compressionStats?.ratio ?? compressionStats?.savings?.ratio ?? 0;
+    if (compressionStats && compressionRatio < 0.6) {
       recommendations.push('🗜️ Compression ratio could be improved. Consider enabling Brotli or Zstd');
     }
     
@@ -164,7 +164,7 @@ export class ProtocolOptimizer {
     };
     grade: 'A' | 'B' | 'C' | 'D' | 'F';
   } {
-    const protocol = this.server.protocol;
+    const protocol = this.server.protocol as string;
     const performance = this.server.performance;
     const compressionStats = this.server.getCompressionStats?.();
     
@@ -177,7 +177,7 @@ export class ProtocolOptimizer {
     if (protocol === 'http') score -= 20;
     if (performance?.avgResponseTime > 500) score -= 15;
     if (performance?.avgResponseTime > 1000) score -= 20;
-    if (compressionStats?.ratio < 0.5) score -= 10;
+    if ((compressionStats?.ratio ?? compressionStats?.savings?.ratio ?? 0) < 0.5) score -= 10;
     if (performance?.cacheStats.ratio < 0.5) score -= 10;
     
     const grade = score >= 90 ? 'A' : score >= 80 ? 'B' : score >= 70 ? 'C' : score >= 60 ? 'D' : 'F';
@@ -189,7 +189,7 @@ export class ProtocolOptimizer {
       performance: {
         requestsPerSecond: performance?.requestsPerSecond || 0,
         avgResponseTime: performance?.avgResponseTime || 0,
-        compressionRatio: compressionStats?.ratio || 0,
+        compressionRatio: compressionStats?.ratio ?? compressionStats?.savings?.ratio ?? 0,
         cacheHitRatio: performance?.cacheStats.ratio || 0,
       },
       grade,
