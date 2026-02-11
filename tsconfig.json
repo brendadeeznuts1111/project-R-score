@@ -1,34 +1,19 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    // Enable modern JavaScript features
-    "target": "ES2022",
-    "module": "ESNext",
-    
-    /* React support */
-    "jsx": "react-jsx",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    
-    // Bun-specific configuration
-    "moduleResolution": "bundler",
-    
-    // Path mapping for cleaner imports
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@/components/*": ["./src/components/*"],
-      "@/utils/*": ["./utils/*"]
-    }
+    "composite": true,
+    "noEmit": true
   },
-  /* Include patterns */
-  "include": [
-    "src/**/*",
-    "types/**/*",
-    "lib/**/*"
-  ],
-  // Exclude node_modules and build outputs
-  "exclude": [
-    "node_modules",
-    "dist",
-    "build"
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.check.json" },
+    { "path": "./packages/ab-testing" },
+    { "path": "./packages/business" },
+    { "path": "./packages/docs-tools" },
+    { "path": "./packages/guards" },
+    { "path": "./packages/p2p" },
+    { "path": "./packages/package" },
+    { "path": "./packages/rip" },
+    { "path": "./packages/versioning" }
   ]
 }

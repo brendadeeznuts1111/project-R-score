@@ -1,6 +1,6 @@
 // lib/versioning/version-cli.ts — CLI for version management and rollbacks
 
-import { write, read } from 'bun';
+import { readFileSync } from 'node:fs';
 
 import VersionTracker from './version-tracking';
 
@@ -453,7 +453,7 @@ class VersionCLI {
     };
 
     if (output) {
-      await write(output, JSON.stringify(report, null, 2));
+      await Bun.write(output, JSON.stringify(report, null, 2));
       console.log(`📄 Report saved to ${output}`);
     } else if (format === 'json') {
       console.log(JSON.stringify(report, null, 2));
@@ -539,8 +539,8 @@ class VersionCLI {
 
   private loadConfig(configPath: string): any {
     try {
-      const configData = read(configPath);
-      return JSON.parse(configData.toString());
+      const configData = readFileSync(configPath, 'utf8');
+      return JSON.parse(configData);
     } catch (error) {
       console.warn(`Warning: Could not load config from ${configPath}, using defaults`);
       return {};

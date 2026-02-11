@@ -1,8 +1,14 @@
 // src/server/enhanced-server.ts
 import { PerformanceMonitor } from '../performance/monitoring-middleware';
-import type { Bun } from 'bun';
+import type {
+  EnhancedServer,
+  EnhancedServeOptions,
+  RequestMetrics,
+  CompressionStats,
+  ProtocolMetrics,
+} from '../core/types/bun-extended';
 
-export function createEnhancedServer(options: Bun.ServeOptions) {
+export function createEnhancedServer(options: EnhancedServeOptions) {
   // Set default compression if not specified
   if (!options.compression) {
     options.compression = {
@@ -40,7 +46,7 @@ export function createEnhancedServer(options: Bun.ServeOptions) {
     ...options,
     async fetch(request) {
       const monitor = new PerformanceMonitor({
-        server,
+        server: server as EnhancedServer,
         enableMetrics: options.monitoring?.enabled,
         logSlowRequests: options.monitoring?.logSlowRequests,
         slowThreshold: options.monitoring?.slowRequestThreshold,
@@ -51,7 +57,7 @@ export function createEnhancedServer(options: Bun.ServeOptions) {
   });
   
   // Enhance server with performance properties
-  enhanceServerWithMetrics(server);
+  enhanceServerWithMetrics(server as EnhancedServer);
   
   // Log server info with protocol
   console.log(`
@@ -68,11 +74,11 @@ export function createEnhancedServer(options: Bun.ServeOptions) {
   Metrics Endpoint: ${server.url}/_metrics
   `);
   
-  return server;
+  return server as EnhancedServer;
 }
 
 // Enhance server instance with performance tracking
-function enhanceServerWithMetrics(server: Bun.Server) {
+function enhanceServerWithMetrics(server: EnhancedServer) {
   let requestCount = 0;
   let totalResponseTime = 0;
   let activeConnections = 0;
@@ -105,7 +111,7 @@ function enhanceServerWithMetrics(server: Bun.Server) {
   });
   
   // Add request metrics method
-  server.getRequestMetrics = () => {
+  server.getRequestMetrics = (): RequestMetrics[] => {
     // Return mock metrics for now
     return [{
       id: 'mock-1',
@@ -123,29 +129,33 @@ function enhanceServerWithMetrics(server: Bun.Server) {
   };
   
   // Add compression stats method
-  server.getCompressionStats = () => {
+  server.getCompressionStats = (): CompressionStats => {
     return {
       enabled: true,
       algorithms: ['gzip', 'brotli'],
+      ratio: bytesTransferred.uncompressed > 0 ? bytesTransferred.compressed / bytesTransferred.uncompressed : 0,
       savings: {
         total: bytesTransferred.uncompressed - bytesTransferred.compressed,
         byAlgorithm: { gzip: 1024, brotli: 2048 },
         ratio: bytesTransferred.uncompressed > 0 ? bytesTransferred.compressed / bytesTransferred.uncompressed : 0
       },
       eligibleRequests: requestCount,
-      skippedRequests: 0
+      skippedRequests: 0,
+      averageCompressionTime: 0
     };
   };
   
   // Add protocol metrics method
-  server.getProtocolMetrics = () => {
+  server.getProtocolMetrics = (): ProtocolMetrics => {
     return {
       http: server.protocol === 'http' ? 1 : 0,
       https: server.protocol === 'https' ? 1 : 0,
       http2: 0, // Would need actual detection
       http3: 0, // Would need actual detection
       alpnNegotiations: 0,
-      tlsVersions: { 'TLSv1.2': 0, 'TLSv1.3': server.protocol === 'https' ? 1 : 0 }
+      tlsVersions: { 'TLSv1.2': 0, 'TLSv1.3': server.protocol === 'https' ? 1 : 0 },
+      upgradeRequests: 0,
+      connectionReuse: 0
     };
   };
   

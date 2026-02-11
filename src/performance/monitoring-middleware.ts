@@ -1,10 +1,9 @@
 // src/performance/monitoring-middleware.ts
-import type { Bun } from 'bun';
-import type { RequestMetrics, CompressionStats } from '../core/types/bun-extended';
+import type { EnhancedServer, RequestMetrics, CompressionStats } from '../core/types/bun-extended';
 
 export class PerformanceMonitor {
   private metrics: Map<string, RequestMetrics> = new Map();
-  private server: Bun.Server | null = null;
+  private server: EnhancedServer | null = null;
   private options: {
     enableMetrics?: boolean;
     logSlowRequests?: boolean;
@@ -12,7 +11,7 @@ export class PerformanceMonitor {
   };
   
   constructor(options: {
-    server: Bun.Server;
+    server: EnhancedServer;
     enableMetrics?: boolean;
     logSlowRequests?: boolean;
     slowThreshold?: number;

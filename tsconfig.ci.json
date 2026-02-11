@@ -1,0 +1,9 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.check.json" },
+    { "path": "./packages/guards" },
+    { "path": "./packages/p2p" },
+    { "path": "./packages/rip" }
+  ]
+}

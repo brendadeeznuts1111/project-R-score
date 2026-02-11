@@ -2,6 +2,7 @@
 
 import { BusinessContinuity } from './business-continuity';
 import Redis from 'ioredis';
+import { mkdir } from 'node:fs/promises';
 
 const redis = new Redis(Bun.env.REDIS_URL ?? 'redis://localhost:6379', {
   retryStrategy: times => Math.min(times * 50, 2000),
@@ -88,7 +89,7 @@ export async function executeBusinessMigration(
   // Save report
   const reportsDir = 'migrations';
   try {
-    await Bun.mkdir(reportsDir, { recursive: true });
+    await mkdir(reportsDir, { recursive: true });
   } catch {
     // Directory might already exist
   }
@@ -236,7 +237,7 @@ export async function handlePaymentAccountLoss(
   };
 
   try {
-    await Bun.mkdir('emergency', { recursive: true });
+    await mkdir('emergency', { recursive: true });
   } catch {
     // Directory might already exist
   }

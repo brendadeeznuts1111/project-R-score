@@ -1,7 +1,5 @@
 // lib/versioning/version-tracking.ts — Version tracking and rollback system
 
-import { write, read } from 'bun';
-
 // ============================================================================
 // TYPES & INTERFACES
 // ============================================================================
@@ -48,7 +46,7 @@ export interface DeploymentStatus {
 export interface EndpointVersion {
   endpoint: string;
   component: string;
-  versions: ComponentVersion[];
+  versions: VersionMetadata[];
   globalRollbackPolicy: RollbackPolicy;
 }
 
@@ -656,7 +654,7 @@ export class VersionTracker {
         config: this.config,
       };
 
-      await write(`${this.config.storagePath}/version-tracker.json`, JSON.stringify(data, null, 2));
+      await Bun.write(`${this.config.storagePath}/version-tracker.json`, JSON.stringify(data, null, 2));
     } catch (error) {
       console.error('Failed to save version tracker data:', error);
     }
@@ -664,8 +662,8 @@ export class VersionTracker {
 
   private async loadFromStorage(): Promise<void> {
     try {
-      const data = await read(`${this.config.storagePath}/version-tracker.json`);
-      const parsed = JSON.parse(data.toString());
+      const data = await Bun.file(`${this.config.storagePath}/version-tracker.json`).text();
+      const parsed = JSON.parse(data);
 
       this.components = new Map(Object.entries(parsed.components || {}));
       this.endpoints = new Map(Object.entries(parsed.endpoints || {}));
