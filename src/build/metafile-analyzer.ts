@@ -309,7 +309,7 @@ export class MetafileAnalyzer {
       .map(([path, data]) => ({ path, ...data }));
   }
 
-  private findOptimizationOpportunities() {
+  findOptimizationOpportunities() {
     const opportunities: string[] = [];
     
     // Check for large files

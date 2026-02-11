@@ -1,7 +1,7 @@
 import { ProtocolOrchestrator, type ExecuteRequest } from "../src/protocol-matrix";
 import type { WorkerTaskMessage, WorkerResultMessage } from "./ultra-pool";
 
-declare var self: DedicatedWorkerGlobalScope;
+declare var self: Worker;
 
 self.onmessage = async (event: MessageEvent<WorkerTaskMessage<ExecuteRequest>>) => {
   const msg = event.data;

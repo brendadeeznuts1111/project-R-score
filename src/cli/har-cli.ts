@@ -157,7 +157,7 @@ async function cmdCapture(options: CLIOptions): Promise<void> {
   // Wait for shutdown
   await new Promise<void>(resolve => {
     const originalStop = server.stop.bind(server);
-    server.stop = () => { originalStop(); resolve(); };
+    (server as any).stop = () => { originalStop(); resolve(); };
   });
   
   const builder = new HarBuilder({ name: 'har-cli', version: '1.0.0' });
