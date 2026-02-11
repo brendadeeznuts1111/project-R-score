@@ -6,5 +6,5 @@
     "exactOptionalPropertyTypes": true,
     "skipLibCheck": true
   },
-  "files": ["src/version-cli.ts", "src/version-cli.test.ts"]
+  "include": ["src/**/*"]
 }
