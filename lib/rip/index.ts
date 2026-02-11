@@ -1,6 +1,7 @@
 // lib/rip/index.ts — Core code analysis and transmutation engine
 
 import { file } from 'bun';
+import { parse as parseYaml } from 'yaml';
 
 // ============================================================================
 // CORE TYPES & INTERFACES
@@ -58,25 +59,70 @@ export class RipgrepEngine {
     this.config = this.loadConfig(configPath);
   }
 
+  private configPromise: Promise<RipgrepConfig>;
+
   /**
-   * Load configuration from YAML file
+   * Load configuration from YAML file (async, lazy-init)
    */
   private loadConfig(configPath: string): RipgrepConfig {
-    try {
-      const configText = file(configPath).text();
-      // Simple YAML parsing for now - in production, use proper YAML parser
-      return this.parseConfig(configText);
-    } catch (error) {
-      console.warn(`⚠️  Could not load config from ${configPath}, using defaults`);
-      return this.getDefaultConfig();
-    }
+    const defaults = this.getDefaultConfig();
+    // Kick off async config load; callers that need the resolved config
+    // should await ensureConfig().
+    this.configPromise = (async () => {
+      try {
+        const configText = await file(configPath).text();
+        return this.parseConfig(configText);
+      } catch (error) {
+        console.warn(`⚠️  Could not load config from ${configPath}, using defaults`);
+        return defaults;
+      }
+    })();
+    return defaults;
   }
 
   /**
-   * Parse YAML configuration (simplified implementation)
+   * Await the async config load (call from any async method that needs config)
+   */
+  async ensureConfig(): Promise<RipgrepConfig> {
+    this.config = await this.configPromise;
+    return this.config;
+  }
+
+  /**
+   * Parse YAML configuration into RipgrepConfig
    */
   private parseConfig(yamlText: string): RipgrepConfig {
-    return this.getDefaultConfig(); // Placeholder - implement proper YAML parsing
+    const defaults = this.getDefaultConfig();
+    try {
+      const raw = parseYaml(yamlText) as Record<string, any> | null;
+      if (!raw || typeof raw !== 'object') return defaults;
+
+      return {
+        schema: {
+          scope: raw.schema?.scope ?? defaults.schema.scope,
+          type: raw.schema?.type ?? defaults.schema.type,
+          variant: raw.schema?.variant ?? defaults.schema.variant,
+          hash_algo: raw.schema?.['hash-algo'] ?? raw.schema?.hash_algo ?? defaults.schema.hash_algo,
+          id_pattern: raw.schema?.['id-pattern'] ?? raw.schema?.id_pattern ?? defaults.schema.id_pattern,
+          ai_prefix: raw.schema?.['ai-prefix'] ?? raw.schema?.ai_prefix ?? defaults.schema.ai_prefix,
+        },
+        defaults: {
+          scope: raw.defaults?.scope ?? defaults.defaults.scope,
+          type: raw.defaults?.type ?? defaults.defaults.type,
+          version: raw.defaults?.version ?? defaults.defaults.version,
+          status: raw.defaults?.status ?? defaults.defaults.status,
+        },
+        grep: {
+          all_tags: raw.grep?.['all-tags'] ?? raw.grep?.all_tags ?? defaults.grep.all_tags,
+          rg_flags: raw.grep?.['rg-flags'] ?? raw.grep?.rg_flags ?? defaults.grep.rg_flags,
+          validate: {
+            hooks: raw.grep?.validate?.hooks ?? defaults.grep.validate.hooks,
+          },
+        },
+      };
+    } catch {
+      return defaults;
+    }
   }
 
   /**
