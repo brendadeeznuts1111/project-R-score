@@ -634,9 +634,15 @@ function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Global performance monitor stub
-declare const DomainPerformanceMonitor: {
-  recordEvent: (type: string, data: any) => void;
+// Lightweight performance monitor — logs structured JSON entries
+const DomainPerformanceMonitor = {
+  recordEvent(type: string, data: any): void {
+    const entry = { timestamp: new Date().toISOString(), type,
+      ...(typeof data === 'object' ? data : { value: data }) };
+    if (process.env.NODE_ENV !== 'test') {
+      console.log(`[perf:${type}]`, JSON.stringify(entry));
+    }
+  },
 };
 
 // Export error classes for consumers

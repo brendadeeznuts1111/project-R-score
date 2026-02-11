@@ -266,6 +266,8 @@ bun run test
 
 ### Day 2-5: Hands-On Standards Practice
 \`\`\`typescript
+// Onboarding exercise: These TODOs are intentional placeholders for new
+// developers to practice implementing standards-compliant code.
 // Exercise: Implement a utility following all standards
 export class StandardsCompliantUtility {
   // TODO: Implement following TypeScript standards
