@@ -940,6 +940,7 @@ bun -e 'import{Database}from"bun:sqlite";const d=new Database("./data/tier1380.d
 | `.kimi/skills/tier1380-infra/SKILL.md` | Infrastructure management |
 | `.kimi/skills/tier1380-commit-flow/SKILL.md` | Commit governance and validation |
 | `.kimi/skills/tier1380-mcp/SKILL.md` | MCP integration and flows |
+| `.agents/skills/project-r-skill-maintenance/SKILL.md` | Skill update and metadata alignment workflow |
 | `cli/tier1380-audit.ts` | Col-89 audit CLI with SQLite |
 | `docs/release-notes.md` | Bun runtime release notes |
 | `mcp-bun-docs/lib.ts` | Bun docs search, curated entries, reference links (searchBunDocs, getDocEntry, BUN_REFERENCE_LINKS) |
