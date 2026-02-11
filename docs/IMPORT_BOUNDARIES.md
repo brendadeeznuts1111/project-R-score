@@ -3,7 +3,7 @@
 This repository enforces package import boundaries with:
 
 - `bun run imports:verify`
-- `/Users/nolarose/Projects/scripts/verify-package-import-boundaries.ts`
+- `scripts/verify-package-import-boundaries.ts`
 
 The goal is to keep package type-check scope predictable and avoid accidental coupling to unrelated modules.
 

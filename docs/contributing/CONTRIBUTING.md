@@ -507,7 +507,7 @@ We use [Semantic Versioning](https://semver.org/):
 
 This repository includes an optional local hook at:
 
-- `/Users/nolarose/Projects/.githooks/pre-commit`
+- `.githooks/pre-commit`
 
 Enable it in your local clone:
 

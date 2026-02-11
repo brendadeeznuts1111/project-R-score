@@ -59,4 +59,4 @@ bun run build
 ```
 
 ## Project Policies
-- Import boundaries and allowed package roots: `/Users/nolarose/Projects/docs/IMPORT_BOUNDARIES.md`
+- Import boundaries and allowed package roots: `docs/IMPORT_BOUNDARIES.md`
