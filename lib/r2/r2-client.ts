@@ -2,13 +2,20 @@
 
 /**
  * Simple R2 Client for Filter Watch Logger
- * 
+ *
  * Basic R2 upload functionality for storing watch session logs.
+ * Uses signed S3 requests in production, local filesystem in development.
  */
+
+import { signS3Request, getR2Credentials } from './s3-signer';
 
 interface R2UploadOptions {
   contentType?: string;
   metadata?: Record<string, string>;
+}
+
+function isLocalMode(): boolean {
+  return process.env.NODE_ENV === 'development' || !process.env.R2_BUCKET_NAME;
 }
 
 /**
@@ -16,39 +23,44 @@ interface R2UploadOptions {
  */
 export async function uploadToR2(key: string, data: any, options: R2UploadOptions = {}): Promise<void> {
   try {
-    // For demo purposes, we'll simulate R2 upload with local file storage
-    // In production, this would use actual Cloudflare R2 API
-    
-    const r2Bucket = process.env.R2_BUCKET_NAME || 'bun-filter-logs';
-    const r2Endpoint = process.env.R2_ENDPOINT || 'https://your-account.r2.cloudflarestorage.com';
-    
     console.log(`📤 Uploading to R2: ${key}`);
-    console.log(`   Bucket: ${r2Bucket}`);
-    console.log(`   Data size: ${JSON.stringify(data).length} bytes`);
-    
-    // Simulate upload delay
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
+
     // For local development, store in local directory
-    if (process.env.NODE_ENV === 'development' || !process.env.R2_BUCKET_NAME) {
+    if (isLocalMode()) {
       const fs = await import('fs');
       const path = await import('path');
-      
+
       const localDir = path.join(process.cwd(), 'data', 'r2-logs');
       const localFile = path.join(localDir, key);
-      
+
       // Ensure directory exists
       await fs.promises.mkdir(path.dirname(localFile), { recursive: true });
-      
+
       // Write file
       await fs.promises.writeFile(localFile, JSON.stringify(data, null, 2));
-      
+
       console.log(`💾 Stored locally: ${localFile}`);
       return;
     }
-    
+
+    // Production: signed PUT request
+    const creds = getR2Credentials();
+    const url = `${creds.endpoint}/${creds.bucket}/${key}`;
+    const body = JSON.stringify(data);
+    const signed = await signS3Request('PUT', url, creds, body);
+
+    const response = await fetch(signed.url, {
+      method: 'PUT',
+      headers: signed.headers,
+      body,
+    });
+
+    if (!response.ok) {
+      throw new Error(`R2 upload failed: ${response.status} ${response.statusText}`);
+    }
+
     console.log(`✅ Successfully uploaded to R2: ${key}`);
-    
+
   } catch (error) {
     console.error(`❌ Failed to upload to R2: ${key}`, error);
     throw error;
@@ -60,17 +72,15 @@ export async function uploadToR2(key: string, data: any, options: R2UploadOption
  */
 export async function listR2Objects(prefix: string): Promise<string[]> {
   try {
-    const r2Bucket = process.env.R2_BUCKET_NAME || 'bun-filter-logs';
-    
     console.log(`📋 Listing R2 objects: ${prefix}`);
-    
+
     // For local development, list local files
-    if (process.env.NODE_ENV === 'development' || !process.env.R2_BUCKET_NAME) {
+    if (isLocalMode()) {
       const fs = await import('fs');
       const path = await import('path');
-      
+
       const localDir = path.join(process.cwd(), 'data', 'r2-logs', prefix);
-      
+
       try {
         const files = await fs.promises.readdir(localDir, { recursive: true });
         return files.map(file => path.join(prefix, file));
@@ -78,10 +88,28 @@ export async function listR2Objects(prefix: string): Promise<string[]> {
         return [];
       }
     }
-    
-    // Production R2 listing would go here
-    return [];
-    
+
+    // Production: signed GET with list-type=2
+    const creds = getR2Credentials();
+    const url = `${creds.endpoint}/${creds.bucket}?list-type=2&prefix=${encodeURIComponent(prefix)}`;
+    const signed = await signS3Request('GET', url, creds);
+
+    const response = await fetch(signed.url, { headers: signed.headers });
+
+    if (!response.ok) {
+      throw new Error(`R2 list failed: ${response.status} ${response.statusText}`);
+    }
+
+    const xml = await response.text();
+    // Parse <Key> elements from S3 ListObjectsV2 XML response
+    const keys: string[] = [];
+    const keyRegex = /<Key>([^<]+)<\/Key>/g;
+    let match: RegExpExecArray | null;
+    while ((match = keyRegex.exec(xml)) !== null) {
+      keys.push(match[1]);
+    }
+    return keys;
+
   } catch (error) {
     console.error(`❌ Failed to list R2 objects: ${prefix}`, error);
     return [];
@@ -93,17 +121,15 @@ export async function listR2Objects(prefix: string): Promise<string[]> {
  */
 export async function downloadFromR2(key: string): Promise<any> {
   try {
-    const r2Bucket = process.env.R2_BUCKET_NAME || 'bun-filter-logs';
-    
     console.log(`📥 Downloading from R2: ${key}`);
-    
+
     // For local development, read local file
-    if (process.env.NODE_ENV === 'development' || !process.env.R2_BUCKET_NAME) {
+    if (isLocalMode()) {
       const fs = await import('fs');
       const path = await import('path');
-      
+
       const localFile = path.join(process.cwd(), 'data', 'r2-logs', key);
-      
+
       try {
         const data = await fs.promises.readFile(localFile, 'utf-8');
         return JSON.parse(data);
@@ -111,10 +137,20 @@ export async function downloadFromR2(key: string): Promise<any> {
         throw new Error(`Local file not found: ${localFile}`);
       }
     }
-    
-    // Production R2 download would go here
-    throw new Error('R2 download not implemented in production mode');
-    
+
+    // Production: signed GET request
+    const creds = getR2Credentials();
+    const url = `${creds.endpoint}/${creds.bucket}/${key}`;
+    const signed = await signS3Request('GET', url, creds);
+
+    const response = await fetch(signed.url, { headers: signed.headers });
+
+    if (!response.ok) {
+      throw new Error(`R2 download failed: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
+
   } catch (error) {
     console.error(`❌ Failed to download from R2: ${key}`, error);
     throw error;
