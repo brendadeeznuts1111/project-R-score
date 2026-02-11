@@ -1,18 +1,19 @@
 import { afterEach, describe, expect, test } from 'bun:test';
 
-import DocumentationValidator, {
-  __runAutoHealForTest,
-  __setPlatformValidatorLoaderForTest,
-} from './documentation-validator';
+import DocumentationValidator from './documentation-validator';
+import {
+  runAutoHealForTest,
+  setPlatformValidatorLoaderForTest,
+} from './documentation-validator.internal';
 
 describe('documentation-validator integration', () => {
   afterEach(() => {
-    __setPlatformValidatorLoaderForTest(null);
+    setPlatformValidatorLoaderForTest(null);
   });
 
   test('uses platform validator module when loader provides it', async () => {
     let calls = 0;
-    __setPlatformValidatorLoaderForTest(async () => ({
+    setPlatformValidatorLoaderForTest(async () => ({
       ConstantValidator: {
         validateConstant(name: string) {
           calls++;
@@ -34,12 +35,12 @@ describe('documentation-validator integration', () => {
     expect(result.valid).toBe(2);
     expect(result.errors).toContain('mocked failure');
 
-    const heal = await __runAutoHealForTest();
+    const heal = await runAutoHealForTest();
     expect(heal.totalFixes).toBe(7);
   });
 
   test('falls back cleanly when platform loader throws', async () => {
-    __setPlatformValidatorLoaderForTest(async () => {
+    setPlatformValidatorLoaderForTest(async () => {
       throw new Error('module unavailable');
     });
 
@@ -47,8 +48,9 @@ describe('documentation-validator integration', () => {
     expect(result.total).toBe(3);
     expect(result.valid).toBe(3);
 
-    const heal = await __runAutoHealForTest();
+    const heal = await runAutoHealForTest();
     expect(typeof heal.totalFixes).toBe('number');
     expect(heal.totalFixes).toBeGreaterThanOrEqual(0);
   });
+
 });
