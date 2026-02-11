@@ -326,10 +326,20 @@ export class UDPRealtimeService {
     let sent = 0;
     if (this.isConnected && this.batchConnectedQueue.length > 0) {
       const batch = this.batchConnectedQueue.splice(0);
-      sent = this.sendMany(batch);
+      try {
+        sent = this.sendMany(batch);
+      } catch (err) {
+        this.batchConnectedQueue.unshift(...batch);
+        throw err;
+      }
     } else if (!this.isConnected && this.batchQueue.length > 0) {
       const batch = this.batchQueue.splice(0);
-      sent = this.sendMany(batch);
+      try {
+        sent = this.sendMany(batch);
+      } catch (err) {
+        this.batchQueue.unshift(...batch);
+        throw err;
+      }
     }
 
     if (sent > 0) this.metrics.batchFlushes++;
@@ -467,6 +477,7 @@ export class UDPRealtimeService {
   close(): void {
     if (this._state === "closed") return;
     this.stopTimers();
+    this.breaker?.destroy();
     this.socket?.close();
     this.socket = null;
     this._state = "closed";

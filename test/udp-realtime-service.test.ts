@@ -1656,7 +1656,7 @@ describe("UDPRealtimeService", () => {
       );
     });
 
-    test("flush propagates breaker rejection", async () => {
+    test("flush propagates breaker rejection and preserves queued packets", async () => {
       svc = new UDPRealtimeService(CB_CONFIG);
       await svc.bind();
 
@@ -1670,6 +1670,9 @@ describe("UDPRealtimeService", () => {
 
       // flush() calls sendMany() internally — breaker should reject
       expect(() => svc.flush()).toThrow(/Circuit breaker is OPEN/);
+
+      // Packets should be restored to the queue, not lost
+      expect(svc.pendingBatchSize).toBe(2);
     });
 
     // ---- C. Connected socket mode ----
