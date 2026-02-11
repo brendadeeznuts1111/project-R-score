@@ -262,7 +262,7 @@ export async function runFilteredScript(
 /**
  * Filter packages using glob patterns
  */
-async function filterPackages(packages: WorkspacePackage[], pattern: string): Promise<WorkspacePackage[]> {
+export async function filterPackages(packages: WorkspacePackage[], pattern: string): Promise<WorkspacePackage[]> {
   // Handle negation patterns
   const negationPatterns: string[] = [];
   let filterPattern = pattern;
@@ -491,8 +491,8 @@ function formatFilterSummary(summary: FilterSummary): string {
     `${c.dim('Script:')} ${c.cyan(summary.script)}`,
     `${c.dim('Matched:')} ${summary.matchedPackages}/${summary.totalPackages} packages`,
     `${c.dim('Executed:')} ${summary.executedPackages} packages`,
-    `${c.dim('Success:')} ${c.green(summary.successfulPackages)} ${c.dim(`(${successRate}%)`)}`,
-    summary.failedPackages > 0 ? `${c.dim('Failed:')} ${c.red(summary.failedPackages)}` : '',
+    `${c.dim('Success:')} ${c.green(String(summary.successfulPackages))} ${c.dim(`(${successRate}%)`)}`,
+    summary.failedPackages > 0 ? `${c.dim('Failed:')} ${c.red(String(summary.failedPackages))}` : '',
     `${c.dim('Total Time:')} ${summary.totalDurationMs.toFixed(0)}ms`,
     `${c.dim('Average:')} ${summary.averageDurationMs.toFixed(0)}ms/package`
   ].filter(Boolean).join('\n');

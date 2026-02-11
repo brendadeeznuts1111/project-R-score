@@ -70,15 +70,15 @@ export class EnhancedBuilder {
       
     } catch (error) {
       this.performanceMetrics.endTime = performance.now();
-      throw new Error(`Build failed: ${error.message}`);
+      throw new Error(`Build failed: ${(error as Error).message}`);
     }
   }
 
   // Execute the actual build
   private async executeBuild() {
     // Configure metafile options
-    let metafileConfig = true;
-    
+    let metafileConfig: any = true;
+
     if (this.metafileOptions.json || this.metafileOptions.markdown) {
       metafileConfig = {};
       if (this.metafileOptions.json) {

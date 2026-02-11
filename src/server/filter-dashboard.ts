@@ -6,7 +6,8 @@
  */
 
 import { spawn } from 'bun';
-import { runFilteredScript, discoverWorkspacePackages } from '../../lib/filter-runner';
+import { runFilteredScript, discoverWorkspacePackages, filterPackages } from '../../lib/filter-runner';
+import type { FilterOptions, FilterSummary } from '../../lib/filter-runner';
 
 // Color utilities
 const c = {
@@ -48,8 +49,7 @@ export class FilterDashboard {
         message: this.handleWebSocketMessage.bind(this),
         open: this.handleWebSocketOpen.bind(this),
         close: this.handleWebSocketClose.bind(this),
-        error: this.handleWebSocketError.bind(this)
-      }
+      } as any
     });
 
     console.log(c.bold(`🚀 Filter Dashboard running on http://localhost:${port}`));
@@ -167,7 +167,6 @@ export class FilterDashboard {
 
   private async runFilterWithStreaming(request: FilterRequest): Promise<FilterSummary> {
     // Create a custom implementation that streams progress
-    const { discoverWorkspacePackages, filterPackages } = await import('../../lib/filter-runner');
     
     const startTime = performance.now();
     
@@ -252,7 +251,6 @@ export class FilterDashboard {
   }
 
   private async handlePackageList(req: Request): Promise<Response> {
-    const { discoverWorkspacePackages } = await import('../../lib/filter-runner');
     const packages = await discoverWorkspacePackages();
     
     return Response.json({
@@ -267,7 +265,6 @@ export class FilterDashboard {
   }
 
   private async handleScriptList(req: Request): Promise<Response> {
-    const { discoverWorkspacePackages } = await import('../../lib/filter-runner');
     const packages = await discoverWorkspacePackages();
     
     const allScripts = new Set<string>();

@@ -19,10 +19,13 @@ interface GOVHeaders {
 }
 
 // Enhanced Fetch Options
-interface EnhancedFetchOptions extends RequestInit {
+interface EnhancedFetchOptions {
+  method?: string;
   headers?: HeadersInit | Record<string, string>;
-  integrity?: boolean;
-  cache?: 'force-cache' | 'no-cache' | 'default';
+  body?: BodyInit | null;
+  signal?: AbortSignal | null;
+  integrity?: string;
+  cache?: RequestCache;
   timeout?: number;
   retries?: number;
   benchmark?: boolean;
@@ -92,7 +95,7 @@ export function createGOVHeaders(
     ...extras
   };
   
-  return new Headers(base);
+  return new Headers(base as unknown as Record<string, string>);
 }
 
 // Compute SHA-256 hash for integrity
@@ -230,7 +233,7 @@ export async function fetchWithIntegrity(
   url: string, 
   options: EnhancedFetchOptions = {}
 ): Promise<Response> {
-  return enhancedFetch(url, { ...options, integrity: true });
+  return enhancedFetch(url, { ...options, integrity: 'sha256' });
 }
 
 // Streaming fetch for large data

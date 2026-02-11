@@ -90,7 +90,7 @@ interface HarTimings {
   receive: number;
 }
 
-interface HarEntry {
+export interface HarEntry {
   startedDateTime: string;
   time: number;
   request: HarRequest;
@@ -134,7 +134,7 @@ interface HarLog {
   [key: string]: unknown;
 }
 
-interface Har {
+export interface Har {
   log: HarLog;
 }
 

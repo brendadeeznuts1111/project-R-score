@@ -145,7 +145,7 @@ export class UltraWorkerPool<TPayload = unknown, TResult = unknown> {
 
   unref(): void {
     for (const worker of this.workers) {
-      worker.unref();
+      (worker as any).unref();
     }
   }
 
