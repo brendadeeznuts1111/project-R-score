@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "[pre-commit] verifying import boundaries..."
+bun run imports:verify
+
+echo "[pre-commit] running docs regression tests..."
+bun test tests/docs-urls-regression.test.ts
+bun test packages/docs-tools/src/documentation-validator.test.ts
