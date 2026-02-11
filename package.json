@@ -1723,6 +1723,7 @@
     "type-check:ci": "bun run tsc -b tsconfig.ci.json",
     "type-check:full": "bun run tsc -b",
     "ts:verify": "bun run scripts/verify-ts-check-config.ts",
+    "imports:verify": "bun run scripts/verify-package-import-boundaries.ts",
     "standards:check": "bun run url:check && bun run lint && bun run type-check",
     "guard:bun-first": "bun run packages/guards/src/bun-first-guard.ts lib/**/*.ts",
     "guard:bun-first:strict": "bun run packages/guards/src/bun-first-guard.ts lib/**/*.ts tools/**/*.ts cli/**/*.ts",

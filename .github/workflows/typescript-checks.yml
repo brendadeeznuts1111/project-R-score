@@ -37,5 +37,8 @@ jobs:
       - name: Verify TypeScript Check Config
         run: bun run ts:verify
 
+      - name: Verify Package Import Boundaries
+        run: bun run imports:verify
+
       - name: Run Type Check
         run: ${{ matrix.command }}
