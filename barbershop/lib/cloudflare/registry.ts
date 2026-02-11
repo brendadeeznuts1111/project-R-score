@@ -1029,30 +1029,3 @@ export class FactoryWagerRegistry {
 // Singleton instance
 export const registry = new FactoryWagerRegistry();
 export default registry;
-
-// Re-export types
-export type {
-  RegistryEntry,
-  RegistryQuery,
-  PlaygroundConfig,
-  DashboardLayout,
-  WidgetConfig,
-  PermissionConfig,
-  PaymentPipeline,
-  PipelineStage,
-  BarberHierarchy,
-  PaymentApproval,
-  ApprovalComment,
-  PaymentType,
-  PaymentProvider,
-  PaymentStatus,
-  CancellationReason,
-  TipType,
-  TipConfig,
-  PaymentTransaction,
-  P2PTransfer,
-  BarberPayout,
-  BarberAdvance,
-  InsufficientFundsConfig,
-  PaymentNotification,
-};

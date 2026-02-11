@@ -444,11 +444,3 @@ export class EnterpriseDocumentationURLValidator {
 
 // Export the enhanced validator for backward compatibility
 export { EnterpriseDocumentationURLValidator as DocumentationURLValidator };
-
-// Export interfaces for type usage
-export type {
-  DocumentationMetadata,
-  ValidationOptions,
-  ValidationResult,
-  SecurityValidationResult,
-};

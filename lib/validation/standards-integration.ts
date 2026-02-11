@@ -1044,5 +1044,3 @@ Example:
 if (import.meta.main) {
   main().catch(console.error);
 }
-
-export { StandardsIntegration };

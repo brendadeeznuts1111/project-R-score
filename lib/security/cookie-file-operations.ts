@@ -608,5 +608,3 @@ export default {
   CookieBatchProcessor,
   demonstrateFileHandleReadLines
 };
-
-export type { CookieLogEntry, CookieBatchAnalysis };
