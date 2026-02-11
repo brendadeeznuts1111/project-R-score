@@ -49,7 +49,7 @@ export function styled(
   // Use Bun.color for ANSI output (fallback to plain text if not available)
   try {
     const fg = Bun.color(fgColor, 'ansi') || '';
-    const bg = bgColor ? Bun.color(bgColor, 'ansi', 'background') || '' : '';
+    const bg = bgColor ? Bun.color(bgColor, 'ansi') || '' : '';
     const reset = Bun.color('reset', 'ansi') || '';
 
     if (bgColor) {
@@ -174,7 +174,7 @@ export function generateVisualMetadata(severity: FactoryWagerColor): VisualMetad
     'visual:color-hex': color,
     'visual:color-rgb': Bun.color(color, 'rgb') || '',
     'visual:color-hsl': Bun.color(color, 'hsl') || '',
-    'visual:ansi-sample': Bun.color(color, 'ansi256') + '█' + Bun.color('reset', 'ansi256'),
+    'visual:ansi-sample': Bun.color(color, 'ansi-256') + '█' + Bun.color('reset', 'ansi'),
     'profile:severity': severity,
   };
 }
@@ -232,7 +232,7 @@ if (import.meta.main) {
   });
 
   log.section('Example Usage');
-  console.log(styled('  styled("Hello World", "primary")', 'code'));
+  console.log(styled('  styled("Hello World", "primary")', 'accent'));
   console.log('  ' + styled('Hello World', 'primary'));
 
   console.log(styled('\n🚀 Ready for FactoryWager profiling!', 'success'));
