@@ -261,7 +261,10 @@ async function multiComponentDeploymentExample() {
   ];
 
   // Deploy all components
-  const deploymentResults = [];
+  const deploymentResults: Array<
+    | { component: string; version: string; success: true; versionId: string }
+    | { component: string; version: string; success: false; error: string }
+  > = [];
   for (const { component, version, metadata } of deployment) {
     try {
       const versionId = await tracker.registerVersion(component, version, metadata);
@@ -285,8 +288,9 @@ async function multiComponentDeploymentExample() {
 
     for (const { component } of deployment) {
       const history = tracker.getVersionHistory(component);
-      if (history.length > 1) {
-        const previousVersion = history[1].version;
+      const previous = history[1];
+      if (previous) {
+        const previousVersion = previous.version;
         await tracker.rollbackToVersion(
           component,
           previousVersion,

@@ -21,6 +21,7 @@ import {
   appendCRC,
   verifyAndStripCRC,
 } from "./packet-id";
+import { CircuitBreaker, CircuitBreakerOpenError } from "../core/circuit-breaker";
 
 type UDPSocket = Bun.udp.Socket<"buffer"> | Bun.udp.ConnectedSocket<"buffer">;
 
@@ -71,6 +72,9 @@ export class UDPRealtimeService {
   private batchQueue: UDPSendPacket[] = [];
   private batchConnectedQueue: Bun.udp.Data[] = [];
   private batchTimer: ReturnType<typeof setInterval> | null = null;
+
+  // Circuit breaker
+  private breaker: CircuitBreaker | null = null;
 
   constructor(config: UDPServiceConfig = {}) {
     this.config = config;
@@ -196,11 +200,26 @@ export class UDPRealtimeService {
     this.applySocketOptions();
     this.startHeartbeat();
     this.startBatchTimer();
+
+    if (this.config.circuitBreaker) {
+      const cb = this.config.circuitBreaker;
+      this.breaker = new CircuitBreaker("udp-send", {
+        failureThreshold: cb.failureThreshold ?? 5,
+        resetTimeoutMs: cb.resetTimeoutMs ?? 10_000,
+        successThreshold: cb.successThreshold ?? 2,
+        callTimeoutMs: 0, // not used for sync sends
+      });
+    }
   }
 
   send(data: Bun.udp.Data, port?: number, address?: string): boolean {
     if (this._state !== "bound" && this._state !== "connected") {
       throw new Error(`Cannot send: state is "${this._state}", expected "bound" or "connected"`);
+    }
+
+    if (this.breaker?.isOpen()) {
+      this.breaker.recordRejection();
+      throw new CircuitBreakerOpenError("udp-send", null, 0);
     }
 
     const framed = this.config.packetTracking ? this.frameOutbound(data) : data;
@@ -217,6 +236,12 @@ export class UDPRealtimeService {
       ok = (this.socket as Bun.udp.Socket<"buffer">).send(framed, port, address);
     }
 
+    if (ok) {
+      this.breaker?.recordSuccess();
+    } else {
+      this.breaker?.recordFailure(new Error("backpressure"));
+    }
+
     this.metrics.packetsSent++;
     this.metrics.bytesSent += byteLen;
     return ok;
@@ -227,6 +252,11 @@ export class UDPRealtimeService {
   sendMany(packets: readonly any[]): number {
     if (this._state !== "bound" && this._state !== "connected") {
       throw new Error(`Cannot sendMany: state is "${this._state}", expected "bound" or "connected"`);
+    }
+
+    if (this.breaker?.isOpen()) {
+      this.breaker.recordRejection();
+      throw new CircuitBreakerOpenError("udp-send", null, 0);
     }
 
     let sent: number;
@@ -250,6 +280,12 @@ export class UDPRealtimeService {
       sent = (this.socket as Bun.udp.Socket<"buffer">).sendMany(flat);
     }
 
+    if (packets.length > 0 && sent === 0) {
+      this.breaker?.recordFailure(new Error("sendMany: 0 packets sent"));
+    } else if (sent > 0) {
+      this.breaker?.recordSuccess();
+    }
+
     this.metrics.packetsSent += sent;
     return sent;
   }
@@ -263,6 +299,11 @@ export class UDPRealtimeService {
   scheduleSend(data: Bun.udp.Data, port?: number, address?: string): void {
     if (this._state !== "bound" && this._state !== "connected") {
       throw new Error(`Cannot scheduleSend: state is "${this._state}", expected "bound" or "connected"`);
+    }
+
+    if (this.breaker?.isOpen()) {
+      this.breaker.recordRejection();
+      throw new CircuitBreakerOpenError("udp-send", null, 0);
     }
 
     if (this.isConnected) {
@@ -285,10 +326,20 @@ export class UDPRealtimeService {
     let sent = 0;
     if (this.isConnected && this.batchConnectedQueue.length > 0) {
       const batch = this.batchConnectedQueue.splice(0);
-      sent = this.sendMany(batch);
+      try {
+        sent = this.sendMany(batch);
+      } catch (err) {
+        this.batchConnectedQueue.unshift(...batch);
+        throw err;
+      }
     } else if (!this.isConnected && this.batchQueue.length > 0) {
       const batch = this.batchQueue.splice(0);
-      sent = this.sendMany(batch);
+      try {
+        sent = this.sendMany(batch);
+      } catch (err) {
+        this.batchQueue.unshift(...batch);
+        throw err;
+      }
     }
 
     if (sent > 0) this.metrics.batchFlushes++;
@@ -375,6 +426,13 @@ export class UDPRealtimeService {
     };
   }
 
+  /**
+   * Returns the circuit breaker instance, or null if not configured.
+   */
+  getCircuitBreaker(): CircuitBreaker | null {
+    return this.breaker;
+  }
+
   // ---- Lifecycle ----
 
   /**
@@ -419,6 +477,7 @@ export class UDPRealtimeService {
   close(): void {
     if (this._state === "closed") return;
     this.stopTimers();
+    this.breaker?.destroy();
     this.socket?.close();
     this.socket = null;
     this._state = "closed";
@@ -426,6 +485,8 @@ export class UDPRealtimeService {
 
   reset(): void {
     this.close();
+    this.breaker?.destroy();
+    this.breaker = null;
     this.metrics = {
       packetsSent: 0,
       packetsReceived: 0,

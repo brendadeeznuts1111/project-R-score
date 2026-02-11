@@ -4,23 +4,21 @@
  * Enterprise-grade security suite with Bun native features
  */
 
-// Type declarations for Bun globals
-declare global {
-  namespace Bun {
-    const password: {
-      hash(password: string, options?: any): Promise<string>;
-      verify(password: string, hash: string): Promise<boolean>;
+type BunRuntime = typeof Bun & {
+  password: {
+    hash(password: string, options?: any): Promise<string>;
+    verify(password: string, hash: string): Promise<boolean>;
+  };
+  env: Record<string, string | undefined>;
+  compress?: {
+    zstd?: {
+      encode(data: string | Uint8Array): Uint8Array;
+      decode(data: Uint8Array): Uint8Array;
     };
-    const env: Record<string, string | undefined>;
-    let compress: {
-      zstd?: {
-        encode(data: string | Uint8Array): Uint8Array;
-        decode(data: Uint8Array): Uint8Array;
-      };
-    } | undefined;
-    const write: (path: string, data: string | Uint8Array) => Promise<number>;
-  }
-}
+  };
+};
+
+const bunRuntime = globalThis.Bun as BunRuntime | undefined;
 
 // import { Cookie, CookieMap } from 'bun:cookies'; // Not available in this version
 import { createCipheriv, createDecipheriv, createHmac, randomBytes, pbkdf2Sync } from 'node:crypto';
@@ -145,8 +143,11 @@ export class BunSecurityEngine {
       const cost = options?.cost || 10;
       
       try {
+        if (!bunRuntime?.password) {
+          throw new SecurityError('Bun.password is not available in this runtime');
+        }
         // Use Bun.password for secure hashing
-        const hash = await Bun.password.hash(password, {
+        const hash = await bunRuntime.password.hash(password, {
           algorithm,
           memoryCost: 65536, // 64MB for argon2
           timeCost: cost,
@@ -175,9 +176,12 @@ export class BunSecurityEngine {
       storedHash: string, 
       options?: { breachCheck?: boolean }
     ): Promise<{ valid: boolean; needsUpgrade?: boolean; breached?: boolean }> {
+      if (!bunRuntime?.password) {
+        throw new SecurityError('Bun.password is not available in this runtime');
+      }
       
       // Verify against stored hash
-      const isValid = await Bun.password.verify(password, storedHash);
+      const isValid = await bunRuntime.password.verify(password, storedHash);
       
       if (!isValid) {
         return { valid: false };
@@ -306,7 +310,7 @@ export class BunSecurityEngine {
     // 🔑 GENERATE CSRF TOKEN WITH ZST COMPRESSION
     static generateCSRFToken(
       sessionId: string, 
-      secret: string = Bun.env.CSRF_SECRET || 'default-secret'
+      secret: string = bunRuntime?.env.CSRF_SECRET || 'default-secret'
     ): { token: string; cookie: Cookie; compressed?: boolean } {
       
       const timestamp = Date.now();
@@ -333,8 +337,8 @@ export class BunSecurityEngine {
       
       try {
         // @ts-ignore - ZST compression might be available
-        if (typeof Bun !== 'undefined' && Bun.compress && Bun.compress.zstd) {
-          const compressedToken = Bun.compress.zstd.encode(rawToken);
+        if (bunRuntime?.compress?.zstd) {
+          const compressedToken = bunRuntime.compress.zstd.encode(rawToken);
           if (compressedToken.length < rawToken.length) {
             finalToken = compressedToken.toString('base64');
             compressed = true;
@@ -361,7 +365,7 @@ export class BunSecurityEngine {
     static validateCSRFToken(
       token: string, 
       sessionId: string,
-      secret: string = Bun.env.CSRF_SECRET || 'default-secret'
+      secret: string = bunRuntime?.env.CSRF_SECRET || 'default-secret'
     ): { valid: boolean; reason?: string; metadata?: any } {
       
       try {
@@ -370,8 +374,8 @@ export class BunSecurityEngine {
         // Try to decompress (check if it's ZST compressed)
         try {
           // @ts-ignore
-          if (typeof Bun !== 'undefined' && Bun.compress && Bun.compress.zstd) {
-            const decompressed = Bun.compress.zstd.decode(Buffer.from(token, 'base64'));
+          if (bunRuntime?.compress?.zstd) {
+            const decompressed = bunRuntime.compress.zstd.decode(Buffer.from(token, 'base64'));
             tokenData = JSON.parse(decompressed.toString());
           } else {
             tokenData = JSON.parse(Buffer.from(token, 'base64').toString());
@@ -455,7 +459,7 @@ export class BunSecurityEngine {
     ): { encrypted: string; keyVersion: number; metadata: any } {
       
       // Get current secret (use consistent secret for demo)
-      const secret = Bun.env[secretName] || 'demo-secret-key-32-chars-long';
+      const secret = bunRuntime?.env[secretName] || 'demo-secret-key-32-chars-long';
       const keyVersion = this.getKeyVersion(secretName);
       
       // Derive encryption key from secret
@@ -501,7 +505,7 @@ export class BunSecurityEngine {
         );
         
         // Get secret for this version (use same secret as encryption)
-        const secret = Bun.env[secretName] || 'demo-secret-key-32-chars-long';
+        const secret = bunRuntime?.env[secretName] || 'demo-secret-key-32-chars-long';
         
         // Derive key
         const salt = Buffer.from(packageData.s, 'hex');

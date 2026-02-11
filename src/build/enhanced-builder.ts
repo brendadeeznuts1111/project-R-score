@@ -1,12 +1,13 @@
 // src/build/enhanced-builder.ts
-import type { BuildMetafile, MetafileOptions, ImportKind } from './types';
+import type { BuildMetafile, MetafileOptions } from './types';
 import { MetafileAnalyzer } from './metafile-analyzer';
 import { generateMarkdownReport } from './markdown-generator';
 
 // Enhanced Bun Builder with Metafile Supremacy v4.0
 export class EnhancedBuilder {
-  private buildOptions: any;
+  private buildOptions: Partial<Bun.BuildConfig>;
   private metafileOptions: MetafileOptions;
+  private lastBuildOutputCount = 0;
   private performanceMetrics = {
     startTime: 0,
     endTime: 0,
@@ -15,7 +16,7 @@ export class EnhancedBuilder {
     markdownGenerationTime: 0,
   };
 
-  constructor(options: any = {}, metafileOptions: MetafileOptions = {}) {
+  constructor(options: Partial<Bun.BuildConfig> = {}, metafileOptions: MetafileOptions = {}) {
     this.buildOptions = {
       metafile: true, // Enable metafile by default
       ...options,
@@ -30,6 +31,7 @@ export class EnhancedBuilder {
     try {
       // Step 1: Execute Bun.build with metafile
       const buildResult = await this.executeBuild();
+      this.lastBuildOutputCount = Array.isArray(buildResult.outputs) ? buildResult.outputs.length : 0;
       
       // Step 2: Process metafile if generated
       if (buildResult.metafile) {
@@ -53,7 +55,8 @@ export class EnhancedBuilder {
             await this.saveMarkdown(markdown);
             this.performanceMetrics.markdownGenerationTime = performance.now() - markdownStartTime;
           }
-          
+
+          this.performanceMetrics.endTime = performance.now();
           return {
             ...buildResult,
             analysis,
@@ -75,23 +78,13 @@ export class EnhancedBuilder {
   }
 
   // Execute the actual build
-  private async executeBuild() {
-    // Configure metafile options
-    let metafileConfig: any = true;
-
-    if (this.metafileOptions.json || this.metafileOptions.markdown) {
-      metafileConfig = {};
-      if (this.metafileOptions.json) {
-        metafileConfig.json = this.metafileOptions.json;
-      }
-    }
-    
+  private async executeBuild(): Promise<Bun.BuildOutput> {
     const buildConfig = {
       ...this.buildOptions,
-      metafile: metafileConfig,
+      metafile: true,
     };
-    
-    return await Bun.build(buildConfig);
+
+    return await Bun.build(buildConfig as Bun.BuildConfig);
   }
 
   // Save metafile in different formats
@@ -273,8 +266,8 @@ ${issues.length > 0 ? `Issues detected:\n${issues.map(issue => `- ${issue}`).joi
   private calculateThroughput(): number {
     const totalTime = this.performanceMetrics.endTime - this.performanceMetrics.startTime;
     if (totalTime === 0) return 0;
-    
-    const totalFiles = Object.keys(this.metafileOptions.json ? {} : {}).length || 1;
+
+    const totalFiles = this.lastBuildOutputCount || 1;
     return (totalFiles / totalTime) * 1000; // files per second
   }
 }

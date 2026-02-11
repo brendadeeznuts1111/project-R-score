@@ -25,6 +25,20 @@ interface CLIOptions {
   verbose?: boolean;
 }
 
+const VALID_ENVIRONMENTS = ['development', 'staging', 'production'] as const;
+const VALID_FORMATS = ['json', 'table', 'csv'] as const;
+
+type CLIEnvironment = CLIOptions['environment'];
+type CLIFormat = CLIOptions['format'];
+
+function isCLIEnvironment(value: string): value is NonNullable<CLIEnvironment> {
+  return (VALID_ENVIRONMENTS as readonly string[]).includes(value);
+}
+
+function isCLIFormat(value: string): value is NonNullable<CLIFormat> {
+  return (VALID_FORMATS as readonly string[]).includes(value);
+}
+
 interface ComponentConfig {
   uri: string;
   version: string;
@@ -247,6 +261,9 @@ class VersionCLI {
         for (const component of components) {
           const current = this.tracker.getCurrentVersion(component);
           const status = healthStatus[component];
+          if (!status) {
+            continue;
+          }
           console.log(
             `"${component}","${current?.version || 'N/A'}","${status.healthStatus}","${status.errorRate}%","${status.uptimePercentage}%"`
           );
@@ -257,6 +274,9 @@ class VersionCLI {
         for (const component of components) {
           const current = this.tracker.getCurrentVersion(component);
           const status = healthStatus[component];
+          if (!status) {
+            continue;
+          }
           const healthIcon =
             status.healthStatus === 'healthy'
               ? '✅'
@@ -613,8 +633,7 @@ For more information, see the documentation.
 // CLI ENTRY POINT
 // ============================================================================
 
-function parseArgs(): CLIOptions {
-  const args = process.argv.slice(2);
+export function parseArgsFrom(args: readonly string[]): CLIOptions {
   const options: CLIOptions = {};
 
   for (let i = 0; i < args.length; i++) {
@@ -633,37 +652,92 @@ function parseArgs(): CLIOptions {
         options.command = arg;
         break;
       case '--component':
-        options.component = args[++i];
+        {
+          const value = args[++i];
+          if (value !== undefined) {
+            options.component = value;
+          }
+        }
         break;
       case '--endpoint':
-        options.endpoint = args[++i];
+        {
+          const value = args[++i];
+          if (value !== undefined) {
+            options.endpoint = value;
+          }
+        }
         break;
       case '--version':
-        options.version = args[++i];
+        {
+          const value = args[++i];
+          if (value !== undefined) {
+            options.version = value;
+          }
+        }
         break;
       case '--author':
-        options.author = args[++i];
+        {
+          const value = args[++i];
+          if (value !== undefined) {
+            options.author = value;
+          }
+        }
         break;
       case '--description':
-        options.description = args[++i];
+        {
+          const value = args[++i];
+          if (value !== undefined) {
+            options.description = value;
+          }
+        }
         break;
       case '--reason':
-        options.reason = args[++i];
+        {
+          const value = args[++i];
+          if (value !== undefined) {
+            options.reason = value;
+          }
+        }
         break;
       case '--environment':
-        options.environment = args[++i] as any;
+        {
+          const value = args[++i];
+          if (value && isCLIEnvironment(value)) {
+            options.environment = value;
+          }
+        }
         break;
       case '--tags':
-        options.tags = args[++i]?.split(',').map(t => t.trim());
+        {
+          const value = args[++i];
+          if (value !== undefined) {
+            options.tags = value.split(',').map(t => t.trim());
+          }
+        }
         break;
       case '--format':
-        options.format = args[++i] as any;
+        {
+          const value = args[++i];
+          if (value && isCLIFormat(value)) {
+            options.format = value;
+          }
+        }
         break;
       case '--output':
-        options.output = args[++i];
+        {
+          const value = args[++i];
+          if (value !== undefined) {
+            options.output = value;
+          }
+        }
         break;
       case '--config':
-        options.config = args[++i];
+        {
+          const value = args[++i];
+          if (value !== undefined) {
+            options.config = value;
+          }
+        }
         break;
       case '--verbose':
         options.verbose = true;
@@ -676,6 +750,10 @@ function parseArgs(): CLIOptions {
   }
 
   return options;
+}
+
+function parseArgs(): CLIOptions {
+  return parseArgsFrom(process.argv.slice(2));
 }
 
 // ============================================================================

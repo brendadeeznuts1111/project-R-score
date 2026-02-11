@@ -1,6 +1,6 @@
 // src/core/types/bun-extended.ts
 // Application-level server and options types (not augmenting Bun globals)
-import type { Server as BunServer } from 'bun';
+import type { Server as BunServer, ServeOptions as BunServeOptions } from 'bun';
 
 export interface EnhancedServerConfig {
   protocol?: 'http' | 'https' | 'http2' | 'http3' | 'auto';
@@ -46,7 +46,7 @@ export interface ServerPerformanceState {
   };
 }
 
-export type EnhancedServeOptions = Bun.ServeOptions & EnhancedServerConfig;
+export type EnhancedServeOptions = BunServeOptions & EnhancedServerConfig;
 
 export type EnhancedServer = BunServer<unknown> & {
   protocol: ServerProtocol;

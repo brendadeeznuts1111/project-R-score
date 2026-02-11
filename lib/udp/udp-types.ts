@@ -21,6 +21,14 @@ export interface UDPServiceConfig {
   heartbeatTimeoutMs?: number;
   /** Auto-flush interval in ms for batched sends. 0 = disabled (default). */
   batchFlushIntervalMs?: number;
+  /** Circuit breaker config. When set, send/sendMany/scheduleSend reject with
+   *  CircuitBreakerOpenError when the breaker is OPEN. Backpressure (send returns false
+   *  or sendMany returns 0) counts as a failure. */
+  circuitBreaker?: {
+    failureThreshold?: number;
+    resetTimeoutMs?: number;
+    successThreshold?: number;
+  };
 }
 
 export type UDPServiceState = "idle" | "binding" | "bound" | "connected" | "draining" | "closed";
