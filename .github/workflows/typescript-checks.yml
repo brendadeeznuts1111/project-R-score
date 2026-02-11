@@ -6,10 +6,22 @@ on:
       - main
   pull_request:
 
+concurrency:
+  group: typescript-checks-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  type-check-ci:
-    name: Type Check (CI Scope)
+  type-check:
+    name: ${{ matrix.name }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Type Check (CI Scope)
+            command: bun run type-check:ci
+          - name: Type Check (Full Scope)
+            command: bun run type-check:full
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,26 +37,5 @@ jobs:
       - name: Verify TypeScript Check Config
         run: bun run ts:verify
 
-      - name: Run CI Type Check
-        run: bun run type-check:ci
-
-  type-check-full:
-    name: Type Check (Full Scope)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Verify TypeScript Check Config
-        run: bun run ts:verify
-
-      - name: Run Full Type Check
-        run: bun run type-check:full
+      - name: Run Type Check
+        run: ${{ matrix.command }}
