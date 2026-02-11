@@ -1,10 +1,5 @@
 // lib/docs/documentation-validator.ts — Documentation constants validator
 
-// Entry guard check
-if (import.meta.path !== Bun.main) {
-  process.exit(0);
-}
-
 import { CLI_DOCUMENTATION_URLS } from '../../../lib/docs/constants/cli';
 import { BUN_UTILS_URLS } from '../../../lib/docs/constants/utils';
 
@@ -17,6 +12,11 @@ type AutoHealerLike = {
 };
 
 type PlatformValidators = {
+  ConstantValidator: ConstantValidatorLike;
+  AutoHealer: AutoHealerLike;
+};
+
+type PlatformModule = {
   ConstantValidator: ConstantValidatorLike;
   AutoHealer: AutoHealerLike;
 };
@@ -80,17 +80,41 @@ const fallbackAutoHealer: AutoHealerLike = {
 
 let validatorsPromise: Promise<PlatformValidators> | null = null;
 
+function createDefaultPlatformValidatorLoader(): () => Promise<unknown> {
+  return async () => {
+    const modulePath = '../../../lib/validation/' + 'cli-constants-validation';
+    const dynamicImport = new Function('m', 'return import(m)') as (
+      m: string
+    ) => Promise<unknown>;
+    return dynamicImport(modulePath);
+  };
+}
+
+let platformValidatorLoader: () => Promise<unknown> = createDefaultPlatformValidatorLoader();
+
+function isPlatformModule(value: unknown): value is PlatformModule {
+  if (!value || typeof value !== 'object') return false;
+  const candidate = value as Record<string, unknown>;
+  const hasConstantValidator =
+    !!candidate.ConstantValidator &&
+    typeof (candidate.ConstantValidator as Record<string, unknown>).validateConstant ===
+      'function';
+  const hasAutoHealer =
+    !!candidate.AutoHealer &&
+    typeof (candidate.AutoHealer as Record<string, unknown>).healAll === 'function';
+  return hasConstantValidator && hasAutoHealer;
+}
+
 async function getValidators(): Promise<PlatformValidators> {
   if (!validatorsPromise) {
     validatorsPromise = (async () => {
       try {
         // Load dynamically to avoid hard compile-time coupling to the platform module graph.
-        const modulePath = '../../../lib/validation/cli-constants-validation';
-        const mod = await import(modulePath);
-        if (mod?.ConstantValidator && mod?.AutoHealer) {
+        const mod = await platformValidatorLoader();
+        if (isPlatformModule(mod)) {
           return {
-            ConstantValidator: mod.ConstantValidator as ConstantValidatorLike,
-            AutoHealer: mod.AutoHealer as AutoHealerLike,
+            ConstantValidator: mod.ConstantValidator,
+            AutoHealer: mod.AutoHealer,
           };
         }
       } catch {
@@ -100,6 +124,19 @@ async function getValidators(): Promise<PlatformValidators> {
     })();
   }
   return validatorsPromise;
+}
+
+// Test helpers for deterministic unit testing of loader and fallback paths.
+export function __setPlatformValidatorLoaderForTest(
+  loader: (() => Promise<unknown>) | null
+): void {
+  platformValidatorLoader = loader ?? createDefaultPlatformValidatorLoader();
+  validatorsPromise = null;
+}
+
+export async function __runAutoHealForTest(): Promise<{ totalFixes: number }> {
+  const { AutoHealer } = await getValidators();
+  return AutoHealer.healAll();
 }
 
 // ============================================================================
@@ -408,11 +445,13 @@ async function main(): Promise<void> {
   }
 }
 
-// Run main function
-main().catch(error => {
-  console.error('❌ Unhandled error:', error);
-  process.exit(1);
-});
+// Run main function only when executed as a script.
+if (import.meta.main) {
+  main().catch(error => {
+    console.error('❌ Unhandled error:', error);
+    process.exit(1);
+  });
+}
 
 /**
  * 💡 Performance Tip: For better performance, consider:
