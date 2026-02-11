@@ -1,7 +1,5 @@
 // lib/docs/constants/utils.ts — URL normalization utilities
 
-import { URLHandler, URLFragmentUtils } from '../../core/url-handler';
-
 export enum UtilsCategory {
   FILE_SYSTEM = 'file_system',
   NETWORKING = 'networking',
@@ -163,8 +161,12 @@ export class UtilityFactory {
     // Add fragment to URL if provided
     let finalUrl = normalizedUrl;
     if (config.fragment && Object.keys(config.fragment).length > 0) {
-      const fragmentString = URLFragmentUtils.buildFragment(config.fragment);
-      finalUrl = URLHandler.addFragment(normalizedUrl, fragmentString);
+      const fragmentString = Object.entries(config.fragment)
+        .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+        .join('&');
+      const withFragment = new URL(normalizedUrl);
+      withFragment.hash = fragmentString;
+      finalUrl = withFragment.toString();
     }
 
     // Validate example code (basic syntax check)

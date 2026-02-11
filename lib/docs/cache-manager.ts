@@ -1,4 +1,5 @@
 // lib/docs/cache-manager.ts — Documentation cache management
+import { createHash } from 'node:crypto';
 
 export interface CacheConfig {
   ttl: number; // milliseconds
@@ -73,13 +74,13 @@ export class EnhancedDocsCacheManager {
     try {
       const cacheData = Object.fromEntries(this.cache.entries());
 
-      let dataToSave = cacheData;
+      let dataToSave: Record<string, unknown> = cacheData;
 
       // Compress if enabled
       if (this.config.compression) {
         const jsonString = JSON.stringify(cacheData);
         const compressed = Bun.gzipSync(Buffer.from(jsonString));
-        dataToSave = { _compressed: true, data: compressed.toString('base64') };
+        dataToSave = { _compressed: true, data: Buffer.from(compressed).toString('base64') };
       }
 
       await Bun.write(`${this.cacheDir}/cache.json`, JSON.stringify(dataToSave, null, 2));
@@ -210,7 +211,7 @@ export class EnhancedDocsCacheManager {
   }
 
   private calculateChecksum(data: any): string {
-    return Bun.hash.sha256(JSON.stringify(data)).toString('hex').slice(0, 16);
+    return createHash('sha256').update(JSON.stringify(data)).digest('hex').slice(0, 16);
   }
 
   private async evictEntries(newEntrySize: number): Promise<void> {

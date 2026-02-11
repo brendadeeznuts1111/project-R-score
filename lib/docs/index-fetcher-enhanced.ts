@@ -16,7 +16,7 @@ export interface BunApiIndex {
 }
 
 export class EnhancedDocsFetcher {
-  private cache: DocsCacheManager;
+  private cache: EnhancedDocsCacheManager;
   private fallbackData: BunApiIndex[];
   private domains = ['sh', 'com'] as const;
   private ripgrepSearcher: RipgrepSearcher;

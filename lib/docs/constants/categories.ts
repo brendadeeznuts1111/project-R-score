@@ -960,7 +960,9 @@ export const ENHANCED_DOCUMENTATION_PATHS = {
 // Utility type for path access
 export type EnhancedDocumentationPaths = typeof ENHANCED_DOCUMENTATION_PATHS;
 export type CategoryPaths<C extends DocumentationCategory> = {
-  [K in keyof EnhancedDocumentationPaths]: EnhancedDocumentationPaths[K][C] extends object
-    ? EnhancedDocumentationPaths[K][C]
+  [K in keyof EnhancedDocumentationPaths]: C extends keyof EnhancedDocumentationPaths[K]
+    ? EnhancedDocumentationPaths[K][C] extends object
+      ? EnhancedDocumentationPaths[K][C]
+      : never
     : never;
 };

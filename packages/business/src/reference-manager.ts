@@ -19,21 +19,21 @@ class ReferenceManager {
   private initializeReferences() {
     // Initialize with documentation URLs
     this.references.set('secrets-versioning', {
-      url: BUN_DOCS_EXTENDED.runtime.secrets.versioning.com,
+      url: BUN_DOCS_EXTENDED.runtime.secrets.com.versioning,
       title: 'Secrets Versioning',
       category: 'runtime',
       domain: 'com',
     });
 
     this.references.set('secrets-lifecycle', {
-      url: BUN_DOCS_EXTENDED.runtime.secrets.lifecycle.com,
+      url: BUN_DOCS_EXTENDED.runtime.secrets.com.lifecycle,
       title: 'Secrets Lifecycle Management',
       category: 'runtime',
       domain: 'com',
     });
 
     this.references.set('secrets-rollback', {
-      url: BUN_DOCS_EXTENDED.runtime.secrets.rollback.com,
+      url: BUN_DOCS_EXTENDED.runtime.secrets.com.rollback,
       title: 'Secrets Rollback',
       category: 'runtime',
       domain: 'com',

@@ -123,18 +123,27 @@ export const BUN_DOCS_EXTENDED = {
 export const getSecretsDocs = (feature?: string, domain: 'sh' | 'com' = 'sh'): string => {
   if (!feature) return BUN_DOCS_EXTENDED.runtime.secrets.overview;
 
-  const docs = BUN_DOCS_EXTENDED.runtime.secrets[domain === 'com' ? 'com' : 'overview'];
-  return typeof docs === 'string' ? docs : docs[feature] || docs.overview;
+  const docs =
+    domain === 'com'
+      ? BUN_DOCS_EXTENDED.runtime.secrets.com
+      : BUN_DOCS_EXTENDED.runtime.secrets;
+  return docs[feature as keyof typeof docs] || docs.overview;
 };
 
 export const getVersioningDocs = (domain: 'sh' | 'com' = 'com'): string => {
-  return BUN_DOCS_EXTENDED.runtime.secrets[domain === 'com' ? 'com' : 'overview'].versioning;
+  return domain === 'com'
+    ? BUN_DOCS_EXTENDED.runtime.secrets.com.versioning
+    : BUN_DOCS_EXTENDED.runtime.secrets.versioning;
 };
 
 export const getLifecycleDocs = (domain: 'sh' | 'com' = 'com'): string => {
-  return BUN_DOCS_EXTENDED.runtime.secrets[domain === 'com' ? 'com' : 'overview'].lifecycle;
+  return domain === 'com'
+    ? BUN_DOCS_EXTENDED.runtime.secrets.com.lifecycle
+    : BUN_DOCS_EXTENDED.runtime.secrets.lifecycle;
 };
 
 export const getRollbackDocs = (domain: 'sh' | 'com' = 'com'): string => {
-  return BUN_DOCS_EXTENDED.runtime.secrets[domain === 'com' ? 'com' : 'overview'].rollback;
+  return domain === 'com'
+    ? BUN_DOCS_EXTENDED.runtime.secrets.com.rollback
+    : BUN_DOCS_EXTENDED.runtime.secrets.rollback;
 };

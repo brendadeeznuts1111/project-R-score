@@ -5,13 +5,13 @@ import {
   DocumentationProvider,
   DocumentationCategory,
   DocumentationDomain,
+  DocumentationURLType,
   DOCUMENTATION_URL_MAPPINGS,
   DOMAIN_PREFERENCES,
   PROVIDER_METADATA,
 } from '../../../../lib/docs/constants/domains';
 import { GITHUB_URL_PATTERNS, FRAGMENT_PARSERS, FRAGMENT_VALIDATION } from '../../../../lib/docs/constants/fragments';
 import { IntelligentRouting, ENTERPRISE_DOCUMENTATION_PATHS } from '../../../../lib/docs/constants/categories';
-import { URLHandler } from '../../../../lib/core/url-handler';
 
 export class EnhancedDocumentationURLValidator {
   /**
@@ -467,7 +467,7 @@ export class EnhancedDocumentationURLValidator {
         if (match) {
           switch (type) {
             case 'TREE_VIEW':
-              const treeResult = {
+              const treeResult: any = {
                 isValid: true,
                 type: 'tree' as const,
                 owner: match[1],
@@ -493,7 +493,7 @@ export class EnhancedDocumentationURLValidator {
               return treeResult;
 
             case 'BLOB_VIEW':
-              const blobResult = {
+              const blobResult: any = {
                 isValid: true,
                 type: 'blob' as const,
                 owner: match[1],

@@ -386,24 +386,11 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     COMMUNITY_FEED: 'https://bun.com/community/rss.xml',
   },
 
-  [DocumentationProvider.GITHUB_PUBLIC]: {
-    BASE: 'https://github.com',
-    REPOSITORY: 'https://github.com/oven-sh/bun',
-    RELEASES: 'https://github.com/oven-sh/bun/releases',
-    ISSUES: 'https://github.com/oven-sh/bun/issues',
-    PULL_REQUESTS: 'https://github.com/oven-sh/bun/pulls',
-    DISCUSSIONS: 'https://github.com/oven-sh/bun/discussions',
-    ACTIONS: 'https://github.com/oven-sh/bun/actions',
-    WIKI: 'https://github.com/oven-sh/bun/wiki',
-    MAIN_BRANCH: 'https://github.com/oven-sh/bun/tree/main',
-    CANARY: 'https://github.com/oven-sh/bun/tree/canary',
-    EXAMPLE_COMMIT_AF76296: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types',
-  },
 } as const;
 
 // Type-safe access to base URLs
 export type BaseURLs = typeof ENTERPRISE_DOCUMENTATION_BASE_URLS;
-export type ProviderURLs<T extends DocumentationProvider> = BaseURLs[T];
+export type ProviderURLs<T extends keyof BaseURLs> = BaseURLs[T];
 
 // URL categorization and mapping for intelligent routing
 export const DOCUMENTATION_URL_MAPPINGS = {

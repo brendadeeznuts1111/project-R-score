@@ -22,7 +22,6 @@ import {
   FRAGMENT_BUILDERS,
   FRAGMENT_VALIDATION,
 } from '../../../../lib/docs/constants/fragments';
-import { URLHandler, URLFragmentUtils } from '../../../../lib/core/url-handler';
 
 // Enhanced interface for URL building options
 export interface DocumentationURLOptions {
@@ -668,11 +667,3 @@ export class EnterpriseDocumentationURLBuilder {
 
 // Export singleton instance for easy access
 export const docsURLBuilder = EnterpriseDocumentationURLBuilder.getInstance();
-
-// Export interfaces for type usage
-export type {
-  DocumentationURLOptions,
-  TypedArrayURLOptions,
-  EnterpriseAPIURLOptions,
-  SyscallOptimizationURLOptions,
-};

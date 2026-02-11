@@ -208,9 +208,10 @@ export const FRAGMENT_VALIDATION = {
     }
 
     // Check if value is in valid values for known parameters
-    const validValues =
-      FRAGMENT_VALIDATION.VALID_VALUES[name as keyof typeof FRAGMENT_VALIDATION.VALID_VALUES];
-    if (validValues && !validValues.includes(value as any)) {
+    const validValues = FRAGMENT_VALIDATION.VALID_VALUES[
+      name as keyof typeof FRAGMENT_VALIDATION.VALID_VALUES
+    ] as readonly string[] | undefined;
+    if (validValues && !validValues.includes(value)) {
       return false;
     }
 

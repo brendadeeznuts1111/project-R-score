@@ -4,5 +4,6 @@ export {
   DocumentationProvider,
   ENTERPRISE_DOCUMENTATION_BASE_URLS,
   SIGNIFICANT_COMMITS,
-  TEXT_FRAGMENT_PATTERNS,
 } from './domains';
+
+export { TEXT_FRAGMENT_PATTERNS } from './fragments';
