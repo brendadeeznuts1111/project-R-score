@@ -307,10 +307,44 @@ export class CircuitBreaker {
   }
 
   /**
-   * Check if circuit is open (failing)
+   * Check if circuit is open (failing).
+   * Also handles the OPEN → HALF_OPEN timeout transition: if resetTimeoutMs
+   * has elapsed since the last failure, transitions to HALF_OPEN and returns false.
    */
   isOpen(): boolean {
-    return this.state === CircuitState.OPEN;
+    if (this.state === CircuitState.OPEN) {
+      const elapsed = Date.now() - (this.lastFailureTime || 0);
+      if (elapsed >= this.config.resetTimeoutMs) {
+        this.transitionTo(CircuitState.HALF_OPEN);
+        return false;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Record a successful synchronous operation (for callers that don't use execute()).
+   */
+  recordSuccess(): void {
+    this.totalCalls++;
+    this.onSuccess();
+  }
+
+  /**
+   * Record a failed synchronous operation (for callers that don't use execute()).
+   */
+  recordFailure(error?: Error): void {
+    this.totalCalls++;
+    this.onFailure(error ?? new Error("unknown failure"));
+  }
+
+  /**
+   * Record a rejection (call blocked because circuit is open).
+   */
+  recordRejection(): void {
+    this.totalCalls++;
+    this.rejectedCalls++;
   }
 
   /**

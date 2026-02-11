@@ -1540,4 +1540,205 @@ describe("UDPRealtimeService", () => {
       expect(hdr!.sequenceId).toBe(0);
     });
   });
+
+  // ====== Circuit Breaker Integration ======
+
+  describe("Circuit Breaker Integration", () => {
+    const CB_CONFIG = {
+      circuitBreaker: {
+        failureThreshold: 3,
+        resetTimeoutMs: 5000,
+        successThreshold: 2,
+      },
+    };
+
+    function openBreaker(svc: UDPRealtimeService): void {
+      // Force backpressure to record failures
+      const origSend = fakeSocket.send.bind(fakeSocket);
+      fakeSocket.send = (...args: any[]) => {
+        fakeSocket.sendCalls.push(args);
+        return false; // backpressure
+      };
+      for (let i = 0; i < CB_CONFIG.circuitBreaker.failureThreshold; i++) {
+        svc.send("fail", 4000, "10.0.0.1");
+      }
+      // Restore normal send
+      fakeSocket.send = origSend;
+    }
+
+    // ---- A. Recovery flow: OPEN → HALF_OPEN → CLOSED ----
+
+    test("half-open transition after resetTimeout", async () => {
+      svc = new UDPRealtimeService(CB_CONFIG);
+      await svc.bind();
+
+      openBreaker(svc);
+      const breaker = svc.getCircuitBreaker()!;
+      expect(breaker.isOpen()).toBe(true);
+
+      // Advance time past resetTimeoutMs
+      const realNow = Date.now;
+      const nowSpy = spyOn(Date, "now").mockReturnValue(realNow() + 6000);
+
+      // isOpen() should trigger HALF_OPEN transition and return false
+      expect(breaker.isOpen()).toBe(false);
+      expect(breaker.getState()).toBe("half_open");
+
+      // Send should succeed now
+      const ok = svc.send("recovery", 4000, "10.0.0.1");
+      expect(ok).toBe(true);
+
+      nowSpy.mockRestore();
+    });
+
+    test("successful recovery closes breaker", async () => {
+      svc = new UDPRealtimeService(CB_CONFIG);
+      await svc.bind();
+
+      openBreaker(svc);
+      const breaker = svc.getCircuitBreaker()!;
+
+      // Advance time past resetTimeoutMs
+      const realNow = Date.now;
+      const nowSpy = spyOn(Date, "now").mockReturnValue(realNow() + 6000);
+
+      // Transition to HALF_OPEN
+      expect(breaker.isOpen()).toBe(false);
+
+      // Send successThreshold successful packets to close
+      for (let i = 0; i < CB_CONFIG.circuitBreaker.successThreshold; i++) {
+        svc.send("ok", 4000, "10.0.0.1");
+      }
+
+      expect(breaker.getState()).toBe("closed");
+      nowSpy.mockRestore();
+    });
+
+    test("failure in half-open re-opens breaker", async () => {
+      svc = new UDPRealtimeService(CB_CONFIG);
+      await svc.bind();
+
+      openBreaker(svc);
+      const breaker = svc.getCircuitBreaker()!;
+
+      // Advance time past resetTimeoutMs
+      const realNow = Date.now;
+      const nowSpy = spyOn(Date, "now").mockReturnValue(realNow() + 6000);
+
+      // Transition to HALF_OPEN
+      expect(breaker.isOpen()).toBe(false);
+      expect(breaker.getState()).toBe("half_open");
+
+      // Force backpressure failure
+      const origSend = fakeSocket.send.bind(fakeSocket);
+      fakeSocket.send = (...args: any[]) => {
+        fakeSocket.sendCalls.push(args);
+        return false;
+      };
+      svc.send("fail", 4000, "10.0.0.1");
+      fakeSocket.send = origSend;
+
+      // Should be back to OPEN
+      expect(breaker.getState()).toBe("open");
+      nowSpy.mockRestore();
+    });
+
+    // ---- B. scheduleSend + flush with breaker ----
+
+    test("scheduleSend throws when breaker is open", async () => {
+      svc = new UDPRealtimeService(CB_CONFIG);
+      await svc.bind();
+
+      openBreaker(svc);
+
+      expect(() => svc.scheduleSend("data", 4000, "10.0.0.1")).toThrow(
+        /Circuit breaker is OPEN/
+      );
+    });
+
+    test("flush propagates breaker rejection", async () => {
+      svc = new UDPRealtimeService(CB_CONFIG);
+      await svc.bind();
+
+      // Queue packets while breaker is CLOSED
+      svc.scheduleSend("a", 4000, "10.0.0.1");
+      svc.scheduleSend("b", 4000, "10.0.0.1");
+      expect(svc.pendingBatchSize).toBe(2);
+
+      // Now open the breaker
+      openBreaker(svc);
+
+      // flush() calls sendMany() internally — breaker should reject
+      expect(() => svc.flush()).toThrow(/Circuit breaker is OPEN/);
+    });
+
+    // ---- C. Connected socket mode ----
+
+    test("connected socket send respects breaker", async () => {
+      svc = new UDPRealtimeService({
+        connect: { hostname: "127.0.0.1", port: 5000 },
+        ...CB_CONFIG,
+      });
+      await svc.bind();
+
+      // Force backpressure on connected send
+      const origSend = fakeSocket.send.bind(fakeSocket);
+      fakeSocket.send = (...args: any[]) => {
+        fakeSocket.sendCalls.push(args);
+        return false;
+      };
+      for (let i = 0; i < CB_CONFIG.circuitBreaker.failureThreshold; i++) {
+        svc.send("fail");
+      }
+      fakeSocket.send = origSend;
+
+      const breaker = svc.getCircuitBreaker()!;
+      expect(breaker.isOpen()).toBe(true);
+
+      expect(() => svc.send("blocked")).toThrow(/Circuit breaker is OPEN/);
+    });
+
+    // ---- D. Lifecycle ----
+
+    test("reset destroys breaker, re-bind creates fresh one", async () => {
+      svc = new UDPRealtimeService(CB_CONFIG);
+      await svc.bind();
+
+      openBreaker(svc);
+      expect(svc.getCircuitBreaker()!.isOpen()).toBe(true);
+
+      svc.reset();
+      expect(svc.getCircuitBreaker()).toBeNull();
+
+      // Re-bind creates a fresh CLOSED breaker
+      await svc.bind();
+      const fresh = svc.getCircuitBreaker()!;
+      expect(fresh).not.toBeNull();
+      expect(fresh.getState()).toBe("closed");
+    });
+
+    // ---- E. sendMany partial success ----
+
+    test("sendMany records failure when 0 packets sent from non-empty batch", async () => {
+      svc = new UDPRealtimeService({
+        connect: { hostname: "127.0.0.1", port: 5000 },
+        ...CB_CONFIG,
+      });
+      await svc.bind();
+
+      // Override sendMany to return 0 (full backpressure)
+      fakeSocket.sendMany = (_packets: any[]) => {
+        fakeSocket.sendManyCalls.push(_packets);
+        return 0;
+      };
+
+      const breaker = svc.getCircuitBreaker()!;
+      const statsBefore = breaker.getStats();
+
+      svc.sendMany(["a", "b", "c"]);
+
+      const statsAfter = breaker.getStats();
+      expect(statsAfter.failures).toBe(statsBefore.failures + 1);
+    });
+  });
 });
